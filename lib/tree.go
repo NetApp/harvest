@@ -6,6 +6,7 @@ import (
     "bytes"
     "encoding/xml"
     "unicode"
+    "errors"
 )
 
 var RED string = "\033[31m"
@@ -23,10 +24,43 @@ type Node struct {
     Children []Node     `xml:",any"`
 }
 
-func (n *Node) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-    n.Attrs = start.Attr
-    type node Node
-    return d.DecodeElement((*node)(n), &start)
+func NewNode(name string) *Node {
+    var node Node
+    var xmlname xml.Name
+    xmlname = xml.Name{ "", name }
+    node = Node{ XMLName : xmlname }
+    return &node
+}
+
+func (n *Node) CreateChild(name string, content string) {
+    var child Node
+    child = *NewNode(name)
+    child.Content = []byte(content)
+    n.AddChild(child)
+}
+
+func (n *Node) AddChild(child Node) {
+    n.Children = append(n.Children, child)
+}
+
+func (n *Node) GetChild(name string) (*Node, bool) {
+    var child Node
+    for _, child = range n.Children {
+        if child.GetName() == name {
+            return &child, true
+        }
+    }
+    return nil, false
+}
+
+func (n *Node) GetChildContent(name string) ([]byte, bool) {
+    var child *Node
+    var found bool
+    child, found = n.GetChild(name)
+    if found == true {
+        return child.GetContent()
+    }
+    return nil, false
 }
 
 func (n *Node) GetName() string {
@@ -34,19 +68,8 @@ func (n *Node) GetName() string {
 }
 
 func (n *Node) GetContent() ([]byte, bool) {
-    //var i int
     var content []byte
     if len(n.Content) != 0 {
-        /*
-        i = 0
-        for {
-            if !unicode.IsSpace(rune(n.Content[i])) || i==len(n.Content)-1 {
-                break
-            }
-            i += 1
-        }
-        */
-        //fmt.Printf("n.Content[%d] = %s\n", i, string(n.Content[i]))
         content = bytes.TrimFunc(n.Content, unicode.IsSpace)
         if content[0] != '<' {
             return content, true
@@ -72,15 +95,34 @@ func (n *Node) GetAttributeNames() []string {
     return names
 }
 
-func NewTree(data []byte) (*Node, error) {
+func (n *Node) Build() ([]byte, error) {
+    return xml.Marshal(&n)
+}
+
+func (n *Node) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+    n.Attrs = start.Attr
+    type node Node
+    return d.DecodeElement((*node)(n), &start)
+}
+
+func Parse(data []byte) (*Node, error) {
     var buffer *bytes.Buffer
     var decoder *xml.Decoder
-    var node Node
+    var node, root *Node
+    var found bool
     var err error
+
     buffer = bytes.NewBuffer(data)
     decoder = xml.NewDecoder(buffer)
     err = decoder.Decode(&node)
-    return &node, err
+
+    if err == nil {
+        root, found = node.GetChild("results")
+        if found != true {
+            err = errors.New("Root element \"results\" missing")
+        }
+    }
+    return root, err
 }
 
 func PrintTree(n *Node, depth int) {
