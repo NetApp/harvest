@@ -4,7 +4,7 @@ package collector
 import (
     "fmt"
     "errors"
-    "encoding/binary"
+    "strconv"
     "local.host/api"
     "local.host/matrix"
 )
@@ -79,9 +79,10 @@ func (z Zapi) GetSystemInfo() (SystemInfo, error) {
             maj, _ := tuple.GetChildContent("major")
             min, _ := tuple.GetChildContent("minor")
 
-            genint, _ := binary.Varint(gen)
-            majint, _ := binary.Varint(maj)
-            minint, _ := binary.Varint(min)
+            z.Log(fmt.Sprintf("convertion version tuple: %s %s %s", string(gen), string(maj), string(min)))
+            genint, _ := strconv.ParseInt(string(gen), 0, 16)
+            majint, _ := strconv.ParseInt(string(maj), 0, 16)
+            minint, _ := strconv.ParseInt(string(min), 0, 16)
 
             sys.Version[0] = int(genint)
             sys.Version[1] = int(majint)
