@@ -1,4 +1,4 @@
-package lib
+package api
 
 import (
     "fmt"
@@ -10,13 +10,20 @@ import (
     "crypto/tls"
 )
 
+type ConnectionParams struct {
+    Hostname string
+    UseCert bool
+    Authorization [2]string
+    Timeout int
+}
+
 type Connection struct {
     client      *http.Client
     request     *http.Request
     buffer      *bytes.Buffer
 }
 
-func NewConnection(hostname string, cert_auth bool, auth [2]string, timeout int) (Connection, error) {
+func NewConnection(p ConnectionParams) (Connection, error) {
     var connection Connection
     var client *http.Client
     var request *http.Request
@@ -27,7 +34,7 @@ func NewConnection(hostname string, cert_auth bool, auth [2]string, timeout int)
 
     err = nil
 
-    url = fmt.Sprintf("https://%s:443/servlets/netapp.servlets.admin.XMLrequest_filer", hostname)
+    url = fmt.Sprintf("https://%s:443/servlets/netapp.servlets.admin.XMLrequest_filer", p.Hostname)
     request, err = http.NewRequest("POST", url, nil)
     if err != nil {
         fmt.Printf("Error creating request: %s\n", err)
@@ -36,20 +43,20 @@ func NewConnection(hostname string, cert_auth bool, auth [2]string, timeout int)
     request.Header.Set("Content-type", "text/xml")
     request.Header.Set("Charset", "utf-8")
 
-    if cert_auth == true {
-        cert, err = tls.LoadX509KeyPair(auth[0], auth[1])
+    if p.UseCert == true {
+        cert, err = tls.LoadX509KeyPair(p.Authorization[0], p.Authorization[1])
         if err != nil {
             fmt.Printf("Error loading key pair: %s\n", err)
             return connection, err
         }
         transport = &http.Transport{ TLSClientConfig : &tls.Config{Certificates : []tls.Certificate{cert}, InsecureSkipVerify : true }, }
     } else {
-        request.SetBasicAuth(auth[0], auth[1])
+        request.SetBasicAuth(p.Authorization[0], p.Authorization[1])
         transport = &http.Transport{ TLSClientConfig : &tls.Config{ InsecureSkipVerify : true }, }
     }
 
     // build client
-    client = &http.Client{ Transport : transport, Timeout: time.Duration(timeout) * time.Second }
+    client = &http.Client{ Transport : transport, Timeout: time.Duration(p.Timeout) * time.Second }
 
     connection = Connection{ client: client, request: request }
 
