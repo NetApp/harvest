@@ -4,9 +4,14 @@ package collector
 import (
     "fmt"
     "errors"
+    "strings"
     "strconv"
+    "regexp"
+    "io/ioutil"
+    "path/filepath"
     "local.host/api"
     "local.host/matrix"
+    "local.host/share"
 )
 
 type SystemInfo struct {
@@ -166,29 +171,82 @@ func (z Zapi) GetSystemInfo() (SystemInfo, error) {
     return sys, nil
 }
 
-func (z Zapi) Log(msg string) {
-    //fmt.Printf("Log called for %s", c.Name)
-    fmt.Printf("[%s:%s] %s\n", z.Class, z.Name, msg)
+func (z Zapi) Log(format string, vars ...interface{}) {
+    fmt.Printf("[%s:%s] ", z.Class, z.Name)
+    fmt.Printf(format, vars...)
+    fmt.Println()
 }
 
-func (z Zapi) Init(p api.ConnectionParams) error {
+func (z Zapi) Init(params map[string]string, template *share.Element, cp api.ConnectionParams) error {
 
     var err error
 
     z.Log("Intializing!")
 
-    z.Connection, err = api.NewConnection(p)
+    z.Connection, err = api.NewConnection(cp)
     if err != nil {
-        z.Log("Error connection")
+        z.Log("Error connecting: %s", err)
         return err
     }
 
     z.System, err = z.GetSystemInfo()
     if err != nil {
-        z.Log("Error fetching system info")
+        z.Log("Error fetching system info: %s", err)
         return err
     }
 
+    dir, _ := params["subtemplate_dir"]
+    fn, _ := params["subtemplate"]
+    path, _ := params["harvest_path"]
+
+    subtemplate, err := z.LoadSubtemplate(path, dir, fn, z.Class, z.System.Version)
+    if err != nil {
+        z.Log("Error importing subtemplate: %s", err)
+        return err
+    }
+
+    subtemplate.MergeFrom(template)
+
     z.Log(fmt.Sprintf("Start-up success! Connected to: %s", z.System.ToString()))
     return err
+}
+
+
+func (z Zapi) LoadSubtemplate(path, dir, filename, collector string, version [3]int) (*share.Element, error) {
+
+    var err error
+    var selected_version string
+    var subtemplate *share.Element
+
+    path_prefix := filepath.Join(path, "var/", strings.ToLower(collector), dir)
+    z.Log("Looking for best-fitting template in [%s]", path_prefix)
+
+    available := make(map[string]bool)
+    files, _ := ioutil.ReadDir(path_prefix)
+    for _, file := range files {
+        if match, _ := regexp.MatchString(`\d+\.\d+\.\d+`, file.Name()); match == true && file.IsDir() {
+            available[file.Name()] = true
+        }
+    }
+
+    vers := version[0] * 100 + version[1] * 10 + version[2]
+    if err != nil { return subtemplate, err }
+
+    for max:=300; max>0 && vers>0; max-=1 {
+        str := strings.Join(strings.Split(strconv.Itoa(vers), ""), ".")
+        if _, exists := available[str]; exists == true {
+            selected_version = str
+            break
+        }
+        vers-= 1
+    }
+
+    if selected_version == "" {
+        err = errors.New("No best-fitting subtemplate version found")
+    } else {
+        z.Log("Selected best-fitting subtemplate version [%s]", selected_version)
+        path := filepath.Join(path_prefix, selected_version, filename)
+        subtemplate, err = share.ImportTemplate(path)
+    }
+    return subtemplate, err
 }

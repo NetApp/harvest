@@ -3,10 +3,10 @@ package share
 import (
     "io/ioutil"
     "bytes"
-    "fmt"
-    "errors"
     "strconv"
+    "errors"
 )
+
 
 func ImportTemplate(filepath string) (*Element, error) {
     var err error
@@ -15,8 +15,8 @@ func ImportTemplate(filepath string) (*Element, error) {
 
     content, err = ioutil.ReadFile(filepath)
     if err == nil {
-        root = NewElement([]byte("Root"))
-        root.Parse(bytes.Split(content, []byte("\n")), 0, 0, &err)
+        root = NewElement("Root")
+        err = root.Parse(bytes.Split(content, []byte("\n")), 0, 0)
     }
     return root, err
 }
@@ -24,40 +24,71 @@ func ImportTemplate(filepath string) (*Element, error) {
 
 type Element struct {
     Parent *Element
-    Name []byte
-    Values [][]byte
+    Name string
+    Values []string
     Children []*Element
 }
 
 
-func NewElement(name []byte) *Element {
+func NewElement(name string) *Element {
     return &Element{ Name: name }
 }
 
+func (e *Element) MergeFrom(dest *Element) {
+    var children []*Element
+    var child *Element
 
-func (e *Element) Parse(lines [][]byte, index, depth int, err *error) {
+    for _, child = range dest.Children {
+        if e.HasChild(child.Name) {
+            children = append(children, e.GetChild(child.Name))
+        } else {
+            children = append(children, child)
+        }
+    }
+
+    for _, child = range e.Children {
+        if !dest.HasChild(child.Name) {
+            children = append(children, child)
+        }
+    }
+    e.Children = children
+}
+
+
+func (e *Element) HasChild(name string) bool {
+    return e.GetChild != nil
+}
+
+func (e *Element) GetChild(name string) *Element {
+    var child *Element
+    for _, child = range e.Children {
+        if child.Name == name {
+            break
+        }
+    }
+    return child
+}
+
+func (e *Element) Parse(lines [][]byte, index, depth int) error {
     var indent int
     var child *Element
-    var key, value []byte
+    var key, value string
 
     /* Reached end of file */
     if index == len(lines) {
-        return
+        return nil
     }
 
     /* Check for consistent indentation */
     if depth % 2 != 0 {
-        e := errors.New("Inconsistent indentation at line " + strconv.Itoa(index))
-        err = &e
-        return
+        return errors.New("Inconsistent indentation at line " + strconv.Itoa(index+1))
     }
 
     indent, key, value = ParseLine(lines[index])
 
     /* Skip empty line */
     if len(key) == 0 && len(value) == 0 {
-        e.Parse(lines, index+1, depth, err)
-        return
+        return e.Parse(lines, index+1, depth)
     }
 
     /* Indentation is same, so parse for current element */
@@ -69,37 +100,32 @@ func (e *Element) Parse(lines [][]byte, index, depth int, err *error) {
         if len(key) == 0 {
             e.Values = append(e.Values, value)
             /* continue parsing next line */
-            e.Parse(lines, index+1, depth, err)
-            return
+            return e.Parse(lines, index+1, depth)
         } else {  /* create new element */
             child = NewElement(key)
             child.Parent = e
             e.Children = append(e.Children, child)
 
             if len(value) == 0 {  /* expect child values on next line(s) */
-                child.Parse(lines, index+1, depth+2, err)
-                return
+                return child.Parse(lines, index+1, depth+2)
             } else {  /* child is single-valued */
                 child.Values = append(child.Values, value)
-                e.Parse(lines, index+1, depth, err)
-                return
+                return e.Parse(lines, index+1, depth)
             }
         }
     /* Jump back to previous element */
     } else if indent < depth {
-        e.Parent.Parse(lines, index, depth-2, err)
+        return e.Parent.Parse(lines, index, depth-2)
     /* Current indent can't be larger than previous */
     } else {
-        e := errors.New("Invalid indentation at line " + strconv.Itoa(index))
-        err = &e
-        return
+        return errors.New("Invalid indentation at " + strconv.Itoa(index+1))
     }
 }
 
 /* Function for debugging lib */
 func (e *Element) Print() {
     var child_names, values string
-    var value []byte
+    var value string
     var i int
     var child *Element
 
@@ -107,23 +133,21 @@ func (e *Element) Print() {
         if i != 0 {
             child_names += ", "
         }
-        child_names += string(child.Name)
+        child_names += child.Name
     }
     for i, value = range e.Values {
         if i != 0 {
             values += ", "
         }
-        values += string(value)
+        values += value
     }
-    fmt.Printf("%-35s [%-35s] %s\n", e.Name, child_names, values)
-
     for _, child = range e.Children {
         child.Print()
     }
 }
 
 
-func ParseLine(line []byte) (int, []byte, []byte) {
+func ParseLine(line []byte) (int, string, string) {
     /* variables holding indices of:
         start = position of first non-whitespace character, i.e. where indentation ends
         end = end of line or position where comment starts (#....)
@@ -160,5 +184,5 @@ func ParseLine(line []byte) (int, []byte, []byte) {
     value = bytes.TrimLeft(value, " ")
     value = bytes.TrimPrefix(value, []byte("- "))
 
-    return start, key, value
+    return start, string(key), string(value)
 }

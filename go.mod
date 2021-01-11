@@ -14,5 +14,5 @@ replace (
 	local.host/api => ./api
 	local.host/collector => ./collector
 	local.host/matrix => ./matrix
-    loca.host/share => ./share
+    local.host/share => ./share
 )
