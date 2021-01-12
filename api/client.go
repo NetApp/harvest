@@ -3,18 +3,23 @@ package api
 import (
     "fmt"
     "time"
-    "net/http"
+    "bytes"
+    "errors"
     "io"
     "io/ioutil"
-    "bytes"
+    "net/http"
     "crypto/tls"
 )
 
-type ConnectionParams struct {
+type Params struct {
     Hostname string
     UseCert bool
     Authorization [2]string
     Timeout int
+    Path string
+    Object string
+    Template string
+    Subtemplate string
 }
 
 type Connection struct {
@@ -23,7 +28,7 @@ type Connection struct {
     buffer      *bytes.Buffer
 }
 
-func NewConnection(p ConnectionParams) (Connection, error) {
+func NewConnection(p Params) (Connection, error) {
     var connection Connection
     var client *http.Client
     var request *http.Request
@@ -69,25 +74,34 @@ func NewConnection(p ConnectionParams) (Connection, error) {
     return connection, err
 }
 
+func (c *Connection) BuildRequest(node *Node) error {
+    var buffer *bytes.Buffer
+    var xml []byte
+    var err error
 
-func (c *Connection) InvokeAPI(api string) ([]byte, error) {
+    xml, err = node.Build()
+
+    if err == nil {
+        buffer = bytes.NewBuffer(xml)
+        c.buffer = buffer
+        c.request.Body = ioutil.NopCloser(buffer)
+        c.request.ContentLength = int64(buffer.Len())
+    }
+    return err
+}
+
+func (c *Connection) InvokeRequest() (*Node, error) {
     var err error
     var body []byte
-    var data string
-    var buffer *bytes.Buffer
     var response *http.Response
-
-    data = `<netapp xmlns="http://www.netapp.com/filer/admin" version="1.3">` + api + `</netapp>`
-
-    buffer = bytes.NewBuffer([]byte(data))
-    c.buffer = buffer
-    c.request.Body = ioutil.NopCloser(buffer)
-    c.request.ContentLength = int64(buffer.Len())
+    var node *Node
+    var status, reason string
+    var found bool
 
     response, err = c.client.Do(c.request)
     if err != nil {
         fmt.Printf("error reading response: %s\n", err)
-        return body, err
+        return node, err
     }
 
     defer response.Body.Close()
@@ -95,8 +109,22 @@ func (c *Connection) InvokeAPI(api string) ([]byte, error) {
     body, err = ioutil.ReadAll(response.Body)
     if err != nil {
         fmt.Printf("error reading body: %s\n", err)
+        return node, err
     }
 
-    return body, err
+    node, err = Parse(body)
+    if err != nil {
+        fmt.Printf("error parsing body: %s\n", err)
+        return node, err
+    }
+
+    if status, found = node.GetAttr("status"); !found {
+        err = errors.New("Missing status attribute")
+    } else if status != "passed" {
+        reason, _ = node.GetAttr("reason")
+        err = errors.New("Request rejected: " + reason)
+    }
+
+    return node, err
 }
 

@@ -5,6 +5,7 @@ import (
     "bytes"
     "strconv"
     "errors"
+    "fmt"
 )
 
 
@@ -31,7 +32,12 @@ type Element struct {
 
 
 func NewElement(name string) *Element {
-    return &Element{ Name: name }
+    var elem *Element
+    elem = new(Element)
+    elem = &Element{ Name: name }
+    elem.Values = make([]string, 0)
+    elem.Children = make([]*Element, 0)
+    return elem
 }
 
 func (e *Element) MergeFrom(dest *Element) {
@@ -59,14 +65,47 @@ func (e *Element) HasChild(name string) bool {
     return e.GetChild != nil
 }
 
+func (e *Element) NumValues() int {
+    return len(e.Values)
+}
+
 func (e *Element) GetChild(name string) *Element {
-    var child *Element
-    for _, child = range e.Children {
+    var found *Element
+    for _, child := range e.Children {
         if child.Name == name {
+            found = child
             break
         }
     }
-    return child
+    return found
+}
+
+func (e *Element) GetChildValue(name string) string {
+
+    fmt.Printf("Hello, [%s] looking for my child [%s]\n", e.Name, name)
+
+    if exists := e.HasChild(name); exists {
+        fmt.Printf("[%s] has child named [%s]\n", e.Name, name)
+    } else {
+        fmt.Printf("[%s] has NO child [%s]\n", e.Name, name)
+        return ""
+    }
+
+    child := e.GetChild(name)
+    if child != nil {
+        fmt.Printf("child [%s] not nil!\n", child.Name)
+    } else {
+        fmt.Printf("child [%s] IS nil!\n", name)
+        return ""
+    }
+
+    if num := child.NumValues(); num>0 {
+        fmt.Printf("child [%s] has [%d] values!\n", name, num)
+        return child.Values[0]
+    } else {
+        fmt.Printf("child [%s] has NO values!\n", name)
+        return ""
+    }
 }
 
 func (e *Element) Parse(lines [][]byte, index, depth int) error {

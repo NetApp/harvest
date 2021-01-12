@@ -39,13 +39,25 @@ type Zapi struct {
     Name string
     Connection api.Connection
     System SystemInfo
-    Data matrix.Matrix
+    Data *matrix.Matrix
+    Template *share.Element
+}
+
+func NewZapi(class, name string) *Zapi {
+    var z Zapi
+    z = Zapi{ Class : class, Name : name }
+    //z.Connection = new(api.Connection)
+    //z.System = new(SystemInfo)
+    z.Data = new(matrix.Matrix)
+    z.Template = new(share.Element)
+    return &z
 }
 
 func (z Zapi) GetSystemInfo() (SystemInfo, error) {
     var sys SystemInfo
+    var node *api.Node
     var err error
-    var status, reason, request string
+    var request string
     var found bool
 
     sys = SystemInfo{}
@@ -53,24 +65,10 @@ func (z Zapi) GetSystemInfo() (SystemInfo, error) {
     // fetch system version and mode
     z.Log("Fetching system version")
 
-    node := api.NewNode("system-get-version")
-    xml, err := node.Build()
-    if err != nil { return sys, err }
+    z.Connection.BuildRequest(api.NewNode("system-get-version"))
 
-    re, err := z.Connection.InvokeAPI(string(xml))
+    node, err = z.Connection.InvokeRequest()
     if err != nil { return sys, err }
-
-    node, err = api.Parse(re)
-    if err != nil { return sys, err }
-
-    if status, found = node.GetAttribute("status"); !found {
-        z.Log("Error: attribute status")
-        return sys, errors.New("Status not found")
-    } else if status != "passed" {
-        reason, _ = node.GetAttribute("reason")
-        z.Log(fmt.Sprintf("Request rejected: %s", reason))
-        return sys, errors.New("Request rejected")
-    }
 
     release, _ := node.GetChildContent("version")
     sys.Release = string(release)
@@ -109,7 +107,6 @@ func (z Zapi) GetSystemInfo() (SystemInfo, error) {
         sys.Clustered = false
     }
 
-
     // fetch system name and serial number
     z.Log("Fetching system identity")
 
@@ -119,24 +116,11 @@ func (z Zapi) GetSystemInfo() (SystemInfo, error) {
         request = "system-get-info"
     }
 
-    node = api.NewNode(request)
-    xml, err = node.Build()
+    err = z.Connection.BuildRequest(api.NewNode(request))
     if err != nil { return sys, err }
 
-    re, err = z.Connection.InvokeAPI(string(xml))
+    node, err = z.Connection.InvokeRequest()
     if err != nil { return sys, err }
-
-    node, err = api.Parse(re)
-    if err != nil { return sys, err }
-
-    if status, found = node.GetAttribute("status"); !found {
-        z.Log("Error: attribute status")
-        return sys, errors.New("Status not found")
-    } else if status != "passed" {
-        reason, _ = node.GetAttribute("reason")
-        z.Log(fmt.Sprintf("Request rejected: %s", reason))
-        return sys, errors.New("Request rejected")
-    }
 
     if sys.Clustered {
         id, found := node.GetChild("attributes")
@@ -177,13 +161,13 @@ func (z Zapi) Log(format string, vars ...interface{}) {
     fmt.Println()
 }
 
-func (z Zapi) Init(params map[string]string, template *share.Element, cp api.ConnectionParams) error {
+func (z Zapi) Init(params api.Params, template *share.Element) error {
 
     var err error
 
     z.Log("Intializing!")
 
-    z.Connection, err = api.NewConnection(cp)
+    z.Connection, err = api.NewConnection(params)
     if err != nil {
         z.Log("Error connecting: %s", err)
         return err
@@ -195,25 +179,59 @@ func (z Zapi) Init(params map[string]string, template *share.Element, cp api.Con
         return err
     }
 
-    dir, _ := params["subtemplate_dir"]
-    fn, _ := params["subtemplate"]
-    path, _ := params["harvest_path"]
-
-    subtemplate, err := z.LoadSubtemplate(path, dir, fn, z.Class, z.System.Version)
+    z.Template, err = z.LoadSubtemplate(params.Path, params.Template, params.Subtemplate, z.Class, z.System.Version)
     if err != nil {
         z.Log("Error importing subtemplate: %s", err)
         return err
     }
+    p := z.Template
+    z.Log("[Init] Address of pointer: %v (%v). Address of value: (%v)", z.Template, p, &p)
+    //subtemplate.MergeFrom(template)
 
-    subtemplate.MergeFrom(template)
+    z.Data = matrix.NewMatrix("volume")
 
-    data := matrix.NewMatrix("volume")
+    counters := z.Template.GetChild("counters")
+    if counters == nil {
+        z.Log("Error: subtemplate has no counters sections")
+    } else {
+        z.Log("Parsing subtemplate counter section: %d values, %d children", len(counters.Values), len(counters.Children))
+        empty := make([]string, 0)
+        z.ParseCounters(z.Data, counters, empty)
+        z.Log("Built counter cache with %d Metrics and %d Labels", len(z.Data.Counters), len(z.Data.Instances))
 
-    empty := make([]string, 0)
-    z.ParseCounters(data, subtemplate.GetChild("counters"), empty)
-    z.Log("Built counter cache with %d Metrics and %Labels")
+        z.Log(fmt.Sprintf("Start-up success! Connected to: %s", z.System.ToString()))
+    }
 
-    z.Log(fmt.Sprintf("Start-up success! Connected to: %s", z.System.ToString()))
+    query := z.Template.GetChildValue("query")
+    z.Log("I got query: [%s] and template is [%v]", query, z.Template)
+    return err
+}
+
+func (z Zapi) PollData() error {
+    var err error
+    var query string
+    var node *api.Node
+
+    z.Log("\n\nStarting data poll session: %s", z.System.ToString())
+
+    if z.Template == nil {
+        z.Log("template is [%v] and NIL!!", z.Template)
+    } else {
+        z.Log("template is [%v] and OK!", z.Template)
+    }
+
+    query = z.Template.GetChildValue("query")
+    if query == "" { panic("missing query in template") }
+
+    z.Connection.BuildRequest(api.NewNode(query))
+
+    node, err = z.Connection.InvokeRequest()
+
+    if err != nil {
+        z.Log("Request for [%s] failed: %s", query, err)
+    } else {
+        api.PrintTree(node, 0)
+    }
     return err
 }
 
@@ -250,8 +268,8 @@ func (z Zapi) LoadSubtemplate(path, dir, filename, collector string, version [3]
     if selected_version == "" {
         err = errors.New("No best-fitting subtemplate version found")
     } else {
-        z.Log("Selected best-fitting subtemplate version [%s]", selected_version)
         path := filepath.Join(path_prefix, selected_version, filename)
+        z.Log("Selected best-fitting subtemplate [%s]", path)
         subtemplate, err = share.ImportTemplate(path)
     }
     return subtemplate, err
@@ -259,6 +277,7 @@ func (z Zapi) LoadSubtemplate(path, dir, filename, collector string, version [3]
 
 
 func (z Zapi) ParseCounters(data *matrix.Matrix, elem *share.Element, path []string) {
+    z.Log("Parsing [%s] with %d values and %d children", elem.Name, len(elem.Values), len(elem.Children))
     for _, value := range elem.Values {
         z.HandleCounter(data, path, value)
     }
@@ -305,7 +324,7 @@ func (z Zapi) HandleCounter(data *matrix.Matrix, path []string, value string) {
 
 func ParseDisplay(obj string, path []string) string {
     var ignore = map[string]int{"attributes" : 0, "info" : 0, "list" : 0, "details" : 0}
-    var added map[string]int
+    var added = map[string]int{}
     var words []string
 
     for _, attribute := range path {

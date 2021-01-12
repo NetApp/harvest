@@ -25,11 +25,16 @@ type Node struct {
 }
 
 func NewNode(name string) *Node {
-    var node Node
-    var xmlname xml.Name
-    xmlname = xml.Name{ "", name }
-    node = Node{ XMLName : xmlname }
-    return &node
+    return &Node{ XMLName : xml.Name{"",name}}
+}
+
+func (n *Node) AddToRoot() *Node {
+    var root *Node
+    root = NewNode("netapp")
+    root.Attrs = append(root.Attrs, xml.Attr{Name: xml.Name{ "","xmlns"}, Value: "http://www.netapp.com/filer/admin"})
+    root.Attrs = append(root.Attrs, xml.Attr{Name: xml.Name{"","version"}, Value: "1.3"})
+    root.Children = append(root.Children, *n)
+    return root
 }
 
 func (n *Node) CreateChild(name string, content string) {
@@ -78,7 +83,7 @@ func (n *Node) GetContent() ([]byte, bool) {
     return nil, false
 }
 
-func (n *Node) GetAttribute(name string) (string, bool) {
+func (n *Node) GetAttr(name string) (string, bool) {
     for _, a := range n.Attrs {
         if a.Name.Local == name {
             return a.Value, true
@@ -87,7 +92,7 @@ func (n *Node) GetAttribute(name string) (string, bool) {
     return "", false
 }
 
-func (n *Node) GetAttributeNames() []string {
+func (n *Node) GetAttrs() []string {
     var names []string
     for _, a := range n.Attrs {
         names = append(names, a.Name.Local)
@@ -96,7 +101,9 @@ func (n *Node) GetAttributeNames() []string {
 }
 
 func (n *Node) Build() ([]byte, error) {
-    return xml.Marshal(&n)
+    var root *Node
+    root = n.AddToRoot()
+    return xml.Marshal(&root)
 }
 
 func (n *Node) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
@@ -137,13 +144,13 @@ func PrintTree(n *Node, depth int) {
         COLOR = CYAN
     }
 
-    attrs_names := n.GetAttributeNames()
+    attrs_names := n.GetAttrs()
     if len(attrs_names) == 0 {
         attrs = ""
     } else {
         attrs = GREY + " ("
         for _, a := range attrs_names {
-            value, _ := n.GetAttribute(a)
+            value, _ := n.GetAttr(a)
             attrs += " " + a + "=\"" + value + "\""
         }
         attrs += " )"

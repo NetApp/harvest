@@ -35,7 +35,13 @@ type Matrix struct {
 }
 
 func NewMatrix(object string) *Matrix {
-	return &Matrix{Object: object, CounterIndex: 0 }
+    m := Matrix{Object: object, CounterIndex: 0 }
+    m.GlobalLabels = map[string]string{}
+    m.LabelNames = map[string]string{}
+    m.InstanceKeys = [][]string{}
+    m.Instances = map[string]Instance{}
+    m.Counters = map[string]Counter{}
+    return &m
 }
 
 func (m *Matrix) InitData() error {
