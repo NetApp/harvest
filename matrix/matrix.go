@@ -26,6 +26,7 @@ type Matrix struct {
 	Object string
 	GlobalLabels map[string]string
 	LabelNames map[string]string
+    InstanceKeys [][]string
 	ExportOptions map[string]string
 	Instances map[string]Instance
 	Counters map[string]Counter
@@ -33,13 +34,11 @@ type Matrix struct {
 	Data [][]float64
 }
 
-func NewMatrix(object string) Matrix {
-	var m Matrix
-	m = Matrix{Object: object, CounterIndex: 0 }
-	return m
+func NewMatrix(object string) *Matrix {
+	return &Matrix{Object: object, CounterIndex: 0 }
 }
 
-func (m Matrix) InitData() error {
+func (m *Matrix) InitData() error {
 	var x, y, i, j int
 	x = len(m.Counters)
 	y = len(m.Instances)
@@ -56,28 +55,28 @@ func (m Matrix) InitData() error {
 	return nil
 }
 
-func (m Matrix) AddCounter(name string, enabled bool) (Counter, error) {
+func (m *Matrix) AddCounter(key, name string, enabled bool) (Counter, error) {
 	var counter Counter
 	var exists bool
 	var err error
-	if _, exists = m.Counters[name]; exists {
-		err = errors.New(fmt.Sprintf("Counter [%s] already in cache", name))
+	if _, exists = m.Counters[key]; exists {
+		err = errors.New(fmt.Sprintf("Counter [%s] already in cache", key))
 	} else {
 		counter = Counter{Name: name, Index: m.CounterIndex, Scalar: true, Enabled: enabled}
-		m.Counters[name] = counter
+		m.Counters[key] = counter
 		m.CounterIndex += 1
 	}
 	return counter, err
 }
 
-func (m Matrix) GetCounter(name string) (Counter, bool) {
+func (m *Matrix) GetCounter(name string) (Counter, bool) {
     var c Counter
     var found bool
     c, found = m.Counters[name]
 	return c, found
 }
 
-func (m Matrix) GetCounters() []Counter {
+func (m *Matrix) GetCounters() []Counter {
 	var c Counter
 	var counters []Counter
 	counters = make([]Counter, len(m.Counters))
@@ -87,27 +86,27 @@ func (m Matrix) GetCounters() []Counter {
 	return counters
 }
 
-func (m Matrix) AddInstance(name string) (Instance, error) {
+func (m *Matrix) AddInstance(key, name string) (Instance, error) {
 	var instance Instance
 	var exists bool
 	var err error
-	if _, exists = m.Instances[name]; exists {
-		err = errors.New(fmt.Sprintf("Instance [%s] already in cache", name))
+	if _, exists = m.Instances[key]; exists {
+		err = errors.New(fmt.Sprintf("Instance [%s] already in cache", key))
 	} else {
 		instance = Instance{Name: name, Index: len(m.Instances)}
-		m.Instances[name] = instance
+		m.Instances[key] = instance
 	}
 	return instance, err
 }
 
-func (m Matrix) GetInstance(name string) (Instance, bool) {
+func (m *Matrix) GetInstance(name string) (Instance, bool) {
     var i Instance
     var found bool
     i, found = m.Instances[name]
     return i, found
 }
 
-func (m Matrix) GetInstances() []Instance {
+func (m *Matrix) GetInstances() []Instance {
 	var i Instance
 	var instances []Instance
 	instances = make([]Instance, len(m.Instances))
@@ -117,7 +116,7 @@ func (m Matrix) GetInstances() []Instance {
 	return instances
 }
 
-func (m Matrix) SetValue(c Counter, i Instance, value []byte) error {
+func (m *Matrix) SetValue(c Counter, i Instance, value []byte) error {
 	var numeric float64
 	var err error
 
@@ -129,18 +128,22 @@ func (m Matrix) SetValue(c Counter, i Instance, value []byte) error {
 	return err
 }
 
-func (m Matrix) GetValue(c Counter, i Instance) (float64, bool) {
+func (m *Matrix) GetValue(c Counter, i Instance) (float64, bool) {
 	var value float64
 	value = m.Data[c.Index][i.Index]
 	return value, value==value
 
 }
 
-func (m Matrix) AddLabel(label, display string) {
-	m.LabelNames[label] = display
+func (m *Matrix) AddLabel(key, name string) {
+	m.LabelNames[key] = name
 }
 
-func (m Matrix) SetInstanceLabel(i Instance, label, value string) {
+func (m *Matrix) AddInstanceKey(key []string) {
+    m.InstanceKeys = append(m.InstanceKeys, key)
+}
+
+func (m *Matrix) SetInstanceLabel(i Instance, label, value string) {
 	var display string
 	var exists bool
 
@@ -151,21 +154,21 @@ func (m Matrix) SetInstanceLabel(i Instance, label, value string) {
 	}
 }
 
-func (m Matrix) GetInstanceLabel(i Instance, display string) (string, bool) {
+func (m *Matrix) GetInstanceLabel(i Instance, display string) (string, bool) {
     var label string
     var found bool
     label, found = i.Labels[display]
     return label, found
 }
 
-func (m Matrix) GetInstanceLabels(i Instance) map[string]string {
+func (m *Matrix) GetInstanceLabels(i Instance) map[string]string {
 	return i.Labels
 }
 
-func (m Matrix) SetGlobalLabel(label, value string) {
+func (m *Matrix) SetGlobalLabel(label, value string) {
 	m.GlobalLabels[label] = value
 }
 
-func (m Matrix) GetGlobalLabels() map[string]string {
+func (m *Matrix) GetGlobalLabels() map[string]string {
 	return m.GlobalLabels
 }

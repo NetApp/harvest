@@ -207,6 +207,12 @@ func (z Zapi) Init(params map[string]string, template *share.Element, cp api.Con
 
     subtemplate.MergeFrom(template)
 
+    data := matrix.NewMatrix("volume")
+
+    empty := make([]string, 0)
+    z.ParseCounters(data, subtemplate.GetChild("counters"), empty)
+    z.Log("Built counter cache with %d Metrics and %Labels")
+
     z.Log(fmt.Sprintf("Start-up success! Connected to: %s", z.System.ToString()))
     return err
 }
@@ -249,4 +255,68 @@ func (z Zapi) LoadSubtemplate(path, dir, filename, collector string, version [3]
         subtemplate, err = share.ImportTemplate(path)
     }
     return subtemplate, err
+}
+
+
+func (z Zapi) ParseCounters(data *matrix.Matrix, elem *share.Element, path []string) {
+    for _, value := range elem.Values {
+        z.HandleCounter(data, path, value)
+    }
+    new_path := append(path, elem.Name)
+    for _, child := range elem.Children {
+        z.ParseCounters(data, child, new_path)
+    }
+}
+
+func (z Zapi) HandleCounter(data *matrix.Matrix, path []string, value string) {
+    var name, display, flat_path string
+    var split_value, full_path []string
+
+    split_value = strings.Split(value, "=>")
+    if len(split_value) == 1 {
+        name = value
+    } else {
+        name = split_value[0]
+        display = strings.TrimLeft(split_value[1], " ")
+    }
+
+    name = strings.TrimLeft(name, "^")
+    name = strings.TrimRight(name, " ")
+
+    full_path = append(path[1:], name)
+    flat_path = strings.Join(full_path, ".")
+
+    if display == "" {
+        display = ParseDisplay(data.Object, full_path)
+    }
+
+    if value[0] == '^' {
+        data.AddLabel(flat_path, display)
+            z.Log("Added as Label [%s] [%s]", display, flat_path)
+        if value[1] == '^' {
+            data.AddInstanceKey(full_path)
+            z.Log("Added as Key [%s] [%s]", display, flat_path)
+        }
+    } else {
+        data.AddCounter(flat_path, display, true)
+            z.Log("Added as Metric [%s] [%s]", display, flat_path)
+    }
+}
+
+func ParseDisplay(obj string, path []string) string {
+    var ignore = map[string]int{"attributes" : 0, "info" : 0, "list" : 0, "details" : 0}
+    var added map[string]int
+    var words []string
+
+    for _, attribute := range path {
+        split := strings.Split(attribute, "-")
+        for _, word := range split {
+            if word == obj { continue }
+            if _, exists := ignore[word]; exists { continue }
+            if _, exists := added[word]; exists { continue }
+            words = append(words, word)
+            added[word] = 0
+        }
+    }
+    return strings.Join(words, "_")
 }
