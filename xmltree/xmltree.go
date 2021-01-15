@@ -1,4 +1,4 @@
-package api
+package xmltree
 
 import (
     "fmt"
@@ -7,14 +7,8 @@ import (
     "encoding/xml"
     "unicode"
     "errors"
+    "local.host/share"
 )
-
-var RED string = "\033[31m"
-var PURPLE string = "\033[35m"
-var CYAN string = "\033[36m"
-var BOLD string = "\033[1m"
-var END string = "\033[0m"
-var GREY string = "\033[90m"
 
 
 type Node struct {
@@ -24,13 +18,13 @@ type Node struct {
     Children []Node     `xml:",any"`
 }
 
-func NewNode(name string) *Node {
+func New(name string) *Node {
     return &Node{ XMLName : xml.Name{"",name}}
 }
 
 func (n *Node) AddToRoot() *Node {
     var root *Node
-    root = NewNode("netapp")
+    root = New("netapp")
     root.Attrs = append(root.Attrs, xml.Attr{Name: xml.Name{ "","xmlns"}, Value: "http://www.netapp.com/filer/admin"})
     root.Attrs = append(root.Attrs, xml.Attr{Name: xml.Name{"","version"}, Value: "1.3"})
     root.Children = append(root.Children, *n)
@@ -39,7 +33,7 @@ func (n *Node) AddToRoot() *Node {
 
 func (n *Node) CreateChild(name string, content string) {
     var child Node
-    child = *NewNode(name)
+    child = *New(name)
     child.Content = []byte(content)
     n.AddChild(child)
 }
@@ -139,16 +133,16 @@ func PrintTree(n *Node, depth int) {
     var child Node
 
     if len(n.Children) == 0 {
-        COLOR = RED
+        COLOR = share.Red
     } else {
-        COLOR = CYAN
+        COLOR = share.Cyan
     }
 
     attrs_names := n.GetAttrs()
     if len(attrs_names) == 0 {
         attrs = ""
     } else {
-        attrs = GREY + " ("
+        attrs = share.Grey + " ("
         for _, a := range attrs_names {
             value, _ := n.GetAttr(a)
             attrs += " " + a + "=\"" + value + "\""
@@ -156,7 +150,7 @@ func PrintTree(n *Node, depth int) {
         attrs += " )"
     }
 
-    name = BOLD + COLOR + strings.Repeat(" ", depth) + n.GetName() + attrs + END
+    name = share.Bold + COLOR + strings.Repeat(" ", depth) + n.GetName() + attrs + share.End
     content, exists = n.GetContent()
     if ! exists { content = []byte("-") }
 

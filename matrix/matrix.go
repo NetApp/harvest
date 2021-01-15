@@ -34,7 +34,7 @@ type Matrix struct {
 	Data [][]float64
 }
 
-func NewMatrix(object string) *Matrix {
+func New(object string) *Matrix {
     m := Matrix{Object: object, CounterIndex: 0 }
     m.GlobalLabels = map[string]string{}
     m.LabelNames = map[string]string{}

@@ -1,4 +1,4 @@
-package api
+package client
 
 import (
     "fmt"
@@ -9,28 +9,19 @@ import (
     "io/ioutil"
     "net/http"
     "crypto/tls"
+    "local.host/params"
+    "local.host/xmltree"
 )
 
-type Params struct {
-    Hostname string
-    UseCert bool
-    Authorization [2]string
-    Timeout int
-    Path string
-    Object string
-    Template string
-    Subtemplate string
-}
-
-type Connection struct {
+type Client struct {
     client      *http.Client
     request     *http.Request
     buffer      *bytes.Buffer
 }
 
-func NewConnection(p Params) (Connection, error) {
-    var connection Connection
-    var client *http.Client
+func New(p params.Params) (Client, error) {
+    var client Client
+    var httpclient *http.Client
     var request *http.Request
     var transport *http.Transport
     var cert tls.Certificate
@@ -39,20 +30,22 @@ func NewConnection(p Params) (Connection, error) {
 
     err = nil
 
-    url = fmt.Sprintf("https://%s:443/servlets/netapp.servlets.admin.XMLrequest_filer", p.Hostname)
+    url = "https://" + p.Hostname + ":443/servlets/netapp.servlets.admin.XMLrequest_filer"
+
     request, err = http.NewRequest("POST", url, nil)
     if err != nil {
-        fmt.Printf("Error creating request: %s\n", err)
-        return connection, err
+        fmt.Printf("[Client.New] Error initializing request: %s\n", err)
+        return client, err
     }
+
     request.Header.Set("Content-type", "text/xml")
     request.Header.Set("Charset", "utf-8")
 
-    if p.UseCert == true {
+    if p.UseCert {
         cert, err = tls.LoadX509KeyPair(p.Authorization[0], p.Authorization[1])
         if err != nil {
-            fmt.Printf("Error loading key pair: %s\n", err)
-            return connection, err
+            fmt.Printf("[Client.New] Error loading key pair: %s\n", err)
+            return client, err
         }
         transport = &http.Transport{ TLSClientConfig : &tls.Config{Certificates : []tls.Certificate{cert}, InsecureSkipVerify : true }, }
     } else {
@@ -60,21 +53,21 @@ func NewConnection(p Params) (Connection, error) {
         transport = &http.Transport{ TLSClientConfig : &tls.Config{ InsecureSkipVerify : true }, }
     }
 
-    // build client
-    client = &http.Client{ Transport : transport, Timeout: time.Duration(p.Timeout) * time.Second }
+    // initialize http client
+    httpclient = &http.Client{ Transport : transport, Timeout: time.Duration(p.Timeout) * time.Second }
 
-    connection = Connection{ client: client, request: request }
+    client = Client{ client: httpclient, request: request }
 
     // ensure that we can change body dynamically
     request.GetBody = func() (io.ReadCloser, error) {
-        r := bytes.NewReader(connection.buffer.Bytes())
+        r := bytes.NewReader(client.buffer.Bytes())
         return ioutil.NopCloser(r), nil
     }
 
-    return connection, err
+    return client, err
 }
 
-func (c *Connection) BuildRequest(node *Node) error {
+func (c *Client) BuildRequest(node *xmltree.Node) error {
     var buffer *bytes.Buffer
     var xml []byte
     var err error
@@ -90,11 +83,11 @@ func (c *Connection) BuildRequest(node *Node) error {
     return err
 }
 
-func (c *Connection) InvokeRequest() (*Node, error) {
+func (c *Client) InvokeRequest() (*xmltree.Node, error) {
     var err error
     var body []byte
     var response *http.Response
-    var node *Node
+    var node *xmltree.Node
     var status, reason string
     var found bool
 
@@ -112,7 +105,7 @@ func (c *Connection) InvokeRequest() (*Node, error) {
         return node, err
     }
 
-    node, err = Parse(body)
+    node, err = xmltree.Parse(body)
     if err != nil {
         fmt.Printf("error parsing body: %s\n", err)
         return node, err

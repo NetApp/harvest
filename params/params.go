@@ -1,18 +1,27 @@
-package main
+
+package params
 
 import (
-    "fmt"
     "os"
     "strings"
-    "path/filepath"
-	"local.host/api"
-	"local.host/collector"
-    "local.host/share"
+    "fmt"
 )
 
-func get_params() api.Params {
+type Params struct {
+    Hostname string
+    UseCert bool
+    Authorization [2]string
+    Timeout int
+    Path string
+    Object string
+    Template string
+    Subtemplate string
+}
 
-	var params api.Params
+
+func NewFromArgs() Params {
+
+	var params Params
     var cwd string
 
     if len(os.Args) < 6 {
@@ -25,7 +34,7 @@ func get_params() api.Params {
 
     cwd, _ = os.Getwd()
 
-	params = api.Params{}
+	params = Params{}
     params.Hostname = os.Args[1]
     params.Authorization[0] = os.Args[3]
     params.Authorization[1] = os.Args[4]
@@ -49,20 +58,4 @@ func get_params() api.Params {
 		os.Exit(1)
 	}
 	return params
-}
-
-
-func main() {
-
-	params := get_params()
-
-    template, err := share.ImportTemplate(filepath.Join(params.Path, "var/zapi/", params.Template+".yaml" ))
-    if err != nil { panic(err) }
-
-	zapi := collector.NewZapi("Zapi", params.Object)
-    err = zapi.Init(params, template)
-    if err != nil { panic(err) }
-
-    err = zapi.PollData()
-    if err != nil { panic(err) }
 }
