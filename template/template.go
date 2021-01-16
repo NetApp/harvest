@@ -67,7 +67,6 @@ func (e *Element) HasChild(name string) bool {
 
 
 func (e *Element) GetChildValue(name string) string {
-
     var child *Element
 
     child = e.GetChild(name)
@@ -77,6 +76,16 @@ func (e *Element) GetChildValue(name string) string {
     return child.value
 }
 
+func (e *Element) GetChildValues(name string) []string {
+    var child *Element
+    var values []string
+
+    child = e.GetChild(name)
+    if child == nil {
+        return values
+    }
+    return child.values
+}
 
 func (e *Element) MergeFrom(dest *Element) {
     var children []*Element

@@ -13,6 +13,7 @@ import (
     "local.host/matrix"
     "local.host/template"
     "local.host/xmltree"
+    "local.host/share"
 )
 
 type Collector struct {
@@ -22,6 +23,7 @@ type Collector struct {
     System SystemInfo
     Data *matrix.Matrix
     Template *template.Element
+    InstanceKeyPrefix []string
 }
 
 func New(class, name string) *Collector {
@@ -40,7 +42,7 @@ func (c *Collector) Log(format string, vars ...interface{}) {
     fmt.Println()
 }
 
-func (c Collector) Init(p params.Params, t *template.Element) error {
+func (c *Collector) Init(p params.Params, t *template.Element) error {
 
     var err error
 
@@ -69,11 +71,13 @@ func (c Collector) Init(p params.Params, t *template.Element) error {
         c.Log("Error importing subtemplate: %s", err)
         return err
     }
+
+    c.Template.PrintTree(0)
     //p := c.Template
     //c.Log("[Init] Address of pointer: %v (%v). Address of value: (%v)", c.Template, p, &p)
     //subtemplate.MergeFrom(template)
 
-    c.Data = matrix.New("volume")
+    c.Data = matrix.New(c.Template.GetChildValue("object"))
 
     counters := c.Template.GetChild("counters")
     if counters == nil {
@@ -82,27 +86,139 @@ func (c Collector) Init(p params.Params, t *template.Element) error {
         c.Log("Parsing subtemplate counter section: %d values, %d children", len(counters.Values()), len(counters.Children()))
         empty := make([]string, 0)
         c.ParseCounters(c.Data, counters, empty)
-        c.Log("Built counter cache with %d Metrics and %d Labels", len(c.Data.Counters), len(c.Data.Instances))
+        c.Log("Built counter cache with %d Metrics and %d Labels", c.Data.MetricsIndex+1, len(c.Data.Instances))
+
+        c.InstanceKeyPrefix = ParseKeyPrefix(c.Data.GetInstanceKeys())
+        c.Log("Parsed Instance Key Prefix: %v", c.InstanceKeyPrefix)
 
         c.Log(fmt.Sprintf("Start-up success! Connected to: %s", c.System.ToString()))
     }
 
-    query := c.Template.GetChildValue("query")
-    c.Log("I got query: [%s] and template is [%v]", query, c.Template)
     return err
 }
 
-func (c Collector) PollData() error {
+func ParseKeyPrefix(keys [][]string) []string {
+    var prefix []string
+    var i, n int
+    n = share.MinLen(keys)-1
+    for i=0; i<n; i+=1 {
+        if share.AllSame(keys, i) {
+            prefix = append(prefix, keys[0][i])
+        } else {
+            break
+        }
+    }
+    return prefix
+}
+
+func (c *Collector) PollInstance() error {
+    var err error
+    var root *xmltree.Node
+    var instances []xmltree.Node
+    var old_count int
+    var keys []string
+    var keypaths [][]string
+    var found bool
+
+    c.Log("Collector starting InstancePoll session....")
+
+    c.Client.BuildRequest(xmltree.New(c.Template.GetChildValue("query")))
+    root, err = c.Client.InvokeRequest()
+
+    if err != nil {
+        c.Log("InstancePoll: client request failed: %s", err)
+        return err
+    }
+
+    old_count = len(c.Data.GetInstances())
+    c.Data.ResetInstances()
+
+    instances = xmltree.SearchByPath(root, c.InstanceKeyPrefix)
+    c.Log("Fetched %d instances!!!!", len(instances))
+    keypaths = c.Data.GetInstanceKeys()
+
+    fmt.Printf("keys=%v keypaths=%v found=%v\n", keys, keypaths, found)
+
+    count := 0
+
+    for _, instance := range instances {
+        //c.Log("Handling instance element <%v> [%s]", &instance, instance.GetName())
+        keys, found = xmltree.SearchByNames(&instance, c.InstanceKeyPrefix, keypaths)
+        c.Log("Fetched instance keys (%v): %s", keypaths, strings.Join(keys, "."))
+
+        if !found {
+            c.Log("Skipping instance, keys not found")
+        } else {
+            _, err = c.Data.AddInstance(strings.Join(keys, "."))
+            if err != nil {
+                c.Log("Error adding instance: %s", err)
+            } else {
+                c.Log("Added new Instance to cache [%s]", strings.Join(keys, "."))
+            }
+        }
+        //xmltree.PrintTree(instance, 0)
+        //break
+        count += 1
+    }
+
+    //xmltree.PrintTree(root, 0)
+
+    c.Data.PrintInstances()
+    c.Log("InstancePoll complete: added %d (or %d?) new instances (old cache had %d) (new cache: %d)", len(c.Data.GetInstances()), count, old_count, len(c.Data.Instances))
+    return nil
+}
+
+func (c *Collector) PollData() (*matrix.Matrix, error) {
     var err error
     var query string
     var node *xmltree.Node
+    var fetch func(*matrix.Instance, xmltree.Node, []string)
+    var count, skipped int
 
-    c.Log("\n\nStarting data poll session: %s", c.System.ToString())
+    count = 0
+    skipped = 0
 
-    if c.Template == nil {
-        c.Log("template is [%v] and NIL!!", c.Template)
-    } else {
-        c.Log("template is [%v] and OK!", c.Template)
+    fetch = func(instance *matrix.Instance, node xmltree.Node, path []string) {
+        newpath := append(path, node.GetName())
+        key := strings.Join(newpath, ".")
+        metric, found := c.Data.GetMetric(key)
+        content, has := node.GetContent()
+
+        if has {
+            if found {
+                if float, err := strconv.ParseFloat(string(content), 64); err != nil {
+                    c.Log("%sSkipping metric [%s]: failed to parse [%s] float%s", share.Red, key, content, share.End)
+                    skipped += 1
+                } else {
+                    c.Data.SetValue(metric, instance, float)
+                    c.Log("%sMetric [%s] - Set Value [%f]%s", share.Green, key, float, share.End)
+                    count += 1
+                }
+            } else if label, found := c.Data.GetLabel(key); found {
+                c.Data.SetInstanceLabel(instance, label, string(content))
+                c.Log("%sMetric [%s] (%s) Set Value [%s] as Instance Label%s", share.Yellow, label, key, content, share.End)
+                count += 1
+            } else {
+                c.Log("%sSkipped [%s]: not found in metric or label cache%s", share.Blue, key, share.End)
+                skipped += 1
+            }
+        } else {
+            c.Log("Skipping metric [%s] with no value", key)
+            skipped += 1
+        }
+
+        children := node.GetChildren()
+        for _, child := range children {
+            fetch(instance, child, newpath)
+        }
+    }
+
+    fmt.Printf("\n\n")
+    c.Log("Starting data poll session: %s", c.System.ToString())
+
+    err = c.Data.InitData()
+    if err != nil {
+        return nil, err
     }
 
     query = c.Template.GetChildValue("query")
@@ -114,14 +230,38 @@ func (c Collector) PollData() error {
 
     if err != nil {
         c.Log("Request for [%s] failed: %s", query, err)
-    } else {
-        xmltree.PrintTree(node, 0)
+        return nil, err
     }
-    return err
+
+    instances := xmltree.SearchByPath(node, c.InstanceKeyPrefix)
+    c.Log("Fetched %d instance elements", len(instances))
+
+    for _, instance := range instances {
+        //c.Log("Handling instance element <%v> [%s]", &instance, instance.GetName())
+        keys, found := xmltree.SearchByNames(&instance, c.InstanceKeyPrefix, c.Data.GetInstanceKeys())
+        c.Log("Fetched instance keys: %s", strings.Join(keys, "."))
+
+        if !found {
+            c.Log("Skipping instance: no keys fetched")
+            continue
+        }
+
+        instanceObj, found := c.Data.GetInstance(strings.Join(keys, "."))
+
+        if !found {
+            c.Log("Skipping instance [%s]: not found in cache", strings.Join(keys, "."))
+            continue
+        }
+        path := make([]string, 0)
+        //copy(path, c.InstanceKeyPrefix)
+        fetch(instanceObj, instance, path)
+    }
+    //xmltree.PrintTree(node, 0)
+
+    return c.Data, nil
 }
 
-
-func (c Collector) LoadSubtemplate(path, dir, filename, collector string, version [3]int) (*template.Element, error) {
+func (c *Collector) LoadSubtemplate(path, dir, filename, collector string, version [3]int) (*template.Element, error) {
 
     var err error
     var selected_version string
@@ -161,22 +301,22 @@ func (c Collector) LoadSubtemplate(path, dir, filename, collector string, versio
 }
 
 
-func (c Collector) ParseCounters(data *matrix.Matrix, elem *template.Element, path []string) {
-    c.Log("Parsing [%s] with %d values and %d children", elem.Name(), len(elem.Values()), len(elem.Children()))
+func (c *Collector) ParseCounters(data *matrix.Matrix, elem *template.Element, path []string) {
+    new_path := append(path, elem.Name())
+    c.Log("%v Parsing [%s] [%s] with %d values and %d children", new_path, elem.Name(), elem.Value(), len(elem.Values()), len(elem.Children()))
 
     if elem.Value() != "" {
-        c.HandleCounter(data, path, elem.Value())
+        c.HandleCounter(data, new_path, elem.Value())
     }
     for _, value := range elem.Values() {
-        c.HandleCounter(data, path, value)
+        c.HandleCounter(data, new_path, value)
     }
-    new_path := append(path, elem.Name())
     for _, child := range elem.Children() {
         c.ParseCounters(data, child, new_path)
     }
 }
 
-func (c Collector) HandleCounter(data *matrix.Matrix, path []string, value string) {
+func (c *Collector) HandleCounter(data *matrix.Matrix, path []string, value string) {
     var name, display, flat_path string
     var split_value, full_path []string
 
@@ -206,7 +346,7 @@ func (c Collector) HandleCounter(data *matrix.Matrix, path []string, value strin
             c.Log("Added as Key [%s] [%s]", display, flat_path)
         }
     } else {
-        data.AddCounter(flat_path, display, true)
+        data.AddMetric(flat_path, display, true)
             c.Log("Added as Metric [%s] [%s]", display, flat_path)
     }
 }

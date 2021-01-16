@@ -42,6 +42,10 @@ func (n *Node) AddChild(child Node) {
     n.Children = append(n.Children, child)
 }
 
+func (n *Node) GetChildren() []Node {
+    return n.Children
+}
+
 func (n *Node) GetChild(name string) (*Node, bool) {
     var child Node
     for _, child = range n.Children {
@@ -124,6 +128,97 @@ func Parse(data []byte) (*Node, error) {
         }
     }
     return root, err
+}
+
+func SearchByNames(node *Node, prefix []string, paths [][]string) ([]string, bool) {
+    var curr_path, matches []string
+    var search func(*Node, []string)
+    curr_path = make([]string, 0)
+
+    //fmt.Printf("Prefix= %v, Paths= %v\n", prefix, paths)
+
+    search = func(n *Node, curr []string) {
+        var newcurr, path []string
+        var children []Node
+        var child Node
+        var content []byte
+
+        if len(curr) > 0 || n.GetName() == prefix[0] {
+            newcurr = append(curr, n.GetName())
+        } else {
+            newcurr = make([]string, len(curr))
+            copy(newcurr, curr)
+        }
+
+        //fmt.Printf("> [%s]  newcurr= %v\n", n.GetName(), newcurr)
+
+        //fmt.Printf("[%v] with %d children - match: %v\n", mynew, len(children), EqualSlices(path, mynew))
+        content, _ = n.GetContent()
+        for _, path = range paths {
+            if EqualSlices(newcurr, path) {
+                matches = append(matches, string(content))
+                //fmt.Printf("MATCH <%s>      %v ==> %s (%s)\n", n.GetName(), path, content, n.Content)
+                break
+            }
+        }
+
+        if len(newcurr) < share.MaxLen(paths) {
+            children = n.GetChildren()
+            for _, child = range children {
+                search(&child, newcurr)
+            }
+        }
+    }
+    search(node, curr_path)
+    //fmt.Printf("          --- Search complte: match = %d\n", len(matches))
+    return matches, len(matches)==len(paths)
+}
+
+func SearchByPath(root *Node, path []string) []Node {
+    var matches []Node
+    var curr_path []string
+    var search func(*Node, []string)
+    curr_path = make([]string, 0)
+
+    search = func(node *Node, curr []string) {
+        var newcurr []string
+        var children []Node
+        //var child Node
+
+        if len(curr) > 0 || node.GetName() == path[0] {
+            newcurr = append(curr, node.GetName())
+        } else {
+            newcurr = make([]string, len(curr))
+            copy(newcurr, curr)
+        }
+        children = node.GetChildren()
+
+        //fmt.Printf("[%v] with %d children - match: %v\n", mynew, len(children), EqualSlices(path, mynew))
+        if EqualSlices(newcurr, path) {
+            matches = append(matches, *node)
+            //name, found := node.GetChildContent("disk-name")
+            //fmt.Printf("%s%sMATCH: <%p> <%v> => %s => %s (%v)%s\n", share.Bold, share.Red, node, &node, node.GetName(), name, found, share.End)
+        } else if len(newcurr) < len(path) {
+            for _, child := range children {
+                search(&child, newcurr)
+            }
+        }
+    }
+    search(root, curr_path)
+    return matches
+}
+
+func EqualSlices(a, b []string) bool {
+    var i int
+    if len(a) != len(b) {
+        return false
+    }
+    for i=0; i<len(a); i+=1 {
+        if a[i] != b[i] {
+            return false
+        }
+    }
+    return true
 }
 
 func PrintTree(n *Node, depth int) {
