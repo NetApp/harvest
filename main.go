@@ -2,6 +2,8 @@ package main
 
 import (
     "fmt"
+    "log"
+    "os"
     "path/filepath"
     "local.host/params"
     "local.host/template"
@@ -19,6 +21,17 @@ func main() {
     var t *template.Element
     var c *collector.Collector
     var e *exporter.Exporter
+    var logfp string
+    var logf *os.File
+
+    logfp = "log/goharvest2_poller.log"
+    logf, err = os.OpenFile(logfp, os.O_APPEND | os.O_CREATE | os.O_WRONLY, 0644)
+    if err != nil { panic(err) }
+    defer logf.Close()
+
+    log.SetOutput(logf)
+    log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile | log.Lmsgprefix)
+    log.Printf("Opened logger file [%s], starting-up Poller", logfp)
 
 	p = params.NewFromArgs()
 
@@ -46,7 +59,7 @@ func main() {
     data, err = c.PollData()
     if err != nil { panic(err) }
 
-    e = exporter.New("Prometheus", "P_Andromeda")
+    e = exporter.New("Prometheus", "pandro")
     err = e.Init()
     if err != nil { panic(err) }
 
@@ -55,4 +68,5 @@ func main() {
     fmt.Println("SUCCESS")
 
     data.Print()
+    log.Printf("Cleaning up and shutting down Poller")
 }

@@ -37,7 +37,7 @@ func (c *Collector) GetSystemInfo() (SystemInfo, error) {
     sys = SystemInfo{}
 
     // fetch system version and mode
-    c.Log("Fetching system version")
+    c.Log.Printf("Fetching system version")
 
     c.Client.BuildRequest(xmltree.New("system-get-version"))
 
@@ -56,7 +56,7 @@ func (c *Collector) GetSystemInfo() (SystemInfo, error) {
             maj, _ := tuple.GetChildContent("major")
             min, _ := tuple.GetChildContent("minor")
 
-            c.Log(fmt.Sprintf("convertion version tuple: %s %s %s", string(gen), string(maj), string(min)))
+            c.Log.Printf(fmt.Sprintf("convertion version tuple: %s %s %s", string(gen), string(maj), string(min)))
             genint, _ := strconv.ParseInt(string(gen), 0, 16)
             majint, _ := strconv.ParseInt(string(maj), 0, 16)
             minint, _ := strconv.ParseInt(string(min), 0, 16)
@@ -66,15 +66,15 @@ func (c *Collector) GetSystemInfo() (SystemInfo, error) {
             sys.Version[2] = int(minint)
 
         } else {
-            c.Log("Not found [system-version-tuple]")
+            c.Log.Printf("Not found [system-version-tuple]")
         }
     } else {
-        c.Log("Not found [version-tuple]")
+        c.Log.Printf("Not found [version-tuple]")
     }
 
     clustered, found := node.GetChildContent("is-clustered")
     if !found {
-        c.Log("Not found [is-clustered]")
+        c.Log.Printf("Not found [is-clustered]")
     } else if string(clustered) == "true" {
         sys.Clustered = true
     } else {
@@ -82,7 +82,7 @@ func (c *Collector) GetSystemInfo() (SystemInfo, error) {
     }
 
     // fetch system name and serial number
-    c.Log("Fetching system identity")
+    c.Log.Printf("Fetching system identity")
 
     if sys.Clustered {
         request = "cluster-identity-get"
@@ -107,10 +107,10 @@ func (c *Collector) GetSystemInfo() (SystemInfo, error) {
                 sys.Name = string(name)
                 sys.SerialNumber = string(serial)
             } else {
-                c.Log("Not found [cluster-identity-info]")
+                c.Log.Printf("Not found [cluster-identity-info]")
             }
         } else {
-            c.Log("Not found [attributes]")
+            c.Log.Printf("Not found [attributes]")
         }
     } else {
         id, found := node.GetChild("system-info")
@@ -121,10 +121,10 @@ func (c *Collector) GetSystemInfo() (SystemInfo, error) {
             sys.Name = string(name)
             sys.SerialNumber = string(serial)
         } else {
-            c.Log("Not found [system-info]")
+            c.Log.Printf("Not found [system-info]")
         }
     }
 
-    c.Log("Collected system info!")
+    c.Log.Printf("Collected system info!")
     return sys, nil
 }
