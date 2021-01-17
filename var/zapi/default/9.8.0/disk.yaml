@@ -1,0 +1,41 @@
+
+name:             StorageDisk
+query:            storage-disk-get-iter
+object:           storage_disk
+
+counters: 
+  storage-disk-info:
+    - ^^disk-uid
+    - ^^disk-name               => disk
+    - disk-inventory-info:
+      - bytes-per-sector
+      - capacity-sectors
+      - ^disk-type              => type
+      - ^model                  => model
+      - ^serial-number          => serial_number
+      - ^shelf                  => shelf
+      - ^shelf-bay              => shelf_bay
+    - disk-ownership-info:
+      - ^is-failed              => is_failed
+      - ^home-node-name         => node
+    - disk-stats-info:
+      - average-latency
+      - disk-io-kbps
+      - disk-iops
+      - power-on-time-interval
+      - path-error-count
+
+export_options:
+  exclude_instance_name: True
+  graphite_leafs:
+    - node.{node}.disk.{disk} # take last part
+  include_keys:
+    - node
+    - disk
+  include_labels:
+    - type
+    - model
+    - serial_number
+    - shelf
+    - shelf_bay
+    - is_failed

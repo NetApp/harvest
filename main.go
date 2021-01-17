@@ -3,13 +3,13 @@ package main
 import (
     "fmt"
     "log"
-    "os"
     "path/filepath"
     "local.host/params"
     "local.host/template"
 	"local.host/collector"
 	"local.host/exporter"
     "local.host/matrix"
+    "local.host/logger"
 )
 
 
@@ -21,19 +21,27 @@ func main() {
     var t *template.Element
     var c *collector.Collector
     var e *exporter.Exporter
-    var logfp string
-    var logf *os.File
-
-    logfp = "log/goharvest2_poller.log"
-    logf, err = os.OpenFile(logfp, os.O_APPEND | os.O_CREATE | os.O_WRONLY, 0644)
-    if err != nil { panic(err) }
-    defer logf.Close()
-
-    log.SetOutput(logf)
-    log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile | log.Lmsgprefix)
-    log.Printf("Opened logger file [%s], starting-up Poller", logfp)
 
 	p = params.NewFromArgs()
+
+    fmt.Println(p.Path)
+    fmt.Printf("handler output: (%T) %v\n", log.Writer(), log.Writer() )
+
+    err = logger.OpenFileOutput(p.Path, "goharvest2_poller.log")
+    //logf, err = os.OpenFile(logfp, os.O_APPEND | os.O_CREATE | os.O_WRONLY, 0644)
+    if err != nil {
+        panic(err)
+    }
+    defer logger.CloseFileOutput()
+    fmt.Printf("handler output: (%T) %v\n", log.Writer(), log.Writer() )
+
+    //log.SetOutput(logf)
+    //log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile | log.Lmsgprefix)
+
+    Log := logger.New(1, "")
+    Log.Info("Opened logger file, starting-up Poller")
+
+    fmt.Printf("handler output: (%T) %v\n", log.Writer(), log.Writer() )
 
     t, err = template.New(filepath.Join(p.Path, "var/zapi/", p.Template+".yaml" ))
     if err != nil { panic(err) }
@@ -44,6 +52,8 @@ func main() {
     fmt.Printf("&t = %v (%T)\n", &t, &t)
     fmt.Printf("*t = %v (%T)\n", *t, *t)
 
+    Log.Debug("Loaded Parameters and Template. Starting up collectors and exporters....")
+
     c = collector.New("Zapi", p.Object)
     fmt.Printf("c = %v (%T)\n", c, c)
     fmt.Printf("&c = %v (%T)\n", &c, &c)
@@ -51,7 +61,6 @@ func main() {
 
     err = c.Init(p, t)
     if err != nil { panic(err) }
-
 
     err = c.PollInstance()
     if err != nil { panic(err) }
@@ -68,5 +77,5 @@ func main() {
     fmt.Println("SUCCESS")
 
     data.Print()
-    log.Printf("Cleaning up and shutting down Poller")
+    Log.Info("Cleaning up and shutting down Poller")
 }

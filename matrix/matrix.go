@@ -209,67 +209,106 @@ func (m *Matrix) GetGlobalLabels() map[string]string {
 
 func (m *Matrix) Print() {
 
-    isorted := make(map[int]Instance, 0)
-    count := 0
-    for _, instance := range m.Instances {
-        if _, found := isorted[instance.Index]; found {
-            fmt.Printf("Error: instance index [%d] is duplicate!!\n", instance.Index)
+    fmt.Printf("\n\n")
+
+    /* create local caches */
+    lineLen := 8 + 50 + 60 + 15 + 15 + 7
+
+    mSorted := make(map[int]Metric, 0)
+    mKeys := make([]string, 0)
+    mCount := 0
+
+    for key, metric := range m.Metrics {
+        if _, found := mSorted[metric.Index]; found {
+            fmt.Printf("Error: metric index [%d] duplicate\n", metric.Index)
         } else {
-            isorted[instance.Index] = instance
-            count += 1
+            mSorted[metric.Index] = metric
+            mKeys = append(mKeys, key)
+            mCount += 1
         }
     }
-    fmt.Printf("Sorted instance cache with %d elements (out of %d)\n", count, len(m.Instances))
+    fmt.Printf("Sorted metric cache with %d elements (out of %d)\n", mCount, len(m.Metrics))
 
-    lsorted := make([]string, 0)
-    lcount := 0
+    lSorted := make([]string, 0)
+    lKeys := make([]string, 0)
+    lCount := 0
 
-    fmt.Printf("\n\nInstance Cache\n")
-    fmt.Printf("%s%s%6s ", share.Bold, share.Yellow, "INDEX")
-    for _, display := range m.LabelNames {
-        if display != "storage_disk_uid" {
-            fmt.Printf("%20s ", strings.ToUpper(display))
-            lsorted = append(lsorted, display)
-            lcount += 1
+    for key, display := range m.LabelNames {
+        lSorted = append(lSorted, display)
+        lKeys = append(lKeys, key)
+        lCount += 1
+    }
+    fmt.Printf("Sorted label cache with %d elements (out of %d)\n", lCount, len(m.LabelNames))
+
+    iSorted := make(map[int]Instance, 0)
+    iKeys := make([]string, 0)
+    iCount := 0
+    for key, instance := range m.Instances {
+        if _, found := iSorted[instance.Index]; found {
+            fmt.Printf("Error: instance index [%d] is duplicate\n", instance.Index)
+        } else {
+            iSorted[instance.Index] = instance
+            iKeys = append(iKeys, key)
+            iCount += 1
         }
     }
-    fmt.Printf("%s\n", share.End)
+    fmt.Printf("Sorted instance cache with %d elements (out of %d)\n", iCount, len(m.Instances))
 
-    for i:=0; i<count; i+=1 {
-        //fmt.Printf("\n%s%s%s\n", share.Grey, key, share.End)
-        instance := isorted[i]
-        fmt.Printf("%6d ", instance.Index)
-        for j:=0; j<len(lsorted); j+=1 {
-            display := lsorted[j]
-            value, found := m.GetInstanceLabel(&instance, display)
+    /* Print metric cache */
+    fmt.Printf("\n\nMetric cache:\n\n")
+    fmt.Println(strings.Repeat("+", lineLen))
+    fmt.Printf("%-8s %s %s %-50s %s %60s %15s %15s\n", "index", share.Bold, share.Blue, "display", share.End, "key", "enabled", "scalar")
+    fmt.Println(strings.Repeat("+", lineLen))
+
+    for i:=0; i<mCount; i+=1 {
+        metric := mSorted[i]
+        fmt.Printf("%-8d %s %s %-50s %s %60s %15v %15v\n", metric.Index, share.Bold, share.Blue, metric.Display, share.End, mKeys[i], metric.Enabled, metric.Scalar)
+    }
+
+    /* Print labels */
+    fmt.Printf("\n\nLabel cache:\n\n")
+    fmt.Println(strings.Repeat("+", lineLen))
+    fmt.Printf("%-8s %s %s %-50s %s %60s\n", "index", share.Bold, share.Yellow, "display", share.End, "key")
+    fmt.Println(strings.Repeat("+", lineLen))
+    for i:=0; i<lCount; i+=1 {
+        fmt.Printf("%-8d %s %s %-50s %s %60s\n", i, share.Bold, share.Yellow, lSorted[i], share.End, lKeys[i])
+    }
+
+    /* Print instances with data and labels */
+    fmt.Printf("\n\nInstance & Data cache:\n\n")
+    for i:=0; i<iCount; i+=1 {
+        fmt.Printf("\n")
+        fmt.Println(strings.Repeat("-", 100))
+        fmt.Printf("%-8d Instance:\n", i)
+        fmt.Printf("%s%s%s\n", share.Grey, iKeys[i], share.End)
+        fmt.Println(strings.Repeat("-", 100))
+
+        instance := iSorted[i]
+
+        fmt.Println(share.Bold, "\nlabels:\n", share.End)
+
+        for j:=0; j<lCount; j+=1 {
+            if lSorted[j] == "uid" {
+                continue
+            }
+            value, found := m.GetInstanceLabel(&instance, lSorted[j])
             if !found {
                 value = "--"
             }
-            fmt.Printf("%20s ", value)
+            fmt.Printf("%-46s %s %s %50s %s\n", lSorted[j], share.Bold, share.Yellow, value, share.End)
         }
-        fmt.Println()
-    }
 
-    fmt.Printf("Sorted label cache with %d elements (out of %d)\n", lcount, len(m.LabelNames))
-    /*
-    fmt.Printf("\n\nData Cache\n")
+        fmt.Println(share.Bold, "\ndata:\n", share.End)
 
-    fmt.Printf("%30s ", "METRIC / INDEX")
-    for i:=0; i<len(m.Instances); i+=1 {
-        fmt.Printf("%7d ", i)
-    }
-    fmt.Println()
-
-    for _, metric := range m.Metrics {
-        fmt.Printf("%30s ", metric.Display)
-        for _, instance := range isorted {
-            numeric, set := m.GetValue(metric, instance)
-            if set {
-                fmt.Printf("%7f ", numeric)
+        for k:=0; k<mCount; k+=1 {
+            metric := mSorted[k]
+            value, has := m.GetValue(metric, instance)
+            if !has {
+                fmt.Printf("%-46s %s %s %50s %s\n", metric.Display, share.Bold, share.Pink, "--", share.End)
             } else {
-                fmt.Printf("%7s ", "--")
+                fmt.Printf("%-46s %s %s %50f %s\n", metric.Display, share.Bold, share.Pink, value, share.End)
             }
         }
-    }*/
+    }
     fmt.Println()
 }

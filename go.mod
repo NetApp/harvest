@@ -11,6 +11,7 @@ require (
     local.host/matrix v0.0.0
     local.host/template v0.0.0
     local.host/share v0.0.0
+    local.host/logger v0.0.0
 )
 
 replace (
@@ -22,4 +23,5 @@ replace (
 	local.host/matrix => ./matrix
     local.host/template => ./template
     local.host/share => ./share
+    local.host/logger => ./logger
 )
