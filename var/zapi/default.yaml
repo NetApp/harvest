@@ -6,16 +6,12 @@ poll_frequencies:
   - instance: 600
   - data: 180
 
-
-subtemplates_load:  False
-subtemplates_dir:   default
-
 subtemplates:
-  Aggregate:        aggregate.yaml
-  Volume:           volume.yaml
-  LUN:              lun.yaml
-  SnapMirror:       snapmirror.yaml
-  SystemNode:       node.yaml
+#  Aggregate:        aggregate.yaml
+#  Volume:           volume.yaml
+#  LUN:              lun.yaml
+#  SnapMirror:       snapmirror.yaml
+#  SystemNode:       node.yaml
   StorageDisk:      disk.yaml
-  Qtree:            qtree.yaml
-  Shelf:            shelf.yaml
+#  Qtree:            qtree.yaml
+#  Shelf:            shelf.yaml
