@@ -4,7 +4,7 @@ package collector
 import (
 	"fmt"
 	"strconv"
-	"local.host/xmltree"
+	"local.host/xml"
 )
 
 type SystemInfo struct {
@@ -29,7 +29,7 @@ func (sys SystemInfo) ToString() string {
 
 func (c *Collector) GetSystemInfo() (SystemInfo, error) {
     var sys SystemInfo
-    var node *xmltree.Node
+    var node *xml.Node
     var err error
     var request string
     var found bool
@@ -39,7 +39,7 @@ func (c *Collector) GetSystemInfo() (SystemInfo, error) {
     // fetch system version and mode
     Log.Debug("Fetching system version")
 
-    c.Client.BuildRequest(xmltree.New("system-get-version"))
+    c.Client.BuildRequest(xml.New("system-get-version"))
 
     node, err = c.Client.InvokeRequest()
     if err != nil { return sys, err }
@@ -90,7 +90,7 @@ func (c *Collector) GetSystemInfo() (SystemInfo, error) {
         request = "system-get-info"
     }
 
-    err = c.Client.BuildRequest(xmltree.New(request))
+    err = c.Client.BuildRequest(xml.New(request))
     if err != nil { return sys, err }
 
     node, err = c.Client.InvokeRequest()

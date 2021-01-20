@@ -6,11 +6,12 @@ import (
     "bytes"
     "errors"
     "io"
+    "strconv"
     "io/ioutil"
     "net/http"
     "crypto/tls"
-    "local.host/params"
-    "local.host/xmltree"
+    "local.host/yaml"
+    "local.host/xml"
 )
 
 type Client struct {
@@ -19,18 +20,19 @@ type Client struct {
     buffer      *bytes.Buffer
 }
 
-func New(p params.Params) (Client, error) {
+func New(config *yaml.Node) (Client, error) {
     var client Client
     var httpclient *http.Client
     var request *http.Request
     var transport *http.Transport
     var cert tls.Certificate
+    var timeout time.Duration
     var url string
     var err error
 
     err = nil
 
-    url = "https://" + p.Hostname + ":443/servlets/netapp.servlets.admin.XMLrequest_filer"
+    url = "https://" + config.GetChildValue("url") + ":443/servlets/netapp.servlets.admin.XMLrequest_filer"
 
     request, err = http.NewRequest("POST", url, nil)
     if err != nil {
@@ -41,20 +43,29 @@ func New(p params.Params) (Client, error) {
     request.Header.Set("Content-type", "text/xml")
     request.Header.Set("Charset", "utf-8")
 
-    if p.UseCert {
-        cert, err = tls.LoadX509KeyPair(p.Authorization[0], p.Authorization[1])
+    if config.GetChildValue("auth_style") == "certificate_auth" {
+        cert, err = tls.LoadX509KeyPair(config.GetChildValue("ssl_cert"), config.GetChildValue("ssl_key"))
         if err != nil {
             fmt.Printf("[Client.New] Error loading key pair: %s\n", err)
             return client, err
         }
         transport = &http.Transport{ TLSClientConfig : &tls.Config{Certificates : []tls.Certificate{cert}, InsecureSkipVerify : true }, }
     } else {
-        request.SetBasicAuth(p.Authorization[0], p.Authorization[1])
+        request.SetBasicAuth(config.GetChildValue("username"), config.GetChildValue("password"))
         transport = &http.Transport{ TLSClientConfig : &tls.Config{ InsecureSkipVerify : true }, }
     }
 
     // initialize http client
-    httpclient = &http.Client{ Transport : transport, Timeout: time.Duration(p.Timeout) * time.Second }
+    t, err := strconv.Atoi(config.GetChildValue("client_timeout"))
+    if err != nil {
+        timeout = time.Duration(5) * time.Second
+        fmt.Printf("Using default timeout [%s]\n", timeout.String())
+    } else {
+        timeout = time.Duration(t) * time.Second
+        fmt.Printf("Using timeout [%s]\n", timeout.String())
+    }
+
+    httpclient = &http.Client{ Transport : transport, Timeout: timeout }
 
     client = Client{ client: httpclient, request: request }
 
@@ -64,18 +75,18 @@ func New(p params.Params) (Client, error) {
         return ioutil.NopCloser(r), nil
     }
 
-    return client, err
+    return client, nil
 }
 
-func (c *Client) BuildRequest(node *xmltree.Node) error {
+func (c *Client) BuildRequest(node *xml.Node) error {
     var buffer *bytes.Buffer
-    var xml []byte
+    var data []byte
     var err error
 
-    xml, err = node.Build()
+    data, err = node.Build()
 
     if err == nil {
-        buffer = bytes.NewBuffer(xml)
+        buffer = bytes.NewBuffer(data)
         c.buffer = buffer
         c.request.Body = ioutil.NopCloser(buffer)
         c.request.ContentLength = int64(buffer.Len())
@@ -83,11 +94,11 @@ func (c *Client) BuildRequest(node *xmltree.Node) error {
     return err
 }
 
-func (c *Client) InvokeRequest() (*xmltree.Node, error) {
+func (c *Client) InvokeRequest() (*xml.Node, error) {
     var err error
     var body []byte
     var response *http.Response
-    var node *xmltree.Node
+    var node *xml.Node
     var status, reason string
     var found bool
 
@@ -105,7 +116,7 @@ func (c *Client) InvokeRequest() (*xmltree.Node, error) {
         return node, err
     }
 
-    node, err = xmltree.Parse(body)
+    node, err = xml.Parse(body)
     if err != nil {
         fmt.Printf("error parsing body: %s\n", err)
         return node, err

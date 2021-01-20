@@ -1,4 +1,4 @@
-package xmltree
+package xml
 
 import (
     "fmt"

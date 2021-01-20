@@ -4,10 +4,10 @@ import (
     "log"
     "fmt"
     "os"
-    "path/filepath"
+    "path"
 )
 
-const flags int = log.Ldate | log.Ltime | log.Lshortfile | log.Lmsgprefix
+const flags int = log.Ldate | log.Ltime | log.Lmsgprefix
 var levels = [6]string{ " [TRACE  ] ", " [DEBUG  ] ", " [INFO   ] ", " [WARNING] ", " [ERROR  ] ", " [FATAL  ] " }
 
 var file *os.File
@@ -19,17 +19,17 @@ func OpenFileOutput(rootdir, filename string) error {
     var info os.FileInfo
     var err error
 
-    fmt.Printf("Checking if dir [%s] exists...\n", filepath.Join(rootdir, "log"))
+    fmt.Printf("Checking if dir [%s] exists...\n", path.Join(rootdir, "log"))
 
-    info, err = os.Stat(filepath.Join(rootdir, "log"))
+    info, err = os.Stat(path.Join(rootdir, "log"))
     if err != nil || info.IsDir() == true {
         fmt.Printf("Creating dir...\n")
-        err = os.Mkdir(filepath.Join(rootdir, "log"), dirperm)
+        err = os.Mkdir(path.Join(rootdir, "log"), dirperm)
     }
     if err == nil || os.IsExist(err) {
-        fmt.Printf("Opening file [%s]...\n", filepath.Join(rootdir, "log", filename))
+        fmt.Printf("Opening file [%s]...\n", path.Join(rootdir, "log", filename))
 
-        file, err = os.OpenFile(filepath.Join(rootdir, "log", filename), fileflags, fileperm)
+        file, err = os.OpenFile(path.Join(rootdir, "log", filename), fileflags, fileperm)
         if err == nil {
             fmt.Printf("Setting as handler output (%T) %v\n", file, file)
             log.SetOutput(file)

@@ -3,41 +3,44 @@ package exporter
 import (
     "fmt"
     "strings"
-    "log"
     "local.host/share"
     "local.host/matrix"
-    "local.host/template"
+    "local.host/yaml"
+    "local.host/logger"
 )
+
+var Log *logger.Logger = logger.New(1, "")
 
 type Exporter struct {
     Class string
     Name string
-    Log *log.Logger
+    Params *yaml.Node
 }
 
-func New(class, name string) *Exporter {
-    var e Exporter
-    e = Exporter{Class: class, Name: name}
+func New(params *yaml.Node) *Exporter {
+    class := params.PopChild("exporter").Value
+    name := params.Name
+    e := Exporter{Class: class, Name: name, Params: params}
     return &e
 }
 
 func (e *Exporter) Init() error {
-    e.Log = log.New(log.Writer(), fmt.Sprintf("[%-25s]: ", e.Class + ":" + e.Name), log.Flags())
-    e.Log.Printf("Opened logger, initialized exporter")
+	Log = logger.New(0, e.Name)
+    Log.Info("Initialized exporter!")
     return nil
 }
 
-func (e *Exporter) Export(data *matrix.Matrix, options *template.Element) error {
+func (e *Exporter) Export(data *matrix.Matrix, options *yaml.Node) error {
     rendered := e.Render(data, options)
     for _, m := range rendered {
         fmt.Printf("M= %s%s%s\n", share.Pink, m, share.End)
     }
 
-    e.Log.Printf("Export completed: exported %d data points", len(rendered))
+    Log.Debug("Export completed: exported %d data points", len(rendered))
     return nil
 }
 
-func (e *Exporter) Render(data *matrix.Matrix, options *template.Element) []string {
+func (e *Exporter) Render(data *matrix.Matrix, options *yaml.Node) []string {
     var rendered []string
     var metric_labels, key_labels []string
     var object string
@@ -48,7 +51,7 @@ func (e *Exporter) Render(data *matrix.Matrix, options *template.Element) []stri
     object = data.Object
 
     for _, instance := range data.GetInstances() {
-        e.Log.Printf("Rendering instance [%d]", instance.Index)
+        Log.Debug("Rendering instance [%d]", instance.Index)
 
         instance_labels := make([]string, 0)
         instance_keys := make([]string, 0)
@@ -58,7 +61,7 @@ func (e *Exporter) Render(data *matrix.Matrix, options *template.Element) []stri
             if found && value != "" {
                 instance_keys = append(instance_keys, fmt.Sprintf("%s=\"%s\"", key, value))
             } else {
-                e.Log.Printf("Skipped Key [%s] (%s) found=%v", key, value, found)
+                Log.Debug("Skipped Key [%s] (%s) found=%v", key, value, found)
             }
         }
 
@@ -67,15 +70,15 @@ func (e *Exporter) Render(data *matrix.Matrix, options *template.Element) []stri
             if found {
                 instance_labels = append(instance_labels, fmt.Sprintf("%s=\"%s\"", label, value))
             } else {
-                e.Log.Printf("Skipped Label [%s] (%s) found=%v", label, value, found)
+                Log.Debug("Skipped Label [%s] (%s) found=%v", label, value, found)
             }
         }
 
-        //e.Log.Printf("Parsed Keys: [%s]", strings.Join(instance_keys, ","))
-        //e.Log.Printf("Parsed Labels: [%s]", strings.Join(instance_labels, ","))
+        //Log.Debug("Parsed Keys: [%s]", strings.Join(instance_keys, ","))
+        //Log.Debug("Parsed Labels: [%s]", strings.Join(instance_labels, ","))
 
         if len(instance_keys) == 0 {
-            e.Log.Printf("Skipping instance, no keys parsed (%v) (%v)", instance_keys, instance_labels)
+            Log.Debug("Skipping instance, no keys parsed (%v) (%v)", instance_keys, instance_labels)
             continue
         }
 
@@ -83,7 +86,7 @@ func (e *Exporter) Render(data *matrix.Matrix, options *template.Element) []stri
             label_data := fmt.Sprintf("%s_labels{%s,%s} 1.0", object, strings.Join(instance_keys, ","), strings.Join(instance_labels, ","))
             rendered = append(rendered, label_data)
         } else {
-            e.Log.Printf("Skipping instance labels (%v) (%v)", instance_keys, instance_labels)
+            Log.Debug("Skipping instance labels (%v) (%v)", instance_keys, instance_labels)
         }
 
         for _, metric := range data.GetMetrics() {
@@ -100,7 +103,7 @@ func (e *Exporter) Render(data *matrix.Matrix, options *template.Element) []stri
             }
         }
     }
-    e.Log.Printf("Renderd %d data points for [%s] %d instances", len(rendered), object, len(data.Instances))
+    Log.Debug("Renderd %d data points for [%s] %d instances", len(rendered), object, len(data.Instances))
     return rendered
 }
 
