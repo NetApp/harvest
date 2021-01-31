@@ -3,19 +3,18 @@ collector: Psutil
 object: poller
 
 schedule:
-  - data: 20
+  - instance: 10s
+  - data: 10s
 
 counters:
-  - Name
-  - Status
-  - Terminal
+  - status
   - CreateTime          => create_time 
   - CPUPercent          => cpu_percent
   - MemoryPercent       => memory_percent
   - NumThreads          => num_threads
   - NumFDs              => num_fds
-  - Children            => num_children
-  - OpenFiles           => open_files
+  - NumChildren         => num_children
+  - NumSockets          => num_sockets
   - MemoryInfo => memory:
     - RSS
     - VMS
@@ -25,30 +24,30 @@ counters:
     - Locked
     - Swap
   - Times => cpu_times:
-    - CPU
     - User
     - System
-    - Idle
-    - Nice
     - Iowait
-    - Irq
-    - Softirq
-    - Steal
-    - Guest
-    - GuestNice
   - IOCounters => io:
     - ReadCount       => read_count
     - WriteCount      => write_count
     - ReadBytes       => read_bytes
     - WriteBytes      => write_byes
+  - NetIOCounters => net_io:
+    - BytesSent
+    - BytesRecv
+    - PacketsSent
+    - PacketsRecv
+    - Errin
+    - Errout
+    - Dropin
+    - Dropout
   - NumCtxSwitches => ctx_switches:
     - Voluntary
     - Involuntary
+
 
 export_options:
 
   include_keys:
     - poller
     - pid
-  include_labels:
-    - state

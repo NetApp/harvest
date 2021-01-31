@@ -61,7 +61,7 @@ func HandleCounter(data *matrix.Matrix, path []string, value string) {
     }
 
     if value[0] == '^' {
-        data.AddLabel(flat_path, display)
+        data.AddLabelKeyName(flat_path, display)
             Log.Trace("Added as Label [%s] [%s]", display, flat_path)
         if value[1] == '^' {
             data.AddInstanceKey(full_path)

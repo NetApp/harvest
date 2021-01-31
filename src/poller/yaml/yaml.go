@@ -34,6 +34,10 @@ type Node struct {
     Children []*Node
 }
 
+func New(name, value string) *Node {
+    return &Node{Name: name, Value: value}
+}
+
 func (node *Node) Copy() *Node {
     n := Node{ Name : node.Name }
     n.Value = node.Value
@@ -48,6 +52,10 @@ func (node *Node) Copy() *Node {
 
 func (node *Node) AddChild(child *Node) {
     node.Children = append(node.Children, child)
+}
+
+func (node *Node) AddNewChild(name, value string) {
+    node.Children = append(node.Children, New(name, value))
 }
 
 func (node *Node) GetChild(name string) *Node {

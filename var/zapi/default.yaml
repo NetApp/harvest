@@ -2,11 +2,11 @@
 collector:          Zapi
 
 # Order here matters!
-poll_frequencies:
+schedule:
   - instance: 600
-  - data: 180
+  - data: 10
 
-subtemplates:
+objects:
 #  Aggregate:        aggregate.yaml
 #  Volume:           volume.yaml
 #  LUN:              lun.yaml

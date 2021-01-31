@@ -1,115 +1,67 @@
 package psutil
 
 import (
+	"os"
 	"path"
 	"sync"
 	"strings"
 	"strconv"
 	"errors"
 	"io/ioutil"
-	"math"
-	"fmt"
-	"reflect"
-	"encoding/json"
-	"github.com/shirou/gopsutil/v3/process"
+	"github.com/shirou/gopsutil/process"
 	"poller/yaml"
-	"poller/exporter"
-	"poller/schedule"
 	"poller/structs/matrix"
 	"poller/structs/opts"
 	"poller/share/logger"
+    "poller/collector/abc"
 )
 
 var Log *logger.Logger = logger.New(1, "")
 
+var extractors = map[string]interface{}{
+	"Times" 	     : cpu_times,
+	"MemoryInfo"     : memory_info,
+	"IOCounters" 	 : io_counters,
+	"NetIOCounters"  : net_io_counters,
+	"NumCtxSwitches" : ctx_switches,
+}
+
 
 type Psutil struct {
+	*abc.AbstractCollector
+	/*
 	Class string
 	Name string
 	Params *yaml.Node
 	Options *opts.Opts
 	Exporters []exporter.Exporter
 	Schedule *schedule.Schedule
-	Data *matrix.Matrix
+	Data *matrix.Matrix*/
 }
 
-func New(class string, params *yaml.Node, options *opts.Opts) []*Psutil {
-	var subcollectors []*Psutil
-	Log = logger.New(options.LogLevel, class)
-	
-	c := Psutil{
-		Class : class,
-		Name : "local_proc",
-		Params : params,
-		Options : options,
-	}
-	c.Exporters = make([]exporter.Exporter, 0)
-	subcollectors = append(subcollectors, &c)
-	return subcollectors
-}
-
-func (c *Psutil) GetName() string {
-    return c.Name
-}
-
-func (c *Psutil) GetClass() string {
-    return c.Class
-}
-
-func (c *Psutil) GetExporterNames() []string {
-    var names []string
-    e := c.Params.GetChild("exporters")
-    if e != nil {
-        names = e.Values
-	}
-	Log.Info("OK, my exporters are: %v", names)
-    return names
-}
-
-func (c *Psutil) AddExporter(e exporter.Exporter) {
-	Log.Info("Adding exporter [%s]", e.GetName())
-    c.Exporters = append(c.Exporters, e)
+func New(name, obj string, options *opts.Opts, params *yaml.Node) *Psutil {
+	a := abc.New(name, obj, options, params)
+	return &Psutil{AbstractCollector: a}
 }
 
 func (c *Psutil) Init() error {
 
-	var err error
-
-	template, err := yaml.Import(path.Join(c.Options.Path, "var", strings.ToLower(c.Class), "default.yaml"))
-	//template, err := ImportDefaultTemplate(class, options.Path)
-	if err != nil {
-		return err
+    if err := c.InitAbc(); err != nil {
+        return err
+	}
+	
+    if counters := c.Params.GetChild("counters"); counters == nil {
+		return errors.New("Missing counters in template")
+	} else {
+		c.load_metrics(counters)
 	}
 
-	fmt.Printf("imported Template:")
-	template.PrintTree(0)
+	//c.Data = matrix.New(object, c.Class, "", c.Params.GetChild("export_options"))
+	hostname, _ := os.Hostname()
+	c.Data.SetGlobalLabel("hostname", hostname)
+	c.Data.SetGlobalLabel("datacenter", c.Params.GetChildValue("datacenter"))
 
-	c.Params.Union(template, false)
-
-	fmt.Printf("merged Template:")
-	c.Params.PrintTree(0)
-
-    object := c.Params.GetChildValue("object")
-    if object == "" {
-        Log.Warn("Missing object in template")
-    }
-    counters := c.Params.GetChild("counters")
-    if counters == nil {
-        Log.Warn("Missing counters in template")
-    }
-    if object == "" || counters == nil {
-        return errors.New("missing parameters")
-    }
-
-	c.Data = matrix.New(object, c.Class, "", c.Params.GetChild("export_options"))
-	
-	c.load_metrics(counters)
-
-	interval := c.Params.GetChild("schedule").GetChild("data").Value
-	i, _ := strconv.Atoi(interval)
-	c.Schedule = schedule.New(i)
-
-	Log.Info("Collector started, poll interval: %s s", interval)
+	Log.Info("Collector initialized")
 
 	return nil
 
@@ -120,35 +72,60 @@ func (c *Psutil) Start(wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	for {
-		c.Schedule.Start()
-		Log.Debug("Starting poll session")
+		c.Metadata.InitData()
 
-		err := c.poll_instance()
-		if err != nil {
-			Log.Error("instance poll: %v", err)
-			continue
-		}
-		Log.Info("Completed instance poll")
+		for _, task := range c.Schedule.GetTasks() {
 
-		data, err := c.poll_data()
-		if err != nil {
-			Log.Error("data poll: %v", err)
-			continue
-		}
-		Log.Info("Completed data poll")
+			if c.Schedule.IsDue(task) {
+				c.Schedule.Start(task)
 
-		for _, exp := range c.Exporters {
-			err := exp.Export(data)
-			if err != nil {
-				Log.Error("export data to [%s]: %v", exp.GetName(), err)
-			} else {
-				Log.Debug("exported data to [%s]", exp.GetName())
+				data, err := c.poll(task)
+
+				if err != nil {
+					Log.Warn("%s poll failed: %v", task, err)
+					return
+				}
+
+				Log.Debug("%s poll completed", task)
+
+				duration := c.Schedule.Stop(task)
+				c.Metadata.SetValueForMetricAndInstance("poll_time", task, duration.Seconds())
+
+				if data != nil {
+
+					Log.Debug("exporting to %d exporters", len(c.Exporters))
+
+					for _, e := range c.Exporters {
+						if err := e.Export(data); err != nil {
+							Log.Warn("export to [%s] failed: %v", e.GetName(), err)
+						}
+					}
+				}
+			}
+
+			Log.Debug("exporting metadata")
+
+			for _, e := range c.Exporters {
+				if err := e.Export(c.Metadata); err != nil {
+					Log.Warn("metadata export to [%s] failed: %v", e.GetName(), err)
+				}
 			}
 		}
-
-		c.Schedule.Pause()
+		c.Schedule.Sleep()
 	}
 }
+
+func (c *Psutil) poll(task string) (*matrix.Matrix, error) {
+    switch task {
+        case "data":
+            return c.poll_data()
+        case "instance":
+            return nil, c.poll_instance()
+        default:
+            return nil, errors.New("invalid task: " + task)
+    }
+}
+
 
 func (c *Psutil) poll_data() (*matrix.Matrix, error) {
 
@@ -157,93 +134,107 @@ func (c *Psutil) poll_data() (*matrix.Matrix, error) {
 
 	for key, instance := range m.Instances {
 		pid, _ := m.GetInstanceLabel(instance, "pid")
+		poller, _ := m.GetInstanceLabel(instance, "poller")
+
+		// assume not running
+		c.Data.SetValueForMetric("status", instance, float64(1))
+
 		if pid == "" {
-			Log.Debug("Skipping instance [%s]: not running", key)
+			Log.Debug("Skip instance [%s]: not running", key)
 			continue
 		}
 
-		pid_i,_ := strconv.Atoi(pid)
-		proc, err := process.NewProcess(int32(pid_i))
-
+		pid_i, err := strconv.Atoi(pid)
 		if err != nil {
-			Log.Debug("Skipping instance [%s]: proc not found", key)
+			Log.Warn("Skip instance [%s], failed convert PID: %v", key, err)
 			continue
+		}
+
+		proc, err := process.NewProcess(int32(pid_i))
+		if err != nil {
+			Log.Debug("Skip instance [%s], proc not found: %v", key, err)
+			continue
+		}
+
+		name, _ := proc.Name()
+		cmdline, _ := proc.Cmdline()
+
+		Log.Debug("Extracting instance [%s] counters (%s) [%s]\n", key, name, cmdline)
+
+		if !strings.Contains(name, "poller") || !strings.Contains(cmdline, poller) {
+			Log.Debug("Skip instance [%s]: PID might have changed")
+			continue
+		}
+
+		// if we got here poller is running
+		c.Data.SetValueForMetric("status", instance, float64(0))
+
+
+		/*
+		state, err := proc.Status()
+		if err == nil {
+			m.SetInstanceLabel(instance, "state", state)
+		}*/
+
+		cpu, _ := proc.CPUPercent()
+		if err == nil {
+			m.SetValueForMetric("CPUPercent", instance, float64(cpu))
+		}
+
+		mem, _ := proc.MemoryPercent()
+		if err == nil {
+			m.SetValueForMetric("MemoryPercent", instance, float64(mem))
+		}
+		
+		create_time, _ := proc.CreateTime()
+		if err == nil {
+			m.SetValueForMetric("CreateTime", instance, float64(create_time))
+		}
+		
+		num_threads, _ := proc.NumThreads()
+		if err == nil {
+			m.SetValueForMetric("NumThreads", instance, float64(num_threads))
+		}
+		
+		num_fds, _ := proc.NumFDs()
+		if err == nil {
+			m.SetValueForMetric("NumFDs", instance, float64(num_fds))
+		}
+		
+		children, _ := proc.Children()
+		if err == nil {
+			m.SetValueForMetric("NumChildren", instance, float64(len(children)))
+		}
+		
+		socks, _ := proc.Connections()
+		if err == nil {
+			m.SetValueForMetric("NumSockets", instance, float64(len(socks)))
 		}
 
 		for key, metric := range m.Metrics {
 
-			values := make(map[string]string)
-			var value float64
-			
-			switch key {
-			case "CPUPercent":
-				value, _ = proc.CPUPercent()
-				break
-			case "CreateTime":
-				v, _ := proc.CreateTime()
-				value = float64(v)
-				break
-			case "MemoryPercent":
-				v, _ := proc.MemoryPercent()
-				value = float64(v)
-				break
-			case "NumFds":
-				v, _ := proc.NumFDs()
-				value = float64(v)
-				break
-			case "NumThreads":
-				v, _ := proc.NumThreads()
-				value = float64(v)
-				break
-			case "IOCounters":
-				data, _ := proc.IOCounters()
-				str, _ := json.Marshal(data)
-				json.Unmarshal(str, &values)
-				break
-			case "MemoryInfo":
-				data, _ := proc.MemoryInfo()
-				str, _ := json.Marshal(data)
-				json.Unmarshal(str, &values)
-				break
-			case "NumCtxSwitches":
-				data, _ := proc.NumCtxSwitches()
-				str, _ := json.Marshal(data)
-				json.Unmarshal(str, &values)
-				break
-			case "Times":
-				data, _ := proc.Times()
-				str, _ := json.Marshal(data)
-				json.Unmarshal(str, &values)
-				break
-			}
+			if !metric.Scalar {
+				f, ok := extractors[key]
 
-			if metric.Scalar {
-				//Log.Debug("Handling metric [%s] with value [%v]", )
-				m.SetValue(metric, instance, float64(value))
-				Log.Debug("+ [%s] [%s] => [%f]", key, metric.Display, value)
-			} else {
-				float_values := make([]float64, 0)
-				for _, labelUpper := range metric.Labels {
-					label := strings.ToLower(labelUpper)
-					v, ok := values[label]
-					if !ok {
-						Log.Warn("For metric [%s] label [%s] not found", metric.Display, label)
-					}
-					f, err := to_float64(v)
-					if err != nil {
-						Log.Warn("For metric [%s] label [%s]: value [%s] failed to convert", metric.Display, label, v)
-						float_values = append(float_values, math.NaN())
-					} else {
-						float_values = append(float_values, f)
-					}
-					Log.Debug("+ [%s] [%s:%s] => [%f]", key, metric.Display, label, f)
-					
+				if !ok {
+					continue
 				}
-				m.SetArrayValues(metric, instance, float_values)
+
+				values, ok := f.(func(*process.Process)([]float64, bool))(proc)
+
+				if !ok {
+					continue
+				}
+
+				if len(values) != len(metric.Labels) {
+					Log.Warn("Extracted [%s] values (%d) not what expected (%d)", metric.Display, len(values), len(metric.Labels))
+					continue
+				}
+
+				m.SetArrayValues(metric, instance, values)
 			}
 		}
 	}
-
 	Log.Info("Data poll completed!")
 	return m, nil
 }
@@ -253,20 +244,42 @@ func (c *Psutil) load_metrics(counters *yaml.Node) {
 	m := c.Data
 
 	for _, child := range counters.Children {
-		name := child.Name
-		labels := child.Values
-		
-		m.AddMetricArray(name, name, labels, true)
+		name, display := parse_metric_name(child.Name)
 
-		Log.Debug("Added array metric [%s] with %d submetrics", name, len(labels))
+		Log.Debug("Parsing [%s] => (%s => %s)", child.Name, name, display)
+
+		labels := make([]string, len(child.Values))
+		for i, label := range(child.Values) {
+			_, display := parse_metric_name(label)
+			labels[i] = strings.ToLower(display)
+		}
+
+		Log.Debug("Parsed (%d) labels [%v] => (%d) [%v]", len(child.Values), child.Values, len(labels), labels)
+		
+		m.AddMetricArray(name, display, labels, true)
+		Log.Debug("+ Array metric [%s => %s] with %d labels", name, display, len(labels))
 	}
 
 	for _, value := range counters.Values {
-		m.AddMetric(value, value, true)
-		Log.Debug("Added scalar metric [%s]", value)
+		name, display := parse_metric_name(value)
+		m.AddMetric(name, display, true)
+		Log.Debug("+ Scalar metric [%s => %s]", name, display)
 	}
 
+	//m.AddMetric("status", "status", true) // static metric
+
+	m.AddLabelName("poller")
+	m.AddLabelName("pid")
+	//m.AddLabelName("state")
+
 	Log.Info("Loaded %d metrics", m.MetricsIndex)
+}
+
+func parse_metric_name(raw_name string) (string, string) {
+	if items := strings.Split(raw_name, "=>"); len(items) == 2 {
+		return strings.TrimSpace(items[0]), strings.TrimSpace(items[1])
+	}
+	return raw_name, raw_name
 }
 
 func (c *Psutil) poll_instance() error {
@@ -305,7 +318,6 @@ func (c *Psutil) poll_instance() error {
 			instance, _ := c.Data.AddInstance(name)
 
 			c.Data.SetInstanceLabel(instance, "poller", name)
-			c.Data.SetInstanceLabel(instance, "state", "1")
 			c.Data.SetInstanceLabel(instance, "pid", "")
 		} else {
 			Log.Debug("Adding instance [%s] - up and running", name)
@@ -313,7 +325,6 @@ func (c *Psutil) poll_instance() error {
 			instance, _ := c.Data.AddInstance(name+"."+pid_s)
 
 			c.Data.SetInstanceLabel(instance, "poller", name)
-			c.Data.SetInstanceLabel(instance, "state", "1")
 			c.Data.SetInstanceLabel(instance, "pid", pid_s)
 		}
 
@@ -346,40 +357,95 @@ func get_poller_names(harvest_path, config_fn string) ([]string, error){
 	return poller_names, nil
 }
 
-func to_float64(x interface{}) (float64, error) {
-	var floatType = reflect.TypeOf(float64(0))
-	var stringType = reflect.TypeOf("")
-	switch i := x.(type) {
-	case float64:
-		return i, nil
-	case float32:
-		return float64(i), nil
-	case int64:
-		return float64(i), nil
-	case int32:
-		return float64(i), nil
-	case int:
-		return float64(i), nil
-	case uint64:
-		return float64(i), nil
-	case uint32:
-		return float64(i), nil
-	case uint:
-		return float64(i), nil
-	case string:
-		return strconv.ParseFloat(i, 64)
-	default:
-		v := reflect.ValueOf(x)
-		v = reflect.Indirect(v)
-		if v.Type().ConvertibleTo(floatType) {
-			fv := v.Convert(floatType)
-			return fv.Float(), nil
-		} else if v.Type().ConvertibleTo(stringType) {
-			sv := v.Convert(stringType)
-			s := sv.String()
-			return strconv.ParseFloat(s, 64)
-		} else {
-			return math.NaN(), fmt.Errorf("Can't convert %v to float64", v.Type())
-		}
+func memory_info(proc *process.Process) ([]float64, bool) {
+
+	values := make([]float64, 7)
+
+	mem, err := proc.MemoryInfo()
+	if err != nil {
+		return values, false
 	}
+
+	values[0] = float64(mem.RSS)
+	values[1] = float64(mem.VMS)
+	values[2] = float64(mem.HWM)
+	values[3] = float64(mem.Data)
+	values[4] = float64(mem.Stack)
+	values[5] = float64(mem.Locked)
+	values[6] = float64(mem.Swap)
+
+	return values, true
+}
+
+func cpu_times(proc *process.Process) ([]float64, bool) {
+
+	values := make([]float64, 3)
+
+	cpu, err := proc.Times()
+	if err != nil {
+		return values, false
+	}
+
+	values[0] = float64(cpu.User)
+	values[1] = float64(cpu.System)
+	values[2] = float64(cpu.Iowait)
+
+	return values, true
+}
+
+func ctx_switches(proc *process.Process) ([]float64, bool) {
+
+	values := make([]float64, 2)
+
+	ctx, err := proc.NumCtxSwitches()
+	if err != nil {
+		return values, false
+	}
+
+	values[0] = float64(ctx.Voluntary)
+	values[1] = float64(ctx.Involuntary)
+
+	return values, true
+}
+
+func io_counters(proc *process.Process) ([]float64, bool) {
+
+	values := make([]float64, 4)
+
+	iocounter, err := proc.IOCounters()
+	if err != nil {
+		return values, false
+	}
+
+	values[0] = float64(iocounter.ReadCount)
+	values[1] = float64(iocounter.WriteCount)
+	values[2] = float64(iocounter.ReadBytes)
+	values[3] = float64(iocounter.WriteBytes)
+
+	return values, true
+}
+
+func net_io_counters(proc *process.Process) ([]float64, bool) {
+
+	values := make([]float64, 8)
+
+	netio, err := proc.NetIOCounters(false)
+	if err != nil {
+		return values, false
+	}
+
+	if len(netio) != 1 || netio[0].Name != "all" {
+		return values, false
+	}
+
+	values[0] = float64(netio[0].BytesSent)
+	values[1] = float64(netio[0].BytesRecv)
+	values[2] = float64(netio[0].PacketsSent)
+	values[3] = float64(netio[0].PacketsRecv)
+	values[4] = float64(netio[0].Errin)
+	values[5] = float64(netio[0].Errout)
+	values[6] = float64(netio[0].Dropin)
+	values[7] = float64(netio[0].Dropout)
+
+	return values, true
 }

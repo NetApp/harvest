@@ -10,10 +10,12 @@ import (
 type Exporter interface {
 	//New(string, *yaml.Node, *structs.Options) Collector
 	Init() error
-    GetName() string
+	GetClass() string
+	GetName() string
+	IsUp() bool
 	Export(*matrix.Matrix) error
 }
 
-func New(class string, params *yaml.Node, options *opts.Opts) Exporter {
-	return prometheus.New(class, params, options)
+func New(class, name string, options *opts.Opts, params *yaml.Node) Exporter {
+	return prometheus.New(class, name, options, params)
 }

@@ -1,11 +1,12 @@
 package zapi
 
-import (
+import (    
     "fmt"
     "errors"
     "strings"
     "strconv"
     "sync"
+    "time"
     client "poller/apis/zapi"
     "poller/structs/matrix"
     "poller/structs/opts"
@@ -13,131 +14,92 @@ import (
     "poller/xml"
     "poller/share"
     "poller/share/logger"
-    "poller/exporter"
-    "poller/schedule"
+    "poller/collector/abc"
+    //"poller/errors"
 )
 
 var Log *logger.Logger = logger.New(1, "")
 
 type Zapi struct {
-    Class string
-    Name string
-    Params *yaml.Node
-    Args *opts.Opts
-    Exporters []exporter.Exporter
-    Schedule *schedule.Schedule
-    Client client.Client
-    System client.SystemInfo
-    TemplateFn string
-    Data *matrix.Matrix
-    InstanceKeyPrefix []string
+    *abc.AbstractCollector
+    //name string
+    //object string
+    //options *opts.Opts
+    //params *yaml.Node
+    //Exporters []exporter.Exporter
+    //Schedule *schedule.Schedule
+    object_raw string
+    connection client.Client
+    system client.SystemInfo
+    //TemplateFn string
+    //Data *matrix.Matrix
+    instanceKeyPrefix []string
 }
 
-func (c *Zapi) GetName() string {
-    return c.Name
+func New(name, obj string, options *opts.Opts, params *yaml.Node) *Zapi {
+    a := abc.New(name, obj, options, params)
+    return &Zapi{AbstractCollector: a}
 }
 
-func (c *Zapi) GetClass() string {
-    return c.Class
-}
-
-func (c *Zapi) GetExporterNames() []string {
-    var names []string
-    e := c.Params.GetChild("exporters")
-    if e != nil {
-        names = e.Values
-    }
-    return names
-}
-
-func (c *Zapi) AddExporter(e exporter.Exporter) {
-    c.Exporters = append(c.Exporters, e)
-}
-
-func New(class string, params *yaml.Node, options *opts.Opts) []*Zapi {
-    var subcollectors []*Zapi
-    Log = logger.New(options.LogLevel, class)
-    
-    connection, err := client.New(params)
-    if err != nil {
-        Log.Error("connecting: %v", err)
-        return subcollectors
-    }
-
-    system_info, err := connection.GetSystemInfo()
-    if err != nil {
-        Log.Error("system info: %v", err)
-        return subcollectors
-    }
-    Log.Info("Connected to: %s", system_info.String())
-
-    template, err := ImportDefaultTemplate(class, options.Path)
-    if err != nil {
-        Log.Error("load template: %v", err)
-        return subcollectors
-    }
-
-    objects := template.PopChild("objects")
-    if objects == nil {
-        Log.Error("no objects in template")
-        return subcollectors
-    }
-
-    params.Union(template, false)
-
-    for _, object := range objects.GetChildren() {
-        c := Zapi{ 
-            Class: class, 
-            Name: object.Name, 
-            Params: params.Copy(), 
-            System: system_info,
-            TemplateFn: object.Value,
-        }
-        Log.Debug("Initialized subcollector [%s:%s]", c.Class, c.Name)
-        subcollectors = append(subcollectors, &c)
-    }
-    return subcollectors
-}
 
 func (c *Zapi) Init() error {
 
     var err error
 
-    c.Client, err = client.New(c.Params)
-    if err != nil {
-        Log.Error("Error connecting: %s", err)
+    Log = logger.New(c.Options.LogLevel, c.Name+":"+c.Object)
+    
+    if c.connection, err = client.New(c.Params); err != nil {
+        //Log.Error("connecting: %v", err)
         return err
     }
 
-    template, err := LoadSubTemplate(c.Args.Path, "default", c.TemplateFn, c.Class, c.System.Version)
+    if c.system, err = c.connection.GetSystemInfo(); err != nil {
+        //Log.Error("system info: %v", err)
+        return err
+    }
+
+    Log.Debug("Connected to: %s", c.system.String())
+
+    template_fn := c.Params.GetChild("objects").GetChildValue(c.Object) // @TODO err handling
+
+    template, err := abc.ImportObjectTemplate(c.Options.Path, "default", template_fn, c.Name, c.system.Version)
     if err != nil {
         Log.Error("Error importing subtemplate: %s", err)
         return err
     }
- 
     c.Params.Union(template, false)
+ 
+    if err := c.InitAbc(); err != nil {
+        return err
+    }
 
-    object := c.Params.GetChildValue("object")
-    if object == "" {
+    if expopt := c.Params.GetChild("export_options"); expopt != nil {
+        c.Data.SetExportOptions(expopt)
+    } else {
+        return errors.New("missing export options")
+    }
+
+    c.Metadata.AddMetric("api_time", "api_time", true) // extra metric for measuring api time
+
+    if c.object_raw = c.Params.GetChildValue("object"); c.object_raw == "" {
         Log.Warn("Missing object in template")
     }
+    
     counters := c.Params.GetChild("counters")
     if counters == nil {
         Log.Warn("Missing counters in template")
     }
-    if object == "" || counters == nil {
+
+    if c.object_raw == "" || counters == nil {
         return errors.New("missing parameters")
     }
 
-    c.Data = matrix.New(object, c.Class, "", c.Params.GetChild("export_options"))
-
     Log.Debug("Parsing counters: %d values, %d children", len(counters.Values), len(counters.Children))
-    empty := make([]string, 0)
-    ParseCounters(c.Data, counters, empty)
+    ParseCounters(c.Data, counters, make([]string, 0))
     Log.Debug("Built counter cache with %d Metrics and %d Labels", c.Data.MetricsIndex+1, len(c.Data.Instances))
 
-    c.InstanceKeyPrefix = ParseKeyPrefix(c.Data.GetInstanceKeys())
-    Log.Debug("Parsed Instance Key Prefix: %v", c.InstanceKeyPrefix)
+    c.instanceKeyPrefix = ParseKeyPrefix(c.Data.GetInstanceKeys())
+    Log.Debug("Parsed Instance Key Prefix: %v", c.instanceKeyPrefix)
 
     return nil
 
@@ -145,48 +107,67 @@ func (c *Zapi) Init() error {
 
 func (c *Zapi) Start(wg *sync.WaitGroup) {
 
-    var err error
-
     defer wg.Done()
 
-    if err = c.PollInstance(); err != nil {
-        return
-    }
-
     for {
-        c.Schedule.Start()
-        Log.Debug("Starting DataPoll")
 
-        data, err := c.PollData()
+        c.Metadata.InitData()
 
-        if err != nil {
-            Log.Warn("DataPoll failed: %v", err)
-        } else {
-            for _, e := range c.Exporters {
-                
-                err = e.Export(data)
+        for _, task := range c.Schedule.GetTasks() {
+
+            if c.Schedule.IsDue(task) {
+
+                c.Schedule.Start(task)
+
+                data, err := c.poll(task)
 
                 if err != nil {
-                    Log.Warn("Failed to export to [%s]", e.GetName())
-                } else {
-                    Log.Debug("Exported successfully to [%s]", e.GetName())
+                    Log.Warn("%s poll failed: %v", task, err)
+                    return
+                }
+                
+                Log.Debug("%s poll completed", task)
+
+                duration := c.Schedule.Stop(task)
+                c.Metadata.SetValueForMetricAndInstance("poll_time", task, duration.Seconds())
+                
+                if data != nil {
+                    
+                    Log.Debug("exporting to %d exporters", len(c.Exporters))
+
+                    for _, e := range c.Exporters {
+                        if err := e.Export(data); err != nil {
+                            Log.Warn("export to [%s] failed: %v", e.GetName(), err)
+                        }
+                    }
+                }
+            }
+
+            Log.Debug("exporting metadata")
+
+            for _, e := range c.Exporters {
+                if err := e.Export(c.Metadata); err != nil {
+                    Log.Warn("Metadata export to [%s] failed: %v", e.GetName(), err)
                 }
             }
         }
 
-        d := c.Schedule.Pause()
-        if d < 0 {
-            Log.Warn("Lagging behind schedule [%s]", d.String())
-        }
+        c.Schedule.Sleep()
     }
 }
 
-func (c *Zapi) Poll() error {
-    _, err := c.PollData()
-    return err
+func (c *Zapi) poll(task string) (*matrix.Matrix, error) {
+    switch task {
+        case "data":
+            return c.poll_data()
+        case "instance":
+            return nil, c.poll_instance()
+        default:
+            return nil, errors.New("invalid task: " + task)
+    }
 }
 
-func (c *Zapi) PollInstance() error {
+func (c *Zapi) poll_instance() error {
     var err error
     var root *xml.Node
     var instances []xml.Node
@@ -195,20 +176,24 @@ func (c *Zapi) PollInstance() error {
     var keypaths [][]string
     var found bool
 
-    Log.Debug("Collector starting InstancePoll session....")
+    Log.Debug("starting instance poll")
 
-    c.Client.BuildRequest(xml.New(c.Params.GetChildValue("query")))
-    root, err = c.Client.InvokeRequest()
+    start := time.Now()
+    c.connection.BuildRequest(xml.New(c.Params.GetChildValue("query")))
+    root, err = c.connection.InvokeRequest()
+    end := time.Since(start)
+
+    c.Metadata.SetValueForMetricAndInstance("api_time", "instance", end.Seconds())
 
     if err != nil {
-        Log.Error("InstancePoll: client request failed: %s", err)
+        Log.Error("client request failed: %s", err)
         return err
     }
 
     old_count = len(c.Data.Instances)
     c.Data.ResetInstances()
 
-    instances = xml.SearchByPath(root, c.InstanceKeyPrefix)
+    instances = xml.SearchByPath(root, c.instanceKeyPrefix)
     Log.Debug("Fetched %d instances!!!!", len(instances))
     keypaths = c.Data.GetInstanceKeys()
 
@@ -218,7 +203,7 @@ func (c *Zapi) PollInstance() error {
 
     for _, instance := range instances {
         //c.Log.Printf("Handling instance element <%v> [%s]", &instance, instance.GetName())
-        keys, found = xml.SearchByNames(&instance, c.InstanceKeyPrefix, keypaths)
+        keys, found = xml.SearchByNames(&instance, c.instanceKeyPrefix, keypaths)
         Log.Debug("Fetched instance keys (%v): %s", keypaths, strings.Join(keys, "."))
 
         if !found {
@@ -236,14 +221,14 @@ func (c *Zapi) PollInstance() error {
         count += 1
     }
 
-    //xmltree.PrintTree(root, 0)
+    c.Metadata.SetValueForMetricAndInstance("count", "instance", float64(count))
 
-    c.Data.PrintInstances()
-    Log.Info("InstancePoll complete: added %d (or %d?) new instances (old cache had %d) (new cache: %d)", len(c.Data.Instances), count, old_count, len(c.Data.Instances))
+    //c.data.PrintInstances()
+    Log.Info("added %d instances to cache (old cache had %d)", count, old_count)
     return nil
 }
 
-func (c *Zapi) PollData() (*matrix.Matrix, error) {
+func (c *Zapi) poll_data() (*matrix.Matrix, error) {
     var err error
     var query string
     var node *xml.Node
@@ -288,31 +273,29 @@ func (c *Zapi) PollData() (*matrix.Matrix, error) {
         }
     }
 
-    Log.Debug("Starting data poll session: %s", c.System.String())
+    Log.Debug("starting data poll")
 
-    err = c.Data.InitData()
-    if err != nil {
+    if err = c.Data.InitData(); err != nil {
         return nil, err
     }
 
-    query = c.Params.GetChildValue("query")
-    if query == "" { panic("missing query in template") }
+    if query = c.Params.GetChildValue("query"); query == "" {
+        return nil, errors.New("missing query in template")
+    }
 
-    c.Client.BuildRequest(xml.New(query))
+    c.connection.BuildRequest(xml.New(query))
 
-    node, err = c.Client.InvokeRequest()
-
-    if err != nil {
+    if node, err = c.connection.InvokeRequest(); err != nil {
         Log.Debug("Request for [%s] failed: %s", query, err)
         return nil, err
     }
 
-    instances := xml.SearchByPath(node, c.InstanceKeyPrefix)
+    instances := xml.SearchByPath(node, c.instanceKeyPrefix)
     Log.Debug("Fetched %d instance elements", len(instances))
 
     for _, instance := range instances {
         //c.Log.Printf("Handling instance element <%v> [%s]", &instance, instance.GetName())
-        keys, found := xml.SearchByNames(&instance, c.InstanceKeyPrefix, c.Data.GetInstanceKeys())
+        keys, found := xml.SearchByNames(&instance, c.instanceKeyPrefix, c.Data.GetInstanceKeys())
         Log.Debug("Fetched instance keys: %s", strings.Join(keys, "."))
 
         if !found {
@@ -326,11 +309,56 @@ func (c *Zapi) PollData() (*matrix.Matrix, error) {
             Log.Debug("Skipping instance [%s]: not found in cache", strings.Join(keys, "."))
             continue
         }
-        path := make([]string, 0)
+        //path := make([]string, 0)
         //copy(path, c.InstanceKeyPrefix)
-        fetch(instanceObj, instance, path)
+        fetch(instanceObj, instance, make([]string, 0))
     }
     //xmltree.PrintTree(node, 0)
 
     return c.Data, nil
 }
+
+/*
+
+func News(name string, options *opts.Opts, params *yaml.Node) ([]*Zapi, error) {
+    var subcollectors []*Zapi
+    var err error
+
+    Log = logger.New(options.LogLevel, class)
+    
+    connection, err := client.New(params)
+    if err != nil {
+        Log.Error("connecting: %v", err)
+        return, subcollectors, err
+    }
+
+    system_info, err := connection.GetSystemInfo()
+    if err != nil {
+        Log.Error("system info: %v", err)
+        return subcollectors, err
+    }
+
+    template, err := abc.ImportTemplate(options.Path, name)
+    if err != nil {
+        Log.Error("load template: %v", err)
+        return subcollectors, err
+    }
+
+    objects := template.GetChild("objects")
+    if objects == nil {
+        Log.Error("no objects in template")
+        return subcollectors, errors.New("no objects in template")
+    }
+
+    params.Union(template, false)
+
+    for _, object := range objects.GetChildren() {
+        c := New(name, object, optionos, params.Copy())
+        c.system = system_info
+        Log.Debug("Initialized subcollector [%s:%s]", name, c.object)
+        subcollectors = append(subcollectors, c)
+    }
+
+    return subcollectors
+}
+*/

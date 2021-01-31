@@ -48,8 +48,8 @@ func NewInstance (index int) *Instance {
 }
 
 type Matrix struct {
-    Object string
     Collector string
+    Object string
     Plugin string
 	GlobalLabels map[string]string
 	LabelNames map[string]string
@@ -58,11 +58,14 @@ type Matrix struct {
 	Instances map[string]*Instance
 	Metrics map[string]*Metric
 	MetricsIndex int /* since some metrics are arrays and we can't relay on len(Metrics) */
-	Data [][]float64
+    Data [][]float64
+    IsMetadata bool
+    MetadataType string
+    MetadataObject string
 }
 
-func New(object, collector, plugin string, options *yaml.Node) *Matrix {
-    m := Matrix{Object: object, Collector: collector, Plugin: plugin, ExportOptions: options, MetricsIndex: 0 }
+func New(collector, object, plugin string) *Matrix {
+    m := Matrix{Collector: collector, Object: object, Plugin: plugin, MetricsIndex: 0 }
     m.GlobalLabels = map[string]string{}
     m.LabelNames = map[string]string{}
     m.InstanceKeys = [][]string{}
@@ -190,6 +193,18 @@ func (m *Matrix) SetValue(metric *Metric, instance *Instance, value float64) {
 	m.Data[metric.Index][instance.Index] = value
 }
 
+func (m *Matrix) SetValueForMetric(key string, instance *Instance, value float64) {
+    metric, found := m.GetMetric(key)
+    if found {
+        m.SetValue(metric, instance, value)
+    }
+}
+
+func (m *Matrix) SetValueForMetricAndInstance(metric_key, instance_key string, value float64) {
+    if instance, found := m.GetInstance(instance_key); found {
+        m.SetValueForMetric(metric_key, instance, value)
+    }
+}
 
 func (m *Matrix) SetArrayValues(metric *Metric, instance *Instance, values []float64) {
     for i:=0; i<len(metric.Labels); i+=1 {
@@ -203,7 +218,19 @@ func (m *Matrix) GetValue(metric *Metric, instance *Instance) (float64, bool) {
 	return value, value==value
 }
 
-func (m *Matrix) AddLabel(key, name string) {
+func (m *Matrix) GetArrayValues(metric *Metric, instance *Instance) []float64 {
+    values := make([]float64, len(metric.Labels))
+    for i:=0; i<len(metric.Labels); i+=1 {
+        values[i] = m.Data[metric.Index+i][instance.Index]        
+    }
+    return values
+}
+
+func (m *Matrix) AddLabelName(name string) {
+    m.AddLabelKeyName(name, name)
+}
+
+func (m *Matrix) AddLabelKeyName(key, name string) {
 	m.LabelNames[key] = name
 }
 
@@ -243,13 +270,23 @@ func (m *Matrix) GetGlobalLabels() map[string]string {
 	return m.GlobalLabels
 }
 
+func (m *Matrix) SetExportOptions(options *yaml.Node) {
+    m.ExportOptions = options
+}
+
+func DefaultExportOptions() *yaml.Node {
+    n := yaml.New("export_options", "")
+    n.AddNewChild("include_all_labels", "True")
+    return n
+}
+
 
 func (m *Matrix) Copy() *Matrix {
     /* Only export options is passed as pointer */
     /* Everything else undergoes deep copy */
 
 
-    n := New(m.Object, m.Collector, m.Plugin, m.ExportOptions)
+    n := New(m.Object, m.Collector, m.Plugin)
 
     /* Copy string2string maps */
     n.GlobalLabels = copy_ss_map(m.GlobalLabels)
@@ -297,16 +334,21 @@ func (m *Matrix) Print() {
     lineLen := 8 + 50 + 60 + 15 + 15 + 7
 
     mSorted := make(map[int]*Metric, 0)
-    mKeys := make([]string, 0)
+    mKeys := make(map[int]string, 0)
     mCount := 0
+    mMaxIndex := 0
 
     for key, metric := range m.Metrics {
         if _, found := mSorted[metric.Index]; found {
             fmt.Printf("Error: metric index [%d] duplicate\n", metric.Index)
         } else {
             mSorted[metric.Index] = metric
-            mKeys = append(mKeys, key)
+            mKeys[metric.Index] = key
             mCount += 1
+
+            if metric.Index > mMaxIndex {
+                mMaxIndex = metric.Index
+            }
         }
     }
     fmt.Printf("Sorted metric cache with %d elements (out of %d)\n", mCount, len(m.Metrics))
@@ -342,9 +384,19 @@ func (m *Matrix) Print() {
     fmt.Printf("%-8s %s %s %-50s %s %60s %15s %15s\n", "index", share.Bold, share.Blue, "display", share.End, "key", "enabled", "scalar")
     fmt.Println(strings.Repeat("+", lineLen))
 
-    for i:=0; i<mCount; i+=1 {
+    for i:=0; i<mMaxIndex; i+=1 {
         metric := mSorted[i]
-        fmt.Printf("%-8d %s %s %-50s %s %60s %15v %15v\n", metric.Index, share.Bold, share.Blue, metric.Display, share.End, mKeys[i], metric.Enabled, metric.Scalar)
+        if metric == nil {
+            continue
+        }
+        if metric.Scalar {
+            fmt.Printf("%-8d %s %s %-50s %s %60s %15v %15v\n", metric.Index, share.Bold, share.Blue, metric.Display, share.End, mKeys[i], metric.Enabled, metric.Scalar)
+        } else {
+            for k:=0; k<len(metric.Labels); k+=1 {
+                fmt.Printf("%s %-8d %s %s %s %-50s %s\n", share.Grey, metric.Index+k, share.End, share.Bold, share.Cyan, metric.Labels[k], share.End)
+            }
+        }
+        
     }
 
     /* Print labels */
@@ -382,13 +434,26 @@ func (m *Matrix) Print() {
 
         fmt.Println(share.Bold, "\ndata:\n", share.End)
 
-        for k:=0; k<mCount; k+=1 {
+        for k:=0; k<mMaxIndex; k+=1 {
             metric := mSorted[k]
-            value, has := m.GetValue(metric, instance)
-            if !has {
-                fmt.Printf("%-46s %s %s %50s %s\n", metric.Display, share.Bold, share.Pink, "--", share.End)
+
+            if metric == nil {
+                continue
+            }
+
+            if metric.Scalar {
+                value, has := m.GetValue(metric, instance)
+                if !has {
+                    fmt.Printf("%-46s %s %s %50s %s\n", metric.Display, share.Bold, share.Pink, "--", share.End)
+                } else {
+                    fmt.Printf("%-46s %s %s %50f %s\n", metric.Display, share.Bold, share.Pink, value, share.End)
+                }
             } else {
-                fmt.Printf("%-46s %s %s %50f %s\n", metric.Display, share.Bold, share.Pink, value, share.End)
+                fmt.Printf("%-46s\n", metric.Display)
+                values := m.GetArrayValues(metric, instance)
+                for l:=0; l<len(values); l+=1 {
+                    fmt.Printf("  %-44s %s %s %50f %s\n", metric.Labels[l], share.Bold, share.Pink, values[l], share.End)
+                }
             }
         }
     }

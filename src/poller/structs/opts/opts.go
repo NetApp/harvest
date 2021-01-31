@@ -8,6 +8,7 @@ import (
 )
 
 type Opts struct {
+    Poller      string
     Daemon      bool
     Config      string
     Path        string
@@ -15,15 +16,18 @@ type Opts struct {
     LogLevel    int
     Debug       bool
     Test        bool
+    Collector   string
+    Object      string
+    Exporter    string
+    Version     string
 }
 
 func GetOpts() (*Opts, string, error)  {
 	var args Opts
-	var name string
     var err error
     args = Opts{}
 
-    flag.StringVar(&name, "poller", "",
+    flag.StringVar(&args.Poller, "poller", "",
         "Poller name as defined in config")
     flag.BoolVar(&args.Daemon, "daemon", false,
         "Start as daemon")
@@ -39,10 +43,16 @@ func GetOpts() (*Opts, string, error)  {
         "Debug mode, no data will be exported")
     flag.BoolVar(&args.Test, "test", false,
         "Startup collectors and exporters, and exit")
+    flag.StringVar(&args.Collector, "collector", "",
+        "Only run this collector (overrides config)")
+    flag.StringVar(&args.Object, "object", "",
+        "Only run this object (overrides template)")
+    flag.StringVar(&args.Exporter, "exporter", "",
+            "Only run this exporter (overrides config)")
 
     flag.Parse()
 
-    if name == "" {
+    if args.Poller == "" {
         fmt.Println("Missing required argument: poller")
         flag.PrintDefaults()
         os.Exit(1)
@@ -63,5 +73,7 @@ func GetOpts() (*Opts, string, error)  {
 		args.Path = cwd
     }
 
-    return &args, name, err
+    args.Version = "2.0.1"
+    
+    return &args, args.Poller, err
 }
