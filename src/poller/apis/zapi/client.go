@@ -10,8 +10,8 @@ import (
     "io/ioutil"
     "net/http"
     "crypto/tls"
-    "poller/yaml"
-    "poller/xml"
+    "goharvest2/poller/yaml"
+    "goharvest2/poller/xml"
 )
 
 type Client struct {

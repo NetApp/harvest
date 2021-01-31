@@ -4,7 +4,7 @@ import (
     "fmt"
     "errors"
 	"strconv"
-	"poller/xml"
+	"goharvest2/poller/xml"
 )
 
 type SystemInfo struct {

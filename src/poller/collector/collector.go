@@ -2,15 +2,21 @@ package collector
 
 import (
 	"sync"
-	"strings"
-	"errors"
-	"poller/yaml"
-	"poller/collector/abc"
-	"poller/collector/zapi"
-	"poller/collector/psutil"
-	"poller/structs/opts"
-	"poller/exporter"
+    "os"
+    "strconv"
+	//"strings"
+	//"errors"
+
+	"goharvest2/poller/yaml"
+	"goharvest2/poller/structs/options"
+	"goharvest2/poller/structs/matrix"
+	"goharvest2/poller/schedule"
+	"goharvest2/poller/exporter"
+	"goharvest2/poller/share/logger"
+	herrors "goharvest2/poller/errors"
 )
+
+var Log *logger.Logger = logger.New(1, "")
 
 type Collector interface {
 	Init() error
@@ -22,59 +28,115 @@ type Collector interface {
 	LinkExporter(exporter.Exporter)
 }
 
-func Load(class, object string, options *opts.Opts, params *yaml.Node) ([]Collector, error) {
-	var collectors []Collector
-	var err error
 
-	template, err := abc.ImportTemplate(options.Path, class)
-	if err != nil {
-		return nil, err
-	} else if template != nil {
-		template.Union(params, false)
-		// log: imported and merged template...
-	}
-
-	if object == "" {
-		object = template.GetChildValue("object")
-	}
-
-	if object != "" {
-		if c, err := New(class, object, options, template.Copy()); err == nil {
-			if err = c.Init(); err == nil {
-				collectors = append(collectors, c)
-			} else {
-				return collectors, err
-			}
-		} else {
-			return collectors, err
-		}
-	} else if objects := template.GetChild("objects"); objects != nil {
-		for _, object := range objects.GetChildren() {
-			if c, err := New(class, object.Name, options, params.Copy()); err == nil {
-				if err = c.Init(); err == nil {
-					collectors = append(collectors, c)
-				} else {
-					return collectors, err
-				}	
-			} else {
-				return collectors, err
-			}
-		}
-	} else {
-		return collectors, errors.New("no object defined in template")
-	}
-
-	return collectors, err
+type AbstractCollector struct {
+	Name string
+	Object string
+	Options *options.Options
+	Params *yaml.Node
+	Data *matrix.Matrix
+	Metadata *matrix.Matrix
+	Exporters []exporter.Exporter
+	Schedule *schedule.Schedule
+	//plugins []plugin.Plugin
 }
 
-func New(class, object string, options *opts.Opts, params *yaml.Node) (Collector, error) {
-
-	switch strings.ToLower(class) {
-	case "zapi":
-		return zapi.New(class, object, options, params), nil
-	case "psutil":
-		return psutil.New(class, object, options, params), nil
-	default:
-		return nil, errors.New("unknown collector class: " + class)
+func New(name, object string, options *options.Options, params *yaml.Node) *AbstractCollector {
+	c := AbstractCollector{
+		Name: name,
+		Object: object,
+		Options: options,
+		Params: params,
 	}
+	return &c
+}
+
+
+func (c *AbstractCollector) InitAbc() error {
+
+	/* Initialize schedule and tasks (polls) */
+	items := c.Params.GetChild("schedule")
+	if items == nil || len(items.GetChildren()) == 0 {
+		return herrors.MissingParam("schedule")
+	}
+
+	c.Schedule = schedule.New()
+	for _, task := range items.GetChildren() {
+		err := c.Schedule.AddTaskString(task.Name, task.Value, nil)
+		if err != nil {
+			return herrors.InvalidParam("schedule (" + task.Name + "): " + err.Error())
+		}
+	}
+
+	/* Initialize Matrix, the container of collected data */
+	c.Data = matrix.New(c.Name, c.Object, "")
+	if expo := c.Params.GetChild("export_options"); expo != nil {
+		c.Data.SetExportOptions(expo)
+	} else {
+		c.Data.SetExportOptions(matrix.DefaultExportOptions())
+	}
+	c.Data.SetGlobalLabel("datacenter", c.Params.GetChildValue("datacenter"))
+
+	/* Initialize metadata */
+	c.Metadata = matrix.New(c.Name, c.Object, "")
+	c.Metadata.IsMetadata = true
+	c.Metadata.MetadataType = "collector"
+	c.Metadata.MetadataObject = "task"
+
+	hostname, _ := os.Hostname()
+	c.Metadata.SetGlobalLabel("hostname", hostname)
+	c.Metadata.SetGlobalLabel("version", c.Options.Version)
+	c.Metadata.SetGlobalLabel("poller", c.Options.Poller)
+	c.Metadata.SetGlobalLabel("collector", c.Name)
+	c.Metadata.SetGlobalLabel("object", c.Object)
+
+	c.Metadata.AddMetric("poll_time", "poll_time", true)
+	c.Metadata.AddMetric("count", "count", true)
+	c.Metadata.AddLabelName("task")
+	c.Metadata.AddLabelName("interval")
+
+	c.Metadata.SetExportOptions(matrix.DefaultExportOptions())
+
+	/* each task we run is an "instance" */
+	for _, task := range c.Schedule.GetTasks() {
+		instance, _ := c.Metadata.AddInstance(task)
+		c.Metadata.SetInstanceLabel(instance, "task", task)
+		s := c.Schedule.GetInterval(task).Seconds()
+		c.Metadata.SetInstanceLabel(instance, "interval", strconv.FormatFloat(s, 'f', 4, 32))
+	}
+
+	/* initialize underlaying arrays */
+	err := c.Metadata.InitData()
+
+	return err
+}
+
+func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
+	panic(c.Name + " has not implemented Start()")
+}
+
+func (c *AbstractCollector) GetName() string {
+	return c.Name
+}
+
+func (c *AbstractCollector) GetObject() string {
+	return c.Object
+}
+
+func (c *AbstractCollector) IsUp() bool {
+	return true
+}
+
+func (c *AbstractCollector) WantedExporters() []string {
+	var names []string
+	if e := c.Params.GetChild("exporters"); e != nil {
+		names = e.Values
+	}
+	return names
+}
+
+func (c *AbstractCollector) LinkExporter(e exporter.Exporter) {
+	// @TODO: add lock if we want to add exporters while collector is running
+	Log.Info("Adding exporter [%s:%s]", e.GetClass(), e.GetName())
+	c.Exporters = append(c.Exporters, e)
 }

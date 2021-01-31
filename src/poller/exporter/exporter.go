@@ -1,10 +1,10 @@
 package exporter
 
 import (
-	"poller/exporter/prometheus"
-	"poller/yaml"
-	"poller/structs/matrix"
-	"poller/structs/opts"
+	//"goharvest2/poller/exporter/prometheus"
+	//"goharvest2/poller/yaml"
+	"goharvest2/poller/structs/matrix"
+	//"goharvest2/poller/structs/options"
 )
 
 type Exporter interface {
@@ -15,7 +15,7 @@ type Exporter interface {
 	IsUp() bool
 	Export(*matrix.Matrix) error
 }
-
-func New(class, name string, options *opts.Opts, params *yaml.Node) Exporter {
+/*
+func New(class, name string, options *options.Options, params *yaml.Node) Exporter {
 	return prometheus.New(class, name, options, params)
-}
+}*/

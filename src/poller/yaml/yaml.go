@@ -5,7 +5,7 @@ import (
     "bytes"
     "strings"
     "io/ioutil"
-    "poller/share"
+    "goharvest2/poller/share"
 )
 
 

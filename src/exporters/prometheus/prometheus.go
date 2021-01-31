@@ -1,0 +1,219 @@
+package main
+
+import (
+    "fmt"
+    "os"
+    "strings"
+    "goharvest2/poller/exporter"
+    "goharvest2/poller/share"
+    "goharvest2/poller/yaml"
+    "goharvest2/poller/share/logger"
+    "goharvest2/poller/structs/matrix"
+    "goharvest2/poller/structs/options"
+)
+
+var Log *logger.Logger = logger.New(1, "")
+
+type Prometheus struct {
+    class string
+    name string
+    options *options.Options
+    params *yaml.Node
+    cache []*matrix.Matrix
+    Metadata *matrix.Matrix
+}
+
+func New(class, name string, options *options.Options, params *yaml.Node) exporter.Exporter {
+    e := Prometheus{class: class, name: name, options: options, params: params}
+    return &e
+}
+
+func (p* Prometheus) GetClass() string {
+    return p.class
+}
+
+func (p* Prometheus) GetName() string {
+    return p.name
+}
+
+func (p* Prometheus) IsUp() bool {
+    return true
+}
+
+func (e *Prometheus) Init() error {
+    Log = logger.New(0, e.name)
+
+    if e.options.Debug {
+        Log.Info("Initialized exporter. No HTTP server started since in debug mode")
+        return nil
+    }
+    
+    url := e.params.GetChildValue("url")
+    port := e.params.GetChildValue("port")
+    e.StartHttpd(url, port)
+
+    Log.Info("Initialized Exporter. HTTP daemon serving at [http://%s:%s]", url, port)
+
+    e.Metadata = matrix.New(e.class, e.name, "")
+	e.Metadata.IsMetadata = true
+	e.Metadata.MetadataType = "exporter"
+	e.Metadata.MetadataObject = "export"
+	hostname, _ := os.Hostname()
+	e.Metadata.SetGlobalLabel("hostname", hostname)
+	e.Metadata.SetGlobalLabel("version", e.options.Version)
+	e.Metadata.SetGlobalLabel("poller", e.options.Poller)
+	e.Metadata.SetGlobalLabel("exporter", e.class)
+    e.Metadata.SetGlobalLabel("target", e.name)
+    
+	if _, err := e.Metadata.AddMetric("time", "time", true); err != nil {
+        return err
+    }
+	if _, err := e.Metadata.AddMetric("count", "count", true); err != nil {
+        return err
+    }
+
+    e.Metadata.AddLabelName("task")
+    instance, _ := e.Metadata.AddInstance("render")
+    e.Metadata.SetInstanceLabel(instance, "task", "render")
+    e.Metadata.SetExportOptions(matrix.DefaultExportOptions())
+    
+	/* initialize underlaying arrays */
+    err := e.Metadata.InitData()
+    e.Metadata.Print()
+
+    Log.Info("metadata with %d metrics (index = %d)", len(e.Metadata.Metrics), e.Metadata.MetricsIndex)
+    return err
+}
+
+func (e *Prometheus) Export(data *matrix.Matrix) error {
+
+    if e.options.Debug {
+        rendered := e.Render(data)
+        Log.Debug("Simulating export of %d data points", len(rendered))
+        for _, m := range rendered {
+            fmt.Printf("M= %s%s%s\n", share.Pink, m, share.End)
+        }
+    } else {
+        e.cache = append(e.cache, data)
+        Log.Debug("Added data to cache")
+    }
+
+    return nil
+}
+
+func (e *Prometheus) Render(data *matrix.Matrix) [][]byte {
+    var rendered [][]byte
+    var metric_labels, key_labels []string
+    var object, prefix, instance_tag string
+    var include_all_labels, include_instance_names bool
+
+    options := data.ExportOptions
+
+    rendered = make([][]byte, 0)
+    metric_labels = options.GetChildValues("include_labels")
+    key_labels = options.GetChildValues("include_keys")
+    if options.GetChildValue("include_all_labels") == "True" {
+        include_all_labels = true
+    } else {
+        include_all_labels = false
+    }
+
+    if options.GetChildValue("include_instance_names") == "False" {
+        include_instance_names = false
+    } else {
+        include_instance_names = true
+    }
+
+    object = data.Object
+    if data.IsMetadata {
+        prefix = "metadata_" + data.MetadataType
+        instance_tag = data.MetadataObject
+    } else {
+        prefix = object
+        instance_tag = object
+    }
+
+    global_labels := make([]string, 0)
+    for key, value := range data.GetGlobalLabels(   ) {
+        global_labels = append(global_labels, fmt.Sprintf("%s=\"%s\"", key, value))
+    }
+
+    for key, instance := range data.Instances {
+        Log.Debug("Rendering instance [%d]", instance.Index)
+
+        instance_labels := make([]string, 0)
+        instance_keys := make([]string, len(global_labels))
+        copy(instance_keys, global_labels)
+
+        for _, key := range key_labels {
+            value, found := data.GetInstanceLabel(instance, key)
+            if include_all_labels || (found && value != "") {
+                instance_keys = append(instance_keys, fmt.Sprintf("%s=\"%s\"", key, value))
+            } else {
+                Log.Debug("Skipped Key [%s] (%s) found=%v", key, value, found)
+            }
+        }
+
+        if include_instance_names {
+            instance_keys = append(instance_keys, fmt.Sprintf("%s=\"%s\"", instance_tag, key))
+        }
+
+        for _, label := range metric_labels {
+            value, found := data.GetInstanceLabel(instance, label)
+            if found {
+                instance_labels = append(instance_labels, fmt.Sprintf("%s=\"%s\"", label, value))
+            } else {
+                Log.Debug("Skipped Label [%s] (%s) found=%v", label, value, found)
+            }
+        }
+
+        //Log.Debug("Parsed Keys: [%s]", strings.Join(instance_keys, ","))
+        //Log.Debug("Parsed Labels: [%s]", strings.Join(instance_labels, ","))
+
+        if len(instance_keys) == 0 {
+            Log.Debug("Skipping instance, no keys parsed (%v) (%v)", instance_keys, instance_labels)
+            continue
+        }
+
+        if len(instance_labels) > 0 {
+            label_data := fmt.Sprintf("%s_labels{%s,%s} 1.0", prefix, strings.Join(instance_keys, ","), strings.Join(instance_labels, ","))
+            rendered = append(rendered, []byte(label_data))
+        } else {
+            Log.Debug("Skipping instance labels (%v) (%v)", instance_keys, instance_labels)
+        }
+
+        for _, metric := range data.Metrics {
+
+            if !metric.Enabled {
+                continue
+            }
+
+            if metric.Scalar {
+                if value, set := data.GetValue(metric, instance); set {
+                    metric_data := fmt.Sprintf("%s_%s{%s} %f", prefix, metric.Display, strings.Join(instance_keys, ","), value)
+                    rendered = append(rendered, []byte(metric_data))
+                }
+            } else {
+                values := data.GetArrayValues(metric, instance)
+                for i:=0; i<len(metric.Labels); i+=1 {
+                    if values[i] == values[i] {
+                        metric_data := fmt.Sprintf("%s_%s{%s,submetric=\"%s\"} %f", prefix, metric.Display, strings.Join(instance_keys, ","), metric.Labels[i], values[i])
+                        rendered = append(rendered, []byte(metric_data))
+                    }
+                }
+            }
+        }
+    }
+    Log.Debug("Renderd %d data points for [%s] %d instances", len(rendered), object, len(data.Instances))
+    return rendered
+}
+
+
+
+
+
+
+
+
+
+

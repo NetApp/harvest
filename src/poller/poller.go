@@ -11,12 +11,12 @@ import (
 	"path"
 	//"time"  // @debug
 	//"runtime/pprof"  // @debug
-	"poller/share/logger"
-	"poller/schedule"
-	"poller/collector"
-	"poller/exporter"
-	"poller/yaml"
-	"poller/structs/opts"
+	"goharvest2/poller/share/logger"
+	"goharvest2/poller/schedule"
+	"goharvest2/poller/collector"
+	"goharvest2/poller/exporter"
+	"goharvest2/poller/yaml"
+	"goharvest2/poller/structs/opts"
 )
 
 var Log *logger.Logger = logger.New(1, "")
@@ -129,16 +129,97 @@ func (p *Poller) Init() error {
 
 }
 
-func (p *Poller) load_collector(class, object string) {
+func (p *Poller) load_module(binpath, name string) (*plugin.Plugin, error) {
 
-	subcollectors, err := collector.Load(class, object, p.options, p.params)
+	files, err := ioutil.ReadDir(binpath)
 	if err != nil {
-		Log.Error("Failed initializing Collector [%s]: %v", class, err)
-		return
+		Log.Warn("Error ReadDir: %v", err)
+		return nil, err
 	}
 
-	p.collectors = append(p.collectors, subcollectors...)
-	Log.Debug("Loaded [%s] with %d subcollectors", class, len(subcollectors))
+	fn := ""
+
+	for _, f := range files {
+		if f.Name() == name + ".so" {
+			fn = f.Name()
+			break
+		}
+	}
+
+	if fn == "" {
+		Log.Warn("Failed to find %s.so file in [%s]", name, binpath)
+		return nil, errors.New(".so file not found")
+	}
+
+	return plugin.Open(path.Join(binpath, fn))
+}
+
+func (p *Poller) load_collector(class, object string) error {
+
+	mod, err := p.load_module(path.Join(p.options.Path, "bin", "collectors"), strings.ToLower(class))
+	if err != nil {
+		Log.Error("load .so: %v")
+		return err
+	}
+
+	sym, err := mod.Lookup("New")
+	if err != nil {
+		Log.Error("load New(): %v", err)
+		return err
+	}
+
+	NewFunc, ok := sym.(func(string, string, *options.Options, *yaml.Node) collector.Collector)
+	if !ok {
+		Log.Error("New() has expected signature")
+		return errors.New("incompatible New()")
+	}
+
+	template, err := collector.ImportTemplate(p.options.Path, class)
+	if err != nil {
+		Log.Error("load template: %v", err)
+		return err
+	} else if template == nil {
+		Log.Error("empty template")
+		return errors.New("empty template")
+		// log: imported and merged template...
+	}
+
+	template.Union(params, false)
+
+	if object == "" {
+		object = template.GetChildValue("object")
+	}
+
+	if object != "" {
+		if c, err := NewFunc(class, object, options, template.Copy()); err != nil {
+			Log.Error("loading [%s:%s]: %v", class, object, err)
+			return err
+		} else if err = c.Init(); err != nil {
+			Log.Error("init [%s:%s]: %v", class, object, err)
+			return err
+		} else {
+			p.collectors = append(collectors, c)
+			Log.Debug("intialized collector [%s:%s]", class, object)
+			return nil
+		}
+	} else if objects := template.GetChild("objects"); objects != nil {
+		for _, object := range objects.GetChildren() {
+			if c, err := NewFunc(class, object.Name, options, params.Copy()); err != nil {
+				Log.Error("loading [%s:%s]: %v", class, object.Name, err)
+				return err
+			} else if err = c.Init(); err != nil {
+				Log.Error("init [%s:%s]: %v", class, object.Name, err)
+				return err
+			} else {
+				collectors = append(collectors, c)
+				Log.Debug("intialized subcollector [%s:%s]", class, object.Name)
+			}
+		}
+	} else {
+		return errors.New("no object defined in template")
+	}
+
+	Log.Debug("initialized [%s] with %d subcollectors", class, len(subcollectors))
 
 	for _, c := range subcollectors {
 		for _, e := range c.WantedExporters() {

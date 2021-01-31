@@ -6,8 +6,8 @@ import (
     "math"
     "strconv"
     "strings"
-    "poller/share"
-    "poller/yaml"
+    "goharvest2/poller/share"
+    "goharvest2/poller/yaml"
 )
 
 type Metric struct {
