@@ -98,7 +98,10 @@ func (p *Poller) Init() error {
 		Log.Warn("No exporters defined in config")
 	}
 
-	if collectors := p.params.PopChild("collectors"); collectors != nil {
+	if collectors := p.params.GetChild("collectors"); collectors != nil {
+		if len(p.options.Collectors) > 0 {
+			filter_collectors(collectors, p.options.Collectors)
+		}
 		for _, c := range collectors.Values {
 			p.load_collector(c, "")
 		}
@@ -131,6 +134,19 @@ func (p *Poller) Init() error {
 	return nil
 
 }
+
+func filter_collectors(c *yaml.Node, names []string) {
+	var filter map[string]int
+	for _, n := range names {
+		filter[n] = 1
+	}
+	for i, v := range c.Values {
+		if _, ok := filter[v]; !ok {
+			c.RemoveValueByIndex(i)
+		}
+	}
+}
+
 
 func (p *Poller) load_module(binpath, name string) (*plugin.Plugin, error) {
 

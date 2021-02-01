@@ -1,0 +1,60 @@
+ 
+name:               Aggregate
+query:              aggr-get-iter
+object:             aggregate 
+
+counters:
+  aggr-attributes:
+    - ^aggregate-name                          => aggregate
+    - ^^aggregate-uuid
+    - aggr-ownership-attributes:
+      - ^home-name                             => node
+    - aggr-raid-attributes:
+      - ^aggregate-type                        => type
+      - disk-count
+      - plex-count
+      - raid-size
+      - ^state                                 => state
+    - aggr-space-attributes:
+      - capacity-tier-used
+      - data-compacted-count
+      - data-compaction-space-saved
+      - data-compaction-space-saved-percent
+      - hybrid-cache-size-total
+      - percent-used-capacity
+      - performance-tier-inactive-user-data
+      - performance-tier-inactive-user-data-percent
+      - physical-used
+      - physical-used-percent
+      - sis-shared-count
+      - sis-space-saved
+      - sis-space-saved-percent
+      - size-available
+      - size-total
+      - size-used
+      - total-reserved-space
+    - aggr-volume-count-attributes:
+      - flexvol-count
+    - aggr-snapshot-attributes:
+      - files-total
+      - files-used
+      - maxfiles-available
+      - maxfiles-possible
+      - maxfiles-used
+      - percent-inode-used-capacity
+      - percent-used-capacity
+      - size-available
+      - size-total
+      - size-used
+      - snapshot-reserve-percent
+
+export_options:
+  exclude_instance_name: True
+  graphite_leafs:
+    - node.{node}.aggr.{aggregate}
+  include_keys:
+    - aggregate
+    - node
+  include_labels:
+    - type
+    - state

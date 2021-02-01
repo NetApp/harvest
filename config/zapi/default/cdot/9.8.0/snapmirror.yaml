@@ -1,0 +1,91 @@
+
+name:                         SnapMirror
+query:                        snapmirror-get-iter
+object:                       snapmirror  
+
+instance_key:                 relationship_id
+
+instance_query:
+  snapmirror-info:
+    - ^^relationship-id
+
+counters:
+  snapmirror-info:
+    - break-failed-count
+    - break-successful-count
+    
+    - ^destination-volume
+    - ^destination-volume-node       => destination_node
+    - ^destination-vserver
+    - ^is-healthy                    => healthy
+    - lag-time
+    - last-transfer-duration
+    - last-transfer-end-timestamp
+    - last-transfer-size
+    - ^last-transfer-type
+
+    - newest-snapshot-timestamp
+
+    - ^^relationship-id
+    - ^relationship-status
+    - ^relationship-type
+
+    - ^relationship-group-type      => group_type
+
+    - resync-failed-count
+    - resync-successful-count
+
+    - ^schedule
+
+    - ^source-volume
+    - ^source-vserver
+
+    - total-transfer-bytes
+    - total-transfer-time-secs
+
+    - ^unhealthy-reason
+
+    - update-failed-count
+    - update-successful-count
+
+
+mappings:
+  relationship-group-type:
+    'none': 'vol'
+    'vserver': 'svm'
+  is-healthy:
+    'true': '0'
+    'false': '1'
+
+
+plugins:
+  Snapmirror:
+    run_after_poll: data
+
+plugins_replace_data: False
+
+export_options:
+  include_keys:
+    - relationship_id
+    - destination_volume
+    - destination_node
+    - destination_vserver
+    - source_volume
+    - source_vserver
+#    - source_node
+  include_labels:
+    - healthy
+    - unhealthy_reason
+    - last_transfer_type
+    - relationship_status
+    - relationship_type
+    - schedule
+#    - destination_node_limit
+#    - source_node_limit
+    - group_type
+  exclude_instance_name: True
+  graphite_leafs:
+    - node.{destination_node}.snapmirror.dest.{destination_volume}
+    - node.{source_node}.snapmirror.src.{source_volume}
+    - svm.{destination_vserver}.snapmirror.dest.{destination_volume}
+    - svm.{source_vserver}.snapmirror.src.{source_volume}

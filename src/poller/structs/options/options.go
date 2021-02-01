@@ -4,7 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"path"
+    "path"
+    "strings"
 )
 
 type Options struct {
@@ -16,11 +17,44 @@ type Options struct {
     LogLevel    int
     Debug       bool
     Test        bool
-    Collector   string
-    Object      string
-    Exporter    string
     Version     string
+    collectors  string
+    objects     string
+    Collectors   []string
+    Objects     []string
 }
+
+func (o *Options) Print() {
+    fmt.Printf("%-20s = %s\n", "Poller", o.Poller)
+    fmt.Printf("%-20s = %s\n", "Version", o.Version)
+    fmt.Printf("%-20s = %s\n", "Path", o.Path)
+    fmt.Printf("%-20s = %s\n", "Config", o.Config)
+    fmt.Printf("%-20s = %v\n", "Daemon", o.Daemon)
+    fmt.Printf("%-20s = %v\n", "Debug", o.Debug)
+    fmt.Printf("%-20s = %v\n", "Test", o.Test)
+    fmt.Printf("%-20s = %d\n", "Delay", o.Delay)
+    fmt.Printf("%-20s = %d\n", "LogLevel", o.LogLevel)
+    fmt.Printf("%-20s = %v\n", "Collectors", o.Collectors)
+    fmt.Printf("%-20s = %v\n", "Objects", o.Objects)
+    //fmt.Printf("%-20s = %s\n", "collectors", o.collectors)
+    //fmt.Printf("%-20s = %s\n", "objects", o.objects)
+}
+
+type stringArray struct {
+    container *[]string
+    description string
+}
+
+
+func (s *stringArray) Set(v string) error {
+    *s.container = append(*s.container, v)
+    return nil
+}
+
+func (s *stringArray) String() string {
+    return s.description
+}
+
 
 func GetOpts() (*Options, string, error)  {
 	var args Options
@@ -43,14 +77,22 @@ func GetOpts() (*Options, string, error)  {
         "Debug mode, no data will be exported")
     flag.BoolVar(&args.Test, "test", false,
         "Startup collectors and exporters, and exit")
-    flag.StringVar(&args.Collector, "collector", "",
-        "Only run this collector (overrides config)")
-    flag.StringVar(&args.Object, "object", "",
-        "Only run this object (overrides template)")
-    flag.StringVar(&args.Exporter, "exporter", "",
-            "Only run this exporter (overrides config)")
+
+    //collectors := stringArray{&args.Collectors, "list of collectors"}
+    //objects := stringArray{&args.Objects, "list of objects"}
+
+    flag.StringVar(&args.collectors, "collectors", "", "list of collectors to start (overrides config)")
+    flag.StringVar(&args.objects, "objects", "", "list of collector objects to start (overrides config)")
 
     flag.Parse()
+
+    if args.collectors != "" {
+        args.Collectors = strings.Split(args.collectors, ",")
+    }
+
+    if args.objects != "" {
+        args.Objects = strings.Split(args.objects, ",")
+    }
 
     if args.Poller == "" {
         fmt.Println("Missing required argument: poller")

@@ -99,6 +99,12 @@ func (node *Node) AddValue(value string) {
     node.Values = append(node.Values, value)
 }
 
+func (node *Node) RemoveValueByIndex(i int) {
+    size := len(node.Values)
+    node.Values[i] = node.Values[size-1]
+    node.Values = node.Values[:size-1]
+}
+
 func (node *Node) HasInValues(value string) bool {
     for _, v := range node.Values {
         if v == value {

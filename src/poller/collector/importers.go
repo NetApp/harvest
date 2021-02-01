@@ -11,7 +11,7 @@ import (
 )
 
 func ImportTemplate(harvest_path, collector_name string) (*yaml.Node, error) {
-    fp := path.Join(harvest_path, "var/", strings.ToLower(collector_name), "default.yaml")
+    fp := path.Join(harvest_path, "config/", strings.ToLower(collector_name), "cdot", "default.yaml")
 	return yaml.Import(fp)
 }
 
@@ -21,7 +21,7 @@ func ImportObjectTemplate(harvest_path, dirname, filename, collector string, ver
     var selected_version string
     var template *yaml.Node
 
-    path_prefix := path.Join(harvest_path, "var/", strings.ToLower(collector), dirname)
+    path_prefix := path.Join(harvest_path, "config/", strings.ToLower(collector), "cdot", dirname)
     Log.Debug("Looking for best-fitting template in [%s]", path_prefix)
 
     available := make(map[string]bool)

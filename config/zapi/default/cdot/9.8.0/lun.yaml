@@ -1,0 +1,42 @@
+
+name:                   LUN
+query:                  lun-get-iter
+object:                 lun  
+
+
+counters:
+  lun-info:
+    - ^block-size
+    - ^read-only
+    - ^class
+    - ^qtree
+    - ^state
+    - size
+    - size-used
+    - ^^uuid
+    - ^volume
+    - ^vserver
+    - ^node
+    - ^path
+
+plugins:
+  Lun:
+    run_after_poll: instance
+plugins_replace_data: False
+
+export_options:
+  exclude_instance_name: True
+  graphite_leafs:
+    - svm.{vserver}.vol.{volume}.lun.{lun_name}
+  include_keys:
+    - node
+#    - lun_name
+    - qtree
+    - volume
+    - vserver
+    - path
+    - qtree
+  include_labels:
+    - block_size
+    - read_only
+    - class

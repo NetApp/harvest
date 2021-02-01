@@ -1,0 +1,95 @@
+
+name:                       SystemNode
+query:                      system-node-get-iter
+object:                     node
+
+reset_matrix_with_zeros:    True
+
+
+instance_query:
+  node-details-info:
+    - ^^node
+
+counters:
+  node-details-info:
+    - cpu-busytime
+#    - ^cpu-firmware-release
+    - ^env-failed-fan-count                 => failed_fan
+    - ^env-failed-fan-message               => failed_fan_message
+    - ^env-failed-power-supply-count        => failed_power
+    - ^env-failed-power-supply-message      => failed_power_message
+    - ^env-over-temperature                 => over_temperature
+#    - ^is-all-flash-optimized
+#    - ^is-all-flash-select-optimized
+#    - ^is-capacity-optimized
+#    - ^is-cloud-optimized
+#    - ^is-diff-svcs
+#    - ^is-epsilon-node
+#    - ^is-node-cluster-eligible
+    - ^is-node-healthy                      => healthy
+#    - ^is-perf-optimized
+    - ^maximum-aggregate-size
+    - ^maximum-number-of-volumes
+    - ^maximum-volume-size
+    - ^node
+    - ^node-location                        => location
+    - ^node-model                           => model
+#   - node-nvram-id
+#   - node-owner
+    - ^node-serial-number                   => serial
+#    - ^node-storage-configuration          => storage_configuration
+#    - node-system-id
+    - node-uptime                           => uptime
+#    - node-uuid
+    - ^node-vendor                          => vendor
+#    - nvram-battery-status
+    - ^product-version                      => version
+#    - sas2-sas3-mixed-stack-support
+
+mappings:
+  env-over-temperature:
+    'true': '1'
+    'false': '0'
+  is-node-healthy:
+    'true': '0'
+    'false': '1'
+  is-capacity-optimized:
+    'true': '0'
+    'false': '1'
+  is-all-flash-optimized:
+    'true': '0'
+    'false': '1'
+  is-perf-optimized:
+    'true': '0'
+    'false': '1'
+  is-node-cluster-eligible:
+    'true': '0'
+    'false': '1'
+
+
+plugins:
+  Node:
+    run_after_poll: data
+plugins_replace_data: False
+
+
+export_options:
+  exclude_instance_name: True
+  graphite_leafs:
+    - node.{node}
+  include_keys:
+    - node
+  include_labels:
+    - failed_fan
+    - failed_fan_message
+    - failed_power
+    - failed_power_message
+    - over_temperature
+#    - warnings
+    - healthy
+    - location
+    - model
+    - serial
+    - uptime
+    - vendor
+    - version

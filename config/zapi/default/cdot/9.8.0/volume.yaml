@@ -1,0 +1,80 @@
+
+name:                     Volume
+query:                    volume-get-iter
+object:                   volume   
+
+counters:
+  volume-attributes:
+    - volume-autosize-attributes:
+      - maximum-size 
+      - ^is_enabled                 => enabled
+      - grow-threshold-percent
+
+    - volume-id-attributes:
+      - ^^instance-uuid             => instance_uuid
+      - ^name                       => volume
+      - ^node                       => node
+      - ^owning-vserver-name        => vserver
+      - ^containing-aggregate-name  => aggregate
+      - ^style-extended             => style
+
+    - volume-inode-attributes:
+      - files-used
+      - files-total
+      
+    - volume-sis-attributes:
+      - compression-space-saved
+      - deduplication-space-saved
+      - total-space-saved
+      - percentage-compression-space-saved
+      - percentage-deduplication-space-saved
+      - percentage-total-space-saved
+
+    - volume-space-attributes:
+      - expected-available
+      - filesystem-size
+      - logical-available
+      - logical-used
+      - logical-used-by-afs
+      - logical-used-by-snapshots
+      - logical-used-percent
+      - percentage-size-used
+      - percentage-snapshot-reserve
+      - percentage-snapshot-reserve-used
+      - physical-used
+      - physical-used-percent
+      - size
+      - size-available
+      - size-available-for-snapshots
+      - size-total
+      - size-used
+      - size-used-by-snapshots
+      - snapshot-reserve-available
+      - snapshot-reserve-size
+
+    - volume-state-attributes:
+      - ^state
+      - ^status
+
+mappings:
+  state:
+    'online' : '0'
+    'mixed' : '1'
+    'offline' : '2'
+    'restricted' : '3'
+
+export_options:
+  graphite_leafs:
+    - svm.{vserver_name}.vol.{volume_name}
+    - node.{node_name}.aggr.{aggregate_name}.vol.{volume_name}
+  include_keys:
+    - volume
+    - node
+    - vserver
+    - aggregate
+  include_labels:
+    - state
+    - status
+    - style
+    - enabled
+  exclude_instance_name: True
