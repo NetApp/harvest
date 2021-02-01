@@ -1,4 +1,4 @@
-package psutil
+package main
 
 import (
 	"os"
@@ -9,11 +9,11 @@ import (
 	"errors"
 	"io/ioutil"
 	"github.com/shirou/gopsutil/process"
-	"poller/yaml"
-	"poller/structs/matrix"
-	"poller/structs/opts"
-	"poller/share/logger"
-    "poller/collector/abc"
+	"goharvest2/poller/yaml"
+	"goharvest2/poller/structs/matrix"
+	"goharvest2/poller/structs/options"
+	"goharvest2/poller/share/logger"
+    "goharvest2/poller/collector"
 )
 
 var Log *logger.Logger = logger.New(1, "")
@@ -28,7 +28,7 @@ var extractors = map[string]interface{}{
 
 
 type Psutil struct {
-	*abc.AbstractCollector
+	*collector.AbstractCollector
 	/*
 	Class string
 	Name string
@@ -39,8 +39,8 @@ type Psutil struct {
 	Data *matrix.Matrix*/
 }
 
-func New(name, obj string, options *opts.Opts, params *yaml.Node) *Psutil {
-	a := abc.New(name, obj, options, params)
+func New(name, obj string, options *options.Options, params *yaml.Node) collector.Collector {
+	a := collector.New(name, obj, options, params)
 	return &Psutil{AbstractCollector: a}
 }
 

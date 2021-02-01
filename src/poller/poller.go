@@ -9,6 +9,9 @@ import (
 	"syscall"
 	"strconv"
 	"path"
+	"plugin"
+	"io/ioutil"
+	"strings"
 	//"time"  // @debug
 	//"runtime/pprof"  // @debug
 	"goharvest2/poller/share/logger"
@@ -16,7 +19,7 @@ import (
 	"goharvest2/poller/collector"
 	"goharvest2/poller/exporter"
 	"goharvest2/poller/yaml"
-	"goharvest2/poller/structs/opts"
+	"goharvest2/poller/structs/options"
 )
 
 var Log *logger.Logger = logger.New(1, "")
@@ -31,7 +34,7 @@ var SIGNALS = []os.Signal{
 
 type Poller struct {
 	Name string
-	options *opts.Opts
+	options *options.Options
 	pid int
 	pidf string
 	schedule *schedule.Schedule
@@ -50,7 +53,7 @@ func (p *Poller) Init() error {
 
 	var err error
 	/* Set poller main attributes */
-	p.options, p.Name, err = opts.GetOpts()
+	p.options, p.Name, err = options.GetOpts()
 
 	/* If daemon, make sure handler outputs to file */
 	if p.options.Daemon {
@@ -131,13 +134,13 @@ func (p *Poller) Init() error {
 
 func (p *Poller) load_module(binpath, name string) (*plugin.Plugin, error) {
 
-	files, err := ioutil.ReadDir(binpath)
-	if err != nil {
-		Log.Warn("Error ReadDir: %v", err)
+	var err error
+	var files []os.FileInfo
+	var fn string
+
+	if files, err = ioutil.ReadDir(binpath); err != nil {
 		return nil, err
 	}
-
-	fn := ""
 
 	for _, f := range files {
 		if f.Name() == name + ".so" {
@@ -156,62 +159,65 @@ func (p *Poller) load_module(binpath, name string) (*plugin.Plugin, error) {
 
 func (p *Poller) load_collector(class, object string) error {
 
-	mod, err := p.load_module(path.Join(p.options.Path, "bin", "collectors"), strings.ToLower(class))
-	if err != nil {
-		Log.Error("load .so: %v")
+	var err error
+	var module *plugin.Plugin
+	var sym plugin.Symbol
+	var binpath string
+	var template *yaml.Node
+	var subcollectors []collector.Collector
+
+	binpath = path.Join(p.options.Path, "bin", "collectors")
+
+	if module, err = p.load_module(binpath, strings.ToLower(class)); err != nil {
+		Log.Error("load .so: %v", err)
 		return err
 	}
 
-	sym, err := mod.Lookup("New")
-	if err != nil {
+	if sym, err = module.Lookup("New"); err != nil {
 		Log.Error("load New(): %v", err)
 		return err
 	}
 
 	NewFunc, ok := sym.(func(string, string, *options.Options, *yaml.Node) collector.Collector)
 	if !ok {
-		Log.Error("New() has expected signature")
+		Log.Error("New() has not expected signature")
 		return errors.New("incompatible New()")
 	}
 
-	template, err := collector.ImportTemplate(p.options.Path, class)
-	if err != nil {
+	if template, err = collector.ImportTemplate(p.options.Path, class); err != nil {
 		Log.Error("load template: %v", err)
 		return err
-	} else if template == nil {
+	} else if template == nil {  // probably redundant
 		Log.Error("empty template")
 		return errors.New("empty template")
-		// log: imported and merged template...
 	}
+	// log: imported and merged template...
+	template.Union(p.params, false)
 
-	template.Union(params, false)
-
+	// if we don't know object, try load from template
 	if object == "" {
 		object = template.GetChildValue("object")
 	}
 
+	// if object is defined, we only initialize 1 subcollector / object
 	if object != "" {
-		if c, err := NewFunc(class, object, options, template.Copy()); err != nil {
-			Log.Error("loading [%s:%s]: %v", class, object, err)
-			return err
-		} else if err = c.Init(); err != nil {
+		c := NewFunc(class, object, p.options, template.Copy())
+		if err = c.Init(); err != nil {
 			Log.Error("init [%s:%s]: %v", class, object, err)
 			return err
 		} else {
-			p.collectors = append(collectors, c)
+			subcollectors = append(subcollectors, c)
 			Log.Debug("intialized collector [%s:%s]", class, object)
-			return nil
 		}
+	// if template has list of objects, initialiez 1 subcollector for each
 	} else if objects := template.GetChild("objects"); objects != nil {
 		for _, object := range objects.GetChildren() {
-			if c, err := NewFunc(class, object.Name, options, params.Copy()); err != nil {
-				Log.Error("loading [%s:%s]: %v", class, object.Name, err)
-				return err
-			} else if err = c.Init(); err != nil {
+			c := NewFunc(class, object.Name, p.options, template.Copy())
+			if err = c.Init(); err != nil {
 				Log.Error("init [%s:%s]: %v", class, object.Name, err)
 				return err
 			} else {
-				collectors = append(collectors, c)
+				subcollectors = append(subcollectors, c)
 				Log.Debug("intialized subcollector [%s:%s]", class, object.Name)
 			}
 		}
@@ -219,8 +225,10 @@ func (p *Poller) load_collector(class, object string) error {
 		return errors.New("no object defined in template")
 	}
 
+	p.collectors = append(p.collectors, subcollectors...)
 	Log.Debug("initialized [%s] with %d subcollectors", class, len(subcollectors))
 
+	// link each collector with requested exporter
 	for _, c := range subcollectors {
 		for _, e := range c.WantedExporters() {
 			if exp := p.load_exporter(e); exp != nil {
@@ -231,6 +239,7 @@ func (p *Poller) load_collector(class, object string) error {
 			}
 		}
 	}
+	return nil
 }
 
 
@@ -246,24 +255,46 @@ func (p *Poller) get_exporter(name string) exporter.Exporter {
 
 func (p *Poller) load_exporter(name string) exporter.Exporter {
 
+	var err error
+	var module *plugin.Plugin
+	var sym plugin.Symbol
+	var binpath string
+	var params, class *yaml.Node
+
 	if e := p.get_exporter(name); e != nil {
 		return e
 	}
 
-	params := p.exporter_params.GetChild(name)
-	if params == nil {
+	if params = p.exporter_params.GetChild(name); params == nil {
 		Log.Warn("Exporter [%s] not defined in config", name)
 		return nil
 	}
 
-	class := params.GetChild("exporter")
-	if class == nil {
+	if class = params.GetChild("exporter"); class == nil {
 		Log.Warn("Exporter [%s] missing field \"exporter\"", name)
 		return nil
 	}
+	binpath = path.Join(p.options.Path, "bin", "exporters")
 
-	e := exporter.New(class.Value, name, p.options, params)
-	if err := e.Init(); err != nil {
+	if module, err = p.load_module(binpath, strings.ToLower(class.Value)); err != nil {
+		Log.Error("load .so: %v")
+		return nil
+	}
+
+	if sym, err = module.Lookup("New"); err != nil {
+		Log.Error("load New(): %v", err)
+		return nil
+	}
+
+	NewFunc, ok := sym.(func(string, string, *options.Options, *yaml.Node) exporter.Exporter)
+	if !ok {
+		Log.Error("New() has not expected signature")
+		return nil
+	}
+
+
+	e := NewFunc(class.Value, name, p.options, params)
+	if err = e.Init(); err != nil {
 		Log.Error("Failed initializing exporter [%s]: %v", name, err)
 		return nil
 	}
