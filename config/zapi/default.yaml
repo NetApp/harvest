@@ -3,15 +3,15 @@ collector:          Zapi
 
 # Order here matters!
 schedule:
-  - instance: 600
-  - data: 10
+  - instance: 600s
+  - data: 20s
 
 objects:
-  SystemNode:       node.yaml
-  Aggregate:        aggregate.yaml
-  Volume:           volume.yaml
-  LUN:              lun.yaml
-  SnapMirror:       snapmirror.yaml
+#  SystemNode:       node.yaml
+#  Aggregate:        aggregate.yaml
+#  Volume:           volume.yaml
+#  LUN:              lun.yaml
+#  SnapMirror:       snapmirror.yaml
   StorageDisk:      disk.yaml
 #  Qtree:            qtree.yaml
 #  Shelf:            shelf.yaml

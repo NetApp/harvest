@@ -11,7 +11,7 @@ import (
 )
 
 func ImportTemplate(harvest_path, collector_name string) (*yaml.Node, error) {
-    fp := path.Join(harvest_path, "config/", strings.ToLower(collector_name), "cdot", "default.yaml")
+    fp := path.Join(harvest_path, "config/", strings.ToLower(collector_name), "default.yaml")
 	return yaml.Import(fp)
 }
 
@@ -21,12 +21,13 @@ func ImportObjectTemplate(harvest_path, dirname, filename, collector string, ver
     var selected_version string
     var template *yaml.Node
 
-    path_prefix := path.Join(harvest_path, "config/", strings.ToLower(collector), "cdot", dirname)
+    path_prefix := path.Join(harvest_path, "config/", strings.ToLower(collector), dirname, "cdot")
     Log.Debug("Looking for best-fitting template in [%s]", path_prefix)
 
     available := make(map[string]bool)
     files, _ := ioutil.ReadDir(path_prefix)
     for _, file := range files {
+        Log.Debug("Found version dir: [%s]", file.Name())
         if match, _ := regexp.MatchString(`\d+\.\d+\.\d+`, file.Name()); match == true && file.IsDir() {
             available[file.Name()] = true
         }
