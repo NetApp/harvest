@@ -15,7 +15,7 @@ type Node struct {
     XMLName  xml.Name
     Attrs    []xml.Attr `xml:",any,attr"`
     Content  []byte     `xml:",innerxml"`
-    Children []Node     `xml:",any"`
+    Children []*Node     `xml:",any"`
 }
 
 func New(name string) *Node {
@@ -27,33 +27,44 @@ func (n *Node) AddToRoot() *Node {
     root = New("netapp")
     root.Attrs = append(root.Attrs, xml.Attr{Name: xml.Name{ "","xmlns"}, Value: "http://www.netapp.com/filer/admin"})
     root.Attrs = append(root.Attrs, xml.Attr{Name: xml.Name{"","version"}, Value: "1.3"})
-    root.Children = append(root.Children, *n)
+    root.Children = append(root.Children, n)
     return root
 }
 
 func (n *Node) CreateChild(name string, content string) {
-    var child Node
-    child = *New(name)
+    var child *Node
+    child = New(name)
     child.Content = []byte(content)
     n.AddChild(child)
 }
 
-func (n *Node) AddChild(child Node) {
+func (n *Node) AddChild(child *Node) {
     n.Children = append(n.Children, child)
 }
 
-func (n *Node) GetChildren() []Node {
+func (n *Node) GetChildren() []*Node {
     return n.Children
 }
 
 func (n *Node) GetChild(name string) (*Node, bool) {
-    var child Node
+    var child *Node
     for _, child = range n.Children {
         if child.GetName() == name {
-            return &child, true
+            return child, true
         }
     }
     return nil, false
+}
+
+func (n *Node) GetContentS() string {
+    return string(n.Content)
+}
+
+func (n *Node) GetChildContentS(name string) string {
+    if content, _ := n.GetChildContent(name); content != nil {
+        return string(content)
+    }
+    return ""
 }
 
 func (n *Node) GetChildContent(name string) ([]byte, bool) {
@@ -104,6 +115,10 @@ func (n *Node) Build() ([]byte, error) {
     return xml.Marshal(&root)
 }
 
+func (n *Node) Print() {
+    PrintTree(n, 0)
+}
+
 func (n *Node) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
     n.Attrs = start.Attr
     type node Node
@@ -138,9 +153,10 @@ func SearchByNames(node *Node, prefix []string, paths [][]string) ([]string, boo
     //fmt.Printf("Prefix= %v, Paths= %v\n", prefix, paths)
 
     search = func(n *Node, curr []string) {
+        fmt.Printf("[%v]%sSEARCH [%s]%s\n", curr, share.Cyan, n.GetName(), share.End)
         var newcurr, path []string
-        var children []Node
-        var child Node
+        var children []*Node
+        var child *Node
         var content []byte
 
         if len(curr) > 0 || n.GetName() == prefix[0] {
@@ -165,24 +181,25 @@ func SearchByNames(node *Node, prefix []string, paths [][]string) ([]string, boo
         if len(newcurr) < share.MaxLen(paths) {
             children = n.GetChildren()
             for _, child = range children {
-                search(&child, newcurr)
+                search(child, newcurr)
             }
         }
     }
+
     search(node, curr_path)
     //fmt.Printf("          --- Search complte: match = %d\n", len(matches))
     return matches, len(matches)==len(paths)
 }
 
-func SearchByPath(root *Node, path []string) []Node {
-    var matches []Node
+func SearchByPath(root *Node, path []string) []*Node {
+    var matches []*Node
     var curr_path []string
     var search func(*Node, []string)
     curr_path = make([]string, 0)
 
     search = func(node *Node, curr []string) {
         var newcurr []string
-        var children []Node
+        var children []*Node
         //var child Node
 
         if len(curr) > 0 || node.GetName() == path[0] {
@@ -193,19 +210,35 @@ func SearchByPath(root *Node, path []string) []Node {
         }
         children = node.GetChildren()
 
-        //fmt.Printf("[%v] with %d children - match: %v\n", mynew, len(children), EqualSlices(path, mynew))
         if EqualSlices(newcurr, path) {
-            matches = append(matches, *node)
+            matches = append(matches, node)
+            fmt.Printf("%s[%v] == [%v] TRUE%s\n", share.Green, newcurr, path, share.End)
             //name, found := node.GetChildContent("disk-name")
             //fmt.Printf("%s%sMATCH: <%p> <%v> => %s => %s (%v)%s\n", share.Bold, share.Red, node, &node, node.GetName(), name, found, share.End)
         } else if len(newcurr) < len(path) {
+
+            fmt.Printf("[%v] == [%v] FALSE\n", newcurr, path)
             for _, child := range children {
-                search(&child, newcurr)
+                search(child, newcurr)
             }
+        } else {
+            fmt.Printf("%s[%v] == [%v] STOP%s\n", share.Red, newcurr, path, share.End)
         }
     }
     search(root, curr_path)
     return matches
+}
+
+
+func DecodeHtml(x string) string {
+    x = strings.ReplaceAll(x, "&amp;", "&")
+    x = strings.ReplaceAll(x, "&lt;", "<")
+    x = strings.ReplaceAll(x, "&gt;", ">")
+    x = strings.ReplaceAll(x, "&apos;", "'")
+    x = strings.ReplaceAll(x, "&quot;", "\"")
+    x = strings.ReplaceAll(x, " ", "_") // not escape char, but wanted
+    x = strings.ReplaceAll(x, "-", "_")
+    return x
 }
 
 func EqualSlices(a, b []string) bool {
@@ -222,10 +255,10 @@ func EqualSlices(a, b []string) bool {
 }
 
 func PrintTree(n *Node, depth int) {
-    var COLOR, name, attrs string
+    var COLOR, name string //, attrs string
     var content []byte
     var exists bool
-    var child Node
+    var child *Node
 
     if len(n.Children) == 0 {
         COLOR = share.Red
@@ -233,6 +266,7 @@ func PrintTree(n *Node, depth int) {
         COLOR = share.Cyan
     }
 
+    /*
     attrs_names := n.GetAttrs()
     if len(attrs_names) == 0 {
         attrs = ""
@@ -243,15 +277,17 @@ func PrintTree(n *Node, depth int) {
             attrs += " " + a + "=\"" + value + "\""
         }
         attrs += " )"
+    }*/
+
+    name = share.Bold + COLOR + strings.Repeat("   ", depth) + n.GetName() + share.End
+    
+    if content, exists = n.GetContent(); !exists {
+        content = []byte("-") 
     }
 
-    name = share.Bold + COLOR + strings.Repeat(" ", depth) + n.GetName() + attrs + share.End
-    content, exists = n.GetContent()
-    if ! exists { content = []byte("-") }
-
-    fmt.Printf("(%d) %-35s %120s (%d)\n", len(n.GetName()), name, string(content), len(content))
+    fmt.Printf("%-35s %120s %10d\n", name, string(content), len(n.Children))
 
     for _, child = range n.Children {
-        PrintTree(&child, depth+1)
+        PrintTree(child, depth+1)
     }
 }

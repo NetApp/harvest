@@ -9,6 +9,31 @@ import (
 )
 
 
+func ParseShortestPath(m *matrix.Matrix) []string {
+
+    prefix := make([]string, 0)
+    keys := make([][]string, 0)
+
+    for key, _ := range m.Metrics {
+        keys = append(keys, strings.Split(key, "."))
+    }
+    for key, _ := range m.LabelNames {
+        keys = append(keys, strings.Split(key, "."))
+    }
+
+    max := share.MinLen(keys)
+    
+    for i:=0; i<max; i+=1 {
+        if share.AllSame(keys, i) {
+            prefix = append(prefix, keys[0][i])
+        } else {
+            break
+        }
+    }
+    return prefix
+}
+
+
 func ParseKeyPrefix(keys [][]string) []string {
     var prefix []string
     var i, n int
@@ -63,14 +88,14 @@ func HandleCounter(data *matrix.Matrix, path []string, value string) {
 
     if value[0] == '^' {
         data.AddLabelKeyName(flat_path, display)
-            Log.Trace("Added as Label [%s] [%s]", display, flat_path)
+            Log.Trace("%sAdded as Label [%s] [%s]%s => %v", share.Yellow, display, flat_path, share.End, full_path)
         if value[1] == '^' {
-            data.AddInstanceKey(full_path)
-            Log.Trace("Added as Key [%s] [%s]", display, flat_path)
+            data.AddInstanceKey(full_path[:])
+            Log.Trace("%sAdded as Key [%s] [%s]%s => %v", share.Red, display, flat_path, share.End, full_path)
         }
     } else {
         data.AddMetric(flat_path, display, true)
-            Log.Trace("Added as Metric [%s] [%s]", display, flat_path)
+            Log.Trace("%sAdded as Metric [%s] [%s]%s => %v", share.Blue, display, flat_path, share.End, full_path)
     }
 }
 

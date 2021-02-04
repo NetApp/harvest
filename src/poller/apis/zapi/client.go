@@ -59,10 +59,10 @@ func New(config *yaml.Node) (Client, error) {
     t, err := strconv.Atoi(config.GetChildValue("client_timeout"))
     if err != nil {
         timeout = time.Duration(5) * time.Second
-        fmt.Printf("Using default timeout [%s]\n", timeout.String())
+        //fmt.Printf("Using default timeout [%s]\n", timeout.String())
     } else {
         timeout = time.Duration(t) * time.Second
-        fmt.Printf("Using timeout [%s]\n", timeout.String())
+        //fmt.Printf("Using timeout [%s]\n", timeout.String())
     }
 
     httpclient = &http.Client{ Transport : transport, Timeout: timeout }
@@ -76,6 +76,10 @@ func New(config *yaml.Node) (Client, error) {
     }
 
     return client, nil
+}
+
+func (c *Client) BuildRequestString(request string) error {
+    return c.BuildRequest(xml.New(request))
 }
 
 func (c *Client) BuildRequest(node *xml.Node) error {

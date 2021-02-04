@@ -1,7 +1,7 @@
  
 name:               Aggregate
 query:              aggr-get-iter
-object:             aggregate 
+object:             aggregate
 
 counters:
   aggr-attributes:

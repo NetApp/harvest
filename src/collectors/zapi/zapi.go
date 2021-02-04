@@ -1,7 +1,6 @@
 package main
 
-import (    
-    "fmt"
+import (
     "errors"
     "strings"
     "strconv"
@@ -85,6 +84,9 @@ func (c *Zapi) Init() error {
     if c.object_raw = c.Params.GetChildValue("object"); c.object_raw == "" {
         Log.Warn("Missing object in template")
     }
+
+    c.Data.Object = c.object_raw
+    c.Metadata.Object = c.object_raw
     
     counters := c.Params.GetChild("counters")
     if counters == nil {
@@ -95,12 +97,22 @@ func (c *Zapi) Init() error {
         return errors.New("missing parameters")
     }
 
+    counters.PrintTree(0)
     Log.Debug("Parsing counters: %d values, %d children", len(counters.Values), len(counters.Children))
     ParseCounters(c.Data, counters, make([]string, 0))
     Log.Debug("Built counter cache with %d Metrics and %d Labels", c.Data.MetricsIndex+1, len(c.Data.Instances))
 
-    c.instanceKeyPrefix = ParseKeyPrefix(c.Data.GetInstanceKeys())
+    if len(c.Data.InstanceKeys) == 0 {
+        Log.Error("No instance keys in template")
+        return errors.New("invalid parameters")
+    }
+
+    old_prefix := ParseKeyPrefix(c.Data.GetInstanceKeys())
+    c.instanceKeyPrefix = ParseShortestPath(c.Data)
+    Log.Debug("Parsed Instance Keys: %v", c.Data.InstanceKeys)
     Log.Debug("Parsed Instance Key Prefix: %v", c.instanceKeyPrefix)
+
+    Log.Debug("Old Instance Key Prefix: %v", old_prefix)
 
     return nil
 
@@ -153,6 +165,8 @@ func (c *Zapi) Start(wg *sync.WaitGroup) {
             }
         }
 
+        d := c.Schedule.SleepDuration()
+        Log.Debug("Sleeping %s until next poll session", d.String())
         c.Schedule.Sleep()
     }
 }
@@ -171,7 +185,7 @@ func (c *Zapi) poll(task string) (*matrix.Matrix, error) {
 func (c *Zapi) poll_instance() error {
     var err error
     var root *xml.Node
-    var instances []xml.Node
+    var instances []*xml.Node
     var old_count int
     var keys []string
     var keypaths [][]string
@@ -198,34 +212,48 @@ func (c *Zapi) poll_instance() error {
     Log.Debug("Fetched %d instances!!!!", len(instances))
     keypaths = c.Data.GetInstanceKeys()
 
-    fmt.Printf("keys=%v keypaths=%v found=%v\n", keys, keypaths, found)
+    Log.Debug("keys=%v keypaths=%v found=%v", keys, keypaths, found)
 
     count := 0
 
     for _, instance := range instances {
         //c.Log.Printf("Handling instance element <%v> [%s]", &instance, instance.GetName())
-        keys, found = xml.SearchByNames(&instance, c.instanceKeyPrefix, keypaths)
+        keys, found = xml.SearchByNames(instance, c.instanceKeyPrefix, keypaths)
         Log.Debug("Fetched instance keys (%v): %s", keypaths, strings.Join(keys, "."))
 
         if !found {
-            Log.Debug("Skipping instance, keys not found")
+            Log.Debug("Skipping instance, keys not found:")
+            xml.PrintTree(instance, 0)
         } else {
             _, err = c.Data.AddInstance(strings.Join(keys, "."))
             if err != nil {
                 Log.Error("Error adding instance: %s", err)
             } else {
                 Log.Debug("Added new Instance to cache [%s]", strings.Join(keys, "."))
+                count += 1
             }
         }
         //xmltree.PrintTree(instance, 0)
         //break
-        count += 1
     }
 
     c.Metadata.SetValueForMetricAndInstance("count", "instance", float64(count))
 
     //c.data.PrintInstances()
     Log.Info("added %d instances to cache (old cache had %d)", count, old_count)
+
+    if len(c.Data.Instances) == 0 {
+        Log.Info("Enterying standby mode until instances are detected")
+        c.Status = "standby"
+        c.Message = "no instances"
+        c.Schedule.SetStandbyMode("instance", 1 * time.Hour)
+    } else if c.Schedule.IsStandbyMode() {
+        Log.Info("Unsetting standby mode")
+        c.Status = "up"
+        c.Message = ""
+        c.Schedule.UnsetStandbyMode()
+    }
+
     return nil
 }
 
@@ -233,13 +261,13 @@ func (c *Zapi) poll_data() (*matrix.Matrix, error) {
     var err error
     var query string
     var node *xml.Node
-    var fetch func(*matrix.Instance, xml.Node, []string)
+    var fetch func(*matrix.Instance, *xml.Node, []string)
     var count, skipped int
 
     count = 0
     skipped = 0
 
-    fetch = func(instance *matrix.Instance, node xml.Node, path []string) {
+    fetch = func(instance *matrix.Instance, node *xml.Node, path []string) {
         newpath := append(path, node.GetName())
         key := strings.Join(newpath, ".")
         metric, found := c.Data.GetMetric(key)
@@ -268,8 +296,7 @@ func (c *Zapi) poll_data() (*matrix.Matrix, error) {
             skipped += 1
         }
 
-        children := node.GetChildren()
-        for _, child := range children {
+        for _, child := range node.GetChildren() {
             fetch(instance, child, newpath)
         }
     }
@@ -277,6 +304,8 @@ func (c *Zapi) poll_data() (*matrix.Matrix, error) {
     Log.Debug("starting data poll")
 
     if err = c.Data.InitData(); err != nil {
+        Log.Warn("Len metrics: %d", len(c.Data.Metrics))
+        Log.Warn("Len instances: %d", len(c.Data.Instances))
         return nil, err
     }
 
@@ -296,7 +325,7 @@ func (c *Zapi) poll_data() (*matrix.Matrix, error) {
 
     for _, instance := range instances {
         //c.Log.Printf("Handling instance element <%v> [%s]", &instance, instance.GetName())
-        keys, found := xml.SearchByNames(&instance, c.instanceKeyPrefix, c.Data.GetInstanceKeys())
+        keys, found := xml.SearchByNames(instance, c.instanceKeyPrefix, c.Data.GetInstanceKeys())
         Log.Debug("Fetched instance keys: %s", strings.Join(keys, "."))
 
         if !found {

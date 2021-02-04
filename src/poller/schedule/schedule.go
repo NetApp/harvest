@@ -19,7 +19,7 @@ import (
     General workflow of intializing a Schedule:
         - Initialize empty Schedule with New(),
         - Add tasks with AddTask() or AddTaskString(),
-          the task is marked to be due immediately.
+          the task is marked as due immediately.
 
     Workflow of using the Schedule (usually in a loop):
         - GetTasks() gives list of tasks 
@@ -39,6 +39,10 @@ type Schedule struct {
     foos map[string]interface{}
     intervals map[string]time.Duration
     timers map[string]time.Time
+    standby_mode bool
+    standby_task string
+    standby_interval time.Duration
+    standby_timer time.Time
 }
 
 // Create and initialize and empty Schedule. It is not safe
@@ -49,7 +53,33 @@ func New() *Schedule {
     s.foos = make(map[string]interface{})
     s.intervals = make(map[string]time.Duration)
     s.timers = make(map[string]time.Time)
+    s.standby_mode = false
 	return &s
+}
+
+func (s *Schedule) IsStandbyMode() bool {
+    return s.standby_mode
+}
+
+// StandbyMode will make the schedule stop all tasks except one
+// and will set a temporary extended interval for one task
+func (s *Schedule) SetStandbyMode(task string, interval time.Duration) {
+    s.standby_mode = true
+    s.standby_task = task
+    s.standby_interval = interval
+    s.standby_timer = time.Now()
+}
+
+// Undo StandbyMode
+func (s *Schedule) UnsetStandbyMode() {
+    s.standby_mode = false
+    for _, task := range s.tasks {
+        if task == s.standby_task {
+            s.timers[task] = time.Now()
+        } else {
+            s.timers[task] = time.Now().Add(-s.getInterval(task))
+        }
+    }
 }
 
 // Add new task to Schedule and set to run immediately.
@@ -138,24 +168,44 @@ func (s *Schedule) GetInterval(task string) time.Duration {
 // If task was added with nil interface, then calling foo
 // will crash the program.
 func (s *Schedule) IsDue(task string) (bool) {
-    return s.getNextDue(task) <= 0
+    if !s.standby_mode {
+        return s.getNextDue(task) <= 0
+    } 
+    
+    if task == s.standby_task {
+        return (s.standby_interval - time.Since(s.standby_timer)) <= 0
+    }
+
+    return false
 }
 
 // Start timer for the task
 func (s *Schedule) Start(name string) {
-    s.timers[name] = time.Now()
+    if !s.standby_mode {
+        s.timers[name] = time.Now()
+    } else {
+        s.standby_timer = time.Now()
+    }
 }
 
 // Tell duration of running task
 func (s *Schedule) Stop(name string) time.Duration {
-    started, _ := s.timers[name]
-    return time.Since(started)
+    if !s.standby_mode {
+        started, _ := s.timers[name]
+        return time.Since(started)
+    }
+    return time.Since(s.standby_timer)
 }
 
 // Sleep until a task is due
 func (s *Schedule) Sleep() {
     _, next_due := s.earliestNextDue()
     time.Sleep(next_due)
+}
+
+func (s *Schedule) SleepDuration() time.Duration {
+    _, next_due := s.earliestNextDue()
+    return next_due
 }
 
 // Get blocking channel until a task is due
@@ -200,6 +250,11 @@ func (s *Schedule) getNextDue(task string) time.Duration {
 // Tells name of the task and duration until
 // a new task is due.
 func (s *Schedule) earliestNextDue() (string, time.Duration) {
+
+    if s.standby_mode {
+        return s.standby_task, s.standby_interval - time.Since(s.standby_timer)
+    }
+
     next_task := s.tasks[0]
     next_due := s.getNextDue(next_task)
 

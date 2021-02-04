@@ -6,10 +6,6 @@ object:                     node
 reset_matrix_with_zeros:    True
 
 
-instance_query:
-  node-details-info:
-    - ^^node
-
 counters:
   node-details-info:
     - cpu-busytime
@@ -28,10 +24,10 @@ counters:
 #    - ^is-node-cluster-eligible
     - ^is-node-healthy                      => healthy
 #    - ^is-perf-optimized
-    - ^maximum-aggregate-size
-    - ^maximum-number-of-volumes
-    - ^maximum-volume-size
-    - ^node
+    - ^maximum-aggregate-size               => max_aggr_size
+    - ^maximum-number-of-volumes            => max_vol_num
+    - ^maximum-volume-size                  => max_vol_size
+    - ^^node
     - ^node-location                        => location
     - ^node-model                           => model
 #   - node-nvram-id
@@ -85,6 +81,9 @@ export_options:
     - failed_power
     - failed_power_message
     - over_temperature
+    - max_aggr_size
+    - max_vol_size
+    - max_vol_num
 #    - warnings
     - healthy
     - location

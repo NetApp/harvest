@@ -21,7 +21,7 @@ counters:
     - ^shelf
     - ^shelf-id
     - ^shelf-model
-    - ^shelf-uid
+    - ^^shelf-uid
     - ^stack-id
     - ^state
     - ^vendor-name

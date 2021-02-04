@@ -256,7 +256,7 @@ func (c *Psutil) load_metrics(counters *yaml.Node) {
 
 		Log.Debug("Parsed (%d) labels [%v] => (%d) [%v]", len(child.Values), child.Values, len(labels), labels)
 		
-		m.AddMetricArray(name, display, labels, true)
+		m.AddArrayMetric(name, display, labels, true)
 		Log.Debug("+ Array metric [%s => %s] with %d labels", name, display, len(labels))
 	}
 

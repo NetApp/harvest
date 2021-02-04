@@ -32,6 +32,8 @@ type Collector interface {
 type AbstractCollector struct {
 	Name string
 	Object string
+	Status string
+	Message string
 	Options *options.Options
 	Params *yaml.Node
 	Data *matrix.Matrix

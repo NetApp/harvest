@@ -86,6 +86,34 @@ func (node *Node) HasChild(name string) bool {
     return node.GetChild(name) != nil
 }
 
+func (node *Node) FilterValues(names []string) {
+    filter := make(map[string]int)
+    for _, name := range names {
+        filter[name] = 1
+    }
+    values := make([]string, 0)
+    for _, v := range node.Values {
+        if _, exists := filter[v]; exists {
+            values = append(values, v)
+        }
+    }
+    node.Values = values
+}
+
+func (node *Node) FilterChildren(names []string) {
+    filter := make(map[string]int)
+    for _, name := range names {
+        filter[name] = 1
+    }
+    children := make([]*Node, 0)
+    for _, ch := range node.Children {
+        if _, exists := filter[ch.Name]; exists {
+            children = append(children, ch)
+        }
+    }
+    node.Children = children
+}
+
 
 func (node *Node) GetChildren() []*Node {
     return node.Children

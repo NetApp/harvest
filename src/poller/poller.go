@@ -5,6 +5,7 @@ import (
 	"errors"
 	"sync"
 	"os"
+	"fmt"
 	"os/signal"
 	"syscall"
 	"strconv"
@@ -102,7 +103,8 @@ func (p *Poller) Init() error {
 
 	if collectors := p.params.GetChild("collectors"); collectors != nil {
 		if len(p.options.Collectors) > 0 {
-			filter_values(collectors, p.options.Collectors)
+			collectors.FilterValues(p.options.Collectors)
+			Log.Debug("Filtered collectors: %v (=%d)", p.options.Collectors, len(collectors.Children))
 		}
 		for _, c := range collectors.Values {
 			p.load_collector(c, "")
@@ -136,32 +138,6 @@ func (p *Poller) Init() error {
 	return nil
 
 }
-
-/*
-func filter_children(c *yaml.Node, names []string) {
-	filter := make(map[string]int)
-	for _, n := range names {
-		filter[n] = 1
-	}
-	for i, v := range c.GetChildren() {
-		if _, ok := filter[v]; !ok {
-			c.RemoveValueByIndex(i)
-		}
-	}
-}*/
-
-func filter_values(c *yaml.Node, names []string) {
-	filter := make(map[string]int)
-	for _, n := range names {
-		filter[n] = 1
-	}
-	for i, v := range c.Values {
-		if _, ok := filter[v]; !ok {
-			c.RemoveValueByIndex(i)
-		}
-	}
-}
-
 
 func (p *Poller) load_module(binpath, name string) (*plugin.Plugin, error) {
 
@@ -242,9 +218,11 @@ func (p *Poller) load_collector(class, object string) error {
 		}
 	// if template has list of objects, initialiez 1 subcollector for each
 	} else if objects := template.GetChild("objects"); objects != nil {
-		//if len(p.options.Objects) > 0 {
-		//	objects = filter_children(objects, p.options.Objects)
-		//}
+		
+		if len(p.options.Objects) > 0 {
+			objects.FilterChildren(p.options.Objects)
+			Log.Debug("Filtered Objects: %v (=%d)", p.options.Objects, len(objects.Children))
+		}
 		for _, object := range objects.GetChildren() {
 			c := NewFunc(class, object.Name, p.options, template.Copy())
 			if err = c.Init(); err != nil {
@@ -533,8 +511,19 @@ func main() {
 	*/
 
     p := New()
+
     if err := p.Init(); err == nil {
-		p.Start()
+
+		fmt.Printf("Start poller? [yes/no]")
+		answer := ""
+		fmt.Scanf("%s\n", &answer)
+
+		if answer == "yes" || answer == "y" {
+			p.Start()
+		} else {
+			p.Stop()
+		}
+
 	} else {
 		p.Stop()
 	}

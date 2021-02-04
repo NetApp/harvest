@@ -1,7 +1,7 @@
 
 name:                     Volume
 query:                    volume-get-iter
-object:                   volume   
+object:                   volume
 
 counters:
   volume-attributes:

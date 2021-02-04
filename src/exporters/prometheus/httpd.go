@@ -31,29 +31,37 @@ func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 	num_collectors := 0
 	num_objects := 0
 	num_metrics := 0
-	filtered_cache := map[string]map[string]*matrix.Matrix{}
+	unique_data := map[string]map[string]*matrix.Matrix{}
+	unique_metadata := map[string]*matrix.Matrix{}
 	//collector_names = map[string]string
 	//object_names map[string][]string
 
 	for _, m := range p.cache {
 
-		if _, ok := filtered_cache[m.Collector]; !ok {
-			filtered_cache[m.Collector] = make(map[string]*matrix.Matrix)
+		if m.IsMetadata {
+			Log.Debug("Cache Metadata= [%-20s] [%-20s]", m.Collector, m.Object)
+			//if _, exists := unique_metadata[m.Collector]; !exists {
+			//	unique_metadata[m.Collector] = make(map[string]*matrix.Matrix)
+			//}
+			unique_metadata[m.Collector] = m
+		} else {
+			Log.Debug("Cache Data=     [%-20s] [%-20s]", m.Collector, m.Object)
+			if _, exists := unique_data[m.Collector]; !exists {
+				unique_data[m.Collector] = make(map[string]*matrix.Matrix)
+			}
+			unique_data[m.Collector][m.Object] = m
 		}
-		filtered_cache[m.Collector][m.Object] = m
-		//key := m.Collector + "." + m.Object + "." + m.Plugin
-		//matrix_by_collector[m.Collector] = append(matrix_by_collector[m.Collector], m)
 	}
 
-	for c, data_per_object := range filtered_cache {
+	for col, per_object := range unique_data {
 
 		objects := make([]string, 0)
 
-		for _, m := range data_per_object {
+		for obj, data := range per_object {
 
 			metrics := make([]string, 0)
 
-			for _, metric := range m.Metrics {
+			for _, metric := range data.Metrics {
 				
 				if !metric.Enabled {
 					continue
@@ -62,9 +70,9 @@ func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 				num_metrics += 1
 
 				if metric.Scalar {
-					metrics = append(metrics, fmt.Sprintf(metric_template, m.Object + "_" + metric.Display))
+					metrics = append(metrics, fmt.Sprintf(metric_template, obj + "_" + metric.Display))
 				} else {
-					array_metric := fmt.Sprintf(metric_template, m.Object + "_" + metric.Display)
+					array_metric := fmt.Sprintf(metric_template, obj + "_" + metric.Display)
 					array_metric += "\n<ul>"
 					for _, label := range metric.Labels {
 						array_metric += "\n" + fmt.Sprintf(metric_template, label)
@@ -76,13 +84,21 @@ func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 
 			sort.Strings(metrics)
 
-			objects = append(objects, fmt.Sprintf(object_template, m.Object, strings.Join(metrics, "\n")))
+			objects = append(objects, fmt.Sprintf(object_template, obj, strings.Join(metrics, "\n")))
 
 			//num_metrics += len(metrics)
 			num_objects += 1
 		}
 
-		body = append(body, fmt.Sprintf(collector_template, c, strings.Join(objects, "\n")))
+		if md, exists := unique_metadata[col]; exists {
+			metrics := make([]string, 0)
+			for _, metric := range md.Metrics {
+				metrics = append(metrics, fmt.Sprintf(metric_template, "metadata_" + md.MetadataType + "_" + metric.Display))
+			}
+			objects = append(objects, fmt.Sprintf(object_template, "metadata", strings.Join(metrics, "\n")))
+		}
+
+		body = append(body, fmt.Sprintf(collector_template, col, strings.Join(objects, "\n")))
 		num_collectors += 1
 	}
 
