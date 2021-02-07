@@ -9,10 +9,10 @@ import (
 	"errors"
 	"io/ioutil"
 	"github.com/shirou/gopsutil/process"
-	"goharvest2/poller/yaml"
-	"goharvest2/poller/structs/matrix"
-	"goharvest2/poller/structs/options"
-	"goharvest2/poller/share/logger"
+	"goharvest2/poller/struct/yaml"
+	"goharvest2/poller/struct/matrix"
+	"goharvest2/poller/struct/options"
+	"goharvest2/poller/util/logger"
     "goharvest2/poller/collector"
 )
 
@@ -89,7 +89,7 @@ func (c *Psutil) Start(wg *sync.WaitGroup) {
 				Log.Debug("%s poll completed", task)
 
 				duration := c.Schedule.Stop(task)
-				c.Metadata.SetValueForMetricAndInstance("poll_time", task, duration.Seconds())
+				c.Metadata.SetValueSS("poll_time", task, duration.Seconds())
 
 				if data != nil {
 
@@ -137,7 +137,7 @@ func (c *Psutil) poll_data() (*matrix.Matrix, error) {
 		poller, _ := m.GetInstanceLabel(instance, "poller")
 
 		// assume not running
-		c.Data.SetValueForMetric("status", instance, float64(1))
+		c.Data.SetValueS("status", instance, float64(1))
 
 		if pid == "" {
 			Log.Debug("Skip instance [%s]: not running", key)
@@ -167,7 +167,7 @@ func (c *Psutil) poll_data() (*matrix.Matrix, error) {
 		}
 
 		// if we got here poller is running
-		c.Data.SetValueForMetric("status", instance, float64(0))
+		c.Data.SetValueS("status", instance, float64(0))
 
 
 		/*
@@ -178,37 +178,37 @@ func (c *Psutil) poll_data() (*matrix.Matrix, error) {
 
 		cpu, _ := proc.CPUPercent()
 		if err == nil {
-			m.SetValueForMetric("CPUPercent", instance, float64(cpu))
+			m.SetValueS("CPUPercent", instance, float64(cpu))
 		}
 
 		mem, _ := proc.MemoryPercent()
 		if err == nil {
-			m.SetValueForMetric("MemoryPercent", instance, float64(mem))
+			m.SetValueS("MemoryPercent", instance, float64(mem))
 		}
 		
 		create_time, _ := proc.CreateTime()
 		if err == nil {
-			m.SetValueForMetric("CreateTime", instance, float64(create_time))
+			m.SetValueS("CreateTime", instance, float64(create_time))
 		}
 		
 		num_threads, _ := proc.NumThreads()
 		if err == nil {
-			m.SetValueForMetric("NumThreads", instance, float64(num_threads))
+			m.SetValueS("NumThreads", instance, float64(num_threads))
 		}
 		
 		num_fds, _ := proc.NumFDs()
 		if err == nil {
-			m.SetValueForMetric("NumFDs", instance, float64(num_fds))
+			m.SetValueS("NumFDs", instance, float64(num_fds))
 		}
 		
 		children, _ := proc.Children()
 		if err == nil {
-			m.SetValueForMetric("NumChildren", instance, float64(len(children)))
+			m.SetValueS("NumChildren", instance, float64(len(children)))
 		}
 		
 		socks, _ := proc.Connections()
 		if err == nil {
-			m.SetValueForMetric("NumSockets", instance, float64(len(socks)))
+			m.SetValueS("NumSockets", instance, float64(len(socks)))
 		}
 
 		for key, metric := range m.Metrics {
