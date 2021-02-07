@@ -102,8 +102,12 @@ func parse_line(line []byte) (int, string, string) {
     }
 
     key = bytes.TrimPrefix(key, []byte("- "))
-    value = bytes.TrimLeft(value, " ")
+    key = bytes.TrimLeft(key, " ")
+    key = bytes.TrimRight(key, " ")
+    
     value = bytes.TrimPrefix(value, []byte("- "))
+    value = bytes.TrimLeft(value, " ")
+    value = bytes.TrimRight(value, " ")
 
     return start, string(key), string(value)
 }
