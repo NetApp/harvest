@@ -1,220 +1,145 @@
 
-name:                       StorageShelfInfo
+name:                       StorageShelf
 query:                      storage-shelf-info-get-iter
-object:                     storage_shelf_info
+object:                     shelf
 
-instance_key:               shelf-uid
-
-instance_query:             
-  storage-shelf-info:
-    null:
-    - shelf-uid
-  
 
 counters:
   storage-shelf-info:
-    - ^disk-count
-    - ^is-local-attach
+    - disk-count
     - ^module-type
     - ^op-status
     - ^serial-number
-    - ^shelf
-    - ^shelf-id
+    - ^shelf => shelf
+    - ^shelf-id => shelf_id
     - ^shelf-model
     - ^^shelf-uid
-    - ^stack-id
     - ^state
     - ^vendor-name
-    - boot-devices:
-      storage-shelf-boot-device-info:
-        - boot-device-id
-        - ^boot-device-module-id
-        - ^boot-device-size
-        - ^boot-device-type
-    - coin-battery:
-      storage-shelf-coin-battery-info:
-        - coin-battery-id
-        - ^coin-battery-module-id
-        - coin-battery-voltage
-    - cooling-fans:
-      storage-shelf-cooling-fan-info:
-        - ^fan-id
-        - ^fan-location
-        - ^fan-rpm
-    - current-sensors:
-      storage-shelf-current-sensor-info:
-        - ^current-sensor-id
-        - ^current-sensor-location
-        - ^current-sensor-reading
-    - dimms:
-      storage-shelf-dimm-info:
-        - dimm-id
-        - ^dimm-location
-        - ^dimm-size
-        - ^dimm-type
-    - fc-ports:
-      storage-shelf-fc-port-info:
-        - ^fc-port-id
-    - nsm-ports:
-      storage-shelf-nsm-port-info:
-        - nsm-port-bay
-        - nsm-port-id
-        - ^nsm-port-module-id
-        - ^nsm-port-speed
-    - paths:
-      storage-shelf-path-info:
-        - ^controller
-        - ^controller-uuid
-        - ^initiator
-        - ^initiator-side-switch-port
-        - ^initiator-wwpn
-        - ^io-kbps
-        - ^iops
-        - ^port-speed
-        - ^target-port
-        - ^target-side-switch-port
-        - ^tpgn
-    - power-supply-units:
-      storage-shelf-power-supply-unit-info:
-        - ^psu-crest-factor
-        - ^psu-fw-version
-        - ^psu-id
-        - ^psu-is-enabled
-        - ^psu-location
-        - ^psu-part-number
-        - ^psu-power-drawn
-        - ^psu-power-rating
-        - ^psu-reset-capable
-        - ^psu-serial-number
-        - ^psu-type
-    - sas-ports:
-      storage-shelf-sas-port-info:
-        - ^sas-negotiated-port-speed
-        - ^sas-port-id
-        - ^sas-port-op-status
-        - ^sas-port-power-status
-        - ^sas-port-speed
-        - ^sas-port-type
-        - ^sas-port-wwpn
-    - shelf-bays:
-      storage-shelf-bay-info:
-        - ^bay-has-disk
-        - ^bay-id
-    - shelf-errors:
-      storage-shelf-error-info:
-        - ^component-location
-        - ^corrective-action
-        - ^error-text
-        - ^shelf-component
-    - shelf-modules:
-      storage-shelf-module-info:
-        - ^es-serial-number
-        - ^is-monitor-active
-        - ^is-sas-master-module
-        - ^module-fru-id
-        - ^module-fw-revision
-        - ^module-id
-        - ^module-is-reporting-element
-        - ^module-latest-fw-revision
-        - ^module-location
-        - ^module-part-number
-        - ^module-swap-count
-    - temperature-sensors:
-      storage-shelf-temperature-sensor-info:
-        - ^high-critical-threshold
-        - ^high-warning-threshold
-        - ^temp-is-ambient
-        - ^temp-low-critical-threshold
-        - ^temp-low-warning-threshold
-        - ^temp-sensor-id
-        - ^temp-sensor-reading
-    - voltage-sensors:
-      storage-shelf-voltage-sensor-info:
-        - ^voltage-sensor-location
-        - ^voltage-sensor-reading
+
+plugins:
+  Shelf:
+    type: data
+    objects:
+      - boot-devices => boot_device:
+        storage-shelf-boot-device-info:
+          - ^^boot-device-id   => device_id
+          - ^boot-device-module-id => device_module_id
+          - ^boot-device-size => device_size
+          - ^boot-device-type => device_type
+      - coin-battery:
+        storage-shelf-coin-battery-info:
+          - ^^coin-battery-id
+          - ^coin-battery-module-id
+          - coin-battery-voltage => voltage
+      - cooling-fans => fan:
+        storage-shelf-cooling-fan-info:
+          - ^^fan-id
+          - ^fan-location => location
+          - fan-rpm => rpm
+      - current-sensors => sensor:
+        storage-shelf-current-sensor-info:
+          - ^^current-sensor-id    => sensor_id
+          - ^current-sensor-location => location
+          - current-sensor-reading => reading
+      - dimms => dimm:
+        storage-shelf-dimm-info:
+          - ^^dimm-id
+          - ^dimm-location => location
+          - ^dimm-size => size
+          - ^dimm-type => type
+      - fc-ports => fc_port:
+        storage-shelf-fc-port-info:
+          - ^^fc-port-id
+      - nsm-ports => nsm_port:
+        storage-shelf-nsm-port-info:
+          - ^nsm-port-bay
+          - ^^nsm-port-id
+          - ^nsm-port-module-id
+          - ^nsm-port-speed
+      - paths => path:
+        storage-shelf-path-info:
+          - ^controller
+          - ^^controller-uuid
+          - ^initiator
+          - ^initiator-side-switch-port
+          - ^initiator-wwpn
+          - io-kbps
+          - iops
+          - port-speed
+          - ^target-port
+          - ^target-side-switch-port
+          - ^tpgn
+      - power-supply-units => psu:
+        storage-shelf-power-supply-unit-info:
+#          - ^psu-crest-factor => crest_factor
+#          - ^psu-fw-version => fw_version
+          - ^^psu-id
+          - ^psu-is-enabled => enabled
+          - ^psu-location => location
+          - ^psu-part-number => part_number
+          - psu-power-drawn => power_drawn
+          - psu-power-rating => power_rating
+#          - ^psu-reset-capable => reset_capable
+          - ^psu-serial-number => serial
+          - ^psu-type => type
+      - sas-ports => sas_port:
+        storage-shelf-sas-port-info:
+          - sas-negotiated-port-speed => negotiated_port_speed
+          - ^^sas-port-id
+          - ^sas-port-op-status
+          - ^sas-port-power-status
+          - sas-port-speed => port_speed
+          - ^sas-port-type
+          - ^sas-port-wwpn
+      - shelf-bays => shelf_bay:
+        storage-shelf-bay-info:
+          - ^bay-has-disk
+          - ^^bay-id
+      - shelf-errors => shelf_error:
+        storage-shelf-error-info:
+          - ^component-location
+          - ^corrective-action
+          - ^error-text
+          - ^^shelf-component
+      - shelf-modules => shelf_module:
+        storage-shelf-module-info:
+          - ^es-serial-number
+          - ^is-monitor-active
+          - ^is-sas-master-module
+          - ^module-fru-id
+          - ^module-fw-revision
+          - ^^module-id
+          - ^module-is-reporting-element
+          - ^module-latest-fw-revision
+          - ^module-location
+          - ^module-part-number
+          - module-swap-count => swap_count
+      - temperature-sensors => temperature:
+        storage-shelf-temperature-sensor-info:
+          - ^high-critical-threshold => high_critical
+          - ^high-warning-threshold => high_warning
+          - ^temp-is-ambient
+          - ^temp-low-critical-threshold => low_critical
+          - ^temp-low-warning-threshold => low_warning
+          - ^^temp-sensor-id => sensor_id
+          - temp-sensor-reading => reading
+      - voltage-sensors => voltage:
+        storage-shelf-voltage-sensor-info:
+          - ^^voltage-sensor-id => sensor_id
+          - ^voltage-sensor-location => location
+          - voltage-sensor-reading => reading
 
 
 export_options:
-  labels_to_emit:
-    - boot-device-module-id
-    - boot-device-size
-    - boot-device-type
-    - coin-battery-module-id
-    - fan-id
-    - fan-location
-    - fan-rpm
-    - current-sensor-id
-    - current-sensor-location
-    - current-sensor-reading
-    - dimm-location
-    - dimm-size
-    - dimm-type
-    - disk-count
-    - fc-port-id
-    - is-local-attach
-    - module-type
-    - nsm-port-module-id
-    - nsm-port-speed
-    - controller
-    - controller-uuid
-    - initiator
-    - initiator-side-switch-port
-    - initiator-wwpn
-    - io-kbps
-    - iops
-    - port-speed
-    - target-port
-    - target-side-switch-port
-    - tpgn
-    - psu-crest-factor
-    - psu-fw-version
-    - psu-id
-    - psu-is-enabled
-    - psu-location
-    - psu-part-number
-    - psu-power-drawn
-    - psu-power-rating
-    - psu-reset-capable
-    - psu-serial-number
-    - psu-type
-    - sas-negotiated-port-speed
-    - sas-port-id
-    - sas-port-op-status
-    - sas-port-power-status
-    - sas-port-speed
-    - sas-port-type
-    - sas-port-wwpn
-    - serial-number
+  instance_keys:
     - shelf
-    - bay-has-disk
-    - bay-id
-    - component-location
-    - corrective-action
-    - error-text
-    - shelf-component
     - shelf-id
-    - shelf-model
-    - es-serial-number
-    - is-monitor-active
-    - is-sas-master-module
-    - module-fru-id
-    - module-fw-revision
-    - module-id
-    - module-is-reporting-element
-    - module-latest-fw-revision
-    - module-location
-    - module-part-number
-    - module-swap-count
-    - shelf-uid
-    - stack-id
-    - high-critical-threshold
-    - high-warning-threshold
-    - temp-is-ambient
-    - temp-low-critical-threshold
-    - temp-low-warning-threshold
-    - temp-sensor-id
-    - temp-sensor-reading
-    - vendor-name
-    - voltage-sensor-location
-    - voltage-sensor-reading
+  instance_labels:
+    - module_type
+    - op_status
+    - serial_number
+    - shelf_model
+    - state
+    - vendor_name
     

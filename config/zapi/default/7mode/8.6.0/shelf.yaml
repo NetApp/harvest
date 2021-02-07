@@ -1,0 +1,62 @@
+
+name:                       StorageShelf
+query:                      storage-shelf-environment-list-info
+object:                     shelf
+
+
+counters:
+  - shelf-environ-shelf-list:
+    - ^^shelf-id
+    - ^shelf-status => state
+    - ^shelf-type
+
+plugins:
+  Shelf:
+    type: data
+      objects:
+      - cooling-element-list => fans:
+#        - ^cooling-element-is-error
+#        - ^cooling-element-is-not-installed
+        - cooling-element-number => fan_id
+        - rpm
+        - location  #fake
+      - current-sensor-list => sensor:
+        - current-sensor-no => sensor_id
+#        - ^is-sensor-error
+#        - ^is-sensor-not-installed
+#        - ^sensor-condition
+        - ^sensor-reading => reading
+        - location #fake
+      - temp-sensor-list => temperature:
+#        - ^temp-sensor-current-condition
+        - temp-sensor-current-temperature => reading
+        - ^^temp-sensor-element-no => sensor_id
+        - ^temp-sensor-hi-critical => high_critical
+        - ^temp-sensor-hi-warning => high_warning
+        - ^temp-sensor-is-ambient => temp_is_ambient
+#        - ^temp-sensor-is-error
+#        - ^temp-sensor-is-not-installed
+        - ^temp-sensor-low-critical => low_critical
+        - ^temp-sensor-low-warning => low_warning
+      - voltage-sensor-list => voltage:
+#        - ^is-sensor-error
+#        - ^is-sensor-not-installed
+#        - ^sensor-condition
+        - ^sensor-reading => reading
+        - ^^voltage-sensor-no => sensor_id
+        - ^location #fake
+
+      - power-supply-list => psu:
+#        - ^is-auto-power-reset-enabled
+#        - ^is-power-reset-capable
+        - ^^power-supply-element-number => psu_id
+#        - ^power-supply-firmware-revision
+#        - ^power-supply-is-error
+#        - ^power-supply-is-not-installed
+        - ^power-supply-part-no => part_number
+        - ^power-supply-serial-no => serial
+        - power-supply-swap-count => power_drawn
+        - ^power-supply-type =>type
+        # fake counters to match CDOT
+        - ^enabled
+        - ^location

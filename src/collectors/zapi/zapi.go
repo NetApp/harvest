@@ -67,6 +67,8 @@ func (c *Zapi) Init() error {
         return err
     }
 
+    c.Data.SetGlobalLabel("system", c.system.Name)
+
     if expopt := c.Params.GetChild("export_options"); expopt != nil {
         c.Data.SetExportOptions(expopt)
     } else {
@@ -153,11 +155,14 @@ func (c *Zapi) Start(wg *sync.WaitGroup) {
                             if err != nil {
                                 Log.Error(err.Error())
                             } else if plugin_data != nil {
+                                for _, x := range plugin_data {
+                                    if x != nil {
+                                        results = append(results, x)
+                                        Log.Debug("\n\nPLUGIN DATA\n")
+                                        x.Print()
+                                    }
+                                }
 
-                                Log.Debug("\n\nPLUGIN DATA\n")
-                                plugin_data.Print()
-
-                                results = append(results, plugin_data)
                             }
                         }
                     }

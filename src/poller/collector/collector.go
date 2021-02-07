@@ -165,13 +165,13 @@ func (c *AbstractCollector) LoadPlugins(params *yaml.Node) error {
 			return err
 		}
 
-		NewFunc, ok := module.(func(string, *options.Options, *yaml.Node) plugin.Plugin)
+		NewFunc, ok := module.(func(string, *options.Options, *yaml.Node, *yaml.Node) plugin.Plugin)
 		if !ok {
 			Log.Error("load plugin [%s]: New() has not expected signature", name)
 			return errors.New(errors.ERR_DLOAD, "New()")
 		}
 
-		p := NewFunc(c.Name, c.Options, x)
+		p := NewFunc(c.Name, c.Options, x, c.Params)
 		if err := p.Init(); err != nil {
 			Log.Error("init plugin [%s]: %v", name, err)
 			return errors.New(errors.ERR_DLOAD, "Init()")

@@ -42,31 +42,9 @@ counters:
     - ^product-version                      => version
 #    - sas2-sas3-mixed-stack-support
 
-mappings:
-  env-over-temperature:
-    'true': '1'
-    'false': '0'
-  is-node-healthy:
-    'true': '0'
-    'false': '1'
-  is-capacity-optimized:
-    'true': '0'
-    'false': '1'
-  is-all-flash-optimized:
-    'true': '0'
-    'false': '1'
-  is-perf-optimized:
-    'true': '0'
-    'false': '1'
-  is-node-cluster-eligible:
-    'true': '0'
-    'false': '1'
-
-
 plugins:
   Node:
-    run_after_poll: data
-plugins_replace_data: False
+    type: data
 
 
 export_options:
@@ -76,15 +54,11 @@ export_options:
   include_keys:
     - node
   include_labels:
-    - failed_fan
-    - failed_fan_message
-    - failed_power
-    - failed_power_message
     - over_temperature
     - max_aggr_size
     - max_vol_size
     - max_vol_num
-#    - warnings
+    - warnings
     - healthy
     - location
     - model

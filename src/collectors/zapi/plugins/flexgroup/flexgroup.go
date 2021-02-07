@@ -16,8 +16,8 @@ type FlexGroup struct {
 	*plugin.AbstractPlugin
 }
 
-func New(parent_name string, options *options.Options, params *yaml.Node) plugin.Plugin {
-	p := plugin.New(parent_name, options, params)
+func New(parent_name string, options *options.Options, params *yaml.Node, pparams *yaml.Node) plugin.Plugin {
+	p := plugin.New(parent_name, options, params, pparams)
 	return &FlexGroup{AbstractPlugin: p}
 }
 
@@ -36,7 +36,7 @@ func fetch_names(instance *matrix.Instance) (string, string, string, string) {
 	return key, name, svm, vol
 }
 
-func (p *FlexGroup) Run(data *matrix.Matrix) (*matrix.Matrix, error) {
+func (p *FlexGroup) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	n := data.Clone()
 	n.Plugin = p.Name
@@ -100,5 +100,7 @@ func (p *FlexGroup) Run(data *matrix.Matrix) (*matrix.Matrix, error) {
 		}
 	}
 
-	return n, nil
+	result := make([]*matrix.Matrix, 1)
+	result[0] = n
+	return result, nil
 }

@@ -110,8 +110,8 @@ func (e *Prometheus) Render(data *matrix.Matrix) [][]byte {
     options := data.ExportOptions
 
     rendered = make([][]byte, 0)
-    metric_labels = options.GetChildValues("include_labels")
-    key_labels = options.GetChildValues("include_keys")
+    metric_labels = options.GetChildValues("instance_labels")
+    key_labels = options.GetChildValues("instance_keys")
     if options.GetChildValue("include_all_labels") == "True" {
         include_all_labels = true
     } else {
@@ -138,13 +138,18 @@ func (e *Prometheus) Render(data *matrix.Matrix) [][]byte {
         global_labels = append(global_labels, fmt.Sprintf("%s=\"%s\"", key, value))
     }
 
-    for key, instance := range data.Instances {
+    for raw_key, instance := range data.Instances {
+
         Log.Debug("Rendering instance [%d] %v", instance.Index, instance.Labels.Iter())
 
         instance_labels := make([]string, 0)
         instance_keys := make([]string, len(global_labels))
         copy(instance_keys, global_labels)
 
+        if include_instance_names {
+            instance_keys = append(instance_keys, fmt.Sprintf("%s=\"%s\"", instance_tag, raw_key))
+        }
+        
         for _, key := range key_labels {
             value, found := data.GetInstanceLabel(instance, key)
             if include_all_labels || (found && value != "") {
@@ -152,10 +157,6 @@ func (e *Prometheus) Render(data *matrix.Matrix) [][]byte {
             } else {
                 Log.Debug("Skipped Key [%s] (%s) found=%v", key, value, found)
             }
-        }
-
-        if include_instance_names {
-            instance_keys = append(instance_keys, fmt.Sprintf("%s=\"%s\"", instance_tag, key))
         }
 
         for _, label := range metric_labels {

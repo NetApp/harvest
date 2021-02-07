@@ -12,7 +12,7 @@ import (
 
 func (m *Matrix) Print() {
 
-    fmt.Printf("\n\n")
+    fmt.Printf("\n%s%s%s - %s - %s%s\n", util.Bold, util.Red, m.Collector, m.Plugin, m.Object, util.End)
 
     /* create local caches */
     lineLen := 8 + 50 + 60 + 15 + 15 + 7
@@ -68,7 +68,7 @@ func (m *Matrix) Print() {
     fmt.Printf("%-8s %s %s %-50s %s %60s %15s %15s\n", "index", util.Bold, util.Blue, "display", util.End, "key", "enabled", "scalar")
     fmt.Println(strings.Repeat("+", lineLen))
 
-    for i:=0; i<mMaxIndex; i+=1 {
+    for i:=0; i<=mMaxIndex; i+=1 {
         metric := mSorted[i]
         if metric == nil {
             continue
@@ -104,8 +104,7 @@ func (m *Matrix) Print() {
         instance := iSorted[i]
 
         fmt.Println(util.Bold, "\nlabels:\n", util.End)
-
-        fmt.Printf("\n%s%s%s\n", util.Grey, instance.Labels.String(), util.End)
+        //fmt.Printf("\n%s%s%s\n", util.Grey, instance.Labels.String(), util.End)
 
         for j:=0; j<lCount; j+=1 {
 
@@ -118,7 +117,7 @@ func (m *Matrix) Print() {
 
         fmt.Println(util.Bold, "\ndata:\n", util.End)
 
-        for k:=0; k<mMaxIndex; k+=1 {
+        for k:=0; k<=mMaxIndex; k+=1 {
             metric := mSorted[k]
 
             if metric == nil {

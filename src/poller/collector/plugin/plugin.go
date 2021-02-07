@@ -11,7 +11,7 @@ type Plugin interface {
 	GetName() string
 	GetType() string
 	Init() error
-	Run(*matrix.Matrix) (*matrix.Matrix, error)
+	Run(*matrix.Matrix) ([]*matrix.Matrix, error)
 }
 
 
@@ -21,10 +21,11 @@ type AbstractPlugin struct {
 	Type string
 	Options *options.Options
 	Params *yaml.Node
+	ParentParams *yaml.Node
 }
 
-func New(parent string, o *options.Options, p *yaml.Node) *AbstractPlugin {
-	pl := AbstractPlugin{Parent: parent, Options: o, Params: p}
+func New(parent string, o *options.Options, p *yaml.Node, pp *yaml.Node) *AbstractPlugin {
+	pl := AbstractPlugin{Parent: parent, Options: o, Params: p, ParentParams: pp}
 	return &pl
 }
 
@@ -54,6 +55,6 @@ func (p *AbstractPlugin) GetType() string {
 	return p.Type
 }
 
-func (p *AbstractPlugin) Run(*matrix.Matrix) (*matrix.Matrix, error) {
+func (p *AbstractPlugin) Run(*matrix.Matrix) ([]*matrix.Matrix, error) {
 	panic(p.Name + " has not implemented Run()")
 }

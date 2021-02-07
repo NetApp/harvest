@@ -5,7 +5,6 @@ import (
 	"errors"
 	"sync"
 	"os"
-	"fmt"
 	"os/signal"
 	"syscall"
 	"strconv"
@@ -514,15 +513,7 @@ func main() {
 
     if err := p.Init(); err == nil {
 
-		fmt.Printf("Start poller? [yes/no]")
-		answer := ""
-		fmt.Scanf("%s\n", &answer)
-
-		if answer == "yes" || answer == "y" {
-			p.Start()
-		} else {
-			p.Stop()
-		}
+		p.Start()
 
 	} else {
 		p.Stop()

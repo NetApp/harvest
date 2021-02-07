@@ -13,6 +13,7 @@ const (
 	API_RESPONSE = "error reading api response"
 	API_REQ_REJECTED = "api request rejected"
 	ERR_DLOAD = "dynamic module"
+	NO_INSTANCES = "no instances"
 )
 
 type Error struct {
