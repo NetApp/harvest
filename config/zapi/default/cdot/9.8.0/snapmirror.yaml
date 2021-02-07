@@ -13,7 +13,6 @@ counters:
   snapmirror-info:
     - break-failed-count
     - break-successful-count
-    
     - ^destination-volume
     - ^destination-volume-node       => destination_node
     - ^destination-vserver
@@ -23,36 +22,26 @@ counters:
     - last-transfer-end-timestamp
     - last-transfer-size
     - ^last-transfer-type
-
     - newest-snapshot-timestamp
-
     - ^^relationship-id
     - ^relationship-status
     - ^relationship-type
-
     - ^relationship-group-type      => group_type
-
     - resync-failed-count
     - resync-successful-count
-
     - ^schedule
-
     - ^source-volume
     - ^source-vserver
-
+    - ^source-node
     - total-transfer-bytes
     - total-transfer-time-secs
-
     - ^unhealthy-reason
-
     - update-failed-count
     - update-successful-count
-
 
 plugins:
   Snapmirror:
     type: data
-
 
 export_options:
   instance_keys:

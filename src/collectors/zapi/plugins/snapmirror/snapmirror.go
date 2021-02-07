@@ -89,7 +89,11 @@ func (p *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			return nil, err
 		}
 		Log.Debug("updated limit cache")
-	}	
+	}
+
+	dest_upd_count := 0
+	src_upd_count := 0
+	limit_upd_count := 0
 
 	for _, instance := range data.GetInstances() {
 
@@ -99,6 +103,7 @@ func (p *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			key := instance.Labels.Get("destination_vserver") + "." + instance.Labels.Get("destination_volume")
 			if node, has := p.node_cache.GetHas(key); has {
 				instance.Labels.Set("destination_node", node)
+				dest_upd_count += 1
 			}
 		}
 
@@ -108,6 +113,7 @@ func (p *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			key := instance.Labels.Get("source_vserver") + "." + instance.Labels.Get("source_volume")
 			if node, has := p.node_cache.GetHas(key); has {
 				instance.Labels.Set("source_node", node)
+				src_upd_count += 1
 			}
 		}
 
@@ -116,6 +122,7 @@ func (p *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			
 			if limit, has := p.dest_limit_cache.GetHas(instance.Labels.Get("destination_node")); has {
 				instance.Labels.Set("destination_node_limit", limit)
+				limit_upd_count += 1
 			}
 		}
 
@@ -128,6 +135,8 @@ func (p *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 	}
 
+	Log.Debug("updated %d destination and %d source nodes, %d node limits", dest_upd_count, src_upd_count, limit_upd_count)
+
 	return nil, nil
 }
 
@@ -138,7 +147,7 @@ func (p *SnapMirror) update_node_cache() error {
 
 	request := xml.New("perf-object-get-instances")
 	request.CreateChild("objectname", "volume")
-	request.CreateChild("max-records", p.batch_size)
+	//request.CreateChild("max-records", p.batch_size)
 
 	req_i := xml.New("instances")
 	req_i.CreateChild("instance", "*")
