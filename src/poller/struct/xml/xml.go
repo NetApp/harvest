@@ -56,6 +56,21 @@ func (n *Node) GetChild(name string) (*Node, bool) {
     return nil, false
 }
 
+func (n *Node) PopChild(name string) *Node {
+    var child *Node
+    var i, size int
+    size = len(n.Children)
+    for i, child = range n.Children {
+        if child.GetName() == name {
+            n.Children[i] = n.Children[size-1]
+            n.Children = n.Children[:size-1]
+            return child
+        }
+    }
+    return nil
+}
+
+
 func (n *Node) GetContentS() string {
     return string(n.Content)
 }

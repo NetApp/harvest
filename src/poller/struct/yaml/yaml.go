@@ -54,7 +54,7 @@ func (node *Node) AddChild(child *Node) {
     node.Children = append(node.Children, child)
 }
 
-func (node *Node) AddNewChild(name, value string) {
+func (node *Node) CreateChild(name, value string) {
     node.Children = append(node.Children, New(name, value))
 }
 

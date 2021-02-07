@@ -102,7 +102,7 @@ func (p *Shelf) Init() error {
 		Log.Debug("added data for [%s] with %d metrics and %d labels", attribute, len(p.data[attribute].Metrics), p.data[attribute].LabelNames.Size())
 		export_options.AddChild(instance_keys)
 		export_options.AddChild(instance_labels)
-		export_options.AddNewChild("include_instance_names", "False")
+		export_options.CreateChild("include_instance_names", "False")
 		p.data[attribute].SetExportOptions(export_options)
 	}
 

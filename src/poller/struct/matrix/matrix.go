@@ -242,6 +242,6 @@ func (m *Matrix) SetExportOptions(options *yaml.Node) {
 
 func DefaultExportOptions() *yaml.Node {
     n := yaml.New("export_options", "")
-    n.AddNewChild("include_all_labels", "True")
+    n.CreateChild("include_all_labels", "True")
     return n
 }

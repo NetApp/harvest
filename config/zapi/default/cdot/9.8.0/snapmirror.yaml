@@ -49,39 +49,29 @@ counters:
     - update-successful-count
 
 
-mappings:
-  relationship-group-type:
-    'none': 'vol'
-    'vserver': 'svm'
-  is-healthy:
-    'true': '0'
-    'false': '1'
-
-
 plugins:
   Snapmirror:
-    run_after_poll: data
+    type: data
 
-plugins_replace_data: False
 
 export_options:
-  include_keys:
+  instance_keys:
     - relationship_id
     - destination_volume
     - destination_node
     - destination_vserver
     - source_volume
     - source_vserver
-#    - source_node
-  include_labels:
+    - source_node
+  instance_labels:
     - healthy
     - unhealthy_reason
     - last_transfer_type
     - relationship_status
     - relationship_type
     - schedule
-#    - destination_node_limit
-#    - source_node_limit
+    - destination_node_limit
+    - source_node_limit
     - group_type
   exclude_instance_name: True
   graphite_leafs:

@@ -11,7 +11,7 @@ objects:
 #  Aggregate:        aggregate.yaml
 #  Volume:           volume.yaml
 #  LUN:              lun.yaml
-#  SnapMirror:       snapmirror.yaml
+  SnapMirror:       snapmirror.yaml
 #  StorageDisk:      disk.yaml
 #  Qtree:            qtree.yaml
-  Shelf:            shelf.yaml
+#  Shelf:            shelf.yaml
