@@ -10,9 +10,9 @@ counters:
   node-details-info:
     - cpu-busytime
 #    - ^cpu-firmware-release
-    - ^env-failed-fan-count                 => failed_fan
+    - env-failed-fan-count                 => failed_fan
     - ^env-failed-fan-message               => failed_fan_message
-    - ^env-failed-power-supply-count        => failed_power
+    - env-failed-power-supply-count        => failed_power
     - ^env-failed-power-supply-message      => failed_power_message
     - ^env-over-temperature                 => over_temperature
 #    - ^is-all-flash-optimized
@@ -27,7 +27,7 @@ counters:
     - ^maximum-aggregate-size               => max_aggr_size
     - ^maximum-number-of-volumes            => max_vol_num
     - ^maximum-volume-size                  => max_vol_size
-    - ^^node
+    - ^^node                                => node
     - ^node-location                        => location
     - ^node-model                           => model
 #   - node-nvram-id
