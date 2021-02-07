@@ -1,5 +1,9 @@
 package matrix
 
+import (
+	"goharvest2/poller/errors"
+)
+
 // Metric struct and related methods
 
 type Metric struct {
@@ -29,11 +33,10 @@ func (m *Matrix) GetMetric(key string) *Metric {
 func (m *Matrix) AddMetric(key, display string, enabled bool) (*Metric, error) {
 
 	if _, exists := m.Metrics[key]; exists {
-		err = errors.New(fmt.Sprintf("Metric [%s] already in cache", key))
-		return nil, err
+		return nil, errors.New(errors.MATRIX_HASH, "metric [" + key + "] already in cache")
 	}
 
-	metric = Metric{Index: m.MetricsIndex, Display: display, Scalar: true, Enabled: enabled}
+	metric := Metric{Index: m.MetricsIndex, Display: display, Scalar: true, Enabled: enabled}
 	m.Metrics[key] = &metric
 	m.MetricsIndex += 1
 
@@ -61,13 +64,18 @@ func (m *Matrix) AddArrayMetric(key, display string, labels []string, enabled bo
 // or make Harvest panic
 func (m *Matrix) AddCustomMetric(key string, metric *Metric) error {
 	if _, exists := m.Metrics[key]; exists {
-		return errors.New(fmt.Sprintf("Metric [%s] already in cache", key))
+		return errors.New(errors.MATRIX_HASH, "metric [" + key + "] already in cache")
 	}
 	// sanity check: array should come with size
-	if !m.Scalar && m.Size == 0 {
-		return errors.New("Array metric with no valid size")
+	if !metric.Scalar {
+		if metric.Size == 0 {
+			return errors.New(errors.MATRIX_INV_PARAM, "array metric has 0 size")
+		}
+		m.MetricsIndex += metric.Size
+	} else {
+		m.MetricsIndex += 1
 	}
 	m.Metrics[key] = metric
-	m.MetricsIndex += metric.Size
+	return nil
 }
 

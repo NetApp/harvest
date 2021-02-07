@@ -4,14 +4,14 @@ import (
     "fmt"
     "time"
     "bytes"
-    "errors"
     "io"
     "strconv"
     "io/ioutil"
     "net/http"
     "crypto/tls"
-    "goharvest2/poller/yaml"
-    "goharvest2/poller/xml"
+    "goharvest2/poller/errors"
+    "goharvest2/poller/struct/yaml"
+    "goharvest2/poller/struct/xml"
 )
 
 type Client struct {
@@ -20,8 +20,8 @@ type Client struct {
     buffer      *bytes.Buffer
 }
 
-func New(config *yaml.Node) (Client, error) {
-    var client Client
+func New(config *yaml.Node) (*Client, error) {
+    var client *Client
     var httpclient *http.Client
     var request *http.Request
     var transport *http.Transport
@@ -67,7 +67,7 @@ func New(config *yaml.Node) (Client, error) {
 
     httpclient = &http.Client{ Transport : transport, Timeout: timeout }
 
-    client = Client{ client: httpclient, request: request }
+    client = &Client{ client: httpclient, request: request }
 
     // ensure that we can change body dynamically
     request.GetBody = func() (io.ReadCloser, error) {
@@ -77,6 +77,7 @@ func New(config *yaml.Node) (Client, error) {
 
     return client, nil
 }
+
 
 func (c *Client) BuildRequestString(request string) error {
     return c.BuildRequest(xml.New(request))
@@ -98,41 +99,77 @@ func (c *Client) BuildRequest(node *xml.Node) error {
     return err
 }
 
-func (c *Client) InvokeRequest() (*xml.Node, error) {
+func (c *Client) Invoke() (*xml.Node, error) {
+    result, _, _, err := c.invoke(false)
+    return result, err
+}
+
+func (c *Client) InvokeRequest(request *xml.Node) (*xml.Node, error) {
+
     var err error
-    var body []byte
-    var response *http.Response
-    var node *xml.Node
-    var status, reason string
-    var found bool
 
-    response, err = c.client.Do(c.request)
-    if err != nil {
-        fmt.Printf("error reading response: %s\n", err)
-        return node, err
+    if err = c.BuildRequest(request); err == nil {
+        return c.Invoke()
+    }
+    return nil, err
+}
+
+func (c *Client) InvokeWithTimers() (*xml.Node, time.Duration, time.Duration, error) {
+    return c.invoke(true)
+}
+
+func (c *Client) invoke(with_timers bool) (*xml.Node, time.Duration, time.Duration, error) {
+
+    var (
+        result *xml.Node
+        response *http.Response
+        start time.Time
+        response_t, parse_t time.Duration
+        body []byte
+        status, reason string
+        found bool
+        err error
+    )
+
+    // issue request to server
+    if with_timers {
+        start = time.Now()
+    }
+    if response, err = c.client.Do(c.request); err != nil {
+        return result, response_t, parse_t, err
+    }
+    if with_timers {
+        response_t = time.Since(start)
     }
 
+    // read response body
     defer response.Body.Close()
-
-    body, err = ioutil.ReadAll(response.Body)
-    if err != nil {
-        fmt.Printf("error reading body: %s\n", err)
-        return node, err
+    if body, err = ioutil.ReadAll(response.Body); err != nil {
+        return result, response_t, parse_t, err
     }
 
-    node, err = xml.Parse(body)
-    if err != nil {
-        fmt.Printf("error parsing body: %s\n", err)
-        return node, err
+    // parse xml
+    if with_timers {
+        start = time.Now()
+    }
+    if result, err = xml.Parse(body); err != nil {
+        return result, response_t, parse_t, err
+    }
+    if with_timers {
+        parse_t = time.Since(start)
     }
 
-    if status, found = node.GetAttr("status"); !found {
-        err = errors.New("Missing status attribute")
+    // check if request was successful
+    if status, found = result.GetAttr("status"); !found {
+        err = errors.New(errors.API_RESPONSE, "missing status attribute")
     } else if status != "passed" {
-        reason, _ = node.GetAttr("reason")
-        err = errors.New("Request rejected: " + reason)
+        if reason, found = result.GetAttr("reason"); !found {
+            err = errors.New(errors.API_REQ_REJECTED, "no reason")
+        } else {
+            err = errors.New(errors.API_REQ_REJECTED, reason)
+        }
     }
 
-    return node, err
+    return result, response_t, parse_t, err
 }
 

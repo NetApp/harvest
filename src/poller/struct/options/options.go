@@ -61,6 +61,11 @@ func GetOpts() (*Options, string, error)  {
     var err error
     args = Options{}
 
+    fmt.Println("\n--------------------------------------------------------------------------------")
+    fmt.Println(os.Args)
+    fmt.Println("--------------------------------------------------------------------------------\n")
+
+    
     flag.StringVar(&args.Poller, "poller", "",
         "Poller name as defined in config")
     flag.BoolVar(&args.Daemon, "daemon", false,

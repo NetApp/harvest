@@ -15,12 +15,12 @@ import (
 	"strings"
 	//"time"  // @debug
 	//"runtime/pprof"  // @debug
-	"goharvest2/poller/share/logger"
+	"goharvest2/poller/util/logger"
 	"goharvest2/poller/schedule"
 	"goharvest2/poller/collector"
 	"goharvest2/poller/exporter"
-	"goharvest2/poller/yaml"
-	"goharvest2/poller/structs/options"
+	"goharvest2/poller/struct/yaml"
+	"goharvest2/poller/struct/options"
 )
 
 var Log *logger.Logger = logger.New(1, "")
@@ -289,7 +289,7 @@ func (p *Poller) load_exporter(name string) exporter.Exporter {
 	binpath = path.Join(p.options.Path, "bin", "exporters")
 
 	if module, err = p.load_module(binpath, strings.ToLower(class.Value)); err != nil {
-		Log.Error("load .so: %v")
+		Log.Error("load .so: %v", err)
 		return nil
 	}
 

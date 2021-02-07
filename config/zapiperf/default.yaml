@@ -1,0 +1,13 @@
+
+collector:          ZapiPerf
+
+# Order here matters!
+schedule:
+  - counter: 1200s
+  - instance: 600s
+  - data: 20s
+
+objects:
+
+  # SVM-level metrics
+  Volume:                 volume.yaml

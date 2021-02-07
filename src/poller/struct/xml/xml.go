@@ -7,7 +7,7 @@ import (
     "encoding/xml"
     "unicode"
     "errors"
-    "goharvest2/poller/share"
+    "goharvest2/poller/util"
 )
 
 
@@ -153,7 +153,7 @@ func SearchByNames(node *Node, prefix []string, paths [][]string) ([]string, boo
     //fmt.Printf("Prefix= %v, Paths= %v\n", prefix, paths)
 
     search = func(n *Node, curr []string) {
-        fmt.Printf("[%v]%sSEARCH [%s]%s\n", curr, share.Cyan, n.GetName(), share.End)
+        fmt.Printf("[%v]%sSEARCH [%s]%s\n", curr, util.Cyan, n.GetName(), util.End)
         var newcurr, path []string
         var children []*Node
         var child *Node
@@ -178,7 +178,7 @@ func SearchByNames(node *Node, prefix []string, paths [][]string) ([]string, boo
             }
         }
 
-        if len(newcurr) < share.MaxLen(paths) {
+        if len(newcurr) < util.MaxLen(paths) {
             children = n.GetChildren()
             for _, child = range children {
                 search(child, newcurr)
@@ -212,9 +212,9 @@ func SearchByPath(root *Node, path []string) []*Node {
 
         if EqualSlices(newcurr, path) {
             matches = append(matches, node)
-            fmt.Printf("%s[%v] == [%v] TRUE%s\n", share.Green, newcurr, path, share.End)
+            fmt.Printf("%s[%v] == [%v] TRUE%s\n", util.Green, newcurr, path, util.End)
             //name, found := node.GetChildContent("disk-name")
-            //fmt.Printf("%s%sMATCH: <%p> <%v> => %s => %s (%v)%s\n", share.Bold, share.Red, node, &node, node.GetName(), name, found, share.End)
+            //fmt.Printf("%s%sMATCH: <%p> <%v> => %s => %s (%v)%s\n", util.Bold, util.Red, node, &node, node.GetName(), name, found, util.End)
         } else if len(newcurr) < len(path) {
 
             fmt.Printf("[%v] == [%v] FALSE\n", newcurr, path)
@@ -222,7 +222,7 @@ func SearchByPath(root *Node, path []string) []*Node {
                 search(child, newcurr)
             }
         } else {
-            fmt.Printf("%s[%v] == [%v] STOP%s\n", share.Red, newcurr, path, share.End)
+            fmt.Printf("%s[%v] == [%v] STOP%s\n", util.Red, newcurr, path, util.End)
         }
     }
     search(root, curr_path)
@@ -261,9 +261,9 @@ func PrintTree(n *Node, depth int) {
     var child *Node
 
     if len(n.Children) == 0 {
-        COLOR = share.Red
+        COLOR = util.Red
     } else {
-        COLOR = share.Cyan
+        COLOR = util.Cyan
     }
 
     /*
@@ -271,7 +271,7 @@ func PrintTree(n *Node, depth int) {
     if len(attrs_names) == 0 {
         attrs = ""
     } else {
-        attrs = share.Grey + " ("
+        attrs = util.Grey + " ("
         for _, a := range attrs_names {
             value, _ := n.GetAttr(a)
             attrs += " " + a + "=\"" + value + "\""
@@ -279,7 +279,7 @@ func PrintTree(n *Node, depth int) {
         attrs += " )"
     }*/
 
-    name = share.Bold + COLOR + strings.Repeat("   ", depth) + n.GetName() + share.End
+    name = util.Bold + COLOR + strings.Repeat("   ", depth) + n.GetName() + util.End
     
     if content, exists = n.GetContent(); !exists {
         content = []byte("-") 

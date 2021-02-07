@@ -2,18 +2,20 @@ package collector
 
 import (
 	"sync"
-    "os"
-    "strconv"
-	//"strings"
-	//"errors"
-
-	"goharvest2/poller/yaml"
-	"goharvest2/poller/structs/options"
-	"goharvest2/poller/structs/matrix"
+	"os"
+	"strings"
+	"strconv"
+	"path"
+	
+	"goharvest2/poller/struct/yaml"
+	"goharvest2/poller/struct/options"
+	"goharvest2/poller/struct/matrix"
 	"goharvest2/poller/schedule"
 	"goharvest2/poller/exporter"
-	"goharvest2/poller/share/logger"
-	herrors "goharvest2/poller/errors"
+	"goharvest2/poller/util"
+	"goharvest2/poller/util/logger"
+	"goharvest2/poller/errors"
+	"goharvest2/poller/collector/plugin"
 )
 
 var Log *logger.Logger = logger.New(1, "")
@@ -39,6 +41,7 @@ type AbstractCollector struct {
 	Data *matrix.Matrix
 	Metadata *matrix.Matrix
 	Exporters []exporter.Exporter
+	Plugins []plugin.Plugin
 	Schedule *schedule.Schedule
 	//plugins []plugin.Plugin
 }
@@ -59,14 +62,14 @@ func (c *AbstractCollector) InitAbc() error {
 	/* Initialize schedule and tasks (polls) */
 	items := c.Params.GetChild("schedule")
 	if items == nil || len(items.GetChildren()) == 0 {
-		return herrors.MissingParam("schedule")
+		return errors.New(errors.INVALID_PARAM, "schedule")
 	}
 
 	c.Schedule = schedule.New()
 	for _, task := range items.GetChildren() {
 		err := c.Schedule.AddTaskString(task.Name, task.Value, nil)
 		if err != nil {
-			return herrors.InvalidParam("schedule (" + task.Name + "): " + err.Error())
+			return errors.New(errors.INVALID_PARAM, "schedule (" + task.Name + "): " + err.Error())
 		}
 	}
 
@@ -78,6 +81,12 @@ func (c *AbstractCollector) InitAbc() error {
 		c.Data.SetExportOptions(matrix.DefaultExportOptions())
 	}
 	c.Data.SetGlobalLabel("datacenter", c.Params.GetChildValue("datacenter"))
+
+
+	/* Initialize Plugins */
+	if plugins := c.Params.GetChild("plugins"); plugins != nil {
+		c.LoadPlugins(plugins)
+	}
 
 	/* Initialize metadata */
 	c.Metadata = matrix.New(c.Name, c.Object, "")
@@ -141,4 +150,35 @@ func (c *AbstractCollector) LinkExporter(e exporter.Exporter) {
 	// @TODO: add lock if we want to add exporters while collector is running
 	Log.Info("Adding exporter [%s:%s]", e.GetClass(), e.GetName())
 	c.Exporters = append(c.Exporters, e)
+}
+
+func (c *AbstractCollector) LoadPlugins(params *yaml.Node) error {
+
+	for _, x := range params.GetChildren() {
+		name := x.Name
+
+		binpath := path.Join(c.Options.Path, "bin", "plugins", strings.ToLower(c.Name))
+
+		module, err := util.LoadFromModule(binpath, strings.ToLower(name), "New")
+		if err != nil {
+			Log.Error("load plugin [%s]: %v", name, err)
+			return err
+		}
+
+		NewFunc, ok := module.(func(string, *options.Options, *yaml.Node) plugin.Plugin)
+		if !ok {
+			Log.Error("load plugin [%s]: New() has not expected signature", name)
+			return errors.New(errors.ERR_DLOAD, "New()")
+		}
+
+		p := NewFunc(c.Name, c.Options, x)
+		if err := p.Init(); err != nil {
+			Log.Error("init plugin [%s]: %v", name, err)
+			return errors.New(errors.ERR_DLOAD, "Init()")
+		}
+
+		c.Plugins = append(c.Plugins, p)
+	}
+	Log.Debug("initialized %d plugins", len(c.Plugins))
+	return nil
 }

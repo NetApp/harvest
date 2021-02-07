@@ -5,7 +5,7 @@ import (
     "bytes"
     "strings"
     "io/ioutil"
-    "goharvest2/poller/share"
+    "goharvest2/poller/util"
 )
 
 
@@ -201,19 +201,19 @@ func (node *Node) ToString(depth int) string {
     var name string
     name = fmt.Sprintf("%s%s%s%s%s (%d)", 
         strings.Repeat("  ", depth), 
-        share.Bold, 
-        share.Cyan, 
+        util.Bold, 
+        util.Cyan, 
         node.Name, 
-        share.End, 
+        util.End, 
         len(node.Children),
     )
     return fmt.Sprintf("%-50s - %s%-35s%s - %s%s%s", 
         name, 
-        share.Green, 
+        util.Green, 
         node.Value, 
-        share.End, 
-        share.Pink, 
+        util.End, 
+        util.Pink, 
         strings.Join(node.Values, ", "),
-        share.End,
+        util.End,
     )
 }

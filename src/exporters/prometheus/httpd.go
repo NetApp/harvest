@@ -7,7 +7,7 @@ import (
 	"sort"
 	"strings"
 	"time"
-	"goharvest2/poller/structs/matrix"
+	"goharvest2/poller/struct/matrix"
 )
 
 
@@ -39,7 +39,7 @@ func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 	for _, m := range p.cache {
 
 		if m.IsMetadata {
-			Log.Debug("Cache Metadata= [%-20s] [%-20s]", m.Collector, m.Object)
+			Log.Debug("Cache Metadata= [%-20s] [%-20s] (%d) (%d)", m.Collector, m.Object, len(m.Metrics), len(m.Instances))
 			//if _, exists := unique_metadata[m.Collector]; !exists {
 			//	unique_metadata[m.Collector] = make(map[string]*matrix.Matrix)
 			//}
@@ -128,8 +128,8 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 	}
 
 	duration := time.Since(start)
-	p.Metadata.SetValueForMetricAndInstance("time", "render", duration.Seconds())
-	p.Metadata.SetValueForMetricAndInstance("count", "render", float64(count))
+	p.Metadata.SetValueSS("time", "render", duration.Seconds())
+	p.Metadata.SetValueSS("count", "render", float64(count))
 
 	md := p.Render(p.Metadata)
 	data = append(data, md...)

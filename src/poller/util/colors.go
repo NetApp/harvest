@@ -1,4 +1,4 @@
-package share
+package util
 
 var Bold string = "\033[1m"
 var End string = "\033[0m"

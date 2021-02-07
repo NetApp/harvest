@@ -4,10 +4,10 @@ import (
     "fmt"
     "errors"
 	"strconv"
-	"goharvest2/poller/xml"
+	"goharvest2/poller/struct/xml"
 )
 
-type SystemInfo struct {
+type System struct {
     Name string
     SerialNumber string
     Release string
@@ -15,7 +15,7 @@ type SystemInfo struct {
     Clustered bool
 }
 
-func (sys SystemInfo) String() string {
+func (sys *System) String() string {
     var model, version string
     if sys.Clustered == true {
         model = "CDOT"
@@ -27,21 +27,21 @@ func (sys SystemInfo) String() string {
     return fmt.Sprintf("%s %s (serial %s) (%s)", sys.Name, version, sys.SerialNumber, sys.Release)
 }
 
-func (c *Client) GetSystemInfo() (SystemInfo, error) {
-    var sys SystemInfo
+func (c *Client) GetSystem() (*System, error) {
+    var sys *System
     var node *xml.Node
     var err error
     var request string
     var found bool
 
-    sys = SystemInfo{}
+    sys = &System{}
 
     // fetch system version and mode
     //Log.Debug("Fetching system version")
 
     c.BuildRequest(xml.New("system-get-version"))
 
-    node, err = c.InvokeRequest()
+    node, err = c.Invoke()
     if err != nil { return sys, err }
 
     release, _ := node.GetChildContent("version")
@@ -52,9 +52,9 @@ func (c *Client) GetSystemInfo() (SystemInfo, error) {
         tuple, found := version.GetChild("system-version-tuple")
         if found == true {
 
-            gen, _ := tuple.GetChildContent("generation")
-            maj, _ := tuple.GetChildContent("major")
-            min, _ := tuple.GetChildContent("minor")
+            gen := tuple.GetChildContentS("generation")
+            maj := tuple.GetChildContentS("major")
+            min := tuple.GetChildContentS("minor")
 
             //Log.Debug(fmt.Sprintf("convertion version tuple: %s %s %s", string(gen), string(maj), string(min)))
             genint, _ := strconv.ParseInt(string(gen), 0, 16)
@@ -89,7 +89,7 @@ func (c *Client) GetSystemInfo() (SystemInfo, error) {
     err = c.BuildRequest(xml.New(request))
     if err != nil { return sys, err }
 
-    node, err = c.InvokeRequest()
+    node, err = c.Invoke()
     if err != nil { return sys, err }
 
     if sys.Clustered {

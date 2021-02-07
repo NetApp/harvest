@@ -1,4 +1,4 @@
-package share
+package util
 
 func MinLen(elements [][]string) int {
     var min, i int

@@ -7,32 +7,26 @@ import (
     "sync"
     "time"
 
-    "goharvest2/poller/structs/matrix"
-    "goharvest2/poller/structs/options"
-    "goharvest2/poller/yaml"
-    "goharvest2/poller/xml"
-    "goharvest2/poller/share"
-    "goharvest2/poller/share/logger"
+    "goharvest2/poller/struct/matrix"
+    "goharvest2/poller/struct/options"
+    "goharvest2/poller/struct/yaml"
+    "goharvest2/poller/struct/xml"
+    "goharvest2/poller/util"
+    "goharvest2/poller/util/logger"
     "goharvest2/poller/collector"
 
-    client "goharvest2/poller/apis/zapi"
+    client "goharvest2/poller/api/zapi"
 )
 
 var Log *logger.Logger = logger.New(1, "")
 
 type Zapi struct {
     *collector.AbstractCollector
-    //name string
-    //object string
-    //options *opts.Opts
-    //params *yaml.Node
-    //Exporters []exporter.Exporter
-    //Schedule *schedule.Schedule
-    object_raw string
-    connection client.Client
-    system client.SystemInfo
-    //TemplateFn string
-    //Data *matrix.Matrix
+    connection *client.Client
+    system *client.System
+    object string
+	template_fn string
+	template_type string
     instanceKeyPrefix []string
 }
 
@@ -53,7 +47,7 @@ func (c *Zapi) Init() error {
         return err
     }
 
-    if c.system, err = c.connection.GetSystemInfo(); err != nil {
+    if c.system, err = c.connection.GetSystem(); err != nil {
         //Log.Error("system info: %v", err)
         return err
     }
@@ -62,7 +56,7 @@ func (c *Zapi) Init() error {
 
     template_fn := c.Params.GetChild("objects").GetChildValue(c.Object) // @TODO err handling
 
-    template, err := collector.ImportObjectTemplate(c.Options.Path, "default", template_fn, c.Name, c.system.Version)
+    template, err := collector.ImportSubTemplate(c.Options.Path, "default", template_fn, c.Name, c.system.Version)
     if err != nil {
         Log.Error("Error importing subtemplate: %s", err)
         return err
@@ -81,19 +75,19 @@ func (c *Zapi) Init() error {
 
     c.Metadata.AddMetric("api_time", "api_time", true) // extra metric for measuring api time
 
-    if c.object_raw = c.Params.GetChildValue("object"); c.object_raw == "" {
+    if c.object = c.Params.GetChildValue("object"); c.object == "" {
         Log.Warn("Missing object in template")
     }
 
-    c.Data.Object = c.object_raw
-    c.Metadata.Object = c.object_raw
+    c.Data.Object = c.object
+    c.Metadata.Object = c.object
     
     counters := c.Params.GetChild("counters")
     if counters == nil {
         Log.Warn("Missing counters in template")
     }
 
-    if c.object_raw == "" || counters == nil {
+    if c.object == "" || counters == nil {
         return errors.New("missing parameters")
     }
 
@@ -125,6 +119,7 @@ func (c *Zapi) Start(wg *sync.WaitGroup) {
     for {
 
         c.Metadata.InitData()
+        results := make([]*matrix.Matrix, 0)
 
         for _, task := range c.Schedule.GetTasks() {
 
@@ -142,25 +137,44 @@ func (c *Zapi) Start(wg *sync.WaitGroup) {
                 Log.Debug("%s poll completed", task)
 
                 duration := c.Schedule.Stop(task)
-                c.Metadata.SetValueForMetricAndInstance("poll_time", task, duration.Seconds())
+                c.Metadata.SetValueSS("poll_time", task, duration.Seconds())
                 
                 if data != nil {
-                    
-                    Log.Debug("exporting to %d exporters", len(c.Exporters))
+                    results = append(results, data)
 
-                    for _, e := range c.Exporters {
-                        if err := e.Export(data); err != nil {
-                            Log.Warn("export to [%s] failed: %v", e.GetName(), err)
+                    Log.Debug("\n\nCOLLECTOR DATA\n")
+                    data.Print()
+
+                    for _, p := range c.Plugins {
+                        if p.GetType() == "data" {
+                            Log.Debug("running plugin [%s]", p.GetName())
+
+                            plugin_data, err := p.Run(data)
+                            if err != nil {
+                                Log.Error(err.Error())
+                            } else if plugin_data != nil {
+
+                                Log.Debug("\n\nPLUGIN DATA\n")
+                                plugin_data.Print()
+
+                                results = append(results, plugin_data)
+                            }
                         }
                     }
                 }
             }
+        }
 
-            Log.Debug("exporting metadata")
+        Log.Debug("exporting session data (%d)", len(results))
 
-            for _, e := range c.Exporters {
-                if err := e.Export(c.Metadata); err != nil {
-                    Log.Warn("Metadata export to [%s] failed: %v", e.GetName(), err)
+        for _, e := range c.Exporters {
+            if err := e.Export(c.Metadata); err != nil {
+                Log.Warn("Metadata export to [%s] failed: %v", e.GetName(), err)
+            } else {
+                for _, data := range results {
+                    if err := e.Export(data); err != nil {
+                        Log.Warn("Data export to [%s] failed: %v", e.GetName(), err)
+                    }
                 }
             }
         }
@@ -195,10 +209,10 @@ func (c *Zapi) poll_instance() error {
 
     start := time.Now()
     c.connection.BuildRequest(xml.New(c.Params.GetChildValue("query")))
-    root, err = c.connection.InvokeRequest()
+    root, err = c.connection.Invoke()
     end := time.Since(start)
 
-    c.Metadata.SetValueForMetricAndInstance("api_time", "instance", end.Seconds())
+    c.Metadata.SetValueSS("api_time", "instance", end.Seconds())
 
     if err != nil {
         Log.Error("client request failed: %s", err)
@@ -237,7 +251,7 @@ func (c *Zapi) poll_instance() error {
         //break
     }
 
-    c.Metadata.SetValueForMetricAndInstance("count", "instance", float64(count))
+    c.Metadata.SetValueSS("count", "instance", float64(count))
 
     //c.data.PrintInstances()
     Log.Info("added %d instances to cache (old cache had %d)", count, old_count)
@@ -270,25 +284,26 @@ func (c *Zapi) poll_data() (*matrix.Matrix, error) {
     fetch = func(instance *matrix.Instance, node *xml.Node, path []string) {
         newpath := append(path, node.GetName())
         key := strings.Join(newpath, ".")
-        metric, found := c.Data.GetMetric(key)
+        metric := c.Data.GetMetric(key)
         content, has := node.GetContent()
 
         if has {
-            if found {
+            if metric != nil {
                 if float, err := strconv.ParseFloat(string(content), 64); err != nil {
-                    Log.Warn("%sSkipping metric [%s]: failed to parse [%s] float%s", share.Red, key, content, share.End)
+                    Log.Warn("%sSkipping metric [%s]: failed to parse [%s] float%s", util.Red, key, content, util.End)
                     skipped += 1
                 } else {
                     c.Data.SetValue(metric, instance, float)
-                    Log.Trace("%sMetric [%s] - Set Value [%f]%s", share.Green, key, float, share.End)
+                    Log.Trace("%sMetric [%s] - Set Value [%f]%s", util.Green, key, float, util.End)
                     count += 1
                 }
             } else if label, found := c.Data.GetLabel(key); found {
-                c.Data.SetInstanceLabel(instance, label, string(content))
-                Log.Trace("%sMetric [%s] (%s) Set Value [%s] as Instance Label%s", share.Yellow, label, key, content, share.End)
+                //c.Data.SetInstanceLabel(instance, label, string(content))
+                instance.Labels.Set(label, string(content))
+                Log.Trace("%sMetric [%s] (%s) Set Value [%s] as Instance Label%s", util.Yellow, label, key, content, util.End)
                 count += 1
             } else {
-                Log.Trace("%sSkipped [%s]: not found in metric or label cache%s", share.Blue, key, share.End)
+                Log.Trace("%sSkipped [%s]: not found in metric or label cache%s", util.Blue, key, util.End)
                 skipped += 1
             }
         } else {
@@ -315,7 +330,7 @@ func (c *Zapi) poll_data() (*matrix.Matrix, error) {
 
     c.connection.BuildRequest(xml.New(query))
 
-    if node, err = c.connection.InvokeRequest(); err != nil {
+    if node, err = c.connection.Invoke(); err != nil {
         Log.Debug("Request for [%s] failed: %s", query, err)
         return nil, err
     }
@@ -323,9 +338,9 @@ func (c *Zapi) poll_data() (*matrix.Matrix, error) {
     instances := xml.SearchByPath(node, c.instanceKeyPrefix)
     Log.Debug("Fetched %d instance elements", len(instances))
 
-    for _, instance := range instances {
+    for _, instanceElem := range instances {
         //c.Log.Printf("Handling instance element <%v> [%s]", &instance, instance.GetName())
-        keys, found := xml.SearchByNames(instance, c.instanceKeyPrefix, c.Data.GetInstanceKeys())
+        keys, found := xml.SearchByNames(instanceElem, c.instanceKeyPrefix, c.Data.GetInstanceKeys())
         Log.Debug("Fetched instance keys: %s", strings.Join(keys, "."))
 
         if !found {
@@ -333,15 +348,15 @@ func (c *Zapi) poll_data() (*matrix.Matrix, error) {
             continue
         }
 
-        instanceObj, found := c.Data.GetInstance(strings.Join(keys, "."))
+        instance := c.Data.GetInstance(strings.Join(keys, "."))
 
-        if !found {
+        if instance == nil {
             Log.Debug("Skipping instance [%s]: not found in cache", strings.Join(keys, "."))
             continue
         }
         //path := make([]string, 0)
         //copy(path, c.InstanceKeyPrefix)
-        fetch(instanceObj, instance, make([]string, 0))
+        fetch(instance, instanceElem, make([]string, 0))
     }
     //xmltree.PrintTree(node, 0)
 

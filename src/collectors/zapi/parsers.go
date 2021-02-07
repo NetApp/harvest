@@ -3,9 +3,9 @@ package main
 import (
     "strings"
     
-    "goharvest2/poller/structs/matrix"
-    "goharvest2/poller/yaml"
-    "goharvest2/poller/share"
+    "goharvest2/poller/struct/matrix"
+    "goharvest2/poller/struct/yaml"
+    "goharvest2/poller/util"
 )
 
 
@@ -17,14 +17,14 @@ func ParseShortestPath(m *matrix.Matrix) []string {
     for key, _ := range m.Metrics {
         keys = append(keys, strings.Split(key, "."))
     }
-    for key, _ := range m.LabelNames {
+    for key, _ := range m.LabelNames.Iter() {
         keys = append(keys, strings.Split(key, "."))
     }
 
-    max := share.MinLen(keys)
+    max := util.MinLen(keys)
     
     for i:=0; i<max; i+=1 {
-        if share.AllSame(keys, i) {
+        if util.AllSame(keys, i) {
             prefix = append(prefix, keys[0][i])
         } else {
             break
@@ -37,9 +37,9 @@ func ParseShortestPath(m *matrix.Matrix) []string {
 func ParseKeyPrefix(keys [][]string) []string {
     var prefix []string
     var i, n int
-    n = share.MinLen(keys)-1
+    n = util.MinLen(keys)-1
     for i=0; i<n; i+=1 {
-        if share.AllSame(keys, i) {
+        if util.AllSame(keys, i) {
             prefix = append(prefix, keys[0][i])
         } else {
             break
@@ -88,14 +88,14 @@ func HandleCounter(data *matrix.Matrix, path []string, value string) {
 
     if value[0] == '^' {
         data.AddLabelKeyName(flat_path, display)
-            Log.Trace("%sAdded as Label [%s] [%s]%s => %v", share.Yellow, display, flat_path, share.End, full_path)
+            Log.Trace("%sAdded as Label [%s] [%s]%s => %v", util.Yellow, display, flat_path, util.End, full_path)
         if value[1] == '^' {
             data.AddInstanceKey(full_path[:])
-            Log.Trace("%sAdded as Key [%s] [%s]%s => %v", share.Red, display, flat_path, share.End, full_path)
+            Log.Trace("%sAdded as Key [%s] [%s]%s => %v", util.Red, display, flat_path, util.End, full_path)
         }
     } else {
         data.AddMetric(flat_path, display, true)
-            Log.Trace("%sAdded as Metric [%s] [%s]%s => %v", share.Blue, display, flat_path, share.End, full_path)
+            Log.Trace("%sAdded as Metric [%s] [%s]%s => %v", util.Blue, display, flat_path, util.End, full_path)
     }
 }
 

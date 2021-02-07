@@ -63,6 +63,25 @@ mappings:
     'offline' : '2'
     'restricted' : '3'
 
+
+plugins:
+  FlexGroup:
+    type: data
+    export_options:
+      graphite_leafs:
+        - svm.{vserver_name}.vol.flexgroup.{volume_name}
+        - node.{node_name}.aggr.{aggregate_name}.vol.flexgroup.{volume_name}
+      labels_to_emit:
+        - volume_name
+        - node_name
+        - vserver_name
+        - aggregate_name
+        - count
+        - style
+        - state
+        - status
+
+
 export_options:
   graphite_leafs:
     - svm.{vserver_name}.vol.{volume_name}

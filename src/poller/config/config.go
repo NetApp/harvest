@@ -3,7 +3,7 @@ package config
 import (
 	"errors"
 	"path"
-	"goharvest2/poller/yaml"
+	"goharvest2/poller/struct/yaml"
 
 )
 

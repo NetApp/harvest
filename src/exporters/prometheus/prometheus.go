@@ -5,11 +5,11 @@ import (
     "os"
     "strings"
     "goharvest2/poller/exporter"
-    "goharvest2/poller/share"
-    "goharvest2/poller/yaml"
-    "goharvest2/poller/share/logger"
-    "goharvest2/poller/structs/matrix"
-    "goharvest2/poller/structs/options"
+    "goharvest2/poller/util"
+    "goharvest2/poller/util/logger"
+    "goharvest2/poller/struct/matrix"
+    "goharvest2/poller/struct/options"
+    "goharvest2/poller/struct/yaml"
 )
 
 var Log *logger.Logger = logger.New(1, "")
@@ -91,7 +91,7 @@ func (e *Prometheus) Export(data *matrix.Matrix) error {
         rendered := e.Render(data)
         Log.Debug("Simulating export of %d data points", len(rendered))
         for _, m := range rendered {
-            fmt.Printf("M= %s%s%s\n", share.Pink, m, share.End)
+            fmt.Printf("M= %s%s%s\n", util.Pink, m, util.End)
         }
     } else {
         e.cache = append(e.cache, data)
@@ -134,12 +134,12 @@ func (e *Prometheus) Render(data *matrix.Matrix) [][]byte {
     }
 
     global_labels := make([]string, 0)
-    for key, value := range data.GetGlobalLabels(   ) {
+    for key, value := range data.GlobalLabels.Iter() {
         global_labels = append(global_labels, fmt.Sprintf("%s=\"%s\"", key, value))
     }
 
     for key, instance := range data.Instances {
-        Log.Debug("Rendering instance [%d]", instance.Index)
+        Log.Debug("Rendering instance [%d] %v", instance.Index, instance.Labels.Iter())
 
         instance_labels := make([]string, 0)
         instance_keys := make([]string, len(global_labels))
@@ -195,10 +195,22 @@ func (e *Prometheus) Render(data *matrix.Matrix) [][]byte {
                 }
             } else {
                 values := data.GetArrayValues(metric, instance)
-                for i:=0; i<len(metric.Labels); i+=1 {
-                    if values[i] == values[i] {
-                        metric_data := fmt.Sprintf("%s_%s{%s,submetric=\"%s\"} %f", prefix, metric.Display, strings.Join(instance_keys, ","), metric.Labels[i], values[i])
-                        rendered = append(rendered, []byte(metric_data))
+                if metric.Dimensions == 1 {
+                    for i:=0; i<len(metric.Labels); i+=1 {
+                        if values[i] == values[i] {
+                            metric_data := fmt.Sprintf("%s_%s{%s,metric=\"%s\"} %f", prefix, metric.Display, strings.Join(instance_keys, ","), metric.Labels[i], values[i])
+                            rendered = append(rendered, []byte(metric_data))
+                        }
+                    }
+                } else if metric.Dimensions == 2 {
+                    for i:=0; i<len(metric.Labels); i+=1 {
+                        for j:=0; j<len(metric.SubLabels); j+=1 {
+                            k := i * len(metric.SubLabels) + j
+                            if values[k] == values[k] {
+                                metric_data := fmt.Sprintf("%s_%s{%s,metric=\"%s\",submetric=\"%s\"} %f", prefix, metric.Display, strings.Join(instance_keys, ","), metric.Labels[i], metric.SubLabels[j], values[k])
+                                rendered = append(rendered, []byte(metric_data))
+                            }
+                        }
                     }
                 }
             }

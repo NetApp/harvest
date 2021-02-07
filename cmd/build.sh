@@ -1,8 +1,16 @@
 #!/bin/bash
 
+
+COLOR_END='\033[0m'
+COLOR_GREEN='\033[0;32m'
+COLOR_RED='\033[0;31m'
+
+ROOT_DIR=$(pwd)
+
 all=false
 clean=false
 
+harvest=false
 poller=false
 
 collectors=false
@@ -25,6 +33,10 @@ case $1 in
     "clean")
         clean=true
         echo "clean all"
+        ;;
+    "harvest")
+        harvest=true
+        echo "build harvest"
         ;;
     "poller")
         poller=true
@@ -97,12 +109,16 @@ if [ $clean == true ]; then
     exit 0
 fi
 
-# compile poller
-if [ $all == true ] || [ $poller == true ]; then
-    cd src/poller/
-    go build -o ../../bin/poller
+# compile harvest
+if [ $all == true ] || [ $harvest == true ]; then
+    cd src/harvest/
+    go build -o ../../bin/harvest
+    if [ $? -eq 0 ]; then
+        echo -e "${COLOR_GREEN}compiled: /bin/harvest ${COLOR_END}"
+    else
+        echo -e "${COLOR_RED}compilation failed ${COLOR_END}"
+    fi
     cd ../../
-    echo "compiled: /bin/poller"
 fi
 
 # compile collector(s)
@@ -115,7 +131,31 @@ if [ $all == true ] || [ $collectors == true ] || [ "$collector" != "" ]; then
             cd $f
             if [ $all == true ] || [ $collectors == true ] || [ "$collector" == "$f" ]; then
                 go build -buildmode=plugin -o ../../../bin/collectors/"$f".so
-                echo "compiled: /bin/collectors/$f.so"
+
+                if [ $? -eq 0 ]; then
+                    echo -e "${COLOR_GREEN}compiled: /bin/collectors/$f.so ${COLOR_END}"
+                else
+                    echo -e "${COLOR_RED}compiling [/src/collectors/$f] failed ${COLOR_END}"
+                fi
+            fi
+
+            if [ -d "plugins" ]; then
+                echo "compiling plugins..."
+                cd plugins/
+                plugins=($(ls))
+                for p in ${plugins[@]}; do
+                    if [ -d "$p" ]; then
+                        cd $p
+                        go build -buildmode=plugin -o ../../../../../bin/plugins/"$f"/"$p".so
+                        if [ $? -eq 0 ]; then
+                            echo -e "  compiled bin/plugins/$f/$p.so"
+                        else
+                            echo -e "  compiling [/src/collectors/$f/$p] failed"
+                        fi
+                        cd ../
+                    fi
+                done
+                cd ../
             fi
             cd ../
         fi
@@ -133,7 +173,11 @@ if [ $all == true ] || [ $exporters == true ] || [ "$exporter" != "" ]; then
             cd $f
             if [ $all == true ] || [ $exporters == true ] || [ "$exporter" == "$f" ]; then
                 go build -buildmode=plugin -o ../../../bin/exporters/"$f".so
-                echo "compiled: /bin/exporters/$f.so"
+                if [ $? -eq 0 ]; then
+                    echo -e "${COLOR_GREEN}compiled: /bin/exporters/$f.so ${COLOR_END}"
+                else
+                    echo -e "${COLOR_RED}compilation failed ${COLOR_END}"
+                fi
             fi
             cd ../
         fi
@@ -151,7 +195,11 @@ if [ $all == true ] || [ $plugins == true ] || [ "$plugin" != "" ]; then
             cd $f
             if [ $all == true ] || [ $plugins == true ] || [ "$plugin" == "$f" ]; then
                 go build -buildmode=plugin -o ../../../bin/plugins/"$f".so
-                echo "compiled: /bin/plugins/$f.so"
+                if [ $? -eq 0 ]; then
+                    echo -e "${COLOR_GREEN}compiled: /bin/plugins/$f.so ${COLOR_END}"
+                else
+                    echo -e "${COLOR_RED}compilation failed ${COLOR_END}"
+                fi
             fi
             cd ../
         fi
@@ -169,10 +217,27 @@ if [ $all == true ] || [ $tools == true ] || [ "$tool" != "" ]; then
             cd $f
             if [ $all == true ] || [ $tools == true ] || [ "$tool" == "$f" ]; then
                 go build -o ../../../bin/"$f"
-                echo "compiled: /bin/$f"
+                if [ $? -eq 0 ]; then
+                    echo -e "${COLOR_GREEN}compiled: /bin/$f ${COLOR_END}"
+                else
+                    echo -e "${COLOR_RED}compilation failed ${COLOR_END}"
+                fi
             fi
             cd ../
         fi
     done
     cd ../../
 fi
+
+# compile poller
+if [ $all == true ] || [ $poller == true ]; then
+    cd src/poller/
+    go build -o ../../bin/poller
+    cd ../../
+    if [ $? -eq 0 ]; then
+        echo -e "${COLOR_GREEN}compiled: /bin/poller ${COLOR_END}"
+    else
+        echo -e "${COLOR_RED}compilation failed ${COLOR_END}"
+    fi
+fi
+pwd

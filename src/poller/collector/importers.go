@@ -7,7 +7,7 @@ import (
     "strconv"
     "errors"
 	"io/ioutil"
-	"goharvest2/poller/yaml"
+	"goharvest2/poller/struct/yaml"
 )
 
 func ImportTemplate(harvest_path, collector_name string) (*yaml.Node, error) {
@@ -15,7 +15,7 @@ func ImportTemplate(harvest_path, collector_name string) (*yaml.Node, error) {
 	return yaml.Import(fp)
 }
 
-func ImportObjectTemplate(harvest_path, dirname, filename, collector string, version [3]int) (*yaml.Node, error) {
+func ImportSubTemplate(harvest_path, dirname, filename, collector string, version [3]int) (*yaml.Node, error) {
 
     var err error
     var selected_version string

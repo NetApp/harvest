@@ -4,37 +4,30 @@ const (
 	MISSING_PARAM = "missing parameter"
 	INVALID_PARAM = "invalid parameter"
 	ERR_CONNECTION = "connection error"
+	ERR_CONFIG = "configuration error"
+	NO_METRICS = "no metrics"
+	MATRIX_HASH = "matrix error"
+	MATRIX_EMPTY = "empty cache"
+	MATRIX_INV_PARAM = "matrix invalid parameter"
+	MATRIX_PARSE_STR = "parse numeric value from string"
+	API_RESPONSE = "error reading api response"
+	API_REQ_REJECTED = "api request rejected"
+	ERR_DLOAD = "dynamic module"
 )
 
 type Error struct {
-	Category string
-	Details string
+	err string
+	msg string
 }
 
 func (e Error) Error() string {
-	return e.Category + ": " + e.Details
+	return e.err + ": " + e.msg
 }
 
-func (e Error) IsMissingParam() bool {
-	return e.Category == MISSING_PARAM
+func (e Error) IsErr(name string) bool {
+	return e.err == name
 }
 
-func (e Error) IsInvalidParam() bool {
-	return e.Category == INVALID_PARAM
-}
-
-func New(c, d string) error {
-	return Error{Category: c, Details: d}
-}
-
-func MissingParam(d string) error {
-	return New(MISSING_PARAM, d)
-}
-
-func InvalidParam(d string) error {
-	return New(INVALID_PARAM, d)
-}
-
-func ConnectionError(d string) error {
-	return New(ERR_CONNECTION, d)
+func New(name, msg string) Error {
+	return Error{err:name, msg:msg}
 }

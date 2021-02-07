@@ -7,14 +7,14 @@
 
 .PHONY: build clean install uninstall
 
-build: go
-	scripts/build.sh $(ARGS)
+build: 
+	cmd/build.sh $(ARGS)
 
 clean:
-	scripts/build.sh $(ARGS)
+	cmd/build.sh $(ARGS)
 
 install:
-	scripts/install.sh $(ARGS)
+	cmd/install.sh $(ARGS)
 
 uninstall:
-	scripts/install.sh --uninstall $(ARGS)
+	cmd/install.sh --uninstall $(ARGS)

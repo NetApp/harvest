@@ -1,25 +1,30 @@
 package matrix
 
+import (
+	"goharvest2/poller/errors"
+	"goharvest2/poller/struct/dict"
+
+)
+
 // Instance struct and related methods
 
 type Instance struct {
 	Name string
 	Index int
 	Display string
-	Labels map[string]string
+	Labels *dict.Dict
 }
 
 func NewInstance (index int) *Instance {
     var I Instance
     I = Instance{Index: index}
-    I.Labels = map[string]string{}
+    I.Labels = dict.New()
     return &I
 }
 
 func (m *Matrix) AddInstance(key string) (*Instance, error) {
 	if _, exists := m.Instances[key]; exists {
-		err = errors.New(fmt.Sprintf("Instance [%s] already in cache", key))
-		return nil, err
+		return nil, errors.New(errors.MATRIX_HASH, "instance [" + key + "] already in cache")
 	}
 
 	i := NewInstance(len(m.Instances))
