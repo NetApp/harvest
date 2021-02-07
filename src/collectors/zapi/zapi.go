@@ -93,7 +93,7 @@ func (c *Zapi) Init() error {
         return errors.New("missing parameters")
     }
 
-    counters.PrintTree(0)
+    //counters.PrintTree(0)
     Log.Debug("Parsing counters: %d values, %d children", len(counters.Values), len(counters.Children))
     ParseCounters(c.Data, counters, make([]string, 0))
     Log.Debug("Built counter cache with %d Metrics and %d Labels", c.Data.MetricsIndex+1, len(c.Data.Instances))
@@ -145,7 +145,7 @@ func (c *Zapi) Start(wg *sync.WaitGroup) {
                     results = append(results, data)
 
                     Log.Debug("\n\nCOLLECTOR DATA\n")
-                    data.Print()
+                    //data.Print()
 
                     for _, p := range c.Plugins {
                         if p.GetType() == "data" {
@@ -159,7 +159,7 @@ func (c *Zapi) Start(wg *sync.WaitGroup) {
                                     if x != nil {
                                         results = append(results, x)
                                         Log.Debug("\n\nPLUGIN DATA\n")
-                                        x.Print()
+                                        //x.Print()
                                     }
                                 }
 
@@ -242,7 +242,7 @@ func (c *Zapi) poll_instance() error {
 
         if !found {
             Log.Debug("Skipping instance, keys not found:")
-            xml.PrintTree(instance, 0)
+            //xml.PrintTree(instance, 0)
         } else {
             _, err = c.Data.AddInstance(strings.Join(keys, "."))
             if err != nil {

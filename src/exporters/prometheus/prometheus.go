@@ -79,7 +79,7 @@ func (e *Prometheus) Init() error {
     
 	/* initialize underlaying arrays */
     err := e.Metadata.InitData()
-    e.Metadata.Print()
+    //e.Metadata.Print()
 
     Log.Info("metadata with %d metrics (index = %d)", len(e.Metadata.Metrics), e.Metadata.MetricsIndex)
     return err
@@ -91,7 +91,7 @@ func (e *Prometheus) Export(data *matrix.Matrix) error {
         rendered := e.Render(data)
         Log.Debug("Simulating export of %d data points", len(rendered))
         for _, m := range rendered {
-            fmt.Printf("M= %s%s%s\n", util.Pink, m, util.End)
+            Log.Debug("M= %s%s%s", util.Pink, m, util.End)
         }
     } else {
         e.cache = append(e.cache, data)

@@ -160,7 +160,7 @@ func (c *ZapiPerf) Start(wg *sync.WaitGroup) {
                 
                 if data != nil {
 
-					data.Print()
+					//data.Print()
                     
                     Log.Debug("exporting to %d exporters", len(c.Exporters))
 

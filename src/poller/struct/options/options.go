@@ -61,9 +61,9 @@ func GetOpts() (*Options, string, error)  {
     var err error
     args = Options{}
 
-    fmt.Println("\n--------------------------------------------------------------------------------")
-    fmt.Println(os.Args)
-    fmt.Println("--------------------------------------------------------------------------------\n")
+    //fmt.Println("\n--------------------------------------------------------------------------------")
+    //fmt.Println(os.Args)
+    //fmt.Println("--------------------------------------------------------------------------------\n")
 
     
     flag.StringVar(&args.Poller, "poller", "",
@@ -100,7 +100,7 @@ func GetOpts() (*Options, string, error)  {
     }
 
     if args.Poller == "" {
-        fmt.Println("Missing required argument: poller")
+        //fmt.Println("Missing required argument: poller")
         flag.PrintDefaults()
         os.Exit(1)
     }
@@ -108,14 +108,14 @@ func GetOpts() (*Options, string, error)  {
         var cwd string
 		cwd, _ = os.Getwd()
         if base := path.Base(cwd); base == "poller" {
-            fmt.Println("base=", base)
+            //fmt.Println("base=", base)
             cwd, _ = path.Split(cwd)
-            fmt.Println("=> ", cwd)
+            //fmt.Println("=> ", cwd)
         }
 		if base := path.Base(cwd); base == "src" {
-            fmt.Println("base=", base)
+            //fmt.Println("base=", base)
 			cwd, _ = path.Split(cwd)
-            fmt.Println("=> ", cwd)
+            //fmt.Println("=> ", cwd)
 		}
 		args.Path = cwd
     }

@@ -148,7 +148,7 @@ func (c *AbstractCollector) WantedExporters() []string {
 
 func (c *AbstractCollector) LinkExporter(e exporter.Exporter) {
 	// @TODO: add lock if we want to add exporters while collector is running
-	Log.Info("Adding exporter [%s:%s]", e.GetClass(), e.GetName())
+	//Log.Info("Adding exporter [%s:%s]", e.GetClass(), e.GetName())
 	c.Exporters = append(c.Exporters, e)
 }
 
@@ -179,6 +179,6 @@ func (c *AbstractCollector) LoadPlugins(params *yaml.Node) error {
 
 		c.Plugins = append(c.Plugins, p)
 	}
-	Log.Debug("initialized %d plugins", len(c.Plugins))
+	//Log.Debug("initialized %d plugins", len(c.Plugins))
 	return nil
 }

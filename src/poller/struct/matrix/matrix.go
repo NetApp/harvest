@@ -1,12 +1,12 @@
 package matrix
 
 import (
-	"fmt"
+	//"fmt"
     "math"
     "strings"
     "strconv"
 	"goharvest2/poller/errors"
-    "goharvest2/poller/util"
+    //"goharvest2/poller/util"
     "goharvest2/poller/struct/yaml"
     "goharvest2/poller/struct/dict"
 )
@@ -207,8 +207,8 @@ func (m *Matrix) AddInstanceKey(key []string) {
     copy(copied, key)
 
     m.InstanceKeys = append(m.InstanceKeys, copied)
-    fmt.Printf("%s+ InstancKey %v%s\n", util.Bold, copied, util.End)
-    fmt.Printf("%s= %v %s\n", util.Red, m.InstanceKeys, util.End)
+    //fmt.Printf("%s+ InstancKey %v%s\n", util.Bold, copied, util.End)
+    //fmt.Printf("%s= %v %s\n", util.Red, m.InstanceKeys, util.End)
 }
 
 func (m *Matrix) GetInstanceKeys() [][]string {

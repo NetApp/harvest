@@ -1,7 +1,7 @@
 package zapi
 
 import (
-    "fmt"
+    //"fmt"
     "time"
     "bytes"
     "io"
@@ -36,7 +36,7 @@ func New(config *yaml.Node) (*Client, error) {
 
     request, err = http.NewRequest("POST", url, nil)
     if err != nil {
-        fmt.Printf("[Client.New] Error initializing request: %s\n", err)
+        //fmt.Printf("[Client.New] Error initializing request: %s\n", err)
         return client, err
     }
 
@@ -46,7 +46,7 @@ func New(config *yaml.Node) (*Client, error) {
     if config.GetChildValue("auth_style") == "certificate_auth" {
         cert, err = tls.LoadX509KeyPair(config.GetChildValue("ssl_cert"), config.GetChildValue("ssl_key"))
         if err != nil {
-            fmt.Printf("[Client.New] Error loading key pair: %s\n", err)
+            //fmt.Printf("[Client.New] Error loading key pair: %s\n", err)
             return client, err
         }
         transport = &http.Transport{ TLSClientConfig : &tls.Config{Certificates : []tls.Certificate{cert}, InsecureSkipVerify : true }, }

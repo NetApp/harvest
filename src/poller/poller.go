@@ -55,7 +55,7 @@ func (p *Poller) Init() error {
 	/* Set poller main attributes */
 	p.options, p.Name, err = options.GetOpts()
 
-	p.options.Print()
+	//p.options.Print()
 
 	/* If daemon, make sure handler outputs to file */
 	if p.options.Daemon {

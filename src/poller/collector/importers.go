@@ -22,12 +22,12 @@ func ImportSubTemplate(harvest_path, dirname, filename, collector string, versio
     var template *yaml.Node
 
     path_prefix := path.Join(harvest_path, "config/", strings.ToLower(collector), dirname, "cdot")
-    Log.Debug("Looking for best-fitting template in [%s]", path_prefix)
+    //Log.Debug("Looking for best-fitting template in [%s]", path_prefix)
 
     available := make(map[string]bool)
     files, _ := ioutil.ReadDir(path_prefix)
     for _, file := range files {
-        Log.Debug("Found version dir: [%s]", file.Name())
+        //Log.Debug("Found version dir: [%s]", file.Name())
         if match, _ := regexp.MatchString(`\d+\.\d+\.\d+`, file.Name()); match == true && file.IsDir() {
             available[file.Name()] = true
         }
@@ -45,7 +45,7 @@ func ImportSubTemplate(harvest_path, dirname, filename, collector string, versio
     }
 
     if selected_version == "" {
-        Log.Debug("looking for newer version")
+        //Log.Debug("looking for newer version")
 
         vers = version[0] * 100 + version[1] * 10 + version[2]
 
@@ -63,7 +63,7 @@ func ImportSubTemplate(harvest_path, dirname, filename, collector string, versio
         err = errors.New("No best-fitting subtemplate version found")
     } else {
         template_path := path.Join(path_prefix, selected_version, filename)
-        Log.Info("Selected best-fitting subtemplate [%s]", template_path)
+        //Log.Info("Selected best-fitting subtemplate [%s]", template_path)
         template, err = yaml.Import(template_path)
     }
     return template, err
