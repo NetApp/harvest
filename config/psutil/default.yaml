@@ -48,6 +48,8 @@ counters:
 
 export_options:
 
-  include_keys:
+  instance_keys:
     - poller
     - pid
+    - status
+  include_instance_names: False
