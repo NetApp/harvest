@@ -8,13 +8,11 @@ import (
 	"goharvest2/poller/struct/xml"
 	"goharvest2/poller/struct/yaml"
 	"goharvest2/poller/struct/dict"
-	"goharvest2/poller/util/logger"
+	"goharvest2/share/logger"
 	//"goharvest2/poller/errors"
 
     client "goharvest2/poller/api/zapi"
 )
-
-var Log *logger.Logger = logger.New(1, "")
 
 type SnapMirror struct {
 	*plugin.AbstractPlugin
@@ -41,10 +39,8 @@ func (p *SnapMirror) Init() error {
 		return err
 	}
 
-	Log = logger.New(p.Options.LogLevel, "Plugin:"+p.Name)
-
     if p.connection, err = client.New(p.ParentParams); err != nil {
-        Log.Error("connecting: %v", err)
+        logger.Error(p.Prefix, "connecting: %v", err)
 		return err
 	}
 
@@ -59,7 +55,7 @@ func (p *SnapMirror) Init() error {
 	p.dest_limit_cache = dict.New()
 	p.src_limit_cache = dict.New()
 
-	Log.Debug("plugin initialized")
+	logger.Debug(p.Prefix, "plugin initialized")
 	return nil
 }
 
@@ -81,14 +77,14 @@ func (p *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		if err := p.update_node_cache(); err != nil {
 			return nil, err
 		}
-		Log.Debug("updated node cache")
+		logger.Debug(p.Prefix, "updated node cache")
 	}
 
 	if p.limit_cache_counter == 1 {
 		if err := p.update_limit_cache(); err != nil {
 			return nil, err
 		}
-		Log.Debug("updated limit cache")
+		logger.Debug(p.Prefix, "updated limit cache")
 	}
 
 	dest_upd_count := 0
@@ -135,7 +131,7 @@ func (p *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 	}
 
-	Log.Debug("updated %d destination and %d source nodes, %d node limits", dest_upd_count, src_upd_count, limit_upd_count)
+	logger.Debug(p.Prefix, "updated %d destination and %d source nodes, %d node limits", dest_upd_count, src_upd_count, limit_upd_count)
 
 	return nil, nil
 }
@@ -178,7 +174,7 @@ func (p *SnapMirror) update_node_cache() error {
 
 		next_tag_tmp := resp.GetChildContentS("next-tag")
 		if next_tag_tmp == next_tag {
-			Log.Warn("invalid [next-tag] (ZAPI bug)")
+			logger.Warn(p.Prefix, "invalid [next-tag] (ZAPI bug)")
 			break
 		}
 		next_tag = next_tag_tmp
@@ -195,7 +191,7 @@ func (p *SnapMirror) update_node_cache() error {
 		}
 	}
 
-	Log.Debug("updated node cache for %d volumes", count)
+	logger.Debug(p.Prefix, "updated node cache for %d volumes", count)
 	return nil	
 }
 
@@ -236,7 +232,7 @@ func (p *SnapMirror) update_limit_cache() error {
 			count += 1
 		}
 	}
-	Log.Debug("updated limit cache for %d nodes", count)
+	logger.Debug(p.Prefix, "updated limit cache for %d nodes", count)
 	return nil
 
 }

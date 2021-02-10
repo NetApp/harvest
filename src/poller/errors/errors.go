@@ -14,6 +14,7 @@ const (
 	API_REQ_REJECTED = "api request rejected"
 	ERR_DLOAD = "dynamic module"
 	NO_INSTANCES = "no instances"
+	ERR_IMPLEMENT = "implementation error"
 )
 
 type Error struct {
@@ -23,6 +24,10 @@ type Error struct {
 
 func (e Error) Error() string {
 	return e.err + ": " + e.msg
+}
+
+func (e Error) ErrCode() string {
+	return e.err
 }
 
 func (e Error) IsErr(name string) bool {

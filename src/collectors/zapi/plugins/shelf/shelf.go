@@ -38,7 +38,7 @@ func (p *Shelf) Init() error {
 	Log = logger.New(p.Options.LogLevel, "PLUGIN:"+p.Name)
 
     if p.connection, err = client.New(p.ParentParams); err != nil {
-        Log.Error("connecting: %v", err)
+        logger.Error(p.Prefix, "connecting: %v", err)
 		return err
 	}
 
@@ -47,7 +47,7 @@ func (p *Shelf) Init() error {
         return err
     }
 
-	Log.Debug("plugin connected!")
+	logger.Debug(p.Prefix, "plugin connected!")
 
 	p.data = make(map[string]*matrix.Matrix)
 	p.instance_keys = make(map[string]string)
@@ -87,32 +87,32 @@ func (p *Shelf) Init() error {
 						p.instance_keys[attribute] = c[2:]
 						p.data[attribute].AddLabelKeyName(c[2:], display)
 						instance_keys.AddValue(display)
-						Log.Debug("Adding as instance key: (%s) (%s) [%s]", attribute, x.Name, display)
+						logger.Debug(p.Prefix, "Adding as instance key: (%s) (%s) [%s]", attribute, x.Name, display)
 					} else {
 						p.data[attribute].AddLabelKeyName(c[1:], display)
 						instance_labels.AddValue(display)
-						Log.Debug("Adding as label: (%s) (%s) [%s]", attribute, x.Name, display)
+						logger.Debug(p.Prefix, "Adding as label: (%s) (%s) [%s]", attribute, x.Name, display)
 					}
 				} else {
 					p.data[attribute].AddMetric(c, display, true)
-					Log.Debug("Adding as label: (%s) (%s) [%s]", attribute, x.Name, c)
+					logger.Debug(p.Prefix, "Adding as label: (%s) (%s) [%s]", attribute, x.Name, c)
 				}
 			}
 		}
-		Log.Debug("added data for [%s] with %d metrics and %d labels", attribute, len(p.data[attribute].Metrics), p.data[attribute].LabelNames.Size())
+		logger.Debug(p.Prefix, "added data for [%s] with %d metrics and %d labels", attribute, len(p.data[attribute].Metrics), p.data[attribute].LabelNames.Size())
 		export_options.AddChild(instance_keys)
 		export_options.AddChild(instance_labels)
 		export_options.CreateChild("include_instance_names", "False")
 		p.data[attribute].SetExportOptions(export_options)
 	}
 
-	Log.Debug("initialized data with [%d] objects", len(p.data))
+	logger.Debug(p.Prefix, "initialized data with [%d] objects", len(p.data))
 	return nil
 }
 
 func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
-	Log.Info("Running plugin!!!!")
+	logger.Info(p.Prefix, "Running plugin!!!!")
 
 	p.connection.BuildRequestString("storage-shelf-info-get-iter")
 	result, err := p.connection.Invoke()
@@ -125,7 +125,7 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		return nil, errors.New(errors.NO_INSTANCES, "no shelf instances")
 	}
 
-	Log.Debug("fetching %d shelf counters", len(shelves.GetChildren()))
+	logger.Debug(p.Prefix, "fetching %d shelf counters", len(shelves.GetChildren()))
 
 
 	output := make([]*matrix.Matrix, 0)
@@ -140,17 +140,17 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			data.ResetInstances()
 
 			if p.instance_keys[attribute] == "" {
-				Log.Warn("no instances key defined for object [%s], skipping....", attribute)
+				logger.Warn(p.Prefix, "no instances key defined for object [%s], skipping....", attribute)
 				continue
 			}
 
 			object_elem, has := shelf.GetChild(attribute)
 			if !has {
-				Log.Warn("no [%s] instances on this system", attribute)
+				logger.Warn(p.Prefix, "no [%s] instances on this system", attribute)
 				continue
 			}
 
-			Log.Debug("fetching %d [%s] instances.....", len(object_elem.GetChildren(	)), attribute)
+			logger.Debug(p.Prefix, "fetching %d [%s] instances.....", len(object_elem.GetChildren(	)), attribute)
 
 			for _, obj := range object_elem.GetChildren() {
 
@@ -159,11 +159,11 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					instance, err := data.AddInstance(shelf_id + "." + key)
 
 					if err != nil {
-						Log.Warn("add (%s) instance: %v", attribute, err)
+						logger.Warn(p.Prefix, "add (%s) instance: %v", attribute, err)
 						continue
 					}
 
-					Log.Debug("add (%s) instance: %s.%s", attribute, shelf_id, key)
+					logger.Debug(p.Prefix, "add (%s) instance: %s.%s", attribute, shelf_id, key)
 
 					for label, label_display := range data.LabelNames.Iter() {
 						if value := obj.GetChildContentS(label); value != "" {
@@ -175,7 +175,7 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					instance.Labels.Set("shelf_id", shelf_id)
 
 				} else  {
-					Log.Warn("instance without [%s], skipping", p.instance_keys[attribute])
+					logger.Warn(p.Prefix, "instance without [%s], skipping", p.instance_keys[attribute])
 				}
 			}
 
@@ -213,7 +213,7 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				instance := data.GetInstance(shelf_id + "." + key)
 				
 				if instance == nil {
-					Log.Warn("(%s) instance [%s.%s] not found in cache skipping", attribute, shelf_id, key)
+					logger.Warn(p.Prefix, "(%s) instance [%s.%s] not found in cache skipping", attribute, shelf_id, key)
 					continue
 				}
 
@@ -223,9 +223,9 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					if value := obj.GetChildContentS(mkey); value != "" {
 						if num, err := strconv.ParseFloat(value, 32); err == nil {
 							data.SetValue(m, instance, num)
-							Log.Debug("Added numeric [%s] = [%f]", mkey, num)
+							logger.Debug(p.Prefix, "Added numeric [%s] = [%f]", mkey, num)
 						} else {
-							Log.Warn("Failed to convert [%s] = [%s]", mkey, value)
+							logger.Warn(p.Prefix, "Failed to convert [%s] = [%s]", mkey, value)
 						}
 					}
 				}

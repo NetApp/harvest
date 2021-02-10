@@ -1,7 +1,7 @@
 
 name:                         SnapMirror
 query:                        snapmirror-get-iter
-object:                       snapmirror  
+object:                       snapmirror
 
 instance_key:                 relationship_id
 

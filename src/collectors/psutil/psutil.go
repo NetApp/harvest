@@ -8,15 +8,14 @@ import (
 	"strconv"
 	"errors"
 	"io/ioutil"
+	"goharvest2/share/logger"
 	"github.com/shirou/gopsutil/process"
 	"goharvest2/poller/struct/yaml"
 	"goharvest2/poller/struct/matrix"
 	"goharvest2/poller/struct/options"
-	"goharvest2/poller/util/logger"
     "goharvest2/poller/collector"
 )
 
-var Log *logger.Logger = logger.New(1, "")
 
 var extractors = map[string]interface{}{
 	"Times" 	     : cpu_times,
@@ -61,7 +60,7 @@ func (c *Psutil) Init() error {
 	c.Data.SetGlobalLabel("hostname", hostname)
 	c.Data.SetGlobalLabel("datacenter", c.Params.GetChildValue("datacenter"))
 
-	Log.Info("Collector initialized")
+	logger.Info(c.Prefix, "Collector initialized")
 
 	return nil
 
@@ -82,32 +81,32 @@ func (c *Psutil) Start(wg *sync.WaitGroup) {
 				data, err := c.poll(task)
 
 				if err != nil {
-					Log.Warn("%s poll failed: %v", task, err)
+					logger.Warn(c.Prefix, "%s poll failed: %v", task, err)
 					return
 				}
 
-				Log.Debug("%s poll completed", task)
+				logger.Debug(c.Prefix, "%s poll completed", task)
 
 				duration := c.Schedule.Stop(task)
 				c.Metadata.SetValueSS("poll_time", task, duration.Seconds())
 
 				if data != nil {
 
-					Log.Debug("exporting to %d exporters", len(c.Exporters))
+					logger.Debug(c.Prefix, "exporting to %d exporters", len(c.Exporters))
 
 					for _, e := range c.Exporters {
 						if err := e.Export(data); err != nil {
-							Log.Warn("export to [%s] failed: %v", e.GetName(), err)
+							logger.Warn(c.Prefix, "export to [%s] failed: %v", e.GetName(), err)
 						}
 					}
 				}
 			}
 
-			Log.Debug("exporting metadata")
+			logger.Debug(c.Prefix, "exporting metadata")
 
 			for _, e := range c.Exporters {
 				if err := e.Export(c.Metadata); err != nil {
-					Log.Warn("metadata export to [%s] failed: %v", e.GetName(), err)
+					logger.Warn(c.Prefix, "metadata export to [%s] failed: %v", e.GetName(), err)
 				}
 			}
 		}
@@ -140,29 +139,29 @@ func (c *Psutil) poll_data() (*matrix.Matrix, error) {
 		c.Data.SetValueS("status", instance, float64(1))
 
 		if pid == "" {
-			Log.Debug("Skip instance [%s]: not running", key)
+			logger.Debug(c.Prefix, "Skip instance [%s]: not running", key)
 			continue
 		}
 
 		pid_i, err := strconv.Atoi(pid)
 		if err != nil {
-			Log.Warn("Skip instance [%s], failed convert PID: %v", key, err)
+			logger.Warn(c.Prefix, "Skip instance [%s], failed convert PID: %v", key, err)
 			continue
 		}
 
 		proc, err := process.NewProcess(int32(pid_i))
 		if err != nil {
-			Log.Debug("Skip instance [%s], proc not found: %v", key, err)
+			logger.Debug(c.Prefix, "Skip instance [%s], proc not found: %v", key, err)
 			continue
 		}
 
 		name, _ := proc.Name()
 		cmdline, _ := proc.Cmdline()
 
-		Log.Debug("Extracting instance [%s] counters (%s) [%s]\n", key, name, cmdline)
+		logger.Debug(c.Prefix, "Extracting instance [%s] counters (%s) [%s]\n", key, name, cmdline)
 
 		if !strings.Contains(name, "poller") || !strings.Contains(cmdline, poller) {
-			Log.Debug("Skip instance [%s]: PID might have changed")
+			logger.Debug(c.Prefix, "Skip instance [%s]: PID might have changed")
 			continue
 		}
 
@@ -227,7 +226,7 @@ func (c *Psutil) poll_data() (*matrix.Matrix, error) {
 				}
 
 				if len(values) != len(metric.Labels) {
-					Log.Warn("Extracted [%s] values (%d) not what expected (%d)", metric.Display, len(values), len(metric.Labels))
+					logger.Warn(c.Prefix, "Extracted [%s] values (%d) not what expected (%d)", metric.Display, len(values), len(metric.Labels))
 					continue
 				}
 
@@ -235,7 +234,7 @@ func (c *Psutil) poll_data() (*matrix.Matrix, error) {
 			}
 		}
 	}
-	Log.Info("Data poll completed!")
+	logger.Info(c.Prefix, "Data poll completed!")
 	return m, nil
 }
 
@@ -246,7 +245,7 @@ func (c *Psutil) load_metrics(counters *yaml.Node) {
 	for _, child := range counters.Children {
 		name, display := parse_metric_name(child.Name)
 
-		Log.Debug("Parsing [%s] => (%s => %s)", child.Name, name, display)
+		logger.Debug(c.Prefix, "Parsing [%s] => (%s => %s)", child.Name, name, display)
 
 		labels := make([]string, len(child.Values))
 		for i, label := range(child.Values) {
@@ -254,16 +253,16 @@ func (c *Psutil) load_metrics(counters *yaml.Node) {
 			labels[i] = strings.ToLower(display)
 		}
 
-		Log.Debug("Parsed (%d) labels [%v] => (%d) [%v]", len(child.Values), child.Values, len(labels), labels)
+		logger.Debug(c.Prefix, "Parsed (%d) labels [%v] => (%d) [%v]", len(child.Values), child.Values, len(labels), labels)
 		
 		m.AddArrayMetric(name, display, labels, true)
-		Log.Debug("+ Array metric [%s => %s] with %d labels", name, display, len(labels))
+		logger.Debug(c.Prefix, "+ Array metric [%s => %s] with %d labels", name, display, len(labels))
 	}
 
 	for _, value := range counters.Values {
 		name, display := parse_metric_name(value)
 		m.AddMetric(name, display, true)
-		Log.Debug("+ Scalar metric [%s => %s]", name, display)
+		logger.Debug(c.Prefix, "+ Scalar metric [%s => %s]", name, display)
 	}
 
 	//m.AddMetric("status", "status", true) // static metric
@@ -272,7 +271,7 @@ func (c *Psutil) load_metrics(counters *yaml.Node) {
 	m.AddLabelName("pid")
 	//m.AddLabelName("state")
 
-	Log.Info("Loaded %d metrics", m.MetricsIndex)
+	logger.Info(c.Prefix, "Loaded %d metrics", m.MetricsIndex)
 }
 
 func parse_metric_name(raw_name string) (string, string) {
@@ -307,20 +306,20 @@ func (c *Psutil) poll_instance() error {
 			} else if exists, _ := process.PidExists(int32(pid_i)); !exists {
 				pid_s = ""
 			}
-			Log.Debug("Added pid [%s] from [%s]", pid_s, pidfp)
+			logger.Debug(c.Prefix, "Added pid [%s] from [%s]", pid_s, pidfp)
 		} else {
-			Log.Debug("No such pid file [%s]", pidfp)
+			logger.Debug(c.Prefix, "No such pid file [%s]", pidfp)
 		}
 
 		if pid_s == "" {
-			Log.Debug("Adding instance [%s] - not running", name)
+			logger.Debug(c.Prefix, "Adding instance [%s] - not running", name)
 
 			instance, _ := c.Data.AddInstance(name)
 
 			c.Data.SetInstanceLabel(instance, "poller", name)
 			c.Data.SetInstanceLabel(instance, "pid", "")
 		} else {
-			Log.Debug("Adding instance [%s] - up and running", name)
+			logger.Debug(c.Prefix, "Adding instance [%s] - up and running", name)
 
 			instance, _ := c.Data.AddInstance(name+"."+pid_s)
 
@@ -329,7 +328,7 @@ func (c *Psutil) poll_instance() error {
 		}
 
 	}
-	Log.Info("InstancePoll complete: added %d instances", len(c.Data.Instances))
+	logger.Info(c.Prefix, "InstancePoll complete: added %d instances", len(c.Data.Instances))
 
 	return nil
 }

@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"sync"
 	"time"
+    "goharvest2/share/logger"
 	"goharvest2/poller/errors"
     "goharvest2/poller/struct/matrix"
 	"goharvest2/poller/struct/options"
@@ -13,7 +14,6 @@ import (
     "goharvest2/poller/struct/yaml"
     "goharvest2/poller/struct/xml"
     "goharvest2/poller/share"
-    "goharvest2/poller/share/logger"
 	"goharvest2/poller/collector"
 	
 	client "goharvest2/poller/api/zapi"

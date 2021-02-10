@@ -3,14 +3,13 @@ package main
 import (
 	"strings"
 	"strconv"
+	"goharvest2/share/logger"
 	"goharvest2/poller/collector/plugin"
     "goharvest2/poller/struct/matrix"
 	"goharvest2/poller/struct/options"
 	"goharvest2/poller/struct/yaml"
-	"goharvest2/poller/util/logger"
 )
 
-var Log *logger.Logger = logger.New(1, "")
 
 type FlexGroup struct {
 	*plugin.AbstractPlugin
@@ -71,7 +70,7 @@ func (p *FlexGroup) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 	}
 
-	Log.Debug("extracted %d flexgroup instances", len(counts))
+	logger.Debug(p.Prefix, "extracted %d flexgroup instances", len(counts))
 
 	n.InitData()
 

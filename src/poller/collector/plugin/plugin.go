@@ -18,6 +18,7 @@ type Plugin interface {
 type AbstractPlugin struct {
 	Parent string
 	Name string
+	Prefix string
 	Type string
 	Options *options.Options
 	Params *yaml.Node
@@ -39,6 +40,8 @@ func (p *AbstractPlugin) InitAbc() error {
 	if p.Name = p.Params.Name; p.Name == "" {
 		return errors.New(errors.MISSING_PARAM, "plugin name")
 	}
+
+	pl.Prefix = "(plugin) (" + p.Parent + ":" + p.Name + ")"
 
 	if p.Type = p.Params.GetChildValue("type"); p.Type == "" {
 		return errors.New(errors.MISSING_PARAM, "plugin type")

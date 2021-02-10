@@ -3,7 +3,7 @@ package schedule
 import (
     "fmt"
     "time"
-    "errors"
+    "goharvest2/poller/errors"
 )
 
 /*
@@ -34,14 +34,39 @@ import (
 
 */
 
+type Task struct {
+    Name string
+    interval time.Duration
+    timer time.Time
+    foo func() (*matrix.Matrix, error)
+}
+
+func (t *Task) Start() {
+    t.timer = time.Now()
+}
+
+func (t *Task) Run() (*matrix.Matrix, error) {
+    t.Start()
+    return t.foo()
+}
+
+func (t *Task) Runtime() time.Duration {
+    return time.Since(t.timer)
+}
+
+func (t *Task) GetInterval() time.Duration {
+    return t.interval
+}
+
+func (t *Task) NextDue() time.Duration {
+    return t.interval - time.Since(t.timer)   
+}
+
 type Schedule struct {
-    tasks []string
-    foos map[string]interface{}
-    intervals map[string]time.Duration
-    timers map[string]time.Time
+    tasks []*Task
     standby_mode bool
-    standby_task string
-    standby_interval time.Duration
+    standby_task Task
+    cached_interval time.Duration
     standby_timer time.Time
 }
 
@@ -49,37 +74,46 @@ type Schedule struct {
 // to run the Schedule until tasks have been added
 func New() *Schedule {
 	s := Schedule{}
-    s.tasks = make([]string, 0)
-    s.foos = make(map[string]interface{})
-    s.intervals = make(map[string]time.Duration)
-    s.timers = make(map[string]time.Time)
+    s.tasks = make([]*Task, 0)
     s.standby_mode = false
 	return &s
 }
 
-func (s *Schedule) IsStandbyMode() bool {
+func (s *Schedule) IsStandBy() bool {
     return s.standby_mode
 }
 
 // StandbyMode will make the schedule stop all tasks except one
 // and will set a temporary extended interval for one task
-func (s *Schedule) SetStandbyMode(task string, interval time.Duration) {
-    s.standby_mode = true
-    s.standby_task = task
-    s.standby_interval = interval
-    s.standby_timer = time.Now()
+func (s *Schedule) SetStandByMode(t string, i time.Duration) {
+    if task, ok := s.tasks[t]; ok {
+        s.standby_mode = true
+        s.standby_task = task
+        s.cached_interval = task.interval // remember normal interval of task
+        task.interval = i
+        task.timer = time.Now()
+    } else {
+        panic("invalid task: " + task_name)
+    }
 }
 
-// Undo StandbyMode
-func (s *Schedule) UnsetStandbyMode() {
-    s.standby_mode = false
+// Undo StandbyMode. We assume that stalled task was success, so schedule
+// the other tasks to run on next poll
+func (s *Schedule) Recover() {
+
+    if task, ok := s.tasks[s.standby_task]; ok {
+        task.interval = s.cached_interval
+        task.timer = time.Now()
+    }
+
     for _, task := range s.tasks {
-        if task == s.standby_task {
-            s.timers[task] = time.Now()
-        } else {
-            s.timers[task] = time.Now().Add(-s.getInterval(task))
+        if task != s.standby_task {
+            task.timer = time.Now().Add(-task.interval)
         }
     }
+    s.cached_interval = nil
+    s.standby_task = nil
+    s.standby_mode = false
 }
 
 // Add new task to Schedule and set to run immediately.
@@ -89,181 +123,102 @@ func (s *Schedule) UnsetStandbyMode() {
 //              the task, can be nil if not useful.
 // The order in which tasks are added is maintained: GetTasks() will
 // return tasks in FIFO order.
-func (s *Schedule) AddTask(task string, interval time.Duration, foo interface{}) error {
-    if interval > 0 {
+func (s *Schedule) AddTask(t string, i time.Duration, f func() (*matrix.Matrix, error)) error {
+    if i > 0 {
+        task := &Task{Name: t, interval: i, foo: f}
+        task.timer = time.Now().Add(-i) // set to run immediately
         s.tasks = append(s.tasks, task)
-        s.foos[task] = foo
-        s.intervals[task] = interval
-        s.timers[task] = time.Now().Add(-interval) // set to run immediately
         return nil
     }
-    return errors.New("invalid interval :" + interval.String())
+    return errors.New("invalid interval :" + i.String())
 }
 
 // Same as AddTask, but interval is parsed from string
-func (s *Schedule) AddTaskString(task, interval string, foo interface{}) error {
-    d, err := time.ParseDuration(interval)
-    if err != nil {
+func (s *Schedule) AddTaskString(t, i string, f func() (*matrix.Matrix, error)) error {
+    if d, err := time.ParseDuration(i); err == nil {
+        return s.AddTask(t, d, foo)
+    } else {
         return err
     }
-    return s.AddTask(task, d, foo)
-}
-
-// Format details about task into string. Meant for debugging.
-func (s *Schedule) String(task string) string {
-    details := `
-        Task: %s
-          interface    => %v
-          interval     => %s
-          last started => %s
-          next due in  => %s
-    `
-    str := fmt.Sprintf(
-        details,
-        task,
-        s.getFoo(task),
-        s.getInterval(task).String(),
-        time.Since( s.getTimer(task) ).String(),
-        s.getNextDue(task),
-    )
-    return str
 }
 
 // Change the interval of a task, safe to do this even
 // in the middle of running a task.
-func (s *Schedule) ChangeTask(task string, interval time.Duration) error {
-    if foo, ok := s.foos[task]; !ok {
-        return errors.New("invalid task name: " + task)
+func (s *Schedule) SetInterval(t string, i time.Duration) error {
+    for _, task := range s.tasks {
+        if task.Name == t {
+            if i > 0 {
+                task.interval = i
+                return nil
+            } else {
+                return errors.New(errors.ERR_SCHEDULE, "invalid interval :" + i.String())
+            }
+        }
+    }
+    return errors.New(errors.ERR_SCHEDULE, "invalid task: " + t)
+}
+
+// Same as SetInterval, but interval is parsed from string
+func (s *Schedule) SetIntervalString(t, i string) error {
+    if d, err := time.ParseDuration(i); err == nil {
+        return s.SetInterval(t, d)
     } else {
-        return s.AddTask(task, interval, foo)
+        return err
     }
 }
 
-// Same as ChangeTask, but interval is parsed from string
-func (s *Schedule) ChangeTaskString(task, interval string) error {
-    if foo, ok := s.foos[task]; !ok {
-        return errors.New("invalid task name: " + task)
-    } else {
-        return s.AddTaskString(task, interval, foo)
+// Return tasks in Schedule
+func (s *Schedule) GetTasks() []*Task {
+    if !s.standby_mode {
+        return s.tasks
     }
-}
-
-// Return list of task names
-func (s *Schedule) GetTasks() []string {
-    return s.tasks
-}
-
-
-func (s *Schedule) GetInterval(task string) time.Duration {
-    if interval, ok := s.intervals[task]; ok {
-        return interval
-    }
-    panic("invalid task: " + task)
+    return []*Task{s.standby_task}
 }
 
 // Tell if it's time to run a task
-// @task     name of the task
-// @foo      interface that performs the task
-// 
-// If task was added with nil interface, then calling foo
-// will crash the program.
-func (s *Schedule) IsDue(task string) (bool) {
-    if !s.standby_mode {
-        return s.getNextDue(task) <= 0
-    } 
-    
-    if task == s.standby_task {
-        return (s.standby_interval - time.Since(s.standby_timer)) <= 0
+// @t     name of the task
+func (s *Schedule) IsDue(t string) (bool) {
+    if task, ok := s.tasks[t]; ok {
+        // normal schedule
+        if !s.standby_mode {
+            return task.nextDue() <= 0
+        }
+        // standby mode: task can only be due if it's stalled
+        if task == s.standby_task {
+            return task.nextDue() <= 0
+        }
+        return false
     }
-
-    return false
+    panic("invalid task: " + t)
 }
 
-// Start timer for the task
-func (s *Schedule) Start(name string) {
-    if !s.standby_mode {
-        s.timers[name] = time.Now()
-    } else {
-        s.standby_timer = time.Now()
-    }
-}
-
-// Tell duration of running task
-func (s *Schedule) Stop(name string) time.Duration {
-    if !s.standby_mode {
-        started, _ := s.timers[name]
-        return time.Since(started)
-    }
-    return time.Since(s.standby_timer)
-}
 
 // Sleep until a task is due
 func (s *Schedule) Sleep() {
-    _, next_due := s.earliestNextDue()
-    time.Sleep(next_due)
-}
-
-func (s *Schedule) SleepDuration() time.Duration {
-    _, next_due := s.earliestNextDue()
-    return next_due
+    time.Sleep(s.NextDue())
 }
 
 // Get blocking channel until a task is due
 // Similar to Sleep(), but we can perform other tasks
 // while waiting.
 func (s *Schedule) Wait() <-chan time.Time {
-    _, next_due := s.earliestNextDue()
-    return time.After(next_due)
+    return time.After(s.NextDue())
 }
 
-/* private methods */
-
-// tell the interval of the task
-func (s *Schedule) getInterval(task string) time.Duration {
-    if interval, ok := s.intervals[task]; ok {
-        return interval
-    }
-    // requesting unknown task = bug/typo in program
-    panic("invalid task: " + task)
-}
-
-// tell when was task last started
-func (s *Schedule) getTimer(task string) time.Time {
-    if timer, ok := s.timers[task]; ok {
-        return timer
-    }
-    panic("invalid task: " + task)
-}
-
-func (s *Schedule) getFoo(task string) interface{} {
-    if foo, ok := s.foos[task]; ok {
-        return foo
-    }
-    panic("invalid task: " + task)
-}
-
-// tell how much time is left until task is due
-func (s *Schedule) getNextDue(task string) time.Duration {
-    return s.getInterval(task) - time.Since( s.getTimer(task) )
-}
-
-// Tells name of the task and duration until
-// a new task is due.
-func (s *Schedule) earliestNextDue() (string, time.Duration) {
+// Tells duration until a next earliest task is due.
+func (s *Schedule) NextDue() time.Duration {
 
     if s.standby_mode {
-        return s.standby_task, s.standby_interval - time.Since(s.standby_timer)
+        return s.standby_task.NextDue()
     }
 
-    next_task := s.tasks[0]
-    next_due := s.getNextDue(next_task)
+    next_due := s.tasks[0].NextDue()
 
     for _, task := range s.tasks[1:] {
-        if due := s.getNextDue(task); due < next_due {
+        if due := task.NextDue(); due < next_due {
             next_due = due
-            next_task = task
         }
     }
 
-    return next_task, next_due
+    return next_due
 }

@@ -11,20 +11,20 @@ import (
 )
 
 
-func (p *Prometheus) StartHttpd(url, port string) {
+func (e *Prometheus) StartHttpd(url, port string) {
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", p.ServeInfo)
-	mux.HandleFunc("/metrics", p.ServeMetrics)
+	mux.HandleFunc("/", e.ServeInfo)
+	mux.HandleFunc("/metrics", e.ServeMetrics)
 
 	PORT := ":"+port
-	Log.Info("Starting server at [%s]", PORT)
+	logger.Info(e.Prefix, "Starting server at [%s]", PORT)
 	server := &http.Server{ Addr: PORT, Handler: mux}
 	go server.ListenAndServe()
 
 }
 
-func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
+func (e *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 	
 	body := make([]string, 0)
 	//matrix_by_collector := make(map[string][]*matrix.Matrix)
@@ -36,16 +36,16 @@ func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 	//collector_names = map[string]string
 	//object_names map[string][]string
 
-	for _, m := range p.cache {
+	for _, m := range e.cache {
 
 		if m.IsMetadata {
-			Log.Debug("Cache Metadata= [%-20s] [%-20s] (%d) (%d)", m.Collector, m.Object, len(m.Metrics), len(m.Instances))
+			logger.Debug(e.Prefix, "Cache Metadata= [%-20s] [%-20s] (%d) (%d)", m.Collector, m.Object, len(m.Metrics), len(m.Instances))
 			//if _, exists := unique_metadata[m.Collector]; !exists {
 			//	unique_metadata[m.Collector] = make(map[string]*matrix.Matrix)
 			//}
 			unique_metadata[m.Collector] = m
 		} else {
-			Log.Debug("Cache Data=     [%-20s] [%-20s]", m.Collector, m.Object)
+			logger.Debug(e.Prefix, "Cache Data=     [%-20s] [%-20s]", m.Collector, m.Object)
 			if _, exists := unique_data[m.Collector]; !exists {
 				unique_data[m.Collector] = make(map[string]*matrix.Matrix)
 			}
@@ -102,7 +102,7 @@ func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 		num_collectors += 1
 	}
 
-	poller := p.options.Poller
+	poller := e.options.Poller
 	body_flat := fmt.Sprintf(html_template, poller, poller, poller, num_collectors, num_objects, num_metrics, strings.Join(body, "\n\n"))
 	
 	w.WriteHeader(200)
@@ -112,26 +112,26 @@ func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 
 func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 
-	Log.Info("Serving metrics from %d cached items", len(p.cache))
+	logger.Info(e.Prefix, "Serving metrics from %d cached items", len(e.cache))
 	sep := []byte("\n")
 	var data [][]byte
 
 	start := time.Now()
 	count := 0
 
-	for _, m := range p.cache {
-		Log.Info("Rendering metrics [%s:%s]", m.Collector, m.Object)
-		rendered := p.Render(m)
+	for _, m := range e.cache {
+		logger.Info(e.Prefix, "Rendering metrics [%s:%s]", m.Collector, m.Object)
+		rendered := e.Render(m)
 
 		data = append(data, rendered...)
 		count += len(rendered)
 	}
 
 	duration := time.Since(start)
-	p.Metadata.SetValueSS("time", "render", duration.Seconds())
-	p.Metadata.SetValueSS("count", "render", float64(count))
+	e.Metadata.SetValueSS("time", "render", duration.Seconds())
+	e.Metadata.SetValueSS("count", "render", float64(count))
 
-	md := p.Render(p.Metadata)
+	md := e.Render(e.Metadata)
 	data = append(data, md...)
 	//data = append(data, sep)
 

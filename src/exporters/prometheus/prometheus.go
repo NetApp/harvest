@@ -4,19 +4,18 @@ import (
     "fmt"
     "os"
     "strings"
+    "goharvest2/share/logger"
     "goharvest2/poller/exporter"
     "goharvest2/poller/util"
-    "goharvest2/poller/util/logger"
     "goharvest2/poller/struct/matrix"
     "goharvest2/poller/struct/options"
     "goharvest2/poller/struct/yaml"
 )
 
-var Log *logger.Logger = logger.New(1, "")
-
 type Prometheus struct {
     class string
-    name string
+    Name string
+    Prefix string
     options *options.Options
     params *yaml.Node
     cache []*matrix.Matrix
@@ -24,7 +23,8 @@ type Prometheus struct {
 }
 
 func New(class, name string, options *options.Options, params *yaml.Node) exporter.Exporter {
-    e := Prometheus{class: class, name: name, options: options, params: params}
+    e := Prometheus{class: class, Name: name, options: options, params: params}
+    e.Prefix = "(exporter) (" + name + ")" 
     return &e
 }
 
@@ -44,7 +44,7 @@ func (e *Prometheus) Init() error {
     Log = logger.New(0, e.name)
 
     if e.options.Debug {
-        Log.Info("Initialized exporter. No HTTP server started since in debug mode")
+        logger.Info(e.Prefix, "Initialized exporter. No HTTP server started since in debug mode")
         return nil
     }
     
@@ -52,7 +52,7 @@ func (e *Prometheus) Init() error {
     port := e.params.GetChildValue("port")
     e.StartHttpd(url, port)
 
-    Log.Info("Initialized Exporter. HTTP daemon serving at [http://%s:%s]", url, port)
+    logger.Info(e.Prefix, "Initialized Exporter. HTTP daemon serving at [http://%s:%s]", url, port)
 
     e.Metadata = matrix.New(e.class, e.name, "")
 	e.Metadata.IsMetadata = true
@@ -81,7 +81,7 @@ func (e *Prometheus) Init() error {
     err := e.Metadata.InitData()
     //e.Metadata.Print()
 
-    Log.Info("metadata with %d metrics (index = %d)", len(e.Metadata.Metrics), e.Metadata.MetricsIndex)
+    logger.Info(e.Prefix, "metadata with %d metrics (index = %d)", len(e.Metadata.Metrics), e.Metadata.MetricsIndex)
     return err
 }
 
@@ -89,13 +89,13 @@ func (e *Prometheus) Export(data *matrix.Matrix) error {
 
     if e.options.Debug {
         rendered := e.Render(data)
-        Log.Debug("Simulating export of %d data points", len(rendered))
+        logger.Debug(e.Prefix, "Simulating export of %d data points", len(rendered))
         for _, m := range rendered {
-            Log.Debug("M= %s%s%s", util.Pink, m, util.End)
+            logger.Debug(e.Prefix, "M= %s%s%s", util.Pink, m, util.End)
         }
     } else {
         e.cache = append(e.cache, data)
-        Log.Debug("Added data to cache")
+        logger.Debug(e.Prefix, "Added data to cache")
     }
 
     return nil
@@ -140,7 +140,7 @@ func (e *Prometheus) Render(data *matrix.Matrix) [][]byte {
 
     for raw_key, instance := range data.Instances {
 
-        Log.Debug("Rendering instance [%d] %v", instance.Index, instance.Labels.Iter())
+        logger.Debug(e.Prefix, "Rendering instance [%d] %v", instance.Index, instance.Labels.Iter())
 
         instance_labels := make([]string, 0)
         instance_keys := make([]string, len(global_labels))
@@ -155,7 +155,7 @@ func (e *Prometheus) Render(data *matrix.Matrix) [][]byte {
             if include_all_labels || (found && value != "") {
                 instance_keys = append(instance_keys, fmt.Sprintf("%s=\"%s\"", key, value))
             } else {
-                Log.Debug("Skipped Key [%s] (%s) found=%v", key, value, found)
+                logger.Debug(e.Prefix, "Skipped Key [%s] (%s) found=%v", key, value, found)
             }
         }
 
@@ -164,15 +164,15 @@ func (e *Prometheus) Render(data *matrix.Matrix) [][]byte {
             if found {
                 instance_labels = append(instance_labels, fmt.Sprintf("%s=\"%s\"", label, value))
             } else {
-                Log.Debug("Skipped Label [%s] (%s) found=%v", label, value, found)
+                logger.Debug(e.Prefix, "Skipped Label [%s] (%s) found=%v", label, value, found)
             }
         }
 
-        //Log.Debug("Parsed Keys: [%s]", strings.Join(instance_keys, ","))
-        //Log.Debug("Parsed Labels: [%s]", strings.Join(instance_labels, ","))
+        //logger.Debug(e.Prefix, "Parsed Keys: [%s]", strings.Join(instance_keys, ","))
+        //logger.Debug(e.Prefix, "Parsed Labels: [%s]", strings.Join(instance_labels, ","))
 
         if len(instance_keys) == 0 {
-            Log.Debug("Skipping instance, no keys parsed (%v) (%v)", instance_keys, instance_labels)
+            logger.Debug(e.Prefix, "Skipping instance, no keys parsed (%v) (%v)", instance_keys, instance_labels)
             continue
         }
 
@@ -180,7 +180,7 @@ func (e *Prometheus) Render(data *matrix.Matrix) [][]byte {
             label_data := fmt.Sprintf("%s_labels{%s,%s} 1.0", prefix, strings.Join(instance_keys, ","), strings.Join(instance_labels, ","))
             rendered = append(rendered, []byte(label_data))
         } else {
-            Log.Debug("Skipping instance labels (%v) (%v)", instance_keys, instance_labels)
+            logger.Debug(e.Prefix, "Skipping instance labels (%v) (%v)", instance_keys, instance_labels)
         }
 
         for _, metric := range data.Metrics {
@@ -217,7 +217,7 @@ func (e *Prometheus) Render(data *matrix.Matrix) [][]byte {
             }
         }
     }
-    Log.Debug("Renderd %d data points for [%s] %d instances", len(rendered), object, len(data.Instances))
+    logger.Debug(e.Prefix, "Renderd %d data points for [%s] %d instances", len(rendered), object, len(data.Instances))
     return rendered
 }
 
