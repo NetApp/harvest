@@ -18,7 +18,7 @@ type Prometheus struct {
     Prefix string
     options *options.Options
     params *yaml.Node
-    cache []*matrix.Matrix
+    cache map[string]*matrix.Matrix
     Metadata *matrix.Matrix
 }
 
@@ -53,6 +53,8 @@ func (e *Prometheus) Init() error {
 
     logger.Info(e.Prefix, "Initialized Exporter. HTTP daemon serving at [http://%s:%s]", url, port)
 
+    e.cache = make(map[string]*matrix.Matrix)
+    
     e.Metadata = matrix.New(e.class, e.Name, "")
 	e.Metadata.IsMetadata = true
 	e.Metadata.MetadataType = "exporter"
@@ -93,8 +95,13 @@ func (e *Prometheus) Export(data *matrix.Matrix) error {
             logger.Debug(e.Prefix, "M= %s%s%s", util.Pink, m, util.End)
         }
     } else {
-        e.cache = append(e.cache, data)
-        logger.Debug(e.Prefix, "Added data to cache")
+        key := data.Collector + "." + data.Plugin + "." + data.Object
+        if data.IsMetadata {
+            key = data.MetadataType + "." + data.MetadataObject + "." + key
+        }
+        delete(e.cache, key)
+        e.cache[key] = data
+        logger.Debug(e.Prefix, "Added data to cache [%s]", key)
     }
 
     return nil
