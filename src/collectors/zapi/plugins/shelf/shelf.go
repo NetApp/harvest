@@ -7,13 +7,11 @@ import (
     "goharvest2/poller/struct/matrix"
 	"goharvest2/poller/struct/options"
 	"goharvest2/poller/struct/yaml"
-	"goharvest2/poller/util/logger"
+	"goharvest2/share/logger"
 	"goharvest2/poller/errors"
 
     client "goharvest2/poller/api/zapi"
 )
-
-var Log *logger.Logger = logger.New(1, "")
 
 type Shelf struct {
 	*plugin.AbstractPlugin
@@ -34,8 +32,6 @@ func (p *Shelf) Init() error {
 	if err = p.InitAbc(); err != nil {
 		return err
 	}
-
-	Log = logger.New(p.Options.LogLevel, "PLUGIN:"+p.Name)
 
     if p.connection, err = client.New(p.ParentParams); err != nil {
         logger.Error(p.Prefix, "connecting: %v", err)
@@ -122,7 +118,7 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	shelves, has := result.GetChild("attributes-list")
 	if !has {
-		return nil, errors.New(errors.NO_INSTANCES, "no shelf instances")
+		return nil, errors.New(errors.ERR_NO_INSTANCE, "no shelf instances")
 	}
 
 	logger.Debug(p.Prefix, "fetching %d shelf counters", len(shelves.GetChildren()))

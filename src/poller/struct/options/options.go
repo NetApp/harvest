@@ -76,8 +76,8 @@ func GetOpts() (*Options, string, error)  {
         "Harvest installation directory")
     flag.IntVar(&args.Delay, "delay", 0,
         "Delay startup in seconds")
-    flag.IntVar(&args.LogLevel, "loglevel", 0,
-        "logging level, one of: debug, info, warning, error, critical")
+    flag.IntVar(&args.LogLevel, "loglevel", 2,
+        "logging level, index of: trace, debug, info, warning, error, critical")
     flag.BoolVar(&args.Debug, "debug", false,
         "Debug mode, no data will be exported")
     flag.BoolVar(&args.Test, "test", false,

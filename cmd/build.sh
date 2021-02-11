@@ -117,6 +117,7 @@ if [ $all == true ] || [ $harvest == true ]; then
         echo -e "${COLOR_GREEN}compiled: /bin/harvest ${COLOR_END}"
     else
         echo -e "${COLOR_RED}compilation failed ${COLOR_END}"
+        exit 1
     fi
     cd ../../
 fi
@@ -136,6 +137,7 @@ if [ $all == true ] || [ $collectors == true ] || [ "$collector" != "" ]; then
                     echo -e "${COLOR_GREEN}compiled: /bin/collectors/$f.so ${COLOR_END}"
                 else
                     echo -e "${COLOR_RED}compiling [/src/collectors/$f] failed ${COLOR_END}"
+                    exit 1
                 fi
             fi
 
@@ -151,6 +153,7 @@ if [ $all == true ] || [ $collectors == true ] || [ "$collector" != "" ]; then
                             echo -e "  compiled bin/plugins/$f/$p.so"
                         else
                             echo -e "  compiling [/src/collectors/$f/$p] failed"
+                            exit 1
                         fi
                         cd ../
                     fi
@@ -177,6 +180,7 @@ if [ $all == true ] || [ $exporters == true ] || [ "$exporter" != "" ]; then
                     echo -e "${COLOR_GREEN}compiled: /bin/exporters/$f.so ${COLOR_END}"
                 else
                     echo -e "${COLOR_RED}compilation failed ${COLOR_END}"
+                    exit 1
                 fi
             fi
             cd ../
@@ -199,6 +203,7 @@ if [ $all == true ] || [ $plugins == true ] || [ "$plugin" != "" ]; then
                     echo -e "${COLOR_GREEN}compiled: /bin/plugins/$f.so ${COLOR_END}"
                 else
                     echo -e "${COLOR_RED}compilation failed ${COLOR_END}"
+                    exit 1
                 fi
             fi
             cd ../
@@ -221,6 +226,7 @@ if [ $all == true ] || [ $tools == true ] || [ "$tool" != "" ]; then
                     echo -e "${COLOR_GREEN}compiled: /bin/$f ${COLOR_END}"
                 else
                     echo -e "${COLOR_RED}compilation failed ${COLOR_END}"
+                    exit 1
                 fi
             fi
             cd ../
@@ -238,6 +244,6 @@ if [ $all == true ] || [ $poller == true ]; then
         echo -e "${COLOR_GREEN}compiled: /bin/poller ${COLOR_END}"
     else
         echo -e "${COLOR_RED}compilation failed ${COLOR_END}"
+        exit 1
     fi
 fi
-pwd

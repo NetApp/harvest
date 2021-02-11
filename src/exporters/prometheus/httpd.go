@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 	"goharvest2/poller/struct/matrix"
+	"goharvest2/share/logger"
 )
 
 
@@ -110,7 +111,7 @@ func (e *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(body_flat))
 }
 
-func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
+func (e *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 
 	logger.Info(e.Prefix, "Serving metrics from %d cached items", len(e.cache))
 	sep := []byte("\n")

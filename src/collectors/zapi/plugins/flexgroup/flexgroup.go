@@ -53,7 +53,7 @@ func (p *FlexGroup) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				instance, err := n.AddInstance(key)
 
 				if err != nil {
-					Log.Error(err.Error())
+					logger.Error(p.Prefix, err.Error())
 					continue
 				}
 

@@ -28,20 +28,19 @@ func New(class, name string, options *options.Options, params *yaml.Node) export
     return &e
 }
 
-func (p* Prometheus) GetClass() string {
-    return p.class
+func (e *Prometheus) GetClass() string {
+    return e.class
 }
 
-func (p* Prometheus) GetName() string {
-    return p.name
+func (e *Prometheus) GetName() string {
+    return e.Name
 }
 
-func (p* Prometheus) IsUp() bool {
-    return true
+func (e *Prometheus) GetStatus() (int, string) {
+    return 1, "Up"
 }
 
 func (e *Prometheus) Init() error {
-    Log = logger.New(0, e.name)
 
     if e.options.Debug {
         logger.Info(e.Prefix, "Initialized exporter. No HTTP server started since in debug mode")
@@ -54,7 +53,7 @@ func (e *Prometheus) Init() error {
 
     logger.Info(e.Prefix, "Initialized Exporter. HTTP daemon serving at [http://%s:%s]", url, port)
 
-    e.Metadata = matrix.New(e.class, e.name, "")
+    e.Metadata = matrix.New(e.class, e.Name, "")
 	e.Metadata.IsMetadata = true
 	e.Metadata.MetadataType = "exporter"
 	e.Metadata.MetadataObject = "export"
@@ -63,7 +62,7 @@ func (e *Prometheus) Init() error {
 	e.Metadata.SetGlobalLabel("version", e.options.Version)
 	e.Metadata.SetGlobalLabel("poller", e.options.Poller)
 	e.Metadata.SetGlobalLabel("exporter", e.class)
-    e.Metadata.SetGlobalLabel("target", e.name)
+    e.Metadata.SetGlobalLabel("target", e.Name)
     
 	if _, err := e.Metadata.AddMetric("time", "time", true); err != nil {
         return err

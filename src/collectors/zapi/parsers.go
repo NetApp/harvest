@@ -3,6 +3,8 @@ package main
 import (
     "strings"
     
+	"goharvest2/share/logger"
+
     "goharvest2/poller/struct/matrix"
     "goharvest2/poller/struct/yaml"
     "goharvest2/poller/util"
@@ -50,7 +52,7 @@ func ParseKeyPrefix(keys [][]string) []string {
 
 func ParseCounters(data *matrix.Matrix, elem *yaml.Node, path []string) {
     new_path := append(path, elem.Name)
-    logger.Debug(c.Prefix, "%v Parsing [%s] [%s] with %d values and %d children", new_path, elem.Name, elem.Value, len(elem.Values), len(elem.Children))
+    logger.Debug("", "%v Parsing [%s] [%s] with %d values and %d children", new_path, elem.Name, elem.Value, len(elem.Values), len(elem.Children))
 
     if elem.Value != "" {
         HandleCounter(data, new_path, elem.Value)
@@ -88,14 +90,14 @@ func HandleCounter(data *matrix.Matrix, path []string, value string) {
 
     if value[0] == '^' {
         data.AddLabelKeyName(flat_path, display)
-            logger.Trace(c.Prefix, "%sAdded as Label [%s] [%s]%s => %v", util.Yellow, display, flat_path, util.End, full_path)
+            logger.Trace("", "%sAdded as Label [%s] [%s]%s => %v", util.Yellow, display, flat_path, util.End, full_path)
         if value[1] == '^' {
             data.AddInstanceKey(full_path[:])
-            logger.Trace(c.Prefix, "%sAdded as Key [%s] [%s]%s => %v", util.Red, display, flat_path, util.End, full_path)
+            logger.Trace("", "%sAdded as Key [%s] [%s]%s => %v", util.Red, display, flat_path, util.End, full_path)
         }
     } else {
         data.AddMetric(flat_path, display, true)
-            logger.Trace(c.Prefix, "%sAdded as Metric [%s] [%s]%s => %v", util.Blue, display, flat_path, util.End, full_path)
+            logger.Trace("", "%sAdded as Metric [%s] [%s]%s => %v", util.Blue, display, flat_path, util.End, full_path)
     }
 }
 

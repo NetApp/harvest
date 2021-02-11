@@ -1,8 +1,8 @@
 package logger
 
 import (
-    "log"
     "fmt"
+    "log"
     "os"
     "path"
     "strconv"
@@ -17,12 +17,13 @@ const dirperm os.FileMode = 0755
 var file *os.File
 
 var levels = [6]string{ 
-    " (trace  ) [%-12s] ", 
-    " (debug  ) [%-12s] ", 
-    " (info   ) [%-12s] ", 
-    " (warning) [%-12s] ", 
-    " (error  ) [%-12s] ", 
-    " (fatal  ) [%-12s] ", }
+    " (trace  ) %-12s: ", 
+    " (debug  ) %-12s: ", 
+    " (info   ) %-12s: ", 
+    " (warning) %-12s: ", 
+    " (error  ) %-12s: ", 
+    " (fatal  ) %-12s: ",
+}
 
 var level = 2
 
@@ -60,42 +61,42 @@ func SetLevel(l int) error {
 }
 
 func Log(lvl int, prefix, format string, vars... interface{}) {
-    log.Printf(levels[lvl] + format, prefix, vars...)
+    log.Printf(fmt.Sprintf(levels[lvl], prefix) + fmt.Sprintf(format, vars...))
 }
 
 func Trace(prefix, format string, vars... interface{}) {
     if level == 0 {
-        Log(0, format, prefix, vars...)
+        Log(0, prefix, format, vars...)
     }
 }
 
 func Debug(prefix, format string, vars... interface{}) {
     if level <= 1 {
-        Log(1, format, prefix, vars...)
+        Log(1, prefix, format, vars...)
     }
 }
 
 func Info(prefix, format string, vars... interface{}) {
     if level <= 2 {
-        Log(2, format, prefix, vars...)
+        Log(2, prefix, format, vars...)
     }
 }
 
 func Warn(prefix, format string, vars... interface{}) {
     if level <= 3 {
-        Log(3, format, prefix, vars...)
+        Log(3, prefix, format, vars...)
     }
 }
 
 func Error(prefix, format string, vars... interface{}) {
     if level <= 4 {
-        Log(4, format, prefix, vars...)
+        Log(4, prefix, format, vars...)
     }
 }
 
 func Fatal(prefix, format string, vars... interface{}) {
     if level <= 5 {
-        Log(5, format, prefix, vars...)
+        Log(5, prefix, format, vars...)
     }
 }
 

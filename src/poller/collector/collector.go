@@ -6,7 +6,11 @@ import (
 	"strings"
 	"strconv"
 	"path"
-	
+	"reflect"
+	"time"
+
+	"goharvest2/share/logger"
+
 	"goharvest2/poller/struct/yaml"
 	"goharvest2/poller/struct/options"
 	"goharvest2/poller/struct/matrix"
@@ -31,13 +35,15 @@ type Collector interface {
 	SetMetadata(*matrix.Matrix)
 	WantedExporters() []string
 	LinkExporter(exporter.Exporter)
+	LoadPlugins(*yaml.Node) error
 }
 
-var CollectorStatus [4]string {
+var CollectorStatus = [4]string{
 	"undefined",
 	"up",
 	"standby",
-	"failed", }
+	"failed",
+}
 
 type AbstractCollector struct {
 	Name string
@@ -61,7 +67,7 @@ func New(name, object string, options *options.Options, params *yaml.Node) *Abst
 		Options: options,
 		Params: params,
 	}
-	c.Prefix = "(collector) (" name + ":" + object + ")"
+	c.Prefix = "(collector) (" + name + ":" + object + ")"
 
 	return &c
 }
@@ -94,7 +100,8 @@ func Init(c Collector) error {
 		if m := reflect.ValueOf(c).MethodByName(method_name); m.IsValid() {
 			if foo, ok := m.Interface().(func() (*matrix.Matrix, error)); ok {
 				if err := s.AddTaskString(task.Name, task.Value, foo); err == nil {
-					logger.Debug(c.Prefix, "scheduled task [%s] with %s interval", task.Name, task.GetInterval().String())
+					//logger.Debug(c.Prefix, "scheduled task [%s] with %s interval", task.Name, task.GetInterval().String())
+					;
 				} else {
 					return errors.New(errors.INVALID_PARAM, "schedule (" + task.Name + "): " + err.Error())
 				}
@@ -125,7 +132,7 @@ func Init(c Collector) error {
 	}
 
 	/* Initialize metadata */
-	md := matrix.New(c.Name, c.Object, "")
+	md := matrix.New(name, object, "")
 	md.IsMetadata = true
 	md.MetadataType = "collector"
 	md.MetadataObject = "task"
@@ -147,16 +154,16 @@ func Init(c Collector) error {
 
 	/* each task we run is an "instance" */
 	for _, task := range s.GetTasks() {
-		instance, _ := md.AddInstance(task)
-		md.SetInstanceLabel(instance, "task", task)
-		t := s.GetInterval(task).Seconds()
+		instance, _ := md.AddInstance(task.Name)
+		md.SetInstanceLabel(instance, "task", task.Name)
+		t := task.GetInterval().Seconds()
 		md.SetInstanceLabel(instance, "interval", strconv.FormatFloat(t, 'f', 4, 32))
 	}
 
 	md.SetExportOptions(matrix.DefaultExportOptions())
 
 	/* initialize underlaying arrays */
-	if err := md.Init(); err != nil {
+	if err := md.InitData(); err != nil {
 		return err
 	}
 
@@ -175,7 +182,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 
 	for {
 
-		c.Metadata.Reset() // @TODO handle err (can occur if collector messed up)
+		c.Metadata.InitData() // @TODO handle err (can occur if collector messed up)
 
 		results := make([]*matrix.Matrix, 0)
 
@@ -186,26 +193,26 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 			data, err := task.Run()
 
 			if err != nil {
-				switch e := err.ErrCode() {
-				case errors.ERR_CONNECTION:
+				switch {
+				case errors.IsErr(err, errors.ERR_CONNECTION):
 					if retry_delay < 1024 {
 						retry_delay *= 4
 					}
 					c.Schedule.SetStandByMode(task.Name, time.Duration(retry_delay) * time.Second)
-					c.SetStatus(2, e)
+					c.SetStatus(2, err.Error())
 					logger.Error(c.Prefix, "%s, retry in %d s", err.Error(), retry_delay)
-				case errors.ERR_NO_INSTANCE:
+				case errors.IsErr(err, errors.ERR_NO_INSTANCE):
 					c.Schedule.SetStandByMode(task.Name, 5 * time.Minute)
-					c.SetStatus(2, e)
+					c.SetStatus(2, err.Error())
 					logger.Error(c.Prefix, "no [%s] instances on system, entering standby mode", c.Object)
-				case errors.ERR_NO_METRIC:
-					c.SetStatus(2, e)
+				case errors.IsErr(err, errors.ERR_NO_METRIC):
+					c.SetStatus(2, err.Error())
 					c.Schedule.SetStandByMode(task.Name, 1 * time.Hour)
 					logger.Error(c.Prefix, "no [%s] metrics on system, entering standby mode", c.Object)
 				default:
 					// enter failed state
-					c.SetStatus(3, e)
-					logger.Error(err)
+					c.SetStatus(3, err.Error())
+					logger.Error(c.Prefix, err.Error())
 					return
 				}
 				// don't continue on errors
@@ -224,7 +231,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 				if task.Name == "data" {
 					for _, plg := range c.Plugins {
 						if plg_data_slice, err := plg.Run(data); err != nil {
-							Log.Error(c.Prefix, "plugin [%s]: %s", plg.GetName(), err.Error())
+							logger.Error(c.Prefix, "plugin [%s]: %s", plg.GetName(), err.Error())
 						} else if plg_data_slice != nil {
 							results = append(results, plg_data_slice...)
 							logger.Debug(c.Prefix, "plugin [%s] added (%d) data", len(plg_data_slice))
@@ -240,8 +247,8 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 
 		// @TODO better handling when exporter is standby/failed state
 		for _, e := range c.Exporters {
-			if status, _ := e.GetStatus(); e != 1 {
-				Log.Warn("exporter [%s] down, skipping export", e.GetName())
+			if status, _ := e.GetStatus(); status != 1 {
+				logger.Warn(c.Prefix, "exporter [%s] down, skipping export", e.GetName())
 			} else if err := e.Export(c.Metadata); err != nil {
 				logger.Warn(c.Prefix, "export metadata to [%s]: %s", e.GetName(), err.Error())
 			}
@@ -254,7 +261,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 			}
 		}
 
-		logger.Debug(c.Prefix, "sleeping %s until next poll", c.Schedule.SleepDuration().String())
+		logger.Debug(c.Prefix, "sleeping %s until next poll", c.Schedule.NextDue().String())
 		c.Schedule.Sleep()
 	}
 }
@@ -268,7 +275,7 @@ func (c *AbstractCollector) GetObject() string {
 }
 
 func (c *AbstractCollector) GetStatus() (int, string, string) {
-	return c.Status, CollectorStatus[int], c.Message
+	return c.Status, CollectorStatus[c.Status], c.Message
 }
 
 func (c *AbstractCollector) SetStatus(status int, msg string) {

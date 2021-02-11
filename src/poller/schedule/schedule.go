@@ -1,9 +1,9 @@
 package schedule
 
 import (
-    "fmt"
     "time"
     "goharvest2/poller/errors"
+    "goharvest2/poller/struct/matrix"
 )
 
 /*
@@ -62,10 +62,15 @@ func (t *Task) NextDue() time.Duration {
     return t.interval - time.Since(t.timer)   
 }
 
+// Tell if it's time to run the task
+func (t *Task) IsDue() bool {
+    return t.NextDue() <= 0
+}
+
 type Schedule struct {
     tasks []*Task
     standby_mode bool
-    standby_task Task
+    standby_task *Task
     cached_interval time.Duration
     standby_timer time.Time
 }
@@ -86,32 +91,33 @@ func (s *Schedule) IsStandBy() bool {
 // StandbyMode will make the schedule stop all tasks except one
 // and will set a temporary extended interval for one task
 func (s *Schedule) SetStandByMode(t string, i time.Duration) {
-    if task, ok := s.tasks[t]; ok {
-        s.standby_mode = true
-        s.standby_task = task
-        s.cached_interval = task.interval // remember normal interval of task
-        task.interval = i
-        task.timer = time.Now()
-    } else {
-        panic("invalid task: " + task_name)
+    for _, task := range s.tasks {
+        if task.Name == t {
+            s.standby_task = task
+            s.cached_interval = task.interval // remember normal interval of task
+            task.interval = i
+            task.timer = time.Now()
+            s.standby_mode = true
+            return
+        }
     }
+    panic("invalid task: " + t)
 }
 
 // Undo StandbyMode. We assume that stalled task was success, so schedule
 // the other tasks to run on next poll
 func (s *Schedule) Recover() {
 
-    if task, ok := s.tasks[s.standby_task]; ok {
-        task.interval = s.cached_interval
-        task.timer = time.Now()
-    }
-
+    //@TODO handle when Recover is called in non-standby-mode
     for _, task := range s.tasks {
-        if task != s.standby_task {
+        if task == s.standby_task {
+            task.interval = s.cached_interval
+            task.timer = time.Now()
+        } else {
             task.timer = time.Now().Add(-task.interval)
         }
     }
-    s.cached_interval = nil
+    //s.cached_interval = nil
     s.standby_task = nil
     s.standby_mode = false
 }
@@ -130,13 +136,13 @@ func (s *Schedule) AddTask(t string, i time.Duration, f func() (*matrix.Matrix, 
         s.tasks = append(s.tasks, task)
         return nil
     }
-    return errors.New("invalid interval :" + i.String())
+    return errors.New(errors.INVALID_PARAM, "interval :" + i.String())
 }
 
 // Same as AddTask, but interval is parsed from string
 func (s *Schedule) AddTaskString(t, i string, f func() (*matrix.Matrix, error)) error {
     if d, err := time.ParseDuration(i); err == nil {
-        return s.AddTask(t, d, foo)
+        return s.AddTask(t, d, f)
     } else {
         return err
     }
@@ -175,23 +181,14 @@ func (s *Schedule) GetTasks() []*Task {
     return []*Task{s.standby_task}
 }
 
-// Tell if it's time to run a task
-// @t     name of the task
-func (s *Schedule) IsDue(t string) (bool) {
-    if task, ok := s.tasks[t]; ok {
-        // normal schedule
-        if !s.standby_mode {
-            return task.nextDue() <= 0
+func (s *Schedule) GetTask(t string) (*Task, bool) {
+    for _, task := range s.tasks {
+        if task.Name == t {
+            return task, true
         }
-        // standby mode: task can only be due if it's stalled
-        if task == s.standby_task {
-            return task.nextDue() <= 0
-        }
-        return false
     }
-    panic("invalid task: " + t)
+    return nil, false
 }
-
 
 // Sleep until a task is due
 func (s *Schedule) Sleep() {

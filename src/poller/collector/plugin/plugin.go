@@ -41,7 +41,7 @@ func (p *AbstractPlugin) InitAbc() error {
 		return errors.New(errors.MISSING_PARAM, "plugin name")
 	}
 
-	pl.Prefix = "(plugin) (" + p.Parent + ":" + p.Name + ")"
+	p.Prefix = "(plugin) (" + p.Parent + ":" + p.Name + ")"
 
 	if p.Type = p.Params.GetChildValue("type"); p.Type == "" {
 		return errors.New(errors.MISSING_PARAM, "plugin type")

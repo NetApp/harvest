@@ -12,7 +12,7 @@ type Exporter interface {
 	Init() error
 	GetClass() string
 	GetName() string
-	IsUp() bool
+	GetStatus() (int, string)
 	Export(*matrix.Matrix) error
 }
 /*
