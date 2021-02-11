@@ -3,7 +3,6 @@ package main
 import (
 	"os"
 	"path"
-	"sync"
 	"strings"
 	"strconv"
 	"errors"
@@ -45,10 +44,10 @@ func New(name, obj string, options *options.Options, params *yaml.Node) collecto
 
 func (c *Psutil) Init() error {
 
-    if err := c.InitAbc(); err != nil {
+    if err := collector.Init(c); err != nil {
         return err
 	}
-	
+
     if counters := c.Params.GetChild("counters"); counters == nil {
 		return errors.New("Missing counters in template")
 	} else {
@@ -66,67 +65,7 @@ func (c *Psutil) Init() error {
 
 }
 
-func (c *Psutil) Start(wg *sync.WaitGroup) {
-
-	defer wg.Done()
-
-	for {
-		c.Metadata.InitData()
-
-		for _, task := range c.Schedule.GetTasks() {
-
-			if c.Schedule.IsDue(task) {
-				c.Schedule.Start(task)
-
-				data, err := c.poll(task)
-
-				if err != nil {
-					logger.Warn(c.Prefix, "%s poll failed: %v", task, err)
-					return
-				}
-
-				logger.Debug(c.Prefix, "%s poll completed", task)
-
-				duration := c.Schedule.Stop(task)
-				c.Metadata.SetValueSS("poll_time", task, duration.Seconds())
-
-				if data != nil {
-
-					logger.Debug(c.Prefix, "exporting to %d exporters", len(c.Exporters))
-
-					for _, e := range c.Exporters {
-						if err := e.Export(data); err != nil {
-							logger.Warn(c.Prefix, "export to [%s] failed: %v", e.GetName(), err)
-						}
-					}
-				}
-			}
-
-			logger.Debug(c.Prefix, "exporting metadata")
-
-			for _, e := range c.Exporters {
-				if err := e.Export(c.Metadata); err != nil {
-					logger.Warn(c.Prefix, "metadata export to [%s] failed: %v", e.GetName(), err)
-				}
-			}
-		}
-		c.Schedule.Sleep()
-	}
-}
-
-func (c *Psutil) poll(task string) (*matrix.Matrix, error) {
-    switch task {
-        case "data":
-            return c.poll_data()
-        case "instance":
-            return nil, c.poll_instance()
-        default:
-            return nil, errors.New("invalid task: " + task)
-    }
-}
-
-
-func (c *Psutil) poll_data() (*matrix.Matrix, error) {
+func (c *Psutil) PollData() (*matrix.Matrix, error) {
 
 	m := c.Data
 	m.InitData()
@@ -184,17 +123,17 @@ func (c *Psutil) poll_data() (*matrix.Matrix, error) {
 		if err == nil {
 			m.SetValueS("MemoryPercent", instance, float64(mem))
 		}
-		
+
 		create_time, _ := proc.CreateTime()
 		if err == nil {
 			m.SetValueS("CreateTime", instance, float64(create_time))
 		}
-		
+
 		num_threads, _ := proc.NumThreads()
 		if err == nil {
 			m.SetValueS("NumThreads", instance, float64(num_threads))
 		}
-		
+
 		num_fds, _ := proc.NumFDs()
 		if err == nil {
 			m.SetValueS("NumFDs", instance, float64(num_fds))
@@ -281,13 +220,13 @@ func parse_metric_name(raw_name string) (string, string) {
 	return raw_name, raw_name
 }
 
-func (c *Psutil) poll_instance() error {
+func (c *Psutil) PollInstance() (*matrix.Matrix, error) {
 
 	c.Data.ResetInstances()
 
 	poller_names, err := get_poller_names(c.Options.Path, c.Options.Config)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	for _, name := range poller_names {
@@ -330,7 +269,7 @@ func (c *Psutil) poll_instance() error {
 	}
 	logger.Info(c.Prefix, "InstancePoll complete: added %d instances", len(c.Data.Instances))
 
-	return nil
+	return nil, nil
 }
 
 func get_poller_names(harvest_path, config_fn string) ([]string, error){
