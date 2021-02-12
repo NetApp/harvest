@@ -6,11 +6,11 @@ object:                   volume
 instance_key:             uuid
 
 counters:
-  - instance_name
-  - instance_uuid
-  - vserver_name
-  - node_name
-  - parent_aggr
+  - instance_uui
+  - instance_name         => volume
+  - vserver_name          => svm
+  - node_name             => node
+  - parent_aggr           => aggr
   - read_data
   - write_data
   - read_ops
@@ -26,9 +26,9 @@ export_options:
   instance_tag: volume_name
   include_instance_names: False
   include_keys:
-    - instance_name
-    - node_name
-    - vserver_name
-    - parent_aggr
+    - volume
+    - node
+    - svm
+    - aggr
   graphite_leafs:
-    - svm.{vserver_name}.{node_name}.{parent_aggr}.{instance_name}
+    - svm.{svm}.{node}.{aggr}.{volume}

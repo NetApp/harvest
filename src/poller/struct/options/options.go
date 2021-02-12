@@ -22,6 +22,7 @@ type Options struct {
     objects     string
     Collectors   []string
     Objects     []string
+    Hostname    string
 }
 
 func (o *Options) Print() {
@@ -120,6 +121,9 @@ func GetOpts() (*Options, string, error)  {
 		args.Path = cwd
     }
 
+    
+    hostname, _ := os.Hostname()
+    args.Hostname = hostname
     args.Version = "2.0.1"
 
     return &args, args.Poller, err

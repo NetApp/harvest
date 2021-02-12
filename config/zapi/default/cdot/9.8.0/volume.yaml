@@ -86,12 +86,13 @@ export_options:
   graphite_leafs:
     - svm.{vserver_name}.vol.{volume_name}
     - node.{node_name}.aggr.{aggregate_name}.vol.{volume_name}
-  include_keys:
+    
+  instance_keys:
     - volume
     - node
     - vserver
     - aggregate
-  include_labels:
+  instance_labels:
     - state
     - status
     - style

@@ -168,6 +168,7 @@ func Init(c Collector) error {
 	}
 
 	c.SetMetadata(md)
+	c.SetStatus(1, "")
 
 	return nil
 }
@@ -223,7 +224,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 				c.Schedule.Recover()
 			}
 
-			c.Metadata.SetValueSS("poll_time", task.Name, task.Runtime().Seconds())
+			c.Metadata.SetValueSS("poll_time", task.Name, float32(task.Runtime().Seconds()))
 
 			if data != nil {
 				results = append(results, data)
@@ -247,7 +248,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 
 		// @TODO better handling when exporter is standby/failed state
 		for _, e := range c.Exporters {
-			if status, _ := e.GetStatus(); status != 1 {
+			if status, _, _ := e.GetStatus(); status != 1 {
 				logger.Warn(c.Prefix, "exporter [%s] down, skipping export", e.GetName())
 			} else if err := e.Export(c.Metadata); err != nil {
 				logger.Warn(c.Prefix, "export metadata to [%s]: %s", e.GetName(), err.Error())

@@ -183,7 +183,7 @@ func (p *Poller) load_collector(class, object string) error {
 		return err
 	}
 
-	NewFunc, ok := sym.(func(string, string, *options.Options, *yaml.Node) collector.Collector)
+	NewFunc, ok := sym.(func(*collector.AbstractCollector) collector.Collector)
 	if !ok {
 		logger.Error(p.prefix, "New() has not expected signature")
 		return errors.New("incompatible New()")
@@ -206,7 +206,7 @@ func (p *Poller) load_collector(class, object string) error {
 
 	// if object is defined, we only initialize 1 subcollector / object
 	if object != "" {
-		c := NewFunc(class, object, p.options, template.Copy())
+		c := NewFunc(collector.New(class, object, p.options, template.Copy()))
 		if err = c.Init(); err != nil {
 			logger.Error(p.prefix, "init [%s:%s]: %v", class, object, err)
 			return err
@@ -222,7 +222,7 @@ func (p *Poller) load_collector(class, object string) error {
 			logger.Debug(p.prefix, "Filtered Objects: %v (=%d)", p.options.Objects, len(objects.Children))
 		}
 		for _, object := range objects.GetChildren() {
-			c := NewFunc(class, object.Name, p.options, template.Copy())
+			c := NewFunc(collector.New(class, object.Name, p.options, template.Copy()))
 			if err = c.Init(); err != nil {
 				logger.Error(p.prefix, "init [%s:%s]: %v", class, object.Name, err)
 				return err
@@ -296,14 +296,13 @@ func (p *Poller) load_exporter(name string) exporter.Exporter {
 		return nil
 	}
 
-	NewFunc, ok := sym.(func(string, string, *options.Options, *yaml.Node) exporter.Exporter)
+	NewFunc, ok := sym.(func(*exporter.AbstractExporter) exporter.Exporter)
 	if !ok {
 		logger.Error(p.prefix, "New() has not expected signature")
 		return nil
 	}
 
-
-	e := NewFunc(class.Value, name, p.options, params)
+	e := NewFunc(exporter.New(class.Value, name, p.options, params))
 	if err = e.Init(); err != nil {
 		logger.Error(p.prefix, "Failed initializing exporter [%s]: %v", name, err)
 		return nil
@@ -359,7 +358,6 @@ func (p *Poller) Stop() {
 	}
 }
 
-
 func (p *Poller) selfMonitor() {
 
 	task, _ := p.schedule.GetTask("poller")
@@ -374,13 +372,15 @@ func (p *Poller) selfMonitor() {
 			up_exporters := 0
 
 			for _, c := range p.collectors {
-				if status, _, _ := c.GetStatus(); status == 1 {
+				if code, status, msg := c.GetStatus(); code == 1 {
+					logger.Debug(p.prefix, "collector status: %d (%s) - %s", code, status, msg)
 					up_collectors += 1
 				}
 			}
 
 			for _, e := range p.exporters {
-				if status, _ := e.GetStatus(); status == 1 {
+				if code, status, msg := e.GetStatus(); code == 1 {
+					logger.Debug(p.prefix, "exporter status: %d (%s) - %s", code, status, msg)
 					up_exporters += 1
 				}
 			}

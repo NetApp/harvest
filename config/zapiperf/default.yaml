@@ -11,3 +11,4 @@ objects:
 
   # SVM-level metrics
   Volume:                 volume.yaml
+  SystemNode:             system_node.yaml

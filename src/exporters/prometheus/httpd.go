@@ -130,7 +130,7 @@ func (e *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 
 	duration := time.Since(start)
 	e.Metadata.SetValueSS("time", "render", duration.Seconds())
-	e.Metadata.SetValueSS("count", "render", float64(count))
+	e.Metadata.SetValueSS("count", "render", float32(count))
 
 	md := e.Render(e.Metadata)
 	data = append(data, md...)

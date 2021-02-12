@@ -11,6 +11,7 @@ import (
     "goharvest2/poller/struct/dict"
 )
 
+var NAN = float32(math.NaN())
 
 type Matrix struct {
     Collector string
@@ -23,7 +24,7 @@ type Matrix struct {
 	Instances map[string]*Instance
 	Metrics map[string]*Metric
 	MetricsIndex int /* since some metrics are arrays and we can't relay on len(Metrics) */
-    Data [][]float64
+    Data [][]float32
     IsMetadata bool
     MetadataType string
     MetadataObject string
@@ -59,10 +60,10 @@ func (m *Matrix) Clone() *Matrix {
         MetadataType   : m.MetadataType,
         MetadataObject : m.MetadataObject,
     }
-    n.Data = make([][]float64, n.MetricsIndex)
+    n.Data = make([][]float32, n.MetricsIndex)
     if !m.IsEmpty() {
         for i:=0; i<n.MetricsIndex; i+=1 {
-            n.Data[i] = make([]float64, len(n.Instances))
+            n.Data[i] = make([]float32, len(n.Instances))
             copy(n.Data[i], m.Data[i])
         }
     }
@@ -70,24 +71,24 @@ func (m *Matrix) Clone() *Matrix {
 }
 
 func (m *Matrix) InitData() error {
-	var x, y, i, j int
+    var x, y, i, j int
 	x = m.MetricsIndex
 	y = len(m.Instances)
 	if x == 0 || y == 0 {
 		return errors.New(errors.MATRIX_EMPTY, "counter or instance cache empty")
 	}
-	m.Data = make([][]float64, x)
+    m.Data = make([][]float32, x)
 	for i=0; i<x; i+=1 {
-		m.Data[i] = make([]float64, y)
+		m.Data[i] = make([]float32, y)
 		for j=0; j<y; j+=1 {
-			m.Data[i][j] = math.NaN()
+			m.Data[i][j] = NAN
 		}
 	}
 	return nil
 }
 
 func (m *Matrix) ResetData() {
-    m.Data = make([][]float64, 0)
+    m.Data = make([][]float32, 0)
 }
 
 func (m *Matrix) ResetMetrics() {
@@ -126,28 +127,28 @@ func (m *Matrix) SetValueString(metric *Metric, instance *Instance, value string
     numeric, err = strconv.ParseFloat(value, 32)
 
     if err == nil {
-		m.SetValue(metric, instance, numeric)
+		m.SetValue(metric, instance, float32(numeric))
     }
 	return err
 }
 
-func (m *Matrix) SetValue(metric *Metric, instance *Instance, value float64) {
+func (m *Matrix) SetValue(metric *Metric, instance *Instance, value float32) {
 	m.Data[metric.Index][instance.Index] = value
 }
 
-func (m *Matrix) SetValueS(key string, instance *Instance, value float64) {
+func (m *Matrix) SetValueS(key string, instance *Instance, value float32) {
     if metric := m.GetMetric(key); metric != nil {
         m.SetValue(metric, instance, value)
     }
 }
 
-func (m *Matrix) SetValueSS(metric_key, instance_key string, value float64) {
+func (m *Matrix) SetValueSS(metric_key, instance_key string, value float32) {
     if instance := m.GetInstance(instance_key); instance != nil {
         m.SetValueS(metric_key, instance, value)
     }
 }
 
-func (m *Matrix) SetArrayValues(metric *Metric, instance *Instance, values []float64) {
+func (m *Matrix) SetArrayValues(metric *Metric, instance *Instance, values []float32) {
     for i:=0; i<len(metric.Labels); i+=1 {
         m.Data[metric.Index+i][instance.Index] = values[i]        
     }
@@ -156,13 +157,13 @@ func (m *Matrix) SetArrayValues(metric *Metric, instance *Instance, values []flo
 func (m *Matrix) SetArrayValuesString(metric *Metric, instance *Instance, values []string) error {
     var ok bool
 
-    numeric := make([]float64, len(values))
+    numeric := make([]float32, len(values))
     for _, v := range values {
         if n, err := strconv.ParseFloat(v, 32); err == nil {
-            numeric = append(numeric, n)
+            numeric = append(numeric, float32(n))
             ok = true // at least one parsed
         } else {
-            numeric = append(numeric, math.NaN())
+            numeric = append(numeric, NAN)
         }
     }
 
@@ -174,14 +175,14 @@ func (m *Matrix) SetArrayValuesString(metric *Metric, instance *Instance, values
     return errors.New(errors.MATRIX_PARSE_STR, "no number parsed from: [" + strings.Join(values, ", ") + "]")
 }
 
-func (m *Matrix) GetValue(metric *Metric, instance *Instance) (float64, bool) {
-	var value float64
+func (m *Matrix) GetValue(metric *Metric, instance *Instance) (float32, bool) {
+	var value float32
 	value = m.Data[metric.Index][instance.Index]
 	return value, value==value
 }
 
-func (m *Matrix) GetArrayValues(metric *Metric, instance *Instance) []float64 {
-    values := make([]float64, len(metric.Labels))
+func (m *Matrix) GetArrayValues(metric *Metric, instance *Instance) []float32 {
+    values := make([]float32, len(metric.Labels))
     for i:=0; i<len(metric.Labels); i+=1 {
         values[i] = m.Data[metric.Index+i][instance.Index]        
     }

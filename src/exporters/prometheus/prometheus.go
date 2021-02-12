@@ -13,101 +13,59 @@ import (
 )
 
 type Prometheus struct {
-    class string
-    Name string
-    Prefix string
-    options *options.Options
-    params *yaml.Node
+    *exporter.AbstractExporter
     cache map[string]*matrix.Matrix
-    Metadata *matrix.Matrix
 }
 
-func New(class, name string, options *options.Options, params *yaml.Node) exporter.Exporter {
-    e := Prometheus{class: class, Name: name, options: options, params: params}
-    e.Prefix = "(exporter) (" + name + ")" 
-    return &e
-}
-
-func (e *Prometheus) GetClass() string {
-    return e.class
-}
-
-func (e *Prometheus) GetName() string {
-    return e.Name
-}
-
-func (e *Prometheus) GetStatus() (int, string) {
-    return 1, "Up"
+func New(abc *exporter.AbstractExporter) exporter.Exporter {
+    return &Prometheus{AbstractExporter: abc}
 }
 
 func (e *Prometheus) Init() error {
 
-    if e.options.Debug {
+    if err := e.InitAbc(); err != nil {
+        return err
+    }
+
+    if e.Options.Debug {
         logger.Info(e.Prefix, "Initialized exporter. No HTTP server started since in debug mode")
         return nil
     }
     
-    url := e.params.GetChildValue("url")
-    port := e.params.GetChildValue("port")
-    e.StartHttpd(url, port)
+    e.cache = make(map[string]*matrix.Matrix)
 
+    url := e.Params.GetChildValue("url")
+    port := e.Params.GetChildValue("port")
+    e.StartHttpd(url, port)
+ 
     logger.Info(e.Prefix, "Initialized Exporter. HTTP daemon serving at [http://%s:%s]", url, port)
 
-    e.cache = make(map[string]*matrix.Matrix)
-    
-    e.Metadata = matrix.New(e.class, e.Name, "")
-	e.Metadata.IsMetadata = true
-	e.Metadata.MetadataType = "exporter"
-	e.Metadata.MetadataObject = "export"
-	hostname, _ := os.Hostname()
-	e.Metadata.SetGlobalLabel("hostname", hostname)
-	e.Metadata.SetGlobalLabel("version", e.options.Version)
-	e.Metadata.SetGlobalLabel("poller", e.options.Poller)
-	e.Metadata.SetGlobalLabel("exporter", e.class)
-    e.Metadata.SetGlobalLabel("target", e.Name)
-    
-	if _, err := e.Metadata.AddMetric("time", "time", true); err != nil {
-        return err
-    }
-	if _, err := e.Metadata.AddMetric("count", "count", true); err != nil {
-        return err
-    }
-
-    e.Metadata.AddLabelName("task")
-    instance, _ := e.Metadata.AddInstance("render")
-    e.Metadata.SetInstanceLabel(instance, "task", "render")
-    e.Metadata.SetExportOptions(matrix.DefaultExportOptions())
-    
-	/* initialize underlaying arrays */
-    err := e.Metadata.InitData()
-    //e.Metadata.Print()
-
-    logger.Info(e.Prefix, "metadata with %d metrics (index = %d)", len(e.Metadata.Metrics), e.Metadata.MetricsIndex)
     return err
 }
 
-func (e *Prometheus) Export(data *matrix.Matrix) error {
-
-    if e.options.Debug {
-        rendered := e.Render(data)
-        logger.Debug(e.Prefix, "Simulating export of %d data points", len(rendered))
-        for _, m := range rendered {
-            logger.Debug(e.Prefix, "M= %s%s%s", util.Pink, m, util.End)
-        }
-    } else {
-        key := data.Collector + "." + data.Plugin + "." + data.Object
-        if data.IsMetadata {
-            key = data.MetadataType + "." + data.MetadataObject + "." + key
-        }
-        delete(e.cache, key)
-        e.cache[key] = data
-        logger.Debug(e.Prefix, "Added data to cache [%s]", key)
+func (e *Prometheus) ExportData(data *matrix.Matrix) error {
+	if e.Options.Debug {
+		logger.Debug(e.Prefix, "no actual export since in debug mode")
+		if metrics, err := e.Render(data); err == nil {
+			for _, m := range metrics {
+				logger.Debug(e.Prefix, "M= %s", bytes.TrimRight(m, '\n'))
+			}
+		} else {
+			return err
+		}
+	}
+    key := data.Collector + "." + data.Plugin + "." + data.Object
+    if data.IsMetadata {
+        key = data.MetadataType + "." + data.MetadataObject + "." + key
     }
+    delete(e.cache, key)
+    e.cache[key] = data
+    logger.Debug(e.Prefix, "added to cache with key [%s]", key)
 
     return nil
 }
 
-func (e *Prometheus) Render(data *matrix.Matrix) [][]byte {
+func (e *Prometheus) Render(data *matrix.Matrix) ([][]byte, error) {
     var rendered [][]byte
     var metric_labels, key_labels []string
     var object, prefix, instance_tag string
@@ -124,10 +82,10 @@ func (e *Prometheus) Render(data *matrix.Matrix) [][]byte {
         include_all_labels = false
     }
 
-    if options.GetChildValue("include_instance_names") == "False" {
-        include_instance_names = false
-    } else {
+    if options.GetChildValue("include_instance_names") == "True" {
         include_instance_names = true
+    } else {
+        include_instance_names = false
     }
 
     object = data.Object
@@ -224,7 +182,7 @@ func (e *Prometheus) Render(data *matrix.Matrix) [][]byte {
         }
     }
     logger.Debug(e.Prefix, "Renderd %d data points for [%s] %d instances", len(rendered), object, len(data.Instances))
-    return rendered
+    return rendered, nil
 }
 
 

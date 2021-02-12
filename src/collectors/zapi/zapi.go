@@ -6,8 +6,6 @@ import (
 
     "goharvest2/share/logger"
     "goharvest2/poller/struct/matrix"
-    "goharvest2/poller/struct/options"
-    "goharvest2/poller/struct/yaml"
     "goharvest2/poller/struct/xml"
     "goharvest2/poller/util"
     "goharvest2/poller/collector"
@@ -26,17 +24,15 @@ type Zapi struct {
     instanceKeyPrefix []string
 }
 
-func New(name, obj string, options *options.Options, params *yaml.Node) collector.Collector {
-    a := collector.New(name, obj, options, params)
+func New(a *collector.AbstractCollector) collector.Collector {
     return &Zapi{AbstractCollector: a}
 }
-
 
 func (c *Zapi) Init() error {
 
     var err error
-        if c.connection, err = client.New(c.Params); err != nil {
-            return err
+    if c.connection, err = client.New(c.Params); err != nil {
+        return err
     }
 
     // @TODO handle connectivity-related errors (retry a few times)
@@ -144,7 +140,7 @@ func (c *Zapi) PollInstance() (*matrix.Matrix, error) {
         }
     }
 
-    c.Metadata.SetValueSS("count", "instance", float64(count))
+    c.Metadata.SetValueSS("count", "instance", float32(count))
     logger.Info(c.Prefix, "added %d instances to cache (old cache had %d)", count, old_count)
 
     if len(c.Data.Instances) == 0 {
@@ -172,11 +168,11 @@ func (c *Zapi) PollData() (*matrix.Matrix, error) {
 
         if has {
             if metric != nil {
-                if float, err := strconv.ParseFloat(string(content), 64); err != nil {
+                if float, err := strconv.ParseFloat(string(content), 32); err != nil {
                     logger.Warn(c.Prefix, "%sSkipping metric [%s]: failed to parse [%s] float%s", util.Red, key, content, util.End)
                     skipped += 1
                 } else {
-                    c.Data.SetValue(metric, instance, float)
+                    c.Data.SetValue(metric, instance, float32(float))
                     logger.Trace(c.Prefix, "%sMetric [%s] - Set Value [%f]%s", util.Green, key, float, util.End)
                     count += 1
                 }

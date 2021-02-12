@@ -67,6 +67,7 @@ func (m *Matrix) AddCustomMetric(key string, metric *Metric) error {
 		return errors.New(errors.MATRIX_HASH, "metric [" + key + "] already in cache")
 	}
 	// sanity check: array should come with size
+	metric.Index = m.MetricsIndex
 	if !metric.Scalar {
 		if metric.Size == 0 {
 			return errors.New(errors.MATRIX_INV_PARAM, "array metric has 0 size")
