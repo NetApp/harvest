@@ -46,7 +46,7 @@ function buildrpm {
     else
         docker run -it -v $ROOT:/tmp/src -e HARVEST_BUILD_ARCH="$ARCH" -e HARVEST_BUILD_VERSION="$VERSION" harvest2/rpm
         EXCODE=$?
-        if [ ! $? -eq 0]; then
+        if [ ! $EXCODE -eq 0 ]; then
             error "run docker container failed"
         fi
     fi

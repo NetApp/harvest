@@ -1,4 +1,4 @@
-%define name harvest2
+%define name harvest
 
 Name: %{name}
 Summary: Storage System Monitoring
@@ -26,20 +26,23 @@ mv "harvest2" $RPM_BUILD_ROOT/opt/
 exit
 
 %files
-%attr(0744, root, root) /opt/harvest
+%attr(0744, root, root) /opt/harvest2
 
 %pre
 
 %post
 echo "install..."
-ln -sr /opt/harvest2/bin/harvest /usr/local/bin/harvest
+ln -s /opt/harvest2/bin/harvest /usr/local/bin/harvest
 echo "complete!"
 
 %preun
 
 %postun
 echo "uninstall..."
-unlink /usr/local/bin/xapp
+unlink /usr/local/bin/harvest
 rm -Rf /opt/harvest2
 echo "removed from system"
+
+%clean
+echo "clean up ..."
 

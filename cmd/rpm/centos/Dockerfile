@@ -25,5 +25,5 @@ RUN \
   chmod -R 777 "$GOPATH" && \
   ln -s "/usr/local/go/bin/go" "/usr/local/bin/go" && \
   echo "installed go $GOVERSION"
-CMD ["sh", "/tmp/xapp/cmd/docker-build/build-rpm.sh"]
+CMD ["sh", "/tmp/src/cmd/rpm/build-rpm.sh"]
 
