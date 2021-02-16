@@ -1,9 +1,9 @@
 #!/bin/bash
 
-
-COLOR_END='\033[0m'
 COLOR_GREEN='\033[0;32m'
 COLOR_RED='\033[0;31m'
+COLOR_BOLD='\033[1m'
+COLOR_END='\033[0m'
 
 ROOT_DIR=$(pwd)
 
@@ -15,16 +15,23 @@ poller=false
 
 collectors=false
 exporters=false
-plugins=false
 tools=false
 
-expected_name=""
+component=""
 
 collector=""
 exporter=""
-plugin=""
 tool=""
 
+function error {
+    echo -e $COLOR_RED$COLOR_BOLD$1$COLOR_END
+}
+
+function info {
+    echo -e $COLOR_GREEN$COLOR_BOLD$1$COLOR_END
+}
+
+# parse main command
 case $1 in
     "all"|"")
         all=true
@@ -32,11 +39,11 @@ case $1 in
         ;;
     "clean")
         clean=true
-        echo "clean all"
+        echo "clean"
         ;;
     "harvest")
         harvest=true
-        echo "build harvest"
+        echo "build harvest-cli"
         ;;
     "poller")
         poller=true
@@ -50,23 +57,14 @@ case $1 in
         exporters=true
         echo "build exporters"
         ;;
-    "plugins")
-        plugins=true
-        echo "build plugins"
-        ;;
     "collector")
         collector=$2
-        expected_name="collector"
+        component="collector [$collector]"
         ;;
     "exporter")
         exporter=$2
-        expected_name="exporter"
+        component="exporter"
         echo "build exporter [$exporter]"
-        ;;
-    "plugin")
-        plugin=$2
-        expected_name="plugin"
-        echo "build plugin [$plugin]"
         ;;
     "tools")
         tools=true
@@ -74,51 +72,52 @@ case $1 in
         ;;
     "tool")
         tool=$2
-        expected_name="tool"
+        component="tool"
         echo "build tool [$tool]"
         ;;
 esac
 
-if [ "$expected_name" == "collector" ] && [ "$collector" == "" ]; then
+# validate expected option
+if [ "$component" == "collector" ] && [ "$collector" == "" ]; then
     echo "missing collector name"
     exit 1
 fi
 
-if [ "$expected_name" == "exporter" ] && [ "$exporter" == "" ]; then
+if [ "$component" == "exporter" ] && [ "$exporter" == "" ]; then
     echo "missing exporter name"
     exit 1
 fi
 
-if [ "$expected_name" == "plugin" ] && [ "$plugin" == "" ]; then
-    echo "missing plugin name"
-    exit 1
-fi
-
-if [ "$expected_name" == "tool" ] && [ "$tool" == "" ]; then
+if [ "$component" == "tool" ] && [ "$tool" == "" ]; then
     echo "missing tool name"
     exit 1
 fi
 
+# clean up binaries and exit
 if [ $clean == true ]; then
-    cd bin
-    rm poller
-    rm collectors/*so
-    rm exporters/*so
-    rm plugins/*so
-    cd ..
+    rm -rfv bin/*
     exit 0
 fi
 
-# compile harvest
+# compile tools --- @TODO
+if [ "$tool" != "" ]; then
+    error "not implemented yet"
+    exit 0
+fi
+
+# compile harvest-cli and manager
 if [ $all == true ] || [ $harvest == true ]; then
-    cd src/harvest/
+    cd src/harvest-cli/
     go build -o ../../bin/harvest
     if [ $? -eq 0 ]; then
-        echo -e "${COLOR_GREEN}compiled: /bin/harvest ${COLOR_END}"
+        info "compiled: /bin/harvest"
     else
-        echo -e "${COLOR_RED}compilation failed ${COLOR_END}"
+        error "compilation failed"
         exit 1
     fi
+    # temporarily use python script as manager @TODO migrate to GO
+    cp manager/manager.py ../../bin/manager
+    info "copied /bin/manager"
     cd ../../
 fi
 
@@ -134,9 +133,9 @@ if [ $all == true ] || [ $collectors == true ] || [ "$collector" != "" ]; then
                 go build -buildmode=plugin -o ../../../bin/collectors/"$f".so
 
                 if [ $? -eq 0 ]; then
-                    echo -e "${COLOR_GREEN}compiled: /bin/collectors/$f.so ${COLOR_END}"
+                    info "compiled: /bin/collectors/$f.so"
                 else
-                    echo -e "${COLOR_RED}compiling [/src/collectors/$f] failed ${COLOR_END}"
+                    error "compiling [/src/collectors/$f] failed"
                     exit 1
                 fi
             fi
@@ -177,9 +176,9 @@ if [ $all == true ] || [ $exporters == true ] || [ "$exporter" != "" ]; then
             if [ $all == true ] || [ $exporters == true ] || [ "$exporter" == "$f" ]; then
                 go build -buildmode=plugin -o ../../../bin/exporters/"$f".so
                 if [ $? -eq 0 ]; then
-                    echo -e "${COLOR_GREEN}compiled: /bin/exporters/$f.so ${COLOR_END}"
+                    info "compiled: /bin/exporters/$f.so"
                 else
-                    echo -e "${COLOR_RED}compilation failed ${COLOR_END}"
+                    error "compilation failed"
                     exit 1
                 fi
             fi
@@ -189,29 +188,7 @@ if [ $all == true ] || [ $exporters == true ] || [ "$exporter" != "" ]; then
     cd ../../
 fi
 
-# compile plugins(s)
-if [ $all == true ] || [ $plugins == true ] || [ "$plugin" != "" ]; then
-    cd src/plugins/
-    declare -a files
-    files=($(ls))
-    for f in ${files[@]}; do
-        if [ -d "$f" ]; then
-            cd $f
-            if [ $all == true ] || [ $plugins == true ] || [ "$plugin" == "$f" ]; then
-                go build -buildmode=plugin -o ../../../bin/plugins/"$f".so
-                if [ $? -eq 0 ]; then
-                    echo -e "${COLOR_GREEN}compiled: /bin/plugins/$f.so ${COLOR_END}"
-                else
-                    echo -e "${COLOR_RED}compilation failed ${COLOR_END}"
-                    exit 1
-                fi
-            fi
-            cd ../
-        fi
-    done
-    cd ../../
-fi
-
+: '
 # compile tool(s)
 if [ $all == true ] || [ $tools == true ] || [ "$tool" != "" ]; then
     cd src/tools/
@@ -223,9 +200,9 @@ if [ $all == true ] || [ $tools == true ] || [ "$tool" != "" ]; then
             if [ $all == true ] || [ $tools == true ] || [ "$tool" == "$f" ]; then
                 go build -o ../../../bin/"$f"
                 if [ $? -eq 0 ]; then
-                    echo -e "${COLOR_GREEN}compiled: /bin/$f ${COLOR_END}"
+                    info "compiled: /bin/$f"
                 else
-                    echo -e "${COLOR_RED}compilation failed ${COLOR_END}"
+                    error "compilation failed"
                     exit 1
                 fi
             fi
@@ -234,6 +211,7 @@ if [ $all == true ] || [ $tools == true ] || [ "$tool" != "" ]; then
     done
     cd ../../
 fi
+'
 
 # compile poller
 if [ $all == true ] || [ $poller == true ]; then
@@ -241,9 +219,9 @@ if [ $all == true ] || [ $poller == true ]; then
     go build -o ../../bin/poller
     cd ../../
     if [ $? -eq 0 ]; then
-        echo -e "${COLOR_GREEN}compiled: /bin/poller ${COLOR_END}"
+        info "compiled: /bin/poller"
     else
-        echo -e "${COLOR_RED}compilation failed ${COLOR_END}"
+        error "compilation failed"
         exit 1
     fi
 fi
