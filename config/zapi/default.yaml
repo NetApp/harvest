@@ -14,4 +14,4 @@ objects:
   SnapMirror:       snapmirror.yaml
   StorageDisk:      disk.yaml
 #  Qtree:            qtree.yaml
-#  Shelf:            shelf.yaml
+  Shelf:            shelf.yaml

@@ -4,12 +4,9 @@ package main
 import (
 	"goharvest2/poller/collector/plugin"
     "goharvest2/poller/struct/matrix"
-	"goharvest2/poller/struct/options"
-	"goharvest2/poller/struct/xml"
-	"goharvest2/poller/struct/yaml"
 	"goharvest2/poller/struct/dict"
 	"goharvest2/share/logger"
-	//"goharvest2/poller/errors"
+	"goharvest2/share/tree/node"
 
     client "goharvest2/poller/api/zapi"
 )
@@ -25,8 +22,7 @@ type SnapMirror struct {
 	limit_cache_counter int
 }
 
-func New(parent_name string, options *options.Options, params *yaml.Node, pparams *yaml.Node) plugin.Plugin {
-	p := plugin.New(parent_name, options, params, pparams)
+func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &SnapMirror{AbstractPlugin: p}
 }
 
@@ -44,7 +40,7 @@ func (p *SnapMirror) Init() error {
 		return err
 	}
 
-	if p.batch_size = p.ParentParams.GetChildValue("batch_size"); p.batch_size == "" {
+	if p.batch_size = p.ParentParams.GetChildContentS("batch_size"); p.batch_size == "" {
 		p.batch_size = "500"
 	}
 
@@ -141,26 +137,24 @@ func (p *SnapMirror) update_node_cache() error {
 
 	count := 0	
 
-	request := xml.New("perf-object-get-instances")
-	request.CreateChild("objectname", "volume")
+	request := node.NewXmlS("perf-object-get-instances")
+	request.NewChildS("objectname", "volume")
 	//request.CreateChild("max-records", p.batch_size)
 
-	req_i := xml.New("instances")
-	req_i.CreateChild("instance", "*")
-	request.AddChild(req_i)
+	request_instances := request.NewChildS("instances", "")
+	request_instances.NewChildS("instance", "*")
 
-	req_c := xml.New("counters")
-	req_c.CreateChild("counter", "node_name")
-	req_c.CreateChild("counter", "vserver_name")
-	request.AddChild(req_c)
+	request_counters := request.NewChildS("counters", "")
+	request_counters.NewChildS("counter", "node_name")
+	request_counters.NewChildS("counter", "vserver_name")
 
 	next_tag := "init"
 
 	for next_tag != "" {
 
 		if next_tag != "init" {
-			request.PopChild("tag")
-			request.CreateChild("tag", next_tag)
+			request.PopChildS("tag")
+			request.NewChildS("tag", next_tag)
 		}
 
 		if err := p.connection.BuildRequest(request); err != nil {
@@ -179,7 +173,7 @@ func (p *SnapMirror) update_node_cache() error {
 		}
 		next_tag = next_tag_tmp
 
-		if instances, has := resp.GetChild("instances"); has {
+		if instances := resp.GetChildS("instances"); instances != nil {
 			for _, i := range instances.GetChildren() {
 				vol := i.GetChildContentS("name")
 				svm := i.GetChildContentS("vserver_name")
@@ -197,18 +191,16 @@ func (p *SnapMirror) update_node_cache() error {
 
 
 func (p *SnapMirror) update_limit_cache() error {
-	request := xml.New("perf-object-get-instances")
-	request.CreateChild("objectname", "smc_em")
+	request := node.NewXmlS("perf-object-get-instances")
+	request.NewChildS("objectname", "smc_em")
 
-	req_i := xml.New("instances")
-	req_i.CreateChild("instance", "*")
-	request.AddChild(req_i)
+	req_i := request.NewChildS("instances", "")
+	req_i.NewChildS("instance", "*")
 
-	req_c := xml.New("counters")
-	req_c.CreateChild("counter", "node_name")
-	req_c.CreateChild("counter", "dest_meter_count")
-	req_c.CreateChild("counter", "src_meter_count")
-	request.AddChild(req_c)
+	req_c := request.NewChildS("counters", "")
+	req_c.NewChildS("counter", "node_name")
+	req_c.NewChildS("counter", "dest_meter_count")
+	req_c.NewChildS("counter", "src_meter_count")
 
 	if err := p.connection.BuildRequest(request); err != nil {
 		return err
@@ -221,7 +213,7 @@ func (p *SnapMirror) update_limit_cache() error {
 
 	count := 0
 
-	if instances, has := resp.GetChild("instances"); has {
+	if instances := resp.GetChildS("instances"); instances != nil {
 		for _, i := range instances.GetChildren() {
 			node := i.GetChildContentS("node_name")
 			dest_limit := i.GetChildContentS("dest_meter_count")

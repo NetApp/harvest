@@ -3,6 +3,7 @@ package errors
 import (
 	"strings"
 )
+
 const (
 	MISSING_PARAM = "missing parameter"
 	INVALID_PARAM = "invalid parameter"
@@ -10,6 +11,7 @@ const (
 	ERR_CONFIG = "configuration error"
 	ERR_NO_METRIC = "no metrics"
 	ERR_NO_INSTANCE = "no instances"
+	ERR_NO_COLLECTOR = "no collectors"
 	MATRIX_HASH = "matrix error"
 	MATRIX_EMPTY = "empty cache"
 	MATRIX_INV_PARAM = "matrix invalid parameter"
@@ -22,19 +24,23 @@ const (
 )
 
 type Error struct {
-	err string
+	class string
 	msg string
 }
 
 func (e Error) Error() string {
-	return e.err + ": " + e.msg
+	return e.class + " => " + e.msg
 }
 
-func New(name, msg string) Error {
-	return Error{err:name, msg:msg}
+func New(class, msg string) Error {
+	return Error{class:class, msg:msg}
 }
 
-func IsErr(err error, code string) bool {
+func IsErr(err error, class string) bool {
 	// dirty solution, temporarily
-	return strings.Contains(err.Error(), code)
+	e := strings.Split(err.Error(), " => ")
+	if len(e) > 1 {
+		return strings.Contains(e[0], class)
+	}
+	return false
 }

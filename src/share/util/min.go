@@ -31,3 +31,16 @@ func AllSame(elements [][]string, k int) bool {
     }
     return true
 }
+
+func EqualStringSlice(a, b []string) bool {
+    var i int
+    if len(a) != len(b) {
+        return false
+    }
+    for i=0; i<len(a); i+=1 {
+        if a[i] != b[i] {
+            return false
+        }
+    }
+    return true
+}

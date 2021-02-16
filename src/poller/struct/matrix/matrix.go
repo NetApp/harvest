@@ -5,9 +5,8 @@ import (
     "math"
     "strings"
     "strconv"
-	"goharvest2/poller/errors"
-    //"goharvest2/poller/util"
-    "goharvest2/poller/struct/yaml"
+    "goharvest2/share/tree/node"
+	"goharvest2/share/errors"
     "goharvest2/poller/struct/dict"
 )
 
@@ -19,9 +18,9 @@ type Matrix struct {
     Plugin string
 	GlobalLabels *dict.Dict
 	LabelNames *dict.Dict
+	ExportOptions *node.Node
+    Instances map[string]*Instance
     InstanceKeys [][]string
-	ExportOptions *yaml.Node
-	Instances map[string]*Instance
 	Metrics map[string]*Metric
 	MetricsIndex int /* since some metrics are arrays and we can't relay on len(Metrics) */
     Data [][]float32
@@ -34,7 +33,6 @@ func New(collector, object, plugin string) *Matrix {
     m := Matrix{Collector: collector, Object: object, Plugin: plugin, MetricsIndex: 0 }
     m.GlobalLabels = dict.New()
     m.LabelNames = dict.New()
-    m.InstanceKeys = make([][]string, 0)
     m.Instances = map[string]*Instance{}
     m.Metrics = map[string]*Metric{}
     return &m
@@ -50,11 +48,11 @@ func (m *Matrix) Clone() *Matrix {
         Object         : m.Object, 
         Plugin         : m.Plugin,
         Instances      : m.Instances,
+        InstanceKeys   : m.InstanceKeys,
         Metrics        : m.Metrics,
         MetricsIndex   : m.MetricsIndex,
         GlobalLabels   : m.GlobalLabels,
         LabelNames     : m.LabelNames,
-        InstanceKeys   : m.InstanceKeys,
         ExportOptions  : m.ExportOptions,
         IsMetadata     : m.IsMetadata,
         MetadataType   : m.MetadataType,
@@ -203,18 +201,17 @@ func (m *Matrix) GetLabel(key string) (string, bool) {
     return m.LabelNames.GetHas(key)
 }
 
+
 func (m *Matrix) AddInstanceKey(key []string) {
     copied := make([]string, len(key))
     copy(copied, key)
-
     m.InstanceKeys = append(m.InstanceKeys, copied)
-    //fmt.Printf("%s+ InstancKey %v%s\n", util.Bold, copied, util.End)
-    //fmt.Printf("%s= %v %s\n", util.Red, m.InstanceKeys, util.End)
 }
 
 func (m *Matrix) GetInstanceKeys() [][]string {
     return m.InstanceKeys
 }
+
 
 func (m *Matrix) SetInstanceLabel(instance *Instance, key, value string) {
     display := m.LabelNames.Get(key)
@@ -237,12 +234,12 @@ func (m *Matrix) GetGlobalLabels() *dict.Dict {
 	return m.GlobalLabels
 }
 
-func (m *Matrix) SetExportOptions(options *yaml.Node) {
+func (m *Matrix) SetExportOptions(options *node.Node) {
     m.ExportOptions = options
 }
 
-func DefaultExportOptions() *yaml.Node {
-    n := yaml.New("export_options", "")
-    n.CreateChild("include_all_labels", "True")
+func DefaultExportOptions() *node.Node {
+    n := node.NewS("export_options")
+    n.NewChildS("include_all_labels", "True")
     return n
 }

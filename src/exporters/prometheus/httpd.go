@@ -103,7 +103,7 @@ func (e *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 		num_collectors += 1
 	}
 
-	poller := e.options.Poller
+	poller := e.Options.Poller
 	body_flat := fmt.Sprintf(html_template, poller, poller, poller, num_collectors, num_objects, num_metrics, strings.Join(body, "\n\n"))
 	
 	w.WriteHeader(200)
@@ -122,17 +122,17 @@ func (e *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 
 	for _, m := range e.cache {
 		logger.Info(e.Prefix, "Rendering metrics [%s:%s]", m.Collector, m.Object)
-		rendered := e.Render(m)
+		rendered, _ := e.Render(m)
 
 		data = append(data, rendered...)
 		count += len(rendered)
 	}
 
 	duration := time.Since(start)
-	e.Metadata.SetValueSS("time", "render", duration.Seconds())
+	e.Metadata.SetValueSS("time", "render", float32(duration.Seconds()))
 	e.Metadata.SetValueSS("count", "render", float32(count))
 
-	md := e.Render(e.Metadata)
+	md, _ := e.Render(e.Metadata)
 	data = append(data, md...)
 	//data = append(data, sep)
 

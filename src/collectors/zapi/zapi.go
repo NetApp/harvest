@@ -5,11 +5,11 @@ import (
     "strconv"
 
     "goharvest2/share/logger"
-    "goharvest2/poller/struct/matrix"
-    "goharvest2/poller/struct/xml"
-    "goharvest2/poller/util"
+    "goharvest2/share/tree/node"
+	"goharvest2/share/errors"
+    "goharvest2/share/util"
     "goharvest2/poller/collector"
-	"goharvest2/poller/errors"
+    "goharvest2/poller/struct/matrix"
 
     client "goharvest2/poller/api/zapi"
 )
@@ -19,9 +19,11 @@ type Zapi struct {
     connection *client.Client
     system *client.System
     object string
+    query string
 	template_fn string
 	template_type string
     instanceKeyPrefix []string
+    instanceKeys [][]string
 }
 
 func New(a *collector.AbstractCollector) collector.Collector {
@@ -42,39 +44,49 @@ func (c *Zapi) Init() error {
     }
     logger.Debug(c.Prefix, "Connected to: %s", c.system.String())
 
-    template_fn := c.Params.GetChild("objects").GetChildValue(c.Object) // @TODO err handling
+    template_fn := c.Params.GetChildS("objects").GetChildContentS(c.Object) // @TODO err handling
 
     template, err := collector.ImportSubTemplate(c.Options.Path, "default", template_fn, c.Name, c.system.Version)
     if err != nil {
         logger.Error(c.Prefix, "Error importing subtemplate: %s", err)
         return err
     }
-    c.Params.Union(template, false)
+    c.Params.Union(template)
 
     // object name from subtemplate
-    if c.object = c.Params.GetChildValue("object"); c.object == "" {
+    if c.object = c.Params.GetChildContentS("object"); c.object == "" {
         return errors.New(errors.MISSING_PARAM, "object")
     }
- 
+
+    // api query literal
+    if c.query = c.Params.GetChildContentS("query"); c.query == "" {
+        return errors.New(errors.MISSING_PARAM, "query")
+    }
     // Invoke generic initializer
     // this will load Schedule, initialize Data and Metadata
     if err := collector.Init(c); err != nil {
         return err
     }
 
+    // overwrite from abstract collector
+    c.Data.Object = c.object
+    
     // Add system (cluster) name 
     c.Data.SetGlobalLabel("system", c.system.Name)
 
     // Initialize counter cache
-    counters := c.Params.GetChild("counters")
+    counters := c.Params.GetChildS("counters")
     if counters == nil {
         return errors.New(errors.MISSING_PARAM, "counters")
     }
 
     //@TODO cleanup
-    logger.Debug(c.Prefix, "Parsing counters: %d values, %d children", len(counters.Values), len(counters.Children))
-    ParseCounters(c.Data, counters, make([]string, 0))
-    logger.Debug(c.Prefix, "Built counter cache with %d Metrics and %d Labels", c.Data.MetricsIndex+1, len(c.Data.Instances))
+    logger.Debug(c.Prefix, "Parsing counters: %d values", len(counters.GetChildren()))
+    if ! LoadCounters(c.Data, counters) {
+        return errors.New(errors.ERR_NO_METRIC, "failed to parse any")
+    }
+
+    logger.Debug(c.Prefix, "Loaded %d Metrics and %d Labels", c.Data.MetricsIndex+1, len(c.Data.Instances))
 
     if len(c.Data.InstanceKeys) == 0 {
         return errors.New(errors.INVALID_PARAM, "no instance keys indicated")
@@ -90,8 +102,8 @@ func (c *Zapi) Init() error {
 
 func (c *Zapi) PollInstance() (*matrix.Matrix, error) {
     var err error
-    var response *xml.Node
-    var instances []*xml.Node
+    var response *node.Node
+    var instances []*node.Node
     var old_count int
     var keys []string
     var keypaths [][]string
@@ -100,7 +112,7 @@ func (c *Zapi) PollInstance() (*matrix.Matrix, error) {
     logger.Debug(c.Prefix, "starting instance poll")
 
     //@TODO next tag
-    if err = c.connection.BuildRequestString(c.Params.GetChildValue("query")); err != nil {
+    if err = c.connection.BuildRequestString(c.query); err != nil {
         return nil, err
     }
 
@@ -111,7 +123,7 @@ func (c *Zapi) PollInstance() (*matrix.Matrix, error) {
     old_count = len(c.Data.Instances)
     c.Data.ResetInstances()
 
-    instances = xml.SearchByPath(response, c.instanceKeyPrefix)
+    instances = response.SearchChildren(c.instanceKeyPrefix)
     if len(instances) == 0 {
         return nil, errors.New(errors.ERR_NO_INSTANCE, "no instances in server response")
     }
@@ -125,7 +137,7 @@ func (c *Zapi) PollInstance() (*matrix.Matrix, error) {
 
     for _, instance := range instances {
         //c.logger.Printf(c.Prefix, "Handling instance element <%v> [%s]", &instance, instance.GetName())
-        keys, found = xml.SearchByNames(instance, c.instanceKeyPrefix, keypaths)
+        keys, found = instance.SearchContent(c.instanceKeyPrefix, keypaths)
         logger.Debug(c.Prefix, "fetched instance keys (%v): %s", keypaths, strings.Join(keys, "."))
 
         if !found {
@@ -152,21 +164,20 @@ func (c *Zapi) PollInstance() (*matrix.Matrix, error) {
 
 func (c *Zapi) PollData() (*matrix.Matrix, error) {
     var err error
-    var query string
-    var response *xml.Node
-    var fetch func(*matrix.Instance, *xml.Node, []string)
+    var response *node.Node
+    var fetch func(*matrix.Instance, *node.Node, []string)
     var count, skipped int
 
     count = 0
     skipped = 0
 
-    fetch = func(instance *matrix.Instance, node *xml.Node, path []string) {
-        newpath := append(path, node.GetName())
+    fetch = func(instance *matrix.Instance, node *node.Node, path []string) {
+        newpath := append(path, node.GetNameS())
         key := strings.Join(newpath, ".")
         metric := c.Data.GetMetric(key)
-        content, has := node.GetContent()
+        content := node.GetContentS()
 
-        if has {
+        if content != "" {
             if metric != nil {
                 if float, err := strconv.ParseFloat(string(content), 32); err != nil {
                     logger.Warn(c.Prefix, "%sSkipping metric [%s]: failed to parse [%s] float%s", util.Red, key, content, util.End)
@@ -201,12 +212,7 @@ func (c *Zapi) PollData() (*matrix.Matrix, error) {
         return nil, err
     }
 
-    // @todo just verify once in init
-    if query = c.Params.GetChildValue("query"); query == "" {
-        return nil, errors.New(errors.MISSING_PARAM, "query")
-    }
-
-    if err = c.connection.BuildRequestString(query); err != nil {
+    if err = c.connection.BuildRequestString(c.query); err != nil {
         return nil, err
     }
 
@@ -214,7 +220,7 @@ func (c *Zapi) PollData() (*matrix.Matrix, error) {
         return nil, err
     }
 
-    instances := xml.SearchByPath(response, c.instanceKeyPrefix)
+    instances := response.SearchChildren(c.instanceKeyPrefix)
     if len(instances) == 0 {
         return nil, errors.New(errors.ERR_NO_INSTANCE, "")
     }
@@ -223,7 +229,7 @@ func (c *Zapi) PollData() (*matrix.Matrix, error) {
 
     for _, instanceElem := range instances {
         //c.logger.Printf(c.Prefix, "Handling instance element <%v> [%s]", &instance, instance.GetName())
-        keys, found := xml.SearchByNames(instanceElem, c.instanceKeyPrefix, c.Data.GetInstanceKeys())
+        keys, found := instanceElem.SearchContent(c.instanceKeyPrefix, c.Data.GetInstanceKeys())
         logger.Debug(c.Prefix, "Fetched instance keys: %s", strings.Join(keys, "."))
 
         if !found {

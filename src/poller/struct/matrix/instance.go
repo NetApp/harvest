@@ -1,7 +1,7 @@
 package matrix
 
 import (
-	"goharvest2/poller/errors"
+	"goharvest2/share/errors"
 	"goharvest2/poller/struct/dict"
 
 )

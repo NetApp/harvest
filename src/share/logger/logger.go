@@ -6,7 +6,7 @@ import (
     "os"
     "path"
     "strconv"
-    "goharvest2/poller/errors"
+	"goharvest2/share/errors"
 )
 
 const flags int = log.Ldate | log.Ltime | log.Lmsgprefix
@@ -52,10 +52,10 @@ func CloseFileOutput() error {
 
 func SetLevel(l int) error {
     var err error
-    if l > 0 && l < len(levels) {
+    if l >= 0 && l < len(levels) {
         level = l
     } else {
-        err = errors.New(errors.INVALID_PARAM, "level " + strconv.Itoa(level))
+        err = errors.New(errors.INVALID_PARAM, "level " + strconv.Itoa(l))
     }
     return err
 }

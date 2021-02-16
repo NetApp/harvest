@@ -6,8 +6,6 @@ import (
 	"goharvest2/share/logger"
 	"goharvest2/poller/collector/plugin"
     "goharvest2/poller/struct/matrix"
-	"goharvest2/poller/struct/options"
-	"goharvest2/poller/struct/yaml"
 )
 
 
@@ -15,8 +13,7 @@ type FlexGroup struct {
 	*plugin.AbstractPlugin
 }
 
-func New(parent_name string, options *options.Options, params *yaml.Node, pparams *yaml.Node) plugin.Plugin {
-	p := plugin.New(parent_name, options, params, pparams)
+func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &FlexGroup{AbstractPlugin: p}
 }
 

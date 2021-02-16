@@ -7,7 +7,7 @@ package matrix
 import (
     "fmt"
     "strings"
-    "goharvest2/poller/util"
+    "goharvest2/share/util"
 )
 
 func (m *Matrix) Print() {

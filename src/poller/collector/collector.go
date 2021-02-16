@@ -2,7 +2,6 @@ package collector
 
 import (
 	"sync"
-	"os"
 	"strings"
 	"strconv"
 	"path"
@@ -10,14 +9,14 @@ import (
 	"time"
 
 	"goharvest2/share/logger"
+	"goharvest2/share/util"
+	"goharvest2/share/tree/node"
+	"goharvest2/share/errors"
 
-	"goharvest2/poller/struct/yaml"
 	"goharvest2/poller/struct/options"
 	"goharvest2/poller/struct/matrix"
 	"goharvest2/poller/schedule"
 	"goharvest2/poller/exporter"
-	"goharvest2/poller/util"
-	"goharvest2/poller/errors"
 	"goharvest2/poller/collector/plugin"
 )
 
@@ -26,7 +25,7 @@ type Collector interface {
 	Start(*sync.WaitGroup)
 	GetName() string
 	GetObject() string
-	GetParams() *yaml.Node
+	GetParams() *node.Node
 	GetOptions() *options.Options
 	GetStatus() (int, string, string)
 	SetStatus(int, string)
@@ -35,7 +34,7 @@ type Collector interface {
 	SetMetadata(*matrix.Matrix)
 	WantedExporters() []string
 	LinkExporter(exporter.Exporter)
-	LoadPlugins(*yaml.Node) error
+	LoadPlugins(*node.Node) error
 }
 
 var CollectorStatus = [4]string{
@@ -52,7 +51,7 @@ type AbstractCollector struct {
 	Status int
 	Message string
 	Options *options.Options
-	Params *yaml.Node
+	Params *node.Node
 	Schedule *schedule.Schedule
 	Data *matrix.Matrix
 	Metadata *matrix.Matrix
@@ -60,7 +59,7 @@ type AbstractCollector struct {
 	Plugins []plugin.Plugin
 }
 
-func New(name, object string, options *options.Options, params *yaml.Node) *AbstractCollector {
+func New(name, object string, options *options.Options, params *node.Node) *AbstractCollector {
 	c := AbstractCollector{
 		Name: name,
 		Object: object,
@@ -84,7 +83,7 @@ func Init(c Collector) error {
 	object := c.GetObject()
 
 	/* Initialize schedule and tasks (polls) */
-	tasks := params.GetChild("schedule")
+	tasks := params.GetChildS("schedule")
 	if tasks == nil || len(tasks.GetChildren()) == 0 {
 		return errors.New(errors.MISSING_PARAM, "schedule")
 	}
@@ -95,15 +94,15 @@ func Init(c Collector) error {
 	// Example: "data" will be alligned to method PollData()
 	for _, task := range tasks.GetChildren() {
 
-		method_name := "Poll"+strings.Title(task.Name)
+		method_name := "Poll"+strings.Title(task.GetNameS())
 
 		if m := reflect.ValueOf(c).MethodByName(method_name); m.IsValid() {
 			if foo, ok := m.Interface().(func() (*matrix.Matrix, error)); ok {
-				if err := s.AddTaskString(task.Name, task.Value, foo); err == nil {
+				if err := s.AddTaskString(task.GetNameS(), task.GetContentS(), foo); err == nil {
 					//logger.Debug(c.Prefix, "scheduled task [%s] with %s interval", task.Name, task.GetInterval().String())
 					;
 				} else {
-					return errors.New(errors.INVALID_PARAM, "schedule (" + task.Name + "): " + err.Error())
+					return errors.New(errors.INVALID_PARAM, "schedule (" + task.GetNameS() + "): " + err.Error())
 				}
 			} else {
 				return errors.New(errors.ERR_IMPLEMENT, method_name + " has not signature 'func() (*matrix.Matrix, error)'")
@@ -116,16 +115,16 @@ func Init(c Collector) error {
 
 	/* Initialize Matrix, the container of collected data */
 	data := matrix.New(name, object, "")
-	if export_options := params.GetChild("export_options"); export_options != nil {
+	if export_options := params.GetChildS("export_options"); export_options != nil {
 		data.SetExportOptions(export_options)
 	} else {
 		data.SetExportOptions(matrix.DefaultExportOptions())
 	}
-	data.SetGlobalLabel("datacenter", params.GetChildValue("datacenter"))
+	data.SetGlobalLabel("datacenter", params.GetChildContentS("datacenter"))
 	c.SetData(data)
 
 	/* Initialize Plugins */
-	if plugins := params.GetChild("plugins"); plugins != nil {
+	if plugins := params.GetChildS("plugins"); plugins != nil {
 		if err := c.LoadPlugins(plugins); err != nil {
 			return err
 		}
@@ -137,8 +136,7 @@ func Init(c Collector) error {
 	md.MetadataType = "collector"
 	md.MetadataObject = "task"
 
-	hostname, _ := os.Hostname()
-	md.SetGlobalLabel("hostname", hostname)
+	md.SetGlobalLabel("hostname", options.Hostname)
 	md.SetGlobalLabel("version", options.Version)
 	md.SetGlobalLabel("poller", options.Poller)
 	md.SetGlobalLabel("collector", name)
@@ -194,14 +192,21 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 			data, err := task.Run()
 
 			if err != nil {
+
+				if !c.Schedule.IsStandBy() {
+					logger.Debug(c.Prefix, "handling error during [%s] poll...", task.Name)
+				}
 				switch {
 				case errors.IsErr(err, errors.ERR_CONNECTION):
 					if retry_delay < 1024 {
 						retry_delay *= 4
 					}
+					if !c.Schedule.IsStandBy() {
+						logger.Error(c.Prefix, err.Error())
+						logger.Error(c.Prefix, "target system unreachable, entering standby mode (retry to connect in %d s)", retry_delay)
+					}
 					c.Schedule.SetStandByMode(task.Name, time.Duration(retry_delay) * time.Second)
 					c.SetStatus(2, err.Error())
-					logger.Error(c.Prefix, "%s, retry in %d s", err.Error(), retry_delay)
 				case errors.IsErr(err, errors.ERR_NO_INSTANCE):
 					c.Schedule.SetStandByMode(task.Name, 5 * time.Minute)
 					c.SetStatus(2, err.Error())
@@ -217,11 +222,12 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 					return
 				}
 				// don't continue on errors
-				continue
+				break
 			} else if c.Schedule.IsStandBy() {
 				// recover from standby mode
 				c.SetStatus(1, "")
 				c.Schedule.Recover()
+				logger.Info(c.Prefix, "back to normal schedule")
 			}
 
 			c.Metadata.SetValueSS("poll_time", task.Name, float32(task.Runtime().Seconds()))
@@ -287,7 +293,7 @@ func (c *AbstractCollector) SetStatus(status int, msg string) {
 	c.Message = msg
 }
 
-func (c *AbstractCollector) GetParams() *yaml.Node {
+func (c *AbstractCollector) GetParams() *node.Node {
 	return c.Params
 }
 
@@ -309,8 +315,8 @@ func (c *AbstractCollector) SetMetadata(m *matrix.Matrix) {
 
 func (c *AbstractCollector) WantedExporters() []string {
 	var names []string
-	if e := c.Params.GetChild("exporters"); e != nil {
-		names = e.Values
+	if e := c.Params.GetChildS("exporters"); e != nil {
+		names = e.GetAllChildContentS()
 	}
 	return names
 }
@@ -321,26 +327,26 @@ func (c *AbstractCollector) LinkExporter(e exporter.Exporter) {
 	c.Exporters = append(c.Exporters, e)
 }
 
-func (c *AbstractCollector) LoadPlugins(params *yaml.Node) error {
+func (c *AbstractCollector) LoadPlugins(params *node.Node) error {
 
 	for _, x := range params.GetChildren() {
-		name := x.Name
+		name := x.GetNameS()
 
 		binpath := path.Join(c.Options.Path, "bin", "plugins", strings.ToLower(c.Name))
 
-		module, err := util.LoadFromModule(binpath, strings.ToLower(name), "New")
+		module, err := util.LoadFuncFromModule(binpath, strings.ToLower(name), "New")
 		if err != nil {
 			//logger.Error(c.LongName, "load plugin [%s]: %v", name, err)
 			return errors.New(errors.ERR_DLOAD, name + ": " + err.Error())
 		}
 
-		NewFunc, ok := module.(func(string, *options.Options, *yaml.Node, *yaml.Node) plugin.Plugin)
+		NewFunc, ok := module.(func(*plugin.AbstractPlugin) plugin.Plugin)
 		if !ok {
 			//logger.Error(c.LongName, "load plugin [%s]: New() has not expected signature", name)
 			return errors.New(errors.ERR_DLOAD, name + ": New()")
 		}
 
-		p := NewFunc(c.Name, c.Options, x, c.Params)
+		p := NewFunc(plugin.New(c.Name, c.Options, x, c.Params))
 		if err := p.Init(); err != nil {
 			//logger.Error(c.LongName, "init plugin [%s]: %v", name, err)
 			return errors.New(errors.ERR_DLOAD, name + ": Init(): " + err.Error())

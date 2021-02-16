@@ -4,7 +4,7 @@ import (
 	"path"
 	"io/ioutil"
 	"plugin"
-	"goharvest2/poller/errors"
+	"goharvest2/share/errors"
 )
 
 func LoadModule(binpath, name string) (*plugin.Plugin, error) {
@@ -30,7 +30,7 @@ func LoadModule(binpath, name string) (*plugin.Plugin, error) {
 
 }
 
-func LoadFromModule(binpath, module_name, func_name string) (plugin.Symbol, error) {
+func LoadFuncFromModule(binpath, module_name, func_name string) (plugin.Symbol, error) {
 
 	if mod, err := LoadModule(binpath, module_name); err == nil {
 		return mod.Lookup(func_name)

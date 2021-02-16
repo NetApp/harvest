@@ -3,7 +3,7 @@ package exporter
 import (
 	"sync"
 	"strconv"
-	"goharvest2/poller/struct/yaml"
+	"goharvest2/share/tree/node"
 	"goharvest2/poller/struct/matrix"
 	"goharvest2/poller/struct/options"
 )
@@ -31,18 +31,19 @@ type AbstractExporter struct {
 	Status int
 	Message string
 	Options *options.Options
-	Params *yaml.Node
+	Params *node.Node
 	Metadata *matrix.Matrix
-	mu *sync.Mutex
+	*sync.Mutex
 }
 
-func New(c, n string, o *options.Options, p *yaml.Node) *AbstractExporter {
+func New(c, n string, o *options.Options, p *node.Node) *AbstractExporter {
 	abc := AbstractExporter{
 		Name: n,
 		Class: c,
 		Options: o,
 		Params: p,
 		Prefix: "(exporter) (" + n + ")",
+		Mutex: &sync.Mutex{},
 	}
 	return &abc
 }
@@ -102,6 +103,7 @@ func (e *AbstractExporter) SetStatus(code int, msg string) {
 	e.Message = msg
 }
 
+/*
 func (e *AbstractExporter) Export(data *matrix.Matrix) error {
 	e.mu.Lock()
 	defer e.mu.Unlock()
@@ -112,7 +114,6 @@ func (e *AbstractExporter) ExportData(data *matrix.Matrix) error {
 	panic(e.Class + " did not implement ExportData()")
 }
 
-/*
 func (e *AbstractExporter) Render(data *matrix.Matrix) ([][]byte, error) {
 	panic(e.Class + " did not implement Render()")
 }*/

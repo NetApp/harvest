@@ -2,12 +2,10 @@ package main
 
 import (
     "strings"
-    
 	"goharvest2/share/logger"
-
+    "goharvest2/share/tree/node"
+    "goharvest2/share/util"
     "goharvest2/poller/struct/matrix"
-    "goharvest2/poller/struct/yaml"
-    "goharvest2/poller/util"
 )
 
 
@@ -24,7 +22,7 @@ func ParseShortestPath(m *matrix.Matrix) []string {
     }
 
     max := util.MinLen(keys)
-    
+
     for i:=0; i<max; i+=1 {
         if util.AllSame(keys, i) {
             prefix = append(prefix, keys[0][i])
@@ -50,54 +48,58 @@ func ParseKeyPrefix(keys [][]string) []string {
     return prefix
 }
 
-func ParseCounters(data *matrix.Matrix, elem *yaml.Node, path []string) {
-    new_path := append(path, elem.Name)
-    logger.Debug("", "%v Parsing [%s] [%s] with %d values and %d children", new_path, elem.Name, elem.Value, len(elem.Values), len(elem.Children))
+func LoadCounters(data *matrix.Matrix, counters *node.Node) bool {
+    path := make([]string, 0)
+    ParseCounters(data, counters, path)
+    return len(data.GetMetrics()) > 0
+}
 
-    if elem.Value != "" {
-        HandleCounter(data, new_path, elem.Value)
+func ParseCounters(data *matrix.Matrix, elem *node.Node, path []string) {
+    //logger.Debug("", "%v Parsing [%s] [%s] with %d values and %d children", new_path, elem.Name, elem.Value, len(elem.Values), len(elem.Children))
+
+    new_path := path
+    if len(elem.GetNameS()) != 0 {
+        new_path = append(new_path, elem.GetNameS())
     }
-    for _, value := range elem.Values {
-        HandleCounter(data, new_path, value)
+    if len(elem.GetContentS()) != 0 {
+        HandleCounter(data, new_path, elem.GetContentS())
     }
-    for _, child := range elem.Children {
+    for _, child := range elem.GetChildren() {
         ParseCounters(data, child, new_path)
     }
 }
 
+func HandleCounter(data *matrix.Matrix, path []string, content string) {
+    var name, display, key string
+    var split_values, full_path []string
 
-func HandleCounter(data *matrix.Matrix, path []string, value string) {
-    var name, display, flat_path string
-    var split_value, full_path []string
-
-    split_value = strings.Split(value, "=>")
-    if len(split_value) == 1 {
-        name = value
+    split_values = strings.Split(content, "=>")
+    if len(split_values) == 1 {
+        name = content
     } else {
-        name = split_value[0]
-        display = strings.TrimLeft(split_value[1], " ")
+        name = split_values[0]
+        display = strings.TrimSpace(split_values[1])
     }
 
-    name = strings.TrimLeft(name, "^")
-    name = strings.TrimRight(name, " ")
+    name = strings.TrimSpace(strings.TrimLeft(name, "^"))
 
     full_path = append(path[1:], name)
-    flat_path = strings.Join(full_path, ".")
+    key = strings.Join(full_path, ".")
 
     if display == "" {
         display = ParseDisplay(data.Object, full_path)
     }
 
-    if value[0] == '^' {
-        data.AddLabelKeyName(flat_path, display)
-            logger.Trace("", "%sAdded as Label [%s] [%s]%s => %v", util.Yellow, display, flat_path, util.End, full_path)
-        if value[1] == '^' {
+    if content[0] == '^' {
+        data.AddLabelKeyName(key, display)
+            logger.Trace("", "%sAdded as Label [%s] [%s]%s => %v", util.Yellow, display, key, util.End, full_path)
+        if content[1] == '^' {
             data.AddInstanceKey(full_path[:])
-            logger.Trace("", "%sAdded as Key [%s] [%s]%s => %v", util.Red, display, flat_path, util.End, full_path)
+            logger.Trace("", "%sAdded as Key [%s] [%s]%s => %v", util.Red, display, key, util.End, full_path)
         }
     } else {
-        data.AddMetric(flat_path, display, true)
-            logger.Trace("", "%sAdded as Metric [%s] [%s]%s => %v", util.Blue, display, flat_path, util.End, full_path)
+        data.AddMetric(key, display, true)
+            logger.Trace("", "%sAdded as Metric [%s] [%s]%s => %v", util.Blue, display, key, util.End, full_path)
     }
 }
 

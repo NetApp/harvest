@@ -7,7 +7,7 @@ import (
 	"time"
 	"fmt"
     "goharvest2/share/logger"
-	"goharvest2/poller/errors"
+	"goharvest2/share/errors"
 	"goharvest2/poller/collector"
     "goharvest2/poller/struct/matrix"
 	"goharvest2/poller/struct/set"
@@ -206,14 +206,16 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 
 		if err = c.connection.BuildRequest(request); err != nil {
 			logger.Error(c.Prefix, "build request: %v", err)
-			break
+			//break
+			return nil, err
 		}
 
 		response, rd, pd, err := c.connection.InvokeWithTimers()
 		if err != nil {
-			logger.Error(c.Prefix, "data request: %v", err)
+			//logger.Error(c.Prefix, "data request: %v", err)
 			//@TODO handle "resource limit exceeded"
-			break
+			//break
+			return nil, err
 		}
 
 		response_d += rd
@@ -226,6 +228,7 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 			logger.Warn(c.Prefix, "no instances")
 			//@TODO ErrNoInstances
 			break
+			return nil, errors.New(errors.ERR_NO_INSTANCE, "")
 		}
 
 		logger.Debug(c.Prefix, "fetched batch with %d instances", len(instances.GetChildren()))
@@ -321,13 +324,13 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 
 	logger.Debug(c.Prefix, "collected data: %d batch polls, %d data points", batch_count, data_count)
 
-	fmt.Println()
-	fmt.Println()
+	// fmt.Println()
+	// fmt.Println()
 	for _, m := range NewData.GetMetrics() {
 		print_vector(fmt.Sprintf("%s(%d) %s%s%s", util.Grey, m.Index, util.Cyan, m.Display, util.End), NewData.Data[m.Index])
 	}
-	fmt.Println()
-	fmt.Println()
+	// fmt.Println()
+	// fmt.Println()
 
 	// skip calculating from delta if no data from previous poll
 	if c.Data.IsEmpty()  {
@@ -358,7 +361,7 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 	// calculate timestamp delta first since many counters require it for postprocessing
 	// timestamp has "raw" property, so won't be postprocessed automatically
 	NewData.Delta(c.Data, timestamp.Index)
-	fmt.Printf("\npostprocessing %s%s%s - %s%v%s\n", util.Red, timestamp.Display, util.End, util.Bold, timestamp.Properties, util.End)
+	// fmt.Printf("\npostprocessing %s%s%s - %s%v%s\n", util.Red, timestamp.Display, util.End, util.Bold, timestamp.Properties, util.End)
 	print_vector("current", NewData.Data[timestamp.Index])
 	print_vector("previous", c.Data.Data[timestamp.Index])
 
@@ -371,14 +374,14 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 		}
 
 		//logger.Debug(c.Prefix, "Postprocessing %s%s%s (%s%v%s)", util.Red, m.Display, util.End, util.Bold, m.Properties, util.End)
-		fmt.Printf("\npostprocessing %s%s%s - %s%v%s\n", util.Red, m.Display, util.End, util.Bold, m.Properties, util.End)
+		// fmt.Printf("\npostprocessing %s%s%s - %s%v%s\n", util.Red, m.Display, util.End, util.Bold, m.Properties, util.End)
 		// scalar not depending on base counter
 		if m.Scalar {
 			if m.BaseCounter == "" {
-				fmt.Printf("scalar - no basecounter\n")
+				// fmt.Printf("scalar - no basecounter\n")
 				c.calculate_from_delta(NewData, m.Display, m.Index, -1, m.Properties) // -1 indicates no base counter
 			} else if b := NewData.GetMetric(m.BaseCounter); b != nil {
-				fmt.Printf("scalar - with basecounter %s%s%s (%s)\n", util.Red, m.BaseCounter, util.End, b.Properties)
+				// fmt.Printf("scalar - with basecounter %s%s%s (%s)\n", util.Red, m.BaseCounter, util.End, b.Properties)
 				c.calculate_from_delta(NewData, m.Display, m.Index, b.Index, m.Properties)
 			} else {
 				logger.Error(c.Prefix, "required base [%s] for scalar [%s] missing", m.BaseCounter, m.Display)
@@ -388,18 +391,18 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 		// array metric, it becomes a bit complicated here
 		// since base counter can be array as well
 		if m.BaseCounter == "" {
-			fmt.Printf("array - no basecounter\n")
+			// fmt.Printf("array - no basecounter\n")
 			for i:=0; i<m.Size; i+=1 {
 				c.calculate_from_delta(NewData, m.Display, m.Index+i, -1, m.Properties)
 			}
 		} else if b := NewData.GetMetric(m.BaseCounter); b != nil {
 			if b.Scalar {
-				fmt.Printf("array - scalar basecounter %s%s%s (%s)\n", util.Red, m.BaseCounter, util.End, b.Properties)
+				// fmt.Printf("array - scalar basecounter %s%s%s (%s)\n", util.Red, m.BaseCounter, util.End, b.Properties)
 				for i:=m.Index; i<m.Size; i+=1 {
 					c.calculate_from_delta(NewData, m.Display, m.Index+i, b.Index, m.Properties)
 				}
 			} else if m.Size == b.Size {
-				fmt.Printf("array - array basecounter %s%s%s (%s)\n", util.Red, m.BaseCounter, util.End, b.Properties)
+				// fmt.Printf("array - array basecounter %s%s%s (%s)\n", util.Red, m.BaseCounter, util.End, b.Properties)
 				for i:=0; i<m.Size; i+= 1 {
 					c.calculate_from_delta(NewData, m.Display, m.Index+i, b.Index+i, m.Properties)
 				}
@@ -420,11 +423,11 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 
 
 func print_vector(tag string, x []float32) {
-	fmt.Printf("%-35s", tag)
+	// fmt.Printf("%-35s", tag)
 	for i:=0; i<len(x); i+=1 {
-		fmt.Printf("%25f", x[i])
+		// fmt.Printf("%25f", x[i])
 	}
-	fmt.Println()
+	// fmt.Println()
 }
 
 func (c *ZapiPerf) calculate_from_delta(NewData *matrix.Matrix, metricName string, metricIndex, baseIndex int, properties string) {
@@ -439,7 +442,7 @@ func (c *ZapiPerf) calculate_from_delta(NewData *matrix.Matrix, metricName strin
 
 	print_vector("delta", NewData.Data[metricIndex])
 	
-	fmt.Println()
+	// fmt.Println()
 
 	if strings.Contains(properties, "delta") {
 		print_vector(fmt.Sprintf("%s delta%s", util.Green, util.End), NewData.Data[metricIndex])

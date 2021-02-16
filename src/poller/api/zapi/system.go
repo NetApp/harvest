@@ -4,7 +4,6 @@ import (
     "fmt"
     "errors"
 	"strconv"
-	"goharvest2/poller/struct/xml"
 )
 
 type System struct {
@@ -29,34 +28,29 @@ func (sys *System) String() string {
 
 func (c *Client) GetSystem() (*System, error) {
     var sys *System
-    var node *xml.Node
     var err error
-    var request string
-    var found bool
 
     sys = &System{}
 
-    // fetch system version and mode
-    //Log.Debug("Fetching system version")
+    // fetch system version and model
+    if err := c.BuildRequestString("system-get-version"); err != nil {
+        return sys, err
+    }
 
-    c.BuildRequest(xml.New("system-get-version"))
+    response, err := c.Invoke()
+    if err != nil { 
+        return sys, err 
+    }
+    
+    sys.Release = response.GetChildContentS("version")
 
-    node, err = c.Invoke()
-    if err != nil { return sys, err }
-
-    release, _ := node.GetChildContent("version")
-    sys.Release = string(release)
-
-    version, found := node.GetChild("version-tuple")
-    if found == true {
-        tuple, found := version.GetChild("system-version-tuple")
-        if found == true {
+    if version := response.GetChildS("version-tuple"); version != nil {
+        if tuple := version.GetChildS("system-version-tuple"); tuple != nil {
 
             gen := tuple.GetChildContentS("generation")
             maj := tuple.GetChildContentS("major")
             min := tuple.GetChildContentS("minor")
 
-            //Log.Debug(fmt.Sprintf("convertion version tuple: %s %s %s", string(gen), string(maj), string(min)))
             genint, _ := strconv.ParseInt(string(gen), 0, 16)
             majint, _ := strconv.ParseInt(string(maj), 0, 16)
             minint, _ := strconv.ParseInt(string(min), 0, 16)
@@ -68,53 +62,42 @@ func (c *Client) GetSystem() (*System, error) {
         }
     }
 
-    clustered, found := node.GetChildContent("is-clustered")
-    if !found {
+    if clustered := response.GetChildContentS("is-clustered"); clustered == "" {
         return sys, errors.New("Not found [is-clustered]")
-    } else if string(clustered) == "true" {
+    } else if clustered == "true" {
         sys.Clustered = true
     } else {
         sys.Clustered = false
     }
 
     // fetch system name and serial number
-    //Log.Debug("Fetching system identity")
-
-    if sys.Clustered {
-        request = "cluster-identity-get"
-    } else {
+    request := "cluster-identity-get"
+    if !sys.Clustered {
         request = "system-get-info"
     }
 
-    err = c.BuildRequest(xml.New(request))
-    if err != nil { return sys, err }
+    if err := c.BuildRequestString(request); err != nil {
+        return sys, err
+    }
 
-    node, err = c.Invoke()
-    if err != nil { return sys, err }
+    response, err = c.Invoke()
+    if err != nil {
+        return sys, err
+    }
 
     if sys.Clustered {
-        id, found := node.GetChild("attributes")
-        if found == true {
-            info, found := id.GetChild("cluster-identity-info")
-            if found {
-                name, _ := info.GetChildContent("cluster-name")
-                serial, _ := info.GetChildContent("cluster-serial-number")
-
-                sys.Name = string(name)
-                sys.SerialNumber = string(serial)
+        if attrs := response.GetChildS("attributes"); attrs != nil {
+            if info := attrs.GetChildS("cluster-identity-info"); info != nil {
+                sys.Name = info.GetChildContentS("cluster-name")
+                sys.SerialNumber = info.GetChildContentS("cluster-serial-number")
             }
         }
     } else {
-        id, found := node.GetChild("system-info")
-        if found == true {
-            name, _ := id.GetChildContent("system-name")
-            serial, _ := id.GetChildContent("system-serial-number")
+        if info := response.GetChildS("system-info"); info != nil {
 
-            sys.Name = string(name)
-            sys.SerialNumber = string(serial)
+            sys.Name = info.GetChildContentS("system-name")
+            sys.SerialNumber = info.GetChildContentS("system-serial-number")
         }
     }
-
-    //Log.Debug("Collected system info!")
     return sys, nil
 }

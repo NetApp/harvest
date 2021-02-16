@@ -3,8 +3,8 @@ package plugin
 import (
 	"goharvest2/poller/struct/matrix"
 	"goharvest2/poller/struct/options"
-	"goharvest2/poller/struct/yaml"
-	"goharvest2/poller/errors"
+	"goharvest2/share/tree/node"
+	"goharvest2/share/errors"
 )
 
 type Plugin interface {
@@ -21,11 +21,11 @@ type AbstractPlugin struct {
 	Prefix string
 	Type string
 	Options *options.Options
-	Params *yaml.Node
-	ParentParams *yaml.Node
+	Params *node.Node
+	ParentParams *node.Node
 }
 
-func New(parent string, o *options.Options, p *yaml.Node, pp *yaml.Node) *AbstractPlugin {
+func New(parent string, o *options.Options, p *node.Node, pp *node.Node) *AbstractPlugin {
 	pl := AbstractPlugin{Parent: parent, Options: o, Params: p, ParentParams: pp}
 	return &pl
 }
@@ -37,13 +37,13 @@ func (p *AbstractPlugin) Init() error {
 
 func (p *AbstractPlugin) InitAbc() error {
 
-	if p.Name = p.Params.Name; p.Name == "" {
+	if p.Name = p.Params.GetNameS(); p.Name == "" {
 		return errors.New(errors.MISSING_PARAM, "plugin name")
 	}
 
 	p.Prefix = "(plugin) (" + p.Parent + ":" + p.Name + ")"
 
-	if p.Type = p.Params.GetChildValue("type"); p.Type == "" {
+	if p.Type = p.Params.GetChildContentS("type"); p.Type == "" {
 		return errors.New(errors.MISSING_PARAM, "plugin type")
 	}
 

@@ -48,12 +48,11 @@ plugins:
 
 
 export_options:
-  exclude_instance_name: True
   graphite_leafs:
     - node.{node}
-  include_keys:
+  instance_keys:
     - node
-  include_labels:
+  instance_labels:
     - over_temperature
     - max_aggr_size
     - max_vol_size

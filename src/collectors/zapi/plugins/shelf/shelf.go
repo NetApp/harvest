@@ -5,10 +5,9 @@ import (
 	"strconv"
 	"goharvest2/poller/collector/plugin"
     "goharvest2/poller/struct/matrix"
-	"goharvest2/poller/struct/options"
-	"goharvest2/poller/struct/yaml"
+	"goharvest2/share/tree/node"
 	"goharvest2/share/logger"
-	"goharvest2/poller/errors"
+	"goharvest2/share/errors"
 
     client "goharvest2/poller/api/zapi"
 )
@@ -20,8 +19,7 @@ type Shelf struct {
 	connection *client.Client
 }
 
-func New(parent_name string, options *options.Options, params *yaml.Node, pparams *yaml.Node) plugin.Plugin {
-	p := plugin.New(parent_name, options, params, pparams)
+func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Shelf{AbstractPlugin: p}
 }
 
@@ -48,14 +46,14 @@ func (p *Shelf) Init() error {
 	p.data = make(map[string]*matrix.Matrix)
 	p.instance_keys = make(map[string]string)
 
-	objects := p.Params.GetChild("objects")
+	objects := p.Params.GetChildS("objects")
 	if objects == nil {
 		return errors.New(errors.MISSING_PARAM, "objects")
 	}
 
 	for _, obj := range objects.GetChildren() {
 
-		attribute := obj.Name
+		attribute := obj.GetNameS()
 		object_name := strings.ReplaceAll(attribute, "-", "_")
 
 		if x := strings.Split(attribute, "=>"); len(x) == 2 {
@@ -64,17 +62,18 @@ func (p *Shelf) Init() error {
 		}
 
 		p.data[attribute] = matrix.New(p.Parent, object_name, "shelf")
-		p.data[attribute].SetGlobalLabel("datacenter", p.ParentParams.GetChildValue("datacenter"))
+		p.data[attribute].SetGlobalLabel("datacenter", p.ParentParams.GetChildContentS("datacenter"))
 		p.data[attribute].SetGlobalLabel("sytsem", system.Name)
 
-		export_options := yaml.New("export_options", "")
-		instance_labels := yaml.New("instance_labels", "")
-		instance_keys := yaml.New("instance_keys", "")
-		instance_keys.AddValue("shelf")
-		instance_keys.AddValue("shelf-id")
+		export_options := node.NewS("export_options")
+		export_options.NewChildS("include_instance_names", "False") //@TODO remove!
+		instance_labels := export_options.NewChildS("instance_labels", "")
+		instance_keys := export_options.NewChildS("instance_keys", "")
+		instance_keys.NewChildS("", "shelf")
+		instance_keys.NewChildS("", "shelf-id")
 
 		for _, x := range obj.GetChildren() {
-			for _, c := range x.Values {
+			for _, c := range x.GetAllChildContentS() {
 
 				_, display := parse_display(c)
 
@@ -82,23 +81,21 @@ func (p *Shelf) Init() error {
 					if strings.HasPrefix(c, "^^") {
 						p.instance_keys[attribute] = c[2:]
 						p.data[attribute].AddLabelKeyName(c[2:], display)
-						instance_keys.AddValue(display)
-						logger.Debug(p.Prefix, "Adding as instance key: (%s) (%s) [%s]", attribute, x.Name, display)
+						instance_keys.NewChildS("", display)
+						logger.Debug(p.Prefix, "Adding as instance key: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
 					} else {
 						p.data[attribute].AddLabelKeyName(c[1:], display)
-						instance_labels.AddValue(display)
-						logger.Debug(p.Prefix, "Adding as label: (%s) (%s) [%s]", attribute, x.Name, display)
+						instance_labels.NewChildS("", display)
+						logger.Debug(p.Prefix, "Adding as label: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
 					}
 				} else {
 					p.data[attribute].AddMetric(c, display, true)
-					logger.Debug(p.Prefix, "Adding as label: (%s) (%s) [%s]", attribute, x.Name, c)
+					logger.Debug(p.Prefix, "Adding as label: (%s) (%s) [%s]", attribute, x.GetNameS(), c)
 				}
 			}
 		}
 		logger.Debug(p.Prefix, "added data for [%s] with %d metrics and %d labels", attribute, len(p.data[attribute].Metrics), p.data[attribute].LabelNames.Size())
-		export_options.AddChild(instance_keys)
-		export_options.AddChild(instance_labels)
-		export_options.CreateChild("include_instance_names", "False")
+
 		p.data[attribute].SetExportOptions(export_options)
 	}
 
@@ -116,8 +113,8 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		return nil, err
 	}
 
-	shelves, has := result.GetChild("attributes-list")
-	if !has {
+	shelves := result.GetChildS("attributes-list")
+	if shelves == nil {
 		return nil, errors.New(errors.ERR_NO_INSTANCE, "no shelf instances")
 	}
 
@@ -140,8 +137,8 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				continue
 			}
 
-			object_elem, has := shelf.GetChild(attribute)
-			if !has {
+			object_elem := shelf.GetChildS(attribute)
+			if object_elem == nil {
 				logger.Warn(p.Prefix, "no [%s] instances on this system", attribute)
 				continue
 			}
@@ -192,9 +189,8 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				continue
 			}
 
-			object_elem, has := shelf.GetChild(attribute)
-
-			if !has {
+			object_elem := shelf.GetChildS(attribute)
+			if object_elem == nil {
 				continue
 			}
 

@@ -2,7 +2,7 @@ package schedule
 
 import (
     "time"
-    "goharvest2/poller/errors"
+	"goharvest2/share/errors"
     "goharvest2/poller/struct/matrix"
 )
 

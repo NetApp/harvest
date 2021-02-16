@@ -2,14 +2,11 @@ package main
 
 import (
     "fmt"
-    "os"
     "strings"
+    "bytes"
     "goharvest2/share/logger"
     "goharvest2/poller/exporter"
-    "goharvest2/poller/util"
     "goharvest2/poller/struct/matrix"
-    "goharvest2/poller/struct/options"
-    "goharvest2/poller/struct/yaml"
 )
 
 type Prometheus struct {
@@ -34,21 +31,24 @@ func (e *Prometheus) Init() error {
     
     e.cache = make(map[string]*matrix.Matrix)
 
-    url := e.Params.GetChildValue("url")
-    port := e.Params.GetChildValue("port")
+    url := e.Params.GetChildContentS("url")
+    port := e.Params.GetChildContentS("port")
     e.StartHttpd(url, port)
  
     logger.Info(e.Prefix, "Initialized Exporter. HTTP daemon serving at [http://%s:%s]", url, port)
 
-    return err
+    return nil
 }
 
-func (e *Prometheus) ExportData(data *matrix.Matrix) error {
+func (e *Prometheus) Export(data *matrix.Matrix) error {
+    e.Lock()
+    defer e.Unlock()
+
 	if e.Options.Debug {
-		logger.Debug(e.Prefix, "no actual export since in debug mode")
+		logger.Debug(e.Prefix, "no export since in debug mode")
 		if metrics, err := e.Render(data); err == nil {
 			for _, m := range metrics {
-				logger.Debug(e.Prefix, "M= %s", bytes.TrimRight(m, '\n'))
+				logger.Debug(e.Prefix, "M= %s", bytes.TrimRight(m, "\n"))
 			}
 		} else {
 			return err
@@ -73,16 +73,26 @@ func (e *Prometheus) Render(data *matrix.Matrix) ([][]byte, error) {
 
     options := data.ExportOptions
 
+    options.Print(0)
+
     rendered = make([][]byte, 0)
-    metric_labels = options.GetChildValues("instance_labels")
-    key_labels = options.GetChildValues("instance_keys")
-    if options.GetChildValue("include_all_labels") == "True" {
+    // @TODO check for nil
+    
+    if options.GetChildS("instance_labels") != nil {
+        metric_labels = options.GetChildS("instance_labels").GetAllChildContentS()
+    }
+
+    if options.GetChildS("instance_keys") != nil {
+        key_labels = options.GetChildS("instance_keys").GetAllChildContentS()
+    }
+    
+    if options.GetChildContentS("include_all_labels") == "True" {
         include_all_labels = true
     } else {
         include_all_labels = false
     }
 
-    if options.GetChildValue("include_instance_names") == "True" {
+    if options.GetChildContentS("include_instance_names") == "True" {
         include_instance_names = true
     } else {
         include_instance_names = false

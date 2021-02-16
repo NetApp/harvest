@@ -7,19 +7,20 @@ import (
     "strconv"
     "errors"
 	"io/ioutil"
-	"goharvest2/poller/struct/yaml"
+	"goharvest2/share/tree"
+	"goharvest2/share/tree/node"
 )
 
-func ImportTemplate(harvest_path, collector_name string) (*yaml.Node, error) {
+func ImportTemplate(harvest_path, collector_name string) (*node.Node, error) {
     fp := path.Join(harvest_path, "config/", strings.ToLower(collector_name), "default.yaml")
-	return yaml.Import(fp)
+	return tree.ImportYaml(fp)
 }
 
-func ImportSubTemplate(harvest_path, dirname, filename, collector string, version [3]int) (*yaml.Node, error) {
+func ImportSubTemplate(harvest_path, dirname, filename, collector string, version [3]int) (*node.Node, error) {
 
     var err error
     var selected_version string
-    var template *yaml.Node
+    var template *node.Node
 
     path_prefix := path.Join(harvest_path, "config/", strings.ToLower(collector), dirname, "cdot")
     //Log.Debug("Looking for best-fitting template in [%s]", path_prefix)
@@ -64,7 +65,7 @@ func ImportSubTemplate(harvest_path, dirname, filename, collector string, versio
     } else {
         template_path := path.Join(path_prefix, selected_version, filename)
         //Log.Info("Selected best-fitting subtemplate [%s]", template_path)
-        template, err = yaml.Import(template_path)
+        template, err = tree.ImportYaml(template_path)
     }
     return template, err
 }
