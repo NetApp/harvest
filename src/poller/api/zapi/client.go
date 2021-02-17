@@ -165,9 +165,13 @@ func (c *Client) invoke(with_timers bool) (*node.Node, time.Duration, time.Durat
     }
 
     // check if request was successful
-
     if result = root.GetChildS("results"); result == nil {
+        // look for http response (might be unauthorized)
+        if title := root.GetChildS("title"); title != nil {
+            err = errors.New(errors.API_RESPONSE, title.GetContentS)
+        } else {
         err = errors.New(errors.API_RESPONSE, "missing \"results\"")
+        }
     } else if status, found = result.GetAttrValueS("status"); !found {
         err = errors.New(errors.API_RESPONSE, "missing status attribute")
     } else if status != "passed" {
