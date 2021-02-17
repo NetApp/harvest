@@ -7,7 +7,7 @@ import (
     "encoding/xml"
     "unicode"
     "errors"
-    "goharvest2/poller/util"
+    "goharvest2/share/util"
 )
 
 

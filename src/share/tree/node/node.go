@@ -52,6 +52,14 @@ func (n *Node) GetNameS() string {
     return string(n.name)
 }
 
+func (n *Node) SetName(name []byte) {
+    n.name = name
+}
+
+func (n *Node) SetNameS(name string) {
+    n.name = []byte(name)
+}
+
 func (n *Node) GetParent() *Node {
     return n.parent
 }

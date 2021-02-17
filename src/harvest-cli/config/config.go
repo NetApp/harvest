@@ -4,9 +4,12 @@ import (
 	"os"
 	"fmt"
 	"strings"
+    "path"
 	"goharvest2/share/config"
 	"goharvest2/share/dialog"
+	"goharvest2/share/tree"
 	"goharvest2/share/tree/node"
+    "goharvest2/poller/api/zapi"
 )
 
 var USAGE = `
@@ -14,7 +17,7 @@ Harvest 2.0 - Config utility
 
 Configure a new poller or exporter
 
-Usage: harvest2 config add ["poller" | "exporter"]
+Usage: harvest2 config ["poller" | "exporter"]
 
 Poller:
   A poller is an Harvest instance for monitoring one single
@@ -30,77 +33,134 @@ Exporter:
   Prometheus, InfluxDB and Graphite
 `
 
-var PATH = "/opt/harvest201"
+//var PATH = "/opt/harvest201"
+var PATH = "/home/imandes0/GoCode/goharvest2"
 
-var DIALOG dialog.Dialog
+var DIALOG *dialog.Dialog
 
 func print_usage() {
 	fmt.Println(USAGE)
 }
 
-
 func main() {
 
 	var item string
-	var conf *node.Node
-	var err error
+    var err error
+	var conf, params, pollers, exporters *node.Node
 
-	fmt.Println("hello")
+	if len(os.Args) > 1 {
+		item = strings.ReplaceAll(os.Args[1], "-", "")
+	}
 
-	if len(os.Args) == 1 {
+	if item == "help" {
 		print_usage()
 		os.Exit(0)
-	}
-
-	if command := strings.ReplaceAll(os.Args[1], "-", ""); command == "help" {
-		print_usage()
-		os.Exit(0)
-	} else if command != "add" {
-		fmt.Printf("Unknown command: %s\nRun \"harvest2 config help\" for usage\n", command)
-		os.Exit(1)
-	}
-
-	if len(os.Args) < 3 {
-		fmt.Printf("Missing option: \"poller\" or \"exporter\"\n")
-		os.Exit(1)
-	}
-
-	if item = strings.ReplaceAll(os.Args[2], "-", ""); item != "poller" && item != "exporter" {
-
-		DIALOG.Menu("add", "what do you want to add?", "poller", "exporter")
-
-		item = "poller"
 	}
 
 	DIALOG = dialog.New()
 
-	// load config
-	if conf, err = config.LoadConfig(PATH, "config.yaml"); err != nil {
-		//if DIALOG.YesNo("harvest config", "you don't have existing config file, create new?") {
-		if DIALOG.YesNo("config", "_create_new") {
-			conf = node.NewS("config")
+	if item == "welcome" {
+
+        DIALOG.SetTitle("harvest 2.0 - welcome")
+		DIALOG.Message("Your installation is complete. Welcome to Harvest 2.0!")
+
+		if DIALOG.YesNo("Do you want to quickly configure Harvest?") {
+			item = ""
 		} else {
-			os.Exit(0)
-		}
+		    item = "exit"
+        }
 	}
 
-	//conf.Print(0)
+	DIALOG.SetTitle("harvest 2.0 - config")
 
-	if item == "poller" {
-		add_poller(conf)
-	} else {
-		add_exporter(conf)
+    if item == "exit" {
+        DIALOG.Message("Bye! If you want my help next time, run: \"harvest config\"")
+    }
+
+	if item == "" {
+		item, err = DIALOG.Menu("Add new:", "poller", "exporter")
+		if err != nil {
+            exitError("menu add new", err)
+        }
 	}
-	
+
+    if item == "poller" {
+        params = add_poller()
+    } else if item == "exporter" {
+        params = add_exporter()
+    }
+
+    if conf, err = config.LoadConfig(PATH, "config.yaml"); err != nil {
+        conf = node.NewS("")
+    }
+
+    if item == "poller" {
+        if pollers = conf.GetChildS("Pollers"); pollers == nil {
+            pollers = conf.NewChildS("Pollers", "")
+        }
+        pollers.AddChild(params)
+    } else if item == "exporters" {
+        if exporters = conf.GetChildS("Exporters"); exporters == nil {
+            exporters = conf.NewChildS("Exporters", "")
+        }
+        exporters.AddChild(params)
+    }
+
+    fp := path.Join(PATH, "config.yaml")
+    if err = tree.ExportYaml(conf, fp); err != nil {
+        exitError("export yaml", err)
+    }
+    DIALOG.Message(fmt.Sprintf("Saved results to:\n[%s]", fp))
+    DIALOG.Close()
 }
 
-func add_poller(config *node.Node) bool {
+func exitError(msg string, err error) {
+    DIALOG.Close()
+    fmt.Println(msg)
+    fmt.Println(err)
+    os.Exit(1)
+}
 
-	// load config, if does not exist notify user (create new)
+func add_poller() *node.Node {
+
+    poller := node.NewS("")
 
 	// ask for address
+    addr, err := DIALOG.Input("Enter address (IPv4, IPv6, hostname or URL)")
+    if err != nil {
+        exitError("input addr", err)
+    }
+    poller.NewChildS("url", addr)
 
-	// ask for authentication method
+    // ask for authentication method
+    auth, err := DIALOG.Menu("Choose authentication method", "password", "certificate_auth")
+    if err != nil {
+        exitError("menu auth", err)
+    }
+    poller.NewChildS("auth_style", auth)
+
+    if auth == "password" {
+        username, _ := DIALOG.Input("username: ")
+        password, _ := DIALOG.Password("password: ")
+        poller.NewChildS("username", username)
+        poller.NewChildS("password", password)
+
+    }
+
+    // connect and get system info
+    client, err := zapi.New(poller)
+    if err != nil {
+        exitError("client", err)
+    }
+
+    system, err := client.GetSystem()
+    if err != nil {
+        DIALOG.Message("Failed to connect to system. Are you sure your credentials are correct?")
+        //exitError("system", err)
+    } else {
+        poller.SetNameS(system.Name)
+        DIALOG.Message("Connected to:\n" + system.String())
+    }
 
 	// a. generate ssl certificates
 
@@ -109,10 +169,10 @@ func add_poller(config *node.Node) bool {
 	// ask for confirmation
 
 	// safe / merge
-	return true
+	return poller
 }
 
-func add_exporter(config *node.Node) bool {
-	return true
+func add_exporter() *node.Node {
+	return nil
 
 }
