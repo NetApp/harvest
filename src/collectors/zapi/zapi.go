@@ -86,7 +86,7 @@ func (c *Zapi) Init() error {
         return errors.New(errors.ERR_NO_METRIC, "failed to parse any")
     }
 
-    logger.Debug(c.Prefix, "Loaded %d Metrics and %d Labels", c.Data.MetricsIndex+1, len(c.Data.Instances))
+    logger.Debug(c.Prefix, "Loaded %d Metrics and %d Labels", c.Data.MetricsIndex+1, c.Data.LabelNames.Size())
 
     if len(c.Data.InstanceKeys) == 0 {
         return errors.New(errors.INVALID_PARAM, "no instance keys indicated")

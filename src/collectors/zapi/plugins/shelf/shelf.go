@@ -63,7 +63,7 @@ func (p *Shelf) Init() error {
 
 		p.data[attribute] = matrix.New(p.Parent, object_name, "shelf")
 		p.data[attribute].SetGlobalLabel("datacenter", p.ParentParams.GetChildContentS("datacenter"))
-		p.data[attribute].SetGlobalLabel("sytsem", system.Name)
+		p.data[attribute].SetGlobalLabel("system", system.Name)
 
 		export_options := node.NewS("export_options")
 		export_options.NewChildS("include_instance_names", "False") //@TODO remove!
@@ -75,21 +75,21 @@ func (p *Shelf) Init() error {
 		for _, x := range obj.GetChildren() {
 			for _, c := range x.GetAllChildContentS() {
 
-				_, display := parse_display(c)
+				metric_name, display := parse_display(c)
 
 				if strings.HasPrefix(c, "^") {
 					if strings.HasPrefix(c, "^^") {
-						p.instance_keys[attribute] = c[2:]
-						p.data[attribute].AddLabelKeyName(c[2:], display)
+						p.instance_keys[attribute] = metric_name
+						p.data[attribute].AddLabelKeyName(metric_name, display)
 						instance_keys.NewChildS("", display)
 						logger.Debug(p.Prefix, "Adding as instance key: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
 					} else {
-						p.data[attribute].AddLabelKeyName(c[1:], display)
+						p.data[attribute].AddLabelKeyName(metric_name, display)
 						instance_labels.NewChildS("", display)
 						logger.Debug(p.Prefix, "Adding as label: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
 					}
 				} else {
-					p.data[attribute].AddMetric(c, display, true)
+					p.data[attribute].AddMetric(metric_name, display, true)
 					logger.Debug(p.Prefix, "Adding as label: (%s) (%s) [%s]", attribute, x.GetNameS(), c)
 				}
 			}
@@ -169,6 +169,7 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 				} else  {
 					logger.Warn(p.Prefix, "instance without [%s], skipping", p.instance_keys[attribute])
+					obj.Print(0)
 				}
 			}
 

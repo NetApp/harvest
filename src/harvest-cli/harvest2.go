@@ -10,8 +10,8 @@ import (
 
 var VERSION = "2.0.1"
 
-var PATH = "/opt/harvest2/"
-
+//var PATH = "/opt/harvest2/"
+var PATH = "/home/imandes0/GoCode/goharvest2"
 
 var USAGE = `
 NetApp Harvest 2.0 - application for monitoring storage systems
@@ -50,11 +50,11 @@ func get_opt(flag_long, flag_short, default_val string) string {
 
 func main() {
 
-	h, _ := os.Hostname()
-	c, _ := os.Getwd()
+	//h, _ := os.Hostname()
+	//c, _ := os.Getwd()
 	p := get_opt("path", "p", PATH)
 
-	fmt.Printf("host=%s cwd=%s path=%s\n", h, c, p)
+	//fmt.Printf("host=%s cwd=%s path=%s\n", h, c, p)
 
 	if len(os.Args) == 1 {
 		print_usage()
@@ -78,14 +78,16 @@ func main() {
 	}
 
 	if bin != "" {
-		cmd := exec.Command(path.Join(p, "bin/", bin), os.Args[1:]...)
+		args := make([]string, 0)
+		args = append(args, os.Args[1:]...)
+		args = append(args, "--path")
+		args = append(args, PATH)
+		cmd := exec.Command(path.Join(p, "bin/", bin), args...)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		if err := cmd.Run(); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
-		} else {
-			fmt.Println("OK")
 		}
 	}
 }

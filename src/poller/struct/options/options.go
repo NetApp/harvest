@@ -13,10 +13,8 @@ type Options struct {
     Daemon      bool
     Config      string
     Path        string
-    Delay       int
     LogLevel    int
     Debug       bool
-    Test        bool
     Version     string
     collectors  string
     objects     string
@@ -25,20 +23,24 @@ type Options struct {
     Hostname    string
 }
 
+func (o *Options) String() string {
+    x := []string {
+        fmt.Sprintf("%s= %s\n", "Poller", o.Poller),
+        fmt.Sprintf("%s = %v\n", "Daemon", o.Daemon),
+        fmt.Sprintf("%s = %s\n", "Config", o.Config),
+        fmt.Sprintf("%s = %s\n", "Path", o.Path),
+        fmt.Sprintf("%s = %s\n", "Hostname", o.Hostname),
+        fmt.Sprintf("%s = %d\n", "LogLevel", o.LogLevel),
+        fmt.Sprintf("%s = %v\n", "Debug", o.Debug),
+        fmt.Sprintf("%s= %s\n", "Version", o.Version),
+        fmt.Sprintf("%s = %v\n", "Collectors", o.Collectors),
+        fmt.Sprintf("%s = %v\n", "Objects", o.Objects),
+    }
+    return strings.Join(x, ", ")
+}
+
 func (o *Options) Print() {
-    fmt.Printf("%-20s = %s\n", "Poller", o.Poller)
-    fmt.Printf("%-20s = %s\n", "Version", o.Version)
-    fmt.Printf("%-20s = %s\n", "Path", o.Path)
-    fmt.Printf("%-20s = %s\n", "Config", o.Config)
-    fmt.Printf("%-20s = %v\n", "Daemon", o.Daemon)
-    fmt.Printf("%-20s = %v\n", "Debug", o.Debug)
-    fmt.Printf("%-20s = %v\n", "Test", o.Test)
-    fmt.Printf("%-20s = %d\n", "Delay", o.Delay)
-    fmt.Printf("%-20s = %d\n", "LogLevel", o.LogLevel)
-    fmt.Printf("%-20s = %v\n", "Collectors", o.Collectors)
-    fmt.Printf("%-20s = %v\n", "Objects", o.Objects)
-    //fmt.Printf("%-20s = %s\n", "collectors", o.collectors)
-    //fmt.Printf("%-20s = %s\n", "objects", o.objects)
+    fmt.Println(o.String())
 }
 
 type stringArray struct {
@@ -75,14 +77,10 @@ func GetOpts() (*Options, string, error)  {
         "Configuration file")
     flag.StringVar(&args.Path, "path", "",
         "Harvest installation directory")
-    flag.IntVar(&args.Delay, "delay", 0,
-        "Delay startup in seconds")
     flag.IntVar(&args.LogLevel, "loglevel", 2,
         "logging level, index of: trace, debug, info, warning, error, critical")
     flag.BoolVar(&args.Debug, "debug", false,
         "Debug mode, no data will be exported")
-    flag.BoolVar(&args.Test, "test", false,
-        "Startup collectors and exporters, and exit")
 
     //collectors := stringArray{&args.Collectors, "list of collectors"}
     //objects := stringArray{&args.Objects, "list of objects"}

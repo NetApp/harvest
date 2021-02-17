@@ -105,7 +105,7 @@ func HandleCounter(data *matrix.Matrix, path []string, content string) {
 
 
 func ParseDisplay(obj string, path []string) string {
-    var ignore = map[string]int{"attributes" : 0, "info" : 0, "list" : 0, "details" : 0}
+    var ignore = map[string]int{"attributes" : 0, "info" : 0, "list" : 0, "details" : 0, "storage" : 0}
     var added = map[string]int{}
     var words []string
 

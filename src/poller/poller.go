@@ -68,6 +68,8 @@ func (p *Poller) Init() error {
 		logger.Warn(p.prefix, "using default loglevel=2 (info): %s", err.Error())
 	}
 
+	logger.Info(p.prefix, "using options: %s%v%s", util.Pink, p.options.String(), util.End)
+
 	/* Useful info for debugging */
 	if p.options.Debug {
 		p.LogDebugInfo()

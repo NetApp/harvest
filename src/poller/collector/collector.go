@@ -227,7 +227,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 				// recover from standby mode
 				c.SetStatus(1, "")
 				c.Schedule.Recover()
-				logger.Info(c.Prefix, "back to normal schedule")
+				logger.Info(c.Prefix, "recovered from standby mode, back to normal schedule")
 			}
 
 			c.Metadata.SetValueSS("poll_time", task.Name, float32(task.Runtime().Seconds()))
@@ -241,7 +241,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 							logger.Error(c.Prefix, "plugin [%s]: %s", plg.GetName(), err.Error())
 						} else if plg_data_slice != nil {
 							results = append(results, plg_data_slice...)
-							logger.Debug(c.Prefix, "plugin [%s] added (%d) data", len(plg_data_slice))
+							logger.Debug(c.Prefix, "plugin [%s] added (%d) data", plg.GetName(), len(plg_data_slice))
 						} else {
 							logger.Debug(c.Prefix, "plugin [%s]: completed", plg.GetName())
 						}

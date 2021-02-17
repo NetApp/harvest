@@ -73,17 +73,19 @@ func (e *Prometheus) Render(data *matrix.Matrix) ([][]byte, error) {
 
     options := data.ExportOptions
 
-    options.Print(0)
+    //options.Print(0)
 
     rendered = make([][]byte, 0)
     // @TODO check for nil
     
     if options.GetChildS("instance_labels") != nil {
         metric_labels = options.GetChildS("instance_labels").GetAllChildContentS()
+        logger.Debug(e.Prefix, "requested instance_labels : %v", metric_labels)
     }
 
     if options.GetChildS("instance_keys") != nil {
         key_labels = options.GetChildS("instance_keys").GetAllChildContentS()
+        logger.Debug(e.Prefix, "requested keys_labels : %v", key_labels)
     }
     
     if options.GetChildContentS("include_all_labels") == "True" {
@@ -120,25 +122,28 @@ func (e *Prometheus) Render(data *matrix.Matrix) ([][]byte, error) {
         instance_keys := make([]string, len(global_labels))
         copy(instance_keys, global_labels)
 
+        // @TODO deprecate
         if include_instance_names {
             instance_keys = append(instance_keys, fmt.Sprintf("%s=\"%s\"", instance_tag, raw_key))
         }
         
         for _, key := range key_labels {
-            value, found := data.GetInstanceLabel(instance, key)
+            //value, found := data.GetInstanceLabel(instance, key)
+            value, found := instance.Labels.GetHas(key)
             if include_all_labels || (found && value != "") {
                 instance_keys = append(instance_keys, fmt.Sprintf("%s=\"%s\"", key, value))
             } else {
-                logger.Debug(e.Prefix, "Skipped Key [%s] (%s) found=%v", key, value, found)
+                logger.Debug(e.Prefix, "Key [%s] (%s) found=%v", key, value, found)
             }
         }
 
         for _, label := range metric_labels {
-            value, found := data.GetInstanceLabel(instance, label)
+            //value, found := data.GetInstanceLabel(instance, label)
+            value, found := instance.Labels.GetHas(label)
             if found {
                 instance_labels = append(instance_labels, fmt.Sprintf("%s=\"%s\"", label, value))
             } else {
-                logger.Debug(e.Prefix, "Skipped Label [%s] (%s) found=%v", label, value, found)
+                logger.Debug(e.Prefix, "Label [%s] (%s) found=%v", label, value, found)
             }
         }
 
@@ -154,7 +159,7 @@ func (e *Prometheus) Render(data *matrix.Matrix) ([][]byte, error) {
             label_data := fmt.Sprintf("%s_labels{%s,%s} 1.0", prefix, strings.Join(instance_keys, ","), strings.Join(instance_labels, ","))
             rendered = append(rendered, []byte(label_data))
         } else {
-            logger.Debug(e.Prefix, "Skipping instance labels (%v) (%v)", instance_keys, instance_labels)
+            logger.Debug(e.Prefix, "Skipping instance metric labels parsed (%v) (%v)", instance_keys, instance_labels)
         }
 
         for _, metric := range data.Metrics {

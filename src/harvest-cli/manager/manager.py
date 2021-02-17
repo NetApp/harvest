@@ -37,7 +37,7 @@ def main():
 
     args = read_args()
 
-    print("args=", sys.argv)
+    #print("args=", args)
 
     #if args.version:
     #    print('NetApp Harvest {}'.format(__version__))
@@ -111,13 +111,10 @@ def main():
     # Pollers will be asked to delay their startup incrementally
     # This is to prevent crashing the system with 100s of threads
     # and 100s of sockets starting simultaneously
-    for delay, poller in enumerate(pollers):
+    for poller in pollers:
 
         p, dc = poller
 
-        if args.limit and delay+1 == args.limit:
-            print('Stopped at limit [{}]'.format(args.limit))
-            break
         # Each of the three methods called is expected to return
         # a tuple of two elements: status (str) and PID (int)
         if args.action == 'status':
@@ -128,7 +125,7 @@ def main():
 
         if args.action == 'start' or args.action == 'restart':
             print('{:<20} {}{:<30}{} {:<20} {:<10}'.format(
-                dc, BOLD, p, END, *start_poller(p, args, delay)))
+                dc, BOLD, p, END, *start_poller(p, args)))
 
     print('++++++++++++++++++++ ++++++++++++++++++++++++++++++ ++++++++++++++++++++ ++++++++++')
     return
@@ -313,7 +310,7 @@ def filter_args(args):
 
     return {k:v for k,v in vars(args).items() if k not in ignore}
 
-def start_poller(poller_name, args, delay=0):
+def start_poller(poller_name, args):
     """
 
     Either directly start poller or start as daemon and 
@@ -325,8 +322,6 @@ def start_poller(poller_name, args, delay=0):
         name of the poller
     args : ArgumentParser namespace object
         arguments to be passed to poller
-    delay : int (seconds)
-        request poller to wait before startup
 
     Returns
     -------
@@ -341,38 +336,30 @@ def start_poller(poller_name, args, delay=0):
         return 'ALREADY RUNNING', pid
 
     # Construct CMD arguments
-    cmd_args = [os.path.join(args.path, 'bin/poller'), "./bin/poller"]
+    cmd_args = [os.path.join(args.path, 'bin/poller'), "poller"]
     cmd_args.append("-poller")
     cmd_args.append(poller_name)
 
     for k,v in filter_args(args).items():
-        if type(v) is bool and v is False:
-            pass
-        elif v:
-            cmd_args.append('-'+k)  
-            if type(v) is str:
-                cmd_args.append(v)
-            elif type(v) is list:
-                cmd_args += v
+        if type(v) is bool and v is True:
+            cmd_args.append('-'+k)
+        elif type(v) is list and len(v) > 1:
+            cmd_args.append('-'+k)
+            cmd_args += v
+        elif type(v) is str and v != '':
+            cmd_args.append('-'+k)
+            cmd_args.append(v)
+        elif type(v) is int:
+            cmd_args.append('-'+k)
+            cmd_args.append(str(v))
 
     if not args.foreground:
         cmd_args.append('-daemon')
-    if delay:
-        cmd_args.append('-delay')
-        cmd_args.append(str(delay))
-
-    print("passed args=", cmd_args)
 
     # Start in foreground
     if args.foreground:
-        os.execv(cmd_args[0], cmd_args[1:])
         try:
-            p = subprocess.Popen(
-                args = cmd_args, 
-                stdin = subprocess.PIPE, 
-                stdout = subprocess.PIPE, 
-                stderr = subprocess.PIPE,
-                )
+            os.execv(cmd_args[0], cmd_args[1:])
         except:
             raise
         return
@@ -451,6 +438,8 @@ def daemonize(poller_name, cmd, path):
 
     """
 
+    print('cmd= ', cmd)
+
     try:
         if os.fork():
             return
@@ -477,13 +466,7 @@ def daemonize(poller_name, cmd, path):
     os.chdir('/')
 
     try:
-        p = subprocess.Popen(
-            args = cmd, 
-            stdin = subprocess.DEVNULL, 
-            stdout = subprocess.DEVNULL, 
-            stderr = subprocess.DEVNULL,
-            start_new_session = True
-            )
+        os.execv(cmd[0], cmd[1:])
     except Exception as ex:
         syslog.syslog(syslog.LOG_ERR, '[poller={}] Failed starting ' \
             'subprocess {}: {}'.format(poller_name, cmd, ex))
@@ -546,12 +529,6 @@ def read_args():
                     'are yielded',
         nargs       = '*', 
         default     = []
-        ) 
-    p.add_argument('-V', '--version', 
-        help        = 'Print Harvest version and exit',
-        dest        = 'version',
-        action      = 'store_true',
-        default     = False,
         )
     p.add_argument('-v', '--verbose',
         help        = 'Start poller(s) in verbose mode (pollers will log extensively)',
@@ -571,7 +548,7 @@ def read_args():
         action      = 'store_true',
         dest        = 'foreground',
         default     = False
-        )         
+        )      
     p.add_argument('-c', '--collectors', 
         help        = 'Only start these classes of collectors, e.g. "Zapi", ' \
                         '"ZapiPerf" (intended for debugging)',
@@ -594,21 +571,14 @@ def read_args():
         default     = 'config.yaml'
         )
     p.add_argument('--path', 
-        help        = 'Harvest installation directory (default: {})'.format(
-                        os.path.dirname(os.path.abspath(__file__))),
-        type        = str, 
-        default     = os.path.dirname(os.path.abspath(__file__))
-        ) 
-    p.add_argument('-b', '--backend', 
-        help        = 'Matrix backend to use. Default is [pyarray], ' \
-                            'but you can also choose to use [numpy] (NumPy-based matrix)',
+        help        = 'Harvest installation directory (default: "/opt/harvest2")',
         type        = str,
-        default     = None,
-        )     
-    p.add_argument('--limit', 
-        help        = 'Don\'t start more pollers than this',
+        default     = '/opt/harvest2'
+        ) 
+    p.add_argument('--loglevel', 
+        help        = 'Logging level (0= Trace, 1= Debug, 2= Info)',
         type        = int, 
-        default     = None,
+        default     = 2,
         ) 
 
 

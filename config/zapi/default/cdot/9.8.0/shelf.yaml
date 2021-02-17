@@ -17,6 +17,7 @@ counters:
     - ^state
     - ^vendor-name
 
+
 plugins:
   Shelf:
     type: data
@@ -134,12 +135,12 @@ plugins:
 export_options:
   instance_keys:
     - shelf
-    - shelf-id
+    - shelf_id
   instance_labels:
     - module_type
     - op_status
     - serial_number
-    - shelf_model
+    - model
     - state
     - vendor_name
     
