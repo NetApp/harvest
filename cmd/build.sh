@@ -115,9 +115,20 @@ if [ $all == true ] || [ $harvest == true ]; then
         error "compilation failed"
         exit 1
     fi
+
     # temporarily use python script as manager @TODO migrate to GO
     cp manager/manager.py ../../bin/manager
     info "copied /bin/manager"
+
+    cd config
+    go build -o ../../bin/config
+    if [ $? -eq 0 ]; then
+        info "compiled: /bin/config"
+    else
+        error "compilation failed"
+        exit 1
+    fi
+    
     cd ../../
 fi
 

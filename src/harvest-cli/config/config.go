@@ -33,8 +33,10 @@ Exporter:
   Prometheus, InfluxDB and Graphite
 `
 
-//var PATH = "/opt/harvest201"
-var PATH = "/home/imandes0/GoCode/goharvest2"
+var PATH = "/opt/harvest2"
+
+var HARVEST_USER = "harvest2-user"
+var HARVEST_ROLE = "harvest2-role"
 
 var DIALOG *dialog.Dialog
 
@@ -46,7 +48,7 @@ func main() {
 
 	var item string
     var err error
-	var conf, params, pollers, exporters *node.Node
+	var conf, pollers, exporters *node.Node
 
 	if len(os.Args) > 1 {
 		item = strings.ReplaceAll(os.Args[1], "-", "")
@@ -77,33 +79,52 @@ func main() {
         DIALOG.Message("Bye! If you want my help next time, run: \"harvest config\"")
     }
 
-	if item == "" {
-		item, err = DIALOG.Menu("Add new:", "poller", "exporter")
-		if err != nil {
-            exitError("menu add new", err)
-        }
-	}
-
-    if item == "poller" {
-        params = add_poller()
-    } else if item == "exporter" {
-        params = add_exporter()
-    }
-
     if conf, err = config.LoadConfig(PATH, "config.yaml"); err != nil {
         conf = node.NewS("")
     }
 
-    if item == "poller" {
-        if pollers = conf.GetChildS("Pollers"); pollers == nil {
-            pollers = conf.NewChildS("Pollers", "")
+    if pollers = conf.GetChildS("Pollers"); pollers == nil {
+        pollers = conf.NewChildS("Pollers", "")
+    }
+
+    if exporters = conf.GetChildS("Exporters"); exporters == nil {
+        exporters = conf.NewChildS("Exporters", "")
+    }
+
+    for {
+
+        if item == "" {
+            item, err = DIALOG.Menu("Add new:", "poller", "exporter", "safe and exit")
+            if err != nil {
+                exitError("menu add new", err)
+            }
         }
-        pollers.AddChild(params)
-    } else if item == "exporters" {
-        if exporters = conf.GetChildS("Exporters"); exporters == nil {
-            exporters = conf.NewChildS("Exporters", "")
+    
+        if item == "poller" {
+            if new_poller := add_poller(); new_poller != nil {
+                if pollers.GetChildS(new_poller.GetNameS()) == nil {
+                    pollers.AddChild(new_poller)
+                } else if DIALOG.YesNo("poller [" + new_poller.GetNameS() + "] already exists, overwrite?") {
+                    pollers.AddChild(new_poller)
+                }
+            }
         }
-        exporters.AddChild(params)
+        
+        if item == "exporter" {
+            if new_exporter := add_exporter(); new_exporter != nil {
+                if exporters.GetChildS(new_exporter.GetNameS()) == nil {
+                    exporters.AddChild(new_exporter)
+                } else if DIALOG.YesNo("exporter [" + new_exporter.GetNameS() + "] already exists, overwrite?") {
+                    exporters.AddChild(new_exporter)
+                }
+            }
+        }
+
+        if item == "safe and exit" {
+            break
+        }
+
+        item = ""
     }
 
     fp := path.Join(PATH, "config.yaml")
@@ -112,6 +133,8 @@ func main() {
     }
     DIALOG.Message(fmt.Sprintf("Saved results to:\n[%s]", fp))
     DIALOG.Close()
+
+    conf.Print(0)
 }
 
 func exitError(msg string, err error) {
@@ -125,7 +148,14 @@ func add_poller() *node.Node {
 
     poller := node.NewS("")
 
-	// ask for address
+    // ask for datacenter & address
+
+    datacenter, err := DIALOG.Input("Datacenter name:")
+    if err != nil {
+        exitError("input datacenter", err)
+    }
+    poller.NewChildS("datacenter", datacenter)
+
     addr, err := DIALOG.Input("Enter address (IPv4, IPv6, hostname or URL)")
     if err != nil {
         exitError("input addr", err)
@@ -147,7 +177,16 @@ func add_poller() *node.Node {
 
     }
 
+    //create_cert := false
+
+    if auth == "certificate_auth" {
+        msg := fmt.Sprintf("Copy your cert/key pair to [%s/cert/] as [<SYSTEM_NAME>.key] and [<SYSTEM_NAME>.pem] to continue", PATH)
+        DIALOG.Message(msg)
+    }
+
     // connect and get system info
+    DIALOG.Message("Connecting to system...")
+    
     client, err := zapi.New(poller)
     if err != nil {
         exitError("client", err)
@@ -155,24 +194,56 @@ func add_poller() *node.Node {
 
     system, err := client.GetSystem()
     if err != nil {
-        DIALOG.Message("Failed to connect to system. Are you sure your credentials are correct?")
-        //exitError("system", err)
+        if DIALOG.YesNo("Failed to connect to system. Add system anyway?") {
+            if name, err := DIALOG.Input("System name: "); err != nil {
+                poller.SetNameS(name)
+            } else {
+                exitError("system name", err)
+            }
+        } else {
+            return nil
+        }
     } else {
         poller.SetNameS(system.Name)
         DIALOG.Message("Connected to:\n" + system.String())
     }
 
-	// a. generate ssl certificates
+    collectors := poller.NewChildS("collectors", "")
+    collectors.NewChildS("", "Zapi")
 
-	// b. add existing key/cert
-
-	// ask for confirmation
-
-	// safe / merge
 	return poller
 }
 
 func add_exporter() *node.Node {
-	return nil
 
+    exporter := node.NewS("")
+
+    item, err := DIALOG.Menu("Choose exporter type:", "prometheus", "influxdb", "graphite")
+    if err != nil {
+        exitError("exporter type", err)
+    }
+    exporter.NewChildS("exporter", item)
+
+    name, err := DIALOG.Input("Choose name for exporter instance:")
+    if err != nil {
+        exitError("input exporter name", err)
+    }
+    exporter.SetNameS(name)
+
+
+    port, err := DIALOG.Input("Port of the HTTP service:")
+    if err != nil {
+        exitError("input exporter port", err)
+    }
+    exporter.NewChildS("port", port)
+
+    if DIALOG.YesNo("Make HTTP serve publicly on your network?\n(Choose no to serve it only on localhst)") {
+        exporter.NewChildS("url", "0.0.0.0")
+    } else {
+        exporter.NewChildS("url", "localhost")
+    }
+
+    exporter.NewChildS("master", "True")
+
+	return exporter
 }

@@ -23,7 +23,7 @@ func ExportYaml(n *node.Node, filepath string) error {
     if data, err := yaml.Dump(n); err != nil {
         return err
     } else {
-        return ioutil.WriteFile(filepath, data, 0)
+        return ioutil.WriteFile(filepath, data, 0644)
     }
 }
 

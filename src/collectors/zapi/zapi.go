@@ -3,6 +3,7 @@ package main
 import (
     "strings"
     "strconv"
+    "path"
 
     "goharvest2/share/logger"
     "goharvest2/share/tree/node"
@@ -31,6 +32,18 @@ func New(a *collector.AbstractCollector) collector.Collector {
 }
 
 func (c *Zapi) Init() error {
+
+    if c.Params.GetChildContentS("auth_style") == "certificate_auth" {
+        if c.Params.GetChildS("ssl_cert") == nil {
+            c.Params.NewChildS("ssl_cert", path.Join(c.Options.Path, "cert", c.Options.Poller + ".pem"))
+            logger.Debug(c.Prefix, "added ssl_cert path [%s]", path.Join(c.Options.Path, "cert", c.Options.Poller + ".pem"))
+        }
+
+        if c.Params.GetChildS("ssl_key") == nil {
+            c.Params.NewChildS("ssl_key", path.Join(c.Options.Path, "cert", c.Options.Poller + ".key"))
+            logger.Debug(c.Prefix, "added ssl_key path [%s]", path.Join(c.Options.Path, "cert", c.Options.Poller + ".key"))
+        }
+    }
 
     var err error
     if c.connection, err = client.New(c.Params); err != nil {

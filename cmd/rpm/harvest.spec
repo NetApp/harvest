@@ -34,6 +34,7 @@ exit
 echo "install..."
 ln -s /opt/harvest2/bin/harvest /usr/local/bin/harvest
 echo "complete!"
+harvest config welcome
 
 %preun
 

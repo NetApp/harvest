@@ -325,7 +325,7 @@ def start_poller(poller_name, args):
 
     Returns
     -------
-    tuple of two elements:
+    tuple of two elements:  
         status (string), pid (int)    
     
     """
@@ -437,8 +437,6 @@ def daemonize(poller_name, cmd, path):
         harvest installation directory
 
     """
-
-    print('cmd= ', cmd)
 
     try:
         if os.fork():

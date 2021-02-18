@@ -10,8 +10,7 @@ import (
 
 var VERSION = "2.0.1"
 
-//var PATH = "/opt/harvest2/"
-var PATH = "/home/imandes0/GoCode/goharvest2"
+var PATH = "/opt/harvest2/"
 
 var USAGE = `
 NetApp Harvest 2.0 - application for monitoring storage systems
@@ -68,9 +67,9 @@ func main() {
 	case "status", "start", "restart", "stop":
 		bin = "manager"
 	case "alerts":
-		fmt.Println("starting alert manager....")
+		fmt.Println("alert manager not available....")
 	case "config":
-		fmt.Printf("ready to configure harvest?")
+		bin = "manager"
 	case "version":
 		fmt.Printf("NetApp Harvest 2.0 - Version %s\n", VERSION)
 	default:

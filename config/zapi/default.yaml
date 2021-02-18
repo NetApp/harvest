@@ -4,7 +4,7 @@ collector:          Zapi
 # Order here matters!
 schedule:
   - instance: 600s
-  - data: 20s
+  - data: 60s
 
 objects:
   SystemNode:       node.yaml
