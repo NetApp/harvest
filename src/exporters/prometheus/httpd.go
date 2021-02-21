@@ -70,10 +70,10 @@ func (e *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 
 				num_metrics += 1
 
-				if metric.Scalar {
-					metrics = append(metrics, fmt.Sprintf(metric_template, obj + "_" + metric.Display))
+				if metric.IsScalar() {
+					metrics = append(metrics, fmt.Sprintf(metric_template, obj + "_" + metric.Name))
 				} else {
-					array_metric := fmt.Sprintf(metric_template, obj + "_" + metric.Display)
+					array_metric := fmt.Sprintf(metric_template, obj + "_" + metric.Name)
 					array_metric += "\n<ul>"
 					for _, label := range metric.Labels {
 						array_metric += "\n" + fmt.Sprintf(metric_template, label)
@@ -94,7 +94,7 @@ func (e *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 		if md, exists := unique_metadata[col]; exists {
 			metrics := make([]string, 0)
 			for _, metric := range md.Metrics {
-				metrics = append(metrics, fmt.Sprintf(metric_template, "metadata_" + md.MetadataType + "_" + metric.Display))
+				metrics = append(metrics, fmt.Sprintf(metric_template, "metadata_" + md.MetadataType + "_" + metric.Name))
 			}
 			objects = append(objects, fmt.Sprintf(object_template, "metadata", strings.Join(metrics, "\n")))
 		}

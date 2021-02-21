@@ -8,11 +8,12 @@ import (
 	"strings"
 
 	client "goharvest2/poller/api/zapi"
-	
-	"goharvest2/poller/config"
-	"goharvest2/poller/struct/xml"
+
+	"goharvest2/share/util"
+	"goharvest2/share/config"
+	//"goharvest2/share/tree"
+	"goharvest2/share/tree/node"
 	"goharvest2/poller/struct/set"
-	"goharvest2/poller/share"
 )
 
 var ACTIONS = set.NewFrom([]string{"show", "add", "export"})
@@ -23,11 +24,12 @@ var connection *client.Client
 var system *client.System
 
 type args struct {
-	action string
-	item string
-	poller string
-	query string
-	object string
+	Action string
+	Item string
+	Poller string
+	Path string
+	Query string
+	Object string
 }
 
 type counter struct {
@@ -47,40 +49,41 @@ type counter struct {
 
 func (c *counter) print_header() {
 
-	fmt.Printf("\n%s%-30s %-10s %-15s %-30s %20s %15s %20s%s\n\n", share.Bold, "name", "scalar", "unit", "properties", "base counter", "deprecated", "replacement", share.End)
+	fmt.Printf("\n%s%-30s %-10s %-15s %-30s %20s %15s %20s%s\n\n", util.Bold, "name", "scalar", "unit", "properties", "base counter", "deprecated", "replacement", util.End)
 }
 func (c *counter) print() {
-	fmt.Printf("%s%s%-30s%s %-10v %-15s %-30s %20s %15v %20s\n", share.Bold, share.Cyan, c.name, share.End, c.scalar, c.unit, strings.Join(c.properties, ", "), c.base, c.deprecated, c.replacement)
+	fmt.Printf("%s%s%-30s%s %-10v %-15s %-30s %20s %15v %20s\n", util.Bold, util.Cyan, c.name, util.End, c.scalar, c.unit, strings.Join(c.properties, ", "), c.base, c.deprecated, c.replacement)
 	if !c.scalar {
-		fmt.Printf("%sarray labels 1D%s: %s%v%s\n", share.Pink, share.End, share.Grey, c.labels1, share.End)
+		fmt.Printf("%sarray labels 1D%s: %s%v%s\n", util.Pink, util.End, util.Grey, c.labels1, util.End)
 		if len(c.labels2) > 0 {
-			fmt.Printf("%sarray labels 2D%s: %s%v%s\n", share.Pink, share.End, share.Grey, c.labels2, share.End)
+			fmt.Printf("%sarray labels 2D%s: %s%v%s\n", util.Pink, util.End, util.Grey, c.labels2, util.End)
 		}
 	}
 }
 
-func (a *args) print() {
-	fmt.Printf("action = %s\n", a.action)
-	fmt.Printf("item   = %s\n", a.item)
-	fmt.Printf("poller = %s\n", a.poller)
-	fmt.Printf("query  = %s\n", a.query)
-	fmt.Printf("object = %s\n", a.object)
+func (a *args) Print() {
+	fmt.Printf("action = %s\n", a.Action)
+	fmt.Printf("item   = %s\n", a.Item)
+	fmt.Printf("path = %s\n", a.Path)
+	fmt.Printf("poller = %s\n", a.Poller)
+	fmt.Printf("query  = %s\n", a.Query)
+	fmt.Printf("object = %s\n", a.Object)
 }
 
 func main() {
 
 	var err error
 
-	get_args()
+	options = get_args()
 	//a.print()
 
-	if !ACTIONS.Has(options.action) {
-		fmt.Printf("action should be one of: %v", ACTIONS.Keys())
+	if !ACTIONS.Has(options.Action) {
+		fmt.Printf("action should be one of: %v", ACTIONS.Slice())
 		os.Exit(1)
 	}
 
-	if !ITEMS.Has(options.item) {
-		fmt.Printf("item should be one of: %v", ITEMS.Keys())
+	if !ITEMS.Has(options.Item) {
+		fmt.Printf("item should be one of: %v", ITEMS.Slice())
 		os.Exit(1)
 	}
 
@@ -89,7 +92,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	switch options.item {
+	switch options.Item {
 
 	case "system":
 		get_system()
@@ -102,15 +105,15 @@ func main() {
 
 func connect() error {
 
-	cwd, _ := os.Getwd()
+	//cwd, _ := os.Getwd()
 	//fmt.Printf("cwd = %s\n", cwd)
 
-	params, err := config.GetPoller(cwd, "config.yaml", options.poller)
+	params, err := config.GetPoller(options.Path, "config.yaml", options.Poller)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("connecting to [%s]... ", params.GetChildValue("url"))
+	fmt.Printf("connecting to [%s]... ", params.GetChildContentS("url"))
 
 	if connection, err = client.New(params); err != nil {
 		return err
@@ -160,7 +163,7 @@ func get_system() {
 
 	var err error
 
-	fmt.Printf("fetching system info for poller [%s]\n", options.poller)
+	fmt.Printf("fetching system info for poller [%s]\n", options.Poller)
 
 	if system, err = connection.GetSystem(); err == nil {
 		fmt.Println(system.String())
@@ -170,18 +173,18 @@ func get_system() {
 }
 
 func get_query() {
-	fmt.Printf("fetching data for zapi query [%s]\n", options.query)
+	fmt.Printf("fetching data for zapi query [%s]\n", options.Query)
 
-	if err := connection.BuildRequestString(options.query); err != nil {
+	if err := connection.BuildRequestString(options.Query); err != nil {
 		fmt.Println(err)
 	}
-	
-	results, err := connection.InvokeRequest()
+
+	results, err := connection.Invoke()
 
 	if err != nil {
 		fmt.Println(err)
 	} else {
-		results.Print()
+		results.Print(0)
 	}
 
 }
@@ -190,19 +193,19 @@ func get_query() {
 func get_counters() {
 	counters := make([]counter, 0)
 
-	request := xml.New("perf-object-counter-list-info")
+	request := node.NewXmlS("perf-object-counter-list-info")
 
-	request.CreateChild("objectname", options.object)
-	
+	request.NewChildS("objectname", options.Object)
+
 	connection.BuildRequest(request)
 
-	results, err := connection.InvokeRequest()
+	results, err := connection.Invoke()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	counters_elem, _ := results.GetChild("counters")
+	counters_elem := results.GetChildS("counters")
 	if counters_elem == nil {
 		fmt.Println("no counters in response")
 		return
@@ -233,17 +236,17 @@ func get_counters() {
 		} else {
 			c.scalar = false
 
-			elem.Print()
+			elem.Print(0)
 
-			if labels, _ := elem.GetChild("labels"); labels != nil {
+			if labels := elem.GetChildS("labels"); labels != nil {
 
 				label_elems := labels.GetChildren()
 
 				if len(label_elems) > 0 {
-					c.labels1 = strings.Split( xml.DecodeHtml( label_elems[0].GetContentS() ), ",")
+					c.labels1 = strings.Split( node.DecodeHtml( label_elems[0].GetContentS() ), ",")
 
 					if len(label_elems) > 1 {
-						c.labels2 = strings.Split( xml.DecodeHtml( label_elems[1].GetContentS() ), ",")
+						c.labels2 = strings.Split( node.DecodeHtml( label_elems[1].GetContentS() ), ",")
 					}
 				}
 			}
@@ -265,21 +268,24 @@ func get_counters() {
 
 func get_args() *args {
 
-	options = &args{}
+    a := args{}
 
-	flag.StringVar(&options.poller, "p", "", "poller")
-	flag.StringVar(&options.query, "q", "", "query")
-	flag.StringVar(&options.object, "o", "", "object")
+	flag.StringVar(&a.Path, "path", "/home/imandes0/GoCode/goharvest2", "harvest directory path")
+	flag.StringVar(&a.Poller, "poller", "", "poller name")
+	flag.StringVar(&a.Query, "query", "", "API query")
+	flag.StringVar(&a.Object, "object", "", "API object")
 
 	flag.Parse()
 
-	if flag.NArg() != 2 {
-		fmt.Println("missing arguments: action show")
+	if flag.NArg() < 2 {
+		fmt.Printf("missing arguments (%d): action item\n", flag.NArg())
 		os.Exit(1)
 	}
 
-	options.action = flag.Arg(0)
-	options.item = flag.Arg(1)
+	a.Action = flag.Arg(0)
+	a.Item = flag.Arg(1)
 
-	return options
+    a.Print()
+
+	return &a
 }

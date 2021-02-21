@@ -54,7 +54,8 @@ func (p *FlexGroup) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					continue
 				}
 
-				instance.Name = name
+				//instance.Name = name
+				instance.Labels.Set("flexgroup", name)
 				instance.Labels.Set("style", "flexgroup")
 				instance.Labels.Set("volume", vol)
 				instance.Labels.Set("vserver", svm)
@@ -88,7 +89,7 @@ func (p *FlexGroup) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		instance.Labels.Set("count", strconv.Itoa(count))
 
 		for _, metric := range n.GetMetrics() {
-			if strings.Contains(metric.Display, "percent") {
+			if strings.Contains(metric.Name, "percent") {
 				if value, has := n.GetValue(metric, instance); has {
 					n.SetValue(metric, instance, value / float32(count))
 				}

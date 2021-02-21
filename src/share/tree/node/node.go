@@ -313,3 +313,15 @@ func (n *Node) SearchChildren(path []string) []*Node {
     search(n, []string{})
     return matches
 }
+
+
+func DecodeHtml(x string) string {
+    x = strings.ReplaceAll(x, "&amp;", "&")
+    x = strings.ReplaceAll(x, "&lt;", "<")
+    x = strings.ReplaceAll(x, "&gt;", ">")
+    x = strings.ReplaceAll(x, "&apos;", "'")
+    x = strings.ReplaceAll(x, "&quot;", "\"")
+    x = strings.ReplaceAll(x, " ", "_") // not escape char, but wanted
+    x = strings.ReplaceAll(x, "-", "_")
+    return x
+}

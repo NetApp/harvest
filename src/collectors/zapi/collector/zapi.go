@@ -1,4 +1,4 @@
-package main
+package zapi_collector
 
 import (
     "strings"
@@ -17,12 +17,12 @@ import (
 
 type Zapi struct {
     *collector.AbstractCollector
-    connection *client.Client
-    system *client.System
+    Connection *client.Client
+    System *client.System
     object string
-    query string
-	template_fn string
-	template_type string
+    Query string
+	TemplateFn string
+	TemplateType string
     instanceKeyPrefix []string
     instanceKeys [][]string
 }
@@ -31,8 +31,13 @@ func New(a *collector.AbstractCollector) collector.Collector {
     return &Zapi{AbstractCollector: a}
 }
 
+func NewZapi(a *collector.AbstractCollector) *Zapi {
+    return &Zapi{AbstractCollector: a}
+}
+
 func (c *Zapi) Init() error {
 
+    // @TODO check if cert/key files exist
     if c.Params.GetChildContentS("auth_style") == "certificate_auth" {
         if c.Params.GetChildS("ssl_cert") == nil {
             c.Params.NewChildS("ssl_cert", path.Join(c.Options.Path, "cert", c.Options.Poller + ".pem"))
@@ -46,20 +51,20 @@ func (c *Zapi) Init() error {
     }
 
     var err error
-    if c.connection, err = client.New(c.Params); err != nil {
+    if c.Connection, err = client.New(c.Params); err != nil {
         return err
     }
 
     // @TODO handle connectivity-related errors (retry a few times)
-    if c.system, err = c.connection.GetSystem(); err != nil {
+    if c.System, err = c.Connection.GetSystem(); err != nil {
         //logger.Error(c.Prefix, "system info: %v", err)
         return err
     }
-    logger.Debug(c.Prefix, "Connected to: %s", c.system.String())
+    logger.Debug(c.Prefix, "Connected to: %s", c.System.String())
 
-    template_fn := c.Params.GetChildS("objects").GetChildContentS(c.Object) // @TODO err handling
+    c.TemplateFn = c.Params.GetChildS("objects").GetChildContentS(c.Object) // @TODO err handling
 
-    template, err := collector.ImportSubTemplate(c.Options.Path, "default", template_fn, c.Name, c.system.Version)
+    template, err := collector.ImportSubTemplate(c.Options.Path, "default", c.TemplateFn, c.Name, c.System.Version)
     if err != nil {
         logger.Error(c.Prefix, "Error importing subtemplate: %s", err)
         return err
@@ -72,9 +77,10 @@ func (c *Zapi) Init() error {
     }
 
     // api query literal
-    if c.query = c.Params.GetChildContentS("query"); c.query == "" {
+    if c.Query = c.Params.GetChildContentS("query"); c.Query == "" {
         return errors.New(errors.MISSING_PARAM, "query")
     }
+
     // Invoke generic initializer
     // this will load Schedule, initialize Data and Metadata
     if err := collector.Init(c); err != nil {
@@ -85,7 +91,7 @@ func (c *Zapi) Init() error {
     c.Data.Object = c.object
     
     // Add system (cluster) name 
-    c.Data.SetGlobalLabel("system", c.system.Name)
+    c.Data.SetGlobalLabel("system", c.System.Name)
 
     // Initialize counter cache
     counters := c.Params.GetChildS("counters")
@@ -93,22 +99,34 @@ func (c *Zapi) Init() error {
         return errors.New(errors.MISSING_PARAM, "counters")
     }
 
+    if err = c.InitCache(); err != nil {
+        return err
+    }
+
+    logger.Debug(c.Prefix, "Successfully initialized")
+    return nil
+}
+
+func (c *Zapi) InitCache() error {
+
     //@TODO cleanup
+    counters := c.Params.GetChildS("counters")
+
     logger.Debug(c.Prefix, "Parsing counters: %d values", len(counters.GetChildren()))
     if ! LoadCounters(c.Data, counters) {
         return errors.New(errors.ERR_NO_METRIC, "failed to parse any")
     }
 
-    logger.Debug(c.Prefix, "Loaded %d Metrics and %d Labels", c.Data.MetricsIndex+1, c.Data.LabelNames.Size())
+    logger.Debug(c.Prefix, "Loaded %d Metrics and %d Labels", c.Data.SizeMetrics(), c.Data.SizeLabels())
 
     if len(c.Data.InstanceKeys) == 0 {
         return errors.New(errors.INVALID_PARAM, "no instance keys indicated")
     }
 
+    // @TODO validate
     c.instanceKeyPrefix = ParseShortestPath(c.Data)
     logger.Debug(c.Prefix, "Parsed Instance Keys: %v", c.Data.InstanceKeys)
     logger.Debug(c.Prefix, "Parsed Instance Key Prefix: %v", c.instanceKeyPrefix)
-
     return nil
 
 }
@@ -125,11 +143,11 @@ func (c *Zapi) PollInstance() (*matrix.Matrix, error) {
     logger.Debug(c.Prefix, "starting instance poll")
 
     //@TODO next tag
-    if err = c.connection.BuildRequestString(c.query); err != nil {
+    if err = c.Connection.BuildRequestString(c.Query); err != nil {
         return nil, err
     }
 
-    if response, err = c.connection.Invoke(); err != nil {
+    if response, err = c.Connection.Invoke(); err != nil {
         return nil, err
     }
 
@@ -225,11 +243,11 @@ func (c *Zapi) PollData() (*matrix.Matrix, error) {
         return nil, err
     }
 
-    if err = c.connection.BuildRequestString(c.query); err != nil {
+    if err = c.Connection.BuildRequestString(c.Query); err != nil {
         return nil, err
     }
 
-    if response, err = c.connection.Invoke(); err != nil {
+    if response, err = c.Connection.Invoke(); err != nil {
         return nil, err
     }
 

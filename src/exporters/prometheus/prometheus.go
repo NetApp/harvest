@@ -168,9 +168,9 @@ func (e *Prometheus) Render(data *matrix.Matrix) ([][]byte, error) {
                 continue
             }
 
-            if metric.Scalar {
+            if metric.IsScalar() {
                 if value, set := data.GetValue(metric, instance); set {
-                    metric_data := fmt.Sprintf("%s_%s{%s} %f", prefix, metric.Display, strings.Join(instance_keys, ","), value)
+                    metric_data := fmt.Sprintf("%s_%s{%s} %f", prefix, metric.Name, strings.Join(instance_keys, ","), value)
                     rendered = append(rendered, []byte(metric_data))
                 }
             } else {
@@ -178,7 +178,7 @@ func (e *Prometheus) Render(data *matrix.Matrix) ([][]byte, error) {
                 if metric.Dimensions == 1 {
                     for i:=0; i<len(metric.Labels); i+=1 {
                         if values[i] == values[i] {
-                            metric_data := fmt.Sprintf("%s_%s{%s,metric=\"%s\"} %f", prefix, metric.Display, strings.Join(instance_keys, ","), metric.Labels[i], values[i])
+                            metric_data := fmt.Sprintf("%s_%s{%s,metric=\"%s\"} %f", prefix, metric.Name, strings.Join(instance_keys, ","), metric.Labels[i], values[i])
                             rendered = append(rendered, []byte(metric_data))
                         }
                     }
@@ -187,7 +187,7 @@ func (e *Prometheus) Render(data *matrix.Matrix) ([][]byte, error) {
                         for j:=0; j<len(metric.SubLabels); j+=1 {
                             k := i * len(metric.SubLabels) + j
                             if values[k] == values[k] {
-                                metric_data := fmt.Sprintf("%s_%s{%s,metric=\"%s\",submetric=\"%s\"} %f", prefix, metric.Display, strings.Join(instance_keys, ","), metric.Labels[i], metric.SubLabels[j], values[k])
+                                metric_data := fmt.Sprintf("%s_%s{%s,metric=\"%s\",submetric=\"%s\"} %f", prefix, metric.Name, strings.Join(instance_keys, ","), metric.Labels[i], metric.SubLabels[j], values[k])
                                 rendered = append(rendered, []byte(metric_data))
                             }
                         }

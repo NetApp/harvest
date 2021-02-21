@@ -17,12 +17,12 @@ type Matrix struct {
     Object string
     Plugin string
 	GlobalLabels *dict.Dict
-	LabelNames *dict.Dict
-	ExportOptions *node.Node
+	Labels *dict.Dict
     Instances map[string]*Instance
-    InstanceKeys [][]string
 	Metrics map[string]*Metric
-	MetricsIndex int /* since some metrics are arrays and we can't relay on len(Metrics) */
+	MetricsIndex int  // since some metrics are arrays and we can't relay on len(Metrics)
+    InstanceKeys [][]string  // @TODO deprecate, doesn't belong here
+	ExportOptions *node.Node
     Data [][]float32
     IsMetadata bool
     MetadataType string
@@ -32,11 +32,11 @@ type Matrix struct {
 func New(collector, object, plugin string) *Matrix {
     m := Matrix{Collector: collector, Object: object, Plugin: plugin, MetricsIndex: 0 }
     m.GlobalLabels = dict.New()
-    m.LabelNames = dict.New()
+    m.Labels = dict.New()
     m.Instances = map[string]*Instance{}
     m.Metrics = map[string]*Metric{}
     return &m
-}
+}           
 
 func (m *Matrix) IsEmpty() bool {
     return len(m.Data) == 0
@@ -52,7 +52,7 @@ func (m *Matrix) Clone() *Matrix {
         Metrics        : m.Metrics,
         MetricsIndex   : m.MetricsIndex,
         GlobalLabels   : m.GlobalLabels,
-        LabelNames     : m.LabelNames,
+        Labels         : m.Labels,
         ExportOptions  : m.ExportOptions,
         IsMetadata     : m.IsMetadata,
         MetadataType   : m.MetadataType,
@@ -85,6 +85,61 @@ func (m *Matrix) InitData() error {
 	return nil
 }
 
+func (m *Matrix) RemoveMetric(key string) {
+    if metric, ok := m.Metrics[key]; ok {
+        delete(m.Metrics, key)
+        if !m.IsEmpty() {
+            if len(m.Data) > metric.Size && m.MetricsIndex > metric.Index+metric.Size {
+                for i := metric.Index; i + metric.Size < m.MetricsIndex; i += 1 {
+                    m.Data[i] = m.Data[i+metric.Size]
+                }
+            }
+            m.Data = m.Data[:len(m.Data)-metric.Size]
+        }
+        for _, other := range m.GetMetrics() {
+            if other.Index > metric.Index {
+                other.Index -= metric.Size
+            }
+        }
+        m.MetricsIndex -= metric.Size
+    }
+}
+
+func (m *Matrix) RemoveInstance(key string) {
+    if instance, ok := m.Instances[key]; ok {
+        delete(m.Instances, key)
+        if !m.IsEmpty() {
+            for i := 0; i < m.MetricsIndex; i += 1 {
+                for j := instance.Index; j < len(m.Instances) - 1; j += 1 {
+                    m.Data[i][j] = m.Data[i][j+1]
+                }
+                m.Data[i] = m.Data[i][:len(m.Instances)]
+            }
+        }
+        for _, other := range m.Instances {
+            if other.Index > instance.Index {
+                other.Index -= 1
+            }
+        }
+    }
+}
+
+func (m *Matrix) RemoveLabel(key string) {
+    m.Labels.Delete(key) // remove from instances as well?
+}
+
+func (m *Matrix) SizeMetrics() int {
+    return len(m.Metrics) // or MetricsIndex??
+}
+
+func (m *Matrix) SizeLabels() int {
+    return m.Labels.Size()
+}
+
+func (m *Matrix) SizeInstances() int {
+    return len(m.Instances)
+}
+
 func (m *Matrix) ResetData() {
     m.Data = make([][]float32, 0)
 }
@@ -106,7 +161,7 @@ func (m *Matrix) ResetInstances() {
 
 
 func (m *Matrix) ResetLabelNames() {
-    m.LabelNames = dict.New()
+    m.Labels = dict.New()
 }
 
 
@@ -116,6 +171,10 @@ func (m *Matrix) GetInstances() map[string]*Instance {
 
 func (m *Matrix) GetMetrics() map[string]*Metric {
     return m.Metrics
+}
+
+func (m *Matrix) GetLabels() map[string]string {
+    return m.Labels.Iter()
 }
 
 func (m *Matrix) SetValueString(metric *Metric, instance *Instance, value string) error {
@@ -187,20 +246,22 @@ func (m *Matrix) GetArrayValues(metric *Metric, instance *Instance) []float32 {
     return values
 }
 
-func (m *Matrix) AddLabelName(name string) {
-    m.AddLabelKeyName(name, name)
-}
-
-func (m *Matrix) AddLabelKeyName(key, name string) {
-    //fmt.Printf("%s+ InstancLabel [%s] => [%s] %s\n", util.Bold, key, name, util.End)
-	m.LabelNames.Set(key, name)
-    //fmt.Printf("%s= %v %s\n", util.Red, m.InstanceKeys, util.End)
+// if name is empty, key will be used as name
+func (m *Matrix) AddLabel(key, name string) {
+    if name != "" {
+        m.Labels.Set(key, name)
+    } else {
+        m.Labels.Set(key, key)
+    }
 }
 
 func (m *Matrix) GetLabel(key string) (string, bool) {
-    return m.LabelNames.GetHas(key)
+    name, has := m.Labels.GetHas(key)
+    if name == "" {
+        return key, has
+    }
+    return name, has
 }
-
 
 func (m *Matrix) AddInstanceKey(key []string) {
     copied := make([]string, len(key))
@@ -214,7 +275,7 @@ func (m *Matrix) GetInstanceKeys() [][]string {
 
 
 func (m *Matrix) SetInstanceLabel(instance *Instance, key, value string) {
-    display := m.LabelNames.Get(key)
+    display := m.Labels.Get(key)
     instance.Labels.Set(display, value)
 }
 

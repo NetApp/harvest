@@ -147,8 +147,8 @@ func Init(c Collector) error {
 	md.AddMetric("parse_time", "parse_time", true)
 	md.AddMetric("calc_time", "calc_time", true)
 	md.AddMetric("count", "count", true)
-	md.AddLabelName("task")
-	md.AddLabelName("interval")
+	md.AddLabel("task", "")
+	md.AddLabel("interval", "")
 
 	/* each task we run is an "instance" */
 	for _, task := range s.GetTasks() {

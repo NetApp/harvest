@@ -66,7 +66,7 @@ func (e *AbstractExporter) InitAbc() error {
         return err
     }
 
-    e.Metadata.AddLabelName("task")
+    e.Metadata.AddLabel("task", "")
     if instance, err := e.Metadata.AddInstance("render"); err == nil {
 		e.Metadata.SetInstanceLabel(instance, "task", "render")
 		e.Metadata.SetExportOptions(matrix.DefaultExportOptions())

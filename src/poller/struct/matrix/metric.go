@@ -1,6 +1,7 @@
 package matrix
 
 import (
+	"fmt"
 	"goharvest2/share/errors"
 )
 
@@ -8,17 +9,23 @@ import (
 
 type Metric struct {
 	Index int
-    Display string
+    Name string
 	Enabled bool
-	Scalar bool
+	Size int // 1 for scalar metrics
 	/* extended fields for ZapiPerf counters */
 	Properties string
 	BaseCounter string
 	/* fields for Array counters */
-	Size int
 	Dimensions int
 	Labels []string
 	SubLabels []string
+}
+
+func (m *Metric) IsScalar() bool {
+	if !(m.Size >= 0) {
+		panic(fmt.Sprintf("metric [%s] has size %d", m.Name, m.Size))
+	}
+	return m.Size == 1
 }
 
 func (m *Matrix) GetMetric(key string) *Metric {
@@ -29,32 +36,38 @@ func (m *Matrix) GetMetric(key string) *Metric {
 	return nil
 }
 
-// Create new metric and add to cache
-func (m *Matrix) AddMetric(key, display string, enabled bool) (*Metric, error) {
+func (m *Matrix) add_metric(key string, metric *Metric) error {
 
 	if _, exists := m.Metrics[key]; exists {
-		return nil, errors.New(errors.MATRIX_HASH, "metric [" + key + "] already in cache")
+		//return errors.New(errors.MATRIX_HASH, "metric [" + key + "] already in cache")
+		panic("metric [" + key + "] already in cache")
+	}
+	metric.Index = m.MetricsIndex
+	m.Metrics[key] = metric
+	m.MetricsIndex += metric.Size
+
+	if ! m.IsEmpty() {
+		for i:=metric.Index; i<=m.MetricsIndex; i+=1 {
+			m.Data[i] = make([]float32, len(m.Instances))
+			for j:=0; j<len(m.Instances); j+=1 {
+				m.Data[i][j] = NAN
+			}
+		}
 	}
 
-	metric := Metric{Index: m.MetricsIndex, Display: display, Scalar: true, Enabled: enabled}
-	m.Metrics[key] = &metric
-	m.MetricsIndex += 1
+	return nil
+}
 
-	return &metric, nil
+// Create new metric and add to cache
+func (m *Matrix) AddMetric(key, name string, enabled bool) (*Metric, error) {
+	metric := &Metric{Name: name, Enabled: enabled, Size: 1}
+	return metric, m.add_metric(key, metric)
 }
 
 // Create 1D Array Matric
-func (m *Matrix) AddArrayMetric(key, display string, labels []string, enabled bool) (*Metric, error) {
-    if metric, err := m.AddMetric(key, display, enabled); err == nil {
-		metric.Scalar = false
-		metric.Dimensions = 1
-		metric.Size = len(labels)
-		metric.Labels = labels
-		m.MetricsIndex += metric.Size - 1 // already incremented by 1
-		return metric, nil
-	} else {
-		return nil, err
-	}
+func (m *Matrix) AddArrayMetric(key, name string, labels []string, enabled bool) (*Metric, error) {
+	metric := &Metric{Name: name, Labels: labels, Enabled: enabled, Dimensions: 1, Size: len(labels)}
+	return metric, m.add_metric(key, metric)
 }
 
 // Similar to AddMetric, but metric is initialized. This allows collectors
@@ -63,20 +76,11 @@ func (m *Matrix) AddArrayMetric(key, display string, labels []string, enabled bo
 // Method should be used with caution: incorrect "size" will corrupt data
 // or make Harvest panic
 func (m *Matrix) AddCustomMetric(key string, metric *Metric) error {
-	if _, exists := m.Metrics[key]; exists {
-		return errors.New(errors.MATRIX_HASH, "metric [" + key + "] already in cache")
+
+	// sanity check: metric should come with size
+	if metric.Size == 0 {
+		return errors.New(errors.MATRIX_INV_PARAM, "array metric has 0 size")
 	}
-	// sanity check: array should come with size
-	metric.Index = m.MetricsIndex
-	if !metric.Scalar {
-		if metric.Size == 0 {
-			return errors.New(errors.MATRIX_INV_PARAM, "array metric has 0 size")
-		}
-		m.MetricsIndex += metric.Size
-	} else {
-		m.MetricsIndex += 1
-	}
-	m.Metrics[key] = metric
-	return nil
+	return m.add_metric(key, metric)
 }
 

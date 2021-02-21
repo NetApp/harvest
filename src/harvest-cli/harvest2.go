@@ -79,8 +79,10 @@ func main() {
 	if bin != "" {
 		args := make([]string, 0)
 		args = append(args, os.Args[1:]...)
-		args = append(args, "--path")
-		args = append(args, PATH)
+		if len(os.Args) == 1 {
+			args = append(args, "--path")
+			args = append(args, PATH)
+		}
 		cmd := exec.Command(path.Join(p, "bin/", bin), args...)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr

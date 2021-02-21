@@ -1,4 +1,4 @@
-package main
+package zapi_collector
 
 import (
     "strings"
@@ -14,10 +14,10 @@ func ParseShortestPath(m *matrix.Matrix) []string {
     prefix := make([]string, 0)
     keys := make([][]string, 0)
 
-    for key, _ := range m.Metrics {
+    for key, _ := range m.GetMetrics() {
         keys = append(keys, strings.Split(key, "."))
     }
-    for key, _ := range m.LabelNames.Iter() {
+    for key, _ := range m.GetLabels() {
         keys = append(keys, strings.Split(key, "."))
     }
 
@@ -91,7 +91,7 @@ func HandleCounter(data *matrix.Matrix, path []string, content string) {
     }
 
     if content[0] == '^' {
-        data.AddLabelKeyName(key, display)
+        data.AddLabel(key, display)
             logger.Trace("", "%sAdded as Label [%s] [%s]%s => %v", util.Yellow, display, key, util.End, full_path)
         if content[1] == '^' {
             data.AddInstanceKey(full_path[:])

@@ -3,6 +3,7 @@ package main
 import (
 	"strings"
 	"strconv"
+	"goharvest2/poller/collector"
 	"goharvest2/poller/collector/plugin"
     "goharvest2/poller/struct/matrix"
 	"goharvest2/share/tree/node"
@@ -75,16 +76,16 @@ func (p *Shelf) Init() error {
 		for _, x := range obj.GetChildren() {
 			for _, c := range x.GetAllChildContentS() {
 
-				metric_name, display := parse_display(c)
+				metric_name, display := collector.ParseMetricName(c)
 
 				if strings.HasPrefix(c, "^") {
 					if strings.HasPrefix(c, "^^") {
 						p.instance_keys[attribute] = metric_name
-						p.data[attribute].AddLabelKeyName(metric_name, display)
+						p.data[attribute].AddLabel(metric_name, display)
 						instance_keys.NewChildS("", display)
 						logger.Debug(p.Prefix, "Adding as instance key: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
 					} else {
-						p.data[attribute].AddLabelKeyName(metric_name, display)
+						p.data[attribute].AddLabel(metric_name, display)
 						instance_labels.NewChildS("", display)
 						logger.Debug(p.Prefix, "Adding as label: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
 					}
@@ -94,7 +95,7 @@ func (p *Shelf) Init() error {
 				}
 			}
 		}
-		logger.Debug(p.Prefix, "added data for [%s] with %d metrics and %d labels", attribute, len(p.data[attribute].Metrics), p.data[attribute].LabelNames.Size())
+		logger.Debug(p.Prefix, "added data for [%s] with %d metrics and %d labels", attribute, p.data[attribute].SizeMetrics(), p.data[attribute].SizeLabels())
 
 		p.data[attribute].SetExportOptions(export_options)
 	}
@@ -158,7 +159,7 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 					logger.Debug(p.Prefix, "add (%s) instance: %s.%s", attribute, shelf_id, key)
 
-					for label, label_display := range data.LabelNames.Iter() {
+					for label, label_display := range data.GetLabels() {
 						if value := obj.GetChildContentS(label); value != "" {
 							instance.Labels.Set(label_display, value)
 						}
@@ -227,20 +228,4 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 
 	return output, nil
-}
-
-func parse_display(raw string) (string, string) {
-
-	var name, display string
-
-	name = strings.ReplaceAll(raw, "^", "")	
-
-	if x := strings.Split(name, "=>"); len(x) == 2 {
-		name = strings.TrimSpace(x[0])
-		display = strings.TrimSpace(x[1])
-	} else {
-		display = strings.ReplaceAll(name, "-", "_")
-	}
-
-	return name, display
 }
