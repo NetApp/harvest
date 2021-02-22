@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"goharvest2/share/tree"
 	"goharvest2/share/tree/node"
+    "goharvest2/share/logger"
 )
 
 func ImportTemplate(harvest_path, collector_name string) (*node.Node, error) {
@@ -16,19 +17,19 @@ func ImportTemplate(harvest_path, collector_name string) (*node.Node, error) {
 	return tree.ImportYaml(fp)
 }
 
-func ImportSubTemplate(harvest_path, dirname, filename, collector string, version [3]int) (*node.Node, error) {
+func ImportSubTemplate(harvest_path, model, dirname, filename, collector string, version [3]int) (*node.Node, error) {
 
     var err error
     var selected_version string
     var template *node.Node
 
-    path_prefix := path.Join(harvest_path, "config/", strings.ToLower(collector), dirname, "cdot")
-    //Log.Debug("Looking for best-fitting template in [%s]", path_prefix)
+    path_prefix := path.Join(harvest_path, "config/", strings.ToLower(collector), dirname, model)
+    logger.Info("--", "Looking for best-fitting template in [%s]", path_prefix)
 
     available := make(map[string]bool)
     files, _ := ioutil.ReadDir(path_prefix)
     for _, file := range files {
-        //Log.Debug("Found version dir: [%s]", file.Name())
+        logger.Info("--", "Found version dir: [%s]", file.Name())
         if match, _ := regexp.MatchString(`\d+\.\d+\.\d+`, file.Name()); match == true && file.IsDir() {
             available[file.Name()] = true
         }
@@ -46,7 +47,7 @@ func ImportSubTemplate(harvest_path, dirname, filename, collector string, versio
     }
 
     if selected_version == "" {
-        //Log.Debug("looking for newer version")
+        logger.Warn("--", "looking for newer version")
 
         vers = version[0] * 100 + version[1] * 10 + version[2]
 

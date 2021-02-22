@@ -121,7 +121,7 @@ if [ $all == true ] || [ $harvest == true ]; then
     info "copied /bin/manager"
 
     cd config
-    go build -o ../../bin/config
+    go build -o ../../../bin/config
     if [ $? -eq 0 ]; then
         info "compiled: /bin/config"
     else
@@ -139,8 +139,8 @@ if [ $all == true ] || [ $collectors == true ] || [ "$collector" != "" ]; then
     files=($(ls))
     for f in ${files[@]}; do
         if [ -d "$f" ]; then
-            cd $f
             if [ $all == true ] || [ $collectors == true ] || [ "$collector" == "$f" ]; then
+                cd $f
                 go build -buildmode=plugin -o ../../../bin/collectors/"$f".so
 
                 if [ $? -eq 0 ]; then
@@ -149,28 +149,28 @@ if [ $all == true ] || [ $collectors == true ] || [ "$collector" != "" ]; then
                     error "compiling [/src/collectors/$f] failed"
                     exit 1
                 fi
-            fi
 
-            if [ -d "plugins" ]; then
-                echo "compiling plugins..."
-                cd plugins/
-                plugins=($(ls))
-                for p in ${plugins[@]}; do
-                    if [ -d "$p" ]; then
-                        cd $p
-                        go build -buildmode=plugin -o ../../../../../bin/plugins/"$f"/"$p".so
-                        if [ $? -eq 0 ]; then
-                            echo -e "  compiled bin/plugins/$f/$p.so"
-                        else
-                            echo -e "  compiling [/src/collectors/$f/$p] failed"
-                            exit 1
+                if [ -d "plugins" ]; then
+                    echo "compiling plugins..."
+                    cd plugins/
+                    plugins=($(ls))
+                    for p in ${plugins[@]}; do
+                        if [ -d "$p" ]; then
+                            cd $p
+                            go build -buildmode=plugin -o ../../../../../bin/plugins/"$f"/"$p".so
+                            if [ $? -eq 0 ]; then
+                                echo -e "  compiled bin/plugins/$f/$p.so"
+                            else
+                                echo -e "  compiling [/src/collectors/$f/$p] failed"
+                                exit 1
+                            fi
+                            cd ../
                         fi
-                        cd ../
-                    fi
-                done
+                    done
+                    cd ../
+                fi
                 cd ../
             fi
-            cd ../
         fi
     done
     cd ../../

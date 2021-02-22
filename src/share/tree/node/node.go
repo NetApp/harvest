@@ -244,8 +244,13 @@ func (n *Node) Print(depth int) {
     if len(n.GetName()) > 0 {
         name = n.GetNameS()
     }
-    fname := fmt.Sprintf("%s%s%s%s%s (children=%d)", strings.Repeat("  ", depth), util.Bold, util.Cyan, name, util.End, len(n.Children))
-    fmt.Printf("%-50s - %s%35s%s\n", fname, util.Green, n.GetContentS(), util.End)
+    //fname := fmt.Sprintf("%s%s%s%s%s (children=%d)", strings.Repeat("  ", depth), util.Bold, util.Cyan, name, util.End, len(n.Children))
+    fname := fmt.Sprintf("%s%s%s%s%s", strings.Repeat("  ", depth), util.Bold, util.Cyan, name, util.End)
+    if len(n.GetContentS()) > 0 && n.GetContentS()[0] != '<' {
+        fmt.Printf("%-50s - %s%35s%s\n", fname, util.Green, n.GetContentS(), util.End)
+    } else {
+        fmt.Printf("%-50s\n", fname)
+    }
     for _, child := range n.Children {
         child.Print(depth+1)
     }

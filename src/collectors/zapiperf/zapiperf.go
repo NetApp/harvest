@@ -88,7 +88,11 @@ func (c *ZapiPerf) Init() error {
 
     c.TemplateFn = c.Params.GetChildS("objects").GetChildContentS(c.Object) // @TODO err handling
 
-    template, err := collector.ImportSubTemplate(c.Options.Path, "default", c.TemplateFn, c.Name, c.System.Version)
+    model := "cdot"
+    if !c.System.Clustered {
+        model = "7mode"
+    }
+    template, err := collector.ImportSubTemplate(c.Options.Path, model, "default", c.TemplateFn, c.Name, c.System.Version)
     if err != nil {
         logger.Error(c.Prefix, "Error importing subtemplate: %s", err)
         return err
@@ -784,9 +788,11 @@ func (c *ZapiPerf) PollInstance() (*matrix.Matrix, error) {
 		request = node.NewXmlS("perf-object-instance-list-info")
 		instances_attr = "instances"
 	}
-	
+
 	request.NewChildS("objectname", c.Query)
-	request.NewChildS("max-records", strconv.Itoa(c.batch_size))
+    if c.System.Clustered {
+    	request.NewChildS("max-records", strconv.Itoa(c.batch_size))
+    }
 
 	batch_tag := "initial"
 

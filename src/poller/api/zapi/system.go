@@ -27,21 +27,21 @@ func (sys *System) String() string {
 }
 
 func (c *Client) GetSystem() (*System, error) {
-    var sys *System
+    var sys System
     var err error
 
-    sys = &System{}
+    sys = System{}
 
     // fetch system version and model
     if err := c.BuildRequestString("system-get-version"); err != nil {
-        return sys, err
+        return &sys, err
     }
 
     response, err := c.Invoke()
-    if err != nil { 
-        return sys, err 
+    if err != nil {
+        return &sys, err
     }
-    
+
     sys.Release = response.GetChildContentS("version")
 
     if version := response.GetChildS("version-tuple"); version != nil {
@@ -62,8 +62,16 @@ func (c *Client) GetSystem() (*System, error) {
         }
     }
 
+    // if version tuple is missing try to parse manualle
+    // this is usually the case with 7mode systems
+    if sys.Version[0] == 0 {
+        if _, err = fmt.Sscanf(sys.Release, "NetApp Release %d.%d.%d", &sys.Version[0], &sys.Version[1], &sys.Version[2]); err != nil {
+            return &sys, errors.New("no valid version tuple found")
+        }
+    }
+
     if clustered := response.GetChildContentS("is-clustered"); clustered == "" {
-        return sys, errors.New("Not found [is-clustered]")
+        return &sys, errors.New("Not found [is-clustered]")
     } else if clustered == "true" {
         sys.Clustered = true
     } else {
@@ -77,12 +85,12 @@ func (c *Client) GetSystem() (*System, error) {
     }
 
     if err := c.BuildRequestString(request); err != nil {
-        return sys, err
+        return &sys, err
     }
 
     response, err = c.Invoke()
     if err != nil {
-        return sys, err
+        return &sys, err
     }
 
     if sys.Clustered {
@@ -99,5 +107,5 @@ func (c *Client) GetSystem() (*System, error) {
             sys.SerialNumber = info.GetChildContentS("system-serial-number")
         }
     }
-    return sys, nil
+    return &sys, nil
 }

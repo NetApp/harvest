@@ -75,7 +75,6 @@ func main() {
 	var err error
 
 	options = get_args()
-	//a.print()
 
 	if !ACTIONS.Has(options.Action) {
 		fmt.Printf("action should be one of: %v", ACTIONS.Slice())
@@ -91,13 +90,15 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+	system = get_system()
 
 	switch options.Item {
 
 	case "system":
-		get_system()
+		//get_system()
+        fmt.Println("Done")
 	case "data":
-		get_query()
+		get_data()
 	case "counters":
 		get_counters()
     case "objects":
@@ -166,7 +167,7 @@ func create_client_cert() {
 }
 */
 
-func get_system() {
+func get_system() *client.System {
 
 	var err error
 
@@ -177,6 +178,8 @@ func get_system() {
 	} else {
 		fmt.Println(err)
 	}
+
+    return system
 }
 
 func get_query() {
@@ -194,7 +197,41 @@ func get_query() {
 	} else {
 		results.Print(0)
 	}
+}
 
+func get_data() {
+
+    var request *node.Node
+
+    request = node.NewXmlS(options.Query)
+
+    if options.Object != "" {
+        fmt.Printf("fetching raw data of zapiperf object [%s]\n", options.Object)
+
+        if system.Clustered {
+            request = node.NewXmlS("perf-object-get-instances")
+            //request.NewChildS("max-records", "100")
+            instances := request.NewChildS("instances", "")
+            instances.NewChildS("instance", "*")
+        } else {
+            request = node.NewXmlS("perf-object-get-instances")
+        }
+        request.NewChildS("objectname", options.Object)
+    } else {
+        fmt.Printf("fetching raw data of zapi api [%s]\n", options.Query)
+    }
+
+    if err := connection.BuildRequest(request); err != nil {
+        fmt.Println(err)
+        return
+    }
+
+    results, err := connection.Invoke()
+    if err != nil {
+        fmt.Println(err)
+    } else {
+        results.Print(0)
+    }
 }
 
 func get_apis() {
