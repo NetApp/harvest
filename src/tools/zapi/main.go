@@ -100,6 +100,13 @@ func main() {
 		get_query()
 	case "counters":
 		get_counters()
+    case "objects":
+        get_objects()
+    case "apis":
+        get_apis()
+    default:
+        fmt.Printf("invalid item: %s\n", options.Item)
+        os.Exit(1)
 	}
 }
 
@@ -177,6 +184,7 @@ func get_query() {
 
 	if err := connection.BuildRequestString(options.Query); err != nil {
 		fmt.Println(err)
+        return
 	}
 
 	results, err := connection.Invoke()
@@ -189,6 +197,69 @@ func get_query() {
 
 }
 
+func get_apis() {
+
+    if err := connection.BuildRequestString("system-api-list"); err != nil {
+        fmt.Println(err)
+        return
+    }
+
+    results, err := connection.Invoke()
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+
+    apis := results.GetChildS("apis")
+    if apis == nil {
+        fmt.Println("Missing [apis] element in response")
+        return
+    }
+
+    fmt.Printf("%s%s%-70s %s %20s %15s\n\n", util.Bold, util.Pink, "API", util.End, "LICENSE", "STREAM")
+    for _, a := range apis.GetChildren() {
+        fmt.Printf("%s%s%-70s %s %20s %15s\n", util.Bold, util.Pink, a.GetChildContentS("name"), util.End, a.GetChildContentS("license"), a.GetChildContentS("is-streaming"))
+    }
+
+
+}
+
+func get_objects() {
+
+    if err := connection.BuildRequestString("perf-object-list-info"); err != nil {
+        fmt.Println(err)
+        return
+    }
+
+    results, err := connection.Invoke()
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+
+    objects := results.GetChildS("objects")
+    if objects == nil {
+        fmt.Println("Missing [objects] element in response")
+        return
+    }
+
+    fmt.Printf("%s%s%-50s %s %s %-20s %15s %15s %15s %s\n\n", util.Bold, util.Blue, "OBJECT", util.End, util.Bold, "PREFERRED KEY", "PRIV-LVL", "DEPREC", "REPLC", util.End)
+    for _, o := range objects.GetChildren() {
+        fmt.Printf("\n%s%s%-50s %s %s %-20s %15s %15s %15s %s\n",
+            util.Bold,
+            util.Blue,
+            o.GetChildContentS("name"),
+            util.End,
+            util.Bold,
+            o.GetChildContentS("get-instances-preferred-counter"),
+            o.GetChildContentS("privilege-level"),
+            o.GetChildContentS("is-deprecated"),
+            o.GetChildContentS("replaced-by"),
+            util.End,
+        )
+        fmt.Printf("%s     %s%s\n", util.Grey, o.GetChildContentS("description"), util.End)
+    }
+}
 
 func get_counters() {
 	counters := make([]counter, 0)
@@ -236,7 +307,7 @@ func get_counters() {
 		} else {
 			c.scalar = false
 
-			elem.Print(0)
+			//elem.Print(0)
 
 			if labels := elem.GetChildS("labels"); labels != nil {
 

@@ -134,7 +134,7 @@ func main() {
     DIALOG.Message(fmt.Sprintf("Saved results to:\n[%s]", fp))
     DIALOG.Close()
 
-    conf.Print(0)
+    //conf.Print(0)
 }
 
 func exitError(msg string, err error) {
