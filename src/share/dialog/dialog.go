@@ -9,9 +9,20 @@ import (
     "errors"
 )
 
+/*
+    Text-based UI for interacting with user. Uses whiptail or dialog if
+    available, otherwise will fall back to STDIN/STDOUT (not implemented yet)
+
+    Note that whiptail is usually avaible on RHEL/CentOs and similar systems,
+    while dialog is more typical for Debian and related systems. Both use
+    the same set of flags, so we can easily switch between the two commands
+    (tested at least for the flags used in our methods).
+*/
+
 type Dialog struct {
 	enabled bool
 	title string
+    bin string
 	cmd *exec.Cmd
 }
 
@@ -20,35 +31,37 @@ func New() *Dialog {
 	// use default title
 	d := Dialog{title: "harvest 2.0 - config"}
 
-	// is dialog available?
-	cmd := exec.Command("dialog", "--help")
-	if err := cmd.Run(); err != nil {
-		d.enabled = false
-		fmt.Printf("dialog not enabled: %v", err)
-	} else {
-		d.enabled = true
-		fmt.Println("dialog enabled!")
-	}
-	return &d
+	// whiptail or dialog available?
+
+    if out, err := exec.Command("which", "whiptail").Output(); err != nil {
+        d.bin = string(out)
+    }
+
+    if out, err := exec.Command("which", "dialog").Output(); err != nil {
+        d.bin = string(out)
+    }
+
+    if d.bin == "" {
+        d.enabled = false
+    } else {
+        d.enabled = true
+    }
 }
 
-func (d *Dialog) SetTitle(title string) {
-	d.title = title
-}
-
-func (d *Dialog) Close() {
-	d.setArgs("--clear")
-	d.exec()
-}
-
+// init new process with given args
 func (d *Dialog) setArgs(args... string) {
-	d.cmd = exec.Command("dialog", args...)
+	d.cmd = exec.Command(d.bin, args...)
 }
 
+// add arg to new process, only use after setArgs()
+// and before exec(), otherwise program will panic
 func (d *Dialog) addArg(arg string) {
 	d.cmd.Args = append(d.cmd.Args, arg)
 }
 
+// execute process and return user response
+// from whiptail / dialog.
+// @TODO handle situation when d.enabled == false
 func (d *Dialog) exec() (string, error) {
     os.Stdout.Sync()
     d.cmd.Stdout = os.Stdout
@@ -74,21 +87,45 @@ func (d *Dialog) exec() (string, error) {
     return string(out), nil
 }
 
+// Info about the dialog struct, for debugging
+func (d *Dialog) Info() string {
+    if d.enabled {
+        return fmt.Sprintf("enabled, using binary [%s]", d.bin)
+    } else {
+        "disabled, using StdIn/StdOut"
+    }
+}
+
+// clear screen, good to call this function after last message
+func (d *Dialog) Close() {
+	d.setArgs("--clear")
+	d.exec()
+}
+
+// change default title that's display in whiptail/display
+func (d *Dialog) SetTitle(title string) {
+	d.title = title
+}
+
+// show message to user
 func (d *Dialog) Message(msg string) {
 	d.setArgs("--msgbox", msg, "0", "0")
     d.exec()
 }
 
+// get input from user
 func (d *Dialog) Input(msg string) (string, error) {
     d.setArgs("--inputbox", msg, "0", "0")
     return d.exec()
 }
 
+// get password as input
 func (d *Dialog) Password(msg string) (string, error) {
     d.setArgs("--passwordbox", msg, "0", "0")
     return d.exec()
 }
 
+// get user choice from menu items
 func (d *Dialog) Menu(msg string, items... string) (string, error) {
 	d.setArgs("--menu", msg, "0", "0", strconv.Itoa(len(items)))
 	for i, item := range items {
@@ -112,6 +149,7 @@ func (d *Dialog) Menu(msg string, items... string) (string, error) {
     return items[index], nil
 }
 
+// get consent from user
 func (d *Dialog) YesNo(msg string) bool {
 	d.setArgs("--yesno", msg, "0", "0")
     if _, err := d.exec(); err != nil {
