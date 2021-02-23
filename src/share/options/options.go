@@ -4,6 +4,7 @@ import (
 	"os"
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 type option struct {
@@ -11,39 +12,72 @@ type option struct {
 	class string
 	short string
 	descr string
-	deflt string
-	values []string
+    accept []string
+    target_string *string
+    target_int *int
+    target_bool *bool
+    target_slice *[]string
+}
+
+func (opt *option) value2string() string {
+
+	switch opt.class {
+
+	case "string":
+		if opt.target_string != nil {
+			return *opt.target_string
+		}
+		return "<none>"
+	case "bool":
+		if opt.target_bool != nil {
+			if *opt.target_bool {
+				return "true"
+			}
+			return "false"
+		}
+		return "<none>"
+	case "int":
+		if opt.target_int != nil {
+			return strconv.Itoa(*opt.target_int)
+		}
+		return "<none>"
+	case "slice":
+		if opt.target_slice != nil {
+			return strings.Join(*opt.target_slice, ", ")
+		}
+		return "<none>"
+	}
+
+	return "<panic>"
 }
 
 type Options struct {
 	name string
+	bin string
 	descr string
 	names map[string]int
 	shorts map[string]int
 	options []*option
-	positionals []string
+	positionals []*option
 	errors [][]string
 	index int
 }
 
-func New(program_name, short_descr string) *Options {
+func New(program_name, program_bin, short_descr string) *Options {
 	o := Options{}
 	o.name = program_name
+	o.bin = program_bin
 	o.descr = short_descr
 	o.options = make([]*option, 0)
 	o.names = make(map[string]int)
 	o.shorts = make(map[string]int)
-	o.positionals = make([]string, 0)
+	o.positionals = make([]*option, 0)
 	o.errors = make([][]string, 0)
 	o.index = 0
 	return &o
 }
 
-func (o *Options) add(opt *option, name, short, descr, deflt string) {
-
-	opt.deflt = deflt
-	opt.descr = descr
-	opt.short = short
+func (o *Options) add(opt *option, name, short string) {
 
 	if index, exists := o.names[name]; !exists {
 		o.options = append(o.options, opt)
@@ -52,131 +86,90 @@ func (o *Options) add(opt *option, name, short, descr, deflt string) {
 			o.shorts[short] = o.index
 		}
 		o.index += 1
+	// jic same flag is added again
 	} else {
 		o.options[index] = opt
 	}
 }
 
-func (o *Options) AddBool(name, short, descr string, deflt bool) {
-	opt := option{name: name, class: "bool"}
-	opt.values = make([]string, 1)
-	if deflt {
-		o.add(&opt, name, short, descr, "true")
-	} else {
-		o.add(&opt, name, short, descr, "false")
-	}
+func (o *Options) PosString(target *string, name, descr string, values []string) {
+    opt := option{name: name, class: "string", descr: descr, accept: values, target_string: target}
+    o.positionals = append(o.positionals, &opt)
 }
 
-func (o *Options) AddString(name, short, descr, deflt string) {
-	opt := option{name: name, class: "string"}
-	opt.values = make([]string, 1)
-	o.add(&opt, name, short, descr, deflt)
+func (o *Options) Bool(target *bool, name, short, descr string) {
+	opt := option{name: name, class: "bool", short: short, descr: descr, target_bool: target}
+	o.add(&opt, name, short)
 }
 
-func (o *Options) AddInt(name, short, descr string, deflt int) {
-	opt := option{name: name, class: "int"}
-	opt.values = make([]string, 1)
-	o.add(&opt, name, short, descr, strconv.Itoa(deflt))
+func (o *Options) String(target *string, name, short, descr string) {
+	opt := option{name: name, class: "string", short: short, descr: descr, target_string: target}
+	o.add(&opt, name, short)
 }
 
-func (o *Options) AddSlice(name, short, descr string) {
-	opt := option{name: name, class: "slice"}
-	opt.values = make([]string, 0)
-	o.add(&opt, name, short, descr, "")
+func (o *Options) Int(target *int, name, short, descr string) {
+	opt := option{name: name, class: "int", short: short, descr: descr, target_int: target}
+	o.add(&opt, name, short)
 }
 
-func (o *Options) GetBool(name string) (bool, bool) {
-	var value, ok bool
-	var raw string
-	if index, exists := o.names[name]; exists {
-		opt := o.options[index]
-		if raw = opt.values[0]; raw != "" {
-			ok = true
-		} else {
-			raw = opt.deflt
-			ok = false
-		}
-		if raw == "true" {
-			value = true
-		} else {
-			value = false
-		}
-		return value, ok
-	}
-	panic("invalid bool flag: " + name)
+func (o *Options) Slice(target *[]string, name, short, descr string) {
+	opt := option{name: name, class: "slice", short: short, descr: descr, target_slice: target}
+	o.add(&opt, name, short)
 }
-
-func (o *Options) GetInt(name string) (int, bool) {
-	var value int
-	var ok bool
-	var raw string
-	var err error
-	if index, exists := o.names[name]; exists {
-		opt := o.options[index]
-		if raw = opt.values[0]; raw != "" {
-			ok = true
-		} else {
-			raw = opt.deflt
-			ok = false
-		}
-		if value, err = strconv.Atoi(raw); err != nil {
-			ok = false
-		}
-		return value, ok
-	}
-	panic("invalid int flag: " + name)	
-}
-
-func (o *Options) GetString(name string) (string, bool) {
-	var value string
-	var ok bool
-	if index, exists := o.names[name]; exists {
-		opt := o.options[index]
-		if value = opt.values[0]; value != "" {
-			ok = true
-		} else {
-			value = opt.deflt
-			ok = false
-		}
-		return value, ok
-	}
-	panic("invalid string flag: " + name)	
-}
-
-
-func (o *Options) GetSlice(name string) []string {
-	if index, exists := o.names[name]; exists {
-		return o.options[index].values
-	}
-	panic("invalid slice flag: " + name)	
-}
-
 
 func (o *Options) Parse() bool {
 
+	pos_index := 0
+
 	for i:=1; i<len(os.Args); i+=1 {
 
-		name := os.Args[i]
+		flag := os.Args[i]
 
-		if len(name) > 1 && name[:2] == "--" {
-			i += o.handle_long(i, name[2:])
-		} else if string(name[0]) == "-" {
-			i += o.handle_short(i, string(name[1:]))
+		// help stops here
+		if flag == "help" || flag == "-h" || flag == "--help" || flag == "-help" {
+			o.PrintHelp()
+			return false
+		// long flag
+		} else if len(flag) > 1 && flag[:2] == "--" {
+			i += o.handle_long(i, flag[2:])
+		// short flag
+		} else if string(flag[0]) == "-" {
+			i += o.handle_short(i, string(flag[1:]))
+		// positional
+		} else if len(o.positionals) >= pos_index {
+			o.handle_pos(pos_index, flag)
 		} else {
-			o.positionals = append(o.positionals, name)
+			o.errors = append(o.errors, []string{flag, "unknown command"})
 		}
 	}
-	return len(o.errors) == 0
+
+	if len(o.errors) == 0 {
+		return true
+	}
+
+	o.PrintErrors()
+	return false
 }
 
-func (o *Options) ParseAndHandle() {
-	if !o.Parse() {
-		o.PrintErrors()
-		os.Exit(1)
-	} else if help, _ := o.GetBool("help"); help {
-		o.PrintHelp()
-		os.Exit(0)
+
+func (o *Options) handle_pos(i int, flag string) {
+
+	opt := o.positionals[i]
+
+	if len(opt.accept) == 0 {
+		*opt.target_string = flag
+		return
 	}
+
+	for _, x := range opt.accept {
+		if x == flag {
+			*opt.target_string = flag
+			return
+		}
+	}
+
+	o.errors = append(o.errors, []string{flag, "invalid value for " + opt.name})
+
 }
 
 
@@ -194,7 +187,7 @@ func (o *Options) handle_long(i int, name string) int {
 	}
 
 	if opt.class == "bool" {
-		opt.values[0] = "true"
+		*opt.target_bool = true
 		return 0
 	}
 
@@ -206,16 +199,17 @@ func (o *Options) handle_long(i int, name string) int {
 	value := os.Args[i+1]
 
 	if opt.class == "int" {
-		if _, err := strconv.Atoi(value); err != nil {
+		if x, err := strconv.Atoi(value); err != nil {
 			o.errors = append(o.errors, []string{name, "invalid int " + value})
 			return 0
+		} else {
+			*opt.target_int = x
+			return 1
 		}
-		opt.values[0] = value
-		return 1
 	}
 
 	if opt.class == "string" {
-		opt.values[0] = value
+		*opt.target_string = value
 		return 1
 	}
 
@@ -226,11 +220,10 @@ func (o *Options) handle_long(i int, name string) int {
 			if string(val[0]) == "-" {
 				break
 			}
-			opt.values = append(opt.values, val)
+			*opt.target_slice = append(*opt.target_slice, val)
 		}
 		return k
 	}
-
 	panic("invalid option type: " + opt.class)
 }
 
@@ -265,9 +258,9 @@ func (o *Options) PrintHelp() {
 			flag += ", -" + opt.short
 		}
 		fmt.Printf("    %-20s %s", flag, opt.descr)
-		if opt.deflt != "" {
-			fmt.Printf(" (default: %s)", opt.deflt)
-		}
+		//if opt.deflt != "" {
+		//	fmt.Printf(" (default: %s)", opt.deflt)
+		//}
 		fmt.Println()
 	}
 }
@@ -280,32 +273,15 @@ func (o *Options) PrintErrors() {
 }
 
 func (o *Options) PrintValues() {
-	fmt.Printf("Parsed arguments:\n\n")
+
+	fmt.Printf("\npositional arguments:\n\n")
+	for i, opt := range o.positionals {
+		fmt.Printf(" (%d)    %-20s %s", i, opt.name, opt.value2string())
+	}
+
+	fmt.Printf("\n\nnamed arguments:\n\n")
 	for _, opt := range o.options {
-		//fmt.Printf("<%s>...\n", opt.name)
-		x := true
-		switch opt.class {
-		case "string":
-			v, ok := o.GetString(opt.name)
-			fmt.Printf("    %-20s %s", opt.name, v)
-			x = ok
-		case "bool":
-			v, ok := o.GetBool(opt.name)
-			fmt.Printf("    %-20s %v", opt.name, v)
-			x = ok
-		case "int":
-			v, ok := o.GetInt(opt.name)
-			fmt.Printf("    %-20s %d", opt.name, v)
-			x = ok
-		case "slice":
-			fmt.Printf("    %-20s %v", opt.name, o.GetSlice(opt.name))
-		default:
-			fmt.Printf("    flag [%s] with invalid type: %s\n", opt.name, opt.class)
-			continue
-		}
-		if !x {
-			fmt.Printf(" (default)")
-		}
+		fmt.Printf("        %-20s %s", opt.name, opt.value2string())
 		fmt.Println()
 	}
 }

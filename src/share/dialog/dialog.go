@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"strconv"
     "errors"
+    "strings"
 )
 
 /*
@@ -33,19 +34,17 @@ func New() *Dialog {
 
 	// whiptail or dialog available?
 
-    if out, err := exec.Command("which", "whiptail").Output(); err != nil {
-        d.bin = string(out)
-    }
+    d.enabled = true
 
-    if out, err := exec.Command("which", "dialog").Output(); err != nil {
-        d.bin = string(out)
-    }
-
-    if d.bin == "" {
-        d.enabled = false
+    if out, err := exec.Command("which", "whiptail").Output(); err == nil {
+        d.bin = strings.TrimSpace(string(out))
+    } else if out, err := exec.Command("which", "dialog").Output(); err == nil {
+        d.bin = strings.TrimSpace(string(out))
     } else {
-        d.enabled = true
+        d.enabled = false
     }
+
+    return &d
 }
 
 // init new process with given args
@@ -92,7 +91,7 @@ func (d *Dialog) Info() string {
     if d.enabled {
         return fmt.Sprintf("enabled, using binary [%s]", d.bin)
     } else {
-        "disabled, using StdIn/StdOut"
+        return "disabled, using StdIn/StdOut"
     }
 }
 

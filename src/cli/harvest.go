@@ -69,7 +69,7 @@ func main() {
 	case "alerts":
 		fmt.Println("alert manager not available....")
 	case "config":
-		bin = "manager"
+		bin = "config"
 	case "version":
 		fmt.Printf("NetApp Harvest 2.0 - Version %s\n", VERSION)
 	default:

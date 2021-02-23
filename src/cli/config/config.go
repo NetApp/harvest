@@ -1,7 +1,9 @@
 package main
 
 import (
-	"os"
+    "os"
+    "os/exec"
+    "io/ioutil"
 	"fmt"
 	"strings"
     "path"
@@ -44,6 +46,12 @@ func print_usage() {
 	fmt.Println(USAGE)
 }
 
+func exitError(msg string, err error) {
+    DIALOG.Close()
+    fmt.Printf("Error (%s): %v\n", msg, err)
+    //os.Exit(1)
+}
+
 func main() {
 
 	var item string
@@ -59,7 +67,8 @@ func main() {
 		os.Exit(0)
 	}
 
-	DIALOG = dialog.New()
+    DIALOG = dialog.New()
+    fmt.Println(DIALOG.Info())
 
 	if item == "welcome" {
 
@@ -137,13 +146,6 @@ func main() {
     //conf.Print(0)
 }
 
-func exitError(msg string, err error) {
-    DIALOG.Close()
-    fmt.Println(msg)
-    fmt.Println(err)
-    os.Exit(1)
-}
-
 func add_poller() *node.Node {
 
     poller := node.NewS("")
@@ -163,25 +165,34 @@ func add_poller() *node.Node {
     poller.NewChildS("url", addr)
 
     // ask for authentication method
-    auth, err := DIALOG.Menu("Choose authentication method", "password", "certificate_auth")
+    auth, err := DIALOG.Menu("Choose authentication method", "client certificate (recommended)", "password")
     if err != nil {
         exitError("menu auth", err)
     }
-    poller.NewChildS("auth_style", auth)
 
-    if auth == "password" {
+    create_cert := false
+
+    if auth == "client certificate (recommended)" {
+        if DIALOG.YesNo("Create client certificate and key pair?") {
+            if exec.Command("which", "openssl").Run() != nil {
+                DIALOG.Message("You don't have openssl installed, please install and try again")
+                return nil
+            }
+            create_cert = true
+            DIALOG.Message("This requires one-time admin password to create \na read-only user and install certificate on your system")
+        } else {
+            msg := fmt.Sprintf("Copy your cert/key pair to [%s/cert/] as [<SYSTEM_NAME>.key] and [<SYSTEM_NAME>.pem] to continue", PATH)
+            DIALOG.Message(msg)
+            poller.NewChildS("auth_style", "certificate_auth")
+        }
+    }
+
+    if auth == "password" || create_cert {
+        poller.NewChildS("auth_style", "password")
         username, _ := DIALOG.Input("username: ")
         password, _ := DIALOG.Password("password: ")
         poller.NewChildS("username", username)
         poller.NewChildS("password", password)
-
-    }
-
-    //create_cert := false
-
-    if auth == "certificate_auth" {
-        msg := fmt.Sprintf("Copy your cert/key pair to [%s/cert/] as [<SYSTEM_NAME>.key] and [<SYSTEM_NAME>.pem] to continue", PATH)
-        DIALOG.Message(msg)
     }
 
     // connect and get system info
@@ -194,19 +205,92 @@ func add_poller() *node.Node {
 
     system, err := client.GetSystem()
     if err != nil {
-        if DIALOG.YesNo("Failed to connect to system. Add system anyway?") {
-            if name, err := DIALOG.Input("System name: "); err != nil {
-                poller.SetNameS(name)
-            } else {
-                exitError("system name", err)
-            }
-        } else {
-            return nil
-        }
-    } else {
-        poller.SetNameS(system.Name)
-        DIALOG.Message("Connected to:\n" + system.String())
+        exitError("system", err)
+        poller.Print(0)
+        os.Exit(1)
     }
+
+    poller.SetNameS(system.Name)
+    DIALOG.Message("Connected to:\n" + system.String())
+
+
+    if create_cert {
+
+        cert_path := path.Join(PATH, "cert", system.Name + ".pem")
+        key_path := path.Join(PATH, "cert", system.Name + ".key")
+
+        cmd := exec.Command(
+            "openssl", 
+            "req", 
+            "-x509", 
+            "-nodes", 
+            "-days", 
+            "1095", 
+            "-newkey", 
+            "rsa:2048", 
+            "-keyout", 
+            key_path, 
+            "-out", 
+            cert_path, 
+            "-subj", 
+            "/CN="+HARVEST_USER,
+        )
+
+        if err := cmd.Run(); err != nil {
+            exitError("openssl", err)
+        }
+
+        DIALOG.Message(fmt.Sprintf("Generated certificate/key pair:\n  - %s\n  - %s\n", cert_path, key_path))
+
+        req := node.NewXmlS("security-login-role-create")
+        req.NewChildS("access-level", "readonly")
+        req.NewChildS("command-directory-name", "DEFAULT")
+        req.NewChildS("role-name", HARVEST_ROLE)
+        req.NewChildS("vserver", system.Name)
+
+        if _, err := client.InvokeRequest(req); err != nil {
+            exitError("create role", err)
+        }
+
+        req = node.NewXmlS("security-login-create")
+        req.NewChildS("application", "ontapi")
+        req.NewChildS("authentication-method", "cert")
+        req.NewChildS("comment", "readonly user for harvest2")
+        req.NewChildS("role-name", HARVEST_ROLE)
+        req.NewChildS("user-name", HARVEST_USER)
+        req.NewChildS("vserver", system.Name)
+
+        if _, err := client.InvokeRequest(req); err != nil {
+            exitError("create user", err)
+        }
+
+        DIALOG.Message(fmt.Sprintf("Created read-only user [%s] and role [%s]", HARVEST_USER, HARVEST_ROLE))
+
+        cert_content, err := ioutil.ReadFile(cert_path)
+        if err != nil {
+            exitError("cert content", err)
+        }
+
+        req = node.NewXmlS("security-certificate-install")
+        req.NewChildS("cert-name", HARVEST_USER)
+        req.NewChildS("certificate", string(cert_content))
+        req.NewChildS("type", "client_ca")
+        req.NewChildS("vserver", system.Name)
+        
+        if _, err := client.InvokeRequest(req); err != nil {
+            exitError("install cert", err)
+        }
+    
+        DIALOG.Message("Certificate installed on system.")
+
+        poller.PopChildS("auth_style")
+        poller.PopChildS("username")
+        poller.PopChildS("password")
+        poller.NewChildS("auth_style", "certificate_auth")
+        poller.NewChildS("ssl_cert", cert_path)
+	    poller.NewChildS("ssl_key", key_path)
+    }
+    
 
     collectors := poller.NewChildS("collectors", "")
     collectors.NewChildS("", "Zapi")
