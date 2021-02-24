@@ -5,10 +5,9 @@ import (
 	"os/exec"
 	"path"
 	"fmt"
-	"strings"
+	"goharvest2/share/version"
+	"goharvest2/share/options"
 )
-
-var VERSION = "2.0.1"
 
 var PATH = "/opt/harvest2/"
 
@@ -16,7 +15,7 @@ var USAGE = `
 NetApp Harvest 2.0 - application for monitoring storage systems
 
 Usage:
-    harvest2 <command> [arguments]
+    harvest <command> [arguments]
 
 The commands are:
 
@@ -24,71 +23,85 @@ The commands are:
 	start/restart/stop      manage pollers
 	config                  run the config utility
 	alerts                  manage alerts
-	zapi-tool               explore ZAPI objects and counters
-	grafana-tool            import dashboards to Grafana
+	zapitool                explore ZAPI objects and counters
+	grafanatool             import dashboards to Grafana
 	version                 show Harvest2 version
+	doc                     serve docs over http
 
-Use "harvest2 <command> help" for more information about a command
+Use "harvest <command> help" for more information about a command
 `
-func print_usage() {
-	fmt.Println(USAGE)
-}
 
-func get_opt(flag_long, flag_short, default_val string) string {
-	val := default_val
-	for i:=1; i<len(os.Args); i+=1 {
-		if (os.Args[i] == "-" + flag_short) || (os.Args[i] == "--" + flag_long) {
-			if i+1 < len(os.Args) {
-				val = os.Args[i+1]
-				break
-			}
-		}
-	}
-	return val
+var COMMANDS = []string{
+	"status",
+	"start",
+	"stop",
+	"restart",
+	"config",
+	"alerts",
+	"zapitool",
+	"grafanatool",
+	"version",
+	"help",
+	"doc",
 }
 
 func main() {
 
-	//h, _ := os.Hostname()
-	//c, _ := os.Getwd()
-	p := get_opt("path", "p", PATH)
+	opts := options.New("", "", "")
+	opts.SetHelp(USAGE)
 
-	//fmt.Printf("host=%s cwd=%s path=%s\n", h, c, p)
+	harvest_path := PATH
+	command := ""
 
-	if len(os.Args) == 1 {
-		print_usage()
+	opts.String(&harvest_path, "path", "p", "Harvest installation directory")
+	opts.PosString(&command, "command", "command to run", COMMANDS)
+
+	if ! opts.Parse() {
+		opts.PrintValues()
 		os.Exit(0)
 	}
 
-	command := strings.ReplaceAll(os.Args[1], "-", "")
+	opts.PrintValues()
+
 	bin := ""
 
 	switch command {
+	case "", "help":
+		opts.PrintHelp()
 	case "status", "start", "restart", "stop":
 		bin = "manager"
 	case "alerts":
 		fmt.Println("alert manager not available....")
 	case "config":
 		bin = "config"
+	case "zapitool":
+		bin = "zapitool"
+	case "grafanatool":
+		bin = "grafanatool"
 	case "version":
-		fmt.Printf("NetApp Harvest 2.0 - Version %s\n", VERSION)
+		fmt.Println(version.VERSION)
 	default:
-		fmt.Printf("Unknown command: %s\nRun \"harvest2 help\" for usage\n", command)
+		fmt.Printf("Unknown command: %s\nRun \"harvest help\" for usage\n", command)
 	}
 
 	if bin != "" {
-		args := make([]string, 0)
-		args = append(args, os.Args[1:]...)
-		if len(os.Args) == 1 {
-			args = append(args, "--path")
-			args = append(args, PATH)
+		bin_path := path.Join(harvest_path, "bin/", bin)
+
+		var cmd *exec.Cmd
+		if bin == "manager" {
+			cmd = exec.Command(bin_path, os.Args[1:]...)
+		} else {
+			cmd = exec.Command(bin_path, os.Args[2:]...)
 		}
-		cmd := exec.Command(path.Join(p, "bin/", bin), args...)
+		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
-		if err := cmd.Run(); err != nil {
-			fmt.Println(err)
+		fmt.Println(cmd.String())
+		cmd.Run()
+		/*if err := cmd.Run(); err != nil {
+			fmt.Printf("error executing [%s]: %v\n", bin_path, err)
 			os.Exit(1)
-		}
+		}*/
 	}
+
 }
