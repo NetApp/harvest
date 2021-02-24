@@ -107,7 +107,7 @@ fi
 
 # compile harvest-cli and manager
 if [ $all == true ] || [ $harvest == true ]; then
-    cd src/harvest-cli/
+    cd src/cli/
     go build -o ../../bin/harvest
     if [ $? -eq 0 ]; then
         info "compiled: /bin/harvest"
@@ -120,16 +120,30 @@ if [ $all == true ] || [ $harvest == true ]; then
     cp manager/manager.py ../../bin/manager
     info "copied /bin/manager"
 
-    cd config
-    go build -o ../../../bin/config
+    cd ../config
+    go build -o ../../bin/config
     if [ $? -eq 0 ]; then
         info "compiled: /bin/config"
     else
         error "compilation failed"
         exit 1
     fi
-    
-    cd ../../
+
+    cd ../tools/zapi
+    go build -o ../../../bin/zapitool
+    if [ $? -eq 0 ]; then
+        info "compiled: /bin/zapitool"
+    else
+        error "compilation failed"
+        exit 1
+    fi
+
+    cd ../
+    # @TODO migrate to GO
+    cp grafana/grafana.py ../../bin/grafanatool
+    info "copied /bin/grafantool"
+
+    cd ../
 fi
 
 # compile collector(s)
