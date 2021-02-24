@@ -59,6 +59,7 @@ func (c *counter) print() {
 			fmt.Printf("%sarray labels 2D%s: %s%v%s\n", util.Pink, util.End, util.Grey, c.labels2, util.End)
 		}
 	}
+	fmt.Printf("%s%s%s\n", util.Yellow, c.info, util.End)
 }
 
 func (a *args) Print() {
