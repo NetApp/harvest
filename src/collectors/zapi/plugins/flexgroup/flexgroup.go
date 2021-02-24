@@ -91,7 +91,7 @@ func (p *FlexGroup) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		for _, metric := range n.GetMetrics() {
 			if strings.Contains(metric.Name, "percent") {
 				if value, has := n.GetValue(metric, instance); has {
-					n.SetValue(metric, instance, value / float32(count))
+					n.SetValue(metric, instance, value / float64(count))
 				}
 			}
 		}

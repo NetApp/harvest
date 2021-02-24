@@ -230,7 +230,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 				logger.Info(c.Prefix, "recovered from standby mode, back to normal schedule")
 			}
 
-			c.Metadata.SetValueSS("poll_time", task.Name, float32(task.Runtime().Seconds()))
+			c.Metadata.SetValueSS("poll_time", task.Name, float64(task.Runtime().Seconds()))
 
 			if data != nil {
 				results = append(results, data)

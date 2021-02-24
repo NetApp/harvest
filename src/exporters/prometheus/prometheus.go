@@ -132,9 +132,8 @@ func (e *Prometheus) Render(data *matrix.Matrix) ([][]byte, error) {
             value, found := instance.Labels.GetHas(key)
             if include_all_labels || (found && value != "") {
                 instance_keys = append(instance_keys, fmt.Sprintf("%s=\"%s\"", key, value))
-            } else {
-                logger.Debug(e.Prefix, "Key [%s] (%s) found=%v", key, value, found)
             }
+            logger.Debug(e.Prefix, "Key [%s] (%s) found=%v", key, value, found)
         }
 
         for _, label := range metric_labels {

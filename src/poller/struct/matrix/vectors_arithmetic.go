@@ -13,7 +13,7 @@ func (m *Matrix) Delta(PrevData *Matrix, metricIndex int) error {
 	return nil
 }
 
-func (m *Matrix) Divide(numeratorIndex, denominatorIndex int, threshold float32) error {
+func (m *Matrix) Divide(numeratorIndex, denominatorIndex int, threshold float64) error {
 
 	for k:=0; k<len(m.Instances); k+=1 {
 		if m.Data[denominatorIndex][k] <= threshold {
@@ -25,7 +25,7 @@ func (m *Matrix) Divide(numeratorIndex, denominatorIndex int, threshold float32)
 	return nil
 }
 
-func (m *Matrix) MultByScalar(metricIndex int, scalarValue float32) {
+func (m *Matrix) MultByScalar(metricIndex int, scalarValue float64) {
 	for k:=0; k<len(m.Instances); k+=1 {
 		m.Data[metricIndex][k] *= scalarValue
 	}	
