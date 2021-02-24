@@ -47,17 +47,13 @@ func (c *Client) GetSystem() (*System, error) {
     if version := response.GetChildS("version-tuple"); version != nil {
         if tuple := version.GetChildS("system-version-tuple"); tuple != nil {
 
-            gen := tuple.GetChildContentS("generation")
-            maj := tuple.GetChildContentS("major")
-            min := tuple.GetChildContentS("minor")
+            gener, _ := strconv.ParseInt(tuple.GetChildContentS("generation"), 0, 16)
+            major, _ := strconv.ParseInt(tuple.GetChildContentS("major"), 0, 16)
+            minor, _ := strconv.ParseInt(tuple.GetChildContentS("minor"), 0, 16)
 
-            genint, _ := strconv.ParseInt(string(gen), 0, 16)
-            majint, _ := strconv.ParseInt(string(maj), 0, 16)
-            minint, _ := strconv.ParseInt(string(min), 0, 16)
-
-            sys.Version[0] = int(genint)
-            sys.Version[1] = int(majint)
-            sys.Version[2] = int(minint)
+            sys.Version[0] = int(gener)
+            sys.Version[1] = int(major)
+            sys.Version[2] = int(minor)
 
         }
     }
