@@ -7,7 +7,7 @@ import (
 	"sort"
 	"strings"
 	"time"
-	"goharvest2/poller/struct/matrix"
+	"goharvest2/share/matrix"
 	"goharvest2/share/logger"
 )
 
@@ -26,7 +26,7 @@ func (e *Prometheus) StartHttpd(url, port string) {
 }
 
 func (e *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
-	
+
 	body := make([]string, 0)
 	//matrix_by_collector := make(map[string][]*matrix.Matrix)
 	num_collectors := 0

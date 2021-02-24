@@ -28,7 +28,7 @@ func (m *Matrix) Divide(numeratorIndex, denominatorIndex int, threshold float64)
 func (m *Matrix) MultByScalar(metricIndex int, scalarValue float64) {
 	for k:=0; k<len(m.Instances); k+=1 {
 		m.Data[metricIndex][k] *= scalarValue
-	}	
+	}
 }
 
 func (m *Matrix) InstanceWiseAddition(toInstance, fromInstance *Instance, fromData *Matrix) {

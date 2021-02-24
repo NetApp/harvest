@@ -3,7 +3,7 @@ package schedule
 import (
     "time"
 	"goharvest2/share/errors"
-    "goharvest2/poller/struct/matrix"
+    "goharvest2/share/matrix"
 )
 
 /*

@@ -7,7 +7,7 @@ import (
     "strconv"
     "goharvest2/share/tree/node"
 	"goharvest2/share/errors"
-    "goharvest2/poller/struct/dict"
+    "goharvest2/share/dict"
 )
 
 var NAN = float64(math.NaN())
@@ -36,16 +36,16 @@ func New(collector, object, plugin string) *Matrix {
     m.Instances = map[string]*Instance{}
     m.Metrics = map[string]*Metric{}
     return &m
-}           
+}
 
 func (m *Matrix) IsEmpty() bool {
     return len(m.Data) == 0
 }
 
 func (m *Matrix) Clone() *Matrix {
-    n := &Matrix{ 
-        Collector      : m.Collector, 
-        Object         : m.Object, 
+    n := &Matrix{
+        Collector      : m.Collector,
+        Object         : m.Object,
         Plugin         : m.Plugin,
         Instances      : m.Instances,
         InstanceKeys   : m.InstanceKeys,
@@ -241,7 +241,7 @@ func (m *Matrix) GetValue(metric *Metric, instance *Instance) (float64, bool) {
 func (m *Matrix) GetArrayValues(metric *Metric, instance *Instance) []float64 {
     values := make([]float64, len(metric.Labels))
     for i:=0; i<len(metric.Labels); i+=1 {
-        values[i] = m.Data[metric.Index+i][instance.Index]        
+        values[i] = m.Data[metric.Index+i][instance.Index]
     }
     return values
 }

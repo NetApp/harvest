@@ -8,7 +8,7 @@ import (
 )
 
 func LoadModule(binpath, name string) (*plugin.Plugin, error) {
-	
+
 	files, err := ioutil.ReadDir(binpath)
 	if err != nil {
 		return nil, err

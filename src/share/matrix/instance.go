@@ -2,7 +2,7 @@ package matrix
 
 import (
 	"goharvest2/share/errors"
-	"goharvest2/poller/struct/dict"
+	"goharvest2/share/dict"
 
 )
 
@@ -12,7 +12,7 @@ type Instance struct {
 	Index int
 	Labels *dict.Dict
 }
-          
+
 func (m *Matrix) AddInstance(key string) (*Instance, error) {
 	if _, exists := m.Instances[key]; exists {
 		return nil, errors.New(errors.MATRIX_HASH, "instance [" + key + "] already in cache")

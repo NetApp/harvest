@@ -4,10 +4,9 @@ import (
 	"strings"
 	"strconv"
 	"goharvest2/share/logger"
+    "goharvest2/share/matrix"
 	"goharvest2/poller/collector/plugin"
-    "goharvest2/poller/struct/matrix"
 )
-
 
 type FlexGroup struct {
 	*plugin.AbstractPlugin

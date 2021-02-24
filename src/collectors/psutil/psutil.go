@@ -8,10 +8,10 @@ import (
 	"errors"
 	"io/ioutil"
 	"goharvest2/share/logger"
-	"github.com/shirou/gopsutil/process"
-	"goharvest2/poller/struct/yaml"
-	"goharvest2/poller/struct/matrix"
+	"goharvest2/share/tree"
+	"goharvest2/poller/matrix"
     "goharvest2/poller/collector"
+	"github.com/shirou/gopsutil/process"
 )
 
 
@@ -66,7 +66,7 @@ func (c *Psutil) PollData() (*matrix.Matrix, error) {
 		poller, _ := m.GetInstanceLabel(instance, "poller")
 
 		// assume not running
-		c.Data.SetValueS("status", instance, float32(1))
+		c.Data.SetValueS("status", instance, float64(1))
 
 		if pid == "" {
 			logger.Debug(c.Prefix, "Skip instance [%s]: not running", key)
@@ -96,7 +96,7 @@ func (c *Psutil) PollData() (*matrix.Matrix, error) {
 		}
 
 		// if we got here poller is running
-		c.Data.SetValueS("status", instance, float32(0))
+		c.Data.SetValueS("status", instance, float64(0))
 
 
 		/*
@@ -107,37 +107,37 @@ func (c *Psutil) PollData() (*matrix.Matrix, error) {
 
 		cpu, _ := proc.CPUPercent()
 		if err == nil {
-			m.SetValueS("CPUPercent", instance, float32(cpu))
+			m.SetValueS("CPUPercent", instance, float64(cpu))
 		}
 
 		mem, _ := proc.MemoryPercent()
 		if err == nil {
-			m.SetValueS("MemoryPercent", instance, float32(mem))
+			m.SetValueS("MemoryPercent", instance, float64(mem))
 		}
 
 		create_time, _ := proc.CreateTime()
 		if err == nil {
-			m.SetValueS("CreateTime", instance, float32(create_time))
+			m.SetValueS("CreateTime", instance, float64(create_time))
 		}
 
 		num_threads, _ := proc.NumThreads()
 		if err == nil {
-			m.SetValueS("NumThreads", instance, float32(num_threads))
+			m.SetValueS("NumThreads", instance, float64(num_threads))
 		}
 
 		num_fds, _ := proc.NumFDs()
 		if err == nil {
-			m.SetValueS("NumFDs", instance, float32(num_fds))
+			m.SetValueS("NumFDs", instance, float64(num_fds))
 		}
 		
 		children, _ := proc.Children()
 		if err == nil {
-			m.SetValueS("NumChildren", instance, float32(len(children)))
+			m.SetValueS("NumChildren", instance, float64(len(children)))
 		}
 		
 		socks, _ := proc.Connections()
 		if err == nil {
-			m.SetValueS("NumSockets", instance, float32(len(socks)))
+			m.SetValueS("NumSockets", instance, float64(len(socks)))
 		}
 
 		for key, metric := range m.Metrics {
@@ -149,7 +149,7 @@ func (c *Psutil) PollData() (*matrix.Matrix, error) {
 					continue
 				}
 
-				values, ok := f.(func(*process.Process)([]float32, bool))(proc)
+				values, ok := f.(func(*process.Process)([]float64, bool))(proc)
 
 				if !ok {
 					continue
@@ -197,9 +197,9 @@ func (c *Psutil) load_metrics(counters *yaml.Node) {
 
 	//m.AddMetric("status", "status", true) // static metric
 
-	m.AddLabelName("poller")
-	m.AddLabelName("pid")
-	//m.AddLabelName("state")
+	m.AddLabel("poller", "")
+	m.AddLabel("pid", "")
+	//m.AddLabel("state")
 
 	logger.Info(c.Prefix, "Loaded %d metrics", m.MetricsIndex)
 }
@@ -286,77 +286,77 @@ func get_poller_names(harvest_path, config_fn string) ([]string, error){
 	return poller_names, nil
 }
 
-func memory_info(proc *process.Process) ([]float32, bool) {
+func memory_info(proc *process.Process) ([]float64, bool) {
 
-	values := make([]float32, 7)
+	values := make([]float64, 7)
 
 	mem, err := proc.MemoryInfo()
 	if err != nil {
 		return values, false
 	}
 
-	values[0] = float32(mem.RSS)
-	values[1] = float32(mem.VMS)
-	values[2] = float32(mem.HWM)
-	values[3] = float32(mem.Data)
-	values[4] = float32(mem.Stack)
-	values[5] = float32(mem.Locked)
-	values[6] = float32(mem.Swap)
+	values[0] = float64(mem.RSS)
+	values[1] = float64(mem.VMS)
+	values[2] = float64(mem.HWM)
+	values[3] = float64(mem.Data)
+	values[4] = float64(mem.Stack)
+	values[5] = float64(mem.Locked)
+	values[6] = float64(mem.Swap)
 
 	return values, true
 }
 
-func cpu_times(proc *process.Process) ([]float32, bool) {
+func cpu_times(proc *process.Process) ([]float64, bool) {
 
-	values := make([]float32, 3)
+	values := make([]float64, 3)
 
 	cpu, err := proc.Times()
 	if err != nil {
 		return values, false
 	}
 
-	values[0] = float32(cpu.User)
-	values[1] = float32(cpu.System)
-	values[2] = float32(cpu.Iowait)
+	values[0] = float64(cpu.User)
+	values[1] = float64(cpu.System)
+	values[2] = float64(cpu.Iowait)
 
 	return values, true
 }
 
-func ctx_switches(proc *process.Process) ([]float32, bool) {
+func ctx_switches(proc *process.Process) ([]float64, bool) {
 
-	values := make([]float32, 2)
+	values := make([]float64, 2)
 
 	ctx, err := proc.NumCtxSwitches()
 	if err != nil {
 		return values, false
 	}
 
-	values[0] = float32(ctx.Voluntary)
-	values[1] = float32(ctx.Involuntary)
+	values[0] = float64(ctx.Voluntary)
+	values[1] = float64(ctx.Involuntary)
 
 	return values, true
 }
 
-func io_counters(proc *process.Process) ([]float32, bool) {
+func io_counters(proc *process.Process) ([]float64, bool) {
 
-	values := make([]float32, 4)
+	values := make([]float64, 4)
 
 	iocounter, err := proc.IOCounters()
 	if err != nil {
 		return values, false
 	}
 
-	values[0] = float32(iocounter.ReadCount)
-	values[1] = float32(iocounter.WriteCount)
-	values[2] = float32(iocounter.ReadBytes)
-	values[3] = float32(iocounter.WriteBytes)
+	values[0] = float64(iocounter.ReadCount)
+	values[1] = float64(iocounter.WriteCount)
+	values[2] = float64(iocounter.ReadBytes)
+	values[3] = float64(iocounter.WriteBytes)
 
 	return values, true
 }
 
-func net_io_counters(proc *process.Process) ([]float32, bool) {
+func net_io_counters(proc *process.Process) ([]float64, bool) {
 
-	values := make([]float32, 8)
+	values := make([]float64, 8)
 
 	netio, err := proc.NetIOCounters(false)
 	if err != nil {
@@ -367,14 +367,14 @@ func net_io_counters(proc *process.Process) ([]float32, bool) {
 		return values, false
 	}
 
-	values[0] = float32(netio[0].BytesSent)
-	values[1] = float32(netio[0].BytesRecv)
-	values[2] = float32(netio[0].PacketsSent)
-	values[3] = float32(netio[0].PacketsRecv)
-	values[4] = float32(netio[0].Errin)
-	values[5] = float32(netio[0].Errout)
-	values[6] = float32(netio[0].Dropin)
-	values[7] = float32(netio[0].Dropout)
+	values[0] = float64(netio[0].BytesSent)
+	values[1] = float64(netio[0].BytesRecv)
+	values[2] = float64(netio[0].PacketsSent)
+	values[3] = float64(netio[0].PacketsRecv)
+	values[4] = float64(netio[0].Errin)
+	values[5] = float64(netio[0].Errout)
+	values[6] = float64(netio[0].Dropin)
+	values[7] = float64(netio[0].Dropout)
 
 	return values, true
 }

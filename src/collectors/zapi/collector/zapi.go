@@ -9,10 +9,10 @@ import (
     "goharvest2/share/tree/node"
 	"goharvest2/share/errors"
     "goharvest2/share/util"
+    "goharvest2/share/matrix"
     "goharvest2/poller/collector"
-    "goharvest2/poller/struct/matrix"
 
-    client "goharvest2/poller/api/zapi"
+    client "goharvest2/apis/zapi"
 )
 
 type Zapi struct {

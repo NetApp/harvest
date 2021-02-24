@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"goharvest2/poller/collector"
 	"goharvest2/poller/collector/plugin"
-    "goharvest2/poller/struct/matrix"
+    "goharvest2/share/matrix"
 	"goharvest2/share/tree/node"
 	"goharvest2/share/logger"
 	"goharvest2/share/errors"
@@ -25,9 +25,9 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 }
 
 func (p *Shelf) Init() error {
-	
+
 	var err error
-	
+
 	if err = p.InitAbc(); err != nil {
 		return err
 	}

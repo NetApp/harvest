@@ -12,9 +12,9 @@ import (
 	"goharvest2/share/util"
 	"goharvest2/share/tree/node"
 	"goharvest2/share/errors"
+	"goharvest2/share/matrix"
 
-	"goharvest2/poller/struct/options"
-	"goharvest2/poller/struct/matrix"
+	"goharvest2/poller/options"
 	"goharvest2/poller/schedule"
 	"goharvest2/poller/exporter"
 	"goharvest2/poller/collector/plugin"

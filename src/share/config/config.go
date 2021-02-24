@@ -20,7 +20,7 @@ func GetExporters(harvest_path, config_fn string) (*node.Node, error) {
 	}
 
 	if exporters = config.GetChildS("Exporters"); exporters == nil {
-		err = errors.New(errors.ERR_CONFIG, "[Exporters] section not found")	
+		err = errors.New(errors.ERR_CONFIG, "[Exporters] section not found")
 		return nil, err
 	}
 
@@ -48,7 +48,7 @@ func GetPoller(harvest_path, config_fn, poller_name string) (*node.Node, error) 
 			err = errors.New(errors.ERR_CONFIG, "poller [" + poller_name + "] not found")
 		}
 	} else {
-		err = errors.New(errors.ERR_CONFIG, "[Pollers] section not found")	
+		err = errors.New(errors.ERR_CONFIG, "[Pollers] section not found")
 	}
 
 	return poller, err

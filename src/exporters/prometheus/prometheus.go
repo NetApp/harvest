@@ -5,8 +5,8 @@ import (
     "strings"
     "bytes"
     "goharvest2/share/logger"
+    "goharvest2/share/matrix"
     "goharvest2/poller/exporter"
-    "goharvest2/poller/struct/matrix"
 )
 
 type Prometheus struct {
@@ -28,13 +28,13 @@ func (e *Prometheus) Init() error {
         logger.Info(e.Prefix, "Initialized exporter. No HTTP server started since in debug mode")
         return nil
     }
-    
+
     e.cache = make(map[string]*matrix.Matrix)
 
     url := e.Params.GetChildContentS("url")
     port := e.Params.GetChildContentS("port")
     e.StartHttpd(url, port)
- 
+
     logger.Info(e.Prefix, "Initialized Exporter. HTTP daemon serving at [http://%s:%s]", url, port)
 
     return nil
@@ -87,7 +87,7 @@ func (e *Prometheus) Render(data *matrix.Matrix) ([][]byte, error) {
         key_labels = options.GetChildS("instance_keys").GetAllChildContentS()
         logger.Debug(e.Prefix, "requested keys_labels : %v", key_labels)
     }
-    
+
     if options.GetChildContentS("include_all_labels") == "True" {
         include_all_labels = true
     } else {
@@ -126,7 +126,7 @@ func (e *Prometheus) Render(data *matrix.Matrix) ([][]byte, error) {
         if include_instance_names {
             instance_keys = append(instance_keys, fmt.Sprintf("%s=\"%s\"", instance_tag, raw_key))
         }
-        
+
         for _, key := range key_labels {
             //value, found := data.GetInstanceLabel(instance, key)
             value, found := instance.Labels.GetHas(key)

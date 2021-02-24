@@ -3,12 +3,12 @@ package main
 
 import (
 	"goharvest2/poller/collector/plugin"
-    "goharvest2/poller/struct/matrix"
-	"goharvest2/poller/struct/dict"
+    "goharvest2/share/matrix"
+	"goharvest2/share/dict"
 	"goharvest2/share/logger"
 	"goharvest2/share/tree/node"
 
-    client "goharvest2/poller/api/zapi"
+    client "goharvest2/apis/zapi"
 )
 
 type SnapMirror struct {
@@ -28,9 +28,9 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 
 
 func (p *SnapMirror) Init() error {
-	
+
 	var err error
-	
+
 	if err = p.InitAbc(); err != nil {
 		return err
 	}

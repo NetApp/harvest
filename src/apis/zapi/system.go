@@ -62,7 +62,7 @@ func (c *Client) GetSystem() (*System, error) {
         }
     }
 
-    // if version tuple is missing try to parse manualle
+    // if version tuple is missing try to parse manually
     // this is usually the case with 7mode systems
     if sys.Version[0] == 0 {
         if _, err = fmt.Sscanf(sys.Release, "NetApp Release %d.%d.%d", &sys.Version[0], &sys.Version[1], &sys.Version[2]); err != nil {
