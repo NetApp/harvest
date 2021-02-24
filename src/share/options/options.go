@@ -61,6 +61,7 @@ type Options struct {
 	positionals []*option
 	errors [][]string
 	index int
+	help string
 }
 
 func New(program_name, program_bin, short_descr string) *Options {
@@ -117,6 +118,10 @@ func (o *Options) Slice(target *[]string, name, short, descr string) {
 	o.add(&opt, name, short)
 }
 
+func (o *Options) SetHelp(help string) {
+	o.help = help
+}
+
 func (o *Options) Parse() bool {
 
 	pos_index := 0
@@ -126,7 +131,7 @@ func (o *Options) Parse() bool {
 		flag := os.Args[i]
 
 		// help stops here
-		if flag == "help" || flag == "-h" || flag == "--help" || flag == "-help" {
+		if flag == "-h" || flag == "--help" || flag == "-help" {
 			o.PrintHelp()
 			return false
 		// long flag
@@ -136,8 +141,9 @@ func (o *Options) Parse() bool {
 		} else if string(flag[0]) == "-" {
 			i += o.handle_short(i, string(flag[1:]))
 		// positional
-		} else if len(o.positionals) >= pos_index {
+		} else if len(o.positionals) != 0 {
 			o.handle_pos(pos_index, flag)
+			pos_index += 1
 		} else {
 			o.errors = append(o.errors, []string{flag, "unknown command"})
 		}
@@ -153,6 +159,10 @@ func (o *Options) Parse() bool {
 
 
 func (o *Options) handle_pos(i int, flag string) {
+
+	if len(o.positionals) <= i {
+		return
+	}
 
 	opt := o.positionals[i]
 
@@ -249,6 +259,12 @@ func (o *Options) handle_short(i int, name string) int {
 }
 
 func (o *Options) PrintHelp() {
+
+	if o.help != "" {
+		fmt.Println(o.help)
+		return
+	}
+
 	fmt.Printf("%s - %s\n\n", o.name, o.descr)
 	fmt.Printf("Options are:\n\n")
 
