@@ -1,0 +1,35 @@
+name:                     TokenManager
+query:                    token_manager
+object:                   token
+
+instance_key:             uuid
+
+counters:
+  - node_name              => node
+  - instance_name
+  - instance_uuid
+  - token_copy_success 
+  - token_create_success
+  - token_zero_success
+  - token_copy_failure
+  - token_create_failure
+  - token_zero_failure
+  - token_copy_bytes
+  - token_create_bytes
+  - token_zero_bytes
+
+export_options:
+  instance_keys:
+    - node
+    - token
+  graphite_leafs:
+    - node.{node}.msft_odx
+
+
+override:
+  token_copy_bytes:
+    properties: rate
+  token_create_bytes:
+    properties: rate
+  token_zero_bytes:
+    properties: rate

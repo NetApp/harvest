@@ -1,0 +1,24 @@
+
+name:                     WAFL
+query:                    wafl
+object:                   wafl
+
+instance_key:             uuid
+
+counters:
+  - avg_wafl_msg_latency  => avg_msg_latency
+  - cp_count
+  - cp_phase_times
+  - instance_uuid
+  - instance_name
+  - node_name             => node
+  - read_io_type
+  - total_cp_msecs
+  - wafl_msg_total        => msg_total
+
+export_options:
+  instance_keys:
+    - node
+    - wafl
+  graphite_leafs:
+    - node.{node}.wafl

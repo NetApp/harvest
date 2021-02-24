@@ -1,0 +1,18 @@
+
+name:                     WAFLSizer
+query:                    wafl_hya_sizer
+object:                   flashpool
+
+instance_key:             uuid
+
+counters:
+  - instance_name
+  - node_name              => node
+  - cache_stats
+ 
+export_options:
+  instance_tag: flashpool
+  instance-keys: 
+    - node
+  graphite_leafs:
+    - node.{node}.flashpool.{flashpool}

@@ -1,0 +1,40 @@
+
+
+name:                     ExtCacheObj
+query:                    ext_cache_obj
+object:                   flashcache
+
+instance_key:             uuid
+
+counters:
+  - instance_name
+  - instance_uuid
+  - node_name              => node
+  - disk_reads_replaced
+  - accesses
+  - hit_percent
+  - inserts
+  - evicts
+  - invalidates
+  - usage
+  - hit
+  - hit_normal_lev0
+  - hit_metadata_file
+  - hit_directory
+  - hit_indirect
+  - miss
+  - miss_normal_lev0
+  - miss_metadata_file
+  - miss_directory
+  - miss_indirect
+
+export_options:
+  instance_tag: flashcache
+  instance_keys: 
+    - node
+  graphite_leafs:
+    - node.{node}.flashcache.{flashcache}
+
+override:
+  hit_percent:
+    properties: average
