@@ -330,14 +330,21 @@ func (c *AbstractCollector) LinkExporter(e exporter.Exporter) {
 func (c *AbstractCollector) LoadPlugins(params *node.Node) error {
 
 	for _, x := range params.GetChildren() {
+
 		name := x.GetNameS()
+		if name == "" {
+			name = x.GetContentS() // some plugins are defined as list elements others as dicts
+			x.SetNameS(name)
+		}
+
+		logger.Debug(c.Prefix, "loading plugin [%s]", name)
 
 		binpath := path.Join(c.Options.Path, "bin", "plugins", strings.ToLower(c.Name))
 
 		module, err := util.LoadFuncFromModule(binpath, strings.ToLower(name), "New")
 		if err != nil {
 			//logger.Error(c.LongName, "load plugin [%s]: %v", name, err)
-			return errors.New(errors.ERR_DLOAD, name + ": " + err.Error())
+			return errors.New(errors.ERR_DLOAD, "plugin " + name + ": " + err.Error())
 		}
 
 		NewFunc, ok := module.(func(*plugin.AbstractPlugin) plugin.Plugin)

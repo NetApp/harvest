@@ -18,7 +18,7 @@ const (
 	MATRIX_PARSE_STR = "parse numeric value from string"
 	API_RESPONSE = "error reading api response"
 	API_REQ_REJECTED = "api request rejected"
-	ERR_DLOAD = "dynamic module"
+	ERR_DLOAD = "dynamic load"
 	ERR_IMPLEMENT = "implementation error"
 	ERR_SCHEDULE = "schedule error"
 )

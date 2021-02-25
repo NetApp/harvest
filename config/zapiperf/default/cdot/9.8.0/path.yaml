@@ -18,13 +18,16 @@ counters:
   - read_latency
   - write_latency
 
+
+plugins:
+  - Path
+
+
 export_options:
-  exclude_instance_name: True
-  instance_keyslabels_to_emit: 
+  instance_keys: 
     - node
-    - path
-  #  - hostadapter # from plugin
-  #  - target_wwpn # from plugin
+    - hostadapter # from plugin
+    - target_wwpn # from plugin
   graphite_leafs:
     - node.{node_name}.hostadapter.{hostadapter}.target_wwpn.{target_wwpn}
 

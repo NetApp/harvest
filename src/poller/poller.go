@@ -115,7 +115,7 @@ func (p *Poller) Init() error {
 		//}
 		for _, c := range collectors.GetAllChildContentS() {
 			if err = p.load_collector(c, ""); err != nil {
-				logger.Error(p.prefix, "intializing collector [%s]: %v", c, err)
+				logger.Error(p.prefix, "initializing collector [%s]: %v", c, err)
 			}
 		}
 	} else {
@@ -188,7 +188,7 @@ func (p *Poller) load_collector(class, object string) error {
 			return err
 		} else {
 			subcollectors = append(subcollectors, c)
-			logger.Debug(p.prefix, "intialized collector [%s:%s]", class, object)
+			logger.Debug(p.prefix, "initialized collector [%s:%s]", class, object)
 		}
 	// if template has list of objects, initialiez 1 subcollector for each
 	} else if objects := template.GetChildS("objects"); objects != nil {
@@ -203,7 +203,7 @@ func (p *Poller) load_collector(class, object string) error {
 				return err
 			} else {
 				subcollectors = append(subcollectors, c)
-				logger.Debug(p.prefix, "intialized subcollector [%s:%s]", class, object.GetNameS())
+				logger.Debug(p.prefix, "initialized subcollector [%s:%s]", class, object.GetNameS())
 			}
 		}
 	} else {

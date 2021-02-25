@@ -19,8 +19,7 @@ counters:
 
 
 plugins:
-  Headroom:
-    type: data
+  Headroom
 
 export_options:
   instance_keys:
