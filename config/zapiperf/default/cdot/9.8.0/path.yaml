@@ -1,14 +1,14 @@
 
 name:                     Path
 query:                    path
-obect:                    path
+object:                   path
 
-instance_key:             instance_uuid
+instance_key:             uuid
 
 counters:
   - instance_name
   - instance_uuid
-  - node_name
+  - node_name             => node
   - read_iops
   - read_data
   - write_data
@@ -20,16 +20,11 @@ counters:
 
 export_options:
   exclude_instance_name: True
-  labels_to_emit: 
-    - node_name
-    - hostadapter # from plugin
-    - target_wwpn # from plugin
+  instance_keyslabels_to_emit: 
+    - node
+    - path
+  #  - hostadapter # from plugin
+  #  - target_wwpn # from plugin
   graphite_leafs:
     - node.{node_name}.hostadapter.{hostadapter}.target_wwpn.{target_wwpn}
 
-
-plugins:
-  Path:
-    run_after_poll: data
-
-plugins_replace_data: False    

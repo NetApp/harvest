@@ -3,7 +3,7 @@ package main
 import (
 	"strings"
 	"goharvest2/poller/collector/plugin"
-    "goharvest2/poller/share/matrix"
+    "goharvest2/share/matrix"
 )
 
 type Headroom struct {

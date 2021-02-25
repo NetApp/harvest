@@ -18,12 +18,12 @@ import (
 	"goharvest2/poller/schedule"
 	"goharvest2/poller/collector"
 	"goharvest2/poller/exporter"
-	"goharvest2/poller/struct/options"
+	"goharvest2/poller/options"
 )
 
 var SIGNALS = []os.Signal{
-			syscall.SIGHUP, 
-			syscall.SIGINT, 
+			syscall.SIGHUP,
+			syscall.SIGINT,
 			syscall.SIGTERM,
 			syscall.SIGQUIT,
 }

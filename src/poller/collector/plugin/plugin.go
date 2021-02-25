@@ -1,8 +1,8 @@
 package plugin
 
 import (
-	"goharvest2/poller/struct/matrix"
-	"goharvest2/poller/struct/options"
+	"goharvest2/share/matrix"
+	"goharvest2/poller/options"
 	"goharvest2/share/tree/node"
 	"goharvest2/share/errors"
 )
