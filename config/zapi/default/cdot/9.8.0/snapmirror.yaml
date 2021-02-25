@@ -3,12 +3,6 @@ name:                         SnapMirror
 query:                        snapmirror-get-iter
 object:                       snapmirror
 
-instance_key:                 relationship_id
-
-instance_query:
-  snapmirror-info:
-    - ^^relationship-id
-
 counters:
   snapmirror-info:
     - break-failed-count
@@ -40,8 +34,7 @@ counters:
     - update-successful-count
 
 plugins:
-  Snapmirror:
-    type: data
+  - Snapmirror
 
 export_options:
   instance_keys:
@@ -62,7 +55,6 @@ export_options:
     - destination_node_limit
     - source_node_limit
     - group_type
-  exclude_instance_name: True
   graphite_leafs:
     - node.{destination_node}.snapmirror.dest.{destination_volume}
     - node.{source_node}.snapmirror.src.{source_volume}

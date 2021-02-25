@@ -57,8 +57,11 @@ func (p *FlexGroup) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				instance.Labels.Set("flexgroup", name)
 				instance.Labels.Set("style", "flexgroup")
 				instance.Labels.Set("volume", vol)
-				instance.Labels.Set("vserver", svm)
+				instance.Labels.Set("svm", svm)
 				instance.Labels.Set("node", i.Labels.Get("node"))
+				instance.Labels.Set("aggr", i.Labels.Get("aggr"))
+				instance.Labels.Set("status", i.Labels.Get("status"))
+				instance.Labels.Set("state", i.Labels.Get("state"))
 
 				counts[key] = 1
 			} else {

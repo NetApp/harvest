@@ -10,7 +10,7 @@ import (
 	"goharvest2/share/logger"
 	"goharvest2/share/errors"
 
-    client "goharvest2/poller/api/zapi"
+    client "goharvest2/apis/zapi"
 )
 
 type Shelf struct {

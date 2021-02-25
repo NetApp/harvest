@@ -43,13 +43,10 @@ counters:
 #    - sas2-sas3-mixed-stack-support
 
 plugins:
-  Node:
-    type: data
+  - Node
 
 
 export_options:
-  graphite_leafs:
-    - node.{node}
   instance_keys:
     - node
   instance_labels:
@@ -65,3 +62,5 @@ export_options:
     - uptime
     - vendor
     - version
+  graphite_leafs:
+    - node.{node}

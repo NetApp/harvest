@@ -20,7 +20,6 @@ counters:
 
 plugins:
   Shelf:
-    type: data
     objects:
       - boot-devices => boot_device:
         storage-shelf-boot-device-info:

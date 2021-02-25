@@ -26,9 +26,6 @@ counters:
       - path-error-count
 
 export_options:
-  exclude_instance_name: True
-  graphite_leafs:
-    - node.{node}.disk.{disk} # take last part
   include_keys:
     - node
     - disk
@@ -39,3 +36,5 @@ export_options:
     - shelf
     - shelf_bay
     - is_failed
+  graphite_leafs:
+    - node.{node}.disk.{disk} # take last part

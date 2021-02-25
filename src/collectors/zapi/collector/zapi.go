@@ -64,7 +64,12 @@ func (c *Zapi) Init() error {
 
     c.TemplateFn = c.Params.GetChildS("objects").GetChildContentS(c.Object) // @TODO err handling
 
-    template, err := collector.ImportSubTemplate(c.Options.Path, "default", c.TemplateFn, c.Name, c.System.Version)
+    model := "cdot"
+    if !c.System.Clustered {
+        model = "7mode"
+    }
+
+    template, err := collector.ImportSubTemplate(c.Options.Path, model, "default", c.TemplateFn, c.Name, c.System.Version)
     if err != nil {
         logger.Error(c.Prefix, "Error importing subtemplate: %s", err)
         return err
@@ -91,7 +96,7 @@ func (c *Zapi) Init() error {
     c.Data.Object = c.object
     
     // Add system (cluster) name 
-    c.Data.SetGlobalLabel("system", c.System.Name)
+    c.Data.SetGlobalLabel("cluster", c.System.Name)
 
     // Initialize counter cache
     counters := c.Params.GetChildS("counters")

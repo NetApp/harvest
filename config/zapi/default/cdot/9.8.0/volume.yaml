@@ -14,8 +14,8 @@ counters:
       - ^^instance-uuid             => instance_uuid
       - ^name                       => volume
       - ^node                       => node
-      - ^owning-vserver-name        => vserver
-      - ^containing-aggregate-name  => aggregate
+      - ^owning-vserver-name        => svm
+      - ^containing-aggregate-name  => aggr
       - ^style-extended             => style
 
     - volume-inode-attributes:
@@ -66,20 +66,21 @@ mappings:
 
 plugins:
   FlexGroup:
-    type: data
     export_options:
       graphite_leafs:
         - svm.{vserver_name}.vol.flexgroup.{volume_name}
         - node.{node_name}.aggr.{aggregate_name}.vol.flexgroup.{volume_name}
-      labels_to_emit:
-        - volume_name
-        - node_name
-        - vserver_name
-        - aggregate_name
+      instance_keys:
+        - volume
+        - node
+        - svm
+        - aggr
+      instance_labels:
         - count
         - style
         - state
         - status
+        - enabled
 
 
 export_options:
@@ -90,8 +91,8 @@ export_options:
   instance_keys:
     - volume
     - node
-    - vserver
-    - aggregate
+    - svm
+    - aggr
   instance_labels:
     - state
     - status
