@@ -3,43 +3,43 @@ name:                     NicCommon
 query:                    nic_common
 object:                   nic
 
-instance_key:             instance_uuid
+instance_key:             uuid
 
 counters:
- - instance_name 
- - instance_uuid
- - node_name              => node
- - rx_bytes
- - tx_bytes
- - link_speed
- - link_current_state
- - link_up_to_downs
- - nic_type
- - rx_alignment_errors
- - rx_crc_errors
- - rx_length_errors
- - rx_total_errors
- - rx_errors
- - tx_errors
- - tx_hw_errors
- - tx_total_errors
-
-export_options:
-  instance_tag: eth_port
-  labels_to_emit:
-    - node_name
-    - link_speed
-    - link_current_state
-    - nic_type
-  graphite_leafs:
-    - node.{node_name}.eth_port.{instance_name}
-
-
-plugins:
-  Nic:
-    run_after_poll: data
-    # No export options, use same as collector
+  - instance_name 
+  - instance_uuid
+  - node_name              => node
+  - rx_bytes
+  - tx_bytes
+  - link_speed
+  - link_current_state
+  - link_up_to_downs
+  - nic_type
+  - rx_alignment_errors
+  - rx_crc_errors
+  - rx_length_errors
+  - rx_total_errors
+  - rx_errors
+  - tx_errors
+  - tx_hw_errors
+  - tx_total_errors
 
 override:
   link_speed:
     properties: string
+
+plugins:
+  - Nic
+
+export_options:
+  instance_keys:
+    - node
+    - nic
+  instance_labels:
+    - link_speed
+    - link_current_state
+    - state  # from plugin
+    - nic_type
+  graphite_leafs:
+    - node.{node_name}.eth_port.{instance_name}
+

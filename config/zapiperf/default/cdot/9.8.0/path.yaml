@@ -18,10 +18,8 @@ counters:
   - read_latency
   - write_latency
 
-
 plugins:
   - Path
-
 
 export_options:
   instance_keys: 
