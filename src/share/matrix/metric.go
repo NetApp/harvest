@@ -47,8 +47,8 @@ func (m *Matrix) add_metric(key string, metric *Metric) error {
 	m.MetricsIndex += metric.Size
 
 	if ! m.IsEmpty() {
-		for i:=metric.Index; i<=m.MetricsIndex; i+=1 {
-			m.Data[i] = make([]float64, len(m.Instances))
+		for i:=metric.Index; i<m.MetricsIndex; i+=1 {
+			m.Data = append(m.Data, make([]float64, len(m.Instances)))
 			for j:=0; j<len(m.Instances); j+=1 {
 				m.Data[i][j] = NAN
 			}

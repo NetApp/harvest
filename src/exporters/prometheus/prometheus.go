@@ -163,6 +163,8 @@ func (e *Prometheus) Render(data *matrix.Matrix) ([][]byte, error) {
 
         for _, metric := range data.Metrics {
 
+            logger.Debug(e.Prefix, "Rendering metric [%d] %s (size=%d)", metric.Index, metric.Name, metric.Size)
+
             if !metric.Enabled {
                 continue
             }

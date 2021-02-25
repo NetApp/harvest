@@ -238,6 +238,15 @@ func (m *Matrix) GetValue(metric *Metric, instance *Instance) (float64, bool) {
 	return value, value==value
 }
 
+
+func (m *Matrix) GetValueS(key string, instance *Instance) (float64, bool) {
+    if metric := m.GetMetric(key); metric != nil {
+        return m.GetValue(metric, instance)
+    }
+    return NAN, false
+}
+
+
 func (m *Matrix) GetArrayValues(metric *Metric, instance *Instance) []float64 {
     values := make([]float64, len(metric.Labels))
     for i:=0; i<len(metric.Labels); i+=1 {
