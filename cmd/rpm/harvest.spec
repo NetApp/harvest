@@ -6,7 +6,7 @@ Name: %{name}
 Summary: Storage System Monitoring
 Version: %{version}
 Release: %{release}
-Source: %{name}_%{version}-%{version}.tgz
+Source: %{name}_%{version}-%{release}.tgz
 License: (c) NetApp
 URL: https://www.support.netapp.com
 AutoReq: no
@@ -22,7 +22,7 @@ Description: NetApp Harvest 2 - Monitoring of Storage Systems
 
 %prep
 echo "unpacking tarball..."
-tar xvfz /tmp/build/rpm/SOURCES/%{name}_%{version}-%{version}.tgz
+tar xvfz /tmp/build/rpm/SOURCES/%{name}_%{version}-%{release}.tgz
 cd harvest
 echo "executing install script"
 export BUILD_ROOT=$RPM_BUILD_ROOT

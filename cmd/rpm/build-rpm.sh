@@ -70,7 +70,7 @@ fi
 # copy files & clean up
 cd $BUILD
 alert "copying packages"
-TARGET_DIR="$SRC/dist/$HARVEST_VERSION-$HARVEST_VERSION"
+TARGET_DIR="$SRC/dist/$HARVEST_VERSION-$HARVEST_RELEASE"
 mkdir -p $TARGET_DIR
 mv -vf /root/rpmbuild/RPMS/* $TARGET_DIR/
 mv -vf rpm/SOURCES/* $TARGET_DIR

@@ -19,7 +19,7 @@ function error {
 function install {
     echo "creating harvest user and group [$HARVEST_USER:$HARVEST_GROUP]"
     addgroup --quiet --system "$HARVEST_GROUP"
-    adduser --quite --system --no-create-home --ingroup "$HARVEST_GROUP" --disabled-password --shell /bin/false "$HARVEST_USER"
+    adduser --quiet --system --no-create-home --ingroup "$HARVEST_GROUP" --disabled-password --shell /bin/false "$HARVEST_USER"
 
     echo "creating package directories"
     mkdir -p $ROOT/opt/harvest
