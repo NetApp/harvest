@@ -1,40 +1,38 @@
 package options
 
 import (
-	"flag"
 	"fmt"
 	"os"
-    "path"
     "strings"
+	"goharvest2/share/options"
+	"goharvest2/share/version"
 )
 
 type Options struct {
     Poller      string
     Daemon      bool
-    Config      string
-    Path        string
+    ConfPath  string
+    HomePath    string
+    LogPath     string
+    PidPath     string
     LogLevel    int
     Debug       bool
     Version     string
-    collectors  string
-    objects     string
-    Collectors   []string
-    Objects     []string
     Hostname    string
 }
 
 func (o *Options) String() string {
     x := []string {
-        fmt.Sprintf("%s= %s\n", "Poller", o.Poller),
-        fmt.Sprintf("%s = %v\n", "Daemon", o.Daemon),
-        fmt.Sprintf("%s = %s\n", "Config", o.Config),
-        fmt.Sprintf("%s = %s\n", "Path", o.Path),
-        fmt.Sprintf("%s = %s\n", "Hostname", o.Hostname),
-        fmt.Sprintf("%s = %d\n", "LogLevel", o.LogLevel),
-        fmt.Sprintf("%s = %v\n", "Debug", o.Debug),
-        fmt.Sprintf("%s= %s\n", "Version", o.Version),
-        fmt.Sprintf("%s = %v\n", "Collectors", o.Collectors),
-        fmt.Sprintf("%s = %v\n", "Objects", o.Objects),
+        fmt.Sprintf("%s= %s", "Poller", o.Poller),
+        fmt.Sprintf("%s = %v", "Daemon", o.Daemon),
+        fmt.Sprintf("%s = %v", "Debug", o.Debug),
+        fmt.Sprintf("%s = %d", "LogLevel", o.LogLevel),
+        fmt.Sprintf("%s = %s", "HomePath", o.HomePath),
+        fmt.Sprintf("%s = %s", "ConfPath", o.ConfPath),
+        fmt.Sprintf("%s = %s", "LogPath", o.LogPath),
+        fmt.Sprintf("%s = %s", "PidPath", o.PidPath),
+        fmt.Sprintf("%s = %s", "Hostname", o.Hostname),
+        fmt.Sprintf("%s = %s", "Version", o.Version),
     }
     return strings.Join(x, ", ")
 }
@@ -43,86 +41,50 @@ func (o *Options) Print() {
     fmt.Println(o.String())
 }
 
-type stringArray struct {
-    container *[]string
-    description string
-}
-
-
-func (s *stringArray) Set(v string) error {
-    *s.container = append(*s.container, v)
-    return nil
-}
-
-func (s *stringArray) String() string {
-    return s.description
-}
-
-
-func GetOpts() (*Options, string, error)  {
+func GetOpts() (*Options, string)  {
 	var args Options
-    var err error
     args = Options{}
 
-    //fmt.Println("\n--------------------------------------------------------------------------------")
-    //fmt.Println(os.Args)
-    //fmt.Println("--------------------------------------------------------------------------------\n")
+    // set defaults
+    args.Daemon = false
+    args.Debug = false
+    args.LogLevel = 2
+    args.Version = version.VERSION
+    hostname, _ := os.Hostname()
+    args.Hostname = hostname
 
-    
-    flag.StringVar(&args.Poller, "poller", "",
-        "Poller name as defined in config")
-    flag.BoolVar(&args.Daemon, "daemon", false,
-        "Start as daemon")
-    flag.StringVar(&args.Config, "config", "config.yaml",
-        "Configuration file")
-    flag.StringVar(&args.Path, "path", "",
-        "Harvest installation directory")
-    flag.IntVar(&args.LogLevel, "loglevel", 2,
-        "logging level, index of: trace, debug, info, warning, error, critical")
-    flag.BoolVar(&args.Debug, "debug", false,
-        "Debug mode, no data will be exported")
-
-    //collectors := stringArray{&args.Collectors, "list of collectors"}
-    //objects := stringArray{&args.Objects, "list of objects"}
-
-    flag.StringVar(&args.collectors, "collectors", "", "list of collectors to start (overrides config)")
-    flag.StringVar(&args.objects, "objects", "", "list of collector objects to start (overrides config)")
-
-    flag.Parse()
-
-    if args.collectors != "" {
-        args.Collectors = strings.Split(args.collectors, ",")
+    if args.HomePath = os.Getenv("HARVEST_HOME"); args.HomePath == "" {
+        args.HomePath = "/opt/harvest/"
+    }
+    if args.ConfPath = os.Getenv("HARVEST_CONF"); args.ConfPath == "" {
+        args.ConfPath = "/etc/harvest/"
+    }
+    if args.LogPath = os.Getenv("HARVEST_LOGS"); args.LogPath == "" {
+        args.LogPath = "/var/log/harvest/"
+    }
+    if args.PidPath = os.Getenv("HARVEST_PIDS"); args.PidPath == "" {
+        args.PidPath = "/var/run/harvest/"
     }
 
-    if args.objects != "" {
-        args.Objects = strings.Split(args.objects, ",")
+    // parse from command line
+    parser := options.New("Harvest Poller", "poller", "Runs collectors and exporters for a target system")
+    parser.String(&args.Poller, "poller", "p", "Poller name as defined in config")
+    parser.Bool(&args.Debug, "debug", "d", "Debug mode, no data will be exported")
+    parser.Bool(&args.Daemon, "daemon", "", "Start as daemon")
+    parser.Int(&args.LogLevel, "loglevel", "l", "Logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)")
+
+    ok := parser.Parse()
+
+    if !ok {
+        os.Exit(1)
     }
 
     if args.Poller == "" {
-        //fmt.Println("Missing required argument: poller")
-        flag.PrintDefaults()
+        fmt.Println("Missing required argument: poller")
         os.Exit(1)
     }
-    if args.Path == "" {
-        var cwd string
-		cwd, _ = os.Getwd()
-        if base := path.Base(cwd); base == "poller" {
-            //fmt.Println("base=", base)
-            cwd, _ = path.Split(cwd)
-            //fmt.Println("=> ", cwd)
-        }
-		if base := path.Base(cwd); base == "src" {
-            //fmt.Println("base=", base)
-			cwd, _ = path.Split(cwd)
-            //fmt.Println("=> ", cwd)
-		}
-		args.Path = cwd
-    }
 
-    
-    hostname, _ := os.Hostname()
-    args.Hostname = hostname
-    args.Version = "2.0.1"
+    args.Print()
 
-    return &args, args.Poller, err
+    return &args, args.Poller
 }

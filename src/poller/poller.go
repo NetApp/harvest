@@ -50,7 +50,7 @@ func (p *Poller) Init() error {
 
 	var err error
 	/* Set poller main attributes */
-	p.options, p.Name, err = options.GetOpts()
+	p.options, p.Name = options.GetOpts()
 
 	p.prefix = "(poller) (" + p.Name + ")"
 
@@ -58,7 +58,7 @@ func (p *Poller) Init() error {
 
 	/* If daemon, make sure handler outputs to file */
 	if p.options.Daemon {
-		err := logger.OpenFileOutput(p.options.Path, "harvest_poller_" + p.Name + ".log")
+		err := logger.OpenFileOutput(p.options.LogPath, "poller_" + p.Name + ".log")
 		if err != nil {
 			return err
 		}
@@ -70,7 +70,6 @@ func (p *Poller) Init() error {
 
 	/* Useful info for debugging */
 	if p.options.Debug {
-
 		logger.Info(p.prefix, "using options: %s%v%s", util.Pink, p.options.String(), util.End)
 		p.LogDebugInfo()
 	}
@@ -93,26 +92,19 @@ func (p *Poller) Init() error {
 		logger.Info(p.prefix, "Starting in foreground [pid=%d] [pid file=%s]", p.pid, p.pidf)
 	}
 
-	/* Set Harvest API handler */
-	//go p.handleFifo()
-
 	/* Load poller parameters and exporters from config */
-	if p.params, err = config.GetPoller(p.options.Path, p.options.Config, p.Name); err != nil {
-		logger.Error(p.prefix, "load poller params from config: %v", err)
+	if p.params, err = config.GetPoller(p.options.ConfPath, "harvest.yml", p.Name); err != nil {
+		logger.Error(p.prefix, "read config: %v", err)
 		return err
 	}
 
 
-	if p.exporter_params, err = config.GetExporters(p.options.Path, p.options.Config); err != nil {
-		logger.Warn(p.prefix, "load exporters from config")
+	if p.exporter_params, err = config.GetExporters(p.options.ConfPath, "harvest.yml"); err != nil {
+		logger.Warn(p.prefix, "read exporters from config")
 		// @TODO just warn or abort?
 	}
 
 	if collectors := p.params.GetChildS("collectors"); collectors != nil {
-		//if len(p.options.Collectors) > 0 {
-		//	collectors.FilterValues(p.options.Collectors)
-		//	logger.Debug(p.prefix, "Filtered collectors: %v (=%d)", p.options.Collectors, len(collectors.Children))
-		//}
 		for _, c := range collectors.GetAllChildContentS() {
 			if err = p.load_collector(c, ""); err != nil {
 				logger.Error(p.prefix, "initializing collector [%s]: %v", c, err)
@@ -135,9 +127,9 @@ func (p *Poller) Init() error {
 		logger.Debug(p.prefix, "Initialized %d exporters", len(p.exporters))
 	}
 
-	//@todo interval default = 60s
+	//@todo interval from config
 	p.schedule = schedule.New()
-	if err := p.schedule.AddTaskString("poller", "20s", nil); err != nil {
+	if err := p.schedule.AddTaskString("poller", "60s", nil); err != nil {
 		logger.Error(p.prefix, "Setting schedule: %v", err)
 		return err
 	}
@@ -157,7 +149,7 @@ func (p *Poller) load_collector(class, object string) error {
 	var template *node.Node
 	var subcollectors []collector.Collector
 
-	binpath = path.Join(p.options.Path, "bin", "collectors")
+	binpath = path.Join(p.options.HomePath, "bin", "collectors")
 
 	if sym, err = util.LoadFuncFromModule(binpath, strings.ToLower(class), "New"); err != nil {
 		return err
@@ -168,7 +160,7 @@ func (p *Poller) load_collector(class, object string) error {
 		return errors.New(errors.ERR_DLOAD, "New() has not expected signature")
 	}
 
-	if template, err = collector.ImportTemplate(p.options.Path, class); err != nil {
+	if template, err = collector.ImportTemplate(p.options.ConfPath, class); err != nil {
 		return err
 	} else if template == nil {  // probably redundant
 		return errors.New(errors.MISSING_PARAM, "collector template")
@@ -192,11 +184,6 @@ func (p *Poller) load_collector(class, object string) error {
 		}
 	// if template has list of objects, initialiez 1 subcollector for each
 	} else if objects := template.GetChildS("objects"); objects != nil {
-		
-		//if len(p.options.Objects) > 0 {
-		//	objects.FilterChildren(p.options.Objects)
-		//	logger.Debug(p.prefix, "Filtered Objects: %v (=%d)", p.options.Objects, len(objects.Children))
-		//}
 		for _, object := range objects.GetChildren() {
 			c := NewFunc(collector.New(class, object.GetNameS(), p.options, template.Copy()))
 			if err = c.Init(); err != nil {
@@ -260,7 +247,7 @@ func (p *Poller) load_exporter(name string) exporter.Exporter {
 		return nil
 	}
 
-	binpath = path.Join(p.options.Path, "bin", "exporters")
+	binpath = path.Join(p.options.HomePath, "bin", "exporters")
 
 	if sym, err = util.LoadFuncFromModule(binpath, strings.ToLower(class), "New"); err != nil {
 		logger.Error(p.prefix, err.Error())
@@ -388,7 +375,7 @@ func (p *Poller) registerPid() error {
 	p.pid = os.Getpid()
 	if p.options.Daemon {
 		var file *os.File
-		p.pidf = path.Join(p.options.Path, "var", "." + p.Name + ".pid")
+		p.pidf = path.Join(p.options.PidPath, p.Name + ".pid")
 		file, err = os.Create(p.pidf)
 		if err == nil {
 			_, err = file.WriteString(strconv.Itoa(p.pid))
@@ -403,20 +390,14 @@ func (p *Poller) registerPid() error {
 
 func (p *Poller) LogDebugInfo() {
 
-	var err error
-	var hostname string
 	var st syscall.Sysinfo_t
 
-	logger.Debug(p.prefix, "Options: path=[%s], config=[%s], daemon=%v, debug=%v, loglevel=%d", 
-		p.options.Path, p.options.Config, p.options.Daemon, p.options.Debug, p.options.LogLevel)
-	hostname, err  = os.Hostname()
 	logger.Debug(p.prefix, "Running on [%s]: system [%s], arch [%s], CPUs=%d", 
-		hostname, runtime.GOOS, runtime.GOARCH, runtime.NumCPU())
+		p.options.Hostname, runtime.GOOS, runtime.GOARCH, runtime.NumCPU())
 	logger.Debug(p.prefix, "Poller Go build version [%s]", runtime.Version())
 	
 	st = syscall.Sysinfo_t{}
-	err = syscall.Sysinfo(&st)
-	if err == nil {
+	if syscall.Sysinfo(&st) == nil {
 		logger.Debug(p.prefix, "System uptime [%d], Memory [%d] / Free [%d]. Running processes [%d]", 
 			st.Uptime, st.Totalram, st.Freeram, st.Procs)
 	}
@@ -424,7 +405,6 @@ func (p *Poller) LogDebugInfo() {
 
 
 func main() {
-
 
     p := New()
 

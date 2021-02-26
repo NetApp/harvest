@@ -273,12 +273,10 @@ func (o *Options) PrintHelp() {
 		if opt.short != "" {
 			flag += ", -" + opt.short
 		}
-		fmt.Printf("    %-20s %s", flag, opt.descr)
-		//if opt.deflt != "" {
-		//	fmt.Printf(" (default: %s)", opt.deflt)
-		//}
-		fmt.Println()
+		fmt.Printf("    %-20s %s\n", flag, opt.descr)
 	}
+	fmt.Println()
+	fmt.Println()
 }
 
 func (o *Options) PrintErrors() {

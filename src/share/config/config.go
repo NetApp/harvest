@@ -27,6 +27,29 @@ func GetExporters(harvest_path, config_fn string) (*node.Node, error) {
 	return exporters, nil
 }
 
+func GetPollerNames(harvest_path, config_file string) ([]string, error) {
+
+	var poller_names []string
+	var config, pollers *node.Node
+	var err error
+	
+	if config, err = LoadConfig(harvest_path, config_file); err != nil {
+		return poller_names, err
+	}
+
+	if pollers = config.GetChildS("Pollers"); pollers == nil {
+		return poller_names, errors.New(errors.ERR_CONFIG, "[Pollers] section not found")
+	}
+
+	poller_names = make([]string, 0)
+
+	for _, p := range pollers.GetChildren() {
+		poller_names = append(poller_names, p.GetNameS())
+	}
+
+	return poller_names, nil
+}
+
 
 func GetPoller(harvest_path, config_fn, poller_name string) (*node.Node, error) {
 	var err error

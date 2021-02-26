@@ -33,22 +33,21 @@ BOLD = '\033[1m'
 END = '\033[0m'
 
 
+HOME_PATH = os.getenv("HARVEST_HOME", "/opt/harvest")
+CONF_PATH = os.getenv("HARVEST_CONF", "/etc/harvest")
+PID_PATH = os.getenv("HARVEST_PIDS", "/var/run/harvest")
+
+
 def main():
 
     args = read_args()
-
-    #print("args=", args)
-
-    #if args.version:
-    #    print('NetApp Harvest {}'.format(__version__))
-    #    return
 
     if os.geteuid() == 0:
         print('Warning: Running Pollers as a priviliged user is ' \
             'not safe and will be disabled in future releases\n')
 
     # For other actions, we need list of pollers from config
-    all_pollers = get_poller_names(args.path, args.config)
+    all_pollers = get_poller_names()
 
     # If user didn't specify pollers, take all pollers from config
     if not args.pollers:
@@ -68,7 +67,7 @@ def main():
     if not pollers:
         return
 
-    args.level = 'DEBUG' if args.verbose else 'INFO'
+    args.loglevel = 1 if args.verbose else 2
 
     # Startup poller in foreground mode, but only list collectors 
     # and exporters and exit
@@ -131,24 +130,17 @@ def main():
     return
 
 
-def get_poller_names(path, filename):
+def get_poller_names():
     """
     Get a list of poller names from the configuration file.
     Exit if filename not found.
-
-    Parameters
-    ----------
-    path :  string
-        package (root) directory path
-    filename : string
-        the config file name
 
     Returns
     -------
     list of poller names
     """
     
-    fp = '{}/{}'.format(path, filename)
+    fp = os.path.join(CONF_PATH, 'harvest.yml')
     content = None
 
     try:
@@ -239,7 +231,7 @@ def get_status(poller_name):
 
     """
 
-    pidfp = 'var/.{}.pid'.format(poller_name)
+    pidfp = os.path.join(PID_PATH, '{}.pid'.format(poller_name))
 
     # Try to read poller PID file
     try:
@@ -336,25 +328,25 @@ def start_poller(poller_name, args):
         return 'ALREADY RUNNING', pid
 
     # Construct CMD arguments
-    cmd_args = [os.path.join(args.path, 'bin/poller'), "poller"]
-    cmd_args.append("-poller")
+    cmd_args = [os.path.join(HOME_PATH, 'bin', 'poller'), 'poller']
+    cmd_args.append("--poller")
     cmd_args.append(poller_name)
 
     for k,v in filter_args(args).items():
         if type(v) is bool and v is True:
-            cmd_args.append('-'+k)
+            cmd_args.append('--'+k)
         elif type(v) is list and len(v) > 1:
-            cmd_args.append('-'+k)
+            cmd_args.append('--'+k)
             cmd_args += v
         elif type(v) is str and v != '':
-            cmd_args.append('-'+k)
+            cmd_args.append('--'+k)
             cmd_args.append(v)
         elif type(v) is int:
-            cmd_args.append('-'+k)
+            cmd_args.append('--'+k)
             cmd_args.append(str(v))
 
     if not args.foreground:
-        cmd_args.append('-daemon')
+        cmd_args.append('--daemon')
 
     # Start in foreground
     if args.foreground:
@@ -365,7 +357,7 @@ def start_poller(poller_name, args):
         return
 
     # Start as daemon
-    daemonize(poller_name, cmd_args, args.path)
+    daemonize(poller_name, cmd_args)
 
     # Poller should immediately write its PID to file at startup
     # Allow for some delay and retry checking status a few times
@@ -422,7 +414,7 @@ def stop_poller(poller_name):
     return 'STOPPING FAILED', pid
 
 
-def daemonize(poller_name, cmd, path):
+def daemonize(poller_name, cmd):
     """
     Start poller as daemon process. Since we fork, all 
     error messages will be sent to syslog.
@@ -433,8 +425,6 @@ def daemonize(poller_name, cmd, path):
         name of poller
     cmd : list
         arguments to be passed
-    path : string
-        harvest installation directory
 
     """
 
@@ -555,24 +545,6 @@ def read_args():
         type        = str,
         default=[]
         )
-    p.add_argument('-n', '--names', 
-        help        = 'Only start collectors with these names, e.g. "WAFL", ' \
-                        '"SystemNode" (intended for debugging)',
-        nargs       = '*',
-        dest        = 'names',
-        type        = str,
-        default     = []
-        )               
-    p.add_argument('--config', 
-        help        = 'Configuration file (default: config.yaml)',
-        type        = str,
-        default     = 'config.yaml'
-        )
-    p.add_argument('--path', 
-        help        = 'Harvest installation directory (default: "/opt/harvest2")',
-        type        = str,
-        default     = '/opt/harvest2'
-        ) 
     p.add_argument('--loglevel', 
         help        = 'Logging level (0= Trace, 1= Debug, 2= Info)',
         type        = int, 

@@ -339,7 +339,7 @@ func (c *AbstractCollector) LoadPlugins(params *node.Node) error {
 
 		logger.Debug(c.Prefix, "loading plugin [%s]", name)
 
-		binpath := path.Join(c.Options.Path, "bin", "plugins", strings.ToLower(c.Name))
+		binpath := path.Join(c.Options.HomePath, "bin", "plugins", strings.ToLower(c.Name))
 
 		module, err := util.LoadFuncFromModule(binpath, strings.ToLower(name), "New")
 		if err != nil {

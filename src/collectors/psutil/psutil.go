@@ -8,6 +8,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"goharvest2/share/logger"
+	"goharvest2/share/config"
 	"goharvest2/share/tree"
 	"goharvest2/poller/matrix"
     "goharvest2/poller/collector"
@@ -46,8 +47,7 @@ func (c *Psutil) Init() error {
 	}
 
 	//c.Data = matrix.New(object, c.Class, "", c.Params.GetChild("export_options"))
-	hostname, _ := os.Hostname()
-	c.Data.SetGlobalLabel("hostname", hostname)
+	c.Data.SetGlobalLabel("hostname", c.Options.Hostname)
 	c.Data.SetGlobalLabel("datacenter", c.Params.GetChildValue("datacenter"))
 
 	logger.Info(c.Prefix, "Collector initialized")
@@ -215,7 +215,7 @@ func (c *Psutil) PollInstance() (*matrix.Matrix, error) {
 
 	c.Data.ResetInstances()
 
-	poller_names, err := get_poller_names(c.Options.Path, c.Options.Config)
+	poller_names, err := config.GetPollerNames(c.Options.ConfPath, "harvest.yml")
 	if err != nil {
 		return nil, err
 	}
@@ -224,7 +224,7 @@ func (c *Psutil) PollInstance() (*matrix.Matrix, error) {
 
 		pid_s := ""
 
-		pidfp := path.Join(c.Options.Path, "var", "." + name + ".pid")
+		pidfp := path.Join(c.Options.PidPath, name + ".pid")
 		pid_b, err := ioutil.ReadFile(pidfp)
 
 		if err == nil {
@@ -263,28 +263,6 @@ func (c *Psutil) PollInstance() (*matrix.Matrix, error) {
 	return nil, nil
 }
 
-func get_poller_names(harvest_path, config_fn string) ([]string, error){
-
-	var poller_names []string
-
-	config, err := yaml.Import(path.Join(harvest_path, config_fn))
-	if err != nil {
-		return poller_names, err
-	} else if config == nil {
-		return poller_names, errors.New("no content")
-	}
-
-	pollers := config.GetChild("Pollers")
-	if pollers == nil {
-		return poller_names, errors.New("no pollers")
-	}
-
-	for _, poller := range pollers.GetChildren() {
-		poller_names = append(poller_names, poller.Name)
-	}
-
-	return poller_names, nil
-}
 
 func memory_info(proc *process.Process) ([]float64, bool) {
 

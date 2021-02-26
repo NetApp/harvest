@@ -31,13 +31,13 @@ func OpenFileOutput(rootdir, filename string) error {
     var info os.FileInfo
     var err error
 
-    info, err = os.Stat(path.Join(rootdir, "log"))
+    info, err = os.Stat(rootdir)
     if err != nil || info.IsDir() == true {
-        err = os.Mkdir(path.Join(rootdir, "log"), dirperm)
+        err = os.Mkdir(rootdir, dirperm)
     }
     if err == nil || os.IsExist(err) {
 
-        file, err = os.OpenFile(path.Join(rootdir, "log", filename), fileflags, fileperm)
+        file, err = os.OpenFile(path.Join(rootdir, filename), fileflags, fileperm)
         if err == nil {
             log.SetOutput(file)
         } else {

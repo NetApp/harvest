@@ -35,7 +35,7 @@ Exporter:
   Prometheus, InfluxDB and Graphite
 `
 
-var PATH = "/opt/harvest2"
+var CONF_PATH string
 
 var HARVEST_USER = "harvest2-user"
 var HARVEST_ROLE = "harvest2-role"
@@ -53,6 +53,10 @@ func exitError(msg string, err error) {
 }
 
 func main() {
+
+    if CONF_PATH = os.Getenv("HARVEST_CONF"); CONF_PATH == "" {
+        CONF_PATH = "/etc/harvest/"
+    }
 
 	var item string
     var err error
@@ -88,7 +92,7 @@ func main() {
         DIALOG.Message("Bye! If you want my help next time, run: \"harvest config\"")
     }
 
-    if conf, err = config.LoadConfig(PATH, "config.yaml"); err != nil {
+    if conf, err = config.LoadConfig(CONF_PATH, "harvest.yml"); err != nil {
         conf = node.NewS("")
     }
 
@@ -136,7 +140,7 @@ func main() {
         item = ""
     }
 
-    fp := path.Join(PATH, "config.yaml")
+    fp := path.Join(CONF_PATH, "harvest.yml")
     if err = tree.ExportYaml(conf, fp); err != nil {
         exitError("export yaml", err)
     }
@@ -181,7 +185,7 @@ func add_poller() *node.Node {
             create_cert = true
             DIALOG.Message("This requires one-time admin password to create \na read-only user and install certificate on your system")
         } else {
-            msg := fmt.Sprintf("Copy your cert/key pair to [%s/cert/] as [<SYSTEM_NAME>.key] and [<SYSTEM_NAME>.pem] to continue", PATH)
+            msg := fmt.Sprintf("Copy your cert/key pair to [%s/cert/] as [<SYSTEM_NAME>.key] and [<SYSTEM_NAME>.pem] to continue", CONF_PATH)
             DIALOG.Message(msg)
             poller.NewChildS("auth_style", "certificate_auth")
         }
@@ -216,8 +220,8 @@ func add_poller() *node.Node {
 
     if create_cert {
 
-        cert_path := path.Join(PATH, "cert", system.Name + ".pem")
-        key_path := path.Join(PATH, "cert", system.Name + ".key")
+        cert_path := path.Join(CONF_PATH, "cert", system.Name + ".pem")
+        key_path := path.Join(CONF_PATH, "cert", system.Name + ".key")
 
         cmd := exec.Command(
             "openssl", 

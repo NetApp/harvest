@@ -61,13 +61,15 @@ func (c *ZapiPerf) Init() error {
     // @TODO check if cert/key files exist
     if c.Params.GetChildContentS("auth_style") == "certificate_auth" {
         if c.Params.GetChildS("ssl_cert") == nil {
-            c.Params.NewChildS("ssl_cert", path.Join(c.Options.Path, "cert", c.Options.Poller + ".pem"))
-            logger.Debug(c.Prefix, "added ssl_cert path [%s]", path.Join(c.Options.Path, "cert", c.Options.Poller + ".pem"))
+			cert_path := path.Join(c.Options.ConfPath, "cert", c.Options.Poller + ".pem")
+            c.Params.NewChildS("ssl_cert", cert_path)
+            logger.Debug(c.Prefix, "added ssl_cert path [%s]", cert_path)
         }
 
         if c.Params.GetChildS("ssl_key") == nil {
-            c.Params.NewChildS("ssl_key", path.Join(c.Options.Path, "cert", c.Options.Poller + ".key"))
-            logger.Debug(c.Prefix, "added ssl_key path [%s]", path.Join(c.Options.Path, "cert", c.Options.Poller + ".key"))
+			key_path := path.Join(c.Options.ConfPath, "cert", c.Options.Poller + ".key")
+            c.Params.NewChildS("ssl_key", key_path)
+            logger.Debug(c.Prefix, "added ssl_key path [%s]", key_path)
         }
     }
 
@@ -89,7 +91,7 @@ func (c *ZapiPerf) Init() error {
     if !c.System.Clustered {
         model = "7mode"
     }
-    template, err := collector.ImportSubTemplate(c.Options.Path, model, "default", c.TemplateFn, c.Name, c.System.Version)
+    template, err := collector.ImportSubTemplate(c.Options.ConfPath, model, "default", c.TemplateFn, c.Name, c.System.Version)
     if err != nil {
         logger.Error(c.Prefix, "Error importing subtemplate: %s", err)
         return err

@@ -62,9 +62,9 @@ func (c *counter) print() {
 }
 
 func (a *args) Print() {
+	fmt.Printf("path   = %s\n", a.Path)
 	fmt.Printf("action = %s\n", a.Action)
 	fmt.Printf("item   = %s\n", a.Item)
-	fmt.Printf("path = %s\n", a.Path)
 	fmt.Printf("poller = %s\n", a.Poller)
 	fmt.Printf("query  = %s\n", a.Query)
 	fmt.Printf("object = %s\n", a.Object)
@@ -113,10 +113,7 @@ func main() {
 
 func connect() error {
 
-	//cwd, _ := os.Getwd()
-	//fmt.Printf("cwd = %s\n", cwd)
-
-	params, err := config.GetPoller(options.Path, "config.yaml", options.Poller)
+	params, err := config.GetPoller(options.Path, "harvest.yml", options.Poller)
 	if err != nil {
 		return err
 	}
@@ -130,42 +127,6 @@ func connect() error {
 	fmt.Println("OK")
 	return nil
 }
-
-/*
-func create_client_cert() {
-
-	// check if openssl is installed
-
-	// create harvest role
-
-	req := xml.New("security-login-role-create")
-	req.CreateChild("access-level", "readonly")
-	req.CreateChild("command-directory-name", "DEFAULT")
-	req.CreateChild("role-name", "harvest2-role")
-	req.CreateChild("vserver", system.Name)
-
-	// create harvest user
-
-	req := xml.New("security-login-create")
-	req.CreateChild("application", "ontapi")
-	req.CreateChild("authentication-method", "cert")
-	req.CreateChild("comment", "readonly user for harvest2")
-	req.CreateChild("role-name", "harvest2-role")
-	req.CreateChild("user-name", "harvest2-user")
-	req.CreateChild("vserver", system.Name)
-
-	// generate certificates
-	cmd := exec.Command("openssl", "req", "-x509", "-nodes", "-days", "1095", "-newkey", "rsa:2048", "-keyout", "cert/jamaica.key", "-out", "cert/jamaica.pem", "-subj" "\"/CN=harvest2-user\"")
-	if err := cmd.Run(); err != nil {
-		
-	}
-	// install certificate
-	req := xml.New("security-certificate-install")
-	req.CreateChild("cert-name", "harvest2-ca-cert")
-	req.CreateChild("certificate", publickey)
-	req.CreateChild("type", "client")
-}
-*/
 
 func get_system() *client.System {
 
@@ -378,7 +339,6 @@ func get_args() *args {
 
     a := args{}
 
-	flag.StringVar(&a.Path, "path", "/home/imandes0/GoCode/goharvest2", "harvest directory path")
 	flag.StringVar(&a.Poller, "poller", "", "poller name")
 	flag.StringVar(&a.Query, "query", "", "API query")
 	flag.StringVar(&a.Object, "object", "", "API object")
@@ -393,7 +353,9 @@ func get_args() *args {
 	a.Action = flag.Arg(0)
 	a.Item = flag.Arg(1)
 
-    a.Print()
+	if a.Path = os.Getenv("HARVEST_CONF"); a.Path == "" {
+		a.Path = "/etc/harvest"
+	}
 
 	return &a
 }
