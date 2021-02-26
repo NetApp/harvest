@@ -141,7 +141,7 @@ if [ $all == true ] || [ $harvest == true ]; then
     cd ../
     # @TODO migrate to GO
     cp grafana/grafana.py ../../bin/grafanatool
-    info "copied /bin/grafantool"
+    info "copied /bin/grafanatool"
 
     cd ../
 fi

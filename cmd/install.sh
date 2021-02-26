@@ -18,8 +18,8 @@ function error {
 
 function install {
     echo "creating harvest user and group [$HARVEST_USER:$HARVEST_GROUP]"
-    addgroup --quiet --system "$HARVEST_GROUP"
-    adduser --quiet --system --no-create-home --ingroup "$HARVEST_GROUP" --disabled-password --shell /bin/false "$HARVEST_USER"
+    groupadd -r "$HARVEST_GROUP"
+    adduser -r -M --gid "$HARVEST_USER" --shell /sbin/nologin --comment "NetApp Harvest user" "$HARVEST_USER"
 
     echo "creating package directories"
     mkdir -p $ROOT/opt/harvest
@@ -33,9 +33,9 @@ function install {
     chown -R $HARVEST_USER:$HARVEST_GROUP $ROOT/var/log/harvest
     chown -R $HARVEST_USER:$HARVEST_GROUP $ROOT/var/run/harvest
 
-    mv harvest.yaml config/ $ROOT/etc/harvest/
+    mv config/ $ROOT/etc/harvest/
     mv * $ROOT/opt/harvest
-    ln -s $ROOT/opt/harvest/bin/harvest $ROOT/usr/local/bin/harvest
+    #ln -s $ROOT/opt/harvest/bin/harvest $ROOT/usr/local/bin/harvest
     info "installation complete"
 }
 
