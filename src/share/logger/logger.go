@@ -32,7 +32,7 @@ func OpenFileOutput(rootdir, filename string) error {
     var err error
 
     info, err = os.Stat(rootdir)
-    if err != nil || info.IsDir() == true {
+    if err != nil || info.IsDir() == false {
         err = os.Mkdir(rootdir, dirperm)
     }
     if err == nil || os.IsExist(err) {

@@ -3,9 +3,11 @@ package main
 import (
     "fmt"
     "strings"
+    "strconv"
     "bytes"
     "goharvest2/share/logger"
     "goharvest2/share/matrix"
+    "goharvest2/share/errors"
     "goharvest2/poller/exporter"
 )
 
@@ -31,11 +33,26 @@ func (e *Prometheus) Init() error {
 
     e.cache = make(map[string]*matrix.Matrix)
 
-    url := e.Params.GetChildContentS("url")
-    port := e.Params.GetChildContentS("port")
-    e.StartHttpd(url, port)
+    addr := e.Params.GetChildContentS("addr")
+    if addr == "" {
+        addr = "0.0.0.0"
+    }
 
-    logger.Info(e.Prefix, "Initialized Exporter. HTTP daemon serving at [http://%s:%s]", url, port)
+    port := e.Options.PrometheusPort
+    if port == "" {
+        port = e.Params.GetChildContentS("port")
+    }
+
+    // sanity check on port
+    if port == "" {
+        return errors.New(errors.MISSING_PARAM, "port") 
+    } else if strconv.Atoi(port) != nil {
+        return errors.New(errors.INVALID_PARAM, "port (" + port + ")")
+    }
+    
+    e.StartHttpd(addr, port)
+
+    logger.Info(e.Prefix, "Initialized Exporter. HTTP daemon serving at [http://%s:%s]", addr, port)
 
     return nil
 }

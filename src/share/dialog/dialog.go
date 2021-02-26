@@ -95,6 +95,10 @@ func (d *Dialog) Info() string {
     }
 }
 
+func (d *Dialog) Enabled() bool {
+    return d.enabled
+}
+
 // clear screen, good to call this function after last message
 func (d *Dialog) Close() {
 	d.setArgs("--clear")
@@ -120,7 +124,7 @@ func (d *Dialog) Input(msg string) (string, error) {
 
 // get password as input
 func (d *Dialog) Password(msg string) (string, error) {
-    d.setArgs("--passwordbox", msg, "0", "0")
+    d.setArgs("--passwordbox", msg, "0", "150")
     return d.exec()
 }
 

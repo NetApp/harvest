@@ -12,15 +12,14 @@ import (
 )
 
 
-func (e *Prometheus) StartHttpd(url, port string) {
+func (e *Prometheus) StartHttpd(addr, port string) {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", e.ServeInfo)
 	mux.HandleFunc("/metrics", e.ServeMetrics)
 
-	PORT := ":"+port
-	logger.Info(e.Prefix, "Starting server at [%s]", PORT)
-	server := &http.Server{ Addr: PORT, Handler: mux}
+	logger.Debug(e.Prefix, "Starting server at [:%s]", port)
+	server := &http.Server{ Addr: ":"+port, Handler: mux}
 	go server.ListenAndServe()
 
 }

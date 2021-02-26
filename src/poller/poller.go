@@ -49,14 +49,12 @@ func New() *Poller {
 func (p *Poller) Init() error {
 
 	var err error
-	/* Set poller main attributes */
+	// Set poller main attributes
 	p.options, p.Name = options.GetOpts()
 
 	p.prefix = "(poller) (" + p.Name + ")"
 
-	//p.options.Print()
-
-	/* If daemon, make sure handler outputs to file */
+	// If daemon, make sure handler outputs to file
 	if p.options.Daemon {
 		err := logger.OpenFileOutput(p.options.LogPath, "poller_" + p.Name + ".log")
 		if err != nil {
@@ -68,7 +66,7 @@ func (p *Poller) Init() error {
 		logger.Warn(p.prefix, "using default loglevel=2 (info): %s", err.Error())
 	}
 
-	/* Useful info for debugging */
+	// Useful info for debugging
 	if p.options.Debug {
 		logger.Info(p.prefix, "using options: %s%v%s", util.Pink, p.options.String(), util.End)
 		p.LogDebugInfo()
@@ -79,25 +77,29 @@ func (p *Poller) Init() error {
 	go p.handleSignals(signal_channel)
 	logger.Debug(p.prefix, "Set signal handler for %v", SIGNALS)
 
-	/* Write PID to file */ 
+	// Write PID to file
 	err = p.registerPid()
 	if err != nil {
 		logger.Warn(p.prefix, "Failed to write PID file: %v", err)
 	}
 
-	/* Announce startup */
+	// Announce startup
 	if p.options.Daemon {
 		logger.Info(p.prefix, "Starting as daemon [pid=%d] [pid file=%s]", p.pid, p.pidf)
 	} else {
 		logger.Info(p.prefix, "Starting in foreground [pid=%d] [pid file=%s]", p.pid, p.pidf)
 	}
 
-	/* Load poller parameters and exporters from config */
+	// Load poller parameters and exporters from config
 	if p.params, err = config.GetPoller(p.options.ConfPath, "harvest.yml", p.Name); err != nil {
 		logger.Error(p.prefix, "read config: %v", err)
 		return err
 	}
 
+	// Prometheus port used to be defined in the exporter parameters as a range
+	// this leads to rarely happening bugs, so we will transition to definig
+	// the port at the poller-level
+	p.options.PrometheusPort = p.params.GetChildContentS("prometheus_port")
 
 	if p.exporter_params, err = config.GetExporters(p.options.ConfPath, "harvest.yml"); err != nil {
 		logger.Warn(p.prefix, "read exporters from config")
@@ -134,7 +136,7 @@ func (p *Poller) Init() error {
 		return err
 	}
 
-	/* Famous last words */
+	// Famous last words 
 	logger.Info(p.prefix, "Poller start-up complete.")
 
 	return nil

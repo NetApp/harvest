@@ -9,16 +9,17 @@ import (
 )
 
 type Options struct {
-    Poller      string
-    Daemon      bool
-    ConfPath  string
-    HomePath    string
-    LogPath     string
-    PidPath     string
-    LogLevel    int
-    Debug       bool
-    Version     string
-    Hostname    string
+    Poller          string
+    Daemon          bool
+    Debug           bool
+    PrometheusPort  string
+    ConfPath        string
+    HomePath        string
+    LogPath         string
+    PidPath         string
+    LogLevel        int
+    Version         string
+    Hostname        string
 }
 
 func (o *Options) String() string {
@@ -26,6 +27,7 @@ func (o *Options) String() string {
         fmt.Sprintf("%s= %s", "Poller", o.Poller),
         fmt.Sprintf("%s = %v", "Daemon", o.Daemon),
         fmt.Sprintf("%s = %v", "Debug", o.Debug),
+        fmt.Sprintf("%s = %s", "PrometheusPort", o.PrometheusPort),
         fmt.Sprintf("%s = %d", "LogLevel", o.LogLevel),
         fmt.Sprintf("%s = %s", "HomePath", o.HomePath),
         fmt.Sprintf("%s = %s", "ConfPath", o.ConfPath),

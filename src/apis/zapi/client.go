@@ -27,12 +27,17 @@ func New(config *node.Node) (*Client, error) {
     var transport *http.Transport
     var cert tls.Certificate
     var timeout time.Duration
-    var url string
+    var url, addr string
     var err error
 
     err = nil
 
-    url = "https://" + config.GetChildContentS("url") + ":443/servlets/netapp.servlets.admin.XMLrequest_filer"
+    // check required parameters
+    if addr = config.GetChildContentS("addr"); addr == "" {
+        return client, errors.New(errors.MISSING_PARAM, "addr") 
+    }
+
+    url = "https://" + addr + ":443/servlets/netapp.servlets.admin.XMLrequest_filer"
 
     request, err = http.NewRequest("POST", url, nil)
     if err != nil {
@@ -44,25 +49,42 @@ func New(config *node.Node) (*Client, error) {
     request.Header.Set("Charset", "utf-8")
 
     if config.GetChildContentS("auth_style") == "certificate_auth" {
-        cert, err = tls.LoadX509KeyPair(config.GetChildContentS("ssl_cert"), config.GetChildContentS("ssl_key"))
-        if err != nil {
-            //fmt.Printf("[Client.New] Error loading key pair: %s\n", err)
+
+        cert_path := config.GetChildContentS("ssl_cert")
+        key_path := config.GetChildContentS("ssl_key")
+
+        if cert_path == "" {
+            return client, errors.New(errors.MISSING_PARAM, "ssl_cert")
+        } else if key_path == "" {
+            return client, errors.New(errors.MISSING_PARAM, "ssl_key")
+        } else if cert, err = tls.LoadX509KeyPair(cert_path, key_path); err != nil {
             return client, err
         }
+
         transport = &http.Transport{ TLSClientConfig : &tls.Config{Certificates : []tls.Certificate{cert}, InsecureSkipVerify : true }, }
     } else {
-        request.SetBasicAuth(config.GetChildContentS("username"), config.GetChildContentS("password"))
+
+        username := config.GetChildContentS("username")
+        password := config.GetChildContentS("password")
+
+        if username == "" {
+            return client, errors.New(errors.MISSING_PARAM, "username")
+        } else if password == "" {
+            return client, errors.New(errors.MISSING_PARAM, "password")
+        }
+        
+        request.SetBasicAuth(username, password)
         transport = &http.Transport{ TLSClientConfig : &tls.Config{ InsecureSkipVerify : true }, }
+
     }
 
     // initialize http client
     t, err := strconv.Atoi(config.GetChildContentS("client_timeout"))
     if err != nil {
+        // default timeout
         timeout = time.Duration(5) * time.Second
-        //fmt.Printf("Using default timeout [%s]\n", timeout.String())
     } else {
         timeout = time.Duration(t) * time.Second
-        //fmt.Printf("Using timeout [%s]\n", timeout.String())
     }
 
     httpclient = &http.Client{ Transport : transport, Timeout: timeout }
