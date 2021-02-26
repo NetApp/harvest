@@ -46,7 +46,7 @@ func (e *Prometheus) Init() error {
     // sanity check on port
     if port == "" {
         return errors.New(errors.MISSING_PARAM, "port") 
-    } else if strconv.Atoi(port) != nil {
+    } else if _, err := strconv.Atoi(port); err != nil {
         return errors.New(errors.INVALID_PARAM, "port (" + port + ")")
     }
     

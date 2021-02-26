@@ -47,7 +47,7 @@ def main():
             'not safe and will be disabled in future releases\n')
 
     # For other actions, we need list of pollers from config
-    all_pollers = get_poller_names()
+    all_pollers = get_pollers()
 
     # If user didn't specify pollers, take all pollers from config
     if not args.pollers:
@@ -55,10 +55,10 @@ def main():
     # Verify validity of poller names from input
     else:
         pollers = []
-        for p,dc in all_pollers:
-            if p in args.pollers:
-                args.pollers.remove(p)
-                pollers.append((p,dc))
+        for poller in all_pollers:
+            if poller[0] in args.pollers:
+                args.pollers.remove(poller[0])
+                pollers.append(poller)
 
         for p in args.pollers:
             print('Poller [{}] not defined in config'.format(p))
@@ -77,7 +77,7 @@ def main():
             return
         print('Testing startup of collectors and exporters. ' \
             'This might take a few seconds')
-        poller,__ = pollers.pop()
+        poller = pollers.pop()[0]
         args.level = 'CRITICAL'
         args.foreground = True
         args.debug = True
@@ -99,45 +99,50 @@ def main():
                 'poller in the foreground might not be safe and ' \
                 'could corrupt PID files or DBs')
             #args.debug = True
-        poller,__ = pollers.pop()
+        poller = pollers.pop()[0]
         return start_poller(poller, args)
 
     # From this point on we assume our pollers are daemons
     print()
-    print('{:<20} {:<30} {:<20} {:<10}'.format('DATACENTER', 'POLLER', 'STATUS', 'PID'))
-    print('++++++++++++++++++++ ++++++++++++++++++++++++++++++ ++++++++++++++++++++ ++++++++++')
+    print('{:<20} {:<20} {:<10} {:<20} {:<10}'.format('DATACENTER', 'POLLER', 'PORT', 'STATUS', 'PID'))
+    print('++++++++++++++++++++ ++++++++++++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++')
 
     # Pollers will be asked to delay their startup incrementally
     # This is to prevent crashing the system with 100s of threads
     # and 100s of sockets starting simultaneously
     for poller in pollers:
 
-        p, dc = poller
+        name, datacenter, port = poller
 
         # Each of the three methods called is expected to return
         # a tuple of two elements: status (str) and PID (int)
         if args.action == 'status':
-            print('{:<20} {}{:<30}{} {:<20} {:<10}'.format(dc, BOLD, p, END, *get_status(p)))
+            print('{:<20} {}{:<20}{} {:<10} {:<20} {:<10}' \
+                ''.format(datacenter, BOLD, name, END, port, *get_status(name)))
 
         if args.action == 'stop' or args.action == 'restart':
-            print('{:<20} {}{:<30}{} {:<20} {:<10}'.format(dc, BOLD, p, END, *stop_poller(p)))
+            print('{:<20} {}{:<20}{} {:<10} {:<20} {:<10}' \
+                ''.format(datacenter, BOLD, name, END, port, *stop_poller(name)))
 
         if args.action == 'start' or args.action == 'restart':
-            print('{:<20} {}{:<30}{} {:<20} {:<10}'.format(
-                dc, BOLD, p, END, *start_poller(p, args)))
+            print('{:<20} {}{:<20}{} {:<10} {:<20} {:<10}' \
+                ''.format(datacenter, BOLD, name, END, port, *start_poller(name, args)))
 
-    print('++++++++++++++++++++ ++++++++++++++++++++++++++++++ ++++++++++++++++++++ ++++++++++')
+    print('++++++++++++++++++++ ++++++++++++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++')
     return
 
 
-def get_poller_names():
+def get_pollers():
     """
     Get a list of poller names from the configuration file.
     Exit if filename not found.
 
     Returns
     -------
-    list of poller names
+    list of pollers, each a tuple of three elements:
+        - name
+        - datacenter
+        - prometheus port
     """
     
     fp = os.path.join(CONF_PATH, 'harvest.yml')
@@ -206,7 +211,7 @@ def get_poller_names():
 
     dc = config.get('Defaults', {}).get('datacenter', '')
 
-    return [(poller, config['Pollers'][poller].get('datacenter', dc)) for poller in pollers]
+    return [(p, config['Pollers'][p].get('datacenter', dc), config['Pollers'][p].get('prometheus_port', '')) for p in pollers]
 
 
 def get_status(poller_name):

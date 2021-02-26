@@ -255,7 +255,7 @@ func add_poller() *node.Node {
     if err != nil {
         return nil
     }
-    poller.NewChildS("url", addr)
+    poller.NewChildS("addr", addr)
 
     // ask for authentication method
     auth, err := DIALOG.Menu("Choose authentication method", "client certificate", "password")
