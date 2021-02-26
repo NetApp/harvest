@@ -6,11 +6,7 @@ BIN=`basename $0`
 DIST=$1
 ARCH=$2
 VERSION=$3
-
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-BOLD='\033[1m'
-END='\033[0m'
+RELEASE=$4
 
 function usage {
     cat <<EOF_PRINT_HELP
@@ -23,17 +19,18 @@ function usage {
     Arguments:
         DIST        package format (rpm or dep)
         ARCH        architecture (x86_64, amd64, etc)
-        VERSION     package version
+        VERSION     version
+        RELEASE     release
 
 EOF_PRINT_HELP
 }
 
-function error {
-    echo -e $RED$BOLD$1$END
+function info {
+    echo -e "\033[1m\033[45m$1\033[0m"
 }
 
-function info {
-    echo -e $GREEN$BOLD$1$END
+function error {
+    echo -e "\033[1m\033[41m$1\033[0m"
 }
 
 function buildrpm {
@@ -44,7 +41,7 @@ function buildrpm {
     if [ ! $EXCODE -eq 0 ]; then
         error "build docker container failed, aborting"
     else
-        docker run -it -v $ROOT:/tmp/src -e HARVEST_BUILD_ARCH="$ARCH" -e HARVEST_BUILD_VERSION="$VERSION" harvest2/rpm
+        docker run -it -v $ROOT:/tmp/src -e HARVEST_ARCH="$ARCH" -e HARVEST_VERSION="$VERSION" -e HARVEST_RELEASE="$RELEASE" harvest2/rpm
         EXCODE=$?
         if [ ! $EXCODE -eq 0 ]; then
             error "run docker container failed"
@@ -55,7 +52,7 @@ function buildrpm {
 }
 
 # defaults
-if [ -z "$DIST" ] || [ "$DIST" == "help" ] || [ -z "$ARCH" ] || [ -z "$VERSION" ]; then
+if [ -z "$DIST" ] || [ "$DIST" == "help" ] || [ -z "$ARCH" ] || [ -z "$VERSION" ] || [ -z "$RELEASE" ]; then
     usage
     exit 1
 fi

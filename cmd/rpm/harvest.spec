@@ -1,10 +1,12 @@
+
+# version, release and arch will be pasted here
 %define name harvest
 
 Name: %{name}
 Summary: Storage System Monitoring
 Version: %{version}
-Release: 1
-Source: %{name}_%{version}.tgz
+Release: %{release}
+Source: %{name}_%{version}-%{version}.tgz
 License: (c) NetApp
 URL: https://www.support.netapp.com
 AutoReq: no
@@ -16,33 +18,35 @@ BuildArch: %{arch}
 Description: NetApp Harvest 2 - Monitoring of Storage Systems
  This application collects data from NetApp systems,
  forwards it to the Prometheus time series db, and
- provides default dashboards for visualization.
+ provides Grafana dashboards for visualization.
 
 %prep
 echo "unpacking tarball..."
-mkdir -p $RPM_BUILD_ROOT/opt/
-tar xvfz /tmp/build/rpm/SOURCES/%{name}_%{version}.tgz
-mv "harvest2" $RPM_BUILD_ROOT/opt/
+tar xvfz /tmp/build/rpm/SOURCES/%{name}_%{version}-%{version}.tgz
+cd harvest
+echo "executing install script"
+export BUILD_ROOT=$RPM_BUILD_ROOT
+./cmd/install.sh
+echo "cleaning up..."
+cd ..
+rm -Rf harvest
 exit
 
 %files
-%attr(0744, root, root) /opt/harvest2
+/opt/harvest
+/etc/harvest
+/var/log/harvest
+/var/run/harvest
 
 %pre
 
 %post
-echo "install..."
-ln -s /opt/harvest2/bin/harvest /usr/local/bin/harvest
-echo "complete!"
 harvest config welcome
 
 %preun
 
 %postun
-echo "uninstall..."
-unlink /usr/local/bin/harvest
-rm -Rf /opt/harvest2
-echo "removed from system"
+./opt/harvest/cmd/install.sh uninstall
 
 %clean
 echo "clean up ..."
