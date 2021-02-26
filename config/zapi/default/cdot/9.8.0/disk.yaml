@@ -26,10 +26,10 @@ counters:
       - path-error-count
 
 export_options:
-  include_keys:
+  instance_keys:
     - node
     - disk
-  include_labels:
+  instance_labels:
     - type
     - model
     - serial_number

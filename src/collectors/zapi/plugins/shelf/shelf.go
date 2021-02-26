@@ -64,7 +64,7 @@ func (p *Shelf) Init() error {
 
 		p.data[attribute] = matrix.New(p.Parent, object_name, "shelf")
 		p.data[attribute].SetGlobalLabel("datacenter", p.ParentParams.GetChildContentS("datacenter"))
-		p.data[attribute].SetGlobalLabel("system", system.Name)
+		p.data[attribute].SetGlobalLabel("cluster", system.Name)
 
 		export_options := node.NewS("export_options")
 		export_options.NewChildS("include_instance_names", "False") //@TODO remove!
