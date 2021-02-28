@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"goharvest2/share/options"
+	"goharvest2/share/argparse"
 )
 
 type TestOptions struct {
@@ -27,16 +27,16 @@ func main() {
 
 	t := TestOptions{}
 
-	opts := options.New("Harvest Options", "Quickly parse positional and named flags")
+	p := argparse.New("Harvest Options Tester", "options.go", "Quickly parse positional and named flags")
 
-	opts.PosString(&t.Command, "command", "command, first positional argument", []string{"start", "stop", "status"})
-	opts.String(&t.Poller, "poller", "p", "name of poller")
-	opts.Bool(&t.Debug, "debug", "d", "run in debug mode")
-	opts.Bool(&t.Verbose, "verbose", "v", "equal to loglevel=1")
-	opts.Int(&t.Loglevel, "loglevel", "l", "logging level")
-	opts.Slice(&t.Collectors, "collectors", "c", "names of collectors to start")
+	p.PosString(&t.Command, "command", "command, first positional argument", []string{"start", "stop", "status"})
+	p.String(&t.Poller, "poller", "p", "name of poller")
+	p.Bool(&t.Debug, "debug", "d", "run in debug mode")
+	p.Bool(&t.Verbose, "verbose", "v", "equal to loglevel=1")
+	p.Int(&t.Loglevel, "loglevel", "l", "logging level")
+	p.Slice(&t.Collectors, "collectors", "c", "names of collectors to start")
 
-	ok := opts.Parse()
+	ok := p.Parse()
 
 	fmt.Println("\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n")
 	// Parse returns true if commands were parsed successfully
@@ -47,5 +47,5 @@ func main() {
 	} else {
 		fmt.Println("parsed with errors or asked for help")
 	}
-	opts.PrintValues()
+	p.PrintValues()
 }

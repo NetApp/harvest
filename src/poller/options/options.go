@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
     "strings"
-	"goharvest2/share/options"
+	"goharvest2/share/argparse"
 	"goharvest2/share/version"
 )
 
@@ -69,7 +69,7 @@ func GetOpts() (*Options, string)  {
     }
 
     // parse from command line
-    parser := options.New("Harvest Poller", "poller", "Runs collectors and exporters for a target system")
+    parser := argparse.New("Harvest Poller", "poller", "Runs collectors and exporters for a target system")
     parser.String(&args.Poller, "poller", "p", "Poller name as defined in config")
     parser.Bool(&args.Debug, "debug", "d", "Debug mode, no data will be exported")
     parser.Bool(&args.Daemon, "daemon", "", "Start as daemon")
