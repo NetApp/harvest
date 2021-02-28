@@ -50,28 +50,34 @@ func GetPollerNames(harvest_path, config_file string) ([]string, error) {
 	return poller_names, nil
 }
 
-
-func GetPoller(harvest_path, config_fn, poller_name string) (*node.Node, error) {
+func GetPollers(config_dir, config_fn string) (*node.Node, error) {
+	var config, pollers, defaults *node.Node
 	var err error
-	var config, pollers, poller, defaults *node.Node
 
-	if config, err = LoadConfig(harvest_path, config_fn); err != nil {
+	if config, err = LoadConfig(config_dir, config_fn); err != nil {
 		return nil, err
 	}
 
 	pollers = config.GetChildS("Pollers")
 	defaults = config.GetChildS("Defaults")
 
-	if pollers != nil {
-		if poller = pollers.GetChildS(poller_name); poller != nil {
-			if defaults != nil { // optional
-				poller.Union(defaults)
-			}
-		} else {
+	if pollers == nil {
+		err = errors.New(errors.ERR_CONFIG, "[Pollers] section not found")
+	} else if defaults != nil { // optional
+		pollers.Union(defaults)
+	}
+	return pollers, err
+}
+
+
+func GetPoller(config_dir, config_fn, poller_name string) (*node.Node, error) {
+	var err error
+	var pollers, poller *node.Node
+
+	if pollers, err = GetPollers(config_dir, config_fn); err == nil {
+		if poller = pollers.GetChildS(poller_name); poller == nil {
 			err = errors.New(errors.ERR_CONFIG, "poller [" + poller_name + "] not found")
 		}
-	} else {
-		err = errors.New(errors.ERR_CONFIG, "[Pollers] section not found")
 	}
 
 	return poller, err

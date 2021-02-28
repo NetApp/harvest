@@ -51,7 +51,7 @@ func (opt *option) value2string() string {
 	return "<panic>"
 }
 
-type parser struct {
+type Parser struct {
 	name string
 	bin string
 	descr string
@@ -64,8 +64,8 @@ type parser struct {
 	help string
 }
 
-func New(program_name, program_bin, short_descr string) *parser {
-	p := parser{}
+func New(program_name, program_bin, short_descr string) *Parser {
+	p := Parser{}
 	p.name = program_name
 	p.bin = program_bin
 	p.descr = short_descr
@@ -78,7 +78,7 @@ func New(program_name, program_bin, short_descr string) *parser {
 	return &p
 }
 
-func (p *parser) add(opt *option, name, short string) {
+func (p *Parser) add(opt *option, name, short string) {
 
 	if index, exists := p.names[name]; !exists {
 		p.options = append(p.options, opt)
@@ -93,42 +93,48 @@ func (p *parser) add(opt *option, name, short string) {
 	}
 }
 
-func (p *parser) PosString(target *string, name, descr string, values []string) {
+func (p *Parser) PosString(target *string, name, descr string, values []string) {
     opt := option{name: name, class: "string", descr: descr, accept: values, target_string: target}
     p.positionals = append(p.positionals, &opt)
 }
 
-func (p *parser) Bool(target *bool, name, short, descr string) {
+func (p *Parser) PosSlice(target *[]string, name, descr string) {
+	opt := option{name: name, class: "slice", descr: descr, target_slice: target}
+	p.positionals = append(p.positionals, &opt)
+}
+
+func (p *Parser) Bool(target *bool, name, short, descr string) {
 	opt := option{name: name, class: "bool", short: short, descr: descr, target_bool: target}
 	p.add(&opt, name, short)
 }
 
-func (p *parser) String(target *string, name, short, descr string) {
+func (p *Parser) String(target *string, name, short, descr string) {
 	opt := option{name: name, class: "string", short: short, descr: descr, target_string: target}
 	p.add(&opt, name, short)
 }
 
-func (p *parser) Int(target *int, name, short, descr string) {
+func (p *Parser) Int(target *int, name, short, descr string) {
 	opt := option{name: name, class: "int", short: short, descr: descr, target_int: target}
 	p.add(&opt, name, short)
 }
 
-func (p *parser) Slice(target *[]string, name, short, descr string) {
+func (p *Parser) Slice(target *[]string, name, short, descr string) {
 	opt := option{name: name, class: "slice", short: short, descr: descr, target_slice: target}
 	p.add(&opt, name, short)
 }
 
-func (p *parser) SetHelp(help string) {
+func (p *Parser) SetHelp(help string) {
 	p.help = help
 }
 
-func (p *parser) Parse() bool {
+func (p *Parser) Parse() bool {
 
 	pos_index := 0
+	arg_index := 1
 
-	for i:=1; i<len(os.Args); i+=1 {
+	for arg_index < len(os.Args) {
 
-		flag := os.Args[i]
+		flag := os.Args[arg_index]
 
 		// help stops here
 		if flag == "-h" || flag == "--help" || flag == "-help" {
@@ -136,13 +142,13 @@ func (p *parser) Parse() bool {
 			return false
 		// long flag
 		} else if len(flag) > 1 && flag[:2] == "--" {
-			i += p.handle_long(i, flag[2:])
+			arg_index += p.handle_long(arg_index, flag[2:])
 		// short flag
 		} else if string(flag[0]) == "-" {
-			i += p.handle_short(i, string(flag[1:]))
+			arg_index += p.handle_short(arg_index, string(flag[1:]))
 		// positional
 		} else if len(p.positionals) != 0 {
-			p.handle_pos(pos_index, flag)
+			arg_index += p.handle_pos(arg_index, pos_index)
 			pos_index += 1
 		} else {
 			p.errors = append(p.errors, []string{flag, "unknown command"})
@@ -157,53 +163,75 @@ func (p *parser) Parse() bool {
 	return false
 }
 
+// handle positional argument(s)
+// return number of args parsed
+func (p *Parser) handle_pos(arg_index, pos_index int) int {
 
-func (p *parser) handle_pos(i int, flag string) {
-
-	if len(p.positionals) <= i {
-		return
+	if len(p.positionals) <= pos_index {
+		p.errors = append(p.errors, []string{os.Args[arg_index], "invalid positional at " + strconv.Itoa(arg_index)})
+		return 1
 	}
 
-	opt := p.positionals[i]
+	opt := p.positionals[pos_index]
 
-	if len(opt.accept) == 0 {
-		*opt.target_string = flag
-		return
-	}
+	if opt.class == "string" {
 
-	for _, x := range opt.accept {
-		if x == flag {
+		flag := os.Args[arg_index]
+		if len(opt.accept) == 0 {
 			*opt.target_string = flag
-			return
+			return 1
 		}
+
+		for _, x := range opt.accept {
+			if x == flag {
+				*opt.target_string = flag
+				return 1
+			}
+		}
+		p.errors = append(p.errors, []string{flag, "invalid value for " + opt.name})
+		return 1
+	} else if opt.class == "slice" {
+		var i int
+		for i=0; i+arg_index<len(os.Args); i+=1 {
+			flag := os.Args[i+arg_index]
+			if string(flag[0]) == "-" {
+				break
+			}
+			*opt.target_slice = append(*opt.target_slice, flag)
+		}
+		fmt.Printf(" ~> positional slice, count=%d\n", i)
+		return i
+
 	}
-
-	p.errors = append(p.errors, []string{flag, "invalid value for " + opt.name})
-
+	panic("invalid option class: " + opt.class)
 }
 
+// handle optional argument with long flag
+// return number of args parsed
+// if this is simply a flag (e.g. "-verbose"), return 1
+// if it's a flag with values (e.g. "--collectors"), returns 1 + number or values
+func (p *Parser) handle_long(i int, name string) int {
 
-func (p *parser) handle_long(i int, name string) int {
-
-	//fmt.Printf("parsing long [%s]\n", name)
+	fmt.Printf("~> (%d) parsing long: [%s]\n", i, name)
 
 	var opt *option
 
 	if index, exists := p.names[name]; !exists {
 		p.errors = append(p.errors, []string{name, "undefined"})
-		return 0
+		return 1
 	} else {
 		opt = p.options[index]
 	}
 
 	if opt.class == "bool" {
+		fmt.Println(" ~> bool flag: ", name)
 		*opt.target_bool = true
-		return 0
+		return 1
 	}
 
 	if len(os.Args) < i+2 {
 		p.errors = append(p.errors, []string{name, "value missing"})
-		return 0
+		return 1
 	}
 
 	value := os.Args[i+1]
@@ -211,16 +239,16 @@ func (p *parser) handle_long(i int, name string) int {
 	if opt.class == "int" {
 		if x, err := strconv.Atoi(value); err != nil {
 			p.errors = append(p.errors, []string{name, "invalid int " + value})
-			return 0
+			return 1
 		} else {
 			*opt.target_int = x
-			return 1
+			return 2
 		}
 	}
 
 	if opt.class == "string" {
 		*opt.target_string = value
-		return 1
+		return 2
 	}
 
 	if opt.class == "slice" {
@@ -232,13 +260,13 @@ func (p *parser) handle_long(i int, name string) int {
 			}
 			*opt.target_slice = append(*opt.target_slice, val)
 		}
-		return k
+		return k+1
 	}
 	panic("invalid option type: " + opt.class)
 }
 
 
-func (p *parser) handle_short(i int, name string) int {
+func (p *Parser) handle_short(i int, name string) int {
 
 	//fmt.Printf("parsing shorts [%s]\n", name)
 
@@ -255,10 +283,10 @@ func (p *parser) handle_short(i int, name string) int {
 			p.errors = append(p.errors, []string{string(name[j]), "undefined"})
 		}
 	}
-	return k
+	return k+1
 }
 
-func (p *parser) PrintHelp() {
+func (p *Parser) PrintHelp() {
 
 	if p.help != "" {
 		fmt.Println(p.help)
@@ -279,18 +307,18 @@ func (p *parser) PrintHelp() {
 	fmt.Println()
 }
 
-func (p *parser) PrintErrors() {
+func (p *Parser) PrintErrors() {
 	fmt.Printf("Error parsing arguments:\n\n")
 	for _, err := range p.errors {
 		fmt.Printf("    %-20s %s\n", err[0], err[1])
 	}
 }
 
-func (p *parser) PrintValues() {
+func (p *Parser) PrintValues() {
 
 	fmt.Printf("\npositional arguments:\n\n")
 	for i, opt := range p.positionals {
-		fmt.Printf(" (%d)    %-20s %s", i, opt.name, opt.value2string())
+		fmt.Printf(" (%d)    %-20s %s\n", i, opt.name, opt.value2string())
 	}
 
 	fmt.Printf("\n\nnamed arguments:\n\n")

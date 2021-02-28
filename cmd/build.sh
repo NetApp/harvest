@@ -116,11 +116,28 @@ if [ $all == true ] || [ $harvest == true ]; then
         exit 1
     fi
 
-    # temporarily use python script as manager @TODO migrate to GO
-    cp manager/manager.py ../../bin/manager
-    info "copied /bin/manager"
+    # compile manager and daemonize utils (manager uses daemonize)
+    cd daemonize
+    gcc daemonize.c -o ../../../bin/daemonize
+    if [ $? -eq 0 ]; then
+        info "compiled: /bin/daemonize"
+    else
+        error "compule failed"
+        exit 1
+    fi
+    cd ../
 
-    cd ../config
+    cd manager
+    go build -o ../../../bin/manager
+    if [ $? -eq 0 ]; then
+        info "compiled: /bin/manager"
+    else
+        error "compule failed"
+        exit 1
+    fi
+    cd ../
+
+    cd config
     go build -o ../../bin/config
     if [ $? -eq 0 ]; then
         info "compiled: /bin/config"
@@ -128,8 +145,9 @@ if [ $all == true ] || [ $harvest == true ]; then
         error "compilation failed"
         exit 1
     fi
+    cd ../../
 
-    cd ../tools/zapi
+    cd tools/zapi
     go build -o ../../../bin/zapitool
     if [ $? -eq 0 ]; then
         info "compiled: /bin/zapitool"
