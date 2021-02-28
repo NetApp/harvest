@@ -47,8 +47,6 @@ cd /opt/harvest
 ./bin/config welcome
 
 %preun
-#!/bin/sh
-sh /opt/harvest/cmd/install.sh uninstall
 
 %postun
 
