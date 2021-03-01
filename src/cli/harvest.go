@@ -63,7 +63,8 @@ func main() {
 	if harvest_path = os.Getenv("HARVEST_HOME"); harvest_path == "" {
         harvest_path = "/opt/harvest/"
     }
-    // dirty way of "sourcing" path variables
+	// very dirty way of "sourcing" path variables
+	// temporary 
     if data, err := ioutil.ReadFile(path.Join(harvest_path, "sources.sh")); err == nil {
         for _, line := range strings.Split(string(data), "\n") {
             //line = strings.TrimSpace(line)
@@ -73,7 +74,7 @@ func main() {
                     v := strings.Split(s[1], "=")
                     if len(v) == 2 {
                         os.Setenv(v[0], strings.ReplaceAll(v[1], "\"", ""))
-                        fmt.Printf("%s ==> %s\n", v[0], v[1])
+                        //fmt.Printf("%s ==> %s\n", v[0], v[1])
                     }
                 }
             }
@@ -82,10 +83,10 @@ func main() {
         fmt.Println(err)
     }
 
-    fmt.Printf("HARVEST_HOME = %s\n", harvest_path)
-    fmt.Printf("HARVEST_CONF = %s\n", os.Getenv("HARVEST_CONF"))
-    fmt.Printf("HARVEST_LOGS = %s\n", os.Getenv("HARVEST_LOGS"))
-    fmt.Printf("HARVEST_PIDS = %s\n", os.Getenv("HARVEST_PIDS"))
+    //fmt.Printf("HARVEST_HOME = %s\n", harvest_path)
+    //fmt.Printf("HARVEST_CONF = %s\n", os.Getenv("HARVEST_CONF"))
+    //fmt.Printf("HARVEST_LOGS = %s\n", os.Getenv("HARVEST_LOGS"))
+    //fmt.Printf("HARVEST_PIDS = %s\n", os.Getenv("HARVEST_PIDS"))
 
 	var bin string
 
@@ -114,9 +115,13 @@ func main() {
 			cmd = exec.Command(path.Join(harvest_path, "bin/", bin), os.Args[2:]...)
 		}
 
+<<<<<<< HEAD
         fmt.Println(cmd.String())
         os.Stdout.Sync()
         os.Stdin.Sync()
+=======
+        //fmt.Println(cmd.String())
+>>>>>>> c645d319d42c90012709625d7ebcdd4d7e835fd0
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
