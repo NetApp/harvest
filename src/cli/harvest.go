@@ -115,6 +115,8 @@ func main() {
 		}
 
         fmt.Println(cmd.String())
+        os.Stdout.Sync()
+        os.Stdin.Sync()
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr

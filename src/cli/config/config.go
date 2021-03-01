@@ -80,7 +80,7 @@ func main() {
 	}
 
     if DIALOG = dialog.New(); ! DIALOG.Enabled() {
-        fmt.Printf("This program requires [dialog] or [whiptail].")
+        fmt.Println("This program requires [dialog] or [whiptail].")
         os.Exit(1)
     }
 
@@ -100,6 +100,8 @@ func main() {
 
     if item == "exit" {
         DIALOG.Message("Bye! If you want my help next time, run: \"harvest config\"")
+        DIALOG.Close()
+        os.Exit(0)
     }
 
     if conf, err = config.LoadConfig(CONF_FILE); err != nil {
@@ -191,7 +193,7 @@ func main() {
                 item = "exit"
             }
         }
-        
+
         if item == "exporter" {
             if new_exporter := add_exporter(); new_exporter != nil {
                 if exporters.GetChildS(new_exporter.GetNameS()) == nil {
@@ -206,7 +208,7 @@ func main() {
 
         if item == "exit" || item == "safe and exit" {
             break
-        }        
+        }
 
         item = ""
     }
@@ -214,17 +216,16 @@ func main() {
     if item == "safe and exit" {
 
         use_tmp := false
+        fp := CONF_FILE
 
-        info, err := os.Stat(CONF_PATH)
-        if err != nil || info.IsDir() == false {
+        dir, fn := path.Split(CONF_FILE)
+
+        info, err := os.Stat(dir)
+        if err != nil || ! info.IsDir() {
             if os.Mkdir(CONF_PATH, 0644) != nil {
+                fp = path.Join("/tmp", fn)
                 use_tmp = true
             }
-        }
-
-        fp := path.Join(CONF_PATH, "harvest.yml")
-        if use_tmp {
-            fp = path.Join("/tmp", "harvest.yml")
         }
 
         if err = tree.ExportYaml(conf, fp); err != nil {
@@ -235,7 +236,7 @@ func main() {
         if use_tmp {
             msg = "You don't have write permissions in [" + CONF_PATH + "]!!\n" +
                 "Config file saved as [" + fp + "]. Please move it\n" +
-                "to [" + CONF_PATH + "] with a privileged user." 
+                "to [" + CONF_PATH + "] with a privileged user."
         }
         DIALOG.Message(msg)
     }

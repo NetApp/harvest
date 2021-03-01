@@ -138,7 +138,7 @@ if [ $all == true ] || [ $harvest == true ]; then
     cd ../
 
     cd config
-    go build -o ../../bin/config
+    go build -o ../../../bin/config
     if [ $? -eq 0 ]; then
         info "compiled: /bin/config"
     else

@@ -124,7 +124,7 @@ func (d *Dialog) Input(msg string) (string, error) {
 
 // get password as input
 func (d *Dialog) Password(msg string) (string, error) {
-    d.setArgs("--passwordbox", msg, "0", "150")
+    d.setArgs("--passwordbox", msg, "8", "30")
     return d.exec()
 }
 
