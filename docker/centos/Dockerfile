@@ -1,25 +1,31 @@
 FROM centos:centos7
-COPY harvest-2.0.1-10.x86_64.rpm /
+ENV HARVEST_PACK harvest-2.0.1-*.x86_64.rpm
+COPY $HARVEST_PACK /
 
 RUN \
     #yum update -y && \
     yum install -y \
         tar \
         gcc \
-        dialog \
         newt \
         openssl \
-        python3 \
-        python3-pip \
+        which \
         libc6-dev && \
     yum clean all && \
-    pip3 install pyyaml && \
-    rpm -ivh /harvest-2.0.1-10.x86_64.rpm && \
-    rm -f /harvest-2.0.1-10.x86_64.rpm && \
+    rpm -ivh "$HARVEST_PACK" && \
+    rm -f /"$HARVEST_PACK" && \
     #harvest config welcome 
-    export HARVEST_CONF="/harvest/conf" && \
-    export HARVEST_LOGS="/harvest/log" && \
-    export HARVEST_PIDS="/harvest/pid" && \
+    echo "export HARVEST_CONF=/harvest/" > /opt/harvest/sources.sh && \
+    echo "export HARVEST_LOGS=/harvest/log" >> /opt/harvest/sources.sh && \
+    echo "export HARVEST_PIDS=/harvest/pid" >> /opt/harvest/sources.sh && \
+    echo "set custom path variables:" && \
+    cat /opt/harvest/sources.sh && \
+    ls /opt/harvest/ -a && \
     echo "docker harvest complete"
 
-CMD ["harvest", "config", "welcome"] # $HARVEST_CMD $HARVEST_ARG]
+#CMD ["harvest", "start", "jamaica", "--loglevel", "1"]
+#CMD ["harvest", "$HARVEST_CMD", "$HARVEST_ARG", "--config", "/harvest.yml"]
+CMD harvest "$HARVEST_CMD" "$HARVEST_ARG"
+#CMD ["harvest", "config", "welcome"]
+#CMD ["whiptail", "--yesno", "continue?", "0", "0"]
+#CMD which whiptail

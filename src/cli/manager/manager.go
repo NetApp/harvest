@@ -244,6 +244,11 @@ func get_status(poller_name string) (string, int) {
 		status = "invalid pid"
 	}
 
+    // docker dummy status
+    if os.Getenv("HARVEST_DOCKER") == "yes" {
+        return "na", pid
+    }
+
 	// no valid PID stops here
 	if pid < 1 {
 		return status, pid
@@ -359,6 +364,19 @@ func start_poller(poller_name string, opts *options) (string, int) {
 	}
 
 	argv = append(argv, "--daemon")
+
+    if os.Getenv("HARVEST_DOCKER") == "yes" {
+        cmd := exec.Command(argv[0], argv[1:]...)
+        if err := cmd.Start(); err != nil {
+            fmt.Println(err)
+            os.Exit(1)
+        }
+        if err := cmd.Wait(); err != nil {
+            fmt.Println(err)
+            os.Exit(1)
+        }
+        os.Exit(0)
+    }
 
 	cmd := exec.Command(path.Join(HARVEST_HOME, "bin", "daemonize"), argv...)
 	if err := cmd.Start(); err != nil {

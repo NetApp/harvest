@@ -24,11 +24,19 @@ function usage {
 EOF_PRINT_HELP
 }
 
+function print_pollers {
+    status | while read DATACENTER POLLER PORT STATUS PID ; do
+        echo "$DATACENTER -- $POLLER -- $PORT -- $STATUS -- $PID"
+        case "$PORT" in
+            [0-9]*) echo "!!!"
+        esac
+    done
+}
 
 function get_pollers {
-    cat status.txt | while read DATACENTER POLLER PORT STATUS PID ; do
+    status | while read DATACENTER POLLER PORT STATUS PID ; do
         case "$PORT" in
-            [0-9]*) echo "$POLLER $PORT"
+            [0-9]*) echo "$POLLER;$PORT"
             ;;
         esac
     done
@@ -50,7 +58,6 @@ function build {
     rm -rf "$ROOT/conf" && mkdir "$ROOT/conf"
     rm -rf "$ROOT/pid" && mkdir "$ROOT/pid"
     rm -rf "$ROOT/log" && mkdir "$ROOT/log"
-    #rm -rf "$ROOT/src" && mkdir "$ROOT/src" && mv $RPM "$ROOT/src/"
 
     cd centos
     docker build -t harvest2/poller .
@@ -65,36 +72,46 @@ function build {
 function run {
     cmd=$1
     arg=$2
-    port=$3
-    if [ -z "$port" ]; then
-        docker run -it -v $ROOT:/harvest -e HARVEST_CMD="$cmd" -e HARVEST_ARG="$arg" harvest2/poller
-    else
-        docker run -it -v $ROOT:/harvest -p "$port":"$port" -e HARVEST_CMD="$cmd" -e HARVEST_ARG="$arg" harvest2/poller
-    fi
+    docker run -it -v $ROOT:/harvest -e HARVEST_CMD="$cmd" -e HARVEST_ARG="$arg" -e HARVEST_DOCKER="yes" harvest2/poller
 }
 
 function status {
-    run "status"
+    run "status" "-v"
 }
 
 function start {
 
-    if [ -f "$ROOT/conf/pollers.txt" ]; then
-        echo "retrieving list of pollers"
-    else
-        echo "no pollers defined"
-        exit 1
-    fi
-
     declare -a pollers=( `get_pollers` )
+    declare -a params
 
-    for POLLERPORT in "${pollers[@]}"; do
-        docker run -itd -v $ROOT:/harvest -p "$PORT":"$PORT" -e HARVEST_POLLER="$POLLER" harvest2/poller
+    for p in "${pollers[@]}"; do
+        params=(`echo $p | tr ";" " "`)
+        POLLER="${params[0]}"
+        PORT="${params[1]}"
+
+        image=(`docker container ls -a | grep "harvest2-$POLLER"`)
+        
+        if [ -z "$image" ]; then
+            docker run -d -p $PORT:$PORT -v $ROOT:/harvest -e HARVEST_CMD="start" -e HARVEST_ARG="$POLLER" -e HARVEST_DOCKER="yes" --name "harvest2-$POLLER" harvest2/poller
+        else
+            docker container start "harvest2-$POLLER"
+        fi
+        
         if [ ! $? -eq 0 ]; then
             echo "docker build failed"
             exit 1
         fi
-        echo "started poller [$POLLER] serving at port [:"$PORT"]"
+    done
+}
+
+function stop {
+    declare -a pollers=( `get_pollers` )
+    declare -a params
+
+    for p in "${pollers[@]}"; do
+        params=(`echo $p | tr ";" " "`)
+        POLLER="${params[0]}"
+        docker container stop "harvest2-$POLLER"
     done
 }
 
@@ -109,8 +126,11 @@ case "$1" in
     "start")
         start $2 $3
         ;;
-    "status")
-        status
+    "stop")
+        stop
+        ;;
+    "config")
+        run "config" "welcome"
         ;;
     *)
         echo "unknown comand: $1"

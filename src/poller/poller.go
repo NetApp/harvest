@@ -122,7 +122,7 @@ func (p *Poller) Init() error {
 		return errors.New(errors.ERR_NO_COLLECTOR, "No collectors")
 	}
 	logger.Debug(p.prefix, "Initialized %d collectors", len(p.collectors))
-	
+
 	if len(p.exporters) == 0 {
 		logger.Warn(p.prefix, "No exporters initialized, continuing without exporters")
 	} else {

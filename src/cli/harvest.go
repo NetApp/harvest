@@ -4,7 +4,6 @@ import (
 	"os"
 	"os/exec"
 	"path"
-    "path/filepath"
 	"fmt"
     "strings"
     "io/ioutil"
@@ -46,18 +45,6 @@ func main() {
 		fmt.Println(version.VERSION)
 		os.Exit(0)
 	}
-
-    if cwd, err := os.Getwd(); err == nil {
-        fmt.Println("CWD: ", cwd)
-    } else {
-        fmt.Println("Getwed() ", err)
-    }
-
-    if abs, err := filepath.Abs("."); err == nil {
-        fmt.Println("ABS: ", abs)
-    } else {
-        fmt.Println("Abs() ", err)
-    }
 
     var harvest_path string
 	if harvest_path = os.Getenv("HARVEST_HOME"); harvest_path == "" {
@@ -115,13 +102,9 @@ func main() {
 			cmd = exec.Command(path.Join(harvest_path, "bin/", bin), os.Args[2:]...)
 		}
 
-<<<<<<< HEAD
-        fmt.Println(cmd.String())
         os.Stdout.Sync()
         os.Stdin.Sync()
-=======
         //fmt.Println(cmd.String())
->>>>>>> c645d319d42c90012709625d7ebcdd4d7e835fd0
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
