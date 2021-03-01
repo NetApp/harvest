@@ -5,10 +5,10 @@ import (
     "os/exec"
     "io/ioutil"
 	"fmt"
-    "strings"
     "strconv"
     "path"
 	"goharvest2/share/config"
+	"goharvest2/share/argparse"
 	"goharvest2/share/dialog"
 	"goharvest2/share/tree"
 	"goharvest2/share/tree/node"
@@ -43,12 +43,9 @@ const (
 )
 
 var CONF_PATH string
+var CONF_FILE string
 
 var DIALOG *dialog.Dialog
-
-func print_usage() {
-	fmt.Println(USAGE)
-}
 
 func exitError(msg string, err error) {
     DIALOG.Close()
@@ -62,16 +59,23 @@ func main() {
         CONF_PATH = "/etc/harvest/"
     }
 
+    CONF_FILE = path.Join(CONF_PATH, "harvest.yml")
+
 	var item string
     var err error
 	var conf, pollers, exporters *node.Node
 
-	if len(os.Args) > 1 {
-		item = strings.ReplaceAll(os.Args[1], "-", "")
-	}
+    parser := argparse.New("Config utility", "harvest config", "configure pollers")
+    parser.PosString(&item, "item", "item to configure", []string{"poller", "exporter", "welcome", "help"})
+    parser.String(&CONF_FILE, "config", "c", "custom config filepath (default: " + CONF_FILE + ")")
+    parser.SetHelp(USAGE)
+
+    if ! parser.Parse() {
+        os.Exit(0)
+    }
 
 	if item == "help" {
-		print_usage()
+		fmt.Println(USAGE)
 		os.Exit(0)
 	}
 
@@ -98,7 +102,7 @@ func main() {
         DIALOG.Message("Bye! If you want my help next time, run: \"harvest config\"")
     }
 
-    if conf, err = config.LoadConfig(CONF_PATH, "harvest.yml"); err != nil {
+    if conf, err = config.LoadConfig(CONF_FILE); err != nil {
         conf = node.NewS("")
     }
 
@@ -120,7 +124,7 @@ func main() {
                 break
             }
         }
-    
+
         if item == "poller" {
             if new_poller := add_poller(); new_poller != nil {
 
@@ -154,7 +158,7 @@ func main() {
                     }
                 } else {
                     choices := make([]string, 0, len(exporters.GetChildren()))
-                    
+
                     for _, exp := range exporters.GetChildren() {
                         choices = append(choices, exp.GetNameS())
                     }

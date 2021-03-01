@@ -3,6 +3,7 @@ package options
 import (
 	"fmt"
 	"os"
+    "path"
     "strings"
 	"goharvest2/share/argparse"
 	"goharvest2/share/version"
@@ -13,6 +14,7 @@ type Options struct {
     Daemon          bool
     Debug           bool
     PrometheusPort  string
+    Config          string
     ConfPath        string
     HomePath        string
     LogPath         string
@@ -33,6 +35,7 @@ func (o *Options) String() string {
         fmt.Sprintf("%s = %s", "ConfPath", o.ConfPath),
         fmt.Sprintf("%s = %s", "LogPath", o.LogPath),
         fmt.Sprintf("%s = %s", "PidPath", o.PidPath),
+        fmt.Sprintf("%s = %s", "Config", o.Config),
         fmt.Sprintf("%s = %s", "Hostname", o.Hostname),
         fmt.Sprintf("%s = %s", "Version", o.Version),
     }
@@ -68,13 +71,15 @@ func GetOpts() (*Options, string)  {
         args.PidPath = "/var/run/harvest/"
     }
 
+    args.Config = path.Join(args.ConfPath, "harvest.yml")
+
     // parse from command line
     parser := argparse.New("Harvest Poller", "poller", "Runs collectors and exporters for a target system")
     parser.String(&args.Poller, "poller", "p", "Poller name as defined in config")
     parser.Bool(&args.Debug, "debug", "d", "Debug mode, no data will be exported")
     parser.Bool(&args.Daemon, "daemon", "", "Start as daemon")
     parser.Int(&args.LogLevel, "loglevel", "l", "Logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)")
-
+    parser.String(&args.Config, "config", "c", "Custom config filepath (default: " + args.Config + ")")
     ok := parser.Parse()
 
     if !ok {

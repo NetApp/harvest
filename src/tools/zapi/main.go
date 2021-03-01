@@ -2,7 +2,7 @@ package main
 
 import (
 	"os"
-	//"os/exec"
+	"path"
 	"flag"
 	"fmt"
 	"strings"
@@ -113,7 +113,7 @@ func main() {
 
 func connect() error {
 
-	params, err := config.GetPoller(options.Path, "harvest.yml", options.Poller)
+	params, err := config.GetPoller(path.Join(options.Path, "harvest.yml"), options.Poller)
 	if err != nil {
 		return err
 	}

@@ -30,6 +30,7 @@ type options struct {
 	Debug bool
 	Foreground bool
 	Loglevel int
+    Config string
 }
 
 func (o options) print() {
@@ -57,7 +58,14 @@ func main() {
 	}
 
 	// default options
-	opts := &options{Verbose: false, Debug: false, Trace: false, Foreground: false, Loglevel: 2}
+    opts := &options{
+        Verbose: false,
+        Debug: false,
+        Trace: false,
+        Foreground: false,
+        Loglevel: 2,
+        Config: path.Join(HARVEST_CONF, "harvest.yml"),
+    }
 
 	// parse user-defined options
 	parser := argparse.New("Harvest Manager", "harvest", "manage your pollers")
@@ -110,6 +118,13 @@ func main() {
 		"logging level (0=trace, 1=debug, 2=info, 3=warn, 4=error, 5=fatal)",
 	)
 
+    parser.String(
+        &opts.Config,
+        "config",
+        "c",
+        "Custom config filepath (default: " + opts.Config + ")",
+    )
+
 	// user asked for help or invalid options
 	if ! parser.Parse() {
 		os.Exit(0)
@@ -125,10 +140,10 @@ func main() {
 		opts.Loglevel = 0
 	}
 
-	pollers, err := config.GetPollers(HARVEST_CONF, "harvest.yml")
+	pollers, err := config.GetPollers(opts.Config)
 	if err != nil {
 		if os.IsNotExist(err) {
-			fmt.Printf("config [%s] not found\n", path.Join(HARVEST_CONF, "harvest.yml"))
+			fmt.Printf("config [%s] not found\n", opts.Config)
 		} else {
 			fmt.Println(err)
 		}

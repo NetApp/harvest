@@ -91,7 +91,7 @@ func (p *Poller) Init() error {
 	}
 
 	// Load poller parameters and exporters from config
-	if p.params, err = config.GetPoller(p.options.ConfPath, "harvest.yml", p.Name); err != nil {
+	if p.params, err = config.GetPoller(p.options.Config, p.Name); err != nil {
 		logger.Error(p.prefix, "read config: %v", err)
 		return err
 	}
@@ -101,7 +101,7 @@ func (p *Poller) Init() error {
 	// the port at the poller-level
 	p.options.PrometheusPort = p.params.GetChildContentS("prometheus_port")
 
-	if p.exporter_params, err = config.GetExporters(p.options.ConfPath, "harvest.yml"); err != nil {
+	if p.exporter_params, err = config.GetExporters(p.options.Config); err != nil {
 		logger.Warn(p.prefix, "read exporters from config")
 		// @TODO just warn or abort?
 	}
