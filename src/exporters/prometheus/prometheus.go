@@ -26,12 +26,12 @@ func (e *Prometheus) Init() error {
         return err
     }
 
+    e.cache = make(map[string]*matrix.Matrix)
+
     if e.Options.Debug {
         logger.Info(e.Prefix, "Initialized exporter. No HTTP server started since in debug mode")
         return nil
     }
-
-    e.cache = make(map[string]*matrix.Matrix)
 
     addr := e.Params.GetChildContentS("addr")
     if addr == "" {
@@ -186,6 +186,7 @@ func (e *Prometheus) Render(data *matrix.Matrix) ([][]byte, error) {
                 continue
             }
 
+            logger.Debug
             if metric.IsScalar() {
                 if value, set := data.GetValue(metric, instance); set {
                     metric_data := fmt.Sprintf("%s_%s{%s} %f", prefix, metric.Name, strings.Join(instance_keys, ","), value)

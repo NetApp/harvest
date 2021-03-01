@@ -71,7 +71,7 @@ func (c *Zapi) Init() error {
         model = "7mode"
     }
 
-    template, err := collector.ImportSubTemplate(c.Options.ConfPath, model, "default", c.TemplateFn, c.Name, c.System.Version)
+    template, err := c.ImportSubTemplate(model, "default", c.TemplateFn, c.System.Version)
     if err != nil {
         logger.Error(c.Prefix, "Error importing subtemplate: %s", err)
         return err

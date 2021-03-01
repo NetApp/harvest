@@ -136,13 +136,17 @@ func (p *Parser) Parse() bool {
 
 		flag := os.Args[arg_index]
 
+        //fmt.Printf("%d - \"%s\"\n", arg_index, flag)
+
 		// help stops here
 		if flag == "-h" || flag == "--help" || flag == "-help" {
 			p.PrintHelp()
 			return false
 		// long flag
 		} else if len(flag) > 1 && flag[:2] == "--" {
-			arg_index += p.handle_long(arg_index, flag[2:])
+            i := p.handle_long(arg_index, flag[2:])
+            //fmt.Printf("=> %d\n", i)
+			arg_index += i
 		// short flag
 		} else if string(flag[0]) == "-" {
 			arg_index += p.handle_short(arg_index, string(flag[1:]))
@@ -153,6 +157,8 @@ func (p *Parser) Parse() bool {
 		} else {
 			p.errors = append(p.errors, []string{flag, "unknown command"})
 		}
+
+        //fmt.Printf("++ %d\n", arg_index)
 	}
 
 	if len(p.errors) == 0 {
@@ -199,7 +205,7 @@ func (p *Parser) handle_pos(arg_index, pos_index int) int {
 			}
 			*opt.target_slice = append(*opt.target_slice, flag)
 		}
-		fmt.Printf(" ~> positional slice, count=%d\n", i)
+		//fmt.Printf(" ~> positional slice, count=%d\n", i)
 		return i
 
 	}
@@ -212,7 +218,7 @@ func (p *Parser) handle_pos(arg_index, pos_index int) int {
 // if it's a flag with values (e.g. "--collectors"), returns 1 + number or values
 func (p *Parser) handle_long(i int, name string) int {
 
-	fmt.Printf("~> (%d) parsing long: [%s]\n", i, name)
+	//fmt.Printf("~> (%d) parsing long: [%s]\n", i, name)
 
 	var opt *option
 
@@ -224,7 +230,7 @@ func (p *Parser) handle_long(i int, name string) int {
 	}
 
 	if opt.class == "bool" {
-		fmt.Println(" ~> bool flag: ", name)
+		//fmt.Println(" ~> bool flag: ", name)
 		*opt.target_bool = true
 		return 1
 	}
@@ -268,22 +274,25 @@ func (p *Parser) handle_long(i int, name string) int {
 
 func (p *Parser) handle_short(i int, name string) int {
 
-	//fmt.Printf("parsing shorts [%s]\n", name)
+	//fmt.Printf("parsing short(s) [%s]\n", name)
 
-	var k int
-	k = 0
+    k := 1
 	for j:=0; j<len(name); j+=1 {
 
 		//fmt.Printf(" short= [%s]\n", string(name[j]))
 
 		if index, exists := p.shorts[string(name[j])]; exists {
 			//fmt.Printf(" => long=[%s]\n", o.options[index].name)
-			k += p.handle_long(i+k, p.options[index].name)
+			//@TODO will fail if multiple value assignments
+			x := p.handle_long(i, p.options[index].name)
+			//fmt.Printf(" short ++ %d (-1) ==> ", x)
+			k += (x-1)
+			//fmt.Printf(" %d\n", k)
 		} else {
 			p.errors = append(p.errors, []string{string(name[j]), "undefined"})
 		}
 	}
-	return k+1
+	return k
 }
 
 func (p *Parser) PrintHelp() {

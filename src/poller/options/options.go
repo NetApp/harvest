@@ -86,7 +86,5 @@ func GetOpts() (*Options, string)  {
         os.Exit(1)
     }
 
-    args.Print()
-
     return &args, args.Poller
 }

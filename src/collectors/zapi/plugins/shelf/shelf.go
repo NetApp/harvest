@@ -106,8 +106,6 @@ func (p *Shelf) Init() error {
 
 func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
-	logger.Info(p.Prefix, "Running plugin!!!!")
-
 	p.connection.BuildRequestString("storage-shelf-info-get-iter")
 	result, err := p.connection.Invoke()
 	if err != nil {
@@ -134,7 +132,7 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			data.ResetInstances()
 
 			if p.instance_keys[attribute] == "" {
-				logger.Warn(p.Prefix, "no instances key defined for object [%s], skipping....", attribute)
+				logger.Warn(p.Prefix, "no instance keys defined for object [%s], skipping....", attribute)
 				continue
 			}
 
@@ -219,7 +217,7 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 							data.SetValue(m, instance, float64(num))
 							logger.Debug(p.Prefix, "Added numeric [%s] = [%f]", mkey, num)
 						} else {
-							logger.Warn(p.Prefix, "Failed to convert [%s] = [%s]", mkey, value)
+							logger.Debug(p.Prefix, "Failed to convert [%s] = [%s]", mkey, value)
 						}
 					}
 				}

@@ -13,6 +13,7 @@ import (
 	"time"
 	"goharvest2/share/argparse"
 	"goharvest2/share/config"
+    "goharvest2/share/set"
 )
 
 var (
@@ -62,7 +63,7 @@ func main() {
 	parser := argparse.New("Harvest Manager", "harvest", "manage your pollers")
 
 	parser.PosString(
-		&opts.Command,	
+		&opts.Command,
 		"command",
 		"action to take, one of:",
 		[]string{"status", "start", "restart", "stop"},
@@ -114,17 +115,19 @@ func main() {
 		os.Exit(0)
 	}
 
-	if opts.Loglevel == 3 && opts.Debug {
+    //parser.PrintValues()
+
+	if opts.Debug {
 		opts.Loglevel = 1
 	}
 
-	if opts.Loglevel == 3 && opts.Trace {
+	if opts.Trace {
 		opts.Loglevel = 0
 	}
 
 	pollers, err := config.GetPollers(HARVEST_CONF, "harvest.yml")
 	if err != nil {
-		if strings.Contains(err.Error(), "no such file or directory") {
+		if os.IsNotExist(err) {
 			fmt.Printf("config [%s] not found\n", path.Join(HARVEST_CONF, "harvest.yml"))
 		} else {
 			fmt.Println(err)
@@ -133,31 +136,44 @@ func main() {
 	}
 
 	if len(opts.Pollers) > 0 {
+        // verify poller names
 		ok := true
 		for _, p := range opts.Pollers {
-			if pollers.PopChildS(p) == nil {
-				fmt.Printf("poller [%s] not defined\n")
+			if pollers.GetChildS(p) == nil {
+				fmt.Printf("poller [%s] not defined\n", p)
 				ok = false
 			}
 		}
 		if !ok {
 			os.Exit(1)
 		}
+        // filter pollers
+        poller_names := set.NewFrom(opts.Pollers)
+        for _, p := range pollers.GetChildren() {
+            if ! poller_names.Has(p.GetNameS()) {
+                pollers.PopChildS(p.GetNameS())
+            }
+        }
 	}
 
 	if opts.Foreground {
-		if !opts.Debug {
-			opts.Debug = true
-			fmt.Printf("set debug mode ON (starting poller in foreground otherwise is unsafe)\n")
-		}
-		if len(pollers.GetChildren()) == 1 {
-			p := pollers.GetChildren()[0]
-			fmt.Printf("starting [%s] in foreground mode...\n", p.GetNameS())
-			os.Exit(0)
-		} else {
-			fmt.Printf("only one poller can be started in foreground mode!\n")
+		if opts.Command != "start" {
+			fmt.Printf("invalid command [%s] for foreground mode\n", opts.Command)
 			os.Exit(1)
 		}
+		if len(pollers.GetChildren()) != 1 {
+
+			fmt.Println("only one poller can be started in foreground mode")
+			os.Exit(1)
+		}
+		if !opts.Debug {
+			opts.Debug = true
+			fmt.Println("set debug mode ON (starting poller in foreground otherwise is unsafe)")
+		}
+		p := pollers.GetChildren()[0]
+		fmt.Printf("starting [%s] in foreground mode...\n", p.GetNameS())
+		start_poller(p.GetNameS(), opts)
+		os.Exit(0)
 	}
 
 	// normal start/stop/status operation
@@ -182,7 +198,7 @@ func main() {
 		if opts.Command == "start" || opts.Command == "restart" {
 			status, pid := start_poller(name, opts)
 			fmt.Printf("%-20s%-20s%-20s%-20s%-10d\n", datacenter, name, port, status, pid)
-		}		
+		}
 	}
 	fmt.Println("+++++++++++++++++++ +++++++++++++++++++ +++++++++++++++++++ +++++++++++++++++++ +++++++++")
 }
@@ -202,7 +218,7 @@ func get_status(poller_name string) (string, int) {
 	var pid int
 
 	// running poller should have written PID to file
-	pid_fp := path.Join(HARVEST_PIDS, "." + poller_name + ".pid")
+	pid_fp := path.Join(HARVEST_PIDS, poller_name + ".pid")
 
 	// no PID file, assume process exited or never started
 	if data, err := ioutil.ReadFile(pid_fp); err != nil {
@@ -294,7 +310,7 @@ func stop_poller(poller_name string) (string, int) {
 		}
 	}
 	return "stopping failed", pid
-}	
+}
 
 func start_poller(poller_name string, opts *options) (string, int) {
 
@@ -310,15 +326,20 @@ func start_poller(poller_name string, opts *options) (string, int) {
 	}
 
 	if opts.Foreground {
-		cmd := exec.Command(argv[0], argv...)
-		fmt.Println("Starting in foreground. Enter CTRL+C or close terminal to stop poller.")
+        cmd := exec.Command(argv[0], argv[1:]...)
+        fmt.Println(cmd.String())
+		fmt.Println("starting in foreground, enter CTRL+C or close terminal to stop poller")
 		os.Stdout.Sync()
 		cmd.Stdout = os.Stdout
+		cmd.Stdin = os.Stdin
+		cmd.Stderr = os.Stderr
 
 		if err := cmd.Start(); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
+
+		//fmt.Println("stopped")
 		os.Exit(0)
 	}
 
@@ -339,7 +360,7 @@ func start_poller(poller_name string, opts *options) (string, int) {
 			return status, pid
 		}
 		time.Sleep(100 * time.Millisecond)
-	}	
+	}
 
 	return get_status(poller_name)
 }

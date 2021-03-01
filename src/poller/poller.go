@@ -411,10 +411,10 @@ func main() {
     p := New()
 
     if err := p.Init(); err == nil {
-
 		p.Start()
 
 	} else {
 		p.Stop()
+		os.Exit(1)
 	}
 }

@@ -12,24 +12,24 @@ import (
     "goharvest2/share/logger"
 )
 
-func ImportTemplate(harvest_path, collector_name string) (*node.Node, error) {
-    fp := path.Join(harvest_path, "config/", strings.ToLower(collector_name), "default.yaml")
+func ImportTemplate(conf_path, collector_name string) (*node.Node, error) {
+    fp := path.Join(conf_path, "config/", strings.ToLower(collector_name), "default.yaml")
 	return tree.ImportYaml(fp)
 }
 
-func ImportSubTemplate(harvest_path, model, dirname, filename, collector string, version [3]int) (*node.Node, error) {
+func (c *AbstractCollector) ImportSubTemplate(model, dirname, filename string, version [3]int) (*node.Node, error) {
 
     var err error
     var selected_version string
     var template *node.Node
 
-    path_prefix := path.Join(harvest_path, "config/", strings.ToLower(collector), dirname, model)
-    logger.Info("--", "Looking for best-fitting template in [%s]", path_prefix)
+    path_prefix := path.Join(c.Options.ConfPath, "config/", strings.ToLower(c.Name), dirname, model)
+    logger.Debug(c.Prefix, "Looking for best-fitting template in [%s]", path_prefix)
 
     available := make(map[string]bool)
     files, _ := ioutil.ReadDir(path_prefix)
     for _, file := range files {
-        logger.Info("--", "Found version dir: [%s]", file.Name())
+        logger.Trace(c.Prefix, "Found version dir: [%s]", file.Name())
         if match, _ := regexp.MatchString(`\d+\.\d+\.\d+`, file.Name()); match == true && file.IsDir() {
             available[file.Name()] = true
         }
@@ -47,7 +47,7 @@ func ImportSubTemplate(harvest_path, model, dirname, filename, collector string,
     }
 
     if selected_version == "" {
-        logger.Warn("--", "looking for newer version")
+        logger.Debug(c.Prefix, "looking for newer version")
 
         vers = version[0] * 100 + version[1] * 10 + version[2]
 
@@ -65,7 +65,7 @@ func ImportSubTemplate(harvest_path, model, dirname, filename, collector string,
         err = errors.New("No best-fitting subtemplate version found")
     } else {
         template_path := path.Join(path_prefix, selected_version, filename)
-        //Log.Info("Selected best-fitting subtemplate [%s]", template_path)
+        logger.Debug(c.Prefix, "selected best-fitting subtemplate [%s]", template_path)
         template, err = tree.ImportYaml(template_path)
     }
     return template, err
