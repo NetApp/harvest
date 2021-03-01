@@ -32,7 +32,7 @@ func GetPollerNames(harvest_path, config_file string) ([]string, error) {
 	var poller_names []string
 	var config, pollers *node.Node
 	var err error
-	
+
 	if config, err = LoadConfig(harvest_path, config_file); err != nil {
 		return poller_names, err
 	}
@@ -64,7 +64,9 @@ func GetPollers(config_dir, config_fn string) (*node.Node, error) {
 	if pollers == nil {
 		err = errors.New(errors.ERR_CONFIG, "[Pollers] section not found")
 	} else if defaults != nil { // optional
-		pollers.Union(defaults)
+        for _, p := range pollers.GetChildren() {
+            p.Union(defaults)
+        }
 	}
 	return pollers, err
 }

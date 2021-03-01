@@ -186,7 +186,7 @@ func (e *Prometheus) Render(data *matrix.Matrix) ([][]byte, error) {
                 continue
             }
 
-            logger.Debug
+            //logger.Debug
             if metric.IsScalar() {
                 if value, set := data.GetValue(metric, instance); set {
                     metric_data := fmt.Sprintf("%s_%s{%s} %f", prefix, metric.Name, strings.Join(instance_keys, ","), value)
