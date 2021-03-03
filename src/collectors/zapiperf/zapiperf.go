@@ -40,6 +40,7 @@ type ZapiPerf struct {
 	batch_size int
 	latency_io_reqd int
 	instance_key string
+	array_labels map[string][]string
 }
 
 func New(a *collector.AbstractCollector) collector.Collector {
@@ -135,6 +136,7 @@ func (c *ZapiPerf) Init() error {
 }
 
 func (c *ZapiPerf) InitCache() error {
+	c.array_labels = make(map[string][]string)
 	c.instance_key = c.loadParamStr("instance_key", INSTANCE_KEY)
 	c.batch_size = c.loadParamInt("batch_size", BATCH_SIZE)
 	c.latency_io_reqd = c.loadParamInt("latency_io_reqd", LATENCY_IO_REQD)
@@ -177,7 +179,7 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 
 	logger.Debug(c.Prefix, "Updating data cache")
 
-	NewData := c.Data.Clone()
+	NewData := c.Data.Clone(false)
 	if err = NewData.InitData(); err != nil {
 		return nil, err
 	}
@@ -303,6 +305,12 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 				name := cnt.GetChildContentS("name")
 				value := cnt.GetChildContentS("value")
 
+				// sanity check
+				if name == "" || value == "" {
+					logger.Debug("skipping raw counter [%s] with value [%s]", name, value)
+					continue
+				}
+
 				// ZAPI counter for us is either instance label (string)
 				// or numeric metric (scalar or string)
 
@@ -313,32 +321,43 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 					continue
 				}
 
-				// numeric 
-				counter := NewData.GetMetric(name)
-				if counter == nil {
-					logger.Debug(c.Prefix, "metric [%s] [=%s] not in cache, skip", name, value)
-					continue
-				}
-				//logger.Debug(c.Prefix, "+ metric [%s] [=%s]", name, value)
-
-				if counter.IsScalar() {
-					if e := NewData.SetValueString(counter, instance, string(value)); e != nil {
-						logger.Error(c.Prefix, "set metric [%s] with value [%s]: %v", name, value, e)
-					} else {
-						logger.Debug(c.Prefix, "+ scalar data [%s = %s%s%s]", name, util.Cyan, value, util.End)
-						data_count += 1
-						v, ok := NewData.GetValue(counter, instance)
-						logger.Debug(c.Prefix, "%s(%f) (%v)%s", util.Grey, v, ok, util.End)
+				// process array counter
+				if strings.Contains(value, ",") {
+					labels, ok := c.array_labels[name]
+					if ok {
+						// warn & skip
+						logger.Error(c.Prefix, "metric [%s] array labels not in cache, skip", name, value)
+						continue
 					}
-				} else {
 					values := strings.Split(string(value), ",")
-					if e := NewData.SetArrayValuesString(counter, instance, values); e != nil {
-						logger.Error(c.Prefix, "set array metric [%s] with values [%s]: %v", name, value, e)
+					if len(labels) != len(values) {
+						// warn & skip
+						logger.Error(c.Prefix, "metric [%s] array labels don't match with values (%d), skip", name, len(values))
+						continue
+					}
+					
+					for i, label := range labels {
+						key := name + "." + label
+						if m := NewData.GetMetric(key); m != nil {
+							if e := NewData.SetValueString(m, instance, values[i]); e != nil {
+								logger.Error(c.Prefix, "set metric [%s] with value [%s]: %v", key, values[i], e)
+							} else {
+								logger.Debug(c.Prefix, "+ data [%s] = [%s%s%s]", key, util.Pink, values[i], util.End)
+							}
+						} else {
+							logger.Error(c.Prefix, "metric [%s] not in cache, skip", key, value)
+						}
+					}
+				// process scalar counter
+				} else {
+					if m := NewData.GetMetric(name); m != nil {
+						if e := NewData.SetValueString(m, instance, value); e != nil {
+							logger.Error(c.Prefix, "set metric [%s] with value [%s]: %v", name, value, e)
+						} else {
+							logger.Debug(c.Prefix, "+ data [%s] = [%s%s%s]", name, util.Cyan, value, util.End)
+						}
 					} else {
-						logger.Debug(c.Prefix, "+ array data [%s = %s%s%s]", name, util.Pink, value, util.End)
-						data_count += len(values)
-						v := NewData.GetArrayValues(counter, instance)
-						logger.Debug(c.Prefix, "%s %v %s", util.Grey, v, util.End)
+						logger.Error(c.Prefix, "metric [%s] not in cache, skip", name, value)
 					}
 				}
 			} // end loop over counters
@@ -377,7 +396,7 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 	logger.Debug(c.Prefix, "data has dimensions (%d x %d)", len(NewData.Data), len(NewData.Data[0]))
 
 	// cache data, to store after calculations
-	CachedData := NewData.Clone()
+	CachedData := NewData.Clone(true)
 
 	// order metrics, such that those requiring base counters are processed last
 	ordered_metrics := make([]*matrix.Metric, 0, len(NewData.Metrics))
@@ -412,46 +431,17 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 		//logger.Debug(c.Prefix, "Postprocessing %s%s%s (%s%v%s)", util.Red, m.Name, util.End, util.Bold, m.Properties, util.End)
 		// fmt.Printf("\npostprocessing %s%s%s - %s%v%s\n", util.Red, m.Name, util.End, util.Bold, m.Properties, util.End)
 		// scalar not depending on base counter
-		if m.IsScalar() {
-			if m.BaseCounter == "" {
-				// fmt.Printf("scalar - no basecounter\n")
-				logger.Debug(c.Prefix, "cooking [%d] [%s%s%s] (%s)", m.Index, util.Cyan, m.Name, util.End, m.Properties)
-				c.calculate_from_delta(NewData, m.Name, m.Index, -1, m.Properties) // -1 indicates no base counter
-			} else if b := NewData.GetMetric(m.BaseCounter); b != nil {
-				// fmt.Printf("scalar - with basecounter %s%s%s (%s)\n", util.Red, m.BaseCounter, util.End, b.Properties)
-				logger.Debug(c.Prefix, "cooking [%d] [%s%s%s] (%s) using base counter [%s] (%s)", m.Index, util.Cyan, m.Name, util.End, m.Properties, b.Name, b.Properties)
-				c.calculate_from_delta(NewData, m.Name, m.Index, b.Index, m.Properties)
-			} else {
-				logger.Error(c.Prefix, "required base [%s] for scalar [%s] missing", m.BaseCounter, m.Name)
-			}
-			continue
-		}
-		// array metric, it becomes a bit complicated here
-		// since base counter can be array as well
+
 		if m.BaseCounter == "" {
-			// fmt.Printf("array - no basecounter\n")
-			for i:=0; i<m.Size; i+=1 {
-				logger.Debug(c.Prefix, "cooking [%d] [%s%s : %s%s] (%s)", m.Index+i, util.Pink, m.Name, m.Labels[i], util.End, m.Properties)
-				c.calculate_from_delta(NewData, m.Name, m.Index+i, -1, m.Properties)
-			}
+			// fmt.Printf("scalar - no basecounter\n")
+			logger.Debug(c.Prefix, "cooking [%d] [%s%s%s] (%s)", m.Index, util.Cyan, m.Name, util.End, m.Properties)
+			c.calculate_from_delta(NewData, m.Name, m.Index, -1, m.Properties) // -1 indicates no base counter
 		} else if b := NewData.GetMetric(m.BaseCounter); b != nil {
-			if b.IsScalar() {
-				// fmt.Printf("array - scalar basecounter %s%s%s (%s)\n", util.Red, m.BaseCounter, util.End, b.Properties)
-				for i:=0; i<m.Size; i+=1 {
-					logger.Debug(c.Prefix, "cooking [%d] [%s%s : %s%s] (%s) using base counter [%s] (%s)", m.Index+i, util.Pink, m.Name, m.Labels[i], util.End, m.Properties, b.Name, b.Properties)
-					c.calculate_from_delta(NewData, m.Name, m.Index+i, b.Index, m.Properties)
-				}
-			} else if m.Size == b.Size {
-				// fmt.Printf("array - array basecounter %s%s%s (%s)\n", util.Red, m.BaseCounter, util.End, b.Properties)
-				for i:=0; i<m.Size; i+= 1 {
-					logger.Debug(c.Prefix, "cooking [%d] [%s%s : %s%s] (%s) using base counter [%s : %s] (%s)", m.Index+i, util.Pink, m.Name, m.Labels[i], util.End, m.Properties, b.Name, b.Labels[i], b.Properties)
-					c.calculate_from_delta(NewData, m.Name, m.Index+i, b.Index+i, m.Properties)
-				}
-			} else {
-				logger.Error(c.Prefix, "size of [%s] (%d) does not match with base [%s] (%d)", m.Name, m.Size, b.Name, b.Size)
-			}
+			// fmt.Printf("scalar - with basecounter %s%s%s (%s)\n", util.Red, m.BaseCounter, util.End, b.Properties)
+			logger.Debug(c.Prefix, "cooking [%d] [%s%s%s] (%s) using base counter [%s] (%s)", m.Index, util.Cyan, m.Name, util.End, m.Properties, b.Name, b.Properties)
+			c.calculate_from_delta(NewData, m.Name, m.Index, b.Index, m.Properties)
 		} else {
-			logger.Error(c.Prefix, "required base [%s] for array [%s] missing", m.BaseCounter, m.Name)
+			logger.Error(c.Prefix, "required base [%s] for scalar [%s] missing", m.BaseCounter, m.Name)
 		}
 	}
 
@@ -536,12 +526,14 @@ func (c *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 
 	var (
 		err error
-		request, response, counter_list, counter_elems *node.Node
+		request, response, counter_list *node.Node
 		old_metrics, old_labels, replaced, missing *set.Set
 		wanted *dict.Dict
 		old_metrics_size, old_labels_size int
+		counters map[string]*node.Node
 	)
 
+	counters = make(map[string]*node.Node)
 	old_metrics = set.New() // current set of metrics, so we can remove from matrix if not updated
 	old_labels = set.New() // current set of labels
 	wanted = dict.New() // counters listed in template, maps raw name to display name
@@ -591,15 +583,17 @@ func (c *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 	}
 
 	// fetch counter elements
-	counter_elems = response.GetChildS("counters")
-	
-	if counter_elems == nil || len(counter_elems.GetChildren()) == 0 {
+	if elems := response.GetChildS("counters"); elems != nil && len(elems.GetChildren()) != 0 {
+		for _, counter := range elems.GetChildren() {
+			if name := counter.GetChildContentS("name"); name != "" {
+				counters[name] = counter
+			}
+		}
+	} else {
 		return nil, errors.New(errors.ERR_NO_METRIC, "no counters in response")
 	}
 	
-	for _, counter := range counter_elems.GetChildren() {
-		key := counter.GetChildContentS("name")
-
+	for key, counter := range counters {
 		display, ok := wanted.GetHas(key)
 		// counter not requested
 		if !ok {
@@ -609,7 +603,6 @@ func (c *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 
 		// deprecated and possibly replaced counter
 		if counter.GetChildContentS("is-deprecated") == "true" {
-
 			if r := counter.GetChildContentS("replaced-by"); r != "" {
 				logger.Info(c.Prefix, "replaced deprecated counter [%s] with [%s]", key, r)
 				if !wanted.Has(r) {
@@ -632,7 +625,7 @@ func (c *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 		} else {
 			// add counter as numeric metric
 			old_metrics.Delete(key)
-			if r := c.add_counter(counter, key, display, true); r != "" && !wanted.Has(r) {
+			if r := c.add_counter(counter, key, display, true, counters); r != "" && !wanted.Has(r) {
 				missing.Add(r) // required base counter, missing in template
 				logger.Debug(c.Prefix, "%smarking [%s] as required base counter for [%s]%s", util.Red, r, key, util.End)
 			}
@@ -642,12 +635,11 @@ func (c *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 	// second loop for replaced counters
 	if replaced.Size() > 0 {
 		logger.Debug(c.Prefix, "attempting to retrieve metadata of %d replaced counters", replaced.Size())
-		for _, counter := range counter_elems.GetChildren() {
-			name := counter.GetChildContentS("name")
+		for name, counter := range counters {
 			if replaced.Has(name) {
 				old_metrics.Delete(name)
 				logger.Debug(c.Prefix, "adding [%s] (replacment for deprecated counter)", name)
-				if r:= c.add_counter(counter, name, name, true); r != "" && !wanted.Has(r) {
+				if r:= c.add_counter(counter, name, name, true, counters); r != "" && !wanted.Has(r) {
 					missing.Add(r)  // required base counter, missing in template
 					logger.Debug(c.Prefix, "%smarking [%s] as required base counter for [%s]%s", util.Red, r, name, util.End)
 				}
@@ -658,13 +650,12 @@ func (c *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 	// third loop for required base counters, not in template
 	if missing.Size() > 0 {
 		logger.Debug(c.Prefix, "attempting to retrieve metadata of %d missing base counters", missing.Size())
-		for _, counter := range counter_elems.GetChildren() {
-			name := counter.GetChildContentS("name")
+		for name, counter := range counters {
 			//logger.Debug(c.Prefix, "%shas??? [%s]%s", util.Grey, name, util.End)
 			if missing.Has(name) {
 				old_metrics.Delete(name)
 				logger.Debug(c.Prefix, "adding [%s] (missing base counter)", name)
-				c.add_counter(counter, name, "", false)
+				c.add_counter(counter, name, "", false, counters)
 			}
 		}
 	}
@@ -673,8 +664,8 @@ func (c *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 	// The reason we don't keep a single timestamp for the whole data
 	// is because we might get instances in different batches
 	if !old_metrics.Has("timestamp") {
-		ts := matrix.Metric{Name: "timestamp", Properties: "raw", Size: 1, Enabled: false}
-		if err := c.Data.AddCustomMetric("timestamp", &ts); err != nil {
+		_, err := c.Data.AddMetricExtended("timestamp", "timestamp", "", "raw", false)
+		if err != nil {
 			logger.Error(c.Prefix, "add timestamp metric: %v", err)
 		}
 	}
@@ -713,78 +704,122 @@ func (c *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 	return nil, nil
 }
 
-func (c *ZapiPerf) add_counter(counter *node.Node, name, display string, enabled bool) string {
+func (c *ZapiPerf) add_counter(counter *node.Node, name, display string, enabled bool, cache map[string]*node.Node) string {
 
-	properties := counter.GetChildContentS("properties")
-	base_counter := counter.GetChildContentS("base-counter")
-	unit := counter.GetChildContentS("unit")
+	var properties, base_counter, unit string
+	var err error
+
+	properties = counter.GetChildContentS("properties")
+	base_counter = counter.GetChildContentS("base-counter")
+	unit = counter.GetChildContentS("unit")
+
 	if display == "" {
-		display = strings.ReplaceAll(name, "-", "_") // redundant
+		display = strings.ReplaceAll(name, "-", "_") // redundant for zapiperf
 	}
 	
 	logger.Debug(c.Prefix, "handling counter [%s] with properties [%s] and unit [%s]", name, properties, unit)
 
-	// numerical counter
-
-	// make sure counter is not already in cache
-	// this might happen with base counters that were marked missing
-
-	if m := c.Data.GetMetric(name); m != nil {
-		logger.Debug(c.Prefix, "skipping counter [%s], already in cache", name)
-		return ""
-	}
-
-	m := matrix.Metric{Name: display, Properties: properties, BaseCounter: base_counter, Enabled: enabled}
-
-	// counter type is array
-
+	// counter type is array, each element will be converted to a metric instance
 	if counter.GetChildContentS("type") == "array" {
 
-		//m.IsScalar() = false
+		var labels, base_labels []string
+		var e string
 
-		labels_element := counter.GetChildS("labels")
-		if labels_element == nil {
-			logger.Warn(c.Prefix, "counter [%s] type is array, but subcounters missing", name)
+		if labels, e = parse_array_labels(counter); e != "" {
+			logger.Warn(c.Prefix, "skipping [%s] of type array: %s", name, e)
 			return ""
 		}
 
-		labels := labels_element.GetChildren()
-
-		if len(labels) == 0 || len(labels) > 2 {
-
-			logger.Warn(c.Prefix, "skipping [%s] type array, unexpected (%d) dimensions", name, len(labels))
-			return ""
+		if base_counter != "" {
+			if base, ok := cache[base_counter]; ok {
+				if base.GetChildContentS("type") == "array" {
+					base_labels, e = parse_array_labels(base)
+					if e != "" {
+						logger.Warn(c.Prefix, "skipping [%s], base counter [%s] is array, but %s", name, base_counter, e)
+						return ""
+					} else if len(base_labels) != len(labels) {
+						logger.Warn(c.Prefix, "skipping [%s], array labels does not match with base counter (%s)", name, base_counter)
+						return ""
+					}
+				}
+			} else {
+				logger.Warn(c.Prefix, "skipping [%s], base counter [%s] not found", name, base_counter)
+				return ""
+			}
 		}
-
-		labelsA := node.DecodeHtml(labels[0].GetContentS())
 		
-		if len(labels) == 1 {
+		for i, label := range labels {
 
-			m.Labels = strings.Split(labelsA, ",")
-			m.Dimensions = 1
-			m.Size = len(m.Labels)
+			var m *matrix.Metric
 
-		} else if len(labels) == 2 {
+			key := name + "." + label
 
-			labelsB := node.DecodeHtml(labels[1].GetContentS())
-
-			m.SubLabels = strings.Split(labelsB, ",")
-			m.Dimensions = 2
-			m.Size = len(m.Labels) * len(m.SubLabels)
+			if m = c.Data.GetMetric(key); m != nil {
+				logger.Debug("updating [%s] array metric element", key)
+				m.Name = display
+				m.Properties = properties
+				m.Enabled = enabled
+			// no base counter or base counter is scalar
+			} else if base_counter == "" || len(base_labels) == 0 {
+				m, err = c.Data.AddMetricExtended(key, display, base_counter, properties, enabled)
+			} else {
+				m, err = c.Data.AddMetricExtended(key, display, base_counter + "." + base_labels[i], properties, enabled)
+			}
+			
+			if err != nil {
+				logger.Error(c.Prefix, "add array metric element [%s]: %v", key, err)
+			} else {
+				if x := strings.Split(label, "."); len(x) == 2 {
+					m.Labels.Set("metric", x[0])
+					m.Labels.Set("submetric", x[1])
+				} else {
+					m.Labels.Set("metric", label)
+				}
+				logger.Debug(c.Prefix, "%s+[%s] added array metric (%s), element with label (%s)", util.Pink, name, display, label, util.End)
+			}
 		}
-		logger.Debug(c.Prefix, "%s+[%s] added as array metric (%s)%s", util.Pink, name, display, util.End)
+		// cache labels only when parsing counter was success
+		c.array_labels[name] = labels
 
+	// counter type is scalar
 	} else {
-	// coutner type is scalar
-		m.Size = 1
-		logger.Debug(c.Prefix, "%s+[%s] added as scalar metric (%s)%s", util.Cyan, name, display, util.End)
+		var m *matrix.Metric
+		if m = c.Data.GetMetric(name); m != nil {
+			logger.Debug(c.Prefix, "%s+[%s] updated scalar metric (%s)%s", util.Cyan, name, display, util.End)
+			m.Name = display
+			m.BaseCounter = base_counter
+			m.Properties = properties
+			m.Enabled = enabled
+		} else if _, err = c.Data.AddMetricExtended(name, display, base_counter, properties, enabled); err != nil {
+			logger.Error(c.Prefix, "add scalar metric [%s]: %v", name, err)
+		} else {
+			logger.Debug(c.Prefix, "%s+[%s] added as scalar metric (%s)%s", util.Cyan, name, display, util.End)
+		}
 	}
-
-	if err := c.Data.AddCustomMetric(name, &m); err != nil {
-		logger.Error(c.Prefix, "add metric [%s]: %v", name, err)
-	}
-
 	return base_counter
+}
+
+func parse_array_labels(elem *node.Node) ([]string, string) {
+	var labels []string
+	var msg string
+
+	if x := elem.GetChildS("labels"); x == nil {
+		msg = "array labels missing"
+	} else if d := len(x.GetChildren()); d == 1 {
+		labels = strings.Split( node.DecodeHtml(x.GetChildren()[0].GetContentS()), "," )
+	} else if d == 2 {
+		labelsA := strings.Split( node.DecodeHtml(x.GetChildren()[0].GetContentS()), "," )
+		labelsB := strings.Split( node.DecodeHtml(x.GetChildren()[1].GetContentS()), "," )
+		for _, a := range labelsA {
+			for _, b := range labelsB {
+				labels = append(labels, a + "." + b)
+			}
+		}
+	} else {
+		msg = "unexpected dimensions"
+	}
+
+	return labels, msg
 }
 
 func (c *ZapiPerf) PollInstance() (*matrix.Matrix, error) {
