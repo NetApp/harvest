@@ -3,8 +3,8 @@ collector: Psutil
 object: poller
 
 schedule:
-  - instance: 10s
-  - data: 10s
+  - instance: 30s
+  - data: 15s
 
 counters:
   - status

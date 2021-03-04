@@ -41,7 +41,6 @@ func (m *Matrix) IsEmpty() bool {
 
 
 func (m *Matrix) Clone(copy_data bool) *Matrix {
-    m.PrintDimensions("clone source")
     n := &Matrix{
         Collector      : m.Collector,
         Object         : m.Object,
@@ -63,7 +62,6 @@ func (m *Matrix) Clone(copy_data bool) *Matrix {
             copy(n.Data[i], m.Data[i])
         }
     }
-    n.PrintDimensions("clone result")
     return n
 }
 
