@@ -1,16 +1,16 @@
 package main
 
 import (
-	"os"
 	"path"
 	"strings"
 	"strconv"
-	"errors"
 	"io/ioutil"
 	"goharvest2/share/logger"
 	"goharvest2/share/config"
-	"goharvest2/share/tree"
-	"goharvest2/poller/matrix"
+	"goharvest2/share/tree/node"
+	"goharvest2/share/matrix"
+	"goharvest2/share/errors"
+	"goharvest2/share/dict"
     "goharvest2/poller/collector"
 	"github.com/shirou/gopsutil/process"
 )
@@ -27,6 +27,7 @@ var extractors = map[string]interface{}{
 
 type Psutil struct {
 	*collector.AbstractCollector
+	array_labels map[string][]string
 }
 
 
@@ -40,15 +41,16 @@ func (c *Psutil) Init() error {
         return err
 	}
 
-    if counters := c.Params.GetChild("counters"); counters == nil {
-		return errors.New("Missing counters in template")
-	} else {
+    if counters := c.Params.GetChildS("counters"); counters != nil {
+		c.array_labels = make(map[string][]string)
 		c.load_metrics(counters)
+	} else {
+		return errors.New(errors.MISSING_PARAM, "counters")
 	}
 
 	//c.Data = matrix.New(object, c.Class, "", c.Params.GetChild("export_options"))
 	c.Data.SetGlobalLabel("hostname", c.Options.Hostname)
-	c.Data.SetGlobalLabel("datacenter", c.Params.GetChildValue("datacenter"))
+	c.Data.SetGlobalLabel("datacenter", c.Params.GetChildContentS("datacenter"))
 
 	logger.Info(c.Prefix, "Collector initialized")
 
@@ -58,141 +60,138 @@ func (c *Psutil) Init() error {
 
 func (c *Psutil) PollData() (*matrix.Matrix, error) {
 
-	m := c.Data
-	m.InitData()
+	if err := c.Data.InitData(); err != nil {
+		return nil, err
+	}
 
-	for key, instance := range m.Instances {
-		pid, _ := m.GetInstanceLabel(instance, "pid")
-		poller, _ := m.GetInstanceLabel(instance, "poller")
+	for key, instance := range c.Data.GetInstances() {
+
+		var pid int
+		var err error
+		var proc *process.Process
 
 		// assume not running
 		c.Data.SetValueS("status", instance, float64(1))
 
-		if pid == "" {
-			logger.Debug(c.Prefix, "Skip instance [%s]: not running", key)
+		if instance.Labels.Get("pid") == "" {
+			logger.Debug(c.Prefix, "skip instance [%s]: not running", key)
 			continue
 		}
 
-		pid_i, err := strconv.Atoi(pid)
-		if err != nil {
-			logger.Warn(c.Prefix, "Skip instance [%s], failed convert PID: %v", key, err)
+		if pid, err = strconv.Atoi(instance.Labels.Get("pid")); err != nil {
+			logger.Warn(c.Prefix, "skip instance [%s], invalid PID: %v", key, err)
 			continue
 		}
 
-		proc, err := process.NewProcess(int32(pid_i))
-		if err != nil {
-			logger.Debug(c.Prefix, "Skip instance [%s], proc not found: %v", key, err)
+		if proc, err = process.NewProcess(int32(pid)); err != nil {
+			logger.Debug(c.Prefix, "skip instance [%s], proc not found: %v", key, err)
 			continue
 		}
 
+		poller := instance.Labels.Get("poller")
 		name, _ := proc.Name()
 		cmdline, _ := proc.Cmdline()
 
-		logger.Debug(c.Prefix, "Extracting instance [%s] counters (%s) [%s]\n", key, name, cmdline)
+		logger.Debug(c.Prefix, "parsing instance [%s] process (%s) [%s]\n", key, name, cmdline)
 
 		if !strings.Contains(name, "poller") || !strings.Contains(cmdline, poller) {
-			logger.Debug(c.Prefix, "Skip instance [%s]: PID might have changed")
+			logger.Debug(c.Prefix, "skip instance [%s]: PID might have changed")
 			continue
 		}
 
 		// if we got here poller is running
 		c.Data.SetValueS("status", instance, float64(0))
 
-
-		/*
-		state, err := proc.Status()
-		if err == nil {
-			m.SetInstanceLabel(instance, "state", state)
-		}*/
-
-		cpu, _ := proc.CPUPercent()
-		if err == nil {
-			m.SetValueS("CPUPercent", instance, float64(cpu))
+		if cpu, err := proc.CPUPercent(); err == nil {
+			c.Data.SetValueS("CPUPercent", instance, float64(cpu))
 		}
 
-		mem, _ := proc.MemoryPercent()
-		if err == nil {
-			m.SetValueS("MemoryPercent", instance, float64(mem))
+		if mem, err := proc.MemoryPercent(); err == nil {
+			c.Data.SetValueS("MemoryPercent", instance, float64(mem))
 		}
 
-		create_time, _ := proc.CreateTime()
-		if err == nil {
-			m.SetValueS("CreateTime", instance, float64(create_time))
+		if create_time, err := proc.CreateTime(); err == nil {
+			c.Data.SetValueS("CreateTime", instance, float64(create_time))
 		}
 
-		num_threads, _ := proc.NumThreads()
-		if err == nil {
-			m.SetValueS("NumThreads", instance, float64(num_threads))
+		if num_threads, err := proc.NumThreads(); err == nil {
+			c.Data.SetValueS("NumThreads", instance, float64(num_threads))
 		}
 
-		num_fds, _ := proc.NumFDs()
-		if err == nil {
-			m.SetValueS("NumFDs", instance, float64(num_fds))
+		if num_fds, err := proc.NumFDs(); err == nil {
+			c.Data.SetValueS("NumFDs", instance, float64(num_fds))
 		}
 		
-		children, _ := proc.Children()
-		if err == nil {
-			m.SetValueS("NumChildren", instance, float64(len(children)))
+		if children, err := proc.Children(); err == nil {
+			c.Data.SetValueS("NumChildren", instance, float64(len(children)))
 		}
 		
-		socks, _ := proc.Connections()
-		if err == nil {
-			m.SetValueS("NumSockets", instance, float64(len(socks)))
+		if socks, err := proc.Connections(); err == nil {
+			c.Data.SetValueS("NumSockets", instance, float64(len(socks)))
 		}
 
-		for key, metric := range m.Metrics {
+		for key, labels := range c.array_labels {
 
-			if !metric.Scalar {
-				f, ok := extractors[key]
+			if f, ok := extractors[key]; ok {
 
-				if !ok {
-					continue
+				if values, ok := f.(func(*process.Process)([]float64, bool))(proc); ok {
+					if len(values) != len(labels) {
+						logger.Warn(c.Prefix, "metric [%s] labels don't match with values (%d, but expected %d)", key, len(values), len(labels))
+						continue
+					}
+
+					for i, label := range labels {
+						if m := c.Data.GetMetric(key + "." + label); m != nil {
+							c.Data.SetValue(m, instance, values[i])
+						} else {
+							logger.Error(c.Prefix, "metric [%s.%s] not found in cache", key, label)
+						}
+					}
 				}
-
-				values, ok := f.(func(*process.Process)([]float64, bool))(proc)
-
-				if !ok {
-					continue
-				}
-
-				if len(values) != len(metric.Labels) {
-					logger.Warn(c.Prefix, "Extracted [%s] values (%d) not what expected (%d)", metric.Display, len(values), len(metric.Labels))
-					continue
-				}
-
-				m.SetArrayValues(metric, instance, values)
 			}
 		}
 	}
 	logger.Info(c.Prefix, "Data poll completed!")
-	return m, nil
+	return c.Data, nil
 }
 
-func (c *Psutil) load_metrics(counters *yaml.Node) {
+func (c *Psutil) load_metrics(counters *node.Node) {
 
 	m := c.Data
 
-	for _, child := range counters.Children {
-		name, display := parse_metric_name(child.Name)
+	for _, child := range counters.GetChildren() {
 
-		logger.Debug(c.Prefix, "Parsing [%s] => (%s => %s)", child.Name, name, display)
+		if name := child.GetContentS(); name != "" {
+			key, display := parse_metric_name(name)
+			if _, err := m.AddMetric(key, display, true); err == nil {
+				logger.Debug(c.Prefix, "+ [%s] added metric (%s)", name, display)
+			} else {
+				panic(err)
+			}			
+		} else if name := child.GetNameS(); name != "" {
+			key, display := parse_metric_name(name)
 
-		labels := make([]string, len(child.Values))
-		for i, label := range(child.Values) {
-			_, display := parse_metric_name(label)
-			labels[i] = strings.ToLower(display)
+			if labels := child.GetAllChildContentS(); len(labels) == 0 {
+				logger.Warn(c.Prefix, "[%s] missing labels", key)
+			} else {
+				labels_clean := make([]string, 0, len(labels))
+				for _, x := range(labels) {
+					label, label_display := parse_metric_name(x)
+					labels_clean = append(labels_clean, label)
+					if metric, err := m.AddMetric(key+"."+label, display, true); err == nil {
+						metric.Labels = dict.New()
+						metric.Labels.Set("metric", label_display)
+						logger.Debug(c.Prefix, "+ [%s] added metric (%s) with label (%s)", name, display, label)
+					} else {
+						panic(err)
+					}
+				}
+				c.array_labels[key] = labels_clean
+				logger.Debug(c.Prefix, "add key [%s] with labels [%v]", key, labels_clean)
+			}
+		} else {
+			logger.Warn(c.Prefix, "skipping empty counter")
 		}
-
-		logger.Debug(c.Prefix, "Parsed (%d) labels [%v] => (%d) [%v]", len(child.Values), child.Values, len(labels), labels)
-		
-		m.AddArrayMetric(name, display, labels, true)
-		logger.Debug(c.Prefix, "+ Array metric [%s => %s] with %d labels", name, display, len(labels))
-	}
-
-	for _, value := range counters.Values {
-		name, display := parse_metric_name(value)
-		m.AddMetric(name, display, true)
-		logger.Debug(c.Prefix, "+ Scalar metric [%s => %s]", name, display)
 	}
 
 	//m.AddMetric("status", "status", true) // static metric
@@ -201,12 +200,12 @@ func (c *Psutil) load_metrics(counters *yaml.Node) {
 	m.AddLabel("pid", "")
 	//m.AddLabel("state")
 
-	logger.Info(c.Prefix, "Loaded %d metrics", m.MetricsIndex)
+	logger.Info(c.Prefix, "Loaded %d metrics", m.SizeMetrics())
 }
 
 func parse_metric_name(raw_name string) (string, string) {
 	if items := strings.Split(raw_name, "=>"); len(items) == 2 {
-		return strings.TrimSpace(items[0]), strings.TrimSpace(items[1])
+		return strings.TrimSpace(items[0]), strings.ToLower(strings.TrimSpace(items[1]))
 	}
 	return raw_name, raw_name
 }
@@ -215,7 +214,7 @@ func (c *Psutil) PollInstance() (*matrix.Matrix, error) {
 
 	c.Data.ResetInstances()
 
-	poller_names, err := config.GetPollerNames(c.Options.ConfPath, "harvest.yml")
+	poller_names, err := config.GetPollerNames(path.Join(c.Options.ConfPath, "harvest.yml"))
 	if err != nil {
 		return nil, err
 	}

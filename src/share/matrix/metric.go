@@ -2,7 +2,8 @@ package matrix
 
 import (
 	"fmt"
-	"goharvest2/share/errors"
+	//"goharvest2/share/errors"
+	"goharvest2/share/dict"
 )
 
 // Metric struct and related methods
@@ -17,8 +18,7 @@ type Metric struct {
 	BaseCounter string
 	/* fields for Array counters */
 	Dimensions int
-	Labels []string
-	SubLabels []string
+	Labels *dict.Dict
 }
 
 func (m *Metric) IsScalar() bool {
@@ -42,16 +42,13 @@ func (m *Matrix) add_metric(key string, metric *Metric) error {
 		//return errors.New(errors.MATRIX_HASH, "metric [" + key + "] already in cache")
 		panic("metric [" + key + "] already in cache")
 	}
-	metric.Index = m.MetricsIndex
+	metric.Index = m.SizeMetrics()
 	m.Metrics[key] = metric
-	m.MetricsIndex += metric.Size
 
 	if ! m.IsEmpty() {
-		for i:=metric.Index; i<m.MetricsIndex; i+=1 {
-			m.Data = append(m.Data, make([]float64, len(m.Instances)))
-			for j:=0; j<len(m.Instances); j+=1 {
-				m.Data[i][j] = NAN
-			}
+		m.Data = append(m.Data, make([]float64, m.SizeInstances()))
+		for j:=0; j<m.SizeInstances(); j+=1 {
+			m.Data[metric.Index][j] = NAN
 		}
 	}
 
@@ -64,6 +61,13 @@ func (m *Matrix) AddMetric(key, name string, enabled bool) (*Metric, error) {
 	return metric, m.add_metric(key, metric)
 }
 
+func (m *Matrix) AddMetricExtended(key, name, base, properties string, enabled bool) (*Metric, error) {
+	metric := &Metric{Name: name, Enabled: enabled, Size: 1, BaseCounter: base, Properties: properties}
+	metric.Labels = dict.New()
+	return metric, m.add_metric(key, metric)
+}
+
+/*
 // Create 1D Array Matric
 func (m *Matrix) AddArrayMetric(key, name string, labels []string, enabled bool) (*Metric, error) {
 	metric := &Metric{Name: name, Labels: labels, Enabled: enabled, Dimensions: 1, Size: len(labels)}
@@ -83,4 +87,4 @@ func (m *Matrix) AddCustomMetric(key string, metric *Metric) error {
 	}
 	return m.add_metric(key, metric)
 }
-
+*/

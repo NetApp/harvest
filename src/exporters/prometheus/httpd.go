@@ -74,7 +74,7 @@ func (e *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 				} else {
 					array_metric := fmt.Sprintf(metric_template, obj + "_" + metric.Name)
 					array_metric += "\n<ul>"
-					for _, label := range metric.Labels {
+					for _, label := range metric.Labels.Iter() {
 						array_metric += "\n" + fmt.Sprintf(metric_template, label)
 					}
 					array_metric += "\n</ul>"

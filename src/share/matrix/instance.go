@@ -22,7 +22,7 @@ func (m *Matrix) AddInstance(key string) (*Instance, error) {
 	m.Instances[key] = i
 
 	if !m.IsEmpty() {
-		for i:=0; i<m.MetricsIndex; i+=1 {
+		for i:=0; i<m.SizeMetrics(); i+=1 {
 			m.Data[i] = append(m.Data[i], NAN)
 		}
 	}

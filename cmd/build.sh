@@ -260,11 +260,11 @@ fi
 if [ $all == true ] || [ $poller == true ]; then
     cd src/poller/
     go build -o ../../bin/poller
-    cd ../../
     if [ $? -eq 0 ]; then
         info "compiled: /bin/poller"
     else
         error "compilation failed"
         exit 1
     fi
+    cd ../../
 fi

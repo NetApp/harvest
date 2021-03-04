@@ -1,9 +1,7 @@
 package matrix
 
 import (
-	//"fmt"
     "math"
-    "strings"
     "strconv"
     "goharvest2/share/tree/node"
 	"goharvest2/share/errors"
@@ -20,7 +18,6 @@ type Matrix struct {
 	Labels *dict.Dict
     Instances map[string]*Instance
 	Metrics map[string]*Metric
-	MetricsIndex int  // since some metrics are arrays and we can't relay on len(Metrics)
     InstanceKeys [][]string  // @TODO deprecate, doesn't belong here
 	ExportOptions *node.Node
     Data [][]float64
@@ -30,7 +27,7 @@ type Matrix struct {
 }
 
 func New(collector, object, plugin string) *Matrix {
-    m := Matrix{Collector: collector, Object: object, Plugin: plugin, MetricsIndex: 0 }
+    m := Matrix{Collector: collector, Object: object, Plugin: plugin }
     m.GlobalLabels = dict.New()
     m.Labels = dict.New()
     m.Instances = map[string]*Instance{}
@@ -42,7 +39,8 @@ func (m *Matrix) IsEmpty() bool {
     return len(m.Data) == 0
 }
 
-func (m *Matrix) Clone() *Matrix {
+
+func (m *Matrix) Clone(copy_data bool) *Matrix {
     n := &Matrix{
         Collector      : m.Collector,
         Object         : m.Object,
@@ -50,7 +48,6 @@ func (m *Matrix) Clone() *Matrix {
         Instances      : m.Instances,
         InstanceKeys   : m.InstanceKeys,
         Metrics        : m.Metrics,
-        MetricsIndex   : m.MetricsIndex,
         GlobalLabels   : m.GlobalLabels,
         Labels         : m.Labels,
         ExportOptions  : m.ExportOptions,
@@ -58,10 +55,10 @@ func (m *Matrix) Clone() *Matrix {
         MetadataType   : m.MetadataType,
         MetadataObject : m.MetadataObject,
     }
-    n.Data = make([][]float64, n.MetricsIndex)
-    if !m.IsEmpty() {
-        for i:=0; i<n.MetricsIndex; i+=1 {
-            n.Data[i] = make([]float64, len(n.Instances))
+    if copy_data && !m.IsEmpty() {
+        n.Data = make([][]float64, n.SizeMetrics())
+        for i:=0; i<n.SizeMetrics(); i+=1 {
+            n.Data[i] = make([]float64, n.SizeInstances())
             copy(n.Data[i], m.Data[i])
         }
     }
@@ -69,16 +66,13 @@ func (m *Matrix) Clone() *Matrix {
 }
 
 func (m *Matrix) InitData() error {
-    var x, y, i, j int
-	x = m.MetricsIndex
-	y = len(m.Instances)
-	if x == 0 || y == 0 {
+	if m.SizeMetrics() == 0 || m.SizeInstances() == 0 {
 		return errors.New(errors.MATRIX_EMPTY, "counter or instance cache empty")
 	}
-    m.Data = make([][]float64, x)
-	for i=0; i<x; i+=1 {
-		m.Data[i] = make([]float64, y)
-		for j=0; j<y; j+=1 {
+    m.Data = make([][]float64, m.SizeMetrics())
+	for i:=0; i<m.SizeMetrics(); i+=1 {
+		m.Data[i] = make([]float64, m.SizeInstances())
+		for j:=0; j<m.SizeInstances(); j+=1 {
 			m.Data[i][j] = NAN
 		}
 	}
@@ -89,19 +83,20 @@ func (m *Matrix) RemoveMetric(key string) {
     if metric, ok := m.Metrics[key]; ok {
         delete(m.Metrics, key)
         if !m.IsEmpty() {
-            if len(m.Data) > metric.Size && m.MetricsIndex > metric.Index+metric.Size {
-                for i := metric.Index; i + metric.Size < m.MetricsIndex; i += 1 {
-                    m.Data[i] = m.Data[i+metric.Size]
+            // re-arrange rows, if metric is not last/only row
+            if len(m.Data) > metric.Index+1 {
+                for i := metric.Index; i < m.SizeMetrics(); i += 1 {
+                    m.Data[i] = m.Data[i+1]
                 }
             }
-            m.Data = m.Data[:len(m.Data)-metric.Size]
+            m.Data = m.Data[:len(m.Data)-1]
         }
+        // re-assign indices to other metrics
         for _, other := range m.GetMetrics() {
             if other.Index > metric.Index {
-                other.Index -= metric.Size
+                other.Index -= 1
             }
         }
-        m.MetricsIndex -= metric.Size
     }
 }
 
@@ -109,13 +104,15 @@ func (m *Matrix) RemoveInstance(key string) {
     if instance, ok := m.Instances[key]; ok {
         delete(m.Instances, key)
         if !m.IsEmpty() {
-            for i := 0; i < m.MetricsIndex; i += 1 {
-                for j := instance.Index; j < len(m.Instances) - 1; j += 1 {
+            // re-arrange columns
+            for i := 0; i < m.SizeMetrics(); i += 1 {
+                for j := instance.Index; j < m.SizeInstances(); j += 1 {
                     m.Data[i][j] = m.Data[i][j+1]
                 }
-                m.Data[i] = m.Data[i][:len(m.Instances)]
+                m.Data[i] = m.Data[i][:m.SizeInstances()]
             }
         }
+        // re-assign indices to other instances
         for _, other := range m.Instances {
             if other.Index > instance.Index {
                 other.Index -= 1
@@ -129,7 +126,7 @@ func (m *Matrix) RemoveLabel(key string) {
 }
 
 func (m *Matrix) SizeMetrics() int {
-    return len(m.Metrics) // or MetricsIndex??
+    return len(m.Metrics)
 }
 
 func (m *Matrix) SizeLabels() int {
@@ -205,33 +202,6 @@ func (m *Matrix) SetValueSS(metric_key, instance_key string, value float64) {
     }
 }
 
-func (m *Matrix) SetArrayValues(metric *Metric, instance *Instance, values []float64) {
-    for i:=0; i<len(metric.Labels); i+=1 {
-        m.Data[metric.Index+i][instance.Index] = values[i]        
-    }
-}
-
-func (m *Matrix) SetArrayValuesString(metric *Metric, instance *Instance, values []string) error {
-    var ok bool
-
-    numeric := make([]float64, 0, len(values))
-    for _, v := range values {
-        if n, err := strconv.ParseFloat(v, 32); err == nil {
-            numeric = append(numeric, float64(n))
-            ok = true // at least one parsed
-        } else {
-            numeric = append(numeric, NAN)
-        }
-    }
-
-    m.SetArrayValues(metric, instance, numeric)
-
-    if ok {
-        return nil
-    }
-    return errors.New(errors.MATRIX_PARSE_STR, "no number parsed from: [" + strings.Join(values, ", ") + "]")
-}
-
 func (m *Matrix) GetValue(metric *Metric, instance *Instance) (float64, bool) {
 	var value float64
 	value = m.Data[metric.Index][instance.Index]
@@ -246,16 +216,7 @@ func (m *Matrix) GetValueS(key string, instance *Instance) (float64, bool) {
     return NAN, false
 }
 
-
-func (m *Matrix) GetArrayValues(metric *Metric, instance *Instance) []float64 {
-    values := make([]float64, len(metric.Labels))
-    for i:=0; i<len(metric.Labels); i+=1 {
-        values[i] = m.Data[metric.Index+i][instance.Index]
-    }
-    return values
-}
-
-// if name is empty, key will be used as name
+// if name is empty, key will be used as display name
 func (m *Matrix) AddLabel(key, name string) {
     if name != "" {
         m.Labels.Set(key, name)
