@@ -33,7 +33,7 @@ func fetch_names(instance *matrix.Instance) (string, string, string, string) {
 
 func (p *FlexGroup) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
-	n := data.Clone()
+	n := data.Clone(false)
 	n.Plugin = p.Name
 	n.ResetInstances()
 

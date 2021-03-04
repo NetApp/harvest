@@ -161,7 +161,7 @@ if [ $all == true ] || [ $harvest == true ]; then
     cp grafana/grafana.py ../../bin/grafanatool
     info "copied /bin/grafanatool"
 
-    cd ../
+    cd ../../
 fi
 
 # compile collector(s)

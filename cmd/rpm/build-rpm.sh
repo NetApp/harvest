@@ -24,11 +24,7 @@ cp -r "$SRC/ReadMe.md" "$BUILD/harvest/"
 # build binaries
 alert "building binaries"
 cd "$BUILD/harvest"
-./cmd/build.sh harvest
-./cmd/build.sh collector zapi
-./cmd/build.sh collector zapiperf
-./cmd/build.sh exporter prometheus
-./cmd/build.sh poller
+./cmd/build.sh all
 if [ ! $? -eq 0 ]; then
     error "compiling binaries, failed, aborting"
     exit 1
