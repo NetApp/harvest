@@ -261,7 +261,6 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 		}
 
 		logger.Info(c.Prefix, "exporting collected (%d) data", len(results))
-		c.Metadata.Print()
 
 		// @TODO better handling when exporter is standby/failed state
 		for _, e := range c.Exporters {
