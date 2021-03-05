@@ -5,6 +5,7 @@ import (
 	"sync"
 	"os"
 	"os/signal"
+	"os/exec"
 	"syscall"
 	"strconv"
 	"path"
@@ -14,6 +15,7 @@ import (
     "goharvest2/share/util"
     "goharvest2/share/config"
     "goharvest2/share/errors"
+    "goharvest2/share/matrix"
 	"goharvest2/share/tree/node"
 	"goharvest2/poller/schedule"
 	"goharvest2/poller/collector"
@@ -31,6 +33,7 @@ var SIGNALS = []os.Signal{
 type Poller struct {
 	Name string
 	prefix string
+	target string
 	options *options.Options
 	pid int
 	pidf string
@@ -39,7 +42,8 @@ type Poller struct {
 	exporters []exporter.Exporter
 	exporter_params *node.Node
 	params *node.Node
-	//metadata *metadata.Metadata
+	metadata *matrix.Matrix
+	status *matrix.Matrix
 }
 
 func New() *Poller {
@@ -90,10 +94,47 @@ func (p *Poller) Init() error {
 		logger.Info(p.prefix, "Starting in foreground [pid=%d] [pid file=%s]", p.pid, p.pidf)
 	}
 
+	logger.Info(p.prefix, "importing config [%s]", p.options.Config)
 	// Load poller parameters and exporters from config
 	if p.params, err = config.GetPoller(p.options.Config, p.Name); err != nil {
 		logger.Error(p.prefix, "read config: %v", err)
 		return err
+	}
+
+	if p.target = p.params.GetChildContentS("addr"); p.target == "" {
+		p.target = "localhost"
+	}
+
+	// metadata for collectors and exporters
+	p.metadata = matrix.New("poller", "compontent", "metadata")
+	p.metadata.AddMetric("status", "status", true)
+	p.metadata.AddMetric("count", "count", true)
+	p.metadata.SetGlobalLabel("poller", p.Name)
+	p.metadata.SetGlobalLabel("version", p.options.Version)
+	p.metadata.SetGlobalLabel("hostname", p.options.Hostname)
+	p.metadata.AddLabel("type", "type")
+	p.metadata.AddLabel("name", "name")
+	p.metadata.AddLabel("target", "target")
+	p.metadata.AddLabel("reason", "reason")
+	p.metadata.IsMetadata = true
+	p.metadata.MetadataType = "component"
+	p.metadata.ExportOptions = matrix.DefaultExportOptions()
+
+	// metadata for target system
+	p.status = matrix.New("poller", "target", "metadata")
+	p.status.AddMetric("status", "status", true)
+	p.status.AddMetric("ping", "ping", true)
+	p.status.AddLabel("addr", "addr")
+	instance, err := p.status.AddInstance("host")
+	instance.Labels.Set("addr", p.target)
+	p.status.SetGlobalLabel("poller", p.Name)
+	p.status.SetGlobalLabel("version", p.options.Version)
+	p.status.SetGlobalLabel("hostname", p.options.Hostname)
+	p.status.IsMetadata = true
+	p.status.MetadataType = "target"
+	p.status.ExportOptions = matrix.DefaultExportOptions()
+	if err = p.status.InitData(); err != nil {
+		panic(err)
 	}
 
 	// Prometheus port used to be defined in the exporter parameters as a range
@@ -127,6 +168,11 @@ func (p *Poller) Init() error {
 		logger.Warn(p.prefix, "No exporters initialized, continuing without exporters")
 	} else {
 		logger.Debug(p.prefix, "Initialized %d exporters", len(p.exporters))
+	}
+
+	// init metadata, after collectors/exporters are added
+	if err := p.metadata.InitData(); err != nil {
+		panic(err)
 	}
 
 	//@todo interval from config
@@ -213,9 +259,21 @@ func (p *Poller) load_collector(class, object string) error {
 			}
 		}
 	}
+
+	// update metadata
+	for _, c := range subcollectors {
+		name := c.GetName()
+		target := c.GetObject()
+		if instance, err := p.metadata.AddInstance(name + "." + target); err != nil {
+			panic(err)
+		} else {
+			instance.Labels.Set("type", "collector")
+			instance.Labels.Set("name", name)
+			instance.Labels.Set("target", target)
+		}
+	}
 	return nil
 }
-
 
 func (p *Poller) get_exporter(name string) exporter.Exporter {
 	for _, exp := range p.exporters {
@@ -270,6 +328,15 @@ func (p *Poller) load_exporter(name string) exporter.Exporter {
 
 	p.exporters = append(p.exporters, e)
 	logger.Info(p.prefix, "Initialized exporter [%s]", name)
+
+	// update metadata
+	if instance, err := p.metadata.AddInstance(e.GetClass() + "." + e.GetName()); err != nil {
+		panic(err)
+	} else {
+		instance.Labels.Set("type", "exporter")
+		instance.Labels.Set("name", e.GetClass())
+		instance.Labels.Set("target", e.GetName())
+	}
 	return e
 	
 }
@@ -318,6 +385,20 @@ func (p *Poller) Stop() {
 	}
 }
 
+func (p *Poller) ping() (float64, bool) {
+	cmd := exec.Command("ping", p.target, "-w", "5", "-c", "1", "-q")
+	if out, err := cmd.Output(); err == nil {
+		if x := strings.Split(string(out), "mdev = "); len(x) > 1 {
+			if y := strings.Split(x[len(x)-1], "/"); len(y) > 1 {
+				if p, err := strconv.ParseFloat(y[0], 32); err == nil {
+					return p, true
+				}
+			}
+		}
+	}
+	return float64(0), false
+}
+
 func (p *Poller) selfMonitor() {
 
 	task, _ := p.schedule.GetTask("poller")
@@ -328,14 +409,39 @@ func (p *Poller) selfMonitor() {
 
 			task.Start()
 
+			if err := p.status.InitData(); err != nil {
+				panic(err)
+			}
+
+			if ping, ok := p.ping(); ok {
+				p.status.SetValueSS("status", "host", float64(0))
+				p.status.SetValueSS("ping", "host", ping)
+			} else {
+				p.status.SetValueSS("status", "host", float64(1))
+			}
+
 			up_collectors := 0
 			up_exporters := 0
+
+			if err := p.metadata.InitData(); err != nil {
+				panic(err)
+			}
 
 			for _, c := range p.collectors {
 				code, status, msg := c.GetStatus()
 				logger.Debug(p.prefix, "status of collector [%s]: %d (%s) %s", c.GetName(), code, status, msg)
 				if code == 1 {
 					up_collectors += 1
+				}
+
+				if instance := p.metadata.GetInstance(c.GetName() + "." + c.GetObject()); instance == nil {
+					panic("collector metadata instance")
+				} else {
+					p.metadata.SetValueS("count", instance, float64(c.GetCount()))
+					p.metadata.SetValueS("status", instance, float64(code))
+					if msg != "" {
+						instance.Labels.Set("reason", msg)
+					}
 				}
 			}
 
@@ -344,6 +450,25 @@ func (p *Poller) selfMonitor() {
 				logger.Debug(p.prefix, "status of exporter [%s]: %d (%s) %s", e.GetName(), code, status, msg)
 				if code == 1 {
 					up_exporters += 1
+				}
+				if instance := p.metadata.GetInstance(e.GetClass() + "." + e.GetName()); instance == nil {
+					panic("exporter metadata instance")
+				} else {
+					p.metadata.SetValueS("count", instance, float64(e.GetCount()))
+					p.metadata.SetValueS("status", instance, float64(code))
+					if msg != "" {
+						instance.Labels.Set("reason", msg)
+					}
+				}
+			}
+
+			// @TODO implement "master" exporter
+			for _, e := range p.exporters {
+				if err := e.Export(p.metadata); err != nil {
+					panic(err)
+				}
+				if err := e.Export(p.status); err != nil {
+					panic(err)
 				}
 			}
 

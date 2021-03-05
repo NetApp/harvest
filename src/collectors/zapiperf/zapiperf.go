@@ -176,7 +176,6 @@ func (c *ZapiPerf) loadParamInt(name string, default_value int) int {
 func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 
 	var err error
-
 	logger.Debug(c.Prefix, "Updating data cache")
 
 	NewData := c.Data.Clone(false)
@@ -190,9 +189,9 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 	}
 
 	// for updating metadata
+	count := 0
 	batch_count := 0
-	data_count := 0
-	response_d := time.Duration(0 * time.Second)
+	api_d := time.Duration(0 * time.Second)
 	parse_d := time.Duration(0 * time.Second)
 
 	// determine what will serve as instance key (either "uuid" or "instance")
@@ -257,7 +256,7 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 			return nil, err
 		}
 
-		response_d += rd
+		api_d += rd
 		parse_d += pd
 		batch_count += 1
 
@@ -317,7 +316,6 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 				if _, has := NewData.GetLabel(name); has { // @TODO implement
 					NewData.SetInstanceLabel(instance, name, value)
 					logger.Debug(c.Prefix, "+ label data [%s= %s%s%s]", name, util.Yellow, value, util.End)
-					data_count += 1
 					continue
 				}
 
@@ -343,6 +341,7 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 								logger.Error(c.Prefix, "set metric [%s] with value [%s]: %v", key, values[i], e)
 							} else {
 								logger.Debug(c.Prefix, "+ data [%s] = [%s%s%s]", key, util.Pink, values[i], util.End)
+								count += 1
 							}
 						} else {
 							logger.Error(c.Prefix, "metric [%s] not in cache, skip", key, value)
@@ -355,6 +354,7 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 							logger.Error(c.Prefix, "set metric [%s] with value [%s]: %v", name, value, e)
 						} else {
 							logger.Debug(c.Prefix, "+ data [%s] = [%s%s%s]", name, util.Cyan, value, util.End)
+							count += 1
 						}
 					} else {
 						logger.Error(c.Prefix, "metric [%s] not in cache, skip", name, value)
@@ -366,24 +366,18 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 
 	// terminate if serious errors
 	// @TODO handle...
+
 	if err != nil {
 		return nil, err
 	}
 
 	// update metadata
-	c.Metadata.SetValueSS("response_time", "data", float64(response_d.Seconds()) / float64(batch_count))
-	c.Metadata.SetValueSS("parse_time", "data", float64(parse_d.Seconds()) / float64(batch_count))
-	c.Metadata.SetValueSS("count", "data", float64(data_count))
+	c.Metadata.SetValueSS("api_time", "data", float64(api_d.Microseconds()))
+	c.Metadata.SetValueSS("parse_time", "data", float64(parse_d.Microseconds()))
+	c.Metadata.SetValueSS("count", "data", float64(count))
+	c.AddCount(count)
 
-	logger.Debug(c.Prefix, "collected data: %d batch polls, %d data points", batch_count, data_count)
-
-	// fmt.Println()
-	// fmt.Println()
-	//for _, m := range NewData.GetMetrics() {
-	//	print_vector(fmt.Sprintf("%s(%d) %s%s%s", util.Grey, m.Index, util.Cyan, m.Name, util.End), NewData.Data[m.Index])
-	//}
-	// fmt.Println()
-	// fmt.Println()
+	logger.Debug(c.Prefix, "collected data: %d batch polls, %d data points", batch_count, count)
 
 	// skip calculating from delta if no data from previous poll
 	if c.Data.IsEmpty()  {
@@ -394,6 +388,8 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 
 	logger.Debug(c.Prefix, "starting delta calculations from previous poll")
 	logger.Debug(c.Prefix, "data has dimensions (%d x %d)", len(NewData.Data), len(NewData.Data[0]))
+
+	calc_start := time.Now()
 
 	// cache data, to store after calculations
 	CachedData := NewData.Clone(true)
@@ -445,6 +441,7 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 		}
 	}
 
+	c.Metadata.SetValueSS("calc_time", "data", float64(time.Since(calc_start).Microseconds()))
 	// store cache for next poll
 	c.Data = CachedData
 	//c.Data.IsEmpty = false // @redundant

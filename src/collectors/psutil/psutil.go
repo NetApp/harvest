@@ -60,6 +60,10 @@ func (c *Psutil) Init() error {
 
 func (c *Psutil) PollData() (*matrix.Matrix, error) {
 
+	var count int
+
+	count = 0
+
 	if err := c.Data.InitData(); err != nil {
 		return nil, err
 	}
@@ -104,30 +108,37 @@ func (c *Psutil) PollData() (*matrix.Matrix, error) {
 
 		if cpu, err := proc.CPUPercent(); err == nil {
 			c.Data.SetValueS("CPUPercent", instance, float64(cpu))
+			count += 1
 		}
 
 		if mem, err := proc.MemoryPercent(); err == nil {
 			c.Data.SetValueS("MemoryPercent", instance, float64(mem))
+			count += 1
 		}
 
 		if create_time, err := proc.CreateTime(); err == nil {
 			c.Data.SetValueS("CreateTime", instance, float64(create_time))
+			count += 1
 		}
 
 		if num_threads, err := proc.NumThreads(); err == nil {
 			c.Data.SetValueS("NumThreads", instance, float64(num_threads))
+			count += 1
 		}
 
 		if num_fds, err := proc.NumFDs(); err == nil {
 			c.Data.SetValueS("NumFDs", instance, float64(num_fds))
+			count += 1
 		}
 		
 		if children, err := proc.Children(); err == nil {
 			c.Data.SetValueS("NumChildren", instance, float64(len(children)))
+			count += 1
 		}
 		
 		if socks, err := proc.Connections(); err == nil {
 			c.Data.SetValueS("NumSockets", instance, float64(len(socks)))
+			count += 1
 		}
 
 		for key, labels := range c.array_labels {
@@ -143,6 +154,7 @@ func (c *Psutil) PollData() (*matrix.Matrix, error) {
 					for i, label := range labels {
 						if m := c.Data.GetMetric(key + "." + label); m != nil {
 							c.Data.SetValue(m, instance, values[i])
+							count += 1
 						} else {
 							logger.Error(c.Prefix, "metric [%s.%s] not found in cache", key, label)
 						}
@@ -151,7 +163,8 @@ func (c *Psutil) PollData() (*matrix.Matrix, error) {
 			}
 		}
 	}
-	logger.Info(c.Prefix, "Data poll completed!")
+	c.AddCount(count)
+	logger.Info(c.Prefix, "Data poll completed! Added %d data points", count)
 	return c.Data, nil
 }
 

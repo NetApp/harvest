@@ -2,6 +2,7 @@ package collector
 
 import (
 	"sync"
+	"sync/atomic"
 	"strings"
 	"strconv"
 	"path"
@@ -27,6 +28,8 @@ type Collector interface {
 	GetObject() string
 	GetParams() *node.Node
 	GetOptions() *options.Options
+	GetCount() uint64
+	AddCount(int)
 	GetStatus() (int, string, string)
 	SetStatus(int, string)
 	SetSchedule(*schedule.Schedule)
@@ -37,8 +40,7 @@ type Collector interface {
 	LoadPlugins(*node.Node) error
 }
 
-var CollectorStatus = [4]string{
-	"undefined",
+var CollectorStatus = [3]string{
 	"up",
 	"standby",
 	"failed",
@@ -50,6 +52,7 @@ type AbstractCollector struct {
 	Object string
 	Status int
 	Message string
+	Count uint64
 	Options *options.Options
 	Params *node.Node
 	Schedule *schedule.Schedule
@@ -131,7 +134,7 @@ func Init(c Collector) error {
 	}
 
 	/* Initialize metadata */
-	md := matrix.New(name, object, "")
+	md := matrix.New(name, object, "metadata")
 	md.IsMetadata = true
 	md.MetadataType = "collector"
 	md.MetadataObject = "task"
@@ -166,7 +169,7 @@ func Init(c Collector) error {
 	}
 
 	c.SetMetadata(md)
-	c.SetStatus(1, "")
+	c.SetStatus(0, "initialized")
 
 	return nil
 }
@@ -178,10 +181,13 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 	// keep track of connection errors
 	// to increment time before retry
 	retry_delay := 1
+	c.SetStatus(0, "running")
 
 	for {
 
-		c.Metadata.InitData() // @TODO handle err (can occur if collector messed up)
+		if err := c.Metadata.InitData(); err != nil { // can occur if collector messed up
+			panic(err)
+		}
 
 		results := make([]*matrix.Matrix, 0)
 
@@ -206,31 +212,35 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 						logger.Error(c.Prefix, "target system unreachable, entering standby mode (retry to connect in %d s)", retry_delay)
 					}
 					c.Schedule.SetStandByMode(task.Name, time.Duration(retry_delay) * time.Second)
-					c.SetStatus(2, err.Error())
+					c.SetStatus(1, errors.ERR_CONNECTION)
 				case errors.IsErr(err, errors.ERR_NO_INSTANCE):
 					c.Schedule.SetStandByMode(task.Name, 5 * time.Minute)
-					c.SetStatus(2, err.Error())
+					c.SetStatus(1, errors.ERR_NO_INSTANCE)
 					logger.Error(c.Prefix, "no [%s] instances on system, entering standby mode", c.Object)
 				case errors.IsErr(err, errors.ERR_NO_METRIC):
-					c.SetStatus(2, err.Error())
+					c.SetStatus(1, errors.ERR_NO_METRIC)
 					c.Schedule.SetStandByMode(task.Name, 1 * time.Hour)
 					logger.Error(c.Prefix, "no [%s] metrics on system, entering standby mode", c.Object)
 				default:
 					// enter failed state
-					c.SetStatus(3, err.Error())
 					logger.Error(c.Prefix, err.Error())
+					if errmsg := errors.GetClass(err); errmsg != "" {
+						c.SetStatus(2, errmsg)
+					} else {
+						c.SetStatus(2, err.Error())
+					}
 					return
 				}
 				// don't continue on errors
 				break
 			} else if c.Schedule.IsStandBy() {
 				// recover from standby mode
-				c.SetStatus(1, "")
 				c.Schedule.Recover()
+				c.SetStatus(0, "running")
 				logger.Info(c.Prefix, "recovered from standby mode, back to normal schedule")
 			}
 
-			c.Metadata.SetValueSS("poll_time", task.Name, float64(task.Runtime().Seconds()))
+			c.Metadata.SetValueSS("poll_time", task.Name, float64(task.Runtime().Microseconds()))
 
 			if data != nil {
 				results = append(results, data)
@@ -250,15 +260,20 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 			}
 		}
 
-		logger.Debug(c.Prefix, "exporting collected (%d) data", len(results))
+		logger.Info(c.Prefix, "exporting collected (%d) data", len(results))
+		c.Metadata.Print()
 
 		// @TODO better handling when exporter is standby/failed state
 		for _, e := range c.Exporters {
-			if status, _, _ := e.GetStatus(); status != 1 {
+			if status, _, _ := e.GetStatus(); status != 0 {
 				logger.Warn(c.Prefix, "exporter [%s] down, skipping export", e.GetName())
-			} else if err := e.Export(c.Metadata); err != nil {
+				continue
+			} 
+			
+			if err := e.Export(c.Metadata); err != nil {
 				logger.Warn(c.Prefix, "export metadata to [%s]: %s", e.GetName(), err.Error())
 			}
+			
 			// continue if metadata failed, since it might be specific to metadata
 			for _, data := range results {
 				if err := e.Export(data); err != nil {
@@ -279,6 +294,16 @@ func (c *AbstractCollector) GetName() string {
 
 func (c *AbstractCollector) GetObject() string {
 	return c.Object
+}
+
+func (c *AbstractCollector) GetCount() uint64 {
+	count := c.Count
+	atomic.StoreUint64(&c.Count, 0)
+	return count
+}
+
+func (c *AbstractCollector) AddCount(n int) {
+	atomic.AddUint64(&c.Count, uint64(n))
 }
 
 func (c *AbstractCollector) GetStatus() (int, string, string) {

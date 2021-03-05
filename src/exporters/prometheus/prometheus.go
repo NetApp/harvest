@@ -8,6 +8,7 @@ import (
     "goharvest2/share/logger"
     "goharvest2/share/matrix"
     "goharvest2/share/errors"
+    "goharvest2/share/util"
     "goharvest2/poller/exporter"
 )
 
@@ -73,16 +74,17 @@ func (e *Prometheus) Export(data *matrix.Matrix) error {
 	}
     key := data.Collector + "." + data.Plugin + "." + data.Object
     if data.IsMetadata {
-        key = data.MetadataType + "." + data.MetadataObject + "." + key
+        key += "." + data.MetadataType + "." + data.MetadataObject
     }
     delete(e.cache, key)
     e.cache[key] = data
-    logger.Debug(e.Prefix, "added to cache with key [%s]", key)
+    logger.Info(e.Prefix, "added to cache with key [%s%s%s%s]", util.Bold, util.Red, key, util.End)
 
     return nil
 }
 
 func (e *Prometheus) Render(data *matrix.Matrix) ([][]byte, error) {
+    var count int
     var rendered [][]byte
     var labels_to_include, keys_to_include, global_labels []string
     var object, prefix string
@@ -185,15 +187,18 @@ func (e *Prometheus) Render(data *matrix.Matrix) ([][]byte, error) {
                     }
                     x := fmt.Sprintf("%s_%s{%s,%s} %f", prefix, metric.Name, strings.Join(instance_keys, ","), strings.Join(metric_labels, ","), value)
                     rendered = append(rendered, []byte(x))
+                    count += 1
                 } else {
                     x := fmt.Sprintf("%s_%s{%s} %f", prefix, metric.Name, strings.Join(instance_keys, ","), value) 
                     rendered = append(rendered, []byte(x))
+                    count += 1
                 }
             } else {
                 logger.Debug(e.Prefix, "skipped: no data value")
             }
         }
     }
+    e.AddCount(count)
     logger.Debug(e.Prefix, "rendered %d data points for [%s] %d instances", len(rendered), object, len(data.Instances))
     return rendered, nil
 }

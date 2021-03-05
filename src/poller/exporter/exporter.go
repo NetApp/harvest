@@ -2,6 +2,7 @@ package exporter
 
 import (
 	"sync"
+	"sync/atomic"
 	"strconv"
 	"goharvest2/share/tree/node"
 	"goharvest2/share/matrix"
@@ -13,12 +14,13 @@ type Exporter interface {
 	Init() error
 	GetClass() string
 	GetName() string
+	GetCount() uint64
+	AddCount(int)
 	GetStatus() (int, string, string)
 	Export(*matrix.Matrix) error
 }
 
-var ExporterStatus = [4]string{
-	"undefined",
+var ExporterStatus = [3]string{
 	"up",
 	"standby",
 	"failed",
@@ -30,6 +32,7 @@ type AbstractExporter struct {
 	Prefix string
 	Status int
 	Message string
+	Count uint64
 	Options *options.Options
 	Params *node.Node
 	Metadata *matrix.Matrix
@@ -78,10 +81,9 @@ func (e *AbstractExporter) InitAbc() error {
 		return err
 	}
 
-	e.SetStatus(1, "")
+	e.SetStatus(0, "initialized")
 	return nil
 }
-
 
 func (e *AbstractExporter) GetClass() string {
 	return e.Class
@@ -89,6 +91,16 @@ func (e *AbstractExporter) GetClass() string {
 
 func (e *AbstractExporter) GetName() string {
 	return e.Name
+}
+
+func (e *AbstractExporter) GetCount() uint64 {
+	count := e.Count
+	atomic.StoreUint64(&e.Count, 0)
+	return count
+}
+
+func (e *AbstractExporter) AddCount(n int) {
+	atomic.AddUint64(&e.Count, uint64(n))
 }
 
 func (e *AbstractExporter) GetStatus() (int, string, string) {

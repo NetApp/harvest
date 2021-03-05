@@ -36,11 +36,15 @@ func New(class, msg string) Error {
 	return Error{class:class, msg:msg}
 }
 
-func IsErr(err error, class string) bool {
-	// dirty solution, temporarily
+func GetClass(err error) string {
 	e := strings.Split(err.Error(), " => ")
 	if len(e) > 1 {
-		return strings.Contains(e[0], class)
+		return e[0]
 	}
-	return false
+	return ""	
+}
+
+func IsErr(err error, class string) bool {
+	// dirty solution, temporarily
+	return strings.Contains(GetClass(err), class)
 }

@@ -4,6 +4,7 @@ import (
     "strings"
     "strconv"
     "path"
+    "time"
 
     "goharvest2/share/logger"
     "goharvest2/share/tree/node"
@@ -205,9 +206,13 @@ func (c *Zapi) PollData() (*matrix.Matrix, error) {
     var response *node.Node
     var fetch func(*matrix.Instance, *node.Node, []string)
     var count, skipped int
+    var rd, pd time.Duration
 
     count = 0
     skipped = 0
+
+	api_d := time.Duration(0 * time.Second)
+	parse_d := time.Duration(0 * time.Second)
 
     fetch = func(instance *matrix.Instance, node *node.Node, path []string) {
         newpath := append(path, node.GetNameS())
@@ -254,9 +259,13 @@ func (c *Zapi) PollData() (*matrix.Matrix, error) {
         return nil, err
     }
 
-    if response, err = c.Connection.Invoke(); err != nil {
+    response, rd, pd, err = c.Connection.InvokeWithTimers()
+    if err != nil {
         return nil, err
     }
+    api_d += rd
+    parse_d += pd
+
 
     instances := response.SearchChildren(c.instanceKeyPrefix)
     if len(instances) == 0 {
@@ -283,5 +292,12 @@ func (c *Zapi) PollData() (*matrix.Matrix, error) {
         }
         fetch(instance, instanceElem, make([]string, 0))
     }
+
+	// update metadata
+	c.Metadata.SetValueSS("api_time", "data", float64(api_d.Microseconds()))
+	c.Metadata.SetValueSS("parse_time", "data", float64(parse_d.Microseconds()))
+	c.Metadata.SetValueSS("count", "data", float64(count))
+    c.AddCount(count)
+
     return c.Data, nil
 }
