@@ -18,6 +18,7 @@ type Client struct {
     client      *http.Client
     request     *http.Request
     buffer      *bytes.Buffer
+    System      *System
 }
 
 func New(config *node.Node) (*Client, error) {
@@ -98,6 +99,13 @@ func New(config *node.Node) (*Client, error) {
     }
 
     return client, nil
+}
+
+func (c *Client) IsClustered() bool {
+    if c.System != nil {
+        return c.System.Clustered
+    }
+    panic("System is nil")
 }
 
 

@@ -103,5 +103,6 @@ func (c *Client) GetSystem() (*System, error) {
             sys.SerialNumber = info.GetChildContentS("system-serial-number")
         }
     }
+    c.System = &sys
     return &sys, nil
 }

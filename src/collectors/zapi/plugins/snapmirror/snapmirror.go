@@ -2,6 +2,7 @@
 package main
 
 import (
+	"strings"
 	"goharvest2/poller/collector/plugin"
     "goharvest2/share/matrix"
 	"goharvest2/share/dict"
@@ -18,8 +19,8 @@ type SnapMirror struct {
 	dest_limit_cache *dict.Dict
 	src_limit_cache *dict.Dict
 	batch_size string
-	node_cache_counter int
-	limit_cache_counter int
+	node_upd_counter int
+	limit_upd_counter int
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -40,12 +41,16 @@ func (p *SnapMirror) Init() error {
 		return err
 	}
 
+	if _, err = p.connection.GetSystem(); err != nil {
+		return err
+	}
+
 	if p.batch_size = p.ParentParams.GetChildContentS("batch_size"); p.batch_size == "" {
 		p.batch_size = "500"
 	}
 
-	p.node_cache_counter = 0
-	p.limit_cache_counter = 0
+	p.node_upd_counter = 0
+	p.limit_upd_counter = 0
 
 	p.node_cache = dict.New()
 	p.dest_limit_cache = dict.New()
@@ -58,54 +63,84 @@ func (p *SnapMirror) Init() error {
 
 func (p *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
-	// helps us to update our caches every so while
-	p.node_cache_counter += 1
-	p.limit_cache_counter += 1
-
-	if p.node_cache_counter > 10 {
-		p.node_cache_counter = 0
-	}
-	if p.limit_cache_counter > 100 {
-		p.limit_cache_counter = 0
-	}
-
-	if p.node_cache_counter == 1 {
+	// update caches every so while
+	if p.node_upd_counter == 0 && p.connection.IsClustered() {
 		if err := p.update_node_cache(); err != nil {
 			return nil, err
 		}
 		logger.Debug(p.Prefix, "updated node cache")
+	} else if p.node_upd_counter > 10 {
+		p.node_upd_counter = 0
+	} else {
+		p.node_upd_counter += 1
 	}
 
-	if p.limit_cache_counter == 1 {
+	if p.limit_upd_counter == 0 {
 		if err := p.update_limit_cache(); err != nil {
 			return nil, err
 		}
 		logger.Debug(p.Prefix, "updated limit cache")
+	} else if p.limit_upd_counter > 100 {
+		p.limit_upd_counter = 0
+	} else {
+		p.limit_upd_counter += 1
 	}
 
 	dest_upd_count := 0
 	src_upd_count := 0
 	limit_upd_count := 0
 
+
+	
 	for _, instance := range data.GetInstances() {
 
-		// check instances where destination node is missing
-		if instance.Labels.Get("destination_node") == "" {
-			
-			key := instance.Labels.Get("destination_vserver") + "." + instance.Labels.Get("destination_volume")
-			if node, has := p.node_cache.GetHas(key); has {
-				instance.Labels.Set("destination_node", node)
-				dest_upd_count += 1
+		if p.connection.IsClustered() {
+			// check instances where destination node is missing
+			if instance.Labels.Get("destination_node") == "" {
+				
+				key := instance.Labels.Get("destination_vserver") + "." + instance.Labels.Get("destination_volume")
+				if node, has := p.node_cache.GetHas(key); has {
+					instance.Labels.Set("destination_node", node)
+					dest_upd_count += 1
+				}
 			}
-		}
 
-		// check instances where source node is missing
-		if instance.Labels.Get("source_node") == "" {
-			
-			key := instance.Labels.Get("source_vserver") + "." + instance.Labels.Get("source_volume")
-			if node, has := p.node_cache.GetHas(key); has {
-				instance.Labels.Set("source_node", node)
-				src_upd_count += 1
+			// check instances where source node is missing
+			if instance.Labels.Get("source_node") == "" {
+				
+				key := instance.Labels.Get("source_vserver") + "." + instance.Labels.Get("source_volume")
+				if node, has := p.node_cache.GetHas(key); has {
+					instance.Labels.Set("source_node", node)
+					src_upd_count += 1
+				}
+			}
+		} else {
+			// 7 Mode
+			// source / destination nodes can be something like:
+			//		tobago-1:vol_4kb_neu
+			//      tobago-1:D
+			if src := instance.Labels.Get("source_node"); src != "" {
+				if x := strings.Split(src, ":"); len(x) == 2 {
+					instance.Labels.Set("source_node", x[0])
+					if len(x[1]) != 1 {
+						instance.Labels.Set("source_volume", x[1])
+						src_upd_count += 1
+					}
+				} else {
+					break
+				}
+			}
+	
+			if dest := instance.Labels.Get("destination_node"); dest != "" {
+				if x := strings.Split(dest, ":"); len(x) == 2 {
+					instance.Labels.Set("destination_node", x[0])
+					if len(x[1]) != 1 {
+						instance.Labels.Set("destination_volume", x[1])
+						dest_upd_count += 1
+					}
+				} else {
+					break
+				}
 			}
 		}
 
