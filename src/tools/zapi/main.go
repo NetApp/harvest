@@ -3,33 +3,65 @@ package main
 import (
 	"os"
 	"path"
-	"flag"
 	"fmt"
 	"strings"
 
 	client "goharvest2/apis/zapi"
 
 	"goharvest2/share/util"
+	"goharvest2/share/set"
 	"goharvest2/share/config"
 	"goharvest2/share/tree/node"
-	"goharvest2/share/set"
+	"goharvest2/share/argparse"
 )
 
-var ACTIONS = set.NewFrom([]string{"show", "add", "export"})
-var ITEMS = set.NewFrom([]string{"system", "apis", "attrs", "data", "objects", "counters", "instances"})
-
-var options *args
+var args, options *Args
+var params *node.Node
 var connection *client.Client
 var system *client.System
+var confpath string
 
-type args struct {
-	Action string
+var MAX_SEARCH_DEPTH = 10
+
+var KNOWN_TYPES = set.NewFrom([]string{
+    "string", 
+    "integer", 
+    "boolean", 
+    "node-name", 
+    "aggr-name", 
+    "vserver-name", 
+    "volume-name", 
+    "uuid", "size", 
+    "cache-policy", 
+    "junction-path", 
+    "volstyle", 
+    "repos-constituent-role", 
+    "language-code", 
+    "snaplocktype", 
+    "space-slo-enum",
+})
+
+type Args struct {
+	Command string
 	Item string
 	Poller string
-	Path string
-	Query string
+	Api string
+    Attr string
 	Object string
+    Counter string
+    Export bool
 }
+
+func (a *Args) Print() {
+	fmt.Printf("command = %s\n", a.Command)
+	fmt.Printf("item    = %s\n", a.Item)
+	fmt.Printf("poller  = %s\n", a.Poller)
+	fmt.Printf("api     = %s\n", a.Api)
+	fmt.Printf("object  = %s\n", a.Object)
+	fmt.Printf("attr    = %s\n", a.Attr)
+	fmt.Printf("counter = %s\n", a.Counter)
+}
+
 
 type counter struct {
 	name string
@@ -44,6 +76,29 @@ type counter struct {
 	deprecated bool
 	replacement string
 	key bool
+}
+
+type attribute struct {
+    Name string
+    Type string
+    Children []*attribute
+}
+
+func newAttr(Name, Type string) *attribute {
+    return &attribute{Name: Name, Type: Type}
+}
+
+func (a *attribute) newChild(Name, Type string) *attribute {
+    child := newAttr(Name, Type)
+    a.Children = append(a.Children, child)
+    return child
+}
+
+func (a *attribute) Print(depth int) {
+    fmt.Printf("%s%s%s%-50s%s - %s%35s%s\n", strings.Repeat("  ", depth), util.Bold, util.Cyan, a.Name, util.End, util.Green, a.Type, util.End)
+    for _, ch := range a.Children {
+        ch.Print(depth+1)
+    }
 }
 
 func (c *counter) print_header() {
@@ -61,139 +116,148 @@ func (c *counter) print() {
 	fmt.Printf("%s%s%s\n", util.Yellow, c.info, util.End)
 }
 
-func (a *args) Print() {
-	fmt.Printf("path   = %s\n", a.Path)
-	fmt.Printf("action = %s\n", a.Action)
-	fmt.Printf("item   = %s\n", a.Item)
-	fmt.Printf("poller = %s\n", a.Poller)
-	fmt.Printf("query  = %s\n", a.Query)
-	fmt.Printf("object = %s\n", a.Object)
-}
-
 func main() {
 
-	var err error
+    var err error
 
-	options = get_args()
+    // set harvest config path
+	if confpath = os.Getenv("HARVEST_CONF"); confpath == "" {
+		confpath = "/etc/harvest"
+    }
 
-	if !ACTIONS.Has(options.Action) {
-		fmt.Printf("action should be one of: %v", ACTIONS.Slice())
-		os.Exit(1)
+    // define arguments
+    args = &Args{}
+    parser := argparse.New("Zapi Utility", "harvest zapi", "Explore ZAPI of cDot or 7Mode system")
+
+    parser.PosString(
+        &args.Command,
+        "command",
+        "command",
+        []string{"show", "export"},
+    )
+
+    parser.PosString(
+        &args.Item,
+        "item",
+        "item to show",
+        []string{"data", "apis", "attrs", "objects", "counters", "counter", "system"},
+    )
+
+    parser.String(
+        &args.Poller,
+        "poller",
+        "p",
+        "name of poller (cluster), as defined in your harvest config",
+    )
+
+    parser.String(
+        &args.Api,
+        "api",
+        "a",
+        "API (ZAPI query) to show",
+    )
+
+    parser.String(
+        &args.Attr,
+        "attr",
+        "t",
+        "ZAPI attribute to show",
+    )
+
+    parser.String(
+        &args.Object,
+        "object",
+        "o",
+        "ZapiPerf object to show",
+    )
+
+    parser.String(
+        &args.Counter,
+        "counter",
+        "c",
+        "ZapiPerf counter to show",
+    )
+
+    if ! parser.Parse() {
+        os.Exit(0)
+    }
+
+    if args.Command == "export" {
+        args.Export = true
+    }
+
+    // validate and warn on missing arguments
+    ok := true
+
+    if args.Poller == "" {
+        fmt.Println("missing required argument: --poller")
+        ok = false
+    }
+
+    if args.Item == "data" && args.Api == "" && args.Object == "" {
+        fmt.Println("show data: requires --api or --object")
+        ok = false
+    }
+
+    if args.Item == "attrs" && args.Api == "" {
+        fmt.Println("show attrs: requires --api")
+        ok = false
+    }
+
+    if args.Item == "counters" && args.Object == "" {
+        fmt.Println("show counters: requires --object")
+        ok = false
+    }
+
+    if args.Item == "counter" && (args.Object == "" || args.Counter == "") {
+        fmt.Println("show counter: requires --object and --counter")
+        ok = false
+    }
+
+    if ! ok {
+        os.Exit(1)
+    }
+
+    // connect to cluster and retrieve system version
+	if params, err = config.GetPoller(path.Join(confpath, "harvest.yml"), args.Poller); err != nil {
+		fmt.Println(err)
+        os.Exit(1)
 	}
 
-	if !ITEMS.Has(options.Item) {
-		fmt.Printf("item should be one of: %v", ITEMS.Slice())
-		os.Exit(1)
-	}
-
-	if err = connect(); err != nil {
+	if connection, err = client.New(params); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	system = get_system()
 
-	switch options.Item {
+	if system, err = connection.GetSystem(); err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+    }
+
+	switch args.Item {
+
+    //"data", "apis", "attrs", "objects", "counters", "counter", "system"},
 
 	case "system":
-		//get_system()
-        fmt.Println("Done")
+        fmt.Println(system.String())
 	case "data":
-		get_data()
-	case "counters":
-		get_counters()
-    case "objects":
-        get_objects()
+        get_data()
     case "apis":
         get_apis()
+    case "attrs":
+        get_attrs()
+    case "objects":
+        get_objects()
+	case "counters":
+		get_counters()
+    case "counter":
+        get_counter()
     default:
-        fmt.Printf("invalid item: %s\n", options.Item)
+        fmt.Printf("invalid item: %s\n", args.Item)
         os.Exit(1)
 	}
 }
 
-func connect() error {
-
-	params, err := config.GetPoller(path.Join(options.Path, "harvest.yml"), options.Poller)
-	if err != nil {
-		return err
-	}
-
-	fmt.Printf("connecting to [%s]... ", params.GetChildContentS("url"))
-
-	if connection, err = client.New(params); err != nil {
-		return err
-	}
-
-	fmt.Println("OK")
-	return nil
-}
-
-func get_system() *client.System {
-
-	var err error
-
-	fmt.Printf("fetching system info for poller [%s]\n", options.Poller)
-
-	if system, err = connection.GetSystem(); err == nil {
-		fmt.Println(system.String())
-	} else {
-		fmt.Println(err)
-	}
-
-    return system
-}
-
-func get_query() {
-	fmt.Printf("fetching data for zapi query [%s]\n", options.Query)
-
-	if err := connection.BuildRequestString(options.Query); err != nil {
-		fmt.Println(err)
-        return
-	}
-
-	results, err := connection.Invoke()
-
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		results.Print(0)
-	}
-}
-
-func get_data() {
-
-    var request *node.Node
-
-    request = node.NewXmlS(options.Query)
-
-    if options.Object != "" {
-        fmt.Printf("fetching raw data of zapiperf object [%s]\n", options.Object)
-
-        if system.Clustered {
-            request = node.NewXmlS("perf-object-get-instances")
-            //request.NewChildS("max-records", "100")
-            instances := request.NewChildS("instances", "")
-            instances.NewChildS("instance", "*")
-        } else {
-            request = node.NewXmlS("perf-object-get-instances")
-        }
-        request.NewChildS("objectname", options.Object)
-    } else {
-        fmt.Printf("fetching raw data of zapi api [%s]\n", options.Query)
-    }
-
-    if err := connection.BuildRequest(request); err != nil {
-        fmt.Println(err)
-        return
-    }
-
-    results, err := connection.Invoke()
-    if err != nil {
-        fmt.Println(err)
-    } else {
-        results.Print(0)
-    }
-}
 
 func get_apis() {
 
@@ -216,11 +280,13 @@ func get_apis() {
 
     fmt.Printf("%s%s%-70s %s %20s %15s\n\n", util.Bold, util.Pink, "API", util.End, "LICENSE", "STREAM")
     for _, a := range apis.GetChildren() {
-        fmt.Printf("%s%s%-70s %s %20s %15s\n", util.Bold, util.Pink, a.GetChildContentS("name"), util.End, a.GetChildContentS("license"), a.GetChildContentS("is-streaming"))
+        name := a.GetChildContentS("name")
+        license := a.GetChildContentS("license")
+        streaming := a.GetChildContentS("is-streaming")
+        fmt.Printf("%s%s%-70s %s %20s %15s\n", util.Bold, util.Pink, name, util.End, license, streaming)
     }
-
-
 }
+
 
 func get_objects() {
 
@@ -259,12 +325,166 @@ func get_objects() {
     }
 }
 
+
+func get_data() {
+
+    var request *node.Node
+
+    request = node.NewXmlS(options.Api)
+
+    if options.Object != "" {
+        fmt.Printf("fetching raw data of zapiperf object [%s]\n", options.Object)
+
+        if system.Clustered {
+            request = node.NewXmlS("perf-object-get-instances")
+            //request.NewChildS("max-records", "100")
+            instances := request.NewChildS("instances", "")
+            instances.NewChildS("instance", "*")
+        } else {
+            request = node.NewXmlS("perf-object-get-instances")
+        }
+        request.NewChildS("objectname", options.Object)
+    } else {
+        fmt.Printf("fetching raw data of zapi api [%s]\n", options.Api)
+    }
+
+    if err := connection.BuildRequest(request); err != nil {
+        fmt.Println(err)
+        return
+    }
+
+    results, err := connection.Invoke()
+    if err != nil {
+        fmt.Println(err)
+    } else {
+        results.Print(0)
+    }
+}
+
+func get_attrs() {
+
+    query := node.NewXmlS("system-api-get-elements")
+    api_list := query.NewChildS("api-list", "")
+    api_list.NewChildS("api-list-info", args.Api)
+
+    if err := connection.BuildRequest(query); err != nil {
+        fmt.Println(err)
+        return
+    }
+
+    results, err := connection.Invoke()
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+
+    output := node.NewS("output")
+    input := node.NewS("input")
+
+    if entries := results.GetChildS("api-entries"); entries != nil && len(entries.GetChildren()) > 0 {
+        if elements := entries.GetChildren()[0].GetChildS("api-elements"); elements != nil {
+            for _, x := range elements.GetChildren() {
+                if x.GetChildContentS("is-output") == "true" {
+                    x.PopChildS("is-output")
+                    output.AddChild(x)
+                } else {
+                    input.AddChild(x)
+                }
+            }
+        }
+    }
+
+    fmt.Println("############################        INPUT        ##########################")
+    input.Print(0)
+    fmt.Println()
+    fmt.Println()
+
+    fmt.Println("############################        OUPUT        ##########################")
+    output.Print(0)
+    fmt.Println()
+    fmt.Println()
+
+    // fetch root attribute
+    attr_key := ""
+    attr_name := ""
+
+    for _, x := range output.GetChildren() {
+        if t := x.GetChildContentS("type"); t == "string" || t == "integer" {
+            continue
+        }
+        if name := x.GetChildContentS("name"); name != "num-records" || name != "next-tag" {
+            attr_key = name
+            attr_name = x.GetChildContentS("type")
+            break
+        }
+    }
+
+    if attr_name == "" {
+        fmt.Println("no root attribute, stopping here.")
+        return
+    }
+
+    if strings.HasSuffix(attr_name, "[]") {
+        attr_name = strings.TrimSuffix(attr_name, "[]")
+    }
+
+    fmt.Printf("building tree for attribute [%s] => [%s]\n", attr_key, attr_name)
+
+    if err = connection.BuildRequestString("system-api-list-types"); err != nil {
+        fmt.Println(err)
+        return
+    }
+
+    if results, err = connection.Invoke(); err != nil {
+        fmt.Println(err)
+        return
+    }
+
+    entries := results.GetChildS("type-entries")
+    if entries == nil {
+        fmt.Println("Error: missing [type-entries")
+        return
+    }
+
+    attr := newAttr(attr_name, "")
+    search_entries(attr, entries)
+
+    fmt.Println("############################        ATTR         ##########################")
+    attr.Print(0)
+    fmt.Println()    
+}
+
+func search_entries(root *attribute, entries *node.Node) {
+
+    cache := make(map[string]*attribute)
+    cache[root.Name] = root
+
+    for i:=0; i<MAX_SEARCH_DEPTH; i+=1 {
+        for _, entry := range entries.GetChildren() {
+            name := entry.GetChildContentS("name")
+            parent, ok := cache[name]
+            if ok {
+                delete(cache, name)
+                if elems := entry.GetChildS("type-elements"); elems != nil {
+                    for _, elem := range elems.GetChildren() {
+                        child := parent.newChild(elem.GetChildContentS("name"), elem.GetChildContentS("type"))
+                        attr_type := strings.TrimSuffix(child.Type, "[]")
+                        if ! KNOWN_TYPES.Has(attr_type) {
+                            cache[attr_type] = child
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 func get_counters() {
 	counters := make([]counter, 0)
 
 	request := node.NewXmlS("perf-object-counter-list-info")
 
-	request.NewChildS("objectname", options.Object)
+	request.NewChildS("objectname", args.Object)
 
 	connection.BuildRequest(request)
 
@@ -335,27 +555,6 @@ func get_counters() {
 	fmt.Printf("showed metadata of %d counters\n", len(counters))
 }
 
-func get_args() *args {
+func get_counter() {
 
-    a := args{}
-
-	flag.StringVar(&a.Poller, "poller", "", "poller name")
-	flag.StringVar(&a.Query, "query", "", "API query")
-	flag.StringVar(&a.Object, "object", "", "API object")
-
-	flag.Parse()
-
-	if flag.NArg() < 2 {
-		fmt.Printf("missing arguments (%d): action item\n", flag.NArg())
-		os.Exit(1)
-	}
-
-	a.Action = flag.Arg(0)
-	a.Item = flag.Arg(1)
-
-	if a.Path = os.Getenv("HARVEST_CONF"); a.Path == "" {
-		a.Path = "/etc/harvest"
-	}
-
-	return &a
 }

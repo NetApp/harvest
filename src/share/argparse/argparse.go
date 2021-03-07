@@ -303,16 +303,32 @@ func (p *Parser) PrintHelp() {
 	}
 
 	fmt.Printf("%s - %s\n\n", p.name, p.descr)
-	fmt.Printf("Options are:\n\n")
 
-	for _, opt := range p.options {
-		flag := opt.name
-		if opt.short != "" {
-			flag += ", -" + opt.short
-		}
-		fmt.Printf("    %-20s %s\n", flag, opt.descr)
-	}
-	fmt.Println()
+    if len(p.positionals) != 0 {
+        fmt.Println("Positional arguments:\n")
+
+        for _, x := range p.positionals {
+		    fmt.Printf("    %-20s %s\n", x.name, x.descr)
+            if len(x.accept) != 0 {
+                fmt.Printf("%-25s one of: %s\n", "", strings.Join(x.accept, ", "))
+            }
+        }
+    }
+
+    fmt.Println()
+
+    if len(p.options) != 0 {
+	    fmt.Printf("Optional arguments:\n")
+
+	    for _, opt := range p.options {
+		    flag := opt.name
+		    if opt.short != "" {
+			    flag += ", -" + opt.short
+		    }
+		    fmt.Printf("    %-20s %s\n", flag, opt.descr)
+	    }
+	    fmt.Println()
+    }
 	fmt.Println()
 }
 
