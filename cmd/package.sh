@@ -1,12 +1,7 @@
 #!/bin/bash
 
-ROOT=$(pwd)
+BUILD_SOURCE=$(pwd)
 BIN=`basename $0`
-
-DIST=$1
-ARCH=$2
-VERSION=$3
-RELEASE=$4
 
 function usage {
     cat <<EOF_PRINT_HELP
@@ -14,13 +9,16 @@ function usage {
     $BIN - Build Distribution Package
 
     Usage:
-        $./$BIN DIST ARCH VERSION
+        $./$BIN <dist> <arch> <version> <release> [options]
 
     Arguments:
-        DIST        package format (rpm or dep)
-        ARCH        architecture (x86_64, amd64, etc)
-        VERSION     version
-        RELEASE     release
+        dist            package format (rpm or dep)
+        arch            architecture (x86_64, amd64, etc)
+        version         version
+        release         release
+
+    Options
+        -d, --docker    build in docker container
 
 EOF_PRINT_HELP
 }
@@ -33,33 +31,92 @@ function error {
     echo -e "\033[1m\033[41m$1\033[0m"
 }
 
-function buildrpm {
-    info "building RPM ($ARCH) in container"
-    cd "$ROOT/cmd/rpm/centos"
-    docker build -t harvest2/rpm .
-    EXCODE=$?
-    if [ ! $EXCODE -eq 0 ]; then
-        error "build docker container failed, aborting"
-    else
-        docker run -it -v $ROOT:/tmp/src -e HARVEST_ARCH="$ARCH" -e HARVEST_VERSION="$VERSION" -e HARVEST_RELEASE="$RELEASE" harvest2/rpm
-        EXCODE=$?
-        if [ ! $EXCODE -eq 0 ]; then
-            error "run docker container failed"
+
+function build {
+    if [ $DOCKER ]; then
+
+        info "building [harvest_$VERSION-$RELEASE_$ARCH.$DIST] in container"
+
+        
+        if [ "$DIST" == "rpm" ]; then 
+            $DOCKER_IMAGE="centos"
+        else
+            $DOCKER_IMAGE="debian"
         fi
+
+        cd "$BUILD_SOURCE/cmd/$DIST/$DOCKER_IMAGE"
+        if [ ! $? -eq 0 ]; then
+            error "docker image"
+            exit 1
+        fi
+
+        docker build -t harvest2/$DIST .
+        if [ ! $? -eq 0 ]; then
+            error "build docker container"
+            exit 1
+        fi
+
+        docker run -it -v $BUILD_SOURCE:/tmp/src -e $HARVEST_BUILD_SRC="/tmp/src" -e HARVEST_ARCH="$ARCH" -e HARVEST_VERSION="$VERSION" -e HARVEST_RELEASE="$RELEASE" harvest2/$DIST
+        if [ ! $? -eq 0 ]; then
+            error "run docker container"
+            exit 1
+        else
+            info "build in docker complete"
+        fi
+
+        cd $BUILD_SOURCE
+        exit 0
+
+    else
+
+        info "building [harvest_$VERSION-$RELEASE_$ARCH.$DIST] on local system"
+
+        export HARVEST_BUILD_SRC="/tmp/src"
+        export HARVEST_ARCH="$ARCH"
+        export HARVEST_VERSION="$VERSION"
+        export HARVEST_RELEASE="$RELEASE"
+        
+        sh "$BUILD_SOURCE/cmd/$DIST/build-$DIST.sh"
+
+        if [ ! $? -eq 0 ]; then
+            error "run build script"
+            exit 1
+        else
+            info "build complete"
+        fi
+
+        cd $BUILD_SOURCE
+        exit 0
     fi
-    cd "$ROOT"
-    exit $EXCODE
 }
 
 # defaults
-if [ -z "$DIST" ] || [ "$DIST" == "help" ] || [ -z "$ARCH" ] || [ -z "$VERSION" ] || [ -z "$RELEASE" ]; then
+
+if [ "$1" == "help" ] || [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
+    usage
+    exit 0
+fi
+
+DIST=$1
+ARCH=$2
+VERSION=$3
+RELEASE=$4
+
+if [ -z "$DIST" ] || [ -z "$ARCH" ] || [ -z "$VERSION" ] || [ -z "$RELEASE" ]; then
     usage
     exit 1
 fi
 
-# build package in container
-if [ "$DIST" == "rpm" ]; then
-    buildrpm
+if [ "$5" == "-d" ] || [ "$5" == "--docker" ]; then
+    DOCKER=true
 else
-    error "invalid package format: $DIST"
+    DOCKER=false
+fi
+
+# build package in container
+if [ "$DIST" == "rpm" ] || [ "$DIST" == "deb" ]; then
+    build
+else
+    error "unknown package format: $DIST"
+    exit 1
 fi

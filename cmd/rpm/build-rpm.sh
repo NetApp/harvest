@@ -1,8 +1,6 @@
+#!/bin/bash
 
-SRC="/tmp/src"
-BUILD="/tmp/build"
-
-function alert {
+function info {
     echo -e "\033[1m\033[45m$1\033[0m"
 }
 
@@ -10,8 +8,16 @@ function error {
     echo -e "\033[1m\033[41m$1\033[0m"
 }
 
+BUILD="/tmp/build"
+SRC=$HARVEST_BUILD_SRC
+
+if [ -z "$SRC" ]; then
+    error "build source missing (\$HARVEST_BUILD_SRC)"
+    exit 1
+fi
+
 # copy files and directories
-alert "copying source files"
+info "copying source files"
 rm -rf "$BUILD"
 mkdir -p "$BUILD/harvest/bin"
 cp -r "$SRC/src/" "$BUILD/harvest/"
@@ -22,7 +28,7 @@ cp -r "$SRC/config/" "$BUILD/harvest/"
 cp -r "$SRC/ReadMe.md" "$BUILD/harvest/"
 
 # build binaries
-alert "building binaries"
+info "building binaries"
 cd "$BUILD/harvest"
 ./cmd/build.sh all
 if [ ! $? -eq 0 ]; then
@@ -43,7 +49,7 @@ echo "%define arch $HARVEST_ARCH" >> "rpm/SPECS/harvest.spec"
 cat "$SRC/cmd/rpm/harvest.spec" >> "rpm/SPECS/harvest.spec"
 
 # create tarball
-alert "building tarball"
+info "building tarball"
 cd "$BUILD"
 TGZ_FILEPATH="$BUILD/rpm/SOURCES/harvest_$HARVEST_VERSION-$HARVEST_RELEASE.tgz"
 tar -czvf "$TGZ_FILEPATH" "harvest"
@@ -51,12 +57,12 @@ if [ ! $? -eq 0 ]; then
     error "failed, aborting"
     exit 1
 fi
-alert "  -> [$TGZ_FILEPATH]"
+info "  -> [$TGZ_FILEPATH]"
 file "$TGZ_FILEPATH" # DEBUG
 
 
 # build rpm
-alert "building rpm"
+info "building rpm"
 rpmbuild --target "$HARVEST_ARCH" -bb "rpm/SPECS/harvest.spec"
 if [ ! $? -eq 0 ]; then
     error "rpmbuild failed, aborting"
@@ -65,14 +71,14 @@ fi
 
 # copy files & clean up
 cd $BUILD
-alert "copying packages"
+info "copying packages"
 TARGET_DIR="$SRC/dist/$HARVEST_VERSION-$HARVEST_RELEASE"
 mkdir -p $TARGET_DIR
 mv -vf /root/rpmbuild/RPMS/* $TARGET_DIR/
 mv -vf rpm/SOURCES/* $TARGET_DIR
-alert "cleaning up..."
+info "cleaning up..."
 rm -rf "$BUILD"
 
 # liked this final message by Chris Madden :-)
-alert "RPM and TGZ packages ready for distribution. Have a nice day!"
+info "RPM and TGZ packages ready for distribution. Have a nice day!"
 exit 0

@@ -1,0 +1,8 @@
+Source: hello
+Section: misc
+Suggests: dialog, openssl
+Maintainer: Vachagan Gratian <vachagan@netapp.com>
+Description: NetApp Harvest 2 - Monitoring of Storage Systems
+ This application collects data from NetApp systems,
+ forwards it to the Prometheus time series db, and
+ provides Grafana dashboards for visualization.
