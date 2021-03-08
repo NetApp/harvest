@@ -1,11 +1,11 @@
  
 name:               Aggregate
 query:              aggr-get-iter
-object:             aggregate
+object:             aggr
 
 counters:
   aggr-attributes:
-    - ^aggregate-name                          => aggregate
+    - ^aggregate-name                          => aggr
     - ^^aggregate-uuid
     - aggr-ownership-attributes:
       - ^home-name                             => node
@@ -15,13 +15,23 @@ counters:
       - plex-count
       - raid-size
       - ^state                                 => state
+    - aggr-inode-attributes:
+      - files-private-used               
+      - files-total                      
+      - files-used                       
+      - inodefile-private-capacity
+      - inodefile-public-capacity        
+      - maxfiles-available               
+      - maxfiles-possible                
+      - maxfiles-used                    
+      - percent-inode-used-capacity             => inode_used_percent      
     - aggr-space-attributes:
       - capacity-tier-used
       - data-compacted-count
       - data-compaction-space-saved
       - data-compaction-space-saved-percent
-      - hybrid-cache-size-total
-      - percent-used-capacity
+      - hybrid-cache-size-total                 => hybrid_cache_size_total
+      - percent-used-capacity                   => space_used_percent
       - performance-tier-inactive-user-data
       - performance-tier-inactive-user-data-percent
       - physical-used
@@ -29,10 +39,10 @@ counters:
       - sis-shared-count
       - sis-space-saved
       - sis-space-saved-percent
-      - size-available
-      - size-total
-      - size-used
-      - total-reserved-space
+      - size-available                          => space_available
+      - size-total                              => space_total
+      - size-used                               => space_used
+      - total-reserved-space                    => space_reserved
     - aggr-volume-count-attributes:
       - flexvol-count
     - aggr-snapshot-attributes:
@@ -41,8 +51,8 @@ counters:
       - maxfiles-available
       - maxfiles-possible
       - maxfiles-used
-      - percent-inode-used-capacity
-      - percent-used-capacity
+      - percent-inode-used-capacity             => snapshot_inode_used_percent
+      - percent-used-capacity                   => snapshot_used_percent
       - size-available
       - size-total
       - size-used
@@ -51,7 +61,7 @@ counters:
 export_options:
   exclude_instance_name: True
   graphite_leafs:
-    - node.{node}.aggr.{aggregate}
+    - node.{node}.aggr.{aggr}
   include_keys:
     - aggregate
     - node

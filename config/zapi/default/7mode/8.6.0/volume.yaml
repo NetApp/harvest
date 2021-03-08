@@ -1,0 +1,62 @@
+
+name:                       Volume
+query:                      volume-list-info
+object:                     volume
+
+counters:
+
+  volume-info:
+  # "volume-id-attributes" in cdot
+  - ^^name                                             => volume
+  - ^^uuid                                             => instance_uuid
+  - ^state
+  - ^type                                              => style
+  - ^containing-aggregate                              => aggr
+
+  # "volume-autosize-attributes"
+  - autosize:
+    - grow-threshold-percent
+#    - increment-size
+    - ^is-enabled                                     => enabled
+    - maximum-size
+#    - minimum-size
+    - ^mode
+#    - shrink-threshold-percent  
+
+# "volume-inode-attributes"
+  - files-total                                       => inode_files_total
+  - files-used                                        => inode_files_used
+
+# "volume-sis-attributes"
+  - sis:
+    - compress-saved
+    - dedup-saved
+    - total-saved
+    - percent-compress-saved                          => sis_compress_saved_percent
+    - percent-dedup-saved                             => sis_dedup_saved_percent
+    - percent-total-saved                             => sis_total_saved_percent
+
+# "volume-space-attributes"
+
+  - filesystem-size                                   => filesystem_size
+
+  - percentage-used                                   => size_used_percent
+  - size-available
+  - size-total
+  - size-used
+  - snapshot-percent-reserved                         => snapshot_reserve_percent
+
+
+export_options:
+  instance_keys:
+    - volume
+    - svm
+    - aggr
+  instance_labels:
+    - state
+    - status
+    - style
+    - enabled
+
+  graphite_leafs:
+    - aggr.{aggr}.vol.{volume}    

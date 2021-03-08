@@ -100,6 +100,9 @@ func (c *Zapi) Init() error {
     
     // Add system (cluster) name 
     c.Data.SetGlobalLabel("cluster", c.System.Name)
+    if ! c.System.Clustered {
+        c.Data.SetGlobalLabel("node", c.System.Name)
+    }
 
     // Initialize counter cache
     counters := c.Params.GetChildS("counters")

@@ -1,4 +1,3 @@
-
 name:                     Volume
 query:                    volume-get-iter
 object:                   volume
@@ -23,34 +22,34 @@ counters:
       - files-total
       
     - volume-sis-attributes:
-      - compression-space-saved
-      - deduplication-space-saved
-      - total-space-saved
-      - percentage-compression-space-saved
-      - percentage-deduplication-space-saved
-      - percentage-total-space-saved
+      - compression-space-saved               => sis_compress_saved
+      - deduplication-space-saved             => sis_dedup_saved
+      - total-space-saved                     => sis_total_saved
+      - percentage-compression-space-saved    => sis_compress_saved_percent
+      - percentage-deduplication-space-saved  => sis_dedup_saved_percent
+      - percentage-total-space-saved          => sis_total_saved_percent
 
     - volume-space-attributes:
       - expected-available
-      - filesystem-size
+      - filesystem-size                       => filesystem_size
       - logical-available
       - logical-used
       - logical-used-by-afs
       - logical-used-by-snapshots
       - logical-used-percent
-      - percentage-size-used
-      - percentage-snapshot-reserve
-      - percentage-snapshot-reserve-used
       - physical-used
       - physical-used-percent
-      - size
-      - size-available
-      - size-available-for-snapshots
-      - size-total
-      - size-used
-      - size-used-by-snapshots
-      - snapshot-reserve-available
-      - snapshot-reserve-size
+      - size                                => size
+      - size-available                      => size_available
+      - size-total                          => size_total
+      - size-used                           => size_used
+      - percentage-size-used                => size_used_percent
+      - size-used-by-snapshots              => snapshots_size_used
+      - size-available-for-snapshots        => snapshots_size_available
+      - snapshot-reserve-available          => snapshot_reserve_available
+      - snapshot-reserve-size               => snapshot_reserve_size
+      - percentage-snapshot-reserve         => snapshot_reserve_percent
+      - percentage-snapshot-reserve-used    => snapshot_reserve_used_percent
 
     - volume-state-attributes:
       - ^state
@@ -84,10 +83,6 @@ plugins:
 
 
 export_options:
-  graphite_leafs:
-    - svm.{vserver_name}.vol.{volume_name}
-    - node.{node_name}.aggr.{aggregate_name}.vol.{volume_name}
-    
   instance_keys:
     - volume
     - node
@@ -98,4 +93,8 @@ export_options:
     - status
     - style
     - enabled
-  exclude_instance_name: True
+
+  graphite_leafs:
+    - svm.{svm}.vol.{volume}
+    - node.{node}.aggr.{aggr}.vol.{volume}
+

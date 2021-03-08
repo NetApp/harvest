@@ -18,6 +18,7 @@ type Shelf struct {
 	data map[string]*matrix.Matrix
 	instance_keys map[string]string
 	connection *client.Client
+    query string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -40,6 +41,12 @@ func (p *Shelf) Init() error {
 	system, err := p.connection.GetSystem()
 	if err != nil {
         return err
+    }
+
+    if system.Clustered {
+        p.query = "storage-shelf-info-get-iter"
+    } else {
+        p.query = "storage-shelf-environment-list-info"
     }
 
 	logger.Debug(p.Prefix, "plugin connected!")
@@ -71,7 +78,7 @@ func (p *Shelf) Init() error {
 		instance_labels := export_options.NewChildS("instance_labels", "")
 		instance_keys := export_options.NewChildS("instance_keys", "")
 		instance_keys.NewChildS("", "shelf")
-		instance_keys.NewChildS("", "shelf-id")
+		instance_keys.NewChildS("", "shelf_id")
 
 		for _, x := range obj.GetChildren() {
 			for _, c := range x.GetAllChildContentS() {
@@ -106,26 +113,44 @@ func (p *Shelf) Init() error {
 
 func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
-	p.connection.BuildRequestString("storage-shelf-info-get-iter")
+    if ! p.connection.IsClustered() {
+        for _, instance := range data.GetInstances() {
+            instance.Labels.Set("shelf", instance.Labels.Get("shelf_id"))
+        }
+    }
+
+	p.connection.BuildRequestString(p.query)
 	result, err := p.connection.Invoke()
 	if err != nil {
 		return nil, err
 	}
 
-	shelves := result.GetChildS("attributes-list")
-	if shelves == nil {
+    var shelves []*node.Node
+	if x := result.GetChildS("attributes-list"); x != nil {
+        shelves = x.GetChildren()
+    } else if ! p.connection.IsClustered() {
+        logger.Debug(p.Prefix, "fallback to 7mode")
+        shelves = result.SearchChildren([]string{"shelf-environ-channel-info", "shelf-environ-shelf-list", "shelf-environ-shelf-info"})
+    }
+
+	if shelves == nil || len(shelves) == 0 {
 		return nil, errors.New(errors.ERR_NO_INSTANCE, "no shelf instances")
 	}
 
-	logger.Debug(p.Prefix, "fetching %d shelf counters", len(shelves.GetChildren()))
-
+	logger.Debug(p.Prefix, "fetching %d shelf counters", len(shelves))
 
 	output := make([]*matrix.Matrix, 0)
 
-	for _, shelf := range shelves.GetChildren() {
+	for _, shelf := range shelves {
 
 		shelf_name := shelf.GetChildContentS("shelf")
 		shelf_id := shelf.GetChildContentS("shelf-uid")
+
+        if ! p.connection.IsClustered() {
+		    uid := shelf.GetChildContentS("shelf-id")
+            shelf_id = uid
+            shelf_name = uid
+        }
 
 		for attribute, data := range p.data {
 
@@ -142,7 +167,7 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				continue
 			}
 
-			logger.Debug(p.Prefix, "fetching %d [%s] instances.....", len(object_elem.GetChildren(	)), attribute)
+			logger.Debug(p.Prefix, "fetching %d [%s] instances.....", len(object_elem.GetChildren()), attribute)
 
 			for _, obj := range object_elem.GetChildren() {
 
@@ -178,9 +203,12 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	// second loop to populate numeric data
 	
-	for _, shelf := range shelves.GetChildren() {
+	for _, shelf := range shelves {
 
 		shelf_id := shelf.GetChildContentS("shelf-uid")
+        if ! p.connection.IsClustered() {
+		    shelf_id = shelf.GetChildContentS("shelf-id")
+        }
 
 		for attribute, data := range p.data {
 
