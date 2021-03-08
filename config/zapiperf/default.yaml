@@ -5,15 +5,12 @@ collector:          ZapiPerf
 schedule:
   - counter: 1200s
   - instance: 600s
-  - data: 15s
+  - data: 60s
 
 objects:
 
   # Node-level metrics
   SystemNode:             system_node.yaml
-  #Processor:              processor.yaml
-  #Disk:                   disk.yaml
-  #DiskConstituent:        disk_constituent.yaml
   HostAdapter:            hostadapter.yaml
   Path:                   path.yaml
   FCVI:                   fcvi.yaml
@@ -27,4 +24,3 @@ objects:
   TokenManager:           token_manager.yaml
   HeadroomCPU:            resource_headroom_cpu.yaml
   HeadroomAggr:           resource_headroom_aggr.yaml
-  #CIFSNode:               cifs_node.yaml

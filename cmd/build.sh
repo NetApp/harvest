@@ -148,9 +148,9 @@ if [ $all == true ] || [ $harvest == true ]; then
     cd ../../
 
     cd tools/zapi
-    go build -o ../../../bin/zapitool
+    go build -o ../../../bin/zapi
     if [ $? -eq 0 ]; then
-        info "compiled: /bin/zapitool"
+        info "compiled: /bin/zapi"
     else
         error "compilation failed"
         exit 1
@@ -158,8 +158,8 @@ if [ $all == true ] || [ $harvest == true ]; then
 
     cd ../
     # @TODO migrate to GO
-    cp grafana/grafana.py ../../bin/grafanatool
-    info "copied /bin/grafanatool"
+    cp grafana/grafana.py ../../bin/grafana
+    info "copied /bin/grafana"
 
     cd ../../
 fi
@@ -231,30 +231,6 @@ if [ $all == true ] || [ $exporters == true ] || [ "$exporter" != "" ]; then
     cd ../../
 fi
 
-: '
-# compile tool(s)
-if [ $all == true ] || [ $tools == true ] || [ "$tool" != "" ]; then
-    cd src/tools/
-    declare -a files
-    files=($(ls))
-    for f in ${files[@]}; do
-        if [ -d "$f" ]; then
-            cd $f
-            if [ $all == true ] || [ $tools == true ] || [ "$tool" == "$f" ]; then
-                go build -o ../../../bin/"$f"
-                if [ $? -eq 0 ]; then
-                    info "compiled: /bin/$f"
-                else
-                    error "compilation failed"
-                    exit 1
-                fi
-            fi
-            cd ../
-        fi
-    done
-    cd ../../
-fi
-'
 
 # compile poller
 if [ $all == true ] || [ $poller == true ]; then

@@ -52,7 +52,7 @@ func (c *Psutil) Init() error {
 	c.Data.SetGlobalLabel("hostname", c.Options.Hostname)
 	c.Data.SetGlobalLabel("datacenter", c.Params.GetChildContentS("datacenter"))
 
-	logger.Info(c.Prefix, "Collector initialized")
+	logger.Debug(c.Prefix, "Collector initialized")
 
 	return nil
 
@@ -164,7 +164,7 @@ func (c *Psutil) PollData() (*matrix.Matrix, error) {
 		}
 	}
 	c.AddCount(count)
-	logger.Info(c.Prefix, "Data poll completed! Added %d data points", count)
+	logger.Debug(c.Prefix, "Data poll completed. Added %d data points", count)
 	return c.Data, nil
 }
 
@@ -213,7 +213,7 @@ func (c *Psutil) load_metrics(counters *node.Node) {
 	m.AddLabel("pid", "")
 	//m.AddLabel("state")
 
-	logger.Info(c.Prefix, "Loaded %d metrics", m.SizeMetrics())
+	logger.Debug(c.Prefix, "Loaded %d metrics", m.SizeMetrics())
 }
 
 func parse_metric_name(raw_name string) (string, string) {
@@ -270,7 +270,7 @@ func (c *Psutil) PollInstance() (*matrix.Matrix, error) {
 		}
 
 	}
-	logger.Info(c.Prefix, "InstancePoll complete: added %d instances", len(c.Data.Instances))
+	logger.Debug(c.Prefix, "InstancePoll complete: added %d instances", len(c.Data.Instances))
 
 	return nil, nil
 }

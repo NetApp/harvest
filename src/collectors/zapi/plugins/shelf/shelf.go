@@ -176,7 +176,7 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					instance, err := data.AddInstance(shelf_id + "." + key)
 
 					if err != nil {
-						logger.Warn(p.Prefix, "add (%s) instance: %v", attribute, err)
+						logger.Debug(p.Prefix, "add (%s) instance: %v", attribute, err)
 						continue
 					}
 
@@ -192,8 +192,7 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					instance.Labels.Set("shelf_id", shelf_id)
 
 				} else  {
-					logger.Warn(p.Prefix, "instance without [%s], skipping", p.instance_keys[attribute])
-					obj.Print(0)
+					logger.Debug(p.Prefix, "instance without [%s], skipping", p.instance_keys[attribute])
 				}
 			}
 
@@ -233,7 +232,7 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				instance := data.GetInstance(shelf_id + "." + key)
 				
 				if instance == nil {
-					logger.Warn(p.Prefix, "(%s) instance [%s.%s] not found in cache skipping", attribute, shelf_id, key)
+					logger.Debug(p.Prefix, "(%s) instance [%s.%s] not found in cache skipping", attribute, shelf_id, key)
 					continue
 				}
 

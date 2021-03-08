@@ -50,30 +50,6 @@ func main() {
 	if harvest_path = os.Getenv("HARVEST_HOME"); harvest_path == "" {
         harvest_path = "/opt/harvest/"
     }
-	// very dirty way of "sourcing" path variables
-	// temporary 
-    if data, err := ioutil.ReadFile(path.Join(harvest_path, "sources.sh")); err == nil {
-        for _, line := range strings.Split(string(data), "\n") {
-            //line = strings.TrimSpace(line)
-            if ! strings.HasPrefix(line, "#") {
-                s := strings.Split(line, " ")
-                if len(s) == 2 && s[0] == "export" {
-                    v := strings.Split(s[1], "=")
-                    if len(v) == 2 {
-                        os.Setenv(v[0], strings.ReplaceAll(v[1], "\"", ""))
-                        //fmt.Printf("%s ==> %s\n", v[0], v[1])
-                    }
-                }
-            }
-        }
-    } else {
-        fmt.Println(err)
-    }
-
-    //fmt.Printf("HARVEST_HOME = %s\n", harvest_path)
-    //fmt.Printf("HARVEST_CONF = %s\n", os.Getenv("HARVEST_CONF"))
-    //fmt.Printf("HARVEST_LOGS = %s\n", os.Getenv("HARVEST_LOGS"))
-    //fmt.Printf("HARVEST_PIDS = %s\n", os.Getenv("HARVEST_PIDS"))
 
 	var bin string
 
@@ -84,10 +60,10 @@ func main() {
 		fmt.Println("alert manager not available.")
 	case "config":
 		bin = "config"
-	case "zapitool":
-		bin = "zapitool"
+	case "zapi":
+		bin = "zapi"
 	case "grafanatool":
-		bin = "grafanatool"
+		bin = "grafana"
 	default:
 		fmt.Printf("Unknown command: %s\n", command)
 	}

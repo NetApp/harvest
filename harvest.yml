@@ -1,0 +1,25 @@
+
+
+Exporters:
+  prometheus:
+    exporter: prometheus
+    port: 2323
+    addr: 0.0.0.0
+    master: True
+
+
+Defaults:
+  collectors:
+    - Zapi
+    - ZapiPerf
+  exporters:
+    - prometheus
+
+
+Pollers:
+  localsys:
+    datacenter: local
+    addr: localhost
+    collectors:
+      - Psutil
+    prometheus_port: 7201

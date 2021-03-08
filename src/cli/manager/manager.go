@@ -125,6 +125,8 @@ func main() {
         "Custom config filepath (default: " + opts.Config + ")",
     )
 
+	parser.SetHelp("help")
+	
 	// user asked for help or invalid options
 	if ! parser.Parse() {
 		os.Exit(0)

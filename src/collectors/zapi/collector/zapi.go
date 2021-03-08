@@ -195,7 +195,7 @@ func (c *Zapi) PollInstance() (*matrix.Matrix, error) {
     }
 
     c.Metadata.SetValueSS("count", "instance", float64(count))
-    logger.Info(c.Prefix, "added %d instances to cache (old cache had %d)", count, old_count)
+    logger.Debug(c.Prefix, "added %d instances to cache (old cache had %d)", count, old_count)
 
     if len(c.Data.Instances) == 0 {
         return nil, errors.New(errors.ERR_NO_INSTANCE, "no instances fetched")

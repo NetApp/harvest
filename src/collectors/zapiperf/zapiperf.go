@@ -284,13 +284,13 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 			
 			instance := NewData.GetInstance(key)
 			if instance == nil {
-				logger.Warn(c.Prefix, "skip instance [%s], not found in cache", key)
+				logger.Debug(c.Prefix, "skip instance [%s], not found in cache", key)
 				continue
 			}
 
 			counters := i.GetChildS("counters")
 			if counters == nil {
-				logger.Warn(c.Prefix, "skip instance [%s], no data counters", key)
+				logger.Debug(c.Prefix, "skip instance [%s], no data counters", key)
 				continue
 			}
 	
@@ -682,17 +682,8 @@ func (c *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 	metrics_added := c.Data.SizeMetrics() - (old_metrics_size - old_metrics.Size())
 	labels_added := c.Data.SizeLabels() - (old_labels_size - old_labels.Size())
 
-	if metrics_added > 0 || old_metrics.Size() > 0 {
-		logger.Info(c.Prefix, "added %d new, removed %d metrics (total: %d)", metrics_added, old_metrics.Size(), c.Data.SizeMetrics())
-	} else {
-		logger.Debug(c.Prefix, "added %d new, removed %d metrics (total: %d)", metrics_added, old_metrics.Size(), c.Data.SizeMetrics())
-	}
-
-	if labels_added > 0 || old_labels.Size() > 0 {
-		logger.Info(c.Prefix, "added %d new, removed %d labels (total: %d)", labels_added, old_labels.Size(), c.Data.SizeLabels())
-	} else {
-		logger.Debug(c.Prefix, "added %d new, removed %d labels (total: %d)", labels_added, old_labels.Size(), c.Data.SizeLabels())
-	}
+	logger.Debug(c.Prefix, "added %d new, removed %d metrics (total: %d)", metrics_added, old_metrics.Size(), c.Data.SizeMetrics())
+	logger.Debug(c.Prefix, "added %d new, removed %d labels (total: %d)", labels_added, old_labels.Size(), c.Data.SizeLabels())
 
 	if c.Data.SizeMetrics() == 0 {
 		return nil, errors.New(errors.ERR_NO_METRIC, "")
@@ -907,11 +898,7 @@ func (c *ZapiPerf) PollInstance() (*matrix.Matrix, error) {
 	new_size = c.Data.SizeInstances()
 	added = new_size - (old_size - removed)
 
-	if added > 0 || removed > 0 {
-		logger.Info(c.Prefix, "added %d new, removed %d (total instances %d)", added, removed, new_size)
-	} else {
-		logger.Debug(c.Prefix, "added %d new, removed %d (total instances %d)", added, removed, new_size)
-	}
+	logger.Debug(c.Prefix, "added %d new, removed %d (total instances %d)", added, removed, new_size)
 	
 	if new_size == 0 {
 		return nil, errors.New(errors.ERR_NO_INSTANCE, "")

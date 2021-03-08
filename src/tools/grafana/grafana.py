@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import sys
 import json
 import ssl
 import argparse
@@ -111,17 +112,13 @@ def read_args():
         default     = False
         )        
 
+    if len(sys.argv) > 1 and sys.argv[1] == 'help':
+        p.print_help()
+        sys.exit(0)
+
     args = p.parse_args()
 
-    args.path = os.path.dirname(os.path.abspath(__file__))
-    if args.path.endswith('utils'):
-        args.path = args.path.replace('utils', '')
-    if args.path.endswith('utils/'):
-        args.path = args.path.replace('utils/', '')
-    if args.path.endswith('/'):
-        args.path = args.path.rstrip('/')
-    if args.directory.endswith('/'):          
-        args.directory = args.directory.rstrip('/')
+    args.path = os.getenv('HARVEST_CONF', '/etc/harvest/')
     
     return args
 

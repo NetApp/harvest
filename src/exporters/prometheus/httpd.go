@@ -112,7 +112,7 @@ func (e *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 
 func (e *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 
-	logger.Info(e.Prefix, "Serving metrics from %d cached items", len(e.cache))
+	logger.Debug(e.Prefix, "Serving metrics from %d cached items", len(e.cache))
 	sep := []byte("\n")
 	var data [][]byte
 
@@ -120,7 +120,7 @@ func (e *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 	count := 0
 
 	for _, m := range e.cache {
-		logger.Info(e.Prefix, "Rendering metrics [%s:%s]", m.Collector, m.Object)
+		logger.Debug(e.Prefix, "Rendering metrics [%s:%s]", m.Collector, m.Object)
 		rendered, _ := e.Render(m)
 
 		data = append(data, rendered...)

@@ -39,7 +39,7 @@ Exporter:
 const (
     HARVEST_USER = "harvest2-user"
     HARVEST_ROLE = "harvest2-role"
-    PROMETHEUS_PORT_START = 20100
+    PROMETHEUS_PORT_START = 7202
 )
 
 var CONF_PATH string

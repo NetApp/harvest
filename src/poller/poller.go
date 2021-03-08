@@ -225,7 +225,7 @@ func (p *Poller) load_collector(class, object string) error {
 	if object != "" {
 		c := NewFunc(collector.New(class, object, p.options, template.Copy()))
 		if err = c.Init(); err != nil {
-			return err
+			logger.Warn(p.prefix, "skip subcollector [%s:%s]: %v", class, object, err)
 		} else {
 			subcollectors = append(subcollectors, c)
 			logger.Debug(p.prefix, "initialized collector [%s:%s]", class, object)

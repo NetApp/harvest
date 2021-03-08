@@ -34,6 +34,8 @@ function install {
     chown -R $HARVEST_USER:$HARVEST_GROUP $ROOT/var/run/harvest
 
     mv config/ $ROOT/etc/harvest/
+    mv grafana/ $ROOT/etc/harvest/
+    mv harvest.yml $ROOT/etc/harvest/
     mv * $ROOT/opt/harvest
     #ln -s $ROOT/opt/harvest/bin/harvest $ROOT/usr/local/bin/harvest
     info "installation complete"

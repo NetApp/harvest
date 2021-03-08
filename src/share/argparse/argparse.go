@@ -139,7 +139,7 @@ func (p *Parser) Parse() bool {
         //fmt.Printf("%d - \"%s\"\n", arg_index, flag)
 
 		// help stops here
-		if flag == "-h" || flag == "--help" || flag == "-help" {
+		if flag == "-h" || flag == "--help" || flag == "-help" || flag == p.help {
 			p.PrintHelp()
 			return false
 		// long flag

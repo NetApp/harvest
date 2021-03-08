@@ -35,7 +35,7 @@ func (p *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
         if rx, err = data.AddMetric("rx_percent", "rx_percent", true); err == nil {
             rx.Properties = "raw"
         } else {
-            panic(err)
+            return err
         }
         
     }
@@ -43,7 +43,7 @@ func (p *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
         if tx, err = data.AddMetric("tx_percent", "tx_percent", true); err == nil {
             tx.Properties = "raw"
         } else {
-            panic(err)
+            return err
         }
     }
 
@@ -51,7 +51,7 @@ func (p *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
         if util, err = data.AddMetric("util_percent", "util_percent", true); err == nil {
             util.Properties = "raw"
         } else {
-            panic(err)
+            return err
         }
     }
 
@@ -59,7 +59,7 @@ func (p *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
         if nic_state, err = data.AddMetric("nice_state", "nice_state", true); err == nil {
             nic_state.Properties = "raw"
         } else {
-            panic(err)
+            return err
         }   
     }
 

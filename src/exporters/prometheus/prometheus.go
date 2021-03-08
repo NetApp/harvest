@@ -30,7 +30,7 @@ func (e *Prometheus) Init() error {
     e.cache = make(map[string]*matrix.Matrix)
 
     if e.Options.Debug {
-        logger.Info(e.Prefix, "Initialized exporter. No HTTP server started since in debug mode")
+        logger.Debug(e.Prefix, "Initialized exporter. No HTTP server started since in debug mode")
         return nil
     }
 
@@ -53,7 +53,7 @@ func (e *Prometheus) Init() error {
     
     e.StartHttpd(addr, port)
 
-    logger.Info(e.Prefix, "Initialized Exporter. HTTP daemon serving at [http://%s:%s]", addr, port)
+    logger.Debug(e.Prefix, "Initialized Exporter. HTTP daemon serving at [http://%s:%s]", addr, port)
 
     return nil
 }
@@ -78,7 +78,7 @@ func (e *Prometheus) Export(data *matrix.Matrix) error {
     }
     delete(e.cache, key)
     e.cache[key] = data
-    logger.Info(e.Prefix, "added to cache with key [%s%s%s%s]", util.Bold, util.Red, key, util.End)
+    logger.Debug(e.Prefix, "added to cache with key [%s%s%s%s]", util.Bold, util.Red, key, util.End)
 
     return nil
 }

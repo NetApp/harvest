@@ -44,11 +44,12 @@ exit
 #!/bin/sh
 ln -s /opt/harvest/bin/harvest /usr/local/bin/harvest
 cd /opt/harvest
-./bin/config welcome
 
 %preun
 
 %postun
+unlink /opt/harvest/bin/harvest
+echo "uninstall complete"
 
 %clean
 echo "clean up ..."
