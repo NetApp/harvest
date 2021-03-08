@@ -19,7 +19,7 @@ counters:
 plugins:
   Shelf:
     objects:
-      - cooling-element-list => fans:
+      - cooling-element-list => fan:
         cooling-element-info:
           - ^^cooling-element-number => fan_id
           - ^location  #fake
@@ -30,7 +30,7 @@ plugins:
         current-sensor-info:
           - ^^current-sensor-no => sensor_id
           - ^location #fake
-          - ^sensor-reading => reading
+          - sensor-reading => reading
 #        - ^is-sensor-error
 #        - ^is-sensor-not-installed
 #        - ^sensor-condition
@@ -49,7 +49,7 @@ plugins:
       - voltage-sensor-list => voltage:
         voltage-sensor-info:
           - ^^voltage-sensor-no => sensor_id
-          - ^sensor-reading => reading
+          - sensor-reading => reading
           - ^location #fake
 #        - ^is-sensor-error
 #        - ^is-sensor-not-installed
@@ -60,7 +60,7 @@ plugins:
           - ^^power-supply-element-number => psu_id
           - ^power-supply-part-no => part_number
           - ^power-supply-serial-no => serial
-          - power-supply-swap-count => power_drawn
+        #  - power-supply-swap-count => psu_swap_count
           - ^power-supply-type => type
         # fake counters to match CDOT
           - ^enabled

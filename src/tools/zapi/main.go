@@ -11,11 +11,12 @@ import (
 	"goharvest2/share/util"
 	"goharvest2/share/set"
 	"goharvest2/share/config"
+	"goharvest2/share/tree"
 	"goharvest2/share/tree/node"
 	"goharvest2/share/argparse"
 )
 
-var args, options *Args
+var args *Args
 var params *node.Node
 var connection *client.Client
 var system *client.System
@@ -330,10 +331,10 @@ func get_data() {
 
     var request *node.Node
 
-    request = node.NewXmlS(options.Api)
+    request = node.NewXmlS(args.Api)
 
-    if options.Object != "" {
-        fmt.Printf("fetching raw data of zapiperf object [%s]\n", options.Object)
+    if args.Object != "" {
+        fmt.Printf("fetching raw data of zapiperf object [%s]\n", args.Object)
 
         if system.Clustered {
             request = node.NewXmlS("perf-object-get-instances")
@@ -343,9 +344,9 @@ func get_data() {
         } else {
             request = node.NewXmlS("perf-object-get-instances")
         }
-        request.NewChildS("objectname", options.Object)
+        request.NewChildS("objectname", args.Object)
     } else {
-        fmt.Printf("fetching raw data of zapi api [%s]\n", options.Api)
+        fmt.Printf("fetching raw data of zapi api [%s]\n", args.Api)
     }
 
     if err := connection.BuildRequest(request); err != nil {
@@ -446,29 +447,37 @@ func get_attrs() {
         return
     }
 
-    attr := newAttr(attr_name, "")
+    attr := node.NewS(attr_name)
     search_entries(attr, entries)
 
     fmt.Println("############################        ATTR         ##########################")
     attr.Print(0)
-    fmt.Println()    
+    fmt.Println()
+    if args.Export {
+        fn := path.Join("/tmp", args.Api + ".yml")
+        if err = tree.ExportYaml(attr, fn); err != nil {
+            fmt.Printf("failed to export to [%s]:\n", fn)
+            fmt.Println(err)
+        } else {
+            fmt.Printf("exported to [%s]\n", fn)
+        }
+    }
 }
 
-func search_entries(root *attribute, entries *node.Node) {
+func search_entries(root, entries *node.Node) {
 
-    cache := make(map[string]*attribute)
-    cache[root.Name] = root
+    cache := make(map[string]*node.Node)
+    cache[root.GetNameS()] = root
 
     for i:=0; i<MAX_SEARCH_DEPTH; i+=1 {
         for _, entry := range entries.GetChildren() {
             name := entry.GetChildContentS("name")
-            parent, ok := cache[name]
-            if ok {
+            if parent, ok := cache[name]; ok {
                 delete(cache, name)
                 if elems := entry.GetChildS("type-elements"); elems != nil {
                     for _, elem := range elems.GetChildren() {
-                        child := parent.newChild(elem.GetChildContentS("name"), elem.GetChildContentS("type"))
-                        attr_type := strings.TrimSuffix(child.Type, "[]")
+                        child := parent.NewChildS(elem.GetChildContentS("name"), "")
+                        attr_type := strings.TrimSuffix(elem.GetChildContentS("type"), "[]")
                         if ! KNOWN_TYPES.Has(attr_type) {
                             cache[attr_type] = child
                         }

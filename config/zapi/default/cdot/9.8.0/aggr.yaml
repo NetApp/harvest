@@ -70,9 +70,9 @@ export_options:
   exclude_instance_name: True
   graphite_leafs:
     - node.{node}.aggr.{aggr}
-  include_keys:
+  instance_keys:
     - aggr
     - node
-  include_labels:
+  instance_labels:
     - type
     - state

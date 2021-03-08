@@ -49,13 +49,19 @@ counters:
             - snapshot-size-total                   => snapshot_size_total
             - snapshot-size-used                    => snapshot_size_used
 
+plugins:
+  status:
+    metrics:
+      status:
+        label: state
+        ok_value: online
+
 
 export_options:
   graphite_leafs:
     - node.{node}.aggr.{aggr}
-  include_keys:
+  instance_keys:
     - aggr
-    - node
-  include_labels:
+  instance_labels:
     - type
     - state

@@ -237,10 +237,9 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					continue
 				}
 
-			
 				for mkey, m := range data.Metrics {
 
-					if value := obj.GetChildContentS(mkey); value != "" {
+					if value := strings.Split(obj.GetChildContentS(mkey), " ")[0]; value != "" {
 						if num, err := strconv.ParseFloat(value, 32); err == nil {
 							data.SetValue(m, instance, float64(num))
 							logger.Debug(p.Prefix, "Added numeric [%s] = [%f]", mkey, num)

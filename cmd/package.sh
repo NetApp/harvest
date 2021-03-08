@@ -37,14 +37,12 @@ function build {
 
         info "building [harvest_$VERSION-$RELEASE_$ARCH.$DIST] in container"
 
-        
         if [ "$DIST" == "rpm" ]; then 
-            $DOCKER_IMAGE="centos"
+            cd "$BUILD_SOURCE/cmd/$DIST/centos"
         else
-            $DOCKER_IMAGE="debian"
+            cd "$BUILD_SOURCE/cmd/$DIST/debian"
         fi
 
-        cd "$BUILD_SOURCE/cmd/$DIST/$DOCKER_IMAGE"
         if [ ! $? -eq 0 ]; then
             error "docker image"
             exit 1
@@ -56,7 +54,7 @@ function build {
             exit 1
         fi
 
-        docker run -it -v $BUILD_SOURCE:/tmp/src -e $HARVEST_BUILD_SRC="/tmp/src" -e HARVEST_ARCH="$ARCH" -e HARVEST_VERSION="$VERSION" -e HARVEST_RELEASE="$RELEASE" harvest2/$DIST
+        docker run -it -v $BUILD_SOURCE:/tmp/src -e HARVEST_BUILD_SRC="/tmp/src" -e HARVEST_ARCH="$ARCH" -e HARVEST_VERSION="$VERSION" -e HARVEST_RELEASE="$RELEASE" harvest2/$DIST
         if [ ! $? -eq 0 ]; then
             error "run docker container"
             exit 1
