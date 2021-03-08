@@ -58,12 +58,20 @@ counters:
       - size-used
       - snapshot-reserve-percent
 
+      
+plugins:
+  status:
+    metrics:
+      status:
+        label: state
+        ok_value: online
+    
 export_options:
   exclude_instance_name: True
   graphite_leafs:
     - node.{node}.aggr.{aggr}
   include_keys:
-    - aggregate
+    - aggr
     - node
   include_labels:
     - type
