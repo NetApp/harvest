@@ -26,6 +26,7 @@ cp -r "$SRC/grafana/" "$BUILD/harvest/"
 cp -r "$SRC/docs/" "$BUILD/harvest/"
 cp -r "$SRC/config/" "$BUILD/harvest/"
 cp -r "$SRC/ReadMe.md" "$BUILD/harvest/"
+cp -r "$SRC/harvest.yml" "$BUILD/harvest/"
 
 # build binaries
 info "building binaries"

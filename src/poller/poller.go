@@ -430,7 +430,7 @@ func (p *Poller) selfMonitor() {
 			for _, c := range p.collectors {
 				code, status, msg := c.GetStatus()
 				logger.Debug(p.prefix, "status of collector [%s]: %d (%s) %s", c.GetName(), code, status, msg)
-				if code == 1 {
+				if code == 0 {
 					up_collectors += 1
 				}
 
@@ -448,7 +448,7 @@ func (p *Poller) selfMonitor() {
 			for _, e := range p.exporters {
 				code, status, msg := e.GetStatus()
 				logger.Debug(p.prefix, "status of exporter [%s]: %d (%s) %s", e.GetName(), code, status, msg)
-				if code == 1 {
+				if code == 0 {
 					up_exporters += 1
 				}
 				if instance := p.metadata.GetInstance(e.GetClass() + "." + e.GetName()); instance == nil {

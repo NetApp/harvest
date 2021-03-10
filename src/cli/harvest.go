@@ -5,8 +5,6 @@ import (
 	"os/exec"
 	"path"
 	"fmt"
-    "strings"
-    "io/ioutil"
 	"goharvest2/share/version"
 )
 
@@ -21,9 +19,8 @@ The commands are:
 	status                  show status of pollers
 	start/restart/stop      manage pollers
 	config                  run the config utility
-	alerts                  manage alerts
-	zapitool                explore ZAPI objects and counters
-	grafanatool             import dashboards to Grafana
+	zapi                    explore ZAPI objects and counters
+	grafan                  import dashboards to Grafana
 	version                 show Harvest2 version
 
 Use "harvest <command> help" for more information about a command
@@ -62,7 +59,7 @@ func main() {
 		bin = "config"
 	case "zapi":
 		bin = "zapi"
-	case "grafanatool":
+	case "grafana":
 		bin = "grafana"
 	default:
 		fmt.Printf("Unknown command: %s\n", command)

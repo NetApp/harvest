@@ -179,6 +179,8 @@ func main() {
         "ZapiPerf counter to show",
     )
 
+    parser.SetHelp("help")
+
     if ! parser.Parse() {
         os.Exit(0)
     }

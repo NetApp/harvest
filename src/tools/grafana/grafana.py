@@ -32,7 +32,7 @@ def main():
     print(request.full_url)
     print('******')
 
-    for f in os.listdir('{}/{}'.format(args.path, args.directory)):
+    for f in os.listdir('{}/grafana/{}'.format(args.path, args.directory)):
 
         if not f.endswith('.json'):
             continue
@@ -118,7 +118,7 @@ def read_args():
 
     args = p.parse_args()
 
-    args.path = os.getenv('HARVEST_CONF', '/etc/harvest/')
+    args.path = os.getenv('HARVEST_CONF', '/etc/harvest')
     
     return args
 

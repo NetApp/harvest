@@ -8,7 +8,7 @@ schedule:
 
 objects:
   SystemNode:       node.yaml
-  Aggregate:        aggregate.yaml
+  Aggregate:        aggr.yaml
   Volume:           volume.yaml
   SnapMirror:       snapmirror.yaml
   StorageDisk:      disk.yaml
