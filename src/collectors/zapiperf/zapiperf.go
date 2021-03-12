@@ -120,6 +120,9 @@ func (c *ZapiPerf) Init() error {
     
     // Add system (cluster) name 
     c.Data.SetGlobalLabel("cluster", c.System.Name)
+    if ! c.System.Clustered {
+        c.Data.SetGlobalLabel("node", c.System.Name)
+    }
 
     // Initialize counter cache
     counters := c.Params.GetChildS("counters")
@@ -306,7 +309,7 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 
 				// sanity check
 				if name == "" || value == "" {
-					logger.Debug("skipping raw counter [%s] with value [%s]", name, value)
+					logger.Debug(c.Prefix, "skipping raw counter [%s] with value [%s]", name, value)
 					continue
 				}
 
@@ -610,6 +613,10 @@ func (c *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 				continue
 			}
 		}
+                // override counter properties from template
+                if p := c.GetOverride(key); p != "" {
+                        counter.SetChildContentS("properties", p)
+                }
 
 		// string metric, add as instance label
 		if strings.Contains(counter.GetChildContentS("properties"), "string") {
@@ -785,6 +792,13 @@ func (c *ZapiPerf) add_counter(counter *node.Node, name, display string, enabled
 		}
 	}
 	return base_counter
+}
+
+func (c *ZapiPerf) GetOverride(counter string) string {
+	if o := c.Params.GetChildS("override"); o != nil {
+		return o.GetChildContentS(counter)
+	}
+	return ""
 }
 
 func parse_array_labels(elem *node.Node) ([]string, string) {

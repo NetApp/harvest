@@ -3,7 +3,7 @@ name:                     NicCommon
 query:                    nic_common
 object:                   nic
 
-instance_key:             uuid
+instance_key:             name
 
 counters:
   - instance_name 
@@ -25,8 +25,7 @@ counters:
   - tx_total_errors
 
 override:
-  link_speed:
-    properties: string
+  link_speed: string
 
 plugins:
   - Nic

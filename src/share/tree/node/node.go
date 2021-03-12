@@ -192,6 +192,14 @@ func (n *Node) GetChildContentS(name string) string {
     return ""
 }
 
+func (n *Node) SetChildContentS(name, content string) {
+    if child := n.GetChildS(name); child != nil {
+        child.SetContentS(content)
+    } else {
+        n.NewChildS(name, content)
+    }
+}
+
 func (n *Node) GetAllChildContentS() []string {
     content := make([]string, 0)
     for _, ch := range n.Children {

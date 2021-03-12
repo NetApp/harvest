@@ -55,53 +55,66 @@ func (p *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
         }
     }
 
-    if nic_state = data.GetMetric("nice_state"); nic_state == nil {
-        if nic_state, err = data.AddMetric("nice_state", "nice_state", true); err == nil {
+    if nic_state = data.GetMetric("state"); nic_state == nil {
+        if nic_state, err = data.AddMetric("state", "state", true); err == nil {
             nic_state.Properties = "raw"
         } else {
             return nil, err
         }   
     }
 
-	for _, instance := range data.GetInstances() {
+    for _, instance := range data.GetInstances() {
 
-        if x := instance.Labels.Get("link_speed"); strings.HasSuffix(x, "M") {
-            base, err := strconv.Atoi(strings.TrimSuffix(x, "M"))
+        var speed, base int
+	var s string
+	var err error
+
+        if s = instance.Labels.Get("speed"); strings.HasSuffix(s, "M") {
+            base, err = strconv.Atoi(strings.TrimSuffix(s, "M"))
             if err != nil {
-                logger.Debug(p.Prefix, "skip, can't convert speed (%s) to numeric", x)
+                logger.Debug(p.Prefix, "skip, can't convert speed (%s) to numeric", s)
             } else {
-                speed := base * 125000
-                instance.Labels.Set("link_speed", strconv.Itoa(speed))
-                logger.Trace(p.Prefix, "converted speed (%s) to numeric (%d)", x, speed)
+                speed = base * 125000
+                instance.Labels.Set("speed", strconv.Itoa(speed))
+                logger.Trace(p.Prefix, "converted speed (%s) to numeric (%d)", s, speed)
+	    }
+	} else if speed, err = strconv.Atoi(s); err != nil {
+            logger.Debug(p.Prefix, "skip, can't convert speed (%s) to numeric", s)
+	}
+	    
 
-                if speed != 0 {
+        if speed != 0 {
 
-                    var rx_bytes, tx_bytes, rx_percent, tx_percent float64
-                    var ok bool
+            var rx_bytes, tx_bytes, rx_percent, tx_percent float64
+            var ok bool
 
-                    if rx_bytes, ok = data.GetValueS("rx_bytes", instance); ok {
-                        rx_percent = rx_bytes / float64(speed)
-                        data.SetValue(rx, instance, rx_percent)
-                    }
-
-                    if tx_bytes, ok = data.GetValueS("tx_bytes", instance); ok {
-                        tx_percent = tx_bytes / float64(speed)
-                        data.SetValue(tx, instance, tx_percent)
-                    }
-
-                    if ok {
-                        data.SetValue(util, instance, math.Max(rx_percent, tx_percent))
-                    }
-                }
+            if rx_bytes, ok = data.GetValueS("rx_bytes", instance); ok {
+                rx_percent = rx_bytes / float64(speed)
+                data.SetValue(rx, instance, rx_percent)
             }
-        }
 
-        if state := instance.Labels.Get("link_current_state"); state == "up" {
+            if tx_bytes, ok = data.GetValueS("tx_bytes", instance); ok {
+                tx_percent = tx_bytes / float64(speed)
+                data.SetValue(tx, instance, tx_percent)
+            }
+
+            if ok {
+                data.SetValue(util, instance, math.Max(rx_percent, tx_percent))
+            }
+	}
+
+	if state := instance.Labels.Get("state"); state == "up" {
             data.SetValue(nic_state, instance, float64(0))
         } else {
             data.SetValue(nic_state, instance, float64(1))
         }
+
+        // truncate redundant prefix in nic type
+        if t := instance.Labels.Get("type"); strings.HasPrefix(t, "nic_") {
+	    instance.Labels.Set("type", strings.TrimPrefix(t, "nic_"))
 	}
 
-	return nil, nil
+    }
+
+    return nil, nil
 }
