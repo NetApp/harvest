@@ -6,8 +6,8 @@ The *swiss-army knife* for monitoring datacenters. The default package collects 
 
 Harvest 2.0 is not a collector, but a framework for running collectors and exporters concurrently. You are more than welcome to contribute your own collector, plugin or exporter (see our Developers documentation).
 
-<img src="docs/examples/dashboard_cluster.png" width="50%" align="center"><img src="docs/examples/dashboard_shelf.png" width="50%" align="center">
-<br />
+<img src="docs/examples/dashboard_cluster.png" width="40%" align="center"><img src="docs/examples/dashboard_shelf.png" width="40%" align="center">
+
 
 ## Requirements
 
@@ -26,7 +26,11 @@ Hardware requirements depend on number of pollers (i.e. number of clustered moni
 - CPU: 2 cores
 - Memory: 1 GB
 - Disk: 500 MB (mostly used by log files)
-<br /><br />
+
+Harvest is compatible with:
+- Prometheus: `2.24` or higher
+- InfluxDB: `v2`
+- Grafana: `7.4.2` or higher
 
 
 # Installation / Upgrade

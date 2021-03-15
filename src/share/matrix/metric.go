@@ -28,6 +28,10 @@ func (m *Metric) IsScalar() bool {
 	return m.Size == 1
 }
 
+func (m *Metric) HasLabels() bool {
+	return m.Labels != nil && m.Labels.Size() != 0
+}
+
 func (m *Matrix) GetMetric(key string) *Metric {
 
     if metric, found := m.Metrics[key]; found {

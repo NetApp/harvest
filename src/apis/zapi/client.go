@@ -123,9 +123,7 @@ func (c *Client) BuildRequest(query *node.Node) error {
     request.NewAttrS("version", "1.3")
     request.AddChild(query)
 
-    data, err = tree.DumpXml(request)
-
-    if err == nil {
+    if data, err = tree.DumpXml(request); err == nil {
         buffer = bytes.NewBuffer(data)
         c.buffer = buffer
         c.request.Body = ioutil.NopCloser(buffer)
@@ -177,9 +175,6 @@ func (c *Client) invoke(with_timers bool) (*node.Node, time.Duration, time.Durat
         response_t = time.Since(start)
     }
 
-    // read response body
-    defer response.Body.Close()
-
     if response.StatusCode != 200 {
         return result, response_t, parse_t, errors.New(errors.API_RESPONSE, response.Status)
     }
@@ -187,6 +182,9 @@ func (c *Client) invoke(with_timers bool) (*node.Node, time.Duration, time.Durat
     if body, err = ioutil.ReadAll(response.Body); err != nil {
         return result, response_t, parse_t, err
     }
+    // read response body
+    defer response.Body.Close()
+
 
     // parse xml
     if with_timers {
