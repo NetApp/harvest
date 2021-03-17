@@ -124,6 +124,11 @@ func Init(c Collector) error {
 		data.SetExportOptions(matrix.DefaultExportOptions())
 	}
 	data.SetGlobalLabel("datacenter", params.GetChildContentS("datacenter"))
+
+    if params.GetChildContentS("export_data") == "False" {
+        data.Exportable = false
+    }
+
 	c.SetData(data)
 
 	/* Initialize Plugins */
@@ -275,9 +280,11 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 
 			// continue if metadata failed, since it might be specific to metadata
 			for _, data := range results {
-				if err := e.Export(data); err != nil {
-					logger.Error(c.Prefix, "export data to [%s]: %s", e.GetName(), err.Error())
-					break
+                if data.Exportable {
+				    if err := e.Export(data); err != nil {
+					    logger.Error(c.Prefix, "export data to [%s]: %s", e.GetName(), err.Error())
+					    break
+                    }
 				}
 			}
 		}
