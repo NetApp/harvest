@@ -1,32 +1,30 @@
-
 package main
 
 import (
-	"strings"
 	"goharvest2/poller/collector/plugin"
-    "goharvest2/share/matrix"
 	"goharvest2/share/dict"
 	"goharvest2/share/logger"
+	"goharvest2/share/matrix"
 	"goharvest2/share/tree/node"
+	"strings"
 
-    client "goharvest2/apis/zapi"
+	client "goharvest2/apis/zapi"
 )
 
 type SnapMirror struct {
 	*plugin.AbstractPlugin
-	connection *client.Client
-	node_cache *dict.Dict
-	dest_limit_cache *dict.Dict
-	src_limit_cache *dict.Dict
-	batch_size string
-	node_upd_counter int
+	connection        *client.Client
+	node_cache        *dict.Dict
+	dest_limit_cache  *dict.Dict
+	src_limit_cache   *dict.Dict
+	batch_size        string
+	node_upd_counter  int
 	limit_upd_counter int
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &SnapMirror{AbstractPlugin: p}
 }
-
 
 func (p *SnapMirror) Init() error {
 
@@ -36,8 +34,8 @@ func (p *SnapMirror) Init() error {
 		return err
 	}
 
-    if p.connection, err = client.New(p.ParentParams); err != nil {
-        logger.Error(p.Prefix, "connecting: %v", err)
+	if p.connection, err = client.New(p.ParentParams); err != nil {
+		logger.Error(p.Prefix, "connecting: %v", err)
 		return err
 	}
 
@@ -59,7 +57,6 @@ func (p *SnapMirror) Init() error {
 	logger.Debug(p.Prefix, "plugin initialized")
 	return nil
 }
-
 
 func (p *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
@@ -90,14 +87,12 @@ func (p *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	src_upd_count := 0
 	limit_upd_count := 0
 
-
-	
 	for _, instance := range data.GetInstances() {
 
 		if p.connection.IsClustered() {
 			// check instances where destination node is missing
 			if instance.Labels.Get("destination_node") == "" {
-				
+
 				key := instance.Labels.Get("destination_vserver") + "." + instance.Labels.Get("destination_volume")
 				if node, has := p.node_cache.GetHas(key); has {
 					instance.Labels.Set("destination_node", node)
@@ -107,7 +102,7 @@ func (p *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 			// check instances where source node is missing
 			if instance.Labels.Get("source_node") == "" {
-				
+
 				key := instance.Labels.Get("source_vserver") + "." + instance.Labels.Get("source_volume")
 				if node, has := p.node_cache.GetHas(key); has {
 					instance.Labels.Set("source_node", node)
@@ -130,7 +125,7 @@ func (p *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					break
 				}
 			}
-	
+
 			if dest := instance.Labels.Get("destination_node"); dest != "" {
 				if x := strings.Split(dest, ":"); len(x) == 2 {
 					instance.Labels.Set("destination_node", x[0])
@@ -146,7 +141,7 @@ func (p *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		// check if destination node limit is missing
 		if instance.Labels.Get("destination_node_limit") == "" {
-			
+
 			if limit, has := p.dest_limit_cache.GetHas(instance.Labels.Get("destination_node")); has {
 				instance.Labels.Set("destination_node_limit", limit)
 				limit_upd_count += 1
@@ -155,7 +150,7 @@ func (p *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		// check if destination node limit is missing
 		if instance.Labels.Get("source_node_limit") == "" {
-			
+
 			if limit, has := p.src_limit_cache.GetHas(instance.Labels.Get("source_node")); has {
 				instance.Labels.Set("source_node_limit", limit)
 			}
@@ -167,10 +162,9 @@ func (p *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	return nil, nil
 }
 
-
 func (p *SnapMirror) update_node_cache() error {
 
-	count := 0	
+	count := 0
 
 	request := node.NewXmlS("perf-object-get-instances")
 	request.NewChildS("objectname", "volume")
@@ -221,9 +215,8 @@ func (p *SnapMirror) update_node_cache() error {
 	}
 
 	logger.Debug(p.Prefix, "updated node cache for %d volumes", count)
-	return nil	
+	return nil
 }
-
 
 func (p *SnapMirror) update_limit_cache() error {
 	request := node.NewXmlS("perf-object-get-instances")

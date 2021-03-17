@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-/* Write metrics to the InfluxDB exporter.
+/* Write metrics to the InfluxDB Time-Series Database.
    The exporter follows InfluxDB's v2 documentation
    for authentication and line protocol (measurement):
 

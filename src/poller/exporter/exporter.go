@@ -1,12 +1,12 @@
 package exporter
 
 import (
+	"goharvest2/poller/options"
+	"goharvest2/share/matrix"
+	"goharvest2/share/tree/node"
+	"strconv"
 	"sync"
 	"sync/atomic"
-	"strconv"
-	"goharvest2/share/tree/node"
-	"goharvest2/share/matrix"
-	"goharvest2/poller/options"
 )
 
 type Exporter interface {
@@ -27,32 +27,32 @@ var ExporterStatus = [3]string{
 }
 
 type AbstractExporter struct {
-	Name string
-	Class string
-	Prefix string
-	Status int
-	Message string
-	Count uint64
-	Options *options.Options
-	Params *node.Node
+	Name     string
+	Class    string
+	Prefix   string
+	Status   int
+	Message  string
+	Count    uint64
+	Options  *options.Options
+	Params   *node.Node
 	Metadata *matrix.Matrix
 	*sync.Mutex
 }
 
 func New(c, n string, o *options.Options, p *node.Node) *AbstractExporter {
 	abc := AbstractExporter{
-		Name: n,
-		Class: c,
+		Name:    n,
+		Class:   c,
 		Options: o,
-		Params: p,
-		Prefix: "(exporter) (" + n + ")",
-		Mutex: &sync.Mutex{},
+		Params:  p,
+		Prefix:  "(exporter) (" + n + ")",
+		Mutex:   &sync.Mutex{},
 	}
 	return &abc
 }
 
 func (e *AbstractExporter) InitAbc() error {
-    e.Metadata = matrix.New(e.Class, e.Name, "")
+	e.Metadata = matrix.New(e.Class, e.Name, "")
 	e.Metadata.IsMetadata = true
 	e.Metadata.MetadataType = "exporter"
 	e.Metadata.MetadataObject = "export"
@@ -63,20 +63,20 @@ func (e *AbstractExporter) InitAbc() error {
 	e.Metadata.SetGlobalLabel("target", e.Name)
 
 	if _, err := e.Metadata.AddMetric("time", "time", true); err != nil {
-        return err
-    }
+		return err
+	}
 	if _, err := e.Metadata.AddMetric("count", "count", true); err != nil {
-        return err
-    }
+		return err
+	}
 
-    e.Metadata.AddLabel("task", "")
-    if instance, err := e.Metadata.AddInstance("render"); err == nil {
+	e.Metadata.AddLabel("task", "")
+	if instance, err := e.Metadata.AddInstance("render"); err == nil {
 		e.Metadata.SetInstanceLabel(instance, "task", "render")
 		e.Metadata.SetExportOptions(matrix.DefaultExportOptions())
 	} else {
 		return err
 	}
-	
+
 	if err := e.Metadata.InitData(); err != nil {
 		return err
 	}

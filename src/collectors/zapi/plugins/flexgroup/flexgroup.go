@@ -1,11 +1,11 @@
 package main
 
 import (
-	"strings"
-	"strconv"
-	"goharvest2/share/logger"
-    "goharvest2/share/matrix"
 	"goharvest2/poller/collector/plugin"
+	"goharvest2/share/logger"
+	"goharvest2/share/matrix"
+	"strconv"
+	"strings"
 )
 
 type FlexGroup struct {
@@ -15,7 +15,6 @@ type FlexGroup struct {
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &FlexGroup{AbstractPlugin: p}
 }
-
 
 func fetch_names(instance *matrix.Instance) (string, string, string, string) {
 	var key, name, svm, vol string
@@ -45,7 +44,7 @@ func (p *FlexGroup) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		if key, name, svm, vol := fetch_names(i); key != "" {
 
 			if instance := n.GetInstance(key); instance == nil {
-				
+
 				instance, err := n.AddInstance(key)
 
 				if err != nil {
@@ -93,7 +92,7 @@ func (p *FlexGroup) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		for _, metric := range n.GetMetrics() {
 			if strings.Contains(metric.Name, "percent") {
 				if value, has := n.GetValue(metric, instance); has {
-					n.SetValue(metric, instance, value / float64(count))
+					n.SetValue(metric, instance, value/float64(count))
 				}
 			}
 		}

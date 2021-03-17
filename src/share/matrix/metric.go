@@ -9,16 +9,16 @@ import (
 // Metric struct and related methods
 
 type Metric struct {
-	Index int
-    Name string
+	Index   int
+	Name    string
 	Enabled bool
-	Size int // 1 for scalar metrics
+	Size    int // 1 for scalar metrics
 	/* extended fields for ZapiPerf counters */
-	Properties string
+	Properties  string
 	BaseCounter string
 	/* fields for Array counters */
 	Dimensions int
-	Labels *dict.Dict
+	Labels     *dict.Dict
 }
 
 func (m *Metric) IsScalar() bool {
@@ -34,7 +34,7 @@ func (m *Metric) HasLabels() bool {
 
 func (m *Matrix) GetMetric(key string) *Metric {
 
-    if metric, found := m.Metrics[key]; found {
+	if metric, found := m.Metrics[key]; found {
 		return metric
 	}
 	return nil
@@ -49,9 +49,9 @@ func (m *Matrix) add_metric(key string, metric *Metric) error {
 	metric.Index = m.SizeMetrics()
 	m.Metrics[key] = metric
 
-	if ! m.IsEmpty() {
+	if !m.IsEmpty() {
 		m.Data = append(m.Data, make([]float64, m.SizeInstances()))
-		for j:=0; j<m.SizeInstances(); j+=1 {
+		for j := 0; j < m.SizeInstances(); j += 1 {
 			m.Data[metric.Index][j] = NAN
 		}
 	}

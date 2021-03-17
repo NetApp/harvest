@@ -1,6 +1,4 @@
-
 package set
-
 
 type Set struct {
 	set map[string]bool
@@ -43,7 +41,7 @@ func (s *Set) Has(value string) bool {
 
 func (s *Set) Values() []string {
 	values := make([]string, len(s.set))
-	for v, _ := range s.set {
+	for v := range s.set {
 		values = append(values, v)
 	}
 	return values
@@ -59,7 +57,7 @@ func (s *Set) Size() int {
 
 func (s *Set) Slice() []string {
 	keys := make([]string, 0, len(s.set))
-	for k, _ := range s.set {
+	for k := range s.set {
 		keys = append(keys, k)
 	}
 	return keys

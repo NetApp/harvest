@@ -1,19 +1,19 @@
 package main
 
 import (
-	"os"
-	"os/exec"
-	"fmt"
-	"path"
-	"io/ioutil"
-	"strings"
-	"strconv"
-	"syscall"
 	"bytes"
-	"time"
+	"fmt"
 	"goharvest2/share/argparse"
 	"goharvest2/share/config"
-    "goharvest2/share/set"
+	"goharvest2/share/set"
+	"io/ioutil"
+	"os"
+	"os/exec"
+	"path"
+	"strconv"
+	"strings"
+	"syscall"
+	"time"
 )
 
 var (
@@ -23,14 +23,14 @@ var (
 )
 
 type options struct {
-	Command string
-	Pollers []string
-	Verbose bool
-	Trace bool
-	Debug bool
+	Command    string
+	Pollers    []string
+	Verbose    bool
+	Trace      bool
+	Debug      bool
 	Foreground bool
-	Loglevel int
-    Config string
+	Loglevel   int
+	Config     string
 }
 
 func (o options) print() {
@@ -58,14 +58,14 @@ func main() {
 	}
 
 	// default options
-    opts := &options{
-        Verbose: false,
-        Debug: false,
-        Trace: false,
-        Foreground: false,
-        Loglevel: 2,
-        Config: path.Join(HARVEST_CONF, "harvest.yml"),
-    }
+	opts := &options{
+		Verbose:    false,
+		Debug:      false,
+		Trace:      false,
+		Foreground: false,
+		Loglevel:   2,
+		Config:     path.Join(HARVEST_CONF, "harvest.yml"),
+	}
 
 	// parse user-defined options
 	parser := argparse.New("Harvest Manager", "harvest", "manage your pollers")
@@ -118,21 +118,21 @@ func main() {
 		"logging level (0=trace, 1=debug, 2=info, 3=warn, 4=error, 5=fatal)",
 	)
 
-    parser.String(
-        &opts.Config,
-        "config",
-        "c",
-        "Custom config filepath (default: " + opts.Config + ")",
-    )
+	parser.String(
+		&opts.Config,
+		"config",
+		"c",
+		"Custom config filepath (default: "+opts.Config+")",
+	)
 
 	parser.SetHelp("help")
-	
+
 	// user asked for help or invalid options
-	if ! parser.Parse() {
+	if !parser.Parse() {
 		os.Exit(0)
 	}
 
-    //parser.PrintValues()
+	//parser.PrintValues()
 
 	if opts.Debug {
 		opts.Loglevel = 1
@@ -153,7 +153,7 @@ func main() {
 	}
 
 	if len(opts.Pollers) > 0 {
-        // verify poller names
+		// verify poller names
 		ok := true
 		for _, p := range opts.Pollers {
 			if pollers.GetChildS(p) == nil {
@@ -164,13 +164,13 @@ func main() {
 		if !ok {
 			os.Exit(1)
 		}
-        // filter pollers
-        poller_names := set.NewFrom(opts.Pollers)
-        for _, p := range pollers.GetChildren() {
-            if ! poller_names.Has(p.GetNameS()) {
-                pollers.PopChildS(p.GetNameS())
-            }
-        }
+		// filter pollers
+		poller_names := set.NewFrom(opts.Pollers)
+		for _, p := range pollers.GetChildren() {
+			if !poller_names.Has(p.GetNameS()) {
+				pollers.PopChildS(p.GetNameS())
+			}
+		}
 	}
 
 	if opts.Foreground {
@@ -235,21 +235,21 @@ func get_status(poller_name string) (string, int) {
 	var pid int
 
 	// running poller should have written PID to file
-	pid_fp := path.Join(HARVEST_PIDS, poller_name + ".pid")
+	pid_fp := path.Join(HARVEST_PIDS, poller_name+".pid")
 
 	// no PID file, assume process exited or never started
 	if data, err := ioutil.ReadFile(pid_fp); err != nil {
 		status = "not running"
-	// corrupt PID should never happen
-	// might be a sign of system failure or unexpected shutdown
+		// corrupt PID should never happen
+		// might be a sign of system failure or unexpected shutdown
 	} else if pid, err = strconv.Atoi(string(data)); err != nil {
 		status = "invalid pid"
 	}
 
-    // docker dummy status
-    if os.Getenv("HARVEST_DOCKER") == "yes" {
-        return "na", pid
-    }
+	// docker dummy status
+	if os.Getenv("HARVEST_DOCKER") == "yes" {
+		return "na", pid
+	}
 
 	// no valid PID stops here
 	if pid < 1 {
@@ -283,7 +283,7 @@ func get_status(poller_name string) (string, int) {
 
 		if strings.Contains(cmdline, "--daemon") {
 			s := strings.SplitAfter(cmdline, "--poller ")
-			if len(s)==2 && strings.HasPrefix(s[1], poller_name) {
+			if len(s) == 2 && strings.HasPrefix(s[1], poller_name) {
 				status = "running"
 			}
 		}
@@ -297,7 +297,6 @@ func get_status(poller_name string) (string, int) {
 
 	return status, pid
 }
-
 
 // Stop poller if it's running or it's stoppable
 //
@@ -324,7 +323,7 @@ func stop_poller(poller_name string) (string, int) {
 	}
 
 	// give the poller chance to cleanup and exit
-	for i:=0; i<5; i+=1 {
+	for i := 0; i < 5; i += 1 {
 		time.Sleep(200 * time.Millisecond)
 		// @TODO, handle situation when PID is regained by some other process
 		if proc.Signal(syscall.Signal(0)) != nil {
@@ -348,8 +347,8 @@ func start_poller(poller_name string, opts *options) (string, int) {
 	}
 
 	if opts.Foreground {
-        cmd := exec.Command(argv[0], argv[1:]...)
-        fmt.Println(cmd.String())
+		cmd := exec.Command(argv[0], argv[1:]...)
+		fmt.Println(cmd.String())
 		fmt.Println("starting in foreground, enter CTRL+C or close terminal to stop poller")
 		os.Stdout.Sync()
 		cmd.Stdout = os.Stdout
@@ -367,18 +366,18 @@ func start_poller(poller_name string, opts *options) (string, int) {
 
 	argv = append(argv, "--daemon")
 
-    if os.Getenv("HARVEST_DOCKER") == "yes" {
-        cmd := exec.Command(argv[0], argv[1:]...)
-        if err := cmd.Start(); err != nil {
-            fmt.Println(err)
-            os.Exit(1)
-        }
-        if err := cmd.Wait(); err != nil {
-            fmt.Println(err)
-            os.Exit(1)
-        }
-        os.Exit(0)
-    }
+	if os.Getenv("HARVEST_DOCKER") == "yes" {
+		cmd := exec.Command(argv[0], argv[1:]...)
+		if err := cmd.Start(); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		if err := cmd.Wait(); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		os.Exit(0)
+	}
 
 	cmd := exec.Command(path.Join(HARVEST_HOME, "bin", "daemonize"), argv...)
 	if err := cmd.Start(); err != nil {
@@ -386,10 +385,10 @@ func start_poller(poller_name string, opts *options) (string, int) {
 		os.Exit(1)
 	}
 
-    // Poller should immediately write its PID to file at startup
+	// Poller should immediately write its PID to file at startup
 	// Allow for some delay and retry checking status a few times
 	time.Sleep(50 * time.Millisecond)
-	for i:=0; i<10; i+=1 {
+	for i := 0; i < 10; i += 1 {
 		// @TODO, handle situation when PID is regained by some other process
 		if status, pid := get_status(poller_name); pid > 0 {
 			return status, pid
@@ -406,7 +405,7 @@ func clean_pidf(fp string) bool {
 	if err := os.Remove(fp); err != nil {
 		if os.IsPermission(err) {
 			fmt.Printf("Error: you have no permission to remove [%s]\n", fp)
-		} else if ! os.IsNotExist(err) {
+		} else if !os.IsNotExist(err) {
 			fmt.Printf("Error: %v\n", err)
 		}
 		return false

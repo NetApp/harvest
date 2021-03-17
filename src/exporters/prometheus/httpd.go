@@ -1,16 +1,15 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
 	"bytes"
+	"fmt"
+	"goharvest2/share/logger"
+	"goharvest2/share/matrix"
+	"net/http"
 	"sort"
 	"strings"
 	"time"
-	"goharvest2/share/matrix"
-	"goharvest2/share/logger"
 )
-
 
 func (e *Prometheus) StartHttpd(addr, port string) {
 
@@ -19,7 +18,7 @@ func (e *Prometheus) StartHttpd(addr, port string) {
 	mux.HandleFunc("/metrics", e.ServeMetrics)
 
 	logger.Debug(e.Prefix, "Starting server at [:%s]", port)
-	server := &http.Server{ Addr: ":"+port, Handler: mux}
+	server := &http.Server{Addr: ":" + port, Handler: mux}
 	go server.ListenAndServe()
 
 }
@@ -62,7 +61,7 @@ func (e *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 			metrics := make([]string, 0)
 
 			for _, metric := range data.Metrics {
-				
+
 				if !metric.Enabled {
 					continue
 				}
@@ -70,9 +69,9 @@ func (e *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 				num_metrics += 1
 
 				if metric.IsScalar() {
-					metrics = append(metrics, fmt.Sprintf(metric_template, obj + "_" + metric.Name))
+					metrics = append(metrics, fmt.Sprintf(metric_template, obj+"_"+metric.Name))
 				} else {
-					array_metric := fmt.Sprintf(metric_template, obj + "_" + metric.Name)
+					array_metric := fmt.Sprintf(metric_template, obj+"_"+metric.Name)
 					array_metric += "\n<ul>"
 					for _, label := range metric.Labels.Iter() {
 						array_metric += "\n" + fmt.Sprintf(metric_template, label)
@@ -93,7 +92,7 @@ func (e *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 		if md, exists := unique_metadata[col]; exists {
 			metrics := make([]string, 0)
 			for _, metric := range md.Metrics {
-				metrics = append(metrics, fmt.Sprintf(metric_template, "metadata_" + md.MetadataType + "_" + metric.Name))
+				metrics = append(metrics, fmt.Sprintf(metric_template, "metadata_"+md.MetadataType+"_"+metric.Name))
 			}
 			objects = append(objects, fmt.Sprintf(object_template, "metadata", strings.Join(metrics, "\n")))
 		}
@@ -104,7 +103,7 @@ func (e *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 
 	poller := e.Options.Poller
 	body_flat := fmt.Sprintf(html_template, poller, poller, poller, num_collectors, num_objects, num_metrics, strings.Join(body, "\n\n"))
-	
+
 	w.WriteHeader(200)
 	w.Header().Set("content-type", "text/html")
 	w.Write([]byte(body_flat))

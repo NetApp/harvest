@@ -1,6 +1,4 @@
-
 package dict
-
 
 type Dict struct {
 	dict map[string]string
@@ -51,7 +49,7 @@ func (d *Dict) Iter() map[string]string {
 
 func (d *Dict) Keys() []string {
 	keys := make([]string, len(d.dict))
-	for k, _ := range d.dict {
+	for k := range d.dict {
 		keys = append(keys, k)
 	}
 	return keys

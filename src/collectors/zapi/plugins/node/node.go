@@ -1,14 +1,15 @@
 package main
 
 import (
-	"strings"
 	"goharvest2/poller/collector/plugin"
-    "goharvest2/share/matrix"
+	"goharvest2/share/matrix"
+	"strings"
 )
 
 type Node struct {
 	*plugin.AbstractPlugin
 }
+
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Node{AbstractPlugin: p}
 }

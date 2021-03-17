@@ -1,24 +1,24 @@
 package collector
 
 import (
-	"sync"
-	"sync/atomic"
-	"strings"
-	"strconv"
 	"path"
 	"reflect"
+	"strconv"
+	"strings"
+	"sync"
+	"sync/atomic"
 	"time"
 
-	"goharvest2/share/logger"
-	"goharvest2/share/util"
-	"goharvest2/share/tree/node"
 	"goharvest2/share/errors"
+	"goharvest2/share/logger"
 	"goharvest2/share/matrix"
+	"goharvest2/share/tree/node"
+	"goharvest2/share/util"
 
+	"goharvest2/poller/collector/plugin"
+	"goharvest2/poller/exporter"
 	"goharvest2/poller/options"
 	"goharvest2/poller/schedule"
-	"goharvest2/poller/exporter"
-	"goharvest2/poller/collector/plugin"
 )
 
 type Collector interface {
@@ -47,27 +47,27 @@ var CollectorStatus = [3]string{
 }
 
 type AbstractCollector struct {
-	Name string
-	Prefix string
-	Object string
-	Status int
-	Message string
-	Count uint64
-	Options *options.Options
-	Params *node.Node
-	Schedule *schedule.Schedule
-	Data *matrix.Matrix
-	Metadata *matrix.Matrix
+	Name      string
+	Prefix    string
+	Object    string
+	Status    int
+	Message   string
+	Count     uint64
+	Options   *options.Options
+	Params    *node.Node
+	Schedule  *schedule.Schedule
+	Data      *matrix.Matrix
+	Metadata  *matrix.Matrix
 	Exporters []exporter.Exporter
-	Plugins []plugin.Plugin
+	Plugins   []plugin.Plugin
 }
 
 func New(name, object string, options *options.Options, params *node.Node) *AbstractCollector {
 	c := AbstractCollector{
-		Name: name,
-		Object: object,
+		Name:    name,
+		Object:  object,
 		Options: options,
-		Params: params,
+		Params:  params,
 	}
 	c.Prefix = "(collector) (" + name + ":" + object + ")"
 
@@ -97,18 +97,18 @@ func Init(c Collector) error {
 	// Example: "data" will be alligned to method PollData()
 	for _, task := range tasks.GetChildren() {
 
-		method_name := "Poll"+strings.Title(task.GetNameS())
+		method_name := "Poll" + strings.Title(task.GetNameS())
 
 		if m := reflect.ValueOf(c).MethodByName(method_name); m.IsValid() {
 			if foo, ok := m.Interface().(func() (*matrix.Matrix, error)); ok {
 				if err := s.AddTaskString(task.GetNameS(), task.GetContentS(), foo); err == nil {
 					//logger.Debug(c.Prefix, "scheduled task [%s] with %s interval", task.Name, task.GetInterval().String())
-					;
+
 				} else {
-					return errors.New(errors.INVALID_PARAM, "schedule (" + task.GetNameS() + "): " + err.Error())
+					return errors.New(errors.INVALID_PARAM, "schedule ("+task.GetNameS()+"): "+err.Error())
 				}
 			} else {
-				return errors.New(errors.ERR_IMPLEMENT, method_name + " has not signature 'func() (*matrix.Matrix, error)'")
+				return errors.New(errors.ERR_IMPLEMENT, method_name+" has not signature 'func() (*matrix.Matrix, error)'")
 			}
 		} else {
 			return errors.New(errors.ERR_IMPLEMENT, method_name)
@@ -211,15 +211,15 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 						logger.Error(c.Prefix, err.Error())
 						logger.Error(c.Prefix, "target system unreachable, entering standby mode (retry to connect in %d s)", retry_delay)
 					}
-					c.Schedule.SetStandByMode(task.Name, time.Duration(retry_delay) * time.Second)
+					c.Schedule.SetStandByMode(task.Name, time.Duration(retry_delay)*time.Second)
 					c.SetStatus(1, errors.ERR_CONNECTION)
 				case errors.IsErr(err, errors.ERR_NO_INSTANCE):
-					c.Schedule.SetStandByMode(task.Name, 5 * time.Minute)
+					c.Schedule.SetStandByMode(task.Name, 5*time.Minute)
 					c.SetStatus(1, errors.ERR_NO_INSTANCE)
 					logger.Error(c.Prefix, "no [%s] instances on system, entering standby mode", c.Object)
 				case errors.IsErr(err, errors.ERR_NO_METRIC):
 					c.SetStatus(1, errors.ERR_NO_METRIC)
-					c.Schedule.SetStandByMode(task.Name, 1 * time.Hour)
+					c.Schedule.SetStandByMode(task.Name, 1*time.Hour)
 					logger.Error(c.Prefix, "no [%s] metrics on system, entering standby mode", c.Object)
 				default:
 					// enter failed state
@@ -267,12 +267,12 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 			if status, _, _ := e.GetStatus(); status != 0 {
 				logger.Warn(c.Prefix, "exporter [%s] down, skipping export", e.GetName())
 				continue
-			} 
-			
+			}
+
 			if err := e.Export(c.Metadata); err != nil {
 				logger.Warn(c.Prefix, "export metadata to [%s]: %s", e.GetName(), err.Error())
 			}
-			
+
 			// continue if metadata failed, since it might be specific to metadata
 			for _, data := range results {
 				if err := e.Export(data); err != nil {
@@ -368,19 +368,19 @@ func (c *AbstractCollector) LoadPlugins(params *node.Node) error {
 		module, err := util.LoadFuncFromModule(binpath, strings.ToLower(name), "New")
 		if err != nil {
 			//logger.Error(c.LongName, "load plugin [%s]: %v", name, err)
-			return errors.New(errors.ERR_DLOAD, "plugin " + name + ": " + err.Error())
+			return errors.New(errors.ERR_DLOAD, "plugin "+name+": "+err.Error())
 		}
 
 		NewFunc, ok := module.(func(*plugin.AbstractPlugin) plugin.Plugin)
 		if !ok {
 			//logger.Error(c.LongName, "load plugin [%s]: New() has not expected signature", name)
-			return errors.New(errors.ERR_DLOAD, name + ": New()")
+			return errors.New(errors.ERR_DLOAD, name+": New()")
 		}
 
 		p := NewFunc(plugin.New(c.Name, c.Options, x, c.Params))
 		if err := p.Init(); err != nil {
 			//logger.Error(c.LongName, "init plugin [%s]: %v", name, err)
-			return errors.New(errors.ERR_DLOAD, name + ": Init(): " + err.Error())
+			return errors.New(errors.ERR_DLOAD, name+": Init(): "+err.Error())
 		}
 
 		c.Plugins = append(c.Plugins, p)

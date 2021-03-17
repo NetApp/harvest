@@ -1,47 +1,44 @@
 package main
 
 import (
-	"path"
-	"strings"
-	"strconv"
-	"io/ioutil"
-	"goharvest2/share/logger"
-	"goharvest2/share/config"
-	"goharvest2/share/tree/node"
-	"goharvest2/share/matrix"
-	"goharvest2/share/errors"
-	"goharvest2/share/dict"
-    "goharvest2/poller/collector"
 	"github.com/shirou/gopsutil/process"
+	"goharvest2/poller/collector"
+	"goharvest2/share/config"
+	"goharvest2/share/dict"
+	"goharvest2/share/errors"
+	"goharvest2/share/logger"
+	"goharvest2/share/matrix"
+	"goharvest2/share/tree/node"
+	"io/ioutil"
+	"path"
+	"strconv"
+	"strings"
 )
 
-
 var extractors = map[string]interface{}{
-	"Times" 	     : cpu_times,
-	"MemoryInfo"     : memory_info,
-	"IOCounters" 	 : io_counters,
-	"NetIOCounters"  : net_io_counters,
-	"NumCtxSwitches" : ctx_switches,
+	"Times":          cpu_times,
+	"MemoryInfo":     memory_info,
+	"IOCounters":     io_counters,
+	"NetIOCounters":  net_io_counters,
+	"NumCtxSwitches": ctx_switches,
 }
-
 
 type Psutil struct {
 	*collector.AbstractCollector
 	array_labels map[string][]string
 }
 
-
 func New(a *collector.AbstractCollector) collector.Collector {
-    return &Psutil{AbstractCollector: a}
+	return &Psutil{AbstractCollector: a}
 }
 
 func (c *Psutil) Init() error {
 
-    if err := collector.Init(c); err != nil {
-        return err
+	if err := collector.Init(c); err != nil {
+		return err
 	}
 
-    if counters := c.Params.GetChildS("counters"); counters != nil {
+	if counters := c.Params.GetChildS("counters"); counters != nil {
 		c.array_labels = make(map[string][]string)
 		c.load_metrics(counters)
 	} else {
@@ -130,12 +127,12 @@ func (c *Psutil) PollData() (*matrix.Matrix, error) {
 			c.Data.SetValueS("NumFDs", instance, float64(num_fds))
 			count += 1
 		}
-		
+
 		if children, err := proc.Children(); err == nil {
 			c.Data.SetValueS("NumChildren", instance, float64(len(children)))
 			count += 1
 		}
-		
+
 		if socks, err := proc.Connections(); err == nil {
 			c.Data.SetValueS("NumSockets", instance, float64(len(socks)))
 			count += 1
@@ -145,7 +142,7 @@ func (c *Psutil) PollData() (*matrix.Matrix, error) {
 
 			if f, ok := extractors[key]; ok {
 
-				if values, ok := f.(func(*process.Process)([]float64, bool))(proc); ok {
+				if values, ok := f.(func(*process.Process) ([]float64, bool))(proc); ok {
 					if len(values) != len(labels) {
 						logger.Warn(c.Prefix, "metric [%s] labels don't match with values (%d, but expected %d)", key, len(values), len(labels))
 						continue
@@ -180,7 +177,7 @@ func (c *Psutil) load_metrics(counters *node.Node) {
 				logger.Debug(c.Prefix, "+ [%s] added metric (%s)", name, display)
 			} else {
 				panic(err)
-			}			
+			}
 		} else if name := child.GetNameS(); name != "" {
 			key, display := parse_metric_name(name)
 
@@ -188,7 +185,7 @@ func (c *Psutil) load_metrics(counters *node.Node) {
 				logger.Warn(c.Prefix, "[%s] missing labels", key)
 			} else {
 				labels_clean := make([]string, 0, len(labels))
-				for _, x := range(labels) {
+				for _, x := range labels {
 					label, label_display := parse_metric_name(x)
 					labels_clean = append(labels_clean, label)
 					if metric, err := m.AddMetric(key+"."+label, display, true); err == nil {
@@ -236,7 +233,7 @@ func (c *Psutil) PollInstance() (*matrix.Matrix, error) {
 
 		pid_s := ""
 
-		pidfp := path.Join(c.Options.PidPath, name + ".pid")
+		pidfp := path.Join(c.Options.PidPath, name+".pid")
 		pid_b, err := ioutil.ReadFile(pidfp)
 
 		if err == nil {
@@ -263,7 +260,7 @@ func (c *Psutil) PollInstance() (*matrix.Matrix, error) {
 		} else {
 			logger.Debug(c.Prefix, "Adding instance [%s] - up and running", name)
 
-			instance, _ := c.Data.AddInstance(name+"."+pid_s)
+			instance, _ := c.Data.AddInstance(name + "." + pid_s)
 
 			c.Data.SetInstanceLabel(instance, "poller", name)
 			c.Data.SetInstanceLabel(instance, "pid", pid_s)
@@ -274,7 +271,6 @@ func (c *Psutil) PollInstance() (*matrix.Matrix, error) {
 
 	return nil, nil
 }
-
 
 func memory_info(proc *process.Process) ([]float64, bool) {
 

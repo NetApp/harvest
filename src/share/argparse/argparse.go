@@ -1,22 +1,22 @@
 package argparse
 
 import (
-	"os"
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 )
 
 type option struct {
-	name string
-	class string
-	short string
-	descr string
-    accept []string
-    target_string *string
-    target_int *int
-    target_bool *bool
-    target_slice *[]string
+	name          string
+	class         string
+	short         string
+	descr         string
+	accept        []string
+	target_string *string
+	target_int    *int
+	target_bool   *bool
+	target_slice  *[]string
 }
 
 func (opt *option) value2string() string {
@@ -52,16 +52,16 @@ func (opt *option) value2string() string {
 }
 
 type Parser struct {
-	name string
-	bin string
-	descr string
-	names map[string]int
-	shorts map[string]int
-	options []*option
+	name        string
+	bin         string
+	descr       string
+	names       map[string]int
+	shorts      map[string]int
+	options     []*option
 	positionals []*option
-	errors [][]string
-	index int
-	help string
+	errors      [][]string
+	index       int
+	help        string
 }
 
 func New(program_name, program_bin, short_descr string) *Parser {
@@ -87,15 +87,15 @@ func (p *Parser) add(opt *option, name, short string) {
 			p.shorts[short] = p.index
 		}
 		p.index += 1
-	// jic same flag is added again
+		// jic same flag is added again
 	} else {
 		p.options[index] = opt
 	}
 }
 
 func (p *Parser) PosString(target *string, name, descr string, values []string) {
-    opt := option{name: name, class: "string", descr: descr, accept: values, target_string: target}
-    p.positionals = append(p.positionals, &opt)
+	opt := option{name: name, class: "string", descr: descr, accept: values, target_string: target}
+	p.positionals = append(p.positionals, &opt)
 }
 
 func (p *Parser) PosSlice(target *[]string, name, descr string) {
@@ -136,21 +136,21 @@ func (p *Parser) Parse() bool {
 
 		flag := os.Args[arg_index]
 
-        //fmt.Printf("%d - \"%s\"\n", arg_index, flag)
+		//fmt.Printf("%d - \"%s\"\n", arg_index, flag)
 
 		// help stops here
 		if flag == "-h" || flag == "--help" || flag == "-help" || flag == p.help {
 			p.PrintHelp()
 			return false
-		// long flag
+			// long flag
 		} else if len(flag) > 1 && flag[:2] == "--" {
-            i := p.handle_long(arg_index, flag[2:])
-            //fmt.Printf("=> %d\n", i)
+			i := p.handle_long(arg_index, flag[2:])
+			//fmt.Printf("=> %d\n", i)
 			arg_index += i
-		// short flag
+			// short flag
 		} else if string(flag[0]) == "-" {
 			arg_index += p.handle_short(arg_index, string(flag[1:]))
-		// positional
+			// positional
 		} else if len(p.positionals) != 0 {
 			arg_index += p.handle_pos(arg_index, pos_index)
 			pos_index += 1
@@ -158,7 +158,7 @@ func (p *Parser) Parse() bool {
 			p.errors = append(p.errors, []string{flag, "unknown command"})
 		}
 
-        //fmt.Printf("++ %d\n", arg_index)
+		//fmt.Printf("++ %d\n", arg_index)
 	}
 
 	if len(p.errors) == 0 {
@@ -198,7 +198,7 @@ func (p *Parser) handle_pos(arg_index, pos_index int) int {
 		return 1
 	} else if opt.class == "slice" {
 		var i int
-		for i=0; i+arg_index<len(os.Args); i+=1 {
+		for i = 0; i+arg_index < len(os.Args); i += 1 {
 			flag := os.Args[i+arg_index]
 			if string(flag[0]) == "-" {
 				break
@@ -259,25 +259,24 @@ func (p *Parser) handle_long(i int, name string) int {
 
 	if opt.class == "slice" {
 		var k int
-		for k=0; i+k+1 < len(os.Args); k+=1 {
+		for k = 0; i+k+1 < len(os.Args); k += 1 {
 			val := os.Args[i+k+1]
 			if string(val[0]) == "-" {
 				break
 			}
 			*opt.target_slice = append(*opt.target_slice, val)
 		}
-		return k+1
+		return k + 1
 	}
 	panic("invalid option type: " + opt.class)
 }
-
 
 func (p *Parser) handle_short(i int, name string) int {
 
 	//fmt.Printf("parsing short(s) [%s]\n", name)
 
-    k := 1
-	for j:=0; j<len(name); j+=1 {
+	k := 1
+	for j := 0; j < len(name); j += 1 {
 
 		//fmt.Printf(" short= [%s]\n", string(name[j]))
 
@@ -286,7 +285,7 @@ func (p *Parser) handle_short(i int, name string) int {
 			//@TODO will fail if multiple value assignments
 			x := p.handle_long(i, p.options[index].name)
 			//fmt.Printf(" short ++ %d (-1) ==> ", x)
-			k += (x-1)
+			k += (x - 1)
 			//fmt.Printf(" %d\n", k)
 		} else {
 			p.errors = append(p.errors, []string{string(name[j]), "undefined"})
@@ -304,31 +303,31 @@ func (p *Parser) PrintHelp() {
 
 	fmt.Printf("%s - %s\n\n", p.name, p.descr)
 
-    if len(p.positionals) != 0 {
-        fmt.Println("Positional arguments:\n")
+	if len(p.positionals) != 0 {
+		fmt.Println("Positional arguments:\n")
 
-        for _, x := range p.positionals {
-		    fmt.Printf("    %-20s %s\n", x.name, x.descr)
-            if len(x.accept) != 0 {
-                fmt.Printf("%-25s one of: %s\n", "", strings.Join(x.accept, ", "))
-            }
-        }
-    }
+		for _, x := range p.positionals {
+			fmt.Printf("    %-20s %s\n", x.name, x.descr)
+			if len(x.accept) != 0 {
+				fmt.Printf("%-25s one of: %s\n", "", strings.Join(x.accept, ", "))
+			}
+		}
+	}
 
-    fmt.Println()
+	fmt.Println()
 
-    if len(p.options) != 0 {
-	    fmt.Printf("Optional arguments:\n")
+	if len(p.options) != 0 {
+		fmt.Printf("Optional arguments:\n")
 
-	    for _, opt := range p.options {
-		    flag := opt.name
-		    if opt.short != "" {
-			    flag += ", -" + opt.short
-		    }
-		    fmt.Printf("    %-20s %s\n", flag, opt.descr)
-	    }
-	    fmt.Println()
-    }
+		for _, opt := range p.options {
+			flag := opt.name
+			if opt.short != "" {
+				flag += ", -" + opt.short
+			}
+			fmt.Printf("    %-20s %s\n", flag, opt.descr)
+		}
+		fmt.Println()
+	}
 	fmt.Println()
 }
 

@@ -1,10 +1,10 @@
 package main
 
 import (
-    "strconv"
-    "goharvest2/poller/collector/plugin"
-    "goharvest2/share/matrix"
-    "goharvest2/share/logger"
+	"goharvest2/poller/collector/plugin"
+	"goharvest2/share/logger"
+	"goharvest2/share/matrix"
+	"strconv"
 )
 
 type Processor struct {
@@ -17,78 +17,75 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 
 func (p *Processor) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
-    cpu_count := make(map[string]int)
+	cpu_count := make(map[string]int)
 
-    summary := matrix.New("processor", "processor_summary", "processor")
-    summary.SetExportOptions(data.ExportOptions.Copy())
+	summary := matrix.New("processor", "processor_summary", "processor")
+	summary.SetExportOptions(data.ExportOptions.Copy())
 
-    for key, m := range data.GetMetrics() {
-        if m.Name == "domain_busy" || m.Name == "processor_busy" {
-            if m.Labels != nil && m.Labels.Get("metric") == "idle" {
-                summary.AddMetric(key, m.Name, false)
-            } else {
-                summary.AddMetric(key, m.Name, true)
-            }
-        }
-    }
+	for key, m := range data.GetMetrics() {
+		if m.Name == "domain_busy" || m.Name == "processor_busy" {
+			if m.Labels != nil && m.Labels.Get("metric") == "idle" {
+				summary.AddMetric(key, m.Name, false)
+			} else {
+				summary.AddMetric(key, m.Name, true)
+			}
+		}
+	}
 
-    for _, i := range data.GetInstances() {
-        node := i.Labels.Get("node")
-        if summary.GetInstance(node) == nil {
-            instance := summary.AddInstance(node)
-	    instance.Labels.Set("node", node)
-        }
-        cpu_count[node]++
+	for _, i := range data.GetInstances() {
+		node := i.Labels.Get("node")
+		if summary.GetInstance(node) == nil {
+			instance := summary.AddInstance(node)
+			instance.Labels.Set("node", node)
+		}
+		cpu_count[node]++
 
-    }
+	}
 
-    if err := summary.InitData(); err != nil {
-        return nil, err
-    }
+	if err := summary.InitData(); err != nil {
+		return nil, err
+	}
 
-    for _, instance := range data.GetInstances() {
-        
-        node := instance.Labels.Get("node")
+	for _, instance := range data.GetInstances() {
 
-        if new_instance := summary.GetInstance(node); new_instance != nil {
+		node := instance.Labels.Get("node")
 
-            count, _ := cpu_count[node]
-	    logger.Debug(p.Prefix, "creating summary instance [%s] with %d CPUs", node, count)
+		if new_instance := summary.GetInstance(node); new_instance != nil {
 
-            new_instance.Labels.Set("proc_count", strconv.Itoa(count))
+			count, _ := cpu_count[node]
+			logger.Debug(p.Prefix, "creating summary instance [%s] with %d CPUs", node, count)
 
-            for key, new_metric := range summary.GetMetrics() {
+			new_instance.Labels.Set("proc_count", strconv.Itoa(count))
 
-                if metric := data.GetMetric(key); metric != nil {
+			for key, new_metric := range summary.GetMetrics() {
 
-                    if value, ok := data.GetValue(metric, instance); ok {
+				if metric := data.GetMetric(key); metric != nil {
 
-                        if new_value, ok := summary.GetValue(new_metric, new_instance); ok {
-                            summary.SetValue(new_metric, new_instance, new_value+value)
-                        } else {
-                            summary.SetValue(new_metric, new_instance, value)
-                        }
-                    }
-                }
-            }
-        }
-    }
-    // normalize processor_busy by cpu_count
+					if value, ok := data.GetValue(metric, instance); ok {
 
-    for _, m := range summary.GetMetrics() {
-        if m.Name == "processor_busy" {
-            for _, i := range summary.GetInstances() {
-                if v, ok := summary.GetValue(m, i); ok {
-                    count, _ := cpu_count[i.Labels.Get("node")]
-                    summary.SetValue(m, i, v/float64(count))
-                }
-            }
-        }
-    }
-    summary.Print()
+						if new_value, ok := summary.GetValue(new_metric, new_instance); ok {
+							summary.SetValue(new_metric, new_instance, new_value+value)
+						} else {
+							summary.SetValue(new_metric, new_instance, value)
+						}
+					}
+				}
+			}
+		}
+	}
+	// normalize processor_busy by cpu_count
 
-    return []*matrix.Matrix{summary}, nil
+	for _, m := range summary.GetMetrics() {
+		if m.Name == "processor_busy" {
+			for _, i := range summary.GetInstances() {
+				if v, ok := summary.GetValue(m, i); ok {
+					count, _ := cpu_count[i.Labels.Get("node")]
+					summary.SetValue(m, i, v/float64(count))
+				}
+			}
+		}
+	}
+	summary.Print()
+
+	return []*matrix.Matrix{summary}, nil
 }
-
-
-

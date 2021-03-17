@@ -7,7 +7,7 @@ func (m *Matrix) Delta(PrevData *Matrix, metricIndex int) error {
 	if len(m.Instances) != len(PrevData.Instances) {
 		panic("invalid delta operation")
 	}
-	for k:=0; k<len(m.Instances); k+=1 {
+	for k := 0; k < len(m.Instances); k += 1 {
 		m.Data[metricIndex][k] -= PrevData.Data[metricIndex][k]
 	}
 	return nil
@@ -15,7 +15,7 @@ func (m *Matrix) Delta(PrevData *Matrix, metricIndex int) error {
 
 func (m *Matrix) Divide(numeratorIndex, denominatorIndex int, threshold float64) error {
 
-	for k:=0; k<len(m.Instances); k+=1 {
+	for k := 0; k < len(m.Instances); k += 1 {
 		if m.Data[denominatorIndex][k] <= threshold {
 			m.Data[numeratorIndex][k] = NAN
 		} else {
@@ -26,14 +26,14 @@ func (m *Matrix) Divide(numeratorIndex, denominatorIndex int, threshold float64)
 }
 
 func (m *Matrix) MultByScalar(metricIndex int, scalarValue float64) {
-	for k:=0; k<len(m.Instances); k+=1 {
+	for k := 0; k < len(m.Instances); k += 1 {
 		m.Data[metricIndex][k] *= scalarValue
 	}
 }
 
 func (m *Matrix) InstanceWiseAddition(toInstance, fromInstance *Instance, fromData *Matrix) {
 
-	for i:=0; i<len(m.Metrics); i+=1 {
+	for i := 0; i < len(m.Metrics); i += 1 {
 		if m.Data[i][toInstance.Index] == m.Data[i][toInstance.Index] {
 			m.Data[i][toInstance.Index] += fromData.Data[i][fromInstance.Index]
 		} else {

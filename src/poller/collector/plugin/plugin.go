@@ -1,10 +1,10 @@
 package plugin
 
 import (
-	"goharvest2/share/matrix"
 	"goharvest2/poller/options"
-	"goharvest2/share/tree/node"
 	"goharvest2/share/errors"
+	"goharvest2/share/matrix"
+	"goharvest2/share/tree/node"
 )
 
 type Plugin interface {
@@ -14,14 +14,13 @@ type Plugin interface {
 	Run(*matrix.Matrix) ([]*matrix.Matrix, error)
 }
 
-
 type AbstractPlugin struct {
-	Parent string
-	Name string
-	Prefix string
-	Type string
-	Options *options.Options
-	Params *node.Node
+	Parent       string
+	Name         string
+	Prefix       string
+	Type         string
+	Options      *options.Options
+	Params       *node.Node
 	ParentParams *node.Node
 }
 
@@ -33,7 +32,6 @@ func New(parent string, o *options.Options, p *node.Node, pp *node.Node) *Abstra
 func (p *AbstractPlugin) Init() error {
 	return p.InitAbc()
 }
-
 
 func (p *AbstractPlugin) InitAbc() error {
 

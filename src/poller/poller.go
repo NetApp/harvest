@@ -1,49 +1,49 @@
 package main
 
 import (
-	"runtime"
-	"sync"
-	"os"
-	"os/signal"
-	"os/exec"
-	"syscall"
-	"strconv"
-	"path"
-	"plugin"
-	"strings"
-    "goharvest2/share/logger"
-    "goharvest2/share/util"
-    "goharvest2/share/config"
-    "goharvest2/share/errors"
-    "goharvest2/share/matrix"
-	"goharvest2/share/tree/node"
-	"goharvest2/poller/schedule"
 	"goharvest2/poller/collector"
 	"goharvest2/poller/exporter"
 	"goharvest2/poller/options"
+	"goharvest2/poller/schedule"
+	"goharvest2/share/config"
+	"goharvest2/share/errors"
+	"goharvest2/share/logger"
+	"goharvest2/share/matrix"
+	"goharvest2/share/tree/node"
+	"goharvest2/share/util"
+	"os"
+	"os/exec"
+	"os/signal"
+	"path"
+	"plugin"
+	"runtime"
+	"strconv"
+	"strings"
+	"sync"
+	"syscall"
 )
 
 var SIGNALS = []os.Signal{
-			syscall.SIGHUP,
-			syscall.SIGINT,
-			syscall.SIGTERM,
-			syscall.SIGQUIT,
+	syscall.SIGHUP,
+	syscall.SIGINT,
+	syscall.SIGTERM,
+	syscall.SIGQUIT,
 }
 
 type Poller struct {
-	Name string
-	prefix string
-	target string
-	options *options.Options
-	pid int
-	pidf string
-	schedule *schedule.Schedule
-	collectors []collector.Collector
-	exporters []exporter.Exporter
+	Name            string
+	prefix          string
+	target          string
+	options         *options.Options
+	pid             int
+	pidf            string
+	schedule        *schedule.Schedule
+	collectors      []collector.Collector
+	exporters       []exporter.Exporter
 	exporter_params *node.Node
-	params *node.Node
-	metadata *matrix.Matrix
-	status *matrix.Matrix
+	params          *node.Node
+	metadata        *matrix.Matrix
+	status          *matrix.Matrix
 }
 
 func New() *Poller {
@@ -60,7 +60,7 @@ func (p *Poller) Init() error {
 
 	// If daemon, make sure handler outputs to file
 	if p.options.Daemon {
-		err := logger.OpenFileOutput(p.options.LogPath, "poller_" + p.Name + ".log")
+		err := logger.OpenFileOutput(p.options.LogPath, "poller_"+p.Name+".log")
 		if err != nil {
 			return err
 		}
@@ -182,7 +182,7 @@ func (p *Poller) Init() error {
 		return err
 	}
 
-	// Famous last words 
+	// Famous last words
 	logger.Info(p.prefix, "Poller start-up complete.")
 
 	return nil
@@ -210,7 +210,7 @@ func (p *Poller) load_collector(class, object string) error {
 
 	if template, err = collector.ImportTemplate(p.options.ConfPath, class); err != nil {
 		return err
-	} else if template == nil {  // probably redundant
+	} else if template == nil { // probably redundant
 		return errors.New(errors.MISSING_PARAM, "collector template")
 	}
 	// log: imported and merged template...
@@ -230,7 +230,7 @@ func (p *Poller) load_collector(class, object string) error {
 			subcollectors = append(subcollectors, c)
 			logger.Debug(p.prefix, "initialized collector [%s:%s]", class, object)
 		}
-	// if template has list of objects, initialiez 1 subcollector for each
+		// if template has list of objects, initialiez 1 subcollector for each
 	} else if objects := template.GetChildS("objects"); objects != nil {
 		for _, object := range objects.GetChildren() {
 			c := NewFunc(collector.New(class, object.GetNameS(), p.options, template.Copy()))
@@ -338,7 +338,7 @@ func (p *Poller) load_exporter(name string) exporter.Exporter {
 		instance.Labels.Set("target", e.GetName())
 	}
 	return e
-	
+
 }
 
 func (p *Poller) Start() {
@@ -475,7 +475,7 @@ func (p *Poller) selfMonitor() {
 			logger.Info(p.prefix, "Updated status: %d up collectors (of %d) and %d up exporters (of %d)", up_collectors, len(p.collectors), up_exporters, len(p.exporters))
 
 		}
-		
+
 		p.schedule.Sleep()
 
 	}
@@ -493,7 +493,7 @@ func (p *Poller) handleSignals(signal_channel chan os.Signal) {
 func (p *Poller) handleFifo() {
 	logger.Info(p.prefix, "Serving APIs for Harvest2 daemon")
 	for {
-		;
+
 	}
 }
 
@@ -502,7 +502,7 @@ func (p *Poller) registerPid() error {
 	p.pid = os.Getpid()
 	if p.options.Daemon {
 		var file *os.File
-		p.pidf = path.Join(p.options.PidPath, p.Name + ".pid")
+		p.pidf = path.Join(p.options.PidPath, p.Name+".pid")
 		file, err = os.Create(p.pidf)
 		if err == nil {
 			_, err = file.WriteString(strconv.Itoa(p.pid))
@@ -519,23 +519,22 @@ func (p *Poller) LogDebugInfo() {
 
 	var st syscall.Sysinfo_t
 
-	logger.Debug(p.prefix, "Running on [%s]: system [%s], arch [%s], CPUs=%d", 
+	logger.Debug(p.prefix, "Running on [%s]: system [%s], arch [%s], CPUs=%d",
 		p.options.Hostname, runtime.GOOS, runtime.GOARCH, runtime.NumCPU())
 	logger.Debug(p.prefix, "Poller Go build version [%s]", runtime.Version())
-	
+
 	st = syscall.Sysinfo_t{}
 	if syscall.Sysinfo(&st) == nil {
-		logger.Debug(p.prefix, "System uptime [%d], Memory [%d] / Free [%d]. Running processes [%d]", 
+		logger.Debug(p.prefix, "System uptime [%d], Memory [%d] / Free [%d]. Running processes [%d]",
 			st.Uptime, st.Totalram, st.Freeram, st.Procs)
 	}
 }
 
-
 func main() {
 
-    p := New()
+	p := New()
 
-    if err := p.Init(); err == nil {
+	if err := p.Init(); err == nil {
 		p.Start()
 
 	} else {

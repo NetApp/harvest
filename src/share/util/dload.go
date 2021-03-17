@@ -1,10 +1,10 @@
 package util
 
 import (
-	"path"
-	"io/ioutil"
-	"plugin"
 	"goharvest2/share/errors"
+	"io/ioutil"
+	"path"
+	"plugin"
 )
 
 func LoadModule(binpath, name string) (*plugin.Plugin, error) {
@@ -16,14 +16,14 @@ func LoadModule(binpath, name string) (*plugin.Plugin, error) {
 
 	fn := ""
 	for _, f := range files {
-		if f.Name() == name + ".so" {
+		if f.Name() == name+".so" {
 			fn = f.Name()
 			break
 		}
 	}
 
 	if fn == "" {
-		return nil, errors.New(errors.ERR_DLOAD, name + ".so not in " + binpath)
+		return nil, errors.New(errors.ERR_DLOAD, name+".so not in "+binpath)
 	}
 
 	return plugin.Open(path.Join(binpath, fn))

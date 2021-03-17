@@ -1,24 +1,24 @@
 package main
 
 import (
-	"strings"
-	"strconv"
 	"goharvest2/poller/collector"
 	"goharvest2/poller/collector/plugin"
-    "goharvest2/share/matrix"
-	"goharvest2/share/tree/node"
-	"goharvest2/share/logger"
 	"goharvest2/share/errors"
+	"goharvest2/share/logger"
+	"goharvest2/share/matrix"
+	"goharvest2/share/tree/node"
+	"strconv"
+	"strings"
 
-    client "goharvest2/apis/zapi"
+	client "goharvest2/apis/zapi"
 )
 
 type Shelf struct {
 	*plugin.AbstractPlugin
-	data map[string]*matrix.Matrix
+	data          map[string]*matrix.Matrix
 	instance_keys map[string]string
-	connection *client.Client
-    query string
+	connection    *client.Client
+	query         string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -33,21 +33,21 @@ func (p *Shelf) Init() error {
 		return err
 	}
 
-    if p.connection, err = client.New(p.ParentParams); err != nil {
-        logger.Error(p.Prefix, "connecting: %v", err)
+	if p.connection, err = client.New(p.ParentParams); err != nil {
+		logger.Error(p.Prefix, "connecting: %v", err)
 		return err
 	}
 
 	system, err := p.connection.GetSystem()
 	if err != nil {
-        return err
-    }
+		return err
+	}
 
-    if system.Clustered {
-        p.query = "storage-shelf-info-get-iter"
-    } else {
-        p.query = "storage-shelf-environment-list-info"
-    }
+	if system.Clustered {
+		p.query = "storage-shelf-info-get-iter"
+	} else {
+		p.query = "storage-shelf-environment-list-info"
+	}
 
 	logger.Debug(p.Prefix, "plugin connected!")
 
@@ -113,11 +113,11 @@ func (p *Shelf) Init() error {
 
 func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
-    if ! p.connection.IsClustered() {
-        for _, instance := range data.GetInstances() {
-            instance.Labels.Set("shelf", instance.Labels.Get("shelf_id"))
-        }
-    }
+	if !p.connection.IsClustered() {
+		for _, instance := range data.GetInstances() {
+			instance.Labels.Set("shelf", instance.Labels.Get("shelf_id"))
+		}
+	}
 
 	p.connection.BuildRequestString(p.query)
 	result, err := p.connection.Invoke()
@@ -125,13 +125,13 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		return nil, err
 	}
 
-    var shelves []*node.Node
+	var shelves []*node.Node
 	if x := result.GetChildS("attributes-list"); x != nil {
-        shelves = x.GetChildren()
-    } else if ! p.connection.IsClustered() {
-        logger.Debug(p.Prefix, "fallback to 7mode")
-        shelves = result.SearchChildren([]string{"shelf-environ-channel-info", "shelf-environ-shelf-list", "shelf-environ-shelf-info"})
-    }
+		shelves = x.GetChildren()
+	} else if !p.connection.IsClustered() {
+		logger.Debug(p.Prefix, "fallback to 7mode")
+		shelves = result.SearchChildren([]string{"shelf-environ-channel-info", "shelf-environ-shelf-list", "shelf-environ-shelf-info"})
+	}
 
 	if shelves == nil || len(shelves) == 0 {
 		return nil, errors.New(errors.ERR_NO_INSTANCE, "no shelf instances")
@@ -146,11 +146,11 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		shelf_name := shelf.GetChildContentS("shelf")
 		shelf_id := shelf.GetChildContentS("shelf-uid")
 
-        if ! p.connection.IsClustered() {
-		    uid := shelf.GetChildContentS("shelf-id")
-            shelf_id = uid
-            shelf_name = uid
-        }
+		if !p.connection.IsClustered() {
+			uid := shelf.GetChildContentS("shelf-id")
+			shelf_id = uid
+			shelf_name = uid
+		}
 
 		for attribute, data := range p.data {
 
@@ -191,7 +191,7 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					instance.Labels.Set("shelf", shelf_name)
 					instance.Labels.Set("shelf_id", shelf_id)
 
-				} else  {
+				} else {
 					logger.Debug(p.Prefix, "instance without [%s], skipping", p.instance_keys[attribute])
 				}
 			}
@@ -201,13 +201,13 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 
 	// second loop to populate numeric data
-	
+
 	for _, shelf := range shelves {
 
 		shelf_id := shelf.GetChildContentS("shelf-uid")
-        if ! p.connection.IsClustered() {
-		    shelf_id = shelf.GetChildContentS("shelf-id")
-        }
+		if !p.connection.IsClustered() {
+			shelf_id = shelf.GetChildContentS("shelf-id")
+		}
 
 		for attribute, data := range p.data {
 
@@ -224,13 +224,13 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			for _, obj := range object_elem.GetChildren() {
 
 				key := obj.GetChildContentS(p.instance_keys[attribute])
-				
+
 				if key == "" {
 					continue
 				}
 
 				instance := data.GetInstance(shelf_id + "." + key)
-				
+
 				if instance == nil {
 					logger.Debug(p.Prefix, "(%s) instance [%s.%s] not found in cache skipping", attribute, shelf_id, key)
 					continue

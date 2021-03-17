@@ -1,11 +1,11 @@
 package main
 
 import (
+	"fmt"
+	"goharvest2/share/version"
 	"os"
 	"os/exec"
 	"path"
-	"fmt"
-	"goharvest2/share/version"
 )
 
 var USAGE = `
@@ -43,10 +43,10 @@ func main() {
 		os.Exit(0)
 	}
 
-    var harvest_path string
+	var harvest_path string
 	if harvest_path = os.Getenv("HARVEST_HOME"); harvest_path == "" {
-        harvest_path = "/opt/harvest/"
-    }
+		harvest_path = "/opt/harvest/"
+	}
 
 	var bin string
 
@@ -75,9 +75,9 @@ func main() {
 			cmd = exec.Command(path.Join(harvest_path, "bin/", bin), os.Args[2:]...)
 		}
 
-        os.Stdout.Sync()
-        os.Stdin.Sync()
-        //fmt.Println(cmd.String())
+		os.Stdout.Sync()
+		os.Stdin.Sync()
+		//fmt.Println(cmd.String())
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
