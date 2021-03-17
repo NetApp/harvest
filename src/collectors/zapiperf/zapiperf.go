@@ -216,8 +216,14 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 	// load requested counters (metrics + labels)
 	request_counters := request.NewChildS("counters", "")
 	for key := range NewData.GetMetrics() {
-		request_counters.NewChildS("counter", key)
+        if ! strings.Contains(key, ".") {
+		    request_counters.NewChildS("counter", key)
+        }
 	}
+    for key := range c.array_labels {
+        request_counters.NewChildS("counter", key)
+    }
+
 	for key := range NewData.GetLabels() {
 		request_counters.NewChildS("counter", key)
 	}
@@ -306,6 +312,7 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 				name := cnt.GetChildContentS("name")
 				value := cnt.GetChildContentS("value")
 
+                logger.Trace(c.Prefix, "counter (%s) = %v", name, value)
 				// sanity check
 				if name == "" || value == "" {
 					logger.Debug(c.Prefix, "skipping raw counter [%s] with value [%s]", name, value)
@@ -324,9 +331,9 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 				// process array counter
 				if strings.Contains(value, ",") {
 					labels, ok := c.array_labels[name]
-					if ok {
+					if ! ok {
 						// warn & skip
-						logger.Error(c.Prefix, "metric [%s] array labels not in cache, skip", name, value)
+						logger.Error(c.Prefix, "metric [%s] array labels not in cache, skip", name)
 						continue
 					}
 					values := strings.Split(string(value), ",")
@@ -767,7 +774,7 @@ func (c *ZapiPerf) add_counter(counter *node.Node, name, display string, enabled
 				} else {
 					m.Labels.Set("metric", label)
 				}
-				logger.Debug(c.Prefix, "%s+[%s] added array metric (%s), element with label (%s)", util.Pink, name, display, label, util.End)
+				logger.Debug(c.Prefix, "%s+[%s] added array metric (%s), element with label (%s)%s", util.Pink, name, display, label, util.End)
 			}
 		}
 		// cache labels only when parsing counter was success
