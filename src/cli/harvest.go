@@ -20,7 +20,7 @@ The commands are:
 	start/restart/stop      manage pollers
 	config                  run the config utility
 	zapi                    explore ZAPI objects and counters
-	grafan                  import dashboards to Grafana
+	grafana                 import dashboards to Grafana
 	version                 show Harvest2 version
 
 Use "harvest <command> help" for more information about a command
@@ -77,12 +77,12 @@ func main() {
 
 		os.Stdout.Sync()
 		os.Stdin.Sync()
-		//fmt.Println(cmd.String())
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
-		cmd.Run()
-
+		if err := cmd.Run(); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 	}
-
 }

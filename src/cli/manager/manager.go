@@ -355,7 +355,7 @@ func start_poller(poller_name string, opts *options) (string, int) {
 		cmd.Stdin = os.Stdin
 		cmd.Stderr = os.Stderr
 
-		if err := cmd.Start(); err != nil {
+		if err := cmd.Run(); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}

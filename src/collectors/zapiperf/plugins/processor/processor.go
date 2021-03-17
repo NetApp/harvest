@@ -20,7 +20,7 @@ func (p *Processor) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	cpu_count := make(map[string]int)
 
 	summary := matrix.New("processor", "processor_avg", "processor")
-    summary.GlobalLabels = data.GlobalLabels
+	summary.GlobalLabels = data.GlobalLabels
 	summary.SetExportOptions(data.ExportOptions.Copy())
 
 	for key, m := range data.GetMetrics() {
@@ -28,10 +28,10 @@ func (p *Processor) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			if m.Labels != nil && m.Labels.Get("metric") == "idle" {
 				summary.AddMetric(key, m.Name, false)
 			} else {
-                nm, _ := summary.AddMetric(key, m.Name, true)
-                if m.Labels != nil {
-                    nm.Labels = m.Labels
-                }
+				nm, _ := summary.AddMetric(key, m.Name, true)
+				if m.Labels != nil {
+					nm.Labels = m.Labels
+				}
 			}
 		}
 	}
@@ -40,10 +40,10 @@ func (p *Processor) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		node := i.Labels.Get("node")
 		if summary.GetInstance(node) == nil {
 			if instance, err := summary.AddInstance(node); err == nil {
-			    instance.Labels.Set("node", node)
-            } else {
-                panic(err)
-            }
+				instance.Labels.Set("node", node)
+			} else {
+				panic(err)
+			}
 		}
 		cpu_count[node]++
 
