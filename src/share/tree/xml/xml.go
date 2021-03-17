@@ -7,7 +7,7 @@ import (
 )
 
 func Load(data []byte) (*node.Node, error) {
-	var root *node.Node
+    root := new(node.Node)
 	buf := bytes.NewBuffer(data)
 	dec := xml.NewDecoder(buf)
 	if err := dec.Decode(&root); err != nil {

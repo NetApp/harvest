@@ -6,8 +6,8 @@ object:                   volume
 instance_key:             uuid
 
 counters:
-  - instance_uui
-  - instance_name         => volume
+  - instance_uuid
+  - instance_name
   - vserver_name          => svm
   - node_name             => node
   - parent_aggr           => aggr
@@ -22,13 +22,15 @@ counters:
   - other_latency
   - avg_latency
 
+plugins:
+  - Volume
+
 export_options:
-  instance_tag: volume_name
-  include_instance_names: False
   include_keys:
     - volume
     - node
     - svm
     - aggr
+    - type
   graphite_leafs:
     - svm.{svm}.{node}.{aggr}.{volume}

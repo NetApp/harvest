@@ -24,6 +24,7 @@ type Matrix struct {
 	IsMetadata     bool
 	MetadataType   string
 	MetadataObject string
+    Exportable bool
 }
 
 func New(collector, object, plugin string) *Matrix {
@@ -32,6 +33,7 @@ func New(collector, object, plugin string) *Matrix {
 	m.Labels = dict.New()
 	m.Instances = map[string]*Instance{}
 	m.Metrics = map[string]*Metric{}
+    m.Exportable = true
 	return &m
 }
 
@@ -53,6 +55,7 @@ func (m *Matrix) Clone(copy_data bool) *Matrix {
 		IsMetadata:     m.IsMetadata,
 		MetadataType:   m.MetadataType,
 		MetadataObject: m.MetadataObject,
+        Exportable:     m.Exportable,
 	}
 	if copy_data && !m.IsEmpty() {
 		n.Data = make([][]float64, n.SizeMetrics())
@@ -180,6 +183,14 @@ func (m *Matrix) SetValueString(metric *Metric, instance *Instance, value string
 		m.SetValue(metric, instance, float64(numeric))
 	}
 	return err
+}
+
+func (m *Matrix) IncrementValue(metric *Metric, instance *Instance, value float64) {
+    if _, ok := m.GetValue(metric, instance); ok {
+        m.Data[metric.Index][instance.Index] += value
+    } else {
+        m.Data[metric.Index][instance.Index] = value
+    }
 }
 
 func (m *Matrix) SetValue(metric *Metric, instance *Instance, value float64) {

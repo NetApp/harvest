@@ -1,7 +1,6 @@
 package zapi
 
 import (
-	//"fmt"
 	"bytes"
 	"crypto/tls"
 	"goharvest2/share/errors"
@@ -178,11 +177,12 @@ func (c *Client) invoke(with_timers bool) (*node.Node, time.Duration, time.Durat
 		return result, response_t, parse_t, errors.New(errors.API_RESPONSE, response.Status)
 	}
 
+	// read response body
+	defer response.Body.Close()
+
 	if body, err = ioutil.ReadAll(response.Body); err != nil {
 		return result, response_t, parse_t, err
 	}
-	// read response body
-	defer response.Body.Close()
 
 	// parse xml
 	if with_timers {

@@ -10,6 +10,14 @@ func New() *Dict {
 	return &d
 }
 
+func (d *Dict) Copy() *Dict {
+    c := New()
+    for k, v := range d.dict {
+        c.dict[k] = v
+    }
+    return c
+}
+
 func (d *Dict) Set(key, val string) {
 	d.dict[key] = val
 }
