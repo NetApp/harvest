@@ -16,6 +16,10 @@ import (
 	client "goharvest2/apis/zapi"
 )
 
+const (
+	BATCH_SIZE = "500"
+)
+
 type Zapi struct {
 	*collector.AbstractCollector
 	Connection        *client.Client
@@ -26,6 +30,7 @@ type Zapi struct {
 	TemplateType      string
 	instanceKeyPrefix []string
 	instanceKeys      [][]string
+	batch_size        string
 }
 
 func New(a *collector.AbstractCollector) collector.Collector {
@@ -78,6 +83,19 @@ func (c *Zapi) Init() error {
 		return err
 	}
 	c.Params.Union(template)
+
+	if c.System.Clustered {
+		if b := c.Params.GetChildContentS("batch_size"); b != "" {
+			if _, err := strconv.Atoi(b); err == nil {
+				logger.Trace(c.Prefix, "using batch-size [%s]", c.batch_size)
+				c.batch_size = b
+			}
+		}
+		if c.batch_size == "" {
+			logger.Trace(c.Prefix, "using default batch-size [%s]", BATCH_SIZE)
+			c.batch_size = BATCH_SIZE
+		}
+	}
 
 	// object name from subtemplate
 	if c.object = c.Params.GetChildContentS("object"); c.object == "" {
@@ -144,52 +162,65 @@ func (c *Zapi) InitCache() error {
 
 func (c *Zapi) PollInstance() (*matrix.Matrix, error) {
 	var err error
-	var response *node.Node
+	var request, response *node.Node
 	var instances []*node.Node
 	var old_count int
 	var keys []string
 	var keypaths [][]string
+	var tag string
 	var found bool
 
 	logger.Debug(c.Prefix, "starting instance poll")
 
-	//@TODO next tag
-	if err = c.Connection.BuildRequestString(c.Query); err != nil {
-		return nil, err
-	}
-
-	if response, err = c.Connection.Invoke(); err != nil {
-		return nil, err
-	}
-
 	old_count = len(c.Data.Instances)
 	c.Data.ResetInstances()
 
-	instances = response.SearchChildren(c.instanceKeyPrefix)
-	if len(instances) == 0 {
-		return nil, errors.New(errors.ERR_NO_INSTANCE, "no instances in server response")
-	}
-
-	logger.Debug(c.Prefix, "fetching %d instances", len(instances))
-	// @Cleanup
-	keypaths = c.Data.GetInstanceKeys()
-	logger.Debug(c.Prefix, "keys=%v keypaths=%v found=%v", keys, keypaths, found)
-
 	count := 0
 
-	for _, instance := range instances {
-		//c.logger.Printf(c.Prefix, "Handling instance element <%v> [%s]", &instance, instance.GetName())
-		keys, found = instance.SearchContent(c.instanceKeyPrefix, keypaths)
-		logger.Debug(c.Prefix, "fetched instance keys (%v): %s", keypaths, strings.Join(keys, "."))
+	keypaths = c.Data.GetInstanceKeys()
 
-		if !found {
-			logger.Debug(c.Prefix, "skipping element, no instance keys not found")
-		} else {
-			if _, err = c.Data.AddInstance(strings.Join(keys, ".")); err != nil {
-				logger.Error(c.Prefix, err.Error())
+	request = node.NewXmlS(c.Query)
+	if c.System.Clustered && c.batch_size != "" {
+		request.NewChildS("max-records", c.batch_size)
+	}
+
+	tag = "initial"
+
+	for {
+
+		response, tag, err = c.Connection.InvokeBatchRequest(request, tag)
+
+		if err != nil {
+			return nil, err
+		}
+
+		if response == nil {
+			break
+		}
+
+		instances = response.SearchChildren(c.instanceKeyPrefix)
+		if len(instances) == 0 {
+			return nil, errors.New(errors.ERR_NO_INSTANCE, "no instances in server response")
+		}
+
+		logger.Debug(c.Prefix, "fetching %d instances", len(instances))
+
+		for _, instance := range instances {
+			//c.logger.Printf(c.Prefix, "Handling instance element <%v> [%s]", &instance, instance.GetName())
+			keys, found = instance.SearchContent(c.instanceKeyPrefix, keypaths)
+
+			logger.Debug(c.Prefix, "keys=%v keypaths=%v found=%v", keys, keypaths, found)
+			logger.Debug(c.Prefix, "fetched instance keys (%v): %s", keypaths, strings.Join(keys, "."))
+
+			if !found {
+				logger.Debug(c.Prefix, "skipping element, no instance keys found")
 			} else {
-				logger.Debug(c.Prefix, "Added new Instance to cache [%s]", strings.Join(keys, "."))
-				count += 1
+				if _, err = c.Data.AddInstance(strings.Join(keys, ".")); err != nil {
+					logger.Error(c.Prefix, err.Error())
+				} else {
+					logger.Debug(c.Prefix, "Added new Instance to cache [%s]", strings.Join(keys, "."))
+					count += 1
+				}
 			}
 		}
 	}
@@ -206,10 +237,11 @@ func (c *Zapi) PollInstance() (*matrix.Matrix, error) {
 
 func (c *Zapi) PollData() (*matrix.Matrix, error) {
 	var err error
-	var response *node.Node
+	var request, response *node.Node
 	var fetch func(*matrix.Instance, *node.Node, []string)
 	var count, skipped int
-	var rd, pd time.Duration
+	var rd, pd time.Duration // Request/API time, Parse time
+	var tag string
 
 	count = 0
 	skipped = 0
@@ -258,41 +290,53 @@ func (c *Zapi) PollData() (*matrix.Matrix, error) {
 		return nil, err
 	}
 
-	if err = c.Connection.BuildRequestString(c.Query); err != nil {
-		return nil, err
+	request = node.NewXmlS(c.Query)
+	if c.System.Clustered && c.batch_size != "" {
+		request.NewChildS("max-records", c.batch_size)
 	}
 
-	response, rd, pd, err = c.Connection.InvokeWithTimers()
-	if err != nil {
-		return nil, err
-	}
-	api_d += rd
-	parse_d += pd
+	tag = "initial"
 
-	instances := response.SearchChildren(c.instanceKeyPrefix)
-	if len(instances) == 0 {
-		return nil, errors.New(errors.ERR_NO_INSTANCE, "")
-	}
+	for {
 
-	logger.Debug(c.Prefix, "Fetched %d instance elements", len(instances))
+		response, tag, rd, pd, err = c.Connection.InvokeBatchWithTimers(request, tag)
 
-	for _, instanceElem := range instances {
-		//c.logger.Printf(c.Prefix, "Handling instance element <%v> [%s]", &instance, instance.GetName())
-		keys, found := instanceElem.SearchContent(c.instanceKeyPrefix, c.Data.GetInstanceKeys())
-		logger.Debug(c.Prefix, "Fetched instance keys: %s", strings.Join(keys, "."))
-
-		if !found {
-			logger.Debug(c.Prefix, "Skipping instance: no keys fetched")
-			continue
+		if err != nil {
+			return nil, err
 		}
 
-		instance := c.Data.GetInstance(strings.Join(keys, "."))
-
-		if instance == nil {
-			logger.Debug(c.Prefix, "Skipping instance [%s]: not found in cache", strings.Join(keys, "."))
-			continue
+		if response == nil {
+			break
 		}
-		fetch(instance, instanceElem, make([]string, 0))
+
+		api_d += rd
+		parse_d += pd
+
+		instances := response.SearchChildren(c.instanceKeyPrefix)
+		if len(instances) == 0 {
+			return nil, errors.New(errors.ERR_NO_INSTANCE, "")
+		}
+
+		logger.Debug(c.Prefix, "Fetched %d instance elements", len(instances))
+
+		for _, instanceElem := range instances {
+			//c.logger.Printf(c.Prefix, "Handling instance element <%v> [%s]", &instance, instance.GetName())
+			keys, found := instanceElem.SearchContent(c.instanceKeyPrefix, c.Data.GetInstanceKeys())
+			logger.Debug(c.Prefix, "Fetched instance keys: %s", strings.Join(keys, "."))
+
+			if !found {
+				logger.Debug(c.Prefix, "Skipping instance: no keys fetched")
+				continue
+			}
+
+			instance := c.Data.GetInstance(strings.Join(keys, "."))
+
+			if instance == nil {
+				logger.Debug(c.Prefix, "Skipping instance [%s]: not found in cache", strings.Join(keys, "."))
+				continue
+			}
+			fetch(instance, instanceElem, make([]string, 0))
+		}
 	}
 
 	// update metadata

@@ -164,9 +164,15 @@ func (p *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 func (p *SnapMirror) update_node_cache() error {
 
+	var (
+		request, resp *node.Node
+		next_tag      string
+		err           error
+	)
+
 	count := 0
 
-	request := node.NewXmlS("perf-object-get-instances")
+	request = node.NewXmlS("perf-object-get-instances")
 	request.NewChildS("objectname", "volume")
 	//request.CreateChild("max-records", p.batch_size)
 
@@ -177,30 +183,23 @@ func (p *SnapMirror) update_node_cache() error {
 	request_counters.NewChildS("counter", "node_name")
 	request_counters.NewChildS("counter", "vserver_name")
 
-	next_tag := "init"
+	if p.connection.IsClustered() {
+		request.NewChildS("max-records", p.batch_size)
+	}
 
-	for next_tag != "" {
+	next_tag = "initial"
 
-		if next_tag != "init" {
-			request.PopChildS("tag")
-			request.NewChildS("tag", next_tag)
-		}
+	for {
 
-		if err := p.connection.BuildRequest(request); err != nil {
-			return err
-		}
+		resp, next_tag, err = p.connection.InvokeBatchRequest(request, next_tag)
 
-		resp, err := p.connection.Invoke()
 		if err != nil {
 			return err
 		}
 
-		next_tag_tmp := resp.GetChildContentS("next-tag")
-		if next_tag_tmp == next_tag {
-			logger.Warn(p.Prefix, "invalid [next-tag] (ZAPI bug)")
+		if resp == nil {
 			break
 		}
-		next_tag = next_tag_tmp
 
 		if instances := resp.GetChildS("instances"); instances != nil {
 			for _, i := range instances.GetChildren() {

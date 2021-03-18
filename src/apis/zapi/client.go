@@ -135,6 +135,43 @@ func (c *Client) Invoke() (*node.Node, error) {
 	return result, err
 }
 
+func (c *Client) InvokeBatchRequest(request *node.Node, tag string) (*node.Node, string, error) {
+	// wasteful of course, need to rewrite later...
+	results, tag, _, _, err := c.InvokeBatchWithTimers(request, tag)
+	return results, tag, err
+}
+
+func (c *Client) InvokeBatchWithTimers(request *node.Node, tag string) (*node.Node, string, time.Duration, time.Duration, error) {
+
+	var results *node.Node
+	var next_tag string
+	var err error
+	var rd, pd time.Duration // response time, parse time
+
+	if tag == "" {
+		return nil, "", rd, pd, nil
+	}
+
+	if tag != "initial" {
+		request.SetChildContentS("tag", tag)
+	}
+
+	if err = c.BuildRequest(request); err != nil {
+		return nil, "", rd, pd, err
+	}
+
+	if results, rd, pd, err = c.invoke(true); err != nil {
+		return nil, "", rd, pd, err
+	}
+
+	// avoid ZAPI bug
+	if next_tag = results.GetChildContentS("next-tag"); next_tag == tag {
+		next_tag = ""
+	}
+
+	return results, next_tag, rd, pd, nil
+}
+
 func (c *Client) InvokeRequest(request *node.Node) (*node.Node, error) {
 
 	var err error

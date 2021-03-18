@@ -1,13 +1,7 @@
 package main
 
 import (
-	"fmt"
-	"path"
-	"strconv"
-	"strings"
-	"time"
-	//zapi_collector "goharvest2/collectors/zapi/collector"
-
+	//"fmt"
 	"goharvest2/poller/collector"
 	"goharvest2/share/dict"
 	"goharvest2/share/errors"
@@ -16,6 +10,10 @@ import (
 	"goharvest2/share/set"
 	"goharvest2/share/tree/node"
 	"goharvest2/share/util"
+	"path"
+	"strconv"
+	"strings"
+	"time"
 
 	client "goharvest2/apis/zapi"
 )
@@ -24,7 +22,7 @@ import (
 const (
 	INSTANCE_KEY    = "uuid"
 	BATCH_SIZE      = 500
-	LATENCY_IO_REQD = 0 //10
+	LATENCY_IO_REQD = 10
 )
 
 type ZapiPerf struct {
@@ -396,7 +394,7 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 	}
 
 	logger.Debug(c.Prefix, "starting delta calculations from previous poll")
-	logger.Debug(c.Prefix, "data has dimensions (%d x %d)", len(NewData.Data), len(NewData.Data[0]))
+	//logger.Debug(c.Prefix, "data has dimensions (%d x %d)", len(NewData.Data), len(NewData.Data[0]))
 
 	calc_start := time.Now()
 
@@ -419,11 +417,11 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 	// calculate timestamp delta first since many counters require it for postprocessing
 	// timestamp has "raw" property, so won't be postprocessed automatically
 	// fmt.Printf("\npostprocessing %s%s%s - %s%v%s\n", util.Red, timestamp.Name, util.End, util.Bold, timestamp.Properties, util.End)
-	logger.Debug(c.Prefix, "cooking [%s] (%s)", timestamp.Name, timestamp.Properties)
-	print_vector("current", NewData.Data[timestamp.Index])
-	print_vector("previous", c.Data.Data[timestamp.Index])
+	//logger.Debug(c.Prefix, "cooking [%s] (%s)", timestamp.Name, timestamp.Properties)
+	//print_vector("current", NewData.Data[timestamp.Index])
+	//print_vector("previous", c.Data.Data[timestamp.Index])
 	NewData.Delta(c.Data, timestamp.Index)
-	print_vector(util.Green+"delta"+util.End, NewData.Data[timestamp.Index])
+	//print_vector(util.Green+"delta"+util.End, NewData.Data[timestamp.Index])
 
 	for _, m := range ordered_metrics {
 
@@ -438,11 +436,11 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 
 		if m.BaseCounter == "" {
 			// fmt.Printf("scalar - no basecounter\n")
-			logger.Debug(c.Prefix, "cooking [%d] [%s%s%s] (%s)", m.Index, util.Cyan, m.Name, util.End, m.Properties)
+			//logger.Debug(c.Prefix, "cooking [%d] [%s%s%s] (%s)", m.Index, util.Cyan, m.Name, util.End, m.Properties)
 			c.calculate_from_delta(NewData, m.Name, m.Index, -1, m.Properties) // -1 indicates no base counter
 		} else if b := NewData.GetMetric(m.BaseCounter); b != nil {
 			// fmt.Printf("scalar - with basecounter %s%s%s (%s)\n", util.Red, m.BaseCounter, util.End, b.Properties)
-			logger.Debug(c.Prefix, "cooking [%d] [%s%s%s] (%s) using base counter [%s] (%s)", m.Index, util.Cyan, m.Name, util.End, m.Properties, b.Name, b.Properties)
+			//logger.Debug(c.Prefix, "cooking [%d] [%s%s%s] (%s) using base counter [%s] (%s)", m.Index, util.Cyan, m.Name, util.End, m.Properties, b.Name, b.Properties)
 			c.calculate_from_delta(NewData, m.Name, m.Index, b.Index, m.Properties)
 		} else {
 			logger.Error(c.Prefix, "required base [%s] for scalar [%s] missing", m.BaseCounter, m.Name)
@@ -462,25 +460,25 @@ func print_vector(tag string, x []float64) {
 	for _, n := range x {
 		vector = append(vector, strconv.FormatFloat(float64(n), 'f', 5, 64))
 	}
-	logger.Debug("--------", "%-35s => %v", tag, vector)
+	//logger.Debug("--------", "%-35s => %v", tag, vector)
 }
 
 func (c *ZapiPerf) calculate_from_delta(NewData *matrix.Matrix, metricName string, metricIndex, baseIndex int, properties string) {
 
 	PrevData := c.Data // for convenience
 
-	print_vector("current", NewData.Data[metricIndex])
-	print_vector("previous", PrevData.Data[metricIndex])
+	//print_vector("current", NewData.Data[metricIndex])
+	//print_vector("previous", PrevData.Data[metricIndex])
 
 	// calculate metric delta for all instances from previous cache
 	NewData.Delta(PrevData, metricIndex)
 
-	print_vector("delta", NewData.Data[metricIndex])
+	//print_vector("delta", NewData.Data[metricIndex])
 
 	// fmt.Println()
 
 	if strings.Contains(properties, "delta") {
-		print_vector(fmt.Sprintf("%s delta%s", util.Green, util.End), NewData.Data[metricIndex])
+		//print_vector(fmt.Sprintf("%s delta%s", util.Green, util.End), NewData.Data[metricIndex])
 		//B.Data[metric.Index] = delta
 		return
 	}
@@ -488,7 +486,7 @@ func (c *ZapiPerf) calculate_from_delta(NewData *matrix.Matrix, metricName strin
 	if strings.Contains(properties, "rate") {
 		if ts := NewData.GetMetric("timestamp"); ts != nil {
 			NewData.Divide(metricIndex, ts.Index, float64(0))
-			print_vector(fmt.Sprintf("%s rate%s", util.Green, util.End), NewData.Data[metricIndex])
+			//print_vector(fmt.Sprintf("%s rate%s", util.Green, util.End), NewData.Data[metricIndex])
 		} else {
 			logger.Error(c.Prefix, "timestamp counter not found")
 		}
@@ -511,14 +509,14 @@ func (c *ZapiPerf) calculate_from_delta(NewData *matrix.Matrix, metricName strin
 		} else {
 			NewData.Divide(metricIndex, baseIndex, float64(0))
 		}
-		print_vector(fmt.Sprintf("%s average%s", util.Green, util.End), NewData.Data[metricIndex])
+		//print_vector(fmt.Sprintf("%s average%s", util.Green, util.End), NewData.Data[metricIndex])
 		return
 	}
 
 	if strings.Contains(properties, "percent") {
 		NewData.Divide(metricIndex, baseIndex, float64(0))
 		NewData.MultByScalar(metricIndex, float64(100))
-		print_vector(fmt.Sprintf("%s percent%s", util.Green, util.End), NewData.Data[metricIndex])
+		//print_vector(fmt.Sprintf("%s percent%s", util.Green, util.End), NewData.Data[metricIndex])
 		return
 	}
 
@@ -832,7 +830,7 @@ func (c *ZapiPerf) PollInstance() (*matrix.Matrix, error) {
 
 	var (
 		err                                error
-		request                            *node.Node
+		request, results                   *node.Node
 		old_instances                      *set.Set
 		old_size, new_size, removed, added int
 		instances_attr                     string
@@ -861,30 +859,21 @@ func (c *ZapiPerf) PollInstance() (*matrix.Matrix, error) {
 
 	batch_tag := "initial"
 
-	for batch_tag != "" {
+	for {
 
-		// build request
-		if batch_tag != "initial" {
-			request.PopChildS("tag")
-			request.NewChildS("tag", batch_tag)
-		}
+		results, batch_tag, err = c.Connection.InvokeBatchRequest(request, batch_tag)
 
-		if err = c.Connection.BuildRequest(request); err != nil {
-			logger.Error(c.Prefix, "build request: %v", err)
-			break
-		}
-
-		response, err := c.Connection.Invoke()
 		if err != nil {
 			logger.Error(c.Prefix, "instance request: %v", err)
 			break
 		}
 
-		// @TODO next-tag bug
-		batch_tag = response.GetChildContentS("next-tag")
+		if results == nil {
+			break
+		}
 
 		// fetch instances
-		instances := response.GetChildS(instances_attr)
+		instances := results.GetChildS(instances_attr)
 		if instances == nil || len(instances.GetChildren()) == 0 {
 			break
 		}
