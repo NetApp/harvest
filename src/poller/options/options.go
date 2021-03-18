@@ -22,6 +22,8 @@ type Options struct {
 	LogLevel       int
 	Version        string
 	Hostname       string
+	Collectors	   []string
+	Objects		   []string
 }
 
 func (o *Options) String() string {
@@ -79,7 +81,9 @@ func GetOpts() (*Options, string) {
 	parser.Bool(&args.Debug, "debug", "d", "Debug mode, no data will be exported")
 	parser.Bool(&args.Daemon, "daemon", "", "Start as daemon")
 	parser.Int(&args.LogLevel, "loglevel", "l", "Logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)")
-	parser.String(&args.Config, "config", "c", "Custom config filepath (default: "+args.Config+")")
+	//parser.String(&args.Config, "config", "c", "Custom config filepath (default: "+args.Config+")")
+	parser.Slice(&args.Collectors, "collectors", "c", "Only start these collectors (overrides harvest.yml)")
+	parser.Slice(&args.Objects, "objects", "o", "Only start these objects (overrides collector config)")
 	ok := parser.Parse()
 
 	if !ok {

@@ -148,7 +148,27 @@ func (p *Poller) Init() error {
 	}
 
 	if collectors := p.params.GetChildS("collectors"); collectors != nil {
+
 		for _, c := range collectors.GetAllChildContentS() {
+
+			ok := true
+
+			// if requested, filter collectors
+			if len(p.options.Collectors) != 0 {
+				ok = false
+				for _, x := range p.options.Collectors {
+					if x == c {
+						ok = true
+						break
+					}
+				}	
+			}
+
+			if !ok {
+				logger.Info(p.prefix, "skipping collector [%s]", c)
+				continue
+			}
+
 			if err = p.load_collector(c, ""); err != nil {
 				logger.Error(p.prefix, "initializing collector [%s]: %v", c, err)
 			}
@@ -233,6 +253,25 @@ func (p *Poller) load_collector(class, object string) error {
 		// if template has list of objects, initialiez 1 subcollector for each
 	} else if objects := template.GetChildS("objects"); objects != nil {
 		for _, object := range objects.GetChildren() {
+
+			ok := true
+
+			// if requested filter objects
+			if len(p.options.Objects) != 0 {
+				ok = false
+				for _, o := range p.options.Objects {
+					if o == object.GetNameS() {
+						ok = true
+						break
+					}
+				}
+			}
+
+			if ! ok {
+				logger.Debug(p.prefix, "skipping object [%s]", object.GetNameS())
+				continue
+			}
+			
 			c := NewFunc(collector.New(class, object.GetNameS(), p.options, template.Copy()))
 			if err = c.Init(); err != nil {
 				return err
