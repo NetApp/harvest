@@ -25,8 +25,7 @@ counters:
   - tx_total_errors
 
 override:
-  link_speed:
-    properties: string
+  - link_speed: string
 
 plugins:
   - Nic

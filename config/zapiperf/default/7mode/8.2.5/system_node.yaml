@@ -29,4 +29,4 @@ export_options:
   instance_keys:
     - node
   graphite_leafs:
-    - node.{node}.system
+    - node.{node}

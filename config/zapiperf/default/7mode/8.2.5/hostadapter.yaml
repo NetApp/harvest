@@ -3,7 +3,7 @@ name:                     HostAdapter
 query:                    hostadapter
 object:                   hostadapter
 
-instance_key:             uuid
+instance_key:             name
 
 counters:
   - instance_name

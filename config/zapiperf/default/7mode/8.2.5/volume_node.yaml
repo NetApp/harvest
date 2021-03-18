@@ -1,10 +1,10 @@
 
 name:                     VolumeNode
-query:                    volume:node
-object:                   node
+query:                    volume
+object:                   volume
 
 counters:
-  - instance_name           => node
+  - instance_name
   - cifs_read_data
   - cifs_write_data
   - cifs_read_ops
@@ -40,6 +40,6 @@ counters:
 
 export_options:
   instance_keys:
-    - node
+    - volume
   graphite_leafs:
-    - node.{node}.vol_summary
+    - node.{node}.vol.{volume}

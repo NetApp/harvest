@@ -1,0 +1,20 @@
+name:                     WAFLCompBin
+query:                    wafl_comp_aggr_vol_bin
+object:                   fabricpool
+
+counters:
+  - instance_name
+  - vserver_name            => svm
+  - vol_name                => volume
+  - cloud_bin_operation
+  - cloud_bin_op_latency_average
+
+export_options:
+  instance_keys:
+    - svm
+    - volume
+  graphite_leafs:
+    - svm.{svm}.vol.{volume}
+
+override:
+  - cloud_bin_operation: delta

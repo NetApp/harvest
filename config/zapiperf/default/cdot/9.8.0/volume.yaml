@@ -26,7 +26,7 @@ plugins:
   - Volume
 
 export_options:
-  include_keys:
+  instance_keys:
     - volume
     - node
     - svm

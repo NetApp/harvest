@@ -3,12 +3,11 @@ name:                     Processor
 query:                    processor
 object:                   processor
 
-instance_key:             uuid
+instance_key:             name
 
 counters:
   - node_name             => node
   - instance_name 
-  - instance_uuid
   - domain_busy
   - processor_busy
 

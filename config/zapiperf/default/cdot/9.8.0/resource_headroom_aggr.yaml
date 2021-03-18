@@ -19,7 +19,7 @@ counters:
 
 
 plugins:
-  Headroom
+  - Headroom
 
 export_options:
   instance_keys:
@@ -28,4 +28,4 @@ export_options:
     - disk_type
 
   graphite_leafs:
-    - node.{node_name}.headroom.aggr.{aggregate}.{disk_type}
+    - node.{node}.headroom.aggr.{aggr}.{disk_type}

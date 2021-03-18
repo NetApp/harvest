@@ -1,0 +1,33 @@
+
+
+name:                     FCP
+query:                    fcp_lif
+object:                   fcp_lif
+
+instance_key:             instance_uuid
+
+counters:
+ - instance_name          => lif
+ - instance_uuid
+ - vserver_name           => svm
+ - node_name              => node
+ - port_id
+ - read_data
+ - read_ops
+ - avg_read_latency
+ - write_data
+ - write_ops
+ - avg_write_latency
+ - other_ops
+ - avg_other_latency
+ - total_ops
+ - avg_latency
+
+export_options:
+  instance_keys:
+    - lif
+    - svm
+    - node
+    - port_id
+  graphite_leafs:
+    - svm.{svm}.fcp_lif.{lif}

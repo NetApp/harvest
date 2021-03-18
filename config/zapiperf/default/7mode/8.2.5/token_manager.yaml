@@ -2,12 +2,10 @@ name:                     TokenManager
 query:                    token_manager
 object:                   token
 
-instance_key:             uuid
+instance_key:             name
 
 counters:
-  - node_name              => node
   - instance_name
-  - instance_uuid
   - token_copy_success 
   - token_create_success
   - token_zero_success
@@ -25,7 +23,6 @@ override:
 
 export_options:
   instance_keys:
-    - node
     - token
   graphite_leafs:
     - node.{node}.msft_odx

@@ -1,0 +1,20 @@
+
+name:                     LIF
+query:                    lif
+object:                   lif
+
+counters:
+ - instance_uuid
+ - instance_name
+ - node_name                => node
+ - vserver_name             => svm
+ - recv_data
+ - sent_data
+
+export_options:
+  instance_keys:
+    - lif
+    - node
+    - svm
+  graphite_leafs:
+    - svm.{svm}.lif.{lif}

@@ -3,7 +3,7 @@ name:                     WAFL
 query:                    wafl
 object:                   wafl
 
-instance_key:             uuid
+instance_key:             name
 
 counters:
   - avg_wafl_msg_latency  => avg_msg_latency

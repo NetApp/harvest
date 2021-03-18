@@ -1,0 +1,23 @@
+name:                     CopyManager
+query:                    copy_manager
+object:                   copy_manager
+
+instance_key:             uuid
+
+counters:
+  - instance_name          => svm
+  - instance_uuid
+  - bce_copy_count_curr
+  - ocs_copy_count_curr
+  - sce_copy_count_curr
+  - spince_copy_count_curr
+  - KB_copied               => kb_copied
+    
+override:
+ - KB_copied: delta
+
+export_options:
+  instance_keys:
+    - svm
+  graphite_leafs:
+    - svm.{svm}.copy_manager

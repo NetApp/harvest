@@ -1,0 +1,32 @@
+
+name:                     ISCSI
+query:                    iscsi_lif
+object:                   iscsi_lif
+
+instance_key: instance_uuid
+
+counters:
+  - instance_name         => lif
+  - instance_uuid
+  - vserver_name          => svm
+  - protocol_errors
+  - read_data
+  - write_data
+  - iscsi_read_ops
+  - avg_read_latency
+  - iscsi_write_ops
+  - avg_write_latency
+  - iscsi_other_ops
+  - avg_other_latency
+  - cmd_transfered
+  - avg_latency
+
+override:
+  - cmd_transfered: rate
+    
+export_options:
+  instance_keys:
+    - lif
+    - svm
+  graphite_leafs:
+    - svm.{svm}.iscsi_lif.{lif}

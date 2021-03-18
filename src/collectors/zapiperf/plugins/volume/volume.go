@@ -21,6 +21,7 @@ func (p *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	re := regexp.MustCompile(`^(.*)__(\d{4})$`)
 
 	cache := data.Clone(false)
+    cache.Plugin = "volume.flexgroup"
 	cache.ResetInstances()
 
 	// create flexgroup instance cache
@@ -33,6 +34,7 @@ func (p *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				fg.Labels.Set("volume", match[1])
 				fg.Labels.Set("type", "flexgroup")
 			}
+			i.Labels.Set("type", "flexgroup_constituent")
 		} else {
 			i.Labels.Set("type", "flexvol")
 		}
@@ -54,22 +56,41 @@ func (p *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			}
 
 			for _, m := range data.GetMetrics() {
+
+                if ! m.Enabled {
+                    continue
+                }
+
+                logger.Warn(p.Prefix, "(%s) handling metric (%s)", fg.Labels.Get("volume"), m.Name)
 				value, ok := data.GetValue(m, i)
-				if !ok {
+				if ! ok {
+                    logger.Warn(p.Prefix, "    > no value SKIP")
 					continue
 				}
-				if strings.Contains(m.Name, "_latency") {
+				if ! strings.HasSuffix(m.Name, "_latency") {
+
+                    x, _ := cache.GetValue(m, fg)
 					cache.IncrementValue(m, fg, value)
+                    y, _ := cache.GetValue(m, fg)
+
+                    logger.Info(p.Prefix, "   > simple increment %f + %f = %f", x, value, y)
 					continue
 				}
 				key := strings.Replace(m.Name, "_latency", "_ops", 1)
 				if m.Name == "avg_latency" {
 					key = "total_ops"
 				}
+                logger.Info(p.Prefix, "    > weighted increment <%s * %s>", m.Name, key)
 				if ops := data.GetMetric(key); ops != nil {
 					if ops_value, ok := data.GetValue(ops, i); ok {
-						cache.IncrementValue(m, fg, value*ops_value)
-					}
+                        x, _ := cache.GetValue(m, fg)
+                        prod := value * ops_value
+						cache.IncrementValue(m, fg, prod)
+                        y, _ := cache.GetValue(m, fg)
+                        logger.Info(p.Prefix, "       %f + (%f * %f) (=%f) = %f", x, value, ops_value, prod, y)
+					} else {
+                        logger.Warn(p.Prefix, "       no ops value SKIP")
+                    }
 				}
 			}
 		}
@@ -78,7 +99,7 @@ func (p *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	// normalize latency values
 	for _, i := range cache.GetInstances() {
 		for _, m := range cache.GetMetrics() {
-			if strings.Contains(m.Name, "_latency") {
+			if m.Enabled && strings.HasSuffix(m.Name, "_latency") {
 
 				value, ok := cache.GetValue(m, i)
 				if !ok {
@@ -90,7 +111,7 @@ func (p *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				}
 				if ops := cache.GetMetric(key); ops != nil {
 					if ops_value, ok := cache.GetValue(ops, i); ok {
-						cache.SetValue(m, i, value/ops_value)
+						cache.SetValue(m, i, (value/ops_value))
 					}
 				}
 			}

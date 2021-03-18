@@ -1,0 +1,23 @@
+
+name:                     NFSv4Node
+query:                    nfsv4
+object:                   node_nfs
+
+global_labels:
+  - nfsv: v4
+
+counters:
+  - instance_name            => node
+  - nfsv3_avg_latency        => latency
+  - nfsv4_ops                => ops
+  - nfsv4_ready_latency      => read_avg_latency
+  - nfsv4_write_latency      => write_avg_latency
+  - nfsv4_read_ops           => read_ops
+  - nfsv4_write_ops          => write_ops
+
+export_options:
+  instance_keys:
+    - node
+    - nfsv
+  graphite_leafs:
+    - node.{node}.nfsv4
