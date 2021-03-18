@@ -56,8 +56,8 @@ counters:
       - ^status
 
 plugins:
- - FlexGroup
- - Status:
+  - FlexGroup
+  - Status:
     - status:
       label: state
       ok_value: online

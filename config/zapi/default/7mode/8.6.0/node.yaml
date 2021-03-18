@@ -4,7 +4,7 @@ object:                     node
 
 counters:
   system-info:
-
+    - memory-size
     - ^maximum-aggregate-size               => max_aggr_size
     - ^maximum-flexible-volume-count        => max_vol_num
     - ^maximum-flexible-volume-size         => max_vol_size
@@ -16,8 +16,8 @@ counters:
 
 plugins:
   - Node
-  - Status
-    - status
+  - Status:
+    - status:
       label: healthy
       ok_value: true
 

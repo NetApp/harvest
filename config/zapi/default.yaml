@@ -11,5 +11,5 @@ objects:
   Aggregate:        aggr.yaml
   Volume:           volume.yaml
   SnapMirror:       snapmirror.yaml
-  StorageDisk:      disk.yaml
+  Disk:             disk.yaml
   Shelf:            shelf.yaml

@@ -1,24 +1,24 @@
-name:    -    StorageDisk
-query:    -   disk-list-info
-object:    -  disk
+name:         Disk
+query:        disk-list-info
+object:       disk
 
 
 counters:
   disk-detail-info:
-    - bytes-per-sector
+    - bytes-per-sector          => bytes_per_sector
     - ^disk-model               => model
     - ^disk-type                => type
     - ^^disk-uid
     - ^is-offline		        => offline
     - ^name                     => disk
-    - physical-blocks:
-    - physical-space:
+#    - physical-blocks:
+#    - physical-space:
     - poweron-hours             => uptime
     - raw-disk-sectors          => sectors
-    - serial-number             => serial
-    - shelf
-    - used-blocks:
-    - used-space:
+    - ^serial-number            => serial_number
+    - ^shelf                    => shelf
+#    - used-blocks:
+#    - used-space:
 
 plugins:
   - Status:
