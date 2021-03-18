@@ -60,11 +60,10 @@ counters:
 
       
 plugins:
-  status:
-    metrics:
-      status:
-        label: state
-        ok_value: online
+  - Status:
+    - status:
+      label: state
+      ok_value: online
     
 export_options:
   exclude_instance_name: True

@@ -9,22 +9,28 @@ counters:
     - ^^disk-name               => disk
     - disk-inventory-info:
       - bytes-per-sector
-      - capacity-sectors
+      - capacity-sectors        => sectors
       - ^disk-type              => type
       - ^model                  => model
       - ^serial-number          => serial_number
       - ^shelf                  => shelf
       - ^shelf-bay              => shelf_bay
     - disk-ownership-info:
-      - ^is-failed              => is_failed
+      - ^is-failed              => failed
       - ^home-node-name         => node
     - disk-stats-info:
       - average-latency
       - disk-io-kbps
       - disk-iops
-      - power-on-time-interval
+      - power-on-time-interval  => uptime
       - path-error-count
 
+plugins:
+  - Status:
+    - status:
+      label: failed
+      ok_value: false
+    
 export_options:
   instance_keys:
     - node
@@ -35,6 +41,5 @@ export_options:
     - serial_number
     - shelf
     - shelf_bay
-    - is_failed
   graphite_leafs:
     - node.{node}.disk.{disk} # take last part

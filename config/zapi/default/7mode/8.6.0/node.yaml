@@ -1,0 +1,42 @@
+name:                       SystemNode
+query:                      system-get-info
+object:                     node
+
+counters:
+  system-info:
+
+    - ^maximum-aggregate-size               => max_aggr_size
+    - ^maximum-flexible-volume-count        => max_vol_num
+    - ^maximum-flexible-volume-size         => max_vol_size
+    - ^^system-name                         => node
+    - ^system-model                         => model
+    - ^system-serial-number                 => serial
+    - ^vendor-id                            => vendor
+    - ^product-version                      => version
+
+plugins:
+  - Node
+  - Status
+    - status
+      label: healthy
+      ok_value: true
+
+export_options:
+  instance_keys:
+    - node
+  instance_labels:
+    - over_temperature
+    - max_aggr_size
+    - max_vol_size
+    - max_vol_num
+    - warnings
+    - healthy
+    - location
+    - model
+    - serial
+    - uptime
+    - vendor
+    - version
+  graphite_leafs:
+    - node.{node}
+

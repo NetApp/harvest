@@ -1,0 +1,54 @@
+
+name: Volume
+query: volume-list-info
+object: volume
+
+
+counters:
+  volume-info:
+    - ^name                                  => volume
+    - ^type                                  => style
+    - ^^uuid
+    - ^state
+    - containing-aggregate                  => aggr
+    - files-total
+    - files-used
+    - filesystem-size
+    - size-available
+    - size-total
+    - size-used
+    - percentage-used                       => size_used_percent
+    autosize:
+      - grow-threshold-percent
+      - is-enabled              => autosize_enabled
+      - maximum-size
+    - sis:
+      - compress-saved            => sis_compress_saved
+      - dedup-saved               => sis_dedup_saved
+      - percent-compress-saved    => sis_compress_saved_percent
+      - percent-dedup-saved       => sis_dedup_saved_percent
+      - percent-total-saved       => sis_total_saved_percent
+      - total-saved               => sis_total_saved
+
+plugins:
+  Status:
+    metrics:
+      status:
+        label: state
+        ok_value: online
+                                               
+export_options:
+  instance_keys:
+    - volume
+    - node
+    - svm
+    - aggr
+  instance_labels:
+    - state
+    - status
+    - style
+    - autosize_enabled
+  graphite_leafs:
+    - svm.{svm}.vol.{volume}
+    - node.{node}.aggr.{aggr}.vol.{volume}
+

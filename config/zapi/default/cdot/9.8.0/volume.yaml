@@ -6,7 +6,7 @@ counters:
   volume-attributes:
     - volume-autosize-attributes:
       - maximum-size 
-      - ^is_enabled                 => enabled
+      - ^is_enabled                 => autosize_enabled
       - grow-threshold-percent
 
     - volume-id-attributes:
@@ -55,33 +55,14 @@ counters:
       - ^state
       - ^status
 
-mappings:
-  state:
-    'online' : '0'
-    'mixed' : '1'
-    'offline' : '2'
-    'restricted' : '3'
-
-
 plugins:
-  FlexGroup:
-    export_options:
-      graphite_leafs:
-        - svm.{vserver_name}.vol.flexgroup.{volume_name}
-        - node.{node_name}.aggr.{aggregate_name}.vol.flexgroup.{volume_name}
-      instance_keys:
-        - volume
-        - node
-        - svm
-        - aggr
-      instance_labels:
-        - count
-        - style
-        - state
-        - status
-        - enabled
-
-
+ - FlexGroup
+ - Status:
+    metrics:
+      status:
+        label: state
+        ok_value: online
+              
 export_options:
   instance_keys:
     - volume
@@ -92,8 +73,7 @@ export_options:
     - state
     - status
     - style
-    - enabled
-
+    - autosize_enabled
   graphite_leafs:
     - svm.{svm}.vol.{volume}
     - node.{node}.aggr.{aggr}.vol.{volume}

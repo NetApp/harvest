@@ -44,7 +44,10 @@ counters:
 
 plugins:
   - Node
-
+  - Status:
+    - status:
+      label: healthy
+      ok_value: true
 
 export_options:
   instance_keys:

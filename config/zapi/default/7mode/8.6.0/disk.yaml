@@ -1,0 +1,43 @@
+name:    -    StorageDisk
+query:    -   disk-list-info
+object:    -  disk
+
+
+counters:
+  disk-detail-info:
+    - bytes-per-sector
+    - ^disk-model               => model
+    - ^disk-type                => type
+    - ^^disk-uid
+    - ^is-offline		=> offline
+    - ^name                     => disk
+    - physical-blocks:
+    - physical-space:
+    - poweron-hours             => uptime
+    - raw-disk-sectors          => sectors
+    - serial-number             => serial
+    - shelf
+    - used-blocks:
+    - used-space:
+
+plugins:
+  - Status:
+    - status:
+      label: offline
+      ok_value: false
+    
+export_options:
+  instance_keys:
+    - node
+    - disk
+  instance_labels:
+    - type
+    - model
+    - serial_number
+    - shelf
+    - shelf_bay
+
+  graphite_leafs:
+    - node.{node}.disk.{disk} # take last part
+
+
