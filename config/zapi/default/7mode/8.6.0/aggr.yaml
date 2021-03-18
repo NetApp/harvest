@@ -56,10 +56,10 @@ plugins:
       ok_value: online
 
 export_options:
-  graphite_leafs:
-    - node.{node}.aggr.{aggr}
   instance_keys:
     - aggr
   instance_labels:
     - type
     - state
+  graphite_leafs:
+    - node.{node}.aggr.{aggr}

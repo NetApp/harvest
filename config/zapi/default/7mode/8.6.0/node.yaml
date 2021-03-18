@@ -22,8 +22,7 @@ plugins:
       ok_value: true
 
 export_options:
-  instance_keys:
-    - node
+  require_instance_keys: False
   instance_labels:
     - over_temperature
     - max_aggr_size

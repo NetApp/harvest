@@ -3,7 +3,6 @@ name: Volume
 query: volume-list-info
 object: volume
 
-
 counters:
   volume-info:
     - ^name                                  => volume
@@ -32,15 +31,13 @@ counters:
 
 plugins:
   Status:
-    metrics:
-      status:
-        label: state
-        ok_value: online
+    - status:
+      label: state
+      ok_value: online
                                                
 export_options:
   instance_keys:
     - volume
-    - node
     - svm
     - aggr
   instance_labels:

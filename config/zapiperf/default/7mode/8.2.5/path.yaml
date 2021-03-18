@@ -23,7 +23,6 @@ plugins:
 
 export_options:
   instance_keys: 
-    - node
     - hostadapter # from plugin
     - target_wwpn # from plugin
   graphite_leafs:

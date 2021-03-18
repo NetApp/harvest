@@ -58,10 +58,9 @@ counters:
 plugins:
  - FlexGroup
  - Status:
-    metrics:
-      status:
-        label: state
-        ok_value: online
+    - status:
+      label: state
+      ok_value: online
               
 export_options:
   instance_keys:

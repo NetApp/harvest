@@ -29,7 +29,6 @@ override:
   - write_blks_replaced_percent: average
 
 export_options:
-  instance_keys: 
-    - node
+  require_instance_keys: False
   graphite_leafs:
     - node.{node}.flashpool.{flashpool}

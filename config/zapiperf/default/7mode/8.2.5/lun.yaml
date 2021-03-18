@@ -22,9 +22,9 @@ plugins:
   - Lun
 
 export_options:
-  labels_to_emit:
+  instance_keys:
     - lun # edited by plugin
     - volume # added by plugin
-    - svm
+    - svm # mimic cdot metrics
   graphite_leafs:
     - svm.{svm}.vol.{volume}.{lun}

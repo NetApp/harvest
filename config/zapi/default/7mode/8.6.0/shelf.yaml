@@ -15,7 +15,6 @@ counters:
         - status-reads-attempted        => status_reads_attempted
         - status-reads-failed           => status_reads_failed
 
-
 plugins:
   Shelf:
     objects:
@@ -83,5 +82,3 @@ export_options:
     - model
     - state
     - vendor_name
-
-

@@ -125,6 +125,12 @@ func Init(c Collector) error {
 	}
 	data.SetGlobalLabel("datacenter", params.GetChildContentS("datacenter"))
 
+	if gl := params.GetChildS("global_labels"); gl != nil {
+		for _, c := range gl.GetChildren() {
+			data.SetGlobalLabel(c.GetNameS(), c.GetContentS())
+		}
+	}
+
     if params.GetChildContentS("export_data") == "False" {
         data.Exportable = false
     }

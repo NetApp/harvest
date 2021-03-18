@@ -23,14 +23,13 @@ func (p *Status) Init() error {
 	p.target_labels = dict.New()
 	p.target_values = dict.New()
 
-	if metrics := p.Params.GetChildS("metrics"); metrics == nil {
-		return errors.New(errors.MISSING_PARAM, "metrics")
-	} else {
-		for _, m := range metrics.GetChildren() {
-			name := m.GetNameS()
-			p.target_labels.Set(name, m.GetChildContentS("label"))
-			p.target_values.Set(name, m.GetChildContentS("ok_value"))
-		}
+	if len(p.Params.GetChildren()) == 0 {
+		return errors.New(errors.MISSING_PARAM, "status parameters")
+	}
+	for _, m := range p.Params.GetChildren() {
+		name := m.GetNameS()
+		p.target_labels.Set(name, m.GetChildContentS("label"))
+		p.target_values.Set(name, m.GetChildContentS("ok_value"))
 	}
 	logger.Debug(p.Prefix, "initialized plugin, will cook status metrics from %d instance labels", p.target_labels.Size())
 	return nil

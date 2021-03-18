@@ -16,7 +16,6 @@ counters:
   - wafl_msg_total        => msg_total
 
 export_options:
-  instance_keys:
-    - node
+  require_instance_keys: False
   graphite_leafs:
     - node.{node}.wafl

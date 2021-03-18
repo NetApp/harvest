@@ -153,7 +153,7 @@ func (e *Prometheus) Render(data *matrix.Matrix) ([][]byte, error) {
 			}
 
 			// @TODO, probably be strict, and require all keys to be present
-			if len(instance_keys) == 0 {
+			if len(instance_keys) == 0 && options.GetChildContentS("require_instance_keys") != "False" {
 				logger.Debug(e.Prefix, "skip instance, no keys parsed (%v) (%v)", instance_keys, instance_labels)
 				continue
 			}

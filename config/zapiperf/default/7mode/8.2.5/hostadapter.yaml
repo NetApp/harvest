@@ -13,7 +13,6 @@ counters:
 
 export_options:
   instance_keys: 
-    - node
     - hostadapter
   graphite_leafs:
     - node.{node}.hostadapter.{hostadapter}

@@ -35,7 +35,6 @@ plugins:
 export_options:
   instance_keys:
     - aggr
-    - node
     - disk
     - raid
     - plex

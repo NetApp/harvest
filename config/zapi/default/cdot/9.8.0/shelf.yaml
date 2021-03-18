@@ -44,29 +44,6 @@ plugins:
 #          - ^psu-reset-capable => reset_capable
           - ^psu-serial-number => serial
           - ^psu-type => type
-      - shelf-bays => shelf_bay:
-        storage-shelf-bay-info:
-          - ^bay-has-disk
-          - ^^bay-id
-      - shelf-errors => shelf_error:
-        storage-shelf-error-info:
-          - ^component-location
-          - ^corrective-action
-          - ^error-text
-          - ^^shelf-component
-      - shelf-modules => shelf_module:
-        storage-shelf-module-info:
-          - ^es-serial-number
-          - ^is-monitor-active
-          - ^is-sas-master-module
-          - ^module-fru-id
-          - ^module-fw-revision
-          - ^^module-id
-          - ^module-is-reporting-element
-          - ^module-latest-fw-revision
-          - ^module-location
-          - ^module-part-number
-          - module-swap-count => swap_count
       - temperature-sensors => temperature:
         storage-shelf-temperature-sensor-info:
           - ^high-critical-threshold => high_critical
@@ -81,7 +58,6 @@ plugins:
           - ^^voltage-sensor-id => sensor_id
           - ^voltage-sensor-location => location
           - voltage-sensor-reading => reading
-
 
 export_options:
   instance_keys:

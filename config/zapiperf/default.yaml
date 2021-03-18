@@ -24,3 +24,21 @@ objects:
   TokenManager:           token_manager.yaml
   HeadroomCPU:            resource_headroom_cpu.yaml
   HeadroomAggr:           resource_headroom_aggr.yaml
+  Processor:              processor.yaml
+  CIFSNode:               cifs_node.yaml
+  NFSv3Node:              nfsv3_node.yaml
+  NFSv4Node:              nfsv4_node.yaml
+  NFSv41Node:             nfsv4_1_node.yaml  
+
+  # SVM-level metrics
+  Volume:                 volume.yaml
+  LUN:                    lun.yaml
+  NFSv3:                  nfsv3.yaml
+  NFSv4:                  nfsv4.yaml
+  NFSv41:                 nfsv4_1.yaml
+  CIFSvserver:            cifs_vserver.yaml
+  LIF:                    lif.yaml
+  ISCSI:                  iscsi_lif.yaml
+  FCP:                    fcp_lif.yaml
+  CopyManager:            copy_manager.yaml
+  WAFLCompBin:            wafl_comp_aggr_vol_bin.yaml

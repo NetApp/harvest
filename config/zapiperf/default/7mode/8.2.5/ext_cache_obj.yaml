@@ -32,7 +32,6 @@ override:
   - hit_percent: average
 
 export_options:
-  instance_keys: 
-    - node
+  require_instance_keys: False
   graphite_leafs:
     - node.{node}.flashcache.{flashcache}
