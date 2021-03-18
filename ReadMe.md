@@ -1,5 +1,4 @@
 
-
 # NetApp Harvest 2.0
 
 The *swiss-army knife* for monitoring datacenters. The default package collects performance, capacity and hardware metrics from *ONTAP* clusters. New metrics can be collected by editing the config files. Metrics can be delivered to multiple databases - Prometheus, InfluxDB and Graphite - and displayed in Grafana dashboards.
@@ -87,7 +86,7 @@ Or start specific poller(s):
 $ harvest start jamaica grenada
 ```
 
-(replace `jamaica` and `grenada` with the poller names that you defined in `config.yaml`). The logs of each poller can be found in `/var/log/harvest/`.
+(replace `jamaica` and `grenada` with the poller names that you defined in `harvest.yaml`). The logs of each poller can be found in `/var/log/harvest/`.
 
 ## 3. Import Grafana dashboards
 
@@ -116,7 +115,7 @@ If you need to edit the configuration of Harvest manually, you will find all con
 
 
 ## Pollers
-All pollers are defined in `config.yaml`, the main configuration file of Harvest, under the section `Pollers`. 
+All pollers are defined in `harvest.yaml`, the main configuration file of Harvest, under the section `Pollers`. 
 
 | parameter              | type         | description                                      | default                |
 |------------------------|--------------|--------------------------------------------------|------------------------|
@@ -137,7 +136,7 @@ This section is optional. If there are parameters identical for all your pollers
 ## Exporters
 
 All exporters need two types of parameters:
-- `exporter parameters` - defined in `config.yaml` under section `Exporters`
+- `exporter parameters` - defined in `harvest.yaml` under section `Exporters`
 - `export_options` - which they should get from the datastructure (`Matrix`) that is emitted from collectors and plugins
 
 The following two parameters are required for all exporters:
