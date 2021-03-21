@@ -48,7 +48,7 @@ cd /opt/harvest
 %preun
 
 %postun
-unlink /opt/harvest/bin/harvest
+unlink /usr/local/bin/harvest
 echo "uninstall complete"
 
 %clean

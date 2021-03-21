@@ -6,7 +6,6 @@ counters:
   volume-attributes:
     - volume-autosize-attributes:
       - maximum-size 
-      - ^is_enabled                 => autosize_enabled
       - grow-threshold-percent
 
     - volume-id-attributes:
@@ -56,11 +55,11 @@ counters:
       - ^status
 
 plugins:
-  - FlexGroup
   - Status:
     - status:
       label: state
       ok_value: online
+  - FlexGroup
               
 export_options:
   instance_keys:
@@ -68,11 +67,9 @@ export_options:
     - node
     - svm
     - aggr
+    - style
   instance_labels:
     - state
-    - status
-    - style
-    - autosize_enabled
   graphite_leafs:
     - svm.{svm}.vol.{volume}
     - node.{node}.aggr.{aggr}.vol.{volume}

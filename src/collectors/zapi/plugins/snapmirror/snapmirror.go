@@ -17,7 +17,6 @@ type SnapMirror struct {
 	node_cache        *dict.Dict
 	dest_limit_cache  *dict.Dict
 	src_limit_cache   *dict.Dict
-	batch_size        string
 	node_upd_counter  int
 	limit_upd_counter int
 }
@@ -43,11 +42,7 @@ func (p *SnapMirror) Init() error {
 		return err
 	}
 
-	if p.batch_size = p.ParentParams.GetChildContentS("batch_size"); p.batch_size == "" {
-		p.batch_size = "500"
-	}
-
-	p.node_upd_counter = 0
+    p.node_upd_counter = 0
 	p.limit_upd_counter = 0
 
 	p.node_cache = dict.New()
@@ -166,7 +161,6 @@ func (p *SnapMirror) update_node_cache() error {
 
 	var (
 		request, resp *node.Node
-		next_tag      string
 		err           error
 	)
 
@@ -183,33 +177,18 @@ func (p *SnapMirror) update_node_cache() error {
 	request_counters.NewChildS("counter", "node_name")
 	request_counters.NewChildS("counter", "vserver_name")
 
-	if p.connection.IsClustered() {
-		request.NewChildS("max-records", p.batch_size)
-	}
+    if resp, err = p.connection.InvokeRequest(request); err != nil {
+        return err
+    }
 
-	next_tag = "initial"
+    if instances := resp.GetChildS("instances"); instances != nil {
+        for _, i := range instances.GetChildren() {
+            vol := i.GetChildContentS("name")
+            svm := i.GetChildContentS("vserver_name")
+            node := i.GetChildContentS("node_name")
 
-	for {
-
-		resp, next_tag, err = p.connection.InvokeBatchRequest(request, next_tag)
-
-		if err != nil {
-			return err
-		}
-
-		if resp == nil {
-			break
-		}
-
-		if instances := resp.GetChildS("instances"); instances != nil {
-			for _, i := range instances.GetChildren() {
-				vol := i.GetChildContentS("name")
-				svm := i.GetChildContentS("vserver_name")
-				node := i.GetChildContentS("node_name")
-
-				p.node_cache.Set(svm+"."+vol, node)
-				count += 1
-			}
+            p.node_cache.Set(svm+"."+vol, node)
+            count += 1
 		}
 	}
 

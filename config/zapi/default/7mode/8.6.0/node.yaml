@@ -15,11 +15,11 @@ counters:
     - ^product-version                      => version
 
 plugins:
-  - Node
   - Status:
     - status:
       label: healthy
       ok_value: true
+  - Node
 
 export_options:
   require_instance_keys: False

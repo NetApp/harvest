@@ -43,11 +43,11 @@ counters:
 #    - sas2-sas3-mixed-stack-support
 
 plugins:
-  - Node
   - Status:
     - status:
       label: healthy
       ok_value: true
+  - Node
 
 export_options:
   instance_keys:

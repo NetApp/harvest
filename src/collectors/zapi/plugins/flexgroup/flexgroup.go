@@ -16,24 +16,23 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &FlexGroup{AbstractPlugin: p}
 }
 
-func fetch_names(instance *matrix.Instance) (string, string, string, string) {
-	var key, name, svm, vol string
+func fetch_names(instance *matrix.Instance) (string, string) {
+	var key, name, vol string
 
 	if instance.Labels.Get("style") == "flexgroup_constituent" {
-		if vol = instance.Labels.Get("volume_name"); len(vol) > 6 {
+		if vol = instance.Labels.Get("volume"); len(vol) > 6 {
 			name = vol[:len(vol)-6]
-			svm = instance.Labels.Get("vserver_name")
-			key = svm + "." + name
+			key = instance.Labels.Get("svm") + "." + instance.Labels.Get("node") + "." + name
 		}
 	}
 
-	return key, name, svm, vol
+	return key, name
 }
 
 func (p *FlexGroup) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	n := data.Clone(false)
-	n.Plugin = p.Name
+	n.Plugin = "zapi.volume.flexgroup"
 	n.ResetInstances()
 
 	counts := make(map[string]int)
@@ -41,26 +40,20 @@ func (p *FlexGroup) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	// create new instance cache
 	for _, i := range data.GetInstances() {
 
-		if key, name, svm, vol := fetch_names(i); key != "" {
+		if key, name := fetch_names(i); key != "" {
 
-			if instance := n.GetInstance(key); instance == nil {
+			i.Enabled = false
+
+			if n.GetInstance(key) == nil {
 
 				instance, err := n.AddInstance(key)
 
 				if err != nil {
 					logger.Error(p.Prefix, err.Error())
-					continue
+					return nil, err
 				}
-
-				//instance.Name = name
-				instance.Labels.Set("flexgroup", name)
-				instance.Labels.Set("style", "flexgroup")
-				instance.Labels.Set("volume", vol)
-				instance.Labels.Set("svm", svm)
-				instance.Labels.Set("node", i.Labels.Get("node"))
-				instance.Labels.Set("aggr", i.Labels.Get("aggr"))
-				instance.Labels.Set("status", i.Labels.Get("status"))
-				instance.Labels.Set("state", i.Labels.Get("state"))
+				instance.Labels = i.Labels.Copy()
+				instance.Labels.Set("volume", name)
 
 				counts[key] = 1
 			} else {
@@ -71,11 +64,14 @@ func (p *FlexGroup) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	logger.Debug(p.Prefix, "extracted %d flexgroup instances", len(counts))
 
-	n.InitData()
+	if err := n.InitData(); err != nil {
+		logger.Error(p.Prefix, err.Error())
+		return nil, err
+	}
 
 	// create summaries
 	for _, i := range data.GetInstances() {
-		if key, _, _, _ := fetch_names(i); key != "" {
+		if key, _ := fetch_names(i); key != "" {
 			if instance := n.GetInstance(key); instance != nil {
 				n.InstanceWiseAddition(instance, i, data)
 			}
@@ -94,11 +90,14 @@ func (p *FlexGroup) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				if value, has := n.GetValue(metric, instance); has {
 					n.SetValue(metric, instance, value/float64(count))
 				}
+			} else if metric.Name == "status" {
+				if instance.Labels.Get("state") == "online" {
+					n.SetValue(metric, instance, float64(0.0))
+				} else {
+					n.SetValue(metric, instance, float64(1.0))
+				}
 			}
 		}
 	}
-
-	result := make([]*matrix.Matrix, 1)
-	result[0] = n
-	return result, nil
+	return []*matrix.Matrix{n}, nil
 }

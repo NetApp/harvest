@@ -127,6 +127,10 @@ func (e *Prometheus) Render(data *matrix.Matrix) ([][]byte, error) {
 
 	for _, instance := range data.Instances {
 
+		if ! instance.Enabled {
+			continue
+		}
+
 		logger.Debug(e.Prefix, "render instance [%d] %v", instance.Index, instance.Labels.Iter())
 
 		instance_keys := make([]string, len(global_labels))

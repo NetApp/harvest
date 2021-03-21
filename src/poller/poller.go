@@ -274,7 +274,7 @@ func (p *Poller) load_collector(class, object string) error {
 			
 			c := NewFunc(collector.New(class, object.GetNameS(), p.options, template.Copy()))
 			if err = c.Init(); err != nil {
-				return err
+                logger.Warn(p.prefix, "failed to initialize [%s:%s]: %v", class, object.GetNameS(), err)
 			} else {
 				subcollectors = append(subcollectors, c)
 				logger.Debug(p.prefix, "initialized subcollector [%s:%s]", class, object.GetNameS())

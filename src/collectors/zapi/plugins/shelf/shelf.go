@@ -74,11 +74,9 @@ func (p *Shelf) Init() error {
 		p.data[attribute].SetGlobalLabel("cluster", system.Name)
 
 		export_options := node.NewS("export_options")
-		export_options.NewChildS("include_instance_names", "False") //@TODO remove!
 		instance_labels := export_options.NewChildS("instance_labels", "")
 		instance_keys := export_options.NewChildS("instance_keys", "")
 		instance_keys.NewChildS("", "shelf")
-		instance_keys.NewChildS("", "shelf_id")
 
 		for _, x := range obj.GetChildren() {
 			for _, c := range x.GetAllChildContentS() {

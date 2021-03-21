@@ -11,7 +11,6 @@ counters:
     - ^op-status
     - ^serial-number
     - ^shelf => shelf
-    - ^shelf-id => shelf_id
     - ^shelf-model
     - ^^shelf-uid
     - ^state
@@ -59,10 +58,14 @@ plugins:
           - ^voltage-sensor-location => location
           - voltage-sensor-reading => reading
 
+  - Status:
+    - status:
+      label: state
+      ok_value: online
+
 export_options:
   instance_keys:
     - shelf
-    - shelf_id
   instance_labels:
     - module_type
     - op_status

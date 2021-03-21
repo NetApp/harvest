@@ -200,6 +200,10 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 	// render one measurement for each instance
 	for key, instance := range data.GetInstances() {
 
+		if ! instance.Enabled {
+			continue
+		}
+
 		m := NewMeasurement(object)
 		copy(m.tag_set, global.tag_set)
 

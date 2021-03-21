@@ -10,6 +10,7 @@ import (
 type Instance struct {
 	Index  int
 	Labels *dict.Dict
+        Enabled bool
 }
 
 func (m *Matrix) AddInstance(key string) (*Instance, error) {
@@ -18,6 +19,7 @@ func (m *Matrix) AddInstance(key string) (*Instance, error) {
 	}
 	i := &Instance{Index: len(m.Instances)}
 	i.Labels = dict.New()
+	i.Enabled = true
 	m.Instances[key] = i
 
 	if !m.IsEmpty() {

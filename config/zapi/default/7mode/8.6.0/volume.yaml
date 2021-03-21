@@ -19,7 +19,6 @@ counters:
     - percentage-used                       => size_used_percent
     autosize:
       - grow-threshold-percent
-      - is-enabled              => autosize_enabled
       - maximum-size
     - sis:
       - compress-saved            => sis_compress_saved
@@ -40,11 +39,9 @@ export_options:
     - volume
     - svm
     - aggr
+    - style
   instance_labels:
     - state
-    - status
-    - style
-    - autosize_enabled
   graphite_leafs:
     - svm.{svm}.vol.{volume}
     - node.{node}.aggr.{aggr}.vol.{volume}
