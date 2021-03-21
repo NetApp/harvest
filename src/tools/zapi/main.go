@@ -140,7 +140,7 @@ func main() {
 		&args.Item,
 		"item",
 		"item to show",
-		[]string{"data", "apis", "attrs", "objects", "counters", "counter", "system"},
+		[]string{"data", "apis", "attrs", "objects", "instances", "counters", "counter", "system"},
 	)
 
 	parser.String(
@@ -178,7 +178,7 @@ func main() {
 		"ZapiPerf counter to show",
 	)
 
-	parser.SetHelp("help")
+	parser.SetHelpFlag("help")
 
 	if !parser.Parse() {
 		os.Exit(0)
@@ -208,6 +208,11 @@ func main() {
 
 	if args.Item == "counters" && args.Object == "" {
 		fmt.Println("show counters: requires --object")
+		ok = false
+	}
+
+	if args.Item == "instances" && args.Object == "" {
+		fmt.Println("show instances: requires --object")
 		ok = false
 	}
 
@@ -252,6 +257,8 @@ func main() {
 		get_objects()
 	case "counters":
 		get_counters()
+	case "instances":
+		get_instances()
 	case "counter":
 		get_counter()
 	default:
@@ -323,6 +330,48 @@ func get_objects() {
 		)
 		fmt.Printf("%s     %s%s\n", util.Grey, o.GetChildContentS("description"), util.End)
 	}
+}
+
+func get_instances() {
+
+	var request, results *node.Node
+	var count int
+	var tag string
+	var err error
+
+	request = node.NewXmlS("perf-object-instance-list-info-iter")
+	request.NewChildS("objectname", args.Object)
+	request.NewChildS("max-records", "10")
+
+	tag = "initial"
+
+	for {
+
+		results, tag, err = connection.InvokeBatchRequest(request, tag)
+
+		fmt.Println("tag = ", tag)
+
+		if err != nil {
+			fmt.Println(err)
+			break
+		}
+
+		if results == nil {
+			break
+		}
+
+		if attrs := results.GetChildS("attributes-list"); attrs != nil {
+			count += len(attrs.GetChildren())
+			attrs.Print(0)
+		}
+
+		if tag == "" {
+			break
+		}
+	}
+
+	fmt.Printf("displayed %d [%s] instances\n", count, args.Object)
+
 }
 
 func get_data() {
@@ -453,7 +502,7 @@ func get_attrs() {
 	fmt.Println()
 	if args.Export {
 		fn := path.Join("/tmp", args.Api+".yml")
-		if err = tree.ExportYaml(attr, fn); err != nil {
+		if err = tree.Export(attr, "yaml", fn); err != nil {
 			fmt.Printf("failed to export to [%s]:\n", fn)
 			fmt.Println(err)
 		} else {

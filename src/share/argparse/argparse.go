@@ -62,6 +62,7 @@ type Parser struct {
 	errors      [][]string
 	index       int
 	help        string
+	help_flag   string
 }
 
 func New(program_name, program_bin, short_descr string) *Parser {
@@ -123,6 +124,10 @@ func (p *Parser) Slice(target *[]string, name, short, descr string) {
 	p.add(&opt, name, short)
 }
 
+func (p *Parser) SetHelpFlag(flag string) {
+	p.help_flag = flag
+}
+
 func (p *Parser) SetHelp(help string) {
 	p.help = help
 }
@@ -139,7 +144,7 @@ func (p *Parser) Parse() bool {
 		//fmt.Printf("%d - \"%s\"\n", arg_index, flag)
 
 		// help stops here
-		if flag == "-h" || flag == "--help" || flag == "-help" || flag == p.help {
+		if flag == "-h" || flag == "--help" || flag == "-help" || flag == p.help_flag {
 			p.PrintHelp()
 			return false
 			// long flag

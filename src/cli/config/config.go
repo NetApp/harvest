@@ -228,7 +228,7 @@ func main() {
 			}
 		}
 
-		if err = tree.ExportYaml(conf, fp); err != nil {
+		if err = tree.Export(conf, "yaml", fp); err != nil {
 			exitError("export yaml", err)
 		}
 

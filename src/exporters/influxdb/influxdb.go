@@ -97,7 +97,7 @@ func (e *InfluxDB) Init() error {
 			logger.Warn(e.Prefix, "invalid client_timeout [%s], using default: %d s", ct, DEFAULT_TIMEOUT)
 		}
 	} else {
-		logger.Debug(e.Prefix, "using default client_timeoutt: %d s", DEFAULT_TIMEOUT)
+		logger.Debug(e.Prefix, "using default client_timeout: %d s", DEFAULT_TIMEOUT)
 	}
 
 	// construct client URL
