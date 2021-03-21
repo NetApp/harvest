@@ -8,36 +8,103 @@ import argparse
 import urllib.request
 import urllib.error
 
+FOLDER_UID = '23fzcEW23rsf2'
+FOLDER_NAME = 'Harvest 2.0'
+API_TIMEOUT = 5
 
 def main():
 
     args = read_args()
 
+    dir_path = os.path.join(args.path, 'grafana/', args.directory)
+
+    if not os.path.exists(dir_path):
+        print('No dashboards for [{}]'.format(os.directory))
+        os.exit(1)
+
     if not args.api_token:
         args.api_token = input('Enter Grafana API key:\n')
 
-
-    request = urllib.request.Request('{}://{}{}/api/dashboards/db'.format(
-        'https' if args.https else 'http',
-        args.url,
-        ':' + str(args.port) if args.port else '',
-        ))
-
-    request.headers = {
+    headers = {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         'Authorization': 'Bearer {}'.format(args.api_token) }
 
-    print('******')
-    print(request.full_url)
-    print('******')
+    url_prefix = '{}://{}{}'.format(
+        'https' if args.https else 'http',
+        args.addr,
+        ':' + str(args.port) if args.port else '',
+        )
 
-    for f in os.listdir('{}/grafana/{}'.format(args.path, args.directory)):
+    """
+    # Create folder if doesn't exist
+    print('Checking folder [{}]... '.format(FOLDER_NAME), end='')
+
+    request = urllib.request.Request('{}/api/folder/{}'.format(url_prefix, FOLDER_UID))
+    request.headers = headers
+
+    exists = True
+    
+    try:
+        r = urllib.request.urlopen(request, 
+                data = None, 
+                context = ssl._create_unverified_context(), 
+                timeout = API_TIMEOUT )
+    except urllib.error.HTTPError as err:
+        if err.code == 404:
+            exists = False
+        else:
+            print(err)
+            sys.exit(1)
+
+    if exists:
+        print('exists')
+    else:
+        print('does not exist')
+        print('Creating [{}]... '.format(FOLDER_NAME), end='')
+
+        data = {}
+        data['uid'] = FOLDER_UID
+        data['title'] = FOLDER_NAME
+
+        request = urllib.request.Request('{}/api/folders'.format(url_prefix), data = json.dumps(data).encode(), method = 'POST')
+        request.headers = headers
+
+        try:
+           r = urllib.request.urlopen(request, 
+                    context = ssl._create_unverified_context(), 
+                    timeout = API_TIMEOUT )
+    
+        except urllib.error.HTTPError as err:
+            print(err)
+            try:
+                print('response ({}): [{}] {}'.format(r.code, r.msg, r.reason))
+            except:
+                pass
+            print('url was: [{}]'.format(request.full_url))
+            sys.exit(1)
+
+        else:
+            if r.status == 200:
+                print('DONE')
+            else:
+                print('failed')
+                print('Grafana response ({}): [{}] {}'.format(r.code, r.msg, r.reason))
+                sys.exit(1)
+    """
+
+    print('Importing/updating dashboards...')
+    
+    request = urllib.request.Request('{}/api/dashboards/db'.format(url_prefix))
+    request.headers = headers
+
+
+    for f in os.listdir(dir_path):
 
         if not f.endswith('.json'):
             continue
 
-        fp = '{}/{}/{}'.format(args.path, args.directory, f)
+        fp = os.path.join(dir_path, f)
 
         with open(fp) as fd:
             try:
@@ -69,7 +136,7 @@ def main():
             print('Importing [{}] failed: [{}] [{}] {}'.format(f, r.code, r.msg, r.reason))
         else:
             resp = json.loads(r.read().decode())
-            print('Import success: https://{}{}'.format(args.url, resp['url']))
+            print('Import success: https://{}{}'.format(url_prefix, resp['url']))
 
 
 def read_args():
@@ -77,10 +144,10 @@ def read_args():
     p = argparse.ArgumentParser(
     description ='NetApp Harvest: Grafana API Utility')
 
-    p.add_argument('-u', '--url', 
-        help        = 'Grafana server hostname or IPv4',
+    p.add_argument('-a', '--addr', 
+        help        = 'Address of Grafana server (IP or hostname)',
         type        = str,
-        dest        = 'url',
+        dest        = 'addr',
         required    = True,
         )
 
@@ -119,6 +186,9 @@ def read_args():
     args = p.parse_args()
 
     args.path = os.getenv('HARVEST_CONF', '/etc/harvest')
+
+    args.addr.replace('https://', '')
+    args.addr.replace('http://', '')
     
     return args
 
