@@ -4,17 +4,23 @@ query:                    lif
 object:                   lif
 
 counters:
- - instance_uuid
- - instance_name
- - node_name                => node
- - vserver_name             => svm
- - recv_data
- - sent_data
+  - instance_uuid
+  - instance_name
+  - node_name                => node
+  - vserver_name             => svm
+  - current_port             => port
+  - recv_data
+  - recv_packet
+  - recv_errors
+  - sent_data
+  - sent_packet
+  - sent_errors
 
 export_options:
   instance_keys:
     - lif
     - node
     - svm
+    - port
   graphite_leafs:
     - svm.{svm}.lif.{lif}

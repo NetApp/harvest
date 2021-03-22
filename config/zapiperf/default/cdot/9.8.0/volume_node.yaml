@@ -1,7 +1,7 @@
 
 name:                     VolumeNode
 query:                    volume:node
-object:                   node
+object:                   node_vol
 
 counters:
   - instance_name           => node

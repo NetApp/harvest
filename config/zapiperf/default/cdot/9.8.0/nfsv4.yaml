@@ -96,8 +96,8 @@ rewrite_as_label:
 
 export_options:
   instance_keys:
-  - svm
-  - nfsv
+    - svm
+    - nfsv
   graphite_leafs:
     - svm.{svm}.nfsv4
 

@@ -60,37 +60,37 @@ counters:
   - setattr_avg_latency
   - symlink_avg_latency
 
+override:
+  - access_total: rate
+  - commit_total: rate
+  - create_total: rate
+  - fsinfo_total: rate
+  - fsstat_total: rate
+  - getattr_total: rate
+  - link_total: rate
+  - lookup_total: rate
+  - mkdir_total: rate
+  - mknod_total: rate
+  - null_total: rate
+  - pathconf_total: rate
+  - read_symlink_total: rate
+  - read_total: rate
+  - readdir_total: rate
+  - readdirplus_total: rate
+  - remove_total: rate
+  - rename_total: rate
+  - rmdir_total: rate
+  - setattr_total: rate
+  - symlink_total: rate
+  - write_total: rate
+
 rewrite_as_label:
   - _avg_latency => request_latency: latency_type
   - _total => request_total: request_type
 
 export_options:
   instance_keys:
-  - svm
-  - nfsv
+    - svm
+    - nfsv
   graphite_leafs:
     - svm.{svm}.nfsv3
-
-override:
- - access_total: rate
- - commit_total: rate
- - create_total: rate
- - fsinfo_total: rate
- - fsstat_total: rate
- - getattr_total: rate
- - link_total: rate
- - lookup_total: rate
- - mkdir_total: rate
- - mknod_total: rate
- - null_total: rate
- - pathconf_total: rate
- - read_symlink_total: rate
- - read_total: rate
- - readdir_total: rate
- - readdirplus_total: rate
- - remove_total: rate
- - rename_total: rate
- - rmdir_total: rate
- - setattr_total: rate
- - symlink_total: rate
- - write_total: rate

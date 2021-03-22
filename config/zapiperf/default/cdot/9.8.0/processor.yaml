@@ -22,5 +22,5 @@ export_data: False
 export_options:
   instance_keys:
     - node
-    - cpu_count
+    - cpus
 

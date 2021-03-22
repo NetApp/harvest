@@ -3,15 +3,18 @@ name:                     CIFSvserver
 query:                    cifs:vserver
 object:                   svm_cifs
 
+instance_key:               uuid
+
 counters:
-  - instance_name
-  - cifs_op_count
-  - cifs_ops
-  - cifs_read_ops
-  - cifs_write_ops
-  - cifs_latency
-  - cifs_read_latency
-  - cifs_write_latency
+  - instance_uuid
+  - instance_name           => svm
+  - cifs_op_count           => op_count
+  - cifs_ops                => ops
+  - cifs_read_ops           => read_ops
+  - cifs_write_ops          => write_ops
+  - cifs_latency            => latency
+  - cifs_read_latency       => read_latency
+  - cifs_write_latency      => write_latency
   - connections
   - established_sessions
   - open_files

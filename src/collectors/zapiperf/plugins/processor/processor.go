@@ -62,7 +62,7 @@ func (p *Processor) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			count, _ := cpu_count[node]
 			logger.Debug(p.Prefix, "creating summary instance [%s] with %d CPUs", node, count)
 
-			new_instance.Labels.Set("proc_count", strconv.Itoa(count))
+			new_instance.Labels.Set("cpus", strconv.Itoa(count))
 
 			for key, new_metric := range summary.GetMetrics() {
 

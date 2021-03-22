@@ -14,7 +14,7 @@ counters:
   - KB_copied               => kb_copied
     
 override:
- - KB_copied: delta
+  - KB_copied: delta
 
 export_options:
   instance_keys:

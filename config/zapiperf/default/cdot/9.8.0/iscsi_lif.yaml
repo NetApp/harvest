@@ -3,7 +3,7 @@ name:                     ISCSI
 query:                    iscsi_lif
 object:                   iscsi_lif
 
-instance_key: instance_uuid
+instance_key:             uuid
 
 counters:
   - instance_name         => lif
