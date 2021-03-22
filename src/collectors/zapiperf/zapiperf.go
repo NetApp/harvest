@@ -38,6 +38,8 @@ type ZapiPerf struct {
 	latency_io_reqd int
 	instance_key    string
 	array_labels    map[string][]string
+	status_label 	string
+	status_ok_value string
 }
 
 func New(a *collector.AbstractCollector) collector.Collector {
@@ -369,6 +371,16 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 					}
 				}
 			} // end loop over counters
+
+			if status := NewData.GetMetric("status"); status != nil {
+				if c.status_label != "" {
+					if instance.Labels.Get(c.status_label) == c.status_ok_value {
+						NewData.SetValue(status, instance, float64(0.0))
+					} else {
+						NewData.SetValue(status, instance, float64(1.0))
+					}
+				}
+			}
 		} // end loop over instances
 	} // end batch request
 
@@ -675,6 +687,19 @@ func (c *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 		if err != nil {
 			logger.Error(c.Prefix, "add timestamp metric: %v", err)
 		}
+	}
+
+	if x := c.Params.GetChildS("instance_status"); x != nil && !old_metrics.Has("status") {
+		c.status_label = x.GetChildContentS("label")
+		c.status_ok_value = x.GetChildContentS("ok_value")
+		if c.status_label == "" || c.status_ok_value == "" {
+			return nil, errors.New(errors.MISSING_PARAM, "label or ok_value missing")
+		}
+		_, err := c.Data.AddMetricExtended("status", "status", "", "raw", true)
+		if err != nil {
+			return nil, err
+		}
+		logger.Debug(c.Prefix, "added status metric for label [%s] (ok_value: %s)", c.status_label, c.status_ok_value)
 	}
 
 	for key := range old_metrics.Iter() {
