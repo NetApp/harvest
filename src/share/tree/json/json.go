@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"strconv"
+	"strings"
 	"goharvest2/share/tree/node"
 )
 
@@ -22,11 +23,12 @@ var (
 
 func Load(data []byte) (*node.Node, error) {
 	root := node.New([]byte(""))
+	//data = bytes.ReplaceAll(data, []byte("\n"), EMPTY)
+	//data = bytes.ReplaceAll(data, []byte(`": `), []byte(`":`))
     return root, parse(root, data)
 }
 
 func Dump(n *node.Node) []byte {
-	//return bytes.Join([][]byte{SQUARE_OPEN, dump(n), SQUARE_CLOSE}, EMPTY)
 	return dump(n)
 }
 
@@ -86,9 +88,11 @@ func dump(n *node.Node) []byte {
 
 	if len(n.GetContent()) != 0 {
 		s := n.GetContentS()
-		if s == "true" || s == "false" {
+		if s == "true" || s == "false" || s == "null" {
 			value = n.GetContent()
 		} else if _, err = strconv.ParseFloat(s, 64); err == nil {
+			value = n.GetContent()
+		} else if strings.HasPrefix(s, `{`) {
 			value = n.GetContent()
 		} else {
 			value = bytes.Join([][]byte{QUOTE, n.GetContent(), QUOTE}, EMPTY)

@@ -7,7 +7,11 @@ import (
 )
 
 func LoadConfig(config_fp string) (*node.Node, error) {
-	return tree.ImportYaml(config_fp)
+	return tree.Import("yaml", config_fp)
+}
+
+func SafeConfig(n *node.Node, fp string) error {
+	return tree.Export(n, "yaml", fp)
 }
 
 func GetExporters(config_fp string) (*node.Node, error) {

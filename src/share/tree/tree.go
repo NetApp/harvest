@@ -12,8 +12,12 @@ import (
 func Print(n *node.Node) {
 	n.Print(0)
 }
+
 func Import(format, filepath string) (*node.Node, error) {
-	if data, err := ioutil.ReadFile(filepath); err != nil {
+
+	data, err := ioutil.ReadFile(filepath)
+	
+	if err != nil {
 		return nil, err
 	}
 	
@@ -24,9 +28,9 @@ func Import(format, filepath string) (*node.Node, error) {
 		return xml.Load(data)
 	case "json":
 		return json.Load(data)
-	default:
-		return nil, errors.New("unknown format: " + format)
 	}
+
+	return nil, errors.New("unknown format: " + format)
 }
 
 func Export(n *node.Node, format, filepath string) error {
@@ -36,11 +40,11 @@ func Export(n *node.Node, format, filepath string) error {
 
 	switch format {
 	case "yaml":
-		data, err = yaml.Dump(node)
+		data, err = yaml.Dump(n)
 	case "xml":
-		data, err = xml.Load(data)
+		data, err = xml.Dump(n)
 	case "json":
-		data, err = json.Load(data)
+		data = json.Dump(n)
 	default:
 		err = errors.New("unknown format: " + format)
 	}
