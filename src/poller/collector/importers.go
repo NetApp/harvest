@@ -14,7 +14,7 @@ import (
 
 func ImportTemplate(conf_path, collector_name string) (*node.Node, error) {
 	fp := path.Join(conf_path, "config/", strings.ToLower(collector_name), "default.yaml")
-	return tree.ImportYaml(fp)
+	return tree.Import("yaml", fp)
 }
 
 func (c *AbstractCollector) ImportSubTemplate(model, dirname, filename string, version [3]int) (*node.Node, error) {
@@ -66,7 +66,7 @@ func (c *AbstractCollector) ImportSubTemplate(model, dirname, filename string, v
 	} else {
 		template_path := path.Join(path_prefix, selected_version, filename)
 		logger.Debug(c.Prefix, "selected best-fitting subtemplate [%s]", template_path)
-		template, err = tree.ImportYaml(template_path)
+		template, err = tree.Import("yaml", template_path)
 	}
 	return template, err
 }
