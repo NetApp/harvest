@@ -131,9 +131,9 @@ func Init(c Collector) error {
 		}
 	}
 
-    if params.GetChildContentS("export_data") == "False" {
-        data.Exportable = false
-    }
+	if params.GetChildContentS("export_data") == "False" {
+		data.Exportable = false
+	}
 
 	c.SetData(data)
 
@@ -286,11 +286,11 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 
 			// continue if metadata failed, since it might be specific to metadata
 			for _, data := range results {
-                if data.Exportable {
-				    if err := e.Export(data); err != nil {
-					    logger.Error(c.Prefix, "export data to [%s]: %s", e.GetName(), err.Error())
-					    break
-                    }
+				if data.Exportable {
+					if err := e.Export(data); err != nil {
+						logger.Error(c.Prefix, "export data to [%s]: %s", e.GetName(), err.Error())
+						break
+					}
 				}
 			}
 		}

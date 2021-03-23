@@ -127,7 +127,7 @@ func (e *Prometheus) Render(data *matrix.Matrix) ([][]byte, error) {
 
 	for _, instance := range data.Instances {
 
-		if ! instance.Enabled {
+		if !instance.Enabled {
 			continue
 		}
 

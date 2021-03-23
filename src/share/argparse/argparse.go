@@ -333,7 +333,6 @@ func (p *Parser) PrintHelp() {
 		}
 		fmt.Println()
 	}
-	fmt.Println()
 }
 
 func (p *Parser) PrintErrors() {

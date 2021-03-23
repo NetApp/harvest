@@ -3,29 +3,28 @@ package json
 import (
 	"bytes"
 	"errors"
+	"goharvest2/share/tree/node"
 	"strconv"
 	"strings"
-	"goharvest2/share/tree/node"
 )
 
 var (
-	SQUARE_OPEN = []byte(`[`)
+	SQUARE_OPEN  = []byte(`[`)
 	SQUARE_CLOSE = []byte(`]`)
-	CURLY_OPEN = []byte(`{`)
-	CURLY_CLOSE = []byte(`}`)
-	COMMA = []byte(`,`)
-	COLON = []byte(`:`)
-	QUOTE = []byte(`"`)
-	EMPTY = []byte(``)
-	SPACE = []byte(` `)
-
+	CURLY_OPEN   = []byte(`{`)
+	CURLY_CLOSE  = []byte(`}`)
+	COMMA        = []byte(`,`)
+	COLON        = []byte(`:`)
+	QUOTE        = []byte(`"`)
+	EMPTY        = []byte(``)
+	SPACE        = []byte(` `)
 )
 
 func Load(data []byte) (*node.Node, error) {
 	root := node.New([]byte(""))
 	//data = bytes.ReplaceAll(data, []byte("\n"), EMPTY)
 	//data = bytes.ReplaceAll(data, []byte(`": `), []byte(`":`))
-    return root, parse(root, data)
+	return root, parse(root, data)
 }
 
 func Dump(n *node.Node) []byte {
@@ -60,7 +59,7 @@ func parse(n *node.Node, x []byte) error {
 	} else if pairs := bytes.Split(x, []byte(`,"`)); len(pairs) > 1 {
 		for _, p := range pairs {
 
-			if values := bytes.Split(p, []byte(`":`)); len(values) == 2 {	
+			if values := bytes.Split(p, []byte(`":`)); len(values) == 2 {
 				key := bytes.TrimPrefix(values[0], QUOTE)
 				value := bytes.TrimPrefix(values[1], QUOTE)
 				value = bytes.TrimSuffix(value, QUOTE)
@@ -73,7 +72,6 @@ func parse(n *node.Node, x []byte) error {
 	}
 	return nil
 }
-
 
 func dump(n *node.Node) []byte {
 
@@ -99,10 +97,10 @@ func dump(n *node.Node) []byte {
 		}
 		return bytes.Join([][]byte{key, value}, EMPTY)
 	}
-		
+
 	for _, ch := range n.GetChildren() {
 		child_values = append(child_values, dump(ch))
 	}
 	return bytes.Join([][]byte{key, CURLY_OPEN, bytes.Join(child_values, COMMA), CURLY_CLOSE}, EMPTY)
-	
+
 }

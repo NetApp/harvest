@@ -22,8 +22,8 @@ type Options struct {
 	LogLevel       int
 	Version        string
 	Hostname       string
-	Collectors	   []string
-	Objects		   []string
+	Collectors     []string
+	Objects        []string
 }
 
 func (o *Options) String() string {

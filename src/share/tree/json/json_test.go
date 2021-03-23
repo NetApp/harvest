@@ -1,9 +1,9 @@
 package json
 
 import (
-	"testing"
-	"goharvest2/share/tree/node"
 	"goharvest2/share/tree/json"
+	"goharvest2/share/tree/node"
+	"testing"
 )
 
 func TestLoad(t *testing.T) {
@@ -13,7 +13,7 @@ func TestLoad(t *testing.T) {
 	var root *node.Node
 
 	data = []byte(`{"id":61,"uid":"jratWpwMz","title":"Harvest 2.0","url":"/dashboards/f/jratWpwMz/harvest-2-0","hasAcl":false,"canSave":true,"canEdit":true,"canAdmin":false,"createdBy":"Anonymous","created":"2021-03-21T16:11:38+04:00","updatedBy":"Anonymous","updated":"2021-03-21T16:11:38+04:00","version":1}`)
-	
+
 	if root, err = json.Load(data); err != nil {
 		t.Fatal(err)
 	}

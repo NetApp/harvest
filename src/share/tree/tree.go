@@ -2,11 +2,11 @@ package tree
 
 import (
 	"errors"
-	"io/ioutil"
+	"goharvest2/share/tree/json"
 	"goharvest2/share/tree/node"
 	"goharvest2/share/tree/xml"
 	"goharvest2/share/tree/yaml"
-	"goharvest2/share/tree/json"
+	"io/ioutil"
 )
 
 func Print(n *node.Node) {
@@ -16,11 +16,11 @@ func Print(n *node.Node) {
 func Import(format, filepath string) (*node.Node, error) {
 
 	data, err := ioutil.ReadFile(filepath)
-	
+
 	if err != nil {
 		return nil, err
 	}
-	
+
 	switch format {
 	case "yaml":
 		return yaml.Load(data)

@@ -38,7 +38,7 @@ type ZapiPerf struct {
 	latency_io_reqd int
 	instance_key    string
 	array_labels    map[string][]string
-	status_label 	string
+	status_label    string
 	status_ok_value string
 }
 
@@ -115,7 +115,7 @@ func (c *ZapiPerf) Init() error {
 	}
 
 	// overwrite from abstract collector
-    c.Data.Collector = c.Data.Collector + "." + c.Data.Object
+	c.Data.Collector = c.Data.Collector + "." + c.Data.Object
 	c.Data.Object = c.object
 
 	// Add system (cluster) name

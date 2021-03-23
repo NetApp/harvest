@@ -2,13 +2,13 @@ package logger
 
 import (
 	"fmt"
+	"goharvest2/share/errors"
+	"io/ioutil"
 	"log"
 	"os"
 	"path"
-	"io/ioutil"
-	"strings"
 	"strconv"
-	"goharvest2/share/errors"
+	"strings"
 )
 
 const flags int = log.Ldate | log.Ltime | log.Lmsgprefix
@@ -34,7 +34,7 @@ func OpenFileOutput(dirpath, filename string) error {
 	var err error
 
 	info, err = os.Stat(dirpath)
-	if err != nil || ! info.IsDir() {
+	if err != nil || !info.IsDir() {
 		err = os.Mkdir(dirpath, dirperm)
 	}
 	if err == nil || os.IsExist(err) {
@@ -54,14 +54,14 @@ func CloseFileOutput() error {
 
 func Rotate(dirpath, filename string, maxfiles int) error {
 	var (
-		files []os.FileInfo
-		rotated []string
-		err error
+		files                       []os.FileInfo
+		rotated                     []string
+		err                         error
 		curr_filepath, new_filepath string
 	)
 
 	curr_filepath = path.Join(dirpath, filename)
-	new_filepath = path.Join(dirpath, filename + "." + "1")
+	new_filepath = path.Join(dirpath, filename+"."+"1")
 
 	// list files in log folder, to rename older files
 	if files, err = ioutil.ReadDir(dirpath); err != nil {
@@ -72,23 +72,23 @@ func Rotate(dirpath, filename string, maxfiles int) error {
 	rotated = make([]string, maxfiles) // not really necessary, only max index should be enough...
 
 	for _, f := range files {
-		if ! f.IsDir() && strings.HasPrefix(f.Name(), filename + ".") {
-			if i, err := strconv.Atoi(strings.TrimPrefix(f.Name(), filename + ".")); err == nil {
+		if !f.IsDir() && strings.HasPrefix(f.Name(), filename+".") {
+			if i, err := strconv.Atoi(strings.TrimPrefix(f.Name(), filename+".")); err == nil {
 				// keep
 				if i < maxfiles {
 					rotated[i] = path.Join(dirpath, f.Name())
-				// delete if index is higher than maxfiles
+					// delete if index is higher than maxfiles
 				} else {
-					os.Remove(path.Join(dirpath, f.Name())) // ignore errs, not critical 
+					os.Remove(path.Join(dirpath, f.Name())) // ignore errs, not critical
 				}
 			}
 		}
 	}
 
 	// rotate older files, starting from highest index
-	for i := maxfiles-1; i>0; i-=1 {
+	for i := maxfiles - 1; i > 0; i -= 1 {
 		if fp := rotated[i]; fp != "" {
-			os.Rename(fp, path.Join(dirpath, filename + "." + strconv.Itoa(i+1)))
+			os.Rename(fp, path.Join(dirpath, filename+"."+strconv.Itoa(i+1)))
 		}
 	}
 
@@ -108,7 +108,6 @@ func Rotate(dirpath, filename string, maxfiles int) error {
 
 	return OpenFileOutput(dirpath, filename)
 }
-
 
 func SetLevel(l int) error {
 	var err error

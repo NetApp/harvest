@@ -23,12 +23,11 @@ import (
 	"syscall"
 )
 
-
 // defaults
 var (
 	LOG_FILE_NAME string = ""
-	LOG_MAX_BYTES int64 = 10000000
-	LOG_MAX_FILES int = 10
+	LOG_MAX_BYTES int64  = 10000000
+	LOG_MAX_FILES int    = 10
 )
 
 // signals to catch
@@ -69,7 +68,7 @@ func (p *Poller) Init() error {
 
 	// If daemon, make sure handler outputs to file
 	if p.options.Daemon {
-		LOG_FILE_NAME = "poller_"+p.Name+".log"
+		LOG_FILE_NAME = "poller_" + p.Name + ".log"
 		err := logger.OpenFileOutput(p.options.LogPath, LOG_FILE_NAME)
 		if err != nil {
 			return err
@@ -186,7 +185,7 @@ func (p *Poller) Init() error {
 						ok = true
 						break
 					}
-				}	
+				}
 			}
 
 			if !ok {
@@ -292,14 +291,14 @@ func (p *Poller) load_collector(class, object string) error {
 				}
 			}
 
-			if ! ok {
+			if !ok {
 				logger.Debug(p.prefix, "skipping object [%s]", object.GetNameS())
 				continue
 			}
-			
+
 			c := NewFunc(collector.New(class, object.GetNameS(), p.options, template.Copy()))
 			if err = c.Init(); err != nil {
-                logger.Warn(p.prefix, "failed to initialize [%s:%s]: %v", class, object.GetNameS(), err)
+				logger.Warn(p.prefix, "failed to initialize [%s:%s]: %v", class, object.GetNameS(), err)
 			} else {
 				subcollectors = append(subcollectors, c)
 				logger.Debug(p.prefix, "initialized subcollector [%s:%s]", class, object.GetNameS())

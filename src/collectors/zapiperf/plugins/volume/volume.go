@@ -35,7 +35,7 @@ func (p *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				fg.Labels.Set("type", "flexgroup")
 			}
 			i.Labels.Set("type", "flexgroup_constituent")
-            i.Enabled = false
+			i.Enabled = false
 		} else {
 			i.Labels.Set("type", "flexvol")
 		}

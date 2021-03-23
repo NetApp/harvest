@@ -156,10 +156,14 @@ if [ $all == true ] || [ $harvest == true ]; then
         exit 1
     fi
 
-    cd ../
-    # @TODO migrate to GO
-    cp grafana/grafana.py ../../bin/grafana
-    info "copied /bin/grafana"
+    cd ../grafana
+    go build -o ../../../bin/grafana
+    if [ $? -eq 0 ]; then
+        info "compiled: /bin/grafana"
+    else
+        error "compilation failed"
+        exit 1
+    fi
 
     cd ../../
 fi

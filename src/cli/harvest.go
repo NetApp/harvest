@@ -39,7 +39,7 @@ func main() {
 	}
 
 	if command == "version" {
-		fmt.Println(version.VERSION)
+		fmt.Println(version.VERSION, "-", version.RELEASE)
 		os.Exit(0)
 	}
 

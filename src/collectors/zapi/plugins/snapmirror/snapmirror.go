@@ -42,7 +42,7 @@ func (p *SnapMirror) Init() error {
 		return err
 	}
 
-    p.node_upd_counter = 0
+	p.node_upd_counter = 0
 	p.limit_upd_counter = 0
 
 	p.node_cache = dict.New()
@@ -177,18 +177,18 @@ func (p *SnapMirror) update_node_cache() error {
 	request_counters.NewChildS("counter", "node_name")
 	request_counters.NewChildS("counter", "vserver_name")
 
-    if resp, err = p.connection.InvokeRequest(request); err != nil {
-        return err
-    }
+	if resp, err = p.connection.InvokeRequest(request); err != nil {
+		return err
+	}
 
-    if instances := resp.GetChildS("instances"); instances != nil {
-        for _, i := range instances.GetChildren() {
-            vol := i.GetChildContentS("name")
-            svm := i.GetChildContentS("vserver_name")
-            node := i.GetChildContentS("node_name")
+	if instances := resp.GetChildS("instances"); instances != nil {
+		for _, i := range instances.GetChildren() {
+			vol := i.GetChildContentS("name")
+			svm := i.GetChildContentS("vserver_name")
+			node := i.GetChildContentS("node_name")
 
-            p.node_cache.Set(svm+"."+vol, node)
-            count += 1
+			p.node_cache.Set(svm+"."+vol, node)
+			count += 1
 		}
 	}
 
