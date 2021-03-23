@@ -542,7 +542,7 @@ func (p *Poller) selfMonitor() {
 			// @TODO: syslog or panic on log file related errors (might mean fs is corrupt or unavailable)
 			// @TODO: probably delegate to log handler (both rotating and panicing)
 			if p.options.Daemon {
-				if stat, err := os.Stat(LOG_FILE_NAME); err != nil {
+				if stat, err := os.Stat(path.Join(p.options.LogPath, LOG_FILE_NAME)); err != nil {
 					logger.Error(p.prefix, "log file stat: %v", err)
 				} else if stat.Size() >= LOG_MAX_BYTES {
 					logger.Debug(p.prefix, "rotating log (size = %d bytes)", stat.Size())
