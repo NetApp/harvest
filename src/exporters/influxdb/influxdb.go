@@ -187,7 +187,9 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 	count := 0
 
 	// not all collectors provide timestamp, so this might be nil
-	timestamp := data.GetMetric("timestamp")
+	//timestamp := data.GetMetric("timestamp")
+	var timestamp *matrix.Metric
+	// temporarily disabled, influx expects nanosecs, we get something else from zapis
 
 	// measurement that we will not emit
 	// only to store global labels that we'll
