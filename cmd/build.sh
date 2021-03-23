@@ -165,7 +165,7 @@ if [ $all == true ] || [ $harvest == true ]; then
         exit 1
     fi
 
-    cd ../../
+    cd ../../../
 fi
 
 # compile collector(s)
