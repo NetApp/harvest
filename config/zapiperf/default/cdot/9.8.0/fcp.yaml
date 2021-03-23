@@ -1,0 +1,52 @@
+
+
+name:                     FcpPort
+query:                    fcp_port
+object:                   fcp
+
+instance_key:             uuid
+
+counters:
+  - instance_name          => port
+  - instance_uuid
+  - node_name              => node
+  - avg_other_latency
+  - avg_read_latency
+  - avg_write_latency
+  - read_data
+  - write_data
+  - total_data
+  - read_ops
+  - write_ops
+  - other_ops
+  - total_ops
+  - link_speed             => speed
+  - link_down
+  - link_failure
+  - loss_of_signal
+  - loss_of_sync
+  - prim_seq_err
+  - queue_full
+  - reset_count
+  - shared_int_count
+  - spurious_int_count
+  - threshold_full
+  - discarded_frames_count
+  - int_count
+  - invalid_transmission_word
+  - isr_count
+  - invalid_crc
+
+override:
+  - link_speed: string
+
+plugins:
+  - Fcp
+
+export_options:
+  instance_keys:
+    - node
+    - port
+    - speed
+  graphite_leafs:
+    - node.{node}.fcp.{port}

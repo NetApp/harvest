@@ -19,6 +19,7 @@ objects:
   WAFLAggr:               wafl_hya_per_aggr.yaml
   WAFLSizer:              wafl_hya_sizer.yaml
   NicCommon:              nic_common.yaml
+  FcpPort:                fcp.yaml
   ObjectStoreClient:      object_store_client_op.yaml
   VolumeNode:             volume_node.yaml
   TokenManager:           token_manager.yaml
@@ -39,6 +40,6 @@ objects:
   CIFSvserver:            cifs_vserver.yaml
   LIF:                    lif.yaml
   ISCSI:                  iscsi_lif.yaml
-  FCP:                    fcp_lif.yaml
+  FcpLif:                 fcp_lif.yaml
   CopyManager:            copy_manager.yaml
   WAFLCompBin:            wafl_comp_aggr_vol_bin.yaml

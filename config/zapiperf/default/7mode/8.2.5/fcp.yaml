@@ -1,0 +1,30 @@
+
+
+name:                     FcpPort
+query:                    fcp
+object:                   fcp
+
+instance_key:             uuid
+
+counters:
+  - instance_name           => port
+  - instance_uuid
+  - node_name               => node
+  - fcp_read_latency        => avg_read_latency
+  - fcp_write_latency       => avg_write_latency
+  - fcp_read_data           => read_data
+  - fcp_write_data          => write_data
+  - fcp_read_ops            => read_ops
+  - fcp_write_ops           => write_ops
+  - fcp_ops                 => total_ops
+
+plugins:
+  - Fcp
+
+export_options:
+  instance_keys:
+    - node
+    - port
+    - speed
+  graphite_leafs:
+    - node.{node}.fcp.{port}
