@@ -23,6 +23,15 @@ import (
 	"syscall"
 )
 
+
+// defaults
+var (
+	LOG_FILE_NAME string = ""
+	LOG_MAX_BYTES int64 = 10000000
+	LOG_MAX_FILES int = 10
+)
+
+// signals to catch
 var SIGNALS = []os.Signal{
 	syscall.SIGHUP,
 	syscall.SIGINT,
@@ -60,7 +69,8 @@ func (p *Poller) Init() error {
 
 	// If daemon, make sure handler outputs to file
 	if p.options.Daemon {
-		err := logger.OpenFileOutput(p.options.LogPath, "poller_"+p.Name+".log")
+		LOG_FILE_NAME = "poller_"+p.Name+".log"
+		err := logger.OpenFileOutput(p.options.LogPath, LOG_FILE_NAME)
 		if err != nil {
 			return err
 		}
@@ -94,11 +104,24 @@ func (p *Poller) Init() error {
 		logger.Info(p.prefix, "Starting in foreground [pid=%d] [pid file=%s]", p.pid, p.pidf)
 	}
 
-	logger.Info(p.prefix, "importing config [%s]", p.options.Config)
+	logger.Debug(p.prefix, "importing config [%s]", p.options.Config)
+
 	// Load poller parameters and exporters from config
 	if p.params, err = config.GetPoller(p.options.Config, p.Name); err != nil {
 		logger.Error(p.prefix, "read config: %v", err)
 		return err
+	}
+
+	if s := p.params.GetChildContentS("log_max_bytes"); s != "" {
+		if i, err := strconv.ParseInt(s, 10, 64); err == nil {
+			LOG_MAX_BYTES = i
+		}
+	}
+
+	if s := p.params.GetChildContentS("log_max_files"); s != "" {
+		if i, err := strconv.Atoi(s); err == nil {
+			LOG_MAX_FILES = i
+		}
 	}
 
 	if p.target = p.params.GetChildContentS("addr"); p.target == "" {
@@ -136,6 +159,8 @@ func (p *Poller) Init() error {
 	if err = p.status.InitData(); err != nil {
 		panic(err)
 	}
+
+	// Log handling parameters
 
 	// Prometheus port used to be defined in the exporter parameters as a range
 	// this leads to rarely happening bugs, so we will transition to definig
@@ -513,6 +538,19 @@ func (p *Poller) selfMonitor() {
 
 			logger.Info(p.prefix, "Updated status: %d up collectors (of %d) and %d up exporters (of %d)", up_collectors, len(p.collectors), up_exporters, len(p.exporters))
 
+			// some householding jobs
+			// @TODO: syslog or panic on log file related errors (might mean fs is corrupt or unavailable)
+			// @TODO: probably delegate to log handler (both rotating and panicing)
+			if p.options.Daemon {
+				if stat, err := os.Stat(LOG_FILE_NAME); err != nil {
+					logger.Error(p.prefix, "log file stat: %v", err)
+				} else if stat.Size() >= LOG_MAX_BYTES {
+					logger.Debug(p.prefix, "rotating log (size = %d bytes)", stat.Size())
+					if err = logger.Rotate(p.options.LogPath, LOG_FILE_NAME, LOG_MAX_FILES); err != nil {
+						logger.Error(p.prefix, "rotating log: %v", err)
+					}
+				}
+			}
 		}
 
 		p.schedule.Sleep()

@@ -2,11 +2,13 @@ package logger
 
 import (
 	"fmt"
-	"goharvest2/share/errors"
 	"log"
 	"os"
 	"path"
+	"io/ioutil"
+	"strings"
 	"strconv"
+	"goharvest2/share/errors"
 )
 
 const flags int = log.Ldate | log.Ltime | log.Lmsgprefix
@@ -27,17 +29,17 @@ var levels = [6]string{
 
 var level = 2
 
-func OpenFileOutput(rootdir, filename string) error {
+func OpenFileOutput(dirpath, filename string) error {
 	var info os.FileInfo
 	var err error
 
-	info, err = os.Stat(rootdir)
-	if err != nil || info.IsDir() == false {
-		err = os.Mkdir(rootdir, dirperm)
+	info, err = os.Stat(dirpath)
+	if err != nil || ! info.IsDir() {
+		err = os.Mkdir(dirpath, dirperm)
 	}
 	if err == nil || os.IsExist(err) {
 
-		file, err = os.OpenFile(path.Join(rootdir, filename), fileflags, fileperm)
+		file, err = os.OpenFile(path.Join(dirpath, filename), fileflags, fileperm)
 		if err == nil {
 			log.SetOutput(file)
 		} else {
@@ -49,6 +51,64 @@ func OpenFileOutput(rootdir, filename string) error {
 func CloseFileOutput() error {
 	return file.Close()
 }
+
+func Rotate(dirpath, filename string, maxfiles int) error {
+	var (
+		files []os.FileInfo
+		rotated []string
+		err error
+		curr_filepath, new_filepath string
+	)
+
+	curr_filepath = path.Join(dirpath, filename)
+	new_filepath = path.Join(dirpath, filename + "." + "1")
+
+	// list files in log folder, to rename older files
+	if files, err = ioutil.ReadDir(dirpath); err != nil {
+		return err
+	}
+
+	// rotate already existing backups
+	rotated = make([]string, maxfiles) // not really necessary, only max index should be enough...
+
+	for _, f := range files {
+		if ! f.IsDir() && strings.HasPrefix(f.Name(), filename + ".") {
+			if i, err := strconv.Atoi(strings.TrimPrefix(f.Name(), filename + ".")); err == nil {
+				// keep
+				if i < maxfiles {
+					rotated[i] = path.Join(dirpath, f.Name())
+				// delete if index is higher than maxfiles
+				} else {
+					os.Remove(path.Join(dirpath, f.Name())) // ignore errs, not critical 
+				}
+			}
+		}
+	}
+
+	// rotate older files, starting from highest index
+	for i := maxfiles-1; i>0; i-=1 {
+		if fp := rotated[i]; fp != "" {
+			os.Rename(fp, path.Join(dirpath, filename + "." + strconv.Itoa(i+1)))
+		}
+	}
+
+	// close current file
+	if err = CloseFileOutput(); err != nil {
+		return err
+	}
+
+	// send messages to void until we reopen file
+	if err = OpenFileOutput("dev", "null"); err != nil {
+		return err
+	}
+
+	os.Rename(curr_filepath, new_filepath) // catch and return err does not makes sense, probably we should panic
+
+	CloseFileOutput()
+
+	return OpenFileOutput(dirpath, filename)
+}
+
 
 func SetLevel(l int) error {
 	var err error
