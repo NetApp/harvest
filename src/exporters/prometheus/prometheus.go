@@ -3,18 +3,19 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"time"
+	"strconv"
+	"strings"
 	"goharvest2/poller/exporter"
 	"goharvest2/share/errors"
 	"goharvest2/share/logger"
 	"goharvest2/share/matrix"
 	"goharvest2/share/util"
-	"strconv"
-	"strings"
 )
 
 type Prometheus struct {
 	*exporter.AbstractExporter
-	cache map[string]*matrix.Matrix
+	cache map[string][][]byte
 }
 
 func New(abc *exporter.AbstractExporter) exporter.Exporter {
@@ -27,7 +28,7 @@ func (e *Prometheus) Init() error {
 		return err
 	}
 
-	e.cache = make(map[string]*matrix.Matrix)
+	e.cache = make(map[string][][]byte)
 
 	if e.Options.Debug {
 		logger.Debug(e.Prefix, "Initialized exporter. No HTTP server started since in debug mode")
@@ -72,12 +73,30 @@ func (e *Prometheus) Export(data *matrix.Matrix) error {
 			return err
 		}
 	}
+
+
+	start := time.Now()
+	metrics, err := e.Render(data)
+	if err != nil {
+		return err
+	}
+	duration := time.Since(start)	
+	
 	key := data.Collector + "." + data.Plugin + "." + data.Object
 	if data.IsMetadata {
 		key += "." + data.MetadataType + "." + data.MetadataObject
-	}
+	}	
+
 	delete(e.cache, key)
-	e.cache[key] = data
+	e.cache[key] = metrics
+
+	// update metdata render time
+	if v, ok := e.Metadata.GetValueSS("time", "render"); ok {
+		e.Metadata.SetValueSS("time", "render", float64(duration.Seconds())+v)
+	} else {
+		e.Metadata.SetValueSS("time", "render", float64(duration.Seconds()))
+	}
+	
 	logger.Debug(e.Prefix, "added to cache with key [%s%s%s%s]", util.Bold, util.Red, key, util.End)
 
 	return nil

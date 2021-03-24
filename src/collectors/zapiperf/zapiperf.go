@@ -115,7 +115,7 @@ func (c *ZapiPerf) Init() error {
 	}
 
 	// overwrite from abstract collector
-	c.Data.Collector = c.Data.Collector + "." + c.Data.Object
+	c.Data.Collector = c.Data.Collector + ":" + c.Data.Object
 	c.Data.Object = c.object
 
 	// Add system (cluster) name

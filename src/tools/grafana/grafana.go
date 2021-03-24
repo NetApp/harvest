@@ -20,6 +20,7 @@ const (
 	CLIENT_TIMEOUT       = 5
 	GRAFANA_FOLDER_TITLE = "Harvest 2.0"
 	GRAFANA_FOLDER_UID   = "harvest2.0folder"
+	GRAFANA_DATASOURCE   = "Prometheus" // default datasource to use, @TODO: support others
 )
 
 var (
@@ -34,6 +35,7 @@ type options struct {
 	grafana_dir     string // Grafana folder where to upload from where to download dashboards
 	grafana_dir_id  string
 	grafana_dir_uid string
+	datasource 		string
 	client          *http.Client
 	headers         http.Header
 }
@@ -128,7 +130,7 @@ func import_dashboards(opts *options) error {
 		request = node.NewS("")
 		request.NewChildS("overwrite", "true")
 		request.NewChildS("folderId", opts.grafana_dir_id)
-		request.NewChild([]byte("dashboard"), data)
+		request.NewChild([]byte("dashboard"), bytes.ReplaceAll(data, []byte("${DS_PROMETHEUS}"), []byte(opts.datasource)))
 
 		result, status, code, err := send_request(opts, "POST", "/api/dashboards/db", json.Dump(request))
 
@@ -196,6 +198,14 @@ func get_opts() *options {
 		"folder",
 		"f",
 		"Grafana folder name for the dashboards (default: \""+GRAFANA_FOLDER_TITLE+"\")",
+	)
+
+	opts.datasource = GRAFANA_DATASOURCE
+	parser.String(
+		&opts.datasource,
+		"datasource",
+		"s",
+		"Grafana datasource for the dashboards (default: \""+GRAFANA_DATASOURCE+"\")",
 	)
 
 	parser.Bool(

@@ -226,6 +226,15 @@ func (m *Matrix) GetValueS(key string, instance *Instance) (float64, bool) {
 	return NAN, false
 }
 
+func (m *Matrix) GetValueSS(M, I string) (float64, bool) {
+	if metric := m.GetMetric(M); metric != nil {
+		if instance := m.GetInstance(I); instance != nil {
+			return m.GetValue(metric, instance)
+		}
+	}
+	return NAN, false
+}
+
 // if name is empty, key will be used as display name
 func (m *Matrix) AddLabel(key, name string) {
 	if name != "" {

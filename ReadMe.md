@@ -86,16 +86,22 @@ Or start specific poller(s):
 $ harvest start jamaica grenada
 ```
 
-(replace `jamaica` and `grenada` with the poller names that you defined in `harvest.yaml`). The logs of each poller can be found in `/var/log/harvest/`.
+(replace `jamaica` and `grenada` with the poller names that you defined in `harvest.yml`). The logs of each poller can be found in `/var/log/harvest/`.
 
 ## 3. Import Grafana dashboards
 
 The Grafana dashboards are located in `etc/harvest/grafana`. You can manually import the Grafana dashboards or use the `grafana` utility. It requires the address (hostname or IP) and port of the Grafana server. Port should emitted if the HTTP server is configured to redirect the URL. Use the `-d` flag for pointing to the directory from which the dashboards should be loaded. 
 
-For example, to import the Prometheus-based dashboards from the directory `/opt/netapp-harvest/grafana/prometheus/` we will run (assuming `http://10.12.12.12:3000` points to our Grafana server):
+For example, to import the Prometheus-based dashboards from the directory `/opt/netapp-harvest/grafana/prometheus/` we will run (assuming `http://localhost:3000` points to our Grafana server):
 
 ```
-$ harvest grafana -u 10.12.12.12 -p 3000 -d prometheus
+$ harvest grafana import --addr localhost:3000 --directory prometheus
+```
+
+The dashboards will expected a Graana datasource named `Prometheus`, if your datasource has a different name use the `--datasource` flag during import, e.g.:
+
+```
+$ harvest grafana import --addr localhost:3000 --directory prometheus --datasource prometheus-01
 ```
 
 The utility tool will ask for an API token which can be generated from the Grafana web-gui. Click on `Configuration` in the left menu bar (1), click on `API Keys` (2) and click on the button `New API Key`. Choose a Key name (3), choose `Editor` for role (4) and click on add (5). Copy the generated key and paste it in your terminal.
@@ -115,7 +121,7 @@ If you need to edit the configuration of Harvest manually, you will find all con
 
 
 ## Pollers
-All pollers are defined in `harvest.yaml`, the main configuration file of Harvest, under the section `Pollers`. 
+All pollers are defined in `harvest.yml`, the main configuration file of Harvest, under the section `Pollers`. 
 
 | parameter              | type         | description                                      | default                |
 |------------------------|--------------|--------------------------------------------------|------------------------|
@@ -128,15 +134,18 @@ All pollers are defined in `harvest.yaml`, the main configuration file of Harves
 | `auth_style`           | required by Zapi* collectors |  either `basic_auth` or `certificate_auth`  | `basic_auth` |
 | `username`, `password` | required if `auth_style` is `basic_auth` |  |              |
 | `cert`, `key`          | required if `auth_style` is `certificate_auth` | certificate and key files which should be in the directory `/etc/harvest/cert/`. If these two parameters are not provided files matching the poller name will be used (for example if poller name is `jamaica` than the files should be `jamaica.key` and `jamaica.cert`).                        |              |
-| |  | |
+| `log_max_bytes` |  | Max size of the log file, until it's rotated | `10000000` (10 mb) |
+| `log_max_files` |  | Number of rotated log files to keep | `10` |
+| |  | | |
+
 
 ## Defaults
-This section is optional. If there are parameters identical for all your pollers (e.g. datacenter, authentication method), they can be grouped under section this section to safe space.
+This section is optional. If there are parameters identical for all your pollers (e.g. datacenter, authentication method, loggin preferences), they can be grouped under section this section to safe space.
 
 ## Exporters
 
 All exporters need two types of parameters:
-- `exporter parameters` - defined in `harvest.yaml` under section `Exporters`
+- `exporter parameters` - defined in `harvest.yml` under section `Exporters`
 - `export_options` - which they should get from the datastructure (`Matrix`) that is emitted from collectors and plugins
 
 The following two parameters are required for all exporters:
