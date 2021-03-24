@@ -15,7 +15,6 @@ counters:
   - connections
   - established_sessions
   - open_files
-  - signed_sessions
 
 export_options:
   instance_keys:

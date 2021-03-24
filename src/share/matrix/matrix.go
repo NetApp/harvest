@@ -211,6 +211,10 @@ func (m *Matrix) SetValueSS(metric_key, instance_key string, value float64) {
 
 func (m *Matrix) GetValue(metric *Metric, instance *Instance) (float64, bool) {
 	var value float64
+        // temporary fix plugin bug
+	if m.Data == nil || len(m.Data) == 0 || metric.Index >= len(m.Data) || instance.Index >= len(m.Data[metric.Index]) {
+		return value, false
+	}
 	value = m.Data[metric.Index][instance.Index]
 	return value, value == value
 }

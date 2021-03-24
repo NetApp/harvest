@@ -20,5 +20,5 @@ export_data: False
 
 export_options:
   instance_keys:
-    - cpu_count
+    - cpus
 

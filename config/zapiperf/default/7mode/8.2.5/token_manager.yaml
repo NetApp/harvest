@@ -17,9 +17,9 @@ counters:
   - token_zero_bytes
 
 override:
- - token_copy_bytes: rate
- - token_create_bytes: rate
- - token_zero_bytes: rate
+  - token_copy_bytes: rate
+  - token_create_bytes: rate
+  - token_zero_bytes: rate
 
 export_options:
   instance_keys:

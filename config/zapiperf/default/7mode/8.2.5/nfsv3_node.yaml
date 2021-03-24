@@ -4,7 +4,7 @@ query:                    nfsv3
 object:                   node_nfs
 
 global_labels:
- - nfsv: v3
+  - nfsv: v3
 
 counters:
   - instance_name          => node

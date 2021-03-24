@@ -1,7 +1,7 @@
 
 name:                     SystemNode
 query:                    system
-object:                   node
+object:                   node_sys
 
 instance_key:             name
 

@@ -13,7 +13,7 @@ counters:
   - nfsv3_write_ops        => write_ops
   - nfsv3_throughput       => throughput
   - nfsv3_read_throughput  => read_throughput
-  - nfsv3_write_throughput => write_througput
+  - nfsv3_write_throughput => write_throughput
   - read_avg_latency
   - write_avg_latency
   - latency
