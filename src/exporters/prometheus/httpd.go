@@ -33,8 +33,6 @@ func (e *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 	for key, data := range e.cache {
 
 
-		logger.Info(e.Prefix, "parsing key = [%s]", key)
-
 		var collector, plugin, object string
 
 		if keys := strings.Split(key, "."); len(keys) == 3 {
@@ -53,7 +51,6 @@ func (e *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 
 		for _, m := range data {
 			if x := strings.Split(string(m), "{"); len(x) >= 2 && x[0] != "" {
-				logger.Warn(e.Prefix, "x = [%s]", x[0])
 				metric_names.Add(x[0])
 				}
 		}
@@ -65,7 +62,6 @@ func (e *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 		}
 		unique_data[collector][object] = metric_names.Values()
 
-		//logger.Info(e.Prefix, "parsed (%d): %v", metric_names.Size(), metric_names.Values())
 	}
 
 	for col, per_object := range unique_data {

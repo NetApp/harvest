@@ -3,7 +3,6 @@
 Exporters:
   prometheus:
     exporter: prometheus
-    port: 2323
     addr: 0.0.0.0
     master: True
 
@@ -17,9 +16,18 @@ Defaults:
 
 
 Pollers:
-  localsys:
+  # this is a special poller to monitor the localhost
+  unix:
     datacenter: local
     addr: localhost
     collectors:
       - Psutil
-    prometheus_port: 7201
+    prometheus_port: 5201
+
+  # add your Cdot / 7Mode pollers below, example:
+  # cluster-01:
+  #   datacenter: DC-01
+  #   addr: 10.0.0.1
+  #   username: myuser
+  #   password: mypasw
+  # no need to add collectors/exporters, already defined in Defaults!  
