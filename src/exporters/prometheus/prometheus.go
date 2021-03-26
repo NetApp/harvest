@@ -16,6 +16,7 @@ import (
 type Prometheus struct {
 	*exporter.AbstractExporter
 	cache map[string][][]byte
+	prefix string
 }
 
 func New(abc *exporter.AbstractExporter) exporter.Exporter {
@@ -50,6 +51,13 @@ func (e *Prometheus) Init() error {
 		return errors.New(errors.MISSING_PARAM, "port")
 	} else if _, err := strconv.Atoi(port); err != nil {
 		return errors.New(errors.INVALID_PARAM, "port ("+port+")")
+	}
+
+	if e.prefix = e.Params.GetChildContentS("metric_prefix"); e.prefix != "" {
+		if ! strings.HasSuffix(e.prefix, "_") {
+			e.prefix += "_"
+		}
+		logger.Debug("will use global prefix [%s]", e.prefix)
 	}
 
 	e.StartHttpd(addr, port)
