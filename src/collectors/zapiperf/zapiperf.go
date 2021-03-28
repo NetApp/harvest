@@ -1,7 +1,6 @@
 package main
 
 import (
-	//"fmt"
 	"goharvest2/poller/collector"
 	"goharvest2/share/dict"
 	"goharvest2/share/errors"
@@ -316,7 +315,7 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 				logger.Trace(c.Prefix, "counter (%s) = %v", name, value)
 				// sanity check
 				if name == "" || value == "" {
-					logger.Debug(c.Prefix, "skipping raw counter [%s] with value [%s]", name, value)
+					logger.Debug(c.Prefix, "skipping incomplete counter [%s] with value [%s]", name, value)
 					continue
 				}
 
@@ -325,7 +324,7 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 
 				if _, has := NewData.GetLabel(name); has { // @TODO implement
 					NewData.SetInstanceLabel(instance, name, value)
-					logger.Debug(c.Prefix, "+ label data [%s= %s%s%s]", name, util.Yellow, value, util.End)
+					logger.Trace(c.Prefix, "+ label data [%s= %s%s%s]", name, util.Yellow, value, util.End)
 					continue
 				}
 
@@ -350,11 +349,11 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 							if e := NewData.SetValueString(m, instance, values[i]); e != nil {
 								logger.Error(c.Prefix, "set metric [%s] with value [%s]: %v", key, values[i], e)
 							} else {
-								logger.Debug(c.Prefix, "+ data [%s] = [%s%s%s]", key, util.Pink, values[i], util.End)
+								logger.Trace(c.Prefix, "+ data [%s] = [%s%s%s]", key, util.Pink, values[i], util.End)
 								count += 1
 							}
 						} else {
-							logger.Error(c.Prefix, "metric [%s] not in cache, skip", key, value)
+							logger.Error(c.Prefix, "array metric [%s] (%s) not in cache, skip", key, value)
 						}
 					}
 					// process scalar counter
@@ -363,11 +362,11 @@ func (c *ZapiPerf) PollData() (*matrix.Matrix, error) {
 						if e := NewData.SetValueString(m, instance, value); e != nil {
 							logger.Error(c.Prefix, "set metric [%s] with value [%s]: %v", name, value, e)
 						} else {
-							logger.Debug(c.Prefix, "+ data [%s] = [%s%s%s]", name, util.Cyan, value, util.End)
+							logger.Trace(c.Prefix, "+ data [%s] = [%s%s%s]", name, util.Cyan, value, util.End)
 							count += 1
 						}
 					} else {
-						logger.Error(c.Prefix, "metric [%s] not in cache, skip", name, value)
+						logger.Error(c.Prefix, "metric [%s] (%s) not in cache, skip", name, value)
 					}
 				}
 			} // end loop over counters
@@ -609,6 +608,12 @@ func (c *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 	}
 
 	for key, counter := range counters {
+
+		// override counter properties from template
+		if p := c.GetOverride(key); p != "" {
+			counter.SetChildContentS("properties", p)
+		}
+
 		display, ok := wanted.GetHas(key)
 		// counter not requested
 		if !ok {
@@ -627,10 +632,6 @@ func (c *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 				logger.Info(c.Prefix, "skip [%s], deprecated", key)
 				continue
 			}
-		}
-		// override counter properties from template
-		if p := c.GetOverride(key); p != "" {
-			counter.SetChildContentS("properties", p)
 		}
 
 		// string metric, add as instance label
@@ -703,7 +704,8 @@ func (c *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 	}
 
 	for key := range old_metrics.Iter() {
-		if !(key == "timestamp") {
+		// temporary fix: prevent removing array counters
+		if !(key == "timestamp") && !strings.Contains(key, ".") {
 			c.Data.RemoveMetric(key)
 			logger.Debug(c.Prefix, "removed metric [%s]", key)
 		}
