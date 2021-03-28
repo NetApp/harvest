@@ -6,14 +6,37 @@ object:                   wafl
 instance_key:             uuid
 
 counters:
-  - avg_wafl_msg_latency  => avg_msg_latency
-  - cp_count
-  - cp_phase_times
   - instance_uuid
   - node_name             => node
+  # latency
+  - avg_non_wafl_msg_latency
+  - avg_wafl_msg_latency  => avg_msg_latency
+  - avg_wafl_repl_msg_latency => avg_repl_msg_latency
+  # iops
+  - wafl_msg_total        => msg_total
+  - wafl_repl_msg_total
+  - non_wafl_msg_total
+  # consistency point
+  - cp_count
+  - cp_phase_times
   - read_io_type
   - total_cp_msecs
-  - wafl_msg_total        => msg_total
+  - total_cp_util
+  # memory
+  - wafl_memory_used
+  - wafl_memory_free
+  # reads from
+  - wafl_reads_from_cache
+  - wafl_reads_from_cloud
+  - wafl_reads_from_cloud_s2c_bin
+  - wafl_reads_from_disk
+  - wafl_reads_from_ext_cache
+  - wafl_reads_from_fc_miss
+  - wafl_reads_from_pmem
+  - wafl_reads_from_ssd
+
+override:
+  - read_io_type_base: delta
 
 export_options:
   instance_keys:
