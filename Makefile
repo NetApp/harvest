@@ -15,6 +15,9 @@ header:
 # Anything that needs to be done before we build everything
 precheck:
 
+###############################################################################
+# Clean the code base for rebuilding.
+###############################################################################
 clean:
 	@echo "Cleaning harvest files"
 	@rm -rf bin
@@ -98,6 +101,9 @@ packages: precheck all
 
 ###############################################################################
 # Install targets
+# If the ROOT is not set to "", then this is a development deploy which means
+# we will be creating different users, and linking the deploy directory to
+# the system setup.
 ###############################################################################
 ROOT := ${BUILD_ROOT}
 SUDO := sudo
@@ -108,39 +114,87 @@ USER_EXISTS := $(shell grep -c "^${HARVEST_USER}" /etc/passwd)
 install:
 	@echo "Installing Harvest: ${VERSION}"
 
+ifeq (${ROOT}, "")
 	@echo "  Creating harvest user and group [${HARVEST_USER}:${HARVEST_GROUP}]"
-	@if [ ${GROUP_EXISTS} -eq 0 ]; then              \
-		${SUDO} groupadd -r "${HARVEST_GROUP}";  \
-	else                                             \
-		echo "    Harvest group already exists"; \
+	@if [ ${GROUP_EXISTS} -eq 0 ]; then                                     \
+		${SUDO} groupadd -r ${HARVEST_GROUP};                           \
+	else                                                                    \
+		echo "    Harvest group already exists";                        \
 	fi;
 
 	@# Make sure that the user does not already exist
-	@if [ ${USER_EXISTS} -eq 0 ]; then               \
-		${SUDO} adduser --ingroup ${HARVEST_GROUP} --shell=/sbin/nologin ${HARVEST_USER}; \
-	else                                             \
-		echo "    Harvest user already exists";  \
+	@if [ ${USER_EXISTS} -eq 0 ]; then                                      \
+		${SUDO} adduser --quiet --ingroup ${HARVEST_GROUP} --shell=/sbin/nologin ${HARVEST_USER}; \
+	else                                                                    \
+		echo "    Harvest user already exists";                         \
 	fi;
+endif
 
 	@echo "  Creating package directories"
-	@${SUDO} mkdir -p ${ROOT}/opt/harvest
-	@${SUDO} mkdir -p ${ROOT}/etc/harvest
-	@${SUDO} mkdir -p ${ROOT}/var/log/harvest
-	@${SUDO} mkdir -p ${ROOT}/var/run/harvest
+ifeq (${ROOT}, "")
+	@${SUDO} mkdir -p /opt/harvest
+	@${SUDO} mkdir -p /etc/harvest
+	@${SUDO} mkdir -p /var/log/harvest
+	@${SUDO} mkdir -p /var/run/harvest
+else
+	@mkdir -p ${ROOT}/deploy/opt/harvest
+	@mkdir -p ${ROOT}/deploy/etc/harvest
+	@mkdir -p ${ROOT}/deploy/var/log/harvest
+	@mkdir -p ${ROOT}/deploy/var/run/harvest
+endif
 
+ifeq (${ROOT}, "")
 	@echo "  Setting user permissions"
-	@${SUDO} chown -R ${HARVEST_USER}:${HARVEST_GROUP} ${ROOT}/opt/harvest
-	@${SUDO} chown -R ${HARVEST_USER}:${HARVEST_GROUP} ${ROOT}/etc/harvest
-	@${SUDO} chown -R ${HARVEST_USER}:${HARVEST_GROUP} ${ROOT}/var/log/harvest
-	@${SUDO} chown -R ${HARVEST_USER}:${HARVEST_GROUP} ${ROOT}/var/run/harvest
+	@${SUDO} chown -R ${HARVEST_USER}:${HARVEST_GROUP} /opt/harvest
+	@${SUDO} chown -R ${HARVEST_USER}:${HARVEST_GROUP} /etc/harvest
+	@${SUDO} chown -R ${HARVEST_USER}:${HARVEST_GROUP} /var/log/harvest
+	@${SUDO} chown -R ${HARVEST_USER}:${HARVEST_GROUP} /var/run/harvest
+endif
 
 	@echo "  Copying config and binaries"
-	@${SUDO} mv config/ ${ROOT}/etc/harvest/
-	@${SUDO} mv grafana/ ${ROOT}/etc/harvest/
-	@${SUDO} mv harvest.yml ${ROOT}/etc/harvest/
-	@${SUDO} mv * ${ROOT}/opt/harvest
-	#ln -s $ROOT/opt/harvest/bin/harvest $ROOT/usr/local/bin/harvest
+ifeq (${ROOT}, "")
+	@${SUDO} cp -r  config/ /etc/harvest/
+	@${SUDO} cp -r grafana/ /etc/harvest/
+	@${SUDO} cp harvest.yml /etc/harvest/
+	@${SUDO} cp -r bin /opt/harvest
+	@#ln -s $ROOT/opt/harvest/bin/harvest $ROOT/usr/local/bin/harvest
+else
+	@cp -r  config/ ${ROOT}/deploy/etc/harvest/
+	@cp -r grafana/ ${ROOT}/deploy/etc/harvest/
+	@cp harvest.yml ${ROOT}/deploy/etc/harvest/
+	@${SUDO} ln -sf ${ROOT}/deploy/etc/harvest /etc
+	@cp -r bin ${ROOT}/deploy/opt/harvest/
+	@${SUDO} ln -sf ${ROOT}/deploy/opt/harvest/ /opt
+	@${SUDO} ln -sf ${ROOT}/deploy/var/log/harvest /var/log
+	@${SUDO} ln -sf ${ROOT}/deploy/var/run/harvest /var/run
+endif
 	@echo "  Installation complete"
+
+
+###############################################################################
+# Uninstall target
+###############################################################################
+uninstall:
+	@echo "Stopping Harvest"
+	@/opt/harvest/bin/harvest stop
+
+	@echo "Cleaning install files"
+	@${SUDO} rm -rf /opt/harvest
+	@${SUDO} rm -rf /var/log/harvest
+	@${SUDO} rm -rf /var/run/harvest
+	@echo
+	@echo "Configuration and Certificate files not removed in [${ROOT}/etc/harvest]"
+	@echo "please remove manually if no longer needed."
+	@echo
+ifeq (${ROOT}, "")
+	@echo "Removing harvest user and group"
+	@${SUDO} userdel ${HARVEST_USER}
+	@${SUDO} groupdel ${HARVEST_GROUP}
+	@echo
+endif
+	@echo "Uninstall complete."
+
+
 
 
 
