@@ -1,3 +1,10 @@
+//
+// Copyright NetApp Inc, 2021 All rights reserved
+//
+// Package Description:
+//
+// Examples:
+//
 package matrix
 
 // Print countents of matrix: metrics, instances and data

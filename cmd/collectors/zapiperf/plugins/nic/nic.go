@@ -1,3 +1,10 @@
+//
+// Copyright NetApp Inc, 2021 All rights reserved
+//
+// Package Description:
+//
+// Examples:
+//
 package main
 
 /*  Some postprocessing on counter data "nic_common"
