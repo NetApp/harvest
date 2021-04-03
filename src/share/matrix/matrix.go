@@ -262,6 +262,14 @@ func (m *Matrix) GetInstanceKeys() [][]string {
 	return m.InstanceKeys
 }
 
+func (m *Matrix) GetInstancesKeys() []string {
+	keys := make([]string, 0, len(m.Instances))
+	for k := range m.Instances {
+		keys = append(keys, k)
+	}
+	return keys
+}
+
 func (m *Matrix) SetInstanceLabel(instance *Instance, key, value string) {
 	display := m.Labels.Get(key)
 	instance.Labels.Set(display, value)

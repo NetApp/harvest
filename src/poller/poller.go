@@ -38,6 +38,10 @@ var SIGNALS = []os.Signal{
 	syscall.SIGQUIT,
 }
 
+var DEPRECATED_COLLECTORS = map[string]string{
+	"psutil" : "Unix",
+}
+
 type Poller struct {
 	Name            string
 	prefix          string
@@ -146,6 +150,7 @@ func (p *Poller) Init() error {
 	p.status = matrix.New("poller", "target", "metadata")
 	p.status.AddMetric("status", "status", true)
 	p.status.AddMetric("ping", "ping", true)
+	p.status.AddMetric("goroutines", "goroutines", true)
 	p.status.AddLabel("addr", "addr")
 	instance, err := p.status.AddInstance("host")
 	instance.Labels.Set("addr", p.target)
@@ -242,6 +247,15 @@ func (p *Poller) load_collector(class, object string) error {
 	var subcollectors []collector.Collector
 
 	binpath = path.Join(p.options.HomePath, "bin", "collectors")
+
+	// throw warning for deprecated collectors
+	if r, d := DEPRECATED_COLLECTORS[strings.ToLower(class)]; d {
+		if r != "" {
+			logger.Warn(p.prefix, "collector [%s] is depracated, please use [%s] instead", class, r)
+		} else {
+			logger.Warn(p.prefix, "collector [%s] is depracated, see documentation for help", class)
+		}
+	}
 
 	if sym, err = util.LoadFuncFromModule(binpath, strings.ToLower(class), "New"); err != nil {
 		return err
@@ -482,6 +496,7 @@ func (p *Poller) selfMonitor() {
 			} else {
 				p.status.SetValueSS("status", "host", float64(1))
 			}
+			p.status.SetValueSS("goroutines", "host", float64(runtime.NumGoroutine()))
 
 			up_collectors := 0
 			up_exporters := 0

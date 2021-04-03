@@ -32,6 +32,13 @@ func (m *Metric) HasLabels() bool {
 	return m.Labels != nil && m.Labels.Size() != 0
 }
 
+func (m *Metric) SetLabel(key, value string) {
+	if m.Labels == nil {
+		m.Labels = dict.New()
+	}
+	m.Labels.Set(key, value)
+}
+
 func (m *Matrix) GetMetric(key string) *Metric {
 
 	if metric, found := m.Metrics[key]; found {
