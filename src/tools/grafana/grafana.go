@@ -10,6 +10,7 @@ import (
 	"goharvest2/share/tree/node"
 	"io/ioutil"
 	"net/http"
+    "crypto/tls"
 	"os"
 	"path"
 	"strings"
@@ -78,7 +79,10 @@ func main() {
 	opts.headers.Add("Content-Type", "application/json")
 	opts.headers.Add("Authorization", "Bearer "+opts.token)
 
-	opts.client = &http.Client{Timeout: time.Duration(CLIENT_TIMEOUT) * time.Second}
+    opts.client = &http.Client{Timeout: time.Duration(CLIENT_TIMEOUT) * time.Second}
+    if strings.HasPrefix(opts.addr, "https://") {
+        opts.client.Transport = &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
+    }
 
 	// check if Grafana folder exists
 	if exists, err = check_folder(opts); err != nil {
@@ -372,5 +376,11 @@ func send_request(opts *options, method, url string, data []byte) (*node.Node, s
 	if data, err = ioutil.ReadAll(response.Body); err == nil {
 		result, err = json.Load(data)
 	}
+
+    // DEBUG
+    if err != nil {
+        fmt.Println("raw response body:")
+        fmt.Println(string(data))
+    }
 	return result, status, code, err
 }
