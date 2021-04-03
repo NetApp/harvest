@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"time"
 	"strconv"
@@ -60,9 +59,9 @@ func (e *Prometheus) Init() error {
 		logger.Debug("will use global prefix [%s]", e.prefix)
 	}
 
-	e.StartHttpd(addr, port)
+	go e.StartHttpd(addr, port)
 
-	logger.Debug(e.Prefix, "Initialized Exporter. HTTP daemon serving at [http://%s:%s]", addr, port)
+	logger.Info(e.Prefix, "Initialized Exporter. HTTP daemon serving at [http://%s:%s]", addr, port)
 
 	return nil
 }
@@ -75,13 +74,12 @@ func (e *Prometheus) Export(data *matrix.Matrix) error {
 		logger.Debug(e.Prefix, "no export since in debug mode")
 		if metrics, err := e.Render(data); err == nil {
 			for _, m := range metrics {
-				logger.Debug(e.Prefix, "M= %s", bytes.TrimRight(m, "\n"))
+				logger.Debug(e.Prefix, "M= %s", string(m))
 			}
 		} else {
 			return err
 		}
 	}
-
 
 	start := time.Now()
 	metrics, err := e.Render(data)
@@ -99,11 +97,13 @@ func (e *Prometheus) Export(data *matrix.Matrix) error {
 	e.cache[key] = metrics
 
 	// update metdata render time
-	if v, ok := e.Metadata.GetValueSS("time", "render"); ok {
-		e.Metadata.SetValueSS("time", "render", float64(duration.Seconds())+v)
+	/* @TODO!!!
+	if v, has := e.Metadata.GetValueSS("time", "render"); has {
+		e.Metadata.LazySetValueFloat("time", "render", float64(duration.Seconds())+v)
 	} else {
 		e.Metadata.SetValueSS("time", "render", float64(duration.Seconds()))
-	}
+	}*/
+	e.Metadata.LazySetValueInt64("time", "render", duration.Microseconds())
 	
 	logger.Debug(e.Prefix, "added to cache with key [%s%s%s%s]", util.Bold, util.Red, key, util.End)
 
@@ -119,6 +119,10 @@ func (e *Prometheus) Render(data *matrix.Matrix) ([][]byte, error) {
 
 	options := data.ExportOptions
 	// @TODO check for nil
+
+	//logger.Debug(e.Prefix, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+	//data.Print()
+	//logger.Debug(e.Prefix, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 	rendered = make([][]byte, 0)
 
@@ -148,39 +152,40 @@ func (e *Prometheus) Render(data *matrix.Matrix) ([][]byte, error) {
 	}
 
 	global_labels = make([]string, 0)
-	for key, value := range data.GlobalLabels.Iter() {
+	for key, value := range data.GetGlobalLabels() {
 		global_labels = append(global_labels, fmt.Sprintf("%s=\"%s\"", key, value))
 	}
 
-	for _, instance := range data.Instances {
+	for key, instance := range data.GetInstances() {
 
-		if !instance.Enabled {
+		if ! instance.IsExportable() {
+			logger.Debug(e.Prefix, "skip instance [%s]: disabled for export", key)
 			continue
 		}
 
-		logger.Debug(e.Prefix, "render instance [%d] %v", instance.Index, instance.Labels.Iter())
+		logger.Debug(e.Prefix, "rendering instance [%s] (%v)", key, instance.GetLabels())
 
 		instance_keys := make([]string, len(global_labels))
 		instance_labels := make([]string, 0)
 		copy(instance_keys, global_labels)
 
 		if include_all_labels {
-			for label, value := range instance.Labels.Iter() {
+			for label, value := range instance.GetLabels() {
 				instance_keys = append(instance_keys, fmt.Sprintf("%s=\"%s\"", label, value))
 			}
 		} else {
 			for _, key := range keys_to_include {
-				value, found := instance.Labels.GetHas(key)
-				if found {
+				value := instance.GetLabel(key);
+				if value != "" {
 					instance_keys = append(instance_keys, fmt.Sprintf("%s=\"%s\"", key, value))
 				}
-				logger.Debug(e.Prefix, "++ key [%s] (%s) found=%v", key, value, found)
+				logger.Debug(e.Prefix, "++ key [%s] (%s) found=%v", key, value, value != "")
 			}
 
 			for _, label := range labels_to_include {
-				value, found := instance.Labels.GetHas(label)
+				value := instance.GetLabel(label)
 				instance_labels = append(instance_labels, fmt.Sprintf("%s=\"%s\"", label, value))
-				logger.Debug(e.Prefix, "++ label [%s] (%s) found=%v", label, value, found)
+				logger.Debug(e.Prefix, "++ label [%s] (%s)", label, value, value != "")
 			}
 
 			// @TODO, probably be strict, and require all keys to be present
@@ -198,30 +203,33 @@ func (e *Prometheus) Render(data *matrix.Matrix) ([][]byte, error) {
 			}
 		}
 
-		for key, metric := range data.Metrics {
+		for mkey, metric := range data.Metrics {
 
-			if !metric.Enabled {
-
-				logger.Debug(e.Prefix, "skip metric [%d] %s: disabled", metric.Index, key)
+			if ! metric.IsExportable() {
+				logger.Debug(e.Prefix, "skip metric [%s]: disabled for export", mkey)
 				continue
 			}
 
-			logger.Debug(e.Prefix, "render metric [%d] %s", metric.Index, key)
+			logger.Debug(e.Prefix, "rendering metric [%s]", mkey)
 
-			if value, ok := data.GetValue(metric, instance); ok {
+			if value, ok := metric.GetValueString(instance); ok {
 
-				if metric.Labels != nil && metric.Labels.Size() != 0 {
-					metric_labels := make([]string, 0, metric.Labels.Size())
-					for key, value := range metric.Labels.Iter() {
-						metric_labels = append(metric_labels, fmt.Sprintf("%s=\"%s\"", key, value))
+				// metric is histogram
+				if metric.HasLabels() {
+					metric_labels := make([]string, 0)
+					for k, v := range metric.GetLabels() {
+						metric_labels = append(metric_labels, fmt.Sprintf("%s=\"%s\"", k, v))
 					}
-					x := fmt.Sprintf("%s_%s{%s,%s} %f", prefix, metric.Name, strings.Join(instance_keys, ","), strings.Join(metric_labels, ","), value)
+					x := fmt.Sprintf("%s_%s{%s,%s} %s", prefix, metric.GetName(), strings.Join(instance_keys, ","), strings.Join(metric_labels, ","), value)
 					rendered = append(rendered, []byte(x))
+					logger.Warn(e.Prefix, "M=[%s%s%s]", util.Pink, x, util.End)
 					count += 1
+				// scalar metric
 				} else {
-					x := fmt.Sprintf("%s_%s{%s} %f", prefix, metric.Name, strings.Join(instance_keys, ","), value)
+					x := fmt.Sprintf("%s_%s{%s} %s", prefix, metric.GetName(), strings.Join(instance_keys, ","), value)
 					rendered = append(rendered, []byte(x))
 					count += 1
+					logger.Warn(e.Prefix, "M=[%s%s%s]", util.Cyan, x, util.End)
 				}
 			} else {
 				logger.Debug(e.Prefix, "skipped: no data value")

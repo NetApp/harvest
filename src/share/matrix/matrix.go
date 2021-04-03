@@ -1,268 +1,152 @@
 package matrix
 
 import (
+	"fmt"
 	"goharvest2/share/dict"
+	"goharvest2/share/util"
 	"goharvest2/share/errors"
 	"goharvest2/share/tree/node"
-	"math"
-	"strconv"
 )
-
-var NAN = float64(math.NaN())
 
 type Matrix struct {
 	Collector      string
 	Object         string
 	Plugin         string
 	GlobalLabels   *dict.Dict
-	Labels         *dict.Dict
 	Instances      map[string]*Instance
-	Metrics        map[string]*Metric
-	InstanceKeys   [][]string // @TODO deprecate, doesn't belong here
+	Metrics        map[string]Metric
 	ExportOptions  *node.Node
-	Data           [][]float64
 	IsMetadata     bool
 	MetadataType   string
 	MetadataObject string
-    Exportable bool
+	Exportable bool
+	Empty bool
 }
 
 func New(collector, object, plugin string) *Matrix {
 	m := Matrix{Collector: collector, Object: object, Plugin: plugin}
 	m.GlobalLabels = dict.New()
-	m.Labels = dict.New()
-	m.Instances = map[string]*Instance{}
-	m.Metrics = map[string]*Metric{}
-    m.Exportable = true
+	m.Instances = make(map[string]*Instance, 0)
+	m.Metrics = make(map[string]Metric, 0)
+	m.Exportable = true
+	m.Empty = true
 	return &m
 }
 
+func (m *Matrix) Print() {
+	fmt.Println()
+	fmt.Printf(">>> Metrics = %d\n", m.SizeMetrics())
+	fmt.Printf(">>> Instances = %d\n", m.SizeInstances())
+	fmt.Println()
+
+	for key, metric := range m.GetMetrics() {
+		fmt.Printf("(%s%s%s%s) (type=%s) (exportable=%v) values= ", util.Bold, util.Cyan, key, util.End, metric.GetType(), metric.IsExportable())
+		metric.Print()
+		fmt.Println()
+	}
+	fmt.Println()
+}
+
 func (m *Matrix) IsEmpty() bool {
-	return len(m.Data) == 0
+	return m.Empty
 }
 
-func (m *Matrix) Clone(copy_data bool) *Matrix {
-	n := &Matrix{
-		Collector:      m.Collector,
-		Object:         m.Object,
-		Plugin:         m.Plugin,
-		Instances:      m.Instances,
-		InstanceKeys:   m.InstanceKeys,
-		Metrics:        m.Metrics,
-		GlobalLabels:   m.GlobalLabels,
-		Labels:         m.Labels,
-		ExportOptions:  m.ExportOptions,
-		IsMetadata:     m.IsMetadata,
-		MetadataType:   m.MetadataType,
-		MetadataObject: m.MetadataObject,
-        Exportable:     m.Exportable,
-	}
-	if copy_data && !m.IsEmpty() {
-		n.Data = make([][]float64, n.SizeMetrics())
-		for i := 0; i < n.SizeMetrics(); i += 1 {
-			n.Data[i] = make([]float64, n.SizeInstances())
-			copy(n.Data[i], m.Data[i])
-		}
-	}
-	return n
-}
-
-func (m *Matrix) InitData() error {
+func (m *Matrix) Reset() error {
 	if m.SizeMetrics() == 0 || m.SizeInstances() == 0 {
 		return errors.New(errors.MATRIX_EMPTY, "counter or instance cache empty")
 	}
-	m.Data = make([][]float64, m.SizeMetrics())
-	for i := 0; i < m.SizeMetrics(); i += 1 {
-		m.Data[i] = make([]float64, m.SizeInstances())
-		for j := 0; j < m.SizeInstances(); j += 1 {
-			m.Data[i][j] = NAN
-		}
+	size := m.SizeInstances()
+	for _, metric := range m.Metrics {
+		metric.Reset(size)
 	}
 	return nil
-}
-
-func (m *Matrix) RemoveMetric(key string) {
-	if metric, ok := m.Metrics[key]; ok {
-		delete(m.Metrics, key)
-		if !m.IsEmpty() {
-			// re-arrange rows, if metric is not last/only row
-			if len(m.Data) > metric.Index+1 {
-				for i := metric.Index; i < m.SizeMetrics(); i += 1 {
-					m.Data[i] = m.Data[i+1]
-				}
-			}
-			m.Data = m.Data[:len(m.Data)-1]
-		}
-		// re-assign indices to other metrics
-		for _, other := range m.GetMetrics() {
-			if other.Index > metric.Index {
-				other.Index -= 1
-			}
-		}
-	}
-}
-
-func (m *Matrix) RemoveInstance(key string) {
-	if instance, ok := m.Instances[key]; ok {
-		delete(m.Instances, key)
-		if !m.IsEmpty() {
-			// re-arrange columns
-			for i := 0; i < m.SizeMetrics(); i += 1 {
-				for j := instance.Index; j < m.SizeInstances(); j += 1 {
-					m.Data[i][j] = m.Data[i][j+1]
-				}
-				m.Data[i] = m.Data[i][:m.SizeInstances()]
-			}
-		}
-		// re-assign indices to other instances
-		for _, other := range m.Instances {
-			if other.Index > instance.Index {
-				other.Index -= 1
-			}
-		}
-	}
-}
-
-func (m *Matrix) RemoveLabel(key string) {
-	m.Labels.Delete(key) // remove from instances as well?
 }
 
 func (m *Matrix) SizeMetrics() int {
 	return len(m.Metrics)
 }
 
-func (m *Matrix) SizeLabels() int {
-	return m.Labels.Size()
+func (m *Matrix) GetMetric(key string) Metric {
+	if metric, has := m.Metrics[key]; has {
+		return metric
+	}
+	return nil
+}
+
+func (m *Matrix) GetMetrics() map[string]Metric {
+	return m.Metrics
+}
+
+func (m *Matrix) AddMetricInt(key string) (Metric, error) {
+	metric := &MetricInt{AbstractMetric: &AbstractMetric{Name: key, Type: "int", Exportable: true}}
+	return metric, m.AddMetric(key, metric)
+}
+
+func (m *Matrix) AddMetricInt32(key string) (Metric, error) {
+	metric := &MetricInt32{AbstractMetric: &AbstractMetric{Name: key, Type: "int32", Exportable: true}}
+	return metric, m.AddMetric(key, metric)
+}
+
+func (m *Matrix) AddMetricInt64(key string) (Metric, error) {
+	metric := &MetricInt64{AbstractMetric: &AbstractMetric{Name: key, Type: "int64", Exportable: true}}
+	return metric, m.AddMetric(key, metric)
+}
+
+func (m *Matrix) AddMetricUint32(key string) (Metric, error) {
+	metric := &MetricUint32{AbstractMetric: &AbstractMetric{Name: key, Type: "uint32", Exportable: true}}
+	return metric, m.AddMetric(key, metric)
+}
+
+func (m *Matrix) AddMetricUint64(key string) (Metric, error) {
+	metric := &MetricUint64{AbstractMetric: &AbstractMetric{Name: key, Type: "uint64", Exportable: true}}
+	return metric, m.AddMetric(key, metric)
+}
+
+func (m *Matrix) AddMetricFloat32(key string) (Metric, error) {
+	metric := &MetricFloat32{AbstractMetric: &AbstractMetric{Name: key, Type: "float32", Exportable: true}}
+	return metric, m.AddMetric(key, metric)
+}
+
+func (m *Matrix) AddMetricFloat64(key string) (Metric, error) {
+	metric := &MetricFloat64{AbstractMetric: &AbstractMetric{Name: key, Type: "float64", Exportable: true}}
+	return metric, m.AddMetric(key, metric)
+}
+
+func (m *Matrix) AddMetric(key string, metric Metric) (error) {
+
+	if _, has := m.Metrics[key]; has {
+		return errors.New(DUPLICATE_METRIC_KEY, key)
+	}
+
+	if ! m.IsEmpty() {
+		metric.Reset(m.SizeInstances())
+	}
+
+	m.Metrics[key] = metric
+	
+	return nil
+}
+
+func (m *Matrix) RemoveMetric(key string) {
+	delete(m.Metrics, key)
 }
 
 func (m *Matrix) SizeInstances() int {
 	return len(m.Instances)
 }
 
-func (m *Matrix) ResetData() {
-	m.Data = make([][]float64, 0)
-}
-
-func (m *Matrix) ResetMetrics() {
-	if len(m.Metrics) != 0 {
-		m.Metrics = make(map[string]*Metric)
+func (m *Matrix) GetInstance(key string) *Instance {
+	if instance, has := m.Instances[key]; has {
+		return instance
 	}
-	m.ResetData()
-}
-
-func (m *Matrix) ResetInstances() {
-	if len(m.Instances) != 0 {
-		m.Instances = make(map[string]*Instance)
-	}
-	m.ResetData()
-}
-
-func (m *Matrix) ResetLabelNames() {
-	m.Labels = dict.New()
+	return nil
 }
 
 func (m *Matrix) GetInstances() map[string]*Instance {
 	return m.Instances
 }
 
-func (m *Matrix) GetMetrics() map[string]*Metric {
-	return m.Metrics
-}
-
-func (m *Matrix) GetLabels() map[string]string {
-	return m.Labels.Iter()
-}
-
-func (m *Matrix) SetValueString(metric *Metric, instance *Instance, value string) error {
-	var numeric float64
-	var err error
-
-	numeric, err = strconv.ParseFloat(value, 32)
-
-	if err == nil {
-		m.SetValue(metric, instance, float64(numeric))
-	}
-	return err
-}
-
-func (m *Matrix) IncrementValue(metric *Metric, instance *Instance, value float64) {
-    if _, ok := m.GetValue(metric, instance); ok {
-        m.Data[metric.Index][instance.Index] += value
-    } else {
-        m.Data[metric.Index][instance.Index] = value
-    }
-}
-
-func (m *Matrix) SetValue(metric *Metric, instance *Instance, value float64) {
-	m.Data[metric.Index][instance.Index] = value
-}
-
-func (m *Matrix) SetValueS(key string, instance *Instance, value float64) {
-	if metric := m.GetMetric(key); metric != nil {
-		m.SetValue(metric, instance, value)
-	}
-}
-
-func (m *Matrix) SetValueSS(metric_key, instance_key string, value float64) {
-	if instance := m.GetInstance(instance_key); instance != nil {
-		m.SetValueS(metric_key, instance, value)
-	}
-}
-
-func (m *Matrix) GetValue(metric *Metric, instance *Instance) (float64, bool) {
-	var value float64
-        // temporary fix plugin bug
-	if m.Data == nil || len(m.Data) == 0 || metric.Index >= len(m.Data) || instance.Index >= len(m.Data[metric.Index]) {
-		return value, false
-	}
-	value = m.Data[metric.Index][instance.Index]
-	return value, value == value
-}
-
-func (m *Matrix) GetValueS(key string, instance *Instance) (float64, bool) {
-	if metric := m.GetMetric(key); metric != nil {
-		return m.GetValue(metric, instance)
-	}
-	return NAN, false
-}
-
-func (m *Matrix) GetValueSS(M, I string) (float64, bool) {
-	if metric := m.GetMetric(M); metric != nil {
-		if instance := m.GetInstance(I); instance != nil {
-			return m.GetValue(metric, instance)
-		}
-	}
-	return NAN, false
-}
-
-// if name is empty, key will be used as display name
-func (m *Matrix) AddLabel(key, name string) {
-	if name != "" {
-		m.Labels.Set(key, name)
-	} else {
-		m.Labels.Set(key, key)
-	}
-}
-
-func (m *Matrix) GetLabel(key string) (string, bool) {
-	name, has := m.Labels.GetHas(key)
-	if name == "" {
-		return key, has
-	}
-	return name, has
-}
-
-func (m *Matrix) AddInstanceKey(key []string) {
-	copied := make([]string, len(key))
-	copy(copied, key)
-	m.InstanceKeys = append(m.InstanceKeys, copied)
-}
-
-func (m *Matrix) GetInstanceKeys() [][]string {
-	return m.InstanceKeys
-}
-
-func (m *Matrix) GetInstancesKeys() []string {
+func (m *Matrix) GetInstanceKeys() []string {
 	keys := make([]string, 0, len(m.Instances))
 	for k := range m.Instances {
 		keys = append(keys, k)
@@ -270,25 +154,47 @@ func (m *Matrix) GetInstancesKeys() []string {
 	return keys
 }
 
-func (m *Matrix) SetInstanceLabel(instance *Instance, key, value string) {
-	display := m.Labels.Get(key)
-	instance.Labels.Set(display, value)
+func (m *Matrix) AddInstance(key string) (*Instance, error) {
+
+	var instance *Instance
+
+	if _, has := m.Instances[key]; has {
+		return nil, errors.New(DUPLICATE_INSTANCE_KEY, key)
+	}
+
+	instance = NewInstance(len(m.Instances)) // index is current count of instances
+
+	if ! m.IsEmpty() {
+		for _, mt := range m.Metrics {
+			mt.Append()
+		}
+	}
+
+	m.Instances[key] = instance
+	return instance, nil
 }
 
-func (m *Matrix) GetInstanceLabel(instance *Instance, display string) (string, bool) {
-	return instance.Labels.GetHas(display)
+func (m *Matrix) RemoveInstance(key string) {
+	if instance, has := m.Instances[key]; has {
+
+		if ! m.IsEmpty() {
+			// re-arrange columns in metrics
+			for _, metric := range m.Metrics {
+
+				metric.Remove(instance.index)
+			}
+		}
+		delete(m.Instances, key)
+	}
 }
 
-func (m *Matrix) GetInstanceLabels(instance *Instance) *dict.Dict {
-	return instance.Labels
-}
 
 func (m *Matrix) SetGlobalLabel(label, value string) {
 	m.GlobalLabels.Set(label, value)
 }
 
-func (m *Matrix) GetGlobalLabels() *dict.Dict {
-	return m.GlobalLabels
+func (m *Matrix) GetGlobalLabels() map[string]string {
+	return m.GlobalLabels.Iter()
 }
 
 func (m *Matrix) SetExportOptions(options *node.Node) {

@@ -41,11 +41,11 @@ case $1 in
         clean=true
         echo "clean"
         ;;
-    "harvest")
+    "harvest"|"h")
         harvest=true
         echo "build harvest-cli"
         ;;
-    "poller")
+    "poller"|"p")
         poller=true
         echo "build poller"
         ;;
@@ -57,11 +57,11 @@ case $1 in
         exporters=true
         echo "build exporters"
         ;;
-    "collector")
+    "collector"|"c")
         collector=$2
         component="collector [$collector]"
         ;;
-    "exporter")
+    "exporter"|"e")
         exporter=$2
         component="exporter"
         echo "build exporter [$exporter]"

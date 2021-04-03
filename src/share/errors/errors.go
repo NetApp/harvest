@@ -18,6 +18,9 @@ const (
 	MATRIX_PARSE_STR = "parse numeric value from string"
 	API_RESPONSE     = "error reading api response"
 	API_REQ_REJECTED = "api request rejected"
+	// @TODO, implement: API response is something like
+	// Insufficient privileges: user 'harvest2-user' does not have write access to this resource
+	API_INSUF_PRIV   = "api insufficient priviligies"
 	ERR_DLOAD        = "dynamic load"
 	ERR_IMPLEMENT    = "implementation error"
 	ERR_SCHEDULE     = "schedule error"

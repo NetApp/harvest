@@ -16,13 +16,19 @@ func (e *Prometheus) StartHttpd(addr, port string) {
 	mux.HandleFunc("/", e.ServeInfo)
 	mux.HandleFunc("/metrics", e.ServeMetrics)
 
-	logger.Debug(e.Prefix, "Starting server at [:%s]", port)
+	logger.Warn(e.Prefix+" (httpd)", "Starting server at [:%s]", port)
 	server := &http.Server{Addr: ":" + port, Handler: mux}
-	go server.ListenAndServe()
 
+	if err := server.ListenAndServe(); err != nil {
+		logger.Fatal(e.Prefix+" (httpd)", err.Error())
+	} else {
+		logger.Warn(e.Prefix+" (httpd)", "listening at [:%s]", port)
+	}
 }
 
 func (e *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
+
+	logger.Warn(e.Prefix+" (httpd)", "info request (%s) from (%s)", r.RequestURI, r.RemoteAddr)
 
 	body := make([]string, 0)
 	num_collectors := 0
@@ -31,7 +37,6 @@ func (e *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 	unique_data := map[string]map[string][]string{}
 
 	for key, data := range e.cache {
-
 
 		var collector, plugin, object string
 
@@ -97,7 +102,9 @@ func (e *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 
 func (e *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 
-	logger.Debug(e.Prefix, "Serving metrics from %d cached items", len(e.cache))
+	logger.Warn(e.Prefix+" (httpd) ", "metric request (%s) from (%s)", r.RequestURI, r.RemoteAddr)
+	logger.Warn(e.Prefix+" (httpd) ", "loading metrics from %d cached items", len(e.cache))
+
 	sep := []byte("\n")
 	var data [][]byte
 

@@ -122,6 +122,7 @@ func Init(c Collector) error {
 		data.SetExportOptions(export_options)
 	} else {
 		data.SetExportOptions(matrix.DefaultExportOptions())
+		// @TODO log warning for user
 	}
 	data.SetGlobalLabel("datacenter", params.GetChildContentS("datacenter"))
 
@@ -156,26 +157,29 @@ func Init(c Collector) error {
 	md.SetGlobalLabel("collector", name)
 	md.SetGlobalLabel("object", object)
 
-	md.AddMetric("poll_time", "poll_time", true)
-	md.AddMetric("api_time", "api_time", true)
-	md.AddMetric("parse_time", "parse_time", true)
-	md.AddMetric("calc_time", "calc_time", true)
-	md.AddMetric("count", "count", true)
-	md.AddLabel("task", "")
-	md.AddLabel("interval", "")
+	md.AddMetricInt64("poll_time")
+	md.AddMetricInt64("poll2_time")
+	md.AddMetricInt64("task_time")
+	md.AddMetricInt64("api_time")
+	md.AddMetricInt64("parse_time")
+	md.AddMetricInt64("calc_time")
+	md.AddMetricInt64("plugin_time")
+	md.AddMetricUint64("count")
+	//md.AddLabel("task", "")
+	//md.AddLabel("interval", "")
 
 	/* each task we run is an "instance" */
 	for _, task := range s.GetTasks() {
 		instance, _ := md.AddInstance(task.Name)
-		md.SetInstanceLabel(instance, "task", task.Name)
+		instance.SetLabel("task", task.Name)
 		t := task.GetInterval().Seconds()
-		md.SetInstanceLabel(instance, "interval", strconv.FormatFloat(t, 'f', 4, 32))
+		instance.SetLabel("interval", strconv.FormatFloat(t, 'f', 4, 32))
 	}
 
 	md.SetExportOptions(matrix.DefaultExportOptions())
 
 	/* initialize underlaying arrays */
-	if err := md.InitData(); err != nil {
+	if err := md.Reset(); err != nil {
 		return err
 	}
 
@@ -196,8 +200,8 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 
 	for {
 
-		if err := c.Metadata.InitData(); err != nil { // can occur if collector messed up
-			panic(err)
+		if err := c.Metadata.Reset(); err != nil { // can occur if collector messed up
+			panic(err) // @TODO graceful hadnling, not critical...
 		}
 
 		results := make([]*matrix.Matrix, 0)
@@ -206,7 +210,15 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 			if !task.IsDue() {
 				continue
 			}
+
+			var (
+				start, plugin_start time.Time
+				task_time, poll2_time, plugin_time time.Duration
+			)
+
+			start = time.Now()
 			data, err := task.Run()
+			task_time = time.Since(start)
 
 			if err != nil {
 
@@ -251,12 +263,13 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 				logger.Info(c.Prefix, "recovered from standby mode, back to normal schedule")
 			}
 
-			c.Metadata.SetValueSS("poll_time", task.Name, float64(task.Runtime().Microseconds()))
-
 			if data != nil {
 				results = append(results, data)
 
 				if task.Name == "data" {
+
+					plugin_start = time.Now()
+
 					for _, plg := range c.Plugins {
 						if plg_data_slice, err := plg.Run(data); err != nil {
 							logger.Error(c.Prefix, "plugin [%s]: %s", plg.GetName(), err.Error())
@@ -267,7 +280,15 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 							logger.Debug(c.Prefix, "plugin [%s]: completed", plg.GetName())
 						}
 					}
+
+					plugin_time = time.Since(plugin_start)
+					c.Metadata.LazySetValueInt64("plugin_time", task.Name, plugin_time.Microseconds())
 				}
+
+				poll2_time = time.Since(start)
+				c.Metadata.LazySetValueInt64("poll_time", task.Name, task.Runtime().Microseconds())
+				c.Metadata.LazySetValueInt64("poll2_time", task.Name, poll2_time.Microseconds())
+				c.Metadata.LazySetValueInt64("task_time", task.Name, task_time.Microseconds())
 			}
 		}
 

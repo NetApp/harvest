@@ -62,22 +62,21 @@ func (e *AbstractExporter) InitAbc() error {
 	e.Metadata.SetGlobalLabel("exporter", e.Class)
 	e.Metadata.SetGlobalLabel("target", e.Name)
 
-	if _, err := e.Metadata.AddMetric("time", "time", true); err != nil {
+	if _, err := e.Metadata.AddMetricInt64("time"); err != nil {
 		return err
 	}
-	if _, err := e.Metadata.AddMetric("count", "count", true); err != nil {
+	if _, err := e.Metadata.AddMetricUint64("count"); err != nil {
 		return err
 	}
 
-	e.Metadata.AddLabel("task", "")
+	//e.Metadata.AddLabel("task", "")
 	if instance, err := e.Metadata.AddInstance("render"); err == nil {
-		e.Metadata.SetInstanceLabel(instance, "task", "render")
-		e.Metadata.SetExportOptions(matrix.DefaultExportOptions())
+		instance.SetLabel("task", "render")
 	} else {
 		return err
 	}
 
-	if err := e.Metadata.InitData(); err != nil {
+	if err := e.Metadata.Reset(); err != nil {
 		return err
 	}
 

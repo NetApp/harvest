@@ -125,7 +125,7 @@ func (c *Unix) load_metrics(counters *node.Node) error {
 
 	var (
 		p *Process
-		m *matrix.Metric
+		m matrix.Metric
 		labels, wanted *set.Set
 		err error
 	)
@@ -150,9 +150,10 @@ func (c *Unix) load_metrics(counters *node.Node) error {
 		// counter is scalar metric
 		if _, has := METRICS[name]; has {
 
-			if _, err = c.Data.AddMetric(name, display, true); err != nil {
+			if m, err = c.Data.AddMetricFloat64(name); err != nil {
 				return err
 			}
+			m.SetName(display)
 			logger.Debug(c.Prefix, "(%s) added metric (%s)", name, display)
 
 		// counter is histogram
@@ -182,10 +183,10 @@ func (c *Unix) load_metrics(counters *node.Node) error {
 					continue
 				}
 
-				if m, err = c.Data.AddMetric(name+"."+label, name, true); err != nil {
+				if m, err = c.Data.AddMetricFloat64(name+"."+label); err != nil {
 					return err
 				}
-				
+				m.SetName(name)
 				m.SetLabel("metric", label_display)
 				c.histogram_labels[name] = append(c.histogram_labels[name], label)				
 			}
@@ -201,7 +202,7 @@ func (c *Unix) load_metrics(counters *node.Node) error {
 	//c.Data.AddLabel("poller", "")
 	//c.Data.AddLabel("pid", "")
 
-	if _, err = c.Data.AddMetric("status", "status", true); err != nil {
+	if _, err = c.Data.AddMetricUint32("status"); err != nil {
 		return err
 	}
 
@@ -218,7 +219,7 @@ func parse_metric_name(raw_name string) (string, string) {
 
 func (c *Unix) PollInstance() (*matrix.Matrix, error) {
 
-	curr_instances := set.NewFrom(c.Data.GetInstancesKeys())
+	curr_instances := set.NewFrom(c.Data.GetInstanceKeys())
 	curr_size := curr_instances.Size()
 
 	poller_names, err := config.GetPollerNames(path.Join(c.Options.ConfPath, "harvest.yml"))
@@ -240,12 +241,12 @@ func (c *Unix) PollInstance() (*matrix.Matrix, error) {
 			if instance, err = c.Data.AddInstance(name); err != nil {
 				return nil, err
 			}
-			instance.Labels.Set("poller", name)
-			instance.Labels.Set("pid", pid)
+			instance.SetLabel("poller", name)
+			instance.SetLabel("pid", pid)
 			logger.Debug(c.Prefix, "add instance (%s) with PID (%s)", name, pid)
 		} else {
 			curr_instances.Delete(name)
-			instance.Labels.Set("pid", pid)
+			instance.SetLabel("pid", pid)
 			logger.Debug(c.Prefix, "update instance (%s) with PID (%s)", name, pid)
 		}
 	}
@@ -272,7 +273,7 @@ func (c *Unix) PollData() (*matrix.Matrix, error) {
 		proc *Process
 	)
 
-	if err = c.Data.InitData(); err != nil {
+	if err = c.Data.Reset(); err != nil {
 		return nil, err
 	}
 
@@ -283,7 +284,7 @@ func (c *Unix) PollData() (*matrix.Matrix, error) {
 	for key, instance := range c.Data.GetInstances() {
 
 		// assume not running
-		c.Data.SetValueS("status", instance, float64(1))
+		c.Data.LazySetValueUint32("status", key, 1)
 
 		if proc, ok = c.processes[key]; ok {
 			if err = proc.Reload(); err != nil {
@@ -293,11 +294,11 @@ func (c *Unix) PollData() (*matrix.Matrix, error) {
 		}
 
 		if proc == nil {
-			if instance.Labels.Get("pid") == "" {
+			if instance.GetLabel("pid") == "" {
 				logger.Debug(c.Prefix, "skip instance [%s]: not running", key)
 				continue
 			}
-			if pid, err = strconv.Atoi(instance.Labels.Get("pid")); err != nil {
+			if pid, err = strconv.Atoi(instance.GetLabel("pid")); err != nil {
 				logger.Warn(c.Prefix, "skip instance [%s], invalid PID: %v", key, err)
 				continue
 			}
@@ -308,7 +309,7 @@ func (c *Unix) PollData() (*matrix.Matrix, error) {
 			c.processes[key] = proc
 		}
 
-		poller := instance.Labels.Get("poller")
+		poller := instance.GetLabel("poller")
 		cmd := proc.Cmdline()
 		
 		if ! set.NewFrom(strings.Fields(cmd)).Has(poller) {
@@ -317,7 +318,7 @@ func (c *Unix) PollData() (*matrix.Matrix, error) {
 		}
 
 		// if we got here poller is running
-		c.Data.SetValueS("status", instance, float64(0))
+		c.Data.LazySetValueUint32("status", key, 0)
 
 		logger.Debug(c.Prefix, "populating instance [%s]: PID (%d) with [%s]\n", key, pid, cmd)
 
@@ -326,7 +327,7 @@ func (c *Unix) PollData() (*matrix.Matrix, error) {
 			if metric := c.Data.GetMetric(key); metric != nil {
 				value := foo(proc, c.system)
 				logger.Trace(c.Prefix, "+ (%s) [%f]", key, value)
-				c.Data.SetValue(metric, instance, value)
+				metric.SetValueFloat64(instance, value)
 				count++
 			}
 		}
@@ -339,7 +340,7 @@ func (c *Unix) PollData() (*matrix.Matrix, error) {
 				for _, label := range labels {
 					if metric := c.Data.GetMetric(key+"."+label); metric != nil {
 						if value, ok := values[label]; ok {
-							c.Data.SetValue(metric, instance, value)
+							metric.SetValueFloat64(instance, value)
 							count++
 						}
 					}
