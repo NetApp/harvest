@@ -1,4 +1,4 @@
-Source: hello
+Source: netapp
 Section: misc
 Suggests: dialog, openssl
 Maintainer: Vachagan Gratian <vachagan@netapp.com>
