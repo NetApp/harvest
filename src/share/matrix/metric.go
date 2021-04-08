@@ -2,6 +2,7 @@ package matrix
 
 import (
 	"goharvest2/share/dict"
+	"goharvest2/share/errors"
 )
 
 type Metric interface {
@@ -13,11 +14,17 @@ type Metric interface {
 	SetName(string)
 	GetType() string
 	SetLabel(string, string)
+	SetLabels(*dict.Dict)
 	GetLabel(string) string
-	GetLabels() map[string]string
+	GetLabels() *dict.Dict
 	HasLabels() bool
 	IsExportable() bool
 	SetExportable(bool)
+	GetProperty() string
+	SetProperty(string)
+	GetComment() string
+	SetComment(string)
+	Clone(bool) Metric
 	// methods for resizing metric storage
 	Reset(int)
 	Remove(int)
@@ -26,6 +33,7 @@ type Metric interface {
 	SetValueInt(*Instance, int) error
 	SetValueInt32(*Instance, int32) error
 	SetValueInt64(*Instance, int64) error
+	SetValueUint8(*Instance, uint8) error
 	SetValueUint32(*Instance, uint32) error
 	SetValueUint64(*Instance, uint64) error
 	SetValueFloat32(*Instance, float32) error
@@ -35,95 +43,136 @@ type Metric interface {
 	// methods for reading from metric storage
 	GetValueInt32(*Instance) (int32, bool)
 	GetValueInt64(*Instance) (int64, bool)
+	GetValueUint8(*Instance) (uint8, bool)
 	GetValueUint32(*Instance) (uint32, bool)
 	GetValueUint64(*Instance) (uint64, bool)
 	GetValueFloat32(*Instance) (float32, bool)
 	GetValueFloat64(*Instance) (float64, bool)
 	GetValueString(*Instance) (string, bool)
 	GetValueBytes(*Instance) ([]byte, bool)
+	// methods for doing vector arithmetics
+	// currently only supported for float64!
+	GetRecords() []bool
+	GetValuesFloat64() []float64
+	Delta(Metric) error
+	Divide(Metric) error
+	DivideWithThreshold(Metric, int) error
+	MultiplyByScalar(int) error
 	// debugging
 	Print()
 }
-/*
-func NewMetric(name, dtype string) (Metric, error) {
-
-	var (
-		metric Metric
-		err error
-	)
-
-	abm := &AbstractMetric{Name: name, Type: dtype}
-
-	switch dtype {
-	case "int32":
-		metric = &MetricInt32{AbstractMetric: abm}
-	case "int64":
-		metric = &MetricInt64{AbstractMetric: abm}
-	case "uint32":
-		metric = &MetricUint32{AbstractMetric: abm}
-	case "uint64":
-		metric = &MetricUint64{AbstractMetric: abm}
-	case "float32":
-		metric = &MetricFloat32{AbstractMetric: abm}
-	case "float64":
-		metric = &MetricFloat64{AbstractMetric: abm}
-	default:
-		err = errors.New(INVALID_DTYPE, dtype)
-	}
-	return metric, err
-}
-*/
 
 type AbstractMetric struct {
-	Name string
-	Type string
-	Exportable bool
-	Labels *dict.Dict
+	name string
+	dtype string
+	property string
+	comment string
+	exportable bool
+	labels *dict.Dict
 	record []bool
 }
 
-func (m *AbstractMetric) GetName() string {
-	return m.Name
-}
-
-func (m *AbstractMetric) SetName(name string) {
-	m.Name = name
-}
-
-func (m *AbstractMetric) IsExportable() bool {
-	return m.Exportable
-}
-
-func (m *AbstractMetric) SetExportable(b bool) {
-	m.Exportable = b
-}
-
-func (m *AbstractMetric) GetType() string {
-	return m.Type
-}
-
-func (m *AbstractMetric) SetLabel(key, value string) {
-	if m.Labels == nil {
-		m.Labels = dict.New()
+func (my *AbstractMetric) Clone(deep bool) *AbstractMetric {
+	clone := AbstractMetric{
+		name: my.name,
+		dtype: my.dtype,
+		property: my.property,
+		comment: my.comment,
+		exportable: my.exportable,
 	}
-	m.Labels.Set(key, value)
+	if deep {
+		if my.labels != nil {
+			clone.labels = my.labels.Copy()
+		}
+		if len(my.record) != 0 {
+			clone.record = make([]bool, len(my.record))
+			for i,v := range my.record {
+				clone.record[i] = v
+			}
+		}
+	}
+	return &clone
 }
 
-func (m *AbstractMetric) GetLabel(key string) string {
-	if m.Labels != nil {
-		return m.Labels.Get(key)
+func (my *AbstractMetric) GetName() string {
+	return my.name
+}
+
+func (my *AbstractMetric) SetName(name string) {
+	my.name = name
+}
+
+func (my *AbstractMetric) IsExportable() bool {
+	return my.exportable
+}
+
+func (my *AbstractMetric) SetExportable(b bool) {
+	my.exportable = b
+}
+
+func (my *AbstractMetric) GetType() string {
+	return my.dtype
+}
+
+func (my *AbstractMetric) GetProperty() string {
+	return my.property
+}
+
+func (my *AbstractMetric) SetProperty(p string) {
+	my.property = p
+}
+
+func (my *AbstractMetric) GetComment() string {
+	return my.comment
+}
+
+func (my *AbstractMetric) SetComment(c string) {
+	my.comment = c
+}
+
+func (my *AbstractMetric) SetLabel(key, value string) {
+	if my.labels == nil {
+		my.labels = dict.New()
+	}
+	my.labels.Set(key, value)
+}
+
+func (my *AbstractMetric) SetLabels(labels *dict.Dict) {
+	my.labels = labels
+}
+
+func (my *AbstractMetric) GetLabel(key string) string {
+	if my.labels != nil {
+		return my.labels.Get(key)
 	}
 	return ""
 }
 
-func (m *AbstractMetric) GetLabels() map[string]string {
-	var labels map[string]string
-	if m.HasLabels() {
-		labels = m.Labels.Iter()
-	}
-	return labels
+func (my *AbstractMetric) GetLabels() *dict.Dict {
+	return my.labels
+
+}
+func (my *AbstractMetric) HasLabels() bool {
+	return my.labels != nil && my.labels.Size() != 0
 }
 
-func (m *AbstractMetric) HasLabels() bool {
-	return m.Labels != nil
+func (my *AbstractMetric) GetRecords() []bool {
+	return my.record
 }
+
+func (my *AbstractMetric) Delta(s Metric) error {
+	return errors.New(errors.ERR_IMPLEMENT, my.dtype)
+}
+
+func (my *AbstractMetric) Divide(s Metric) error {
+	return errors.New(errors.ERR_IMPLEMENT, my.dtype)
+}
+
+func (my *AbstractMetric) DivideWithThreshold(s Metric, t int) error {
+	return errors.New(errors.ERR_IMPLEMENT, my.dtype)
+}
+
+func (my *AbstractMetric) MultiplyByScalar(s int) error {
+	return errors.New(errors.ERR_IMPLEMENT, my.dtype)
+}
+

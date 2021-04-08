@@ -13,29 +13,40 @@ type Instance struct {
 }
 
 func NewInstance(index int) *Instance {
-	i := &Instance{index: index}
-	i.labels = dict.New()
-	i.exportable = true
+	me := &Instance{index: index}
+	me.labels = dict.New()
+	me.exportable = true
 
-	return i
+	return me
 }
 
-func (i *Instance) GetLabels() map[string]string {
-	return i.labels.Iter()
+func (me *Instance) GetLabel(key string) string {
+	return me.labels.Get(key)
 }
 
-func (i *Instance) GetLabel(key string) string {
-	return i.labels.Get(key)
+func (me *Instance) GetLabels() *dict.Dict {
+	return me.labels
 }
 
-func (i *Instance) SetLabel(key, value string) {
-	i.labels.Set(key, value)
+func (me *Instance) SetLabel(key, value string) {
+	me.labels.Set(key, value)
 }
 
-func (i *Instance) IsExportable() bool {
-	return i.exportable
+func (me *Instance) SetLabels(labels *dict.Dict) {
+	me.labels = labels
 }
 
-func (i *Instance) SetExportable(b bool) {
-	i.exportable = b
+func (me *Instance) IsExportable() bool {
+	return me.exportable
+}
+
+func (me *Instance) SetExportable(b bool) {
+	me.exportable = b
+}
+
+func (me *Instance) Clone() *Instance {
+	clone := NewInstance(me.index)
+	clone.labels = me.labels.Copy()
+	clone.exportable = me.exportable
+	return clone
 }

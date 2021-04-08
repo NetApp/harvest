@@ -8,4 +8,5 @@ const (
 	DUPLICATE_METRIC_KEY = "duplicate metric key"
 	DUPLICATE_INSTANCE_KEY = "duplicate instance key"
 	OVERFLOW_ERROR = "overflow error"
+	UNEQUAL_VECTORS = "unequal vectors"
 )
