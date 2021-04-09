@@ -1,6 +1,6 @@
 # Copyright 2021 NetApp, Inc.  All Rights Reserved
 
-VERSION := "2.0"
+HARVEST_VERSION := "2.0"
 
 all: header harvest collectors exporters poller
 
@@ -12,8 +12,36 @@ header:
 	@echo
 
 
+###############################################################################
 # Anything that needs to be done before we build everything
+#  Check for GCC, GO version, etc and anything else we are depedent on.
+###############################################################################
+GCC_EXISTS := $(shell which gcc)
+REQUIRED_GO_VERSION := 1.15
+FOUND_GO_VERSION := $(shell go version | cut -d" " -f3 | cut -d"o" -f 2)
+CORRECT_GO_VERSION := $(shell expr `go version | cut -d" " -f3 | cut -d"o" -f 2` \>= ${REQUIRED_GO_VERSION})
 precheck:
+	@# Check for GCC
+ifeq (${GCC_EXISTS}, "")
+	@echo
+	@echo "Harvest requires that you have gcc installed."
+	@echo
+	@exit
+endif
+	@# Make sure that go exists
+ifeq (${FOUND_GO_VERSION}, "")
+	@echo
+	@echo "Harvest requires that the go lang is installed and is at least version: ${REQUIRED_GO_VERSION}"
+	@echo
+	@exit
+endif
+	@# Check to make sure that GO is the correct version
+ifeq ("${CORRECT_GO_VERSION}", "0")
+	@echo
+	@echo "Required go lang version is ${REQUIRED_GO_VERSION}, but found ${FOUND_GO_VERSION}"
+	@echo
+	@exit
+endif
 
 ###############################################################################
 # Clean the code base for rebuilding.
@@ -112,7 +140,7 @@ HARVEST_GROUP := harvestu
 GROUP_EXISTS := $(shell grep -c "^${HARVEST_GROUP}" /etc/group)
 USER_EXISTS := $(shell grep -c "^${HARVEST_USER}" /etc/passwd)
 install:
-	@echo "Installing Harvest: ${VERSION}"
+	@echo "Installing Harvest: ${HARVEST_VERSION}"
 
 ifeq (${ROOT}, "")
 	@echo "  Creating harvest user and group [${HARVEST_USER}:${HARVEST_GROUP}]"
