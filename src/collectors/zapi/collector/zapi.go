@@ -1,6 +1,8 @@
-package zapi_collector
+package zapi
 
 import (
+	//"fmt"
+
 	"path"
 	"strconv"
 	"strings"
@@ -28,9 +30,12 @@ type Zapi struct {
 	Query             string
 	TemplateFn        string
 	TemplateType      string
-	instanceKeyPrefix []string
-	instanceKeys      [][]string
 	batch_size        string
+	//data_attrs	      *node.Node
+	// @TODO: lowercase, since we don't want to export
+	INSTANCE_KEY_PATHS [][]string
+	INSTANCE_LABEL_PATHS map[string]string
+	SHORTEST_PATH_PREFIX []string
 }
 
 func New(a *collector.AbstractCollector) collector.Collector {
@@ -41,155 +46,153 @@ func NewZapi(a *collector.AbstractCollector) *Zapi {
 	return &Zapi{AbstractCollector: a}
 }
 
-func (c *Zapi) Init() error {
+func (me *Zapi) Init() error {
 
 	// @TODO check if cert/key files exist
-	if c.Params.GetChildContentS("auth_style") == "certificate_auth" {
-		if c.Params.GetChildS("ssl_cert") == nil {
-			cert_path := path.Join(c.Options.ConfPath, "cert", c.Options.Poller+".pem")
-			c.Params.NewChildS("ssl_cert", cert_path)
-			logger.Debug(c.Prefix, "added ssl_cert path [%s]", cert_path)
+	if me.Params.GetChildContentS("auth_style") == "certificate_auth" {
+		if me.Params.GetChildS("ssl_cert") == nil {
+			cert_path := path.Join(me.Options.ConfPath, "cert", me.Options.Poller+".pem")
+			me.Params.NewChildS("ssl_cert", cert_path)
+			logger.Debug(me.Prefix, "added ssl_cert path [%s]", cert_path)
 		}
 
-		if c.Params.GetChildS("ssl_key") == nil {
-			key_path := path.Join(c.Options.ConfPath, "cert", c.Options.Poller+".key")
-			c.Params.NewChildS("ssl_key", key_path)
-			logger.Debug(c.Prefix, "added ssl_key path [%s]", key_path)
+		if me.Params.GetChildS("ssl_key") == nil {
+			key_path := path.Join(me.Options.ConfPath, "cert", me.Options.Poller+".key")
+			me.Params.NewChildS("ssl_key", key_path)
+			logger.Debug(me.Prefix, "added ssl_key path [%s]", key_path)
 		}
 	}
 
 	var err error
-	if c.Connection, err = client.New(c.Params); err != nil {
+	if me.Connection, err = client.New(me.Params); err != nil {
 		return err
 	}
 
 	// @TODO handle connectivity-related errors (retry a few times)
-	if c.System, err = c.Connection.GetSystem(); err != nil {
+	if me.System, err = me.Connection.GetSystem(); err != nil {
 		//logger.Error(c.Prefix, "system info: %v", err)
 		return err
 	}
-	logger.Debug(c.Prefix, "Connected to: %s", c.System.String())
+	logger.Debug(me.Prefix, "Connected to: %s", me.System.String())
 
-	c.TemplateFn = c.Params.GetChildS("objects").GetChildContentS(c.Object) // @TODO err handling
+	me.TemplateFn = me.Params.GetChildS("objects").GetChildContentS(me.Object) // @TODO err handling
 
 	model := "cdot"
-	if !c.System.Clustered {
+	if ! me.System.Clustered {
 		model = "7mode"
 	}
 
-	template, err := c.ImportSubTemplate(model, "default", c.TemplateFn, c.System.Version)
+	template, err := me.ImportSubTemplate(model, "default", me.TemplateFn, me.System.Version)
 	if err != nil {
-		logger.Error(c.Prefix, "Error importing subtemplate: %s", err)
+		logger.Error(me.Prefix, "Error importing subtemplate: %s", err)
 		return err
 	}
-	c.Params.Union(template)
-
-	if c.System.Clustered {
-		if b := c.Params.GetChildContentS("batch_size"); b != "" {
-			if _, err := strconv.Atoi(b); err == nil {
-				logger.Trace(c.Prefix, "using batch-size [%s]", c.batch_size)
-				c.batch_size = b
-			}
-		}
-		if c.batch_size == "" {
-			logger.Trace(c.Prefix, "using default batch-size [%s]", BATCH_SIZE)
-			c.batch_size = BATCH_SIZE
-		}
-	}
+	me.Params.Union(template)
 
 	// object name from subtemplate
-	if c.object = c.Params.GetChildContentS("object"); c.object == "" {
+	if me.object = me.Params.GetChildContentS("object"); me.object == "" {
 		return errors.New(errors.MISSING_PARAM, "object")
 	}
 
 	// api query literal
-	if c.Query = c.Params.GetChildContentS("query"); c.Query == "" {
+	if me.Query = me.Params.GetChildContentS("query"); me.Query == "" {
 		return errors.New(errors.MISSING_PARAM, "query")
 	}
 
 	// Invoke generic initializer
 	// this will load Schedule, initialize Data and Metadata
-	if err := collector.Init(c); err != nil {
+	if err := collector.Init(me); err != nil {
 		return err
 	}
 
 	// overwrite from abstract collector
-	c.Data.Collector = c.Data.Collector + ":" + c.Data.Object
-	c.Data.Object = c.object
+	me.Matrix.Collector = me.Matrix.Collector + ":" + me.Matrix.Object
+	me.Matrix.Object = me.object
 
 	// Add system (cluster) name
-	c.Data.SetGlobalLabel("cluster", c.System.Name)
-	if !c.System.Clustered {
-		c.Data.SetGlobalLabel("node", c.System.Name)
+	me.Matrix.SetGlobalLabel("cluster", me.System.Name)
+	if ! me.System.Clustered {
+		me.Matrix.SetGlobalLabel("node", me.System.Name)
 	}
 
 	// Initialize counter cache
-	counters := c.Params.GetChildS("counters")
+	counters := me.Params.GetChildS("counters")
 	if counters == nil {
 		return errors.New(errors.MISSING_PARAM, "counters")
 	}
 
-	if err = c.InitCache(); err != nil {
+	if err = me.InitCache(); err != nil {
 		return err
 	}
 
-	logger.Debug(c.Prefix, "Successfully initialized")
+	logger.Debug(me.Prefix, "initialized")
 	return nil
 }
 
-func (c *Zapi) InitCache() error {
+func (me *Zapi) InitCache() error {
 
+	if me.System.Clustered {
+		if b := me.Params.GetChildContentS("batch_size"); b != "" {
+			if _, err := strconv.Atoi(b); err == nil {
+				logger.Trace(me.Prefix, "using batch-size [%s]", me.batch_size)
+				me.batch_size = b
+			}
+		}
+		if me.batch_size == "" {
+			logger.Trace(me.Prefix, "using default batch-size [%s]", BATCH_SIZE)
+			me.batch_size = BATCH_SIZE
+		}
+	}
+
+	me.INSTANCE_LABEL_PATHS = make(map[string]string)
 	//@TODO cleanup
-	counters := c.Params.GetChildS("counters")
+	counters := me.Params.GetChildS("counters")
 
-	logger.Debug(c.Prefix, "Parsing counters: %d values", len(counters.GetChildren()))
-	if !LoadCounters(c.Data, counters) {
+	logger.Debug(me.Prefix, "Parsing counters: %d values", len(counters.GetChildren()))
+	if ! me.LoadCounters(counters) {
 		return errors.New(errors.ERR_NO_METRIC, "failed to parse any")
 	}
 
-	logger.Debug(c.Prefix, "Loaded %d Metrics and %d Labels", c.Data.SizeMetrics(), c.Data.SizeLabels())
+	logger.Debug(me.Prefix, "initialized cache with %d metrics and %d labels", me.Matrix.SizeMetrics(), len(me.INSTANCE_LABEL_PATHS))
 
-	if len(c.Data.InstanceKeys) == 0 {
+	if len(me.INSTANCE_KEY_PATHS) == 0 {
 		return errors.New(errors.INVALID_PARAM, "no instance keys indicated")
 	}
 
 	// @TODO validate
-	c.instanceKeyPrefix = ParseShortestPath(c.Data)
-	logger.Debug(c.Prefix, "Parsed Instance Keys: %v", c.Data.InstanceKeys)
-	logger.Debug(c.Prefix, "Parsed Instance Key Prefix: %v", c.instanceKeyPrefix)
+	me.SHORTEST_PATH_PREFIX = ParseShortestPath(me.Matrix, me.INSTANCE_LABEL_PATHS)
+	logger.Debug(me.Prefix, "Parsed Instance Keys: %v", me.INSTANCE_KEY_PATHS)
+	logger.Debug(me.Prefix, "Parsed Instance Key Prefix: %v", me.SHORTEST_PATH_PREFIX)
 	return nil
 
 }
 
-func (c *Zapi) PollInstance() (*matrix.Matrix, error) {
+func (me *Zapi) PollInstance() (*matrix.Matrix, error) {
 	var err error
 	var request, response *node.Node
 	var instances []*node.Node
-	var old_count int
+	var old_count, count uint64
 	var keys []string
-	var keypaths [][]string
 	var tag string
 	var found bool
 
-	logger.Debug(c.Prefix, "starting instance poll")
+	logger.Debug(me.Prefix, "starting instance poll")
 
-	old_count = len(c.Data.Instances)
-	c.Data.ResetInstances()
+	old_count = uint64(me.Matrix.SizeInstances())
+	me.Matrix.PurgeInstances()
 
-	count := 0
+	count = 0
 
-	keypaths = c.Data.GetInstanceKeys()
-
-	request = node.NewXmlS(c.Query)
-	if c.System.Clustered && c.batch_size != "" {
-		request.NewChildS("max-records", c.batch_size)
+	request = node.NewXmlS(me.Query)
+	if me.System.Clustered && me.batch_size != "" {
+		request.NewChildS("max-records", me.batch_size)
 	}
 
 	tag = "initial"
 
 	for {
 
-		response, tag, err = c.Connection.InvokeBatchRequest(request, tag)
+		response, tag, err = me.Connection.InvokeBatchRequest(request, tag)
 
 		if err != nil {
 			return nil, err
@@ -199,84 +202,93 @@ func (c *Zapi) PollInstance() (*matrix.Matrix, error) {
 			break
 		}
 
-		instances = response.SearchChildren(c.instanceKeyPrefix)
+		instances = response.SearchChildren(me.SHORTEST_PATH_PREFIX)
 		if len(instances) == 0 {
 			return nil, errors.New(errors.ERR_NO_INSTANCE, "no instances in server response")
 		}
 
-		logger.Debug(c.Prefix, "fetching %d instances", len(instances))
+		logger.Debug(me.Prefix, "fetching %d instances", len(instances))
 
 		for _, instance := range instances {
 			//c.logger.Printf(c.Prefix, "Handling instance element <%v> [%s]", &instance, instance.GetName())
-			keys, found = instance.SearchContent(c.instanceKeyPrefix, keypaths)
+			keys, found = instance.SearchContent(me.SHORTEST_PATH_PREFIX, me.INSTANCE_KEY_PATHS)
 
-			logger.Debug(c.Prefix, "keys=%v keypaths=%v found=%v", keys, keypaths, found)
-			logger.Debug(c.Prefix, "fetched instance keys (%v): %s", keypaths, strings.Join(keys, "."))
+			logger.Debug(me.Prefix, "keys=%v keypaths=%v found=%v", keys, me.INSTANCE_KEY_PATHS, found)
+			logger.Debug(me.Prefix, "fetched instance keys (%v): %v", me.INSTANCE_KEY_PATHS, keys)
 
-			if !found {
-				logger.Debug(c.Prefix, "skipping element, no instance keys found")
+			if ! found {
+				logger.Debug(me.Prefix, "skipping element, no instance keys found")
 			} else {
-				if _, err = c.Data.AddInstance(strings.Join(keys, ".")); err != nil {
-					logger.Error(c.Prefix, err.Error())
+				if _, err = me.Matrix.AddInstance(strings.Join(keys, ".")); err != nil {
+					logger.Error(me.Prefix, err.Error())
 				} else {
-					logger.Debug(c.Prefix, "Added new Instance to cache [%s]", strings.Join(keys, "."))
+					logger.Debug(me.Prefix, "added instance [%s]", strings.Join(keys, "."))
 					count += 1
 				}
 			}
 		}
 	}
 
-	c.Metadata.SetValueSS("count", "instance", float64(count))
-	logger.Debug(c.Prefix, "added %d instances to cache (old cache had %d)", count, old_count)
+	me.Metadata.LazySetValueUint64("count", "instance", count)
+	logger.Debug(me.Prefix, "added %d instances to cache (old cache had %d)", count, old_count)
 
-	if len(c.Data.Instances) == 0 {
+	if me.Matrix.SizeInstances() == 0 {
 		return nil, errors.New(errors.ERR_NO_INSTANCE, "no instances fetched")
 	}
 
 	return nil, nil
 }
 
-func (c *Zapi) PollData() (*matrix.Matrix, error) {
+func (me *Zapi) PollData() (*matrix.Matrix, error) {
 	var err error
 	var request, response *node.Node
 	var fetch func(*matrix.Instance, *node.Node, []string)
-	var count, skipped int
-	var rd, pd time.Duration // Request/API time, Parse time
+	var count, skipped uint64
+	var ad, rd, pd, bd2, fd, sd, sd2, bd, id time.Duration // Request/API time, Parse time, Fetch time
 	var tag string
+	var cl, content_length int64
+
+	task_start := time.Now()
 
 	count = 0
 	skipped = 0
 
 	api_d := time.Duration(0 * time.Second)
+	read_d := time.Duration(0 * time.Second)
 	parse_d := time.Duration(0 * time.Second)
+	build_d := time.Duration(0 * time.Second)
+
+	fd = time.Duration(0 * time.Second)
+	sd = time.Duration(0 * time.Second)
+	sd2 = time.Duration(0 * time.Second)
+	bd = time.Duration(0 * time.Second)
+	id = time.Duration(0 * time.Second)
 
 	fetch = func(instance *matrix.Instance, node *node.Node, path []string) {
 		newpath := append(path, node.GetNameS())
 		key := strings.Join(newpath, ".")
-		metric := c.Data.GetMetric(key)
-		content := node.GetContentS()
+		metric := me.Matrix.GetMetric(key)
+		value := node.GetContentS()
 
-		if content != "" {
+		if value != "" {
 			if metric != nil {
-				if float, err := strconv.ParseFloat(string(content), 32); err != nil {
-					logger.Warn(c.Prefix, "%sSkipping metric [%s]: failed to parse [%s] float%s", util.Red, key, content, util.End)
+				if err := metric.SetValueString(instance, value); err != nil {
+					//logger.Warn(me.Prefix, "%sskipped metric (%s) set value (%s): %v%s", util.Red, key, value, err, util.End)
 					skipped += 1
 				} else {
-					c.Data.SetValue(metric, instance, float64(float))
-					logger.Trace(c.Prefix, "%sMetric [%s] - Set Value [%f]%s", util.Green, key, float, util.End)
+					//logger.Trace(me.Prefix, "%smetric (%s) set value (%s)%s", util.Green, key, value, util.End)
 					count += 1
 				}
-			} else if label, found := c.Data.GetLabel(key); found {
-				//c.Data.SetInstanceLabel(instance, label, string(content))
-				instance.Labels.Set(label, string(content))
-				logger.Trace(c.Prefix, "%sMetric [%s] (%s) Set Value [%s] as Instance Label%s", util.Yellow, label, key, content, util.End)
+			} else if label, has := me.INSTANCE_LABEL_PATHS[key]; has {
+				instance.SetLabel(label, value)
+				//logger.Trace(me.Prefix, "%slabel (%s) [%s] set value (%s)%s", util.Yellow, key, label, value, util.End)
 				count += 1
 			} else {
-				logger.Trace(c.Prefix, "%sSkipped [%s]: not found in metric or label cache%s", util.Blue, key, util.End)
+				logger.Trace(me.Prefix, "%sskipped (%s) with value (%s): not in metric or label cache%s", util.Blue, key, value, util.End)
 				skipped += 1
 			}
 		} else {
-			logger.Trace(c.Prefix, "Skipping metric [%s] with no value", key)
+			//logger.Trace(me.Prefix, "%sskippped (%s) with no value%s", util.Cyan, key, util.End)
 			skipped += 1
 		}
 
@@ -285,22 +297,34 @@ func (c *Zapi) PollData() (*matrix.Matrix, error) {
 		}
 	}
 
-	logger.Debug(c.Prefix, "starting data poll")
+	logger.Debug(me.Prefix, "starting data poll")
 
-	if err = c.Data.InitData(); err != nil {
+	if err = me.Matrix.Reset(); err != nil {
 		return nil, err
 	}
 
-	request = node.NewXmlS(c.Query)
-	if c.System.Clustered && c.batch_size != "" {
-		request.NewChildS("max-records", c.batch_size)
+	request = node.NewXmlS(me.Query)
+	if me.System.Clustered {
+		request.AddChild(me.Params.GetChildS("desired-attributes"))
+		if me.batch_size != "" {
+			request.NewChildS("max-records", me.batch_size)
+		}
 	}
+
+	//fmt.Println(">>> my request tree <<<")
+	//request.Print(0)
 
 	tag = "initial"
 
+	batch_start := time.Now()
+
 	for {
 
-		response, tag, rd, pd, err = c.Connection.InvokeBatchWithTimers(request, tag)
+		invoke_start := time.Now()
+		response, tag, cl, bd2, ad, rd, pd, err = me.Connection.InvokeBatchWithMoreTimers(request, tag)
+		id += time.Since(invoke_start)
+
+		content_length += cl
 
 		if err != nil {
 			return nil, err
@@ -310,41 +334,64 @@ func (c *Zapi) PollData() (*matrix.Matrix, error) {
 			break
 		}
 
-		api_d += rd
+		//fmt.Println(">>> got response tree <<<")
+		//response.Print(0)
+
+		build_d += bd2
+		api_d += ad
+		read_d += rd
 		parse_d += pd
 
-		instances := response.SearchChildren(c.instanceKeyPrefix)
+		search_start := time.Now()
+		instances := response.SearchChildren(me.SHORTEST_PATH_PREFIX)
+		sd += time.Since(search_start)
+
 		if len(instances) == 0 {
 			return nil, errors.New(errors.ERR_NO_INSTANCE, "")
 		}
 
-		logger.Debug(c.Prefix, "Fetched %d instance elements", len(instances))
+		//logger.Debug(me.Prefix, "Fetched %d instance elements", len(instances))
 
 		for _, instanceElem := range instances {
 			//c.logger.Printf(c.Prefix, "Handling instance element <%v> [%s]", &instance, instance.GetName())
-			keys, found := instanceElem.SearchContent(c.instanceKeyPrefix, c.Data.GetInstanceKeys())
-			logger.Debug(c.Prefix, "Fetched instance keys: %s", strings.Join(keys, "."))
+			search2 := time.Now()
+			keys, found := instanceElem.SearchContent(me.SHORTEST_PATH_PREFIX, me.INSTANCE_KEY_PATHS)
+			sd2 += time.Since(search2)
+			//logger.Debug(me.Prefix, "Fetched instance keys: %s", strings.Join(keys, "."))
 
-			if !found {
-				logger.Debug(c.Prefix, "Skipping instance: no keys fetched")
+			if ! found {
+				//logger.Debug(me.Prefix, "Skipping instance: no keys fetched")
 				continue
 			}
 
-			instance := c.Data.GetInstance(strings.Join(keys, "."))
+			instance := me.Matrix.GetInstance(strings.Join(keys, "."))
 
 			if instance == nil {
-				logger.Debug(c.Prefix, "Skipping instance [%s]: not found in cache", strings.Join(keys, "."))
+				//logger.Debug(me.Prefix, "Skipping instance [%s]: not found in cache", strings.Join(keys, "."))
 				continue
 			}
+			fetch_start := time.Now()
 			fetch(instance, instanceElem, make([]string, 0))
+			fd += time.Since(fetch_start)
 		}
 	}
 
-	// update metadata
-	c.Metadata.SetValueSS("api_time", "data", float64(api_d.Microseconds()))
-	c.Metadata.SetValueSS("parse_time", "data", float64(parse_d.Microseconds()))
-	c.Metadata.SetValueSS("count", "data", float64(count))
-	c.AddCount(count)
+	bd = time.Since(batch_start)
 
-	return c.Data, nil
+	// update metadata
+	me.Metadata.LazySetValueInt64("api_time", "data", api_d.Microseconds())
+	me.Metadata.LazySetValueInt64("read_time", "data", read_d.Microseconds())
+	me.Metadata.LazySetValueInt64("build_time", "data", build_d.Microseconds())
+	me.Metadata.LazySetValueInt64("parse_time", "data", parse_d.Microseconds())
+	me.Metadata.LazySetValueInt64("fetch_time", "data", fd.Microseconds())
+	me.Metadata.LazySetValueInt64("search_time", "data", sd.Microseconds())
+	me.Metadata.LazySetValueInt64("search2_time", "data", sd2.Microseconds())
+	me.Metadata.LazySetValueInt64("batch_time", "data", bd.Microseconds())
+	me.Metadata.LazySetValueInt64("invoke_time", "data", id.Microseconds())
+	me.Metadata.LazySetValueInt64("content_length", "data", content_length)
+	me.Metadata.LazySetValueUint64("count", "data", count)
+	me.AddCount(int(count))
+
+	me.Metadata.LazySetValueInt64("task2_time", "data", time.Since(task_start).Microseconds())
+	return me.Matrix, nil
 }

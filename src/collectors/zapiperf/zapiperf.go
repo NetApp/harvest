@@ -9,12 +9,13 @@ import (
 	"goharvest2/share/set"
 	"goharvest2/share/tree/node"
 	"goharvest2/share/util"
-	"path"
+	//"path"
 	"strconv"
 	"strings"
 	"time"
 
-	client "goharvest2/apis/zapi"
+	//client "goharvest2/apis/zapi"
+	zapi "goharvest2/collectors/zapi/collector"
 )
 
 // default parameter values
@@ -27,14 +28,14 @@ const (
 const BILLION		= 1000000000
 
 type ZapiPerf struct {
-	*collector.AbstractCollector
-	//*zapi_collector.Zapi  // provides: Connection, System, Object, Query, TemplateFn, TemplateType
-	Connection      *client.Client
-	System          *client.System
+	//*collector.AbstractCollector
+	*zapi.Zapi  // provides: Connection, System, Object, Query, TemplateFn, TemplateType
+	//Connection      *client.Client
+	//System          *client.System
 	object          string
-	Query           string
-	TemplateFn      string
-	TemplateType    string
+	//Query           string
+	//TemplateFn      string
+	//TemplateType    string
 	batch_size      int
 	latency_io_reqd int
 	instance_key    string
@@ -45,7 +46,8 @@ type ZapiPerf struct {
 }
 
 func New(a *collector.AbstractCollector) collector.Collector {
-	return &ZapiPerf{AbstractCollector: a}
+	//return &ZapiPerf{AbstractCollector: a}
+	return &ZapiPerf{Zapi: zapi.NewZapi(a)}
 }
 
 /*
@@ -56,7 +58,7 @@ func New(a *collector.AbstractCollector) collector.Collector {
 
 /* Copied from Zapi
 Don't change => merge!
-*/
+
 
 func (me *ZapiPerf) Init() error {
 
@@ -117,13 +119,13 @@ func (me *ZapiPerf) Init() error {
 	}
 
 	// overwrite from abstract collector
-	me.Data.Collector = me.Data.Collector + ":" + me.Data.Object
-	me.Data.Object = me.object
+	me.Matrix.Collector = me.Matrix.Collector + ":" + me.Matrix.Object
+	me.Matrix.Object = me.object
 
 	// Add system (cluster) name
-	me.Data.SetGlobalLabel("cluster", me.System.Name)
-	if !me.System.Clustered {
-		me.Data.SetGlobalLabel("node", me.System.Name)
+	me.Matrix.SetGlobalLabel("cluster", me.System.Name)
+	if ! me.System.Clustered {
+		me.Matrix.SetGlobalLabel("node", me.System.Name)
 	}
 
 	// Initialize counter cache
@@ -136,10 +138,10 @@ func (me *ZapiPerf) Init() error {
 		return err
 	}
 
-	logger.Debug(me.Prefix, "Successfully initialized")
+	logger.Debug(me.Prefix, "initialized")
 	return nil
 }
-
+*/
 func (me *ZapiPerf) InitCache() error {
 	me.array_labels = make(map[string][]string)
 	me.instance_labels = make(map[string]string)
@@ -185,7 +187,7 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 	logger.Debug(me.Prefix, "updating data cache")
 	
 	// clone matrix without numeric data
-	NewData := me.Data.Clone(false, true, true) 
+	NewData := me.Matrix.Clone(false, true, true) 
 	if err = NewData.Reset(); err != nil {
 		return nil, err
 	}
@@ -408,9 +410,9 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 	logger.Debug(me.Prefix, "collected %d data points in %d batch polls", count, batch_count)
 
 	// skip calculating from delta if no data from previous poll
-	if me.Data.IsEmpty() {
+	if me.Matrix.IsEmpty() {
 		logger.Debug(me.Prefix, "skip postprocessing until next poll (previous cache empty)")
-		me.Data = NewData
+		me.Matrix = NewData
 		return nil, nil
 	}
 
@@ -446,7 +448,7 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 	//logger.Debug(me.Prefix, "cooking [%s] (%s)", timestamp.Name, timestamp.Properties)
 	//print_vector("current", NewData.Data[timestamp.Index])
 	//print_vector("previous", me.Data.Data[timestamp.Index])
-	if err = timestamp.Delta(me.Data.GetMetric("timestamp")); err != nil {
+	if err = timestamp.Delta(me.Matrix.GetMetric("timestamp")); err != nil {
 		logger.Error(me.Prefix, "(timestamp) calculate delta: %v", err)
 		// @TODO terminate since other counters will be incorrect
 	}
@@ -467,7 +469,7 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 		}
 
 		// for all the other properties we start with delta
-		if err = metric.Delta(me.Data.GetMetric(key)); err != nil {
+		if err = metric.Delta(me.Matrix.GetMetric(key)); err != nil {
 			logger.Error(me.Prefix, "(%s) calculate delta: %v", key, err)
 			continue
 		}
@@ -513,7 +515,7 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 
 	me.Metadata.LazySetValueInt64("calc_time", "data", time.Since(calc_start).Microseconds())
 	// store cache for next poll
-	me.Data = CachedData
+	me.Matrix = CachedData
 	//me.Data.IsEmpty = false // @redundant
 
 	return NewData, nil
@@ -537,7 +539,7 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 	missing = set.New()     // required base counters, missing in template
 	replaced = set.New()    // deprecated and replaced counters
 
-	for key := range me.Data.GetMetrics() {
+	for key := range me.Matrix.GetMetrics() {
 		old_metrics.Add(key)
 	}
 	old_metrics_size = old_metrics.Size()
@@ -668,7 +670,7 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 	// The reason we don't keep a single timestamp for the whole data
 	// is because we might get instances in different batches
 	if !old_metrics.Has("timestamp") {
-		m, err := me.Data.AddMetricFloat64("timestamp")
+		m, err := me.Matrix.AddMetricFloat64("timestamp")
 		if err != nil {
 			logger.Error(me.Prefix, "add timestamp metric: %v", err)
 		}
@@ -683,7 +685,7 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 		if me.status_label == "" || me.status_ok_value == "" {
 			return nil, errors.New(errors.MISSING_PARAM, "label or ok_value missing")
 		}
-		m, err := me.Data.AddMetricUint8("status")
+		m, err := me.Matrix.AddMetricUint8("status")
 		if err != nil {
 			logger.Error(me.Prefix, "add status metric: %v", err)
 			return nil, err
@@ -696,7 +698,7 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 		// temporary fix: prevent removing array counters
 		// @TODO
 		if key != "timestamp" && ! strings.Contains(key, ".") {
-			me.Data.RemoveMetric(key)
+			me.Matrix.RemoveMetric(key)
 			logger.Debug(me.Prefix, "removed metric [%s]", key)
 		}
 	}
@@ -707,13 +709,13 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 		logger.Debug(me.Prefix, "removed label [%s]", key)
 	}
 
-	metrics_added := me.Data.SizeMetrics() - (old_metrics_size - old_metrics.Size())
+	metrics_added := me.Matrix.SizeMetrics() - (old_metrics_size - old_metrics.Size())
 	labels_added := len(me.instance_labels) - (old_labels_size - old_labels.Size())
 
-	logger.Debug(me.Prefix, "added %d new, removed %d metrics (total: %d)", metrics_added, old_metrics.Size(), me.Data.SizeMetrics())
+	logger.Debug(me.Prefix, "added %d new, removed %d metrics (total: %d)", metrics_added, old_metrics.Size(), me.Matrix.SizeMetrics())
 	logger.Debug(me.Prefix, "added %d new, removed %d labels (total: %d)", labels_added, old_labels.Size(), len(me.instance_labels) )
 
-	if me.Data.SizeMetrics() == 0 {
+	if me.Matrix.SizeMetrics() == 0 {
 		return nil, errors.New(errors.ERR_NO_METRIC, "")
 	}
 
@@ -789,9 +791,9 @@ func (me *ZapiPerf) add_counter(counter *node.Node, name, display string, enable
 				base_key += "." + base_labels[0]
 			}
 
-			if m = me.Data.GetMetric(key); m != nil {
+			if m = me.Matrix.GetMetric(key); m != nil {
 				logger.Debug(me.Prefix, "updating array metric [%s] attributes", key)
-			} else if m, err = me.Data.AddMetricFloat64(key); err == nil {
+			} else if m, err = me.Matrix.AddMetricFloat64(key); err == nil {
 				logger.Debug(me.Prefix, "%s+[%s] added array metric (%s), element with label (%s)%s", util.Pink, name, display, label, util.End)
 			} else {
 				logger.Error(me.Prefix, "add array metric element [%s]: %v", key, err)
@@ -816,9 +818,9 @@ func (me *ZapiPerf) add_counter(counter *node.Node, name, display string, enable
 		// counter type is scalar
 	} else {
 		var m matrix.Metric
-		if m = me.Data.GetMetric(name); m != nil {
+		if m = me.Matrix.GetMetric(name); m != nil {
 			logger.Debug(me.Prefix, "updating scalar metric [%s] attributes", name)
-		} else if m, err = me.Data.AddMetricFloat64(name); err == nil {
+		} else if m, err = me.Matrix.AddMetricFloat64(name); err == nil {
 			logger.Debug(me.Prefix, "%s+[%s] added scalar metric (%s)%s", util.Cyan, name, display, util.End)
 		} else {
 			logger.Error(me.Prefix, "add scalar metric [%s]: %v", name, err)
@@ -875,7 +877,7 @@ func (me *ZapiPerf) PollInstance() (*matrix.Matrix, error) {
 	)
 
 	old_instances = set.New()
-	for key := range me.Data.GetInstances() {
+	for key := range me.Matrix.GetInstances() {
 		old_instances.Add(key)
 	}
 	old_size = old_instances.Size()
@@ -926,7 +928,7 @@ func (me *ZapiPerf) PollInstance() (*matrix.Matrix, error) {
 			} else if old_instances.Delete(key) {
 				// instance already in cache
 				continue
-			} else if _, err = me.Data.AddInstance(key); err != nil {
+			} else if _, err = me.Matrix.AddInstance(key); err != nil {
 				logger.Warn(me.Prefix, "add instance: %v", err)
 			} else {
 				logger.Debug(me.Prefix, "added new instance [%s]", key)
@@ -935,12 +937,12 @@ func (me *ZapiPerf) PollInstance() (*matrix.Matrix, error) {
 	}
 
 	for key := range old_instances.Iter() {
-		me.Data.RemoveInstance(key)
+		me.Matrix.RemoveInstance(key)
 		logger.Debug(me.Prefix, "removed instance [%s]", key)
 	}
 
 	removed = old_instances.Size()
-	new_size = me.Data.SizeInstances()
+	new_size = me.Matrix.SizeInstances()
 	added = new_size - (old_size - removed)
 
 	logger.Debug(me.Prefix, "added %d new, removed %d (total instances %d)", added, removed, new_size)

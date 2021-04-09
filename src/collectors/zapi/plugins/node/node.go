@@ -14,21 +14,21 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Node{AbstractPlugin: p}
 }
 
-func (p *Node) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *Node) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	for _, instance := range data.GetInstances() {
 
 		warnings := make([]string, 0)
 
-		if w := instance.Labels.Get("failed_fan_message"); w != "" && w != "There are no failed fans." {
+		if w := instance.GetLabel("failed_fan_message"); w != "" && ! strings.HasPrefix(w, "There are no failed ") {
 			warnings = append(warnings, w)
 		}
 
-		if w := instance.Labels.Get("failed_power_message"); w != "" && w != "There are no failed power supplies." {
+		if w := instance.GetLabel("failed_power_message"); w != "" && ! strings.HasPrefix(w, "There are no failed ") {
 			warnings = append(warnings, w)
 		}
 
-		instance.Labels.Set("warnings", strings.Join(warnings, " "))
+		instance.SetLabel("warnings", strings.Join(warnings, " "))
 	}
 
 	return nil, nil

@@ -25,57 +25,57 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &SnapMirror{AbstractPlugin: p}
 }
 
-func (p *SnapMirror) Init() error {
+func (my *SnapMirror) Init() error {
 
 	var err error
 
-	if err = p.InitAbc(); err != nil {
+	if err = my.InitAbc(); err != nil {
 		return err
 	}
 
-	if p.connection, err = client.New(p.ParentParams); err != nil {
-		logger.Error(p.Prefix, "connecting: %v", err)
+	if my.connection, err = client.New(my.ParentParams); err != nil {
+		logger.Error(my.Prefix, "connecting: %v", err)
 		return err
 	}
 
-	if _, err = p.connection.GetSystem(); err != nil {
+	if _, err = my.connection.GetSystem(); err != nil {
 		return err
 	}
 
-	p.node_upd_counter = 0
-	p.limit_upd_counter = 0
+	my.node_upd_counter = 0
+	my.limit_upd_counter = 0
 
-	p.node_cache = dict.New()
-	p.dest_limit_cache = dict.New()
-	p.src_limit_cache = dict.New()
+	my.node_cache = dict.New()
+	my.dest_limit_cache = dict.New()
+	my.src_limit_cache = dict.New()
 
-	logger.Debug(p.Prefix, "plugin initialized")
+	logger.Debug(my.Prefix, "plugin initialized")
 	return nil
 }
 
-func (p *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	// update caches every so while
-	if p.node_upd_counter == 0 && p.connection.IsClustered() {
-		if err := p.update_node_cache(); err != nil {
+	if my.node_upd_counter == 0 && my.connection.IsClustered() {
+		if err := my.update_node_cache(); err != nil {
 			return nil, err
 		}
-		logger.Debug(p.Prefix, "updated node cache")
-	} else if p.node_upd_counter > 10 {
-		p.node_upd_counter = 0
+		logger.Debug(my.Prefix, "updated node cache")
+	} else if my.node_upd_counter > 10 {
+		my.node_upd_counter = 0
 	} else {
-		p.node_upd_counter += 1
+		my.node_upd_counter += 1
 	}
 
-	if p.limit_upd_counter == 0 {
-		if err := p.update_limit_cache(); err != nil {
+	if my.limit_upd_counter == 0 {
+		if err := my.update_limit_cache(); err != nil {
 			return nil, err
 		}
-		logger.Debug(p.Prefix, "updated limit cache")
-	} else if p.limit_upd_counter > 100 {
-		p.limit_upd_counter = 0
+		logger.Debug(my.Prefix, "updated limit cache")
+	} else if my.limit_upd_counter > 100 {
+		my.limit_upd_counter = 0
 	} else {
-		p.limit_upd_counter += 1
+		my.limit_upd_counter += 1
 	}
 
 	dest_upd_count := 0
@@ -84,23 +84,23 @@ func (p *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	for _, instance := range data.GetInstances() {
 
-		if p.connection.IsClustered() {
+		if my.connection.IsClustered() {
 			// check instances where destination node is missing
-			if instance.Labels.Get("destination_node") == "" {
+			if instance.GetLabel("destination_node") == "" {
 
-				key := instance.Labels.Get("destination_vserver") + "." + instance.Labels.Get("destination_volume")
-				if node, has := p.node_cache.GetHas(key); has {
-					instance.Labels.Set("destination_node", node)
+				key := instance.GetLabel("destination_vserver") + "." + instance.GetLabel("destination_volume")
+				if node, has := my.node_cache.GetHas(key); has {
+					instance.SetLabel("destination_node", node)
 					dest_upd_count += 1
 				}
 			}
 
 			// check instances where source node is missing
-			if instance.Labels.Get("source_node") == "" {
+			if instance.GetLabel("source_node") == "" {
 
-				key := instance.Labels.Get("source_vserver") + "." + instance.Labels.Get("source_volume")
-				if node, has := p.node_cache.GetHas(key); has {
-					instance.Labels.Set("source_node", node)
+				key := instance.GetLabel("source_vserver") + "." + instance.GetLabel("source_volume")
+				if node, has := my.node_cache.GetHas(key); has {
+					instance.SetLabel("source_node", node)
 					src_upd_count += 1
 				}
 			}
@@ -109,11 +109,11 @@ func (p *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			// source / destination nodes can be something like:
 			//		tobago-1:vol_4kb_neu
 			//      tobago-1:D
-			if src := instance.Labels.Get("source_node"); src != "" {
+			if src := instance.GetLabel("source_node"); src != "" {
 				if x := strings.Split(src, ":"); len(x) == 2 {
-					instance.Labels.Set("source_node", x[0])
+					instance.SetLabel("source_node", x[0])
 					if len(x[1]) != 1 {
-						instance.Labels.Set("source_volume", x[1])
+						instance.SetLabel("source_volume", x[1])
 						src_upd_count += 1
 					}
 				} else {
@@ -121,11 +121,11 @@ func (p *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				}
 			}
 
-			if dest := instance.Labels.Get("destination_node"); dest != "" {
+			if dest := instance.GetLabel("destination_node"); dest != "" {
 				if x := strings.Split(dest, ":"); len(x) == 2 {
-					instance.Labels.Set("destination_node", x[0])
+					instance.SetLabel("destination_node", x[0])
 					if len(x[1]) != 1 {
-						instance.Labels.Set("destination_volume", x[1])
+						instance.SetLabel("destination_volume", x[1])
 						dest_upd_count += 1
 					}
 				} else {
@@ -135,29 +135,29 @@ func (p *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 
 		// check if destination node limit is missing
-		if instance.Labels.Get("destination_node_limit") == "" {
+		if instance.GetLabel("destination_node_limit") == "" {
 
-			if limit, has := p.dest_limit_cache.GetHas(instance.Labels.Get("destination_node")); has {
-				instance.Labels.Set("destination_node_limit", limit)
+			if limit, has := my.dest_limit_cache.GetHas(instance.GetLabel("destination_node")); has {
+				instance.SetLabel("destination_node_limit", limit)
 				limit_upd_count += 1
 			}
 		}
 
 		// check if destination node limit is missing
-		if instance.Labels.Get("source_node_limit") == "" {
+		if instance.GetLabel("source_node_limit") == "" {
 
-			if limit, has := p.src_limit_cache.GetHas(instance.Labels.Get("source_node")); has {
-				instance.Labels.Set("source_node_limit", limit)
+			if limit, has := my.src_limit_cache.GetHas(instance.GetLabel("source_node")); has {
+				instance.SetLabel("source_node_limit", limit)
 			}
 		}
 	}
 
-	logger.Debug(p.Prefix, "updated %d destination and %d source nodes, %d node limits", dest_upd_count, src_upd_count, limit_upd_count)
+	logger.Debug(my.Prefix, "updated %d destination and %d source nodes, %d node limits", dest_upd_count, src_upd_count, limit_upd_count)
 
 	return nil, nil
 }
 
-func (p *SnapMirror) update_node_cache() error {
+func (my *SnapMirror) update_node_cache() error {
 
 	var (
 		request, resp *node.Node
@@ -168,7 +168,7 @@ func (p *SnapMirror) update_node_cache() error {
 
 	request = node.NewXmlS("perf-object-get-instances")
 	request.NewChildS("objectname", "volume")
-	//request.CreateChild("max-records", p.batch_size)
+	//request.CreateChild("max-records", my.batch_size)
 
 	request_instances := request.NewChildS("instances", "")
 	request_instances.NewChildS("instance", "*")
@@ -177,7 +177,7 @@ func (p *SnapMirror) update_node_cache() error {
 	request_counters.NewChildS("counter", "node_name")
 	request_counters.NewChildS("counter", "vserver_name")
 
-	if resp, err = p.connection.InvokeRequest(request); err != nil {
+	if resp, err = my.connection.InvokeRequest(request); err != nil {
 		return err
 	}
 
@@ -187,16 +187,16 @@ func (p *SnapMirror) update_node_cache() error {
 			svm := i.GetChildContentS("vserver_name")
 			node := i.GetChildContentS("node_name")
 
-			p.node_cache.Set(svm+"."+vol, node)
+			my.node_cache.Set(svm+"."+vol, node)
 			count += 1
 		}
 	}
 
-	logger.Debug(p.Prefix, "updated node cache for %d volumes", count)
+	logger.Debug(my.Prefix, "updated node cache for %d volumes", count)
 	return nil
 }
 
-func (p *SnapMirror) update_limit_cache() error {
+func (my *SnapMirror) update_limit_cache() error {
 	request := node.NewXmlS("perf-object-get-instances")
 	request.NewChildS("objectname", "smc_em")
 
@@ -208,11 +208,11 @@ func (p *SnapMirror) update_limit_cache() error {
 	req_c.NewChildS("counter", "dest_meter_count")
 	req_c.NewChildS("counter", "src_meter_count")
 
-	if err := p.connection.BuildRequest(request); err != nil {
+	if err := my.connection.BuildRequest(request); err != nil {
 		return err
 	}
 
-	resp, err := p.connection.Invoke()
+	resp, err := my.connection.Invoke()
 	if err != nil {
 		return err
 	}
@@ -225,12 +225,12 @@ func (p *SnapMirror) update_limit_cache() error {
 			dest_limit := i.GetChildContentS("dest_meter_count")
 			src_limit := i.GetChildContentS("src_meter_count")
 
-			p.dest_limit_cache.Set(node, dest_limit)
-			p.src_limit_cache.Set(node, src_limit)
+			my.dest_limit_cache.Set(node, dest_limit)
+			my.src_limit_cache.Set(node, src_limit)
 			count += 1
 		}
 	}
-	logger.Debug(p.Prefix, "updated limit cache for %d nodes", count)
+	logger.Debug(my.Prefix, "updated limit cache for %d nodes", count)
 	return nil
 
 }

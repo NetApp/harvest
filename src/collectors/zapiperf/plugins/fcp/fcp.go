@@ -13,6 +13,7 @@ import (
 	"goharvest2/poller/collector/plugin"
 	"goharvest2/share/logger"
 	"goharvest2/share/matrix"
+	"goharvest2/share/errors"
 	"math"
 	"strconv"
 	"strings"
@@ -26,30 +27,38 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Fcp{AbstractPlugin: p}
 }
 
-func (p *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
-	var rx, tx, util *matrix.Metric
+	var rx, tx, util, read, write matrix.Metric
 	var err error
 
+	if read = data.GetMetric("read_data"); read == nil {
+		return nil, errors.New(errors.ERR_NO_METRIC, "read_data")
+	}
+
+	if write = data.GetMetric("write_data"); write == nil {
+		return nil, errors.New(errors.ERR_NO_METRIC, "write_data")
+	}
+
 	if rx = data.GetMetric("read_percent"); rx == nil {
-		if rx, err = data.AddMetric("read_percent", "read_percent", true); err == nil {
-			rx.Properties = "raw"
+		if rx, err = data.AddMetricFloat64("read_percent"); err == nil {
+			rx.SetProperty("raw")
 		} else {
 			return nil, err
 		}
 
 	}
 	if tx = data.GetMetric("write_percent"); tx == nil {
-		if tx, err = data.AddMetric("write_percent", "write_percent", true); err == nil {
-			tx.Properties = "raw"
+		if tx, err = data.AddMetricFloat64("write_percent"); err == nil {
+			tx.SetProperty("raw")
 		} else {
 			return nil, err
 		}
 	}
 
 	if util = data.GetMetric("util_percent"); util == nil {
-		if util, err = data.AddMetric("util_percent", "util_percent", true); err == nil {
-			util.Properties = "raw"
+		if util, err = data.AddMetricFloat64("util_percent"); err == nil {
+			util.SetProperty("raw")
 		} else {
 			return nil, err
 		}
@@ -67,33 +76,33 @@ func (p *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	for _, instance := range data.GetInstances() {
 
-		instance.Labels.Set("port", strings.TrimPrefix(instance.Labels.Get("port"), "port."))
+		instance.SetLabel("port", strings.TrimPrefix(instance.GetLabel("port"), "port."))
 
 		var speed int
 		var s string
 		var err error
 
-		if speed, err = strconv.Atoi(instance.Labels.Get("speed")); err != nil {
-			logger.Debug(p.Prefix, "skip, can't convert speed (%s) to numeric", s)
+		if speed, err = strconv.Atoi(instance.GetLabel("speed")); err != nil {
+			logger.Debug(me.Prefix, "skip, can't convert speed (%s) to numeric", s)
 		}
 
 		if speed != 0 {
 
 			var rx_bytes, tx_bytes, rx_percent, tx_percent float64
-			var ok bool
+			var rx_ok, tx_ok bool
 
-			if rx_bytes, ok = data.GetValueS("write_data", instance); ok {
+			if rx_bytes, rx_ok = write.GetValueFloat64(instance); rx_ok {
 				rx_percent = rx_bytes / float64(speed)
-				data.SetValue(rx, instance, rx_percent)
+				rx.SetValueFloat64(instance, rx_percent)
 			}
 
-			if tx_bytes, ok = data.GetValueS("read_data", instance); ok {
+			if tx_bytes, tx_ok = read.GetValueFloat64(instance); tx_ok {
 				tx_percent = tx_bytes / float64(speed)
-				data.SetValue(tx, instance, tx_percent)
+				tx.SetValueFloat64(instance, tx_percent)
 			}
 
-			if ok {
-				data.SetValue(util, instance, math.Max(rx_percent, tx_percent))
+			if rx_ok || tx_ok {
+				util.SetValueFloat64(instance, math.Max(rx_percent, tx_percent))
 			}
 		}
 

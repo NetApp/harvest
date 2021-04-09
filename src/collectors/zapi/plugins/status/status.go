@@ -30,21 +30,24 @@ func (p *Status) Init() error {
 		name := m.GetNameS()
 		p.target_labels.Set(name, m.GetChildContentS("label"))
 		p.target_values.Set(name, m.GetChildContentS("ok_value"))
+		logger.Debug(p.Prefix, "adding metric [%s] for label (%s) and OK value (%s)", name, m.GetChildContentS("label"), m.GetChildContentS("ok_value"))
 	}
-	logger.Debug(p.Prefix, "initialized plugin, will cook status metrics from %d instance labels", p.target_labels.Size())
+	logger.Debug(p.Prefix, "will cook status metrics from %d instance labels", p.target_labels.Size())
 	return nil
 }
 
 func (p *Status) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var err error
-	metrics := make(map[string]*matrix.Metric)
+	metrics := make(map[string]matrix.Metric)
 
-	for key := range p.target_labels.Iter() {
+	for key := range p.target_labels.Map() {
 		if m := data.GetMetric(key); m != nil {
 			metrics[key] = m
-		} else if m, err = data.AddMetric(key, key, true); err == nil {
+			m.Reset(data.SizeInstances())
+		} else if m, err = data.AddMetricUint8(key); err == nil {
 			metrics[key] = m
+			m.Reset(data.SizeInstances())
 		} else {
 			return nil, err
 		}
@@ -56,12 +59,10 @@ func (p *Status) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			label := p.target_labels.Get(key)
 			value := p.target_values.Get(key)
 
-			if x := instance.Labels.Get(label); x != "" {
-				if x == value {
-					data.SetValue(metric, instance, float64(0))
-				} else {
-					data.SetValue(metric, instance, float64(1))
-				}
+			if x := instance.GetLabel(label); x == value {
+				metric.SetValueUint8(instance, 0)
+			} else {
+				metric.SetValueUint8(instance, 1)
 			}
 		}
 	}

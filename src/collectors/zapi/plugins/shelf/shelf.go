@@ -7,7 +7,7 @@ import (
 	"goharvest2/share/logger"
 	"goharvest2/share/matrix"
 	"goharvest2/share/tree/node"
-	"strconv"
+	"goharvest2/share/dict"
 	"strings"
 
 	client "goharvest2/apis/zapi"
@@ -17,6 +17,7 @@ type Shelf struct {
 	*plugin.AbstractPlugin
 	data          map[string]*matrix.Matrix
 	instance_keys map[string]string
+	instance_labels map[string]*dict.Dict
 	connection    *client.Client
 	query         string
 }
@@ -25,36 +26,37 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Shelf{AbstractPlugin: p}
 }
 
-func (p *Shelf) Init() error {
+func (my *Shelf) Init() error {
 
 	var err error
 
-	if err = p.InitAbc(); err != nil {
+	if err = my.InitAbc(); err != nil {
 		return err
 	}
 
-	if p.connection, err = client.New(p.ParentParams); err != nil {
-		logger.Error(p.Prefix, "connecting: %v", err)
+	if my.connection, err = client.New(my.ParentParams); err != nil {
+		logger.Error(my.Prefix, "connecting: %v", err)
 		return err
 	}
 
-	system, err := p.connection.GetSystem()
+	system, err := my.connection.GetSystem()
 	if err != nil {
 		return err
 	}
 
 	if system.Clustered {
-		p.query = "storage-shelf-info-get-iter"
+		my.query = "storage-shelf-info-get-iter"
 	} else {
-		p.query = "storage-shelf-environment-list-info"
+		my.query = "storage-shelf-environment-list-info"
 	}
 
-	logger.Debug(p.Prefix, "plugin connected!")
+	logger.Debug(my.Prefix, "plugin connected!")
 
-	p.data = make(map[string]*matrix.Matrix)
-	p.instance_keys = make(map[string]string)
+	my.data = make(map[string]*matrix.Matrix)
+	my.instance_keys = make(map[string]string)
+	my.instance_labels = make(map[string]*dict.Dict)
 
-	objects := p.Params.GetChildS("objects")
+	objects := my.Params.GetChildS("objects")
 	if objects == nil {
 		return errors.New(errors.MISSING_PARAM, "objects")
 	}
@@ -69,9 +71,11 @@ func (p *Shelf) Init() error {
 			object_name = strings.TrimSpace(x[1])
 		}
 
-		p.data[attribute] = matrix.New(p.Parent, object_name, "shelf")
-		p.data[attribute].SetGlobalLabel("datacenter", p.ParentParams.GetChildContentS("datacenter"))
-		p.data[attribute].SetGlobalLabel("cluster", system.Name)
+		my.instance_labels[attribute] = dict.New()
+
+		my.data[attribute] = matrix.New(my.Parent, object_name, "shelf")
+		my.data[attribute].SetGlobalLabel("datacenter", my.ParentParams.GetChildContentS("datacenter"))
+		my.data[attribute].SetGlobalLabel("cluster", system.Name)
 
 		export_options := node.NewS("export_options")
 		instance_labels := export_options.NewChildS("instance_labels", "")
@@ -79,63 +83,71 @@ func (p *Shelf) Init() error {
 		instance_keys.NewChildS("", "shelf")
 
 		for _, x := range obj.GetChildren() {
+
 			for _, c := range x.GetAllChildContentS() {
 
 				metric_name, display := collector.ParseMetricName(c)
 
 				if strings.HasPrefix(c, "^") {
 					if strings.HasPrefix(c, "^^") {
-						p.instance_keys[attribute] = metric_name
-						p.data[attribute].AddLabel(metric_name, display)
+						my.instance_keys[attribute] = metric_name
+						my.instance_labels[attribute].Set(metric_name, display)
 						instance_keys.NewChildS("", display)
-						logger.Debug(p.Prefix, "Adding as instance key: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
+						logger.Debug(my.Prefix, "added instance key: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
 					} else {
-						p.data[attribute].AddLabel(metric_name, display)
+						my.instance_labels[attribute].Set(metric_name, display)
 						instance_labels.NewChildS("", display)
-						logger.Debug(p.Prefix, "Adding as label: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
+						logger.Debug(my.Prefix, "added instance label: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
 					}
 				} else {
-					p.data[attribute].AddMetric(metric_name, display, true)
-					logger.Debug(p.Prefix, "Adding as label: (%s) (%s) [%s]", attribute, x.GetNameS(), c)
+					metric, err := my.data[attribute].AddMetricUint64(metric_name)
+					if err != nil {
+						logger.Error(my.Prefix, "add metric: %v", err)
+						return err
+					}
+					metric.SetName(display)
+					logger.Debug(my.Prefix, "added metric: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
 				}
 			}
 		}
-		logger.Debug(p.Prefix, "added data for [%s] with %d metrics and %d labels", attribute, p.data[attribute].SizeMetrics(), p.data[attribute].SizeLabels())
+		logger.Debug(my.Prefix, "added data for [%s] with %d metrics and %d labels", attribute, my.data[attribute].SizeMetrics(), 0) //my.data[attribute].SizeLabels())
 
-		p.data[attribute].SetExportOptions(export_options)
+		my.data[attribute].SetExportOptions(export_options)
 	}
 
-	logger.Debug(p.Prefix, "initialized data with [%d] objects", len(p.data))
+	logger.Debug(my.Prefix, "initialized with data [%d] objects", len(my.data))
 	return nil
 }
 
-func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
-	if !p.connection.IsClustered() {
+	if ! my.connection.IsClustered() {
 		for _, instance := range data.GetInstances() {
-			instance.Labels.Set("shelf", instance.Labels.Get("shelf_id"))
+			instance.SetLabel("shelf", instance.GetLabel("shelf_id"))
 		}
 	}
 
-	p.connection.BuildRequestString(p.query)
-	result, err := p.connection.Invoke()
+	my.connection.BuildRequestString(my.query)
+
+	result, err := my.connection.Invoke()
 	if err != nil {
 		return nil, err
 	}
 
 	var shelves []*node.Node
+
 	if x := result.GetChildS("attributes-list"); x != nil {
 		shelves = x.GetChildren()
-	} else if !p.connection.IsClustered() {
-		logger.Debug(p.Prefix, "fallback to 7mode")
+	} else if ! my.connection.IsClustered() {
+		logger.Debug(my.Prefix, "fallback to 7mode")
 		shelves = result.SearchChildren([]string{"shelf-environ-channel-info", "shelf-environ-shelf-list", "shelf-environ-shelf-info"})
 	}
 
 	if shelves == nil || len(shelves) == 0 {
-		return nil, errors.New(errors.ERR_NO_INSTANCE, "no shelf instances")
+		return nil, errors.New(errors.ERR_NO_INSTANCE, "no shelf instances found")
 	}
 
-	logger.Debug(p.Prefix, "fetching %d shelf counters", len(shelves))
+	logger.Debug(my.Prefix, "fetching %d shelf counters", len(shelves))
 
 	output := make([]*matrix.Matrix, 0)
 
@@ -144,53 +156,53 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		shelf_name := shelf.GetChildContentS("shelf")
 		shelf_id := shelf.GetChildContentS("shelf-uid")
 
-		if !p.connection.IsClustered() {
+		if ! my.connection.IsClustered() {
 			uid := shelf.GetChildContentS("shelf-id")
 			shelf_id = uid
 			shelf_name = uid
 		}
 
-		for attribute, data := range p.data {
+		for attribute, data := range my.data {
 
-			data.ResetInstances()
+			data.PurgeInstances()
 
-			if p.instance_keys[attribute] == "" {
-				logger.Warn(p.Prefix, "no instance keys defined for object [%s], skipping....", attribute)
+			if my.instance_keys[attribute] == "" {
+				logger.Warn(my.Prefix, "no instance keys defined for object [%s], skipping....", attribute)
 				continue
 			}
 
 			object_elem := shelf.GetChildS(attribute)
 			if object_elem == nil {
-				logger.Warn(p.Prefix, "no [%s] instances on this system", attribute)
+				logger.Warn(my.Prefix, "no [%s] instances on this system", attribute)
 				continue
 			}
 
-			logger.Debug(p.Prefix, "fetching %d [%s] instances.....", len(object_elem.GetChildren()), attribute)
+			logger.Debug(my.Prefix, "fetching %d [%s] instances", len(object_elem.GetChildren()), attribute)
 
 			for _, obj := range object_elem.GetChildren() {
 
-				if key := obj.GetChildContentS(p.instance_keys[attribute]); key != "" {
+				if key := obj.GetChildContentS(my.instance_keys[attribute]); key != "" {
 
 					instance, err := data.AddInstance(shelf_id + "." + key)
 
 					if err != nil {
-						logger.Debug(p.Prefix, "add (%s) instance: %v", attribute, err)
-						continue
+						logger.Debug(my.Prefix, "add (%s) instance: %v", attribute, err)
+						return nil, err
 					}
 
-					logger.Debug(p.Prefix, "add (%s) instance: %s.%s", attribute, shelf_id, key)
+					logger.Debug(my.Prefix, "add (%s) instance: %s.%s", attribute, shelf_id, key)
 
-					for label, label_display := range data.GetLabels() {
+					for label, label_display := range my.instance_labels[attribute].Map() {
 						if value := obj.GetChildContentS(label); value != "" {
-							instance.Labels.Set(label_display, value)
+							instance.SetLabel(label_display, value)
 						}
 					}
 
-					instance.Labels.Set("shelf", shelf_name)
-					instance.Labels.Set("shelf_id", shelf_id)
+					instance.SetLabel("shelf", shelf_name)
+					instance.SetLabel("shelf_id", shelf_id)
 
 				} else {
-					logger.Debug(p.Prefix, "instance without [%s], skipping", p.instance_keys[attribute])
+					logger.Debug(my.Prefix, "instance without [%s], skipping", my.instance_keys[attribute])
 				}
 			}
 
@@ -203,13 +215,13 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	for _, shelf := range shelves {
 
 		shelf_id := shelf.GetChildContentS("shelf-uid")
-		if !p.connection.IsClustered() {
+		if !my.connection.IsClustered() {
 			shelf_id = shelf.GetChildContentS("shelf-id")
 		}
 
-		for attribute, data := range p.data {
+		for attribute, data := range my.data {
 
-			if data.InitData() != nil {
+			if data.Reset() != nil {
 				// means no numeric metrics
 				continue
 			}
@@ -221,7 +233,7 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 			for _, obj := range object_elem.GetChildren() {
 
-				key := obj.GetChildContentS(p.instance_keys[attribute])
+				key := obj.GetChildContentS(my.instance_keys[attribute])
 
 				if key == "" {
 					continue
@@ -230,18 +242,17 @@ func (p *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				instance := data.GetInstance(shelf_id + "." + key)
 
 				if instance == nil {
-					logger.Debug(p.Prefix, "(%s) instance [%s.%s] not found in cache skipping", attribute, shelf_id, key)
+					logger.Debug(my.Prefix, "(%s) instance [%s.%s] not found in cache skipping", attribute, shelf_id, key)
 					continue
 				}
 
-				for mkey, m := range data.Metrics {
+				for mkey, m := range data.GetMetrics() {
 
 					if value := strings.Split(obj.GetChildContentS(mkey), " ")[0]; value != "" {
-						if num, err := strconv.ParseFloat(value, 32); err == nil {
-							data.SetValue(m, instance, float64(num))
-							logger.Debug(p.Prefix, "Added numeric [%s] = [%f]", mkey, num)
+						if err := m.SetValueString(instance, value); err != nil {
+							logger.Debug(my.Prefix, "(%s) failed to parse value (%s): %v", mkey, value, err)
 						} else {
-							logger.Debug(p.Prefix, "Failed to convert [%s] = [%s]", mkey, value)
+							logger.Debug(my.Prefix, "(%s) added value (%s)", mkey, value)
 						}
 					}
 				}

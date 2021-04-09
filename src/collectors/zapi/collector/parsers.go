@@ -1,4 +1,4 @@
-package zapi_collector
+package zapi
 
 import (
 	"goharvest2/share/logger"
@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func ParseShortestPath(m *matrix.Matrix) []string {
+func ParseShortestPath(m *matrix.Matrix, l map[string]string) []string {
 
 	prefix := make([]string, 0)
 	keys := make([][]string, 0)
@@ -16,7 +16,7 @@ func ParseShortestPath(m *matrix.Matrix) []string {
 	for key := range m.GetMetrics() {
 		keys = append(keys, strings.Split(key, "."))
 	}
-	for key := range m.GetLabels() {
+	for key := range l {
 		keys = append(keys, strings.Split(key, "."))
 	}
 
@@ -46,13 +46,14 @@ func ParseKeyPrefix(keys [][]string) []string {
 	return prefix
 }
 
-func LoadCounters(data *matrix.Matrix, counters *node.Node) bool {
+func (me *Zapi) LoadCounters(counters *node.Node) bool {
 	path := make([]string, 0)
-	ParseCounters(data, counters, path)
-	return len(data.GetMetrics()) > 0
+	me.ParseCounters(counters, path)
+	counters.SetXmlNameS("desired-attributes")
+	return len(me.Matrix.GetMetrics()) > 0
 }
 
-func ParseCounters(data *matrix.Matrix, elem *node.Node, path []string) {
+func (me *Zapi) ParseCounters(elem *node.Node, path []string) {
 	//logger.Debug("", "%v Parsing [%s] [%s] with %d values and %d children", new_path, elem.Name, elem.Value, len(elem.Values), len(elem.Children))
 
 	new_path := path
@@ -60,14 +61,16 @@ func ParseCounters(data *matrix.Matrix, elem *node.Node, path []string) {
 		new_path = append(new_path, elem.GetNameS())
 	}
 	if len(elem.GetContentS()) != 0 {
-		HandleCounter(data, new_path, elem.GetContentS())
+		if clean := me.HandleCounter(new_path, elem.GetContentS()); clean != "" {
+			elem.SetContentS(clean)
+		}
 	}
 	for _, child := range elem.GetChildren() {
-		ParseCounters(data, child, new_path)
+		me.ParseCounters(child, new_path)
 	}
 }
 
-func HandleCounter(data *matrix.Matrix, path []string, content string) {
+func (me *Zapi) HandleCounter(path []string, content string) string {
 	var name, display, key string
 	var split_values, full_path []string
 
@@ -85,20 +88,34 @@ func HandleCounter(data *matrix.Matrix, path []string, content string) {
 	key = strings.Join(full_path, ".")
 
 	if display == "" {
-		display = ParseDisplay(data.Object, full_path)
+		display = ParseDisplay(me.Matrix.Object, full_path)
 	}
 
 	if content[0] == '^' {
-		data.AddLabel(key, display)
-		logger.Trace("", "%sAdded as Label [%s] [%s]%s => %v", util.Yellow, display, key, util.End, full_path)
+		me.INSTANCE_LABEL_PATHS[key] = display
+		//data.AddLabel(key, display)
+		logger.Trace(me.Prefix, "%sadd (%s) as label [%s]%s => %v", util.Yellow, key, display, util.End, full_path)
 		if content[1] == '^' {
-			data.AddInstanceKey(full_path[:])
-			logger.Trace("", "%sAdded as Key [%s] [%s]%s => %v", util.Red, display, key, util.End, full_path)
+			//data.AddInstanceKey(full_path[:])
+			copied := make([]string, len(full_path))
+			copy(copied, full_path)
+			me.INSTANCE_KEY_PATHS = append(me.INSTANCE_KEY_PATHS, copied)
+			logger.Trace(me.Prefix, "%sadd (%s) as instance key [%s]%s => %v", util.Red, key, display, util.End, full_path)
 		}
 	} else {
-		data.AddMetric(key, display, true)
-		logger.Trace("", "%sAdded as Metric [%s] [%s]%s => %v", util.Blue, display, key, util.End, full_path)
+		metric, err := me.Matrix.AddMetricUint64(key)
+		if err != nil {
+			logger.Error(me.Prefix, "add ass metric (%s) [%s]: %v", key, display, err)
+		} else {
+			metric.SetName(display)
+			logger.Trace(me.Prefix, "%sadd as metric (%s) [%s]%s => %v", util.Blue, key, display, util.End, full_path)
+		}
 	}
+
+	if display == "" {
+		return ""
+	}
+	return name
 }
 
 func ParseDisplay(obj string, path []string) string {
