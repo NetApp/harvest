@@ -1,167 +1,224 @@
 package main
 
 import (
-	"os"
-	"os/exec"
-	"time"
-	"runtime"
-	"strings"
-	"strconv"
-	"path"
-	"io/ioutil"
 	"goharvest2/poller/collector"
-	"goharvest2/share/matrix"
-	"goharvest2/share/logger"
-	"goharvest2/share/errors"
 	"goharvest2/share/config"
+	"goharvest2/share/errors"
+	"goharvest2/share/logger"
+	"goharvest2/share/matrix"
 	"goharvest2/share/set"
 	"goharvest2/share/tree/node"
+	"io/ioutil"
+	"os"
+	"os/exec"
+	"path"
+	"runtime"
+	"strconv"
+	"strings"
+	"time"
 )
 
 // Relying on Wikipedia for the list of supporting platforms
 // https://en.wikipedia.org/wiki/Procfs
-var SUPPORTED_PLATFORMS = []string{
+var _SUPPORTED_PLATFORMS = []string{
 	"aix",
 	"andriod", // available in termux
 	"dragonfly",
-	"freebsd",  // available, but not mounted by default
+	"freebsd", // available, but not mounted by default
 	"linux",
-	"netbsd",  // same as freebsd
+	"netbsd", // same as freebsd
 	"plan9",
 	"solaris",
 }
 
-var MOUNT_POINT = "/proc"
+var _MOUNT_POINT = "/proc"
 
-var CLK_TCK float64
+var _CLK_TCK float64
 
 // list of histograms provided by the collector, mapped
 // to functions extracting them from a Process instance
-var HISTOGRAMS = map[string]func(*Process) (map[string]float64){
-	"cpu":			cpu,
-	"memory":     	memory,
-	"io":     		io,
-	"net":  		net,
-	"ctx": 			ctx,
+var _HISTOGRAMS = map[string]func(matrix.Metric, string, *matrix.Instance, *Process){
+	"cpu":    setCpu,
+	"memory": setMemory,
+	"io":     setIo,
+	"net":    setNet,
+	"ctx":    setCtx,
 }
 
 // list of (scalar) metrics
-var METRICS = map[string]func(*Process, *System) (float64){
-	"start_time":		start_time,
-	"cpu_percent":		cpu_prc,
-	"memory_percent":	memory_prc,
-	"threads":			num_threads,
-	"fds":				num_fds,
+var _METRICS = map[string]func(matrix.Metric, *matrix.Instance, *Process, *System){
+	"start_time":     setStartTime,
+	"cpu_percent":    setCpuPercent,
+	"memory_percent": setMemoryPercent,
+	"threads":        setNumThreads,
+	"fds":            setNumFds,
 }
 
-func get_histogram_labels(p *Process, name string) []string {
+var _DTYPES = map[string]string{
+	"cpu":            "float64",
+	"memory":         "uint64",
+	"io":             "uint64",
+	"net":            "uint64",
+	"ctx":            "uint64",
+	"start_time":     "float64",
+	"cpu_percent":    "float64",
+	"memory_percent": "float64",
+	"threads":        "uint64",
+	"fds":            "uint64",
+}
+
+func getClockTicks() {
+	_CLK_TCK = 100.0
+	if data, err := exec.Command("getconf", "CLK_TCK").Output(); err == nil {
+		if num, err := strconv.ParseInt(strings.TrimSpace(string(data)), 10, 64); err != nil {
+			_CLK_TCK = float64(num)
+		}
+	}
+}
+
+func parseMetricName(name string) (string, string) {
+	if fields := strings.Fields(name); len(fields) == 3 && fields[1] == "=>" {
+		return fields[0], fields[2]
+	}
+	return name, name
+}
+
+func getHistogramLabels(p *Process, name string) []string {
+
 	var labels []string
-	if foo, ok := HISTOGRAMS[name]; ok {
-		values := foo(p)
-		for key := range values {
+	var m map[string]uint64
+
+	// dirty fast solution
+
+	if name == "cpu" {
+		for key := range p.cpu {
 			labels = append(labels, key)
+		}
+	} else {
+
+		switch name {
+		case "memory":
+			m = p.mem
+		case "io":
+			m = p.io
+		case "net":
+			m = p.net
+		case "ctx":
+			m = p.ctx
+		}
+		if m != nil {
+			for key := range m {
+				labels = append(labels, key)
+			}
 		}
 	}
 	return labels
 }
 
+// Unix - collector providing basic stats about harvest pollers
+// @TODO - extend to monitor any user-defined process
 type Unix struct {
 	*collector.AbstractCollector
-	system *System
-	histogram_labels map[string][]string
-	processes map[string]*Process
+	system          *System
+	histogramLabels map[string][]string
+	processes       map[string]*Process
 }
 
+// New - create new, uninitialized collector
 func New(a *collector.AbstractCollector) collector.Collector {
 	return &Unix{AbstractCollector: a}
 }
 
-func (c *Unix) Init() error {
+// Init - initialize the collector
+func (me *Unix) Init() error {
 
 	var err error
 
-	if ! set.NewFrom(SUPPORTED_PLATFORMS).Has(runtime.GOOS) {
+	if !set.NewFrom(_SUPPORTED_PLATFORMS).Has(runtime.GOOS) {
 		return errors.New(errors.ERR_IMPLEMENT, "platform not supported")
 	}
 
-	if err = collector.Init(c); err != nil {
+	if err = collector.Init(me); err != nil {
 		return err
 	}
 
 	// optionally let user define mount point of the fs
-	if mp := c.Params.GetChildContentS("mount_point"); mp != "" {
-		MOUNT_POINT = mp
+	if mp := me.Params.GetChildContentS("mount_point"); mp != "" {
+		_MOUNT_POINT = mp
 	}
 
 	// assert fs is avilable
-	if fi, err := os.Stat(MOUNT_POINT); err != nil || ! fi.IsDir() {
-		return errors.New(errors.ERR_IMPLEMENT, "filesystem [" + MOUNT_POINT + "] not available")
+	if fi, err := os.Stat(_MOUNT_POINT); err != nil || !fi.IsDir() {
+		return errors.New(errors.ERR_IMPLEMENT, "filesystem ["+_MOUNT_POINT+"] not available")
 	}
 
 	// load list of counters from template
-	if counters := c.Params.GetChildS("counters"); counters != nil {
-		if err = c.load_metrics(counters); err != nil {
+	if counters := me.Params.GetChildS("counters"); counters != nil {
+		if err = me.loadMetrics(counters); err != nil {
 			return err
 		}
 	} else {
 		return errors.New(errors.MISSING_PARAM, "counters")
 	}
 
-	GetClockTicks()
-	if c.system, err = NewSystem(); err != nil {
+	getClockTicks()
+	if me.system, err = NewSystem(); err != nil {
 		return err
 	}
 
-	c.processes = make(map[string]*Process)
+	me.Matrix.SetGlobalLabel("hostname", me.Options.Hostname)
+	me.Matrix.SetGlobalLabel("datacenter", me.Params.GetChildContentS("datacenter"))
 
-	c.Data.SetGlobalLabel("hostname", c.Options.Hostname)
-	c.Data.SetGlobalLabel("datacenter", c.Params.GetChildContentS("datacenter"))
-
-	logger.Debug(c.Prefix, "initialized")
+	logger.Debug(me.Prefix, "initialized")
 	return nil
 }
 
-func (c *Unix) load_metrics(counters *node.Node) error {
-
+func (me *Unix) loadMetrics(counters *node.Node) error {
 	var (
-		p *Process
-		m matrix.Metric
+		proc           *Process
+		metric         matrix.Metric
 		labels, wanted *set.Set
-		err error
+		err            error
 	)
+
+	logger.Debug(me.Prefix, "initializing metric cache")
+
+	me.processes = make(map[string]*Process)
+	me.histogramLabels = make(map[string][]string)
+
 	// process instance for self, we will use this
 	// to get size/labels of histograms at runtime
-	if p, err = NewProcess(os.Getpid()); err != nil {
+	if proc, err = NewProcess(os.Getpid()); err != nil {
 		return err
 	}
-
-	c.histogram_labels = make(map[string][]string)
 
 	// fetch list of counters from template
 	for _, cnt := range counters.GetChildren() {
 
-		name, display := parse_metric_name(cnt.GetNameS())
+		name, display := parseMetricName(cnt.GetNameS())
 		if cnt.GetNameS() == "" {
-			name, display = parse_metric_name(cnt.GetContentS())
+			name, display = parseMetricName(cnt.GetContentS())
 		}
 
-		logger.Trace(c.Prefix, "handling (%s) (%s)", name, display)
+		dtype := _DTYPES[name]
+
+		logger.Trace(me.Prefix, "handling (%s) (%s) dtype=%s", name, display, dtype)
 
 		// counter is scalar metric
-		if _, has := METRICS[name]; has {
+		if _, has := _METRICS[name]; has {
 
-			if m, err = c.Data.AddMetricFloat64(name); err != nil {
+			if metric, err = me.Matrix.AddMetricType(name, dtype); err != nil {
 				return err
 			}
-			m.SetName(display)
-			logger.Debug(c.Prefix, "(%s) added metric (%s)", name, display)
+			metric.SetName(display)
+			logger.Debug(me.Prefix, "(%s) added metric (%s)", name, display)
 
-		// counter is histogram
-		} else if _, has := HISTOGRAMS[name]; has {
+			// counter is histogram
+		} else if _, has := _HISTOGRAMS[name]; has {
 
-			labels = set.NewFrom(get_histogram_labels(p, name))
+			labels = set.NewFrom(getHistogramLabels(proc, name))
 
-			c.histogram_labels[name] = make([]string, 0)
+			me.histogramLabels[name] = make([]string, 0)
 
 			// if template defines labels, only collect those
 			// otherwise get everything available
@@ -175,234 +232,223 @@ func (c *Unix) load_metrics(counters *node.Node) error {
 			// validate
 			for w := range wanted.Iter() {
 				// parse label name and display name
-				label, label_display := parse_metric_name(w)
+				label, ldisplay := parseMetricName(w)
 
-				if ! labels.Has(label) {
-					logger.Warn(c.Prefix, "invalid histogram metric [%s]", label)
+				if !labels.Has(label) {
+					logger.Warn(me.Prefix, "invalid histogram metric [%s]", label)
 					wanted.Delete(w)
 					continue
 				}
 
-				if m, err = c.Data.AddMetricFloat64(name+"."+label); err != nil {
+				if metric, err = me.Matrix.AddMetricType(name+"."+label, dtype); err != nil {
 					return err
 				}
-				m.SetName(name)
-				m.SetLabel("metric", label_display)
-				c.histogram_labels[name] = append(c.histogram_labels[name], label)				
+				metric.SetName(name)
+				metric.SetLabel("metric", ldisplay)
+				me.histogramLabels[name] = append(me.histogramLabels[name], label)
 			}
 
-			logger.Debug(c.Prefix, "(%s) added histogram (%s) with %d submetrics", name, display, len(c.histogram_labels[name]))
+			logger.Debug(me.Prefix, "(%s) added histogram (%s) with %d submetrics", name, display, len(me.histogramLabels[name]))
 
-		// invalid counter
+			// invalid counter
 		} else {
-			logger.Warn(c.Prefix, "(%s) skipped unknown metric", name)
+			logger.Warn(me.Prefix, "(%s) skipped unknown metric", name)
 		}
 	}
 
-	//c.Data.AddLabel("poller", "")
-	//c.Data.AddLabel("pid", "")
-
-	if _, err = c.Data.AddMetricUint32("status"); err != nil {
+	if _, err = me.Matrix.AddMetricUint8("status"); err != nil {
 		return err
 	}
 
-	logger.Debug(c.Prefix, "initialized cache with %d metrics", c.Data.SizeMetrics())
+	logger.Debug(me.Prefix, "initialized cache with %d metrics", me.Matrix.SizeMetrics())
 	return nil
 }
 
-func parse_metric_name(raw_name string) (string, string) {
-	if fields := strings.Fields(raw_name); len(fields) == 3 && fields[1] == "=>" {
-		return fields[0], fields[2]
-	}
-	return raw_name, raw_name
-}
+// PollInstance - update instance cache with running pollers
+func (me *Unix) PollInstance() (*matrix.Matrix, error) {
 
-func (c *Unix) PollInstance() (*matrix.Matrix, error) {
+	currInstances := set.NewFrom(me.Matrix.GetInstanceKeys())
+	currSize := currInstances.Size()
 
-	curr_instances := set.NewFrom(c.Data.GetInstanceKeys())
-	curr_size := curr_instances.Size()
-
-	poller_names, err := config.GetPollerNames(path.Join(c.Options.ConfPath, "harvest.yml"))
+	pollerNames, err := config.GetPollerNames(path.Join(me.Options.ConfPath, "harvest.yml"))
 	if err != nil {
 		return nil, err
 	}
 
-	for _, name := range poller_names {
-		pidf := path.Join(c.Options.PidPath, name+".pid")
+	for _, name := range pollerNames {
+		pidf := path.Join(me.Options.PidPath, name+".pid")
 
 		pid := ""
 
 		if x, err := ioutil.ReadFile(pidf); err == nil {
-			//logger.Debug(c.Prefix, "skip instance (%s), err pidf: %v", name, err)
+			//logger.Debug(me.Prefix, "skip instance (%s), err pidf: %v", name, err)
 			pid = string(x)
 		}
 
-		if instance := c.Data.GetInstance(name); instance == nil {
-			if instance, err = c.Data.AddInstance(name); err != nil {
+		if instance := me.Matrix.GetInstance(name); instance == nil {
+			if instance, err = me.Matrix.AddInstance(name); err != nil {
 				return nil, err
 			}
 			instance.SetLabel("poller", name)
 			instance.SetLabel("pid", pid)
-			logger.Debug(c.Prefix, "add instance (%s) with PID (%s)", name, pid)
+			logger.Debug(me.Prefix, "add instance (%s) with PID (%s)", name, pid)
 		} else {
-			curr_instances.Delete(name)
+			currInstances.Delete(name)
 			instance.SetLabel("pid", pid)
-			logger.Debug(c.Prefix, "update instance (%s) with PID (%s)", name, pid)
+			logger.Debug(me.Prefix, "update instance (%s) with PID (%s)", name, pid)
 		}
 	}
 
-	for name := range curr_instances.Iter() {
-		c.Data.RemoveInstance(name)
-		logger.Debug(c.Prefix, "remove instance (%s)")
+	for name := range currInstances.Iter() {
+		me.Matrix.RemoveInstance(name)
+		logger.Debug(me.Prefix, "remove instance (%s)")
 	}
 
-	t := c.Data.SizeInstances()
-	r := curr_instances.Size()
-	a := t - (curr_size - r)
-	logger.Debug(c.Prefix, "added %d, removed %d, total instances %d", a, r, t)
+	t := me.Matrix.SizeInstances()
+	r := currInstances.Size()
+	a := t - (currSize - r)
+	logger.Debug(me.Prefix, "added %d, removed %d, total instances %d", a, r, t)
 
 	return nil, nil
 }
 
-func (c *Unix) PollData() (*matrix.Matrix, error) {
+// PollData - update data cache
+func (me *Unix) PollData() (*matrix.Matrix, error) {
 
 	var (
 		count, pid int
-		err error
-		ok bool
-		proc *Process
+		err        error
+		ok         bool
+		proc       *Process
 	)
 
-	if err = c.Data.Reset(); err != nil {
+	if err = me.Matrix.Reset(); err != nil {
 		return nil, err
 	}
 
-	if err = c.system.Reload(); err != nil {
+	if err = me.system.Reload(); err != nil {
 		return nil, err
 	}
 
-	for key, instance := range c.Data.GetInstances() {
+	for key, instance := range me.Matrix.GetInstances() {
 
 		// assume not running
-		c.Data.LazySetValueUint32("status", key, 1)
+		me.Matrix.LazySetValueUint8("status", key, 1)
 
-		if proc, ok = c.processes[key]; ok {
+		if proc, ok = me.processes[key]; ok {
 			if err = proc.Reload(); err != nil {
-				delete(c.processes, key)
+				delete(me.processes, key)
 				proc = nil
 			}
 		}
 
 		if proc == nil {
 			if instance.GetLabel("pid") == "" {
-				logger.Debug(c.Prefix, "skip instance [%s]: not running", key)
+				logger.Debug(me.Prefix, "skip instance [%s]: not running", key)
 				continue
 			}
 			if pid, err = strconv.Atoi(instance.GetLabel("pid")); err != nil {
-				logger.Warn(c.Prefix, "skip instance [%s], invalid PID: %v", key, err)
+				logger.Warn(me.Prefix, "skip instance [%s], invalid PID: %v", key, err)
 				continue
 			}
 			if proc, err = NewProcess(pid); err != nil {
-				logger.Warn(c.Prefix, "skip instance [%s], process: %v", key, err)
+				logger.Warn(me.Prefix, "skip instance [%s], process: %v", key, err)
 				continue
 			}
-			c.processes[key] = proc
+			me.processes[key] = proc
 		}
 
 		poller := instance.GetLabel("poller")
 		cmd := proc.Cmdline()
-		
-		if ! set.NewFrom(strings.Fields(cmd)).Has(poller) {
-			logger.Debug(c.Prefix, "skip instance [%s]: PID (%d) not matched with [%s]", key, pid, cmd)
+
+		if !set.NewFrom(strings.Fields(cmd)).Has(poller) {
+			logger.Debug(me.Prefix, "skip instance [%s]: PID (%d) not matched with [%s]", key, pid, cmd)
 			continue
 		}
 
 		// if we got here poller is running
-		c.Data.LazySetValueUint32("status", key, 0)
+		me.Matrix.LazySetValueUint32("status", key, 0)
 
-		logger.Debug(c.Prefix, "populating instance [%s]: PID (%d) with [%s]\n", key, pid, cmd)
+		logger.Debug(me.Prefix, "populating instance [%s]: PID (%d) with [%s]\n", key, pid, cmd)
 
 		// process scalar metrics
-		for key, foo := range METRICS {
-			if metric := c.Data.GetMetric(key); metric != nil {
-				value := foo(proc, c.system)
-				logger.Trace(c.Prefix, "+ (%s) [%f]", key, value)
-				metric.SetValueFloat64(instance, value)
+		for key, foo := range _METRICS {
+			if metric := me.Matrix.GetMetric(key); metric != nil {
+				foo(metric, instance, proc, me.system)
+				//logger.Trace(me.Prefix, "+ (%s) [%f]", key, value)
 				count++
 			}
 		}
 
 		// process histograms
-		for key, foo := range HISTOGRAMS {
-			if labels, ok := c.histogram_labels[key]; ok {
-				values := foo(proc)
-				logger.Trace(c.Prefix, "+++ (%s) [%v]", key, values)
+		for key, foo := range _HISTOGRAMS {
+			if labels, ok := me.histogramLabels[key]; ok {
+				//logger.Trace(me.Prefix, "+++ (%s) [%v]", key, values)
 				for _, label := range labels {
-					if metric := c.Data.GetMetric(key+"."+label); metric != nil {
-						if value, ok := values[label]; ok {
-							metric.SetValueFloat64(instance, value)
-							count++
-						}
+					if metric := me.Matrix.GetMetric(key + "." + label); metric != nil {
+						foo(metric, label, instance, proc)
+						count++
 					}
 				}
 			}
 		}
-
 	}
 
-	c.AddCount(count)
-	logger.Debug(c.Prefix, "poll complete, added %d data points", count)
-	return c.Data, nil
+	me.AddCount(count)
+	logger.Debug(me.Prefix, "poll complete, added %d data points", count)
+	return me.Matrix, nil
 }
 
-func GetClockTicks() {
-	CLK_TCK = 100.0
-	if data, err := exec.Command("getconf", "CLK_TCK").Output(); err == nil {
-		if num, err := strconv.ParseInt(strings.TrimSpace(string(data)), 10, 64); err != nil {
-			CLK_TCK = float64(num)
-		}
+func setStartTime(m matrix.Metric, i *matrix.Instance, p *Process, s *System) {
+	m.SetValueFloat64(i, p.startTime+s.bootTime)
+}
+
+func setNumThreads(m matrix.Metric, i *matrix.Instance, p *Process, s *System) {
+	m.SetValueUint64(i, p.numThreads)
+}
+
+func setNumFds(m matrix.Metric, i *matrix.Instance, p *Process, s *System) {
+	m.SetValueUint64(i, p.numFds)
+}
+
+func setMemoryPercent(m matrix.Metric, i *matrix.Instance, p *Process, s *System) {
+	m.SetValueFloat64(i, float64(p.mem["rss"])/float64(s.memTotal)*100)
+}
+
+func setCpuPercent(m matrix.Metric, i *matrix.Instance, p *Process, s *System) {
+	if p.elapsedTime != 0 {
+		m.SetValueFloat64(i, p.cpuTotal/p.elapsedTime*100)
+	} else {
+		m.SetValueFloat64(i, p.cpuTotal/(float64(time.Now().Unix())-p.startTime)*100)
 	}
 }
 
-func start_time(p *Process, s *System) float64 {
-	return p.start_time + s.boot_time
-}
-
-func num_threads(p *Process, s *System) float64 {
-	return p.num_threads
-}
-
-func num_fds(p *Process, s *System) float64 {
-	return p.num_fds
-}
-
-func memory_prc(p *Process, s *System) float64 {
-	return p.mem["rss"] / s.mem_total * 100
-}
-
-func cpu_prc(p *Process, s *System) float64 {
-	if p.elapsed_time != 0 {
-		return p.cpu_total / p.elapsed_time * 100
+func setCpu(m matrix.Metric, l string, i *matrix.Instance, p *Process) {
+	if value, ok := p.cpu[l]; ok {
+		m.SetValueFloat64(i, value)
 	}
-	return p.cpu_total / (float64(time.Now().Unix()) - p.start_time) * 100
 }
 
-func cpu(p *Process) map[string]float64 {
-	return p.cpu	
+func setMemory(m matrix.Metric, l string, i *matrix.Instance, p *Process) {
+	if value, ok := p.mem[l]; ok {
+		m.SetValueUint64(i, value)
+	}
 }
 
-func memory(p *Process) map[string]float64 {
-	return p.mem	
+func setIo(m matrix.Metric, l string, i *matrix.Instance, p *Process) {
+	if value, ok := p.io[l]; ok {
+		m.SetValueUint64(i, value)
+	}
 }
 
-func io(p *Process) map[string]float64 {
-	return p.io	
+func setNet(m matrix.Metric, l string, i *matrix.Instance, p *Process) {
+	if value, ok := p.net[l]; ok {
+		m.SetValueUint64(i, value)
+	}
 }
 
-func net(p *Process) map[string]float64 {
-	return p.net	
-}
-
-func ctx(p *Process) map[string]float64 {
-	return p.ctx	
+func setCtx(m matrix.Metric, l string, i *matrix.Instance, p *Process) {
+	if value, ok := p.ctx[l]; ok {
+		m.SetValueUint64(i, value)
+	}
 }
