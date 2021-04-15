@@ -112,10 +112,11 @@ func (me *Process) loadCmdline() error {
 		data []byte
 		err  error
 	)
-	if data, err = ioutil.ReadFile(path.Join(me.dirpath, "cmdline")); err == nil {
-		me.cmdline = string(bytes.ReplaceAll(data, []byte("\x00"), []byte(" ")))
+	if data, err = ioutil.ReadFile(path.Join(me.dirpath, "cmdline")); err != nil {
+		return errors.New(FILE_READ, err.Error())
 	}
-	return errors.New(FILE_READ, err.Error())
+	me.cmdline = string(bytes.ReplaceAll(data, []byte("\x00"), []byte(" ")))
+	return nil
 }
 
 func (me *Process) loadStatus() error {
@@ -318,8 +319,9 @@ func (me *Process) loadNetDev() error {
 
 func (me *Process) loadFdinfo() error {
 	files, err := ioutil.ReadDir(path.Join(me.dirpath, "fdinfo"))
-	if err == nil {
-		me.numFds = uint64(len(files))
+	if err != nil {
+		return errors.New(DIR_READ, "fdinfo: "+err.Error())
 	}
-	return errors.New(DIR_READ, "fdinfo: "+err.Error())
+	me.numFds = uint64(len(files))
+	return nil
 }
