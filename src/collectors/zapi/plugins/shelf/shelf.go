@@ -3,11 +3,11 @@ package main
 import (
 	"goharvest2/poller/collector"
 	"goharvest2/poller/collector/plugin"
+	"goharvest2/share/dict"
 	"goharvest2/share/errors"
 	"goharvest2/share/logger"
 	"goharvest2/share/matrix"
 	"goharvest2/share/tree/node"
-	"goharvest2/share/dict"
 	"strings"
 
 	client "goharvest2/apis/zapi"
@@ -15,11 +15,11 @@ import (
 
 type Shelf struct {
 	*plugin.AbstractPlugin
-	data          map[string]*matrix.Matrix
-	instance_keys map[string]string
+	data            map[string]*matrix.Matrix
+	instance_keys   map[string]string
 	instance_labels map[string]*dict.Dict
-	connection    *client.Client
-	query         string
+	connection      *client.Client
+	query           string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -121,7 +121,7 @@ func (my *Shelf) Init() error {
 
 func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
-	if ! my.connection.IsClustered() {
+	if !my.connection.IsClustered() {
 		for _, instance := range data.GetInstances() {
 			instance.SetLabel("shelf", instance.GetLabel("shelf_id"))
 		}
@@ -138,7 +138,7 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	if x := result.GetChildS("attributes-list"); x != nil {
 		shelves = x.GetChildren()
-	} else if ! my.connection.IsClustered() {
+	} else if !my.connection.IsClustered() {
 		logger.Debug(my.Prefix, "fallback to 7mode")
 		shelves = result.SearchChildren([]string{"shelf-environ-channel-info", "shelf-environ-shelf-list", "shelf-environ-shelf-info"})
 	}
@@ -156,7 +156,7 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		shelf_name := shelf.GetChildContentS("shelf")
 		shelf_id := shelf.GetChildContentS("shelf-uid")
 
-		if ! my.connection.IsClustered() {
+		if !my.connection.IsClustered() {
 			uid := shelf.GetChildContentS("shelf-id")
 			shelf_id = uid
 			shelf_name = uid

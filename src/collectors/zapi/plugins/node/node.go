@@ -20,11 +20,11 @@ func (my *Node) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		warnings := make([]string, 0)
 
-		if w := instance.GetLabel("failed_fan_message"); w != "" && ! strings.HasPrefix(w, "There are no failed ") {
+		if w := instance.GetLabel("failed_fan_message"); w != "" && !strings.HasPrefix(w, "There are no failed ") {
 			warnings = append(warnings, w)
 		}
 
-		if w := instance.GetLabel("failed_power_message"); w != "" && ! strings.HasPrefix(w, "There are no failed ") {
+		if w := instance.GetLabel("failed_power_message"); w != "" && !strings.HasPrefix(w, "There are no failed ") {
 			warnings = append(warnings, w)
 		}
 

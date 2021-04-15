@@ -99,7 +99,6 @@ func (my *FlexGroup) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	return []*matrix.Matrix{mydata}, nil
 }
 
-
 func fetch_flexgroup_name(instance *matrix.Instance) (string, string) {
 	var key, name, vol string
 
