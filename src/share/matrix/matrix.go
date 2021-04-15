@@ -51,6 +51,14 @@ func (me *Matrix) IsEmpty() bool {
 	return me.Empty
 }
 
+func (me *Matrix) IsExportable() bool {
+	return me.Exportable
+}
+
+func (me *Matrix) SetExportable(b bool) {
+	me.Exportable = b
+}
+
 func (me *Matrix) Clone(with_data, with_metrics, with_instances bool) *Matrix {
 	clone := New(me.Collector, me.Object, me.Plugin)
 	clone.GlobalLabels = me.GlobalLabels
@@ -79,8 +87,8 @@ func (me *Matrix) Clone(with_data, with_metrics, with_instances bool) *Matrix {
 }
 
 func (me *Matrix) Reset() error {
-	if me.SizeMetrics() == 0 || me.SizeInstances() == 0 {
-		return errors.New(errors.MATRIX_EMPTY, "counter or instance cache empty")
+	if me.SizeMetrics() == 0 && me.SizeInstances() == 0 {
+		return errors.New(errors.MATRIX_EMPTY, "counter and instance cache empty")
 	}
 	size := me.SizeInstances()
 	for _, metric := range me.GetMetrics() {

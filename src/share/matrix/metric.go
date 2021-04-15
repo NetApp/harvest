@@ -40,7 +40,22 @@ type Metric interface {
 	SetValueFloat64(*Instance, float64) error
 	SetValueString(*Instance, string) error
 	SetValueBytes(*Instance, []byte) error
+
+
+	AddValueInt(*Instance, int) error
+	AddValueInt32(*Instance, int32) error
+	AddValueInt64(*Instance, int64) error
+	AddValueUint8(*Instance, uint8) error
+	AddValueUint32(*Instance, uint32) error
+	AddValueUint64(*Instance, uint64) error
+	AddValueFloat32(*Instance, float32) error
+	AddValueFloat64(*Instance, float64) error
+	//AddValueString(*Instance, string) error
+	//SetValueBytes(*Instance, []byte) error
+
+	SetValueNAN(*Instance)
 	// methods for reading from metric storage
+	GetValueInt(*Instance) (int, bool)
 	GetValueInt32(*Instance) (int32, bool)
 	GetValueInt64(*Instance) (int64, bool)
 	GetValueUint8(*Instance) (uint8, bool)
@@ -72,21 +87,21 @@ type AbstractMetric struct {
 	record []bool
 }
 
-func (my *AbstractMetric) Clone(deep bool) *AbstractMetric {
+func (me *AbstractMetric) Clone(deep bool) *AbstractMetric {
 	clone := AbstractMetric{
-		name: my.name,
-		dtype: my.dtype,
-		property: my.property,
-		comment: my.comment,
-		exportable: my.exportable,
+		name: me.name,
+		dtype: me.dtype,
+		property: me.property,
+		comment: me.comment,
+		exportable: me.exportable,
 	}
 	if deep {
-		if my.labels != nil {
-			clone.labels = my.labels.Copy()
+		if me.labels != nil {
+			clone.labels = me.labels.Copy()
 		}
-		if len(my.record) != 0 {
-			clone.record = make([]bool, len(my.record))
-			for i,v := range my.record {
+		if len(me.record) != 0 {
+			clone.record = make([]bool, len(me.record))
+			for i,v := range me.record {
 				clone.record[i] = v
 			}
 		}
@@ -94,85 +109,88 @@ func (my *AbstractMetric) Clone(deep bool) *AbstractMetric {
 	return &clone
 }
 
-func (my *AbstractMetric) GetName() string {
-	return my.name
+func (me *AbstractMetric) GetName() string {
+	return me.name
 }
 
-func (my *AbstractMetric) SetName(name string) {
-	my.name = name
+func (me *AbstractMetric) SetName(name string) {
+	me.name = name
 }
 
-func (my *AbstractMetric) IsExportable() bool {
-	return my.exportable
+func (me *AbstractMetric) IsExportable() bool {
+	return me.exportable
 }
 
-func (my *AbstractMetric) SetExportable(b bool) {
-	my.exportable = b
+func (me *AbstractMetric) SetExportable(b bool) {
+	me.exportable = b
 }
 
-func (my *AbstractMetric) GetType() string {
-	return my.dtype
+func (me *AbstractMetric) GetType() string {
+	return me.dtype
 }
 
-func (my *AbstractMetric) GetProperty() string {
-	return my.property
+func (me *AbstractMetric) GetProperty() string {
+	return me.property
 }
 
-func (my *AbstractMetric) SetProperty(p string) {
-	my.property = p
+func (me *AbstractMetric) SetProperty(p string) {
+	me.property = p
 }
 
-func (my *AbstractMetric) GetComment() string {
-	return my.comment
+func (me *AbstractMetric) GetComment() string {
+	return me.comment
 }
 
-func (my *AbstractMetric) SetComment(c string) {
-	my.comment = c
+func (me *AbstractMetric) SetComment(c string) {
+	me.comment = c
 }
 
-func (my *AbstractMetric) SetLabel(key, value string) {
-	if my.labels == nil {
-		my.labels = dict.New()
+func (me *AbstractMetric) SetLabel(key, value string) {
+	if me.labels == nil {
+		me.labels = dict.New()
 	}
-	my.labels.Set(key, value)
+	me.labels.Set(key, value)
 }
 
-func (my *AbstractMetric) SetLabels(labels *dict.Dict) {
-	my.labels = labels
+func (me *AbstractMetric) SetLabels(labels *dict.Dict) {
+	me.labels = labels
 }
 
-func (my *AbstractMetric) GetLabel(key string) string {
-	if my.labels != nil {
-		return my.labels.Get(key)
+func (me *AbstractMetric) GetLabel(key string) string {
+	if me.labels != nil {
+		return me.labels.Get(key)
 	}
 	return ""
 }
 
-func (my *AbstractMetric) GetLabels() *dict.Dict {
-	return my.labels
+func (me *AbstractMetric) GetLabels() *dict.Dict {
+	return me.labels
 
 }
-func (my *AbstractMetric) HasLabels() bool {
-	return my.labels != nil && my.labels.Size() != 0
+func (me *AbstractMetric) HasLabels() bool {
+	return me.labels != nil && me.labels.Size() != 0
 }
 
-func (my *AbstractMetric) GetRecords() []bool {
-	return my.record
+func (me *AbstractMetric) GetRecords() []bool {
+	return me.record
 }
 
-func (my *AbstractMetric) Delta(s Metric) error {
-	return errors.New(errors.ERR_IMPLEMENT, my.dtype)
+func (me *AbstractMetric) SetValueNAN(i *Instance) {
+	me.record[i.index] = false
 }
 
-func (my *AbstractMetric) Divide(s Metric) error {
-	return errors.New(errors.ERR_IMPLEMENT, my.dtype)
+func (me *AbstractMetric) Delta(s Metric) error {
+	return errors.New(errors.ERR_IMPLEMENT, me.dtype)
 }
 
-func (my *AbstractMetric) DivideWithThreshold(s Metric, t int) error {
-	return errors.New(errors.ERR_IMPLEMENT, my.dtype)
+func (me *AbstractMetric) Divide(s Metric) error {
+	return errors.New(errors.ERR_IMPLEMENT, me.dtype)
 }
 
-func (my *AbstractMetric) MultiplyByScalar(s int) error {
-	return errors.New(errors.ERR_IMPLEMENT, my.dtype)
+func (me *AbstractMetric) DivideWithThreshold(s Metric, t int) error {
+	return errors.New(errors.ERR_IMPLEMENT, me.dtype)
 }
 
+func (me *AbstractMetric) MultiplyByScalar(s int) error {
+	return errors.New(errors.ERR_IMPLEMENT, me.dtype)
+}

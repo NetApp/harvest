@@ -122,7 +122,51 @@ func (me *MetricUint32) SetValueBytes(i *Instance, v []byte) error {
 	return me.SetValueString(i, string(v))
 }
 
+func (me *MetricUint32) AddValueInt(i *Instance, n int) error {
+	m, _ := me.GetValueInt(i)
+	return me.SetValueInt(i, m+n)
+}
+
+func (me *MetricUint32) AddValueInt32(i *Instance, n int32) error {
+	m, _ := me.GetValueInt32(i)
+	return me.SetValueInt32(i, m+n)
+}
+
+func (me *MetricUint32) AddValueInt64(i *Instance, n int64) error {
+	m, _ := me.GetValueInt64(i)
+	return me.SetValueInt64(i, m+n)
+}
+
+func (me *MetricUint32) AddValueUint8(i *Instance, n uint8) error {
+	m, _ := me.GetValueUint8(i)
+	return me.SetValueUint8(i, m+n)
+}
+
+func (me *MetricUint32) AddValueUint32(i *Instance, n uint32) error {
+	m, _ := me.GetValueUint32(i)
+	return me.SetValueUint32(i, m+n)
+}
+
+func (me *MetricUint32) AddValueUint64(i *Instance, n uint64) error {
+	m, _ := me.GetValueUint64(i)
+	return me.SetValueUint64(i, m+n)
+}
+
+func (me *MetricUint32) AddValueFloat32(i *Instance, n float32) error {
+	m, _ := me.GetValueFloat32(i)
+	return me.SetValueFloat32(i, m+n)
+}
+
+func (me *MetricUint32) AddValueFloat64(i *Instance, n float64) error {
+	m, _ := me.GetValueFloat64(i)
+	return me.SetValueFloat64(i, m+n)
+}
+
 // Read methods
+
+func (me *MetricUint32) GetValueInt(i *Instance) (int, bool) {
+	return int(me.values[i.index]), me.record[i.index]
+}
 
 func (me *MetricUint32) GetValueInt32(i *Instance) (int32, bool) {
 	return int32(me.values[i.index]), me.record[i.index]
