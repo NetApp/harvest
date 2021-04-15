@@ -16,7 +16,8 @@ type Exporter interface {
 	GetName() string
 	GetCount() uint64
 	AddCount(int)
-	GetStatus() (int, string, string)
+	GetStatus() (uint8, string, string)
+	IsMaster() bool
 	Export(*matrix.Matrix) error
 }
 
@@ -30,7 +31,7 @@ type AbstractExporter struct {
 	Name     string
 	Class    string
 	Prefix   string
-	Status   int
+	Status   uint8
 	Message  string
 	Count    uint64
 	Options  *options.Options
@@ -51,80 +52,85 @@ func New(c, n string, o *options.Options, p *node.Node) *AbstractExporter {
 	return &abc
 }
 
-func (e *AbstractExporter) InitAbc() error {
-	e.Metadata = matrix.New(e.Class, e.Name, "")
-	e.Metadata.IsMetadata = true
-	e.Metadata.MetadataType = "exporter"
-	e.Metadata.MetadataObject = "export"
-	e.Metadata.SetGlobalLabel("hostname", e.Options.Hostname)
-	e.Metadata.SetGlobalLabel("version", e.Options.Version)
-	e.Metadata.SetGlobalLabel("poller", e.Options.Poller)
-	e.Metadata.SetGlobalLabel("exporter", e.Class)
-	e.Metadata.SetGlobalLabel("target", e.Name)
+func (me *AbstractExporter) InitAbc() error {
+	me.Metadata = matrix.New(me.Class, me.Name, "")
+	me.Metadata.IsMetadata = true
+	me.Metadata.MetadataType = "exporter"
+	me.Metadata.MetadataObject = "export"
+	me.Metadata.SetGlobalLabel("hostname", me.Options.Hostname)
+	me.Metadata.SetGlobalLabel("version", me.Options.Version)
+	me.Metadata.SetGlobalLabel("poller", me.Options.Poller)
+	me.Metadata.SetGlobalLabel("exporter", me.Class)
+	me.Metadata.SetGlobalLabel("target", me.Name)
 
-	if _, err := e.Metadata.AddMetricInt64("time"); err != nil {
+	if _, err := me.Metadata.AddMetricInt64("time"); err != nil {
 		return err
 	}
-	if _, err := e.Metadata.AddMetricUint64("count"); err != nil {
+	if _, err := me.Metadata.AddMetricUint64("count"); err != nil {
 		return err
 	}
 
 	//e.Metadata.AddLabel("task", "")
-	if instance, err := e.Metadata.AddInstance("render"); err == nil {
+	if instance, err := me.Metadata.AddInstance("render"); err == nil {
 		instance.SetLabel("task", "render")
 	} else {
 		return err
 	}
 
-	if err := e.Metadata.Reset(); err != nil {
+	if err := me.Metadata.Reset(); err != nil {
 		return err
 	}
 
-	e.SetStatus(0, "initialized")
+	me.SetStatus(0, "initialized")
 	return nil
 }
 
-func (e *AbstractExporter) GetClass() string {
-	return e.Class
+func (me *AbstractExporter) GetClass() string {
+	return me.Class
 }
 
-func (e *AbstractExporter) GetName() string {
-	return e.Name
+func (me *AbstractExporter) GetName() string {
+	return me.Name
 }
 
-func (e *AbstractExporter) GetCount() uint64 {
-	count := e.Count
-	atomic.StoreUint64(&e.Count, 0)
+func (me *AbstractExporter) GetCount() uint64 {
+	count := me.Count
+	atomic.StoreUint64(&me.Count, 0)
 	return count
 }
 
-func (e *AbstractExporter) AddCount(n int) {
-	atomic.AddUint64(&e.Count, uint64(n))
+func (me *AbstractExporter) AddCount(n int) {
+	atomic.AddUint64(&me.Count, uint64(n))
 }
 
-func (e *AbstractExporter) GetStatus() (int, string, string) {
-	return e.Status, ExporterStatus[e.Status], e.Message
+func (me *AbstractExporter) GetStatus() (uint8, string, string) {
+	return me.Status, ExporterStatus[me.Status], me.Message
 }
 
-func (e *AbstractExporter) SetStatus(code int, msg string) {
-	if code < 0 || code >= len(ExporterStatus) {
-		panic("invalid status code " + strconv.Itoa(code))
+func (me *AbstractExporter) SetStatus(code uint8, msg string) {
+	if code < 0 || code >= uint8(len(ExporterStatus)) {
+		panic("invalid status code " + strconv.Itoa(int(code)))
 	}
-	e.Status = code
-	e.Message = msg
+	me.Status = code
+	me.Message = msg
+}
+
+// @TODO: implement!
+func (me *AbstractExporter) IsMaster() bool {
+	return true
 }
 
 /*
-func (e *AbstractExporter) Export(data *matrix.Matrix) error {
-	e.mu.Lock()
-	defer e.mu.Unlock()
-	return e.ExportData(data)
+func (me *AbstractExporter) Export(data *matrix.Matrix) error {
+	me.mu.Lock()
+	defer me.mu.Unlock()
+	return me.ExportData(data)
 }
 
-func (e *AbstractExporter) ExportData(data *matrix.Matrix) error {
-	panic(e.Class + " did not implement ExportData()")
+func (me *AbstractExporter) ExportData(data *matrix.Matrix) error {
+	panic(me.Class + " did not implement ExportData()")
 }
 
-func (e *AbstractExporter) Render(data *matrix.Matrix) ([][]byte, error) {
-	panic(e.Class + " did not implement Render()")
+func (me *AbstractExporter) Render(data *matrix.Matrix) ([][]byte, error) {
+	panic(me.Class + " did not implement Render()")
 }*/

@@ -1,12 +1,16 @@
+// Package options provides the options with which
+// the Poller is started up, parsed from CLI arguments
+// and environment variables.
+
 package options
 
 import (
 	"fmt"
-	"goharvest2/share/argparse"
-	"goharvest2/share/version"
 	"os"
 	"path"
 	"strings"
+	"goharvest2/harvest/version"
+	"goharvest2/share/argparse"
 )
 
 type Options struct {
@@ -48,7 +52,7 @@ func (o *Options) Print() {
 	fmt.Println(o.String())
 }
 
-func GetOpts() (*Options, string) {
+func Get() (*Options, string) {
 	var args Options
 	args = Options{}
 

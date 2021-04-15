@@ -11,10 +11,12 @@ import (
 	"strings"
 )
 
-const flags int = log.Ldate | log.Ltime | log.Lmsgprefix
-const fileflags int = os.O_APPEND | os.O_CREATE | os.O_WRONLY
-const fileperm os.FileMode = 0644
-const dirperm os.FileMode = 0755
+const (
+	LOG_FLAGS  int         = log.Ldate | log.Ltime | log.Lmsgprefix
+	FILE_FLAGS int         = os.O_APPEND | os.O_CREATE | os.O_WRONLY
+	FILE_PERM  os.FileMode = 0644
+	DIR_PERM   os.FileMode = 0755
+)
 
 var file *os.File
 
@@ -35,11 +37,11 @@ func OpenFileOutput(dirpath, filename string) error {
 
 	info, err = os.Stat(dirpath)
 	if err != nil || !info.IsDir() {
-		err = os.Mkdir(dirpath, dirperm)
+		err = os.Mkdir(dirpath, DIR_PERM)
 	}
 	if err == nil || os.IsExist(err) {
 
-		file, err = os.OpenFile(path.Join(dirpath, filename), fileflags, fileperm)
+		file, err = os.OpenFile(path.Join(dirpath, filename), FILE_FLAGS, FILE_PERM)
 		if err == nil {
 			log.SetOutput(file)
 		} else {

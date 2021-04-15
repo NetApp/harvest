@@ -12,8 +12,8 @@ import (
 	"strings"
 )
 
-func ImportTemplate(conf_path, collector_name string) (*node.Node, error) {
-	fp := path.Join(conf_path, "conf/", strings.ToLower(collector_name), "default.yaml")
+func ImportTemplate(conf_path, collector_name, template string) (*node.Node, error) {
+	fp := path.Join(conf_path, "conf/", strings.ToLower(collector_name), template)
 	return tree.Import("yaml", fp)
 }
 
@@ -23,7 +23,7 @@ func (c *AbstractCollector) ImportSubTemplate(model, dirname, filename string, v
 	var selected_version string
 	var template *node.Node
 
-	path_prefix := path.Join(c.Options.ConfPath, "conf/", strings.ToLower(c.Name), dirname, model)
+	path_prefix := path.Join(c.Options.ConfPath, "conf/", strings.ToLower(c.Name), model)
 	logger.Debug(c.Prefix, "Looking for best-fitting template in [%s]", path_prefix)
 
 	available := make(map[string]bool)
