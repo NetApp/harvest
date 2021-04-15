@@ -11,7 +11,7 @@
     Executes command as a daemon process. Unlike what 
     is done usually (two forks and exit), we perform
     execv after second fork, such that the daemon has
-    it's own cmdline identity. This is helpful to
+    it's own (pretty) cmdline identity. This is helpful to
     trace status of pollers.
 
     Script is only intended to daemonize Harvest pollers.
@@ -21,7 +21,7 @@
 
     The daemonize function is implemented in the quick
     and dirty way: some system calls would need better
-    error-checking for a more safe implementation.
+    error-checking for a safer implementation.
 
     Usage:
         ./daemonize <executable> [args...]
@@ -30,7 +30,6 @@
         - executable    path to executable program
         - args          optional, passed to daemon unchanged
 */
-
 
 int daemonize(char *bin, char *args[]) {
 
@@ -64,7 +63,7 @@ int daemonize(char *bin, char *args[]) {
     for (fd=0; fd<maxfds; fd++)
         close(fd);
 
-    // forwards standard FDs to devnull
+    // forward standard FDs to devnull
     close(STDIN_FILENO);
     fd = open("/dev/null", O_RDWR);
     dup2(STDIN_FILENO, STDOUT_FILENO);
@@ -80,27 +79,37 @@ int daemonize(char *bin, char *args[]) {
 int main(int argc, char* argv[]) {
 
     // at least one argument is required
-    if (argc < 2 || argv[1] == "-h" || argv[1] == "--help") {
+    if (argc < 2 || strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0) {
         printf("Usage: ./daemonize <executable> [args...]\n");
         exit(0);
     }
 
     // construct path to executable and arg vector
     // this is done here, so errors are detected early on
-    char* Args[100];
+    char* daemon_argv[100];
     char path[100];
     int i;
 
     strcpy(path, argv[1]);
 
-    Args[0] = "poller";
+    // simplify first arg, by taking basename instead of full path
+    if ((daemon_argv[0] = strrchr(argv[1], '/')) != NULL)
+        daemon_argv[0]++;
+    else
+        daemon_argv[0] = argv[1];
 
     for (i=1; i<argc-1; i++) {
-        Args[i] = argv[i+1];
+        daemon_argv[i] = argv[i+1];
     }
 
     // arg vector should be null-terminated
-    Args[i] = NULL;
+    daemon_argv[i] = NULL;
 
-    return daemonize(path, Args);
+    /* DEBUG
+    printf("daemon_argv=\n");
+    for (i=0; i<argc-1; i++)
+        printf("%s ", daemon_argv[i]);
+    printf("\n");
+    */
+    return daemonize(path, daemon_argv);
 }
