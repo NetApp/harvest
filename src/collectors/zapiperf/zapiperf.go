@@ -25,14 +25,14 @@ const (
 	LATENCY_IO_REQD = 10
 )
 
-const BILLION		= 1000000000
+const BILLION = 1000000000
 
 type ZapiPerf struct {
 	//*collector.AbstractCollector
-	*zapi.Zapi  // provides: Connection, System, Object, Query, TemplateFn, TemplateType
+	*zapi.Zapi // provides: Connection, System, Object, Query, TemplateFn, TemplateType
 	//Connection      *client.Client
 	//System          *client.System
-	object          string
+	object string
 	//Query           string
 	//TemplateFn      string
 	//TemplateType    string
@@ -48,6 +48,29 @@ type ZapiPerf struct {
 func New(a *collector.AbstractCollector) collector.Collector {
 	//return &ZapiPerf{AbstractCollector: a}
 	return &ZapiPerf{Zapi: zapi.NewZapi(a)}
+}
+
+func (me *ZapiPerf) Init() error {
+
+	if err := me.InitVars(); err != nil {
+		return err
+	}
+	// Invoke generic initializer
+	// this will load Schedule, initialize Data and Metadata
+	if err := collector.Init(me); err != nil {
+		return err
+	}
+
+	if err := me.InitMatrix(); err != nil {
+		return err
+	}
+
+	if err := me.InitCache(); err != nil {
+		return err
+	}
+
+	logger.Debug(me.Prefix, "initialized")
+	return nil
 }
 
 /*
@@ -185,9 +208,9 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 
 	var err error
 	logger.Debug(me.Prefix, "updating data cache")
-	
+
 	// clone matrix without numeric data
-	NewData := me.Matrix.Clone(false, true, true) 
+	NewData := me.Matrix.Clone(false, true, true)
 	if err = NewData.Reset(); err != nil {
 		return nil, err
 	}
@@ -222,7 +245,7 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 	// load scalar metrics
 	for key, m := range NewData.GetMetrics() {
 		// no histograms
-		if ! m.HasLabels() {
+		if !m.HasLabels() {
 			request_counters.NewChildS("counter", key)
 		}
 	}
@@ -332,7 +355,7 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 				// or numeric metric (scalar or string)
 
 				// store as instance label
-				if display, has := me.instance_labels[name]; has { 
+				if display, has := me.instance_labels[name]; has {
 					instance.SetLabel(display, value)
 					logger.Trace(me.Prefix, "+ label (%s) = [%s%s%s]", display, util.Yellow, value, util.End)
 					continue
@@ -350,7 +373,7 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 					}
 
 					for i, label := range labels {
-						if metric := NewData.GetMetric(name+"."+label); metric != nil {
+						if metric := NewData.GetMetric(name + "." + label); metric != nil {
 							if err = metric.SetValueString(instance, values[i]); err != nil {
 								logger.Error(me.Prefix, "set histogram (%s.%s) value [%s]: %v", name, label, values[i], err)
 							} else {
@@ -421,7 +444,6 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 	logger.Debug(me.Prefix, "starting delta calculations from previous cache")
 	//logger.Debug(me.Prefix, "data has dimensions (%d x %d)", len(NewData.Data), len(NewData.Data[0]))
 
-
 	// cache data, to store after calculations
 	CachedData := NewData.Clone(true, true, true) // @TODO implement copy data
 
@@ -474,6 +496,11 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 			continue
 		}
 
+		if property == "delta" {
+			// already done
+			continue
+		}
+
 		// rate is delta, normalized by elapsed time
 		if property == "rate" {
 			if err = metric.Divide(timestamp); err != nil {
@@ -486,21 +513,27 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 		// We assume that delta of base counters is already calculated
 		// (name of base counter is stored as Comment)
 		if base = NewData.GetMetric(metric.GetComment()); base == nil {
-			logger.Warn(me.Prefix, "(%s) base counter (%s) missing", key, metric.GetComment())
+			logger.Warn(me.Prefix, "(%s) <%s> base counter (%s) missing", key, property, metric.GetComment())
 			continue
 		}
 
 		// average and percentage are calculated by dividing by the value of the base counter
 		// special case for latency counter: apply minimum number of iops as threshold
-		if property == "average" && strings.HasSuffix(metric.GetName(), "_latency") {
-			err = metric.Divide(base)
-		} else {
-			err = metric.DivideWithThreshold(base, me.latency_io_reqd)
-		}
+		if property == "average" || property == "percent" {
 
-		if err != nil {
-			logger.Error(me.Prefix, "(%s) division by base: %v", key, err)
-			continue
+			if strings.HasSuffix(metric.GetName(), "_latency") {
+				err = metric.DivideWithThreshold(base, me.latency_io_reqd)
+			} else {
+				err = metric.Divide(base)
+			}
+
+			if err != nil {
+				logger.Error(me.Prefix, "(%s) division by base: %v", key, err)
+			}
+
+			if property == "average" {
+				continue
+			}
 		}
 
 		if property == "percent" {
@@ -510,7 +543,7 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 			continue
 		}
 
-		logger.Error(me.Prefix, "(%s) unknown property: %s", property)
+		logger.Error(me.Prefix, "(%s) unknown property: %s", key, property)
 	}
 
 	me.Metadata.LazySetValueInt64("calc_time", "data", time.Since(calc_start).Microseconds())
@@ -601,7 +634,7 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 
 		display, ok := wanted.GetHas(key)
 		// counter not requested
-		if ! ok {
+		if !ok {
 			logger.Trace(me.Prefix, "%sskip [%s], not requested%s", util.Grey, key, util.End)
 			continue
 		}
@@ -610,7 +643,7 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 		if counter.GetChildContentS("is-deprecated") == "true" {
 			if r := counter.GetChildContentS("replaced-by"); r != "" {
 				logger.Info(me.Prefix, "replaced deprecated counter [%s] with [%s]", key, r)
-				if ! wanted.Has(r) {
+				if !wanted.Has(r) {
 					replaced.Add(r)
 				}
 			} else {
@@ -697,7 +730,7 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 	for key := range old_metrics.Iter() {
 		// temporary fix: prevent removing array counters
 		// @TODO
-		if key != "timestamp" && ! strings.Contains(key, ".") {
+		if key != "timestamp" && !strings.Contains(key, ".") {
 			me.Matrix.RemoveMetric(key)
 			logger.Debug(me.Prefix, "removed metric [%s]", key)
 		}
@@ -713,7 +746,7 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 	labels_added := len(me.instance_labels) - (old_labels_size - old_labels.Size())
 
 	logger.Debug(me.Prefix, "added %d new, removed %d metrics (total: %d)", metrics_added, old_metrics.Size(), me.Matrix.SizeMetrics())
-	logger.Debug(me.Prefix, "added %d new, removed %d labels (total: %d)", labels_added, old_labels.Size(), len(me.instance_labels) )
+	logger.Debug(me.Prefix, "added %d new, removed %d labels (total: %d)", labels_added, old_labels.Size(), len(me.instance_labels))
 
 	if me.Matrix.SizeMetrics() == 0 {
 		return nil, errors.New(errors.ERR_NO_METRIC, "")
@@ -726,12 +759,12 @@ func (me *ZapiPerf) add_counter(counter *node.Node, name, display string, enable
 
 	var property, base_counter, unit string
 	var err error
-	
+
 	p := counter.GetChildContentS("properties")
 	if strings.Contains(p, "raw") {
 		property = "raw"
 	} else if strings.Contains(p, "delta") {
-			property = "delta"		
+		property = "delta"
 	} else if strings.Contains(p, "rate") {
 		property = "rate"
 	} else if strings.Contains(p, "average") {

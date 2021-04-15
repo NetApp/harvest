@@ -11,9 +11,9 @@ package main
 
 import (
 	"goharvest2/poller/collector/plugin"
+	"goharvest2/share/errors"
 	"goharvest2/share/logger"
 	"goharvest2/share/matrix"
-	"goharvest2/share/errors"
 	"math"
 	"strconv"
 	"strings"

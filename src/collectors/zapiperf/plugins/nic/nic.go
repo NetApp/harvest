@@ -11,9 +11,9 @@ package main
 
 import (
 	"goharvest2/poller/collector/plugin"
+	"goharvest2/share/errors"
 	"goharvest2/share/logger"
 	"goharvest2/share/matrix"
-	"goharvest2/share/errors"
 	"math"
 	"strconv"
 	"strings"
@@ -111,7 +111,7 @@ func (me *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			}
 		}
 
-		if instance.GetLabel("state")== "up" {
+		if instance.GetLabel("state") == "up" {
 			nic_state.SetValueUint8(instance, 0)
 		} else {
 			nic_state.SetValueUint8(instance, 1)

@@ -19,27 +19,26 @@ func (me *Processor) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	cpu_count := make(map[string]int)
 
-	sum:= data.Clone(false, true, false)
+	sum := data.Clone(false, true, false)
 	sum.Object = "node_cpu"
 	sum.Plugin = "processor"
 	//matrix.New("processor", "node_processor", "processor")
 	//summary.GlobalLabels = data.GlobalLabels
 	//summary.SetExportOptions(data.ExportOptions.Copy())
 
-
 	/*
-	for key, m := range data.GetMetrics() {
-		if m.Enabled {
-			if m.Labels != nil && m.GetLabel("metric") == "idle" {
-				summary.AddMetric(key, m.Name, false)
-			} else {
-				nm, _ := summary.AddMetric(key, m.Name, true)
-				if m.Labels != nil {
-					nm.Labels = m.Labels
+		for key, m := range data.GetMetrics() {
+			if m.Enabled {
+				if m.Labels != nil && m.GetLabel("metric") == "idle" {
+					summary.AddMetric(key, m.Name, false)
+				} else {
+					nm, _ := summary.AddMetric(key, m.Name, true)
+					if m.Labels != nil {
+						nm.Labels = m.Labels
+					}
 				}
 			}
 		}
-	}
 	*/
 
 	// create new instance cache

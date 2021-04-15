@@ -62,7 +62,7 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 			for mkey, m := range data.GetMetrics() {
 
-				if ! m.IsExportable() && m.GetType() != "float64" {
+				if !m.IsExportable() && m.GetType() != "float64" {
 					continue
 				}
 
@@ -73,18 +73,18 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				}
 
 				logger.Trace(me.Prefix, "(%s) handling metric (%s)", fg.GetLabel("volume"), mkey)
-				
+
 				if value, ok := m.GetValueFloat64(i); ok {
 
 					fgv, _ := fgm.GetValueFloat64(fg)
 
 					// non-latency metrics: simple sum
-					if ! strings.HasSuffix(m.GetName(), "_latency") {
+					if !strings.HasSuffix(m.GetName(), "_latency") {
 
 						fgm.SetValueFloat64(fg, fgv+value)
 						// just for debugging
 						fgv2, _ := fgm.GetValueFloat64(fg)
-	
+
 						logger.Trace(me.Prefix, "   > simple increment %f + %f = %f", fgv, value, fgv2)
 						continue
 					}
@@ -107,10 +107,10 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 						} else {
 							logger.Trace(me.Prefix, "       no ops value SKIP")
 						}
-					}					
+					}
 
 				}
-				
+
 			}
 		}
 	}
@@ -121,7 +121,7 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			if m.IsExportable() && strings.HasSuffix(m.GetName(), "_latency") {
 
 				if value, ok := m.GetValueFloat64(i); ok {
-					
+
 					ops_key := strings.Replace(mkey, "avg_latency", "total_ops", 1)
 					ops_key = strings.Replace(mkey, "_latency", "_ops", 1)
 
