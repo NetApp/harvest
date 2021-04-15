@@ -46,27 +46,42 @@ func ParseKeyPrefix(keys [][]string) []string {
 	return prefix
 }
 
-func (me *Zapi) LoadCounters(counters *node.Node) bool {
-	path := make([]string, 0)
-	me.ParseCounters(counters, path)
-	counters.SetXmlNameS("desired-attributes")
-	return len(me.Matrix.GetMetrics()) > 0
+func (me *Zapi) LoadCounters(counters *node.Node) (bool, *node.Node) {
+	desired := node.NewXmlS("desired-attributes")
+
+	for _, c := range counters.GetChildren() {
+		me.ParseCounters(c, desired, []string{})
+	}
+
+	//counters.SetXmlNameS("desired-attributes")
+	//counters.SetContentS("")
+	return len(me.Matrix.GetMetrics()) > 0, desired
 }
 
-func (me *Zapi) ParseCounters(elem *node.Node, path []string) {
+func (me *Zapi) ParseCounters(elem, desired *node.Node, path []string) {
 	//logger.Debug("", "%v Parsing [%s] [%s] with %d values and %d children", new_path, elem.Name, elem.Value, len(elem.Values), len(elem.Children))
 
+	var d *node.Node
+
+	name := elem.GetNameS()
 	new_path := path
+
 	if len(elem.GetNameS()) != 0 {
-		new_path = append(new_path, elem.GetNameS())
+		new_path = append(new_path, name)
+		d = node.NewXmlS(name)
 	}
+
 	if len(elem.GetContentS()) != 0 {
 		if clean := me.HandleCounter(new_path, elem.GetContentS()); clean != "" {
-			elem.SetContentS(clean)
+			d = node.NewXmlS(clean)
 		}
 	}
+
+	if desired != nil && d != nil {
+		desired.AddChild(d)
+	}
 	for _, child := range elem.GetChildren() {
-		me.ParseCounters(child, new_path)
+		me.ParseCounters(child, d, new_path)
 	}
 }
 
@@ -84,7 +99,8 @@ func (me *Zapi) HandleCounter(path []string, content string) string {
 
 	name = strings.TrimSpace(strings.TrimLeft(name, "^"))
 
-	full_path = append(path[1:], name)
+	//full_path = append(path[1:], name)
+	full_path = append(path, name)
 	key = strings.Join(full_path, ".")
 
 	if display == "" {
@@ -112,9 +128,9 @@ func (me *Zapi) HandleCounter(path []string, content string) string {
 		}
 	}
 
-	if display == "" {
-		return ""
-	}
+	//if display == "" {
+	//	return ""
+	//}
 	return name
 }
 
