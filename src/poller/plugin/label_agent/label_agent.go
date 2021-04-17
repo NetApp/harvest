@@ -1,25 +1,25 @@
 package label_agent
 
 import (
-    "fmt"
-	"strings"
+	"fmt"
 	"goharvest2/poller/plugin"
+	"goharvest2/share/errors"
+	"goharvest2/share/logger"
 	"goharvest2/share/matrix"
-    "goharvest2/share/logger"
-    "goharvest2/share/errors"
+	"strings"
 )
 
 type LabelAgent struct {
 	*plugin.AbstractPlugin
-	actions []func(*matrix.Instance)
-    splitSimpleRules []splitSimpleRule
-    splitRegexRules []splitRegexRule
-    joinSimpleRules []joinSimpleRule
-    replaceSimpleRules []replaceSimpleRule
-    replaceRegexRules []replaceRegexRule
-    excludeEqualsRules []excludeEqualsRule
-    excludeContainsRules []excludeContainsRule
-    excludeRegexRules []excludeRegexRule
+	actions              []func(*matrix.Instance)
+	splitSimpleRules     []splitSimpleRule
+	splitRegexRules      []splitRegexRule
+	joinSimpleRules      []joinSimpleRule
+	replaceSimpleRules   []replaceSimpleRule
+	replaceRegexRules    []replaceRegexRule
+	excludeEqualsRules   []excludeEqualsRule
+	excludeContainsRules []excludeContainsRule
+	excludeRegexRules    []excludeRegexRule
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -28,22 +28,22 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 
 func (me *LabelAgent) Init() error {
 
-    var (
-        err error
-        count int
-    )
+	var (
+		err   error
+		count int
+	)
 
 	if err = me.AbstractPlugin.Init(); err != nil {
 		return err
 	}
 
-    if count = me.parseRules(); count == 0 {
+	if count = me.parseRules(); count == 0 {
 		err = errors.New(errors.MISSING_PARAM, "no valid rules")
 	} else {
-        logger.Info(me.Prefix, "parsed %d rules for %d actions", count, len(me.actions))
-    }
+		logger.Info(me.Prefix, "parsed %d rules for %d actions", count, len(me.actions))
+	}
 
-    return err
+	return err
 }
 
 func (me *LabelAgent) Run(m *matrix.Matrix) ([]*matrix.Matrix, error) {
@@ -104,11 +104,11 @@ func (me *LabelAgent) joinSimple(instance *matrix.Instance) {
 func (me *LabelAgent) replaceSimple(instance *matrix.Instance) {
 	for _, r := range me.replaceSimpleRules {
 		if old := instance.GetLabel(r.source); old != "" {
-            if value := strings.ReplaceAll(old, r.old, r.new); value != old {
-                instance.SetLabel(r.target, value)
-		        logger.Trace(me.Prefix, "replaceSimple: (%s) [%s] => (%s) [%s]", r.source, old, r.target, value)
-            }
-        }
+			if value := strings.ReplaceAll(old, r.old, r.new); value != old {
+				instance.SetLabel(r.target, value)
+				logger.Trace(me.Prefix, "replaceSimple: (%s) [%s] => (%s) [%s]", r.source, old, r.target, value)
+			}
+		}
 	}
 }
 
@@ -117,56 +117,56 @@ func (me *LabelAgent) replaceRegex(instance *matrix.Instance) {
 	for _, r := range me.replaceRegexRules {
 		old := instance.GetLabel(r.source)
 		if m := r.reg.FindStringSubmatch(old); m != nil {
-            logger.Trace(me.Prefix, "replaceRegex: (%d) matches= %v", len(m)-1, m[1:])
+			logger.Trace(me.Prefix, "replaceRegex: (%d) matches= %v", len(m)-1, m[1:])
 			s := make([]interface{}, 0)
 			for _, i := range r.indices {
 				if i < len(m)-1 {
 					s = append(s, m[i+1])
-                    logger.Trace(me.Prefix, "substring [%d] = (%s)", i, m[i+1])
+					logger.Trace(me.Prefix, "substring [%d] = (%s)", i, m[i+1])
 				} else {
-                    // probably we need to throw warning
-                    s = append(s, "")
-                    logger.Trace(me.Prefix, "substring [%d] = no match!", i)
-                }
+					// probably we need to throw warning
+					s = append(s, "")
+					logger.Trace(me.Prefix, "substring [%d] = no match!", i)
+				}
 			}
-            logger.Trace(me.Prefix, "replaceRegex: (%d) substitution strings= %v", len(s), s)
-            if value := fmt.Sprintf(r.format, s...); value != "" && value != old {
-			    instance.SetLabel(r.target, value)
-			    logger.Trace(me.Prefix, "replaceRegex: (%s) [%s] => (%s) [%s]", r.source, old, r.target, value)
-            }
+			logger.Trace(me.Prefix, "replaceRegex: (%d) substitution strings= %v", len(s), s)
+			if value := fmt.Sprintf(r.format, s...); value != "" && value != old {
+				instance.SetLabel(r.target, value)
+				logger.Trace(me.Prefix, "replaceRegex: (%s) [%s] => (%s) [%s]", r.source, old, r.target, value)
+			}
 		}
 	}
 }
 
 // if label equals to value, set instance as non-exportable
 func (me *LabelAgent) excludeEquals(instance *matrix.Instance) {
-    for _, r := range me.excludeEqualsRules {
-        if instance.GetLabel(r.label) == r.value {
-            instance.SetExportable(false)
-            logger.Trace(me.Prefix, "excludeEquals: (%s) [%s] instance with labels [%s] => excluded", r.label, r.value, instance.GetLabels().String())
-            break
-        }
-    }
+	for _, r := range me.excludeEqualsRules {
+		if instance.GetLabel(r.label) == r.value {
+			instance.SetExportable(false)
+			logger.Trace(me.Prefix, "excludeEquals: (%s) [%s] instance with labels [%s] => excluded", r.label, r.value, instance.GetLabels().String())
+			break
+		}
+	}
 }
 
 // if label contains value, set instance as non-exportable
 func (me *LabelAgent) excludeContains(instance *matrix.Instance) {
-    for _, r := range me.excludeContainsRules {
-        if strings.Contains(instance.GetLabel(r.label), r.value) {
-            instance.SetExportable(false)
-            logger.Trace(me.Prefix, "excludeContains: (%s) [%s] instance with labels [%s] => excluded", r.label, r.value, instance.GetLabels().String())
-            break
-        }
-    }
+	for _, r := range me.excludeContainsRules {
+		if strings.Contains(instance.GetLabel(r.label), r.value) {
+			instance.SetExportable(false)
+			logger.Trace(me.Prefix, "excludeContains: (%s) [%s] instance with labels [%s] => excluded", r.label, r.value, instance.GetLabels().String())
+			break
+		}
+	}
 }
 
 // if label equals to value, set instance as non-exportable
 func (me *LabelAgent) excludeRegex(instance *matrix.Instance) {
-    for _, r := range me.excludeRegexRules {
-        if r.reg.MatchString(instance.GetLabel(r.label)) {
-            instance.SetExportable(false)
-            logger.Trace(me.Prefix, "excludeEquals: (%s) [%s] instance with labels [%s] => excluded", r.label, r.reg.String(), instance.GetLabels().String())
-            break
-        }
-    }
+	for _, r := range me.excludeRegexRules {
+		if r.reg.MatchString(instance.GetLabel(r.label)) {
+			instance.SetExportable(false)
+			logger.Trace(me.Prefix, "excludeEquals: (%s) [%s] instance with labels [%s] => excluded", r.label, r.reg.String(), instance.GetLabels().String())
+			break
+		}
+	}
 }

@@ -16,29 +16,29 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 }
 
 type cache struct {
-    matrix *matrix.Matrix
-    counts map[string]map[string]int
-    labels []string
+	matrix *matrix.Matrix
+	counts map[string]map[string]int
+	labels []string
 }
 
 func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
-    all := make(map[string]*cache, 0)
+	all := make(map[string]*cache, 0)
 
 	// initialize cache
 	for _, obj := range me.Params.GetAllChildContentS() {
 
-        c := &cache{}
+		c := &cache{}
 
 		if fields := strings.Fields(obj); len(fields) > 1 {
 			obj = fields[0]
 			c.labels = fields[1:]
 		}
-        all[obj] = c
+		all[obj] = c
 
 		c.matrix = data.Clone(false, true, false)
 		c.matrix.Object = obj + "_" + data.Object
-		c.matrix.Plugin = "Aggregator"
+		c.matrix.UUID += ".Aggregator"
 		c.matrix.SetExportOptions(matrix.DefaultExportOptions())
 		c.counts = make(map[string]map[string]int)
 
@@ -60,7 +60,7 @@ func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	for _, instance := range data.GetInstances() {
 
-        logger.Trace(me.Prefix, "handling instance with labels [%s]", instance.GetLabels().String())
+		logger.Trace(me.Prefix, "handling instance with labels [%s]", instance.GetLabels().String())
 
 		for obj, c := range all {
 			if obj_name = instance.GetLabel(obj); obj_name == "" {
@@ -69,8 +69,8 @@ func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			}
 
 			if obj_instance = c.matrix.GetInstance(obj_name); obj_instance == nil {
-                c.counts[obj_name] = make(map[string]int)
-				if obj_instance, err = c.matrix.AddInstance(obj_name); err != nil {
+				c.counts[obj_name] = make(map[string]int)
+				if obj_instance, err = c.matrix.NewInstance(obj_name); err != nil {
 					return nil, err
 				} else {
 					obj_instance.SetLabel(obj, obj_name)
@@ -82,7 +82,7 @@ func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 			for key, metric := range data.GetMetrics() {
 
-				if value, ok = metric.GetValueFloat64(instance); ! ok {
+				if value, ok = metric.GetValueFloat64(instance); !ok {
 					continue
 				}
 
@@ -98,7 +98,7 @@ func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					logger.Error(me.Prefix, "add value [%s] [%s]: %v", key, obj_name, err)
 				}
 
-                c.counts[obj_name][key]++
+				c.counts[obj_name][key]++
 			}
 		}
 	}
@@ -109,36 +109,36 @@ func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		for mk, metric := range c.matrix.GetMetrics() {
 
 			var (
-				value float64
-                count int
+				value   float64
+				count   int
 				ok, avg bool
-				err   error
+				err     error
 			)
 
-            mn := metric.GetName()
+			mn := metric.GetName()
 			if metric.GetProperty() == "average" || metric.GetProperty() == "percent" {
 				avg = true
 			} else if strings.Contains(mn, "average_") || strings.Contains(mn, "avg_") {
-                avg = true
-            } else if strings.Contains(mn, "_latency") {
-                avg = true
-            }
+				avg = true
+			} else if strings.Contains(mn, "_latency") {
+				avg = true
+			}
 
-            if ! avg {
-                continue
-            }
+			if !avg {
+				continue
+			}
 
-            logger.Debug(me.Prefix, "[%s] (%s) normalizing values as average", mk, mn)
+			logger.Debug(me.Prefix, "[%s] (%s) normalizing values as average", mk, mn)
 
 			for key, instance := range c.matrix.GetInstances() {
 
-				if value, ok = metric.GetValueFloat64(instance); ! ok {
+				if value, ok = metric.GetValueFloat64(instance); !ok {
 					continue
 				}
 
-                if count, ok = c.counts[key][mk]; ! ok {
-                    continue
-                }
+				if count, ok = c.counts[key][mk]; !ok {
+					continue
+				}
 
 				if err = metric.SetValueFloat64(instance, value/float64(count)); err != nil {
 					logger.Error(me.Prefix, "set value [%s] [%s]: %v", mn, key, err)
@@ -148,10 +148,10 @@ func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 
 	results := make([]*matrix.Matrix, len(all))
-    i := 0
+	i := 0
 	for _, c := range all {
 		results[i] = c.matrix
-        i++
+		i++
 	}
 
 	return results, nil

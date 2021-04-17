@@ -5,7 +5,7 @@
 // can be put in a pipeline, they are executed in the same order as they
 // are defined in the collector's config file.
 // Harvest architecuture defines three types of plugins:
-// 
+//
 // **built-in**
 //     Statically compiled, generic plugins. "Generic" means
 //     the plugin is collector-agnostic. These plugins are
@@ -23,14 +23,13 @@
 //     collector and should be therefore treated with great care.
 //
 
-
 package plugin
 
 import (
 	"goharvest2/poller/options"
 	"goharvest2/share/errors"
+	"goharvest2/share/logger"
 	"goharvest2/share/matrix"
-    "goharvest2/share/logger"
 	"goharvest2/share/tree/node"
 )
 
@@ -45,7 +44,7 @@ type AbstractPlugin struct {
 	Parent       string
 	Name         string
 	Prefix       string
-    Type         string // @TODO: use or deprecate
+	Type         string // @TODO: use or deprecate
 	Options      *options.Options
 	Params       *node.Node
 	ParentParams *node.Node
@@ -72,7 +71,7 @@ func (me *AbstractPlugin) InitAbc() error {
 		//return errors.New(errors.MISSING_PARAM, "plugin type")
 	}
 
-    logger.Trace(me.Prefix, "initialized")
+	logger.Trace(me.Prefix, "initialized")
 
 	return nil
 }
