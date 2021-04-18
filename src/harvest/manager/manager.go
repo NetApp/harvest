@@ -1,4 +1,4 @@
-package main
+package manager
 
 import (
 	"bytes"
@@ -6,6 +6,7 @@ import (
 	"goharvest2/share/argparse"
 	"goharvest2/share/config"
 	"goharvest2/share/set"
+	"goharvest2/share/tree/node"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -43,7 +44,7 @@ func (o options) print() {
 	fmt.Printf("loglevel   = %d\n", o.Loglevel)
 }
 
-func main() {
+func Run() {
 
 	if HARVEST_HOME = os.Getenv("HARVEST_HOME"); HARVEST_HOME == "" {
 		HARVEST_HOME = "/opt/harvest/"
@@ -193,9 +194,9 @@ func main() {
 		os.Exit(0)
 	}
 
-	// normal start/stop/status operation
-	fmt.Printf("%-20s%-20s%-20s%-20s%-10s\n", "Datacenter", "Poller", "Prometheus Port", "Status", "PID")
-	fmt.Println("+++++++++++++++++++ +++++++++++++++++++ +++++++++++++++++++ +++++++++++++++++++ +++++++++")
+	c1, c2 := getMaxLengths(pollers, 20, 20)
+	printHeader(c1, c2)
+	printBreak(c1, c2)
 
 	for _, p := range pollers.GetChildren() {
 		name := p.GetNameS()
@@ -204,20 +205,24 @@ func main() {
 
 		if opts.Command == "status" {
 			status, pid := get_status(name)
-			fmt.Printf("%-20s%-20s%-20s%-20s%-10d\n", datacenter, name, port, status, pid)
+			//fmt.Printf("%-20s%-20s%-20s%-20s%-10d\n", datacenter, name, port, status, pid)
+			printStatus(c1, c2, datacenter, name, port, status, pid)
 		}
 
 		if opts.Command == "stop" || opts.Command == "restart" {
 			status, pid := stop_poller(name)
-			fmt.Printf("%-20s%-20s%-20s%-20s%-10d\n", datacenter, name, port, status, pid)
+			//fmt.Printf("%-20s%-20s%-20s%-20s%-10d\n", datacenter, name, port, status, pid)
+			printStatus(c1, c2, datacenter, name, port, status, pid)
 		}
 
 		if opts.Command == "start" || opts.Command == "restart" {
 			status, pid := start_poller(name, opts)
-			fmt.Printf("%-20s%-20s%-20s%-20s%-10d\n", datacenter, name, port, status, pid)
+			//fmt.Printf("%-20s%-20s%-20s%-20s%-10d\n", datacenter, name, port, status, pid)
+			printStatus(c1, c2, datacenter, name, port, status, pid)
 		}
 	}
-	fmt.Println("+++++++++++++++++++ +++++++++++++++++++ +++++++++++++++++++ +++++++++++++++++++ +++++++++")
+
+	printBreak(c1, c2)
 }
 
 // Trace status of a poller. This is partially guesswork and
@@ -248,7 +253,7 @@ func get_status(poller_name string) (string, int) {
 
 	// docker dummy status
 	if os.Getenv("HARVEST_DOCKER") == "yes" {
-		return "na", pid
+		return "n/a", pid
 	}
 
 	// no valid PID stops here
@@ -380,6 +385,7 @@ func start_poller(poller_name string, opts *options) (string, int) {
 	}
 
 	cmd := exec.Command(path.Join(HARVEST_HOME, "bin", "daemonize"), argv...)
+	fmt.Println(cmd.String())
 	if err := cmd.Start(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -411,4 +417,35 @@ func clean_pidf(fp string) bool {
 		return false
 	}
 	return true
+}
+
+// print status of poller, first two arguments are column lengths
+func printStatus(c1, c2 int, dc, pn, port, status string, pid int) {
+	fmt.Printf("%s%s ", dc, strings.Repeat(" ", c1-len(dc)))
+	fmt.Printf("%s%s ", pn, strings.Repeat(" ", c2-len(pn)))
+	fmt.Printf("%-10s %-10d %-20s\n", port, pid, status)
+}
+
+func printHeader(c1, c2 int) {
+	fmt.Printf("Datacenter%s Poller%s ", strings.Repeat(" ", c1-10), strings.Repeat(" ", c2-6))
+	fmt.Printf("%-10s %-10s %-20s\n", "Port", "PID", "Status")
+}
+
+func printBreak(c1, c2 int) {
+	fmt.Printf("%s %s ", strings.Repeat("+", c1), strings.Repeat("+", c2))
+	fmt.Println("++++++++++ ++++++++++ ++++++++++++++++++++")
+}
+
+// maximum size of datacenter and poller names, if exceed defaults
+func getMaxLengths(pollers *node.Node, pn, dc int) (int, int) {
+	for _, p := range pollers.GetChildren() {
+		if len(p.GetNameS()) > pn {
+			pn = len(p.GetNameS())
+		}
+		if len(p.GetChildContentS("datacenter")) > dc {
+			dc = len(p.GetChildContentS("datacenter"))
+			//fmt.Println(len(p.GetChildContentS("datacenter")), p.GetChildContentS("datacenter"))
+		}
+	}
+	return dc + 1, pn + 1
 }
