@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"sync/atomic"
 	"time"
 
 	"goharvest2/share/dload"
@@ -15,10 +14,16 @@ import (
 	"goharvest2/share/matrix"
 	"goharvest2/share/tree/node"
 
-	"goharvest2/poller/collector/plugin"
 	"goharvest2/poller/exporter"
 	"goharvest2/poller/options"
+	"goharvest2/poller/plugin"
 	"goharvest2/poller/schedule"
+
+	// built-in plugins
+
+	"goharvest2/poller/plugin/aggregator"
+	//"goharvest2/poller/plugin/calculator"
+	"goharvest2/poller/plugin/label_agent"
 )
 
 type Collector interface {
@@ -28,8 +33,8 @@ type Collector interface {
 	GetObject() string
 	GetParams() *node.Node
 	GetOptions() *options.Options
-	GetCount() uint64
-	AddCount(int)
+	GetCollectCount() uint64
+	AddCollectCount(uint64)
 	GetStatus() (uint8, string, string)
 	SetStatus(uint8, string)
 	SetSchedule(*schedule.Schedule)
@@ -47,27 +52,29 @@ var CollectorStatus = [3]string{
 }
 
 type AbstractCollector struct {
-	Name      string
-	Prefix    string
-	Object    string
-	Status    uint8
-	Message   string
-	Count     uint64
-	Options   *options.Options
-	Params    *node.Node
-	Schedule  *schedule.Schedule
-	Matrix    *matrix.Matrix
-	Metadata  *matrix.Matrix
-	Exporters []exporter.Exporter
-	Plugins   []plugin.Plugin
+	Name         string
+	Prefix       string
+	Object       string
+	Status       uint8
+	Message      string
+	Options      *options.Options
+	Params       *node.Node
+	Schedule     *schedule.Schedule
+	Matrix       *matrix.Matrix
+	Metadata     *matrix.Matrix
+	Exporters    []exporter.Exporter
+	Plugins      []plugin.Plugin
+	collectCount uint64
+	countMux     *sync.Mutex
 }
 
 func New(name, object string, options *options.Options, params *node.Node) *AbstractCollector {
 	c := AbstractCollector{
-		Name:    name,
-		Object:  object,
-		Options: options,
-		Params:  params,
+		Name:     name,
+		Object:   object,
+		Options:  options,
+		Params:   params,
+		countMux: &sync.Mutex{},
 	}
 	c.Prefix = "(collector) (" + name + ":" + object + ")"
 
@@ -117,7 +124,7 @@ func Init(c Collector) error {
 	c.SetSchedule(s)
 
 	/* Initialize Matrix, the container of collected data */
-	mx := matrix.New(name, object, "")
+	mx := matrix.New(name, object)
 	if export_options := params.GetChildS("export_options"); export_options != nil {
 		mx.SetExportOptions(export_options)
 	} else {
@@ -132,7 +139,7 @@ func Init(c Collector) error {
 		}
 	}
 
-	if params.GetChildContentS("export_data") == "False" {
+	if params.GetChildContentS("export_data") == "false" {
 		mx.SetExportable(false)
 	}
 
@@ -146,10 +153,7 @@ func Init(c Collector) error {
 	}
 
 	/* Initialize metadata */
-	md := matrix.New(name, object, "metadata")
-	md.IsMetadata = true
-	md.MetadataType = "collector"
-	md.MetadataObject = "task"
+	md := matrix.New(name, "metadata_collector")
 
 	md.SetGlobalLabel("hostname", options.Hostname)
 	md.SetGlobalLabel("version", options.Version)
@@ -157,41 +161,36 @@ func Init(c Collector) error {
 	md.SetGlobalLabel("collector", name)
 	md.SetGlobalLabel("object", object)
 
-	md.AddMetricInt64("poll_time")
-	md.AddMetricInt64("poll2_time")
-	md.AddMetricInt64("task_time")
-	md.AddMetricInt64("task2_time")
-	md.AddMetricInt64("read_time")
-	md.AddMetricInt64("build_time")
-	md.AddMetricInt64("batch_time")
-	md.AddMetricInt64("api_time")
-	md.AddMetricInt64("invoke_time")
-	md.AddMetricInt64("parse_time")
-	md.AddMetricInt64("fetch_time")
-	md.AddMetricInt64("search_time")
-	md.AddMetricInt64("search2_time")
-	md.AddMetricInt64("calc_time")
-	md.AddMetricInt64("plugin_time")
-	md.AddMetricInt64("content_length")
-	md.AddMetricFloat64("api_time_percent")
-	md.AddMetricUint64("count")
+	md.NewMetricInt64("poll_time")
+	md.NewMetricInt64("poll2_time")
+	md.NewMetricInt64("task_time")
+	md.NewMetricInt64("task2_time")
+	md.NewMetricInt64("read_time")
+	md.NewMetricInt64("build_time")
+	md.NewMetricInt64("batch_time")
+	md.NewMetricInt64("api_time")
+	md.NewMetricInt64("invoke_time")
+	md.NewMetricInt64("parse_time")
+	md.NewMetricInt64("fetch_time")
+	md.NewMetricInt64("search_time")
+	md.NewMetricInt64("search2_time")
+	md.NewMetricInt64("calc_time")
+	md.NewMetricInt64("plugin_time")
+	md.NewMetricInt64("content_length")
+	md.NewMetricFloat64("api_time_percent")
+	md.NewMetricUint64("count")
 	//md.AddLabel("task", "")
 	//md.AddLabel("interval", "")
 
 	/* each task we run is an "instance" */
 	for _, task := range s.GetTasks() {
-		instance, _ := md.AddInstance(task.Name)
+		instance, _ := md.NewInstance(task.Name)
 		instance.SetLabel("task", task.Name)
 		t := task.GetInterval().Seconds()
 		instance.SetLabel("interval", strconv.FormatFloat(t, 'f', 4, 32))
 	}
 
 	md.SetExportOptions(matrix.DefaultExportOptions())
-
-	/* initialize underlaying arrays */
-	if err := md.Reset(); err != nil {
-		return err
-	}
 
 	c.SetMetadata(md)
 	c.SetStatus(0, "initialized")
@@ -210,10 +209,7 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 
 	for {
 
-		if err := me.Metadata.Reset(); err != nil { // can occur if collector messed up
-			//panic(err) // @TODO graceful hadnling, not critical...
-			logger.Error(me.Prefix, "reset metadata: %v", err)
-		}
+		me.Metadata.Reset()
 
 		results := make([]*matrix.Matrix, 0)
 
@@ -242,19 +238,19 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 						retry_delay *= 4
 					}
 					if !me.Schedule.IsStandBy() {
-						logger.Error(me.Prefix, err.Error())
-						logger.Error(me.Prefix, "target system unreachable, entering standby mode (retry to connect in %d s)", retry_delay)
+						//logger.Error(me.Prefix, err.Error())
+						logger.Warn(me.Prefix, "target system unreachable, entering standby mode (retry to connect in %d s)", retry_delay)
 					}
 					me.Schedule.SetStandByMode(task.Name, time.Duration(retry_delay)*time.Second)
 					me.SetStatus(1, errors.ERR_CONNECTION)
 				case errors.IsErr(err, errors.ERR_NO_INSTANCE):
 					me.Schedule.SetStandByMode(task.Name, 5*time.Minute)
 					me.SetStatus(1, errors.ERR_NO_INSTANCE)
-					logger.Error(me.Prefix, "no [%s] instances on system, entering standby mode", me.Object)
+					logger.Info(me.Prefix, "no [%s] instances on system, entering standby mode", me.Object)
 				case errors.IsErr(err, errors.ERR_NO_METRIC):
 					me.SetStatus(1, errors.ERR_NO_METRIC)
 					me.Schedule.SetStandByMode(task.Name, 1*time.Hour)
-					logger.Error(me.Prefix, "no [%s] metrics on system, entering standby mode", me.Object)
+					logger.Warn(me.Prefix, "no [%s] metrics on system, entering standby mode", me.Object)
 				default:
 					// enter failed state
 					logger.Error(me.Prefix, err.Error())
@@ -301,7 +297,7 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 				me.Metadata.LazySetValueInt64("poll2_time", task.Name, poll2_time.Microseconds())
 				me.Metadata.LazySetValueInt64("task_time", task.Name, task_time.Microseconds())
 
-				if api_time := me.Metadata.LazyGetValueInt64("api_time", task.Name); api_time != 0 {
+				if api_time, ok := me.Metadata.LazyGetValueInt64("api_time", task.Name); ok && api_time != 0 {
 					me.Metadata.LazySetValueFloat64("api_time_percent", task.Name, float64(api_time)/float64(task_time.Microseconds())*100)
 				}
 
@@ -312,7 +308,7 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 
 		// @TODO better handling when exporter is standby/failed state
 		for _, e := range me.Exporters {
-			if code, status, reason := me.GetStatus(); code != 0 {
+			if code, status, reason := e.GetStatus(); code != 0 {
 				logger.Warn(me.Prefix, "exporter [%s] down (%d - %s) (%s), skip export", e.GetName(), code, status, reason)
 				continue
 			}
@@ -345,14 +341,22 @@ func (me *AbstractCollector) GetObject() string {
 	return me.Object
 }
 
-func (me *AbstractCollector) GetCount() uint64 {
-	count := me.Count
-	atomic.StoreUint64(&me.Count, 0)
+// get and reset of collected data counter
+// this and next method are only to report the poller
+// how much data we have collected (independent of poll interval)
+func (me *AbstractCollector) GetCollectCount() uint64 {
+	me.countMux.Lock()
+	count := me.collectCount
+	me.collectCount = 0
+	me.countMux.Unlock()
 	return count
 }
 
-func (me *AbstractCollector) AddCount(n int) {
-	atomic.AddUint64(&me.Count, uint64(n))
+// add count to the collected data counter
+func (me *AbstractCollector) AddCollectCount(n uint64) {
+	me.countMux.Lock()
+	me.collectCount += n
+	me.countMux.Unlock()
 }
 
 func (me *AbstractCollector) GetStatus() (uint8, string, string) {
@@ -403,6 +407,9 @@ func (me *AbstractCollector) LinkExporter(e exporter.Exporter) {
 
 func (me *AbstractCollector) LoadPlugins(params *node.Node) error {
 
+	var p plugin.Plugin
+	var abc *plugin.AbstractPlugin
+
 	for _, x := range params.GetChildren() {
 
 		name := x.GetNameS()
@@ -411,30 +418,53 @@ func (me *AbstractCollector) LoadPlugins(params *node.Node) error {
 			x.SetNameS(name)
 		}
 
-		logger.Debug(me.Prefix, "loading plugin [%s]", name)
+		abc = plugin.New(me.Name, me.Options, x, me.Params)
 
-		binpath := path.Join(me.Options.HomePath, "bin", "plugins", strings.ToLower(me.Name))
-
-		module, err := dload.LoadFuncFromModule(binpath, strings.ToLower(name), "New")
-		if err != nil {
-			//logger.Error(c.LongName, "load plugin [%s]: %v", name, err)
-			return errors.New(errors.ERR_DLOAD, "plugin "+name+": "+err.Error())
+		// case 1: available as built-in plugin
+		if p = getBuiltinPlugin(name, abc); p != nil {
+			logger.Debug(me.Prefix, "loaded built-in plugin [%s]", name)
+		// case 2: available as dynamic plugin
+		} else {
+			binpath := path.Join(me.Options.HomePath, "bin", "plugins", strings.ToLower(me.Name))
+			module, err := dload.LoadFuncFromModule(binpath, strings.ToLower(name), "New")
+			if err != nil {
+				//logger.Error(c.LongName, "load plugin [%s]: %v", name, err)
+				return errors.New(errors.ERR_DLOAD, "plugin "+name+": "+err.Error())
+			}
+	
+			NewFunc, ok := module.(func(*plugin.AbstractPlugin) plugin.Plugin)
+			if !ok {
+				//logger.Error(c.LongName, "load plugin [%s]: New() has not expected signature", name)
+				return errors.New(errors.ERR_DLOAD, name+": New()")
+			}
+			p = NewFunc(abc)
+			logger.Debug(me.Prefix, "loaded dynamic plugin [%s]", name)
 		}
 
-		NewFunc, ok := module.(func(*plugin.AbstractPlugin) plugin.Plugin)
-		if !ok {
-			//logger.Error(c.LongName, "load plugin [%s]: New() has not expected signature", name)
-			return errors.New(errors.ERR_DLOAD, name+": New()")
-		}
-
-		p := NewFunc(plugin.New(me.Name, me.Options, x, me.Params))
 		if err := p.Init(); err != nil {
-			//logger.Error(c.LongName, "init plugin [%s]: %v", name, err)
-			return errors.New(errors.ERR_DLOAD, name+": Init(): "+err.Error())
+			logger.Error(me.Prefix, "init plugin [%s]: %v", name, err)
+			return err
 		}
-
 		me.Plugins = append(me.Plugins, p)
 	}
-	//logger.Debug(c.LongName, "initialized %d plugins", len(c.Plugins))
+	logger.Debug(me.Prefix, "initialized %d plugins", len(me.Plugins))
+	return nil
+}
+
+func getBuiltinPlugin(name string, abc *plugin.AbstractPlugin) plugin.Plugin {
+
+	if name == "Aggregator" {
+		return aggregator.New(abc)
+	}
+
+	/*
+	if name == "Calculator" {
+		return calculator.New(abc)
+	}*/
+
+	if name == "LabelAgent" {
+		return label_agent.New(abc)
+	}
+
 	return nil
 }

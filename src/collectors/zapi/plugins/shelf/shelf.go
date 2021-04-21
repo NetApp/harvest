@@ -2,7 +2,7 @@ package main
 
 import (
 	"goharvest2/poller/collector"
-	"goharvest2/poller/collector/plugin"
+	"goharvest2/poller/plugin"
 	"goharvest2/share/dict"
 	"goharvest2/share/errors"
 	"goharvest2/share/logger"
@@ -10,7 +10,7 @@ import (
 	"goharvest2/share/tree/node"
 	"strings"
 
-	client "goharvest2/apis/zapi"
+	"goharvest2/api/ontapi/zapi"
 )
 
 type Shelf struct {
@@ -18,7 +18,7 @@ type Shelf struct {
 	data            map[string]*matrix.Matrix
 	instance_keys   map[string]string
 	instance_labels map[string]*dict.Dict
-	connection      *client.Client
+	connection      *zapi.Client
 	query           string
 }
 
@@ -34,7 +34,7 @@ func (my *Shelf) Init() error {
 		return err
 	}
 
-	if my.connection, err = client.New(my.ParentParams); err != nil {
+	if my.connection, err = zapi.New(my.ParentParams); err != nil {
 		logger.Error(my.Prefix, "connecting: %v", err)
 		return err
 	}
@@ -73,7 +73,7 @@ func (my *Shelf) Init() error {
 
 		my.instance_labels[attribute] = dict.New()
 
-		my.data[attribute] = matrix.New(my.Parent, object_name, "shelf")
+		my.data[attribute] = matrix.New(my.Parent+".Shelf", "shelf_"+object_name)
 		my.data[attribute].SetGlobalLabel("datacenter", my.ParentParams.GetChildContentS("datacenter"))
 		my.data[attribute].SetGlobalLabel("cluster", system.Name)
 
@@ -100,7 +100,7 @@ func (my *Shelf) Init() error {
 						logger.Debug(my.Prefix, "added instance label: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
 					}
 				} else {
-					metric, err := my.data[attribute].AddMetricUint64(metric_name)
+					metric, err := my.data[attribute].NewMetricUint64(metric_name)
 					if err != nil {
 						logger.Error(my.Prefix, "add metric: %v", err)
 						return err
@@ -110,7 +110,7 @@ func (my *Shelf) Init() error {
 				}
 			}
 		}
-		logger.Debug(my.Prefix, "added data for [%s] with %d metrics and %d labels", attribute, my.data[attribute].SizeMetrics(), 0) //my.data[attribute].SizeLabels())
+		logger.Debug(my.Prefix, "added data for [%s] with %d metrics", attribute, len(my.data[attribute].GetMetrics()))
 
 		my.data[attribute].SetExportOptions(export_options)
 	}
@@ -183,7 +183,7 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 				if key := obj.GetChildContentS(my.instance_keys[attribute]); key != "" {
 
-					instance, err := data.AddInstance(shelf_id + "." + key)
+					instance, err := data.NewInstance(shelf_id + "." + key)
 
 					if err != nil {
 						logger.Debug(my.Prefix, "add (%s) instance: %v", attribute, err)
@@ -221,10 +221,7 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		for attribute, data := range my.data {
 
-			if data.Reset() != nil {
-				// means no numeric metrics
-				continue
-			}
+			data.Reset()
 
 			object_elem := shelf.GetChildS(attribute)
 			if object_elem == nil {

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/xml"
 	"goharvest2/share/tree/node"
+	"io"
 )
 
 func Load(data []byte) (*node.Node, error) {
@@ -14,6 +15,12 @@ func Load(data []byte) (*node.Node, error) {
 		return nil, err
 	}
 	return root, nil
+}
+
+func LoadFromReader(r io.Reader) (*node.Node, error) {
+    root := new(node.Node)
+	dec := xml.NewDecoder(r)
+	return root, dec.Decode(&root)
 }
 
 func Dump(n *node.Node) ([]byte, error) {

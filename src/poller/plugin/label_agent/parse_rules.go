@@ -19,6 +19,8 @@ func (me *LabelAgent) parseRules() int {
 	me.excludeEqualsRules = make([]excludeEqualsRule, 0)
 	me.excludeContainsRules = make([]excludeContainsRule, 0)
 	me.excludeRegexRules = make([]excludeRegexRule, 0)
+	me.splitPairsRules = make([]splitPairsRule, 0)
+	me.valueMappingRules = make([]valueMappingRule, 0)
 
 	for _, c := range me.Params.GetChildren() {
 		name := c.GetNameS()
@@ -29,6 +31,8 @@ func (me *LabelAgent) parseRules() int {
 			me.parseSplitSimpleRule(rule)
 		case "split_regex":
 			me.parseSplitRegexRule(rule)
+		case "split_pairs":
+			me.parseSplitPairsRule(rule)
 		case "join":
 			me.parseJoinSimpleRule(rule)
 		case "replace":
@@ -41,6 +45,8 @@ func (me *LabelAgent) parseRules() int {
 			me.parseExcludeContainsRule(rule)
 		case "exclude_regex":
 			me.parseExcludeRegexRule(rule)
+		case "value_mapping":
+			me.parseValueMappingRule(rule)
 		default:
 			logger.Warn(me.Prefix, "unknown rule (%s)", name)
 		}
@@ -57,6 +63,11 @@ func (me *LabelAgent) parseRules() int {
 	if len(me.splitRegexRules) != 0 {
 		me.actions = append(me.actions, me.splitRegex)
 		count += len(me.splitRegexRules)
+	}
+
+	if len(me.splitPairsRules) != 0 {
+		me.actions = append(me.actions, me.splitPairs)
+		count += len(me.splitPairsRules)
 	}
 
 	if len(me.joinSimpleRules) != 0 {
@@ -89,6 +100,8 @@ func (me *LabelAgent) parseRules() int {
 		count += len(me.excludeRegexRules)
 	}
 
+	count += len(me.valueMappingRules)
+
 	return count
 }
 
@@ -118,6 +131,28 @@ func (me *LabelAgent) parseSplitSimpleRule(rule string) {
 		}
 	}
 	logger.Warn(me.Prefix, "(split) rule has invalid format [%s]", rule)
+}
+
+type splitPairsRule struct {
+	source  string
+	sep1 string
+	sep2 string
+}
+
+// example rule:
+// node ` ` `:`
+// will use single space to extract pairs
+// will use colon to extract key-value
+func (me *LabelAgent) parseSplitPairsRule(rule string) {
+	if fields := strings.Split(rule, "`"); len(fields) == 5 {
+		r := splitPairsRule{source: strings.TrimSpace(fields[0])}
+		r.sep1 = fields[1]
+		r.sep2 = fields[3]
+		logger.Debug(me.Prefix, "(split_pairs) parsed rule [%v]", r)
+		me.splitPairsRules = append(me.splitPairsRules, r)
+		return
+	}
+	logger.Warn(me.Prefix, "(split_pairs) rule has invalid format [%s]", rule)
 }
 
 type splitRegexRule struct {
@@ -323,9 +358,51 @@ func (me *LabelAgent) parseExcludeRegexRule(rule string) {
 			logger.Trace(me.Prefix, "(exclude_regex) compiled regex: [%s]", r.reg.String())
 			logger.Debug(me.Prefix, "(exclude_regex) parsed rule [%v]", r)
 		} else {
-			logger.Error(me.Prefix, "(exclude_regex) compule regex: %v", err)
+			logger.Error(me.Prefix, "(exclude_regex) compile regex: %v", err)
 		}
 	} else {
 		logger.Error(me.Prefix, "(exclude_regex) rule definition [%s] should have two fields", rule)
 	}
+}
+
+type valueMappingRule struct {
+	metric string
+	label string
+	defaultValue uint8
+	hasDefault bool
+	mapping map[string]uint8
+}
+
+// example rule:
+// status state ok,pending,failed `8`
+// will create a new metric "status" of type uint8
+// if value of label "state" is any of ok,pending,failed
+// the metric value will be respectively 0, 1 or 2
+
+func (me *LabelAgent) parseValueMappingRule(rule string) {
+	if fields := strings.Fields(rule); len(fields) == 3 || len(fields) == 4 {
+		r := valueMappingRule{metric: fields[0], label: fields[1]}
+		r.mapping = make(map[string]uint8)
+		for i, v := range strings.Split(fields[2], ",") {
+			r.mapping[v] = uint8(i)
+		}
+
+		if len(fields) == 4 {
+
+			fields[3] = strings.TrimPrefix(strings.TrimSuffix(fields[3], "`"), "`")
+
+			if v, err := strconv.ParseUint(fields[3], 10, 8); err != nil {
+				logger.Error(me.Prefix, "(value_mapping) parse default value (%s): %v", fields[3], err)
+				return
+			} else {
+				r.hasDefault = true
+				r.defaultValue = uint8(v)
+			}
+		}
+
+		me.valueMappingRules = append(me.valueMappingRules, r)
+		logger.Debug(me.Prefix, "(value_mapping) parsed rule [%v]", r)
+		return
+	}
+	logger.Warn(me.Prefix, "(value_mapping) rule has invalid format [%s]", rule)
 }

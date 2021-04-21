@@ -10,7 +10,7 @@ package main
 */
 
 import (
-	"goharvest2/poller/collector/plugin"
+	"goharvest2/poller/plugin"
 	"goharvest2/share/errors"
 	"goharvest2/share/logger"
 	"goharvest2/share/matrix"
@@ -29,7 +29,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 
 func (me *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
-	var read, write, rx, tx, util, nic_state matrix.Metric
+	var read, write, rx, tx, util matrix.Metric
 	var err error
 
 	if read = data.GetMetric("rx_bytes"); read == nil {
@@ -41,7 +41,7 @@ func (me *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 
 	if rx = data.GetMetric("rx_percent"); rx == nil {
-		if rx, err = data.AddMetricFloat64("rx_percent"); err == nil {
+		if rx, err = data.NewMetricFloat64("rx_percent"); err == nil {
 			rx.SetProperty("raw")
 		} else {
 			return nil, err
@@ -49,7 +49,7 @@ func (me *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	}
 	if tx = data.GetMetric("tx_percent"); tx == nil {
-		if tx, err = data.AddMetricFloat64("tx_percent"); err == nil {
+		if tx, err = data.NewMetricFloat64("tx_percent"); err == nil {
 			tx.SetProperty("raw")
 		} else {
 			return nil, err
@@ -57,16 +57,8 @@ func (me *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 
 	if util = data.GetMetric("util_percent"); util == nil {
-		if util, err = data.AddMetricFloat64("util_percent"); err == nil {
+		if util, err = data.NewMetricFloat64("util_percent"); err == nil {
 			util.SetProperty("raw")
-		} else {
-			return nil, err
-		}
-	}
-
-	if nic_state = data.GetMetric("state"); nic_state == nil {
-		if nic_state, err = data.AddMetricUint8("state"); err == nil {
-			nic_state.SetProperty("raw")
 		} else {
 			return nil, err
 		}
@@ -109,12 +101,6 @@ func (me *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			if rx_ok || tx_ok {
 				util.SetValueFloat64(instance, math.Max(rx_percent, tx_percent))
 			}
-		}
-
-		if instance.GetLabel("state") == "up" {
-			nic_state.SetValueUint8(instance, 0)
-		} else {
-			nic_state.SetValueUint8(instance, 1)
 		}
 
 		// truncate redundant prefix in nic type

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"goharvest2/poller/collector/plugin"
+	"goharvest2/poller/plugin"
 	"goharvest2/share/logger"
 	"goharvest2/share/matrix"
 	"regexp"
@@ -25,14 +25,14 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	re := regexp.MustCompile(`^(.*)__(\d{4})$`)
 
 	cache := data.Clone(false, true, false)
-	cache.Plugin = "volume.flexgroup"
+	cache.UUID += ".Volume"
 
 	// create flexgroup instance cache
 	for _, i := range data.GetInstances() {
 		if match := re.FindStringSubmatch(i.GetLabel("volume")); match != nil && len(match) == 3 {
 			key := i.GetLabel("node") + "." + i.GetLabel("svm") + "." + match[1]
 			if cache.GetInstance(key) == nil {
-				fg, _ := cache.AddInstance(key)
+				fg, _ := cache.NewInstance(key)
 				fg.SetLabels(i.GetLabels().Copy())
 				fg.SetLabel("volume", match[1])
 				fg.SetLabel("type", "flexgroup")
@@ -44,11 +44,9 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 	}
 
-	logger.Debug(me.Prefix, "extracted %d flexgroup volumes", cache.SizeInstances())
+	logger.Debug(me.Prefix, "extracted %d flexgroup volumes", len(cache.GetInstances()))
 
-	if err := cache.Reset(); err != nil {
-		return nil, err
-	}
+	//cache.Reset()
 
 	// create summary
 	for _, i := range data.GetInstances() {

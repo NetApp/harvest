@@ -1,16 +1,7 @@
 package main
 
-/*  Some postprocessing on counter data "nic_common"
-    Converts link_speed to numeric MBs
-    Adds custom metrics:
-        - "rc_percent":    receive data utilization percent
-        - "tx_percent":    sent data utilization percent
-        - "util_percent":  max utilization percent
-        - "nic_state":     0 if port is up, 1 otherwise
-*/
-
 import (
-	"goharvest2/poller/collector/plugin"
+	"goharvest2/poller/plugin"
 	"goharvest2/share/errors"
 	"goharvest2/share/logger"
 	"goharvest2/share/matrix"
@@ -41,7 +32,7 @@ func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 
 	if rx = data.GetMetric("read_percent"); rx == nil {
-		if rx, err = data.AddMetricFloat64("read_percent"); err == nil {
+		if rx, err = data.NewMetricFloat64("read_percent"); err == nil {
 			rx.SetProperty("raw")
 		} else {
 			return nil, err
@@ -49,7 +40,7 @@ func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	}
 	if tx = data.GetMetric("write_percent"); tx == nil {
-		if tx, err = data.AddMetricFloat64("write_percent"); err == nil {
+		if tx, err = data.NewMetricFloat64("write_percent"); err == nil {
 			tx.SetProperty("raw")
 		} else {
 			return nil, err
@@ -57,22 +48,12 @@ func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 
 	if util = data.GetMetric("util_percent"); util == nil {
-		if util, err = data.AddMetricFloat64("util_percent"); err == nil {
+		if util, err = data.NewMetricFloat64("util_percent"); err == nil {
 			util.SetProperty("raw")
 		} else {
 			return nil, err
 		}
 	}
-
-	/*
-		if nic_state = data.GetMetric("status"); nic_state == nil {
-			if nic_state, err = data.AddMetric("status", "status", true); err == nil {
-				nic_state.Properties = "raw"
-			} else {
-				return nil, err
-			}
-		}
-	*/
 
 	for _, instance := range data.GetInstances() {
 
@@ -105,15 +86,6 @@ func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				util.SetValueFloat64(instance, math.Max(rx_percent, tx_percent))
 			}
 		}
-
-		/*
-			if state := instance.Labels.Get("state"); state == "up" {
-				data.SetValue(nic_state, instance, float64(0))
-			} else {
-				data.SetValue(nic_state, instance, float64(1))
-			}*/
-
 	}
-
 	return nil, nil
 }

@@ -38,6 +38,10 @@ func (n *Node) GetXmlNameS() string {
 	return n.XMLName.Local
 }
 
+func (n *Node) SetXmlNameS(name string) {
+	n.XMLName = xml.Name{"", name}
+}
+
 func (n *Node) GetName() []byte {
 	if name := n.GetXmlNameS(); name != "" {
 		return []byte(name)
@@ -241,6 +245,21 @@ func (n *Node) Union(source *Node) {
 	}
 }
 
+func (me *Node) Merge(source *Node) {
+
+	if len(me.Content) == 0 {
+		me.Content = source.Content
+	}
+
+	for _, child := range source.Children {
+		if mine := me.GetChild(child.GetName()); mine == nil {
+			me.AddChild(child)
+		} else {
+			mine.Merge(child)
+		}
+	}
+}
+
 func (n *Node) UnmarshalXML(dec *xml.Decoder, root xml.StartElement) error {
 	n.Attrs = root.Attr
 	type node Node
@@ -248,17 +267,20 @@ func (n *Node) UnmarshalXML(dec *xml.Decoder, root xml.StartElement) error {
 }
 
 func (n *Node) Print(depth int) {
-	name := "- "
-	if len(n.GetName()) > 0 {
+	name := "* "
+	content := " *"
+
+	if n.GetNameS() != "" {
 		name = n.GetNameS()
 	}
-	//fname := fmt.Sprintf("%s%s%s%s%s (children=%d)", strings.Repeat("  ", depth), util.Bold, util.Cyan, name, util.End, len(n.Children))
-	fname := fmt.Sprintf("%s%s%s%s%s", strings.Repeat("  ", depth), util.Bold, util.Cyan, name, util.End)
+
 	if len(n.GetContentS()) > 0 && n.GetContentS()[0] != '<' {
-		fmt.Printf("%-50s - %s%35s%s\n", fname, util.Green, n.GetContentS(), util.End)
-	} else {
-		fmt.Printf("%-50s\n", fname)
+		//content = n.GetContentS()
+		content = string(n.Content)
 	}
+	//fname := fmt.Sprintf("%s%s%s%s%s (children=%d)", strings.Repeat("  ", depth), util.Bold, util.Cyan, name, util.End, len(n.Children))
+	fname := fmt.Sprintf("%s%s%s[%s]%s", strings.Repeat("  ", depth), util.Bold, util.Cyan, name, util.End)
+	fmt.Printf("%-50s - %s%35s%s\n", fname, util.Green, content, util.End)
 	for _, child := range n.Children {
 		child.Print(depth + 1)
 	}

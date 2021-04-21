@@ -207,7 +207,7 @@ func (me *Unix) loadMetrics(counters *node.Node) error {
 		// counter is scalar metric
 		if _, has := _METRICS[name]; has {
 
-			if metric, err = me.Matrix.AddMetricType(name, dtype); err != nil {
+			if metric, err = me.Matrix.NewMetricType(name, dtype); err != nil {
 				return err
 			}
 			metric.SetName(display)
@@ -240,7 +240,7 @@ func (me *Unix) loadMetrics(counters *node.Node) error {
 					continue
 				}
 
-				if metric, err = me.Matrix.AddMetricType(name+"."+label, dtype); err != nil {
+				if metric, err = me.Matrix.NewMetricType(name+"."+label, dtype); err != nil {
 					return err
 				}
 				metric.SetName(name)
@@ -256,11 +256,11 @@ func (me *Unix) loadMetrics(counters *node.Node) error {
 		}
 	}
 
-	if _, err = me.Matrix.AddMetricUint8("status"); err != nil {
+	if _, err = me.Matrix.NewMetricUint8("status"); err != nil {
 		return err
 	}
 
-	logger.Debug(me.Prefix, "initialized cache with %d metrics", me.Matrix.SizeMetrics())
+	logger.Debug(me.Prefix, "initialized cache with %d metrics", len(me.Matrix.GetMetrics()))
 	return nil
 }
 
@@ -286,7 +286,7 @@ func (me *Unix) PollInstance() (*matrix.Matrix, error) {
 		}
 
 		if instance := me.Matrix.GetInstance(name); instance == nil {
-			if instance, err = me.Matrix.AddInstance(name); err != nil {
+			if instance, err = me.Matrix.NewInstance(name); err != nil {
 				return nil, err
 			}
 			instance.SetLabel("poller", name)
@@ -304,7 +304,7 @@ func (me *Unix) PollInstance() (*matrix.Matrix, error) {
 		logger.Debug(me.Prefix, "remove instance (%s)")
 	}
 
-	t := me.Matrix.SizeInstances()
+	t := len(me.Matrix.GetInstances())
 	r := currInstances.Size()
 	a := t - (currSize - r)
 	logger.Debug(me.Prefix, "added %d, removed %d, total instances %d", a, r, t)
@@ -316,15 +316,14 @@ func (me *Unix) PollInstance() (*matrix.Matrix, error) {
 func (me *Unix) PollData() (*matrix.Matrix, error) {
 
 	var (
-		count, pid int
-		err        error
-		ok         bool
-		proc       *Process
+		pid   int
+		count uint64
+		err   error
+		ok    bool
+		proc  *Process
 	)
 
-	if err = me.Matrix.Reset(); err != nil {
-		return nil, err
-	}
+	me.Matrix.Reset()
 
 	if err = me.system.Reload(); err != nil {
 		return nil, err
@@ -394,7 +393,7 @@ func (me *Unix) PollData() (*matrix.Matrix, error) {
 		}
 	}
 
-	me.AddCount(count)
+	me.AddCollectCount(count)
 	logger.Debug(me.Prefix, "poll complete, added %d data points", count)
 	return me.Matrix, nil
 }

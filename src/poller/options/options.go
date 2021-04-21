@@ -1,6 +1,6 @@
-// Package options provides the options with which
-// the Poller is started up, parsed from CLI arguments
-// and environment variables.
+// Package options provides Poller start options,
+// parsed from CLI arguments, default values and
+// environment variables.
 
 package options
 
@@ -85,7 +85,7 @@ func Get() (*Options, string) {
 	parser.Bool(&args.Debug, "debug", "d", "Debug mode, no data will be exported")
 	parser.Bool(&args.Daemon, "daemon", "", "Start as daemon")
 	parser.Int(&args.LogLevel, "loglevel", "l", "Logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)")
-	//parser.String(&args.Config, "config", "c", "Custom config filepath (default: "+args.Config+")")
+	parser.String(&args.Config, "conf", "", "Custom config filepath (default: "+args.Config+")")
 	parser.Slice(&args.Collectors, "collectors", "c", "Only start these collectors (overrides harvest.yml)")
 	parser.Slice(&args.Objects, "objects", "o", "Only start these objects (overrides collector config)")
 	ok := parser.Parse()

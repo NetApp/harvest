@@ -21,6 +21,8 @@ func TestInitPlugin(t *testing.T) {
 	params.NewChildS("split", "X `/` ,,C,D")
 	// split value of "X" and take first 2 as new labels
 	params.NewChildS("split_regex", "X `.*(A\\d+)_(B\\d+)` A,B")
+	// split value of "X" into key-value pairs
+	params.NewChildS("split_pairs", "X ` ` `:`")
 	// join values of "A" and "B" and set as label "X"
 	params.NewChildS("join", "X `_` A,B")
 	// replace "aaa_" with "bbb_" and set as label "B"
@@ -35,6 +37,10 @@ func TestInitPlugin(t *testing.T) {
 	params.NewChildS("exclude_contains", "A `_aaa_`")
 	// exclude instance of label value has prefix "aaa_" followed by at least one digit
 	params.NewChildS("exclude_regex", "A `^aaa_\\d+$`")
+	// create metric "status", if label "state" is one of the 3, map metric value to respective index
+	params.NewChildS("value_mapping", "status state up,sleeping,down")
+	// similar to above, but if none of the values is matching, use default value "4"
+	params.NewChildS("value_mapping", "stage stage init `1`")
 
 	abc := plugin.New("Test", nil, params, nil)
 	p = &LabelAgent{AbstractPlugin: abc}
@@ -71,6 +77,21 @@ func TestSplitRegexRule(t *testing.T) {
 		// OK
 	} else {
 		t.Error("Labels A and B don't have expected values")
+	}
+}
+
+func TestSplitPairsRule(t *testing.T) {
+	instance := matrix.NewInstance(0)
+	instance.SetLabel("X", "owner:jack contact:some@email")
+
+	t.Logf("before = [%s]\n", instance.GetLabels().String())
+	p.splitPairs(instance)
+	t.Logf("after  = [%s]\n", instance.GetLabels().String())
+
+	if instance.GetLabel("owner") == "jack" && instance.GetLabel("contact") == "some@email" {
+		// OK
+	} else {
+		t.Error("Labels owner and contact don't have expected values")
 	}
 }
 
@@ -182,4 +203,80 @@ func TestExcludeRegexRule(t *testing.T) {
 	if !instanceNo.IsExportable() {
 		t.Error("instanceNo should not have been excluded")
 	}
+}
+
+
+func TestValueMappingRule(t *testing.T) {
+
+	var (
+		instanceA, instanceB *matrix.Instance
+		status, stage matrix.Metric
+		v, expected uint8
+		ok bool
+		err error
+	)
+	// should match
+	m := matrix.New("TestLabelAgent", "test")
+
+
+	if instanceA, err = m.NewInstance("A"); err != nil {
+		t.Fatal(err)
+	}
+	instanceA.SetLabel("state", "down") // "status" should be 1
+	instanceA.SetLabel("stage", "init") // "stage" should be 0
+
+	if instanceB, err = m.NewInstance("B"); err != nil {
+		t.Fatal(err)
+	}
+	instanceB.SetLabel("state", "unknown") // "status" should not be set
+	instanceB.SetLabel("stage", "unknown") // "stage" should be 1 (default)
+
+	if err = p.mapValues(m); err != nil {
+		t.Fatal(err)
+	}
+
+	if status = m.GetMetric("status"); status == nil {
+		t.Error("metric [status] missing")
+	}
+
+	if stage = m.GetMetric("stage"); stage == nil {
+		t.Error("metric [stage] missing")
+	}
+
+	// check "status" for instanceA
+	expected = 2
+	if v, ok = status.GetValueUint8(instanceA); ! ok {
+		t.Error("metric [status]: value for InstanceA not set")
+	} else if v != expected {
+		t.Errorf("metric [status]: value for InstanceA is %d, expected %d", v, expected)
+	} else {
+		t.Logf("OK - metric [status]: value for instanceA set to %d", v)
+	}
+
+	// check "status" for instanceB
+	if v, ok = status.GetValueUint8(instanceB); ! ok {
+		t.Log("OK - metric [status]: value for InstanceB not set")
+	} else {
+		t.Errorf("metric [status]: value for InstanceA is %d, should not be set", v)
+	}
+
+	// check "stage" for instanceA
+	expected = 0
+	if v, ok = stage.GetValueUint8(instanceA); ! ok {
+		t.Error("metric [stage]: value for InstanceA not set")
+	} else if v != expected {
+		t.Errorf("metric [stage]: value for InstanceA is %d, expected %d", v, expected)
+	} else {
+		t.Logf("OK - metric [stage]: value for instanceA set to %d", v)
+	}
+
+	// check "stage" for instanceB
+	expected = 1
+	if v, ok = stage.GetValueUint8(instanceB); ! ok {
+		t.Error("metric [stage]: value for InstanceB not set")
+	} else if v != expected {
+		t.Errorf("metric [stage]: value for InstanceB is %d, expected %d", v, expected)
+	} else {
+		t.Logf("OK - metric [stage]: value for instanceB set to %d", v)
+	}	
 }

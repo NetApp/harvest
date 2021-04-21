@@ -108,18 +108,18 @@ func (me *Zapi) HandleCounter(path []string, content string) string {
 	}
 
 	if content[0] == '^' {
-		me.INSTANCE_LABEL_PATHS[key] = display
+		me.instance_label_paths[key] = display
 		//data.AddLabel(key, display)
 		logger.Trace(me.Prefix, "%sadd (%s) as label [%s]%s => %v", util.Yellow, key, display, util.End, full_path)
 		if content[1] == '^' {
 			//data.AddInstanceKey(full_path[:])
 			copied := make([]string, len(full_path))
 			copy(copied, full_path)
-			me.INSTANCE_KEY_PATHS = append(me.INSTANCE_KEY_PATHS, copied)
+			me.instance_key_paths = append(me.instance_key_paths, copied)
 			logger.Trace(me.Prefix, "%sadd (%s) as instance key [%s]%s => %v", util.Red, key, display, util.End, full_path)
 		}
 	} else {
-		metric, err := me.Matrix.AddMetricUint64(key)
+		metric, err := me.Matrix.NewMetricUint64(key)
 		if err != nil {
 			logger.Error(me.Prefix, "add ass metric (%s) [%s]: %v", key, display, err)
 		} else {

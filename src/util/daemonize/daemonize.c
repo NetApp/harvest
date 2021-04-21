@@ -56,7 +56,7 @@ int daemonize(char *bin, char *args[]) {
     // change working directory to root
     chdir("/");
 
-    // close FDs, if choose reasonable number
+    // close FDs, if can't get max, choose reasonable number
     int maxfds, fd;
     if ((maxfds = sysconf(_SC_OPEN_MAX)) == -1)
         maxfds = 256;

@@ -2,11 +2,11 @@ package label_agent
 
 import (
 	"fmt"
+	"strings"
 	"goharvest2/poller/plugin"
 	"goharvest2/share/errors"
 	"goharvest2/share/logger"
 	"goharvest2/share/matrix"
-	"strings"
 )
 
 type LabelAgent struct {
@@ -14,12 +14,14 @@ type LabelAgent struct {
 	actions              []func(*matrix.Instance)
 	splitSimpleRules     []splitSimpleRule
 	splitRegexRules      []splitRegexRule
+	splitPairsRules      []splitPairsRule
 	joinSimpleRules      []joinSimpleRule
 	replaceSimpleRules   []replaceSimpleRule
 	replaceRegexRules    []replaceRegexRule
 	excludeEqualsRules   []excludeEqualsRule
 	excludeContainsRules []excludeContainsRule
 	excludeRegexRules    []excludeRegexRule
+	valueMappingRules    []valueMappingRule
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -38,9 +40,9 @@ func (me *LabelAgent) Init() error {
 	}
 
 	if count = me.parseRules(); count == 0 {
-		err = errors.New(errors.MISSING_PARAM, "no valid rules")
+		err = errors.New(errors.MISSING_PARAM, "valid rules")
 	} else {
-		logger.Info(me.Prefix, "parsed %d rules for %d actions", count, len(me.actions))
+		logger.Debug(me.Prefix, "parsed %d rules for %d actions", count, len(me.actions))
 	}
 
 	return err
@@ -48,12 +50,19 @@ func (me *LabelAgent) Init() error {
 
 func (me *LabelAgent) Run(m *matrix.Matrix) ([]*matrix.Matrix, error) {
 
+	var err error
+
 	for _, instance := range m.GetInstances() {
 		for _, foo := range me.actions {
 			foo(instance)
 		}
 	}
-	return nil, nil
+
+	if len(me.valueMappingRules) != 0 {
+		err = me.mapValues(m)
+	}
+
+	return nil, err
 }
 
 // splits one label value into multiple labels using seperator symbol
@@ -78,6 +87,20 @@ func (me *LabelAgent) splitRegex(instance *matrix.Instance) {
 				if r.targets[i] != "" && m[i+1] != "" {
 					instance.SetLabel(r.targets[i], m[i+1])
 					logger.Trace(me.Prefix, "splitRegex: (%s) [%s] => (%s) [%s]", r.source, instance.GetLabel(r.source), r.targets[i], m[i+1])
+				}
+			}
+		}
+	}
+}
+
+// splits one label value into multiple key-value pairs
+func (me *LabelAgent) splitPairs(instance *matrix.Instance) {
+	for _, r := range me.splitPairsRules {
+		if value := instance.GetLabel(r.source); value != ""{
+			for _, pair := range strings.Split(value, r.sep1) {
+				if kv := strings.Split(pair, r.sep2); len(kv) == 2 {
+					instance.SetLabel(kv[0], kv[1])
+					//logger.Trace(me.Prefix, "splitPair: ($s) [%s] => (%s) [%s]", r.source, value, kv[0], kv[1])
 				}
 			}
 		}
@@ -169,4 +192,36 @@ func (me *LabelAgent) excludeRegex(instance *matrix.Instance) {
 			break
 		}
 	}
+}
+
+func (me *LabelAgent) mapValues(m *matrix.Matrix) error {
+
+	var (
+		metric matrix.Metric
+		err error
+	)
+
+	for _, r := range me.valueMappingRules {
+
+		if metric = m.GetMetric(r.metric); metric == nil {
+			if metric, err = m.NewMetricUint8(r.metric); err != nil {
+				logger.Error(me.Prefix, "valueMapping: new metric [%s]: %v", r.metric, err)
+				return err
+			} else {
+				metric.SetProperty("mapping")
+			}
+		}
+
+		for key, instance := range m.GetInstances() {
+			if v, ok := r.mapping[instance.GetLabel(r.label)]; ok {
+				metric.SetValueUint8(instance, v)
+				logger.Trace(me.Prefix, "valueMapping: [%s] [%s] mapped (%s) value to %d", r.metric, key, instance.GetLabel(r.label), v)
+			} else if r.hasDefault {
+				metric.SetValueUint8(instance, r.defaultValue)
+				logger.Trace(me.Prefix, "valueMapping: [%s] [%s] mapped (%s) value to default %d", r.metric, key, instance.GetLabel(r.label), r.defaultValue)
+			}
+		}
+	}
+
+	return nil
 }

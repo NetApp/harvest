@@ -1,7 +1,7 @@
-// Poller is an umbrella over collectors and exporters which
+// Poller is an umbrella for collectors and exporters which
 // run more or less independently.
 //
-// Poller has no knowledge or (much) control over what collectors and
+// Poller has no knowledge or control over what collectors and
 // exporters are doing. Its sole job is to load parameters from
 // configuration files, import, initialize and launch the collectors and
 // exporters. Currently, Poller and collectors run in own goroutines,
@@ -13,7 +13,7 @@
 // signal is received.
 //
 // If Poller fails before a log handler is opened, it will attempt to
-// send error message sent to syslog.
+// send error message to syslog.
 
 package main
 
@@ -44,10 +44,10 @@ import (
 
 // default params
 var (
-	POLLER_SCHEDULE string = "60s"
-	LOG_FILE_NAME   string = ""
-	LOG_MAX_BYTES   int64  = 10000000
-	LOG_MAX_FILES   int    = 10
+	_POLLER_SCHEDULE string = "60s"
+	_LOG_FILE_NAME   string = ""
+	_LOG_MAX_BYTES   int64  = 10000000 // 10MB
+	_LOG_MAX_FILES   int    = 10
 )
 
 // signals to catch
@@ -100,8 +100,8 @@ func (me *Poller) Init() error {
 
 	// if we are daemon, use file logging
 	if me.options.Daemon {
-		LOG_FILE_NAME = "poller_" + me.name + ".log"
-		if err = logger.OpenFileOutput(me.options.LogPath, LOG_FILE_NAME); err != nil {
+		_LOG_FILE_NAME = "poller_" + me.name + ".log"
+		if err = logger.OpenFileOutput(me.options.LogPath, _LOG_FILE_NAME); err != nil {
 			return err
 		}
 	}
@@ -145,14 +145,14 @@ func (me *Poller) Init() error {
 	// size of file before rotating
 	if s := me.params.GetChildContentS("log_max_bytes"); s != "" {
 		if i, err := strconv.ParseInt(s, 10, 64); err == nil {
-			LOG_MAX_BYTES = i
+			_LOG_MAX_BYTES = i
 		}
 	}
 
 	// maximum number of rotated files to keep
 	if s := me.params.GetChildContentS("log_max_files"); s != "" {
 		if i, err := strconv.Atoi(s); err == nil {
-			LOG_MAX_FILES = i
+			_LOG_MAX_FILES = i
 		}
 	}
 
@@ -196,7 +196,6 @@ func (me *Poller) Init() error {
 					}
 				}
 			}
-
 			if !ok {
 				logger.Debug(me.prefix, "skipping collector [%s]", c)
 				continue
@@ -228,14 +227,14 @@ func (me *Poller) Init() error {
 	// we will check the status of collectors, exporters and target system,
 	// and send metadata to exporters
 	if s := me.params.GetChildContentS("poller_schedule"); s != "" {
-		POLLER_SCHEDULE = s
+		_POLLER_SCHEDULE = s
 	}
 	me.schedule = schedule.New()
-	if err = me.schedule.AddTaskString("poller", POLLER_SCHEDULE, nil); err != nil {
+	if err = me.schedule.AddTaskString("poller", _POLLER_SCHEDULE, nil); err != nil {
 		logger.Error(me.prefix, "set schedule: %v", err)
 		return err
 	}
-	logger.Debug(me.prefix, "set poller schedule with %s frequency", POLLER_SCHEDULE)
+	logger.Debug(me.prefix, "set poller schedule with %s frequency", _POLLER_SCHEDULE)
 
 	// famous last words
 	logger.Info(me.prefix, "poller start-up complete")
@@ -290,13 +289,8 @@ func (me *Poller) Run() {
 			task.Start()
 
 			// flush metadata
-			if err := me.status.Reset(); err != nil {
-				logger.Error(me.prefix, "reset target/status metadata: %v", err)
-			}
-
-			if err := me.metadata.Reset(); err != nil {
-				logger.Error(me.prefix, "reset component metadata: %v", err)
-			}
+			me.status.Reset()
+			me.metadata.Reset()
 
 			// ping target system
 			if ping, ok := me.ping(); ok {
@@ -324,7 +318,7 @@ func (me *Poller) Run() {
 
 				key := c.GetName() + "." + c.GetObject()
 
-				me.metadata.LazySetValueUint64("count", key, c.GetCount())
+				me.metadata.LazySetValueUint64("count", key, c.GetCollectCount())
 				me.metadata.LazySetValueUint8("status", key, code)
 
 				if msg != "" {
@@ -345,7 +339,7 @@ func (me *Poller) Run() {
 
 				key := e.GetClass() + "." + e.GetName()
 
-				me.metadata.LazySetValueUint64("count", key, e.GetCount())
+				me.metadata.LazySetValueUint64("count", key, e.GetExportCount())
 				me.metadata.LazySetValueUint8("status", key, code)
 
 				if msg != "" {
@@ -369,7 +363,7 @@ func (me *Poller) Run() {
 
 			// only log when numbers have changes, since hopefully that happens rarely
 			if upc != up_collectors || upe != up_exporters {
-				logger.Info(me.prefix, "updated status, up collectors: %d (of %d), up exporters %d (of %d)", upc, len(me.collectors), upe, len(me.exporters))
+				logger.Info(me.prefix, "updated status, up collectors: %d (of %d), up exporters: %d (of %d)", upc, len(me.collectors), upe, len(me.exporters))
 			}
 			up_collectors = upc
 			up_exporters = upe
@@ -379,12 +373,12 @@ func (me *Poller) Run() {
 			// @TODO: probably delegate to log handler (both rotating and panicing)
 			if me.options.Daemon {
 				// check size of log file
-				if stat, err := os.Stat(path.Join(me.options.LogPath, LOG_FILE_NAME)); err != nil {
+				if stat, err := os.Stat(path.Join(me.options.LogPath, _LOG_FILE_NAME)); err != nil {
 					logger.Error(me.prefix, "stat: %v", err)
 					// rotate if exceeds threshold
-				} else if stat.Size() >= LOG_MAX_BYTES {
+				} else if stat.Size() >= _LOG_MAX_BYTES {
 					logger.Debug(me.prefix, "rotating log (size= %d bytes)", stat.Size())
-					if err = logger.Rotate(me.options.LogPath, LOG_FILE_NAME, LOG_MAX_FILES); err != nil {
+					if err = logger.Rotate(me.options.LogPath, _LOG_FILE_NAME, _LOG_MAX_FILES); err != nil {
 						logger.Error(me.prefix, "rotating log: %v", err)
 					}
 				}
@@ -580,7 +574,7 @@ func (me *Poller) load_collector(class, object string) error {
 
 		// update metadata
 
-		if instance, err := me.metadata.AddInstance(name + "." + obj); err != nil {
+		if instance, err := me.metadata.NewInstance(name + "." + obj); err != nil {
 			return err
 		} else {
 			instance.SetLabel("type", "collector")
@@ -642,7 +636,7 @@ func (me *Poller) load_exporter(name string) exporter.Exporter {
 	logger.Debug(me.prefix, "initialized exporter (%s)", name)
 
 	// update metadata
-	if instance, err := me.metadata.AddInstance(exp.GetClass() + "." + exp.GetName()); err != nil {
+	if instance, err := me.metadata.NewInstance(exp.GetClass() + "." + exp.GetName()); err != nil {
 		logger.Error(me.prefix, "add metadata instance: %v", err)
 	} else {
 		instance.SetLabel("type", "exporter")
@@ -665,34 +659,26 @@ func (me *Poller) get_exporter(name string) exporter.Exporter {
 // initialize matrices to be used as metadata
 func (me *Poller) load_metadata() {
 
-	me.metadata = matrix.New("poller", "compontent", "metadata")
-	me.metadata.AddMetricUint8("status")
-	me.metadata.AddMetricUint64("count")
+	me.metadata = matrix.New("poller", "metadata_component")
+	me.metadata.NewMetricUint8("status")
+	me.metadata.NewMetricUint64("count")
 	me.metadata.SetGlobalLabel("poller", me.name)
 	me.metadata.SetGlobalLabel("version", me.options.Version)
 	me.metadata.SetGlobalLabel("hostname", me.options.Hostname)
-	//me.metadata.AddLabel("type", "type")
-	//me.metadata.AddLabel("name", "name")
-	//me.metadata.AddLabel("target", "target")
-	//me.metadata.AddLabel("reason", "reason")
-	me.metadata.IsMetadata = true
-	me.metadata.MetadataType = "component"
-	me.metadata.ExportOptions = matrix.DefaultExportOptions()
+	me.metadata.SetExportOptions(matrix.DefaultExportOptions())
 
 	// metadata for target system
-	me.status = matrix.New("poller", "target", "metadata")
-	me.status.AddMetricUint8("status")
-	me.status.AddMetricFloat32("ping")
-	me.status.AddMetricUint32("goroutines")
-	//me.status.AddLabel("addr", "addr")
-	instance, _ := me.status.AddInstance("host")
+	me.status = matrix.New("poller", "metadata_target")
+	me.status.NewMetricUint8("status")
+	me.status.NewMetricFloat32("ping")
+	me.status.NewMetricUint32("goroutines")
+
+	instance, _ := me.status.NewInstance("host")
 	instance.SetLabel("addr", me.target)
 	me.status.SetGlobalLabel("poller", me.name)
 	me.status.SetGlobalLabel("version", me.options.Version)
 	me.status.SetGlobalLabel("hostname", me.options.Hostname)
-	me.status.IsMetadata = true
-	me.status.MetadataType = "target"
-	me.status.ExportOptions = matrix.DefaultExportOptions()
+	me.status.SetExportOptions(matrix.DefaultExportOptions())
 }
 
 // start poller, if fails try to write to syslog
@@ -700,19 +686,34 @@ func main() {
 
 	var err error
 
+	// don't recover if a goroutine has paniced, instead
+	// try to log as much as possible, since normally it's
+	// not properly logged
+	defer func() {
+		logger.Warn("(main) ", "defer func here")
+		if r := recover(); r != nil {
+			syslogger, err := syslog.NewLogger(syslog.LOG_ERR|syslog.LOG_DAEMON, logger.LOG_FLAGS)
+			if err == nil {
+				syslogger.Printf("harvest poller paniced: ", r)
+			}
+			// if logger still abailable try to write there as well
+			// do this last, since might make us panic as again
+			logger.Fatal("(main) ", "%v", r)
+			logger.Fatal("(main) ", "terminating abnormally, tip: run in foreground mode to debug")
+
+			os.Exit(1)
+		}
+	}()
+
 	poller := New()
 
-	if err = poller.Init(); err == nil {
-		poller.Start()
-		os.Exit(0)
+	if err = poller.Init(); err != nil {
+		logger.Fatal("(main)", "failed to start poller: %v", err)
+		poller.Stop()
+		os.Exit(1)
 	}
 
-	poller.Stop()
-
-	if syslogger, err2 := syslog.NewLogger(syslog.LOG_ERR|syslog.LOG_DAEMON, logger.LOG_FLAGS); err2 == nil {
-		syslogger.Fatalln(err)
-	}
-
-	// if logger didn't work
-	os.Exit(1)
+	poller.Start()
+	os.Exit(0)
 }
+

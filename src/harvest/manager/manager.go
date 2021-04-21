@@ -75,13 +75,13 @@ func Run() {
 		&opts.Command,
 		"command",
 		"action to take, one of:",
-		[]string{"status", "start", "restart", "stop"},
+		[]string{"status", "start", "restart", "stop", "kill"},
 	)
 
 	parser.PosSlice(
 		&opts.Pollers,
 		"pollers",
-		"names of pollers as defined in config [harvest.yml], yield all pollers if left empty",
+		"names of pollers as defined in config [harvest.yml] (default: all)",
 	)
 
 	parser.Bool(
@@ -126,7 +126,7 @@ func Run() {
 		"Custom config filepath (default: "+opts.Config+")",
 	)
 
-	parser.SetHelp("help")
+	parser.SetHelpFlag("help")
 
 	// user asked for help or invalid options
 	if !parser.Parse() {
@@ -146,9 +146,9 @@ func Run() {
 	pollers, err := config.GetPollers(opts.Config)
 	if err != nil {
 		if os.IsNotExist(err) {
-			fmt.Printf("config [%s] not found\n", opts.Config)
+			fmt.Printf("config [%s]: not found\n", opts.Config)
 		} else {
-			fmt.Println(err)
+			fmt.Printf("config [%s]: %v\n", opts.Config, err)
 		}
 		os.Exit(1)
 	}
@@ -185,12 +185,11 @@ func Run() {
 			os.Exit(1)
 		}
 		if !opts.Debug {
-			opts.Debug = true
+			//opts.Debug = true
 			fmt.Println("set debug mode ON (starting poller in foreground otherwise is unsafe)")
 		}
 		p := pollers.GetChildren()[0]
-		fmt.Printf("starting [%s] in foreground mode...\n", p.GetNameS())
-		start_poller(p.GetNameS(), opts)
+		startPoller(p.GetNameS(), opts)
 		os.Exit(0)
 	}
 
@@ -203,22 +202,29 @@ func Run() {
 		datacenter := p.GetChildContentS("datacenter")
 		port := p.GetChildContentS("prometheus_port")
 
+		if opts.Command == "kill" {
+			status, pid := killPoller(name)
+			printStatus(c1, c2, datacenter, name, port, status, pid)
+			continue
+		}
+
+		status, pid := getStatus(name)
+
 		if opts.Command == "status" {
-			status, pid := get_status(name)
-			//fmt.Printf("%-20s%-20s%-20s%-20s%-10d\n", datacenter, name, port, status, pid)
 			printStatus(c1, c2, datacenter, name, port, status, pid)
 		}
 
 		if opts.Command == "stop" || opts.Command == "restart" {
-			status, pid := stop_poller(name)
-			//fmt.Printf("%-20s%-20s%-20s%-20s%-10d\n", datacenter, name, port, status, pid)
+			status, pid = stopPoller(name)
 			printStatus(c1, c2, datacenter, name, port, status, pid)
 		}
 
 		if opts.Command == "start" || opts.Command == "restart" {
-			status, pid := start_poller(name, opts)
-			//fmt.Printf("%-20s%-20s%-20s%-20s%-10d\n", datacenter, name, port, status, pid)
-			printStatus(c1, c2, datacenter, name, port, status, pid)
+			// only start poller if confirmed that it's not running
+			if status == "not running" || status == "stopped" {
+				status, pid = startPoller(name, opts)
+				printStatus(c1, c2, datacenter, name, port, status, pid)
+			}
 		}
 	}
 
@@ -235,10 +241,12 @@ func Run() {
 // Returns:
 //	@status - status of poller
 //  @pid  - PID of poller (0 means no PID)
-func get_status(poller_name string) (string, int) {
-	var status string
-	var pid int
+func getStatus(poller_name string) (string, int) {
 
+	var (
+		status string
+		pid int
+	)
 	// running poller should have written PID to file
 	pid_fp := path.Join(HARVEST_PIDS, poller_name+".pid")
 
@@ -265,20 +273,22 @@ func get_status(poller_name string) (string, int) {
 	// (error can be safely ignored on Unix)
 	proc, _ := os.FindProcess(pid)
 
-	// sendingg signal 0, return error if
-	//  process is not running or permission is denied
+	// send signal 0 to check if process is runnign
+	// returns err if it's not running or permission is denied
 	if err := proc.Signal(syscall.Signal(0)); err != nil {
 		if os.IsPermission(err) {
-			fmt.Println("Error: you have no permission to send signal to process")
-			return "unknown", pid
+			fmt.Println("Insufficient priviliges to send signal to process")
 		}
+		return "unknown", pid
 		// process not running, but did not clean PID file
 		// maybe it just exited, so give it a chance to clean
+		/*
 		time.Sleep(500 * time.Millisecond)
 		if clean_pidf(pid_fp) {
 			return "interrupted", pid
 		}
 		return "exited", pid
+		*/
 	}
 
 	// process is running, validate that it's the poller we're looking fore
@@ -303,15 +313,71 @@ func get_status(poller_name string) (string, int) {
 	return status, pid
 }
 
+
+func killPoller(poller_name string) (string, int) {
+
+	var (
+		status string
+		pid int
+	)
+
+	defer cleanPidFile(poller_name)
+	
+	// attempt to get pid from pid file
+	status, pid = getStatus(poller_name)
+
+	// attempt to get pid from "ps aux"
+	if pid < 1 {
+		data, err := exec.Command("ps", "aux").Output()
+		if err != nil {
+			fmt.Println("ps aux: ", err)
+			return status, pid
+		}
+
+		var fields, args []string
+
+		for _, line := range strings.Split(string(data), "\n") {
+			if fields = strings.Fields(line); len(fields) != 11 {
+				continue
+			}
+			if args = strings.Fields(fields[10]); len(args) < 3 {
+				continue
+			}
+			
+			if ! strings.HasSuffix(args[0], "poller") && args[2] != poller_name {
+				continue
+			}
+
+			if x, err := strconv.Atoi(fields[1]); err == nil {
+				pid = x
+			}
+			break
+		}		
+	}
+
+	if pid < 1 {
+		return status, pid
+	}
+	proc, _ := os.FindProcess(pid)
+	if err := proc.Kill(); err != nil {
+		fmt.Println("kill: ", err)
+		return status, pid
+	}
+	return "killed", pid
+
+}
+
 // Stop poller if it's running or it's stoppable
 //
 // Returns: same as get_status()
-func stop_poller(poller_name string) (string, int) {
-	var status string
-	var pid int
+func stopPoller(poller_name string) (string, int) {
+	var (
+		status string
+		pid int
+	)
 
-	// if we get a valid PID, assume process is "stoppable"
-	if status, pid = get_status(poller_name); pid < 1 {
+	// if we get no valid PID, assume process is not running
+	if status, pid = getStatus(poller_name); pid < 1 {
 		return status, pid
 	}
 
@@ -320,11 +386,12 @@ func stop_poller(poller_name string) (string, int) {
 	// send terminate signal
 	if err := proc.Signal(syscall.SIGTERM); err != nil {
 		if os.IsPermission(err) {
-			fmt.Println("Error: you have no permission to send signal to process")
+			fmt.Println("Insufficient priviliges to terminate process")
 			return "stopping failed", pid
 		}
+		fmt.Println(err)
 		// other errors, probably mean poller already exited, so double check
-		return get_status(poller_name)
+		return getStatus(poller_name)
 	}
 
 	// give the poller chance to cleanup and exit
@@ -338,7 +405,7 @@ func stop_poller(poller_name string) (string, int) {
 	return "stopping failed", pid
 }
 
-func start_poller(poller_name string, opts *options) (string, int) {
+func startPoller(poller_name string, opts *options) (string, int) {
 
 	argv := make([]string, 5)
 	argv[0] = path.Join(HARVEST_HOME, "bin", "poller")
@@ -351,9 +418,14 @@ func start_poller(poller_name string, opts *options) (string, int) {
 		argv = append(argv, "--debug")
 	}
 
+	if opts.Config != path.Join(HARVEST_CONF, "harvest.yml") {
+		argv = append(argv, "--conf")
+		argv = append(argv, opts.Config)
+	}
+
 	if opts.Foreground {
 		cmd := exec.Command(argv[0], argv[1:]...)
-		fmt.Println(cmd.String())
+		//fmt.Println(cmd.String())
 		fmt.Println("starting in foreground, enter CTRL+C or close terminal to stop poller")
 		os.Stdout.Sync()
 		cmd.Stdout = os.Stdout
@@ -385,7 +457,7 @@ func start_poller(poller_name string, opts *options) (string, int) {
 	}
 
 	cmd := exec.Command(path.Join(HARVEST_HOME, "bin", "daemonize"), argv...)
-	fmt.Println(cmd.String())
+	//fmt.Println(cmd.String())
 	if err := cmd.Start(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -396,18 +468,19 @@ func start_poller(poller_name string, opts *options) (string, int) {
 	time.Sleep(50 * time.Millisecond)
 	for i := 0; i < 10; i += 1 {
 		// @TODO, handle situation when PID is regained by some other process
-		if status, pid := get_status(poller_name); pid > 0 {
+		if status, pid := getStatus(poller_name); pid > 0 {
 			return status, pid
 		}
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(50 * time.Millisecond)
 	}
 
-	return get_status(poller_name)
+	return getStatus(poller_name)
 }
 
 // Clean PID file if it exists
 // Return value indicates wether PID file existed
-func clean_pidf(fp string) bool {
+func cleanPidFile(poller string) bool {
+	fp := path.Join(HARVEST_PIDS, poller+".pid")
 	if err := os.Remove(fp); err != nil {
 		if os.IsPermission(err) {
 			fmt.Printf("Error: you have no permission to remove [%s]\n", fp)
@@ -423,7 +496,11 @@ func clean_pidf(fp string) bool {
 func printStatus(c1, c2 int, dc, pn, port, status string, pid int) {
 	fmt.Printf("%s%s ", dc, strings.Repeat(" ", c1-len(dc)))
 	fmt.Printf("%s%s ", pn, strings.Repeat(" ", c2-len(pn)))
-	fmt.Printf("%-10s %-10d %-20s\n", port, pid, status)
+	if pid == 0 {
+		fmt.Printf("%-10s %-10s %-20s\n", port, "", status)
+	} else {
+		fmt.Printf("%-10s %-10d %-20s\n", port, pid, status)
+	}
 }
 
 func printHeader(c1, c2 int) {
@@ -444,7 +521,6 @@ func getMaxLengths(pollers *node.Node, pn, dc int) (int, int) {
 		}
 		if len(p.GetChildContentS("datacenter")) > dc {
 			dc = len(p.GetChildContentS("datacenter"))
-			//fmt.Println(len(p.GetChildContentS("datacenter")), p.GetChildContentS("datacenter"))
 		}
 	}
 	return dc + 1, pn + 1

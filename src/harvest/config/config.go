@@ -1,8 +1,8 @@
-package main
+package config
 
 import (
 	"fmt"
-	"goharvest2/apis/zapi"
+	"goharvest2/api/ontapi/zapi"
 	"goharvest2/share/argparse"
 	"goharvest2/share/config"
 	"goharvest2/share/dialog"
@@ -53,7 +53,7 @@ func exitError(msg string, err error) {
 	os.Exit(1)
 }
 
-func main() {
+func Run() {
 
 	if CONF_PATH = os.Getenv("HARVEST_CONF"); CONF_PATH == "" {
 		CONF_PATH = "/etc/harvest/"

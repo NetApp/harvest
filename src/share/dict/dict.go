@@ -1,5 +1,7 @@
 package dict
 
+import "strings"
+
 type Dict struct {
 	dict map[string]string
 }
@@ -7,6 +9,11 @@ type Dict struct {
 func New() *Dict {
 	d := Dict{}
 	d.dict = make(map[string]string)
+	return &d
+}
+
+func NewFromMap(m map[string]string) *Dict {
+	d := Dict{dict: m}
 	return &d
 }
 
@@ -55,6 +62,10 @@ func (d *Dict) Iter() map[string]string {
 	return d.dict
 }
 
+func (d *Dict) Map() map[string]string {
+	return d.dict
+}
+
 func (d *Dict) Keys() []string {
 	keys := make([]string, len(d.dict))
 	for k := range d.dict {
@@ -64,11 +75,11 @@ func (d *Dict) Keys() []string {
 }
 
 func (d *Dict) String() string {
-	s := ""
+	s := make([]string, 0, len(d.dict))
 	for k, v := range d.dict {
-		s += k + "=" + v + "\n"
+		s = append(s, k + "=" + v)
 	}
-	return s
+	return strings.Join(s, ", ")
 }
 
 func (d *Dict) Values() []string {

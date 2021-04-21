@@ -7,12 +7,12 @@ import (
 
 var (
 	VERSION = "2.0.2"
-	RELEASE = "RC2"
-	BUILD   = "SRC"
+	RELEASE = "rc2"
+	BUILD   = "src"
 )
 
 func String() string {
-	return fmt.Sprintf("harvest version %s %s/%s - %s/%s",
+	return fmt.Sprintf("harvest version %s %s (%s build) %s/%s",
 		VERSION,
 		RELEASE,
 		BUILD,

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"goharvest2/poller/collector/plugin"
+	"goharvest2/poller/plugin"
 	"goharvest2/share/matrix"
 	"strings"
 )

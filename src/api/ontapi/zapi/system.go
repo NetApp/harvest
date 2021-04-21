@@ -33,7 +33,7 @@ func (c *Client) GetSystem() (*System, error) {
 	sys = System{}
 
 	// fetch system version and model
-	if err := c.BuildRequestString("system-get-version"); err != nil {
+	if err := c.build_request_string("system-get-version", true); err != nil {
 		return &sys, err
 	}
 
@@ -80,7 +80,7 @@ func (c *Client) GetSystem() (*System, error) {
 		request = "system-get-info"
 	}
 
-	if err := c.BuildRequestString(request); err != nil {
+	if err := c.build_request_string(request, true); err != nil {
 		return &sys, err
 	}
 

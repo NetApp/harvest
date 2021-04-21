@@ -9,12 +9,10 @@ import (
 	"goharvest2/share/set"
 	"goharvest2/share/tree/node"
 	"goharvest2/share/util"
-	//"path"
 	"strconv"
 	"strings"
 	"time"
 
-	//client "goharvest2/apis/zapi"
 	zapi "goharvest2/collectors/zapi/collector"
 )
 
@@ -43,6 +41,7 @@ type ZapiPerf struct {
 	array_labels    map[string][]string
 	status_label    string
 	status_ok_value string
+	cache_empty bool
 }
 
 func New(a *collector.AbstractCollector) collector.Collector {
@@ -73,104 +72,13 @@ func (me *ZapiPerf) Init() error {
 	return nil
 }
 
-/*
-func New(a *collector.AbstractCollector) collector.Collector {
-	z := zapi_collector.NewZapi(a)
-    return &ZapiPerf{Zapi: z}
-}*/
-
-/* Copied from Zapi
-Don't change => merge!
-
-
-func (me *ZapiPerf) Init() error {
-
-	// @TODO check if cert/key files exist
-	if me.Params.GetChildContentS("auth_style") == "certificate_auth" {
-		if me.Params.GetChildS("ssl_cert") == nil {
-			cert_path := path.Join(me.Options.ConfPath, "cert", me.Options.Poller+".pem")
-			me.Params.NewChildS("ssl_cert", cert_path)
-			logger.Debug(me.Prefix, "added ssl_cert path [%s]", cert_path)
-		}
-
-		if me.Params.GetChildS("ssl_key") == nil {
-			key_path := path.Join(me.Options.ConfPath, "cert", me.Options.Poller+".key")
-			me.Params.NewChildS("ssl_key", key_path)
-			logger.Debug(me.Prefix, "added ssl_key path [%s]", key_path)
-		}
-	}
-
-	var err error
-	if me.Connection, err = client.New(me.Params); err != nil {
-		return err
-	}
-
-	// @TODO handle connectivity-related errors (retry a few times)
-	if me.System, err = me.Connection.GetSystem(); err != nil {
-		//logger.Error(me.Prefix, "system info: %v", err)
-		return err
-	}
-	logger.Debug(me.Prefix, "Connected to: %s", me.System.String())
-
-	me.TemplateFn = me.Params.GetChildS("objects").GetChildContentS(me.Object) // @TODO err handling
-
-	model := "cdot"
-	if ! me.System.Clustered {
-		model = "7mode"
-	}
-	template, err := me.ImportSubTemplate(model, "default", me.TemplateFn, me.System.Version)
-	if err != nil {
-		logger.Error(me.Prefix, "Error importing subtemplate: %s", err)
-		return err
-	}
-	me.Params.Union(template)
-
-	// object name from subtemplate
-	if me.object = me.Params.GetChildContentS("object"); me.object == "" {
-		return errors.New(errors.MISSING_PARAM, "object")
-	}
-
-	// api query literal
-	if me.Query = me.Params.GetChildContentS("query"); me.Query == "" {
-		return errors.New(errors.MISSING_PARAM, "query")
-	}
-
-	// Invoke generic initializer
-	// this will load Schedule, initialize Data and Metadata
-	if err := collector.Init(me); err != nil {
-		return err
-	}
-
-	// overwrite from abstract collector
-	me.Matrix.Collector = me.Matrix.Collector + ":" + me.Matrix.Object
-	me.Matrix.Object = me.object
-
-	// Add system (cluster) name
-	me.Matrix.SetGlobalLabel("cluster", me.System.Name)
-	if ! me.System.Clustered {
-		me.Matrix.SetGlobalLabel("node", me.System.Name)
-	}
-
-	// Initialize counter cache
-	counters := me.Params.GetChildS("counters")
-	if counters == nil {
-		return errors.New(errors.MISSING_PARAM, "counters")
-	}
-
-	if err = me.InitCache(); err != nil {
-		return err
-	}
-
-	logger.Debug(me.Prefix, "initialized")
-	return nil
-}
-*/
 func (me *ZapiPerf) InitCache() error {
 	me.array_labels = make(map[string][]string)
 	me.instance_labels = make(map[string]string)
 	me.instance_key = me.loadParamStr("instance_key", INSTANCE_KEY)
 	me.batch_size = me.loadParamInt("batch_size", BATCH_SIZE)
 	me.latency_io_reqd = me.loadParamInt("latency_io_reqd", LATENCY_IO_REQD)
+	me.cache_empty = true
 	return nil
 }
 
@@ -211,9 +119,7 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 
 	// clone matrix without numeric data
 	NewData := me.Matrix.Clone(false, true, true)
-	if err = NewData.Reset(); err != nil {
-		return nil, err
-	}
+	NewData.Reset()
 
 	timestamp := NewData.GetMetric("timestamp")
 	if timestamp == nil {
@@ -221,7 +127,7 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 	}
 
 	// for updating metadata
-	count := 0
+	count := uint64(0)
 	batch_count := 0
 	api_d := time.Duration(0 * time.Second)
 	parse_d := time.Duration(0 * time.Second)
@@ -427,15 +333,16 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 	// update metadata
 	me.Metadata.LazySetValueInt64("api_time", "data", api_d.Microseconds())
 	me.Metadata.LazySetValueInt64("parse_time", "data", parse_d.Microseconds())
-	me.Metadata.LazySetValueInt("count", "data", count)
-	me.AddCount(count)
+	me.Metadata.LazySetValueUint64("count", "data", count)
+	me.AddCollectCount(count)
 
 	logger.Debug(me.Prefix, "collected %d data points in %d batch polls", count, batch_count)
 
 	// skip calculating from delta if no data from previous poll
-	if me.Matrix.IsEmpty() {
+	if me.cache_empty {
 		logger.Debug(me.Prefix, "skip postprocessing until next poll (previous cache empty)")
 		me.Matrix = NewData
+		me.cache_empty = false
 		return nil, nil
 	}
 
@@ -448,8 +355,8 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 	CachedData := NewData.Clone(true, true, true) // @TODO implement copy data
 
 	// order metrics, such that those requiring base counters are processed last
-	ordered_metrics := make([]matrix.Metric, 0, NewData.SizeMetrics())
-	ordered_keys := make([]string, 0, NewData.SizeMetrics())
+	ordered_metrics := make([]matrix.Metric, 0, len(NewData.GetMetrics()))
+	ordered_keys := make([]string, 0, len(ordered_metrics))
 
 	for key, metric := range NewData.GetMetrics() {
 		if metric.GetComment() == "" { // does not require base counter
@@ -703,7 +610,7 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 	// The reason we don't keep a single timestamp for the whole data
 	// is because we might get instances in different batches
 	if !old_metrics.Has("timestamp") {
-		m, err := me.Matrix.AddMetricFloat64("timestamp")
+		m, err := me.Matrix.NewMetricFloat64("timestamp")
 		if err != nil {
 			logger.Error(me.Prefix, "add timestamp metric: %v", err)
 		}
@@ -718,7 +625,7 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 		if me.status_label == "" || me.status_ok_value == "" {
 			return nil, errors.New(errors.MISSING_PARAM, "label or ok_value missing")
 		}
-		m, err := me.Matrix.AddMetricUint8("status")
+		m, err := me.Matrix.NewMetricUint8("status")
 		if err != nil {
 			logger.Error(me.Prefix, "add status metric: %v", err)
 			return nil, err
@@ -742,13 +649,13 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 		logger.Debug(me.Prefix, "removed label [%s]", key)
 	}
 
-	metrics_added := me.Matrix.SizeMetrics() - (old_metrics_size - old_metrics.Size())
+	metrics_added := len(me.Matrix.GetMetrics()) - (old_metrics_size - old_metrics.Size())
 	labels_added := len(me.instance_labels) - (old_labels_size - old_labels.Size())
 
-	logger.Debug(me.Prefix, "added %d new, removed %d metrics (total: %d)", metrics_added, old_metrics.Size(), me.Matrix.SizeMetrics())
+	logger.Debug(me.Prefix, "added %d new, removed %d metrics (total: %d)", metrics_added, old_metrics.Size(), len(me.Matrix.GetMetrics()))
 	logger.Debug(me.Prefix, "added %d new, removed %d labels (total: %d)", labels_added, old_labels.Size(), len(me.instance_labels))
 
-	if me.Matrix.SizeMetrics() == 0 {
+	if len(me.Matrix.GetMetrics()) == 0 {
 		return nil, errors.New(errors.ERR_NO_METRIC, "")
 	}
 
@@ -826,7 +733,7 @@ func (me *ZapiPerf) add_counter(counter *node.Node, name, display string, enable
 
 			if m = me.Matrix.GetMetric(key); m != nil {
 				logger.Debug(me.Prefix, "updating array metric [%s] attributes", key)
-			} else if m, err = me.Matrix.AddMetricFloat64(key); err == nil {
+			} else if m, err = me.Matrix.NewMetricFloat64(key); err == nil {
 				logger.Debug(me.Prefix, "%s+[%s] added array metric (%s), element with label (%s)%s", util.Pink, name, display, label, util.End)
 			} else {
 				logger.Error(me.Prefix, "add array metric element [%s]: %v", key, err)
@@ -853,7 +760,7 @@ func (me *ZapiPerf) add_counter(counter *node.Node, name, display string, enable
 		var m matrix.Metric
 		if m = me.Matrix.GetMetric(name); m != nil {
 			logger.Debug(me.Prefix, "updating scalar metric [%s] attributes", name)
-		} else if m, err = me.Matrix.AddMetricFloat64(name); err == nil {
+		} else if m, err = me.Matrix.NewMetricFloat64(name); err == nil {
 			logger.Debug(me.Prefix, "%s+[%s] added scalar metric (%s)%s", util.Cyan, name, display, util.End)
 		} else {
 			logger.Error(me.Prefix, "add scalar metric [%s]: %v", name, err)
@@ -961,7 +868,7 @@ func (me *ZapiPerf) PollInstance() (*matrix.Matrix, error) {
 			} else if old_instances.Delete(key) {
 				// instance already in cache
 				continue
-			} else if _, err = me.Matrix.AddInstance(key); err != nil {
+			} else if _, err = me.Matrix.NewInstance(key); err != nil {
 				logger.Warn(me.Prefix, "add instance: %v", err)
 			} else {
 				logger.Debug(me.Prefix, "added new instance [%s]", key)
@@ -975,7 +882,7 @@ func (me *ZapiPerf) PollInstance() (*matrix.Matrix, error) {
 	}
 
 	removed = old_instances.Size()
-	new_size = me.Matrix.SizeInstances()
+	new_size = len(me.Matrix.GetInstances())
 	added = new_size - (old_size - removed)
 
 	logger.Debug(me.Prefix, "added %d new, removed %d (total instances %d)", added, removed, new_size)

@@ -1,19 +1,18 @@
 package main
 
 import (
-	"goharvest2/poller/collector/plugin"
+	"strings"
+	"goharvest2/poller/plugin"
 	"goharvest2/share/dict"
 	"goharvest2/share/logger"
 	"goharvest2/share/matrix"
 	"goharvest2/share/tree/node"
-	"strings"
-
-	client "goharvest2/apis/zapi"
+	"goharvest2/api/ontapi/zapi"
 )
 
 type SnapMirror struct {
 	*plugin.AbstractPlugin
-	connection        *client.Client
+	connection        *zapi.Client
 	node_cache        *dict.Dict
 	dest_limit_cache  *dict.Dict
 	src_limit_cache   *dict.Dict
@@ -33,7 +32,7 @@ func (my *SnapMirror) Init() error {
 		return err
 	}
 
-	if my.connection, err = client.New(my.ParentParams); err != nil {
+	if my.connection, err = zapi.New(my.ParentParams); err != nil {
 		logger.Error(my.Prefix, "connecting: %v", err)
 		return err
 	}

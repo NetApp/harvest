@@ -2,13 +2,16 @@ package main
 
 import (
 	"fmt"
-	"goharvest2/share/version"
 	"os"
 	"os/exec"
 	"path"
+	"goharvest2/harvest/version"
+	"goharvest2/harvest/manager"
+	"goharvest2/harvest/config"
+	"goharvest2/harvest/template"
 )
 
-var USAGE = `
+var usage = `
 NetApp Harvest 2.0 - application for monitoring storage systems
 
 Usage:
@@ -16,14 +19,17 @@ Usage:
 
 The commands are:
 
-	status                  show status of pollers
-	start/restart/stop      manage pollers
-	config                  run the config utility
-	zapi                    explore ZAPI objects and counters
-	grafana                 import dashboards to Grafana
-	version                 show Harvest2 version
+	status                     show status of pollers
+	start/restart/stop/kill    manage pollers
+	config                     run the config utility
+	build                      re-build Harvest or components
+	new                        create new collector or plugin
+	zapi                       explore ZAPI objects and counters
+	grafana                    import dashboards to Grafana
+	version                    show Harvest2 version
 
 Use "harvest <command> help" for more information about a command
+Use "harvest manager help" for more options on managing pollers
 `
 
 func main() {
@@ -34,12 +40,7 @@ func main() {
 	}
 
 	if command == "" || command == "help" || command == "-h" || command == "--help" {
-		fmt.Println(USAGE)
-		os.Exit(0)
-	}
-
-	if command == "version" {
-		fmt.Println(version.VERSION, "-", version.RELEASE)
+		fmt.Println(usage)
 		os.Exit(0)
 	}
 
@@ -51,29 +52,30 @@ func main() {
 	var bin string
 
 	switch command {
-	case "status", "start", "restart", "stop":
-		bin = "manager"
-	case "alerts":
-		fmt.Println("alert manager not available.")
+	case "version":
+		fmt.Println(version.String())
+	case "manager","status", "start", "restart", "stop", "kill":
+		manager.Run()
 	case "config":
-		bin = "config"
+		config.Run()
+	case "new":
+		template.Run()
 	case "zapi":
-		bin = "zapi"
+		bin = "bin/zapi"
 	case "grafana":
-		bin = "grafana"
+		bin = "bin/grafana"
+	case "build":
+		bin = "cmd/build.sh"
 	default:
 		fmt.Printf("Unknown command: %s\n", command)
+		os.Exit(1)
 	}
 
 	if bin != "" {
 
 		var cmd *exec.Cmd
 
-		if bin == "manager" {
-			cmd = exec.Command(path.Join(harvest_path, "bin/", bin), os.Args[1:]...)
-		} else {
-			cmd = exec.Command(path.Join(harvest_path, "bin/", bin), os.Args[2:]...)
-		}
+		cmd = exec.Command(path.Join(harvest_path, bin), os.Args[2:]...)
 
 		os.Stdout.Sync()
 		os.Stdin.Sync()
