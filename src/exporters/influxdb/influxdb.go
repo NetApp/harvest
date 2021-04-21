@@ -191,7 +191,7 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 	// measurement that we will not emit
 	// only to store global labels that we'll
 	// add to all instances
-	global := NewMeasurement("")
+	global := NewMeasurement("", 0)
 	for key, value := range data.GetGlobalLabels().Map() {
 		global.AddTag(key, value)
 	}
@@ -203,17 +203,19 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 			continue
 		}
 
-		m := NewMeasurement(object)
+		m := NewMeasurement(object, len(global.tag_set))
 		copy(m.tag_set, global.tag_set)
 
 		// tag set
 		if include_all {
 			for label, value := range instance.GetLabels().Map() {
-				m.AddTag(label, value)
+                if value != "" {
+				    m.AddTag(label, value)
+                }
 			}
 		} else {
 			for _, key := range keys_to_include {
-				if value, has := instance.GetLabels().GetHas(key); has {
+				if value, has := instance.GetLabels().GetHas(key); has && value != "" {
 					m.AddTag(key, value)
 				}
 			}
@@ -228,7 +230,7 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 
 		// strings
 		for _, label := range labels_to_include {
-			if value, has := instance.GetLabels().GetHas(label); has {
+			if value, has := instance.GetLabels().GetHas(label); has && value != "" {
 				m.AddField(label, value)
 				count += 1
 			}
