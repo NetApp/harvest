@@ -6,6 +6,7 @@ import (
 	"strings"
 	"bytes"
 	"path"
+    "io/ioutil"
 	"goharvest2/share/tree"
 	"goharvest2/share/tree/node"
 )
@@ -54,7 +55,7 @@ func new_plugin(harvest_path string) error {
 		return err
 	}
 
-	if data, err = os.ReadFile(path.Join(harvest_path, "template/", "plugin.go")); err != nil {
+	if data, err = ioutil.ReadFile(path.Join(harvest_path, "template/", "plugin.go")); err != nil {
 		return err
 	}
 
@@ -68,7 +69,7 @@ func new_plugin(harvest_path string) error {
 
 	data = bytes.ReplaceAll(data, []byte("PLUGIN"), []byte(name))
 
-	if err = os.WriteFile(fp, data, 0644); err != nil {
+	if err = ioutil.WriteFile(fp, data, 0644); err != nil {
 		return err
 	}
 
@@ -76,7 +77,7 @@ func new_plugin(harvest_path string) error {
 	fmt.Printf("Run \"harvest build collector %s\" when you are ready\n", strings.ToLower(name))
 	fmt.Println("Happy coding!")
 
-	return nil	
+	return nil
 }
 
 func get_name() string {
@@ -112,7 +113,7 @@ func new_collector(harvest_path string) error {
 		fmt.Printf("Created collector config [%s]\n", tfp)
 	}
 
-	if data, err = os.ReadFile(path.Join(harvest_path, "template/", "collector.go")); err != nil {
+	if data, err = ioutil.ReadFile(path.Join(harvest_path, "template/", "collector.go")); err != nil {
 		return err
 	}
 
@@ -126,7 +127,7 @@ func new_collector(harvest_path string) error {
 
 	data = bytes.ReplaceAll(data, []byte("COLLECTOR"), []byte(name))
 
-	if err = os.WriteFile(fp, data, 0644); err != nil {
+	if err = ioutil.WriteFile(fp, data, 0644); err != nil {
 		return err
 	}
 

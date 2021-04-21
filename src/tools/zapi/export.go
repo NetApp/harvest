@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 	"path"
+    "io/ioutil"
 	client "goharvest2/api/ontapi/zapi"
 	"goharvest2/share/tree/node"
 	"goharvest2/share/tree/yaml"
@@ -107,7 +108,7 @@ func export_counters(item *node.Node, c *client.Client, args *Args) error {
 	
 	template_fp := path.Join(fp...)
 
-	if err = os.WriteFile(template_fp, dump, 0644); err != nil {
+	if err = ioutil.WriteFile(template_fp, dump, 0644); err != nil {
 		fmt.Println("writefile")
 		return err
 	}
@@ -147,7 +148,7 @@ func export_counters(item *node.Node, c *client.Client, args *Args) error {
 		return err
 	}
 
-	if err = os.WriteFile(custom_fp, dump, 0644); err != nil {
+	if err = ioutil.WriteFile(custom_fp, dump, 0644); err != nil {
 		fmt.Println("write custom.yaml")
 		return err
 	}

@@ -166,43 +166,40 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 	rendered := make([][]byte, 0)
 
 	object := data.Object
-	if data.IsMetadata {
-		object = "metadata_" + data.MetadataType + "_" + data.Object
-	}
 
 	// user-defined preferences for export
 	var labels_to_include, keys_to_include []string
 	include_all := false
-	if data.ExportOptions.GetChildContentS("include_all_labels") == "True" {
+	if data.GetExportOptions().GetChildContentS("include_all_labels") == "true" {
 		include_all = true
 	}
-	if x := data.ExportOptions.GetChildS("instance_keys"); x != nil {
+	if x := data.GetExportOptions().GetChildS("instance_keys"); x != nil {
 		keys_to_include = x.GetAllChildContentS()
 	}
-	if x := data.ExportOptions.GetChildS("instance_labels"); x != nil {
+	if x := data.GetExportOptions().GetChildS("instance_labels"); x != nil {
 		labels_to_include = x.GetAllChildContentS()
 	}
 
 	// count number of data points rendered
-	count := 0
+	count := uint64(0)
 
 	// not all collectors provide timestamp, so this might be nil
 	//timestamp := data.GetMetric("timestamp")
-	var timestamp *matrix.Metric
+	//var timestamp *matrix.Metric
 	// temporarily disabled, influx expects nanosecs, we get something else from zapis
 
 	// measurement that we will not emit
 	// only to store global labels that we'll
 	// add to all instances
 	global := NewMeasurement("")
-	for key, value := range data.GlobalLabels.Iter() {
+	for key, value := range data.GetGlobalLabels().Map() {
 		global.AddTag(key, value)
 	}
 
 	// render one measurement for each instance
 	for key, instance := range data.GetInstances() {
 
-		if !instance.Enabled {
+		if ! instance.IsExportable() {
 			continue
 		}
 
@@ -211,12 +208,12 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 
 		// tag set
 		if include_all {
-			for label, value := range instance.Labels.Iter() {
+			for label, value := range instance.GetLabels().Map() {
 				m.AddTag(label, value)
 			}
 		} else {
 			for _, key := range keys_to_include {
-				if value, has := instance.Labels.GetHas(key); has {
+				if value, has := instance.GetLabels().GetHas(key); has {
 					m.AddTag(key, value)
 				}
 			}
@@ -224,14 +221,14 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 
 		// skip instance without key tags
 		if len(m.tag_set) == 0 {
-			logger.Debug(e.Prefix, "skip instance (%s), no tag set parsed from labels (%v)", key, instance.Labels.Iter())
+			logger.Debug(e.Prefix, "skip instance (%s), no tag set parsed from labels (%v)", key, instance.GetLabels().Map())
 		}
 
 		// field set
 
 		// strings
 		for _, label := range labels_to_include {
-			if value, has := instance.Labels.GetHas(label); has {
+			if value, has := instance.GetLabels().GetHas(label); has {
 				m.AddField(label, value)
 				count += 1
 			}
@@ -240,35 +237,36 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 		// numeric
 		for _, metric := range data.GetMetrics() {
 
-			if !metric.Enabled {
+			if ! metric.IsExportable() {
 				continue
 			}
 
-			value, ok := data.GetValue(metric, instance)
+			value, ok := metric.GetValueString(instance)
 
-			if !ok {
+			if ! ok {
 				continue
 			}
 
-			field_name := metric.Name
+			field_name := metric.GetName()
 
 			if metric.HasLabels() {
-				for _, label := range metric.Labels.Iter() {
+				for _, label := range metric.GetLabels().Map() {
 					field_name += "_" + label
 				}
 			}
 
-			m.AddField(field_name, strconv.FormatFloat(value, 'f', -1, 64))
+			m.AddField(field_name, value)
 
 			count += 1
 		}
 
+        /*
 		// optionially add timestamp
 		if timestamp != nil {
 			if value, ok := data.GetValue(timestamp, instance); ok {
 				m.SetTimestamp(strconv.FormatFloat(value, 'f', 0, 64))
 			}
-		}
+		}*/
 
 		if r, err := m.Render(); err == nil {
 			rendered = append(rendered, []byte(r))
@@ -276,7 +274,7 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 			logger.Debug(e.Prefix, err.Error())
 		}
 	}
-	e.AddCount(count)
+	e.AddExportCount(count)
 	logger.Debug(e.Prefix, "rendered %d measurements with %d data points for (%s)", len(rendered), count, object)
 	return rendered, nil
 }
