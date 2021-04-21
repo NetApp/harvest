@@ -9,13 +9,14 @@ package main
 
 import (
 	"goharvest2/cmd/poller/collector"
+	"goharvest2/pkg/color"
 	"goharvest2/pkg/dict"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/logger"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/set"
 	"goharvest2/pkg/tree/node"
-	"goharvest2/pkg/util"
+
 	"strconv"
 	"strings"
 	"time"
@@ -262,7 +263,7 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 					continue
 				}
 
-				logger.Trace(me.Prefix, "(%s%s%s) parsing counter (%s) = %v", util.Grey, key, util.End, name, value)
+				logger.Trace(me.Prefix, "(%s%s%s) parsing counter (%s) = %v", color.Grey, key, color.End, name, value)
 
 				// ZAPI counter for us is either instance label (string)
 				// or numeric metric (scalar or string)
@@ -270,7 +271,7 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 				// store as instance label
 				if display, has := me.instance_labels[name]; has {
 					instance.SetLabel(display, value)
-					logger.Trace(me.Prefix, "+ label (%s) = [%s%s%s]", display, util.Yellow, value, util.End)
+					logger.Trace(me.Prefix, "+ label (%s) = [%s%s%s]", display, color.Yellow, value, color.End)
 					continue
 				}
 
@@ -290,7 +291,7 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 							if err = metric.SetValueString(instance, values[i]); err != nil {
 								logger.Error(me.Prefix, "set histogram (%s.%s) value [%s]: %v", name, label, values[i], err)
 							} else {
-								logger.Trace(me.Prefix, "+ histogram (%s.%s) = [%s%s%s]", name, label, util.Pink, values[i], util.End)
+								logger.Trace(me.Prefix, "+ histogram (%s.%s) = [%s%s%s]", name, label, color.Pink, values[i], color.End)
 								count += 1
 							}
 						} else {
@@ -305,7 +306,7 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 					if err = metric.SetValueString(instance, value); err != nil {
 						logger.Error(me.Prefix, "set metric (%s) value [%s]: %v", name, value, err)
 					} else {
-						logger.Trace(me.Prefix, "+ metric (%s) = [%s%s%s]", name, util.Cyan, value, util.End)
+						logger.Trace(me.Prefix, "+ metric (%s) = [%s%s%s]", name, color.Cyan, value, color.End)
 						count += 1
 					}
 					continue
@@ -320,10 +321,10 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 				if me.status_label != "" {
 					if instance.GetLabel(me.status_label) == me.status_ok_value {
 						metric.SetValueUint8(instance, 0)
-						logger.Trace(me.Prefix, "(%s%s%s) status (%s= %s) = [0]", util.Grey, key, util.End, me.status_label, instance.GetLabel(me.status_label))
+						logger.Trace(me.Prefix, "(%s%s%s) status (%s= %s) = [0]", color.Grey, key, color.End, me.status_label, instance.GetLabel(me.status_label))
 					} else {
 						metric.SetValueUint8(instance, 1)
-						logger.Trace(me.Prefix, "(%s%s%s) status (%s= %s) = [0]", util.Grey, key, util.End, me.status_label, instance.GetLabel(me.status_label))
+						logger.Trace(me.Prefix, "(%s%s%s) status (%s= %s) = [0]", color.Grey, key, color.End, me.status_label, instance.GetLabel(me.status_label))
 					}
 				}
 			}
@@ -380,7 +381,7 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 
 	// calculate timestamp delta first since many counters require it for postprocessing
 	// timestamp has "raw" property, so won't be postprocessed automatically
-	// fmt.Printf("\npostprocessing %s%s%s - %s%v%s\n", util.Red, timestamp.Name, util.End, util.Bold, timestamp.Properties, util.End)
+	// fmt.Printf("\npostprocessing %s%s%s - %s%v%s\n", color.Red, timestamp.Name, color.End, color.Bold, timestamp.Properties, color.End)
 	//logger.Debug(me.Prefix, "cooking [%s] (%s)", timestamp.Name, timestamp.Properties)
 	//print_vector("current", NewData.Data[timestamp.Index])
 	//print_vector("previous", me.Data.Data[timestamp.Index])
@@ -390,7 +391,7 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 	}
 
 	//NewData.Delta(me.Data, timestamp.Index)
-	//print_vector(util.Green+"delta"+util.End, NewData.Data[timestamp.Index])
+	//print_vector(color.Green+"delta"+color.End, NewData.Data[timestamp.Index])
 
 	var base matrix.Metric
 
@@ -549,7 +550,7 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 		display, ok := wanted.GetHas(key)
 		// counter not requested
 		if !ok {
-			logger.Trace(me.Prefix, "%sskip [%s], not requested%s", util.Grey, key, util.End)
+			logger.Trace(me.Prefix, "%sskip [%s], not requested%s", color.Grey, key, color.End)
 			continue
 		}
 
@@ -573,13 +574,13 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 				display = me.object
 			}
 			me.instance_labels[key] = display
-			logger.Debug(me.Prefix, "%s+[%s] added as label name (%s)%s", util.Yellow, key, display, util.End)
+			logger.Debug(me.Prefix, "%s+[%s] added as label name (%s)%s", color.Yellow, key, display, color.End)
 		} else {
 			// add counter as numeric metric
 			old_metrics.Delete(key)
 			if r := me.add_counter(counter, key, display, true, counters); r != "" && !wanted.Has(r) {
 				missing.Add(r) // required base counter, missing in template
-				logger.Debug(me.Prefix, "%smarking [%s] as required base counter for [%s]%s", util.Red, r, key, util.End)
+				logger.Debug(me.Prefix, "%smarking [%s] as required base counter for [%s]%s", color.Red, r, key, color.End)
 			}
 		}
 	}
@@ -593,7 +594,7 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 				logger.Debug(me.Prefix, "adding [%s] (replacment for deprecated counter)", name)
 				if r := me.add_counter(counter, name, name, true, counters); r != "" && !wanted.Has(r) {
 					missing.Add(r) // required base counter, missing in template
-					logger.Debug(me.Prefix, "%smarking [%s] as required base counter for [%s]%s", util.Red, r, name, util.End)
+					logger.Debug(me.Prefix, "%smarking [%s] as required base counter for [%s]%s", color.Red, r, name, color.End)
 				}
 			}
 		}
@@ -603,7 +604,7 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 	if missing.Size() > 0 {
 		logger.Debug(me.Prefix, "attempting to retrieve metadata of %d missing base counters", missing.Size())
 		for name, counter := range counters {
-			//logger.Debug(me.Prefix, "%shas??? [%s]%s", util.Grey, name, util.End)
+			//logger.Debug(me.Prefix, "%shas??? [%s]%s", color.Grey, name, color.End)
 			if missing.Has(name) {
 				old_metrics.Delete(name)
 				logger.Debug(me.Prefix, "adding [%s] (missing base counter)", name)
@@ -741,7 +742,7 @@ func (me *ZapiPerf) add_counter(counter *node.Node, name, display string, enable
 			if m = me.Matrix.GetMetric(key); m != nil {
 				logger.Debug(me.Prefix, "updating array metric [%s] attributes", key)
 			} else if m, err = me.Matrix.NewMetricFloat64(key); err == nil {
-				logger.Debug(me.Prefix, "%s+[%s] added array metric (%s), element with label (%s)%s", util.Pink, name, display, label, util.End)
+				logger.Debug(me.Prefix, "%s+[%s] added array metric (%s), element with label (%s)%s", color.Pink, name, display, label, color.End)
 			} else {
 				logger.Error(me.Prefix, "add array metric element [%s]: %v", key, err)
 				return ""
@@ -768,7 +769,7 @@ func (me *ZapiPerf) add_counter(counter *node.Node, name, display string, enable
 		if m = me.Matrix.GetMetric(name); m != nil {
 			logger.Debug(me.Prefix, "updating scalar metric [%s] attributes", name)
 		} else if m, err = me.Matrix.NewMetricFloat64(name); err == nil {
-			logger.Debug(me.Prefix, "%s+[%s] added scalar metric (%s)%s", util.Cyan, name, display, util.End)
+			logger.Debug(me.Prefix, "%s+[%s] added scalar metric (%s)%s", color.Cyan, name, display, color.End)
 		} else {
 			logger.Error(me.Prefix, "add scalar metric [%s]: %v", name, err)
 			return ""

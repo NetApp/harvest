@@ -56,19 +56,19 @@ clean:
 harvest: precheck
 	@# Build the harvest cli
 	@echo "Building harvest cli"
-	@cd cmd/cli; go build -o ../../bin/harvest
+	@cd cmd/harvest; go build -o ../../bin/harvest
 
 	@# Build the daemonizer for the pollers
 	@echo "Building daemonizer"
-	@cd cmd/cli/daemonize; gcc daemonize.c -o ../../../bin/daemonize
+	@cd cmd/tools/daemonize; gcc daemonize.c -o ../../../bin/daemonize
 
 	@# Build the manager
 	@echo "Building manager"
-	@cd cmd/cli/manager; go build -o ../../../bin/manager
+	@cd cmd/harvest/manager; go build -o ../../../bin/manager
 
 	@# Build the config
 	@echo "Building config"
-	@cd cmd/cli/config; go build -o ../../../bin/config
+	@cd cmd/harvest/config; go build -o ../../../bin/config
 
 	@# Build the zapi tool
 	@echo "Building zapi tool"

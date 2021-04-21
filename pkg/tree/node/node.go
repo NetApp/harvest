@@ -8,10 +8,11 @@
 package node
 
 import (
-	"goharvest2/pkg/util"
 	"bytes"
 	"encoding/xml"
 	"fmt"
+	util "goharvest2/cmd"
+	"goharvest2/pkg/color"
 	"strings"
 )
 
@@ -286,8 +287,8 @@ func (n *Node) Print(depth int) {
 		content = string(n.Content)
 	}
 	//fname := fmt.Sprintf("%s%s%s%s%s (children=%d)", strings.Repeat("  ", depth), util.Bold, util.Cyan, name, util.End, len(n.Children))
-	fname := fmt.Sprintf("%s%s%s[%s]%s", strings.Repeat("  ", depth), util.Bold, util.Cyan, name, util.End)
-	fmt.Printf("%-50s - %s%35s%s\n", fname, util.Green, content, util.End)
+	fname := fmt.Sprintf("%s%s%s[%s]%s", strings.Repeat("  ", depth), color.Bold, color.Cyan, name, color.End)
+	fmt.Printf("%-50s - %s%35s%s\n", fname, color.Green, content, color.End)
 	for _, child := range n.Children {
 		child.Print(depth + 1)
 	}

@@ -2,7 +2,7 @@ package matrix
 
 import (
 	"fmt"
-	"goharvest2/share/util"
+	"goharvest2/pkg/color"
 	"strconv"
 )
 
@@ -206,9 +206,9 @@ func (me *MetricFloat32) GetValuesFloat64() []float64 {
 func (me *MetricFloat32) Print() {
 	for i := range me.values {
 		if me.record[i] {
-			fmt.Printf("%s%v%s ", util.Green, me.values[i], util.End)
+			fmt.Printf("%s%v%s ", color.Green, me.values[i], color.End)
 		} else {
-			fmt.Printf("%s%v%s ", util.Red, me.values[i], util.End)
+			fmt.Printf("%s%v%s ", color.Red, me.values[i], color.End)
 		}
 	}
 }

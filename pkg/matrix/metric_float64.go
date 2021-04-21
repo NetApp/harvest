@@ -2,8 +2,8 @@ package matrix
 
 import (
 	"fmt"
-	"goharvest2/share/errors"
-	"goharvest2/share/util"
+	"goharvest2/pkg/color"
+	"goharvest2/pkg/errors"
 	"strconv"
 )
 
@@ -255,9 +255,9 @@ func (me *MetricFloat64) MultiplyByScalar(s int) error {
 func (me *MetricFloat64) Print() {
 	for i := range me.values {
 		if me.record[i] {
-			fmt.Printf("%s%v%s ", util.Green, me.values[i], util.End)
+			fmt.Printf("%s%v%s ", color.Green, me.values[i], color.End)
 		} else {
-			fmt.Printf("%s%v%s ", util.Red, me.values[i], util.End)
+			fmt.Printf("%s%v%s ", color.Red, me.values[i], color.End)
 		}
 	}
 }

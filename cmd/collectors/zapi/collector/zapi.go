@@ -14,11 +14,11 @@ import (
 	"time"
 
 	"goharvest2/cmd/poller/collector"
+	"goharvest2/pkg/color"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/logger"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
-	"goharvest2/pkg/util"
 
 	client "goharvest2/pkg/api/ontapi/zapi"
 )
@@ -302,7 +302,7 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 	fetch = func(instance *matrix.Instance, node *node.Node, path []string) {
 
 		newpath := append(path, node.GetNameS())
-		logger.Debug(me.Prefix, " > %s(%s)%s <%s%d%s> name=[%s%s%s%s] value=[%s%s%s]", util.Grey, newpath, util.End, util.Red, len(node.GetChildren()), util.End, util.Bold, util.Cyan, node.GetNameS(), util.End, util.Yellow, node.GetContentS(), util.End)
+		logger.Debug(me.Prefix, " > %s(%s)%s <%s%d%s> name=[%s%s%s%s] value=[%s%s%s]", color.Grey, newpath, color.End, color.Red, len(node.GetChildren()), color.End, color.Bold, color.Cyan, node.GetNameS(), color.End, color.Yellow, node.GetContentS(), color.End)
 
 		if value := node.GetContentS(); value != "" {
 			key := strings.Join(newpath, ".")
@@ -319,7 +319,7 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 				//logger.Trace(me.Prefix, "%slabel (%s) [%s] set value (%s)%s", util.Yellow, key, label, value, util.End)
 				count += 1
 			} else {
-				logger.Debug(me.Prefix, "%sskipped (%s) with value (%s): not in metric or label cache%s", util.Blue, key, value, util.End)
+				logger.Debug(me.Prefix, "%sskipped (%s) with value (%s): not in metric or label cache%s", color.Blue, key, value, color.End)
 				skipped += 1
 			}
 		} else {

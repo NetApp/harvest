@@ -9,12 +9,12 @@ package config
 
 import (
 	"fmt"
-	"goharvest2/api/ontapi/zapi"
-	"goharvest2/share/argparse"
-	"goharvest2/share/config"
-	"goharvest2/share/dialog"
-	"goharvest2/share/tree"
-	"goharvest2/share/tree/node"
+	"goharvest2/pkg/api/ontapi/zapi"
+	"goharvest2/pkg/argparse"
+	"goharvest2/pkg/config"
+	"goharvest2/pkg/dialog"
+	"goharvest2/pkg/tree"
+	"goharvest2/pkg/tree/node"
 	"io/ioutil"
 	"os"
 	"os/exec"

@@ -30,11 +30,11 @@
 package plugin
 
 import (
-	"goharvest2/poller/options"
-	"goharvest2/share/errors"
-	"goharvest2/share/logger"
-	"goharvest2/share/matrix"
-	"goharvest2/share/tree/node"
+	"goharvest2/cmd/poller/options"
+	"goharvest2/pkg/errors"
+	"goharvest2/pkg/logger"
+	"goharvest2/pkg/matrix"
+	"goharvest2/pkg/tree/node"
 )
 
 type Plugin interface {

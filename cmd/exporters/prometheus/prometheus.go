@@ -26,10 +26,10 @@ package main
 import (
 	"fmt"
 	"goharvest2/cmd/poller/exporter"
+	"goharvest2/pkg/color"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/logger"
 	"goharvest2/pkg/matrix"
-	"goharvest2/pkg/util"
 	"regexp"
 	"strconv"
 	"strings"
@@ -223,7 +223,7 @@ func (me *Prometheus) Export(data *matrix.Matrix) error {
 	me.cache.Lock()
 	me.cache.Put(key, metrics)
 	me.cache.Unlock()
-	logger.Debug(me.Prefix, "added to cache with key [%s%s%s%s]", util.Bold, util.Red, key, util.End)
+	logger.Debug(me.Prefix, "added to cache with key [%s%s%s%s]", color.Bold, color.Red, key, color.End)
 
 	// update metadata
 	me.AddExportCount(uint64(len(metrics)))

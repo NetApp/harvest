@@ -1,8 +1,8 @@
 package label_agent
 
 import (
-	"goharvest2/share/logger"
-	"goharvest2/share/matrix"
+	"goharvest2/pkg/logger"
+	"goharvest2/pkg/matrix"
 	"regexp"
 	"strconv"
 	"strings"

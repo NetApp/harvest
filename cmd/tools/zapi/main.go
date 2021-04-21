@@ -15,11 +15,11 @@ import (
 	"strings"
 
 	client "goharvest2/pkg/api/ontapi/zapi"
+	"goharvest2/pkg/color"
 
 	"goharvest2/pkg/config"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/tree/node"
-	"goharvest2/pkg/util"
 )
 
 var (
@@ -61,7 +61,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("connected to %s%s%s (%s)\n", util.Bold, system.Name, util.End, system.Release)
+	fmt.Printf("connected to %s%s%s (%s)\n", color.Bold, system.Name, color.End, system.Release)
 
 	// get requested item
 	if item, err = get(connection, args); err != nil {
