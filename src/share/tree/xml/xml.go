@@ -8,7 +8,7 @@ import (
 )
 
 func Load(data []byte) (*node.Node, error) {
-    root := new(node.Node)
+	root := new(node.Node)
 	buf := bytes.NewBuffer(data)
 	dec := xml.NewDecoder(buf)
 	if err := dec.Decode(&root); err != nil {
@@ -18,7 +18,7 @@ func Load(data []byte) (*node.Node, error) {
 }
 
 func LoadFromReader(r io.Reader) (*node.Node, error) {
-    root := new(node.Node)
+	root := new(node.Node)
 	dec := xml.NewDecoder(r)
 	return root, dec.Decode(&root)
 }

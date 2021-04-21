@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"crypto/tls"
 	"goharvest2/share/errors"
+	"goharvest2/share/logger"
 	"goharvest2/share/tree"
 	"goharvest2/share/tree/node"
 	"goharvest2/share/tree/xml"
-	"goharvest2/share/logger"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -17,7 +17,7 @@ import (
 
 var (
 	API_VERSION = "1.3"
-	API_VFILER = ""
+	API_VFILER  = ""
 )
 
 type Client struct {
@@ -146,7 +146,7 @@ func (my *Client) build_request(query *node.Node, force_cluster bool) error {
 	request := node.NewXmlS("netapp")
 	request.NewAttrS("xmlns", "http://www.netapp.com/filer/admin")
 	request.NewAttrS("version", API_VERSION)
-	if API_VFILER != "" && ! force_cluster {
+	if API_VFILER != "" && !force_cluster {
 		request.NewAttrS("vfiler", API_VFILER)
 	}
 	request.AddChild(query)
@@ -239,7 +239,6 @@ func (my *Client) InvokeRaw() ([]byte, error) {
 	return ioutil.ReadAll(response.Body)
 }
 
-
 func (my *Client) invoke(with_timers bool) (*node.Node, time.Duration, time.Duration, error) {
 
 	var (
@@ -292,12 +291,12 @@ func (my *Client) invoke(with_timers bool) (*node.Node, time.Duration, time.Dura
 	// check if request was successful
 	if result = root.GetChildS("results"); result == nil {
 		return result, response_t, parse_t, errors.New(errors.API_RESPONSE, "missing \"results\"")
-	} 
-	
+	}
+
 	if status, found = result.GetAttrValueS("status"); !found {
 		return result, response_t, parse_t, errors.New(errors.API_RESPONSE, "missing status attribute")
-	} 
-	
+	}
+
 	if status != "passed" {
 		if reason, found = result.GetAttrValueS("reason"); !found {
 			err = errors.New(errors.API_REQ_REJECTED, "no reason")
@@ -309,7 +308,6 @@ func (my *Client) invoke(with_timers bool) (*node.Node, time.Duration, time.Dura
 
 	return result, response_t, parse_t, nil
 }
-
 
 func (c *Client) InvokeBatchWithMoreTimers(request *node.Node, tag string) (*node.Node, string, int64, time.Duration, time.Duration, time.Duration, time.Duration, error) {
 
@@ -345,18 +343,17 @@ func (c *Client) InvokeBatchWithMoreTimers(request *node.Node, tag string) (*nod
 	return results, next_tag, cl, bd, ad, rd, pd, nil
 }
 
-
 func (c *Client) invoke_with_more_timers() (*node.Node, int64, time.Duration, time.Duration, time.Duration, error) {
 
 	var (
-		root, result        *node.Node
-		response            *http.Response
+		root, result                *node.Node
+		response                    *http.Response
 		response_d, read_d, parse_d time.Duration
-	//	body                []byte
-		status, reason      string
-		found               bool
-		err                 error
-		cl		int64
+		//	body                []byte
+		status, reason string
+		found          bool
+		err            error
+		cl             int64
 	)
 
 	// issue request
@@ -375,11 +372,11 @@ func (c *Client) invoke_with_more_timers() (*node.Node, int64, time.Duration, ti
 	cl = response.ContentLength
 
 	/*
-	read_start := time.Now()
-	if body, err = ioutil.ReadAll(response.Body); err != nil {
-		return result, response_d, read_d, parse_d, err
-	}
-	read_d = time.Since(read_start)
+		read_start := time.Now()
+		if body, err = ioutil.ReadAll(response.Body); err != nil {
+			return result, response_d, read_d, parse_d, err
+		}
+		read_d = time.Since(read_start)
 	*/
 
 	// parse xml
@@ -393,12 +390,12 @@ func (c *Client) invoke_with_more_timers() (*node.Node, int64, time.Duration, ti
 	// check if request was successful
 	if result = root.GetChildS("results"); result == nil {
 		return result, cl, response_d, read_d, parse_d, errors.New(errors.API_RESPONSE, "missing \"results\"")
-	} 
-	
+	}
+
 	if status, found = result.GetAttrValueS("status"); !found {
 		return result, cl, response_d, read_d, parse_d, errors.New(errors.API_RESPONSE, "missing status attribute")
-	} 
-	
+	}
+
 	if status != "passed" {
 		if reason, found = result.GetAttrValueS("reason"); !found {
 			err = errors.New(errors.API_REQ_REJECTED, "no reason")

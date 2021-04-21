@@ -1,5 +1,5 @@
 // Package matrix provides the Matrix data-structure and auxiliary structures
-// for high performance storage, manipulation and transmission of numeric 
+// for high performance storage, manipulation and transmission of numeric
 // metrics and string labels. See detailed documentation in README.md
 
 package matrix
@@ -7,23 +7,23 @@ package matrix
 import (
 	"fmt"
 	"goharvest2/share/dict"
-	"goharvest2/share/util"
 	"goharvest2/share/errors"
 	"goharvest2/share/tree/node"
+	"goharvest2/share/util"
 )
 
 type Matrix struct {
-    UUID           string
-	Object         string
-	globalLabels   *dict.Dict
-	instances      map[string]*Instance
-	metrics        map[string]Metric
-	exportOptions  *node.Node
-	exportable bool
+	UUID          string
+	Object        string
+	globalLabels  *dict.Dict
+	instances     map[string]*Instance
+	metrics       map[string]Metric
+	exportOptions *node.Node
+	exportable    bool
 }
 
 func New(uuid, object string) *Matrix {
-    me := Matrix{UUID: uuid, Object: object}
+	me := Matrix{UUID: uuid, Object: object}
 	me.globalLabels = dict.New()
 	me.instances = make(map[string]*Instance, 0)
 	me.metrics = make(map[string]Metric, 0)
@@ -165,7 +165,7 @@ func (me *Matrix) ChangeMetricType(key, dtype string) (Metric, error) {
 	return me.NewMetricType(key, dtype)
 }
 
-func (me *Matrix) addMetric(key string, metric Metric) (error) {
+func (me *Matrix) addMetric(key string, metric Metric) error {
 	if _, has := me.metrics[key]; has {
 		return errors.New(DUPLICATE_METRIC_KEY, key)
 	}

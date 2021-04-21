@@ -4,32 +4,31 @@ import (
 	"fmt"
 	"os"
 	"path"
-	"strings"
 	"strconv"
+	"strings"
 
 	client "goharvest2/api/ontapi/zapi"
 
-	"goharvest2/share/tree/node"
 	"goharvest2/share/config"
 	"goharvest2/share/errors"
+	"goharvest2/share/tree/node"
 	"goharvest2/share/util"
 )
 
 var (
 	MAX_SEARCH_DEPTH = 10
-	CONFPATH = "/etc/harvest"
+	CONFPATH         = "/etc/harvest"
 )
-
 
 func main() {
 
 	var (
-		err error
-		args *Args
+		err          error
+		args         *Args
 		item, params *node.Node
-		confp string
-		connection *client.Client
-		system *client.System
+		confp        string
+		connection   *client.Client
+		system       *client.System
 	)
 
 	args = get_args()
@@ -65,12 +64,11 @@ func main() {
 
 	if args.Command == "show" {
 		show(item, args)
-	} else if err =	export(item, connection, args); err != nil {
+	} else if err = export(item, connection, args); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 }
-
 
 func get(c *client.Client, args *Args) (*node.Node, error) {
 	switch args.Item {
@@ -101,7 +99,7 @@ func get_system(c *client.Client) (*node.Node, error) {
 
 func get_apis(c *client.Client) (*node.Node, error) {
 	var (
-		n *node.Node
+		n   *node.Node
 		err error
 	)
 
@@ -117,7 +115,7 @@ func get_apis(c *client.Client) (*node.Node, error) {
 
 func get_objects(c *client.Client) (*node.Node, error) {
 	var (
-		n *node.Node
+		n   *node.Node
 		err error
 	)
 
@@ -134,7 +132,7 @@ func get_objects(c *client.Client) (*node.Node, error) {
 func get_counters(c *client.Client, args *Args) (*node.Node, error) {
 	var (
 		req, n *node.Node
-		err error
+		err    error
 	)
 
 	req = node.NewXmlS("perf-object-counter-list-info")
@@ -153,7 +151,7 @@ func get_counters(c *client.Client, args *Args) (*node.Node, error) {
 func get_counter(c *client.Client, args *Args) (*node.Node, error) {
 	var (
 		counters, cnt *node.Node
-		err error
+		err           error
 	)
 	if counters, err = get_counters(c, args); err != nil {
 		return nil, err
@@ -170,7 +168,7 @@ func get_counter(c *client.Client, args *Args) (*node.Node, error) {
 func get_instances(c *client.Client, args *Args) (*node.Node, error) {
 	var (
 		req, n *node.Node
-		err error
+		err    error
 	)
 
 	req = node.NewXmlS("perf-object-instance-list-info-iter")
@@ -188,17 +186,17 @@ func get_instances(c *client.Client, args *Args) (*node.Node, error) {
 		return nil, errors.New(ATTRIBUTE_NOT_FOUND, "attributes-list")
 	}
 	return n, nil
-	
+
 }
 
 func get_data(c *client.Client, args *Args) (*node.Node, error) {
-	
+
 	var req *node.Node
 
 	// requested data is for an Zapi query
 	if args.Api != "" {
 		req = node.NewXmlS(args.Api)
-	// requested data is for a ZapiPerf object
+		// requested data is for a ZapiPerf object
 	} else {
 		if c.IsClustered() {
 			req = node.NewXmlS("perf-object-get-instances")

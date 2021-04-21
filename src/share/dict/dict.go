@@ -18,11 +18,11 @@ func NewFromMap(m map[string]string) *Dict {
 }
 
 func (d *Dict) Copy() *Dict {
-    c := New()
-    for k, v := range d.dict {
-        c.dict[k] = v
-    }
-    return c
+	c := New()
+	for k, v := range d.dict {
+		c.dict[k] = v
+	}
+	return c
 }
 
 func (d *Dict) Set(key, val string) {
@@ -77,7 +77,7 @@ func (d *Dict) Keys() []string {
 func (d *Dict) String() string {
 	s := make([]string, 0, len(d.dict))
 	for k, v := range d.dict {
-		s = append(s, k + "=" + v)
+		s = append(s, k+"="+v)
 	}
 	return strings.Join(s, ", ")
 }

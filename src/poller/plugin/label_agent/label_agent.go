@@ -2,11 +2,11 @@ package label_agent
 
 import (
 	"fmt"
-	"strings"
 	"goharvest2/poller/plugin"
 	"goharvest2/share/errors"
 	"goharvest2/share/logger"
 	"goharvest2/share/matrix"
+	"strings"
 )
 
 type LabelAgent struct {
@@ -96,7 +96,7 @@ func (me *LabelAgent) splitRegex(instance *matrix.Instance) {
 // splits one label value into multiple key-value pairs
 func (me *LabelAgent) splitPairs(instance *matrix.Instance) {
 	for _, r := range me.splitPairsRules {
-		if value := instance.GetLabel(r.source); value != ""{
+		if value := instance.GetLabel(r.source); value != "" {
 			for _, pair := range strings.Split(value, r.sep1) {
 				if kv := strings.Split(pair, r.sep2); len(kv) == 2 {
 					instance.SetLabel(kv[0], kv[1])
@@ -198,7 +198,7 @@ func (me *LabelAgent) mapValues(m *matrix.Matrix) error {
 
 	var (
 		metric matrix.Metric
-		err error
+		err    error
 	)
 
 	for _, r := range me.valueMappingRules {

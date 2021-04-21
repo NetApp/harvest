@@ -245,7 +245,7 @@ func getStatus(poller_name string) (string, int) {
 
 	var (
 		status string
-		pid int
+		pid    int
 	)
 	// running poller should have written PID to file
 	pid_fp := path.Join(HARVEST_PIDS, poller_name+".pid")
@@ -283,11 +283,11 @@ func getStatus(poller_name string) (string, int) {
 		// process not running, but did not clean PID file
 		// maybe it just exited, so give it a chance to clean
 		/*
-		time.Sleep(500 * time.Millisecond)
-		if clean_pidf(pid_fp) {
-			return "interrupted", pid
-		}
-		return "exited", pid
+			time.Sleep(500 * time.Millisecond)
+			if clean_pidf(pid_fp) {
+				return "interrupted", pid
+			}
+			return "exited", pid
 		*/
 	}
 
@@ -313,16 +313,15 @@ func getStatus(poller_name string) (string, int) {
 	return status, pid
 }
 
-
 func killPoller(poller_name string) (string, int) {
 
 	var (
 		status string
-		pid int
+		pid    int
 	)
 
 	defer cleanPidFile(poller_name)
-	
+
 	// attempt to get pid from pid file
 	status, pid = getStatus(poller_name)
 
@@ -343,8 +342,8 @@ func killPoller(poller_name string) (string, int) {
 			if args = strings.Fields(fields[10]); len(args) < 3 {
 				continue
 			}
-			
-			if ! strings.HasSuffix(args[0], "poller") && args[2] != poller_name {
+
+			if !strings.HasSuffix(args[0], "poller") && args[2] != poller_name {
 				continue
 			}
 
@@ -352,7 +351,7 @@ func killPoller(poller_name string) (string, int) {
 				pid = x
 			}
 			break
-		}		
+		}
 	}
 
 	if pid < 1 {
@@ -373,7 +372,7 @@ func killPoller(poller_name string) (string, int) {
 func stopPoller(poller_name string) (string, int) {
 	var (
 		status string
-		pid int
+		pid    int
 	)
 
 	// if we get no valid PID, assume process is not running

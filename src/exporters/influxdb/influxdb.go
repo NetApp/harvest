@@ -199,7 +199,7 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 	// render one measurement for each instance
 	for key, instance := range data.GetInstances() {
 
-		if ! instance.IsExportable() {
+		if !instance.IsExportable() {
 			continue
 		}
 
@@ -237,13 +237,13 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 		// numeric
 		for _, metric := range data.GetMetrics() {
 
-			if ! metric.IsExportable() {
+			if !metric.IsExportable() {
 				continue
 			}
 
 			value, ok := metric.GetValueString(instance)
 
-			if ! ok {
+			if !ok {
 				continue
 			}
 
@@ -260,13 +260,13 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 			count += 1
 		}
 
-        /*
-		// optionially add timestamp
-		if timestamp != nil {
-			if value, ok := data.GetValue(timestamp, instance); ok {
-				m.SetTimestamp(strconv.FormatFloat(value, 'f', 0, 64))
-			}
-		}*/
+		/*
+			// optionially add timestamp
+			if timestamp != nil {
+				if value, ok := data.GetValue(timestamp, instance); ok {
+					m.SetTimestamp(strconv.FormatFloat(value, 'f', 0, 64))
+				}
+			}*/
 
 		if r, err := m.Render(); err == nil {
 			rendered = append(rendered, []byte(r))

@@ -2,18 +2,17 @@ package main
 
 import (
 	"fmt"
-	"strings"
 	client "goharvest2/api/ontapi/zapi"
-	"goharvest2/share/tree/node"
 	"goharvest2/share/errors"
+	"goharvest2/share/tree/node"
+	"strings"
 )
-
 
 func get_attrs(c *client.Client, a *Args) (*node.Node, error) {
 
 	var (
 		req, apis, results, attr *node.Node
-		err error
+		err                      error
 	)
 
 	req = node.NewXmlS("system-api-get-elements")
@@ -23,7 +22,6 @@ func get_attrs(c *client.Client, a *Args) (*node.Node, error) {
 	if results, err = c.InvokeRequest(req); err != nil {
 		return nil, err
 	}
-
 
 	output := node.NewS("output")
 	input := node.NewS("input")
@@ -94,15 +92,15 @@ func get_attrs(c *client.Client, a *Args) (*node.Node, error) {
 	//attr.Print(0)
 	//fmt.Println()
 	/*
-	if args.Export {
-		fn := path.Join("/tmp", args.Api+".yml")
-		if err = tree.Export(attr, "yaml", fn); err != nil {
-			fmt.Printf("failed to export to [%s]:\n", fn)
-			fmt.Println(err)
-		} else {
-			fmt.Printf("exported to [%s]\n", fn)
+		if args.Export {
+			fn := path.Join("/tmp", args.Api+".yml")
+			if err = tree.Export(attr, "yaml", fn); err != nil {
+				fmt.Printf("failed to export to [%s]:\n", fn)
+				fmt.Println(err)
+			} else {
+				fmt.Printf("exported to [%s]\n", fn)
+			}
 		}
-	}
 	*/
 	return attr, nil
 }

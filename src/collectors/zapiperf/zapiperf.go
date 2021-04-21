@@ -41,7 +41,7 @@ type ZapiPerf struct {
 	array_labels    map[string][]string
 	status_label    string
 	status_ok_value string
-	cache_empty bool
+	cache_empty     bool
 }
 
 func New(a *collector.AbstractCollector) collector.Collector {

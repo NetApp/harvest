@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
+	"goharvest2/harvest/config"
+	"goharvest2/harvest/manager"
+	"goharvest2/harvest/template"
+	"goharvest2/harvest/version"
 	"os"
 	"os/exec"
 	"path"
-	"goharvest2/harvest/version"
-	"goharvest2/harvest/manager"
-	"goharvest2/harvest/config"
-	"goharvest2/harvest/template"
 )
 
 var usage = `
@@ -54,7 +54,7 @@ func main() {
 	switch command {
 	case "version":
 		fmt.Println(version.String())
-	case "manager","status", "start", "restart", "stop", "kill":
+	case "manager", "status", "start", "restart", "stop", "kill":
 		manager.Run()
 	case "config":
 		config.Run()

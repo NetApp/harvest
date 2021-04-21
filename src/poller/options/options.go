@@ -6,11 +6,11 @@ package options
 
 import (
 	"fmt"
+	"goharvest2/harvest/version"
+	"goharvest2/share/argparse"
 	"os"
 	"path"
 	"strings"
-	"goharvest2/harvest/version"
-	"goharvest2/share/argparse"
 )
 
 type Options struct {

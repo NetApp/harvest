@@ -1,14 +1,14 @@
 package template
 
 import (
-	"os"
-	"fmt"
-	"strings"
 	"bytes"
-	"path"
-    "io/ioutil"
+	"fmt"
 	"goharvest2/share/tree"
 	"goharvest2/share/tree/node"
+	"io/ioutil"
+	"os"
+	"path"
+	"strings"
 )
 
 func Run() {
@@ -34,7 +34,7 @@ func Run() {
 		os.Exit(1)
 	}
 
-	if  err != nil {
+	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
@@ -44,8 +44,8 @@ func Run() {
 func new_plugin(harvest_path string) error {
 	var (
 		name, collector string
-		err error
-		data []byte
+		err             error
+		data            []byte
 	)
 
 	name = get_name()
@@ -96,8 +96,8 @@ func get_name() string {
 func new_collector(harvest_path string) error {
 	var (
 		name, object string
-		data []byte
-		err error
+		data         []byte
+		err          error
 	)
 
 	name = get_name()
@@ -138,7 +138,6 @@ func new_collector(harvest_path string) error {
 	return nil
 }
 
-
 func create_template(harvest_path, collector, object string) (string, error) {
 
 	t := node.NewS("")
@@ -151,7 +150,7 @@ func create_template(harvest_path, collector, object string) (string, error) {
 		return "", err
 	}
 
-	if ! strings.HasSuffix(freq, "s") {
+	if !strings.HasSuffix(freq, "s") {
 		freq += "s"
 	}
 
@@ -166,7 +165,7 @@ func create_template(harvest_path, collector, object string) (string, error) {
 	if err := os.MkdirAll(fp, 0755); err != nil {
 		return "", err
 	}
-	
+
 	fp = path.Join(fp, "default.yaml")
 
 	return fp, tree.Export(t, "yaml", fp)

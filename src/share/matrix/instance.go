@@ -7,9 +7,9 @@ import (
 // Instance struct and related methods
 
 type Instance struct {
-	index  int
-	labels *dict.Dict
-    exportable bool
+	index      int
+	labels     *dict.Dict
+	exportable bool
 }
 
 func NewInstance(index int) *Instance {

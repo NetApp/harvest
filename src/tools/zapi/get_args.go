@@ -1,24 +1,24 @@
 package main
 
 import (
-	"os"
 	"fmt"
-    "goharvest2/share/argparse"
+	"goharvest2/share/argparse"
+	"os"
 )
 
 type Args struct {
 	// main command: show, export, etc
 	Command string
 	// second command: what to show, export,
-	Item    string
+	Item string
 	// poller that contains parameters of an Ontap cluster
-	Poller  string
+	Poller string
 	// which API to show (when Item is "api")
-	Api     string
+	Api string
 	// which attr to show (when Item is "attrs")
-	Attr    string
+	Attr string
 	// which object to show (when Item is "object")
-	Object  string
+	Object string
 	// which counter to show (when Item is "counter")
 	Counter string
 	// ???
@@ -126,7 +126,7 @@ func get_args() *Args {
 
 	parser.SetHelpFlag("help")
 
-	if ! parser.Parse() {
+	if !parser.Parse() {
 		os.Exit(0)
 	}
 
@@ -178,7 +178,7 @@ func get_args() *Args {
 		args.Duration = 30
 	}
 
-	if ! ok {
+	if !ok {
 		os.Exit(1)
 	}
 

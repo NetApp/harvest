@@ -1,22 +1,22 @@
 package util
 
 import (
-	"net/http"
 	"io/ioutil"
+	"net/http"
 	"strings"
 )
 
 func Curl(addr string) (string, error) {
 
 	var (
-		req *http.Request
+		req    *http.Request
 		client *http.Client
-		resp *http.Response
-		data []byte
-		err error
+		resp   *http.Response
+		data   []byte
+		err    error
 	)
 
-	if ! strings.HasPrefix("http", addr) {
+	if !strings.HasPrefix("http", addr) {
 		addr = "http://" + addr
 	}
 

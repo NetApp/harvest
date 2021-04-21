@@ -134,9 +134,9 @@ func (me *LabelAgent) parseSplitSimpleRule(rule string) {
 }
 
 type splitPairsRule struct {
-	source  string
-	sep1 string
-	sep2 string
+	source string
+	sep1   string
+	sep2   string
 }
 
 // example rule:
@@ -366,11 +366,11 @@ func (me *LabelAgent) parseExcludeRegexRule(rule string) {
 }
 
 type valueMappingRule struct {
-	metric string
-	label string
+	metric       string
+	label        string
 	defaultValue uint8
-	hasDefault bool
-	mapping map[string]uint8
+	hasDefault   bool
+	mapping      map[string]uint8
 }
 
 // example rule:

@@ -11,9 +11,9 @@ type Measurement struct {
 	timestamp   string
 }
 
-func NewMeasurement(name string) *Measurement {
+func NewMeasurement(name string, size int) *Measurement {
 	m := Measurement{measurement: name}
-	m.tag_set = make([]string, 0)
+	m.tag_set = make([]string, size)
 	m.field_set = make([]string, 0)
 	return &m
 }

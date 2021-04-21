@@ -2,9 +2,9 @@ package matrix
 
 import (
 	"fmt"
-	"strconv"
-	"goharvest2/share/util"
 	"goharvest2/share/errors"
+	"goharvest2/share/util"
+	"strconv"
 )
 
 type MetricFloat64 struct {
@@ -12,12 +12,11 @@ type MetricFloat64 struct {
 	values []float64
 }
 
-
 func (me *MetricFloat64) Clone(deep bool) Metric {
 	clone := MetricFloat64{AbstractMetric: me.AbstractMetric.Clone(deep)}
 	if deep && len(me.values) != 0 {
 		clone.values = make([]float64, len(me.values))
-		for i,v := range me.values {
+		for i, v := range me.values {
 			clone.values[i] = v
 		}
 	}
@@ -46,7 +45,7 @@ func (me *MetricFloat64) Remove(index int) {
 	me.values = me.values[:len(me.values)-1]
 }
 
-// Write methods 
+// Write methods
 
 func (me *MetricFloat64) SetValueInt(i *Instance, v int) error {
 	me.record[i.index] = true
@@ -206,7 +205,7 @@ func (me *MetricFloat64) Delta(s Metric) error {
 	if len(me.values) != len(s_values) {
 		return errors.New(UNEQUAL_VECTORS, fmt.Sprintf("minuend=%d, subtrahend=%d", len(me.values), len(s_values)))
 	}
-	for i, _ := range me.values {
+	for i := range me.values {
 		if me.record[i] && s_record[i] {
 			me.values[i] -= s_values[i]
 		}

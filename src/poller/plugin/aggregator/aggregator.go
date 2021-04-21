@@ -2,11 +2,11 @@ package aggregator
 
 import (
 	"goharvest2/poller/plugin"
+	"goharvest2/share/errors"
 	"goharvest2/share/logger"
 	"goharvest2/share/matrix"
-	"goharvest2/share/errors"
-	"strings"
 	"regexp"
+	"strings"
 )
 
 type Aggregator struct {
@@ -19,14 +19,14 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 }
 
 type rule struct {
-	label string
-	object string
-	checkLabel string
-	checkValue string
-	checkRegex *regexp.Regexp
+	label         string
+	object        string
+	checkLabel    string
+	checkValue    string
+	checkRegex    *regexp.Regexp
 	includeLabels []string
-	allLabels bool
-	counts map[string]map[string]int
+	allLabels     bool
+	counts        map[string]map[string]int
 }
 
 func (me *Aggregator) Init() error {
@@ -132,11 +132,11 @@ func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var (
 		obj_name, obj_key string
-		obj_instance *matrix.Instance
-		obj_metric   matrix.Metric
-		value        float64
-		ok           bool
-		err          error
+		obj_instance      *matrix.Instance
+		obj_metric        matrix.Metric
+		value             float64
+		ok                bool
+		err               error
 	)
 
 	for _, instance := range data.GetInstances() {
@@ -151,20 +151,20 @@ func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 			if rule.checkLabel != "" {
 				if rule.checkRegex != nil {
-					if ! rule.checkRegex.MatchString(instance.GetLabel(rule.checkLabel)) {
+					if !rule.checkRegex.MatchString(instance.GetLabel(rule.checkLabel)) {
 						continue
 					}
 				} else if instance.GetLabel(rule.checkLabel) != rule.checkValue {
 					continue
 				}
 			}
-			
+
 			if rule.allLabels {
 				obj_key = strings.Join(instance.GetLabels().Values(), ".")
 			} else if len(rule.includeLabels) != 0 {
 				obj_key = obj_name
 				for _, k := range rule.includeLabels {
-					obj_key += "."+instance.GetLabel(k)
+					obj_key += "." + instance.GetLabel(k)
 				}
 			} else {
 				obj_key = obj_name
@@ -190,7 +190,7 @@ func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 			for key, metric := range data.GetMetrics() {
 
-				if value, ok = metric.GetValueFloat64(instance); ! ok {
+				if value, ok = metric.GetValueFloat64(instance); !ok {
 					continue
 				}
 

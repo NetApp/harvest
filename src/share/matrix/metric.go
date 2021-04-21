@@ -41,7 +41,6 @@ type Metric interface {
 	SetValueString(*Instance, string) error
 	SetValueBytes(*Instance, []byte) error
 
-
 	AddValueInt(*Instance, int) error
 	AddValueInt32(*Instance, int32) error
 	AddValueInt64(*Instance, int64) error
@@ -78,21 +77,21 @@ type Metric interface {
 }
 
 type AbstractMetric struct {
-	name string
-	dtype string
-	property string
-	comment string
+	name       string
+	dtype      string
+	property   string
+	comment    string
 	exportable bool
-	labels *dict.Dict
-	record []bool
+	labels     *dict.Dict
+	record     []bool
 }
 
 func (me *AbstractMetric) Clone(deep bool) *AbstractMetric {
 	clone := AbstractMetric{
-		name: me.name,
-		dtype: me.dtype,
-		property: me.property,
-		comment: me.comment,
+		name:       me.name,
+		dtype:      me.dtype,
+		property:   me.property,
+		comment:    me.comment,
 		exportable: me.exportable,
 	}
 	if deep {
@@ -101,7 +100,7 @@ func (me *AbstractMetric) Clone(deep bool) *AbstractMetric {
 		}
 		if len(me.record) != 0 {
 			clone.record = make([]bool, len(me.record))
-			for i,v := range me.record {
+			for i, v := range me.record {
 				clone.record[i] = v
 			}
 		}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"goharvest2/share/argparse"
@@ -10,7 +11,6 @@ import (
 	"goharvest2/share/tree/node"
 	"io/ioutil"
 	"net/http"
-    "crypto/tls"
 	"os"
 	"path"
 	"strings"
@@ -36,7 +36,7 @@ type options struct {
 	grafana_dir     string // Grafana folder where to upload from where to download dashboards
 	grafana_dir_id  string
 	grafana_dir_uid string
-	datasource 		string
+	datasource      string
 	client          *http.Client
 	headers         http.Header
 }
@@ -79,10 +79,10 @@ func main() {
 	opts.headers.Add("Content-Type", "application/json")
 	opts.headers.Add("Authorization", "Bearer "+opts.token)
 
-    opts.client = &http.Client{Timeout: time.Duration(CLIENT_TIMEOUT) * time.Second}
-    if strings.HasPrefix(opts.addr, "https://") {
-        opts.client.Transport = &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
-    }
+	opts.client = &http.Client{Timeout: time.Duration(CLIENT_TIMEOUT) * time.Second}
+	if strings.HasPrefix(opts.addr, "https://") {
+		opts.client.Transport = &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
+	}
 
 	// check if Grafana folder exists
 	if exists, err = check_folder(opts); err != nil {
@@ -377,10 +377,10 @@ func send_request(opts *options, method, url string, data []byte) (*node.Node, s
 		result, err = json.Load(data)
 	}
 
-    // DEBUG
-    if err != nil {
-        fmt.Println("raw response body:")
-        fmt.Println(string(data))
-    }
+	// DEBUG
+	if err != nil {
+		fmt.Println("raw response body:")
+		fmt.Println(string(data))
+	}
 	return result, status, code, err
 }

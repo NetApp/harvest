@@ -205,19 +205,17 @@ func TestExcludeRegexRule(t *testing.T) {
 	}
 }
 
-
 func TestValueMappingRule(t *testing.T) {
 
 	var (
 		instanceA, instanceB *matrix.Instance
-		status, stage matrix.Metric
-		v, expected uint8
-		ok bool
-		err error
+		status, stage        matrix.Metric
+		v, expected          uint8
+		ok                   bool
+		err                  error
 	)
 	// should match
 	m := matrix.New("TestLabelAgent", "test")
-
 
 	if instanceA, err = m.NewInstance("A"); err != nil {
 		t.Fatal(err)
@@ -245,7 +243,7 @@ func TestValueMappingRule(t *testing.T) {
 
 	// check "status" for instanceA
 	expected = 2
-	if v, ok = status.GetValueUint8(instanceA); ! ok {
+	if v, ok = status.GetValueUint8(instanceA); !ok {
 		t.Error("metric [status]: value for InstanceA not set")
 	} else if v != expected {
 		t.Errorf("metric [status]: value for InstanceA is %d, expected %d", v, expected)
@@ -254,7 +252,7 @@ func TestValueMappingRule(t *testing.T) {
 	}
 
 	// check "status" for instanceB
-	if v, ok = status.GetValueUint8(instanceB); ! ok {
+	if v, ok = status.GetValueUint8(instanceB); !ok {
 		t.Log("OK - metric [status]: value for InstanceB not set")
 	} else {
 		t.Errorf("metric [status]: value for InstanceA is %d, should not be set", v)
@@ -262,7 +260,7 @@ func TestValueMappingRule(t *testing.T) {
 
 	// check "stage" for instanceA
 	expected = 0
-	if v, ok = stage.GetValueUint8(instanceA); ! ok {
+	if v, ok = stage.GetValueUint8(instanceA); !ok {
 		t.Error("metric [stage]: value for InstanceA not set")
 	} else if v != expected {
 		t.Errorf("metric [stage]: value for InstanceA is %d, expected %d", v, expected)
@@ -272,11 +270,11 @@ func TestValueMappingRule(t *testing.T) {
 
 	// check "stage" for instanceB
 	expected = 1
-	if v, ok = stage.GetValueUint8(instanceB); ! ok {
+	if v, ok = stage.GetValueUint8(instanceB); !ok {
 		t.Error("metric [stage]: value for InstanceB not set")
 	} else if v != expected {
 		t.Errorf("metric [stage]: value for InstanceB is %d, expected %d", v, expected)
 	} else {
 		t.Logf("OK - metric [stage]: value for instanceB set to %d", v)
-	}	
+	}
 }

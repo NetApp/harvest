@@ -192,7 +192,7 @@ func TestComplexRuleRegex(t *testing.T) {
 	A.SetLabel("volume", "A_1234")
 	A.SetLabel("aggr", "aggrA")
 	A.SetLabel("svm", "svmA")
-	
+
 	// should match
 	if B, err = m.NewInstance("B"); err != nil {
 		t.Fatal(err)
@@ -287,7 +287,7 @@ func TestComplexRuleRegex(t *testing.T) {
 		} else {
 			t.Errorf("instance has not expected labels: %v", instance.GetLabels())
 		}
-		if v, ok := metricA.GetValueUint8(instance); ! ok {
+		if v, ok := metricA.GetValueUint8(instance); !ok {
 			t.Errorf("value [metricA] not set")
 		} else if v != expected {
 			t.Errorf("value [metricA] = %d, expected %d", v, expected)
@@ -308,7 +308,7 @@ func TestComplexRuleRegex(t *testing.T) {
 			t.Errorf("instance has not expected labels: %v", instance.GetLabels())
 		}
 
-		if v, ok := metricA.GetValueUint8(instance); ! ok {
+		if v, ok := metricA.GetValueUint8(instance); !ok {
 			t.Errorf("value [metricA] not set")
 		} else if v != expected {
 			t.Errorf("value [metricA] = %d, expected %d", v, expected)

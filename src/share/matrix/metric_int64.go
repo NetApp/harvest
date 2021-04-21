@@ -2,8 +2,8 @@ package matrix
 
 import (
 	"fmt"
-	"strconv"
 	"goharvest2/share/util"
+	"strconv"
 )
 
 type MetricInt64 struct {
@@ -15,7 +15,7 @@ func (me *MetricInt64) Clone(deep bool) Metric {
 	clone := MetricInt64{AbstractMetric: me.AbstractMetric.Clone(deep)}
 	if deep && len(me.values) != 0 {
 		clone.values = make([]int64, len(me.values))
-		for i,v := range me.values {
+		for i, v := range me.values {
 			clone.values[i] = v
 		}
 	}
@@ -44,7 +44,7 @@ func (me *MetricInt64) Remove(index int) {
 	me.values = me.values[:len(me.values)-1]
 }
 
-// Write methods 
+// Write methods
 
 func (me *MetricInt64) SetValueInt(i *Instance, v int) error {
 	me.record[i.index] = true
@@ -108,7 +108,6 @@ func (me *MetricInt64) SetValueString(i *Instance, v string) error {
 func (me *MetricInt64) SetValueBytes(i *Instance, v []byte) error {
 	return me.SetValueString(i, string(v))
 }
-
 
 func (me *MetricInt64) AddValueInt(i *Instance, n int) error {
 	m, _ := me.GetValueInt(i)

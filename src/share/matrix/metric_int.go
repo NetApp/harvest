@@ -2,8 +2,8 @@ package matrix
 
 import (
 	"fmt"
-	"strconv"
 	"goharvest2/share/util"
+	"strconv"
 )
 
 type MetricInt struct {
@@ -15,7 +15,7 @@ func (me *MetricInt) Clone(deep bool) Metric {
 	clone := MetricInt{AbstractMetric: me.AbstractMetric.Clone(deep)}
 	if deep && len(me.values) != 0 {
 		clone.values = make([]int, len(me.values))
-		for i,v := range me.values {
+		for i, v := range me.values {
 			clone.values[i] = v
 		}
 	}
@@ -44,7 +44,7 @@ func (me *MetricInt) Remove(index int) {
 	me.values = me.values[:len(me.values)-1]
 }
 
-// Write methods 
+// Write methods
 
 func (me *MetricInt) SetValueInt(i *Instance, v int) error {
 	me.record[i.index] = true
@@ -82,7 +82,7 @@ func (me *MetricInt) SetValueUint64(i *Instance, v uint64) error {
 	return nil
 }
 
-func (me *MetricInt) SetValueFloat32(i *Instance, v float32) error{
+func (me *MetricInt) SetValueFloat32(i *Instance, v float32) error {
 	me.record[i.index] = true
 	me.values[i.index] = int(v)
 	return nil
@@ -108,7 +108,6 @@ func (me *MetricInt) SetValueString(i *Instance, v string) error {
 func (me *MetricInt) SetValueBytes(i *Instance, v []byte) error {
 	return me.SetValueString(i, string(v))
 }
-
 
 func (me *MetricInt) AddValueInt(i *Instance, n int) error {
 	m, _ := me.GetValueInt(i)

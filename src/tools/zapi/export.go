@@ -1,16 +1,16 @@
 package main
 
 import (
-	"os"
 	"fmt"
-	"strings"
-	"path"
-    "io/ioutil"
 	client "goharvest2/api/ontapi/zapi"
+	"goharvest2/poller/collector"
+	"goharvest2/share/errors"
 	"goharvest2/share/tree/node"
 	"goharvest2/share/tree/yaml"
-	"goharvest2/share/errors"
-	"goharvest2/poller/collector"
+	"io/ioutil"
+	"os"
+	"path"
+	"strings"
 )
 
 func export(n *node.Node, c *client.Client, args *Args) error {
@@ -30,8 +30,8 @@ func export_attrs(item *node.Node, c *client.Client, args *Args) error {
 func export_counters(item *node.Node, c *client.Client, args *Args) error {
 
 	var (
-		dump []byte
-		err error
+		dump   []byte
+		err    error
 		custom *node.Node
 	)
 
@@ -73,9 +73,9 @@ func export_counters(item *node.Node, c *client.Client, args *Args) error {
 		}
 	}
 	/*
-	fmt.Println("\n===========================================================================\n")
-	template.Print(0)
-	fmt.Println("\n===========================================================================\n")
+		fmt.Println("\n===========================================================================\n")
+		template.Print(0)
+		fmt.Println("\n===========================================================================\n")
 	*/
 	if dump, err = yaml.Dump(template); err != nil {
 		fmt.Println(err)
@@ -85,8 +85,8 @@ func export_counters(item *node.Node, c *client.Client, args *Args) error {
 	}
 	fmt.Println("\n===========================================================================\n")
 	*/
-	fp := make([]string, 0) 
-	
+	fp := make([]string, 0)
+
 	fp = append(fp, CONFPATH)
 	fp = append(fp, "conf/")
 	fp = append(fp, "zapiperf/")
@@ -105,7 +105,7 @@ func export_counters(item *node.Node, c *client.Client, args *Args) error {
 		fmt.Println("mkdirall")
 		return err
 	}
-	
+
 	template_fp := path.Join(fp...)
 
 	if err = ioutil.WriteFile(template_fp, dump, 0644); err != nil {
@@ -114,7 +114,7 @@ func export_counters(item *node.Node, c *client.Client, args *Args) error {
 	}
 
 	fmt.Printf("exported to [%s]\n", template_fp)
-	
+
 	answer := ""
 	fmt.Printf("enable template? [y/N]: ")
 	if _, err := fmt.Scanln(&answer); err != nil {
@@ -153,7 +153,6 @@ func export_counters(item *node.Node, c *client.Client, args *Args) error {
 		return err
 	}
 
-
 	fmt.Printf("added template to [%s]\n", custom_fp)
 
 	return nil
@@ -170,7 +169,7 @@ func render_object_name(raw_name string) string {
 		c := string(raw_name[i])
 
 		if c == "_" || c == ":" || c == "-" {
-			if i < size - 1 {
+			if i < size-1 {
 				name += strings.ToUpper(string(raw_name[i+1]))
 			}
 			i += 2

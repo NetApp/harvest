@@ -423,7 +423,7 @@ func (me *AbstractCollector) LoadPlugins(params *node.Node) error {
 		// case 1: available as built-in plugin
 		if p = getBuiltinPlugin(name, abc); p != nil {
 			logger.Debug(me.Prefix, "loaded built-in plugin [%s]", name)
-		// case 2: available as dynamic plugin
+			// case 2: available as dynamic plugin
 		} else {
 			binpath := path.Join(me.Options.HomePath, "bin", "plugins", strings.ToLower(me.Name))
 			module, err := dload.LoadFuncFromModule(binpath, strings.ToLower(name), "New")
@@ -431,7 +431,7 @@ func (me *AbstractCollector) LoadPlugins(params *node.Node) error {
 				//logger.Error(c.LongName, "load plugin [%s]: %v", name, err)
 				return errors.New(errors.ERR_DLOAD, "plugin "+name+": "+err.Error())
 			}
-	
+
 			NewFunc, ok := module.(func(*plugin.AbstractPlugin) plugin.Plugin)
 			if !ok {
 				//logger.Error(c.LongName, "load plugin [%s]: New() has not expected signature", name)
@@ -458,9 +458,9 @@ func getBuiltinPlugin(name string, abc *plugin.AbstractPlugin) plugin.Plugin {
 	}
 
 	/*
-	if name == "Calculator" {
-		return calculator.New(abc)
-	}*/
+		if name == "Calculator" {
+			return calculator.New(abc)
+		}*/
 
 	if name == "LabelAgent" {
 		return label_agent.New(abc)
