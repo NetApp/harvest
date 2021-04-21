@@ -8,39 +8,52 @@
 package matrix
 
 import (
-    "goharvest2/pkg/dict"
-    "goharvest2/pkg/errors"
+	"goharvest2/pkg/dict"
 )
 
 // Instance struct and related methods
 
 type Instance struct {
-    Index  int
-    Labels *dict.Dict
-        Enabled bool
+	index      int
+	labels     *dict.Dict
+	exportable bool
 }
 
-func (m *Matrix) AddInstance(key string) (*Instance, error) {
-    if _, exists := m.Instances[key]; exists {
-        return nil, errors.New(errors.MATRIX_HASH, "instance ["+key+"] already in cache")
-    }
-    i := &Instance{Index: len(m.Instances)}
-    i.Labels = dict.New()
-    i.Enabled = true
-    m.Instances[key] = i
+func NewInstance(index int) *Instance {
+	me := &Instance{index: index}
+	me.labels = dict.New()
+	me.exportable = true
 
-    if !m.IsEmpty() {
-        for i := 0; i < m.SizeMetrics(); i += 1 {
-            m.Data[i] = append(m.Data[i], NAN)
-        }
-    }
-
-    return i, nil
+	return me
 }
 
-func (m *Matrix) GetInstance(key string) *Instance {
-    if instance, found := m.Instances[key]; found {
-        return instance
-    }
-    return nil
+func (me *Instance) GetLabel(key string) string {
+	return me.labels.Get(key)
+}
+
+func (me *Instance) GetLabels() *dict.Dict {
+	return me.labels
+}
+
+func (me *Instance) SetLabel(key, value string) {
+	me.labels.Set(key, value)
+}
+
+func (me *Instance) SetLabels(labels *dict.Dict) {
+	me.labels = labels
+}
+
+func (me *Instance) IsExportable() bool {
+	return me.exportable
+}
+
+func (me *Instance) SetExportable(b bool) {
+	me.exportable = b
+}
+
+func (me *Instance) Clone() *Instance {
+	clone := NewInstance(me.index)
+	clone.labels = me.labels.Copy()
+	clone.exportable = me.exportable
+	return clone
 }

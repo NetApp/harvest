@@ -8,94 +8,195 @@
 package matrix
 
 import (
-    "fmt"
-    //"goharvest2/pkg/errors"
-    "goharvest2/pkg/dict"
+	"goharvest2/pkg/dict"
+	"goharvest2/pkg/errors"
 )
 
-// Metric struct and related methods
+type Metric interface {
+	// methods related to metric attributes
+	// @TODO, add methods for (conveniency for some collectors)
+	// Property
+	// BaseCounter
+	GetName() string
+	SetName(string)
+	GetType() string
+	SetLabel(string, string)
+	SetLabels(*dict.Dict)
+	GetLabel(string) string
+	GetLabels() *dict.Dict
+	HasLabels() bool
+	IsExportable() bool
+	SetExportable(bool)
+	GetProperty() string
+	SetProperty(string)
+	GetComment() string
+	SetComment(string)
+	Clone(bool) Metric
+	// methods for resizing metric storage
+	Reset(int)
+	Remove(int)
+	Append()
+	// methods for writing to metric storage
+	SetValueInt(*Instance, int) error
+	SetValueInt32(*Instance, int32) error
+	SetValueInt64(*Instance, int64) error
+	SetValueUint8(*Instance, uint8) error
+	SetValueUint32(*Instance, uint32) error
+	SetValueUint64(*Instance, uint64) error
+	SetValueFloat32(*Instance, float32) error
+	SetValueFloat64(*Instance, float64) error
+	SetValueString(*Instance, string) error
+	SetValueBytes(*Instance, []byte) error
 
-type Metric struct {
-    Index   int
-    Name    string
-    Enabled bool
-    Size    int // 1 for scalar metrics
-    /* extended fields for ZapiPerf counters */
-    Properties  string
-    BaseCounter string
-    /* fields for Array counters */
-    Dimensions int
-    Labels     *dict.Dict
+	AddValueInt(*Instance, int) error
+	AddValueInt32(*Instance, int32) error
+	AddValueInt64(*Instance, int64) error
+	AddValueUint8(*Instance, uint8) error
+	AddValueUint32(*Instance, uint32) error
+	AddValueUint64(*Instance, uint64) error
+	AddValueFloat32(*Instance, float32) error
+	AddValueFloat64(*Instance, float64) error
+	//AddValueString(*Instance, string) error
+	//SetValueBytes(*Instance, []byte) error
+
+	SetValueNAN(*Instance)
+	// methods for reading from metric storage
+	GetValueInt(*Instance) (int, bool)
+	GetValueInt32(*Instance) (int32, bool)
+	GetValueInt64(*Instance) (int64, bool)
+	GetValueUint8(*Instance) (uint8, bool)
+	GetValueUint32(*Instance) (uint32, bool)
+	GetValueUint64(*Instance) (uint64, bool)
+	GetValueFloat32(*Instance) (float32, bool)
+	GetValueFloat64(*Instance) (float64, bool)
+	GetValueString(*Instance) (string, bool)
+	GetValueBytes(*Instance) ([]byte, bool)
+	// methods for doing vector arithmetics
+	// currently only supported for float64!
+	GetRecords() []bool
+	GetValuesFloat64() []float64
+	Delta(Metric) error
+	Divide(Metric) error
+	DivideWithThreshold(Metric, int) error
+	MultiplyByScalar(int) error
+	// debugging
+	Print()
 }
 
-func (m *Metric) IsScalar() bool {
-    if !(m.Size >= 0) {
-        panic(fmt.Sprintf("metric [%s] has size %d", m.Name, m.Size))
-    }
-    return m.Size == 1
+type AbstractMetric struct {
+	name       string
+	dtype      string
+	property   string
+	comment    string
+	exportable bool
+	labels     *dict.Dict
+	record     []bool
 }
 
-func (m *Metric) HasLabels() bool {
-    return m.Labels != nil && m.Labels.Size() != 0
+func (me *AbstractMetric) Clone(deep bool) *AbstractMetric {
+	clone := AbstractMetric{
+		name:       me.name,
+		dtype:      me.dtype,
+		property:   me.property,
+		comment:    me.comment,
+		exportable: me.exportable,
+	}
+	if deep {
+		if me.labels != nil {
+			clone.labels = me.labels.Copy()
+		}
+		if len(me.record) != 0 {
+			clone.record = make([]bool, len(me.record))
+			for i, v := range me.record {
+				clone.record[i] = v
+			}
+		}
+	}
+	return &clone
 }
 
-func (m *Matrix) GetMetric(key string) *Metric {
-
-    if metric, found := m.Metrics[key]; found {
-        return metric
-    }
-    return nil
+func (me *AbstractMetric) GetName() string {
+	return me.name
 }
 
-func (m *Matrix) add_metric(key string, metric *Metric) error {
-
-    if _, exists := m.Metrics[key]; exists {
-        //return errors.New(errors.MATRIX_HASH, "metric [" + key + "] already in cache")
-        panic("metric [" + key + "] already in cache")
-    }
-    metric.Index = m.SizeMetrics()
-    m.Metrics[key] = metric
-
-    if !m.IsEmpty() {
-        m.Data = append(m.Data, make([]float64, m.SizeInstances()))
-        for j := 0; j < m.SizeInstances(); j += 1 {
-            m.Data[metric.Index][j] = NAN
-        }
-    }
-
-    return nil
+func (me *AbstractMetric) SetName(name string) {
+	me.name = name
 }
 
-// Create new metric and add to cache
-func (m *Matrix) AddMetric(key, name string, enabled bool) (*Metric, error) {
-    metric := &Metric{Name: name, Enabled: enabled, Size: 1}
-    return metric, m.add_metric(key, metric)
+func (me *AbstractMetric) IsExportable() bool {
+	return me.exportable
 }
 
-func (m *Matrix) AddMetricExtended(key, name, base, properties string, enabled bool) (*Metric, error) {
-    metric := &Metric{Name: name, Enabled: enabled, Size: 1, BaseCounter: base, Properties: properties}
-    metric.Labels = dict.New()
-    return metric, m.add_metric(key, metric)
+func (me *AbstractMetric) SetExportable(b bool) {
+	me.exportable = b
 }
 
-/*
-// Create 1D Array Matric
-func (m *Matrix) AddArrayMetric(key, name string, labels []string, enabled bool) (*Metric, error) {
-    metric := &Metric{Name: name, Labels: labels, Enabled: enabled, Dimensions: 1, Size: len(labels)}
-    return metric, m.add_metric(key, metric)
+func (me *AbstractMetric) GetType() string {
+	return me.dtype
 }
 
-// Similar to AddMetric, but metric is initialized. This allows collectors
-// to add extended fields to metric or create multidimensional Array metric.
-//
-// Method should be used with caution: incorrect "size" will corrupt data
-// or make Harvest panic
-func (m *Matrix) AddCustomMetric(key string, metric *Metric) error {
-
-    // sanity check: metric should come with size
-    if metric.Size == 0 {
-        return errors.New(errors.MATRIX_INV_PARAM, "array metric has 0 size")
-    }
-    return m.add_metric(key, metric)
+func (me *AbstractMetric) GetProperty() string {
+	return me.property
 }
-*/
+
+func (me *AbstractMetric) SetProperty(p string) {
+	me.property = p
+}
+
+func (me *AbstractMetric) GetComment() string {
+	return me.comment
+}
+
+func (me *AbstractMetric) SetComment(c string) {
+	me.comment = c
+}
+
+func (me *AbstractMetric) SetLabel(key, value string) {
+	if me.labels == nil {
+		me.labels = dict.New()
+	}
+	me.labels.Set(key, value)
+}
+
+func (me *AbstractMetric) SetLabels(labels *dict.Dict) {
+	me.labels = labels
+}
+
+func (me *AbstractMetric) GetLabel(key string) string {
+	if me.labels != nil {
+		return me.labels.Get(key)
+	}
+	return ""
+}
+
+func (me *AbstractMetric) GetLabels() *dict.Dict {
+	return me.labels
+
+}
+func (me *AbstractMetric) HasLabels() bool {
+	return me.labels != nil && me.labels.Size() != 0
+}
+
+func (me *AbstractMetric) GetRecords() []bool {
+	return me.record
+}
+
+func (me *AbstractMetric) SetValueNAN(i *Instance) {
+	me.record[i.index] = false
+}
+
+func (me *AbstractMetric) Delta(s Metric) error {
+	return errors.New(errors.ERR_IMPLEMENT, me.dtype)
+}
+
+func (me *AbstractMetric) Divide(s Metric) error {
+	return errors.New(errors.ERR_IMPLEMENT, me.dtype)
+}
+
+func (me *AbstractMetric) DivideWithThreshold(s Metric, t int) error {
+	return errors.New(errors.ERR_IMPLEMENT, me.dtype)
+}
+
+func (me *AbstractMetric) MultiplyByScalar(s int) error {
+	return errors.New(errors.ERR_IMPLEMENT, me.dtype)
+}

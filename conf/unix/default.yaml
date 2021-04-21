@@ -1,0 +1,23 @@
+collector: Unix
+object: poller
+
+schedule:
+  - instance: 20s
+  - data: 10s
+
+counters:
+  - start_time
+  - cpu
+  - cpu_percent
+  - memory
+  - memory_percent
+  - io
+  - net
+  - ctx
+  - threads
+  - fds
+
+export_options:
+  instance_keys:
+    - poller
+    - pid

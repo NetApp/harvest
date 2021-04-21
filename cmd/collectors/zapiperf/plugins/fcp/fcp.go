@@ -7,111 +7,92 @@
 //
 package main
 
-/*  Some postprocessing on counter data "nic_common"
-    Converts link_speed to numeric MBs
-    Adds custom metrics:
-        - "rc_percent":    receive data utilization percent
-        - "tx_percent":    sent data utilization percent
-        - "util_percent":  max utilization percent
-        - "nic_state":     0 if port is up, 1 otherwise
-*/
-
 import (
-    "goharvest2/cmd/poller/collector/plugin"
-    "goharvest2/pkg/logger"
-    "goharvest2/pkg/matrix"
-    "math"
-    "strconv"
-    "strings"
+	"goharvest2/cmd/poller/plugin"
+	"goharvest2/pkg/errors"
+	"goharvest2/pkg/logger"
+	"goharvest2/pkg/matrix"
+	"math"
+	"strconv"
+	"strings"
 )
 
 type Fcp struct {
-    *plugin.AbstractPlugin
+	*plugin.AbstractPlugin
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
-    return &Fcp{AbstractPlugin: p}
+	return &Fcp{AbstractPlugin: p}
 }
 
-func (p *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
-    var rx, tx, util *matrix.Metric
-    var err error
+	var rx, tx, util, read, write matrix.Metric
+	var err error
 
-    if rx = data.GetMetric("read_percent"); rx == nil {
-        if rx, err = data.AddMetric("read_percent", "read_percent", true); err == nil {
-            rx.Properties = "raw"
-        } else {
-            return nil, err
-        }
+	if read = data.GetMetric("read_data"); read == nil {
+		return nil, errors.New(errors.ERR_NO_METRIC, "read_data")
+	}
 
-    }
-    if tx = data.GetMetric("write_percent"); tx == nil {
-        if tx, err = data.AddMetric("write_percent", "write_percent", true); err == nil {
-            tx.Properties = "raw"
-        } else {
-            return nil, err
-        }
-    }
+	if write = data.GetMetric("write_data"); write == nil {
+		return nil, errors.New(errors.ERR_NO_METRIC, "write_data")
+	}
 
-    if util = data.GetMetric("util_percent"); util == nil {
-        if util, err = data.AddMetric("util_percent", "util_percent", true); err == nil {
-            util.Properties = "raw"
-        } else {
-            return nil, err
-        }
-    }
+	if rx = data.GetMetric("read_percent"); rx == nil {
+		if rx, err = data.NewMetricFloat64("read_percent"); err == nil {
+			rx.SetProperty("raw")
+		} else {
+			return nil, err
+		}
 
-    /*
-        if nic_state = data.GetMetric("status"); nic_state == nil {
-            if nic_state, err = data.AddMetric("status", "status", true); err == nil {
-                nic_state.Properties = "raw"
-            } else {
-                return nil, err
-            }
-        }
-    */
+	}
+	if tx = data.GetMetric("write_percent"); tx == nil {
+		if tx, err = data.NewMetricFloat64("write_percent"); err == nil {
+			tx.SetProperty("raw")
+		} else {
+			return nil, err
+		}
+	}
 
-    for _, instance := range data.GetInstances() {
+	if util = data.GetMetric("util_percent"); util == nil {
+		if util, err = data.NewMetricFloat64("util_percent"); err == nil {
+			util.SetProperty("raw")
+		} else {
+			return nil, err
+		}
+	}
 
-        instance.Labels.Set("port", strings.TrimPrefix(instance.Labels.Get("port"), "port."))
+	for _, instance := range data.GetInstances() {
 
-        var speed int
-        var s string
-        var err error
+		instance.SetLabel("port", strings.TrimPrefix(instance.GetLabel("port"), "port."))
 
-        if speed, err = strconv.Atoi(instance.Labels.Get("speed")); err != nil {
-            logger.Debug(p.Prefix, "skip, can't convert speed (%s) to numeric", s)
-        }
+		var speed int
+		var s string
+		var err error
 
-        if speed != 0 {
+		if speed, err = strconv.Atoi(instance.GetLabel("speed")); err != nil {
+			logger.Debug(me.Prefix, "skip, can't convert speed (%s) to numeric", s)
+		}
 
-            var rx_bytes, tx_bytes, rx_percent, tx_percent float64
-            var ok bool
+		if speed != 0 {
 
-            if rx_bytes, ok = data.GetValueS("write_data", instance); ok {
-                rx_percent = rx_bytes / float64(speed)
-                data.SetValue(rx, instance, rx_percent)
-            }
+			var rx_bytes, tx_bytes, rx_percent, tx_percent float64
+			var rx_ok, tx_ok bool
 
-            if tx_bytes, ok = data.GetValueS("read_data", instance); ok {
-                tx_percent = tx_bytes / float64(speed)
-                data.SetValue(tx, instance, tx_percent)
-            }
+			if rx_bytes, rx_ok = write.GetValueFloat64(instance); rx_ok {
+				rx_percent = rx_bytes / float64(speed)
+				rx.SetValueFloat64(instance, rx_percent)
+			}
 
-            if ok {
-                data.SetValue(util, instance, math.Max(rx_percent, tx_percent))
-            }
-        }
+			if tx_bytes, tx_ok = read.GetValueFloat64(instance); tx_ok {
+				tx_percent = tx_bytes / float64(speed)
+				tx.SetValueFloat64(instance, tx_percent)
+			}
 
-        /*
-            if state := instance.Labels.Get("state"); state == "up" {
-                data.SetValue(nic_state, instance, float64(0))
-            } else {
-                data.SetValue(nic_state, instance, float64(1))
-            }*/
-
-    }
-
-    return nil, nil
+			if rx_ok || tx_ok {
+				util.SetValueFloat64(instance, math.Max(rx_percent, tx_percent))
+			}
+		}
+	}
+	return nil, nil
 }

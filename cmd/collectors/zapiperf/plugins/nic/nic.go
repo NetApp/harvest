@@ -2,125 +2,118 @@
 // Copyright NetApp Inc, 2021 All rights reserved
 //
 // Package Description:
+//  Some postprocessing on counter data "nic_common"
+//    Converts link_speed to numeric MBs
+//    Adds custom metrics:
+//        - "rc_percent":    receive data utilization percent
+//        - "tx_percent":    sent data utilization percent
+//        - "util_percent":  max utilization percent
+//        - "nic_state":     0 if port is up, 1 otherwise
 //
 // Examples:
 //
 package main
 
-/*  Some postprocessing on counter data "nic_common"
-    Converts link_speed to numeric MBs
-    Adds custom metrics:
-        - "rc_percent":    receive data utilization percent
-        - "tx_percent":    sent data utilization percent
-        - "util_percent":  max utilization percent
-        - "nic_state":     0 if port is up, 1 otherwise
-*/
-
 import (
-    "goharvest2/cmd/poller/collector/plugin"
-    "goharvest2/pkg/logger"
-    "goharvest2/pkg/matrix"
-    "math"
-    "strconv"
-    "strings"
+	"goharvest2/cmd/poller/plugin"
+	"goharvest2/pkg/errors"
+	"goharvest2/pkg/logger"
+	"goharvest2/pkg/matrix"
+	"math"
+	"strconv"
+	"strings"
 )
 
 type Nic struct {
-    *plugin.AbstractPlugin
+	*plugin.AbstractPlugin
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
-    return &Nic{AbstractPlugin: p}
+	return &Nic{AbstractPlugin: p}
 }
 
-func (p *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (me *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
-    var rx, tx, util, nic_state *matrix.Metric
-    var err error
+	var read, write, rx, tx, util matrix.Metric
+	var err error
 
-    if rx = data.GetMetric("rx_percent"); rx == nil {
-        if rx, err = data.AddMetric("rx_percent", "rx_percent", true); err == nil {
-            rx.Properties = "raw"
-        } else {
-            return nil, err
-        }
+	if read = data.GetMetric("rx_bytes"); read == nil {
+		return nil, errors.New(errors.ERR_NO_METRIC, "rx_bytes")
+	}
 
-    }
-    if tx = data.GetMetric("tx_percent"); tx == nil {
-        if tx, err = data.AddMetric("tx_percent", "tx_percent", true); err == nil {
-            tx.Properties = "raw"
-        } else {
-            return nil, err
-        }
-    }
+	if write = data.GetMetric("tx_bytes"); write == nil {
+		return nil, errors.New(errors.ERR_NO_METRIC, "tx_bytes")
+	}
 
-    if util = data.GetMetric("util_percent"); util == nil {
-        if util, err = data.AddMetric("util_percent", "util_percent", true); err == nil {
-            util.Properties = "raw"
-        } else {
-            return nil, err
-        }
-    }
+	if rx = data.GetMetric("rx_percent"); rx == nil {
+		if rx, err = data.NewMetricFloat64("rx_percent"); err == nil {
+			rx.SetProperty("raw")
+		} else {
+			return nil, err
+		}
 
-    if nic_state = data.GetMetric("state"); nic_state == nil {
-        if nic_state, err = data.AddMetric("state", "state", true); err == nil {
-            nic_state.Properties = "raw"
-        } else {
-            return nil, err
-        }
-    }
+	}
+	if tx = data.GetMetric("tx_percent"); tx == nil {
+		if tx, err = data.NewMetricFloat64("tx_percent"); err == nil {
+			tx.SetProperty("raw")
+		} else {
+			return nil, err
+		}
+	}
 
-    for _, instance := range data.GetInstances() {
+	if util = data.GetMetric("util_percent"); util == nil {
+		if util, err = data.NewMetricFloat64("util_percent"); err == nil {
+			util.SetProperty("raw")
+		} else {
+			return nil, err
+		}
+	}
 
-        var speed, base int
-        var s string
-        var err error
+	for _, instance := range data.GetInstances() {
 
-        if s = instance.Labels.Get("speed"); strings.HasSuffix(s, "M") {
-            base, err = strconv.Atoi(strings.TrimSuffix(s, "M"))
-            if err != nil {
-                logger.Debug(p.Prefix, "skip, can't convert speed (%s) to numeric", s)
-            } else {
-                speed = base * 125000
-                instance.Labels.Set("speed", strconv.Itoa(speed))
-                logger.Trace(p.Prefix, "converted speed (%s) to numeric (%d)", s, speed)
-            }
-        } else if speed, err = strconv.Atoi(s); err != nil {
-            logger.Debug(p.Prefix, "skip, can't convert speed (%s) to numeric", s)
-        }
+		var speed, base int
+		var s string
+		var err error
 
-        if speed != 0 {
+		if s = instance.GetLabel("speed"); strings.HasSuffix(s, "M") {
+			base, err = strconv.Atoi(strings.TrimSuffix(s, "M"))
+			if err != nil {
+				logger.Warn(me.Prefix, "convert speed [%s]", s)
+			} else {
+				speed = base * 125000
+				instance.SetLabel("speed", strconv.Itoa(speed))
+				logger.Debug(me.Prefix, "converted speed (%s) to numeric (%d)", s, speed)
+			}
+		} else if speed, err = strconv.Atoi(s); err != nil {
+			logger.Warn(me.Prefix, "convert speed [%s]", s)
+		}
 
-            var rx_bytes, tx_bytes, rx_percent, tx_percent float64
-            var ok bool
+		if speed != 0 {
 
-            if rx_bytes, ok = data.GetValueS("rx_bytes", instance); ok {
-                rx_percent = rx_bytes / float64(speed)
-                data.SetValue(rx, instance, rx_percent)
-            }
+			var rx_bytes, tx_bytes, rx_percent, tx_percent float64
+			var rx_ok, tx_ok bool
 
-            if tx_bytes, ok = data.GetValueS("tx_bytes", instance); ok {
-                tx_percent = tx_bytes / float64(speed)
-                data.SetValue(tx, instance, tx_percent)
-            }
+			if rx_bytes, rx_ok = read.GetValueFloat64(instance); rx_ok {
+				rx_percent = rx_bytes / float64(speed)
+				rx.SetValueFloat64(instance, rx_percent)
+			}
 
-            if ok {
-                data.SetValue(util, instance, math.Max(rx_percent, tx_percent))
-            }
-        }
+			if tx_bytes, tx_ok = write.GetValueFloat64(instance); tx_ok {
+				tx_percent = tx_bytes / float64(speed)
+				tx.SetValueFloat64(instance, tx_percent)
+			}
 
-        if state := instance.Labels.Get("state"); state == "up" {
-            data.SetValue(nic_state, instance, float64(0))
-        } else {
-            data.SetValue(nic_state, instance, float64(1))
-        }
+			if rx_ok || tx_ok {
+				util.SetValueFloat64(instance, math.Max(rx_percent, tx_percent))
+			}
+		}
 
-        // truncate redundant prefix in nic type
-        if t := instance.Labels.Get("type"); strings.HasPrefix(t, "nic_") {
-            instance.Labels.Set("type", strings.TrimPrefix(t, "nic_"))
-        }
+		// truncate redundant prefix in nic type
+		if t := instance.GetLabel("type"); strings.HasPrefix(t, "nic_") {
+			instance.SetLabel("type", strings.TrimPrefix(t, "nic_"))
+		}
 
-    }
+	}
 
-    return nil, nil
+	return nil, nil
 }

@@ -49,4 +49,4 @@ var object_template = `
                 <small><em>object</em></small>
                 %s`
 
-var metric_template = `<li>%s</li>`
+var metric_template = `                <li>%s</li>`

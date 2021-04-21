@@ -41,11 +41,11 @@ case $1 in
         clean=true
         echo "clean"
         ;;
-    "harvest")
+    "harvest"|"h")
         harvest=true
-        echo "build harvest-cli"
+        echo "build harvest"
         ;;
-    "poller")
+    "poller"|"p")
         poller=true
         echo "build poller"
         ;;
@@ -57,11 +57,11 @@ case $1 in
         exporters=true
         echo "build exporters"
         ;;
-    "collector")
+    "collector"|"c")
         collector=$2
         component="collector [$collector]"
         ;;
-    "exporter")
+    "exporter"|"e")
         exporter=$2
         component="exporter"
         echo "build exporter [$exporter]"
@@ -105,9 +105,9 @@ if [ "$tool" != "" ]; then
     exit 0
 fi
 
-# compile harvest-cli and manager
+# compile harvest
 if [ $all == true ] || [ $harvest == true ]; then
-    cd src/cli/
+    cd src/harvest/
     go build -o ../../bin/harvest
     if [ $? -eq 0 ]; then
         info "compiled: /bin/harvest"
@@ -117,32 +117,12 @@ if [ $all == true ] || [ $harvest == true ]; then
     fi
 
     # compile manager and daemonize utils (manager uses daemonize)
-    cd daemonize
+    cd ../util/daemonize
     gcc daemonize.c -o ../../../bin/daemonize
     if [ $? -eq 0 ]; then
         info "compiled: /bin/daemonize"
     else
         error "compule failed"
-        exit 1
-    fi
-    cd ../
-
-    cd manager
-    go build -o ../../../bin/manager
-    if [ $? -eq 0 ]; then
-        info "compiled: /bin/manager"
-    else
-        error "compule failed"
-        exit 1
-    fi
-    cd ../
-
-    cd config
-    go build -o ../../../bin/config
-    if [ $? -eq 0 ]; then
-        info "compiled: /bin/config"
-    else
-        error "compilation failed"
         exit 1
     fi
     cd ../../
