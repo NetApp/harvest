@@ -168,13 +168,13 @@ endif
 
 	@echo "  Copying config and binaries"
 ifeq (${ROOT}, "")
-	@${SUDO} cp -r  config/ /etc/harvest/
+	@${SUDO} cp -r  conf/ /etc/harvest/
 	@${SUDO} cp -r grafana/ /etc/harvest/
 	@${SUDO} cp harvest.yml /etc/harvest/
 	@${SUDO} cp -r bin /opt/harvest
 	@#ln -s $ROOT/opt/harvest/bin/harvest $ROOT/usr/local/bin/harvest
 else
-	@cp -r  config/ ${ROOT}/deploy/etc/harvest/
+	@cp -r  conf/ ${ROOT}/deploy/etc/harvest/
 	@cp -r grafana/ ${ROOT}/deploy/etc/harvest/
 	@cp harvest.yml ${ROOT}/deploy/etc/harvest/
 	@${SUDO} ln -sf ${ROOT}/deploy/etc/harvest /etc
@@ -208,8 +208,3 @@ ifeq (${ROOT}, "")
 	@echo
 endif
 	@echo "Uninstall complete."
-
-
-
-
-
