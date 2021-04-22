@@ -15,10 +15,10 @@ package main
 
 import (
 	"fmt"
-	"goharvest2/harvest/config"
-	"goharvest2/harvest/manager"
-	"goharvest2/harvest/template"
-	"goharvest2/harvest/version"
+	"goharvest2/cmd/harvest/config"
+	"goharvest2/cmd/harvest/manager"
+	"goharvest2/cmd/harvest/template"
+	"goharvest2/cmd/harvest/version"
 	"os"
 	"os/exec"
 	"path"

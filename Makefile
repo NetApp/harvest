@@ -2,7 +2,7 @@
 
 HARVEST_VERSION := "2.0"
 
-all: header harvest collectors exporters poller
+all: header harvest collectors exporters
 
 header:
 	@echo "    _  _                     _     ___   __   "
@@ -55,20 +55,16 @@ clean:
 ###############################################################################
 harvest: precheck
 	@# Build the harvest cli
-	@echo "Building harvest cli"
-	@cd cmd/cli; go build -o ../../bin/harvest
+	@echo "Building harvest"
+	@cd cmd/harvest; go build -o ../../bin/harvest
+
+	@# Build the harvest poller
+	@echo "Building poller"
+	@cd cmd/poller/; go build -o ../../bin/poller
 
 	@# Build the daemonizer for the pollers
 	@echo "Building daemonizer"
-	@cd cmd/cli/daemonize; gcc daemonize.c -o ../../../bin/daemonize
-
-	@# Build the manager
-	@echo "Building manager"
-	@cd cmd/cli/manager; go build -o ../../../bin/manager
-
-	@# Build the config
-	@echo "Building config"
-	@cd cmd/cli/config; go build -o ../../../bin/config
+	@cd cmd/tools/daemonize; gcc daemonize.c -o ../../../bin/daemonize
 
 	@# Build the zapi tool
 	@echo "Building zapi tool"
@@ -115,15 +111,6 @@ exporters: precheck
 		go build -buildmode=plugin -o ../../../bin/exporters/"$${exporter}".so;       \
 	       	cd - > /dev/null;                                                             \
 	done
-
-###############################################################################
-# Poller
-###############################################################################
-poller: precheck
-	@echo "Building poller"
-	@cd cmd/poller/;                                                                      \
-	go build -o ../../bin/poller
-
 
 packages: precheck all
 

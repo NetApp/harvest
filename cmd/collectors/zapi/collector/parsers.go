@@ -11,6 +11,7 @@ import (
 	"goharvest2/pkg/logger"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
+	"goharvest2/pkg/util"
 	"goharvest2/pkg/color"
 	"strings"
 )
@@ -27,10 +28,10 @@ func ParseShortestPath(m *matrix.Matrix, l map[string]string) []string {
 		keys = append(keys, strings.Split(key, "."))
 	}
 
-	max := MinLen(keys)
+	max := util.MinLen(keys)
 
 	for i := 0; i < max; i += 1 {
-		if AllSame(keys, i) {
+		if util.AllSame(keys, i) {
 			prefix = append(prefix, keys[0][i])
 		} else {
 			break
@@ -42,9 +43,9 @@ func ParseShortestPath(m *matrix.Matrix, l map[string]string) []string {
 func ParseKeyPrefix(keys [][]string) []string {
 	var prefix []string
 	var i, n int
-	n = MinLen(keys) - 1
+	n = util.MinLen(keys) - 1
 	for i = 0; i < n; i += 1 {
-		if AllSame(keys, i) {
+		if util.AllSame(keys, i) {
 			prefix = append(prefix, keys[0][i])
 		} else {
 			break

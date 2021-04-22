@@ -108,6 +108,7 @@ func (me *Process) Reload() error {
 }
 
 func (me *Process) loadCmdline() error {
+
 	var (
 		data []byte
 		err  error
@@ -241,7 +242,7 @@ func (me *Process) loadSmaps() error {
 			}
 		}
 	}
-	return err
+	return nil
 }
 
 func (me *Process) loadIo() error {

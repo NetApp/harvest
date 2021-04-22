@@ -1,10 +1,10 @@
 package aggregator
 
 import (
-	"goharvest2/poller/plugin"
-	"goharvest2/share/errors"
-	"goharvest2/share/logger"
-	"goharvest2/share/matrix"
+	"goharvest2/cmd/poller/plugin"
+	"goharvest2/pkg/errors"
+	"goharvest2/pkg/logger"
+	"goharvest2/pkg/matrix"
 	"regexp"
 	"strings"
 )

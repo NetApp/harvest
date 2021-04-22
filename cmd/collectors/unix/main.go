@@ -162,6 +162,7 @@ func (me *Unix) Init() error {
 	// load list of counters from template
 	if counters := me.Params.GetChildS("counters"); counters != nil {
 		if err = me.loadMetrics(counters); err != nil {
+            logger.Error(me.Prefix, "load metrics: %v", err)
 			return err
 		}
 	} else {
@@ -170,6 +171,7 @@ func (me *Unix) Init() error {
 
 	getClockTicks()
 	if me.system, err = NewSystem(); err != nil {
+        logger.Error(me.Prefix, "load system: %v", err)
 		return err
 	}
 

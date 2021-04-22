@@ -29,7 +29,7 @@ import (
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/logger"
 	"goharvest2/pkg/matrix"
-	"goharvest2/pkg/util"
+	"goharvest2/pkg/color"
 	"regexp"
 	"strconv"
 	"strings"
@@ -223,7 +223,7 @@ func (me *Prometheus) Export(data *matrix.Matrix) error {
 	me.cache.Lock()
 	me.cache.Put(key, metrics)
 	me.cache.Unlock()
-	logger.Debug(me.Prefix, "added to cache with key [%s%s%s%s]", util.Bold, util.Red, key, util.End)
+	logger.Debug(me.Prefix, "added to cache with key [%s%s%s%s]", color.Bold, color.Red, key, color.End)
 
 	// update metadata
 	me.AddExportCount(uint64(len(metrics)))
@@ -352,7 +352,7 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 				} else {
 					x := fmt.Sprintf("%s_%s{%s} %s", prefix, metric.GetName(), strings.Join(instance_keys, ","), value)
 					rendered = append(rendered, []byte(x))
-					//logger.Warn(me.Prefix, "M=[%s%s%s]", util.Cyan, x, util.End)
+					//logger.Warn(me.Prefix, "M=[%s%s%s]", color.Cyan, x, color.End)
 				}
 			} else {
 				logger.Trace(me.Prefix, "skipped: no data value")

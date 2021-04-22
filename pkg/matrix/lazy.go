@@ -4,7 +4,7 @@
 
 package matrix
 
-import "goharvest2/share/errors"
+import "goharvest2/pkg/errors"
 
 func (me *Matrix) LazySetValueInt(mkey, ikey string, v int) error {
 	if instance := me.GetInstance(ikey); instance != nil {

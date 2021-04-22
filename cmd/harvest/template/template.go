@@ -8,10 +8,10 @@
 package template
 
 import (
+	"goharvest2/pkg/tree"
+	"goharvest2/pkg/tree/node"
 	"bytes"
 	"fmt"
-	"goharvest2/share/tree"
-	"goharvest2/share/tree/node"
 	"io/ioutil"
 	"os"
 	"path"

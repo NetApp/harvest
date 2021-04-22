@@ -2,10 +2,11 @@
 // Copyright NetApp Inc, 2021 All rights reserved
 //
 // Package Description: 
+//   Some helper methods.
 //
 // Examples:
 //
-package zapi
+package util
 
 func MinLen(elements [][]string) int {
     var min, i int

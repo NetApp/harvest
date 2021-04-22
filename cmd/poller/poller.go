@@ -64,8 +64,8 @@ var SIGNALS = []os.Signal{
 }
 
 // deprecated collectors to throw warning
-var DEPRECATED_COLLECTORS = map[string]string{
-	"Psutil": "Unix",
+var _DEPRECATED_COLLECTORS = map[string]string{
+	"psutil": "Unix",
 }
 
 // Poller is the instance that starts and monitors a
@@ -478,7 +478,7 @@ func (me *Poller) load_collector(class, object string) error {
 	binpath = path.Join(me.options.HomePath, "bin", "collectors")
 
 	// throw warning for deprecated collectors
-	if r, d := DEPRECATED_COLLECTORS[strings.ToLower(class)]; d {
+	if r, d := _DEPRECATED_COLLECTORS[strings.ToLower(class)]; d {
 		if r != "" {
 			logger.Warn(me.prefix, "collector (%s) is depracated, please use (%s) instead", class, r)
 		} else {

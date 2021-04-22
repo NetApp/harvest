@@ -18,7 +18,7 @@ import (
 	"goharvest2/pkg/logger"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
-	"goharvest2/pkg/util"
+	"goharvest2/pkg/color"
 
 	client "goharvest2/pkg/api/ontapi/zapi"
 )
@@ -302,28 +302,28 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 	fetch = func(instance *matrix.Instance, node *node.Node, path []string) {
 
 		newpath := append(path, node.GetNameS())
-		logger.Debug(me.Prefix, " > %s(%s)%s <%s%d%s> name=[%s%s%s%s] value=[%s%s%s]", util.Grey, newpath, util.End, util.Red, len(node.GetChildren()), util.End, util.Bold, util.Cyan, node.GetNameS(), util.End, util.Yellow, node.GetContentS(), util.End)
+		logger.Debug(me.Prefix, " > %s(%s)%s <%s%d%s> name=[%s%s%s%s] value=[%s%s%s]", color.Grey, newpath, color.End, color.Red, len(node.GetChildren()), color.End, color.Bold, color.Cyan, node.GetNameS(), color.End, color.Yellow, node.GetContentS(), color.End)
 
 		if value := node.GetContentS(); value != "" {
 			key := strings.Join(newpath, ".")
 			if metric := me.Matrix.GetMetric(key); metric != nil {
 				if err := metric.SetValueString(instance, value); err != nil {
-					//logger.Warn(me.Prefix, "%sskipped metric (%s) set value (%s): %v%s", util.Red, key, value, err, util.End)
+					//logger.Warn(me.Prefix, "%sskipped metric (%s) set value (%s): %v%s", color.Red, key, value, err, color.End)
 					skipped += 1
 				} else {
-					//logger.Trace(me.Prefix, "%smetric (%s) set value (%s)%s", util.Green, key, value, util.End)
+					//logger.Trace(me.Prefix, "%smetric (%s) set value (%s)%s", color.Green, key, value, color.End)
 					count += 1
 				}
 			} else if label, has := me.instance_label_paths[key]; has {
 				instance.SetLabel(label, value)
-				//logger.Trace(me.Prefix, "%slabel (%s) [%s] set value (%s)%s", util.Yellow, key, label, value, util.End)
+				//logger.Trace(me.Prefix, "%slabel (%s) [%s] set value (%s)%s", color.Yellow, key, label, value, color.End)
 				count += 1
 			} else {
-				logger.Debug(me.Prefix, "%sskipped (%s) with value (%s): not in metric or label cache%s", util.Blue, key, value, util.End)
+				logger.Debug(me.Prefix, "%sskipped (%s) with value (%s): not in metric or label cache%s", color.Blue, key, value, color.End)
 				skipped += 1
 			}
 		} else {
-			//logger.Trace(me.Prefix, "%sskippped (%s) with no value%s", util.Cyan, key, util.End)
+			//logger.Trace(me.Prefix, "%sskippped (%s) with no value%s", color.Cyan, key, color.End)
 			skipped += 1
 		}
 
