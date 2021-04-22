@@ -8,8 +8,8 @@
 package main
 
 import (
-	"goharvest2/cmd/poller/plugin"
 	"goharvest2/cmd/poller/collector"
+	"goharvest2/cmd/poller/plugin"
 	"goharvest2/pkg/api/ontapi/zapi"
 	"goharvest2/pkg/dict"
 	"goharvest2/pkg/errors"
@@ -149,7 +149,7 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		shelves = result.SearchChildren([]string{"shelf-environ-channel-info", "shelf-environ-shelf-list", "shelf-environ-shelf-info"})
 	}
 
-	if shelves == nil || len(shelves) == 0 {
+	if len(shelves) == 0 {
 		return nil, errors.New(errors.ERR_NO_INSTANCE, "no shelf instances found")
 	}
 

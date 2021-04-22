@@ -9,13 +9,13 @@ package main
 
 import (
 	"goharvest2/cmd/poller/collector"
+	"goharvest2/pkg/color"
 	"goharvest2/pkg/dict"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/logger"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/set"
 	"goharvest2/pkg/tree/node"
-	"goharvest2/pkg/color"
 	"strconv"
 	"strings"
 	"time"

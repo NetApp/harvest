@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"goharvest2/pkg/tree/node"
 	"goharvest2/pkg/color"
+	"goharvest2/pkg/tree/node"
 )
 
 func show(n *node.Node, args *Args) {

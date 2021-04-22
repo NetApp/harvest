@@ -1,11 +1,11 @@
 package label_agent
 
 import (
+	"goharvest2/pkg/logger"
+	"goharvest2/pkg/matrix"
 	"regexp"
 	"strconv"
 	"strings"
-	"goharvest2/pkg/logger"
-	"goharvest2/pkg/matrix"
 )
 
 // parse rules from plugin parameters and return number of rules parsed

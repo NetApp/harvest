@@ -10,10 +10,10 @@ package matrix
 
 import (
 	"fmt"
+	"goharvest2/pkg/color"
 	"goharvest2/pkg/dict"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/tree/node"
-	"goharvest2/pkg/color"
 )
 
 type Matrix struct {
