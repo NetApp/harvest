@@ -25,8 +25,9 @@ echo "unpacking tarball..."
 tar xvfz /tmp/build/rpm/SOURCES/%{name}_%{version}-%{release}.tgz
 cd harvest
 echo "executing install script"
-export BUILD_ROOT=$RPM_BUILD_ROOT
-sh cmd/install.sh
+export INSTALL_ROOT=$RPM_BUILD_ROOT
+export INSTALL_TARGET=rpm
+make install
 echo "cleaning up..."
 cd ..
 rm -Rf harvest
@@ -41,15 +42,11 @@ exit
 %pre
 
 %post
-#!/bin/sh
-ln -s /opt/harvest/bin/harvest /usr/local/bin/harvest
-cd /opt/harvest
 
 %preun
 
 %postun
-unlink /usr/local/bin/harvest
-echo "uninstall complete"
+make uninstall
 
 %clean
 echo "clean up ..."

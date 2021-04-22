@@ -3,7 +3,7 @@
 BUILD_SOURCE=$(pwd)
 BIN=`basename $0`
 
-function usage {
+usage() {
     cat <<EOF_PRINT_HELP
 
     $BIN - Build Distribution Package
@@ -23,24 +23,24 @@ function usage {
 EOF_PRINT_HELP
 }
 
-function info {
+info() {
     echo -e "\033[1m\033[45m$1\033[0m"
 }
 
-function error {
+error() {
     echo -e "\033[1m\033[41m$1\033[0m"
 }
 
 
-function build {
+build () {
     if [ $DOCKER ]; then
 
         info "building [harvest_$VERSION-$RELEASE_$ARCH.$DIST] in container"
 
         if [ "$DIST" == "rpm" ]; then 
-            cd "$BUILD_SOURCE/cmd/$DIST/centos"
+            cd "$BUILD_SOURCE/$DIST/centos"
         else
-            cd "$BUILD_SOURCE/cmd/$DIST/debian"
+            cd "$BUILD_SOURCE/$DIST/debian"
         fi
 
         if [ ! $? -eq 0 ]; then
@@ -74,7 +74,7 @@ function build {
         export HARVEST_VERSION="$VERSION"
         export HARVEST_RELEASE="$RELEASE"
         
-        sh "$BUILD_SOURCE/cmd/$DIST/build-$DIST.sh"
+        sh "$BUILD_SOURCE/$DIST/build-$DIST.sh"
 
         if [ ! $? -eq 0 ]; then
             error "run build script"

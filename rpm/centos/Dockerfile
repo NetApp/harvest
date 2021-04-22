@@ -14,6 +14,9 @@ RUN \
     rpm-build \
     tar \
     wget \
+    make \
+    which \
+    sudo \
     gcc \
     libc6-dev && \
   yum clean all && \
@@ -25,5 +28,5 @@ RUN \
   chmod -R 777 "$GOPATH" && \
   ln -s "/usr/local/go/bin/go" "/usr/local/bin/go" && \
   echo "installed go $GOVERSION"
-CMD ["sh", "/tmp/src/cmd/rpm/build-rpm.sh"]
+CMD ["bash", "/tmp/src/rpm/build-rpm.sh"]
 

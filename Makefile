@@ -119,6 +119,10 @@ packages: precheck all
 # If the ROOT is not set to "", then this is a development deploy which means
 # we will be creating different users, and linking the deploy directory to
 # the system setup.
+#
+# When install if part of package building, the two env variabls a can be set:
+# - INSTALL_TARGET: the target package (e.g. "rpm" or "deb")
+# - INSTALL_ROOT: fs root of the package builder (e.g. BUILDROOT in rpmbuild)
 ###############################################################################
 ROOT := ${BUILD_ROOT}
 SUDO := sudo
@@ -126,10 +130,11 @@ HARVEST_USER := harvestu
 HARVEST_GROUP := harvestu
 GROUP_EXISTS := $(shell grep -c "^${HARVEST_GROUP}" /etc/group)
 USER_EXISTS := $(shell grep -c "^${HARVEST_USER}" /etc/passwd)
+
 install:
 	@echo "Installing Harvest: ${HARVEST_VERSION}"
 
-ifeq (${ROOT}, "")
+ifeq (${ROOT},)
 	@echo "  Creating harvest user and group [${HARVEST_USER}:${HARVEST_GROUP}]"
 	@if [ ${GROUP_EXISTS} -eq 0 ]; then                                     \
 		${SUDO} groupadd -r ${HARVEST_GROUP};                           \
@@ -139,18 +144,22 @@ ifeq (${ROOT}, "")
 
 	@# Make sure that the user does not already exist
 	@if [ ${USER_EXISTS} -eq 0 ]; then                                      \
-		${SUDO} adduser --quiet --ingroup ${HARVEST_GROUP} --shell=/sbin/nologin ${HARVEST_USER}; \
+		if [ '${INSTALL_TARGET}' == 'rpm' ]; then                           \
+	        ${SUDO} useradd -r -M --gid ${HARVEST_GROUP} --shell=/sbin/nologin ${HARVEST_USER}; \
+        else                                                                \
+	        ${SUDO} adduser --quite --ingroup ${HARVEST_GROUP} --shell=/sbin/nologin ${HARVEST_USER}; \
+		fi;                                                                 \
 	else                                                                    \
 		echo "    Harvest user already exists";                         \
 	fi;
 endif
 
 	@echo "  Creating package directories"
-ifeq (${ROOT}, "")
-	@${SUDO} mkdir -p /opt/harvest
-	@${SUDO} mkdir -p /etc/harvest
-	@${SUDO} mkdir -p /var/log/harvest
-	@${SUDO} mkdir -p /var/run/harvest
+ifeq (${ROOT},)
+	@${SUDO} mkdir -p ${INSTALL_ROOT}/opt/harvest
+	@${SUDO} mkdir -p ${INSTALL_ROOT}/etc/harvest
+	@${SUDO} mkdir -p ${INSTALL_ROOT}/var/log/harvest
+	@${SUDO} mkdir -p ${INSTALL_ROOT}/var/run/harvest
 else
 	@mkdir -p ${ROOT}/deploy/opt/harvest
 	@mkdir -p ${ROOT}/deploy/etc/harvest
@@ -158,21 +167,21 @@ else
 	@mkdir -p ${ROOT}/deploy/var/run/harvest
 endif
 
-ifeq (${ROOT}, "")
+ifeq (${ROOT},)
 	@echo "  Setting user permissions"
-	@${SUDO} chown -R ${HARVEST_USER}:${HARVEST_GROUP} /opt/harvest
-	@${SUDO} chown -R ${HARVEST_USER}:${HARVEST_GROUP} /etc/harvest
-	@${SUDO} chown -R ${HARVEST_USER}:${HARVEST_GROUP} /var/log/harvest
-	@${SUDO} chown -R ${HARVEST_USER}:${HARVEST_GROUP} /var/run/harvest
+	@${SUDO} chown -R ${HARVEST_USER}:${HARVEST_GROUP} ${INSTALL_ROOT}/opt/harvest
+	@${SUDO} chown -R ${HARVEST_USER}:${HARVEST_GROUP} ${INSTALL_ROOT}/etc/harvest
+	@${SUDO} chown -R ${HARVEST_USER}:${HARVEST_GROUP} ${INSTALL_ROOT}/var/log/harvest
+	@${SUDO} chown -R ${HARVEST_USER}:${HARVEST_GROUP} ${INSTALL_ROOT}/var/run/harvest
 endif
 
 	@echo "  Copying config and binaries"
-ifeq (${ROOT}, "")
-	@${SUDO} cp -r  conf/ /etc/harvest/
-	@${SUDO} cp -r grafana/ /etc/harvest/
-	@${SUDO} cp harvest.yml /etc/harvest/
-	@${SUDO} cp -r bin /opt/harvest
-	@#ln -s $ROOT/opt/harvest/bin/harvest $ROOT/usr/local/bin/harvest
+ifeq (${ROOT},)
+	@${SUDO} cp -r  conf/ ${INSTALL_ROOT}/etc/harvest/
+	@${SUDO} cp -r grafana/ ${INSTALL_ROOT}/etc/harvest/
+	@${SUDO} cp harvest.yml ${INSTALL_ROOT}/etc/harvest/
+	@${SUDO} cp -r bin ${INSTALL_ROOT}/opt/harvest
+	@${SUDO} ln -s ${INSTALL_ROOT}/opt/harvest/bin/harvest /usr/local/bin/harvest
 else
 	@cp -r  conf/ ${ROOT}/deploy/etc/harvest/
 	@cp -r grafana/ ${ROOT}/deploy/etc/harvest/
@@ -197,6 +206,7 @@ uninstall:
 	@${SUDO} rm -rf /opt/harvest
 	@${SUDO} rm -rf /var/log/harvest
 	@${SUDO} rm -rf /var/run/harvest
+	@${SUDO} unlink /usr/local/bin/harvest
 	@echo
 	@echo "Configuration and Certificate files not removed in [${ROOT}/etc/harvest]"
 	@echo "please remove manually if no longer needed."
