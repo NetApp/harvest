@@ -76,7 +76,7 @@ func New(config *node.Node) (*Client, error) {
 
 	useInsecureTLS, err := strconv.ParseBool(config.GetChildContentS("useInsecureTLS"))
 	if err != nil {
-		logger.Error("", "Error %v ", err)
+		logger.Error("(Zapi:Client)", "Error %v ", err)
 	}
 
 	if config.GetChildContentS("auth_style") == "certificate_auth" {
