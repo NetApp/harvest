@@ -147,7 +147,7 @@ ifeq (${ROOT},)
 		if [ '${INSTALL_TARGET}' == 'rpm' ]; then                           \
 	        ${SUDO} useradd -r -M --gid ${HARVEST_GROUP} --shell=/sbin/nologin ${HARVEST_USER}; \
         else                                                                \
-	        ${SUDO} adduser --quite --ingroup ${HARVEST_GROUP} --shell=/sbin/nologin ${HARVEST_USER}; \
+	        ${SUDO} adduser --quiet --ingroup ${HARVEST_GROUP} --shell=/sbin/nologin ${HARVEST_USER}; \
 		fi;                                                                 \
 	else                                                                    \
 		echo "    Harvest user already exists";                         \

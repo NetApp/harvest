@@ -23,6 +23,7 @@
 package main
 
 import (
+	"fmt"
 	"goharvest2/cmd/harvest/version"
 	"goharvest2/cmd/poller/collector"
 	"goharvest2/cmd/poller/exporter"
@@ -35,6 +36,8 @@ import (
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
 	"log/syslog"
+	"net/http"
+	_ "net/http/pprof" // #nosec since pprof is off by default
 	"os"
 	"os/exec"
 	"os/signal"
@@ -114,6 +117,15 @@ func (me *Poller) Init() error {
 	// set logging level
 	if err = logger.SetLevel(me.options.LogLevel); err != nil {
 		logger.Warn(me.prefix, "using default loglevel=2 (info): %s", err.Error())
+	}
+
+	// if profiling port > 0 start profiling service
+	if me.options.Profiling > 0 {
+		addr := fmt.Sprintf("localhost:%d", me.options.Profiling)
+		logger.Info(me.prefix, "profiling enabled on [%s]", addr)
+		go func() {
+			fmt.Println(http.ListenAndServe(addr, nil))
+		}()
 	}
 
 	// useful info for debugging

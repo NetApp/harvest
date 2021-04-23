@@ -35,6 +35,7 @@ type Options struct {
 	Hostname       string
 	Collectors     []string
 	Objects        []string
+	Profiling      int
 }
 
 func (o *Options) String() string {
@@ -42,6 +43,7 @@ func (o *Options) String() string {
 		fmt.Sprintf("%s= %s", "Poller", o.Poller),
 		fmt.Sprintf("%s = %v", "Daemon", o.Daemon),
 		fmt.Sprintf("%s = %v", "Debug", o.Debug),
+		fmt.Sprintf("%s = %d", "Profiling", o.Profiling),
 		fmt.Sprintf("%s = %s", "PrometheusPort", o.PrometheusPort),
 		fmt.Sprintf("%s = %d", "LogLevel", o.LogLevel),
 		fmt.Sprintf("%s = %s", "HomePath", o.HomePath),
@@ -92,6 +94,7 @@ func Get() (*Options, string) {
 	parser.Bool(&args.Debug, "debug", "d", "Debug mode, no data will be exported")
 	parser.Bool(&args.Daemon, "daemon", "", "Start as daemon")
 	parser.Int(&args.LogLevel, "loglevel", "l", "Logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)")
+	parser.Int(&args.Profiling, "profiling", "", "If profiling port > 0, enables profiling via locahost:PORT/debug/pprof/")
 	parser.String(&args.Config, "conf", "", "Custom config filepath (default: "+args.Config+")")
 	parser.Slice(&args.Collectors, "collectors", "c", "Only start these collectors (overrides harvest.yml)")
 	parser.Slice(&args.Objects, "objects", "o", "Only start these objects (overrides collector config)")

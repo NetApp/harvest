@@ -15,9 +15,12 @@ import (
 	"goharvest2/pkg/set"
 	"goharvest2/pkg/tree/node"
 	"io/ioutil"
+	"net"
+	_ "net/http/pprof" // #nosec since pprof is off by default
 	"os"
 	"os/exec"
 	"path"
+	"regexp"
 	"strconv"
 	"strings"
 	"syscall"
@@ -39,6 +42,7 @@ type options struct {
 	Foreground bool
 	Loglevel   int
 	Config     string
+	Profiling  bool
 }
 
 func (o options) print() {
@@ -49,6 +53,7 @@ func (o options) print() {
 	fmt.Printf("debug      = %v\n", o.Debug)
 	fmt.Printf("foreground = %v\n", o.Foreground)
 	fmt.Printf("loglevel   = %d\n", o.Loglevel)
+	fmt.Printf("profiling  = %v\n", o.Profiling)
 }
 
 func Run() {
@@ -73,6 +78,7 @@ func Run() {
 		Foreground: false,
 		Loglevel:   2,
 		Config:     path.Join(HARVEST_CONF, "harvest.yml"),
+		Profiling:  false,
 	}
 
 	// parse user-defined options
@@ -131,6 +137,13 @@ func Run() {
 		"config",
 		"c",
 		"Custom config filepath (default: "+opts.Config+")",
+	)
+
+	parser.Bool(
+		&opts.Profiling,
+		"profiling",
+		"p",
+		"If true enables profiling via locahost:PORT/debug/pprof/",
 	)
 
 	parser.SetHelpFlag("help")
@@ -210,27 +223,27 @@ func Run() {
 		port := p.GetChildContentS("prometheus_port")
 
 		if opts.Command == "kill" {
-			status, pid := killPoller(name)
-			printStatus(c1, c2, datacenter, name, port, status, pid)
+			status, pid, profilingPort := killPoller(name)
+			printStatus(c1, c2, datacenter, name, port, status, pid, profilingPort)
 			continue
 		}
 
-		status, pid := getStatus(name)
+		status, pid, profilingPort := getStatus(name)
 
 		if opts.Command == "status" {
-			printStatus(c1, c2, datacenter, name, port, status, pid)
+			printStatus(c1, c2, datacenter, name, port, status, pid, profilingPort)
 		}
 
 		if opts.Command == "stop" || opts.Command == "restart" {
-			status, pid = stopPoller(name)
-			printStatus(c1, c2, datacenter, name, port, status, pid)
+			status, pid, profilingPort = stopPoller(name)
+			printStatus(c1, c2, datacenter, name, port, status, pid, profilingPort)
 		}
 
 		if opts.Command == "start" || opts.Command == "restart" {
 			// only start poller if confirmed that it's not running
 			if status == "not running" || status == "stopped" {
-				status, pid = startPoller(name, opts)
-				printStatus(c1, c2, datacenter, name, port, status, pid)
+				status, pid, profilingPort = startPoller(name, opts)
+				printStatus(c1, c2, datacenter, name, port, status, pid, profilingPort)
 			}
 		}
 	}
@@ -248,11 +261,12 @@ func Run() {
 // Returns:
 //	@status - status of poller
 //  @pid  - PID of poller (0 means no PID)
-func getStatus(poller_name string) (string, int) {
+func getStatus(poller_name string) (string, int, string) {
 
 	var (
-		status string
-		pid    int
+		status        string
+		pid           int
+		profilingPort string
 	)
 	// running poller should have written PID to file
 	pid_fp := path.Join(HARVEST_PIDS, poller_name+".pid")
@@ -268,12 +282,12 @@ func getStatus(poller_name string) (string, int) {
 
 	// docker dummy status
 	if os.Getenv("HARVEST_DOCKER") == "yes" {
-		return "n/a", pid
+		return "n/a", pid, profilingPort
 	}
 
 	// no valid PID stops here
 	if pid < 1 {
-		return status, pid
+		return status, pid, profilingPort
 	}
 
 	// retrieve process with PID and check if running
@@ -286,7 +300,7 @@ func getStatus(poller_name string) (string, int) {
 		if os.IsPermission(err) {
 			fmt.Println("Insufficient priviliges to send signal to process")
 		}
-		return "unknown", pid
+		return "unknown", pid, profilingPort
 		// process not running, but did not clean PID file
 		// maybe it just exited, so give it a chance to clean
 		/*
@@ -309,6 +323,13 @@ func getStatus(poller_name string) (string, int) {
 				status = "running"
 			}
 		}
+		if strings.Contains(cmdline, "--profiling") {
+			r := regexp.MustCompile(`--profiling (\d+)`)
+			matches := r.FindStringSubmatch(cmdline)
+			if len(matches) > 0 {
+				profilingPort = matches[1]
+			}
+		}
 	}
 
 	// if status is not running, either process just exited and cmdline was unavailable
@@ -317,27 +338,28 @@ func getStatus(poller_name string) (string, int) {
 		status = "unknown"
 	}
 
-	return status, pid
+	return status, pid, profilingPort
 }
 
-func killPoller(poller_name string) (string, int) {
+func killPoller(poller_name string) (string, int, string) {
 
 	var (
-		status string
-		pid    int
+		status        string
+		pid           int
+		profilingPort string
 	)
 
 	defer cleanPidFile(poller_name)
 
 	// attempt to get pid from pid file
-	status, pid = getStatus(poller_name)
+	status, pid, profilingPort = getStatus(poller_name)
 
 	// attempt to get pid from "ps aux"
 	if pid < 1 {
 		data, err := exec.Command("ps", "aux").Output()
 		if err != nil {
 			fmt.Println("ps aux: ", err)
-			return status, pid
+			return status, pid, profilingPort
 		}
 
 		var fields, args []string
@@ -362,29 +384,29 @@ func killPoller(poller_name string) (string, int) {
 	}
 
 	if pid < 1 {
-		return status, pid
+		return status, pid, profilingPort
 	}
 	proc, _ := os.FindProcess(pid)
 	if err := proc.Kill(); err != nil {
 		fmt.Println("kill: ", err)
-		return status, pid
+		return status, pid, profilingPort
 	}
-	return "killed", pid
-
+	return "killed", pid, profilingPort
 }
 
 // Stop poller if it's running or it's stoppable
 //
 // Returns: same as get_status()
-func stopPoller(poller_name string) (string, int) {
+func stopPoller(poller_name string) (string, int, string) {
 	var (
-		status string
-		pid    int
+		status        string
+		pid           int
+		profilingPort string
 	)
 
 	// if we get no valid PID, assume process is not running
-	if status, pid = getStatus(poller_name); pid < 1 {
-		return status, pid
+	if status, pid, profilingPort = getStatus(poller_name); pid < 1 {
+		return status, pid, profilingPort
 	}
 
 	proc, _ := os.FindProcess(pid)
@@ -393,7 +415,7 @@ func stopPoller(poller_name string) (string, int) {
 	if err := proc.Signal(syscall.SIGTERM); err != nil {
 		if os.IsPermission(err) {
 			fmt.Println("Insufficient priviliges to terminate process")
-			return "stopping failed", pid
+			return "stopping failed", pid, profilingPort
 		}
 		fmt.Println(err)
 		// other errors, probably mean poller already exited, so double check
@@ -405,13 +427,13 @@ func stopPoller(poller_name string) (string, int) {
 		time.Sleep(200 * time.Millisecond)
 		// @TODO, handle situation when PID is regained by some other process
 		if proc.Signal(syscall.Signal(0)) != nil {
-			return "stopped", pid
+			return "stopped", pid, profilingPort
 		}
 	}
-	return "stopping failed", pid
+	return "stopping failed", pid, profilingPort
 }
 
-func startPoller(poller_name string, opts *options) (string, int) {
+func startPoller(poller_name string, opts *options) (string, int, string) {
 
 	argv := make([]string, 5)
 	argv[0] = path.Join(HARVEST_HOME, "bin", "poller")
@@ -427,6 +449,23 @@ func startPoller(poller_name string, opts *options) (string, int) {
 	if opts.Config != path.Join(HARVEST_CONF, "harvest.yml") {
 		argv = append(argv, "--conf")
 		argv = append(argv, opts.Config)
+	}
+
+	if opts.Profiling {
+		if opts.Foreground {
+			// Always pick the same port when profiling in foreground
+			argv = append(argv, "--profiling")
+			argv = append(argv, "6060")
+		} else {
+			port, err := freePort()
+			if err != nil {
+				// No free port, log it and move on
+				fmt.Println("profiling disabled due to no free ports")
+			} else {
+				argv = append(argv, "--profiling")
+				argv = append(argv, strconv.Itoa(port))
+			}
+		}
 	}
 
 	if opts.Foreground {
@@ -474,8 +513,8 @@ func startPoller(poller_name string, opts *options) (string, int) {
 	time.Sleep(50 * time.Millisecond)
 	for i := 0; i < 10; i += 1 {
 		// @TODO, handle situation when PID is regained by some other process
-		if status, pid := getStatus(poller_name); pid > 0 {
-			return status, pid
+		if status, pid, profilingPort := getStatus(poller_name); pid > 0 {
+			return status, pid, profilingPort
 		}
 		time.Sleep(50 * time.Millisecond)
 	}
@@ -499,24 +538,24 @@ func cleanPidFile(poller string) bool {
 }
 
 // print status of poller, first two arguments are column lengths
-func printStatus(c1, c2 int, dc, pn, port, status string, pid int) {
+func printStatus(c1, c2 int, dc, pn, port, status string, pid int, profilingPort string) {
 	fmt.Printf("%s%s ", dc, strings.Repeat(" ", c1-len(dc)))
 	fmt.Printf("%s%s ", pn, strings.Repeat(" ", c2-len(pn)))
 	if pid == 0 {
-		fmt.Printf("%-10s %-10s %-20s\n", port, "", status)
+		fmt.Printf("%-10s %-10s %-10s %-20s\n", port, "", profilingPort, status)
 	} else {
-		fmt.Printf("%-10s %-10d %-20s\n", port, pid, status)
+		fmt.Printf("%-10s %-10d %-10s %-20s\n", port, pid, profilingPort, status)
 	}
 }
 
 func printHeader(c1, c2 int) {
 	fmt.Printf("Datacenter%s Poller%s ", strings.Repeat(" ", c1-10), strings.Repeat(" ", c2-6))
-	fmt.Printf("%-10s %-10s %-20s\n", "Port", "PID", "Status")
+	fmt.Printf("%-10s %-10s %-10s %-20s\n", "Port", "PID", "Profiling", "Status")
 }
 
 func printBreak(c1, c2 int) {
 	fmt.Printf("%s %s ", strings.Repeat("+", c1), strings.Repeat("+", c2))
-	fmt.Println("++++++++++ ++++++++++ ++++++++++++++++++++")
+	fmt.Println("++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++")
 }
 
 // maximum size of datacenter and poller names, if exceed defaults
@@ -530,4 +569,19 @@ func getMaxLengths(pollers *node.Node, pn, dc int) (int, int) {
 		}
 	}
 	return dc + 1, pn + 1
+}
+
+func freePort() (int, error) {
+	// TODO add range support [min, max] and read the range from harvest.yml
+	// Ask the kernel for a free open port
+	addr, err := net.ResolveTCPAddr("tcp", "localhost:0")
+	if err != nil {
+		return 0, err
+	}
+	dial, err := net.ListenTCP("tcp", addr)
+	if err != nil {
+		return 0, err
+	}
+	defer dial.Close()
+	return dial.Addr().(*net.TCPAddr).Port, nil
 }
