@@ -1,9 +1,9 @@
 package label_agent
 
 import (
-	"goharvest2/poller/plugin"
-	"goharvest2/share/matrix"
-	"goharvest2/share/tree/node"
+	"goharvest2/cmd/poller/plugin"
+	"goharvest2/pkg/matrix"
+	"goharvest2/pkg/tree/node"
 	"testing"
 	//"goharvest2/share/logger"
 )
