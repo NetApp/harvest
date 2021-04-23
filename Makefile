@@ -181,7 +181,7 @@ ifeq (${ROOT},)
 	@${SUDO} cp -r grafana/ ${INSTALL_ROOT}/etc/harvest/
 	@${SUDO} cp harvest.yml ${INSTALL_ROOT}/etc/harvest/
 	@${SUDO} cp -r bin ${INSTALL_ROOT}/opt/harvest
-	@${SUDO} ln -s ${INSTALL_ROOT}/opt/harvest/bin/harvest /usr/local/bin/harvest
+	@${SUDO} ln -sf ${INSTALL_ROOT}/opt/harvest/bin/harvest /usr/local/bin/harvest
 else
 	@cp -r  conf/ ${ROOT}/deploy/etc/harvest/
 	@cp -r grafana/ ${ROOT}/deploy/etc/harvest/

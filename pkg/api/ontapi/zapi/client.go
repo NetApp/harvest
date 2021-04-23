@@ -74,6 +74,11 @@ func New(config *node.Node) (*Client, error) {
 	request.Header.Set("Content-type", "text/xml")
 	request.Header.Set("Charset", "utf-8")
 
+	useInsecureTLS, err := strconv.ParseBool(config.GetChildContentS("useInsecureTLS"))
+	if err != nil {
+		logger.Error("", "Error %v ", err)
+	}
+
 	if config.GetChildContentS("auth_style") == "certificate_auth" {
 
 		cert_path := config.GetChildContentS("ssl_cert")
@@ -87,7 +92,7 @@ func New(config *node.Node) (*Client, error) {
 			return client, err
 		}
 
-		transport = &http.Transport{TLSClientConfig: &tls.Config{Certificates: []tls.Certificate{cert}, InsecureSkipVerify: true}}
+		transport = &http.Transport{TLSClientConfig: &tls.Config{Certificates: []tls.Certificate{cert}, InsecureSkipVerify: useInsecureTLS}}
 	} else {
 
 		username := config.GetChildContentS("username")
@@ -100,7 +105,7 @@ func New(config *node.Node) (*Client, error) {
 		}
 
 		request.SetBasicAuth(username, password)
-		transport = &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
+		transport = &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: useInsecureTLS}}
 
 	}
 
