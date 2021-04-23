@@ -120,7 +120,7 @@ packages: precheck all
 # we will be creating different users, and linking the deploy directory to
 # the system setup.
 #
-# When install if part of package building, the two env variabls a can be set:
+# When install is part of package building, the two env variabls a can be set:
 # - INSTALL_TARGET: the target package (e.g. "rpm" or "deb")
 # - INSTALL_ROOT: fs root of the package builder (e.g. BUILDROOT in rpmbuild)
 ###############################################################################
