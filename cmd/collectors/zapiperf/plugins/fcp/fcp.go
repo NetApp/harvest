@@ -81,16 +81,25 @@ func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 			if rx_bytes, rx_ok = write.GetValueFloat64(instance); rx_ok {
 				rx_percent = rx_bytes / float64(speed)
-				rx.SetValueFloat64(instance, rx_percent)
+				err := rx.SetValueFloat64(instance, rx_percent)
+				if err != nil {
+					logger.Error(me.Prefix, "error: %v", err)
+				}
 			}
 
 			if tx_bytes, tx_ok = read.GetValueFloat64(instance); tx_ok {
 				tx_percent = tx_bytes / float64(speed)
-				tx.SetValueFloat64(instance, tx_percent)
+				err := tx.SetValueFloat64(instance, tx_percent)
+				if err != nil {
+					logger.Error(me.Prefix, "error: %v", err)
+				}
 			}
 
 			if rx_ok || tx_ok {
-				util.SetValueFloat64(instance, math.Max(rx_percent, tx_percent))
+				err := util.SetValueFloat64(instance, math.Max(rx_percent, tx_percent))
+				if err != nil {
+					logger.Error(me.Prefix, "error: %v", err)
+				}
 			}
 		}
 	}

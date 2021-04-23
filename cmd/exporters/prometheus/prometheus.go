@@ -26,10 +26,10 @@ package main
 import (
 	"fmt"
 	"goharvest2/cmd/poller/exporter"
+	"goharvest2/pkg/color"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/logger"
 	"goharvest2/pkg/matrix"
-	"goharvest2/pkg/color"
 	"regexp"
 	"strconv"
 	"strings"
@@ -101,7 +101,7 @@ func (me *Prometheus) Init() error {
 			logger.Debug(me.Prefix, "using cache_max_keep [%s]", x)
 			me.cache = newCache(d)
 		} else {
-			logger.Error(me.Prefix, " cache_max_keep [%s]", x, err)
+			logger.Error(me.Prefix, " cache_max_keep [%s] %v", x, err)
 		}
 	}
 
@@ -133,7 +133,7 @@ func (me *Prometheus) Init() error {
 			if reg, err := regexp.Compile(r); err == nil {
 				me.allowAddrsRegex = append(me.allowAddrsRegex, reg)
 			} else {
-				logger.Error(me.Prefix, "parse regex: ", err)
+				logger.Error(me.Prefix, "parse regex: %v", err)
 				return errors.New(errors.INVALID_PARAM, "allow_addrs_regex")
 			}
 		}
@@ -227,8 +227,14 @@ func (me *Prometheus) Export(data *matrix.Matrix) error {
 
 	// update metadata
 	me.AddExportCount(uint64(len(metrics)))
-	me.Metadata.LazyAddValueInt64("time", "render", d.Microseconds())
-	me.Metadata.LazyAddValueInt64("time", "export", time.Since(start).Microseconds())
+	err = me.Metadata.LazyAddValueInt64("time", "render", d.Microseconds())
+	if err != nil {
+		logger.Error(me.Prefix, "error: %v", err)
+	}
+	err = me.Metadata.LazyAddValueInt64("time", "export", time.Since(start).Microseconds())
+	if err != nil {
+		logger.Error(me.Prefix, "error: %v", err)
+	}
 
 	return nil
 }
@@ -311,7 +317,7 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 			for _, label := range labels_to_include {
 				value := instance.GetLabel(label)
 				instance_labels = append(instance_labels, fmt.Sprintf("%s=\"%s\"", label, value))
-				logger.Trace(me.Prefix, "++ label [%s] (%s)", label, value, value != "")
+				logger.Trace(me.Prefix, "++ label [%s] (%s) %t", label, value, value != "")
 			}
 
 			// @TODO, probably be strict, and require all keys to be present

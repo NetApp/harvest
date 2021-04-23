@@ -1,8 +1,8 @@
 package main
 
 import (
-	"goharvest2/pkg/errors"
 	"bytes"
+	"goharvest2/pkg/errors"
 	"io/ioutil"
 	"os"
 	"path"
@@ -147,7 +147,6 @@ func (me *Process) loadStatus() error {
 			case "threads":
 				if num, err = strconv.ParseUint(value, 10, 32); err == nil {
 					me.numThreads = num
-				} else {
 				}
 			case "voluntary_ctxt_switches":
 				if num, err = strconv.ParseUint(value, 10, 64); err == nil {

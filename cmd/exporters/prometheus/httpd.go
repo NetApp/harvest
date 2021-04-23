@@ -12,11 +12,11 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"goharvest2/pkg/logger"
+	"goharvest2/pkg/set"
 	"net/http"
 	"strings"
 	"time"
-	"goharvest2/pkg/logger"
-	"goharvest2/pkg/set"
 )
 
 func (me *Prometheus) startHttpD(addr, port string) {
@@ -77,7 +77,10 @@ func (me *Prometheus) denyAccess(w http.ResponseWriter, r *http.Request) {
 	logger.Debug(me.Prefix+" (httpd) ", "denied request [%s] (%s)", r.RequestURI, r.RemoteAddr)
 	w.WriteHeader(403)
 	w.Header().Set("content-type", "text/plain")
-	w.Write([]byte("403 Forbidden"))
+	_, err := w.Write([]byte("403 Forbidden"))
+	if err != nil {
+		logger.Error(me.Prefix, "error: %v", err)
+	}
 }
 
 func (me *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
@@ -109,7 +112,7 @@ func (me *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 		data = append(data, md...)
 		count += len(md)
 	} else {
-		logger.Error(me.Prefix+" (httpd) ", "render metadata: ", err)
+		logger.Error(me.Prefix+" (httpd) ", "render metadata: %v", err)
 	}
 	/*
 
@@ -121,11 +124,20 @@ func (me *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(200)
 	w.Header().Set("content-type", "text/plain")
-	w.Write(bytes.Join(data, []byte("\n")))
+	_, err := w.Write(bytes.Join(data, []byte("\n")))
+	if err != nil {
+		logger.Error(me.Prefix, "error: %v", err)
+	}
 
 	me.Metadata.Reset()
-	me.Metadata.LazySetValueInt64("time", "http", time.Since(start).Microseconds())
-	me.Metadata.LazySetValueInt("count", "http", count)
+	err = me.Metadata.LazySetValueInt64("time", "http", time.Since(start).Microseconds())
+	if err != nil {
+		logger.Error(me.Prefix, "error: %v", err)
+	}
+	err = me.Metadata.LazySetValueInt("count", "http", count)
+	if err != nil {
+		logger.Error(me.Prefix, "error: %v", err)
+	}
 }
 
 // provide a human-friendly overview of metric types and source collectors
@@ -217,8 +229,13 @@ func (me *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(200)
 	w.Header().Set("content-type", "text/html")
-	w.Write([]byte(body_flat))
+	_, err := w.Write([]byte(body_flat))
+	if err != nil {
+		logger.Error(me.Prefix, "error: %v", err)
+	}
 
-	me.Metadata.LazyAddValueInt64("time", "info", time.Since(start).Microseconds())
+	err = me.Metadata.LazyAddValueInt64("time", "info", time.Since(start).Microseconds())
+	if err != nil {
+		logger.Error(me.Prefix, "error: %v", err)
+	}
 }
-
