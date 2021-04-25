@@ -15,3 +15,4 @@ objects:
   Shelf:            shelf.yaml
   Status:           status.yaml
   Subsystem:        subsystem.yaml
+  Lun:              lun.yaml

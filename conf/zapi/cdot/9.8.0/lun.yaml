@@ -1,0 +1,35 @@
+
+name:                       Lun
+query:                      lun-get-iter
+object:                     lun
+
+counters:
+  node-details-info:
+    - ^node
+    - ^path
+    - ^qtree
+    - size
+    - size-used
+    - ^state
+    - ^^uuid
+    - ^volume
+    - ^vserver => svm
+
+plugins:
+  - LabelAgent:
+    value_mapping: status state online `1`
+    # path is something like "/vol/vol_georg_fcp401/lun401"
+    # we only want lun name, which is 4th element
+    split: `:` path ,,,lun
+
+export_options:
+  instance_keys:
+    - node
+    - qtree
+    - lun
+    - volume
+    - svm
+  instance_labels:
+    - state
+  graphite_leafs:
+    - svm.{svm}.volume.{volume}.lun.{lun}
