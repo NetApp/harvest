@@ -1,5 +1,6 @@
-Source: netapp
-Section: misc
+Section: utils
+Priority: optional
+Essential: no
 Suggests: dialog, openssl
 Maintainer: Vachagan Gratian <vachagan@netapp.com>
 Description: NetApp Harvest 2 - Monitoring of Storage Systems
