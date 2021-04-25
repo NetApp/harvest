@@ -13,6 +13,7 @@ objects:
   SystemNode:             system_node.yaml
   HostAdapter:            hostadapter.yaml
   Path:                   path.yaml
+  Disk:                   disk.yaml
   FCVI:                   fcvi.yaml
   ExtCacheObj:            ext_cache_obj.yaml
   WAFL:                   wafl.yaml

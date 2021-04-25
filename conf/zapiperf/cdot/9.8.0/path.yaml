@@ -19,7 +19,9 @@ counters:
   - write_latency
 
 plugins:
-  - Path
+  LabelAgent:
+    split: path `.` hostadapter,target_wwpn
+    split: path `_` hostadapter,target_wwpn
 
 export_options:
   instance_keys: 

@@ -29,6 +29,8 @@ override:
 
 plugins:
   - Nic
+  - LabelAgent:
+    value_mapping: status state up `1`
 
 export_options:
   instance_keys:
