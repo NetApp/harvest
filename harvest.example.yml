@@ -11,14 +11,15 @@ Defaults:
     - prometheus
 
 Pollers:
-  # this is a special poller to monitor the localhost
+  # this is a special/optional poller that provides stats about harvest itself
+  # to remove this poller, simply delete the section "unix"
   unix:
     datacenter: local
     addr: localhost
     collectors:
       - Unix
     prometheus_port: 5201
-
+ 
   # add your Cdot / 7Mode pollers below, example:
   # cluster-01:
   #   datacenter: DC-01
