@@ -1,0 +1,97 @@
+
+# version, release and arch will be pasted here
+%define name harvest
+
+Name: %{name}
+Summary: Storage System Monitoring
+Version: %{version}
+Release: %{release}
+Source: %{name}_%{version}-%{release}.tgz
+License: (c) NetApp
+URL: https://www.support.netapp.com
+Packager: Vachagan Gratian <vachagan@netapp.com>
+AutoReq: no
+Provides: harvest
+BuildRoot: %{buildroot}
+BuildArch: %{arch}
+
+%description
+Description: NetApp Harvest 2 - Monitoring of Storage Systems
+ This application collects data from NetApp systems,
+ forwards it to the Prometheus time series db, and
+ provides Grafana dashboards for visualization.
+
+%prep
+
+%pre
+# stop harvest before upgrade
+if [ "$1" = "2" ]; then
+    echo "stopping harvest ..."
+    harvest stop
+fi
+
+%install
+echo " --> unpacking package..."
+mkdir -p $RPM_BUILD_ROOT/opt/
+tar xvfz /tmp/build/rpm/SOURCES/%{name}_%{version}-%{release}.tgz -C $RPM_BUILD_ROOT/opt/
+cd $RPM_BUILD_ROOT/opt/harvest
+echo " --> installing harvest..."
+cd $RPM_BUILD_ROOT/opt/harvest
+mkdir -p $RPM_BUILD_ROOT/etc/harvest
+mkdir -p $RPM_BUILD_ROOT/var/log/harvest
+mkdir -p $RPM_BUILD_ROOT/var/run/harvest
+mv conf/ grafana/ harvest.example.yml $RPM_BUILD_ROOT/etc/harvest/
+
+%post
+if [ ! -e $RPM_BUILD_ROOT/etc/harvest/harvest.yml ]; then
+    mv $RPM_BUILD_ROOT/etc/harvest/harvest.example.yml $RPM_BUILD_ROOT/etc/harvest/harvest.yml
+    echo "  --> use default config file [/etc/harvest/harvest.yml]"
+fi
+getent group harvest > /dev/null 2>&1 || groupadd -r harvest && echo "  --> create harvest group"
+getent passwd harvest > /dev/null 2>&1 || useradd -r -M -g harvest --shell=/sbin/nologin harvest && echo "  --> create harvest user"
+
+chown -R harvest:harvest $RPM_BUILD_ROOT/etc/harvest/
+chown -R harvest:harvest $RPM_BUILD_ROOT/opt/harvest/
+chown -R harvest:harvest $RPM_BUILD_ROOT/var/log/harvest/
+chown -R harvest:harvest $RPM_BUILD_ROOT/var/run/harvest/
+# remove link from previous version, use /usr/bin to conform to linux fhs
+if [ -e /usr/local/bin/harvest ]; then
+    unlink /usr/local/bin/harvest
+fi
+if [ ! -e /usr/bin/harvest ]; then
+    ln -s /opt/harvest/bin/harvest /usr/local/bin/harvest
+    echo "  --> create link"
+fi
+if [ "$1" = "1" ]; then
+    echo " --> install complete!"
+else
+    echo " --> updated harvest!"
+fi
+
+%preun
+# stop harvest before uninstall
+if [ "$1" = "0" ]; then
+    echo "stoping harvest ..."
+    harvest stop
+fi
+
+%postun
+if [ "$1" = "0" ]; then
+    userdel harvest && echo "  --> delete harvest user"
+    groupdel harvest && echo "  --> delete harvest group"
+    unlink /usr/bin/harvest && echo "  --> delete link"
+    rm -rf /var/run/harvest && echo "  --> delete pid folder"
+    # keep logs at var/log/harvest
+    echo "  --> kept log folder"
+    echo " --> uninstall complete"
+else
+    echo " --> upgrade complete"
+    echo "     you can restart harvest now"
+fi
+
+%clean
+
+%files
+/opt/harvest
+/etc/harvest
+

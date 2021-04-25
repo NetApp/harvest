@@ -171,13 +171,13 @@ endif
 ifeq (${ROOT},)
 	@${SUDO} cp -r  conf/ /etc/harvest/
 	@${SUDO} cp -r grafana/ /etc/harvest/
-	@${SUDO} cp harvest.yml /etc/harvest/
+	@${SUDO} cp harvest.example.yml /etc/harvest/harvest.yml
 	@${SUDO} cp -r bin /opt/harvest
 	@${SUDO} ln -s /opt/harvest/bin/harvest /usr/bin/harvest
 else
 	@cp -r  conf/ ${ROOT}/deploy/etc/harvest/
 	@cp -r grafana/ ${ROOT}/deploy/etc/harvest/
-	@cp harvest.yml ${ROOT}/deploy/etc/harvest/
+	@cp harvest.example.yml ${ROOT}/deploy/etc/harvest/harvest.yml
 	@${SUDO} ln -sf ${ROOT}/deploy/etc/harvest /etc
 	@cp -r bin ${ROOT}/deploy/opt/harvest/
 	@${SUDO} ln -sf ${ROOT}/deploy/opt/harvest/ /opt
