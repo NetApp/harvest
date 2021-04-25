@@ -8,28 +8,30 @@ counters:
     - ^^disk-uid
     - ^^disk-name               => disk
     - disk-inventory-info:
-      - bytes-per-sector
+      - bytes-per-sector        => bytes_per_sector
       - capacity-sectors        => sectors
       - ^disk-type              => type
+      - ^is-shared              => shared
       - ^model                  => model
-      - ^serial-number          => serial_number
       - ^shelf                  => shelf
       - ^shelf-bay              => shelf_bay
     - disk-ownership-info:
-      - ^is-failed              => failed
       - ^home-node-name         => node
+      - ^owner-node-name        => owner_node
     - disk-stats-info:
-      - average-latency
-      - disk-io-kbps
-      - disk-iops
+    #  - average-latency
+    #  - disk-io-kbps
+    #  - disk-iops
       - power-on-time-interval  => uptime
-      - path-error-count
+      - sectors-read
+      - sectors-written
+    - disk-raid-info:
+      - disk-outage-info:
+        - reason                => outage
 
 plugins:
-  - Status:
-    - status:
-      label: failed
-      ok_value: false
+  - LabelAgent:
+    value_mapping: status outage , `0` # ok_value is empty value
     
 export_options:
   instance_keys:
@@ -38,7 +40,9 @@ export_options:
   instance_labels:
     - type
     - model
-    - serial_number
+    - outage
+    - owner_node
+    - shared
     - shelf
     - shelf_bay
   graphite_leafs:

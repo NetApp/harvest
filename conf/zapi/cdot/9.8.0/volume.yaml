@@ -55,12 +55,13 @@ counters:
       - ^status
 
 plugins:
-  - Status:
-    - status:
-      label: state
-      ok_value: online
-  - FlexGroup
-              
+  LabelAgent:
+    value_mapping: status state online `1`
+    exclude_equals: style `flexgroup_constituent`
+    replace: style style `flexgroup_constituent` `flexgroup`
+  Aggregator:
+    volume<style=flexgroup>volume node,svm,aggr,style
+
 export_options:
   instance_keys:
     - volume

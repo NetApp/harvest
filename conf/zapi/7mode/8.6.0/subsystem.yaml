@@ -1,0 +1,21 @@
+# API provides health status of cluster subsystems
+
+name:       Subsystem
+query:      diagnosis-subsystem-config-get-iter
+object:     cluster_subsystem
+
+counters:
+  diagnosis-subsystem-config-info:
+    - ^health                       => health
+    - ^^subsystem                   => subsystem
+    - outstanding-alert-count       => outstanding_alerts
+    - suppressed-alert-count        => suppressed_alerts
+
+plugins:
+  - LabelAgent:
+    value_mapping: status health ok `1`
+
+export_options:
+  instance_keys:
+    - subsystem
+    - health

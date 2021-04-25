@@ -58,13 +58,10 @@ counters:
       - size-used
       - snapshot-reserve-percent
 
-      
 plugins:
-  - Status:
-    - status:
-      label: state
-      ok_value: online
-    
+  LabelAgent:
+    value_mapping: status state online `1`
+ 
 export_options:
   instance_keys:
     - aggr

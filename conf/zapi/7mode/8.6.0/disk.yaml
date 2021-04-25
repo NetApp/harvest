@@ -21,10 +21,8 @@ counters:
 #    - used-space:
 
 plugins:
-  - Status:
-    - status:
-      label: offline
-      ok_value: false
+  - LabelAgent:
+    value_mapping: status offline false `0`
     
 export_options:
   instance_keys:

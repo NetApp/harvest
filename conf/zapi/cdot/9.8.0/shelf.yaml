@@ -8,14 +8,12 @@ counters:
   storage-shelf-info:
     - disk-count
     - ^module-type
-    - ^op-status
     - ^serial-number
     - ^shelf => shelf
     - ^shelf-model
     - ^^shelf-uid
     - ^state
     - ^vendor-name
-
 
 plugins:
   Shelf:
@@ -57,18 +55,15 @@ plugins:
           - ^^voltage-sensor-id => sensor_id
           - ^voltage-sensor-location => location
           - voltage-sensor-reading => reading
-
-  - Status:
-    - status:
-      label: state
-      ok_value: online
+          
+  - LabelAgent:
+    value_mapping: status state online `1`
 
 export_options:
   instance_keys:
     - shelf
   instance_labels:
     - module_type
-    - op_status
     - serial_number
     - model
     - state
