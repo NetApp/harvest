@@ -1,24 +1,23 @@
 # Harvest Support and Getting Help
 
-Welcome to Harvest! Harvest is an officially supported NetApp project. That means you can reach out
-to NetApp using any of the [standard mechanisms](http://mysupport.netapp.com/info/web/ECMLP2619434.html) and get the enterprise grade
-support you need.
+Welcome to Harvest! Harvest is an official NetApp open-source project. You can reach out
+to NetApp using any of the [standard mechanisms](http://mysupport.netapp.com/info/web/ECMLP2619434.html) and get support.
 
 This document describes Harvest's release and support lifecycle as well as places you can get help.
 
 ## Harvest's Release and Support Lifecycle
 
-Harvest releases quarterly in January, April, July, and October. 
+Harvest's current release schedule is quarterly in January, April, July, and October, but it may change at our discretion. 
 
-Each release of Harvest supports the most recently released version of ONTAP. We make a best effort to also ensure that earlier versions of ONTAP are supported. When that's not possible, breaking changes will be outlined in the changelog.
+Each release of Harvest supports the most recently released version of ONTAP. We try our best to also support earlier versions of ONTAP. When that's not possible, breaking changes will be outlined in the changelog.
 
-Harvest is constantly being improved with new features and bug fixes and customers are encouraged to upgrade frequently to take advantage of those improvements.
+Harvest is constantly being improved with new features and bug fixes. Customers are encouraged to upgrade frequently to take advantage of these improvements.
 
-`Each Harvest release is supported for 12 months.`
+`We intend to support each Harvest release for 12 months.`
 
-When `YY.MM` (ex: 19.04) is released, it is fully supported until `YY+1.MM` (ex: 20.04) is released. At the same time, `YY-1.MM` (ex: 18.04) and associated minor releases (ex: 18.04.1) move to limited support.
+For example, when `YY.MM` (ex: 19.04) is released, we intend to support it until `YY+1.MM` (ex: 20.04) is released. At the same time, `YY-1.MM` (ex: 18.04) and associated minor releases (ex: 18.04.1) move to limited or no support.
 
-If you are running a version of Harvest that’s more than 12 months old, you must upgrade to a newer version to receive full support from NetApp. We always recommend running the latest version.
+If you are running a version of Harvest that’s more than 12 months old, you must upgrade to a newer version to receive any support then available from NetApp. We always recommend running the latest version.
 
 We use GitHub for tracking bugs and feature requests.
 
