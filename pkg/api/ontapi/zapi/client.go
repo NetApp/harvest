@@ -42,6 +42,7 @@ func New(config *node.Node) (*Client, error) {
 	var cert tls.Certificate
 	var timeout time.Duration
 	var url, addr string
+	var useInsecureTLS bool
 	var err error
 
 	err = nil
@@ -74,9 +75,13 @@ func New(config *node.Node) (*Client, error) {
 	request.Header.Set("Content-type", "text/xml")
 	request.Header.Set("Charset", "utf-8")
 
-	useInsecureTLS, err := strconv.ParseBool(config.GetChildContentS("use_insecure_tls"))
-	if err != nil {
-		logger.Error("(Zapi:Client)", "Error %v ", err)
+	if x := config.GetChildContentS("use_insecure_tls"); x != "" {
+		if useInsecureTLS, err = strconv.ParseBool(x); err != nil {
+			logger.Error("(Zapi:Client)", "use_insecure_tls: %v ", err)
+		}
+	} else {
+		// defaults to true
+		useInsecureTLS = true
 	}
 
 	if config.GetChildContentS("auth_style") == "certificate_auth" {
