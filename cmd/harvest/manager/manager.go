@@ -462,6 +462,14 @@ func startPoller(poller_name string, opts *options) (string, int) {
 		os.Exit(0)
 	}
 
+	// if pid directory doesn't exist, create full path, otherwise poller will complain
+	if info, err := os.Stat(HARVEST_PIDS); err != nil || !info.IsDir() {
+		// don't abort on error, since another poller might have done the job
+		if err = os.MkdirAll(HARVEST_PIDS, 0755); err != nil && !os.IsExist(err) {
+			fmt.Printf("error mkdir [%s]: %v\n", HARVEST_PIDS, err)
+		}
+	}
+
 	cmd := exec.Command(path.Join(HARVEST_HOME, "bin", "daemonize"), argv...)
 	//fmt.Println(cmd.String())
 	if err := cmd.Start(); err != nil {

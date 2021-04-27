@@ -576,7 +576,7 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 		// string metric, add as instance label
 		if strings.Contains(counter.GetChildContentS("properties"), "string") {
 			old_labels.Delete(key)
-			if key == "instance_name" {
+			if key == "instance_name" && display == "" {
 				display = me.object
 			}
 			me.instance_labels[key] = display

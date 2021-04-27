@@ -25,9 +25,10 @@ Description: NetApp Harvest 2 - Monitoring of Storage Systems
 
 %pre
 # stop harvest before upgrade
-if [ "$1" = "2" ]; then
-    echo "stopping harvest ..."
-    harvest stop
+if [ $1 = 2 ]; then
+    if [ -x /opt/harvest/bin/harvest ]; then
+        /opt/harvest/bin/harvest stop && echo "stopped harvest ..."
+    fi
 fi
 
 %install
@@ -59,10 +60,10 @@ if [ -e /usr/local/bin/harvest ]; then
     unlink /usr/local/bin/harvest
 fi
 if [ ! -e /usr/bin/harvest ]; then
-    ln -s /opt/harvest/bin/harvest /usr/local/bin/harvest
+    ln -s /opt/harvest/bin/harvest /usr/bin/harvest
     echo "  --> create link"
 fi
-if [ "$1" = "1" ]; then
+if [ $1 = 1 ]; then
     echo " --> install complete!"
 else
     echo " --> updated harvest!"
@@ -70,13 +71,13 @@ fi
 
 %preun
 # stop harvest before uninstall
-if [ "$1" = "0" ]; then
+if [ $1 = 0 ]; then
     echo "stoping harvest ..."
     harvest stop
 fi
 
 %postun
-if [ "$1" = "0" ]; then
+if [ $1 = 0 ]; then
     userdel harvest && echo "  --> delete harvest user"
     groupdel harvest && echo "  --> delete harvest group"
     unlink /usr/bin/harvest && echo "  --> delete link"

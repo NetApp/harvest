@@ -101,10 +101,10 @@ func (me *AbstractMetric) Clone(deep bool) *AbstractMetric {
 		comment:    me.comment,
 		exportable: me.exportable,
 	}
+	if me.labels != nil {
+		clone.labels = me.labels.Copy()
+	}
 	if deep {
-		if me.labels != nil {
-			clone.labels = me.labels.Copy()
-		}
 		if len(me.record) != 0 {
 			clone.record = make([]bool, len(me.record))
 			for i, v := range me.record {

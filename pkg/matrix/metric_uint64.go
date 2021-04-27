@@ -2,9 +2,9 @@ package matrix
 
 import (
 	"fmt"
-	"strconv"
-	"goharvest2/pkg/errors"
 	"goharvest2/pkg/color"
+	"goharvest2/pkg/errors"
+	"strconv"
 )
 
 type MetricUint64 struct {
@@ -110,7 +110,7 @@ func (me *MetricUint64) SetValueFloat64(i *Instance, v float64) error {
 func (me *MetricUint64) SetValueString(i *Instance, v string) error {
 	var x uint64
 	var err error
-	if x, err = strconv.ParseUint(v, 10, 32); err == nil {
+	if x, err = strconv.ParseUint(v, 10, 64); err == nil {
 		me.record[i.index] = true
 		me.values[i.index] = x
 		return nil
