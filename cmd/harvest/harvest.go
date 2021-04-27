@@ -17,7 +17,7 @@ import (
 	"fmt"
 	"goharvest2/cmd/harvest/config"
 	"goharvest2/cmd/harvest/manager"
-	"goharvest2/cmd/harvest/template"
+	//	"goharvest2/cmd/harvest/template"
 	"goharvest2/cmd/harvest/version"
 	"os"
 	"os/exec"
@@ -36,7 +36,6 @@ The commands are:
 	start/restart/stop/kill    manage pollers
 	config                     run the config utility
 	build                      re-build Harvest or components
-	new                        create new collector or plugin
 	zapi                       explore ZAPI objects and counters
 	grafana                    import dashboards to Grafana
 	version                    show Harvest2 version
@@ -71,8 +70,9 @@ func main() {
 		manager.Run()
 	case "config":
 		config.Run()
-	case "new":
-		template.Run()
+	//@ not ready to advertise
+	//case "new":
+	//	template.Run()
 	case "zapi":
 		bin = "bin/zapi"
 	case "grafana":
