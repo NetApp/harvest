@@ -9,6 +9,7 @@ Defaults:
     - ZapiPerf
   exporters:
     - prometheus
+  useInsecureTLS: false  
 
 Pollers:
   # this is a special/optional poller that provides stats about harvest itself
