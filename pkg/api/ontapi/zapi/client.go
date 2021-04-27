@@ -74,7 +74,7 @@ func New(config *node.Node) (*Client, error) {
 	request.Header.Set("Content-type", "text/xml")
 	request.Header.Set("Charset", "utf-8")
 
-	useInsecureTLS, err := strconv.ParseBool(config.GetChildContentS("useInsecureTLS"))
+	useInsecureTLS, err := strconv.ParseBool(config.GetChildContentS("use_insecure_tls"))
 	if err != nil {
 		logger.Error("(Zapi:Client)", "Error %v ", err)
 	}
