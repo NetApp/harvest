@@ -18,7 +18,6 @@ A Linux system with libraries:
 Optional prerequisites:
 - `dialog` or `whiptail` (used by the `config` utility)
 - `openssl` (used by `config`)
-- `python3` (used by the `grafana` utility)
   
 Hardware requirements depend on number of pollers (i.e. number of clustered monitored) and collected metrics. With default configuration, for monitoring 10 clusteres, optimal resources are:
 
@@ -34,7 +33,10 @@ Harvest is compatible with:
 
 # Installation / Upgrade
 
-Download the latest package to your machine. For CentOS, RHEL, etc this is the latest `harvest-2*.x86_64.rpm` package. To build from source or run in a Docker container, download the latest tarball (`harvest-2*.tgz`).
+Download the latest package to your machine:
+- for CentOS, RHEL, etc this is the latest `harvest-2*..rpm` package.
+- for Debian, Ubuntu, etc use the latest `harvest-2*.deb`.
+- to build from source download the latest source tarball (`harvest-2*source.tgz`).
 
 ## RPM-based installation
 
@@ -50,13 +52,21 @@ Upgrade with `rpm`:
 $ rpm -Uvh harvest-2*.x86_64.rpm
 ```
 
-## Build from source
-Requires Go 1.15 or higher, as well as internet connection to install go-dependencies.
+## DEB-based installation
+
+Install or update with `dpkg`:
 
 ```sh
-$ tar -xzvf harvest-2*.tgz -C /opt/ && cd /opt/harvest2/
-$ ./cmd/build.sh all
-$ ./cmd/install.sh
+$ dpkg -i harvest-2*.deb
+```
+
+## Build from source
+Requires Go 1.15 or higher, <s>as well as internet connection to install go-dependencies</s>.
+
+```sh
+$ tar -xzvf harvest-2*source.tgz -C /opt/ && cd /opt/harvest2/
+$ make all
+$ make install
 ```
 
 # Quick start
@@ -161,9 +171,12 @@ Note: when we talk about *Prometheus Exporter*, *Graphite Exporter*, etc., we me
 ***parameters:***
 | parameter     | type         | description                                                                             | default      |
 |---------------|--------------|-----------------------------------------------------------------------------------------|--------------|
-| `url`    | optional  | Local address of the HTTP service (`localhost` or `127.0.0.1` makes the metrics accessible only on local machine, `0.0.0.0` makes it public).| `0.0.0.0` |
+| `local_http_addr`    | optional  | Local address of the HTTP service (`localhost` or `127.0.0.1` makes the metrics accessible only on local machine, `0.0.0.0` makes it public).| `0.0.0.0` |
 | `port`        | required  | Local port of the HTTP service. This value can be also defined under the poller section as `prometheus_port`.  |
-| `allowed_urls`        | optional, list | List of clients that can access the HTTP service, each "URL" should be a hostname or IP address (regexes will be supported in the future). If the client is not in thist list, the HTTP request will be rejected. | allow all URLs |
+| `allow_addrs`        | optional, list | List of clients that can access the HTTP service, each "URL" should be a hostname or IP address. If the client is not in thist list, the HTTP request will be rejected. | allow all URLs |
+| `allow_addrs_regex`        | optional, list | Same as `allow_addrs`, but client will be only allowed if matches to any of the regular expressions | allow all URLs |
+| `global_prefix` | optional, string | globally add a prefix to all metrics, e.g settings this paraters to `netapp` (or `netapp_`), would make the metric `cluster_status` into (`netapp_cluster_status`) and similarly all other metrics delivered from Harvest. | |
+| `cache_max_keep` | optional, duration | In circumstances when Prometheus might be unabailable or scrap Harvest less frequently that the polling interval of collectors, you can set the maximum amount of time that metrics are cached by the HTTP server. Examples: `10s`, `1m`, `1h`, etc| `180s` |
 | |  | |
 
 Notice that you should define a new job in the configuration of your Prometheus database and add a target for each of the ports defined in Harvest configuration. As an example, let's assume we defined the port range `12990-12992` for the Prometheus Exporter. Open the configuration of the Prometheus database:
