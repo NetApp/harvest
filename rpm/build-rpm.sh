@@ -22,8 +22,6 @@ cp "$SRC/harvest.example.yml" "$BUILD/harvest/"
 cp "$SRC/go.mod" "$BUILD/harvest/"
 cp "$SRC/Makefile" "$BUILD/harvest/"
 cp "$SRC/README.md" "$BUILD/harvest/"
-cp "$SRC/SUPPORT.md" "$BUILD/harvest/"
-cp "$SRC/CONTRIBUTING.md" "$BUILD/harvest/"
 cp "$SRC/LICENSE" "$BUILD/harvest/"
 
 # update build and package version

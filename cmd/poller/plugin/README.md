@@ -107,8 +107,8 @@ plugins:
 
 Notice that the rules are executed in the same order as you've added them. List of currently available rules:
 
-- [split_simple](#split_simple)
-- [split_regex](#split_simple)
+- [split](#split)
+- [split_regex](#split_regex)
 - [split_pairs](#split_pairs)
 - [join](#join)
 - [replace](#replace)
