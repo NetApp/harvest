@@ -1,5 +1,5 @@
 
-name:                     LUN
+name:                     Lun
 query:                    lun
 object:                   lun
 
@@ -35,8 +35,10 @@ override:
   - unmap_reqs: rate
   - xcopy_reqs: rate
 
+
 plugins:
-  - Lun
+  LabelAgent:
+    split: lun `/` ,,volume,lun
 
 export_options:
   instance_keys:

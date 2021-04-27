@@ -69,7 +69,8 @@ plugins:
 #        - ^power-supply-firmware-revision
 #        - ^power-supply-is-error
 #        - ^power-supply-is-not-installed
-
+  LabelAgent:
+    value_mapping: status state normal `1`
 
 export_options:
   instance_keys:

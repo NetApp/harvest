@@ -1,0 +1,18 @@
+
+name:       Status
+query:      diagnosis-status-get
+object:     cluster
+
+counters:
+  - ^status
+
+collect_only_labels: true
+only_cluster_instance: true
+no_max_records: true
+
+plugins:
+  - LabelAgent:
+    value_mapping: status status ok `1`
+
+export_options:
+  include_all_labels: true

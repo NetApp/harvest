@@ -1,19 +1,24 @@
 
 name:                     SystemNode
 query:                    system:node
-object:                   node_sys
+object:                   node
 
 instance_key:             name
 
 counters:
-  - instance_name          => node
+  - instance_name
   - avg_processor_busy
   - cpu_elapsed_time
   - uptime
+  - memory
+  - total_data
+  - total_latency
+  - total_ops
   - cifs_ops
   - nfs_ops
   - iscsi_ops
   - fcp_ops
+  - nvmf_ops
   - disk_data_read
   - disk_data_written
   - hdd_data_read
@@ -24,6 +29,8 @@ counters:
   - net_data_sent
   - fcp_data_recv
   - fcp_data_sent
+  - nvmf_data_recv
+  - mvmf_data_sent
 
 export_options:
   instance_keys:

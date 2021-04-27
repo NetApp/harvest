@@ -1,63 +1,71 @@
 #!/bin/bash
 
-function info {
-    echo -e "\033[1m\033[45m$1\033[0m"
-}
-
-function error {
-    echo -e "\033[1m\033[41m$1\033[0m"
-}
-
 BUILD="/tmp/build"
 SRC=$HARVEST_BUILD_SRC
 
 if [ -z "$SRC" ]; then
-    error "build source missing (\$HARVEST_BUILD_SRC)"
+    echo "build source missing (\$HARVEST_BUILD_SRC)"
     exit 1
 fi
 
+echo "\033[1m\033[46m--> building DEB/$HARVEST_ARCH for \
+    harvest $HARVEST_VERSION-$HARVEST_RELEASE \033[0m"
+
 # create build directory tree
-info "creating package directories"
-rm -rf "$BUILD" && mkdir -p "$BUILD" && cd "$BUILD"
-mkdir -p "$BUILD/opt/harvest/"
+echo " --> create package directories"
+rm -rf "$BUILD"
+mkdir -p "$BUILD"
+mkdir -p "$BUILD/opt/harvest/bin/"
 mkdir -p "$BUILD/etc/harvest/"
-mkdir -p "$BUILD/var/log/harvest/"
-mkdir -p "$BUILD/var/run/harvest/"
-cp -r "$SRC/src/" "opt/harvest/"
-cp -r "$SRC/cmd/" "opt/harvest/"
-cp -r "$SRC/docs/" "opt/harvest/"
-cp -r "$SRC/README.md" "opt/harvest/"
-cp -r "$SRC/conf/" "etc/harvest/"
-cp -r "$SRC/grafana/" "etc/harvest/"
-cp -r "$SRC/harvest.yml" "etc/harvest/"
+cp -r "$SRC/grafana" "$SRC/conf" "$BUILD/etc/harvest/"
+cp "$SRC/harvest.yml" "$BUILD/etc/harvest/"
+cp -r "$SRC/pkg/" "$SRC/cmd/" "$SRC/docs/" "$BUILD/opt/harvest/"
+cp -r "$SRC/rpm/" "$SRC/deb/" "$BUILD/opt/harvest/"
+cp "$SRC/Makefile" "$SRC/README.md" "$SRC/LICENSE" "$SRC/go.mod" "$BUILD/opt/harvest/"
 
-info "creating DEB control file"
-mkdir "DEBIAN"
-echo "Package: harvest" > "DEBIAN/control"
-echo "Version: $HARVEST_VERSION-$HARVEST_RELEASE" >> "DEBIAN/control"
-#echo "Section: base" > "DEBIAN/control"
-echo "Priority: optional" > "DEBIAN/control"
-echo "Architecture: $HARVEST_ARCH" >> "DEBIAN/control"
-cat "$SRC/cmd/deb/harvest.control" >> "DEBIAN/control"
-cp "$SRC/cmd/install.sh" "DEBIAN/preinst"
+# copy and modify debian packaging files
+echo " --> create DEB control file"
+mkdir "$BUILD/DEBIAN/"
+cp "$SRC/deb/preinst" "$SRC/deb/postinst" "$SRC/deb/prerm" "$SRC/deb/postrm" "$BUILD/DEBIAN/"
+echo "Package: harvest" > "$BUILD/DEBIAN/control"
+echo "Version: $HARVEST_VERSION-$HARVEST_RELEASE" >> "$BUILD/DEBIAN/control"
+echo "Architecture: $HARVEST_ARCH" >> "$BUILD/DEBIAN/control"
+cat "$SRC/deb/control" >> "$BUILD/DEBIAN/control"
 
-# build binaries
-info "compiling binaries..."
+echo " --> update version & build info in [cmd/harvest/version/version.go]"
+cd "$BUILD/opt/harvest/cmd/harvest/version"
+sed -i -E "s/(\s*BUILD\s*=\s*\")\w*(\")/\1deb $HARVEST_ARCH\2/" version.go
+sed -i -E "s/(\s*VERSION\s*=\s*\")\w*(\")/\1$HARVEST_VERSION\2/" version.go
+sed -i -E "s/(\s*RELEASE\s*=\s*\")\w*(\")/\1$HARVEST_RELEASE\2/" version.go
+
+# build binaries, since arch of build machine might not be the same as the target machine
+# export a variable that Makefile will pass to the go compiler
 cd "$BUILD/opt/harvest/"
-sh cmd/build.sh all
+export GOOS="linux"
+export GOARCH="$HARVEST_ARCH"
+if [ "$HARVEST_ARCH" = "armhf" ]; then
+    export GOARCH="arm"
+    export GOARM="7"
+fi
+echo " --> build harvest with envs [GOOS=$GOOS, GOARCH=$GOARCH, GOARM=$GOARM]"
+make all
 if [ ! $? -eq 0 ]; then
-    error "compile failed"
+    error "     build failed"
     exit 1
 fi
 
 # build deb package
-mkdir -p "$SRC/dist/$HARVEST_VERSION-$HARVEST_RELEASE"
-dpkg-deb --build "$BUILD" "$SRC/dist/$HARVEST_VERSION-$HARVEST_RELEASE_$HARVEST_ARCH.deb"
+PACKAGE_DIR="$SRC/dist/$HARVEST_VERSION-$HARVEST_RELEASE"
+PACKAGE_NAME="harvest_${HARVEST_VERSION}-${HARVEST_RELEASE}_${HARVEST_ARCH}.deb"
+mkdir -p "$PACKAGE_DIR"
+rm -f "$PACKAGE_DIR/$PACKAGE_NAME"
+dpkg-deb --build "$BUILD" "$PACKAGE_DIR/$PACKAGE_NAME"
 if [ ! $? -eq 0 ]; then
     error "dpkg build failed"
     exit 1
 fi
-
-rm -Rf "$BUILDIR"
-info "DEB package ready for distribution. Have a nice evening!"
+echo " --> created package: [$PACKAGE_DIR/$PACKAGE_NAME]"
+echo " --> cleanup"
+rm -Rf "$BUILD"
+echo "DEB package ready for distribution. Have a nice evening!"
 exit 0

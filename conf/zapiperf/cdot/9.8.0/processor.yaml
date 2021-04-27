@@ -13,11 +13,12 @@ counters:
   - processor_busy
 
 plugins:
-  - Processor
+  Aggregator:
+    - node<>node_cpu
 
 # only export node-level averages from plugin
 # set this true or comment, to get data for each cpu
-export_data: False
+export_data: false
 
 export_options:
   instance_keys:

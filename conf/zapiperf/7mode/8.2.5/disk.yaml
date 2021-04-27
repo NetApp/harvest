@@ -1,6 +1,6 @@
-name:                     DiskConstituent
+name:                     Disk
 query:                    disk
-object:                   disk_constituent
+object:                   disk
 instance_key:             name
 
 counters:
@@ -11,13 +11,10 @@ counters:
   - disk_busy
   - disk_capacity
   - disk_speed
-#  - display_name
   - io_pending
   - io_queued
-  - node_name             => node
-#  - physical_disk_name
-#  - raid_group
-  - raid_name
+  - physical_disk_name
+  - raid_group
   - raid_type
   - total_transfers
   - user_read_chain
@@ -30,7 +27,11 @@ counters:
   - user_writes
 
 plugins:
-  - Disk
+  LabelAgent:
+    split: raid_group `/` ,aggr,plex,raid
+  Aggregator:
+    - node
+    - aggr node
 
 export_options:
   instance_keys:

@@ -18,7 +18,7 @@ cp -r "$SRC/grafana/" "$BUILD/harvest/"
 cp -r "$SRC/docs/" "$BUILD/harvest/"
 cp -r "$SRC/conf/" "$BUILD/harvest/"
 cp -r "$SRC/rpm/" "$BUILD/harvest/"
-cp "$SRC/harvest.yml" "$BUILD/harvest/"
+cp "$SRC/harvest.example.yml" "$BUILD/harvest/"
 cp "$SRC/go.mod" "$BUILD/harvest/"
 cp "$SRC/Makefile" "$BUILD/harvest/"
 cp "$SRC/README.md" "$BUILD/harvest/"
@@ -47,13 +47,13 @@ mkdir -p "rpm/RPMS"
 mkdir "rpm/SOURCES"
 mkdir "rpm/SRPMS"
 mkdir "rpm/SPECS"
-echo "%define release $HARVEST_RELEASE" > "rpm/SPECS/harvest.spec"
-echo "%define version $HARVEST_VERSION" >> "rpm/SPECS/harvest.spec"
-echo "%define arch $HARVEST_ARCH" >> "rpm/SPECS/harvest.spec"
-cat "$SRC/rpm/harvest.spec" >> "rpm/SPECS/harvest.spec"
+echo "%define release $HARVEST_RELEASE" > "rpm/SPECS/spec"
+echo "%define version $HARVEST_VERSION" >> "rpm/SPECS/spec"
+echo "%define arch $HARVEST_ARCH" >> "rpm/SPECS/spec"
+cat "$SRC/rpm/spec" >> "rpm/SPECS/spec"
 
 # create tarball
-echo "building tarball"
+echo "building binary tarball"
 cd "$BUILD"
 TGZ_FILEPATH="$BUILD/rpm/SOURCES/harvest_$HARVEST_VERSION-$HARVEST_RELEASE.tgz"
 tar -czvf "$TGZ_FILEPATH" "harvest"
@@ -62,11 +62,22 @@ if [ ! $? -eq 0 ]; then
     exit 1
 fi
 echo "  -> [$TGZ_FILEPATH]"
-file "$TGZ_FILEPATH" # DEBUG
+
+echo "building source tarball"
+rm -rf "harvest/bin/"
+TARGET_DIR="$SRC/dist/$HARVEST_VERSION-$HARVEST_RELEASE"
+mkdir -p $TARGET_DIR
+TGZ_SOURCE="$TARGET_DIR/harvest_${HARVEST_VERSION}-${HARVEST_RELEASE}_source.tgz"
+tar -czvf "$TGZ_SOURCE" "harvest"
+if [ ! $? -eq 0 ]; then
+    echo "failed, aborting"
+    exit 1
+fi
+echo "  -> [$TGZ_SOURCE]"
 
 # build rpm
 echo "building rpm"
-rpmbuild --target "$HARVEST_ARCH" -bb "rpm/SPECS/harvest.spec"
+rpmbuild --target "$HARVEST_ARCH" -bb "rpm/SPECS/spec"
 if [ ! $? -eq 0 ]; then
     echo "rpmbuild failed, aborting"
     exit 1
@@ -75,8 +86,6 @@ fi
 # copy files & clean up
 cd $BUILD
 echo "copying packages"
-TARGET_DIR="$SRC/dist/$HARVEST_VERSION-$HARVEST_RELEASE"
-mkdir -p $TARGET_DIR
 mv -vf /root/rpmbuild/RPMS/* $TARGET_DIR/
 mv -vf rpm/SOURCES/* $TARGET_DIR/
 echo "cleaning up..."

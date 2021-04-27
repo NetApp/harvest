@@ -1,0 +1,57 @@
+name:                     Disk
+query:                    disk:constituent
+object:                   disk
+instance_key:             uuid
+
+counters:
+  - instance_uuid
+  - instance_name         => partition
+  - cp_read_chain
+  - cp_read_latency
+  - cp_reads
+  - disk_busy 
+  - disk_capacity
+  - disk_speed
+  - io_pending
+  - io_queued
+  - node_name             => node
+  - physical_disk_name    => disk
+  - raid_group
+  - raid_type
+  - total_transfers
+  - user_read_chain
+  - user_read_blocks
+  - user_read_latency
+  - user_reads
+  - user_write_chain
+  - user_write_blocks
+  - user_write_latency
+  - user_writes
+
+plugins:
+  LabelAgent:
+    split: raid_group `/` ,aggr,plex,raid
+  Aggregator:
+  # plugin will create summary/average for each object
+  # any names after the object names will be threated as
+  # label names that will be added to instances
+    - node
+    - aggr node
+  #  - plex node aggr
+  #  - raid node aggr plex
+
+# only export node/aggr aggregations from plugin
+# set this true or comment, to get data for each disk
+export_data: false
+
+export_options:
+  instance_keys:
+    - partition
+    - aggr
+    - node
+    - disk
+    - raid
+    - plex
+  instance_labels:
+    - disk_speed
+    - raid_type

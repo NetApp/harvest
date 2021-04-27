@@ -3,7 +3,7 @@
 BUILD_SOURCE=$(pwd)
 BIN=`basename $0`
 
-usage() {
+help() {
     cat <<EOF_PRINT_HELP
 
     $BIN - Build Distribution Package
@@ -13,7 +13,10 @@ usage() {
 
     Arguments:
         dist            package format (rpm or dep)
-        arch            architecture (x86_64, amd64, etc)
+        arch            target architecture, one of:
+                            x86_64/amd64, amd64, arm64, arm32, armhf
+                            (other architectures should work as well,
+                            but we haven't tested)
         version         version
         release         release
 
@@ -21,6 +24,11 @@ usage() {
         -d, --docker    build in docker container
 
 EOF_PRINT_HELP
+}
+
+usage() {
+    echo "Usage:"
+    echo "$./$BIN <dist> <arch> <version> <release> [options]"
 }
 
 info() {
@@ -33,7 +41,7 @@ error() {
 
 
 build () {
-    if [ $DOCKER ]; then
+    if [ "$DOCKER" == "true" ]; then
 
         info "building [harvest_$VERSION-$RELEASE_$ARCH.$DIST] in container"
 
@@ -69,7 +77,7 @@ build () {
 
         info "building [harvest_$VERSION-$RELEASE_$ARCH.$DIST] on local system"
 
-        export HARVEST_BUILD_SRC="/tmp/src"
+        export HARVEST_BUILD_SRC="$BUILD_SOURCE"
         export HARVEST_ARCH="$ARCH"
         export HARVEST_VERSION="$VERSION"
         export HARVEST_RELEASE="$RELEASE"
@@ -91,7 +99,7 @@ build () {
 # defaults
 
 if [ "$1" == "help" ] || [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
-    usage
+    help
     exit 0
 fi
 
@@ -100,19 +108,25 @@ ARCH=$2
 VERSION=$3
 RELEASE=$4
 
-if [ -z "$DIST" ] || [ -z "$ARCH" ] || [ -z "$VERSION" ] || [ -z "$RELEASE" ]; then
+if [[ -z "$DIST" || -z "$ARCH" || -z "$VERSION" || -z "$RELEASE" ]]; then
     usage
     exit 1
 fi
 
-if [ "$5" == "-d" ] || [ "$5" == "--docker" ]; then
+if [[ "$5" == "-d" || "$5" == "--docker" ]]; then
+    echo " -- build in docker"
     DOCKER=true
 else
+    echo " -- build locally"
     DOCKER=false
 fi
 
+if [[ "$ARCH" == "x86_64" && "$DIST" == "deb" ]]; then
+    ARCH="amd64"
+fi
+
 # build package in container
-if [ "$DIST" == "rpm" ] || [ "$DIST" == "deb" ]; then
+if [[ "$DIST" == "rpm" || "$DIST" == "deb" ]]; then
     build
 else
     error "unknown package format: $DIST"

@@ -29,11 +29,9 @@ counters:
       - total-saved               => sis_total_saved
 
 plugins:
-  Status:
-    - status:
-      label: state
-      ok_value: online
-                                               
+  LabelAgent:
+    value_mapping: status state online `1`
+ 
 export_options:
   instance_keys:
     - volume

@@ -28,6 +28,6 @@ override:
   - read_io_type_base: delta
 
 export_options:
-  require_instance_keys: False # node is global label for 7mode
+  require_instance_keys: false # node is global label for 7mode
   graphite_leafs:
     - node.{node}.wafl
