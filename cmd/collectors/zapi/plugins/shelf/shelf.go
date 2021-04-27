@@ -106,7 +106,7 @@ func (my *Shelf) Init() error {
 						logger.Debug(my.Prefix, "added instance label: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
 					}
 				} else {
-					metric, err := my.data[attribute].NewMetricUint64(metric_name)
+					metric, err := my.data[attribute].NewMetricFloat64(metric_name)
 					if err != nil {
 						logger.Error(my.Prefix, "add metric: %v", err)
 						return err

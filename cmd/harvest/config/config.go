@@ -413,6 +413,7 @@ func add_poller() *node.Node {
 
 	collectors := poller.NewChildS("collectors", "")
 	collectors.NewChildS("", "Zapi")
+	collectors.NewChildS("", "ZapiPerf")
 
 	return poller
 }

@@ -26,10 +26,10 @@ package main
 import (
 	"fmt"
 	"goharvest2/cmd/poller/exporter"
+	"goharvest2/pkg/color"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/logger"
 	"goharvest2/pkg/matrix"
-	"goharvest2/pkg/color"
 	"regexp"
 	"strconv"
 	"strings"
@@ -198,6 +198,8 @@ func (me *Prometheus) Export(data *matrix.Matrix) error {
 	// lock the exporter, to prevent other collectors from writing to us
 	me.Lock()
 	defer me.Unlock()
+
+	logger.Trace(me.Prefix, "incoming %s%s(%s) (%s)%s", color.Bold, color.Cyan, data.UUID, data.Object, color.End)
 
 	// render metrics into Prometheus format
 	start := time.Now()

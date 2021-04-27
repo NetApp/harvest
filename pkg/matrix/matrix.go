@@ -38,8 +38,8 @@ func New(uuid, object string) *Matrix {
 // only for debugging
 func (me *Matrix) Print() {
 	fmt.Println()
-	fmt.Printf(">>> Metrics = %d\n", len(me.instances))
-	fmt.Printf(">>> Instances = %d\n", len(me.metrics))
+	fmt.Printf(">>> Metrics = %d\n", len(me.metrics))
+	fmt.Printf(">>> Instances = %d\n", len(me.instances))
 	fmt.Println()
 
 	for key, metric := range me.GetMetrics() {

@@ -71,7 +71,7 @@ func (me *Aggregator) parseRules() error {
 				if s := strings.SplitN(suffix[0], "=", 2); len(s) == 2 {
 					r.checkLabel = s[0]
 					value = s[1]
-				} else {
+				} else if s[0] != "" {
 					r.checkLabel = r.label
 					value = s[0]
 				}
@@ -125,6 +125,7 @@ func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 		matrices[i].UUID += ".Aggregator"
 		matrices[i].SetExportOptions(matrix.DefaultExportOptions())
+		matrices[i].SetExportable(true)
 		rule.counts = make(map[string]map[string]int)
 	}
 
@@ -144,12 +145,15 @@ func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		logger.Trace(me.Prefix, "handling instance with labels [%s]", instance.GetLabels().String())
 
 		for i, rule := range me.rules {
+
+			logger.Info(me.Prefix, "handling rule [%v]", rule)
 			if obj_name = instance.GetLabel(rule.label); obj_name == "" {
 				logger.Warn(me.Prefix, "label name for [%s] missing, skipped", rule.label)
 				continue
 			}
 
 			if rule.checkLabel != "" {
+				logger.Trace(me.Prefix, "checking label (%s => %s)....", rule.checkLabel, rule.checkValue)
 				if rule.checkRegex != nil {
 					if !rule.checkRegex.MatchString(instance.GetLabel(rule.checkLabel)) {
 						continue

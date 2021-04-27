@@ -169,18 +169,9 @@ func Init(c Collector) error {
 	md.SetGlobalLabel("object", object)
 
 	md.NewMetricInt64("poll_time")
-	md.NewMetricInt64("poll2_time")
 	md.NewMetricInt64("task_time")
-	md.NewMetricInt64("task2_time")
-	md.NewMetricInt64("read_time")
-	md.NewMetricInt64("build_time")
-	md.NewMetricInt64("batch_time")
 	md.NewMetricInt64("api_time")
-	md.NewMetricInt64("invoke_time")
 	md.NewMetricInt64("parse_time")
-	md.NewMetricInt64("fetch_time")
-	md.NewMetricInt64("search_time")
-	md.NewMetricInt64("search2_time")
 	md.NewMetricInt64("calc_time")
 	md.NewMetricInt64("plugin_time")
 	md.NewMetricInt64("content_length")
@@ -226,8 +217,8 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 			}
 
 			var (
-				start, plugin_start                time.Time
-				task_time, poll2_time, plugin_time time.Duration
+				start, plugin_start    time.Time
+				task_time, plugin_time time.Duration
 			)
 
 			start = time.Now()
@@ -299,9 +290,7 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 					me.Metadata.LazySetValueInt64("plugin_time", task.Name, plugin_time.Microseconds())
 				}
 
-				poll2_time = time.Since(start)
 				me.Metadata.LazySetValueInt64("poll_time", task.Name, task.Runtime().Microseconds())
-				me.Metadata.LazySetValueInt64("poll2_time", task.Name, poll2_time.Microseconds())
 				me.Metadata.LazySetValueInt64("task_time", task.Name, task_time.Microseconds())
 
 				if api_time, ok := me.Metadata.LazyGetValueInt64("api_time", task.Name); ok && api_time != 0 {
@@ -331,6 +320,8 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 						logger.Error(me.Prefix, "export data to [%s]: %s", e.GetName(), err.Error())
 						break
 					}
+				} else {
+					logger.Debug(me.Prefix, "skipped data (%s) (%s) - set non-exportable", data.UUID, data.Object)
 				}
 			}
 		}

@@ -10,42 +10,45 @@ package main
 import (
 	"bytes"
 	"crypto/tls"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"goharvest2/pkg/argparse"
 	"goharvest2/pkg/config"
-	"goharvest2/pkg/tree/json"
 	"goharvest2/pkg/tree/node"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
+	"strconv"
 	"strings"
 	"time"
 )
 
 const (
-	CLIENT_TIMEOUT       = 5
-	GRAFANA_FOLDER_TITLE = "Harvest 2.0"
-	GRAFANA_FOLDER_UID   = "harvest2.0folder"
-	GRAFANA_DATASOURCE   = "Prometheus" // default datasource to use, @TODO: support others
+	_CLIENT_TIMEOUT       = 5
+	_GRAFANA_FOLDER_TITLE = "Harvest 2.0"
+	_GRAFANA_FOLDER_UID   = "harvest2.0folder"
+	_GRAFANA_DATASOURCE   = "Prometheus"
 )
 
 var (
-	CONF_PATH string
+	_GRAFANA_MIN_VERS = [3]int{7, 1, 0} // lowest grafana version we require
+	_CONF_PATH        string
 )
 
 type options struct {
-	command         string // one of: import, export, clean
-	addr            string // URL of Grafana server (e.g. "http://localhost:3000")
-	token           string // API token issued by Grafana server
-	import_dir      string // Directory from which to import dashboards (e.g. "/etc/harvest/grafana/prometheus")
-	grafana_dir     string // Grafana folder where to upload from where to download dashboards
-	grafana_dir_id  string
-	grafana_dir_uid string
-	datasource      string
-	client          *http.Client
-	headers         http.Header
+	command    string // one of: import, export, clean
+	addr       string // URL of Grafana server (e.g. "http://localhost:3000")
+	token      string // API token issued by Grafana server
+	dir        string // Directory from which to import dashboards (e.g. "/etc/harvest/grafana/prometheus")
+	folder     string // Grafana folder where to upload from where to download dashboards
+	folderId   int64
+	folderUid  string
+	datasource string
+	variable   bool
+	client     *http.Client
+	headers    http.Header
 }
 
 func main() {
@@ -57,12 +60,12 @@ func main() {
 	)
 
 	// set harvest config path
-	if CONF_PATH = os.Getenv("HARVEST_CONF"); CONF_PATH == "" {
-		CONF_PATH = "/etc/harvest"
+	if _CONF_PATH = os.Getenv("HARVEST_CONF"); _CONF_PATH == "" {
+		_CONF_PATH = "/etc/harvest"
 	}
 
 	// parse CLI args
-	opts = get_opts()
+	opts = getOptions()
 
 	if opts.command == "" {
 		fmt.Println("missing positional argument: command")
@@ -72,57 +75,128 @@ func main() {
 	// assume command is "import"
 	// other commands not implemented yet
 
-	// ask for API token if not provided as arg
-	if opts.token == "" {
-		if opts.token, err = get_token(); err != nil {
+	// ask for API token if not provided as arg and validate
+	if err = checkToken(opts, false); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	// check if Grafana folder exists
+	if exists, err = checkFolder(opts); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	if opts.command == "import" {
+		if exists {
+			fmt.Printf("folder [%s] exists in Grafana - OK\n", opts.folder)
+		} else if err = createFolder(opts); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		} else {
+			fmt.Printf("created Grafana folder [%s] - OK\n", opts.folder)
+		}
+		if err = importDashboards(opts); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 	}
 
-	// build headers for HTTP request
-	opts.headers = http.Header{}
-	opts.headers.Add("Accept", "application/json")
-	opts.headers.Add("Content-Type", "application/json")
-	opts.headers.Add("Authorization", "Bearer "+opts.token)
-
-	opts.client = &http.Client{Timeout: time.Duration(CLIENT_TIMEOUT) * time.Second}
-	if strings.HasPrefix(opts.addr, "https://") {
-		opts.client.Transport = &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
-	}
-
-	// check if Grafana folder exists
-	if exists, err = check_folder(opts); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	} else if exists {
-		fmt.Printf("Grafana folder [%s] already exists - OK\n", opts.grafana_dir)
-	} else if err = create_folder(opts); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	} else {
-		fmt.Printf("Created Grafana folder [%s] - OK\n", opts.grafana_dir)
-	}
-
-	if err = import_dashboards(opts); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+	if opts.command == "export" {
+		if !exists {
+			fmt.Printf("folder [%s] not found in Grafana\n", opts.folder)
+			os.Exit(1)
+		} else if err = exportDashboards(opts); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 	}
 }
 
-func import_dashboards(opts *options) error {
-
+func exportDashboards(opts *options) error {
 	var (
-		files   []os.FileInfo
-		request *node.Node
-		data    []byte
-		err     error
+		//request *node.Node
+		err   error
+		uids  map[string]string
+		dir   string
+		count int
 	)
 
-	if files, err = ioutil.ReadDir(opts.import_dir); err != nil {
+	fmt.Printf("querying for content of folder id [%d]\n", opts.folderId)
+	/*
+	   request = node.NewS("")
+	   request.NewChildS("type", "dash-db")
+	   fd := request.NewChildS("folderIds", "")
+	   fd.NewChildS("", opts.folderId)
+	*/
+
+	//result, status, code, err := sendRequest(opts, "POST", "/api/search?folderIds=", json.Dump(request))
+	result, status, code, err := sendRequestArray(opts, "GET", "/api/search?folderIds="+strconv.FormatInt(opts.folderId, 10), nil)
+	if err != nil && code != 200 {
+		fmt.Printf("server response [%d: %s]: %v\n", code, status, err)
+		return err
+	}
+	//result.Print(0)
+
+	uids = make(map[string]string)
+	for _, elem := range result {
+		uid := elem["uid"].(string)
+		uri := elem["uri"].(string)
+		if uid != "" && uri != "" {
+			uids[uid] = strings.ReplaceAll(strings.ReplaceAll(uri, "/", "_"), "-", "_")
+		}
+	}
+
+	if opts.dir == "" {
+		dir = path.Join("./", strings.ReplaceAll(opts.folder, " ", "_"))
+	} else {
+		dir = path.Join(opts.dir, strings.ReplaceAll(opts.folder, " ", "_"))
+	}
+	if err = os.MkdirAll(dir, 0755); err != nil {
+		fmt.Printf("error makedir [%s]: %v\n", dir, err)
+		return err
+	}
+	fmt.Printf("exporting dashboards to directory [%s]\n", dir)
+	//fmt.Printf("fetching %d dashboards from folder [%s]...\n", len(uids), opts.folder)
+
+	for uid, uri := range uids {
+		//fmt.Printf("(debug) [%s] => [%s]\n", uid, uri)
+		if result, status, code, err := sendRequest(opts, "GET", "/api/dashboards/uid/"+uid, nil); err != nil {
+			fmt.Printf("error requesting [%s]: [%d: %s] %v\n", uid, code, status, err)
+			return err
+		} else if dashboard, ok := result["dashboard"]; ok {
+			fp := path.Join(dir, uri+".json")
+			if data, err := json.Marshal(dashboard); err != nil {
+				fmt.Println("error marshall dashboard [%s]: %v\n", uid, err)
+				return err
+			} else if err = ioutil.WriteFile(fp, data, 0644); err != nil {
+				fmt.Printf("error write to [%s]: %v\n", fp, err)
+				return err
+			} else {
+				fmt.Printf("OK - exported [%s]\n", fp)
+				count++
+			}
+		}
+	}
+	fmt.Printf("exported %d dashboards to [%s]\n", count, dir)
+	return nil
+}
+
+func importDashboards(opts *options) error {
+
+	var (
+		files              []os.FileInfo
+		request, dashboard map[string]interface{}
+		data               []byte
+		err                error
+	)
+
+	if files, err = ioutil.ReadDir(opts.dir); err != nil {
 		// TODO check for not exist
 		return err
 	}
+
+	fmt.Printf("preparing to import %d dashboards...\n", len(files))
 
 	for _, f := range files {
 
@@ -131,38 +205,45 @@ func import_dashboards(opts *options) error {
 			continue
 		}
 
-		fmt.Printf("Importing [%s] ", f.Name())
+		//fmt.Printf("Importing [%s] ", f.Name())
 
-		if data, err = ioutil.ReadFile(path.Join(opts.import_dir, f.Name())); err != nil {
-			fmt.Println("ERR")
+		if data, err = ioutil.ReadFile(path.Join(opts.dir, f.Name())); err != nil {
+			fmt.Printf("error reading file [%s]\n", f.Name())
 			return err
 		}
 
-		request = node.NewS("")
-		request.NewChildS("overwrite", "true")
-		request.NewChildS("folderId", opts.grafana_dir_id)
-		request.NewChild([]byte("dashboard"), bytes.ReplaceAll(data, []byte("${DS_PROMETHEUS}"), []byte(opts.datasource)))
+		data = bytes.ReplaceAll(data, []byte("${DS_PROMETHEUS}"), []byte(opts.datasource))
 
-		result, status, code, err := send_request(opts, "POST", "/api/dashboards/db", json.Dump(request))
+		if err = json.Unmarshal(data, &dashboard); err != nil {
+			fmt.Printf("error parsing file [%s]\n", f.Name())
+			fmt.Println("-------------------------------")
+			fmt.Println(string(data))
+			fmt.Println("-------------------------------")
+			return err
+		}
+
+		request = make(map[string]interface{})
+		request["overwrite"] = true
+		request["folderId"] = opts.folderId
+		request["dashboard"] = dashboard
+
+		result, status, code, err := sendRequest(opts, "POST", "/api/dashboards/db", request)
 
 		if err != nil {
-			fmt.Println("ERR")
+			fmt.Printf("error importing [%s]\n", f.Name())
 			return err
 		}
 
 		if code != 200 {
-			fmt.Println("ERR")
-			if result != nil {
-				result.Print(0)
-			}
-			return errors.New("server response: " + status)
+			fmt.Printf("error - server response (%d - %s) %v\n", code, status, result)
+			return errors.New(status)
 		}
-		fmt.Println("OK")
+		fmt.Printf("OK - imported [%s]\n", f.Name())
 	}
 	return nil
 }
 
-func get_opts() *options {
+func getOptions() *options {
 
 	var (
 		opts      *options
@@ -177,7 +258,7 @@ func get_opts() *options {
 		&opts.command,
 		"command",
 		"command to execute",
-		[]string{"import"},
+		[]string{"import", "export"},
 	)
 
 	opts.addr = "http://127.0.0.1:3000"
@@ -195,34 +276,41 @@ func get_opts() *options {
 		"API token issued by Grafana server for authentication",
 	)
 
-	opts.import_dir = "prometheus"
+	opts.dir = "prometheus"
 	parser.String(
-		&opts.import_dir,
+		&opts.dir,
 		"directory",
 		"d",
 		"Directory from which to import or where to export dashboards (default: prometheus)",
 	)
 
-	opts.grafana_dir = GRAFANA_FOLDER_TITLE
+	opts.folder = _GRAFANA_FOLDER_TITLE
 	parser.String(
-		&opts.grafana_dir,
+		&opts.folder,
 		"folder",
 		"f",
-		"Grafana folder name for the dashboards (default: \""+GRAFANA_FOLDER_TITLE+"\")",
+		"Grafana folder name for the dashboards (default: \""+_GRAFANA_FOLDER_TITLE+"\")",
 	)
 
-	opts.datasource = GRAFANA_DATASOURCE
+	opts.datasource = _GRAFANA_DATASOURCE
 	parser.String(
 		&opts.datasource,
 		"datasource",
 		"s",
-		"Grafana datasource for the dashboards (default: \""+GRAFANA_DATASOURCE+"\")",
+		"Grafana datasource for the dashboards (default: \""+_GRAFANA_DATASOURCE+"\")",
+	)
+
+	parser.Bool(
+		&opts.variable,
+		"variable",
+		"v",
+		"Use datasource as variable (overrides: --datasource, default: false)",
 	)
 
 	parser.Bool(
 		&use_https,
 		"https",
-		"s",
+		"S",
 		"Force to use HTTPS (default: false)",
 	)
 
@@ -233,7 +321,9 @@ func get_opts() *options {
 	}
 
 	// full path
-	opts.import_dir = path.Join(CONF_PATH, "grafana", opts.import_dir)
+	if opts.command == "import" {
+		opts.dir = path.Join(_CONF_PATH, "grafana", opts.dir)
+	}
 
 	// full URL
 	opts.addr = strings.TrimPrefix(opts.addr, "http://")
@@ -249,7 +339,7 @@ func get_opts() *options {
 	return opts
 }
 
-func get_token() (string, error) {
+func checkToken(opts *options, ignoreConfig bool) error {
 
 	// @TODO check and handle expired API token
 
@@ -259,50 +349,119 @@ func get_token() (string, error) {
 		err                        error
 	)
 
-	config_path = path.Join(CONF_PATH, "harvest.yml")
+	config_path = path.Join(_CONF_PATH, "harvest.yml")
 
 	if params, err = config.LoadConfig(config_path); err != nil {
-		return token, err
+		return err
 	} else if params == nil {
-		return token, errors.New(fmt.Sprintf("config [%s] not found", config_path))
+		return errors.New(fmt.Sprintf("config [%s] not found", config_path))
 	}
 
 	if tools = params.GetChildS("Tools"); tools != nil {
-		token = tools.GetChildContentS("grafana_api_token")
-		fmt.Println("Using API token from config")
+		if !ignoreConfig {
+			token = tools.GetChildContentS("grafana_api_token")
+			fmt.Println("using API token from config")
+		}
 	}
 
-	if token == "" {
+	if opts.token == "" && token == "" {
 		fmt.Printf("enter API token: ")
-		fmt.Scanf("%s\n", &token)
+		fmt.Scanf("%s\n", &opts.token)
+	} else if opts.token == "" {
+		opts.token = token
+	}
 
-		fmt.Printf("safe for later use? [y/n]: ")
+	// build headers for HTTP request
+	opts.headers = http.Header{}
+	opts.headers.Add("Accept", "application/json")
+	opts.headers.Add("Content-Type", "application/json")
+	opts.headers.Add("Authorization", "Bearer "+opts.token)
+
+	opts.client = &http.Client{Timeout: time.Duration(_CLIENT_TIMEOUT) * time.Second}
+	if strings.HasPrefix(opts.addr, "https://") {
+		opts.client.Transport = &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
+	}
+	// send random request to validate token
+	result, status, code, err := sendRequest(opts, "GET", "/api/folders/aaaaaaa", nil)
+	if err != nil {
+		return err
+	} else if code != 200 && code != 404 {
+		msg := result["message"].(string)
+		fmt.Printf("error connect: (%d - %s) %s\n", code, status, msg)
+		opts.token = ""
+		return checkToken(opts, true)
+	}
+
+	// ask user to safe API key
+	if opts.token != tools.GetChildContentS("grafana_api_token") {
+
+		fmt.Printf("safe API key for later use? [Y/n]: ")
 		fmt.Scanf("%s\n", &answer)
 
-		if answer == "y" || answer == "yes" {
+		if answer == "y" || answer == "yes" || answer == "" {
 			if tools == nil {
 				tools = params.NewChildS("Tools", "")
 			}
-			tools.SetChildContentS("grafana_api_token", token)
+			tools.SetChildContentS("grafana_api_token", opts.token)
 			fmt.Printf("saving config file [%s]\n", config_path)
 			if err = config.SafeConfig(params, config_path); err != nil {
-				return token, err
+				return err
 			}
 		}
 	}
-	return token, nil
+
+	// get grafana version, we are more or less guaranteed this succeeds
+	if result, status, code, err = sendRequest(opts, "GET", "/api/health", nil); err != nil {
+		return err
+	}
+
+	version := result["version"].(string)
+	fmt.Printf("connected to Grafana server (version: %s)\n", version)
+	// if we are going to import check grafana version
+	if opts.command == "import" && !checkVersion(version) {
+		fmt.Printf("warning: current set of dashboards require Grafana version (%d.%d.%d) or higher\n", _GRAFANA_MIN_VERS[0], _GRAFANA_MIN_VERS[1], _GRAFANA_MIN_VERS[2])
+		fmt.Printf("continue anyway? [y/N]: ")
+		fmt.Scanf("%s\n", &answer)
+		if answer != "y" && answer != "yes" {
+			os.Exit(0)
+		}
+	}
+
+	return nil
 }
 
-func create_folder(opts *options) error {
+func checkVersion(version string) bool {
+	//fmt.Printf("checking required version (%d.%d.%d) or higher\n", _GRAFANA_MIN_VERS[0], _GRAFANA_MIN_VERS[1], _GRAFANA_MIN_VERS[2])
+	if v := strings.Split(version, "."); len(v) == 3 {
+		for i := range v {
+			if n, err := strconv.Atoi(v[i]); err != nil {
+				fmt.Printf("error parsing version (%s): %v\n", version, err)
+				return false
+			} else if n < _GRAFANA_MIN_VERS[i] {
+				return false
+			} else if n > _GRAFANA_MIN_VERS[i] {
+				return false
+			} // if equal continue checking...
+		}
+	} else {
+		fmt.Printf("error parsing version (%s): expected three dot-seperated values\n", version)
+		return false
+	}
+	// we reach here if there is exact match
+	return true
+}
 
-	var request *node.Node
+func createFolder(opts *options) error {
 
-	request = node.NewS("")
-	request.NewChildS("title", opts.grafana_dir)
+	var request map[string]interface{}
+
+	request = make(map[string]interface{})
+
+	request["title"] = opts.folder
 	//fmt.Println("REQUEST:") // DEBUG
 	//request.Print(0)
 
-	result, status, code, err := send_request(opts, "POST", "/api/folders", json.Dump(request))
+	result, status, code, err := sendRequest(opts, "POST", "/api/folders", request)
 
 	if err != nil {
 		return err
@@ -312,19 +471,17 @@ func create_folder(opts *options) error {
 		return errors.New("server response: " + status)
 	}
 
-	opts.grafana_dir_id = result.GetChildContentS("id")
-	opts.grafana_dir_uid = result.GetChildContentS("uid")
-
-	// DEBUG
-	//fmt.Println("FOLDER CREATED!")
-	//result.Print(0)
+	opts.folderId = int64(result["id"].(float64))
+	//opts.folderId = strconv.FormatFloat(result["id"].(float64), 'f', 0, 32)
+	//opts.folderId = result["id"].(string)
+	opts.folderUid = result["uid"].(string)
 
 	return nil
 }
 
-func check_folder(opts *options) (bool, error) {
+func checkFolder(opts *options) (bool, error) {
 
-	result, status, code, err := send_request(opts, "GET", "/api/folders?limit=1000", nil)
+	result, status, code, err := sendRequestArray(opts, "GET", "/api/folders?limit=1000", nil)
 
 	if err != nil {
 		return false, err
@@ -334,10 +491,16 @@ func check_folder(opts *options) (bool, error) {
 		return false, errors.New("server response: " + status)
 	}
 
-	for _, x := range result.GetChildren() {
-		if x.GetChildContentS("title") == opts.grafana_dir {
-			opts.grafana_dir_id = x.GetChildContentS("id")
-			opts.grafana_dir_uid = x.GetChildContentS("uid")
+	if result == nil || len(result) == 0 {
+		return false, nil
+	}
+
+	for _, x := range result {
+		//elem := x.(map[string]interface{})
+		if x["title"].(string) == opts.folder {
+			//opts.folderId = strconv.FormatFloat(x["id"].(float64), 'f', 0, 32)
+			opts.folderId = int64(x["id"].(float64))
+			opts.folderUid = x["uid"].(string)
 
 			// DEBUG
 			//fmt.Println("FOUND FOLDER!")
@@ -349,45 +512,76 @@ func check_folder(opts *options) (bool, error) {
 	return false, nil
 }
 
-func send_request(opts *options, method, url string, data []byte) (*node.Node, string, int, error) {
+func sendRequest(opts *options, method, url string, query map[string]interface{}) (map[string]interface{}, string, int, error) {
 
-	var (
-		request  *http.Request
-		response *http.Response
-		result   *node.Node
-		status   string
-		code     int
-		err      error
-	)
+	var result map[string]interface{}
 
-	if method == "GET" {
-		request, err = http.NewRequest("GET", opts.addr+url, nil)
-	} else {
-		request, err = http.NewRequest("POST", opts.addr+url, bytes.NewBuffer(data))
-	}
-
+	data, status, code, err := doRequest(opts, method, url, query)
 	if err != nil {
 		return result, status, code, err
 	}
 
+	if err = json.Unmarshal(data, &result); err != nil {
+		fmt.Printf("raw response (%d - %s):\n", code, status)
+		fmt.Println(string(data))
+	}
+	return result, status, code, err
+}
+
+func sendRequestArray(opts *options, method, url string, query map[string]interface{}) ([]map[string]interface{}, string, int, error) {
+
+	var result []map[string]interface{}
+
+	data, status, code, err := doRequest(opts, method, url, query)
+	if err != nil {
+		return result, status, code, err
+	}
+
+	if err = json.Unmarshal(data, &result); err != nil {
+		fmt.Printf("raw response (%d - %s):\n", code, status)
+		fmt.Println(string(data))
+	}
+	return result, status, code, err
+}
+
+func doRequest(opts *options, method, url string, query map[string]interface{}) ([]byte, string, int, error) {
+
+	var (
+		request  *http.Request
+		response *http.Response
+		status   string
+		code     int
+		err      error
+		buf      *bytes.Buffer
+		data     []byte
+	)
+
+	if query != nil {
+		if data, err = json.Marshal(query); err != nil {
+			return nil, status, code, err
+		}
+		buf = bytes.NewBuffer(data)
+		request, err = http.NewRequest(method, opts.addr+url, buf)
+	} else {
+		request, err = http.NewRequest(method, opts.addr+url, nil)
+	}
+
+	if err != nil {
+		return nil, status, code, err
+	}
+
+	//fmt.Printf("(debug) send request [%s]\n", request.URL.String())
+
 	request.Header = opts.headers
 
 	if response, err = opts.client.Do(request); err != nil {
-		return result, status, code, err
+		return nil, status, code, err
 	}
 
 	status = response.Status
 	code = response.StatusCode
 
 	defer response.Body.Close()
-	if data, err = ioutil.ReadAll(response.Body); err == nil {
-		result, err = json.Load(data)
-	}
-
-	// DEBUG
-	if err != nil {
-		fmt.Println("raw response body:")
-		fmt.Println(string(data))
-	}
-	return result, status, code, err
+	data, err = ioutil.ReadAll(response.Body)
+	return data, status, code, err
 }

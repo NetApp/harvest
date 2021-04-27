@@ -36,35 +36,35 @@ func (c *AbstractCollector) ImportSubTemplate(model, dirname, filename string, v
 	available := make(map[string]bool)
 	files, _ := ioutil.ReadDir(path_prefix)
 	for _, file := range files {
-		logger.Trace(c.Prefix, "Found version dir: [%s]", file.Name())
 		if match, _ := regexp.MatchString(`\d+\.\d+\.\d+`, file.Name()); match == true && file.IsDir() {
-			available[file.Name()] = true
+			if templates, err := ioutil.ReadDir(path.Join(path_prefix, file.Name())); err == nil {
+				for _, t := range templates {
+					if t.Name() == filename {
+						logger.Trace(c.Prefix, "available version dir: [%s]", file.Name())
+						available[file.Name()] = true
+						break
+					}
+				}
+			}
 		}
 	}
+	logger.Trace(c.Prefix, "checking for %d available versions: %v", len(available), available)
 
 	vers := version[0]*100 + version[1]*10 + version[2]
 
-	for max := 300; max > 0 && vers > 0; max -= 1 {
-		str := strings.Join(strings.Split(strconv.Itoa(vers), ""), ".")
+	//@TODO: this will become a bug once ontap version is higher than 9.9.0!
+	for max := 0; max <= 100; max++ {
+		// check older version
+		str := strings.Join(strings.Split(strconv.Itoa(vers-max), ""), ".")
 		if _, exists := available[str]; exists == true {
 			selected_version = str
 			break
 		}
-		vers -= 1
-	}
-
-	if selected_version == "" {
-		logger.Debug(c.Prefix, "looking for newer version")
-
-		vers = version[0]*100 + version[1]*10 + version[2]
-
-		for max := 300; max > 0 && vers > 0; max -= 1 {
-			str := strings.Join(strings.Split(strconv.Itoa(vers), ""), ".")
-			if _, exists := available[str]; exists == true {
-				selected_version = str
-				break
-			}
-			vers += 1
+		// check newer version
+		str = strings.Join(strings.Split(strconv.Itoa(vers+max), ""), ".")
+		if _, exists := available[str]; exists == true {
+			selected_version = str
+			break
 		}
 	}
 

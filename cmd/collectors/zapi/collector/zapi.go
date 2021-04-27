@@ -279,25 +279,14 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 	var request, response *node.Node
 	var fetch func(*matrix.Instance, *node.Node, []string)
 	var count, skipped uint64
-	var ad, rd, pd, bd2, fd, sd, sd2, bd, id time.Duration // Request/API time, Parse time, Fetch time
+	var ad, pd time.Duration // Request/API time, Parse time, Fetch time
 	var tag string
-	var cl, content_length int64
-
-	task_start := time.Now()
 
 	count = 0
 	skipped = 0
 
 	api_d := time.Duration(0 * time.Second)
-	read_d := time.Duration(0 * time.Second)
 	parse_d := time.Duration(0 * time.Second)
-	build_d := time.Duration(0 * time.Second)
-
-	fd = time.Duration(0 * time.Second)
-	sd = time.Duration(0 * time.Second)
-	sd2 = time.Duration(0 * time.Second)
-	bd = time.Duration(0 * time.Second)
-	id = time.Duration(0 * time.Second)
 
 	fetch = func(instance *matrix.Instance, node *node.Node, path []string) {
 
@@ -347,29 +336,10 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 		}
 	}
 
-	/*
-		fmt.Println("\n>>> my request tree <<<")
-		request.Print(0)
-
-		fmt.Println("\n>>> my xml dump <<<")
-		if dump, err := tree.DumpXml(request); err == nil {
-			fmt.Println(string(dump))
-		} else {
-			fmt.Println(err)
-		}
-	*/
-
 	tag = "initial"
 
-	batch_start := time.Now()
-
 	for {
-
-		invoke_start := time.Now()
-		response, tag, cl, bd2, ad, rd, pd, err = me.Connection.InvokeBatchWithMoreTimers(request, tag)
-		id += time.Since(invoke_start)
-
-		content_length += cl
+		response, tag, ad, pd, err = me.Connection.InvokeBatchWithTimers(request, tag)
 
 		if err != nil {
 			return nil, err
@@ -379,19 +349,10 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 			break
 		}
 
-		/*
-			fmt.Println(">>> got response tree <<<")
-			response.Print(0)
-		*/
-
-		build_d += bd2
 		api_d += ad
-		read_d += rd
 		parse_d += pd
 
-		search_start := time.Now()
 		instances := response.SearchChildren(me.shortest_path_prefix)
-		sd += time.Since(search_start)
 
 		if len(instances) == 0 {
 			return nil, errors.New(errors.ERR_NO_INSTANCE, "")
@@ -410,9 +371,7 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 
 		for _, instanceElem := range instances {
 			//c.logger.Printf(c.Prefix, "Handling instance element <%v> [%s]", &instance, instance.GetName())
-			search2 := time.Now()
 			keys, found := instanceElem.SearchContent(me.shortest_path_prefix, me.instance_key_paths)
-			sd2 += time.Since(search2)
 			//logger.Debug(me.Prefix, "Fetched instance keys: %s", strings.Join(keys, "."))
 
 			if !found {
@@ -426,28 +385,15 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 				logger.Error(me.Prefix, "skipped instance [%s]: not found in cache", strings.Join(keys, "."))
 				continue
 			}
-			fetch_start := time.Now()
 			fetch(instance, instanceElem, make([]string, 0))
-			fd += time.Since(fetch_start)
 		}
 	}
 
-	bd = time.Since(batch_start)
-
 	// update metadata
 	me.Metadata.LazySetValueInt64("api_time", "data", api_d.Microseconds())
-	me.Metadata.LazySetValueInt64("read_time", "data", read_d.Microseconds())
-	me.Metadata.LazySetValueInt64("build_time", "data", build_d.Microseconds())
 	me.Metadata.LazySetValueInt64("parse_time", "data", parse_d.Microseconds())
-	me.Metadata.LazySetValueInt64("fetch_time", "data", fd.Microseconds())
-	me.Metadata.LazySetValueInt64("search_time", "data", sd.Microseconds())
-	me.Metadata.LazySetValueInt64("search2_time", "data", sd2.Microseconds())
-	me.Metadata.LazySetValueInt64("batch_time", "data", bd.Microseconds())
-	me.Metadata.LazySetValueInt64("invoke_time", "data", id.Microseconds())
-	me.Metadata.LazySetValueInt64("content_length", "data", content_length)
 	me.Metadata.LazySetValueUint64("count", "data", count)
 	me.AddCollectCount(count)
 
-	me.Metadata.LazySetValueInt64("task2_time", "data", time.Since(task_start).Microseconds())
 	return me.Matrix, nil
 }

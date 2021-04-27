@@ -86,6 +86,13 @@ func (me *ZapiPerf) InitCache() error {
 	me.batch_size = me.loadParamInt("batch_size", BATCH_SIZE)
 	me.latency_io_reqd = me.loadParamInt("latency_io_reqd", LATENCY_IO_REQD)
 	me.cache_empty = true
+	me.object = me.loadParamStr("object", "")
+	// override from AbstractCollector
+	if me.object == "" {
+		me.object = me.Object
+	}
+	me.Matrix.Object = me.object
+	logger.Debug(me.Prefix, "object= %s --> %s", me.Object, me.object)
 	return nil
 }
 
@@ -569,7 +576,7 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 		// string metric, add as instance label
 		if strings.Contains(counter.GetChildContentS("properties"), "string") {
 			old_labels.Delete(key)
-			if display == "instance_name" {
+			if key == "instance_name" {
 				display = me.object
 			}
 			me.instance_labels[key] = display

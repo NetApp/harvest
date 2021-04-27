@@ -12,11 +12,11 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"goharvest2/pkg/logger"
+	"goharvest2/pkg/set"
 	"net/http"
 	"strings"
 	"time"
-	"goharvest2/pkg/logger"
-	"goharvest2/pkg/set"
 )
 
 func (me *Prometheus) startHttpD(addr, port string) {
@@ -221,4 +221,3 @@ func (me *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 
 	me.Metadata.LazyAddValueInt64("time", "info", time.Since(start).Microseconds())
 }
-
