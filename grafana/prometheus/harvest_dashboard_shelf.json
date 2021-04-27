@@ -20,7 +20,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "7.5.0-beta1"
+      "version": "7.5.4"
     },
     {
       "type": "datasource",
@@ -54,11 +54,12 @@
       }
     ]
   },
+  "description": "",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1616469000085,
+  "iteration": 1619514558045,
   "links": [],
   "panels": [
     {
@@ -130,7 +131,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "expr": "sum(count(shelf_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}) by (shelf_id))",
@@ -209,10 +210,11 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "avg(temperature_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
+          "exemplar": true,
+          "expr": "avg(shelf_temperature_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -282,10 +284,11 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "avg(fan_rpm{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
+          "exemplar": true,
+          "expr": "avg(shelf_fan_rpm{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -355,10 +358,11 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "avg(sensor_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
+          "exemplar": true,
+          "expr": "avg(shelf_sensor_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -428,10 +432,11 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "sum(sum_over_time(psu_power_drawn{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}[24h]))",
+          "exemplar": true,
+          "expr": "sum(sum_over_time(shelf_psu_power_drawn{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}[24h]))",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -567,7 +572,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "expr": "shelf_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
@@ -722,12 +727,13 @@
         "showUnfilled": true,
         "text": {}
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "repeat": "TempShelf",
       "repeatDirection": "h",
       "targets": [
         {
-          "expr": "temperature_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\",shelf=~\"$Shelf\"}",
+          "exemplar": true,
+          "expr": "shelf_temperature_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\",shelf=~\"$Shelf\"}",
           "interval": "",
           "legendFormat": "{{shelf}} · {{sensor_id}}",
           "refId": "A"
@@ -790,11 +796,12 @@
         "showUnfilled": true,
         "text": {}
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "repeat": "FanShelf",
       "targets": [
         {
-          "expr": "fan_rpm{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "exemplar": true,
+          "expr": "shelf_fan_rpm{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "interval": "",
           "legendFormat": "{{shelf}} · {{fan_id}}",
           "refId": "A"
@@ -872,11 +879,12 @@
         "showUnfilled": true,
         "text": {}
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "repeat": null,
       "targets": [
         {
-          "expr": "voltage_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "exemplar": true,
+          "expr": "shelf_voltage_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "interval": "",
           "legendFormat": "{{shelf}} · {{sensor_id}}",
           "refId": "A"
@@ -937,12 +945,13 @@
         "showUnfilled": true,
         "text": {}
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "sum(psu_power_drawn{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}) by (shelf, psu_id)",
+          "exemplar": true,
+          "expr": "sum(shelf_psu_power_drawn{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}) by (shelf, psu_id)",
           "interval": "",
-          "legendFormat": "Shelf {{shelf}} - PSU {{psu_id}}",
+          "legendFormat": "{{shelf}} - PSU {{psu_id}}",
           "refId": "A"
         }
       ],
@@ -1001,12 +1010,13 @@
         "showUnfilled": true,
         "text": {}
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "sum(psu_power_rating{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}) by (shelf, psu_id)",
+          "exemplar": true,
+          "expr": "sum(shelf_psu_power_rating{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}) by (shelf, psu_id)",
           "interval": "",
-          "legendFormat": "Shelf {{shelf}} - PSU {{psu_id}}",
+          "legendFormat": "{{shelf}} - PSU {{psu_id}}",
           "refId": "A"
         }
       ],
@@ -1080,11 +1090,12 @@
         "showUnfilled": true,
         "text": {}
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "repeat": "SensShelf",
       "targets": [
         {
-          "expr": "sensor_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "exemplar": true,
+          "expr": "shelf_sensor_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "interval": "",
           "legendFormat": "S{{sensor_id}}",
           "refId": "A"
@@ -1215,6 +1226,6 @@
   },
   "timezone": "",
   "title": "NetApp Detail: Shelf",
-  "uid": "foUEOXEMk",
-  "version": 21
+  "uid": "FnaQeK9Mk",
+  "version": 2
 }

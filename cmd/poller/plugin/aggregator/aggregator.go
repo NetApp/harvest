@@ -146,7 +146,7 @@ func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		for i, rule := range me.rules {
 
-			logger.Info(me.Prefix, "handling rule [%v]", rule)
+			logger.Trace(me.Prefix, "handling rule [%v]", rule)
 			if obj_name = instance.GetLabel(rule.label); obj_name == "" {
 				logger.Warn(me.Prefix, "label name for [%s] missing, skipped", rule.label)
 				continue

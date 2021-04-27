@@ -14,7 +14,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "7.5.0-beta1"
+      "version": "7.5.4"
     },
     {
       "type": "panel",
@@ -54,11 +54,12 @@
       }
     ]
   },
+  "description": "",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1616469003357,
+  "iteration": 1619514559023,
   "links": [],
   "panels": [
     {
@@ -127,7 +128,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "expr": "count (count by (relationship_id) (snapmirror_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}))",
@@ -197,7 +198,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "expr": "count (count by (relationship_id) (snapmirror_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",group_type=\"vol\"}))",
@@ -267,7 +268,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "expr": "count (count by (relationship_id) (snapmirror_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",group_type=\"svm\"}))",
@@ -337,7 +338,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "expr": "count (count by (relationship_id) (snapmirror_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",relationship_status=\"insync\"}))",
@@ -408,7 +409,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "expr": "count (count by (relationship_id) (snapmirror_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",is_healthy=\"false\"}))",
@@ -837,7 +838,7 @@
           }
         ]
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "expr": "avg (snapmirror_last_transfer_duration{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}) by (relationship_id)",
@@ -1028,7 +1029,7 @@
       },
       "paceLength": 10,
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1139,7 +1140,7 @@
       },
       "paceLength": 10,
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1261,7 +1262,7 @@
       },
       "paceLength": 10,
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1382,7 +1383,7 @@
       },
       "paceLength": 10,
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1502,7 +1503,7 @@
       },
       "paceLength": 10,
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1613,7 +1614,7 @@
       },
       "paceLength": 10,
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1734,7 +1735,7 @@
       },
       "paceLength": 10,
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1855,7 +1856,7 @@
       },
       "paceLength": 10,
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1989,7 +1990,7 @@
       },
       "paceLength": 10,
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2110,7 +2111,7 @@
       },
       "paceLength": 10,
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2386,6 +2387,6 @@
   },
   "timezone": "",
   "title": "NetApp Detail: SnapMirror",
-  "uid": "mQfUmTsGz",
-  "version": 12
+  "uid": "UDtSk59Mz",
+  "version": 2
 }

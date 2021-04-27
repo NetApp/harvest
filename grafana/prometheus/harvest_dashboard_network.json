@@ -14,19 +14,13 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "7.5.0-beta1"
+      "version": "7.5.4"
     },
     {
       "type": "panel",
       "id": "graph",
       "name": "Graph",
       "version": ""
-    },
-    {
-      "type": "datasource",
-      "id": "graphite",
-      "name": "Graphite",
-      "version": "1.0.0"
     },
     {
       "type": "datasource",
@@ -60,11 +54,12 @@
       }
     ]
   },
+  "description": "",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1616468993320,
+  "iteration": 1619514555038,
   "links": [],
   "panels": [
     {
@@ -92,6 +87,7 @@
               "value": "1"
             }
           ],
+          "noValue": "0",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -109,7 +105,7 @@
         "h": 5,
         "w": 6,
         "x": 0,
-        "y": 1
+        "y": 0
       },
       "id": 26,
       "options": {
@@ -127,7 +123,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "expr": "sum(nic_tx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
@@ -166,6 +162,7 @@
               "value": "1"
             }
           ],
+          "noValue": "0",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -183,7 +180,7 @@
         "h": 5,
         "w": 6,
         "x": 6,
-        "y": 1
+        "y": 0
       },
       "id": 27,
       "options": {
@@ -201,7 +198,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "expr": "sum(nic_rx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
@@ -258,7 +255,7 @@
         "h": 5,
         "w": 6,
         "x": 12,
-        "y": 1
+        "y": 0
       },
       "id": 59,
       "options": {
@@ -276,9 +273,10 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
+          "exemplar": true,
           "expr": "sum(fcp_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
           "interval": "",
           "legendFormat": "",
@@ -333,7 +331,7 @@
         "h": 5,
         "w": 6,
         "x": 18,
-        "y": 1
+        "y": 0
       },
       "id": 60,
       "options": {
@@ -351,7 +349,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "expr": "sum(fcp_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
@@ -372,7 +370,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 6
+        "y": 5
       },
       "id": 32,
       "panels": [],
@@ -654,7 +652,7 @@
         "h": 11,
         "w": 24,
         "x": 0,
-        "y": 7
+        "y": 6
       },
       "id": 58,
       "interval": "",
@@ -667,7 +665,7 @@
           }
         ]
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "expr": "nic_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
@@ -761,7 +759,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 18
+        "y": 17
       },
       "hiddenSeries": false,
       "id": 12,
@@ -784,7 +782,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -863,7 +861,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 18
+        "y": 17
       },
       "hiddenSeries": false,
       "id": 28,
@@ -886,7 +884,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -965,7 +963,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 28
+        "y": 27
       },
       "hiddenSeries": false,
       "id": 61,
@@ -988,7 +986,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1067,7 +1065,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 28
+        "y": 27
       },
       "hiddenSeries": false,
       "id": 29,
@@ -1090,7 +1088,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1174,7 +1172,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 28
+        "y": 27
       },
       "hiddenSeries": false,
       "id": 30,
@@ -1197,7 +1195,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1273,6 +1271,20 @@
         "align": false,
         "alignLevel": null
       }
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 35
+      },
+      "id": 80,
+      "panels": [],
+      "title": "FibreChannel Drilldown",
+      "type": "row"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
@@ -1436,7 +1448,7 @@
         "h": 11,
         "w": 24,
         "x": 0,
-        "y": 37
+        "y": 36
       },
       "id": 71,
       "interval": "",
@@ -1449,9 +1461,10 @@
           }
         ]
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
+          "exemplar": true,
           "expr": "fcp_util_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
           "format": "table",
           "hide": false,
@@ -1524,7 +1537,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 48
+        "y": 47
       },
       "hiddenSeries": false,
       "id": 67,
@@ -1547,7 +1560,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1626,7 +1639,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 48
+        "y": 47
       },
       "hiddenSeries": false,
       "id": 69,
@@ -1649,7 +1662,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1659,6 +1672,7 @@
       "steppedLine": false,
       "targets": [
         {
+          "exemplar": true,
           "expr": "topk($TopResources, fcp_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "{{node}} - {{port}}",
@@ -1727,7 +1741,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 58
+        "y": 57
       },
       "hiddenSeries": false,
       "id": 77,
@@ -1750,7 +1764,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1829,7 +1843,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 58
+        "y": 57
       },
       "hiddenSeries": false,
       "id": 78,
@@ -1852,7 +1866,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1931,7 +1945,7 @@
         "h": 10,
         "w": 6,
         "x": 0,
-        "y": 68
+        "y": 67
       },
       "hiddenSeries": false,
       "id": 75,
@@ -1954,7 +1968,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2061,7 +2075,7 @@
         "h": 10,
         "w": 6,
         "x": 6,
-        "y": 68
+        "y": 67
       },
       "hiddenSeries": false,
       "id": 76,
@@ -2084,7 +2098,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2197,7 +2211,7 @@
         "h": 10,
         "w": 6,
         "x": 12,
-        "y": 68
+        "y": 67
       },
       "hiddenSeries": false,
       "id": 73,
@@ -2220,7 +2234,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2298,7 +2312,7 @@
         "h": 10,
         "w": 6,
         "x": 18,
-        "y": 68
+        "y": 67
       },
       "hiddenSeries": false,
       "id": 74,
@@ -2321,7 +2335,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2639,6 +2653,6 @@
   },
   "timezone": "",
   "title": "NetApp Detail: Network",
-  "uid": "Pzhf1eVGz",
-  "version": 49
+  "uid": "8uaMk59Gz",
+  "version": 1
 }

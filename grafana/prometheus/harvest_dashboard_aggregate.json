@@ -14,19 +14,13 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "7.5.0-beta1"
+      "version": "7.5.4"
     },
     {
       "type": "panel",
       "id": "graph",
       "name": "Graph",
       "version": ""
-    },
-    {
-      "type": "datasource",
-      "id": "graphite",
-      "name": "Graphite",
-      "version": "1.0.0"
     },
     {
       "type": "datasource",
@@ -65,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1616468987344,
+  "iteration": 1619514550706,
   "links": [],
   "panels": [
     {
@@ -104,7 +98,7 @@
         "h": 5,
         "w": 3,
         "x": 0,
-        "y": 1
+        "y": 0
       },
       "id": 20,
       "links": [],
@@ -123,7 +117,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "expr": "sum(count(aggr_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}) by (aggr))",
@@ -177,7 +171,7 @@
         "h": 5,
         "w": 3,
         "x": 3,
-        "y": 1
+        "y": 0
       },
       "id": 21,
       "links": [],
@@ -196,7 +190,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "expr": "sum(aggr_raid_disk_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
@@ -250,7 +244,7 @@
         "h": 5,
         "w": 3,
         "x": 6,
-        "y": 1
+        "y": 0
       },
       "id": 22,
       "links": [],
@@ -269,7 +263,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "expr": "sum(aggr_volume_count_flexvol{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
@@ -314,7 +308,7 @@
         "h": 5,
         "w": 5,
         "x": 9,
-        "y": 1
+        "y": 0
       },
       "id": 24,
       "options": {
@@ -332,9 +326,10 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
+          "exemplar": true,
           "expr": "sum(aggr_space_total{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "interval": "",
           "legendFormat": "",
@@ -371,7 +366,7 @@
         "h": 5,
         "w": 5,
         "x": 14,
-        "y": 1
+        "y": 0
       },
       "id": 25,
       "options": {
@@ -389,9 +384,10 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
+          "exemplar": true,
           "expr": "sum(aggr_space_available{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "interval": "",
           "legendFormat": "",
@@ -428,7 +424,7 @@
         "h": 5,
         "w": 5,
         "x": 19,
-        "y": 1
+        "y": 0
       },
       "id": 26,
       "options": {
@@ -446,7 +442,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "expr": "avg(aggr_space_used_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
@@ -739,7 +735,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 6
+        "y": 5
       },
       "id": 2,
       "interval": "1m",
@@ -748,7 +744,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "expr": "aggr_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
@@ -858,7 +854,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 15
+        "y": 13
       },
       "hiddenSeries": false,
       "id": 13,
@@ -879,7 +875,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -967,7 +963,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 15
+        "y": 13
       },
       "hiddenSeries": false,
       "id": 14,
@@ -988,7 +984,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -998,6 +994,7 @@
       "steppedLine": false,
       "targets": [
         {
+          "exemplar": true,
           "expr": "aggr_space_available{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
@@ -1076,7 +1073,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 15
+        "y": 13
       },
       "hiddenSeries": false,
       "id": 15,
@@ -1097,7 +1094,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1185,7 +1182,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 23
+        "y": 21
       },
       "hiddenSeries": false,
       "id": 16,
@@ -1206,7 +1203,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1294,7 +1291,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 23
+        "y": 21
       },
       "hiddenSeries": false,
       "id": 17,
@@ -1315,7 +1312,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1403,7 +1400,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 23
+        "y": 21
       },
       "hiddenSeries": false,
       "id": 18,
@@ -1424,7 +1421,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1519,7 +1516,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 32
+        "y": 29
       },
       "hiddenSeries": false,
       "id": 4,
@@ -1540,7 +1537,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1626,7 +1623,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 32
+        "y": 29
       },
       "hiddenSeries": false,
       "id": 35,
@@ -1647,7 +1644,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1740,7 +1737,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 32
+        "y": 29
       },
       "hiddenSeries": false,
       "id": 6,
@@ -1761,7 +1758,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1856,7 +1853,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 41
+        "y": 37
       },
       "hiddenSeries": false,
       "id": 33,
@@ -1877,7 +1874,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1972,7 +1969,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 41
+        "y": 37
       },
       "hiddenSeries": false,
       "id": 32,
@@ -1993,7 +1990,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2081,7 +2078,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 41
+        "y": 37
       },
       "hiddenSeries": false,
       "id": 31,
@@ -2102,7 +2099,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2190,7 +2187,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 49
+        "y": 45
       },
       "hiddenSeries": false,
       "id": 30,
@@ -2211,7 +2208,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2297,7 +2294,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 49
+        "y": 45
       },
       "hiddenSeries": false,
       "id": 5,
@@ -2318,7 +2315,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2411,7 +2408,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 49
+        "y": 45
       },
       "hiddenSeries": false,
       "id": 34,
@@ -2432,7 +2429,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.0-beta1",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2639,6 +2636,6 @@
   "timepicker": {},
   "timezone": "",
   "title": "NetApp Detail: Aggregate",
-  "uid": "EAZeqO8Gz",
-  "version": 31
+  "uid": "nWYwRcrMk",
+  "version": 1
 }
