@@ -140,7 +140,7 @@ ifeq (${ROOT},)
 
 	@# Make sure that the user does not already exist
 	@if [ ${USER_EXISTS} -eq 0 ]; then                                      \
-	    ${SUDO} adduser --quite --ingroup ${HARVEST_GROUP} --shell=/sbin/nologin ${HARVEST_USER}; \
+	    ${SUDO} adduser --quiet --ingroup ${HARVEST_GROUP} --shell=/sbin/nologin ${HARVEST_USER}; \
 	else                                                                    \
 		echo "    Harvest user already exists";                         \
 	fi;
