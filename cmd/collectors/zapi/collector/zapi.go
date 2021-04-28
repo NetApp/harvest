@@ -264,7 +264,10 @@ func (me *Zapi) PollInstance() (*matrix.Matrix, error) {
 		}
 	}
 
-	me.Metadata.LazySetValueUint64("count", "instance", count)
+	err = me.Metadata.LazySetValueUint64("count", "instance", count)
+	if err != nil {
+		logger.Error(me.Prefix, "error: %v", err)
+	}
 	logger.Debug(me.Prefix, "added %d instances to cache (old cache had %d)", count, old_count)
 
 	if len(me.Matrix.GetInstances()) == 0 {

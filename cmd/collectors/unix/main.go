@@ -162,7 +162,7 @@ func (me *Unix) Init() error {
 	// load list of counters from template
 	if counters := me.Params.GetChildS("counters"); counters != nil {
 		if err = me.loadMetrics(counters); err != nil {
-            logger.Error(me.Prefix, "load metrics: %v", err)
+			logger.Error(me.Prefix, "load metrics: %v", err)
 			return err
 		}
 	} else {
@@ -171,7 +171,7 @@ func (me *Unix) Init() error {
 
 	getClockTicks()
 	if me.system, err = NewSystem(); err != nil {
-        logger.Error(me.Prefix, "load system: %v", err)
+		logger.Error(me.Prefix, "load system: %v", err)
 		return err
 	}
 
@@ -310,7 +310,7 @@ func (me *Unix) PollInstance() (*matrix.Matrix, error) {
 
 	for name := range currInstances.Iter() {
 		me.Matrix.RemoveInstance(name)
-		logger.Debug(me.Prefix, "remove instance (%s)")
+		logger.Debug(me.Prefix, "remove instance (%s)", name)
 	}
 
 	t := len(me.Matrix.GetInstances())
@@ -341,7 +341,10 @@ func (me *Unix) PollData() (*matrix.Matrix, error) {
 	for key, instance := range me.Matrix.GetInstances() {
 
 		// assume not running
-		me.Matrix.LazySetValueUint8("status", key, 1)
+		err = me.Matrix.LazySetValueUint8("status", key, 1)
+		if err != nil {
+			logger.Error(me.Prefix, "error while parsing metric key [%s], %v", key, err)
+		}
 
 		if proc, ok = me.processes[key]; ok {
 			if err = proc.Reload(); err != nil {
@@ -375,7 +378,10 @@ func (me *Unix) PollData() (*matrix.Matrix, error) {
 		}
 
 		// if we got here poller is running
-		me.Matrix.LazySetValueUint32("status", key, 0)
+		err = me.Matrix.LazySetValueUint32("status", key, 0)
+		if err != nil {
+			logger.Error(me.Prefix, "error while parsing metric key [%s], %v", key, err)
+		}
 
 		logger.Debug(me.Prefix, "populating instance [%s]: PID (%d) with [%s]\n", key, pid, cmd)
 
@@ -408,55 +414,88 @@ func (me *Unix) PollData() (*matrix.Matrix, error) {
 }
 
 func setStartTime(m matrix.Metric, i *matrix.Instance, p *Process, s *System) {
-	m.SetValueFloat64(i, p.startTime+s.bootTime)
+	err := m.SetValueFloat64(i, p.startTime+s.bootTime)
+	if err != nil {
+		logger.Error("", "error %v", err)
+	}
 }
 
 func setNumThreads(m matrix.Metric, i *matrix.Instance, p *Process, s *System) {
-	m.SetValueUint64(i, p.numThreads)
+	err := m.SetValueUint64(i, p.numThreads)
+	if err != nil {
+		logger.Error("", "error %v", err)
+	}
 }
 
 func setNumFds(m matrix.Metric, i *matrix.Instance, p *Process, s *System) {
-	m.SetValueUint64(i, p.numFds)
+	err := m.SetValueUint64(i, p.numFds)
+	if err != nil {
+		logger.Error("", "error %v", err)
+	}
 }
 
 func setMemoryPercent(m matrix.Metric, i *matrix.Instance, p *Process, s *System) {
-	m.SetValueFloat64(i, float64(p.mem["rss"])/float64(s.memTotal)*100)
+	err := m.SetValueFloat64(i, float64(p.mem["rss"])/float64(s.memTotal)*100)
+	if err != nil {
+		logger.Error("", "error %v", err)
+	}
 }
 
 func setCpuPercent(m matrix.Metric, i *matrix.Instance, p *Process, s *System) {
 	if p.elapsedTime != 0 {
-		m.SetValueFloat64(i, p.cpuTotal/p.elapsedTime*100)
+		err := m.SetValueFloat64(i, p.cpuTotal/p.elapsedTime*100)
+		if err != nil {
+			logger.Error("", "error %v", err)
+		}
 	} else {
-		m.SetValueFloat64(i, p.cpuTotal/(float64(time.Now().Unix())-p.startTime)*100)
+		err := m.SetValueFloat64(i, p.cpuTotal/(float64(time.Now().Unix())-p.startTime)*100)
+		if err != nil {
+			logger.Error("", "error %v", err)
+		}
 	}
 }
 
 func setCpu(m matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.cpu[l]; ok {
-		m.SetValueFloat64(i, value)
+		err := m.SetValueFloat64(i, value)
+		if err != nil {
+			logger.Error("", "error %v", err)
+		}
 	}
 }
 
 func setMemory(m matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.mem[l]; ok {
-		m.SetValueUint64(i, value)
+		err := m.SetValueUint64(i, value)
+		if err != nil {
+			logger.Error("", "error %v", err)
+		}
 	}
 }
 
 func setIo(m matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.io[l]; ok {
-		m.SetValueUint64(i, value)
+		err := m.SetValueUint64(i, value)
+		if err != nil {
+			logger.Error("", "error %v", err)
+		}
 	}
 }
 
 func setNet(m matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.net[l]; ok {
-		m.SetValueUint64(i, value)
+		err := m.SetValueUint64(i, value)
+		if err != nil {
+			logger.Error("", "error %v", err)
+		}
 	}
 }
 
 func setCtx(m matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.ctx[l]; ok {
-		m.SetValueUint64(i, value)
+		err := m.SetValueUint64(i, value)
+		if err != nil {
+			logger.Error("", "error %v", err)
+		}
 	}
 }

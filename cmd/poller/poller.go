@@ -711,7 +711,7 @@ func main() {
 		if r := recover(); r != nil {
 			syslogger, err := syslog.NewLogger(syslog.LOG_ERR|syslog.LOG_DAEMON, logger.LOG_FLAGS)
 			if err == nil {
-				syslogger.Printf("harvest poller paniced: ", r)
+				syslogger.Printf("harvest poller paniced: %v", r)
 			}
 			// if logger still abailable try to write there as well
 			// do this last, since might make us panic as again

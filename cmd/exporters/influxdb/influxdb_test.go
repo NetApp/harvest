@@ -8,10 +8,11 @@
 package main
 
 import (
-	"goharvest2/pkg/logger"
-	"goharvest2/pkg/matrix"
 	"goharvest2/cmd/poller/exporter"
 	"goharvest2/cmd/poller/options"
+	"goharvest2/pkg/logger"
+	"goharvest2/pkg/matrix"
+
 	//"goharvest2/pkg/tree/node"
 	"testing"
 )

@@ -133,7 +133,10 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 	}
 
-	my.connection.BuildRequestString(my.query)
+	err := my.connection.BuildRequestString(my.query)
+	if err != nil {
+		logger.Error(my.Prefix, "error: %v", err)
+	}
 
 	result, err := my.connection.Invoke()
 	if err != nil {

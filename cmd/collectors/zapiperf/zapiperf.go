@@ -255,7 +255,10 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 			logger.Debug(me.Prefix, "fetching data of instance [%s]", key)
 
 			// add batch timestamp as custom counter
-			timestamp.SetValueFloat64(instance, ts)
+			err := timestamp.SetValueFloat64(instance, ts)
+			if err != nil {
+				logger.Error(me.Prefix, "error: %v", err)
+			}
 
 			for _, cnt := range counters.GetChildren() {
 

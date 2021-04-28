@@ -86,7 +86,10 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					// non-latency metrics: simple sum
 					if !strings.HasSuffix(m.GetName(), "_latency") {
 
-						fgm.SetValueFloat64(fg, fgv+value)
+						err := fgm.SetValueFloat64(fg, fgv+value)
+						if err != nil {
+							logger.Error(me.Prefix, "error: %v", err)
+						}
 						// just for debugging
 						fgv2, _ := fgm.GetValueFloat64(fg)
 
@@ -95,15 +98,18 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					}
 
 					// latency metric: weighted sum
-					ops_key := strings.Replace(mkey, "avg_latency", "total_ops", 1)
-					ops_key = strings.Replace(mkey, "_latency", "_ops", 1)
+					// ops_key := strings.Replace(mkey, "avg_latency", "total_ops", 1)
+					ops_key := strings.Replace(mkey, "_latency", "_ops", 1)
 					logger.Trace(me.Prefix, "    > weighted increment <%s * %s>", mkey, ops_key)
 
 					if ops := data.GetMetric(ops_key); ops != nil {
 						if ops_value, ok := ops.GetValueFloat64(i); ok {
 
 							prod := value * ops_value
-							fgm.SetValueFloat64(fg, fgv+prod)
+							err := fgm.SetValueFloat64(fg, fgv+prod)
+							if err != nil {
+								logger.Error(me.Prefix, "error: %v", err)
+							}
 
 							// debugging
 							fgv2, _ := fgm.GetValueFloat64(fg)
@@ -127,13 +133,16 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 				if value, ok := m.GetValueFloat64(i); ok {
 
-					ops_key := strings.Replace(mkey, "avg_latency", "total_ops", 1)
-					ops_key = strings.Replace(mkey, "_latency", "_ops", 1)
+					//ops_key := strings.Replace(mkey, "avg_latency", "total_ops", 1)
+					ops_key := strings.Replace(mkey, "_latency", "_ops", 1)
 
 					if ops := cache.GetMetric(ops_key); ops != nil {
 
 						if ops_value, ok := ops.GetValueFloat64(i); ok && ops_value != 0 {
-							m.SetValueFloat64(i, value/ops_value)
+							err := m.SetValueFloat64(i, value/ops_value)
+							if err != nil {
+								logger.Error(me.Prefix, "error: %v", err)
+							}
 						} else {
 							m.SetValueNAN(i)
 						}

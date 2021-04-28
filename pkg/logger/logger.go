@@ -8,8 +8,8 @@
 package logger
 
 import (
-	"goharvest2/pkg/errors"
 	"fmt"
+	"goharvest2/pkg/errors"
 	"io/ioutil"
 	"log"
 	"os"
@@ -51,7 +51,6 @@ func OpenFileOutput(dirpath, filename string) error {
 		file, err = os.OpenFile(path.Join(dirpath, filename), FILE_FLAGS, FILE_PERM)
 		if err == nil {
 			log.SetOutput(file)
-		} else {
 		}
 	}
 	return err
