@@ -144,7 +144,7 @@ All pollers are defined in `harvest.yml`, the main configuration file of Harvest
 | `auth_style`           | required by Zapi* collectors |  either `basic_auth` or `certificate_auth`  | `basic_auth` |
 | `username`, `password` | required if `auth_style` is `basic_auth` |  |              |
 | `cert`, `key`          | required if `auth_style` is `certificate_auth` | certificate and key files which should be in the directory `/etc/harvest/cert/`. If these two parameters are not provided files matching the poller name will be used (for example if poller name is `jamaica` than the files should be `jamaica.key` and `jamaica.cert`).                        |              |
-| `use_insecure_tls` | optional, bool |  Allow to access host (Ontap server) without server certificate verification  | true         |
+| `use_insecure_tls` | optional, bool |  Allow to access host (Ontap server) without server certificate verification  | false         |
 | `log_max_bytes` |  | Max size of the log file, until it's rotated | `10000000` (10 mb) |
 | `log_max_files` |  | Number of rotated log files to keep | `10` |
 | |  | | |

@@ -80,8 +80,8 @@ func New(config *node.Node) (*Client, error) {
 			logger.Error("(Zapi:Client)", "use_insecure_tls: %v ", err)
 		}
 	} else {
-		// defaults to true
-		useInsecureTLS = true
+		// defaults to false
+		useInsecureTLS = false
 	}
 
 	if config.GetChildContentS("auth_style") == "certificate_auth" {
