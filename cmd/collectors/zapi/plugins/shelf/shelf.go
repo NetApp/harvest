@@ -264,3 +264,6 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	return output, nil
 }
+
+// Need to appease go build - see https://github.com/golang/go/issues/20312
+func main() {}

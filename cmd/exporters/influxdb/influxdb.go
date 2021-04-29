@@ -283,3 +283,6 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 	logger.Debug(e.Prefix, "rendered %d measurements with %d data points for (%s)", len(rendered), count, object)
 	return rendered, nil
 }
+
+// Need to appease go build - see https://github.com/golang/go/issues/20312
+func main() {}

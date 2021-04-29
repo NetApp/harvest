@@ -495,3 +495,6 @@ func setCtx(m matrix.Metric, l string, i *matrix.Instance, p *Process) {
 		}
 	}
 }
+
+// Need to appease go build - see https://github.com/golang/go/issues/20312
+func main() {}

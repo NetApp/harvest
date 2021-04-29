@@ -906,3 +906,6 @@ func (me *ZapiPerf) PollInstance() (*matrix.Matrix, error) {
 
 	return nil, err
 }
+
+// Need to appease go build - see https://github.com/golang/go/issues/20312
+func main() {}
