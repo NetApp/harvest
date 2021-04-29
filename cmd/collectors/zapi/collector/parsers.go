@@ -1,18 +1,14 @@
-//
-// Copyright NetApp Inc, 2021 All rights reserved
-//
-// Package Description:
-//
-// Examples:
-//
+/*
+ * Copyright NetApp Inc, 2021 All rights reserved
+ */
 package zapi
 
 import (
+	"goharvest2/pkg/color"
 	"goharvest2/pkg/logger"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
 	"goharvest2/pkg/util"
-	"goharvest2/pkg/color"
 	"strings"
 )
 

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#
+# Copyright NetApp Inc, 2021 All rights reserved
+#
+
 COLOR_GREEN='\033[0;32m'
 COLOR_RED='\033[0;31m'
 COLOR_BOLD='\033[1m'

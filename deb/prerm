@@ -1,4 +1,8 @@
 #!/bin/bash
 
+#
+# Copyright NetApp Inc, 2021 All rights reserved
+#
+
 echo " --> stop harvest for $1"
 harvest "stop"

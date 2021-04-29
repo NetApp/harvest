@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#
+# Copyright NetApp Inc, 2021 All rights reserved
+#
+
 ROOT=$(pwd)
 PROJECT="HarvestDocler"
 BASENAME=`basename $0`

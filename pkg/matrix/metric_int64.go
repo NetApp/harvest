@@ -1,9 +1,13 @@
+/*
+ * Copyright NetApp Inc, 2021 All rights reserved
+ */
+
 package matrix
 
 import (
 	"fmt"
-	"strconv"
 	"goharvest2/pkg/color"
+	"strconv"
 )
 
 type MetricInt64 struct {

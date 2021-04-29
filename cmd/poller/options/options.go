@@ -1,14 +1,6 @@
-//
-// Copyright NetApp Inc, 2021 All rights reserved
-//
-// Package Description:
-//
-// Package options provides Poller start options,
-// parsed from CLI arguments, default values and
-// environment variables.
-//
-// Examples:
-//
+/*
+ * Copyright NetApp Inc, 2021 All rights reserved
+ */
 package options
 
 import (

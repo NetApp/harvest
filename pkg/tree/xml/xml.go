@@ -1,16 +1,12 @@
-//
-// Copyright NetApp Inc, 2021 All rights reserved
-//
-// Package Description:
-//
-// Examples:
-//
+/*
+ * Copyright NetApp Inc, 2021 All rights reserved
+ */
 package xml
 
 import (
-	"goharvest2/pkg/tree/node"
 	"bytes"
 	"encoding/xml"
+	"goharvest2/pkg/tree/node"
 	"io"
 )
 

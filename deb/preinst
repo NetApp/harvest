@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# Copyright NetApp Inc, 2021 All rights reserved
+#
+
 echo " --> preparing $1"
 if [[ "$1" == "install" || "$1" == "upgrade" ]]; then
     getent group harvest > /dev/null 2>&1 || addgroup -q --system harvest && echo " --> group created"

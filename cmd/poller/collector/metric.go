@@ -1,13 +1,6 @@
-//
-// Copyright NetApp Inc, 2021 All rights reserved
-//
-// Package Description:
-// Parse raw metric name from collector template
-//
-// Examples:
-// Simple name (e.g. "metric_name"), means both name and display are the same
-// Custom name (e.g. "metric_name => custom_name") is parsed as display name.
-//
+/*
+ * Copyright NetApp Inc, 2021 All rights reserved
+ */
 package collector
 
 import (

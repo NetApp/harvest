@@ -1,3 +1,7 @@
+/*
+ * Copyright NetApp Inc, 2021 All rights reserved
+ */
+
 package matrix
 
 func (my *Matrix) InstanceWiseAdditionUint64(toInstance, fromInstance *Instance, fromData *Matrix) {

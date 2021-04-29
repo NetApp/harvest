@@ -1,10 +1,6 @@
-//
-// Copyright NetApp Inc, 2021 All rights reserved
-//
-// Package Description:
-//
-// Examples:
-//
+/*
+ * Copyright NetApp Inc, 2021 All rights reserved
+ */
 package main
 
 import (
@@ -15,10 +11,10 @@ import (
 	"strings"
 
 	client "goharvest2/pkg/api/ontapi/zapi"
+	"goharvest2/pkg/color"
 	"goharvest2/pkg/config"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/tree/node"
-	"goharvest2/pkg/color"
 )
 
 var (

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#
+# Copyright NetApp Inc, 2021 All rights reserved
+#
+
 if [[ "$1" == "purge" || "$1" == "remove" ]]; then
     if [ "$1" == "purge" ]; then
         rm -r /var/log/harvest && echo " --> delete log directory"
