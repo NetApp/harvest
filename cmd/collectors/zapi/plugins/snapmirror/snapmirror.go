@@ -236,3 +236,6 @@ func (my *SnapMirror) update_limit_cache() error {
 	return nil
 
 }
+
+// Need to appease go build - see https://github.com/golang/go/issues/20312
+func main() {}

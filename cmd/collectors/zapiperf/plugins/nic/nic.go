@@ -115,3 +115,6 @@ func (me *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	return nil, nil
 }
+
+// Need to appease go build - see https://github.com/golang/go/issues/20312
+func main() {}

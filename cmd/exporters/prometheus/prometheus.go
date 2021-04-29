@@ -351,3 +351,6 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 	logger.Debug(me.Prefix, "rendered %d data points from %d (%s) instances", len(rendered), len(data.GetInstances()), data.Object)
 	return rendered, nil
 }
+
+// Need to appease go build - see https://github.com/golang/go/issues/20312
+func main() {}

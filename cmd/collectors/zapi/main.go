@@ -11,3 +11,6 @@ import (
 func New(a *collector.AbstractCollector) collector.Collector {
 	return zapi.New(a)
 }
+
+// Need to appease go build - see https://github.com/golang/go/issues/20312
+func main() {}
