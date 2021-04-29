@@ -1,6 +1,23 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
- */
+
+Package Description:
+
+   The Prometheus exporter exposes metrics to the Prometheus DB
+   over an HTTP server. It consists of two concurrent components:
+
+      - the "actual" exporter (this file): receives metrics from collectors,
+        renders into the Prometheus format and stores in cache
+
+      - the HTTP daemon (httpd.go): will listen for incoming requests and
+        will serve metrics from that cache.
+
+   Strictly speaking this is an HTTP-exporter, simply using the exposition
+   format accepted by Prometheus.
+
+   Special thanks Yann Bizeul who helped to identify that having no lock
+   on the cache creates a race-condition (not caught on all Linux systems).
+*/
 
 package main
 

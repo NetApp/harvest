@@ -1,6 +1,10 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
- */
+
+Package Description:
+   The HTTP daemon exposes metrics for the Prometheus database
+   as well as a list of the names of available metrics for humans
+*/
 package main
 
 import (

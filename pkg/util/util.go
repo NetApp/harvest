@@ -1,6 +1,9 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
- */
+
+ Package Description:
+    Some helper methods.
+*/
 package util
 
 func MinLen(elements [][]string) int {

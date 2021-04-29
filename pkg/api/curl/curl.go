@@ -1,6 +1,9 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
- */
+
+Package Description:
+   Does a simple HTTP Get request to the specified address, returns data if any.
+*/
 package util
 
 import (
