@@ -4,7 +4,6 @@
 package json
 
 import (
-	"goharvest2/pkg/tree/json"
 	"goharvest2/pkg/tree/node"
 	"testing"
 )
@@ -17,7 +16,7 @@ func TestLoad(t *testing.T) {
 
 	data = []byte(`{"id":61,"uid":"jratWpwMz","title":"Harvest 2.0","url":"/dashboards/f/jratWpwMz/harvest-2-0","hasAcl":false,"canSave":true,"canEdit":true,"canAdmin":false,"createdBy":"Anonymous","created":"2021-03-21T16:11:38+04:00","updatedBy":"Anonymous","updated":"2021-03-21T16:11:38+04:00","version":1}`)
 
-	if root, err = json.Load(data); err != nil {
+	if root, err = Load(data); err != nil {
 		t.Fatal(err)
 	}
 
@@ -49,7 +48,7 @@ func TestDump(t *testing.T) {
 	t.Logf("dumping node:")
 	root.Print(0)
 
-	dump = json.Dump(root)
+	dump = Dump(root)
 
 	t.Logf("%-10s [%s]", "expected:", string(data))
 

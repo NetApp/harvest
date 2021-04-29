@@ -13,7 +13,7 @@ func TestMeasurementA(t *testing.T) {
 
 	expecting := `weather,location=us-midwest temperature=82 1465839830100400200`
 
-	m := NewMeasurement("weather")
+	m := NewMeasurement("weather", 0)
 	m.AddTag("location", "us-midwest")
 	m.AddField("temperature", "82")
 	m.SetTimestamp("1465839830100400200")
@@ -31,7 +31,7 @@ func TestMeasurementB(t *testing.T) {
 
 	expecting := `weather temperature=82 1465839830100400200`
 
-	m := NewMeasurement("weather")
+	m := NewMeasurement("weather", 0)
 	m.AddField("temperature", "82")
 	m.SetTimestamp("1465839830100400200")
 
@@ -48,7 +48,7 @@ func TestMeasurementC(t *testing.T) {
 
 	expecting := `weather,location=us-midwest temperature=82`
 
-	m := NewMeasurement("weather")
+	m := NewMeasurement("weather", 0)
 	m.AddTag("location", "us-midwest")
 	m.AddField("temperature", "82")
 
@@ -65,7 +65,7 @@ func TestMeasurementD(t *testing.T) {
 
 	expecting := `weather,location=us-midwest temperature=82,humidity=71 1465839830100400200`
 
-	m := NewMeasurement("weather")
+	m := NewMeasurement("weather", 0)
 	m.AddTag("location", "us-midwest")
 	m.AddField("temperature", "82")
 	m.AddField("humidity", "71")
@@ -84,7 +84,7 @@ func TestMeasurementE(t *testing.T) {
 
 	expecting := `weather,location=us\,midwest temperature="too warm" 1465839830100400200`
 
-	m := NewMeasurement("weather")
+	m := NewMeasurement("weather", 0)
 	m.AddTag("location", "us,midwest")
 	m.AddFieldString("temperature", "too warm")
 	m.SetTimestamp("1465839830100400200")

@@ -25,29 +25,29 @@ func TestExportDebug(t *testing.T) {
 	influx := New(exporter.New("InfluxDB", "influx-test", opts, nil))
 
 	// matrix with fake data
-	data := matrix.New("test_exporter", "influxd_test_data", "")
+	data := matrix.New("test_exporter", "influxd_test_data")
 	data.SetExportOptions(matrix.DefaultExportOptions())
 
 	// add metric
-	m, err := data.AddMetric("test_metric", "test_metric", true)
-	if err != nil {
-		t.Fatal(err)
-	}
+	//m, err := data.AddMetric("test_metric", "test_metric", true)
+	//if err != nil {
+	//	t.Fatal(err)
+	//}
 
 	// add instance
-	i, err := data.AddInstance("test_instance")
+	i, err := data.NewInstance("test_instance")
 	if err != nil {
 		t.Fatal(err)
 	}
-	i.Labels.Set("test_label", "test_label_value")
+	i.SetLabel("test_label", "test_label_value")
 
 	// add numeric data
-	if err := data.InitData(); err != nil {
-		t.Fatal(err)
-	}
-	if err := data.SetValueString(m, i, "42.2"); err != nil {
-		t.Fatal(err)
-	}
+	//if err := data.InitData(); err != nil {
+	//	t.Fatal(err)
+	//}
+	//if err := data.SetValueString(m, i, "42.2"); err != nil {
+	//	t.Fatal(err)
+	//}
 
 	// render data
 	if err := influx.Export(data); err != nil {
