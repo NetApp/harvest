@@ -163,7 +163,7 @@ func exportDashboards(opts *options) error {
 		} else if dashboard, ok := result["dashboard"]; ok {
 			fp := path.Join(dir, uri+".json")
 			if data, err := json.Marshal(dashboard); err != nil {
-				fmt.Println("error marshall dashboard [%s]: %v\n", uid, err)
+				fmt.Printf("error marshall dashboard [%s]: %v\n\n", uid, err)
 				return err
 			} else if err = ioutil.WriteFile(fp, data, 0644); err != nil {
 				fmt.Printf("error write to [%s]: %v\n", fp, err)
