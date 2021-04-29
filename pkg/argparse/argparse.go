@@ -312,7 +312,7 @@ func (p *Parser) PrintHelp() {
 	fmt.Printf("%s - %s\n\n", p.name, p.descr)
 
 	if len(p.positionals) != 0 {
-		fmt.Println("Positional arguments:\n")
+		fmt.Println("Positional arguments:")
 
 		for _, x := range p.positionals {
 			fmt.Printf("    %-20s %s\n", x.name, x.descr)
