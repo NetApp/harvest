@@ -1,17 +1,13 @@
-//
-// Copyright NetApp Inc, 2021 All rights reserved
-//
-// Package Description:
-//
-// Examples:
-//
+/*
+ * Copyright NetApp Inc, 2021 All rights reserved
+ */
 package template
 
 import (
-	"goharvest2/pkg/tree"
-	"goharvest2/pkg/tree/node"
 	"bytes"
 	"fmt"
+	"goharvest2/pkg/tree"
+	"goharvest2/pkg/tree/node"
 	"io/ioutil"
 	"os"
 	"path"

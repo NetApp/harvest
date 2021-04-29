@@ -1,17 +1,6 @@
-//
-// Copyright NetApp Inc, 2021 All rights reserved
-//
-// Package Description:
-//  Some postprocessing on counter data "nic_common"
-//    Converts link_speed to numeric MBs
-//    Adds custom metrics:
-//        - "rc_percent":    receive data utilization percent
-//        - "tx_percent":    sent data utilization percent
-//        - "util_percent":  max utilization percent
-//        - "nic_state":     0 if port is up, 1 otherwise
-//
-// Examples:
-//
+/*
+ * Copyright NetApp Inc, 2021 All rights reserved
+ */
 package main
 
 import (

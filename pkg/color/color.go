@@ -1,10 +1,6 @@
-//
-// Copyright NetApp Inc, 2021 All rights reserved
-//
-// Package Description: 
-//
-// Examples:
-//
+/*
+ * Copyright NetApp Inc, 2021 All rights reserved
+ */
 package color
 
 var Bold string = "\033[1m"

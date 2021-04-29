@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#
+# Copyright NetApp Inc, 2021 All rights reserved
+#
+
 BUILD_SOURCE=$(pwd)
 BIN=`basename $0`
 

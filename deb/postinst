@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#
+# Copyright NetApp Inc, 2021 All rights reserved
+#
+
 echo " --> set directory ownership"
 chown -R harvest:harvest /opt/harvest
 chown -R harvest:harvest /etc/harvest

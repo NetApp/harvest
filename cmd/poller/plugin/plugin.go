@@ -1,32 +1,6 @@
-//
-// Copyright NetApp Inc, 2021 All rights reserved
-//
-// Package Description:
-//
-// Package plugin provides abstractions for plugins, as well as
-// a number of generic built-in plugins. Plugins allow to customize
-// and manipulate data from collectors and sometimes collect additional
-// data without changing the sourcecode of collectors. Multiple plugins
-// can be put in a pipeline, they are executed in the same order as they
-// are defined in the collector's config file.
-// Harvest architecuture defines three types of plugins:
-//
-// **built-in**
-//     Statically compiled, generic plugins. "Generic" means
-//     the plugin is collector-agnostic. These plugins are
-//     provided in this package.
-//
-// **generic**
-//	   These are generic plugins as well, but they are compiled
-//     as shared objects and dynamically loaded. These plugins are
-//     living in the directory src/plugins.
-//
-// **custom**
-//     These plugins are collector-specific. Their source code should
-//     reside inside the plugins/ subdirectory of the collector package.
-//     Custom plugins have access to all the parameters of their parent
-//     collector and should be therefore treated with great care.
-//
+/*
+ * Copyright NetApp Inc, 2021 All rights reserved
+ */
 package plugin
 
 import (

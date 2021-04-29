@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#
+# Copyright NetApp Inc, 2021 All rights reserved
+#
+
 BUILD="/tmp/build"
 SRC=$HARVEST_BUILD_SRC
 

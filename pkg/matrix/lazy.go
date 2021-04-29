@@ -1,3 +1,7 @@
+/*
+ * Copyright NetApp Inc, 2021 All rights reserved
+ */
+
 // this file provides methods got quick read/writes to the matrix
 // except for using to update metadata, it's unsafe to use these methods
 // and they may be deprecated in the future
