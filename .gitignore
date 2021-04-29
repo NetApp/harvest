@@ -12,5 +12,8 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
+# GoLand stuff
+.idea/*
+
 # build directories
 bin/
