@@ -61,7 +61,7 @@ func get_attrs(c *client.Client, a *Args) (*node.Node, error) {
 		if t := x.GetChildContentS("type"); t == "string" || t == "integer" {
 			continue
 		}
-		if name := x.GetChildContentS("name"); name != "num-records" || name != "next-tag" {
+		if name := x.GetChildContentS("name"); true {
 			attr_key = name
 			attr_name = x.GetChildContentS("type")
 			break
