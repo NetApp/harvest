@@ -1,6 +1,25 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
- */
+
+Package Description:
+
+   Poller is an umbrella for collectors and exporters which
+   run more or less independently.
+
+   Poller has no knowledge or control over what collectors and
+   exporters are doing. Its sole job is to load parameters from
+   configuration files, import, initialize and launch the collectors and
+   exporters. Currently, Poller and collectors run in own goroutines,
+   while exporters live in the main goroutine, this last will change.
+
+   The rest of the time Poller will do some housekeeping, like
+   rotating logs, check and report status of collectors and exporters.
+   It will terminate when no collectors are active or when termination
+   signal is received.
+
+   If Poller fails before a log handler is opened, it will attempt to
+   send error message to syslog.
+*/
 package main
 
 import (
