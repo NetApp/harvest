@@ -284,8 +284,8 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 	count = 0
 	skipped = 0
 
-	api_d := time.Duration(0 * time.Second)
-	parse_d := time.Duration(0 * time.Second)
+	api_d := 0 * time.Second
+	parse_d := 0 * time.Second
 
 	fetch = func(instance *matrix.Instance, node *node.Node, path []string) {
 

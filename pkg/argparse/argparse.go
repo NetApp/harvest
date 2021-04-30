@@ -157,7 +157,7 @@ func (p *Parser) Parse() bool {
 			arg_index += i
 			// short flag
 		} else if string(flag[0]) == "-" {
-			arg_index += p.handle_short(arg_index, string(flag[1:]))
+			arg_index += p.handle_short(arg_index, flag[1:])
 			// positional
 		} else if len(p.positionals) != 0 {
 			arg_index += p.handle_pos(arg_index, pos_index)
@@ -293,7 +293,7 @@ func (p *Parser) handle_short(i int, name string) int {
 			//@TODO will fail if multiple value assignments
 			x := p.handle_long(i, p.options[index].name)
 			//fmt.Printf(" short ++ %d (-1) ==> ", x)
-			k += (x - 1)
+			k += x - 1
 			//fmt.Printf(" %d\n", k)
 		} else {
 			p.errors = append(p.errors, []string{string(name[j]), "undefined"})

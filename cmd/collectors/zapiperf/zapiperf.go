@@ -139,8 +139,8 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 	// for updating metadata
 	count := uint64(0)
 	batch_count := 0
-	api_d := time.Duration(0 * time.Second)
-	parse_d := time.Duration(0 * time.Second)
+	api_d := 0 * time.Second
+	parse_d := 0 * time.Second
 
 	// determine what will serve as instance key (either "uuid" or "instance")
 	key_name := "instance-uuid"
@@ -283,7 +283,7 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 				// store as array counter / histogram
 				if labels, has := me.array_labels[name]; has {
 
-					values := strings.Split(string(value), ",")
+					values := strings.Split(value, ",")
 
 					if len(labels) != len(values) {
 						// warn & skip
