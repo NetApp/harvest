@@ -6,6 +6,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"goharvest2/pkg/errors"
 	"io/ioutil"
 	"os"
@@ -71,7 +72,11 @@ func (me *Process) Reload() error {
 	me.dirpath = path.Join("/proc", strconv.Itoa(me.pid)+"/")
 
 	if s, err := os.Stat(me.dirpath); err != nil || !s.IsDir() {
-		return errors.New(PROCESS_NOT_FOUND, err.Error())
+		if err == nil {
+			return errors.New(PROCESS_NOT_FOUND, fmt.Sprintf("%s is not dir", me.dirpath))
+		} else {
+			return errors.New(PROCESS_NOT_FOUND, err.Error())
+		}
 	}
 
 	if err = me.loadCmdline(); err != nil {

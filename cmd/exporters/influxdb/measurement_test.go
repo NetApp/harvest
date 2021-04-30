@@ -20,10 +20,10 @@ func TestMeasurementA(t *testing.T) {
 
 	if out, err := m.Render(); err != nil {
 		t.Errorf("render: %s", err.Error())
-	} else if string(out) != expecting {
-		t.Errorf("\n%-10s [%s]\n%-10s [%s]", "got:", string(out), "expected:", expecting)
+	} else if out != expecting {
+		t.Errorf("\n%-10s [%s]\n%-10s [%s]", "got:", out, "expected:", expecting)
 	} else {
-		t.Logf("\n%-10s [%s]\n%-10s [%s]", "got:", string(out), "expected:", expecting)
+		t.Logf("\n%-10s [%s]\n%-10s [%s]", "got:", out, "expected:", expecting)
 	}
 }
 
@@ -37,10 +37,10 @@ func TestMeasurementB(t *testing.T) {
 
 	if out, err := m.Render(); err != nil {
 		t.Errorf("render: %s", err.Error())
-	} else if string(out) != expecting {
-		t.Errorf("\n%-10s [%s]\n%-10s [%s]", "got:", string(out), "expected:", expecting)
+	} else if out != expecting {
+		t.Errorf("\n%-10s [%s]\n%-10s [%s]", "got:", out, "expected:", expecting)
 	} else {
-		t.Logf("\n%-10s [%s]\n%-10s [%s]", "got:", string(out), "expected:", expecting)
+		t.Logf("\n%-10s [%s]\n%-10s [%s]", "got:", out, "expected:", expecting)
 	}
 }
 
@@ -54,10 +54,10 @@ func TestMeasurementC(t *testing.T) {
 
 	if out, err := m.Render(); err != nil {
 		t.Errorf("render: %s", err.Error())
-	} else if string(out) != expecting {
-		t.Errorf("\n%-10s [%s]\n%-10s [%s]", "got:", string(out), "expected:", expecting)
+	} else if out != expecting {
+		t.Errorf("\n%-10s [%s]\n%-10s [%s]", "got:", out, "expected:", expecting)
 	} else {
-		t.Logf("\n%-10s [%s]\n%-10s [%s]", "got:", string(out), "expected:", expecting)
+		t.Logf("\n%-10s [%s]\n%-10s [%s]", "got:", out, "expected:", expecting)
 	}
 }
 
@@ -73,10 +73,10 @@ func TestMeasurementD(t *testing.T) {
 
 	if out, err := m.Render(); err != nil {
 		t.Errorf("render: %s", err.Error())
-	} else if string(out) != expecting {
-		t.Errorf("\n%-10s [%s]\n%-10s [%s]", "got:", string(out), "expected:", expecting)
+	} else if out != expecting {
+		t.Errorf("\n%-10s [%s]\n%-10s [%s]", "got:", out, "expected:", expecting)
 	} else {
-		t.Logf("\n%-10s [%s]\n%-10s [%s]", "got:", string(out), "expected:", expecting)
+		t.Logf("\n%-10s [%s]\n%-10s [%s]", "got:", out, "expected:", expecting)
 	}
 }
 
@@ -91,9 +91,9 @@ func TestMeasurementE(t *testing.T) {
 
 	if out, err := m.Render(); err != nil {
 		t.Errorf("render: %s", err.Error())
-	} else if string(out) != expecting {
-		t.Errorf("\n%-10s [%s]\n%-10s [%s]", "got:", string(out), "expected:", expecting)
+	} else if out != expecting {
+		t.Errorf("\n%-10s [%s]\n%-10s [%s]", "got:", out, "expected:", expecting)
 	} else {
-		t.Logf("\n%-10s [%s]\n%-10s [%s]", "got:", string(out), "expected:", expecting)
+		t.Logf("\n%-10s [%s]\n%-10s [%s]", "got:", out, "expected:", expecting)
 	}
 }
