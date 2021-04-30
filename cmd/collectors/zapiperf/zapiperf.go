@@ -339,10 +339,6 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 	// terminate if serious errors
 	// @TODO handle...
 
-	if err != nil {
-		return nil, err
-	}
-
 	// update metadata
 	me.Metadata.LazySetValueInt64("api_time", "data", api_d.Microseconds())
 	me.Metadata.LazySetValueInt64("parse_time", "data", parse_d.Microseconds())
