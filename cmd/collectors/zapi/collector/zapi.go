@@ -108,7 +108,7 @@ func (me *Zapi) InitVars() error {
 		model = "7mode"
 	}
 
-	template, err := me.ImportSubTemplate(model, "default", me.TemplateFn, me.System.Version)
+	template, err := me.ImportSubTemplate(model, me.TemplateFn, me.System.Version)
 	if err != nil {
 		logger.Error(me.Prefix, "Error importing subtemplate: %s", err)
 		return err

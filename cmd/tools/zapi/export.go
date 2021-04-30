@@ -128,7 +128,7 @@ func export_counters(item *node.Node, c *client.Client, args *Args) error {
 		return nil
 	}
 
-	if custom, err = collector.ImportTemplate(CONFPATH, "zapiperf", "custom.yaml"); err != nil {
+	if custom, err = collector.ImportTemplate(CONFPATH, "custom.yaml", "zapiperf"); err != nil {
 		custom = node.NewS("")
 		custom.NewChildS("collector", "ZapiPerf")
 		custom.NewChildS("objects", "")

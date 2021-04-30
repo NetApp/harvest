@@ -1,24 +1,25 @@
 /*
- * Copyright NetApp Inc, 2021 All rights reserved
+	Copyright NetApp Inc, 2021 All rights reserved
 
-Package Description:
+	Package poller implements the program that monitors a target system.
+	This can be either a remote host or the local system. Poller is however
+	agnostic about the target system and the APIs used to communicate with it.
 
-   Poller is an umbrella for collectors and exporters which
-   run more or less independently.
+	Polling the target is done by collectors (sometimes plugins). Conversely,
+	storing collected data is done by exporters. All the poller does is
+	initialize the collectors and exporters defined in its configuration
+	and start them up. All poller parameters are passed on to the collectors.
+	Conversely, exporters get only what is explicitly defined as their
+	parameters.
 
-   Poller has no knowledge or control over what collectors and
-   exporters are doing. Its sole job is to load parameters from
-   configuration files, import, initialize and launch the collectors and
-   exporters. Currently, Poller and collectors run in own goroutines,
-   while exporters live in the main goroutine, this last will change.
+	After start-up, poller will periodically check the status of collectors
+	and exporters, ping the target system, generate metadata and do some
+	housekeeping.
 
-   The rest of the time Poller will do some housekeeping, like
-   rotating logs, check and report status of collectors and exporters.
-   It will terminate when no collectors are active or when termination
-   signal is received.
-
-   If Poller fails before a log handler is opened, it will attempt to
-   send error message to syslog.
+	Usually the poller will run as a daemon. In this case it will creat
+	a PID file and write logs to a file. For debugging and testing
+	it can also be started as a foreground process, in this case
+	logs are sent to STDOUT.
 */
 package main
 
@@ -247,7 +248,7 @@ func (me *Poller) Init() error {
 		_POLLER_SCHEDULE = s
 	}
 	me.schedule = schedule.New()
-	if err = me.schedule.AddTaskString("poller", _POLLER_SCHEDULE, nil); err != nil {
+	if err = me.schedule.NewTaskString("poller", _POLLER_SCHEDULE, nil); err != nil {
 		logger.Error(me.prefix, "set schedule: %v", err)
 		return err
 	}
@@ -293,7 +294,7 @@ func (me *Poller) Start() {
 func (me *Poller) Run() {
 
 	// poller schedule has just one task
-	task, _ := me.schedule.GetTask("poller")
+	task := me.schedule.GetTask("poller")
 
 	// number of collectors/exporters that are still up
 	up_collectors := 0
@@ -368,13 +369,11 @@ func (me *Poller) Run() {
 
 			// @TODO if there are no "master" exporters, don't collect metadata
 			for _, e := range me.exporters {
-				if e.IsMaster() {
-					if err := e.Export(me.metadata); err != nil {
-						logger.Error(me.prefix, "export component metadata: %v", err)
-					}
-					if err := e.Export(me.status); err != nil {
-						logger.Error(me.prefix, "export target metadata: %v", err)
-					}
+				if err := e.Export(me.metadata); err != nil {
+					logger.Error(me.prefix, "export component metadata: %v", err)
+				}
+				if err := e.Export(me.status); err != nil {
+					logger.Error(me.prefix, "export target metadata: %v", err)
 				}
 			}
 
@@ -509,13 +508,13 @@ func (me *Poller) load_collector(class, object string) error {
 
 	// load the template file(s) of the collector where we expect to find
 	// object name or list of objects
-	if template, err = collector.ImportTemplate(me.options.ConfPath, class, "default.yaml"); err != nil {
+	if template, err = collector.ImportTemplate(me.options.ConfPath, "default.yaml", class); err != nil {
 		return err
 	} else if template == nil { // probably redundant
 		return errors.New(errors.MISSING_PARAM, "collector template")
 	}
 
-	if custom, err = collector.ImportTemplate(me.options.ConfPath, class, "custom.yaml"); err == nil && custom != nil {
+	if custom, err = collector.ImportTemplate(me.options.ConfPath, "custom.yaml", class); err == nil && custom != nil {
 		template.Merge(custom)
 		logger.Debug(me.prefix, "merged custom and default templates")
 	}
