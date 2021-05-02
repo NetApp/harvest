@@ -108,8 +108,8 @@ func (s *Schedule) IsStandBy() bool {
 // the critical task t has succeeded. The temporary interval i will be used for
 // the task until Schedule recovers to normal mode.
 func (s *Schedule) SetStandByMode(t *task, i time.Duration) {
-	for _, t := range s.tasks {
-		if task.Name == t.Name {
+	for _, x := range s.tasks {
+		if x.Name == t.Name {
 			s.standByTask = t
 			s.cachedInterval = t.interval // remember normal interval of task
 			t.interval = i
@@ -118,7 +118,7 @@ func (s *Schedule) SetStandByMode(t *task, i time.Duration) {
 			return
 		}
 	}
-	panic("invalid task: " + t)
+	panic("invalid task: " + t.Name)
 }
 
 // Recover undoes StandbyMode and restores normal state of the Schedule
@@ -135,7 +135,7 @@ func (s *Schedule) Recover() {
 				t.timer = time.Now().Add(-t.interval)
 			}
 		}
-		s.cachedInterval = nil
+		//s.cachedInterval = nil
 		s.standByTask = nil
 		s.standByMode = false
 		return
@@ -158,13 +158,13 @@ func (s *Schedule) NewTask(n string, i time.Duration, f func() (*matrix.Matrix, 
 		}
 		return errors.New(errors.INVALID_PARAM, "interval :"+i.String())
 	}
-	return errors.New(errors.INVALID_PARAM, "duplicate task :"+t)
+	return errors.New(errors.INVALID_PARAM, "duplicate task :"+n)
 }
 
 // NewTaskStrings creates a new task, the interval is parsed from string i
 func (s *Schedule) NewTaskString(n, i string, f func() (*matrix.Matrix, error)) error {
 	if d, err := time.ParseDuration(i); err == nil {
-		return s.NewTask(t, d, f)
+		return s.NewTask(n, d, f)
 	} else {
 		return err
 	}
@@ -231,7 +231,7 @@ func (s *Schedule) NextDue() time.Duration {
 	d := 1000000 * time.Hour
 
 	for _, t := range s.tasks {
-		if due := task.NextDue(); due < d {
+		if due := t.NextDue(); due < d {
 			d = due
 		}
 	}

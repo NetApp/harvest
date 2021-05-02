@@ -13,14 +13,18 @@ package collector
 
 import (
 	"errors"
-	"goharvest2/pkg/logger"
-	"goharvest2/pkg/tree"
-	"goharvest2/pkg/tree/node"
 	"io/ioutil"
 	"path"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"goharvest2/cmd/poller/plugin"
+	"goharvest2/cmd/poller/plugin/aggregator"
+	"goharvest2/cmd/poller/plugin/label_agent"
+	"goharvest2/pkg/logger"
+	"goharvest2/pkg/tree"
+	"goharvest2/pkg/tree/node"
 )
 
 // ImportTemplate retrieves the config (template) of a collector, arguments are:
@@ -51,9 +55,7 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, version [3
 	var (
 		selectedVersion, pathPrefix, subTemplateFp string
 		availableVersions                          map[string]bool
-		template                                   *node.Node
 		versionDecimal                             int
-		err                                        error
 	)
 
 	pathPrefix = path.Join(c.Options.ConfPath, "conf/", strings.ToLower(c.Name), model)

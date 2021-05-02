@@ -33,12 +33,6 @@ import (
 	"goharvest2/cmd/poller/options"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/cmd/poller/schedule"
-
-	// built-in plugins
-
-	"goharvest2/cmd/poller/plugin/aggregator"
-	//"goharvest2/cmd/poller/plugin/calculator"
-	"goharvest2/cmd/poller/plugin/label_agent"
 )
 
 // Collector defines the attributes of a collector
@@ -346,7 +340,7 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 				me.Metadata.LazySetValueInt64("poll_time", task.Name, task.GetDuration().Microseconds())
 				me.Metadata.LazySetValueInt64("task_time", task.Name, taskTime.Microseconds())
 
-				if apiTime, ok := me.Metadata.LazyGetValueInt64("api_time", task.Name); ok && api_time != 0 {
+				if apiTime, ok := me.Metadata.LazyGetValueInt64("api_time", task.Name); ok && apiTime != 0 {
 					me.Metadata.LazySetValueFloat64("api_time_percent", task.Name, float64(apiTime)/float64(taskTime.Microseconds())*100)
 				}
 
