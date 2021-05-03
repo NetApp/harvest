@@ -128,19 +128,20 @@ func (e *InfluxDB) Export(data *matrix.Matrix) error {
 
 	s = time.Now()
 
+	// render the metrics, i.e. convert to InfluxDb line protocol
 	if metrics, err = e.Render(data); err == nil && len(metrics) != 0 {
 		// fix render time
 		if err = e.Metadata.LazyAddValueInt64("time", "render", time.Since(s).Microseconds()); err != nil {
 			logger.Error(e.Prefix, "metadata render time: %v", err)
 		}
-		// no export in debug mode
+		// in debug mode, don't actually export but write to log
 		if e.Options.Debug {
 			logger.Debug(e.Prefix, "simulating export since in debug mode")
 			for _, m := range metrics {
 				logger.Debug(e.Prefix, "M= [%s%s%s]", color.Blue, m, color.End)
 			}
 			return nil
-			// export to db
+			// otherwise to the actual export: send to the DB
 		} else if err = e.Emit(metrics); err != nil {
 			logger.Error(e.Prefix, "(%s.%s) --> %s", data.Object, data.UUID, err.Error())
 			return err
