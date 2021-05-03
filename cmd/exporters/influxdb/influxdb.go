@@ -27,11 +27,11 @@ import (
 */
 
 const (
-	_DEFAULT_PORT          = "8086"
-	_DEFAULT_TIMEOUT       = 5
-	_DEFAULT_API_VERSION   = "2"
-	_DEFAULT_API_PRECISION = "s"
-	_EXPECTED_STATUS_CODE  = 204
+	defaultPort          = "8086"
+	detaultTimeout       = 5
+	defaultApiVersion    = "2"
+	defaultApiPrecision  = "s"
+	expectedResponseCode = 204
 )
 
 type InfluxDB struct {
@@ -60,8 +60,8 @@ func (e *InfluxDB) Init() error {
 	}
 
 	if port = e.Params.GetChildContentS("port"); port == "" {
-		logger.Debug(e.Prefix, "using default port [%s]", _DEFAULT_PORT)
-		port = _DEFAULT_PORT
+		logger.Debug(e.Prefix, "using default port [%s]", defaultPort)
+		port = defaultPort
 	} else if _, err = strconv.Atoi(port); err != nil {
 		return errors.New(errors.INVALID_PARAM, "port")
 	}
@@ -83,25 +83,25 @@ func (e *InfluxDB) Init() error {
 	}
 
 	if v = e.Params.GetChildContentS("version"); v == "" {
-		v = _DEFAULT_API_VERSION
+		v = defaultApiVersion
 	}
 	logger.Debug(e.Prefix, "using api version [%s]", v)
 
 	if p = e.Params.GetChildContentS("precision"); p == "" {
-		p = _DEFAULT_API_PRECISION
+		p = defaultApiPrecision
 	}
 	logger.Debug(e.Prefix, "using api precision [%s]", p)
 
 	// timeout parameter
-	timeout := time.Duration(_DEFAULT_TIMEOUT) * time.Second
+	timeout := time.Duration(detaultTimeout) * time.Second
 	if ct := e.Params.GetChildContentS("client_timeout"); ct != "" {
 		if t, err := strconv.Atoi(ct); err == nil {
 			timeout = time.Duration(t) * time.Second
 		} else {
-			logger.Warn(e.Prefix, "invalid client_timeout [%s], using default: %d s", ct, _DEFAULT_TIMEOUT)
+			logger.Warn(e.Prefix, "invalid client_timeout [%s], using default: %d s", ct, detaultTimeout)
 		}
 	} else {
-		logger.Debug(e.Prefix, "using default client_timeout: %d s", _DEFAULT_TIMEOUT)
+		logger.Debug(e.Prefix, "using default client_timeout: %d s", detaultTimeout)
 	}
 
 	// construct client URL
@@ -185,7 +185,7 @@ func (e *InfluxDB) Emit(data [][]byte) error {
 		return err
 	}
 
-	if response.StatusCode != _EXPECTED_STATUS_CODE {
+	if response.StatusCode != expectedResponseCode {
 		defer response.Body.Close()
 		if body, err := ioutil.ReadAll(response.Body); err != nil {
 			return errors.New(errors.API_RESPONSE, err.Error())
