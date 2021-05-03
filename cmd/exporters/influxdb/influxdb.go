@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"fmt"
 	"goharvest2/cmd/poller/exporter"
+	"goharvest2/pkg/color"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/logger"
 	"goharvest2/pkg/matrix"
@@ -26,11 +27,11 @@ import (
 */
 
 const (
-	DEFAULT_PORT          = "8086"
-	DEFAULT_TIMEOUT       = 5
-	DEFAULT_API_VERSION   = "2"
-	DEFAULT_API_PRECISION = "s"
-	EXPECTED_STATUS_CODE  = 204
+	_DEFAULT_PORT          = "8086"
+	_DEFAULT_TIMEOUT       = 5
+	_DEFAULT_API_VERSION   = "2"
+	_DEFAULT_API_PRECISION = "s"
+	_EXPECTED_STATUS_CODE  = 204
 )
 
 type InfluxDB struct {
@@ -59,8 +60,8 @@ func (e *InfluxDB) Init() error {
 	}
 
 	if port = e.Params.GetChildContentS("port"); port == "" {
-		logger.Debug(e.Prefix, "using default port [%s]", DEFAULT_PORT)
-		port = DEFAULT_PORT
+		logger.Debug(e.Prefix, "using default port [%s]", _DEFAULT_PORT)
+		port = _DEFAULT_PORT
 	} else if _, err = strconv.Atoi(port); err != nil {
 		return errors.New(errors.INVALID_PARAM, "port")
 	}
@@ -82,25 +83,25 @@ func (e *InfluxDB) Init() error {
 	}
 
 	if v = e.Params.GetChildContentS("version"); v == "" {
-		v = DEFAULT_API_VERSION
+		v = _DEFAULT_API_VERSION
 	}
 	logger.Debug(e.Prefix, "using api version [%s]", v)
 
 	if p = e.Params.GetChildContentS("precision"); p == "" {
-		p = DEFAULT_API_PRECISION
+		p = _DEFAULT_API_PRECISION
 	}
 	logger.Debug(e.Prefix, "using api precision [%s]", p)
 
 	// timeout parameter
-	timeout := time.Duration(DEFAULT_TIMEOUT) * time.Second
+	timeout := time.Duration(_DEFAULT_TIMEOUT) * time.Second
 	if ct := e.Params.GetChildContentS("client_timeout"); ct != "" {
 		if t, err := strconv.Atoi(ct); err == nil {
 			timeout = time.Duration(t) * time.Second
 		} else {
-			logger.Warn(e.Prefix, "invalid client_timeout [%s], using default: %d s", ct, DEFAULT_TIMEOUT)
+			logger.Warn(e.Prefix, "invalid client_timeout [%s], using default: %d s", ct, _DEFAULT_TIMEOUT)
 		}
 	} else {
-		logger.Debug(e.Prefix, "using default client_timeout: %d s", DEFAULT_TIMEOUT)
+		logger.Debug(e.Prefix, "using default client_timeout: %d s", _DEFAULT_TIMEOUT)
 	}
 
 	// construct client URL
@@ -116,23 +117,54 @@ func (e *InfluxDB) Init() error {
 
 func (e *InfluxDB) Export(data *matrix.Matrix) error {
 
-	var metrics [][]byte
-	var err error
+	var (
+		metrics [][]byte
+		err     error
+		s       time.Time
+	)
 
 	e.Lock()
 	defer e.Unlock()
 
-	if metrics, err = e.Render(data); err == nil {
+	s = time.Now()
+
+	if metrics, err = e.Render(data); err == nil && len(metrics) != 0 {
+		// fix render time
+		if err = e.Metadata.LazyAddValueInt64("time", "render", time.Since(s).Microseconds()); err != nil {
+			logger.Error(e.Prefix, "metadata render time: %v", err)
+		}
+		// no export in debug mode
 		if e.Options.Debug {
 			logger.Debug(e.Prefix, "simulating export since in debug mode")
 			for _, m := range metrics {
-				logger.Debug(e.Prefix, "M= [%s]", m)
+				logger.Debug(e.Prefix, "M= [%s%s%s]", color.Blue, m, color.End)
 			}
-		} else {
-			err = e.Emit(metrics)
+			return nil
+			// export to db
+		} else if err = e.Emit(metrics); err != nil {
+			logger.Error(e.Prefix, "(%s.%s) --> %s", data.Object, data.UUID, err.Error())
+			return err
 		}
 	}
-	return err
+
+	logger.Debug(e.Prefix, "(%s.%s) --> exported %d data points", data.Object, data.UUID, len(metrics))
+
+	// update metadata
+	if err = e.Metadata.LazyAddValueInt64("time", "export", time.Since(s).Microseconds()); err != nil {
+		logger.Error(e.Prefix, "metadata export time: %v", err)
+	}
+
+	/* skipped for now, since InfluxDB complains about "time" field name
+
+	// export metadata
+	if metrics, err = e.Render(e.Metadata); err != nil {
+		logger.Error(e.Prefix, "render metadata: %v", err)
+	} else if err = e.Emit(metrics); err != nil {
+		logger.Error(e.Prefix, "emit metadata: %v", err)
+	}
+
+	*/
+	return nil
 }
 
 func (e *InfluxDB) Emit(data [][]byte) error {
@@ -153,7 +185,7 @@ func (e *InfluxDB) Emit(data [][]byte) error {
 		return err
 	}
 
-	if response.StatusCode != EXPECTED_STATUS_CODE {
+	if response.StatusCode != _EXPECTED_STATUS_CODE {
 		defer response.Body.Close()
 		if body, err := ioutil.ReadAll(response.Body); err != nil {
 			return errors.New(errors.API_RESPONSE, err.Error())
@@ -165,6 +197,10 @@ func (e *InfluxDB) Emit(data [][]byte) error {
 }
 
 func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
+
+	var (
+		count, countTmp uint64
+	)
 
 	rendered := make([][]byte, 0)
 
@@ -183,14 +219,6 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 		labels_to_include = x.GetAllChildContentS()
 	}
 
-	// count number of data points rendered
-	count := uint64(0)
-
-	// not all collectors provide timestamp, so this might be nil
-	//timestamp := data.GetMetric("timestamp")
-	//var timestamp *matrix.Metric
-	// temporarily disabled, influx expects nanosecs, we get something else from zapis
-
 	// measurement that we will not emit
 	// only to store global labels that we'll
 	// add to all instances
@@ -201,6 +229,8 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 
 	// render one measurement for each instance
 	for key, instance := range data.GetInstances() {
+
+		countTmp = 0
 
 		if !instance.IsExportable() {
 			continue
@@ -234,8 +264,13 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 		// strings
 		for _, label := range labels_to_include {
 			if value, has := instance.GetLabels().GetHas(label); has && value != "" {
-				m.AddField(label, value)
-				count += 1
+				if value == "true" || value == "false" {
+					m.AddField(label, value)
+				} else {
+					m.AddFieldString(label, value)
+				}
+
+				countTmp++
 			}
 		}
 
@@ -261,26 +296,30 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 			}
 
 			m.AddField(field_name, value)
-
-			count += 1
+			countTmp++
 		}
 
-		/*
-			// optionially add timestamp
-			if timestamp != nil {
-				if value, ok := data.GetValue(timestamp, instance); ok {
-					m.SetTimestamp(strconv.FormatFloat(value, 'f', 0, 64))
-				}
-			}*/
+		logger.Trace(e.Prefix, "rendering from: %s", m.String())
 
-		if r, err := m.Render(); err == nil {
+		// skip instance with no tag set (no metrics)
+		if len(m.field_set) == 0 {
+			logger.Debug(e.Prefix, "skip instance (%s), no field set parsed", key)
+		} else if r, err := m.Render(); err == nil {
 			rendered = append(rendered, []byte(r))
+			//logger.Debug(e.Prefix, "M= [%s%s%s]", color.Blue, r, color.End)
+			count += countTmp
 		} else {
 			logger.Debug(e.Prefix, err.Error())
 		}
 	}
-	e.AddExportCount(count)
+
 	logger.Debug(e.Prefix, "rendered %d measurements with %d data points for (%s)", len(rendered), count, object)
+
+	// update metadata
+	e.AddExportCount(count)
+	if err := e.Metadata.LazySetValueUint64("count", "export", count); err != nil {
+		logger.Error(e.Prefix, "metadata export count: %v", err)
+	}
 	return rendered, nil
 }
 

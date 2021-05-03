@@ -8,8 +8,7 @@ import (
 	"goharvest2/cmd/poller/options"
 	"goharvest2/pkg/logger"
 	"goharvest2/pkg/matrix"
-
-	//"goharvest2/pkg/tree/node"
+	"goharvest2/pkg/tree/node"
 	"testing"
 )
 
@@ -22,17 +21,26 @@ func TestExportDebug(t *testing.T) {
 
 	opts := &options.Options{}
 	opts.Debug = true
-	influx := New(exporter.New("InfluxDB", "influx-test", opts, nil))
+
+	params := node.NewS("")
+	params.NewChildS("addr", "localhost")
+	params.NewChildS("org", "harvest")
+	params.NewChildS("bucket", "harvest")
+	params.NewChildS("token", "xxxxxxx")
+	influx := New(exporter.New("InfluxDB", "influx-test", opts, params))
+	if err := influx.Init(); err != nil {
+		t.Fatal(err)
+	}
 
 	// matrix with fake data
 	data := matrix.New("test_exporter", "influxd_test_data")
 	data.SetExportOptions(matrix.DefaultExportOptions())
 
 	// add metric
-	//m, err := data.AddMetric("test_metric", "test_metric", true)
-	//if err != nil {
-	//	t.Fatal(err)
-	//}
+	m, err := data.NewMetricInt("test_metric")
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	// add instance
 	i, err := data.NewInstance("test_instance")
@@ -42,12 +50,10 @@ func TestExportDebug(t *testing.T) {
 	i.SetLabel("test_label", "test_label_value")
 
 	// add numeric data
-	//if err := data.InitData(); err != nil {
-	//	t.Fatal(err)
-	//}
-	//if err := data.SetValueString(m, i, "42.2"); err != nil {
-	//	t.Fatal(err)
-	//}
+
+	if err := m.SetValueInt(i, 42); err != nil {
+		t.Fatal(err)
+	}
 
 	// render data
 	if err := influx.Export(data); err != nil {

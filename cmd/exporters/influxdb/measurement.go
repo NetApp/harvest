@@ -4,6 +4,7 @@
 package main
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -21,6 +22,11 @@ func NewMeasurement(name string, size int) *Measurement {
 	return &m
 }
 
+func (m *Measurement) String() string {
+	format := "\nmeasurement=%s \ntag_set=%v \nfield_set=%v \ntimestamp=%s"
+	return fmt.Sprintf(format, m.measurement, m.tag_set, m.field_set, m.timestamp)
+}
+
 func (m *Measurement) AddTag(key, value string) {
 	m.tag_set = append(m.tag_set, escape(key)+"="+escape(value))
 }
@@ -30,6 +36,7 @@ func (m *Measurement) AddField(key, value string) {
 }
 
 func (m *Measurement) AddFieldString(key, value string) {
+	value = strings.ReplaceAll(value, "\\", `\\`)
 	value = strings.ReplaceAll(value, `"`, `\"`)
 	m.AddField(key, `"`+value+`"`)
 }
