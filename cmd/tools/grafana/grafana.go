@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/hashicorp/go-version"
 	"goharvest2/pkg/argparse"
 	"goharvest2/pkg/config"
 	"goharvest2/pkg/tree/node"
@@ -29,7 +30,7 @@ const (
 )
 
 var (
-	_GRAFANA_MIN_VERS = [3]int{7, 1, 0} // lowest grafana version we require
+	_GRAFANA_MIN_VERS = [3]string{"7", "1", "0"} // lowest grafana version we require
 	_CONF_PATH        string
 )
 
@@ -415,7 +416,7 @@ func checkToken(opts *options, ignoreConfig bool) error {
 	fmt.Printf("connected to Grafana server (version: %s)\n", version)
 	// if we are going to import check grafana version
 	if opts.command == "import" && !checkVersion(version) {
-		fmt.Printf("warning: current set of dashboards require Grafana version (%d.%d.%d) or higher\n", _GRAFANA_MIN_VERS[0], _GRAFANA_MIN_VERS[1], _GRAFANA_MIN_VERS[2])
+		fmt.Printf("warning: current set of dashboards require Grafana version (%s.%s.%s) or higher\n", _GRAFANA_MIN_VERS[0], _GRAFANA_MIN_VERS[1], _GRAFANA_MIN_VERS[2])
 		fmt.Printf("continue anyway? [y/N]: ")
 		fmt.Scanf("%s\n", &answer)
 		if answer != "y" && answer != "yes" {
@@ -426,21 +427,26 @@ func checkToken(opts *options, ignoreConfig bool) error {
 	return nil
 }
 
-func checkVersion(version string) bool {
-	//fmt.Printf("checking required version (%d.%d.%d) or higher\n", _GRAFANA_MIN_VERS[0], _GRAFANA_MIN_VERS[1], _GRAFANA_MIN_VERS[2])
-	if v := strings.Split(version, "."); len(v) == 3 {
-		for i := range v {
-			if n, err := strconv.Atoi(v[i]); err != nil {
-				fmt.Printf("error parsing version (%s): %v\n", version, err)
-				return false
-			} else if n < _GRAFANA_MIN_VERS[i] {
-				return false
-			} else if n > _GRAFANA_MIN_VERS[i] {
-				return false
-			} // if equal continue checking...
+func checkVersion(inputVersion string) bool {
+	//fmt.Printf("checking required version (%s.%s.%s) or higher\n", _GRAFANA_MIN_VERS[0], _GRAFANA_MIN_VERS[1], _GRAFANA_MIN_VERS[2])
+	if v := strings.Split(inputVersion, "."); len(v) == 3 {
+		minVersion := strings.Join(_GRAFANA_MIN_VERS[:], ".")
+
+		v1, err := version.NewVersion(inputVersion)
+		if err != nil {
+			fmt.Println(err)
+			return false
 		}
+		v2, err := version.NewVersion(minVersion)
+		if err != nil {
+			fmt.Println(err)
+			return false
+		}
+
+		// Check if input version is greater than or equal to min version required
+		return v1.GreaterThan(v2) || v1.Equal(v2)
 	} else {
-		fmt.Printf("error parsing version (%s): expected three dot-seperated values\n", version)
+		fmt.Printf("error parsing version (%s): expected three dot-seperated values\n", inputVersion)
 		return false
 	}
 	// we reach here if there is exact match
