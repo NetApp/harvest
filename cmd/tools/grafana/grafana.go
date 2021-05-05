@@ -428,25 +428,25 @@ func checkToken(opts *options, ignoreConfig bool) error {
 }
 
 func checkVersion(inputVersion string) bool {
-		v1, err := version.NewVersion(inputVersion)
-		if err != nil {
-			fmt.Println(err)
-			return false
-		}
-		constraints, err := version.NewConstraint(">= " + grafanaMinVers)
+	v1, err := version.NewVersion(inputVersion)
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+	constraints, err := version.NewConstraint(">= " + grafanaMinVers)
 
-		if err != nil {
-			fmt.Println(err)
-			return false
-		}
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
 
-		// Check if input version is greater than or equal to min version required
-		if constraints.Check(v1) {
-			return true
-		} else {
-			fmt.Printf("%s does not satisfies constraints %s", v1, constraints)
-			return false
-		}
+	// Check if input version is greater than or equal to min version required
+	if constraints.Check(v1) {
+		return true
+	} else {
+		fmt.Printf("%s does not satisfies constraints %s", v1, constraints)
+		return false
+	}
 }
 
 func createFolder(opts *options) error {
