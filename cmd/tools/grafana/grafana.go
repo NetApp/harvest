@@ -30,7 +30,7 @@ const (
 )
 
 var (
-	grafanaMinVers = [3]string{"7", "1", "0"} // lowest grafana version we require
+	grafanaMinVers = "7.1.0" // lowest grafana version we require
 	confPath       string
 )
 
@@ -416,7 +416,7 @@ func checkToken(opts *options, ignoreConfig bool) error {
 	fmt.Printf("connected to Grafana server (version: %s)\n", version)
 	// if we are going to import check grafana version
 	if opts.command == "import" && !checkVersion(version) {
-		fmt.Printf("warning: current set of dashboards require Grafana version (%s.%s.%s) or higher\n", grafanaMinVers[0], grafanaMinVers[1], grafanaMinVers[2])
+		fmt.Printf("warning: current set of dashboards require Grafana version (%s) or higher\n", grafanaMinVers)
 		fmt.Printf("continue anyway? [y/N]: ")
 		fmt.Scanf("%s\n", &answer)
 		if answer != "y" && answer != "yes" {
@@ -428,15 +428,12 @@ func checkToken(opts *options, ignoreConfig bool) error {
 }
 
 func checkVersion(inputVersion string) bool {
-	if v := strings.Split(inputVersion, "."); len(v) == 3 {
-		minVersion := strings.Join(grafanaMinVers[:], ".")
-
 		v1, err := version.NewVersion(inputVersion)
 		if err != nil {
 			fmt.Println(err)
 			return false
 		}
-		constraints, err := version.NewConstraint(">= " + minVersion)
+		constraints, err := version.NewConstraint(">= " + grafanaMinVers)
 
 		if err != nil {
 			fmt.Println(err)
@@ -450,10 +447,6 @@ func checkVersion(inputVersion string) bool {
 			fmt.Printf("%s does not satisfies constraints %s", v1, constraints)
 			return false
 		}
-	} else {
-		fmt.Printf("error parsing version (%s): expected three dot-seperated values\n", inputVersion)
-		return false
-	}
 }
 
 func createFolder(opts *options) error {
