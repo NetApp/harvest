@@ -23,15 +23,15 @@ import (
 )
 
 const (
-	_CLIENT_TIMEOUT       = 5
-	_GRAFANA_FOLDER_TITLE = "Harvest 2.0"
-	_GRAFANA_FOLDER_UID   = "harvest2.0folder"
-	_GRAFANA_DATASOURCE   = "Prometheus"
+	clientTimeout      = 5
+	grafanaFolderTitle = "Harvest 2.0"
+	grafanaFolderUid   = "harvest2.0folder"
+	grafanaDataSource  = "Prometheus"
 )
 
 var (
-	_GRAFANA_MIN_VERS = [3]string{"7", "1", "0"} // lowest grafana version we require
-	_CONF_PATH        string
+	grafanaMinVers = [3]string{"7", "1", "0"} // lowest grafana version we require
+	confPath       string
 )
 
 type options struct {
@@ -57,8 +57,8 @@ func main() {
 	)
 
 	// set harvest config path
-	if _CONF_PATH = os.Getenv("HARVEST_CONF"); _CONF_PATH == "" {
-		_CONF_PATH = "/etc/harvest"
+	if confPath = os.Getenv("HARVEST_CONF"); confPath == "" {
+		confPath = "/etc/harvest"
 	}
 
 	// parse CLI args
@@ -281,20 +281,20 @@ func getOptions() *options {
 		"Directory from which to import or where to export dashboards (default: prometheus)",
 	)
 
-	opts.folder = _GRAFANA_FOLDER_TITLE
+	opts.folder = grafanaFolderTitle
 	parser.String(
 		&opts.folder,
 		"folder",
 		"f",
-		"Grafana folder name for the dashboards (default: \""+_GRAFANA_FOLDER_TITLE+"\")",
+		"Grafana folder name for the dashboards (default: \""+grafanaFolderTitle+"\")",
 	)
 
-	opts.datasource = _GRAFANA_DATASOURCE
+	opts.datasource = grafanaDataSource
 	parser.String(
 		&opts.datasource,
 		"datasource",
 		"s",
-		"Grafana datasource for the dashboards (default: \""+_GRAFANA_DATASOURCE+"\")",
+		"Grafana datasource for the dashboards (default: \""+grafanaDataSource+"\")",
 	)
 
 	parser.Bool(
@@ -319,7 +319,7 @@ func getOptions() *options {
 
 	// full path
 	if opts.command == "import" {
-		opts.dir = path.Join(_CONF_PATH, "grafana", opts.dir)
+		opts.dir = path.Join(confPath, "grafana", opts.dir)
 	}
 
 	// full URL
@@ -346,7 +346,7 @@ func checkToken(opts *options, ignoreConfig bool) error {
 		err                        error
 	)
 
-	config_path = path.Join(_CONF_PATH, "harvest.yml")
+	config_path = path.Join(confPath, "harvest.yml")
 
 	if params, err = config.LoadConfig(config_path); err != nil {
 		return err
@@ -374,7 +374,7 @@ func checkToken(opts *options, ignoreConfig bool) error {
 	opts.headers.Add("Content-Type", "application/json")
 	opts.headers.Add("Authorization", "Bearer "+opts.token)
 
-	opts.client = &http.Client{Timeout: time.Duration(_CLIENT_TIMEOUT) * time.Second}
+	opts.client = &http.Client{Timeout: time.Duration(clientTimeout) * time.Second}
 	if strings.HasPrefix(opts.addr, "https://") {
 		opts.client.Transport = &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
 	}
@@ -416,7 +416,7 @@ func checkToken(opts *options, ignoreConfig bool) error {
 	fmt.Printf("connected to Grafana server (version: %s)\n", version)
 	// if we are going to import check grafana version
 	if opts.command == "import" && !checkVersion(version) {
-		fmt.Printf("warning: current set of dashboards require Grafana version (%s.%s.%s) or higher\n", _GRAFANA_MIN_VERS[0], _GRAFANA_MIN_VERS[1], _GRAFANA_MIN_VERS[2])
+		fmt.Printf("warning: current set of dashboards require Grafana version (%s.%s.%s) or higher\n", grafanaMinVers[0], grafanaMinVers[1], grafanaMinVers[2])
 		fmt.Printf("continue anyway? [y/N]: ")
 		fmt.Scanf("%s\n", &answer)
 		if answer != "y" && answer != "yes" {
@@ -428,29 +428,32 @@ func checkToken(opts *options, ignoreConfig bool) error {
 }
 
 func checkVersion(inputVersion string) bool {
-	//fmt.Printf("checking required version (%s.%s.%s) or higher\n", _GRAFANA_MIN_VERS[0], _GRAFANA_MIN_VERS[1], _GRAFANA_MIN_VERS[2])
 	if v := strings.Split(inputVersion, "."); len(v) == 3 {
-		minVersion := strings.Join(_GRAFANA_MIN_VERS[:], ".")
+		minVersion := strings.Join(grafanaMinVers[:], ".")
 
 		v1, err := version.NewVersion(inputVersion)
 		if err != nil {
 			fmt.Println(err)
 			return false
 		}
-		v2, err := version.NewVersion(minVersion)
+		constraints, err := version.NewConstraint(">= " + minVersion)
+
 		if err != nil {
 			fmt.Println(err)
 			return false
 		}
 
 		// Check if input version is greater than or equal to min version required
-		return v1.GreaterThan(v2) || v1.Equal(v2)
+		if constraints.Check(v1) {
+			return true
+		} else {
+			fmt.Printf("%s does not satisfies constraints %s", v1, constraints)
+			return false
+		}
 	} else {
 		fmt.Printf("error parsing version (%s): expected three dot-seperated values\n", inputVersion)
 		return false
 	}
-	// we reach here if there is exact match
-	return true
 }
 
 func createFolder(opts *options) error {
