@@ -1,4 +1,4 @@
-name: Go
+name: Build and Test
 
 on:
   push:
@@ -23,3 +23,7 @@ jobs:
 
     - name: Test
       run: go test -v ./...
+
+    - name: Check code formatting using gofmt
+      uses: Jerome1337/gofmt-action@v1.0.4
+      
