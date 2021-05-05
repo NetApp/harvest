@@ -24,7 +24,7 @@ counters:
 
 override:
   - cmd_transfered: rate
-    
+
 export_options:
   instance_keys:
     - lif

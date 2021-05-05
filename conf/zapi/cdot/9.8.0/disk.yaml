@@ -3,7 +3,7 @@ name:             Disk
 query:            storage-disk-get-iter
 object:           disk
 
-counters: 
+counters:
   storage-disk-info:
     - ^^disk-uid
     - ^^disk-name               => disk
@@ -32,7 +32,7 @@ counters:
 plugins:
   - LabelAgent:
     value_mapping: status outage , `0` # ok_value is empty value
-    
+
 export_options:
   instance_keys:
     - node

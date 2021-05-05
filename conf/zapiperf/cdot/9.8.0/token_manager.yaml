@@ -8,7 +8,7 @@ counters:
   - node_name              => node
   - instance_name
   - instance_uuid
-  - token_copy_success 
+  - token_copy_success
   - token_create_success
   - token_zero_success
   - token_copy_failure

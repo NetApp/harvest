@@ -55,8 +55,8 @@ plugins:
           - ^^voltage-sensor-id => sensor_id
           - ^voltage-sensor-location => location
           - voltage-sensor-reading => reading
-          
-  - LabelAgent:
+
+  LabelAgent:
     value_mapping: status state online `1`
 
 export_options:
@@ -68,4 +68,4 @@ export_options:
     - model
     - state
     - vendor_name
-    
+

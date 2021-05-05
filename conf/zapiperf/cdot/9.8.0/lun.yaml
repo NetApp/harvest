@@ -27,7 +27,7 @@ counters:
   - write_partial_blocks
   - write_align_histo
   - read_align_histo
- 
+
 override:
   - writesame_reqs: rate
   - writesame_unmap_reqs: rate

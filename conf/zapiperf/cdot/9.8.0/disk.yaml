@@ -9,7 +9,7 @@ counters:
   - cp_read_chain
   - cp_read_latency
   - cp_reads
-  - disk_busy 
+  - disk_busy
   - disk_capacity
   - disk_speed
   - io_pending

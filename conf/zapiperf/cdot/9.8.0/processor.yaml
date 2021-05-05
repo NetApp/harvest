@@ -7,7 +7,7 @@ instance_key:             uuid
 
 counters:
   - node_name             => node
-  - instance_name 
+  - instance_name
   - instance_uuid
   - domain_busy
   - processor_busy

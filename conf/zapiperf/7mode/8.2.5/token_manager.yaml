@@ -6,7 +6,7 @@ instance_key:             name
 
 counters:
   - instance_name
-  - token_copy_success 
+  - token_copy_success
   - token_create_success
   - token_zero_success
   - token_copy_failure

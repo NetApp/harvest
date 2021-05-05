@@ -9,7 +9,7 @@ counters:
     - ^disk-model               => model
     - ^disk-type                => type
     - ^^disk-uid
-    - ^is-offline		        => offline
+    - ^is-offline               => offline
     - ^name                     => disk
 #    - physical-blocks:
 #    - physical-space:
@@ -23,7 +23,7 @@ counters:
 plugins:
   - LabelAgent:
     value_mapping: status offline false `0`
-    
+
 export_options:
   instance_keys:
     - disk

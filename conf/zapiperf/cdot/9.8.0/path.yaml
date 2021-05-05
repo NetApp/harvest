@@ -20,11 +20,10 @@ counters:
 
 plugins:
   LabelAgent:
-    split: path `.` hostadapter,target_wwpn
     split: path `_` hostadapter,target_wwpn
 
 export_options:
-  instance_keys: 
+  instance_keys:
     - node
     - hostadapter # from plugin
     - target_wwpn # from plugin
