@@ -249,6 +249,11 @@ func Run() {
 
 func add_poller() *node.Node {
 
+	var (
+		client *zapi.Client
+		err    error
+	)
+
 	poller := node.NewS("")
 
 	// ask for datacenter & address
@@ -305,32 +310,29 @@ func add_poller() *node.Node {
 	// connect and get system info
 	DIALOG.Message("Connecting to system...")
 
-	var client *zapi.Client
-	var system *zapi.System
-
-	if client, err = zapi.New(poller); err == nil {
-		system, err = client.GetSystem()
+	if client, err = zapi.New(poller); err != nil {
+		exitError("client", err)
 	}
 
-	if err != nil {
+	if err = client.Init(5); err != nil {
 		if DIALOG.YesNo("Unable to connect to system. Add poller anyway?") {
-			name, err := DIALOG.Input("Name of poller / cluster:")
-			if err != nil {
+			if name, err := DIALOG.Input("Name of poller / cluster:"); err != nil {
 				return nil
+			} else {
+				poller.SetNameS(name)
 			}
-			poller.SetNameS(name)
 		} else {
 			return nil
 		}
 	} else {
-		DIALOG.Message("Connected to:\n" + system.String())
-		poller.SetNameS(system.Name)
+		DIALOG.Message("Connected to:\n" + client.Info())
+		poller.SetNameS(client.Name())
 	}
 
 	if err == nil && create_cert {
 
-		cert_path := path.Join(CONF_PATH, "cert", system.Name+".pem")
-		key_path := path.Join(CONF_PATH, "cert", system.Name+".key")
+		cert_path := path.Join(CONF_PATH, "cert", client.Name()+".pem")
+		key_path := path.Join(CONF_PATH, "cert", client.Name()+".key")
 
 		cmd := exec.Command(
 			"openssl",
@@ -359,7 +361,7 @@ func add_poller() *node.Node {
 		req.NewChildS("access-level", "readonly")
 		req.NewChildS("command-directory-name", "DEFAULT")
 		req.NewChildS("role-name", HARVEST_ROLE)
-		req.NewChildS("vserver", system.Name)
+		req.NewChildS("vserver", client.Name())
 
 		if _, err := client.InvokeRequest(req); err != nil {
 			exitError("create role", err)
@@ -371,7 +373,7 @@ func add_poller() *node.Node {
 		req.NewChildS("comment", "readonly user for harvest2")
 		req.NewChildS("role-name", HARVEST_ROLE)
 		req.NewChildS("user-name", HARVEST_USER)
-		req.NewChildS("vserver", system.Name)
+		req.NewChildS("vserver", client.Name())
 
 		if _, err := client.InvokeRequest(req); err != nil {
 			exitError("create user", err)
@@ -388,7 +390,7 @@ func add_poller() *node.Node {
 		req.NewChildS("cert-name", HARVEST_USER)
 		req.NewChildS("certificate", string(cert_content))
 		req.NewChildS("type", "client_ca")
-		req.NewChildS("vserver", system.Name)
+		req.NewChildS("vserver", client.Name())
 
 		if _, err := client.InvokeRequest(req); err != nil {
 			exitError("install cert", err)

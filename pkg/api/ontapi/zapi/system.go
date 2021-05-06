@@ -6,106 +6,86 @@ package zapi
 import (
 	"errors"
 	"fmt"
+	"goharvest2/pkg/tree/node"
 	"strconv"
 )
 
-type System struct {
-	Name         string
-	SerialNumber string
-	Release      string
-	Version      [3]int
-	Clustered    bool
+type system struct {
+	name      string
+	serial    string
+	release   string
+	version   [3]int
+	clustered bool
 }
 
-func (sys *System) String() string {
-	var model, version string
-	if sys.Clustered == true {
-		model = "CDOT"
-	} else {
-		model = "7MODE"
-	}
+// getSystem connects to ONTAP system and retrieves its identity and version
+// this works for Clustered and 7-mode systems
+func (c *Client) getSystem() error {
+	var (
+		s        system
+		response *node.Node
+		err      error
+	)
 
-	version = fmt.Sprintf("(%s version %d.%d.%d)", model, sys.Version[0], sys.Version[1], sys.Version[2])
-	return fmt.Sprintf("%s %s (serial %s) (%s)", sys.Name, version, sys.SerialNumber, sys.Release)
-}
-
-func (c *Client) GetSystem() (*System, error) {
-	var sys System
-	var err error
-
-	sys = System{}
+	s = system{}
 
 	// fetch system version and model
-	if err := c.build_request_string("system-get-version", true); err != nil {
-		return &sys, err
+	if response, err = c.InvokeRequestString("system-get-version"); err != nil {
+		return err
 	}
 
-	response, err := c.Invoke()
-	if err != nil {
-		return &sys, err
-	}
-
-	sys.Release = response.GetChildContentS("version")
+	s.release = response.GetChildContentS("version")
 
 	if version := response.GetChildS("version-tuple"); version != nil {
 		if tuple := version.GetChildS("system-version-tuple"); tuple != nil {
 
-			gener, _ := strconv.ParseInt(tuple.GetChildContentS("generation"), 0, 16)
-			major, _ := strconv.ParseInt(tuple.GetChildContentS("major"), 0, 16)
-			minor, _ := strconv.ParseInt(tuple.GetChildContentS("minor"), 0, 16)
-
-			sys.Version[0] = int(gener)
-			sys.Version[1] = int(major)
-			sys.Version[2] = int(minor)
-
+			for i, v := range []string{"generation", "major", "minor"} {
+				if n, err := strconv.ParseInt(tuple.GetChildContentS(v), 0, 16); err == nil {
+					s.version[i] = int(n)
+				}
+			}
 		}
 	}
 
-	// if version tuple is missing try to parse manually
+	// if version tuple is missing try to parse from the release strirng
 	// this is usually the case with 7mode systems
-	if sys.Version[0] == 0 {
-		if _, err = fmt.Sscanf(sys.Release, "NetApp Release %d.%d.%d", &sys.Version[0], &sys.Version[1], &sys.Version[2]); err != nil {
-			return &sys, errors.New("no valid version tuple found")
+	if s.version[0] == 0 {
+		if _, err = fmt.Sscanf(s.release, "NetApp Release %d.%d.%d", &s.version[0], &s.version[1], &s.version[2]); err != nil {
+			return errors.New("no valid version tuple found")
 		}
 	}
 
 	if clustered := response.GetChildContentS("is-clustered"); clustered == "" {
-		return &sys, errors.New("Not found [is-clustered]")
+		return errors.New("missing attribute [is-clustered]")
 	} else if clustered == "true" {
-		sys.Clustered = true
+		s.clustered = true
 	} else {
-		sys.Clustered = false
+		s.clustered = false
 	}
 
 	// fetch system name and serial number
 	request := "cluster-identity-get"
-	if !sys.Clustered {
+	if !s.clustered {
 		request = "system-get-info"
 	}
 
-	if err := c.build_request_string(request, true); err != nil {
-		return &sys, err
+	if response, err = c.InvokeRequestString(request); err != nil {
+		return err
 	}
 
-	response, err = c.Invoke()
-	if err != nil {
-		return &sys, err
-	}
-
-	if sys.Clustered {
+	if s.clustered {
 		if attrs := response.GetChildS("attributes"); attrs != nil {
 			if info := attrs.GetChildS("cluster-identity-info"); info != nil {
-				sys.Name = info.GetChildContentS("cluster-name")
-				sys.SerialNumber = info.GetChildContentS("cluster-serial-number")
+				s.name = info.GetChildContentS("cluster-name")
+				s.serial = info.GetChildContentS("cluster-serial-number")
 			}
 		}
 	} else {
 		if info := response.GetChildS("system-info"); info != nil {
-
-			sys.Name = info.GetChildContentS("system-name")
-			sys.SerialNumber = info.GetChildContentS("system-serial-number")
+			s.name = info.GetChildContentS("system-name")
+			s.serial = info.GetChildContentS("system-serial-number")
 		}
 	}
-	c.System = &sys
-	return &sys, nil
+	c.system = &s
+	return nil
 }

@@ -55,10 +55,10 @@ func export_counters(item *node.Node, c *client.Client, args *Args) error {
 	export_options := template.NewChildS("export_options", "")
 	instance_keys := export_options.NewChildS("instance_keys", "")
 
-	for _, c := range item.GetChildren() {
-		if c.GetChildContentS("is-deprecated") != "true" {
-			name := c.GetChildContentS("name")
-			prop := c.GetChildContentS("properties")
+	for _, ch := range item.GetChildren() {
+		if ch.GetChildContentS("is-deprecated") != "true" {
+			name := ch.GetChildContentS("name")
+			prop := ch.GetChildContentS("properties")
 
 			if strings.Contains(prop, "no-display") {
 				continue

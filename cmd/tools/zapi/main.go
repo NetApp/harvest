@@ -30,7 +30,6 @@ func main() {
 		item, params *node.Node
 		confp        string
 		connection   *client.Client
-		system       *client.System
 	)
 
 	args = get_args()
@@ -51,12 +50,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	if system, err = connection.GetSystem(); err != nil {
+	if err = connection.Init(2); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	fmt.Printf("connected to %s%s%s (%s)\n", color.Bold, system.Name, color.End, system.Release)
+	fmt.Printf("connected to %s%s%s (%s)\n", color.Bold, connection.Name(), color.End, connection.Release())
 
 	// get requested item
 	if item, err = get(connection, args); err != nil {
