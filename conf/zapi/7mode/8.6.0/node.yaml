@@ -14,7 +14,7 @@ counters:
     - ^vendor-id                            => vendor
     - ^product-version                      => version
 
-    
+
 
 plugins:
   - LabelAgent:

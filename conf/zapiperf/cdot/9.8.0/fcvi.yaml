@@ -14,7 +14,7 @@ counters:
   - rdma_write_avg_latency
 
 export_options:
-  instance_keys: 
+  instance_keys:
     - node
   graphite_leafs:
     - node.{node}.fcvi.{fcvi}

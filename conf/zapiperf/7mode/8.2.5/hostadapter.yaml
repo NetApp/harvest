@@ -12,7 +12,7 @@ counters:
   - bytes_written
 
 export_options:
-  instance_keys: 
+  instance_keys:
     - hostadapter
   graphite_leafs:
     - node.{node}.hostadapter.{hostadapter}

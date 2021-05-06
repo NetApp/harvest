@@ -30,7 +30,7 @@ objects:
   CIFSNode:               cifs_node.yaml
   NFSv3Node:              nfsv3_node.yaml
   NFSv4Node:              nfsv4_node.yaml
-  NFSv41Node:             nfsv4_1_node.yaml  
+  NFSv41Node:             nfsv4_1_node.yaml
 
   # SVM-level metrics
   Volume:                 volume.yaml

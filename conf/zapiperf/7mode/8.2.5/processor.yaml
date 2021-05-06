@@ -7,7 +7,7 @@ instance_key:             name
 
 counters:
   - node_name             => node
-  - instance_name 
+  - instance_name
   - domain_busy
   - processor_busy
 

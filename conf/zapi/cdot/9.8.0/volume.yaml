@@ -5,7 +5,7 @@ object:                   volume
 counters:
   volume-attributes:
     - volume-autosize-attributes:
-      - maximum-size 
+      - maximum-size
       - grow-threshold-percent
 
     - volume-id-attributes:
@@ -19,7 +19,7 @@ counters:
     - volume-inode-attributes:
       - files-used
       - files-total
-      
+
     - volume-sis-attributes:
       - compression-space-saved               => sis_compress_saved
       - deduplication-space-saved             => sis_dedup_saved

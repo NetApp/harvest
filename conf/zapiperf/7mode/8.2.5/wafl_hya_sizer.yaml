@@ -9,7 +9,7 @@ counters:
   - instance_name
   - node_name              => node
   - cache_stats
- 
+
 export_options:
   require_instance_keys: false
   graphite_leafs:

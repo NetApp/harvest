@@ -6,7 +6,7 @@ object:                   nic
 instance_key:             name
 
 counters:
-  - instance_name 
+  - instance_name
   - instance_uuid
   - node_name              => node
   - rx_bytes
@@ -37,7 +37,7 @@ export_options:
     - nic
   instance_labels:
     - speed
-    - state 
+    - state
     - type
   graphite_leafs:
     - node.{node_name}.eth_port.{instance_name}
