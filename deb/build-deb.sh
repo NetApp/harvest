@@ -26,6 +26,9 @@ cp "$SRC/harvest.yml" "$BUILD/etc/harvest/"
 cp -r "$SRC/pkg/" "$SRC/cmd/" "$SRC/docs/" "$BUILD/opt/harvest/"
 cp -r "$SRC/rpm/" "$SRC/deb/" "$BUILD/opt/harvest/"
 cp "$SRC/Makefile" "$SRC/README.md" "$SRC/LICENSE" "$SRC/go.mod" "$BUILD/opt/harvest/"
+if [ -d "$SRC/vendor" ]; then
+    cp -r "$SRC/vendor" "$BUILD/opt/harvest/"
+fi
 
 # copy and modify debian packaging files
 echo " --> create DEB control file"

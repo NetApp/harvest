@@ -24,6 +24,9 @@ cp -r "$SRC/conf/" "$BUILD/harvest/"
 cp -r "$SRC/rpm/" "$BUILD/harvest/"
 cp "$SRC/harvest.example.yml" "$BUILD/harvest/"
 cp "$SRC/go.mod" "$BUILD/harvest/"
+if [ -d "$SRC/vendor" ]; then
+    cp -r "$SRC/vendor" "$BUILD/harvest/"
+fi
 cp "$SRC/Makefile" "$BUILD/harvest/"
 cp "$SRC/README.md" "$BUILD/harvest/"
 cp "$SRC/LICENSE" "$BUILD/harvest/"
