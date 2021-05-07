@@ -40,7 +40,7 @@ echo " --> installing harvest..."
 cd $RPM_BUILD_ROOT/opt/harvest
 mkdir -p $RPM_BUILD_ROOT/var/log/harvest
 mkdir -p $RPM_BUILD_ROOT/var/run/harvest
-cp conf/ grafana/ harvest.example.yml $RPM_BUILD_ROOT/opt/harvest/
+mv conf/ grafana/ harvest.example.yml $RPM_BUILD_ROOT/opt/harvest/
 
 %post
 if [ ! -e $RPM_BUILD_ROOT/opt/harvest/harvest.yml ]; then
