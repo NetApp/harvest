@@ -12,6 +12,14 @@ import (
 
 /* 
 Here we declare the new plugin
+Your plugin has these fields:
+ - Name   (string) - name of your plugin
+ - Parent (string) - name of your parent collector
+ - Prefix (string) - nicely formatted name of plugin, used for logging
+ - Options (*options.Options) - poller start-up options
+ - Params (*node.Node) - parameters of the plugin (if defined in collector template)
+ - ParentParams (*node.Node) - parameters of parent collector
+You can add other fields if you need.
 */
 type PLUGIN struct {
 	*plugin.AbstractPlugin
@@ -28,9 +36,24 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
    of the plugin is the matrix from your parent collector.
    The plugin can either manipulate this matrix, or create
    new matrices by its own.
+
+   In our dummy example, we will just add a custom label
+   to all instances. Additionally if the instance has no
+   name label, we will blacklist it.
 */
 
-func (me *PLUGIN) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (p *PLUGIN) Run(m *matrix.Matrix) ([]*matrix.Matrix, error) {
 
+	for _, instance := range m.GetInstances() {
+
+		instance.SetLabel("comment", "plugin was here!")
+
+		if instance.GetLabel("name") == "" {
+			instance.SetExportable(false)
+		}
+	}
+
+	// we return nil, because we didn't create a new matrix
+	// (some advanced plugins will create a new matrices and return those)
 	return nil, nil
 }

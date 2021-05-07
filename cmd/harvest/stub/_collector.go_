@@ -13,13 +13,12 @@ import (
 
 /* Logging is useful for debugging your collector, here are a few exmaples:
 
-	logger.Warn(me.Prefix, "nothing to collect")
-	logger.Debug(me.Prefix, "collected %d data points!!", count)
-	logger.Error(me.Prefix, "open URL: %s", err.Error())
+	logger.Warn(c.Prefix, "nothing to collect")
+	logger.Debug(c.Prefix, "collected %d data points!!", count)
+	logger.Error(c.Prefix, "open URL: %s", err.Error())
 
-	(the examples assume you are in a struct method with received "me")
+	(the examples assume you are in a struct method with receiver "c")
 */
-
 
 /*
 You collector is initialized with a number of fields, some of them are important to know:
@@ -43,54 +42,76 @@ func New(a *collector.AbstractCollector) collector.Collector {
 }
 
 /* This method initializes your collector. You can add more things here, bur remove
-   "collector.Init(me)" only if you know what you are doing. The last method will initialize
+   "collector.Init(c)" only if you know what you are doing. The last method will initialize
    the schedule of your collector, its metadata and will run a few other important 
    procedures.
 
-   Most commonly you will declare metrics of your Matrix in this method and check that
-   important parameters are not missing. Examples:
-   
-   if err := me.Matrix.AddMetricInt64("some_methirc"); err != nil {
-	   return err
-   }
+   Most commonly you will check that important parameters are not missing.
+   You can also add metric to the Matrix if they will never change. Examples:
 
    if me.Params.GetChildContentS("addr") == "" {
 	   return errors.New(errors.MISSING_PARAM, "addr")
    }
+
+   if err := c.Matrix.NewMetricInt64("some_methirc"); err != nil {
+	   return err
+   }
 */
-func (me *COLLECTOR) Init() error {
-	return collector.Init(me)
+func (c *COLLECTOR) Init() error {
+	return collector.Init(c)
 }
 
 
 /* This is the only method that needs to be written by You!
    The *matrix.Matrix that is returned is most commonly me.Matrix.
-   Remember to return serious errors and log trivial ones */
-func (me *COLLECTOR) PollData() (*matrix.Matrix, error) {
+   Remember to return serious errors and log trivial ones
+*/
+func (c *COLLECTOR) PollData() (*matrix.Matrix, error) {
 
 	// first flush data from previous poll
-	me.Matrix.Reset()
+	c.Matrix.Reset()
 
 	/* collect data and feed into me.Matrix
-	   remember you need to declare instances before adding numeric values
-	   examples:
+	   remember you need to declare metrics and instances before adding values
+	   examples will floow
 	*/
 
-	/* metric := me.Matrix.GetMetric("some_metric")
-	   if instance, err = me.Matrix.AddInstance("some_instance"); err != nil {
-		return nil, err
-		} else {
-			if err = metric.SetValueString(instance, "10"); err != nil {
-				return nil, err
-			}
+	var (
+		metric matrix.Metric
+		instance *matrix.Instance
+		err error
+	)
 
-			if err = metric.AddValueInt64(instance, 10); err != nil {
-				return nil, err
-			}
+	// example adding a metric (remember to first check if it's already exists)
+
+	if metric = c.Matrix.GetMetric("some_metric"); metric == nil {
+		// metrics are typed (int, int32, uint64, float32 etc..)
+		if metric, err = c.Matrix.NewMetricInt("some_metric); err != nil {
+			return nil, err
 		}
-		// now the value for "some_instance" is 20!
 	}
-	*/
 
-	return me.Matrix, nil
+	// adding new instance is very similar
+
+	if instance = c.Matrix.GetInstance("some_instance"); instance == nil {
+		if instance, err = c.Matrix.NewInstance("some_instance); err != nil {
+			return nil, err
+		} else {
+			// here we can add labels to our instance
+			instance.SetLabel("name", "my_name")
+		}
+	}
+
+	// now we can set numeric values
+
+	if err = metric.SetValueString(instance, "10"); err != nil { // matrix will convert the value for us
+		return nil, err
+	}
+
+	if err = metric.AddValueInt(instance, 10); err != nil {
+		return nil, err
+	}
+	// now the value for "some_instance" is 20!
+
+	return c.Matrix, nil
 }
