@@ -313,9 +313,7 @@ func getOptions() *options {
 
 	parser.SetHelpFlag("help")
 
-	if !parser.Parse() {
-		os.Exit(0)
-	}
+	parser.ParseOrExit()
 
 	// full path
 	if opts.command == "import" {

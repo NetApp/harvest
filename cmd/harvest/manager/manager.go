@@ -72,7 +72,7 @@ func Run() {
 
 	// parse user-defined options
 	parser := argparse.New("Harvest Manager", "harvest", "manage your pollers")
-	parser.SetOffset(1)
+	parser.SetOffset(2)
 	parser.SetHelpFlag("help")
 	parser.SetHelpFlag("manager")
 

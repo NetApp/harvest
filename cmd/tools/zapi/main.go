@@ -18,8 +18,8 @@ import (
 )
 
 var (
-	MAX_SEARCH_DEPTH = 10
-	CONFPATH         = "/etc/harvest"
+	maxSearchDepth  = 10
+	harvestConfPath = "/etc/harvest"
 )
 
 func main() {
@@ -32,15 +32,15 @@ func main() {
 		connection   *client.Client
 	)
 
-	args = get_args()
+	args = getArgs()
 
 	// set harvest config path
 	if confp = os.Getenv("HARVEST_CONF"); confp != "" {
-		CONFPATH = confp
+		harvestConfPath = confp
 	}
 
 	// connect to cluster and retrieve system version
-	if params, err = config.GetPoller(path.Join(CONFPATH, "harvest.yml"), args.Poller); err != nil {
+	if params, err = config.GetPoller(path.Join(harvestConfPath, "harvest.yml"), args.Poller); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
@@ -74,31 +74,31 @@ func main() {
 func get(c *client.Client, args *Args) (*node.Node, error) {
 	switch args.Item {
 	case "system":
-		return get_system(c)
+		return getSystem(c)
 	case "apis":
-		return get_apis(c)
+		return getApis(c)
 	case "objects":
-		return get_objects(c)
+		return getObjects(c)
 	case "attrs":
-		return get_attrs(c, args)
+		return getAttrs(c, args)
 	case "counters":
-		return get_counters(c, args)
+		return getCounters(c, args)
 	case "counter":
-		return get_counter(c, args)
+		return getCounter(c, args)
 	case "instances":
-		return get_instances(c, args)
+		return getInstances(c, args)
 	case "data":
-		return get_data(c, args)
+		return getData(c, args)
 	default:
 		return nil, errors.New(INVALID_ITEM, args.Item)
 	}
 }
 
-func get_system(c *client.Client) (*node.Node, error) {
+func getSystem(c *client.Client) (*node.Node, error) {
 	return c.InvokeRequestString("system-get-version")
 }
 
-func get_apis(c *client.Client) (*node.Node, error) {
+func getApis(c *client.Client) (*node.Node, error) {
 	var (
 		n   *node.Node
 		err error
@@ -114,7 +114,7 @@ func get_apis(c *client.Client) (*node.Node, error) {
 	return n, nil
 }
 
-func get_objects(c *client.Client) (*node.Node, error) {
+func getObjects(c *client.Client) (*node.Node, error) {
 	var (
 		n   *node.Node
 		err error
@@ -130,7 +130,7 @@ func get_objects(c *client.Client) (*node.Node, error) {
 	return n, nil
 }
 
-func get_counters(c *client.Client, args *Args) (*node.Node, error) {
+func getCounters(c *client.Client, args *Args) (*node.Node, error) {
 	var (
 		req, n *node.Node
 		err    error
@@ -149,12 +149,12 @@ func get_counters(c *client.Client, args *Args) (*node.Node, error) {
 	return n, nil
 }
 
-func get_counter(c *client.Client, args *Args) (*node.Node, error) {
+func getCounter(c *client.Client, args *Args) (*node.Node, error) {
 	var (
 		counters, cnt *node.Node
 		err           error
 	)
-	if counters, err = get_counters(c, args); err != nil {
+	if counters, err = getCounters(c, args); err != nil {
 		return nil, err
 	}
 
@@ -166,7 +166,7 @@ func get_counter(c *client.Client, args *Args) (*node.Node, error) {
 	return nil, errors.New(ATTRIBUTE_NOT_FOUND, args.Counter)
 }
 
-func get_instances(c *client.Client, args *Args) (*node.Node, error) {
+func getInstances(c *client.Client, args *Args) (*node.Node, error) {
 	var (
 		req, n *node.Node
 		err    error
@@ -190,7 +190,7 @@ func get_instances(c *client.Client, args *Args) (*node.Node, error) {
 
 }
 
-func get_data(c *client.Client, args *Args) (*node.Node, error) {
+func getData(c *client.Client, args *Args) (*node.Node, error) {
 
 	var req *node.Node
 

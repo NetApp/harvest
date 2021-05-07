@@ -166,7 +166,7 @@ func (p *ArgParse) parse() string {
 	posIndex := 0
 	argIndex := p.offset
 
-	if argIndex >= len(os.Args) {
+	if argIndex+1 > len(os.Args) {
 		return "usage"
 	}
 
