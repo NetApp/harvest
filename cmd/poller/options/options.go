@@ -103,11 +103,9 @@ func Get() (*Options, string) {
 	parser.String(&args.Config, "conf", "", "Custom config filepath (default: "+args.Config+")")
 	parser.Slice(&args.Collectors, "collectors", "c", "Only start these collectors (overrides harvest.yml)")
 	parser.Slice(&args.Objects, "objects", "o", "Only start these objects (overrides collector config)")
-	ok := parser.Parse()
 
-	if !ok {
-		os.Exit(1)
-	}
+	parser.SetHelpFlag("help")
+	parser.ParseOrExit()
 
 	if args.Poller == "" {
 		fmt.Println("Missing required argument: poller")
