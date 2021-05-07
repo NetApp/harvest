@@ -375,8 +375,12 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 			}
 		}
 
-		logger.Debug(me.Prefix, "sleeping %s until next poll", me.Schedule.NextDue().String())
-		me.Schedule.Sleep()
+		if nd := me.Schedule.NextDue(); nd > 0 {
+			logger.Info(me.Prefix, "sleeping %s until next poll", nd.String()) //DEBUG
+			me.Schedule.Sleep()
+		} else {
+			logger.Warn(me.Prefix, "lagging behind schedule %s", (-nd).String())
+		}
 	}
 }
 
