@@ -250,7 +250,7 @@ func Run() {
 				s = startPoller(name, opts)
 				printStatus(opts.longStatus, c1, c2, datacenter, name, port, s)
 			} else {
-				fmt.Println("can't verify status of [%s]: kill poller and try again", name)
+				fmt.Printf("can't verify status of [%s]: kill poller and try again\n", name)
 			}
 		}
 	}
