@@ -83,7 +83,7 @@ echo "  -> [$TGZ_SOURCE]"
 
 # build rpm
 echo "building rpm"
-apt --target "$HARVEST_ARCH" -bb "rpm/SPECS/spec"
+rpmbuild --target "$HARVEST_ARCH" -bb "rpm/SPECS/spec"
 if [ ! $? -eq 0 ]; then
     echo "rpmbuild failed, aborting"
     exit 1

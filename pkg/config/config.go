@@ -94,13 +94,13 @@ func GetPoller(config_fp, poller_name string) (*node.Node, error) {
 }
 
 /*
-if HARVEST_CONF variable exists then return HARVEST_CONF value
-else return parent path of executable. For example : harvest binary is in /opt/harvest/bin. This methid will return /opt/harvest
+This method is used to initialize the default location to find the yml config file. If you start Harvest with the --config option it will override the value returned from this method.
+else return parent directory of executable. For example : harvest binary is in /opt/harvest/bin. This method will return /opt/harvest
 */
 func GetHarvestConf() string {
 	var confPath string
-	configFileName := "harvest.yml"
 	if confPath = os.Getenv("HARVEST_CONF"); confPath == "" {
+		configFileName := "harvest.yml"
 		path, _ := os.Executable()
 		exPath := filepath.Dir(filepath.Dir(path))
 		if _, err := os.Stat(exPath + string(os.PathSeparator) + configFileName); os.IsNotExist(err) {
@@ -115,8 +115,8 @@ func GetHarvestConf() string {
 }
 
 /*
-This method returns the parent folder path of executable binary
-For example : harvest binary is in /opt/harvest/bin. This methid will return /opt/harvest
+This method returns the parent directory path of executable binary
+For example : harvest binary is in /opt/harvest/bin. This method will return /opt/harvest
 */
 func GetHarvestHome() string {
 	var homePath string
