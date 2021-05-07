@@ -1,19 +1,15 @@
 
-Tools:
-  grafana_api_token: eyJrIjoiMkVkV0FCVFpPOUlWUU9xcDVOc2J5Z3VMQjBqd3JKdDMiLCJuIjoiaGFydmVzdCIsImlkIjoxfQ==
-
 Exporters:
-  prometheus1:
-    exporter: Prometheus
-    addr: 0.0.0.0
-    port: 12990
-  prometheus2:
-    exporter: Prometheus
-    addr: 0.0.0.0
-    port: 12991
+  prometheus:
+    exporter: prometheus
 
 Defaults:
-  use_insecure_tls: true
+  collectors:
+    - Zapi
+    - ZapiPerf
+  exporters:
+    - prometheus
+  use_insecure_tls: false
 
 Pollers:
   # this is a special/optional poller that provides stats about harvest itself
@@ -24,16 +20,11 @@ Pollers:
     collectors:
       - Unix
     prometheus_port: 5201
-
+ 
   # add your Cdot / 7Mode pollers below, example:
-  cluster-01:
-    datacenter: DC-01
-    addr: 10.226.207.25
-    username: admin
-    password: netapp1!
-    collectors:
-      - Zapi
-      - ZapiPerf
-    exporters:
-      - prometheus1
+  # cluster-01:
+  #   datacenter: DC-01
+  #   addr: 10.0.0.1
+  #   username: myuser
+  #   password: mypasw
   # no need to add collectors/exporters, already defined in Defaults!  

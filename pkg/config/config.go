@@ -110,7 +110,7 @@ func GetHarvestConf() string {
 			confPath = exPath
 		}
 	}
-	fmt.Printf("Config file %s read from %s\n", configFileName, confPath)
+	//fmt.Printf("Config file %s read from %s\n", configFileName, confPath)
 	return confPath
 }
 
@@ -125,6 +125,6 @@ func GetHarvestHome() string {
 		exPath := filepath.Dir(filepath.Dir(path))
 		homePath = exPath
 	}
-	fmt.Printf("Harvest path %s\n", homePath)
+	//fmt.Printf("Harvest path %s\n", homePath)
 	return homePath
 }

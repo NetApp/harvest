@@ -38,7 +38,7 @@ type options struct {
 	command    string // one of: import, export, clean
 	addr       string // URL of Grafana server (e.g. "http://localhost:3000")
 	token      string // API token issued by Grafana server
-	dir        string // Directory from which to import dashboards (e.g. "/grafana/prometheus")
+	dir        string // Directory from which to import dashboards (e.g. "opt/harvest/grafana/prometheus")
 	folder     string // Grafana folder where to upload from where to download dashboards
 	folderId   int64
 	folderUid  string
