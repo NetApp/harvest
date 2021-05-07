@@ -21,10 +21,10 @@ func matrix.New(name, object string) *Matrix
 This section describes how to properly initialize a new Matrix instance. Note that if you write a collector, a Matrix instance is already properly initialized for you (as `MyCollector.matrix`), and if you write a plugin or exporter, it is passed to you from the collector. So most of the time you should not worry about properly initializing the Matrix. 
 
 `matrix.New()` requires two arguments:
-* `name` is by convention the collector name (e.g. `MyCollector`), if the Matrix comes from a collector, or the collector name and the plugin name concatenated with a `.` (e.g. `MyCollector.MyPlugin`), if the Matrix comes from a plugin.
+* `UUID` is by convention the collector name (e.g. `MyCollector`) if the Matrix comes from a collector, or the collector name and the plugin name concatenated with a `.` (e.g. `MyCollector.MyPlugin`) if the Matrix comes from a plugin.
 * `object` is the best desciption of the instances of the Matrix. For example `car` if we collect data about cars and our instances are cars.
   
-Note that the combination of `name` and `object` should uniquely identify a Matrix instance. This is not a strict requirement, but guarantes that our data is properly handled by exporters.
+Note that the combination of `UUID` and `object` should uniquely identify a Matrix instance. This is not a strict requirement, but guarantees that our data is properly handled by exporters.
 
 ### Example
 Here is an example from the point of view of a collector:
@@ -197,8 +197,8 @@ if instance2, err = myMatrix.NewInstance("SomeOtherCar"); err != nil {
 }
 ```
 
-## Retrieve metrics and instances
-In the next sections we switch gears and look at the Matrix from the POV of plugins and exporters, who have to read from the Matrix and have no knowledge if its origin and contents. 
+## Read metrics and instances
+In this section we switch gears and look at the Matrix from the POV of plugins and exporters, who have to read from the Matrix and have no knowledge if its origin and contents. 
 
 ```go
 func (x *Matrix) GetMetrics(key string) map[string]Metric
@@ -209,41 +209,44 @@ func (x *Matrix) GeInstances(key string) map[string]*Instance
 // returns all instances in the Matrix
 ```
 
-Usually we will do two loops with these two methods to read all data in the Matrix. See example in next section.
+Usually we will do two loops with these two methods to read all data in the Matrix. See examples below.
 
-### Example
+### Example: Iterate over instances
 
 In this example the method `PrintKeys()` will iterate of a Matrix and print all metric and instance keys.
 
 ```go
-
 func PrintKeys(x *matrix.Matrix) {
-    for ik, _ := range x.GetInstances() {
-        fmt.Println("instance key=", ik)
+    for instanceKey, _ := range x.GetInstances() {
+        fmt.Println("instance key=", instanceKey)
     }
 }
 ```
 
-`get_instances()` and `get_counters()` return iterables of Instance and Counter objects. Each of these objects has the methods and attributes described above (e.g. `instance.get_all()` gives us all instance labels).
+### Example: Read instance labels
 
-### 2.2. Retrieving values
-Before using a counter value it's usually a good idea to check if the counter is enabled (`counter.enabled`) and if it's actually a number (`value == value` is `False` for NaNs).
+Each instance has a set of labels. We can iterate over these labels with the `.GetLabel()` and `.GetLabels()` method. In this example, we write a function that prints all labels of an instance:
 
-Anything else is up to the Exporter
-
-### 2.3. Slightly better way
-The above script will run much faster when using list comprehension:
-
-```python
-def export(data):
-    ins = list(data.get_instances())
-    with open(filename, 'w') as fd:
-        fd.write('counter' + ',')
-        fd.write(','.join(i.name for i in ins + ['\n']))
-        for c in data.get_counters():
-            if c.enabled:
-                fd.write(c.name+',')
-                fd.write(','.join(data.get_filtered(c,i,default='') for i in ins))
-                fd.write('\n')
+```go
+func PrintLabels(instance *matrix.Instance) {
+    for label, value, := range instance.GetLabels().Map() {
+        fmt.Printf("%s= %s\n", label, value)
+    }
+}
 ```
-`get_filtered` returns value or `default` if value is `NaN`.
+
+### Example: Read metric values labels
+
+Similar to the `SetValue*` and `AddValue*` methods, we can choose a type when we read from a metric. If you don't know the type of the metric, it is safe to read it as a string. In this example, we write a function that prints the value of a metric for all instances in a Matrix:
+
+```go
+func PrintMetricValues(x *matrix.Matrix, m matrix.Metric) {
+	for key, instance := range x.GetInstances() {
+		if value, has := m.GetValueString(instance) {
+			fmt.Printf("instance %s = %s\n", key, value)
+		} else {
+			fmt.Printf("instance %s = no value\n", key)
+		}
+    }
+}
+```
