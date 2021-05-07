@@ -53,14 +53,9 @@ func (o options) print() {
 }
 
 func Run() {
+	HARVEST_HOME = config.GetHarvestHome()
 
-	if HARVEST_HOME = os.Getenv("HARVEST_HOME"); HARVEST_HOME == "" {
-		HARVEST_HOME = "/opt/harvest/"
-	}
-
-	if HARVEST_CONF = os.Getenv("HARVEST_CONF"); HARVEST_CONF == "" {
-		HARVEST_CONF = "/etc/harvest/"
-	}
+	HARVEST_CONF = config.GetHarvestConf()
 
 	if HARVEST_PIDS = os.Getenv("HARVEST_PIDS"); HARVEST_PIDS == "" {
 		HARVEST_PIDS = "/var/run/harvest/"

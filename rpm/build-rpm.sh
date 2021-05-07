@@ -24,6 +24,7 @@ cp -r "$SRC/conf/" "$BUILD/harvest/"
 cp -r "$SRC/rpm/" "$BUILD/harvest/"
 cp "$SRC/harvest.example.yml" "$BUILD/harvest/"
 cp "$SRC/go.mod" "$BUILD/harvest/"
+cp "$SRC/go.sum" "$BUILD/harvest/"
 if [ -d "$SRC/vendor" ]; then
     cp -r "$SRC/vendor" "$BUILD/harvest/"
 fi
@@ -82,7 +83,7 @@ echo "  -> [$TGZ_SOURCE]"
 
 # build rpm
 echo "building rpm"
-rpmbuild --target "$HARVEST_ARCH" -bb "rpm/SPECS/spec"
+apt --target "$HARVEST_ARCH" -bb "rpm/SPECS/spec"
 if [ ! $? -eq 0 ]; then
     echo "rpmbuild failed, aborting"
     exit 1

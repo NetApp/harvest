@@ -6,7 +6,6 @@
 
 echo " --> set directory ownership"
 chown -R harvest:harvest /opt/harvest
-chown -R harvest:harvest /etc/harvest
 if [ -z "$2" ]; then
     mkdir -p /var/log/harvest
     mkdir -p /var/run/harvest

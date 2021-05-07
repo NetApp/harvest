@@ -4,9 +4,12 @@
 package config
 
 import (
+	"fmt"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/tree"
 	"goharvest2/pkg/tree/node"
+	"os"
+	"path/filepath"
 )
 
 func LoadConfig(config_fp string) (*node.Node, error) {
@@ -88,4 +91,40 @@ func GetPoller(config_fp, poller_name string) (*node.Node, error) {
 	}
 
 	return poller, err
+}
+
+/*
+if HARVEST_CONF variable exists then return HARVEST_CONF value
+else return parent path of executable. For example : harvest binary is in /opt/harvest/bin. This methid will return /opt/harvest
+*/
+func GetHarvestConf() string {
+	var confPath string
+	configFileName := "harvest.yml"
+	if confPath = os.Getenv("HARVEST_CONF"); confPath == "" {
+		path, _ := os.Executable()
+		exPath := filepath.Dir(filepath.Dir(path))
+		if _, err := os.Stat(exPath + string(os.PathSeparator) + configFileName); os.IsNotExist(err) {
+			fmt.Printf("Config file %s does not exist at %s\n", configFileName, exPath)
+			os.Exit(1)
+		} else {
+			confPath = exPath
+		}
+	}
+	fmt.Printf("Config file %s read from %s\n", configFileName, confPath)
+	return confPath
+}
+
+/*
+This method returns the parent folder path of executable binary
+For example : harvest binary is in /opt/harvest/bin. This methid will return /opt/harvest
+*/
+func GetHarvestHome() string {
+	var homePath string
+	if homePath = os.Getenv("HARVEST_HOME"); homePath == "" {
+		path, _ := os.Executable()
+		exPath := filepath.Dir(filepath.Dir(path))
+		homePath = exPath
+	}
+	fmt.Printf("Harvest path %s\n", homePath)
+	return homePath
 }

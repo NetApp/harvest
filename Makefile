@@ -149,12 +149,10 @@ endif
 	@echo "  Creating package directories"
 ifeq (${ROOT},)
 	@${SUDO} mkdir -p /opt/harvest
-	@${SUDO} mkdir -p /etc/harvest
 	@${SUDO} mkdir -p /var/log/harvest
 	@${SUDO} mkdir -p /var/run/harvest
 else
 	@mkdir -p ${ROOT}/deploy/opt/harvest
-	@mkdir -p ${ROOT}/deploy/etc/harvest
 	@mkdir -p ${ROOT}/deploy/var/log/harvest
 	@mkdir -p ${ROOT}/deploy/var/run/harvest
 endif
@@ -162,23 +160,21 @@ endif
 ifeq (${ROOT},)
 	@echo "  Setting user permissions"
 	@${SUDO} chown -R ${HARVEST_USER}:${HARVEST_GROUP} /opt/harvest
-	@${SUDO} chown -R ${HARVEST_USER}:${HARVEST_GROUP} /etc/harvest
 	@${SUDO} chown -R ${HARVEST_USER}:${HARVEST_GROUP} /var/log/harvest
 	@${SUDO} chown -R ${HARVEST_USER}:${HARVEST_GROUP} /var/run/harvest
 endif
 
 	@echo "  Copying config and binaries"
 ifeq (${ROOT},)
-	@${SUDO} cp -r  conf/ /etc/harvest/
-	@${SUDO} cp -r grafana/ /etc/harvest/
-	@${SUDO} cp harvest.example.yml /etc/harvest/harvest.yml
+	@${SUDO} cp -r  conf/ /opt/harvest
+	@${SUDO} cp -r grafana/ /opt/harvest
+	@${SUDO} cp harvest.example.yml /opt/harvest/harvest.yml
 	@${SUDO} cp -r bin /opt/harvest
 	@${SUDO} ln -sf /opt/harvest/bin/harvest /usr/bin/harvest
 else
-	@cp -r  conf/ ${ROOT}/deploy/etc/harvest/
-	@cp -r grafana/ ${ROOT}/deploy/etc/harvest/
-	@cp harvest.example.yml ${ROOT}/deploy/etc/harvest/harvest.yml
-	@${SUDO} ln -sf ${ROOT}/deploy/etc/harvest /etc
+	@cp -r  conf/ ${ROOT}/deploy/opt/harvest/
+	@cp -r grafana/ ${ROOT}/deploy/opt/harvest
+	@cp harvest.example.yml ${ROOT}/deploy/opt/harvest/harvest.yml
 	@cp -r bin ${ROOT}/deploy/opt/harvest/
 	@${SUDO} ln -sf ${ROOT}/deploy/opt/harvest/ /opt
 	@${SUDO} ln -sf ${ROOT}/deploy/var/log/harvest /var/log
@@ -195,12 +191,12 @@ uninstall:
 	@/opt/harvest/bin/harvest stop
 
 	@echo "Cleaning install files"
-	@${SUDO} rm -rf /opt/harvest
+	@${SUDO} rm -rf /opt/harvest/bin
 	@${SUDO} rm -rf /var/log/harvest
 	@${SUDO} rm -rf /var/run/harvest
-	@${SUDO} unlink /usr/local/bin/harvest
+	@${SUDO} unlink /usr/bin/harvest
 	@echo
-	@echo "Configuration and Certificate files not removed in [${ROOT}/etc/harvest]"
+	@echo "Configuration and Certificate files not removed in [${ROOT}/opt/harvest]"
 	@echo "please remove manually if no longer needed."
 	@echo
 ifeq (${ROOT}, "")

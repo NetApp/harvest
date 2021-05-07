@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"goharvest2/cmd/harvest/config"
 	"goharvest2/cmd/harvest/manager"
+	pkgConfig "goharvest2/pkg/config"
 	//	"goharvest2/cmd/harvest/template"
 	"goharvest2/cmd/harvest/version"
 	"os"
@@ -57,10 +58,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	var harvest_path string
-	if harvest_path = os.Getenv("HARVEST_HOME"); harvest_path == "" {
-		harvest_path = "/opt/harvest/"
-	}
+	harvest_path := pkgConfig.GetHarvestHome()
 
 	var bin string
 

@@ -6,6 +6,7 @@ package template
 import (
 	"bytes"
 	"fmt"
+	"goharvest2/pkg/config"
 	"goharvest2/pkg/tree"
 	"goharvest2/pkg/tree/node"
 	"io/ioutil"
@@ -17,9 +18,7 @@ import (
 func Run() {
 
 	var harvest_path string
-	if harvest_path = os.Getenv("HARVEST_HOME"); harvest_path == "" {
-		harvest_path = "/opt/harvest/"
-	}
+	harvest_path = config.GetHarvestConf()
 
 	var err error
 

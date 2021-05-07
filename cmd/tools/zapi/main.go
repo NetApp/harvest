@@ -19,7 +19,7 @@ import (
 
 var (
 	MAX_SEARCH_DEPTH = 10
-	CONFPATH         = "/etc/harvest"
+	CONFPATH         = config.GetHarvestConf()
 )
 
 func main() {

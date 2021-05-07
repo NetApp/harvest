@@ -58,9 +58,7 @@ func exitError(msg string, err error) {
 
 func Run() {
 
-	if CONF_PATH = os.Getenv("HARVEST_CONF"); CONF_PATH == "" {
-		CONF_PATH = "/etc/harvest/"
-	}
+	CONF_PATH = config.GetHarvestConf()
 
 	CONF_FILE = path.Join(CONF_PATH, "harvest.yml")
 
