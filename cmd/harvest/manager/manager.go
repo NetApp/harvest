@@ -51,14 +51,8 @@ type pollerStatus struct {
 }
 
 func Run() {
-
-	if HarvestHomePath = os.Getenv("HARVEST_HOME"); HarvestHomePath == "" {
-		HarvestHomePath = "/opt/harvest/"
-	}
-
-	if HarvestConfPath = os.Getenv("HARVEST_CONF"); HarvestConfPath == "" {
-		HarvestConfPath = "/etc/harvest/"
-	}
+	HarvestHomePath = config.GetHarvestHome()
+	HarvestConfPath = config.GetHarvestConf()
 
 	if HarvestPidPath = os.Getenv("HARVEST_PIDS"); HarvestPidPath == "" {
 		HarvestPidPath = "/var/run/harvest/"

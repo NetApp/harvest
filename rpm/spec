@@ -38,20 +38,18 @@ tar xvfz /tmp/build/rpm/SOURCES/%{name}_%{version}-%{release}.tgz -C $RPM_BUILD_
 cd $RPM_BUILD_ROOT/opt/harvest
 echo " --> installing harvest..."
 cd $RPM_BUILD_ROOT/opt/harvest
-mkdir -p $RPM_BUILD_ROOT/etc/harvest
 mkdir -p $RPM_BUILD_ROOT/var/log/harvest
 mkdir -p $RPM_BUILD_ROOT/var/run/harvest
-mv conf/ grafana/ harvest.example.yml $RPM_BUILD_ROOT/etc/harvest/
+cp conf/ grafana/ harvest.example.yml $RPM_BUILD_ROOT/opt/harvest/
 
 %post
-if [ ! -e $RPM_BUILD_ROOT/etc/harvest/harvest.yml ]; then
-    mv $RPM_BUILD_ROOT/etc/harvest/harvest.example.yml $RPM_BUILD_ROOT/etc/harvest/harvest.yml
-    echo "  --> use default config file [/etc/harvest/harvest.yml]"
+if [ ! -e $RPM_BUILD_ROOT/opt/harvest/harvest.yml ]; then
+    mv $RPM_BUILD_ROOT/opt/harvest/harvest.example.yml $RPM_BUILD_ROOT/opt/harvest/harvest.yml
+    echo "  --> use default config file [/opt/harvest/harvest.yml]"
 fi
 getent group harvest > /dev/null 2>&1 || groupadd -r harvest && echo "  --> create harvest group"
 getent passwd harvest > /dev/null 2>&1 || useradd -r -M -g harvest --shell=/sbin/nologin harvest && echo "  --> create harvest user"
 
-chown -R harvest:harvest $RPM_BUILD_ROOT/etc/harvest/
 chown -R harvest:harvest $RPM_BUILD_ROOT/opt/harvest/
 chown -R harvest:harvest $RPM_BUILD_ROOT/var/log/harvest/
 chown -R harvest:harvest $RPM_BUILD_ROOT/var/run/harvest/
@@ -94,5 +92,4 @@ fi
 
 %files
 /opt/harvest
-/etc/harvest
 

@@ -15,6 +15,7 @@ import (
 	"fmt"
 	"goharvest2/cmd/harvest/version"
 	"goharvest2/pkg/argparse"
+	"goharvest2/pkg/config"
 	"os"
 	"path"
 	"strings"
@@ -78,12 +79,10 @@ func Get() (*Options, string) {
 		args.Hostname = hostname
 	}
 
-	if args.HomePath = os.Getenv("HARVEST_HOME"); args.HomePath == "" {
-		args.HomePath = "/opt/harvest/"
-	}
-	if args.ConfPath = os.Getenv("HARVEST_CONF"); args.ConfPath == "" {
-		args.ConfPath = "/etc/harvest/"
-	}
+	args.HomePath = config.GetHarvestConf()
+
+	args.ConfPath = config.GetHarvestConf()
+
 	if args.LogPath = os.Getenv("HARVEST_LOGS"); args.LogPath == "" {
 		args.LogPath = "/var/log/harvest/"
 	}

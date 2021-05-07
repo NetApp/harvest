@@ -4,9 +4,12 @@
 package config
 
 import (
+	"fmt"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/tree"
 	"goharvest2/pkg/tree/node"
+	"os"
+	"path/filepath"
 )
 
 func LoadConfig(config_fp string) (*node.Node, error) {
@@ -88,4 +91,40 @@ func GetPoller(config_fp, poller_name string) (*node.Node, error) {
 	}
 
 	return poller, err
+}
+
+/*
+This method is used to initialize the default location to find the yml config file. If you start Harvest with the --config option it will override the value returned from this method.
+else return parent directory of executable. For example : harvest binary is in /opt/harvest/bin. This method will return /opt/harvest
+*/
+func GetHarvestConf() string {
+	var confPath string
+	if confPath = os.Getenv("HARVEST_CONF"); confPath == "" {
+		configFileName := "harvest.yml"
+		path, _ := os.Executable()
+		exPath := filepath.Dir(filepath.Dir(path))
+		if _, err := os.Stat(exPath + string(os.PathSeparator) + configFileName); os.IsNotExist(err) {
+			fmt.Printf("Config file %s does not exist at %s\n", configFileName, exPath)
+			os.Exit(1)
+		} else {
+			confPath = exPath
+		}
+	}
+	//fmt.Printf("Config file %s read from %s\n", configFileName, confPath)
+	return confPath
+}
+
+/*
+This method returns the parent directory path of executable binary
+For example : harvest binary is in /opt/harvest/bin. This method will return /opt/harvest
+*/
+func GetHarvestHome() string {
+	var homePath string
+	if homePath = os.Getenv("HARVEST_HOME"); homePath == "" {
+		path, _ := os.Executable()
+		exPath := filepath.Dir(filepath.Dir(path))
+		homePath = exPath
+	}
+	//fmt.Printf("Harvest path %s\n", homePath)
+	return homePath
 }
