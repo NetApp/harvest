@@ -1,7 +1,7 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
-package template
+package stub
 
 import (
 	"bytes"
@@ -83,19 +83,6 @@ func new_plugin(harvest_path string) error {
 	return nil
 }
 
-func get_name() string {
-
-	var name string
-
-	if len(os.Args) > 3 {
-		return os.Args[3]
-	} else {
-		fmt.Printf("name: ")
-		fmt.Scanln(&name)
-	}
-	return name
-}
-
 func new_collector(harvest_path string) error {
 	var (
 		name, object string
@@ -139,6 +126,19 @@ func new_collector(harvest_path string) error {
 	fmt.Println("Happy coding!")
 
 	return nil
+}
+
+func get_name() string {
+
+	var name string
+
+	if len(os.Args) > 3 {
+		return os.Args[3]
+	} else {
+		fmt.Printf("name: ")
+		fmt.Scanln(&name)
+	}
+	return name
 }
 
 func create_template(harvest_path, collector, object string) (string, error) {

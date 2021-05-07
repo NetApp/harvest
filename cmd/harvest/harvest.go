@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"goharvest2/cmd/harvest/config"
 	"goharvest2/cmd/harvest/manager"
-	//	"goharvest2/cmd/harvest/template"
+	"goharvest2/cmd/harvest/stub"
 	"goharvest2/cmd/harvest/version"
 	"os"
 	"os/exec"
@@ -34,12 +34,12 @@ Usage:
 The commands are:
 
 	status                     show status of pollers
-	start/restart/stop/kill    manage pollers
+	start, stop...             manage pollers
 	config                     run the config utility
-	build                      re-build Harvest or components
 	zapi                       explore ZAPI objects and counters
-	grafana                    import dashboards to Grafana
-	version                    show Harvest2 version
+	grafana                    import/export Grafana dashboards
+	new                        create new collector, plugin or exporter (for developers)
+	version                    show version and exit
 
 Use "harvest <command> help" for more information about a command
 Use "harvest manager help" for more options on managing pollers
@@ -47,7 +47,11 @@ Use "harvest manager help" for more options on managing pollers
 
 func main() {
 
-	command := ""
+	var (
+		command, bin, harvestPath string
+		cmd                       *exec.Cmd
+	)
+
 	if len(os.Args) > 1 {
 		command = os.Args[1]
 	}
@@ -57,12 +61,9 @@ func main() {
 		os.Exit(0)
 	}
 
-	var harvest_path string
-	if harvest_path = os.Getenv("HARVEST_HOME"); harvest_path == "" {
-		harvest_path = "/opt/harvest/"
+	if harvestPath = os.Getenv("HARVEST_HOME"); harvestPath == "" {
+		harvestPath = "/opt/harvest/"
 	}
-
-	var bin string
 
 	switch command {
 	case "version":
@@ -71,26 +72,23 @@ func main() {
 		manager.Run()
 	case "config":
 		config.Run()
-	//@ not ready to advertise
-	//case "new":
-	//	template.Run()
+	case "new":
+		stub.Run()
 	case "zapi":
 		bin = "bin/zapi"
 	case "grafana":
 		bin = "bin/grafana"
-	case "build":
-		bin = "cmd/build.sh"
+	/*
+		case "build":
+			bin = "cmd/build.sh"
+	*/
 	default:
 		fmt.Printf("Unknown command: %s\n", command)
 		os.Exit(1)
 	}
 
 	if bin != "" {
-
-		var cmd *exec.Cmd
-
-		cmd = exec.Command(path.Join(harvest_path, bin), os.Args[2:]...)
-
+		cmd = exec.Command(path.Join(harvestPath, bin), os.Args[2:]...)
 		os.Stdout.Sync()
 		os.Stdin.Sync()
 		cmd.Stdin = os.Stdin
