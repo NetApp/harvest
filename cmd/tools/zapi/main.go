@@ -20,6 +20,7 @@ import (
 var (
 	maxSearchDepth  = 10
 	harvestConfPath = config.GetHarvestConf()
+)
 
 func main() {
 

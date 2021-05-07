@@ -19,7 +19,7 @@ import (
 	"goharvest2/cmd/harvest/config"
 	"goharvest2/cmd/harvest/manager"
 	pkgConfig "goharvest2/pkg/config"
-	//	"goharvest2/cmd/harvest/template"
+	"goharvest2/cmd/harvest/stub"
 	"goharvest2/cmd/harvest/version"
 	"os"
 	"os/exec"
@@ -62,7 +62,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	harvestPath := pkgConfig.GetHarvestHome()
+	harvestPath = pkgConfig.GetHarvestHome()
 
 	switch command {
 	case "version":
