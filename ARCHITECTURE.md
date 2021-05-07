@@ -2,7 +2,7 @@
 
 This document describes the high-level architecture of Harvest. If you want to familiarize yourself with the code base, you're in the right place!
 
-Harvest has a relatively small, but fairly dense code base. We try to maintain a strongly modular design, this means that if you develop a collector, you don't need to understand what the poller does.
+Harvest has a strong emphasize modular design, the core code-base is isolated from the code-base of secondary components - the philosophy is: adding new collectors, exporters or plugins should be simple.
 
 ## Bird's Eye View
 
@@ -57,13 +57,11 @@ Collectors are "object-oriented", which means that metrics are grouped together 
 
 Most of the auxiliary jobs that a collector needs to do (such as initializing, running on scheduled time, reporting status to Poller, updating metadata and handling errors) are implemented by the AbstractCollector. Writing a new collector, most of the times, only requires implementing the `PollData()` method.
 
-Creating a new collector is easy: run `harvest new collector` to get quickly started.
-
 ### Plug-Ins
 
 Plug-ins are optional and run as part of the collector. They will customize, post-process metrics from collectors, aggregate new metrics or trigger user-defined actions. They allow you to extend Harvest without writing a new collector. Some plugins will collect additional metrics on their own (example: [Zapi/SnapMirror](cmd/collectors/zapi/plugins/snapmirror/snapmirror.go)).
 
-Harvest includes a range of built-in, collector-independent plugins for generic customization (see [documentation](cmd/poller/plugin/README.md)). Run `harvest new plugin` to write your own plugin.
+Harvest includes a range of built-in, collector-independent plugins for generic customization (see [documentation](cmd/poller/plugin/README.md)).
 
 
 ### Exporters 
@@ -71,8 +69,6 @@ Harvest includes a range of built-in, collector-independent plugins for generic 
 Exporters write metrics to an external data source (usually time-series database). They will read the metrics from a Matrix instance passed to them by collectors, encode them to the required format and send to the database.
 
 The way "sending" is done, can be quite different. For example, the [InfluxDB exporter](cmd/exporters/influxdb/README.md) will simply push (HTTP PUT request) to the InfluxDB, while the [Prometheus exporter](cmd/exporters/prometheus/README.md) will expose the metrics on an HTTP server and wait for Prometheus scrapers to collect them.
-
-If you are courageous, run `harvest new exporter` to write your own exporter. 
 
 ## Data Structures
 
