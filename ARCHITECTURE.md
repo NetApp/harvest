@@ -131,7 +131,3 @@ This directory contains all packages that are imported and used as shared librar
 * `tree/` - the Tree data structure
 * `util/` - helper functions
 
-
-## Request Flows
-
-## Life-cycle

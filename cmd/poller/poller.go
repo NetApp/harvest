@@ -16,7 +16,7 @@
 	and exporters, ping the target system, generate metadata and do some
 	housekeeping.
 
-	Usually the poller will run as a daemon. In this case it will creat
+	Usually the poller will run as a daemon. In this case it will create
 	a PID file and write logs to a file. For debugging and testing
 	it can also be started as a foreground process, in this case
 	logs are sent to STDOUT.

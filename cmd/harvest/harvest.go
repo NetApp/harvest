@@ -35,7 +35,7 @@ Usage:
 The commands are:
 
 	status                     show status of pollers
-	start, stop...             manage pollers
+	start/restart/stop/kill    manage pollers
 	config                     run the config utility
 	zapi                       explore ZAPI objects and counters
 	grafana                    import/export Grafana dashboards

@@ -35,15 +35,15 @@ import (
 )
 
 // Default parameters
-var (
+const (
 	// maximum amount of time we will keep metrics in cache
-	_CACHE_MAX_KEEP = "180s"
+	cacheMaxKeep = "180s"
 	// apply a prefix to metrics globally (default none)
-	_GLOBAL_PREFIX = ""
+	globalPrefix = ""
 	// address of the HTTP service, valid values are
 	// - "localhost" or "127.0.0.1", this limits access to local machine
 	// - "" or "0.0.0.0", allows access from network
-	_LOCAL_HTTP_ADDR = ""
+	localHttpAddr = ""
 )
 
 type Prometheus struct {
@@ -86,6 +86,8 @@ func (me *Prometheus) Init() error {
 		if !strings.HasSuffix(x, "_") {
 			me.globalPrefix += "_"
 		}
+	} else {
+		me.globalPrefix = globalPrefix
 	}
 
 	if me.Options.Debug {
@@ -104,8 +106,8 @@ func (me *Prometheus) Init() error {
 	}
 
 	if me.cache == nil {
-		logger.Debug(me.Prefix, "using default cache_max_keep [%s]", _CACHE_MAX_KEEP)
-		if d, err := time.ParseDuration(_CACHE_MAX_KEEP); err == nil {
+		logger.Debug(me.Prefix, "using default cache_max_keep [%s]", cacheMaxKeep)
+		if d, err := time.ParseDuration(cacheMaxKeep); err == nil {
 			me.cache = newCache(d)
 		} else {
 			return err
@@ -162,7 +164,7 @@ func (me *Prometheus) Init() error {
 		return errors.New(errors.INVALID_PARAM, "port ("+port+")")
 	}
 
-	addr := _LOCAL_HTTP_ADDR
+	addr := localHttpAddr
 	if x := me.Params.GetChildContentS("local_http_addr"); x != "" {
 		addr = x
 		logger.Debug(me.Prefix, "using custom local addr [%s]", x)
