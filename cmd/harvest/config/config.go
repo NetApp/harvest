@@ -18,12 +18,12 @@ import (
 	"strconv"
 )
 
-var USAGE = `
+var usage = `
 Harvest 2.0 - Config utility
 
 Configure a new poller or exporter
 
-Usage: harvest2 config ["poller" | "exporter"]
+Usage: harvest config ["poller" | "exporter"]
 
 Poller:
   A poller is an Harvest instance for monitoring one single
@@ -40,27 +40,29 @@ Exporter:
 `
 
 const (
-	HARVEST_USER          = "harvest2-user"
-	HARVEST_ROLE          = "harvest2-role"
-	PROMETHEUS_PORT_START = 7202
+	// if we create user/role on ONTAP use these names
+	harvestUserName = "harvest2-user"
+	harvestRoleName = "harvest2-role"
+	// if we add Promtheus port to config start from this
+	PrometheusPortStart = 7202
 )
 
-var CONF_PATH string
-var CONF_FILE string
-
-var DIALOG *dialog.Dialog
+var (
+	harvestConfPath string
+	harvestConfFile string
+	_dialog         *dialog.Dialog
+)
 
 func exitError(msg string, err error) {
-	DIALOG.Close()
+	_dialog.Close()
 	fmt.Printf("Error (%s): %v\n", msg, err)
 	os.Exit(1)
 }
 
 func Run() {
 
-	CONF_PATH = config.GetHarvestConf()
-
-	CONF_FILE = path.Join(CONF_PATH, "harvest.yml")
+	harvestConfPath = config.GetHarvestConf()
+	harvestConfFile = path.Join(harvestConfPath, "harvest.yml")
 
 	var item string
 	var err error
@@ -68,44 +70,39 @@ func Run() {
 
 	parser := argparse.New("Config utility", "harvest config", "configure pollers")
 	parser.PosString(&item, "item", "item to configure", []string{"poller", "exporter", "welcome", "help"})
-	parser.String(&CONF_FILE, "config", "c", "custom config filepath (default: "+CONF_FILE+")")
-	parser.SetHelp(USAGE)
+	parser.String(&harvestConfFile, "config", "c", "custom config filepath (default: "+harvestConfFile+")")
+	parser.SetHelp(usage)
+	parser.SetHelpFlag("help")
+	parser.SetOffset(2)
 
-	if !parser.Parse() {
-		os.Exit(0)
-	}
+	parser.ParseOrExit()
 
-	if item == "help" {
-		fmt.Println(USAGE)
-		os.Exit(0)
-	}
-
-	if DIALOG = dialog.New(); !DIALOG.Enabled() {
+	if _dialog = dialog.New(); !_dialog.Enabled() {
 		fmt.Println("This program requires [dialog] or [whiptail].")
 		os.Exit(1)
 	}
 
 	if item == "welcome" {
 
-		DIALOG.SetTitle("harvest 2.0 - welcome")
-		DIALOG.Message("Your installation is complete. Welcome to Harvest 2.0!")
+		_dialog.SetTitle("harvest 2.0 - welcome")
+		_dialog.Message("Your installation is complete. Welcome to Harvest 2.0!")
 
-		if DIALOG.YesNo("Do you want to quickly configure Harvest?") {
+		if _dialog.YesNo("Do you want to quickly configure Harvest?") {
 			item = ""
 		} else {
 			item = "exit"
 		}
 	}
 
-	DIALOG.SetTitle("harvest 2.0 - config")
+	_dialog.SetTitle("harvest 2.0 - config")
 
 	if item == "exit" {
-		DIALOG.Message("Bye! If you want my help next time, run: \"harvest config\"")
-		DIALOG.Close()
+		_dialog.Message("Bye! If you want my help next time, run: \"harvest config\"")
+		_dialog.Close()
 		os.Exit(0)
 	}
 
-	if conf, err = config.LoadConfig(CONF_FILE); err != nil {
+	if conf, err = config.LoadConfig(harvestConfFile); err != nil {
 		conf = node.NewS("")
 	}
 
@@ -120,7 +117,7 @@ func Run() {
 	for {
 
 		if item == "" {
-			item, err = DIALOG.Menu("Add new:", "poller", "exporter", "safe and exit")
+			item, err = _dialog.Menu("Add new:", "poller", "exporter", "safe and exit")
 			if err != nil {
 				// error means user clicked on Cancel
 				item = "exit"
@@ -129,34 +126,34 @@ func Run() {
 		}
 
 		if item == "poller" {
-			if new_poller := add_poller(); new_poller != nil {
+			if newPoller := addPoller(); newPoller != nil {
 
 				if len(exporters.GetChildren()) == 0 {
 					question := "You don't have any exporters defined.\n" +
 						"Create Prometheus exporter with default " +
 						"parameters and add to this poller?"
-					if DIALOG.YesNo(question) {
+					if _dialog.YesNo(question) {
 						prometheus := exporters.NewChildS("prometheus", "")
 						prometheus.NewChildS("exporter", "Prometheus")
 						prometheus.NewChildS("addr", "0.0.0.0")
 						prometheus.NewChildS("master", "True")
 
-						poller_exporters := new_poller.NewChildS("exporters", "")
-						poller_exporters.NewChildS("", "prometheus")
-						new_poller.NewChildS("prometheus_port", strconv.Itoa(PROMETHEUS_PORT_START))
+						pollerExporters := newPoller.NewChildS("exporters", "")
+						pollerExporters.NewChildS("", "prometheus")
+						newPoller.NewChildS("prometheus_port", strconv.Itoa(PrometheusPortStart))
 					}
 
 				} else if len(exporters.GetChildren()) == 1 {
 					exporter := exporters.GetChildren()[0]
 
 					question := "Add exporter [" + exporter.GetNameS() + "] to poller?"
-					if DIALOG.YesNo(question) {
+					if _dialog.YesNo(question) {
 
-						poller_exporters := new_poller.NewChildS("exporters", "")
-						poller_exporters.NewChildS("", exporter.GetNameS())
+						pollerExporters := newPoller.NewChildS("exporters", "")
+						pollerExporters.NewChildS("", exporter.GetNameS())
 
 						if exporter.GetChildContentS("exporter") == "Prometheus" {
-							new_poller.NewChildS("prometheus_port", strconv.Itoa(PROMETHEUS_PORT_START+len(pollers.GetChildren())+1))
+							newPoller.NewChildS("prometheus_port", strconv.Itoa(PrometheusPortStart+len(pollers.GetChildren())+1))
 						}
 					}
 				} else {
@@ -168,27 +165,27 @@ func Run() {
 					choices = append(choices, "skip")
 
 					// @TODO allow multiple choices
-					item, err = DIALOG.Menu("Choose exporter for this poller:", choices...)
+					item, err = _dialog.Menu("Choose exporter for this poller:", choices...)
 
 					if item != "skip" {
 						if exp := exporters.GetChildS(item); exp != nil {
 
-							poller_exporters := new_poller.NewChildS("exporters", "")
-							poller_exporters.NewChildS("", item)
+							pollerExporters := newPoller.NewChildS("exporters", "")
+							pollerExporters.NewChildS("", item)
 
 							if exp.GetChildContentS("exporter") == "Prometheus" {
-								new_poller.NewChildS("prometheus_port", strconv.Itoa(PROMETHEUS_PORT_START+len(pollers.GetChildren())+1))
+								newPoller.NewChildS("prometheus_port", strconv.Itoa(PrometheusPortStart+len(pollers.GetChildren())+1))
 							}
 						} else {
-							DIALOG.Message("You don't have any exporter named [" + item + "].")
+							_dialog.Message("You don't have any exporter named [" + item + "].")
 						}
 					}
 				}
 
-				if pollers.GetChildS(new_poller.GetNameS()) == nil {
-					pollers.AddChild(new_poller)
-				} else if DIALOG.YesNo("poller [" + new_poller.GetNameS() + "] already exists, overwrite?") {
-					pollers.AddChild(new_poller)
+				if pollers.GetChildS(newPoller.GetNameS()) == nil {
+					pollers.AddChild(newPoller)
+				} else if _dialog.YesNo("poller [" + newPoller.GetNameS() + "] already exists, overwrite?") {
+					pollers.AddChild(newPoller)
 				}
 			} else {
 				item = "exit"
@@ -196,11 +193,11 @@ func Run() {
 		}
 
 		if item == "exporter" {
-			if new_exporter := add_exporter(); new_exporter != nil {
-				if exporters.GetChildS(new_exporter.GetNameS()) == nil {
-					exporters.AddChild(new_exporter)
-				} else if DIALOG.YesNo("exporter [" + new_exporter.GetNameS() + "] already exists, overwrite?") {
-					exporters.AddChild(new_exporter)
+			if newExporter := addExporter(); newExporter != nil {
+				if exporters.GetChildS(newExporter.GetNameS()) == nil {
+					exporters.AddChild(newExporter)
+				} else if _dialog.YesNo("exporter [" + newExporter.GetNameS() + "] already exists, overwrite?") {
+					exporters.AddChild(newExporter)
 				}
 			} else {
 				item = "exit"
@@ -216,16 +213,16 @@ func Run() {
 
 	if item == "safe and exit" {
 
-		use_tmp := false
-		fp := CONF_FILE
+		useTmp := false
+		fp := harvestConfFile
 
-		dir, fn := path.Split(CONF_FILE)
+		dir, fn := path.Split(harvestConfFile)
 
 		info, err := os.Stat(dir)
 		if err != nil || !info.IsDir() {
-			if os.Mkdir(CONF_PATH, 0644) != nil {
+			if os.Mkdir(harvestConfPath, 0644) != nil {
 				fp = path.Join("/tmp", fn)
-				use_tmp = true
+				useTmp = true
 			}
 		}
 
@@ -234,65 +231,70 @@ func Run() {
 		}
 
 		msg := "Saved results as [" + fp + "]"
-		if use_tmp {
-			msg = "You don't have write permissions in [" + CONF_PATH + "]!!\n" +
+		if useTmp {
+			msg = "You don't have write permissions in [" + harvestConfPath + "]!!\n" +
 				"Config file saved as [" + fp + "]. Please move it\n" +
-				"to [" + CONF_PATH + "] with a privileged user."
+				"to [" + harvestConfPath + "] with a privileged user."
 		}
-		DIALOG.Message(msg)
+		_dialog.Message(msg)
 	}
 
-	DIALOG.Close()
+	_dialog.Close()
 }
 
-func add_poller() *node.Node {
+func addPoller() *node.Node {
+
+	var (
+		client *zapi.Client
+		err    error
+	)
 
 	poller := node.NewS("")
 
 	// ask for datacenter & address
 
-	datacenter, err := DIALOG.Input("Datacenter name:")
+	datacenter, err := _dialog.Input("Datacenter name:")
 	if err != nil {
 		return nil
 	}
 	poller.NewChildS("datacenter", datacenter)
 
-	addr, err := DIALOG.Input("Enter address (IPv4, IPv6, hostname or URL)")
+	addr, err := _dialog.Input("Enter address (IPv4, IPv6, hostname or URL)")
 	if err != nil {
 		return nil
 	}
 	poller.NewChildS("addr", addr)
 
 	// ask for authentication method
-	auth, err := DIALOG.Menu("Choose authentication method", "client certificate", "password")
+	auth, err := _dialog.Menu("Choose authentication method", "client certificate", "password")
 	if err != nil {
 		return nil
 	}
 
-	create_cert := false
+	createCert := false
 
 	if auth == "client certificate" {
-		if DIALOG.YesNo("Create client certificate and key pair?") {
+		if _dialog.YesNo("Create client certificate and key pair?") {
 			if exec.Command("which", "openssl").Run() != nil {
-				DIALOG.Message("You don't have openssl installed, please install and try again")
+				_dialog.Message("You don't have openssl installed, please install and try again")
 				return nil
 			}
-			create_cert = true
-			DIALOG.Message("This requires one-time admin password to create \na read-only user and install certificate on your system")
+			createCert = true
+			_dialog.Message("This requires one-time admin password to create \na read-only user and install certificate on your system")
 		} else {
-			msg := fmt.Sprintf("Copy your cert/key pair to [%s/cert/] as [<SYSTEM_NAME>.key] and [<SYSTEM_NAME>.pem] to continue", CONF_PATH)
-			DIALOG.Message(msg)
+			msg := fmt.Sprintf("Copy your cert/key pair to [%s/cert/] as [<SYSTEM_NAME>.key] and [<SYSTEM_NAME>.pem] to continue", harvestConfPath)
+			_dialog.Message(msg)
 			poller.NewChildS("auth_style", "certificate_auth")
 		}
 	}
 
-	if auth == "password" || create_cert {
+	if auth == "password" || createCert {
 		poller.NewChildS("auth_style", "password")
-		username, err := DIALOG.Input("username: ")
+		username, err := _dialog.Input("username: ")
 		if err != nil {
 			return nil
 		}
-		password, err := DIALOG.Password("password: ")
+		password, err := _dialog.Password("password: ")
 		if err != nil {
 			return nil
 		}
@@ -301,34 +303,31 @@ func add_poller() *node.Node {
 	}
 
 	// connect and get system info
-	DIALOG.Message("Connecting to system...")
+	_dialog.Message("Connecting to system...")
 
-	var client *zapi.Client
-	var system *zapi.System
-
-	if client, err = zapi.New(poller); err == nil {
-		system, err = client.GetSystem()
+	if client, err = zapi.New(poller); err != nil {
+		exitError("client", err)
 	}
 
-	if err != nil {
-		if DIALOG.YesNo("Unable to connect to system. Add poller anyway?") {
-			name, err := DIALOG.Input("Name of poller / cluster:")
-			if err != nil {
+	if err = client.Init(5); err != nil {
+		if _dialog.YesNo("Unable to connect to system. Add poller anyway?") {
+			if name, err := _dialog.Input("Name of poller / cluster:"); err != nil {
 				return nil
+			} else {
+				poller.SetNameS(name)
 			}
-			poller.SetNameS(name)
 		} else {
 			return nil
 		}
 	} else {
-		DIALOG.Message("Connected to:\n" + system.String())
-		poller.SetNameS(system.Name)
+		_dialog.Message("Connected to:\n" + client.Info())
+		poller.SetNameS(client.Name())
 	}
 
-	if err == nil && create_cert {
+	if err == nil && createCert {
 
-		cert_path := path.Join(CONF_PATH, "cert", system.Name+".pem")
-		key_path := path.Join(CONF_PATH, "cert", system.Name+".key")
+		certPath := path.Join(harvestConfPath, "cert", client.Name()+".pem")
+		keyPath := path.Join(harvestConfPath, "cert", client.Name()+".key")
 
 		cmd := exec.Command(
 			"openssl",
@@ -340,24 +339,24 @@ func add_poller() *node.Node {
 			"-newkey",
 			"rsa:2048",
 			"-keyout",
-			key_path,
+			keyPath,
 			"-out",
-			cert_path,
+			certPath,
 			"-subj",
-			"/CN="+HARVEST_USER,
+			"/CN="+harvestUserName,
 		)
 
 		if err := cmd.Run(); err != nil {
 			exitError("openssl", err)
 		}
 
-		DIALOG.Message(fmt.Sprintf("Generated certificate/key pair:\n  - %s\n  - %s\n", cert_path, key_path))
+		_dialog.Message(fmt.Sprintf("Generated certificate/key pair:\n  - %s\n  - %s\n", certPath, keyPath))
 
 		req := node.NewXmlS("security-login-role-create")
 		req.NewChildS("access-level", "readonly")
 		req.NewChildS("command-directory-name", "DEFAULT")
-		req.NewChildS("role-name", HARVEST_ROLE)
-		req.NewChildS("vserver", system.Name)
+		req.NewChildS("role-name", harvestRoleName)
+		req.NewChildS("vserver", client.Name())
 
 		if _, err := client.InvokeRequest(req); err != nil {
 			exitError("create role", err)
@@ -367,32 +366,32 @@ func add_poller() *node.Node {
 		req.NewChildS("application", "ontapi")
 		req.NewChildS("authentication-method", "cert")
 		req.NewChildS("comment", "readonly user for harvest2")
-		req.NewChildS("role-name", HARVEST_ROLE)
-		req.NewChildS("user-name", HARVEST_USER)
-		req.NewChildS("vserver", system.Name)
+		req.NewChildS("role-name", harvestRoleName)
+		req.NewChildS("user-name", harvestUserName)
+		req.NewChildS("vserver", client.Name())
 
 		if _, err := client.InvokeRequest(req); err != nil {
 			exitError("create user", err)
 		}
 
-		DIALOG.Message(fmt.Sprintf("Created read-only user [%s] and role [%s]", HARVEST_USER, HARVEST_ROLE))
+		_dialog.Message(fmt.Sprintf("Created read-only user [%s] and role [%s]", harvestUserName, harvestRoleName))
 
-		cert_content, err := ioutil.ReadFile(cert_path)
+		certContent, err := ioutil.ReadFile(certPath)
 		if err != nil {
 			exitError("cert content", err)
 		}
 
 		req = node.NewXmlS("security-certificate-install")
-		req.NewChildS("cert-name", HARVEST_USER)
-		req.NewChildS("certificate", string(cert_content))
+		req.NewChildS("cert-name", harvestUserName)
+		req.NewChildS("certificate", string(certContent))
 		req.NewChildS("type", "client_ca")
-		req.NewChildS("vserver", system.Name)
+		req.NewChildS("vserver", client.Name())
 
 		if _, err := client.InvokeRequest(req); err != nil {
 			exitError("install cert", err)
 		}
 
-		DIALOG.Message("Certificate installed on system.")
+		_dialog.Message("Certificate installed on system.")
 
 		// forget password immediately
 		poller.PopChildS("auth_style")
@@ -401,8 +400,8 @@ func add_poller() *node.Node {
 
 		// new auth parameters
 		poller.NewChildS("auth_style", "certificate_auth")
-		poller.NewChildS("ssl_cert", cert_path)
-		poller.NewChildS("ssl_key", key_path)
+		poller.NewChildS("ssl_cert", certPath)
+		poller.NewChildS("ssl_key", keyPath)
 	}
 
 	collectors := poller.NewChildS("collectors", "")
@@ -412,29 +411,29 @@ func add_poller() *node.Node {
 	return poller
 }
 
-func add_exporter() *node.Node {
+func addExporter() *node.Node {
 
 	exporter := node.NewS("")
 
-	item, err := DIALOG.Menu("Choose exporter type:", "prometheus", "influxdb", "graphite")
+	item, err := _dialog.Menu("Choose exporter type:", "prometheus", "influxdb")
 	if err != nil {
 		return nil
 	}
 	exporter.NewChildS("exporter", item)
 
-	name, err := DIALOG.Input("Choose name for exporter instance:")
+	name, err := _dialog.Input("Choose name for exporter instance:")
 	if err != nil {
 		return nil
 	}
 	exporter.SetNameS(name)
 
-	port, err := DIALOG.Input("Port of the HTTP service:")
+	port, err := _dialog.Input("Port of the HTTP service:")
 	if err != nil {
 		exitError("input exporter port", err)
 	}
 	exporter.NewChildS("port", port)
 
-	if DIALOG.YesNo("Make HTTP serve publicly on your network?\n(Choose no to serve it only on localhst)") {
+	if _dialog.YesNo("Make HTTP serve publicly on your network?\n(Choose no to serve it only on localhst)") {
 		exporter.NewChildS("addr", "0.0.0.0")
 	} else {
 		exporter.NewChildS("addr", "localhost")

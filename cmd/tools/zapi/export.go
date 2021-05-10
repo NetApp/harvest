@@ -19,18 +19,18 @@ import (
 func export(n *node.Node, c *client.Client, args *Args) error {
 	switch args.Item {
 	case "attrs":
-		return export_attrs(n, c, args)
+		return exportAttrs(n, c, args)
 	case "counters":
-		return export_counters(n, c, args)
+		return exportCounters(n, c, args)
 	default:
 		return errors.New(INVALID_ITEM, args.Item)
 	}
 }
 
-func export_attrs(item *node.Node, c *client.Client, args *Args) error {
+func exportAttrs(item *node.Node, c *client.Client, args *Args) error {
 	return nil
 }
-func export_counters(item *node.Node, c *client.Client, args *Args) error {
+func exportCounters(item *node.Node, c *client.Client, args *Args) error {
 
 	var (
 		dump   []byte
@@ -46,7 +46,7 @@ func export_counters(item *node.Node, c *client.Client, args *Args) error {
 		return err
 	}
 
-	object_display := render_object_name(args.Object)
+	object_display := renderObjectName(args.Object)
 	template.NewChildS("name", object_display)
 	template.NewChildS("query", args.Object)
 	template.NewChildS("object", object)
@@ -55,10 +55,10 @@ func export_counters(item *node.Node, c *client.Client, args *Args) error {
 	export_options := template.NewChildS("export_options", "")
 	instance_keys := export_options.NewChildS("instance_keys", "")
 
-	for _, c := range item.GetChildren() {
-		if c.GetChildContentS("is-deprecated") != "true" {
-			name := c.GetChildContentS("name")
-			prop := c.GetChildContentS("properties")
+	for _, ch := range item.GetChildren() {
+		if ch.GetChildContentS("is-deprecated") != "true" {
+			name := ch.GetChildContentS("name")
+			prop := ch.GetChildContentS("properties")
 
 			if strings.Contains(prop, "no-display") {
 				continue
@@ -90,7 +90,7 @@ func export_counters(item *node.Node, c *client.Client, args *Args) error {
 	*/
 	fp := make([]string, 0)
 
-	fp = append(fp, CONFPATH)
+	fp = append(fp, harvestConfPath)
 	fp = append(fp, "conf/")
 	fp = append(fp, "zapiperf/")
 
@@ -128,13 +128,13 @@ func export_counters(item *node.Node, c *client.Client, args *Args) error {
 		return nil
 	}
 
-	if custom, err = collector.ImportTemplate(CONFPATH, "zapiperf", "custom.yaml"); err != nil {
+	if custom, err = collector.ImportTemplate(harvestConfPath, "custom.yaml", "zapiperf"); err != nil {
 		custom = node.NewS("")
 		custom.NewChildS("collector", "ZapiPerf")
 		custom.NewChildS("objects", "")
 	}
 
-	custom_fp := path.Join(CONFPATH, "conf/", "zapiperf/", "custom.yaml")
+	custom_fp := path.Join(harvestConfPath, "conf/", "zapiperf/", "custom.yaml")
 
 	if objects := custom.GetChildS("objects"); objects != nil {
 
@@ -161,7 +161,7 @@ func export_counters(item *node.Node, c *client.Client, args *Args) error {
 	return nil
 }
 
-func render_object_name(raw_name string) string {
+func renderObjectName(raw_name string) string {
 
 	name := strings.ToUpper(string(raw_name[0]))
 	i := 1

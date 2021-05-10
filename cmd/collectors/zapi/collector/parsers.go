@@ -68,15 +68,15 @@ func (me *Zapi) ParseCounters(elem, desired *node.Node, path []string) {
 	var d *node.Node
 
 	name := elem.GetNameS()
-	new_path := path
+	newPath := path
 
 	if len(elem.GetNameS()) != 0 {
-		new_path = append(new_path, name)
+		newPath = append(newPath, name)
 		d = node.NewXmlS(name)
 	}
 
 	if len(elem.GetContentS()) != 0 {
-		if clean := me.HandleCounter(new_path, elem.GetContentS()); clean != "" {
+		if clean := me.HandleCounter(newPath, elem.GetContentS()); clean != "" {
 			d = node.NewXmlS(clean)
 		}
 	}
@@ -85,42 +85,43 @@ func (me *Zapi) ParseCounters(elem, desired *node.Node, path []string) {
 		desired.AddChild(d)
 	}
 	for _, child := range elem.GetChildren() {
-		me.ParseCounters(child, d, new_path)
+		me.ParseCounters(child, d, newPath)
 	}
 }
 
 func (me *Zapi) HandleCounter(path []string, content string) string {
-	var name, display, key string
-	var split_values, full_path []string
+	var (
+		name, display, key    string
+		splitValues, fullPath []string
+	)
 
-	split_values = strings.Split(content, "=>")
-	if len(split_values) == 1 {
+	splitValues = strings.Split(content, "=>")
+	if len(splitValues) == 1 {
 		name = content
 	} else {
-		name = split_values[0]
-		display = strings.TrimSpace(split_values[1])
+		name = splitValues[0]
+		display = strings.TrimSpace(splitValues[1])
 	}
 
 	name = strings.TrimSpace(strings.TrimLeft(name, "^"))
 
 	//full_path = append(path[1:], name)
-	full_path = append(path, name)
-	key = strings.Join(full_path, ".")
+	fullPath = append(path, name)
+	key = strings.Join(fullPath, ".")
 
 	if display == "" {
-		display = ParseDisplay(me.Matrix.Object, full_path)
+		display = ParseDisplay(me.Matrix.Object, fullPath)
 	}
 
 	if content[0] == '^' {
-		me.instance_label_paths[key] = display
+		me.instanceLabelPaths[key] = display
 		//data.AddLabel(key, display)
-		logger.Trace(me.Prefix, "%sadd (%s) as label [%s]%s => %v", color.Yellow, key, display, color.End, full_path)
+		logger.Trace(me.Prefix, "%sadd (%s) as label [%s]%s => %v", color.Yellow, key, display, color.End, fullPath)
 		if content[1] == '^' {
-			//data.AddInstanceKey(full_path[:])
-			copied := make([]string, len(full_path))
-			copy(copied, full_path)
-			me.instance_key_paths = append(me.instance_key_paths, copied)
-			logger.Trace(me.Prefix, "%sadd (%s) as instance key [%s]%s => %v", color.Red, key, display, color.End, full_path)
+			copied := make([]string, len(fullPath))
+			copy(copied, fullPath)
+			me.instanceKeyPaths = append(me.instanceKeyPaths, copied)
+			logger.Trace(me.Prefix, "%sadd (%s) as instance key [%s]%s => %v", color.Red, key, display, color.End, fullPath)
 		}
 	} else {
 		metric, err := me.Matrix.NewMetricUint64(key)
@@ -128,23 +129,21 @@ func (me *Zapi) HandleCounter(path []string, content string) string {
 			logger.Error(me.Prefix, "add ass metric (%s) [%s]: %v", key, display, err)
 		} else {
 			metric.SetName(display)
-			logger.Trace(me.Prefix, "%sadd as metric (%s) [%s]%s => %v", color.Blue, key, display, color.End, full_path)
+			logger.Trace(me.Prefix, "%sadd as metric (%s) [%s]%s => %v", color.Blue, key, display, color.End, fullPath)
 		}
 	}
 
-	//if display == "" {
-	//	return ""
-	//}
 	return name
 }
 
 func ParseDisplay(obj string, path []string) string {
-	var ignore = map[string]int{"attributes": 0, "info": 0, "list": 0, "details": 0, "storage": 0}
-	var added = map[string]int{}
-	var words []string
+	var (
+		ignore = map[string]int{"attributes": 0, "info": 0, "list": 0, "details": 0, "storage": 0}
+		added  = map[string]int{}
+		words  []string
+	)
 
-	obj_words := strings.Split(obj, "_")
-	for _, w := range obj_words {
+	for _, w := range strings.Split(obj, "_") {
 		ignore[w] = 0
 	}
 

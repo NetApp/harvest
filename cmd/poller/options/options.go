@@ -1,11 +1,12 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
 
-Package Description:
+   Package options provides Poller start-up options. These are fetched from CLI arguments,
+   default values and/or environment variables. Some of the options are left blank and will
+   be set by the Poller.
 
-   Package options provides Poller start options,
-   parsed from CLI arguments, default values and
-   environment variables.
+   Options is declared in a seperate file to make it possible for collector/exporters
+   to access it.
 
 */
 package options
@@ -21,23 +22,25 @@ import (
 )
 
 type Options struct {
-	Poller         string
-	Daemon         bool
-	Debug          bool
-	PrometheusPort string
-	Config         string
-	ConfPath       string
-	HomePath       string
-	LogPath        string
-	PidPath        string
-	LogLevel       int
-	Version        string
-	Hostname       string
-	Collectors     []string
-	Objects        []string
-	Profiling      int
+	Poller string // name of the Poller
+	Daemon bool   // if true, Poller is started as daemon
+	Debug  bool   // if true, Poller is started in debug mode
+	// this mostly means that no data will be exported
+	PrometheusPort string   // HTTP port that is assigned to Poller and can be used by the Prometheus exporter
+	Config         string   // filename of Harvest config (e.g. "harvest.yml")
+	ConfPath       string   // path to config directory (usually "/etc/harvest")
+	HomePath       string   // path to harvest home (usually "/opt/harvest")
+	LogPath        string   // log files location (usually "/var/log/harvest")
+	PidPath        string   // pid files location (usually "/var/run/harvest")
+	LogLevel       int      // logging level, 0 for trace, 5 for fatal
+	Version        string   // harvest version
+	Hostname       string   // hostname of the machine harvest is running
+	Collectors     []string // name of collectors to load (override poller config)
+	Objects        []string // objects to load (overrides collector config)
+	Profiling      int      // in case of profiling, the HTTP port used to display results
 }
 
+// String provides a string representation of Options
 func (o *Options) String() string {
 	x := []string{
 		fmt.Sprintf("%s= %s", "Poller", o.Poller),
@@ -57,10 +60,12 @@ func (o *Options) String() string {
 	return strings.Join(x, ", ")
 }
 
+// Print writes Options to STDOUT
 func (o *Options) Print() {
 	fmt.Println(o.String())
 }
 
+// Get retrieves options from CLI flags, env variables and defaults
 func Get() (*Options, string) {
 	var args Options
 	args = Options{}
@@ -70,8 +75,9 @@ func Get() (*Options, string) {
 	args.Debug = false
 	args.LogLevel = 2
 	args.Version = version.VERSION
-	hostname, _ := os.Hostname()
-	args.Hostname = hostname
+	if hostname, err := os.Hostname(); err == nil {
+		args.Hostname = hostname
+	}
 
 	args.HomePath = config.GetHarvestConf()
 
@@ -96,11 +102,9 @@ func Get() (*Options, string) {
 	parser.String(&args.Config, "conf", "", "Custom config filepath (default: "+args.Config+")")
 	parser.Slice(&args.Collectors, "collectors", "c", "Only start these collectors (overrides harvest.yml)")
 	parser.Slice(&args.Objects, "objects", "o", "Only start these objects (overrides collector config)")
-	ok := parser.Parse()
 
-	if !ok {
-		os.Exit(1)
-	}
+	parser.SetHelpFlag("help")
+	parser.ParseOrExit()
 
 	if args.Poller == "" {
 		fmt.Println("Missing required argument: poller")

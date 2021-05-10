@@ -8,7 +8,7 @@ import (
 	"goharvest2/pkg/set"
 )
 
-var KNOWN_TYPES = set.NewFrom([]string{
+var knownTypes = set.NewFrom([]string{
 	"string",
 	"integer",
 	"boolean",

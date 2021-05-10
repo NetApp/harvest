@@ -37,7 +37,7 @@ type Args struct {
 	Parameters []string
 }
 
-func get_args() *Args {
+func getArgs() *Args {
 
 	// define arguments
 	args := &Args{}
@@ -92,26 +92,28 @@ func get_args() *Args {
 		"ZapiPerf counter to show",
 	)
 
-	parser.Slice(
-		&args.Counters,
-		"counters",
-		"l",
-		"list of counters for periodic show",
-	)
+	/*
+		parser.Slice(
+			&args.Counters,
+			"counters",
+			"l",
+			"list of counters for periodic show",
+		)
 
-	parser.String(
-		&args.Instance,
-		"instance",
-		"i",
-		"instance for which to show periodic data",
-	)
+		parser.String(
+			&args.Instance,
+			"instance",
+			"i",
+			"instance for which to show periodic data",
+		)
 
-	parser.Int(
-		&args.Duration,
-		"duration",
-		"d",
-		"duration/interval to show periodic data",
-	)
+		parser.Int(
+			&args.Duration,
+			"duration",
+			"d",
+			"duration/interval to show periodic data",
+		)
+	*/
 
 	args.MaxRecords = 100
 	parser.Int(
@@ -130,10 +132,7 @@ func get_args() *Args {
 
 	parser.SetHelpFlag("help")
 
-	if !parser.Parse() {
-		os.Exit(0)
-	}
-
+	parser.ParseOrExit()
 	// validate and warn on missing arguments
 	ok := true
 
@@ -167,20 +166,22 @@ func get_args() *Args {
 		ok = false
 	}
 
-	if args.Item == "periodic" && len(args.Counters) == 0 {
-		fmt.Println("show periodic: requires --counters (list of counters)")
-		ok = false
-	}
+	/*
+		if args.Item == "periodic" && len(args.Counters) == 0 {
+			fmt.Println("show periodic: requires --counters (list of counters)")
+			ok = false
+		}
 
-	if args.Item == "periodic" && args.Instance == "" {
-		fmt.Println("show periodic requires --instance (name or uuid)")
-		ok = false
-	}
+		if args.Item == "periodic" && args.Instance == "" {
+			fmt.Println("show periodic requires --instance (name or uuid)")
+			ok = false
+		}
 
-	if args.Item == "periodic" && args.Duration == 0 {
-		//fmt.Println("show periodic: using default interval [30 s]")
-		args.Duration = 30
-	}
+		if args.Item == "periodic" && args.Duration == 0 {
+			//fmt.Println("show periodic: using default interval [30 s]")
+			args.Duration = 30
+		}
+	*/
 
 	if !ok {
 		os.Exit(1)

@@ -13,35 +13,35 @@ import (
 func show(n *node.Node, args *Args) {
 	switch args.Item {
 	case "system":
-		show_system(n, args)
+		showSystem(n, args)
 	case "apis":
-		show_apis(n, args)
+		showApis(n, args)
 	case "objects":
-		show_objects(n, args)
+		showObjects(n, args)
 	case "attrs":
-		show_attrs(n, args)
+		showAttrs(n, args)
 	case "counters":
-		show_counters(n, args)
+		showCounters(n, args)
 	case "counter":
-		show_counter(n, args)
+		showCounter(n, args)
 	case "instances":
-		show_instances(n, args)
+		showInstances(n, args)
 	case "data":
-		show_data(n, args)
+		showData(n, args)
 	default:
 		fmt.Printf("Sorry, I don't know how to show [%s]\n", args.Item)
 	}
 }
 
-func show_system(n *node.Node, args *Args) {
+func showSystem(n *node.Node, args *Args) {
 	n.Print(0)
 }
 
-func show_apis(n *node.Node, args *Args) {
+func showApis(n *node.Node, args *Args) {
 	n.Print(0)
 }
 
-func show_objects(item *node.Node, args *Args) {
+func showObjects(item *node.Node, args *Args) {
 
 	for _, o := range item.GetChildren() {
 
@@ -53,22 +53,22 @@ func show_objects(item *node.Node, args *Args) {
 	}
 }
 
-func show_attrs(n *node.Node, args *Args) {
+func showAttrs(n *node.Node, args *Args) {
 	n.Print(0)
 }
 
-func show_counters(n *node.Node, args *Args) {
+func showCounters(n *node.Node, args *Args) {
 	n.Print(0)
 }
 
-func show_counter(n *node.Node, args *Args) {
+func showCounter(n *node.Node, args *Args) {
 	n.Print(0)
 }
 
-func show_instances(n *node.Node, args *Args) {
+func showInstances(n *node.Node, args *Args) {
 	n.Print(0)
 }
 
-func show_data(n *node.Node, args *Args) {
+func showData(n *node.Node, args *Args) {
 	n.Print(0)
 }
