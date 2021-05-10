@@ -214,7 +214,10 @@ func Run() {
 		port := p.GetChildContentS("prometheus_port")
 		// check in exporter config if prometheus port is not defined in pollers
 		if len(port) == 0 {
-			port = config.GetExporterPorts(p, opts.Config)
+			port, err = config.GetExporterPorts(p, opts.Config)
+			if err != nil {
+				port = "error"
+			}
 		}
 
 		if opts.Command == "kill" {

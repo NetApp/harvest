@@ -134,12 +134,15 @@ func GetHarvestHome() string {
 This method returns port configured in exporters for given poller
 If there are more than 1 exporter configured for a poller then return string will have ports as comma seperated
 */
-func GetExporterPorts(p *node.Node, config_fp string) string {
+func GetExporterPorts(p *node.Node, config_fp string) (string, error) {
 	var port string
 	exporters := p.GetChildS("exporters")
 	if exporters != nil {
 		exportChildren := exporters.GetAllChildContentS()
-		definedExporters, _ := GetExporters(config_fp)
+		definedExporters, err := GetExporters(config_fp)
+		if err != nil {
+			return "", err
+		}
 		var ports []string
 		for _, ec := range exportChildren {
 			currentPort := definedExporters.GetChildS(ec).GetChildContentS("port")
@@ -149,5 +152,5 @@ func GetExporterPorts(p *node.Node, config_fp string) string {
 		}
 		port = strings.Join(ports, ", ")
 	}
-	return port
+	return port, nil
 }
