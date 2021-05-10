@@ -145,7 +145,7 @@ func New(config *node.Node) (*Client, error) {
 // it will give up after retries
 func (c *Client) Init(retries int) error {
 	var err error
-	for i := 0; i < 0; i++ {
+	for i := 0; i < retries; i++ {
 		if err = c.getSystem(); err == nil {
 			break
 		}
