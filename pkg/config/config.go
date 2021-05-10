@@ -10,6 +10,7 @@ import (
 	"goharvest2/pkg/tree/node"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func LoadConfig(config_fp string) (*node.Node, error) {
@@ -127,4 +128,26 @@ func GetHarvestHome() string {
 	}
 	//fmt.Printf("Harvest path %s\n", homePath)
 	return homePath
+}
+
+/*
+This method returns port configured in exporters for given poller
+If there are more than 1 exporter configured for a poller then return string will have ports as comma seperated
+*/
+func GetExporterPorts(p *node.Node, config_fp string) string {
+	var port string
+	exporters := p.GetChildS("exporters")
+	if exporters != nil {
+		exportChildren := exporters.GetAllChildContentS()
+		definedExporters, _ := GetExporters(config_fp)
+		var ports []string
+		for _, ec := range exportChildren {
+			currentPort := definedExporters.GetChildS(ec).GetChildContentS("port")
+			if len(currentPort) > 0 {
+				ports = append(ports, currentPort)
+			}
+		}
+		port = strings.Join(ports, ", ")
+	}
+	return port
 }

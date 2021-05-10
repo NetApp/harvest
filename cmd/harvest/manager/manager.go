@@ -212,6 +212,10 @@ func Run() {
 		name := p.GetNameS()
 		datacenter := p.GetChildContentS("datacenter")
 		port := p.GetChildContentS("prometheus_port")
+		// check in exporter config if prometheus port is not defined in pollers
+		if len(port) == 0 {
+			port = config.GetExporterPorts(p, opts.Config)
+		}
 
 		if opts.Command == "kill" {
 			status, pid, profilingPort := killPoller(name)
@@ -541,20 +545,20 @@ func printStatus(c1, c2 int, dc, pn, port, status string, pid int, profilingPort
 	fmt.Printf("%s%s ", dc, strings.Repeat(" ", c1-len(dc)))
 	fmt.Printf("%s%s ", pn, strings.Repeat(" ", c2-len(pn)))
 	if pid == 0 {
-		fmt.Printf("%-10s %-10s %-10s %-20s\n", port, "", profilingPort, status)
+		fmt.Printf("%-15s %-10s %-10s %-20s\n", port, "", profilingPort, status)
 	} else {
-		fmt.Printf("%-10s %-10d %-10s %-20s\n", port, pid, profilingPort, status)
+		fmt.Printf("%-15s %-10d %-10s %-20s\n", port, pid, profilingPort, status)
 	}
 }
 
 func printHeader(c1, c2 int) {
 	fmt.Printf("Datacenter%s Poller%s ", strings.Repeat(" ", c1-10), strings.Repeat(" ", c2-6))
-	fmt.Printf("%-10s %-10s %-10s %-20s\n", "Port", "PID", "Profiling", "Status")
+	fmt.Printf("%-15s %-10s %-10s %-20s\n", "Port", "PID", "Profiling", "Status")
 }
 
 func printBreak(c1, c2 int) {
 	fmt.Printf("%s %s ", strings.Repeat("+", c1), strings.Repeat("+", c2))
-	fmt.Println("++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++")
+	fmt.Println("+++++++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++")
 }
 
 // maximum size of datacenter and poller names, if exceed defaults
