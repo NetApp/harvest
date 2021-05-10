@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-func get_attrs(c *client.Client, a *Args) (*node.Node, error) {
+func getAttrs(c *client.Client, a *Args) (*node.Node, error) {
 
 	var (
 		req, apis, results, attr *node.Node
@@ -114,7 +114,7 @@ func search_entries(root, entries *node.Node) {
 	cache := make(map[string]*node.Node)
 	cache[root.GetNameS()] = root
 
-	for i := 0; i < MAX_SEARCH_DEPTH; i += 1 {
+	for i := 0; i < maxSearchDepth; i += 1 {
 		for _, entry := range entries.GetChildren() {
 			name := entry.GetChildContentS("name")
 			if parent, ok := cache[name]; ok {
@@ -123,7 +123,7 @@ func search_entries(root, entries *node.Node) {
 					for _, elem := range elems.GetChildren() {
 						child := parent.NewChildS(elem.GetChildContentS("name"), "")
 						attr_type := strings.TrimSuffix(elem.GetChildContentS("type"), "[]")
-						if !KNOWN_TYPES.Has(attr_type) {
+						if !knownTypes.Has(attr_type) {
 							cache[attr_type] = child
 						}
 					}

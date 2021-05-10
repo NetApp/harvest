@@ -1,6 +1,18 @@
 /*
- * Copyright NetApp Inc, 2021 All rights reserved
- */
+	Copyright NetApp Inc, 2021 All rights reserved
+
+	Package collector provides the Collector interface and
+	the AbstractCollector type which implements most basic
+	attributes.
+
+	A Harvest collector should normally "inherit" all these
+	attributes and implement only the PollData function.
+	The AbstractCollector will make sure that the collector
+	is properly initializied, metadata are updated and
+	data poll(s) and plugins run as scheduled. The collector
+	can also choose to override any of the attributes
+	implemented by AbstractCollector.
+*/
 package collector
 
 import (
@@ -21,14 +33,15 @@ import (
 	"goharvest2/cmd/poller/options"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/cmd/poller/schedule"
-
-	// built-in plugins
-
-	"goharvest2/cmd/poller/plugin/aggregator"
-	//"goharvest2/cmd/poller/plugin/calculator"
-	"goharvest2/cmd/poller/plugin/label_agent"
 )
 
+// Collector defines the attributes of a collector
+// The poll functions (PollData, PollInstance, etc)
+// are not part of the interface and are linked dynamically
+// All required functions are implemented by AbstractCollector
+//
+// Note that many of the functions required by the interface
+// are only there to facilitate "inheritance" through AbstractCollector.
 type Collector interface {
 	Init() error
 	Start(*sync.WaitGroup)
@@ -48,29 +61,44 @@ type Collector interface {
 	LoadPlugins(*node.Node) error
 }
 
+// CollectorStatus defines the possible states of a collector
 var CollectorStatus = [3]string{
 	"up",
 	"standby",
 	"failed",
 }
 
+// AbstractCollector implements all required attributes of Collector.
+// A "real" collector will "inherit" all these attributes and has
+// the option to override them. The real collector should implement
+// at least one poll function (usually PollData). AbstractCollector
+// will link these functions to its Schedule and make sure that they
+// are properly and timely executed.
 type AbstractCollector struct {
-	Name         string
-	Prefix       string
-	Object       string
-	Status       uint8
-	Message      string
-	Options      *options.Options
-	Params       *node.Node
-	Schedule     *schedule.Schedule
-	Matrix       *matrix.Matrix
-	Metadata     *matrix.Matrix
-	Exporters    []exporter.Exporter
-	Plugins      []plugin.Plugin
-	collectCount uint64
-	countMux     *sync.Mutex
+	Name    string           // name of the collector, CamelCased
+	Object  string           // object of the collector, describes what thet collector is collecting
+	Prefix  string           // prefix used for logging
+	Status  uint8            // current state of th
+	Message string           // reason if collector is in failed state
+	Options *options.Options // poller options
+	Params  *node.Node       // collector parameters
+	// note that this is a merge of poller parameters, collector conf and object conf ("subtemplate")
+	Schedule     *schedule.Schedule  // schedule of the collector
+	Matrix       *matrix.Matrix      // the data storage of the collector
+	Metadata     *matrix.Matrix      // metadata of the collector, such as poll duration, collected data points etc.
+	Exporters    []exporter.Exporter // the exporters that the collector will emit data to
+	Plugins      []plugin.Plugin     // built-in or custom plugins
+	collectCount uint64              // count of collected data points
+	// this is different from what the collector will have in its metadata, since this variable
+	// holds count independent of the poll interval of the collector, used to give stats to Poller
+	countMux *sync.Mutex // used for atomic access to collectCount
 }
 
+// New creates an AbstractCollector with the given arguments:
+// @name	- name of the collector
+// @object	- object of the collector (something that best describes the data)
+// @options	- poller options
+// @params	- collector parameters
 func New(name, object string, options *options.Options, params *node.Node) *AbstractCollector {
 	c := AbstractCollector{
 		Name:     name,
@@ -84,10 +112,24 @@ func New(name, object string, options *options.Options, params *node.Node) *Abst
 	return &c
 }
 
-// This is a func not method to enforce "inheritance"
+// Init initializes a collector and does the trick of "inheritance",
+// hence a function and not a method.
 // A collector can to choose to call this function
 // inside its Init method, or leave it to be called
-// by the poller during dynamic load
+// by the poller during dynamic load.
+//
+// The important thing done here is too look what tasks are defined
+// in the "schedule" parameter of the collector and create a pointer
+// to the corresponding method of the collector. Example, parameter is:
+//
+// schedule:
+//   data: 10s
+//   instance: 20s
+//
+// then we expect that the collector has methods PollDdta and PollInstance
+// that need to be invoked every 10 and 20 seconds respectively.
+// Names of the polls are arbitrary, only "ddta" is a special case, since
+// plugins are executed after the data poll (this might change).
 func Init(c Collector) error {
 
 	params := c.GetParams()
@@ -95,7 +137,7 @@ func Init(c Collector) error {
 	name := c.GetName()
 	object := c.GetObject()
 
-	/* Initialize schedule and tasks (polls) */
+	// Initialize schedule and tasks (polls)
 	tasks := params.GetChildS("schedule")
 	if tasks == nil || len(tasks.GetChildren()) == 0 {
 		return errors.New(errors.MISSING_PARAM, "schedule")
@@ -107,55 +149,54 @@ func Init(c Collector) error {
 	// Example: "data" will be alligned to method PollData()
 	for _, task := range tasks.GetChildren() {
 
-		method_name := "Poll" + strings.Title(task.GetNameS())
+		methodName := "Poll" + strings.Title(task.GetNameS())
 
-		if m := reflect.ValueOf(c).MethodByName(method_name); m.IsValid() {
+		if m := reflect.ValueOf(c).MethodByName(methodName); m.IsValid() {
 			if foo, ok := m.Interface().(func() (*matrix.Matrix, error)); ok {
-				if err := s.AddTaskString(task.GetNameS(), task.GetContentS(), foo); err == nil {
-					//logger.Debug(c.Prefix, "scheduled task [%s] with %s interval", task.Name, task.GetInterval().String())
-
-				} else {
+				if err := s.NewTaskString(task.GetNameS(), task.GetContentS(), foo); err != nil {
 					return errors.New(errors.INVALID_PARAM, "schedule ("+task.GetNameS()+"): "+err.Error())
 				}
 			} else {
-				return errors.New(errors.ERR_IMPLEMENT, method_name+" has not signature 'func() (*matrix.Matrix, error)'")
+				return errors.New(errors.ERR_IMPLEMENT, methodName+" has not signature 'func() (*matrix.Matrix, error)'")
 			}
 		} else {
-			return errors.New(errors.ERR_IMPLEMENT, method_name)
+			return errors.New(errors.ERR_IMPLEMENT, methodName)
 		}
 	}
 	c.SetSchedule(s)
 
-	/* Initialize Matrix, the container of collected data */
+	// Initialize Matrix, the container of collected data
 	mx := matrix.New(name, object)
-	if export_options := params.GetChildS("export_options"); export_options != nil {
-		mx.SetExportOptions(export_options)
+	if exportOptions := params.GetChildS("export_options"); exportOptions != nil {
+		mx.SetExportOptions(exportOptions)
 	} else {
 		mx.SetExportOptions(matrix.DefaultExportOptions())
 		// @TODO log warning for user
 	}
 	mx.SetGlobalLabel("datacenter", params.GetChildContentS("datacenter"))
 
+	// Add user-defined global labels
 	if gl := params.GetChildS("global_labels"); gl != nil {
 		for _, c := range gl.GetChildren() {
 			mx.SetGlobalLabel(c.GetNameS(), c.GetContentS())
 		}
 	}
 
+	// Some data should not be exported and is only used for plugins
 	if params.GetChildContentS("export_data") == "false" {
 		mx.SetExportable(false)
 	}
 
 	c.SetMatrix(mx)
 
-	/* Initialize Plugins */
+	// Initialize Plugins
 	if plugins := params.GetChildS("plugins"); plugins != nil {
 		if err := c.LoadPlugins(plugins); err != nil {
 			return err
 		}
 	}
 
-	/* Initialize metadata */
+	// Initialize metadata
 	md := matrix.New(name, "metadata_collector")
 
 	md.SetGlobalLabel("hostname", options.Hostname)
@@ -176,7 +217,7 @@ func Init(c Collector) error {
 	//md.AddLabel("task", "")
 	//md.AddLabel("interval", "")
 
-	/* each task we run is an "instance" */
+	// add tasks of the collecor as metadata instances
 	for _, task := range s.GetTasks() {
 		instance, _ := md.NewInstance(task.Name)
 		instance.SetLabel("task", task.Name)
@@ -192,13 +233,15 @@ func Init(c Collector) error {
 	return nil
 }
 
+// Start will run the collector in an infinity loop
 func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 
 	defer wg.Done()
 
 	// keep track of connection errors
 	// to increment time before retry
-	retry_delay := 1
+	// @TODO add to metadata
+	retryDelay := 1
 	me.SetStatus(0, "running")
 
 	for {
@@ -207,56 +250,62 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 
 		results := make([]*matrix.Matrix, 0)
 
+		// run all scheduled tasks
 		for _, task := range me.Schedule.GetTasks() {
 			if !task.IsDue() {
 				continue
 			}
 
 			var (
-				start, plugin_start    time.Time
-				task_time, plugin_time time.Duration
+				start, pluginStart   time.Time
+				taskTime, pluginTime time.Duration
 			)
 
 			start = time.Now()
 			data, err := task.Run()
-			task_time = time.Since(start)
+			taskTime = time.Since(start)
 
+			// poll returned error, try to understand what to do
 			if err != nil {
 
 				if !me.Schedule.IsStandBy() {
 					logger.Debug(me.Prefix, "handling error during [%s] poll...", task.Name)
 				}
 				switch {
+				// target system is unreachable
+				// enter standby mode and retry with some delay that will be increased if we fail again
 				case errors.IsErr(err, errors.ERR_CONNECTION):
-					if retry_delay < 1024 {
-						retry_delay *= 4
+					if retryDelay < 1024 {
+						retryDelay *= 4
 					}
 					if !me.Schedule.IsStandBy() {
 						//logger.Error(me.Prefix, err.Error())
-						logger.Warn(me.Prefix, "target system unreachable, entering standby mode (retry to connect in %d s)", retry_delay)
+						logger.Warn(me.Prefix, "target unreachable, entering standby mode (retry to connect in %d s)", retryDelay)
 					}
-					me.Schedule.SetStandByMode(task.Name, time.Duration(retry_delay)*time.Second)
+					me.Schedule.SetStandByMode(task, time.Duration(retryDelay)*time.Second)
 					me.SetStatus(1, errors.ERR_CONNECTION)
+				// there are no instances to collect
 				case errors.IsErr(err, errors.ERR_NO_INSTANCE):
-					me.Schedule.SetStandByMode(task.Name, 5*time.Minute)
+					me.Schedule.SetStandByMode(task, 5*time.Minute)
 					me.SetStatus(1, errors.ERR_NO_INSTANCE)
 					logger.Info(me.Prefix, "no [%s] instances on system, entering standby mode", me.Object)
+				// no metrics available
 				case errors.IsErr(err, errors.ERR_NO_METRIC):
 					me.SetStatus(1, errors.ERR_NO_METRIC)
-					me.Schedule.SetStandByMode(task.Name, 1*time.Hour)
+					me.Schedule.SetStandByMode(task, 1*time.Hour)
 					logger.Warn(me.Prefix, "no [%s] metrics on system, entering standby mode", me.Object)
+				// not an error we are expecting, so enter failed state and terminate
 				default:
-					// enter failed state
 					logger.Error(me.Prefix, err.Error())
 					if errmsg := errors.GetClass(err); errmsg != "" {
 						me.SetStatus(2, errmsg)
 					} else {
 						me.SetStatus(2, err.Error())
 					}
-					return
+					break
 				}
-				// don't continue on errors
-				break
+				// stop here if we had errors
+				continue
 			} else if me.Schedule.IsStandBy() {
 				// recover from standby mode
 				me.Schedule.Recover()
@@ -267,34 +316,38 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 			if data != nil {
 				results = append(results, data)
 
+				// run plugins after data poll
 				if task.Name == "data" {
 
-					plugin_start = time.Now()
+					pluginStart = time.Now()
 
 					for _, plg := range me.Plugins {
-						if plg_data_slice, err := plg.Run(data); err != nil {
+						if pluginData, err := plg.Run(data); err != nil {
 							logger.Error(me.Prefix, "plugin [%s]: %s", plg.GetName(), err.Error())
-						} else if plg_data_slice != nil {
-							results = append(results, plg_data_slice...)
-							logger.Debug(me.Prefix, "plugin [%s] added (%d) data", plg.GetName(), len(plg_data_slice))
+						} else if pluginData != nil {
+							results = append(results, pluginData...)
+							logger.Debug(me.Prefix, "plugin [%s] added (%d) data", plg.GetName(), len(pluginData))
 						} else {
 							logger.Debug(me.Prefix, "plugin [%s]: completed", plg.GetName())
 						}
 					}
 
-					plugin_time = time.Since(plugin_start)
-					me.Metadata.LazySetValueInt64("plugin_time", task.Name, plugin_time.Microseconds())
+					pluginTime = time.Since(pluginStart)
+					me.Metadata.LazySetValueInt64("plugin_time", task.Name, pluginTime.Microseconds())
 				}
 
-				me.Metadata.LazySetValueInt64("poll_time", task.Name, task.Runtime().Microseconds())
-				me.Metadata.LazySetValueInt64("task_time", task.Name, task_time.Microseconds())
+				// update some metadata
+				me.Metadata.LazySetValueInt64("poll_time", task.Name, task.GetDuration().Microseconds())
+				me.Metadata.LazySetValueInt64("task_time", task.Name, taskTime.Microseconds())
 
-				if api_time, ok := me.Metadata.LazyGetValueInt64("api_time", task.Name); ok && api_time != 0 {
-					me.Metadata.LazySetValueFloat64("api_time_percent", task.Name, float64(api_time)/float64(task_time.Microseconds())*100)
+				if apiTime, ok := me.Metadata.LazyGetValueInt64("api_time", task.Name); ok && apiTime != 0 {
+					me.Metadata.LazySetValueFloat64("api_time_percent", task.Name, float64(apiTime)/float64(taskTime.Microseconds())*100)
 				}
 
 			}
 		}
+
+		// pass results to exporters
 
 		logger.Debug(me.Prefix, "exporting collected (%d) data", len(results))
 
@@ -322,20 +375,26 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 			}
 		}
 
-		logger.Debug(me.Prefix, "sleeping %s until next poll", me.Schedule.NextDue().String())
-		me.Schedule.Sleep()
+		if nd := me.Schedule.NextDue(); nd > 0 {
+			logger.Info(me.Prefix, "sleeping %s until next poll", nd.String()) //DEBUG
+			me.Schedule.Sleep()
+		} else {
+			logger.Warn(me.Prefix, "lagging behind schedule %s", (-nd).String())
+		}
 	}
 }
 
+// GetName returns name of the collector
 func (me *AbstractCollector) GetName() string {
 	return me.Name
 }
 
+// GetObject returns object of the collector
 func (me *AbstractCollector) GetObject() string {
 	return me.Object
 }
 
-// get and reset of collected data counter
+// GetCollectCount retrieves and resets count of collected data
 // this and next method are only to report the poller
 // how much data we have collected (independent of poll interval)
 func (me *AbstractCollector) GetCollectCount() uint64 {
@@ -346,17 +405,20 @@ func (me *AbstractCollector) GetCollectCount() uint64 {
 	return count
 }
 
-// add count to the collected data counter
+// AddCollectCount adds n to collectCount atomically
 func (me *AbstractCollector) AddCollectCount(n uint64) {
 	me.countMux.Lock()
 	me.collectCount += n
 	me.countMux.Unlock()
 }
 
+// GetStatus returns current state of the collector
 func (me *AbstractCollector) GetStatus() (uint8, string, string) {
 	return me.Status, CollectorStatus[me.Status], me.Message
 }
 
+// SetStatus sets the current state of the collector to one
+// of the values defined by CollectorStatus
 func (me *AbstractCollector) SetStatus(status uint8, msg string) {
 	if status < 0 || status >= uint8(len(CollectorStatus)) {
 		panic("invalid status code " + strconv.Itoa(int(status)))
@@ -365,26 +427,33 @@ func (me *AbstractCollector) SetStatus(status uint8, msg string) {
 	me.Message = msg
 }
 
+// GetParams returns the parameters of the collector
 func (me *AbstractCollector) GetParams() *node.Node {
 	return me.Params
 }
 
+// GetOptions returns the poller options passed to the collector
 func (me *AbstractCollector) GetOptions() *options.Options {
 	return me.Options
 }
 
+// SetSchedule set Schedule s as a field of the collector
 func (me *AbstractCollector) SetSchedule(s *schedule.Schedule) {
 	me.Schedule = s
 }
 
+// SetMatrix set Matrix m as a field of the collector
 func (me *AbstractCollector) SetMatrix(m *matrix.Matrix) {
 	me.Matrix = m
 }
 
+// SetMetadata set the metadata Matrix m as a field of the collector
 func (me *AbstractCollector) SetMetadata(m *matrix.Matrix) {
 	me.Metadata = m
 }
 
+// WantedExporters retrievs the names of the exporters to which the collector
+// needs to export data
 func (me *AbstractCollector) WantedExporters() []string {
 	var names []string
 	if e := me.Params.GetChildS("exporters"); e != nil {
@@ -393,12 +462,14 @@ func (me *AbstractCollector) WantedExporters() []string {
 	return names
 }
 
+// LinkExporter appends exporter e to the list of exporters of the collector
 func (me *AbstractCollector) LinkExporter(e exporter.Exporter) {
 	// @TODO: add lock if we want to add exporters while collector is running
-	//logger.Info(c.LongName, "Adding exporter [%s:%s]", e.GetClass(), e.GetName())
 	me.Exporters = append(me.Exporters, e)
 }
 
+// LoadPlugins loads built-in plugins or dynamically loads custom plugins
+// and adds them to the collector
 func (me *AbstractCollector) LoadPlugins(params *node.Node) error {
 
 	var p plugin.Plugin
@@ -442,23 +513,5 @@ func (me *AbstractCollector) LoadPlugins(params *node.Node) error {
 		me.Plugins = append(me.Plugins, p)
 	}
 	logger.Debug(me.Prefix, "initialized %d plugins", len(me.Plugins))
-	return nil
-}
-
-func getBuiltinPlugin(name string, abc *plugin.AbstractPlugin) plugin.Plugin {
-
-	if name == "Aggregator" {
-		return aggregator.New(abc)
-	}
-
-	/*
-		if name == "Calculator" {
-			return calculator.New(abc)
-		}*/
-
-	if name == "LabelAgent" {
-		return label_agent.New(abc)
-	}
-
 	return nil
 }

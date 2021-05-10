@@ -1,10 +1,9 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
 
-Package Description:
-   Does a simple HTTP Get request to the specified address, returns data if any.
+Helper function to do simple HTTP Get request (much like the bash curl command).
 */
-package util
+package curl
 
 import (
 	"io/ioutil"
@@ -12,7 +11,8 @@ import (
 	"strings"
 )
 
-func Curl(addr string) (string, error) {
+// Curl issues a GET request to addr and returns data if any
+func Curl(addr string) ([]byte, error) {
 
 	var (
 		req    *http.Request
@@ -27,20 +27,20 @@ func Curl(addr string) (string, error) {
 	}
 
 	if req, err = http.NewRequest("GET", addr, nil); err != nil {
-		return "", err
+		return data, err
 	}
 
 	client = &http.Client{}
 
 	if resp, err = client.Do(req); err != nil {
-		return "", err
+		return data, err
 	}
 
 	defer resp.Body.Close()
 
 	if data, err = ioutil.ReadAll(resp.Body); err != nil {
-		return "", err
+		return data, err
 	}
 
-	return string(data), nil
+	return data, nil
 }

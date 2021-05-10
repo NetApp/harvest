@@ -24,150 +24,160 @@ import (
 )
 
 var (
-	HARVEST_HOME string
-	HARVEST_CONF string
-	HARVEST_PIDS string
+	HarvestHomePath string
+	HarvestConfPath string
+	HarvestPidPath  string
 )
 
 type options struct {
-	Command    string
-	Pollers    []string
-	Verbose    bool
-	Trace      bool
-	Debug      bool
-	Foreground bool
-	Loglevel   int
-	Config     string
-	Profiling  bool
+	command    string
+	pollers    []string
+	collectors []string
+	objects    []string
+	verbose    bool
+	trace      bool
+	debug      bool
+	foreground bool
+	loglevel   int
+	config     string
+	profiling  bool
+	longStatus bool
 }
 
-func (o options) print() {
-	fmt.Printf("command    = %s\n", o.Command)
-	fmt.Printf("pollers    = %v\n", o.Pollers)
-	fmt.Printf("verbose    = %v\n", o.Verbose)
-	fmt.Printf("trace      = %v\n", o.Trace)
-	fmt.Printf("debug      = %v\n", o.Debug)
-	fmt.Printf("foreground = %v\n", o.Foreground)
-	fmt.Printf("loglevel   = %d\n", o.Loglevel)
-	fmt.Printf("profiling  = %v\n", o.Profiling)
+type pollerStatus struct {
+	status        string
+	pid           int
+	profilingPort string
 }
 
 func Run() {
-	HARVEST_HOME = config.GetHarvestHome()
+	HarvestHomePath = config.GetHarvestHome()
+	HarvestConfPath = config.GetHarvestConf()
 
-	HARVEST_CONF = config.GetHarvestConf()
-
-	if HARVEST_PIDS = os.Getenv("HARVEST_PIDS"); HARVEST_PIDS == "" {
-		HARVEST_PIDS = "/var/run/harvest/"
+	if HarvestPidPath = os.Getenv("HARVEST_PIDS"); HarvestPidPath == "" {
+		HarvestPidPath = "/var/run/harvest/"
 	}
 
 	// default options
 	opts := &options{
-		Verbose:    false,
-		Debug:      false,
-		Trace:      false,
-		Foreground: false,
-		Loglevel:   2,
-		Config:     path.Join(HARVEST_CONF, "harvest.yml"),
-		Profiling:  false,
+		loglevel: 2,
+		config:   path.Join(HarvestConfPath, "harvest.yml"),
 	}
 
 	// parse user-defined options
 	parser := argparse.New("Harvest Manager", "harvest", "manage your pollers")
+	parser.SetOffset(1)
+	parser.SetHelpFlag("help")
+	parser.SetHelpFlag("manager")
 
 	parser.PosString(
-		&opts.Command,
+		&opts.command,
 		"command",
 		"action to take, one of:",
 		[]string{"status", "start", "restart", "stop", "kill"},
 	)
 
 	parser.PosSlice(
-		&opts.Pollers,
+		&opts.pollers,
 		"pollers",
 		"names of pollers as defined in config [harvest.yml] (default: all)",
 	)
 
 	parser.Bool(
-		&opts.Verbose,
+		&opts.verbose,
 		"verbose",
 		"v",
 		"verbose logging (equals to loglevel=1)",
 	)
 
 	parser.Bool(
-		&opts.Trace,
+		&opts.trace,
 		"trace",
 		"t",
 		"aggressively verbose logging (equals to loglevel=0)",
 	)
 
 	parser.Bool(
-		&opts.Debug,
+		&opts.debug,
 		"debug",
 		"d",
 		"debug mode (collect data, but no HTTP daemons and no writes to DBs)",
 	)
 
 	parser.Bool(
-		&opts.Foreground,
+		&opts.foreground,
 		"foreground",
 		"f",
 		"start poller in foreground (only one poller, implies debug mode)",
 	)
 
 	parser.Int(
-		&opts.Loglevel,
+		&opts.loglevel,
 		"loglevel",
-		"l",
+		"",
 		"logging level (0=trace, 1=debug, 2=info, 3=warn, 4=error, 5=fatal)",
 	)
 
+	parser.Slice(
+		&opts.collectors,
+		"collectors",
+		"",
+		"start poller with only these collectors (overrides harvest.yml)",
+	)
+
+	parser.Slice(
+		&opts.objects,
+		"objects",
+		"",
+		"start collectors with only these objects (overrides collector template)",
+	)
+
 	parser.String(
-		&opts.Config,
+		&opts.config,
 		"config",
 		"c",
-		"Custom config filepath (default: "+opts.Config+")",
+		"Custom config filepath (default: "+opts.config+")",
 	)
 
 	parser.Bool(
-		&opts.Profiling,
+		&opts.longStatus,
+		"long",
+		"l",
+		"show advanced options in poller status",
+	)
+
+	parser.Bool(
+		&opts.profiling,
 		"profiling",
 		"p",
 		"If true enables profiling via locahost:PORT/debug/pprof/",
 	)
 
-	parser.SetHelpFlag("help")
+	// exit if user asked for help or invalid options
+	parser.ParseOrExit()
 
-	// user asked for help or invalid options
-	if !parser.Parse() {
-		os.Exit(0)
+	if opts.verbose {
+		opts.loglevel = 1
 	}
 
-	//parser.PrintValues()
-
-	if opts.Debug {
-		opts.Loglevel = 1
+	if opts.trace {
+		opts.loglevel = 0
 	}
 
-	if opts.Trace {
-		opts.Loglevel = 0
-	}
-
-	pollers, err := config.GetPollers(opts.Config)
+	pollers, err := config.GetPollers(opts.config)
 	if err != nil {
 		if os.IsNotExist(err) {
-			fmt.Printf("config [%s]: not found\n", opts.Config)
+			fmt.Printf("config [%s]: not found\n", opts.config)
 		} else {
-			fmt.Printf("config [%s]: %v\n", opts.Config, err)
+			fmt.Printf("config [%s]: %v\n", opts.config, err)
 		}
 		os.Exit(1)
 	}
 
-	if len(opts.Pollers) > 0 {
+	if len(opts.pollers) > 0 {
 		// verify poller names
 		ok := true
-		for _, p := range opts.Pollers {
+		for _, p := range opts.pollers {
 			if pollers.GetChildS(p) == nil {
 				fmt.Printf("poller [%s] not defined\n", p)
 				ok = false
@@ -177,26 +187,25 @@ func Run() {
 			os.Exit(1)
 		}
 		// filter pollers
-		poller_names := set.NewFrom(opts.Pollers)
+		pollerNames := set.NewFrom(opts.pollers)
 		for _, p := range pollers.GetChildren() {
-			if !poller_names.Has(p.GetNameS()) {
+			if !pollerNames.Has(p.GetNameS()) {
 				pollers.PopChildS(p.GetNameS())
 			}
 		}
 	}
 
-	if opts.Foreground {
-		if opts.Command != "start" {
-			fmt.Printf("invalid command [%s] for foreground mode\n", opts.Command)
+	if opts.foreground {
+		if opts.command != "start" {
+			fmt.Printf("invalid command [%s] for foreground mode\n", opts.command)
 			os.Exit(1)
 		}
 		if len(pollers.GetChildren()) != 1 {
-
 			fmt.Println("only one poller can be started in foreground mode")
 			os.Exit(1)
 		}
-		if !opts.Debug {
-			//opts.Debug = true
+		if !opts.debug {
+			opts.debug = true
 			fmt.Println("set debug mode ON (starting poller in foreground otherwise is unsafe)")
 		}
 		p := pollers.GetChildren()[0]
@@ -204,49 +213,49 @@ func Run() {
 		os.Exit(0)
 	}
 
+	// get max lengths of datacanter and poller names
+	// so that output does not get distorted if they are too long
 	c1, c2 := getMaxLengths(pollers, 20, 20)
-	printHeader(c1, c2)
-	printBreak(c1, c2)
+	printHeader(opts.longStatus, c1, c2)
+	printBreak(opts.longStatus, c1, c2)
 
 	for _, p := range pollers.GetChildren() {
+
+		var s *pollerStatus
+
 		name := p.GetNameS()
 		datacenter := p.GetChildContentS("datacenter")
 		port := p.GetChildContentS("prometheus_port")
-		// check in exporter config if prometheus port is not defined in pollers
-		if len(port) == 0 {
-			port, err = config.GetExporterPorts(p, opts.Config)
-			if err != nil {
-				port = "error"
-			}
-		}
 
-		if opts.Command == "kill" {
-			status, pid, profilingPort := killPoller(name)
-			printStatus(c1, c2, datacenter, name, port, status, pid, profilingPort)
+		if opts.command == "kill" {
+			s = killPoller(name)
+			printStatus(opts.longStatus, c1, c2, datacenter, name, port, s)
 			continue
 		}
 
-		status, pid, profilingPort := getStatus(name)
+		s = getStatus(name)
 
-		if opts.Command == "status" {
-			printStatus(c1, c2, datacenter, name, port, status, pid, profilingPort)
+		if opts.command == "status" {
+			printStatus(opts.longStatus, c1, c2, datacenter, name, port, s)
 		}
 
-		if opts.Command == "stop" || opts.Command == "restart" {
-			status, pid, profilingPort = stopPoller(name)
-			printStatus(c1, c2, datacenter, name, port, status, pid, profilingPort)
+		if opts.command == "stop" || opts.command == "restart" {
+			s = stopPoller(name)
+			printStatus(opts.longStatus, c1, c2, datacenter, name, port, s)
 		}
 
-		if opts.Command == "start" || opts.Command == "restart" {
+		if opts.command == "start" || opts.command == "restart" {
 			// only start poller if confirmed that it's not running
-			if status == "not running" || status == "stopped" {
-				status, pid, profilingPort = startPoller(name, opts)
-				printStatus(c1, c2, datacenter, name, port, status, pid, profilingPort)
+			if s.status == "not running" || s.status == "stopped" {
+				s = startPoller(name, opts)
+				printStatus(opts.longStatus, c1, c2, datacenter, name, port, s)
+			} else {
+				fmt.Printf("can't verify status of [%s]: kill poller and try again\n", name)
 			}
 		}
 	}
 
-	printBreak(c1, c2)
+	printBreak(opts.longStatus, c1, c2)
 }
 
 // Trace status of a poller. This is partially guesswork and
@@ -259,38 +268,35 @@ func Run() {
 // Returns:
 //	@status - status of poller
 //  @pid  - PID of poller (0 means no PID)
-func getStatus(poller_name string) (string, int, string) {
+func getStatus(pollerName string) *pollerStatus {
 
-	var (
-		status        string
-		pid           int
-		profilingPort string
-	)
+	s := &pollerStatus{}
 	// running poller should have written PID to file
-	pid_fp := path.Join(HARVEST_PIDS, poller_name+".pid")
+	pidFp := path.Join(HarvestPidPath, pollerName+".pid")
 
 	// no PID file, assume process exited or never started
-	if data, err := ioutil.ReadFile(pid_fp); err != nil {
-		status = "not running"
+	if data, err := ioutil.ReadFile(pidFp); err != nil {
+		s.status = "not running"
 		// corrupt PID should never happen
 		// might be a sign of system failure or unexpected shutdown
-	} else if pid, err = strconv.Atoi(string(data)); err != nil {
-		status = "invalid pid"
+	} else if s.pid, err = strconv.Atoi(string(data)); err != nil {
+		s.status = "invalid pid"
 	}
 
 	// docker dummy status
 	if os.Getenv("HARVEST_DOCKER") == "yes" {
-		return "n/a", pid, profilingPort
+		s.status = "n/a (docker)"
+		return s
 	}
 
 	// no valid PID stops here
-	if pid < 1 {
-		return status, pid, profilingPort
+	if s.pid < 1 {
+		return s
 	}
 
 	// retrieve process with PID and check if running
 	// (error can be safely ignored on Unix)
-	proc, _ := os.FindProcess(pid)
+	proc, _ := os.FindProcess(s.pid)
 
 	// send signal 0 to check if process is runnign
 	// returns err if it's not running or permission is denied
@@ -298,7 +304,8 @@ func getStatus(poller_name string) (string, int, string) {
 		if os.IsPermission(err) {
 			fmt.Println("Insufficient priviliges to send signal to process")
 		}
-		return "unknown", pid, profilingPort
+		s.status = "unknown: " + err.Error()
+		return s
 		// process not running, but did not clean PID file
 		// maybe it just exited, so give it a chance to clean
 		/*
@@ -312,112 +319,129 @@ func getStatus(poller_name string) (string, int, string) {
 
 	// process is running, validate that it's the poller we're looking fore
 	// since PID might have changed (although very inlikely)
-	if data, err := ioutil.ReadFile(fmt.Sprintf("/proc/%d/cmdline", pid)); err == nil {
+	if data, err := ioutil.ReadFile(fmt.Sprintf("/proc/%d/cmdline", s.pid)); err == nil {
 		cmdline := string(bytes.ReplaceAll(data, []byte("\x00"), []byte(" ")))
 
-		if strings.Contains(cmdline, "--daemon") {
-			s := strings.SplitAfter(cmdline, "--poller ")
-			if len(s) == 2 && strings.HasPrefix(s[1], poller_name) {
-				status = "running"
-			}
-		}
-		if strings.Contains(cmdline, "--profiling") {
-			r := regexp.MustCompile(`--profiling (\d+)`)
-			matches := r.FindStringSubmatch(cmdline)
-			if len(matches) > 0 {
-				profilingPort = matches[1]
+		if checkPollerIdentity(cmdline, pollerName) {
+			s.status = "running"
+
+			if strings.Contains(cmdline, "--profiling") {
+				r := regexp.MustCompile(`--profiling (\d+)`)
+				matches := r.FindStringSubmatch(cmdline)
+				if len(matches) > 0 {
+					s.profilingPort = matches[1]
+				}
 			}
 		}
 	}
 
 	// if status is not running, either process just exited and cmdline was unavailable
 	// or cmdline did not confirm process is the poller we're looking for
-	if status != "running" {
-		status = "unknown"
+	if s.status == "" {
+		s.status = "unknown/unmatched"
 	}
 
-	return status, pid, profilingPort
+	return s
 }
 
-func killPoller(poller_name string) (string, int, string) {
+func checkPollerIdentity(cmdline, pollerName string) bool {
+	if x := strings.Fields(cmdline); len(x) == 0 || !strings.HasSuffix(x[0], "poller") {
+		return false
+	}
 
-	var (
-		status        string
-		pid           int
-		profilingPort string
-	)
+	if !strings.Contains(cmdline, "--daemon") {
+		return false
+	}
 
-	defer cleanPidFile(poller_name)
+	if !strings.Contains(cmdline, "--poller") {
+		return false
+	}
+
+	x := strings.SplitAfter(cmdline, "--poller ")
+	if len(x) != 2 {
+		return false
+	}
+
+	if y := strings.Fields(x[1]); len(y) == 0 || y[0] != pollerName {
+		return false
+	}
+	return true
+}
+
+func killPoller(pollerName string) *pollerStatus {
+
+	defer cleanPidFile(pollerName)
 
 	// attempt to get pid from pid file
-	status, pid, profilingPort = getStatus(poller_name)
+	s := getStatus(pollerName)
 
 	// attempt to get pid from "ps aux"
-	if pid < 1 {
+	if s.pid < 1 {
 		data, err := exec.Command("ps", "aux").Output()
 		if err != nil {
 			fmt.Println("ps aux: ", err)
-			return status, pid, profilingPort
+			return s
 		}
-
-		var fields, args []string
 
 		for _, line := range strings.Split(string(data), "\n") {
-			if fields = strings.Fields(line); len(fields) != 11 {
-				continue
+			// BSD format should have 11 columns
+			// last column can contain whitespace, so we should get at least 11
+			if fields := strings.Fields(line); len(fields) > 10 {
+				// CLI args are everything after 10th column
+				if checkPollerIdentity(strings.Join(fields[10:], " "), pollerName) {
+					if x, err := strconv.Atoi(fields[1]); err == nil {
+						s.pid = x
+					}
+					break
+				}
 			}
-			if args = strings.Fields(fields[10]); len(args) < 3 {
-				continue
-			}
-
-			if !strings.HasSuffix(args[0], "poller") && args[2] != poller_name {
-				continue
-			}
-
-			if x, err := strconv.Atoi(fields[1]); err == nil {
-				pid = x
-			}
-			break
 		}
 	}
 
-	if pid < 1 {
-		return status, pid, profilingPort
+	// stop if couldn't find pid
+	if s.pid < 1 {
+		return s
 	}
-	proc, _ := os.FindProcess(pid)
+
+	// send kill signal
+	// TODO handle already exited
+	proc, _ := os.FindProcess(s.pid)
 	if err := proc.Kill(); err != nil {
-		fmt.Println("kill: ", err)
-		return status, pid, profilingPort
+		if strings.HasSuffix(err.Error(), "process already finished") {
+			s.status = "already exited"
+		} else {
+			fmt.Println("kill:", err)
+			os.Exit(1)
+		}
+	} else {
+		s.status = "killed"
 	}
-	return "killed", pid, profilingPort
+
+	return s
 }
 
 // Stop poller if it's running or it's stoppable
 //
 // Returns: same as get_status()
-func stopPoller(poller_name string) (string, int, string) {
-	var (
-		status        string
-		pid           int
-		profilingPort string
-	)
-
+func stopPoller(pollerName string) *pollerStatus {
+	var s *pollerStatus
 	// if we get no valid PID, assume process is not running
-	if status, pid, profilingPort = getStatus(poller_name); pid < 1 {
-		return status, pid, profilingPort
+	if s = getStatus(pollerName); s.pid < 1 {
+		return s
 	}
 
-	proc, _ := os.FindProcess(pid)
+	proc, _ := os.FindProcess(s.pid)
 
 	// send terminate signal
 	if err := proc.Signal(syscall.SIGTERM); err != nil {
 		if os.IsPermission(err) {
 			fmt.Println("Insufficient priviliges to terminate process")
-			return "stopping failed", pid, profilingPort
+			s.status = "stopping failed"
+			return s
 		}
 		fmt.Println(err)
 		// other errors, probably mean poller already exited, so double check
-		return getStatus(poller_name)
+		return getStatus(pollerName)
 	}
 
 	// give the poller chance to cleanup and exit
@@ -425,38 +449,38 @@ func stopPoller(poller_name string) (string, int, string) {
 		time.Sleep(200 * time.Millisecond)
 		// @TODO, handle situation when PID is regained by some other process
 		if proc.Signal(syscall.Signal(0)) != nil {
-			return "stopped", pid, profilingPort
+			s.status = "stopped"
 		}
 	}
-	return "stopping failed", pid, profilingPort
+	s.status = "stopping failed"
+	return s
 }
 
-func startPoller(poller_name string, opts *options) (string, int, string) {
+func startPoller(pollerName string, opts *options) *pollerStatus {
 
 	argv := make([]string, 5)
-	argv[0] = path.Join(HARVEST_HOME, "bin", "poller")
+	argv[0] = path.Join(HarvestHomePath, "bin", "poller")
 	argv[1] = "--poller"
-	argv[2] = poller_name
+	argv[2] = pollerName
 	argv[3] = "--loglevel"
-	argv[4] = strconv.Itoa(opts.Loglevel)
+	argv[4] = strconv.Itoa(opts.loglevel)
 
-	if opts.Debug {
+	if opts.debug {
 		argv = append(argv, "--debug")
 	}
 
-	if opts.Config != path.Join(HARVEST_CONF, "harvest.yml") {
+	if opts.config != path.Join(HarvestConfPath, "harvest.yml") {
 		argv = append(argv, "--conf")
-		argv = append(argv, opts.Config)
+		argv = append(argv, opts.config)
 	}
 
-	if opts.Profiling {
-		if opts.Foreground {
+	if opts.profiling {
+		if opts.foreground {
 			// Always pick the same port when profiling in foreground
 			argv = append(argv, "--profiling")
 			argv = append(argv, "6060")
 		} else {
-			port, err := freePort()
-			if err != nil {
+			if port, err := freePort(); err != nil {
 				// No free port, log it and move on
 				fmt.Println("profiling disabled due to no free ports")
 			} else {
@@ -466,7 +490,17 @@ func startPoller(poller_name string, opts *options) (string, int, string) {
 		}
 	}
 
-	if opts.Foreground {
+	if len(opts.collectors) > 0 {
+		argv = append(argv, "--collectors")
+		argv = append(argv, opts.collectors...)
+	}
+
+	if len(opts.objects) > 0 {
+		argv = append(argv, "--objects")
+		argv = append(argv, opts.objects...)
+	}
+
+	if opts.foreground {
 		cmd := exec.Command(argv[0], argv[1:]...)
 		//fmt.Println(cmd.String())
 		fmt.Println("starting in foreground, enter CTRL+C or close terminal to stop poller")
@@ -486,6 +520,15 @@ func startPoller(poller_name string, opts *options) (string, int, string) {
 
 	argv = append(argv, "--daemon")
 
+	// if pid directory doesn't exist, create full path, otherwise poller will complain
+	if info, err := os.Stat(HarvestPidPath); err != nil || !info.IsDir() {
+		// don't abort on error, since another poller might have done the job
+		if err = os.MkdirAll(HarvestPidPath, 0755); err != nil && !os.IsExist(err) {
+			fmt.Printf("error mkdir [%s]: %v\n", HarvestPidPath, err)
+		}
+	}
+
+	// special case if we are in container, don't actually daemonize
 	if os.Getenv("HARVEST_DOCKER") == "yes" {
 		cmd := exec.Command(argv[0], argv[1:]...)
 		if err := cmd.Start(); err != nil {
@@ -499,15 +542,7 @@ func startPoller(poller_name string, opts *options) (string, int, string) {
 		os.Exit(0)
 	}
 
-	// if pid directory doesn't exist, create full path, otherwise poller will complain
-	if info, err := os.Stat(HARVEST_PIDS); err != nil || !info.IsDir() {
-		// don't abort on error, since another poller might have done the job
-		if err = os.MkdirAll(HARVEST_PIDS, 0755); err != nil && !os.IsExist(err) {
-			fmt.Printf("error mkdir [%s]: %v\n", HARVEST_PIDS, err)
-		}
-	}
-
-	cmd := exec.Command(path.Join(HARVEST_HOME, "bin", "daemonize"), argv...)
+	cmd := exec.Command(path.Join(HarvestHomePath, "bin", "daemonize"), argv...)
 	//fmt.Println(cmd.String())
 	if err := cmd.Start(); err != nil {
 		fmt.Println(err)
@@ -519,19 +554,19 @@ func startPoller(poller_name string, opts *options) (string, int, string) {
 	time.Sleep(50 * time.Millisecond)
 	for i := 0; i < 10; i += 1 {
 		// @TODO, handle situation when PID is regained by some other process
-		if status, pid, profilingPort := getStatus(poller_name); pid > 0 {
-			return status, pid, profilingPort
+		if s := getStatus(pollerName); s.pid > 0 {
+			return s
 		}
 		time.Sleep(50 * time.Millisecond)
 	}
 
-	return getStatus(poller_name)
+	return getStatus(pollerName)
 }
 
 // Clean PID file if it exists
 // Return value indicates wether PID file existed
-func cleanPidFile(poller string) bool {
-	fp := path.Join(HARVEST_PIDS, poller+".pid")
+func cleanPidFile(pollerName string) bool {
+	fp := path.Join(HarvestPidPath, pollerName+".pid")
 	if err := os.Remove(fp); err != nil {
 		if os.IsPermission(err) {
 			fmt.Printf("Error: you have no permission to remove [%s]\n", fp)
@@ -544,24 +579,39 @@ func cleanPidFile(poller string) bool {
 }
 
 // print status of poller, first two arguments are column lengths
-func printStatus(c1, c2 int, dc, pn, port, status string, pid int, profilingPort string) {
+func printStatus(long bool, c1, c2 int, dc, pn, prometheusPort string, s *pollerStatus) {
 	fmt.Printf("%s%s ", dc, strings.Repeat(" ", c1-len(dc)))
 	fmt.Printf("%s%s ", pn, strings.Repeat(" ", c2-len(pn)))
-	if pid == 0 {
-		fmt.Printf("%-15s %-10s %-10s %-20s\n", port, "", profilingPort, status)
+	if long {
+		if s.pid == 0 {
+			fmt.Printf("%-10s %-10s %-10s %-20s\n", "", prometheusPort, s.profilingPort, s.status)
+		} else {
+			fmt.Printf("%-10d %-10s %-10s %-20s\n", s.pid, prometheusPort, s.profilingPort, s.status)
+		}
+	} else if s.pid == 0 {
+		fmt.Printf("%-10s %-10s %-20s\n", "", prometheusPort, s.status)
 	} else {
-		fmt.Printf("%-15s %-10d %-10s %-20s\n", port, pid, profilingPort, status)
+		fmt.Printf("%-10d %-10s %-20s\n", s.pid, prometheusPort, s.status)
 	}
 }
 
-func printHeader(c1, c2 int) {
+func printHeader(long bool, c1, c2 int) {
 	fmt.Printf("Datacenter%s Poller%s ", strings.Repeat(" ", c1-10), strings.Repeat(" ", c2-6))
-	fmt.Printf("%-15s %-10s %-10s %-20s\n", "Port", "PID", "Profiling", "Status")
+	if long {
+		fmt.Printf("%-10s %-10s %-10s %-20s\n", "PID", "Port", "Profiling", "Status")
+	} else {
+		fmt.Printf("%-10s %-10s %-20s\n", "PID", "Port", "Status")
+	}
 }
 
-func printBreak(c1, c2 int) {
+func printBreak(long bool, c1, c2 int) {
 	fmt.Printf("%s %s ", strings.Repeat("+", c1), strings.Repeat("+", c2))
-	fmt.Println("+++++++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++")
+	if long {
+		fmt.Println("++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++")
+	} else {
+		fmt.Println("++++++++++ ++++++++++ ++++++++++++++++++++")
+	}
+
 }
 
 // maximum size of datacenter and poller names, if exceed defaults
