@@ -91,4 +91,6 @@ fi
 
 %files
 /opt/harvest
+/var/log/harvest
+/var/run/harvest
 
