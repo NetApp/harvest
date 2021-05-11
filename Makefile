@@ -14,7 +14,7 @@ header:
 
 ###############################################################################
 # Anything that needs to be done before we build everything
-#  Check for GCC, GO version, etc and anything else we are depedent on.
+#  Check for GCC, GO version, etc and anything else we are dependent on.
 ###############################################################################
 GCC_EXISTS := $(shell which gcc)
 REQUIRED_GO_VERSION := 1.15
@@ -24,6 +24,8 @@ RELEASE      := $(shell git describe --tags --abbrev=0)
 COMMIT       := $(shell git rev-parse --short HEAD)
 BUILD_DATE   := `date +%FT%T%z`
 LD_FLAGS     := "-X 'goharvest2/cmd/harvest/version.Release=$(RELEASE)' -X 'goharvest2/cmd/harvest/version.Commit=$(COMMIT)' -X 'goharvest2/cmd/harvest/version.BuildDate=$(BUILD_DATE)'"
+GOARCH ?= amd64
+GOOS ?= linux
 
 precheck:
 	@# Check for GCC
@@ -61,11 +63,11 @@ clean:
 harvest: precheck
 	@# Build the harvest cli
 	@echo "Building harvest"
-	@cd cmd/harvest; go build -ldflags=$(LD_FLAGS) -o ../../bin/harvest
+	@cd cmd/harvest; GOOS=$(GOOS) GOARCH=$(GOARCH) go build -ldflags=$(LD_FLAGS) -o ../../bin/harvest
 
 	@# Build the harvest poller
 	@echo "Building poller"
-	@cd cmd/poller/; go build -ldflags=$(LD_FLAGS) -o ../../bin/poller
+	@cd cmd/poller/; GOOS=$(GOOS) GOARCH=$(GOARCH) go build -ldflags=$(LD_FLAGS) -o ../../bin/poller
 
 	@# Build the daemonizer for the pollers
 	@echo "Building daemonizer"
@@ -73,11 +75,11 @@ harvest: precheck
 
 	@# Build the zapi tool
 	@echo "Building zapi tool"
-	@cd cmd/tools/zapi; go build -ldflags=$(LD_FLAGS) -o ../../../bin/zapi
+	@cd cmd/tools/zapi; GOOS=$(GOOS) GOARCH=$(GOARCH) go build -ldflags=$(LD_FLAGS) -o ../../../bin/zapi
 
 	@# Build the grafana tool
 	@echo "Building grafana tool"
-	@cd cmd/tools/grafana; go build -ldflags=$(LD_FLAGS) -o ../../../bin/grafana
+	@cd cmd/tools/grafana; GOOS=$(GOOS) GOARCH=$(GOARCH) go build -ldflags=$(LD_FLAGS) -o ../../../bin/grafana
 
 ###############################################################################
 # Collectors
@@ -88,14 +90,14 @@ collectors:
 	@for collector in ${COLLECTORS}; do                                                   \
 		cd cmd/collectors/$${collector};                                              \
 		echo "  Building $${collector}";                                              \
-		go build -ldflags=$(LD_FLAGS) -buildmode=plugin -o ../../../bin/collectors/"$${collector}".so;     \
+		GOOS=$(GOOS) GOARCH=$(GOARCH) go build -ldflags=$(LD_FLAGS) -buildmode=plugin -o ../../../bin/collectors/"$${collector}".so;     \
 		if [ -d plugins ]; then                                                       \
 			echo "    Building plugins for $${collector}";                        \
 	        	cd plugins;                                                           \
 	        	for plugin in `ls`; do                                                \
 				echo "        Building: $${plugin}";                          \
 				cd $${plugin};                                                \
-				go build -ldflags=$(LD_FLAGS) -buildmode=plugin -o ../../../../../bin/plugins/"$${collector}"/"$${plugin}".so; \
+				GOOS=$(GOOS) GOARCH=$(GOARCH) go build -ldflags=$(LD_FLAGS) -buildmode=plugin -o ../../../../../bin/plugins/"$${collector}"/"$${plugin}".so; \
 				cd ../;                                                       \
 			done;                                                                 \
 			cd ../../../../;                                                      \
@@ -113,11 +115,23 @@ exporters: precheck
 	@for exporter in ${EXPORTERS}; do                                                     \
 		cd cmd/exporters/$${exporter};                                                \
 		echo "  Building $${exporter}";                                               \
-		go build -ldflags=$(LD_FLAGS) -buildmode=plugin -o ../../../bin/exporters/"$${exporter}".so;       \
+		GOOS=$(GOOS) GOARCH=$(GOARCH) go build -ldflags=$(LD_FLAGS) -buildmode=plugin -o ../../../bin/exporters/"$${exporter}".so;       \
 	       	cd - > /dev/null;                                                             \
 	done
 
 packages: precheck all
+
+###############################################################################
+# Build tar gz distribution
+###############################################################################
+DIST := /tmp/harvest-${RELEASE}
+dist-tar:
+	-rm -rf ${DIST}
+	@mkdir ${DIST}
+	@cp -a bin conf docs grafana README.md LICENSE ${DIST}
+	@cp -a harvest.example.yml ${DIST}/harvest.yml
+	@tar --directory /tmp --create --gzip --file harvest-${RELEASE}.tar.gz harvest-${RELEASE}
+	-rm -rf ${DIST}
 
 ###############################################################################
 # Install targets
