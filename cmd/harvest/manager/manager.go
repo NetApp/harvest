@@ -42,14 +42,14 @@ type options struct {
 	config     string
 	profiling  bool
 	longStatus bool
-	PromPort   int
+	promPort   int
 }
 
 type pollerStatus struct {
 	status        string
 	pid           int
 	profilingPort string
-	PromPort      string
+	promPort      string
 }
 
 func Run() {
@@ -162,7 +162,7 @@ func Run() {
 	)
 
 	parser.Int(
-		&opts.PromPort,
+		&opts.promPort,
 		"promPort",
 		"",
 		"HTTP port to use for Prometheus scrapping (overrides harvest.yml)",
@@ -240,30 +240,30 @@ func Run() {
 
 		name := p.GetNameS()
 		datacenter := p.GetChildContentS("datacenter")
-		PromPort := getPollerPrometheusPort(p, opts)
+		promPort := getPollerPrometheusPort(p, opts)
 
 		s = getStatus(name)
 
 		if opts.command == "kill" {
 			s = killPoller(name)
-			printStatus(opts.longStatus, c1, c2, datacenter, name, s.PromPort, s)
+			printStatus(opts.longStatus, c1, c2, datacenter, name, s.promPort, s)
 			continue
 		}
 
 		if opts.command == "status" {
-			printStatus(opts.longStatus, c1, c2, datacenter, name, s.PromPort, s)
+			printStatus(opts.longStatus, c1, c2, datacenter, name, s.promPort, s)
 		}
 
 		if opts.command == "stop" || opts.command == "restart" {
 			s = stopPoller(name)
-			printStatus(opts.longStatus, c1, c2, datacenter, name, s.PromPort, s)
+			printStatus(opts.longStatus, c1, c2, datacenter, name, s.promPort, s)
 		}
 
 		if opts.command == "start" || opts.command == "restart" {
 			// only start poller if confirmed that it's not running
 			if s.status == "not running" || s.status == "stopped" {
-				s = startPoller(name, PromPort, opts)
-				printStatus(opts.longStatus, c1, c2, datacenter, name, s.PromPort, s)
+				s = startPoller(name, promPort, opts)
+				printStatus(opts.longStatus, c1, c2, datacenter, name, s.promPort, s)
 			} else {
 				fmt.Printf("can't verify status of [%s]: kill poller and try again\n", name)
 			}
@@ -352,7 +352,7 @@ func getStatus(pollerName string) *pollerStatus {
 				r := regexp.MustCompile(`--promPort (\d+)`)
 				matches := r.FindStringSubmatch(cmdline)
 				if len(matches) > 0 {
-					s.PromPort = matches[1]
+					s.promPort = matches[1]
 				}
 			}
 		}
@@ -479,7 +479,7 @@ func stopPoller(pollerName string) *pollerStatus {
 	return s
 }
 
-func startPoller(pollerName string, PromPort string, opts *options) *pollerStatus {
+func startPoller(pollerName string, promPort string, opts *options) *pollerStatus {
 
 	argv := make([]string, 7)
 	argv[0] = path.Join(HarvestHomePath, "bin", "poller")
@@ -488,7 +488,7 @@ func startPoller(pollerName string, PromPort string, opts *options) *pollerStatu
 	argv[3] = "--loglevel"
 	argv[4] = strconv.Itoa(opts.loglevel)
 	argv[5] = "--promPort"
-	argv[6] = PromPort
+	argv[6] = promPort
 
 	if opts.debug {
 		argv = append(argv, "--debug")
@@ -604,19 +604,19 @@ func cleanPidFile(pollerName string) bool {
 }
 
 // print status of poller, first two arguments are column lengths
-func printStatus(long bool, c1, c2 int, dc, pn, PromPort string, s *pollerStatus) {
+func printStatus(long bool, c1, c2 int, dc, pn, promPort string, s *pollerStatus) {
 	fmt.Printf("%s%s ", dc, strings.Repeat(" ", c1-len(dc)))
 	fmt.Printf("%s%s ", pn, strings.Repeat(" ", c2-len(pn)))
 	if long {
 		if s.pid == 0 {
-			fmt.Printf("%-10s %-15s %-10s %-20s\n", "", PromPort, s.profilingPort, s.status)
+			fmt.Printf("%-10s %-15s %-10s %-20s\n", "", promPort, s.profilingPort, s.status)
 		} else {
-			fmt.Printf("%-10d %-15s %-10s %-20s\n", s.pid, PromPort, s.profilingPort, s.status)
+			fmt.Printf("%-10d %-15s %-10s %-20s\n", s.pid, promPort, s.profilingPort, s.status)
 		}
 	} else if s.pid == 0 {
-		fmt.Printf("%-10s %-15s %-20s\n", "", PromPort, s.status)
+		fmt.Printf("%-10s %-15s %-20s\n", "", promPort, s.status)
 	} else {
-		fmt.Printf("%-10d %-15s %-20s\n", s.pid, PromPort, s.status)
+		fmt.Printf("%-10d %-15s %-20s\n", s.pid, promPort, s.status)
 	}
 }
 
@@ -668,17 +668,17 @@ func freePort() (int, error) {
 }
 
 func getPollerPrometheusPort(p *node.Node, opts *options) string {
-	var PromPort string
+	var promPort string
 	var err error
-	// check first if poller argument has PromPort defined
+	// check first if poller argument has promPort defined
 	// else in exporter config of poller
-	if opts.PromPort != 0 {
-		PromPort = strconv.Itoa(opts.PromPort)
+	if opts.promPort != 0 {
+		promPort = strconv.Itoa(opts.promPort)
 	} else {
-		PromPort, err = config.GetPrometheusExporterPorts(p, opts.config)
+		promPort, err = config.GetPrometheusExporterPorts(p, opts.config)
 		if err != nil {
-			PromPort = "error"
+			promPort = "error"
 		}
 	}
-	return PromPort
+	return promPort
 }
