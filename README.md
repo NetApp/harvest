@@ -172,7 +172,7 @@ Note: when we talk about *Prometheus Exporter*, *Graphite Exporter*, etc., we me
 | parameter     | type         | description                                                                             | default      |
 |---------------|--------------|-----------------------------------------------------------------------------------------|--------------|
 | `local_http_addr`    | optional  | Local address of the HTTP service (`localhost` or `127.0.0.1` makes the metrics accessible only on local machine, `0.0.0.0` makes it public).| `0.0.0.0` |
-| `port`        | required  | Local port of the HTTP service.  |
+| `port`        | required  | Local HTTP service port Prometheus will scrape.  |
 | `allow_addrs`        | optional, list | List of clients that can access the HTTP service, each "URL" should be a hostname or IP address. If the client is not in thist list, the HTTP request will be rejected. | allow all URLs |
 | `allow_addrs_regex`        | optional, list | Same as `allow_addrs`, but client will be only allowed if matches to any of the regular expressions | allow all URLs |
 | `global_prefix` | optional, string | globally add a prefix to all metrics, e.g settings this paraters to `netapp` (or `netapp_`), would make the metric `cluster_status` into (`netapp_cluster_status`) and similarly all other metrics delivered from Harvest. | |
