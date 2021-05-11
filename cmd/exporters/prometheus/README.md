@@ -16,7 +16,7 @@ The Exporter has two concurrent components that makes it possible to simulatenou
 
 ## Parameters
 
-All parameters of the exporter are defined in the `Exporters` section of `harvest.yml`. If you go for the first option, you can define as many Prometheus exporters as you would like. We are planning to integrete the exporter with one of Prometheus' service-discovery options to simplify this in the future.
+All parameters of the exporter are defined in the `Exporters` section of `harvest.yml`. We are planning to integrete the exporter with one of Prometheus' service-discovery options to simplify this in the future.
 
 
 An overview of all parameters:
