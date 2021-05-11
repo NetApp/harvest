@@ -163,9 +163,9 @@ func Run() {
 
 	parser.Int(
 		&opts.prometheusPort,
-		"prometheusPort",
+		"promPort",
 		"",
-		"start poller with only this prometheusPort (overrides harvest.yml)",
+		"HTTP port to use for Prometheus scrapping (overrides harvest.yml)",
 	)
 
 	// exit if user asked for help or invalid options
@@ -623,9 +623,9 @@ func printStatus(long bool, c1, c2 int, dc, pn, prometheusPort string, s *poller
 func printHeader(long bool, c1, c2 int) {
 	fmt.Printf("Datacenter%s Poller%s ", strings.Repeat(" ", c1-10), strings.Repeat(" ", c2-6))
 	if long {
-		fmt.Printf("%-10s %-10s %-10s %-20s\n", "PID", "PrometheusPort", "Profiling", "Status")
+		fmt.Printf("%-10s %-10s %-10s %-20s\n", "PID", "PromPort", "Profiling", "Status")
 	} else {
-		fmt.Printf("%-10s %-10s %-20s\n", "PID", "PrometheusPort", "Status")
+		fmt.Printf("%-10s %-10s %-20s\n", "PID", "PromPort", "Status")
 	}
 }
 
