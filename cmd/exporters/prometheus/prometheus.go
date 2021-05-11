@@ -152,7 +152,7 @@ func (me *Prometheus) Init() error {
 
 	// finally the most important and only required parameter: port
 	// can be passed to us either as an option or as a parameter
-	port := me.Options.PrometheusPort
+	port := me.Options.PromPort
 	if port == "" {
 		port = me.Params.GetChildContentS("port")
 	}
