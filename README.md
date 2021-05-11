@@ -140,7 +140,6 @@ All pollers are defined in `harvest.yml`, the main configuration file of Harvest
 | `addr`                  | required by some collectors |  IPv4 or FQDN of the target system                     |                        |
 | `collectors`            | **required**              | list of collectors to run in this poller |   |
 | `exporters` | **required**  | list of exporter names from the `Exporters` section. Note: this should be the exporter instance (e.g. `prometheus01`), not the exporter class (e.g. `Prometheus`)   |                   |
-| `prometheus_port` | **optional** | local HTTP that the Prmometheus exporter will use. | |
 | `auth_style`           | required by Zapi* collectors |  either `basic_auth` or `certificate_auth`  | `basic_auth` |
 | `username`, `password` | required if `auth_style` is `basic_auth` |  |              |
 | `cert`, `key`          | required if `auth_style` is `certificate_auth` | certificate and key files which should be in the directory `/etc/harvest/cert/`. If these two parameters are not provided files matching the poller name will be used (for example if poller name is `jamaica` than the files should be `jamaica.key` and `jamaica.cert`).                        |              |
@@ -173,7 +172,7 @@ Note: when we talk about *Prometheus Exporter*, *Graphite Exporter*, etc., we me
 | parameter     | type         | description                                                                             | default      |
 |---------------|--------------|-----------------------------------------------------------------------------------------|--------------|
 | `local_http_addr`    | optional  | Local address of the HTTP service (`localhost` or `127.0.0.1` makes the metrics accessible only on local machine, `0.0.0.0` makes it public).| `0.0.0.0` |
-| `port`        | required  | Local port of the HTTP service. This value can be also defined under the poller section as `prometheus_port`.  |
+| `port`        | required  | Local port of the HTTP service.  |
 | `allow_addrs`        | optional, list | List of clients that can access the HTTP service, each "URL" should be a hostname or IP address. If the client is not in thist list, the HTTP request will be rejected. | allow all URLs |
 | `allow_addrs_regex`        | optional, list | Same as `allow_addrs`, but client will be only allowed if matches to any of the regular expressions | allow all URLs |
 | `global_prefix` | optional, string | globally add a prefix to all metrics, e.g settings this paraters to `netapp` (or `netapp_`), would make the metric `cluster_status` into (`netapp_cluster_status`) and similarly all other metrics delivered from Harvest. | |
