@@ -25,11 +25,11 @@ var (
 func main() {
 
 	var (
-		err          error
-		args         *Args
-		item, params *node.Node
-		confp        string
-		connection   *client.Client
+		err             error
+		args            *Args
+		item, params    *node.Node
+		confp           string
+		connection      *client.Client
 		harvestConfPath string
 	)
 
