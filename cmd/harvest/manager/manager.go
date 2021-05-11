@@ -664,7 +664,8 @@ func freePort() (int, error) {
 func getPollerPrometheusPort(p *node.Node, opts *options) string {
 	var prometheusPort string
 	var err error
-	// check in exporter config if prometheus port is not defined in pollers
+	// check first if poller argument has prometheusPort defined
+	// else in exporter config of poller
 	if opts.prometheusPort != 0 {
 		prometheusPort = strconv.Itoa(opts.prometheusPort)
 	} else {
