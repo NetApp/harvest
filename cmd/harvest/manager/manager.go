@@ -623,9 +623,9 @@ func printStatus(long bool, c1, c2 int, dc, pn, prometheusPort string, s *poller
 func printHeader(long bool, c1, c2 int) {
 	fmt.Printf("Datacenter%s Poller%s ", strings.Repeat(" ", c1-10), strings.Repeat(" ", c2-6))
 	if long {
-		fmt.Printf("%-10s %-10s %-10s %-20s\n", "PID", "PromPort", "Profiling", "Status")
+		fmt.Printf("%-10s %-15s %-10s %-20s\n", "PID", "PromPort", "Profiling", "Status")
 	} else {
-		fmt.Printf("%-10s %-10s %-20s\n", "PID", "PromPort", "Status")
+		fmt.Printf("%-10s %-15s %-20s\n", "PID", "PromPort", "Status")
 	}
 }
 

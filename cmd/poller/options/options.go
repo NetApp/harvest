@@ -83,7 +83,7 @@ func Get() (*Options, string, error) {
 
 	args.HomePath = config.GetHarvestHome()
 
-	if args.HomePath, err = config.GetHarvestConf(); err != nil {
+	if args.ConfPath, err = config.GetHarvestConf(); err != nil {
 		return &args, args.Poller, err
 	}
 
