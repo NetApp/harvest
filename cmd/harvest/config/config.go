@@ -61,11 +61,15 @@ func exitError(msg string, err error) {
 
 func Run() {
 
-	harvestConfPath = config.GetHarvestConf()
+	var err error
+	harvestConfPath, err = config.GetHarvestConf()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 	harvestConfFile = path.Join(harvestConfPath, "harvest.yml")
 
 	var item string
-	var err error
 	var conf, pollers, exporters *node.Node
 
 	parser := argparse.New("Config utility", "harvest config", "configure pollers")

@@ -102,7 +102,11 @@ func (me *Poller) Init() error {
 	var err error
 
 	// read options
-	me.options, me.name = options.Get()
+	me.options, me.name, err = options.Get()
+	if err != nil {
+		logger.Error(me.prefix, "error: %s", err.Error())
+		return err
+	}
 
 	// use prefix for logging
 	me.prefix = "(poller) (" + me.name + ")"

@@ -16,6 +16,7 @@ import (
 	"goharvest2/cmd/harvest/version"
 	"goharvest2/pkg/argparse"
 	"goharvest2/pkg/config"
+	"goharvest2/pkg/errors"
 	"os"
 	"path"
 	"strings"
@@ -66,8 +67,9 @@ func (o *Options) Print() {
 }
 
 // Get retrieves options from CLI flags, env variables and defaults
-func Get() (*Options, string) {
+func Get() (*Options, string, error) {
 	var args Options
+	var err error
 	args = Options{}
 
 	// set defaults
@@ -81,7 +83,9 @@ func Get() (*Options, string) {
 
 	args.HomePath = config.GetHarvestHome()
 
-	args.ConfPath = config.GetHarvestConf()
+	if args.HomePath, err = config.GetHarvestConf(); err != nil {
+		return &args, args.Poller, err
+	}
 
 	if args.LogPath = os.Getenv("HARVEST_LOGS"); args.LogPath == "" {
 		args.LogPath = "/var/log/harvest/"
@@ -108,9 +112,9 @@ func Get() (*Options, string) {
 	parser.ParseOrExit()
 
 	if args.Poller == "" {
-		fmt.Println("Missing required argument: poller")
-		os.Exit(1)
+		err = errors.New(errors.ERR_CONFIG, "Missing required argument: poller")
+		return &args, args.Poller, err
 	}
 
-	return &args, args.Poller
+	return &args, args.Poller, err
 }

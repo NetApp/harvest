@@ -9,16 +9,18 @@ import (
 )
 
 var (
-	VERSION = "2.0.2"
-	RELEASE = "rc2"
-	BUILD   = "src"
+	VERSION   = "2.0.2"
+	Release   = "rc2"
+	Commit    = "HEAD"
+	BuildDate = "undefined"
 )
 
 func String() string {
-	return fmt.Sprintf("harvest version %s %s (%s build) %s/%s",
+	return fmt.Sprintf("harvest version %s %s (commit %s) (build date %s) %s/%s",
 		VERSION,
-		RELEASE,
-		BUILD,
+		Release,
+		Commit,
+		BuildDate,
 		runtime.GOOS,
 		runtime.GOARCH,
 	)
