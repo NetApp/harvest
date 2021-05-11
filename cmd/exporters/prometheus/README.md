@@ -16,7 +16,7 @@ The Exporter has two concurrent components that makes it possible to simulatenou
 
 ## Parameters
 
-All parameters of the exporter are defined in the `Exporters` section of `harvest.yml`. An exception is port, which can either be part of the exporter parameters (`port`) or part of the poller parameters (`prometheus_port`). If you go for the first option, you can define as many Prometheus exporters as you would like. We are planning to integrete the exporter with one of Prometheus' service-discovery options to simplify this in the future.
+All parameters of the exporter are defined in the `Exporters` section of `harvest.yml`. An exception is port, which can either be part of the exporter parameters (`port`). If you go for the first option, you can define as many Prometheus exporters as you would like. We are planning to integrete the exporter with one of Prometheus' service-discovery options to simplify this in the future.
 
 
 An overview of all parameters:
