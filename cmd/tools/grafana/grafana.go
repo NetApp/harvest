@@ -57,8 +57,11 @@ func main() {
 	)
 
 	// set harvest config path
-	confPath = config.GetHarvestConf()
-
+	confPath, err = config.GetHarvestConf()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 	// parse CLI args
 	opts = getOptions()
 

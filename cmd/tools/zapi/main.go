@@ -18,8 +18,8 @@ import (
 )
 
 var (
-	maxSearchDepth  = 10
-	harvestConfPath = config.GetHarvestConf()
+	harvestConfPath string
+	maxSearchDepth  = 1
 )
 
 func main() {
@@ -30,7 +30,14 @@ func main() {
 		item, params *node.Node
 		confp        string
 		connection   *client.Client
+		harvestConfPath string
 	)
+
+	harvestConfPath, err = config.GetHarvestConf()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
 	args = getArgs()
 
