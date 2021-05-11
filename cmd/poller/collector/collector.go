@@ -16,6 +16,7 @@
 package collector
 
 import (
+	"goharvest2/pkg/config"
 	"path"
 	"reflect"
 	"strconv"
@@ -56,7 +57,7 @@ type Collector interface {
 	SetSchedule(*schedule.Schedule)
 	SetMatrix(*matrix.Matrix)
 	SetMetadata(*matrix.Matrix)
-	WantedExporters() []string
+	WantedExporters(configFp string) []string
 	LinkExporter(exporter.Exporter)
 	LoadPlugins(*node.Node) error
 }
@@ -454,10 +455,10 @@ func (me *AbstractCollector) SetMetadata(m *matrix.Matrix) {
 
 // WantedExporters retrievs the names of the exporters to which the collector
 // needs to export data
-func (me *AbstractCollector) WantedExporters() []string {
-	var names []string
-	if e := me.Params.GetChildS("exporters"); e != nil {
-		names = e.GetAllChildContentS()
+func (me *AbstractCollector) WantedExporters(configFp string) []string {
+	names, err := config.GetUniqueExporters(me.Params, configFp)
+	if err != nil {
+		logger.Error(me.Prefix, "Error while fetching exporters %v", err)
 	}
 	return names
 }

@@ -1,14 +1,18 @@
 
 Exporters:
   prometheus:
-    exporter: prometheus
+    exporter: Prometheus
+    addr: 0.0.0.0
+    port: 12990
+  prometheus1:
+    exporter: Prometheus
+    addr: 0.0.0.0
+    port: 12991
 
 Defaults:
   collectors:
     - Zapi
     - ZapiPerf
-  exporters:
-    - prometheus
   use_insecure_tls: false
 
 Pollers:
@@ -19,12 +23,15 @@ Pollers:
     addr: localhost
     collectors:
       - Unix
-    prometheus_port: 5201
- 
+    exporters:
+      - prometheus
+
   # add your Cdot / 7Mode pollers below, example:
   # cluster-01:
   #   datacenter: DC-01
   #   addr: 10.0.0.1
   #   username: myuser
   #   password: mypasw
-  # no need to add collectors/exporters, already defined in Defaults!  
+  #    exporters:
+  #      - prometheus1
+  # no need to add collectors, already defined in Defaults!

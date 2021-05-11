@@ -189,11 +189,6 @@ func (me *Poller) Init() error {
 	// collectors and exporters, as well as ping stats to target host
 	me.load_metadata()
 
-	// Prometheus port used to be defined in the exporter parameters as a range
-	// this leads to rarely happening bugs, so we will transition to definig
-	// the port at the poller-level
-	me.options.PrometheusPort = me.params.GetChildContentS("prometheus_port")
-
 	if me.exporter_params, err = config.GetExporters(me.options.Config); err != nil {
 		logger.Warn(me.prefix, "read exporter params: %v", err)
 		// @TODO just warn or abort?
@@ -495,9 +490,9 @@ func (me *Poller) load_collector(class, object string) error {
 	// throw warning for deprecated collectors
 	if r, d := _DEPRECATED_COLLECTORS[strings.ToLower(class)]; d {
 		if r != "" {
-			logger.Warn(me.prefix, "collector (%s) is depracated, please use (%s) instead", class, r)
+			logger.Warn(me.prefix, "collector (%s) is deprecated, please use (%s) instead", class, r)
 		} else {
-			logger.Warn(me.prefix, "collector (%s) is depracated, see documentation for help", class)
+			logger.Warn(me.prefix, "collector (%s) is deprecated, see documentation for help", class)
 		}
 	}
 
@@ -583,10 +578,11 @@ func (me *Poller) load_collector(class, object string) error {
 		name := col.GetName()
 		obj := col.GetObject()
 
-		for _, exp_name := range col.WantedExporters() {
+		for _, exp_name := range col.WantedExporters(me.options.Config) {
+			logger.Info(me.prefix, "exp_name %s", exp_name)
 			if exp := me.load_exporter(exp_name); exp != nil {
 				col.LinkExporter(exp)
-				logger.Debug(me.prefix, "linked (%s:%s) to exporter (%s)", name, obj, exp_name)
+				logger.Info(me.prefix, "linked (%s:%s) to exporter (%s)", name, obj, exp_name)
 			} else {
 				logger.Warn(me.prefix, "exporter (%s) requested by (%s:%s) not available", exp_name, name, obj)
 			}

@@ -121,7 +121,7 @@ func Run() {
 	for {
 
 		if item == "" {
-			item, err = _dialog.Menu("Add new:", "poller", "exporter", "safe and exit")
+			item, err = _dialog.Menu("Add new:", "poller", "exporter", "save and exit")
 			if err != nil {
 				// error means user clicked on Cancel
 				item = "exit"
@@ -140,11 +140,10 @@ func Run() {
 						prometheus := exporters.NewChildS("prometheus", "")
 						prometheus.NewChildS("exporter", "Prometheus")
 						prometheus.NewChildS("addr", "0.0.0.0")
-						prometheus.NewChildS("master", "True")
+						prometheus.NewChildS("port", strconv.Itoa(PrometheusPortStart))
 
 						pollerExporters := newPoller.NewChildS("exporters", "")
 						pollerExporters.NewChildS("", "prometheus")
-						newPoller.NewChildS("prometheus_port", strconv.Itoa(PrometheusPortStart))
 					}
 
 				} else if len(exporters.GetChildren()) == 1 {
@@ -155,10 +154,6 @@ func Run() {
 
 						pollerExporters := newPoller.NewChildS("exporters", "")
 						pollerExporters.NewChildS("", exporter.GetNameS())
-
-						if exporter.GetChildContentS("exporter") == "Prometheus" {
-							newPoller.NewChildS("prometheus_port", strconv.Itoa(PrometheusPortStart+len(pollers.GetChildren())+1))
-						}
 					}
 				} else {
 					choices := make([]string, 0, len(exporters.GetChildren()))
@@ -208,14 +203,14 @@ func Run() {
 			}
 		}
 
-		if item == "exit" || item == "safe and exit" {
+		if item == "exit" || item == "save and exit" {
 			break
 		}
 
 		item = ""
 	}
 
-	if item == "safe and exit" {
+	if item == "save and exit" {
 
 		useTmp := false
 		fp := harvestConfFile
@@ -431,19 +426,17 @@ func addExporter() *node.Node {
 	}
 	exporter.SetNameS(name)
 
-	port, err := _dialog.Input("Port of the HTTP service:")
-	if err != nil {
-		exitError("input exporter port", err)
-	}
-	exporter.NewChildS("port", port)
-
 	if _dialog.YesNo("Make HTTP serve publicly on your network?\n(Choose no to serve it only on localhst)") {
 		exporter.NewChildS("addr", "0.0.0.0")
 	} else {
 		exporter.NewChildS("addr", "localhost")
 	}
 
-	exporter.NewChildS("master", "True")
+	port, err := _dialog.Input("Port of the HTTP service:")
+	if err != nil {
+		exitError("input exporter port", err)
+	}
+	exporter.NewChildS("port", port)
 
 	return exporter
 }

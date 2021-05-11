@@ -103,6 +103,7 @@ func Get() (*Options, string, error) {
 	parser.Bool(&args.Daemon, "daemon", "", "Start as daemon")
 	parser.Int(&args.LogLevel, "loglevel", "l", "Logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)")
 	parser.Int(&args.Profiling, "profiling", "", "If profiling port > 0, enables profiling via locahost:PORT/debug/pprof/")
+	parser.String(&args.PrometheusPort, "prometheusPort", "", "Prometheus Port")
 	parser.String(&args.Config, "conf", "", "Custom config filepath (default: "+args.Config+")")
 	parser.Slice(&args.Collectors, "collectors", "c", "Only start these collectors (overrides harvest.yml)")
 	parser.Slice(&args.Objects, "objects", "o", "Only start these objects (overrides collector config)")

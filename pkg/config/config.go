@@ -127,3 +127,51 @@ func GetHarvestHome() string {
 	//fmt.Printf("Harvest path %s\n", homePath)
 	return homePath
 }
+
+/*
+This method returns port configured in prometheus exporter for given poller
+If there are more than 1 exporter configured for a poller then return string will have ports as comma seperated
+*/
+func GetPrometheusExporterPorts(p *node.Node, configFp string) (string, error) {
+	var port string
+	exporters := p.GetChildS("exporters")
+	if exporters != nil {
+		exportChildren := exporters.GetAllChildContentS()
+		definedExporters, err := GetExporters(configFp)
+		if err != nil {
+			return "", err
+		}
+		for _, ec := range exportChildren {
+			exporterType := definedExporters.GetChildS(ec).GetChildContentS("exporter")
+			if exporterType == "Prometheus" {
+				currentPort := definedExporters.GetChildS(ec).GetChildContentS("port")
+				port = currentPort
+			}
+		}
+	}
+	return port, nil
+}
+
+// Returns unique type of exporters for the poller
+// For example: If 2 prometheus exporters are configured for a poller then last one defined is returned
+func GetUniqueExporters(p *node.Node, configFp string) ([]string, error) {
+	var resultExporters []string
+	exporters := p.GetChildS("exporters")
+	if exporters != nil {
+		exportChildren := exporters.GetAllChildContentS()
+		definedExporters, err := GetExporters(configFp)
+		if err != nil {
+			return nil, err
+		}
+		exporterMap := make(map[string]string)
+		for _, ec := range exportChildren {
+			exporterType := definedExporters.GetChildS(ec).GetChildContentS("exporter")
+			exporterMap[exporterType] = ec
+		}
+
+		for _, value := range exporterMap {
+			resultExporters = append(resultExporters, value)
+		}
+	}
+	return resultExporters, nil
+}
