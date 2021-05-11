@@ -348,8 +348,8 @@ func getStatus(pollerName string) *pollerStatus {
 				}
 			}
 
-			if strings.Contains(cmdline, "--prometheusPort") {
-				r := regexp.MustCompile(`--prometheusPort (\d+)`)
+			if strings.Contains(cmdline, "--promPort") {
+				r := regexp.MustCompile(`--promPort (\d+)`)
 				matches := r.FindStringSubmatch(cmdline)
 				if len(matches) > 0 {
 					s.prometheusPort = matches[1]
@@ -487,7 +487,7 @@ func startPoller(pollerName string, prometheusPort string, opts *options) *polle
 	argv[2] = pollerName
 	argv[3] = "--loglevel"
 	argv[4] = strconv.Itoa(opts.loglevel)
-	argv[5] = "--prometheusPort"
+	argv[5] = "--promPort"
 	argv[6] = prometheusPort
 
 	if opts.debug {
