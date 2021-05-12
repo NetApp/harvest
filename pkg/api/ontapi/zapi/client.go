@@ -142,7 +142,6 @@ func New(config *node.Node) (*Client, error) {
 		return ioutil.NopCloser(r), nil
 	}
 
-	logger.Error("(Zapi:Client)", "return!")
 	return &client, nil
 }
 
