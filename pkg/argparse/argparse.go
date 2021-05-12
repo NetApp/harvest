@@ -170,16 +170,20 @@ func (p *ArgParse) parse() string {
 		return "usage"
 	}
 
+	// check first argument once, to stop if help is asked
+	arg := os.Args[argIndex]
+	if arg == "-h" || arg == "--help" || arg == "-help" || p.helpFlags.Has(arg) {
+		return "help"
+	}
+
 	for argIndex < len(os.Args) {
 
 		arg := os.Args[argIndex]
 
-		// help stops here
-		if arg == "-h" || arg == "--help" || arg == "-help" || p.helpFlags.Has(arg) {
-			return "help"
-			// long flag
-		} else if len(arg) > 1 && arg[:2] == "--" {
-			argIndex += p.handleLong(argIndex, arg[2:])
+		// long flag
+		if len(arg) > 1 && arg[:2] == "--" {
+			i := p.handleLong(argIndex, arg[2:])
+			argIndex += i
 			// short flag
 		} else if string(arg[0]) == "-" {
 			argIndex += p.handleShort(argIndex, arg[1:])
@@ -189,6 +193,7 @@ func (p *ArgParse) parse() string {
 			posIndex++
 		} else {
 			p.errors = append(p.errors, []string{arg, "unknown command"})
+			argIndex++
 		}
 	}
 
@@ -280,6 +285,8 @@ func (p *ArgParse) handleLong(i int, name string) int {
 		*f.targetBool = true
 		return 1
 	}
+
+	// for other types we expect flag to be followed by value(s)
 
 	if len(os.Args) < i+2 {
 		p.errors = append(p.errors, []string{name, "value missing"})
