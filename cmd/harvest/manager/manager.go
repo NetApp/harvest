@@ -55,11 +55,8 @@ type pollerStatus struct {
 func Run() {
 	var err error
 
-	harvestHomePath, err = config.GetHarvestHomePath()
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	harvestHomePath = config.GetHarvestHomePath()
+
 	harvestConfigPath, err = config.GetDefaultHarvestConfigPath()
 	if err != nil {
 		fmt.Println(err)
@@ -489,7 +486,7 @@ func stopPoller(pollerName string) *pollerStatus {
 
 func startPoller(pollerName string, promPort string, opts *options) *pollerStatus {
 
-	argv := make([]string, 9)
+	argv := make([]string, 7)
 	argv[0] = path.Join(harvestHomePath, "bin", "poller")
 	argv[1] = "--poller"
 	argv[2] = pollerName
@@ -497,8 +494,6 @@ func startPoller(pollerName string, promPort string, opts *options) *pollerStatu
 	argv[4] = strconv.Itoa(opts.loglevel)
 	argv[5] = "--promPort"
 	argv[6] = promPort
-	argv[7] = "--homePath"
-	argv[8] = harvestHomePath
 
 	if opts.debug {
 		argv = append(argv, "--debug")
@@ -507,9 +502,6 @@ func startPoller(pollerName string, promPort string, opts *options) *pollerStatu
 	if opts.config != harvestConfigPath {
 		argv = append(argv, "--config")
 		argv = append(argv, opts.config)
-	} else {
-		argv = append(argv, "--config")
-		argv = append(argv, harvestConfigPath)
 	}
 
 	if opts.profiling {

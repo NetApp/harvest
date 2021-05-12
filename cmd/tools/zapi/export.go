@@ -92,7 +92,7 @@ func exportCounters(item *node.Node, c *client.Client, args *Args) error {
 	*/
 	fp := make([]string, 0)
 
-	harvestHomePath, err = config.GetHarvestHomePath()
+	harvestHomePath = config.GetHarvestHomePath()
 	fp = append(fp, harvestHomePath)
 	fp = append(fp, "conf/")
 	fp = append(fp, "zapiperf/")

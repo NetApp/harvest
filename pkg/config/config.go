@@ -10,7 +10,6 @@ import (
 	"goharvest2/pkg/tree/node"
 	"os"
 	"path"
-	"path/filepath"
 )
 
 func LoadConfig(config_fp string) (*node.Node, error) {
@@ -102,9 +101,7 @@ func GetDefaultHarvestConfigPath() (string, error) {
 	configFileName := constant.ConfigFileName
 	if configPath = os.Getenv("HARVEST_CONF"); configPath == "" {
 		var homePath string
-		if homePath, err = GetHarvestHomePath(); err != nil {
-			return "", err
-		}
+		homePath = GetHarvestHomePath()
 		configPath = path.Join(homePath, configFileName)
 	} else {
 		configPath = path.Join(configPath, configFileName)
@@ -114,17 +111,8 @@ func GetDefaultHarvestConfigPath() (string, error) {
 
 /*GetHarvestHomePath*/
 //This method is used to return current working directory
-func GetHarvestHomePath() (string, error) {
-	var err error
-	var homePath string
-	if homePath = os.Getenv("HARVEST_HOME"); homePath == "" {
-		if homePath, err = filepath.Abs("./"); os.IsNotExist(err) {
-			err = errors.New(errors.ERR_CONFIG, "Error while calculating harvest installation path ")
-			return "", err
-		}
-	}
-	//fmt.Printf("Harvest path %s\n", homePath)
-	return homePath, err
+func GetHarvestHomePath() string {
+	return "./"
 }
 
 /*

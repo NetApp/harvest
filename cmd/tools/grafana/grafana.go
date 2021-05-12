@@ -57,7 +57,7 @@ func main() {
 	)
 
 	// set harvest home path
-	homePath, err = config.GetHarvestHomePath()
+	homePath = config.GetHarvestHomePath()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

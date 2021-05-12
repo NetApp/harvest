@@ -66,7 +66,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	if harvestPath, err = pkgConfig.GetHarvestHomePath(); err != nil {
+	if harvestPath = pkgConfig.GetHarvestHomePath(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}

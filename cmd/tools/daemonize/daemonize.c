@@ -53,8 +53,6 @@ int daemonize(char *bin, char *args[]) {
 
     // clean file permissions
     umask(0);
-    // change working directory to root
-    chdir("/");
 
     // close FDs, if can't get max, choose reasonable number
     int maxfds, fd;
@@ -92,11 +90,7 @@ int main(int argc, char* argv[]) {
 
     strcpy(path, argv[1]);
 
-    // simplify first arg, by taking basename instead of full path
-    if ((daemon_argv[0] = strrchr(argv[1], '/')) != NULL)
-        daemon_argv[0]++;
-    else
-        daemon_argv[0] = argv[1];
+    daemon_argv[0] = argv[1];
 
     for (i=1; i<argc-1; i++) {
         daemon_argv[i] = argv[i+1];

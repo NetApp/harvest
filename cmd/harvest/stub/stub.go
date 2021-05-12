@@ -24,7 +24,7 @@ Usage: harvest new [collector | plugin | exporter ]
 `
 
 var (
-	harvestHomePath, _ = config.GetHarvestHomePath()
+	harvestHomePath = config.GetHarvestHomePath()
 )
 
 func Run() {

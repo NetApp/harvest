@@ -68,7 +68,7 @@ func Run() {
 		os.Exit(1)
 	}
 
-	harvestHomePath, err = config.GetHarvestHomePath()
+	harvestHomePath = config.GetHarvestHomePath()
 
 	var item string
 	var conf, pollers, exporters *node.Node
