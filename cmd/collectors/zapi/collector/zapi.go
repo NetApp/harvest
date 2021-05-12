@@ -85,12 +85,12 @@ func (me *Zapi) InitVars() error {
 		}
 	}
 
-	if me.Client, err = client.New(me.Params); err != nil {
-		return err
+	if me.Client, err = client.New(me.Params); err != nil { // convert to connection error, so poller aborts
+		return errors.New(errors.ERR_CONNECTION, err.Error())
 	}
 
 	if me.Client.Init(5); err != nil { // 5 retries before giving up to connect
-		return err
+		return errors.New(errors.ERR_CONNECTION, err.Error())
 	}
 	logger.Debug(me.Prefix, "connected to: %s", me.Client.Info())
 
