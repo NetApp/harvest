@@ -266,7 +266,7 @@ func Run() {
 
 		if opts.command == "start" || opts.command == "restart" {
 			// only start poller if confirmed that it's not running
-			if s.status == "not running" || s.status == "stopped" {
+			if s.status == "not running" || s.status == "stopped" || s.status == "killed" {
 				s = startPoller(name, promPort, opts)
 				printStatus(opts.longStatus, c1, c2, datacenter, name, s.promPort, s)
 			} else {
@@ -474,14 +474,17 @@ func stopPoller(pollerName string) *pollerStatus {
 
 	// give the poller chance to cleanup and exit
 	for i := 0; i < 5; i += 1 {
-		time.Sleep(200 * time.Millisecond)
+		time.Sleep(50 * time.Millisecond)
 		// @TODO, handle situation when PID is regained by some other process
 		if proc.Signal(syscall.Signal(0)) != nil {
 			s.status = "stopped"
+			return s
 		}
 	}
-	s.status = "stopping failed"
-	return s
+
+	// couldn't verify poller exited
+	// just try to kill it and cleanup
+	return killPoller(pollerName)
 }
 
 func startPoller(pollerName string, promPort string, opts *options) *pollerStatus {
