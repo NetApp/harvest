@@ -30,7 +30,8 @@ var (
 func Run() {
 
 	var (
-		err error
+		object string
+		err    error
 	)
 	if harvestHomePath = os.Getenv("HARVEST_HOME"); harvestHomePath == "" {
 		harvestHomePath = "/opt/harvest/"
@@ -39,27 +40,23 @@ func Run() {
 	if harvestConfPath = os.Getenv("HARVEST_CONF"); harvestConfPath == "" {
 		harvestConfPath = "/etc/harvest/"
 	}
-
-	if len(os.Args) > 1 {
-		if os.Args[1] == "-h" || os.Args[1] == "--help" || os.Args[1] == "help" {
-			fmt.Println(usage)
-			os.Exit(0)
-		}
-	}
-
 	if len(os.Args) < 3 {
-		fmt.Println("What to create? (choose: collector, plugin, exporter)")
-		os.Exit(1)
+		fmt.Println("Usage: harvest new [collector | plugin | exporter ]")
+		os.Exit(0)
 	}
 
-	if os.Args[2] == "collector" {
+	switch object = os.Args[2]; object {
+	case "-h", "--help", "help":
+		fmt.Println(usage)
+		os.Exit(0)
+	case "collector":
 		err = newCollector()
-	} else if os.Args[2] == "plugin" {
+	case "plugin":
 		err = newPlugin()
-	} else if os.Args[2] == "exporter" {
+	case "exporter":
 		err = newExporter()
-	} else {
-		fmt.Printf("Sorry, can't create %s\n", os.Args[2])
+	default:
+		fmt.Printf("Sorry, can't create %s\n", object)
 		os.Exit(1)
 	}
 

@@ -74,9 +74,13 @@ func Run() {
 
 	// parse user-defined options
 	parser := argparse.New("Harvest Manager", "harvest", "manage your pollers")
-	parser.SetOffset(1)
 	parser.SetHelpFlag("help")
-	parser.SetHelpFlag("manager")
+	// if user runs "harvest manager..", skip keyword "manager"
+	if len(os.Args) > 1 && os.Args[1] == "manager" {
+		parser.SetOffset(2)
+	} else {
+		parser.SetOffset(1)
+	}
 
 	parser.PosString(
 		&opts.command,
@@ -495,7 +499,7 @@ func startPoller(pollerName string, promPort string, opts *options) *pollerStatu
 	}
 
 	if opts.config != path.Join(HarvestConfPath, "harvest.yml") {
-		argv = append(argv, "--conf")
+		argv = append(argv, "--config")
 		argv = append(argv, opts.config)
 	}
 
