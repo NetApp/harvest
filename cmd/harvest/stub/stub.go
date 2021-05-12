@@ -6,6 +6,7 @@ package stub
 import (
 	"bytes"
 	"fmt"
+	"goharvest2/pkg/config"
 	"goharvest2/pkg/tree"
 	"goharvest2/pkg/tree/node"
 	"io/ioutil"
@@ -23,8 +24,8 @@ Usage: harvest new [collector | plugin | exporter ]
 `
 
 var (
-	harvestHomePath string
-	harvestConfPath string
+	harvestHomePath string = config.GetHarvestHome()
+	harvestConfPath string = config.GetHarvestHome()
 )
 
 func Run() {
@@ -33,13 +34,6 @@ func Run() {
 		object string
 		err    error
 	)
-	if harvestHomePath = os.Getenv("HARVEST_HOME"); harvestHomePath == "" {
-		harvestHomePath = "/opt/harvest/"
-	}
-
-	if harvestConfPath = os.Getenv("HARVEST_CONF"); harvestConfPath == "" {
-		harvestConfPath = "/etc/harvest/"
-	}
 	if len(os.Args) < 3 {
 		fmt.Println("Usage: harvest new [collector | plugin | exporter ]")
 		os.Exit(0)
