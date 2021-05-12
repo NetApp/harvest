@@ -124,14 +124,18 @@ packages: precheck all
 ###############################################################################
 # Build tar gz distribution
 ###############################################################################
-DIST := /tmp/harvest-${RELEASE}
+HARVEST_RELEASE := harvest-${RELEASE}
+TMP := /tmp/${HARVEST_RELEASE}
+DIST := dist
 dist-tar:
+	-rm -rf ${TMP}
 	-rm -rf ${DIST}
+	@mkdir ${TMP}
 	@mkdir ${DIST}
-	@cp -a bin conf docs grafana README.md LICENSE ${DIST}
-	@cp -a harvest.example.yml ${DIST}/harvest.yml
-	@tar --directory /tmp --create --gzip --file harvest-${RELEASE}.tar.gz harvest-${RELEASE}
-	-rm -rf ${DIST}
+	@cp -a bin conf docs grafana README.md LICENSE ${TMP}
+	@cp -a harvest.example.yml ${TMP}/harvest.yml
+	@tar --directory /tmp --create --gzip --file ${DIST}/${HARVEST_RELEASE}.tar.gz ${HARVEST_RELEASE}
+	-rm -rf ${TMP}
 
 ###############################################################################
 # Install targets
