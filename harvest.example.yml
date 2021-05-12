@@ -32,8 +32,21 @@ Pollers:
   # cluster-01:
   #   datacenter: DC-01
   #   addr: 10.0.0.1
+  #   auth_style: basic_auth
   #   username: myuser
   #   password: mypasw
+  #   use_insecure_tls: true   # since we don't use certificate authentication
   #    exporters:
   #      - prometheus1
   # no need to add collectors, already defined in Defaults!
+
+  # example where we use certificate authentication
+  # cluster-01:
+  #  datacenter: DC-01
+  #  addr: 10.0.0.2
+  #  auth_style: certificate_auth
+  #  ssl_cert: /path/to/cert.pem
+  #  ssl_key: /path/to/key.key
+  #  use_insecure_tls: false  # if harvest should be able to authneticate your server, set this true
+                              # otherwise set it to false (if cluster has no valid server certificates)
+  #  # all the other parameters should be the same

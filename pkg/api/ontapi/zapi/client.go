@@ -104,6 +104,10 @@ func New(config *node.Node) (*Client, error) {
 		}
 	} else {
 
+		if !useInsecureTLS {
+			return nil, errors.New(errors.INVALID_PARAM, "use_insecure_tls is false, but no certificates")
+		}
+
 		username := config.GetChildContentS("username")
 		password := config.GetChildContentS("password")
 
@@ -138,6 +142,7 @@ func New(config *node.Node) (*Client, error) {
 		return ioutil.NopCloser(r), nil
 	}
 
+	logger.Error("(Zapi:Client)", "return!")
 	return &client, nil
 }
 
