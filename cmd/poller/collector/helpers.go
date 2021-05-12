@@ -58,7 +58,7 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, version [3
 		versionDecimal                             int
 	)
 
-	pathPrefix = path.Join(c.Options.ConfPath, "conf/", strings.ToLower(c.Name), model)
+	pathPrefix = path.Join(c.Options.HomePath, "conf/", strings.ToLower(c.Name), model)
 	logger.Debug(c.Prefix, "Looking for best-fitting template in [%s]", pathPrefix)
 
 	// check for available versons, those are the subdirectories that include filename

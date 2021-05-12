@@ -24,8 +24,7 @@ Usage: harvest new [collector | plugin | exporter ]
 `
 
 var (
-	harvestHomePath string = config.GetHarvestHome()
-	harvestConfPath string = config.GetHarvestHome()
+	harvestHomePath, _ = config.GetHarvestHomePath()
 )
 
 func Run() {
@@ -215,7 +214,7 @@ func createTemplate(collector, object string) (string, error) {
 	export := t.NewChildS("export_options", "")
 	export.NewChildS("include_all_labels", "True")
 
-	fp := path.Join(harvestConfPath, "conf/", strings.ToLower(collector))
+	fp := path.Join(harvestHomePath, "conf/", strings.ToLower(collector))
 
 	if err := os.MkdirAll(fp, 0755); err != nil {
 		return "", err

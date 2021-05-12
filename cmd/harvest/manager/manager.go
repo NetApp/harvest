@@ -24,9 +24,9 @@ import (
 )
 
 var (
-	HarvestHomePath string
-	HarvestConfPath string
-	HarvestPidPath  string
+	harvestHomePath   string
+	harvestConfigPath string
+	harvestPidPath    string
 )
 
 type options struct {
@@ -55,21 +55,25 @@ type pollerStatus struct {
 func Run() {
 	var err error
 
-	HarvestHomePath = config.GetHarvestHome()
-	HarvestConfPath, err = config.GetHarvestConf()
+	harvestHomePath, err = config.GetHarvestHomePath()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	harvestConfigPath, err = config.GetDefaultHarvestConfigPath()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	if HarvestPidPath = os.Getenv("HARVEST_PIDS"); HarvestPidPath == "" {
-		HarvestPidPath = "/var/run/harvest/"
+	if harvestPidPath = os.Getenv("HARVEST_PIDS"); harvestPidPath == "" {
+		harvestPidPath = "/var/run/harvest/"
 	}
 
 	// default options
 	opts := &options{
 		loglevel: 2,
-		config:   path.Join(HarvestConfPath, "harvest.yml"),
+		config:   harvestConfigPath,
 	}
 
 	// parse user-defined options
@@ -291,7 +295,7 @@ func getStatus(pollerName string) *pollerStatus {
 
 	s := &pollerStatus{}
 	// running poller should have written PID to file
-	pidFp := path.Join(HarvestPidPath, pollerName+".pid")
+	pidFp := path.Join(harvestPidPath, pollerName+".pid")
 
 	// no PID file, assume process exited or never started
 	if data, err := ioutil.ReadFile(pidFp); err != nil {
@@ -485,22 +489,27 @@ func stopPoller(pollerName string) *pollerStatus {
 
 func startPoller(pollerName string, promPort string, opts *options) *pollerStatus {
 
-	argv := make([]string, 7)
-	argv[0] = path.Join(HarvestHomePath, "bin", "poller")
+	argv := make([]string, 9)
+	argv[0] = path.Join(harvestHomePath, "bin", "poller")
 	argv[1] = "--poller"
 	argv[2] = pollerName
 	argv[3] = "--loglevel"
 	argv[4] = strconv.Itoa(opts.loglevel)
 	argv[5] = "--promPort"
 	argv[6] = promPort
+	argv[7] = "--homePath"
+	argv[8] = harvestHomePath
 
 	if opts.debug {
 		argv = append(argv, "--debug")
 	}
 
-	if opts.config != path.Join(HarvestConfPath, "harvest.yml") {
+	if opts.config != harvestConfigPath {
 		argv = append(argv, "--config")
 		argv = append(argv, opts.config)
+	} else {
+		argv = append(argv, "--config")
+		argv = append(argv, harvestConfigPath)
 	}
 
 	if opts.profiling {
@@ -550,10 +559,10 @@ func startPoller(pollerName string, promPort string, opts *options) *pollerStatu
 	argv = append(argv, "--daemon")
 
 	// if pid directory doesn't exist, create full path, otherwise poller will complain
-	if info, err := os.Stat(HarvestPidPath); err != nil || !info.IsDir() {
+	if info, err := os.Stat(harvestPidPath); err != nil || !info.IsDir() {
 		// don't abort on error, since another poller might have done the job
-		if err = os.MkdirAll(HarvestPidPath, 0755); err != nil && !os.IsExist(err) {
-			fmt.Printf("error mkdir [%s]: %v\n", HarvestPidPath, err)
+		if err = os.MkdirAll(harvestPidPath, 0755); err != nil && !os.IsExist(err) {
+			fmt.Printf("error mkdir [%s]: %v\n", harvestPidPath, err)
 		}
 	}
 
@@ -571,7 +580,7 @@ func startPoller(pollerName string, promPort string, opts *options) *pollerStatu
 		os.Exit(0)
 	}
 
-	cmd := exec.Command(path.Join(HarvestHomePath, "bin", "daemonize"), argv...)
+	cmd := exec.Command(path.Join(harvestHomePath, "bin", "daemonize"), argv...)
 	//fmt.Println(cmd.String())
 	if err := cmd.Start(); err != nil {
 		fmt.Println(err)
@@ -595,7 +604,7 @@ func startPoller(pollerName string, promPort string, opts *options) *pollerStatu
 // Clean PID file if it exists
 // Return value indicates wether PID file existed
 func cleanPidFile(pollerName string) bool {
-	fp := path.Join(HarvestPidPath, pollerName+".pid")
+	fp := path.Join(harvestPidPath, pollerName+".pid")
 	if err := os.Remove(fp); err != nil {
 		if os.IsPermission(err) {
 			fmt.Printf("Error: you have no permission to remove [%s]\n", fp)

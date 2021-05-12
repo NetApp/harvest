@@ -275,7 +275,7 @@ func (me *Unix) PollInstance() (*matrix.Matrix, error) {
 	currInstances := set.NewFrom(me.Matrix.GetInstanceKeys())
 	currSize := currInstances.Size()
 
-	pollerNames, err := config.GetPollerNames(path.Join(me.Options.ConfPath, "harvest.yml"))
+	pollerNames, err := config.GetPollerNames(me.Options.Config)
 	if err != nil {
 		return nil, err
 	}

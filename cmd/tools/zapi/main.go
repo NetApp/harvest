@@ -6,7 +6,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"path"
 	"strconv"
 	"strings"
 
@@ -18,22 +17,20 @@ import (
 )
 
 var (
-	harvestConfPath string
-	maxSearchDepth  = 1
+	maxSearchDepth = 1
 )
 
 func main() {
 
 	var (
-		err             error
-		args            *Args
-		item, params    *node.Node
-		confp           string
-		connection      *client.Client
-		harvestConfPath string
+		err               error
+		args              *Args
+		item, params      *node.Node
+		connection        *client.Client
+		harvestConfigPath string
 	)
 
-	harvestConfPath, err = config.GetHarvestConf()
+	harvestConfigPath, err = config.GetDefaultHarvestConfigPath()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -41,13 +38,8 @@ func main() {
 
 	args = getArgs()
 
-	// set harvest config path
-	if confp = os.Getenv("HARVEST_CONF"); confp != "" {
-		harvestConfPath = confp
-	}
-
 	// connect to cluster and retrieve system version
-	if params, err = config.GetPoller(path.Join(harvestConfPath, "harvest.yml"), args.Poller); err != nil {
+	if params, err = config.GetPoller(harvestConfigPath, args.Poller); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}

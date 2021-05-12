@@ -18,7 +18,6 @@ import (
 	"goharvest2/pkg/config"
 	"goharvest2/pkg/errors"
 	"os"
-	"path"
 	"strings"
 )
 
@@ -28,8 +27,7 @@ type Options struct {
 	Debug  bool   // if true, Poller is started in debug mode
 	// this mostly means that no data will be exported
 	PromPort   string   // HTTP port that is assigned to Poller and can be used by the Prometheus exporter
-	Config     string   // filename of Harvest config (e.g. "harvest.yml")
-	ConfPath   string   // path to config directory (usually "/etc/harvest")
+	Config     string   // absolute filepath of Harvest config (e.g. "harvest.yml")
 	HomePath   string   // path to harvest home (usually "/opt/harvest")
 	LogPath    string   // log files location (usually "/var/log/harvest")
 	PidPath    string   // pid files location (usually "/var/run/harvest")
@@ -51,7 +49,6 @@ func (o *Options) String() string {
 		fmt.Sprintf("%s = %s", "PromPort", o.PromPort),
 		fmt.Sprintf("%s = %d", "LogLevel", o.LogLevel),
 		fmt.Sprintf("%s = %s", "HomePath", o.HomePath),
-		fmt.Sprintf("%s = %s", "ConfPath", o.ConfPath),
 		fmt.Sprintf("%s = %s", "LogPath", o.LogPath),
 		fmt.Sprintf("%s = %s", "PidPath", o.PidPath),
 		fmt.Sprintf("%s = %s", "Config", o.Config),
@@ -81,9 +78,9 @@ func Get() (*Options, string, error) {
 		args.Hostname = hostname
 	}
 
-	args.HomePath = config.GetHarvestHome()
+	args.HomePath, _ = config.GetHarvestHomePath()
 
-	if args.ConfPath, err = config.GetHarvestConf(); err != nil {
+	if args.Config, err = config.GetDefaultHarvestConfigPath(); err != nil {
 		return &args, args.Poller, err
 	}
 
@@ -94,8 +91,6 @@ func Get() (*Options, string, error) {
 		args.PidPath = "/var/run/harvest/"
 	}
 
-	args.Config = path.Join(args.ConfPath, "harvest.yml")
-
 	// parse from command line
 	parser := argparse.New("Harvest Poller", "poller", "Runs collectors and exporters for a target system")
 	parser.String(&args.Poller, "poller", "p", "Poller name as defined in config")
@@ -104,6 +99,7 @@ func Get() (*Options, string, error) {
 	parser.Int(&args.LogLevel, "loglevel", "l", "Logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)")
 	parser.Int(&args.Profiling, "profiling", "", "If profiling port > 0, enables profiling via locahost:PORT/debug/pprof/")
 	parser.String(&args.PromPort, "promPort", "", "Prometheus Port")
+	parser.String(&args.HomePath, "homePath", "", "Harvest home path")
 	parser.String(&args.Config, "config", "", "Custom config filepath (default: "+args.Config+")")
 	parser.Slice(&args.Collectors, "collectors", "c", "Only start these collectors (overrides harvest.yml)")
 	parser.Slice(&args.Objects, "objects", "o", "Only start these objects (overrides collector config)")

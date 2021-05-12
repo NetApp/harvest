@@ -48,9 +48,9 @@ const (
 )
 
 var (
-	harvestConfPath string
-	harvestConfFile string
-	_dialog         *dialog.Dialog
+	harvestConfigPath string
+	harvestHomePath   string
+	_dialog           *dialog.Dialog
 )
 
 func exitError(msg string, err error) {
@@ -62,19 +62,20 @@ func exitError(msg string, err error) {
 func Run() {
 
 	var err error
-	harvestConfPath, err = config.GetHarvestConf()
+	harvestConfigPath, err = config.GetDefaultHarvestConfigPath()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	harvestConfFile = path.Join(harvestConfPath, "harvest.yml")
+
+	harvestHomePath, err = config.GetHarvestHomePath()
 
 	var item string
 	var conf, pollers, exporters *node.Node
 
 	parser := argparse.New("Config utility", "harvest config", "configure pollers")
 	parser.PosString(&item, "item", "item to configure", []string{"poller", "exporter", "welcome", "help"})
-	parser.String(&harvestConfFile, "config", "c", "custom config filepath (default: "+harvestConfFile+")")
+	parser.String(&harvestConfigPath, "config", "c", "custom config filepath (default: "+harvestConfigPath+")")
 	parser.SetHelp(usage)
 	parser.SetHelpFlag("help")
 	parser.SetOffset(2)
@@ -106,7 +107,7 @@ func Run() {
 		os.Exit(0)
 	}
 
-	if conf, err = config.LoadConfig(harvestConfFile); err != nil {
+	if conf, err = config.LoadConfig(harvestConfigPath); err != nil {
 		conf = node.NewS("")
 	}
 
@@ -213,13 +214,13 @@ func Run() {
 	if item == "save and exit" {
 
 		useTmp := false
-		fp := harvestConfFile
+		fp := harvestConfigPath
 
-		dir, fn := path.Split(harvestConfFile)
+		dir, fn := path.Split(harvestConfigPath)
 
 		info, err := os.Stat(dir)
 		if err != nil || !info.IsDir() {
-			if os.Mkdir(harvestConfPath, 0644) != nil {
+			if os.Mkdir(harvestHomePath, 0644) != nil {
 				fp = path.Join("/tmp", fn)
 				useTmp = true
 			}
@@ -231,9 +232,9 @@ func Run() {
 
 		msg := "Saved results as [" + fp + "]"
 		if useTmp {
-			msg = "You don't have write permissions in [" + harvestConfPath + "]!!\n" +
+			msg = "You don't have write permissions in [" + harvestHomePath + "]!!\n" +
 				"Config file saved as [" + fp + "]. Please move it\n" +
-				"to [" + harvestConfPath + "] with a privileged user."
+				"to [" + harvestHomePath + "] with a privileged user."
 		}
 		_dialog.Message(msg)
 	}
@@ -281,7 +282,7 @@ func addPoller() *node.Node {
 			createCert = true
 			_dialog.Message("This requires one-time admin password to create \na read-only user and install certificate on your system")
 		} else {
-			msg := fmt.Sprintf("Copy your cert/key pair to [%s/cert/] as [<SYSTEM_NAME>.key] and [<SYSTEM_NAME>.pem] to continue", harvestConfPath)
+			msg := fmt.Sprintf("Copy your cert/key pair to [%s/cert/] as [<SYSTEM_NAME>.key] and [<SYSTEM_NAME>.pem] to continue", harvestHomePath)
 			_dialog.Message(msg)
 			poller.NewChildS("auth_style", "certificate_auth")
 		}
@@ -325,8 +326,8 @@ func addPoller() *node.Node {
 
 	if err == nil && createCert {
 
-		certPath := path.Join(harvestConfPath, "cert", client.Name()+".pem")
-		keyPath := path.Join(harvestConfPath, "cert", client.Name()+".key")
+		certPath := path.Join(harvestHomePath, "cert", client.Name()+".pem")
+		keyPath := path.Join(harvestHomePath, "cert", client.Name()+".key")
 
 		cmd := exec.Command(
 			"openssl",

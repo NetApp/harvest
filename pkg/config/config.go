@@ -4,10 +4,12 @@
 package config
 
 import (
+	"goharvest2/pkg/constant"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/tree"
 	"goharvest2/pkg/tree/node"
 	"os"
+	"path"
 	"path/filepath"
 )
 
@@ -92,40 +94,37 @@ func GetPoller(config_fp, poller_name string) (*node.Node, error) {
 	return poller, err
 }
 
-/*
-This method is used to initialize the default location to find the yml config file. If you start Harvest with the --config option it will override the value returned from this method.
-else return parent directory of executable. For example : harvest binary is in /opt/harvest/bin. This method will return /opt/harvest
-*/
-func GetHarvestConf() (string, error) {
-	var confPath string
+/*GetDefaultHarvestConfigPath*/
+//This method is used to return the default absolute path of harvest config file.
+func GetDefaultHarvestConfigPath() (string, error) {
+	var configPath string
 	var err error
-	if confPath = os.Getenv("HARVEST_CONF"); confPath == "" {
-		configFileName := "harvest.yml"
-		path, _ := os.Executable()
-		exPath := filepath.Dir(filepath.Dir(path))
-		if _, err = os.Stat(exPath + string(os.PathSeparator) + configFileName); os.IsNotExist(err) {
-			err = errors.New(errors.ERR_CONFIG, "Config file ["+configFileName+"] does not exist at ["+exPath+"] ")
-		} else {
-			confPath = exPath
+	configFileName := constant.ConfigFileName
+	if configPath = os.Getenv("HARVEST_CONF"); configPath == "" {
+		var homePath string
+		if homePath, err = GetHarvestHomePath(); err != nil {
+			return "", err
 		}
+		configPath = path.Join(homePath, configFileName)
+	} else {
+		configPath = path.Join(configPath, configFileName)
 	}
-	//fmt.Printf("Config file %s read from %s\n", configFileName, confPath)
-	return confPath, err
+	return configPath, err
 }
 
-/*
-This method returns the parent directory path of executable binary
-For example : harvest binary is in /opt/harvest/bin. This method will return /opt/harvest
-*/
-func GetHarvestHome() string {
+/*GetHarvestHomePath*/
+//This method is used to return current working directory
+func GetHarvestHomePath() (string, error) {
+	var err error
 	var homePath string
 	if homePath = os.Getenv("HARVEST_HOME"); homePath == "" {
-		path, _ := os.Executable()
-		exPath := filepath.Dir(filepath.Dir(path))
-		homePath = exPath
+		if homePath, err = filepath.Abs("./"); os.IsNotExist(err) {
+			err = errors.New(errors.ERR_CONFIG, "Error while calculating harvest installation path ")
+			return "", err
+		}
 	}
 	//fmt.Printf("Harvest path %s\n", homePath)
-	return homePath
+	return homePath, err
 }
 
 /*

@@ -103,6 +103,7 @@ func (me *Poller) Init() error {
 
 	// read options
 	me.options, me.name, err = options.Get()
+	logger.Info(me.prefix, "options config: %s", me.options.Config)
 	if err != nil {
 		logger.Error(me.prefix, "error: %s", err.Error())
 		return err
@@ -507,13 +508,13 @@ func (me *Poller) load_collector(class, object string) error {
 
 	// load the template file(s) of the collector where we expect to find
 	// object name or list of objects
-	if template, err = collector.ImportTemplate(me.options.ConfPath, "default.yaml", class); err != nil {
+	if template, err = collector.ImportTemplate(me.options.HomePath, "default.yaml", class); err != nil {
 		return err
 	} else if template == nil { // probably redundant
 		return errors.New(errors.MISSING_PARAM, "collector template")
 	}
 
-	if custom, err = collector.ImportTemplate(me.options.ConfPath, "custom.yaml", class); err == nil && custom != nil {
+	if custom, err = collector.ImportTemplate(me.options.HomePath, "custom.yaml", class); err == nil && custom != nil {
 		template.Merge(custom)
 		logger.Debug(me.prefix, "merged custom and default templates")
 	}

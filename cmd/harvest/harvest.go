@@ -50,6 +50,7 @@ func main() {
 
 	var (
 		command, bin, harvestPath string
+		err                       error
 		cmd                       *exec.Cmd
 	)
 
@@ -65,7 +66,10 @@ func main() {
 		os.Exit(0)
 	}
 
-	harvestPath = pkgConfig.GetHarvestHome()
+	if harvestPath, err = pkgConfig.GetHarvestHomePath(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
 	switch command {
 	case "version":
@@ -96,7 +100,7 @@ func main() {
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
-		if err := cmd.Run(); err != nil {
+		if err = cmd.Run(); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}

@@ -31,7 +31,7 @@ const (
 
 var (
 	grafanaMinVers = "7.1.0" // lowest grafana version we require
-	confPath       string
+	homePath       string
 )
 
 type options struct {
@@ -56,8 +56,8 @@ func main() {
 		exists bool
 	)
 
-	// set harvest config path
-	confPath, err = config.GetHarvestConf()
+	// set harvest home path
+	homePath, err = config.GetHarvestHomePath()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -318,7 +318,7 @@ func getOptions() *options {
 
 	// full path
 	if opts.command == "import" {
-		opts.dir = path.Join(confPath, "grafana", opts.dir)
+		opts.dir = path.Join(homePath, "grafana", opts.dir)
 	}
 
 	// full URL
@@ -345,7 +345,7 @@ func checkToken(opts *options, ignoreConfig bool) error {
 		err                        error
 	)
 
-	config_path = path.Join(confPath, "harvest.yml")
+	config_path, _ = config.GetDefaultHarvestConfigPath()
 
 	if params, err = config.LoadConfig(config_path); err != nil {
 		return err

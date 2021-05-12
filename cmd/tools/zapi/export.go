@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"goharvest2/cmd/poller/collector"
 	client "goharvest2/pkg/api/ontapi/zapi"
+	"goharvest2/pkg/config"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/tree/node"
 	"goharvest2/pkg/tree/yaml"
@@ -33,9 +34,10 @@ func exportAttrs(item *node.Node, c *client.Client, args *Args) error {
 func exportCounters(item *node.Node, c *client.Client, args *Args) error {
 
 	var (
-		dump   []byte
-		err    error
-		custom *node.Node
+		dump            []byte
+		err             error
+		custom          *node.Node
+		harvestHomePath string
 	)
 
 	template := node.NewS("")
@@ -90,7 +92,8 @@ func exportCounters(item *node.Node, c *client.Client, args *Args) error {
 	*/
 	fp := make([]string, 0)
 
-	fp = append(fp, harvestConfPath)
+	harvestHomePath, err = config.GetHarvestHomePath()
+	fp = append(fp, harvestHomePath)
 	fp = append(fp, "conf/")
 	fp = append(fp, "zapiperf/")
 
@@ -128,13 +131,13 @@ func exportCounters(item *node.Node, c *client.Client, args *Args) error {
 		return nil
 	}
 
-	if custom, err = collector.ImportTemplate(harvestConfPath, "custom.yaml", "zapiperf"); err != nil {
+	if custom, err = collector.ImportTemplate(harvestHomePath, "custom.yaml", "zapiperf"); err != nil {
 		custom = node.NewS("")
 		custom.NewChildS("collector", "ZapiPerf")
 		custom.NewChildS("objects", "")
 	}
 
-	custom_fp := path.Join(harvestConfPath, "conf/", "zapiperf/", "custom.yaml")
+	custom_fp := path.Join(harvestHomePath, "conf/", "zapiperf/", "custom.yaml")
 
 	if objects := custom.GetChildS("objects"); objects != nil {
 
