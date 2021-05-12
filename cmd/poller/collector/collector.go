@@ -379,7 +379,7 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 		if nd := me.Schedule.NextDue(); nd > 0 {
 			logger.Debug(me.Prefix, "sleeping %s until next poll", nd.String()) //DEBUG
 			me.Schedule.Sleep()
-		} else if nd.Milliseconds() > 50 { // skip wanrs for nanosecs
+		} else if nd.Milliseconds() > 50 { // avoid warning for nanosecs
 			logger.Warn(me.Prefix, "lagging behind schedule %s", (-nd).String())
 		}
 	}

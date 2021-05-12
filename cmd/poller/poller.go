@@ -717,7 +717,7 @@ func main() {
 			// if logger still abailable try to write there as well
 			// do this last, since might make us panic as again
 			logger.Fatal("(main) ", "%v", r)
-			logger.Fatal("(main) ", "terminating abnormally, tip: run in foreground with \"-l 0\" mode to debug")
+			logger.Fatal("(main) ", "terminating abnormally, tip: run in foreground mode (with \"-l 0\") to debug")
 
 			os.Exit(1)
 		}
