@@ -30,7 +30,7 @@ var usage = `
 NetApp Harvest 2.0 - application for monitoring storage systems
 
 Usage:
-    harvest <command> [arguments]
+    harvest <command> [options]
 
 The commands are:
 
@@ -57,7 +57,10 @@ func main() {
 		command = os.Args[1]
 	}
 
-	if command == "" || command == "help" || command == "-h" || command == "--help" {
+	if command == "" {
+		fmt.Println("Usage: harvest <command> [options]")
+		os.Exit(0)
+	} else if command == "help" || command == "-h" || command == "--help" {
 		fmt.Println(usage)
 		os.Exit(0)
 	}

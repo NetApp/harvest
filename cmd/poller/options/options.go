@@ -104,12 +104,13 @@ func Get() (*Options, string, error) {
 	parser.Int(&args.LogLevel, "loglevel", "l", "Logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)")
 	parser.Int(&args.Profiling, "profiling", "", "If profiling port > 0, enables profiling via locahost:PORT/debug/pprof/")
 	parser.String(&args.PromPort, "promPort", "", "Prometheus Port")
-	parser.String(&args.Config, "conf", "", "Custom config filepath (default: "+args.Config+")")
+	parser.String(&args.Config, "config", "", "Custom config filepath (default: "+args.Config+")")
 	parser.Slice(&args.Collectors, "collectors", "c", "Only start these collectors (overrides harvest.yml)")
 	parser.Slice(&args.Objects, "objects", "o", "Only start these objects (overrides collector config)")
 
 	parser.SetHelpFlag("help")
-	parser.ParseOrExit()
+	parser.ParseOrExit() // if we are daemon arguments should be always correct
+	parser.PrintValues()
 
 	if args.Poller == "" {
 		err = errors.New(errors.ERR_CONFIG, "Missing required argument: poller")
