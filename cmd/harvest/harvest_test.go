@@ -6,23 +6,24 @@
 package main
 
 import (
-	"os/exec"
 	"bytes"
+	"goharvest2/pkg/config"
+	"io/ioutil"
+	"os/exec"
 	"path"
 	"testing"
-	"goharvest2/pkg/config"
 )
 
 var home string = config.GetHarvestHome()
-
+var binsExist bool = binDirExists()
 var commands = [][]string{
-	[]string{path.Join(home, "bin/harvest")},
-	[]string{path.Join(home, "bin/harvest"), "manager"},
-	[]string{path.Join(home, "bin/harvest"), "config"},
-	[]string{path.Join(home, "bin/harvest"), "new"},
-	[]string{path.Join(home, "bin/poller")},
-	[]string{path.Join(home, "bin/zapi")},
-	[]string{path.Join(home, "bin/grafana")},
+	{path.Join(home, "bin/harvest")},
+	{path.Join(home, "bin/harvest"), "manager"},
+	{path.Join(home, "bin/harvest"), "config"},
+	{path.Join(home, "bin/harvest"), "new"},
+	{path.Join(home, "bin/poller")},
+	{path.Join(home, "bin/zapi")},
+	{path.Join(home, "bin/grafana")},
 }
 
 // all bins should print usage if no args are provided
@@ -31,6 +32,11 @@ func TestPrintUsage(t *testing.T) {
 		out []byte
 		err error
 	)
+
+	if !binsExist {
+		t.Log("no binaries compiled, can't run tests")
+		return
+	}
 
 	for _, c := range commands {
 
@@ -45,13 +51,17 @@ func TestPrintUsage(t *testing.T) {
 	}
 }
 
-
 // all bins should print help if first arg is "help"
 func TestPrintHelp(t *testing.T) {
 	var (
 		out []byte
 		err error
 	)
+
+	if !binsExist {
+		t.Log("no binaries compiled, can't run tests")
+		return
+	}
 	for _, c := range commands {
 
 		h := append(c, "help")
@@ -66,4 +76,11 @@ func TestPrintHelp(t *testing.T) {
 			t.Log("  -> OK: multi-line text printed")
 		}
 	}
+}
+
+func binDirExists() bool {
+	if fs, err := ioutil.ReadDir(path.Join(home, "bin/")); err == nil && len(fs) != 0 {
+		return true
+	}
+	return false
 }
