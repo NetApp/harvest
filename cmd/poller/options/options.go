@@ -27,7 +27,7 @@ type Options struct {
 	Debug  bool   // if true, Poller is started in debug mode
 	// this mostly means that no data will be exported
 	PromPort   string   // HTTP port that is assigned to Poller and can be used by the Prometheus exporter
-	Config     string   // absolute filepath of Harvest config (e.g. "harvest.yml")
+	Config     string   // filepath of Harvest config (defaults to "harvest.yml") can be relative or absolute path
 	HomePath   string   // path to harvest home (usually "/opt/harvest")
 	LogPath    string   // log files location (usually "/var/log/harvest")
 	PidPath    string   // pid files location (usually "/var/run/harvest")
