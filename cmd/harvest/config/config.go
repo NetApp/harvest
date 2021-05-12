@@ -35,8 +35,8 @@ Exporter:
   An exporter is an interface that forwards data to a database.
   The same exporter can be used by more than one pollers, i.e.
   you need to define only one exporter for each of your DBs.
-  This utility helps you to create exporters for three DBs:
-  Prometheus, InfluxDB and Graphite
+  This utility helps you to create exporters for:
+  Prometheus and InfluxDB
 `
 
 const (
