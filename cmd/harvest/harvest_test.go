@@ -14,7 +14,7 @@ import (
 	"testing"
 )
 
-var home string = config.GetHarvestHome()
+var home string = config.GetHarvestHomePath()
 var binsExist bool = binDirExists()
 var commands = [][]string{
 	{path.Join(home, "bin/harvest")},
