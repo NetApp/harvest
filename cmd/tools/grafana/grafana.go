@@ -46,6 +46,7 @@ type options struct {
 	variable   bool
 	client     *http.Client
 	headers    http.Header
+	config     string
 }
 
 func main() {
@@ -64,6 +65,7 @@ func main() {
 	}
 	// parse CLI args
 	opts = getOptions()
+	fmt.Printf("loaded harvest configuration from [%s] \n", opts.config)
 
 	if opts.command == "" {
 		fmt.Println("missing positional argument: command")
@@ -248,7 +250,16 @@ func getOptions() *options {
 		use_https bool
 	)
 
-	opts = &options{}
+	harvestConfigPath, err := config.GetDefaultHarvestConfigPath()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	// default options
+	opts = &options{
+		config: harvestConfigPath,
+	}
 
 	parser := argparse.New("Grafana tool", "harvest grafana", "Import/Export Grafana dashboards")
 
@@ -312,6 +323,13 @@ func getOptions() *options {
 		"Force to use HTTPS (default: false)",
 	)
 
+	parser.String(
+		&opts.config,
+		"config",
+		"c",
+		"Custom config filepath (default: "+opts.config+")",
+	)
+
 	parser.SetHelpFlag("help")
 
 	parser.ParseOrExit()
@@ -345,7 +363,7 @@ func checkToken(opts *options, ignoreConfig bool) error {
 		err                        error
 	)
 
-	config_path, _ = config.GetDefaultHarvestConfigPath()
+	config_path = opts.config
 
 	if params, err = config.LoadConfig(config_path); err != nil {
 		return err
@@ -391,7 +409,7 @@ func checkToken(opts *options, ignoreConfig bool) error {
 	// ask user to safe API key
 	if opts.token != tools.GetChildContentS("grafana_api_token") {
 
-		fmt.Printf("safe API key for later use? [Y/n]: ")
+		fmt.Printf("safe API key for later use? [y/n]: ")
 		fmt.Scanf("%s\n", &answer)
 
 		if answer == "y" || answer == "yes" || answer == "" {
