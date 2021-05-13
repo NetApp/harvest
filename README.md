@@ -105,13 +105,15 @@ $ bin/harvest start jamaica grenada
 
 ## 3. Import Grafana dashboards
 
-The Grafana dashboards are located in the [grafana/](grafana/) directory. You can manually import the dashboards or use the `harvest grafana` command. See [documentation of the utilty](cmd/tools/grafana/README.md).
+The Grafana dashboards are located in the `$HARVEST_HOME/grafana` directory. You can manually import the dashboards or use the `harvest grafana` command. See [documentation of the utilty](cmd/tools/grafana/README.md).
+
+Note: the current release has only dashboards that use Prometheus as a datasource. If you use the InfluxDB exporter, you will need to create your own dashboards.
 
 ## 4. Verify the metrics
 
 If you use a Prometheus Exporter, open a browser and navigate to [http://0.0.0.0:12990/](http://0.0.0.0:12990/) (replace `12990` with the port number of your poller). This is the Harvest created HTTP end-point for your Prometheus exporter. This page provides a real-time generated list of running collectors and names of exported metrics. 
 
-The metric data that's exposed for Prometheus to scrap is available at [http://0.0.0.0:12990/metrics/](http://0.0.0.0:12990/metrics/). For more help on how to configure Prometheus DB, see the [Prometheus](#prometheus-exporter) section.
+The metric data that's exposed for Prometheus to scrap is available at [http://0.0.0.0:12990/metrics/](http://0.0.0.0:12990/metrics/). For more help on how to configure Prometheus DB, see the [Prometheus exporter](cmd/exporters/prometheus/README.md) documentation.
 
 If you can't access the URL, check the logs of your pollers. These are located in `/var/log/harvest/`.
 

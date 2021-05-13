@@ -6,7 +6,7 @@
 
 The Prometheus Exporter will format metrics into the Prometheus [line protocol](https://prometheus.io/docs/instrumenting/exposition_formats/) (a.k.a. *open metric format*) and expose it on an HTTP port (`http://<ADDR>:<PORT>/metrics`). Additionally, it serves a basic overview of available metrics and collectors on its root address (`http://<ADDR>:<PORT>`).
 
-Don't forget to [update your Prometheus configuration](#configure-prometheus-to-scrape-from-harvest) and add a new target for each of the ports defined in Harvest configuration.
+Don't forget to [update your Prometheus configuration](#configure-prometheus-to-scrape-from-harvest) and add a new target for each of the ports defined in your Harvest configuration.
 
 ## Design
 

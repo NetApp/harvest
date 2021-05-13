@@ -104,7 +104,7 @@ security login create -user-or-group-name harvest2 -application ontapi \
 
 #### Using Certificate Authentication
 
-CD to the Harvest home directory:
+Change directory to your Harvest home directory (replace `/opt/harvest/` if this is not the default):
 
 ```bash
 $ cd /opt/harvest/
