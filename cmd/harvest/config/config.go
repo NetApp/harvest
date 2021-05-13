@@ -1,13 +1,13 @@
 /*
- * Copyright NetApp Inc, 2021 All rights reserved
- */
+Copyright NetApp Inc, 2021 All rights reserved
+*/
 package config
 
 import (
 	"fmt"
+	"github.com/spf13/cobra"
 	"goharvest2/pkg/api/ontapi/zapi"
-	"goharvest2/pkg/argparse"
-	"goharvest2/pkg/config"
+	"goharvest2/pkg/conf"
 	"goharvest2/pkg/dialog"
 	"goharvest2/pkg/tree"
 	"goharvest2/pkg/tree/node"
@@ -18,32 +18,11 @@ import (
 	"strconv"
 )
 
-var usage = `
-Harvest 2.0 - Config utility
-
-Configure a new poller or exporter
-
-Usage: harvest config ["poller" | "exporter"]
-
-Poller:
-  A poller is an Harvest instance for monitoring one single
-  storage system. This utility helps you to create a poller 
-  for a NetApp System (Cdot or 7Mode). For a custom poller,
-  just edit your config.yaml manually.
-
-Exporter:
-  An exporter is an interface that forwards data to a database.
-  The same exporter can be used by more than one pollers, i.e.
-  you need to define only one exporter for each of your DBs.
-  This utility helps you to create exporters for:
-  Prometheus and InfluxDB
-`
-
 const (
 	// if we create user/role on ONTAP use these names
 	harvestUserName = "harvest2-user"
 	harvestRoleName = "harvest2-role"
-	// if we add Promtheus port to config start from this
+	// PrometheusPortStart use this port if included
 	PrometheusPortStart = 7202
 )
 
@@ -59,35 +38,81 @@ func exitError(msg string, err error) {
 	os.Exit(1)
 }
 
-func Run() {
+const (
+	pollerUsage = `
+    A pollers monitors a single storage system. This utility creates a 
+    poller for ONTAP clusters (CDOT or 7Mode). For a custom poller, edit your 
+    config.yaml manually.`
 
+	exporterUsage = `
+    An exporter forwards data to a database. The same exporter 
+    can be used by more than one pollers, i.e. you need to define
+    only one exporter for each of your DBs. This utility creates
+    exporters for: Prometheus and InfluxDB.`
+
+	welcome  = "welcome"
+	exporter = "exporter"
+	poller   = "poller"
+)
+
+var ConfigCmd = &cobra.Command{
+	Use:    "config",
+	Short:  "run the config utility",
+	Long:   "Harvest 2.0 - Config utility",
+	Hidden: true,
+}
+
+var exportCmd = &cobra.Command{
+	Use:   exporter,
+	Short: "create a new exporter " + exporterUsage,
+	Long:  exporterUsage,
+	Args:  cobra.OnlyValidArgs,
+	Run: func(cmd *cobra.Command, args []string) {
+		Run(exporter)
+	},
+}
+
+var pollerCmd = &cobra.Command{
+	Use:   poller,
+	Short: "create a new poller " + pollerUsage,
+	Long:  pollerUsage,
+	Args:  cobra.OnlyValidArgs,
+	Run: func(cmd *cobra.Command, args []string) {
+		Run(poller)
+	},
+}
+
+var welcomeCmd = &cobra.Command{
+	Use:    welcome,
+	Short:  "run welcome helper",
+	Hidden: true,
+	Run: func(cmd *cobra.Command, args []string) {
+		Run(welcome)
+	},
+}
+
+func init() {
+	ConfigCmd.AddCommand(pollerCmd, exportCmd, welcomeCmd)
+}
+
+func Run(item string) {
 	var err error
-	harvestConfigPath, err = config.GetDefaultHarvestConfigPath()
+	harvestConfigPath, err = conf.GetDefaultHarvestConfigPath()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	harvestHomePath = config.GetHarvestHomePath()
+	harvestHomePath = conf.GetHarvestHomePath()
 
-	var item string
-	var conf, pollers, exporters *node.Node
-
-	parser := argparse.New("Config utility", "harvest config", "configure pollers")
-	parser.PosString(&item, "item", "item to configure", []string{"poller", "exporter", "welcome", "help"})
-	parser.String(&harvestConfigPath, "config", "c", "custom config filepath (default: "+harvestConfigPath+")")
-	parser.SetHelp(usage)
-	parser.SetHelpFlag("help")
-	parser.SetOffset(2)
-
-	parser.ParseOrExit()
+	var confNode, pollers, exporters *node.Node
 
 	if _dialog = dialog.New(); !_dialog.Enabled() {
 		fmt.Println("This program requires [dialog] or [whiptail].")
 		os.Exit(1)
 	}
 
-	if item == "welcome" {
+	if item == welcome {
 
 		_dialog.SetTitle("harvest 2.0 - welcome")
 		_dialog.Message("Your installation is complete. Welcome to Harvest 2.0!")
@@ -107,22 +132,22 @@ func Run() {
 		os.Exit(0)
 	}
 
-	if conf, err = config.LoadConfig(harvestConfigPath); err != nil {
-		conf = node.NewS("")
+	if confNode, err = conf.LoadConfig(harvestConfigPath); err != nil {
+		confNode = node.NewS("")
 	}
 
-	if pollers = conf.GetChildS("Pollers"); pollers == nil {
-		pollers = conf.NewChildS("Pollers", "")
+	if pollers = confNode.GetChildS("Pollers"); pollers == nil {
+		pollers = confNode.NewChildS("Pollers", "")
 	}
 
-	if exporters = conf.GetChildS("Exporters"); exporters == nil {
-		exporters = conf.NewChildS("Exporters", "")
+	if exporters = confNode.GetChildS("Exporters"); exporters == nil {
+		exporters = confNode.NewChildS("Exporters", "")
 	}
 
 	for {
 
 		if item == "" {
-			item, err = _dialog.Menu("Add new:", "poller", "exporter", "save and exit")
+			item, err = _dialog.Menu("Add new:", poller, exporter, "save and exit")
 			if err != nil {
 				// error means user clicked on Cancel
 				item = "exit"
@@ -130,7 +155,7 @@ func Run() {
 			}
 		}
 
-		if item == "poller" {
+		if item == poller {
 			if newPoller := addPoller(); newPoller != nil {
 
 				if len(exporters.GetChildren()) == 0 {
@@ -192,7 +217,7 @@ func Run() {
 			}
 		}
 
-		if item == "exporter" {
+		if item == exporter {
 			if newExporter := addExporter(); newExporter != nil {
 				if exporters.GetChildS(newExporter.GetNameS()) == nil {
 					exporters.AddChild(newExporter)
@@ -226,7 +251,7 @@ func Run() {
 			}
 		}
 
-		if err = tree.Export(conf, "yaml", fp); err != nil {
+		if err = tree.Export(confNode, "yaml", fp); err != nil {
 			exitError("export yaml", err)
 		}
 
@@ -427,7 +452,7 @@ func addExporter() *node.Node {
 	}
 	exporter.SetNameS(name)
 
-	if _dialog.YesNo("Make HTTP serve publicly on your network?\n(Choose no to serve it only on localhst)") {
+	if _dialog.YesNo("Make HTTP serve publicly on your network?\n(Choose no to serve it only on localhost)") {
 		exporter.NewChildS("addr", "0.0.0.0")
 	} else {
 		exporter.NewChildS("addr", "localhost")

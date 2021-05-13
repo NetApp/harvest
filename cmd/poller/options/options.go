@@ -1,22 +1,20 @@
 /*
- * Copyright NetApp Inc, 2021 All rights reserved
+   Copyright NetApp Inc, 2021 All rights reserved
 
    Package options provides Poller start-up options. These are fetched from CLI arguments,
    default values and/or environment variables. Some of the options are left blank and will
    be set by the Poller.
 
-   Options is declared in a seperate file to make it possible for collector/exporters
+   Options is declared in a separate file to make it possible for collector/exporters
    to access it.
 
 */
+
 package options
 
 import (
 	"fmt"
-	"goharvest2/cmd/harvest/version"
-	"goharvest2/pkg/argparse"
-	"goharvest2/pkg/config"
-	"goharvest2/pkg/errors"
+	"goharvest2/pkg/conf"
 	"os"
 	"strings"
 )
@@ -63,26 +61,13 @@ func (o *Options) Print() {
 	fmt.Println(o.String())
 }
 
-// Get retrieves options from CLI flags, env variables and defaults
-func Get() (*Options, string, error) {
-	var args Options
-	var err error
-	args = Options{}
-
-	// set defaults
-	args.Daemon = false
-	args.Debug = false
-	args.LogLevel = 2
-	args.Version = version.VERSION
+func SetPathsAndHostname(args *Options) {
 	if hostname, err := os.Hostname(); err == nil {
 		args.Hostname = hostname
 	}
 
-	args.HomePath = config.GetHarvestHomePath()
-
-	if args.Config, err = config.GetDefaultHarvestConfigPath(); err != nil {
-		return &args, args.Poller, err
-	}
+	args.HomePath = conf.GetHarvestHomePath()
+	args.Config, _ = conf.GetDefaultHarvestConfigPath()
 
 	if args.LogPath = os.Getenv("HARVEST_LOGS"); args.LogPath == "" {
 		args.LogPath = "/var/log/harvest/"
@@ -90,27 +75,4 @@ func Get() (*Options, string, error) {
 	if args.PidPath = os.Getenv("HARVEST_PIDS"); args.PidPath == "" {
 		args.PidPath = "/var/run/harvest/"
 	}
-
-	// parse from command line
-	parser := argparse.New("Harvest Poller", "poller", "Runs collectors and exporters for a target system")
-	parser.String(&args.Poller, "poller", "p", "Poller name as defined in config")
-	parser.Bool(&args.Debug, "debug", "d", "Debug mode, no data will be exported")
-	parser.Bool(&args.Daemon, "daemon", "", "Start as daemon")
-	parser.Int(&args.LogLevel, "loglevel", "l", "Logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)")
-	parser.Int(&args.Profiling, "profiling", "", "If profiling port > 0, enables profiling via locahost:PORT/debug/pprof/")
-	parser.String(&args.PromPort, "promPort", "", "Prometheus Port")
-	parser.String(&args.Config, "config", "", "Custom config filepath (default: "+args.Config+")")
-	parser.Slice(&args.Collectors, "collectors", "c", "Only start these collectors (overrides harvest.yml)")
-	parser.Slice(&args.Objects, "objects", "o", "Only start these objects (overrides collector config)")
-
-	parser.SetHelpFlag("help")
-	parser.ParseOrExit() // if we are daemon arguments should be always correct
-	//parser.PrintValues() // uncomment for debugging
-
-	if args.Poller == "" {
-		err = errors.New(errors.ERR_CONFIG, "Missing required argument: poller")
-		return &args, args.Poller, err
-	}
-
-	return &args, args.Poller, err
 }

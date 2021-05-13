@@ -1,13 +1,14 @@
 /*
- * Copyright NetApp Inc, 2021 All rights reserved
- */
-package main
+	Copyright NetApp Inc, 2021 All rights reserved
+	Package zapi
+*/
+package zapi
 
 import (
 	"fmt"
 	"goharvest2/cmd/poller/collector"
 	client "goharvest2/pkg/api/ontapi/zapi"
-	"goharvest2/pkg/config"
+	"goharvest2/pkg/conf"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/tree/node"
 	"goharvest2/pkg/tree/yaml"
@@ -92,7 +93,7 @@ func exportCounters(item *node.Node, c *client.Client, args *Args) error {
 	*/
 	fp := make([]string, 0)
 
-	harvestHomePath = config.GetHarvestHomePath()
+	harvestHomePath = conf.GetHarvestHomePath()
 	fp = append(fp, harvestHomePath)
 	fp = append(fp, "conf/")
 	fp = append(fp, "zapiperf/")
