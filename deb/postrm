@@ -8,9 +8,22 @@ if [[ "$1" == "purge" || "$1" == "remove" ]]; then
     if [ "$1" == "purge" ]; then
         rm -r /var/log/harvest && echo " --> delete log directory"
     fi
-    rm -r /var/run/harvest && echo " --> delete pid directory"
-    unlink /usr/bin/harvest && echo " --> delete link"
-    userdel harvest && echo " --> delete harvest user"
-    groupdel harvest && echo " --> delete harvest group"
+    if systemctl list-units --full -all | grep -Fq 'harvest.service'; then
+      echo " --> removing systemctl harvest files "
+      systemctl disable harvest.service
+      rm /etc/systemd/system/harvest.service
+      systemctl daemon-reload
+      systemctl reset-failed
+    fi
+    rm -rf /var/run/harvest && echo " --> delete pid directory"
+    if [  -e /usr/bin/harvest ]; then
+      unlink /usr/bin/harvest && echo " --> delete link"
+    fi
+    if id harvest &>/dev/null; then
+      userdel harvest && echo " --> delete harvest user"
+    fi
+    if [ $(getent group harvest) ]; then
+      groupdel harvest && echo " --> delete harvest group"
+    fi
     echo " --> cleanup & uninstall complete"
 fi

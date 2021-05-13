@@ -27,7 +27,7 @@ Description: NetApp Harvest 2 - Monitoring of Storage Systems
 # stop harvest before upgrade
 if [ $1 = 2 ]; then
     if systemctl list-units --full -all | grep -Fq 'harvest.service'; then
-      sudo systemctl stop harvest && echo "stopped harvest ..."
+      systemctl stop harvest && echo "stopped harvest ..."
     fi
 fi
 
@@ -43,7 +43,7 @@ mkdir -p $RPM_BUILD_ROOT/var/run/harvest
 
 %post
 if [ ! -e $RPM_BUILD_ROOT/opt/harvest/harvest.yml ]; then
-    mv $RPM_BUILD_ROOT/opt/harvest/harvest.example.yml $RPM_BUILD_ROOT/opt/harvest/harvest.yml
+    cp $RPM_BUILD_ROOT/opt/harvest/harvest.example.yml $RPM_BUILD_ROOT/opt/harvest/harvest.yml
     echo "  --> use default config file [/opt/harvest/harvest.yml]"
 fi
 getent group harvest > /dev/null 2>&1 || groupadd -r harvest && echo "  --> create harvest group"
@@ -64,9 +64,10 @@ if [ ! -e /usr/bin/harvest ]; then
     ln -s /opt/harvest/bin/harvest /usr/bin/harvest
     echo "  --> create link"
 fi
-sudo systemctl daemon-reload
-sudo systemctl start harvest.service
-sudo systemctl enable harvest.service
+systemctl daemon-reload
+systemctl start harvest.service
+systemctl enable harvest.service
+echo "  --> harvest service started through systemctl"
 if [ $1 = 1 ]; then
     echo " --> install complete!"
 else
@@ -77,7 +78,7 @@ fi
 # stop harvest before uninstall
 if [ $1 = 0 ]; then
     echo "stopping harvest ..."
-    sudo systemctl stop harvest
+    systemctl stop harvest
 fi
 
 %postun
