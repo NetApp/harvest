@@ -1,5 +1,6 @@
 
 Tools:
+  #grafana_api_token: 'aaa-bbb-ccc-ddd'
 
 Exporters:
   prometheus:
