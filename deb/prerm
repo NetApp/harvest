@@ -5,4 +5,4 @@
 #
 
 echo " --> stop harvest for $1"
-sudo systemctl stop harvest
+systemctl stop harvest

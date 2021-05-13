@@ -5,8 +5,8 @@
 
 echo " --> preparing $1"
 if [[ "$1" == "install" || "$1" == "upgrade" ]]; then
-    if sudo systemctl list-units --full -all | grep -Fq 'harvest.service'; then
-      sudo systemctl stop harvest && echo "stopped harvest ..."
+    if systemctl list-units --full -all | grep -Fq 'harvest.service'; then
+      systemctl stop harvest && echo "stopped harvest ..."
     fi
     getent group harvest > /dev/null 2>&1 || addgroup -q --system harvest && echo " --> group created"
     getent passwd harvest > /dev/null 2>&1 || adduser -q --system --no-create-home \

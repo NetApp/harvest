@@ -12,15 +12,16 @@ chown -R harvest:harvest /var/log/harvest
 chown -R harvest:harvest /var/run/harvest
 
 echo "  --> copying service"
-sudo cp /opt/harvest/service/harvest.service /etc/systemd/system/
-sudo chmod 664 /etc/systemd/system/harvest.service
+cp /opt/harvest/service/harvest.service /etc/systemd/system/
+chmod 664 /etc/systemd/system/harvest.service
 if [ ! -e /opt/harvest/harvest.yml ]; then
-    mv /opt/harvest/harvest.example.yml /opt/harvest/harvest.yml
+    cp /opt/harvest/harvest.example.yml /opt/harvest/harvest.yml
     echo "  --> use default config file [/opt/harvest/harvest.yml]"
 fi
 if [ ! -e /usr/bin/harvest ]; then
     ln -s /opt/harvest/bin/harvest /usr/bin/harvest && echo " --> link created"
 fi
-sudo systemctl daemon-reload
-sudo systemctl start harvest.service
-sudo systemctl enable harvest.service
+systemctl daemon-reload
+systemctl start harvest.service
+systemctl enable harvest.service
+echo "  --> harvest service started through systemctl"
