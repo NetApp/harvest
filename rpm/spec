@@ -26,7 +26,7 @@ Description: NetApp Harvest 2 - Monitoring of Storage Systems
 %pre
 # stop harvest before upgrade
 if [ $1 = 2 ]; then
-    if systemctl list-units --full -all | grep -Fq 'harvest.service'; then
+    if sudo systemctl list-units --full -all | grep -Fq 'harvest.service'; then
       sudo systemctl stop harvest && echo "stopped harvest ..."
     fi
 fi
@@ -53,8 +53,8 @@ chown -R harvest:harvest $RPM_BUILD_ROOT/opt/harvest/
 chown -R harvest:harvest $RPM_BUILD_ROOT/var/log/harvest/
 chown -R harvest:harvest $RPM_BUILD_ROOT/var/run/harvest/
 echo "  --> copying service"
-cp $RPM_BUILD_ROOT/opt/harvest/service/harvest.service /etc/systemd/system/
-chmod 664 /etc/systemd/system/harvest.service
+sudo cp $RPM_BUILD_ROOT/opt/harvest/service/harvest.service /etc/systemd/system/
+sudo chmod 664 /etc/systemd/system/harvest.service
 
 # remove link from previous version, use /usr/bin to conform to linux fhs
 if [ -e /usr/local/bin/harvest ]; then
@@ -87,10 +87,10 @@ if [ $1 = 0 ]; then
     unlink /usr/bin/harvest && echo "  --> delete link"
     rm -rf /var/run/harvest && echo "  --> delete pid folder"
     echo " --> removing systemctl harvest files "
-    systemctl disable harvest.service
-    rm /etc/systemd/system/harvest.service
-    systemctl daemon-reload
-    systemctl reset-failed
+    sudo systemctl disable harvest.service
+    sudo rm /etc/systemd/system/harvest.service
+    sudo systemctl daemon-reload
+    sudo systemctl reset-failed
     # keep logs at var/log/harvest
     echo " --> kept log folder"
     echo " --> uninstall complete"
