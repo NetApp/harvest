@@ -4,7 +4,6 @@
 package zapi
 
 import (
-	"path"
 	"strconv"
 	"strings"
 	"time"
@@ -69,21 +68,6 @@ func (me *Zapi) Init() error {
 func (me *Zapi) InitVars() error {
 
 	var err error
-
-	// @TODO check if cert/key files exist
-	if me.Params.GetChildContentS("auth_style") == "certificate_auth" {
-		if me.Params.GetChildS("ssl_cert") == nil {
-			certPath := path.Join(me.Options.HomePath, "cert", me.Options.Poller+".pem")
-			me.Params.NewChildS("ssl_cert", certPath)
-			logger.Debug(me.Prefix, "added ssl_cert path [%s]", certPath)
-		}
-
-		if me.Params.GetChildS("ssl_key") == nil {
-			keyPath := path.Join(me.Options.HomePath, "cert", me.Options.Poller+".key")
-			me.Params.NewChildS("ssl_key", keyPath)
-			logger.Debug(me.Prefix, "added ssl_key path [%s]", keyPath)
-		}
-	}
 
 	if me.Client, err = client.New(me.Params); err != nil { // convert to connection error, so poller aborts
 		return errors.New(errors.ERR_CONNECTION, err.Error())

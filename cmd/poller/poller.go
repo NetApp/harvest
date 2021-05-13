@@ -186,6 +186,27 @@ func (me *Poller) Init() error {
 		me.target = "localhost"
 	}
 
+	// check optional parameter auth_style
+	// if certificates are missing use default paths
+	if me.params.GetChildContentS("auth_style") == "certificate_auth" {
+		filenames := [2]string{"ssl_cert", "ssl_key"}
+		extensions := [2]string{".pem", ".key"}
+		fp := ""
+		for i := range filenames {
+			if fp = me.params.GetChildContentS(filenames[i]); fp == "" {
+				// use default paths
+				// example: /opt/harvest/cert/hostname.key, /opt/harvest/cert/hostname.pem
+				fp = path.Join(me.options.HomePath, "cert/", me.options.Hostname+extensions[i])
+				me.params.SetChildContentS(filenames[i], fp)
+				logger.Debug(me.prefix, "using default [%s] path: [%s]", filenames[i], fp)
+			}
+			if _, err = os.Stat(fp); err != nil {
+				logger.Error(me.prefix, "%s %v", filenames[i], err)
+				return errors.New(errors.MISSING_PARAM, filenames[i]+": "+err.Error())
+			}
+		}
+	}
+
 	// initialize our metadata, the metadata will host status of our
 	// collectors and exporters, as well as ping stats to target host
 	me.load_metadata()

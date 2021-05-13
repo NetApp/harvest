@@ -105,7 +105,7 @@ func Get() (*Options, string, error) {
 
 	parser.SetHelpFlag("help")
 	parser.ParseOrExit() // if we are daemon arguments should be always correct
-	parser.PrintValues()
+	//parser.PrintValues() // uncomment for debugging
 
 	if args.Poller == "" {
 		err = errors.New(errors.ERR_CONFIG, "Missing required argument: poller")
