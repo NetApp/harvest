@@ -65,7 +65,7 @@ Now we need to create a user. Click on *Users* in the left menu bar and *Add*. C
 
 <center><img src="examples/ontap_user_smc_3.png" width="75%"></center>
 
-Now add the username and password to `config.yaml` and start Harvest.
+Now add the username and password to `harvest.yml` and start Harvest.
 
 #### ONTAP CLI
 
@@ -104,20 +104,20 @@ security login create -user-or-group-name harvest2 -application ontapi \
 
 #### Using Certificate Authentication
 
-CD to the Harvest package directory:
+CD to the Harvest home directory:
 
 ```bash
-$ cd /opt/netapp-harvest/
+$ cd /opt/harvest/
 ```
 
-Generate an SSL cert and key pair with the following command. Note that it's preferred to generate these files with the name of your poller. The command bellow assumes `jamaica` as out poller/cluster name and `harvest2` as the user we created in the previous step:
+Generate an SSL cert and key pair with the following command. Note that it's preferred to generate these files using the hostname of the local machine. The command bellow assumes `debian8` as our hostname name and `harvest2` as the user we created in the previous step:
 
 ```bash
-openssl req -x509 -nodes -days 1095 -newkey rsa:2048 -keyout cert/jamaica.key \
- -out cert/jamaica.pem  -subj "/CN=harvest2"
+openssl req -x509 -nodes -days 1095 -newkey rsa:2048 -keyout cert/debian8.key \
+ -out cert/debian8.pem  -subj "/CN=harvest2"
 ```
 
-Next, open the public key (`jamaica.pem` in our example) and copy all of its content. Login into your ONTAP CLI and run this command by replacing **CLUSTER** with the name of your cluster. 
+Next, open the public key (`debian8.pem` in our example) and copy all of its content. Login into your ONTAP CLI and run this command by replacing **CLUSTER** with the name of your cluster. 
 
 ```bash
 security certificate install -type client-ca -vserver CLUSTER
