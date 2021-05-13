@@ -37,3 +37,5 @@ Exporters:
 	allow_addrs_regex:
   	  - `^192.168.0.\d+$`
 ```
+
+Notice: InfluxDB stores a token in `~/.influxdbv2/configs`, but you can also retrieve it from the UI (usually serving on `localhost:8086`): click on "Data" on the left task bar, then on "Tokens".

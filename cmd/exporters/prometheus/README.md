@@ -6,6 +6,7 @@
 
 The Prometheus Exporter will format metrics into the Prometheus [line protocol](https://prometheus.io/docs/instrumenting/exposition_formats/) (a.k.a. *open metric format*) and expose it on an HTTP port (`http://<ADDR>:<PORT>/metrics`). Additionally, it serves a basic overview of available metrics and collectors on its root address (`http://<ADDR>:<PORT>`).
 
+Don't forget to [update your Prometheus configuration](#configure-prometheus-to-scrape-from-harvest) and add a new target for each of the ports defined in Harvest configuration.
 
 ## Design
 
@@ -56,3 +57,25 @@ Exporters:
   	  - `^192.168.0.\d+$`
 ```
 will only allow access from the IP4 range `192.168.0.0`-`192.168.0.255`.
+
+## Configure Prometheus to scrape from Harvest
+
+As an example, if we defined four prometheus exporters at ports: 12990, 12991, 14567, and 14568 you need to add four sections to your `prometheus.yml`.
+
+```bash
+$ vim /etc/prometheus/prometheus.yml
+```
+
+Scroll down to near the end of file and add the following lines:
+
+```yaml
+  - job_name: 'harvest'
+    scrape_interval:     60s 
+    static_configs:
+      - targets: 
+        - 'localhost:12990'
+        - 'localhost:12991'
+        - 'localhost:14567'
+        - 'localhost:14568'
+```
+**NOTE** If Prometheus is not on the same machine as Harvest, then replace `localhost` with the IP address of your Harvest machine. Also note the scrape interval above is set to 60s. That matches the polling frequency of the default Harvest collectors. If you change the polling frequency of a Harvest collector to a lower value, you should also change the scrape interval.
