@@ -27,7 +27,7 @@ Harvest is compatible with:
 
 # Installation / Upgrade
 
-We provide pre-compiled binaries for Linux, RPMs and Debs.
+We provide pre-compiled binaries for Linux, RPMs, and Debs.
 
 ## Pre-compiled Binaries
 Download the latest version of [Harvest](https://github.com/NetApp/harvest/releases/latest) from the releases tab and extract it.
@@ -57,11 +57,11 @@ sudo apt install harvest.deb
 
 ## Docker
 
-WIP. Coming soon
+Work in progress. Coming soon
 
 ## Building from source
 
-To build Harvest from source code, first make sure you have a working Go environment with [version 1.15 or greater installed](https://golang.org/doc/install). You'll also need an Internet connection to install go dependencies. If you need to build from an air-gapped machine, use `go mod vendor` from an Internet connected machine first and then copy the `vendor` directory to the air-gapped machine.
+To build Harvest from source code, first make sure you have a working Go environment with [version 1.15 or greater installed](https://golang.org/doc/install). You'll also need an Internet connection to install go dependencies. If you need to build from an air-gapped machine, use `go mod vendor` from an Internet connected machine first, and then copy the `vendor` directory to the air-gapped machine.
 
 Clone the repo and build everything.
 
@@ -89,7 +89,7 @@ The next step is to add pollers for your ONTAP clusters in the [Pollers](#poller
 
 ## 2. Start Harvest
 
-Start *all* Harvest pollers as daemons:
+Start all Harvest pollers as daemons:
 
 ```bash
 $ bin/harvest start
@@ -101,13 +101,13 @@ Or start a specific poller(s):
 $ bin/harvest start jamaica grenada
 ```
 
-(replace `jamaica` and `grenada` with the poller names that you defined in `harvest.yml`). The logs of each poller can be found in `/var/log/harvest/`.
+Replace `jamaica` and `grenada` with the poller names you defined in `harvest.yml`. The logs of each poller can be found in `/var/log/harvest/`.
 
 ## 3. Import Grafana dashboards
 
-The Grafana dashboards are located in the `$HARVEST_HOME/grafana` directory. You can manually import the dashboards or use the `harvest grafana` command. See [documentation of the utilty](cmd/tools/grafana/README.md).
+The Grafana dashboards are located in the `$HARVEST_HOME/grafana` directory. You can manually import the dashboards or use the `harvest grafana` command ([more documentation](cmd/tools/grafana/README.md)).
 
-Note: the current release has only dashboards that use Prometheus as a datasource. If you use the InfluxDB exporter, you will need to create your own dashboards.
+Note: the current dashboards specify Prometheus as the datasource. If you use the InfluxDB exporter, you will need to create your own dashboards.
 
 ## 4. Verify the metrics
 
@@ -133,14 +133,14 @@ All pollers are defined in `harvest.yml`, the main configuration file of Harvest
 | `exporters`            | **required** | list of exporter names from the `Exporters` section. Note: this should be the name of the exporter (e.g. `prometheus1`), not the value of the `exporter` key (e.g. `Prometheus`)   |                   |
 | `auth_style`           | required by Zapi* collectors |  either `basic_auth` or `certificate_auth`  | `basic_auth` |
 | `username`, `password` | required if `auth_style` is `basic_auth` |  |              |
-| `ssl_cert`, `ssl_key`          | optional if `auth_style` is `certificate_auth` | Absolute paths to SSL (client) certificate and key used to authenticate with the target system.<br /><br />If not provided, the poller will look for `<hostname>.key` and `<hostname>.pem` in `/opt/harvest/cert/` (or custom home directory).<br/><br/>To create certificates for ONTAP systems, see the [Zapi documentation](cmd/collectors/zapi/README.md#authentication)                        |              |
+| `ssl_cert`, `ssl_key`  | optional if `auth_style` is `certificate_auth` | Absolute paths to SSL (client) certificate and key used to authenticate with the target system.<br /><br />If not provided, the poller will look for `<hostname>.key` and `<hostname>.pem` in `$HARVEST_HOME/cert/`.<br/><br/>To create certificates for ONTAP systems, see the [Zapi documentation](cmd/collectors/zapi/README.md#authentication)                        |              |
 | `use_insecure_tls`     | optional, bool |  If true, disable TLS verification when connecting to ONTAP cluster  | false         |
 | `log_max_bytes`        |  | Maximum size of the log file before it will be rotated | `10000000` (10 mb) |
 | `log_max_files`        |  | Number of rotated log files to keep | `10` |
 | |  | | |
 
 ## Defaults
-This section is optional. If there are parameters identical for all your pollers (e.g. datacenter, authentication method, login preferences), they can be grouped under this section. The poller section will be checked first and then the defaults consulted.
+This section is optional. If there are parameters identical for all your pollers (e.g. datacenter, authentication method, login preferences), they can be grouped under this section. The poller section will be checked first and if the values aren't found there, the defaults will be consulted.
 
 ## Exporters
 
@@ -156,15 +156,11 @@ The following two parameters are required for all exporters:
 | Exporter name (header) | **required** | Name of the exporter instance, this is a user-defined value |              |
 | `exporter`    | **required** | Name of the exporter class (e.g. Prometheus, InfluxDB, Http) - these can be found under the `cmd/exporters/` directory           |              |
 
-Note: when we talk about *Prometheus Exporter*, *InfluxDB Exporter*, etc., we mean the Harvest modules that send the data to a database, NOT the names used to refer to the actual databases.
+Note: when we talk about the *Prometheus Exporter* or *InfluxDB Exporter*, we mean the Harvest modules that send the data to a database, NOT the names used to refer to the actual databases.
 
-### Prometheus Exporter
-***See: [exporter documentation](cmd/exporters/prometheus/README.md)***
+### [Prometheus Exporter](cmd/exporters/prometheus/README.md)
 
-
-### InfluxDB Exporter
-***See: [exporter documentation](cmd/exporters/influxdb/README.md)***
-
+### [InfluxDB Exporter](cmd/exporters/influxdb/README.md)
 
 ## Tools
 
@@ -180,13 +176,9 @@ Tools:
 
 Collectors are configured by their own configuration files, which are subdirectories in [conf/](conf/). Each collector can define its own set of parameters.
 
-### Zapi
-***See: [collector documentation](cmd/collectors/zapi/README.md)***
+### [Zapi](cmd/collectors/zapi/README.md)
 
+### [ZapiPerf](cmd/collectors/zapiperf/README.md)
 
-### ZapiPerf
-***See: [collector documentation](cmd/collectors/zapiperf/README.md)***
+### [Unix](cmd/collectors/unix/README.md)
 
-
-### Unix
-***See: [collector documentation](cmd/collectors/unix/README.md)***

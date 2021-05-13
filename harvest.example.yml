@@ -48,6 +48,6 @@ Pollers:
   #  auth_style: certificate_auth
   #  ssl_cert: /path/to/cert.pem
   #  ssl_key: /path/to/key.key
-  #  use_insecure_tls: false  # if harvest should be able to authneticate your server, set this true
+  #  use_insecure_tls: false  # if harvest should be able to authenticate your server, set this true
                               # otherwise set it to false (if cluster has no valid server certificates)
   #  # all the other parameters should be the same
