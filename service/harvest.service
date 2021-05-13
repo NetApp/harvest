@@ -6,7 +6,6 @@ After=network-online.target
 [Service]
 User=harvest
 Group=harvest
-Type=simple
 WorkingDirectory=/opt/harvest
 ExecStart=/usr/bin/harvest \
     start \
