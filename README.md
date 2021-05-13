@@ -85,7 +85,7 @@ Harvest's configuration information is defined in `harvest.yml`. There are a few
 
 To start collecting metrics, you need to define at least one `poller` and one `exporter` in your  configuration file. The default configuration comes with a pre-configured poller named `unix` which collects metrics from the local system. This is useful if you want to monitor resource usage by Harvest and serves as a good example. Feel free to delete it if you want.
 
-The next step is to add pollers for your ONTAP clusters in the [Pollers](#pollers) section of the configuration file. Refer to the [Harvest Configuration] Section(#harvest-configuration) for more details.
+The next step is to add pollers for your ONTAP clusters in the [Pollers](#pollers) section of the configuration file. Refer to the [Harvest Configuration](#harvest-configuration) Section for more details.
 
 ## 2. Start Harvest
 
@@ -111,7 +111,7 @@ The Grafana dashboards are located in the [grafana/](grafana/) directory. You ca
 
 If you use a Prometheus Exporter, open a browser and navigate to [http://0.0.0.0:12990/](http://0.0.0.0:12990/) (replace `12990` with the port number of your poller). This is the Harvest created HTTP end-point for your Prometheus exporter. This page provides a real-time generated list of running collectors and names of exported metrics. 
 
-The metric data that's exposed for Prometheus to scrap is available at [http://0.0.0.0:12990/metrics/](http://0.0.0.0:12990/metrics/). For more help on how to configure Prometheus DB, see the [Prometheus](#prometheus) section.
+The metric data that's exposed for Prometheus to scrap is available at [http://0.0.0.0:12990/metrics/](http://0.0.0.0:12990/metrics/). For more help on how to configure Prometheus DB, see the [Prometheus](#prometheus-exporter) section.
 
 If you can't access the URL, check the logs of your pollers. These are located in `/var/log/harvest/`.
 
