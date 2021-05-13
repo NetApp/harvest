@@ -489,15 +489,17 @@ func stopPoller(pollerName string) *pollerStatus {
 
 func startPoller(pollerName string, promPort string, opts *options) *pollerStatus {
 
-	argv := make([]string, 7)
+	argv := make([]string, 5)
 	argv[0] = path.Join(harvestHomePath, "bin", "poller")
 	argv[1] = "--poller"
 	argv[2] = pollerName
 	argv[3] = "--loglevel"
 	argv[4] = strconv.Itoa(opts.loglevel)
-	argv[5] = "--promPort"
-	argv[6] = promPort
 
+	if len(promPort) != 0 {
+		argv = append(argv, "--promPort")
+		argv = append(argv, promPort)
+	}
 	if opts.debug {
 		argv = append(argv, "--debug")
 	}
@@ -685,6 +687,7 @@ func getPollerPrometheusPort(p *node.Node, opts *options) string {
 	} else {
 		promPort, err = config.GetPrometheusExporterPorts(p, opts.config)
 		if err != nil {
+			fmt.Println(err)
 			promPort = "error"
 		}
 	}
