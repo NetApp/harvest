@@ -4,6 +4,7 @@
 package config
 
 import (
+	"fmt"
 	"goharvest2/pkg/constant"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/tree"
@@ -129,7 +130,12 @@ func GetPrometheusExporterPorts(p *node.Node, configFp string) (string, error) {
 			return "", err
 		}
 		for _, ec := range exportChildren {
-			exporterType := definedExporters.GetChildS(ec).GetChildContentS("exporter")
+			promNode := definedExporters.GetChildS(ec)
+			if promNode == nil {
+				fmt.Printf("poller [%s] specified exporter [%s] that does not exist\n", p.GetNameS(), ec)
+				continue
+			}
+			exporterType := promNode.GetChildContentS("exporter")
 			if exporterType == "Prometheus" {
 				currentPort := definedExporters.GetChildS(ec).GetChildContentS("port")
 				port = currentPort
