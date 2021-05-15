@@ -8,6 +8,9 @@ if [[ "$1" == "install" || "$1" == "upgrade" ]]; then
     if systemctl list-units --full -all | grep -Fq 'harvest.service'; then
       systemctl stop harvest && echo "stopped harvest ..."
     fi
+    if [  -e /usr/bin/harvest ]; then
+      unlink /usr/bin/harvest && echo " --> delete link"
+    fi
     getent group harvest > /dev/null 2>&1 || addgroup -q --system harvest && echo " --> group created"
     getent passwd harvest > /dev/null 2>&1 || adduser -q --system --no-create-home \
         --ingroup harvest --disabled-password --shell /bin/false harvest && echo " --> user created"

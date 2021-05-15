@@ -18,9 +18,6 @@ if [ ! -e /opt/harvest/harvest.yml ]; then
     cp /opt/harvest/harvest.example.yml /opt/harvest/harvest.yml
     echo "  --> use default config file [/opt/harvest/harvest.yml]"
 fi
-if [ ! -e /usr/bin/harvest ]; then
-    ln -s /opt/harvest/bin/harvest /usr/bin/harvest && echo " --> link created"
-fi
 systemctl daemon-reload
 systemctl start harvest.service
 systemctl enable harvest.service

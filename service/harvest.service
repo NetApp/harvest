@@ -7,8 +7,8 @@ After=network-online.target
 User=harvest
 Group=harvest
 WorkingDirectory=/opt/harvest
-ExecStart=/usr/bin/harvest \
-    start \
+ExecStart=/opt/harvest/bin/harvest \
+    restart \
     --config /opt/harvest/harvest.yml
 IgnoreSIGPIPE=no
 KillMode=process

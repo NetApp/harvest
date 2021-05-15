@@ -57,12 +57,8 @@ cp $RPM_BUILD_ROOT/opt/harvest/service/harvest.service /etc/systemd/system/
 chmod 664 /etc/systemd/system/harvest.service
 
 # remove link from previous version, use /usr/bin to conform to linux fhs
-if [ -e /usr/local/bin/harvest ]; then
-    unlink /usr/local/bin/harvest
-fi
-if [ ! -e /usr/bin/harvest ]; then
-    ln -s /opt/harvest/bin/harvest /usr/bin/harvest
-    echo "  --> create link"
+if [ -e /usr/bin/harvest ]; then
+    unlink /usr/bin/harvest
 fi
 systemctl daemon-reload
 systemctl start harvest.service
@@ -85,7 +81,9 @@ fi
 if [ $1 = 0 ]; then
     userdel harvest && echo "  --> delete harvest user"
     groupdel harvest && echo "  --> delete harvest group"
-    unlink /usr/bin/harvest && echo "  --> delete link"
+    if [ -e /usr/bin/harvest ]; then
+        unlink /usr/bin/harvest && echo "  --> delete link"
+    fi
     rm -rf /var/run/harvest && echo "  --> delete pid folder"
     echo " --> removing systemctl harvest files "
     systemctl disable harvest.service
