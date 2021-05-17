@@ -127,7 +127,7 @@ packages: precheck all
 HARVEST_RELEASE := harvest-${RELEASE}
 TMP := /tmp/${HARVEST_RELEASE}
 DIST := dist
-dist-tar:
+dist-tar: all
 	-rm -rf ${TMP}
 	-rm -rf ${DIST}
 	@mkdir ${TMP}

@@ -2,17 +2,23 @@ pipeline {
     agent any
 
     environment {
-        key = credentials('OAUTH_KEY')
+        key = credentials('HARVEST_ACCESS_TOKEN')
         harvestVersion = 2.0
         version =sh (returnStdout: true, script: 'echo $(date +"%Y%m%d%H%S")').trim()
         targetParentLocation = "/opt/home/nightly/"
     }
 
     stages {
+
+        stage('clean workspace') {
+            steps {
+                cleanWs()
+            }
+
+        }
         stage('Setup GO') {
             steps {
                 sh '''
-                rm -rf *
                 wget -O go.tar.gz "https://dl.google.com/go/$(curl https://golang.org/VERSION?m=text).linux-amd64.tar.gz"
                 rm -rf /usr/local/go && tar -C /usr/local -xzf go.tar.gz
                 '''
@@ -65,12 +71,10 @@ pipeline {
                export PATH=$PATH:/usr/local/go/bin
                targetLocation=$targetParentLocation$version
                rm -rf dist
-               make
                make dist-tar
                cp -RT ./dist/ $targetLocation
                 '''
             }
         }
-
     }
 }
