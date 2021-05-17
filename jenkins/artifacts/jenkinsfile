@@ -4,7 +4,7 @@ pipeline {
     environment {
         key = credentials('HARVEST_ACCESS_TOKEN')
         harvestVersion = 2.0
-        version =sh (returnStdout: true, script: 'echo $(date +"%Y%m%d%H%S")').trim()
+        version =sh (returnStdout: true, script: 'echo $(date +"%Y%m%d%H00")').trim()
         targetParentLocation = "/opt/home/nightly/"
     }
 
@@ -13,6 +13,7 @@ pipeline {
         stage('clean workspace') {
             steps {
                 cleanWs()
+                sh 'rm -rf $targetParentLocation$version'
             }
 
         }
@@ -50,16 +51,15 @@ pipeline {
             steps {
                sh '''
                cd harvest-private
-               gitCommit=$(git rev-parse --short HEAD)
                targetLocation=$targetParentLocation$version
                rm -rf ./dist
                export PATH=$PATH:/usr/local/go/bin
                rm -rf /root/rpmbuild/
                mkdir -p $targetLocation
-               ./package.sh deb x86_64 $harvestVersion $version$gitCommit
-               cp -RT ./dist/$harvestVersion-$version$gitCommit/ $targetLocation
-               ./package.sh rpm x86_64 $harvestVersion $version$gitCommit
-               cp -RT ./dist/$harvestVersion-$version$gitCommit/x86_64/  $targetLocation
+               ./package.sh deb x86_64 $harvestVersion $version
+               cp -RT ./dist/$harvestVersion-$version/ $targetLocation
+               ./package.sh rpm x86_64 $harvestVersion $version
+               cp -RT ./dist/$harvestVersion-$version/x86_64/  $targetLocation
                 '''
             }
         }
@@ -71,9 +71,19 @@ pipeline {
                export PATH=$PATH:/usr/local/go/bin
                targetLocation=$targetParentLocation$version
                rm -rf dist
+               make
                make dist-tar
                cp -RT ./dist/ $targetLocation
                 '''
+            }
+        }
+
+    }
+
+    post {
+        always {
+            dir("$targetParentLocation$version") {
+                archiveArtifacts artifacts: '**', fingerprint: true
             }
         }
     }
