@@ -71,6 +71,7 @@ pipeline {
                export PATH=$PATH:/usr/local/go/bin
                targetLocation=$targetParentLocation$version
                rm -rf dist
+               make
                make dist-tar
                cp -RT ./dist/ $targetLocation
                 '''
