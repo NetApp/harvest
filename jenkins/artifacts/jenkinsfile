@@ -1,0 +1,76 @@
+pipeline {
+    agent any
+
+    environment {
+        key = credentials('OAUTH_KEY')
+        harvestVersion = 2.0
+        version =sh (returnStdout: true, script: 'echo $(date +"%Y%m%d%H%S")').trim()
+        targetParentLocation = "/opt/home/nightly/"
+    }
+
+    stages {
+        stage('Setup GO') {
+            steps {
+                sh '''
+                rm -rf *
+                curl -o go.tar.gz https://dl.google.com/go/go1.16.4.linux-amd64.tar.gz
+                rm -rf /usr/local/go && tar -C /usr/local -xzf go.tar.gz
+                '''
+            }
+        }
+
+        stage('Download Prerequisites') {
+            steps {
+                sh '''
+               apt-get update
+               apt-get install -y rpm
+               apt-get install -y net-tools
+               apt install -y git-all
+               apt-get install -y build-essential
+                '''
+            }
+        }
+
+
+        stage('Git Clone Harvest') {
+            steps {
+               sh '''
+               git clone https://$key@github.com/NetApp/harvest-private.git
+                '''
+            }
+        }
+
+        stage('Build Harvest RPM/DEB') {
+            steps {
+               sh '''
+               cd harvest-private
+               gitCommit=$(git rev-parse --short HEAD)
+               targetLocation=$targetParentLocation$version
+               rm -rf ./dist
+               export PATH=$PATH:/usr/local/go/bin
+               rm -rf /root/rpmbuild/
+               mkdir -p $targetLocation
+               ./package.sh deb x86_64 $harvestVersion $version$gitCommit
+               cp -RT ./dist/$harvestVersion-$version$gitCommit/ $targetLocation
+               ./package.sh rpm x86_64 $harvestVersion $version$gitCommit
+               cp -RT ./dist/$harvestVersion-$version$gitCommit/x86_64/  $targetLocation
+                '''
+            }
+        }
+
+        stage('Build Harvest Tar gz') {
+            steps {
+               sh '''
+               cd harvest-private
+               export PATH=$PATH:/usr/local/go/bin
+               targetLocation=$targetParentLocation$version
+               rm -rf dist
+               make
+               make dist-tar
+               cp -RT ./dist/ $targetLocation
+                '''
+            }
+        }
+
+    }
+}
