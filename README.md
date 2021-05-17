@@ -42,18 +42,40 @@ bin/harvest start
 ```
 
 ## Redhat
+> Installation of the Harvest package may require root or administrator privileges
+
 Download the latest rpm of [Harvest](https://github.com/NetApp/harvest/releases/latest) from the releases tab and install with yum.
 
 ```
-sudo yum install harvest.rpm
+  $ sudo yum install harvest.XXX.rpm
 ```
 
+Once the installation has finished, edit the [harvest.yml configuration](#harvest-configuration) file located in `/opt/harvest/harvest.yml`
+
+After editing `/opt/harvest/harvest.yml`, manage Harvest with `systemctl start|stop|restart harvest`
+
+### Changes install makes
+* Directories `/var/log/harvest/` and `/var/log/run/` are created
+* A `harvest` user and group are created and the installed files are chowned to harvest
+* Systemd `/etc/systemd/system/harvest.service` file is created and enabled
+
 ## Debian
+> Installation of the Harvest package may require root or administrator privileges
+
 Download the latest deb of [Harvest](https://github.com/NetApp/harvest/releases/latest) from the releases tab and install with apt.
 
 ```
-sudo apt install harvest.deb
+  $ sudo apt install harvest.deb
 ```
+
+Once the installation has finished, edit the [harvest.yml configuration](#harvest-configuration) file located in `/opt/harvest/harvest.yml`
+
+After editing `/opt/harvest/harvest.yml`, manage Harvest with `systemctl start|stop|restart harvest`
+
+### Changes install makes
+* Directories `/var/log/harvest/` and `/var/log/run/` are created
+* A `harvest` user and group are created and the installed files are chowned to harvest
+* Systemd `/etc/systemd/system/harvest.service` file is created and enabled
 
 ## Docker
 
