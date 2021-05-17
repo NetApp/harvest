@@ -193,7 +193,6 @@ Tools:
   #grafana_api_token: 'aaa-bbb-ccc-ddd'
 ```
 
-
 ## Configuring collectors
 
 Collectors are configured by their own configuration files, which are subdirectories in [conf/](conf/). Each collector can define its own set of parameters.

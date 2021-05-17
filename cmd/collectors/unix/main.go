@@ -5,7 +5,7 @@ package main
 
 import (
 	"goharvest2/cmd/poller/collector"
-	"goharvest2/pkg/config"
+	"goharvest2/pkg/conf"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/logger"
 	"goharvest2/pkg/matrix"
@@ -275,7 +275,7 @@ func (me *Unix) PollInstance() (*matrix.Matrix, error) {
 	currInstances := set.NewFrom(me.Matrix.GetInstanceKeys())
 	currSize := currInstances.Size()
 
-	pollerNames, err := config.GetPollerNames(me.Options.Config)
+	pollerNames, err := conf.GetPollerNames(me.Options.Config)
 	if err != nil {
 		return nil, err
 	}

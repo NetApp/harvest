@@ -1,7 +1,8 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
-package main
+
+package grafana
 
 import (
 	"bytes"
@@ -10,8 +11,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/hashicorp/go-version"
-	"goharvest2/pkg/argparse"
-	"goharvest2/pkg/config"
+	"github.com/spf13/cobra"
+	"goharvest2/pkg/conf"
 	"goharvest2/pkg/tree/node"
 	"io/ioutil"
 	"net/http"
@@ -25,7 +26,6 @@ import (
 const (
 	clientTimeout      = 5
 	grafanaFolderTitle = "Harvest 2.0"
-	grafanaFolderUid   = "harvest2.0folder"
 	grafanaDataSource  = "Prometheus"
 )
 
@@ -47,69 +47,76 @@ type options struct {
 	client     *http.Client
 	headers    http.Header
 	config     string
+	useHttps   bool
 }
 
-func main() {
+func doExport(_ *cobra.Command, _ []string) {
+	adjustOptions()
+	askForToken()
+	var doesFolderExist = doesGrafanaFolderExist()
+	var err error
 
-	var (
-		opts   *options
-		err    error
-		exists bool
-	)
-
-	// set harvest home path
-	homePath = config.GetHarvestHomePath()
-	if err != nil {
+	if !doesFolderExist {
+		fmt.Printf("folder [%s] not found in Grafana\n", opts.folder)
+		os.Exit(1)
+	} else if err = exportDashboards(opts); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	// parse CLI args
-	opts = getOptions()
-	fmt.Printf("loaded harvest configuration from [%s] \n", opts.config)
+}
 
-	if opts.command == "" {
-		fmt.Println("missing positional argument: command")
+func doImport(_ *cobra.Command, _ []string) {
+	adjustOptions()
+	askForToken()
+	var doesFolderExist = doesGrafanaFolderExist()
+	var err error
+	if doesFolderExist {
+		fmt.Printf("folder [%s] exists in Grafana - OK\n", opts.folder)
+	} else if err = createFolder(opts); err != nil {
+		fmt.Println(err)
 		os.Exit(1)
+	} else {
+		fmt.Printf("created Grafana folder [%s] - OK\n", opts.folder)
 	}
-
-	// assume command is "import"
-	// other commands not implemented yet
-
-	// ask for API token if not provided as arg and validate
-	if err = checkToken(opts, false); err != nil {
+	if err = importDashboards(opts); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
 
-	// check if Grafana folder exists
+func doesGrafanaFolderExist() bool {
+	var exists = false
+	var err error
 	if exists, err = checkFolder(opts); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+	return exists
+}
 
+func askForToken() {
+	// ask for API token if not provided as arg and validate
+	if err := checkToken(opts, false); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+}
+
+func adjustOptions() {
+	// full path
 	if opts.command == "import" {
-		if exists {
-			fmt.Printf("folder [%s] exists in Grafana - OK\n", opts.folder)
-		} else if err = createFolder(opts); err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		} else {
-			fmt.Printf("created Grafana folder [%s] - OK\n", opts.folder)
-		}
-		if err = importDashboards(opts); err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
+		opts.dir = path.Join(homePath, "grafana", opts.dir)
 	}
 
-	if opts.command == "export" {
-		if !exists {
-			fmt.Printf("folder [%s] not found in Grafana\n", opts.folder)
-			os.Exit(1)
-		} else if err = exportDashboards(opts); err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
+	// full URL
+	opts.addr = strings.TrimPrefix(opts.addr, "http://")
+	opts.addr = strings.TrimPrefix(opts.addr, "https://")
+	opts.addr = strings.TrimSuffix(opts.addr, "/")
+
+	if opts.useHttps {
+		opts.addr = "https://" + opts.addr
+	} else {
+		opts.addr = "http://" + opts.addr
 	}
 }
 
@@ -243,132 +250,22 @@ func importDashboards(opts *options) error {
 	return nil
 }
 
-func getOptions() *options {
-
-	var (
-		opts      *options
-		use_https bool
-	)
-
-	harvestConfigPath, err := config.GetDefaultHarvestConfigPath()
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
-	// default options
-	opts = &options{
-		config: harvestConfigPath,
-	}
-
-	parser := argparse.New("Grafana tool", "harvest grafana", "Import/Export Grafana dashboards")
-
-	parser.PosString(
-		&opts.command,
-		"command",
-		"command to execute",
-		[]string{"import", "export"},
-	)
-
-	opts.addr = "http://127.0.0.1:3000"
-	parser.String(
-		&opts.addr,
-		"addr",
-		"a",
-		"Address of Grafana server (IP, FQDN or hostname) (default: "+opts.addr+")",
-	)
-
-	parser.String(
-		&opts.token,
-		"token",
-		"t",
-		"API token issued by Grafana server for authentication",
-	)
-
-	opts.dir = "prometheus"
-	parser.String(
-		&opts.dir,
-		"directory",
-		"d",
-		"Directory from which to import or where to export dashboards (default: prometheus)",
-	)
-
-	opts.folder = grafanaFolderTitle
-	parser.String(
-		&opts.folder,
-		"folder",
-		"f",
-		"Grafana folder name for the dashboards (default: \""+grafanaFolderTitle+"\")",
-	)
-
-	opts.datasource = grafanaDataSource
-	parser.String(
-		&opts.datasource,
-		"datasource",
-		"s",
-		"Grafana datasource for the dashboards (default: \""+grafanaDataSource+"\")",
-	)
-
-	parser.Bool(
-		&opts.variable,
-		"variable",
-		"v",
-		"Use datasource as variable (overrides: --datasource, default: false)",
-	)
-
-	parser.Bool(
-		&use_https,
-		"https",
-		"S",
-		"Force to use HTTPS (default: false)",
-	)
-
-	parser.String(
-		&opts.config,
-		"config",
-		"c",
-		"Custom config filepath (default: "+opts.config+")",
-	)
-
-	parser.SetHelpFlag("help")
-
-	parser.ParseOrExit()
-
-	// full path
-	if opts.command == "import" {
-		opts.dir = path.Join(homePath, "grafana", opts.dir)
-	}
-
-	// full URL
-	opts.addr = strings.TrimPrefix(opts.addr, "http://")
-	opts.addr = strings.TrimPrefix(opts.addr, "https://")
-	opts.addr = strings.TrimSuffix(opts.addr, "/")
-
-	if use_https {
-		opts.addr = "https://" + opts.addr
-	} else {
-		opts.addr = "http://" + opts.addr
-	}
-
-	return opts
-}
-
 func checkToken(opts *options, ignoreConfig bool) error {
 
 	// @TODO check and handle expired API token
 
 	var (
-		params, tools              *node.Node
-		token, config_path, answer string
-		err                        error
+		params, tools             *node.Node
+		token, configPath, answer string
+		err                       error
 	)
 
-	config_path = opts.config
+	configPath = opts.config
 
-	if params, err = config.LoadConfig(config_path); err != nil {
+	if params, err = conf.LoadConfig(configPath); err != nil {
 		return err
 	} else if params == nil {
-		return errors.New(fmt.Sprintf("config [%s] not found", config_path))
+		return errors.New(fmt.Sprintf("config [%s] not found", configPath))
 	}
 
 	if tools = params.GetChildS("Tools"); tools != nil {
@@ -417,8 +314,8 @@ func checkToken(opts *options, ignoreConfig bool) error {
 				tools = params.NewChildS("Tools", "")
 			}
 			tools.SetChildContentS("grafana_api_token", opts.token)
-			fmt.Printf("saving config file [%s]\n", config_path)
-			if err = config.SafeConfig(params, config_path); err != nil {
+			fmt.Printf("saving config file [%s]\n", configPath)
+			if err = conf.SafeConfig(params, configPath); err != nil {
 				return err
 			}
 		}
@@ -429,10 +326,10 @@ func checkToken(opts *options, ignoreConfig bool) error {
 		return err
 	}
 
-	version := result["version"].(string)
-	fmt.Printf("connected to Grafana server (version: %s)\n", version)
+	grafanaVersion := result["version"].(string)
+	fmt.Printf("connected to Grafana server (version: %s)\n", grafanaVersion)
 	// if we are going to import check grafana version
-	if opts.command == "import" && !checkVersion(version) {
+	if opts.command == "import" && !checkVersion(grafanaVersion) {
 		fmt.Printf("warning: current set of dashboards require Grafana version (%s) or higher\n", grafanaMinVers)
 		fmt.Printf("continue anyway? [y/N]: ")
 		fmt.Scanf("%s\n", &answer)
@@ -599,4 +496,39 @@ func doRequest(opts *options, method, url string, query map[string]interface{}) 
 	defer response.Body.Close()
 	data, err = ioutil.ReadAll(response.Body)
 	return data, status, code, err
+}
+
+var opts = &options{}
+
+var GrafanaCmd = &cobra.Command{
+	Use:   "grafana",
+	Short: "import/export Grafana dashboards",
+	Long:  "Grafana tool - Import/Export Grafana dashboards",
+}
+
+var importCmd = &cobra.Command{
+	Use:     "import",
+	Short:   "import Grafana dashboards",
+	Run:     doImport,
+	Example: "grafana import --addr my.grafana.server:3000 --directory grafana/prometheus",
+}
+
+var exportCmd = &cobra.Command{
+	Use:     "export",
+	Short:   "export Grafana dashboards",
+	Run:     doExport,
+	Example: "grafana export --addr my.grafana.server:3000 --directory exported_dash",
+}
+
+func init() {
+	GrafanaCmd.AddCommand(importCmd, exportCmd)
+
+	GrafanaCmd.PersistentFlags().StringVar(&opts.config, "config", "./harvest.yml", "harvest config file path")
+	GrafanaCmd.PersistentFlags().StringVarP(&opts.addr, "addr", "a", "http://127.0.0.1:3000", "address of Grafana server (IP, FQDN or hostname)")
+	GrafanaCmd.PersistentFlags().StringVarP(&opts.token, "token", "t", "", "API token issued by Grafana server for authentication")
+	GrafanaCmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d", "grafana/prometheus/", "when importing, directory that contains dashboards.\nWhen exporting, directory to write dashboards to")
+	GrafanaCmd.PersistentFlags().StringVarP(&opts.folder, "folder", "f", grafanaFolderTitle, "Grafana folder name for the dashboards")
+	GrafanaCmd.PersistentFlags().StringVarP(&opts.datasource, "datasource", "s", grafanaDataSource, "Grafana datasource for the dashboards")
+	GrafanaCmd.PersistentFlags().BoolVarP(&opts.variable, "variable", "v", false, "use datasource as variable, overrides: --datasource")
+	GrafanaCmd.PersistentFlags().BoolVarP(&opts.useHttps, "https", "S", false, "use HTTPS")
 }

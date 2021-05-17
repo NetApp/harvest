@@ -16,7 +16,7 @@
 package collector
 
 import (
-	"goharvest2/pkg/config"
+	"goharvest2/pkg/conf"
 	"path"
 	"reflect"
 	"strconv"
@@ -456,7 +456,7 @@ func (me *AbstractCollector) SetMetadata(m *matrix.Matrix) {
 // WantedExporters retrievs the names of the exporters to which the collector
 // needs to export data
 func (me *AbstractCollector) WantedExporters(configFp string) []string {
-	names, err := config.GetUniqueExporters(me.Params, configFp)
+	names, err := conf.GetUniqueExporters(me.Params, configFp)
 	if err != nil {
 		logger.Error(me.Prefix, "Error while fetching exporters %v", err)
 	}

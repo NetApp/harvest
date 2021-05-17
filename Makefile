@@ -63,11 +63,11 @@ clean:
 harvest: precheck
 	@# Build the harvest cli
 	@echo "Building harvest"
-	@cd cmd/harvest; GOOS=$(GOOS) GOARCH=$(GOARCH) go build -ldflags=$(LD_FLAGS) -o ../../bin/harvest
+	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o bin/harvest -ldflags=$(LD_FLAGS) cmd/harvest/harvest.go
 
 	@# Build the harvest poller
 	@echo "Building poller"
-	@cd cmd/poller/; GOOS=$(GOOS) GOARCH=$(GOARCH) go build -ldflags=$(LD_FLAGS) -o ../../bin/poller
+	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o bin/poller -ldflags=$(LD_FLAGS) cmd/poller/poller.go
 
 	@# Build the daemonizer for the pollers
 	@echo "Building daemonizer"
@@ -75,11 +75,11 @@ harvest: precheck
 
 	@# Build the zapi tool
 	@echo "Building zapi tool"
-	@cd cmd/tools/zapi; GOOS=$(GOOS) GOARCH=$(GOARCH) go build -ldflags=$(LD_FLAGS) -o ../../../bin/zapi
+	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o bin/zapi -ldflags=$(LD_FLAGS) cmd/tools/zapi/main/main.go
 
 	@# Build the grafana tool
 	@echo "Building grafana tool"
-	@cd cmd/tools/grafana; GOOS=$(GOOS) GOARCH=$(GOARCH) go build -ldflags=$(LD_FLAGS) -o ../../../bin/grafana
+	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o bin/grafana -ldflags=$(LD_FLAGS) cmd/tools/grafana/main/main.go
 
 ###############################################################################
 # Collectors

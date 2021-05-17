@@ -2,15 +2,34 @@
  * Copyright NetApp Inc, 2021 All rights reserved
  */
 
-package main
+package zapi
 
 import (
 	"fmt"
 	client "goharvest2/pkg/api/ontapi/zapi"
 	"goharvest2/pkg/errors"
+	"goharvest2/pkg/set"
 	"goharvest2/pkg/tree/node"
 	"strings"
 )
+
+var knownTypes = set.NewFrom([]string{
+	"string",
+	"integer",
+	"boolean",
+	"node-name",
+	"aggr-name",
+	"vserver-name",
+	"volume-name",
+	"uuid", "size",
+	"cache-policy",
+	"junction-path",
+	"volstyle",
+	"repos-constituent-role",
+	"language-code",
+	"snaplocktype",
+	"space-slo-enum",
+})
 
 func getAttrs(c *client.Client, a *Args) (*node.Node, error) {
 

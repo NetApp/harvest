@@ -6,7 +6,8 @@ package stub
 import (
 	"bytes"
 	"fmt"
-	"goharvest2/pkg/config"
+	"github.com/spf13/cobra"
+	"goharvest2/pkg/conf"
 	"goharvest2/pkg/tree"
 	"goharvest2/pkg/tree/node"
 	"io/ioutil"
@@ -15,33 +16,43 @@ import (
 	"strings"
 )
 
-var usage = `
-Harvest 2.0 Stub utility
-
-Tool for developers to create new collector, plugin or exporter
-
-Usage: harvest new [collector | plugin | exporter ]
-`
-
 var (
-	harvestHomePath = config.GetHarvestHomePath()
+	harvestHomePath = conf.GetHarvestHomePath()
 )
 
-func Run() {
+var NewCmd = &cobra.Command{
+	Use:   "new",
+	Short: "Create new collector, plugin or exporter (for developers)",
+}
 
-	var (
-		object string
-		err    error
-	)
-	if len(os.Args) < 3 {
-		fmt.Println("Usage: harvest new [collector | plugin | exporter ]")
-		os.Exit(0)
-	}
+var collectorCmd = &cobra.Command{
+	Use:   "collector",
+	Short: "create collector",
+	Run: func(cmd *cobra.Command, args []string) {
+		run("collector")
+	},
+}
 
-	switch object = os.Args[2]; object {
-	case "-h", "--help", "help":
-		fmt.Println(usage)
-		os.Exit(0)
+var pluginCmd = &cobra.Command{
+	Use:   "plugin",
+	Short: "create plugin",
+	Run: func(cmd *cobra.Command, args []string) {
+		run("plugin")
+	},
+}
+
+var exporterCmd = &cobra.Command{
+	Use:   "exporter",
+	Short: "create exporter",
+	Run: func(cmd *cobra.Command, args []string) {
+		run("exporter")
+	},
+}
+
+func run(cmd string) {
+	var err error
+
+	switch cmd {
 	case "collector":
 		err = newCollector()
 	case "plugin":
@@ -49,7 +60,7 @@ func Run() {
 	case "exporter":
 		err = newExporter()
 	default:
-		fmt.Printf("Sorry, can't create %s\n", object)
+		fmt.Printf("Sorry, can't create %s\n", cmd)
 		os.Exit(1)
 	}
 
@@ -187,7 +198,7 @@ func getName() string {
 		return os.Args[3]
 	} else {
 		fmt.Printf("name: ")
-		fmt.Scanln(&name)
+		_, _ = fmt.Scanln(&name)
 	}
 	return name
 }
@@ -223,4 +234,8 @@ func createTemplate(collector, object string) (string, error) {
 	fp = path.Join(fp, "default.yaml")
 
 	return fp, tree.Export(t, "yaml", fp)
+}
+
+func init() {
+	NewCmd.AddCommand(collectorCmd, pluginCmd, exporterCmd)
 }

@@ -25,12 +25,13 @@ package main
 
 import (
 	"fmt"
+	"github.com/spf13/cobra"
 	"goharvest2/cmd/harvest/version"
 	"goharvest2/cmd/poller/collector"
 	"goharvest2/cmd/poller/exporter"
 	"goharvest2/cmd/poller/options"
 	"goharvest2/cmd/poller/schedule"
-	"goharvest2/pkg/config"
+	"goharvest2/pkg/conf"
 	"goharvest2/pkg/dload"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/logger"
@@ -102,12 +103,10 @@ func (me *Poller) Init() error {
 	var err error
 
 	// read options
-	me.options, me.name, err = options.Get()
+	options.SetPathsAndHostname(&args)
+	me.options = &args
+	me.name = args.Poller
 	logger.Info(me.prefix, "options config: %s", me.options.Config)
-	if err != nil {
-		logger.Error(me.prefix, "error: %s", err.Error())
-		return err
-	}
 
 	// use prefix for logging
 	me.prefix = "(poller) (" + me.name + ")"
@@ -139,9 +138,9 @@ func (me *Poller) Init() error {
 	logger.Debug(me.prefix, "options= %s", me.options.String())
 
 	// set signal handler for graceful termination
-	signal_channel := make(chan os.Signal, 1)
-	signal.Notify(signal_channel, SIGNALS...)
-	go me.handleSignals(signal_channel)
+	signalChannel := make(chan os.Signal, 1)
+	signal.Notify(signalChannel, SIGNALS...)
+	go me.handleSignals(signalChannel)
 	logger.Debug(me.prefix, "set signal handler for %v", SIGNALS)
 
 	// write PID to file
@@ -159,7 +158,7 @@ func (me *Poller) Init() error {
 
 	// load parameters from config (harvest.yml)
 	logger.Debug(me.prefix, "importing config [%s]", me.options.Config)
-	if me.params, err = config.GetPoller(me.options.Config, me.name); err != nil {
+	if me.params, err = conf.GetPoller(me.options.Config, me.name); err != nil {
 		logger.Error(me.prefix, "read config: %v", err)
 		return err
 	}
@@ -181,7 +180,7 @@ func (me *Poller) Init() error {
 
 	// each poller is associated with a remote host
 	// if no address is specified, assume that is local host
-	// @TODO: remove, redundany and error-prone
+	// @TODO: remove, redundant and error-prone
 	if me.target = me.params.GetChildContentS("addr"); me.target == "" {
 		me.target = "localhost"
 	}
@@ -211,7 +210,7 @@ func (me *Poller) Init() error {
 	// collectors and exporters, as well as ping stats to target host
 	me.load_metadata()
 
-	if me.exporter_params, err = config.GetExporters(me.options.Config); err != nil {
+	if me.exporter_params, err = conf.GetExporters(me.options.Config); err != nil {
 		logger.Warn(me.prefix, "read exporter params: %v", err)
 		// @TODO just warn or abort?
 	}
@@ -262,7 +261,7 @@ func (me *Poller) Init() error {
 		logger.Debug(me.prefix, "initialized %d exporters", len(me.exporters))
 	}
 
-	// initialze a schedule for the poller, this is the interval at which
+	// initialize a schedule for the poller, this is the interval at which
 	// we will check the status of collectors, exporters and target system,
 	// and send metadata to exporters
 	if s := me.params.GetChildContentS("poller_schedule"); s != "" {
@@ -283,7 +282,7 @@ func (me *Poller) Init() error {
 }
 
 // Start will run the collectors and the poller itself
-// in seperate goroutines, leaving the main goroutine
+// in separate goroutines, leaving the main goroutine
 // to the exporters
 func (me *Poller) Start() {
 
@@ -310,7 +309,7 @@ func (me *Poller) Start() {
 	me.Stop()
 }
 
-// Run will periodicaly check the status of collectors/exporters,
+// Run will periodically check the status of collectors/exporters,
 // report metadata and do some housekeeping
 func (me *Poller) Run() {
 
@@ -318,8 +317,8 @@ func (me *Poller) Run() {
 	task := me.schedule.GetTask("poller")
 
 	// number of collectors/exporters that are still up
-	up_collectors := 0
-	up_exporters := 0
+	upCollectors := 0
+	upExporters := 0
 
 	for {
 
@@ -399,11 +398,11 @@ func (me *Poller) Run() {
 			}
 
 			// only log when numbers have changes, since hopefully that happens rarely
-			if upc != up_collectors || upe != up_exporters {
+			if upc != upCollectors || upe != upExporters {
 				logger.Info(me.prefix, "updated status, up collectors: %d (of %d), up exporters: %d (of %d)", upc, len(me.collectors), upe, len(me.exporters))
 			}
-			up_collectors = upc
-			up_exporters = upe
+			upCollectors = upc
+			upExporters = upe
 
 			// some housekeeping jobs if we are daemon
 			// @TODO: syslog or panic on log file related errors (might mean fs is corrupt or unavailable)
@@ -474,7 +473,7 @@ func (me *Poller) handleSignals(signal_channel chan os.Signal) {
 	}
 }
 
-// ping target system, report weither it's available or not
+// ping target system, report if it's available or not
 // and if available, response time
 func (me *Poller) ping() (float32, bool) {
 
@@ -540,7 +539,7 @@ func (me *Poller) load_collector(class, object string) error {
 		logger.Debug(me.prefix, "merged custom and default templates")
 	}
 
-	// add Poller's parametres to the collector parameters
+	// add Poller's parameters to the collector parameters
 	template.Union(me.params)
 
 	// if we don't know object, try load from template
@@ -723,10 +722,51 @@ func (me *Poller) load_metadata() {
 	me.status.SetExportOptions(matrix.DefaultExportOptions())
 }
 
+var pollerCmd = &cobra.Command{
+	Use:   "poller -p name [flags]",
+	Short: "Harvest Poller - Runs collectors and exporters for a target system",
+	Args:  cobra.NoArgs,
+	Run:   startPoller,
+}
+
+func startPoller(cmd *cobra.Command, _ []string) {
+	//cmd.DebugFlags()  // uncomment to print flags
+	poller := New()
+	poller.options = &args
+	if poller.Init() != nil {
+		// error already logger by poller
+		poller.Stop()
+		os.Exit(1)
+	}
+	poller.Start()
+	os.Exit(0)
+}
+
+var args = options.Options{
+	Version: version.VERSION,
+}
+
+func init() {
+	configPath, _ := conf.GetDefaultHarvestConfigPath()
+
+	var flags = pollerCmd.Flags()
+	flags.StringVarP(&args.Poller, "poller", "p", "", "Poller name as defined in config")
+	flags.BoolVarP(&args.Debug, "debug", "d", false, "Debug mode, no data will be exported")
+	flags.BoolVar(&args.Daemon, "daemon", false, "Start as daemon")
+	flags.IntVarP(&args.LogLevel, "loglevel", "l", 2, "Logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)")
+	flags.IntVar(&args.Profiling, "profiling", 0, "If profiling port > 0, enables profiling via localhost:PORT/debug/pprof/")
+	flags.StringVar(&args.PromPort, "promPort", "", "Prometheus Port")
+	flags.StringVar(&args.Config, "config", configPath, "harvest config file path")
+	flags.StringSliceVarP(&args.Collectors, "collectors", "c", []string{}, "only start these collectors (overrides harvest.yml)")
+	flags.StringSliceVarP(&args.Objects, "objects", "o", []string{}, "only start these objects (overrides collector config)")
+
+	_ = pollerCmd.MarkFlagRequired("poller")
+}
+
 // start poller, if fails try to write to syslog
 func main() {
 
-	// don't recover if a goroutine has paniced, instead
+	// don't recover if a goroutine has panicked, instead
 	// try to log as much as possible, since normally it's
 	// not properly logged
 	defer func() {
@@ -736,7 +776,7 @@ func main() {
 			if err == nil {
 				syslogger.Printf("harvest poller paniced: %v", r)
 			}
-			// if logger still abailable try to write there as well
+			// if logger still available try to write there as well
 			// do this last, since might make us panic as again
 			logger.Fatal("(main) ", "%v", r)
 			logger.Fatal("(main) ", "terminating abnormally, tip: run in foreground mode (with \"--loglevel 0\") to debug")
@@ -745,14 +785,5 @@ func main() {
 		}
 	}()
 
-	poller := New()
-
-	if poller.Init() != nil {
-		// error already logger by poller
-		poller.Stop()
-		os.Exit(1)
-	}
-
-	poller.Start()
-	os.Exit(0)
+	cobra.CheckErr(pollerCmd.Execute())
 }
