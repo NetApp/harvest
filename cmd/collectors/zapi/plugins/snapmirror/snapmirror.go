@@ -91,8 +91,8 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			if instance.GetLabel("destination_node") == "" {
 
 				key := instance.GetLabel("destination_vserver") + "." + instance.GetLabel("destination_volume")
-				if node, has := my.nodeCache.GetHas(key); has {
-					instance.SetLabel("destination_node", node)
+				if destVol, has := my.nodeCache.GetHas(key); has {
+					instance.SetLabel("destination_node", destVol)
 					destUpdCount += 1
 				}
 			}
@@ -101,8 +101,8 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			if instance.GetLabel("source_node") == "" {
 
 				key := instance.GetLabel("source_vserver") + "." + instance.GetLabel("source_volume")
-				if node, has := my.nodeCache.GetHas(key); has {
-					instance.SetLabel("source_node", node)
+				if srcVol, has := my.nodeCache.GetHas(key); has {
+					instance.SetLabel("source_node", srcVol)
 					srcUpdCount += 1
 				}
 			}
@@ -187,9 +187,9 @@ func (my *SnapMirror) updateNodeCache() error {
 		for _, i := range instances.GetChildren() {
 			vol := i.GetChildContentS("name")
 			svm := i.GetChildContentS("vserver_name")
-			node := i.GetChildContentS("node_name")
+			nodeName := i.GetChildContentS("node_name")
 
-			my.nodeCache.Set(svm+"."+vol, node)
+			my.nodeCache.Set(svm+"."+vol, nodeName)
 			count += 1
 		}
 	}
@@ -223,9 +223,9 @@ func (my *SnapMirror) updateLimitCache() error {
 
 	if instances := response.GetChildS("instances"); instances != nil {
 		for _, i := range instances.GetChildren() {
-			node := i.GetChildContentS("node_name")
-			my.destLimitCache.Set(node, i.GetChildContentS("dest_meter_count"))
-			my.srcLimitCache.Set(node, i.GetChildContentS("src_meter_count"))
+			nodeName := i.GetChildContentS("node_name")
+			my.destLimitCache.Set(nodeName, i.GetChildContentS("dest_meter_count"))
+			my.srcLimitCache.Set(nodeName, i.GetChildContentS("src_meter_count"))
 			count += 1
 		}
 	}

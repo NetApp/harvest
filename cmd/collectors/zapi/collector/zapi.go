@@ -73,7 +73,7 @@ func (me *Zapi) InitVars() error {
 		return errors.New(errors.ERR_CONNECTION, err.Error())
 	}
 
-	if me.Client.Init(5); err != nil { // 5 retries before giving up to connect
+	if err = me.Client.Init(5); err != nil { // 5 retries before giving up to connect
 		return errors.New(errors.ERR_CONNECTION, err.Error())
 	}
 	logger.Debug(me.Prefix, "connected to: %s", me.Client.Info())
