@@ -13,7 +13,7 @@ pipeline {
             steps {
                 sh '''
                 rm -rf *
-                curl -o go.tar.gz https://dl.google.com/go/go1.16.4.linux-amd64.tar.gz
+                wget -O go.tar.gz "https://dl.google.com/go/$(curl https://golang.org/VERSION?m=text).linux-amd64.tar.gz"
                 rm -rf /usr/local/go && tar -C /usr/local -xzf go.tar.gz
                 '''
             }
