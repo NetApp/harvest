@@ -1,13 +1,13 @@
 pipeline {
     agent any
 
-	triggers {
+    triggers {
         cron('@midnight')
     }
 
     parameters {
         string(name: 'VERSION', defaultValue: '', description: '[Optional] RPM Version should match Harvest version with rc or nightly stripped. If not filled default is YY.mm.ddHH. See https://github.com/NetApp/harvest-private/wiki/Release-Checklist#version-names for details')
-		string(name: 'REVISION', defaultValue: '', description: '[Optional] Example: Nightly (default), GA See https://github.com/NetApp/harvest-private/wiki/Release-Checklist#rpm-and-debian-names for details ')
+        string(name: 'REVISION', defaultValue: '', description: '[Optional] Example: Nightly (default), GA See https://github.com/NetApp/harvest-private/wiki/Release-Checklist#rpm-and-debian-names for details ')
     }
 
     environment {
@@ -15,7 +15,7 @@ pipeline {
         VERSION =sh (returnStdout: true, script: """
         [ -n \"${params.VERSION}\" ] && echo \"${params.VERSION}\" || date +%Y.%m.%d%H | cut -c 3-
         """).trim()
-		REVISION =sh (returnStdout: true, script: """
+        REVISION =sh (returnStdout: true, script: """
         [ -n \"${params.REVISION}\" ] && echo \"${params.REVISION}\" || echo "Nightly"
         """).trim()
         targetParentLocation = "/opt/home/nightly/"
