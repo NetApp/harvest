@@ -6,8 +6,8 @@ pipeline {
     }
 
     parameters {
-        string(name: 'VERSION', defaultValue: '', description: '')
-		string(name: 'REVISION', defaultValue: '', description: '')
+        string(name: 'VERSION', defaultValue: '', description: '[Optional] RPM Version should match Harvest version with rc or nightly stripped. If not filled default is YY.mm.ddHH. See https://github.com/NetApp/harvest-private/wiki/Release-Checklist#version-names for details')
+		string(name: 'REVISION', defaultValue: '', description: '[Optional] Example: Nightly (default), GA See https://github.com/NetApp/harvest-private/wiki/Release-Checklist#rpm-and-debian-names for details ')
     }
 
     environment {
