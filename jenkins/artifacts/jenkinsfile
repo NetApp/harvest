@@ -8,6 +8,7 @@ pipeline {
     parameters {
         string(name: 'VERSION', defaultValue: '', description: '[Optional] RPM Version should match Harvest version with rc or nightly stripped. If not filled default is YY.mm.ddHH. See https://github.com/NetApp/harvest-private/wiki/Release-Checklist#version-names for details')
         string(name: 'RELEASE', defaultValue: '', description: '[Optional] Example: Nightly (default), GA See https://github.com/NetApp/harvest-private/wiki/Release-Checklist#rpm-and-debian-names for details ')
+        string(name: 'BRANCH', defaultValue: '', description: '[Optional] Branch name to clone. Default (main) ')
     }
 
     environment {
@@ -17,6 +18,9 @@ pipeline {
         """).trim()
         RELEASE =sh (returnStdout: true, script: """
         [ -n \"${params.RELEASE}\" ] && echo \"${params.RELEASE}\" || echo "Nightly"
+        """).trim()
+        BRANCH =sh (returnStdout: true, script: """
+        [ -n \"${params.BRANCH}\" ] && echo \"${params.BRANCH}\" || echo "main"
         """).trim()
         targetParentLocation = "/opt/home/nightly/"
     }
@@ -55,7 +59,7 @@ pipeline {
         stage('Git Clone Harvest') {
             steps {
                sh '''
-               git clone https://$key@github.com/NetApp/harvest-private.git
+               git clone --single-branch --branch $BRANCH https://$key@github.com/NetApp/harvest-private.git
                 '''
             }
         }
