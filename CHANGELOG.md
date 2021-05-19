@@ -1,8 +1,14 @@
 # Change Log
 
 [Releases](https://github.com/NetApp/harvest/releases)
-
 ## 21.05.0 / 2021-05-20
+
+Announcing the release of Harvest2. With this release the core of Harvest has been completely rewritten in Go. Harvest2 is a replacement for the older versions of Harvest 1.6 and below. 
+
+If you're using one of the Harvest 2.x release candidates, you can do a direct upgrade. 
+
+Going forward Harvest2 will follow a `year.month.fix` release naming convention with the first release being 21.05.0. See [SUPPORT.md](SUPPORT.md) for details.
+
 **IMPORTANT** v21.05 increased Harvest's out-of-the-box security posture - self-signed certificates are rejected by default. You have two options:
  
  1. [Setup client certificates for each cluster](https://github.com/NetApp/harvest-private/blob/main/cmd/collectors/zapi/README.md)
