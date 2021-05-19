@@ -28,6 +28,7 @@ import (
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/logger"
 	"goharvest2/pkg/matrix"
+	"goharvest2/pkg/set"
 	"regexp"
 	"strconv"
 	"strings"
@@ -53,6 +54,7 @@ type Prometheus struct {
 	allowAddrsRegex []*regexp.Regexp
 	cacheAddrs      map[string]bool
 	checkAddrs      bool
+	addMetaTags     bool
 	globalPrefix    string
 }
 
@@ -93,6 +95,11 @@ func (me *Prometheus) Init() error {
 	if me.Options.Debug {
 		logger.Debug(me.Prefix, "initialized without HTTP server since in debug mode")
 		return nil
+	}
+
+	// add HELP and TYPE tags to exported metrics if requested
+	if me.Params.GetChildContentS("add_meta_tags") == "true" {
+		me.addMetaTags = true
 	}
 
 	// all other parameters are only relevant to the HTTP daemon
@@ -258,13 +265,20 @@ func (me *Prometheus) Export(data *matrix.Matrix) error {
 // fcp_lif_read_ops{vserver="nas_svm",port_id="e02"} 771
 
 func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
-	var rendered [][]byte
-	var labels_to_include, keys_to_include, global_labels []string
-	var prefix string
-	var include_all_labels bool
+	var (
+		rendered                                          [][]byte
+		tagged                                            *set.Set
+		labels_to_include, keys_to_include, global_labels []string
+		prefix                                            string
+		include_all_labels                                bool
+	)
 
 	rendered = make([][]byte, 0)
 	global_labels = make([]string, 0)
+
+	if me.addMetaTags {
+		tagged = set.New()
+	}
 
 	options := data.GetExportOptions()
 
@@ -355,12 +369,25 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 						metric_labels = append(metric_labels, fmt.Sprintf("%s=\"%s\"", k, v))
 					}
 					x := fmt.Sprintf("%s_%s{%s,%s} %s", prefix, metric.GetName(), strings.Join(instance_keys, ","), strings.Join(metric_labels, ","), value)
+
+					if me.addMetaTags && !tagged.Has(prefix+"_"+metric.GetName()) {
+						tagged.Add(prefix + "_" + metric.GetName())
+						rendered = append(rendered, []byte("# HELP "+prefix+"_"+metric.GetName()+" Metric for "+data.Object))
+						rendered = append(rendered, []byte("# TYPE "+prefix+"_"+metric.GetName()+" histogram"))
+					}
+
 					rendered = append(rendered, []byte(x))
 					// scalar metric
 				} else {
 					x := fmt.Sprintf("%s_%s{%s} %s", prefix, metric.GetName(), strings.Join(instance_keys, ","), value)
+
+					if me.addMetaTags && !tagged.Has(prefix+"_"+metric.GetName()) {
+						tagged.Add(prefix + "_" + metric.GetName())
+						rendered = append(rendered, []byte("# HELP "+prefix+"_"+metric.GetName()+" Metric for "+data.Object))
+						rendered = append(rendered, []byte("# TYPE "+prefix+"_"+metric.GetName()+" gauge"))
+					}
+
 					rendered = append(rendered, []byte(x))
-					//logger.Warn(me.Prefix, "M=[%s%s%s]", color.Cyan, x, color.End)
 				}
 			} else {
 				logger.Trace(me.Prefix, "skipped: no data value")
