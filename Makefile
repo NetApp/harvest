@@ -20,10 +20,15 @@ GCC_EXISTS := $(shell which gcc)
 REQUIRED_GO_VERSION := 1.15
 FOUND_GO_VERSION := $(shell go version | cut -d" " -f3 | cut -d"o" -f 2)
 CORRECT_GO_VERSION := $(shell expr `go version | cut -d" " -f3 | cut -d"o" -f 2` \>= ${REQUIRED_GO_VERSION})
-RELEASE      := $(shell git describe --tags --abbrev=0)
+ifndef RELEASE
+    RELEASE      := $(shell git describe --tags --abbrev=0)
+endif
+ifndef VERSION
+    VERSION      := $(shell expr `date +%Y.%m.%d%H | cut -c 3-`)
+endif
 COMMIT       := $(shell git rev-parse --short HEAD)
 BUILD_DATE   := `date +%FT%T%z`
-LD_FLAGS     := "-X 'goharvest2/cmd/harvest/version.Release=$(RELEASE)' -X 'goharvest2/cmd/harvest/version.Commit=$(COMMIT)' -X 'goharvest2/cmd/harvest/version.BuildDate=$(BUILD_DATE)'"
+LD_FLAGS     := "-X 'goharvest2/cmd/harvest/version.VERSION=$(VERSION)' -X 'goharvest2/cmd/harvest/version.Release=$(RELEASE)' -X 'goharvest2/cmd/harvest/version.Commit=$(COMMIT)' -X 'goharvest2/cmd/harvest/version.BuildDate=$(BUILD_DATE)'"
 GOARCH ?= amd64
 GOOS ?= linux
 
@@ -124,9 +129,9 @@ packages: precheck all
 ###############################################################################
 # Build tar gz distribution
 ###############################################################################
-HARVEST_RELEASE := harvest-${RELEASE}
-TMP := /tmp/${HARVEST_RELEASE}
+HARVEST_RELEASE := harvest-${VERSION}-${RELEASE}
 DIST := dist
+TMP := /tmp/${HARVEST_RELEASE}
 dist-tar: all
 	-rm -rf ${TMP}
 	-rm -rf ${DIST}
