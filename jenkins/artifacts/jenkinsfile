@@ -6,9 +6,9 @@ pipeline {
     }
 
     parameters {
-        string(name: 'VERSION', defaultValue: '', description: '[Optional] RPM Version should match Harvest version with rc or nightly stripped. If not filled default is YY.mm.ddHH. See https://github.com/NetApp/harvest-private/wiki/Release-Checklist#version-names for details')
-        string(name: 'RELEASE', defaultValue: '', description: '[Optional] Example: Nightly (default), GA See https://github.com/NetApp/harvest-private/wiki/Release-Checklist#rpm-and-debian-names for details ')
-        string(name: 'BRANCH', defaultValue: '', description: '[Optional] Branch name to clone. Default (main) ')
+        string(name: 'VERSION', defaultValue: '', description: '[Optional] RPM Version should match Harvest version with rc or nightly stripped. If not filled default is YY.mm.ddHH. See https://github.com/NetApp/harvest/wiki/Release-Checklist#version-names for details')
+        string(name: 'RELEASE', defaultValue: 'nightly', description: '[Optional] Example: nightly (default) See https://github.com/NetApp/harvest/wiki/Release-Checklist#rpm-and-debian-names for details ')
+        string(name: 'BRANCH', defaultValue: 'main', description: '[Optional] Branch name to clone. Default (main) ')
     }
 
     environment {
@@ -17,12 +17,13 @@ pipeline {
         [ -n \"${params.VERSION}\" ] && echo \"${params.VERSION}\" || date +%Y.%m.%d%H | cut -c 3-
         """).trim()
         RELEASE =sh (returnStdout: true, script: """
-        [ -n \"${params.RELEASE}\" ] && echo \"${params.RELEASE}\" || echo "Nightly"
+        echo \"${params.RELEASE}\"
         """).trim()
         BRANCH =sh (returnStdout: true, script: """
-        [ -n \"${params.BRANCH}\" ] && echo \"${params.BRANCH}\" || echo "main"
+        echo \"${params.BRANCH}\"
         """).trim()
         targetParentLocation = "/opt/home/nightly/"
+        harvestPath = "harvest"
     }
 
     stages {
@@ -59,7 +60,7 @@ pipeline {
         stage('Git Clone Harvest') {
             steps {
                sh '''
-               git clone --single-branch --branch $BRANCH https://$key@github.com/NetApp/harvest-private.git
+               git clone --single-branch --branch $BRANCH https://$key@github.com/NetApp/harvest.git
                 '''
             }
         }
@@ -67,8 +68,8 @@ pipeline {
         stage('Build Harvest RPM/DEB') {
             steps {
                sh '''
-               cd harvest-private
-               targetLocation=$targetParentLocation$VERSION$RELEASE
+               cd $harvestPath
+               targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
                rm -rf ./dist
                export PATH=$PATH:/usr/local/go/bin
                rm -rf /root/rpmbuild/
@@ -84,9 +85,9 @@ pipeline {
         stage('Build Harvest Tar gz') {
             steps {
                sh '''
-               cd harvest-private
+               cd $harvestPath
                export PATH=$PATH:/usr/local/go/bin
-               targetLocation=$targetParentLocation$VERSION$RELEASE
+               targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
                rm -rf dist
                make dist-tar VERSION=$VERSION RELEASE=$RELEASE
                cp -RT ./dist/ $targetLocation
@@ -98,7 +99,7 @@ pipeline {
 
     post {
         always {
-            dir("$targetParentLocation$VERSION$RELEASE") {
+            dir("$targetParentLocation$VERSION-$RELEASE-$BRANCH") {
                 archiveArtifacts artifacts: '**', fingerprint: true
             }
         }
