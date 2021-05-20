@@ -16,7 +16,7 @@ var (
 )
 
 func String() string {
-	return fmt.Sprintf("harvest version %s %s (commit %s) (build date %s) %s/%s",
+	return fmt.Sprintf("harvest version %s %s (commit %s) (build date %s) %s/%s\n",
 		VERSION,
 		Release,
 		Commit,
