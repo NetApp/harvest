@@ -1,7 +1,7 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
 
-NetApp Harvest 2.0: the swiss-army-knife for datacenter monitoring
+NetApp Harvest : the swiss-army-knife for datacenter monitoring
 
 Authors:
    Georg Mey & Vachagan Gratian
@@ -71,8 +71,8 @@ var (
 
 var rootCmd = &cobra.Command{
 	Use:   "harvest <command> <subcommand> [flags]",
-	Short: "NetApp Harvest 2.0 - application for monitoring storage systems",
-	Long: `NetApp Harvest 2.0 - application for monitoring storage systems
+	Short: "NetApp Harvest - application for monitoring storage systems",
+	Long: `NetApp Harvest - application for monitoring storage systems
 `,
 	Args: cobra.ArbitraryArgs,
 }

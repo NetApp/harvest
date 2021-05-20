@@ -23,7 +23,7 @@ mkdir -p "$BUILD/opt/harvest/bin/"
 cp -r "$SRC/grafana" "$SRC/conf" "$BUILD/opt/harvest/"
 cp "$SRC/harvest.example.yml" "$BUILD/opt/harvest/"
 cp -r "$SRC/pkg/" "$SRC/cmd/" "$SRC/docs/" "$BUILD/opt/harvest/"
-cp -r "$SRC/rpm/" "$SRC/deb/" "$SRC/service/" "$BUILD/opt/harvest/"
+cp -r "$SRC/rpm/" "$SRC/deb/" "$SRC/service/" "$SRC/.git" "$BUILD/opt/harvest/"
 cp "$SRC/Makefile" "$SRC/README.md" "$SRC/LICENSE" "$SRC/go.mod" "$SRC/go.sum" "$BUILD/opt/harvest/"
 if [ -d "$SRC/vendor" ]; then
     cp -r "$SRC/vendor" "$BUILD/opt/harvest/"
@@ -40,9 +40,6 @@ cat "$SRC/deb/control" >> "$BUILD/DEBIAN/control"
 
 echo " --> update version & build info in [cmd/harvest/version/version.go]"
 cd "$BUILD/opt/harvest/cmd/harvest/version"
-sed -i -E "s/(\s*BUILD\s*=\s*\")\w*(\")/\1deb $HARVEST_ARCH\2/" version.go
-sed -i -E "s/(\s*VERSION\s*=\s*\")\w*(\")/\1$HARVEST_VERSION\2/" version.go
-sed -i -E "s/(\s*RELEASE\s*=\s*\")\w*(\")/\1$HARVEST_RELEASE\2/" version.go
 
 # build binaries, since arch of build machine might not be the same as the target machine
 # export a variable that Makefile will pass to the go compiler
@@ -54,7 +51,7 @@ if [ "$HARVEST_ARCH" = "armhf" ]; then
     export GOARM="7"
 fi
 echo " --> build harvest with envs [GOOS=$GOOS, GOARCH=$GOARCH, GOARM=$GOARM]"
-make all
+make all VERSION=$HARVEST_VERSION RELEASE=$HARVEST_RELEASE
 if [ ! $? -eq 0 ]; then
     error "     build failed"
     exit 1

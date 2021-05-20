@@ -16,6 +16,7 @@ fi
 echo "copying source files"
 rm -rf "$BUILD"
 mkdir -p "$BUILD/harvest/bin"
+cp -r "$SRC/.git" "$BUILD/harvest"
 cp -r "$SRC/pkg/" "$BUILD/harvest/"
 cp -r "$SRC/cmd/" "$BUILD/harvest/"
 cp -r "$SRC/grafana/" "$BUILD/harvest/"
@@ -33,15 +34,11 @@ cp "$SRC/Makefile" "$BUILD/harvest/"
 cp "$SRC/README.md" "$BUILD/harvest/"
 cp "$SRC/LICENSE" "$BUILD/harvest/"
 
-# update build and package version
-sed -i -E "s/(\s*BUILD\s*=\s*\")\w*(\")/\1rpm $HARVEST_ARCH\2/" $BUILD/harvest/cmd/harvest/version/version.go
-sed -i -E "s/(\s*VERSION\s*=\s*\")\w*(\")/\1$HARVEST_VERSION\2/" $BUILD/harvest/cmd/harvest/version/version.go
-sed -i -E "s/(\s*RELEASE\s*=\s*\")\w*(\")/\1$HARVEST_RELEASE\2/" $BUILD/harvest/cmd/harvest/version/version.go
 
 # build binaries
 echo "building binaries"
 cd "$BUILD/harvest"
-make all
+make all VERSION=$HARVEST_VERSION RELEASE=$HARVEST_RELEASE
 if [ ! $? -eq 0 ]; then
     echo "build failed, aborting"
     exit 1
