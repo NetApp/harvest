@@ -1,7 +1,7 @@
 # Change Log
 
 [Releases](https://github.com/NetApp/harvest/releases)
-## 21.05.0 / 2021-05-20
+## 21.05.1 / 2021-05-20
 
 Announcing the release of Harvest2. With this release the core of Harvest has been completely rewritten in Go. Harvest2 is a replacement for the older versions of Harvest 1.6 and below. 
 
@@ -34,6 +34,7 @@ Changes since rc2
 - Collector now warns if it falls behind schedule
 - package.sh fails without internet connection
 - Version flag is missing new line on some shells [#4](https://github.com/NetApp/harvest/issues/4) 
+- Poller should not ignore --config [#28](https://github.com/NetApp/harvest/issues/28)
 
 ### Enhancements
 - Add new exporter for InfluxDB
