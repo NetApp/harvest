@@ -400,10 +400,8 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 		}
 
 		// rate is delta, normalized by elapsed time
+		// we skip calculating rates to fist calculate averages and percentages
 		if property == "rate" {
-			if err = metric.Divide(timestamp); err != nil {
-				logger.Error(me.Prefix, "(%s) calculate rate: %v", key, err)
-			}
 			continue
 		}
 
@@ -442,6 +440,15 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 		}
 
 		logger.Error(me.Prefix, "(%s) unknown property: %s", key, property)
+	}
+
+	// calculate rates (which we deferred to calculate averages/percents first)
+	for i, metric := range orderedMetrics {
+		if metric.GetProperty() == "rate" {
+			if err = metric.Divide(timestamp); err != nil {
+				logger.Error(me.Prefix, "(%s) calculate rate: %v", orderedKeys[i], err)
+			}
+		}
 	}
 
 	me.Metadata.LazySetValueInt64("calc_time", "data", time.Since(calcStart).Microseconds())

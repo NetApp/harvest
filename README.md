@@ -65,7 +65,7 @@ After editing `/opt/harvest/harvest.yml`, manage Harvest with `systemctl start|s
 Download the latest deb of [Harvest](https://github.com/NetApp/harvest/releases/latest) from the releases tab and install with apt.
 
 ```
-  $ sudo apt install harvest.deb
+  $ sudo apt install ./harvest-<RELEASE>.amd64.deb
 ```
 
 Once the installation has finished, edit the [harvest.yml configuration](#harvest-configuration) file located in `/opt/harvest/harvest.yml`

@@ -33,6 +33,7 @@ Changes since rc2
 - RPM install should create required directories
 - Collector now warns if it falls behind schedule
 - package.sh fails without internet connection
+- Version flag is missing new line on some shells [#4](https://github.com/NetApp/harvest/issues/4) 
 
 ### Enhancements
 - Add new exporter for InfluxDB
