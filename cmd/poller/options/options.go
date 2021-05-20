@@ -67,7 +67,6 @@ func SetPathsAndHostname(args *Options) {
 	}
 
 	args.HomePath = conf.GetHarvestHomePath()
-	args.Config, _ = conf.GetDefaultHarvestConfigPath()
 
 	if args.LogPath = os.Getenv("HARVEST_LOGS"); args.LogPath == "" {
 		args.LogPath = "/var/log/harvest/"
