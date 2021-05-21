@@ -23,7 +23,7 @@ We use GitHub for tracking bugs and feature requests.
 
 # Getting Help
 
-There is also a vibrant community of Harvest users on NetApp's community discussion board and the `#harvest` channel in [NetApp's Slack team](https://ulleundgeorg.slack.com). This is a great place to ask general questions about the project and discuss related topics with like-minded peers.
+There is also a vibrant community of Harvest users on NetApp's community discussion board and the `#harvest` channel in [NetApp's Slack team](https://netapppub.slack.com/archives/C02072M1UCD). This is a great place to ask general questions about the project and discuss related topics with like-minded peers.
 
 ## NetApp Community Discussion Board
 
@@ -35,9 +35,12 @@ The Harvest Community is active on the NetApp Community Discussion Board, you ca
 
 ## Documentation
 
-* [Harvest Documentation](https://github.com/NetApp/Harvest/docs)
+* [Harvest Documentation](README.md)
+* [Harvest Architecture](ARCHITECTURE.md)
+* [Contributing](CONTRIBUTING.md)
+* [Wiki](https://github.com/NetApp/harvest/wiki)
 
 ## Real-time Chat
 
-* [Slack](https://ulleundgeorg.slack.com) ([registration](https://join.slack.com/t/netapppub/shared_invite/zt-njcjx2sh-1VR2mEDvPcJAmPutOnP~mg)):
+* [Slack](https://netapppub.slack.com/archives/C02072M1UCD) ([registration](https://join.slack.com/t/netapppub/shared_invite/zt-njcjx2sh-1VR2mEDvPcJAmPutOnP~mg)):
 The `#harvest` channel is the best place to chat with like-minded Harvesters.
