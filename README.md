@@ -30,15 +30,22 @@ Harvest is compatible with:
 We provide pre-compiled binaries for Linux, RPMs, and Debs.
 
 ## Pre-compiled Binaries
-Download the latest version of [Harvest](https://github.com/NetApp/harvest/releases/latest) from the releases tab and extract it.
+
+Visit the [Releases page](https://github.com/NetApp/harvest/releases) and copy the `tar.gz` link you want to download. For example, to download the `v21.05.1` release:
 
 ```
-wget https://github.com/NetApp/harvest/releases/download/v21.05.0/harvest-21.05.0.tar.gz
-tar -xf harvest-21.05.0.tar.gz
-cd harvest-21.05.0
+wget https://github.com/NetApp/harvest/releases/download/v21.05.1/harvest-21.05.1-1.tar.gz
+tar -xvf harvest-21.05.1-1.tar.gz
+cd harvest-21.05.1-1
 
 # Run Harvest with the default unix localhost collector
 bin/harvest start
+```
+
+If you don't have `wget` installed, you can use `curl` like so:
+
+```
+curl -L -O https://github.com/NetApp/harvest/releases/download/v21.05.1/harvest-21.05.1-1.tar.gz
 ```
 
 ## Redhat
@@ -93,6 +100,8 @@ cd harvest
 make
 bin/harvest version
 ```
+
+If you're building on a Mac use `GOOS=darwin make`
 
 Checkout the `Makefile` for other targets of interest.
 # Quick start
