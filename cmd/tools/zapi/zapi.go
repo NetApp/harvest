@@ -336,9 +336,9 @@ func init() {
 	// Append usage examples
 	ZapiCmd.SetUsageTemplate(ZapiCmd.UsageString() + `
 Examples:
-  harvest zapi -p infinity show objects                         Query cluster infinity for all ZAPI objects
-  harvest zapi -p infinity show attrs --api system-node-get     Query cluster infinity for attributes of system-node-get
-  harvest zapi -p infinity show instances --object system:node  Query cluster infinity for all instance of system:node
-  
-  harvest zapi -p infinity export attrs --api system-node-get   Query cluster infinity for all instance of system:node`)
+  harvest zapi -p infinity show apis                             Query cluster infinity for available APIs
+  harvest zapi -p infinity show attrs --api volume-get-iter      Query cluster infinity for volume-get-iter metrics
+                                                                 Typically APIs suffixed with 'get-iter' have interesting metrics 
+  harvest zapi -p infinity show data --api volume-get-iter       Query cluster infinity and print attribute tree of volume-get-iter
+`)
 }
