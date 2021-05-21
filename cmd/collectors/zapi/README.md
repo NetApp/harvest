@@ -2,12 +2,12 @@
 
 # Zapi Collector
 
-Zapi collects data from ONTAP systems using the ZAPI protocol. The collector submits data as it is and does not perform any calculations (therefore it is not able to collect `perf` objects). Since the attributes of most APIs have a irregular tree structure, sometimes a plugin will be required to collect metrics from an API.
+Zapi collects data from ONTAP systems using the ZAPI protocol. The collector submits data as it is and does not perform any calculations (therefore it is not able to collect `perf` objects). Since the attributes of most APIs have an irregular tree structure, sometimes a plugin will be required to collect metrics from an API.
 
 
 ## Configuration
 
-The parameters and configuration are similar to those of the [ZapiPerf collector](../zapiperf/README.md). Therefore, only what is different will be discussed here.
+The parameters and configuration are similar to those of the [ZapiPerf collector](../zapiperf/README.md). Only the differences will be discussed below.
 
 ### Collector configuration file
 
@@ -28,7 +28,7 @@ The Zapi collector does not have the parameters `instance_key` and `override` pa
 
 #### `counters`
 
-This section should contain the complete or partial attribute tree of the API that is queried. Since the collector does get counter metadata from the ONTAP system, two additional symbols are used for non-numeric attributes:
+This section contains the complete or partial attribute tree of the queried API. Since the collector does get counter metadata from the ONTAP system, two additional symbols are used for non-numeric attributes:
 
 - `^` used as a prefix indicates that the attribute should be stored as a label
 - `^^` indicates that the attribute is a label and an instance key (i.e. a label that uniquely identifies an instance, such as `name`, `uuid`). If a single label does not uniquely identify an instance, then multiple instance keys should be indicated.
