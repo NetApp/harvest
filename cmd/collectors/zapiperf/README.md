@@ -110,15 +110,15 @@ The Object configuration file ("subtemplate") should contain the following param
 
 This section defines the list of counters that will be collected. These counters can be labels, numeric metrics or histograms. The exact property of each counter is fetched from ONTAP and updated periodically.
 
-Some counters require a "base-counter" for post-processing, if the base-counter is missing, ZapiPerf will collect, but not export it.
+Some counters require a "base-counter" for post-processing. If the base-counter is missing, ZapiPerf will still run, but the missing data won't be exported.
 
 The display name of a counter can be changed with `=>` (e.g. `nfsv3_ops => ops`). The special counter `instance_name` will be renamed to the value of `object` by default.
 
-Counters that are stored as labels will be only exported (by the exporters) if they are added in the `export_options` section.
+Counters that are stored as labels will only be exported if they are included in the `export_options` section.
 
 #### `export_options`
 
-Parameters in this section will tell the exporters how to handle the collected data. The exact set of parameters depends on the exporters that are configured. For [Prometheus](../../exporters/prometheus/README.md) and [InfluxDB]((../../exporters/influxdb/README.md)) exporters, the following parameters can be defined:
+Parameters in this section tell the exporters how to handle the collected data. The set of parameters varies by exporter. For [Prometheus](../../exporters/prometheus/README.md) and [InfluxDB]((../../exporters/influxdb/README.md)) exporters, the following parameters can be defined:
 
 * `instances_keys` (list): display names of labels to export with each data-point
 * `instance_labels` (list): display names of labels to export as a separate data-point
@@ -126,9 +126,9 @@ Parameters in this section will tell the exporters how to handle the collected d
 
 #### Creating/editing subtemplates
 
-It is recommended not to directly edit existing subtemplates, but create a copy first. Then use a custom template to point to them. This way, the custom subtemplates will not be overwritten after upgrading Harvest.
+Instead of editing one of the existing subtemplates, create a copy and edit that. This way, your custom template will not be overwritten when upgrading Harvest.
 
-Harvest provides a tool for exploring what objects and counters are available on an ONTAP system. This tool can help to create or edit subtemplates. Examples:
+Harvest provides a tool for exploring what objects and counters are available on ONTAP systems. This tool can help create or edit subtemplates. Examples:
 
 ```sh
 $ harvest zapi --poller <poller> show objects
@@ -139,8 +139,7 @@ $ harvest zapi --poller <poller> show counters --object volume
   # will print raw data of all counters in the volume objects
 ```
 
-Replace `<poller>` with the name of a poller that can connect to an ONTAP system.
-
+Replace `<poller>` with the name of one of your ONTAP pollers.
 
 ## Authentication
 
@@ -148,10 +147,10 @@ The collector requires an authentication (`auth_style`) method to connect to the
 
 ### Creating ONTAP user
 There are two ways to create a read-only user:
-* We create a user with read-only access to **all** API objects
-* We limit access to the API objects collected by Harvest with default configuration
+* Create a user with read-only access to **all** API objects
+* Limit the harvest user to the handful of APIs that Harvest collects
 
-The second option is safer, however each time you want to collect counters of a new object, you need to update the user privilages.
+The second option has a smaller attack surface, but each time you want to collect counters of a new object, you will need to update the user's privileges.
 
 Below we explain how to create an ONTAP user and role for Harvest using ONTAP System Manager (Classic interface & New interface) and CLI.
 
