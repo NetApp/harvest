@@ -251,8 +251,8 @@ func (me *Prometheus) Export(data *matrix.Matrix) error {
 // Render metrics and labels into the exposition format, as described in
 // https://prometheus.io/docs/instrumenting/exposition_formats/
 //
-// All metrics are imlicitely "Gauge" counters. We don't submit
-// HELP and TYPE metadata (maybe @TODO for later).
+// All metrics are implicitly "Gauge" counters. If requested we also submit
+// HELP and TYPE metadata (see add_meta_tags in config).
 //
 // Metric name is concatenation of the collector object (e.g. "volume",
 // "fcp_lif") + the metric name (e.g. "read_ops" => "volume_read_ops").

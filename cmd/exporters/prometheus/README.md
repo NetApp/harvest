@@ -10,14 +10,14 @@ Don't forget to [update your Prometheus configuration](#configure-prometheus-to-
 
 ## Design
 
-The Exporter has two concurrent components that makes it possible to simulatenously serve push requests by collectors and pull requests by Prometheus scrapers.
+The Exporter has two concurrent components that makes it possible to simultaneously serve push requests by collectors and pull requests by Prometheus scrapers.
 
 <img src="prometheus.png" width="100%" align="center">
 
 
 ## Parameters
 
-All parameters of the exporter are defined in the `Exporters` section of `harvest.yml`. We are planning to integrete the exporter with one of Prometheus' service-discovery options to simplify this in the future.
+All parameters of the exporter are defined in the `Exporters` section of `harvest.yml`. We are planning to integrate the exporter with one of Prometheus' service-discovery options to simplify this in the future.
 
 
 An overview of all parameters:
@@ -25,7 +25,7 @@ An overview of all parameters:
 
 | parameter              | type         | description                                      | default                |
 |------------------------|--------------|--------------------------------------------------|------------------------|
-| `port`                 | int, requird | port of the HTTP server                          |                        |
+| `port`                 | int, required | port of the HTTP server                          |                        |
 | `local_http_addr`      | string, optional	| address of the HTTP server Harvest starts for Prometheus to scrape:<br />use `localhost` to serve only on the local machine<br />use `0.0.0.0` (default) if Prometheus is scrapping from another machine | `0.0.0.0` |
 | `global_prefx`         | string, optional | add a prefix to all metrics (e.g. `netapp_`) |                        |
 | `allow_addrs`          | list of strings, optional | allow access only if host matches any of the provided addresses | |
@@ -41,9 +41,9 @@ A few examples:
 ```yaml
 Exporters:
   my_prom:
-	allow_addrs:
-  	  - 192.168.0.102
-  	  - 192.168.0.103
+    allow_addrs:
+      - 192.168.0.102
+      - 192.168.0.103
 ```
 will only allow access from exactly these two addresses.
 
@@ -53,8 +53,8 @@ will only allow access from exactly these two addresses.
 ```yaml
 Exporters:
   my_prom:
-	allow_addrs_regex:
-  	  - `^192.168.0.\d+$`
+    allow_addrs_regex:
+      - `^192.168.0.\d+$`
 ```
 will only allow access from the IP4 range `192.168.0.0`-`192.168.0.255`.
 
