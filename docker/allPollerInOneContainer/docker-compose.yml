@@ -1,0 +1,15 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  harvest:
+    image: harvest:latest
+    ports:
+      - "12990:12990"
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    #entrypoint: ["sh", "-c", "sleep 2073600"]
+    volumes:
+      - harvest:/opt/harvest
+      - harvestlog:/var/log/harvest
+volumes:
+  harvest:
+  harvestlog:

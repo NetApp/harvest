@@ -12,7 +12,6 @@ pipeline {
     }
 
     environment {
-        key = credentials('HARVEST_ACCESS_TOKEN')
         VERSION =sh (returnStdout: true, script: """
         [ -n \"${params.VERSION}\" ] && echo \"${params.VERSION}\" || date +%Y.%m.%d%H | cut -c 3-
         """).trim()
@@ -60,7 +59,7 @@ pipeline {
         stage('Git Clone Harvest') {
             steps {
                sh '''
-               git clone --single-branch --branch $BRANCH https://$key@github.com/NetApp/harvest.git
+               git clone --single-branch --branch $BRANCH https://github.com/NetApp/harvest.git
                 '''
             }
         }

@@ -1,0 +1,5 @@
+LICENSE
+NOTICE
+*.md
+bin/
+dist/
