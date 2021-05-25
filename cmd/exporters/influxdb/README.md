@@ -29,13 +29,13 @@ snippet from `harvest.yml`:
 ```yaml
 Exporters:
   my_influx:
-	exporter: InfluxDB
-	addr: localhost
-	bucket: harvest
-	org: harvest
-	token: ZTTrt%24@#WNFM2VZTTNNT25wZWUdtUmhBZEdVUmd3dl@# 
-	allow_addrs_regex:
-  	  - `^192.168.0.\d+$`
+    exporter: InfluxDB
+    addr: localhost
+    bucket: harvest
+    org: harvest
+    token: ZTTrt%24@#WNFM2VZTTNNT25wZWUdtUmhBZEdVUmd3dl@# 
+    allow_addrs_regex:
+        - `^192.168.0.\d+$`
 ```
 
 Notice: InfluxDB stores a token in `~/.influxdbv2/configs`, but you can also retrieve it from the UI (usually serving on `localhost:8086`): click on "Data" on the left task bar, then on "Tokens".
