@@ -65,9 +65,9 @@ clean: header ## Cleanup the project binary (bin) folders
 
 build: clean deps harvest collectors exporters ## Build the project
 
-packages: clean deps build dist-tar ## Package Harvest binary
+package: clean deps build dist-tar ## Package Harvest binary
 
-all: packages ## Build and Package
+all: package ## Build and Package
 
 harvest: deps
 	@# Build the harvest cli
