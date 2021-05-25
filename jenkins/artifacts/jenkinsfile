@@ -88,7 +88,7 @@ pipeline {
                export PATH=$PATH:/usr/local/go/bin
                targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
                rm -rf dist
-               make dist-tar VERSION=$VERSION RELEASE=$RELEASE
+               make package VERSION=$VERSION RELEASE=$RELEASE
                cp -RT ./dist/ $targetLocation
                 '''
             }
