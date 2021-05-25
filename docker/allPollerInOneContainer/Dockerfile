@@ -17,7 +17,7 @@ RUN mkdir -p $INSTALL_DIR
 
 COPY . .
 
-RUN make VERSION=$VERSION RELEASE=$RELEASE
+RUN make build VERSION=$VERSION RELEASE=$RELEASE
 
 RUN cp -a $BUILD_DIR/harvest.example.yml $INSTALL_DIR/harvest.yml
 
