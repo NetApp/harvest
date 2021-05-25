@@ -492,6 +492,8 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 		for _, cnt := range counterList.GetAllChildContentS() {
 			if renamed := strings.Split(cnt, "=>"); len(renamed) == 2 {
 				wanted.Set(strings.TrimSpace(renamed[0]), strings.TrimSpace(renamed[1]))
+			} else if cnt == "instance_name" {
+				wanted.Set(cnt, me.object)
 			} else {
 				display := strings.ReplaceAll(cnt, "-", "_")
 				if strings.HasPrefix(display, me.object) {
@@ -560,9 +562,6 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 		// string metric, add as instance label
 		if strings.Contains(counter.GetChildContentS("properties"), "string") {
 			oldLabels.Delete(key)
-			if key == "instance_name" && display == "" {
-				display = me.object
-			}
 			me.instanceLabels[key] = display
 			logger.Debug(me.Prefix, "%s+[%s] added as label name (%s)%s", color.Yellow, key, display, color.End)
 		} else {
