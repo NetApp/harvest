@@ -101,7 +101,7 @@ make
 bin/harvest version
 ```
 
-If you're building on a Mac use `GOOS=darwin make`
+If you're building on a Mac use `GOOS=darwin make build`
 
 Checkout the `Makefile` for other targets of interest.
 # Quick start
