@@ -22,9 +22,9 @@ GOARCH ?= amd64
 GOOS ?= linux
 COLLECTORS := $(shell ls cmd/collectors)
 EXPORTERS := $(shell ls cmd/exporters)
-HARVEST_RELEASE := harvest-${VERSION}-${RELEASE}
+HARVEST_PACKAGE := harvest-${VERSION}-${RELEASE}_${GOOS}_${GOARCH}
 DIST := dist
-TMP := /tmp/${HARVEST_RELEASE}
+TMP := /tmp/${HARVEST_PACKAGE}
 
 help:  ## Display this help
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m\033[0m\n\nTargets:\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
@@ -139,6 +139,6 @@ dist-tar:
 	@mkdir ${DIST}
 	@cp -a bin conf docs grafana README.md LICENSE ${TMP}
 	@cp -a harvest.example.yml ${TMP}/harvest.yml
-	@tar --directory /tmp --create --gzip --file ${DIST}/${HARVEST_RELEASE}.tar.gz ${HARVEST_RELEASE}
+	@tar --directory /tmp --create --gzip --file ${DIST}/${HARVEST_PACKAGE}.tar.gz ${HARVEST_PACKAGE}
 	@rm -rf ${TMP}
-	@echo "tar artifact @" ${DIST}/${HARVEST_RELEASE}.tar.gz
+	@echo "tar artifact @" ${DIST}/${HARVEST_PACKAGE}.tar.gz
