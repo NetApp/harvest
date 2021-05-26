@@ -138,10 +138,11 @@ func (me *Zapi) InitCache() error {
 		}
 	}
 
-	logger.Debug(me.Prefix, "initialized cache with %d metrics and %d labels", len(me.Matrix.GetInstances()), len(me.instanceLabelPaths))
+	logger.Debug(me.Prefix, "initialized cache with %d metrics and %d labels", len(me.Matrix.GetMetrics()), len(me.instanceLabelPaths))
 
+	// unless cluster is the only instance, require instance keys
 	if len(me.instanceKeyPaths) == 0 && me.Params.GetChildContentS("only_cluster_instance") != "true" {
-		return errors.New(errors.INVALID_PARAM, "no instance keys indicated")
+		return errors.New(errors.MISSING_PARAM, "no instance keys indicated")
 	}
 
 	// @TODO validate
@@ -159,6 +160,7 @@ func (me *Zapi) InitMatrix() error {
 
 	// Add system (cluster) name
 	me.Matrix.SetGlobalLabel("cluster", me.Client.Name())
+	// For 7mode cluster is same as node
 	if !me.Client.IsClustered() {
 		me.Matrix.SetGlobalLabel("node", me.Client.Name())
 	}
@@ -183,7 +185,7 @@ func (me *Zapi) PollInstance() (*matrix.Matrix, error) {
 
 	count = 0
 
-	// special case when there is only once instance
+	// special case when only "instance" is the cluster
 	if me.Params.GetChildContentS("only_cluster_instance") == "true" {
 		if me.Matrix.GetInstance("cluster") == nil {
 			if _, err := me.Matrix.NewInstance("cluster"); err != nil {
@@ -269,28 +271,28 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 	fetch = func(instance *matrix.Instance, node *node.Node, path []string) {
 
 		newpath := append(path, node.GetNameS())
-		logger.Debug(me.Prefix, " > %s(%s)%s <%s%d%s> name=[%s%s%s%s] value=[%s%s%s]", color.Grey, newpath, color.End, color.Red, len(node.GetChildren()), color.End, color.Bold, color.Cyan, node.GetNameS(), color.End, color.Yellow, node.GetContentS(), color.End)
+		key := strings.Join(newpath, ".")
+		logger.Debug(me.Prefix, " > %s(%s)%s <%s%d%s> name=[%s%s%s%s] value=[%s%s%s]", color.Grey, key, color.End, color.Red, len(node.GetChildren()), color.End, color.Bold, color.Cyan, node.GetNameS(), color.End, color.Yellow, node.GetContentS(), color.End)
 
 		if value := node.GetContentS(); value != "" {
-			key := strings.Join(newpath, ".")
-			if metric := me.Matrix.GetMetric(key); metric != nil {
+			if label, has := me.instanceLabelPaths[key]; has {
+				instance.SetLabel(label, value)
+				logger.Trace(me.Prefix, "%slabel (%s) [%s] set value (%s)%s", color.Yellow, key, label, value, color.End)
+				count += 1
+			} else if metric := me.Matrix.GetMetric(key); metric != nil {
 				if err := metric.SetValueString(instance, value); err != nil {
-					//logger.Warn(me.Prefix, "%sskipped metric (%s) set value (%s): %v%s", color.Red, key, value, err, color.End)
+					logger.Error(me.Prefix, "%smetric (%s) set value (%s): %v%s", color.Red, key, value, err, color.End)
 					skipped += 1
 				} else {
-					//logger.Trace(me.Prefix, "%smetric (%s) set value (%s)%s", color.Green, key, value, color.End)
+					logger.Trace(me.Prefix, "%smetric (%s) set value (%s)%s", color.Green, key, value, color.End)
 					count += 1
 				}
-			} else if label, has := me.instanceLabelPaths[key]; has {
-				instance.SetLabel(label, value)
-				//logger.Trace(me.Prefix, "%slabel (%s) [%s] set value (%s)%s", color.Yellow, key, label, value, color.End)
-				count += 1
 			} else {
 				logger.Debug(me.Prefix, "%sskipped (%s) with value (%s): not in metric or label cache%s", color.Blue, key, value, color.End)
 				skipped += 1
 			}
 		} else {
-			//logger.Trace(me.Prefix, "%sskippped (%s) with no value%s", color.Cyan, key, color.End)
+			logger.Trace(me.Prefix, "%sskippped (%s) with no value%s", color.Cyan, key, color.End)
 			skipped += 1
 		}
 
