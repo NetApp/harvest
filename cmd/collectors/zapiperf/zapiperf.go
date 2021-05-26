@@ -62,7 +62,7 @@ func (me *ZapiPerf) Init() error {
 		return err
 	}
 
-	me.Logger.Debug().Msgf("initialized")
+	me.Logger.Debug().Msg("initialized")
 	return nil
 }
 
@@ -118,7 +118,7 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 
 	var err error
 
-	me.Logger.Debug().Msgf("updating data cache")
+	me.Logger.Debug().Msg("updating data cache")
 
 	// clone matrix without numeric data
 	newData := me.Matrix.Clone(false, true, true)
@@ -330,7 +330,7 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 
 	// skip calculating from delta if no data from previous poll
 	if me.isCacheEmpty {
-		me.Logger.Debug().Msgf("skip postprocessing until next poll (previous cache empty)")
+		me.Logger.Debug().Msg("skip postprocessing until next poll (previous cache empty)")
 		me.Matrix = newData
 		me.isCacheEmpty = false
 		return nil, nil
@@ -338,7 +338,7 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 
 	calcStart := time.Now()
 
-	me.Logger.Debug().Msgf("starting delta calculations from previous cache")
+	me.Logger.Debug().Msg("starting delta calculations from previous cache")
 	//me.Logger.Debug(me.Prefix, "data has dimensions (%d x %d)", len(newData.Data), len(newData.Data[0]))
 
 	// cache data, to store after calculations
@@ -608,7 +608,7 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 	if !oldMetrics.Has("timestamp") {
 		m, err := me.Matrix.NewMetricFloat64("timestamp")
 		if err != nil {
-			me.Logger.Error().Stack().Err(err).Msgf("add timestamp metric:")
+			me.Logger.Error().Stack().Err(err).Msg("add timestamp metric")
 		}
 		m.SetProperty("raw")
 		m.SetExportable(false)
@@ -826,7 +826,7 @@ func (me *ZapiPerf) PollInstance() (*matrix.Matrix, error) {
 	for {
 
 		if results, batchTag, err = me.Client.InvokeBatchRequest(request, batchTag); err != nil {
-			me.Logger.Error().Stack().Err(err).Msgf("instance request:")
+			me.Logger.Error().Stack().Err(err).Msg("instance request")
 			break
 		}
 

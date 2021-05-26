@@ -60,7 +60,7 @@ func (me *Zapi) Init() error {
 		return err
 	}
 
-	me.Logger.Debug().Msgf("initialized")
+	me.Logger.Debug().Msg("initialized")
 	return nil
 }
 
@@ -116,7 +116,7 @@ func (me *Zapi) InitCache() error {
 			me.Logger.Trace().Msgf("using default batch-size [%s]", BatchSize)
 			me.batchSize = BatchSize
 		} else {
-			me.Logger.Trace().Msgf("using default no batch-size")
+			me.Logger.Trace().Msg("using default no batch-size")
 		}
 	}
 
@@ -175,7 +175,7 @@ func (me *Zapi) PollInstance() (*matrix.Matrix, error) {
 		err               error
 	)
 
-	me.Logger.Debug().Msgf("starting instance poll")
+	me.Logger.Debug().Msg("starting instance poll")
 
 	oldCount = uint64(len(me.Matrix.GetInstances()))
 	me.Matrix.PurgeInstances()
@@ -225,10 +225,10 @@ func (me *Zapi) PollInstance() (*matrix.Matrix, error) {
 				me.Logger.Debug().Msgf("fetched instance keys (%v): %v", me.instanceKeyPaths, keys)
 
 				if !found {
-					me.Logger.Debug().Msgf("skipping element, no instance keys found")
+					me.Logger.Debug().Msg("skipping element, no instance keys found")
 				} else {
 					if _, err = me.Matrix.NewInstance(strings.Join(keys, ".")); err != nil {
-						me.Logger.Error().Stack().Err(err).Msgf("")
+						me.Logger.Error().Stack().Err(err).Msg("")
 					} else {
 						me.Logger.Debug().Msgf("added instance [%s]", strings.Join(keys, "."))
 						count += 1
@@ -240,7 +240,7 @@ func (me *Zapi) PollInstance() (*matrix.Matrix, error) {
 
 	err = me.Metadata.LazySetValueUint64("count", "instance", count)
 	if err != nil {
-		me.Logger.Error().Stack().Err(err).Msgf("error:")
+		me.Logger.Error().Stack().Err(err).Msg("error")
 	}
 	me.Logger.Debug().Msgf("added %d instances to cache (old cache had %d)", count, oldCount)
 
@@ -298,7 +298,7 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 		}
 	}
 
-	me.Logger.Debug().Msgf("starting data poll")
+	me.Logger.Debug().Msg("starting data poll")
 
 	me.Matrix.Reset()
 
@@ -341,7 +341,7 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 			if instance := me.Matrix.GetInstance("cluster"); instance != nil {
 				fetch(instance, instances[0], make([]string, 0))
 			} else {
-				me.Logger.Error().Stack().Err(nil).Msgf("cluster instance not found in cache")
+				me.Logger.Error().Stack().Err(nil).Msg("cluster instance not found in cache")
 			}
 			break
 		}

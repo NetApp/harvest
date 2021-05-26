@@ -175,7 +175,7 @@ func (me *LabelAgent) parseSplitRegexRule(rule string) {
 		if fields = strings.SplitN(fields[1], "` ", 2); len(fields) == 2 {
 			var err error
 			if r.reg, err = regexp.Compile(fields[0]); err != nil {
-				me.Logger.Error().Stack().Err(err).Msgf("(split_regex) invalid regex:")
+				me.Logger.Error().Stack().Err(err).Msg("(split_regex) invalid regex")
 				return
 			}
 			me.Logger.Trace().Msgf("(split_regex) compule regex [%s]", r.reg.String())
@@ -260,7 +260,7 @@ func (me *LabelAgent) parseReplaceRegexRule(rule string) {
 			r := replaceRegexRule{source: labels[0], target: labels[1]}
 			var err error
 			if r.reg, err = regexp.Compile(strings.TrimSuffix(fields[1], "`")); err != nil {
-				me.Logger.Error().Stack().Err(err).Msgf("(replace_regex) invalid regex:")
+				me.Logger.Error().Stack().Err(err).Msg("(replace_regex) invalid regex")
 				return
 			}
 			me.Logger.Trace().Msgf("(replace_regex) compiled regular expression [%s]", r.reg.String())

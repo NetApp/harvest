@@ -79,7 +79,7 @@ func New(config *node.Node) (*Client, error) {
 	// by default, encorce secure TLS, if not requested otherwise by user
 	if x := config.GetChildContentS("use_insecure_tls"); x != "" {
 		if useInsecureTLS, err = strconv.ParseBool(x); err != nil {
-			client.Logger.Error().Stack().Err(err).Msgf("use_insecure_tls:")
+			client.Logger.Error().Stack().Err(err).Msg("use_insecure_tls")
 		}
 	} else {
 		useInsecureTLS = false

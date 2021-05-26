@@ -35,7 +35,7 @@ func (my *SnapMirror) Init() error {
 	}
 
 	if my.client, err = zapi.New(my.ParentParams); err != nil {
-		my.Logger.Error().Stack().Err(err).Msgf("connecting: ")
+		my.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
 	}
 
@@ -50,7 +50,7 @@ func (my *SnapMirror) Init() error {
 	my.destLimitCache = dict.New()
 	my.srcLimitCache = dict.New()
 
-	my.Logger.Debug().Msgf("plugin initialized")
+	my.Logger.Debug().Msg("plugin initialized")
 	return nil
 }
 
@@ -61,7 +61,7 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		if err := my.updateNodeCache(); err != nil {
 			return nil, err
 		}
-		my.Logger.Debug().Msgf("updated node cache")
+		my.Logger.Debug().Msg("updated node cache")
 	} else if my.nodeUpdCounter > 10 {
 		my.nodeUpdCounter = 0
 	} else {
@@ -72,7 +72,7 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		if err := my.updateLimitCache(); err != nil {
 			return nil, err
 		}
-		my.Logger.Debug().Msgf("updated limit cache")
+		my.Logger.Debug().Msg("updated limit cache")
 	} else if my.limitUpdCounter > 100 {
 		my.limitUpdCounter = 0
 	} else {

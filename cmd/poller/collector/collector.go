@@ -296,7 +296,7 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 					me.Logger.Warn().Msgf("no [%s] metrics on system, entering standby mode", me.Object)
 				// not an error we are expecting, so enter failed state and terminate
 				default:
-					me.Logger.Error().Stack().Err(err).Msgf("")
+					me.Logger.Error().Stack().Err(err).Msg("")
 					if errmsg := errors.GetClass(err); errmsg != "" {
 						me.SetStatus(2, errmsg)
 					} else {
@@ -310,7 +310,7 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 				// recover from standby mode
 				me.Schedule.Recover()
 				me.SetStatus(0, "running")
-				me.Logger.Info().Msgf("recovered from standby mode, back to normal schedule")
+				me.Logger.Info().Msg("recovered from standby mode, back to normal schedule")
 			}
 
 			if data != nil {
@@ -457,7 +457,7 @@ func (me *AbstractCollector) SetMetadata(m *matrix.Matrix) {
 func (me *AbstractCollector) WantedExporters(configFp string) []string {
 	names, err := conf.GetUniqueExporters(me.Params, configFp)
 	if err != nil {
-		me.Logger.Error().Stack().Err(err).Msgf("Error while fetching exporters")
+		me.Logger.Error().Stack().Err(err).Msg("Error while fetching exporters")
 	}
 	return names
 }

@@ -184,7 +184,7 @@ func (me *Poller) Init() error {
 	// load parameters from config (harvest.yml)
 	logger.Debug().Msgf("importing config [%s]", me.options.Config)
 	if me.params, err = conf.GetPoller(me.options.Config, me.name); err != nil {
-		logger.Error().Stack().Err(err).Msgf("read config:")
+		logger.Error().Stack().Err(err).Msg("read config")
 		return err
 	}
 

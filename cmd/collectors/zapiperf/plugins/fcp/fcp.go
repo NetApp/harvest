@@ -78,7 +78,7 @@ func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				rx_percent = rx_bytes / float64(speed)
 				err := rx.SetValueFloat64(instance, rx_percent)
 				if err != nil {
-					me.Logger.Error().Stack().Err(err).Msgf("error:")
+					me.Logger.Error().Stack().Err(err).Msg("error")
 				}
 			}
 
@@ -86,14 +86,14 @@ func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				tx_percent = tx_bytes / float64(speed)
 				err := tx.SetValueFloat64(instance, tx_percent)
 				if err != nil {
-					me.Logger.Error().Stack().Err(err).Msgf("error:")
+					me.Logger.Error().Stack().Err(err).Msg("error")
 				}
 			}
 
 			if rx_ok || tx_ok {
 				err := util.SetValueFloat64(instance, math.Max(rx_percent, tx_percent))
 				if err != nil {
-					me.Logger.Error().Stack().Err(err).Msgf("error:")
+					me.Logger.Error().Stack().Err(err).Msg("error")
 				}
 			}
 		}

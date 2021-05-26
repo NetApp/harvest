@@ -92,7 +92,7 @@ func (me *Prometheus) Init() error {
 	}
 
 	if me.Options.Debug {
-		me.Logger.Debug().Msgf("initialized without HTTP server since in debug mode")
+		me.Logger.Debug().Msg("initialized without HTTP server since in debug mode")
 		return nil
 	}
 
@@ -124,7 +124,7 @@ func (me *Prometheus) Init() error {
 	if x := me.Params.GetChildS("allow_addrs"); x != nil {
 		me.allowAddrs = x.GetAllChildContentS()
 		if len(me.allowAddrs) == 0 {
-			me.Logger.Error().Stack().Err(nil).Msgf("allow_addrs without any")
+			me.Logger.Error().Stack().Err(nil).Msg("allow_addrs without any")
 			return errors.New(errors.INVALID_PARAM, "allow_addrs")
 		}
 		me.checkAddrs = true
@@ -139,12 +139,12 @@ func (me *Prometheus) Init() error {
 			if reg, err := regexp.Compile(r); err == nil {
 				me.allowAddrsRegex = append(me.allowAddrsRegex, reg)
 			} else {
-				me.Logger.Error().Stack().Err(err).Msgf("parse regex:")
+				me.Logger.Error().Stack().Err(err).Msg("parse regex")
 				return errors.New(errors.INVALID_PARAM, "allow_addrs_regex")
 			}
 		}
 		if len(me.allowAddrsRegex) == 0 {
-			me.Logger.Error().Stack().Err(nil).Msgf("allow_addrs_regex without any")
+			me.Logger.Error().Stack().Err(nil).Msg("allow_addrs_regex without any")
 			return errors.New(errors.INVALID_PARAM, "allow_addrs")
 		}
 		me.checkAddrs = true
@@ -217,7 +217,7 @@ func (me *Prometheus) Export(data *matrix.Matrix) error {
 
 	// simulate export in debug mode
 	if me.Options.Debug {
-		me.Logger.Debug().Msgf("no export since in debug mode")
+		me.Logger.Debug().Msg("no export since in debug mode")
 		for _, m := range metrics {
 			me.Logger.Debug().Msgf("M= %s", string(m))
 		}
@@ -237,11 +237,11 @@ func (me *Prometheus) Export(data *matrix.Matrix) error {
 	me.AddExportCount(uint64(len(metrics)))
 	err = me.Metadata.LazyAddValueInt64("time", "render", d.Microseconds())
 	if err != nil {
-		me.Logger.Error().Stack().Err(err).Msgf("error:")
+		me.Logger.Error().Stack().Err(err).Msg("error")
 	}
 	err = me.Metadata.LazyAddValueInt64("time", "export", time.Since(start).Microseconds())
 	if err != nil {
-		me.Logger.Error().Stack().Err(err).Msgf("error:")
+		me.Logger.Error().Stack().Err(err).Msg("error")
 	}
 
 	return nil
@@ -389,7 +389,7 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 					rendered = append(rendered, []byte(x))
 				}
 			} else {
-				me.Logger.Trace().Msgf("skipped: no data value")
+				me.Logger.Trace().Msg("skipped: no data value")
 			}
 		}
 	}

@@ -78,7 +78,7 @@ func (e *InfluxDB) Init() error {
 	if e.token = e.Params.GetChildContentS("token"); e.token == "" {
 		return errors.New(errors.MISSING_PARAM, "token")
 	} else {
-		e.Logger.Debug().Msgf("will use authorization with api token")
+		e.Logger.Debug().Msg("will use authorization with api token")
 	}
 
 	if v = e.Params.GetChildContentS("version"); v == "" {
@@ -131,11 +131,11 @@ func (e *InfluxDB) Export(data *matrix.Matrix) error {
 	if metrics, err = e.Render(data); err == nil && len(metrics) != 0 {
 		// fix render time
 		if err = e.Metadata.LazyAddValueInt64("time", "render", time.Since(s).Microseconds()); err != nil {
-			e.Logger.Error().Stack().Err(err).Msgf("metadata render time:")
+			e.Logger.Error().Stack().Err(err).Msg("metadata render time")
 		}
 		// in debug mode, don't actually export but write to log
 		if e.Options.Debug {
-			e.Logger.Debug().Msgf("simulating export since in debug mode")
+			e.Logger.Debug().Msg("simulating export since in debug mode")
 			for _, m := range metrics {
 				e.Logger.Debug().Msgf("M= [%s%s%s]", color.Blue, m, color.End)
 			}
@@ -151,7 +151,7 @@ func (e *InfluxDB) Export(data *matrix.Matrix) error {
 
 	// update metadata
 	if err = e.Metadata.LazyAddValueInt64("time", "export", time.Since(s).Microseconds()); err != nil {
-		e.Logger.Error().Stack().Err(err).Msgf("metadata export time:")
+		e.Logger.Error().Stack().Err(err).Msg("metadata export time")
 	}
 
 	/* skipped for now, since InfluxDB complains about "time" field name
@@ -309,7 +309,7 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 			//logger.Debug(e.Prefix, "M= [%s%s%s]", color.Blue, r, color.End)
 			count += countTmp
 		} else {
-			e.Logger.Debug().Msgf(err.Error())
+			e.Logger.Debug().Msg(err.Error())
 		}
 	}
 
@@ -318,7 +318,7 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 	// update metadata
 	e.AddExportCount(count)
 	if err := e.Metadata.LazySetValueUint64("count", "export", count); err != nil {
-		e.Logger.Error().Stack().Err(err).Msgf("metadata export count:")
+		e.Logger.Error().Stack().Err(err).Msg("metadata export count")
 	}
 	return rendered, nil
 }

@@ -36,7 +36,7 @@ func (my *Shelf) Init() error {
 	}
 
 	if my.client, err = zapi.New(my.ParentParams); err != nil {
-		my.Logger.Error().Stack().Err(err).Msgf("connecting:")
+		my.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
 	}
 
@@ -50,7 +50,7 @@ func (my *Shelf) Init() error {
 		my.query = "storage-shelf-environment-list-info"
 	}
 
-	my.Logger.Debug().Msgf("plugin connected!")
+	my.Logger.Debug().Msg("plugin connected!")
 
 	my.data = make(map[string]*matrix.Matrix)
 	my.instanceKeys = make(map[string]string)
@@ -102,7 +102,7 @@ func (my *Shelf) Init() error {
 				} else {
 					metric, err := my.data[attribute].NewMetricFloat64(metricName)
 					if err != nil {
-						my.Logger.Error().Stack().Err(err).Msgf("add metric:")
+						my.Logger.Error().Stack().Err(err).Msg("add metric")
 						return err
 					}
 					metric.SetName(display)

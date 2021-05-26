@@ -83,7 +83,7 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 						err := fgm.SetValueFloat64(fg, fgv+value)
 						if err != nil {
-							me.Logger.Error().Stack().Err(err).Msgf("error: ")
+							me.Logger.Error().Stack().Err(err).Msg("error")
 						}
 						// just for debugging
 						fgv2, _ := fgm.GetValueFloat64(fg)
@@ -103,7 +103,7 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 							prod := value * ops_value
 							err := fgm.SetValueFloat64(fg, fgv+prod)
 							if err != nil {
-								me.Logger.Error().Stack().Err(err).Msgf("error: ")
+								me.Logger.Error().Stack().Err(err).Msg("error")
 							}
 
 							// debugging
@@ -111,7 +111,7 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 							me.Logger.Trace().Msgf("       %f + (%f * %f) (=%f) = %f", fgv, value, ops_value, prod, fgv2)
 						} else {
-							me.Logger.Trace().Msgf("       no ops value SKIP")
+							me.Logger.Trace().Msg("       no ops value SKIP")
 						}
 					}
 
@@ -136,7 +136,7 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 						if ops_value, ok := ops.GetValueFloat64(i); ok && ops_value != 0 {
 							err := m.SetValueFloat64(i, value/ops_value)
 							if err != nil {
-								me.Logger.Error().Stack().Err(err).Msgf("error: ")
+								me.Logger.Error().Stack().Err(err).Msgf("error")
 							}
 						} else {
 							m.SetValueNAN(i)
