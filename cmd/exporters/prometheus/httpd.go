@@ -10,7 +10,6 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"goharvest2/pkg/logger"
 	"goharvest2/pkg/set"
 	"net/http"
 	"strings"
@@ -23,13 +22,13 @@ func (me *Prometheus) startHttpD(addr, port string) {
 	mux.HandleFunc("/", me.ServeInfo)
 	mux.HandleFunc("/metrics", me.ServeMetrics)
 
-	logger.Debug(me.Prefix+" (httpd)", "starting server at [%s:%s]", addr, port)
+	me.Logger.Debug().Msgf(" (httpd)", "starting server at [%s:%s]", addr, port)
 	server := &http.Server{Addr: addr + ":" + port, Handler: mux}
 
 	if err := server.ListenAndServe(); err != nil {
-		logger.Fatal(me.Prefix+" (httpd)", err.Error())
+		me.Logger.Fatal().Msgf(" (httpd)", err.Error())
 	} else {
-		logger.Info(me.Prefix+" (httpd)", "listening at [http://%s:%s]", addr, port)
+		me.Logger.Info().Msgf(" (httpd)", "listening at [http://%s:%s]", addr, port)
 	}
 }
 
@@ -72,12 +71,12 @@ func (me *Prometheus) checkAddr(addr string) bool {
 // send a deny request response
 func (me *Prometheus) denyAccess(w http.ResponseWriter, r *http.Request) {
 
-	logger.Debug(me.Prefix+" (httpd) ", "denied request [%s] (%s)", r.RequestURI, r.RemoteAddr)
+	me.Logger.Debug().Msgf(" (httpd) ", "denied request [%s] (%s)", r.RequestURI, r.RemoteAddr)
 	w.WriteHeader(403)
 	w.Header().Set("content-type", "text/plain")
 	_, err := w.Write([]byte("403 Forbidden"))
 	if err != nil {
-		logger.Error(me.Prefix, "error: %v", err)
+		me.Logger.Error().Stack().Err(err).Msgf("error:")
 	}
 }
 
@@ -95,7 +94,7 @@ func (me *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	logger.Debug(me.Prefix+" (httpd) ", "serving request [%s] (%s)", r.RequestURI, r.RemoteAddr)
+	me.Logger.Debug().Msgf(" (httpd) ", "serving request [%s] (%s)", r.RequestURI, r.RemoteAddr)
 
 	me.cache.Lock()
 	for _, metrics := range me.cache.Get() {
@@ -110,7 +109,7 @@ func (me *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 		data = append(data, md...)
 		count += len(md)
 	} else {
-		logger.Error(me.Prefix+" (httpd) ", "render metadata: %v", err)
+		me.Logger.Error().Stack().Err(err).Msgf("(httpd) render metadata:")
 	}
 	/*
 
@@ -124,17 +123,17 @@ func (me *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "text/plain")
 	_, err := w.Write(bytes.Join(data, []byte("\n")))
 	if err != nil {
-		logger.Error(me.Prefix, "error: %v", err)
+		me.Logger.Error().Stack().Err(err).Msgf("error:")
 	}
 
 	me.Metadata.Reset()
 	err = me.Metadata.LazySetValueInt64("time", "http", time.Since(start).Microseconds())
 	if err != nil {
-		logger.Error(me.Prefix, "error: %v", err)
+		me.Logger.Error().Stack().Err(err).Msgf("error:")
 	}
 	err = me.Metadata.LazySetValueInt("count", "http", count)
 	if err != nil {
-		logger.Error(me.Prefix, "error: %v", err)
+		me.Logger.Error().Stack().Err(err).Msgf("error:")
 	}
 }
 
@@ -152,7 +151,7 @@ func (me *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	logger.Debug(me.Prefix+" (httpd)", "serving info request [%s] (%s)", r.RequestURI, r.RemoteAddr)
+	me.Logger.Debug().Msgf(" (httpd)", "serving info request [%s] (%s)", r.RequestURI, r.RemoteAddr)
 
 	body := make([]string, 0)
 
@@ -171,16 +170,16 @@ func (me *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 	}
 	me.cache.Unlock()
 
-	logger.Debug(me.Prefix+" (httpd)", "fetching %d cached elements", len(cache))
+	me.Logger.Debug().Msgf(" (httpd)", "fetching %d cached elements", len(cache))
 
 	for key, data := range cache {
-		logger.Debug(me.Prefix+" (httpd)", "key => [%s] (%d)", key, len(data))
+		me.Logger.Debug().Msgf(" (httpd)", "key => [%s] (%d)", key, len(data))
 		var collector, object string
 
 		if keys := strings.Split(key, "."); len(keys) == 2 {
 			collector = keys[0]
 			object = keys[1]
-			logger.Debug(me.Prefix+" (httpd)", "collector [%s] - object [%s]", collector, object)
+			me.Logger.Debug().Msgf(" (httpd)", "collector [%s] - object [%s]", collector, object)
 		} else {
 			continue
 		}
@@ -229,11 +228,11 @@ func (me *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "text/html")
 	_, err := w.Write([]byte(body_flat))
 	if err != nil {
-		logger.Error(me.Prefix, "error: %v", err)
+		me.Logger.Error().Stack().Err(err).Msgf("error:")
 	}
 
 	err = me.Metadata.LazyAddValueInt64("time", "info", time.Since(start).Microseconds())
 	if err != nil {
-		logger.Error(me.Prefix, "error: %v", err)
+		me.Logger.Error().Stack().Err(err).Msgf("error:")
 	}
 }

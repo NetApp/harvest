@@ -26,7 +26,6 @@ import (
 	"goharvest2/cmd/poller/exporter"
 	"goharvest2/pkg/color"
 	"goharvest2/pkg/errors"
-	"goharvest2/pkg/logger"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/set"
 	"regexp"
@@ -83,7 +82,7 @@ func (me *Prometheus) Init() error {
 	}
 
 	if x := me.Params.GetChildContentS("global_prefix"); x != "" {
-		logger.Debug(me.Prefix, "will use global prefix [%s]", x)
+		me.Logger.Debug().Msgf("will use global prefix [%s]", x)
 		me.globalPrefix = x
 		if !strings.HasSuffix(x, "_") {
 			me.globalPrefix += "_"
@@ -93,7 +92,7 @@ func (me *Prometheus) Init() error {
 	}
 
 	if me.Options.Debug {
-		logger.Debug(me.Prefix, "initialized without HTTP server since in debug mode")
+		me.Logger.Debug().Msgf("initialized without HTTP server since in debug mode")
 		return nil
 	}
 
@@ -105,15 +104,15 @@ func (me *Prometheus) Init() error {
 	// all other parameters are only relevant to the HTTP daemon
 	if x := me.Params.GetChildContentS("cache_max_keep"); x != "" {
 		if d, err := time.ParseDuration(x); err == nil {
-			logger.Debug(me.Prefix, "using cache_max_keep [%s]", x)
+			me.Logger.Debug().Msgf("using cache_max_keep [%s]", x)
 			me.cache = newCache(d)
 		} else {
-			logger.Error(me.Prefix, " cache_max_keep [%s] %v", x, err)
+			me.Logger.Error().Stack().Err(err).Msgf("cache_max_keep [%s]", x)
 		}
 	}
 
 	if me.cache == nil {
-		logger.Debug(me.Prefix, "using default cache_max_keep [%s]", cacheMaxKeep)
+		me.Logger.Debug().Msgf("using default cache_max_keep [%s]", cacheMaxKeep)
 		if d, err := time.ParseDuration(cacheMaxKeep); err == nil {
 			me.cache = newCache(d)
 		} else {
@@ -125,11 +124,11 @@ func (me *Prometheus) Init() error {
 	if x := me.Params.GetChildS("allow_addrs"); x != nil {
 		me.allowAddrs = x.GetAllChildContentS()
 		if len(me.allowAddrs) == 0 {
-			logger.Error(me.Prefix, "allow_addrs without any")
+			me.Logger.Error().Stack().Err(nil).Msgf("allow_addrs without any")
 			return errors.New(errors.INVALID_PARAM, "allow_addrs")
 		}
 		me.checkAddrs = true
-		logger.Debug(me.Prefix, "added %d plain allow rules", len(me.allowAddrs))
+		me.Logger.Debug().Msgf("added %d plain allow rules", len(me.allowAddrs))
 	}
 
 	// allow access only from addresses matching one of defined regular expressions
@@ -140,16 +139,16 @@ func (me *Prometheus) Init() error {
 			if reg, err := regexp.Compile(r); err == nil {
 				me.allowAddrsRegex = append(me.allowAddrsRegex, reg)
 			} else {
-				logger.Error(me.Prefix, "parse regex: %v", err)
+				me.Logger.Error().Stack().Err(err).Msgf("parse regex:")
 				return errors.New(errors.INVALID_PARAM, "allow_addrs_regex")
 			}
 		}
 		if len(me.allowAddrsRegex) == 0 {
-			logger.Error(me.Prefix, "allow_addrs_regex without any")
+			me.Logger.Error().Stack().Err(nil).Msgf("allow_addrs_regex without any")
 			return errors.New(errors.INVALID_PARAM, "allow_addrs")
 		}
 		me.checkAddrs = true
-		logger.Debug(me.Prefix, "added %d regex allow rules", len(me.allowAddrsRegex))
+		me.Logger.Debug().Msgf("added %d regex allow rules", len(me.allowAddrsRegex))
 	}
 
 	// cache addresses that have been allowed or denied already
@@ -174,7 +173,7 @@ func (me *Prometheus) Init() error {
 	addr := localHttpAddr
 	if x := me.Params.GetChildContentS("local_http_addr"); x != "" {
 		addr = x
-		logger.Debug(me.Prefix, "using custom local addr [%s]", x)
+		me.Logger.Debug().Msgf("using custom local addr [%s]", x)
 	}
 
 	go me.startHttpD(addr, port)
@@ -182,7 +181,7 @@ func (me *Prometheus) Init() error {
 	// @TODO: implement error checking to enter failed state if HTTPd failed
 	// (like we did in Alpha)
 
-	logger.Debug(me.Prefix, "initialized, HTTP daemon started at [http://%s:%s]", addr, port)
+	me.Logger.Debug().Msgf("initialized, HTTP daemon started at [http://%s:%s]", addr, port)
 
 	return nil
 }
@@ -206,7 +205,7 @@ func (me *Prometheus) Export(data *matrix.Matrix) error {
 	me.Lock()
 	defer me.Unlock()
 
-	logger.Trace(me.Prefix, "incoming %s%s(%s) (%s)%s", color.Bold, color.Cyan, data.UUID, data.Object, color.End)
+	me.Logger.Trace().Msgf("incoming %s%s(%s) (%s)%s", color.Bold, color.Cyan, data.UUID, data.Object, color.End)
 
 	// render metrics into Prometheus format
 	start := time.Now()
@@ -218,9 +217,9 @@ func (me *Prometheus) Export(data *matrix.Matrix) error {
 
 	// simulate export in debug mode
 	if me.Options.Debug {
-		logger.Debug(me.Prefix, "no export since in debug mode")
+		me.Logger.Debug().Msgf("no export since in debug mode")
 		for _, m := range metrics {
-			logger.Debug(me.Prefix, "M= %s", string(m))
+			me.Logger.Debug().Msgf("M= %s", string(m))
 		}
 		return nil
 	}
@@ -232,17 +231,17 @@ func (me *Prometheus) Export(data *matrix.Matrix) error {
 	me.cache.Lock()
 	me.cache.Put(key, metrics)
 	me.cache.Unlock()
-	logger.Debug(me.Prefix, "added to cache with key [%s%s%s%s]", color.Bold, color.Red, key, color.End)
+	me.Logger.Debug().Msgf("added to cache with key [%s%s%s%s]", color.Bold, color.Red, key, color.End)
 
 	// update metadata
 	me.AddExportCount(uint64(len(metrics)))
 	err = me.Metadata.LazyAddValueInt64("time", "render", d.Microseconds())
 	if err != nil {
-		logger.Error(me.Prefix, "error: %v", err)
+		me.Logger.Error().Stack().Err(err).Msgf("error:")
 	}
 	err = me.Metadata.LazyAddValueInt64("time", "export", time.Since(start).Microseconds())
 	if err != nil {
-		logger.Error(me.Prefix, "error: %v", err)
+		me.Logger.Error().Stack().Err(err).Msgf("error:")
 	}
 
 	return nil
@@ -284,12 +283,12 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 
 	if x := options.GetChildS("instance_labels"); x != nil {
 		labels_to_include = x.GetAllChildContentS()
-		logger.Debug(me.Prefix, "requested instance_labels : %v", labels_to_include)
+		me.Logger.Debug().Msgf("requested instance_labels : %v", labels_to_include)
 	}
 
 	if x := options.GetChildS("instance_keys"); x != nil {
 		keys_to_include = x.GetAllChildContentS()
-		logger.Debug(me.Prefix, "requested keys_labels : %v", keys_to_include)
+		me.Logger.Debug().Msgf("requested keys_labels : %v", keys_to_include)
 	}
 
 	if options.GetChildContentS("include_all_labels") == "true" {
@@ -307,11 +306,11 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 	for key, instance := range data.GetInstances() {
 
 		if !instance.IsExportable() {
-			logger.Trace(me.Prefix, "skip instance [%s]: disabled for export", key)
+			me.Logger.Trace().Msgf("skip instance [%s]: disabled for export", key)
 			continue
 		}
 
-		logger.Trace(me.Prefix, "rendering instance [%s] (%v)", key, instance.GetLabels())
+		me.Logger.Trace().Msgf("rendering instance [%s] (%v)", key, instance.GetLabels())
 
 		instance_keys := make([]string, len(global_labels))
 		instance_labels := make([]string, 0)
@@ -327,18 +326,18 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 				if value != "" {
 					instance_keys = append(instance_keys, fmt.Sprintf("%s=\"%s\"", key, value))
 				}
-				logger.Trace(me.Prefix, "++ key [%s] (%s) found=%v", key, value, value != "")
+				me.Logger.Trace().Msgf("++ key [%s] (%s) found=%v", key, value, value != "")
 			}
 
 			for _, label := range labels_to_include {
 				value := instance.GetLabel(label)
 				instance_labels = append(instance_labels, fmt.Sprintf("%s=\"%s\"", label, value))
-				logger.Trace(me.Prefix, "++ label [%s] (%s) %t", label, value, value != "")
+				me.Logger.Trace().Msgf("++ label [%s] (%s) %t", label, value, value != "")
 			}
 
 			// @TODO, probably be strict, and require all keys to be present
 			if len(instance_keys) == 0 && options.GetChildContentS("require_instance_keys") != "False" {
-				logger.Trace(me.Prefix, "skip instance, no keys parsed (%v) (%v)", instance_keys, instance_labels)
+				me.Logger.Trace().Msgf("skip instance, no keys parsed (%v) (%v)", instance_keys, instance_labels)
 				continue
 			}
 
@@ -347,18 +346,18 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 				label_data := fmt.Sprintf("%s_labels{%s,%s} 1.0", prefix, strings.Join(instance_keys, ","), strings.Join(instance_labels, ","))
 				rendered = append(rendered, []byte(label_data))
 			} else {
-				logger.Trace(me.Prefix, "skip instance labels, no labels parsed (%v) (%v)", instance_keys, instance_labels)
+				me.Logger.Trace().Msgf("skip instance labels, no labels parsed (%v) (%v)", instance_keys, instance_labels)
 			}
 		}
 
 		for mkey, metric := range data.GetMetrics() {
 
 			if !metric.IsExportable() {
-				logger.Debug(me.Prefix, "skip metric [%s]: disabled for export", mkey)
+				me.Logger.Debug().Msgf("skip metric [%s]: disabled for export", mkey)
 				continue
 			}
 
-			logger.Trace(me.Prefix, "rendering metric [%s]", mkey)
+			me.Logger.Trace().Msgf("rendering metric [%s]", mkey)
 
 			if value, ok := metric.GetValueString(instance); ok {
 
@@ -390,11 +389,11 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 					rendered = append(rendered, []byte(x))
 				}
 			} else {
-				logger.Trace(me.Prefix, "skipped: no data value")
+				me.Logger.Trace().Msgf("skipped: no data value")
 			}
 		}
 	}
-	logger.Debug(me.Prefix, "rendered %d data points from %d (%s) instances", len(rendered), len(data.GetInstances()), data.Object)
+	me.Logger.Debug().Msgf("rendered %d data points from %d (%s) instances", len(rendered), len(data.GetInstances()), data.Object)
 	return rendered, nil
 }
 

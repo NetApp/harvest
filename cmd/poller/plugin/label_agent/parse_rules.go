@@ -5,7 +5,6 @@
 package label_agent
 
 import (
-	"goharvest2/pkg/logger"
 	"goharvest2/pkg/matrix"
 	"regexp"
 	"strconv"
@@ -52,7 +51,7 @@ func (me *LabelAgent) parseRules() int {
 		case "value_mapping":
 			me.parseValueMappingRule(rule)
 		default:
-			logger.Warn(me.Prefix, "unknown rule (%s)", name)
+			me.Logger.Warn().Msgf("unknown rule (%s)", name)
 		}
 	}
 
@@ -123,18 +122,18 @@ type splitSimpleRule struct {
 func (me *LabelAgent) parseSplitSimpleRule(rule string) {
 	if fields := strings.SplitN(rule, " `", 2); len(fields) == 2 {
 		r := splitSimpleRule{source: strings.TrimSpace(fields[0])}
-		logger.Debug(me.Prefix, "fields := %v", fields)
+		me.Logger.Debug().Msgf("fields := %v", fields)
 		if fields = strings.SplitN(fields[1], "` ", 2); len(fields) == 2 {
-			logger.Debug(me.Prefix, "fields = %v", fields)
+			me.Logger.Debug().Msgf("fields = %v", fields)
 			r.sep = fields[0]
 			if r.targets = strings.Split(fields[1], ","); len(r.targets) != 0 {
 				me.splitSimpleRules = append(me.splitSimpleRules, r)
-				logger.Debug(me.Prefix, "(split) parsed rule [%v]", r)
+				me.Logger.Debug().Msgf("(split) parsed rule [%v]", r)
 				return
 			}
 		}
 	}
-	logger.Warn(me.Prefix, "(split) rule has invalid format [%s]", rule)
+	me.Logger.Warn().Msgf("(split) rule has invalid format [%s]", rule)
 }
 
 type splitPairsRule struct {
@@ -152,11 +151,11 @@ func (me *LabelAgent) parseSplitPairsRule(rule string) {
 		r := splitPairsRule{source: strings.TrimSpace(fields[0])}
 		r.sep1 = fields[1]
 		r.sep2 = fields[3]
-		logger.Debug(me.Prefix, "(split_pairs) parsed rule [%v]", r)
+		me.Logger.Debug().Msgf("(split_pairs) parsed rule [%v]", r)
 		me.splitPairsRules = append(me.splitPairsRules, r)
 		return
 	}
-	logger.Warn(me.Prefix, "(split_pairs) rule has invalid format [%s]", rule)
+	me.Logger.Warn().Msgf("(split_pairs) rule has invalid format [%s]", rule)
 }
 
 type splitRegexRule struct {
@@ -176,18 +175,18 @@ func (me *LabelAgent) parseSplitRegexRule(rule string) {
 		if fields = strings.SplitN(fields[1], "` ", 2); len(fields) == 2 {
 			var err error
 			if r.reg, err = regexp.Compile(fields[0]); err != nil {
-				logger.Error(me.Prefix, "(split_regex) invalid regex: %v", err)
+				me.Logger.Error().Stack().Err(err).Msgf("(split_regex) invalid regex:")
 				return
 			}
-			logger.Trace(me.Prefix, "(split_regex) compule regex [%s]", r.reg.String())
+			me.Logger.Trace().Msgf("(split_regex) compule regex [%s]", r.reg.String())
 			if r.targets = strings.Split(fields[1], ","); len(r.targets) != 0 {
 				me.splitRegexRules = append(me.splitRegexRules, r)
-				logger.Debug(me.Prefix, "(split_regex) parsed rule [%v]", r)
+				me.Logger.Debug().Msgf("(split_regex) parsed rule [%v]", r)
 				return
 			}
 		}
 	}
-	logger.Warn(me.Prefix, "(split_regex) rule has invalid format [%s]", rule)
+	me.Logger.Warn().Msgf("(split_regex) rule has invalid format [%s]", rule)
 }
 
 type joinSimpleRule struct {
@@ -208,12 +207,12 @@ func (me *LabelAgent) parseJoinSimpleRule(rule string) {
 			r.sep = fields[0]
 			if r.sources = strings.Split(fields[1], ","); len(r.sources) != 0 {
 				me.joinSimpleRules = append(me.joinSimpleRules, r)
-				logger.Debug(me.Prefix, "(join) parsed rule [%v]", r)
+				me.Logger.Debug().Msgf("(join) parsed rule [%v]", r)
 				return
 			}
 		}
 	}
-	logger.Warn(me.Prefix, "(join) rule has invalid format [%s]", rule)
+	me.Logger.Warn().Msgf("(join) rule has invalid format [%s]", rule)
 }
 
 type replaceSimpleRule struct {
@@ -235,11 +234,11 @@ func (me *LabelAgent) parseReplaceSimpleRule(rule string) {
 			r.old = strings.TrimSuffix(fields[1], "`")
 			r.new = strings.TrimSuffix(fields[2], "`")
 			me.replaceSimpleRules = append(me.replaceSimpleRules, r)
-			logger.Debug(me.Prefix, "(replace) parsed rule [%v]", r)
+			me.Logger.Debug().Msgf("(replace) parsed rule [%v]", r)
 			return
 		}
 	}
-	logger.Warn(me.Prefix, "(replace) rule has invalid format [%s]", rule)
+	me.Logger.Warn().Msgf("(replace) rule has invalid format [%s]", rule)
 }
 
 type replaceRegexRule struct {
@@ -261,16 +260,16 @@ func (me *LabelAgent) parseReplaceRegexRule(rule string) {
 			r := replaceRegexRule{source: labels[0], target: labels[1]}
 			var err error
 			if r.reg, err = regexp.Compile(strings.TrimSuffix(fields[1], "`")); err != nil {
-				logger.Error(me.Prefix, "(replace_regex) invalid regex: %v", err)
+				me.Logger.Error().Stack().Err(err).Msgf("(replace_regex) invalid regex:")
 				return
 			}
-			logger.Trace(me.Prefix, "(replace_regex) compiled regular expression [%s]", r.reg.String())
+			me.Logger.Trace().Msgf("(replace_regex) compiled regular expression [%s]", r.reg.String())
 
 			r.indices = make([]int, 0)
 			err_pos := -1
 
 			if fields[2] = strings.TrimSuffix(fields[2], "`"); len(fields[2]) != 0 {
-				logger.Trace(me.Prefix, "(replace_regex) parsing substitution string [%s] (%d)", fields[2], len(fields[2]))
+				me.Logger.Trace().Msgf("(replace_regex) parsing substitution string [%s] (%d)", fields[2], len(fields[2]))
 				inside_num := false
 				num := ""
 				for i, b := range fields[2] {
@@ -301,15 +300,15 @@ func (me *LabelAgent) parseReplaceRegexRule(rule string) {
 				}
 			}
 			if err_pos != -1 {
-				logger.Error(me.Prefix, "(replace_regex) invalid char in substitution string at pos %d (%s)", err_pos, string(fields[2][err_pos]))
+				me.Logger.Error().Stack().Err(nil).Msgf("(replace_regex) invalid char in substitution string at pos %d (%s)", err_pos, string(fields[2][err_pos]))
 				return
 			}
 			me.replaceRegexRules = append(me.replaceRegexRules, r)
-			logger.Debug(me.Prefix, "(replace_regex) parsed rule [%v]", r)
+			me.Logger.Debug().Msgf("(replace_regex) parsed rule [%v]", r)
 			return
 		}
 	}
-	logger.Warn(me.Prefix, "(replace_regex) rule has invalid format [%s]", rule)
+	me.Logger.Warn().Msgf("(replace_regex) rule has invalid format [%s]", rule)
 }
 
 type excludeEqualsRule struct {
@@ -326,9 +325,9 @@ func (me *LabelAgent) parseExcludeEqualsRule(rule string) {
 		r := excludeEqualsRule{label: fields[0]}
 		r.value = strings.TrimSuffix(fields[1], "`")
 		me.excludeEqualsRules = append(me.excludeEqualsRules, r)
-		logger.Debug(me.Prefix, "(exclude_equals) parsed rule [%v]", r)
+		me.Logger.Debug().Msgf("(exclude_equals) parsed rule [%v]", r)
 	} else {
-		logger.Warn(me.Prefix, "(exclude_equals) rule definition [%s] should have two fields", rule)
+		me.Logger.Warn().Msgf("(exclude_equals) rule definition [%s] should have two fields", rule)
 	}
 }
 
@@ -342,9 +341,9 @@ func (me *LabelAgent) parseExcludeContainsRule(rule string) {
 		r := excludeContainsRule{label: fields[0]}
 		r.value = strings.TrimSuffix(fields[1], "`")
 		me.excludeContainsRules = append(me.excludeContainsRules, r)
-		logger.Debug(me.Prefix, "(exclude_contains) parsed rule [%v]", r)
+		me.Logger.Debug().Msgf("(exclude_contains) parsed rule [%v]", r)
 	} else {
-		logger.Error(me.Prefix, "(exclude_contains) rule definition [%s] should have two fields", rule)
+		me.Logger.Error().Stack().Err(nil).Msgf("(exclude_contains) rule definition [%s] should have two fields", rule)
 	}
 }
 
@@ -359,13 +358,13 @@ func (me *LabelAgent) parseExcludeRegexRule(rule string) {
 		var err error
 		if r.reg, err = regexp.Compile(strings.TrimSuffix(fields[1], "`")); err == nil {
 			me.excludeRegexRules = append(me.excludeRegexRules, r)
-			logger.Trace(me.Prefix, "(exclude_regex) compiled regex: [%s]", r.reg.String())
-			logger.Debug(me.Prefix, "(exclude_regex) parsed rule [%v]", r)
+			me.Logger.Debug().Msgf("(exclude_regex) compiled regex: [%s]", r.reg.String())
+			me.Logger.Debug().Msgf("(exclude_regex) parsed rule [%v]", r)
 		} else {
-			logger.Error(me.Prefix, "(exclude_regex) compile regex: %v", err)
+			me.Logger.Error().Stack().Err(err).Msgf("(exclude_regex) compile regex:")
 		}
 	} else {
-		logger.Error(me.Prefix, "(exclude_regex) rule definition [%s] should have two fields", rule)
+		me.Logger.Error().Stack().Err(nil).Msgf("(exclude_regex) rule definition [%s] should have two fields", rule)
 	}
 }
 
@@ -396,7 +395,7 @@ func (me *LabelAgent) parseValueMappingRule(rule string) {
 			fields[3] = strings.TrimPrefix(strings.TrimSuffix(fields[3], "`"), "`")
 
 			if v, err := strconv.ParseUint(fields[3], 10, 8); err != nil {
-				logger.Error(me.Prefix, "(value_mapping) parse default value (%s): %v", fields[3], err)
+				me.Logger.Error().Stack().Err(err).Msgf("(value_mapping) parse default value (%s): ", fields[3])
 				return
 			} else {
 				r.hasDefault = true
@@ -405,8 +404,8 @@ func (me *LabelAgent) parseValueMappingRule(rule string) {
 		}
 
 		me.valueMappingRules = append(me.valueMappingRules, r)
-		logger.Debug(me.Prefix, "(value_mapping) parsed rule [%v]", r)
+		me.Logger.Debug().Msgf("(value_mapping) parsed rule [%v]", r)
 		return
 	}
-	logger.Warn(me.Prefix, "(value_mapping) rule has invalid format [%s]", rule)
+	me.Logger.Warn().Msgf("(value_mapping) rule has invalid format [%s]", rule)
 }

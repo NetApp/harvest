@@ -22,10 +22,12 @@ import (
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/cmd/poller/plugin/aggregator"
 	"goharvest2/cmd/poller/plugin/label_agent"
-	"goharvest2/pkg/logger"
+	"goharvest2/pkg/logging"
 	"goharvest2/pkg/tree"
 	"goharvest2/pkg/tree/node"
 )
+
+var logger *logging.Logger = logging.GetInstance()
 
 // ImportTemplate retrieves the config (template) of a collector, arguments are:
 // @confDir			- path of Harvest config durectory (usually /etc/harvest)
@@ -59,7 +61,7 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, version [3
 	)
 
 	pathPrefix = path.Join(c.Options.HomePath, "conf/", strings.ToLower(c.Name), model)
-	logger.Debug(c.Prefix, "Looking for best-fitting template in [%s]", pathPrefix)
+	c.Logger.Debug().Msgf("Looking for best-fitting template in [%s]", pathPrefix)
 
 	// check for available versons, those are the subdirectories that include filename
 	availableVersions = make(map[string]bool)
@@ -69,7 +71,7 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, version [3
 				if templates, err := ioutil.ReadDir(path.Join(pathPrefix, file.Name())); err == nil {
 					for _, t := range templates {
 						if t.Name() == filename {
-							logger.Trace(c.Prefix, "available version dir: [%s]", file.Name())
+							c.Logger.Trace().Msgf("available version dir: [%s]", file.Name())
 							availableVersions[file.Name()] = true
 							break
 						}
@@ -80,7 +82,7 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, version [3
 	} else {
 		return nil, err
 	}
-	logger.Trace(c.Prefix, "checking for %d available versions: %v", len(availableVersions), availableVersions)
+	c.Logger.Trace().Msgf("checking for %d available versions: %v", len(availableVersions), availableVersions)
 
 	versionDecimal = version[0]*100 + version[1]*10 + version[2]
 
@@ -104,7 +106,7 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, version [3
 	}
 
 	subTemplateFp = path.Join(pathPrefix, selectedVersion, filename)
-	logger.Debug(c.Prefix, "selected best-fitting subtemplate [%s]", subTemplateFp)
+	c.Logger.Debug().Msgf("selected best-fitting subtemplate [%s]", subTemplateFp)
 	return tree.Import("yaml", subTemplateFp)
 }
 

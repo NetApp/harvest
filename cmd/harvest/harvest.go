@@ -93,9 +93,7 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	if HarvestPidPath = os.Getenv("HARVEST_PIDS"); HarvestPidPath == "" {
-		HarvestPidPath = "/var/run/harvest/"
-	}
+	HarvestPidPath = conf.GetHarvestPidPath()
 
 	if opts.verbose {
 		_ = cmd.Flags().Set("loglevel", "1")

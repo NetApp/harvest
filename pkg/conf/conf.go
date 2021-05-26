@@ -116,6 +116,22 @@ func GetHarvestHomePath() string {
 	return "./"
 }
 
+func GetHarvestLogPath() string {
+	var logPath string
+	if logPath = os.Getenv("HARVEST_LOGS"); logPath == "" {
+		logPath = "/var/log/harvest/"
+	}
+	return logPath
+}
+
+func GetHarvestPidPath() string {
+	var pidPath string
+	if pidPath = os.Getenv("HARVEST_PIDS"); pidPath == "" {
+		pidPath = "/var/run/harvest/"
+	}
+	return pidPath
+}
+
 /*
 This method returns port configured in prometheus exporter for given poller
 If there are more than 1 exporter configured for a poller then return string will have ports as comma seperated

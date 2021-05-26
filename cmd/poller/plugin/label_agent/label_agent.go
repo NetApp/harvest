@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/pkg/errors"
-	"goharvest2/pkg/logger"
 	"goharvest2/pkg/matrix"
 	"strings"
 )
@@ -46,7 +45,7 @@ func (me *LabelAgent) Init() error {
 	if count = me.parseRules(); count == 0 {
 		err = errors.New(errors.MISSING_PARAM, "valid rules")
 	} else {
-		logger.Debug(me.Prefix, "parsed %d rules for %d actions", count, len(me.actions))
+		me.Logger.Debug().Msgf("parsed %d rules for %d actions", count, len(me.actions))
 	}
 
 	return err
@@ -76,7 +75,7 @@ func (me *LabelAgent) splitSimple(instance *matrix.Instance) {
 			for i := range r.targets {
 				if r.targets[i] != "" && values[i] != "" {
 					instance.SetLabel(r.targets[i], values[i])
-					logger.Trace(me.Prefix, "splitSimple: (%s) [%s] => (%s) [%s]", r.source, instance.GetLabel(r.source), r.targets[i], values[i])
+					me.Logger.Trace().Msgf("splitSimple: (%s) [%s] => (%s) [%s]", r.source, instance.GetLabel(r.source), r.targets[i], values[i])
 				}
 			}
 		}
@@ -90,7 +89,7 @@ func (me *LabelAgent) splitRegex(instance *matrix.Instance) {
 			for i := range r.targets {
 				if r.targets[i] != "" && m[i+1] != "" {
 					instance.SetLabel(r.targets[i], m[i+1])
-					logger.Trace(me.Prefix, "splitRegex: (%s) [%s] => (%s) [%s]", r.source, instance.GetLabel(r.source), r.targets[i], m[i+1])
+					me.Logger.Trace().Msgf("splitRegex: (%s) [%s] => (%s) [%s]", r.source, instance.GetLabel(r.source), r.targets[i], m[i+1])
 				}
 			}
 		}
@@ -122,7 +121,7 @@ func (me *LabelAgent) joinSimple(instance *matrix.Instance) {
 		}
 		if len(values) != 0 {
 			instance.SetLabel(r.target, strings.Join(values, r.sep))
-			logger.Trace(me.Prefix, "joinSimple: (%v) => (%s) [%s]", r.sources, r.target, instance.GetLabel(r.target))
+			me.Logger.Trace().Msgf("joinSimple: (%v) => (%s) [%s]", r.sources, r.target, instance.GetLabel(r.target))
 		}
 	}
 }
@@ -133,7 +132,7 @@ func (me *LabelAgent) replaceSimple(instance *matrix.Instance) {
 		if old := instance.GetLabel(r.source); old != "" {
 			if value := strings.ReplaceAll(old, r.old, r.new); value != old {
 				instance.SetLabel(r.target, value)
-				logger.Trace(me.Prefix, "replaceSimple: (%s) [%s] => (%s) [%s]", r.source, old, r.target, value)
+				me.Logger.Trace().Msgf("replaceSimple: (%s) [%s] => (%s) [%s]", r.source, old, r.target, value)
 			}
 		}
 	}
@@ -144,22 +143,22 @@ func (me *LabelAgent) replaceRegex(instance *matrix.Instance) {
 	for _, r := range me.replaceRegexRules {
 		old := instance.GetLabel(r.source)
 		if m := r.reg.FindStringSubmatch(old); m != nil {
-			logger.Trace(me.Prefix, "replaceRegex: (%d) matches= %v", len(m)-1, m[1:])
+			me.Logger.Trace().Msgf("replaceRegex: (%d) matches= %v", len(m)-1, m[1:])
 			s := make([]interface{}, 0)
 			for _, i := range r.indices {
 				if i < len(m)-1 {
 					s = append(s, m[i+1])
-					logger.Trace(me.Prefix, "substring [%d] = (%s)", i, m[i+1])
+					me.Logger.Trace().Msgf("substring [%d] = (%s)", i, m[i+1])
 				} else {
 					// probably we need to throw warning
 					s = append(s, "")
-					logger.Trace(me.Prefix, "substring [%d] = no match!", i)
+					me.Logger.Trace().Msgf("substring [%d] = no match!", i)
 				}
 			}
-			logger.Trace(me.Prefix, "replaceRegex: (%d) substitution strings= %v", len(s), s)
+			me.Logger.Trace().Msgf("replaceRegex: (%d) substitution strings= %v", len(s), s)
 			if value := fmt.Sprintf(r.format, s...); value != "" && value != old {
 				instance.SetLabel(r.target, value)
-				logger.Trace(me.Prefix, "replaceRegex: (%s) [%s] => (%s) [%s]", r.source, old, r.target, value)
+				me.Logger.Trace().Msgf("replaceRegex: (%s) [%s] => (%s) [%s]", r.source, old, r.target, value)
 			}
 		}
 	}
@@ -170,7 +169,7 @@ func (me *LabelAgent) excludeEquals(instance *matrix.Instance) {
 	for _, r := range me.excludeEqualsRules {
 		if instance.GetLabel(r.label) == r.value {
 			instance.SetExportable(false)
-			logger.Trace(me.Prefix, "excludeEquals: (%s) [%s] instance with labels [%s] => excluded", r.label, r.value, instance.GetLabels().String())
+			me.Logger.Trace().Msgf("excludeEquals: (%s) [%s] instance with labels [%s] => excluded", r.label, r.value, instance.GetLabels().String())
 			break
 		}
 	}
@@ -181,7 +180,7 @@ func (me *LabelAgent) excludeContains(instance *matrix.Instance) {
 	for _, r := range me.excludeContainsRules {
 		if strings.Contains(instance.GetLabel(r.label), r.value) {
 			instance.SetExportable(false)
-			logger.Trace(me.Prefix, "excludeContains: (%s) [%s] instance with labels [%s] => excluded", r.label, r.value, instance.GetLabels().String())
+			me.Logger.Trace().Msgf("excludeContains: (%s) [%s] instance with labels [%s] => excluded", r.label, r.value, instance.GetLabels().String())
 			break
 		}
 	}
@@ -192,7 +191,7 @@ func (me *LabelAgent) excludeRegex(instance *matrix.Instance) {
 	for _, r := range me.excludeRegexRules {
 		if r.reg.MatchString(instance.GetLabel(r.label)) {
 			instance.SetExportable(false)
-			logger.Trace(me.Prefix, "excludeEquals: (%s) [%s] instance with labels [%s] => excluded", r.label, r.reg.String(), instance.GetLabels().String())
+			me.Logger.Trace().Msgf("excludeEquals: (%s) [%s] instance with labels [%s] => excluded", r.label, r.reg.String(), instance.GetLabels().String())
 			break
 		}
 	}
@@ -209,7 +208,7 @@ func (me *LabelAgent) mapValues(m *matrix.Matrix) error {
 
 		if metric = m.GetMetric(r.metric); metric == nil {
 			if metric, err = m.NewMetricUint8(r.metric); err != nil {
-				logger.Error(me.Prefix, "valueMapping: new metric [%s]: %v", r.metric, err)
+				me.Logger.Error().Stack().Err(err).Msgf("valueMapping: new metric [%s]:", r.metric)
 				return err
 			} else {
 				metric.SetProperty("mapping")
@@ -219,10 +218,10 @@ func (me *LabelAgent) mapValues(m *matrix.Matrix) error {
 		for key, instance := range m.GetInstances() {
 			if v, ok := r.mapping[instance.GetLabel(r.label)]; ok {
 				metric.SetValueUint8(instance, v)
-				logger.Trace(me.Prefix, "valueMapping: [%s] [%s] mapped (%s) value to %d", r.metric, key, instance.GetLabel(r.label), v)
+				me.Logger.Trace().Msgf("valueMapping: [%s] [%s] mapped (%s) value to %d", r.metric, key, instance.GetLabel(r.label), v)
 			} else if r.hasDefault {
 				metric.SetValueUint8(instance, r.defaultValue)
-				logger.Trace(me.Prefix, "valueMapping: [%s] [%s] mapped (%s) value to default %d", r.metric, key, instance.GetLabel(r.label), r.defaultValue)
+				me.Logger.Trace().Msgf("valueMapping: [%s] [%s] mapped (%s) value to default %d", r.metric, key, instance.GetLabel(r.label), r.defaultValue)
 			}
 		}
 	}

@@ -9,6 +9,7 @@ package exporter
 
 import (
 	"goharvest2/cmd/poller/options"
+	"goharvest2/pkg/logging"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
 	"strconv"
@@ -41,7 +42,7 @@ var ExporterStatus = [3]string{
 type AbstractExporter struct {
 	Class       string
 	Name        string
-	Prefix      string
+	Logger      *logging.Logger // logger used for logging
 	Status      uint8
 	Message     string
 	Options     *options.Options
@@ -63,7 +64,7 @@ func New(c, n string, o *options.Options, p *node.Node) *AbstractExporter {
 		Name:     n,
 		Options:  o,
 		Params:   p,
-		Prefix:   "(exporter) (" + n + ")",
+		Logger:   logging.GetInstanceSubLogger("exporter", n),
 		Mutex:    &sync.Mutex{},
 		countMux: &sync.Mutex{},
 	}

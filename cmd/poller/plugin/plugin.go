@@ -30,7 +30,7 @@ package plugin
 import (
 	"goharvest2/cmd/poller/options"
 	"goharvest2/pkg/errors"
-	"goharvest2/pkg/logger"
+	"goharvest2/pkg/logging"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
 )
@@ -46,7 +46,7 @@ type Plugin interface {
 type AbstractPlugin struct {
 	Parent       string
 	Name         string
-	Prefix       string
+	Logger       *logging.Logger // logger used for logging
 	Options      *options.Options
 	Params       *node.Node
 	ParentParams *node.Node
@@ -78,10 +78,7 @@ func (me *AbstractPlugin) InitAbc() error {
 	if me.Name = me.Params.GetNameS(); me.Name == "" {
 		return errors.New(errors.MISSING_PARAM, "plugin name")
 	}
-
-	me.Prefix = "(plugin) (" + me.Parent + ":" + me.Name + ")"
-
-	logger.Trace(me.Prefix, "initialized")
+	me.Logger = logging.GetInstanceSubLogger("plugin", me.Parent+":"+me.Name)
 
 	return nil
 }

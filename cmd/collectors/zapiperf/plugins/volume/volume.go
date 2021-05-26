@@ -5,7 +5,6 @@ package main
 
 import (
 	"goharvest2/cmd/poller/plugin"
-	"goharvest2/pkg/logger"
 	"goharvest2/pkg/matrix"
 	"regexp"
 	"strings"
@@ -47,7 +46,7 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 	}
 
-	logger.Debug(me.Prefix, "extracted %d flexgroup volumes", len(cache.GetInstances()))
+	me.Logger.Debug().Msgf("extracted %d flexgroup volumes", len(cache.GetInstances()))
 
 	//cache.Reset()
 
@@ -57,7 +56,7 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			key := i.GetLabel("node") + "." + i.GetLabel("svm") + "." + match[1]
 			fg := cache.GetInstance(key)
 			if fg == nil {
-				logger.Error(me.Prefix, "instance [%s] not in local cache", key)
+				me.Logger.Error().Stack().Err(nil).Msgf("instance [%s] not in local cache", key)
 				continue
 			}
 
@@ -69,11 +68,11 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 				fgm := cache.GetMetric(mkey)
 				if fgm == nil {
-					logger.Error(me.Prefix, "metric [%s] not in local cache", mkey)
+					me.Logger.Error().Stack().Err(nil).Msgf("metric [%s] not in local cache", mkey)
 					continue
 				}
 
-				logger.Trace(me.Prefix, "(%s) handling metric (%s)", fg.GetLabel("volume"), mkey)
+				me.Logger.Trace().Msgf("(%s) handling metric (%s)", fg.GetLabel("volume"), mkey)
 
 				if value, ok := m.GetValueFloat64(i); ok {
 
@@ -84,19 +83,19 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 						err := fgm.SetValueFloat64(fg, fgv+value)
 						if err != nil {
-							logger.Error(me.Prefix, "error: %v", err)
+							me.Logger.Error().Stack().Err(err).Msgf("error: ")
 						}
 						// just for debugging
 						fgv2, _ := fgm.GetValueFloat64(fg)
 
-						logger.Trace(me.Prefix, "   > simple increment %f + %f = %f", fgv, value, fgv2)
+						me.Logger.Trace().Msgf("   > simple increment %f + %f = %f", fgv, value, fgv2)
 						continue
 					}
 
 					// latency metric: weighted sum
 					// ops_key := strings.Replace(mkey, "avg_latency", "total_ops", 1)
 					ops_key := strings.Replace(mkey, "_latency", "_ops", 1)
-					logger.Trace(me.Prefix, "    > weighted increment <%s * %s>", mkey, ops_key)
+					me.Logger.Trace().Msgf("    > weighted increment <%s * %s>", mkey, ops_key)
 
 					if ops := data.GetMetric(ops_key); ops != nil {
 						if ops_value, ok := ops.GetValueFloat64(i); ok {
@@ -104,15 +103,15 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 							prod := value * ops_value
 							err := fgm.SetValueFloat64(fg, fgv+prod)
 							if err != nil {
-								logger.Error(me.Prefix, "error: %v", err)
+								me.Logger.Error().Stack().Err(err).Msgf("error: ")
 							}
 
 							// debugging
 							fgv2, _ := fgm.GetValueFloat64(fg)
 
-							logger.Trace(me.Prefix, "       %f + (%f * %f) (=%f) = %f", fgv, value, ops_value, prod, fgv2)
+							me.Logger.Trace().Msgf("       %f + (%f * %f) (=%f) = %f", fgv, value, ops_value, prod, fgv2)
 						} else {
-							logger.Trace(me.Prefix, "       no ops value SKIP")
+							me.Logger.Trace().Msgf("       no ops value SKIP")
 						}
 					}
 
@@ -137,7 +136,7 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 						if ops_value, ok := ops.GetValueFloat64(i); ok && ops_value != 0 {
 							err := m.SetValueFloat64(i, value/ops_value)
 							if err != nil {
-								logger.Error(me.Prefix, "error: %v", err)
+								me.Logger.Error().Stack().Err(err).Msgf("error: ")
 							}
 						} else {
 							m.SetValueNAN(i)

@@ -9,7 +9,6 @@ import (
 	"goharvest2/cmd/poller/exporter"
 	"goharvest2/pkg/color"
 	"goharvest2/pkg/errors"
-	"goharvest2/pkg/logger"
 	"goharvest2/pkg/matrix"
 	"io/ioutil"
 	"net/http"
@@ -60,7 +59,7 @@ func (e *InfluxDB) Init() error {
 	}
 
 	if port = e.Params.GetChildContentS("port"); port == "" {
-		logger.Debug(e.Prefix, "using default port [%s]", defaultPort)
+		e.Logger.Debug().Msgf("using default port [%s]", defaultPort)
 		port = defaultPort
 	} else if _, err = strconv.Atoi(port); err != nil {
 		return errors.New(errors.INVALID_PARAM, "port")
@@ -69,28 +68,28 @@ func (e *InfluxDB) Init() error {
 	if bucket = e.Params.GetChildContentS("bucket"); bucket == "" {
 		return errors.New(errors.MISSING_PARAM, "bucket")
 	}
-	logger.Debug(e.Prefix, "using bucket [%s]", bucket)
+	e.Logger.Debug().Msgf("using bucket [%s]", bucket)
 
 	if org = e.Params.GetChildContentS("org"); org == "" {
 		return errors.New(errors.MISSING_PARAM, "org")
 	}
-	logger.Debug(e.Prefix, "using organization [%s]", org)
+	e.Logger.Debug().Msgf("using organization [%s]", org)
 
 	if e.token = e.Params.GetChildContentS("token"); e.token == "" {
 		return errors.New(errors.MISSING_PARAM, "token")
 	} else {
-		logger.Debug(e.Prefix, "will use authorization with api token")
+		e.Logger.Debug().Msgf("will use authorization with api token")
 	}
 
 	if v = e.Params.GetChildContentS("version"); v == "" {
 		v = defaultApiVersion
 	}
-	logger.Debug(e.Prefix, "using api version [%s]", v)
+	e.Logger.Debug().Msgf("using api version [%s]", v)
 
 	if p = e.Params.GetChildContentS("precision"); p == "" {
 		p = defaultApiPrecision
 	}
-	logger.Debug(e.Prefix, "using api precision [%s]", p)
+	e.Logger.Debug().Msgf("using api precision [%s]", p)
 
 	// timeout parameter
 	timeout := time.Duration(detaultTimeout) * time.Second
@@ -98,20 +97,20 @@ func (e *InfluxDB) Init() error {
 		if t, err := strconv.Atoi(ct); err == nil {
 			timeout = time.Duration(t) * time.Second
 		} else {
-			logger.Warn(e.Prefix, "invalid client_timeout [%s], using default: %d s", ct, detaultTimeout)
+			e.Logger.Warn().Msgf("invalid client_timeout [%s], using default: %d s", ct, detaultTimeout)
 		}
 	} else {
-		logger.Debug(e.Prefix, "using default client_timeout: %d s", detaultTimeout)
+		e.Logger.Debug().Msgf("using default client_timeout: %d s", detaultTimeout)
 	}
 
 	// construct client URL
 	e.url = fmt.Sprintf("http://%s:%s/api/v%s/write?org=%s&bucket=%s&precision=%s", addr, port, v, org, bucket, p)
-	logger.Debug(e.Prefix, "url= [%s]", e.url)
+	e.Logger.Debug().Msgf("url= [%s]", e.url)
 
 	// construct HTTP client
 	e.client = &http.Client{Timeout: timeout}
 
-	logger.Debug(e.Prefix, "initialized exporter, ready to emit to [%s:%s]", addr, port)
+	e.Logger.Debug().Msgf("initialized exporter, ready to emit to [%s:%s]", addr, port)
 	return nil
 }
 
@@ -132,27 +131,27 @@ func (e *InfluxDB) Export(data *matrix.Matrix) error {
 	if metrics, err = e.Render(data); err == nil && len(metrics) != 0 {
 		// fix render time
 		if err = e.Metadata.LazyAddValueInt64("time", "render", time.Since(s).Microseconds()); err != nil {
-			logger.Error(e.Prefix, "metadata render time: %v", err)
+			e.Logger.Error().Stack().Err(err).Msgf("metadata render time:")
 		}
 		// in debug mode, don't actually export but write to log
 		if e.Options.Debug {
-			logger.Debug(e.Prefix, "simulating export since in debug mode")
+			e.Logger.Debug().Msgf("simulating export since in debug mode")
 			for _, m := range metrics {
-				logger.Debug(e.Prefix, "M= [%s%s%s]", color.Blue, m, color.End)
+				e.Logger.Debug().Msgf("M= [%s%s%s]", color.Blue, m, color.End)
 			}
 			return nil
 			// otherwise to the actual export: send to the DB
 		} else if err = e.Emit(metrics); err != nil {
-			logger.Error(e.Prefix, "(%s.%s) --> %s", data.Object, data.UUID, err.Error())
+			e.Logger.Error().Stack().Err(err).Msgf("(%s.%s) --> %s", data.Object, data.UUID)
 			return err
 		}
 	}
 
-	logger.Debug(e.Prefix, "(%s.%s) --> exported %d data points", data.Object, data.UUID, len(metrics))
+	e.Logger.Debug().Msgf("(%s.%s) --> exported %d data points", data.Object, data.UUID, len(metrics))
 
 	// update metadata
 	if err = e.Metadata.LazyAddValueInt64("time", "export", time.Since(s).Microseconds()); err != nil {
-		logger.Error(e.Prefix, "metadata export time: %v", err)
+		e.Logger.Error().Stack().Err(err).Msgf("metadata export time:")
 	}
 
 	/* skipped for now, since InfluxDB complains about "time" field name
@@ -257,7 +256,7 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 
 		// skip instance without key tags
 		if len(m.tag_set) == 0 {
-			logger.Debug(e.Prefix, "skip instance (%s), no tag set parsed from labels (%v)", key, instance.GetLabels().Map())
+			e.Logger.Debug().Msgf("skip instance (%s), no tag set parsed from labels (%v)", key, instance.GetLabels().Map())
 		}
 
 		// field set
@@ -300,26 +299,26 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 			countTmp++
 		}
 
-		logger.Trace(e.Prefix, "rendering from: %s", m.String())
+		e.Logger.Trace().Msgf("rendering from: %s", m.String())
 
 		// skip instance with no tag set (no metrics)
 		if len(m.field_set) == 0 {
-			logger.Debug(e.Prefix, "skip instance (%s), no field set parsed", key)
+			e.Logger.Debug().Msgf("skip instance (%s), no field set parsed", key)
 		} else if r, err := m.Render(); err == nil {
 			rendered = append(rendered, []byte(r))
 			//logger.Debug(e.Prefix, "M= [%s%s%s]", color.Blue, r, color.End)
 			count += countTmp
 		} else {
-			logger.Debug(e.Prefix, err.Error())
+			e.Logger.Debug().Msgf(err.Error())
 		}
 	}
 
-	logger.Debug(e.Prefix, "rendered %d measurements with %d data points for (%s)", len(rendered), count, object)
+	e.Logger.Debug().Msgf("rendered %d measurements with %d data points for (%s)", len(rendered), count, object)
 
 	// update metadata
 	e.AddExportCount(count)
 	if err := e.Metadata.LazySetValueUint64("count", "export", count); err != nil {
-		logger.Error(e.Prefix, "metadata export count: %v", err)
+		e.Logger.Error().Stack().Err(err).Msgf("metadata export count:")
 	}
 	return rendered, nil
 }
