@@ -1,7 +1,7 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
-package main
+package fcp
 
 import (
 	"goharvest2/cmd/poller/plugin"
@@ -100,6 +100,3 @@ func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 	return nil, nil
 }
-
-// Need to appease go build - see https://github.com/golang/go/issues/20312
-func main() {}

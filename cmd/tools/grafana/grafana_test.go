@@ -17,3 +17,32 @@ func TestCheckVersion(t *testing.T) {
 		}
 	}
 }
+
+func TestHttpsAddr(t *testing.T) {
+	opts.addr = "https://1.1.1.1:3000"
+	adjustOptions()
+	if opts.addr != "https://1.1.1.1:3000" {
+		t.Errorf("Expected opts.addr to be %s but got %s", "https://1.1.1.1:3000", opts.addr)
+	}
+
+	opts.addr = "https://1.1.1.1:3000"
+	opts.useHttps = false // addr takes precedence over useHttps
+	adjustOptions()
+	if opts.addr != "https://1.1.1.1:3000" {
+		t.Errorf("Expected opts.addr to be %s but got %s", "https://1.1.1.1:3000", opts.addr)
+	}
+
+	opts.addr = "http://1.1.1.1:3000"
+	adjustOptions()
+	if opts.addr != "http://1.1.1.1:3000" {
+		t.Errorf("Expected opts.addr to be %s but got %s", "http://1.1.1.1:3000", opts.addr)
+	}
+
+	// Old way of specifying https
+	opts.addr = "http://1.1.1.1:3000"
+	opts.useHttps = true
+	adjustOptions()
+	if opts.addr != "https://1.1.1.1:3000" {
+		t.Errorf("Expected opts.addr to be %s but got %s", "https://1.1.1.1:3000", opts.addr)
+	}
+}

@@ -129,7 +129,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "count( count by (node) (node_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}) )",
           "format": "time_series",
           "hide": false,
@@ -199,7 +199,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "count(count by (aggr) (aggr_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}))",
           "format": "time_series",
           "hide": false,
@@ -259,7 +259,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(volume_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "",
@@ -315,7 +315,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum(volume_write_data+volume_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "",
@@ -371,7 +371,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum(volume_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "",
@@ -425,7 +425,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(node_cpu_busy{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "",
@@ -490,7 +490,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg by(node) (volume_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
           "interval": "",
           "legendFormat": "{{node}}",
@@ -550,7 +550,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "unit": "µs"
+          "unit": "Bps"
         },
         "overrides": []
       },
@@ -594,7 +594,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum by (node) (volume_write_data+volume_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
           "interval": "",
           "legendFormat": "{{node}}",
@@ -605,7 +605,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Thoughput",
+      "title": "Throughput",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -623,7 +623,7 @@
       "yaxes": [
         {
           "$$hashKey": "object:195",
-          "format": "µs",
+          "format": "Bps",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -654,7 +654,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "unit": "µs"
+          "unit": "iops"
         },
         "overrides": []
       },
@@ -698,7 +698,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum by(node) (volume_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
           "interval": "",
           "legendFormat": "{{node}}",
@@ -727,7 +727,7 @@
       "yaxes": [
         {
           "$$hashKey": "object:427",
-          "format": "µs",
+          "format": "iops",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -791,7 +791,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(node_disk_busy{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "",
@@ -870,21 +870,21 @@
       "steppedLine": false,
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(volume_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "Read",
           "refId": "A"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(volume_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "Write",
           "refId": "B"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(volume_other_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "Other",
@@ -944,7 +944,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "unit": "µs"
+          "unit": "Bps"
         },
         "overrides": []
       },
@@ -988,7 +988,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum(volume_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "intervalFactor": 1,
@@ -996,7 +996,7 @@
           "refId": "A"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum(volume_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "intervalFactor": 1,
@@ -1008,7 +1008,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Thoughput",
+      "title": "Throughput",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1026,7 +1026,7 @@
       "yaxes": [
         {
           "$$hashKey": "object:581",
-          "format": "µs",
+          "format": "Bps",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -1057,7 +1057,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "unit": "µs"
+          "unit": "iops"
         },
         "overrides": []
       },
@@ -1101,21 +1101,21 @@
       "steppedLine": false,
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum(volume_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "Read",
           "refId": "A"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum(volume_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "Write",
           "refId": "B"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum(volume_other_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "Other",
@@ -1144,7 +1144,7 @@
       "yaxes": [
         {
           "$$hashKey": "object:659",
-          "format": "µs",
+          "format": "iops",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -1217,7 +1217,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(node_cpu_busy{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "hide": false,
           "interval": "",
@@ -1225,7 +1225,7 @@
           "refId": "A"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(node_cpu_domain_busy{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",metric=\"kahuna\"})",
           "hide": false,
           "interval": "",
@@ -1233,7 +1233,7 @@
           "refId": "C"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(node_disk_busy{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "hide": false,
           "interval": "",
@@ -1241,7 +1241,7 @@
           "refId": "B"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "abs(avg(wafl_cp_phase_times{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",metric=\"P2_FLUSH\"}) - 100)",
           "hide": true,
           "interval": "",
@@ -1363,7 +1363,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg by(metric) (wafl_read_io_type{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "hide": false,
           "interval": "",
@@ -1424,7 +1424,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "unit": "µs"
+          "unit": "iops"
         },
         "overrides": []
       },
@@ -1468,7 +1468,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum(node_cifs_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "hide": false,
           "interval": "",
@@ -1476,7 +1476,7 @@
           "refId": "A"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum(node_nfs_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "hide": false,
           "interval": "",
@@ -1484,7 +1484,7 @@
           "refId": "B"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum(node_fcp_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "hide": false,
           "interval": "",
@@ -1528,7 +1528,7 @@
       "yaxes": [
         {
           "$$hashKey": "object:737",
-          "format": "µs",
+          "format": "iops",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -1615,7 +1615,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "node_avg_processor_busy{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
           "hide": false,
           "interval": "",
@@ -1737,7 +1737,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg by(metric) (node_cpu_domain_busy{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "hide": false,
           "interval": "",
@@ -1849,7 +1849,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(node_cifs_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "",
@@ -1908,7 +1908,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum(node_cifs_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "",
@@ -1930,7 +1930,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "unit": "µs"
+          "unit": "iops"
         },
         "overrides": []
       },
@@ -1974,7 +1974,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum by (metric) (node_cifs_op_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "{{metric}}",
@@ -2003,7 +2003,7 @@
       "yaxes": [
         {
           "$$hashKey": "object:736",
-          "format": "µs",
+          "format": "iops",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -2076,28 +2076,28 @@
       "steppedLine": false,
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum(node_cifs_connections{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "Connections",
           "refId": "A"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum(node_cifs_established_sessions{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "Established Sessions",
           "refId": "B"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum(node_cifs_signed_sessions{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "Signed Sessions",
           "refId": "C"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum(node_cifs_open_files{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "Open Files",
@@ -2388,7 +2388,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "unit": "µs"
+          "unit": "Bps"
         },
         "overrides": []
       },
@@ -2460,7 +2460,7 @@
       },
       "yaxes": [
         {
-          "format": "µs",
+          "format": "Bps",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -2490,7 +2490,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "unit": "µs"
+          "unit": "iops"
         },
         "overrides": []
       },
@@ -2562,7 +2562,7 @@
       },
       "yaxes": [
         {
-          "format": "µs",
+          "format": "iops",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -2823,7 +2823,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "unit": "µs"
+          "unit": "Bps"
         },
         "overrides": []
       },
@@ -2895,7 +2895,7 @@
       },
       "yaxes": [
         {
-          "format": "µs",
+          "format": "Bps",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -2925,7 +2925,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "unit": "µs"
+          "unit": "iops"
         },
         "overrides": []
       },
@@ -2997,7 +2997,7 @@
       },
       "yaxes": [
         {
-          "format": "µs",
+          "format": "iops",
           "label": null,
           "logBase": 1,
           "max": null,

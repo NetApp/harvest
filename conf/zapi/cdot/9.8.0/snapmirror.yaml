@@ -55,8 +55,3 @@ export_options:
     - destination_node_limit
     - source_node_limit
     - group_type
-  graphite_leafs:
-    - node.{destination_node}.snapmirror.dest.{destination_volume}
-    - node.{source_node}.snapmirror.src.{source_volume}
-    - svm.{destination_vserver}.snapmirror.dest.{destination_volume}
-    - svm.{source_vserver}.snapmirror.src.{source_volume}

@@ -407,7 +407,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Top Average Thoughput",
+      "title": "Top Average Throughput",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1003,7 +1003,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Read Thoughput",
+      "title": "Read Throughput",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1312,7 +1312,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Read Thoughput",
+      "title": "Read Throughput",
       "tooltip": {
         "shared": true,
         "sort": 2,

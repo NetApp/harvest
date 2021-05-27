@@ -26,6 +26,3 @@ export_options:
     - node
     - aggr
     - disk_type
-
-  graphite_leafs:
-    - node.{node}.headroom.aggr.{aggr}.{disk_type}

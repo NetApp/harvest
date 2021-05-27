@@ -1,0 +1,91 @@
+Tools:
+  grafana_api_token: 'aaa-bbb-ccc-ddd'
+  token: [ 'aaa-bbb-ccc-ddd' ]
+
+Exporters:
+  prometheus:
+    exporter: Prometheus
+    addr: 0.0.0.0
+    port: 12990
+    allow_addrs_regex:
+      - ^192.168.0.\d+$
+  pluto: # name of your exporter, can be any valid yaml string
+    exporter: Prometheus
+    port: 12990              # ignored since this exporter contains a consul block
+    consul: # consul block added because we want service discovery
+      host: 1.2.3.4          # ip or hostname of Consul cluster
+      service_name: monitor  # all pollers exporting to pluto will be registered with the service name of 'monitor'
+      tags:
+        - netapp             # each of the pollers exporting to pluto will be tagged with two tags: 'netapp' and 'harvest'
+        - harvest
+  influxy:
+    exporter: InfluxDB
+    addr: localhost
+    bucket: harvest
+    org: harvest
+    token: abcdefghijklmnopqrstuvwxyz
+  influxz:
+    exporter: InfluxDB
+    url: www.example.com/influxdb
+    bucket: harvest
+    org: harvest
+    token: abcdefghijklmnopqrstuvwxyz
+  invalid-type:
+    exporter: Foo
+Defaults:
+  collectors:
+    - Zapi
+    - ZapiPerf
+  use_insecure_tls: false
+  username: myuser
+  password: 123#abc
+
+Pollers:
+  # this is a special/optional poller that provides stats about harvest itself
+  # to remove this poller, simply delete the section "unix"
+  unix:
+    datacenter: local
+    addr: localhost
+    log_max_files: 1
+    collectors:
+      - Unix
+    exporters:
+      - prometheus
+
+  zeros:
+    log_max_files: 0
+    use_insecure_tls: false
+    collectors: [ ]
+
+  # add your Cdot / 7Mode pollers below, example:
+  cluster-01:
+    datacenter: DC-01
+    addr: 10.0.0.1
+    auth_style: basic_auth
+    username: myuser
+    password: mypasw
+    use_insecure_tls: true   # since we don't use certificate authentication
+    exporters:
+      - prometheus1
+  #no need to add collectors, already defined in Defaults!
+
+  # example where we use certificate authentication
+  infinity:
+    datacenter: DC-01
+    addr: 10.0.0.2
+    auth_style: certificate_auth
+    ssl_cert: /path/to/cert.pem
+    ssl_key: /path/to/key.key
+    use_insecure_tls: false  # if harvest should be able to authenticate your server, set this true
+    # otherwise set it to false (if cluster has no valid server certificates)
+    # all the other parameters should be the same
+
+  infinity2:
+    datacenter: DC-01
+    addr: 10.0.0.2
+    collectors: [ Zapi ]
+
+  sim-0001:
+    is_kfs: true
+
+ll: grafana_api_token grafana_api_token

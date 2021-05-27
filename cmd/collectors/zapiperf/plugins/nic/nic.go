@@ -11,7 +11,7 @@ Package Description:
 		  - "nic_state":     0 if port is up, 1 otherwise
 
 */
-package main
+package nic
 
 import (
 	"goharvest2/cmd/poller/plugin"
@@ -124,6 +124,3 @@ func (me *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	return nil, nil
 }
-
-// Need to appease go build - see https://github.com/golang/go/issues/20312
-func main() {}

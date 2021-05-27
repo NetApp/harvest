@@ -1,7 +1,7 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
-package main
+package influxdb
 
 import (
 	"bytes"
@@ -50,20 +50,12 @@ func (e *InfluxDB) Init() error {
 		return err
 	}
 
-	var addr, port, bucket, org, v, p string
-	var err error
+	var (
+		url, addr, port, bucket, org, v, p string
+		err                                error
+	)
 
 	// check required / optional parameters
-	if addr = e.Params.GetChildContentS("addr"); addr == "" {
-		return errors.New(errors.MISSING_PARAM, "addr")
-	}
-
-	if port = e.Params.GetChildContentS("port"); port == "" {
-		e.Logger.Debug().Msgf("using default port [%s]", defaultPort)
-		port = defaultPort
-	} else if _, err = strconv.Atoi(port); err != nil {
-		return errors.New(errors.INVALID_PARAM, "port")
-	}
 
 	if bucket = e.Params.GetChildContentS("bucket"); bucket == "" {
 		return errors.New(errors.MISSING_PARAM, "bucket")
@@ -91,6 +83,27 @@ func (e *InfluxDB) Init() error {
 	}
 	e.Logger.Debug().Msgf("using api precision [%s]", p)
 
+	// user should provide either url or addr
+	// url is expected to be the full write URL with all query params specified (optionally with scheme)
+	// addr is expected to include host only (no scheme, no port)
+	if url = e.Params.GetChildContentS("url"); url == "" {
+		if addr = e.Params.GetChildContentS("addr"); addr == "" {
+			return errors.New(errors.MISSING_PARAM, "url or addr")
+		}
+
+		if port = e.Params.GetChildContentS("port"); port == "" {
+			e.Logger.Debug().Msgf("using default port [%s]", defaultPort)
+			port = defaultPort
+		} else if _, err = strconv.Atoi(port); err != nil {
+			return errors.New(errors.INVALID_PARAM, "port")
+		}
+
+		url = "http://" + addr + ":" + port
+		e.url = fmt.Sprintf("%s/api/v%s/write?org=%s&bucket=%s&precision=%s", url, v, org, bucket, p)
+	} else {
+		e.url = url
+	}
+
 	// timeout parameter
 	timeout := time.Duration(detaultTimeout) * time.Second
 	if ct := e.Params.GetChildContentS("client_timeout"); ct != "" {
@@ -103,8 +116,6 @@ func (e *InfluxDB) Init() error {
 		e.Logger.Debug().Msgf("using default client_timeout: %d s", detaultTimeout)
 	}
 
-	// construct client URL
-	e.url = fmt.Sprintf("http://%s:%s/api/v%s/write?org=%s&bucket=%s&precision=%s", addr, port, v, org, bucket, p)
 	e.Logger.Debug().Msgf("url= [%s]", e.url)
 
 	// construct HTTP client
@@ -322,6 +333,3 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 	}
 	return rendered, nil
 }
-
-// Need to appease go build - see https://github.com/golang/go/issues/20312
-func main() {}

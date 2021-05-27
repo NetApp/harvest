@@ -35,7 +35,7 @@ func NewXml(name []byte) *Node {
 
 func NewXmlS(name string) *Node {
 	// ugly solution to support xml
-	return &Node{XMLName: xml.Name{"", name}}
+	return &Node{XMLName: xml.Name{Local: name}}
 }
 
 func (n *Node) GetXmlNameS() string {
@@ -43,7 +43,7 @@ func (n *Node) GetXmlNameS() string {
 }
 
 func (n *Node) SetXmlNameS(name string) {
-	n.XMLName = xml.Name{"", name}
+	n.XMLName = xml.Name{Local: name}
 }
 
 func (n *Node) GetName() []byte {
@@ -94,7 +94,7 @@ func (n *Node) AddAttr(attr xml.Attr) {
 }
 
 func (n *Node) NewAttrS(name, value string) {
-	n.AddAttr(xml.Attr{Name: xml.Name{"", name}, Value: value})
+	n.AddAttr(xml.Attr{Name: xml.Name{Local: name}, Value: value})
 }
 
 func (n *Node) GetChildren() []*Node {
@@ -214,6 +214,14 @@ func (n *Node) GetAllChildContentS() []string {
 		content = append(content, ch.GetContentS())
 	}
 	return content
+}
+
+func (n *Node) GetAllChildNamesS() []string {
+	names := make([]string, 0)
+	for _, ch := range n.Children {
+		names = append(names, ch.GetNameS())
+	}
+	return names
 }
 
 func (n *Node) SetContent(content []byte) {

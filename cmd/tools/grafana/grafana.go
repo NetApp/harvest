@@ -35,19 +35,20 @@ var (
 )
 
 type options struct {
-	command    string // one of: import, export, clean
-	addr       string // URL of Grafana server (e.g. "http://localhost:3000")
-	token      string // API token issued by Grafana server
-	dir        string // Directory from which to import dashboards (e.g. "opt/harvest/grafana/prometheus")
-	folder     string // Grafana folder where to upload from where to download dashboards
-	folderId   int64
-	folderUid  string
-	datasource string
-	variable   bool
-	client     *http.Client
-	headers    http.Header
-	config     string
-	useHttps   bool
+	command        string // one of: import, export, clean
+	addr           string // URL of Grafana server (e.g. "http://localhost:3000")
+	token          string // API token issued by Grafana server
+	dir            string // Directory from which to import dashboards (e.g. "opt/harvest/grafana/prometheus")
+	folder         string // Grafana folder where to upload from where to download dashboards
+	folderId       int64
+	folderUid      string
+	datasource     string
+	variable       bool
+	client         *http.Client
+	headers        http.Header
+	config         string
+	useHttps       bool
+	useInsecureTLS bool
 }
 
 func doExport(_ *cobra.Command, _ []string) {
@@ -108,15 +109,16 @@ func adjustOptions() {
 		opts.dir = path.Join(homePath, "grafana", opts.dir)
 	}
 
-	// full URL
-	opts.addr = strings.TrimPrefix(opts.addr, "http://")
-	opts.addr = strings.TrimPrefix(opts.addr, "https://")
-	opts.addr = strings.TrimSuffix(opts.addr, "/")
-
-	if opts.useHttps {
-		opts.addr = "https://" + opts.addr
-	} else {
-		opts.addr = "http://" + opts.addr
+	// When opt.addr starts with https don't change it
+	if !strings.HasPrefix(opts.addr, "https://") {
+		opts.addr = strings.TrimPrefix(opts.addr, "http://")
+		opts.addr = strings.TrimPrefix(opts.addr, "https://")
+		opts.addr = strings.TrimSuffix(opts.addr, "/")
+		if opts.useHttps {
+			opts.addr = "https://" + opts.addr
+		} else {
+			opts.addr = "http://" + opts.addr
+		}
 	}
 }
 
@@ -265,7 +267,7 @@ func checkToken(opts *options, ignoreConfig bool) error {
 	if params, err = conf.LoadConfig(configPath); err != nil {
 		return err
 	} else if params == nil {
-		return errors.New(fmt.Sprintf("config [%s] not found", configPath))
+		return fmt.Errorf("config [%s] not found", configPath)
 	}
 
 	if tools = params.GetChildS("Tools"); tools != nil {
@@ -290,7 +292,8 @@ func checkToken(opts *options, ignoreConfig bool) error {
 
 	opts.client = &http.Client{Timeout: time.Duration(clientTimeout) * time.Second}
 	if strings.HasPrefix(opts.addr, "https://") {
-		opts.client.Transport = &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
+		tlsConfig := &tls.Config{InsecureSkipVerify: opts.useInsecureTLS}
+		opts.client.Transport = &http.Transport{TLSClientConfig: tlsConfig}
 	}
 	// send random request to validate token
 	result, status, code, err := sendRequest(opts, "GET", "/api/folders/aaaaaaa", nil)
@@ -502,7 +505,7 @@ var opts = &options{}
 
 var GrafanaCmd = &cobra.Command{
 	Use:   "grafana",
-	Short: "import/export Grafana dashboards",
+	Short: "Import/export Grafana dashboards",
 	Long:  "Grafana tool - Import/Export Grafana dashboards",
 }
 
@@ -531,4 +534,5 @@ func init() {
 	GrafanaCmd.PersistentFlags().StringVarP(&opts.datasource, "datasource", "s", grafanaDataSource, "Grafana datasource for the dashboards")
 	GrafanaCmd.PersistentFlags().BoolVarP(&opts.variable, "variable", "v", false, "use datasource as variable, overrides: --datasource")
 	GrafanaCmd.PersistentFlags().BoolVarP(&opts.useHttps, "https", "S", false, "use HTTPS")
+	GrafanaCmd.PersistentFlags().BoolVarP(&opts.useInsecureTLS, "insecure", "k", false, "Allow insecure server connections when using SSL")
 }

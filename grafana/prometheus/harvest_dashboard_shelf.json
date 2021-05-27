@@ -213,7 +213,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(shelf_temperature_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
           "interval": "",
           "legendFormat": "",
@@ -287,7 +287,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(shelf_fan_rpm{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
           "interval": "",
           "legendFormat": "",
@@ -361,7 +361,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(shelf_sensor_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
           "interval": "",
           "legendFormat": "",
@@ -435,7 +435,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum(sum_over_time(shelf_psu_power_drawn{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}[24h]))",
           "interval": "",
           "legendFormat": "",
@@ -480,6 +480,18 @@
               {
                 "id": "custom.displayMode",
                 "value": "color-text"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "shelf"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "json-view"
               }
             ]
           },
@@ -732,7 +744,7 @@
       "repeatDirection": "h",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "shelf_temperature_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\",shelf=~\"$Shelf\"}",
           "interval": "",
           "legendFormat": "{{shelf}} · {{sensor_id}}",
@@ -800,7 +812,7 @@
       "repeat": "FanShelf",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "shelf_fan_rpm{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "interval": "",
           "legendFormat": "{{shelf}} · {{fan_id}}",
@@ -883,7 +895,7 @@
       "repeat": null,
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "shelf_voltage_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "interval": "",
           "legendFormat": "{{shelf}} · {{sensor_id}}",
@@ -948,7 +960,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum(shelf_psu_power_drawn{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}) by (shelf, psu_id)",
           "interval": "",
           "legendFormat": "{{shelf}} - PSU {{psu_id}}",
@@ -1013,7 +1025,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum(shelf_psu_power_rating{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}) by (shelf, psu_id)",
           "interval": "",
           "legendFormat": "{{shelf}} - PSU {{psu_id}}",
@@ -1094,7 +1106,7 @@
       "repeat": "SensShelf",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "shelf_sensor_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "interval": "",
           "legendFormat": "S{{sensor_id}}",

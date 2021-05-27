@@ -1,7 +1,6 @@
 # Harvest Support and Getting Help
 
-Welcome to Harvest! Harvest is an official NetApp open-source project. You can reach out
-to NetApp using any of the [standard mechanisms](http://mysupport.netapp.com/info/web/ECMLP2619434.html) and get support.
+Harvest is an open-source project developed and published by NetApp to collect performance, capacity and hardware metrics from ONTAP clusters. These metrics can then be delivered to a range of databases and displayed in Grafana dashboards. Harvest is not an officially supported NetApp product. NetApp maintains and updates Harvest with bug fixes, security updates, and feature development. For assistance refer [Getting Help](#getting%20help)
 
 This document describes Harvest's release and support lifecycle as well as places you can get help.
 
@@ -23,9 +22,11 @@ We use GitHub for tracking bugs and feature requests.
 
 # Getting Help
 
-There is also a vibrant community of Harvest users on NetApp's community discussion board and the `#harvest` channel in [NetApp's Slack team](https://netapppub.slack.com/archives/C02072M1UCD). This is a great place to ask general questions about the project and discuss related topics with like-minded peers.
+There is a vibrant community of Harvest users on NetApp's community discussion board and the `#harvest` channel in [NetApp's Slack team](https://netapppub.slack.com/archives/C02072M1UCD). Slack is a great place to ask general questions about the project and discuss related topics with like-minded peers.
 
-Join the [thePub workspace](https://www.netapp.io/slack). After joining, click the `+` sign next to `Channels` and then click the `Browse Channels` button. Search for `harvest` from the Channel Browser and click `Join`.
+## Slack
+
+Join [thePub workspace](https://www.netapp.io/slack). After joining, click the `+` sign next to `Channels` and then click the `Browse Channels` button. Search for `harvest` from the Channel Browser and click `Join`.
 
 ![Join channel image](/docs/slack.png)
 
@@ -43,8 +44,3 @@ The Harvest Community is active on the NetApp Community Discussion Board, you ca
 * [Harvest Architecture](ARCHITECTURE.md)
 * [Contributing](CONTRIBUTING.md)
 * [Wiki](https://github.com/NetApp/harvest/wiki)
-
-## Real-time Chat
-
-* [Slack](https://netapppub.slack.com/archives/C02072M1UCD) ([registration](https://join.slack.com/t/netapppub/shared_invite/zt-njcjx2sh-1VR2mEDvPcJAmPutOnP~mg)):
-The `#harvest` channel is the best place to chat with like-minded Harvesters.

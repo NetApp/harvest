@@ -1,20 +1,20 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
-package main
+package unix
 
 import (
 	"goharvest2/cmd/poller/collector"
+	"goharvest2/cmd/poller/plugin"
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/logging"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/set"
 	"goharvest2/pkg/tree/node"
-	"io/ioutil"
+	"goharvest2/pkg/util"
 	"os"
 	"os/exec"
-	"path"
 	"runtime"
 	"strconv"
 	"strings"
@@ -25,7 +25,7 @@ import (
 // https://en.wikipedia.org/wiki/Procfs
 var _SUPPORTED_PLATFORMS = []string{
 	"aix",
-	"andriod", // available in termux
+	"android", // available in termux
 	"dragonfly",
 	"freebsd", // available, but not mounted by default
 	"linux",
@@ -68,6 +68,17 @@ var _DTYPES = map[string]string{
 	"memory_percent": "float64",
 	"threads":        "uint64",
 	"fds":            "uint64",
+}
+
+func init() {
+	plugin.RegisterModule(Unix{})
+}
+
+func (Unix) HarvestModule() plugin.ModuleInfo {
+	return plugin.ModuleInfo{
+		ID:  "harvest.collector.unix",
+		New: func() plugin.Module { return new(Unix) },
+	}
 }
 
 func getClockTicks() {
@@ -127,14 +138,9 @@ type Unix struct {
 	processes       map[string]*Process
 }
 
-// New - create new, uninitialized collector
-func New(a *collector.AbstractCollector) collector.Collector {
-	return &Unix{AbstractCollector: a}
-}
-
 // Init - initialize the collector
-func (me *Unix) Init() error {
-
+func (me *Unix) Init(a *collector.AbstractCollector) error {
+	me.AbstractCollector = a
 	var err error
 
 	if !set.NewFrom(_SUPPORTED_PLATFORMS).Has(runtime.GOOS) {
@@ -150,7 +156,7 @@ func (me *Unix) Init() error {
 		_MOUNT_POINT = mp
 	}
 
-	// assert fs is avilable
+	// assert fs is available
 	if fi, err := os.Stat(_MOUNT_POINT); err != nil || !fi.IsDir() {
 		return errors.New(errors.ERR_IMPLEMENT, "filesystem ["+_MOUNT_POINT+"] not available")
 	}
@@ -281,13 +287,10 @@ func (me *Unix) PollInstance() (*matrix.Matrix, error) {
 	}
 
 	for _, name := range pollerNames {
-		pidf := path.Join(me.Options.PidPath, name+".pid")
-
 		pid := ""
-
-		if x, err := ioutil.ReadFile(pidf); err == nil {
-			//logger.Debug(me.Prefix, "skip instance (%s), err pidf: %v", name, err)
-			pid = string(x)
+		pids, err := util.GetPid(name)
+		if err == nil && len(pids) == 1 {
+			pid = strconv.Itoa(pids[0])
 		}
 
 		if instance := me.Matrix.GetInstance(name); instance == nil {
@@ -303,12 +306,19 @@ func (me *Unix) PollInstance() (*matrix.Matrix, error) {
 			me.Logger.Debug().Msgf("update instance (%s) with PID (%s)", name, pid)
 		}
 	}
-
+	rewriteIndexes := currInstances.Size() > 0
 	for name := range currInstances.Iter() {
 		me.Matrix.RemoveInstance(name)
 		me.Logger.Debug().Msgf("remove instance (%s)", name)
 	}
-
+	// If there were removals, the indexes need to be rewritten since gaps were created
+	if rewriteIndexes {
+		newMatrix := me.Matrix.Clone(false, true, false)
+		for key := range me.Matrix.GetInstances() {
+			_, _ = newMatrix.NewInstance(key)
+		}
+		me.Matrix = newMatrix
+	}
 	t := len(me.Matrix.GetInstances())
 	r := currInstances.Size()
 	a := t - (currSize - r)
@@ -416,14 +426,14 @@ func setStartTime(m matrix.Metric, i *matrix.Instance, p *Process, s *System) {
 	}
 }
 
-func setNumThreads(m matrix.Metric, i *matrix.Instance, p *Process, s *System) {
+func setNumThreads(m matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
 	err := m.SetValueUint64(i, p.numThreads)
 	if err != nil {
 		logging.Get().Error().Stack().Err(err).Msg("error")
 	}
 }
 
-func setNumFds(m matrix.Metric, i *matrix.Instance, p *Process, s *System) {
+func setNumFds(m matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
 	err := m.SetValueUint64(i, p.numFds)
 	if err != nil {
 		logging.Get().Error().Stack().Err(err).Msg("error")
@@ -437,7 +447,7 @@ func setMemoryPercent(m matrix.Metric, i *matrix.Instance, p *Process, s *System
 	}
 }
 
-func setCpuPercent(m matrix.Metric, i *matrix.Instance, p *Process, s *System) {
+func setCpuPercent(m matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
 	if p.elapsedTime != 0 {
 		err := m.SetValueFloat64(i, p.cpuTotal/p.elapsedTime*100)
 		if err != nil {
@@ -496,5 +506,7 @@ func setCtx(m matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	}
 }
 
-// Need to appease go build - see https://github.com/golang/go/issues/20312
-func main() {}
+// Interface guards
+var (
+	_ collector.Collector = (*Unix)(nil)
+)

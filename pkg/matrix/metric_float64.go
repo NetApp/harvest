@@ -154,6 +154,21 @@ func (me *MetricFloat64) AddValueFloat64(i *Instance, n float64) error {
 	return me.SetValueFloat64(i, m+n)
 }
 
+func (me *MetricFloat64) AddValueString(i *Instance, v string) error {
+	var (
+		x, n float64
+		err  error
+		has  bool
+	)
+	if x, err = strconv.ParseFloat(v, 64); err != nil {
+		return err
+	}
+	if n, has = me.GetValueFloat64(i); has {
+		return me.SetValueFloat64(i, x+n)
+	}
+	return me.SetValueFloat64(i, x)
+}
+
 // Read methods
 
 func (me *MetricFloat64) GetValueInt(i *Instance) (int, bool) {

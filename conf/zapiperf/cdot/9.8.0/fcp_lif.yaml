@@ -29,5 +29,3 @@ export_options:
     - svm
     - node
     - port
-  graphite_leafs:
-    - svm.{svm}.fcp_lif.{lif}

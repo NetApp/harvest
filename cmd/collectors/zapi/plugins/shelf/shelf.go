@@ -1,7 +1,7 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
-package main
+package shelf
 
 import (
 	"goharvest2/cmd/poller/collector"
@@ -150,7 +150,13 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	my.Logger.Debug().Msgf("fetching %d shelf counters", len(shelves))
 
-	output := make([]*matrix.Matrix, 0)
+	var output []*matrix.Matrix
+
+	// Purge and reset data
+	for _, data1 := range my.data {
+		data1.PurgeInstances()
+		data1.Reset()
+	}
 
 	for _, shelf := range shelves {
 
@@ -163,10 +169,7 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			shelfId = uid
 		}
 
-		for attribute, data := range my.data {
-
-			data.PurgeInstances()
-
+		for attribute, data1 := range my.data {
 			if my.instanceKeys[attribute] == "" {
 				my.Logger.Warn().Msgf("no instance keys defined for object [%s], skipping", attribute)
 				continue
@@ -183,8 +186,7 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			for _, obj := range objectElem.GetChildren() {
 
 				if key := obj.GetChildContentS(my.instanceKeys[attribute]); key != "" {
-
-					instance, err := data.NewInstance(shelfId + "." + key)
+					instance, err := data1.NewInstance(shelfId + "." + key)
 
 					if err != nil {
 						my.Logger.Debug().Msgf("add (%s) instance: %v", attribute, err)
@@ -207,7 +209,7 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				}
 			}
 
-			output = append(output, data)
+			output = append(output, data1)
 		}
 	}
 
@@ -220,9 +222,7 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			shelfId = shelf.GetChildContentS("shelf-id")
 		}
 
-		for attribute, data := range my.data {
-
-			data.Reset()
+		for attribute, data1 := range my.data {
 
 			objectElem := shelf.GetChildS(attribute)
 			if objectElem == nil {
@@ -237,14 +237,14 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					continue
 				}
 
-				instance := data.GetInstance(shelfId + "." + key)
+				instance := data1.GetInstance(shelfId + "." + key)
 
 				if instance == nil {
 					my.Logger.Debug().Msgf("(%s) instance [%s.%s] not found in cache skipping", attribute, shelfId, key)
 					continue
 				}
 
-				for metricKey, m := range data.GetMetrics() {
+				for metricKey, m := range data1.GetMetrics() {
 
 					if value := strings.Split(obj.GetChildContentS(metricKey), " ")[0]; value != "" {
 						if err := m.SetValueString(instance, value); err != nil {
@@ -260,6 +260,3 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	return output, nil
 }
-
-// Need to appease go build - see https://github.com/golang/go/issues/20312
-func main() {}

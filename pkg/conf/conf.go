@@ -1,6 +1,7 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
+
 package conf
 
 import (
@@ -9,18 +10,27 @@ import (
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/tree"
 	"goharvest2/pkg/tree/node"
+	"goharvest2/pkg/util"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"os"
 	"path"
+	"regexp"
+	"strconv"
 )
 
 // LoadConfig loads the config info from harvest.yml
 func LoadConfig(configPath string) (*node.Node, error) {
 	configNode, err := tree.Import("yaml", configPath)
 	if configNode != nil {
-		// Load HarvestConfig to rewrite - eventually all the code will be refactored to use HarvestConfig
-		_ = LoadHarvestConfig(configPath)
+		// Load HarvestConfig to rewrite passwords - eventually all the code will be refactored to use HarvestConfig.
+		// This is needed because the current yaml parser does not handle password with special characters.
+		// E.g abc#123, that's because the # is interpreted as the beginning of a comment. The code below overwrites
+		// the incorrect password with the correct one by using a better yaml parser for each Poller and Default section
+		err := LoadHarvestConfig(configPath)
+		if err != nil {
+			return nil, err
+		}
 		pollers := configNode.GetChildS("Pollers")
 		if pollers != nil {
 			for _, poller := range pollers.GetChildren() {
@@ -45,18 +55,31 @@ func LoadConfig(configPath string) (*node.Node, error) {
 }
 
 var Config = HarvestConfig{}
+var configRead = false
 
 func LoadHarvestConfig(configPath string) error {
+	if configRead {
+		return nil
+	}
 	contents, err := ioutil.ReadFile(configPath)
 	if err != nil {
 		fmt.Printf("error reading config file=[%s] %+v\n", configPath, err)
 		return err
 	}
 	err = yaml.Unmarshal(contents, &Config)
+	configRead = true
 	if err != nil {
-		fmt.Printf("error reading config file=[%s] %+v\n", configPath, err)
+		fmt.Printf("error unmarshalling config file=[%s] %+v\n", configPath, err)
 		return err
 	}
+	// Until https://github.com/go-yaml/yaml/issues/717 is fixed
+	// read the yaml again to determine poller order
+	orderedConfig := OrderedConfig{}
+	err = yaml.Unmarshal(contents, &orderedConfig)
+	if err != nil {
+		return err
+	}
+	Config.PollersOrdered = orderedConfig.Pollers.namesInOrder
 	return nil
 }
 
@@ -64,11 +87,11 @@ func SafeConfig(n *node.Node, fp string) error {
 	return tree.Export(n, "yaml", fp)
 }
 
-func GetExporters(config_fp string) (*node.Node, error) {
+func GetExporters(configFp string) (*node.Node, error) {
 	var err error
 	var config, exporters *node.Node
 
-	if config, err = LoadConfig(config_fp); err != nil {
+	if config, err = LoadConfig(configFp); err != nil {
 		return nil, err
 	}
 
@@ -80,34 +103,34 @@ func GetExporters(config_fp string) (*node.Node, error) {
 	return exporters, nil
 }
 
-func GetPollerNames(config_fp string) ([]string, error) {
+func GetPollerNames(configFp string) ([]string, error) {
 
-	var poller_names []string
+	var pollerNames []string
 	var config, pollers *node.Node
 	var err error
 
-	if config, err = LoadConfig(config_fp); err != nil {
-		return poller_names, err
+	if config, err = LoadConfig(configFp); err != nil {
+		return pollerNames, err
 	}
 
 	if pollers = config.GetChildS("Pollers"); pollers == nil {
-		return poller_names, errors.New(errors.ERR_CONFIG, "[Pollers] section not found")
+		return pollerNames, errors.New(errors.ERR_CONFIG, "[Pollers] section not found")
 	}
 
-	poller_names = make([]string, 0)
+	pollerNames = make([]string, 0)
 
 	for _, p := range pollers.GetChildren() {
-		poller_names = append(poller_names, p.GetNameS())
+		pollerNames = append(pollerNames, p.GetNameS())
 	}
 
-	return poller_names, nil
+	return pollerNames, nil
 }
 
-func GetPollers(config_fp string) (*node.Node, error) {
+func GetPollers(configFp string) (*node.Node, error) {
 	var config, pollers, defaults *node.Node
 	var err error
 
-	if config, err = LoadConfig(config_fp); err != nil {
+	if config, err = LoadConfig(configFp); err != nil {
 		return nil, err
 	}
 
@@ -124,16 +147,15 @@ func GetPollers(config_fp string) (*node.Node, error) {
 	return pollers, err
 }
 
-func GetPoller(config_fp, poller_name string) (*node.Node, error) {
+func GetPoller(configFp, pollerName string) (*node.Node, error) {
 	var err error
 	var pollers, poller *node.Node
 
-	if pollers, err = GetPollers(config_fp); err == nil {
-		if poller = pollers.GetChildS(poller_name); poller == nil {
-			err = errors.New(errors.ERR_CONFIG, "poller ["+poller_name+"] not found")
+	if pollers, err = GetPollers(configFp); err == nil {
+		if poller = pollers.GetChildS(pollerName); poller == nil {
+			err = errors.New(errors.ERR_CONFIG, "poller ["+pollerName+"] not found")
 		}
 	}
-
 	return poller, err
 }
 
@@ -167,44 +189,102 @@ func GetHarvestLogPath() string {
 	return logPath
 }
 
-func GetHarvestPidPath() string {
-	var pidPath string
-	if pidPath = os.Getenv("HARVEST_PIDS"); pidPath == "" {
-		pidPath = "/var/run/harvest/"
-	}
-	return pidPath
-}
-
 /*
-This method returns port configured in prometheus exporter for given poller
+GetPrometheusExporterPorts returns port configured in prometheus exporter for given poller
 If there are more than 1 exporter configured for a poller then return string will have ports as comma seperated
 */
-func GetPrometheusExporterPorts(p *node.Node, configFp string) (string, error) {
-	var port string
-	exporters := p.GetChildS("exporters")
-	if exporters != nil {
-		exportChildren := exporters.GetAllChildContentS()
-		definedExporters, err := GetExporters(configFp)
-		if err != nil {
-			return "", err
-		}
-		for _, ec := range exportChildren {
-			promNode := definedExporters.GetChildS(ec)
-			if promNode == nil {
-				fmt.Printf("poller [%s] specified exporter [%s] that does not exist\n", p.GetNameS(), ec)
-				continue
+func GetPrometheusExporterPorts(pollerName string) (int, error) {
+	var port int
+	var isPrometheusExporterConfigured bool
+
+	if len(promPortRangeMapping) == 0 {
+		loadPrometheusExporterPortRangeMapping()
+	}
+	exporters := (*Config.Pollers)[pollerName].Exporters
+
+	if exporters != nil && len(*exporters) > 0 {
+		for _, e := range *exporters {
+			exporter := (*Config.Exporters)[e]
+			if *exporter.Type == "Prometheus" {
+				isPrometheusExporterConfigured = true
+				if exporter.PortRange != nil {
+					ports := promPortRangeMapping[e]
+					for k := range ports.freePorts {
+						port = k
+						delete(ports.freePorts, k)
+						break
+					}
+				} else if *exporter.Port != 0 {
+					port = *exporter.Port
+					break
+				}
 			}
-			exporterType := promNode.GetChildContentS("exporter")
-			if exporterType == "Prometheus" {
-				currentPort := definedExporters.GetChildS(ec).GetChildContentS("port")
-				port = currentPort
+			continue
+		}
+	}
+	if port == 0 && isPrometheusExporterConfigured {
+		return port, errors.New(errors.ERR_CONFIG, "No free port found for poller "+pollerName)
+	} else {
+		return port, nil
+	}
+}
+
+type PortMap struct {
+	portSet   []int
+	freePorts map[int]struct{}
+}
+
+func PortMapFromRange(address string, portRange *IntRange) PortMap {
+	portMap := PortMap{}
+	start := portRange.Min
+	end := portRange.Max
+	for i := start; i <= end; i++ {
+		portMap.portSet = append(portMap.portSet, i)
+	}
+	portMap.freePorts = util.CheckFreePorts(address, portMap.portSet)
+	return portMap
+}
+
+var promPortRangeMapping = make(map[string]PortMap)
+
+func loadPrometheusExporterPortRangeMapping() {
+	exporters := *Config.Exporters
+	for k, v := range exporters {
+		if *v.Type == "Prometheus" {
+			if v.PortRange != nil {
+				promPortRangeMapping[k] = PortMapFromRange(*v.Addr, v.PortRange)
 			}
 		}
 	}
-	return port, nil
 }
 
-// Returns unique type of exporters for the poller
+type IntRange struct {
+	Min int
+	Max int
+}
+
+var rangeRegex, _ = regexp.Compile(`(\d+)\s*-\s*(\d+)`)
+
+func (i *IntRange) UnmarshalYAML(node *yaml.Node) error {
+	if node.Kind == yaml.ScalarNode && node.ShortTag() == "!!str" {
+		matches := rangeRegex.FindStringSubmatch(node.Value)
+		if len(matches) == 3 {
+			min, err1 := strconv.Atoi(matches[1])
+			max, err2 := strconv.Atoi(matches[2])
+			if err1 != nil {
+				return err1
+			}
+			if err2 != nil {
+				return err2
+			}
+			i.Min = min
+			i.Max = max
+		}
+	}
+	return nil
+}
+
+// GetUniqueExporters returns unique type of exporters for the poller
 // For example: If 2 prometheus exporters are configured for a poller then last one defined is returned
 func GetUniqueExporters(p *node.Node, configFp string) ([]string, error) {
 	var resultExporters []string
@@ -257,12 +337,15 @@ type Poller struct {
 	LogMaxFiles    *int      `yaml:"log_max_files,omitempty"`
 	Exporters      *[]string `yaml:"exporters,omitempty"`
 	Collectors     *[]string `yaml:"collectors,omitempty"`
+	IsKfs          *bool     `yaml:"is_kfs,omitempty"`
 }
 
 type Exporter struct {
 	Port              *int      `yaml:"port,omitempty"`
+	PortRange         *IntRange `yaml:"port_range,omitempty"`
 	Type              *string   `yaml:"exporter,omitempty"`
 	Addr              *string   `yaml:"addr,omitempty"`
+	Url               *string   `yaml:"url,omitempty"`
 	LocalHttpAddr     *string   `yaml:"local_http_addr,omitempty"`
 	GlobalPrefix      *string   `yaml:"global_prefix,omitempty"`
 	AllowedAddrs      *[]string `yaml:"allow_addrs,omitempty"`
@@ -279,9 +362,31 @@ type Exporter struct {
 	ClientTimeout *string `yaml:"client_timeout,omitempty"`
 }
 
+type Pollers struct {
+	namesInOrder []string
+}
+
+func (i *Pollers) UnmarshalYAML(node *yaml.Node) error {
+	if node.Kind == yaml.MappingNode {
+		var namesInOrder []string
+		for _, n := range node.Content {
+			if n.Kind == yaml.ScalarNode && n.ShortTag() == "!!str" {
+				namesInOrder = append(namesInOrder, n.Value)
+			}
+		}
+		i.namesInOrder = namesInOrder
+	}
+	return nil
+}
+
+type OrderedConfig struct {
+	Pollers Pollers `yaml:"Pollers,omitempty"`
+}
+
 type HarvestConfig struct {
-	Tools     *Tools               `yaml:"Tools,omitempty"`
-	Exporters *map[string]Exporter `yaml:"Exporters,omitempty"`
-	Pollers   *map[string]Poller   `yaml:"Pollers,omitempty"`
-	Defaults  *Poller              `yaml:"Defaults,omitempty"`
+	Tools          *Tools               `yaml:"Tools,omitempty"`
+	Exporters      *map[string]Exporter `yaml:"Exporters,omitempty"`
+	Pollers        *map[string]Poller   `yaml:"Pollers,omitempty"`
+	Defaults       *Poller              `yaml:"Defaults,omitempty"`
+	PollersOrdered []string             // poller names in same order as yaml config
 }

@@ -16,8 +16,8 @@
 	and exporters, ping the target system, generate metadata and do some
 	housekeeping.
 
-	Usually the poller will run as a daemon. In this case it will create
-	a PID file and write logs to a file. For debugging and testing
+	Usually the poller will run as a daemon. In this case it will
+	write logs to a file. For debugging and testing
 	it can also be started as a foreground process, in this case
 	logs are sent to STDOUT.
 */
@@ -26,13 +26,18 @@ package main
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	_ "goharvest2/cmd/collectors/unix"
+	_ "goharvest2/cmd/collectors/zapi/collector"
+	_ "goharvest2/cmd/collectors/zapiperf"
+	"goharvest2/cmd/exporters/influxdb"
+	"goharvest2/cmd/exporters/prometheus"
 	"goharvest2/cmd/harvest/version"
 	"goharvest2/cmd/poller/collector"
 	"goharvest2/cmd/poller/exporter"
 	"goharvest2/cmd/poller/options"
+	"goharvest2/cmd/poller/plugin"
 	"goharvest2/cmd/poller/schedule"
 	"goharvest2/pkg/conf"
-	"goharvest2/pkg/dload"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/logging"
 	"goharvest2/pkg/matrix"
@@ -43,7 +48,6 @@ import (
 	"os/exec"
 	"os/signal"
 	"path"
-	"plugin"
 	"runtime"
 	"strconv"
 	"strings"
@@ -53,17 +57,17 @@ import (
 
 // default params
 var (
-	pollerSchedule  string = "60s"
-	logFileName     string = ""
-	logMaxMegaBytes int    = logging.DefaultLogMaxMegaBytes // 10MB
-	logMaxBackups   int    = logging.DefaultLogMaxBackups
-	logMaxAge       int    = logging.DefaultLogMaxAge
+	pollerSchedule  = "60s"
+	logFileName     = ""
+	logMaxMegaBytes = logging.DefaultLogMaxMegaBytes // 10MB
+	logMaxBackups   = logging.DefaultLogMaxBackups
+	logMaxAge       = logging.DefaultLogMaxAge
 )
 
 // init with default configuration by default it gets logged both to console and  harvest.log
-var logger *logging.Logger = logging.Get()
+var logger = logging.Get()
 
-// signals to catch
+// SIGNALS to catch
 var SIGNALS = []os.Signal{
 	syscall.SIGHUP,
 	syscall.SIGINT,
@@ -79,23 +83,16 @@ var deprecatedCollectors = map[string]string{
 // Poller is the instance that starts and monitors a
 // group of collectors and exporters as a single UNIX process
 type Poller struct {
-	name            string
-	target          string
-	options         *options.Options
-	pid             int
-	pidf            string
-	schedule        *schedule.Schedule
-	collectors      []collector.Collector
-	exporters       []exporter.Exporter
-	exporter_params *node.Node
-	params          *node.Node
-	metadata        *matrix.Matrix
-	status          *matrix.Matrix
-}
-
-// New returns a new instance of Poller
-func New() *Poller {
-	return &Poller{}
+	name           string
+	target         string
+	options        *options.Options
+	schedule       *schedule.Schedule
+	collectors     []collector.Collector
+	exporters      []exporter.Exporter
+	exporterParams *node.Node
+	params         *node.Node
+	metadata       *matrix.Matrix
+	status         *matrix.Matrix
 }
 
 // Init starts Poller, reads parameters, opens zeroLog handler, initializes metadata,
@@ -121,8 +118,8 @@ func (me *Poller) Init() error {
 	}
 
 	if me.params, err = conf.GetPoller(me.options.Config, me.name); err != nil {
-		// seperate logger is not yet configured as it depends on setting logMaxMegaBytes, logMaxFiles later
-		// Using default insance of logger which logs below error to harvest.log
+		// separate logger is not yet configured as it depends on setting logMaxMegaBytes, logMaxFiles later
+		// Using default instance of logger which logs below error to harvest.log
 		logging.SubLogger("Poller", me.name).Error().Stack().Err(err).Msg("read config")
 		return err
 	}
@@ -176,17 +173,11 @@ func (me *Poller) Init() error {
 	go me.handleSignals(signalChannel)
 	logger.Debug().Msgf("set signal handler for %v", SIGNALS)
 
-	// write PID to file
-	if err = me.registerPid(); err != nil {
-		logger.Warn().Msgf("failed to write PID file: %v", err)
-		return err
-	}
-
 	// announce startup
 	if me.options.Daemon {
-		logger.Info().Msgf("started as daemon [pid=%d] [pid file=%s]", me.pid, me.pidf)
+		logger.Info().Msgf("started as daemon [pid=%d]", os.Getpid())
 	} else {
-		logger.Info().Msgf("started in foreground [pid=%d]", me.pid)
+		logger.Info().Msgf("started in foreground [pid=%d]", os.Getpid())
 	}
 
 	// load parameters from config (harvest.yml)
@@ -221,9 +212,9 @@ func (me *Poller) Init() error {
 
 	// initialize our metadata, the metadata will host status of our
 	// collectors and exporters, as well as ping stats to target host
-	me.load_metadata()
+	me.loadMetadata()
 
-	if me.exporter_params, err = conf.GetExporters(me.options.Config); err != nil {
+	if me.exporterParams, err = conf.GetExporters(me.options.Config); err != nil {
 		logger.Warn().Msgf("read exporter params: %v", err)
 		// @TODO just warn or abort?
 	}
@@ -252,7 +243,7 @@ func (me *Poller) Init() error {
 				continue
 			}
 
-			if err = me.load_collector(c, ""); err != nil {
+			if err = me.loadCollector(c, ""); err != nil {
 				logger.Error().Stack().Err(err).Msgf("load collector (%s):", c)
 			}
 		}
@@ -422,44 +413,15 @@ func (me *Poller) Run() {
 	}
 }
 
-// Stop gracefully exits the program by closing zeroLog file and removing pid file
+// Stop gracefully exits the program by closing zeroLog
 func (me *Poller) Stop() {
-	logger.Info().Msgf("cleaning up and stopping [pid=%d]", me.pid)
-
-	if me.options.Daemon {
-		if err := os.Remove(me.pidf); err != nil {
-			logger.Error().Stack().Err(err).Msg("clean pid file")
-		} else {
-			logger.Debug().Msgf("cleaned pid file [%s]", me.pidf)
-		}
-	}
-}
-
-// get PID and write to file if we are daemon
-func (me *Poller) registerPid() error {
-	me.pid = os.Getpid()
-
-	if me.options.Daemon {
-
-		me.pidf = path.Join(me.options.PidPath, me.name+".pid")
-
-		file, err := os.Create(me.pidf)
-
-		if err == nil {
-			if _, err = file.WriteString(strconv.Itoa(me.pid)); err == nil {
-				file.Sync()
-			}
-			file.Close()
-		}
-		return err
-	}
-	return nil
+	logger.Info().Msgf("cleaning up and stopping [pid=%d]", os.Getpid())
 }
 
 // set up signal disposition
-func (me *Poller) handleSignals(signal_channel chan os.Signal) {
+func (me *Poller) handleSignals(signalChannel chan os.Signal) {
 	for {
-		sig := <-signal_channel
+		sig := <-signalChannel
 		logger.Info().Msgf("caught signal [%s]", sig)
 		me.Stop()
 		os.Exit(0)
@@ -487,19 +449,14 @@ func (me *Poller) ping() (float32, bool) {
 // dynamically load and initialize a collector
 // if there are more than one objects defined for a collector,
 // then multiple collectors will be initialized
-func (me *Poller) load_collector(class, object string) error {
+func (me *Poller) loadCollector(class, object string) error {
 
 	var (
 		err              error
-		sym              plugin.Symbol
-		binpath          string
 		template, custom *node.Node
 		collectors       []collector.Collector
 		col              collector.Collector
 	)
-
-	// path to the shared object (.so file)
-	binpath = path.Join(me.options.HomePath, "bin", "collectors")
 
 	// throw warning for deprecated collectors
 	if r, d := deprecatedCollectors[strings.ToLower(class)]; d {
@@ -508,15 +465,6 @@ func (me *Poller) load_collector(class, object string) error {
 		} else {
 			logger.Warn().Msgf("collector (%s) is deprecated, see documentation for help", class)
 		}
-	}
-
-	if sym, err = dload.LoadFuncFromModule(binpath, strings.ToLower(class), "New"); err != nil {
-		return err
-	}
-
-	NewFunc, ok := sym.(func(*collector.AbstractCollector) collector.Collector)
-	if !ok {
-		return errors.New(errors.ERR_DLOAD, "New() has not expected signature")
 	}
 
 	// load the template file(s) of the collector where we expect to find
@@ -539,14 +487,16 @@ func (me *Poller) load_collector(class, object string) error {
 		object = template.GetChildContentS("object")
 	}
 
-	// if object is defined, we only initialize 1 subcollector / object
+	// if object is defined, we only initialize 1 sub-collector / object
 	if object != "" {
-		col = NewFunc(collector.New(class, object, me.options, template.Copy()))
-		if err = col.Init(); err != nil {
-			logger.Error().Msgf("init collector (%s:%s): %v", class, object, err)
-		} else {
-			collectors = append(collectors, col)
-			logger.Debug().Msgf("initialized collector (%s:%s)", class, object)
+		col, err = me.newCollector(class, object, template)
+		if col != nil {
+			if err != nil {
+				logger.Error().Msgf("init collector (%s:%s): %v", class, object, err)
+			} else {
+				collectors = append(collectors, col)
+				logger.Debug().Msgf("initialized collector (%s:%s)", class, object)
+			}
 		}
 		// if template has list of objects, initialize 1 subcollector for each
 	} else if objects := template.GetChildS("objects"); objects != nil {
@@ -570,8 +520,12 @@ func (me *Poller) load_collector(class, object string) error {
 				continue
 			}
 
-			col = NewFunc(collector.New(class, object.GetNameS(), me.options, template.Copy()))
-			if err = col.Init(); err != nil {
+			col, err = me.newCollector(class, object.GetNameS(), template)
+			if col == nil {
+				logger.Warn().Msgf("collector is nil for collector-object (%s:%s)", class, object.GetNameS())
+				continue
+			}
+			if err != nil {
 				logger.Warn().Msgf("init collector-object (%s:%s): %v", class, object.GetNameS(), err)
 				if errors.IsErr(err, errors.ERR_CONNECTION) {
 					logger.Warn().Msgf("aborting collector (%s)", class)
@@ -590,17 +544,20 @@ func (me *Poller) load_collector(class, object string) error {
 	logger.Debug().Msgf("initialized (%s) with %d objects", class, len(collectors))
 	// link each collector with requested exporter & update metadata
 	for _, col = range collectors {
-
+		if col == nil {
+			logger.Warn().Msg("ignoring nil collector")
+			continue
+		}
 		name := col.GetName()
 		obj := col.GetObject()
 
-		for _, exp_name := range col.WantedExporters(me.options.Config) {
-			logger.Trace().Msgf("exp_name %s", exp_name)
-			if exp := me.load_exporter(exp_name); exp != nil {
+		for _, expName := range col.WantedExporters(me.options.Config) {
+			logger.Trace().Msgf("expName %s", expName)
+			if exp := me.loadExporter(expName); exp != nil {
 				col.LinkExporter(exp)
-				logger.Debug().Msgf("linked (%s:%s) to exporter (%s)", name, obj, exp_name)
+				logger.Debug().Msgf("linked (%s:%s) to exporter (%s)", name, obj, expName)
 			} else {
-				logger.Warn().Msgf("exporter (%s) requested by (%s:%s) not available", exp_name, name, obj)
+				logger.Warn().Msgf("exporter (%s) requested by (%s:%s) not available", expName, name, obj)
 			}
 		}
 
@@ -618,24 +575,41 @@ func (me *Poller) load_collector(class, object string) error {
 	return nil
 }
 
+func (me *Poller) newCollector(class string, object string, template *node.Node) (collector.Collector, error) {
+	name := "harvest.collector." + strings.ToLower(class)
+	mod, err := plugin.GetModule(name)
+	if err != nil {
+		logger.Error().Msgf("error getting module %s", name)
+		return nil, err
+	}
+	inst := mod.New()
+	col, ok := inst.(collector.Collector)
+	if !ok {
+		logger.Error().Msgf("collector '%s' is not a Collector", name)
+		return nil, errors.New(errors.ERR_NO_COLLECTOR, "no collectors")
+	}
+	delegate := collector.New(class, object, me.options, template.Copy())
+	err = col.Init(delegate)
+	return col, err
+}
+
 // returns exporter that matches to name, if exporter is not loaded
 // tries to load and return
-func (me *Poller) load_exporter(name string) exporter.Exporter {
+func (me *Poller) loadExporter(name string) exporter.Exporter {
 
 	var (
-		err            error
-		sym            plugin.Symbol
-		binpath, class string
-		params         *node.Node
-		exp            exporter.Exporter
+		err    error
+		class  string
+		params *node.Node
+		exp    exporter.Exporter
 	)
 
 	// stop here if exporter is already loaded
-	if exp = me.get_exporter(name); exp != nil {
+	if exp = me.getExporter(name); exp != nil {
 		return exp
 	}
 
-	if params = me.exporter_params.GetChildS(name); params == nil {
+	if params = me.exporterParams.GetChildS(name); params == nil {
 		logger.Warn().Msgf("exporter (%s) not defined in config", name)
 		return nil
 	}
@@ -645,20 +619,16 @@ func (me *Poller) load_exporter(name string) exporter.Exporter {
 		return nil
 	}
 
-	binpath = path.Join(me.options.HomePath, "bin", "exporters")
-
-	if sym, err = dload.LoadFuncFromModule(binpath, strings.ToLower(class), "New"); err != nil {
-		logger.Error().Msgf("dload: %v", err.Error())
+	absExp := exporter.New(class, name, me.options, params)
+	switch class {
+	case "Prometheus":
+		exp = prometheus.New(absExp)
+	case "InfluxDB":
+		exp = influxdb.New(absExp)
+	default:
+		logger.Error().Msgf("no exporter of name:type %s:%s", name, class)
 		return nil
 	}
-
-	NewFunc, ok := sym.(func(*exporter.AbstractExporter) exporter.Exporter)
-	if !ok {
-		logger.Error().Msg("New() has not expected signature")
-		return nil
-	}
-
-	exp = NewFunc(exporter.New(class, name, me.options, params))
 	if err = exp.Init(); err != nil {
 		logger.Error().Msgf("init exporter (%s): %v", name, err)
 		return nil
@@ -679,7 +649,7 @@ func (me *Poller) load_exporter(name string) exporter.Exporter {
 
 }
 
-func (me *Poller) get_exporter(name string) exporter.Exporter {
+func (me *Poller) getExporter(name string) exporter.Exporter {
 	for _, exp := range me.exporters {
 		if exp.GetName() == name {
 			return exp
@@ -689,7 +659,7 @@ func (me *Poller) get_exporter(name string) exporter.Exporter {
 }
 
 // initialize matrices to be used as metadata
-func (me *Poller) load_metadata() {
+func (me *Poller) loadMetadata() {
 
 	me.metadata = matrix.New("poller", "metadata_component")
 	me.metadata.NewMetricUint8("status")
@@ -720,9 +690,9 @@ var pollerCmd = &cobra.Command{
 	Run:   startPoller,
 }
 
-func startPoller(cmd *cobra.Command, _ []string) {
+func startPoller(_ *cobra.Command, _ []string) {
 	//cmd.DebugFlags()  // uncomment to print flags
-	poller := New()
+	poller := &Poller{}
 	poller.options = &args
 	if poller.Init() != nil {
 		// error already logger by poller
@@ -746,7 +716,7 @@ func init() {
 	flags.BoolVar(&args.Daemon, "daemon", false, "Start as daemon")
 	flags.IntVarP(&args.LogLevel, "loglevel", "l", 2, "Logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)")
 	flags.IntVar(&args.Profiling, "profiling", 0, "If profiling port > 0, enables profiling via localhost:PORT/debug/pprof/")
-	flags.StringVar(&args.PromPort, "promPort", "", "Prometheus Port")
+	flags.IntVar(&args.PromPort, "promPort", 0, "Prometheus Port")
 	flags.StringVar(&args.Config, "config", configPath, "harvest config file path")
 	flags.StringSliceVarP(&args.Collectors, "collectors", "c", []string{}, "only start these collectors (overrides harvest.yml)")
 	flags.StringSliceVarP(&args.Objects, "objects", "o", []string{}, "only start these objects (overrides collector config)")

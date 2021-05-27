@@ -4,6 +4,7 @@
 package errors
 
 import (
+	"github.com/pkg/errors"
 	"strings"
 )
 
@@ -23,23 +24,15 @@ const (
 	API_REQ_REJECTED = "api request rejected"
 	// @TODO, implement: API response is something like
 	// Insufficient privileges: user 'harvest2-user' does not have write access to this resource
-	API_INSUF_PRIV = "api insufficient priviliges"
-	ERR_DLOAD      = "dynamic load"
-	ERR_IMPLEMENT  = "implementation error"
-	ERR_SCHEDULE   = "schedule error"
+	API_INSUF_PRIV   = "api insufficient priviliges"
+	ERR_DLOAD        = "dynamic load"
+	ERR_IMPLEMENT    = "implementation error"
+	ERR_SCHEDULE     = "schedule error"
+	GO_ROUTINE_PANIC = "goroutine panic"
 )
 
-type Error struct {
-	class string
-	msg   string
-}
-
-func (e Error) Error() string {
-	return e.class + " => " + e.msg
-}
-
-func New(class, msg string) Error {
-	return Error{class: class, msg: msg}
+func New(class, msg string) error {
+	return errors.New(class + " => " + msg)
 }
 
 func GetClass(err error) string {
