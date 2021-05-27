@@ -38,7 +38,7 @@ cp "$SRC/LICENSE" "$BUILD/harvest/"
 # build binaries
 echo "building binaries"
 cd "$BUILD/harvest"
-make all VERSION=$HARVEST_VERSION RELEASE=$HARVEST_RELEASE
+make build VERSION=$HARVEST_VERSION RELEASE=$HARVEST_RELEASE
 if [ ! $? -eq 0 ]; then
     echo "build failed, aborting"
     exit 1
