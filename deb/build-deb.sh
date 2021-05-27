@@ -51,7 +51,7 @@ if [ "$HARVEST_ARCH" = "armhf" ]; then
     export GOARM="7"
 fi
 echo " --> build harvest with envs [GOOS=$GOOS, GOARCH=$GOARCH, GOARM=$GOARM]"
-make all VERSION=$HARVEST_VERSION RELEASE=$HARVEST_RELEASE
+make build VERSION=$HARVEST_VERSION RELEASE=$HARVEST_RELEASE
 if [ ! $? -eq 0 ]; then
     error "     build failed"
     exit 1
