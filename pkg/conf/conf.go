@@ -184,3 +184,61 @@ func GetUniqueExporters(p *node.Node, configFp string) ([]string, error) {
 	}
 	return resultExporters, nil
 }
+
+// Pointers need to be used for struct members where you need
+// to distinguish missing values from zero values. See
+// https://github.com/go-yaml/yaml/issues/113 for details
+// The downside of making all members pointers is accessing
+// the values requires more dereferencing - see doctor_test.go
+
+type Consul struct {
+	Host        *string   `yaml:"host,omitempty"`
+	ServiceName *string   `yaml:"service_name,omitempty"`
+	Tags        *[]string `yaml:"tags,omitempty"`
+}
+
+type Tools struct {
+	GrafanaApiToken *string `yaml:"grafana_api_token,omitempty"`
+}
+
+type Poller struct {
+	Datacenter     *string   `yaml:"datacenter,omitempty"`
+	Addr           *string   `yaml:"addr,omitempty"`
+	AuthStyle      *string   `yaml:"auth_style,omitempty"`
+	Username       *string   `yaml:"username,omitempty"`
+	Password       *string   `yaml:"password,omitempty"`
+	UseInsecureTls *bool     `yaml:"use_insecure_tls,omitempty"`
+	SslCert        *string   `yaml:"ssl_cert,omitempty"`
+	SslKey         *string   `yaml:"ssl_key,omitempty"`
+	LogMaxBytes    *int64    `yaml:"log_max_bytes,omitempty"`
+	LogMaxFiles    *int      `yaml:"log_max_files,omitempty"`
+	Exporters      *[]string `yaml:"exporters,omitempty"`
+	Collectors     *[]string `yaml:"collectors,omitempty"`
+}
+
+type Exporter struct {
+	Port              *int      `yaml:"port,omitempty"`
+	Type              *string   `yaml:"exporter,omitempty"`
+	Addr              *string   `yaml:"addr,omitempty"`
+	LocalHttpAddr     *string   `yaml:"local_http_addr,omitempty"`
+	GlobalPrefix      *string   `yaml:"global_prefix,omitempty"`
+	AllowedAddrs      *[]string `yaml:"allow_addrs,omitempty"`
+	AllowedAddrsRegex *[]string `yaml:"allow_addrs_regex,omitempty"`
+	CacheMaxKeep      *string   `yaml:"cache_max_keep,omitempty"`
+	ShouldAddMetaTags *bool     `yaml:"add_meta_tags,omitempty"`
+	Consul            *Consul   `yaml:"consul,omitempty"`
+
+	// InfluxDB specific
+	Bucket        *string `yaml:"bucket,omitempty"`
+	Org           *string `yaml:"org,omitempty"`
+	Token         *string `yaml:"token,omitempty"`
+	Precision     *string `yaml:"precision,omitempty"`
+	ClientTimeout *string `yaml:"client_timeout,omitempty"`
+}
+
+type HarvestConfig struct {
+	Tools     *Tools               `yaml:"Tools,omitempty"`
+	Exporters *map[string]Exporter `yaml:"Exporters,omitempty"`
+	Pollers   *map[string]Poller   `yaml:"Pollers,omitempty"`
+	Defaults  *Poller              `yaml:"Defaults,omitempty"`
+}

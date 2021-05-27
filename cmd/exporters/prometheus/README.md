@@ -27,7 +27,7 @@ An overview of all parameters:
 |------------------------|--------------|--------------------------------------------------|------------------------|
 | `port`                 | int, required | port of the HTTP server                          |                        |
 | `local_http_addr`      | string, optional	| address of the HTTP server Harvest starts for Prometheus to scrape:<br />use `localhost` to serve only on the local machine<br />use `0.0.0.0` (default) if Prometheus is scrapping from another machine | `0.0.0.0` |
-| `global_prefx`         | string, optional | add a prefix to all metrics (e.g. `netapp_`) |                        |
+| `global_prefix`         | string, optional | add a prefix to all metrics (e.g. `netapp_`) |                        |
 | `allow_addrs`          | list of strings, optional | allow access only if host matches any of the provided addresses | |
 | `allow_addrs_regex`	 | list of strings, optional | allow access only if host address matches at least one of the regular expressions | |
 | `cache_max_keep`       | string (Go duration format), optional | maximum amount of time metrics are cached (in case Prometheus does not timely collect the metrics) | `180s` |
