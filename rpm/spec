@@ -43,7 +43,7 @@ mkdir -p $RPM_BUILD_ROOT/var/run/harvest
 
 %post
 if [ ! -e $RPM_BUILD_ROOT/opt/harvest/harvest.yml ]; then
-    cp $RPM_BUILD_ROOT/opt/harvest/harvest.example.yml $RPM_BUILD_ROOT/opt/harvest/harvest.yml
+    cp $RPM_BUILD_ROOT/opt/harvest/harvest.yml $RPM_BUILD_ROOT/opt/harvest/harvest.yml
     echo "  --> use default config file [/opt/harvest/harvest.yml]"
 fi
 getent group harvest > /dev/null 2>&1 || groupadd -r harvest && echo "  --> create harvest group"

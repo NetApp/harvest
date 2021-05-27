@@ -150,7 +150,7 @@ dist-tar:
 	@mkdir ${TMP}
 	@mkdir ${DIST}
 	@cp -a bin conf docs grafana README.md LICENSE ${TMP}
-	@cp -a harvest.example.yml ${TMP}/harvest.yml
+	@cp -a harvest.yml ${TMP}/harvest.yml
 	@tar --directory /tmp --create --gzip --file ${DIST}/${HARVEST_PACKAGE}.tar.gz ${HARVEST_PACKAGE}
 	@rm -rf ${TMP}
 	@echo "tar artifact @" ${DIST}/${HARVEST_PACKAGE}.tar.gz
