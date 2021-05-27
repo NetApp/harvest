@@ -759,11 +759,11 @@ func main() {
 	defer func() {
 		//logger.Warn("(main) ", "defer func here")
 		if r := recover(); r != nil {
-			logger.Info().Msgf("harvest poller paniced: %v", r)
+			logger.Info().Msgf("harvest poller panicked: %v", r)
 			// if logger still available try to write there as well
 			// do this last, since might make us panic as again
-			logger.Fatal().Msgf("(main) ", "%v", r)
-			logger.Fatal().Msgf("(main) ", "terminating abnormally, tip: run in foreground mode (with \"--loglevel 0\") to debug")
+			logger.Fatal().Msgf("(main) %v", r)
+			logger.Fatal().Msg(`(main) terminating abnormally, tip: run in foreground mode (with "--loglevel 0") to debug`)
 
 			os.Exit(1)
 		}
