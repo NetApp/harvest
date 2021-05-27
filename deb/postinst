@@ -15,7 +15,7 @@ echo "  --> copying service"
 cp /opt/harvest/service/harvest.service /etc/systemd/system/
 chmod 664 /etc/systemd/system/harvest.service
 if [ ! -e /opt/harvest/harvest.yml ]; then
-    cp /opt/harvest/harvest.example.yml /opt/harvest/harvest.yml
+    cp /opt/harvest/harvest.yml /opt/harvest/harvest.yml
     echo "  --> use default config file [/opt/harvest/harvest.yml]"
 fi
 systemctl daemon-reload

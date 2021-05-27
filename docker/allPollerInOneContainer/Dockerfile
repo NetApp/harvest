@@ -19,7 +19,7 @@ COPY . .
 
 RUN make build VERSION=$VERSION RELEASE=$RELEASE
 
-RUN cp -a $BUILD_DIR/harvest.example.yml $INSTALL_DIR/harvest.yml
+RUN cp -a $BUILD_DIR/harvest.yml $INSTALL_DIR/harvest.yml
 
 RUN cp -aR bin $BUILD_DIR/conf $BUILD_DIR/docs $BUILD_DIR/grafana $BUILD_DIR/docker/allPollerInOneContainer/docker-entrypoint.sh $INSTALL_DIR && \
    chmod +x $INSTALL_DIR/docker-entrypoint.sh
