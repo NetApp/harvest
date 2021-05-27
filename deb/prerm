@@ -6,3 +6,8 @@
 
 echo " --> stop harvest for $1"
 systemctl stop harvest
+if [ -e /opt/harvest/harvest.yml ]; then
+  echo " --> backing up harvest conf"
+  cp /opt/harvest/harvest.yml /opt/harvest/backup_harvest.yml
+  echo "  --> Backing up existing config file as [/opt/harvest/backup_harvest.yml]"
+fi
