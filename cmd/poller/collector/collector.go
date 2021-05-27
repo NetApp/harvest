@@ -105,7 +105,7 @@ func New(name, object string, options *options.Options, params *node.Node) *Abst
 		Name:     name,
 		Object:   object,
 		Options:  options,
-		Logger:   logging.GetInstanceSubLogger("collector", name+":"+object),
+		Logger:   logging.SubLogger("collector", name+":"+object),
 		Params:   params,
 		countMux: &sync.Mutex{},
 	}

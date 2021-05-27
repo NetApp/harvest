@@ -50,7 +50,7 @@ func New(config *node.Node) (*Client, error) {
 	)
 
 	client = Client{}
-	client.Logger = logging.GetInstanceSubLogger("Zapi", "Client")
+	client.Logger = logging.SubLogger("Zapi", "Client")
 
 	// check required & optional parameters
 	if client.apiVersion = config.GetChildContentS("api_version"); client.apiVersion == "" {

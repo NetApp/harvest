@@ -22,12 +22,9 @@ import (
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/cmd/poller/plugin/aggregator"
 	"goharvest2/cmd/poller/plugin/label_agent"
-	"goharvest2/pkg/logging"
 	"goharvest2/pkg/tree"
 	"goharvest2/pkg/tree/node"
 )
-
-var logger *logging.Logger = logging.GetInstance()
 
 // ImportTemplate retrieves the config (template) of a collector, arguments are:
 // @confDir			- path of Harvest config durectory (usually /etc/harvest)

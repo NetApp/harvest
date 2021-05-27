@@ -78,7 +78,7 @@ func (me *AbstractPlugin) InitAbc() error {
 	if me.Name = me.Params.GetNameS(); me.Name == "" {
 		return errors.New(errors.MISSING_PARAM, "plugin name")
 	}
-	me.Logger = logging.GetInstanceSubLogger("plugin", me.Parent+":"+me.Name)
+	me.Logger = logging.SubLogger("plugin", me.Parent+":"+me.Name)
 
 	return nil
 }

@@ -55,12 +55,13 @@ import (
 var (
 	pollerSchedule  string = "60s"
 	logFileName     string = ""
-	logMaxMegaBytes int    = 10 // 10MB
-	logMaxFiles     int    = 10
-	logMaxAge       int    = 30
+	logMaxMegaBytes int    = logging.DefaultLogMaxMegaBytes // 10MB
+	logMaxBackups   int    = logging.DefaultLogMaxBackups
+	logMaxAge       int    = logging.DefaultLogMaxAge
 )
 
-var logger *logging.Logger
+// init with default configuration by default it gets logged both to console and  harvest.log
+var logger *logging.Logger = logging.Get()
 
 // signals to catch
 var SIGNALS = []os.Signal{
@@ -71,7 +72,7 @@ var SIGNALS = []os.Signal{
 }
 
 // deprecated collectors to throw warning
-var _DEPRECATED_COLLECTORS = map[string]string{
+var deprecatedCollectors = map[string]string{
 	"psutil": "Unix",
 }
 
@@ -119,6 +120,13 @@ func (me *Poller) Init() error {
 		consoleLoggingEnabled = true
 	}
 
+	if me.params, err = conf.GetPoller(me.options.Config, me.name); err != nil {
+		// seperate logger is not yet configured as it depends on setting logMaxMegaBytes, logMaxFiles later
+		// Using default insance of logger which logs below error to harvest.log
+		logging.SubLogger("Poller", me.name).Error().Stack().Err(err).Msg("read config")
+		return err
+	}
+
 	// log handling parameters
 	// size of file before rotating
 	if s := me.params.GetChildContentS("log_max_bytes"); s != "" {
@@ -130,7 +138,7 @@ func (me *Poller) Init() error {
 	// maximum number of rotated files to keep
 	if s := me.params.GetChildContentS("log_max_files"); s != "" {
 		if i, err := strconv.Atoi(s); err == nil {
-			logMaxFiles = i
+			logMaxBackups = i
 		}
 	}
 
@@ -142,7 +150,7 @@ func (me *Poller) Init() error {
 		Directory:          me.options.LogPath,
 		Filename:           logFileName,
 		MaxSize:            logMaxMegaBytes,
-		MaxBackups:         logMaxFiles,
+		MaxBackups:         logMaxBackups,
 		MaxAge:             logMaxAge}
 
 	logger = logging.Configure(logConfig)
@@ -183,10 +191,6 @@ func (me *Poller) Init() error {
 
 	// load parameters from config (harvest.yml)
 	logger.Debug().Msgf("importing config [%s]", me.options.Config)
-	if me.params, err = conf.GetPoller(me.options.Config, me.name); err != nil {
-		logger.Error().Stack().Err(err).Msg("read config")
-		return err
-	}
 
 	// each poller is associated with a remote host
 	// if no address is specified, assume that is local host
@@ -498,7 +502,7 @@ func (me *Poller) load_collector(class, object string) error {
 	binpath = path.Join(me.options.HomePath, "bin", "collectors")
 
 	// throw warning for deprecated collectors
-	if r, d := _DEPRECATED_COLLECTORS[strings.ToLower(class)]; d {
+	if r, d := deprecatedCollectors[strings.ToLower(class)]; d {
 		if r != "" {
 			logger.Warn().Msgf("collector (%s) is deprecated, please use (%s) instead", class, r)
 		} else {

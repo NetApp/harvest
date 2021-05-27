@@ -16,10 +16,11 @@ const (
 	defaultLogFileName           string = "harvest.log"
 	defaultLogLevel                     = zerolog.InfoLevel
 	defaultConsoleLoggingEnabled bool   = true
-	defaultFileLoggingEnabled    bool   = true
-	defaultLogMaxMegaBytes       int    = 10 // 10MB
-	defaultLogMaxBackups         int    = 10
-	defaultLogMaxAge             int    = 30
+	// DefaultFileLoggingEnabled is intentionally false to avoid opening many file descriptors for same log file
+	defaultFileLoggingEnabled bool = false
+	DefaultLogMaxMegaBytes    int  = 10 // 10MB
+	DefaultLogMaxBackups      int  = 10
+	DefaultLogMaxAge          int  = 30
 )
 
 // Configuration for logging
@@ -53,7 +54,9 @@ type Logger struct {
 	*zerolog.Logger
 }
 
-func GetInstance() *Logger {
+// Get Returns a logger with default configuration if logger is not initialized yet
+// default configuration only writes to console and not to file see param defaultFileLoggingEnabled
+func Get() *Logger {
 	once.Do(func() {
 		if logger == nil {
 			defaultPrefixKey := "harvest"
@@ -65,17 +68,18 @@ func GetInstance() *Logger {
 				FileLoggingEnabled: defaultFileLoggingEnabled,
 				Directory:          conf.GetHarvestLogPath(),
 				Filename:           defaultLogFileName,
-				MaxSize:            defaultLogMaxMegaBytes,
-				MaxBackups:         defaultLogMaxBackups,
-				MaxAge:             defaultLogMaxAge}
+				MaxSize:            DefaultLogMaxMegaBytes,
+				MaxBackups:         DefaultLogMaxBackups,
+				MaxAge:             DefaultLogMaxAge}
 			logger = Configure(logConfig)
 		}
 	})
 	return logger
 }
 
-func GetInstanceSubLogger(key string, value string) *Logger {
-	logger := GetInstance().With().Str(key, value).Logger()
+// SubLogger adds the field key with val as a string to the logger context and returns sublogger
+func SubLogger(key string, value string) *Logger {
+	logger := Get().With().Str(key, value).Logger()
 	subLogger := &Logger{
 		Logger: &logger,
 	}
@@ -118,6 +122,7 @@ func Configure(config LogConfig) *Logger {
 	return logger
 }
 
+//returns lumberjack writer
 func newRollingFile(config LogConfig) io.Writer {
 	return &lumberjack.Logger{
 		Filename:   path.Join(config.Directory, config.Filename),
@@ -128,6 +133,7 @@ func newRollingFile(config LogConfig) io.Writer {
 	}
 }
 
+// GetZerologLevel returns log level mapping
 func GetZerologLevel(logLevel int) zerolog.Level {
 	switch logLevel {
 	case 0:

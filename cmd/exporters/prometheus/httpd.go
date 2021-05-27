@@ -26,7 +26,7 @@ func (me *Prometheus) startHttpD(addr, port string) {
 	server := &http.Server{Addr: addr + ":" + port, Handler: mux}
 
 	if err := server.ListenAndServe(); err != nil {
-		me.Logger.Fatal().Msgf(" (httpd)", err.Error())
+		me.Logger.Fatal().Msgf(" (httpd) %v", err.Error())
 	} else {
 		me.Logger.Info().Msgf(" (httpd)", "listening at [http://%s:%s]", addr, port)
 	}
