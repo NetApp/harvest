@@ -1,0 +1,9 @@
+# https://github.com/frapposelli/wwhrd
+# Check vendored licenses in your Go project
+---
+allowlist:
+  - Apache-2.0
+  - MIT
+  - BSD-2-Clause
+  - BSD-3-Clause
+  - MPL-2.0
