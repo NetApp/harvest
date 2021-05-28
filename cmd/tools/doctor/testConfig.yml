@@ -31,7 +31,7 @@ Defaults:
     - ZapiPerf
   use_insecure_tls: false
   username: myuser
-  password: mypasw
+  password: 123#abc
 
 Pollers:
   # this is a special/optional poller that provides stats about harvest itself

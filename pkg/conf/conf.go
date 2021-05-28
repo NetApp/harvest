@@ -9,12 +9,58 @@ import (
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/tree"
 	"goharvest2/pkg/tree/node"
+	"gopkg.in/yaml.v3"
+	"io/ioutil"
 	"os"
 	"path"
 )
 
-func LoadConfig(config_fp string) (*node.Node, error) {
-	return tree.Import("yaml", config_fp)
+// LoadConfig loads the config info from harvest.yml
+func LoadConfig(configPath string) (*node.Node, error) {
+	configNode, err := tree.Import("yaml", configPath)
+	if configNode != nil {
+		// Load HarvestConfig to rewrite passwords - eventually all the code will be refactored to use HarvestConfig.
+		// This is needed because the current yaml parser does not handle password with special characters.
+		// E.g abc#123, that's because the # is interpreted as the beginning of a comment. The code below overwrites
+		// the incorrect password with the correct one by using a better yaml parser for each Poller and Default section
+		_ = LoadHarvestConfig(configPath)
+		pollers := configNode.GetChildS("Pollers")
+		if pollers != nil {
+			for _, poller := range pollers.GetChildren() {
+				password := poller.GetChildContentS("password")
+				pollerStruct := (*Config.Pollers)[poller.GetNameS()]
+				if pollerStruct.Password != "" && pollerStruct.Password != password {
+					poller.SetChildContentS("password", pollerStruct.Password)
+				}
+			}
+		}
+		// Check Defaults also
+		defaultNode := configNode.GetChildS("Defaults")
+		if defaultNode != nil {
+			password := defaultNode.GetChildContentS("password")
+			defaultStruct := *Config.Defaults
+			if defaultStruct.Password != "" && defaultStruct.Password != password {
+				defaultNode.SetChildContentS("password", defaultStruct.Password)
+			}
+		}
+	}
+	return configNode, err
+}
+
+var Config = HarvestConfig{}
+
+func LoadHarvestConfig(configPath string) error {
+	contents, err := ioutil.ReadFile(configPath)
+	if err != nil {
+		fmt.Printf("error reading config file=[%s] %+v\n", configPath, err)
+		return err
+	}
+	err = yaml.Unmarshal(contents, &Config)
+	if err != nil {
+		fmt.Printf("error unmarshalling config file=[%s] %+v\n", configPath, err)
+		return err
+	}
+	return nil
 }
 
 func SafeConfig(n *node.Node, fp string) error {
@@ -206,7 +252,7 @@ type Poller struct {
 	Addr           *string   `yaml:"addr,omitempty"`
 	AuthStyle      *string   `yaml:"auth_style,omitempty"`
 	Username       *string   `yaml:"username,omitempty"`
-	Password       *string   `yaml:"password,omitempty"`
+	Password       string    `yaml:"password,omitempty"`
 	UseInsecureTls *bool     `yaml:"use_insecure_tls,omitempty"`
 	SslCert        *string   `yaml:"ssl_cert,omitempty"`
 	SslKey         *string   `yaml:"ssl_key,omitempty"`
