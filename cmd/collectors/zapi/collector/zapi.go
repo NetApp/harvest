@@ -286,11 +286,11 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 					count += 1
 				}
 			} else {
-				me.Logger.Debug().Msgf("%sskipped (%s) with value (%s): not in metric or label cache%s", color.Blue, key, value, color.End)
+				me.Logger.Debug().Msgf(" > %sskipped (%s) with value (%s): not in metric or label cache%s", color.Blue, key, value, color.End)
 				skipped += 1
 			}
 		} else {
-			logger.Trace(me.Prefix, "%sskippped (%s) with no value%s", color.Cyan, key, color.End)
+			me.Logger.Debug().Msgf(" > %sskippped (%s) with no value%s", color.Cyan, key, color.End)
 			skipped += 1
 		}
 
