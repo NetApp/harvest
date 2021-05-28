@@ -5,7 +5,6 @@ package zapi
 
 import (
 	"goharvest2/pkg/color"
-	"goharvest2/pkg/logger"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
 	"goharvest2/pkg/util"
@@ -116,20 +115,20 @@ func (me *Zapi) HandleCounter(path []string, content string) string {
 	if content[0] == '^' {
 		me.instanceLabelPaths[key] = display
 		//data.AddLabel(key, display)
-		logger.Trace(me.Prefix, "%sadd (%s) as label [%s]%s => %v", color.Yellow, key, display, color.End, fullPath)
+		me.Logger.Trace().Msgf("%sadd (%s) as label [%s]%s => %v", color.Yellow, key, display, color.End, fullPath)
 		if content[1] == '^' {
 			copied := make([]string, len(fullPath))
 			copy(copied, fullPath)
 			me.instanceKeyPaths = append(me.instanceKeyPaths, copied)
-			logger.Trace(me.Prefix, "%sadd (%s) as instance key [%s]%s => %v", color.Red, key, display, color.End, fullPath)
+			me.Logger.Trace().Msgf("%sadd (%s) as instance key [%s]%s => %v", color.Red, key, display, color.End, fullPath)
 		}
 	} else {
 		metric, err := me.Matrix.NewMetricUint64(key)
 		if err != nil {
-			logger.Error(me.Prefix, "add ass metric (%s) [%s]: %v", key, display, err)
+			me.Logger.Error().Stack().Err(err).Msgf("add as metric (%s) [%s]: %v", key, display)
 		} else {
 			metric.SetName(display)
-			logger.Trace(me.Prefix, "%sadd as metric (%s) [%s]%s => %v", color.Blue, key, display, color.End, fullPath)
+			me.Logger.Trace().Msgf("%sadd as metric (%s) [%s]%s => %v", color.Blue, key, display, color.End, fullPath)
 		}
 	}
 

@@ -24,7 +24,7 @@ cp -r "$SRC/docs/" "$BUILD/harvest/"
 cp -r "$SRC/conf/" "$BUILD/harvest/"
 cp -r "$SRC/rpm/" "$BUILD/harvest/"
 cp -r "$SRC/service/" "$BUILD/harvest/"
-cp "$SRC/harvest.example.yml" "$BUILD/harvest/"
+cp "$SRC/harvest.yml" "$BUILD/harvest/"
 cp "$SRC/go.mod" "$BUILD/harvest/"
 cp "$SRC/go.sum" "$BUILD/harvest/"
 if [ -d "$SRC/vendor" ]; then
@@ -38,7 +38,7 @@ cp "$SRC/LICENSE" "$BUILD/harvest/"
 # build binaries
 echo "building binaries"
 cd "$BUILD/harvest"
-make all VERSION=$HARVEST_VERSION RELEASE=$HARVEST_RELEASE
+make build VERSION=$HARVEST_VERSION RELEASE=$HARVEST_RELEASE
 if [ ! $? -eq 0 ]; then
     echo "build failed, aborting"
     exit 1

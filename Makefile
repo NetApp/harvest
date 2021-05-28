@@ -1,7 +1,7 @@
 # Copyright 2021 NetApp, Inc.  All Rights Reserved
 .DEFAULT_GOAL:=help
 
-.PHONY: help deps clean build package
+.PHONY: help deps clean build test fmt vet package
 
 ###############################################################################
 # Anything that needs to be done before we build everything
@@ -63,11 +63,23 @@ clean: header ## Cleanup the project binary (bin) folders
 	@echo "Cleaning harvest files"
 	@rm -rf bin
 
-build: clean deps harvest collectors exporters ## Build the project
+test: ## run tests
+	@echo "Running tests"
+	go test -v ./...
 
-package: clean deps build dist-tar ## Package Harvest binary
+fmt: ## format the go source files
+	@echo "Running gofmt"
+	go fmt ./...
 
-all: package ## Build and Package
+vet: ## run go vet on the source files
+	@echo "Running govet"
+	go vet ./...
+
+build: clean deps fmt harvest collectors exporters ## Build the project
+
+package: clean deps build test dist-tar ## Package Harvest binary
+
+all: package ## Build, Test, Package
 
 harvest: deps
 	@# Build the harvest cli
@@ -138,7 +150,7 @@ dist-tar:
 	@mkdir ${TMP}
 	@mkdir ${DIST}
 	@cp -a bin conf docs grafana README.md LICENSE ${TMP}
-	@cp -a harvest.example.yml ${TMP}/harvest.yml
+	@cp -a harvest.yml ${TMP}/harvest.yml
 	@tar --directory /tmp --create --gzip --file ${DIST}/${HARVEST_PACKAGE}.tar.gz ${HARVEST_PACKAGE}
 	@rm -rf ${TMP}
 	@echo "tar artifact @" ${DIST}/${HARVEST_PACKAGE}.tar.gz

@@ -21,6 +21,7 @@ import (
 	"goharvest2/cmd/harvest/config"
 	"goharvest2/cmd/harvest/stub"
 	"goharvest2/cmd/harvest/version"
+	"goharvest2/cmd/tools/doctor"
 	"goharvest2/cmd/tools/grafana"
 	"goharvest2/cmd/tools/zapi"
 	"goharvest2/pkg/conf"
@@ -93,9 +94,7 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	if HarvestPidPath = os.Getenv("HARVEST_PIDS"); HarvestPidPath == "" {
-		HarvestPidPath = "/var/run/harvest/"
-	}
+	HarvestPidPath = conf.GetHarvestPidPath()
 
 	if opts.verbose {
 		_ = cmd.Flags().Set("loglevel", "1")
@@ -628,6 +627,7 @@ func init() {
 	rootCmd.AddCommand(manageCmd("restart", true))
 	rootCmd.AddCommand(manageCmd("kill", true))
 	rootCmd.AddCommand(config.ConfigCmd, zapi.ZapiCmd, grafana.GrafanaCmd, stub.NewCmd)
+	rootCmd.AddCommand(doctor.Cmd)
 
 	rootCmd.PersistentFlags().StringVar(&opts.config, "config", "./harvest.yml", "harvest config file path")
 	rootCmd.Version = version.String()
