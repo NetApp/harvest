@@ -17,6 +17,7 @@ package collector
 
 import (
 	"goharvest2/pkg/conf"
+	"goharvest2/pkg/logging"
 	"path"
 	"reflect"
 	"strconv"
@@ -26,7 +27,6 @@ import (
 
 	"goharvest2/pkg/dload"
 	"goharvest2/pkg/errors"
-	"goharvest2/pkg/logger"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
 
@@ -78,7 +78,7 @@ var CollectorStatus = [3]string{
 type AbstractCollector struct {
 	Name    string           // name of the collector, CamelCased
 	Object  string           // object of the collector, describes what thet collector is collecting
-	Prefix  string           // prefix used for logging
+	Logger  *logging.Logger  // logger used for logging
 	Status  uint8            // current state of th
 	Message string           // reason if collector is in failed state
 	Options *options.Options // poller options
@@ -105,11 +105,10 @@ func New(name, object string, options *options.Options, params *node.Node) *Abst
 		Name:     name,
 		Object:   object,
 		Options:  options,
+		Logger:   logging.SubLogger("collector", name+":"+object),
 		Params:   params,
 		countMux: &sync.Mutex{},
 	}
-	c.Prefix = "(collector) (" + name + ":" + object + ")"
-
 	return &c
 }
 
@@ -270,7 +269,7 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 			if err != nil {
 
 				if !me.Schedule.IsStandBy() {
-					logger.Debug(me.Prefix, "handling error during [%s] poll...", task.Name)
+					me.Logger.Debug().Msgf("handling error during [%s] poll...", task.Name)
 				}
 				switch {
 				// target system is unreachable
@@ -281,7 +280,7 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 					}
 					if !me.Schedule.IsStandBy() {
 						//logger.Error(me.Prefix, err.Error())
-						logger.Warn(me.Prefix, "target unreachable, entering standby mode (retry to connect in %d s)", retryDelay)
+						me.Logger.Warn().Msgf("target unreachable, entering standby mode (retry to connect in %d s)", retryDelay)
 					}
 					me.Schedule.SetStandByMode(task, time.Duration(retryDelay)*time.Second)
 					me.SetStatus(1, errors.ERR_CONNECTION)
@@ -289,15 +288,15 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 				case errors.IsErr(err, errors.ERR_NO_INSTANCE):
 					me.Schedule.SetStandByMode(task, 5*time.Minute)
 					me.SetStatus(1, errors.ERR_NO_INSTANCE)
-					logger.Info(me.Prefix, "no [%s] instances on system, entering standby mode", me.Object)
+					me.Logger.Info().Msgf("no [%s] instances on system, entering standby mode", me.Object)
 				// no metrics available
 				case errors.IsErr(err, errors.ERR_NO_METRIC):
 					me.SetStatus(1, errors.ERR_NO_METRIC)
 					me.Schedule.SetStandByMode(task, 1*time.Hour)
-					logger.Warn(me.Prefix, "no [%s] metrics on system, entering standby mode", me.Object)
+					me.Logger.Warn().Msgf("no [%s] metrics on system, entering standby mode", me.Object)
 				// not an error we are expecting, so enter failed state and terminate
 				default:
-					logger.Error(me.Prefix, err.Error())
+					me.Logger.Error().Stack().Err(err).Msg("")
 					if errmsg := errors.GetClass(err); errmsg != "" {
 						me.SetStatus(2, errmsg)
 					} else {
@@ -311,7 +310,7 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 				// recover from standby mode
 				me.Schedule.Recover()
 				me.SetStatus(0, "running")
-				logger.Info(me.Prefix, "recovered from standby mode, back to normal schedule")
+				me.Logger.Info().Msg("recovered from standby mode, back to normal schedule")
 			}
 
 			if data != nil {
@@ -324,12 +323,12 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 
 					for _, plg := range me.Plugins {
 						if pluginData, err := plg.Run(data); err != nil {
-							logger.Error(me.Prefix, "plugin [%s]: %s", plg.GetName(), err.Error())
+							me.Logger.Error().Stack().Err(err).Msgf("plugin [%s]: ", plg.GetName())
 						} else if pluginData != nil {
 							results = append(results, pluginData...)
-							logger.Debug(me.Prefix, "plugin [%s] added (%d) data", plg.GetName(), len(pluginData))
+							me.Logger.Debug().Msgf("plugin [%s] added (%d) data", plg.GetName(), len(pluginData))
 						} else {
-							logger.Debug(me.Prefix, "plugin [%s]: completed", plg.GetName())
+							me.Logger.Debug().Msgf("plugin [%s]: completed", plg.GetName())
 						}
 					}
 
@@ -350,37 +349,37 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 
 		// pass results to exporters
 
-		logger.Debug(me.Prefix, "exporting collected (%d) data", len(results))
+		me.Logger.Debug().Msgf("exporting collected (%d) data", len(results))
 
 		// @TODO better handling when exporter is standby/failed state
 		for _, e := range me.Exporters {
 			if code, status, reason := e.GetStatus(); code != 0 {
-				logger.Warn(me.Prefix, "exporter [%s] down (%d - %s) (%s), skip export", e.GetName(), code, status, reason)
+				me.Logger.Warn().Msgf("exporter [%s] down (%d - %s) (%s), skip export", e.GetName(), code, status, reason)
 				continue
 			}
 
 			if err := e.Export(me.Metadata); err != nil {
-				logger.Warn(me.Prefix, "export metadata to [%s]: %s", e.GetName(), err.Error())
+				me.Logger.Warn().Msgf("export metadata to [%s]: %s", e.GetName(), err.Error())
 			}
 
 			// continue if metadata failed, since it might be specific to metadata
 			for _, data := range results {
 				if data.IsExportable() {
 					if err := e.Export(data); err != nil {
-						logger.Error(me.Prefix, "export data to [%s]: %s", e.GetName(), err.Error())
+						me.Logger.Error().Stack().Err(err).Msgf("export data to [%s]:", e.GetName())
 						break
 					}
 				} else {
-					logger.Debug(me.Prefix, "skipped data (%s) (%s) - set non-exportable", data.UUID, data.Object)
+					me.Logger.Debug().Msgf("skipped data (%s) (%s) - set non-exportable", data.UUID, data.Object)
 				}
 			}
 		}
 
 		if nd := me.Schedule.NextDue(); nd > 0 {
-			logger.Debug(me.Prefix, "sleeping %s until next poll", nd.String()) //DEBUG
+			me.Logger.Debug().Msgf("sleeping %s until next poll", nd.String()) //DEBUG
 			me.Schedule.Sleep()
 		} else if nd.Milliseconds() > -50 { // avoid warning for small delays
-			logger.Warn(me.Prefix, "lagging behind schedule %s", (-nd).String())
+			me.Logger.Warn().Msgf("lagging behind schedule %s", (-nd).String())
 		}
 	}
 }
@@ -458,7 +457,7 @@ func (me *AbstractCollector) SetMetadata(m *matrix.Matrix) {
 func (me *AbstractCollector) WantedExporters(configFp string) []string {
 	names, err := conf.GetUniqueExporters(me.Params, configFp)
 	if err != nil {
-		logger.Error(me.Prefix, "Error while fetching exporters %v", err)
+		me.Logger.Error().Stack().Err(err).Msg("Error while fetching exporters")
 	}
 	return names
 }
@@ -488,7 +487,7 @@ func (me *AbstractCollector) LoadPlugins(params *node.Node) error {
 
 		// case 1: available as built-in plugin
 		if p = getBuiltinPlugin(name, abc); p != nil {
-			logger.Debug(me.Prefix, "loaded built-in plugin [%s]", name)
+			me.Logger.Debug().Msgf("loaded built-in plugin [%s]", name)
 			// case 2: available as dynamic plugin
 		} else {
 			binpath := path.Join(me.Options.HomePath, "bin", "plugins", strings.ToLower(me.Name))
@@ -504,15 +503,15 @@ func (me *AbstractCollector) LoadPlugins(params *node.Node) error {
 				return errors.New(errors.ERR_DLOAD, name+": New()")
 			}
 			p = NewFunc(abc)
-			logger.Debug(me.Prefix, "loaded dynamic plugin [%s]", name)
+			me.Logger.Debug().Msgf("loaded dynamic plugin [%s]", name)
 		}
 
 		if err := p.Init(); err != nil {
-			logger.Error(me.Prefix, "init plugin [%s]: %v", name, err)
+			me.Logger.Error().Stack().Err(err).Msgf("init plugin [%s]:", name)
 			return err
 		}
 		me.Plugins = append(me.Plugins, p)
 	}
-	logger.Debug(me.Prefix, "initialized %d plugins", len(me.Plugins))
+	me.Logger.Debug().Msgf("initialized %d plugins", len(me.Plugins))
 	return nil
 }

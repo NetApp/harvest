@@ -7,7 +7,6 @@ import (
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/pkg/api/ontapi/zapi"
 	"goharvest2/pkg/dict"
-	"goharvest2/pkg/logger"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
 	"strings"
@@ -36,7 +35,7 @@ func (my *SnapMirror) Init() error {
 	}
 
 	if my.client, err = zapi.New(my.ParentParams); err != nil {
-		logger.Error(my.Prefix, "connecting: %v", err)
+		my.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
 	}
 
@@ -51,7 +50,7 @@ func (my *SnapMirror) Init() error {
 	my.destLimitCache = dict.New()
 	my.srcLimitCache = dict.New()
 
-	logger.Debug(my.Prefix, "plugin initialized")
+	my.Logger.Debug().Msg("plugin initialized")
 	return nil
 }
 
@@ -62,7 +61,7 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		if err := my.updateNodeCache(); err != nil {
 			return nil, err
 		}
-		logger.Debug(my.Prefix, "updated node cache")
+		my.Logger.Debug().Msg("updated node cache")
 	} else if my.nodeUpdCounter > 10 {
 		my.nodeUpdCounter = 0
 	} else {
@@ -73,7 +72,7 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		if err := my.updateLimitCache(); err != nil {
 			return nil, err
 		}
-		logger.Debug(my.Prefix, "updated limit cache")
+		my.Logger.Debug().Msg("updated limit cache")
 	} else if my.limitUpdCounter > 100 {
 		my.limitUpdCounter = 0
 	} else {
@@ -154,7 +153,7 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 	}
 
-	logger.Debug(my.Prefix, "updated %d destination and %d source nodes, %d node limits", destUpdCount, srcUpdCount, limitUpdCount)
+	my.Logger.Debug().Msgf("updated %d destination and %d source nodes, %d node limits", destUpdCount, srcUpdCount, limitUpdCount)
 
 	return nil, nil
 }
@@ -194,7 +193,7 @@ func (my *SnapMirror) updateNodeCache() error {
 		}
 	}
 
-	logger.Debug(my.Prefix, "updated node cache for %d volumes", count)
+	my.Logger.Debug().Msgf("updated node cache for %d volumes", count)
 	return nil
 }
 
@@ -229,7 +228,7 @@ func (my *SnapMirror) updateLimitCache() error {
 			count += 1
 		}
 	}
-	logger.Debug(my.Prefix, "updated limit cache for %d nodes", count)
+	my.Logger.Debug().Msgf("updated limit cache for %d nodes", count)
 	return nil
 
 }

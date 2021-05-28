@@ -6,7 +6,6 @@ package main
 import (
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/pkg/errors"
-	"goharvest2/pkg/logger"
 	"goharvest2/pkg/matrix"
 	"math"
 	"strconv"
@@ -67,7 +66,7 @@ func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		var err error
 
 		if speed, err = strconv.Atoi(instance.GetLabel("speed")); err != nil {
-			logger.Debug(me.Prefix, "skip, can't convert speed (%s) to numeric", s)
+			me.Logger.Debug().Msgf("skip, can't convert speed (%s) to numeric", s)
 		}
 
 		if speed != 0 {
@@ -79,7 +78,7 @@ func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				rx_percent = rx_bytes / float64(speed)
 				err := rx.SetValueFloat64(instance, rx_percent)
 				if err != nil {
-					logger.Error(me.Prefix, "error: %v", err)
+					me.Logger.Error().Stack().Err(err).Msg("error")
 				}
 			}
 
@@ -87,14 +86,14 @@ func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				tx_percent = tx_bytes / float64(speed)
 				err := tx.SetValueFloat64(instance, tx_percent)
 				if err != nil {
-					logger.Error(me.Prefix, "error: %v", err)
+					me.Logger.Error().Stack().Err(err).Msg("error")
 				}
 			}
 
 			if rx_ok || tx_ok {
 				err := util.SetValueFloat64(instance, math.Max(rx_percent, tx_percent))
 				if err != nil {
-					logger.Error(me.Prefix, "error: %v", err)
+					me.Logger.Error().Stack().Err(err).Msg("error")
 				}
 			}
 		}

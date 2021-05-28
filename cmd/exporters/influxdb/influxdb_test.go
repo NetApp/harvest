@@ -6,7 +6,6 @@ package main
 import (
 	"goharvest2/cmd/poller/exporter"
 	"goharvest2/cmd/poller/options"
-	"goharvest2/pkg/logger"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
 	"testing"
@@ -16,8 +15,6 @@ import (
 // this does not send to influxdb, but simply prints
 // rendered data
 func TestExportDebug(t *testing.T) {
-
-	logger.SetLevel(0)
 
 	opts := &options.Options{}
 	opts.Debug = true

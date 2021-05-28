@@ -11,7 +11,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"goharvest2/pkg/errors"
-	"goharvest2/pkg/logger"
+	"goharvest2/pkg/logging"
 	"goharvest2/pkg/tree"
 	"goharvest2/pkg/tree/node"
 	"io"
@@ -33,6 +33,7 @@ type Client struct {
 	system     *system
 	apiVersion string
 	vfiler     string
+	Logger     *logging.Logger // logger used for logging
 }
 
 func New(config *node.Node) (*Client, error) {
@@ -49,15 +50,16 @@ func New(config *node.Node) (*Client, error) {
 	)
 
 	client = Client{}
+	client.Logger = logging.SubLogger("Zapi", "Client")
 
 	// check required & optional parameters
 	if client.apiVersion = config.GetChildContentS("api_version"); client.apiVersion == "" {
 		client.apiVersion = DefaultApiVersion
-		logger.Debug("(Zapi:Client)", "using default API version [%s]", DefaultApiVersion)
+		client.Logger.Debug().Msgf("using default API version [%s]", DefaultApiVersion)
 	}
 
 	if client.vfiler = config.GetChildContentS("api_vfiler"); client.vfiler != "" {
-		logger.Debug("(Zapi:Client)", "using vfiler tunneling [%s]", client.vfiler)
+		client.Logger.Debug().Msgf("using vfiler tunneling [%s]", client.vfiler)
 	}
 
 	if addr = config.GetChildContentS("addr"); addr == "" {
@@ -77,7 +79,7 @@ func New(config *node.Node) (*Client, error) {
 	// by default, encorce secure TLS, if not requested otherwise by user
 	if x := config.GetChildContentS("use_insecure_tls"); x != "" {
 		if useInsecureTLS, err = strconv.ParseBool(x); err != nil {
-			logger.Error("(Zapi:Client)", "use_insecure_tls: %v ", err)
+			client.Logger.Error().Stack().Err(err).Msg("use_insecure_tls")
 		}
 	} else {
 		useInsecureTLS = false
@@ -125,11 +127,11 @@ func New(config *node.Node) (*Client, error) {
 	// initialize http client
 	if t, err := strconv.Atoi(config.GetChildContentS("client_timeout")); err == nil {
 		timeout = time.Duration(t) * time.Second
-		logger.Debug("(Zapi:Client)", "using timeout [%d] s", t)
+		client.Logger.Debug().Msgf("using timeout [%d] s", t)
 	} else {
 		// default timeout
 		timeout = time.Duration(DefaultTimeout) * time.Second
-		logger.Debug("(Zapi:Client)", "using default timeout [%d] s", DefaultTimeout)
+		client.Logger.Debug().Msgf("using default timeout [%d] s", DefaultTimeout)
 	}
 
 	httpclient = &http.Client{Transport: transport, Timeout: timeout}
