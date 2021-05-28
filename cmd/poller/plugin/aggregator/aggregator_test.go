@@ -6,7 +6,6 @@ package aggregator
 
 import (
 	"goharvest2/cmd/poller/plugin"
-	"goharvest2/pkg/logger"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
 	"testing"
@@ -16,8 +15,6 @@ var p *Aggregator
 var m *matrix.Matrix
 
 func TestInitPlugin(t *testing.T) {
-
-	logger.SetLevel(0)
 
 	params := node.NewS("Aggregator")
 	params.NewChildS("", "node")
