@@ -1,0 +1,16 @@
+{
+    "message": "Thank you for your interest in contributing to the Harvest project! We require contributors to sign our [Corporate contributor license agreement (CCLA)](https://github.com/NetApp/Harvest/blob/master/CONTRIBUTING_CCLA.pdf), and we don\"t have the user(s) {{usersWithoutCLA}} on file. In order for us to review and merge your code, please send the signed document to <legalip@netapp.com>.\nAfter signing the CCLA, you can ask us to recheck this PR by posting `@cla-bot check` as a comment to the PR.",
+    "label": "cla-signed",
+    "contributors": [
+        "$$$ Harvest Dev $$$",
+        "ybizeul",
+        "cgrinds",
+        "georgmey",
+        "schmots1",
+        "vgratian",
+        "rahulguptajss",
+        "mrydeen",
+        "ruanruijuan",
+        "$$$ External $$$"
+    ]
+}
