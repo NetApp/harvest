@@ -1,11 +1,10 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
+ */
 
-Package Description:
-   The HTTP daemon exposes metrics for the Prometheus database
-   as well as a list of the names of available metrics for humans
-*/
-package main
+// Package prometheus creates an HTTP end-point for Prometheus to scrape on `/metrics`
+//It also publishes a list of available metrics for human consumption on `/`
+package prometheus
 
 import (
 	"bytes"
@@ -22,13 +21,13 @@ func (me *Prometheus) startHttpD(addr, port string) {
 	mux.HandleFunc("/", me.ServeInfo)
 	mux.HandleFunc("/metrics", me.ServeMetrics)
 
-	me.Logger.Debug().Msgf(" (httpd)", "starting server at [%s:%s]", addr, port)
+	me.Logger.Debug().Msgf("(httpd) starting server at [%s:%s]", addr, port)
 	server := &http.Server{Addr: addr + ":" + port, Handler: mux}
 
 	if err := server.ListenAndServe(); err != nil {
-		me.Logger.Fatal().Msgf(" (httpd) %v", err.Error())
+		me.Logger.Fatal().Msgf("(httpd) %v", err.Error())
 	} else {
-		me.Logger.Info().Msgf(" (httpd)", "listening at [http://%s:%s]", addr, port)
+		me.Logger.Info().Msgf("(httpd) listening at [http://%s:%s]", addr, port)
 	}
 }
 
@@ -71,7 +70,7 @@ func (me *Prometheus) checkAddr(addr string) bool {
 // send a deny request response
 func (me *Prometheus) denyAccess(w http.ResponseWriter, r *http.Request) {
 
-	me.Logger.Debug().Msgf(" (httpd) ", "denied request [%s] (%s)", r.RequestURI, r.RemoteAddr)
+	me.Logger.Debug().Msgf("(httpd) denied request [%s] (%s)", r.RequestURI, r.RemoteAddr)
 	w.WriteHeader(403)
 	w.Header().Set("content-type", "text/plain")
 	_, err := w.Write([]byte("403 Forbidden"))
@@ -94,7 +93,7 @@ func (me *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	me.Logger.Debug().Msgf(" (httpd) ", "serving request [%s] (%s)", r.RequestURI, r.RemoteAddr)
+	me.Logger.Debug().Msgf("(httpd) serving request [%s] (%s)", r.RequestURI, r.RemoteAddr)
 
 	me.cache.Lock()
 	for _, metrics := range me.cache.Get() {
@@ -137,13 +136,11 @@ func (me *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// provide a human-friendly overview of metric types and source collectors
-// this is than in a very inefficient way, by "reverse engineering" the metrics,
-// but probably that's ok, since we don't expected this to be requested
-// very often.
-// @TODO: also add plugins and plugin metrics
+// ServeInfo provides a human-friendly overview of metric types and source collectors
+// this is done in a very inefficient way, by "reverse engineering" the metrics.
+// That's probably ok, since we don't expect this to be called often.
 func (me *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
-
+	// TODO: also add plugins and plugin metrics
 	start := time.Now()
 
 	if !me.checkAddr(r.RemoteAddr) {
@@ -151,15 +148,15 @@ func (me *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	me.Logger.Debug().Msgf(" (httpd)", "serving info request [%s] (%s)", r.RequestURI, r.RemoteAddr)
+	me.Logger.Debug().Msgf("(httpd) serving info request [%s] (%s)", r.RequestURI, r.RemoteAddr)
 
 	body := make([]string, 0)
 
-	num_collectors := 0
-	num_objects := 0
-	num_metrics := 0
+	numCollectors := 0
+	numObjects := 0
+	numMetrics := 0
 
-	unique_data := map[string]map[string][]string{}
+	uniqueData := map[string]map[string][]string{}
 
 	// copy cache so we don't lock it
 	me.cache.Lock()
@@ -170,16 +167,16 @@ func (me *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 	}
 	me.cache.Unlock()
 
-	me.Logger.Debug().Msgf(" (httpd)", "fetching %d cached elements", len(cache))
+	me.Logger.Debug().Msgf("(httpd) fetching %d cached elements", len(cache))
 
 	for key, data := range cache {
-		me.Logger.Debug().Msgf(" (httpd)", "key => [%s] (%d)", key, len(data))
+		me.Logger.Debug().Msgf("(httpd) key => [%s] (%d)", key, len(data))
 		var collector, object string
 
 		if keys := strings.Split(key, "."); len(keys) == 2 {
 			collector = keys[0]
 			object = keys[1]
-			me.Logger.Debug().Msgf(" (httpd)", "collector [%s] - object [%s]", collector, object)
+			me.Logger.Debug().Msgf("(httpd) collector [%s] - object [%s]", collector, object)
 		} else {
 			continue
 		}
@@ -189,44 +186,44 @@ func (me *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		metric_names := set.New()
+		metricNames := set.New()
 		for _, m := range data {
 			if x := strings.Split(string(m), "{"); len(x) >= 2 && x[0] != "" {
-				metric_names.Add(x[0])
+				metricNames.Add(x[0])
 			}
 		}
-		num_metrics += metric_names.Size()
+		numMetrics += metricNames.Size()
 
-		if _, exists := unique_data[collector]; !exists {
-			unique_data[collector] = make(map[string][]string)
+		if _, exists := uniqueData[collector]; !exists {
+			uniqueData[collector] = make(map[string][]string)
 		}
-		unique_data[collector][object] = metric_names.Values()
+		uniqueData[collector][object] = metricNames.Values()
 
 	}
 
-	for col, per_object := range unique_data {
+	for col, perObject := range uniqueData {
 		objects := make([]string, 0)
-		for obj, metric_names := range per_object {
+		for obj, metricNames := range perObject {
 			metrics := make([]string, 0)
-			for _, m := range metric_names {
+			for _, m := range metricNames {
 				if m != "" {
 					metrics = append(metrics, fmt.Sprintf(metric_template, m))
 				}
 			}
 			objects = append(objects, fmt.Sprintf(object_template, obj, strings.Join(metrics, "\n")))
-			num_objects += 1
+			numObjects += 1
 		}
 
 		body = append(body, fmt.Sprintf(collector_template, col, strings.Join(objects, "\n")))
-		num_collectors += 1
+		numCollectors += 1
 	}
 
 	poller := me.Options.Poller
-	body_flat := fmt.Sprintf(html_template, poller, poller, poller, num_collectors, num_objects, num_metrics, strings.Join(body, "\n\n"))
+	bodyFlat := fmt.Sprintf(html_template, poller, poller, poller, numCollectors, numObjects, numMetrics, strings.Join(body, "\n\n"))
 
 	w.WriteHeader(200)
 	w.Header().Set("content-type", "text/html")
-	_, err := w.Write([]byte(body_flat))
+	_, err := w.Write([]byte(bodyFlat))
 	if err != nil {
 		me.Logger.Error().Stack().Err(err).Msg("error")
 	}
