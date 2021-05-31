@@ -4,7 +4,7 @@
 
 // Package prometheus creates an HTTP end-point for Prometheus to scrape on `/metrics`
 //It also publishes a list of available metrics for human consumption on `/`
-package prometheus
+package main
 
 import (
 	"bytes"
