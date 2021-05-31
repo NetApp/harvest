@@ -91,8 +91,7 @@ func Configure(config LogConfig) *Logger {
 	var writers []io.Writer
 
 	if config.ConsoleLoggingEnabled {
-		// writers = append(writers, zerolog.ConsoleWriter{Out: os.Stderr})
-		writers = append(writers, os.Stdout)
+		writers = append(writers, zerolog.ConsoleWriter{Out: os.Stderr})
 	}
 	if config.FileLoggingEnabled {
 		writers = append(writers, newRollingFile(config))
