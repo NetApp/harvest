@@ -270,8 +270,8 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 	fetch = func(instance *matrix.Instance, node *node.Node, path []string) {
 
 		newpath := append(path, node.GetNameS())
+		key := strings.Join(newpath, ".")
 		me.Logger.Debug().Msgf(" > %s(%s)%s <%s%d%s> name=[%s%s%s%s] value=[%s%s%s]", color.Grey, newpath, color.End, color.Red, len(node.GetChildren()), color.End, color.Bold, color.Cyan, node.GetNameS(), color.End, color.Yellow, node.GetContentS(), color.End)
-
 		if value := node.GetContentS(); value != "" {
 			if label, has := me.instanceLabelPaths[key]; has {
 				instance.SetLabel(label, value)
@@ -282,7 +282,7 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 					me.Logger.Error().Msgf("%smetric (%s) set value (%s): %v%s", color.Red, key, value, err, color.End)
 					skipped += 1
 				} else {
-					me.Logger.Debug().Msgf("> %smetric (%s) set value (%s)%s", color.Green, key, value, color.End)
+					me.Logger.Debug().Msgf(" > %smetric (%s) set value (%s)%s", color.Green, key, value, color.End)
 					count += 1
 				}
 			} else {

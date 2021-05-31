@@ -11,6 +11,11 @@ if [[ "$1" == "install" || "$1" == "upgrade" ]]; then
     if [  -e /usr/bin/harvest ]; then
       unlink /usr/bin/harvest && echo " --> delete link"
     fi
+    # Backup existing harvest.yml to avoid overwrite from new binary
+    if [ -e /opt/harvest/harvest.yml ]; then
+      cp /opt/harvest/harvest.yml /opt/harvest/backup_harvest.yml
+      echo " --> Backing up existing config file as [/opt/harvest/backup_harvest.yml]"
+    fi
     getent group harvest > /dev/null 2>&1 || addgroup -q --system harvest && echo " --> group created"
     getent passwd harvest > /dev/null 2>&1 || adduser -q --system --no-create-home \
         --ingroup harvest --disabled-password --shell /bin/false harvest && echo " --> user created"

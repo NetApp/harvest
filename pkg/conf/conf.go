@@ -19,7 +19,10 @@ import (
 func LoadConfig(configPath string) (*node.Node, error) {
 	configNode, err := tree.Import("yaml", configPath)
 	if configNode != nil {
-		// Load HarvestConfig to rewrite - eventually all the code will be refactored to use HarvestConfig
+		// Load HarvestConfig to rewrite passwords - eventually all the code will be refactored to use HarvestConfig.
+		// This is needed because the current yaml parser does not handle password with special characters.
+		// E.g abc#123, that's because the # is interpreted as the beginning of a comment. The code below overwrites
+		// the incorrect password with the correct one by using a better yaml parser for each Poller and Default section
 		_ = LoadHarvestConfig(configPath)
 		pollers := configNode.GetChildS("Pollers")
 		if pollers != nil {
@@ -54,7 +57,7 @@ func LoadHarvestConfig(configPath string) error {
 	}
 	err = yaml.Unmarshal(contents, &Config)
 	if err != nil {
-		fmt.Printf("error reading config file=[%s] %+v\n", configPath, err)
+		fmt.Printf("error unmarshalling config file=[%s] %+v\n", configPath, err)
 		return err
 	}
 	return nil

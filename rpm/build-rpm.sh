@@ -24,7 +24,7 @@ cp -r "$SRC/docs/" "$BUILD/harvest/"
 cp -r "$SRC/conf/" "$BUILD/harvest/"
 cp -r "$SRC/rpm/" "$BUILD/harvest/"
 cp -r "$SRC/service/" "$BUILD/harvest/"
-cp "$SRC/harvest.example.yml" "$BUILD/harvest/"
+cp "$SRC/harvest.yml" "$BUILD/harvest/"
 cp "$SRC/go.mod" "$BUILD/harvest/"
 cp "$SRC/go.sum" "$BUILD/harvest/"
 if [ -d "$SRC/vendor" ]; then
