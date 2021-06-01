@@ -57,3 +57,8 @@ Additionally, the collector provides the following instance labels:
 |-------------------|----------------------------------------------------------|
 | poller            | name of the poller                                       |
 | pid               | PID of the poller                                        |
+
+
+## Issues
+
+* Collector will fail on WSL because some, non-critical files in the proc-filesystem are not present. This can be fixed by making the collector (the `Reload` method in [process.go](process.go) specifically) more tolerant.
