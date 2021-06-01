@@ -7,6 +7,8 @@ Exporters:
     exporter: Prometheus
     addr: 0.0.0.0
     port: 12990
+    allow_addrs_regex:
+      - ^192.168.0.\d+$
   pluto: # name of your exporter, can be any valid yaml string
     exporter: Prometheus
     port: 12990              # ignored since this exporter contains a consul block
@@ -22,9 +24,12 @@ Exporters:
     bucket: harvest
     org: harvest
     token: abcdefghijklmnopqrstuvwxyz
-    allow_addrs_regex:
-      - ^192.168.0.\d+$
-
+  influxz:
+    exporter: InfluxDB
+    url: www.example.com/influxdb
+    bucket: harvest
+    org: harvest
+    token: abcdefghijklmnopqrstuvwxyz
 Defaults:
   collectors:
     - Zapi
