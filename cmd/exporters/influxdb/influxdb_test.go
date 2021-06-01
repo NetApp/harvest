@@ -11,6 +11,59 @@ import (
 	"testing"
 )
 
+// test that the addr (and port) parameters
+// are handled properly to construct server URL
+func TestAddrParameter(t *testing.T) {
+
+	expectedURL := "http://localhost:8086/api/v2/write?org=netapp&bucket=harvest&precision=s"
+
+	opts := &options.Options{}
+	opts.Debug = true
+
+	params := node.NewS("")
+	params.NewChildS("addr", "localhost")
+	params.NewChildS("org", "netapp")
+	params.NewChildS("bucket", "harvest")
+	params.NewChildS("token", "xxxxxxx")
+
+	influx := &InfluxDB{AbstractExporter: exporter.New("InfluxDB", "influx-test", opts, params)}
+	if err := influx.Init(); err != nil {
+		t.Fatal(err)
+	}
+
+	if influx.url == expectedURL {
+		t.Logf("OK - url: [%s]", expectedURL)
+	} else {
+		t.Fatalf("FAIL - expected [%s]\n                             got [%s]", expectedURL, influx.url)
+	}
+}
+
+// test that the addr (and port) parameters
+// are handled properly to construct server URL
+func TestUrlParameter(t *testing.T) {
+
+	expectedURL := "https://some-valid-domain-name.net/api/v2/write?org=netapp&bucket=harvest&precision=s"
+
+	opts := &options.Options{}
+	opts.Debug = true
+
+	params := node.NewS("")
+	params.NewChildS("url", "https://some-valid-domain-name.net/")
+	params.NewChildS("org", "netapp")
+	params.NewChildS("bucket", "harvest")
+	params.NewChildS("token", "xxxxxxx")
+	influx := &InfluxDB{AbstractExporter: exporter.New("InfluxDB", "influx-test", opts, params)}
+	if err := influx.Init(); err != nil {
+		t.Fatal(err)
+	}
+
+	if influx.url == expectedURL {
+		t.Logf("OK - url: [%s]", expectedURL)
+	} else {
+		t.Fatalf("FAIL - expected [%s]\n       got [%s]", expectedURL, influx.url)
+	}
+}
+
 // test rendering in debug mode
 // this does not send to influxdb, but simply prints
 // rendered data

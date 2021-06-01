@@ -13,6 +13,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -50,19 +51,33 @@ func (e *InfluxDB) Init() error {
 		return err
 	}
 
-	var addr, port, bucket, org, v, p string
-	var err error
+	var (
+		url, addr, port, bucket, org, v, p string
+		err                                error
+	)
 
 	// check required / optional parameters
-	if addr = e.Params.GetChildContentS("addr"); addr == "" {
-		return errors.New(errors.MISSING_PARAM, "addr")
-	}
 
-	if port = e.Params.GetChildContentS("port"); port == "" {
-		e.Logger.Debug().Msgf("using default port [%s]", defaultPort)
-		port = defaultPort
-	} else if _, err = strconv.Atoi(port); err != nil {
-		return errors.New(errors.INVALID_PARAM, "port")
+	// user should provide either url or addr
+	// url is expected to be the full URL (optionallly with scheme)
+	// addr is expected to include host only (no scheme, no port)
+	if url = e.Params.GetChildContentS("url"); url == "" {
+		if addr = e.Params.GetChildContentS("addr"); addr == "" {
+			return errors.New(errors.MISSING_PARAM, "url or addr")
+		}
+
+		if port = e.Params.GetChildContentS("port"); port == "" {
+			e.Logger.Debug().Msgf("using default port [%s]", defaultPort)
+			port = defaultPort
+		} else if _, err = strconv.Atoi(port); err != nil {
+			return errors.New(errors.INVALID_PARAM, "port")
+		}
+
+		url = "http://" + addr + ":" + port
+	}
+	// make sure url ends with slash
+	if !strings.HasSuffix(url, "/") {
+		url += "/"
 	}
 
 	if bucket = e.Params.GetChildContentS("bucket"); bucket == "" {
@@ -104,7 +119,7 @@ func (e *InfluxDB) Init() error {
 	}
 
 	// construct client URL
-	e.url = fmt.Sprintf("http://%s:%s/api/v%s/write?org=%s&bucket=%s&precision=%s", addr, port, v, org, bucket, p)
+	e.url = fmt.Sprintf("%sapi/v%s/write?org=%s&bucket=%s&precision=%s", url, v, org, bucket, p)
 	e.Logger.Debug().Msgf("url= [%s]", e.url)
 
 	// construct HTTP client
