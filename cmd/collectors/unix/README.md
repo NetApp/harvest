@@ -9,6 +9,7 @@ This collector polls resource usage by Harvest pollers on the local system. Coll
 - [Requirements](#requirements)
 - [Parameters](#parameters)
 - [Metrics](#metrics)
+- [Issues](#issues)
 
 ## Target System
 The machine where Harvest is running ("localhost").
