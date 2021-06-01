@@ -4,13 +4,6 @@
 
 This collector polls resource usage by Harvest pollers on the local system. Collector might be extended in the future to monitor any local or remote process.
 
-### Table of Contents
-- [Target System](#target-system)
-- [Requirements](#requirements)
-- [Parameters](#parameters)
-- [Metrics](#metrics)
-- [Issues](#issues)
-
 ## Target System
 The machine where Harvest is running ("localhost").
 
