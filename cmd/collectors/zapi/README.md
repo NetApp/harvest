@@ -51,8 +51,8 @@ Additionally, the symbol `=>` can be used to set a custom display name for for b
 ```yaml
 aggr-attributes:
   - aggr-raid-attributes:
-    - ^aggregate-type    => type
-	- disk-count     => disks
+	- ^aggregate-type    => type
+    - disk-count     => disks
 ```
 
 will force to use `aggr_type` and `aggr_disks` for the label and the metric respectively.
