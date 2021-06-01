@@ -51,7 +51,7 @@ Additionally, the symbol `=>` can be used to set a custom display name for for b
 ```yaml
 aggr-attributes:
   - aggr-raid-attributes:
-	- ^aggregate-type    => type
+    - ^aggregate-type    => type
     - disk-count     => disks
 ```
 
