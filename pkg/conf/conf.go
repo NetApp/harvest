@@ -266,6 +266,7 @@ type Exporter struct {
 	Port              *int      `yaml:"port,omitempty"`
 	Type              *string   `yaml:"exporter,omitempty"`
 	Addr              *string   `yaml:"addr,omitempty"`
+	Url               *string   `yaml:"url,omitempty"`
 	LocalHttpAddr     *string   `yaml:"local_http_addr,omitempty"`
 	GlobalPrefix      *string   `yaml:"global_prefix,omitempty"`
 	AllowedAddrs      *[]string `yaml:"allow_addrs,omitempty"`

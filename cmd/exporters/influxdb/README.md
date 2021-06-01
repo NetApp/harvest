@@ -9,11 +9,12 @@ The InfluxDB Exporter will format metrics into the InfluxDB's [line protocol](ht
 
 
 ## Parameters
-Overview of all parameters:
+Overview of all parameters is provided below. Notice that only one of `url` and `addr` should be provided (at least one is required).
 
 | parameter              | type         | description                                      | default                |
 |------------------------|--------------|--------------------------------------------------|------------------------|
-| `addr`                 | string       | address of the database            			   |		     			|
+| `url`                  | string       | URL of the database, format: `SCHEME://HOST[:PORT]`  |		  			|
+| `addr`                 | string       | address of the database, format: `[SCHEME://]HOST`   |		        	|
 | `port`                 | int, optional| port of the database                             | `8086`                 |
 | `bucket`               | string       | InfluxDB bucket to write                         |                        |
 | `org`                  | string       | InfluxDB organization name                       |                        |
