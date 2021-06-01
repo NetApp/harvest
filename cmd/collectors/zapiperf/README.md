@@ -4,13 +4,6 @@ ZapiPerf collects performance metrics from ONTAP systems using the ZAPI protocol
 
 This collector is an extension of the [Zapi collector](../zapi/README.md) with the major difference between that ZapiPerf collects only the `perf` subfamily of the ZAPIs. Additionally, ZapiPerf always calculates final values from deltas of two subsequent polls.
 
-
-### Table of Contents
-- [Target System](#target-system)
-- [Requirements](#requirements)
-- [Parameters](#parameters)
-- [Metrics](#metrics)
-
 ## Target System
 Target system can be any cDot or 7Mode ONTAP system. Any version is supported, however the default configuration files may not completely match with an older system.
 
@@ -162,7 +155,7 @@ The collector collects a dynamic set of metrics. The metric values are calculate
 
 | property  | formula                                    |  description                                              |
 |-----------|--------------------------------------------|-----------------------------------------------------------|
-| raw       | x = x<sub>i</sub>                          | no postpocessing, value **x** is submitted as it is       |
+| raw       | x = x<sub>i</sub>                          | no post-pocessing, value **x** is submitted as it is       |
 | delta    | x = x<sub>i</sub> - x<sub>i-1</sub> | delta of two poll values, **x<sub>i<sub>** and **x<sub>i-1<sub>** |
 | rate | x = (x<sub>i</sub> - x<sub>i-1</sub>) / (t<sub>i</sub> - t<sub>i-1</sub>) | delta divided by the interval of the two polls in seconds |
 | average | x = (x<sub>i</sub> - x<sub>i-1</sub>) / (y<sub>i</sub> - y<sub>i-1</sub>) | delta divided by the delta of the base counter **y** |
