@@ -1,10 +1,24 @@
-# ZapiPerf Collector
+# ZapiPerf
 
 ZapiPerf collects performance metrics from ONTAP systems using the ZAPI protocol. The collector is designed to be easily extendible to collect new objects or to collect additional counters from already configured objects. (The [default configuration](../../../conf/zapiperf/default.yaml) file contains 25 objects)
 
-Note: The main difference between this collector and the Zapi collector is that ZapiPerf collects only the `perf` subfamily of the ZAPIs. Additionally, ZapiPerf always calculates final values from deltas of two subsequent polls (therefore data is emitted only after the second poll).
+This collector is an extension of the [Zapi collector](../zapi/README.md) with the major difference between that ZapiPerf collects only the `perf` subfamily of the ZAPIs. Additionally, ZapiPerf always calculates final values from deltas of two subsequent polls.
 
-## Configuration
+
+### Table of Contents
+- [Target System](#target-system)
+- [Requirements](#requirements)
+- [Parameters](#parameters)
+- [Metrics](#metrics)
+
+## Target System
+Target system can be any cDot or 7Mode ONTAP system. Any version is supported, however the default configuration files may not completely match with an older system.
+
+## Requirements
+No SDK or any other requirement. It is recommended to create a read-only user for Harvest on the ONTAP system (see the [Authentication document](../../../docs/AuthAndPermissions.md))
+
+## Parameters
+
 
 The parameters of the collector are distributed across three files:
 - Harvest configuration file (default: `harvest.yml`)
@@ -13,7 +27,7 @@ The parameters of the collector are distributed across three files:
 
 With the exception of `addr`, `datacenter` and `auth_style`, all other parameters of the ZapiPerf collector can be defined in either of these three files. Parameters defined in the lower-level file, override parameters in the higher-level file. This allows the user to configure each objects individually, or use same parameters for all objects.
 
-For the sake of brevity, these parameters are described only in the section [ZapiPerf configuration file](#zapiperf-configuration-file).
+For the sake of brevity, these parameters are described only in the section [Collector configuration file](#collector-configuration-file).
 
 
 ### Harvest configuration file
@@ -140,3 +154,16 @@ $ harvest zapi --poller <poller> show counters --object volume
 ```
 
 Replace `<poller>` with the name of one of your ONTAP pollers.
+
+
+## Metrics
+
+The collector collects a dynamic set of metrics. The metric values are calculated from two consecutive polls (therefore no metrics are emitted after the first poll). The calculation algorithm depends on the `property` and `base-counter` attributes of each metric, the following properties are supported:
+
+| property  | formula                                    |  description                                              |
+|-----------|--------------------------------------------|-----------------------------------------------------------|
+| raw       | x = x<sub>i</sub>                          | no postpocessing, value **x** is submitted as it is       |
+| delta    | x = x<sub>i</sub> - x<sub>i-1</sub> | delta of two poll values, **x<sub>i<sub>** and **x<sub>i-1<sub>** |
+| rate | x = (x<sub>i</sub> - x<sub>i-1</sub>) / (t<sub>i</sub> - t<sub>i-1</sub>) | delta divided by the interval of the two polls in seconds |
+| average | x = (x<sub>i</sub> - x<sub>i-1</sub>) / (y<sub>i</sub> - y<sub>i-1</sub>) | delta divided by the delta of the base counter **y** |
+| percent | x = 100 * (x<sub>i</sub> - x<sub>i-1</sub>) / (y<sub>i</sub> - y<sub>i-1</sub>) | average multiplied by 100 |
