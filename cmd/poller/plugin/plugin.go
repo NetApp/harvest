@@ -1,13 +1,13 @@
-/*
- * Copyright NetApp Inc, 2021 All rights reserved
+//Copyright NetApp Inc, 2021 All rights reserved
 
+/*
 	Package plugin provides abstractions for plugins, as well as
 	a number of generic built-in plugins. Plugins allow to customize
 	and manipulate data from collectors and sometimes collect additional
 	data without changing the sourcecode of collectors. Multiple plugins
 	can be put in a pipeline, they are executed in the same order as they
 	are defined in the collector's config file.
-	Harvest architecuture defines three types of plugins:
+	Harvest architecture defines three types of plugins:
 
 	**built-in**
     	Statically compiled, generic plugins. "Generic" means
@@ -28,11 +28,13 @@
 package plugin
 
 import (
+	"fmt"
 	"goharvest2/cmd/poller/options"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/logging"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
+	"sync"
 )
 
 // Plugin defines the methods of a plugin
@@ -40,6 +42,57 @@ type Plugin interface {
 	GetName() string
 	Init() error
 	Run(*matrix.Matrix) ([]*matrix.Matrix, error)
+}
+
+var (
+	modules   = make(map[string]ModuleInfo)
+	modulesMu sync.RWMutex
+)
+
+// GetModule returns module information from its ID (full name).
+func GetModule(name string) (ModuleInfo, error) {
+	modulesMu.RLock()
+	defer modulesMu.RUnlock()
+	m, ok := modules[name]
+	if !ok {
+		return ModuleInfo{}, fmt.Errorf("module not registered: %s", name)
+	}
+	return m, nil
+}
+
+func RegisterModule(instance Module) {
+	mod := instance.HarvestModule()
+
+	if mod.ID == "" {
+		panic("module missing ID")
+	}
+	if mod.ID == "harvest" || mod.ID == "admin" {
+		panic(fmt.Sprintf("module ID '%s' is reserved", mod.ID))
+	}
+	if mod.New == nil {
+		panic("missing ModuleInfo.New")
+	}
+	if val := mod.New(); val == nil {
+		panic("ModuleInfo.New must return a non-nil module instance")
+	}
+	modulesMu.Lock()
+	defer modulesMu.Unlock()
+
+	if _, ok := modules[mod.ID]; ok {
+		panic(fmt.Sprintf("module already registered: %s", mod.ID))
+	}
+	modules[mod.ID] = mod
+}
+
+type Module interface {
+	HarvestModule() ModuleInfo
+}
+
+type ModuleInfo struct {
+	// name of module
+	ID string
+
+	New func() Module
 }
 
 // AbstractPlugin implements methods of the Plugin interface, except Run()

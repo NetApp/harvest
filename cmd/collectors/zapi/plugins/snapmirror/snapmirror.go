@@ -1,7 +1,7 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
-package main
+package snapmirror
 
 import (
 	"goharvest2/cmd/poller/plugin"
@@ -230,8 +230,4 @@ func (my *SnapMirror) updateLimitCache() error {
 	}
 	my.Logger.Debug().Msgf("updated limit cache for %d nodes", count)
 	return nil
-
 }
-
-// Need to appease go build - see https://github.com/golang/go/issues/20312
-func main() {}

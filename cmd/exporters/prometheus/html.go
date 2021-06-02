@@ -1,7 +1,7 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
-package main
+package prometheus
 
 var html_template = `
 <!DOCTYPE html>

@@ -20,8 +20,6 @@ BUILD_DATE   := `date +%FT%T%z`
 LD_FLAGS     := "-X 'goharvest2/cmd/harvest/version.VERSION=$(VERSION)' -X 'goharvest2/cmd/harvest/version.Release=$(RELEASE)' -X 'goharvest2/cmd/harvest/version.Commit=$(COMMIT)' -X 'goharvest2/cmd/harvest/version.BuildDate=$(BUILD_DATE)'"
 GOARCH ?= amd64
 GOOS ?= linux
-COLLECTORS := $(shell ls cmd/collectors)
-EXPORTERS := $(shell ls cmd/exporters)
 HARVEST_PACKAGE := harvest-${VERSION}-${RELEASE}_${GOOS}_${GOARCH}
 DIST := dist
 TMP := /tmp/${HARVEST_PACKAGE}
@@ -72,10 +70,10 @@ fmt: ## format the go source files
 	go fmt ./...
 
 vet: ## run go vet on the source files
-	@echo "Running govet"
+	@echo "Running go vet"
 	go vet ./...
 
-build: clean deps fmt harvest collectors exporters ## Build the project
+build: clean deps fmt harvest ## Build the project
 
 package: clean deps build test dist-tar ## Package Harvest binary
 
@@ -90,8 +88,8 @@ harvest: deps
 	@echo "Building poller"
 	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o bin/poller -ldflags=$(LD_FLAGS) cmd/poller/poller.go
 
-	@# Build the daemonizer for the pollers
-	@echo "Building daemonizer"
+	@# Build the daemonize for the pollers
+	@echo "Building daemonize"
 	@cd cmd/tools/daemonize; gcc daemonize.c -o ../../../bin/daemonize
 
 	@# Build the zapi tool
@@ -101,44 +99,6 @@ harvest: deps
 	@# Build the grafana tool
 	@echo "Building grafana tool"
 	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o bin/grafana -ldflags=$(LD_FLAGS) cmd/tools/grafana/main/main.go
-
-###############################################################################
-# Collectors
-###############################################################################
-collectors: deps
-	@echo "Building collectors:"
-	@for collector in ${COLLECTORS}; do                                                   \
-		cd cmd/collectors/$${collector};                                              \
-		echo "  Building $${collector}";                                              \
-		GOOS=$(GOOS) GOARCH=$(GOARCH) go build -ldflags=$(LD_FLAGS) -buildmode=plugin -o ../../../bin/collectors/"$${collector}".so;     \
-		if [ -d plugins ]; then                                                       \
-			echo "    Building plugins for $${collector}";                        \
-	        	cd plugins;                                                           \
-	        	for plugin in `ls`; do                                                \
-				echo "        Building: $${plugin}";                          \
-				cd $${plugin};                                                \
-				GOOS=$(GOOS) GOARCH=$(GOARCH) go build -ldflags=$(LD_FLAGS) -buildmode=plugin -o ../../../../../bin/plugins/"$${collector}"/"$${plugin}".so; \
-				cd ../;                                                       \
-			done;                                                                 \
-			cd ../../../../;                                                      \
-		else                                                                          \
-	       		cd - > /dev/null;                                                     \
-		fi;                                                                           \
-	done
-
-###############################################################################
-# Exporters
-###############################################################################
-exporters: deps
-	@echo "Building exporters:"
-	@for exporter in ${EXPORTERS}; do                                                     \
-		cd cmd/exporters/$${exporter};                                                \
-		echo "  Building $${exporter}";                                               \
-		GOOS=$(GOOS) GOARCH=$(GOARCH) go build -ldflags=$(LD_FLAGS) -buildmode=plugin -o ../../../bin/exporters/"$${exporter}".so;       \
-	       	cd - > /dev/null;                                                             \
-	done
-
-
 
 ###############################################################################
 # Build tar gz distribution

@@ -38,7 +38,7 @@ func ImportTemplate(confPath, confFn, collectorName string) (*node.Node, error) 
 // ImportSubTemplate retrieves the best matching subtemplate of a collector object.
 //
 // This method is only applicable to the Zapi/ZapiPerf collectors which have
-// multiple objects and each object is forked as a seperate collector.
+// multiple objects and each object is forked as a separate collector.
 // The subtemplates are sorted in subdirectories that serve as "tag" for the
 // matching ONTAP version. ImportSubTemplate will attempt to choose the subtemplate
 // with closest matching ONTAP version.
@@ -60,7 +60,7 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, version [3
 	pathPrefix = path.Join(c.Options.HomePath, "conf/", strings.ToLower(c.Name), model)
 	c.Logger.Debug().Msgf("Looking for best-fitting template in [%s]", pathPrefix)
 
-	// check for available versons, those are the subdirectories that include filename
+	// check for available versions, those are the subdirectories that include filename
 	availableVersions = make(map[string]bool)
 	if files, err := ioutil.ReadDir(pathPrefix); err == nil {
 		for _, file := range files {

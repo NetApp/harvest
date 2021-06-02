@@ -4,7 +4,7 @@
 
 // Package prometheus creates an HTTP end-point for Prometheus to scrape on `/metrics`
 //It also publishes a list of available metrics for human consumption on `/`
-package main
+package prometheus
 
 import (
 	"bytes"
@@ -25,7 +25,7 @@ func (me *Prometheus) startHttpD(addr, port string) {
 	server := &http.Server{Addr: addr + ":" + port, Handler: mux}
 
 	if err := server.ListenAndServe(); err != nil {
-		me.Logger.Fatal().Msgf("(httpd) %v", err.Error())
+		me.Logger.Fatal().Msgf(" (httpd) %v", err.Error())
 	} else {
 		me.Logger.Info().Msgf("(httpd) listening at [http://%s:%s]", addr, port)
 	}
