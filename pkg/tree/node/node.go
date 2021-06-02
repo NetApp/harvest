@@ -216,6 +216,14 @@ func (n *Node) GetAllChildContentS() []string {
 	return content
 }
 
+func (n *Node) GetAllChildNamesS() []string {
+	names := make([]string, 0)
+	for _, ch := range n.Children {
+		names = append(names, ch.GetNameS())
+	}
+	return names
+}
+
 func (n *Node) SetContent(content []byte) {
 	n.Content = content
 }
