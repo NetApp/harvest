@@ -44,3 +44,9 @@ objects:
   FcpLif:                 fcp_lif.yaml
   CopyManager:            copy_manager.yaml
   WAFLCompBin:            wafl_comp_aggr_vol_bin.yaml
+
+#  Uncomment to collect workload/QOS counters  
+#  Workload:               workload.yaml
+#  WorkloadDetail:         workload_detail.yaml
+#  WorkloadVolume:         workload_volume.yaml
+#  WorkloadDetailVolume:   workload_detail_volume.yaml
