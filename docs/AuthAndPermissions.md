@@ -108,7 +108,7 @@ Change directory to your Harvest home directory (replace `/opt/harvest/` if this
 $ cd /opt/harvest/
 ```
 
-Generate an SSL cert and key pair with the following command. Note that it's preferred to generate these files using the hostname of the local machine. The command bellow assumes `debian8` as our hostname name and `harvest2` as the user we created in the previous step:
+Generate an SSL cert and key pair with the following command. Note that it's preferred to generate these files using the hostname of the local machine. The command below assumes `debian8` as our hostname name and `harvest2` as the user we created in the previous step:
 
 ```bash
 openssl req -x509 -nodes -days 1095 -newkey rsa:2048 -keyout cert/debian8.key \

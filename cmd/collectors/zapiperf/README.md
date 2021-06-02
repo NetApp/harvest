@@ -155,7 +155,7 @@ The collector collects a dynamic set of metrics. The metric values are calculate
 
 | property  | formula                                    |  description                                              |
 |-----------|--------------------------------------------|-----------------------------------------------------------|
-| raw       | x = x<sub>i</sub>                          | no post-pocessing, value **x** is submitted as it is       |
+| raw       | x = x<sub>i</sub>                          | no post-processing, value **x** is submitted as it is       |
 | delta    | x = x<sub>i</sub> - x<sub>i-1</sub> | delta of two poll values, **x<sub>i<sub>** and **x<sub>i-1<sub>** |
 | rate | x = (x<sub>i</sub> - x<sub>i-1</sub>) / (t<sub>i</sub> - t<sub>i-1</sub>) | delta divided by the interval of the two polls in seconds |
 | average | x = (x<sub>i</sub> - x<sub>i-1</sub>) / (y<sub>i</sub> - y<sub>i-1</sub>) | delta divided by the delta of the base counter **y** |
