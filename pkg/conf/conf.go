@@ -260,6 +260,7 @@ type Poller struct {
 	LogMaxFiles    *int      `yaml:"log_max_files,omitempty"`
 	Exporters      *[]string `yaml:"exporters,omitempty"`
 	Collectors     *[]string `yaml:"collectors,omitempty"`
+	IsKfs          *bool     `yaml:"is_kfs,omitempty"`
 }
 
 type Exporter struct {

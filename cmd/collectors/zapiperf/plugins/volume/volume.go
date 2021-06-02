@@ -1,7 +1,7 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
-package main
+package volume
 
 import (
 	"goharvest2/cmd/poller/plugin"
@@ -150,6 +150,3 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	return []*matrix.Matrix{cache}, nil
 }
-
-// Need to appease go build - see https://github.com/golang/go/issues/20312
-func main() {}

@@ -1,7 +1,7 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
-package main
+package shelf
 
 import (
 	"goharvest2/cmd/poller/collector"
@@ -260,6 +260,3 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	return output, nil
 }
-
-// Need to appease go build - see https://github.com/golang/go/issues/20312
-func main() {}

@@ -19,7 +19,7 @@ Package Description:
    on the cache creates a race-condition (not caught on all Linux systems).
 */
 
-package main
+package prometheus
 
 import (
 	"fmt"
@@ -396,6 +396,3 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 	me.Logger.Debug().Msgf("rendered %d data points from %d (%s) instances", len(rendered), len(data.GetInstances()), data.Object)
 	return rendered, nil
 }
-
-// Need to appease go build - see https://github.com/golang/go/issues/20312
-func main() {}

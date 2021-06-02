@@ -1,7 +1,7 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
-package main
+package influxdb
 
 import (
 	"bytes"
@@ -337,6 +337,3 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 	}
 	return rendered, nil
 }
-
-// Need to appease go build - see https://github.com/golang/go/issues/20312
-func main() {}

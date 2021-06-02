@@ -83,4 +83,7 @@ Pollers:
     addr: 10.0.0.2
     collectors: [ Zapi ]
 
+  sim-0001:
+    is_kfs: true
+
 ll: grafana_api_token grafana_api_token

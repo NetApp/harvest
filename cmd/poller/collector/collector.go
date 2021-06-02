@@ -18,7 +18,6 @@ package collector
 import (
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/logging"
-	"path"
 	"reflect"
 	"runtime/debug"
 	"strconv"
@@ -26,7 +25,6 @@ import (
 	"sync"
 	"time"
 
-	"goharvest2/pkg/dload"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
@@ -45,7 +43,7 @@ import (
 // Note that many of the functions required by the interface
 // are only there to facilitate "inheritance" through AbstractCollector.
 type Collector interface {
-	Init() error
+	Init(*AbstractCollector) error
 	Start(*sync.WaitGroup)
 	GetName() string
 	GetObject() string
@@ -60,11 +58,12 @@ type Collector interface {
 	SetMetadata(*matrix.Matrix)
 	WantedExporters(configFp string) []string
 	LinkExporter(exporter.Exporter)
-	LoadPlugins(*node.Node) error
+	LoadPlugins(*node.Node, Collector) error
+	LoadPlugin(string, *plugin.AbstractPlugin) plugin.Plugin
 }
 
-// CollectorStatus defines the possible states of a collector
-var CollectorStatus = [3]string{
+// Status defines the possible states of a collector
+var Status = [3]string{
 	"up",
 	"standby",
 	"failed",
@@ -127,9 +126,9 @@ func New(name, object string, options *options.Options, params *node.Node) *Abst
 //   data: 10s
 //   instance: 20s
 //
-// then we expect that the collector has methods PollDdta and PollInstance
+// then we expect that the collector has methods PollData and PollInstance
 // that need to be invoked every 10 and 20 seconds respectively.
-// Names of the polls are arbitrary, only "ddta" is a special case, since
+// Names of the polls are arbitrary, only "data" is a special case, since
 // plugins are executed after the data poll (this might change).
 func Init(c Collector) error {
 
@@ -147,7 +146,7 @@ func Init(c Collector) error {
 	s := schedule.New()
 
 	// Each task will be mapped to a collector method
-	// Example: "data" will be alligned to method PollData()
+	// Example: "data" will be aligned to method PollData()
 	for _, task := range tasks.GetChildren() {
 
 		methodName := "Poll" + strings.Title(task.GetNameS())
@@ -192,7 +191,7 @@ func Init(c Collector) error {
 
 	// Initialize Plugins
 	if plugins := params.GetChildS("plugins"); plugins != nil {
-		if err := c.LoadPlugins(plugins); err != nil {
+		if err := c.LoadPlugins(plugins, c); err != nil {
 			return err
 		}
 	}
@@ -218,7 +217,7 @@ func Init(c Collector) error {
 	//md.AddLabel("task", "")
 	//md.AddLabel("interval", "")
 
-	// add tasks of the collecor as metadata instances
+	// add tasks of the collector as metadata instances
 	for _, task := range s.GetTasks() {
 		instance, _ := md.NewInstance(task.Name)
 		instance.SetLabel("task", task.Name)
@@ -419,13 +418,13 @@ func (me *AbstractCollector) AddCollectCount(n uint64) {
 
 // GetStatus returns current state of the collector
 func (me *AbstractCollector) GetStatus() (uint8, string, string) {
-	return me.Status, CollectorStatus[me.Status], me.Message
+	return me.Status, Status[me.Status], me.Message
 }
 
 // SetStatus sets the current state of the collector to one
 // of the values defined by CollectorStatus
 func (me *AbstractCollector) SetStatus(status uint8, msg string) {
-	if status < 0 || status >= uint8(len(CollectorStatus)) {
+	if status < 0 || status >= uint8(len(Status)) {
 		panic("invalid status code " + strconv.Itoa(int(status)))
 	}
 	me.Status = status
@@ -473,9 +472,13 @@ func (me *AbstractCollector) LinkExporter(e exporter.Exporter) {
 	me.Exporters = append(me.Exporters, e)
 }
 
-// LoadPlugins loads built-in plugins or dynamically loads custom plugins
-// and adds them to the collector
-func (me *AbstractCollector) LoadPlugins(params *node.Node) error {
+func (me *AbstractCollector) LoadPlugin(s string, abc *plugin.AbstractPlugin) plugin.Plugin {
+	return nil
+}
+
+//LoadPlugins loads built-in plugins or dynamically loads custom plugins
+//and adds them to the collector
+func (me *AbstractCollector) LoadPlugins(params *node.Node, c Collector) error {
 
 	var p plugin.Plugin
 	var abc *plugin.AbstractPlugin
@@ -495,20 +498,8 @@ func (me *AbstractCollector) LoadPlugins(params *node.Node) error {
 			me.Logger.Debug().Msgf("loaded built-in plugin [%s]", name)
 			// case 2: available as dynamic plugin
 		} else {
-			binpath := path.Join(me.Options.HomePath, "bin", "plugins", strings.ToLower(me.Name))
-			module, err := dload.LoadFuncFromModule(binpath, strings.ToLower(name), "New")
-			if err != nil {
-				//logger.Error(c.LongName, "load plugin [%s]: %v", name, err)
-				return errors.New(errors.ERR_DLOAD, "plugin "+name+": "+err.Error())
-			}
-
-			NewFunc, ok := module.(func(*plugin.AbstractPlugin) plugin.Plugin)
-			if !ok {
-				//logger.Error(c.LongName, "load plugin [%s]: New() has not expected signature", name)
-				return errors.New(errors.ERR_DLOAD, name+": New()")
-			}
-			p = NewFunc(abc)
-			me.Logger.Debug().Msgf("loaded dynamic plugin [%s]", name)
+			p = c.LoadPlugin(name, abc)
+			me.Logger.Debug().Msgf("loaded plugin [%s]", name)
 		}
 
 		if err := p.Init(); err != nil {
