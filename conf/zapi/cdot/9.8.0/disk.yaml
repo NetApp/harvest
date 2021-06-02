@@ -13,11 +13,13 @@ counters:
       - ^disk-type              => type
       - ^is-shared              => shared
       - ^model                  => model
+      - ^serial-number          => serial_number
       - ^shelf                  => shelf
       - ^shelf-bay              => shelf_bay
     - disk-ownership-info:
       - ^home-node-name         => node
       - ^owner-node-name        => owner_node
+      - ^is-failed              => failed
     - disk-stats-info:
     #  - average-latency
     #  - disk-io-kbps
@@ -45,5 +47,7 @@ export_options:
     - shared
     - shelf
     - shelf_bay
+    - serial_number
+    - failed
   graphite_leafs:
     - node.{node}.disk.{disk} # take last part
