@@ -2,7 +2,7 @@
 
 This document describes the high-level architecture of Harvest. If you want to familiarize yourself with the code base, you're in the right place!
 
-Harvest has a strong emphasize modular design, the core code-base is isolated from the code-base of secondary components - the philosophy is: adding new collectors, exporters or plugins should be simple.
+Harvest has a strong emphasis on modular design, the core code-base is isolated from the code-base of secondary components - the philosophy is: adding new collectors, exporters or plugins should be simple.
 
 ## Bird's Eye View
 
@@ -10,7 +10,7 @@ Harvest consists of several processes/packages. All, except Poller, are short-li
 
 <center><img src="docs/harvest.png" width="50%"></center>
 
-* **harvest**: the main executable and entry-point for the user, it's task is mainly to trigger the other processes
+* **harvest**: the main executable and entry-point for the user, its task is mainly to trigger the other processes
 * **manager**: starts, stops and shows the status of pollers
 * **poller**: daemon process that polls a target system
 * **config**: helps to validate and configure harvest
@@ -44,7 +44,7 @@ One of the tasks of the Poller is to parse CLI flags and configuration files and
 
 For exporters, *Params*, is the exact parameters of the exporter as defined in `harvest.yml`. For collectors, *Params*, is a top-down merge of:
 * poller parameters from `harvest.yml` (can include `addr`, `auth_style`, etc.)
-* collector default template (can include poll frequency, list of counters, etc)
+* collector default template (can include poll frequency, list of counters, etc.)
 * collector custom template (same)
 
 Since the Poller is agnostic about the system collectors will poll, it is the user's (and developer's) responsibility to make sure required parameters are available in their right place.
@@ -53,7 +53,7 @@ Since the Poller is agnostic about the system collectors will poll, it is the us
 
 Collectors are responsible for collecting metrics from a data source and writing them into a Matrix instance.
 
-Collectors are "object-oriented", which means that metrics are grouped together by the logical unit that they describe (such as volume, node, process, file). If there are more than one objects defined for a collector, then for each object a new instance of the collector will be created (example of such "multi-object" collectors are [Zapi](cmd/collectors/zapi/) and [ZapiPerf](cmd/collectors/zapiperf/). This means that the user only needs to add a new template file if they want to collector a new object.
+Collectors are "object-oriented", which means that metrics are grouped together by the logical unit that they describe (such as volume, node, process, file). If there are more than one objects defined for a collector, then for each object a new instance of the collector will be created (example of such "multi-object" collectors are [Zapi](cmd/collectors/zapi/) and [ZapiPerf](cmd/collectors/zapiperf/). This means that the user only needs to add a new template file if they want to collect a new object.
 
 Most of the auxiliary jobs that a collector needs to do (such as initializing, running on scheduled time, reporting status to Poller, updating metadata and handling errors) are implemented by the AbstractCollector. Writing a new collector, most of the times, only requires implementing the `PollData()` method.
 
@@ -82,7 +82,7 @@ This package is in a semi-frozen, stable state and will not change (much) in the
 
 ### Tree
 
-The Tree data structure ([*node.Node](pkg/tree/node/node.go)) is used for unstructured and untyped data. It provides read/write methods that are independent of the underlaying data format (`xml`, `yaml`, `json`). It is mainly used for API calls and for storing configuration files. 
+The Tree data structure ([*node.Node](pkg/tree/node/node.go)) is used for unstructured and untyped data. It provides read/write methods that are independent of the underlying data format (`xml`, `yaml`, `json`). It is mainly used for API calls and for storing configuration files. 
 
 Often collectors will receive an XML from their target system, parse it into a Tree, then extract meaningful information and write it into the Matrix.
 
@@ -93,7 +93,7 @@ Unlike, the Matrix, this package is not in a stable state and will likely need a
 This section describes the directories of the project and how source files are organized:
 
 ### `/` 
-The root directories contains scripts for building Harvest:
+The root directories contain scripts for building Harvest:
 * `MakeFile` - script for building and installing Harvest
 * `package` - script for building distribution packages (uses the subdirectories `deb/` and `rpm/`)
 * `harvest.yml` - main configuration file
