@@ -60,7 +60,7 @@ type Metric interface {
 	AddValueUint64(*Instance, uint64) error
 	AddValueFloat32(*Instance, float32) error
 	AddValueFloat64(*Instance, float64) error
-	//AddValueString(*Instance, string) error
+	AddValueString(*Instance, string) error
 	//SetValueBytes(*Instance, []byte) error
 
 	SetValueNAN(*Instance)
@@ -202,5 +202,9 @@ func (me *AbstractMetric) DivideWithThreshold(s Metric, t int) error {
 }
 
 func (me *AbstractMetric) MultiplyByScalar(s int) error {
+	return errors.New(errors.ERR_IMPLEMENT, me.dtype)
+}
+
+func (me *AbstractMetric) AddValueString(i *Instance, s string) error {
 	return errors.New(errors.ERR_IMPLEMENT, me.dtype)
 }
