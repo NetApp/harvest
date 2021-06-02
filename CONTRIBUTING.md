@@ -10,9 +10,8 @@ We appreciate that you want to take the time to contribute! Please follow these 
 3. Let us know in the issue that you plan on creating a pull request for it. This helps us to keep track of the pull request and make sure there isn't duplicate effort.
 4. Before creating a pull request, write up a brief proposal in the issue describing what your change would be and how it would work so that others can comment.
 5. It's better to wait for feedback from someone on NetApp's Harvest development team before writing code. We don't have an SLA for our feedback, but we will do our best to respond in a timely manner (at a minimum, to give you an idea if you're on the right track and that you should proceed, or not).
-6. Sign NetApp's Contributor License Agreement. You must sign the [Corporate Contributor License Agreement (CCLA)](https://github.com/NetApp/Harvest/blob/master/CONTRIBUTING_CCLA.pdf) in order to contribute.
-7. Please send the signed document to <legalip@netapp.com>.
-8. If you've made it this far, have written the code that solves your issue, and addressed the review comments, then feel free to create your pull request.
+6. Sign and submit NetApp's Contributor License Agreement. You must sign and submit the [Corporate Contributor License Agreement (CCLA)](https://netapp.na1.echosign.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhBN1IcwqxqFOpZRSYcKO8V4nppnNJaH2QnbKIaJXBcoBFoGiQXAUjSamaZAvzBJOUM*) in order to contribute.
+7. If you've made it this far, have written the code that solves your issue, and addressed the review comments, then feel free to create your pull request.
 
 Important: **NetApp will NOT look at the PR or any of the code submitted in the PR if the CCLA is not on file with NetApp Legal.**
 

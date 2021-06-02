@@ -18,3 +18,4 @@
 # build directories
 bin/
 dist/
+cert/
