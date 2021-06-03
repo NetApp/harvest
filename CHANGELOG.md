@@ -1,7 +1,7 @@
 # Change Log
 
 [Releases](https://github.com/NetApp/harvest/releases)
-## 21.05.1 / 2021-05-20
+## 21.05.2 / 2021-06-09
 
 Announcing the release of Harvest2. With this release the core of Harvest has been completely rewritten in Go. Harvest2 is a replacement for the older versions of Harvest 1.6 and below. 
 
@@ -35,6 +35,14 @@ Changes since rc2
 - package.sh fails without internet connection
 - Version flag is missing new line on some shells [#4](https://github.com/NetApp/harvest/issues/4) 
 - Poller should not ignore --config [#28](https://github.com/NetApp/harvest/issues/28)
+- Handle special characters in passwords
+- Allow TLS server verification for basic auth [#51](https://github.com/NetApp/harvest/issues/51)
+- Allow user-defined URL for the influxDB server
+- Shelf metrics appear to only collect metrics for one shelf [#75](https://github.com/NetApp/harvest/issues/75)
+- Disk serial number and is-failed are missing from cdot query [#60](https://github.com/NetApp/harvest/issues/60)
+- Ensure collectors and pollers recover panics [#105](https://github.com/NetApp/harvest/issues/105)
+- Status label on cluster_status metric disappears [#66](https://github.com/NetApp/harvest/issues/66)
+- Performance metrics dont display volume name [#40](https://github.com/NetApp/harvest/issues/40)
 
 ### Enhancements
 - Add new exporter for InfluxDB
@@ -46,6 +54,14 @@ Changes since rc2
 - Add per-poller Prometheus end-point support with `promPort`
 - The release, commit and build date information are baked into the release executables
 - You can pick a subset of pollers to manage by passing the name of the poller to harvest. e.g. `harvest start|stop|restart POLLERS`
+- Add workload counters in ZapiPerf [#9](https://github.com/NetApp/harvest/issues/9)
+- Create harvest doctor to validate customer environments [#16](https://github.com/NetApp/harvest/issues/16) e.g. `harvest doctor --config ./harvest.yml`
+- Document on how to join Harvest slack channel
+- Improve documentation for Collectors
+- Add Zerolog framework for enhanced logging [#61](https://github.com/NetApp/harvest/issues/61)
+- Refactor ONTAP auth documentation
+- Package harvest.example.yml in binaries for reference [#41](https://github.com/NetApp/harvest/issues/41)
+- Bundle vendored copy of dependencies
 
 ## rc2
 
