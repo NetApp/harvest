@@ -45,6 +45,7 @@ import (
 	"path"
 	"plugin"
 	"runtime"
+	"runtime/debug"
 	"strconv"
 	"strings"
 	"sync"
@@ -60,7 +61,8 @@ var (
 	logMaxAge       int    = logging.DefaultLogMaxAge
 )
 
-// init with default configuration by default it gets logged both to console and  harvest.log
+// init with default configuration
+// by default it gets logged only to console
 var logger *logging.Logger = logging.Get()
 
 // signals to catch
@@ -754,21 +756,12 @@ func init() {
 	_ = pollerCmd.MarkFlagRequired("poller")
 }
 
-// start poller, if fails try to write to syslog
+// start poller, if fails write to log
 func main() {
 
-	// don't recover if a goroutine has panicked, instead
-	// try to zeroLog as much as possible, since normally it's
-	// not properly logged
 	defer func() {
-		//logger.Warn("(main) ", "defer func here")
 		if r := recover(); r != nil {
-			logger.Info().Msgf("harvest poller panicked: %v", r)
-			// if logger still available try to write there as well
-			// do this last, since might make us panic as again
-			logger.Fatal().Msgf("(main) %v", r)
-			logger.Fatal().Msg(`(main) terminating abnormally, tip: run in foreground mode (with "--loglevel 0") to debug`)
-
+			logger.Fatal().Stack().Err(errors.New(errors.GO_ROUTINE_PANIC, string(debug.Stack()))).Msg(`(main) terminating abnormally, tip: run in foreground mode (with "--loglevel 0") to debug`)
 			os.Exit(1)
 		}
 	}()
