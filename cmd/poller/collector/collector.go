@@ -20,6 +20,7 @@ import (
 	"goharvest2/pkg/logging"
 	"path"
 	"reflect"
+	"runtime/debug"
 	"strconv"
 	"strings"
 	"sync"
@@ -235,7 +236,11 @@ func Init(c Collector) error {
 
 // Start will run the collector in an infinity loop
 func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
-
+	defer func() {
+		if r := recover(); r != nil {
+			me.Logger.Error().Stack().Err(errors.New(errors.GO_ROUTINE_PANIC, string(debug.Stack()))).Msg("Collector panicked")
+		}
+	}()
 	defer wg.Done()
 
 	// keep track of connection errors
