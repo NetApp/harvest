@@ -100,7 +100,7 @@ func Configure(config LogConfig) *Logger {
 
 	zerolog.SetGlobalLevel(config.LogLevel)
 	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
-	zeroLogger := zerolog.New(multiWriters).With().Str(config.PrefixKey, config.PrefixValue).Timestamp().Logger()
+	zeroLogger := zerolog.New(multiWriters).With().Caller().Str(config.PrefixKey, config.PrefixValue).Timestamp().Logger()
 
 	zeroLogger.Debug().
 		Bool("consoleLoggingEnabled", config.ConsoleLoggingEnabled).
