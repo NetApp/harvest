@@ -9,7 +9,9 @@ The InfluxDB Exporter will format metrics into the InfluxDB's [line protocol](ht
 
 
 ## Parameters
-Overview of all parameters is provided below. Notice that only one of `url` and `addr` should be provided (at least one is required).
+Overview of all parameters is provided below. Only one of `url` and `addr` should be provided (at least one is required). 
+If `url` is specified, you must add all arguments to the url. Harvest will do no additional processing and use exactly what you specify. (e.g. `url: https://influxdb.example.com:8086/write?db=netapp&u=user&p=pass&precision=2`. 
+That means when using `url` the `org`, `bucket`, `port`, and `precision` fields will be ignored.
 
 | parameter              | type         | description                                      | default                |
 |------------------------|--------------|--------------------------------------------------|------------------------|
