@@ -42,6 +42,7 @@ Changes since rc2
 - Ensure collectors and pollers recover from panics [#105](https://github.com/NetApp/harvest/issues/105)
 - Cluster status is initially reported, but then stops being reported [#66](https://github.com/NetApp/harvest/issues/66)
 - Performance metrics don't display volume names [#40](https://github.com/NetApp/harvest/issues/40)
+- Allow insecure Grafana TLS connections `--insecure` and honor requested transport. See `harvest grafana --help` for details [#111](https://github.com/NetApp/harvest/issues/111)
 
 ### Enhancements
 - Add new exporter for InfluxDB
