@@ -35,13 +35,13 @@ Changes since rc2
 - package.sh fails without internet connection
 - Version flag is missing new line on some shells [#4](https://github.com/NetApp/harvest/issues/4) 
 - Poller should not ignore --config [#28](https://github.com/NetApp/harvest/issues/28)
-- Handle special characters in passwords [#79](https://github.com/NetApp/harvest/pull/79)
+- Handle special characters in cluster credentials [#79](https://github.com/NetApp/harvest/pull/79)
 - TLS server verification works with basic auth [#51](https://github.com/NetApp/harvest/issues/51)
 - Collect metrics from all disk shelves instead of one [#75](https://github.com/NetApp/harvest/issues/75)
 - Disk serial number and is-failed are missing from cdot query [#60](https://github.com/NetApp/harvest/issues/60)
 - Ensure collectors and pollers recover from panics [#105](https://github.com/NetApp/harvest/issues/105)
 - Cluster status is initially reported, but then stops being reported [#66](https://github.com/NetApp/harvest/issues/66)
-- Performance metrics don't display volume name [#40](https://github.com/NetApp/harvest/issues/40)
+- Performance metrics don't display volume names [#40](https://github.com/NetApp/harvest/issues/40)
 
 ### Enhancements
 - Add new exporter for InfluxDB
