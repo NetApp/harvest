@@ -1,10 +1,11 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
-package main
+package unix
 
 import (
 	"goharvest2/cmd/poller/collector"
+	"goharvest2/cmd/poller/plugin"
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/logging"
@@ -25,7 +26,7 @@ import (
 // https://en.wikipedia.org/wiki/Procfs
 var _SUPPORTED_PLATFORMS = []string{
 	"aix",
-	"andriod", // available in termux
+	"android", // available in termux
 	"dragonfly",
 	"freebsd", // available, but not mounted by default
 	"linux",
@@ -68,6 +69,17 @@ var _DTYPES = map[string]string{
 	"memory_percent": "float64",
 	"threads":        "uint64",
 	"fds":            "uint64",
+}
+
+func init() {
+	plugin.RegisterModule(Unix{})
+}
+
+func (Unix) HarvestModule() plugin.ModuleInfo {
+	return plugin.ModuleInfo{
+		ID:  "harvest.collector.unix",
+		New: func() plugin.Module { return new(Unix) },
+	}
 }
 
 func getClockTicks() {
@@ -127,14 +139,9 @@ type Unix struct {
 	processes       map[string]*Process
 }
 
-// New - create new, uninitialized collector
-func New(a *collector.AbstractCollector) collector.Collector {
-	return &Unix{AbstractCollector: a}
-}
-
 // Init - initialize the collector
-func (me *Unix) Init() error {
-
+func (me *Unix) Init(a *collector.AbstractCollector) error {
+	me.AbstractCollector = a
 	var err error
 
 	if !set.NewFrom(_SUPPORTED_PLATFORMS).Has(runtime.GOOS) {
@@ -150,7 +157,7 @@ func (me *Unix) Init() error {
 		_MOUNT_POINT = mp
 	}
 
-	// assert fs is avilable
+	// assert fs is available
 	if fi, err := os.Stat(_MOUNT_POINT); err != nil || !fi.IsDir() {
 		return errors.New(errors.ERR_IMPLEMENT, "filesystem ["+_MOUNT_POINT+"] not available")
 	}
@@ -416,14 +423,14 @@ func setStartTime(m matrix.Metric, i *matrix.Instance, p *Process, s *System) {
 	}
 }
 
-func setNumThreads(m matrix.Metric, i *matrix.Instance, p *Process, s *System) {
+func setNumThreads(m matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
 	err := m.SetValueUint64(i, p.numThreads)
 	if err != nil {
 		logging.Get().Error().Stack().Err(err).Msg("error")
 	}
 }
 
-func setNumFds(m matrix.Metric, i *matrix.Instance, p *Process, s *System) {
+func setNumFds(m matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
 	err := m.SetValueUint64(i, p.numFds)
 	if err != nil {
 		logging.Get().Error().Stack().Err(err).Msg("error")
@@ -437,7 +444,7 @@ func setMemoryPercent(m matrix.Metric, i *matrix.Instance, p *Process, s *System
 	}
 }
 
-func setCpuPercent(m matrix.Metric, i *matrix.Instance, p *Process, s *System) {
+func setCpuPercent(m matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
 	if p.elapsedTime != 0 {
 		err := m.SetValueFloat64(i, p.cpuTotal/p.elapsedTime*100)
 		if err != nil {
@@ -496,5 +503,7 @@ func setCtx(m matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	}
 }
 
-// Need to appease go build - see https://github.com/golang/go/issues/20312
-func main() {}
+// Interface guards
+var (
+	_ collector.Collector = (*Unix)(nil)
+)

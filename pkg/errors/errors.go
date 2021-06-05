@@ -23,10 +23,11 @@ const (
 	API_REQ_REJECTED = "api request rejected"
 	// @TODO, implement: API response is something like
 	// Insufficient privileges: user 'harvest2-user' does not have write access to this resource
-	API_INSUF_PRIV = "api insufficient priviliges"
-	ERR_DLOAD      = "dynamic load"
-	ERR_IMPLEMENT  = "implementation error"
-	ERR_SCHEDULE   = "schedule error"
+	API_INSUF_PRIV   = "api insufficient priviliges"
+	ERR_DLOAD        = "dynamic load"
+	ERR_IMPLEMENT    = "implementation error"
+	ERR_SCHEDULE     = "schedule error"
+	GO_ROUTINE_PANIC = "goroutine panic"
 )
 
 type Error struct {

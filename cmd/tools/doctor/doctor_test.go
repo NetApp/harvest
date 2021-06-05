@@ -27,7 +27,7 @@ func assertRedacted(t *testing.T, input, redacted string) {
 }
 
 func TestConfigToStruct(t *testing.T) {
-	path := "testConfig.yml"
+	path := "testdata/testConfig.yml"
 	err := conf.LoadHarvestConfig(path)
 	if err != nil {
 		return
@@ -62,9 +62,17 @@ func TestConfigToStruct(t *testing.T) {
 		t.Fatalf(`expected addr to be "www.example.com/influxdb", actual=%+v`, (*influxyURL))
 	}
 
-	collectors := (*conf.Config.Pollers)["infinity2"].Collectors
+	infinity := (*conf.Config.Pollers)["infinity2"]
+	collectors := infinity.Collectors
 	if (*collectors)[0] != "Zapi" {
 		t.Fatalf(`expected infinity2 collectors to contain Zapi actual=%+v`,
 			(*collectors)[0])
+	}
+	if infinity.IsKfs != nil && !*infinity.IsKfs {
+		t.Fatalf(`expected infinity2 is_kfs to be false, but was true`)
+	}
+	sim1 := (*conf.Config.Pollers)["sim-0001"]
+	if !*sim1.IsKfs {
+		t.Fatalf(`expected sim-0001 is_kfs to be true, but was false`)
 	}
 }

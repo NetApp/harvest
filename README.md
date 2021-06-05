@@ -90,7 +90,7 @@ Work in progress. Coming soon
 
 ## Building from source
 
-To build Harvest from source code, first make sure you have a working Go environment with [version 1.15 or greater installed](https://golang.org/doc/install). You'll also need an Internet connection to install go dependencies. If you need to build from an air-gapped machine, use `go mod vendor` from an Internet connected machine first, and then copy the `vendor` directory to the air-gapped machine.
+To build Harvest from source code, first make sure you have a working Go environment with [version 1.15 or greater installed](https://golang.org/doc/install).
 
 Clone the repo and build everything.
 

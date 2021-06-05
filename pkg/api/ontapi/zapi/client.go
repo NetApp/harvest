@@ -1,9 +1,7 @@
-/*
- * Copyright NetApp Inc, 2021 All rights reserved
+// Copyright NetApp Inc, 2021 All rights reserved
 
-Package zapi provides type Client for connecting to a C-dot or 7-mode
-Ontap cluster and sending API requests using the ZAPI protocol.
-*/
+// Package zapi provides type Client for connecting to a C-dot or 7-mode
+// ONTAP cluster and sending API requests using the ZAPI protocol.
 package zapi
 
 import (
@@ -66,8 +64,11 @@ func New(config *node.Node) (*Client, error) {
 		return nil, errors.New(errors.MISSING_PARAM, "addr")
 	}
 
-	url = "https://" + addr + ":443/servlets/netapp.servlets.admin.XMLrequest_filer"
-
+	if config.GetChildContentS("is_kfs") == "true" {
+		url = "https://" + addr + ":8443/servlets/netapp.servlets.admin.XMLrequest_filer"
+	} else {
+		url = "https://" + addr + ":443/servlets/netapp.servlets.admin.XMLrequest_filer"
+	}
 	// create a request object that will be used for later requests
 	if request, err = http.NewRequest("POST", url, nil); err != nil {
 		return nil, err
@@ -76,7 +77,7 @@ func New(config *node.Node) (*Client, error) {
 	request.Header.Set("Content-type", "text/xml")
 	request.Header.Set("Charset", "utf-8")
 
-	// by default, encorce secure TLS, if not requested otherwise by user
+	// by default, enforce secure TLS, if not requested otherwise by user
 	if x := config.GetChildContentS("use_insecure_tls"); x != "" {
 		if useInsecureTLS, err = strconv.ParseBool(x); err != nil {
 			client.Logger.Error().Stack().Err(err).Msg("use_insecure_tls")
@@ -143,7 +144,7 @@ func New(config *node.Node) (*Client, error) {
 	return &client, nil
 }
 
-// init connects to the cluster and retrieves system info
+// Init connects to the cluster and retrieves system info
 // it will give up after retries
 func (c *Client) Init(retries int) error {
 	var err error
@@ -165,7 +166,7 @@ func (c *Client) IsClustered() bool {
 	return c.system.clustered
 }
 
-// Version returns version of the ONTAP server (generation, manjor and minor)
+// Version returns version of the ONTAP server (generation, major and minor)
 func (c *Client) Version() [3]int {
 	return c.system.version
 }
@@ -199,7 +200,7 @@ func (c *Client) BuildRequestString(request string) error {
 }
 
 // BuildRequest builds an API request from the node query
-// root element of the request is usualy the API name (e.g. "volume-get-iter") and
+// root element of the request is usually the API name (e.g. "volume-get-iter") and
 // its children are the attributes requested
 func (c *Client) BuildRequest(request *node.Node) error {
 	return c.buildRequest(request, false)
@@ -239,14 +240,14 @@ func (c *Client) buildRequest(query *node.Node, forceCluster bool) error {
 }
 
 // Invoke will issue the API request and return server response
-// this method should only be callled after building the request
+// this method should only be called after building the request
 func (c *Client) Invoke() (*node.Node, error) {
 	result, _, _, err := c.invoke(false)
 	return result, err
 }
 
 // InvokeBatchRequest will issue API requests in series, once there
-// are no more instances returned by the server, returned results will be nill
+// are no more instances returned by the server, returned results will be nil
 // Use the returned tag for subsequent calls to this method
 func (c *Client) InvokeBatchRequest(request *node.Node, tag string) (*node.Node, string, error) {
 	// wasteful of course, need to rewrite later @TODO
@@ -254,7 +255,7 @@ func (c *Client) InvokeBatchRequest(request *node.Node, tag string) (*node.Node,
 	return results, tag, err
 }
 
-// InvokeBatchRequestWithTimers does the same as InvokeBatchRequest, but it also
+// InvokeBatchWithTimers does the same as InvokeBatchRequest, but it also
 // returns API time and XML parse time
 func (c *Client) InvokeBatchWithTimers(request *node.Node, tag string) (*node.Node, string, time.Duration, time.Duration, error) {
 
@@ -311,13 +312,13 @@ func (c *Client) InvokeRequest(request *node.Node) (*node.Node, error) {
 
 // InvokeWithTimers invokes the request and returns parsed XML response and timers:
 // API wait time and XML parse time.
-// This method should only be callled after building the request
+// This method should only be called after building the request
 func (c *Client) InvokeWithTimers() (*node.Node, time.Duration, time.Duration, error) {
 	return c.invoke(true)
 }
 
-// InvokeWithTimers invokes the request and returns the raw server response
-// This method should only be callled after building the request
+// InvokeRaw invokes the request and returns the raw server response
+// This method should only be called after building the request
 func (c *Client) InvokeRaw() ([]byte, error) {
 	var (
 		response *http.Response

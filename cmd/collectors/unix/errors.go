@@ -2,7 +2,7 @@
  * Copyright NetApp Inc, 2021 All rights reserved
  */
 
-package main
+package unix
 
 const (
 	PROCESS_NOT_FOUND = "process not found"
