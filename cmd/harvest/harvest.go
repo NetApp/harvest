@@ -258,7 +258,7 @@ func getStatus(pollerName string) *pollerStatus {
 		*/
 	}
 
-	// process is running, validate that it's the poller we're looking fore
+	// process is running, validate that it's the poller we're looking for
 	// since PID might have changed (although very unlikely)
 	if data, err := ioutil.ReadFile(fmt.Sprintf("/proc/%d/cmdline", s.pid)); err == nil {
 		cmdline := string(bytes.ReplaceAll(data, []byte("\x00"), []byte(" ")))
