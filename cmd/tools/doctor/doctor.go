@@ -3,18 +3,32 @@ package doctor
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"goharvest2/pkg/color"
 	"goharvest2/pkg/conf"
+	"golang.org/x/term"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"os"
+	"strings"
 )
 
 type options struct {
 	ShouldPrintConfig bool
+	Color             string
 }
+
+var (
+	withColor bool
+)
 
 var opts = &options{
 	ShouldPrintConfig: false,
+	Color:             "auto",
+}
+
+type validation struct {
+	isValid bool
+	invalid []string // collect invalid results
 }
 
 var Cmd = &cobra.Command{
@@ -41,10 +55,12 @@ func doDoctor(path string) {
 	checkAll(path, contents)
 }
 
+// checkAll runs all doctor checks
+// If all checks succeed, print nothing and exit with a return code of 0
+// Otherwise, print what failed and exit with a return code of 1
 func checkAll(path string, contents []byte) {
-	// TODO add checks here, see https://github.com/NetApp/harvest/issues/16
-	// print nothing and exit with 0 when all checks pass
-
+	// See https://github.com/NetApp/harvest/issues/16 for more checks to add
+	detectConsole()
 	// Validate that the config file can be parsed
 	harvestConfig := &conf.HarvestConfig{}
 	err := yaml.Unmarshal(contents, harvestConfig)
@@ -53,7 +69,110 @@ func checkAll(path string, contents []byte) {
 		os.Exit(1)
 		return
 	}
-	os.Exit(0)
+
+	anyFailed := false
+	anyFailed = !checkUniquePromPorts(*harvestConfig).isValid || anyFailed
+	anyFailed = !checkExporterTypes(*harvestConfig).isValid || anyFailed
+
+	if anyFailed {
+		os.Exit(1)
+	} else {
+		os.Exit(0)
+	}
+}
+
+func detectConsole() {
+	withColor = false
+	switch opts.Color {
+	case "never":
+		withColor = false
+	case "always":
+		withColor = true
+	default:
+		if term.IsTerminal(int(os.Stdout.Fd())) {
+			withColor = true
+		}
+	}
+}
+
+// checkExporterTypes validates that all exporters are of valid types
+func checkExporterTypes(config conf.HarvestConfig) validation {
+	if config.Exporters == nil {
+		return validation{}
+	}
+	invalidTypes := make(map[string]string)
+	for name, exporter := range *config.Exporters {
+		if exporter.Type == nil {
+			continue
+		}
+		switch *exporter.Type {
+		case "Prometheus", "InfluxDB":
+			break
+		default:
+			invalidTypes[name] = *exporter.Type
+		}
+	}
+
+	valid := validation{isValid: true}
+
+	if len(invalidTypes) > 0 {
+		valid.isValid = false
+		fmt.Printf("%s Unknown Exporter types found\n", colorize("Error:", color.Red))
+		fmt.Println("These are probably misspellings or the wrong case.")
+		fmt.Println("Exporter types must start with a capital letter.")
+		fmt.Println("The following exporters are unknown:")
+		for name, eType := range invalidTypes {
+			valid.invalid = append(valid.invalid, eType)
+			fmt.Printf("  exporter named: [%s] has unknown type: [%s]\n", colorize(name, color.Red), colorize(eType, color.Yellow))
+		}
+		fmt.Println()
+	}
+	return valid
+}
+
+// checkUniquePromPorts checks that all Prometheus exporters
+// that specify a port, do so uniquely
+func checkUniquePromPorts(config conf.HarvestConfig) validation {
+	if config.Exporters == nil {
+		return validation{}
+	}
+	// Add all exporters that have a port to a
+	// map of portNum -> list of names
+	seen := make(map[int][]string)
+	for name, exporter := range *config.Exporters {
+		if exporter.Port == nil || exporter.Type == nil || *exporter.Type != "Prometheus" {
+			continue
+		}
+		previous := seen[*exporter.Port]
+		previous = append(previous, name)
+		seen[*exporter.Port] = previous
+	}
+
+	valid := validation{isValid: true}
+	for _, exporterNames := range seen {
+		if len(exporterNames) == 1 {
+			continue
+		}
+		valid.isValid = false
+		for _, name := range exporterNames {
+			valid.invalid = append(valid.invalid, name)
+		}
+		break
+	}
+
+	if !valid.isValid {
+		fmt.Printf("%s: Exporter PromPort conflict\n", colorize("Error", color.Red))
+		fmt.Println("  Prometheus exporters must specify unique ports. Change the following exporters to use unique ports:")
+		for port, exporterNames := range seen {
+			if len(exporterNames) == 1 {
+				continue
+			}
+			names := strings.Join(exporterNames, ", ")
+			fmt.Printf("  port: [%s] duplicateExporters: [%s]\n", colorize(port, color.Red), colorize(names, color.Yellow))
+		}
+		fmt.Println()
+	}
+	return valid
 }
 
 func printRedactedConfig(path string, contents []byte) string {
@@ -112,6 +231,13 @@ func collectNodes(root *yaml.Node, nodes *[]*yaml.Node) {
 	}
 }
 
+func colorize(s interface{}, color string) string {
+	if withColor {
+		return fmt.Sprintf("%s%v\x1b[0m", color, s)
+	}
+	return fmt.Sprintf("%s", s)
+}
+
 func init() {
 	Cmd.Flags().BoolVarP(
 		&opts.ShouldPrintConfig,
@@ -120,4 +246,6 @@ func init() {
 		false,
 		"print config to console with sensitive info redacted",
 	)
+
+	Cmd.Flags().StringVar(&opts.Color, "color", "auto", "When to use colors. One of: auto | always | never. Auto will guess based on tty.")
 }

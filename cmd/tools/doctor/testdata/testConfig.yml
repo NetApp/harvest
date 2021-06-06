@@ -30,6 +30,8 @@ Exporters:
     bucket: harvest
     org: harvest
     token: abcdefghijklmnopqrstuvwxyz
+  invalid-type:
+    exporter: Foo
 Defaults:
   collectors:
     - Zapi
