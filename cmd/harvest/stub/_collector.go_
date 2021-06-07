@@ -2,6 +2,7 @@ package main
 
 import (
 	"goharvest2/poller/collector"
+	"goharvest2/poller/registrar"
 	"goharvest2/share/matrix"
 
 	/* You might want to uncomment and use some of these:
@@ -13,9 +14,9 @@ import (
 
 /* Logging is useful for debugging your collector, here are a few exmaples:
 
-	logger.Warn(c.Prefix, "nothing to collect")
-	logger.Debug(c.Prefix, "collected %d data points!!", count)
-	logger.Error(c.Prefix, "open URL: %s", err.Error())
+	me.Logger.Warn().Msg("nothing to collect")
+	me.Logger.Debug().Msgf("collected %d data points!!", count)
+	logger.Error().Stack().Err(err).Msgf("open URL")
 
 	(the examples assume you are in a struct method with receiver "c")
 */
@@ -35,11 +36,12 @@ type COLLECTOR struct {
 }
 
 /*
-This method creates a new instance of your collector, no need to touch it.
+This method registers your collector as a module, no need to touch it.
 */
-func New(a *collector.AbstractCollector) collector.Collector {
-	return &COLLECTOR{AbstractCollector: a}
+func init() {
+    registrar.RegisterCollector("COLLECTOR", func() collector.Collector { return new(COLLECTOR) })
 }
+var _ collector.Collector = (*COLLECTOR)(nil)
 
 /* This method initializes your collector. You can add more things here, bur remove
    "collector.Init(c)" only if you know what you are doing. The last method will initialize
@@ -57,10 +59,10 @@ func New(a *collector.AbstractCollector) collector.Collector {
 	   return err
    }
 */
-func (c *COLLECTOR) Init() error {
+func (c *COLLECTOR) Init(abc *collector.AbstractCollector) error {
+    c.AbstractCollector = abc
 	return collector.Init(c)
 }
-
 
 /* This is the only method that needs to be written by You!
    The *matrix.Matrix that is returned is most commonly me.Matrix.

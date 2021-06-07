@@ -5,6 +5,7 @@ import (
 	// "fmt" uncomment for the dummy example in Export()
 
 	"goharvest2/poller/exporter"
+	"goharvest2/poller/registrar"
 	"goharvest2/share/matrix"
 
 	/* You might want to uncomment and use some of these:
@@ -16,9 +17,9 @@ import (
 
 /* Logging is useful for debugging your exporter, here are a few exmaples:
 
-	logger.Warn(e.Prefix, "nothing to exporter")
-	logger.Debug(e.Prefix, "exporter %d data points!!", count)
-	logger.Error(e.Prefix, "open URL: %s", err.Error())
+	me.Logger.Warn().Msg("nothing to exporter")
+	me.Logger.Debug().Msgf("exporter %d data points!!", count)
+	me.Logger.Error().Stack().Err(err).Msg("open URL:")
 
 	(the examples assume you are in a struct method with receiver "e")
 */
@@ -39,16 +40,18 @@ type EXPORTER struct {
 }
 
 /*
-This method creates a new instance of your collector, no need to touch it.
+This method registers your exporter as a module, no need to touch it.
 */
-func New(abc *exporter.AbstractExporter) exporter.Exporter {
-	return &EXPORTER{AbstractExporter: abc}
+func init() {
+    registrar.RegisterExporter("EXPORTER", func() exporter.Exporter { return new(EXPORTER) })
 }
+var _ exporter.Exporter = (*EXPORTER)(nil)
 
 /* This method initializes your exporter. If you need to initialize a client or check parameters,
-   you can do it here. Don't remove "e.InitAbc()" since this will do some useful work for you.
+   you can do it here. Don't remove the first two lines since these will do some useful work for you.
 */
-func (e *EXPORTER) Init() error {
+func (e *EXPORTER) Init(abc *exporter.AbstractExporter) error {
+    e.AbstractExporter = abc
 	return e.InitAbc()
 }
 

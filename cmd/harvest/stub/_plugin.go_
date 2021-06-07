@@ -2,6 +2,7 @@ package main
 
 import (
 	"goharvest2/poller/plugin"
+	"goharvest2/poller/registrar"
 	"goharvest2/share/matrix"
 
 	/* uncomment to use:
@@ -26,11 +27,20 @@ type PLUGIN struct {
 }
 
 /* 
-Here we create a new plugin, no need to change!
+Here we register a new plugin, no need to change!
 */
-func New(p *plugin.AbstractPlugin) plugin.Plugin {
-	return &PLUGIN{AbstractPlugin: p}
+var plugin.Plugin = (*PLUGIN)(nil)
+func init() {
+    registrar.RegisterPlugin("PLUGIN", func() plugin.Plugin { return new(PLUGIN) })
 }
+
+/*
+Here we initialize the plugin
+func (p *PLUGIN) Init(abc *plugin.AbstractPlugin) error {
+    p.AbstractPlugin = abc
+    return p.AbstractPlugin.Init()
+}
+*/
 
 /* Here is where the main job needs to be done. The argument
    of the plugin is the matrix from your parent collector.
