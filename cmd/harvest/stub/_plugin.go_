@@ -38,7 +38,7 @@ func init() {
 Here we initialize the plugin
 func (p *PLUGIN) Init(abc *plugin.AbstractPlugin) error {
     p.AbstractPlugin = abc
-    return p.AbstractPlugin.Init()
+    return p.InitAbc()
 }
 */
 

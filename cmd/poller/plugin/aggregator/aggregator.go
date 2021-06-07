@@ -41,7 +41,7 @@ func (me *Aggregator) Init(abc *plugin.AbstractPlugin) error {
 
 	me.AbstractPlugin = abc
 
-	if err := me.AbstractPlugin.Init(); err != nil {
+	if err := me.InitAbc(); err != nil {
 		return err
 	}
 
