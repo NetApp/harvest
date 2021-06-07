@@ -8,8 +8,9 @@
 package modules
 
 import (
-	_ "github.com/vgratian/GithubCollector"
 	_ "goharvest2/cmd/collectors/unix"
 	_ "goharvest2/cmd/collectors/zapi/collector"
 	_ "goharvest2/cmd/collectors/zapiperf"
+	_ "goharvest2/cmd/exporters/influxdb"
+	_ "goharvest2/cmd/exporters/prometheus"
 )
