@@ -329,7 +329,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum(aggr_space_total{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "interval": "",
           "legendFormat": "",
@@ -387,7 +387,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum(aggr_space_available{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "interval": "",
           "legendFormat": "",
@@ -994,7 +994,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "aggr_space_available{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",

@@ -4165,7 +4165,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg by (name, target) (metadata_component_count{hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"exporter\"})",
           "hide": false,
           "interval": "",
@@ -4173,7 +4173,7 @@
           "refId": "C"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg by (exporter, target) (metadata_exporter_count{hostname=~\"$Hostname\",poller=~\"$Poller\"})",
           "hide": false,
           "interval": "",
