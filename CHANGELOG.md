@@ -1,7 +1,35 @@
 # Change Log
 
 [Releases](https://github.com/NetApp/harvest/releases)
+
 ## 21.05.2 / 2021-06-09
+
+This release adds support for user-defined URLs for InfluxDB exporter, a new command to validate your `harvest.yml` file, improved logging, panic handling, and collector documentation. We also enabled GitHub security code scanning for the Harvest repo to catch issues sooner. These scans happen on every push.
+
+There are also several quality-of-life bug fixes listed below.
+
+### Fixes
+- Handle special characters in cluster credentials [#79](https://github.com/NetApp/harvest/pull/79)
+- TLS server verification works with basic auth [#51](https://github.com/NetApp/harvest/issues/51)
+- Collect metrics from all disk shelves instead of one [#75](https://github.com/NetApp/harvest/issues/75)
+- Disk serial number and is-failed are missing from cdot query [#60](https://github.com/NetApp/harvest/issues/60)
+- Ensure collectors and pollers recover from panics [#105](https://github.com/NetApp/harvest/issues/105)
+- Cluster status is initially reported, but then stops being reported [#66](https://github.com/NetApp/harvest/issues/66)
+- Performance metrics don't display volume names [#40](https://github.com/NetApp/harvest/issues/40)
+- Allow insecure Grafana TLS connections `--insecure` and honor requested transport. See `harvest grafana --help` for details [#111](https://github.com/NetApp/harvest/issues/111)
+- Prometheus dashboards don't load when `exemplar` is true. Thanks to @sevenval-admins, @florianmulatz, and @unbreakabl3 for their help tracking this down and suggesting a fix. [#96](https://github.com/NetApp/harvest/issues/96)
+
+### Enhancements
+- InfluxDB exporter supports [user-defined URLs](https://github.com/NetApp/harvest/blob/main/cmd/exporters/influxdb/README.md#parameters)
+- Add workload counters to ZapiPerf [#9](https://github.com/NetApp/harvest/issues/9)
+- Add new command to validate `harvest.yml` file and optionally redact sensitive information [#16](https://github.com/NetApp/harvest/issues/16) e.g. `harvest doctor --config ./harvest.yml`
+- Improve documentation for [Unix](https://github.com/NetApp/harvest/tree/main/cmd/collectors/unix), [Zapi](https://github.com/NetApp/harvest/tree/main/cmd/collectors/zapi), and [ZapiPerf](https://github.com/NetApp/harvest/tree/main/cmd/collectors/zapiperf) collectors
+- Add Zerolog framework for structured logging [#61](https://github.com/NetApp/harvest/issues/61)
+- Vendor 3rd party code to increase reliability and make it easier to build in air-gapped environments [#26](https://github.com/NetApp/harvest/pull/26)
+- Make contributing easier with a digital CCLA instead of 1970's era PDF :)
+- Enable GitHub security code scanning
+ 
+## 21.05.1 / 2021-05-20
 
 Announcing the release of Harvest2. With this release the core of Harvest has been completely rewritten in Go. Harvest2 is a replacement for the older versions of Harvest 1.6 and below. 
 
@@ -43,6 +71,7 @@ Changes since rc2
 - Cluster status is initially reported, but then stops being reported [#66](https://github.com/NetApp/harvest/issues/66)
 - Performance metrics don't display volume names [#40](https://github.com/NetApp/harvest/issues/40)
 - Allow insecure Grafana TLS connections `--insecure` and honor requested transport. See `harvest grafana --help` for details [#111](https://github.com/NetApp/harvest/issues/111)
+- Prometheus dashboards don't load when `exemplar` is true. Thanks to @sevenval-admins, @florianmulatz, and @unbreakabl3 for their help tracking this down and suggesting a fix. [#96](https://github.com/NetApp/harvest/issues/96)
 
 ### Enhancements
 - Add new exporter for InfluxDB
