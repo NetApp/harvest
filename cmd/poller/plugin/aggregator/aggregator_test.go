@@ -20,9 +20,9 @@ func TestInitPlugin(t *testing.T) {
 	params.NewChildS("", "node")
 
 	abc := plugin.New("Test", nil, params, nil)
-	p = &Aggregator{AbstractPlugin: abc}
+	p = &Aggregator{}
 
-	if err := p.Init(); err != nil {
+	if err := p.Init(abc); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -121,9 +121,9 @@ func TestRuleIncludeAllLabels(t *testing.T) {
 	params := node.NewS("Aggregator")
 	params.NewChildS("", "svm ...")
 
-	p.Params = params
+	abc := plugin.New("Test", nil, params, nil)
 
-	if err := p.Init(); err != nil {
+	if err := p.Init(abc); err != nil {
 		t.Fatal(err)
 	}
 
@@ -178,9 +178,9 @@ func TestComplexRuleRegex(t *testing.T) {
 	params := node.NewS("Aggregator")
 	params.NewChildS("", "volume<`_\\d{4}$`>flexgroup aggr,svm")
 
-	p.Params = params
+	abc := plugin.New("Test", nil, params, nil)
 
-	if err := p.Init(); err != nil {
+	if err := p.Init(abc); err != nil {
 		t.Fatal(err)
 	}
 

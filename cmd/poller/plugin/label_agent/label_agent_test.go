@@ -47,9 +47,9 @@ func TestInitPlugin(t *testing.T) {
 	params.NewChildS("value_mapping", "stage stage init `1`")
 
 	abc := plugin.New("Test", nil, params, nil)
-	p = &LabelAgent{AbstractPlugin: abc}
+	p = &LabelAgent{}
 
-	if err := p.Init(); err != nil {
+	if err := p.Init(abc); err != nil {
 		t.Fatal(err)
 	}
 }

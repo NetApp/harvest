@@ -26,8 +26,8 @@ func TestAddrParameter(t *testing.T) {
 	params.NewChildS("bucket", "harvest")
 	params.NewChildS("token", "xxxxxxx")
 
-	influx := &InfluxDB{AbstractExporter: exporter.New("InfluxDB", "influx-test", opts, params)}
-	if err := influx.Init(); err != nil {
+	influx := &InfluxDB{}
+	if err := influx.Init(exporter.New("InfluxDB", "influx-test", opts, params)); err != nil {
 		t.Fatal(err)
 	}
 
@@ -52,8 +52,9 @@ func TestUrlParameter(t *testing.T) {
 	params.NewChildS("org", "netapp")
 	params.NewChildS("bucket", "harvest")
 	params.NewChildS("token", "xxxxxxx")
-	influx := &InfluxDB{AbstractExporter: exporter.New("InfluxDB", "influx-test", opts, params)}
-	if err := influx.Init(); err != nil {
+
+	influx := &InfluxDB{}
+	if err := influx.Init(exporter.New("InfluxDB", "influx-test", opts, params)); err != nil {
 		t.Fatal(err)
 	}
 
@@ -77,8 +78,9 @@ func TestExportDebug(t *testing.T) {
 	params.NewChildS("org", "harvest")
 	params.NewChildS("bucket", "harvest")
 	params.NewChildS("token", "xxxxxxx")
-	influx := New(exporter.New("InfluxDB", "influx-test", opts, params))
-	if err := influx.Init(); err != nil {
+
+	influx := &InfluxDB{}
+	if err := influx.Init(exporter.New("InfluxDB", "influx-test", opts, params)); err != nil {
 		t.Fatal(err)
 	}
 
@@ -126,11 +128,10 @@ func TestExportProduction(t *testing.T) {
     params.NewChildS("org", "")
     params.NewChildS("token", "")
 
-    influx := New(exporter.New("InfluxDB", "influx-test", opts, params))
-
-    if err := influx.Init(); err != nil {
-        t.Fatal(err)
-    }
+	influx := &InfluxDB{}
+	if err := influx.Init(exporter.New("InfluxDB", "influx-test", opts, params)); err != nil {
+		t.Fatal(err)
+	}
 
     // matrix with fake data
     data := matrix.New("test_exporter", "influxd_test_data", "")

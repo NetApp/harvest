@@ -660,7 +660,6 @@ func (me *Poller) newCollector(class string, object string, template *node.Node)
 	//	return nil, errors.New(errors.ERR_NO_COLLECTOR, "no collectors")
 	//}
 	col := foo()
-	logger.Debug().Msgf("foo-ed (%v)  new collector: %v", foo, col)
 	delegate := collector.New(class, object, me.options, template.Copy())
 	return col, col.Init(delegate)
 }
