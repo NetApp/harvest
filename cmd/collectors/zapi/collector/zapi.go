@@ -11,6 +11,7 @@ import (
 	"goharvest2/cmd/collectors/zapiperf/plugins/nic"
 	"goharvest2/cmd/collectors/zapiperf/plugins/volume"
 	"goharvest2/cmd/poller/plugin"
+	"goharvest2/cmd/poller/registrar"
 	"strconv"
 	"strings"
 	"time"
@@ -41,14 +42,7 @@ type Zapi struct {
 }
 
 func init() {
-	plugin.RegisterModule(Zapi{})
-}
-
-func (Zapi) HarvestModule() plugin.ModuleInfo {
-	return plugin.ModuleInfo{
-		ID:  "harvest.collector.zapi",
-		New: func() plugin.Module { return new(Zapi) },
-	}
+	registrar.RegisterCollector("Zapi", func() collector.Collector { return new(Zapi) })
 }
 
 func (me *Zapi) Init(a *collector.AbstractCollector) error {

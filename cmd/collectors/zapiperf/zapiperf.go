@@ -5,7 +5,7 @@ package zapiperf
 
 import (
 	"goharvest2/cmd/poller/collector"
-	"goharvest2/cmd/poller/plugin"
+	"goharvest2/cmd/poller/registrar"
 	"goharvest2/pkg/color"
 	"goharvest2/pkg/dict"
 	"goharvest2/pkg/errors"
@@ -40,14 +40,7 @@ type ZapiPerf struct {
 }
 
 func init() {
-	plugin.RegisterModule(ZapiPerf{})
-}
-
-func (ZapiPerf) HarvestModule() plugin.ModuleInfo {
-	return plugin.ModuleInfo{
-		ID:  "harvest.collector.zapiperf",
-		New: func() plugin.Module { return new(ZapiPerf) },
-	}
+	registrar.RegisterCollector("ZapiPerf", func() collector.Collector { return new(ZapiPerf) })
 }
 
 func (me *ZapiPerf) Init(a *collector.AbstractCollector) error {

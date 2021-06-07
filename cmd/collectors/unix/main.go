@@ -5,7 +5,7 @@ package unix
 
 import (
 	"goharvest2/cmd/poller/collector"
-	"goharvest2/cmd/poller/plugin"
+	"goharvest2/cmd/poller/registrar"
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/logging"
@@ -72,14 +72,7 @@ var _DTYPES = map[string]string{
 }
 
 func init() {
-	plugin.RegisterModule(Unix{})
-}
-
-func (Unix) HarvestModule() plugin.ModuleInfo {
-	return plugin.ModuleInfo{
-		ID:  "harvest.collector.unix",
-		New: func() plugin.Module { return new(Unix) },
-	}
+	registrar.RegisterCollector("Unix", func() collector.Collector { return new(Unix) })
 }
 
 func getClockTicks() {

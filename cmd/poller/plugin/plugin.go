@@ -28,13 +28,13 @@
 package plugin
 
 import (
-	"fmt"
+	//"fmt"
 	"goharvest2/cmd/poller/options"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/logging"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
-	"sync"
+	//"sync"
 )
 
 // Plugin defines the methods of a plugin
@@ -44,6 +44,7 @@ type Plugin interface {
 	Run(*matrix.Matrix) ([]*matrix.Matrix, error)
 }
 
+/*
 var (
 	modules   = make(map[string]ModuleInfo)
 	modulesMu sync.RWMutex
@@ -94,7 +95,7 @@ type ModuleInfo struct {
 
 	New func() Module
 }
-
+*/
 // AbstractPlugin implements methods of the Plugin interface, except Run()
 type AbstractPlugin struct {
 	Parent       string
