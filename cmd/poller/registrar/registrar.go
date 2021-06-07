@@ -60,7 +60,7 @@ func RegisterPlugin(name string, foo func() plugin.Plugin) {
 	if _, ok := plugins[name]; ok {
 		panic(fmt.Sprintf("plugin [%s] already registered", name))
 	}
-    plugins[name] = foo
+	plugins[name] = foo
 }
 
 // GetCollector returns the new() function of the collector if it

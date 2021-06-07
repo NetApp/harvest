@@ -24,6 +24,7 @@ package prometheus
 import (
 	"fmt"
 	"goharvest2/cmd/poller/exporter"
+	"goharvest2/cmd/poller/registrar"
 	"goharvest2/pkg/color"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
@@ -57,11 +58,17 @@ type Prometheus struct {
 	globalPrefix    string
 }
 
-func New(abc *exporter.AbstractExporter) exporter.Exporter {
-	return &Prometheus{AbstractExporter: abc}
+func init() {
+	registrar.RegisterExporter("Prometheus", func() exporter.Exporter { return new(Prometheus) })
 }
 
-func (me *Prometheus) Init() error {
+var (
+	_ exporter.Exporter = (*Prometheus)(nil)
+)
+
+func (me *Prometheus) Init(abc *exporter.AbstractExporter) error {
+
+	me.AbstractExporter = abc
 
 	if err := me.InitAbc(); err != nil {
 		return err

@@ -19,9 +19,9 @@ import (
 // Exporter defines the required attributes of an exporter
 // All except, Export() are implemented by AbstractExporter
 type Exporter interface {
-	Init() error      // initialize exporter
-	GetClass() string // the class of the exporter, e.g. Prometheus, InfluxDB
-	GetName() string  // the name of the exporter instance
+	Init(*AbstractExporter) error // initialize exporter
+	GetClass() string             // the class of the exporter, e.g. Prometheus, InfluxDB
+	GetName() string              // the name of the exporter instance
 	// Name is different from Class, since we can have multiple instances of the same Class
 	GetExportCount() uint64             // return and reset number of exported data points, used by Poller to keep stats
 	AddExportCount(uint64)              // add count to the export count, called by the exporter itself

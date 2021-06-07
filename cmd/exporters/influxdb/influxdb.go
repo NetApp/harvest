@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"fmt"
 	"goharvest2/cmd/poller/exporter"
+	"goharvest2/cmd/poller/registrar"
 	"goharvest2/pkg/color"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
@@ -40,11 +41,17 @@ type InfluxDB struct {
 	token  string
 }
 
-func New(abc *exporter.AbstractExporter) exporter.Exporter {
-	return &InfluxDB{AbstractExporter: abc}
+func init() {
+	registrar.RegisterExporter("InfluxDB", func() exporter.Exporter { return new(InfluxDB) })
 }
 
-func (e *InfluxDB) Init() error {
+var (
+	_ exporter.Exporter = (*InfluxDB)(nil)
+)
+
+func (e *InfluxDB) Init(abc *exporter.AbstractExporter) error {
+
+	e.AbstractExporter = abc
 
 	if err := e.InitAbc(); err != nil {
 		return err

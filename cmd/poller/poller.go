@@ -26,8 +26,6 @@ package main
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"goharvest2/cmd/exporters/influxdb"
-	"goharvest2/cmd/exporters/prometheus"
 	"goharvest2/cmd/harvest/version"
 	"goharvest2/cmd/poller/collector"
 	"goharvest2/cmd/poller/exporter"
@@ -662,16 +660,15 @@ func (me *Poller) loadExporter(name string) exporter.Exporter {
 	}
 
 	absExp := exporter.New(class, name, me.options, params)
-	switch class {
-	case "Prometheus":
-		exp = prometheus.New(absExp)
-	case "InfluxDB":
-		exp = influxdb.New(absExp)
-	default:
+	foo := registrar.GetExporter(class)
+
+	if foo == nil {
 		logger.Error().Msgf("no exporter of name:type %s:%s", name, class)
 		return nil
 	}
-	if err = exp.Init(); err != nil {
+
+	exp = foo()
+	if err = exp.Init(absExp); err != nil {
 		logger.Error().Msgf("init exporter (%s): %v", name, err)
 		return nil
 	}
