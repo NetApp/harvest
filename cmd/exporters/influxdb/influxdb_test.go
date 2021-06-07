@@ -48,7 +48,7 @@ func TestUrlParameter(t *testing.T) {
 	opts.Debug = true
 
 	params := node.NewS("")
-	params.NewChildS("url", "https://some-valid-domain-name.net/")
+	params.NewChildS("url", "https://some-valid-domain-name.net/api/v2/write?org=netapp&bucket=harvest&precision=s")
 	params.NewChildS("org", "netapp")
 	params.NewChildS("bucket", "harvest")
 	params.NewChildS("token", "xxxxxxx")

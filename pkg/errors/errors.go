@@ -4,6 +4,7 @@
 package errors
 
 import (
+	"github.com/pkg/errors"
 	"strings"
 )
 
@@ -31,17 +32,8 @@ const (
 	GO_ROUTINE_PANIC = "goroutine panic"
 )
 
-type Error struct {
-	class string
-	msg   string
-}
-
-func (e Error) Error() string {
-	return e.class + " => " + e.msg
-}
-
-func New(class, msg string) Error {
-	return Error{class: class, msg: msg}
+func New(class, msg string) error {
+	return errors.New(class + " => " + msg)
 }
 
 func GetClass(err error) string {
