@@ -15,6 +15,7 @@ package nic
 
 import (
 	"goharvest2/cmd/poller/plugin"
+	"goharvest2/cmd/poller/registrar"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
 	"math"
@@ -26,8 +27,17 @@ type Nic struct {
 	*plugin.AbstractPlugin
 }
 
-func New(p *plugin.AbstractPlugin) plugin.Plugin {
-	return &Nic{AbstractPlugin: p}
+func init() {
+	registrar.RegisterPlugin("Nic", func() plugin.Plugin { return new(Nic) })
+}
+
+var (
+	_ plugin.Plugin = (*Nic)(nil)
+)
+
+func (me *Nic) Init(p *plugin.AbstractPlugin) error {
+	me.AbstractPlugin = p
+	return me.InitAbc()
 }
 
 func (me *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {

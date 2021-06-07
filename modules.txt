@@ -1,0 +1,15 @@
+# This file contains list of modules to be compiled with Harvest
+# Collectors:
+_ "goharvest2/cmd/collectors/unix"
+_ "goharvest2/cmd/collectors/zapi/collector"
+_ "goharvest2/cmd/collectors/zapiperf"
+# Exporters
+_ "goharvest2/cmd/exporters/influxdb"
+_ "goharvest2/cmd/exporters/prometheus"
+# Collector plugins
+_ "goharvest2/cmd/collectors/zapi/plugins/shelf"
+_ "goharvest2/cmd/collectors/zapi/plugins/snapmirror"
+_ "goharvest2/cmd/collectors/zapiperf/plugins/fcp"
+_ "goharvest2/cmd/collectors/zapiperf/plugins/headroom"
+_ "goharvest2/cmd/collectors/zapiperf/plugins/nic"
+_ "goharvest2/cmd/collectors/zapiperf/plugins/volume"

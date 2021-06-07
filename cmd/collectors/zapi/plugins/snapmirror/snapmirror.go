@@ -5,6 +5,7 @@ package snapmirror
 
 import (
 	"goharvest2/cmd/poller/plugin"
+	"goharvest2/cmd/poller/registrar"
 	"goharvest2/pkg/api/ontapi/zapi"
 	"goharvest2/pkg/dict"
 	"goharvest2/pkg/matrix"
@@ -22,11 +23,17 @@ type SnapMirror struct {
 	limitUpdCounter int
 }
 
-func New(p *plugin.AbstractPlugin) plugin.Plugin {
-	return &SnapMirror{AbstractPlugin: p}
+func init() {
+	registrar.RegisterPlugin("SnapMirror", func() plugin.Plugin { return new(SnapMirror) })
 }
 
-func (my *SnapMirror) Init() error {
+var (
+	_ plugin.Plugin = (*SnapMirror)(nil)
+)
+
+func (my *SnapMirror) Init(abc *plugin.AbstractPlugin) error {
+
+	my.AbstractPlugin = abc
 
 	var err error
 

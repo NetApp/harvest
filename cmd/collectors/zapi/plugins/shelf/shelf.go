@@ -6,6 +6,7 @@ package shelf
 import (
 	"goharvest2/cmd/poller/collector"
 	"goharvest2/cmd/poller/plugin"
+	"goharvest2/cmd/poller/registrar"
 	"goharvest2/pkg/api/ontapi/zapi"
 	"goharvest2/pkg/dict"
 	"goharvest2/pkg/errors"
@@ -23,11 +24,17 @@ type Shelf struct {
 	query          string
 }
 
-func New(p *plugin.AbstractPlugin) plugin.Plugin {
-	return &Shelf{AbstractPlugin: p}
+func init() {
+	registrar.RegisterPlugin("Shelf", func() plugin.Plugin { return new(Shelf) })
 }
 
-func (my *Shelf) Init() error {
+var (
+	_ plugin.Plugin = (*Shelf)(nil)
+)
+
+func (my *Shelf) Init(abc *plugin.AbstractPlugin) error {
+
+	my.AbstractPlugin = abc
 
 	var err error
 

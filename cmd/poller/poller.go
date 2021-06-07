@@ -31,6 +31,7 @@ import (
 	"goharvest2/cmd/poller/exporter"
 	_ "goharvest2/cmd/poller/modules"
 	"goharvest2/cmd/poller/options"
+	"goharvest2/cmd/poller/plugin"
 	"goharvest2/cmd/poller/registrar"
 	"goharvest2/cmd/poller/schedule"
 	"goharvest2/pkg/conf"
@@ -581,7 +582,6 @@ func (me *Poller) loadCollector(class, object string) error {
 
 	me.collectors = append(me.collectors, collectors...)
 	logger.Debug().Msgf("initialized (%s) with %d objects", class, len(collectors))
-	// link each collector with requested exporter & update metadata
 	for _, col = range collectors {
 		if col == nil {
 			logger.Warn().Msg("ignoring nil collector")
@@ -590,6 +590,7 @@ func (me *Poller) loadCollector(class, object string) error {
 		name := col.GetName()
 		obj := col.GetObject()
 
+		// link collector to requested exporter
 		for _, expName := range col.WantedExporters(me.options.Config) {
 			logger.Trace().Msgf("expName %s", expName)
 			if exp := me.loadExporter(expName); exp != nil {
@@ -599,9 +600,40 @@ func (me *Poller) loadCollector(class, object string) error {
 				logger.Warn().Msgf("exporter (%s) requested by (%s:%s) not available", expName, name, obj)
 			}
 		}
+		// load requested plugins
+		if plugins := col.WantedPlugins(); plugins != nil {
+			var (
+				p   plugin.Plugin
+				abc *plugin.AbstractPlugin
+			)
+			for _, x := range plugins.GetChildren() {
 
-		// update metadata
+				pluginName := x.GetNameS()
+				if pluginName == "" {
+					pluginName = x.GetContentS() // some plugins are defined as list elements others as dicts
+					x.SetNameS(pluginName)
+				}
+				logger.Trace().Msgf("loading plugin [%s]", pluginName)
 
+				abc = plugin.New(col.GetName(), col.GetOptions(), x, col.GetParams())
+
+				foo := registrar.GetPlugin(pluginName)
+				if foo == nil {
+					return errors.New(errors.MISSING_MODULE, name)
+				}
+
+				p = foo()
+
+				if err := p.Init(abc); err != nil {
+					logger.Error().Stack().Err(err).Msgf("init plugin [%s]:", name)
+					return err
+				}
+				col.LinkPlugin(p)
+				logger.Debug().Msgf("linked (%s:%s) to plugin (%s)", name, obj, pluginName)
+			}
+		}
+
+		// update collector metadata
 		if instance, err := me.metadata.NewInstance(name + "." + obj); err != nil {
 			return err
 		} else {

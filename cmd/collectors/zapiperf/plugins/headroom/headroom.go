@@ -5,6 +5,7 @@ package headroom
 
 import (
 	"goharvest2/cmd/poller/plugin"
+	"goharvest2/cmd/poller/registrar"
 	"goharvest2/pkg/matrix"
 	"strings"
 )
@@ -13,8 +14,17 @@ type Headroom struct {
 	*plugin.AbstractPlugin
 }
 
-func New(p *plugin.AbstractPlugin) plugin.Plugin {
-	return &Headroom{AbstractPlugin: p}
+func init() {
+	registrar.RegisterPlugin("Headroom", func() plugin.Plugin { return new(Headroom) })
+}
+
+var (
+	_ plugin.Plugin = (*Headroom)(nil)
+)
+
+func (me *Headroom) Init(p *plugin.AbstractPlugin) error {
+	me.AbstractPlugin = p
+	return me.InitAbc()
 }
 
 func (me *Headroom) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {

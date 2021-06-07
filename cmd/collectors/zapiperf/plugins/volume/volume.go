@@ -5,6 +5,7 @@ package volume
 
 import (
 	"goharvest2/cmd/poller/plugin"
+	"goharvest2/cmd/poller/registrar"
 	"goharvest2/pkg/matrix"
 	"regexp"
 	"strings"
@@ -14,8 +15,17 @@ type Volume struct {
 	*plugin.AbstractPlugin
 }
 
-func New(p *plugin.AbstractPlugin) plugin.Plugin {
-	return &Volume{AbstractPlugin: p}
+func init() {
+	registrar.RegisterPlugin("Volume", func() plugin.Plugin { return new(Volume) })
+}
+
+var (
+	_ plugin.Plugin = (*Volume)(nil)
+)
+
+func (me *Volume) Init(p *plugin.AbstractPlugin) error {
+	me.AbstractPlugin = p
+	return me.InitAbc()
 }
 
 //@TODO cleanup logging

@@ -24,7 +24,7 @@ HARVEST_PACKAGE := harvest-${VERSION}-${RELEASE}_${GOOS}_${GOARCH}
 DIST := dist
 TMP := /tmp/${HARVEST_PACKAGE}
 
-MODS_SOURCE_FILE := modules.ini
+MODS_SOURCE_FILE := modules.txt
 MODS_TARGET_PATH := cmd/poller/modules
 MODS_TARGET_FILE := modules.go
 MODS_PATTERN := '^_ ".+"$'
@@ -102,7 +102,6 @@ modules:
 		echo "$$MOD" | grep -E '^_ ".+"' && echo -e "\t$$MOD" >> $(MODS_TARGET_PATH)/$(MODS_TARGET_FILE); \
 	done < modules.ini
 	@echo ")" >> $(MODS_TARGET_PATH)/$(MODS_TARGET_FILE)
-	# might move to separate command
 	go mod tidy
 	go mod vendor
 

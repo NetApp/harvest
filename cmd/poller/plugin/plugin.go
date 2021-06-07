@@ -28,74 +28,20 @@
 package plugin
 
 import (
-	//"fmt"
 	"goharvest2/cmd/poller/options"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/logging"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
-	//"sync"
 )
 
 // Plugin defines the methods of a plugin
 type Plugin interface {
 	GetName() string
-	Init() error
+	Init(*AbstractPlugin) error
 	Run(*matrix.Matrix) ([]*matrix.Matrix, error)
 }
 
-/*
-var (
-	modules   = make(map[string]ModuleInfo)
-	modulesMu sync.RWMutex
-)
-
-// GetModule returns module information from its ID (full name).
-func GetModule(name string) (ModuleInfo, error) {
-	modulesMu.RLock()
-	defer modulesMu.RUnlock()
-	m, ok := modules[name]
-	if !ok {
-		return ModuleInfo{}, fmt.Errorf("module not registered: %s", name)
-	}
-	return m, nil
-}
-
-func RegisterModule(instance Module) {
-	mod := instance.HarvestModule()
-
-	if mod.ID == "" {
-		panic("module missing ID")
-	}
-	if mod.ID == "harvest" || mod.ID == "admin" {
-		panic(fmt.Sprintf("module ID '%s' is reserved", mod.ID))
-	}
-	if mod.New == nil {
-		panic("missing ModuleInfo.New")
-	}
-	if val := mod.New(); val == nil {
-		panic("ModuleInfo.New must return a non-nil module instance")
-	}
-	modulesMu.Lock()
-	defer modulesMu.Unlock()
-
-	if _, ok := modules[mod.ID]; ok {
-		panic(fmt.Sprintf("module already registered: %s", mod.ID))
-	}
-	modules[mod.ID] = mod
-}
-
-type Module interface {
-	HarvestModule() ModuleInfo
-}
-
-type ModuleInfo struct {
-	// name of module
-	ID string
-
-	New func() Module
-}
-*/
 // AbstractPlugin implements methods of the Plugin interface, except Run()
 type AbstractPlugin struct {
 	Parent       string
@@ -119,11 +65,6 @@ func New(parent string, o *options.Options, p *node.Node, pp *node.Node) *Abstra
 // GetName returns the name of the plugin
 func (p *AbstractPlugin) GetName() string {
 	return p.Name
-}
-
-// Init initializes the plugin by calling InitAbc
-func (me *AbstractPlugin) Init() error {
-	return me.InitAbc()
 }
 
 // InitAbc initializes the plugin

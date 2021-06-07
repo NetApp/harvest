@@ -13,17 +13,13 @@ package collector
 
 import (
 	"errors"
+	"goharvest2/pkg/tree"
+	"goharvest2/pkg/tree/node"
 	"io/ioutil"
 	"path"
 	"regexp"
 	"strconv"
 	"strings"
-
-	"goharvest2/cmd/poller/plugin"
-	"goharvest2/cmd/poller/plugin/aggregator"
-	"goharvest2/cmd/poller/plugin/label_agent"
-	"goharvest2/pkg/tree"
-	"goharvest2/pkg/tree/node"
 )
 
 // ImportTemplate retrieves the config (template) of a collector, arguments are:
@@ -124,24 +120,4 @@ func ParseMetricName(raw string) (string, string) {
 	}
 
 	return name, display
-}
-
-// getBuiltinPlugin returns built-in plugin with name if it exists, otherwise nil
-func getBuiltinPlugin(name string, abc *plugin.AbstractPlugin) plugin.Plugin {
-
-	if name == "Aggregator" {
-		return aggregator.New(abc)
-	}
-
-	/* this will be added in soon
-	if name == "Calculator" {
-		return calculator.New(abc)
-	}
-	*/
-
-	if name == "LabelAgent" {
-		return label_agent.New(abc)
-	}
-
-	return nil
 }

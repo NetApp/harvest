@@ -5,6 +5,7 @@ package fcp
 
 import (
 	"goharvest2/cmd/poller/plugin"
+	"goharvest2/cmd/poller/registrar"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
 	"math"
@@ -16,8 +17,17 @@ type Fcp struct {
 	*plugin.AbstractPlugin
 }
 
-func New(p *plugin.AbstractPlugin) plugin.Plugin {
-	return &Fcp{AbstractPlugin: p}
+func init() {
+	registrar.RegisterPlugin("Fcp", func() plugin.Plugin { return new(Fcp) })
+}
+
+var (
+	_ plugin.Plugin = (*Fcp)(nil)
+)
+
+func (me *Fcp) Init(p *plugin.AbstractPlugin) error {
+	me.AbstractPlugin = p
+	return me.InitAbc()
 }
 
 func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {

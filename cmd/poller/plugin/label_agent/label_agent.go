@@ -7,6 +7,7 @@ package label_agent
 import (
 	"fmt"
 	"goharvest2/cmd/poller/plugin"
+	"goharvest2/cmd/poller/registrar"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
 	"strings"
@@ -27,11 +28,17 @@ type LabelAgent struct {
 	valueMappingRules    []valueMappingRule
 }
 
-func New(p *plugin.AbstractPlugin) plugin.Plugin {
-	return &LabelAgent{AbstractPlugin: p}
+func init() {
+	registrar.RegisterPlugin("LabelAgent", func() plugin.Plugin { return new(LabelAgent) })
 }
 
-func (me *LabelAgent) Init() error {
+var (
+	_ plugin.Plugin = (*LabelAgent)(nil)
+)
+
+func (me *LabelAgent) Init(abc *plugin.AbstractPlugin) error {
+
+	me.AbstractPlugin = abc
 
 	var (
 		err   error

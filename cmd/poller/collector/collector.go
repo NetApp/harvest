@@ -58,8 +58,8 @@ type Collector interface {
 	SetMetadata(*matrix.Matrix)
 	WantedExporters(configFp string) []string
 	LinkExporter(exporter.Exporter)
-	LoadPlugins(*node.Node, Collector) error
-	LoadPlugin(string, *plugin.AbstractPlugin) plugin.Plugin
+	WantedPlugins() *node.Node
+	LinkPlugin(plugin.Plugin)
 }
 
 // Status defines the possible states of a collector
@@ -188,13 +188,6 @@ func Init(c Collector) error {
 	}
 
 	c.SetMatrix(mx)
-
-	// Initialize Plugins
-	if plugins := params.GetChildS("plugins"); plugins != nil {
-		if err := c.LoadPlugins(plugins, c); err != nil {
-			return err
-		}
-	}
 
 	// Initialize metadata
 	md := matrix.New(name, "metadata_collector")
@@ -472,42 +465,10 @@ func (me *AbstractCollector) LinkExporter(e exporter.Exporter) {
 	me.Exporters = append(me.Exporters, e)
 }
 
-func (me *AbstractCollector) LoadPlugin(s string, abc *plugin.AbstractPlugin) plugin.Plugin {
-	return nil
+func (me *AbstractCollector) WantedPlugins() *node.Node {
+	return me.Params.GetChildS("plugins")
 }
 
-//LoadPlugins loads built-in plugins or dynamically loads custom plugins
-//and adds them to the collector
-func (me *AbstractCollector) LoadPlugins(params *node.Node, c Collector) error {
-
-	var p plugin.Plugin
-	var abc *plugin.AbstractPlugin
-
-	for _, x := range params.GetChildren() {
-
-		name := x.GetNameS()
-		if name == "" {
-			name = x.GetContentS() // some plugins are defined as list elements others as dicts
-			x.SetNameS(name)
-		}
-
-		abc = plugin.New(me.Name, me.Options, x, me.Params)
-
-		// case 1: available as built-in plugin
-		if p = getBuiltinPlugin(name, abc); p != nil {
-			me.Logger.Debug().Msgf("loaded built-in plugin [%s]", name)
-			// case 2: available as dynamic plugin
-		} else {
-			p = c.LoadPlugin(name, abc)
-			me.Logger.Debug().Msgf("loaded plugin [%s]", name)
-		}
-
-		if err := p.Init(); err != nil {
-			me.Logger.Error().Stack().Err(err).Msgf("init plugin [%s]:", name)
-			return err
-		}
-		me.Plugins = append(me.Plugins, p)
-	}
-	me.Logger.Debug().Msgf("initialized %d plugins", len(me.Plugins))
-	return nil
+func (me *AbstractCollector) LinkPlugin(p plugin.Plugin) {
+	me.Plugins = append(me.Plugins, p)
 }
