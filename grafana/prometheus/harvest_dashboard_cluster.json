@@ -225,7 +225,7 @@
       "repeatDirection": "v",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "node_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "instant": true,
@@ -235,7 +235,7 @@
           "refId": "A"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "node_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
@@ -417,7 +417,7 @@
       "repeatDirection": "h",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "cluster_status{datacenter=~\"$Datacenter\",cluster=\"$Cluster\"}",
           "instant": true,
           "interval": "",
@@ -497,7 +497,7 @@
       "repeatDirection": "h",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(node_cpu_busy{datacenter=~\"$Datacenter\",cluster=\"$Cluster\"})",
           "instant": false,
           "interval": "",
@@ -571,7 +571,7 @@
       "repeatDirection": "h",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(node_disk_busy{datacenter=~\"$Datacenter\",cluster=\"$Cluster\"})",
           "instant": false,
           "interval": "",
@@ -762,7 +762,7 @@
       "repeatDirection": "v",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "cluster_subsystem_suppressed_alerts{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
@@ -773,7 +773,7 @@
           "refId": "B"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "cluster_subsystem_outstanding_alerts{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
@@ -784,7 +784,7 @@
           "refId": "C"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "cluster_subsystem_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "instant": true,
@@ -891,7 +891,7 @@
       "repeatDirection": "h",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(aggr_space_used_percent{datacenter=~\"$Datacenter\",cluster=\"$Cluster\"})",
           "instant": false,
           "interval": "",
@@ -1273,7 +1273,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(aggr_disk_busy{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster, aggr)",
           "interval": "",
           "legendFormat": "{{cluster}} - {{aggr}}",
@@ -1376,7 +1376,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(aggr_space_used_percent{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster, aggr)",
           "interval": "",
           "legendFormat": "{{cluster}} - {{aggr}}",
@@ -1479,7 +1479,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(node_cpu_busy{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster, node)",
           "interval": "",
           "legendFormat": "{{cluster}} - {{node}}",
