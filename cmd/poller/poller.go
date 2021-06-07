@@ -508,9 +508,6 @@ func (me *Poller) loadCollector(class, object string) error {
 	} else if template == nil { // probably redundant
 		return errors.New(errors.MISSING_PARAM, "collector template")
 	}
-	// DEBUG
-	logger.Debug().Msg("imported default template:")
-	template.Print(0)
 
 	if custom, err = collector.ImportTemplate(me.options.HomePath, "custom.yaml", class); err == nil && custom != nil {
 		template.Merge(custom)
