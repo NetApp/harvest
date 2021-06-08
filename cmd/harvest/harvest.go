@@ -195,10 +195,16 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 
 		if opts.command == "start" || opts.command == "restart" {
 			// only start poller if confirmed that it's not running
-			if s.status == "not running" || s.status == "stopped" || s.status == "killed" {
+			// if it's running do nothing
+			switch s.status {
+			case "running":
+				// do nothing but print current status, idempotent
+				printStatus(opts.longStatus, c1, c2, datacenter, name, s.promPort, s)
+				break
+			case "not running", "stopped", "killed":
 				s = startPoller(name, promPort, opts)
 				printStatus(opts.longStatus, c1, c2, datacenter, name, s.promPort, s)
-			} else {
+			default:
 				fmt.Printf("can't verify status of [%s]: kill poller and try again\n", name)
 			}
 		}
@@ -252,8 +258,10 @@ func getStatus(pollerName string) *pollerStatus {
 	if err := proc.Signal(syscall.Signal(0)); err != nil {
 		if os.IsPermission(err) {
 			fmt.Println("Insufficient privileges to send signal to process")
+		} else {
+			// if not a permission issue, assume process is not running
+			s.status = "not running"
 		}
-		s.status = "unknown: " + err.Error()
 		return s
 		// process not running, but did not clean PID file
 		// maybe it just exited, so give it a chance to clean
