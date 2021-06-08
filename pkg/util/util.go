@@ -81,17 +81,17 @@ func RemoveEmptyStrings(s []string) []string {
 	return r
 }
 
-func GetProcessPid(search string) ([]int, error) {
+func GetProcessPids(search string) ([]int, error) {
 	var result []int
 	var ee *exec.ExitError
 	var pe *os.PathError
 	data, err := exec.Command("pgrep", "-f", search).Output()
 	if errors.As(err, &ee) {
-		return result, nil
+		return result, nil // ran, but non-zero exit code
 	} else if errors.As(err, &pe) {
-		return result, err
+		return result, err // "no such file ...", "permission denied" etc.
 	} else if err != nil {
-		return result, err
+		return result, err // something really bad happened!
 	}
 	sdata := string(data)
 	pids := RemoveEmptyStrings(strings.Split(sdata, "\n"))
@@ -117,11 +117,3 @@ func ContainsWholeWord(source string, search string) bool {
 	}
 	return false
 }
-
-//func main() {
-//	result, err := GetProcessPid("test")
-//	if err != nil {
-//		fmt.Println(err)
-//	}
-//	fmt.Println(result)
-//}

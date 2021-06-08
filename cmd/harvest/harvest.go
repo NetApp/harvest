@@ -328,7 +328,7 @@ func checkPollerIdentity(cmdline, pollerName string, verifyPollerName bool) bool
 }
 
 func stopGhostPollers(search string, skipPoller []string) {
-	pids, err := util.GetProcessPid(search)
+	pids, err := util.GetProcessPids(search)
 	if err != nil {
 		fmt.Printf("Error while executing pgrep %v \n", err)
 		return
