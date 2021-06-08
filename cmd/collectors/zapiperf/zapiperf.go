@@ -61,6 +61,7 @@ type ZapiPerf struct {
 	instanceKey     string
 	instanceLabels  map[string]string
 	histogramLabels map[string][]string
+	scalarCounters  []string
 	qosLabels       map[string]string
 	isCacheEmpty    bool
 }
@@ -209,11 +210,8 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 	// load requested counters (metrics + labels)
 	requestCounters := request.NewChildS("counters", "")
 	// load scalar metrics
-	for key, m := range newData.GetMetrics() {
-		// skip histograms
-		if !m.HasLabels() {
-			requestCounters.NewChildS("counter", key)
-		}
+	for _, key := range me.scalarCounters {
+		requestCounters.NewChildS("counter", key)
 	}
 	// load histograms
 	for key := range me.histogramLabels {
@@ -698,6 +696,7 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 		counters                                 map[string]*node.Node
 	)
 
+	me.scalarCounters = make([]string, 0)
 	counters = make(map[string]*node.Node)
 	oldMetrics = set.New() // current set of metrics, so we can remove from matrix if not updated
 	oldLabels = set.New()  // current set of labels
@@ -1060,6 +1059,7 @@ func (me *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled
 			return ""
 		}
 
+		me.scalarCounters = append(me.scalarCounters, name)
 		m.SetName(display)
 		m.SetProperty(property)
 		m.SetComment(baseCounter)
