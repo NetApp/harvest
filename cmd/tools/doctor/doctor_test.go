@@ -30,7 +30,7 @@ func TestConfigToStruct(t *testing.T) {
 	path := "testdata/testConfig.yml"
 	err := conf.LoadHarvestConfig(path)
 	if err != nil {
-		return
+		panic(err)
 	}
 	if conf.Config.Defaults.Password != "123#abc" {
 		t.Fatalf(`expected harvestConfig.Defaults.Password to be 123#abc, actual=[%+v]`,
@@ -74,5 +74,35 @@ func TestConfigToStruct(t *testing.T) {
 	sim1 := (*conf.Config.Pollers)["sim-0001"]
 	if !*sim1.IsKfs {
 		t.Fatalf(`expected sim-0001 is_kfs to be true, but was false`)
+	}
+}
+
+func TestUniquePromPorts(t *testing.T) {
+	path := "testdata/testConfig.yml"
+	err := conf.LoadHarvestConfig(path)
+	if err != nil {
+		panic(err)
+	}
+	valid := checkUniquePromPorts(conf.Config)
+	if valid.isValid {
+		t.Fatal(`expected isValid to be false since there are duplicate prom ports, actual was isValid=true`)
+	}
+	if len(valid.invalid) != 2 {
+		t.Fatalf(`expected checkUniquePromPorts to return 2 invalid results, actual was %s`, valid.invalid)
+	}
+}
+
+func TestExporterTypesAreValid(t *testing.T) {
+	path := "testdata/testConfig.yml"
+	err := conf.LoadHarvestConfig(path)
+	if err != nil {
+		panic(err)
+	}
+	valid := checkExporterTypes(conf.Config)
+	if valid.isValid {
+		t.Fatalf(`expected isValid to be false since there are invalid exporter types, actual was %+v`, valid)
+	}
+	if valid.invalid[0] != "Foo" {
+		t.Fatalf(`expected invalid exporter of type Foo, actual was %+v`, valid)
 	}
 }

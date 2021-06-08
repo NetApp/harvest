@@ -59,7 +59,10 @@ Download the latest rpm of [Harvest](https://github.com/NetApp/harvest/releases/
 
 Once the installation has finished, edit the [harvest.yml configuration](#harvest-configuration) file located in `/opt/harvest/harvest.yml`
 
-After editing `/opt/harvest/harvest.yml`, manage Harvest with `systemctl start|stop|restart harvest`
+After editing `/opt/harvest/harvest.yml`, manage Harvest with `systemctl start|stop|restart harvest`. 
+
+> To ensure that you don't run into [permission issues](https://github.com/NetApp/harvest/issues/122#issuecomment-856138831), make sure you manage Harvest using `systemctl` instead of running the harvest binary directly.
+
 
 ### Changes install makes
 * Directories `/var/log/harvest/` and `/var/log/run/` are created
@@ -77,7 +80,9 @@ Download the latest deb of [Harvest](https://github.com/NetApp/harvest/releases/
 
 Once the installation has finished, edit the [harvest.yml configuration](#harvest-configuration) file located in `/opt/harvest/harvest.yml`
 
-After editing `/opt/harvest/harvest.yml`, manage Harvest with `systemctl start|stop|restart harvest`
+After editing `/opt/harvest/harvest.yml`, manage Harvest with `systemctl start|stop|restart harvest`. 
+
+> To ensure that you don't run into [permission issues](https://github.com/NetApp/harvest/issues/122#issuecomment-856138831), make sure you manage Harvest using `systemctl` instead of running the harvest binary directly.
 
 ### Changes install makes
 * Directories `/var/log/harvest/` and `/var/log/run/` are created
