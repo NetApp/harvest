@@ -6,6 +6,17 @@
 */
 package util
 
+import (
+	"bytes"
+	"errors"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"os/exec"
+	"strconv"
+	"strings"
+)
+
 func MinLen(elements [][]string) int {
 	var min, i int
 	min = len(elements[0])
@@ -49,4 +60,60 @@ func EqualStringSlice(a, b []string) bool {
 		}
 	}
 	return true
+}
+
+func GetCmdLine(pid int) (string, error) {
+	data, err := ioutil.ReadFile(fmt.Sprintf("/proc/%d/cmdline", pid))
+	if err != nil {
+		return "", err
+	}
+	result := string(bytes.ReplaceAll(data, []byte("\x00"), []byte(" ")))
+	return result, nil
+}
+
+func RemoveEmptyStrings(s []string) []string {
+	var r []string
+	for _, str := range s {
+		if str != "" {
+			r = append(r, str)
+		}
+	}
+	return r
+}
+
+func GetProcessPids(search string) ([]int, error) {
+	var result []int
+	var ee *exec.ExitError
+	var pe *os.PathError
+	data, err := exec.Command("pgrep", "-f", search).Output()
+	if errors.As(err, &ee) {
+		return result, nil // ran, but non-zero exit code
+	} else if errors.As(err, &pe) {
+		return result, err // "no such file ...", "permission denied" etc.
+	} else if err != nil {
+		return result, err // something really bad happened!
+	}
+	sdata := string(data)
+	pids := RemoveEmptyStrings(strings.Split(sdata, "\n"))
+	for _, pid := range pids {
+		p, err := strconv.Atoi(strings.TrimSpace(pid))
+		if err != nil {
+			return result, err
+		}
+		result = append(result, p)
+	}
+	return result, err
+}
+
+func ContainsWholeWord(source string, search string) bool {
+	if len(source) == 0 || len(search) == 0 {
+		return false
+	}
+	fields := strings.Fields(source)
+	for _, w := range fields {
+		if w == search {
+			return true
+		}
+	}
+	return false
 }
