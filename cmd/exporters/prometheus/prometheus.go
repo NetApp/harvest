@@ -344,6 +344,11 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 			// @TODO, check at least one label is found?
 			if len(instance_labels) != 0 {
 				label_data := fmt.Sprintf("%s_labels{%s,%s} 1.0", prefix, strings.Join(instance_keys, ","), strings.Join(instance_labels, ","))
+				if me.addMetaTags && !tagged.Has(prefix+"_labels") {
+					tagged.Add(prefix + "_labels")
+					rendered = append(rendered, []byte("# HELP "+prefix+"_labels Pseudo-metric for "+data.Object+" labels"))
+					rendered = append(rendered, []byte("# TYPE "+prefix+"_labels gauge"))
+				}
 				rendered = append(rendered, []byte(label_data))
 			} else {
 				me.Logger.Trace().Msgf("skip instance labels, no labels parsed (%v) (%v)", instance_keys, instance_labels)
