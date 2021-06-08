@@ -27,6 +27,7 @@ import (
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/set"
 	"goharvest2/pkg/tree/node"
+	"goharvest2/pkg/util"
 	"io/ioutil"
 	"net"
 	_ "net/http/pprof" // #nosec since pprof is off by default
@@ -136,6 +137,13 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 			}
 		}
 	}
+
+	var pollerNames []string
+	for _, p := range pollers.GetChildren() {
+		pollerNames = append(pollerNames, p.GetNameS())
+	}
+	// stop pollers which may have been renamed or no longer exists in harvest.yml
+	stopGhostPollers("poller", pollerNames)
 
 	if opts.foreground {
 		if opts.command != "start" {
@@ -263,7 +271,7 @@ func getStatus(pollerName string) *pollerStatus {
 	if data, err := ioutil.ReadFile(fmt.Sprintf("/proc/%d/cmdline", s.pid)); err == nil {
 		cmdline := string(bytes.ReplaceAll(data, []byte("\x00"), []byte(" ")))
 
-		if checkPollerIdentity(cmdline, pollerName) {
+		if checkPollerIdentity(cmdline, pollerName, true) {
 			s.status = "running"
 
 			if strings.Contains(cmdline, "--profiling") {
@@ -293,7 +301,7 @@ func getStatus(pollerName string) *pollerStatus {
 	return s
 }
 
-func checkPollerIdentity(cmdline, pollerName string) bool {
+func checkPollerIdentity(cmdline, pollerName string, verifyPollerName bool) bool {
 	if x := strings.Fields(cmdline); len(x) == 0 || !strings.HasSuffix(x[0], "poller") {
 		return false
 	}
@@ -311,10 +319,59 @@ func checkPollerIdentity(cmdline, pollerName string) bool {
 		return false
 	}
 
-	if y := strings.Fields(x[1]); len(y) == 0 || y[0] != pollerName {
-		return false
+	if verifyPollerName {
+		if y := strings.Fields(x[1]); len(y) == 0 || y[0] != pollerName {
+			return false
+		}
 	}
 	return true
+}
+
+func stopGhostPollers(search string, skipPoller []string) {
+	result, err := util.GetProcessPid(search)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	pids := util.RemoveEmptyStrings(strings.Split(result, "\n"))
+	for _, pid := range pids {
+		p, err := strconv.Atoi(strings.TrimSpace(pid))
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		c, err := util.GetCmdLine(p)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+
+		if checkPollerIdentity(c, "", false) {
+			// skip if this poller is defined in harvest config
+			var skip bool
+			for _, s := range skipPoller {
+				if strings.Contains(c, s) {
+					skip = true
+					break
+				}
+			}
+			// if poller doesn't exists in harvest config
+			if !skip {
+				proc, err := os.FindProcess(p)
+				if err != nil {
+					fmt.Println(err)
+					continue
+				}
+				// send terminate signal
+				if err := proc.Signal(syscall.SIGTERM); err != nil {
+					if os.IsPermission(err) {
+						fmt.Println(err)
+					}
+					fmt.Println(err)
+				}
+			}
+		}
+	}
 }
 
 func killPoller(pollerName string) *pollerStatus {
@@ -337,7 +394,7 @@ func killPoller(pollerName string) *pollerStatus {
 			// last column can contain whitespace, so we should get at least 11
 			if fields := strings.Fields(line); len(fields) > 10 {
 				// CLI args are everything after 10th column
-				if checkPollerIdentity(strings.Join(fields[10:], " "), pollerName) {
+				if checkPollerIdentity(strings.Join(fields[10:], " "), pollerName, true) {
 					if x, err := strconv.Atoi(fields[1]); err == nil {
 						s.pid = x
 					}

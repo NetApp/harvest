@@ -6,6 +6,13 @@
 */
 package util
 
+import (
+	"bytes"
+	"fmt"
+	"io/ioutil"
+	"os/exec"
+)
+
 func MinLen(elements [][]string) int {
 	var min, i int
 	min = len(elements[0])
@@ -49,4 +56,32 @@ func EqualStringSlice(a, b []string) bool {
 		}
 	}
 	return true
+}
+
+func GetCmdLine(pid int) (string, error) {
+	data, err := ioutil.ReadFile(fmt.Sprintf("/proc/%d/cmdline", pid))
+	if err != nil {
+		return "", err
+	}
+	result := string(bytes.ReplaceAll(data, []byte("\x00"), []byte(" ")))
+	return result, err
+}
+
+func RemoveEmptyStrings(s []string) []string {
+	var r []string
+	for _, str := range s {
+		if str != "" {
+			r = append(r, str)
+		}
+	}
+	return r
+}
+
+func GetProcessPid(search string) (string, error) {
+	data, err := exec.Command("pgrep", "-f", search).Output()
+	if err != nil {
+		return "", err
+	}
+	result := string(data)
+	return result, err
 }
