@@ -1,9 +1,15 @@
+# github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d
+github.com/StackExchange/wmi
+# github.com/go-ole/go-ole v1.2.4
+github.com/go-ole/go-ole
+github.com/go-ole/go-ole/oleutil
 # github.com/hashicorp/go-version v1.3.0
 ## explicit
 github.com/hashicorp/go-version
 # github.com/inconshreveable/mousetrap v1.0.0
 github.com/inconshreveable/mousetrap
 # github.com/pkg/errors v0.9.1
+## explicit
 github.com/pkg/errors
 # github.com/rs/zerolog v1.22.0
 ## explicit
@@ -11,13 +17,24 @@ github.com/rs/zerolog
 github.com/rs/zerolog/internal/cbor
 github.com/rs/zerolog/internal/json
 github.com/rs/zerolog/pkgerrors
+# github.com/shirou/gopsutil v3.21.5+incompatible
+## explicit
+# github.com/shirou/gopsutil/v3 v3.21.5
+## explicit
+github.com/shirou/gopsutil/v3/cpu
+github.com/shirou/gopsutil/v3/internal/common
+github.com/shirou/gopsutil/v3/mem
+github.com/shirou/gopsutil/v3/net
+github.com/shirou/gopsutil/v3/process
 # github.com/spf13/cobra v1.1.3
 ## explicit
 github.com/spf13/cobra
 # github.com/spf13/pflag v1.0.5
 github.com/spf13/pflag
-# golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a
-## explicit
+# github.com/tklauser/go-sysconf v0.3.4
+github.com/tklauser/go-sysconf
+# github.com/tklauser/numcpus v0.2.1
+github.com/tklauser/numcpus
 # golang.org/x/sys v0.0.0-20210603125802-9665404d3644
 ## explicit
 golang.org/x/sys/internal/unsafeheader

@@ -27,6 +27,7 @@ import (
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/set"
 	"goharvest2/pkg/tree/node"
+	"goharvest2/pkg/util"
 	"io/ioutil"
 	"net"
 	_ "net/http/pprof" // #nosec since pprof is off by default
@@ -160,6 +161,18 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 	c1, c2 := getMaxLengths(pollers, 20, 20)
 	printHeader(opts.longStatus, c1, c2)
 	printBreak(opts.longStatus, c1, c2)
+
+	var pollerNames []string
+	for _, p := range pollers.GetChildren() {
+		pollerNames = append(pollerNames, p.GetNameS())
+	}
+	// stop pollers which may have been renamed
+	if opts.command == "stop" || opts.command == "restart" {
+		err = util.KillProcess("--poller", pollerNames)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
 
 	for _, p := range pollers.GetChildren() {
 

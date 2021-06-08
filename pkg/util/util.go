@@ -6,6 +6,12 @@
 */
 package util
 
+import (
+	"github.com/shirou/gopsutil/v3/process"
+	"strings"
+	"syscall"
+)
+
 func MinLen(elements [][]string) int {
 	var min, i int
 	min = len(elements[0])
@@ -49,4 +55,33 @@ func EqualStringSlice(a, b []string) bool {
 		}
 	}
 	return true
+}
+
+// KillProcess Stops process whose cmdline matches the search string but not inside skip slice
+func KillProcess(search string, skip []string) error {
+	processes, err := process.Processes()
+	if err != nil {
+		return err
+	}
+	for _, p := range processes {
+		c, err := p.Cmdline()
+		if err != nil {
+			return err
+		}
+		for _, s := range skip {
+			if strings.Contains(c, s) {
+				continue
+			}
+			if strings.Contains(c, search) && strings.Contains(c, search) {
+				err = p.SendSignal(syscall.SIGINT)
+				if err != nil {
+					err = p.Kill()
+					if err != nil {
+						return err
+					}
+				}
+			}
+		}
+	}
+	return nil
 }
