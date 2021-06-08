@@ -8,9 +8,13 @@ package util
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"os/exec"
+	"strconv"
+	"strings"
 )
 
 func MinLen(elements [][]string) int {
@@ -64,7 +68,7 @@ func GetCmdLine(pid int) (string, error) {
 		return "", err
 	}
 	result := string(bytes.ReplaceAll(data, []byte("\x00"), []byte(" ")))
-	return result, err
+	return result, nil
 }
 
 func RemoveEmptyStrings(s []string) []string {
@@ -77,11 +81,47 @@ func RemoveEmptyStrings(s []string) []string {
 	return r
 }
 
-func GetProcessPid(search string) (string, error) {
+func GetProcessPid(search string) ([]int, error) {
+	var result []int
+	var ee *exec.ExitError
+	var pe *os.PathError
 	data, err := exec.Command("pgrep", "-f", search).Output()
-	if err != nil {
-		return "", err
+	if errors.As(err, &ee) {
+		return result, nil
+	} else if errors.As(err, &pe) {
+		return result, err
+	} else if err != nil {
+		return result, err
 	}
-	result := string(data)
+	sdata := string(data)
+	pids := RemoveEmptyStrings(strings.Split(sdata, "\n"))
+	for _, pid := range pids {
+		p, err := strconv.Atoi(strings.TrimSpace(pid))
+		if err != nil {
+			return result, err
+		}
+		result = append(result, p)
+	}
 	return result, err
 }
+
+func ContainsWholeWord(source string, search string) bool {
+	if len(source) == 0 || len(search) == 0 {
+		return false
+	}
+	fields := strings.Fields(source)
+	for _, w := range fields {
+		if w == search {
+			return true
+		}
+	}
+	return false
+}
+
+//func main() {
+//	result, err := GetProcessPid("test")
+//	if err != nil {
+//		fmt.Println(err)
+//	}
+//	fmt.Println(result)
+//}

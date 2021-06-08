@@ -336,21 +336,15 @@ func checkPollerIdentity(cmdline, pollerName string, verifyPollerName bool) bool
 }
 
 func stopGhostPollers(search string, skipPoller []string) {
-	result, err := util.GetProcessPid(search)
+	pids, err := util.GetProcessPid(search)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("Error while executing pgrep %v \n", err)
 		return
 	}
-	pids := util.RemoveEmptyStrings(strings.Split(result, "\n"))
-	for _, pid := range pids {
-		p, err := strconv.Atoi(strings.TrimSpace(pid))
-		if err != nil {
-			fmt.Println(err)
-			continue
-		}
+	for _, p := range pids {
 		c, err := util.GetCmdLine(p)
 		if err != nil {
-			fmt.Println(err)
+			fmt.Printf("Missing pid %d %v \n", p, err)
 			continue
 		}
 
@@ -358,7 +352,7 @@ func stopGhostPollers(search string, skipPoller []string) {
 			// skip if this poller is defined in harvest config
 			var skip bool
 			for _, s := range skipPoller {
-				if strings.Contains(c, s) {
+				if util.ContainsWholeWord(c, s) {
 					skip = true
 					break
 				}
@@ -367,15 +361,14 @@ func stopGhostPollers(search string, skipPoller []string) {
 			if !skip {
 				proc, err := os.FindProcess(p)
 				if err != nil {
-					fmt.Println(err)
+					fmt.Printf("process not found for pid %d %v \n", p, err)
 					continue
 				}
 				// send terminate signal
 				if err := proc.Signal(syscall.SIGTERM); err != nil {
 					if os.IsPermission(err) {
-						fmt.Println(err)
+						fmt.Printf("Insufficient priviliges to terminate process %v \n", err)
 					}
-					fmt.Println(err)
 				}
 			}
 		}
