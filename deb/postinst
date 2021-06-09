@@ -24,10 +24,14 @@ mkdir -p /var/log/harvest
 mkdir -p /var/run/harvest
 chown -R harvest:harvest /var/log/harvest
 chown -R harvest:harvest /var/run/harvest
+chmod -R u+s /opt/harvest/bin
+chmod -R g+s /opt/harvest/bin
 
 echo "  --> copying service"
 cp /opt/harvest/service/harvest.service /etc/systemd/system/
 chmod 664 /etc/systemd/system/harvest.service
+echo "  --> copying harvest.conf to tmpfiles.d"
+cp /opt/harvest/service/harvest.conf /usr/lib/tmpfiles.d/
 
 systemctl daemon-reload
 systemctl start harvest.service

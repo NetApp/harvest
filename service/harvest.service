@@ -10,6 +10,9 @@ WorkingDirectory=/opt/harvest
 ExecStart=/opt/harvest/bin/harvest \
     restart \
     --config /opt/harvest/harvest.yml
+ExecStop=/opt/harvest/bin/harvest \
+    stop \
+    --config /opt/harvest/harvest.yml
 IgnoreSIGPIPE=no
 KillMode=process
 Restart=on-failure
