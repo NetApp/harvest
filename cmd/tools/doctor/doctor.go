@@ -198,6 +198,7 @@ func printRedactedConfig(path string, contents []byte) string {
 }
 
 func sanitize(nodes []*yaml.Node) {
+	// Update this list when there are additional tokens to sanitize
 	sanitizeWords := []string{"username", "password", "grafana_api_token", "token",
 		"host", "addr"}
 	for i, node := range nodes {
@@ -205,10 +206,12 @@ func sanitize(nodes []*yaml.Node) {
 			continue
 		}
 		if node.Kind == yaml.ScalarNode && node.ShortTag() == "!!str" {
-			// Update this list of conditionals if there are other tokens you want to sanitize
 			value := node.Value
 			for _, word := range sanitizeWords {
 				if value == word {
+					if nodes[i-1].Value == "auth_style" {
+						continue
+					}
 					nodes[i+1].SetString("-REDACTED-")
 				}
 			}
