@@ -25,7 +25,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
 	_ "goharvest2/cmd/collectors/unix"
 	_ "goharvest2/cmd/collectors/zapi/collector"
 	_ "goharvest2/cmd/collectors/zapiperf"
@@ -53,6 +52,8 @@ import (
 	"strings"
 	"sync"
 	"syscall"
+
+	"github.com/spf13/cobra"
 )
 
 // default params
@@ -753,7 +754,7 @@ func init() {
 	flags.BoolVar(&args.Daemon, "daemon", false, "Start as daemon")
 	flags.IntVarP(&args.LogLevel, "loglevel", "l", 2, "Logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)")
 	flags.IntVar(&args.Profiling, "profiling", 0, "If profiling port > 0, enables profiling via localhost:PORT/debug/pprof/")
-	flags.StringVar(&args.PromPort, "promPort", "", "Prometheus Port")
+	flags.StringVar(&args.PromPort, "promPort", "1", "Prometheus Port")
 	flags.StringVar(&args.Config, "config", configPath, "harvest config file path")
 	flags.StringSliceVarP(&args.Collectors, "collectors", "c", []string{}, "only start these collectors (overrides harvest.yml)")
 	flags.StringSliceVarP(&args.Objects, "objects", "o", []string{}, "only start these objects (overrides collector config)")
