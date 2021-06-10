@@ -15,6 +15,7 @@ func TestRedaction(t *testing.T) {
 	assertRedacted(t, "# foo\nusername: pass\n#foot", `username: -REDACTED-`)
 	assertRedacted(t, `host: 1.2.3.4`, `host: -REDACTED-`)
 	assertRedacted(t, `addr: 1.2.3.4`, `addr: -REDACTED-`)
+	assertRedacted(t, "auth_style: password\nusername: cat", "auth_style: password\nusername: -REDACTED-")
 }
 
 func assertRedacted(t *testing.T, input, redacted string) {
