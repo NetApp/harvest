@@ -19,7 +19,7 @@ There are also several quality-of-life bug fixes listed below.
 - Allow insecure Grafana TLS connections `--insecure` and honor requested transport. See `harvest grafana --help` for details [#111](https://github.com/NetApp/harvest/issues/111)
 - Prometheus dashboards don't load when `exemplar` is true. Thanks to @sevenval-admins, @florianmulatz, and @unbreakabl3 for their help tracking this down and suggesting a fix. [#96](https://github.com/NetApp/harvest/issues/96)
 - `harvest stop` does not stop pollers that have been renamed [#20](https://github.com/NetApp/harvest/issues/20)
-- Harvest stops working after reboot on CentOS / RHEL [#50](https://github.com/NetApp/harvest/issues/50)
+- Harvest stops working after reboot on rpm/deb [#50](https://github.com/NetApp/harvest/issues/50)
 - `harvest start` shall start as harvest user in rpm/deb [#129](https://github.com/NetApp/harvest/issues/129)
 - `harvest start` detects stale pidfiles and makes start idempotent [#123](https://github.com/NetApp/harvest/issues/123)
 - Prometheus exporter should include meta-tags for pseudo-metrics [#104](https://github.com/NetApp/harvest/issues/104)
