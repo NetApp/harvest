@@ -32,5 +32,3 @@ export_options:
     - svm
     - aggr
     - type
-  graphite_leafs:
-    - svm.{svm}.{node}.{aggr}.{volume}

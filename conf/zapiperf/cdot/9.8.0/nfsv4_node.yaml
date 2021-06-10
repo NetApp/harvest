@@ -98,8 +98,6 @@ export_options:
   instance_keys:
     - node
     - nfsv
-  graphite_leafs:
-    - node.{node}.nfsv4
 
 override:
   - access_total: rate

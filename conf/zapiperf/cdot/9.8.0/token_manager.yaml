@@ -27,5 +27,3 @@ export_options:
   instance_keys:
     - node
     - token
-  graphite_leafs:
-    - node.{node}.msft_odx

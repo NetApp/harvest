@@ -45,5 +45,3 @@ export_options:
     - lun # edited by plugin
     - volume # added by plugin
     - svm
-  graphite_leafs:
-    - svm.{svm}.vol.{volume}.{lun}
