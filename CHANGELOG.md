@@ -21,7 +21,9 @@ There are also several quality-of-life bug fixes listed below.
 - `harvest stop` does not stop pollers that have been renamed [#20](https://github.com/NetApp/harvest/issues/20)
 - Harvest stops working after reboot on CentOS / RHEL [#50](https://github.com/NetApp/harvest/issues/50)
 - `harvest start` shall start as harvest user in rpm/deb [#129](https://github.com/NetApp/harvest/issues/129)
-
+- `harvest start` detects stale pidfiles and makes start idempotent [#123](https://github.com/NetApp/harvest/issues/123)
+- Prometheus exporter should include meta-tags for pseudo-metrics [#104](https://github.com/NetApp/harvest/issues/104)
+- Don't include unknown metrics when talking with older versions of ONTAP [#116](https://github.com/NetApp/harvest/issues/116)
 ### Enhancements
 - InfluxDB exporter supports [user-defined URLs](https://github.com/NetApp/harvest/blob/main/cmd/exporters/influxdb/README.md#parameters)
 - Add workload counters to ZapiPerf [#9](https://github.com/NetApp/harvest/issues/9)
@@ -31,6 +33,7 @@ There are also several quality-of-life bug fixes listed below.
 - Vendor 3rd party code to increase reliability and make it easier to build in air-gapped environments [#26](https://github.com/NetApp/harvest/pull/26)
 - Make contributing easier with a digital CCLA instead of 1970's era PDF :)
 - Enable GitHub security code scanning
+- InfluxDB exporter provides the option to pass the URL end-point unchanged. Thanks to @steverweber for their suggestion and validation. [#63](https://github.com/NetApp/harvest/issues/63)
  
 ## 21.05.1 / 2021-05-20
 
