@@ -31,5 +31,3 @@ export_options:
     - svm
   instance_labels:
     - state
-  graphite_leafs:
-    - svm.{svm}.volume.{volume}.lun.{lun}

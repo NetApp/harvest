@@ -48,5 +48,3 @@ export_options:
     - node
     - port
     - speed
-  graphite_leafs:
-    - node.{node}.fcp.{port}

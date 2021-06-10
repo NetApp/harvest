@@ -30,5 +30,3 @@ export_options:
     - lif
     - node
     - svm
-  graphite_leafs:
-    - svm.{svm}.iscsi_lif.{lif}
