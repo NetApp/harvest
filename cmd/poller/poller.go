@@ -25,7 +25,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
 	_ "goharvest2/cmd/collectors/unix"
 	_ "goharvest2/cmd/collectors/zapi/collector"
 	_ "goharvest2/cmd/collectors/zapiperf"
@@ -53,6 +52,8 @@ import (
 	"strings"
 	"sync"
 	"syscall"
+
+	"github.com/spf13/cobra"
 )
 
 // default params
