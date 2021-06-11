@@ -116,6 +116,14 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
+	var pollerNames []string
+	for _, p := range pollers.GetChildren() {
+		pollerNames = append(pollerNames, p.GetNameS())
+	}
+	// do this before filtering of pollers
+	// stop pollers which may have been renamed or no longer exists in harvest.yml
+	stopGhostPollers("poller", pollerNames)
+
 	pollersFromCmdLine := args
 	if len(pollersFromCmdLine) > 0 {
 		// verify poller names
@@ -137,13 +145,6 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 			}
 		}
 	}
-
-	var pollerNames []string
-	for _, p := range pollers.GetChildren() {
-		pollerNames = append(pollerNames, p.GetNameS())
-	}
-	// stop pollers which may have been renamed or no longer exists in harvest.yml
-	stopGhostPollers("poller", pollerNames)
 
 	if opts.foreground {
 		if opts.command != "start" {
