@@ -182,7 +182,7 @@ func (me *Prometheus) Init() error {
 		me.Logger.Debug().Msgf("using custom local addr [%s]", x)
 	}
 
-	go me.startHttpD(addr, string(port))
+	go me.startHttpD(addr, port)
 
 	// @TODO: implement error checking to enter failed state if HTTPd failed
 	// (like we did in Alpha)
