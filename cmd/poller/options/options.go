@@ -44,7 +44,7 @@ func (o *Options) String() string {
 		fmt.Sprintf("%s = %v", "Daemon", o.Daemon),
 		fmt.Sprintf("%s = %v", "Debug", o.Debug),
 		fmt.Sprintf("%s = %d", "Profiling", o.Profiling),
-		fmt.Sprintf("%s = %s", "PromPort", o.PromPort),
+		fmt.Sprintf("%s = %d", "PromPort", o.PromPort),
 		fmt.Sprintf("%s = %d", "LogLevel", o.LogLevel),
 		fmt.Sprintf("%s = %s", "HomePath", o.HomePath),
 		fmt.Sprintf("%s = %s", "LogPath", o.LogPath),
