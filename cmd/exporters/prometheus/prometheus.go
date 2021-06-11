@@ -159,15 +159,21 @@ func (me *Prometheus) Init() error {
 	// finally the most important and only required parameter: port
 	// can be passed to us either as an option or as a parameter
 	port := me.Options.PromPort
-	if port == "" {
-		port = me.Params.GetChildContentS("port")
+	if port == 0 {
+		p, err := strconv.Atoi(me.Params.GetChildContentS("port"))
+		if err != nil {
+			me.Logger.Error().Stack().Err(err).Msg("Issue while reading prometheus port")
+			//return errors.New(errors.INVALID_PARAM, "port")
+		} else {
+			port = p
+		}
 	}
 
 	// sanity check on port
-	if port == "" {
+	if port == 0 {
 		return errors.New(errors.MISSING_PARAM, "port")
-	} else if _, err := strconv.Atoi(port); err != nil {
-		return errors.New(errors.INVALID_PARAM, "port ("+port+")")
+	} else if port < 0 {
+		return errors.New(errors.INVALID_PARAM, "port")
 	}
 
 	addr := localHttpAddr
@@ -176,7 +182,7 @@ func (me *Prometheus) Init() error {
 		me.Logger.Debug().Msgf("using custom local addr [%s]", x)
 	}
 
-	go me.startHttpD(addr, port)
+	go me.startHttpD(addr, string(port))
 
 	// @TODO: implement error checking to enter failed state if HTTPd failed
 	// (like we did in Alpha)
