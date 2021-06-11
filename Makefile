@@ -84,11 +84,11 @@ all: package ## Build, Test, Package
 harvest: deps
 	@# Build the harvest cli
 	@echo "Building harvest"
-	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o bin/harvest -ldflags=$(LD_FLAGS) cmd/harvest/harvest.go
+	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -trimpath -o bin/harvest -ldflags=$(LD_FLAGS) cmd/harvest/harvest.go
 
 	@# Build the harvest poller
 	@echo "Building poller"
-	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o bin/poller -ldflags=$(LD_FLAGS) cmd/poller/poller.go
+	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -trimpath -o bin/poller -ldflags=$(LD_FLAGS) cmd/poller/poller.go
 
 	@# Build the daemonizer for the pollers
 	@echo "Building daemonizer"
@@ -96,11 +96,11 @@ harvest: deps
 
 	@# Build the zapi tool
 	@echo "Building zapi tool"
-	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o bin/zapi -ldflags=$(LD_FLAGS) cmd/tools/zapi/main/main.go
+	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -trimpath -o bin/zapi -ldflags=$(LD_FLAGS) cmd/tools/zapi/main/main.go
 
 	@# Build the grafana tool
 	@echo "Building grafana tool"
-	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o bin/grafana -ldflags=$(LD_FLAGS) cmd/tools/grafana/main/main.go
+	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -trimpath -o bin/grafana -ldflags=$(LD_FLAGS) cmd/tools/grafana/main/main.go
 
 ###############################################################################
 # Collectors
@@ -110,14 +110,14 @@ collectors: deps
 	@for collector in ${COLLECTORS}; do                                                   \
 		cd cmd/collectors/$${collector};                                              \
 		echo "  Building $${collector}";                                              \
-		GOOS=$(GOOS) GOARCH=$(GOARCH) go build -ldflags=$(LD_FLAGS) -buildmode=plugin -o ../../../bin/collectors/"$${collector}".so;     \
+		GOOS=$(GOOS) GOARCH=$(GOARCH) go build -trimpath -ldflags=$(LD_FLAGS) -buildmode=plugin -o ../../../bin/collectors/"$${collector}".so;     \
 		if [ -d plugins ]; then                                                       \
 			echo "    Building plugins for $${collector}";                        \
 	        	cd plugins;                                                           \
 	        	for plugin in `ls`; do                                                \
 				echo "        Building: $${plugin}";                          \
 				cd $${plugin};                                                \
-				GOOS=$(GOOS) GOARCH=$(GOARCH) go build -ldflags=$(LD_FLAGS) -buildmode=plugin -o ../../../../../bin/plugins/"$${collector}"/"$${plugin}".so; \
+				GOOS=$(GOOS) GOARCH=$(GOARCH) go build -trimpath -ldflags=$(LD_FLAGS) -buildmode=plugin -o ../../../../../bin/plugins/"$${collector}"/"$${plugin}".so; \
 				cd ../;                                                       \
 			done;                                                                 \
 			cd ../../../../;                                                      \
@@ -134,7 +134,7 @@ exporters: deps
 	@for exporter in ${EXPORTERS}; do                                                     \
 		cd cmd/exporters/$${exporter};                                                \
 		echo "  Building $${exporter}";                                               \
-		GOOS=$(GOOS) GOARCH=$(GOARCH) go build -ldflags=$(LD_FLAGS) -buildmode=plugin -o ../../../bin/exporters/"$${exporter}".so;       \
+		GOOS=$(GOOS) GOARCH=$(GOARCH) go build -trimpath -ldflags=$(LD_FLAGS) -buildmode=plugin -o ../../../bin/exporters/"$${exporter}".so;       \
 	       	cd - > /dev/null;                                                             \
 	done
 
