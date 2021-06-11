@@ -15,14 +15,14 @@ import (
 	"time"
 )
 
-func (me *Prometheus) startHttpD(addr, port string) {
+func (me *Prometheus) startHttpD(addr string, port int) {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", me.ServeInfo)
 	mux.HandleFunc("/metrics", me.ServeMetrics)
 
 	me.Logger.Debug().Msgf("(httpd) starting server at [%s:%s]", addr, port)
-	server := &http.Server{Addr: addr + ":" + port, Handler: mux}
+	server := &http.Server{Addr: addr + ":" + fmt.Sprint(port), Handler: mux}
 
 	if err := server.ListenAndServe(); err != nil {
 		me.Logger.Fatal().Msgf(" (httpd) %v", err.Error())

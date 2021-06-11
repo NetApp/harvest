@@ -24,7 +24,7 @@ type Options struct {
 	Daemon bool   // if true, Poller is started as daemon
 	Debug  bool   // if true, Poller is started in debug mode
 	// this mostly means that no data will be exported
-	PromPort   string   // HTTP port that is assigned to Poller and can be used by the Prometheus exporter
+	PromPort   int      // HTTP port that is assigned to Poller and can be used by the Prometheus exporter
 	Config     string   // filepath of Harvest config (defaults to "harvest.yml") can be relative or absolute path
 	HomePath   string   // path to harvest home (usually "/opt/harvest")
 	LogPath    string   // log files location (usually "/var/log/harvest")
@@ -44,7 +44,7 @@ func (o *Options) String() string {
 		fmt.Sprintf("%s = %v", "Daemon", o.Daemon),
 		fmt.Sprintf("%s = %v", "Debug", o.Debug),
 		fmt.Sprintf("%s = %d", "Profiling", o.Profiling),
-		fmt.Sprintf("%s = %s", "PromPort", o.PromPort),
+		fmt.Sprintf("%s = %d", "PromPort", o.PromPort),
 		fmt.Sprintf("%s = %d", "LogLevel", o.LogLevel),
 		fmt.Sprintf("%s = %s", "HomePath", o.HomePath),
 		fmt.Sprintf("%s = %s", "LogPath", o.LogPath),
