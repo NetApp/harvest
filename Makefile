@@ -82,11 +82,11 @@ all: package ## Build, Test, Package
 harvest: deps
 	@# Build the harvest cli
 	@echo "Building harvest"
-	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o bin/harvest -ldflags=$(LD_FLAGS) cmd/harvest/harvest.go
+	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -trimpath -o bin/harvest -ldflags=$(LD_FLAGS) cmd/harvest/harvest.go
 
 	@# Build the harvest poller
 	@echo "Building poller"
-	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o bin/poller -ldflags=$(LD_FLAGS) cmd/poller/poller.go
+	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -trimpath -o bin/poller -ldflags=$(LD_FLAGS) cmd/poller/poller.go
 
 	@# Build the daemonize for the pollers
 	@echo "Building daemonize"
@@ -94,11 +94,11 @@ harvest: deps
 
 	@# Build the zapi tool
 	@echo "Building zapi tool"
-	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o bin/zapi -ldflags=$(LD_FLAGS) cmd/tools/zapi/main/main.go
+	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -trimpath -o bin/zapi -ldflags=$(LD_FLAGS) cmd/tools/zapi/main/main.go
 
 	@# Build the grafana tool
 	@echo "Building grafana tool"
-	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o bin/grafana -ldflags=$(LD_FLAGS) cmd/tools/grafana/main/main.go
+	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -trimpath -o bin/grafana -ldflags=$(LD_FLAGS) cmd/tools/grafana/main/main.go
 
 ###############################################################################
 # Build tar gz distribution
