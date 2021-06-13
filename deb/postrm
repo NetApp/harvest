@@ -16,8 +16,6 @@ if [[ "$1" == "purge" || "$1" == "remove" ]]; then
       systemctl daemon-reload
       systemctl reset-failed
     fi
-    rm -rf /var/run/harvest && echo " --> delete pid directory"
-    rm -rf /usr/lib/tmpfiles.d/harvest.conf && echo "  --> removing tmpfiles.d harvest configuration"
     if [  -e /usr/bin/harvest ]; then
       unlink /usr/bin/harvest && echo " --> delete link"
     fi

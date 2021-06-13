@@ -49,7 +49,6 @@ cd $RPM_BUILD_ROOT/opt/harvest
 echo " --> installing harvest..."
 cd $RPM_BUILD_ROOT/opt/harvest
 mkdir -p $RPM_BUILD_ROOT/var/log/harvest
-mkdir -p $RPM_BUILD_ROOT/var/run/harvest
 
 %post
 # After installation/upgrade, copy latest harvest.yml as harvest.example.yml
@@ -70,14 +69,11 @@ getent passwd harvest > /dev/null 2>&1 || useradd -r -M -g harvest --shell=/sbin
 
 chown -R harvest:harvest $RPM_BUILD_ROOT/opt/harvest/
 chown -R harvest:harvest $RPM_BUILD_ROOT/var/log/harvest/
-chown -R harvest:harvest $RPM_BUILD_ROOT/var/run/harvest/
 chmod -R u+s $RPM_BUILD_ROOT/opt/harvest/bin
 chmod -R g+s $RPM_BUILD_ROOT/opt/harvest/bin
 echo "  --> copying service"
 cp $RPM_BUILD_ROOT/opt/harvest/service/harvest.service /etc/systemd/system/
 chmod 664 /etc/systemd/system/harvest.service
-echo "  --> copying harvest.conf to tmpfiles.d"
-cp $RPM_BUILD_ROOT/opt/harvest/service/harvest.conf /usr/lib/tmpfiles.d/
 
 # remove link from previous version, use /usr/bin to conform to linux fhs
 if [ -e /usr/bin/harvest ]; then
@@ -142,5 +138,4 @@ fi
 %files
 /opt/harvest
 /var/log/harvest
-/var/run/harvest
 

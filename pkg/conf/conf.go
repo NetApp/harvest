@@ -170,16 +170,8 @@ func GetHarvestLogPath() string {
 	return logPath
 }
 
-func GetHarvestPidPath() string {
-	var pidPath string
-	if pidPath = os.Getenv("HARVEST_PIDS"); pidPath == "" {
-		pidPath = "/var/run/harvest/"
-	}
-	return pidPath
-}
-
 /*
-This method returns port configured in prometheus exporter for given poller
+GetPrometheusExporterPorts returns port configured in prometheus exporter for given poller
 If there are more than 1 exporter configured for a poller then return string will have ports as comma seperated
 */
 func GetPrometheusExporterPorts(p *node.Node, configFp string) (string, error) {
