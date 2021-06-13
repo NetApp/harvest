@@ -1,9 +1,7 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
+ */
 
- Package Description:
-    Some helper methods.
-*/
 package util
 
 import (
@@ -16,6 +14,9 @@ import (
 	"strconv"
 	"strings"
 )
+
+// HarvestTag is injected into a poller's environment to disambiguate the process
+const HarvestTag = "IS_HARVEST=TRUE"
 
 func MinLen(elements [][]string) int {
 	var min, i int
@@ -62,13 +63,21 @@ func EqualStringSlice(a, b []string) bool {
 	return true
 }
 
-func GetCmdLine(pid int) (string, error) {
-	data, err := ioutil.ReadFile(fmt.Sprintf("/proc/%d/cmdline", pid))
+func readProcFile(path string) (string, error) {
+	data, err := ioutil.ReadFile(path)
 	if err != nil {
 		return "", err
 	}
 	result := string(bytes.ReplaceAll(data, []byte("\x00"), []byte(" ")))
 	return result, nil
+}
+
+func GetEnviron(pid int) (string, error) {
+	return readProcFile(fmt.Sprintf("/proc/%d/environ", pid))
+}
+
+func GetCmdLine(pid int) (string, error) {
+	return readProcFile(fmt.Sprintf("/proc/%d/cmdline", pid))
 }
 
 func RemoveEmptyStrings(s []string) []string {
@@ -81,7 +90,14 @@ func RemoveEmptyStrings(s []string) []string {
 	return r
 }
 
-func GetProcessPids(search string) ([]int, error) {
+func GetPid(pollerName string) ([]int, error) {
+	// ($|\s) is included to match the poller name
+	// followed by a space or end of line - that way unix1 does not match unix11
+	search := fmt.Sprintf(`\-\-poller %s($|\s)`, pollerName)
+	return GetPids(search)
+}
+
+func GetPids(search string) ([]int, error) {
 	var result []int
 	var ee *exec.ExitError
 	var pe *os.PathError
@@ -100,7 +116,20 @@ func GetProcessPids(search string) ([]int, error) {
 		if err != nil {
 			return result, err
 		}
-		result = append(result, p)
+
+		// Validate this is a Harvest process
+		environ, err := GetEnviron(p)
+		if err != nil {
+			if errors.As(err, &pe) {
+				// permission denied, no need to log
+				continue
+			}
+			fmt.Printf("err reading environ for search=%s pid=%d err=%+v\n", search, p, err)
+			continue
+		}
+		if strings.Contains(environ, HarvestTag) {
+			result = append(result, p)
+		}
 	}
 	return result, err
 }

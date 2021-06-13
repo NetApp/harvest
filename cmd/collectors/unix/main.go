@@ -12,10 +12,9 @@ import (
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/set"
 	"goharvest2/pkg/tree/node"
-	"io/ioutil"
+	"goharvest2/pkg/util"
 	"os"
 	"os/exec"
-	"path"
 	"runtime"
 	"strconv"
 	"strings"
@@ -288,13 +287,10 @@ func (me *Unix) PollInstance() (*matrix.Matrix, error) {
 	}
 
 	for _, name := range pollerNames {
-		pidf := path.Join(me.Options.PidPath, name+".pid")
-
 		pid := ""
-
-		if x, err := ioutil.ReadFile(pidf); err == nil {
-			//logger.Debug(me.Prefix, "skip instance (%s), err pidf: %v", name, err)
-			pid = string(x)
+		pids, err := util.GetPid(name)
+		if err == nil && len(pids) == 1 {
+			pid = strconv.Itoa(pids[0])
 		}
 
 		if instance := me.Matrix.GetInstance(name); instance == nil {
