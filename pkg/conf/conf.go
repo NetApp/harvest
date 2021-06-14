@@ -1,7 +1,10 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
-package conf
+package main
+
+
+//package conf
 
 import (
 	"fmt"
@@ -9,10 +12,13 @@ import (
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/tree"
 	"goharvest2/pkg/tree/node"
+	"goharvest2/pkg/util"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"os"
 	"path"
+	"regexp"
+	"strconv"
 )
 
 // LoadConfig loads the config info from harvest.yml
@@ -178,33 +184,92 @@ func GetHarvestPidPath() string {
 	return pidPath
 }
 
+func main() {
+	configFp := "/home/rahulg2/code/github/harvest/harvest.yml"
+	if Config == (HarvestConfig{}) {
+		LoadHarvestConfig(configFp)
+	}
+
+	for k,_ := range *Config.Pollers {
+		GetPrometheusExporterPorts(k, configFp)
+	}
+}
+
 /*
 This method returns port configured in prometheus exporter for given poller
 If there are more than 1 exporter configured for a poller then return string will have ports as comma seperated
 */
-func GetPrometheusExporterPorts(p *node.Node, configFp string) (string, error) {
-	var port string
-	exporters := p.GetChildS("exporters")
-	if exporters != nil {
-		exportChildren := exporters.GetAllChildContentS()
-		definedExporters, err := GetExporters(configFp)
-		if err != nil {
-			return "", err
-		}
-		for _, ec := range exportChildren {
-			promNode := definedExporters.GetChildS(ec)
-			if promNode == nil {
-				fmt.Printf("poller [%s] specified exporter [%s] that does not exist\n", p.GetNameS(), ec)
-				continue
+func GetPrometheusExporterPorts(pollerName string, configFp string) (int, error) {
+	var port int
+
+	if Config == (HarvestConfig{}) {
+		LoadHarvestConfig(configFp)
+	}
+	if len(promPortRangeMapping) == 0 {
+		LoadPrometheusExporterPortRangeMapping(configFp)
+	}
+	exporters := (*Config.Pollers)[pollerName].Exporters
+
+	if exporters != nil && len(*exporters) > 0 {
+		for _, e := range *exporters {
+			exporter := (*Config.Exporters)[e]
+			if *exporter.Type == "Prometheus" {
+				if exporter.PortRange != nil {
+					//fmt.Println(exporter.PortRange)
+					ports := promPortRangeMapping[e]
+					for p, _ := range ports {
+						if util.CheckPortAvailable(*exporter.Addr, strconv.Itoa(p)) {
+							port = p
+							break
+						}
+					}
+					for k, _ := range ports {
+						if k == port {
+							delete(ports,k)
+							break
+						}
+					}
+					fmt.Printf("chosen port %d \n", port)
+					return port, nil
+				} else if *exporter.Port != 0 {
+					fmt.Printf("port---- %d \n", *exporter.Port)
+					port = *exporter.Port
+					return port, nil
+				}
 			}
-			exporterType := promNode.GetChildContentS("exporter")
-			if exporterType == "Prometheus" {
-				currentPort := definedExporters.GetChildS(ec).GetChildContentS("port")
-				port = currentPort
+			continue
+		}
+
+	}
+	return port, errors.New(errors.ERR_CONFIG, "No free port found for poller "+pollerName)
+}
+
+var promPortRangeMapping = make(map[string]map[int]struct{})
+
+func LoadPrometheusExporterPortRangeMapping(configFp string) {
+	if Config == (HarvestConfig{}) {
+		LoadHarvestConfig(configFp)
+	}
+	exporters := *Config.Exporters
+	for k, v := range exporters {
+		if *v.Type == "Prometheus" {
+			if v.PortRange != nil {
+				portRange := v.PortRange // [2000-2030]
+				var ports = make(map[int]struct{})
+				r := regexp.MustCompile(`\((\d+)-(\d+)\)`)
+				matches := r.FindStringSubmatch(*portRange)
+				//fmt.Println(matches)
+				if len(matches) > 0 {
+					start, _ := strconv.Atoi(matches[1])
+					end, _ := strconv.Atoi(matches[2])
+					for i := start; i <= end; i++ {
+						ports[i] = struct{}{}
+					}
+				}
+				promPortRangeMapping[k] = ports
 			}
 		}
 	}
-	return port, nil
 }
 
 // Returns unique type of exporters for the poller
@@ -265,6 +330,7 @@ type Poller struct {
 
 type Exporter struct {
 	Port              *int      `yaml:"port,omitempty"`
+	PortRange         *string   `yaml:"port_range,omitempty"`
 	Type              *string   `yaml:"exporter,omitempty"`
 	Addr              *string   `yaml:"addr,omitempty"`
 	Url               *string   `yaml:"url,omitempty"`

@@ -176,7 +176,6 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 
 		name := p.GetNameS()
 		datacenter := p.GetChildContentS("datacenter")
-		promPort := getPollerPrometheusPort(p, opts)
 
 		s = getStatus(name)
 		if opts.command == "kill" {
@@ -203,6 +202,7 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 				printStatus(opts.longStatus, c1, c2, datacenter, name, s.promPort, s)
 				break
 			case "not running", "stopped", "killed":
+				promPort := getPollerPrometheusPort(p, opts)
 				s = startPoller(name, promPort, opts)
 				printStatus(opts.longStatus, c1, c2, datacenter, name, s.promPort, s)
 			default:
@@ -662,20 +662,20 @@ func closeDial(dial *net.TCPListener) {
 }
 
 func getPollerPrometheusPort(p *node.Node, opts *options) string {
-	var promPort string
+	var promPort int
 	var err error
 	// check first if poller argument has promPort defined
 	// else in exporter config of poller
 	if opts.promPort != 0 {
-		promPort = strconv.Itoa(opts.promPort)
+		promPort = opts.promPort
 	} else {
-		promPort, err = conf.GetPrometheusExporterPorts(p, opts.config)
+		promPort, err = conf.GetPrometheusExporterPorts(p.GetNameS(), opts.config)
 		if err != nil {
 			fmt.Println(err)
-			promPort = "error"
+			return "error"
 		}
 	}
-	return promPort
+	return strconv.Itoa(promPort)
 }
 
 func init() {
