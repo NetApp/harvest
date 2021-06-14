@@ -26,6 +26,9 @@ RUN cp -aR bin $BUILD_DIR/conf $BUILD_DIR/docs $BUILD_DIR/grafana $BUILD_DIR/doc
 
 FROM alpine:latest
 
+# Work around https://github.com/mirror/busybox/issues/21
+RUN apk add wget
+
 RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.5/dumb-init_1.2.5_x86_64 && \
     chmod +x /usr/local/bin/dumb-init
 
