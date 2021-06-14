@@ -310,12 +310,19 @@ func (me *Unix) PollInstance() (*matrix.Matrix, error) {
 			me.Logger.Debug().Msgf("update instance (%s) with PID (%s)", name, pid)
 		}
 	}
-
+	rewriteIndexes := currInstances.Size() > 0
 	for name := range currInstances.Iter() {
 		me.Matrix.RemoveInstance(name)
 		me.Logger.Debug().Msgf("remove instance (%s)", name)
 	}
-
+	// If there were removals, the indexes need to be rewritten since gaps were created
+	if rewriteIndexes {
+		newMatrix := me.Matrix.Clone(false, true, false)
+		for key := range me.Matrix.GetInstances() {
+			_, _ = newMatrix.NewInstance(key)
+		}
+		me.Matrix = newMatrix
+	}
 	t := len(me.Matrix.GetInstances())
 	r := currInstances.Size()
 	a := t - (currSize - r)
