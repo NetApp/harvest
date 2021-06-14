@@ -2,7 +2,7 @@
 
 [Releases](https://github.com/NetApp/harvest/releases)
 
-## 21.05.2 / 2021-06-09
+## 21.05.2 / 2021-06-14
 
 This release adds support for user-defined URLs for InfluxDB exporter, a new command to validate your `harvest.yml` file, improved logging, panic handling, and collector documentation. We also enabled GitHub security code scanning for the Harvest repo to catch issues sooner. These scans happen on every push.
 
