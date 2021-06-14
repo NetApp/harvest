@@ -29,3 +29,7 @@ MIT License
 gopkg.in/yaml.v3
 https://github.com/go-yaml/yaml v3.0.0-20210107192922-496545a6307b
 Apache License 2.0
+
+github.com/pkg/errors
+https://github.com/pkg/errors v0.9.1
+BSD 2-Clause "Simplified" License
