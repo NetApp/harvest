@@ -1,3 +1,3 @@
 #!/bin/bash
-bin/harvest $1 $2
+bin/harvest "$@"
 `exec "sh"`

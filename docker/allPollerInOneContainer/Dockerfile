@@ -39,4 +39,4 @@ VOLUME     [ "/opt/harvest" ]
 VOLUME     [ "/var/log/harvest" ]
 
 ENTRYPOINT ["/usr/local/bin/dumb-init", "--", "./docker-entrypoint.sh"]
-CMD ["start", "--config harvest.yml"]
+CMD ["start", "--config", "harvest.yml"]
