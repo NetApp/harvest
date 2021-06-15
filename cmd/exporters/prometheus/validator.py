@@ -128,7 +128,7 @@ def main():
 
         if len(metrics) and metrics[-1] != '\n':
             errors['missing_newlines'] += 1
-            print('   {}missing newline at the end of metric barch{}'.format(PINK, END))
+            print('   {}missing newline at the end of metric batch{}'.format(PINK, END))
 
         # sleep until next scrape
         time.sleep(a.interval)
@@ -202,7 +202,7 @@ def get_args() -> argparse.Namespace:
 SYNOPSIS:
     Run this tool specifying the port of the Prometheus exporter. Then,
     start a Harvest poller that will serve the metrics on the port.
-    (Start this tools first, so no metatags are missed).
+    (Start tools first, so no metatags are missed).
 
 VALIDATION:
     Tool will validate integrity of the rendered metrics:
