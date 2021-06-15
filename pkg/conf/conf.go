@@ -1,6 +1,7 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
+
 package conf
 
 import (
@@ -13,6 +14,8 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"regexp"
+	"strconv"
 )
 
 // LoadConfig loads the config info from harvest.yml
@@ -50,6 +53,9 @@ func LoadConfig(configPath string) (*node.Node, error) {
 var Config = HarvestConfig{}
 
 func LoadHarvestConfig(configPath string) error {
+	if Config != (HarvestConfig{}) {
+		return nil
+	}
 	contents, err := ioutil.ReadFile(configPath)
 	if err != nil {
 		fmt.Printf("error reading config file=[%s] %+v\n", configPath, err)
@@ -177,6 +183,7 @@ If there are more than 1 exporter configured for a poller then return string wil
 func GetPrometheusExporterPorts(p *node.Node, configFp string) (string, error) {
 	var port string
 	exporters := p.GetChildS("exporters")
+	exportersMap := *Config.Exporters
 	if exporters != nil {
 		exportChildren := exporters.GetAllChildContentS()
 		definedExporters, err := GetExporters(configFp)
@@ -191,15 +198,20 @@ func GetPrometheusExporterPorts(p *node.Node, configFp string) (string, error) {
 			}
 			exporterType := promNode.GetChildContentS("exporter")
 			if exporterType == "Prometheus" {
-				currentPort := definedExporters.GetChildS(ec).GetChildContentS("port")
-				port = currentPort
+				exp := exportersMap[ec]
+				if exp.PortRange != nil {
+					port = exp.NextPortInRange(p.GetNameS())
+				} else {
+					currentPort := definedExporters.GetChildS(ec).GetChildContentS("port")
+					port = currentPort
+				}
 			}
 		}
 	}
 	return port, nil
 }
 
-// Returns unique type of exporters for the poller
+// GetUniqueExporters returns unique type of exporters for the poller
 // For example: If 2 prometheus exporters are configured for a poller then last one defined is returned
 func GetUniqueExporters(p *node.Node, configFp string) ([]string, error) {
 	var resultExporters []string
@@ -257,6 +269,8 @@ type Poller struct {
 
 type Exporter struct {
 	Port              *int      `yaml:"port,omitempty"`
+	PortRange         *IntRange `yaml:"port_range,omitempty"`
+	promIndex         *int      // running index used by port range
 	Type              *string   `yaml:"exporter,omitempty"`
 	Addr              *string   `yaml:"addr,omitempty"`
 	Url               *string   `yaml:"url,omitempty"`
@@ -276,9 +290,51 @@ type Exporter struct {
 	ClientTimeout *string `yaml:"client_timeout,omitempty"`
 }
 
+func (e *Exporter) NextPortInRange(poller string) string {
+	newIndex := 0
+	if e.promIndex != nil {
+		newIndex = *e.promIndex
+	}
+	newPort := e.PortRange.Min + newIndex
+	if newPort > e.PortRange.Max {
+		fmt.Printf("%d is not in port_range [%d-%d] - no port for %s\n", newPort,
+			e.PortRange.Min, e.PortRange.Max, poller)
+		return ""
+	}
+	newIndex++
+	e.promIndex = &newIndex
+	return strconv.Itoa(newPort)
+}
+
+type IntRange struct {
+	Min int
+	Max int
+}
+
+var rangeRegex, _ = regexp.Compile(`(\d+)\s*-\s*(\d+)`)
+
+func (i *IntRange) UnmarshalYAML(node *yaml.Node) error {
+	if node.Kind == yaml.ScalarNode && node.ShortTag() == "!!str" {
+		matches := rangeRegex.FindStringSubmatch(node.Value)
+		if len(matches) == 3 {
+			min, err1 := strconv.Atoi(matches[1])
+			max, err2 := strconv.Atoi(matches[2])
+			if err1 != nil {
+				return err1
+			}
+			if err2 != nil {
+				return err2
+			}
+			i.Min = min
+			i.Max = max
+		}
+	}
+	return nil
+}
+
 type HarvestConfig struct {
-	Tools     *Tools               `yaml:"Tools,omitempty"`
-	Exporters *map[string]Exporter `yaml:"Exporters,omitempty"`
-	Pollers   *map[string]Poller   `yaml:"Pollers,omitempty"`
-	Defaults  *Poller              `yaml:"Defaults,omitempty"`
+	Tools     *Tools                `yaml:"Tools,omitempty"`
+	Exporters *map[string]*Exporter `yaml:"Exporters,omitempty"`
+	Pollers   *map[string]Poller    `yaml:"Pollers,omitempty"`
+	Defaults  *Poller               `yaml:"Defaults,omitempty"`
 }
