@@ -12,10 +12,9 @@ import (
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/set"
 	"goharvest2/pkg/tree/node"
-	"io/ioutil"
+	"goharvest2/pkg/util"
 	"os"
 	"os/exec"
-	"path"
 	"runtime"
 	"strconv"
 	"strings"
@@ -288,13 +287,10 @@ func (me *Unix) PollInstance() (*matrix.Matrix, error) {
 	}
 
 	for _, name := range pollerNames {
-		pidf := path.Join(me.Options.PidPath, name+".pid")
-
 		pid := ""
-
-		if x, err := ioutil.ReadFile(pidf); err == nil {
-			//logger.Debug(me.Prefix, "skip instance (%s), err pidf: %v", name, err)
-			pid = string(x)
+		pids, err := util.GetPid(name)
+		if err == nil && len(pids) == 1 {
+			pid = strconv.Itoa(pids[0])
 		}
 
 		if instance := me.Matrix.GetInstance(name); instance == nil {
@@ -310,12 +306,19 @@ func (me *Unix) PollInstance() (*matrix.Matrix, error) {
 			me.Logger.Debug().Msgf("update instance (%s) with PID (%s)", name, pid)
 		}
 	}
-
+	rewriteIndexes := currInstances.Size() > 0
 	for name := range currInstances.Iter() {
 		me.Matrix.RemoveInstance(name)
 		me.Logger.Debug().Msgf("remove instance (%s)", name)
 	}
-
+	// If there were removals, the indexes need to be rewritten since gaps were created
+	if rewriteIndexes {
+		newMatrix := me.Matrix.Clone(false, true, false)
+		for key := range me.Matrix.GetInstances() {
+			_, _ = newMatrix.NewInstance(key)
+		}
+		me.Matrix = newMatrix
+	}
 	t := len(me.Matrix.GetInstances())
 	r := currInstances.Size()
 	a := t - (currSize - r)

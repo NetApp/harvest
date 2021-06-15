@@ -196,7 +196,7 @@ func main() {
 }
 
 /*
-This method returns port configured in prometheus exporter for given poller
+GetPrometheusExporterPorts returns port configured in prometheus exporter for given poller
 If there are more than 1 exporter configured for a poller then return string will have ports as comma seperated
 */
 func GetPrometheusExporterPorts(pollerName string, configFp string) (int, error) {

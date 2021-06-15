@@ -28,7 +28,6 @@ type Options struct {
 	Config     string   // filepath of Harvest config (defaults to "harvest.yml") can be relative or absolute path
 	HomePath   string   // path to harvest home (usually "/opt/harvest")
 	LogPath    string   // log files location (usually "/var/log/harvest")
-	PidPath    string   // pid files location (usually "/var/run/harvest")
 	LogLevel   int      // logging level, 0 for trace, 5 for fatal
 	Version    string   // harvest version
 	Hostname   string   // hostname of the machine harvest is running
@@ -48,7 +47,6 @@ func (o *Options) String() string {
 		fmt.Sprintf("%s = %d", "LogLevel", o.LogLevel),
 		fmt.Sprintf("%s = %s", "HomePath", o.HomePath),
 		fmt.Sprintf("%s = %s", "LogPath", o.LogPath),
-		fmt.Sprintf("%s = %s", "PidPath", o.PidPath),
 		fmt.Sprintf("%s = %s", "Config", o.Config),
 		fmt.Sprintf("%s = %s", "Hostname", o.Hostname),
 		fmt.Sprintf("%s = %s", "Version", o.Version),
@@ -69,6 +67,4 @@ func SetPathsAndHostname(args *Options) {
 	args.HomePath = conf.GetHarvestHomePath()
 
 	args.LogPath = conf.GetHarvestLogPath()
-
-	args.PidPath = conf.GetHarvestPidPath()
 }

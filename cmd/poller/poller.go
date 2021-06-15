@@ -16,8 +16,8 @@
 	and exporters, ping the target system, generate metadata and do some
 	housekeeping.
 
-	Usually the poller will run as a daemon. In this case it will create
-	a PID file and write logs to a file. For debugging and testing
+	Usually the poller will run as a daemon. In this case it will
+	write logs to a file. For debugging and testing
 	it can also be started as a foreground process, in this case
 	logs are sent to STDOUT.
 */
@@ -86,8 +86,6 @@ type Poller struct {
 	name           string
 	target         string
 	options        *options.Options
-	pid            int
-	pidf           string
 	schedule       *schedule.Schedule
 	collectors     []collector.Collector
 	exporters      []exporter.Exporter
@@ -175,17 +173,11 @@ func (me *Poller) Init() error {
 	go me.handleSignals(signalChannel)
 	logger.Debug().Msgf("set signal handler for %v", SIGNALS)
 
-	// write PID to file
-	if err = me.registerPid(); err != nil {
-		logger.Warn().Msgf("failed to write PID file: %v", err)
-		return err
-	}
-
 	// announce startup
 	if me.options.Daemon {
-		logger.Info().Msgf("started as daemon [pid=%d] [pid file=%s]", me.pid, me.pidf)
+		logger.Info().Msgf("started as daemon [pid=%d]", os.Getpid())
 	} else {
-		logger.Info().Msgf("started in foreground [pid=%d]", me.pid)
+		logger.Info().Msgf("started in foreground [pid=%d]", os.Getpid())
 	}
 
 	// load parameters from config (harvest.yml)
@@ -421,38 +413,9 @@ func (me *Poller) Run() {
 	}
 }
 
-// Stop gracefully exits the program by closing zeroLog file and removing pid file
+// Stop gracefully exits the program by closing zeroLog
 func (me *Poller) Stop() {
-	logger.Info().Msgf("cleaning up and stopping [pid=%d]", me.pid)
-
-	if me.options.Daemon {
-		if err := os.Remove(me.pidf); err != nil {
-			logger.Error().Stack().Err(err).Msg("clean pid file")
-		} else {
-			logger.Debug().Msgf("cleaned pid file [%s]", me.pidf)
-		}
-	}
-}
-
-// get PID and write to file if we are daemon
-func (me *Poller) registerPid() error {
-	me.pid = os.Getpid()
-
-	if me.options.Daemon {
-
-		me.pidf = path.Join(me.options.PidPath, me.name+".pid")
-
-		file, err := os.Create(me.pidf)
-
-		if err == nil {
-			if _, err = file.WriteString(strconv.Itoa(me.pid)); err == nil {
-				file.Sync()
-			}
-			file.Close()
-		}
-		return err
-	}
-	return nil
+	logger.Info().Msgf("cleaning up and stopping [pid=%d]", os.Getpid())
 }
 
 // set up signal disposition
