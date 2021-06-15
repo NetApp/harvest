@@ -15,8 +15,6 @@ export_options:
   instance_keys:
     - svm
     - volume
-  graphite_leafs:
-    - svm.{svm}.vol.{volume}
 
 override:
   - cloud_bin_operation: delta

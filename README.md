@@ -31,12 +31,14 @@ We provide pre-compiled binaries for Linux, RPMs, and Debs.
 
 ## Pre-compiled Binaries
 
-Visit the [Releases page](https://github.com/NetApp/harvest/releases) and copy the `tar.gz` link you want to download. For example, to download the `v21.05.1` release:
+### Installation 
+Visit the [Releases page](https://github.com/NetApp/harvest/releases) and copy the `tar.gz` link you want to download. For example, to download the `v21.05.2` release:
 
 ```
-wget https://github.com/NetApp/harvest/releases/download/v21.05.1/harvest-21.05.1-1.tar.gz
-tar -xvf harvest-21.05.1-1.tar.gz
-cd harvest-21.05.1-1
+RELEASE=harvest-21.05.2-1
+wget https://github.com/NetApp/harvest/releases/latest/download/$RELEASE.tar.gz
+tar -xvf $RELEASE.tar.gz
+cd $RELEASE
 
 # Run Harvest with the default unix localhost collector
 bin/harvest start
@@ -45,16 +47,39 @@ bin/harvest start
 If you don't have `wget` installed, you can use `curl` like so:
 
 ```
-curl -L -O https://github.com/NetApp/harvest/releases/download/v21.05.1/harvest-21.05.1-1.tar.gz
+curl -L -O https://github.com/NetApp/harvest/releases/latest/download/$RELEASE.tar.gz
+```
+
+### Upgrade
+Follow the steps below to upgrade Harvest
+
+Stop harvest
+```
+cd <existing harvest directory>
+bin/harvest stop
+```
+Verify that all pollers have stopped:
+```
+bin/harvest status
+or
+pgrep --full '\-\-poller'  # should return nothing if all pollers are stopped
+```
+
+Follow the instructions [above](#installation) to download and install Harvest and then
+copy your old `harvest.yml` into the new install directory like so:
+
+```
+cp /path/to/old/harvest/harvest.yml /path/to/new/harvest.yml
 ```
 
 ## Redhat
-> Installation of the Harvest package may require root or administrator privileges
 
-Download the latest rpm of [Harvest](https://github.com/NetApp/harvest/releases/latest) from the releases tab and install with yum.
+> Installation and upgrade of the Harvest package may require root or administrator privileges
+
+Download the latest rpm of [Harvest](https://github.com/NetApp/harvest/releases/latest) from the releases tab and install or upgrade with yum.
 
 ```
-  $ sudo yum install harvest.XXX.rpm
+  $ sudo yum install|upgrade harvest.XXX.rpm
 ```
 
 Once the installation has finished, edit the [harvest.yml configuration](#harvest-configuration) file located in `/opt/harvest/harvest.yml`
@@ -70,12 +95,15 @@ After editing `/opt/harvest/harvest.yml`, manage Harvest with `systemctl start|s
 * Systemd `/etc/systemd/system/harvest.service` file is created and enabled
 
 ## Debian
-> Installation of the Harvest package may require root or administrator privileges
 
-Download the latest deb of [Harvest](https://github.com/NetApp/harvest/releases/latest) from the releases tab and install with apt.
+> Installation and upgrade of the Harvest package may require root or administrator privileges
+
+Download the latest deb of [Harvest](https://github.com/NetApp/harvest/releases/latest) from the releases tab and install or upgrade with apt.
 
 ```
-  $ sudo apt install ./harvest-<RELEASE>.amd64.deb
+  $ sudo apt update
+  $ sudo apt install|upgrade ./harvest-<RELEASE>.amd64.deb
+  
 ```
 
 Once the installation has finished, edit the [harvest.yml configuration](#harvest-configuration) file located in `/opt/harvest/harvest.yml`

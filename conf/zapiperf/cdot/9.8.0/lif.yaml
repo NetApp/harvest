@@ -22,5 +22,3 @@ export_options:
     - node
     - svm
     - port
-  graphite_leafs:
-    - svm.{svm}.lif.{lif}

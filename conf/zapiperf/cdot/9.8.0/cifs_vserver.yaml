@@ -23,8 +23,6 @@ counters:
 export_options:
   instance_keys:
     - svm
-  graphite_leafs:
-    - svm.{svm}.cifs
 
 override:
   - cifs_op_count: rate

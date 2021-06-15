@@ -27,6 +27,4 @@ export_options:
     - node
     - hostadapter # from plugin
     - target_wwpn # from plugin
-  graphite_leafs:
-    - node.{node}.hostadapter.{hostadapter}.target_wwpn.{target_wwpn}
 

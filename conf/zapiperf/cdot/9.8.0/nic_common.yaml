@@ -40,6 +40,4 @@ export_options:
     - speed
     - state
     - type
-  graphite_leafs:
-    - node.{node_name}.eth_port.{instance_name}
 

@@ -21,9 +21,9 @@ fi
 echo " --> set directory ownership"
 chown -R harvest:harvest /opt/harvest
 mkdir -p /var/log/harvest
-mkdir -p /var/run/harvest
 chown -R harvest:harvest /var/log/harvest
-chown -R harvest:harvest /var/run/harvest
+chmod -R u+s /opt/harvest/bin
+chmod -R g+s /opt/harvest/bin
 
 echo "  --> copying service"
 cp /opt/harvest/service/harvest.service /etc/systemd/system/

@@ -19,8 +19,6 @@ counters:
 export_options:
   instance_keys:
     - node
-  graphite_leafs:
-    - node.{node}.cifs
 
 override:
   - cifs_op_count: rate

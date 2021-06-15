@@ -29,6 +29,11 @@ if [ $1 = 2 ]; then
     if systemctl list-units --full -all | grep -Fq 'harvest.service'; then
       systemctl stop harvest && echo "stopped harvest ..."
     fi
+    # Stop any harvest process which are not under systemctl
+    ps -ef | grep -w -- --poller | grep -w bin/poller | awk '{print $2}' | xargs -r kill
+    if [ $? -ne 0 ]; then
+       echo "  --> Error while stopping pollers"
+    fi
 fi
 # Backup existing harvest.yml to avoid overwrite from new binary
 if [ -e $RPM_BUILD_ROOT/opt/harvest/harvest.yml ]; then
@@ -44,7 +49,6 @@ cd $RPM_BUILD_ROOT/opt/harvest
 echo " --> installing harvest..."
 cd $RPM_BUILD_ROOT/opt/harvest
 mkdir -p $RPM_BUILD_ROOT/var/log/harvest
-mkdir -p $RPM_BUILD_ROOT/var/run/harvest
 
 %post
 # After installation/upgrade, copy latest harvest.yml as harvest.example.yml
@@ -65,7 +69,8 @@ getent passwd harvest > /dev/null 2>&1 || useradd -r -M -g harvest --shell=/sbin
 
 chown -R harvest:harvest $RPM_BUILD_ROOT/opt/harvest/
 chown -R harvest:harvest $RPM_BUILD_ROOT/var/log/harvest/
-chown -R harvest:harvest $RPM_BUILD_ROOT/var/run/harvest/
+chmod -R u+s $RPM_BUILD_ROOT/opt/harvest/bin
+chmod -R g+s $RPM_BUILD_ROOT/opt/harvest/bin
 echo "  --> copying service"
 cp $RPM_BUILD_ROOT/opt/harvest/service/harvest.service /etc/systemd/system/
 chmod 664 /etc/systemd/system/harvest.service
@@ -89,6 +94,11 @@ fi
 if [ $1 = 0 ]; then
     echo "stopping harvest ..."
     systemctl stop harvest
+    # Stop any harvest process which are not under systemctl
+    ps -ef | grep -w -- --poller | grep -w -- --daemon | awk '{print $2}' | xargs -r kill
+    if [ $? -ne 0 ]; then
+       echo "  --> Error while stopping pollers"
+    fi
     if [ -e /opt/harvest/harvest.yml ]; then
       cp /opt/harvest/harvest.yml /opt/harvest/backup_harvest.yml
       echo " --> Backing up existing config file as [/opt/harvest/backup_harvest.yml]"
@@ -103,6 +113,7 @@ if [ $1 = 0 ]; then
         unlink /usr/bin/harvest && echo "  --> delete link"
     fi
     rm -rf /var/run/harvest && echo "  --> delete pid folder"
+    rm -rf /usr/lib/tmpfiles.d/harvest.conf && echo "  --> removing tmpfiles.d harvest configuration"
     echo " --> removing systemctl harvest files "
     systemctl disable harvest.service
     rm /etc/systemd/system/harvest.service
@@ -127,5 +138,4 @@ fi
 %files
 /opt/harvest
 /var/log/harvest
-/var/run/harvest
 
