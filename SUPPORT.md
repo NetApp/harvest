@@ -1,7 +1,6 @@
 # Harvest Support and Getting Help
 
-Welcome to Harvest! Harvest is an official NetApp open-source project. You can reach out
-to NetApp using any of the [standard mechanisms](http://mysupport.netapp.com/info/web/ECMLP2619434.html) and get support.
+Harvest is an open-source project developed and published by NetApp to collect performance, capacity and hardware metrics from ONTAP clusters. These metrics can then be delivered to a range of databases and displayed in Grafana dashboards. Harvest is not an officially supported NetApp product. NetApp maintains and updates Harvest with bug fixes, security updates, and feature development. For assistance refer [Getting Help](#getting%20help)
 
 This document describes Harvest's release and support lifecycle as well as places you can get help.
 
