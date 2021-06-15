@@ -1,10 +1,9 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
-package main
+//package main
 
-
-//package conf
+package conf
 
 import (
 	"fmt"
@@ -142,7 +141,6 @@ func GetPoller(config_fp, poller_name string) (*node.Node, error) {
 			err = errors.New(errors.ERR_CONFIG, "poller ["+poller_name+"] not found")
 		}
 	}
-
 	return poller, err
 }
 
@@ -190,7 +188,7 @@ func main() {
 		LoadHarvestConfig(configFp)
 	}
 
-	for k,_ := range *Config.Pollers {
+	for k, _ := range *Config.Pollers {
 		GetPrometheusExporterPorts(k, configFp)
 	}
 }
@@ -225,7 +223,8 @@ func GetPrometheusExporterPorts(pollerName string, configFp string) (int, error)
 					}
 					for k, _ := range ports {
 						if k == port {
-							delete(ports,k)
+							// remove ports which are already used
+							delete(ports, k)
 							break
 						}
 					}
@@ -256,10 +255,10 @@ func LoadPrometheusExporterPortRangeMapping(configFp string) {
 			if v.PortRange != nil {
 				portRange := v.PortRange // [2000-2030]
 				var ports = make(map[int]struct{})
-				r := regexp.MustCompile(`\((\d+)-(\d+)\)`)
+				r := regexp.MustCompile(`(\d+)\s*-\s*(\d+)`)
 				matches := r.FindStringSubmatch(*portRange)
 				//fmt.Println(matches)
-				if len(matches) > 0 {
+				if len(matches) == 3 {
 					start, _ := strconv.Atoi(matches[1])
 					end, _ := strconv.Atoi(matches[2])
 					for i := start; i <= end; i++ {
