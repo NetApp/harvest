@@ -176,14 +176,11 @@ func GetHarvestLogPath() string {
 GetPrometheusExporterPorts returns port configured in prometheus exporter for given poller
 If there are more than 1 exporter configured for a poller then return string will have ports as comma seperated
 */
-func GetPrometheusExporterPorts(pollerName string, configFp string) (int, error) {
+func GetPrometheusExporterPorts(pollerName string) (int, error) {
 	var port int
 
-	if Config == (HarvestConfig{}) {
-		LoadHarvestConfig(configFp)
-	}
 	if len(promPortRangeMapping) == 0 {
-		loadPrometheusExporterPortRangeMapping(configFp)
+		loadPrometheusExporterPortRangeMapping()
 	}
 	exporters := (*Config.Pollers)[pollerName].Exporters
 
@@ -193,19 +190,14 @@ func GetPrometheusExporterPorts(pollerName string, configFp string) (int, error)
 			if *exporter.Type == "Prometheus" {
 				if exporter.PortRange != nil {
 					ports := promPortRangeMapping[e]
-					for p, _ := range ports {
+					for p := range ports.portSet {
 						if util.CheckPortAvailable(*exporter.Addr, strconv.Itoa(p)) {
 							port = p
 							break
 						}
 					}
-					for k, _ := range ports {
-						if k == port {
-							// remove ports which are already used
-							delete(ports, k)
-							break
-						}
-					}
+					// remove ports which are already used
+					ports.remove(port)
 					break
 				} else if *exporter.Port != 0 {
 					port = *exporter.Port
@@ -222,23 +214,32 @@ func GetPrometheusExporterPorts(pollerName string, configFp string) (int, error)
 	}
 }
 
-var promPortRangeMapping = make(map[string]map[int]struct{})
+type PortMap struct {
+	portSet map[int]struct{}
+}
 
-func loadPrometheusExporterPortRangeMapping(configFp string) {
-	if Config == (HarvestConfig{}) {
-		LoadHarvestConfig(configFp)
+func (p *PortMap) remove(port int) {
+	delete(p.portSet, port)
+}
+
+func PortMapFromRange(portRange *IntRange) PortMap {
+	portMap := PortMap{portSet: map[int]struct{}{}}
+	start := portRange.Min
+	end := portRange.Max
+	for i := start; i <= end; i++ {
+		portMap.portSet[i] = struct{}{}
 	}
+	return portMap
+}
+
+var promPortRangeMapping = make(map[string]PortMap)
+
+func loadPrometheusExporterPortRangeMapping() {
 	exporters := *Config.Exporters
 	for k, v := range exporters {
 		if *v.Type == "Prometheus" {
 			if v.PortRange != nil {
-				start := v.PortRange.Min
-				end := v.PortRange.Max
-				var ports = make(map[int]struct{})
-				for i := start; i <= end; i++ {
-					ports[i] = struct{}{}
-				}
-				promPortRangeMapping[k] = ports
+				promPortRangeMapping[k] = PortMapFromRange(v.PortRange)
 			}
 		}
 	}
@@ -251,7 +252,6 @@ type IntRange struct {
 
 var rangeRegex, _ = regexp.Compile(`(\d+)\s*-\s*(\d+)`)
 
-// TODO intrange parsing fails if defined in brackets i.e. [2000-2030]. Works fine with (2000-2030)
 func (i *IntRange) UnmarshalYAML(node *yaml.Node) error {
 	if node.Kind == yaml.ScalarNode && node.ShortTag() == "!!str" {
 		matches := rangeRegex.FindStringSubmatch(node.Value)

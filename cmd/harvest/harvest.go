@@ -562,7 +562,7 @@ func getPollerPrometheusPort(p *node.Node, opts *options) string {
 	if opts.promPort != 0 {
 		promPort = opts.promPort
 	} else {
-		promPort, err = conf.GetPrometheusExporterPorts(p.GetNameS(), opts.config)
+		promPort, err = conf.GetPrometheusExporterPorts(p.GetNameS())
 		if err != nil {
 			fmt.Println(err)
 			return "error"
