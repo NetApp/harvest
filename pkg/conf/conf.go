@@ -1,8 +1,6 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
-//package main
-
 package conf
 
 import (
@@ -174,25 +172,6 @@ func GetHarvestLogPath() string {
 	return logPath
 }
 
-func GetHarvestPidPath() string {
-	var pidPath string
-	if pidPath = os.Getenv("HARVEST_PIDS"); pidPath == "" {
-		pidPath = "/var/run/harvest/"
-	}
-	return pidPath
-}
-
-func main() {
-	configFp := "/home/rahulg2/code/github/harvest/harvest.yml"
-	if Config == (HarvestConfig{}) {
-		LoadHarvestConfig(configFp)
-	}
-
-	for k, _ := range *Config.Pollers {
-		GetPrometheusExporterPorts(k, configFp)
-	}
-}
-
 /*
 GetPrometheusExporterPorts returns port configured in prometheus exporter for given poller
 If there are more than 1 exporter configured for a poller then return string will have ports as comma seperated
@@ -204,7 +183,7 @@ func GetPrometheusExporterPorts(pollerName string, configFp string) (int, error)
 		LoadHarvestConfig(configFp)
 	}
 	if len(promPortRangeMapping) == 0 {
-		LoadPrometheusExporterPortRangeMapping(configFp)
+		loadPrometheusExporterPortRangeMapping(configFp)
 	}
 	exporters := (*Config.Pollers)[pollerName].Exporters
 
@@ -213,7 +192,6 @@ func GetPrometheusExporterPorts(pollerName string, configFp string) (int, error)
 			exporter := (*Config.Exporters)[e]
 			if *exporter.Type == "Prometheus" {
 				if exporter.PortRange != nil {
-					//fmt.Println(exporter.PortRange)
 					ports := promPortRangeMapping[e]
 					for p, _ := range ports {
 						if util.CheckPortAvailable(*exporter.Addr, strconv.Itoa(p)) {
@@ -228,24 +206,25 @@ func GetPrometheusExporterPorts(pollerName string, configFp string) (int, error)
 							break
 						}
 					}
-					fmt.Printf("chosen port %d \n", port)
-					return port, nil
+					break
 				} else if *exporter.Port != 0 {
-					fmt.Printf("port---- %d \n", *exporter.Port)
 					port = *exporter.Port
-					return port, nil
+					break
 				}
 			}
 			continue
 		}
-
 	}
-	return port, errors.New(errors.ERR_CONFIG, "No free port found for poller "+pollerName)
+	if port == 0 {
+		return port, errors.New(errors.ERR_CONFIG, "No free port found for poller "+pollerName)
+	} else {
+		return port, nil
+	}
 }
 
 var promPortRangeMapping = make(map[string]map[int]struct{})
 
-func LoadPrometheusExporterPortRangeMapping(configFp string) {
+func loadPrometheusExporterPortRangeMapping(configFp string) {
 	if Config == (HarvestConfig{}) {
 		LoadHarvestConfig(configFp)
 	}
@@ -253,22 +232,43 @@ func LoadPrometheusExporterPortRangeMapping(configFp string) {
 	for k, v := range exporters {
 		if *v.Type == "Prometheus" {
 			if v.PortRange != nil {
-				portRange := v.PortRange // [2000-2030]
+				start := v.PortRange.Min
+				end := v.PortRange.Max
 				var ports = make(map[int]struct{})
-				r := regexp.MustCompile(`(\d+)\s*-\s*(\d+)`)
-				matches := r.FindStringSubmatch(*portRange)
-				//fmt.Println(matches)
-				if len(matches) == 3 {
-					start, _ := strconv.Atoi(matches[1])
-					end, _ := strconv.Atoi(matches[2])
-					for i := start; i <= end; i++ {
-						ports[i] = struct{}{}
-					}
+				for i := start; i <= end; i++ {
+					ports[i] = struct{}{}
 				}
 				promPortRangeMapping[k] = ports
 			}
 		}
 	}
+}
+
+type IntRange struct {
+	Min int
+	Max int
+}
+
+var rangeRegex, _ = regexp.Compile(`(\d+)\s*-\s*(\d+)`)
+
+// TODO intrange parsing fails if defined in brackets i.e. [2000-2030]. Works fine with (2000-2030)
+func (i *IntRange) UnmarshalYAML(node *yaml.Node) error {
+	if node.Kind == yaml.ScalarNode && node.ShortTag() == "!!str" {
+		matches := rangeRegex.FindStringSubmatch(node.Value)
+		if len(matches) == 3 {
+			min, err1 := strconv.Atoi(matches[1])
+			max, err2 := strconv.Atoi(matches[2])
+			if err1 != nil {
+				return err1
+			}
+			if err2 != nil {
+				return err2
+			}
+			i.Min = min
+			i.Max = max
+		}
+	}
+	return nil
 }
 
 // Returns unique type of exporters for the poller
@@ -329,7 +329,7 @@ type Poller struct {
 
 type Exporter struct {
 	Port              *int      `yaml:"port,omitempty"`
-	PortRange         *string   `yaml:"port_range,omitempty"`
+	PortRange         *IntRange `yaml:"port_range,omitempty"`
 	Type              *string   `yaml:"exporter,omitempty"`
 	Addr              *string   `yaml:"addr,omitempty"`
 	Url               *string   `yaml:"url,omitempty"`
