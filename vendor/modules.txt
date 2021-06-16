@@ -4,6 +4,7 @@ github.com/hashicorp/go-version
 # github.com/inconshreveable/mousetrap v1.0.0
 github.com/inconshreveable/mousetrap
 # github.com/pkg/errors v0.9.1
+## explicit
 github.com/pkg/errors
 # github.com/rs/zerolog v1.22.0
 ## explicit
@@ -16,8 +17,9 @@ github.com/rs/zerolog/pkgerrors
 github.com/spf13/cobra
 # github.com/spf13/pflag v1.0.5
 github.com/spf13/pflag
-# golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a
+# github.com/wk8/go-ordered-map v0.2.0
 ## explicit
+github.com/wk8/go-ordered-map
 # golang.org/x/sys v0.0.0-20210603125802-9665404d3644
 ## explicit
 golang.org/x/sys/internal/unsafeheader

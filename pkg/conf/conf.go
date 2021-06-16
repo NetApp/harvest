@@ -6,6 +6,7 @@ package conf
 
 import (
 	"fmt"
+	orderedmap "github.com/wk8/go-ordered-map"
 	"goharvest2/pkg/constant"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/tree"
@@ -26,7 +27,10 @@ func LoadConfig(configPath string) (*node.Node, error) {
 		// This is needed because the current yaml parser does not handle password with special characters.
 		// E.g abc#123, that's because the # is interpreted as the beginning of a comment. The code below overwrites
 		// the incorrect password with the correct one by using a better yaml parser for each Poller and Default section
-		_ = LoadHarvestConfig(configPath)
+		err := LoadHarvestConfig(configPath)
+		if err != nil {
+			return nil, err
+		}
 		pollers := configNode.GetChildS("Pollers")
 		if pollers != nil {
 			for _, poller := range pollers.GetChildren() {
@@ -51,9 +55,10 @@ func LoadConfig(configPath string) (*node.Node, error) {
 }
 
 var Config = HarvestConfig{}
+var configRead = false
 
 func LoadHarvestConfig(configPath string) error {
-	if Config != (HarvestConfig{}) {
+	if configRead {
 		return nil
 	}
 	contents, err := ioutil.ReadFile(configPath)
@@ -62,11 +67,54 @@ func LoadHarvestConfig(configPath string) error {
 		return err
 	}
 	err = yaml.Unmarshal(contents, &Config)
+	configRead = true
 	if err != nil {
 		fmt.Printf("error unmarshalling config file=[%s] %+v\n", configPath, err)
 		return err
 	}
+	initPortRange(contents)
 	return nil
+}
+
+func initPortRange(contents []byte) {
+	// Until https://github.com/go-yaml/yaml/issues/717 is fixed
+	// read the yaml again to determine poller order
+	orderedConfig := OrderedConfig{}
+	err := yaml.Unmarshal(contents, &orderedConfig)
+	if err != nil {
+		return
+	}
+	expToPollers := make(map[string][]string)
+
+	omap := orderedmap.New()
+	if Config.Pollers == nil {
+		return
+	}
+	for _, pollerName := range orderedConfig.Pollers.namesInOrder {
+		omap.Set(pollerName, (*Config.Pollers)[pollerName])
+	}
+	Config.PollersOrdered = omap
+
+	for pair := omap.Oldest(); pair != nil; pair = pair.Next() {
+		pollerName := pair.Key.(string)
+		poller := (*Config.Pollers)[pollerName]
+		if poller.Exporters == nil {
+			continue
+		}
+		for _, exp := range *poller.Exporters {
+			exporters := expToPollers[exp]
+			exporters = append(exporters, pollerName)
+			expToPollers[exp] = exporters
+		}
+	}
+
+	for _, pollerNames := range expToPollers {
+		for i, pollerName := range pollerNames {
+			poller := (*Config.Pollers)[pollerName]
+			poller.promIndex = i
+		}
+	}
+	Config.ExportersToPollers = expToPollers
 }
 
 func SafeConfig(n *node.Node, fp string) error {
@@ -265,12 +313,12 @@ type Poller struct {
 	Exporters      *[]string `yaml:"exporters,omitempty"`
 	Collectors     *[]string `yaml:"collectors,omitempty"`
 	IsKfs          *bool     `yaml:"is_kfs,omitempty"`
+	promIndex      int
 }
 
 type Exporter struct {
 	Port              *int      `yaml:"port,omitempty"`
 	PortRange         *IntRange `yaml:"port_range,omitempty"`
-	promIndex         *int      // running index used by port range
 	Type              *string   `yaml:"exporter,omitempty"`
 	Addr              *string   `yaml:"addr,omitempty"`
 	Url               *string   `yaml:"url,omitempty"`
@@ -290,19 +338,14 @@ type Exporter struct {
 	ClientTimeout *string `yaml:"client_timeout,omitempty"`
 }
 
-func (e *Exporter) NextPortInRange(poller string) string {
-	newIndex := 0
-	if e.promIndex != nil {
-		newIndex = *e.promIndex
-	}
-	newPort := e.PortRange.Min + newIndex
+func (e *Exporter) NextPortInRange(pollerName string) string {
+	poller := (*Config.Pollers)[pollerName]
+	newPort := e.PortRange.Min + poller.promIndex
 	if newPort > e.PortRange.Max {
 		fmt.Printf("%d is not in port_range [%d-%d] - no port for %s\n", newPort,
-			e.PortRange.Min, e.PortRange.Max, poller)
+			e.PortRange.Min, e.PortRange.Max, pollerName)
 		return ""
 	}
-	newIndex++
-	e.promIndex = &newIndex
 	return strconv.Itoa(newPort)
 }
 
@@ -332,9 +375,35 @@ func (i *IntRange) UnmarshalYAML(node *yaml.Node) error {
 	return nil
 }
 
-type HarvestConfig struct {
+type Pollers struct {
+	namesInOrder []string
+}
+
+func (i *Pollers) UnmarshalYAML(node *yaml.Node) error {
+	if node.Kind == yaml.MappingNode {
+		var namesInOrder []string
+		for _, n := range node.Content {
+			if n.Kind == yaml.ScalarNode && n.ShortTag() == "!!str" {
+				namesInOrder = append(namesInOrder, n.Value)
+			}
+		}
+		i.namesInOrder = namesInOrder
+	}
+	return nil
+}
+
+type OrderedConfig struct {
 	Tools     *Tools                `yaml:"Tools,omitempty"`
 	Exporters *map[string]*Exporter `yaml:"Exporters,omitempty"`
-	Pollers   *map[string]Poller    `yaml:"Pollers,omitempty"`
+	Pollers   Pollers               `yaml:"Pollers,omitempty"`
 	Defaults  *Poller               `yaml:"Defaults,omitempty"`
+}
+
+type HarvestConfig struct {
+	Tools              *Tools               `yaml:"Tools,omitempty"`
+	Exporters          *map[string]Exporter `yaml:"Exporters,omitempty"`
+	Pollers            *map[string]*Poller  `yaml:"Pollers,omitempty"`
+	Defaults           *Poller              `yaml:"Defaults,omitempty"`
+	PollersOrdered     *orderedmap.OrderedMap
+	ExportersToPollers map[string][]string
 }
