@@ -130,7 +130,7 @@ Clone the repo and build everything.
 ```
 git clone https://github.com/NetApp/harvest.git
 cd harvest
-make
+make build
 bin/harvest version
 ```
 

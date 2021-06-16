@@ -117,7 +117,9 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 	}
 	// do this before filtering of pollers
 	// stop pollers which may have been renamed or no longer exists in harvest.yml
-	stopGhostPollers("poller", pollerNames)
+	if opts.command == "start" || opts.command == "restart" {
+		stopGhostPollers("poller", pollerNames)
+	}
 
 	pollersFromCmdLine := args
 	if len(pollersFromCmdLine) > 0 {
