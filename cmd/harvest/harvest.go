@@ -478,11 +478,11 @@ func startPoller(pollerName string, promPort string, opts *options) *pollerStatu
 	}
 
 	// Allow for some delay and retry checking status a few times
-	for i := 0; i < 10; i += 1 {
+	for i := 0; i < 2; i += 1 {
 		if s := getStatus(pollerName); s.pid > 0 {
 			return s
 		}
-		time.Sleep(50 * time.Millisecond)
+		time.Sleep(10 * time.Millisecond)
 	}
 
 	return getStatus(pollerName)
