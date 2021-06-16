@@ -384,7 +384,7 @@ func stopPoller(pollerName string) *pollerStatus {
 	return killPoller(pollerName)
 }
 
-func startPoller(pollerName string, promPort string, opts *options) *pollerStatus {
+func startPoller(pollerName string, promPort int, opts *options) *pollerStatus {
 
 	argv := make([]string, 5)
 	argv[0] = path.Join(HarvestHomePath, "bin", "poller")
@@ -393,9 +393,9 @@ func startPoller(pollerName string, promPort string, opts *options) *pollerStatu
 	argv[3] = "--loglevel"
 	argv[4] = strconv.Itoa(opts.loglevel)
 
-	if len(promPort) != 0 {
+	if promPort != 0 {
 		argv = append(argv, "--promPort")
-		argv = append(argv, promPort)
+		argv = append(argv, strconv.Itoa(promPort))
 	}
 	if opts.debug {
 		argv = append(argv, "--debug")
@@ -554,9 +554,10 @@ func closeDial(dial *net.TCPListener) {
 	_ = dial.Close()
 }
 
-func getPollerPrometheusPort(p *node.Node, opts *options) string {
+func getPollerPrometheusPort(p *node.Node, opts *options) int {
 	var promPort int
 	var err error
+
 	// check first if poller argument has promPort defined
 	// else in exporter config of poller
 	if opts.promPort != 0 {
@@ -565,10 +566,10 @@ func getPollerPrometheusPort(p *node.Node, opts *options) string {
 		promPort, err = conf.GetPrometheusExporterPorts(p.GetNameS())
 		if err != nil {
 			fmt.Println(err)
-			return "error"
+			return 0
 		}
 	}
-	return strconv.Itoa(promPort)
+	return promPort
 }
 
 func init() {

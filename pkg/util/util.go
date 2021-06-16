@@ -9,7 +9,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"net"
 	"os"
 	"os/exec"
 	"strconv"
@@ -146,17 +145,4 @@ func ContainsWholeWord(source string, search string) bool {
 		}
 	}
 	return false
-}
-
-func CheckPortAvailable(addr string, port string) bool {
-	ln, err := net.Listen("tcp", addr+":"+port)
-
-	if err != nil {
-		//fmt.Fprintf(os.Stderr, "Can't listen on port %q: %s", port, err)
-		return false
-	}
-
-	ln.Close()
-	//fmt.Printf("TCP Port %q is available", port)
-	return true
 }

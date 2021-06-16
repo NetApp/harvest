@@ -178,6 +178,7 @@ If there are more than 1 exporter configured for a poller then return string wil
 */
 func GetPrometheusExporterPorts(pollerName string) (int, error) {
 	var port int
+	var isPrometheusExporterConfigured bool
 
 	if len(promPortRangeMapping) == 0 {
 		loadPrometheusExporterPortRangeMapping()
@@ -188,17 +189,14 @@ func GetPrometheusExporterPorts(pollerName string) (int, error) {
 		for _, e := range *exporters {
 			exporter := (*Config.Exporters)[e]
 			if *exporter.Type == "Prometheus" {
+				isPrometheusExporterConfigured = true
 				if exporter.PortRange != nil {
 					ports := promPortRangeMapping[e]
-					for p := range ports.portSet {
-						if util.CheckPortAvailable(*exporter.Addr, strconv.Itoa(p)) {
-							port = p
-							break
-						}
+					for k, _ := range ports.freePorts {
+						port = k
+						delete(ports.freePorts, k)
+						break
 					}
-					// remove ports which are already used
-					ports.remove(port)
-					break
 				} else if *exporter.Port != 0 {
 					port = *exporter.Port
 					break
@@ -207,7 +205,7 @@ func GetPrometheusExporterPorts(pollerName string) (int, error) {
 			continue
 		}
 	}
-	if port == 0 {
+	if port == 0 && isPrometheusExporterConfigured {
 		return port, errors.New(errors.ERR_CONFIG, "No free port found for poller "+pollerName)
 	} else {
 		return port, nil
@@ -215,20 +213,18 @@ func GetPrometheusExporterPorts(pollerName string) (int, error) {
 }
 
 type PortMap struct {
-	portSet map[int]struct{}
+	portSet   []int
+	freePorts map[int]struct{}
 }
 
-func (p *PortMap) remove(port int) {
-	delete(p.portSet, port)
-}
-
-func PortMapFromRange(portRange *IntRange) PortMap {
-	portMap := PortMap{portSet: map[int]struct{}{}}
+func PortMapFromRange(address string, portRange *IntRange) PortMap {
+	portMap := PortMap{}
 	start := portRange.Min
 	end := portRange.Max
 	for i := start; i <= end; i++ {
-		portMap.portSet[i] = struct{}{}
+		portMap.portSet = append(portMap.portSet, i)
 	}
+	portMap.freePorts = util.CheckFreePorts(address, portMap.portSet)
 	return portMap
 }
 
@@ -239,7 +235,7 @@ func loadPrometheusExporterPortRangeMapping() {
 	for k, v := range exporters {
 		if *v.Type == "Prometheus" {
 			if v.PortRange != nil {
-				promPortRangeMapping[k] = PortMapFromRange(v.PortRange)
+				promPortRangeMapping[k] = PortMapFromRange(*v.Addr, v.PortRange)
 			}
 		}
 	}
