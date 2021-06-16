@@ -30,7 +30,7 @@ metric_pattern = regex.compile(r'^(\w+)\{(.+)\} \d+(\.\d+(e[-+]\d+)?)?$')
 tag_pattern = regex.compile(r'^# (\w+) (\w+) .*$')
 # label name must start with alphabetical char
 # see: https://github.com/prometheus/common/blob/main/model/labels.go#L94
-label_pattern = regex.compile(r'^([_a-zA-Z]\w*)="[^"]+?"$', flags=regex.ASCII)
+label_pattern = regex.compile(r'^([_a-zA-Z]\w*)="[^"]??"$', flags=regex.ASCII)
 
 # tty colors
 END = '\033[0m'
