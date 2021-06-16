@@ -173,7 +173,6 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 
 		name := p.GetNameS()
 		datacenter := p.GetChildContentS("datacenter")
-		promPort := getPollerPrometheusPort(p, opts)
 
 		s = getStatus(name)
 		if opts.command == "kill" {
@@ -200,6 +199,7 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 				printStatus(opts.longStatus, c1, c2, datacenter, name, s.promPort, s)
 				break
 			case "not running", "stopped", "killed":
+				promPort := getPollerPrometheusPort(p, opts)
 				s = startPoller(name, promPort, opts)
 				printStatus(opts.longStatus, c1, c2, datacenter, name, s.promPort, s)
 			default:
@@ -386,7 +386,7 @@ func stopPoller(pollerName string) *pollerStatus {
 	return killPoller(pollerName)
 }
 
-func startPoller(pollerName string, promPort string, opts *options) *pollerStatus {
+func startPoller(pollerName string, promPort int, opts *options) *pollerStatus {
 
 	argv := make([]string, 5)
 	argv[0] = path.Join(HarvestHomePath, "bin", "poller")
@@ -395,9 +395,9 @@ func startPoller(pollerName string, promPort string, opts *options) *pollerStatu
 	argv[3] = "--loglevel"
 	argv[4] = strconv.Itoa(opts.loglevel)
 
-	if len(promPort) != 0 {
+	if promPort != 0 {
 		argv = append(argv, "--promPort")
-		argv = append(argv, promPort)
+		argv = append(argv, strconv.Itoa(promPort))
 	}
 	if opts.debug {
 		argv = append(argv, "--debug")
@@ -556,18 +556,19 @@ func closeDial(dial *net.TCPListener) {
 	_ = dial.Close()
 }
 
-func getPollerPrometheusPort(p *node.Node, opts *options) string {
-	var promPort string
+func getPollerPrometheusPort(p *node.Node, opts *options) int {
+	var promPort int
 	var err error
+
 	// check first if poller argument has promPort defined
 	// else in exporter config of poller
 	if opts.promPort != 0 {
-		promPort = strconv.Itoa(opts.promPort)
+		promPort = opts.promPort
 	} else {
-		promPort, err = conf.GetPrometheusExporterPorts(p, opts.config)
+		promPort, err = conf.GetPrometheusExporterPorts(p.GetNameS())
 		if err != nil {
 			fmt.Println(err)
-			promPort = "error"
+			return 0
 		}
 	}
 	return promPort
