@@ -122,9 +122,15 @@ func (me *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "text/plain")
 	_, err := w.Write(bytes.Join(data, []byte("\n")))
 	if err != nil {
-		me.Logger.Error().Stack().Err(err).Msg("error")
+		me.Logger.Error().Stack().Err(err).Msg("write metrics")
 	}
 
+    // make sure stream ends with newline
+    if _, err = w.Write([]byte("\n")); err != nil {
+		me.Logger.Error().Stack().Err(err).Msg("write ending newline")
+	}
+
+    // update metadata
 	me.Metadata.Reset()
 	err = me.Metadata.LazySetValueInt64("time", "http", time.Since(start).Microseconds())
 	if err != nil {
