@@ -318,8 +318,9 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 		me.Logger.Trace().Msgf("rendering instance [%s] (%v)", key, instance.GetLabels())
 
 		instance_keys := make([]string, len(global_labels))
-		instance_labels := make([]string, 0)
 		copy(instance_keys, global_labels)
+		instance_keys_ok := false
+		instance_labels := make([]string, 0)
 
 		if include_all_labels {
 			for label, value := range instance.GetLabels().Map() {
@@ -328,8 +329,9 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 		} else {
 			for _, key := range keys_to_include {
 				value := instance.GetLabel(key)
-				if value != "" {
-					instance_keys = append(instance_keys, fmt.Sprintf("%s=\"%s\"", key, value))
+				instance_keys = append(instance_keys, fmt.Sprintf("%s=\"%s\"", key, value))
+				if !instance_keys_ok && value != "" {
+					instance_keys_ok = true
 				}
 				me.Logger.Trace().Msgf("++ key [%s] (%s) found=%v", key, value, value != "")
 			}
@@ -341,7 +343,7 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 			}
 
 			// @TODO, probably be strict, and require all keys to be present
-			if len(instance_keys) == 0 && options.GetChildContentS("require_instance_keys") != "False" {
+			if !instance_keys_ok && options.GetChildContentS("require_instance_keys") != "False" {
 				me.Logger.Trace().Msgf("skip instance, no keys parsed (%v) (%v)", instance_keys, instance_labels)
 				continue
 			}
