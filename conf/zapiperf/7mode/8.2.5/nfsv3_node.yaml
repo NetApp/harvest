@@ -16,8 +16,7 @@ counters:
   - nfsv3_avg_op_latency   => latency
 
 export_options:
-  instance_keys:
-    - nfsv
+  require_instance_keys: false
   graphite_leafs:
     - node.{node}.nfsv3
 

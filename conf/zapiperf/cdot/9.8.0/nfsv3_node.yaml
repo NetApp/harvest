@@ -91,5 +91,3 @@ override:
 export_options:
   instance_keys:
     - node
-    - nfsv
-
