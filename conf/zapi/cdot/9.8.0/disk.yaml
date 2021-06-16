@@ -29,7 +29,7 @@ counters:
       - sectors-written
     - disk-raid-info:
       - disk-outage-info:
-        - reason                => outage
+        - ^reason                => outage
 
 plugins:
   - LabelAgent:
