@@ -274,7 +274,7 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 		tagged                                            *set.Set
 		labels_to_include, keys_to_include, global_labels []string
 		prefix                                            string
-		include_all_labels                                bool
+		err                                               error
 	)
 
 	rendered = make([][]byte, 0)
@@ -296,10 +296,19 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 		me.Logger.Debug().Msgf("requested keys_labels : %v", keys_to_include)
 	}
 
-	if options.GetChildContentS("include_all_labels") == "true" {
-		include_all_labels = true
-	} else {
-		include_all_labels = false
+	include_all_labels := false
+	require_instance_keys := true
+
+	if x := options.GetChildContentS("include_all_labels"); x != "" {
+		if include_all_labels, err = strconv.ParseBool(x); err != nil {
+			me.Logger.Error().Stack().Err(err).Msg("parameter: include_all_labels")
+		}
+	}
+
+	if x := options.GetChildContentS("require_instance_keys"); x != "" {
+		if require_instance_keys, err = strconv.ParseBool(x); err != nil {
+			me.Logger.Error().Stack().Err(err).Msg("parameter: require_instance_keys")
+		}
 	}
 
 	prefix = me.globalPrefix + data.Object
@@ -343,7 +352,7 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 			}
 
 			// @TODO, probably be strict, and require all keys to be present
-			if !instance_keys_ok && options.GetChildContentS("require_instance_keys") != "False" {
+			if !instance_keys_ok && require_instance_keys {
 				me.Logger.Trace().Msgf("skip instance, no keys parsed (%v) (%v)", instance_keys, instance_labels)
 				continue
 			}
