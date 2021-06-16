@@ -52,7 +52,11 @@ def main():
         metrics = get_batch_metrics(a.addr, a.port)
         print('{}-> scrape #{:<4} - scraped metrics: {}{}'.format(BOLD, i+1, len(metrics), END))
 
-        for m in metrics:
+        if not metrics.endswith('\n'):
+            errors['missing_newlines'] += 1
+            print('   {}missing newline at the end of metric batch{}'.format(PINK, END))
+
+        for m in metrics.splitlines():
 
             # skip newline
             if m == '\n':
@@ -126,10 +130,6 @@ def main():
                     if not has_type:
                         print('     - TYPE tag not detected')
 
-        if len(metrics) and metrics[-1] != '\n':
-            errors['missing_newlines'] += 1
-            print('   {}missing newline at the end of metric batch{}'.format(PINK, END))
-
         # sleep until next scrape
         time.sleep(a.interval)
 
@@ -139,7 +139,7 @@ def main():
 # Scrape an HTTP endpoint and return data
 def get_batch_metrics(addr: str, port: int) -> [str]:
     try:
-        return urllib.request.urlopen('http://{}:{}/metrics'.format(addr, port)).read().decode().splitlines()
+        return urllib.request.urlopen('http://{}:{}/metrics'.format(addr, port)).read().decode()
     except urllib.error.URLError as err:
         print(err)
         return []
