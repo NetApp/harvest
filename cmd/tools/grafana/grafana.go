@@ -505,7 +505,7 @@ var opts = &options{}
 
 var GrafanaCmd = &cobra.Command{
 	Use:   "grafana",
-	Short: "import/export Grafana dashboards",
+	Short: "Import/export Grafana dashboards",
 	Long:  "Grafana tool - Import/Export Grafana dashboards",
 }
 

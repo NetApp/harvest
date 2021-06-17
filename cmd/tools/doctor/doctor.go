@@ -5,7 +5,6 @@ import (
 	"github.com/spf13/cobra"
 	"goharvest2/pkg/color"
 	"goharvest2/pkg/conf"
-	"golang.org/x/term"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"os"
@@ -16,10 +15,6 @@ type options struct {
 	ShouldPrintConfig bool
 	Color             string
 }
-
-var (
-	withColor bool
-)
 
 var opts = &options{
 	ShouldPrintConfig: false,
@@ -60,7 +55,7 @@ func doDoctor(path string) {
 // Otherwise, print what failed and exit with a return code of 1
 func checkAll(path string, contents []byte) {
 	// See https://github.com/NetApp/harvest/issues/16 for more checks to add
-	detectConsole()
+	color.DetectConsole(opts.Color)
 	// Validate that the config file can be parsed
 	harvestConfig := &conf.HarvestConfig{}
 	err := yaml.Unmarshal(contents, harvestConfig)
@@ -78,20 +73,6 @@ func checkAll(path string, contents []byte) {
 		os.Exit(1)
 	} else {
 		os.Exit(0)
-	}
-}
-
-func detectConsole() {
-	withColor = false
-	switch opts.Color {
-	case "never":
-		withColor = false
-	case "always":
-		withColor = true
-	default:
-		if term.IsTerminal(int(os.Stdout.Fd())) {
-			withColor = true
-		}
 	}
 }
 
@@ -117,13 +98,13 @@ func checkExporterTypes(config conf.HarvestConfig) validation {
 
 	if len(invalidTypes) > 0 {
 		valid.isValid = false
-		fmt.Printf("%s Unknown Exporter types found\n", colorize("Error:", color.Red))
+		fmt.Printf("%s Unknown Exporter types found\n", color.Colorize("Error:", color.Red))
 		fmt.Println("These are probably misspellings or the wrong case.")
 		fmt.Println("Exporter types must start with a capital letter.")
 		fmt.Println("The following exporters are unknown:")
 		for name, eType := range invalidTypes {
 			valid.invalid = append(valid.invalid, eType)
-			fmt.Printf("  exporter named: [%s] has unknown type: [%s]\n", colorize(name, color.Red), colorize(eType, color.Yellow))
+			fmt.Printf("  exporter named: [%s] has unknown type: [%s]\n", color.Colorize(name, color.Red), color.Colorize(eType, color.Yellow))
 		}
 		fmt.Println()
 	}
@@ -161,14 +142,14 @@ func checkUniquePromPorts(config conf.HarvestConfig) validation {
 	}
 
 	if !valid.isValid {
-		fmt.Printf("%s: Exporter PromPort conflict\n", colorize("Error", color.Red))
+		fmt.Printf("%s: Exporter PromPort conflict\n", color.Colorize("Error", color.Red))
 		fmt.Println("  Prometheus exporters must specify unique ports. Change the following exporters to use unique ports:")
 		for port, exporterNames := range seen {
 			if len(exporterNames) == 1 {
 				continue
 			}
 			names := strings.Join(exporterNames, ", ")
-			fmt.Printf("  port: [%s] duplicateExporters: [%s]\n", colorize(port, color.Red), colorize(names, color.Yellow))
+			fmt.Printf("  port: [%s] duplicateExporters: [%s]\n", color.Colorize(port, color.Red), color.Colorize(names, color.Yellow))
 		}
 		fmt.Println()
 	}
@@ -232,13 +213,6 @@ func collectNodes(root *yaml.Node, nodes *[]*yaml.Node) {
 		*nodes = append(*nodes, node)
 		collectNodes(node, nodes)
 	}
-}
-
-func colorize(s interface{}, color string) string {
-	if withColor {
-		return fmt.Sprintf("%s%v\x1b[0m", color, s)
-	}
-	return fmt.Sprintf("%s", s)
 }
 
 func init() {
