@@ -1,5 +1,15 @@
 #!/usr/bin/env python3
 
+"""
+Copyright NetApp Inc, 2021 All rights reserved
+
+Utility to validate integrity of Prometheus metrics generated
+by Harvests' Prometheus exporter. This utility takes into account
+the parsing rules of the PrometheusDB, as well as other collector
+servers, such as InfluxDB's Telegraf.
+
+"""
+
 import argparse
 import regex
 import signal
@@ -15,7 +25,7 @@ errors = {
     'inconsistent_labels'   : 0,
     'duplicate_labels'      : 0,
     'missing_metatags'      : 0,
-    'missing_newlines'       : 0,
+    'missing_newlines'      : 0,
     }
 
 # cache label keys of seen metrics to check for consistency
@@ -51,6 +61,9 @@ def main():
     for i in range(a.scrapes):
         metrics = get_batch_metrics(a.addr, a.port)
         print('{}-> scrape #{:<4} - scraped metrics: {}{}'.format(BOLD, i+1, len(metrics), END))
+
+        if not metrics:
+            continue
 
         if not metrics.endswith('\n'):
             errors['missing_newlines'] += 1
@@ -137,12 +150,12 @@ def main():
     # DONE
 
 # Scrape an HTTP endpoint and return data
-def get_batch_metrics(addr: str, port: int) -> [str]:
+def get_batch_metrics(addr: str, port: int) -> str:
     try:
         return urllib.request.urlopen('http://{}:{}/metrics'.format(addr, port)).read().decode()
     except urllib.error.URLError as err:
         print(err)
-        return []
+        return ''
 
 # validate metric format (without labels), extract name and labels substring
 def check_metric(metric: str) -> (bool, str, str):
