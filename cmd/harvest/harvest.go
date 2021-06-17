@@ -21,6 +21,7 @@ import (
 	"goharvest2/cmd/harvest/stub"
 	"goharvest2/cmd/harvest/version"
 	"goharvest2/cmd/tools/doctor"
+	"goharvest2/cmd/tools/generate"
 	"goharvest2/cmd/tools/grafana"
 	"goharvest2/cmd/tools/zapi"
 	"goharvest2/pkg/conf"
@@ -582,6 +583,7 @@ func init() {
 	rootCmd.AddCommand(manageCmd("restart", true))
 	rootCmd.AddCommand(manageCmd("kill", true))
 	rootCmd.AddCommand(config.ConfigCmd, zapi.ZapiCmd, grafana.GrafanaCmd, stub.NewCmd)
+	rootCmd.AddCommand(generate.Cmd)
 	rootCmd.AddCommand(doctor.Cmd)
 
 	rootCmd.PersistentFlags().StringVar(&opts.config, "config", "./harvest.yml", "harvest config file path")
@@ -667,7 +669,7 @@ Feedback
 func manageCmd(use string, shouldHide bool) *cobra.Command {
 	return &cobra.Command{
 		Use:    fmt.Sprintf("%s [POLLER...]", use),
-		Short:  "stop/restart/status/kill - all or individual pollers",
+		Short:  "Stop/restart/status/kill - all or individual pollers",
 		Long:   "Harvest Manager - manage your pollers",
 		Args:   cobra.ArbitraryArgs,
 		Hidden: shouldHide,
