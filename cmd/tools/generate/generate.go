@@ -8,6 +8,15 @@ import (
 	"text/template"
 )
 
+type PollerPort struct {
+	PollerName string
+	Port       int
+}
+
+type PollerTemplate struct {
+	Pollers []PollerPort
+}
+
 var Cmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate Harvest related files",
@@ -20,9 +29,53 @@ var systemdCmd = &cobra.Command{
 	Run:   doSystemd,
 }
 
+var dockerCmd = &cobra.Command{
+	Use:   "docker",
+	Short: "generate Harvest docker-compose.yml target for all pollers defined in config",
+	Run:   doDockerCompose,
+}
+
 func doSystemd(cmd *cobra.Command, _ []string) {
 	var config = cmd.Root().PersistentFlags().Lookup("config")
 	generateSystemd(config.Value.String())
+}
+
+func doDockerCompose(cmd *cobra.Command, _ []string) {
+	var config = cmd.Root().PersistentFlags().Lookup("config")
+	generateDockerCompose(config.Value.String())
+}
+
+func generateDockerCompose(path string) {
+	pollerTemplate := PollerTemplate{}
+	err := conf.LoadHarvestConfig(path)
+	if err != nil {
+		return
+	}
+	if conf.Config.Pollers == nil {
+		return
+	}
+	conf.IsDocker = true
+	for k, _ := range *conf.Config.Pollers {
+		port, _ := conf.GetPrometheusExporterPorts(k)
+		pollerTemplate.Pollers = append(pollerTemplate.Pollers, PollerPort{k, port})
+	}
+
+	t, err := template.New("docker-compose.tmpl").ParseFiles("docker/onePollerPerContainer/docker-compose.tmpl")
+	if err != nil {
+		panic(err)
+	}
+
+	color.DetectConsole("")
+	println("Docker Compose file generated at harvest home " + color.Colorize("docker-compose.yml", color.Green))
+	// Create the file
+	f, err := os.Create("docker-compose.yml")
+	if err != nil {
+		panic(err)
+	}
+	err = t.Execute(f, pollerTemplate)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func generateSystemd(path string) {
@@ -49,4 +102,5 @@ func generateSystemd(path string) {
 
 func init() {
 	Cmd.AddCommand(systemdCmd)
+	Cmd.AddCommand(dockerCmd)
 }

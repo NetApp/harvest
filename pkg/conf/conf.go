@@ -56,7 +56,7 @@ func LoadConfig(configPath string) (*node.Node, error) {
 
 var Config = HarvestConfig{}
 var configRead = false
-var isDocker = false
+var IsDocker = false
 
 func LoadHarvestConfig(configPath string) error {
 	if configRead {
@@ -242,11 +242,11 @@ func PortMapFromRange(address string, portRange *IntRange) PortMap {
 	end := portRange.Max
 	for i := start; i <= end; i++ {
 		portMap.portSet = append(portMap.portSet, i)
-		if isDocker {
+		if IsDocker {
 			portMap.freePorts[i] = struct{}{}
 		}
 	}
-	if !isDocker {
+	if !IsDocker {
 		portMap.freePorts = util.CheckFreePorts(address, portMap.portSet)
 	}
 	return portMap

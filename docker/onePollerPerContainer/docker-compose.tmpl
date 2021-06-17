@@ -12,8 +12,8 @@ services:
     tty: true        # docker run -t
     command: ' --poller {{ .PollerName }} --loglevel 2 {{if .Port }} --promPort {{ .Port }} {{ end }} --config ./harvest.yml'
     #entrypoint: ["sh", "-c", "sleep 2073600"]
-    #volumes:
-    #  - harvestlog:/var/log/harvest
+    volumes:
+      - harvest:/opt/harvest/
 {{end}}
-#volumes:
-#  harvestlog:
+volumes:
+  harvest:
