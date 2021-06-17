@@ -11,7 +11,7 @@ servers, such as InfluxDB's Telegraf.
 """
 
 import argparse
-import regex
+import re
 import signal
 import sys
 import time
@@ -35,12 +35,12 @@ help_cache = {}   # str -> bool
 type_cache = {}   # str -> bool
 
 # regular expressions to match metric
-metric_pattern = regex.compile(r'^(\w+)\{(.+)\} \d+(\.\d+(e[-+]\d+)?)?$')
+metric_pattern = re.compile(r'^(\w+)\{(.+)\} \d+(\.\d+(e[-+]\d+)?)?$')
 # pattern to match HELP/TYPE metatags
-tag_pattern = regex.compile(r'^# (\w+) (\w+) .*$')
+tag_pattern = re.compile(r'^# (\w+) (\w+) .*$')
 # label name must start with alphabetical char
 # see: https://github.com/prometheus/common/blob/main/model/labels.go#L94
-label_pattern = regex.compile(r'^([_a-zA-Z]\w*)="[^"]*?"$', flags=regex.ASCII)
+label_pattern = re.compile(r'^([_a-zA-Z]\w*)="[^"]*?"$', flags=re.ASCII)
 
 # tty colors
 END = '\033[0m'
