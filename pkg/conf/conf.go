@@ -51,6 +51,7 @@ func LoadConfig(configPath string) (*node.Node, error) {
 }
 
 var Config = HarvestConfig{}
+var isDocker = false
 
 func LoadHarvestConfig(configPath string) error {
 	contents, err := ioutil.ReadFile(configPath)
@@ -197,7 +198,7 @@ func GetPrometheusExporterPorts(pollerName string) (int, error) {
 						delete(ports.freePorts, k)
 						break
 					}
-				} else if *exporter.Port != 0 {
+				} else if exporter.Port != nil && *exporter.Port != 0 {
 					port = *exporter.Port
 					break
 				}
@@ -219,12 +220,18 @@ type PortMap struct {
 
 func PortMapFromRange(address string, portRange *IntRange) PortMap {
 	portMap := PortMap{}
+	portMap.freePorts = make(map[int]struct{})
 	start := portRange.Min
 	end := portRange.Max
 	for i := start; i <= end; i++ {
 		portMap.portSet = append(portMap.portSet, i)
+		if isDocker {
+			portMap.freePorts[i] = struct{}{}
+		}
 	}
-	portMap.freePorts = util.CheckFreePorts(address, portMap.portSet)
+	if !isDocker {
+		portMap.freePorts = util.CheckFreePorts(address, portMap.portSet)
+	}
 	return portMap
 }
 

@@ -1,0 +1,19 @@
+services:
+{{range .Pollers}}
+  {{ .PollerName }}:
+    image: harvest:latest
+    container_name: harvest_{{ .PollerName }}
+    restart: always
+    {{if .Port }}
+    ports:
+      - "{{ .Port }}:{{ .Port }}"
+    {{end}}
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    command: ' --poller {{ .PollerName }} --loglevel 2 {{if .Port }} --promPort {{ .Port }} {{ end }} --config ./harvest.yml'
+    #entrypoint: ["sh", "-c", "sleep 2073600"]
+    #volumes:
+    #  - harvestlog:/var/log/harvest
+{{end}}
+#volumes:
+#  harvestlog:
