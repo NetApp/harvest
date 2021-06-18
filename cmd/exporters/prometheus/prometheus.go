@@ -333,7 +333,13 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 
 		if include_all_labels {
 			for label, value := range instance.GetLabels().Map() {
-				instance_keys = append(instance_keys, fmt.Sprintf("%s=\"%s\"", label, value))
+				// temporary fix for the rarely happening duplicate labels
+				// known case is: ZapiPerf -> 7mode -> disk.yaml
+				// actual cause is the Aggregator plugin, which is adding node as
+				// instance label (even though it's already a global label for 7modes)
+				if !data.GetGlobalLabels().Has(label) {
+					instance_keys = append(instance_keys, fmt.Sprintf("%s=\"%s\"", label, value))
+				}
 			}
 		} else {
 			for _, key := range keys_to_include {
