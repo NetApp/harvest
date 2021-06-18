@@ -11,7 +11,7 @@ servers, such as InfluxDB's Telegraf.
 """
 
 import argparse
-import re
+import regex
 import signal
 import sys
 import time
@@ -24,23 +24,21 @@ errors = {
     'corrupt_metatags'      : 0,
     'inconsistent_labels'   : 0,
     'duplicate_labels'      : 0,
+    'duplicate_metatags'    : 0,
     'missing_metatags'      : 0,
     'missing_newlines'      : 0,
     }
 
 # cache label keys of seen metrics to check for consistency
 label_cache = {}  # str -> set
-# cache metrics for which we have seen metatags
-help_cache = {}   # str -> bool
-type_cache = {}   # str -> bool
 
 # regular expressions to match metric
-metric_pattern = re.compile(r'^(\w+)\{(.+)\} \d+(\.\d+(e[-+]\d+)?)?$')
+metric_pattern = regex.compile(r'^(\w+)\{(.+)\} \d+(\.\d+(e[-+]\d+)?)?$')
 # pattern to match HELP/TYPE metatags
-tag_pattern = re.compile(r'^# (\w+) (\w+) .*$')
+tag_pattern = regex.compile(r'^# (\w+) (\w+) .*$')
 # label name must start with alphabetical char
 # see: https://github.com/prometheus/common/blob/main/model/labels.go#L94
-label_pattern = re.compile(r'^([_a-zA-Z]\w*)="[^"]*?"$', flags=re.ASCII)
+label_pattern = regex.compile(r'^([_a-zA-Z]\w*)="[^"]*?"$', flags=regex.ASCII)
 
 # tty colors
 END = '\033[0m'
@@ -59,11 +57,17 @@ def main():
 
     # run the scrapes
     for i in range(a.scrapes):
+        
+        # cache metrics for which we have seen metatags
+        help_cache = {}   # str -> bool
+        type_cache = {}   # str -> bool
+        
         metrics = get_batch_metrics(a.addr, a.port)
-        print('{}-> scrape #{:<4} - scraped metrics: {}{}'.format(BOLD, i+1, len(metrics), END))
+        print('{}-> scrape #{:<4} - scraped metrics/lines: {}{}'.format(BOLD, i+1, len(metrics.splitlines()), END))
 
-        if not metrics:
-            continue
+        if metrics == '':
+            # sleep until next scrape
+            time.sleep(a.interval)
 
         if not metrics.endswith('\n'):
             errors['missing_newlines'] += 1
@@ -72,7 +76,7 @@ def main():
         for m in metrics.splitlines():
 
             # skip newline
-            if m == '\n':
+            if m == '\n' or m == '':
                 continue
 
             # handle metatag
@@ -83,8 +87,13 @@ def main():
                     print('   corrupt {} metatag:'.format(tag))
                     print('   [{}{}{}]'.format(RED, m, END))
                 elif tag == 'HELP':
+                    if help_cache.get(metric_name, False):
+                        errors['duplicate_metatags'] += 1  # count only once
+                        print('   duplicate HELP tag for metric {}'.format(metric_name))
                     help_cache[metric_name] = True
                 elif tag == 'TYPE':
+                    if type_cache.get(metric_name, False):
+                        print('   duplicate TYPE tag for metric {}'.format(metric_name))
                     type_cache[metric_name] = True
                 continue
 
