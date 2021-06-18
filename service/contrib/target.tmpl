@@ -1,0 +1,6 @@
+[Unit]
+Description="Harvest"
+Wants={{range .PollersOrdered}}poller@{{.}}.service {{end}}
+
+[Install]
+WantedBy=multi-user.target

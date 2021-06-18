@@ -21,6 +21,7 @@ import (
 	"goharvest2/cmd/harvest/stub"
 	"goharvest2/cmd/harvest/version"
 	"goharvest2/cmd/tools/doctor"
+	"goharvest2/cmd/tools/generate"
 	"goharvest2/cmd/tools/grafana"
 	"goharvest2/cmd/tools/zapi"
 	"goharvest2/pkg/conf"
@@ -173,7 +174,6 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 
 		name := p.GetNameS()
 		datacenter := p.GetChildContentS("datacenter")
-		promPort := getPollerPrometheusPort(p, opts)
 
 		s = getStatus(name)
 		if opts.command == "kill" {
@@ -200,6 +200,7 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 				printStatus(opts.longStatus, c1, c2, datacenter, name, s.promPort, s)
 				break
 			case "not running", "stopped", "killed":
+				promPort := getPollerPrometheusPort(p, opts)
 				s = startPoller(name, promPort, opts)
 				printStatus(opts.longStatus, c1, c2, datacenter, name, s.promPort, s)
 			default:
@@ -386,7 +387,7 @@ func stopPoller(pollerName string) *pollerStatus {
 	return killPoller(pollerName)
 }
 
-func startPoller(pollerName string, promPort string, opts *options) *pollerStatus {
+func startPoller(pollerName string, promPort int, opts *options) *pollerStatus {
 
 	argv := make([]string, 5)
 	argv[0] = path.Join(HarvestHomePath, "bin", "poller")
@@ -395,9 +396,9 @@ func startPoller(pollerName string, promPort string, opts *options) *pollerStatu
 	argv[3] = "--loglevel"
 	argv[4] = strconv.Itoa(opts.loglevel)
 
-	if len(promPort) != 0 {
+	if promPort != 0 {
 		argv = append(argv, "--promPort")
-		argv = append(argv, promPort)
+		argv = append(argv, strconv.Itoa(promPort))
 	}
 	if opts.debug {
 		argv = append(argv, "--debug")
@@ -478,11 +479,11 @@ func startPoller(pollerName string, promPort string, opts *options) *pollerStatu
 	}
 
 	// Allow for some delay and retry checking status a few times
-	for i := 0; i < 10; i += 1 {
+	for i := 0; i < 2; i += 1 {
 		if s := getStatus(pollerName); s.pid > 0 {
 			return s
 		}
-		time.Sleep(50 * time.Millisecond)
+		time.Sleep(10 * time.Millisecond)
 	}
 
 	return getStatus(pollerName)
@@ -556,18 +557,19 @@ func closeDial(dial *net.TCPListener) {
 	_ = dial.Close()
 }
 
-func getPollerPrometheusPort(p *node.Node, opts *options) string {
-	var promPort string
+func getPollerPrometheusPort(p *node.Node, opts *options) int {
+	var promPort int
 	var err error
+
 	// check first if poller argument has promPort defined
 	// else in exporter config of poller
 	if opts.promPort != 0 {
-		promPort = strconv.Itoa(opts.promPort)
+		promPort = opts.promPort
 	} else {
-		promPort, err = conf.GetPrometheusExporterPorts(p, opts.config)
+		promPort, err = conf.GetPrometheusExporterPorts(p.GetNameS())
 		if err != nil {
 			fmt.Println(err)
-			promPort = "error"
+			return 0
 		}
 	}
 	return promPort
@@ -581,6 +583,7 @@ func init() {
 	rootCmd.AddCommand(manageCmd("restart", true))
 	rootCmd.AddCommand(manageCmd("kill", true))
 	rootCmd.AddCommand(config.ConfigCmd, zapi.ZapiCmd, grafana.GrafanaCmd, stub.NewCmd)
+	rootCmd.AddCommand(generate.Cmd)
 	rootCmd.AddCommand(doctor.Cmd)
 
 	rootCmd.PersistentFlags().StringVar(&opts.config, "config", "./harvest.yml", "harvest config file path")
@@ -666,7 +669,7 @@ Feedback
 func manageCmd(use string, shouldHide bool) *cobra.Command {
 	return &cobra.Command{
 		Use:    fmt.Sprintf("%s [POLLER...]", use),
-		Short:  "stop/restart/status/kill - all or individual pollers",
+		Short:  "Stop/restart/status/kill - all or individual pollers",
 		Long:   "Harvest Manager - manage your pollers",
 		Args:   cobra.ArbitraryArgs,
 		Hidden: shouldHide,

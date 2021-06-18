@@ -605,7 +605,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Thoughput",
+      "title": "Throughput",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1008,7 +1008,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Thoughput",
+      "title": "Throughput",
       "tooltip": {
         "shared": true,
         "sort": 2,
