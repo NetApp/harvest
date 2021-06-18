@@ -11,6 +11,7 @@ import (
 type PollerPort struct {
 	PollerName string
 	Port       int
+	ConfigFile string
 }
 
 type PollerTemplate struct {
@@ -55,9 +56,9 @@ func generateDockerCompose(path string) {
 		return
 	}
 	conf.IsDocker = true
-	for k, _ := range *conf.Config.Pollers {
-		port, _ := conf.GetPrometheusExporterPorts(k)
-		pollerTemplate.Pollers = append(pollerTemplate.Pollers, PollerPort{k, port})
+	for _, v := range conf.Config.PollersOrdered {
+		port, _ := conf.GetPrometheusExporterPorts(v)
+		pollerTemplate.Pollers = append(pollerTemplate.Pollers, PollerPort{v, port, path})
 	}
 
 	t, err := template.New("docker-compose.tmpl").ParseFiles("docker/onePollerPerContainer/docker-compose.tmpl")
@@ -66,13 +67,10 @@ func generateDockerCompose(path string) {
 	}
 
 	color.DetectConsole("")
-	println("Docker Compose file generated at harvest home " + color.Colorize("docker-compose.yml", color.Green))
-	// Create the file
-	f, err := os.Create("docker-compose.yml")
-	if err != nil {
-		panic(err)
-	}
-	err = t.Execute(f, pollerTemplate)
+	println("Save the following to " + color.Colorize("docker-compose.yml", color.Green))
+	println("and then run " + color.Colorize("docker-compose -f docker-compose.yml up -d", color.Green))
+
+	err = t.Execute(os.Stdout, pollerTemplate)
 	if err != nil {
 		panic(err)
 	}
