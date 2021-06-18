@@ -15,5 +15,5 @@ bin/harvest generate docker --config ./harvest.yml
 Start docker containers
 
 ```
-docker-compose -f docker-compose.yml up -d
+docker-compose -f docker-compose.yml up -d --remove-orphans
 ```
