@@ -116,7 +116,12 @@ func (me *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 
 		if md, err := e.Render(e.Metadata); err == nil {
 			data = append(data, md...)
-		}*/
+		}
+	*/
+
+	if me.addMetaTags {
+		data = filterMetaTags(data)
+	}
 
 	w.WriteHeader(200)
 	w.Header().Set("content-type", "text/plain")
@@ -140,6 +145,32 @@ func (me *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		me.Logger.Error().Stack().Err(err).Msg("error")
 	}
+}
+
+func filterMetaTags(metrics [][]byte) [][]byte {
+
+	filtered := make([][]byte, 0)
+
+	metricsWithTags := make(map[string]bool)
+
+	for i, m := range metrics {
+		if bytes.HasPrefix(m, []byte("# ")) {
+			if fields := strings.Fields(string(m)); len(fields) > 3 {
+				name := fields[2]
+				if !metricsWithTags[name] {
+					metricsWithTags[name] = true
+					filtered = append(filtered, m)
+					if i+1 < len(metrics) {
+						filtered = append(filtered, metrics[i+1])
+						i++
+					}
+				}
+			}
+		} else {
+			filtered = append(filtered, m)
+		}
+	}
+	return filtered
 }
 
 // ServeInfo provides a human-friendly overview of metric types and source collectors
