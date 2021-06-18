@@ -486,6 +486,18 @@
           {
             "matcher": {
               "id": "byName",
+              "options": "shelf"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "json-view"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
               "options": "op_status"
             },
             "properties": [
