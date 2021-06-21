@@ -1199,7 +1199,7 @@
       "yaxes": [
         {
           "$$hashKey": "object:75",
-          "format": "Bps",
+          "format": "iops",
           "label": null,
           "logBase": 1,
           "max": null,
