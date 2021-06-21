@@ -42,6 +42,7 @@ import (
 	"goharvest2/pkg/logging"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
+	"gopkg.in/yaml.v3"
 	"net/http"
 	_ "net/http/pprof" // #nosec since pprof is off by default
 	"os"
@@ -90,7 +91,7 @@ type Poller struct {
 	collectors     []collector.Collector
 	exporters      []exporter.Exporter
 	exporterParams *node.Node
-	params         *node.Node
+	params         *conf.Poller
 	metadata       *matrix.Matrix
 	status         *matrix.Matrix
 }
@@ -117,7 +118,7 @@ func (p *Poller) Init() error {
 		consoleLoggingEnabled = true
 	}
 
-	if p.params, err = conf.GetPoller(p.options.Config, p.name); err != nil {
+	if p.params, err = conf.GetPoller2(p.options.Config, p.name); err != nil {
 		// separate logger is not yet configured as it depends on setting logMaxMegaBytes, logMaxFiles later
 		// Using default instance of logger which logs below error to harvest.log
 		logging.SubLogger("Poller", p.name).Error().Stack().Err(err).Msg("read config")
@@ -126,17 +127,13 @@ func (p *Poller) Init() error {
 
 	// log handling parameters
 	// size of file before rotating
-	if s := p.params.GetChildContentS("log_max_bytes"); s != "" {
-		if i, err := strconv.ParseInt(s, 10, 64); err == nil {
-			logMaxMegaBytes = int(i / (1024 * 1024))
-		}
+	if s := p.params.LogMaxBytes; s != nil {
+		logMaxMegaBytes = int(*s / (1024 * 1024))
 	}
 
 	// maximum number of rotated files to keep
-	if s := p.params.GetChildContentS("log_max_files"); s != "" {
-		if i, err := strconv.Atoi(s); err == nil {
-			logMaxBackups = i
-		}
+	if s := p.params.LogMaxFiles; s != nil {
+		logMaxBackups = *p.params.LogMaxFiles
 	}
 
 	logConfig := logging.LogConfig{ConsoleLoggingEnabled: consoleLoggingEnabled,
@@ -186,26 +183,30 @@ func (p *Poller) Init() error {
 	// each poller is associated with a remote host
 	// if no address is specified, assume that is local host
 	// @TODO: remove, redundant and error-prone
-	if p.target = p.params.GetChildContentS("addr"); p.target == "" {
+	if p.params.Addr == nil {
 		p.target = "localhost"
+	} else {
+		p.target = *p.params.Addr
 	}
 	// check optional parameter auth_style
 	// if certificates are missing use default paths
-	if p.params.GetChildContentS("auth_style") == "certificate_auth" {
-		filenames := [2]string{"ssl_cert", "ssl_key"}
-		extensions := [2]string{".pem", ".key"}
-		fp := ""
-		for i := range filenames {
-			if fp = p.params.GetChildContentS(filenames[i]); fp == "" {
-				// use default paths
-				// example: /opt/harvest/cert/hostname.key, /opt/harvest/cert/hostname.pem
-				fp = path.Join(p.options.HomePath, "cert/", p.options.Hostname+extensions[i])
-				p.params.SetChildContentS(filenames[i], fp)
-				logger.Debug().Msgf("using default [%s] path: [%s]", filenames[i], fp)
-			}
+	if p.params.AuthStyle != nil && *p.params.AuthStyle == "certificate_auth" {
+		if p.params.SslCert != nil {
+			fp := path.Join(p.options.HomePath, "cert/", p.options.Hostname+".pem")
+			p.params.SslCert = &fp
+			logger.Debug().Msgf("using default [ssl_cert] path: [%s]", fp)
 			if _, err = os.Stat(fp); err != nil {
-				logger.Error().Stack().Err(err).Msgf("%s", filenames[i])
-				return errors.New(errors.MISSING_PARAM, filenames[i]+": "+err.Error())
+				logger.Error().Stack().Err(err).Msgf("ssl_cert")
+				return errors.New(errors.MISSING_PARAM, "ssl_cert: "+err.Error())
+			}
+		}
+		if p.params.SslKey != nil {
+			fp := path.Join(p.options.HomePath, "cert/", p.options.Hostname+".key")
+			p.params.SslKey = &fp
+			logger.Debug().Msgf("using default [ssl_key] path: [%s]", fp)
+			if _, err = os.Stat(fp); err != nil {
+				logger.Error().Stack().Err(err).Msgf("ssl_key")
+				return errors.New(errors.MISSING_PARAM, "ssl_key: "+err.Error())
 			}
 		}
 	}
@@ -222,11 +223,11 @@ func (p *Poller) Init() error {
 	// iterate over list of collectors and initialize them
 	// exporters are initialized on the fly, if at least one collector
 	// has requested them
-	if collectors := p.params.GetChildS("collectors"); collectors == nil {
+	if p.params.Collectors == nil {
 		logger.Warn().Msg("no collectors defined for this poller in config")
 		return errors.New(errors.ERR_NO_COLLECTOR, "no collectors")
 	} else {
-		for _, c := range collectors.GetAllChildContentS() {
+		for _, c := range *p.params.Collectors {
 			ok := true
 			// if requested, filter collectors
 			if len(p.options.Collectors) != 0 {
@@ -268,8 +269,8 @@ func (p *Poller) Init() error {
 	// initialize a schedule for the poller, this is the interval at which
 	// we will check the status of collectors, exporters and target system,
 	// and send metadata to exporters
-	if s := p.params.GetChildContentS("poller_schedule"); s != "" {
-		pollerSchedule = s
+	if p.params.PollerSchedule != nil {
+		pollerSchedule = *p.params.PollerSchedule
 	}
 	p.schedule = schedule.New()
 	if err = p.schedule.NewTaskString("poller", pollerSchedule, nil); err != nil {
@@ -479,8 +480,8 @@ func (p *Poller) loadCollector(class, object string) error {
 		template.Merge(custom)
 		logger.Debug().Msg("merged custom and default templates")
 	}
-	// add Poller's parameters to the collector parameters
-	template.Union(p.params)
+	// add the poller's parameters to the collector's parameters
+	Union2(template, p.params)
 
 	// if we don't know object, try load from template
 	if object == "" {
@@ -573,6 +574,56 @@ func (p *Poller) loadCollector(class, object string) error {
 	}
 
 	return nil
+}
+
+// Union2 merges the fields of a Poller with the fields of a node.
+// This is a way to bridge the struct world with the string typed world.
+// If one of the poller field's does not exist in hNode, it will be copied
+// from poller to hNode.
+// If the field already exists in hNode, nothing is copied.
+// Instead of comparing each field of the poller individually and being forced
+// to keep this method in sync with the Poller struct, reflection via yaml marshaling
+// is used to do the comparison. First the poller is marshaled to yaml and then
+// unmarshalled into a list of generic yaml node. Each generic yaml node is walked, checking
+// if there is a corresponding node in hNode, when there isn't one, a new hNode is created
+// and populated with the yaml node's content. Finally, the new hNode is added to its parent
+
+func Union2(hNode *node.Node, poller *conf.Poller) {
+	marshal, err := yaml.Marshal(poller)
+	if err != nil {
+		return
+	}
+	root := yaml.Node{}
+	err = yaml.Unmarshal(marshal, &root)
+	if err != nil {
+		return
+	}
+	rootContent := root.Content[0]
+	if rootContent.Kind == yaml.MappingNode {
+		for index, yNode := range rootContent.Content {
+			// since rootContent is a mapping node every other yNode is a key
+			if index%2 == 0 && yNode.Tag == "!!str" {
+				// If the harvest node is missing this key, add it the harvest node
+				if !hNode.HasChildS(yNode.Value) {
+					// create a new harvest node to contain the missing content
+					newNode := node.NewS(yNode.Value)
+					// this is the value that goes along with the key from yNode
+					valNode := rootContent.Content[index+1]
+					//fmt.Printf("node type=%s val=%s %s\n", yNode.Value, valNode.Tag, valNode.Value)
+					switch valNode.Tag {
+					case "!!str", "!!bool":
+						newNode.Content = []byte(valNode.Value)
+					case "!!seq":
+						// the poller node that's missing is a sequence so add all the children of the sequence
+						for _, seqNode := range valNode.Content {
+							newNode.NewChildS(seqNode.Value, seqNode.Value)
+						}
+					}
+					hNode.AddChild(newNode)
+				}
+			}
+		}
+	}
 }
 
 func (p *Poller) newCollector(class string, object string, template *node.Node) (collector.Collector, error) {

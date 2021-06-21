@@ -127,6 +127,24 @@ func GetPollerNames(configFp string) ([]string, error) {
 	return pollerNames, nil
 }
 
+func GetPollers2(configFp string) (map[string]Poller, error) {
+	err := LoadHarvestConfig(configFp)
+	if err != nil {
+		return nil, err
+	}
+	pollers := Config.Pollers
+	defaults := Config.Defaults
+
+	if pollers == nil {
+		return nil, errors.New(errors.ERR_CONFIG, "[Pollers] section not found")
+	} else if defaults != nil { // optional
+		for _, p := range *pollers {
+			p.Union(defaults)
+		}
+	}
+	return *pollers, nil
+}
+
 func GetPollers(configFp string) (*node.Node, error) {
 	var config, pollers, defaults *node.Node
 	var err error
@@ -146,6 +164,18 @@ func GetPollers(configFp string) (*node.Node, error) {
 		}
 	}
 	return pollers, err
+}
+
+func GetPoller2(configFp, pollerName string) (*Poller, error) {
+	pollers, err := GetPollers2(configFp)
+	if err != nil {
+		return nil, err
+	}
+	poller, ok := pollers[pollerName]
+	if !ok {
+		return nil, errors.New(errors.ERR_CONFIG, "poller ["+pollerName+"] not found")
+	}
+	return &poller, nil
 }
 
 func GetPoller(configFp, pollerName string) (*node.Node, error) {
@@ -346,6 +376,52 @@ type Poller struct {
 	Exporters      *[]string `yaml:"exporters,omitempty"`
 	Collectors     *[]string `yaml:"collectors,omitempty"`
 	IsKfs          *bool     `yaml:"is_kfs,omitempty"`
+	PollerSchedule *string   `yaml:"poller_schedule,omitempty"`
+}
+
+func (p *Poller) Union(defaults *Poller) {
+	if p.Datacenter == nil && defaults.Datacenter != nil {
+		p.Datacenter = defaults.Datacenter
+	}
+	if p.Addr == nil && defaults.Addr != nil {
+		p.Addr = defaults.Addr
+	}
+	if p.AuthStyle == nil && defaults.AuthStyle != nil {
+		p.AuthStyle = defaults.AuthStyle
+	}
+	if p.Username == nil && defaults.Username != nil {
+		p.Username = defaults.Username
+	}
+	if p.Password == "" && defaults.Password != "" {
+		p.Password = defaults.Password
+	}
+	if p.UseInsecureTls == nil && defaults.UseInsecureTls != nil {
+		p.UseInsecureTls = defaults.UseInsecureTls
+	}
+	if p.SslCert == nil && defaults.SslCert != nil {
+		p.SslCert = defaults.SslCert
+	}
+	if p.SslKey == nil && defaults.SslKey != nil {
+		p.SslKey = defaults.SslKey
+	}
+	if p.LogMaxBytes == nil && defaults.LogMaxBytes != nil {
+		p.LogMaxBytes = defaults.LogMaxBytes
+	}
+	if p.LogMaxFiles == nil && defaults.LogMaxFiles != nil {
+		p.LogMaxFiles = defaults.LogMaxFiles
+	}
+	if p.Exporters == nil && defaults.Exporters != nil {
+		p.Exporters = defaults.Exporters
+	}
+	if p.Collectors == nil && defaults.Collectors != nil {
+		p.Collectors = defaults.Collectors
+	}
+	if p.IsKfs == nil && defaults.IsKfs != nil {
+		p.IsKfs = defaults.IsKfs
+	}
+	if p.PollerSchedule == nil && defaults.PollerSchedule != nil {
+		p.PollerSchedule = defaults.PollerSchedule
+	}
 }
 
 type Exporter struct {
