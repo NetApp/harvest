@@ -7,10 +7,9 @@ Internally, the Matrix is a collection of metrics (`matrix.Metric`) and instance
 
 <center><img src="matrix.png" width="70%"></center><br />
 
-Since we use hash tables for accessing the elemnts of the array, any metrics and instances added two the Matrix should have a unique key. Metrics are typed and contain the numeric data (i.e. rows) of the Matrix. Instances only serve as pointers to the columents of the Matrix, but they also store non-numeric data as labels (`*dict.Dict`).
+Since we use hash tables for accessing the elements of the array, all metrics and instances added to the matrix must have a unique key. Metrics are typed and contain the numeric data (i.e. rows) of the Matrix. Instances only serve as pointers to the columents of the Matrix, but they also store non-numeric data as labels (`*dict.Dict`).
 
 This package is the architectural backbone of Harvest, therefore understanding it is key for an advanced user or contributor.
-
 
 # Basic Usage
 ## Initialize
@@ -18,20 +17,20 @@ This package is the architectural backbone of Harvest, therefore understanding i
 func matrix.New(name, object string) *Matrix
 // always returns successfully pointer to (empty) Matrix 
 ```
-This section describes how to properly initialize a new Matrix instance. Note that if you write a collector, a Matrix instance is already properly initialized for you (as `MyCollector.matrix`), and if you write a plugin or exporter, it is passed to you from the collector. So most of the time you should not worry about properly initializing the Matrix. 
+This section describes how to properly initialize a new Matrix instance. Note that if you write a collector, a Matrix instance is already properly initialized for you (as `MyCollector.matrix`), and if you write a plugin or exporter, it is passed to you from the collector. That means most of the time you don't have to worry about initializing the Matrix.
 
 `matrix.New()` requires two arguments:
 * `UUID` is by convention the collector name (e.g. `MyCollector`) if the Matrix comes from a collector, or the collector name and the plugin name concatenated with a `.` (e.g. `MyCollector.MyPlugin`) if the Matrix comes from a plugin.
-* `object` is the best desciption of the instances of the Matrix. For example `car` if we collect data about cars and our instances are cars.
-  
-Note that the combination of `UUID` and `object` should uniquely identify a Matrix instance. This is not a strict requirement, but guarantees that our data is properly handled by exporters.
+* `object` is a description of the instances of the Matrix. For example, if we collect data about cars and our instances are cars, a good name would be `car`.
+
+Note that the combination of `UUID` and `object` should uniquely identify a Matrix instance. This is not a strict requirement, but guarantees that your data is properly handled by exporters.
 
 ### Example
 Here is an example from the point of view of a collector:
 
 ```go
 
-import "goharvest2/share/matrix"
+import "goharvest2/pkg/matrix"
 
 var myMatrix *matrix.Matrix
 
@@ -48,7 +47,7 @@ func (x *Matrix) NewInstance(key string) (*Instance, error)
 
 ```go
 func (i *Instance) SetLabel(key, value string)
-// always successfull, overwrite possibly pre-existing values
+// always successful, overwrites existing values
 ```
 ```go
 func (i *Instance) GetLabel(key) string
@@ -93,13 +92,14 @@ Metrics are typed and there are currently 8 types, all can be created with the s
 * `MetricInt64`
 * `MetricFloat32`
 * `MetricFloat64`
+*
 We are able to read from and write to a metric instance using different types (as displayed in the next section), however choosing a type wisely ensures that this is done efficiently and overflow does not occur.
 
-Furthermore we can add labels to metrics just the same way as we did with instances. This is usually done when we deal with histograms:
+We can add labels to metrics just like instances. This is usually done when we deal with histograms:
 
 ```go
 func (m Metric) SetLabel(key, value string)
-// always successfull, overwrites old value if it exists
+// always successful, overwrites existing values
 ```
 ```go
 func (m Metric) GetLabel(key) string
@@ -149,21 +149,20 @@ func (m Metric) SetValueString(i *Instance, v []string) error
 ```go
 func (m Metric) AddValueInt(i *Instance, v int) error
 // increments the numeric value for the instance i by v
-// same signatures for all the types defined aboce
+// same signatures for all the types defined above
 ```
 
-If we re-used a Matrix for each data poll (recommended), we should call call `Reset()` to flush old data Note that it is still safe to add new instances and metrics after calling this method.
+When possible you should reuse a Matrix for each data poll, but to do that, you need to call `Reset()` to drop old data from the Matrix. It is safe to add new instances and metrics after calling this method.
 
-The `SetValue*()` and `AddValue*()` methods are typed as the metrics themselves. However we are not required to use same type as the type of our metric although that is the safest and most efficient way.
+The `SetValue*()` and `AddValue*()` methods are typed same as the metrics. Even though you are not required to use the same type as the metric, it is the safest and most efficient way.
 
 Since most collectors get their data as bytes or strings, it is recommended to use the `SetValueString()` and `SetValueBytes()` methods.
 
-These methods return an error if value `v` can not be converted to the type of the metric. Error is always `nil` is type of `v` matches the type of the metric.
-
+These methods return an error if value `v` can not be converted to the type of the metric. Error is always `nil` when the type of `v` matches the type of the metric.
 
 ### Example
 
-We assume here the variables defined in the previous examples:
+Continuing with the previous examples:
 
 
 ```go
@@ -173,9 +172,9 @@ if err = myMatrix.Reset(); err != nil {
 }
 // write numbers to the matrix using the instance and the metrics we have created
 
-// let the metric to the conversion for us
+// let the metric do the conversion for us
 if err = speed.SetValueString(instance, "500"); err != nil {
-    logger.Error(me.Prefix, "set speed value: ", err) // for usage of the logger module see its documentation
+    logger.Error(me.Prefix, "set speed value: ", err)
 }
 // here we ignore err since type is the metric type
 length.SetValueFloat32(instance, 10000.00)
@@ -198,22 +197,22 @@ if instance2, err = myMatrix.NewInstance("SomeOtherCar"); err != nil {
 ```
 
 ## Read metrics and instances
-In this section we switch gears and look at the Matrix from the POV of plugins and exporters, who have to read from the Matrix and have no knowledge if its origin and contents. 
+In this section we switch gears and look at the Matrix from the point of view of plugins and exporters. Both those components need to read from the Matrix and have no knowledge of its origin or contents.
 
 ```go
-func (x *Matrix) GetMetrics(key string) map[string]Metric
+func (x *Matrix) GetMetrics() map[string]Metric
 // returns all metrics in the Matrix
 ```
 ```go
-func (x *Matrix) GeInstances(key string) map[string]*Instance
+func (x *Matrix) GetInstances() map[string]*Instance
 // returns all instances in the Matrix
 ```
 
-Usually we will do two loops with these two methods to read all data in the Matrix. See examples below.
+Usually we will do a nested loop with these two methods to read all data in the Matrix. See examples below.
 
 ### Example: Iterate over instances
 
-In this example the method `PrintKeys()` will iterate of a Matrix and print all metric and instance keys.
+In this example the method `PrintKeys()` will iterate over a Matrix and print all metric and instance keys.
 
 ```go
 func PrintKeys(x *matrix.Matrix) {
@@ -225,28 +224,28 @@ func PrintKeys(x *matrix.Matrix) {
 
 ### Example: Read instance labels
 
-Each instance has a set of labels. We can iterate over these labels with the `.GetLabel()` and `.GetLabels()` method. In this example, we write a function that prints all labels of an instance:
+Each instance has a set of labels. We can iterate over these labels with the `GetLabel()` and `GetLabels()` method. In this example, we write a function that prints all labels of an instance:
 
 ```go
 func PrintLabels(instance *matrix.Instance) {
     for label, value, := range instance.GetLabels().Map() {
-        fmt.Printf("%s= %s\n", label, value)
+        fmt.Printf("%s=%s\n", label, value)
     }
 }
 ```
 
 ### Example: Read metric values labels
 
-Similar to the `SetValue*` and `AddValue*` methods, we can choose a type when we read from a metric. If you don't know the type of the metric, it is safe to read it as a string. In this example, we write a function that prints the value of a metric for all instances in a Matrix:
+Similar to the `SetValue*` and `AddValue*` methods, you can choose a type when reading from a metric. If you don't know the type of the metric, it is safe to read it as a string. In this example, we write a function that prints the value of a metric for all instances in a Matrix:
 
 ```go
 func PrintMetricValues(x *matrix.Matrix, m matrix.Metric) {
-	for key, instance := range x.GetInstances() {
-		if value, has := m.GetValueString(instance) {
-			fmt.Printf("instance %s = %s\n", key, value)
-		} else {
-			fmt.Printf("instance %s = no value\n", key)
-		}
+    for key, instance := range x.GetInstances() {
+        if value, has := m.GetValueString(instance) {
+            fmt.Printf("instance %s = %s\n", key, value)
+        } else {
+            fmt.Printf("instance %s has no value\n", key)
+        }
     }
 }
 ```
