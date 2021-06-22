@@ -91,4 +91,3 @@ rewrite_as_label:
 export_options:
   instance_keys:
     - svm
-    - nfsv

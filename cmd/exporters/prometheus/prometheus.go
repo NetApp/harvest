@@ -274,7 +274,7 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 		tagged                                            *set.Set
 		labels_to_include, keys_to_include, global_labels []string
 		prefix                                            string
-		include_all_labels                                bool
+		err                                               error
 	)
 
 	rendered = make([][]byte, 0)
@@ -296,10 +296,19 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 		me.Logger.Debug().Msgf("requested keys_labels : %v", keys_to_include)
 	}
 
-	if options.GetChildContentS("include_all_labels") == "true" {
-		include_all_labels = true
-	} else {
-		include_all_labels = false
+	include_all_labels := false
+	require_instance_keys := true
+
+	if x := options.GetChildContentS("include_all_labels"); x != "" {
+		if include_all_labels, err = strconv.ParseBool(x); err != nil {
+			me.Logger.Error().Stack().Err(err).Msg("parameter: include_all_labels")
+		}
+	}
+
+	if x := options.GetChildContentS("require_instance_keys"); x != "" {
+		if require_instance_keys, err = strconv.ParseBool(x); err != nil {
+			me.Logger.Error().Stack().Err(err).Msg("parameter: require_instance_keys")
+		}
 	}
 
 	prefix = me.globalPrefix + data.Object
@@ -318,18 +327,26 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 		me.Logger.Trace().Msgf("rendering instance [%s] (%v)", key, instance.GetLabels())
 
 		instance_keys := make([]string, len(global_labels))
-		instance_labels := make([]string, 0)
 		copy(instance_keys, global_labels)
+		instance_keys_ok := false
+		instance_labels := make([]string, 0)
 
 		if include_all_labels {
 			for label, value := range instance.GetLabels().Map() {
-				instance_keys = append(instance_keys, fmt.Sprintf("%s=\"%s\"", label, value))
+				// temporary fix for the rarely happening duplicate labels
+				// known case is: ZapiPerf -> 7mode -> disk.yaml
+				// actual cause is the Aggregator plugin, which is adding node as
+				// instance label (even though it's already a global label for 7modes)
+				if !data.GetGlobalLabels().Has(label) {
+					instance_keys = append(instance_keys, fmt.Sprintf("%s=\"%s\"", label, value))
+				}
 			}
 		} else {
 			for _, key := range keys_to_include {
 				value := instance.GetLabel(key)
-				if value != "" {
-					instance_keys = append(instance_keys, fmt.Sprintf("%s=\"%s\"", key, value))
+				instance_keys = append(instance_keys, fmt.Sprintf("%s=\"%s\"", key, value))
+				if !instance_keys_ok && value != "" {
+					instance_keys_ok = true
 				}
 				me.Logger.Trace().Msgf("++ key [%s] (%s) found=%v", key, value, value != "")
 			}
@@ -341,7 +358,7 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 			}
 
 			// @TODO, probably be strict, and require all keys to be present
-			if len(instance_keys) == 0 && options.GetChildContentS("require_instance_keys") != "False" {
+			if !instance_keys_ok && require_instance_keys {
 				me.Logger.Trace().Msgf("skip instance, no keys parsed (%v) (%v)", instance_keys, instance_labels)
 				continue
 			}

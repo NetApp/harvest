@@ -9,7 +9,7 @@ global_labels:
 counters:
   - instance_name            => node
   - latency
-  - total_ops                => ops
+  - total_ops 
   - nfs4_read_throughput     => read_throughput
   - nfs4_throughput          => throughput
   - nfs4_write_throughput    => write_throughput
@@ -94,11 +94,6 @@ rewrite_as_label:
   - _avg_latency => request_latency: latency_type
   - _total => request_total: request_type
 
-export_options:
-  instance_keys:
-    - node
-    - nfsv
-
 override:
   - access_total: rate
   - close_total: rate
@@ -139,3 +134,7 @@ override:
   - setclientid_total: rate
   - verify_total: rate
   - write_total: rate
+
+export_options:
+  instance_keys:
+    - node

@@ -23,7 +23,6 @@ plugins:
 
 export_options:
   instance_keys:
-    - node
     - port
     - speed
   graphite_leafs:

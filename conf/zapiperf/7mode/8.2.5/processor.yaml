@@ -13,7 +13,7 @@ counters:
 
 plugins:
   Aggregator:
-  - node<>node_cpu
+    - node<>node_cpu
 
 # only export node-level averages from plugin
 # set this true or comment, to get data for each cpu

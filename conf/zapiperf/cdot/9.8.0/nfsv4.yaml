@@ -94,11 +94,6 @@ rewrite_as_label:
   - _avg_latency => request_latency: latency_type
   - _total => request_total: request_type
 
-export_options:
-  instance_keys:
-    - svm
-    - nfsv
-
 override:
   - access_total: rate
   - close_total: rate
@@ -139,3 +134,8 @@ override:
   - setclientid_total: rate
   - verify_total: rate
   - write_total: rate
+
+export_options:
+  instance_keys:
+    - svm
+

@@ -9,7 +9,7 @@ global_labels:
 counters:
   - instance_name            => node
   - latency
-  - total_ops                => ops
+  - total_ops
   - nfs41_read_throughput    => read_throughput
   - nfs41_throughput         => throughput
   - nfs41_write_throughput   => write_throughput
@@ -118,11 +118,6 @@ counters:
   - want_delegation_avg_latency
   - write_avg_latency
 
-export_options:
-  instance_keys:
-    - node
-    - nfsv
-
 override:
   - access_total: rate
   - backchannel_ctl_total: rate
@@ -177,3 +172,7 @@ override:
   - verify_total: rate
   - want_delegation_total: rate
   - write_total: rate
+
+export_options:
+  instance_keys:
+    - node
