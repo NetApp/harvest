@@ -9,7 +9,7 @@ global_labels:
 counters:
   - instance_name            => node
   - latency
-  - total_ops                => ops
+  - total_ops
   - nfs4_read_throughput     => read_throughput
   - nfs4_throughput          => throughput
   - nfs4_write_throughput    => write_throughput
@@ -97,7 +97,6 @@ rewrite_as_label:
 export_options:
   instance_keys:
     - node
-    - nfsv
 
 override:
   - access_total: rate
