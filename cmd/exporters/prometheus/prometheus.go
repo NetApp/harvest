@@ -274,7 +274,7 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 		tagged                                            *set.Set
 		labels_to_include, keys_to_include, global_labels []string
 		prefix                                            string
-        err                                               error
+		err                                               error
 	)
 
 	rendered = make([][]byte, 0)
@@ -358,7 +358,7 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 			}
 
 			// @TODO, probably be strict, and require all keys to be present
-            if !instance_keys_ok && require_instance_keys {
+			if !instance_keys_ok && require_instance_keys {
 				me.Logger.Trace().Msgf("skip instance, no keys parsed (%v) (%v)", instance_keys, instance_labels)
 				continue
 			}

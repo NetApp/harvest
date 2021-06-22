@@ -84,7 +84,7 @@ func (me *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 	var (
 		data  [][]byte
 		count int
-        err error
+		err   error
 	)
 
 	start := time.Now()
@@ -113,16 +113,16 @@ func (me *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 	}
 	/*
 
-		e.Metadata.SetValueSS("count", "render", float64(count))
+			e.Metadata.SetValueSS("count", "render", float64(count))
 
-		if md, err := e.Render(e.Metadata); err == nil {
-			data = append(data, md...)
-	    }
-    */
+			if md, err := e.Render(e.Metadata); err == nil {
+				data = append(data, md...)
+		    }
+	*/
 
-    // if HELP/TYPE tags are requested, make sure we have no duplicates
-    // (this is a temporary fix)
-    if me.addMetaTags {
+	// if HELP/TYPE tags are requested, make sure we have no duplicates
+	// (this is a temporary fix)
+	if me.addMetaTags {
 		data = FilterMetaTags(data)
 	}
 
@@ -132,7 +132,7 @@ func (me *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 		me.Logger.Error().Stack().Err(err).Msg("write metrics")
 	}
 
-    // make sure stream ends with newline
+	// make sure stream ends with newline
 	if _, err = w.Write([]byte("\n")); err != nil {
 		me.Logger.Error().Stack().Err(err).Msg("write ending newline")
 	}
