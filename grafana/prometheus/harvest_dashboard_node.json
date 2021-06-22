@@ -550,7 +550,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "unit": "µs"
+          "unit": "Bps"
         },
         "overrides": []
       },
@@ -605,7 +605,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Thoughput",
+      "title": "Throughput",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -623,7 +623,7 @@
       "yaxes": [
         {
           "$$hashKey": "object:195",
-          "format": "µs",
+          "format": "Bps",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -654,7 +654,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "unit": "µs"
+          "unit": "iops"
         },
         "overrides": []
       },
@@ -727,7 +727,7 @@
       "yaxes": [
         {
           "$$hashKey": "object:427",
-          "format": "µs",
+          "format": "iops",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -944,7 +944,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "unit": "µs"
+          "unit": "Bps"
         },
         "overrides": []
       },
@@ -1008,7 +1008,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Thoughput",
+      "title": "Throughput",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1026,7 +1026,7 @@
       "yaxes": [
         {
           "$$hashKey": "object:581",
-          "format": "µs",
+          "format": "Bps",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -1057,7 +1057,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "unit": "µs"
+          "unit": "iops"
         },
         "overrides": []
       },
@@ -1144,7 +1144,7 @@
       "yaxes": [
         {
           "$$hashKey": "object:659",
-          "format": "µs",
+          "format": "iops",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -1424,7 +1424,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "unit": "µs"
+          "unit": "iops"
         },
         "overrides": []
       },
@@ -1528,7 +1528,7 @@
       "yaxes": [
         {
           "$$hashKey": "object:737",
-          "format": "µs",
+          "format": "iops",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -1930,7 +1930,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "unit": "µs"
+          "unit": "iops"
         },
         "overrides": []
       },
@@ -2003,7 +2003,7 @@
       "yaxes": [
         {
           "$$hashKey": "object:736",
-          "format": "µs",
+          "format": "iops",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -2388,7 +2388,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "unit": "µs"
+          "unit": "Bps"
         },
         "overrides": []
       },
@@ -2460,7 +2460,7 @@
       },
       "yaxes": [
         {
-          "format": "µs",
+          "format": "Bps",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -2490,7 +2490,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "unit": "µs"
+          "unit": "iops"
         },
         "overrides": []
       },
@@ -2562,7 +2562,7 @@
       },
       "yaxes": [
         {
-          "format": "µs",
+          "format": "iops",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -2823,7 +2823,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "unit": "µs"
+          "unit": "Bps"
         },
         "overrides": []
       },
@@ -2895,7 +2895,7 @@
       },
       "yaxes": [
         {
-          "format": "µs",
+          "format": "Bps",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -2925,7 +2925,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "unit": "µs"
+          "unit": "iops"
         },
         "overrides": []
       },
@@ -2997,7 +2997,7 @@
       },
       "yaxes": [
         {
-          "format": "µs",
+          "format": "iops",
           "label": null,
           "logBase": 1,
           "max": null,
