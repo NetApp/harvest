@@ -56,7 +56,7 @@ func LoadConfig(configPath string) (*node.Node, error) {
 
 var Config = HarvestConfig{}
 var configRead = false
-var IsDocker = false
+var ValidatePortInUse = false
 
 func LoadHarvestConfig(configPath string) error {
 	if configRead {
@@ -192,7 +192,6 @@ func GetHarvestLogPath() string {
 
 /*
 GetPrometheusExporterPorts returns port configured in prometheus exporter for given poller
-If there are more than 1 exporter configured for a poller then return string will have ports as comma seperated
 */
 func GetPrometheusExporterPorts(pollerName string) (int, error) {
 	var port int
@@ -206,7 +205,7 @@ func GetPrometheusExporterPorts(pollerName string) (int, error) {
 	if exporters != nil && len(*exporters) > 0 {
 		for _, e := range *exporters {
 			exporter := (*Config.Exporters)[e]
-			if *exporter.Type == "Prometheus" {
+			if exporter.Type != nil && *exporter.Type == "Prometheus" {
 				isPrometheusExporterConfigured = true
 				if exporter.PortRange != nil {
 					ports := promPortRangeMapping[e]
@@ -222,6 +221,8 @@ func GetPrometheusExporterPorts(pollerName string) (int, error) {
 			}
 			continue
 		}
+	} else {
+		return 0, errors.New(errors.ERR_CONFIG, "Poller does not exist "+pollerName)
 	}
 	if port == 0 && isPrometheusExporterConfigured {
 		return port, errors.New(errors.ERR_CONFIG, "No free port found for poller "+pollerName)
@@ -242,11 +243,11 @@ func PortMapFromRange(address string, portRange *IntRange) PortMap {
 	end := portRange.Max
 	for i := start; i <= end; i++ {
 		portMap.portSet = append(portMap.portSet, i)
-		if IsDocker {
+		if ValidatePortInUse {
 			portMap.freePorts[i] = struct{}{}
 		}
 	}
-	if !IsDocker {
+	if !ValidatePortInUse {
 		portMap.freePorts = util.CheckFreePorts(address, portMap.portSet)
 	}
 	return portMap
