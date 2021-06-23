@@ -491,7 +491,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg by(node) (volume_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
+          "expr": "avg by(node) (volume_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -595,7 +595,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by (node) (volume_write_data+volume_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
+          "expr": "sum by (node) (volume_write_data+volume_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -699,7 +699,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by(node) (volume_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
+          "expr": "sum by(node) (volume_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
