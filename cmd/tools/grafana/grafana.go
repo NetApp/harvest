@@ -18,6 +18,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -47,6 +48,7 @@ type options struct {
 	client         *http.Client
 	headers        http.Header
 	config         string
+	prefix         string
 	useHttps       bool
 	useInsecureTLS bool
 }
@@ -231,6 +233,11 @@ func importDashboards(opts *options) error {
 			return err
 		}
 
+		// optionally add prefix to all metric names in the queries
+		if opts.prefix != "" {
+			addGlobalPrefix(dashboard, opts.prefix)
+		}
+
 		request = make(map[string]interface{})
 		request["overwrite"] = true
 		request["folderId"] = opts.folderId
@@ -250,6 +257,125 @@ func importDashboards(opts *options) error {
 		fmt.Printf("OK - imported [%s]\n", f.Name())
 	}
 	return nil
+}
+
+// addGlobalPrefix adds the given prefix to all metric names in the
+// dashboards. It assumes that metrics are in Prometheus-format.
+func addGlobalPrefix(db map[string]interface{}, prefix string) {
+
+	var (
+		panels, targets, templates                 []interface{}
+		panel, target, templating, template, query map[string]interface{}
+		p, t                                       interface{}
+		queryString, definition, expr              string
+		ok, has                                    bool
+		regex                                      *regexp.Regexp
+	)
+
+	// regex we will use to match metric names
+	// used in addPrefixToMatricNames, but better to initialize it once
+	regex = regexp.MustCompile(`([a-zA-Z_+]+)\{.+?\}`)
+
+	// make sure prefix ends with _
+	if !strings.HasSuffix(prefix, "_") {
+		prefix += "_"
+	}
+
+	// apply to queries in panels
+	if panels, ok = db["panels"].([]interface{}); !ok {
+		return
+	}
+
+	for _, p = range panels {
+		if panel, ok = p.(map[string]interface{}); !ok {
+			continue
+		}
+
+		if _, has = panel["targets"]; !has {
+			continue
+		}
+
+		if targets, ok = panel["targets"].([]interface{}); !ok {
+			continue
+		}
+
+		for _, t = range targets {
+
+			if target, ok = t.(map[string]interface{}); !ok {
+				continue
+			}
+
+			if _, has = target["expr"]; has {
+				if expr, ok = target["expr"].(string); ok {
+					target["expr"] = addPrefixToMetricNames(expr, prefix, regex)
+				}
+			}
+		}
+	}
+
+	// apply to variables
+	if templating, ok = db["templating"].(map[string]interface{}); !ok {
+		return
+	}
+
+	if templates, ok = templating["list"].([]interface{}); !ok {
+		return
+	}
+
+	for _, t = range templates {
+		if template, ok = t.(map[string]interface{}); ok {
+			if definition, ok = template["definition"].(string); ok {
+				template["definition"] = addPrefixToMetricNames(definition, prefix, regex)
+			}
+			if query, ok = template["query"].(map[string]interface{}); ok {
+				if queryString, ok = query["query"].(string); ok {
+					query["query"] = addPrefixToMetricNames(queryString, prefix, regex)
+				}
+			}
+		}
+	}
+}
+
+// addPrefixToMetricNames adds prefix to metric names in expr. Note that
+// this function will only work with the Prometheus-dashboards of Harvest.
+// It will recognize a number of ways in which metrics are used as queries.
+// (E.g. a single metric, multiple metrics used in addition, etc -- for examples
+// see the test). If we change queries of our dashboards, we have to review
+// this function as well (or come up with a better solution).
+func addPrefixToMetricNames(expr, prefix string, regex *regexp.Regexp) string {
+	var (
+		match    [][]string
+		submatch []string
+	)
+
+	// variable queries
+	if strings.HasPrefix(expr, "label_values(") {
+		if strings.Contains(expr, ", ") {
+			return strings.Replace(expr, "label_values(", "label_values("+prefix, 1)
+		} else {
+			// no metric name
+			return expr
+		}
+	}
+
+	// everything else is for graph queries
+	match = regex.FindAllStringSubmatch(expr, -1)
+
+	for _, m := range match {
+		// multiple metrics used to summarize
+		if strings.Contains(m[1], "+") {
+			submatch = strings.Split(m[1], "+")
+			for i := range submatch {
+				submatch[i] = prefix + submatch[i]
+			}
+			expr = strings.Replace(expr, m[1], strings.Join(submatch, "+"), 1)
+			// single metric
+		} else {
+			expr = strings.Replace(expr, m[1], prefix+m[1], 1)
+		}
+	}
+
+	return expr
 }
 
 func checkToken(opts *options, ignoreConfig bool) error {
@@ -531,6 +657,7 @@ func init() {
 	GrafanaCmd.PersistentFlags().StringVarP(&opts.token, "token", "t", "", "API token issued by Grafana server for authentication")
 	GrafanaCmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d", "grafana/prometheus/", "when importing, directory that contains dashboards.\nWhen exporting, directory to write dashboards to")
 	GrafanaCmd.PersistentFlags().StringVarP(&opts.folder, "folder", "f", grafanaFolderTitle, "Grafana folder name for the dashboards")
+	GrafanaCmd.PersistentFlags().StringVarP(&opts.prefix, "prefix", "p", "", "Use global metric prefix in queries")
 	GrafanaCmd.PersistentFlags().StringVarP(&opts.datasource, "datasource", "s", grafanaDataSource, "Grafana datasource for the dashboards")
 	GrafanaCmd.PersistentFlags().BoolVarP(&opts.variable, "variable", "v", false, "use datasource as variable, overrides: --datasource")
 	GrafanaCmd.PersistentFlags().BoolVarP(&opts.useHttps, "https", "S", false, "use HTTPS")
