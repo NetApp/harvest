@@ -137,6 +137,11 @@ bin/harvest version
 If you're building on a Mac use `GOOS=darwin make build`
 
 Checkout the `Makefile` for other targets of interest.
+
+## Build Binaries
+Refer [Build Binaries](jenkins/artifacts/README.MD)
+
+
 # Quick start
 
 ## 1. Configuration file
