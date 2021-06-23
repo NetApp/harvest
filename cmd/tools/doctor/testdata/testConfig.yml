@@ -3,6 +3,10 @@ Tools:
   token: [ 'aaa-bbb-ccc-ddd' ]
 
 Exporters:
+  prometheusrange:
+    exporter: Prometheus
+    addr: 0.0.0.0
+    port_range: 2000-2000
   prometheus:
     exporter: Prometheus
     addr: 0.0.0.0
@@ -84,6 +88,25 @@ Pollers:
     datacenter: DC-01
     addr: 10.0.0.2
     collectors: [ Zapi ]
+
+  unix-01:
+    datacenter: local
+    addr: localhost
+    collectors:
+      - Unix
+    exporters:
+      - prometheusrange
+
+  # add your Cdot / 7Mode pollers below, example:
+  cluster-02:
+    datacenter: DC-01
+    addr: 1.1.1.1
+    username: username
+    password: password
+    collectors:
+      - Zapi
+    exporters:
+      - prometheusrange
 
   sim-0001:
     is_kfs: true

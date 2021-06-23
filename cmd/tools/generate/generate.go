@@ -61,7 +61,7 @@ func generateDockerCompose(path string) {
 	if err != nil {
 		panic(err)
 	}
-	conf.IsDocker = true
+	conf.ValidatePortInUse = true
 	for _, v := range conf.Config.PollersOrdered {
 		port, _ := conf.GetPrometheusExporterPorts(v)
 		pollerTemplate.Pollers = append(pollerTemplate.Pollers, PollerPort{v, port, absPath})
