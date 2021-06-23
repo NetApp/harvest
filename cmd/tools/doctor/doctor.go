@@ -121,12 +121,28 @@ func checkUniquePromPorts(config conf.HarvestConfig) validation {
 	// map of portNum -> list of names
 	seen := make(map[int][]string)
 	for name, exporter := range *config.Exporters {
-		if exporter.Port == nil || exporter.Type == nil || *exporter.Type != "Prometheus" {
+		// ignore configuration with both port and portrange defined. PortRange takes precedence
+		if exporter.Port == nil || exporter.Type == nil || *exporter.Type != "Prometheus" || exporter.PortRange != nil {
 			continue
 		}
 		previous := seen[*exporter.Port]
 		previous = append(previous, name)
 		seen[*exporter.Port] = previous
+	}
+
+	// Update PortRanges
+	for name, exporter := range *config.Exporters {
+		if exporter.PortRange == nil || exporter.Type == nil || *exporter.Type != "Prometheus" {
+			continue
+		}
+		portRange := exporter.PortRange
+		start := portRange.Min
+		end := portRange.Max
+		for i := start; i <= end; i++ {
+			previous := seen[i]
+			previous = append(previous, name)
+			seen[i] = previous
+		}
 	}
 
 	valid := validation{isValid: true}
