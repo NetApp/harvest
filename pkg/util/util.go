@@ -73,10 +73,6 @@ func readProcFile(path string) (string, error) {
 	return result, nil
 }
 
-func GetEnviron(pid int) (string, error) {
-	return readProcFile(fmt.Sprintf("/proc/%d/environ", pid))
-}
-
 func GetCmdLine(pid int) (string, error) {
 	if runtime.GOOS == "darwin" {
 		return darwinGetCmdLine(pid)
@@ -168,23 +164,8 @@ func GetPids(search string) ([]int, error) {
 		}
 
 		// Validate this is a Harvest process
-		if runtime.GOOS == "darwin" {
-			// env check does not work on darwin
-			result = append(result, p)
-		} else {
-			environ, err := GetEnviron(p)
-			if err != nil {
-				if errors.As(err, &pe) {
-					// permission denied, no need to log
-					continue
-				}
-				fmt.Printf("err reading environ for search=%s pid=%d err=%+v\n", search, p, err)
-				continue
-			}
-			if strings.Contains(environ, HarvestTag) {
-				result = append(result, p)
-			}
-		}
+		// env check does not work on Darwin or Unix when running as non-root
+		result = append(result, p)
 	}
 	return result, err
 }
