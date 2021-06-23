@@ -889,7 +889,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources, volume_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
+          "expr": "topk($TopResources, volume_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
@@ -992,7 +992,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources, volume_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
+          "expr": "topk($TopResources, volume_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "{{svm}} - {{volume}}",
@@ -1096,7 +1096,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources, volume_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
+          "expr": "topk($TopResources, volume_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
@@ -1199,7 +1199,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources, volume_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
+          "expr": "topk($TopResources, volume_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
@@ -1302,7 +1302,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources, volume_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
+          "expr": "topk($TopResources, volume_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
@@ -1405,7 +1405,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources, volume_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
+          "expr": "topk($TopResources, volume_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
