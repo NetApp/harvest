@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"runtime"
 	"strconv"
 	"strings"
 )
@@ -77,7 +78,49 @@ func GetEnviron(pid int) (string, error) {
 }
 
 func GetCmdLine(pid int) (string, error) {
+	if runtime.GOOS == "darwin" {
+		return darwinGetCmdLine(pid)
+	}
 	return readProcFile(fmt.Sprintf("/proc/%d/cmdline", pid))
+}
+
+func darwinGetCmdLine(pid int) (string, error) {
+	bin, err := exec.LookPath("ps")
+	if err != nil {
+		return "", err
+	}
+	var ee *exec.ExitError
+	var pe *os.PathError
+	cmd := exec.Command(bin, "-x", "-o", "command", "-p", strconv.Itoa(pid))
+	out, err := cmd.Output()
+	if errors.As(err, &ee) {
+		if ee.Stderr != nil {
+			fmt.Printf("Exit error stderr=%s\n", ee.Stderr)
+		}
+		return "", nil // ran, but non-zero exit code
+	} else if errors.As(err, &pe) {
+		return "", err // "no such file ...", "permission denied" etc.
+	} else if err != nil {
+		return "", err // something really bad happened!
+	}
+	lines := strings.Split(string(out), "\n")
+	var ret [][]string
+	for _, line := range lines[1:] {
+		var lr []string
+		for _, word := range strings.Split(line, " ") {
+			if word == "" {
+				continue
+			}
+			lr = append(lr, strings.TrimSpace(word))
+		}
+		if len(lr) != 0 {
+			ret = append(ret, lr)
+		}
+	}
+	if ret == nil {
+		return "", nil
+	}
+	return strings.Join(ret[0], " "), err
 }
 
 func RemoveEmptyStrings(s []string) []string {
@@ -94,6 +137,9 @@ func GetPid(pollerName string) ([]int, error) {
 	// ($|\s) is included to match the poller name
 	// followed by a space or end of line - that way unix1 does not match unix11
 	search := fmt.Sprintf(`\-\-poller %s($|\s)`, pollerName)
+	if runtime.GOOS == "darwin" {
+		search = fmt.Sprintf(`\-\-poller %s([[:space:]]+|$)`, pollerName)
+	}
 	return GetPids(search)
 }
 
@@ -101,8 +147,12 @@ func GetPids(search string) ([]int, error) {
 	var result []int
 	var ee *exec.ExitError
 	var pe *os.PathError
-	data, err := exec.Command("pgrep", "-f", search).Output()
+	cmd := exec.Command("pgrep", "-f", search)
+	data, err := cmd.Output()
 	if errors.As(err, &ee) {
+		if ee.Stderr != nil {
+			fmt.Printf("Exit error stderr=%s\n", ee.Stderr)
+		}
 		return result, nil // ran, but non-zero exit code
 	} else if errors.As(err, &pe) {
 		return result, err // "no such file ...", "permission denied" etc.
@@ -118,17 +168,22 @@ func GetPids(search string) ([]int, error) {
 		}
 
 		// Validate this is a Harvest process
-		environ, err := GetEnviron(p)
-		if err != nil {
-			if errors.As(err, &pe) {
-				// permission denied, no need to log
+		if runtime.GOOS == "darwin" {
+			// env check does not work on darwin
+			result = append(result, p)
+		} else {
+			environ, err := GetEnviron(p)
+			if err != nil {
+				if errors.As(err, &pe) {
+					// permission denied, no need to log
+					continue
+				}
+				fmt.Printf("err reading environ for search=%s pid=%d err=%+v\n", search, p, err)
 				continue
 			}
-			fmt.Printf("err reading environ for search=%s pid=%d err=%+v\n", search, p, err)
-			continue
-		}
-		if strings.Contains(environ, HarvestTag) {
-			result = append(result, p)
+			if strings.Contains(environ, HarvestTag) {
+				result = append(result, p)
+			}
 		}
 	}
 	return result, err

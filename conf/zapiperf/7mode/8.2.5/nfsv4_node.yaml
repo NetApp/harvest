@@ -9,14 +9,13 @@ global_labels:
 counters:
   - instance_name            => node
   - nfsv3_avg_latency        => latency
-  - nfsv4_ops                => ops
+  - nfsv4_ops                => total_ops
   - nfsv4_ready_latency      => read_avg_latency
   - nfsv4_write_latency      => write_avg_latency
   - nfsv4_read_ops           => read_ops
   - nfsv4_write_ops          => write_ops
 
 export_options:
-  instance_keys:
-    - nfsv
+  require_instance_keys: false
   graphite_leafs:
     - node.{node}.nfsv4

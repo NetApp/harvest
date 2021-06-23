@@ -491,7 +491,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg by(node) (volume_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
+          "expr": "avg by(node) (volume_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -595,7 +595,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by (node) (volume_write_data+volume_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
+          "expr": "sum by (node) (volume_write_data+volume_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -699,7 +699,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by(node) (volume_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
+          "expr": "sum by(node) (volume_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -3029,7 +3029,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(datacenter)",
+        "definition": "label_values(node_labels, datacenter)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -3039,7 +3039,7 @@
         "name": "Datacenter",
         "options": [],
         "query": {
-          "query": "label_values(datacenter)",
+          "query": "label_values(node_labels, datacenter)",
           "refId": "Prometheus-Datacenter-Variable-Query"
         },
         "refresh": 1,
@@ -3056,7 +3056,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(cluster)",
+        "definition": "label_values(node_labels{datacenter=\"$Datacenter\"}, cluster)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -3066,7 +3066,7 @@
         "name": "Cluster",
         "options": [],
         "query": {
-          "query": "label_values(cluster)",
+          "query": "label_values(node_labels{datacenter=\"$Datacenter\"}, cluster)",
           "refId": "Prometheus-Cluster-Variable-Query"
         },
         "refresh": 1,
@@ -3083,7 +3083,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(node_uptime{cluster=\"$Cluster\"}, node)",
+        "definition": "label_values(node_labels{datacenter=\"$Datacenter\", cluster=\"$Cluster\"}, node)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -3093,7 +3093,7 @@
         "name": "Node",
         "options": [],
         "query": {
-          "query": "label_values(node_uptime{cluster=\"$Cluster\"}, node)",
+          "query": "label_values(node_labels{datacenter=\"$Datacenter\", cluster=\"$Cluster\"}, node)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
