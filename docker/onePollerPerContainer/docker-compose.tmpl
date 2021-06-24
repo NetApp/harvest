@@ -11,7 +11,7 @@ services:
     {{end}}
     stdin_open: true # docker run -i
     tty: true        # docker run -t
-    command: ' --poller {{ .PollerName }} --loglevel 2 {{if .Port }} --promPort {{ .Port }} {{ end }} --config /opt/harvest.yml'
+    command: ' --poller {{ .PollerName }} --loglevel {{ .LogLevel }} {{if .Port }} --promPort {{ .Port }} {{ end }} --config /opt/harvest.yml'
     #entrypoint: ["sh", "-c", "sleep 2073600"]
     volumes:
       - harvest:/opt/harvest/

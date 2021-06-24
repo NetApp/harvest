@@ -13,10 +13,19 @@ type PollerPort struct {
 	PollerName string
 	Port       int
 	ConfigFile string
+	LogLevel   int
 }
 
 type PollerTemplate struct {
 	Pollers []PollerPort
+}
+
+type options struct {
+	loglevel int
+}
+
+var opts = &options{
+	loglevel: 2,
 }
 
 var Cmd = &cobra.Command{
@@ -64,7 +73,7 @@ func generateDockerCompose(path string) {
 	conf.ValidatePortInUse = true
 	for _, v := range conf.Config.PollersOrdered {
 		port, _ := conf.GetPrometheusExporterPorts(v)
-		pollerTemplate.Pollers = append(pollerTemplate.Pollers, PollerPort{v, port, absPath})
+		pollerTemplate.Pollers = append(pollerTemplate.Pollers, PollerPort{v, port, absPath, opts.loglevel})
 	}
 
 	t, err := template.New("docker-compose.tmpl").ParseFiles("docker/onePollerPerContainer/docker-compose.tmpl")
@@ -107,4 +116,11 @@ func generateSystemd(path string) {
 func init() {
 	Cmd.AddCommand(systemdCmd)
 	Cmd.AddCommand(dockerCmd)
+	dockerCmd.PersistentFlags().IntVarP(
+		&opts.loglevel,
+		"loglevel",
+		"l",
+		2,
+		"logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)",
+	)
 }
