@@ -2,6 +2,7 @@ package conf
 
 import (
 	"fmt"
+	"reflect"
 	"testing"
 )
 
@@ -40,4 +41,58 @@ func TestGetPrometheusExporterPorts(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestPollerStructDefaults(t *testing.T) {
+	path := "../../cmd/tools/doctor/testdata/testConfig.yml"
+	err := LoadHarvestConfig(path)
+	if err != nil {
+		panic(err)
+	}
+	t.Run("poller exporters", func(t *testing.T) {
+		poller, err := GetPoller2(path, "zeros")
+		if err != nil {
+			panic(err)
+		}
+		// the poller does not define exporters but defaults does
+		if poller.Exporters == nil {
+			t.Fatalf(`expected exporters to not be nil, but it was`)
+		}
+		if len(*poller.Exporters) != 1 {
+			t.Fatalf(`expected 1 exporters but got %v`, *poller.Exporters)
+		}
+		expected := []string{"prometheusrange"}
+		if !reflect.DeepEqual(*poller.Exporters, expected) {
+			t.Fatalf(`expected collectors to be %v but was %v`, expected, *poller.Exporters)
+		}
+	})
+
+	t.Run("poller collector", func(t *testing.T) {
+		poller, err := GetPoller2(path, "cluster-01")
+		if err != nil {
+			panic(err)
+		}
+		// the poller does not define collectors but defaults does
+		if poller.Collectors == nil {
+			t.Fatalf(`expected collectors to not be nil, but it was`)
+		}
+		if len(*poller.Collectors) != 2 {
+			t.Fatalf(`expected 2 collectors but got %v`, *poller.Collectors)
+		}
+		expected := []string{"Zapi", "ZapiPerf"}
+		if !reflect.DeepEqual(*poller.Collectors, expected) {
+			t.Fatalf(`expected collectors to be %v but was %v`, expected, *poller.Collectors)
+		}
+	})
+
+	t.Run("poller username", func(t *testing.T) {
+		poller, err := GetPoller2(path, "zeros")
+		if err != nil {
+			panic(err)
+		}
+		// the poller does not define a username but defaults does
+		if *poller.Username != "myuser" {
+			t.Fatalf(`expected username to be [myuser] but was [%v]`, *poller.Username)
+		}
+	})
 }
