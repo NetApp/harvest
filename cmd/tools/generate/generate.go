@@ -82,7 +82,8 @@ func generateDockerCompose(path string) {
 	}
 
 	color.DetectConsole("")
-	println("Save the following to " + color.Colorize("docker-compose.yml", color.Green))
+	println("Save the following to " + color.Colorize("docker-compose.yml", color.Green) +
+		" or " + color.Colorize("> docker-compose.yml", color.Green))
 	println("and then run " + color.Colorize("docker-compose -f docker-compose.yml up -d --remove-orphans", color.Green))
 
 	err = t.Execute(os.Stdout, pollerTemplate)

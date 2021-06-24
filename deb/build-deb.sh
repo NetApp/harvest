@@ -22,7 +22,7 @@ mkdir -p "$BUILD"
 mkdir -p "$BUILD/opt/harvest/bin/"
 cp -r "$SRC/grafana" "$SRC/conf" "$BUILD/opt/harvest/"
 cp "$SRC/harvest.yml" "$BUILD/opt/harvest/"
-cp -r "$SRC/pkg/" "$SRC/cmd/" "$SRC/docs/" "$BUILD/opt/harvest/"
+cp -r "$SRC/pkg/" "$SRC/cmd/" "$SRC/docs/" "$SRC/docker/" "$BUILD/opt/harvest/"
 cp -r "$SRC/rpm/" "$SRC/deb/" "$SRC/service/" "$SRC/.git" "$BUILD/opt/harvest/"
 cp "$SRC/Makefile" "$SRC/README.md" "$SRC/LICENSE" "$SRC/go.mod" "$SRC/go.sum" "$BUILD/opt/harvest/"
 if [ -d "$SRC/vendor" ]; then
