@@ -1,3 +1,3 @@
 #!/bin/bash
-bin/harvest $1 $2
-`exec "sh"`
+bin/harvest "$@"
+`exec /bin/sleep infinity`

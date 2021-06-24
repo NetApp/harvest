@@ -2,6 +2,7 @@ version: "3.9"  # optional since v1.27.0
 services:
   harvest:
     image: harvest:latest
+    init: true
     ports:
       - "12990:12990"
     stdin_open: true # docker run -i
