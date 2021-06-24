@@ -53,6 +53,7 @@ type Args struct {
 	MaxRecords int
 	// additional parameters to add to the ZAPI request, in "key:value" format
 	Parameters []string
+	Config     string // filepath of Harvest config (defaults to "harvest.yml") can be relative or absolute path
 }
 
 var ZapiCmd = &cobra.Command{
@@ -127,16 +128,13 @@ func validateArgs(strings []string) {
 
 func doCmd(cmd string) {
 	var (
-		err               error
-		item, params      *node.Node
-		connection        *client.Client
-		harvestConfigPath string
+		err          error
+		item, params *node.Node
+		connection   *client.Client
 	)
 
-	harvestConfigPath, err = conf.GetDefaultHarvestConfigPath()
-
 	// connect to cluster and retrieve system version
-	if params, err = conf.GetPoller(harvestConfigPath, args.Poller); err != nil {
+	if params, err = conf.GetPoller(args.Config, args.Poller); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
@@ -320,16 +318,20 @@ func getData(c *client.Client, args *Args) (*node.Node, error) {
 var args = &Args{}
 
 func init() {
+	configPath, _ := conf.GetDefaultHarvestConfigPath()
+
 	ZapiCmd.AddCommand(showCmd, exportCmd)
-	ZapiCmd.PersistentFlags().StringVarP(&args.Poller, "poller", "p", "", "name of poller (cluster), as defined in your harvest config")
+	flags := ZapiCmd.PersistentFlags()
+	flags.StringVarP(&args.Poller, "poller", "p", "", "name of poller (cluster), as defined in your harvest config")
 	_ = ZapiCmd.MarkPersistentFlagRequired("poller")
 
-	ZapiCmd.PersistentFlags().StringVarP(&args.Api, "api", "a", "", "ZAPI query to show")
-	ZapiCmd.PersistentFlags().StringVarP(&args.Attr, "attr", "t", "", "ZAPI attribute to show")
-	ZapiCmd.PersistentFlags().StringVarP(&args.Object, "object", "o", "", "ZapiPerf object to show")
-	ZapiCmd.PersistentFlags().StringVarP(&args.Counter, "counter", "c", "", "ZapiPerf counter to show")
-	ZapiCmd.PersistentFlags().IntVarP(&args.MaxRecords, "max", "m", 100, "max-records: max instances per API request")
-	ZapiCmd.PersistentFlags().StringSliceVarP(&args.Parameters, "parameters", "r", []string{}, "parameter to add to the ZAPI query")
+	flags.StringVarP(&args.Api, "api", "a", "", "ZAPI query to show")
+	flags.StringVarP(&args.Attr, "attr", "t", "", "ZAPI attribute to show")
+	flags.StringVarP(&args.Object, "object", "o", "", "ZapiPerf object to show")
+	flags.StringVarP(&args.Counter, "counter", "c", "", "ZapiPerf counter to show")
+	flags.IntVarP(&args.MaxRecords, "max", "m", 100, "max-records: max instances per API request")
+	flags.StringSliceVarP(&args.Parameters, "parameters", "r", []string{}, "parameter to add to the ZAPI query")
+	flags.StringVar(&args.Config, "config", configPath, "harvest config file path")
 
 	showCmd.SetUsageTemplate("item to show should be one of: " + strings.Join(validShowArgs, ", "))
 
