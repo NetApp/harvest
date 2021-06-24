@@ -4,7 +4,7 @@ query:                      lun-get-iter
 object:                     lun
 
 counters:
-  node-details-info:
+  lun-info:
     - ^node
     - ^path
     - ^qtree
@@ -20,7 +20,7 @@ plugins:
     value_mapping: status state online `1`
     # path is something like "/vol/vol_georg_fcp401/lun401"
     # we only want lun name, which is 4th element
-    split: path `:` ,,,lun
+    split: path `/` ,,,lun
 
 export_options:
   instance_keys:
