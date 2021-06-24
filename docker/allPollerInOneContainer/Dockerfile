@@ -26,9 +26,6 @@ RUN cp -aR bin $BUILD_DIR/conf $BUILD_DIR/docs $BUILD_DIR/grafana $BUILD_DIR/doc
 
 FROM alpine:latest
 
-RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.5/dumb-init_1.2.5_x86_64 && \
-    chmod +x /usr/local/bin/dumb-init
-
 RUN apk add bash
 
 ARG INSTALL_DIR=/opt/harvest
@@ -38,5 +35,5 @@ WORKDIR $INSTALL_DIR
 VOLUME     [ "/opt/harvest" ]
 VOLUME     [ "/var/log/harvest" ]
 
-ENTRYPOINT ["/usr/local/bin/dumb-init", "--", "./docker-entrypoint.sh"]
-CMD ["start", "--config harvest.yml"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
+CMD ["start", "--config", "./harvest.yml"]
