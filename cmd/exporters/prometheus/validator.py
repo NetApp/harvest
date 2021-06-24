@@ -8,6 +8,8 @@ by Harvests' Prometheus exporter. This utility takes into account
 the parsing rules of the PrometheusDB, as well as other collector
 servers, such as InfluxDB's Telegraf.
 
+If you get this error: `ModuleNotFoundError: No module named 'regex'`
+You need to install regex like so: `pip3 install regex`
 """
 
 import argparse
