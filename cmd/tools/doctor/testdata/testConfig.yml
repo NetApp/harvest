@@ -40,6 +40,8 @@ Defaults:
   collectors:
     - Zapi
     - ZapiPerf
+  exporters:
+    - prometheusrange
   use_insecure_tls: false
   username: myuser
   password: 123#abc

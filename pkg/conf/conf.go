@@ -127,7 +127,7 @@ func GetPollerNames(configFp string) ([]string, error) {
 	return pollerNames, nil
 }
 
-func GetPollers2(configFp string) (map[string]Poller, error) {
+func GetPollers2(configFp string) (map[string]*Poller, error) {
 	err := LoadHarvestConfig(configFp)
 	if err != nil {
 		return nil, err
@@ -175,7 +175,7 @@ func GetPoller2(configFp, pollerName string) (*Poller, error) {
 	if !ok {
 		return nil, errors.New(errors.ERR_CONFIG, "poller ["+pollerName+"] not found")
 	}
-	return &poller, nil
+	return poller, nil
 }
 
 func GetPoller(configFp, pollerName string) (*node.Node, error) {
@@ -230,8 +230,11 @@ func GetPrometheusExporterPorts(pollerName string) (int, error) {
 	if len(promPortRangeMapping) == 0 {
 		loadPrometheusExporterPortRangeMapping()
 	}
-	exporters := (*Config.Pollers)[pollerName].Exporters
-
+	poller := (*Config.Pollers)[pollerName]
+	if poller == nil {
+		return 0, errors.New(errors.ERR_CONFIG, "Poller does not exist "+pollerName)
+	}
+	exporters := poller.Exporters
 	if exporters != nil && len(*exporters) > 0 {
 		for _, e := range *exporters {
 			exporter := (*Config.Exporters)[e]
@@ -251,8 +254,6 @@ func GetPrometheusExporterPorts(pollerName string) (int, error) {
 			}
 			continue
 		}
-	} else {
-		return 0, errors.New(errors.ERR_CONFIG, "Poller does not exist "+pollerName)
 	}
 	if port == 0 && isPrometheusExporterConfigured {
 		return port, errors.New(errors.ERR_CONFIG, "No free port found for poller "+pollerName)
@@ -470,7 +471,7 @@ type OrderedConfig struct {
 type HarvestConfig struct {
 	Tools          *Tools               `yaml:"Tools,omitempty"`
 	Exporters      *map[string]Exporter `yaml:"Exporters,omitempty"`
-	Pollers        *map[string]Poller   `yaml:"Pollers,omitempty"`
+	Pollers        *map[string]*Poller  `yaml:"Pollers,omitempty"`
 	Defaults       *Poller              `yaml:"Defaults,omitempty"`
 	PollersOrdered []string             // poller names in same order as yaml config
 }
