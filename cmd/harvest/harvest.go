@@ -153,10 +153,6 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 			fmt.Println("only one poller can be started in foreground mode")
 			os.Exit(1)
 		}
-		if !opts.debug {
-			opts.debug = true
-			fmt.Println("set debug mode ON (starting poller in foreground otherwise is unsafe)")
-		}
 		p := pollers.GetChildren()[0]
 		startPoller(p.GetNameS(), getPollerPrometheusPort(p, opts), opts)
 		os.Exit(0)
