@@ -186,7 +186,7 @@ func (me *Prometheus) Init() error {
 	// @TODO: implement error checking to enter failed state if HTTPd failed
 	// (like we did in Alpha)
 
-	me.Logger.Debug().Msgf("initialized, HTTP daemon started at [http://%s:%s]", addr, port)
+	me.Logger.Debug().Msgf("initialized, HTTP daemon started at [http://%s:%d]", addr, port)
 
 	return nil
 }
