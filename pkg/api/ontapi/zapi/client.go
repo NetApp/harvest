@@ -101,6 +101,7 @@ func New(config *node.Node) (*Client, error) {
 		}
 
 		transport = &http.Transport{
+			Proxy: http.ProxyFromEnvironment,
 			TLSClientConfig: &tls.Config{
 				Certificates:       []tls.Certificate{cert},
 				InsecureSkipVerify: useInsecureTLS},
@@ -117,7 +118,10 @@ func New(config *node.Node) (*Client, error) {
 		}
 
 		request.SetBasicAuth(username, password)
-		transport = &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: useInsecureTLS}}
+		transport = &http.Transport{
+			Proxy:           http.ProxyFromEnvironment,
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: useInsecureTLS},
+		}
 	}
 	client.request = request
 
