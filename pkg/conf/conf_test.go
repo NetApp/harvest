@@ -3,6 +3,7 @@ package conf
 import (
 	"fmt"
 	"reflect"
+	"strconv"
 	"testing"
 )
 
@@ -95,4 +96,62 @@ func TestPollerStructDefaults(t *testing.T) {
 			t.Fatalf(`expected username to be [myuser] but was [%v]`, *poller.Username)
 		}
 	})
+}
+
+func TestPollerUnion(t *testing.T) {
+	path := "../../cmd/tools/doctor/testdata/testConfig.yml"
+	err := LoadHarvestConfig(path)
+	if err != nil {
+		panic(err)
+	}
+	addr := "addr"
+	user := "user"
+	defaults := Poller{
+		Addr:       &addr,
+		Collectors: &[]string{"0", "1", "2", "3"},
+		Username:   &user,
+	}
+	var p Poller
+	p.Union(&defaults)
+	if *p.Username != "user" {
+		t.Fatalf(`expected username to be [user] but was [%v]`, *p.Username)
+	}
+	if *p.Addr != "addr" {
+		t.Fatalf(`expected addr to be [addr] but was [%v]`, *p.Addr)
+	}
+	if len(*p.Collectors) != 4 {
+		t.Fatalf(`expected collectors to be have four elements but was [%v]`, *p.Collectors)
+	}
+	for i := 0; i < len(*p.Collectors); i++ {
+		actual := (*p.Collectors)[i]
+		if actual != strconv.Itoa(i) {
+			t.Fatalf(`expected element at index=%d to be %d but was [%v]`, i, i, actual)
+		}
+	}
+
+	name := "name"
+	isKfs := true
+	maxFiles := 314
+	p2 := Poller{
+		Username:    &name,
+		Collectors:  &[]string{"10", "11", "12", "13"},
+		IsKfs:       &isKfs,
+		LogMaxFiles: &maxFiles,
+	}
+	p2.Union(&defaults)
+	if *p2.Username != "name" {
+		t.Fatalf(`expected username to be [name] but was [%v]`, *p2.Username)
+	}
+	if *p2.IsKfs != true {
+		t.Fatalf(`expected isKfs to be [true] but was [%v]`, *p2.IsKfs)
+	}
+	if *p2.LogMaxFiles != maxFiles {
+		t.Fatalf(`expected LogMaxFiles to be [314] but was [%v]`, *p2.LogMaxFiles)
+	}
+	for i := 0; i < len(*p2.Collectors); i++ {
+		actual := (*p2.Collectors)[i]
+		if actual != strconv.Itoa(10+i) {
+			t.Fatalf(`expected element at index=%d to be %d but was [%v]`, i, i+10, actual)
+		}
+	}
 }
