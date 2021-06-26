@@ -433,7 +433,6 @@ func startPoller(pollerName string, promPort int, opts *options) *pollerStatus {
 
 	if opts.foreground {
 		cmd := exec.Command(argv[0], argv[1:]...)
-		cmd.Env = append(os.Environ(), util.HarvestTag)
 		//fmt.Println(cmd.String())
 		fmt.Println("starting in foreground, enter CTRL+C or close terminal to stop poller")
 		_ = os.Stdout.Sync()
@@ -467,7 +466,6 @@ func startPoller(pollerName string, promPort int, opts *options) *pollerStatus {
 	}
 
 	cmd := exec.Command(path.Join(HarvestHomePath, "bin", "daemonize"), argv...)
-	cmd.Env = append(os.Environ(), util.HarvestTag)
 	//fmt.Println(cmd.String())
 	if err := cmd.Start(); err != nil {
 		fmt.Println(err)
