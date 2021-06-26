@@ -6,6 +6,7 @@ package conf
 
 import (
 	"fmt"
+	"github.com/imdario/mergo"
 	"goharvest2/pkg/constant"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/tree"
@@ -384,48 +385,7 @@ type Poller struct {
 }
 
 func (p *Poller) Union(defaults *Poller) {
-	if p.Datacenter == nil && defaults.Datacenter != nil {
-		p.Datacenter = defaults.Datacenter
-	}
-	if p.Addr == nil && defaults.Addr != nil {
-		p.Addr = defaults.Addr
-	}
-	if p.AuthStyle == nil && defaults.AuthStyle != nil {
-		p.AuthStyle = defaults.AuthStyle
-	}
-	if p.Username == nil && defaults.Username != nil {
-		p.Username = defaults.Username
-	}
-	if p.Password == "" && defaults.Password != "" {
-		p.Password = defaults.Password
-	}
-	if p.UseInsecureTls == nil && defaults.UseInsecureTls != nil {
-		p.UseInsecureTls = defaults.UseInsecureTls
-	}
-	if p.SslCert == nil && defaults.SslCert != nil {
-		p.SslCert = defaults.SslCert
-	}
-	if p.SslKey == nil && defaults.SslKey != nil {
-		p.SslKey = defaults.SslKey
-	}
-	if p.LogMaxBytes == nil && defaults.LogMaxBytes != nil {
-		p.LogMaxBytes = defaults.LogMaxBytes
-	}
-	if p.LogMaxFiles == nil && defaults.LogMaxFiles != nil {
-		p.LogMaxFiles = defaults.LogMaxFiles
-	}
-	if p.Exporters == nil && defaults.Exporters != nil {
-		p.Exporters = defaults.Exporters
-	}
-	if p.Collectors == nil && defaults.Collectors != nil {
-		p.Collectors = defaults.Collectors
-	}
-	if p.IsKfs == nil && defaults.IsKfs != nil {
-		p.IsKfs = defaults.IsKfs
-	}
-	if p.PollerSchedule == nil && defaults.PollerSchedule != nil {
-		p.PollerSchedule = defaults.PollerSchedule
-	}
+	_ = mergo.Merge(p, defaults)
 }
 
 type Exporter struct {

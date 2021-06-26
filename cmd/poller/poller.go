@@ -588,7 +588,6 @@ func (p *Poller) loadCollector(class, object string) error {
 // unmarshalled into a list of generic yaml node. Each generic yaml node is walked, checking
 // if there is a corresponding node in hNode, when there isn't one, a new hNode is created
 // and populated with the yaml node's content. Finally, the new hNode is added to its parent
-
 func Union2(hNode *node.Node, poller *conf.Poller) {
 	marshal, err := yaml.Marshal(poller)
 	if err != nil {

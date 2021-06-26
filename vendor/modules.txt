@@ -1,6 +1,9 @@
 # github.com/hashicorp/go-version v1.3.0
 ## explicit
 github.com/hashicorp/go-version
+# github.com/imdario/mergo v0.3.12
+## explicit
+github.com/imdario/mergo
 # github.com/inconshreveable/mousetrap v1.0.0
 github.com/inconshreveable/mousetrap
 # github.com/pkg/errors v0.9.1
