@@ -155,3 +155,29 @@ func TestPollerUnion(t *testing.T) {
 		}
 	}
 }
+
+func TestFlowStyle(t *testing.T) {
+	path := "../../cmd/tools/doctor/testdata/testConfig.yml"
+	err := LoadHarvestConfig(path)
+	if err != nil {
+		panic(err)
+	}
+	t.Run("poller with flow", func(t *testing.T) {
+		poller, err := GetPoller2(path, "flow")
+		if err != nil {
+			panic(err)
+		}
+		if len(*poller.Collectors) != 1 {
+			t.Fatalf(`expected there to be one collector but got %v`, len(*poller.Collectors))
+		}
+		if (*poller.Collectors)[0] != "Zapi" {
+			t.Fatalf(`expected the first collector to be Zapi but got %v`, (*poller.Collectors)[0])
+		}
+		if len(*poller.Exporters) != 1 {
+			t.Fatalf(`expected there to be one exporter but got %v`, len(*poller.Exporters))
+		}
+		if (*poller.Collectors)[0] != "Zapi" {
+			t.Fatalf(`expected the first exporter to be prom but got %v`, (*poller.Exporters)[0])
+		}
+	})
+}
