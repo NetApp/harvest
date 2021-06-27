@@ -113,4 +113,8 @@ Pollers:
   sim-0001:
     is_kfs: true
 
+  flow:
+    collectors: [Zapi]
+    exporters: [prom]
+
 ll: grafana_api_token grafana_api_token
