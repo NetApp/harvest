@@ -7,6 +7,7 @@ Exporters: [Name=_]: #Prom | #Influx | #PromConsul
 	exporter:    "Prometheus"
 	port?:       int
 	port_range?: string
+	allow_addrs_regex?: [...string]
 }
 
 #PromConsul: {
