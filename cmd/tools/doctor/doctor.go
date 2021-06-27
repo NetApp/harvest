@@ -87,7 +87,7 @@ func checkExporterTypes(config conf.HarvestConfig) validation {
 			continue
 		}
 		switch *exporter.Type {
-		case "Prometheus", "InfluxDB":
+		case "Prometheus", "InfluxDB", "PrometheusConsul":
 			break
 		default:
 			invalidTypes[name] = *exporter.Type
