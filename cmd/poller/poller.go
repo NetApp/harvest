@@ -49,6 +49,7 @@ import (
 	"os/signal"
 	"path"
 	"runtime"
+	"runtime/debug"
 	"strconv"
 	"strings"
 	"sync"
@@ -733,10 +734,7 @@ func main() {
 	defer func() {
 		//logger.Warn("(main) ", "defer func here")
 		if r := recover(); r != nil {
-			logger.Info().Msgf("harvest poller panicked: %v", r)
-			// if logger still available try to write there as well
-			// do this last, since might make us panic as again
-			logger.Fatal().Msgf("(main) %v", r)
+			logger.Error().Stack().Err(errors.New(errors.GO_ROUTINE_PANIC, string(debug.Stack()))).Msg("Poller panicked")
 			logger.Fatal().Msg(`(main) terminating abnormally, tip: run in foreground mode (with "--loglevel 0") to debug`)
 
 			os.Exit(1)
