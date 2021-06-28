@@ -336,8 +336,11 @@ func GetUniqueExporters(p *node.Node, configFp string) ([]string, error) {
 		}
 		exporterMap := make(map[string]string)
 		for _, ec := range exportChildren {
-			exporterType := definedExporters.GetChildS(ec).GetChildContentS("exporter")
-			exporterMap[exporterType] = ec
+			e := definedExporters.GetChildS(ec)
+			if e != nil {
+				exporterType := e.GetChildContentS("exporter")
+				exporterMap[exporterType] = ec
+			}
 		}
 
 		for _, value := range exporterMap {
