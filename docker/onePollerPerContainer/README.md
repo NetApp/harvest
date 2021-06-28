@@ -17,3 +17,9 @@ Start docker containers
 ```
 docker-compose -f docker-compose.yml up -d --remove-orphans
 ```
+
+Stop docker containers
+
+```
+docker-compose -f docker-compose.yml down
+```
