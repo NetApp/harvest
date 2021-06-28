@@ -16,9 +16,6 @@ import (
 	"strings"
 )
 
-// HarvestTag is injected into a poller's environment to disambiguate the process
-const HarvestTag = "IS_HARVEST=TRUE"
-
 func MinLen(elements [][]string) int {
 	var min, i int
 	min = len(elements[0])
