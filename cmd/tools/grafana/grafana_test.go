@@ -1,6 +1,7 @@
 package grafana
 
 import (
+	"regexp"
 	"testing"
 )
 
@@ -44,5 +45,50 @@ func TestHttpsAddr(t *testing.T) {
 	adjustOptions()
 	if opts.addr != "https://1.1.1.1:3000" {
 		t.Errorf("Expected opts.addr to be %s but got %s", "https://1.1.1.1:3000", opts.addr)
+	}
+}
+
+// Since there can be many exceptions in how metrics are using in queries,
+// the best we can do is check all queries in dashboards (especially after
+// we have changed them), e.g. by running:
+// $ grep \"expr\": grafana/prometheus*
+func TestAddPrefixToMetricNames(t *testing.T) {
+
+	var (
+		examples, expected [7]string
+		prefix, result     string
+		regex              *regexp.Regexp
+		i                  int
+	)
+
+	regex = regexp.MustCompile(`([a-zA-Z_+]+){.+?}`)
+
+	prefix = "xx_"
+
+	examples = [7]string{
+		`sum(volume_read_data{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster) + sum(volume_write_data{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) by(cluster)`,
+		`sum(topk($TopResources, volume_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}))`,
+		`volume_size_used_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}`,
+		`avg by(iscsi_lif) (iscsi_lif_iscsi_read_ops+iscsi_lif_iscsi_write_ops+iscsi_lif_iscsi_other_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})`,
+		`label_values(metadata_component_status{type="collector",poller=~"$Poller"}, name)`,
+		`label_values(poller_status, datacenter)`,
+		`label_values(datacenter)`,
+	}
+
+	expected = [7]string{
+		`sum(xx_volume_read_data{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster) + sum(xx_volume_write_data{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) by(cluster)`,
+		`sum(topk($TopResources, xx_volume_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}))`,
+		`xx_volume_size_used_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}`,
+		`avg by(iscsi_lif) (xx_iscsi_lif_iscsi_read_ops+xx_iscsi_lif_iscsi_write_ops+xx_iscsi_lif_iscsi_other_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})`,
+		`label_values(xx_metadata_component_status{type="collector",poller=~"$Poller"}, name)`,
+		`label_values(xx_poller_status, datacenter)`,
+		`label_values(datacenter)`, // no metric name
+	}
+
+	for i = range examples {
+		result = addPrefixToMetricNames(examples[i], prefix, regex)
+		if result != expected[i] {
+			t.Errorf("\nExpected: [%s]\n     Got: [%s]", expected[i], result)
+		}
 	}
 }
