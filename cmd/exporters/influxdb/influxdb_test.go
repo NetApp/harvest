@@ -50,7 +50,7 @@ func TestAddrParameter(t *testing.T) {
 // test that the addr (and port) parameters
 // are handled properly to construct server URL
 func TestUrlParameter(t *testing.T) {
-	expectedURL := "https://some-valid-domain-name.net:8086/api/v2/write?org=netapp&bucket=harvest&precision=s"
+	expectedURL := "https://some-valid-domain-name.net/api/v2/write?org=netapp&bucket=harvest&precision=s"
 
 	opts := &options.Options{}
 	opts.Debug = true
