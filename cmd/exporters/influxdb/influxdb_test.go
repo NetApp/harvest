@@ -6,27 +6,36 @@ package influxdb
 import (
 	"goharvest2/cmd/poller/exporter"
 	"goharvest2/cmd/poller/options"
+	"goharvest2/pkg/conf"
 	"goharvest2/pkg/matrix"
-	"goharvest2/pkg/tree/node"
 	"testing"
 )
 
 // test that the addr (and port) parameters
 // are handled properly to construct server URL
 func TestAddrParameter(t *testing.T) {
-
 	expectedURL := "http://localhost:8086/api/v2/write?org=netapp&bucket=harvest&precision=s"
 
 	opts := &options.Options{}
 	opts.Debug = true
+	var params map[string]conf.Exporter
+	exporterName := "influx-test-addr"
 
-	params := node.NewS("")
-	params.NewChildS("addr", "localhost")
-	params.NewChildS("org", "netapp")
-	params.NewChildS("bucket", "harvest")
-	params.NewChildS("token", "xxxxxxx")
+	path := "../../tools/doctor/testdata/testConfig.yml"
+	err := conf.LoadHarvestConfig(path)
+	if err != nil {
+		panic(err)
+	}
 
-	influx := &InfluxDB{AbstractExporter: exporter.New("InfluxDB", "influx-test", opts, params)}
+	if params, err = conf.GetExporters2(path); err != nil {
+		panic(err)
+	}
+	param, ok := params[exporterName]
+	if !ok {
+		t.Fatalf(`exporter (%v) not defined in config`, exporterName)
+	}
+
+	influx := &InfluxDB{AbstractExporter: exporter.New("InfluxDB", exporterName, opts, param)}
 	if err := influx.Init(); err != nil {
 		t.Fatal(err)
 	}
@@ -41,18 +50,28 @@ func TestAddrParameter(t *testing.T) {
 // test that the addr (and port) parameters
 // are handled properly to construct server URL
 func TestUrlParameter(t *testing.T) {
-
-	expectedURL := "https://some-valid-domain-name.net/api/v2/write?org=netapp&bucket=harvest&precision=s"
+	expectedURL := "https://some-valid-domain-name.net:8086/api/v2/write?org=netapp&bucket=harvest&precision=s"
 
 	opts := &options.Options{}
 	opts.Debug = true
+	var params map[string]conf.Exporter
+	exporterName := "influx-test-url"
 
-	params := node.NewS("")
-	params.NewChildS("url", "https://some-valid-domain-name.net/api/v2/write?org=netapp&bucket=harvest&precision=s")
-	params.NewChildS("org", "netapp")
-	params.NewChildS("bucket", "harvest")
-	params.NewChildS("token", "xxxxxxx")
-	influx := &InfluxDB{AbstractExporter: exporter.New("InfluxDB", "influx-test", opts, params)}
+	path := "../../tools/doctor/testdata/testConfig.yml"
+	err := conf.LoadHarvestConfig(path)
+	if err != nil {
+		panic(err)
+	}
+
+	if params, err = conf.GetExporters2(path); err != nil {
+		panic(err)
+	}
+	param, ok := params[exporterName]
+	if !ok {
+		t.Fatalf(`exporter (%v) not defined in config`, exporterName)
+	}
+
+	influx := &InfluxDB{AbstractExporter: exporter.New("InfluxDB", exporterName, opts, param)}
 	if err := influx.Init(); err != nil {
 		t.Fatal(err)
 	}
@@ -68,16 +87,26 @@ func TestUrlParameter(t *testing.T) {
 // this does not send to influxdb, but simply prints
 // rendered data
 func TestExportDebug(t *testing.T) {
-
 	opts := &options.Options{}
 	opts.Debug = true
+	var params map[string]conf.Exporter
+	exporterName := "influx-test-url"
 
-	params := node.NewS("")
-	params.NewChildS("addr", "localhost")
-	params.NewChildS("org", "harvest")
-	params.NewChildS("bucket", "harvest")
-	params.NewChildS("token", "xxxxxxx")
-	influx := New(exporter.New("InfluxDB", "influx-test", opts, params))
+	path := "../../tools/doctor/testdata/testConfig.yml"
+	err := conf.LoadHarvestConfig(path)
+	if err != nil {
+		panic(err)
+	}
+
+	if params, err = conf.GetExporters2(path); err != nil {
+		panic(err)
+	}
+	param, ok := params[exporterName]
+	if !ok {
+		t.Fatalf(`exporter (%v) not defined in config`, exporterName)
+	}
+
+	influx := New(exporter.New("InfluxDB", exporterName, opts, param))
 	if err := influx.Init(); err != nil {
 		t.Fatal(err)
 	}

@@ -81,10 +81,10 @@ func (me *Prometheus) Init() error {
 		return err
 	}
 
-	if x := me.Params.GetChildContentS("global_prefix"); x != "" {
-		me.Logger.Debug().Msgf("will use global prefix [%s]", x)
-		me.globalPrefix = x
-		if !strings.HasSuffix(x, "_") {
+	if x := me.Params.GlobalPrefix; x != nil {
+		me.Logger.Debug().Msgf("will use global prefix [%s]", *x)
+		me.globalPrefix = *x
+		if !strings.HasSuffix(*x, "_") {
 			me.globalPrefix += "_"
 		}
 	} else {
@@ -97,17 +97,17 @@ func (me *Prometheus) Init() error {
 	}
 
 	// add HELP and TYPE tags to exported metrics if requested
-	if me.Params.GetChildContentS("add_meta_tags") == "true" {
+	if me.Params.ShouldAddMetaTags != nil && *me.Params.ShouldAddMetaTags == true {
 		me.addMetaTags = true
 	}
 
 	// all other parameters are only relevant to the HTTP daemon
-	if x := me.Params.GetChildContentS("cache_max_keep"); x != "" {
-		if d, err := time.ParseDuration(x); err == nil {
-			me.Logger.Debug().Msgf("using cache_max_keep [%s]", x)
+	if x := me.Params.CacheMaxKeep; x != nil {
+		if d, err := time.ParseDuration(*x); err == nil {
+			me.Logger.Debug().Msgf("using cache_max_keep [%s]", *x)
 			me.cache = newCache(d)
 		} else {
-			me.Logger.Error().Stack().Err(err).Msgf("cache_max_keep [%s]", x)
+			me.Logger.Error().Stack().Err(err).Msgf("cache_max_keep [%s]", *x)
 		}
 	}
 
@@ -121,8 +121,8 @@ func (me *Prometheus) Init() error {
 	}
 
 	// allow access to metrics only from the given plain addresses
-	if x := me.Params.GetChildS("allow_addrs"); x != nil {
-		me.allowAddrs = x.GetAllChildContentS()
+	if x := me.Params.AllowedAddrs; x != nil {
+		me.allowAddrs = *x
 		if len(me.allowAddrs) == 0 {
 			me.Logger.Error().Stack().Err(nil).Msg("allow_addrs without any")
 			return errors.New(errors.INVALID_PARAM, "allow_addrs")
@@ -132,9 +132,9 @@ func (me *Prometheus) Init() error {
 	}
 
 	// allow access only from addresses matching one of defined regular expressions
-	if x := me.Params.GetChildS("allow_addrs_regex"); x != nil {
+	if x := me.Params.AllowedAddrsRegex; x != nil {
 		me.allowAddrsRegex = make([]*regexp.Regexp, 0)
-		for _, r := range x.GetAllChildContentS() {
+		for _, r := range *x {
 			r = strings.TrimPrefix(strings.TrimSuffix(r, "`"), "`")
 			if reg, err := regexp.Compile(r); err == nil {
 				me.allowAddrsRegex = append(me.allowAddrsRegex, reg)
@@ -160,11 +160,10 @@ func (me *Prometheus) Init() error {
 	// can be passed to us either as an option or as a parameter
 	port := me.Options.PromPort
 	if port == 0 {
-		p, err := strconv.Atoi(me.Params.GetChildContentS("port"))
-		if err != nil {
-			me.Logger.Error().Stack().Err(err).Msg("Issue while reading prometheus port")
+		if p := me.Params.Port; p == nil {
+			me.Logger.Error().Stack().Err(nil).Msg("Issue while reading prometheus port")
 		} else {
-			port = p
+			port = *p
 		}
 	}
 
@@ -176,9 +175,9 @@ func (me *Prometheus) Init() error {
 	}
 
 	addr := localHttpAddr
-	if x := me.Params.GetChildContentS("local_http_addr"); x != "" {
-		addr = x
-		me.Logger.Debug().Msgf("using custom local addr [%s]", x)
+	if x := me.Params.LocalHttpAddr; x != nil {
+		addr = *x
+		me.Logger.Debug().Msgf("using custom local addr [%s]", *x)
 	}
 
 	go me.startHttpD(addr, port)

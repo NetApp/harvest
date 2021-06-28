@@ -26,7 +26,7 @@ import (
 */
 
 const (
-	defaultPort          = "8086"
+	defaultPort          = 8086
 	detaultTimeout       = 5
 	defaultApiVersion    = "2"
 	defaultApiPrecision  = "s"
@@ -51,66 +51,70 @@ func (e *InfluxDB) Init() error {
 	}
 
 	var (
-		url, addr, port, bucket, org, v, p string
-		err                                error
+		url, addr, bucket, org, token, v, p *string
+		port                                *int
 	)
 
 	// check required / optional parameters
 
-	if bucket = e.Params.GetChildContentS("bucket"); bucket == "" {
+	if bucket = e.Params.Bucket; bucket == nil {
 		return errors.New(errors.MISSING_PARAM, "bucket")
 	}
-	e.Logger.Debug().Msgf("using bucket [%s]", bucket)
+	e.Logger.Debug().Msgf("using bucket [%s]", *bucket)
 
-	if org = e.Params.GetChildContentS("org"); org == "" {
+	if org = e.Params.Org; org == nil {
 		return errors.New(errors.MISSING_PARAM, "org")
 	}
-	e.Logger.Debug().Msgf("using organization [%s]", org)
+	e.Logger.Debug().Msgf("using organization [%s]", *org)
 
-	if e.token = e.Params.GetChildContentS("token"); e.token == "" {
+	if token = e.Params.Token; token == nil {
 		return errors.New(errors.MISSING_PARAM, "token")
 	} else {
+		e.token = *token
 		e.Logger.Debug().Msg("will use authorization with api token")
 	}
 
-	if v = e.Params.GetChildContentS("version"); v == "" {
-		v = defaultApiVersion
+	if v = e.Params.Version; v == nil {
+		version := defaultApiVersion
+		v = &version
 	}
-	e.Logger.Debug().Msgf("using api version [%s]", v)
+	e.Logger.Debug().Msgf("using api version [%s]", *v)
 
-	if p = e.Params.GetChildContentS("precision"); p == "" {
-		p = defaultApiPrecision
+	if p = e.Params.Precision; p == nil {
+		precision := defaultApiPrecision
+		p = &precision
 	}
-	e.Logger.Debug().Msgf("using api precision [%s]", p)
+	e.Logger.Debug().Msgf("using api precision [%s]", *p)
 
 	// user should provide either url or addr
 	// url is expected to be the full write URL with all query params specified (optionally with scheme)
 	// addr is expected to include host only (no scheme, no port)
-	if url = e.Params.GetChildContentS("url"); url == "" {
-		if addr = e.Params.GetChildContentS("addr"); addr == "" {
+	if url = e.Params.Url; url == nil {
+		if addr = e.Params.Addr; addr == nil {
 			return errors.New(errors.MISSING_PARAM, "url or addr")
 		}
 
-		if port = e.Params.GetChildContentS("port"); port == "" {
-			e.Logger.Debug().Msgf("using default port [%s]", defaultPort)
-			port = defaultPort
-		} else if _, err = strconv.Atoi(port); err != nil {
-			return errors.New(errors.INVALID_PARAM, "port")
+		if port = e.Params.Port; port == nil {
+			e.Logger.Debug().Msgf("using default port [%d]", defaultPort)
+			defPort := defaultPort
+			port = &defPort
 		}
 
-		url = "http://" + addr + ":" + port
-		e.url = fmt.Sprintf("%s/api/v%s/write?org=%s&bucket=%s&precision=%s", url, v, org, bucket, p)
+		urlToUSe := "http://" + *addr + ":" + strconv.Itoa(*port)
+		url = &urlToUSe
+		e.url = fmt.Sprintf("%s/api/v%s/write?org=%s&bucket=%s&precision=%s", *url, *v, *org, *bucket, *p)
 	} else {
-		e.url = url
+		e.url = *url
+		// [TODO] need to store addr and port even when url has provided.
 	}
 
 	// timeout parameter
 	timeout := time.Duration(detaultTimeout) * time.Second
-	if ct := e.Params.GetChildContentS("client_timeout"); ct != "" {
-		if t, err := strconv.Atoi(ct); err == nil {
+	if ct := e.Params.ClientTimeout; ct != nil {
+		if t, err := strconv.Atoi(*ct); err == nil {
 			timeout = time.Duration(t) * time.Second
 		} else {
-			e.Logger.Warn().Msgf("invalid client_timeout [%s], using default: %d s", ct, detaultTimeout)
+			e.Logger.Warn().Msgf("invalid client_timeout [%s], using default: %d s", *ct, detaultTimeout)
 		}
 	} else {
 		e.Logger.Debug().Msgf("using default client_timeout: %d s", detaultTimeout)
@@ -121,7 +125,7 @@ func (e *InfluxDB) Init() error {
 	// construct HTTP client
 	e.client = &http.Client{Timeout: timeout}
 
-	e.Logger.Debug().Msgf("initialized exporter, ready to emit to [%s:%s]", addr, port)
+	//e.Logger.Debug().Msgf("initialized exporter, ready to emit to [%s:%s]", *addr, *port)
 	return nil
 }
 

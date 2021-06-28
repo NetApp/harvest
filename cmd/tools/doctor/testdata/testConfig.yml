@@ -36,6 +36,19 @@ Exporters:
     token: abcdefghijklmnopqrstuvwxyz
   invalid-type:
     exporter: Foo
+  influx-test-addr:
+    exporter: InfluxDB
+    addr: localhost
+    bucket: harvest
+    org: netapp
+    token: abcdefghijklmnopqrstuvwxyz
+  influx-test-url:
+    exporter: InfluxDB
+    url: https://some-valid-domain-name.net:8086/api/v2/write?org=netapp&bucket=harvest&precision=s
+    addr: localhost
+    bucket: harvest
+    org: harvest
+    token: abcdefghijklmnopqrstuvwxyz
 Defaults:
   collectors:
     - Zapi
