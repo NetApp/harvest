@@ -2,8 +2,8 @@ version: "3.5"
 services:
 {{range .Pollers}}
   {{ .PollerName }}:
-    image: harvest:latest
-    container_name: harvest_{{ .PollerName }}
+    image: {{ .Image }}
+    container_name: harvest_{{ .Version }}_{{ .PollerName }}
     restart: unless-stopped
     {{if .Port }}
     ports:

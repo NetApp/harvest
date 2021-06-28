@@ -2,6 +2,7 @@ package generate
 
 import (
 	"github.com/spf13/cobra"
+	"goharvest2/cmd/harvest/version"
 	"goharvest2/pkg/color"
 	"goharvest2/pkg/conf"
 	"os"
@@ -14,6 +15,8 @@ type PollerPort struct {
 	Port       int
 	ConfigFile string
 	LogLevel   int
+	Image      string
+	Version    string
 }
 
 type PollerTemplate struct {
@@ -22,10 +25,12 @@ type PollerTemplate struct {
 
 type options struct {
 	loglevel int
+	image    string
 }
 
 var opts = &options{
 	loglevel: 2,
+	image:    "harvest:latest",
 }
 
 var Cmd = &cobra.Command{
@@ -73,7 +78,7 @@ func generateDockerCompose(path string) {
 	conf.ValidatePortInUse = true
 	for _, v := range conf.Config.PollersOrdered {
 		port, _ := conf.GetPrometheusExporterPorts(v)
-		pollerTemplate.Pollers = append(pollerTemplate.Pollers, PollerPort{v, port, absPath, opts.loglevel})
+		pollerTemplate.Pollers = append(pollerTemplate.Pollers, PollerPort{v, port, absPath, opts.loglevel, opts.image, version.VERSION})
 	}
 
 	t, err := template.New("docker-compose.tmpl").ParseFiles("docker/onePollerPerContainer/docker-compose.tmpl")
@@ -123,5 +128,11 @@ func init() {
 		"l",
 		2,
 		"logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)",
+	)
+	dockerCmd.PersistentFlags().StringVar(
+		&opts.image,
+		"image",
+		"harvest:latest",
+		"Harvest image",
 	)
 }
