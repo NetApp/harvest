@@ -119,4 +119,8 @@ Pollers:
     collectors: [Zapi]
     exporters: [prom]
 
+  issue-271:
+    exporters:
+      - missing
+
 ll: grafana_api_token grafana_api_token
