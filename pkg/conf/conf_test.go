@@ -181,3 +181,18 @@ func TestFlowStyle(t *testing.T) {
 		}
 	})
 }
+
+func TestIssue271_PollerPanicsWhenExportDoesNotExist(t *testing.T) {
+	path := "../../cmd/tools/doctor/testdata/testConfig.yml"
+	node, _ := LoadConfig(path)
+	poller := node.GetChildS("Pollers").GetChildS("issue-271")
+	t.Run("Poller panics when exporter does not exist", func(t *testing.T) {
+		exporters, err := GetUniqueExporters(poller, path)
+		if err != nil {
+			panic(err)
+		}
+		if exporters != nil {
+			return
+		}
+	})
+}
