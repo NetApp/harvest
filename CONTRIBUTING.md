@@ -32,3 +32,47 @@ In other words, while your bug fix or feature may be perfect as a standalone pat
 
 Thank you for considering to contribute to the Harvest project!
 
+# Changelog
+
+The changelog is one of the most important ways we communicate with stakeholders. As such, it needs careful attention and focus. 
+
+Creating the changelog is a mixture of auto-generated commands and careful curation. We use [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/#summary) titles to help:
+* improve communication
+* make this process less error prone and faster
+
+## Commit Message
+
+All Harvest commits should follow this form - a GitHub action will reject commits that don't follow this pattern
+
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+`type` is one of:
+* `build`
+* `chore` - bump version of dependencies
+* `ci`
+* `docs`
+* `feat` - new feature, big or small
+* `fix`
+* `perf`
+* `refactor`
+* `revert`
+* `style`
+* `test`
+
+`scope` is one of:
+* `collector`
+* `config`
+* `exporter`
+* `grafana`
+* `influxdb`
+* `manager` - this is typically something to do with the `harvest` binary
+* `matrix`
+* `poller`
+* `prometheus`
+
