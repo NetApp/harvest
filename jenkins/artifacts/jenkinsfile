@@ -9,6 +9,8 @@ pipeline {
         string(name: 'VERSION', defaultValue: '', description: '[Optional] RPM Version should match Harvest version with rc or nightly stripped. If not filled default is YY.mm.ddHH. See https://github.com/NetApp/harvest/wiki/Release-Checklist#version-names for details')
         string(name: 'RELEASE', defaultValue: 'nightly', description: '[Optional] Example: nightly (default) See https://github.com/NetApp/harvest/wiki/Release-Checklist#rpm-and-debian-names for details ')
         string(name: 'BRANCH', defaultValue: 'main', description: '[Optional] Branch name to clone. Default (main) ')
+		string(name: 'BUILD_DOCKER_HUB_PUBLISH', defaultValue: 'false', description: 'true to publish to docker hub')
+		string(name: 'OVERWRITE_LATEST', defaultValue: 'false', description: 'true to overwrite latest tag at docker hub. Works only if BUILD_DOCKER_HUB_PUBLISH is true')
     }
 
     environment {
@@ -20,6 +22,12 @@ pipeline {
         """).trim()
         BRANCH =sh (returnStdout: true, script: """
         echo \"${params.BRANCH}\"
+        """).trim()
+		BUILD_DOCKER_HUB_PUBLISH =sh (returnStdout: true, script: """
+        echo \"${params.BUILD_DOCKER_HUB_PUBLISH}\"
+        """).trim()
+		OVERWRITE_LATEST =sh (returnStdout: true, script: """
+        echo \"${params.OVERWRITE_LATEST}\"
         """).trim()
         targetParentLocation = "/opt/home/nightly/"
         harvestPath = "harvest"
@@ -54,7 +62,6 @@ pipeline {
                 '''
             }
         }
-
 
         stage('Git Clone Harvest') {
             steps {
@@ -93,6 +100,28 @@ pipeline {
                 '''
             }
         }
+       stage('Build Docker Image and Publish') {
+                when {
+                  expression {
+                    return env.BUILD_DOCKER_HUB_PUBLISH == 'true';
+                  }
+                }
+                steps {
+                  withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
+                    sh '''
+                    cd $harvestPath
+                    docker build -f docker/onePollerPerContainer/Dockerfile -t rahulguptajss/harvest:latest -t rahulguptajss/harvest:$VERSION-$RELEASE . --no-cache
+                    docker login
+                    docker push rahulguptajss/harvest:$VERSION-$RELEASE
+                    '''
+					script {
+					if (OVERWRITE_LATEST == 'true') {
+					  sh 'docker push rahulguptajss/harvest:latest'
+					}
+					}
+                  }
+                }
+              }
 
     }
 
@@ -103,4 +132,5 @@ pipeline {
             }
         }
     }
+
 }
