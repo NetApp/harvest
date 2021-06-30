@@ -21,15 +21,15 @@ import (
 func export(n *node.Node, c *client.Client, args *Args) error {
 	switch args.Item {
 	case "attrs":
-		return exportAttrs(n, c, args)
+		return exportAttrs()
 	case "counters":
 		return exportCounters(n, c, args)
 	default:
-		return errors.New(INVALID_ITEM, args.Item)
+		return errors.New(InvalidItem, args.Item)
 	}
 }
 
-func exportAttrs(item *node.Node, c *client.Client, args *Args) error {
+func exportAttrs() error {
 	return nil
 }
 func exportCounters(item *node.Node, c *client.Client, args *Args) error {

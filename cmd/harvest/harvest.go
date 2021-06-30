@@ -576,7 +576,7 @@ func init() {
 	rootCmd.AddCommand(manageCmd("stop", true))
 	rootCmd.AddCommand(manageCmd("restart", true))
 	rootCmd.AddCommand(manageCmd("kill", true))
-	rootCmd.AddCommand(config.ConfigCmd, zapi.ZapiCmd, grafana.GrafanaCmd, stub.NewCmd)
+	rootCmd.AddCommand(config.ConfigCmd, zapi.Cmd, grafana.GrafanaCmd, stub.NewCmd)
 	rootCmd.AddCommand(generate.Cmd)
 	rootCmd.AddCommand(doctor.Cmd)
 

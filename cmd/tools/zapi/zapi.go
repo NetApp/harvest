@@ -18,8 +18,8 @@ import (
 )
 
 const (
-	ATTRIBUTE_NOT_FOUND = "attribute not found"
-	INVALID_ITEM        = "invalid item"
+	AttributeNotFound = "attribute not found"
+	InvalidItem       = "invalid item"
 )
 
 var (
@@ -56,7 +56,7 @@ type Args struct {
 	Config     string // filepath of Harvest config (defaults to "harvest.yml") can be relative or absolute path
 }
 
-var ZapiCmd = &cobra.Command{
+var Cmd = &cobra.Command{
 	Use:   "zapi",
 	Short: "Zapi Utility",
 	Long:  "Zapi Utility - Explore available ZAPI counters of an ONTAP system",
@@ -184,7 +184,7 @@ func get(c *client.Client, args *Args) (*node.Node, error) {
 	case "data":
 		return getData(c, args)
 	default:
-		return nil, errors.New(INVALID_ITEM, args.Item)
+		return nil, errors.New(InvalidItem, args.Item)
 	}
 }
 
@@ -203,7 +203,7 @@ func getApis(c *client.Client) (*node.Node, error) {
 	}
 
 	if n = n.GetChildS("apis"); n == nil {
-		return nil, errors.New(ATTRIBUTE_NOT_FOUND, "apis")
+		return nil, errors.New(AttributeNotFound, "apis")
 	}
 	return n, nil
 }
@@ -219,7 +219,7 @@ func getObjects(c *client.Client) (*node.Node, error) {
 	}
 
 	if n = n.GetChildS("objects"); n == nil {
-		return nil, errors.New(ATTRIBUTE_NOT_FOUND, "objects")
+		return nil, errors.New(AttributeNotFound, "objects")
 	}
 	return n, nil
 }
@@ -238,7 +238,7 @@ func getCounters(c *client.Client, args *Args) (*node.Node, error) {
 	}
 
 	if n = n.GetChildS("counters"); n == nil {
-		return nil, errors.New(ATTRIBUTE_NOT_FOUND, "counters")
+		return nil, errors.New(AttributeNotFound, "counters")
 	}
 	return n, nil
 }
@@ -257,7 +257,7 @@ func getCounter(c *client.Client, args *Args) (*node.Node, error) {
 			return cnt, nil
 		}
 	}
-	return nil, errors.New(ATTRIBUTE_NOT_FOUND, args.Counter)
+	return nil, errors.New(AttributeNotFound, args.Counter)
 }
 
 func getInstances(c *client.Client, args *Args) (*node.Node, error) {
@@ -278,7 +278,7 @@ func getInstances(c *client.Client, args *Args) (*node.Node, error) {
 	}
 
 	if n = n.GetChildS("attributes-list"); n == nil {
-		return nil, errors.New(ATTRIBUTE_NOT_FOUND, "attributes-list")
+		return nil, errors.New(AttributeNotFound, "attributes-list")
 	}
 	return n, nil
 
@@ -320,10 +320,10 @@ var args = &Args{}
 func init() {
 	configPath, _ := conf.GetDefaultHarvestConfigPath()
 
-	ZapiCmd.AddCommand(showCmd, exportCmd)
-	flags := ZapiCmd.PersistentFlags()
+	Cmd.AddCommand(showCmd, exportCmd)
+	flags := Cmd.PersistentFlags()
 	flags.StringVarP(&args.Poller, "poller", "p", "", "name of poller (cluster), as defined in your harvest config")
-	_ = ZapiCmd.MarkPersistentFlagRequired("poller")
+	_ = Cmd.MarkPersistentFlagRequired("poller")
 
 	flags.StringVarP(&args.Api, "api", "a", "", "ZAPI query to show")
 	flags.StringVarP(&args.Attr, "attr", "t", "", "ZAPI attribute to show")
@@ -336,11 +336,12 @@ func init() {
 	showCmd.SetUsageTemplate("item to show should be one of: " + strings.Join(validShowArgs, ", "))
 
 	// Append usage examples
-	ZapiCmd.SetUsageTemplate(ZapiCmd.UsageString() + `
+	Cmd.SetUsageTemplate(Cmd.UsageString() + `
 Examples:
-  harvest zapi -p infinity show apis                             Query cluster infinity for available APIs
-  harvest zapi -p infinity show attrs --api volume-get-iter      Query cluster infinity for volume-get-iter metrics
-                                                                 Typically APIs suffixed with 'get-iter' have interesting metrics 
-  harvest zapi -p infinity show data --api volume-get-iter       Query cluster infinity and print attribute tree of volume-get-iter
+  harvest zapi -p infinity show apis                                      Query cluster infinity for available APIs
+  harvest zapi -p infinity show attrs --api volume-get-iter               Query cluster infinity for volume-get-iter metrics
+                                                                          Typically APIs suffixed with 'get-iter' have interesting metrics 
+  harvest zapi -p infinity show data --api volume-get-iter                Query cluster infinity and print attribute tree of volume-get-iter
+  harvest zapi -p infinity show counters --object workload_detail_volume  Query cluster infinity and print performance counter metadata 
 `)
 }
