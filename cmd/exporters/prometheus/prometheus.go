@@ -84,7 +84,7 @@ func (me *Prometheus) Init() error {
 	if x := me.Params.GlobalPrefix; x != nil {
 		me.Logger.Debug().Msgf("will use global prefix [%s]", *x)
 		me.globalPrefix = *x
-		if !strings.HasSuffix(*x, "_") {
+		if !strings.HasSuffix(me.globalPrefix, "_") {
 			me.globalPrefix += "_"
 		}
 	} else {
@@ -97,7 +97,7 @@ func (me *Prometheus) Init() error {
 	}
 
 	// add HELP and TYPE tags to exported metrics if requested
-	if me.Params.ShouldAddMetaTags != nil && *me.Params.ShouldAddMetaTags == true {
+	if me.Params.ShouldAddMetaTags != nil && *me.Params.ShouldAddMetaTags {
 		me.addMetaTags = true
 	}
 
@@ -177,7 +177,7 @@ func (me *Prometheus) Init() error {
 	addr := localHttpAddr
 	if x := me.Params.LocalHttpAddr; x != nil {
 		addr = *x
-		me.Logger.Debug().Msgf("using custom local addr [%s]", *x)
+		me.Logger.Debug().Msgf("using custom local addr [%s]", addr)
 	}
 
 	go me.startHttpD(addr, port)

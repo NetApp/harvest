@@ -230,7 +230,7 @@ func GetHarvestHomePath() string {
 func GetHarvestLogPath() string {
 	var logPath string
 	if logPath = os.Getenv("HARVEST_LOGS"); logPath == "" {
-		logPath = "/Users/hardikl/Documents/HarvestPublic/harvest/log/harvest/"
+		logPath = "/var/log/harvest/"
 	}
 	return logPath
 }

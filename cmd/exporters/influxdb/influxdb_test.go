@@ -18,24 +18,20 @@ func TestAddrParameter(t *testing.T) {
 
 	opts := &options.Options{}
 	opts.Debug = true
-	var params map[string]conf.Exporter
+	var exporters map[string]conf.Exporter
 	exporterName := "influx-test-addr"
+	var err error
 
 	path := "../../tools/doctor/testdata/testConfig.yml"
-	err := conf.LoadHarvestConfig(path)
-	if err != nil {
+	if exporters, err = conf.GetExporters2(path); err != nil {
 		panic(err)
 	}
-
-	if params, err = conf.GetExporters2(path); err != nil {
-		panic(err)
-	}
-	param, ok := params[exporterName]
+	e, ok := exporters[exporterName]
 	if !ok {
 		t.Fatalf(`exporter (%v) not defined in config`, exporterName)
 	}
 
-	influx := &InfluxDB{AbstractExporter: exporter.New("InfluxDB", exporterName, opts, param)}
+	influx := &InfluxDB{AbstractExporter: exporter.New("InfluxDB", exporterName, opts, e)}
 	if err := influx.Init(); err != nil {
 		t.Fatal(err)
 	}
@@ -54,24 +50,51 @@ func TestUrlParameter(t *testing.T) {
 
 	opts := &options.Options{}
 	opts.Debug = true
-	var params map[string]conf.Exporter
+	var exporters map[string]conf.Exporter
 	exporterName := "influx-test-url"
+	var err error
 
 	path := "../../tools/doctor/testdata/testConfig.yml"
-	err := conf.LoadHarvestConfig(path)
-	if err != nil {
+	if exporters, err = conf.GetExporters2(path); err != nil {
 		panic(err)
 	}
-
-	if params, err = conf.GetExporters2(path); err != nil {
-		panic(err)
-	}
-	param, ok := params[exporterName]
+	e, ok := exporters[exporterName]
 	if !ok {
 		t.Fatalf(`exporter (%v) not defined in config`, exporterName)
 	}
 
-	influx := &InfluxDB{AbstractExporter: exporter.New("InfluxDB", exporterName, opts, param)}
+	influx := &InfluxDB{AbstractExporter: exporter.New("InfluxDB", exporterName, opts, e)}
+	if err := influx.Init(); err != nil {
+		t.Fatal(err)
+	}
+
+	if influx.url == expectedURL {
+		t.Logf("OK - url: [%s]", expectedURL)
+	} else {
+		t.Fatalf("FAIL - expected [%s]\n       got [%s]", expectedURL, influx.url)
+	}
+}
+
+// test that the addr, port and version parameters are handled properly to construct server URL
+func TestVersionParameter(t *testing.T) {
+	expectedURL := "http://localhost:8088/api/v4/write?org=harvest&bucket=harvest&precision=s"
+
+	opts := &options.Options{}
+	opts.Debug = true
+	var exporters map[string]conf.Exporter
+	exporterName := "influx-test-version"
+	var err error
+
+	path := "../../tools/doctor/testdata/testConfig.yml"
+	if exporters, err = conf.GetExporters2(path); err != nil {
+		panic(err)
+	}
+	e, ok := exporters[exporterName]
+	if !ok {
+		t.Fatalf(`exporter (%v) not defined in config`, exporterName)
+	}
+
+	influx := &InfluxDB{AbstractExporter: exporter.New("InfluxDB", exporterName, opts, e)}
 	if err := influx.Init(); err != nil {
 		t.Fatal(err)
 	}
@@ -89,24 +112,20 @@ func TestUrlParameter(t *testing.T) {
 func TestExportDebug(t *testing.T) {
 	opts := &options.Options{}
 	opts.Debug = true
-	var params map[string]conf.Exporter
+	var exporters map[string]conf.Exporter
 	exporterName := "influx-test-url"
+	var err error
 
 	path := "../../tools/doctor/testdata/testConfig.yml"
-	err := conf.LoadHarvestConfig(path)
-	if err != nil {
+	if exporters, err = conf.GetExporters2(path); err != nil {
 		panic(err)
 	}
-
-	if params, err = conf.GetExporters2(path); err != nil {
-		panic(err)
-	}
-	param, ok := params[exporterName]
+	e, ok := exporters[exporterName]
 	if !ok {
 		t.Fatalf(`exporter (%v) not defined in config`, exporterName)
 	}
 
-	influx := New(exporter.New("InfluxDB", exporterName, opts, param))
+	influx := New(exporter.New("InfluxDB", exporterName, opts, e))
 	if err := influx.Init(); err != nil {
 		t.Fatal(err)
 	}
