@@ -89,7 +89,7 @@ func getAttrs(c *client.Client, a *Args) (*node.Node, error) {
 
 	if attr_name == "" {
 		fmt.Println("no root attribute, stopping here.")
-		return nil, errors.New(ATTRIBUTE_NOT_FOUND, "root attribute")
+		return nil, errors.New(AttributeNotFound, "root attribute")
 	}
 
 	if strings.HasSuffix(attr_name, "[]") {
@@ -105,7 +105,7 @@ func getAttrs(c *client.Client, a *Args) (*node.Node, error) {
 	entries := results.GetChildS("type-entries")
 	if entries == nil {
 		fmt.Println("Error: missing [type-entries]")
-		return nil, errors.New(ATTRIBUTE_NOT_FOUND, "type-entries")
+		return nil, errors.New(AttributeNotFound, "type-entries")
 	}
 
 	attr = node.NewS(attr_name)

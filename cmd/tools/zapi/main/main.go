@@ -6,5 +6,5 @@ import (
 )
 
 func main() {
-	cobra.CheckErr(zapi.ZapiCmd.Execute())
+	cobra.CheckErr(zapi.Cmd.Execute())
 }
