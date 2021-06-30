@@ -44,7 +44,7 @@ Exporters:
     token: abcdefghijklmnopqrstuvwxyz
   influx-test-url:
     exporter: InfluxDB
-    url: https://some-valid-domain-name.net/api/v2/write?org=netapp&bucket=harvest&precision=s
+    url: https://some-valid-domain-name.net:8888/api/v2/write?org=netapp&bucket=harvest&precision=s
     addr: localhost
     bucket: harvest
     org: harvest
