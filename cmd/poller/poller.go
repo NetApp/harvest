@@ -92,7 +92,7 @@ type Poller struct {
 	schedule       *schedule.Schedule
 	collectors     []collector.Collector
 	exporters      []exporter.Exporter
-	exporterParams *node.Node
+	exporterParams map[string]conf.Exporter
 	params         *conf.Poller
 	metadata       *matrix.Matrix
 	status         *matrix.Matrix
@@ -217,7 +217,7 @@ func (p *Poller) Init() error {
 	// collectors and exporters, as well as ping stats to target host
 	p.loadMetadata()
 
-	if p.exporterParams, err = conf.GetExporters(p.options.Config); err != nil {
+	if p.exporterParams, err = conf.GetExporters2(p.options.Config); err != nil {
 		logger.Warn().Msgf("read exporter params: %v", err)
 		// @TODO just warn or abort?
 	}
@@ -651,8 +651,8 @@ func (p *Poller) loadExporter(name string) exporter.Exporter {
 
 	var (
 		err    error
-		class  string
-		params *node.Node
+		class  *string
+		params conf.Exporter
 		exp    exporter.Exporter
 	)
 
@@ -661,24 +661,25 @@ func (p *Poller) loadExporter(name string) exporter.Exporter {
 		return exp
 	}
 
-	if params = p.exporterParams.GetChildS(name); params == nil {
+	params, ok := p.exporterParams[name]
+	if !ok {
 		logger.Warn().Msgf("exporter (%s) not defined in config", name)
 		return nil
 	}
 
-	if class = params.GetChildContentS("exporter"); class == "" {
+	if class = params.Type; class == nil {
 		logger.Warn().Msgf("exporter (%s) has no exporter class defined", name)
 		return nil
 	}
 
-	absExp := exporter.New(class, name, p.options, params)
-	switch class {
+	absExp := exporter.New(*class, name, p.options, params)
+	switch *class {
 	case "Prometheus":
 		exp = prometheus.New(absExp)
 	case "InfluxDB":
 		exp = influxdb.New(absExp)
 	default:
-		logger.Error().Msgf("no exporter of name:type %s:%s", name, class)
+		logger.Error().Msgf("no exporter of name:type %s:%s", name, *class)
 		return nil
 	}
 	if err = exp.Init(); err != nil {
