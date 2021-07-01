@@ -88,6 +88,21 @@ func SafeConfig(n *node.Node, fp string) error {
 	return tree.Export(n, "yaml", fp)
 }
 
+func GetExporters2(configFp string) (map[string]Exporter, error) {
+	err := LoadHarvestConfig(configFp)
+	if err != nil {
+		return nil, err
+	}
+	exporters := Config.Exporters
+
+	if exporters == nil {
+		err = errors.New(errors.ERR_CONFIG, "[Exporters] section not found")
+		return nil, err
+	}
+
+	return *exporters, nil
+}
+
 func GetExporters(configFp string) (*node.Node, error) {
 	var err error
 	var config, exporters *node.Node
@@ -444,6 +459,7 @@ type Exporter struct {
 	Token         *string `yaml:"token,omitempty"`
 	Precision     *string `yaml:"precision,omitempty"`
 	ClientTimeout *string `yaml:"client_timeout,omitempty"`
+	Version       *string `yaml:"version,omitempty"`
 }
 
 type Pollers struct {
