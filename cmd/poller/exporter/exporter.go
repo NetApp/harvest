@@ -9,9 +9,9 @@ package exporter
 
 import (
 	"goharvest2/cmd/poller/options"
+	"goharvest2/pkg/conf"
 	"goharvest2/pkg/logging"
 	"goharvest2/pkg/matrix"
-	"goharvest2/pkg/tree/node"
 	"strconv"
 	"sync"
 )
@@ -46,7 +46,7 @@ type AbstractExporter struct {
 	Status      uint8
 	Message     string
 	Options     *options.Options
-	Params      *node.Node
+	Params      conf.Exporter
 	Metadata    *matrix.Matrix // metadata about the export
 	*sync.Mutex                // mutex to block exporter during export
 	exportCount uint64         // atomic
@@ -58,7 +58,7 @@ type AbstractExporter struct {
 // @n - exporter name
 // @o - poller options
 // @p - exporter parameters
-func New(c, n string, o *options.Options, p *node.Node) *AbstractExporter {
+func New(c, n string, o *options.Options, p conf.Exporter) *AbstractExporter {
 	abc := AbstractExporter{
 		Class:    c,
 		Name:     n,
