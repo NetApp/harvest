@@ -13,7 +13,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -70,10 +69,9 @@ func (e *InfluxDB) Init() error {
 
 	if token = e.Params.Token; token == nil {
 		return errors.New(errors.MISSING_PARAM, "token")
-	} else {
-		e.token = *token
-		e.Logger.Debug().Msg("will use authorization with api token")
 	}
+	e.token = *token
+	e.Logger.Debug().Msg("will use authorization with api token")
 
 	if version = e.Params.Version; version == nil {
 		v := defaultApiVersion
@@ -106,19 +104,6 @@ func (e *InfluxDB) Init() error {
 		e.url = fmt.Sprintf("%s/api/v%s/write?org=%s&bucket=%s&precision=%s", *url, *version, *org, *bucket, *precision)
 	} else {
 		e.url = *url
-		/* Example url: http://localhost:8088/api/v4/write?org=harvest&bucket=harvest&precision=s
-		   step 1: localhost:8088/api/v4/write?org=harvest&bucket=harvest&precision=s
-		   step 2: localhost:8088 value in addrAndPort var
-		   step 3: addr has localhost and port has 8088
-		*/
-		addrAndPort := strings.Split(strings.Split(e.url, "//")[1], "/")[0]
-		res := strings.Split(addrAndPort, ":")
-		addr = &res[0]
-		if p, err := strconv.Atoi(res[1]); err != nil {
-			e.Logger.Warn().Msgf("invalid port [%s]", p)
-		} else {
-			port = &p
-		}
 	}
 
 	// timeout parameter
@@ -138,7 +123,6 @@ func (e *InfluxDB) Init() error {
 	// construct HTTP client
 	e.client = &http.Client{Timeout: timeout}
 
-	e.Logger.Debug().Msgf("initialized exporter, ready to emit to [%s:%s]", *addr, *port)
 	return nil
 }
 
