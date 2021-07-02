@@ -28,5 +28,3 @@ export_options:
   instance_keys:
     - lif
     - svm
-  graphite_leafs:
-    - svm.{svm}.iscsi_lif.{lif}

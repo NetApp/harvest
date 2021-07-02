@@ -19,5 +19,3 @@ override:
 export_options:
   instance_keys:
     - svm
-  graphite_leafs:
-    - svm.{svm}.copy_manager

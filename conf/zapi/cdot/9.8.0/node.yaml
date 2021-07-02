@@ -59,5 +59,3 @@ export_options:
     - uptime
     - vendor
     - version
-  graphite_leafs:
-    - node.{node}

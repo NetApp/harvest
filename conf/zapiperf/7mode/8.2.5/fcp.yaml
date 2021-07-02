@@ -25,5 +25,3 @@ export_options:
   instance_keys:
     - port
     - speed
-  graphite_leafs:
-    - node.{node}.fcp.{port}

@@ -71,7 +71,4 @@ export_options:
     - style
   instance_labels:
     - state
-  graphite_leafs:
-    - svm.{svm}.vol.{volume}
-    - node.{node}.aggr.{aggr}.vol.{volume}
 

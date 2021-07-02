@@ -27,5 +27,3 @@ export_options:
     - lun # edited by plugin
     - volume # added by plugin
     - svm # mimic cdot metrics
-  graphite_leafs:
-    - svm.{svm}.vol.{volume}.{lun}

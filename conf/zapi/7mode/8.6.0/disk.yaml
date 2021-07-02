@@ -33,7 +33,5 @@ export_options:
     - serial_number
     - shelf
     - shelf_bay
-  graphite_leafs:
-    - node.{node}.disk.{disk} # take last part
 
 

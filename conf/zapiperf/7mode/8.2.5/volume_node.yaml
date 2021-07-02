@@ -41,5 +41,3 @@ counters:
 export_options:
   instance_keys:
     - volume
-  graphite_leafs:
-    - node.{node}.vol.{volume}
