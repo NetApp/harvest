@@ -10,7 +10,9 @@ import (
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/set"
 	"goharvest2/pkg/tree/node"
+	"os"
 	"runtime"
+	"strconv"
 	"strings"
 )
 
@@ -104,6 +106,7 @@ func (n *NodeMon) PollInstance() (*matrix.Matrix, error) {
 		}
 		instance.SetLabel("poller", name)
 		instance.SetLabel("version", version.VERSION)
+		instance.SetLabel("pid", strconv.Itoa(os.Getpid()))
 		n.Logger.Debug().Msgf("add instance (%s)", name)
 	}
 	t := len(n.Matrix.GetInstances())
