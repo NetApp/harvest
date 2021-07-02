@@ -1,6 +1,6 @@
 ## Docker
 
-Build Docker Image from source code
+Build Docker Image
 
 ```
 docker build -f docker/onePollerPerContainer/Dockerfile -t harvest:latest  . --no-cache
@@ -8,7 +8,6 @@ docker build -f docker/onePollerPerContainer/Dockerfile -t harvest:latest  . --n
 
 Generate docker-compose file and save contents as docker-compose.yml
 ```
-make build
 bin/harvest generate docker --config ./harvest.yml
 ```
 

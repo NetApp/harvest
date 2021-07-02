@@ -119,7 +119,7 @@ After editing `/opt/harvest/harvest.yml`, manage Harvest with `systemctl start|s
 
 ## Docker
 
-Work in progress. Coming soon
+* Refer [One Poller One Container](docker/onePollerPerContainer/README.md)
 
 ## Building from source
 
