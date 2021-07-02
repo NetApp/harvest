@@ -28,11 +28,7 @@ func assertRedacted(t *testing.T, input, redacted string) {
 }
 
 func TestConfigToStruct(t *testing.T) {
-	path := "testdata/testConfig.yml"
-	err := conf.LoadHarvestConfig(path)
-	if err != nil {
-		panic(err)
-	}
+	loadTestConfig()
 	if conf.Config.Defaults.Password != "123#abc" {
 		t.Fatalf(`expected harvestConfig.Defaults.Password to be 123#abc, actual=[%+v]`,
 			conf.Config.Defaults.Addr)
@@ -79,11 +75,7 @@ func TestConfigToStruct(t *testing.T) {
 }
 
 func TestUniquePromPorts(t *testing.T) {
-	path := "testdata/testConfig.yml"
-	err := conf.LoadHarvestConfig(path)
-	if err != nil {
-		panic(err)
-	}
+	loadTestConfig()
 	valid := checkUniquePromPorts(conf.Config)
 	if valid.isValid {
 		t.Fatal(`expected isValid to be false since there are duplicate prom ports, actual was isValid=true`)
@@ -94,16 +86,20 @@ func TestUniquePromPorts(t *testing.T) {
 }
 
 func TestExporterTypesAreValid(t *testing.T) {
-	path := "testdata/testConfig.yml"
-	err := conf.LoadHarvestConfig(path)
-	if err != nil {
-		panic(err)
-	}
+	loadTestConfig()
 	valid := checkExporterTypes(conf.Config)
 	if valid.isValid {
 		t.Fatalf(`expected isValid to be false since there are invalid exporter types, actual was %+v`, valid)
 	}
 	if valid.invalid[0] != "Foo" {
 		t.Fatalf(`expected invalid exporter of type Foo, actual was %+v`, valid)
+	}
+}
+
+func loadTestConfig() {
+	path := "testdata/testConfig.yml"
+	err := conf.LoadHarvestConfig(path)
+	if err != nil {
+		panic(err)
 	}
 }
