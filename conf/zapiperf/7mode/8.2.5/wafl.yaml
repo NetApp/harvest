@@ -29,5 +29,3 @@ override:
 
 export_options:
   require_instance_keys: false # node is global label for 7mode
-  graphite_leafs:
-    - node.{node}.wafl

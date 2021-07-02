@@ -24,5 +24,3 @@ override:
 export_options:
   instance_keys:
     - token
-  graphite_leafs:
-    - node.{node}.msft_odx

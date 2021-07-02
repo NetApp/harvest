@@ -59,5 +59,3 @@ export_options:
   instance_labels:
     - type
     - state
-  graphite_leafs:
-    - node.{node}.aggr.{aggr}

@@ -49,5 +49,3 @@ export_options:
     - shelf_bay
     - serial_number
     - failed
-  graphite_leafs:
-    - node.{node}.disk.{disk} # take last part

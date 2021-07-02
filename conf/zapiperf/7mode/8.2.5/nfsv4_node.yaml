@@ -17,5 +17,3 @@ counters:
 
 export_options:
   require_instance_keys: false
-  graphite_leafs:
-    - node.{node}.nfsv4
