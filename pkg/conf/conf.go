@@ -59,6 +59,12 @@ var Config = HarvestConfig{}
 var configRead = false
 var ValidatePortInUse = false
 
+// Used by testing code to reload a new config
+func loadHarvestConfig(configPath string) error {
+	configRead = false
+	return LoadHarvestConfig(configPath)
+}
+
 func LoadHarvestConfig(configPath string) error {
 	if configRead {
 		return nil
@@ -305,7 +311,7 @@ var promPortRangeMapping = make(map[string]PortMap)
 func loadPrometheusExporterPortRangeMapping() {
 	exporters := *Config.Exporters
 	for k, v := range exporters {
-		if *v.Type == "Prometheus" {
+		if v.Type != nil && *v.Type == "Prometheus" {
 			if v.PortRange != nil {
 				promPortRangeMapping[k] = PortMapFromRange(*v.Addr, v.PortRange)
 			}

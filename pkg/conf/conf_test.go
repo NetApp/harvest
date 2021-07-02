@@ -7,14 +7,12 @@ import (
 	"testing"
 )
 
+var testYml = "../../cmd/tools/doctor/testdata/testConfig.yml"
+
 func TestGetPrometheusExporterPorts(t *testing.T) {
-	path := "../../cmd/tools/doctor/testdata/testConfig.yml"
-	err := LoadHarvestConfig(path)
+	loadTestData(testYml)
 	// Test without checking
 	ValidatePortInUse = true
-	if err != nil {
-		panic(err)
-	}
 	type args struct {
 		pollerName string
 	}
@@ -44,14 +42,26 @@ func TestGetPrometheusExporterPorts(t *testing.T) {
 	}
 }
 
-func TestPollerStructDefaults(t *testing.T) {
-	path := "../../cmd/tools/doctor/testdata/testConfig.yml"
-	err := LoadHarvestConfig(path)
+func TestGetPrometheusExporterPortsIssue284(t *testing.T) {
+	loadTestData("../../cmd/tools/doctor/testdata/issue-284.yml")
+	loadPrometheusExporterPortRangeMapping()
+	got, _ := GetPrometheusExporterPorts("issue-284")
+	if got != 0 {
+		t.Fatalf("expected port to be 0 but was %d", got)
+	}
+}
+
+func loadTestData(yml string) {
+	err := loadHarvestConfig(yml)
 	if err != nil {
 		panic(err)
 	}
+}
+
+func TestPollerStructDefaults(t *testing.T) {
+	loadTestData(testYml)
 	t.Run("poller exporters", func(t *testing.T) {
-		poller, err := GetPoller2(path, "zeros")
+		poller, err := GetPoller2(testYml, "zeros")
 		if err != nil {
 			panic(err)
 		}
@@ -69,7 +79,7 @@ func TestPollerStructDefaults(t *testing.T) {
 	})
 
 	t.Run("poller collector", func(t *testing.T) {
-		poller, err := GetPoller2(path, "cluster-01")
+		poller, err := GetPoller2(testYml, "cluster-01")
 		if err != nil {
 			panic(err)
 		}
@@ -87,7 +97,7 @@ func TestPollerStructDefaults(t *testing.T) {
 	})
 
 	t.Run("poller username", func(t *testing.T) {
-		poller, err := GetPoller2(path, "zeros")
+		poller, err := GetPoller2(testYml, "zeros")
 		if err != nil {
 			panic(err)
 		}
@@ -99,11 +109,7 @@ func TestPollerStructDefaults(t *testing.T) {
 }
 
 func TestPollerUnion(t *testing.T) {
-	path := "../../cmd/tools/doctor/testdata/testConfig.yml"
-	err := LoadHarvestConfig(path)
-	if err != nil {
-		panic(err)
-	}
+	loadTestData(testYml)
 	addr := "addr"
 	user := "user"
 	defaults := Poller{
@@ -157,13 +163,9 @@ func TestPollerUnion(t *testing.T) {
 }
 
 func TestFlowStyle(t *testing.T) {
-	path := "../../cmd/tools/doctor/testdata/testConfig.yml"
-	err := LoadHarvestConfig(path)
-	if err != nil {
-		panic(err)
-	}
+	loadTestData(testYml)
 	t.Run("poller with flow", func(t *testing.T) {
-		poller, err := GetPoller2(path, "flow")
+		poller, err := GetPoller2(testYml, "flow")
 		if err != nil {
 			panic(err)
 		}
