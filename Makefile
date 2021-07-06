@@ -100,6 +100,10 @@ harvest: deps
 	@echo "Building grafana tool"
 	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -trimpath -o bin/grafana -ldflags=$(LD_FLAGS) cmd/tools/grafana/main/main.go
 
+	@# Build the rest tool
+	@echo "Building rest tool"
+	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -trimpath -o bin/rest -ldflags=$(LD_FLAGS) cmd/tools/rest/main/main.go
+
 ###############################################################################
 # Build tar gz distribution
 ###############################################################################
