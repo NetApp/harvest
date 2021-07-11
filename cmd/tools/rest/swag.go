@@ -3,6 +3,7 @@
 package rest
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/bbrks/wrap/v2"
@@ -10,6 +11,7 @@ import (
 	tw "github.com/olekukonko/tablewriter"
 	"gopkg.in/yaml.v3"
 	"html"
+	"io"
 	"io/ioutil"
 	"os"
 	"regexp"
@@ -268,7 +270,6 @@ func readSwagger(args Args) (ontap, error) {
 		fmt.Printf("error reading swagger file=[%s] err=%+v\n", args.SwaggerPath, err)
 		return ontap{}, err
 	}
-	var ontapSwag spec.Swagger
 	// read ONTAP swagger yaml and convert to JSON since swagger only has JSON unmarshalling
 	node := make(map[string]interface{})
 	err = yaml.Unmarshal(contents, node)
@@ -282,14 +283,20 @@ func readSwagger(args Args) (ontap, error) {
 		fmt.Printf("error marshalling swagger file=[%s] to json err=%+v\n", args.SwaggerPath, err)
 		return ontap{}, err
 	}
+	var ontapSwag spec.Swagger
 	err = json.Unmarshal(b, &ontapSwag)
 	if err != nil {
-		fmt.Printf("error unmarshalling %s into swagger err=%+v\n", args.SwaggerPath, err)
-		return ontap{}, err
+		// attempt to fix the swagger and try again
+		swag, err2 := fixSwagger(args.SwaggerPath, b)
+		if err2 != nil {
+			fmt.Printf("error unmarshalling %s into swagger err=%+v\n", args.SwaggerPath, err)
+			fmt.Printf("error attemping to fix swagger err=%+v\n", err2)
+			return ontap{}, err2
+		}
+		ontapSwag = swag
 	}
 
-	// These are not tagged with an operations props id of "_collection_"
-	// but should be included
+	// Include the following, even though they are not tagged with an operations props id of "_collection_"
 	missingToAdd := map[string]interface{}{
 		"/cluster/nodes": true,
 	}
@@ -308,6 +315,65 @@ func readSwagger(args Args) (ontap, error) {
 	}
 	names := sortApis(collectionsApis)
 	return ontap{apis: names, swagger: ontapSwag, collectionsApis: collectionsApis}, nil
+}
+
+// fixSwagger attempts to fix some known errors in ONTAP's swagger yaml file
+// that cause go-openapi/spec to fail. The errors are found in visitNode
+func fixSwagger(path string, b []byte) (spec.Swagger, error) {
+	var nodes map[string]interface{}
+	err := json.Unmarshal(b, &nodes)
+	if err != nil {
+		fmt.Printf("error unmarshalling %s into map err=%+v\n", args.SwaggerPath, err)
+		return spec.Swagger{}, err
+	}
+
+	// visit every node correcting known issues then try again
+	visitNode(nodes)
+	var ontapSwag spec.Swagger
+	nb, err := json.Marshal(nodes)
+	if err != nil {
+		fmt.Printf("error marshalling adjusted swagger file=[%s] to json err=%+v\n", args.SwaggerPath, err)
+		return spec.Swagger{}, err
+	}
+	err = json.Unmarshal(nb, &ontapSwag)
+	if err == nil {
+		// the fixes worked, write out the changes
+		out, err := os.Create(path)
+		if err != nil {
+			return spec.Swagger{}, fmt.Errorf("unable to create %s to save swagger.yaml", path)
+		}
+		defer silentClose(out)
+		_, err = io.Copy(out, bytes.NewReader(nb))
+		if err != nil {
+			return spec.Swagger{}, fmt.Errorf("error while saving mutated swagger to %s err=%w\n", path, err)
+		}
+	}
+	return ontapSwag, err
+}
+
+// visitNode corrects type errors in ONTAP's swagger.yaml file
+// the properties listed in the case statement below should have a type
+// of int instead of string - correct that so the yaml is valid and parses
+func visitNode(v interface{}) {
+	switch vv := v.(type) {
+	case map[string]interface{}:
+		for k, val := range vv {
+			switch k {
+			case "maxLength", "minLength", "maximum", "minimum", "minItems", "maxItems":
+				if s, ok := val.(string); ok {
+					num, err := strconv.Atoi(s)
+					if err == nil {
+						vv[k] = num
+					}
+				}
+			}
+			visitNode(val)
+		}
+	case []interface{}:
+		for _, val := range vv {
+			visitNode(val)
+		}
+	}
 }
 
 func showApis(ontapSwag ontap) {
