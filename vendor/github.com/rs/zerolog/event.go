@@ -211,6 +211,14 @@ func (e *Event) Object(key string, obj LogObjectMarshaler) *Event {
 	return e
 }
 
+// Func allows an anonymous func to run only if the event is enabled.
+func (e *Event) Func(f func(e *Event)) *Event {
+	if e != nil && e.Enabled() {
+		f(e)
+	}
+	return e
+}
+
 // EmbedObject marshals an object that implement the LogObjectMarshaler interface.
 func (e *Event) EmbedObject(obj LogObjectMarshaler) *Event {
 	if e == nil {
@@ -690,6 +698,9 @@ func (e *Event) Interface(key string, i interface{}) *Event {
 // CallerSkipFrame instructs any future Caller calls to skip the specified number of frames.
 // This includes those added via hooks from the context.
 func (e *Event) CallerSkipFrame(skip int) *Event {
+	if e == nil {
+		return e
+	}
 	e.skipFrame += skip
 	return e
 }
