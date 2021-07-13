@@ -786,7 +786,7 @@ func main() {
 	defer func() {
 		//logger.Warn("(main) ", "defer func here")
 		if r := recover(); r != nil {
-			logger.Error().Stack().Err(errors.New(errors.GO_ROUTINE_PANIC, string(debug.Stack()))).Msg("Poller panicked")
+			logger.Error().Stack().Err(errors.New(errors.GO_ROUTINE_PANIC, string(debug.Stack()))).Msgf("Poller panicked %s", r)
 			logger.Fatal().Msg(`(main) terminating abnormally, tip: run in foreground mode (with "--loglevel 0") to debug`)
 
 			os.Exit(1)
