@@ -237,7 +237,7 @@ func Init(c Collector) error {
 func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 	defer func() {
 		if r := recover(); r != nil {
-			me.Logger.Error().Stack().Err(errors.New(errors.GO_ROUTINE_PANIC, string(debug.Stack()))).Msg("Collector panicked")
+			me.Logger.Error().Stack().Err(errors.New(errors.GO_ROUTINE_PANIC, string(debug.Stack()))).Msgf("Collector panicked %s", r)
 		}
 	}()
 	defer wg.Done()
