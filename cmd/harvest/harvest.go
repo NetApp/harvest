@@ -16,6 +16,7 @@ package main
 
 import (
 	"fmt"
+	tw "github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 	"goharvest2/cmd/harvest/config"
 	"goharvest2/cmd/harvest/stub"
@@ -39,6 +40,8 @@ import (
 	"syscall"
 	"time"
 )
+
+const maxCol = 40
 
 type options struct {
 	command    string
@@ -158,11 +161,15 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 		os.Exit(0)
 	}
 
-	// get max lengths of datacenter and poller names
-	// so that output does not get distorted if they are too long
-	c1, c2 := getMaxLengths(pollers, 20, 20)
-	printHeader(opts.longStatus, c1, c2)
-	printBreak(opts.longStatus, c1, c2)
+	table := tw.NewWriter(os.Stdout)
+	table.SetBorder(false)
+	table.SetAutoFormatHeaders(false)
+	if opts.longStatus {
+		table.SetHeader([]string{"Datacenter", "Poller", "PID", "PromPort", "Profiling", "Status"})
+	} else {
+		table.SetHeader([]string{"Datacenter", "Poller", "PID", "PromPort", "Status"})
+	}
+	table.SetColumnAlignment([]int{tw.ALIGN_LEFT, tw.ALIGN_LEFT, tw.ALIGN_RIGHT, tw.ALIGN_RIGHT, tw.ALIGN_RIGHT})
 
 	for _, p := range pollers.GetChildren() {
 
@@ -174,17 +181,17 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 		s = getStatus(name)
 		if opts.command == "kill" {
 			s = killPoller(name)
-			printStatus(opts.longStatus, c1, c2, datacenter, name, s.promPort, s)
+			printStatus(table, opts.longStatus, datacenter, name, s)
 			continue
 		}
 
 		if opts.command == "status" {
-			printStatus(opts.longStatus, c1, c2, datacenter, name, s.promPort, s)
+			printStatus(table, opts.longStatus, datacenter, name, s)
 		}
 
 		if opts.command == "stop" || opts.command == "restart" {
 			s = stopPoller(name)
-			printStatus(opts.longStatus, c1, c2, datacenter, name, s.promPort, s)
+			printStatus(table, opts.longStatus, datacenter, name, s)
 		}
 
 		if opts.command == "start" || opts.command == "restart" {
@@ -193,19 +200,19 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 			switch s.status {
 			case "running":
 				// do nothing but print current status, idempotent
-				printStatus(opts.longStatus, c1, c2, datacenter, name, s.promPort, s)
+				printStatus(table, opts.longStatus, datacenter, name, s)
 				break
 			case "not running", "stopped", "killed":
 				promPort := getPollerPrometheusPort(p, opts)
 				s = startPoller(name, promPort, opts)
-				printStatus(opts.longStatus, c1, c2, datacenter, name, s.promPort, s)
+				printStatus(table, opts.longStatus, datacenter, name, s)
 			default:
 				fmt.Printf("can't verify status of [%s]: kill poller and try again\n", name)
 			}
 		}
 	}
 
-	printBreak(opts.longStatus, c1, c2)
+	table.Render()
 }
 
 // Get status of a poller. This is partially guesswork and
@@ -483,53 +490,26 @@ func startPoller(pollerName string, promPort int, opts *options) *pollerStatus {
 	return getStatus(pollerName)
 }
 
-// print status of poller, first two arguments are column lengths
-func printStatus(long bool, c1, c2 int, dc, pn, promPort string, s *pollerStatus) {
-	fmt.Printf("%s%s ", dc, strings.Repeat(" ", c1-len(dc)))
-	fmt.Printf("%s%s ", pn, strings.Repeat(" ", c2-len(pn)))
+func printStatus(table *tw.Table, long bool, dc, pn string, ps *pollerStatus) {
+	dct := truncate(dc)
+	pnt := truncate(pn)
+	var row []string
 	if long {
-		if s.pid == 0 {
-			fmt.Printf("%-10s %-15s %-10s %-20s\n", "", promPort, s.profilingPort, s.status)
-		} else {
-			fmt.Printf("%-10d %-15s %-10s %-20s\n", s.pid, promPort, s.profilingPort, s.status)
-		}
-	} else if s.pid == 0 {
-		fmt.Printf("%-10s %-15s %-20s\n", "", promPort, s.status)
+		row = []string{dct, pnt, "", ps.promPort, ps.profilingPort, ps.status}
 	} else {
-		fmt.Printf("%-10d %-15s %-20s\n", s.pid, promPort, s.status)
+		row = []string{dct, pnt, "", ps.promPort, ps.status}
 	}
+	if ps.pid != 0 {
+		row[2] = strconv.Itoa(ps.pid)
+	}
+	table.Append(row)
 }
 
-func printHeader(long bool, c1, c2 int) {
-	fmt.Printf("Datacenter%s Poller%s ", strings.Repeat(" ", c1-10), strings.Repeat(" ", c2-6))
-	if long {
-		fmt.Printf("%-10s %-15s %-10s %-20s\n", "PID", "PromPort", "Profiling", "Status")
-	} else {
-		fmt.Printf("%-10s %-15s %-20s\n", "PID", "PromPort", "Status")
+func truncate(name string) string {
+	if len(name) < maxCol {
+		return name
 	}
-}
-
-func printBreak(long bool, c1, c2 int) {
-	fmt.Printf("%s %s ", strings.Repeat("+", c1), strings.Repeat("+", c2))
-	if long {
-		fmt.Println("++++++++++ +++++++++++++++ ++++++++++ ++++++++++++++++++++")
-	} else {
-		fmt.Println("++++++++++ +++++++++++++++ ++++++++++++++++++++")
-	}
-
-}
-
-// maximum size of datacenter and poller names, if exceed defaults
-func getMaxLengths(pollers *node.Node, pn, dc int) (int, int) {
-	for _, p := range pollers.GetChildren() {
-		if len(p.GetNameS()) > pn {
-			pn = len(p.GetNameS())
-		}
-		if len(p.GetChildContentS("datacenter")) > dc {
-			dc = len(p.GetChildContentS("datacenter"))
-		}
-	}
-	return dc + 1, pn + 1
+	return name[0:maxCol-3] + "→"
 }
 
 func freePort() (int, error) {
@@ -661,7 +641,7 @@ Feedback
 // are created with this function - all but start are hidden
 // to save space
 func manageCmd(use string, shouldHide bool) *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:    fmt.Sprintf("%s [POLLER...]", use),
 		Short:  "Stop/restart/status/kill - all or individual pollers",
 		Long:   "Harvest Manager - manage your pollers",
@@ -669,6 +649,8 @@ func manageCmd(use string, shouldHide bool) *cobra.Command {
 		Hidden: shouldHide,
 		Run:    doManageCmd,
 	}
+	cmd.PersistentFlags().BoolVar(&opts.longStatus, "long", false, "show advanced status options")
+	return cmd
 }
 
 func main() {
