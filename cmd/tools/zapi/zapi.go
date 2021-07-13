@@ -312,6 +312,10 @@ func getData(c *client.Client, args *Args) (*node.Node, error) {
 		}
 	}
 
+	if args.Counter != "" {
+		counters := req.NewChildS("counters", "")
+		counters.NewChildS("counter", args.Counter)
+	}
 	return c.InvokeRequest(req)
 }
 
@@ -343,5 +347,7 @@ Examples:
                                                                           Typically APIs suffixed with 'get-iter' have interesting metrics 
   harvest zapi -p infinity show data --api volume-get-iter                Query cluster infinity and print attribute tree of volume-get-iter
   harvest zapi -p infinity show counters --object workload_detail_volume  Query cluster infinity and print performance counter metadata 
+  harvest zapi -p infinity show data --object qtree --counter nfs_ops     Query cluster infinity and print performance counters on the 
+                                                                          number of NFS operations per second on each qtree
 `)
 }
