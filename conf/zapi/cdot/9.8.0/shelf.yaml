@@ -14,6 +14,7 @@ counters:
     - ^^shelf-uid
     - ^state
     - ^vendor-name
+    - ^op-status
 
 plugins:
   Shelf:
@@ -62,7 +63,7 @@ plugins:
           - voltage-sensor-reading => reading
 
   LabelAgent:
-    value_mapping: status state online `1`
+    value_mapping: status op_status normal `1`
 
 export_options:
   instance_keys:
@@ -72,5 +73,6 @@ export_options:
     - serial_number
     - model
     - state
+    - op_status
     - vendor_name
 
