@@ -230,7 +230,16 @@ func (me *Matrix) RemoveInstance(key string) {
 		for _, metric := range me.GetMetrics() {
 			metric.Remove(instance.index)
 		}
+		deletedIndex := instance.index
 		delete(me.instances, key)
+		// If there were removals, the indexes need to be rewritten since gaps were created
+		// Map is not ordered hence recreating map will cause mapping issue with metrics
+		for _, i := range me.instances {
+			if i.index > deletedIndex {
+				// reduce index by 1
+				i.index = i.index - 1
+			}
+		}
 	}
 }
 
