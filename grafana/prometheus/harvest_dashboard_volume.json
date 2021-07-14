@@ -663,6 +663,10 @@
               {
                 "id": "custom.displayMode",
                 "value": "gradient-gauge"
+              },
+              {
+                "id": "max",
+                "value": 100
               }
             ]
           },
