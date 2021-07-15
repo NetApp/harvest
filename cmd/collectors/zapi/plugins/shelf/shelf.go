@@ -182,6 +182,8 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			}
 
 			my.Logger.Debug().Msgf("fetching %d [%s] instances", len(objectElem.GetChildren()), attribute)
+			// To decide record would be available in metric or not
+			isInclude := true
 
 			for _, obj := range objectElem.GetChildren() {
 
@@ -197,7 +199,13 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 					for label, labelDisplay := range my.instanceLabels[attribute].Map() {
 						if value := obj.GetChildContentS(label); value != "" {
-							instance.SetLabel(labelDisplay, value)
+							// This is apply only for the child of the shelf object like psu, fan, etc.
+							// Exclude the records from metric whose op-status is normal
+							if labelDisplay == "status" && value == "normal" {
+								isInclude = false
+							} else {
+								instance.SetLabel(labelDisplay, value)
+							}
 						}
 					}
 
@@ -209,7 +217,11 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				}
 			}
 
-			output = append(output, data1)
+			if isInclude {
+				output = append(output, data1)
+			} else {
+				my.Logger.Info().Msgf("not including %s", (*data1).Object)
+			}
 		}
 	}
 
