@@ -41,10 +41,10 @@ func TestInitPlugin(t *testing.T) {
 	params.NewChildS("exclude_contains", "A `_aaa_`")
 	// exclude instance of label value has prefix "aaa_" followed by at least one digit
 	params.NewChildS("exclude_regex", "A `^aaa_\\d+$`")
-	// create metric "status", if label "state" is one of the 3, map metric value to respective index
-	params.NewChildS("value_mapping", "status state up,sleeping,down")
+	// create metric "status", if label "state" is one of the up/ok[zapi/rest], map metric value to respective index
+	params.NewChildS("value_mapping", "status state up ok")
 	// similar to above, but if none of the values is matching, use default value "4"
-	params.NewChildS("value_mapping", "stage stage init `1`")
+	params.NewChildS("value_mapping", "stage stage init start `4`")
 
 	abc := plugin.New("Test", nil, params, nil)
 	p = &LabelAgent{AbstractPlugin: abc}
@@ -224,14 +224,14 @@ func TestValueMappingRule(t *testing.T) {
 	if instanceA, err = m.NewInstance("A"); err != nil {
 		t.Fatal(err)
 	}
-	instanceA.SetLabel("state", "down") // "status" should be 1
-	instanceA.SetLabel("stage", "init") // "stage" should be 0
+	instanceA.SetLabel("state", "up")   // "status" should be 1
+	instanceA.SetLabel("stage", "init") // "stage" should be 1
 
 	if instanceB, err = m.NewInstance("B"); err != nil {
 		t.Fatal(err)
 	}
 	instanceB.SetLabel("state", "unknown") // "status" should not be set
-	instanceB.SetLabel("stage", "unknown") // "stage" should be 1 (default)
+	instanceB.SetLabel("stage", "unknown") // "stage" should be 0 (default)
 
 	if err = p.mapValues(m); err != nil {
 		t.Fatal(err)
@@ -246,7 +246,7 @@ func TestValueMappingRule(t *testing.T) {
 	}
 
 	// check "status" for instanceA
-	expected = 2
+	expected = 1
 	if v, ok = status.GetValueUint8(instanceA); !ok {
 		t.Error("metric [status]: value for InstanceA not set")
 	} else if v != expected {
@@ -263,7 +263,7 @@ func TestValueMappingRule(t *testing.T) {
 	}
 
 	// check "stage" for instanceA
-	expected = 0
+	expected = 1
 	if v, ok = stage.GetValueUint8(instanceA); !ok {
 		t.Error("metric [stage]: value for InstanceA not set")
 	} else if v != expected {
@@ -273,7 +273,7 @@ func TestValueMappingRule(t *testing.T) {
 	}
 
 	// check "stage" for instanceB
-	expected = 1
+	expected = 4
 	if v, ok = stage.GetValueUint8(instanceB); !ok {
 		t.Error("metric [stage]: value for InstanceB not set")
 	} else if v != expected {

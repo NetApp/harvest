@@ -377,25 +377,24 @@ type valueMappingRule struct {
 }
 
 // example rule:
-// status state ok,pending,failed `8`
+// status state normal ok `0`
 // will create a new metric "status" of type uint8
-// if value of label "state" is any of ok,pending,failed
-// the metric value will be respectively 0, 1 or 2
+// if value of label "state" is normal or ok
+// the metric value will be 1, otherwise it will be 0.
 
 func (me *LabelAgent) parseValueMappingRule(rule string) {
-	if fields := strings.Fields(rule); len(fields) == 3 || len(fields) == 4 {
+	if fields := strings.Fields(rule); len(fields) == 4 || len(fields) == 5 {
 		r := valueMappingRule{metric: fields[0], label: fields[1]}
 		r.mapping = make(map[string]uint8)
-		for i, v := range strings.Split(fields[2], ",") {
-			r.mapping[v] = uint8(i)
-		}
+		r.mapping[fields[2]] = uint8(1)
+		r.mapping[fields[3]] = uint8(1)
 
-		if len(fields) == 4 {
+		if len(fields) == 5 {
 
-			fields[3] = strings.TrimPrefix(strings.TrimSuffix(fields[3], "`"), "`")
+			fields[4] = strings.TrimPrefix(strings.TrimSuffix(fields[4], "`"), "`")
 
-			if v, err := strconv.ParseUint(fields[3], 10, 8); err != nil {
-				me.Logger.Error().Stack().Err(err).Msgf("(value_mapping) parse default value (%s): ", fields[3])
+			if v, err := strconv.ParseUint(fields[4], 10, 8); err != nil {
+				me.Logger.Error().Stack().Err(err).Msgf("(value_mapping) parse default value (%s): ", fields[4])
 				return
 			} else {
 				r.hasDefault = true
