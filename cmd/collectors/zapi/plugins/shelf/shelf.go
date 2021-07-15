@@ -186,24 +186,36 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			for _, obj := range objectElem.GetChildren() {
 
 				if key := obj.GetChildContentS(my.instanceKeys[attribute]); key != "" {
-					instance, err := data1.NewInstance(shelfId + "." + key)
+					instanceKey := shelfId + "." + key
+					instance, err := data1.NewInstance(instanceKey)
 
 					if err != nil {
 						my.Logger.Debug().Msgf("add (%s) instance: %v", attribute, err)
 						return nil, err
 					}
-
 					my.Logger.Debug().Msgf("add (%s) instance: %s.%s", attribute, shelfId, key)
 
+					// To decide instance would be available in metric or not
+					isInclude := true
 					for label, labelDisplay := range my.instanceLabels[attribute].Map() {
 						if value := obj.GetChildContentS(label); value != "" {
-							instance.SetLabel(labelDisplay, value)
+							// This is apply only for the child of the shelf object like psu, fan, etc.
+							// Exclude the instance from metric whose op-status is normal
+							if labelDisplay == "status" && value == "normal" {
+								isInclude = false
+							} else {
+								instance.SetLabel(labelDisplay, value)
+							}
 						}
 					}
 
 					instance.SetLabel("shelf", shelfName)
 					instance.SetLabel("shelf_id", shelfId)
-
+					// Remove instance from metric
+					if !isInclude {
+						data1.RemoveInstance(instanceKey)
+						my.Logger.Debug().Msgf("instance removed %s. attribute: %s", instanceKey, attribute)
+					}
 				} else {
 					my.Logger.Debug().Msgf("instance without [%s], skipping", my.instanceKeys[attribute])
 				}
