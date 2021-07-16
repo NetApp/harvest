@@ -24,6 +24,7 @@ import (
 	"goharvest2/cmd/tools/doctor"
 	"goharvest2/cmd/tools/generate"
 	"goharvest2/cmd/tools/grafana"
+	"goharvest2/cmd/tools/rest"
 	"goharvest2/cmd/tools/zapi"
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/set"
@@ -556,7 +557,7 @@ func init() {
 	rootCmd.AddCommand(manageCmd("stop", true))
 	rootCmd.AddCommand(manageCmd("restart", true))
 	rootCmd.AddCommand(manageCmd("kill", true))
-	rootCmd.AddCommand(config.ConfigCmd, zapi.Cmd, grafana.GrafanaCmd, stub.NewCmd)
+	rootCmd.AddCommand(config.ConfigCmd, zapi.Cmd, rest.Cmd, grafana.GrafanaCmd, stub.NewCmd)
 	rootCmd.AddCommand(generate.Cmd)
 	rootCmd.AddCommand(doctor.Cmd)
 

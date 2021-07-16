@@ -31,6 +31,8 @@ type Args struct {
 	Config        string
 	SwaggerPath   string
 	Fields        string
+	Field         string
+	CrossFields   string
 	DownloadAll   bool
 	MaxRecords    string
 	ForceDownload bool
@@ -201,13 +203,21 @@ func buildHref() string {
 	href := strings.Builder{}
 	href.WriteString("api/")
 	href.WriteString(args.Api)
-	href.WriteString("?return_records=true&fields=")
-	href.WriteString(args.Fields)
-	if args.MaxRecords != "" {
-		href.WriteString("&max_records=")
-		href.WriteString(args.MaxRecords)
-	}
+	href.WriteString("?return_records=true")
+	addArg(&href, "&fields=", args.Fields)
+	addArg(&href, "&", args.Field)
+	addArg(&href, "&query_fields=", args.CrossFields)
+	addArg(&href, "&max_records=", args.MaxRecords)
+
 	return href.String()
+}
+
+func addArg(href *strings.Builder, field string, value string) {
+	if value == "" {
+		return
+	}
+	href.WriteString(field)
+	href.WriteString(value)
 }
 
 func fetchData(client *Client, href string, records *[]interface{}) {
@@ -256,8 +266,16 @@ func init() {
 
 	showFlags := showCmd.Flags()
 	showFlags.StringVarP(&args.Api, "api", "a", "", "REST API PATTERN to show")
-	showFlags.StringVarP(&args.Fields, "fields", "f", "*", "REST fields used to modify query")
 	showFlags.BoolVar(&args.DownloadAll, "all", false, "Collect all records by walking pagination links")
 	showFlags.StringVarP(&args.MaxRecords, "max-records", "m", "", "Limit the number of records returned before providing pagination link")
 	showFlags.BoolVar(&args.ForceDownload, "download", false, "Force download Swagger file instead of using local copy")
+	showFlags.StringVarP(&args.Fields, "fields", "f", "*", "Fields to return in the response <field>[,...]")
+	showFlags.StringVar(&args.Field, "field", "", "Query a field by value. If the value contains query characters (*|,!<>..), it must be quoted to avoid their special meaning\n"+
+		`    *         wildcard
+    < > <= >= comparisons
+    3..10     range
+    !water    negation
+    3|5       matching value in a list
+    {} and "" escape special characters`)
+	showFlags.StringVarP(&args.CrossFields, "cross", "c", "", "Cross-field queries return rows where any field in a specified set of fields matches the query")
 }
