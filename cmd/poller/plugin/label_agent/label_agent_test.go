@@ -45,6 +45,8 @@ func TestInitPlugin(t *testing.T) {
 	params.NewChildS("value_mapping", "status state up ok")
 	// similar to above, but if none of the values is matching, use default value "4"
 	params.NewChildS("value_mapping", "stage stage init start `4`")
+	// similar to above, if empty value is expected and non empty means wrong, use default value "0"
+	params.NewChildS("value_mapping", "outageStatus outage - - `0`")
 
 	abc := plugin.New("Test", nil, params, nil)
 	p = &LabelAgent{AbstractPlugin: abc}
@@ -212,11 +214,11 @@ func TestExcludeRegexRule(t *testing.T) {
 func TestValueMappingRule(t *testing.T) {
 
 	var (
-		instanceA, instanceB *matrix.Instance
-		status, stage        matrix.Metric
-		v, expected          uint8
-		ok                   bool
-		err                  error
+		instanceA, instanceB        *matrix.Instance
+		status, stage, outageStatus matrix.Metric
+		v, expected                 uint8
+		ok                          bool
+		err                         error
 	)
 	// should match
 	m := matrix.New("TestLabelAgent", "test")
@@ -226,12 +228,14 @@ func TestValueMappingRule(t *testing.T) {
 	}
 	instanceA.SetLabel("state", "up")   // "status" should be 1
 	instanceA.SetLabel("stage", "init") // "stage" should be 1
+	instanceA.SetLabel("outage", "")    // "outageStatus" should be 1
 
 	if instanceB, err = m.NewInstance("B"); err != nil {
 		t.Fatal(err)
 	}
 	instanceB.SetLabel("state", "unknown") // "status" should not be set
 	instanceB.SetLabel("stage", "unknown") // "stage" should be 0 (default)
+	instanceB.SetLabel("outage", "failed") // "outageStatus" should be 0 (default)
 
 	if err = p.mapValues(m); err != nil {
 		t.Fatal(err)
@@ -243,6 +247,10 @@ func TestValueMappingRule(t *testing.T) {
 
 	if stage = m.GetMetric("stage"); stage == nil {
 		t.Error("metric [stage] missing")
+	}
+
+	if outageStatus = m.GetMetric("outageStatus"); stage == nil {
+		t.Error("metric [outageStatus] missing")
 	}
 
 	// check "status" for instanceA
@@ -280,5 +288,25 @@ func TestValueMappingRule(t *testing.T) {
 		t.Errorf("metric [stage]: value for InstanceB is %d, expected %d", v, expected)
 	} else {
 		t.Logf("OK - metric [stage]: value for instanceB set to %d", v)
+	}
+
+	// check "outageStatus" for instanceA
+	expected = 1
+	if v, ok = outageStatus.GetValueUint8(instanceA); !ok {
+		t.Error("metric [outageStatus]: value for InstanceA not set")
+	} else if v != expected {
+		t.Errorf("metric [outageStatus]: value for InstanceA is %d, expected %d", v, expected)
+	} else {
+		t.Logf("OK - metric [outageStatus]: value for instanceA set to %d", v)
+	}
+
+	// check "outageStatus" for instanceB
+	expected = 0
+	if v, ok = outageStatus.GetValueUint8(instanceB); !ok {
+		t.Error("metric [outageStatus]: value for InstanceB not set")
+	} else if v != expected {
+		t.Errorf("metric [outageStatus]: value for InstanceB is %d, expected %d", v, expected)
+	} else {
+		t.Logf("OK - metric [outageStatus]: value for instanceB set to %d", v)
 	}
 }

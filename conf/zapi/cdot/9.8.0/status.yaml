@@ -12,7 +12,7 @@ no_max_records: true
 
 plugins:
   - LabelAgent:
-    value_mapping: status status ok `1`
+    value_mapping: status status ok todo `0`
 
 export_options:
   include_all_labels: true

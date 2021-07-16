@@ -33,7 +33,7 @@ counters:
 
 plugins:
   - LabelAgent:
-    value_mapping: status outage , `0` # ok_value is empty value
+    value_mapping: status outage - - `0` #ok_value is empty value, '-' would be converted to blank while processing.
 
 export_options:
   instance_keys:

@@ -12,7 +12,7 @@ counters:
 
 plugins:
   - LabelAgent:
-    value_mapping: status health ok `1`
+    value_mapping: status health ok todo `0`
 
 export_options:
   instance_keys:

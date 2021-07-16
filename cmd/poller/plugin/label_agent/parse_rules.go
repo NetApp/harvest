@@ -377,6 +377,7 @@ type valueMappingRule struct {
 }
 
 // example rule:
+// metric label zapi_value rest_value `default_value`
 // status state normal ok `0`
 // will create a new metric "status" of type uint8
 // if value of label "state" is normal or ok
@@ -386,8 +387,14 @@ func (me *LabelAgent) parseValueMappingRule(rule string) {
 	if fields := strings.Fields(rule); len(fields) == 4 || len(fields) == 5 {
 		r := valueMappingRule{metric: fields[0], label: fields[1]}
 		r.mapping = make(map[string]uint8)
-		r.mapping[fields[2]] = uint8(1)
-		r.mapping[fields[3]] = uint8(1)
+
+		// This '-' is used for handling special case in disk.yaml, rest all are handled normally with assigning to 1.
+		for _, v := range strings.Split(fields[2], "-") {
+			r.mapping[v] = uint8(1)
+		}
+		for _, v := range strings.Split(fields[3], "-") {
+			r.mapping[v] = uint8(1)
+		}
 
 		if len(fields) == 5 {
 

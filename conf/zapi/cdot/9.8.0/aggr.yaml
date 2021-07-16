@@ -60,7 +60,7 @@ counters:
 
 plugins:
   LabelAgent:
-    value_mapping: status state online `1`
+    value_mapping: status state online online `0`
 
 export_options:
   instance_keys:

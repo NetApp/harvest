@@ -17,7 +17,7 @@ counters:
 
 plugins:
   - LabelAgent:
-    value_mapping: status state online `1`
+    value_mapping: status state online online `0`
     # path is something like "/vol/vol_georg_fcp401/lun401"
     # we only want lun name, which is 4th element
     split: path `/` ,,,lun
