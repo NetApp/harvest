@@ -340,7 +340,7 @@ func init() {
 	showCmd.SetUsageTemplate("item to show should be one of: " + strings.Join(validShowArgs, ", "))
 
 	// Append usage examples
-	Cmd.SetUsageTemplate(Cmd.UsageString() + `
+	Cmd.SetUsageTemplate(Cmd.UsageTemplate() + `
 Examples:
   harvest zapi -p infinity show apis                                      Query cluster infinity for available APIs
   harvest zapi -p infinity show attrs --api volume-get-iter               Query cluster infinity for volume-get-iter metrics
