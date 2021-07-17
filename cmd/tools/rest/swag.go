@@ -13,6 +13,7 @@ import (
 	"html"
 	"io"
 	"io/ioutil"
+	"net/url"
 	"os"
 	"regexp"
 	"sort"
@@ -56,6 +57,11 @@ const (
 	xNtapIntroduced  = "x-ntap-introduced"
 )
 
+type model struct {
+	schema spec.Schema
+	name   string
+}
+
 // showModels prints the swagger definitions matching the specified api
 // Most models have a reference and response. For example: volume has the following three definitions
 // volume, volume_reference, volume_response
@@ -69,40 +75,35 @@ func showModels(a Args, ontapSwag ontap) {
 		fmt.Printf("Error compiling api regex param=[%s] %v\n", a.Api, err)
 		return
 	}
-	sortedKeys := sortSchema(ontapSwag.swagger.Definitions)
 	seen := map[string]interface{}{}
-	for _, respName := range sortedKeys {
-		if compile.MatchString(respName) {
-			printModelTable(respName, seen, ontapSwag)
+	var collected []model
+	for _, name := range sortApis(ontapSwag.collectionsApis) {
+		pathItem := ontapSwag.collectionsApis[name]
+		if compile.MatchString(name) {
+			if pathItem.Get.OperationProps.Responses != nil {
+				schema := (*pathItem.Get.OperationProps.Responses).ResponsesProps.StatusCodeResponses[200].ResponseProps.Schema
+				if schema != nil {
+					responseModel := schemaFromRef(schema.Ref.GetURL())
+					if responseModel != "" {
+						collectModels(responseModel, ontapSwag, &collected)
+					}
+				}
+			}
 		}
 	}
-}
+	// Sort by api name
+	sort.Slice(collected, func(i, j int) bool {
+		return collected[i].name < collected[j].name
+	})
 
-func printModelTable(name string, seen map[string]interface{}, ontapSwag ontap) {
-	_, ok := seen[name]
-	if ok {
-		return
-	}
-	def, ok := ontapSwag.swagger.Definitions[name]
-	if ok {
-		seen[name] = true
-		// determine if this is a collection wrapper or a model
-		// if it's a collection wrapper, unwrap the underlying model
-		props := def.SchemaProps.Properties
-		records, hasRecords := def.SchemaProps.Properties["records"]
-		if hasRecords {
-			props = records.Items.Schema.Properties
-		}
-		if props == nil {
-			return
-		}
-		fmt.Printf("\n# Model: %s\n", name)
+	for _, m := range collected {
+		fmt.Printf("\n# Model: %s\n", m.name)
 
 		table := newTable("name", "type", "description")
 		table.SetColMinWidth(2, descriptionWidth)
 		table.SetColWidth(descriptionWidth)
 
-		for _, orderedItem := range props.ToOrderedSchemaItems() {
+		for _, orderedItem := range m.schema.Properties.ToOrderedSchemaItems() {
 			args := propArgs{
 				table:     table,
 				name:      orderedItem.Name,
@@ -114,6 +115,44 @@ func printModelTable(name string, seen map[string]interface{}, ontapSwag ontap) 
 		}
 		table.Render()
 	}
+}
+
+func collectModels(name string, ontapSwag ontap, collected *[]model) {
+	def, modelName := walkRefs(ontapSwag, name)
+	if def == nil {
+		return
+	}
+	*collected = append(*collected, model{
+		schema: *def,
+		name:   modelName,
+	})
+}
+
+func walkRefs(ontapSwag ontap, name string) (*spec.Schema, string) {
+	def, ok := ontapSwag.swagger.Definitions[name]
+	if !ok {
+		return nil, ""
+	}
+	records, hasRecords := def.SchemaProps.Properties["records"]
+	if hasRecords {
+		schemaProps := records.Items.Schema.SchemaProps
+		if schemaProps.Type == nil {
+			ref := schemaFromRef(schemaProps.Ref.GetURL())
+			if len(ref) > 0 {
+				schema, ok := ontapSwag.swagger.Definitions[ref]
+				if ok {
+					return &schema, ref
+				}
+			}
+		} else {
+			ref := schemaFromRef(records.Items.Schema.Ref.GetURL())
+			if len(ref) == 0 {
+				ref = name
+			}
+			return records.Items.Schema, ref
+		}
+	}
+	return nil, ""
 }
 
 func newTable(headers ...string) *tw.Table {
@@ -131,7 +170,7 @@ func printProperty(args propArgs) {
 	}
 	if args.schema.Type == nil {
 		// check if this is a reference to another schema
-		refModel := schemaFromRef(args.schema)
+		refModel := schemaFromRef(args.schema.Ref.GetURL())
 		if len(refModel) > 0 {
 			_, seen := args.seen[refModel]
 			if !seen {
@@ -174,15 +213,6 @@ func sortApis(schema map[string]spec.PathItem) []string {
 	return keys
 }
 
-func sortSchema(schema map[string]spec.Schema) []string {
-	var keys []string
-	for name := range schema {
-		keys = append(keys, name)
-	}
-	sort.Strings(keys)
-	return keys
-}
-
 func showParams(a Args, ontapSwag ontap) {
 	compile, err := regexp.Compile(a.Api)
 	if err != nil {
@@ -202,7 +232,7 @@ func showParams(a Args, ontapSwag ontap) {
 			if pathItem.Get.OperationProps.Responses != nil {
 				schema := (*pathItem.Get.OperationProps.Responses).ResponsesProps.StatusCodeResponses[200].ResponseProps.Schema
 				if schema != nil {
-					responseModel = schemaFromRef(*schema)
+					responseModel = schemaFromRef(schema.Ref.GetURL())
 				}
 			}
 
@@ -229,8 +259,7 @@ func showParams(a Args, ontapSwag ontap) {
 	}
 }
 
-func schemaFromRef(schema spec.Schema) string {
-	url := schema.Ref.GetURL()
+func schemaFromRef(url *url.URL) string {
 	responseModel := ""
 	if url != nil {
 		responseModel = url.Fragment

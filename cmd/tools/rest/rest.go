@@ -31,8 +31,9 @@ type Args struct {
 	Config        string
 	SwaggerPath   string
 	Fields        string
-	Field         string
-	CrossFields   string
+	Field         []string
+	QueryField    string
+	QueryValue    string
 	DownloadAll   bool
 	MaxRecords    string
 	ForceDownload bool
@@ -120,6 +121,12 @@ func validateArgs(strings []string) check {
 	} else {
 		args.Item = strings[0]
 	}
+	qfSet := args.QueryField != ""
+	qvSet := args.QueryValue != ""
+	if args.Item == "data" && (qfSet != qvSet) {
+		fmt.Printf(`Both "query-fields" and "query-value" must be specified if either is specified.` + "\n")
+		return check{isValid: false}
+	}
 	return check{isValid: true}
 }
 
@@ -205,8 +212,11 @@ func buildHref() string {
 	href.WriteString(args.Api)
 	href.WriteString("?return_records=true")
 	addArg(&href, "&fields=", args.Fields)
-	addArg(&href, "&", args.Field)
-	addArg(&href, "&query_fields=", args.CrossFields)
+	for _, field := range args.Field {
+		addArg(&href, "&", field)
+	}
+	addArg(&href, "&query_fields=", args.QueryField)
+	addArg(&href, "&query=", args.QueryValue)
 	addArg(&href, "&max_records=", args.MaxRecords)
 
 	return href.String()
@@ -269,13 +279,35 @@ func init() {
 	showFlags.BoolVar(&args.DownloadAll, "all", false, "Collect all records by walking pagination links")
 	showFlags.StringVarP(&args.MaxRecords, "max-records", "m", "", "Limit the number of records returned before providing pagination link")
 	showFlags.BoolVar(&args.ForceDownload, "download", false, "Force download Swagger file instead of using local copy")
-	showFlags.StringVarP(&args.Fields, "fields", "f", "*", "Fields to return in the response <field>[,...]")
-	showFlags.StringVar(&args.Field, "field", "", "Query a field by value. If the value contains query characters (*|,!<>..), it must be quoted to avoid their special meaning\n"+
-		`    *         wildcard
+	showFlags.StringVarP(&args.Fields, "fields", "f", "*", "Fields to return in the response <field>[,...].")
+	showFlags.StringArrayVar(&args.Field, "field", []string{}, "Query a field by value (can be specified multiple times.)\n"+
+		`If the value contains query characters (*|,!<>..), it must be quoted to avoid their special meaning
+    *         wildcard
     < > <= >= comparisons
     3..10     range
     !water    negation
     3|5       matching value in a list
     {} and "" escape special characters`)
-	showFlags.StringVarP(&args.CrossFields, "cross", "c", "", "Cross-field queries return rows where any field in a specified set of fields matches the query")
+	showFlags.StringVarP(&args.QueryField, "query-field", "q", "", "Search fields named <string>, matching rows where the value of the field selected by <string> matches <query-value>.\n"+
+		"comma-delimited list of fields, or * to search across all fields.")
+	showFlags.StringVarP(&args.QueryValue, "query-value", "u", "", "Pattern to search for in all fields specified by <query-fields>\n"+
+		"same query characters as <field> apply (see above)")
+
+	Cmd.SetUsageTemplate(Cmd.UsageTemplate() + `
+Examples:
+  harvest rest -p infinity show apis                                        Query cluster infinity for available APIs
+  harvest rest -p infinity show params --api svm/svms                       Query cluster infinity for svm parameters. These query parameters are used
+                                                                            to filter requests.
+  harvest rest -p infinity show models --api svm/svms                       Query cluster infinity for svm models. These describe the REST response
+                                                                            received when sending the svm/svms GET request.
+  harvest rest -p infinity show data --api svm/svms --field "state=stopped" Query cluster infinity for stopped svms.
+
+  harvest rest -p infinity show data --api storage/volumes \                Query cluster infinity for all volumes where  
+      --field "space.physical_used_percent=>70" \                               physical_used_percent is > 70% and 
+      --field "space.total_footprint=>400G" \                                   total_footprint is > 400G 
+      --fields "name,svm,space"                                             The response should contain name, svm, and space attributes of matching volumes.
+
+  harvest rest -p infinity show data --api storage/volumes \                Query cluster infinity for all volumes where the name of any volume or child
+      --query-field "name" --query-value "io_load|scale"                         resource matches io_load or scale.
+`)
 }
