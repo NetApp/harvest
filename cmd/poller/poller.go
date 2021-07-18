@@ -193,7 +193,7 @@ func (p *Poller) Init() error {
 	// check optional parameter auth_style
 	// if certificates are missing use default paths
 	if p.params.AuthStyle != nil && *p.params.AuthStyle == "certificate_auth" {
-		if p.params.SslCert != nil {
+		if p.params.SslCert == nil {
 			fp := path.Join(p.options.HomePath, "cert/", p.options.Hostname+".pem")
 			p.params.SslCert = &fp
 			logger.Debug().Msgf("using default [ssl_cert] path: [%s]", fp)
@@ -202,7 +202,7 @@ func (p *Poller) Init() error {
 				return errors.New(errors.MISSING_PARAM, "ssl_cert: "+err.Error())
 			}
 		}
-		if p.params.SslKey != nil {
+		if p.params.SslKey == nil {
 			fp := path.Join(p.options.HomePath, "cert/", p.options.Hostname+".key")
 			p.params.SslKey = &fp
 			logger.Debug().Msgf("using default [ssl_key] path: [%s]", fp)
