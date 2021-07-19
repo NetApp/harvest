@@ -24,6 +24,7 @@ Harvest is compatible with:
 - Prometheus: `2.24` or higher
 - InfluxDB: `v2`
 - Grafana: `7.4.2` or higher
+- Docker: `20.10.0` or higher
 
 # Installation / Upgrade
 
@@ -119,7 +120,7 @@ After editing `/opt/harvest/harvest.yml`, manage Harvest with `systemctl start|s
 
 ## Docker
 
-* Refer [One Poller One Container](docker/onePollerPerContainer/README.md)
+* See [Harvest for Docker](docker/onePollerPerContainer/README.md)
 
 ## Building from source
 
