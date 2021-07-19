@@ -82,6 +82,9 @@ func (my *Shelf) Init() error {
 		instanceKeys := exportOptions.NewChildS("instance_keys", "")
 		instanceKeys.NewChildS("", "shelf")
 
+		// artificial metric for status of child object of shelf
+		my.data[attribute].NewMetricUint8("status")
+
 		for _, x := range obj.GetChildren() {
 
 			for _, c := range x.GetAllChildContentS() {
@@ -110,6 +113,7 @@ func (my *Shelf) Init() error {
 				}
 			}
 		}
+
 		my.Logger.Debug().Msgf("added data for [%s] with %d metrics", attribute, len(my.data[attribute].GetMetrics()))
 
 		my.data[attribute].SetExportOptions(exportOptions)
@@ -170,58 +174,57 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 
 		for attribute, data1 := range my.data {
-			if my.instanceKeys[attribute] == "" {
-				my.Logger.Warn().Msgf("no instance keys defined for object [%s], skipping", attribute)
-				continue
-			}
+			if statusMetric := data1.GetMetric("status"); statusMetric != nil {
 
-			objectElem := shelf.GetChildS(attribute)
-			if objectElem == nil {
-				my.Logger.Warn().Msgf("no [%s] instances on this system", attribute)
-				continue
-			}
+				if my.instanceKeys[attribute] == "" {
+					my.Logger.Warn().Msgf("no instance keys defined for object [%s], skipping", attribute)
+					continue
+				}
 
-			my.Logger.Debug().Msgf("fetching %d [%s] instances", len(objectElem.GetChildren()), attribute)
+				objectElem := shelf.GetChildS(attribute)
+				if objectElem == nil {
+					my.Logger.Warn().Msgf("no [%s] instances on this system", attribute)
+					continue
+				}
 
-			for _, obj := range objectElem.GetChildren() {
+				my.Logger.Debug().Msgf("fetching %d [%s] instances", len(objectElem.GetChildren()), attribute)
 
-				if key := obj.GetChildContentS(my.instanceKeys[attribute]); key != "" {
-					instanceKey := shelfId + "." + key
-					instance, err := data1.NewInstance(instanceKey)
+				for _, obj := range objectElem.GetChildren() {
 
-					if err != nil {
-						my.Logger.Debug().Msgf("add (%s) instance: %v", attribute, err)
-						return nil, err
-					}
-					my.Logger.Debug().Msgf("add (%s) instance: %s.%s", attribute, shelfId, key)
+					if key := obj.GetChildContentS(my.instanceKeys[attribute]); key != "" {
+						instanceKey := shelfId + "." + key
+						instance, err := data1.NewInstance(instanceKey)
 
-					// To decide instance would be available in metric or not
-					isInclude := true
-					for label, labelDisplay := range my.instanceLabels[attribute].Map() {
-						if value := obj.GetChildContentS(label); value != "" {
-							// This is apply only for the child of the shelf object like psu, fan, etc.
-							// Exclude the instance from metric whose op-status is normal
-							if labelDisplay == "status" && value == "normal" {
-								isInclude = false
-							} else {
+						if err != nil {
+							my.Logger.Debug().Msgf("add (%s) instance: %v", attribute, err)
+							return nil, err
+						}
+						my.Logger.Debug().Msgf("add (%s) instance: %s.%s", attribute, shelfId, key)
+
+						for label, labelDisplay := range my.instanceLabels[attribute].Map() {
+							if value := obj.GetChildContentS(label); value != "" {
 								instance.SetLabel(labelDisplay, value)
 							}
 						}
-					}
 
-					instance.SetLabel("shelf", shelfName)
-					instance.SetLabel("shelf_id", shelfId)
-					// Remove instance from metric
-					if !isInclude {
-						data1.RemoveInstance(instanceKey)
-						my.Logger.Debug().Msgf("instance removed %s. attribute: %s", instanceKey, attribute)
+						instance.SetLabel("shelf", shelfName)
+						instance.SetLabel("shelf_id", shelfId)
+
+						// Each child would have different possible values which is ugly way to write all of them,
+						// so normal value would be mapped to 1 and rest all are mapped to 0.
+						if instance.GetLabel("status") == "normal" {
+							statusMetric.SetValueInt(instance, 1)
+						} else {
+							statusMetric.SetValueInt(instance, 0)
+						}
+
+					} else {
+						my.Logger.Debug().Msgf("instance without [%s], skipping", my.instanceKeys[attribute])
 					}
-				} else {
-					my.Logger.Debug().Msgf("instance without [%s], skipping", my.instanceKeys[attribute])
 				}
-			}
 
-			output = append(output, data1)
+				output = append(output, data1)
+			}
 		}
 	}
 
