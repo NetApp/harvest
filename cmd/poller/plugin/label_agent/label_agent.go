@@ -25,6 +25,7 @@ type LabelAgent struct {
 	excludeContainsRules []excludeContainsRule
 	excludeRegexRules    []excludeRegexRule
 	valueMappingRules    []valueMappingRule
+	valueToNumRules      []valueToNumRule
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -61,7 +62,8 @@ func (me *LabelAgent) Run(m *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 	}
 
-	if len(me.valueMappingRules) != 0 {
+	// if any of the value mapping available, then map values with appropriate rules
+	if len(me.valueMappingRules) != 0 || len(me.valueToNumRules) != 0 {
 		err = me.mapValues(m)
 	}
 
@@ -204,6 +206,7 @@ func (me *LabelAgent) mapValues(m *matrix.Matrix) error {
 		err    error
 	)
 
+	// map values for value mapping rules
 	for _, r := range me.valueMappingRules {
 
 		if metric = m.GetMetric(r.metric); metric == nil {
@@ -222,6 +225,29 @@ func (me *LabelAgent) mapValues(m *matrix.Matrix) error {
 			} else if r.hasDefault {
 				metric.SetValueUint8(instance, r.defaultValue)
 				me.Logger.Trace().Msgf("valueMapping: [%s] [%s] mapped (%s) value to default %d", r.metric, key, instance.GetLabel(r.label), r.defaultValue)
+			}
+		}
+	}
+
+	// map values for value_to_num mapping rules
+	for _, r := range me.valueToNumRules {
+
+		if metric = m.GetMetric(r.metric); metric == nil {
+			if metric, err = m.NewMetricUint8(r.metric); err != nil {
+				me.Logger.Error().Stack().Err(err).Msgf("valueToNumMapping: new metric [%s]:", r.metric)
+				return err
+			} else {
+				metric.SetProperty("value_to_num mapping")
+			}
+		}
+
+		for key, instance := range m.GetInstances() {
+			if v, ok := r.mapping[instance.GetLabel(r.label)]; ok {
+				metric.SetValueUint8(instance, v)
+				me.Logger.Trace().Msgf("valueToNumMapping: [%s] [%s] mapped (%s) value to %d", r.metric, key, instance.GetLabel(r.label), v)
+			} else if r.hasDefault {
+				metric.SetValueUint8(instance, r.defaultValue)
+				me.Logger.Trace().Msgf("valueToNumMapping: [%s] [%s] mapped (%s) value to default %d", r.metric, key, instance.GetLabel(r.label), r.defaultValue)
 			}
 		}
 	}

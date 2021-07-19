@@ -117,6 +117,7 @@ Notice that the rules are executed in the same order as you've added them. List 
 - [exclude_contains](#exclude_contains)
 - [exclude_regex](#exclude_regex)
 - [value_mapping](#value_mapping)
+- [value_to_num](#value_to_num)
 
 ## split
 
@@ -297,6 +298,8 @@ exclude_equals: vol_type `flexgroup_`
 
 ## value_mapping
 
+value_mapping is deprecated and you should always use value_to_num mapping.
+
 Maps values of a given label to a numeric metric (of type `uint8`). This is sometimes handy to manipulate the data in the DB or Grafana (e.g. change color based on status or create alert).
 
 Note that you don't define the numeric values yourself, instead, you only provide the possible (expected) values, the plugin will map each value to its index in the rule.
@@ -323,3 +326,45 @@ value_mapping: status state up,sleeping,unknown,down
 value_mapping: status state up `1`
 # metric value will be set to 0 if "state" is "up", otherwise to **1**
 ```
+
+
+## value_to_num
+
+This rule is similar to value_mapping but in this mapping, healthy is mapped to 1 and all non healthy values are mapped to 0.
+
+Going further, We should always use value_to_num mapping as value_mapping is deprecated.
+
+Maps values of a given label to a numeric metric (of type `uint8`). This is sometimes handy to manipulate the data in the DB or Grafana (e.g. change color based on status or create alert).
+
+Note that you don't define the numeric values yourself, instead, you only provide the possible (expected) values, the plugin will map each value to its index in the rule.
+
+Rule syntax:
+
+```yaml
+value_to_num: METRIC LABEL ZAPI_VALUE REST_VALUE `N`
+# maps values of LABEL to 1 if it is ZAPI_VALUE or REST_VALUE
+# otherwise value of METRIC is set to N
+```
+The default value `N` is optional, if no default value is given and the label value does not match any of the given values, the metric value will not be set.
+
+Examples:
+
+```yaml
+value_to_num: status state up online `0`
+# a new metric will be created with the name "status"
+# if an instance has label "state" with value "up", the metric value will be 1,
+# if it's "online", the value will be set to 1,
+# if it's any other value, it will be set to the specified default, 0
+```
+
+```yaml
+value_to_num: status state up online `4`
+# metric value will be set to 1 if "state" is "up", otherwise to **4**
+```
+
+```yaml
+value_to_num: status outage - - `0` #ok_value is empty value. 
+# metric value will be set to 1 if "outage" is empty, if it's any other value, it will be set to the default, 0
+# '-' is a special symbol in this mapping and it will be converted to blank while processing.
+```
+
