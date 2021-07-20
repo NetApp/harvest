@@ -130,7 +130,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "count( count by (node) (node_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}) )",
+          "expr": "count( count by (node) (node_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}) )",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -200,7 +200,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "count(count by (aggr) (aggr_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}))",
+          "expr": "count(count by (aggr) (aggr_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}))",
           "format": "time_series",
           "hide": false,
           "instant": false,

@@ -97,11 +97,11 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "rgb(101, 201, 87)",
+                "color": "rgba(217, 91, 91, 0.74)",
                 "value": null
               },
               {
-                "color": "rgba(217, 91, 91, 0.74)",
+                "color": "rgb(101, 201, 87)",
                 "value": 1
               }
             ]
@@ -125,7 +125,7 @@
                   {
                     "from": "",
                     "id": 1,
-                    "text": "OK",
+                    "text": "not healthy",
                     "to": "",
                     "type": 1,
                     "value": "0"
@@ -133,7 +133,7 @@
                   {
                     "from": "",
                     "id": 2,
-                    "text": "not healthy",
+                    "text": "OK",
                     "to": "",
                     "type": 1,
                     "value": "1"
@@ -236,7 +236,7 @@
         },
         {
           "exemplar": false,
-          "expr": "node_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "expr": "node_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -359,14 +359,14 @@
             {
               "id": 0,
               "op": "=",
-              "text": "healthy",
+              "text": "unhealthy",
               "type": 1,
               "value": "0"
             },
             {
               "from": "",
               "id": 1,
-              "text": "unhealthy",
+              "text": "healthy",
               "to": "",
               "type": 1,
               "value": "1"
@@ -418,7 +418,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "cluster_status{datacenter=~\"$Datacenter\",cluster=\"$Cluster\"}",
+          "expr": "cluster_new_status{datacenter=~\"$Datacenter\",cluster=\"$Cluster\"}",
           "instant": true,
           "interval": "",
           "legendFormat": "",
@@ -599,11 +599,11 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "rgb(101, 201, 87)",
+                "color": "rgba(217, 91, 91, 0.74)",
                 "value": null
               },
               {
-                "color": "rgba(217, 91, 91, 0.74)",
+                "color": "rgb(101, 201, 87)",
                 "value": 1
               }
             ]
@@ -627,7 +627,7 @@
                   {
                     "from": "",
                     "id": 1,
-                    "text": "OK",
+                    "text": "not healthy",
                     "to": "",
                     "type": 1,
                     "value": "0"
@@ -635,7 +635,7 @@
                   {
                     "from": "",
                     "id": 2,
-                    "text": "not healthy",
+                    "text": "OK",
                     "to": "",
                     "type": 1,
                     "value": "1"
@@ -785,7 +785,7 @@
         },
         {
           "exemplar": false,
-          "expr": "cluster_subsystem_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "expr": "cluster_subsystem_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "instant": true,
           "interval": "",

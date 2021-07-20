@@ -585,7 +585,7 @@
                   {
                     "from": "0",
                     "id": 0,
-                    "text": "online",
+                    "text": "offline",
                     "to": "0.99",
                     "type": 2,
                     "value": "0"
@@ -593,7 +593,7 @@
                   {
                     "from": "",
                     "id": 2,
-                    "text": "offline",
+                    "text": "online",
                     "to": "",
                     "type": 1,
                     "value": "1"
@@ -738,7 +738,7 @@
           "refId": "B"
         },
         {
-          "expr": "volume_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+          "expr": "volume_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
           "format": "table",
           "hide": false,
           "instant": true,
