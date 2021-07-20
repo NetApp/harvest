@@ -42,6 +42,8 @@ counters:
 plugins:
   - LabelAgent:
     value_mapping: status healthy true `1`
+    # metric label zapi_value rest_value `default_value`
+    value_to_num: new_status healthy true up `0`
     join: warnings `; ` failed_fan_message,failed_power_message,over_temperature
 
 export_options:

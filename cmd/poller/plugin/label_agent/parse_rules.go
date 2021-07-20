@@ -24,6 +24,7 @@ func (me *LabelAgent) parseRules() int {
 	me.excludeRegexRules = make([]excludeRegexRule, 0)
 	me.splitPairsRules = make([]splitPairsRule, 0)
 	me.valueMappingRules = make([]valueMappingRule, 0)
+	me.valueToNumRules = make([]valueToNumRule, 0)
 
 	for _, c := range me.Params.GetChildren() {
 		name := c.GetNameS()
@@ -50,6 +51,8 @@ func (me *LabelAgent) parseRules() int {
 			me.parseExcludeRegexRule(rule)
 		case "value_mapping":
 			me.parseValueMappingRule(rule)
+		case "value_to_num":
+			me.parseValueToNumRule(rule)
 		default:
 			me.Logger.Warn().Msgf("unknown rule (%s)", name)
 		}
@@ -104,6 +107,7 @@ func (me *LabelAgent) parseRules() int {
 	}
 
 	count += len(me.valueMappingRules)
+	count += len(me.valueToNumRules)
 
 	return count
 }
@@ -408,4 +412,52 @@ func (me *LabelAgent) parseValueMappingRule(rule string) {
 		return
 	}
 	me.Logger.Warn().Msgf("(value_mapping) rule has invalid format [%s]", rule)
+}
+
+type valueToNumRule struct {
+	metric       string
+	label        string
+	defaultValue uint8
+	hasDefault   bool
+	mapping      map[string]uint8
+}
+
+// example rule:
+// metric label zapi_value rest_value `default_value`
+// status state normal ok `0`
+// will create a new metric "status" of type uint8
+// if value of label "state" is normal or ok
+// the metric value will be 1, otherwise it will be 0.
+
+func (me *LabelAgent) parseValueToNumRule(rule string) {
+	if fields := strings.Fields(rule); len(fields) == 4 || len(fields) == 5 {
+		r := valueToNumRule{metric: fields[0], label: fields[1]}
+		r.mapping = make(map[string]uint8)
+
+		// This '-' is used for handling special case in disk.yaml, rest all are handled normally with assigning to 1.
+		for _, v := range strings.Split(fields[2], "-") {
+			r.mapping[v] = uint8(1)
+		}
+		for _, v := range strings.Split(fields[3], "-") {
+			r.mapping[v] = uint8(1)
+		}
+
+		if len(fields) == 5 {
+
+			fields[4] = strings.TrimPrefix(strings.TrimSuffix(fields[4], "`"), "`")
+
+			if v, err := strconv.ParseUint(fields[4], 10, 8); err != nil {
+				me.Logger.Error().Stack().Err(err).Msgf("(value_to_num) parse default value (%s): ", fields[4])
+				return
+			} else {
+				r.hasDefault = true
+				r.defaultValue = uint8(v)
+			}
+		}
+
+		me.valueToNumRules = append(me.valueToNumRules, r)
+		me.Logger.Debug().Msgf("(value_to_num) parsed rule [%v]", r)
+		return
+	}
+	me.Logger.Warn().Msgf("(value_to_num) rule has invalid format [%s]", rule)
 }

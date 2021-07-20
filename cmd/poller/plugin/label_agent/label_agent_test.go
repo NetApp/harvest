@@ -45,6 +45,12 @@ func TestInitPlugin(t *testing.T) {
 	params.NewChildS("value_mapping", "status state up,sleeping,down")
 	// similar to above, but if none of the values is matching, use default value "4"
 	params.NewChildS("value_mapping", "stage stage init `1`")
+	// create metric "new_status", if label "state" is one of the up/ok[zapi/rest], map metric value to respective index
+	params.NewChildS("value_to_num", "new_status state up ok")
+	// create metric "new_stage", but if none of the values is matching, use default value "4"
+	params.NewChildS("value_to_num", "new_stage stage init start `4`")
+	// create metric "new_outage", if empty value is expected and non empty means wrong, use default value "0"
+	params.NewChildS("value_to_num", "new_outage outage - - `0`")
 
 	abc := plugin.New("Test", nil, params, nil)
 	p = &LabelAgent{AbstractPlugin: abc}
@@ -280,5 +286,105 @@ func TestValueMappingRule(t *testing.T) {
 		t.Errorf("metric [stage]: value for InstanceB is %d, expected %d", v, expected)
 	} else {
 		t.Logf("OK - metric [stage]: value for instanceB set to %d", v)
+	}
+}
+
+func TestValueToNumRule(t *testing.T) {
+
+	var (
+		instanceA, instanceB  *matrix.Instance
+		status, stage, outage matrix.Metric
+		v, expected           uint8
+		ok                    bool
+		err                   error
+	)
+	// should match
+	m := matrix.New("TestLabelAgent", "test")
+
+	if instanceA, err = m.NewInstance("A"); err != nil {
+		t.Fatal(err)
+	}
+	instanceA.SetLabel("state", "up")   // "status" should be 1
+	instanceA.SetLabel("stage", "init") // "stage" should be 1
+	instanceA.SetLabel("outage", "")    // "outageStatus" should be 1
+
+	if instanceB, err = m.NewInstance("B"); err != nil {
+		t.Fatal(err)
+	}
+	instanceB.SetLabel("state", "unknown") // "status" should not be set
+	instanceB.SetLabel("stage", "unknown") // "stage" should be 4 (default)
+	instanceB.SetLabel("outage", "failed") // "outage" should be 0 (default)
+
+	if err = p.mapValues(m); err != nil {
+		t.Fatal(err)
+	}
+
+	if status = m.GetMetric("new_status"); status == nil {
+		t.Error("metric [status] missing")
+	}
+
+	if stage = m.GetMetric("new_stage"); stage == nil {
+		t.Error("metric [stage] missing")
+	}
+
+	if outage = m.GetMetric("new_outage"); outage == nil {
+		t.Error("metric [outage] missing")
+	}
+
+	// check "status" for instanceA
+	expected = 1
+	if v, ok = status.GetValueUint8(instanceA); !ok {
+		t.Error("metric [status]: value for InstanceA not set")
+	} else if v != expected {
+		t.Errorf("metric [status]: value for InstanceA is %d, expected %d", v, expected)
+	} else {
+		t.Logf("OK - metric [status]: value for instanceA set to %d", v)
+	}
+
+	// check "status" for instanceB
+	if v, ok = status.GetValueUint8(instanceB); !ok {
+		t.Log("OK - metric [status]: value for InstanceB not set")
+	} else {
+		t.Errorf("metric [status]: value for InstanceA is %d, should not be set", v)
+	}
+
+	// check "stage" for instanceA
+	expected = 1
+	if v, ok = stage.GetValueUint8(instanceA); !ok {
+		t.Error("metric [stage]: value for InstanceA not set")
+	} else if v != expected {
+		t.Errorf("metric [stage]: value for InstanceA is %d, expected %d", v, expected)
+	} else {
+		t.Logf("OK - metric [stage]: value for instanceA set to %d", v)
+	}
+
+	// check "stage" for instanceB
+	expected = 4
+	if v, ok = stage.GetValueUint8(instanceB); !ok {
+		t.Error("metric [stage]: value for InstanceB not set")
+	} else if v != expected {
+		t.Errorf("metric [stage]: value for InstanceB is %d, expected %d", v, expected)
+	} else {
+		t.Logf("OK - metric [stage]: value for instanceB set to %d", v)
+	}
+
+	// check "outage" for instanceA
+	expected = 1
+	if v, ok = outage.GetValueUint8(instanceA); !ok {
+		t.Error("metric [outage]: value for InstanceA not set")
+	} else if v != expected {
+		t.Errorf("metric [outage]: value for InstanceA is %d, expected %d", v, expected)
+	} else {
+		t.Logf("OK - metric [outage]: value for instanceA set to %d", v)
+	}
+
+	// check "outage" for instanceB
+	expected = 0
+	if v, ok = outage.GetValueUint8(instanceB); !ok {
+		t.Error("metric [outage]: value for InstanceB not set")
+	} else if v != expected {
+		t.Errorf("metric [outage]: value for InstanceB is %d, expected %d", v, expected)
+	} else {
+		t.Logf("OK - metric [outage]: value for instanceB set to %d", v)
 	}
 }

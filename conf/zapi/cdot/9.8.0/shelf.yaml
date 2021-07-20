@@ -64,6 +64,8 @@ plugins:
 
   LabelAgent:
     value_mapping: status op_status normal `1`
+    # metric label zapi_value rest_value `default_value`
+    value_to_num: new_status state online ok `0`
 
 export_options:
   instance_keys:

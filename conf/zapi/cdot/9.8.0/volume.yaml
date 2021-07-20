@@ -57,6 +57,8 @@ counters:
 plugins:
   LabelAgent:
     value_mapping: status state online `1`
+    # metric label zapi_value rest_value `default_value`
+    value_to_num: new_status state online online `0`
     exclude_equals: style `flexgroup_constituent`
     replace: style style `flexgroup_constituent` `flexgroup`
   Aggregator:
