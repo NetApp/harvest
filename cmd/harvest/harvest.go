@@ -560,6 +560,7 @@ func init() {
 	rootCmd.AddCommand(config.ConfigCmd, zapi.Cmd, rest.Cmd, grafana.GrafanaCmd, stub.NewCmd)
 	rootCmd.AddCommand(generate.Cmd)
 	rootCmd.AddCommand(doctor.Cmd)
+	rootCmd.AddCommand(version.Cmd())
 
 	rootCmd.PersistentFlags().StringVar(&opts.config, "config", "./harvest.yml", "harvest config file path")
 	rootCmd.Version = version.String()
