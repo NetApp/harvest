@@ -536,11 +536,11 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "rgb(118, 204, 49)",
+                      "color": "rgb(224, 47, 47)",
                       "value": null
                     },
                     {
-                      "color": "rgb(224, 47, 47)",
+                      "color": "rgb(118, 204, 49)",
                       "value": 1
                     }
                   ]
@@ -552,7 +552,7 @@
                   {
                     "from": "0",
                     "id": 1,
-                    "text": "ONLINE",
+                    "text": "OFFLINE",
                     "to": "0.999",
                     "type": 2,
                     "value": ""
@@ -560,7 +560,7 @@
                   {
                     "from": "",
                     "id": 2,
-                    "text": "OFFLINE",
+                    "text": "ONLINE",
                     "to": "",
                     "type": 1,
                     "value": "1"
@@ -604,7 +604,7 @@
           "refId": "B"
         },
         {
-          "expr": "shelf_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "expr": "shelf_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
