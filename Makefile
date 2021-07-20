@@ -13,7 +13,8 @@ ifneq (, $(shell which go))
 FOUND_GO_VERSION := $(shell go version | cut -d" " -f3 | cut -d"o" -f 2)
 CORRECT_GO_VERSION := $(shell expr `go version | cut -d" " -f3 | cut -d"o" -f 2` \>= ${REQUIRED_GO_VERSION})
 endif
-RELEASE      ?= $(shell git describe --tags --abbrev=0)
+TAG_COMMIT   ?= $(shell git rev-list --tags --max-count=1)
+RELEASE      ?= $(shell git describe --tags $(TAG_COMMIT))
 VERSION      ?= $(shell expr `date +%Y.%m.%d%H | cut -c 3-`)
 COMMIT       := $(shell git rev-parse --short HEAD)
 BUILD_DATE   := `date +%FT%T%z`
