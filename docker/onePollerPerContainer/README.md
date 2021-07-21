@@ -49,7 +49,7 @@ You can also generate a [docker-compose file as described above](#docker-compose
 
 # Building Harvest Docker Image
 
-You only need to do build a Harvest Docker image if you want to custom image. If you are wanting to run Harvest with Docker see [deployment](#deployment) above.
+You only need to build a Harvest Docker image if you want a custom image. If instead, you are wanting to run Harvest with Docker see [deployment](#deployment) above.
 
 Build Docker Image
 
