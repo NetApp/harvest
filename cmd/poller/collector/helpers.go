@@ -13,10 +13,12 @@ package collector
 
 import (
 	"errors"
+	"fmt"
+	"github.com/hashicorp/go-version"
 	"io/ioutil"
 	"path"
 	"regexp"
-	"strconv"
+	"sort"
 	"strings"
 
 	"goharvest2/cmd/poller/plugin"
@@ -48,20 +50,17 @@ func ImportTemplate(confPath, confFn, collectorName string) (*node.Node, error) 
 // @filename	- name of the subtemplate
 // @version		- ONTAP version triple (generation, major, minor)
 //
-// BUG: ImportSubTemplate will break if ONTAP version is higher than 9.9.0.
-func (c *AbstractCollector) ImportSubTemplate(model, filename string, version [3]int) (*node.Node, error) {
+func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int) (*node.Node, error) {
 
 	var (
 		selectedVersion, pathPrefix, subTemplateFp string
-		availableVersions                          map[string]bool
-		versionDecimal                             int
+		availableVersions                          []string
 	)
 
 	pathPrefix = path.Join(c.Options.HomePath, "conf/", strings.ToLower(c.Name), model)
 	c.Logger.Debug().Msgf("Looking for best-fitting template in [%s]", pathPrefix)
 
 	// check for available versions, those are the subdirectories that include filename
-	availableVersions = make(map[string]bool)
 	if files, err := ioutil.ReadDir(pathPrefix); err == nil {
 		for _, file := range files {
 			if match, _ := regexp.MatchString(`\d+\.\d+\.\d+`, file.Name()); match == true && file.IsDir() {
@@ -69,7 +68,7 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, version [3
 					for _, t := range templates {
 						if t.Name() == filename {
 							c.Logger.Trace().Msgf("available version dir: [%s]", file.Name())
-							availableVersions[file.Name()] = true
+							availableVersions = append(availableVersions, file.Name())
 							break
 						}
 					}
@@ -81,20 +80,20 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, version [3
 	}
 	c.Logger.Trace().Msgf("checking for %d available versions: %v", len(availableVersions), availableVersions)
 
-	versionDecimal = version[0]*100 + version[1]*10 + version[2]
-
-	for max := 0; max <= 100; max++ {
-		// check older version
-		str := strings.Join(strings.Split(strconv.Itoa(versionDecimal-max), ""), ".")
-		if _, exists := availableVersions[str]; exists == true {
-			selectedVersion = str
-			break
+	if len(availableVersions) > 0 {
+		versions := make([]*version.Version, len(availableVersions))
+		for i, raw := range availableVersions {
+			v, _ := version.NewVersion(raw)
+			versions[i] = v
 		}
-		// check newer version
-		str = strings.Join(strings.Split(strconv.Itoa(versionDecimal+max), ""), ".")
-		if _, exists := availableVersions[str]; exists == true {
-			selectedVersion = str
-			break
+
+		sort.Sort(version.Collection(versions))
+
+		verS, _ := version.NewVersion(strings.Trim(strings.Join(strings.Fields(fmt.Sprint(ver)), "."), "[]"))
+		// get closest index
+		idx := getClosestIndex(versions, verS)
+		if idx >= 0 && idx < len(versions) {
+			selectedVersion = versions[idx].String()
 		}
 	}
 
@@ -103,8 +102,27 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, version [3
 	}
 
 	subTemplateFp = path.Join(pathPrefix, selectedVersion, filename)
-	c.Logger.Debug().Msgf("selected best-fitting subtemplate [%s]", subTemplateFp)
+	c.Logger.Info().Msgf("selected best-fitting subtemplate [%s]", subTemplateFp)
 	return tree.Import("yaml", subTemplateFp)
+}
+
+//getClosestIndex input versions should be sorted
+// returns -1 if not match else returns equals or closest match to the left
+func getClosestIndex(versions []*version.Version, version *version.Version) int {
+	var l = 0
+	var r = len(versions) - 1
+	for l <= r {
+		var m = l + ((r - l) >> 1)
+		var comp = versions[m].Compare(version)
+		if comp < 0 { // versions[m] comes before the element
+			l = m + 1
+		} else if comp > 0 { // versions[m] comes after the element
+			r = m - 1
+		} else { // versions[m] equals the element
+			return m
+		}
+	}
+	return l - 1
 }
 
 // ParseMetricName parses display name from the raw name of the metric as defined in (sub)template.
