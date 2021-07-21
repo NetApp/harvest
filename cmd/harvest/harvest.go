@@ -123,7 +123,7 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 	// do this before filtering of pollers
 	// stop pollers which may have been renamed or no longer exists in harvest.yml
 	if opts.command == "start" || opts.command == "restart" {
-		stopGhostPollers("poller", pollerNames)
+		stopGhostPollers(pollerNames)
 	}
 
 	pollersFromCmdLine := args
@@ -289,8 +289,8 @@ func getStatus(pollerName string) *pollerStatus {
 	return s
 }
 
-func stopGhostPollers(search string, skipPoller []string) {
-	pids, err := util.GetPids(search)
+func stopGhostPollers(skipPoller []string) {
+	pids, err := util.GetPid("")
 	if err != nil {
 		fmt.Printf("Error while executing pgrep %v \n", err)
 		return
