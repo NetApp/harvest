@@ -2,6 +2,52 @@
 
 [Releases](https://github.com/NetApp/harvest/releases)
 
+## 21.05.4 / 2021-07-22
+<!-- git log --no-merges --cherry-pick --right-only --oneline release/21.05.3...release/21.05.4 -->
+
+This release introduces Qtree protocol collection, improved Docker and client authentication documentation, publishing to Docker Hub, and a new plugin that helps build richer dashboards, as well as a couple of important fixes for collector panics.
+
+**IMPORTANT** RPM and Debian packages will be deprecated in the future, replaced with Docker and native binaries. See [#330](https://github.com/NetApp/harvest/issues/330) for details and tell us what you think.
+
+**Known Issues**
+
+On RHEL and Debian, the example Unix collector does not work at the moment due to the `harvest` user lacking permissions to read the `/proc` filesystem. See [#249](https://github.com/NetApp/harvest/issues/249) for details.
+
+### Enhancements
+
+- Harvest collects Qtree protocol ops [#298](https://github.com/NetApp/harvest/pull/298). Thanks to Martin Möbius for contributing
+  
+- Harvest is taking its first steps to talk REST: query ONTAP, show Swagger API, model, and definitions [#292](https://github.com/NetApp/harvest/pull/292)
+ 
+- Tagged releases of Harvest are published to [Docker Hub](https://hub.docker.com/r/rahulguptajss/harvest) 
+  
+- Harvest honors Go's http(s) environment variable proxy information. See https://pkg.go.dev/net/http#ProxyFromEnvironment for details [#252](https://github.com/NetApp/harvest/pull/252)
+
+- New plugin [value_to_map](https://github.com/NetApp/harvest/blob/main/cmd/poller/plugin/README.md#value_to_num) helps map labels to numeric values for Grafana dashboards. Current dashboards updated to use this plugin [#319](https://github.com/NetApp/harvest/pull/319)
+
+- `harvest.yml` supports YAML flow style. E.g. `collectors: [Zapi]` [#260](https://github.com/NetApp/harvest/pull/260)
+
+- New Simple collector that runs on Macos and Unix [#270](https://github.com/NetApp/harvest/pull/270)  
+
+- Improve client certificate authentication [documentation](https://github.com/NetApp/harvest/issues/314#issuecomment-882120238)
+
+- Improve Docker deployment documentation [4019308](https://github.com/NetApp/harvest/tree/main/docker/onePollerPerContainer)
+### Fixes
+
+- Harvest collector should not panic when resources are deleted from ONTAP [#174](https://github.com/NetApp/harvest/issues/174) and [#302](https://github.com/NetApp/harvest/issues/302). Thanks to @hashi825 and @mamoep for providing steps to reproduce
+
+- Shelf metrics should report on op-status for components. Thanks to @hashi825 for working with us on this fix and dashboard improvements [#262](https://github.com/NetApp/harvest/issues/262)
+  
+- Harvest should not panic when InfluxDB is the only exporter [#286](https://github.com/NetApp/harvest/issues/286)
+
+- Certificate authentication should honor path in `harvest.yml` [#318](https://github.com/NetApp/harvest/pull/318)
+  
+- Harvest should not kill processes with `poller` in their arguments [#328](https://github.com/NetApp/harvest/issues/328)
+  
+- Harvest ZAPI command line tool should limit perf-object-get-iter to subset of counters when using `--counter` [#299](https://github.com/NetApp/harvest/pull/299) 
+
+---
+
 ## 21.05.3 / 2021-06-28
 
 This release introduces a significantly simplified way to connect Harvest and Prometheus, improves Harvest builds times by 7x, reduces executable sizes by 3x, enables cross compiling support, and includes several Grafana dashboard and collector fixes.
@@ -48,6 +94,7 @@ On RHEL and Debian, the example Unix collector does not work at the moment due t
 
 - Improve Docker all-in-one-container argument handling and simplify building in air gapped environments. Thanks to @optiz0r for reporting these issues and creating fixes. [#166](https://github.com/NetApp/harvest/pull/166) [#167](https://github.com/NetApp/harvest/pull/167) [#168](https://github.com/NetApp/harvest/pull/168)
 
+---
 ## 21.05.2 / 2021-06-14
 
 This release adds support for user-defined URLs for InfluxDB exporter, a new command to validate your `harvest.yml` file, improved logging, panic handling, and collector documentation. We also enabled GitHub security code scanning for the Harvest repo to catch issues sooner. These scans happen on every push.
@@ -80,6 +127,7 @@ There are also several quality-of-life bug fixes listed below.
 - Enable GitHub security code scanning
 - InfluxDB exporter provides the option to pass the URL end-point unchanged. Thanks to @steverweber for their suggestion and validation. [#63](https://github.com/NetApp/harvest/issues/63)
 
+---
 ## 21.05.1 / 2021-05-20
 
 Announcing the release of Harvest2. With this release the core of Harvest has been completely rewritten in Go. Harvest2 is a replacement for the older versions of Harvest 1.6 and below.
@@ -143,6 +191,7 @@ Changes since rc2
 - Make contributing easier with a digital CCLA instead of 1970's era PDF :)
 - Enable GitHub security code scanning
 
+---
 ## rc2
 
 ### Fixes
@@ -163,6 +212,8 @@ Changes since rc2
     - You can use built-in plugins by adding rules to a collector's template. RC2 includes two built-in plugins:
       - **Aggregator**: Aggregates metrics for a given label, e.g. volume data can be used to create an aggregation at the node or SVM-level
        - **LabelAgent**: Defines rules for rewriting instance labels, creating new labels or create ignore-lists based on regular expressions
+
+---
 ## rc1
 
  **IMPORTANT** Harvest has been rewritten in Go
