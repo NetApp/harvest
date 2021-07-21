@@ -102,6 +102,8 @@ security login create -user-or-group-name harvest2 -application ontapi \
 
 #### Using Certificate Authentication
 
+See [comments here for troubleshooting](https://github.com/NetApp/harvest/issues/314#issuecomment-882120238) client certificate authentication 
+
 Change directory to your Harvest home directory (replace `/opt/harvest/` if this is not the default):
 
 ```bash
