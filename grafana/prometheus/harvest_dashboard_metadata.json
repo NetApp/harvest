@@ -136,7 +136,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "count (count by (datacenter) (poller_status))",
+          "expr": "count (count by (datacenter) (poller_status{hostname=~\"$Hostname\"}))",
           "format": "time_series",
           "hide": false,
           "instant": false,

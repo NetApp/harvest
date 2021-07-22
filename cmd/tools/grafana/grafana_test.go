@@ -1,7 +1,6 @@
 package grafana
 
 import (
-	"regexp"
 	"testing"
 )
 
@@ -55,17 +54,17 @@ func TestHttpsAddr(t *testing.T) {
 func TestAddPrefixToMetricNames(t *testing.T) {
 
 	var (
-		examples, expected [7]string
+		examples, expected []string
 		prefix, result     string
-		regex              *regexp.Regexp
-		i                  int
+		//regex              *regexp.Regexp
+		i int
 	)
 
-	regex = regexp.MustCompile(`([a-zA-Z_+]+){.+?}`)
+	//regex = regexp.MustCompile(`([a-zA-Z_+]+){.+?}`)
 
 	prefix = "xx_"
 
-	examples = [7]string{
+	examples = []string{
 		`sum(volume_read_data{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster) + sum(volume_write_data{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) by(cluster)`,
 		`sum(topk($TopResources, volume_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}))`,
 		`volume_size_used_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}`,
@@ -73,9 +72,10 @@ func TestAddPrefixToMetricNames(t *testing.T) {
 		`label_values(metadata_component_status{type="collector",poller=~"$Poller"}, name)`,
 		`label_values(poller_status, datacenter)`,
 		`label_values(datacenter)`,
+		`label_values(node_uptime{datacenter="$Datacenter"},cluster)`,
 	}
 
-	expected = [7]string{
+	expected = []string{
 		`sum(xx_volume_read_data{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster) + sum(xx_volume_write_data{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) by(cluster)`,
 		`sum(topk($TopResources, xx_volume_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}))`,
 		`xx_volume_size_used_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}`,
@@ -83,10 +83,11 @@ func TestAddPrefixToMetricNames(t *testing.T) {
 		`label_values(xx_metadata_component_status{type="collector",poller=~"$Poller"}, name)`,
 		`label_values(xx_poller_status, datacenter)`,
 		`label_values(datacenter)`, // no metric name
+		`label_values(xx_node_uptime{datacenter="$Datacenter"},cluster)`,
 	}
 
 	for i = range examples {
-		result = addPrefixToMetricNames(examples[i], prefix, regex)
+		result = addPrefixToMetricNames(examples[i], prefix)
 		if result != expected[i] {
 			t.Errorf("\nExpected: [%s]\n     Got: [%s]", expected[i], result)
 		}
