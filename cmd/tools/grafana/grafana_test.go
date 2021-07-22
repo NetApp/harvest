@@ -56,11 +56,8 @@ func TestAddPrefixToMetricNames(t *testing.T) {
 	var (
 		examples, expected []string
 		prefix, result     string
-		//regex              *regexp.Regexp
-		i int
+		i                  int
 	)
-
-	//regex = regexp.MustCompile(`([a-zA-Z_+]+){.+?}`)
 
 	prefix = "xx_"
 
