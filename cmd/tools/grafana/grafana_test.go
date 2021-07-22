@@ -70,6 +70,8 @@ func TestAddPrefixToMetricNames(t *testing.T) {
 		`label_values(poller_status, datacenter)`,
 		`label_values(datacenter)`,
 		`label_values(node_uptime{datacenter="$Datacenter"},cluster)`,
+		`label_values (node_uptime{datacenter="$Datacenter"},cluster)`,
+		`label_values(node_uptime {datacenter="$Datacenter"},cluster)`,
 	}
 
 	expected = []string{
@@ -81,6 +83,8 @@ func TestAddPrefixToMetricNames(t *testing.T) {
 		`label_values(xx_poller_status, datacenter)`,
 		`label_values(datacenter)`, // no metric name
 		`label_values(xx_node_uptime{datacenter="$Datacenter"},cluster)`,
+		`label_values (xx_node_uptime{datacenter="$Datacenter"},cluster)`,
+		`label_values(xx_node_uptime {datacenter="$Datacenter"},cluster)`,
 	}
 
 	for i = range examples {

@@ -354,7 +354,7 @@ func addPrefixToMetricNames(expr, prefix string) string {
 
 	// variable queries
 	if strings.HasPrefix(expr, "label_values(") {
-		if isMatch, err = regexp.MatchString(`^label_values\(([a-zA-Z_])+({.+?})?,\s?[a-zA-Z_]+\)$`, expr); err != nil {
+		if isMatch, err = regexp.MatchString(`^label_values\s?\(([a-zA-Z_])+(\s?{.+?})?,\s?[a-zA-Z_]+\)$`, expr); err != nil {
 			fmt.Printf("Regex error: %v\n", err)
 			return expr
 		} else if isMatch {
@@ -366,7 +366,7 @@ func addPrefixToMetricNames(expr, prefix string) string {
 	}
 
 	// everything else is for graph queries
-	regex = regexp.MustCompile(`([a-zA-Z_+]+){.+?}`)
+	regex = regexp.MustCompile(`([a-zA-Z_+]+)\s?{.+?}`)
 	match = regex.FindAllStringSubmatch(expr, -1)
 
 	for _, m := range match {
