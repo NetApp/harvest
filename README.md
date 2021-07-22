@@ -73,6 +73,8 @@ copy your old `harvest.yml` into the new install directory like so:
 cp /path/to/old/harvest/harvest.yml /path/to/new/harvest.yml
 ```
 
+After upgrade, you should re-import all dashboards (either grafana import cli or grafana UI) to get any new enhancements in dashboards.
+
 ## Redhat
 
 > Installation and upgrade of the Harvest package may require root or administrator privileges
@@ -86,6 +88,8 @@ Download the latest rpm of [Harvest](https://github.com/NetApp/harvest/releases/
 Once the installation has finished, edit the [harvest.yml configuration](#harvest-configuration) file located in `/opt/harvest/harvest.yml`
 
 After editing `/opt/harvest/harvest.yml`, manage Harvest with `systemctl start|stop|restart harvest`. 
+
+After upgrade, you should re-import all dashboards (either grafana import cli or grafana UI) to get any new enhancements in dashboards.
 
 > To ensure that you don't run into [permission issues](https://github.com/NetApp/harvest/issues/122#issuecomment-856138831), make sure you manage Harvest using `systemctl` instead of running the harvest binary directly.
 
@@ -110,6 +114,8 @@ Download the latest deb of [Harvest](https://github.com/NetApp/harvest/releases/
 Once the installation has finished, edit the [harvest.yml configuration](#harvest-configuration) file located in `/opt/harvest/harvest.yml`
 
 After editing `/opt/harvest/harvest.yml`, manage Harvest with `systemctl start|stop|restart harvest`. 
+
+After upgrade, You should re-import all dashboards (either grafana import cli or grafana UI) to get any new enhancements in dashboards.
 
 > To ensure that you don't run into [permission issues](https://github.com/NetApp/harvest/issues/122#issuecomment-856138831), make sure you manage Harvest using `systemctl` instead of running the harvest binary directly.
 
