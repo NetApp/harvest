@@ -274,12 +274,7 @@ func addGlobalPrefix(db map[string]interface{}, prefix string) {
 		p, t                                       interface{}
 		queryString, definition, expr              string
 		ok, has                                    bool
-		//regex                                      *regexp.Regexp
 	)
-
-	// regex we will use to match metric names
-	// used in addPrefixToMatricNames, but better to initialize it once
-	//regex = regexp.MustCompile(`([a-zA-Z_+]+){.+?}`)
 
 	// make sure prefix ends with _
 	if !strings.HasSuffix(prefix, "_") {
@@ -341,9 +336,10 @@ func addGlobalPrefix(db map[string]interface{}, prefix string) {
 	}
 }
 
-// addPrefixToMetricNames adds prefix to metric names in expr. Note that
-// this function will only work with the Prometheus-dashboards of Harvest.
-// It will recognize a number of ways in which metrics are used as queries.
+// addPrefixToMetricNames adds prefix to metric names in expr or leaves it
+// unchanged if no metric names are identified.
+// Note that this function will only work with the Prometheus-dashboards of Harvest.
+// It will use a number of patterns in which metrics might be used in queries.
 // (E.g. a single metric, multiple metrics used in addition, etc -- for examples
 // see the test). If we change queries of our dashboards, we have to review
 // this function as well (or come up with a better solution).
