@@ -274,12 +274,12 @@ func addGlobalPrefix(db map[string]interface{}, prefix string) {
 		p, t                                       interface{}
 		queryString, definition, expr              string
 		ok, has                                    bool
-		regex                                      *regexp.Regexp
+		//regex                                      *regexp.Regexp
 	)
 
 	// regex we will use to match metric names
 	// used in addPrefixToMatricNames, but better to initialize it once
-	regex = regexp.MustCompile(`([a-zA-Z_+]+){.+?}`)
+	//regex = regexp.MustCompile(`([a-zA-Z_+]+){.+?}`)
 
 	// make sure prefix ends with _
 	if !strings.HasSuffix(prefix, "_") {
@@ -312,7 +312,7 @@ func addGlobalPrefix(db map[string]interface{}, prefix string) {
 
 			if _, has = target["expr"]; has {
 				if expr, ok = target["expr"].(string); ok {
-					target["expr"] = addPrefixToMetricNames(expr, prefix, regex)
+					target["expr"] = addPrefixToMetricNames(expr, prefix)
 				}
 			}
 		}
@@ -330,11 +330,11 @@ func addGlobalPrefix(db map[string]interface{}, prefix string) {
 	for _, t = range templates {
 		if template, ok = t.(map[string]interface{}); ok {
 			if definition, ok = template["definition"].(string); ok {
-				template["definition"] = addPrefixToMetricNames(definition, prefix, regex)
+				template["definition"] = addPrefixToMetricNames(definition, prefix)
 			}
 			if query, ok = template["query"].(map[string]interface{}); ok {
 				if queryString, ok = query["query"].(string); ok {
-					query["query"] = addPrefixToMetricNames(queryString, prefix, regex)
+					query["query"] = addPrefixToMetricNames(queryString, prefix)
 				}
 			}
 		}
@@ -347,15 +347,21 @@ func addGlobalPrefix(db map[string]interface{}, prefix string) {
 // (E.g. a single metric, multiple metrics used in addition, etc -- for examples
 // see the test). If we change queries of our dashboards, we have to review
 // this function as well (or come up with a better solution).
-func addPrefixToMetricNames(expr, prefix string, regex *regexp.Regexp) string {
+func addPrefixToMetricNames(expr, prefix string) string {
 	var (
 		match    [][]string
 		submatch []string
+		isMatch  bool
+		regex    *regexp.Regexp
+		err      error
 	)
 
 	// variable queries
 	if strings.HasPrefix(expr, "label_values(") {
-		if strings.Contains(expr, ", ") {
+		if isMatch, err = regexp.MatchString(`^label_values\(([a-zA-Z_])+({.+?})?,\s?[a-zA-Z_]+\)$`, expr); err != nil {
+			fmt.Printf("Regex error: %v\n", err)
+			return expr
+		} else if isMatch {
 			return strings.Replace(expr, "label_values(", "label_values("+prefix, 1)
 		} else {
 			// no metric name
@@ -364,6 +370,7 @@ func addPrefixToMetricNames(expr, prefix string, regex *regexp.Regexp) string {
 	}
 
 	// everything else is for graph queries
+	regex = regexp.MustCompile(`([a-zA-Z_+]+){.+?}`)
 	match = regex.FindAllStringSubmatch(expr, -1)
 
 	for _, m := range match {
