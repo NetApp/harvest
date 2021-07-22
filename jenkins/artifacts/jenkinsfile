@@ -35,12 +35,17 @@ pipeline {
 
     stages {
 
+        stage("Initialization") {
+            steps {
+                buildName "${BUILD_NUMBER}_$BRANCH"
+            }
+        }
+
         stage('clean workspace') {
             steps {
                 cleanWs()
                 sh 'rm -rf $targetParentLocation$VERSION$RELEASE'
             }
-
         }
         stage('Setup GO') {
             steps {
