@@ -198,3 +198,16 @@ func TestIssue271_PollerPanicsWhenExportDoesNotExist(t *testing.T) {
 		}
 	})
 }
+
+func TestQuotedPassword(t *testing.T) {
+	loadTestData(testYml)
+	t.Run("quoted password", func(t *testing.T) {
+		poller, err := GetPoller2(testYml, "pass-with-escape")
+		if err != nil {
+			panic(err)
+		}
+		if poller.Password != "#pass" {
+			t.Fatalf(`expected password to be #pass but got %v`, poller.Password)
+		}
+	})
+}

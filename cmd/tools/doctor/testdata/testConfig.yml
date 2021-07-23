@@ -144,4 +144,8 @@ Pollers:
     exporters:
       - missing
 
+  pass-with-escape:
+    username: admin
+    password: '#pass'  # you can use single or double quotes to escape #
+
 ll: grafana_api_token grafana_api_token
