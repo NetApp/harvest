@@ -131,7 +131,7 @@
       "pluginVersion": "8.0.6",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(svm_nfs_read_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}) / 1000",
           "interval": "",
           "legendFormat": "",
@@ -196,7 +196,7 @@
       "pluginVersion": "8.0.6",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(svm_nfs_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}) / 1000",
           "interval": "",
           "legendFormat": "",
@@ -261,7 +261,7 @@
       "pluginVersion": "8.0.6",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(svm_nfs_write_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}) / 1000",
           "interval": "",
           "legendFormat": "",
@@ -329,7 +329,7 @@
       "pluginVersion": "8.0.6",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(svm_nfs_throughput{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}) / 1000",
           "format": "table",
           "hide": false,
@@ -339,7 +339,7 @@
           "refId": "Total Ops"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(svm_nfs_write_throughput{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}) / 1000",
           "format": "table",
           "hide": false,
@@ -349,7 +349,7 @@
           "refId": "Write Ops"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(svm_nfs_read_throughput{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}) / 1000",
           "format": "table",
           "hide": false,
@@ -441,7 +441,7 @@
       "pluginVersion": "8.0.6",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(svm_nfs_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"})",
           "format": "table",
           "hide": false,
@@ -451,7 +451,7 @@
           "refId": "Total Ops"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg((svm_nfs_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}) - (svm_nfs_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}) - (svm_nfs_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}))",
           "hide": false,
           "interval": "",
@@ -459,7 +459,7 @@
           "refId": "Other Ops"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(svm_nfs_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"})",
           "format": "table",
           "hide": false,
@@ -469,7 +469,7 @@
           "refId": "Write Ops"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "avg(svm_nfs_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"})",
           "format": "table",
           "hide": false,
@@ -572,7 +572,7 @@
       "pluginVersion": "8.0.6",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "svm_nfs_read_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"} / 1000",
           "hide": false,
           "interval": "",
@@ -580,7 +580,7 @@
           "refId": "Read Latency"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "svm_nfs_write_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"} / 1000",
           "hide": false,
           "interval": "",
@@ -660,7 +660,7 @@
       "pluginVersion": "8.0.6",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "svm_nfs_read_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"} / 1000",
           "hide": false,
           "interval": "",
@@ -668,7 +668,7 @@
           "refId": "Read Latency"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "svm_nfs_write_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"} / 1000",
           "hide": false,
           "interval": "",
@@ -748,7 +748,7 @@
       "pluginVersion": "8.0.6",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "svm_nfs_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}",
           "hide": false,
           "interval": "",
@@ -756,7 +756,7 @@
           "refId": "Read Ops"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "svm_nfs_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}",
           "hide": false,
           "interval": "",
@@ -764,7 +764,7 @@
           "refId": "Write Ops"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "svm_nfs_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}",
           "interval": "",
           "legendFormat": "Total",
@@ -843,7 +843,7 @@
       "pluginVersion": "8.0.6",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "{__name__=~\"svm_nfs_.+_avg_latency\",datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}",
           "hide": false,
           "interval": "",
@@ -932,7 +932,7 @@
       "pluginVersion": "8.0.6",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "{__name__=~\"svm_nfs_.+_total\",datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}",
           "hide": false,
           "interval": "",
@@ -999,7 +999,7 @@
       "pluginVersion": "8.0.6",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "svm_nfs_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}",
           "interval": "",
           "legendFormat": "",
@@ -1056,7 +1056,7 @@
       "pluginVersion": "8.0.6",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "svm_nfs_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}",
           "interval": "",
           "legendFormat": "",
