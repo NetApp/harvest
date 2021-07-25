@@ -1,31 +1,37 @@
 package generate
 
 import (
+	"fmt"
 	"github.com/spf13/cobra"
 	"goharvest2/cmd/harvest/version"
 	"goharvest2/pkg/color"
 	"goharvest2/pkg/conf"
+	"io"
 	"os"
-	"path/filepath"
 	"text/template"
 )
 
-type PollerPort struct {
-	PollerName string
-	Port       int
-	ConfigFile string
-	LogLevel   int
-	Image      string
-	Version    string
+type PollerInfo struct {
+	PollerName    string
+	Port          int
+	ConfigFile    string
+	LogLevel      int
+	Image         string
+	ContainerName string
+	ShowPorts     bool
+	IsFull        bool
 }
 
 type PollerTemplate struct {
-	Pollers []PollerPort
+	Pollers []PollerInfo
 }
 
 type options struct {
-	loglevel int
-	image    string
+	loglevel   int
+	image      string
+	filesdPath string
+	showPorts  bool
+	outputPath string
 }
 
 var opts = &options{
@@ -51,6 +57,17 @@ var dockerCmd = &cobra.Command{
 	Run:   doDockerCompose,
 }
 
+var fullCmd = &cobra.Command{
+	Use:   "full",
+	Short: "generate Harvest, Grafana, Prometheus docker-compose.yml target for all pollers defined in config",
+	Run:   doDockerFull,
+}
+
+func doDockerFull(cmd *cobra.Command, _ []string) {
+	var config = cmd.Root().PersistentFlags().Lookup("config")
+	generateFullCompose(config.Value.String())
+}
+
 func doSystemd(cmd *cobra.Command, _ []string) {
 	var config = cmd.Root().PersistentFlags().Lookup("config")
 	generateSystemd(config.Value.String())
@@ -61,24 +78,41 @@ func doDockerCompose(cmd *cobra.Command, _ []string) {
 	generateDockerCompose(config.Value.String())
 }
 
+const (
+	full    = 0
+	harvest = 1
+)
+
+func generateFullCompose(path string) {
+	generateDocker(path, full)
+}
+
 func generateDockerCompose(path string) {
+	generateDocker(path, harvest)
+}
+
+func generateDocker(path string, kind int) {
 	pollerTemplate := PollerTemplate{}
-	err := conf.LoadHarvestConfig(path)
-	if err != nil {
-		return
-	}
-	if conf.Config.Pollers == nil {
-		return
-	}
-	// fetch absolute path of file for binding to volume
-	absPath, err := filepath.Abs(path)
+	_, err := conf.GetPollers2(path)
 	if err != nil {
 		panic(err)
 	}
 	conf.ValidatePortInUse = true
+	var filesd []string
 	for _, v := range conf.Config.PollersOrdered {
 		port, _ := conf.GetPrometheusExporterPorts(v)
-		pollerTemplate.Pollers = append(pollerTemplate.Pollers, PollerPort{v, port, absPath, opts.loglevel, opts.image, version.VERSION})
+		pollerInfo := PollerInfo{
+			PollerName:    v,
+			ConfigFile:    path,
+			Port:          port,
+			LogLevel:      opts.loglevel,
+			Image:         opts.image,
+			ContainerName: "poller_" + v + "_v" + version.VERSION,
+			ShowPorts:     kind == harvest || opts.showPorts,
+			IsFull:        kind == full,
+		}
+		pollerTemplate.Pollers = append(pollerTemplate.Pollers, pollerInfo)
+		filesd = append(filesd, fmt.Sprintf("- targets: ['%s:%d']", pollerInfo.ContainerName, pollerInfo.Port))
 	}
 
 	t, err := template.New("docker-compose.tmpl").ParseFiles("docker/onePollerPerContainer/docker-compose.tmpl")
@@ -86,15 +120,41 @@ func generateDockerCompose(path string) {
 		panic(err)
 	}
 
+	out := os.Stdout
 	color.DetectConsole("")
-	println("Save the following to " + color.Colorize("docker-compose.yml", color.Green) +
-		" or " + color.Colorize("> docker-compose.yml", color.Green))
-	println("and then run " + color.Colorize("docker-compose -f docker-compose.yml up -d --remove-orphans", color.Green))
-
-	err = t.Execute(os.Stdout, pollerTemplate)
+	if kind == harvest {
+		println("Save the following to " + color.Colorize("docker-compose.yml", color.Green) +
+			" or " + color.Colorize("> docker-compose.yml", color.Green))
+		println("and then run " + color.Colorize("docker-compose -f docker-compose.yml up -d --remove-orphans", color.Green))
+	} else {
+		out, err = os.Create(opts.outputPath)
+		if err != nil {
+			panic(err)
+		}
+	}
+	err = t.Execute(out, pollerTemplate)
 	if err != nil {
 		panic(err)
 	}
+
+	f, err := os.Create(opts.filesdPath)
+	if err != nil {
+		panic(err)
+	}
+	defer silentClose(f)
+	for _, line := range filesd {
+		_, _ = fmt.Fprintln(f, line)
+	}
+	_, _ = fmt.Fprintf(os.Stderr, "Wrote file_sd targets to %s\n", opts.filesdPath)
+	if kind == full {
+		_, _ = fmt.Fprintf(os.Stderr,
+			"Start containers with:\n"+
+				color.Colorize("docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans\n", color.Green))
+	}
+}
+
+func silentClose(body io.ReadCloser) {
+	_ = body.Close()
 }
 
 func generateSystemd(path string) {
@@ -122,17 +182,19 @@ func generateSystemd(path string) {
 func init() {
 	Cmd.AddCommand(systemdCmd)
 	Cmd.AddCommand(dockerCmd)
-	dockerCmd.PersistentFlags().IntVarP(
-		&opts.loglevel,
-		"loglevel",
-		"l",
-		2,
+	dockerCmd.AddCommand(fullCmd)
+
+	dFlags := dockerCmd.PersistentFlags()
+	fFlags := fullCmd.PersistentFlags()
+
+	dFlags.IntVarP(&opts.loglevel, "loglevel", "l", 2,
 		"logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)",
 	)
-	dockerCmd.PersistentFlags().StringVar(
-		&opts.image,
-		"image",
-		"harvest:latest",
-		"Harvest image",
-	)
+	dFlags.StringVar(&opts.image, "image", "rahulguptajss/harvest:latest", "Harvest image")
+
+	fFlags.BoolVarP(&opts.showPorts, "port", "p", false, "Expose poller ports to host machine")
+	fFlags.StringVarP(&opts.outputPath, "output", "o", "", "Output file path. ")
+	_ = fullCmd.MarkPersistentFlagRequired("output")
+	fFlags.StringVar(&opts.filesdPath, "filesdpath", "docker/prometheus/harvest_targets.yml",
+		"Prometheus file_sd target path. Written when the --output is set")
 }

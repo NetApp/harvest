@@ -14,6 +14,7 @@ import (
 	"github.com/spf13/cobra"
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/tree/node"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -39,7 +40,7 @@ type options struct {
 	command        string // one of: import, export, clean
 	addr           string // URL of Grafana server (e.g. "http://localhost:3000")
 	token          string // API token issued by Grafana server
-	dir            string // Directory from which to import dashboards (e.g. "opt/harvest/grafana/prometheus")
+	dir            string // Directory from which to import dashboards (e.g. "opt/harvest/grafana/dashboards")
 	folder         string // Grafana folder where to upload from where to download dashboards
 	folderId       int64
 	folderUid      string
@@ -413,7 +414,7 @@ func checkToken(opts *options, ignoreConfig bool) error {
 
 	if opts.token == "" && token == "" {
 		fmt.Printf("enter API token: ")
-		fmt.Scanf("%s\n", &opts.token)
+		_, _ = fmt.Scanf("%s\n", &opts.token)
 	} else if opts.token == "" {
 		opts.token = token
 	}
@@ -444,7 +445,7 @@ func checkToken(opts *options, ignoreConfig bool) error {
 	if opts.token != tools.GetChildContentS("grafana_api_token") {
 
 		fmt.Printf("safe API key for later use? [Y/n]: ")
-		fmt.Scanf("%s\n", &answer)
+		_, _ = fmt.Scanf("%s\n", &answer)
 
 		if answer == "Y" || answer == "y" || answer == "yes" || answer == "" {
 			if tools == nil {
@@ -469,7 +470,7 @@ func checkToken(opts *options, ignoreConfig bool) error {
 	if opts.command == "import" && !checkVersion(grafanaVersion) {
 		fmt.Printf("warning: current set of dashboards require Grafana version (%s) or higher\n", grafanaMinVers)
 		fmt.Printf("continue anyway? [y/N]: ")
-		fmt.Scanf("%s\n", &answer)
+		_, _ = fmt.Scanf("%s\n", &answer)
 		if answer != "y" && answer != "yes" {
 			os.Exit(0)
 		}
@@ -630,9 +631,13 @@ func doRequest(opts *options, method, url string, query map[string]interface{}) 
 	status = response.Status
 	code = response.StatusCode
 
-	defer response.Body.Close()
+	defer silentClose(response.Body)
 	data, err = ioutil.ReadAll(response.Body)
 	return data, status, code, err
+}
+
+func silentClose(body io.ReadCloser) {
+	_ = body.Close()
 }
 
 var opts = &options{}
@@ -647,7 +652,7 @@ var importCmd = &cobra.Command{
 	Use:     "import",
 	Short:   "import Grafana dashboards",
 	Run:     doImport,
-	Example: "grafana import --addr my.grafana.server:3000 --directory grafana/prometheus",
+	Example: "grafana import --addr my.grafana.server:3000 --directory grafana/dashboards",
 }
 
 var exportCmd = &cobra.Command{
@@ -663,7 +668,7 @@ func init() {
 	GrafanaCmd.PersistentFlags().StringVar(&opts.config, "config", "./harvest.yml", "harvest config file path")
 	GrafanaCmd.PersistentFlags().StringVarP(&opts.addr, "addr", "a", "http://127.0.0.1:3000", "address of Grafana server (IP, FQDN or hostname)")
 	GrafanaCmd.PersistentFlags().StringVarP(&opts.token, "token", "t", "", "API token issued by Grafana server for authentication")
-	GrafanaCmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d", "grafana/prometheus/", "when importing, directory that contains dashboards.\nWhen exporting, directory to write dashboards to")
+	GrafanaCmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d", "grafana/dashboards/", "when importing, directory that contains dashboards.\nWhen exporting, directory to write dashboards to")
 	GrafanaCmd.PersistentFlags().StringVarP(&opts.folder, "folder", "f", grafanaFolderTitle, "Grafana folder name for the dashboards")
 	GrafanaCmd.PersistentFlags().StringVarP(&opts.prefix, "prefix", "p", "", "Use global metric prefix in queries")
 	GrafanaCmd.PersistentFlags().StringVarP(&opts.datasource, "datasource", "s", grafanaDataSource, "Grafana datasource for the dashboards")
