@@ -1,23 +1,27 @@
-version: "3.5"
+version: "3.7"
+
 services:
 {{range .Pollers}}
   {{ .PollerName }}:
     image: {{ .Image }}
-    container_name: harvest_{{ .Version }}_{{ .PollerName }}
+    container_name: {{ .ContainerName }}
     restart: unless-stopped
-    {{if .Port }}
-    ports:
-      - "{{ .Port }}:{{ .Port }}"
-    {{end}}
-    stdin_open: true # docker run -i
-    tty: true        # docker run -t
-    command: ' --poller {{ .PollerName }} --loglevel {{ .LogLevel }} {{if .Port }} --promPort {{ .Port }} {{ end }} --config /opt/harvest.yml'
-    #entrypoint: ["sh", "-c", "sleep 2073600"]
+    {{- if .ShowPorts}}
+    {{ if .Port }}ports:
+      - {{ .Port }}:{{ .Port }}
+    {{- end}}
+    {{- end}}
+    command: '--poller {{ .PollerName }} {{if .Port }}--promPort {{ .Port }} {{ end }}
+    {{- if ne .LogLevel 2 }}--loglevel {{ .LogLevel }} {{ end}}--config /opt/harvest.yml'
     volumes:
       - harvest:/opt/harvest/
       - type: bind
-        source: {{ .ConfigFile }}
+        source: ./{{ .ConfigFile }}
         target: /opt/harvest.yml
+    {{- if .IsFull}}
+    networks:
+      - backend
+    {{- end}}
 {{end}}
 volumes:
   harvest:

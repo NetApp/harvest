@@ -50,7 +50,7 @@ func TestHttpsAddr(t *testing.T) {
 // Since there can be many exceptions in how metrics are using in queries,
 // the best we can do is check all queries in dashboards (especially after
 // we have changed them), e.g. by running:
-// $ grep \"expr\": grafana/prometheus*
+// $ grep \"expr\": grafana/dashboards*
 func TestAddPrefixToMetricNames(t *testing.T) {
 
 	var (

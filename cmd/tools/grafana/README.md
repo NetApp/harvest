@@ -11,7 +11,7 @@ Click on `Configuration` in the left menu bar (1), click on `API Keys` (2) and c
 For example, let's say your Grafana server is on `http://my.grafana.server:3000` and you want to import the Prometheus-based dashboards from the `grafana` directory. You would run this:
 
 ```
-$ bin/grafana import --addr my.grafana.server:3000 --directory grafana/prometheus
+$ bin/grafana import --addr my.grafana.server:3000 --directory grafana/dashboards
 ```
 
 Similarly, to export:
