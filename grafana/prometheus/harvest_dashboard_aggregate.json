@@ -608,6 +608,10 @@
                 "value": "gradient-gauge"
               },
               {
+                "id": "max",
+                "value": 100
+              },
+              {
                 "id": "thresholds",
                 "value": {
                   "mode": "absolute",
