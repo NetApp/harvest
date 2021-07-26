@@ -26,6 +26,7 @@ var (
 	maxSearchDepth  = 1
 	validShowArgs   = []string{"data", "apis", "attrs", "objects", "instances", "counters", "counter", "system"}
 	validExportArgs = []string{"attrs", "counters"}
+	outputFormats   = []string{"xml", "color"}
 )
 
 type Args struct {
@@ -52,8 +53,9 @@ type Args struct {
 	// ??
 	MaxRecords int
 	// additional parameters to add to the ZAPI request, in "key:value" format
-	Parameters []string
-	Config     string // filepath of Harvest config (defaults to "harvest.yml") can be relative or absolute path
+	Parameters   []string
+	Config       string // filepath of Harvest config (defaults to "harvest.yml") can be relative or absolute path
+	OutputFormat string
 }
 
 var Cmd = &cobra.Command{
@@ -149,7 +151,8 @@ func doCmd(cmd string) {
 		os.Exit(1)
 	}
 
-	fmt.Printf("connected to %s%s%s (%s)\n", color.Bold, connection.Name(), color.End, connection.Release())
+	color.DetectConsole("")
+	_, _ = fmt.Fprintf(os.Stderr, "connected to %s%s%s (%s)\n", color.Bold, connection.Name(), color.End, connection.Release())
 
 	// get requested item
 	if item, err = get(connection, args); err != nil {
@@ -329,6 +332,8 @@ func init() {
 	flags.StringVarP(&args.Poller, "poller", "p", "", "name of poller (cluster), as defined in your harvest config")
 	_ = Cmd.MarkPersistentFlagRequired("poller")
 
+	flags.StringVarP(&args.OutputFormat, "write", "w", "xml",
+		fmt.Sprintf("Output format to use: one of %s", outputFormats))
 	flags.StringVarP(&args.Api, "api", "a", "", "ZAPI query to show")
 	flags.StringVarP(&args.Attr, "attr", "t", "", "ZAPI attribute to show")
 	flags.StringVarP(&args.Object, "object", "o", "", "ZapiPerf object to show")
