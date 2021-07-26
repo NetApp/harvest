@@ -13,19 +13,19 @@ import (
 func show(n *node.Node, args *Args) {
 	switch args.Item {
 	case "system":
-		showSystem(n, args)
+		showSystem(n)
 	case "apis":
-		showApis(n, args)
+		showApis(n)
 	case "objects":
-		showObjects(n, args)
+		showObjects(n)
 	case "attrs":
-		showAttrs(n, args)
+		showAttrs(n)
 	case "counters":
-		showCounters(n, args)
+		showCounters(n)
 	case "counter":
-		showCounter(n, args)
+		showCounter(n)
 	case "instances":
-		showInstances(n, args)
+		showInstances(n)
 	case "data":
 		showData(n, args)
 	default:
@@ -33,15 +33,15 @@ func show(n *node.Node, args *Args) {
 	}
 }
 
-func showSystem(n *node.Node, args *Args) {
+func showSystem(n *node.Node) {
 	n.Print(0)
 }
 
-func showApis(n *node.Node, args *Args) {
+func showApis(n *node.Node) {
 	n.Print(0)
 }
 
-func showObjects(item *node.Node, args *Args) {
+func showObjects(item *node.Node) {
 
 	for _, o := range item.GetChildren() {
 
@@ -53,22 +53,29 @@ func showObjects(item *node.Node, args *Args) {
 	}
 }
 
-func showAttrs(n *node.Node, args *Args) {
+func showAttrs(n *node.Node) {
 	n.Print(0)
 }
 
-func showCounters(n *node.Node, args *Args) {
+func showCounters(n *node.Node) {
 	n.Print(0)
 }
 
-func showCounter(n *node.Node, args *Args) {
+func showCounter(n *node.Node) {
 	n.Print(0)
 }
 
-func showInstances(n *node.Node, args *Args) {
+func showInstances(n *node.Node) {
 	n.Print(0)
 }
 
-func showData(n *node.Node, args *Args) {
-	n.Print(0)
+func showData(n *node.Node, a *Args) {
+	if a.OutputFormat == "xml" {
+		// the root node was stripped earlier, add back here
+		fmt.Println("<root>")
+		fmt.Println(string(n.Content))
+		fmt.Println("</root>")
+	} else {
+		n.Print(0)
+	}
 }
