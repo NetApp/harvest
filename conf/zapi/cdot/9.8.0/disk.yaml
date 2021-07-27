@@ -30,6 +30,10 @@ counters:
     - disk-raid-info:
       - disk-outage-info:
         - ^reason                => outage
+      - disk-shared-info:
+        - aggregate-list:
+          - shared-aggregate-info:
+            - ^aggregate-name      => aggr
 
 plugins:
   - LabelAgent:
@@ -51,3 +55,4 @@ export_options:
     - shelf_bay
     - serial_number
     - failed
+    - aggr
