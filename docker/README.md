@@ -59,7 +59,7 @@ bin/harvest generate docker full --output harvest-compose.yml
 
 ## Start everything
 
-Bring everything up :tada:
+Bring everything up :rocket:
    
 ```
 docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
