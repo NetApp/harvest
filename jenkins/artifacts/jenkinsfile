@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent {label 'buildserver'}
 
     triggers {
         cron('@midnight')

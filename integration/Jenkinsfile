@@ -1,0 +1,147 @@
+pipeline {
+
+    agent none
+
+    options {
+        buildDiscarder logRotator(
+                    daysToKeepStr: '16',
+                    numToKeepStr: '10'
+            )
+    }
+    parameters {
+        string(name: 'BRANCH', defaultValue: 'install_automation_test', description: '[Optional] Branch name to clone. Default (main) ')
+        string(name: 'RPM', defaultValue: '', description: 'http url of RPM build')
+        string(name: 'NATIVE', defaultValue: '', description: 'http url of native tar file')
+    }
+
+    stages {
+        stage('Setup') {
+            agent {
+                label "master"
+            }
+            steps {
+                sh '''
+                echo "Setup"
+                '''
+            }
+        }
+        stage('Run Tests') {
+            parallel {
+                stage('RPM') {
+                    agent {
+                        label "rhel"
+                    }
+                    stages('Test on RPM Pkg') {
+                        stage('Cleanup Workspace') {
+                            steps {
+                                cleanWs()
+                                sh """
+                                echo "Cleaned Up Workspace For Project"
+                                """
+                            }
+                        }
+
+                        stage('Setup GO') {
+                            steps {
+                                sh '''
+                                wget --quiet -O go.tar.gz "https://dl.google.com/go/$(curl https://golang.org/VERSION?m=text).linux-amd64.tar.gz"
+                                ls -ltrh
+                                rm -rf /usr/local/go && tar -C /usr/local -xzf ./go.tar.gz
+                                '''
+                            }
+                        }
+
+                        stage('Code Checkout') {
+                            steps {
+                               sh '''
+                               git clone --single-branch --branch $BRANCH https://github.com/NetApp/harvest.git
+                                '''
+                            }
+                        }
+
+                        stage('Install RPM') {
+                            steps {
+                                sh """
+                                echo "Installing"
+                                export PATH=$PATH:/usr/local/go/bin
+                                export BUILD_PATH=$RPM
+                                cd $WORKSPACE/harvest/integration/test/
+                                go mod vendor
+                                go test -tags=install_rpm
+                                """
+                            }
+                        }
+                        stage('Running Test') {
+                            steps {
+                                sh """
+                                echo "Running Unit Tests"
+                                export PATH=$PATH:/usr/local/go/bin
+                                cd $WORKSPACE/harvest/integration/test/
+                                go test -tags=regression
+                                """
+                            }
+                        }
+                    }
+
+                }
+                stage('Native') {
+                    agent {
+                        label "rhel"
+                    }
+                    stages('Test on Native Pkg') {
+                        stage('Cleanup Workspace') {
+                            steps {
+                                cleanWs()
+                                sh """
+                                echo "Cleaned Up Workspace For Project"
+                                """
+                            }
+                        }
+
+                        stage('Setup GO') {
+                            steps {
+                                sh '''
+                                wget --quiet -O go.tar.gz "https://dl.google.com/go/$(curl https://golang.org/VERSION?m=text).linux-amd64.tar.gz"
+                                ls -ltrh
+                                rm -rf /usr/local/go && tar -C /usr/local -xzf ./go.tar.gz
+                                '''
+                            }
+                        }
+
+                        stage('Code Checkout') {
+                           steps {
+                               sh '''
+                               git clone --single-branch --branch $BRANCH https://github.com/NetApp/harvest.git
+                                '''
+                            }
+                        }
+
+                        stage('Install Native') {
+                            steps {
+                                sh """
+                                echo "Installing"
+                                export PATH=$PATH:/usr/local/go/bin
+                                export BUILD_PATH=$NATIVE
+                                cd $WORKSPACE/harvest/integration/test/
+                                go mod vendor
+                                go test -tags=install_native
+                                """
+                            }
+                        }
+                        stage('Running Test') {
+                            steps {
+                                sh """
+                                echo "Running Unit Tests"
+                                export PATH=$PATH:/usr/local/go/bin
+                                cd $WORKSPACE/harvest/integration/test/
+                                go test -tags=regression
+                                """
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+}
