@@ -256,6 +256,11 @@ func GetPrometheusExporterPorts(pollerName string) (int, error) {
 	if poller == nil {
 		return 0, errors.New(errors.ERR_CONFIG, "Poller does not exist "+pollerName)
 	}
+
+	if Config.Defaults != nil {
+		poller.Union(Config.Defaults) // exporter can be defined in Defaults
+	}
+
 	exporters := poller.Exporters
 	if exporters != nil && len(*exporters) > 0 {
 		for _, e := range *exporters {
@@ -313,7 +318,8 @@ func loadPrometheusExporterPortRangeMapping() {
 	for k, v := range exporters {
 		if v.Type != nil && *v.Type == "Prometheus" {
 			if v.PortRange != nil {
-				promPortRangeMapping[k] = PortMapFromRange(*v.Addr, v.PortRange)
+				// we only care about free ports on the localhost
+				promPortRangeMapping[k] = PortMapFromRange("localhost", v.PortRange)
 			}
 		}
 	}
