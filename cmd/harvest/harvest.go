@@ -241,7 +241,7 @@ func getStatus(pollerName string) *pollerStatus {
 	}
 	if len(pids) != 1 {
 		if len(pids) > 1 {
-			fmt.Printf("exepcted one pid for %s, instead pids=%+v\n", pollerName, pids)
+			fmt.Printf("expected one pid for %s, instead pids=%+v\n", pollerName, pids)
 		}
 		return s
 	}
