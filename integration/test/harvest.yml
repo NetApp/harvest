@@ -1,0 +1,36 @@
+Exporters:
+  prometheus1:
+    exporter: Prometheus
+    addr: 0.0.0.0
+    port: 12990
+  prometheus2:
+    exporter: Prometheus
+    addr: 0.0.0.0
+    port: 12991
+
+Defaults:
+  collectors:
+    - Zapi
+    - ZapiPerf
+  use_insecure_tls: true
+
+Pollers:
+  # this is a special/optional poller that provides stats about harvest itself
+  # to remove this poller, simply delete the section "unix"
+  umeng_aff300:
+    datacenter: umeng_aff300
+    addr: 10.193.48.11
+    auth_style: password
+    username: admin
+    password: netapp1!
+    exporters:
+      - prometheus1
+  F2240-127-26:
+    datacenter: F2240-127-26
+    addr: 10.193.6.61
+    auth_style: password
+    username: admin
+    password: netapp1!
+    exporters:
+      - prometheus2
+Tools:
