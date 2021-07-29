@@ -9,14 +9,14 @@ import (
 	"time"
 )
 
-const HARVEST_HOME = "/opt/harvest"
-const HARVEST_BIN = "./bin/harvest"
+const HarvestHome = "/opt/harvest"
+const HarvestBin = "./bin/harvest"
 
 type Harvest struct {
 }
 
 func (h *Harvest) Start() {
-	status := utils.Exec(HARVEST_HOME, HARVEST_BIN, "start")
+	status := utils.Exec(HarvestHome, HarvestBin, "start")
 	fmt.Println(status)
 	time.Sleep(30 * time.Second)
 	h.AllRunning()
@@ -24,7 +24,7 @@ func (h *Harvest) Start() {
 }
 
 func (h *Harvest) Stop() {
-	status := utils.Exec(HARVEST_HOME, HARVEST_BIN, "stop")
+	status := utils.Exec(HarvestHome, HarvestBin, "stop")
 	fmt.Println(status)
 }
 
@@ -52,9 +52,9 @@ func (h *Harvest) AllStopped() bool {
 
 func (h *Harvest) GetPollerInfo() []core.Poller {
 	log.Println("Getting all pollers details")
-	status := utils.Exec(HARVEST_HOME, HARVEST_BIN, "status")
-	fmt.Println(status)
-	rows := strings.Split(status, "\n")
+	harvestStatus := utils.Exec(HarvestHome, HarvestBin, "status")
+	fmt.Println(harvestStatus)
+	rows := strings.Split(harvestStatus, "\n")
 	var pollerArray []core.Poller
 	for i := range rows {
 		columns := strings.Split(rows[i], `|`)
@@ -66,13 +66,13 @@ func (h *Harvest) GetPollerInfo() []core.Poller {
 		poller := columns[1]
 		pid := columns[2]
 		promPort := columns[3]
-		status := columns[4]
+		pollerStatus := columns[4]
 		pollerObject := core.Poller{
 			DataCenter: dataCenter,
 			Poller:     poller,
 			Pid:        pid,
 			PromPort:   promPort,
-			Status:     strings.TrimSpace(status),
+			Status:     strings.TrimSpace(pollerStatus),
 		}
 		pollerArray = append(pollerArray, pollerObject)
 	}

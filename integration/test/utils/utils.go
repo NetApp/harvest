@@ -11,9 +11,6 @@ import (
 func Run(command string, arg ...string) string {
 	out, err := exec.Command(command, arg...).Output()
 	if err != nil {
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-		}
 		panic(err)
 	}
 	output := string(out[:])
@@ -25,9 +22,6 @@ func Exec(dir string, command string, arg ...string) string {
 	cmd.Dir = dir
 	out, err := cmd.Output()
 	if err != nil {
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-		}
 		panic(err)
 	}
 	output := string(out[:])

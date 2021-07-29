@@ -24,16 +24,16 @@ func (r *Native) Install() bool {
 	}
 	log.Println("Downloaded: " + r.path)
 	log.Println("Check and remove harvest ")
-	if utils.FileExists(HARVEST_HOME) && !harvestObj.AllStopped() {
+	if utils.FileExists(HarvestHome) && !harvestObj.AllStopped() {
 		harvestObj.Stop()
 	}
-	unInstallOutput := utils.Run("rm", "-rf", HARVEST_HOME)
+	unInstallOutput := utils.Run("rm", "-rf", HarvestHome)
 	log.Println(unInstallOutput)
 	log.Println("Installing " + tarFileName)
 	unTarOutput := utils.Run("tar", "-xf", tarFileName, "--one-top-level=harvest", "--strip-components", "1", "-C", "/opt")
 	log.Println(unTarOutput)
-	utils.RemoveSafely(HARVEST_HOME + "/" + harvestFile)
-	utils.CopyFile(harvestFile, HARVEST_HOME+"/"+harvestFile)
+	utils.RemoveSafely(HarvestHome + "/" + harvestFile)
+	utils.CopyFile(harvestFile, HarvestHome+"/"+harvestFile)
 	harvestObj.Start()
 	status := harvestObj.AllRunning()
 	return status
