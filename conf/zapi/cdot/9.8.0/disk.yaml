@@ -6,7 +6,7 @@ object:           disk
 counters:
   storage-disk-info:
     - ^^disk-uid
-    - ^^disk-name               => disk
+    - ^^disk-name              => disk
     - disk-inventory-info:
       - bytes-per-sector        => bytes_per_sector
       - capacity-sectors        => sectors
@@ -21,8 +21,8 @@ counters:
       - ^owner-node-name        => owner_node
       - ^is-failed              => failed
     - disk-stats-info:
-    #  - average-latency
-    #  - disk-io-kbps
+      - average-latency
+      - disk-io-kbps
     #  - disk-iops
       - power-on-time-interval  => uptime
       - sectors-read
