@@ -43,7 +43,7 @@ func ImportTemplate(confPath, confFn, collectorName string) (*node.Node, error) 
 // multiple objects and each object is forked as a separate collector.
 // The subtemplates are sorted in subdirectories that serve as "tag" for the
 // matching ONTAP version. ImportSubTemplate will attempt to choose the subtemplate
-// with closest matching ONTAP version.
+// with the closest matching ONTAP version.
 //
 // Arguments:
 // @model		- ONTAP model, either cdot or 7mode
@@ -83,13 +83,22 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 	if len(availableVersions) > 0 {
 		versions := make([]*version.Version, len(availableVersions))
 		for i, raw := range availableVersions {
-			v, _ := version.NewVersion(raw)
+			v, err := version.NewVersion(raw)
+			if err != nil {
+				c.Logger.Trace().Msgf("error parsing version: %s err: %s", raw, err)
+				continue
+			}
 			versions[i] = v
 		}
 
 		sort.Sort(version.Collection(versions))
 
-		verS, _ := version.NewVersion(strings.Trim(strings.Join(strings.Fields(fmt.Sprint(ver)), "."), "[]"))
+		verWithDots := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(ver)), "."), "[]")
+		verS, err := version.NewVersion(verWithDots)
+		if err != nil {
+			c.Logger.Trace().Msgf("error parsing ONTAP version: %s err: %s", verWithDots, err)
+			return nil, errors.New("No best-fitting subtemplate version found")
+		}
 		// get closest index
 		idx := getClosestIndex(versions, verS)
 		if idx >= 0 && idx < len(versions) {
