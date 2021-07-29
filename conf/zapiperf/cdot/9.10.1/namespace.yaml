@@ -1,0 +1,34 @@
+name:                     Namespace
+query:                    namespace
+object:                   namespace
+
+counters:
+  - instance_name       => name
+  - vserver_name        => svm
+  - read_data
+  - write_data
+  - read_ops
+  - write_ops
+  - other_ops
+  - avg_read_latency
+  - avg_write_latency
+  - avg_other_latency
+  - queue_full
+  - remote_bytes
+  - remote_ops
+
+override:
+
+
+plugins:
+#  LabelAgent:
+#    split: namespace `/` ,,volume,namespace
+
+export_options:
+  instance_keys:
+#    - namespace # edited by plugin
+#    - volume # added by plugin
+    - name
+    - svm
+
+

@@ -59,6 +59,7 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 
 	pathPrefix = path.Join(c.Options.HomePath, "conf/", strings.ToLower(c.Name), model)
 	c.Logger.Debug().Msgf("Looking for best-fitting template in [%s]", pathPrefix)
+	verWithDots := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(ver)), "."), "[]")
 
 	// check for available versions, those are the subdirectories that include filename
 	if files, err := ioutil.ReadDir(pathPrefix); err == nil {
@@ -93,7 +94,6 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 
 		sort.Sort(version.Collection(versions))
 
-		verWithDots := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(ver)), "."), "[]")
 		verS, err := version.NewVersion(verWithDots)
 		if err != nil {
 			c.Logger.Trace().Msgf("error parsing ONTAP version: %s err: %s", verWithDots, err)
@@ -107,11 +107,11 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 	}
 
 	if selectedVersion == "" {
-		return nil, errors.New("No best-fitting subtemplate version found")
+		return nil, errors.New("No best-fit template found")
 	}
 
 	subTemplateFp = path.Join(pathPrefix, selectedVersion, filename)
-	c.Logger.Info().Msgf("selected best-fitting subtemplate [%s]", subTemplateFp)
+	c.Logger.Info().Msgf("best-fit template [%s] for [%s]", subTemplateFp, verWithDots)
 	return tree.Import("yaml", subTemplateFp)
 }
 

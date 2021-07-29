@@ -20,6 +20,8 @@ objects:
   WAFLAggr:               wafl_hya_per_aggr.yaml
   WAFLSizer:              wafl_hya_sizer.yaml
   NicCommon:              nic_common.yaml
+  Namespace:              namespace.yaml
+  NVMfLif:                nvmf_lif.yaml
   FcpPort:                fcp.yaml
   ObjectStoreClient:      object_store_client_op.yaml
   VolumeNode:             volume_node.yaml
