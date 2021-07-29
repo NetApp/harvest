@@ -36,7 +36,7 @@ plugins:
   # any names after the object names will be threated as
   # label names that will be added to instances
     - node
-    - aggr node
+    - aggr ...
   #  - plex node aggr
   #  - raid node aggr plex
 

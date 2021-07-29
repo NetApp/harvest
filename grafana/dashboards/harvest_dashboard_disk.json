@@ -88,7 +88,7 @@
       "pluginVersion": "7.2.0",
       "targets": [
         {
-          "expr": "count( count by(serial_number) (disk_stats_power_on_time_interval{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node_name=~\"$Node\"}) )",
+          "expr": "count( count by(disk) (disk_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}) )",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -158,7 +158,7 @@
       "pluginVersion": "7.2.0",
       "targets": [
         {
-          "expr": "count( count by(serial_number) (disk_stats_power_on_time_interval{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node_name=~\"$Node\",is_failed=\"true\"}) )",
+          "expr": "count( count by(serial_number) (disk_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",failed=\"true\"}) )",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -228,7 +228,7 @@
       "pluginVersion": "7.2.0",
       "targets": [
         {
-          "expr": "count( count by(raid_group) (disk_constituent_disk_busy{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node_name=~\"$Node\"}) )",
+          "expr": "count( count by(raid) (aggr_disk_busy{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}) )",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -298,7 +298,7 @@
       "pluginVersion": "7.2.0",
       "targets": [
         {
-          "expr": "count( count by(plex) (disk_constituent_disk_busy{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node_name=~\"$Node\"}) )",
+          "expr": "count( count by(plex) (aggr_disk_busy{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}) )",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -519,7 +519,7 @@
       "pluginVersion": "7.2.0",
       "targets": [
         {
-          "expr": "aggregate_raid_disk_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggregate=~\"$Aggregate\"}",
+          "expr": "aggr_raid_disk_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -527,7 +527,7 @@
           "refId": "D"
         },
         {
-          "expr": "aggregate_space_size_total{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggregate=~\"$Aggregate\"}",
+          "expr": "aggr_space_total{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -535,7 +535,7 @@
           "refId": "E"
         },
         {
-          "expr": "aggregate_space_percent_used_capacity{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggregate=~\"$Aggregate\"}",
+          "expr": "aggr_space_used_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -543,7 +543,7 @@
           "refId": "A"
         },
         {
-          "expr": "max by (node_name, aggregate) (disk_constituent_total_transfers{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node_name=~\"$Node\",aggregate=~\"$Aggregate\"})",
+          "expr": "max by (node, aggr) (aggr_disk_total_transfers{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "format": "table",
           "hide": true,
           "instant": true,
@@ -552,7 +552,7 @@
           "refId": "C"
         },
         {
-          "expr": "max by (node_name, aggregate) (disk_constituent_disk_busy{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node_name=~\"$Node\",aggregate=~\"$Aggregate\"})",
+          "expr": "max by (node, aggr) (aggr_disk_busy{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "format": "table",
           "hide": true,
           "instant": true,
@@ -689,7 +689,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "node_name"
+              "options": "node"
             },
             "properties": [
               {
@@ -719,7 +719,7 @@
       "pluginVersion": "7.2.0",
       "targets": [
         {
-          "expr": "max by (node_name, aggregate) (disk_constituent_total_transfers{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node_name=~\"$Node\",aggregate=~\"$Aggregate\"})",
+          "expr": "max by (node, aggr) (aggr_disk_total_transfers{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -728,7 +728,7 @@
           "refId": "C"
         },
         {
-          "expr": "max by (node_name, aggregate) (disk_constituent_disk_busy{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node_name=~\"$Node\",aggregate=~\"$Aggregate\"})",
+          "expr": "max by (node, aggr) (aggr_disk_busy{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -749,7 +749,7 @@
                 "aggregate",
                 "Value #C",
                 "Value #B",
-                "node_name"
+                "node"
               ]
             }
           }
@@ -813,9 +813,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "max by (node_name, aggregate) (disk_constituent_disk_busy{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node_name=~\"$Node\",aggregate=~\"$Aggregate\"})",
+          "expr": "max by (node, aggr) (aggr_disk_busy{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "interval": "",
-          "legendFormat": "{{node_name}} - {{aggregate}}",
+          "legendFormat": "{{node}} - {{aggregate}}",
           "refId": "A"
         }
       ],
@@ -914,9 +914,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "max by (node_name, aggregate) (disk_constituent_total_transfers{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node_name=~\"$Node\",aggregate=~\"$Aggregate\"})",
+          "expr": "max by (node, aggr) (aggr_disk_total_transfers{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "interval": "",
-          "legendFormat": "{{node_name}} - {{aggregate}}",
+          "legendFormat": "{{node}} - {{aggregate}}",
           "refId": "A"
         }
       ],
@@ -1195,7 +1195,7 @@
       "pluginVersion": "7.2.0",
       "targets": [
         {
-          "expr": "disk_inventory_bytes_per_sector * disk_inventory_capacity_sectors{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "expr": "disk_bytes_per_sector * disk_sectors{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1205,7 +1205,7 @@
           "refId": "B"
         },
         {
-          "expr": "disk_stats_disk_io_kbps{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "expr": "disk_stats_io_kbps{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1225,7 +1225,7 @@
           "refId": "D"
         },
         {
-          "expr": "disk_stats_power_on_time_interval{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "expr": "disk_uptime{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1362,17 +1362,17 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum (node_disk_data_read{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node_name=~\"$Node\"}) by (node_name)",
+          "expr": "sum (node_disk_data_read{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}) by (node)",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{node_name}} - READ",
+          "legendFormat": "{{node}} - READ",
           "refId": "A"
         },
         {
-          "expr": "sum (node_disk_data_written{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node_name=~\"$Node\"}) by (node_name)",
+          "expr": "sum (node_disk_data_written{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}) by (node)",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{node_name}} - WRITE",
+          "legendFormat": "{{node}} - WRITE",
           "refId": "B"
         }
       ],
@@ -1485,17 +1485,17 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum (hostadapter_bytes_written{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node_name=~\"$Node\"}) by (node_name)",
+          "expr": "sum (hostadapter_bytes_written{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}) by (node)",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{node_name}} - WRITE",
+          "legendFormat": "{{node}} - WRITE",
           "refId": "A"
         },
         {
-          "expr": "sum (hostadapter_bytes_read{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node_name=~\"$Node\"}) by (node_name)",
+          "expr": "sum (hostadapter_bytes_read{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}) by (node)",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{node_name}} - READ",
+          "legendFormat": "{{node}} - READ",
           "refId": "B"
         }
       ],
@@ -1606,7 +1606,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(wafl_cp_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node_name=~\"$Node\"}) by (subcounter)",
+          "expr": "sum(wafl_cp_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}) by (subcounter)",
           "hide": false,
           "interval": "",
           "legendFormat": "{{subcounter}}",
@@ -1726,14 +1726,14 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum (flashcache_hit_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node_name=~\"$Node\"})",
+          "expr": "sum (flashcache_hit_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Hit %",
           "refId": "A"
         },
         {
-          "expr": "sum (flashcache_disk_reads_replaced{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node_name=~\"$Node\"})",
+          "expr": "sum (flashcache_disk_reads_replaced{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "HDD Reads Replaced",
@@ -1853,14 +1853,14 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum (flashpool_read_ops_replaced_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node_name=~\"$Node\"})",
+          "expr": "sum (flashpool_read_ops_replaced_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Hit %",
           "refId": "A"
         },
         {
-          "expr": "sum (flashpool_read_ops_replaced{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node_name=~\"$Node\"})",
+          "expr": "sum (flashpool_read_ops_replaced{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "HDD Reads Replaced",
@@ -1978,14 +1978,14 @@
           "value": "$__all"
         },
         "datasource": "Prometheus",
-        "definition": "label_values(disk_constituent_disk_busy{cluster=\"$Cluster\"}, node_name)",
+        "definition": "label_values(disk_labels{cluster=\"$Cluster\"}, node)",
         "hide": 0,
         "includeAll": true,
         "label": null,
         "multi": false,
         "name": "Node",
         "options": [],
-        "query": "label_values(disk_constituent_disk_busy{cluster=\"$Cluster\"}, node_name)",
+        "query": "label_values(disk_labels{cluster=\"$Cluster\"}, node)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2004,14 +2004,14 @@
           "value": "$__all"
         },
         "datasource": "Prometheus",
-        "definition": "label_values(disk_constituent_disk_busy{cluster=\"$Cluster\"}, aggregate)",
+        "definition": "label_values(aggr_disk_busy{cluster=\"$Cluster\"}, aggr)",
         "hide": 0,
         "includeAll": true,
         "label": null,
         "multi": false,
         "name": "Aggregate",
         "options": [],
-        "query": "label_values(disk_constituent_disk_busy{cluster=\"$Cluster\"}, aggregate)",
+        "query": "label_values(aggr_disk_busy{cluster=\"$Cluster\"}, aggr)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2119,14 +2119,14 @@
           "value": "$__all"
         },
         "datasource": "Prometheus",
-        "definition": "label_values(disk_stats_power_on_time_interval{cluster=\"$Cluster\"}, type)",
+        "definition": "label_values(disk_uptime{cluster=\"$Cluster\"}, type)",
         "hide": 2,
         "includeAll": true,
         "label": null,
         "multi": false,
         "name": "DiskType",
         "options": [],
-        "query": "label_values(disk_stats_power_on_time_interval{cluster=\"$Cluster\"}, type)",
+        "query": "label_values(disk_labels{cluster=\"$Cluster\"}, type)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
