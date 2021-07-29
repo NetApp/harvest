@@ -9,8 +9,7 @@ import (
 func setupVersions(availableVersions []string) []*version.Version {
 	versions := make([]*version.Version, len(availableVersions))
 	for i, raw := range availableVersions {
-		v, _ := version.NewVersion(raw)
-		versions[i] = v
+		versions[i] = buildVersion(raw)
 	}
 	sort.Sort(version.Collection(versions))
 	return versions
