@@ -8,7 +8,6 @@ type Poller struct {
 	Pid        string
 	PromPort   string
 	Status     string
-	metricUrl  string
 }
 
 func (p *Poller) New(dataCenter string,
@@ -18,6 +17,7 @@ func (p *Poller) New(dataCenter string,
 	p.PromPort = strings.TrimSpace(promPort)
 	p.Status = status
 	p.DataCenter = strings.TrimSpace(dataCenter)
+	p.Poller = strings.TrimSpace(poller)
 }
 
 func (p *Poller) MetricUrl() string {
