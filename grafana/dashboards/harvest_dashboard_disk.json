@@ -1003,36 +1003,48 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Shelf"
+              "options": "outage"
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 72
+                "id": "noValue",
+                "value": "Ok"
+              },
+              {
+                "id": "displayName",
+                "value": "Status"
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "Bay"
+              "options": "disk"
             },
             "properties": [
               {
+                "id": "displayName",
+                "value": "Disk"
+              },
+              {
                 "id": "custom.width",
-                "value": 89
+                "value": 144
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "Disk"
+              "options": "type"
             },
             "properties": [
               {
+                "id": "displayName",
+                "value": "Type"
+              },
+              {
                 "id": "custom.width",
-                "value": 102
+                "value": 144
               }
             ]
           },
@@ -1057,18 +1069,6 @@
               {
                 "id": "custom.width",
                 "value": 185
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Type"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 144
               }
             ]
           },
@@ -1233,6 +1233,17 @@
           "intervalFactor": 1,
           "legendFormat": "",
           "refId": "C"
+        },
+        {
+          "expr": "disk_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "legendFormat": "",
+          "interval": "",
+          "exemplar": true,
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "intervalFactor": 1,
+          "refId": "E"
         }
       ],
       "timeFrom": null,
@@ -1244,18 +1255,27 @@
           "options": {
             "excludeByName": {
               "Time": true,
-              "Value": false,
               "__name__": true,
               "cluster": true,
               "datacenter": true,
               "instance": true,
-              "job": true
+              "job": true,
+              "node": true,
+              "aggr": true,
+              "failed": true,
+              "model": true,
+              "shelf_bay": true,
+              "serial_number": true,
+              "owner_node": true,
+              "shared": true,
+              "shelf": true,
+              "Value #E": true
             },
             "indexByName": {
               "Time": 0,
               "Value": 7,
-              "cluster": 8,
-              "datacenter": 9,
+              "cluster": 2,
+              "datacenter": 1,
               "disk": 3,
               "instance": 10,
               "job": 11,
@@ -1263,18 +1283,10 @@
               "serial_number": 5,
               "shelf": 1,
               "shelf_bay": 2,
-              "type": 6
+              "type": 4,
+              "outage": 12
             },
-            "renameByName": {
-              "Value": "Capacity",
-              "cluster": "",
-              "disk": "Disk",
-              "model": "Model",
-              "serial_number": "Serial",
-              "shelf": "Shelf",
-              "shelf_bay": "Bay",
-              "type": "Type"
-            }
+            "renameByName": {}
           }
         },
         {
