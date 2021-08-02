@@ -18,6 +18,7 @@ import (
 	"path"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 // LoadConfig loads the config info from harvest.yml
@@ -231,7 +232,14 @@ func GetDefaultHarvestConfigPath() (string, error) {
 /*GetHarvestHomePath*/
 //This method is used to return current working directory
 func GetHarvestHomePath() string {
-	return "./"
+	harvestConf := os.Getenv("HARVEST_CONF")
+	if harvestConf == "" {
+		return "./"
+	}
+	if !strings.HasSuffix(harvestConf, "/") {
+		harvestConf += "/"
+	}
+	return harvestConf
 }
 
 func GetHarvestLogPath() string {

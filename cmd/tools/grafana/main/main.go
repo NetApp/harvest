@@ -10,5 +10,5 @@ import (
 )
 
 func main() {
-	cobra.CheckErr(grafana.GrafanaCmd.Execute())
+	cobra.CheckErr(grafana.Cmd.Execute())
 }
