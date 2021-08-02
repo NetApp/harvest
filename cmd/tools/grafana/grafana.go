@@ -70,6 +70,7 @@ func doExport(_ *cobra.Command, _ []string) {
 }
 
 func doImport(_ *cobra.Command, _ []string) {
+	opts.command = "import"
 	adjustOptions()
 	askForToken()
 	var doesFolderExist = doesGrafanaFolderExist()
@@ -107,9 +108,10 @@ func askForToken() {
 }
 
 func adjustOptions() {
+	homePath = conf.GetHarvestHomePath()
 	// full path
 	if opts.command == "import" {
-		opts.dir = path.Join(homePath, "grafana", opts.dir)
+		opts.dir = path.Join(homePath, opts.dir)
 	}
 
 	// When opt.addr starts with https don't change it
@@ -642,7 +644,7 @@ func silentClose(body io.ReadCloser) {
 
 var opts = &options{}
 
-var GrafanaCmd = &cobra.Command{
+var Cmd = &cobra.Command{
 	Use:   "grafana",
 	Short: "Import/export Grafana dashboards",
 	Long:  "Grafana tool - Import/Export Grafana dashboards",
@@ -663,16 +665,16 @@ var exportCmd = &cobra.Command{
 }
 
 func init() {
-	GrafanaCmd.AddCommand(importCmd, exportCmd)
+	Cmd.AddCommand(importCmd, exportCmd)
 
-	GrafanaCmd.PersistentFlags().StringVar(&opts.config, "config", "./harvest.yml", "harvest config file path")
-	GrafanaCmd.PersistentFlags().StringVarP(&opts.addr, "addr", "a", "http://127.0.0.1:3000", "address of Grafana server (IP, FQDN or hostname)")
-	GrafanaCmd.PersistentFlags().StringVarP(&opts.token, "token", "t", "", "API token issued by Grafana server for authentication")
-	GrafanaCmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d", "grafana/dashboards/", "when importing, directory that contains dashboards.\nWhen exporting, directory to write dashboards to")
-	GrafanaCmd.PersistentFlags().StringVarP(&opts.folder, "folder", "f", grafanaFolderTitle, "Grafana folder name for the dashboards")
-	GrafanaCmd.PersistentFlags().StringVarP(&opts.prefix, "prefix", "p", "", "Use global metric prefix in queries")
-	GrafanaCmd.PersistentFlags().StringVarP(&opts.datasource, "datasource", "s", grafanaDataSource, "Grafana datasource for the dashboards")
-	GrafanaCmd.PersistentFlags().BoolVarP(&opts.variable, "variable", "v", false, "use datasource as variable, overrides: --datasource")
-	GrafanaCmd.PersistentFlags().BoolVarP(&opts.useHttps, "https", "S", false, "use HTTPS")
-	GrafanaCmd.PersistentFlags().BoolVarP(&opts.useInsecureTLS, "insecure", "k", false, "Allow insecure server connections when using SSL")
+	Cmd.PersistentFlags().StringVar(&opts.config, "config", "./harvest.yml", "harvest config file path")
+	Cmd.PersistentFlags().StringVarP(&opts.addr, "addr", "a", "http://127.0.0.1:3000", "address of Grafana server (IP, FQDN or hostname)")
+	Cmd.PersistentFlags().StringVarP(&opts.token, "token", "t", "", "API token issued by Grafana server for authentication")
+	Cmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d", "grafana/dashboards/", "when importing, directory that contains dashboards.\nWhen exporting, directory to write dashboards to")
+	Cmd.PersistentFlags().StringVarP(&opts.folder, "folder", "f", grafanaFolderTitle, "Grafana folder name for the dashboards")
+	Cmd.PersistentFlags().StringVarP(&opts.prefix, "prefix", "p", "", "Use global metric prefix in queries")
+	Cmd.PersistentFlags().StringVarP(&opts.datasource, "datasource", "s", grafanaDataSource, "Grafana datasource for the dashboards")
+	Cmd.PersistentFlags().BoolVarP(&opts.variable, "variable", "v", false, "use datasource as variable, overrides: --datasource")
+	Cmd.PersistentFlags().BoolVarP(&opts.useHttps, "https", "S", false, "use HTTPS")
+	Cmd.PersistentFlags().BoolVarP(&opts.useInsecureTLS, "insecure", "k", false, "Allow insecure server connections when using SSL")
 }
