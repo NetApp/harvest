@@ -28,7 +28,6 @@ import (
 	"goharvest2/cmd/tools/zapi"
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/set"
-	"goharvest2/pkg/tree/node"
 	"goharvest2/pkg/util"
 	"net"
 	_ "net/http/pprof" // #nosec since pprof is off by default
@@ -87,8 +86,16 @@ var opts = &options{
 }
 
 func doManageCmd(cmd *cobra.Command, args []string) {
+	var (
+		poller                          *conf.Poller
+		pollers                         map[string]*conf.Poller
+		name                            string
+		pollerNames, pollersFromCmdLine []string
+		pollerNamesSet                  *set.Set
+		ok, has                         bool
+		err                             error
+	)
 	opts.command = cmd.Name()
-	var err error
 	HarvestHomePath = conf.GetHarvestHomePath()
 	HarvestConfigPath, err = conf.GetDefaultHarvestConfigPath()
 
@@ -106,8 +113,7 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 
 	//cmd.DebugFlags()  // uncomment to print flags
 
-	pollers, err := conf.GetPollers(opts.config)
-	if err != nil {
+	if pollers, err = conf.GetPollers2(opts.config); err != nil {
 		if os.IsNotExist(err) {
 			fmt.Printf("config [%s]: not found\n", opts.config)
 		} else {
@@ -116,49 +122,50 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	var pollerNames []string
-	for _, p := range pollers.GetChildren() {
-		pollerNames = append(pollerNames, p.GetNameS())
+	for name = range pollers {
+		pollerNames = append(pollerNames, name)
 	}
+
 	// do this before filtering of pollers
 	// stop pollers which may have been renamed or no longer exists in harvest.yml
 	if opts.command == "start" || opts.command == "restart" {
 		stopGhostPollers(pollerNames)
 	}
 
-	pollersFromCmdLine := args
+	pollersFromCmdLine = args
 	if len(pollersFromCmdLine) > 0 {
 		// verify poller names
-		ok := true
-		for _, p := range pollersFromCmdLine {
-			if pollers.GetChildS(p) == nil {
-				fmt.Printf("poller [%s] not defined\n", p)
+		ok = true
+		for _, name = range pollersFromCmdLine {
+			if _, has = pollers[name]; !has {
+				fmt.Printf("poller [%s] not defined\n", name)
 				ok = false
 			}
 		}
 		if !ok {
 			os.Exit(1)
 		}
-		// filter pollers
-		pollerNames := set.NewFrom(pollersFromCmdLine)
-		for _, p := range pollers.GetChildren() {
-			if !pollerNames.Has(p.GetNameS()) {
-				pollers.PopChildS(p.GetNameS())
+		// leave only requested pollers
+		pollerNamesSet = set.NewFrom(pollersFromCmdLine)
+		for name = range pollers {
+			if !pollerNamesSet.Has(name) {
+				delete(pollers, name)
 			}
 		}
 	}
+	// if no pollers in cmdline, we use all pollers
 
 	if opts.foreground {
 		if opts.command != "start" {
 			fmt.Printf("invalid command [%s] for foreground mode\n", opts.command)
 			os.Exit(1)
 		}
-		if len(pollers.GetChildren()) != 1 {
+		if len(pollers) != 1 {
 			fmt.Println("only one poller can be started in foreground mode")
 			os.Exit(1)
 		}
-		p := pollers.GetChildren()[0]
-		startPoller(p.GetNameS(), getPollerPrometheusPort(p, opts), opts)
+		name = pollersFromCmdLine[0]
+		startPoller(name, getPollerPrometheusPort(name, opts), opts)
 		os.Exit(0)
 	}
 
@@ -172,12 +179,16 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 	}
 	table.SetColumnAlignment([]int{tw.ALIGN_LEFT, tw.ALIGN_LEFT, tw.ALIGN_RIGHT, tw.ALIGN_RIGHT, tw.ALIGN_RIGHT})
 
-	for _, p := range pollers.GetChildren() {
+	for name, poller = range pollers {
 
-		var s *pollerStatus
+		var (
+			s          *pollerStatus
+			datacenter string
+		)
 
-		name := p.GetNameS()
-		datacenter := p.GetChildContentS("datacenter")
+		if poller.Datacenter != nil {
+			datacenter = *poller.Datacenter
+		}
 
 		s = getStatus(name)
 		if opts.command == "kill" {
@@ -204,7 +215,7 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 				printStatus(table, opts.longStatus, datacenter, name, s)
 				break
 			case "not running", "stopped", "killed":
-				promPort := getPollerPrometheusPort(p, opts)
+				promPort := getPollerPrometheusPort(name, opts)
 				s = startPoller(name, promPort, opts)
 				printStatus(table, opts.longStatus, datacenter, name, s)
 			default:
@@ -532,20 +543,19 @@ func closeDial(dial *net.TCPListener) {
 	_ = dial.Close()
 }
 
-func getPollerPrometheusPort(p *node.Node, opts *options) int {
+func getPollerPrometheusPort(pollerName string, opts *options) int {
 	var promPort int
 	var err error
 
 	// check first if poller argument has promPort defined
 	// else in exporter config of poller
 	if opts.promPort != 0 {
-		promPort = opts.promPort
-	} else {
-		promPort, err = conf.GetPrometheusExporterPorts(p.GetNameS())
-		if err != nil {
-			fmt.Println(err)
-			return 0
-		}
+		return opts.promPort
+	}
+
+	if promPort, err = conf.GetPrometheusExporterPorts(pollerName); err != nil {
+		fmt.Println(err)
+		return 0
 	}
 	return promPort
 }

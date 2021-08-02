@@ -257,10 +257,6 @@ func GetPrometheusExporterPorts(pollerName string) (int, error) {
 		return 0, errors.New(errors.ERR_CONFIG, "Poller does not exist "+pollerName)
 	}
 
-	if Config.Defaults != nil {
-		poller.Union(Config.Defaults) // exporter can be defined in Defaults
-	}
-
 	exporters := poller.Exporters
 	if exporters != nil && len(*exporters) > 0 {
 		for _, e := range *exporters {
