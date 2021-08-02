@@ -188,7 +188,7 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 
 		if poller, ok = pollers[name]; !ok {
 			// should never happen
-			fmt.Printf("poller [%s]: missing parameters\n")
+			fmt.Printf("poller [%s]: missing parameters\n", name)
 			continue
 		}
 
