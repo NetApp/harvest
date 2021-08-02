@@ -36,7 +36,7 @@ header:
 	@echo
 
 deps: header ## Check dependencies
-	@echo "checking Harvest dependencies"
+	@echo "Checking Harvest dependencies"
 ifeq (${GCC_EXISTS}, )
 	@echo
 	@echo "Harvest requires that you have gcc installed."
