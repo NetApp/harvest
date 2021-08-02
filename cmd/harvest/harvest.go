@@ -87,13 +87,13 @@ var opts = &options{
 
 func doManageCmd(cmd *cobra.Command, args []string) {
 	var (
-		poller                          *conf.Poller
-		pollers                         map[string]*conf.Poller
-		name                            string
-		pollerNames, pollersFromCmdLine []string
-		pollerNamesSet                  *set.Set
-		ok, has                         bool
-		err                             error
+		poller                                           *conf.Poller
+		pollers                                          map[string]*conf.Poller
+		name                                             string
+		pollerNames, pollersFromCmdLine, pollersFiltered []string
+		pollerNamesSet                                   *set.Set
+		ok, has                                          bool
+		err                                              error
 	)
 	opts.command = cmd.Name()
 	HarvestHomePath = conf.GetHarvestHomePath()
@@ -122,9 +122,7 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	for name = range pollers {
-		pollerNames = append(pollerNames, name)
-	}
+	pollerNames = conf.Config.PollersOrdered
 
 	// do this before filtering of pollers
 	// stop pollers which may have been renamed or no longer exists in harvest.yml
@@ -148,23 +146,25 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 		// leave only requested pollers
 		pollerNamesSet = set.NewFrom(pollersFromCmdLine)
 		for name = range pollers {
-			if !pollerNamesSet.Has(name) {
-				delete(pollers, name)
+			if pollerNamesSet.Has(name) {
+				pollersFiltered = append(pollersFiltered, name)
 			}
 		}
+	} else {
+		// if no pollers in cmdline, use all pollers
+		pollersFiltered = pollerNames
 	}
-	// if no pollers in cmdline, we use all pollers
 
 	if opts.foreground {
 		if opts.command != "start" {
 			fmt.Printf("invalid command [%s] for foreground mode\n", opts.command)
 			os.Exit(1)
 		}
-		if len(pollers) != 1 {
+		if len(pollersFiltered) != 1 {
 			fmt.Println("only one poller can be started in foreground mode")
 			os.Exit(1)
 		}
-		name = pollersFromCmdLine[0]
+		name = pollersFiltered[0]
 		startPoller(name, getPollerPrometheusPort(name, opts), opts)
 		os.Exit(0)
 	}
@@ -179,12 +179,18 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 	}
 	table.SetColumnAlignment([]int{tw.ALIGN_LEFT, tw.ALIGN_LEFT, tw.ALIGN_RIGHT, tw.ALIGN_RIGHT, tw.ALIGN_RIGHT})
 
-	for name, poller = range pollers {
+	for _, name = range pollersFiltered {
 
 		var (
 			s          *pollerStatus
 			datacenter string
 		)
+
+		if poller, ok = pollers[name]; !ok {
+			// should never happen
+			fmt.Printf("poller [%s]: missing parameters\n")
+			continue
+		}
 
 		if poller.Datacenter != nil {
 			datacenter = *poller.Datacenter
