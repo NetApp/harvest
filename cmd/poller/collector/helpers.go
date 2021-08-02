@@ -115,9 +115,13 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 	return tree.Import("yaml", subTemplateFp)
 }
 
-//getClosestIndex input versions should be sorted
-// returns -1 if not match else returns equals or closest match to the left
+//getClosestIndex returns the closest left match to the sorted list of input versions
+// returns -1 when the versions list is empty
+// returns equal or closest match to the left
 func getClosestIndex(versions []*version.Version, version *version.Version) int {
+	if len(versions) == 0 {
+		return -1
+	}
 	var l = 0
 	var r = len(versions) - 1
 	for l <= r {
@@ -130,6 +134,9 @@ func getClosestIndex(versions []*version.Version, version *version.Version) int 
 		} else { // versions[m] equals the element
 			return m
 		}
+	}
+	if l == 0 {
+		return 0
 	}
 	return l - 1
 }

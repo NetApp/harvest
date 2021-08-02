@@ -33,7 +33,7 @@ func Test_getClosestIndex(t *testing.T) {
 
 	tests := []test{
 		{"MatchCase", args{setupVersions([]string{"9.8.0", "9.8.1", "9.9.0", "10.10.10"}), buildVersion("9.8.1")}, 1},
-		{"NonMatchCase", args{setupVersions([]string{"9.8.0", "9.8.1", "9.9.0", "10.10.10"}), buildVersion("9.7.1")}, -1},
+		{"MatchFirstYolo", args{setupVersions([]string{"9.8.0", "9.8.1", "9.9.0", "10.10.10"}), buildVersion("9.7.1")}, 0},
 		{"ClosestMatchCase", args{setupVersions([]string{"9.8.0", "9.8.1", "9.9.0", "10.10.10"}), buildVersion("9.9.2")}, 2},
 		{"EmptyCase", args{setupVersions([]string{}), buildVersion("9.8.1")}, -1},
 	}
