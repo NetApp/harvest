@@ -19,14 +19,14 @@ func TestNativeInstall(t *testing.T) {
 		log.Println("Unable to initialize installer object")
 		panic(error)
 	}
-	if installObject.Install() == true {
+	if installObject.Install() {
 		log.Println("Installation is successful..")
 	} else {
 		log.Println("Setup completed")
 		panic("installation is failed.")
 	}
 	harvestObj := new(installer.Harvest)
-	if harvestObj.AllRunning() == true {
+	if harvestObj.AllRunning() {
 		log.Println("All pollers are running")
 	} else {
 		t.Errorf("One or more pollers are not running.")

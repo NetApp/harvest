@@ -22,5 +22,5 @@ func GetInstaller(installType string, path string) (Installer, error) {
 		d.Init(path)
 		return d, nil
 	}
-	return nil, fmt.Errorf("Wrong installer type passed")
+	return nil, fmt.Errorf("Wrong installer type passed " + installType)
 }

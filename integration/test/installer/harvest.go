@@ -30,8 +30,7 @@ func (h *Harvest) Stop() {
 
 func (h *Harvest) AllRunning() bool {
 	pollerArray := h.GetPollerInfo()
-	for i := range pollerArray {
-		poller := pollerArray[i]
+	for _, poller := range pollerArray {
 		if poller.Status != "running" {
 			return false
 		}
@@ -41,8 +40,7 @@ func (h *Harvest) AllRunning() bool {
 
 func (h *Harvest) AllStopped() bool {
 	pollerArray := h.GetPollerInfo()
-	for i := range pollerArray {
-		poller := pollerArray[i]
+	for _, poller := range pollerArray {
 		if poller.Status != "not running" {
 			return false
 		}

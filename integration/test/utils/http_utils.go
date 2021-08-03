@@ -14,7 +14,7 @@ func GetResponse(url string) (string, error) {
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatalln(err)
+		return "", err
 	}
-	sb := string(body)
-	return sb, err
+	return string(body), nil
 }
