@@ -395,6 +395,20 @@ func visitNode(v interface{}) {
 						vv[k] = num
 					}
 				}
+			case "readOnly":
+				// seen on 9.7P9
+				// readOnly should be a boolean. In some versions of ONTAP, a number was used as the value
+				// instead of a boolean type. e.g. "readOnly": 1
+				// detect that and fix it here
+				if _, ok := val.(bool); !ok {
+					if s, ok2 := val.(float64); ok2 {
+						if s > 0 {
+							vv[k] = true
+						} else {
+							vv[k] = false
+						}
+					}
+				}
 			}
 			visitNode(val)
 		}
