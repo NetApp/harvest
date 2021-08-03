@@ -1003,22 +1003,6 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "outage"
-            },
-            "properties": [
-              {
-                "id": "noValue",
-                "value": "Ok"
-              },
-              {
-                "id": "displayName",
-                "value": "Status"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "disk"
             },
             "properties": [
@@ -1163,6 +1147,32 @@
           {
             "matcher": {
               "id": "byName",
+              "options": "diskStatus"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Status"
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      " ": {
+                        "text": "Ok",
+                        "index": 0
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
               "options": "shelf_bay"
             },
             "properties": [
@@ -1235,7 +1245,7 @@
           "refId": "C"
         },
         {
-          "expr": "disk_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "expr": "label_join(disk_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}, \"diskStatus\", \" \",\"NonSupportedField\", \"outage\")",
           "legendFormat": "",
           "interval": "",
           "exemplar": true,
@@ -1269,7 +1279,8 @@
               "owner_node": true,
               "shared": true,
               "shelf": true,
-              "Value #E": true
+              "Value #E": true,
+              "outage": true
             },
             "indexByName": {
               "Time": 0,
@@ -1283,8 +1294,7 @@
               "serial_number": 5,
               "shelf": 1,
               "shelf_bay": 2,
-              "type": 4,
-              "outage": 12
+              "type": 4
             },
             "renameByName": {}
           }
