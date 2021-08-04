@@ -16,6 +16,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -32,6 +33,7 @@ type Client struct {
 	apiVersion string
 	vfiler     string
 	Logger     *logging.Logger // logger used for logging
+	logZapi    bool            // used to log ZAPI request/response
 }
 
 func New(config *node.Node) (*Client, error) {
@@ -362,6 +364,13 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 	if withTimers {
 		start = time.Now()
 	}
+
+	// ZAPI request needs to be saved before calling client.Do because client.Do will zero out the buffer
+	zapiReq := ""
+	if c.logZapi {
+		zapiReq = c.buffer.String()
+	}
+
 	if response, err = c.client.Do(c.request); err != nil {
 		return result, responseT, parseT, errors.New(errors.ERR_CONNECTION, err.Error())
 	}
@@ -379,6 +388,7 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 	if body, err = ioutil.ReadAll(response.Body); err != nil {
 		return result, responseT, parseT, err
 	}
+	defer c.printRequestAndResponse(zapiReq, body)
 
 	// parse xml
 	if withTimers {
@@ -410,4 +420,29 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 	}
 
 	return result, responseT, parseT, nil
+}
+
+func (c *Client) TraceLogSet(collectorName string, config *node.Node) {
+	// check for log sets and enable zapi request logging if collectorName is in the set
+	if llogs := config.GetChildS("log"); llogs != nil {
+		for _, log := range llogs.GetAllChildContentS() {
+			if strings.EqualFold(log, collectorName) {
+				c.logZapi = true
+				break
+			}
+		}
+	}
+}
+
+func (c *Client) printRequestAndResponse(req string, response []byte) {
+	res := "<nil>"
+	if response != nil {
+		res = string(response)
+	}
+	if req != "" {
+		c.Logger.Info().
+			Str("Request", req).
+			Str("Response", res).
+			Msg("")
+	}
 }
