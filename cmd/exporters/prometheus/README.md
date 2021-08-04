@@ -49,7 +49,6 @@ A few examples:
 Exporters:
   prom-prod:
     exporter: Prometheus
-    addr: 0.0.0.0
     port_range: 2000-2030
 Pollers:
   cluster-01:

@@ -1,20 +1,14 @@
 package harvest
 
-Exporters: [Name=_]: #Prom | #Influx | #PromConsul
+Exporters: [Name=_]: #Prom | #Influx
 
 #Prom: {
-	addr: string
+	local_http_addr: "0.0.0.0" | "localhost" | "127.0.0.1"
+	addr: string // deprecated
 	exporter:    "Prometheus"
 	port?:       int
 	port_range?: string
 	allow_addrs_regex?: [...string]
-}
-
-#PromConsul: {
-	addr: string
-	exporter:    "PrometheusConsul"
-    service_name: string
-    tags: [...string]
 }
 
 #Influx: {

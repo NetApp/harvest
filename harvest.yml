@@ -5,11 +5,10 @@ Tools:
 Exporters:
   prometheus:
     exporter: Prometheus
-    addr: 0.0.0.0
+    local_http_addr: 0.0.0.0
     port: 12990
   prometheus1:
     exporter: Prometheus
-    addr: 0.0.0.0
     port: 12991
 
 Defaults:
