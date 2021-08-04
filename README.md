@@ -213,7 +213,7 @@ All pollers are defined in `harvest.yml`, the main configuration file of Harvest
 | `use_insecure_tls`     | optional, bool |  If true, disable TLS verification when connecting to ONTAP cluster  | false         |
 | `log_max_bytes`        |  | Maximum size of the log file before it will be rotated | `10000000` (10 mb) |
 | `log_max_files`        |  | Number of rotated log files to keep | `10` |
-| |  | | |
+| `log`                  | optional, list of collector names              | matching collectors log their ZAPI request/response                                                                                                                                                                                                                                                                                                                         |                    |
 
 ## Defaults
 This section is optional. If there are parameters identical for all your pollers (e.g. datacenter, authentication method, login preferences), they can be grouped under this section. The poller section will be checked first and if the values aren't found there, the defaults will be consulted.

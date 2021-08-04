@@ -81,7 +81,7 @@ func (me *Zapi) InitVars() error {
 	if me.Client, err = client.New(me.Params); err != nil { // convert to connection error, so poller aborts
 		return errors.New(errors.ERR_CONNECTION, err.Error())
 	}
-
+	me.Client.TraceLogSet(me.Name, me.Params)
 	if err = me.Client.Init(5); err != nil { // 5 retries before giving up to connect
 		return errors.New(errors.ERR_CONNECTION, err.Error())
 	}
