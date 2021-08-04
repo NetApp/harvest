@@ -414,6 +414,7 @@ type Poller struct {
 	IsKfs          *bool     `yaml:"is_kfs,omitempty"`
 	PollerSchedule *string   `yaml:"poller_schedule,omitempty"`
 	ClientTimeout  *string   `yaml:"client_timeout,omitempty"`
+	LogSet         *[]string `yaml:"log,omitempty"`
 }
 
 func (p *Poller) Union(defaults *Poller) {

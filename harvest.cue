@@ -38,4 +38,5 @@ Pollers: [Name=_]: #Poller
 	log_max_files?: int
 	collectors: [...string]
 	exporters: [...string]
+	log: [...string]
 }
