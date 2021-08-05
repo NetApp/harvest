@@ -25,6 +25,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/spf13/cobra"
 	_ "goharvest2/cmd/collectors/simple"
 	_ "goharvest2/cmd/collectors/unix"
@@ -38,6 +39,7 @@ import (
 	"goharvest2/cmd/poller/options"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/cmd/poller/schedule"
+	"goharvest2/cmd/tools/asup"
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/logging"
@@ -65,6 +67,8 @@ var (
 	logMaxMegaBytes = logging.DefaultLogMaxMegaBytes // 10MB
 	logMaxBackups   = logging.DefaultLogMaxBackups
 	logMaxAge       = logging.DefaultLogMaxAge
+	asupInterval    = "1m" // send every 1 minute
+	harvestUUID     uuid.UUID
 )
 
 // init with default configuration by default it gets logged both to console and  harvest.log
@@ -281,11 +285,67 @@ func (p *Poller) Init() error {
 	}
 	logger.Debug().Msgf("set poller schedule with %s frequency", pollerSchedule)
 
+	// ASUP parameters will be loaded from Tools section
+	// since this feature will probably be delegated to a separate tool
+	toolsParams, err := conf.GetTools(p.options.Config)
+	if err != nil {
+		logger.Error().Stack().Err(err).Msg("load Tools config")
+		return err
+	}
+
+	if toolsParams.AsupEnabled != nil && *toolsParams.AsupEnabled {
+		if !p.targetIsOntap() {
+			logger.Info().Msg("disabling ASUP messaging as target is not ONTAP")
+		} else if err = p.schedule.NewTaskString("asup", asupInterval, p.startAsup); err != nil {
+			logger.Error().Stack().Err(err).Msg("set ASUP interval:")
+			return err
+		} else {
+			logger.Info().Msgf("set ASUP interval to %s", asupInterval)
+
+			// Make sure harvest instance has a UUID, if not create one and safe for later use
+			// @TODO: race conditions can occur here, so maybe do this at install time?
+			if toolsParams.HarvestUUID != nil {
+				logger.Info().Msg("parsing harvestUUID from config...")
+				if harvestUUID, err = uuid.Parse(*toolsParams.HarvestUUID); err != nil {
+					logger.Error().Stack().Err(err).Msg("parse stored harvest UUID")
+				}
+				logger.Info().Msgf("using stored harvest UUID [%s]", *toolsParams.HarvestUUID)
+			} else if harvestUUID, err = uuid.NewRandom(); err != nil {
+				logger.Error().Stack().Err(err).Msg("generate harvest UUID")
+				return err
+			} else {
+				s := harvestUUID.String()
+				toolsParams.HarvestUUID = &s
+				logger.Info().Msgf("generated harvest UUID [%s]", *toolsParams.HarvestUUID)
+				// Safe UUID
+				if err = conf.SafeHarvestConfig(p.options.Config); err != nil {
+					logger.Error().Stack().Err(err).Msg("safe config")
+					return err
+				} else {
+					logger.Info().Msgf("saved harvest UUID [%s] to new_%s", harvestUUID.String(), p.options.Config)
+				}
+			}
+		}
+
+	} else {
+		logger.Info().Msg("disabling ASUP messaging, by preference")
+	}
+
 	// famous last words
 	logger.Info().Msg("poller start-up complete")
 
 	return nil
 
+}
+
+// to the asup
+func (p *Poller) startAsup() (*matrix.Matrix, error) {
+	if p.collectors != nil {
+		if err := asup.DoAsupMessage(p.options.Config, p.collectors, p.status, p.name, harvestUUID.String()); err != nil {
+			return nil, err
+		}
+	}
+	return nil, nil
 }
 
 // Start will run the collectors and the poller itself
@@ -322,17 +382,15 @@ func (p *Poller) Run() {
 
 	// poller schedule has just one task
 	task := p.schedule.GetTask("poller")
+	asuptask := p.schedule.GetTask("asup")
 
 	// number of collectors/exporters that are still up
 	upCollectors := 0
 	upExporters := 0
 
 	for {
-
 		if task.IsDue() {
-
 			task.Start()
-
 			// flush metadata
 			p.status.Reset()
 			p.metadata.Reset()
@@ -410,6 +468,12 @@ func (p *Poller) Run() {
 			}
 			upCollectors = upc
 			upExporters = upe
+		}
+
+		if asuptask.IsDue() {
+			logger.Info().Msg("asup generation invoked")
+			asuptask.Run()
+			logger.Info().Msg("asup generation done")
 		}
 
 		p.schedule.Sleep()
@@ -741,6 +805,18 @@ var pollerCmd = &cobra.Command{
 	Short: "Harvest Poller - Runs collectors and exporters for a target system",
 	Args:  cobra.NoArgs,
 	Run:   startPoller,
+}
+
+// Returns true if at least one collector is known
+// to collect from an Ontap system (needs to be updated
+// when we add other Ontap collectors, e.g. REST)
+func (p *Poller) targetIsOntap() bool {
+	for _, c := range p.collectors {
+		if c.GetName() == "ZapiPerf" || c.GetName() == "Zapi" {
+			return true
+		}
+	}
+	return false
 }
 
 func startPoller(_ *cobra.Command, _ []string) {

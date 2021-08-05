@@ -94,6 +94,12 @@ func (me *Zapi) InitVars() error {
 		model = "7mode"
 	}
 
+	// save for ASUP messaging
+	me.HostUUID = me.Client.Serial()
+	version := me.Client.Version()
+	me.HostVersion = strconv.Itoa(version[0]) + "." + strconv.Itoa(version[1]) + "." + strconv.Itoa(version[2])
+	me.HostModel = model
+
 	template, err := me.ImportSubTemplate(model, me.TemplateFn, me.Client.Version())
 	if err != nil {
 		me.Logger.Error().Stack().Err(err).Msgf("Error importing subtemplate: %s", me.TemplateFn)

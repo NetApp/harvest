@@ -92,6 +92,24 @@ func LoadHarvestConfig(configPath string) error {
 	return nil
 }
 
+func SafeHarvestConfig(configPath string) error {
+	var (
+		contents []byte
+		err      error
+		fileName string
+	)
+	if !configRead {
+		panic("config not read")
+	}
+	if contents, err = yaml.Marshal(&Config); err != nil {
+		return err
+	}
+	if filepaths := strings.Split(configPath, "/"); len(filepaths) > 1 {
+		fileName = filepaths[1]
+	}
+	return ioutil.WriteFile("new_"+fileName, contents, 0644)
+}
+
 func SafeConfig(n *node.Node, fp string) error {
 	return tree.Export(n, "yaml", fp)
 }
@@ -148,6 +166,17 @@ func GetPollerNames(configFp string) ([]string, error) {
 	}
 
 	return pollerNames, nil
+}
+
+func GetTools(configFp string) (*Tools, error) {
+	var err error
+	if err = LoadHarvestConfig(configFp); err != nil {
+		return nil, err
+	}
+	if Config.Tools == nil {
+		Config.Tools = new(Tools)
+	}
+	return Config.Tools, nil
 }
 
 func GetPollers2(configFp string) (map[string]*Poller, error) {
@@ -396,6 +425,8 @@ type Consul struct {
 
 type Tools struct {
 	GrafanaApiToken *string `yaml:"grafana_api_token,omitempty"`
+	AsupEnabled     *bool   `yaml:"asup_messaging_enabled,omitempty"`
+	HarvestUUID     *string `yaml:"harvest_uuid,omitempty"`
 }
 
 type Poller struct {

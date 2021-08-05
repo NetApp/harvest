@@ -49,6 +49,10 @@ type Collector interface {
 	GetObject() string
 	GetParams() *node.Node
 	GetOptions() *options.Options
+	GetMetadata() *matrix.Matrix
+	GetHostVersion() string
+	GetHostModel() string
+	GetHostUUID() string
 	GetCollectCount() uint64
 	AddCollectCount(uint64)
 	GetStatus() (uint8, string, string)
@@ -77,7 +81,7 @@ var Status = [3]string{
 // are properly and timely executed.
 type AbstractCollector struct {
 	Name    string           // name of the collector, CamelCased
-	Object  string           // object of the collector, describes what thet collector is collecting
+	Object  string           // object of the collector, describes what that collector is collecting
 	Logger  *logging.Logger  // logger used for logging
 	Status  uint8            // current state of th
 	Message string           // reason if collector is in failed state
@@ -92,7 +96,10 @@ type AbstractCollector struct {
 	collectCount uint64              // count of collected data points
 	// this is different from what the collector will have in its metadata, since this variable
 	// holds count independent of the poll interval of the collector, used to give stats to Poller
-	countMux *sync.Mutex // used for atomic access to collectCount
+	countMux    *sync.Mutex // used for atomic access to collectCount
+	HostVersion string
+	HostModel   string
+	HostUUID    string
 }
 
 // New creates an AbstractCollector with the given arguments:
@@ -231,6 +238,23 @@ func Init(c Collector) error {
 	c.SetStatus(0, "initialized")
 
 	return nil
+}
+
+// @TODO unsafe to read concurrently
+func (me *AbstractCollector) GetMetadata() *matrix.Matrix {
+	return me.Metadata
+}
+
+func (me *AbstractCollector) GetHostModel() string {
+	return me.HostModel
+}
+
+func (me *AbstractCollector) GetHostVersion() string {
+	return me.HostVersion
+}
+
+func (me *AbstractCollector) GetHostUUID() string {
+	return me.HostUUID
 }
 
 // Start will run the collector in an infinity loop
