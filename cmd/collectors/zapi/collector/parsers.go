@@ -125,10 +125,10 @@ func (me *Zapi) HandleCounter(path []string, content string) string {
 			me.Logger.Trace().Msgf("%sadd (%s) as instance key [%s]%s => %v", color.Red, key, display, color.End, fullPath)
 		}
 	} else {
-        // use user-defined metric type
+		// use user-defined metric type
 		if t := me.Params.GetChildContentS("metric_type"); t != "" {
 			metric, err = me.Matrix.NewMetricType(key, t)
-        // use uint64 as default, since nearly all ZAPI counters are unsigned
+			// use uint64 as default, since nearly all ZAPI counters are unsigned
 		} else {
 			metric, err = me.Matrix.NewMetricUint64(key)
 		}
