@@ -31,7 +31,7 @@ Parameters different from ZapiPerf:
 
 ### Object configuration file
 
-The Zapi collector does not have the parameters `instance_key` and `override` parameters. The optional parameter `metric_type` allows to override the defualt metric type (`uint64`). The value of this parameter should be only of the metric types supported by [the Matrix data-structure](../../pkg/matrix/README.md#add-metrics).
+The Zapi collector does not have the parameters `instance_key` and `override` parameters. The optional parameter `metric_type` allows to override the defualt metric type (`uint64`). The value of this parameter should be only of the metric types supported by [the Matrix data-structure](../../../pkg/matrix/README.md#add-metrics).
 
 #### `counters`
 
