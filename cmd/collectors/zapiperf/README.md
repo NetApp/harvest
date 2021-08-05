@@ -131,24 +131,6 @@ Parameters in this section tell the exporters how to handle the collected data. 
 * `instance_labels` (list): display names of labels to export as a separate data-point
 * `include_all_labels` (bool): export all labels with each data-point (overrides previous two parameters)
 
-#### Creating/editing subtemplates
-
-Instead of editing one of the existing subtemplates, create a copy and edit that. This way, your custom template will not be overwritten when upgrading Harvest.
-
-Harvest provides a tool for exploring what objects and counters are available on ONTAP systems. This tool can help create or edit subtemplates. Examples:
-
-```sh
-$ harvest zapi --poller <poller> show objects
-  # will print list of perf objects
-$ harvest zapi --poller <poller> show counters --object volume
-  # will print list of counters in the volume objects
-$ harvest zapi --poller <poller> show counters --object volume
-  # will print raw data of all counters in the volume objects
-```
-
-Replace `<poller>` with the name of one of your ONTAP pollers.
-
-
 ## Metrics
 
 The collector collects a dynamic set of metrics. The metric values are calculated from two consecutive polls (therefore no metrics are emitted after the first poll). The calculation algorithm depends on the `property` and `base-counter` attributes of each metric, the following properties are supported:
@@ -160,3 +142,75 @@ The collector collects a dynamic set of metrics. The metric values are calculate
 | rate | x = (x<sub>i</sub> - x<sub>i-1</sub>) / (t<sub>i</sub> - t<sub>i-1</sub>) | delta divided by the interval of the two polls in seconds |
 | average | x = (x<sub>i</sub> - x<sub>i-1</sub>) / (y<sub>i</sub> - y<sub>i-1</sub>) | delta divided by the delta of the base counter **y** |
 | percent | x = 100 * (x<sub>i</sub> - x<sub>i-1</sub>) / (y<sub>i</sub> - y<sub>i-1</sub>) | average multiplied by 100 |
+
+## Creating/editing subtemplates
+
+Instead of editing one of the existing templates, it's better to copy one and edit the copy. That way, your custom template will not be overwritten when upgrading Harvest. Below is an example of collecting sensor metrics.
+
+### Copy an existing template or create a new one
+
+Create `conf/zapi/cdot/9.8.0/sensor.yaml` with the following content:
+
+```
+name:                      Sensor
+query:                     environment-sensors-get-iter
+object:                    sensor
+
+counters:
+  environment-sensors-info:
+    - critical-high-threshold    => critical_high
+    - critical-low-threshold     => critical_low
+    - ^discrete-sensor-state     => discrete_state
+    - ^discrete-sensor-value     => discrete_value
+    - ^^node-name                => node
+    - ^^sensor-name              => sensor
+    - ^sensor-type               => type
+    - ^threshold-sensor-state    => threshold_state
+    - threshold-sensor-value     => threshold_value
+    - ^value-units               => unit
+    - ^warning-high-threshold    => warning_high
+    - ^warning-low-threshold     => warning_low
+
+export_options:
+  include_all_labels: true
+```
+
+### Enable the new template
+
+To enable the new template, create `conf/zapi/custom.yaml` with the lines shown below.
+
+In the future, if you add more templates, you can add those in this same file.
+
+```
+objects:
+  Sensor: sensor.yaml
+```
+
+### Test your changes and restart pollers
+
+Test your new `Sensor` template with a single poller like this:
+```
+./bin/harvest start --foreground --verbose --collectors Zapi --objects Sensor <poller>
+```
+Replace `<poller>` with the name of one of your ONTAP pollers.
+
+Once you have confirmed that the new template works, restart any already running pollers that you want to pick up the new template(s).
+
+### Check the metrics
+
+If you are using the Prometheus exporter, check the metrics on the HTTP endpoint with `curl` or a web browser. e.g. my poller is exporting its data on port `15001`. Adjust as needed for your exporter.
+
+```
+curl -s 'http://localhost:15001/metrics' | grep sensor_
+
+sensor_value{datacenter="WDRF",cluster="shopfloor",critical_high="3664",node="shopfloor-02",sensor="P3.3V STBY",type="voltage",warning_low="3040",critical_low="2960",threshold_state="normal",unit="mV",warning_high="3568"} 3280
+sensor_value{datacenter="WDRF",cluster="shopfloor",sensor="P1.2V STBY",type="voltage",threshold_state="normal",warning_high="1299",warning_low="1105",critical_low="1086",node="shopfloor-02",critical_high="1319",unit="mV"} 1193
+sensor_value{datacenter="WDRF",cluster="shopfloor",unit="mV",critical_high="15810",critical_low="0",node="shopfloor-02",sensor="P12V STBY",type="voltage",threshold_state="normal"} 11842
+sensor_value{datacenter="WDRF",cluster="shopfloor",sensor="P12V STBY Curr",type="current",threshold_state="normal",unit="mA",critical_high="3182",critical_low="0",node="shopfloor-02"} 748
+sensor_value{datacenter="WDRF",cluster="shopfloor",critical_low="1470",node="shopfloor-02",sensor="Sysfan2 F2 Speed",type="fan",threshold_state="normal",unit="RPM",warning_low="1560"} 2820
+sensor_value{datacenter="WDRF",cluster="shopfloor",sensor="PSU2 Fan1 Speed",type="fan",threshold_state="normal",unit="RPM",warning_low="4600",critical_low="4500",node="shopfloor-01"} 6900
+sensor_value{datacenter="WDRF",cluster="shopfloor",sensor="PSU1 InPwr Monitor",type="unknown",threshold_state="normal",unit="mW",node="shopfloor-01"} 132000
+sensor_value{datacenter="WDRF",cluster="shopfloor",critical_high="58",type="thermal",unit="C",warning_high="53",critical_low="0",node="shopfloor-01",sensor="Bat Temp",threshold_state="normal",warning_low="5"} 24
+sensor_value{datacenter="WDRF",cluster="shopfloor",critical_high="9000",node="shopfloor-01",sensor="Bat Charge Volt",type="voltage",threshold_state="normal",unit="mV",warning_high="8900"} 8200
+sensor_value{datacenter="WDRF",cluster="shopfloor",node="shopfloor-02",sensor="PSU1 InPwr Monitor",type="unknown",threshold_state="normal",unit="mW"} 132000
+```
