@@ -1,6 +1,7 @@
 
 Tools:
   #grafana_api_token: 'aaa-bbb-ccc-ddd'
+  asup_messaging_enabled: true
 
 Exporters:
   prometheus:

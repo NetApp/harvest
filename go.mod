@@ -5,6 +5,7 @@ go 1.15
 require (
 	github.com/bbrks/wrap/v2 v2.5.0
 	github.com/go-openapi/spec v0.20.3
+	github.com/google/uuid v1.1.2
 	github.com/hashicorp/go-version v1.3.0
 	github.com/imdario/mergo v0.3.12
 	github.com/olekukonko/tablewriter v0.0.5
