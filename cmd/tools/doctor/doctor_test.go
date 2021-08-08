@@ -61,7 +61,7 @@ func TestConfigToStruct(t *testing.T) {
 
 	infinity := (*conf.Config.Pollers)["infinity2"]
 	collectors := infinity.Collectors
-	if (*collectors)[0] != "Zapi" {
+	if (*collectors)[0].Name != "Zapi" {
 		t.Fatalf(`expected infinity2 collectors to contain Zapi actual=%+v`,
 			(*collectors)[0])
 	}

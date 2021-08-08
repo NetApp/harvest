@@ -398,23 +398,28 @@ type Tools struct {
 	GrafanaApiToken *string `yaml:"grafana_api_token,omitempty"`
 }
 
+type Collector struct {
+	Name      string
+	Templates *[]string
+}
+
 type Poller struct {
-	Datacenter     *string   `yaml:"datacenter,omitempty"`
-	Addr           *string   `yaml:"addr,omitempty"`
-	AuthStyle      *string   `yaml:"auth_style,omitempty"`
-	Username       *string   `yaml:"username,omitempty"`
-	Password       string    `yaml:"password,omitempty"`
-	UseInsecureTls *bool     `yaml:"use_insecure_tls,omitempty"`
-	SslCert        *string   `yaml:"ssl_cert,omitempty"`
-	SslKey         *string   `yaml:"ssl_key,omitempty"`
-	LogMaxBytes    *int64    `yaml:"log_max_bytes,omitempty"`
-	LogMaxFiles    *int      `yaml:"log_max_files,omitempty"`
-	Exporters      *[]string `yaml:"exporters,omitempty"`
-	Collectors     *[]string `yaml:"collectors,omitempty"`
-	IsKfs          *bool     `yaml:"is_kfs,omitempty"`
-	PollerSchedule *string   `yaml:"poller_schedule,omitempty"`
-	ClientTimeout  *string   `yaml:"client_timeout,omitempty"`
-	LogSet         *[]string `yaml:"log,omitempty"`
+	Datacenter     *string      `yaml:"datacenter,omitempty"`
+	Addr           *string      `yaml:"addr,omitempty"`
+	AuthStyle      *string      `yaml:"auth_style,omitempty"`
+	Username       *string      `yaml:"username,omitempty"`
+	Password       string       `yaml:"password,omitempty"`
+	UseInsecureTls *bool        `yaml:"use_insecure_tls,omitempty"`
+	SslCert        *string      `yaml:"ssl_cert,omitempty"`
+	SslKey         *string      `yaml:"ssl_key,omitempty"`
+	LogMaxBytes    *int64       `yaml:"log_max_bytes,omitempty"`
+	LogMaxFiles    *int         `yaml:"log_max_files,omitempty"`
+	Exporters      *[]string    `yaml:"exporters,omitempty"`
+	Collectors     *[]Collector `yaml:"collectors,omitempty"`
+	IsKfs          *bool        `yaml:"is_kfs,omitempty"`
+	PollerSchedule *string      `yaml:"poller_schedule,omitempty"`
+	ClientTimeout  *string      `yaml:"client_timeout,omitempty"`
+	LogSet         *[]string    `yaml:"log,omitempty"`
 }
 
 func (p *Poller) Union(defaults *Poller) {
@@ -446,6 +451,24 @@ type Exporter struct {
 
 type Pollers struct {
 	namesInOrder []string
+}
+
+var defaultTemplate = &[]string{"default.yaml"}
+
+func (c *Collector) UnmarshalYAML(n *yaml.Node) error {
+	if n.Kind == yaml.ScalarNode && n.ShortTag() == "!!str" {
+		c.Name = n.Value
+		c.Templates = defaultTemplate
+	} else if n.Kind == yaml.MappingNode && len(n.Content) == 2 {
+		c.Name = n.Content[0].Value
+		var subs []string
+		c.Templates = &subs
+		seq := n.Content[1]
+		for _, n2 := range seq.Content {
+			subs = append(subs, n2.Value)
+		}
+	}
+	return nil
 }
 
 func (i *Pollers) UnmarshalYAML(node *yaml.Node) error {
