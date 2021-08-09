@@ -92,6 +92,8 @@ func (me *Zapi) HandleCounter(path []string, content string) string {
 	var (
 		name, display, key    string
 		splitValues, fullPath []string
+		metric                matrix.Metric
+		err                   error
 	)
 
 	splitValues = strings.Split(content, "=>")
@@ -123,7 +125,13 @@ func (me *Zapi) HandleCounter(path []string, content string) string {
 			me.Logger.Trace().Msgf("%sadd (%s) as instance key [%s]%s => %v", color.Red, key, display, color.End, fullPath)
 		}
 	} else {
-		metric, err := me.Matrix.NewMetricUint64(key)
+		// use user-defined metric type
+		if t := me.Params.GetChildContentS("metric_type"); t != "" {
+			metric, err = me.Matrix.NewMetricType(key, t)
+			// use uint64 as default, since nearly all ZAPI counters are unsigned
+		} else {
+			metric, err = me.Matrix.NewMetricUint64(key)
+		}
 		if err != nil {
 			me.Logger.Error().Stack().Err(err).Msgf("add as metric (%s) [%s]: %v", key, display)
 		} else {
