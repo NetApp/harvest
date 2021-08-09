@@ -90,7 +90,7 @@ func TestPollerStructDefaults(t *testing.T) {
 		if len(*poller.Collectors) != 2 {
 			t.Fatalf(`expected 2 collectors but got %v`, *poller.Collectors)
 		}
-		defaultT := []string{"default.yaml"}
+		defaultT := []string{"default.yaml", "custom.yaml"}
 		expected := []Collector{{Name: "Zapi", Templates: &defaultT}, {Name: "ZapiPerf", Templates: &defaultT}}
 		if !reflect.DeepEqual(*poller.Collectors, expected) {
 			t.Fatalf(`expected collectors to be %v but was %v`, expected, *poller.Collectors)
