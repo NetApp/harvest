@@ -1,6 +1,7 @@
 
 # version, release and arch will be pasted here
 %define name harvest
+%define _python_bytecompile_errors_terminate_build 0
 
 Name: %{name}
 Summary: Storage System Monitoring
