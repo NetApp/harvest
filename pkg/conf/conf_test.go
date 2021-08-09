@@ -90,7 +90,8 @@ func TestPollerStructDefaults(t *testing.T) {
 		if len(*poller.Collectors) != 2 {
 			t.Fatalf(`expected 2 collectors but got %v`, *poller.Collectors)
 		}
-		expected := []string{"Zapi", "ZapiPerf"}
+		defaultT := []string{"default.yaml", "custom.yaml"}
+		expected := []Collector{{Name: "Zapi", Templates: &defaultT}, {Name: "ZapiPerf", Templates: &defaultT}}
 		if !reflect.DeepEqual(*poller.Collectors, expected) {
 			t.Fatalf(`expected collectors to be %v but was %v`, expected, *poller.Collectors)
 		}
@@ -114,7 +115,7 @@ func TestPollerUnion(t *testing.T) {
 	user := "user"
 	defaults := Poller{
 		Addr:       &addr,
-		Collectors: &[]string{"0", "1", "2", "3"},
+		Collectors: &[]Collector{{Name: "0"}, {Name: "1"}, {Name: "2"}, {Name: "3"}},
 		Username:   &user,
 	}
 	var p Poller
@@ -129,7 +130,7 @@ func TestPollerUnion(t *testing.T) {
 		t.Fatalf(`expected collectors to be have four elements but was [%v]`, *p.Collectors)
 	}
 	for i := 0; i < len(*p.Collectors); i++ {
-		actual := (*p.Collectors)[i]
+		actual := (*p.Collectors)[i].Name
 		if actual != strconv.Itoa(i) {
 			t.Fatalf(`expected element at index=%d to be %d but was [%v]`, i, i, actual)
 		}
@@ -140,7 +141,7 @@ func TestPollerUnion(t *testing.T) {
 	maxFiles := 314
 	p2 := Poller{
 		Username:    &name,
-		Collectors:  &[]string{"10", "11", "12", "13"},
+		Collectors:  &[]Collector{{Name: "10"}, {Name: "11"}, {Name: "12"}, {Name: "13"}},
 		IsKfs:       &isKfs,
 		LogMaxFiles: &maxFiles,
 	}
@@ -155,7 +156,7 @@ func TestPollerUnion(t *testing.T) {
 		t.Fatalf(`expected LogMaxFiles to be [314] but was [%v]`, *p2.LogMaxFiles)
 	}
 	for i := 0; i < len(*p2.Collectors); i++ {
-		actual := (*p2.Collectors)[i]
+		actual := (*p2.Collectors)[i].Name
 		if actual != strconv.Itoa(10+i) {
 			t.Fatalf(`expected element at index=%d to be %d but was [%v]`, i, i+10, actual)
 		}
@@ -172,13 +173,13 @@ func TestFlowStyle(t *testing.T) {
 		if len(*poller.Collectors) != 1 {
 			t.Fatalf(`expected there to be one collector but got %v`, len(*poller.Collectors))
 		}
-		if (*poller.Collectors)[0] != "Zapi" {
+		if (*poller.Collectors)[0].Name != "Zapi" {
 			t.Fatalf(`expected the first collector to be Zapi but got %v`, (*poller.Collectors)[0])
 		}
 		if len(*poller.Exporters) != 1 {
 			t.Fatalf(`expected there to be one exporter but got %v`, len(*poller.Exporters))
 		}
-		if (*poller.Collectors)[0] != "Zapi" {
+		if (*poller.Collectors)[0].Name != "Zapi" {
 			t.Fatalf(`expected the first exporter to be prom but got %v`, (*poller.Exporters)[0])
 		}
 	})
@@ -210,4 +211,34 @@ func TestQuotedPassword(t *testing.T) {
 			t.Fatalf(`expected password to be #pass but got %v`, poller.Password)
 		}
 	})
+}
+
+func TestCollectorConfig(t *testing.T) {
+	type test struct {
+		name string
+		path string
+		want []string
+	}
+	tests := []test{
+		{name: "normal", path: "testdata/normal.yaml", want: []string{"default.yaml"}},
+		{name: "issue_396", path: "testdata/issue_396.yaml", want: []string{"limited1.yaml", "limited2.yaml", "limited3.yaml"}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := loadHarvestConfig(tt.path)
+			if err != nil {
+				panic(err)
+			}
+			poller, err := GetPoller2(tt.path, "DC-01")
+			if err != nil {
+				panic(err)
+			}
+			for i, tc := range tt.want {
+				collectors := *poller.Collectors
+				if tc != (*collectors[0].Templates)[i] {
+					t.Errorf("want %s collector config, got %s", tt.want[i], tc)
+				}
+			}
+		})
+	}
 }

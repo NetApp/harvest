@@ -235,19 +235,19 @@ func (p *Poller) Init() error {
 			if len(p.options.Collectors) != 0 {
 				ok = false
 				for _, x := range p.options.Collectors {
-					if x == c {
+					if x == c.Name {
 						ok = true
 						break
 					}
 				}
 			}
 			if !ok {
-				logger.Debug().Msgf("skipping collector [%s]", c)
+				logger.Debug().Msgf("skipping collector [%s]", c.Name)
 				continue
 			}
 
 			if err = p.loadCollector(c, ""); err != nil {
-				logger.Error().Stack().Err(err).Msgf("load collector (%s):", c)
+				logger.Error().Stack().Err(err).Msgf("load collector (%s) templates=%s:", c.Name, *c.Templates)
 			}
 		}
 	}
@@ -452,15 +452,17 @@ func (p *Poller) ping() (float32, bool) {
 // dynamically load and initialize a collector
 // if there are more than one objects defined for a collector,
 // then multiple collectors will be initialized
-func (p *Poller) loadCollector(class, object string) error {
+func (p *Poller) loadCollector(c conf.Collector, object string) error {
 
 	var (
-		err              error
-		template, custom *node.Node
-		collectors       []collector.Collector
-		col              collector.Collector
+		class                 string
+		err                   error
+		template, subTemplate *node.Node
+		collectors            []collector.Collector
+		col                   collector.Collector
 	)
 
+	class = c.Name
 	// throw warning for deprecated collectors
 	if r, d := deprecatedCollectors[strings.ToLower(class)]; d {
 		if r != "" {
@@ -472,15 +474,26 @@ func (p *Poller) loadCollector(class, object string) error {
 
 	// load the template file(s) of the collector where we expect to find
 	// object name or list of objects
-	if template, err = collector.ImportTemplate(p.options.HomePath, "default.yaml", class); err != nil {
-		return err
-	} else if template == nil { // probably redundant
-		return errors.New(errors.MISSING_PARAM, "collector template")
+	if c.Templates != nil {
+		for _, t := range *c.Templates {
+			if subTemplate, err = collector.ImportTemplate(p.options.HomePath, t, class); err != nil {
+				logger.Warn().
+					Err(err).
+					Msg("Unable to load template.")
+				continue
+			}
+			if template == nil {
+				template = subTemplate
+			} else {
+				logger.Debug().
+					Str("template", t).
+					Msg("Merged template.")
+				template.Merge(subTemplate)
+			}
+		}
 	}
-
-	if custom, err = collector.ImportTemplate(p.options.HomePath, "custom.yaml", class); err == nil && custom != nil {
-		template.Merge(custom)
-		logger.Debug().Msg("merged custom and default templates")
+	if template == nil {
+		return fmt.Errorf("no templates loaded for %s", c.Name)
 	}
 	// add the poller's parameters to the collector's parameters
 	Union2(template, p.params)
