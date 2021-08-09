@@ -453,7 +453,7 @@ type Pollers struct {
 	namesInOrder []string
 }
 
-var defaultTemplate = &[]string{"default.yaml"}
+var defaultTemplate = &[]string{"default.yaml", "custom.yaml"}
 
 func (c *Collector) UnmarshalYAML(n *yaml.Node) error {
 	if n.Kind == yaml.ScalarNode && n.ShortTag() == "!!str" {

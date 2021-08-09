@@ -249,7 +249,26 @@ Tools:
 
 ## Configuring collectors
 
-Collectors are configured by their own configuration files, which are subdirectories in [conf/](conf/). Each collector can define its own set of parameters.
+Collectors are configured by their own configuration files (templates), which are stored in subdirectories in [conf/](conf/). Most collectors run concurrently and collect a subset of related metrics. For example, node related metrics are grouped together and run independently from the disk related metrics. Below is a snippet from `conf/zapi/default.yaml`
+
+In this example, the `default.yaml` template contains a list of objects (e.g. Node) that reference subtemplates (e.g. node.yaml). This decomposition groups related metrics together and at runtime, a `Zapi` collector per object will be created and each of these collectors will run concurrently. 
+
+Using the snippet below, we  expect there to be four `Zapi` collectors running, each with a different subtemplate and object.
+
+```
+collector:          Zapi
+objects:
+  Node:             node.yaml
+  Aggregate:        aggr.yaml
+  Volume:           volume.yaml
+  SnapMirror:       snapmirror.yaml
+```
+
+At start-up, Harvest looks for two files (`default.yaml` and `custom.yaml`) in the `conf` directory of the collector (e.g. `conf/zapi/default.yaml`). The `default.yaml` is installed by default, while the `custom.yaml` is an optional file you can create to [add new templates](https://github.com/NetApp/harvest/blob/main/cmd/collectors/zapiperf/README.md#creatingediting-subtemplates).
+
+When present, the `custom.yaml` file will be merged with the `default.yaml` file. This behavior can be overridden in your `harvest.yml`, see [here](pkg/conf/testdata/issue_396.yaml) for an example.
+
+For a list of collector-specific parameters, see the documentation of each collector.
 
 ### [Zapi](cmd/collectors/zapi/README.md)
 

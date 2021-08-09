@@ -455,11 +455,11 @@ func (p *Poller) ping() (float32, bool) {
 func (p *Poller) loadCollector(c conf.Collector, object string) error {
 
 	var (
-		class                         string
-		err                           error
-		template, subTemplate, custom *node.Node
-		collectors                    []collector.Collector
-		col                           collector.Collector
+		class                 string
+		err                   error
+		template, subTemplate *node.Node
+		collectors            []collector.Collector
+		col                   collector.Collector
 	)
 
 	class = c.Name
@@ -485,16 +485,15 @@ func (p *Poller) loadCollector(c conf.Collector, object string) error {
 			if template == nil {
 				template = subTemplate
 			} else {
+				logger.Debug().
+					Str("template", t).
+					Msg("Merged template.")
 				template.Merge(subTemplate)
 			}
 		}
 	}
 	if template == nil {
 		return fmt.Errorf("no templates loaded for %s", c.Name)
-	}
-	if custom, err = collector.ImportTemplate(p.options.HomePath, "custom.yaml", class); err == nil && custom != nil {
-		template.Merge(custom)
-		logger.Debug().Msg("merged custom and default templates")
 	}
 	// add the poller's parameters to the collector's parameters
 	Union2(template, p.params)
