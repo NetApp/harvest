@@ -9,9 +9,9 @@ pipeline {
             )
     }
     parameters {
-        string(name: 'BRANCH', defaultValue: 'install_automation_test', description: '[Optional] Branch name to clone. Default (main) ')
+        string(name: 'BRANCH', defaultValue: 'docker-automation', description: '[Optional] Branch name to clone. Default (main) ')
         string(name: 'RPM', defaultValue: '', description: 'http url of RPM build')
-        string(name: 'NATIVE', defaultValue: '', description: 'http url of native tar file')
+        string(name: 'DOCKER', defaultValue: '', description: 'http url of docker image/tar file')
     }
 
     stages {
@@ -84,11 +84,11 @@ pipeline {
                     }
 
                 }
-                stage('Native') {
+                stage('DOCKER') {
                     agent {
                         label "rhel"
                     }
-                    stages('Test on Native Pkg') {
+                    stages('Test on DOCKER Pkg') {
                         stage('Cleanup Workspace') {
                             steps {
                                 cleanWs()
@@ -116,15 +116,15 @@ pipeline {
                             }
                         }
 
-                        stage('Install Native') {
+                        stage('Install DOCKER') {
                             steps {
                                 sh """
                                 echo "Installing"
                                 export PATH=$PATH:/usr/local/go/bin
-                                export BUILD_PATH=$NATIVE
+                                export BUILD_PATH=$DOCKER
                                 cd $WORKSPACE/harvest/integration/test/
                                 go mod vendor
-                                go test -tags=install_native
+                                go test -tags=install_docker
                                 """
                             }
                         }

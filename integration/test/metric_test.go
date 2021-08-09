@@ -5,6 +5,7 @@ package main
 import (
 	"goharvest2/integration/test/installer"
 	"goharvest2/integration/test/utils"
+	"goharvest2/pkg/conf"
 	"log"
 	"strconv"
 	"strings"
@@ -12,15 +13,12 @@ import (
 )
 
 func TestPollerMetrics(t *testing.T) {
-	harvestObj := new(installer.Harvest)
-	status := harvestObj.AllRunning()
-	if status == false {
-		panic("One or more pollers are not running.")
-	}
-	pollers := harvestObj.GetPollerInfo()
-	for i := range pollers {
+	pollerNames, _ := conf.GetPollerNames(installer.HARVEST_CONFIG_FILE)
+	for _, pollerName := range pollerNames {
+		port, _ := conf.GetPrometheusExporterPorts(pollerName)
+		portString := strconv.Itoa(port)
 		var validCounters = 0
-		sb, error := utils.GetResponse(pollers[i].MetricUrl())
+		sb, error := utils.GetResponse("http://localhost:" + strings.TrimSpace(portString) + "/metrics")
 		if error != nil {
 			panic("Unable to get metric data")
 		}
@@ -46,9 +44,9 @@ func TestPollerMetrics(t *testing.T) {
 			}
 		}
 		if validCounters == 0 {
-			panic("Empty values found for all counters for poller " + pollers[i].Poller)
+			panic("Empty values found for all counters for poller " + pollerName)
 		}
-		log.Printf("Total number of counters verified %d for poller '%s' \n", validCounters, pollers[i].Poller)
+		log.Printf("Total number of counters verified %d for poller '%s' \n", validCounters, pollerName)
 	}
 
 }

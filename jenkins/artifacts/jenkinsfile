@@ -31,6 +31,7 @@ pipeline {
         """).trim()
         targetParentLocation = "/opt/home/nightly/"
         harvestPath = "harvest"
+        imageName = "rahulguptajss/harvest"
     }
 
     stages {
@@ -105,7 +106,17 @@ pipeline {
                 '''
             }
         }
-       stage('Build Docker Image and Publish') {
+
+        stage('Build Docker') {
+                    steps {
+                       sh '''
+                       cd $harvestPath
+                       docker build -f docker/onePollerPerContainer/Dockerfile -t $imageName:latest -t $imageName:$VERSION-$RELEASE . --no-cache
+                       docker save -o $targetParentLocation$VERSION-$RELEASE-$BRANCH/docker_harvest.tar $imageName:latest
+                        '''
+                    }
+                }
+       stage('Publish Docker Image') {
                 when {
                   expression {
                     return env.BUILD_DOCKER_HUB_PUBLISH == 'true';
@@ -115,13 +126,12 @@ pipeline {
                   withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
                     sh '''
                     cd $harvestPath
-                    docker build -f docker/onePollerPerContainer/Dockerfile -t rahulguptajss/harvest:latest -t rahulguptajss/harvest:$VERSION-$RELEASE . --no-cache
                     docker login
-                    docker push rahulguptajss/harvest:$VERSION-$RELEASE
+                    docker push $imageName:$VERSION-$RELEASE
                     '''
 					script {
 					if (OVERWRITE_LATEST == 'true') {
-					  sh 'docker push rahulguptajss/harvest:latest'
+					  sh 'docker push $imageName:latest'
 					}
 					}
                   }
