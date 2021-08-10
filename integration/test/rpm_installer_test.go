@@ -3,7 +3,7 @@
 package main
 
 import (
-	"goharvest2/integration/test/installer"
+	"github.com/Netapp/harvest-automation/test/installer"
 	"log"
 	"os"
 	"testing"

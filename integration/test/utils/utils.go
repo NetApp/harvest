@@ -1,20 +1,27 @@
 package utils
 
 import (
+	"bytes"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"os/exec"
 )
 
 func Run(command string, arg ...string) string {
-	out, err := exec.Command(command, arg...).Output()
+	cmd := exec.Command(command, arg...)
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &stderr
+	err := cmd.Run()
 	if err != nil {
+		log.Println(stderr.String())
 		panic(err)
 	}
-	output := string(out[:])
-	return output
+	return out.String()
 }
 
 func Exec(dir string, command string, arg ...string) string {
@@ -37,14 +44,24 @@ func DownloadFile(filepath string, url string) error {
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(resp.Body)
 
 	// Create the file
 	out, err := os.Create(filepath)
 	if err != nil {
 		return err
 	}
-	defer out.Close()
+	defer func(out *os.File) {
+		err := out.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(out)
 
 	// Write the body to file
 	_, err = io.Copy(out, resp.Body)
@@ -108,7 +125,12 @@ func copyFileContents(src, dst string) (err error) {
 	if err != nil {
 		return
 	}
-	defer in.Close()
+	defer func(in *os.File) {
+		err := in.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(in)
 	out, err := os.Create(dst)
 	if err != nil {
 		return

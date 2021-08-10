@@ -1,7 +1,7 @@
 package installer
 
 import (
-	"goharvest2/integration/test/utils"
+	"github.com/Netapp/harvest-automation/test/utils"
 	"log"
 )
 
@@ -33,7 +33,10 @@ func (r *Native) Install() bool {
 	unTarOutput := utils.Run("tar", "-xf", tarFileName, "--one-top-level=harvest", "--strip-components", "1", "-C", "/opt")
 	log.Println(unTarOutput)
 	utils.RemoveSafely(HarvestHome + "/" + harvestFile)
-	utils.CopyFile(harvestFile, HarvestHome+"/"+harvestFile)
+	err = utils.CopyFile(harvestFile, HarvestHome+"/"+harvestFile)
+	if err != nil {
+		panic(err)
+	}
 	harvestObj.Start()
 	status := harvestObj.AllRunning()
 	return status

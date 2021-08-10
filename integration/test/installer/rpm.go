@@ -1,7 +1,7 @@
 package installer
 
 import (
-	"goharvest2/integration/test/utils"
+	"github.com/Netapp/harvest-automation/test/utils"
 	"log"
 )
 
@@ -14,7 +14,7 @@ func (r *RPM) Init(path string) {
 }
 
 func (r *RPM) Install() bool {
-	//harvestFile := "harvest.yml"
+	harvestFile := "harvest.yml"
 	rpmFileName := "harvest.rpm"
 	utils.RemoveSafely(rpmFileName)
 	err := utils.DownloadFile(rpmFileName, r.path)
@@ -28,8 +28,11 @@ func (r *RPM) Install() bool {
 	log.Println("Installing " + rpmFileName)
 	installOutput := utils.Run("yum", "install", "-y", rpmFileName)
 	log.Println(installOutput)
-	//utils.RemoveSafely(harvestFile)
-	//utils.CopyFile(HARVEST_HOME+"/harvest.yml", harvestFile) use file directly from the repo
+	utils.RemoveSafely(harvestFile)
+	copyErr := utils.CopyFile(HarvestHome+"/harvest.yml", harvestFile)
+	if copyErr != nil {
+		return false
+	} //use file directly from the repo
 	harvestObj := new(Harvest)
 	harvestObj.Start()
 	status := harvestObj.AllRunning()

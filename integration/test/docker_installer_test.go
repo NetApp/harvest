@@ -1,5 +1,3 @@
-//+build install_native
-
 package main
 
 import (
@@ -9,27 +7,21 @@ import (
 	"testing"
 )
 
-func TestNativeInstall(t *testing.T) {
+func TestDockerInstall(t *testing.T) {
 	var path = os.Getenv("BUILD_PATH")
 	if len(path) == 0 {
 		panic("BUILD_PATH variable is not set.")
 	}
-	installObject, error := installer.GetInstaller(installer.NATIVE, path)
-	if error != nil {
+	installObject, err := installer.GetInstaller(installer.DOCKER, path)
+	if err != nil {
 		log.Println("Unable to initialize installer object")
-		panic(error)
+		panic(err)
 	}
 	if installObject.Install() {
 		log.Println("Installation is successful..")
 	} else {
 		log.Println("Setup completed")
 		panic("installation is failed.")
-	}
-	harvestObj := new(installer.Harvest)
-	if harvestObj.AllRunning() {
-		log.Println("All pollers are running")
-	} else {
-		t.Errorf("One or more pollers are not running.")
 	}
 
 }
