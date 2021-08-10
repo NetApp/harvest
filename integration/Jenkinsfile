@@ -10,7 +10,7 @@ pipeline {
     }
     parameters {
         string(name: 'BRANCH', defaultValue: 'install_automation_test', description: '[Optional] Branch name to clone. Default (main) ')
-        string(name: 'RPM', defaultValue: '', description: 'http url of RPM build')
+        string(name: 'DOCKER', defaultValue: '', description: 'http url of docker tar file or docker image tag')
         string(name: 'NATIVE', defaultValue: '', description: 'http url of native tar file')
     }
 
@@ -27,11 +27,11 @@ pipeline {
         }
         stage('Run Tests') {
             parallel {
-                stage('RPM') {
+                stage('DOCKER') {
                     agent {
                         label "rhel"
                     }
-                    stages('Test on RPM Pkg') {
+                    stages('Test on Docker Pkg') {
                         stage('Cleanup Workspace') {
                             steps {
                                 cleanWs()
@@ -59,15 +59,15 @@ pipeline {
                             }
                         }
 
-                        stage('Install RPM') {
+                        stage('Install Docker') {
                             steps {
                                 sh """
                                 echo "Installing"
                                 export PATH=$PATH:/usr/local/go/bin
-                                export BUILD_PATH=$RPM
+                                export BUILD_PATH=$DOCKER
                                 cd $WORKSPACE/harvest/integration/test/
                                 go mod vendor
-                                go test -tags=install_rpm
+                                go test -tags=install_docker
                                 """
                             }
                         }
