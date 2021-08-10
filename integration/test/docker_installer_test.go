@@ -1,3 +1,5 @@
+//+build install_docker
+
 package main
 
 import (
