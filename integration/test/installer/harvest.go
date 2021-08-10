@@ -2,8 +2,8 @@ package installer
 
 import (
 	"fmt"
-	"goharvest2/integration/test/core"
-	"goharvest2/integration/test/utils"
+	"github.com/Netapp/harvest-automation/test/core"
+	"github.com/Netapp/harvest-automation/test/utils"
 	"log"
 	"strings"
 	"time"

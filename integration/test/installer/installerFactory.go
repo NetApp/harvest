@@ -3,9 +3,10 @@ package installer
 import "fmt"
 
 const (
-	DOCKER = "docker"
-	RHEL   = "rpm"
-	NATIVE = "tar"
+	DOCKER              = "docker"
+	RHEL                = "rpm"
+	NATIVE              = "tar"
+	HARVEST_CONFIG_FILE = "harvest.yml"
 )
 
 func GetInstaller(installType string, path string) (Installer, error) {
