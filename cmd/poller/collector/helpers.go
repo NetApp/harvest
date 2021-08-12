@@ -122,23 +122,20 @@ func getClosestIndex(versions []*version.Version, version *version.Version) int 
 	if len(versions) == 0 {
 		return -1
 	}
-	var l = 0
-	var r = len(versions) - 1
-	for l <= r {
-		var m = l + ((r - l) >> 1)
-		var comp = versions[m].Compare(version)
-		if comp < 0 { // versions[m] comes before the element
-			l = m + 1
-		} else if comp > 0 { // versions[m] comes after the element
-			r = m - 1
-		} else { // versions[m] equals the element
-			return m
-		}
+	idx := sort.Search(len(versions), func(i int) bool {
+		return versions[i].GreaterThanOrEqual(version)
+	})
+
+	// if we are at length of slice
+	if idx == len(versions) {
+		return len(versions) - 1
 	}
-	if l == 0 {
-		return 0
+
+	// if idx is greater than 0 but less than length of slice
+	if idx > 0 && idx < len(versions) && !versions[idx].Equal(version) {
+		return idx - 1
 	}
-	return l - 1
+	return idx
 }
 
 // ParseMetricName parses display name from the raw name of the metric as defined in (sub)template.

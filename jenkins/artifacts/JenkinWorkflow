@@ -42,8 +42,8 @@ pipeline {
         stage('Git Clone Harvest') {
             steps {
                sh '''
-                #git clone --single-branch --branch $GIT_BRANCH https://github.com/NetApp/harvest.git
-                git clone --single-branch --branch main https://github.com/NetApp/harvest.git
+                git clone --single-branch --branch $GIT_BRANCH https://github.com/NetApp/harvest.git
+                #git clone --single-branch --branch main https://github.com/NetApp/harvest.git
                 '''
             }
         }
