@@ -2,7 +2,7 @@
 
 ZapiPerf collects performance metrics from ONTAP systems using the ZAPI protocol. The collector is designed to be easily extendible to collect new objects or to collect additional counters from already configured objects. (The [default configuration](../../../conf/zapiperf/default.yaml) file contains 25 objects)
 
-This collector is an extension of the [Zapi collector](../zapi/README.md), with the major difference between that ZapiPerf collects only the `perf` subfamily of the ZAPIs. Additionally, ZapiPerf always calculates final values from deltas of two subsequent polls.
+This collector is an extension of the [Zapi collector](../zapi/README.md). The major difference between them is that ZapiPerf collects only the performance (`perf`) APIs. Additionally, ZapiPerf always calculates final values from the deltas of two subsequent polls.
 
 ## Target System
 Target system can be any cDot or 7Mode ONTAP system. Any version is supported, however the default configuration files may not completely match with an older system.
@@ -129,7 +129,7 @@ This section defines the list of counters that will be collected. These counters
 
 Some counters require a "base-counter" for post-processing. If the base-counter is missing, ZapiPerf will still run, but the missing data won't be exported.
 
-The display name of a counter can be changed with `=>` (e.g., `nfsv3_ops => ops`). The special counter `instance_name` will be renamed to the value of `object` by default.
+The display name of a counter can be changed with `=>` (e.g., `nfsv3_ops => ops`). There's one conversion Harvest does for you by default, the `instance_name` counter will be renamed to the value of `object`.
 
 Counters that are stored as labels will only be exported if they are included in the `export_options` section.
 
