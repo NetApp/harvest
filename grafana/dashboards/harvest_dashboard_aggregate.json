@@ -1915,7 +1915,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Space Used",
+      "title": "Space Used by Snapshots",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -2024,7 +2024,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Space Used %",
+      "title": "Space Used by Snapshots %",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -2133,7 +2133,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Space Reserved %",
+      "title": "Space Reserved for Snapshots%",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -2242,7 +2242,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Inodes Used %",
+      "title": "Snapshot Inodes Used %",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -2356,7 +2356,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Files",
+      "title": "Snapshot Files",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -2477,7 +2477,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "MaxFiles",
+      "title": "Snapshot MaxFiles",
       "tooltip": {
         "shared": true,
         "sort": 0,
