@@ -9,8 +9,8 @@ pipeline {
             )
     }
     parameters {
-        string(name: 'BRANCH', defaultValue: 'install_automation_test', description: '[Optional] Branch name to clone. Default (main) ')
-        string(name: 'RPM', defaultValue: '', description: 'http url of RPM build')
+        string(name: 'BRANCH', defaultValue: 'main', description: '[Optional] Branch name to clone. Default (main) ')
+        string(name: 'DOCKER', defaultValue: '', description: 'http url of docker tar build or docker image')
         string(name: 'NATIVE', defaultValue: '', description: 'http url of native tar file')
     }
 
@@ -27,7 +27,7 @@ pipeline {
         }
         stage('Run Tests') {
             parallel {
-                stage('RPM') {
+                stage('NATIVE') {
                     agent {
                         label "rhel"
                     }
@@ -59,15 +59,15 @@ pipeline {
                             }
                         }
 
-                        stage('Install RPM') {
+                        stage('Install NATIVE pkg') {
                             steps {
                                 sh """
                                 echo "Installing"
                                 export PATH=$PATH:/usr/local/go/bin
-                                export BUILD_PATH=$RPM
+                                export BUILD_PATH=$NATIVE
                                 cd $WORKSPACE/harvest/integration/test/
                                 go mod vendor
-                                go test -tags=install_rpm
+                                go test -tags=install_native
                                 """
                             }
                         }
@@ -84,11 +84,11 @@ pipeline {
                     }
 
                 }
-                stage('Native') {
+                stage('DOCKER') {
                     agent {
                         label "rhel"
                     }
-                    stages('Test on Native Pkg') {
+                    stages('Test on docker Pkg') {
                         stage('Cleanup Workspace') {
                             steps {
                                 cleanWs()
@@ -116,15 +116,15 @@ pipeline {
                             }
                         }
 
-                        stage('Install Native') {
+                        stage('Install Docker') {
                             steps {
                                 sh """
                                 echo "Installing"
                                 export PATH=$PATH:/usr/local/go/bin
-                                export BUILD_PATH=$NATIVE
+                                export BUILD_PATH=$DOCKER
                                 cd $WORKSPACE/harvest/integration/test/
                                 go mod vendor
-                                go test -tags=install_native
+                                go test -tags=install_docker
                                 """
                             }
                         }
