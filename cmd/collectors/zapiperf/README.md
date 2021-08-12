@@ -2,7 +2,7 @@
 
 ZapiPerf collects performance metrics from ONTAP systems using the ZAPI protocol. The collector is designed to be easily extendible to collect new objects or to collect additional counters from already configured objects. (The [default configuration](../../../conf/zapiperf/default.yaml) file contains 25 objects)
 
-This collector is an extension of the [Zapi collector](../zapi/README.md) with the major difference between that ZapiPerf collects only the `perf` subfamily of the ZAPIs. Additionally, ZapiPerf always calculates final values from deltas of two subsequent polls.
+This collector is an extension of the [Zapi collector](../zapi/README.md), with the major difference between that ZapiPerf collects only the `perf` subfamily of the ZAPIs. Additionally, ZapiPerf always calculates final values from deltas of two subsequent polls.
 
 ## Target System
 Target system can be any cDot or 7Mode ONTAP system. Any version is supported, however the default configuration files may not completely match with an older system.
@@ -10,15 +10,26 @@ Target system can be any cDot or 7Mode ONTAP system. Any version is supported, h
 ## Requirements
 No SDK or any other requirement. It is recommended to create a read-only user for Harvest on the ONTAP system (see the [Authentication document](../../../docs/AuthAndPermissions.md))
 
-## Parameters
+## Metrics
 
+The collector collects a dynamic set of metrics. The metric values are calculated from two consecutive polls (therefore, no metrics are emitted after the first poll). The calculation algorithm depends on the `property` and `base-counter` attributes of each metric, the following properties are supported:
+
+| property  | formula                                    |  description                                              |
+|-----------|--------------------------------------------|-----------------------------------------------------------|
+| raw       | x = x<sub>i</sub>                          | no post-processing, value **x** is submitted as it is       |
+| delta    | x = x<sub>i</sub> - x<sub>i-1</sub> | delta of two poll values, **x<sub>i<sub>** and **x<sub>i-1<sub>** |
+| rate | x = (x<sub>i</sub> - x<sub>i-1</sub>) / (t<sub>i</sub> - t<sub>i-1</sub>) | delta divided by the interval of the two polls in seconds |
+| average | x = (x<sub>i</sub> - x<sub>i-1</sub>) / (y<sub>i</sub> - y<sub>i-1</sub>) | delta divided by the delta of the base counter **y** |
+| percent | x = 100 * (x<sub>i</sub> - x<sub>i-1</sub>) / (y<sub>i</sub> - y<sub>i-1</sub>) | average multiplied by 100 |
+
+## Parameters
 
 The parameters of the collector are distributed across three files:
 - Harvest configuration file (default: `harvest.yml`)
 - ZapiPerf configuration file (default: `conf/zapiperf/default.yaml`)
 - Each object has its own configuration file (located in `conf/zapiperf/cdot/` and `conf/zapiperf/7mode/` for cDot and 7Mode systems respectively)
 
-With the exception of `addr`, `datacenter` and `auth_style`, all other parameters of the ZapiPerf collector can be defined in either of these three files. Parameters defined in the lower-level file, override parameters in the higher-level file. This allows the user to configure each objects individually, or use same parameters for all objects.
+With the exception of `addr`, `datacenter` and `auth_style`, all other parameters of the ZapiPerf collector can be defined in either of these three files. Parameters defined in the lower-level file, override parameters in the higher-level file. This allows the user to configure each objects individually, or use the same parameters for all objects.
 
 For the sake of brevity, these parameters are described only in the section [Collector configuration file](#collector-configuration-file).
 
@@ -90,7 +101,6 @@ Additionally, this file contains the parameters that are applied as defaults to 
 The template should define objects in the `objects` section. Example:
 
 ```yaml
-
 objects:
   SystemNode:             system_node.yaml
   HostAdapter:            hostadapter.yaml
@@ -109,7 +119,7 @@ The Object configuration file ("subtemplate") should contain the following param
 | `query`                | string       | raw object name used to issue a ZAPI request     |                        |
 | `counters`             | list         | list of counters to collect (see notes below) |                        |
 | `instance_key`         | string | label to use as instance key (either `name` or `uuid`) |                        |
-| `override` | list of key-value pairs | override counter properties that we get from ONTAP (allows to circumvent ZAPI bugs) | |
+| `override` | list of key-value pairs | override counter properties that we get from ONTAP (allows circumventing ZAPI bugs) | |
 | `plugins`  | list | plugins and their parameters to run on the collected data | |
 | `export_options` | list | parameters to pass to exporters (see notes below) | |
 
@@ -119,7 +129,7 @@ This section defines the list of counters that will be collected. These counters
 
 Some counters require a "base-counter" for post-processing. If the base-counter is missing, ZapiPerf will still run, but the missing data won't be exported.
 
-The display name of a counter can be changed with `=>` (e.g. `nfsv3_ops => ops`). The special counter `instance_name` will be renamed to the value of `object` by default.
+The display name of a counter can be changed with `=>` (e.g., `nfsv3_ops => ops`). The special counter `instance_name` will be renamed to the value of `object` by default.
 
 Counters that are stored as labels will only be exported if they are included in the `export_options` section.
 
@@ -131,66 +141,70 @@ Parameters in this section tell the exporters how to handle the collected data. 
 * `instance_labels` (list): display names of labels to export as a separate data-point
 * `include_all_labels` (bool): export all labels with each data-point (overrides previous two parameters)
 
-## Metrics
-
-The collector collects a dynamic set of metrics. The metric values are calculated from two consecutive polls (therefore no metrics are emitted after the first poll). The calculation algorithm depends on the `property` and `base-counter` attributes of each metric, the following properties are supported:
-
-| property  | formula                                    |  description                                              |
-|-----------|--------------------------------------------|-----------------------------------------------------------|
-| raw       | x = x<sub>i</sub>                          | no post-processing, value **x** is submitted as it is       |
-| delta    | x = x<sub>i</sub> - x<sub>i-1</sub> | delta of two poll values, **x<sub>i<sub>** and **x<sub>i-1<sub>** |
-| rate | x = (x<sub>i</sub> - x<sub>i-1</sub>) / (t<sub>i</sub> - t<sub>i-1</sub>) | delta divided by the interval of the two polls in seconds |
-| average | x = (x<sub>i</sub> - x<sub>i-1</sub>) / (y<sub>i</sub> - y<sub>i-1</sub>) | delta divided by the delta of the base counter **y** |
-| percent | x = 100 * (x<sub>i</sub> - x<sub>i-1</sub>) / (y<sub>i</sub> - y<sub>i-1</sub>) | average multiplied by 100 |
-
 ## Creating/editing subtemplates
 
-Instead of editing one of the existing templates, it's better to copy one and edit the copy. That way, your custom template will not be overwritten when upgrading Harvest. Below is an example of collecting sensor metrics.
+You can use Harvest's `zapi` to explore available objects and counters on your cluster. Examples:
 
-### Copy an existing template or create a new one
-
-Create `conf/zapi/cdot/9.8.0/sensor.yaml` with the following content:
-
+```sh
+$ harvest zapi --poller <poller> show objects
+  # will print the list of zapiperf objects
+$ harvest zapi --poller <poller> show counters --object ip
+  # will print the list of counters of ip object
+$ harvest zapi --poller <poller> export counters --object ip
+  # will export the list of counters into a subtemplate
 ```
-name:                      Sensor
-query:                     environment-sensors-get-iter
-object:                    sensor
+Instead of editing one of the existing templates, it's better to copy one and edit the copy. That way, your custom template will not be overwritten when upgrading Harvest. For example, if you want to change `conf/zapiperf/cdot/9.8.0/volume.yaml`, first create a copy (e.g., `conf/zapiperf/cdot/9.8.0/custom_volume.yaml`), then add these lines to `conf/zapiperf/custom.yaml` to override the default subtemplate:
+
+```yaml
+objects:
+  Volume: custom_volume.yaml
+```
+
+### Example subtemplate
+
+In this example, we want to collect metrics of the `ip` object. These are the steps that we need to follow:
+
+#### 1. Create new subtemplate
+
+Create `conf/zapiperf/cdot/9.8.0/ip.yaml` with the following content:
+
+```yaml
+name:           IP
+query:          ip
+object:         ip
+instance_key:   uuid
 
 counters:
-  environment-sensors-info:
-    - critical-high-threshold    => critical_high
-    - critical-low-threshold     => critical_low
-    - ^discrete-sensor-state     => discrete_state
-    - ^discrete-sensor-value     => discrete_value
-    - ^^node-name                => node
-    - ^^sensor-name              => sensor
-    - ^sensor-type               => type
-    - ^threshold-sensor-state    => threshold_state
-    - threshold-sensor-value     => threshold_value
-    - ^value-units               => unit
-    - ^warning-high-threshold    => warning_high
-    - ^warning-low-threshold     => warning_low
+  - instance_name
+  - instance_uuid
+  - node_name => node
+  - packets_delivered
+  - packets_forwarded
+  - packets_redirected
+  - packets_unforwardable
 
 export_options:
-  include_all_labels: true
+  instance_keys:
+    - ip
+    - node
 ```
 
 ### Enable the new template
 
-To enable the new template, create `conf/zapi/custom.yaml` with the lines shown below.
+To enable the new template, create `conf/zapiperf/custom.yaml` with the lines shown below.
 
 In the future, if you add more templates, you can add those in this same file.
 
-```
+```yaml
 objects:
-  Sensor: sensor.yaml
+  IP: ip.yaml
 ```
 
 ### Test your changes and restart pollers
 
-Test your new `Sensor` template with a single poller like this:
+Test your new `IP` template with a single poller like this:
 ```
-./bin/harvest start --foreground --verbose --collectors Zapi --objects Sensor <poller>
+./bin/harvest start <poller> --foreground --verbose --collectors ZapiPerf --objects IP
 ```
 Replace `<poller>` with the name of one of your ONTAP pollers.
 
@@ -198,19 +212,17 @@ Once you have confirmed that the new template works, restart any already running
 
 ### Check the metrics
 
-If you are using the Prometheus exporter, check the metrics on the HTTP endpoint with `curl` or a web browser. e.g. my poller is exporting its data on port `15001`. Adjust as needed for your exporter.
+If you are using the Prometheus exporter, check the metrics on the HTTP endpoint with `curl` or a web browser. E.g., my poller is exporting its data on port `15001`. Adjust as needed for your exporter. Note that the ZapiPerf collector will emit metrics only after the second poller, so you have to wait about 1 minute.
 
 ```
-curl -s 'http://localhost:15001/metrics' | grep sensor_
-
-sensor_value{datacenter="WDRF",cluster="shopfloor",critical_high="3664",node="shopfloor-02",sensor="P3.3V STBY",type="voltage",warning_low="3040",critical_low="2960",threshold_state="normal",unit="mV",warning_high="3568"} 3280
-sensor_value{datacenter="WDRF",cluster="shopfloor",sensor="P1.2V STBY",type="voltage",threshold_state="normal",warning_high="1299",warning_low="1105",critical_low="1086",node="shopfloor-02",critical_high="1319",unit="mV"} 1193
-sensor_value{datacenter="WDRF",cluster="shopfloor",unit="mV",critical_high="15810",critical_low="0",node="shopfloor-02",sensor="P12V STBY",type="voltage",threshold_state="normal"} 11842
-sensor_value{datacenter="WDRF",cluster="shopfloor",sensor="P12V STBY Curr",type="current",threshold_state="normal",unit="mA",critical_high="3182",critical_low="0",node="shopfloor-02"} 748
-sensor_value{datacenter="WDRF",cluster="shopfloor",critical_low="1470",node="shopfloor-02",sensor="Sysfan2 F2 Speed",type="fan",threshold_state="normal",unit="RPM",warning_low="1560"} 2820
-sensor_value{datacenter="WDRF",cluster="shopfloor",sensor="PSU2 Fan1 Speed",type="fan",threshold_state="normal",unit="RPM",warning_low="4600",critical_low="4500",node="shopfloor-01"} 6900
-sensor_value{datacenter="WDRF",cluster="shopfloor",sensor="PSU1 InPwr Monitor",type="unknown",threshold_state="normal",unit="mW",node="shopfloor-01"} 132000
-sensor_value{datacenter="WDRF",cluster="shopfloor",critical_high="58",type="thermal",unit="C",warning_high="53",critical_low="0",node="shopfloor-01",sensor="Bat Temp",threshold_state="normal",warning_low="5"} 24
-sensor_value{datacenter="WDRF",cluster="shopfloor",critical_high="9000",node="shopfloor-01",sensor="Bat Charge Volt",type="voltage",threshold_state="normal",unit="mV",warning_high="8900"} 8200
-sensor_value{datacenter="WDRF",cluster="shopfloor",node="shopfloor-02",sensor="PSU1 InPwr Monitor",type="unknown",threshold_state="normal",unit="mW"} 132000
+curl -s 'http://localhost:15001/metrics' | grep ip_
+ip_packets_unforwardable{datacenter="WDRF",cluster="shopfloor",ip="ip_ipsid_0014967294",node="shopfloor-02"} 0
+ip_packets_delivered{datacenter="WDRF",cluster="shopfloor",ip="ip_ipsid_0014967294",node="shopfloor-02"} 4245
+ip_packets_unforwardable{datacenter="WDRF",cluster="shopfloor",ip="ip_ipsid_0014967293",node="shopfloor-02"} 0
+ip_packets_delivered{datacenter="WDRF",cluster="shopfloor",ip="ip_ipsid_0014967293",node="shopfloor-02"} 0
+ip_packets_redirected{datacenter="WDRF",cluster="shopfloor",ip="ip_ipsid_0014967293",node="shopfloor-02"} 0
+ip_packets_forwarded{datacenter="WDRF",cluster="shopfloor",ip="ip_ipsid_0014967293",node="shopfloor-02"} 0
+ip_packets_unforwardable{datacenter="WDRF",cluster="shopfloor",ip="ip_ipsid_0014967293",node="shopfloor-01"} 0
+ip_packets_delivered{datacenter="WDRF",cluster="shopfloor",ip="ip_ipsid_0014967293",node="shopfloor-01"} 0
+ip_packets_redirected{datacenter="WDRF",cluster="shopfloor",ip="ip_ipsid_0014967293",node="shopfloor-01"} 0
 ```
