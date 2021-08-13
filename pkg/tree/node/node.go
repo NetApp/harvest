@@ -268,6 +268,8 @@ func (me *Node) Merge(source *Node) {
 		if mine := me.GetChild(child.GetName()); mine == nil {
 			me.AddChild(child)
 		} else {
+			// set content
+			mine.SetContentS(child.GetContentS())
 			mine.Merge(child)
 		}
 	}

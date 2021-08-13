@@ -1,0 +1,18 @@
+
+collector:          Zapi
+
+# Order here matters!
+schedule:
+  - instance: 600s
+  - data: 180s
+
+objects:
+  Node:             node.yaml
+  Aggregate:        aggr.yaml
+  Volume:           volume.yaml
+  SnapMirror:       snapmirror.yaml
+  Disk:             disk.yaml
+  Shelf:            shelf.yaml
+  Status:           status.yaml
+  Subsystem:        subsystem.yaml
+  Lun:              lun.yaml
