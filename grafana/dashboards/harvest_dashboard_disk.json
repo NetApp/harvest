@@ -840,7 +840,7 @@
       "yaxes": [
         {
           "$$hashKey": "object:234",
-          "format": "percentunit",
+          "format": "percent",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -1158,13 +1158,12 @@
                 "id": "mappings",
                 "value": [
                   {
-                    "type": "value",
-                    "options": {
-                      " ": {
-                        "text": "Ok",
-                        "index": 0
-                      }
-                    }
+                    "id": 1,
+                    "type": 1,
+                    "from": "",
+                    "to": "",
+                    "text": "Ok",
+                    "value": " "
                   }
                 ]
               }
