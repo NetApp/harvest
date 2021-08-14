@@ -1,0 +1,96 @@
+pipeline {
+    agent {label 'buildserver'}
+
+    environment {
+        targetParentLocation = "/opt/home/nightly/"
+        harvestPath = "harvest"
+        imageName = "rahulguptajss/harvest"
+        VERSION=""
+        RELEASE=""
+    }
+
+    stages {
+
+        stage('clean workspace') {
+            steps {
+                cleanWs()
+                sh 'rm -rf $targetParentLocation$VERSION$RELEASE'
+
+            }
+        }
+        stage('Setup GO') {
+            steps {
+                sh '''
+                wget -q -O go.tar.gz "https://dl.google.com/go/$(curl https://golang.org/VERSION?m=text).linux-amd64.tar.gz"
+                rm -rf /usr/local/go && tar -C /usr/local -xzf go.tar.gz
+                '''
+            }
+        }
+
+        stage('Download Prerequisites') {
+            steps {
+                sh '''
+               apt-get update
+               apt-get install -y rpm
+               apt-get install -y net-tools
+               apt install -y git-all
+               apt-get install -y build-essential
+                '''
+            }
+        }
+
+        stage('Git Clone Harvest') {
+            steps {
+               sh '''
+                git clone --single-branch --branch $GIT_BRANCH https://github.com/NetApp/harvest.git
+                #git clone --single-branch --branch main https://github.com/NetApp/harvest.git
+                '''
+            }
+        }
+        stage('Build'){
+            parallel {
+                stage('Build Harvest Tar gz') {
+                    steps {
+                       sh '''
+                       cd $harvestPath
+                       export PATH=$PATH:/usr/local/go/bin
+                       targetLocation=$targetParentLocation$VERSION-$RELEASE
+                       rm -rf dist
+                       make package VERSION=$VERSION RELEASE=$RELEASE
+                       cp ./dist/*tar.gz ./dist/harvest.tar.gz
+                        '''
+                    }
+                }
+                stage('Build Docker') {
+                    steps {
+                       sh '''
+                       cd $harvestPath
+                       docker login -u $DOCKER_USER -p $DOCKER_PWD
+                       docker rmi $(docker images -q)
+                       docker build -f docker/onePollerPerContainer/Dockerfile -t $imageName:latest . --no-cache
+                       docker save -o ./dist/docker_harvest.tar $imageName:latest
+                        '''
+                    }
+                }
+
+            }
+        }
+        stage('Publish builds locally'){
+            steps {
+                dir("./${harvestPath}/dist") {
+                    archiveArtifacts artifacts: '**', fingerprint: true
+                }
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                script {
+                    dockerBuild = "${BUILD_URL}/artifact/docker_harvest.tar"
+                    nativeBuild = "${BUILD_URL}/artifact/harvest.tar.gz"
+                    build job: 'harvest2_0/smoke', parameters: [string(name: 'BRANCH', value: "${GIT_BRANCH}"), string(name: 'NATIVE', value: "${nativeBuild}"), string(name: 'DOCKER', value: "${dockerBuild}")]
+            }    }
+        }
+
+    }
+
+}
