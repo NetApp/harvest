@@ -4,6 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/shirou/gopsutil/cpu"
+	"github.com/shirou/gopsutil/host"
+	"github.com/shirou/gopsutil/v3/mem"
 	"goharvest2/cmd/harvest/version"
 	"goharvest2/cmd/poller/collector"
 	client "goharvest2/pkg/api/ontapi/zapi"
@@ -15,7 +18,6 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -100,8 +102,8 @@ func sendAsupMessage(msg *asupMessage, pollerName string) error {
 	)
 	asupTimeOutLimit := 10 * time.Second
 	workingDir := "asup"
-	//asupExecPath := "./../../Harvest/harvest-private/harvest-asup/bin/asup"
-	asupExecPath := "./bin/asup"
+	asupExecPath := "./../../Harvest/harvest-private/harvest-asup/bin/asup"
+	//asupExecPath := "./bin/asup"
 
 	if payloadPath, err = getPayloadPath(workingDir, pollerName); err != nil {
 		return err
@@ -236,27 +238,36 @@ func getInstanceInfo(collectors []collector.Collector, status *matrix.Matrix, co
 func getCPUInfo() (string, uint8) {
 
 	var (
-		arch, countString, line string
-		fields                  []string
-		count                   uint64
-		output                  []byte
-		err                     error
+		arch     string
+		count    int32
+		cpuinfo  []cpu.InfoStat
+		hostinfo *host.InfoStat
+		err      error
 	)
 
-	if output, err = exec.Command("lscpu").Output(); err == nil {
-		for _, line = range strings.Split(string(output), "\n") {
-			if fields = strings.Fields(line); len(fields) >= 2 {
-				if fields[0] == "Architecture:" {
-					arch = fields[1]
-				} else if fields[0] == "CPU(s):" {
-					countString = fields[1]
-				}
-			}
+	//if output, err = exec.Command("lscpu").Output(); err == nil {
+	//	for _, line = range strings.Split(string(output), "\n") {
+	//		if fields = strings.Fields(line); len(fields) >= 2 {
+	//			if fields[0] == "Architecture:" {
+	//				arch = fields[1]
+	//			} else if fields[0] == "CPU(s):" {
+	//				countString = fields[1]
+	//			}
+	//		}
+	//	}
+	//}
+
+	if cpuinfo, err = cpu.Info(); err == nil {
+		if cpuinfo != nil && len(cpuinfo) > 0 {
+			fmt.Printf("%s", cpuinfo)
+			count = cpuinfo[0].CPU
 		}
 	}
 
-	if countString != "" {
-		if count, err = strconv.ParseUint(countString, 10, 8); err != nil {
+	if hostinfo, err = host.Info(); err == nil {
+		if hostinfo != nil {
+			fmt.Printf("%s", *hostinfo)
+			arch = (*hostinfo).Platform
 		}
 	}
 
@@ -266,26 +277,31 @@ func getCPUInfo() (string, uint8) {
 func getRamSize() uint64 {
 
 	var (
-		output           []byte
-		err              error
-		line, sizeString string
-		fields           []string
-		size             uint64
+		//output           []byte
+		err error
+		//line, sizeString string
+		//fields           []string
+		memory *mem.VirtualMemoryStat
+		size   uint64
 	)
 
-	if output, err = exec.Command("free", "--kilo").Output(); err == nil {
-		for _, line = range strings.Split(string(output), "\n") {
-			if fields = strings.Fields(line); len(fields) >= 4 && fields[0] == "Mem:" {
-				sizeString = fields[1]
-				break
-			}
-		}
-	}
+	//if output, err = exec.Command("free", "--kilo").Output(); err == nil {
+	//	for _, line = range strings.Split(string(output), "\n") {
+	//		if fields = strings.Fields(line); len(fields) >= 4 && fields[0] == "Mem:" {
+	//			sizeString = fields[1]
+	//			break
+	//		}
+	//	}
+	//}
 
-	if sizeString != "" {
-		if size, err = strconv.ParseUint(sizeString, 10, 64); err != nil {
-			size = 0
-		}
+	//if sizeString != "" {
+	//	if size, err = strconv.ParseUint(sizeString, 10, 64); err != nil {
+	//		size = 0
+	//	}
+	//}
+	if memory, err = mem.VirtualMemory(); err == nil {
+		fmt.Printf("%s", *memory)
+		size = memory.Free / 1024
 	}
 
 	return size

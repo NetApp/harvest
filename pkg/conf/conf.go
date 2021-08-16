@@ -104,8 +104,8 @@ func SafeHarvestConfig(configPath string) error {
 	if contents, err = yaml.Marshal(&Config); err != nil {
 		return err
 	}
-	if filepaths := strings.Split(configPath, "/"); len(filepaths) > 1 {
-		fileName = filepaths[1]
+	if _, filepath := path.Split(configPath); filepath != "" {
+		fileName = filepath
 	}
 	return ioutil.WriteFile("new_"+fileName, contents, 0644)
 }
