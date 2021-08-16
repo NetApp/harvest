@@ -67,7 +67,7 @@ var (
 	logMaxMegaBytes = logging.DefaultLogMaxMegaBytes // 10MB
 	logMaxBackups   = logging.DefaultLogMaxBackups
 	logMaxAge       = logging.DefaultLogMaxAge
-	asupInterval    = "1m" // send every 1 minute
+	asupInterval    = "720h" // send every 30 days
 	harvestUUID     uuid.UUID
 )
 
@@ -301,30 +301,6 @@ func (p *Poller) Init() error {
 			return err
 		} else {
 			logger.Info().Msgf("set ASUP interval to %s", asupInterval)
-
-			// Make sure harvest instance has a UUID, if not create one and safe for later use
-			// @TODO: race conditions can occur here, so maybe do this at install time?
-			if toolsParams.HarvestUUID != nil {
-				logger.Info().Msg("parsing harvestUUID from config...")
-				if harvestUUID, err = uuid.Parse(*toolsParams.HarvestUUID); err != nil {
-					logger.Error().Stack().Err(err).Msg("parse stored harvest UUID")
-				}
-				logger.Info().Msgf("using stored harvest UUID [%s]", *toolsParams.HarvestUUID)
-			} else if harvestUUID, err = uuid.NewRandom(); err != nil {
-				logger.Error().Stack().Err(err).Msg("generate harvest UUID")
-				return err
-			} else {
-				s := harvestUUID.String()
-				toolsParams.HarvestUUID = &s
-				logger.Info().Msgf("generated harvest UUID [%s]", *toolsParams.HarvestUUID)
-				// Safe UUID
-				if err = conf.SafeHarvestConfig(p.options.Config); err != nil {
-					logger.Error().Stack().Err(err).Msg("safe config")
-					return err
-				} else {
-					logger.Info().Msgf("saved harvest UUID [%s] to new_%s", harvestUUID.String(), p.options.Config)
-				}
-			}
 		}
 
 	} else {

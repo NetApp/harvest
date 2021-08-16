@@ -92,24 +92,6 @@ func LoadHarvestConfig(configPath string) error {
 	return nil
 }
 
-func SafeHarvestConfig(configPath string) error {
-	var (
-		contents []byte
-		err      error
-		fileName string
-	)
-	if !configRead {
-		panic("config not read")
-	}
-	if contents, err = yaml.Marshal(&Config); err != nil {
-		return err
-	}
-	if _, filepath := path.Split(configPath); filepath != "" {
-		fileName = filepath
-	}
-	return ioutil.WriteFile("new_"+fileName, contents, 0644)
-}
-
 func SafeConfig(n *node.Node, fp string) error {
 	return tree.Export(n, "yaml", fp)
 }
@@ -426,7 +408,6 @@ type Consul struct {
 type Tools struct {
 	GrafanaApiToken *string `yaml:"grafana_api_token,omitempty"`
 	AsupEnabled     *bool   `yaml:"asup_messaging_enabled,omitempty"`
-	HarvestUUID     *string `yaml:"harvest_uuid,omitempty"`
 }
 
 type Poller struct {

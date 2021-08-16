@@ -2,6 +2,8 @@ package asup
 
 import (
 	"context"
+	"crypto/sha1"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"github.com/shirou/gopsutil/cpu"
@@ -155,15 +157,6 @@ func buildAsupMessage(collectors []collector.Collector, status *matrix.Matrix, c
 
 	msg = new(asupMessage)
 
-	// add harvest release info
-	msg.Harvest = new(harvestInfo)
-	msg.Harvest.UUID = harvestUUID
-	msg.Harvest.Version = version.VERSION
-	msg.Harvest.Release = version.Release
-	msg.Harvest.Commit = version.Commit
-	msg.Harvest.BuildDate = version.BuildDate
-	msg.Harvest.NumClusters = getNumClusters(collectors)
-
 	// add info about platform (where Harvest is running)
 	msg.Platform = new(platformInfo)
 	arch, cpus = getCPUInfo()
@@ -175,6 +168,15 @@ func buildAsupMessage(collectors []collector.Collector, status *matrix.Matrix, c
 	// info about ONTAP host and instances
 	msg.Target, msg.Nodes, msg.Volumes, msg.Svms = getInstanceInfo(collectors, status, connection)
 
+	// add harvest release info
+	msg.Harvest = new(harvestInfo)
+	// harvest uuid creation from sha1 of cluster uuid
+	msg.Harvest.UUID = getSha1Uuid(msg.Target.ClusterUuid)
+	msg.Harvest.Version = version.VERSION
+	msg.Harvest.Release = version.Release
+	msg.Harvest.Commit = version.Commit
+	msg.Harvest.BuildDate = version.BuildDate
+	msg.Harvest.NumClusters = getNumClusters(collectors)
 	return msg, nil
 }
 
@@ -445,4 +447,13 @@ func getdata(config, pollername string) *client.Client {
 	}
 
 	return connection
+}
+
+func getSha1Uuid(clusterUuid string) string {
+	shaHash := sha1.New()
+	if _, err := shaHash.Write([]byte(clusterUuid)); err != nil {
+		fmt.Printf("issue while invoking sha1 of uuid")
+		return ""
+	}
+	return hex.EncodeToString(shaHash.Sum(nil))
 }
