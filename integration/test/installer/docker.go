@@ -23,7 +23,7 @@ func (d *Docker) Init(path string) {
 func (d *Docker) Install() bool {
 	log.Println("Docker build : " + d.path)
 	pollerProcessName := "bin/poller"
-	pollerNames, _ := conf.GetPollerNames(HARVEST_CONFIG_FILE)
+	pollerNames, _ := conf.GetPollerNames(HarvestConfigFile)
 	docker.StopContainers(pollerProcessName)
 	docker.RemoveImage("harvest")
 	var dockerImageName string
@@ -50,7 +50,9 @@ func (d *Docker) Install() bool {
 	for _, pollerName := range pollerNames {
 		port, _ := conf.GetPrometheusExporterPorts(pollerName)
 		portString := strconv.Itoa(port)
+		ipAddress := utils.GetOutboundIP()
 		cmd := exec.Command("docker", "run", "--rm", "-p", portString+":"+portString,
+			"--add-host=localhost:"+ipAddress,
 			"--volume", path+"/harvest.yml:/opt/harvest/harvest.yml",
 			dockerImageName, "--poller", pollerName)
 		cmd.Stdout = os.Stdout

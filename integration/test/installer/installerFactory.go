@@ -3,10 +3,12 @@ package installer
 import "fmt"
 
 const (
-	DOCKER              = "docker"
-	RHEL                = "rpm"
-	NATIVE              = "tar"
-	HARVEST_CONFIG_FILE = "harvest.yml"
+	DOCKER            = "docker"
+	RHEL              = "rpm"
+	NATIVE            = "tar"
+	HarvestConfigFile = "harvest.yml"
+	GRAFANA           = "grafana"
+	PROMETHEUS        = "prometheus"
 )
 
 func GetInstaller(installType string, path string) (Installer, error) {
@@ -20,6 +22,14 @@ func GetInstaller(installType string, path string) (Installer, error) {
 		return d, nil
 	} else if installType == NATIVE {
 		d := new(Native)
+		d.Init(path)
+		return d, nil
+	} else if installType == GRAFANA {
+		d := new(Grafana)
+		d.Init(path)
+		return d, nil
+	} else if installType == PROMETHEUS {
+		d := new(Prometheus)
 		d.Init(path)
 		return d, nil
 	}

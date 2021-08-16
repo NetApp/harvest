@@ -33,4 +33,3 @@ Pollers:
     password: netapp1!
     exporters:
       - prometheus2
-Tools:

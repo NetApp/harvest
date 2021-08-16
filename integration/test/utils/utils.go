@@ -2,15 +2,30 @@ package utils
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"os/exec"
+	"strings"
+	"time"
+)
+
+const (
+	GrafanaPort    = "3000"
+	PrometheusPort = "9090"
 )
 
 func Run(command string, arg ...string) string {
+	fmt.Print("CMD :" + command + " ")
+	for _, param := range arg {
+		fmt.Print(param)
+		fmt.Print(" ")
+	}
+	fmt.Print("\n")
 	cmd := exec.Command(command, arg...)
 	var out bytes.Buffer
 	var stderr bytes.Buffer
@@ -146,4 +161,110 @@ func copyFileContents(src, dst string) (err error) {
 	}
 	err = out.Sync()
 	return
+}
+
+func IsUrlReachable(url string) bool {
+	response, errors := http.Get(url)
+	if errors == nil && response.StatusCode == 200 {
+		return true
+	}
+	return false
+}
+
+func AddPPrometheusToGrafana() {
+	log.Println("Add Prometheus into Grafana")
+	url := GetGrafanaHttpUrl() + "/api/datasources"
+	method := "POST"
+	jsonValue := []byte(fmt.Sprintf(`{"name": "Prometheus", "type": "prometheus", "access": "direct",
+		"url": "%s", "isDefault": true, "basicAuth": false}`, GetPrometheusUrl()))
+	var data map[string]interface{}
+	data = SendReqAndGetRes(url, method, jsonValue)
+	key := fmt.Sprintf("%v", data["message"])
+	if key == "Datasource added" {
+		log.Println("Prometheus has been added successfully into Grafana .")
+		return
+	}
+	panic(fmt.Errorf("ERROR: unable to add Prometheus into grafana"))
+}
+
+func CreateGrafanaToken() string {
+	log.Println("Creating grafana API Key.")
+	url := GetGrafanaHttpUrl() + "/api/auth/keys"
+	method := "POST"
+	name := fmt.Sprint(time.Now().Unix())
+	values := map[string]string{"name": name, "role": "Admin"}
+	jsonValue, _ := json.Marshal(values)
+	var data map[string]interface{}
+	data = SendReqAndGetRes(url, method, jsonValue)
+	key := fmt.Sprintf("%v", data["key"])
+	if len(key) > 0 {
+		log.Println("Grafana: Token has been created successfully.")
+		return key
+	}
+	panic(fmt.Errorf("ERROR: unable to create grafana token"))
+}
+
+func PanicIfNotNil(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
+func GetOutboundIP() string {
+	if interfaces, err := net.Interfaces(); err == nil {
+		for _, interfac := range interfaces {
+			if interfac.HardwareAddr.String() != "" {
+				if strings.Index(interfac.Name, "en") == 0 ||
+					strings.Index(interfac.Name, "eth") == 0 {
+					if addrs, err := interfac.Addrs(); err == nil {
+						for _, addr := range addrs {
+							if addr.Network() == "ip+net" {
+								pr := strings.Split(addr.String(), "/")
+								if len(pr) == 2 && len(strings.Split(pr[0], ".")) == 4 {
+									return pr[0]
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	panic(fmt.Errorf("ERROR : Failed to get ip address of this system"))
+}
+
+func WriteToken(token string) {
+	filename := "harvest.yml"
+	f, err := os.OpenFile(filename, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0660)
+	if err != nil {
+		fmt.Println(err)
+		panic(err)
+	}
+	defer func(f *os.File) {
+		err := f.Close()
+		PanicIfNotNil(err)
+	}(f)
+	fmt.Fprintf(f, "\n%s\n", "Tools:")
+	fmt.Fprintf(f, "  grafana_api_token: %s\n", token)
+}
+
+func GetGrafanaHttpUrl() string {
+	return "http://admin:admin@" + GetGrafanaUrl()
+}
+
+func GetGrafanaUrl() string {
+	return "localhost:" + GrafanaPort
+}
+
+func GetPrometheusUrl() string {
+	return "http://localhost:" + PrometheusPort
+}
+
+func Contains(s []string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
+		}
+	}
+	return false
 }

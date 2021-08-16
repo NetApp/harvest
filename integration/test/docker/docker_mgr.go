@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 	"io"
@@ -61,9 +62,6 @@ func HasAllStarted(commandSubString string, count int) bool {
 	for _, container := range containers {
 		if strings.Contains(container.Command, commandSubString) && container.State == "running" {
 			actualCount++
-		} else {
-			log.Println(container.Command)
-			log.Println(container.State)
 		}
 	}
 	if actualCount != count {
@@ -71,6 +69,24 @@ func HasAllStarted(commandSubString string, count int) bool {
 		return false
 	}
 	return true
+}
+
+func HasStarted(imageName string) bool {
+	ctx := context.Background()
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		panic(err)
+	}
+	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{})
+	if err != nil {
+		panic(err)
+	}
+	for _, container := range containers {
+		if strings.Contains(container.Image, imageName) && container.State == "running" {
+			return true
+		}
+	}
+	return false
 }
 
 func StopContainers(commandSubString string) {
@@ -84,13 +100,31 @@ func StopContainers(commandSubString string) {
 		panic(err)
 	}
 	for _, container := range containers {
-		if strings.Contains(container.Command, commandSubString) {
+		if strings.Contains(container.Command, commandSubString) || strings.Contains(container.Image, commandSubString) {
 			log.Println("Stopping container ", container.ID[:10], "... ")
 			if err := cli.ContainerStop(ctx, container.ID, nil); err != nil {
 				panic(err)
 			}
 		}
 	}
+}
+
+func GetContainerID(commandSubString string) string {
+	ctx := context.Background()
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		panic(err)
+	}
+	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{})
+	if err != nil {
+		panic(err)
+	}
+	for _, container := range containers {
+		if strings.Contains(container.Command, commandSubString) || strings.Contains(container.Image, commandSubString) {
+			return fmt.Sprintf("%s", container.ID)
+		}
+	}
+	return ""
 }
 
 func RemoveImage(imageName string) {
@@ -108,9 +142,9 @@ func RemoveImage(imageName string) {
 		PruneChildren: true,
 	}
 	for _, image := range images {
-		log.Println("Removing image ", image.RepoTags, "... ")
 		imageSummary := strings.Join(image.RepoTags, " ")
 		if strings.Contains(imageSummary, imageName) {
+			log.Println("Removing image ", image.RepoTags, "... ")
 			if _, err := cli.ImageRemove(ctx, image.ID, options); err != nil {
 				panic(err)
 			}
