@@ -102,8 +102,8 @@ func sendAsupMessage(msg *asupMessage, pollerName string) error {
 	)
 	asupTimeOutLimit := 10 * time.Second
 	workingDir := "asup"
-	asupExecPath := "./../../Harvest/harvest-private/harvest-asup/bin/asup"
-	//asupExecPath := "./bin/asup"
+	//asupExecPath := "./../../Harvest/harvest-private/harvest-asup/bin/asup"
+	asupExecPath := "./bin/asup"
 
 	if payloadPath, err = getPayloadPath(workingDir, pollerName); err != nil {
 		return err
@@ -245,18 +245,6 @@ func getCPUInfo() (string, uint8) {
 		err      error
 	)
 
-	//if output, err = exec.Command("lscpu").Output(); err == nil {
-	//	for _, line = range strings.Split(string(output), "\n") {
-	//		if fields = strings.Fields(line); len(fields) >= 2 {
-	//			if fields[0] == "Architecture:" {
-	//				arch = fields[1]
-	//			} else if fields[0] == "CPU(s):" {
-	//				countString = fields[1]
-	//			}
-	//		}
-	//	}
-	//}
-
 	if cpuinfo, err = cpu.Info(); err == nil {
 		if cpuinfo != nil && len(cpuinfo) > 0 {
 			fmt.Printf("%s", cpuinfo)
@@ -285,20 +273,6 @@ func getRamSize() uint64 {
 		size   uint64
 	)
 
-	//if output, err = exec.Command("free", "--kilo").Output(); err == nil {
-	//	for _, line = range strings.Split(string(output), "\n") {
-	//		if fields = strings.Fields(line); len(fields) >= 4 && fields[0] == "Mem:" {
-	//			sizeString = fields[1]
-	//			break
-	//		}
-	//	}
-	//}
-
-	//if sizeString != "" {
-	//	if size, err = strconv.ParseUint(sizeString, 10, 64); err != nil {
-	//		size = 0
-	//	}
-	//}
 	if memory, err = mem.VirtualMemory(); err == nil {
 		fmt.Printf("%s", *memory)
 		size = memory.Free / 1024
