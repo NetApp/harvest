@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"goharvest2/pkg/conf"
+	"goharvest2/pkg/tree/node"
 	"io"
 	"log"
 	"net"
@@ -17,6 +19,7 @@ import (
 const (
 	GrafanaPort    = "3000"
 	PrometheusPort = "9090"
+	GrafanaTokeKey = "grafana_api_token"
 )
 
 func Run(command string, arg ...string) string {
@@ -171,7 +174,7 @@ func IsUrlReachable(url string) bool {
 	return false
 }
 
-func AddPPrometheusToGrafana() {
+func AddPrometheusToGrafana() {
 	log.Println("Add Prometheus into Grafana")
 	url := GetGrafanaHttpUrl() + "/api/datasources"
 	method := "POST"
@@ -234,7 +237,23 @@ func GetOutboundIP() string {
 }
 
 func WriteToken(token string) {
+	var (
+		params, tools *node.Node
+		err           error
+	)
 	filename := "harvest.yml"
+	if params, err = conf.LoadConfig(filename); err != nil {
+		PanicIfNotNil(err)
+	} else if params == nil {
+		PanicIfNotNil(fmt.Errorf("config [%s] not found", filename))
+	}
+	if tools = params.GetChildS("Tools"); tools != nil {
+		token = tools.GetChildContentS("grafana_api_token")
+		if len(token) > 0 {
+			log.Println(filename + "  has an entry for grafana token")
+			return
+		}
+	}
 	f, err := os.OpenFile(filename, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0660)
 	if err != nil {
 		fmt.Println(err)
@@ -245,7 +264,7 @@ func WriteToken(token string) {
 		PanicIfNotNil(err)
 	}(f)
 	fmt.Fprintf(f, "\n%s\n", "Tools:")
-	fmt.Fprintf(f, "  grafana_api_token: %s\n", token)
+	fmt.Fprintf(f, "  %s: %s\n", GrafanaTokeKey, token)
 }
 
 func GetGrafanaHttpUrl() string {

@@ -121,9 +121,19 @@ pipeline {
                                 sh """
                                 echo "Installing"
                                 export PATH=$PATH:/usr/local/go/bin
-                                export BUILD_PATH=$DOCKER
+                                #export BUILD_PATH=$DOCKER
+                                cd $WORKSPACE/harvest
+                                cp -rf $WORKSPACE/harvest/integration/test/harvest.yml .
+                                make build
+                                ./bin/harvest stop
+                                ./bin/harvest generate docker full --port --output harvest-compose.yml
+                                docker login -u harvesttest -p harvesttest
+                                docker stop $(docker ps -a -q)
+                                docker rm $(docker ps -a -q)
+                                docker rmi $(docker images -q)
+                                docker build -f docker/onePollerPerContainer/Dockerfile -t rahulguptajss/harvest:latest . --no-cache
+                                docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
                                 cd $WORKSPACE/harvest/integration/test/
-                                go mod vendor
                                 go test -tags=install_docker
                                 """
                             }

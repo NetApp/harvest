@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 	"io"
@@ -109,7 +110,12 @@ func StopContainers(commandSubString string) {
 	}
 }
 
-func GetContainerID(commandSubString string) string {
+func CopyFile(containerId string, src string, dest string) {
+	utils.Run("docker", "cp", src, containerId+":"+dest)
+}
+
+func GetContainerID(commandSubString string) []string {
+	var containerIds []string
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
@@ -121,10 +127,10 @@ func GetContainerID(commandSubString string) string {
 	}
 	for _, container := range containers {
 		if strings.Contains(container.Command, commandSubString) || strings.Contains(container.Image, commandSubString) {
-			return fmt.Sprintf("%s", container.ID)
+			containerIds = append(containerIds, fmt.Sprintf("%s", container.ID))
 		}
 	}
-	return ""
+	return containerIds
 }
 
 func RemoveImage(imageName string) {

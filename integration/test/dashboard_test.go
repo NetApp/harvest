@@ -39,22 +39,18 @@ func (suite *DashboardImportTestSuite) SetupSuite() {
 		panic(fmt.Errorf("Grafana is not reachable."))
 	}
 	if !utils.IsUrlReachable(utils.GetPrometheusUrl()) {
-		panic(fmt.Errorf("Grafana is not reachable."))
+		panic(fmt.Errorf("Prometheus is not reachable."))
 	}
 	log.Println("Import dashboard from grafana/dashboards")
-	params := []string{"import", "--addr", utils.GetGrafanaUrl(), "--directory", "grafana/dashboards"}
-	containerID := docker.GetContainerID("poller")
-	if len(containerID) == 0 {
-		//assuming non docker based harvest
+	containerIDs := docker.GetContainerID("poller")
+	if len(containerIDs) == 0 {
+		//assuming non docker based harvest grafana
 		log.Println("It is non docker based harvest")
-		importOutput := utils.Exec("/opt/harvest", "bin/grafana", params...)
+		importOutput := utils.Exec("/opt/harvest", "bin/grafana", "import", "--addr", utils.GetGrafanaUrl(), "--directory", "grafana/dashboards")
 		log.Println(importOutput)
 	} else {
-		execParam := []string{"exec", containerID, "bin/grafana"}
-		for index, _ := range params {
-			execParam = append(execParam, params[index])
-		}
-		importOutput := utils.Run("docker", execParam...)
+		params := []string{"exec", containerIDs[0], "bin/grafana", "import", "--addr", "grafana:3000", "--directory", "grafana/dashboards"}
+		importOutput := utils.Run("docker", params...)
 		log.Println(importOutput)
 	}
 

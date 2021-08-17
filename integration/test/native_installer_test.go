@@ -51,6 +51,6 @@ func TestNativeInstall(t *testing.T) {
 	if !installObject.Install() {
 		panic(installer.PROMETHEUS + " installation is failed.")
 	}
-	utils.AddPPrometheusToGrafana()
+	utils.AddPrometheusToGrafana()
 
 }
