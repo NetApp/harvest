@@ -407,7 +407,7 @@ type Consul struct {
 
 type Tools struct {
 	GrafanaApiToken *string `yaml:"grafana_api_token,omitempty"`
-	AsupDisabled    bool    `yaml:"harvest_no_asup,omitempty"`
+	AsupDisabled    bool    `yaml:"autosupport_disabled,omitempty"`
 }
 
 type Poller struct {
