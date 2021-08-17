@@ -160,7 +160,7 @@ func Init(c Collector) error {
 
 		if m := reflect.ValueOf(c).MethodByName(methodName); m.IsValid() {
 			if foo, ok := m.Interface().(func() (*matrix.Matrix, error)); ok {
-				if err := s.NewTaskString(task.GetNameS(), task.GetContentS(), foo); err != nil {
+				if err := s.NewTaskString(task.GetNameS(), task.GetContentS(), foo, true); err != nil {
 					return errors.New(errors.INVALID_PARAM, "schedule ("+task.GetNameS()+"): "+err.Error())
 				}
 			} else {
