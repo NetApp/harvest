@@ -3,7 +3,6 @@ github.com/PuerkitoBio/purell
 # github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578
 github.com/PuerkitoBio/urlesc
 # github.com/StackExchange/wmi v1.2.1
-## explicit
 github.com/StackExchange/wmi
 # github.com/bbrks/wrap/v2 v2.5.0
 ## explicit
@@ -20,9 +19,6 @@ github.com/go-openapi/jsonreference
 github.com/go-openapi/spec
 # github.com/go-openapi/swag v0.19.14
 github.com/go-openapi/swag
-# github.com/google/uuid v1.1.2
-## explicit
-github.com/google/uuid
 # github.com/hashicorp/go-version v1.3.0
 ## explicit
 github.com/hashicorp/go-version
