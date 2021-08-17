@@ -120,7 +120,7 @@ func sendAsupVia(msg *asupMessage, pollerName string, asupExecPath string) error
 	}
 
 	// name of the file: {poller_name}_payload.json
-	file, err := os.OpenFile(payloadPath, os.O_CREATE|os.O_WRONLY, os.ModePerm)
+	file, err := os.OpenFile(payloadPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, os.ModePerm)
 	if err != nil {
 		return fmt.Errorf("autosupport failed to open payloadPath:%s %w", payloadPath, err)
 	}

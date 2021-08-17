@@ -449,7 +449,7 @@ func (p *Poller) Run() {
 		}
 
 		// asup task will be nil when autosupport is disabled
-		if asuptask != nil && asuptask.IsDue() {
+		if asuptask != nil && asuptask.IsDue() && p.options.Asup {
 			asuptask.Run()
 		}
 
@@ -826,6 +826,7 @@ func init() {
 	flags.StringVar(&args.Config, "config", configPath, "harvest config file path")
 	flags.StringSliceVarP(&args.Collectors, "collectors", "c", []string{}, "only start these collectors (overrides harvest.yml)")
 	flags.StringSliceVarP(&args.Objects, "objects", "o", []string{}, "only start these objects (overrides collector config)")
+	flags.BoolVarP(&args.Asup, "asup", "a", false, "Asup invocation at start up")
 
 	_ = pollerCmd.MarkFlagRequired("poller")
 }
