@@ -295,15 +295,16 @@ func (p *Poller) Init() error {
 	if tools.AsupDisabled {
 		logger.Info().Msgf("Autosupport is disabled")
 	} else {
-		if !p.targetIsOntap() {
+		if p.targetIsOntap() {
+			if err = p.schedule.NewTaskString("asup", asupInterval, p.startAsup); err != nil {
+				return err
+			}
+			logger.Debug().Msgf("Autosupport scheduled with %s frequency", asupInterval)
+		} else {
 			logger.Info().
 				Str("poller", p.name).
 				Msg("Autosupport disabled since poller not connected to ONTAP.")
 		}
-		if err = p.schedule.NewTaskString("asup", asupInterval, p.startAsup); err != nil {
-			return err
-		}
-		logger.Debug().Msgf("Autosupport scheduled with %s frequency", asupInterval)
 	}
 
 	// famous last words
