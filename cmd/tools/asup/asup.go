@@ -255,15 +255,15 @@ func getCPUInfo() (string, uint8) {
 
 	var (
 		arch     string
-		count    int32
+		cpuCount int
 		cpuinfo  []cpu.InfoStat
 		hostinfo *host.InfoStat
 		err      error
 	)
 
 	if cpuinfo, err = cpu.Info(); err == nil {
-		if cpuinfo != nil && len(cpuinfo) > 0 {
-			count = cpuinfo[0].CPU
+		if cpuinfo != nil {
+			cpuCount = len(cpuinfo)
 		}
 	}
 
@@ -273,7 +273,7 @@ func getCPUInfo() (string, uint8) {
 		}
 	}
 
-	return arch, uint8(count)
+	return arch, uint8(cpuCount)
 }
 
 func getRamSize() uint64 {
