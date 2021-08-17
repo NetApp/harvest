@@ -5,6 +5,7 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/host"
@@ -13,14 +14,12 @@ import (
 	"goharvest2/cmd/poller/collector"
 	client "goharvest2/pkg/api/ontapi/zapi"
 	"goharvest2/pkg/conf"
-	"goharvest2/pkg/errors"
+	"goharvest2/pkg/logging"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
-	"io/ioutil"
-	"log"
 	"os"
 	"os/exec"
-	"strings"
+	"path"
 	"time"
 )
 
@@ -76,7 +75,7 @@ type harvestInfo struct {
 	NumClusters uint8
 }
 
-func DoAsupMessage(config string, collectors []collector.Collector, status *matrix.Matrix, pollerName string, harvestUUID string) error {
+func DoAsupMessage(config string, collectors []collector.Collector, status *matrix.Matrix, pollerName string) error {
 
 	var (
 		msg *asupMessage
@@ -85,75 +84,90 @@ func DoAsupMessage(config string, collectors []collector.Collector, status *matr
 
 	connection := getdata(config, pollerName)
 
-	if msg, err = buildAsupMessage(collectors, status, connection, harvestUUID); err != nil {
-		return errors.New(errors.ERR_CONFIG, "failed to build ASUP message")
+	if msg, err = buildAsupMessage(collectors, status, connection); err != nil {
+		return fmt.Errorf("failed to build ASUP message poller:%s %w", pollerName, err)
 	}
 
 	if err = sendAsupMessage(msg, pollerName); err != nil {
-		return errors.New(errors.ERR_CONFIG, "failed to send ASUP message")
+		return fmt.Errorf("failed to send ASUP message poller:%s %w", pollerName, err)
 	}
 
 	return nil
 }
 
-// This function would be used to invoke harvest-asup(private repo)
+// This function forks the autosupport binary
 func sendAsupMessage(msg *asupMessage, pollerName string) error {
+	err := sendAsupVia(msg, pollerName, "./bin/asup")
+	if errors.Is(err, os.ErrNotExist) {
+		err = sendAsupVia(msg, pollerName, "../harvest-private/harvest-asup/bin/asup")
+	}
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func sendAsupVia(msg *asupMessage, pollerName string, asupExecPath string) error {
 	var (
 		payloadPath string
 		err         error
 	)
 	asupTimeOutLimit := 10 * time.Second
 	workingDir := "asup"
-	//asupExecPath := "./../../Harvest/harvest-private/harvest-asup/bin/asup"
-	asupExecPath := "./bin/asup"
 
 	if payloadPath, err = getPayloadPath(workingDir, pollerName); err != nil {
 		return err
 	}
-	fmt.Printf("%s", payloadPath)
 
 	// name of the file: {poller_name}_payload.json
 	file, err := os.OpenFile(payloadPath, os.O_CREATE|os.O_WRONLY, os.ModePerm)
 	if err != nil {
-		errors.New(errors.ERR_CONFIG, "asup json creation failed")
+		return fmt.Errorf("autosupport failed to open payloadPath:%s %w", payloadPath, err)
 	}
 	defer file.Close()
 	encoder := json.NewEncoder(file)
 	encoder.SetIndent("", " ")
 	if err = encoder.Encode(msg); err != nil {
-		errors.New(errors.ERR_CONFIG, "writing to payload failed")
+		return fmt.Errorf("autosupport failed to encode payloadPath:%s %w", payloadPath, err)
 	}
 
-	// Invoke private-asup binary
+	// Invoke autosupport binary
 	cont, cancel := context.WithTimeout(context.Background(), asupTimeOutLimit)
 	defer cancel()
-	out, err := exec.CommandContext(cont, asupExecPath, "--payload="+payloadPath, "--working-dir="+workingDir).Output()
+	logging.Get().Info().
+		Str("payloadPath", payloadPath).
+		Msg("Fork autosupport binary.")
+
+	out, err := exec.CommandContext(cont, asupExecPath, "--payload", payloadPath, "--working-dir", workingDir).Output()
 
 	// make sure to timeout after x minutes, kill that process
-	if cont.Err() == context.DeadlineExceeded {
-		fmt.Print("asup call timed out ")
-		return errors.New(errors.ERR_CONFIG, "asup call timed out")
+	if errors.Is(cont.Err(), context.DeadlineExceeded) {
+		return fmt.Errorf("autosupport call to %s timed out:%w", asupExecPath, err)
 	}
 
 	if err != nil {
-		log.Fatal(err)
+		logging.Get().Error().
+			Err(err).
+			Str("payloadPath", payloadPath).
+			Msg("Unable to execute autosupport binary")
+		return err
 	}
 
-	fmt.Print("sent ASUP message")
-	fmt.Printf("%s", string(out))
+	logging.Get().Info().
+		Str("payloadPath", payloadPath).
+		Str("out", string(out)).
+		Msg("Autosupport binary forked successfully.")
+
 	return nil
 }
 
-func buildAsupMessage(collectors []collector.Collector, status *matrix.Matrix, connection *client.Client, harvestUUID string) (*asupMessage, error) {
+func buildAsupMessage(collectors []collector.Collector, status *matrix.Matrix, connection *client.Client) (*asupMessage, error) {
 
 	var (
 		msg  *asupMessage
 		arch string
 		cpus uint8
 	)
-
-	// @DEBUG all log messages are info or higher, only for development/debugging
-	fmt.Print("building ASUP message")
 
 	msg = new(asupMessage)
 
@@ -249,14 +263,12 @@ func getCPUInfo() (string, uint8) {
 
 	if cpuinfo, err = cpu.Info(); err == nil {
 		if cpuinfo != nil && len(cpuinfo) > 0 {
-			fmt.Printf("%s", cpuinfo)
 			count = cpuinfo[0].CPU
 		}
 	}
 
 	if hostinfo, err = host.Info(); err == nil {
 		if hostinfo != nil {
-			fmt.Printf("%s", *hostinfo)
 			arch = (*hostinfo).Platform
 		}
 	}
@@ -284,34 +296,18 @@ func getRamSize() uint64 {
 }
 
 func getOSName() string {
-
-	var (
-		output     []byte
-		err        error
-		name, line string
-		fields     []string
-	)
-
-	if output, err = ioutil.ReadFile("/etc/os-release"); err == nil {
-		for _, line = range strings.Split(string(output), "\n") {
-			if fields = strings.SplitN(line, "=", 2); len(fields) == 2 {
-				if fields[0] == "NAME" {
-					name = fields[1]
-				} else if fields[1] == "PRETTY_NAME" {
-					name = fields[1]
-					break
-				}
-			}
-		}
+	info, err := host.Info()
+	if err != nil {
+		return ""
 	}
-	return strings.Trim(name, `"`)
+	return info.OS
 }
 
 func getNumClusters(collectors []collector.Collector) uint8 {
 	var count uint8
 
-	for _, collector := range collectors {
-		if collector.GetName() == "Zapi" || collector.GetName() == "ZapiPerf" {
+	for _, c := range collectors {
+		if c.GetName() == "Zapi" || c.GetName() == "ZapiPerf" {
 			count++
 			break
 		}
@@ -320,27 +316,20 @@ func getNumClusters(collectors []collector.Collector) uint8 {
 	return count
 }
 
-// Gives asup payload dir path based on input.
-// Ex. asupDir = asup, then o/p would be asup/payload
-func getPayloadDir(asupDir string) string {
-	return fmt.Sprintf("%s/%s", asupDir, "payload")
-}
-
 // Gives asup payload json file path based on input.
 // Ex. asupDir = asup, pollerName = poller-1
 // o/p would be asup/payload/poller-1_payload.json
 func getPayloadPath(asupDir string, pollerName string) (string, error) {
-	payloadDir := getPayloadDir(asupDir)
+	payloadDir := path.Join(asupDir, "payload")
 
 	// Create the asup payload directory if needed
 	if _, err := os.Stat(payloadDir); os.IsNotExist(err) {
 		if err = os.MkdirAll(payloadDir, 0777); err != nil {
-			errors.New(errors.ERR_CONFIG, "Could not create asup payload directory.")
-			return "", err
+			return "", fmt.Errorf("could not create asup payload directory %s: %w", payloadDir, err)
 		}
 	}
 
-	return fmt.Sprintf("%s/%s_%s", payloadDir, pollerName, "payload.json"), nil
+	return path.Join(payloadDir, fmt.Sprintf("%s_%s", pollerName, "payload.json")), nil
 }
 
 func getClusterNodeInfo(client *client.Client) ([]string, error) {
@@ -354,21 +343,17 @@ func getClusterNodeInfo(client *client.Client) ([]string, error) {
 	request := "cluster-node-get-iter"
 
 	if response, err = client.InvokeRequestString(request); err != nil {
-		fmt.Printf("H")
-		errors.New(errors.ERR_CONFIG, "failure while invoking zapi call")
-		return nil, err
+		return nil, fmt.Errorf("failure invoking zapi: %s %w", request, err)
 	}
 
 	if attrs := response.GetChildS("attributes-list"); attrs != nil {
 		nodes = attrs.GetChildren()
 	}
 
-	for _, node := range nodes {
-		uuid := node.GetChildContentS("node-uuid")
+	for _, n := range nodes {
+		uuid := n.GetChildContentS("node-uuid")
 		uuids = append(uuids, uuid)
 	}
-
-	fmt.Printf("node uuid %s", uuids)
 
 	return uuids, nil
 }
@@ -387,8 +372,7 @@ func (target *targetInfo) getClusterInfo(connection *client.Client) error {
 	}
 
 	if response, err = connection.InvokeRequestString(request); err != nil {
-		errors.New(errors.ERR_CONFIG, "failure while invoking zapi call")
-		return err
+		return fmt.Errorf("failure invoking zapi: %s %w", request, err)
 	}
 
 	if isClustered {
@@ -403,8 +387,6 @@ func (target *targetInfo) getClusterInfo(connection *client.Client) error {
 			target.ClusterUuid = info.GetChildContentS("system-id")
 		}
 	}
-	fmt.Printf("cluster uuid %s", target.ClusterUuid)
-
 	return nil
 }
 

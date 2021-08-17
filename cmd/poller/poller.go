@@ -25,7 +25,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/google/uuid"
 	"github.com/spf13/cobra"
 	_ "goharvest2/cmd/collectors/simple"
 	_ "goharvest2/cmd/collectors/unix"
@@ -68,7 +67,6 @@ var (
 	logMaxBackups   = logging.DefaultLogMaxBackups
 	logMaxAge       = logging.DefaultLogMaxAge
 	asupInterval    = "720h" // send every 30 days
-	harvestUUID     uuid.UUID
 )
 
 // init with default configuration by default it gets logged both to console and  harvest.log
@@ -285,26 +283,27 @@ func (p *Poller) Init() error {
 	}
 	logger.Debug().Msgf("set poller schedule with %s frequency", pollerSchedule)
 
-	// ASUP parameters will be loaded from Tools section
-	// since this feature will probably be delegated to a separate tool
-	toolsParams, err := conf.GetTools(p.options.Config)
+	// Check if autosupport is enabled
+	tools, err := conf.GetTools(p.options.Config)
 	if err != nil {
-		logger.Error().Stack().Err(err).Msg("load Tools config")
+		logger.Error().Stack().
+			Str("config", p.options.Config).
+			Err(err).Msgf("Failed to load tools from config")
 		return err
 	}
 
-	if toolsParams.AsupEnabled != nil && *toolsParams.AsupEnabled {
-		if !p.targetIsOntap() {
-			logger.Info().Msg("disabling ASUP messaging as target is not ONTAP")
-		} else if err = p.schedule.NewTaskString("asup", asupInterval, p.startAsup); err != nil {
-			logger.Error().Stack().Err(err).Msg("set ASUP interval:")
-			return err
-		} else {
-			logger.Info().Msgf("set ASUP interval to %s", asupInterval)
-		}
-
+	if tools.AsupDisabled {
+		logger.Info().Msgf("Autosupport is disabled")
 	} else {
-		logger.Info().Msg("disabling ASUP messaging, by preference")
+		if !p.targetIsOntap() {
+			logger.Info().
+				Str("poller", p.name).
+				Msg("Autosupport disabled since poller not connected to ONTAP.")
+		}
+		if err = p.schedule.NewTaskString("asup", asupInterval, p.startAsup); err != nil {
+			return err
+		}
+		logger.Debug().Msgf("Autosupport scheduled with %s frequency", asupInterval)
 	}
 
 	// famous last words
@@ -314,10 +313,12 @@ func (p *Poller) Init() error {
 
 }
 
-// to the asup
 func (p *Poller) startAsup() (*matrix.Matrix, error) {
 	if p.collectors != nil {
-		if err := asup.DoAsupMessage(p.options.Config, p.collectors, p.status, p.name, harvestUUID.String()); err != nil {
+		if err := asup.DoAsupMessage(p.options.Config, p.collectors, p.status, p.name); err != nil {
+			logger.Error().Err(err).
+				Str("poller", p.name).
+				Msg("Start autosupport failed.")
 			return nil, err
 		}
 	}
@@ -446,10 +447,9 @@ func (p *Poller) Run() {
 			upExporters = upe
 		}
 
-		if asuptask.IsDue() {
-			logger.Info().Msg("asup generation invoked")
+		// asup task will be nil when autosupport is disabled
+		if asuptask != nil && asuptask.IsDue() {
 			asuptask.Run()
-			logger.Info().Msg("asup generation done")
 		}
 
 		p.schedule.Sleep()

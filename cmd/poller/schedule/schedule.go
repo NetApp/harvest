@@ -161,7 +161,7 @@ func (s *Schedule) NewTask(n string, i time.Duration, f func() (*matrix.Matrix, 
 	return errors.New(errors.INVALID_PARAM, "duplicate task :"+n)
 }
 
-// NewTaskStrings creates a new task, the interval is parsed from string i
+// NewTaskString creates a new task, the interval is parsed from string i
 func (s *Schedule) NewTaskString(n, i string, f func() (*matrix.Matrix, error)) error {
 	if d, err := time.ParseDuration(i); err == nil {
 		return s.NewTask(n, d, f)
