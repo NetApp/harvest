@@ -840,9 +840,11 @@ func init() {
 	flags.StringSliceVarP(&args.Collectors, "collectors", "c", []string{}, "Only start these collectors (overrides harvest.yml)")
 	flags.StringSliceVarP(&args.Objects, "objects", "o", []string{}, "Only start these objects (overrides collector config)")
 
-	// Used to test autosupport at startup
-	flags.BoolVarP(&args.Asup, "asup", "a", false, "Invoke autosupport at startup")
-	pollerCmd.Flags().MarkHidden("asup")
+	// Used to test autosupport at startup. An environment variable is used instead of a cmdline
+	// arg, so we don't have to also add this testing arg to harvest cli
+	if isAsup := os.Getenv("ASUP"); isAsup != "" {
+		args.Asup = true
+	}
 
 	_ = pollerCmd.MarkFlagRequired("poller")
 }
