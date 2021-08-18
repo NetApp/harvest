@@ -23,22 +23,28 @@ const (
 )
 
 func Run(command string, arg ...string) string {
-	fmt.Print("CMD :" + command + " ")
+	fmt.Println("----------CMD---------")
+
+	cmdString := command + " "
 	for _, param := range arg {
-		fmt.Print(param)
-		fmt.Print(" ")
+		cmdString = cmdString + param + " "
 	}
-	fmt.Print("\n")
+	fmt.Println(cmdString)
+	fmt.Println("-------------------------")
 	cmd := exec.Command(command, arg...)
 	var out bytes.Buffer
 	var stderr bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
 	err := cmd.Run()
-	if err != nil {
-		log.Println(stderr.String())
-		panic(err)
+	fmt.Println("----------Output---------")
+	if len(out.String()) > 0 {
+		fmt.Println(out.String())
 	}
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println("-------------------------")
 	return out.String()
 }
 
