@@ -2,7 +2,7 @@
 name:                     Lun
 query:                    lun
 object:                   lun
-
+instance_key:             name
 counters:
   - instance_name
   - read_data

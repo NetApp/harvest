@@ -2,6 +2,7 @@
 name:                     NFSv3Node
 query:                    nfsv3
 object:                   node_nfs
+instance_key:             name
 
 global_labels:
   - nfsv: v3

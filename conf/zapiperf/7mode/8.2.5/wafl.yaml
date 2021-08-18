@@ -3,7 +3,7 @@ name:                     WAFL
 query:                    wafl
 object:                   wafl
 
-instance_key:             uuid
+instance_key:             name
 
 counters:
   - instance_uuid

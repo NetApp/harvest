@@ -4,7 +4,7 @@ name:                     FcpPort
 query:                    fcp
 object:                   fcp
 
-instance_key:             uuid
+instance_key:             name
 
 counters:
   - instance_name           => port
