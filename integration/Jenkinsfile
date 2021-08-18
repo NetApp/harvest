@@ -35,9 +35,12 @@ pipeline {
                         stage('Cleanup Workspace') {
                             steps {
                                 cleanWs()
-                                sh """
+                                sh '''
                                 echo "Cleaned Up Workspace For Project"
-                                """
+                                docker stop $(docker ps -a -q)
+                                docker rm $(docker ps -a -q)
+                                docker rmi $(docker images -q)
+                                '''
                             }
                         }
 
@@ -61,14 +64,13 @@ pipeline {
 
                         stage('Install NATIVE pkg') {
                             steps {
-                                sh """
+                                sh '''
                                 echo "Installing"
                                 export PATH=$PATH:/usr/local/go/bin
                                 export BUILD_PATH=$NATIVE
                                 cd $WORKSPACE/harvest/integration/test/
-                                go mod vendor
                                 go test -tags=install_native
-                                """
+                                '''
                             }
                         }
                         stage('Running Test') {
@@ -92,9 +94,12 @@ pipeline {
                         stage('Cleanup Workspace') {
                             steps {
                                 cleanWs()
-                                sh """
+                                sh '''
                                 echo "Cleaned Up Workspace For Project"
-                                """
+                                docker stop $(docker ps -a -q)
+                                docker rm $(docker ps -a -q)
+                                docker rmi $(docker images -q)
+                                '''
                             }
                         }
 
@@ -118,7 +123,7 @@ pipeline {
 
                         stage('Install Docker') {
                             steps {
-                                sh """
+                                sh '''
                                 echo "Installing"
                                 export PATH=$PATH:/usr/local/go/bin
                                 #export BUILD_PATH=$DOCKER
@@ -127,15 +132,12 @@ pipeline {
                                 make build
                                 ./bin/harvest stop
                                 ./bin/harvest generate docker full --port --output harvest-compose.yml
-                                docker login -u harvesttest -p harvesttest
-                                docker stop $(docker ps -a -q)
-                                docker rm $(docker ps -a -q)
-                                docker rmi $(docker images -q)
+                                docker login -u $DOCKER_USER -p $DOCKER_PWD
                                 docker build -f docker/onePollerPerContainer/Dockerfile -t rahulguptajss/harvest:latest . --no-cache
                                 docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
                                 cd $WORKSPACE/harvest/integration/test/
                                 go test -tags=install_docker
-                                """
+                                '''
                             }
                         }
                         stage('Running Test') {
