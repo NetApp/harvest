@@ -519,7 +519,7 @@ func (p *Poller) loadCollector(c conf.Collector, object string) error {
 		for _, t := range *c.Templates {
 			if subTemplate, err = collector.ImportTemplate(p.options.HomePath, t, class); err != nil {
 				logger.Warn().
-					Err(err).
+					Str("err", err.Error()).
 					Msg("Unable to load template.")
 				continue
 			}
