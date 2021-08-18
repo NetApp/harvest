@@ -11,9 +11,9 @@ Tools:
 
 This information is collected and sent via the `bin/asup` executable. Harvest
 autosupport does not gather or transmit Personally Identifiable Information
-(PII) or Personal Information. `bin/asup` comes with a
-[EULA](https://www.netapp.com/us/media/enduser-license-agreement-worldwide.pdf)
-that is not applicable to the other Harvest binaries in `./bin`. The EULA only applies to `bin/asup`. 
+(PII) or Personal Information. `bin/asup` comes with a [end user license
+agreement](NetApp-EULA.md) that is not applicable to the other Harvest binaries
+in `./bin`. This EULA only applies to `bin/asup`. 
 
 You can learn more about NetApp's commitment to data security and trust
 [here](https://www.netapp.com/us/company/trust-center/index.aspx).
