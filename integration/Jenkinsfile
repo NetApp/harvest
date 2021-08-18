@@ -9,9 +9,10 @@ pipeline {
             )
     }
     parameters {
-        string(name: 'BRANCH', defaultValue: 'main', description: '[Optional] Branch name to clone. Default (main) ')
-        string(name: 'DOCKER', defaultValue: '', description: 'http url of docker tar build or docker image')
-        string(name: 'NATIVE', defaultValue: '', description: 'http url of native tar file')
+        string(name: 'BRANCH',  defaultValue: 'main', description: '[Optional] Branch name to clone. Default (main) ')
+        string(name: 'DOCKER',  defaultValue: '', description: 'http url of docker tar build or docker image')
+        string(name: 'RPM',     defaultValue: '', description: 'http url of rpm file')
+        string(name: 'NATIVE',  defaultValue: '', description: 'http url of native tar file')
     }
 
     stages {
@@ -35,12 +36,7 @@ pipeline {
                         stage('Cleanup Workspace') {
                             steps {
                                 cleanWs()
-                                sh '''
-                                echo "Cleaned Up Workspace For Project"
-                                docker stop $(docker ps -a -q)
-                                docker rm $(docker ps -a -q)
-                                docker rmi $(docker images -q)
-                                '''
+                                stopAndRemoveDockers()
                             }
                         }
 
@@ -86,6 +82,60 @@ pipeline {
                     }
 
                 }
+                stage('RPM') {
+                    agent {
+                        label "rhel"
+                    }
+                    stages('Test on RPM Pkg') {
+                        stage('Cleanup Workspace') {
+                            steps {
+                                cleanWs()
+                                stopAndRemoveDockers()
+                            }
+                        }
+
+                        stage('Setup GO') {
+                            steps {
+                                sh '''
+                                wget --quiet -O go.tar.gz "https://dl.google.com/go/$(curl https://golang.org/VERSION?m=text).linux-amd64.tar.gz"
+                                ls -ltrh
+                                rm -rf /usr/local/go && tar -C /usr/local -xzf ./go.tar.gz
+                                '''
+                            }
+                        }
+
+                        stage('Code Checkout') {
+                            steps {
+                               sh '''
+                               git clone --single-branch --branch $BRANCH https://github.com/NetApp/harvest.git
+                                '''
+                            }
+                        }
+
+                        stage('Install RPM pkg') {
+                            steps {
+                                sh '''
+                                echo "Installing"
+                                export PATH=$PATH:/usr/local/go/bin
+                                export BUILD_PATH=$RPM
+                                cd $WORKSPACE/harvest/integration/test/
+                                go test -tags=install_rpm
+                                '''
+                            }
+                        }
+                        stage('Running Test') {
+                            steps {
+                                sh """
+                                echo "Running Unit Tests"
+                                export PATH=$PATH:/usr/local/go/bin
+                                cd $WORKSPACE/harvest/integration/test/
+                                go test -tags=regression
+                                """
+                            }
+                        }
+                    }
+
+                }
                 stage('DOCKER') {
                     agent {
                         label "rhel"
@@ -94,12 +144,7 @@ pipeline {
                         stage('Cleanup Workspace') {
                             steps {
                                 cleanWs()
-                                sh '''
-                                echo "Cleaned Up Workspace For Project"
-                                docker stop $(docker ps -a -q)
-                                docker rm $(docker ps -a -q)
-                                docker rmi $(docker images -q)
-                                '''
+                                stopAndRemoveDockers()
                             }
                         }
 
@@ -132,7 +177,7 @@ pipeline {
                                 make build
                                 ./bin/harvest stop
                                 ./bin/harvest generate docker full --port --output harvest-compose.yml
-                                docker login -u $DOCKER_USER -p $DOCKER_PWD
+                                #docker login -u $DOCKER_USER -p $DOCKER_PWD
                                 docker build -f docker/onePollerPerContainer/Dockerfile -t rahulguptajss/harvest:latest . --no-cache
                                 docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
                                 cd $WORKSPACE/harvest/integration/test/
@@ -156,4 +201,11 @@ pipeline {
             }
         }
     }
+}
+
+void stopAndRemoveDockers() {
+    sh '''
+        for container_id in $(docker ps -a -q);do docker stop $container_id && docker rm $container_id;done
+        for image_id in $(docker images -q);do docker rmi $image_id;done
+    '''
 }
