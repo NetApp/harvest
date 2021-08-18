@@ -1,8 +1,8 @@
 
 name:                     VolumeNode
 query:                    volume
-object:                   volume
-
+object:                   node_vol
+instance_key:             name
 counters:
   - instance_name
   - cifs_read_data

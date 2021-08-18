@@ -2,6 +2,7 @@
 name:                     CIFSNode
 query:                    cifs
 object:                   node_cifs
+instance_key:             name
 
 counters:
   - instance_name            => node

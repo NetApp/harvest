@@ -8,6 +8,7 @@ instance_key:             name
 counters:
   - instance_name         => node
   - avg_processor_busy
+  - cpu_busy
   - cpu_elapsed_time
   - uptime
   - total_ops

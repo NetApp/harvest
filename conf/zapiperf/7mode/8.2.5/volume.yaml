@@ -1,0 +1,31 @@
+name: Volume
+query: volume
+object: volume
+
+instance_key: name
+
+counters:
+  - instance_uuid
+  - instance_name
+  - vserver_name          => svm
+  - node_name             => node
+  - parent_aggr           => aggr
+  - read_data
+  - write_data
+  - read_ops
+  - write_ops
+  - other_ops
+  - total_ops
+  - read_latency
+  - write_latency
+  - other_latency
+  - avg_latency
+
+plugins:
+  - Volume
+
+export_options:
+  instance_keys:
+    - volume
+    - aggr
+    - type
