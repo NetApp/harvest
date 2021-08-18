@@ -57,10 +57,7 @@ pipeline {
                        targetLocation=$targetParentLocation$VERSION-$RELEASE
                        rm -rf dist
                        make package VERSION=$VERSION RELEASE=$RELEASE
-<<<<<<< HEAD
-=======
                        #cp ./dist/*tar.gz ./dist/harvest.tar.gz
->>>>>>> 9d56c47 (feat: add test for dashboard negative case and enable RPM pipeline)
                         '''
                     }
                 }
@@ -76,10 +73,7 @@ pipeline {
                        #./package.sh deb x86_64 $VERSION $RELEASE
                        #cp -RT ./dist/$VERSION-$RELEASE/ $targetLocation
                        ./package.sh rpm x86_64 $VERSION $RELEASE
-<<<<<<< HEAD
-=======
                        #cp -RT ./dist/$VERSION-$RELEASE/x86_64/*.rpm  ./dist/harvest.rpm
->>>>>>> 9d56c47 (feat: add test for dashboard negative case and enable RPM pipeline)
                         '''
                     }
                 }
@@ -108,11 +102,7 @@ pipeline {
             steps {
                 script {
                     dockerBuild = "${BUILD_URL}/artifact/docker_harvest.tar"
-<<<<<<< HEAD
-                    nativeBuild = "${BUILD_URL}/artifact/harvest-1-2_linux_amd64.tar.gz	"
-=======
                     nativeBuild = "${BUILD_URL}/artifact/harvest-1-2_linux_amd64.tar.gz"
->>>>>>> 9d56c47 (feat: add test for dashboard negative case and enable RPM pipeline)
                     rpmBuild    = "${BUILD_URL}/artifact/harvest-1-2.x86_64.rpm"
                     build job: 'harvest2_0/smoke', parameters: [string(name: 'BRANCH', value: "${GIT_BRANCH}"), string(name: 'NATIVE', value: "${nativeBuild}"),  string(name: 'RPM', value: "${rpmBuild}"), string(name: 'DOCKER', value: "${dockerBuild}")]
                 }
