@@ -1,6 +1,6 @@
-# Improved SystemD Integration
+# Improved systemd Integration
 
-Systemd instantiated units for each poller and a target to tie them together. Use wildcards to start|stop|restart
+systemd instantiated units for each poller and a target to tie them together. Use wildcards to start|stop|restart
 
 ## Poller Service via systemd instantiated services
 
@@ -66,7 +66,7 @@ systemctl start|stop|restart harvest.target
 
 ```
 
-### Systemd: Logs
+### systemd: Logs
 
 ```
 journalctl -fu poller@cluster-01 # follow, tail like behavior for poller named cluster-01
