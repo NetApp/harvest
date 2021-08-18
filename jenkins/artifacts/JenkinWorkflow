@@ -5,8 +5,8 @@ pipeline {
         targetParentLocation = "/opt/home/nightly/"
         harvestPath = "harvest"
         imageName = "rahulguptajss/harvest"
-        VERSION=""
-        RELEASE=""
+        VERSION="1"
+        RELEASE="2"
     }
 
     stages {
@@ -49,7 +49,7 @@ pipeline {
         }
         stage('Build'){
             parallel {
-                stage('Build Harvest Tar gz') {
+                stage('Build Tar gz') {
                     steps {
                        sh '''
                        cd $harvestPath
@@ -57,7 +57,23 @@ pipeline {
                        targetLocation=$targetParentLocation$VERSION-$RELEASE
                        rm -rf dist
                        make package VERSION=$VERSION RELEASE=$RELEASE
-                       cp ./dist/*tar.gz ./dist/harvest.tar.gz
+                       #cp ./dist/*tar.gz ./dist/harvest.tar.gz
+                        '''
+                    }
+                }
+                stage('Build RPM/DEB') {
+                    steps {
+                       sh '''
+                       cd $harvestPath
+                       targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
+                       rm -rf ./dist
+                       export PATH=$PATH:/usr/local/go/bin
+                       rm -rf /root/rpmbuild/
+                       mkdir -p $targetLocation
+                       #./package.sh deb x86_64 $VERSION $RELEASE
+                       #cp -RT ./dist/$VERSION-$RELEASE/ $targetLocation
+                       ./package.sh rpm x86_64 $VERSION $RELEASE
+                       #cp -RT ./dist/$VERSION-$RELEASE/x86_64/*.rpm  ./dist/harvest.rpm
                         '''
                     }
                 }
@@ -86,11 +102,12 @@ pipeline {
             steps {
                 script {
                     dockerBuild = "${BUILD_URL}/artifact/docker_harvest.tar"
-                    nativeBuild = "${BUILD_URL}/artifact/harvest.tar.gz"
-                    build job: 'harvest2_0/smoke', parameters: [string(name: 'BRANCH', value: "${GIT_BRANCH}"), string(name: 'NATIVE', value: "${nativeBuild}"), string(name: 'DOCKER', value: "${dockerBuild}")]
-            }    }
+                    nativeBuild = "${BUILD_URL}/artifact/harvest-1-2_linux_amd64.tar.gz"
+                    rpmBuild    = "${BUILD_URL}/artifact/harvest-1-2.x86_64.rpm"
+                    build job: 'harvest2_0/smoke', parameters: [string(name: 'BRANCH', value: "${GIT_BRANCH}"), string(name: 'NATIVE', value: "${nativeBuild}"),  string(name: 'RPM', value: "${rpmBuild}"), string(name: 'DOCKER', value: "${dockerBuild}")]
+                }
+            }
         }
-
     }
 
 }

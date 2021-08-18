@@ -49,6 +49,16 @@ func GetAuth() string {
 	return authStr
 }
 
+func IsDockerBasedPoller() bool {
+	containerIDs := GetContainerID("poller")
+	return len(containerIDs) > 0
+}
+
+func GetOnePollerContainers() string {
+	containerIDs := GetContainerID("poller")
+	return containerIDs[0]
+}
+
 func HasAllStarted(commandSubString string, count int) bool {
 	ctx := context.Background()
 	actualCount := 0

@@ -1,4 +1,4 @@
-//+build regression
+//+build regression dashboard
 
 package main
 
@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/docker"
+	"github.com/Netapp/harvest-automation/test/grafana"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -41,19 +42,10 @@ func (suite *DashboardImportTestSuite) SetupSuite() {
 	if !utils.IsUrlReachable(utils.GetPrometheusUrl()) {
 		panic(fmt.Errorf("Prometheus is not reachable."))
 	}
-	log.Println("Import dashboard from grafana/dashboards")
-	containerIDs := docker.GetContainerID("poller")
-	if len(containerIDs) == 0 {
-		//assuming non docker based harvest grafana
-		log.Println("It is non docker based harvest")
-		importOutput := utils.Exec("/opt/harvest", "bin/grafana", "import", "--addr", utils.GetGrafanaUrl(), "--directory", "grafana/dashboards")
-		log.Println(importOutput)
-	} else {
-		params := []string{"exec", containerIDs[0], "bin/grafana", "import", "--addr", "grafana:3000", "--directory", "grafana/dashboards"}
-		importOutput := utils.Run("docker", params...)
-		log.Println(importOutput)
+	status, _ := new(grafana.GrafanaMgr).Import("grafana/dashboards")
+	if !status {
+		assert.Fail(suite.T(), "Grafana import operation is failed")
 	}
-
 }
 
 func (suite *DashboardImportTestSuite) TestImport() {
@@ -116,6 +108,18 @@ func (suite *DashboardImportTestSuite) TestDashboardCount() {
 	if len(notFoundList) > 0 {
 		log.Println("The following dashboards were not imported successfully.")
 		assert.Fail(suite.T(), fmt.Sprintf("One or more dashboards %s were missing/ not imported", notFoundList))
+	}
+}
+
+func (suite *DashboardImportTestSuite) TestImportForInvalidJson() {
+	if docker.IsDockerBasedPoller() {
+		containerId := docker.GetOnePollerContainers()
+		jsonDir := "grafana/dashboard_jsons"
+		docker.CopyFile(containerId, "dashboard_jsons", "/opt/harvest/"+jsonDir)
+		status, _ := new(grafana.GrafanaMgr).Import(jsonDir)
+		if !status {
+			assert.Fail(suite.T(), "Grafana import should fail but it is succeeded")
+		}
 	}
 }
 
