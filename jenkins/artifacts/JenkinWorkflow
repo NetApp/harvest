@@ -103,7 +103,7 @@ pipeline {
                 script {
                     dockerBuild = "${BUILD_URL}/artifact/docker_harvest.tar"
                     nativeBuild = "${BUILD_URL}/artifact/harvest-1-2_linux_amd64.tar.gz"
-                    rpmBuild    = "${BUILD_URL}/artifact/harvest-1-2.x86_64.rpm"
+                    rpmBuild    = "${BUILD_URL}/artifact/1-2/x86_64/harvest-1-2.x86_64.rpm"
                     build job: 'harvest2_0/smoke', parameters: [string(name: 'BRANCH', value: "${GIT_BRANCH}"), string(name: 'NATIVE', value: "${nativeBuild}"),  string(name: 'RPM', value: "${rpmBuild}"), string(name: 'DOCKER', value: "${dockerBuild}")]
                 }
             }

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/docker"
 	"github.com/Netapp/harvest-automation/test/grafana"
+	"github.com/Netapp/harvest-automation/test/installer"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -112,14 +113,16 @@ func (suite *DashboardImportTestSuite) TestDashboardCount() {
 }
 
 func (suite *DashboardImportTestSuite) TestImportForInvalidJson() {
+	jsonDir := "grafana/dashboard_jsons"
 	if docker.IsDockerBasedPoller() {
 		containerId := docker.GetOnePollerContainers()
-		jsonDir := "grafana/dashboard_jsons"
 		docker.CopyFile(containerId, "dashboard_jsons", "/opt/harvest/"+jsonDir)
-		status, _ := new(grafana.GrafanaMgr).Import(jsonDir)
-		if !status {
-			assert.Fail(suite.T(), "Grafana import should fail but it is succeeded")
-		}
+	} else {
+		utils.Run("cp", "-R", "dashboard_jsons", installer.HarvestHome+"/grafana")
+	}
+	status, _ := new(grafana.GrafanaMgr).Import(jsonDir)
+	if status {
+		assert.Fail(suite.T(), "Grafana import should fail but it is succeeded")
 	}
 }
 

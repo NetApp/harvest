@@ -177,7 +177,7 @@ pipeline {
                                 make build
                                 ./bin/harvest stop
                                 ./bin/harvest generate docker full --port --output harvest-compose.yml
-                                #docker login -u $DOCKER_USER -p $DOCKER_PWD
+                                docker login -u $DOCKER_USER -p $DOCKER_PWD
                                 docker build -f docker/onePollerPerContainer/Dockerfile -t rahulguptajss/harvest:latest . --no-cache
                                 docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
                                 cd $WORKSPACE/harvest/integration/test/

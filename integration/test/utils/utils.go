@@ -23,12 +23,19 @@ const (
 )
 
 func Run(command string, arg ...string) string {
+	return Exec("", command, arg...)
+}
+
+func Exec(dir string, command string, arg ...string) string {
 	cmdString := command + " "
 	for _, param := range arg {
 		cmdString = cmdString + param + " "
 	}
 	fmt.Println("CMD : " + cmdString)
 	cmd := exec.Command(command, arg...)
+	if len(dir) > 0 {
+		cmd.Dir = dir
+	}
 	var out bytes.Buffer
 	var stderr bytes.Buffer
 	cmd.Stdout = &out
@@ -43,17 +50,6 @@ func Run(command string, arg ...string) string {
 	}
 	fmt.Println("-------------------------")
 	return out.String()
-}
-
-func Exec(dir string, command string, arg ...string) string {
-	cmd := exec.Command(command, arg...)
-	cmd.Dir = dir
-	out, err := cmd.Output()
-	if err != nil {
-		panic(err)
-	}
-	output := string(out[:])
-	return output
 }
 
 // DownloadFile will download a url to a local file. It's efficient because it will

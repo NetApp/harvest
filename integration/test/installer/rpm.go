@@ -28,8 +28,7 @@ func (r *RPM) Install() bool {
 	log.Println("Installing " + rpmFileName)
 	installOutput := utils.Run("yum", "install", "-y", rpmFileName)
 	log.Println(installOutput)
-	utils.RemoveSafely(harvestFile)
-	copyErr := utils.CopyFile(HarvestHome+"/harvest.yml", harvestFile)
+	copyErr := utils.CopyFile(harvestFile, HarvestHome+"/harvest.yml")
 	if copyErr != nil {
 		return false
 	} //use file directly from the repo
