@@ -66,7 +66,7 @@ var (
 	logMaxMegaBytes = logging.DefaultLogMaxMegaBytes // 10MB
 	logMaxBackups   = logging.DefaultLogMaxBackups
 	logMaxAge       = logging.DefaultLogMaxAge
-	asupSchedule    = "720h" // send every 30 days
+	asupSchedule    = "24h" // send every 24 hours
 )
 
 // init with default configuration by default it gets logged both to console and  harvest.log

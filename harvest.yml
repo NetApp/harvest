@@ -1,6 +1,7 @@
 
 Tools:
-  #grafana_api_token: 'aaa-bbb-ccc-ddd'
+#  grafana_api_token: 'aaa-bbb-ccc-ddd'
+#  autosupport_disabled: true
 
 Exporters:
   prometheus:
