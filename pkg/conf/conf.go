@@ -150,6 +150,17 @@ func GetPollerNames(configFp string) ([]string, error) {
 	return pollerNames, nil
 }
 
+func GetTools(configFp string) (*Tools, error) {
+	var err error
+	if err = LoadHarvestConfig(configFp); err != nil {
+		return nil, err
+	}
+	if Config.Tools == nil {
+		Config.Tools = new(Tools)
+	}
+	return Config.Tools, nil
+}
+
 func GetPollers2(configFp string) (map[string]*Poller, error) {
 	err := LoadHarvestConfig(configFp)
 	if err != nil {
@@ -396,6 +407,7 @@ type Consul struct {
 
 type Tools struct {
 	GrafanaApiToken *string `yaml:"grafana_api_token,omitempty"`
+	AsupDisabled    bool    `yaml:"autosupport_disabled,omitempty"`
 }
 
 type Collector struct {

@@ -144,15 +144,19 @@ func (s *Schedule) Recover() {
 }
 
 // NewTask creates new task named n with interval i. If f is not nil, f will be called
-// to exectute task when task.Run() is called. Task name n should be unique. Interval i
+// to execute task when task.Run() is called. Task name n should be unique. Interval i
 // should be positive.
 // The order in which tasks are added is maintained: GetTasks() will
 // return tasks in FIFO order.
-func (s *Schedule) NewTask(n string, i time.Duration, f func() (*matrix.Matrix, error)) error {
+func (s *Schedule) NewTask(n string, i time.Duration, f func() (*matrix.Matrix, error), runNow bool) error {
 	if s.GetTask(n) == nil {
 		if i > 0 {
 			t := &task{Name: n, interval: i, foo: f}
-			t.timer = time.Now().Add(-i) // set to run immediately
+			if runNow {
+				t.timer = time.Now().Add(-i) // set to run immediately
+			} else {
+				t.timer = time.Now().Add(i) // run after interval
+			}
 			s.tasks = append(s.tasks, t)
 			return nil
 		}
@@ -161,10 +165,10 @@ func (s *Schedule) NewTask(n string, i time.Duration, f func() (*matrix.Matrix, 
 	return errors.New(errors.INVALID_PARAM, "duplicate task :"+n)
 }
 
-// NewTaskStrings creates a new task, the interval is parsed from string i
-func (s *Schedule) NewTaskString(n, i string, f func() (*matrix.Matrix, error)) error {
+// NewTaskString creates a new task, the interval is parsed from string i
+func (s *Schedule) NewTaskString(n, i string, f func() (*matrix.Matrix, error), runNow bool) error {
 	if d, err := time.ParseDuration(i); err == nil {
-		return s.NewTask(n, d, f)
+		return s.NewTask(n, d, f, runNow)
 	} else {
 		return err
 	}

@@ -38,6 +38,7 @@ import (
 	"goharvest2/cmd/poller/options"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/cmd/poller/schedule"
+	"goharvest2/cmd/tools/asup"
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/logging"
@@ -65,6 +66,7 @@ var (
 	logMaxMegaBytes = logging.DefaultLogMaxMegaBytes // 10MB
 	logMaxBackups   = logging.DefaultLogMaxBackups
 	logMaxAge       = logging.DefaultLogMaxAge
+	asupSchedule    = "720h" // send every 30 days
 )
 
 // init with default configuration by default it gets logged both to console and  harvest.log
@@ -275,17 +277,53 @@ func (p *Poller) Init() error {
 		pollerSchedule = *p.params.PollerSchedule
 	}
 	p.schedule = schedule.New()
-	if err = p.schedule.NewTaskString("poller", pollerSchedule, nil); err != nil {
+	if err = p.schedule.NewTaskString("poller", pollerSchedule, nil, true); err != nil {
 		logger.Error().Stack().Err(err).Msg("set schedule:")
 		return err
 	}
 	logger.Debug().Msgf("set poller schedule with %s frequency", pollerSchedule)
+
+	// Check if autosupport is enabled
+	tools, err := conf.GetTools(p.options.Config)
+	if err != nil {
+		logger.Error().Stack().
+			Str("config", p.options.Config).
+			Err(err).Msgf("Failed to load tools from config")
+		return err
+	}
+
+	if tools.AsupDisabled {
+		logger.Info().Msgf("Autosupport is disabled")
+	} else {
+		if p.targetIsOntap() {
+			if err = p.schedule.NewTaskString("asup", asupSchedule, p.startAsup, p.options.Asup); err != nil {
+				return err
+			}
+			logger.Debug().Msgf("Autosupport scheduled with %s frequency", asupSchedule)
+		} else {
+			logger.Info().
+				Str("poller", p.name).
+				Msg("Autosupport disabled since poller not connected to ONTAP.")
+		}
+	}
 
 	// famous last words
 	logger.Info().Msg("poller start-up complete")
 
 	return nil
 
+}
+
+func (p *Poller) startAsup() (*matrix.Matrix, error) {
+	if p.collectors != nil {
+		if err := asup.DoAsupMessage(p.options.Config, p.collectors, p.status, p.name); err != nil {
+			logger.Error().Err(err).
+				Str("poller", p.name).
+				Msg("Start autosupport failed.")
+			return nil, err
+		}
+	}
+	return nil, nil
 }
 
 // Start will run the collectors and the poller itself
@@ -322,17 +360,15 @@ func (p *Poller) Run() {
 
 	// poller schedule has just one task
 	task := p.schedule.GetTask("poller")
+	asuptask := p.schedule.GetTask("asup")
 
 	// number of collectors/exporters that are still up
 	upCollectors := 0
 	upExporters := 0
 
 	for {
-
 		if task.IsDue() {
-
 			task.Start()
-
 			// flush metadata
 			p.status.Reset()
 			p.metadata.Reset()
@@ -410,6 +446,11 @@ func (p *Poller) Run() {
 			}
 			upCollectors = upc
 			upExporters = upe
+		}
+
+		// asup task will be nil when autosupport is disabled
+		if asuptask != nil && asuptask.IsDue() {
+			asuptask.Run()
 		}
 
 		p.schedule.Sleep()
@@ -756,6 +797,18 @@ var pollerCmd = &cobra.Command{
 	Run:   startPoller,
 }
 
+// Returns true if at least one collector is known
+// to collect from an Ontap system (needs to be updated
+// when we add other Ontap collectors, e.g. REST)
+func (p *Poller) targetIsOntap() bool {
+	for _, c := range p.collectors {
+		if c.GetName() == "ZapiPerf" || c.GetName() == "Zapi" {
+			return true
+		}
+	}
+	return false
+}
+
 func startPoller(_ *cobra.Command, _ []string) {
 	//cmd.DebugFlags()  // uncomment to print flags
 	poller := &Poller{}
@@ -783,9 +836,13 @@ func init() {
 	flags.IntVarP(&args.LogLevel, "loglevel", "l", 2, "Logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)")
 	flags.IntVar(&args.Profiling, "profiling", 0, "If profiling port > 0, enables profiling via localhost:PORT/debug/pprof/")
 	flags.IntVar(&args.PromPort, "promPort", 0, "Prometheus Port")
-	flags.StringVar(&args.Config, "config", configPath, "harvest config file path")
-	flags.StringSliceVarP(&args.Collectors, "collectors", "c", []string{}, "only start these collectors (overrides harvest.yml)")
-	flags.StringSliceVarP(&args.Objects, "objects", "o", []string{}, "only start these objects (overrides collector config)")
+	flags.StringVar(&args.Config, "config", configPath, "Harvest config file path")
+	flags.StringSliceVarP(&args.Collectors, "collectors", "c", []string{}, "Only start these collectors (overrides harvest.yml)")
+	flags.StringSliceVarP(&args.Objects, "objects", "o", []string{}, "Only start these objects (overrides collector config)")
+
+	// Used to test autosupport at startup
+	flags.BoolVarP(&args.Asup, "asup", "a", false, "Invoke autosupport at startup")
+	pollerCmd.Flags().MarkHidden("asup")
 
 	_ = pollerCmd.MarkFlagRequired("poller")
 }

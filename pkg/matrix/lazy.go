@@ -119,3 +119,12 @@ func (me *Matrix) LazySetValueFloat64(mkey, ikey string, v float64) error {
 	}
 	return errors.New(INVALID_INSTANCE_KEY, ikey)
 }
+
+func (me *Matrix) LazyGetValueFloat64(m, i string) (float64, bool) {
+	if metric := me.GetMetric(m); metric != nil {
+		if instance := me.GetInstance(i); instance != nil {
+			return metric.GetValueFloat64(instance)
+		}
+	}
+	return 0.0, false
+}

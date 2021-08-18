@@ -34,6 +34,7 @@ type Options struct {
 	Collectors []string // name of collectors to load (override poller config)
 	Objects    []string // objects to load (overrides collector config)
 	Profiling  int      // in case of profiling, the HTTP port used to display results
+	Asup       bool     // if true, invoke autosupport at start up
 }
 
 // String provides a string representation of Options
@@ -50,6 +51,7 @@ func (o *Options) String() string {
 		fmt.Sprintf("%s = %s", "Config", o.Config),
 		fmt.Sprintf("%s = %s", "Hostname", o.Hostname),
 		fmt.Sprintf("%s = %s", "Version", o.Version),
+		fmt.Sprintf("%s = %v", "Asup", o.Asup),
 	}
 	return strings.Join(x, ", ")
 }
