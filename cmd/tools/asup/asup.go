@@ -138,7 +138,13 @@ func sendAsupVia(msg *asupMessage, pollerName string, asupExecPath string) error
 		Str("payloadPath", payloadPath).
 		Msg("Fork autosupport binary.")
 
-	out, err := exec.CommandContext(cont, asupExecPath, "--payload", payloadPath, "--working-dir", workingDir).Output()
+	exitStatus := 0
+	err = exec.CommandContext(cont, asupExecPath, "--payload", payloadPath, "--working-dir", workingDir).Run()
+	if err != nil {
+		if exitError, ok := err.(*exec.ExitError); ok {
+			exitStatus = exitError.ExitCode()
+		}
+	}
 
 	// make sure to timeout after x minutes, kill that process
 	if errors.Is(cont.Err(), context.DeadlineExceeded) {
@@ -155,7 +161,7 @@ func sendAsupVia(msg *asupMessage, pollerName string, asupExecPath string) error
 
 	logging.Get().Info().
 		Str("payloadPath", payloadPath).
-		Str("out", string(out)).
+		Int("exitStatus", exitStatus).
 		Msg("Autosupport binary forked successfully.")
 
 	return nil
