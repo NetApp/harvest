@@ -3,27 +3,21 @@
 package main
 
 import (
+	"fmt"
+	"github.com/Netapp/harvest-automation/test/docker"
 	"github.com/Netapp/harvest-automation/test/installer"
-	"log"
-	"os"
+	"github.com/Netapp/harvest-automation/test/utils"
 	"testing"
 )
 
 func TestDockerInstall(t *testing.T) {
-	var path = os.Getenv("BUILD_PATH")
-	if len(path) == 0 {
-		panic("BUILD_PATH variable is not set.")
+	//it will create a grafana token and configure it for dashboard export
+	if !utils.IsUrlReachable(utils.GetGrafanaHttpUrl()) {
+		panic(fmt.Errorf("Grafana is not reachable."))
 	}
-	installObject, err := installer.GetInstaller(installer.DOCKER, path)
-	if err != nil {
-		log.Println("Unable to initialize installer object")
-		panic(err)
+	utils.WriteToken(utils.CreateGrafanaToken())
+	containerIds := docker.GetContainerID("poller")
+	for _, containerId := range containerIds {
+		docker.CopyFile(containerId, installer.HarvestConfigFile, installer.HarvestHome+"/"+installer.HarvestConfigFile)
 	}
-	if installObject.Install() {
-		log.Println("Installation is successful..")
-	} else {
-		log.Println("Setup completed")
-		panic("installation is failed.")
-	}
-
 }

@@ -13,7 +13,7 @@ import (
 )
 
 func TestPollerMetrics(t *testing.T) {
-	pollerNames, _ := conf.GetPollerNames(installer.HARVEST_CONFIG_FILE)
+	pollerNames, _ := conf.GetPollerNames(installer.HarvestConfigFile)
 	for _, pollerName := range pollerNames {
 		port, _ := conf.GetPrometheusExporterPorts(pollerName)
 		portString := strconv.Itoa(port)
