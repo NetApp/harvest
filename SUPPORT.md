@@ -1,6 +1,6 @@
 # Harvest Support and Getting Help
 
-Harvest is an open-source project developed and published by NetApp to collect performance, capacity and hardware metrics from ONTAP clusters. These metrics can then be delivered to a range of databases and displayed in Grafana dashboards. Harvest is not an officially supported NetApp product. NetApp maintains and updates Harvest with bug fixes, security updates, and feature development. For assistance refer [Getting Help](#getting%20help)
+Harvest is an open-source project developed and published by NetApp to collect performance, capacity and hardware metrics from ONTAP clusters. These metrics can then be delivered to a range of databases and displayed in Grafana dashboards. Harvest is not an officially supported NetApp product. NetApp maintains and updates Harvest with bug fixes, security updates, and feature development. For assistance refer [Getting Help](#getting-help)
 
 This document describes Harvest's release and support lifecycle as well as places you can get help.
 
@@ -22,21 +22,13 @@ We use GitHub for tracking bugs and feature requests.
 
 # Getting Help
 
-There is a vibrant community of Harvest users on NetApp's community discussion board and the `#harvest` channel in [NetApp's Slack team](https://netapppub.slack.com/archives/C02072M1UCD). Slack is a great place to ask general questions about the project and discuss related topics with like-minded peers.
+There is a vibrant community of Harvest users on the `#harvest` channel in [NetApp's Slack team](https://netapppub.slack.com/archives/C02072M1UCD). Slack is a great place to ask general questions about the project and discuss related topics with like-minded peers.
 
 ## Slack
 
 Join [thePub workspace](https://www.netapp.io/slack). After joining, click the `+` sign next to `Channels` and then click the `Browse Channels` button. Search for `harvest` from the Channel Browser and click `Join`.
 
 ![Join channel image](/docs/slack.png)
-
-## NetApp Community Discussion Board
-
-The Harvest Community is active on the NetApp Community Discussion Board, you can post your questions there:
-
-* [NetApp Community Discussion Board](https://community.netapp.com/t5/Data-Infrastructure-Management-Software-Discussions/bd-p/oncommand-storage-management-software-discussions)
-
-  * Here are some tips on [how to ask good questions](https://stackoverflow.com/help/how-to-ask).
 
 ## Documentation
 
