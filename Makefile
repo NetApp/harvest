@@ -24,6 +24,11 @@ GOOS ?= linux
 HARVEST_PACKAGE := harvest-${VERSION}-${RELEASE}_${GOOS}_${GOARCH}
 DIST := dist
 TMP := /tmp/${HARVEST_PACKAGE}
+ASUP_TMP := /tmp/asup
+ASUP_MAKE_TARGET ?= build #one of build/production
+GIT_TOKEN ?=
+CURRENT_DIR = $(shell pwd)
+
 
 help:  ## Display this help
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m\033[0m\n\nTargets:\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
@@ -60,7 +65,7 @@ endif
 
 clean: header ## Cleanup the project binary (bin) folders
 	@echo "Cleaning harvest files"
-	@rm -rf bin
+	@if test -d bin; then ls -d ./bin/* | grep -v "asup" | xargs rm -f; fi
 
 test: ## run tests
 	@echo "Running tests"
@@ -119,3 +124,13 @@ dist-tar:
 	@tar --directory /tmp --create --gzip --file ${DIST}/${HARVEST_PACKAGE}.tar.gz ${HARVEST_PACKAGE}
 	@rm -rf ${TMP}
 	@echo "tar artifact @" ${DIST}/${HARVEST_PACKAGE}.tar.gz
+
+asup:
+	@echo "Building AutoSupport"
+	@rm -rf bin/asup
+	@rm -rf ${ASUP_TMP}
+	@mkdir ${ASUP_TMP}
+	@git clone https://${GIT_TOKEN}@github.com/NetApp/harvest-private.git ${ASUP_TMP}
+	@cd ${ASUP_TMP}/harvest-asup && make ${ASUP_MAKE_TARGET} VERSION=$VERSION RELEASE=$RELEASE
+	@mkdir -p ${CURRENT_DIR}/bin
+	@cp ${ASUP_TMP}/harvest-asup/bin/asup ${CURRENT_DIR}/bin
