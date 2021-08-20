@@ -312,6 +312,10 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 						//logger.Error(me.Prefix, err.Error())
 						me.Logger.Warn().Msgf("target unreachable, entering standby mode (retry to connect in %d s)", retryDelay)
 					}
+					me.Logger.Debug().
+						Int("retryDelay", retryDelay).
+						Err(err).
+						Msg("Target unreachable, entering standby mode (retry in retryDelay s)")
 					me.Schedule.SetStandByMode(task, time.Duration(retryDelay)*time.Second)
 					me.SetStatus(1, errors.ERR_CONNECTION)
 				// there are no instances to collect
@@ -339,6 +343,7 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 			} else if me.Schedule.IsStandBy() {
 				// recover from standby mode
 				me.Schedule.Recover()
+				retryDelay = 1
 				me.SetStatus(0, "running")
 				me.Logger.Info().Msg("recovered from standby mode, back to normal schedule")
 			}
