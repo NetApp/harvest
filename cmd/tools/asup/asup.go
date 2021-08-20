@@ -27,7 +27,6 @@ type asupMessage struct {
 	Target   *targetInfo
 	Nodes    *NodeInstanceInfo
 	Volumes  *instanceInfo
-	Svms     *instanceInfo
 	Platform *platformInfo
 	Harvest  *harvestInfo
 }
@@ -82,7 +81,10 @@ func DoAsupMessage(config string, collectors []collector.Collector, status *matr
 		err error
 	)
 
-	connection := getdata(config, pollerName)
+	connection, err := newClient(config, pollerName)
+	if err != nil {
+		return fmt.Errorf("failed to create client poller:%s %w", pollerName, err)
+	}
 
 	if msg, err = buildAsupMessage(collectors, status, connection); err != nil {
 		return fmt.Errorf("failed to build ASUP message poller:%s %w", pollerName, err)
@@ -124,7 +126,9 @@ func sendAsupVia(msg *asupMessage, pollerName string, asupExecPath string) error
 	if err != nil {
 		return fmt.Errorf("autosupport failed to open payloadPath:%s %w", payloadPath, err)
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		_ = file.Close()
+	}(file)
 	encoder := json.NewEncoder(file)
 	encoder.SetIndent("", " ")
 	if err = encoder.Encode(msg); err != nil {
@@ -186,7 +190,7 @@ func buildAsupMessage(collectors []collector.Collector, status *matrix.Matrix, c
 	msg.Platform.OS = getOSName()
 
 	// info about ONTAP host and instances
-	msg.Target, msg.Nodes, msg.Volumes, msg.Svms = getInstanceInfo(collectors, status, connection)
+	getInstanceInfo(collectors, status, connection, msg)
 
 	// add harvest release info
 	msg.Harvest = new(harvestInfo)
@@ -200,11 +204,10 @@ func buildAsupMessage(collectors []collector.Collector, status *matrix.Matrix, c
 	return msg, nil
 }
 
-func getInstanceInfo(collectors []collector.Collector, status *matrix.Matrix, connection *client.Client) (*targetInfo, *NodeInstanceInfo, *instanceInfo, *instanceInfo) {
+func getInstanceInfo(collectors []collector.Collector, status *matrix.Matrix, connection *client.Client, msg *asupMessage) {
 	target := new(targetInfo)
 	nodes := new(NodeInstanceInfo)
 	vols := new(instanceInfo)
-	svms := new(instanceInfo)
 
 	// get ping value from poller metadata
 	target.Ping, _ = status.LazyGetValueFloat64("ping", "host")
@@ -220,8 +223,12 @@ func getInstanceInfo(collectors []collector.Collector, status *matrix.Matrix, co
 				target.Version = c.GetHostVersion()
 				target.Model = c.GetHostModel()
 				target.Serial = c.GetHostUUID()
-				target.getClusterInfo(connection)
-
+				err := target.getClusterInfo(connection)
+				if err != nil {
+					logging.Get().Warn().
+						Err(err).
+						Msg("Unable to get cluster info")
+				}
 			} else if c.GetObject() == "Volume" {
 				md := c.GetMetadata()
 				vols.Count, _ = md.LazyGetValueInt64("count", "instance")
@@ -230,31 +237,13 @@ func getInstanceInfo(collectors []collector.Collector, status *matrix.Matrix, co
 				vols.ApiTime, _ = md.LazyGetValueInt64("api_time", "data")
 				vols.ParseTime, _ = md.LazyGetValueInt64("parse_time", "data")
 				vols.PluginTime, _ = md.LazyGetValueInt64("plugin_time", "data")
-
-				//} else if c.GetObject() == "Svm" {
-				//	md := c.GetMetadata()
-				//	svms.Count, _ = md.LazyGetValueInt64("count", "instance")
-				//	svms.DataPoints, _ = md.LazyGetValueInt64("count", "data")
-				//	svms.PollTime, _ = md.LazyGetValueInt64("poll_time", "data")
-				//	svms.ApiTime, _ = md.LazyGetValueInt64("api_time", "data")
-				//	svms.ParseTime, _ = md.LazyGetValueInt64("parse_time", "data")
-				//	svms.PluginTime, _ = md.LazyGetValueInt64("plugin_time", "data")
-			}
-		} else if c.GetName() == "ZapiPerf" {
-			// TODO: SVM data population
-			if c.GetObject() == "Svm" {
-				md := c.GetMetadata()
-				svms.Count, _ = md.LazyGetValueInt64("count", "instance")
-				svms.DataPoints, _ = md.LazyGetValueInt64("count", "data")
-				svms.PollTime, _ = md.LazyGetValueInt64("poll_time", "data")
-				svms.ApiTime, _ = md.LazyGetValueInt64("api_time", "data")
-				svms.ParseTime, _ = md.LazyGetValueInt64("parse_time", "data")
-				svms.PluginTime, _ = md.LazyGetValueInt64("plugin_time", "data")
 			}
 		}
 	}
 
-	return target, nodes, vols, svms
+	msg.Target = target
+	msg.Nodes = nodes
+	msg.Volumes = vols
 }
 
 func getCPUInfo() (string, uint8) {
@@ -294,7 +283,6 @@ func getRamSize() uint64 {
 	)
 
 	if memory, err = mem.VirtualMemory(); err == nil {
-		fmt.Printf("%s", *memory)
 		size = memory.Free / 1024
 	}
 
@@ -396,11 +384,14 @@ func (target *targetInfo) getClusterInfo(connection *client.Client) error {
 	return nil
 }
 
-func (node *NodeInstanceInfo) getNodeInfo(md *matrix.Matrix, connection *client.Client) error {
-	var uuids []string
-	var err error
-	if uuids, err = getClusterNodeInfo(connection); err != nil {
-		fmt.Printf("issue while fetching node uuids")
+func (node *NodeInstanceInfo) getNodeInfo(md *matrix.Matrix, connection *client.Client) {
+	uuids, err := getClusterNodeInfo(connection)
+	if err != nil {
+		// log but don't return so the other info below is collected
+		logging.Get().Error().
+			Err(err).
+			Msg("Unable to calculate sha1 of clusterUuid")
+		uuids = make([]string, 0)
 	}
 	node.Count, _ = md.LazyGetValueInt64("count", "instance")
 	node.DataPoints, _ = md.LazyGetValueInt64("count", "data")
@@ -409,38 +400,37 @@ func (node *NodeInstanceInfo) getNodeInfo(md *matrix.Matrix, connection *client.
 	node.ParseTime, _ = md.LazyGetValueInt64("parse_time", "data")
 	node.PluginTime, _ = md.LazyGetValueInt64("plugin_time", "data")
 	node.NodeUuid = uuids
-	return nil
 }
 
-func getdata(config, pollername string) *client.Client {
+func newClient(config, pollerName string) (*client.Client, error) {
 	var (
 		params     *node.Node
 		err        error
 		connection *client.Client
 	)
 
-	if params, err = conf.GetPoller(config, pollername); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+	if params, err = conf.GetPoller(config, pollerName); err != nil {
+		return nil, err
 	}
 
 	if connection, err = client.New(params); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return nil, err
 	}
 
 	if err = connection.Init(2); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return nil, err
 	}
 
-	return connection
+	return connection, nil
 }
 
 func getSha1Uuid(clusterUuid string) string {
 	shaHash := sha1.New()
 	if _, err := shaHash.Write([]byte(clusterUuid)); err != nil {
-		fmt.Printf("issue while invoking sha1 of uuid")
+		logging.Get().Error().
+			Err(err).
+			Str("clusterUuid", clusterUuid).
+			Msg("Unable to calculate sha1 of clusterUuid")
 		return ""
 	}
 	return hex.EncodeToString(shaHash.Sum(nil))
