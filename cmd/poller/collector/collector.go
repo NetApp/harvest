@@ -218,8 +218,6 @@ func Init(c Collector) error {
 	md.NewMetricInt64("parse_time")
 	md.NewMetricInt64("calc_time")
 	md.NewMetricInt64("plugin_time")
-	md.NewMetricInt64("content_length")
-	md.NewMetricFloat64("api_time_percent")
 	md.NewMetricUint64("count")
 	//md.AddLabel("task", "")
 	//md.AddLabel("interval", "")
@@ -290,6 +288,9 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 				start, pluginStart   time.Time
 				taskTime, pluginTime time.Duration
 			)
+
+			// reset task metadata
+			me.Metadata.ResetInstance(task.Name)
 
 			start = time.Now()
 			data, err := task.Run()
@@ -370,16 +371,11 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 					pluginTime = time.Since(pluginStart)
 					me.Metadata.LazySetValueInt64("plugin_time", task.Name, pluginTime.Microseconds())
 				}
-
-				// update some metadata
-				me.Metadata.LazySetValueInt64("poll_time", task.Name, task.GetDuration().Microseconds())
-				me.Metadata.LazySetValueInt64("task_time", task.Name, taskTime.Microseconds())
-
-				if apiTime, ok := me.Metadata.LazyGetValueInt64("api_time", task.Name); ok && apiTime != 0 {
-					me.Metadata.LazySetValueFloat64("api_time_percent", task.Name, float64(apiTime)/float64(taskTime.Microseconds())*100)
-				}
-
 			}
+
+			// update task metadata
+			me.Metadata.LazySetValueInt64("poll_time", task.Name, task.GetDuration().Microseconds())
+			me.Metadata.LazySetValueInt64("task_time", task.Name, taskTime.Microseconds())
 		}
 
 		// pass results to exporters
