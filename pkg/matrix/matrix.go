@@ -224,6 +224,14 @@ func (me *Matrix) NewInstance(key string) (*Instance, error) {
 	return instance, nil
 }
 
+func (me *Matrix) ResetInstance(key string) {
+	if instance, has := me.instances[key]; has {
+		for _, metric := range me.GetMetrics() {
+			metric.SetValueNAN(instance)
+		}
+	}
+}
+
 func (me *Matrix) RemoveInstance(key string) {
 	if instance, has := me.instances[key]; has {
 		// re-arrange columns in metrics
