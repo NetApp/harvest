@@ -218,8 +218,6 @@ func Init(c Collector) error {
 	md.NewMetricInt64("parse_time")
 	md.NewMetricInt64("calc_time")
 	md.NewMetricInt64("plugin_time")
-	md.NewMetricInt64("content_length")
-	md.NewMetricFloat64("api_time_percent")
 	md.NewMetricUint64("count")
 	//md.AddLabel("task", "")
 	//md.AddLabel("interval", "")
