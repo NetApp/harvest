@@ -274,7 +274,9 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 
 	for {
 
-		me.Metadata.Reset()
+		// We can't reset metadata here because autosupport metadata is reset
+		// https://github.com/NetApp/harvest-private/issues/114 for details
+		//me.Metadata.Reset()
 
 		results := make([]*matrix.Matrix, 0)
 
