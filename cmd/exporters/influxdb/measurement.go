@@ -11,14 +11,14 @@ import (
 type Measurement struct {
 	measurement string
 	tag_set     []string
-	field_set   []string
+	field_set   map[string]string
 	timestamp   string
 }
 
 func NewMeasurement(name string, size int) *Measurement {
 	m := Measurement{measurement: name}
 	m.tag_set = make([]string, size)
-	m.field_set = make([]string, 0)
+	m.field_set = make(map[string]string)
 	return &m
 }
 
@@ -31,8 +31,14 @@ func (m *Measurement) AddTag(key, value string) {
 	m.tag_set = append(m.tag_set, escape(key)+"="+escape(value))
 }
 
+// Returns "true" if field key already exists
+func (m *Measurement) HasFieldKey(key string) bool {
+	_, has := m.field_set[key]
+	return has
+}
+
 func (m *Measurement) AddField(key, value string) {
-	m.field_set = append(m.field_set, escape(key)+"="+value)
+	m.field_set[key] = value
 }
 
 func (m *Measurement) AddFieldString(key, value string) {
@@ -43,6 +49,14 @@ func (m *Measurement) AddFieldString(key, value string) {
 
 func (m *Measurement) SetTimestamp(t string) {
 	m.timestamp = t
+}
+
+func (m *Measurement) renderFields() []string {
+	r := make([]string, 0)
+	for k, v := range m.field_set {
+		r = append(r, escape(k)+"="+v)
+	}
+	return r
 }
 
 func (m *Measurement) Render() (string, error) {
@@ -65,7 +79,7 @@ func (m *Measurement) Render() (string, error) {
 		sep1,
 		strings.Join(m.tag_set, ","),
 		" ",
-		strings.Join(m.field_set, ","),
+		strings.Join(m.renderFields(), ","),
 		sep2,
 		m.timestamp,
 	), nil

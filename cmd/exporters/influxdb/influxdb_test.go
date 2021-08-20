@@ -8,6 +8,7 @@ import (
 	"goharvest2/cmd/poller/options"
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/matrix"
+	"goharvest2/pkg/tree/node"
 	"testing"
 )
 
@@ -72,6 +73,49 @@ func TestVersionParameter(t *testing.T) {
 		t.Logf("OK - url: [%s]", expectedURL)
 	} else {
 		t.Fatalf("FAIL - expected [%s]\n       got [%s]", expectedURL, influx.url)
+	}
+}
+
+// exporter should deal with situation when metric key
+// conflicts with instance labels
+func TestFieldKeyConflict(t *testing.T) {
+
+	influx := setupInfluxDB("influx-test-url", t)
+
+	data := matrix.New("collector", "object")
+	exp := node.NewS("")
+	exp.NewChildS("instance_keys", "").NewChildS("", "name")
+	exp.NewChildS("instance_labels", "").NewChildS("", "status")
+	data.SetExportOptions(exp)
+
+	i, err := data.NewInstance("instance")
+	if err != nil {
+		t.Fatal(err)
+	}
+	i.SetLabel("name", "instance")
+	i.SetLabel("status", "ok")
+
+	m, err := data.NewMetricInt("status")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err := m.SetValueInt(i, 0); err != nil {
+		t.Fatal(err)
+	}
+
+	// order can differ, since we use hash
+	expected1 := `object,name=instance status="ok",status_num=0`
+	expected2 := `object,name=instance status_num=0,status="ok"`
+
+	if r, err := influx.Render(data); err != nil {
+		t.Fatal(err)
+	} else if len(r) != 1 {
+		t.Errorf("expected 1 result, but got %d", len(r))
+	} else if string(r[0]) != expected1 && string(r[0]) != expected2 {
+		t.Errorf("metric [status] not renamed: %s", string(r[0]))
+	} else {
+		t.Logf("rendered correctly:\n%s", string(r[0]))
 	}
 }
 

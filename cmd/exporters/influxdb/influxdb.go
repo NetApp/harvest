@@ -154,7 +154,7 @@ func (e *InfluxDB) Export(data *matrix.Matrix) error {
 			return nil
 			// otherwise to the actual export: send to the DB
 		} else if err = e.Emit(metrics); err != nil {
-			e.Logger.Error().Stack().Err(err).Msgf("(%s.%s) --> %s", data.Object, data.UUID)
+			e.Logger.Error().Stack().Err(err).Msgf("(%s.%s)", data.Object, data.UUID)
 			return err
 		}
 	}
@@ -299,15 +299,24 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 				continue
 			}
 
-			field_name := metric.GetName()
+			field_key := metric.GetName()
 
 			if metric.HasLabels() {
 				for _, label := range metric.GetLabels().Map() {
-					field_name += "_" + label
+					field_key += "_" + label
 				}
 			}
 
-			m.AddField(field_name, value)
+			// make sure metric name does not collide with label names
+			if m.HasFieldKey(field_key) {
+				// try to add a suffix
+				field_key += "_num"
+				if m.HasFieldKey(field_key) {
+					return nil, errors.New("metric key collides with labels", field_key)
+					break
+				}
+			}
+			m.AddField(field_key, value)
 			countTmp++
 		}
 
