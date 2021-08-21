@@ -187,6 +187,11 @@ func (c *Client) Serial() string {
 	return c.system.serial
 }
 
+// ClusterUuid returns the cluster UUID of a c-mode system and system-id for 7-mode
+func (c *Client) ClusterUuid() string {
+	return c.system.clusterUuid
+}
+
 // Info returns a string with details about the ONTAP system identity
 func (c *Client) Info() string {
 	var model, version string

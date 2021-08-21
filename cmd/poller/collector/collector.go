@@ -8,7 +8,7 @@
 	A Harvest collector should normally "inherit" all these
 	attributes and implement only the PollData function.
 	The AbstractCollector will make sure that the collector
-	is properly initializied, metadata are updated and
+	is properly initialized, metadata are updated and
 	data poll(s) and plugins run as scheduled. The collector
 	can also choose to override any of the attributes
 	implemented by AbstractCollector.
@@ -49,10 +49,6 @@ type Collector interface {
 	GetObject() string
 	GetParams() *node.Node
 	GetOptions() *options.Options
-	GetMetadata() *matrix.Matrix
-	GetHostVersion() string
-	GetHostModel() string
-	GetHostUUID() string
 	GetCollectCount() uint64
 	AddCollectCount(uint64)
 	GetStatus() (uint8, string, string)
@@ -64,6 +60,7 @@ type Collector interface {
 	LinkExporter(exporter.Exporter)
 	LoadPlugins(*node.Node, Collector) error
 	LoadPlugin(string, *plugin.AbstractPlugin) plugin.Plugin
+	CollectAutoSupport(p *Payload)
 }
 
 // Status defines the possible states of a collector
@@ -485,7 +482,7 @@ func (me *AbstractCollector) SetMetadata(m *matrix.Matrix) {
 	me.Metadata = m
 }
 
-// WantedExporters retrievs the names of the exporters to which the collector
+// WantedExporters retrieves the names of the exporters to which the collector
 // needs to export data
 func (me *AbstractCollector) WantedExporters(configFp string) []string {
 	names, err := conf.GetUniqueExporters(me.Params, configFp)
@@ -539,4 +536,8 @@ func (me *AbstractCollector) LoadPlugins(params *node.Node, c Collector) error {
 	}
 	me.Logger.Debug().Msgf("initialized %d plugins", len(me.Plugins))
 	return nil
+}
+
+// CollectAutoSupport allows a Collector to add autosupport information
+func (me *AbstractCollector) CollectAutoSupport(_ *Payload) {
 }
