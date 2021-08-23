@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"goharvest2/pkg/color"
 	"goharvest2/pkg/util"
+	"regexp"
 	"strings"
 )
 
@@ -279,6 +280,41 @@ func (n *Node) UnmarshalXML(dec *xml.Decoder, root xml.StartElement) error {
 	n.Attrs = root.Attr
 	type node Node
 	return dec.DecodeElement((*node)(n), &root)
+}
+
+func (n *Node) FlatList(list *[]string, prefix string) {
+	if n == nil {
+		return
+	}
+	if len(n.Children) == 0 {
+		var sub string
+		if len(prefix) > 0 {
+			sub = prefix + " " + simpleName(n.GetContentS())
+		} else {
+			sub = simpleName(n.GetContentS())
+		}
+		*list = append(*list, sub)
+	} else {
+		nameS := n.GetNameS()
+		if len(nameS) > 0 && nameS != "counters" {
+			if prefix == "" {
+				prefix = nameS
+			} else {
+				prefix += " " + nameS
+			}
+		}
+		for _, child := range n.Children {
+			child.FlatList(list, prefix)
+		}
+	}
+}
+
+var wordRegex = regexp.MustCompile(`(\w|-)+`)
+
+// simpleName returns the first word in the string s
+// ignoring non-word characters. see node_test for examples
+func simpleName(s string) string {
+	return wordRegex.FindString(s)
 }
 
 func (n *Node) Print(depth int) {

@@ -12,11 +12,12 @@ import (
 )
 
 type system struct {
-	name      string
-	serial    string
-	release   string
-	version   [3]int
-	clustered bool
+	name        string
+	serial      string
+	clusterUuid string
+	release     string
+	version     [3]int
+	clustered   bool
 }
 
 // See system_test.go for examples
@@ -123,12 +124,15 @@ func (c *Client) getSystem() error {
 			if info := attrs.GetChildS("cluster-identity-info"); info != nil {
 				s.name = info.GetChildContentS("cluster-name")
 				s.serial = info.GetChildContentS("cluster-serial-number")
+				s.clusterUuid = info.GetChildContentS("cluster-uuid")
 			}
 		}
 	} else {
 		if info := response.GetChildS("system-info"); info != nil {
 			s.name = info.GetChildContentS("system-name")
 			s.serial = info.GetChildContentS("system-serial-number")
+			// There is no uuid for non cluster mode, using system-id.
+			s.clusterUuid = info.GetChildContentS("system-id")
 		}
 	}
 	c.system = &s

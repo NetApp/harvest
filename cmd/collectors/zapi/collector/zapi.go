@@ -1,9 +1,11 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
+
 package zapi
 
 import (
+	"fmt"
 	"goharvest2/cmd/collectors/zapi/plugins/shelf"
 	"goharvest2/cmd/collectors/zapi/plugins/snapmirror"
 	"goharvest2/cmd/collectors/zapiperf/plugins/fcp"
@@ -410,6 +412,111 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 	me.AddCollectCount(count)
 
 	return me.Matrix, nil
+}
+
+func (me *Zapi) CollectAutoSupport(p *collector.Payload) {
+	var exporterTypes []string
+	for _, exporter := range me.Exporters {
+		exporterTypes = append(exporterTypes, exporter.GetClass())
+	}
+
+	var counters = make([]string, 0)
+	if me.Params != nil {
+		c := me.Params.GetChildS("counters")
+		c.FlatList(&counters, "")
+	}
+
+	var schedules = make([]collector.Schedule, 0)
+	tasks := me.Params.GetChildS("schedule")
+	if tasks != nil && len(tasks.GetChildren()) > 0 {
+		for _, task := range tasks.GetChildren() {
+			schedules = append(schedules, collector.Schedule{
+				Name:     task.GetNameS(),
+				Schedule: task.GetContentS(),
+			})
+		}
+	}
+
+	clientTimeout := strconv.Itoa(client.DefaultTimeout)
+	clientNode := me.Params.GetChildS("client_timeout")
+	if clientNode != nil {
+		clientTimeout = clientNode.GetContentS()
+	}
+
+	// Add collector information
+	p.AddCollectorAsup(collector.AsupCollector{
+		Name:      me.Name,
+		Query:     me.Query,
+		BatchSize: me.batchSize,
+		Exporters: exporterTypes,
+		Counters: collector.Counters{
+			Count: len(counters),
+			List:  counters,
+		},
+		Schedules:     schedules,
+		ClientTimeout: clientTimeout,
+	})
+
+	if me.Name == "Zapi" && (me.Object == "Volume" || me.Object == "Node") {
+		p.Target.Version = me.GetHostVersion()
+		p.Target.Model = me.GetHostModel()
+		p.Target.Serial = me.GetHostUUID()
+		p.Target.ClusterUuid = me.Client.ClusterUuid()
+
+		md := me.GetMetadata()
+		info := collector.InstanceInfo{
+			Count:      md.LazyValueInt64("count", "instance"),
+			DataPoints: md.LazyValueInt64("count", "data"),
+			PollTime:   md.LazyValueInt64("poll_time", "data"),
+			ApiTime:    md.LazyValueInt64("api_time", "data"),
+			ParseTime:  md.LazyValueInt64("parse_time", "data"),
+			PluginTime: md.LazyValueInt64("plugin_time", "data"),
+		}
+
+		if me.Object == "Node" {
+			nodes, err := me.getNodeUuids()
+			if err != nil {
+				// log but don't return so the other info below is collected
+				me.Logger.Error().
+					Err(err).
+					Msg("Unable to get nodes.")
+				nodes = make([]string, 0)
+			}
+			info.Uuids = &nodes
+			p.Nodes = &info
+		} else if me.Object == "Volume" {
+			p.Volumes = &info
+		}
+	}
+}
+
+func (me *Zapi) getNodeUuids() ([]string, error) {
+	var (
+		response *node.Node
+		nodes    []*node.Node
+		err      error
+		uuids    []string
+	)
+
+	// 7-mode does not have this information
+	if !me.Client.IsClustered() {
+		return make([]string, 0), err
+	}
+	request := "cluster-node-get-iter"
+
+	if response, err = me.Client.InvokeRequestString(request); err != nil {
+		return nil, fmt.Errorf("failure invoking zapi: %s %w", request, err)
+	}
+
+	if attrs := response.GetChildS("attributes-list"); attrs != nil {
+		nodes = attrs.GetChildren()
+	}
+
+	for _, n := range nodes {
+		uuid := n.GetChildContentS("node-uuid")
+		uuids = append(uuids, uuid)
+	}
+	return uuids, nil
 }
 
 // Interface guards

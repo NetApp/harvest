@@ -38,7 +38,6 @@ import (
 	"goharvest2/cmd/poller/options"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/cmd/poller/schedule"
-	"goharvest2/cmd/tools/asup"
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/logging"
@@ -57,6 +56,7 @@ import (
 	"strings"
 	"sync"
 	"syscall"
+	"time"
 )
 
 // default params
@@ -67,6 +67,7 @@ var (
 	logMaxBackups   = logging.DefaultLogMaxBackups
 	logMaxAge       = logging.DefaultLogMaxAge
 	asupSchedule    = "24h" // send every 24 hours
+	asupFirstWrite  = "4m"  // after this time, write 1st autosupport payload (for testing)
 )
 
 // init with default configuration by default it gets logged both to console and  harvest.log
@@ -296,6 +297,19 @@ func (p *Poller) Init() error {
 		logger.Info().Msgf("Autosupport is disabled")
 	} else {
 		if p.targetIsOntap() {
+			// Write the payload after asupFirstWrite.
+			// This is to examine the autosupport contents
+			// Nothing is sent, sending happens based on the asupSchedule
+			duration, err := time.ParseDuration(asupFirstWrite)
+			if err != nil {
+				logger.Error().Err(err).
+					Str("asupFirstWrite", asupFirstWrite).
+					Msg("Failed to write 1st autosupport payload.")
+			} else {
+				time.AfterFunc(duration, func() {
+					p.firstAutoSupport()
+				})
+			}
 			if err = p.schedule.NewTaskString("asup", asupSchedule, p.startAsup, p.options.Asup); err != nil {
 				return err
 			}
@@ -314,9 +328,20 @@ func (p *Poller) Init() error {
 
 }
 
+func (p *Poller) firstAutoSupport() {
+	if p.collectors == nil {
+		return
+	}
+	if _, err := collector.BuildAndWriteAutoSupport(p.collectors, p.status, p.name); err != nil {
+		logger.Error().Err(err).
+			Str("poller", p.name).
+			Msg("First autosupport failed.")
+	}
+}
+
 func (p *Poller) startAsup() (*matrix.Matrix, error) {
 	if p.collectors != nil {
-		if err := asup.DoAsupMessage(p.options.Config, p.collectors, p.status, p.name); err != nil {
+		if err := collector.SendAutosupport(p.collectors, p.status, p.name); err != nil {
 			logger.Error().Err(err).
 				Str("poller", p.name).
 				Msg("Start autosupport failed.")
