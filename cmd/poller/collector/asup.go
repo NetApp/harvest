@@ -29,13 +29,6 @@ type Payload struct {
 	path       string
 }
 
-func (p *Payload) AddCollectorAsup(a AsupCollector) {
-	if p.Collectors == nil {
-		p.Collectors = &[]AsupCollector{}
-	}
-	*p.Collectors = append(*p.Collectors, a)
-}
-
 type TargetInfo struct {
 	Version     string
 	Model       string
@@ -95,6 +88,15 @@ type AsupCollector struct {
 	Counters      Counters
 }
 
+const workingDir = "asup"
+
+func (p *Payload) AddCollectorAsup(a AsupCollector) {
+	if p.Collectors == nil {
+		p.Collectors = &[]AsupCollector{}
+	}
+	*p.Collectors = append(*p.Collectors, a)
+}
+
 func SendAutosupport(collectors []Collector, status *matrix.Matrix, pollerName string) error {
 
 	var (
@@ -106,7 +108,7 @@ func SendAutosupport(collectors []Collector, status *matrix.Matrix, pollerName s
 		return fmt.Errorf("failed to build ASUP message poller:%s %w", pollerName, err)
 	}
 
-	if err = sendAsupMessage(msg, pollerName); err != nil {
+	if err = sendAsupMessage(msg); err != nil {
 		return fmt.Errorf("failed to send ASUP message poller:%s %w", pollerName, err)
 	}
 
@@ -114,7 +116,7 @@ func SendAutosupport(collectors []Collector, status *matrix.Matrix, pollerName s
 }
 
 // This function forks the autosupport binary
-func sendAsupMessage(msg *Payload, pollerName string) error {
+func sendAsupMessage(msg *Payload) error {
 	err := sendAsupVia(msg, "./bin/asup")
 	if errors.Is(err, os.ErrNotExist) {
 		err = sendAsupVia(msg, "../harvest-private/harvest-asup/bin/asup")
@@ -127,7 +129,6 @@ func sendAsupMessage(msg *Payload, pollerName string) error {
 
 func sendAsupVia(msg *Payload, asupExecPath string) error {
 	asupTimeOutLimit := 10 * time.Second
-	workingDir := "asup"
 
 	// Invoke autosupport binary
 	cont, cancel := context.WithTimeout(context.Background(), asupTimeOutLimit)
@@ -217,7 +218,6 @@ func writeAutoSupport(msg *Payload, pollerName string) (string, error) {
 		payloadPath string
 		err         error
 	)
-	workingDir := "asup"
 
 	if payloadPath, err = getPayloadPath(workingDir, pollerName); err != nil {
 		return "", err

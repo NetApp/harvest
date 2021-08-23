@@ -437,7 +437,7 @@ func (me *Zapi) CollectAutoSupport(p *collector.Payload) {
 		}
 	}
 
-	clientTimeout := ""
+	clientTimeout := strconv.Itoa(client.DefaultTimeout)
 	clientNode := me.Params.GetChildS("client_timeout")
 	if clientNode != nil {
 		clientTimeout = clientNode.GetContentS()
