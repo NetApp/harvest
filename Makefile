@@ -119,7 +119,7 @@ dist-tar:
 	@rm -rf ${DIST}
 	@mkdir ${TMP}
 	@mkdir ${DIST}
-	@cp -r .git cmd bin conf docker docs grafana pkg service go.mod go.sum Makefile README.md LICENSE ${TMP}
+	@cp -r .git cmd bin conf docker docs grafana pkg service autosupport go.mod go.sum Makefile README.md LICENSE ${TMP}
 	@cp harvest.yml ${TMP}/harvest.yml
 	@tar --directory /tmp --create --gzip --file ${DIST}/${HARVEST_PACKAGE}.tar.gz ${HARVEST_PACKAGE}
 	@rm -rf ${TMP}
