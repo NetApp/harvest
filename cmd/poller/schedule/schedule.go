@@ -178,27 +178,6 @@ func (s *Schedule) NewTaskString(n, i string, f func() (*matrix.Matrix, error), 
 	}
 }
 
-// SetInterval changes the interval of an existing task. Changing interval is safe
-// at any time.
-func (s *Schedule) SetInterval(t *task, i time.Duration) error {
-	if i > 0 {
-		t.interval = i
-		s.cachedInterval[t.Name] = t.interval
-		return nil
-	}
-	return errors.New(errors.ERR_SCHEDULE, "invalid interval :"+i.String())
-}
-
-// SetIntervalString changes the interval of an existing task. Interval is parsed
-// from string i.
-func (s *Schedule) SetIntervalString(t *task, i string) error {
-	if d, err := time.ParseDuration(i); err == nil {
-		return s.SetInterval(t, d)
-	} else {
-		return err
-	}
-}
-
 // GetTasks returns scheduled tasks
 func (s *Schedule) GetTasks() []*task {
 	if !s.standByMode {

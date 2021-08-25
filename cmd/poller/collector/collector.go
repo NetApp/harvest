@@ -308,27 +308,28 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 					}
 					if !me.Schedule.IsStandBy() {
 						//logger.Error(me.Prefix, err.Error())
-						me.Logger.Warn().Msgf("task %s, target unreachable, entering standby mode (retry to connect in %d s)", task.Name, retryDelay)
+						me.Logger.Warn().Str("task", task.Name).Msgf("target unreachable, entering standby mode (retry to connect in %d s)", retryDelay)
 					}
 					me.Logger.Debug().
 						Int("retryDelay", retryDelay).
 						Err(err).
-						Msgf("task %s, Target unreachable, entering standby mode (retry in retryDelay s)", task.Name)
+						Str("task", task.Name).
+						Msgf("Target unreachable, entering standby mode (retry in retryDelay s)")
 					me.Schedule.SetStandByMode(task, time.Duration(retryDelay)*time.Second)
 					me.SetStatus(1, errors.ERR_CONNECTION)
 				// there are no instances to collect
 				case errors.IsErr(err, errors.ERR_NO_INSTANCE):
 					me.Schedule.SetStandByMode(task, 5*time.Minute)
 					me.SetStatus(1, errors.ERR_NO_INSTANCE)
-					me.Logger.Info().Msgf("task %s, no [%s] instances on system, entering standby mode", task.Name, me.Object)
+					me.Logger.Info().Str("task", task.Name).Msgf("no [%s] instances on system, entering standby mode", me.Object)
 				// no metrics available
 				case errors.IsErr(err, errors.ERR_NO_METRIC):
 					me.SetStatus(1, errors.ERR_NO_METRIC)
 					me.Schedule.SetStandByMode(task, 1*time.Hour)
-					me.Logger.Warn().Msgf("task %s, no [%s] metrics on system, entering standby mode", task.Name, me.Object)
+					me.Logger.Warn().Str("task", task.Name).Msgf("no [%s] metrics on system, entering standby mode", me.Object)
 				// not an error we are expecting, so enter failed state and terminate
 				default:
-					me.Logger.Error().Stack().Err(err).Msgf("task %s", task.Name)
+					me.Logger.Error().Stack().Err(err).Str("task", task.Name).Msgf("")
 					if errmsg := errors.GetClass(err); errmsg != "" {
 						me.SetStatus(2, errmsg)
 					} else {
@@ -343,7 +344,7 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 				me.Schedule.Recover()
 				retryDelay = 1
 				me.SetStatus(0, "running")
-				me.Logger.Info().Msgf("task %s, recovered from standby mode, back to normal schedule", task.Name)
+				me.Logger.Info().Str("task", task.Name).Msgf("recovered from standby mode, back to normal schedule")
 			}
 
 			if data != nil {
