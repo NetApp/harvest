@@ -127,10 +127,10 @@ dist-tar:
 
 asup:
 	@echo "Building AutoSupport"
-	@rm -rf bin/asup
+	@rm -rf autosupport/asup
 	@rm -rf ${ASUP_TMP}
 	@mkdir ${ASUP_TMP}
 	@git clone https://${GIT_TOKEN}@github.com/NetApp/harvest-private.git ${ASUP_TMP}
 	@cd ${ASUP_TMP}/harvest-asup && make ${ASUP_MAKE_TARGET} VERSION=$VERSION RELEASE=$RELEASE
-	@mkdir -p ${CURRENT_DIR}/bin
-	@cp ${ASUP_TMP}/harvest-asup/bin/asup ${CURRENT_DIR}/bin
+	@mkdir -p ${CURRENT_DIR}/autosupport
+	@cp ${ASUP_TMP}/harvest-asup/bin/asup ${CURRENT_DIR}/autosupport
