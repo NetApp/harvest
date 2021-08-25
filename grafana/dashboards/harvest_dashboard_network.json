@@ -217,26 +217,6 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "mappings": [
-            {
-              "from": "",
-              "id": 0,
-              "operator": "",
-              "text": "UP",
-              "to": "",
-              "type": 1,
-              "value": "0"
-            },
-            {
-              "from": "",
-              "id": 1,
-              "operator": "",
-              "text": "DOWN",
-              "to": "",
-              "type": 1,
-              "value": "1"
-            }
-          ],
           "noValue": "n/a",
           "thresholds": {
             "mode": "absolute",
@@ -293,26 +273,6 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "mappings": [
-            {
-              "from": "",
-              "id": 0,
-              "operator": "",
-              "text": "UP",
-              "to": "",
-              "type": 1,
-              "value": "0"
-            },
-            {
-              "from": "",
-              "id": 1,
-              "operator": "",
-              "text": "DOWN",
-              "to": "",
-              "type": 1,
-              "value": "1"
-            }
-          ],
           "noValue": "n/a",
           "thresholds": {
             "mode": "absolute",
