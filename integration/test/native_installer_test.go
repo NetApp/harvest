@@ -15,6 +15,7 @@ func TestNativeInstall(t *testing.T) {
 	if len(path) == 0 {
 		panic("BUILD_PATH variable is not set.")
 	}
+	utils.UseCertFile()
 	installObject, err := installer.GetInstaller(installer.GRAFANA, "grafana/grafana")
 	if err != nil {
 		log.Println("Unable to initialize installer object for " + installer.GRAFANA)
