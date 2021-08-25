@@ -15,7 +15,6 @@ func (r *Native) Init(path string) {
 
 func (r *Native) Install() bool {
 	harvestFile := "harvest.yml"
-	utils.UseCertFile()
 	harvestObj := new(Harvest)
 	tarFileName := "harvest.tar.gz"
 	utils.RemoveSafely(tarFileName)
@@ -36,9 +35,12 @@ func (r *Native) Install() bool {
 	utils.RemoveSafely(HarvestHome + "/" + harvestFile)
 	log.Println("Copy certificates files into harvest directory")
 	path := HarvestHome + "/certificates"
-	err = utils.RemoveDir(path)
-	utils.PanicIfNotNil(err)
-	utils.MkDir(path)
+	if utils.FileExists(path) {
+		err = utils.RemoveDir(path)
+		utils.PanicIfNotNil(err)
+	}
+
+	utils.Run("mkdir", "-p", path)
 	utils.Run("cp", "-R", utils.GetConfigDir()+"/certificates", HarvestHome)
 	err = utils.CopyFile(harvestFile, HarvestHome+"/"+harvestFile)
 	if err != nil {
