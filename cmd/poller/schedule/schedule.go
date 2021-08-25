@@ -40,10 +40,11 @@ import (
 
 // Task represents a scheduled task
 type task struct {
-	Name     string                         // name of the task
-	interval time.Duration                  // the schedule interval
-	timer    time.Time                      // last time task was executed
-	foo      func() (*matrix.Matrix, error) // pointer to the function that executes the task
+	Name       string                         // name of the task
+	interval   time.Duration                  // the schedule interval
+	timer      time.Time                      // last time task was executed
+	foo        func() (*matrix.Matrix, error) // pointer to the function that executes the task
+	identifier string                         // optional additional information about schedule i.e. collector name
 }
 
 // Start marks the task as started by updating timer
@@ -83,11 +84,11 @@ func (t *task) IsDue() bool {
 
 // Schedule contains a collection of tasks and the current state of the schedule
 type Schedule struct {
-	tasks          []*task       // list of tasks that Schedule needs to run
-	standByMode    bool          // if true, Schedule waitsfor a stalled task
-	standByTask    *task         // stalled task in standByMode
-	standByTimer   time.Time     // timer for stalled task in standByMode
-	cachedInterval time.Duration // normal interval of the stalled task
+	tasks          []*task                  // list of tasks that Schedule needs to run
+	standByMode    bool                     // if true, Schedule waitsfor a stalled task
+	standByTask    *task                    // stalled task in standByMode
+	standByTimer   time.Time                // timer for stalled task in standByMode
+	cachedInterval map[string]time.Duration // normal interval of the stalled tasks
 }
 
 // New creates and initializes an empty Schedule.
@@ -95,6 +96,7 @@ func New() *Schedule {
 	s := Schedule{}
 	s.tasks = make([]*task, 0)
 	s.standByMode = false
+	s.cachedInterval = make(map[string]time.Duration)
 	return &s
 }
 
@@ -104,14 +106,13 @@ func (s *Schedule) IsStandBy() bool {
 	return s.standByMode
 }
 
-// SetStandByMode intiailzes StandbyMode: Schedule will suspend all tasks until
+// SetStandByMode initializes StandbyMode: Schedule will suspend all tasks until
 // the critical task t has succeeded. The temporary interval i will be used for
 // the task until Schedule recovers to normal mode.
 func (s *Schedule) SetStandByMode(t *task, i time.Duration) {
 	for _, x := range s.tasks {
 		if x.Name == t.Name {
 			s.standByTask = t
-			s.cachedInterval = t.interval // remember normal interval of task
 			t.interval = i
 			t.timer = time.Now()
 			s.standByMode = true
@@ -126,9 +127,11 @@ func (s *Schedule) Recover() {
 
 	if s.standByMode {
 		for _, t := range s.tasks {
+			if interval, ok := s.cachedInterval[t.Name]; ok {
+				t.interval = interval
+			}
 			// reset timer of the critical task, assume that it just completed
 			if t.Name == s.standByTask.Name {
-				t.interval = s.cachedInterval
 				t.timer = time.Now()
 				// all the other tasks that were suspended need to run asap
 			} else {
@@ -148,10 +151,11 @@ func (s *Schedule) Recover() {
 // should be positive.
 // The order in which tasks are added is maintained: GetTasks() will
 // return tasks in FIFO order.
-func (s *Schedule) NewTask(n string, i time.Duration, f func() (*matrix.Matrix, error), runNow bool) error {
+func (s *Schedule) NewTask(n string, i time.Duration, f func() (*matrix.Matrix, error), runNow bool, identifier string) error {
 	if s.GetTask(n) == nil {
 		if i > 0 {
-			t := &task{Name: n, interval: i, foo: f}
+			t := &task{Name: n, interval: i, foo: f, identifier: identifier}
+			s.cachedInterval[n] = t.interval // remember normal interval of task
 			if runNow {
 				t.timer = time.Now().Add(-i) // set to run immediately
 			} else {
@@ -166,9 +170,9 @@ func (s *Schedule) NewTask(n string, i time.Duration, f func() (*matrix.Matrix, 
 }
 
 // NewTaskString creates a new task, the interval is parsed from string i
-func (s *Schedule) NewTaskString(n, i string, f func() (*matrix.Matrix, error), runNow bool) error {
+func (s *Schedule) NewTaskString(n, i string, f func() (*matrix.Matrix, error), runNow bool, identifier string) error {
 	if d, err := time.ParseDuration(i); err == nil {
-		return s.NewTask(n, d, f, runNow)
+		return s.NewTask(n, d, f, runNow, identifier)
 	} else {
 		return err
 	}
@@ -179,6 +183,7 @@ func (s *Schedule) NewTaskString(n, i string, f func() (*matrix.Matrix, error), 
 func (s *Schedule) SetInterval(t *task, i time.Duration) error {
 	if i > 0 {
 		t.interval = i
+		s.cachedInterval[t.Name] = t.interval
 		return nil
 	}
 	return errors.New(errors.ERR_SCHEDULE, "invalid interval :"+i.String())

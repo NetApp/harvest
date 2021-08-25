@@ -157,7 +157,7 @@ func Init(c Collector) error {
 
 		if m := reflect.ValueOf(c).MethodByName(methodName); m.IsValid() {
 			if foo, ok := m.Interface().(func() (*matrix.Matrix, error)); ok {
-				if err := s.NewTaskString(task.GetNameS(), task.GetContentS(), foo, true); err != nil {
+				if err := s.NewTaskString(task.GetNameS(), task.GetContentS(), foo, true, "Collector_"+c.GetName()+"_"+c.GetObject()); err != nil {
 					return errors.New(errors.INVALID_PARAM, "schedule ("+task.GetNameS()+"): "+err.Error())
 				}
 			} else {
@@ -308,27 +308,27 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 					}
 					if !me.Schedule.IsStandBy() {
 						//logger.Error(me.Prefix, err.Error())
-						me.Logger.Warn().Msgf("target unreachable, entering standby mode (retry to connect in %d s)", retryDelay)
+						me.Logger.Warn().Msgf("task %s, target unreachable, entering standby mode (retry to connect in %d s)", task.Name, retryDelay)
 					}
 					me.Logger.Debug().
 						Int("retryDelay", retryDelay).
 						Err(err).
-						Msg("Target unreachable, entering standby mode (retry in retryDelay s)")
+						Msgf("task %s, Target unreachable, entering standby mode (retry in retryDelay s)", task.Name)
 					me.Schedule.SetStandByMode(task, time.Duration(retryDelay)*time.Second)
 					me.SetStatus(1, errors.ERR_CONNECTION)
 				// there are no instances to collect
 				case errors.IsErr(err, errors.ERR_NO_INSTANCE):
 					me.Schedule.SetStandByMode(task, 5*time.Minute)
 					me.SetStatus(1, errors.ERR_NO_INSTANCE)
-					me.Logger.Info().Msgf("no [%s] instances on system, entering standby mode", me.Object)
+					me.Logger.Info().Msgf("task %s, no [%s] instances on system, entering standby mode", task.Name, me.Object)
 				// no metrics available
 				case errors.IsErr(err, errors.ERR_NO_METRIC):
 					me.SetStatus(1, errors.ERR_NO_METRIC)
 					me.Schedule.SetStandByMode(task, 1*time.Hour)
-					me.Logger.Warn().Msgf("no [%s] metrics on system, entering standby mode", me.Object)
+					me.Logger.Warn().Msgf("task %s, no [%s] metrics on system, entering standby mode", task.Name, me.Object)
 				// not an error we are expecting, so enter failed state and terminate
 				default:
-					me.Logger.Error().Stack().Err(err).Msg("")
+					me.Logger.Error().Stack().Err(err).Msgf("task %s", task.Name)
 					if errmsg := errors.GetClass(err); errmsg != "" {
 						me.SetStatus(2, errmsg)
 					} else {
@@ -343,7 +343,7 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 				me.Schedule.Recover()
 				retryDelay = 1
 				me.SetStatus(0, "running")
-				me.Logger.Info().Msg("recovered from standby mode, back to normal schedule")
+				me.Logger.Info().Msgf("task %s, recovered from standby mode, back to normal schedule", task.Name)
 			}
 
 			if data != nil {

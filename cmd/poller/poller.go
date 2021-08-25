@@ -278,7 +278,7 @@ func (p *Poller) Init() error {
 		pollerSchedule = *p.params.PollerSchedule
 	}
 	p.schedule = schedule.New()
-	if err = p.schedule.NewTaskString("poller", pollerSchedule, nil, true); err != nil {
+	if err = p.schedule.NewTaskString("poller", pollerSchedule, nil, true, "poller_"+p.name); err != nil {
 		logger.Error().Stack().Err(err).Msg("set schedule:")
 		return err
 	}
@@ -310,7 +310,7 @@ func (p *Poller) Init() error {
 					p.firstAutoSupport()
 				})
 			}
-			if err = p.schedule.NewTaskString("asup", asupSchedule, p.startAsup, p.options.Asup); err != nil {
+			if err = p.schedule.NewTaskString("asup", asupSchedule, p.startAsup, p.options.Asup, "asup_"+p.name); err != nil {
 				return err
 			}
 			logger.Debug().Msgf("Autosupport scheduled with %s frequency", asupSchedule)
