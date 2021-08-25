@@ -446,7 +446,7 @@ func checkToken(opts *options, ignoreConfig bool) error {
 	// ask user to safe API key
 	if opts.token != tools.GetChildContentS("grafana_api_token") {
 
-		fmt.Printf("safe API key for later use? [Y/n]: ")
+		fmt.Printf("save API key for later use? [Y/n]: ")
 		_, _ = fmt.Scanf("%s\n", &answer)
 
 		if answer == "Y" || answer == "y" || answer == "yes" || answer == "" {
