@@ -13,6 +13,7 @@ require (
 	github.com/morikuni/aec v1.0.0 // indirect
 	github.com/stretchr/testify v1.7.0
 	goharvest2 v0.0.0-00010101000000-000000000000
+	golang.org/x/term v0.0.0-20210503060354-a79de5458b56 // indirect
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
 	google.golang.org/grpc v1.39.1 // indirect
 )

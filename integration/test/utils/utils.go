@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -24,6 +25,21 @@ const (
 
 func Run(command string, arg ...string) string {
 	return Exec("", command, arg...)
+}
+
+func MkDir(dirname string) {
+	if _, err := os.Stat(dirname); os.IsNotExist(err) {
+		err := os.Mkdir(dirname, os.ModePerm)
+		PanicIfNotNil(err)
+	}
+}
+
+func GetConfigDir() string {
+	value := os.Getenv("TEST_CONFIG")
+	if len(value) > 0 {
+		return value
+	}
+	return "/u/cdurai/harvest"
 }
 
 func Exec(dir string, command string, arg ...string) string {
@@ -88,6 +104,40 @@ func DownloadFile(filepath string, url string) error {
 func FileExists(path string) bool {
 	_, err := os.Stat(path)
 	return !os.IsNotExist(err)
+}
+
+func RemoveDir(dir string) error {
+	d, err := os.Open(dir)
+	if err != nil {
+		return err
+	}
+	defer func(d *os.File) {
+		err := d.Close()
+		if err != nil {
+
+		}
+	}(d)
+	names, err := d.Readdirnames(-1)
+	if err != nil {
+		return err
+	}
+	for _, name := range names {
+		err = os.RemoveAll(filepath.Join(dir, name))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func UseCertFile() {
+	harvestFile := "harvest.yml"
+	harvestCertFile := "harvest_cert.yml"
+	RemoveSafely(harvestFile)
+	err := CopyFile(harvestCertFile, harvestFile)
+	if err != nil {
+		PanicIfNotNil(err)
+	}
 }
 
 func RemoveSafely(filename string) bool {

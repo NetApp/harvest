@@ -17,6 +17,7 @@ func (r *RPM) Install() bool {
 	harvestFile := "harvest.yml"
 	rpmFileName := "harvest.rpm"
 	utils.RemoveSafely(rpmFileName)
+	utils.UseCertFile()
 	err := utils.DownloadFile(rpmFileName, r.path)
 	if err != nil {
 		panic(err)
@@ -28,7 +29,13 @@ func (r *RPM) Install() bool {
 	log.Println("Installing " + rpmFileName)
 	installOutput := utils.Run("yum", "install", "-y", rpmFileName)
 	log.Println(installOutput)
-	copyErr := utils.CopyFile(harvestFile, HarvestHome+"/harvest.yml")
+	log.Println("Copy certificates files into harvest directory")
+	path := HarvestHome + "/certificates"
+	copyErr := utils.RemoveDir(path)
+	utils.PanicIfNotNil(copyErr)
+	utils.MkDir(path)
+	utils.Run("cp", "-R", utils.GetConfigDir()+"/certificates", HarvestHome)
+	copyErr = utils.CopyFile(harvestFile, HarvestHome+"/harvest.yml")
 	if copyErr != nil {
 		return false
 	} //use file directly from the repo
