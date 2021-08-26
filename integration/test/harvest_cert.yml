@@ -1,11 +1,9 @@
 Exporters:
   prometheus1:
     exporter: Prometheus
-    addr: 0.0.0.0
     port: 12990
   prometheus2:
     exporter: Prometheus
-    addr: 0.0.0.0
     port: 12991
 
 Defaults:
