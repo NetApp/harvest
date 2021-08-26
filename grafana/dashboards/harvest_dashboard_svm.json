@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1629988142967,
+  "iteration": 1629988142974,
   "links": [],
   "panels": [
     {
@@ -763,7 +763,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(svm_nfs_read_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"})",
+          "expr": "avg(svm_nfs_read_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Read",
@@ -771,7 +771,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg(svm_nfs_write_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"})",
+          "expr": "avg(svm_nfs_write_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Write",
@@ -1315,5 +1315,5 @@
   "timezone": "",
   "title": "NetApp Detail: SVM",
   "uid": "aYm9xDZ7zsd",
-  "version": 3
+  "version": 4
 }
