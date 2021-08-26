@@ -134,3 +134,7 @@ asup:
 	@cd ${ASUP_TMP}/harvest-asup && make ${ASUP_MAKE_TARGET} VERSION=$VERSION RELEASE=$RELEASE
 	@mkdir -p ${CURRENT_DIR}/bin
 	@cp ${ASUP_TMP}/harvest-asup/bin/asup ${CURRENT_DIR}/bin
+
+dev: build
+	@echo "Deleting AutoSupport binary"
+	@rm -rf autosupport/asup
