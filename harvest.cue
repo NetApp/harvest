@@ -9,6 +9,7 @@ Exporters: [Name=_]: #Prom | #Influx
 	port?:       int
 	port_range?: string
 	allow_addrs_regex?: [...string]
+	add_meta_tags?: bool
 }
 
 #Influx: {
@@ -40,7 +41,8 @@ Pollers: [Name=_]: #Poller
 	addr?:          string
 	log_max_bytes?: int
 	log_max_files?: int
-	collectors: [...#CollectorDef] | [...string]
+	client_timeout?: string
+	collectors?: [...#CollectorDef] | [...string]
 	exporters: [...string]
 	log: [...string]
 }
