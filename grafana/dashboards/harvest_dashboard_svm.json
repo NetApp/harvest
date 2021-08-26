@@ -14,7 +14,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "7.5.6"
+      "version": "8.1.1"
     },
     {
       "type": "datasource",
@@ -50,6 +50,12 @@
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
         "type": "dashboard"
       }
     ]
@@ -59,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1629977286226,
+  "iteration": 1629988142967,
   "links": [],
   "panels": [
     {
@@ -73,7 +79,7 @@
       },
       "id": 37,
       "panels": [],
-      "title": "NFSv3 Frontend Drilldown",
+      "title": "NFS${NFSv} Frontend Drilldown",
       "type": "row"
     },
     {
@@ -129,7 +135,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.1.1",
       "targets": [
         {
           "exemplar": false,
@@ -195,7 +201,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.1.1",
       "targets": [
         {
           "exemplar": false,
@@ -261,7 +267,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.1.1",
       "targets": [
         {
           "exemplar": false,
@@ -318,11 +324,11 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.1.1",
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(svm_nfs_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
+          "expr": "sum(svm_nfs_read_total{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -376,17 +382,75 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.1.1",
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(svm_nfs_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
+          "expr": "sum(svm_nfs_write_total{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
       "title": "Write IOPs",
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "iops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 20,
+        "y": 1
+      },
+      "id": 55,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.1",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "sum(svm_nfs_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Total IOPs",
       "type": "stat"
     },
     {
@@ -447,7 +511,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.1.1",
       "targets": [
         {
           "exemplar": false,
@@ -476,11 +540,11 @@
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "Avg",
+          "legendFormat": "Read",
           "refId": "Read Ops"
         }
       ],
-      "title": "NFSv3 Avg Throughput",
+      "title": "Avg Throughput",
       "transformations": [
         {
           "id": "reduce",
@@ -562,7 +626,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.1.1",
       "targets": [
         {
           "exemplar": false,
@@ -576,7 +640,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg((svm_nfs_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"}) - (svm_nfs_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"}) - (svm_nfs_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"}))",
+          "expr": "avg((svm_nfs_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"}) - (svm_nfs_read_total{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"}) - (svm_nfs_write_total{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"}))",
           "hide": false,
           "interval": "",
           "legendFormat": "-other-",
@@ -584,7 +648,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg(svm_nfs_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
+          "expr": "avg(svm_nfs_write_total{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -594,7 +658,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg(svm_nfs_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
+          "expr": "avg(svm_nfs_read_total{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -603,7 +667,7 @@
           "refId": "Read Ops"
         }
       ],
-      "title": "NFSv3 Avg IOPs",
+      "title": "Avg IOPs",
       "transformations": [
         {
           "id": "reduce",
@@ -655,7 +719,14 @@
               "type": "linear"
             },
             "showPoints": "never",
-            "spanNulls": 300000
+            "spanNulls": 300000,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "mappings": [],
           "thresholds": {
@@ -685,9 +756,6 @@
           "placement": "right"
         },
         "tooltip": {
-          "mode": "single"
-        },
-        "tooltipOptions": {
           "mode": "single"
         }
       },
@@ -741,7 +809,14 @@
               "type": "linear"
             },
             "showPoints": "never",
-            "spanNulls": 300000
+            "spanNulls": 300000,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "mappings": [],
           "thresholds": {
@@ -771,9 +846,6 @@
           "placement": "right"
         },
         "tooltip": {
-          "mode": "single"
-        },
-        "tooltipOptions": {
           "mode": "single"
         }
       },
@@ -835,7 +907,14 @@
               "type": "linear"
             },
             "showPoints": "never",
-            "spanNulls": 300000
+            "spanNulls": 300000,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "mappings": [],
           "thresholds": {
@@ -866,16 +945,13 @@
         },
         "tooltip": {
           "mode": "single"
-        },
-        "tooltipOptions": {
-          "mode": "single"
         }
       },
       "pluginVersion": "8.0.6",
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(svm_nfs_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
+          "expr": "sum(svm_nfs_read_total{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Read",
@@ -883,7 +959,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum(svm_nfs_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
+          "expr": "sum(svm_nfs_write_total{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Write",
@@ -928,7 +1004,14 @@
               "type": "linear"
             },
             "showPoints": "never",
-            "spanNulls": 300000
+            "spanNulls": 300000,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "mappings": [],
           "thresholds": {
@@ -960,9 +1043,6 @@
           "placement": "right"
         },
         "tooltip": {
-          "mode": "single"
-        },
-        "tooltipOptions": {
           "mode": "single"
         }
       },
@@ -1017,7 +1097,14 @@
               "type": "linear"
             },
             "showPoints": "never",
-            "spanNulls": 300000
+            "spanNulls": 300000,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "mappings": [],
           "thresholds": {
@@ -1050,9 +1137,6 @@
         },
         "tooltip": {
           "mode": "single"
-        },
-        "tooltipOptions": {
-          "mode": "single"
         }
       },
       "pluginVersion": "8.0.6",
@@ -1080,7 +1164,7 @@
     }
   ],
   "refresh": "",
-  "schemaVersion": 27,
+  "schemaVersion": 30,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -1127,7 +1211,6 @@
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -1154,7 +1237,6 @@
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -1181,7 +1263,6 @@
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -1208,7 +1289,6 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -1216,7 +1296,7 @@
     ]
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-3h",
     "to": "now"
   },
   "timepicker": {
@@ -1234,6 +1314,6 @@
   },
   "timezone": "",
   "title": "NetApp Detail: SVM",
-  "uid": "aYm9xDZ7z",
-  "version": 4
+  "uid": "aYm9xDZ7zsd",
+  "version": 3
 }
