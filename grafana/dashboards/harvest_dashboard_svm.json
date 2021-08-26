@@ -14,13 +14,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "7.5.4"
-    },
-    {
-      "type": "panel",
-      "id": "graph",
-      "name": "Graph",
-      "version": ""
+      "version": "7.5.6"
     },
     {
       "type": "datasource",
@@ -38,6 +32,12 @@
       "type": "panel",
       "id": "table",
       "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
       "version": ""
     }
   ],
@@ -59,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1626948102350,
+  "iteration": 1629977286226,
   "links": [],
   "panels": [
     {
@@ -78,6 +78,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -94,15 +95,15 @@
               },
               {
                 "color": "#EAB839",
-                "value": 20
+                "value": 20000
               },
               {
                 "color": "dark-red",
-                "value": 30
+                "value": 30000
               }
             ]
           },
-          "unit": "ms"
+          "unit": "µs"
         },
         "overrides": []
       },
@@ -128,21 +129,22 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.0.6",
+      "pluginVersion": "7.5.6",
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(svm_nfs_read_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}) / 1000",
+          "expr": "avg(svm_nfs_read_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "NFSv3 Read Latency",
+      "title": "Read Latency",
       "type": "stat"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -159,15 +161,15 @@
               },
               {
                 "color": "#EAB839",
-                "value": 2
+                "value": 2000
               },
               {
                 "color": "dark-red",
-                "value": 10
+                "value": 10000
               }
             ]
           },
-          "unit": "ms"
+          "unit": "µs"
         },
         "overrides": []
       },
@@ -175,71 +177,6 @@
         "h": 6,
         "w": 4,
         "x": 4,
-        "y": 1
-      },
-      "id": 39,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.0.6",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "avg(svm_nfs_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}) / 1000",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "NFSv3 Avg Latency",
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 2,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "#EAB839",
-                "value": 2
-              },
-              {
-                "color": "dark-red",
-                "value": 10
-              }
-            ]
-          },
-          "unit": "ms"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 4,
-        "x": 8,
         "y": 1
       },
       "id": 47,
@@ -258,17 +195,83 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.0.6",
+      "pluginVersion": "7.5.6",
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(svm_nfs_write_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}) / 1000",
+          "expr": "avg(svm_nfs_write_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "NFSv3 Write Latency",
+      "title": "Write Latency",
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 2000
+              },
+              {
+                "color": "dark-red",
+                "value": 10000
+              }
+            ]
+          },
+          "unit": "µs"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 8,
+        "y": 1
+      },
+      "id": 39,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.5.6",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "avg(svm_nfs_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Avg Latency",
       "type": "stat"
     },
     {
@@ -278,9 +281,126 @@
           "color": {
             "mode": "thresholds"
           },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "iops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 12,
+        "y": 1
+      },
+      "id": 43,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.5.6",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "sum(svm_nfs_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Read IOPs",
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "iops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 16,
+        "y": 1
+      },
+      "id": 44,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.5.6",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "sum(svm_nfs_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Write IOPs",
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
           "custom": {
             "align": "auto",
-            "displayMode": "auto"
+            "displayMode": "auto",
+            "filterable": false
           },
           "mappings": [
             {
@@ -310,27 +430,28 @@
               }
             ]
           },
-          "unit": "KBs"
+          "unit": "Bps"
         },
         "overrides": []
       },
       "gridPos": {
         "h": 6,
-        "w": 6,
-        "x": 12,
-        "y": 1
+        "w": 9,
+        "x": 0,
+        "y": 7
       },
       "id": 50,
       "interval": null,
       "options": {
         "frameIndex": 2,
-        "showHeader": true
+        "showHeader": true,
+        "sortBy": []
       },
-      "pluginVersion": "8.0.6",
+      "pluginVersion": "7.5.6",
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(svm_nfs_throughput{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}) / 1000",
+          "expr": "avg(svm_nfs_throughput{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -340,17 +461,17 @@
         },
         {
           "exemplar": false,
-          "expr": "avg(svm_nfs_write_throughput{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}) / 1000",
+          "expr": "avg(svm_nfs_write_throughput{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
           "format": "table",
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "Avg",
+          "legendFormat": "Write",
           "refId": "Write Ops"
         },
         {
           "exemplar": false,
-          "expr": "avg(svm_nfs_read_throughput{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}) / 1000",
+          "expr": "avg(svm_nfs_read_throughput{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -385,6 +506,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -392,7 +514,8 @@
           },
           "custom": {
             "align": "auto",
-            "displayMode": "auto"
+            "displayMode": "auto",
+            "filterable": false
           },
           "mappings": [
             {
@@ -428,21 +551,22 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 6,
-        "x": 18,
-        "y": 1
+        "w": 8,
+        "x": 9,
+        "y": 7
       },
       "id": 46,
       "interval": null,
       "options": {
         "frameIndex": 2,
-        "showHeader": true
+        "showHeader": true,
+        "sortBy": []
       },
-      "pluginVersion": "8.0.6",
+      "pluginVersion": "7.5.6",
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(svm_nfs_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"})",
+          "expr": "avg(svm_nfs_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -452,7 +576,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg((svm_nfs_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}) - (svm_nfs_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}) - (svm_nfs_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}))",
+          "expr": "avg((svm_nfs_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"}) - (svm_nfs_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"}) - (svm_nfs_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"}))",
           "hide": false,
           "interval": "",
           "legendFormat": "-other-",
@@ -460,7 +584,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg(svm_nfs_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"})",
+          "expr": "avg(svm_nfs_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -470,7 +594,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg(svm_nfs_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"})",
+          "expr": "avg(svm_nfs_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -505,6 +629,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -518,6 +643,7 @@
             "fillOpacity": 10,
             "gradientMode": "none",
             "hideFrom": {
+              "graph": false,
               "legend": false,
               "tooltip": false,
               "viz": false
@@ -529,14 +655,7 @@
               "type": "linear"
             },
             "showPoints": "never",
-            "spanNulls": 300000,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "spanNulls": 300000
           },
           "mappings": [],
           "thresholds": {
@@ -548,7 +667,7 @@
               }
             ]
           },
-          "unit": "ms"
+          "unit": "µs"
         },
         "overrides": []
       },
@@ -556,16 +675,19 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 7
+        "y": 13
       },
       "id": 51,
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "list",
+          "displayMode": "table",
           "placement": "right"
         },
         "tooltip": {
+          "mode": "single"
+        },
+        "tooltipOptions": {
           "mode": "single"
         }
       },
@@ -573,7 +695,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "svm_nfs_read_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"} / 1000",
+          "expr": "avg(svm_nfs_read_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Read",
@@ -581,18 +703,19 @@
         },
         {
           "exemplar": false,
-          "expr": "svm_nfs_write_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"} / 1000",
+          "expr": "avg(svm_nfs_write_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Write",
           "refId": "Write Latency"
         }
       ],
-      "title": "NFSv3 Read and Write Latency",
+      "title": "Read and Write Latency",
       "type": "timeseries"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -606,6 +729,7 @@
             "fillOpacity": 10,
             "gradientMode": "none",
             "hideFrom": {
+              "graph": false,
               "legend": false,
               "tooltip": false,
               "viz": false
@@ -617,14 +741,7 @@
               "type": "linear"
             },
             "showPoints": "never",
-            "spanNulls": 300000,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "spanNulls": 300000
           },
           "mappings": [],
           "thresholds": {
@@ -636,7 +753,7 @@
               }
             ]
           },
-          "unit": "ms"
+          "unit": "Bps"
         },
         "overrides": []
       },
@@ -644,16 +761,19 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 7
+        "y": 13
       },
       "id": 53,
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "list",
+          "displayMode": "table",
           "placement": "right"
         },
         "tooltip": {
+          "mode": "single"
+        },
+        "tooltipOptions": {
           "mode": "single"
         }
       },
@@ -661,26 +781,35 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "svm_nfs_read_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"} / 1000",
+          "expr": "sum(svm_nfs_read_throughput{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Read",
-          "refId": "Read Latency"
+          "refId": "Read"
         },
         {
           "exemplar": false,
-          "expr": "svm_nfs_write_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"} / 1000",
+          "expr": "sum(svm_nfs_write_throughput{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Write",
-          "refId": "Write Latency"
+          "refId": "Write"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(svm_nfs_throughput{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Total",
+          "refId": "Total"
         }
       ],
-      "title": "NFSv3 Read and Write Latency",
+      "title": "Throughput",
       "type": "timeseries"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -694,6 +823,7 @@
             "fillOpacity": 10,
             "gradientMode": "none",
             "hideFrom": {
+              "graph": false,
               "legend": false,
               "tooltip": false,
               "viz": false
@@ -705,14 +835,7 @@
               "type": "linear"
             },
             "showPoints": "never",
-            "spanNulls": 300000,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "spanNulls": 300000
           },
           "mappings": [],
           "thresholds": {
@@ -732,16 +855,19 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 7
+        "y": 13
       },
       "id": 42,
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "list",
+          "displayMode": "table",
           "placement": "right"
         },
         "tooltip": {
+          "mode": "single"
+        },
+        "tooltipOptions": {
           "mode": "single"
         }
       },
@@ -749,7 +875,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "svm_nfs_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}",
+          "expr": "sum(svm_nfs_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Read",
@@ -757,7 +883,7 @@
         },
         {
           "exemplar": false,
-          "expr": "svm_nfs_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}",
+          "expr": "sum(svm_nfs_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Write",
@@ -765,17 +891,18 @@
         },
         {
           "exemplar": false,
-          "expr": "svm_nfs_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}",
+          "expr": "sum(svm_nfs_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
           "interval": "",
           "legendFormat": "Total",
           "refId": "Total Ops"
         }
       ],
-      "title": "NFSv3 IOPs",
+      "title": "IOPs",
       "type": "timeseries"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -789,6 +916,7 @@
             "fillOpacity": 10,
             "gradientMode": "none",
             "hideFrom": {
+              "graph": false,
               "legend": false,
               "tooltip": false,
               "viz": false
@@ -800,14 +928,7 @@
               "type": "linear"
             },
             "showPoints": "never",
-            "spanNulls": 300000,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "spanNulls": 300000
           },
           "mappings": [],
           "thresholds": {
@@ -827,16 +948,21 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 15
+        "y": 21
       },
       "id": 52,
       "options": {
         "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
+          "calcs": [
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "right"
         },
         "tooltip": {
+          "mode": "single"
+        },
+        "tooltipOptions": {
           "mode": "single"
         }
       },
@@ -844,14 +970,14 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "{__name__=~\"svm_nfs_.+_avg_latency\",datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}",
+          "expr": "avg by(__name__) ({__name__=~\"svm_nfs_.+_avg_latency\",datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{__name__}}",
           "refId": "Read Throughput"
         }
       ],
-      "title": "NFSv3 Throughput",
+      "title": "Latency per Type",
       "transformations": [
         {
           "id": "renameByRegex",
@@ -865,6 +991,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -878,6 +1005,7 @@
             "fillOpacity": 10,
             "gradientMode": "none",
             "hideFrom": {
+              "graph": false,
               "legend": false,
               "tooltip": false,
               "viz": false
@@ -889,14 +1017,7 @@
               "type": "linear"
             },
             "showPoints": "never",
-            "spanNulls": 300000,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "spanNulls": 300000
           },
           "mappings": [],
           "thresholds": {
@@ -908,7 +1029,7 @@
               }
             ]
           },
-          "unit": "µs"
+          "unit": "iops"
         },
         "overrides": []
       },
@@ -916,16 +1037,21 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 15
+        "y": 21
       },
       "id": 54,
       "options": {
         "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "right"
         },
         "tooltip": {
+          "mode": "single"
+        },
+        "tooltipOptions": {
           "mode": "single"
         }
       },
@@ -933,14 +1059,14 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "{__name__=~\"svm_nfs_.+_total\",datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}",
+          "expr": "sum by (__name__) ({__name__=~\"svm_nfs_.+_total\",datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"$NFSv\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{__name__}}",
           "refId": "Read Throughput"
         }
       ],
-      "title": "NFSv3 IOPs per Type",
+      "title": "IOPs per Type",
       "transformations": [
         {
           "id": "renameByRegex",
@@ -951,124 +1077,10 @@
         }
       ],
       "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "semi-dark-blue",
-                "value": null
-              }
-            ]
-          },
-          "unit": "iops"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 0,
-        "y": 23
-      },
-      "id": 43,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.0.6",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "svm_nfs_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Read IOPs",
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "semi-dark-blue",
-                "value": null
-              }
-            ]
-          },
-          "unit": "iops"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 4,
-        "y": 23
-      },
-      "id": 44,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.0.6",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "svm_nfs_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Write IOPs",
-      "type": "stat"
     }
   ],
   "refresh": "",
-  "schemaVersion": 30,
+  "schemaVersion": 27,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -1079,6 +1091,8 @@
           "text": "Prometheus",
           "value": "Prometheus"
         },
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": false,
         "label": "Data Source",
@@ -1093,6 +1107,7 @@
       },
       {
         "allValue": null,
+        "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(volume_labels, datacenter)",
         "description": null,
@@ -1112,12 +1127,14 @@
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
+        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
         "allValue": null,
+        "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(volume_labels{datacenter=\"$Datacenter\"}, cluster)",
         "description": null,
@@ -1137,20 +1154,22 @@
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
+        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
         "allValue": null,
+        "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}, svm)",
         "description": null,
         "error": null,
         "hide": 0,
-        "includeAll": false,
+        "includeAll": true,
         "label": null,
-        "multi": false,
+        "multi": true,
         "name": "SVM",
         "options": [],
         "query": {
@@ -1162,6 +1181,34 @@
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(svm_nfs_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}, nfsv)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "NFSv",
+        "options": [],
+        "query": {
+          "query": "label_values(svm_nfs_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}, nfsv)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -1169,7 +1216,7 @@
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {
@@ -1188,5 +1235,5 @@
   "timezone": "",
   "title": "NetApp Detail: SVM",
   "uid": "aYm9xDZ7z",
-  "version": 2
+  "version": 4
 }
