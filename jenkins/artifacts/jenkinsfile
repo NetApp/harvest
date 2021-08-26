@@ -115,7 +115,7 @@ pipeline {
                   withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
                     sh '''
                     cd $harvestPath
-                    docker build -f docker/onePollerPerContainer/Dockerfile -t rahulguptajss/harvest:latest -t rahulguptajss/harvest:$VERSION-$RELEASE . --no-cache
+                    docker build -f docker/onePollerPerContainer/Dockerfile --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE -t rahulguptajss/harvest:latest -t rahulguptajss/harvest:$VERSION-$RELEASE . --no-cache
                     docker login
                     docker push rahulguptajss/harvest:$VERSION-$RELEASE
                     '''
