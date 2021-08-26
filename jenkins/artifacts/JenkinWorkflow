@@ -81,9 +81,8 @@ pipeline {
                     steps {
                        sh '''
                        cd $harvestPath
-                       docker login -u $DOCKER_USER -p $DOCKER_PWD
                        docker rmi $(docker images -q)
-                       docker build -f docker/onePollerPerContainer/Dockerfile -t $imageName:latest . --no-cache
+                       docker build -f docker/onePollerPerContainer/Dockerfile --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE -t $imageName:latest . --no-cache
                        docker save -o ./dist/docker_harvest.tar $imageName:latest
                         '''
                     }
