@@ -63,7 +63,7 @@ func checkLatest() {
 		fmt.Printf("%s\n", err)
 		return
 	}
-	available, err := isNewerAvailable(Release, latest)
+	available, err := isNewerAvailable(VERSION, latest)
 	if err != nil {
 		fmt.Printf("%s\n", err)
 		return
