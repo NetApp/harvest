@@ -117,7 +117,7 @@ func SendAutosupport(collectors []Collector, status *matrix.Matrix, pollerName s
 
 // This function forks the autosupport binary
 func sendAsupMessage(msg *Payload) error {
-	err := sendAsupVia(msg, "./bin/asup")
+	err := sendAsupVia(msg, "./autosupport/asup")
 	if errors.Is(err, os.ErrNotExist) {
 		err = sendAsupVia(msg, "../harvest-private/harvest-asup/bin/asup")
 	}
