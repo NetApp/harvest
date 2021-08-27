@@ -9,7 +9,6 @@ counters:
   - instance_name
   - avg_processor_busy
   - cpu_elapsed_time
-  - uptime
   - memory
   - total_data
   - total_latency

@@ -33,6 +33,17 @@ const (
 	expectedResponseCode = 204
 )
 
+// some field names that we need to avoid
+// first two: to avoid collision with label names
+// others: protected field names by influxdb
+var protectedFieldNames = map[string]string{
+	"status":       "status_code",
+	"new_status":   "new_status_code",
+	"time":         "harvest_time",
+	"_measurement": "harvest_measurement",
+	"_field":       "harvest_field",
+}
+
 type InfluxDB struct {
 	*exporter.AbstractExporter
 	client *http.Client
@@ -162,20 +173,16 @@ func (e *InfluxDB) Export(data *matrix.Matrix) error {
 	e.Logger.Debug().Msgf("(%s.%s) --> exported %d data points", data.Object, data.UUID, len(metrics))
 
 	// update metadata
-	if err = e.Metadata.LazyAddValueInt64("time", "export", time.Since(s).Microseconds()); err != nil {
-		e.Logger.Error().Stack().Err(err).Msg("metadata export time")
+	if err = e.Metadata.LazySetValueInt64("time", "export", time.Since(s).Microseconds()); err != nil {
+		e.Logger.Error().Err(err).Msg("metadata export time")
 	}
 
-	/* skipped for now, since InfluxDB complains about "time" field name
-
-	// export metadata
 	if metrics, err = e.Render(e.Metadata); err != nil {
-		logger.Error(e.Prefix, "render metadata: %v", err)
+		e.Logger.Error().Err(err).Msg("render metadata")
 	} else if err = e.Emit(metrics); err != nil {
-		logger.Error(e.Prefix, "emit metadata: %v", err)
+		e.Logger.Error().Err(err).Msg("emit metadata")
 	}
 
-	*/
 	return nil
 }
 
@@ -305,6 +312,10 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 				for _, label := range metric.GetLabels().Map() {
 					field_name += "_" + label
 				}
+			}
+
+			if rename, has := protectedFieldNames[field_name]; has {
+				field_name = rename
 			}
 
 			m.AddField(field_name, value)
