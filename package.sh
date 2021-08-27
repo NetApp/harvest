@@ -85,6 +85,8 @@ build () {
         export HARVEST_ARCH="$ARCH"
         export HARVEST_VERSION="$VERSION"
         export HARVEST_RELEASE="$RELEASE"
+        export ASUP_MAKE_TARGET="$ASUP_MAKE_TARGET"
+        export GIT_TOKEN="$GIT_TOKEN"
         
         sh "$BUILD_SOURCE/$DIST/build-$DIST.sh"
 
@@ -111,6 +113,8 @@ DIST=$1
 ARCH=$2
 VERSION=$3
 RELEASE=$4
+ASUP_MAKE_TARGET=$5
+GIT_TOKEN=$6
 
 if [[ -z "$DIST" || -z "$ARCH" || -z "$VERSION" || -z "$RELEASE" ]]; then
     usage

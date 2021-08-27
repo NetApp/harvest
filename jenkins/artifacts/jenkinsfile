@@ -7,13 +7,14 @@ pipeline {
 
     parameters {
         string(name: 'VERSION', defaultValue: '', description: '[Optional] RPM Version should match Harvest version with rc or nightly stripped. If not filled default is YY.mm.ddHH. See https://github.com/NetApp/harvest/wiki/Release-Checklist#version-names for details')
-        string(name: 'RELEASE', defaultValue: 'nightly', description: '[Optional] Example: nightly (default) See https://github.com/NetApp/harvest/wiki/Release-Checklist#rpm-and-debian-names for details ')
+        string(name: 'RELEASE', defaultValue: 'nightly', description: '[Optional] Example: nightly (default) See https://github.com/NetApp/harvest-private/wiki/Release-Checklist#rpm-and-debian-names for details ')
         string(name: 'BRANCH', defaultValue: 'main', description: '[Optional] Branch name to clone. Default (main) ')
-		string(name: 'BUILD_DOCKER_HUB_PUBLISH', defaultValue: 'false', description: 'true to publish to docker hub')
-		string(name: 'OVERWRITE_LATEST', defaultValue: 'false', description: 'true to overwrite latest tag at docker hub. Works only if BUILD_DOCKER_HUB_PUBLISH is true')
+		string(name: 'IS_PRODUCTION', defaultValue: 'false', description: 'true to publish to dockerhub and "production" AutoSupport binary. Default (no dockerhub publish "build" AutoSupport binary)')
+		string(name: 'OVERWRITE_DOCKER_LATEST_TAG', defaultValue: 'false', description: 'true to overwrite latest tag at dockerhub. Works only if IS_PRODUCTION is true')
     }
 
     environment {
+        GIT_TOKEN = credentials('GIT_TOKEN')
         VERSION =sh (returnStdout: true, script: """
         [ -n \"${params.VERSION}\" ] && echo \"${params.VERSION}\" || date +%Y.%m.%d%H | cut -c 3-
         """).trim()
@@ -23,12 +24,13 @@ pipeline {
         BRANCH =sh (returnStdout: true, script: """
         echo \"${params.BRANCH}\"
         """).trim()
-		BUILD_DOCKER_HUB_PUBLISH =sh (returnStdout: true, script: """
-        echo \"${params.BUILD_DOCKER_HUB_PUBLISH}\"
+		IS_PRODUCTION =sh (returnStdout: true, script: """
+        echo \"${params.IS_PRODUCTION}\"
         """).trim()
-		OVERWRITE_LATEST =sh (returnStdout: true, script: """
-        echo \"${params.OVERWRITE_LATEST}\"
+		OVERWRITE_DOCKER_LATEST_TAG =sh (returnStdout: true, script: """
+        echo \"${params.OVERWRITE_DOCKER_LATEST_TAG}\"
         """).trim()
+        ASUP_MAKE_TARGET = "${params.IS_PRODUCTION == "true" ? "production" : "build"}"
         targetParentLocation = "/opt/home/nightly/"
         harvestPath = "harvest"
     }
@@ -85,9 +87,9 @@ pipeline {
                export PATH=$PATH:/usr/local/go/bin
                rm -rf /root/rpmbuild/
                mkdir -p $targetLocation
-               ./package.sh deb x86_64 $VERSION $RELEASE
+               ./package.sh deb x86_64 $VERSION $RELEASE $ASUP_MAKE_TARGET $GIT_TOKEN
                cp -RT ./dist/$VERSION-$RELEASE/ $targetLocation
-               ./package.sh rpm x86_64 $VERSION $RELEASE
+               ./package.sh rpm x86_64 $VERSION $RELEASE $ASUP_MAKE_TARGET $GIT_TOKEN
                cp -RT ./dist/$VERSION-$RELEASE/x86_64/  $targetLocation
                 '''
             }
@@ -100,7 +102,7 @@ pipeline {
                export PATH=$PATH:/usr/local/go/bin
                targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
                rm -rf dist
-               make package VERSION=$VERSION RELEASE=$RELEASE
+               make asup package VERSION=$VERSION RELEASE=$RELEASE ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET GIT_TOKEN=$GIT_TOKEN
                cp -RT ./dist/ $targetLocation
                 '''
             }
@@ -108,7 +110,7 @@ pipeline {
        stage('Build Docker Image and Publish') {
                 when {
                   expression {
-                    return env.BUILD_DOCKER_HUB_PUBLISH == 'true';
+                    return env.IS_PRODUCTION == 'true';
                   }
                 }
                 steps {
@@ -120,7 +122,7 @@ pipeline {
                     docker push rahulguptajss/harvest:$VERSION-$RELEASE
                     '''
 					script {
-					if (OVERWRITE_LATEST == 'true') {
+					if (OVERWRITE_DOCKER_LATEST_TAG == 'true') {
 					  sh 'docker push rahulguptajss/harvest:latest'
 					}
 					}
