@@ -27,18 +27,6 @@
       "id": "influxdb",
       "name": "InfluxDB",
       "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "stat",
-      "name": "Stat",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "table",
-      "name": "Table",
-      "version": ""
     }
   ],
   "annotations": {
@@ -60,11 +48,12 @@
       }
     ]
   },
+  "description": "",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1630063184425,
+  "iteration": 1630063514650,
   "links": [],
   "panels": [
     {
@@ -76,1011 +65,9 @@
         "x": 0,
         "y": 0
       },
-      "id": 18,
+      "id": 191,
       "panels": [],
-      "title": "Highlights",
-      "type": "row"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": "${DS_INFLUXDB}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "color": "rgb(21, 118, 171)",
-                  "text": "0"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "rgb(21, 118, 171)",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 3,
-        "x": 0,
-        "y": 1
-      },
-      "id": 22,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.1",
-      "targets": [
-        {
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\" and r[\"_field\"] == \"status\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))\r\n  |> group()\r\n  |> unique(column: \"aggr\")\r\n  |> count(column: \"aggr\")",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Aggregates",
-      "type": "stat"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": "${DS_INFLUXDB}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "color": "rgb(21, 118, 171)",
-                  "text": "0"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "rgb(21, 118, 171)",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 3,
-        "x": 3,
-        "y": 1
-      },
-      "id": 23,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.1",
-      "targets": [
-        {
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\" and r[\"_field\"] == \"raid_plex_count\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))\r\n  |> group()\r\n  |> aggregateWindow(every: 1m, fn: sum, createEmpty: false) ",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Plexes",
-      "type": "stat"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": "${DS_INFLUXDB}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "color": "rgb(21, 118, 171)",
-                  "text": "0"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "rgb(21, 118, 171)",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 3,
-        "x": 6,
-        "y": 1
-      },
-      "id": 26,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.1",
-      "targets": [
-        {
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\" and r[\"_field\"] == \"raid_disk_count\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))\r\n  |> group()\r\n  |> aggregateWindow(every: 1m, fn: sum, createEmpty: false) ",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Disks",
-      "type": "stat"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": "${DS_INFLUXDB}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "color": "rgb(21, 118, 171)",
-                  "text": "0"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "rgb(21, 118, 171)",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 3,
-        "x": 9,
-        "y": 1
-      },
-      "id": 27,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.1",
-      "targets": [
-        {
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\" and r[\"_field\"] == \"volume_count_flexvol\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))\r\n  |> group()\r\n  |> aggregateWindow(every: 1m, fn: sum, createEmpty: false) ",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Volumes",
-      "type": "stat"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": "${DS_INFLUXDB}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "color": "rgb(21, 118, 171)",
-                  "text": "0"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "rgb(21, 118, 171)",
-                "value": null
-              }
-            ]
-          },
-          "unit": "decbytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 3,
-        "x": 12,
-        "y": 1
-      },
-      "id": 28,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.1",
-      "targets": [
-        {
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\" and r[\"_field\"] == \"space_total\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))\r\n  |> group()\r\n  |> aggregateWindow(every: 1m, fn: sum, createEmpty: false) ",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Capacity",
-      "type": "stat"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": "${DS_INFLUXDB}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 2,
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "color": "rgb(21, 118, 171)",
-                  "text": "0"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "max": 100,
-          "min": 0,
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "rgb(21, 118, 171)",
-                "value": null
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 3,
-        "x": 15,
-        "y": 1
-      },
-      "id": 29,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.1",
-      "targets": [
-        {
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\" and r[\"_field\"] == \"space_used_percent\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))\r\n  |> group()\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false) ",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Used %",
-      "type": "stat"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": "${DS_INFLUXDB}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "color": "rgb(21, 118, 171)",
-                  "text": "0"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "rgb(21, 118, 171)",
-                "value": null
-              }
-            ]
-          },
-          "unit": "decbytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 3,
-        "x": 18,
-        "y": 1
-      },
-      "id": 30,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.1",
-      "targets": [
-        {
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\" and r[\"_field\"] == \"space_available\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))\r\n  |> group()\r\n  |> aggregateWindow(every: 1m, fn: sum, createEmpty: false) ",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Available",
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_INFLUXDB}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "displayMode": "auto",
-            "filterable": false
-          },
-          "mappings": [],
-          "max": 100,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "semi-dark-green",
-                "value": null
-              },
-              {
-                "color": "rgb(115, 224, 63)",
-                "value": 0
-              },
-              {
-                "color": "#EAB839",
-                "value": 30
-              },
-              {
-                "color": "semi-dark-orange",
-                "value": 60
-              },
-              {
-                "color": "semi-dark-red",
-                "value": 75
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "used %"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "percent"
-              },
-              {
-                "id": "custom.displayMode",
-                "value": "gradient-gauge"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "status"
-            },
-            "properties": [
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "rgb(38, 150, 28)",
-                      "value": null
-                    },
-                    {
-                      "color": "red",
-                      "value": 1
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "custom.displayMode",
-                "value": "color-background"
-              },
-              {
-                "id": "mappings",
-                "value": [
-                  {
-                    "options": {
-                      "1": {
-                        "text": "online"
-                      }
-                    },
-                    "type": "value"
-                  },
-                  {
-                    "from": "0",
-                    "options": {
-                      "0": {
-                        "index": 0,
-                        "text": "OK"
-                      },
-                      "1": {
-                        "index": 1,
-                        "text": "unreachable"
-                      }
-                    },
-                    "text": "offline/error",
-                    "to": "0.99999",
-                    "type": 2,
-                    "value": "0"
-                  }
-                ]
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "rgb(74, 195, 58)",
-                      "value": null
-                    },
-                    {
-                      "color": "red",
-                      "value": 80
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "custom.width",
-                "value": 178
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "capacity"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "decbytes"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "used"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "decbytes"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 21,
-        "x": 0,
-        "y": 6
-      },
-      "id": 32,
-      "options": {
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "used %"
-          }
-        ]
-      },
-      "pluginVersion": "8.1.1",
-      "targets": [
-        {
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\")\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\n  |> filter(fn: (r) => contains(value: r[\"_field\"], set: [\"new_status_code\", \"volume_count_flexvol\", \"raid_disk_count\", \"space_total\", \"space_used\", \"space_used_percent\"]))\n  |> last()",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "title": "Aggregates",
-      "transformations": [
-        {
-          "id": "labelsToFields",
-          "options": {}
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Time": true,
-              "cluster": true,
-              "datacenter": true,
-              "disk": true,
-              "health": true,
-              "lun": true,
-              "shelf": true,
-              "status": true,
-              "style": true,
-              "subsystem": true,
-              "svm": true,
-              "version": true,
-              "volume": true
-            },
-            "indexByName": {
-              "Time": 0,
-              "aggr": 4,
-              "cluster": 2,
-              "datacenter": 1,
-              "new_status": 5,
-              "node": 3,
-              "raid_disk_count": 6,
-              "space_total": 8,
-              "space_used": 9,
-              "space_used_percent": 10,
-              "volume_count_flexvol": 7
-            },
-            "renameByName": {
-              "Time": "",
-              "aggr": "",
-              "new_status": "status",
-              "new_status_code": "status",
-              "node": "",
-              "raid_disk_count": "disks",
-              "space_total": "capacity",
-              "space_used": "used",
-              "space_used_percent": "used %",
-              "volume_count_flexvol": "volumes"
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "collapsed": false,
-      "datasource": null,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 15
-      },
-      "id": 20,
-      "panels": [],
-      "title": "Capacity",
+      "title": "Aggregate Headroom",
       "type": "row"
     },
     {
@@ -1092,26 +79,27 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "unit": "decbytes"
+          "links": []
         },
         "overrides": []
       },
       "fill": 1,
-      "fillGradient": 0,
+      "fillGradient": 3,
       "gridPos": {
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 16
+        "y": 1
       },
       "hiddenSeries": false,
-      "id": 2,
+      "id": 181,
       "legend": {
         "alignAsTable": true,
         "avg": true,
         "current": true,
         "max": true,
         "min": false,
+        "rightSide": false,
         "show": true,
         "sort": "avg",
         "sortDesc": true,
@@ -1120,7 +108,7 @@
       },
       "lines": true,
       "linewidth": 1,
-      "nullPointMode": "null",
+      "nullPointMode": "null as zero",
       "options": {
         "alertThreshold": true
       },
@@ -1151,7 +139,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\" and r[\"_field\"] == \"space_physical_used\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))\r\n  |> map(fn: (r) => ({ r with unique_name: r.node + \" - \" + r.aggr}) )\r\n  |> group(columns: [\"unique_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"headroom_aggr\" and  r[\"_field\"] == \"current_latency\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> map(fn: (r) => ({ r with display_name: r.node + \" - \" + r.aggr}) )\r\n  |> group(columns: [\"display_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -1171,23 +159,14 @@
           "tags": []
         }
       ],
-      "thresholds": [
-        {
-          "$$hashKey": "object:741",
-          "colorMode": "critical",
-          "fill": true,
-          "line": true,
-          "op": "gt",
-          "yaxis": "left"
-        }
-      ],
+      "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Physical Space Used",
+      "title": "Current Latency",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -1200,8 +179,8 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:629",
-          "format": "decbytes",
+          "$$hashKey": "object:75",
+          "format": "µs",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -1209,13 +188,13 @@
           "show": true
         },
         {
-          "$$hashKey": "object:630",
+          "$$hashKey": "object:76",
           "format": "short",
           "label": null,
           "logBase": 1,
           "max": null,
           "min": null,
-          "show": true
+          "show": false
         }
       ],
       "yaxis": {
@@ -1230,22 +209,29 @@
       "dashes": false,
       "datasource": "${DS_INFLUXDB}",
       "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
-      "fillGradient": 0,
+      "fillGradient": 3,
       "gridPos": {
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 16
+        "y": 1
       },
       "hiddenSeries": false,
-      "id": 3,
+      "id": 183,
       "legend": {
         "alignAsTable": true,
         "avg": true,
         "current": true,
         "max": true,
         "min": false,
+        "rightSide": false,
         "show": true,
         "sort": "avg",
         "sortDesc": true,
@@ -1254,7 +240,7 @@
       },
       "lines": true,
       "linewidth": 1,
-      "nullPointMode": "null",
+      "nullPointMode": "null as zero",
       "options": {
         "alertThreshold": true
       },
@@ -1285,7 +271,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\" and r[\"_field\"] == \"space_available\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))\r\n  |> map(fn: (r) => ({ r with unique_name: r.node + \" - \" + r.aggr}) )\r\n  |> group(columns: [\"unique_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"headroom_aggr\" and  r[\"_field\"] == \"current_ops\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> map(fn: (r) => ({ r with display_name: r.node + \" - \" + r.aggr}) )\r\n  |> group(columns: [\"display_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -1309,10 +295,10 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Space Available",
+      "title": "Current Throughput",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -1325,8 +311,8 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:202",
-          "format": "decbytes",
+          "$$hashKey": "object:75",
+          "format": "iops",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -1334,7 +320,7 @@
           "show": true
         },
         {
-          "$$hashKey": "object:203",
+          "$$hashKey": "object:76",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1357,26 +343,27 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "unit": "decbytes"
+          "links": []
         },
         "overrides": []
       },
       "fill": 1,
-      "fillGradient": 0,
+      "fillGradient": 3,
       "gridPos": {
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 16
+        "y": 1
       },
       "hiddenSeries": false,
-      "id": 4,
+      "id": 185,
       "legend": {
         "alignAsTable": true,
         "avg": true,
         "current": true,
         "max": true,
         "min": false,
+        "rightSide": false,
         "show": true,
         "sort": "avg",
         "sortDesc": true,
@@ -1385,7 +372,7 @@
       },
       "lines": true,
       "linewidth": 1,
-      "nullPointMode": "null",
+      "nullPointMode": "null as zero",
       "options": {
         "alertThreshold": true
       },
@@ -1416,7 +403,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\" and r[\"_field\"] == \"space_capacity_tier_used\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))\r\n  |> map(fn: (r) => ({ r with display_name: r.node + \" - \" + r.aggr}) )\r\n  |> group(columns: [\"display_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"headroom_aggr\" and  r[\"_field\"] == \"current_utilization\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> map(fn: (r) => ({ r with display_name: r.node + \" - \" + r.aggr}) )\r\n  |> group(columns: [\"display_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -1440,10 +427,10 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Capacity Tier Used",
+      "title": "Current Utilization",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -1456,404 +443,7 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:1773",
-          "format": "decbytes",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:1774",
-          "decimals": null,
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_INFLUXDB}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "unit": "decbytes"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 24
-      },
-      "hiddenSeries": false,
-      "id": 5,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "sort": "avg",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.1.1",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\" and r[\"_field\"] == \"space_data_compaction_saved\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))\r\n  |> map(fn: (r) => ({ r with unique_name: r.node + \" - \" + r.aggr}) )\r\n  |> group(columns: [\"unique_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Data Compaction space saved",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:507",
-          "format": "decbytes",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:508",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_INFLUXDB}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "unit": "decbytes"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 24
-      },
-      "hiddenSeries": false,
-      "id": 6,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "sort": "avg",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.1.1",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\" and r[\"_field\"] == \"space_sis_saved\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))\r\n  |> map(fn: (r) => ({ r with unique_name: r.node + \" - \" + r.aggr}) )\r\n  |> group(columns: [\"unique_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "SIS space saved",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:205",
-          "format": "decbytes",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:206",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_INFLUXDB}",
-      "description": "",
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 24
-      },
-      "hiddenSeries": false,
-      "id": 7,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "sort": "avg",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.1.1",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\" and contains(value: r[\"_field\"], set: [\"space_data_compaction_saved_percent\", \"space_sis_saved_percent\"]))\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))\r\n  |> map(fn: (r) => ({ r with unique_name: r.node + \" - \" + r.aggr + \" (\" + r._field + \")\"}) )\r\n  |> group(columns: [\"unique_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Spaced Saved Percentage",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "transformations": [
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": "(.*) \\(space_(\\w+)_saved_percent\\)",
-            "renamePattern": "$1 - ($2)"
-          }
-        }
-      ],
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:205",
+          "$$hashKey": "object:75",
           "format": "percent",
           "label": null,
           "logBase": 1,
@@ -1862,7 +452,7 @@
           "show": true
         },
         {
-          "$$hashKey": "object:206",
+          "$$hashKey": "object:76",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1883,31 +473,38 @@
       "dashes": false,
       "datasource": "${DS_INFLUXDB}",
       "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
-      "fillGradient": 0,
+      "fillGradient": 3,
       "gridPos": {
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 32
+        "y": 9
       },
       "hiddenSeries": false,
-      "id": 8,
+      "id": 182,
       "legend": {
         "alignAsTable": true,
         "avg": true,
         "current": true,
         "max": true,
         "min": false,
+        "rightSide": false,
         "show": true,
-        "sort": "current",
+        "sort": "avg",
         "sortDesc": true,
         "total": false,
         "values": true
       },
       "lines": true,
       "linewidth": 1,
-      "nullPointMode": "null",
+      "nullPointMode": "null as zero",
       "options": {
         "alertThreshold": true
       },
@@ -1938,7 +535,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\" and r[\"_field\"] == \"inode_used_percent\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))\r\n  |> map(fn: (r) => ({ r with unique_name: r.node + \" - \" + r.aggr}) )\r\n  |> group(columns: [\"unique_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"headroom_aggr\" and  r[\"_field\"] == \"optimal_point_latency\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> map(fn: (r) => ({ r with display_name: r.node + \" - \" + r.aggr}) )\r\n  |> group(columns: [\"display_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -1958,23 +555,14 @@
           "tags": []
         }
       ],
-      "thresholds": [
-        {
-          "$$hashKey": "object:182",
-          "colorMode": "critical",
-          "fill": true,
-          "line": true,
-          "op": "gt",
-          "yaxis": "left"
-        }
-      ],
+      "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Inodes Used %",
+      "title": "Optimal-Point Latency",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -1987,7 +575,271 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:205",
+          "$$hashKey": "object:75",
+          "format": "µs",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:76",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_INFLUXDB}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 3,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 9
+      },
+      "hiddenSeries": false,
+      "id": 184,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sort": "avg",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.1.1",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"headroom_aggr\" and  r[\"_field\"] == \"optimal_point_ops\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> map(fn: (r) => ({ r with display_name: r.node + \" - \" + r.aggr}) )\r\n  |> group(columns: [\"display_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Optimal-Point Throughput",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:75",
+          "format": "iops",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:76",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_INFLUXDB}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 3,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 9
+      },
+      "hiddenSeries": false,
+      "id": 186,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sort": "avg",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.1.1",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"headroom_aggr\" and  r[\"_field\"] == \"optimal_point_utilization\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> map(fn: (r) => ({ r with display_name: r.node + \" - \" + r.aggr}) )\r\n  |> group(columns: [\"display_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Optimal-Point Utilization",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:75",
           "format": "percent",
           "label": null,
           "logBase": 1,
@@ -1996,7 +848,7 @@
           "show": true
         },
         {
-          "$$hashKey": "object:206",
+          "$$hashKey": "object:76",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -2017,31 +869,38 @@
       "dashes": false,
       "datasource": "${DS_INFLUXDB}",
       "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
-      "fillGradient": 0,
+      "fillGradient": 3,
       "gridPos": {
         "h": 8,
         "w": 8,
-        "x": 8,
-        "y": 32
+        "x": 0,
+        "y": 17
       },
       "hiddenSeries": false,
-      "id": 9,
+      "id": 189,
       "legend": {
         "alignAsTable": true,
         "avg": true,
         "current": true,
         "max": true,
         "min": false,
+        "rightSide": false,
         "show": true,
-        "sort": "current",
+        "sort": "avg",
         "sortDesc": true,
         "total": false,
         "values": true
       },
       "lines": true,
       "linewidth": 1,
-      "nullPointMode": "null",
+      "nullPointMode": "null as zero",
       "options": {
         "alertThreshold": true
       },
@@ -2072,7 +931,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\" and r[\"_field\"] == \"inode_files_used\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))\r\n  |> map(fn: (r) => ({ r with unique_name: r.node + \" - \" + r.aggr}) )\r\n  |> group(columns: [\"unique_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"headroom_aggr\" and  r[\"_field\"] == \"ewma_${Interval}_latency\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> map(fn: (r) => ({ r with display_name: r.node + \" - \" + r.aggr}) )\r\n  |> group(columns: [\"display_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -2092,23 +951,14 @@
           "tags": []
         }
       ],
-      "thresholds": [
-        {
-          "$$hashKey": "object:182",
-          "colorMode": "critical",
-          "fill": true,
-          "line": true,
-          "op": "gt",
-          "yaxis": "left"
-        }
-      ],
+      "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Inodes Files Used",
+      "title": "EWMA $Interval Latency",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -2121,8 +971,8 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:205",
-          "format": "short",
+          "$$hashKey": "object:75",
+          "format": "µs",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -2130,13 +980,13 @@
           "show": true
         },
         {
-          "$$hashKey": "object:206",
+          "$$hashKey": "object:76",
           "format": "short",
           "label": null,
           "logBase": 1,
           "max": null,
           "min": null,
-          "show": true
+          "show": false
         }
       ],
       "yaxis": {
@@ -2151,31 +1001,38 @@
       "dashes": false,
       "datasource": "${DS_INFLUXDB}",
       "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
-      "fillGradient": 0,
+      "fillGradient": 3,
       "gridPos": {
         "h": 8,
         "w": 8,
-        "x": 16,
-        "y": 32
+        "x": 8,
+        "y": 17
       },
       "hiddenSeries": false,
-      "id": 10,
+      "id": 188,
       "legend": {
         "alignAsTable": true,
         "avg": true,
         "current": true,
         "max": true,
         "min": false,
+        "rightSide": false,
         "show": true,
-        "sort": "current",
+        "sort": "avg",
         "sortDesc": true,
         "total": false,
         "values": true
       },
       "lines": true,
       "linewidth": 1,
-      "nullPointMode": "null",
+      "nullPointMode": "null as zero",
       "options": {
         "alertThreshold": true
       },
@@ -2206,7 +1063,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\" and contains(value: r[\"_field\"], set: [\"inode_inodefile_private_capacity\", \"inode_inodefile_public_capacity\"]))\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))\r\n  |> map(fn: (r) => ({ r with unique_name: r.node + \" - \" + r.aggr + \" - \" + r._field}) )\r\n  |> group(columns: [\"unique_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"headroom_aggr\" and  r[\"_field\"] == \"ewma_${Interval}_ops\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> map(fn: (r) => ({ r with display_name: r.node + \" - \" + r.aggr}) )\r\n  |> group(columns: [\"display_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -2226,34 +1083,16 @@
           "tags": []
         }
       ],
-      "thresholds": [
-        {
-          "$$hashKey": "object:182",
-          "colorMode": "critical",
-          "fill": true,
-          "line": true,
-          "op": "gt",
-          "yaxis": "left"
-        }
-      ],
+      "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Inode Capacity",
+      "title": "EWMA $Interval Throughput",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
-      "transformations": [
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": "(.*) - inode_inodefile_(\\w+)",
-            "renamePattern": "$1 - ($2)"
-          }
-        }
-      ],
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -2264,8 +1103,8 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:205",
-          "format": "short",
+          "$$hashKey": "object:75",
+          "format": "iops",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -2273,13 +1112,541 @@
           "show": true
         },
         {
-          "$$hashKey": "object:206",
+          "$$hashKey": "object:76",
           "format": "short",
           "label": null,
           "logBase": 1,
           "max": null,
           "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_INFLUXDB}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 3,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 17
+      },
+      "hiddenSeries": false,
+      "id": 187,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sort": "avg",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.1.1",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"headroom_aggr\" and  r[\"_field\"] == \"ewma_${Interval}_utilization\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> map(fn: (r) => ({ r with display_name: r.node + \" - \" + r.aggr}) )\r\n  |> group(columns: [\"display_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "EWMA $Interval Utilization",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:75",
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
           "show": true
+        },
+        {
+          "$$hashKey": "object:76",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_INFLUXDB}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 3,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 25
+      },
+      "hiddenSeries": false,
+      "id": 192,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sort": "avg",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.1.1",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"headroom_aggr\" and  r[\"_field\"] == \"ewma_${Interval}_optimal_point_latency\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> map(fn: (r) => ({ r with display_name: r.node + \" - \" + r.aggr}) )\r\n  |> group(columns: [\"display_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "EWMA $Interval Optimal-Point Latency",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:75",
+          "format": "µs",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:76",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_INFLUXDB}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 3,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 25
+      },
+      "hiddenSeries": false,
+      "id": 193,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sort": "avg",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.1.1",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"headroom_aggr\" and  r[\"_field\"] == \"ewma_${Interval}_optimal_point_ops\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> map(fn: (r) => ({ r with display_name: r.node + \" - \" + r.aggr}) )\r\n  |> group(columns: [\"display_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "EWMA $Interval Optimal-Point Throughput",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:75",
+          "format": "iops",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:76",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_INFLUXDB}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 3,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 25
+      },
+      "hiddenSeries": false,
+      "id": 194,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sort": "avg",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.1.1",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"headroom_aggr\" and  r[\"_field\"] == \"ewma_${Interval}_optimal_point_utilization\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> map(fn: (r) => ({ r with display_name: r.node + \" - \" + r.aggr}) )\r\n  |> group(columns: [\"display_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "EWMA $Interval Optimal-Point Utilization",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:75",
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:76",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
         }
       ],
       "yaxis": {
@@ -2294,11 +1661,11 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 33
       },
-      "id": 34,
+      "id": 196,
       "panels": [],
-      "title": "Snapshots Capacity",
+      "title": "CPU Headroom",
       "type": "row"
     },
     {
@@ -2310,26 +1677,27 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "unit": "decbytes"
+          "links": []
         },
         "overrides": []
       },
       "fill": 1,
-      "fillGradient": 0,
+      "fillGradient": 3,
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 8,
         "x": 0,
-        "y": 41
+        "y": 34
       },
       "hiddenSeries": false,
-      "id": 11,
+      "id": 198,
       "legend": {
         "alignAsTable": true,
         "avg": true,
         "current": true,
         "max": true,
         "min": false,
+        "rightSide": false,
         "show": true,
         "sort": "avg",
         "sortDesc": true,
@@ -2338,7 +1706,7 @@
       },
       "lines": true,
       "linewidth": 1,
-      "nullPointMode": "null",
+      "nullPointMode": "null as zero",
       "options": {
         "alertThreshold": true
       },
@@ -2369,7 +1737,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\" and r[\"_field\"] == \"snapshot_size_used\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))\r\n  |> map(fn: (r) => ({ r with unique_name: r.node + \" - \" + r.aggr}) )\r\n  |> group(columns: [\"unique_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"headroom_cpu\" and  r[\"_field\"] == \"current_latency\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> group(columns: [\"node\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -2389,23 +1757,14 @@
           "tags": []
         }
       ],
-      "thresholds": [
-        {
-          "$$hashKey": "object:182",
-          "colorMode": "critical",
-          "fill": true,
-          "line": true,
-          "op": "gt",
-          "yaxis": "left"
-        }
-      ],
+      "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Space Used by Snapshots",
+      "title": "Current Latency",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -2418,8 +1777,8 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:205",
-          "format": "decbytes",
+          "$$hashKey": "object:75",
+          "format": "µs",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -2427,407 +1786,7 @@
           "show": true
         },
         {
-          "$$hashKey": "object:206",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_INFLUXDB}",
-      "description": "",
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 8,
-        "y": 41
-      },
-      "hiddenSeries": false,
-      "id": 12,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "sort": "avg",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.1.1",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\" and r[\"_field\"] == \"snapshot_used_percent\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))\r\n  |> map(fn: (r) => ({ r with unique_name: r.node + \" - \" + r.aggr}) )\r\n  |> group(columns: [\"unique_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "thresholds": [
-        {
-          "$$hashKey": "object:182",
-          "colorMode": "critical",
-          "fill": true,
-          "line": true,
-          "op": "gt",
-          "yaxis": "left"
-        }
-      ],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Space Used % by Snapshots",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:205",
-          "format": "percent",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:206",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_INFLUXDB}",
-      "description": "",
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 16,
-        "y": 41
-      },
-      "hiddenSeries": false,
-      "id": 13,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.1.1",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\" and r[\"_field\"] == \"snapshot_reserve_percent\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))\r\n  |> map(fn: (r) => ({ r with unique_name: r.node + \" - \" + r.aggr}) )\r\n  |> group(columns: [\"unique_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "thresholds": [
-        {
-          "$$hashKey": "object:182",
-          "colorMode": "critical",
-          "fill": true,
-          "line": true,
-          "op": "gt",
-          "yaxis": "left"
-        }
-      ],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Space Reserved % for Snapshots",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:205",
-          "format": "percent",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:206",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_INFLUXDB}",
-      "description": "",
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 0,
-        "y": 48
-      },
-      "hiddenSeries": false,
-      "id": 14,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "sort": "avg",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.1.1",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\" and r[\"_field\"] == \"snapshot_inode_used_percent\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))\r\n  |> map(fn: (r) => ({ r with unique_name: r.node + \" - \" + r.aggr}) )\r\n  |> group(columns: [\"unique_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "thresholds": [
-        {
-          "$$hashKey": "object:182",
-          "colorMode": "critical",
-          "fill": true,
-          "line": true,
-          "op": "gt",
-          "yaxis": "left"
-        }
-      ],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Snapshot Inodes Used %",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:205",
-          "format": "percent",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:206",
+          "$$hashKey": "object:76",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -2848,22 +1807,29 @@
       "dashes": false,
       "datasource": "${DS_INFLUXDB}",
       "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
-      "fillGradient": 0,
+      "fillGradient": 3,
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 8,
         "x": 8,
-        "y": 48
+        "y": 34
       },
       "hiddenSeries": false,
-      "id": 15,
+      "id": 200,
       "legend": {
         "alignAsTable": true,
         "avg": true,
         "current": true,
         "max": true,
         "min": false,
+        "rightSide": false,
         "show": true,
         "sort": "avg",
         "sortDesc": true,
@@ -2872,7 +1838,7 @@
       },
       "lines": true,
       "linewidth": 1,
-      "nullPointMode": "null",
+      "nullPointMode": "null as zero",
       "options": {
         "alertThreshold": true
       },
@@ -2903,7 +1869,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\" and contains(value: r[\"_field\"], set: [\"snapshot_files_total\", \"snapshot_files_used\"]))\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))\r\n  |> map(fn: (r) => ({ r with unique_name: r.node + \" - \" + r.aggr + \" - \" + r._field}) )\r\n  |> group(columns: [\"unique_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"headroom_cpu\" and  r[\"_field\"] == \"current_ops\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> group(columns: [\"node\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -2923,34 +1889,16 @@
           "tags": []
         }
       ],
-      "thresholds": [
-        {
-          "$$hashKey": "object:182",
-          "colorMode": "critical",
-          "fill": true,
-          "line": true,
-          "op": "gt",
-          "yaxis": "left"
-        }
-      ],
+      "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Snapshot Files",
+      "title": "Current Throughput",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
-      "transformations": [
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": "(.*) - snapshot_files_(\\w+)",
-            "renamePattern": "$1 - ($2)"
-          }
-        }
-      ],
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -2961,8 +1909,8 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:205",
-          "format": "short",
+          "$$hashKey": "object:75",
+          "format": "iops",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -2970,13 +1918,13 @@
           "show": true
         },
         {
-          "$$hashKey": "object:206",
+          "$$hashKey": "object:76",
           "format": "short",
           "label": null,
           "logBase": 1,
           "max": null,
           "min": null,
-          "show": true
+          "show": false
         }
       ],
       "yaxis": {
@@ -2991,22 +1939,29 @@
       "dashes": false,
       "datasource": "${DS_INFLUXDB}",
       "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
-      "fillGradient": 0,
+      "fillGradient": 3,
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 8,
         "x": 16,
-        "y": 48
+        "y": 34
       },
       "hiddenSeries": false,
-      "id": 16,
+      "id": 202,
       "legend": {
         "alignAsTable": true,
         "avg": true,
         "current": true,
         "max": true,
         "min": false,
+        "rightSide": false,
         "show": true,
         "sort": "avg",
         "sortDesc": true,
@@ -3015,7 +1970,7 @@
       },
       "lines": true,
       "linewidth": 1,
-      "nullPointMode": "null",
+      "nullPointMode": "null as zero",
       "options": {
         "alertThreshold": true
       },
@@ -3046,7 +2001,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\" and contains(value: r[\"_field\"], set: [\"snapshot_maxfiles_possible\", \"snapshot_maxfiles_used\"]))\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))\r\n  |> map(fn: (r) => ({ r with unique_name: r.node + \" - \" + r.aggr + \" - \" + r._field}) )\r\n  |> group(columns: [\"unique_name\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"headroom_cpu\" and  r[\"_field\"] == \"current_utilization\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> group(columns: [\"node\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -3066,34 +2021,16 @@
           "tags": []
         }
       ],
-      "thresholds": [
-        {
-          "$$hashKey": "object:182",
-          "colorMode": "critical",
-          "fill": true,
-          "line": true,
-          "op": "gt",
-          "yaxis": "left"
-        }
-      ],
+      "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Snapshot MaxFiles",
+      "title": "Current Utilization",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
-      "transformations": [
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": "(.*) - snapshot_maxfiles_(\\w+)",
-            "renamePattern": "$1 - ($2)"
-          }
-        }
-      ],
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -3104,7 +2041,7 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:205",
+          "$$hashKey": "object:75",
           "format": "percent",
           "label": null,
           "logBase": 1,
@@ -3113,13 +2050,1201 @@
           "show": true
         },
         {
-          "$$hashKey": "object:206",
+          "$$hashKey": "object:76",
           "format": "short",
           "label": null,
           "logBase": 1,
           "max": null,
           "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_INFLUXDB}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 3,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 42
+      },
+      "hiddenSeries": false,
+      "id": 204,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sort": "avg",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.1.1",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"headroom_cpu\" and  r[\"_field\"] == \"optimal_point_latency\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> group(columns: [\"node\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Optimal-Point Latency",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:75",
+          "format": "µs",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
           "show": true
+        },
+        {
+          "$$hashKey": "object:76",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_INFLUXDB}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 3,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 42
+      },
+      "hiddenSeries": false,
+      "id": 206,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sort": "avg",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.1.1",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"headroom_cpu\" and  r[\"_field\"] == \"optimal_point_ops\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> group(columns: [\"node\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Optimal-Point Throughput",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:75",
+          "format": "iops",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:76",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_INFLUXDB}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 3,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 42
+      },
+      "hiddenSeries": false,
+      "id": 208,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sort": "avg",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.1.1",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"headroom_cpu\" and  r[\"_field\"] == \"optimal_point_utilization\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> group(columns: [\"node\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Optimal-Point Utilization",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:75",
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:76",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_INFLUXDB}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 3,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 50
+      },
+      "hiddenSeries": false,
+      "id": 210,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sort": "avg",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.1.1",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"headroom_cpu\" and  r[\"_field\"] == \"ewma_${Interval}_latency\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> group(columns: [\"node\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "EWMA $Interval Latency",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:75",
+          "format": "µs",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:76",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_INFLUXDB}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 3,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 50
+      },
+      "hiddenSeries": false,
+      "id": 212,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sort": "avg",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.1.1",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"headroom_cpu\" and  r[\"_field\"] == \"ewma_${Interval}_ops\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> group(columns: [\"node\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "EWMA $Interval Throughput",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:75",
+          "format": "iops",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:76",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_INFLUXDB}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 3,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 50
+      },
+      "hiddenSeries": false,
+      "id": 214,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sort": "avg",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.1.1",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"headroom_cpu\" and  r[\"_field\"] == \"ewma_${Interval}_utilization\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> group(columns: [\"node\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "EWMA $Interval Utilization",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:75",
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:76",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_INFLUXDB}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 3,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 58
+      },
+      "hiddenSeries": false,
+      "id": 216,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sort": "avg",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.1.1",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"headroom_cpu\" and  r[\"_field\"] == \"ewma_${Interval}_optimal_point_latency\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> group(columns: [\"node\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "EWMA $Interval Optimal-Point Latency",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:75",
+          "format": "µs",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:76",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_INFLUXDB}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 3,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 58
+      },
+      "hiddenSeries": false,
+      "id": 218,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sort": "avg",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.1.1",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"headroom_cpu\" and  r[\"_field\"] == \"ewma_${Interval}_optimal_point_ops\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> group(columns: [\"node\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "EWMA $Interval Optimal-Point Throughput",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:75",
+          "format": "iops",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:76",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_INFLUXDB}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 3,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 58
+      },
+      "hiddenSeries": false,
+      "id": 220,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sort": "avg",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.1.1",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"headroom_cpu\" and  r[\"_field\"] == \"ewma_${Interval}_optimal_point_utilization\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> group(columns: [\"node\"], mode:\"by\")\r\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "EWMA $Interval Optimal-Point Utilization",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:75",
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:76",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
         }
       ],
       "yaxis": {
@@ -3128,6 +3253,7 @@
       }
     }
   ],
+  "refresh": "1m",
   "schemaVersion": 30,
   "style": "dark",
   "tags": [],
@@ -3142,7 +3268,7 @@
         "error": null,
         "hide": 0,
         "includeAll": false,
-        "label": null,
+        "label": "",
         "multi": false,
         "name": "Bucket",
         "options": [],
@@ -3160,16 +3286,16 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_INFLUXDB}",
-        "definition": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\")\r\n  |> keep(columns: [\"datacenter\"])\r\n  |> group()\r\n  |> distinct(column: \"datacenter\")",
+        "definition": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"cluster\")\r\n  |> keep(columns: [\"datacenter\"])\r\n  |> group()\r\n  |> distinct(column: \"datacenter\")",
         "description": null,
         "error": null,
         "hide": 0,
         "includeAll": false,
-        "label": null,
+        "label": "",
         "multi": false,
         "name": "Datacenter",
         "options": [],
-        "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\")\r\n  |> keep(columns: [\"datacenter\"])\r\n  |> group()\r\n  |> distinct(column: \"datacenter\")",
+        "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"cluster\")\r\n  |> keep(columns: [\"datacenter\"])\r\n  |> group()\r\n  |> distinct(column: \"datacenter\")",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -3183,80 +3309,87 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_INFLUXDB}",
-        "definition": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> keep(columns: [\"cluster\"])\r\n  |> group()\r\n  |> distinct(column: \"cluster\")",
+        "definition": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"cluster\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> keep(columns: [\"cluster\"])\r\n  |> group()\r\n  |> distinct(column: \"cluster\")",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "Cluster",
+        "options": [],
+        "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"cluster\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> keep(columns: [\"cluster\"])\r\n  |> group()\r\n  |> distinct(column: \"cluster\")",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "weekly",
+          "value": "weekly"
+        },
         "description": null,
         "error": null,
         "hide": 0,
         "includeAll": false,
         "label": null,
         "multi": false,
-        "name": "Cluster",
-        "options": [],
-        "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\")\r\n  |> filter(fn: (r) => r[\"datacenter\"] == \"${Datacenter}\")\r\n  |> keep(columns: [\"cluster\"])\r\n  |> group()\r\n  |> distinct(column: \"cluster\")",
-        "refresh": 1,
-        "regex": "",
+        "name": "Interval",
+        "options": [
+          {
+            "selected": false,
+            "text": "hourly",
+            "value": "hourly"
+          },
+          {
+            "selected": false,
+            "text": "daily",
+            "value": "daily"
+          },
+          {
+            "selected": true,
+            "text": "weekly",
+            "value": "weekly"
+          },
+          {
+            "selected": false,
+            "text": "monthly",
+            "value": "monthly"
+          }
+        ],
+        "query": "hourly, daily, weekly, monthly",
+        "queryValue": "",
         "skipUrlSync": false,
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_INFLUXDB}",
-        "definition": "from(bucket: \"${Bucket}\")\r\n  |> range(start: -3h)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> keep(columns: [\"node\"])\r\n  |> group()\r\n  |> distinct(column: \"node\")",
-        "description": null,
-        "error": null,
-        "hide": 0,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "Node",
-        "options": [],
-        "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: -3h)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> keep(columns: [\"node\"])\r\n  |> group()\r\n  |> distinct(column: \"node\")",
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_INFLUXDB}",
-        "definition": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))  \r\n  |> keep(columns: [\"aggr\"])\r\n  |> group()\r\n  |> distinct(column: \"aggr\")",
-        "description": null,
-        "error": null,
-        "hide": 0,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "Aggregate",
-        "options": [],
-        "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))  \r\n  |> keep(columns: [\"aggr\"])\r\n  |> group()\r\n  |> distinct(column: \"aggr\")",
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "custom"
       }
     ]
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-6h",
     "to": "now"
   },
-  "timepicker": {},
+  "timepicker": {
+    "refresh_intervals": [
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
   "timezone": "",
-  "title": "NetApp Detail: Aggregate",
-  "uid": "d7rkR4Vnz",
+  "title": "NetApp Detail: Headroom",
+  "uid": "MhKmRVV7z",
   "version": 3
 }
