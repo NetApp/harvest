@@ -26,11 +26,15 @@ func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	var err error
 
 	if read = data.GetMetric("read_data"); read == nil {
-		return nil, errors.New(errors.ERR_NO_METRIC, "read_data")
+		if read = data.GetMetric("fcp_read_data"); read == nil {
+			return nil, errors.New(errors.ERR_NO_METRIC, "read_data")
+		}
 	}
 
 	if write = data.GetMetric("write_data"); write == nil {
-		return nil, errors.New(errors.ERR_NO_METRIC, "write_data")
+		if write = data.GetMetric("fcp_write_data"); write == nil {
+			return nil, errors.New(errors.ERR_NO_METRIC, "write_data")
+		}
 	}
 
 	if rx = data.GetMetric("read_percent"); rx == nil {
