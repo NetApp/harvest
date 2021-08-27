@@ -26,12 +26,14 @@ func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	var err error
 
 	if read = data.GetMetric("read_data"); read == nil {
+		// Check for 7 mode fcp counters, as they starts with fcp_.
 		if read = data.GetMetric("fcp_read_data"); read == nil {
 			return nil, errors.New(errors.ERR_NO_METRIC, "read_data")
 		}
 	}
 
 	if write = data.GetMetric("write_data"); write == nil {
+		// Check for 7 mode fcp counters, as they starts with fcp_.
 		if write = data.GetMetric("fcp_write_data"); write == nil {
 			return nil, errors.New(errors.ERR_NO_METRIC, "write_data")
 		}
