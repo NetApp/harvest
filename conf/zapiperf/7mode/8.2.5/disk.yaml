@@ -30,8 +30,7 @@ plugins:
   LabelAgent:
     split: raid_group `/` ,aggr,plex,raid
   Aggregator:
-    - node
-    - aggr node
+    - aggr
 
 export_options:
   instance_keys:
