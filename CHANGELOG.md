@@ -84,7 +84,7 @@ On RHEL and Debian, the example Unix collector does not work at the moment due t
 
 - Aggregate dashboard panel titles should match the information being displayed [#133](https://github.com/NetApp/harvest/issues/133)
 
-- Harvest should handle ZAPIs that include signed integers. Most ZAPIs use unsigned integers, but a few return signed ones [#387](https://github.com/NetApp/harvest/issues/387)
+- Harvest should handle ZAPIs that include signed integers. Most ZAPIs use unsigned integers, but a few return signed ones. Thanks for reporting @hashi825 [#384](https://github.com/NetApp/harvest/issues/384)
 
 ---
 
