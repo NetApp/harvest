@@ -7,6 +7,7 @@
 
 The InfluxDB Exporter will format metrics into the InfluxDB's [line protocol](https://docs.influxdata.com/influxdb/v2.0/reference/syntax/line-protocol/#naming-restrictions) and write it into a bucket. The Exporter is compatible with InfluxDB v2.0. For explanation about `bucket`, `org` and `precision`, see [InfluxDB API documentation](https://docs.influxdata.com/influxdb/v2.0/api/#tag/Write).
 
+If you are monitoring both cdot and 7mode clusters, it is strongly recommended to use two different buckets.
 
 ## Parameters
 Overview of all parameters is provided below. Only one of `url` and `addr` should be provided (at least one is required). 
