@@ -313,7 +313,9 @@ func (p *Poller) Init() error {
 			if err = p.schedule.NewTaskString("asup", asupSchedule, p.startAsup, p.options.Asup, "asup_"+p.name); err != nil {
 				return err
 			}
-			logger.Debug().Msgf("Autosupport scheduled with %s frequency", asupSchedule)
+			logger.Info().
+				Str("asupSchedule", asupSchedule).
+				Msg("Autosupport scheduled.")
 		} else {
 			logger.Info().
 				Str("poller", p.name).
@@ -383,7 +385,7 @@ func (p *Poller) Start() {
 // report metadata and do some housekeeping
 func (p *Poller) Run() {
 
-	// poller schedule has just one task
+	// poller schedule has the poller and asup task (when enabled)
 	task := p.schedule.GetTask("poller")
 	asuptask := p.schedule.GetTask("asup")
 
