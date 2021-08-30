@@ -225,7 +225,7 @@ func TestValueMappingRule(t *testing.T) {
 		err                  error
 	)
 	// should match
-	m := matrix.New("TestLabelAgent", "test")
+	m := matrix.New("TestLabelAgent", "test", "test")
 
 	if instanceA, err = m.NewInstance("A"); err != nil {
 		t.Fatal(err)
@@ -299,7 +299,7 @@ func TestValueToNumRule(t *testing.T) {
 		err                   error
 	)
 	// should match
-	m := matrix.New("TestLabelAgent", "test")
+	m := matrix.New("TestLabelAgent", "test", "test")
 
 	if instanceA, err = m.NewInstance("A"); err != nil {
 		t.Fatal(err)
