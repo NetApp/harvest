@@ -9,8 +9,9 @@ pipeline {
         string(name: 'VERSION', defaultValue: '', description: '[Optional] RPM Version should match Harvest version with rc or nightly stripped. If not filled default is YY.mm.ddHH. See https://github.com/NetApp/harvest/wiki/Release-Checklist#version-names for details')
         string(name: 'RELEASE', defaultValue: 'nightly', description: '[Optional] Example: nightly (default) See https://github.com/NetApp/harvest-private/wiki/Release-Checklist#rpm-and-debian-names for details ')
         string(name: 'BRANCH', defaultValue: 'main', description: '[Optional] Branch name to clone. Default (main) ')
-		string(name: 'IS_PRODUCTION', defaultValue: 'false', description: 'true to publish to dockerhub and "production" AutoSupport binary. Default (no dockerhub publish "build" AutoSupport binary)')
-		string(name: 'OVERWRITE_DOCKER_LATEST_TAG', defaultValue: 'false', description: 'true to overwrite latest tag at dockerhub. Works only if IS_PRODUCTION is true')
+		string(name: 'ASUP_MAKE_TARGET', defaultValue: 'build', description: 'make target for AutoSupport binary build|production')
+		string(name: 'DOCKER_PUBLISH', defaultValue: 'false', description: 'true to publish to dockerhub')
+		string(name: 'OVERWRITE_DOCKER_LATEST_TAG', defaultValue: 'false', description: 'true to overwrite latest tag at dockerhub. Works only if DOCKER_PUBLISH is true')
     }
 
     environment {
@@ -24,13 +25,15 @@ pipeline {
         BRANCH =sh (returnStdout: true, script: """
         echo \"${params.BRANCH}\"
         """).trim()
-		IS_PRODUCTION =sh (returnStdout: true, script: """
-        echo \"${params.IS_PRODUCTION}\"
+		ASUP_MAKE_TARGET =sh (returnStdout: true, script: """
+        echo \"${params.ASUP_MAKE_TARGET}\"
         """).trim()
-		OVERWRITE_DOCKER_LATEST_TAG =sh (returnStdout: true, script: """
+		DOCKER_PUBLISH =sh (returnStdout: true, script: """
+        echo \"${params.DOCKER_PUBLISH}\"
+        """).trim()
+        OVERWRITE_DOCKER_LATEST_TAG =sh (returnStdout: true, script: """
         echo \"${params.OVERWRITE_DOCKER_LATEST_TAG}\"
         """).trim()
-        ASUP_MAKE_TARGET = "${params.IS_PRODUCTION == "true" ? "production" : "build"}"
         targetParentLocation = "/opt/home/nightly/"
         harvestPath = "harvest"
     }
@@ -110,7 +113,7 @@ pipeline {
        stage('Build Docker Image and Publish') {
                 when {
                   expression {
-                    return env.IS_PRODUCTION == 'true';
+                    return env.DOCKER_PUBLISH == 'true';
                   }
                 }
                 steps {
@@ -139,5 +142,4 @@ pipeline {
             }
         }
     }
-
 }
