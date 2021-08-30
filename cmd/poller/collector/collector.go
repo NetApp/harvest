@@ -170,7 +170,7 @@ func Init(c Collector) error {
 	c.SetSchedule(s)
 
 	// Initialize Matrix, the container of collected data
-	mx := matrix.New(name, object)
+	mx := matrix.New(name, object, object)
 	if exportOptions := params.GetChildS("export_options"); exportOptions != nil {
 		mx.SetExportOptions(exportOptions)
 	} else {
@@ -201,7 +201,7 @@ func Init(c Collector) error {
 	}
 
 	// Initialize metadata
-	md := matrix.New(name, "metadata_collector")
+	md := matrix.New(name, "metadata_collector", "metadata_collector")
 
 	md.SetGlobalLabel("hostname", opts.Hostname)
 	md.SetGlobalLabel("version", opts.Version)

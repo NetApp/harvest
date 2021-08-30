@@ -313,7 +313,9 @@ func (p *Poller) Init() error {
 			if err = p.schedule.NewTaskString("asup", asupSchedule, p.startAsup, p.options.Asup, "asup_"+p.name); err != nil {
 				return err
 			}
-			logger.Debug().Msgf("Autosupport scheduled with %s frequency", asupSchedule)
+			logger.Info().
+				Str("asupSchedule", asupSchedule).
+				Msg("Autosupport scheduled.")
 		} else {
 			logger.Info().
 				Str("poller", p.name).
@@ -383,7 +385,7 @@ func (p *Poller) Start() {
 // report metadata and do some housekeeping
 func (p *Poller) Run() {
 
-	// poller schedule has just one task
+	// poller schedule has the poller and asup task (when enabled)
 	task := p.schedule.GetTask("poller")
 	asuptask := p.schedule.GetTask("asup")
 
@@ -793,7 +795,7 @@ func (p *Poller) getExporter(name string) exporter.Exporter {
 // initialize matrices to be used as metadata
 func (p *Poller) loadMetadata() {
 
-	p.metadata = matrix.New("poller", "metadata_component")
+	p.metadata = matrix.New("poller", "metadata_component", "metadata_component")
 	p.metadata.NewMetricUint8("status")
 	p.metadata.NewMetricUint64("count")
 	p.metadata.SetGlobalLabel("poller", p.name)
@@ -802,7 +804,7 @@ func (p *Poller) loadMetadata() {
 	p.metadata.SetExportOptions(matrix.DefaultExportOptions())
 
 	// metadata for target system
-	p.status = matrix.New("poller", "metadata_target")
+	p.status = matrix.New("poller", "metadata_target", "metadata_component")
 	p.status.NewMetricUint8("status")
 	p.status.NewMetricFloat32("ping")
 	p.status.NewMetricUint32("goroutines")

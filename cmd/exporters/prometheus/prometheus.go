@@ -229,7 +229,7 @@ func (me *Prometheus) Export(data *matrix.Matrix) error {
 	}
 
 	// store metrics in cache
-	key := data.UUID + "." + data.Object
+	key := data.UUID + "." + data.Object + "." + data.Identifier
 
 	// lock cache, to prevent HTTPd reading while we are mutating it
 	me.cache.Lock()

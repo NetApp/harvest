@@ -5,7 +5,7 @@ import (
 )
 
 func setUpMatrix() *Matrix {
-	m := New("TestRemoveInstance", "test")
+	m := New("TestRemoveInstance", "test", "test")
 	speed, _ := m.NewMetricUint32("max_speed")
 	length, _ := m.NewMetricFloat32("length_in_mm")
 	instanceNames := []string{"A", "B", "C", "D"}

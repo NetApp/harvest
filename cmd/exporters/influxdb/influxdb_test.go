@@ -83,7 +83,7 @@ func TestExportDebug(t *testing.T) {
 	influx := setupInfluxDB(exporterName, t)
 
 	// matrix with fake data
-	data := matrix.New("test_exporter", "influxd_test_data")
+	data := matrix.New("test_exporter", "influxd_test_data", "influxd_test_data")
 	data.SetExportOptions(matrix.DefaultExportOptions())
 
 	// add metric

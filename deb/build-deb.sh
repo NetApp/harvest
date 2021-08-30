@@ -21,9 +21,9 @@ rm -rf "$BUILD"
 mkdir -p "$BUILD"
 mkdir -p "$BUILD/opt/harvest/bin/"
 cp -r "$SRC/grafana" "$SRC/conf" "$BUILD/opt/harvest/"
-cp "$SRC/harvest.yml" "$BUILD/opt/harvest/"
+cp "$SRC/harvest.yml" "$SRC/prom-stack.yml" "$SRC/harvest.cue" "$BUILD/opt/harvest/"
 cp -r "$SRC/pkg/" "$SRC/cmd/" "$SRC/docs/" "$SRC/docker/" "$BUILD/opt/harvest/"
-cp -r "$SRC/rpm/" "$SRC/deb/" "$SRC/service/" "$SRC/.git" "$BUILD/opt/harvest/"
+cp -r "$SRC/rpm/" "$SRC/deb/" "$SRC/service/" "$SRC/autosupport/" "$SRC/.git" "$BUILD/opt/harvest/"
 cp "$SRC/Makefile" "$SRC/README.md" "$SRC/LICENSE" "$SRC/go.mod" "$SRC/go.sum" "$BUILD/opt/harvest/"
 if [ -d "$SRC/vendor" ]; then
     cp -r "$SRC/vendor" "$BUILD/opt/harvest/"
@@ -51,7 +51,18 @@ if [ "$HARVEST_ARCH" = "armhf" ]; then
     export GOARM="7"
 fi
 echo " --> build harvest with envs [GOOS=$GOOS, GOARCH=$GOARCH, GOARM=$GOARM]"
-make build VERSION=$HARVEST_VERSION RELEASE=$HARVEST_RELEASE
+if [ -n "$ASUP_MAKE_TARGET" ] && [ -z "$GIT_TOKEN" ]
+then
+      echo "GIT_TOKEN is required when ASUP_MAKE_TARGET is passed!"
+      exit 1
+fi
+
+if [ -n "$ASUP_MAKE_TARGET" ] && [ -n "$GIT_TOKEN" ]
+then
+      make asup build VERSION=$VERSION RELEASE=$RELEASE ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET GIT_TOKEN=$GIT_TOKEN
+else
+      make build VERSION=$HARVEST_VERSION RELEASE=$HARVEST_RELEASE
+fi
 if [ ! $? -eq 0 ]; then
     error "     build failed"
     exit 1

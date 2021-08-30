@@ -21,7 +21,7 @@ RUN make build VERSION=$VERSION RELEASE=$RELEASE
 
 RUN cp -a $BUILD_DIR/harvest.yml $INSTALL_DIR/harvest.yml
 
-RUN cp -aR bin $BUILD_DIR/conf $BUILD_DIR/docs $BUILD_DIR/grafana $INSTALL_DIR
+RUN cp -aR bin $BUILD_DIR/conf $BUILD_DIR/docs $BUILD_DIR/grafana $BUILD_DIR/autosupport $INSTALL_DIR
 
 FROM alpine:latest
 

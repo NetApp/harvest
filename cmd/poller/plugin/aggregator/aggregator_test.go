@@ -30,7 +30,7 @@ func TestInitPlugin(t *testing.T) {
 func TestRuleSimpleAggregation(t *testing.T) {
 
 	// create artifical data
-	m = matrix.New("", "")
+	m = matrix.New("", "", "")
 	var n *matrix.Matrix
 
 	metricA, err := m.NewMetricUint8("metricA")
