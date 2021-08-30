@@ -20,12 +20,12 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "7.5.6"
+      "version": "8.1.1"
     },
     {
       "type": "panel",
       "id": "graph",
-      "name": "Graph",
+      "name": "Graph (old)",
       "version": ""
     },
     {
@@ -62,15 +62,22 @@
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
         "type": "dashboard"
       }
     ]
   },
+  "description": "",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1630070097492,
+  "iteration": 1630338645186,
   "links": [],
   "panels": [
     {
@@ -141,7 +148,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.1.1",
       "targets": [
         {
           "exemplar": false,
@@ -214,7 +221,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.1.1",
       "targets": [
         {
           "exemplar": false,
@@ -275,7 +282,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.1.1",
       "targets": [
         {
           "exemplar": false,
@@ -331,7 +338,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.1.1",
       "targets": [
         {
           "exemplar": false,
@@ -387,7 +394,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.1.1",
       "targets": [
         {
           "exemplar": false,
@@ -443,7 +450,7 @@
         "showUnfilled": true,
         "text": {}
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.1.1",
       "targets": [
         {
           "exemplar": false,
@@ -501,7 +508,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.1.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -605,7 +612,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.1.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -709,7 +716,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.1.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -811,7 +818,7 @@
         "showUnfilled": true,
         "text": {}
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.1.1",
       "targets": [
         {
           "exemplar": false,
@@ -870,12 +877,13 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.1.1",
       "targets": [
         {
           "exemplar": true,
           "expr": "node_uptime{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
           "format": "time_series",
+          "instant": false,
           "interval": "",
           "legendFormat": "{{cluster}} - {{node}}",
           "refId": "A"
@@ -951,7 +959,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.1.1",
       "targets": [
         {
           "exemplar": true,
@@ -1033,7 +1041,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.1.1",
       "targets": [
         {
           "exemplar": true,
@@ -1066,17 +1074,13 @@
           "dashes": false,
           "datasource": "${DS_PROMETHEUS}",
           "description": "",
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 2
+            "y": 18
           },
           "hiddenSeries": false,
           "id": 54,
@@ -1100,7 +1104,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.5.6",
+          "pluginVersion": "8.1.1",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -1188,17 +1192,13 @@
           "dashes": false,
           "datasource": "${DS_PROMETHEUS}",
           "description": "",
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 2
+            "y": 18
           },
           "hiddenSeries": false,
           "id": 55,
@@ -1222,7 +1222,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.5.6",
+          "pluginVersion": "8.1.1",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -1307,9 +1307,7 @@
           "datasource": null,
           "description": "",
           "fieldConfig": {
-            "defaults": {
-              "unit": "percentunit"
-            },
+            "defaults": {},
             "overrides": []
           },
           "fill": 1,
@@ -1329,6 +1327,8 @@
             "max": true,
             "min": false,
             "show": true,
+            "sort": "avg",
+            "sortDesc": true,
             "total": false,
             "values": true
           },
@@ -1339,7 +1339,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.5.6",
+          "pluginVersion": "8.1.1",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -1406,12 +1406,6 @@
           "dashes": false,
           "datasource": null,
           "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "unit": "percentunit"
-            },
-            "overrides": []
-          },
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -1429,6 +1423,8 @@
             "max": true,
             "min": false,
             "show": true,
+            "sort": "avg",
+            "sortDesc": true,
             "total": false,
             "values": true
           },
@@ -1439,7 +1435,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.5.6",
+          "pluginVersion": "8.1.1",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -1529,6 +1525,8 @@
             "max": true,
             "min": false,
             "show": true,
+            "sort": "avg",
+            "sortDesc": true,
             "total": false,
             "values": true
           },
@@ -1539,7 +1537,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.5.6",
+          "pluginVersion": "8.1.1",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -1629,6 +1627,8 @@
             "max": true,
             "min": false,
             "show": true,
+            "sort": "avg",
+            "sortDesc": true,
             "total": false,
             "values": true
           },
@@ -1639,7 +1639,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.5.6",
+          "pluginVersion": "8.1.1",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -1745,7 +1745,7 @@
             "min": false,
             "rightSide": false,
             "show": true,
-            "sort": "current",
+            "sort": "max",
             "sortDesc": true,
             "total": false,
             "values": true
@@ -1757,7 +1757,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.5.6",
+          "pluginVersion": "8.1.1",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -1863,7 +1863,7 @@
             "min": false,
             "rightSide": false,
             "show": true,
-            "sort": "current",
+            "sort": "max",
             "sortDesc": true,
             "total": false,
             "values": true
@@ -1875,7 +1875,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.5.6",
+          "pluginVersion": "8.1.1",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -1976,7 +1976,7 @@
             "min": false,
             "rightSide": false,
             "show": true,
-            "sort": "current",
+            "sort": "max",
             "sortDesc": true,
             "total": false,
             "values": true
@@ -1988,7 +1988,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.5.6",
+          "pluginVersion": "8.1.1",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -2070,10 +2070,6 @@
           "dashes": false,
           "datasource": "${DS_PROMETHEUS}",
           "description": "",
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -2092,7 +2088,7 @@
             "min": false,
             "rightSide": false,
             "show": true,
-            "sort": "current",
+            "sort": "max",
             "sortDesc": true,
             "total": false,
             "values": true
@@ -2104,7 +2100,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.5.6",
+          "pluginVersion": "8.1.1",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -2216,10 +2212,6 @@
           "dashes": false,
           "datasource": "${DS_PROMETHEUS}",
           "description": "Percent of reads on node that are supplied from, and had to wait on, various media types",
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
           "fill": 5,
           "fillGradient": 0,
           "gridPos": {
@@ -2238,7 +2230,7 @@
             "min": false,
             "rightSide": false,
             "show": true,
-            "sort": "current",
+            "sort": "max",
             "sortDesc": true,
             "total": false,
             "values": true
@@ -2250,7 +2242,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.5.6",
+          "pluginVersion": "8.1.1",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -2343,7 +2335,7 @@
             "min": false,
             "rightSide": false,
             "show": true,
-            "sort": "current",
+            "sort": "max",
             "sortDesc": true,
             "total": false,
             "values": true
@@ -2355,7 +2347,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.5.6",
+          "pluginVersion": "8.1.1",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -2496,15 +2488,19 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
+                    "color": "semi-dark-green",
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
-                    "value": 20000
+                    "color": "semi-dark-yellow",
+                    "value": 10000
                   },
                   {
-                    "color": "red",
+                    "color": "semi-dark-orange",
+                    "value": 25000
+                  },
+                  {
+                    "color": "semi-dark-red",
                     "value": 50000
                   }
                 ]
@@ -2535,7 +2531,7 @@
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "7.5.6",
+          "pluginVersion": "8.1.1",
           "targets": [
             {
               "exemplar": true,
@@ -2550,6 +2546,7 @@
         },
         {
           "datasource": null,
+          "description": "",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2560,15 +2557,19 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
+                    "color": "semi-dark-green",
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
-                    "value": 20000
+                    "color": "semi-dark-yellow",
+                    "value": 10000
                   },
                   {
-                    "color": "red",
+                    "color": "semi-dark-orange",
+                    "value": 25000
+                  },
+                  {
+                    "color": "semi-dark-red",
                     "value": 50000
                   }
                 ]
@@ -2599,7 +2600,7 @@
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "7.5.6",
+          "pluginVersion": "8.1.1",
           "targets": [
             {
               "exemplar": true,
@@ -2624,15 +2625,19 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
+                    "color": "semi-dark-green",
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
-                    "value": 20000
+                    "color": "semi-dark-yellow",
+                    "value": 10000
                   },
                   {
-                    "color": "red",
+                    "color": "semi-dark-orange",
+                    "value": 25000
+                  },
+                  {
+                    "color": "semi-dark-red",
                     "value": 50000
                   }
                 ]
@@ -2663,7 +2668,7 @@
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "7.5.6",
+          "pluginVersion": "8.1.1",
           "targets": [
             {
               "exemplar": true,
@@ -2685,8 +2690,7 @@
               },
               "custom": {
                 "align": "auto",
-                "displayMode": "auto",
-                "filterable": false
+                "displayMode": "auto"
               },
               "mappings": [
                 {
@@ -2735,7 +2739,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "7.5.6",
+          "pluginVersion": "8.1.1",
           "targets": [
             {
               "exemplar": true,
@@ -2801,12 +2805,15 @@
               },
               "custom": {
                 "align": "auto",
-                "displayMode": "auto",
-                "filterable": false
+                "displayMode": "auto"
               },
               "mappings": [
                 {
                   "options": {
+                    "Value #Other Ops": {
+                      "index": 3,
+                      "text": "-other-"
+                    },
                     "Value #Read Ops": {
                       "index": 2,
                       "text": "-read-"
@@ -2850,7 +2857,7 @@
           "options": {
             "showHeader": true
           },
-          "pluginVersion": "7.5.6",
+          "pluginVersion": "8.1.1",
           "targets": [
             {
               "exemplar": true,
@@ -2863,7 +2870,7 @@
             },
             {
               "exemplar": true,
-              "expr": "avg((node_nfs_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}) - (node_nfs_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}) - (node_nfs_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}))",
+              "expr": "avg(node_nfs_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}) - avg(node_nfs_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}) - avg(node_nfs_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2931,7 +2938,6 @@
                 "fillOpacity": 10,
                 "gradientMode": "none",
                 "hideFrom": {
-                  "graph": false,
                   "legend": false,
                   "tooltip": false,
                   "viz": false
@@ -2943,7 +2949,14 @@
                   "type": "linear"
                 },
                 "showPoints": "auto",
-                "spanNulls": false
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
               },
               "mappings": [],
               "thresholds": {
@@ -2981,9 +2994,6 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
-            },
-            "tooltipOptions": {
               "mode": "single"
             }
           },
@@ -3023,7 +3033,6 @@
                 "fillOpacity": 10,
                 "gradientMode": "none",
                 "hideFrom": {
-                  "graph": false,
                   "legend": false,
                   "tooltip": false,
                   "viz": false
@@ -3035,7 +3044,14 @@
                   "type": "linear"
                 },
                 "showPoints": "auto",
-                "spanNulls": false
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
               },
               "mappings": [],
               "thresholds": {
@@ -3074,15 +3090,12 @@
             },
             "tooltip": {
               "mode": "single"
-            },
-            "tooltipOptions": {
-              "mode": "single"
             }
           },
           "targets": [
             {
               "exemplar": true,
-              "expr": "sum(node_nfs_read_throughput{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nfsv=\"v3\"})",
+              "expr": "avg(node_nfs_read_throughput{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nfsv=\"v3\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Read",
@@ -3090,7 +3103,7 @@
             },
             {
               "exemplar": true,
-              "expr": "sum(node_nfs_write_throughput{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nfsv=\"v3\"})",
+              "expr": "avg(node_nfs_write_throughput{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nfsv=\"v3\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Write",
@@ -3116,7 +3129,6 @@
                 "fillOpacity": 10,
                 "gradientMode": "none",
                 "hideFrom": {
-                  "graph": false,
                   "legend": false,
                   "tooltip": false,
                   "viz": false
@@ -3128,7 +3140,14 @@
                   "type": "linear"
                 },
                 "showPoints": "auto",
-                "spanNulls": false
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
               },
               "mappings": [],
               "thresholds": {
@@ -3167,15 +3186,12 @@
             },
             "tooltip": {
               "mode": "single"
-            },
-            "tooltipOptions": {
-              "mode": "single"
             }
           },
           "targets": [
             {
               "exemplar": true,
-              "expr": "sum(node_nfs_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nfsv=\"v3\"})",
+              "expr": "avg(node_nfs_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nfsv=\"v3\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Read",
@@ -3183,7 +3199,7 @@
             },
             {
               "exemplar": true,
-              "expr": "sum(node_nfs_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nfsv=\"v3\"})",
+              "expr": "avg(node_nfs_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nfsv=\"v3\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Write",
@@ -3191,7 +3207,7 @@
             },
             {
               "exemplar": true,
-              "expr": "sum(node_nfs_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nfsv=\"v3\"})",
+              "expr": "avg(node_nfs_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nfsv=\"v3\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Total",
@@ -3241,7 +3257,7 @@
             "h": 5,
             "w": 4,
             "x": 0,
-            "y": 6
+            "y": 7
           },
           "id": 68,
           "options": {
@@ -3259,7 +3275,7 @@
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "8.0.6",
+          "pluginVersion": "8.1.1",
           "targets": [
             {
               "exemplar": false,
@@ -3300,7 +3316,7 @@
             "h": 5,
             "w": 4,
             "x": 4,
-            "y": 6
+            "y": 7
           },
           "id": 63,
           "options": {
@@ -3318,7 +3334,7 @@
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "8.0.6",
+          "pluginVersion": "8.1.1",
           "targets": [
             {
               "exemplar": false,
@@ -3353,7 +3369,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 6
+            "y": 7
           },
           "hiddenSeries": false,
           "id": 64,
@@ -3377,7 +3393,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.0.6",
+          "pluginVersion": "8.1.1",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -3451,7 +3467,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 6
+            "y": 7
           },
           "hiddenSeries": false,
           "id": 65,
@@ -3475,7 +3491,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.0.6",
+          "pluginVersion": "8.1.1",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -3597,7 +3613,7 @@
             "h": 5,
             "w": 3,
             "x": 0,
-            "y": 8
+            "y": 24
           },
           "id": 84,
           "options": {
@@ -3615,7 +3631,7 @@
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "7.5.6",
+          "pluginVersion": "8.1.1",
           "targets": [
             {
               "expr": "avg(fcp_lif_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
@@ -3654,7 +3670,7 @@
             "h": 5,
             "w": 3,
             "x": 3,
-            "y": 8
+            "y": 24
           },
           "id": 69,
           "options": {
@@ -3672,7 +3688,7 @@
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "7.5.6",
+          "pluginVersion": "8.1.1",
           "targets": [
             {
               "expr": "sum(fcp_lif_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
@@ -3706,7 +3722,7 @@
             "h": 9,
             "w": 6,
             "x": 6,
-            "y": 8
+            "y": 24
           },
           "hiddenSeries": false,
           "id": 72,
@@ -3730,7 +3746,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.5.6",
+          "pluginVersion": "8.1.1",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -3811,7 +3827,7 @@
             "h": 9,
             "w": 6,
             "x": 12,
-            "y": 8
+            "y": 24
           },
           "hiddenSeries": false,
           "id": 73,
@@ -3835,7 +3851,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.5.6",
+          "pluginVersion": "8.1.1",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -3916,7 +3932,7 @@
             "h": 9,
             "w": 6,
             "x": 18,
-            "y": 8
+            "y": 24
           },
           "hiddenSeries": false,
           "id": 74,
@@ -3940,7 +3956,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.5.6",
+          "pluginVersion": "8.1.1",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -4007,7 +4023,7 @@
       "type": "row"
     },
     {
-      "collapsed": false,
+      "collapsed": true,
       "datasource": null,
       "gridPos": {
         "h": 1,
@@ -4016,880 +4032,891 @@
         "y": 24
       },
       "id": 118,
-      "panels": [],
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "mappings": [],
+              "min": 0,
+              "noValue": "0",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "rgb(31, 176, 196)",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "µs"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 3,
+            "x": 0,
+            "y": 25
+          },
+          "id": 122,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.1.1",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "avg(nvme_lif_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "NVMe/FC Latency",
+          "transformations": [],
+          "type": "stat"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "rgb(31, 176, 196)",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 3,
+            "x": 3,
+            "y": 25
+          },
+          "id": 124,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.1.1",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "sum(nvme_lif_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "NVMe/FC IOPs",
+          "transformations": [],
+          "type": "stat"
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "unit": "µs"
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 6,
+            "y": 25
+          },
+          "hiddenSeries": false,
+          "id": 120,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": false,
+            "rightSide": false,
+            "show": true,
+            "sort": "current",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.1.1",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "avg by(lif, port, node) (nvme_lif_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{node}} - {{port}} - {{lif}}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "NVMe/FC Average Latency by Port / LIF",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "transformations": [],
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:1230",
+              "format": "µs",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:1231",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "unit": "Bps"
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 12,
+            "y": 25
+          },
+          "hiddenSeries": false,
+          "id": 126,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": false,
+            "rightSide": false,
+            "show": true,
+            "sort": "current",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.1.1",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "avg by(node, port, lif) (nvme_lif_read_data+nvme_lif_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{node}} - {{port}} - {{lif}}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "NVMe/FC Throughput by Port / LIF",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "transformations": [],
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:1288",
+              "format": "Bps",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:1289",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 18,
+            "y": 25
+          },
+          "hiddenSeries": false,
+          "id": 128,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": false,
+            "rightSide": false,
+            "show": true,
+            "sort": "current",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.1.1",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "avg by(node, port, lif) (nvme_lif_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{node}} - {{port_id}} - {{lif}}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "NVMe/FC IOPs by Port / LIF",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "transformations": [],
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:1346",
+              "format": "iops",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:1347",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        }
+      ],
       "title": "NVMe/FC Frontend Drilldown",
       "type": "row"
     },
     {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [],
-          "min": 0,
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "rgb(31, 176, 196)",
-                "value": null
-              }
-            ]
-          },
-          "unit": "µs"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 3,
-        "x": 0,
-        "y": 25
-      },
-      "id": 122,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "7.5.6",
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "avg(nvme_lif_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "NVMe/FC Latency",
-      "transformations": [],
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "rgb(31, 176, 196)",
-                "value": null
-              }
-            ]
-          },
-          "unit": "iops"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 3,
-        "x": 3,
-        "y": 25
-      },
-      "id": 124,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "7.5.6",
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "sum(nvme_lif_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "NVMe/FC IOPs",
-      "transformations": [],
-      "type": "stat"
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "unit": "µs"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 9,
-        "w": 6,
-        "x": 6,
-        "y": 25
-      },
-      "hiddenSeries": false,
-      "id": 120,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "rightSide": false,
-        "show": true,
-        "sort": "current",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "connected",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.5.6",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "avg by(lif, port, node) (nvme_lif_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{node}} - {{port}} - {{lif}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "NVMe/FC Average Latency by Port / LIF",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "transformations": [],
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1230",
-          "format": "µs",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:1231",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "unit": "Bps"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 9,
-        "w": 6,
-        "x": 12,
-        "y": 25
-      },
-      "hiddenSeries": false,
-      "id": 126,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "rightSide": false,
-        "show": true,
-        "sort": "current",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "connected",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.5.6",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "avg by(node, port, lif) (nvme_lif_read_data+nvme_lif_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{node}} - {{port}} - {{lif}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "NVMe/FC Throughput by Port / LIF",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "transformations": [],
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1288",
-          "format": "Bps",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:1289",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "unit": "iops"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 9,
-        "w": 6,
-        "x": 18,
-        "y": 25
-      },
-      "hiddenSeries": false,
-      "id": 128,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "rightSide": false,
-        "show": true,
-        "sort": "current",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "connected",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.5.6",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "avg by(node, port, lif) (nvme_lif_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{node}} - {{port_id}} - {{lif}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "NVMe/FC IOPs by Port / LIF",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "transformations": [],
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1346",
-          "format": "iops",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:1347",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "collapsed": false,
+      "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 34
+        "y": 25
       },
       "id": 76,
-      "panels": [],
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "mappings": [],
+              "min": 0,
+              "noValue": "0",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "rgb(31, 176, 196)",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "µs"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 3,
+            "x": 0,
+            "y": 26
+          },
+          "id": 77,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.1.1",
+          "targets": [
+            {
+              "expr": "avg(iscsi_lif_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "iSCSI Latency",
+          "transformations": [],
+          "type": "stat"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "rgb(31, 176, 196)",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 3,
+            "x": 3,
+            "y": 26
+          },
+          "id": 78,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.1.1",
+          "targets": [
+            {
+              "expr": "sum(iscsi_lif_iscsi_read_ops+iscsi_lif_iscsi_write_ops+iscsi_lif_iscsi_other_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "iSCSI IOPs",
+          "transformations": [],
+          "type": "stat"
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "unit": "µs"
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 6,
+            "y": 26
+          },
+          "hiddenSeries": false,
+          "id": 79,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": false,
+            "rightSide": false,
+            "show": true,
+            "sort": "current",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.1.1",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "avg by(node, lif) (iscsi_lif_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{node}} - {{lif}}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Average Latency by LIF",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "transformations": [],
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:732",
+              "format": "µs",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:733",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "unit": "Bps"
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 12,
+            "y": 26
+          },
+          "hiddenSeries": false,
+          "id": 80,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": false,
+            "rightSide": false,
+            "show": true,
+            "sort": "current",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.1.1",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "avg by(node, lif) (iscsi_lif_read_data+iscsi_lif_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{node}} - {{lif}}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Throughput by LIF",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "transformations": [],
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:962",
+              "format": "Bps",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:963",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 18,
+            "y": 26
+          },
+          "hiddenSeries": false,
+          "id": 81,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": false,
+            "rightSide": false,
+            "show": true,
+            "sort": "current",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.1.1",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "avg by(node, lif) (iscsi_lif_iscsi_read_ops+iscsi_lif_iscsi_write_ops+iscsi_lif_iscsi_other_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{node}} - {{lif}}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "IOPs by LIF",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "transformations": [],
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:1040",
+              "format": "iops",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:1041",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        }
+      ],
       "title": "iSCSI Frontend Drilldown",
       "type": "row"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [],
-          "min": 0,
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "rgb(31, 176, 196)",
-                "value": null
-              }
-            ]
-          },
-          "unit": "µs"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 3,
-        "x": 0,
-        "y": 35
-      },
-      "id": 77,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "7.5.6",
-      "targets": [
-        {
-          "expr": "avg(iscsi_lif_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "iSCSI Latency",
-      "transformations": [],
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "rgb(31, 176, 196)",
-                "value": null
-              }
-            ]
-          },
-          "unit": "iops"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 3,
-        "x": 3,
-        "y": 35
-      },
-      "id": 78,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "7.5.6",
-      "targets": [
-        {
-          "expr": "sum(iscsi_lif_iscsi_read_ops+iscsi_lif_iscsi_write_ops+iscsi_lif_iscsi_other_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "iSCSI IOPs",
-      "transformations": [],
-      "type": "stat"
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "unit": "µs"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 9,
-        "w": 6,
-        "x": 6,
-        "y": 35
-      },
-      "hiddenSeries": false,
-      "id": 79,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "rightSide": false,
-        "show": true,
-        "sort": "current",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "connected",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.5.6",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "avg by(iscsi_lif) (iscsi_lif_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{iscsi_lif}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Average Latency by LIF",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "transformations": [],
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "µs",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "unit": "Bps"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 9,
-        "w": 6,
-        "x": 12,
-        "y": 35
-      },
-      "hiddenSeries": false,
-      "id": 80,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "rightSide": false,
-        "show": true,
-        "sort": "current",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "connected",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.5.6",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "avg by(iscsi_lif) (iscsi_lif_read_data+iscsi_lif_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{iscsi_lif}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Throughput by LIF",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "transformations": [],
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "Bps",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "unit": "iops"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 9,
-        "w": 6,
-        "x": 18,
-        "y": 35
-      },
-      "hiddenSeries": false,
-      "id": 81,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "rightSide": false,
-        "show": true,
-        "sort": "current",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "connected",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.5.6",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "avg by(iscsi_lif) (iscsi_lif_iscsi_read_ops+iscsi_lif_iscsi_write_ops+iscsi_lif_iscsi_other_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{iscsi_lif}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "IOPs by LIF",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "transformations": [],
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "iops",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
     }
   ],
   "refresh": false,
-  "schemaVersion": 27,
+  "schemaVersion": 30,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -4936,7 +4963,6 @@
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -4963,7 +4989,6 @@
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -4990,7 +5015,6 @@
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -5089,7 +5113,7 @@
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {
@@ -5106,7 +5130,7 @@
     ]
   },
   "timezone": "",
-  "title": "NetApp Detail: Node Details",
-  "uid": "B4RtUG4nk",
-  "version": 4
+  "title": "NetApp Detail: Node Detailed",
+  "uid": "8wpLI247k",
+  "version": 6
 }
