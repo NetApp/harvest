@@ -7,7 +7,7 @@
 
 This major release introduces a Docker workflow that makes it a breeze to
 standup Grafana, Prometheus, and Harvest with auto-provisioned dashboards. There
-are six new dashboards, example Prometheus alerts, and a bunch of fixes
+are seven new dashboards, example Prometheus alerts, and a bunch of fixes
 detailed below. We haven't forgotten about our 7-mode customers either and have
 a number of improvements in 7-mode dashboards with more to come.
 
@@ -38,11 +38,11 @@ On RHEL and Debian, the example Unix collector does not work at the moment due t
 
 - Make it easy to install Grafana, Prometheus, and Harvest with Docker Compose and auto-provisioned dashboards. [#349](https://github.com/NetApp/harvest/pull/349)
 
-- Lun, Volume Details, Node Details, and Network Details dashboards added to Harvest. Thanks to @jgasher for contributing four solid dashboards. [#458](https://github.com/NetApp/harvest/pull/458)
+- Lun, Volume Details, Node Details, Network Details, and SVM dashboards added to Harvest. Thanks to @jgasher for contributing five solid dashboards. [#458](https://github.com/NetApp/harvest/pull/458) [#482](https://github.com/NetApp/harvest/pull/482)
       
 - Disk dashboard added to Harvest with disk type, status, uptime, and aggregate information. Thanks to @faguayot, @bengoldenberg, and @talshechanovitz for helping with this feature [#348](https://github.com/NetApp/harvest/issues/348) [#375](https://github.com/NetApp/harvest/pull/375) [#367](https://github.com/NetApp/harvest/pull/367) [#361](https://github.com/NetApp/harvest/pull/361)
   
-- New SVM dashboard with NFS v3 and v4 frontend drill-downs. Thanks to @burkl for contributing these. :tada: [#344](https://github.com/NetApp/harvest/issues/344)
+- New SVM dashboard with NFS v3, v4, and v4.1 frontend drill-downs. Thanks to @burkl for contributing these. :tada: [#344](https://github.com/NetApp/harvest/issues/344)
 
 - Harvest templates should be extendible without modifying the originals. Thanks to @madhusudhanarya and @albinpopote for reporting. [#394](https://github.com/NetApp/harvest/issues/394) [#396](https://github.com/NetApp/harvest/issues/396) [#391](https://github.com/NetApp/harvest/pull/391)
 
