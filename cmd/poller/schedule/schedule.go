@@ -159,7 +159,7 @@ func (s *Schedule) NewTask(n string, i time.Duration, f func() (*matrix.Matrix, 
 			if runNow {
 				t.timer = time.Now().Add(-i) // set to run immediately
 			} else {
-				t.timer = time.Now().Add(i) // run after interval
+				t.timer = time.Now().Add(0) // run after interval has elapsed
 			}
 			s.tasks = append(s.tasks, t)
 			return nil
