@@ -793,7 +793,7 @@ func (p *Poller) getExporter(name string) exporter.Exporter {
 // initialize matrices to be used as metadata
 func (p *Poller) loadMetadata() {
 
-	p.metadata = matrix.New("poller", "metadata_component")
+	p.metadata = matrix.New("poller", "metadata_component", "metadata_component")
 	p.metadata.NewMetricUint8("status")
 	p.metadata.NewMetricUint64("count")
 	p.metadata.SetGlobalLabel("poller", p.name)
@@ -802,7 +802,7 @@ func (p *Poller) loadMetadata() {
 	p.metadata.SetExportOptions(matrix.DefaultExportOptions())
 
 	// metadata for target system
-	p.status = matrix.New("poller", "metadata_target")
+	p.status = matrix.New("poller", "metadata_target", "metadata_component")
 	p.status.NewMetricUint8("status")
 	p.status.NewMetricFloat32("ping")
 	p.status.NewMetricUint32("goroutines")
