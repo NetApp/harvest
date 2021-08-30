@@ -38,7 +38,7 @@ On RHEL and Debian, the example Unix collector does not work at the moment due t
 
 - Make it easy to install Grafana, Prometheus, and Harvest with Docker Compose and auto-provisioned dashboards. [#349](https://github.com/NetApp/harvest/pull/349)
 
-- Lun, Volume Details, Node Details, and Network Details dashboards added to Harvest. Thanks to Jeff Asher for contributing four solid dashboards. [#458](https://github.com/NetApp/harvest/pull/458)
+- Lun, Volume Details, Node Details, and Network Details dashboards added to Harvest. Thanks to @jgasher for contributing four solid dashboards. [#458](https://github.com/NetApp/harvest/pull/458)
       
 - Disk dashboard added to Harvest with disk type, status, uptime, and aggregate information. Thanks to @faguayot, @bengoldenberg, and @talshechanovitz for helping with this feature [#348](https://github.com/NetApp/harvest/issues/348) [#375](https://github.com/NetApp/harvest/pull/375) [#367](https://github.com/NetApp/harvest/pull/367) [#361](https://github.com/NetApp/harvest/pull/361)
   
@@ -78,8 +78,10 @@ On RHEL and Debian, the example Unix collector does not work at the moment due t
 
 - When building RPMs don't compile Harvest Python test code. Thanks to @madhusudhanarya for reporting. [#385](https://github.com/NetApp/harvest/issues/385)
 
-- Harvest should collect include NVMe and fiber chanel port counters. Thanks to @jgasher for submitting these. [#363](https://github.com/NetApp/harvest/issues/363)
-- 
+- Harvest should collect include NVMe and fiber channel port counters. Thanks to @jgasher for submitting these. [#363](https://github.com/NetApp/harvest/issues/363)
+
+- Harvest should export NFS v4 metrics. It does for v3 and v4.1, but did not for v4 due to a typo in the v4 ZAPI template. Thanks to @jgasher for reporting. [#481](https://github.com/NetApp/harvest/pull/481)
+  
 - Harvest panics when port_range is used in the Prometheus exporter and address is missing. Thanks to @ybizeul for reporting. [#357](https://github.com/NetApp/harvest/issues/357)
 
 - Network dashboard fiber channel ports (FCP) should report read and write throughput [#445](https://github.com/NetApp/harvest/pull/445)
