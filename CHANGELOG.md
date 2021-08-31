@@ -2,6 +2,96 @@
 
 [Releases](https://github.com/NetApp/harvest/releases)
 
+## 21.08.0 / 2021-08-31
+<!-- git log --no-merges --cherry-pick --right-only --oneline release/21.05.4...release/21.08.0 -->
+
+This major release introduces a Docker workflow that makes it a breeze to
+standup Grafana, Prometheus, and Harvest with auto-provisioned dashboards. There
+are seven new dashboards, example Prometheus alerts, and a bunch of fixes
+detailed below. We haven't forgotten about our 7-mode customers either and have
+a number of improvements in 7-mode dashboards with more to come.
+
+This release Harvest also sports the most external contributions to date.
+:metal: Thanks!
+
+With 284 commits since 21.05, there is a lot to summarize! Make sure you check out the full list of enhancements and improvements in the [CHANGELOG.md](CHANGELOG.md) since 21.05.
+
+**IMPORTANT** Harvest relies on the autosupport sidecar binary to periodically
+send usage and support telemetry data to NetApp by default. Usage of the
+harvest-autosupport binary falls under the NetApp [EULA](autosupport/NetApp-EULA.md).
+Automatic sending of this data can be disabled with the `autosupport_disabled`
+option. See [Autosupport](autosupport) for details.
+
+**IMPORTANT** RPM and Debian packages will be deprecated in the future, replaced
+with Docker and native binaries. See
+[#330](https://github.com/NetApp/harvest/issues/330) for details and tell us
+what you think. Several of you have already weighed-in. Thanks! If you haven't,
+please do.
+
+**Known Issues**
+
+We've improved several of the 7-mode dashboards this release, but there are still a number of gaps with 7-mode dashboards when compared to c-mode. We will address these in a point release by splitting the c-mode and 7-mode dashboards. See [#423](https://github.com/NetApp/harvest/issues/423) for details.
+
+On RHEL and Debian, the example Unix collector does not work at the moment due to the `harvest` user lacking permissions to read the `/proc` filesystem. See [#249](https://github.com/NetApp/harvest/issues/249) for details.
+
+### Enhancements
+
+- Make it easy to install Grafana, Prometheus, and Harvest with Docker Compose and auto-provisioned dashboards. [#349](https://github.com/NetApp/harvest/pull/349)
+
+- Lun, Volume Details, Node Details, Network Details, and SVM dashboards added to Harvest. Thanks to @jgasher for contributing five solid dashboards. [#458](https://github.com/NetApp/harvest/pull/458) [#482](https://github.com/NetApp/harvest/pull/482)
+      
+- Disk dashboard added to Harvest with disk type, status, uptime, and aggregate information. Thanks to @faguayot, @bengoldenberg, and @talshechanovitz for helping with this feature [#348](https://github.com/NetApp/harvest/issues/348) [#375](https://github.com/NetApp/harvest/pull/375) [#367](https://github.com/NetApp/harvest/pull/367) [#361](https://github.com/NetApp/harvest/pull/361)
+  
+- New SVM dashboard with NFS v3, v4, and v4.1 frontend drill-downs. Thanks to @burkl for contributing these. :tada: [#344](https://github.com/NetApp/harvest/issues/344)
+
+- Harvest templates should be extendible without modifying the originals. Thanks to @madhusudhanarya and @albinpopote for reporting. [#394](https://github.com/NetApp/harvest/issues/394) [#396](https://github.com/NetApp/harvest/issues/396) [#391](https://github.com/NetApp/harvest/pull/391)
+
+- Sort all variables in Harvest dashboards in ascending order. Thanks to @florianmulatz for raising [#350](https://github.com/NetApp/harvest/issues/350)
+
+- Harvest should include example Prometheus alerting rules [#414](https://github.com/NetApp/harvest/pull/414)
+
+- Improved documentation on how to send new ZAPIs and modify existing ZAPI templates. Thanks to @albinpopote for reporting. [#397](https://github.com/NetApp/harvest/issues/397) 
+ 
+- Improve Harvest ZAPI template selection when monitoring a broader set of ONTAP clusters including 7-mode and 9.10.X [#407](https://github.com/NetApp/harvest/pull/407)
+
+- Collectors should log their full ZAPI request/response(s) when their poller includes a `log` section [#382](https://github.com/NetApp/harvest/pull/382)
+
+- Harvest should load config information from the `HARVEST_CONF` environment variable when set. Thanks to @ybizeul for reporting. [#368](https://github.com/NetApp/harvest/issues/368)
+
+- Document how to delete time series data from Prometheus [#393](https://github.com/NetApp/harvest/pull/393)
+  
+- Harvest ZAPI tool supports printing results in XML and colors. This makes it easier to post-process responses in downstream pipelines [#353](https://github.com/NetApp/harvest/pull/353)
+  
+- Harvest `version` should check for a new release and display it when available [#323](https://github.com/NetApp/harvest/issues/323)
+
+- Document how client authentication works and how to troubleshoot [#325](https://github.com/NetApp/harvest/pull/325)  
+
+### Fixes
+
+- ZAPI collector should recover after losing connection with ONTAP cluster for several hours. Thanks to @hashi825 for reporting this and helping us track it down [#356](https://github.com/NetApp/harvest/issues/356)
+
+- ZAPI templates with the same object name overwrite matrix data (impacted nfs and object_store_client_op templates). Thanks to @hashi825 for reporting this [#462](https://github.com/NetApp/harvest/issues/462)
+
+- Lots of fixes for 7-mode dashboards and data collection. Thanks to @madhusudhanarya and @ybizeul for reporting. There's still more work to do for 7-mode, but we understand some of our customers rely on Harvest to help them monitor these legacy systems. [#383](https://github.com/NetApp/harvest/issues/383) [#441](https://github.com/NetApp/harvest/issues/441) [#423](https://github.com/NetApp/harvest/issues/423) [#415](https://github.com/NetApp/harvest/issues/415) [#376](https://github.com/NetApp/harvest/issues/376)
+
+- Aggregate dashboard "space used column" should use current fill grade. Thanks to @florianmulatz for reporting. [#351](https://github.com/NetApp/harvest/issues/351)
+
+- When building RPMs don't compile Harvest Python test code. Thanks to @madhusudhanarya for reporting. [#385](https://github.com/NetApp/harvest/issues/385)
+
+- Harvest should collect include NVMe and fiber channel port counters. Thanks to @jgasher for submitting these. [#363](https://github.com/NetApp/harvest/issues/363)
+
+- Harvest should export NFS v4 metrics. It does for v3 and v4.1, but did not for v4 due to a typo in the v4 ZAPI template. Thanks to @jgasher for reporting. [#481](https://github.com/NetApp/harvest/pull/481)
+  
+- Harvest panics when port_range is used in the Prometheus exporter and address is missing. Thanks to @ybizeul for reporting. [#357](https://github.com/NetApp/harvest/issues/357)
+
+- Network dashboard fiber channel ports (FCP) should report read and write throughput [#445](https://github.com/NetApp/harvest/pull/445)
+
+- Aggregate dashboard panel titles should match the information being displayed [#133](https://github.com/NetApp/harvest/issues/133)
+
+- Harvest should handle ZAPIs that include signed integers. Most ZAPIs use unsigned integers, but a few return signed ones. Thanks for reporting @hashi825 [#384](https://github.com/NetApp/harvest/issues/384)
+
+---
+
 ## 21.05.4 / 2021-07-22
 <!-- git log --no-merges --cherry-pick --right-only --oneline release/21.05.3...release/21.05.4 -->
 
