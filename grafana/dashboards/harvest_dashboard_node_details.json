@@ -2460,20 +2460,6 @@
         "x": 0,
         "y": 20
       },
-      "id": 86,
-      "panels": [],
-      "title": "FabricPool",
-      "type": "row"
-    },
-    {
-      "collapsed": true,
-      "datasource": null,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 21
-      },
       "id": 88,
       "panels": [
         {
