@@ -1387,7 +1387,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Average Disk Utilization",
+      "title": "Average Aggregate Space Used",
       "tooltip": {
         "shared": true,
         "sort": 0,
