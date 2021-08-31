@@ -73,7 +73,7 @@ func New(c, n string, o *options.Options, p conf.Exporter) *AbstractExporter {
 
 // InitAbc() initializes AbstractExporter
 func (me *AbstractExporter) InitAbc() error {
-	me.Metadata = matrix.New(me.Name, "metadata_exporter")
+	me.Metadata = matrix.New(me.Name, "metadata_exporter", "metadata_exporter")
 	me.Metadata.SetGlobalLabel("hostname", me.Options.Hostname)
 	me.Metadata.SetGlobalLabel("version", me.Options.Version)
 	me.Metadata.SetGlobalLabel("poller", me.Options.Poller)

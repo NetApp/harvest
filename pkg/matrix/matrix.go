@@ -20,6 +20,7 @@ import (
 type Matrix struct {
 	UUID          string
 	Object        string
+	Identifier    string
 	globalLabels  *dict.Dict
 	instances     map[string]*Instance
 	metrics       map[string]Metric
@@ -27,8 +28,8 @@ type Matrix struct {
 	exportable    bool
 }
 
-func New(uuid, object string) *Matrix {
-	me := Matrix{UUID: uuid, Object: object}
+func New(uuid, object string, identifier string) *Matrix {
+	me := Matrix{UUID: uuid, Object: object, Identifier: identifier}
 	me.globalLabels = dict.New()
 	me.instances = make(map[string]*Instance, 0)
 	me.metrics = make(map[string]Metric, 0)
@@ -62,7 +63,7 @@ func (me *Matrix) SetExportable(b bool) {
 }
 
 func (me *Matrix) Clone(with_data, with_metrics, with_instances bool) *Matrix {
-	clone := New(me.UUID, me.Object)
+	clone := New(me.UUID, me.Object, me.Identifier)
 	clone.globalLabels = me.globalLabels
 	clone.exportOptions = me.exportOptions
 	clone.exportable = me.exportable

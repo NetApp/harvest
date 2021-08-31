@@ -3,7 +3,7 @@ name:                     NFSv4
 query:                    nfsv4
 object:                   svm_nfs
 
-global_label:
+global_labels:
   - nfsv: v4
 
 counters:

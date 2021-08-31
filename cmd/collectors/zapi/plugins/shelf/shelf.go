@@ -73,7 +73,7 @@ func (my *Shelf) Init() error {
 
 		my.instanceLabels[attribute] = dict.New()
 
-		my.data[attribute] = matrix.New(my.Parent+".Shelf", "shelf_"+objectName)
+		my.data[attribute] = matrix.New(my.Parent+".Shelf", "shelf_"+objectName, "shelf_"+objectName)
 		my.data[attribute].SetGlobalLabel("datacenter", my.ParentParams.GetChildContentS("datacenter"))
 		my.data[attribute].SetGlobalLabel("cluster", my.client.Name())
 
