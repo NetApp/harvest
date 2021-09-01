@@ -453,7 +453,7 @@
                   {
                     "from": "0",
                     "id": 1,
-                    "text": "up",
+                    "text": "down",
                     "to": "0.999",
                     "type": 2,
                     "value": "0"
@@ -461,7 +461,7 @@
                   {
                     "from": "",
                     "id": 2,
-                    "text": "down",
+                    "text": "up",
                     "to": "",
                     "type": 1,
                     "value": "1"
@@ -474,11 +474,11 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "rgb(75, 155, 35)",
+                      "color": "rgb(199, 48, 66)",
                       "value": null
                     },
                     {
-                      "color": "rgb(225, 90, 40)",
+                      "color": "rgb(74, 163, 52)",
                       "value": 1
                     }
                   ]
@@ -636,7 +636,7 @@
           "refId": "A"
         },
         {
-          "expr": "nic_state{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
+          "expr": "nic_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
           "format": "table",
           "hide": false,
           "instant": true,
