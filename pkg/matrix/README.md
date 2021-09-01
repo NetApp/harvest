@@ -14,16 +14,17 @@ This package is the architectural backbone of Harvest, therefore understanding i
 # Basic Usage
 ## Initialize
 ```go
-func matrix.New(name, object string) *Matrix
+func matrix.New(name, object string, identifier string) *Matrix
 // always returns successfully pointer to (empty) Matrix 
 ```
 This section describes how to properly initialize a new Matrix instance. Note that if you write a collector, a Matrix instance is already properly initialized for you (as `MyCollector.matrix`), and if you write a plugin or exporter, it is passed to you from the collector. That means most of the time you don't have to worry about initializing the Matrix.
 
-`matrix.New()` requires two arguments:
+`matrix.New()` requires three arguments:
 * `UUID` is by convention the collector name (e.g. `MyCollector`) if the Matrix comes from a collector, or the collector name and the plugin name concatenated with a `.` (e.g. `MyCollector.MyPlugin`) if the Matrix comes from a plugin.
 * `object` is a description of the instances of the Matrix. For example, if we collect data about cars and our instances are cars, a good name would be `car`.
+* `identifier` is a unique key used to identify a matrix instance
 
-Note that the combination of `UUID` and `object` should uniquely identify a Matrix instance. This is not a strict requirement, but guarantees that your data is properly handled by exporters.
+Note that `identifier` should uniquely identify a Matrix instance. This is not a strict requirement, but guarantees that your data is properly handled by exporters.
 
 ### Example
 Here is an example from the point of view of a collector:
@@ -34,7 +35,7 @@ import "goharvest2/pkg/matrix"
 
 var myMatrix *matrix.Matrix
 
-myMatrix = matrix.New("CarCollector", "car")
+myMatrix = matrix.New("CarCollector", "car", "car")
 ```
 
 Next step is to add metrics and instances to our Matrix.
