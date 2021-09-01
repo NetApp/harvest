@@ -62,20 +62,15 @@ pipeline {
                             steps {
                                 sh '''
                                 echo "Installing"
-                                export PATH=$PATH:/usr/local/go/bin
                                 export BUILD_PATH=$NATIVE
-                                cd $WORKSPACE/harvest/integration/test/
-                                go test -tags=install_native
+                                bash $WORKSPACE/harvest/integration/test/test.sh install_native
                                 '''
                             }
                         }
                         stage('Running Test') {
                             steps {
                                 sh """
-                                echo "Running Unit Tests"
-                                export PATH=$PATH:/usr/local/go/bin
-                                cd $WORKSPACE/harvest/integration/test/
-                                go test -tags=regression
+                                bash $WORKSPACE/harvest/integration/test/test.sh regression
                                 """
                             }
                         }
@@ -111,25 +106,28 @@ pipeline {
                                 '''
                             }
                         }
-
                         stage('Install RPM pkg') {
                             steps {
                                 sh '''
                                 echo "Installing"
-                                export PATH=$PATH:/usr/local/go/bin
+                                export BUILD_PATH=https://github.com/NetApp/harvest/releases/download/v21.08.0/harvest-21.08.0-6.x86_64.rpm
+                                bash $WORKSPACE/harvest/integration/test/test.sh install_rpm
+                                '''
+                            }
+                        }
+                        stage('Upgrade RPM pkg') {
+                            steps {
+                                sh '''
+                                echo "Upgrading"
                                 export BUILD_PATH=$RPM
-                                cd $WORKSPACE/harvest/integration/test/
-                                go test -tags=install_rpm
+                                bash $WORKSPACE/harvest/integration/test/test.sh upgrade_rpm
                                 '''
                             }
                         }
                         stage('Running Test') {
                             steps {
                                 sh """
-                                echo "Running Unit Tests"
-                                export PATH=$PATH:/usr/local/go/bin
-                                cd $WORKSPACE/harvest/integration/test/
-                                go test -tags=regression
+                                bash $WORKSPACE/harvest/integration/test/test.sh regression
                                 """
                             }
                         }
@@ -180,18 +178,14 @@ pipeline {
                                 docker login -u $DOCKER_USER -p $DOCKER_PWD
                                 docker build -f docker/onePollerPerContainer/Dockerfile -t rahulguptajss/harvest:latest . --no-cache
                                 docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
-                                cd $WORKSPACE/harvest/integration/test/
-                                go test -tags=install_docker
+                                bash $WORKSPACE/harvest/integration/test/test.sh install_docker
                                 '''
                             }
                         }
                         stage('Running Test') {
                             steps {
                                 sh """
-                                echo "Running Unit Tests"
-                                export PATH=$PATH:/usr/local/go/bin
-                                cd $WORKSPACE/harvest/integration/test/
-                                go test -tags=regression
+                                bash $WORKSPACE/harvest/integration/test/test.sh regression
                                 """
                             }
                         }
@@ -204,8 +198,8 @@ pipeline {
 }
 
 void stopAndRemoveDockers() {
-    sh '''
+    sh ''',.m
         for container_id in $(docker ps -a -q);do docker stop $container_id && docker rm $container_id;done
-        for image_id in $(docker images -q);do docker rmi $image_id;done
+        for image_id in $(docker images -q);do docker rmi -f  $image_id;done
     '''
 }
