@@ -121,6 +121,7 @@ pipeline {
                                 echo "Upgrading"
                                 export BUILD_PATH=$RPM
                                 bash $WORKSPACE/harvest/integration/test/test.sh upgrade_rpm
+                                sleep 1m
                                 '''
                             }
                         }
@@ -178,6 +179,7 @@ pipeline {
                                 docker login -u $DOCKER_USER -p $DOCKER_PWD
                                 docker build -f docker/onePollerPerContainer/Dockerfile -t rahulguptajss/harvest:latest . --no-cache
                                 docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
+                                sleep 1m
                                 bash $WORKSPACE/harvest/integration/test/test.sh install_docker
                                 '''
                             }
@@ -201,5 +203,6 @@ void stopAndRemoveDockers() {
     sh '''
         for container_id in $(docker ps -a -q);do docker stop $container_id && docker rm $container_id;done
         for image_id in $(docker images -q);do docker rmi $image_id;done
+        for volume_id in $(docker volume ls -q); do docker volume rm -f $volume_id;done
     '''
 }
