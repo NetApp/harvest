@@ -198,8 +198,8 @@ pipeline {
 }
 
 void stopAndRemoveDockers() {
-    sh ''',.m
+    sh '''
         for container_id in $(docker ps -a -q);do docker stop $container_id && docker rm $container_id;done
-        for image_id in $(docker images -q);do docker rmi -f  $image_id;done
+        for image_id in $(docker images -q);do docker rmi $image_id;done
     '''
 }
