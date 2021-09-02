@@ -453,7 +453,7 @@
                   {
                     "from": "0",
                     "id": 1,
-                    "text": "down",
+                    "text": "up",
                     "to": "0.999",
                     "type": 2,
                     "value": "0"
@@ -461,7 +461,7 @@
                   {
                     "from": "",
                     "id": 2,
-                    "text": "up",
+                    "text": "down",
                     "to": "",
                     "type": 1,
                     "value": "1"
@@ -474,11 +474,11 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "rgb(199, 48, 66)",
+                      "color": "rgb(75, 155, 35)",
                       "value": null
                     },
                     {
-                      "color": "rgb(74, 163, 52)",
+                      "color": "rgb(225, 90, 40)",
                       "value": 1
                     }
                   ]
@@ -636,7 +636,7 @@
           "refId": "A"
         },
         {
-          "expr": "nic_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
+          "expr": "nic_state{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1062,12 +1062,6 @@
           "interval": "",
           "legendFormat": "TOTAL",
           "refId": "A"
-        },
-        {
-          "expr": "sum by (cluster) (nic_tx_hw_errors{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
-          "interval": "",
-          "legendFormat": "HW",
-          "refId": "D"
         }
       ],
       "thresholds": [],
@@ -1169,24 +1163,6 @@
           "interval": "",
           "legendFormat": "TOTAL",
           "refId": "A"
-        },
-        {
-          "expr": "sum by (cluster) (nic_rx_alignment_errors{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
-          "interval": "",
-          "legendFormat": "ALIGNMENT",
-          "refId": "B"
-        },
-        {
-          "expr": "sum by (cluster) (nic_rx_crc_errors{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
-          "interval": "",
-          "legendFormat": "CRC",
-          "refId": "C"
-        },
-        {
-          "expr": "sum by (cluster) (nic_rx_length_errors{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
-          "interval": "",
-          "legendFormat": "LENGTH",
-          "refId": "D"
         }
       ],
       "thresholds": [],
@@ -1885,474 +1861,6 @@
         "align": false,
         "alignLevel": null
       }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Summarized on Cluster or Node level. Select FCP to show for a specific FibreChannel Port.",
-      "fieldConfig": {
-        "defaults": {
-          "links": []
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 10,
-        "w": 6,
-        "x": 0,
-        "y": 67
-      },
-      "hiddenSeries": false,
-      "id": 75,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "sort": "avg",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.5.4",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum(fcp_int_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "interrupts",
-          "refId": "B"
-        },
-        {
-          "expr": "sum(fcp_invalid_transmission_word{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "invalid transmission words (blocks)",
-          "refId": "C"
-        },
-        {
-          "expr": "sum(fcp_isr_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "interrupt responses",
-          "refId": "D"
-        },
-        {
-          "expr": "sum(fcp_spurious_int_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "spurious interrupts",
-          "refId": "I"
-        },
-        {
-          "expr": "sum(fcp_invalid_crc{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "invalid CRCs",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Transmission interrupts",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:159",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:160",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Summarized on Cluster or Node level. Select FCP to show for a specific FibreChannel Port.",
-      "fieldConfig": {
-        "defaults": {
-          "links": []
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 10,
-        "w": 6,
-        "x": 6,
-        "y": 67
-      },
-      "hiddenSeries": false,
-      "id": 76,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "sort": "avg",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.5.4",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum(fcp_discarded_frames_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
-          "interval": "",
-          "legendFormat": "discarded frames",
-          "refId": "A"
-        },
-        {
-          "expr": "sum(fcp_loss_of_signal{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "loss of signal",
-          "refId": "E"
-        },
-        {
-          "expr": "sum(fcp_loss_of_sync{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "loss of sync",
-          "refId": "F"
-        },
-        {
-          "expr": "sum(fcp_prim_seq_err{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "primitive sequence errors",
-          "refId": "G"
-        },
-        {
-          "expr": "sum(fcp_queue_full{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "queue full",
-          "refId": "H"
-        },
-        {
-          "expr": "sum(fcp_threshold_full{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "threshold full",
-          "refId": "J"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Transmission errors",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:159",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:160",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "links": []
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 10,
-        "w": 6,
-        "x": 12,
-        "y": 67
-      },
-      "hiddenSeries": false,
-      "id": 73,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "sort": "avg",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.5.4",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "topk($TopResources, fcp_link_down{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
-          "interval": "",
-          "legendFormat": "{{node}} - {{port}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Link Down",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:159",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:160",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "links": []
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 10,
-        "w": 6,
-        "x": 18,
-        "y": 67
-      },
-      "hiddenSeries": false,
-      "id": 74,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "sort": "avg",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.5.4",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "topk($TopResources, fcp_link_failure{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
-          "interval": "",
-          "legendFormat": "{{node}} - {{port}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Link Failure",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:159",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:160",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
     }
   ],
   "refresh": "1m",
@@ -2383,7 +1891,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(node_labels{system_type!=\"7mode\"}, datacenter)",
+        "definition": "label_values(node_labels{system_type=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -2393,7 +1901,7 @@
         "name": "Datacenter",
         "options": [],
         "query": {
-          "query": "label_values(node_labels{system_type!=\"7mode\"}, datacenter)",
+          "query": "label_values(node_labels{system_type=\"7mode\"}, datacenter)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2491,7 +1999,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(fcp_total_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}, port)",
+        "definition": "label_values(fcp_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}, port)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -2501,7 +2009,7 @@
         "name": "FCP",
         "options": [],
         "query": {
-          "query": "label_values(fcp_total_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}, port)",
+          "query": "label_values(fcp_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}, port)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2630,7 +2138,7 @@
     ]
   },
   "timezone": "",
-  "title": "NetApp Detail: Network",
-  "uid": "8uaMk59Gz",
+  "title": "NetApp Detail: Network 7 mode",
+  "uid": "8uaMk59Gj",
   "version": 1
 }

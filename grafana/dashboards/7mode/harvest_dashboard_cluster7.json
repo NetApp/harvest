@@ -20,7 +20,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "7.5.4"
+      "version": "7.5.10"
     },
     {
       "type": "panel",
@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1619515444046,
+  "iteration": 1630406364959,
   "links": [],
   "panels": [
     {
@@ -220,7 +220,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "7.5.10",
       "repeat": "Cluster",
       "repeatDirection": "v",
       "targets": [
@@ -236,7 +236,7 @@
         },
         {
           "exemplar": false,
-          "expr": "node_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "expr": "cluster_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -412,7 +412,7 @@
         "text": {},
         "textMode": "value"
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "7.5.10",
       "repeat": null,
       "repeatDirection": "h",
       "targets": [
@@ -493,7 +493,7 @@
         "showUnfilled": true,
         "text": {}
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "7.5.10",
       "repeatDirection": "h",
       "targets": [
         {
@@ -567,12 +567,12 @@
         "showUnfilled": true,
         "text": {}
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "7.5.10",
       "repeatDirection": "h",
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(node_disk_busy{datacenter=~\"$Datacenter\",cluster=\"$Cluster\"})",
+          "expr": "avg(disk_busy{datacenter=~\"$Datacenter\",cluster=\"$Cluster\"})",
           "instant": false,
           "interval": "",
           "legendFormat": "",
@@ -758,7 +758,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "7.5.10",
       "repeatDirection": "v",
       "targets": [
         {
@@ -887,7 +887,7 @@
         "showUnfilled": true,
         "text": {}
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "7.5.10",
       "repeatDirection": "h",
       "targets": [
         {
@@ -960,7 +960,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "7.5.10",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -996,7 +996,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:75",
           "format": "µs",
           "label": null,
           "logBase": 1,
@@ -1005,7 +1004,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:76",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1061,7 +1059,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "7.5.10",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1097,7 +1095,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:75",
           "format": "Bps",
           "label": null,
           "logBase": 1,
@@ -1106,7 +1103,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:76",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1162,7 +1158,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "7.5.10",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1198,7 +1194,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:75",
           "format": "iops",
           "label": null,
           "logBase": 1,
@@ -1207,7 +1202,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:76",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1263,7 +1257,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "7.5.10",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1300,7 +1294,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:135",
           "decimals": null,
           "format": "percent",
           "label": "",
@@ -1310,7 +1303,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:136",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1366,7 +1358,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "7.5.10",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1403,7 +1395,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:135",
           "decimals": null,
           "format": "percent",
           "label": "",
@@ -1413,7 +1404,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:136",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1469,7 +1459,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "7.5.10",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1506,7 +1496,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:135",
           "decimals": null,
           "format": "percent",
           "label": "",
@@ -1516,7 +1505,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:136",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1543,6 +1531,8 @@
           "text": "Prometheus",
           "value": "Prometheus"
         },
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": false,
         "label": "Data Source",
@@ -1559,7 +1549,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(node_labels{system_type!=\"7mode\"},datacenter)",
+        "definition": "label_values(node_labels{system_type=\"7mode\"},datacenter)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -1569,7 +1559,7 @@
         "name": "Datacenter",
         "options": [],
         "query": {
-          "query": "label_values(node_labels{system_type!=\"7mode\"},datacenter)",
+          "query": "label_values(node_labels{system_type=\"7mode\"},datacenter)",
           "refId": "Prometheus-Datacenter-Variable-Query"
         },
         "refresh": 1,
@@ -1629,7 +1619,7 @@
     ]
   },
   "timezone": "",
-  "title": "NetApp Detail: Cluster",
-  "uid": "uc8GCF9Mk",
-  "version": 3
+  "title": "NetApp Detail: Cluster 7 mode",
+  "uid": "uc8GCF9Mll",
+  "version": 1
 }
