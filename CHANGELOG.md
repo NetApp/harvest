@@ -28,6 +28,8 @@ with Docker and native binaries. See
 what you think. Several of you have already weighed-in. Thanks! If you haven't,
 please do.
 
+**IMPORTANT** After upgrade, don't forget to re-import all dashboards so you get new dashboard enhancements and fixes. You can re-import via `bin/harvest/grafana` cli or from the Grafana UI.
+
 **Known Issues**
 
 We've improved several of the 7-mode dashboards this release, but there are still a number of gaps with 7-mode dashboards when compared to c-mode. We will address these in a point release by splitting the c-mode and 7-mode dashboards. See [#423](https://github.com/NetApp/harvest/issues/423) for details.
