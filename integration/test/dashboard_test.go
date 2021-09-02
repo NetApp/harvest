@@ -94,8 +94,9 @@ func (suite *DashboardImportTestSuite) TestDashboardCount() {
 	var dataDashboard []Dashboard
 	err = json.Unmarshal(data, &dataDashboard)
 	utils.PanicIfNotNil(err)
-	assert.True(suite.T(), len(expectedName) == len(dataDashboard), fmt.Sprintf("Expected dashboard %d but found %d dashboards",
-		TOTAL_DASHBOARD, len(dataDashboard)))
+	totalDashboardCount := len(expectedName)
+	assert.True(suite.T(), totalDashboardCount == len(dataDashboard), fmt.Sprintf("Expected dashboard %d but found %d dashboards",
+		totalDashboardCount, len(dataDashboard)))
 	var actualNames []string
 	var notFoundList []string
 	for _, values := range dataDashboard {
