@@ -2,6 +2,9 @@ name:                       Node
 query:                      system-get-info
 object:                     node
 
+global_labels:
+  - system_type: 7mode
+
 counters:
   system-info:
     - memory-size
