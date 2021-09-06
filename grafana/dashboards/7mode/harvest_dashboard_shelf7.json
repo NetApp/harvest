@@ -379,80 +379,6 @@
           "color": {
             "mode": "thresholds"
           },
-          "mappings": [],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "semi-dark-blue",
-                "value": null
-              },
-              {
-                "color": "rgb(84, 184, 45)",
-                "value": 50000
-              },
-              {
-                "color": "semi-dark-yellow",
-                "value": 100000
-              },
-              {
-                "color": "semi-dark-orange",
-                "value": 300000
-              },
-              {
-                "color": "dark-red",
-                "value": 600000
-              }
-            ]
-          },
-          "unit": "watt"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 5,
-        "x": 19,
-        "y": 1
-      },
-      "id": 66,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "7.5.4",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "sum(sum_over_time(shelf_psu_power_drawn{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}[24h]))",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Power used 24h",
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
           "custom": {
             "align": "left",
             "displayMode": "auto",
@@ -474,49 +400,12 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "disk_count"
-            },
-            "properties": [
-              {
-                "id": "custom.displayMode",
-                "value": "color-text"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "shelf"
             },
             "properties": [
               {
                 "id": "custom.displayMode",
                 "value": "json-view"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "op_status"
-            },
-            "properties": [
-              {
-                "id": "custom.displayMode",
-                "value": "color-text"
-              },
-              {
-                "id": "mappings",
-                "value": [
-                  {
-                    "from": "",
-                    "id": 1,
-                    "text": "",
-                    "to": "",
-                    "type": 1,
-                    "value": ""
-                  }
-                ]
               }
             ]
           },
@@ -595,15 +484,6 @@
           "refId": "A"
         },
         {
-          "expr": "shelf_disk_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "B"
-        },
-        {
           "expr": "shelf_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
@@ -625,13 +505,11 @@
                 "datacenter",
                 "model",
                 "module_type",
-                "op_status",
                 "serial_number",
                 "shelf",
                 "state",
                 "vendor_name",
                 "Value #A",
-                "Value #B",
                 "Value #C"
               ]
             }
@@ -651,11 +529,9 @@
             },
             "indexByName": {
               "Value #A": 9,
-              "Value #B": 6,
               "datacenter": 0,
               "model": 4,
               "module_type": 5,
-              "op_status": 7,
               "serial_number": 3,
               "shelf": 1,
               "state": 8,
@@ -663,7 +539,6 @@
             },
             "renameByName": {
               "Value #A": "",
-              "Value #B": "disk_count",
               "Value #C": "state",
               "module_type": "",
               "shelf_id": ""
@@ -908,136 +783,6 @@
       "type": "bargauge"
     },
     {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "light-blue",
-                "value": null
-              },
-              {
-                "color": "semi-dark-blue",
-                "value": 800
-              },
-              {
-                "color": "rgb(13, 81, 186)",
-                "value": 1000
-              }
-            ]
-          },
-          "unit": "watt"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 4,
-        "x": 7,
-        "y": 37
-      },
-      "id": 48,
-      "options": {
-        "displayMode": "lcd",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true,
-        "text": {}
-      },
-      "pluginVersion": "7.5.4",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "sum(shelf_psu_power_drawn{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}) by (shelf, psu_id)",
-          "interval": "",
-          "legendFormat": "{{shelf}} - PSU {{psu_id}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Energy Drawn from PSUs",
-      "type": "bargauge"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "light-blue",
-                "value": null
-              },
-              {
-                "color": "semi-dark-blue",
-                "value": 800
-              },
-              {
-                "color": "rgb(13, 81, 186)",
-                "value": 1000
-              }
-            ]
-          },
-          "unit": "watt"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 4,
-        "x": 11,
-        "y": 37
-      },
-      "id": 53,
-      "options": {
-        "displayMode": "lcd",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true,
-        "text": {}
-      },
-      "pluginVersion": "7.5.4",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "sum(shelf_psu_power_rating{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}) by (shelf, psu_id)",
-          "interval": "",
-          "legendFormat": "{{shelf}} - PSU {{psu_id}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Power Rating from PSUs",
-      "type": "bargauge"
-    },
-    {
       "collapsed": false,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
@@ -1147,7 +892,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(shelf_labels{system_type!=\"7mode\"}, datacenter)",
+        "definition": "label_values(shelf_labels{system_type=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -1157,7 +902,7 @@
         "name": "Datacenter",
         "options": [],
         "query": {
-          "query": "label_values(shelf_labels{system_type!=\"7mode\"}, datacenter)",
+          "query": "label_values(shelf_labels{system_type=\"7mode\"}, datacenter)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -1255,7 +1000,7 @@
     ]
   },
   "timezone": "",
-  "title": "NetApp Detail: Shelf",
-  "uid": "FnaQeK9Mk",
+  "title": "NetApp Detail: Shelf 7 mode",
+  "uid": "FnaQeK9Mp",
   "version": 2
 }
