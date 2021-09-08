@@ -1,21 +1,29 @@
 pipeline {
     agent {label 'buildserver'}
 
+    triggers {
+        cron('@midnight')
+    }
+
     parameters {
         string(name: 'VERSION', defaultValue: '', description: '[Optional] RPM Version should match Harvest version with rc or nightly stripped. If not filled default is YY.mm.ddHH. See https://github.com/NetApp/harvest/wiki/Release-Checklist#version-names for details')
         string(name: 'RELEASE', defaultValue: 'nightly', description: '[Optional] Example: nightly (default) See https://github.com/NetApp/harvest-private/wiki/Release-Checklist#rpm-and-debian-names for details ')
+        string(name: 'BRANCH', defaultValue: 'main', description: '[Optional] Branch name to clone. Default (main) ')
 		string(name: 'ASUP_MAKE_TARGET', defaultValue: 'build', description: 'make target for AutoSupport binary build|production')
-		string(name: 'DOCKER_PUBLISH', defaultValue: 'true', description: 'true to publish to dockerhub')
+		string(name: 'DOCKER_PUBLISH', defaultValue: 'false', description: 'true to publish to dockerhub')
+		string(name: 'RUN_TEST', defaultValue: 'true', description: 'false to skip test')
 		string(name: 'OVERWRITE_DOCKER_LATEST_TAG', defaultValue: 'false', description: 'true to overwrite latest tag at dockerhub. Works only if DOCKER_PUBLISH is true')
     }
 
     environment {
         GIT_TOKEN = credentials('GIT_TOKEN')
-        VERSION ="2021"
+        VERSION =sh (returnStdout: true, script: """
+        [ -n \"${params.VERSION}\" ] && echo \"${params.VERSION}\" || date +%Y.%m.%d%H | cut -c 3-
+        """).trim()
         RELEASE =sh (returnStdout: true, script: """
         echo \"${params.RELEASE}\"
         """).trim()
-        BRANCH = "${GIT_BRANCH}"
+        BRANCH = getBranchName(env.GIT_BRANCH, params.BRANCH)
 		ASUP_MAKE_TARGET =sh (returnStdout: true, script: """
         echo \"${params.ASUP_MAKE_TARGET}\"
         """).trim()
@@ -27,111 +35,123 @@ pipeline {
         """).trim()
         targetParentLocation = "/opt/home/nightly/"
         harvestPath = "harvest"
+        imageName = "rahulguptajss/harvest"
     }
 
     stages {
 
-            stage("Initialization") {
-                steps {
-                    buildName "${BUILD_NUMBER}_$BRANCH"
-                }
-            }
-
-            stage('clean workspace') {
-                steps {
-                    cleanWs()
-                    sh 'rm -rf $targetParentLocation'
-                }
-            }
-            stage('Setup GO') {
-                steps {
-                    sh '''
-                    wget -q -O go.tar.gz "https://dl.google.com/go/$(curl https://golang.org/VERSION?m=text).linux-amd64.tar.gz"
-                    rm -rf /usr/local/go && tar -C /usr/local -xzf go.tar.gz
-                    '''
-                }
-            }
-
-            stage('Download Prerequisites') {
-                steps {
-                    sh '''
-                   apt-get update
-                   apt-get install -y rpm
-                   apt-get install -y net-tools
-                   apt install -y git-all
-                   apt-get install -y build-essential
-                    '''
-                }
-            }
-
-            stage('Git Clone Harvest') {
-                steps {
-                   sh '''
-                   git clone --single-branch --branch $GIT_BRANCH https://github.com/NetApp/harvest.git
-                    '''
-                }
-            }
-
-            stage('Build Harvest RPM/DEB') {
-                steps {
-                   sh '''
-                   cd $harvestPath
-                   targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
-                   rm -rf ./dist
-                   export PATH=$PATH:/usr/local/go/bin
-                   rm -rf /root/rpmbuild/
-                   mkdir -p $targetLocation
-                   #./package.sh deb x86_64 $VERSION $RELEASE $ASUP_MAKE_TARGET $GIT_TOKEN
-                   #cp -RT ./dist/$VERSION-$RELEASE/ $targetLocation
-                   ./package.sh rpm x86_64 $VERSION $RELEASE $ASUP_MAKE_TARGET $GIT_TOKEN
-                   cp -RT ./dist/$VERSION-$RELEASE/x86_64/  $targetLocation
-                    '''
-                }
-            }
-
-            stage('Build Harvest Tar gz') {
-                steps {
-                   sh '''
-                   cd $harvestPath
-                   export PATH=$PATH:/usr/local/go/bin
-                   targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
-                   rm -rf dist
-                   make asup package VERSION=$VERSION RELEASE=$RELEASE ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET GIT_TOKEN=$GIT_TOKEN
-                   cp -RT ./dist/ $targetLocation
-                    '''
-                }
-            }
-           stage('Build Docker Image') {
+        stage("Initialization") {
             steps {
-              withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
+                buildName "${BUILD_NUMBER}_$BRANCH"
+            }
+        }
+
+        stage('clean workspace') {
+            steps {
+                cleanWs()
+                sh 'rm -rf $targetParentLocation$VERSION$RELEASE'
+            }
+        }
+        stage('Setup GO') {
+            steps {
                 sh '''
-                cd $harvestPath
-                targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
-                for image_id in $(docker images -q);do docker rmi -f  $image_id;done
-                docker build -f docker/onePollerPerContainer/Dockerfile --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE -t rahulguptajss/harvest:latest -t rahulguptajss/harvest:$VERSION-$RELEASE . --no-cache
-                docker save -o ${targetLocation}/docker_harvest.tar rahulguptajss/harvest:latest
+                wget -O go.tar.gz "https://dl.google.com/go/$(curl https://golang.org/VERSION?m=text).linux-amd64.tar.gz"
+                rm -rf /usr/local/go && tar -C /usr/local -xzf go.tar.gz
                 '''
-              }
             }
-          }
-           stage('Publish builds locally'){
-              steps {
-                  dir("$targetParentLocation$VERSION-$RELEASE-$BRANCH") {
-                      archiveArtifacts artifacts: '**', fingerprint: true
-                  }
-              }
-          }
-          stage('Run Tests') {
+        }
+
+        stage('Download Prerequisites') {
             steps {
-                script {
-                    dockerBuild = "${BUILD_URL}/artifact/docker_harvest.tar"
-                    nativeBuild = "${BUILD_URL}/artifact/harvest-2021-nightly_linux_amd64.tar.gz"
-                    rpmBuild    = "${BUILD_URL}/artifact/harvest-2021-nightly.x86_64.rpm"
-                    build job: 'harvest2_0/smoke', parameters: [string(name: 'BRANCH', value: "${GIT_BRANCH}"), string(name: 'NATIVE', value: "${nativeBuild}"),  string(name: 'RPM', value: "${rpmBuild}"), string(name: 'DOCKER', value: "${dockerBuild}")]
-                }
+                sh '''
+               apt-get update
+               apt-get install -y rpm
+               apt-get install -y net-tools
+               apt install -y git-all
+               apt-get install -y build-essential
+                '''
             }
+        }
+
+        stage('Git Clone Harvest') {
+            steps {
+               sh '''
+               git clone --single-branch --branch $BRANCH https://github.com/NetApp/harvest.git
+                '''
+            }
+        }
+
+        stage('Build Harvest RPM/DEB') {
+            steps {
+               sh '''
+               cd $harvestPath
+               targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
+               rm -rf ./dist
+               export PATH=$PATH:/usr/local/go/bin
+               rm -rf /root/rpmbuild/
+               mkdir -p $targetLocation
+               ./package.sh deb x86_64 $VERSION $RELEASE $ASUP_MAKE_TARGET $GIT_TOKEN
+               cp -RT ./dist/$VERSION-$RELEASE/ $targetLocation
+               ./package.sh rpm x86_64 $VERSION $RELEASE $ASUP_MAKE_TARGET $GIT_TOKEN
+               cp -RT ./dist/$VERSION-$RELEASE/x86_64/  $targetLocation
+                '''
+            }
+        }
+
+        stage('Build Harvest Tar gz') {
+            steps {
+               sh '''
+               cd $harvestPath
+               export PATH=$PATH:/usr/local/go/bin
+               targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
+               rm -rf dist
+               make asup package VERSION=$VERSION RELEASE=$RELEASE ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET GIT_TOKEN=$GIT_TOKEN
+               cp -RT ./dist/ $targetLocation
+                '''
+            }
+        }
+        stage('Build Docker Image ') {
+                steps {
+                  withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
+                    sh '''
+                    cd $harvestPath
+                    docker login
+                    docker build -f docker/onePollerPerContainer/Dockerfile --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE -t ${imageName}:latest -t ${imageName}:$VERSION-$RELEASE . --no-cache
+                    docker save -o ${targetLocation}/docker_harvest.tar ${imageName}:latest
+                    '''
+                  }
+                }
+              }
+
+         stage('Publish builds locally'){
+          steps {
+              dir("$targetParentLocation$VERSION-$RELEASE-$BRANCH") {
+                  archiveArtifacts artifacts: '**', fingerprint: true
+              }
           }
-
+      }
+    stage('Run Tests') {
+        when {
+            expression {
+                return env.RUN_TEST == 'true';
+            }
+        }
+        steps {
+            script {
+                dockerBuild = "${BUILD_URL}/artifact/docker_harvest.tar"
+                nativeBuild = "${BUILD_URL}/artifact/harvest-${VERSION}-${RELEASE}_linux_amd64.tar.gz"
+                rpmBuild    = "${BUILD_URL}/artifact/harvest-${VERSION}-${RELEASE}.x86_64.rpm"
+                build job: 'harvest2_0/smoke', parameters: [string(name: 'BRANCH', value: "${GIT_BRANCH}"), string(name: 'NATIVE', value: "${nativeBuild}"),  string(name: 'RPM', value: "${rpmBuild}"), string(name: 'DOCKER', value: "${dockerBuild}")]
+            }
+        }
+     }
     }
+}
 
+
+def getBranchName(gitBranchName, paramBranchName) {
+    if (gitBranchName?.trim()) {
+        return gitBranchName
+    }
+    return paramBranchName
 }
