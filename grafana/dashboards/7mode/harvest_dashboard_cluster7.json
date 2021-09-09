@@ -236,7 +236,7 @@
         },
         {
           "exemplar": false,
-          "expr": "cluster_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "expr": "node_7mode_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\",monitor=\"node-connect\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -406,7 +406,7 @@
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "/^status$/",
+          "fields": "/^health$/",
           "values": false
         },
         "text": {},
@@ -418,7 +418,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "cluster_new_status{datacenter=~\"$Datacenter\",cluster=\"$Cluster\"}",
+          "expr": "node_7mode_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\", monitor=\"node-connect\"}",
           "instant": true,
           "interval": "",
           "legendFormat": "",

@@ -1,0 +1,24 @@
+# API provides over system health of a cluster
+
+name:       Status_7mode
+query:      diagnosis-config-get-iter
+object:     node
+
+counters:
+  diagnosis-config-info:
+    - ^health                       => health
+    - ^^monitor                     => monitor
+    - mon-version                   => monitor_version
+
+collect_only_labels: true
+
+plugins:
+  - LabelAgent:
+    value_mapping: 7mode_status health ok `1`
+    # metric label zapi_value rest_value `default_value`
+    value_to_num: 7mode_new_status health ok todo `0`
+
+export_options:
+  instance_keys:
+    - monitor
+    - health
