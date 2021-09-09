@@ -2,6 +2,24 @@
 
 [Releases](https://github.com/NetApp/harvest/releases)
 
+## 21.08.1 / 2021-??-??
+<!-- git log --no-merges --cherry-pick --right-only --oneline release/21.08.0...release/21.08.1 -->
+
+**IMPORTANT** The LabelAgent `value_mapping` plugin is being deprecated in this
+release and will be removed in the next release of Harvest. Use LabelAgent
+`value_to_num` instead. See
+[docs](https://github.com/NetApp/harvest/blob/main/cmd/poller/plugin/README.md#value_to_num)
+for details. 
+
+**IMPORTANT** After upgrade, don't forget to re-import all dashboards so you get new dashboard enhancements and fixes. 
+You can re-import via `bin/harvest/grafana` cli or from the Grafana UI.
+
+**IMPORTANT** RPM and Debian packages will be deprecated in the future, replaced
+with Docker and native binaries. See
+[#330](https://github.com/NetApp/harvest/issues/330) for details and tell us
+what you think. Several of you have already weighed-in. Thanks! If you haven't,
+please do.
+
 ## 21.08.0 / 2021-08-31
 <!-- git log --no-merges --cherry-pick --right-only --oneline release/21.05.4...release/21.08.0 -->
 
