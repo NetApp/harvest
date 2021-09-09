@@ -1,6 +1,7 @@
 package installer
 
 import (
+	"fmt"
 	"github.com/Netapp/harvest-automation/test/docker"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"goharvest2/pkg/conf"
@@ -71,5 +72,10 @@ func (d *Docker) Install() bool {
 		}
 	}
 	log.Println("Reached maximum timeout. One or more poller are failed to start after 1 min")
+	return false
+}
+
+func (d *Docker) Upgrade() bool {
+	utils.PanicIfNotNil(fmt.Errorf("not supported"))
 	return false
 }

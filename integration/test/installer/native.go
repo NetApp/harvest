@@ -1,6 +1,7 @@
 package installer
 
 import (
+	"fmt"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"log"
 )
@@ -49,4 +50,9 @@ func (r *Native) Install() bool {
 	harvestObj.Start()
 	status := harvestObj.AllRunning()
 	return status
+}
+
+func (n *Native) Upgrade() bool {
+	utils.PanicIfNotNil(fmt.Errorf("not supported"))
+	return false
 }
