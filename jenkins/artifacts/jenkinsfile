@@ -11,6 +11,7 @@ pipeline {
         string(name: 'BRANCH', defaultValue: 'main', description: '[Optional] Branch name to clone. Default (main) ')
 		string(name: 'ASUP_MAKE_TARGET', defaultValue: 'build', description: 'make target for AutoSupport binary build|production')
 		string(name: 'DOCKER_PUBLISH', defaultValue: 'false', description: 'true to publish to dockerhub')
+		string(name: 'RUN_TEST', defaultValue: 'true', description: 'false to skip test')
 		string(name: 'OVERWRITE_DOCKER_LATEST_TAG', defaultValue: 'false', description: 'true to overwrite latest tag at dockerhub. Works only if DOCKER_PUBLISH is true')
     }
 
@@ -22,9 +23,7 @@ pipeline {
         RELEASE =sh (returnStdout: true, script: """
         echo \"${params.RELEASE}\"
         """).trim()
-        BRANCH =sh (returnStdout: true, script: """
-        echo \"${params.BRANCH}\"
-        """).trim()
+        BRANCH = getBranchName(env.GIT_BRANCH, params.BRANCH)
 		ASUP_MAKE_TARGET =sh (returnStdout: true, script: """
         echo \"${params.ASUP_MAKE_TARGET}\"
         """).trim()
@@ -36,6 +35,7 @@ pipeline {
         """).trim()
         targetParentLocation = "/opt/home/nightly/"
         harvestPath = "harvest"
+        imageName = "rahulguptajss/harvest"
     }
 
     stages {
@@ -110,36 +110,70 @@ pipeline {
                 '''
             }
         }
-       stage('Build Docker Image and Publish') {
-                when {
-                  expression {
-                    return env.DOCKER_PUBLISH == 'true';
-                  }
-                }
+        stage('Build Docker Image ') {
                 steps {
                   withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
                     sh '''
                     cd $harvestPath
-                    docker build -f docker/onePollerPerContainer/Dockerfile --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE -t rahulguptajss/harvest:latest -t rahulguptajss/harvest:$VERSION-$RELEASE . --no-cache
+                    targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
                     docker login
-                    docker push rahulguptajss/harvest:$VERSION-$RELEASE
+                    docker build -f docker/onePollerPerContainer/Dockerfile --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE -t ${imageName}:latest -t ${imageName}:$VERSION-$RELEASE . --no-cache
+                    docker save -o ${targetLocation}/docker_harvest.tar ${imageName}:latest
                     '''
-					script {
-					if (OVERWRITE_DOCKER_LATEST_TAG == 'true') {
-					  sh 'docker push rahulguptajss/harvest:latest'
-					}
-					}
                   }
                 }
               }
 
-    }
+         stage('Publish builds locally'){
+          steps {
+              dir("$targetParentLocation$VERSION-$RELEASE-$BRANCH") {
+                  archiveArtifacts artifacts: '**', fingerprint: true
+              }
+          }
+      }
+      stage('Docker Image Publish') {
+          when {
+            expression {
+              return env.DOCKER_PUBLISH == 'true';
+            }
+          }
+          steps {
+            withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
+              sh '''
+              docker login
+              docker push ${imageName}:$VERSION-$RELEASE
+              '''
+             script {
+             if (OVERWRITE_DOCKER_LATEST_TAG == 'true') {
+               sh 'docker push ${imageName}:latest'
+             }
+             }
+            }
+          }
+      }
 
-    post {
-        always {
-            dir("$targetParentLocation$VERSION-$RELEASE-$BRANCH") {
-                archiveArtifacts artifacts: '**', fingerprint: true
+    stage('Run Tests') {
+        when {
+            expression {
+                return env.RUN_TEST == 'true';
             }
         }
+        steps {
+            script {
+                dockerBuild = "${BUILD_URL}/artifact/docker_harvest.tar"
+                nativeBuild = "${BUILD_URL}/artifact/harvest-${VERSION}-${RELEASE}_linux_amd64.tar.gz"
+                rpmBuild    = "${BUILD_URL}/artifact/harvest-${VERSION}-${RELEASE}.x86_64.rpm"
+                build job: 'harvest2_0/smoke', parameters: [string(name: 'BRANCH', value: "${GIT_BRANCH}"), string(name: 'NATIVE', value: "${nativeBuild}"),  string(name: 'RPM', value: "${rpmBuild}"), string(name: 'DOCKER', value: "${dockerBuild}")]
+            }
+        }
+     }
     }
+}
+
+
+def getBranchName(gitBranchName, paramBranchName) {
+    if (gitBranchName?.trim()) {
+        return gitBranchName
+    }
+    return paramBranchName
 }
