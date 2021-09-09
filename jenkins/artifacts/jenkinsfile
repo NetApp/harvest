@@ -55,7 +55,7 @@ pipeline {
         stage('Setup GO') {
             steps {
                 sh '''
-                wget -O go.tar.gz "https://dl.google.com/go/$(curl https://golang.org/VERSION?m=text).linux-amd64.tar.gz"
+                wget -q -O go.tar.gz "https://dl.google.com/go/$(curl https://golang.org/VERSION?m=text).linux-amd64.tar.gz"
                 rm -rf /usr/local/go && tar -C /usr/local -xzf go.tar.gz
                 '''
             }
@@ -170,9 +170,8 @@ pipeline {
     }
 }
 
-
 def getBranchName(gitBranchName, paramBranchName) {
-    if (gitBranchName?.trim()) {
+    if (gitBranchName?.trim() && gitBranchName != "origin/main") {
         return gitBranchName
     }
     return paramBranchName
