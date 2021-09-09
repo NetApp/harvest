@@ -16,3 +16,4 @@ objects:
   Status:           status.yaml
   Subsystem:        subsystem.yaml
   Lun:              lun.yaml
+  Status_7mode:     status_7.yaml
