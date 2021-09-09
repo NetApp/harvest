@@ -158,7 +158,7 @@
       "pluginVersion": "7.2.0",
       "targets": [
         {
-          "expr": "count( count by(serial_number) (disk_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",failed=\"true\"}) )",
+          "expr": "count( count by(serial_number) (disk_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",offline!=\"\"}) )",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -1214,26 +1214,6 @@
           "refId": "B"
         },
         {
-          "expr": "disk_stats_io_kbps{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        },
-        {
-          "expr": "disk_stats_average_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "D"
-        },
-        {
           "expr": "disk_uptime{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
@@ -1244,7 +1224,7 @@
           "refId": "C"
         },
         {
-          "expr": "label_join(disk_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}, \"diskStatus\", \" \",\"NonSupportedField\", \"outage\")",
+          "expr": "label_join(disk_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}, \"diskStatus\", \" \",\"NonSupportedField\", \"offline\")",
           "legendFormat": "",
           "interval": "",
           "exemplar": true,
@@ -1279,7 +1259,7 @@
               "shared": true,
               "shelf": true,
               "Value #E": true,
-              "outage": true
+              "offline": true
             },
             "indexByName": {
               "Time": 0,
@@ -1947,14 +1927,14 @@
           "value": "CBC-Munich"
         },
         "datasource": "Prometheus",
-        "definition": "label_values(node_labels{system_type!=\"7mode\"},datacenter)",
+        "definition": "label_values(node_labels{system_type=\"7mode\"},datacenter)",
         "hide": 0,
         "includeAll": false,
         "label": null,
         "multi": false,
         "name": "Datacenter",
         "options": [],
-        "query": "label_values(node_labels{system_type!=\"7mode\"},datacenter)",
+        "query": "label_values(node_labels{system_type=\"7mode\"},datacenter)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2178,7 +2158,7 @@
     ]
   },
   "timezone": "",
-  "title": "NetApp Detail: Disk",
-  "uid": "MZ4uALHGk",
+  "title": "NetApp Detail: Disk 7 mode",
+  "uid": "MZ4uALHGa",
   "version": 21
 }

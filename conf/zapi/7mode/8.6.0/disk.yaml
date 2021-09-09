@@ -35,5 +35,6 @@ export_options:
     - serial_number
     - shelf
     - shelf_bay
+    - offline
 
 
