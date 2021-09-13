@@ -9,7 +9,8 @@ counters:
     - ^type                                  => style
     - ^^uuid
     - ^state
-    - containing-aggregate                  => aggr
+    - ^containing-aggregate                  => aggr
+    - ^owning-vfiler                         => svm
     - files-total
     - files-used
     - filesystem-size
