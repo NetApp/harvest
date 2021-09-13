@@ -55,64 +55,82 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 	var (
 		selectedVersion, pathPrefix, subTemplateFp string
 		availableVersions                          []string
+		err                                        error
+		finalTemplate                              *node.Node
+		tempTemplate                               *node.Node
 	)
 
-	pathPrefix = path.Join(c.Options.HomePath, "conf/", strings.ToLower(c.Name), model)
-	c.Logger.Debug().Msgf("Looking for best-fitting template in [%s]", pathPrefix)
-	verWithDots := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(ver)), "."), "[]")
+	//split filename by comma
+	// in case of custom.yaml having same key, file names will be concatenated by comma
+	filenames := strings.Split(filename, ",")
 
-	// check for available versions, those are the subdirectories that include filename
-	if files, err := ioutil.ReadDir(pathPrefix); err == nil {
-		for _, file := range files {
-			if match, _ := regexp.MatchString(`\d+\.\d+\.\d+`, file.Name()); match == true && file.IsDir() {
-				if templates, err := ioutil.ReadDir(path.Join(pathPrefix, file.Name())); err == nil {
-					for _, t := range templates {
-						if t.Name() == filename {
-							c.Logger.Trace().Msgf("available version dir: [%s]", file.Name())
-							availableVersions = append(availableVersions, file.Name())
-							break
+	for _, f := range filenames {
+		pathPrefix = path.Join(c.Options.HomePath, "conf/", strings.ToLower(c.Name), model)
+		c.Logger.Debug().Msgf("Looking for best-fitting template in [%s]", pathPrefix)
+		verWithDots := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(ver)), "."), "[]")
+
+		// check for available versions, those are the subdirectories that include filename
+		if files, err := ioutil.ReadDir(pathPrefix); err == nil {
+			for _, file := range files {
+				if match, _ := regexp.MatchString(`\d+\.\d+\.\d+`, file.Name()); match == true && file.IsDir() {
+					if templates, err := ioutil.ReadDir(path.Join(pathPrefix, file.Name())); err == nil {
+						for _, t := range templates {
+							if t.Name() == f {
+								c.Logger.Trace().Msgf("available version dir: [%s]", file.Name())
+								availableVersions = append(availableVersions, file.Name())
+								break
+							}
 						}
 					}
 				}
 			}
+		} else {
+			return nil, err
 		}
-	} else {
-		return nil, err
-	}
-	c.Logger.Trace().Msgf("checking for %d available versions: %v", len(availableVersions), availableVersions)
+		c.Logger.Trace().Msgf("checking for %d available versions: %v", len(availableVersions), availableVersions)
 
-	if len(availableVersions) > 0 {
-		versions := make([]*version.Version, len(availableVersions))
-		for i, raw := range availableVersions {
-			v, err := version.NewVersion(raw)
-			if err != nil {
-				c.Logger.Trace().Msgf("error parsing version: %s err: %s", raw, err)
-				continue
+		if len(availableVersions) > 0 {
+			versions := make([]*version.Version, len(availableVersions))
+			for i, raw := range availableVersions {
+				v, err := version.NewVersion(raw)
+				if err != nil {
+					c.Logger.Trace().Msgf("error parsing version: %s err: %s", raw, err)
+					continue
+				}
+				versions[i] = v
 			}
-			versions[i] = v
+
+			sort.Sort(version.Collection(versions))
+
+			verS, err := version.NewVersion(verWithDots)
+			if err != nil {
+				c.Logger.Trace().Msgf("error parsing ONTAP version: %s err: %s", verWithDots, err)
+				return nil, errors.New("No best-fitting subtemplate version found")
+			}
+			// get closest index
+			idx := getClosestIndex(versions, verS)
+			if idx >= 0 && idx < len(versions) {
+				selectedVersion = versions[idx].String()
+			}
 		}
 
-		sort.Sort(version.Collection(versions))
-
-		verS, err := version.NewVersion(verWithDots)
-		if err != nil {
-			c.Logger.Trace().Msgf("error parsing ONTAP version: %s err: %s", verWithDots, err)
-			return nil, errors.New("No best-fitting subtemplate version found")
+		if selectedVersion == "" {
+			return nil, errors.New("No best-fit template found")
 		}
-		// get closest index
-		idx := getClosestIndex(versions, verS)
-		if idx >= 0 && idx < len(versions) {
-			selectedVersion = versions[idx].String()
+
+		subTemplateFp = path.Join(pathPrefix, selectedVersion, f)
+		c.Logger.Info().Msgf("best-fit template [%s] for [%s]", subTemplateFp, verWithDots)
+		if finalTemplate == nil {
+			finalTemplate, err = tree.Import("yaml", subTemplateFp)
+		} else {
+			tempTemplate, err = tree.Import("yaml", subTemplateFp)
+			if err == nil {
+				// merge templates
+				finalTemplate.Merge(tempTemplate, nil)
+			}
 		}
 	}
-
-	if selectedVersion == "" {
-		return nil, errors.New("No best-fit template found")
-	}
-
-	subTemplateFp = path.Join(pathPrefix, selectedVersion, filename)
-	c.Logger.Info().Msgf("best-fit template [%s] for [%s]", subTemplateFp, verWithDots)
-	return tree.Import("yaml", subTemplateFp)
+	return finalTemplate, err
 }
 
 //getClosestIndex returns the closest left match to the sorted list of input versions

@@ -20,7 +20,8 @@ counters:
 
 plugins:
   - LabelAgent:
-    split: lun `/` ,,volume,lun
+    split:
+      - lun `/` ,,volume,lun
 
 export_options:
   instance_keys:

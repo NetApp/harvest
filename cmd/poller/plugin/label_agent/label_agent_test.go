@@ -22,35 +22,35 @@ func TestInitPlugin(t *testing.T) {
 	// define plugin rules
 	params := node.NewS("LabelAgent")
 	// split value of "X" into 4 and take last 2 as new labels
-	params.NewChildS("split", "X `/` ,,C,D")
+	params.NewChildS("split", "").AddChild(params.NewChildS("", "X `/` ,,C,D"))
 	// split value of "X" and take first 2 as new labels
-	params.NewChildS("split_regex", "X `.*(A\\d+)_(B\\d+)` A,B")
+	params.NewChildS("split_regex", "").AddChild(params.NewChildS("", "X `.*(A\\d+)_(B\\d+)` A,B"))
 	// split value of "X" into key-value pairs
-	params.NewChildS("split_pairs", "X ` ` `:`")
+	params.NewChildS("split_pairs", "").AddChild(params.NewChildS("", "X ` ` `:`"))
 	// join values of "A" and "B" and set as label "X"
-	params.NewChildS("join", "X `_` A,B")
+	params.NewChildS("join", "").AddChild(params.NewChildS("", "X `_` A,B"))
 	// replace "aaa_" with "bbb_" and set as label "B"
-	params.NewChildS("replace", "A B `aaa_` `bbb_`")
+	params.NewChildS("replace", "").AddChild(params.NewChildS("", "A B `aaa_` `bbb_`"))
 	// remove occurences of "aaa_" from value of "A"
-	params.NewChildS("replace", "A A `aaa_` ``")
+	params.NewChildS("replace", "").AddChild(params.NewChildS("", "A A `aaa_` ``"))
 	// reverse the order of matching elements, replace underscore with dash and "aaa" with "bbb"
-	params.NewChildS("replace_regex", "A B `^(aaa)_(\\d+)_(\\w+)$` `$3-$2-bbb`")
+	params.NewChildS("replace_regex", "").AddChild(params.NewChildS("", "A B `^(aaa)_(\\d+)_(\\w+)$` `$3-$2-bbb`"))
 	// exclude instance if label "A" has value "aaa bbb ccc"
-	params.NewChildS("exclude_equals", "A `aaa bbb ccc`")
+	params.NewChildS("exclude_equals", "").AddChild(params.NewChildS("", "A `aaa bbb ccc`"))
 	// exclude instance if label "A" contains "_aaa_"
-	params.NewChildS("exclude_contains", "A `_aaa_`")
+	params.NewChildS("exclude_contains", "").AddChild(params.NewChildS("", "A `_aaa_`"))
 	// exclude instance of label value has prefix "aaa_" followed by at least one digit
-	params.NewChildS("exclude_regex", "A `^aaa_\\d+$`")
+	params.NewChildS("exclude_regex", "").AddChild(params.NewChildS("", "A `^aaa_\\d+$`"))
 	// create metric "status", if label "state" is one of the 3, map metric value to respective index
-	params.NewChildS("value_mapping", "status state up,sleeping,down")
+	params.NewChildS("value_mapping", "").AddChild(params.NewChildS("", "status state up,sleeping,down"))
 	// similar to above, but if none of the values is matching, use default value "4"
-	params.NewChildS("value_mapping", "stage stage init `1`")
+	params.NewChildS("value_mapping", "").AddChild(params.NewChildS("", "stage stage init `1`"))
 	// create metric "new_status", if label "state" is one of the up/ok[zapi/rest], map metric value to respective index
-	params.NewChildS("value_to_num", "new_status state up ok")
+	params.NewChildS("value_to_num", "").AddChild(params.NewChildS("", "new_status state up ok"))
 	// create metric "new_stage", but if none of the values is matching, use default value "4"
-	params.NewChildS("value_to_num", "new_stage stage init start `4`")
+	params.NewChildS("value_to_num", "").AddChild(params.NewChildS("", "new_stage stage init start `4`"))
 	// create metric "new_outage", if empty value is expected and non empty means wrong, use default value "0"
-	params.NewChildS("value_to_num", "new_outage outage - - `0`")
+	params.NewChildS("value_to_num", "").AddChild(params.NewChildS("", "new_outage outage - - `0`"))
 
 	abc := plugin.New("Test", nil, params, nil)
 	p = &LabelAgent{AbstractPlugin: abc}

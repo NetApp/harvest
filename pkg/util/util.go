@@ -179,3 +179,14 @@ func ContainsWholeWord(source string, search string) bool {
 	}
 	return false
 }
+
+func Contains(s []string, e string) bool {
+	if len(s) > 0 {
+		for _, a := range s {
+			if a == e {
+				return true
+			}
+		}
+	}
+	return false
+}

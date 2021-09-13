@@ -1,0 +1,26 @@
+
+name:                       customLun
+
+counters:
+  lun-info:
+    - ^vserver => svm
+
+plugins:
+  LabelAgent:
+    value_mapping:
+      - custom_status state online `1`
+    # metric label zapi_value rest_value `default_value`
+    value_to_num:
+      - new_status state online online `0`
+    new_mapping:
+      - xyz
+
+  Aggregator:
+    - node<>node_cpu1
+
+export_options:
+  instance_keys:
+    - node1
+
+  instance_labels:
+    - state
