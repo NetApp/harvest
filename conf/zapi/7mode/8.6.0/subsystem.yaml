@@ -13,9 +13,11 @@ counters:
 
 plugins:
   - LabelAgent:
-    value_mapping: status health ok `1`
+    value_mapping:
+      - status health ok `1`
     # metric label zapi_value rest_value `default_value`
-    value_to_num: new_status health ok todo `0`  # REST gap will be filled up later.
+    value_to_num:
+      - new_status health ok todo `0`  # REST gap will be filled up later.
 
 export_options:
   instance_keys:

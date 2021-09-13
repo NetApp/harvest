@@ -202,6 +202,16 @@ func (n *Node) GetChildContentS(name string) string {
 	return ""
 }
 
+// GetChildByContent Compare child content
+func (n *Node) GetChildByContent(content string) *Node {
+	for _, child := range n.Children {
+		if child.GetContentS() == content {
+			return child
+		}
+	}
+	return nil
+}
+
 func (n *Node) SetChildContentS(name, content string) {
 	if child := n.GetChildS(name); child != nil {
 		child.SetContentS(content)
@@ -259,19 +269,51 @@ func (n *Node) Union(source *Node) {
 	}
 }
 
-func (me *Node) Merge(source *Node) {
+//fetchRoot get Top most parent of a child
+func fetchRoot(source *Node) *Node {
+	if source != nil && source.GetParent() != nil && source.GetParent().GetNameS() == "Root" {
+		return source
+	}
+	return fetchRoot(source.GetParent())
+}
 
+//Merge Merge templates
+// skipOverwrite is list of parents under which overwrite will be ignored.
+// Case1: objects in default.yaml
+// Case2: plugins in collector templates
+func (me *Node) Merge(source *Node, skipOverwrite []string) {
 	if len(me.Content) == 0 {
 		me.Content = source.Content
 	}
-
 	for _, child := range source.Children {
-		if mine := me.GetChild(child.GetName()); mine == nil {
+		mine := me.GetChild(child.GetName())
+		rootName := fetchRoot(child).GetNameS()
+		if child.GetName() == nil {
+			if mine.GetParent().GetChildByContent(child.GetContentS()) == nil {
+				mine.GetParent().AddChild(child)
+			}
+		} else if mine == nil {
 			me.AddChild(child)
+			if me.parent != nil && me.parent.GetNameS() == "plugins" {
+				if len(child.GetContentS()) > 0 {
+					child.NewChildS("", child.GetContentS())
+					child.SetContentS("")
+				}
+			}
 		} else {
-			// set content
-			mine.SetContentS(child.GetContentS())
-			mine.Merge(child)
+			if rootName == "plugins" {
+				content := child.GetContentS()
+				if len(content) > 0 && mine.GetChildByContent(content) == nil {
+					mine.NewChildS("", content)
+				}
+			} else {
+				if mine.GetParent() != nil && util.Contains(skipOverwrite, mine.GetParent().GetNameS()) {
+					mine.SetContentS(mine.GetContentS() + "," + child.GetContentS())
+				} else {
+					mine.SetContentS(child.GetContentS())
+				}
+			}
+			mine.Merge(child, skipOverwrite)
 		}
 	}
 }

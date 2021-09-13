@@ -28,33 +28,38 @@ func (me *LabelAgent) parseRules() int {
 
 	for _, c := range me.Params.GetChildren() {
 		name := c.GetNameS()
-		rule := strings.TrimSpace(c.GetContentS())
 
-		switch name {
-		case "split":
-			me.parseSplitSimpleRule(rule)
-		case "split_regex":
-			me.parseSplitRegexRule(rule)
-		case "split_pairs":
-			me.parseSplitPairsRule(rule)
-		case "join":
-			me.parseJoinSimpleRule(rule)
-		case "replace":
-			me.parseReplaceSimpleRule(rule)
-		case "replace_regex":
-			me.parseReplaceRegexRule(rule)
-		case "exclude_equals":
-			me.parseExcludeEqualsRule(rule)
-		case "exclude_contains":
-			me.parseExcludeContainsRule(rule)
-		case "exclude_regex":
-			me.parseExcludeRegexRule(rule)
-		case "value_mapping":
-			me.parseValueMappingRule(rule)
-		case "value_to_num":
-			me.parseValueToNumRule(rule)
-		default:
-			me.Logger.Warn().Msgf("unknown rule (%s)", name)
+		rules := c.GetChildren()
+		// loop over all rules
+		for _, rc := range rules {
+			rule := strings.TrimSpace(rc.GetContentS())
+
+			switch name {
+			case "split":
+				me.parseSplitSimpleRule(rule)
+			case "split_regex":
+				me.parseSplitRegexRule(rule)
+			case "split_pairs":
+				me.parseSplitPairsRule(rule)
+			case "join":
+				me.parseJoinSimpleRule(rule)
+			case "replace":
+				me.parseReplaceSimpleRule(rule)
+			case "replace_regex":
+				me.parseReplaceRegexRule(rule)
+			case "exclude_equals":
+				me.parseExcludeEqualsRule(rule)
+			case "exclude_contains":
+				me.parseExcludeContainsRule(rule)
+			case "exclude_regex":
+				me.parseExcludeRegexRule(rule)
+			case "value_mapping":
+				me.parseValueMappingRule(rule)
+			case "value_to_num":
+				me.parseValueToNumRule(rule)
+			default:
+				me.Logger.Warn().Msgf("unknown rule (%s)", name)
+			}
 		}
 	}
 

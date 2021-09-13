@@ -28,7 +28,8 @@ counters:
 
 plugins:
   LabelAgent:
-    split: raid_group `/` ,aggr,plex,raid
+    split:
+      - raid_group `/` ,aggr,plex,raid
   Aggregator:
     - aggr
 

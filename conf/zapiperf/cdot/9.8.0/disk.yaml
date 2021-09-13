@@ -30,7 +30,8 @@ counters:
 
 plugins:
   LabelAgent:
-    split: raid_group `/` ,aggr,plex,raid
+    split:
+      - raid_group `/` ,aggr,plex,raid
   Aggregator:
   # plugin will create summary/average for each object
   # any names after the object names will be threated as

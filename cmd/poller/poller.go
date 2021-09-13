@@ -556,7 +556,8 @@ func (p *Poller) loadCollector(c conf.Collector, object string) error {
 				logger.Debug().
 					Str("template", t).
 					Msg("Merged template.")
-				template.Merge(subTemplate)
+				// do not overwrite child of objects. They will be concatenated
+				template.Merge(subTemplate, []string{"objects"})
 			}
 		}
 	}

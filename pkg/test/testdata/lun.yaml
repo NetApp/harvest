@@ -16,7 +16,7 @@ counters:
     - ^vserver => svm
 
 plugins:
-  - LabelAgent:
+  LabelAgent:
     value_mapping:
       - status state online `1`
     # metric label zapi_value rest_value `default_value`
@@ -26,6 +26,8 @@ plugins:
     # we only want lun name, which is 4th element
     split:
       - path `/` ,,,lun
+  Aggregator:
+    - aggr
 
 export_options:
   instance_keys:
