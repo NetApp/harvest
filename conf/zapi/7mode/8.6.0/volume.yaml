@@ -24,8 +24,6 @@ counters:
     - sis:
       - compress-saved            => sis_compress_saved
       - dedup-saved               => sis_dedup_saved
-      - percent-compress-saved    => sis_compress_saved_percent
-      - percent-dedup-saved       => sis_dedup_saved_percent
       - percent-total-saved       => sis_total_saved_percent
       - total-saved               => sis_total_saved
 

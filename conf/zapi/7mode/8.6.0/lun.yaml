@@ -1,0 +1,32 @@
+
+name:                       Lun
+query:                      lun-list-info
+object:                     lun
+
+counters:
+  lun-info:
+    - ^node
+    - ^path
+    - ^qtree
+    - size
+    - size-used
+    - ^state
+    - ^^uuid
+
+plugins:
+  - LabelAgent:
+    value_mapping: status state online `1`
+    # metric label zapi_value rest_value `default_value`
+    value_to_num: new_status state online online `0`
+    # path is something like "/vol/vol_georg_fcp401/lun401"
+    # we only want lun name, which is 4th element
+    split: path `/` ,,volume,lun
+
+export_options:
+  instance_keys:
+    - node
+    - qtree
+    - lun
+    - volume
+  instance_labels:
+    - state

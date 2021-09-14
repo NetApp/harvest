@@ -141,7 +141,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(topk($TopResources, lun_avg_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}))/1000",
+          "expr": "avg(topk($TopResources, lun_avg_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"}))/1000",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -205,7 +205,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(topk($TopResources, lun_avg_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}))/1000",
+          "expr": "avg(topk($TopResources, lun_avg_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"}))/1000",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -261,7 +261,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(topk($TopResources, lun_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}))",
+          "expr": "sum(topk($TopResources, lun_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"}))",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -317,7 +317,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(topk($TopResources, lun_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}))",
+          "expr": "sum(topk($TopResources, lun_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"}))",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -373,7 +373,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(topk($TopResources, lun_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}))",
+          "expr": "sum(topk($TopResources, lun_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"}))",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -429,7 +429,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(topk($TopResources, lun_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}))",
+          "expr": "sum(topk($TopResources, lun_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"}))",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -509,7 +509,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, lun_avg_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"})/1000",
+          "expr": "topk($TopResources, lun_avg_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"})/1000",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -605,7 +605,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, lun_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"})",
+          "expr": "topk($TopResources, lun_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"})",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -701,7 +701,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, lun_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"})",
+          "expr": "topk($TopResources, lun_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"})",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -805,7 +805,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, lun_avg_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"})/1000",
+          "expr": "topk($TopResources, lun_avg_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"})/1000",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -901,7 +901,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, lun_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"})",
+          "expr": "topk($TopResources, lun_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"})",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -997,7 +997,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, lun_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"})",
+          "expr": "topk($TopResources, lun_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"})",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -1199,7 +1199,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "lun_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
+          "expr": "lun_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -1209,7 +1209,7 @@
         },
         {
           "exemplar": false,
-          "expr": "lun_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
+          "expr": "lun_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1220,7 +1220,7 @@
         },
         {
           "exemplar": false,
-          "expr": "lun_size{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
+          "expr": "lun_size{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1231,7 +1231,7 @@
         },
         {
           "exemplar": false,
-          "expr": "lun_size_used{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
+          "expr": "lun_size_used{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1364,7 +1364,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, lun_avg_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"})/1000",
+          "expr": "topk($TopResources, lun_avg_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"})/1000",
           "interval": "",
           "legendFormat": "{{svm}} / {{volume}} / {{lun}}",
           "refId": "A"
@@ -1465,7 +1465,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, lun_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"})",
+          "expr": "topk($TopResources, lun_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"})",
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "{{svm}} / {{volume}} / {{lun}}",
@@ -1570,7 +1570,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, lun_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"})",
+          "expr": "topk($TopResources, lun_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"})",
           "interval": "",
           "legendFormat": "{{svm}} / {{volume}} / {{lun}}",
           "refId": "A"
@@ -1671,7 +1671,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, lun_avg_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"})/1000",
+          "expr": "topk($TopResources, lun_avg_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"})/1000",
           "interval": "",
           "legendFormat": "{{svm}} / {{volume}} / {{lun}}",
           "refId": "A"
@@ -1772,7 +1772,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, lun_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"})",
+          "expr": "topk($TopResources, lun_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"})",
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "{{svm}} / {{volume}} / {{lun}}",
@@ -1877,7 +1877,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, lun_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"})",
+          "expr": "topk($TopResources, lun_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"})",
           "interval": "",
           "legendFormat": "{{svm}} / {{volume}} / {{lun}}",
           "refId": "A"
@@ -1985,7 +1985,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, lun_write_align_histo{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"})",
+          "expr": "topk($TopResources, lun_write_align_histo{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"})",
           "interval": "",
           "legendFormat": "{{svm}} / {{volume}} / {{lun}} : {{metric}}",
           "refId": "A"
@@ -2091,7 +2091,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, lun_read_align_histo{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"})",
+          "expr": "topk($TopResources, lun_read_align_histo{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"})",
           "interval": "",
           "legendFormat": "{{svm}} / {{volume}} / {{lun}} : {{metric}}",
           "refId": "A"
@@ -2140,1050 +2140,6 @@
         },
         {
           "$$hashKey": "object:2346",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "unit": "iops"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 61
-      },
-      "hiddenSeries": false,
-      "id": 59,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.0.6",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "topk($TopResources, lun_remote_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"})",
-          "interval": "",
-          "legendFormat": "{{svm}} / {{volume}} / {{lun}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Top LUN Indirect Access IOPS",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "transformations": [
-        {
-          "id": "organize",
-          "options": {}
-        },
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": "(metric)",
-            "renamePattern": "bucket"
-          }
-        }
-      ],
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:2427",
-          "format": "iops",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:2428",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "collapsed": false,
-      "datasource": null,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 69
-      },
-      "id": 61,
-      "panels": [],
-      "title": "Top Volume Latency from QoS",
-      "type": "row"
-    },
-    {
-      "datasource": null,
-      "gridPos": {
-        "h": 3,
-        "w": 24,
-        "x": 0,
-        "y": 70
-      },
-      "id": 73,
-      "options": {
-        "content": "You must enable the Workload/QOS counters in $HARVEST/conf/zapiperf/default.yaml.\n",
-        "mode": "markdown"
-      },
-      "pluginVersion": "8.0.6",
-      "title": "Important Information on Top Volume QoS Latency Graphs",
-      "type": "text"
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ms"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 0,
-        "y": 73
-      },
-      "hiddenSeries": false,
-      "id": 63,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.0.6",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"network\"})/1000",
-          "interval": "",
-          "legendFormat": "{{svm}} / {{volume}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Volume Latency from Network",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1425",
-          "format": "ms",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:1426",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ms"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 8,
-        "y": 73
-      },
-      "hiddenSeries": false,
-      "id": 64,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.0.6",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"throttle\"})/1000",
-          "interval": "",
-          "legendFormat": "{{svm}} / {{volume}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Volume Latency from Throttle",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1507",
-          "format": "ms",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:1508",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ms"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 16,
-        "y": 73
-      },
-      "hiddenSeries": false,
-      "id": 65,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.0.6",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"frontend\"})/1000",
-          "interval": "",
-          "legendFormat": "{{svm}} / {{volume}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Volume Latency from Frontend",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1589",
-          "format": "ms",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:1590",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ms"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 0,
-        "y": 82
-      },
-      "hiddenSeries": false,
-      "id": 66,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.0.6",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"cluster\"})/1000",
-          "interval": "",
-          "legendFormat": "{{svm}} / {{volume}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Volume Latency from Cluster",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1671",
-          "format": "ms",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:1672",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ms"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 8,
-        "y": 82
-      },
-      "hiddenSeries": false,
-      "id": 67,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.0.6",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"backend\"})/1000",
-          "interval": "",
-          "legendFormat": "{{svm}} / {{volume}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Volume Latency from Backend",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1753",
-          "format": "ms",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:1754",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ms"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 16,
-        "y": 82
-      },
-      "hiddenSeries": false,
-      "id": 68,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.0.6",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"disk\"})/1000",
-          "interval": "",
-          "legendFormat": "{{svm}} / {{volume}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Volume Latency from Disk",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1835",
-          "format": "ms",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:1836",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ms"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 0,
-        "y": 91
-      },
-      "hiddenSeries": false,
-      "id": 69,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.0.6",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"suspend\"})/1000",
-          "interval": "",
-          "legendFormat": "{{svm}} / {{volume}} ",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Volume Latency from Suspend",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1917",
-          "format": "ms",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:1918",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ms"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 8,
-        "y": 91
-      },
-      "hiddenSeries": false,
-      "id": 70,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.0.6",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"cloud\"})/1000",
-          "interval": "",
-          "legendFormat": "{{svm}} / {{volume}} ",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Volume Latency from Cloud",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1999",
-          "format": "ms",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:2000",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ms"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 16,
-        "y": 91
-      },
-      "hiddenSeries": false,
-      "id": 71,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.0.6",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"nvlog\"})/1000",
-          "interval": "",
-          "legendFormat": "{{svm}} / {{volume}} ",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Volume Latency from NVLog Mirroring",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:2081",
-          "format": "ms",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:2082",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -3261,7 +2217,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, volume_size_used_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "topk($TopResources, volume_size_used_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\"})",
           "interval": "",
           "legendFormat": "{{svm}} / {{volume}}",
           "refId": "A"
@@ -3303,295 +2259,6 @@
           "max": null,
           "min": null,
           "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 101
-      },
-      "hiddenSeries": false,
-      "id": 78,
-      "legend": {
-        "alignAsTable": true,
-        "avg": false,
-        "current": true,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.0.6",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "topk($TopResources, volume_snapshot_reserve_used_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
-          "interval": "",
-          "legendFormat": "{{svm}} / {{volume}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Snapshot Used Percent",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1248",
-          "format": "percent",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:1249",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 109
-      },
-      "hiddenSeries": false,
-      "id": 80,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "sort": "current",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.0.6",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "topk($TopResources, volume_sis_dedup_saved_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
-          "interval": "",
-          "legendFormat": "{{svm}} / {{volume}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Deduplication Percent Saved",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:2581",
-          "format": "percent",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:2582",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 109
-      },
-      "hiddenSeries": false,
-      "id": 81,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "sort": "current",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.0.6",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "topk($TopResources, volume_sis_compress_saved_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
-          "interval": "",
-          "legendFormat": "{{svm}} / {{volume}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Compression Percent Saved",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:2581",
-          "format": "percent",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:2582",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": false
         }
       ],
       "yaxis": {
@@ -3651,7 +2318,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, lun_size_used/lun_size{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "topk($TopResources, lun_size_used/lun_size{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\"})",
           "instant": false,
           "interval": "",
           "legendFormat": "{{svm}} / {{volume}} / {{lun}}",
@@ -3754,7 +2421,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, lun_size_used/lun_size{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "topk($TopResources, lun_size_used/lun_size{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\"})",
           "instant": false,
           "interval": "",
           "legendFormat": "{{svm}} / {{volume}} / {{lun}}",
@@ -3896,14 +2563,14 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "lun_avg_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}/1000",
+          "expr": "lun_avg_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"}/1000",
           "interval": "",
           "legendFormat": "{{svm}} / {{volume}} / {{lun}} Read",
           "refId": "A"
         },
         {
           "exemplar": false,
-          "expr": "lun_avg_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}/1000",
+          "expr": "lun_avg_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"}/1000",
           "hide": false,
           "interval": "",
           "legendFormat": "{{svm}} / {{volume}} / {{lun}} Write",
@@ -3990,14 +2657,14 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "lun_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
+          "expr": "lun_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"}",
           "interval": "",
           "legendFormat": "{{svm}} / {{volume}} / {{lun}} Read",
           "refId": "A"
         },
         {
           "exemplar": false,
-          "expr": "lun_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
+          "expr": "lun_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"}",
           "hide": false,
           "interval": "",
           "legendFormat": "{{svm}} / {{volume}} / {{lun}} Write",
@@ -4084,14 +2751,14 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "lun_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
+          "expr": "lun_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"}",
           "interval": "",
           "legendFormat": "{{svm}} / {{volume}} / {{lun}} Read",
           "refId": "A"
         },
         {
           "exemplar": false,
-          "expr": "lun_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
+          "expr": "lun_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"}",
           "hide": false,
           "interval": "",
           "legendFormat": "{{svm}} / {{volume}} / {{lun}} Write",
@@ -4099,249 +2766,6 @@
         }
       ],
       "title": "IOPs",
-      "type": "timeseries"
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "Bps"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byFrameRefID",
-              "options": "B"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "iops"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 0,
-        "y": 135
-      },
-      "id": 90,
-      "options": {
-        "legend": {
-          "calcs": [
-            "max",
-            "mean",
-            "last"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "lun_remote_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
-          "interval": "",
-          "legendFormat": "{{svm}} / {{volume}} / {{lun}} Remote Data",
-          "refId": "A"
-        },
-        {
-          "exemplar": false,
-          "expr": "lun_remote_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{svm}} / {{volume}} / {{lun}} Remote IOPs",
-          "refId": "B"
-        }
-      ],
-      "title": "Indirect Access",
-      "type": "timeseries"
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "ops"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 8,
-        "y": 135
-      },
-      "id": 91,
-      "options": {
-        "legend": {
-          "calcs": [
-            "max",
-            "mean",
-            "last"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "lun_caw_reqs{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
-          "interval": "",
-          "legendFormat": "Compare and Write",
-          "refId": "A"
-        },
-        {
-          "exemplar": false,
-          "expr": "lun_unmap_reqs{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "Unmap",
-          "refId": "B"
-        },
-        {
-          "exemplar": false,
-          "expr": "lun_writesame_reqs{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "Write Same",
-          "refId": "C"
-        },
-        {
-          "exemplar": false,
-          "expr": "lun_writesame_unmap_reqs{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "Write Same Unmap",
-          "refId": "D"
-        },
-        {
-          "exemplar": false,
-          "expr": "lun_xcopy_reqs{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "Xcopy",
-          "refId": "E"
-        }
-      ],
-      "title": "vStorage Offload Operations",
-      "transformations": [
-        {
-          "id": "calculateField",
-          "options": {
-            "mode": "reduceRow",
-            "reduce": {
-              "include": [
-                "Compare and Write",
-                "Unmap",
-                "Write Same",
-                "Write Same Unmap",
-                "Xcopy"
-              ],
-              "reducer": "sum"
-            }
-          }
-        }
-      ],
       "type": "timeseries"
     },
     {
@@ -4400,7 +2824,7 @@
       "gridPos": {
         "h": 9,
         "w": 8,
-        "x": 16,
+        "x": 0,
         "y": 135
       },
       "id": 93,
@@ -4421,14 +2845,14 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "lun_read_data/lun_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}/1024",
+          "expr": "lun_read_data/lun_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"}/1024",
           "interval": "",
           "legendFormat": "{{svm}} / {{volume}} / {{lun}} Read",
           "refId": "A"
         },
         {
           "exemplar": false,
-          "expr": "lun_write_data/lun_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}/1024",
+          "expr": "lun_write_data/lun_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\",lun=~\"$LUN\"}/1024",
           "hide": false,
           "interval": "",
           "legendFormat": "{{svm}} / {{volume}} / {{lun}} Write",
@@ -4469,7 +2893,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(node_labels{system_type!=\"7mode\"}, datacenter)",
+        "definition": "label_values(node_labels{system_type=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -4479,7 +2903,7 @@
         "name": "Datacenter",
         "options": [],
         "query": {
-          "query": "label_values(node_labels{system_type!=\"7mode\"}, datacenter)",
+          "query": "label_values(node_labels{system_type=\"7mode\"}, datacenter)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -4521,33 +2945,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(lun_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}, svm)",
-        "description": null,
-        "error": null,
-        "hide": 0,
-        "includeAll": true,
-        "label": null,
-        "multi": false,
-        "name": "SVM",
-        "options": [],
-        "query": {
-          "query": "label_values(lun_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}, svm)",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(lun_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\"}, volume)",
+        "definition": "label_values(lun_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}, volume)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -4557,7 +2955,7 @@
         "name": "Volume",
         "options": [],
         "query": {
-          "query": "label_values(lun_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\"}, volume)",
+          "query": "label_values(lun_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}, volume)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -4573,7 +2971,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(lun_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\", volume=~\"$Volume\"},lun)",
+        "definition": "label_values(lun_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\", volume=~\"$Volume\"},lun)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -4583,7 +2981,7 @@
         "name": "LUN",
         "options": [],
         "query": {
-          "query": "label_values(lun_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\", volume=~\"$Volume\"},lun)",
+          "query": "label_values(lun_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\", volume=~\"$Volume\"},lun)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -4685,29 +3083,6 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(qos_detail_volume_resource_latency,resource)",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": false,
-        "label": null,
-        "multi": false,
-        "name": "SystemResources",
-        "options": [],
-        "query": {
-          "query": "label_values(qos_detail_volume_resource_latency,resource)",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
@@ -4729,7 +3104,7 @@
     ]
   },
   "timezone": "",
-  "title": "NetApp Detail: LUN",
-  "uid": "cbhobG47z",
+  "title": "NetApp Detail: LUN 7 mode",
+  "uid": "cbhobG47a",
   "version": 1
 }
