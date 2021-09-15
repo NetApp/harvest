@@ -5,6 +5,7 @@ import (
 	"testing"
 )
 
+// Merge default.yaml and custom.yaml
 func TestNode_Merge(t *testing.T) {
 	defaultTemplate, _ := tree.Import("yaml", "testdata/default.yaml")
 	customTemplate, _ := tree.Import("yaml", "testdata/custom.yaml")
@@ -46,7 +47,9 @@ func TestNode_Merge(t *testing.T) {
 
 }
 
-func TestNode_Merge2(t *testing.T) {
+// merge collector templates for 21.08.6+ versions
+// change is LabelAgent child will have list of rules instead of key-value pair
+func TestNode_MergeCollector(t *testing.T) {
 	defaultTemplate, _ := tree.Import("yaml", "testdata/lun.yaml")
 	customTemplate, _ := tree.Import("yaml", "testdata/custom_lun.yaml")
 	defaultTemplate.Merge(customTemplate, nil)
@@ -200,7 +203,9 @@ func TestNode_Merge2(t *testing.T) {
 	}
 }
 
-func TestNode_Merge3(t *testing.T) {
+// Merge collector templates where custom templates are from 21.08.6 and before
+// LabelAgent child did have key-value pair of rules instead of a list
+func TestNode_MergeCollectorOld(t *testing.T) {
 	defaultTemplate, _ := tree.Import("yaml", "testdata/lun.yaml")
 	customTemplate, _ := tree.Import("yaml", "testdata/custom_lun_old.yaml")
 	defaultTemplate.Merge(customTemplate, nil)
