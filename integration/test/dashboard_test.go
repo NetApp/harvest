@@ -15,8 +15,6 @@ import (
 	"testing"
 )
 
-const TOTAL_DASHBOARD = 11
-
 type DashboardImportTestSuite struct {
 	suite.Suite
 }
@@ -82,6 +80,12 @@ func (suite *DashboardImportTestSuite) TestDashboardCount() {
 	if !(folderId > 0) {
 		assert.Fail(suite.T(), "Folder id is empty or zero.")
 	}
+	expectedName := []string{"Harvest Metadata", "NetApp Detail: Aggregate", "NetApp Detail: Cluster",
+		"NetApp Detail: Disk", "NetApp Detail: LUN", "NetApp Detail: Network", "NetApp Detail: Network  - Details",
+		"NetApp Detail: Network with NVMe/FC", "NetApp Detail: Node", "NetApp Detail: Node - Details",
+		"NetApp Detail: Shelf", "NetApp Detail: SnapMirror", "NetApp Detail: SVM", "NetApp Detail: SVM - Details",
+		"NetApp Detail: Volume", "NetApp Detail: Volume - Details"}
+
 	log.Println(fmt.Sprintf("Find list of dashboard for folder %d", folderId))
 	url := utils.GetGrafanaHttpUrl() + fmt.Sprintf("/api/search?folderIds=%d", folderId)
 	log.Println(url)
@@ -90,17 +94,15 @@ func (suite *DashboardImportTestSuite) TestDashboardCount() {
 	var dataDashboard []Dashboard
 	err = json.Unmarshal(data, &dataDashboard)
 	utils.PanicIfNotNil(err)
-	assert.True(suite.T(), TOTAL_DASHBOARD == len(dataDashboard), fmt.Sprintf("Expected dashboard %d but found %d dashboards",
-		TOTAL_DASHBOARD, len(dataDashboard)))
+	totalDashboardCount := len(expectedName)
+	assert.True(suite.T(), totalDashboardCount == len(dataDashboard), fmt.Sprintf("Expected dashboard %d but found %d dashboards",
+		totalDashboardCount, len(dataDashboard)))
 	var actualNames []string
 	var notFoundList []string
 	for _, values := range dataDashboard {
 		actualNames = append(actualNames, values.Title)
 	}
-	expectedName := []string{"Harvest Metadata", "NetApp Detail: Aggregate", "NetApp Detail: Cluster",
-		"NetApp Detail: Disk", "NetApp Detail: Network",
-		"NetApp Detail: Network with NVMe/FC", "NetApp Detail: Node",
-		"NetApp Detail: Shelf", "NetApp Detail: SnapMirror", "NetApp Detail: SVM", "NetApp Detail: Volume"}
+
 	for _, title := range expectedName {
 		if !(utils.Contains(actualNames, title)) {
 			notFoundList = append(notFoundList, title)

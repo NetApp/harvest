@@ -1,6 +1,7 @@
 package installer
 
 import (
+	"fmt"
 	"github.com/Netapp/harvest-automation/test/docker"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"log"
@@ -40,5 +41,10 @@ func (d *Prometheus) Install() bool {
 		}
 	}
 	log.Println("Reached maximum timeout. Prometheus is failed to start after 1 min")
+	return false
+}
+
+func (p *Prometheus) Upgrade() bool {
+	utils.PanicIfNotNil(fmt.Errorf("not supported"))
 	return false
 }

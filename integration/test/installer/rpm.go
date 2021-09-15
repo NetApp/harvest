@@ -1,8 +1,10 @@
 package installer
 
 import (
+	"fmt"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"log"
+	"strings"
 )
 
 type RPM struct {
@@ -42,6 +44,29 @@ func (r *RPM) Install() bool {
 	} //use file directly from the repo
 	harvestObj := new(Harvest)
 	harvestObj.Start()
+	status := harvestObj.AllRunning()
+	return status
+}
+
+func (r *RPM) Upgrade() bool {
+	rpmFileName := "harvest.rpm"
+	utils.RemoveSafely(rpmFileName)
+	harvestObj := new(Harvest)
+	if !harvestObj.AllRunning() {
+		utils.PanicIfNotNil(fmt.Errorf("pollers are not in a running state before upgrade"))
+	}
+	versionCmd := []string{"-qa", "harvest"}
+	previousVersion := strings.TrimSpace(utils.Run("rpm", versionCmd...))
+	err := utils.DownloadFile(rpmFileName, r.path)
+	utils.PanicIfNotNil(err)
+	log.Println("Downloaded: " + r.path)
+	log.Println("Updating " + rpmFileName)
+	installOutput := utils.Run("yum", "upgrade", "-y", rpmFileName)
+	log.Println(installOutput)
+	installedVersion := strings.TrimSpace(utils.Run("rpm", versionCmd...))
+	if previousVersion == installedVersion {
+		utils.PanicIfNotNil(fmt.Errorf("upgrade is failed"))
+	}
 	status := harvestObj.AllRunning()
 	return status
 }

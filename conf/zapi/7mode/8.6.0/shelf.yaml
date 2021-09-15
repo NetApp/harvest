@@ -4,6 +4,9 @@ query:                      storage-shelf-environment-list-info
 object:                     shelf
 
 
+global_labels:
+  - system_type: 7mode
+
 counters:
   - shelf-environ-channel-info:
     - ^^channel-name                    => channel
@@ -11,9 +14,14 @@ counters:
       - shelf-environ-shelf-info:
         - ^^shelf-id                    => shelf_id
         - ^shelf-status                 => state
-        - ^shelf-type
+        - ^shelf-type                   => module_type
         - status-reads-attempted        => status_reads_attempted
         - status-reads-failed           => status_reads_failed
+        - sas-specific-info:
+          - ^serial-no                  => serial_number
+        - ses-generic-info:
+          - ^ses-vendor-id              => vendor_name
+          - ^ses-product-id             => model
 
 plugins:
   Shelf:
@@ -82,7 +90,6 @@ export_options:
     - shelf_id
   instance_labels:
     - module_type
-    - op_status
     - serial_number
     - model
     - state
