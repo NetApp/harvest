@@ -1,9 +1,10 @@
 plugins:
-  LabelAgent:
+  - nic
+  - LabelAgent:
     value_mapping: custom_status state online `1`
-    # metric label zapi_value rest_value `default_value`
+      # metric label zapi_value rest_value `default_value`
     value_to_num: new_status state online online `0`
     new_mapping: xyz
-  Aggregator:
+  - Aggregator:
     - node<>node_cpu1
     - nodetest

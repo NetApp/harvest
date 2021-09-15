@@ -15,7 +15,8 @@ collect_only_labels: true
 plugins:
   - LabelAgent:
     # metric label zapi_value rest_value `default_value`
-    value_to_num: 7mode_status health ok todo `0`
+    value_to_num:
+      - 7mode_status health ok todo `0`
 
 export_options:
   instance_keys:

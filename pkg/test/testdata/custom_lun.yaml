@@ -18,6 +18,12 @@ plugins:
   Aggregator:
     - node<>node_cpu1
 
+override:
+  - KB_copied: delta
+  - key2: test
+
+export_data: false
+
 export_options:
   instance_keys:
     - node1
