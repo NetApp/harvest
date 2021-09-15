@@ -173,6 +173,31 @@ func TestNode_Merge2(t *testing.T) {
 	if got7 != want7 {
 		t.Errorf("got %v, want %v", want7, got7)
 	}
+
+	//override block
+	want9 := 2
+	got9 := 0
+	counters = defaultTemplate.GetChildS("override")
+	if counters != nil {
+		for range counters.GetChildren() {
+			got9 += 1
+		}
+	}
+
+	if want9 != got9 {
+		t.Errorf("got %v, want %v", want9, got9)
+	}
+
+	//export block
+
+	export := defaultTemplate.GetChildS("export")
+	if export != nil {
+		t.Errorf("missing export block")
+	}
+
+	if want9 != got9 {
+		t.Errorf("got %v, want %v", want9, got9)
+	}
 }
 
 func TestNode_Merge3(t *testing.T) {

@@ -289,8 +289,12 @@ func (me *Node) Merge(source *Node, skipOverwrite []string) {
 		mine := me.GetChild(child.GetName())
 		rootName := fetchRoot(child).GetNameS()
 		if child.GetName() == nil {
-			if mine.GetParent().GetChildByContent(child.GetContentS()) == nil {
+			if mine != nil && mine.GetParent().GetChildByContent(child.GetContentS()) == nil {
 				mine.GetParent().AddChild(child)
+			} else {
+				if me.GetChildByContent(child.GetContentS()) == nil {
+					me.AddChild(child)
+				}
 			}
 		} else if mine == nil {
 			me.AddChild(child)
