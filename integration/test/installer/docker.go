@@ -25,8 +25,7 @@ func (d *Docker) Install() bool {
 	log.Println("Docker build : " + d.path)
 	pollerProcessName := "bin/poller"
 	pollerNames, _ := conf.GetPollerNames(HarvestConfigFile)
-	docker.StopContainers(pollerProcessName)
-	docker.RemoveImage("harvest")
+	Uninstall()
 	var dockerImageName string
 	if !strings.Contains(d.path, ".tar") {
 		dockerImageName = d.path

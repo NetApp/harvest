@@ -100,6 +100,20 @@ func HasStarted(imageName string) bool {
 	return false
 }
 
+func StoreContainerLog(containerId string, logFile string) {
+	ctx := context.Background()
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	utils.PanicIfNotNil(err)
+	options := types.ContainerLogsOptions{ShowStdout: true, ShowStderr: true}
+	out, containerErr := cli.ContainerLogs(ctx, containerId, options)
+	utils.PanicIfNotNil(containerErr)
+	fileOut, err := os.Create(logFile)
+	utils.PanicIfNotNil(err)
+	defer fileOut.Close()
+	_, err = io.Copy(fileOut, out)
+	utils.PanicIfNotNil(err)
+}
+
 func StopContainers(commandSubString string) {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
@@ -122,6 +136,10 @@ func StopContainers(commandSubString string) {
 
 func CopyFile(containerId string, src string, dest string) {
 	utils.Run("docker", "cp", src, containerId+":"+dest)
+}
+
+func CopyFileFromDocker(containerId string, src string, dest string) {
+	utils.Run("docker", "cp", containerId+":"+src, dest)
 }
 
 func GetContainerID(commandSubString string) []string {
