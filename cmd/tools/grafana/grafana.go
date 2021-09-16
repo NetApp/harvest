@@ -87,7 +87,7 @@ func doImport(_ *cobra.Command, _ []string) {
 
 	fmt.Printf("preparing to import dashboards...\n")
 	// Recursive function call
-	if err := importDashboards(opts, opts.dir, opts.folder[0].folderId); err != nil {
+	if err := importDashboards(opts); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
@@ -214,13 +214,21 @@ func exportFiles(folder Folder) error {
 	return nil
 }
 
-// This is recursive function call.
-func importDashboards(opts *options, dir string, folderId int64) error {
+func importDashboards(opts *options) error {
+	// Importing C mode dashboards
+	importFiles(opts.dir, opts.folder[0])
+	// Importing 7 mode dashboards
+	importFiles(path.Join(opts.dir, strings.ReplaceAll(grafana7modeFolderTitle, " ", "")), opts.folder[1])
+	return nil
+}
 
+func importFiles(dir string, folder Folder) error {
 	var (
-		files         []os.FileInfo
-		importedFiles int
-		err           error
+		request, dashboard map[string]interface{}
+		files              []os.FileInfo
+		importedFiles      int
+		data               []byte
+		err                error
 	)
 
 	if files, err = ioutil.ReadDir(dir); err != nil {
@@ -228,73 +236,53 @@ func importDashboards(opts *options, dir string, folderId int64) error {
 		return err
 	}
 
-	for _, f := range files {
-		// This is for 7 mode dashboards, for any new folder addition, this need to be followed
-		if f.IsDir() && (f.Name() == strings.ReplaceAll(grafana7modeFolderTitle, " ", "")) {
-			if err = importDashboards(opts, path.Join(dir, f.Name()), opts.folder[1].folderId); err != nil {
-				fmt.Println(err)
-				os.Exit(1)
-			}
-		} else {
-			importFiles(f, dir, folderId, &importedFiles)
+	for _, file := range files {
+		if !strings.HasSuffix(file.Name(), ".json") {
+			//fmt.Printf("Skipping [%s]...\n", file.Name())
+			//fmt.Printf("preparing to import %d dashboards...\n", len(files))
+			continue
 		}
-	}
 
+		if data, err = ioutil.ReadFile(path.Join(dir, file.Name())); err != nil {
+			fmt.Printf("error reading file [%s]\n", file.Name())
+			return err
+		}
+
+		data = bytes.ReplaceAll(data, []byte("${DS_PROMETHEUS}"), []byte(opts.datasource))
+
+		if err = json.Unmarshal(data, &dashboard); err != nil {
+			fmt.Printf("error parsing file [%s]\n", file.Name())
+			fmt.Println("-------------------------------")
+			fmt.Println(string(data))
+			fmt.Println("-------------------------------")
+			return err
+		}
+
+		// optionally add prefix to all metric names in the queries
+		if opts.prefix != "" {
+			addGlobalPrefix(dashboard, opts.prefix)
+		}
+
+		request = make(map[string]interface{})
+		request["overwrite"] = true
+		request["folderId"] = folder.folderId
+		request["dashboard"] = dashboard
+
+		result, status, code, err := sendRequest(opts, "POST", "/api/dashboards/db", request)
+
+		if err != nil {
+			fmt.Printf("error importing [%s]\n", file.Name())
+			return err
+		}
+
+		if code != 200 {
+			fmt.Printf("error - server response (%d - %s) %v\n", code, status, result)
+			return errors.New(status)
+		}
+		fmt.Printf("OK - imported [%s]\n", file.Name())
+		importedFiles++
+	}
 	fmt.Printf("Imported %d dashboards from %s \n", importedFiles, dir)
-	return nil
-}
-
-func importFiles(file os.FileInfo, dir string, folderId int64, importedFiles *int) error {
-	var (
-		request, dashboard map[string]interface{}
-		data               []byte
-		err                error
-	)
-
-	if !strings.HasSuffix(file.Name(), ".json") {
-		//fmt.Printf("Skipping [%s]...\n", file.Name())
-		//fmt.Printf("preparing to import %d dashboards...\n", len(files))
-		return nil
-	}
-
-	if data, err = ioutil.ReadFile(path.Join(dir, file.Name())); err != nil {
-		fmt.Printf("error reading file [%s]\n", file.Name())
-		return err
-	}
-
-	data = bytes.ReplaceAll(data, []byte("${DS_PROMETHEUS}"), []byte(opts.datasource))
-
-	if err = json.Unmarshal(data, &dashboard); err != nil {
-		fmt.Printf("error parsing file [%s]\n", file.Name())
-		fmt.Println("-------------------------------")
-		fmt.Println(string(data))
-		fmt.Println("-------------------------------")
-		return err
-	}
-
-	// optionally add prefix to all metric names in the queries
-	if opts.prefix != "" {
-		addGlobalPrefix(dashboard, opts.prefix)
-	}
-
-	request = make(map[string]interface{})
-	request["overwrite"] = true
-	request["folderId"] = folderId
-	request["dashboard"] = dashboard
-
-	result, status, code, err := sendRequest(opts, "POST", "/api/dashboards/db", request)
-
-	if err != nil {
-		fmt.Printf("error importing [%s]\n", file.Name())
-		return err
-	}
-
-	if code != 200 {
-		fmt.Printf("error - server response (%d - %s) %v\n", code, status, result)
-		return errors.New(status)
-	}
-	fmt.Printf("OK - imported [%s]\n", file.Name())
-	*importedFiles++
 	return nil
 }
 
