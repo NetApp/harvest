@@ -5,6 +5,8 @@ import (
 	"github.com/spf13/cobra"
 	"goharvest2/pkg/color"
 	"goharvest2/pkg/conf"
+	"goharvest2/pkg/tree"
+	harvestyaml "goharvest2/pkg/tree/yaml"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"os"
@@ -14,6 +16,8 @@ import (
 type options struct {
 	ShouldPrintConfig bool
 	Color             string
+	TemplatePath1     string
+	TemplatePath2     string
 }
 
 var opts = &options{
@@ -31,6 +35,37 @@ var Cmd = &cobra.Command{
 	Short: "Check for potential problems",
 	Long:  "Check for potential problems",
 	Run:   doDoctorCmd,
+}
+
+var mergeCmd = &cobra.Command{
+	Use:    "merge",
+	Hidden: true,
+	Short:  "generate Harvest systemd target for all pollers defined in config",
+	Run:    doMergeCmd,
+}
+
+func doMergeCmd(cmd *cobra.Command, _ []string) {
+	doMerge(opts.TemplatePath1, opts.TemplatePath2)
+}
+
+func doMerge(path1 string, path2 string) {
+	template, err := tree.Import("yaml", path1)
+	if err != nil {
+		fmt.Printf("error reading template file. err=%+v\n", err)
+		return
+	}
+	subTemplate, err := tree.Import("yaml", path2)
+	if err != nil {
+		fmt.Printf("error reading template file. err=%+v\n", err)
+		return
+	}
+	template.Merge(subTemplate, nil)
+	data, err := harvestyaml.Dump(template)
+	if err != nil {
+		fmt.Printf("error reading parsing template file. err=%+v\n", err)
+		return
+	}
+	fmt.Println(string(data))
 }
 
 func doDoctorCmd(cmd *cobra.Command, _ []string) {
@@ -232,6 +267,14 @@ func collectNodes(root *yaml.Node, nodes *[]*yaml.Node) {
 }
 
 func init() {
+	Cmd.AddCommand(mergeCmd)
+	mFlags := mergeCmd.PersistentFlags()
+
+	mFlags.StringVarP(&opts.TemplatePath1, "template", "", "", "First file path ")
+	mFlags.StringVarP(&opts.TemplatePath2, "with", "", "", "Second file path. ")
+
+	_ = mergeCmd.MarkPersistentFlagRequired("template")
+	_ = mergeCmd.MarkPersistentFlagRequired("with")
 	Cmd.Flags().BoolVarP(
 		&opts.ShouldPrintConfig,
 		"print",
