@@ -22,9 +22,8 @@ RUN make build VERSION=$VERSION RELEASE=$RELEASE
 RUN cp -a $BUILD_DIR/harvest.yml $INSTALL_DIR/harvest.yml
 
 RUN cp -aR bin $BUILD_DIR/conf $BUILD_DIR/docs $BUILD_DIR/grafana $BUILD_DIR/autosupport $INSTALL_DIR &&\
-    rm -f $INSTALL_DIR/autosupport/asup &&\
-    cp $INSTALL_DIR/autosupport/asup_alpine_amd64 $INSTALL_DIR/autosupport/asup &&\
-    rm -f $INSTALL_DIR/autosupport/asup_alpine_amd64 &&\
+    rm $INSTALL_DIR/autosupport/asup &&\
+    mv $INSTALL_DIR/autosupport/asup_alpine_amd64 $INSTALL_DIR/autosupport/asup &&\
     chmod u=rwx,g=rx,o=rx $INSTALL_DIR/autosupport/asup
 
 FROM alpine:latest
