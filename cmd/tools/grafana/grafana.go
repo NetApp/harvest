@@ -42,7 +42,8 @@ type options struct {
 	addr           string // URL of Grafana server (e.g. "http://localhost:3000")
 	token          string // API token issued by Grafana server
 	dir            string // Directory from which to import dashboards (e.g. "opt/harvest/grafana/dashboards")
-	folder         [2]Folder
+	cmodeFolder    Folder
+	mode7Folder    Folder
 	datasource     string
 	variable       bool
 	client         *http.Client
@@ -65,12 +66,12 @@ func doExport(_ *cobra.Command, _ []string) {
 	var doesFolderExist = doesGrafanaFolderExist()
 	var err error
 
-	if !(doesFolderExist[0] && doesFolderExist[1]) {
-		if !doesFolderExist[0] {
-			fmt.Printf("folder [%s] not found in Grafana\n", opts.folder[0].folderName)
+	if !(doesFolderExist[opts.cmodeFolder] && doesFolderExist[opts.mode7Folder]) {
+		if !doesFolderExist[opts.cmodeFolder] {
+			fmt.Printf("folder [%s] not found in Grafana\n", opts.cmodeFolder.folderName)
 		}
-		if !doesFolderExist[1] {
-			fmt.Printf("folder [%s] not found in Grafana\n", opts.folder[1].folderName)
+		if !doesFolderExist[opts.mode7Folder] {
+			fmt.Printf("folder [%s] not found in Grafana\n", opts.mode7Folder.folderName)
 		}
 		os.Exit(1)
 	} else if err = exportDashboards(opts); err != nil {
@@ -86,7 +87,6 @@ func doImport(_ *cobra.Command, _ []string) {
 	checkAndCreateFolder()
 
 	fmt.Printf("preparing to import dashboards...\n")
-	// Recursive function call
 	if err := importDashboards(opts); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -97,21 +97,22 @@ func checkAndCreateFolder() {
 	var folderExists = doesGrafanaFolderExist()
 	var err error
 
-	// first folder is Harvest 2.0 and second is 7 mode
-	for i, exist := range folderExists {
-		if exist {
-			fmt.Printf("folder [%s] exists in Grafana - OK\n", opts.folder[i].folderName)
-		} else if err = createFolder(opts, i); err != nil {
+	// first folder is Harvest 2.0 and second folder is 7mode
+	for folder, value := range folderExists {
+		if value {
+			fmt.Printf("folder [%s] exists in Grafana - OK\n", folder.folderName)
+		} else if err = createFolder(opts, &folder); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		} else {
-			fmt.Printf("created Grafana folder [%s] - OK\n", opts.folder[i].folderName)
+			fmt.Printf("created Grafana folder [%s] - OK\n", folder.folderName)
 		}
 	}
+
 }
 
-func doesGrafanaFolderExist() []bool {
-	folderExists := []bool{false, false}
+func doesGrafanaFolderExist() map[Folder]bool {
+	folderExists := make(map[Folder]bool)
 	var err error
 	if folderExists, err = checkFolder(opts); err != nil {
 		fmt.Println(err)
@@ -150,9 +151,9 @@ func adjustOptions() {
 
 func exportDashboards(opts *options) error {
 	// Exporting C mode dashboards
-	exportFiles(opts.folder[0])
-	// Exporting 7 mode dashboards
-	exportFiles(opts.folder[1])
+	exportFiles(opts.cmodeFolder)
+	// Exporting 7mode dashboards
+	exportFiles(opts.mode7Folder)
 	return nil
 }
 
@@ -216,9 +217,9 @@ func exportFiles(folder Folder) error {
 
 func importDashboards(opts *options) error {
 	// Importing C mode dashboards
-	importFiles(opts.dir, opts.folder[0])
-	// Importing 7 mode dashboards
-	importFiles(path.Join(opts.dir, strings.ReplaceAll(grafana7modeFolderTitle, " ", "")), opts.folder[1])
+	importFiles(opts.dir, opts.cmodeFolder)
+	// Importing 7mode dashboards
+	importFiles(path.Join(opts.dir, strings.ReplaceAll(grafana7modeFolderTitle, " ", "")), opts.mode7Folder)
 	return nil
 }
 
@@ -238,8 +239,6 @@ func importFiles(dir string, folder Folder) error {
 
 	for _, file := range files {
 		if !strings.HasSuffix(file.Name(), ".json") {
-			//fmt.Printf("Skipping [%s]...\n", file.Name())
-			//fmt.Printf("preparing to import %d dashboards...\n", len(files))
 			continue
 		}
 
@@ -527,12 +526,12 @@ func checkVersion(inputVersion string) bool {
 	}
 }
 
-func createFolder(opts *options, i int) error {
+func createFolder(opts *options, folder *Folder) error {
 
 	var request map[string]interface{}
 	request = make(map[string]interface{})
 
-	request["title"] = opts.folder[i].folderName
+	request["title"] = folder.folderName
 
 	result, status, code, err := sendRequest(opts, "POST", "/api/folders", request)
 
@@ -544,32 +543,32 @@ func createFolder(opts *options, i int) error {
 		return errors.New("server response: " + status)
 	}
 
-	opts.folder[i].folderId = int64(result["id"].(float64))
-	opts.folder[i].folderUid = result["uid"].(string)
+	folder.folderId = int64(result["id"].(float64))
+	folder.folderUid = result["uid"].(string)
 
 	return nil
 }
 
-func checkFolder(opts *options) ([]bool, error) {
+func checkFolder(opts *options) (map[Folder]bool, error) {
 
 	result, status, code, err := sendRequestArray(opts, "GET", "/api/folders?limit=1000", nil)
 
 	if err != nil {
-		return []bool{false, false}, err
+		return map[Folder]bool{opts.cmodeFolder: false, opts.mode7Folder: false}, err
 	}
 
 	if code != 200 {
-		return []bool{false, false}, errors.New("server response: " + status)
+		return map[Folder]bool{opts.cmodeFolder: false, opts.mode7Folder: false}, errors.New("server response: " + status)
 	}
 
 	if result == nil || len(result) == 0 {
-		return []bool{false, false}, nil
+		return map[Folder]bool{opts.cmodeFolder: false, opts.mode7Folder: false}, nil
 	}
 
-	cmodeFolder := folderExist(result, &opts.folder[0])
-	nonCmodeFolder := folderExist(result, &opts.folder[1])
+	cmodeFolder := folderExist(result, &opts.cmodeFolder)
+	nonCmodeFolder := folderExist(result, &opts.mode7Folder)
 
-	return []bool{cmodeFolder, nonCmodeFolder}, nil
+	return map[Folder]bool{opts.cmodeFolder: cmodeFolder, opts.mode7Folder: nonCmodeFolder}, nil
 }
 
 func folderExist(result []map[string]interface{}, folder *Folder) bool {
@@ -690,8 +689,8 @@ func init() {
 	Cmd.PersistentFlags().StringVarP(&opts.addr, "addr", "a", "http://127.0.0.1:3000", "address of Grafana server (IP, FQDN or hostname)")
 	Cmd.PersistentFlags().StringVarP(&opts.token, "token", "t", "", "API token issued by Grafana server for authentication")
 	Cmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d", "grafana/dashboards/", "when importing, directory that contains dashboards.\nWhen exporting, directory to write dashboards to")
-	Cmd.PersistentFlags().StringVarP(&opts.folder[0].folderName, "harvestfolder", "H", grafanaFolderTitle, "Grafana folder name for the C mode dashboards")
-	Cmd.PersistentFlags().StringVarP(&opts.folder[1].folderName, "7modefolder", "f", grafana7modeFolderTitle, "Grafana folder name for the 7 mode dashboards")
+	Cmd.PersistentFlags().StringVarP(&opts.cmodeFolder.folderName, "folder", "f", grafanaFolderTitle, "Grafana folder name for the C mode dashboards")
+	Cmd.PersistentFlags().StringVarP(&opts.mode7Folder.folderName, "folder-7mode", "", grafana7modeFolderTitle, "Grafana folder name for the 7mode dashboards")
 	Cmd.PersistentFlags().StringVarP(&opts.prefix, "prefix", "p", "", "Use global metric prefix in queries")
 	Cmd.PersistentFlags().StringVarP(&opts.datasource, "datasource", "s", grafanaDataSource, "Grafana datasource for the dashboards")
 	Cmd.PersistentFlags().BoolVarP(&opts.variable, "variable", "v", false, "use datasource as variable, overrides: --datasource")
