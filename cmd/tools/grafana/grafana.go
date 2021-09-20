@@ -573,11 +573,19 @@ func checkFolder(opts *options) (map[Folder]bool, error) {
 
 func folderExist(result []map[string]interface{}, folder *Folder) bool {
 	for _, x := range result {
-		if x["title"].(string) == folder.folderName {
-			folder.folderId = int64(x["id"].(float64))
-			folder.folderUid = x["uid"].(string)
-			return true
+
+		if name, ok := x["title"]; ok {
+			if name.(string) == folder.folderName {
+				if id, idExist := x["id"]; idExist {
+					folder.folderId = int64(id.(float64))
+					if uid, uidExist := x["uid"]; uidExist {
+						folder.folderUid = uid.(string)
+						return true
+					}
+				}
+			}
 		}
+
 	}
 	return false
 }
