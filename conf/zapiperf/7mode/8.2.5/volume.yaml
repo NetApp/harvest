@@ -8,7 +8,6 @@ counters:
   - instance_uuid
   - instance_name
   - vserver_name          => svm
-  - node_name             => node
   - parent_aggr           => aggr
   - read_data
   - write_data
@@ -29,3 +28,4 @@ export_options:
     - volume
     - aggr
     - type
+    - svm

@@ -120,7 +120,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "avg(topk($TopResources, volume_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}))",
+          "expr": "avg(topk($TopResources, volume_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}))",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -175,7 +175,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "sum(topk($TopResources, volume_write_data+volume_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}))",
+          "expr": "sum(topk($TopResources, (volume_read_data+volume_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\"}) * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} ))",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -230,7 +230,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "sum(topk($TopResources, volume_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}))",
+          "expr": "sum(topk($TopResources, volume_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} ))",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -294,7 +294,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources, volume_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "topk($TopResources, volume_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
@@ -397,7 +397,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources, volume_write_data+volume_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "topk($TopResources,  (volume_read_data+volume_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\"}) * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} )",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
@@ -500,7 +500,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources, volume_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "topk($TopResources, volume_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} )",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
@@ -549,6 +549,20 @@
         "align": false,
         "alignLevel": null
       }
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 13
+      },
+      "id": 37,
+      "panels": [],
+      "title": "Volume Table Drilldown",
+      "type": "row"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
@@ -709,10 +723,10 @@
         ]
       },
       "gridPos": {
-        "h": 10,
-        "w": 21,
+        "h": 9,
+        "w": 24,
         "x": 0,
-        "y": 13
+        "y": 14
       },
       "id": 18,
       "interval": "1m",
@@ -726,7 +740,7 @@
           }
         ]
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "7.5.6",
       "targets": [
         {
           "expr": "volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
@@ -773,6 +787,27 @@
       "title": "Volumes in Cluster",
       "transformations": [
         {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "node",
+                "svm",
+                "aggr",
+                "volume",
+                "style",
+                "Value #A",
+                "Value #C",
+                "Value #D"
+              ]
+            }
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
           "id": "organize",
           "options": {
             "excludeByName": {
@@ -802,23 +837,683 @@
             },
             "renameByName": {}
           }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "color-background-solid",
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 20
+              },
+              {
+                "color": "red",
+                "value": 30
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 23
+      },
+      "id": 39,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "7.5.6",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "topk($TopResources, volume_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})/1000",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "{{svm}} / {{volume}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top Volume Read Latency",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "SVM / Volume",
+            "binary": {
+              "left": "svm",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "volume"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "svm",
+                "volume"
+              ],
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
         },
         {
-          "id": "merge",
-          "options": {}
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Avg",
+              "type": "{{svm}} / {{volume}}",
+              "volume": ""
+            }
+          }
         },
         {
           "id": "filterFieldsByName",
           "options": {
             "include": {
               "names": [
-                "node",
                 "svm",
                 "volume",
-                "style",
-                "Value #A",
-                "Value #C",
-                "Value #D"
+                "Avg"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "transparent",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "color-background-solid",
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "Bps"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 23
+      },
+      "id": 41,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "7.5.6",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "topk($TopResources, volume_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "{{svm}} / {{volume}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top Volume Read Throughput",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "SVM / Volume",
+            "binary": {
+              "left": "svm",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "volume"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "svm",
+                "volume"
+              ],
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Avg",
+              "type": "{{svm}} / {{volume}}",
+              "volume": ""
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "svm",
+                "volume",
+                "Avg"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "transparent",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "color-background-solid",
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "iops"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 16,
+        "y": 23
+      },
+      "id": 43,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "7.5.6",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "topk($TopResources, volume_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "{{svm}} / {{volume}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top Volume Read IOPS",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "SVM / Volume",
+            "binary": {
+              "left": "svm",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "volume"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "svm",
+                "volume"
+              ],
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Avg",
+              "type": "{{svm}} / {{volume}}",
+              "volume": ""
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "svm",
+                "volume",
+                "Avg"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "color-background-solid",
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 20
+              },
+              {
+                "color": "red",
+                "value": 30
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 30
+      },
+      "id": 40,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "7.5.6",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "topk($TopResources, volume_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})/1000",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "{{svm}} / {{volume}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top Volume Write Latency",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "SVM / Volume",
+            "binary": {
+              "left": "svm",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "volume"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "svm",
+                "volume"
+              ],
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Avg",
+              "type": "{{svm}} / {{volume}}",
+              "volume": ""
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "svm",
+                "volume",
+                "Avg"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "transparent",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "color-background-solid",
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "Bps"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 30
+      },
+      "id": 42,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "7.5.6",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "topk($TopResources, volume_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "{{svm}} / {{volume}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top Volume Write Throughput",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "SVM / Volume",
+            "binary": {
+              "left": "svm",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "volume"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "svm",
+                "volume"
+              ],
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Avg",
+              "type": "{{svm}} / {{volume}}",
+              "volume": ""
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "svm",
+                "volume",
+                "Avg"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "transparent",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "color-background-solid",
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "iops"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 16,
+        "y": 30
+      },
+      "id": 44,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "7.5.6",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "topk($TopResources, volume_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "{{svm}} / {{volume}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top Volume Write IOPS",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "SVM / Volume",
+            "binary": {
+              "left": "svm",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "volume"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "svm",
+                "volume"
+              ],
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Avg",
+              "type": "{{svm}} / {{volume}}",
+              "volume": ""
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "svm",
+                "volume",
+                "Avg"
               ]
             }
           }
@@ -833,7 +1528,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 37
       },
       "id": 28,
       "panels": [],
@@ -859,7 +1554,7 @@
         "h": 9,
         "w": 8,
         "x": 0,
-        "y": 24
+        "y": 38
       },
       "hiddenSeries": false,
       "id": 30,
@@ -893,7 +1588,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources, volume_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "topk($TopResources, volume_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
@@ -962,7 +1657,7 @@
         "h": 9,
         "w": 8,
         "x": 8,
-        "y": 24
+        "y": 38
       },
       "hiddenSeries": false,
       "id": 31,
@@ -996,7 +1691,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources, volume_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "topk($TopResources, volume_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "{{svm}} - {{volume}}",
@@ -1066,7 +1761,7 @@
         "h": 9,
         "w": 8,
         "x": 16,
-        "y": 24
+        "y": 38
       },
       "hiddenSeries": false,
       "id": 32,
@@ -1100,7 +1795,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources, volume_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "topk($TopResources, volume_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
@@ -1169,7 +1864,7 @@
         "h": 9,
         "w": 8,
         "x": 0,
-        "y": 33
+        "y": 47
       },
       "hiddenSeries": false,
       "id": 33,
@@ -1203,7 +1898,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources, volume_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "topk($TopResources, volume_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
@@ -1272,7 +1967,7 @@
         "h": 9,
         "w": 8,
         "x": 8,
-        "y": 33
+        "y": 47
       },
       "hiddenSeries": false,
       "id": 34,
@@ -1306,7 +2001,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources, volume_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "topk($TopResources, volume_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
@@ -1375,7 +2070,7 @@
         "h": 9,
         "w": 8,
         "x": 16,
-        "y": 33
+        "y": 47
       },
       "hiddenSeries": false,
       "id": 35,
@@ -1409,7 +2104,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources, volume_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "topk($TopResources, volume_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
@@ -1458,6 +2153,241 @@
         "align": false,
         "alignLevel": null
       }
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 56
+      },
+      "id": 70,
+      "panels": [],
+      "title": "Per Volume Statistics",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 0,
+        "y": 57
+      },
+      "hiddenSeries": false,
+      "id": 83,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "show": true,
+        "sort": "avg",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.6",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:417",
+          "alias": "/Volume Total Size/",
+          "dashes": true,
+          "fill": 0,
+          "lines": false,
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "volume_size_total{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{svm}} - {{volume}} - Volume Total Size",
+          "refId": "D"
+        },
+        {
+          "exemplar": false,
+          "expr": "volume_size_used{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{svm}} - {{volume}} - Volume Size Used",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Per Volume Space Used",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transformations": [],
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:123",
+          "format": "decbytes",
+          "label": "Used",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:124",
+          "format": "decbytes",
+          "label": "Total",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 12,
+        "y": 57
+      },
+      "hiddenSeries": false,
+      "id": 84,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "show": true,
+        "sort": "avg",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.6",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "volume_size_used_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{svm}} - {{volume}} - Volume Size Used",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Per Volume Space Used Percent",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transformations": [],
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:123",
+          "format": "percent",
+          "label": "%",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:124",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
     }
   ],
   "refresh": "1m",
@@ -1488,7 +2418,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(node_labels{system_type!=\"7mode\"}, datacenter)",
+        "definition": "label_values(node_labels{system_type=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -1498,7 +2428,7 @@
         "name": "Datacenter",
         "options": [],
         "query": {
-          "query": "label_values(node_labels{system_type!=\"7mode\"}, datacenter)",
+          "query": "label_values(node_labels{system_type=\"7mode\"}, datacenter)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -1703,7 +2633,7 @@
     ]
   },
   "timezone": "",
-  "title": "NetApp Detail: Volume",
-  "uid": "widNk59Mz",
+  "title": "NetApp Detail: Volume 7 mode",
+  "uid": "widNk59Mp",
   "version": 1
 }

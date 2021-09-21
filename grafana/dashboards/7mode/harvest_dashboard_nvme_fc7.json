@@ -651,7 +651,7 @@
               "refId": "A"
             },
             {
-              "expr": "nic_state{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
+              "expr": "nic_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
               "format": "table",
               "hide": false,
               "instant": true,
