@@ -13,15 +13,10 @@ counters:
     - ^volume
     - ^vserver => svm
 plugins:
-  LabelAgent:
-    value_mapping:
-      - status state online `1`
-    value_to_num:
-      - new_status state online online `0`
-    split:
-      - path `/` ,,,lun
-  Aggregator:
-    - aggr
+  - LabelAgent:
+    value_mapping: status state online `1`
+    value_to_num: new_status state online online `0`
+    split: path `/` ,,,lun
 export_options:
   instance_keys:
     - node

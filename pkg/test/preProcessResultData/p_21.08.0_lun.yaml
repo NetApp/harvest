@@ -20,8 +20,6 @@ plugins:
       - new_status state online online `0`
     split:
       - path `/` ,,,lun
-  Aggregator:
-    - aggr
 export_options:
   instance_keys:
     - node

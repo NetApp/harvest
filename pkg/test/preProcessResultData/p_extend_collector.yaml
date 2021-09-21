@@ -1,0 +1,6 @@
+schedule:
+  instance: 650s
+  data: 185s
+objects:
+  Node: node2.yaml
+  Sensor: sensor.yaml

@@ -2,13 +2,16 @@ package test
 
 import (
 	"goharvest2/pkg/tree"
+	"goharvest2/pkg/tree/yaml"
+	"io/ioutil"
+	"strings"
 	"testing"
 )
 
 // Merge default.yaml and custom.yaml
 func TestNode_Merge(t *testing.T) {
-	defaultTemplate, _ := tree.Import("yaml", "testdata/default.yaml")
-	customTemplate, _ := tree.Import("yaml", "testdata/custom.yaml")
+	defaultTemplate, _ := tree.Import("yaml", "testdata/default_collector.yaml")
+	customTemplate, _ := tree.Import("yaml", "testdata/extend_collector.yaml")
 	defaultTemplate.Merge(customTemplate, []string{"objects"})
 
 	// count number of objects post merge
@@ -51,8 +54,19 @@ func TestNode_Merge(t *testing.T) {
 // change is LabelAgent child will have list of rules instead of key-value pair
 func TestNode_MergeCollector(t *testing.T) {
 	defaultTemplate, _ := tree.Import("yaml", "testdata/lun.yaml")
-	customTemplate, _ := tree.Import("yaml", "testdata/custom_lun.yaml")
+	customTemplate, _ := tree.Import("yaml", "testdata/extend_lun.yaml")
+	defaultTemplate.PreprocessTemplate()
+	customTemplate.PreprocessTemplate()
 	defaultTemplate.Merge(customTemplate, nil)
+
+	gotString1, _ := yaml.Dump(defaultTemplate)
+	gotString := strings.TrimRight(string(gotString1), "\r\n")
+	expected, _ := ioutil.ReadFile("mergeTemplates/lun_merge.yaml")
+	expectedString := strings.TrimRight(string(expected), "\r\n")
+
+	if gotString != expectedString {
+		t.Errorf("got %v, want %v", gotString, expectedString)
+	}
 
 	// object name overwrite
 	want := "customLun"
@@ -207,7 +221,9 @@ func TestNode_MergeCollector(t *testing.T) {
 // LabelAgent child did have key-value pair of rules instead of a list
 func TestNode_MergeCollectorOld(t *testing.T) {
 	defaultTemplate, _ := tree.Import("yaml", "testdata/lun.yaml")
-	customTemplate, _ := tree.Import("yaml", "testdata/custom_lun_old.yaml")
+	customTemplate, _ := tree.Import("yaml", "testdata/21.08.0_extend_lun.yaml")
+	defaultTemplate.PreprocessTemplate()
+	customTemplate.PreprocessTemplate()
 	defaultTemplate.Merge(customTemplate, nil)
 
 	// plugins labelagent add new child to existing plugin
@@ -264,5 +280,66 @@ func TestNode_MergeCollectorOld(t *testing.T) {
 
 	if got5 != want5 {
 		t.Errorf("got %v, want %v", got5, want5)
+	}
+}
+
+func TestNode_PreProcessCollector(t *testing.T) {
+
+	tests := []struct {
+		name        string
+		sourceFile  string
+		compareFile string
+	}{
+		{name: "preprocess template from 21.08.0", sourceFile: "testdata/21.08.0_extend_lun.yaml", compareFile: "preProcessResultData/p_21.08.0_extend_lun.yaml"},
+		{name: "preprocess template after 21.08.0", sourceFile: "testdata/21.08.0_lun.yaml", compareFile: "preProcessResultData/p_21.08.0_lun.yaml"},
+		{name: "process collector template", sourceFile: "testdata/default_collector.yaml", compareFile: "preProcessResultData/p_default_collector.yaml"},
+		{name: "process extended collector template", sourceFile: "testdata/extend_collector.yaml", compareFile: "preProcessResultData/p_extend_collector.yaml"},
+		{name: "process extended object template", sourceFile: "testdata/extend_lun.yaml", compareFile: "preProcessResultData/p_extend_lun.yaml"},
+		{name: "process object template", sourceFile: "testdata/lun.yaml", compareFile: "preProcessResultData/p_lun.yaml"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			template, _ := tree.Import("yaml", tt.sourceFile)
+			template.PreprocessTemplate()
+			got, _ := yaml.Dump(template)
+			expected, _ := ioutil.ReadFile(tt.compareFile)
+			gotString := strings.TrimRight(string(got), "\r\n")
+			expectedString := strings.TrimRight(string(expected), "\r\n")
+			if gotString != expectedString {
+				t.Errorf("got %v, want %v", gotString, expectedString)
+			}
+		})
+	}
+}
+
+func TestNode_PreProcessMergeCollector(t *testing.T) {
+
+	tests := []struct {
+		name           string
+		baseTemplate   string
+		extendTemplate string
+		mergeTemplate  string
+	}{
+		{name: "Case1: Both base and extended template follow new convention for labelagent which is list", baseTemplate: "testdata/lun.yaml", extendTemplate: "testdata/extend_lun.yaml", mergeTemplate: "mergeTemplates/lun_merge.yaml"},
+		{name: "Case2: base template follow new convention for labelagent and extended template follow 21.08.0", baseTemplate: "testdata/lun.yaml", extendTemplate: "testdata/21.08.0_extend_lun.yaml", mergeTemplate: "mergeTemplates/lun_merge_21.08.0_extended.yaml"},
+		{name: "Case3: base template follow old convention for labelagent and extended template follow 21.08.0", baseTemplate: "testdata/21.08.0_lun.yaml", extendTemplate: "testdata/21.08.0_extend_lun.yaml", mergeTemplate: "mergeTemplates/21.08.0_lun_merge_21.08.0_extended.yaml"},
+		{name: "Case4: base template follow old convention for labelagent and extended template follow new", baseTemplate: "testdata/21.08.0_lun.yaml", extendTemplate: "testdata/extend_lun.yaml", mergeTemplate: "mergeTemplates/21.08.0_lun_merge_extended.yaml"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			baseTemplate, _ := tree.Import("yaml", tt.baseTemplate)
+			extendTemplate, _ := tree.Import("yaml", tt.extendTemplate)
+			baseTemplate.PreprocessTemplate()
+			extendTemplate.PreprocessTemplate()
+			baseTemplate.Merge(extendTemplate, nil)
+			gotString1, _ := yaml.Dump(baseTemplate)
+			gotString := strings.TrimRight(string(gotString1), "\r\n")
+			expected, _ := ioutil.ReadFile(tt.mergeTemplate)
+			expectedString := strings.TrimRight(string(expected), "\r\n")
+
+			if gotString != expectedString {
+				t.Errorf("got %v, want %v", gotString, expectedString)
+			}
+		})
 	}
 }

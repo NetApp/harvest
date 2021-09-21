@@ -1,4 +1,4 @@
-name: Lun
+name: customLun
 query: lun-get-iter
 object: lun
 counters:
@@ -16,12 +16,15 @@ plugins:
   LabelAgent:
     value_mapping:
       - status state online `1`
+      - custom_status state online `1`
     value_to_num:
       - new_status state online online `0`
     split:
       - path `/` ,,,lun
+    new_mapping:
+      - xyz
   Aggregator:
-    - aggr
+    - node<>node_cpu1
 export_options:
   instance_keys:
     - node
@@ -29,5 +32,10 @@ export_options:
     - lun
     - volume
     - svm
+    - node1
   instance_labels:
     - state
+override:
+  KB_copied: delta
+  key2: test
+export_data: false

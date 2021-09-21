@@ -1,0 +1,12 @@
+plugins:
+  - nic
+  LabelAgent:
+    value_mapping:
+      - custom_status state online `1`
+    value_to_num:
+      - new_status state online online `0`
+    new_mapping:
+      - xyz
+  Aggregator:
+    - node<>node_cpu1
+    - nodetest
