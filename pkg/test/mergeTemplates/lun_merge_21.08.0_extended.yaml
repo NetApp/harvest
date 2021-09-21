@@ -16,12 +16,18 @@ plugins:
   LabelAgent:
     value_mapping:
       - status state online `1`
+      - custom_status state online `1`
     value_to_num:
       - new_status state online online `0`
     split:
       - path `/` ,,,lun
+    new_mapping:
+      - xyz
   Aggregator:
     - aggr
+    - node<>node_cpu1
+    - nodetest
+  - nic
 export_options:
   instance_keys:
     - node

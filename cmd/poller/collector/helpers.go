@@ -122,9 +122,13 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 		c.Logger.Info().Msgf("best-fit template [%s] for [%s]", subTemplateFp, verWithDots)
 		if finalTemplate == nil {
 			finalTemplate, err = tree.Import("yaml", subTemplateFp)
+			if err == nil {
+				finalTemplate.PreprocessTemplate()
+			}
 		} else {
 			tempTemplate, err = tree.Import("yaml", subTemplateFp)
 			if err == nil {
+				tempTemplate.PreprocessTemplate()
 				// merge templates
 				finalTemplate.Merge(tempTemplate, nil)
 			}

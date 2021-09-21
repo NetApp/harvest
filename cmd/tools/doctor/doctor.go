@@ -16,8 +16,8 @@ import (
 type options struct {
 	ShouldPrintConfig bool
 	Color             string
-	TemplatePath1     string
-	TemplatePath2     string
+	BaseTemplate      string
+	MergeTemplate     string
 }
 
 var opts = &options{
@@ -40,29 +40,31 @@ var Cmd = &cobra.Command{
 var mergeCmd = &cobra.Command{
 	Use:    "merge",
 	Hidden: true,
-	Short:  "generate Harvest systemd target for all pollers defined in config",
+	Short:  "merge templates",
 	Run:    doMergeCmd,
 }
 
 func doMergeCmd(cmd *cobra.Command, _ []string) {
-	doMerge(opts.TemplatePath1, opts.TemplatePath2)
+	doMerge(opts.BaseTemplate, opts.MergeTemplate)
 }
 
 func doMerge(path1 string, path2 string) {
 	template, err := tree.Import("yaml", path1)
 	if err != nil {
-		fmt.Printf("error reading template file. err=%+v\n", err)
+		fmt.Printf("error reading template file [%s]. err=%+v\n", path1, err)
 		return
 	}
 	subTemplate, err := tree.Import("yaml", path2)
 	if err != nil {
-		fmt.Printf("error reading template file. err=%+v\n", err)
+		fmt.Printf("error reading template file [%s] err=%+v\n", path2, err)
 		return
 	}
+	template.PreprocessTemplate()
+	subTemplate.PreprocessTemplate()
 	template.Merge(subTemplate, nil)
 	data, err := harvestyaml.Dump(template)
 	if err != nil {
-		fmt.Printf("error reading parsing template file. err=%+v\n", err)
+		fmt.Printf("error reading parsing template file [%s]  err=%+v\n", data, err)
 		return
 	}
 	fmt.Println(string(data))
@@ -270,8 +272,8 @@ func init() {
 	Cmd.AddCommand(mergeCmd)
 	mFlags := mergeCmd.PersistentFlags()
 
-	mFlags.StringVarP(&opts.TemplatePath1, "template", "", "", "First file path ")
-	mFlags.StringVarP(&opts.TemplatePath2, "with", "", "", "Second file path. ")
+	mFlags.StringVarP(&opts.BaseTemplate, "template", "", "", "Base template path ")
+	mFlags.StringVarP(&opts.MergeTemplate, "with", "", "", "Extended file path. ")
 
 	_ = mergeCmd.MarkPersistentFlagRequired("template")
 	_ = mergeCmd.MarkPersistentFlagRequired("with")

@@ -270,25 +270,54 @@ func (n *Node) Union(source *Node) {
 }
 
 //fetchRoot get Top most parent of a child
-func fetchRoot(source *Node) *Node {
-	if source != nil && source.GetParent() != nil && source.GetParent().GetNameS() == "Root" {
-		return source
+func (n *Node) fetchRoot() *Node {
+	if n == nil {
+		return nil
 	}
-	return fetchRoot(source.GetParent())
+	p := n.GetParent()
+	if p != nil && p.GetNameS() == "Root" {
+		return n
+	}
+	return p.fetchRoot()
 }
 
-//Merge Merge templates
-// skipOverwrite is list of parents under which overwrite will be ignored.
-// Case1: objects in default.yaml
-// Case2: plugins in collector templates
-func (me *Node) Merge(source *Node, skipOverwrite []string) {
-	if len(me.Content) == 0 {
-		me.Content = source.Content
+//fetchRoot return if a parent name ancestor exists
+func (n *Node) searchAncestor(ancestor string) *Node {
+	if n == nil {
+		return nil
 	}
-	for _, child := range source.Children {
+	p := n.GetParent()
+	if p != nil && p.GetNameS() == ancestor {
+		return n
+	}
+	return p.searchAncestor(ancestor)
+}
+
+func (me *Node) PreprocessTemplate() {
+	for _, child := range me.Children {
 		mine := me.GetChild(child.GetName())
-		rootName := fetchRoot(child).GetNameS()
-		if child.GetName() == nil {
+		if mine != nil && len(child.GetName()) > 0 {
+			if mine.searchAncestor("LabelAgent") != nil {
+				if len(mine.GetContentS()) > 0 {
+					mine.NewChildS("", child.GetContentS())
+					mine.SetContentS("")
+				}
+			}
+			mine.PreprocessTemplate()
+		}
+	}
+}
+
+//Merge method will merge the subtemplate into the receiver, modifying the receiver in-place.
+//skipOverwrite is a readonly list of keys that will not be overwritten in the receiver.
+func (me *Node) Merge(subtemplate *Node, skipOverwrite []string) {
+	if len(me.Content) == 0 {
+		me.Content = subtemplate.Content
+	}
+	for _, child := range subtemplate.Children {
+		mine := me.GetChild(child.GetName())
+		//rootName := child.fetchRoot().GetNameS()
+		if len(child.GetName()) == 0 {
 			if mine != nil && mine.GetParent() != nil && mine.GetParent().GetChildByContent(child.GetContentS()) == nil {
 				mine.GetParent().AddChild(child)
 			} else {
@@ -298,24 +327,11 @@ func (me *Node) Merge(source *Node, skipOverwrite []string) {
 			}
 		} else if mine == nil {
 			me.AddChild(child)
-			if me.parent != nil && me.parent.GetNameS() == "plugins" {
-				if len(child.GetContentS()) > 0 {
-					child.NewChildS("", child.GetContentS())
-					child.SetContentS("")
-				}
-			}
 		} else {
-			if rootName == "plugins" {
-				content := child.GetContentS()
-				if len(content) > 0 && mine.GetChildByContent(content) == nil {
-					mine.NewChildS("", content)
-				}
+			if mine.GetParent() != nil && util.Contains(skipOverwrite, mine.GetParent().GetNameS()) {
+				mine.SetContentS(mine.GetContentS() + "," + child.GetContentS())
 			} else {
-				if mine.GetParent() != nil && util.Contains(skipOverwrite, mine.GetParent().GetNameS()) {
-					mine.SetContentS(mine.GetContentS() + "," + child.GetContentS())
-				} else {
-					mine.SetContentS(child.GetContentS())
-				}
+				mine.SetContentS(child.GetContentS())
 			}
 			mine.Merge(child, skipOverwrite)
 		}
