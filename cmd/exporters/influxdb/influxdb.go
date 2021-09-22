@@ -10,6 +10,7 @@ import (
 	"goharvest2/pkg/color"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
+	"goharvest2/pkg/util"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -112,7 +113,8 @@ func (e *InfluxDB) Init() error {
 
 		urlToUSe := "http://" + *addr + ":" + strconv.Itoa(*port)
 		url = &urlToUSe
-		e.url = fmt.Sprintf("%s/api/v%s/write?org=%s&bucket=%s&precision=%s", *url, *version, *org, *bucket, *precision)
+		e.url = fmt.Sprintf("%s/api/v%s/write?org=%s&bucket=%s&precision=%s", *url, *version, util.EscapeUrl(*org),
+			util.EscapeUrl(*bucket), *precision)
 	} else {
 		e.url = *url
 	}

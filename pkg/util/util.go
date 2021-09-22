@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"net/url"
 	"os"
 	"os/exec"
 	"runtime"
@@ -124,6 +125,10 @@ func RemoveEmptyStrings(s []string) []string {
 		}
 	}
 	return r
+}
+
+func EscapeUrl(urlParam string) string {
+	return url.PathEscape(urlParam)
 }
 
 func GetPid(pollerName string) ([]int, error) {
