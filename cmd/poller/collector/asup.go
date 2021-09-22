@@ -37,6 +37,11 @@ type TargetInfo struct {
 	ClusterUuid string
 }
 
+type Id struct {
+	SerialNumber string `json:"serial-number"`
+	SystemId     string `json:"system-id"`
+}
+
 type InstanceInfo struct {
 	Count      int64
 	DataPoints int64
@@ -44,7 +49,7 @@ type InstanceInfo struct {
 	ApiTime    int64
 	ParseTime  int64
 	PluginTime int64
-	Uuids      *[]string `json:"Uuids,omitempty"`
+	Ids        []Id `json:"Ids,omitempty"`
 }
 
 type platformInfo struct {

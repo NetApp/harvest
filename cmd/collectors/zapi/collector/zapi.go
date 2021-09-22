@@ -13,6 +13,7 @@ import (
 	"goharvest2/cmd/collectors/zapiperf/plugins/nic"
 	"goharvest2/cmd/collectors/zapiperf/plugins/volume"
 	"goharvest2/cmd/poller/plugin"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -406,9 +407,9 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 	}
 
 	// update metadata
-	me.Metadata.LazySetValueInt64("api_time", "data", apiT.Microseconds())
-	me.Metadata.LazySetValueInt64("parse_time", "data", parseT.Microseconds())
-	me.Metadata.LazySetValueUint64("count", "data", count)
+	_ = me.Metadata.LazySetValueInt64("api_time", "data", apiT.Microseconds())
+	_ = me.Metadata.LazySetValueInt64("parse_time", "data", parseT.Microseconds())
+	_ = me.Metadata.LazySetValueUint64("count", "data", count)
 	me.AddCollectCount(count)
 
 	return me.Matrix, nil
@@ -460,7 +461,9 @@ func (me *Zapi) CollectAutoSupport(p *collector.Payload) {
 	if me.Name == "Zapi" && (me.Object == "Volume" || me.Object == "Node") {
 		p.Target.Version = me.GetHostVersion()
 		p.Target.Model = me.GetHostModel()
-		p.Target.Serial = me.GetHostUUID()
+		if p.Target.Serial == "" {
+			p.Target.Serial = me.GetHostUUID()
+		}
 		p.Target.ClusterUuid = me.Client.ClusterUuid()
 
 		md := me.GetMetadata()
@@ -474,35 +477,45 @@ func (me *Zapi) CollectAutoSupport(p *collector.Payload) {
 		}
 
 		if me.Object == "Node" {
-			nodes, err := me.getNodeUuids()
+			nodeIds, err := me.getNodeUuids()
 			if err != nil {
 				// log but don't return so the other info below is collected
 				me.Logger.Error().
 					Err(err).
 					Msg("Unable to get nodes.")
-				nodes = make([]string, 0)
+				nodeIds = make([]collector.Id, 0)
 			}
-			info.Uuids = &nodes
+			info.Ids = nodeIds
 			p.Nodes = &info
+			if me.Client.IsClustered() {
+				// Since the serial number is bogus in c-mode
+				// use the first node's serial number instead (the nodes were ordered in getNodeUuids())
+				if len(nodeIds) > 0 {
+					p.Target.Serial = nodeIds[0].SerialNumber
+				}
+			}
 		} else if me.Object == "Volume" {
 			p.Volumes = &info
 		}
 	}
 }
 
-func (me *Zapi) getNodeUuids() ([]string, error) {
+func (me *Zapi) getNodeUuids() ([]collector.Id, error) {
 	var (
 		response *node.Node
 		nodes    []*node.Node
 		err      error
-		uuids    []string
+		infos    []collector.Id
 	)
 
-	// 7-mode does not have this information
+	// Since 7-mode is like single node, return the ids for it
 	if !me.Client.IsClustered() {
-		return make([]string, 0), err
+		return []collector.Id{{
+			SerialNumber: me.Client.Serial(),
+			SystemId:     me.Client.ClusterUuid(),
+		}}, nil
 	}
-	request := "cluster-node-get-iter"
+	request := "system-node-get-iter"
 
 	if response, err = me.Client.InvokeRequestString(request); err != nil {
 		return nil, fmt.Errorf("failure invoking zapi: %s %w", request, err)
@@ -513,10 +526,16 @@ func (me *Zapi) getNodeUuids() ([]string, error) {
 	}
 
 	for _, n := range nodes {
-		uuid := n.GetChildContentS("node-uuid")
-		uuids = append(uuids, uuid)
+		sn := n.GetChildContentS("node-serial-number")
+		systemId := n.GetChildContentS("node-system-id")
+		infos = append(infos, collector.Id{SerialNumber: sn, SystemId: systemId})
 	}
-	return uuids, nil
+	// When Harvest monitors a c-mode system, the first node is picked.
+	// Sort so there's a higher chance the same node is picked each time this method is called
+	sort.SliceStable(infos, func(i, j int) bool {
+		return infos[i].SerialNumber < infos[j].SerialNumber
+	})
+	return infos, nil
 }
 
 // Interface guards
