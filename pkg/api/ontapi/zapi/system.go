@@ -123,7 +123,6 @@ func (c *Client) getSystem() error {
 		if attrs := response.GetChildS("attributes"); attrs != nil {
 			if info := attrs.GetChildS("cluster-identity-info"); info != nil {
 				s.name = info.GetChildContentS("cluster-name")
-				s.serial = info.GetChildContentS("cluster-serial-number")
 				s.clusterUuid = info.GetChildContentS("cluster-uuid")
 			}
 		}
