@@ -24,12 +24,13 @@ func (r *RPM) Install() bool {
 		panic(err)
 	}
 	log.Println("Downloaded: " + r.path)
-	log.Println("Check and remove harvest ")
-	unInstallOutput := utils.Run("yum", "remove", "-y", "harvest")
-	log.Println(unInstallOutput)
+	Uninstall()
+	harvestObj := new(Harvest)
 	log.Println("Installing " + rpmFileName)
 	installOutput := utils.Run("yum", "install", "-y", rpmFileName)
 	log.Println(installOutput)
+	log.Println("Stopping harvest before copying ONTAP certificates")
+	harvestObj.Stop()
 	log.Println("Copy certificates files into harvest directory")
 	path := HarvestHome + "/certificates"
 	if utils.FileExists(path) {
@@ -42,7 +43,6 @@ func (r *RPM) Install() bool {
 	if copyErr != nil {
 		return false
 	} //use file directly from the repo
-	harvestObj := new(Harvest)
 	harvestObj.Start()
 	status := harvestObj.AllRunning()
 	return status

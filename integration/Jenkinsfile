@@ -33,31 +33,14 @@ pipeline {
                         label "rhel"
                     }
                     stages('Test on RPM Pkg') {
-                        stage('Cleanup Workspace') {
+                        stage('Setup') {
                             steps {
+                                printNodeInfo()
                                 cleanWs()
                                 stopAndRemoveDockers()
+                                setupWorkspace()
                             }
                         }
-
-                        stage('Setup GO') {
-                            steps {
-                                sh '''
-                                wget --quiet -O go.tar.gz "https://dl.google.com/go/$(curl https://golang.org/VERSION?m=text).linux-amd64.tar.gz"
-                                ls -ltrh
-                                rm -rf /usr/local/go && tar -C /usr/local -xzf ./go.tar.gz
-                                '''
-                            }
-                        }
-
-                        stage('Code Checkout') {
-                            steps {
-                               sh '''
-                               git clone --single-branch --branch $BRANCH https://github.com/NetApp/harvest.git
-                                '''
-                            }
-                        }
-
                         stage('Install NATIVE pkg') {
                             steps {
                                 sh '''
@@ -73,6 +56,15 @@ pipeline {
                                 bash $WORKSPACE/harvest/integration/test/test.sh regression
                                 """
                             }
+                            post {
+                                always {
+                                     sh '''
+                                         rm -f native_logs.zip
+                                         zip -r native_logs.zip /var/log/harvest
+                                         '''
+                                     archiveArtifacts artifacts: "native_logs.zip", fingerprint: true
+                                }
+                            }
                         }
                     }
 
@@ -82,28 +74,12 @@ pipeline {
                         label "rhel"
                     }
                     stages('Test on RPM Pkg') {
-                        stage('Cleanup Workspace') {
+                        stage('Setup') {
                             steps {
+                                printNodeInfo()
                                 cleanWs()
                                 stopAndRemoveDockers()
-                            }
-                        }
-
-                        stage('Setup GO') {
-                            steps {
-                                sh '''
-                                wget --quiet -O go.tar.gz "https://dl.google.com/go/$(curl https://golang.org/VERSION?m=text).linux-amd64.tar.gz"
-                                ls -ltrh
-                                rm -rf /usr/local/go && tar -C /usr/local -xzf ./go.tar.gz
-                                '''
-                            }
-                        }
-
-                        stage('Code Checkout') {
-                            steps {
-                               sh '''
-                               git clone --single-branch --branch $BRANCH https://github.com/NetApp/harvest.git
-                                '''
+                                setupWorkspace()
                             }
                         }
                         stage('Install RPM pkg') {
@@ -131,6 +107,15 @@ pipeline {
                                 bash $WORKSPACE/harvest/integration/test/test.sh regression
                                 """
                             }
+                            post {
+                                always {
+                                     sh '''
+                                          rm -f rpm_logs.zip
+                                          zip -r rpm_logs.zip /var/log/harvest
+                                          '''
+                                      archiveArtifacts artifacts: "rpm_logs.zip", fingerprint: true
+                                }
+                            }
                         }
                     }
 
@@ -140,31 +125,14 @@ pipeline {
                         label "rhel"
                     }
                     stages('Test on docker Pkg') {
-                        stage('Cleanup Workspace') {
+                        stage('Setup') {
                             steps {
+                                printNodeInfo()
                                 cleanWs()
                                 stopAndRemoveDockers()
+                                setupWorkspace()
                             }
                         }
-
-                        stage('Setup GO') {
-                            steps {
-                                sh '''
-                                wget --quiet -O go.tar.gz "https://dl.google.com/go/$(curl https://golang.org/VERSION?m=text).linux-amd64.tar.gz"
-                                ls -ltrh
-                                rm -rf /usr/local/go && tar -C /usr/local -xzf ./go.tar.gz
-                                '''
-                            }
-                        }
-
-                        stage('Code Checkout') {
-                           steps {
-                               sh '''
-                               git clone --single-branch --branch $BRANCH https://github.com/NetApp/harvest.git
-                                '''
-                            }
-                        }
-
                         stage('Install Docker') {
                             steps {
                                 sh '''
@@ -189,20 +157,46 @@ pipeline {
                                 sh """
                                 bash $WORKSPACE/harvest/integration/test/test.sh regression
                                 """
+
+                            }
+                            post {
+                                always {
+                                    sh """
+                                        bash $WORKSPACE/harvest/integration/test/test.sh copy_docker_logs
+                                        rm -f docker_logs.zip
+                                        zip -r docker_logs.zip /var/log/harvest
+                                    """
+                                    archiveArtifacts artifacts: "docker_logs.zip", fingerprint: true
+                                }
                             }
                         }
-                    }
 
+                    }
                 }
             }
         }
     }
 }
 
-void stopAndRemoveDockers() {
+def void stopAndRemoveDockers() {
     sh '''
         for container_id in $(docker ps -a -q);do docker stop $container_id && docker rm $container_id;done
         for image_id in $(docker images -q);do docker rmi $image_id;done
         for volume_id in $(docker volume ls -q); do docker volume rm -f $volume_id;done
     '''
+}
+
+def void setupWorkspace() {
+ sh '''
+    wget --quiet -O go.tar.gz "https://dl.google.com/go/$(curl https://golang.org/VERSION?m=text).linux-amd64.tar.gz"
+    rm -rf /usr/local/go && tar -C /usr/local -xzf ./go.tar.gz
+    git clone --single-branch --branch $BRANCH https://github.com/NetApp/harvest.git
+'''
+}
+
+def void printNodeInfo() {
+        def socket = new DatagramSocket()
+        socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
+        nodeIp = socket.getLocalAddress().getHostAddress();
+        println("The Node IP Address is: ${nodeIp}")
 }
