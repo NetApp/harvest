@@ -51,6 +51,13 @@ Exporters:
     version: 4
     port: 8088
     token: abcdefghijklmnopqrstuvwxyz
+  influx-test-space:
+    exporter: InfluxDB
+    addr: localhost
+    port: 8086
+    org: harvest 2
+    bucket: harvest  09
+    token: REDACTED
 Defaults:
   collectors:
     - Zapi
