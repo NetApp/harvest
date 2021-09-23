@@ -269,24 +269,15 @@ func (n *Node) Union(source *Node) {
 	}
 }
 
-//fetchRoot get Top most parent of a child
-func (n *Node) fetchRoot() *Node {
-	if n == nil {
-		return nil
-	}
-	p := n.GetParent()
-	if p != nil && p.GetNameS() == "Root" {
-		return n
-	}
-	return p.fetchRoot()
-}
-
 //fetchRoot return if a parent name ancestor exists
 func (n *Node) searchAncestor(ancestor string) *Node {
 	if n == nil {
 		return nil
 	}
 	p := n.GetParent()
+	if p == nil {
+		return nil
+	}
 	if p != nil && p.GetNameS() == ancestor {
 		return n
 	}
@@ -311,12 +302,14 @@ func (me *Node) PreprocessTemplate() {
 //Merge method will merge the subtemplate into the receiver, modifying the receiver in-place.
 //skipOverwrite is a readonly list of keys that will not be overwritten in the receiver.
 func (me *Node) Merge(subtemplate *Node, skipOverwrite []string) {
+	if subtemplate == nil {
+		return
+	}
 	if len(me.Content) == 0 {
 		me.Content = subtemplate.Content
 	}
 	for _, child := range subtemplate.Children {
 		mine := me.GetChild(child.GetName())
-		//rootName := child.fetchRoot().GetNameS()
 		if len(child.GetName()) == 0 {
 			if mine != nil && mine.GetParent() != nil && mine.GetParent().GetChildByContent(child.GetContentS()) == nil {
 				mine.GetParent().AddChild(child)

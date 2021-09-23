@@ -60,9 +60,9 @@ func TestNode_MergeCollector(t *testing.T) {
 	defaultTemplate.Merge(customTemplate, nil)
 
 	gotString1, _ := yaml.Dump(defaultTemplate)
-	gotString := strings.TrimRight(string(gotString1), "\r\n")
+	gotString := strings.TrimSpace(string(gotString1))
 	expected, _ := ioutil.ReadFile("mergeTemplates/lun_merge.yaml")
-	expectedString := strings.TrimRight(string(expected), "\r\n")
+	expectedString := strings.TrimSpace(string(expected))
 
 	if gotString != expectedString {
 		t.Errorf("got %v, want %v", gotString, expectedString)
@@ -303,8 +303,8 @@ func TestNode_PreProcessCollector(t *testing.T) {
 			template.PreprocessTemplate()
 			got, _ := yaml.Dump(template)
 			expected, _ := ioutil.ReadFile(tt.compareFile)
-			gotString := strings.TrimRight(string(got), "\r\n")
-			expectedString := strings.TrimRight(string(expected), "\r\n")
+			gotString := strings.TrimSpace(string(got))
+			expectedString := strings.TrimSpace(string(expected))
 			if gotString != expectedString {
 				t.Errorf("got %v, want %v", gotString, expectedString)
 			}
@@ -333,9 +333,9 @@ func TestNode_PreProcessMergeCollector(t *testing.T) {
 			extendTemplate.PreprocessTemplate()
 			baseTemplate.Merge(extendTemplate, nil)
 			gotString1, _ := yaml.Dump(baseTemplate)
-			gotString := strings.TrimRight(string(gotString1), "\r\n")
+			gotString := strings.TrimSpace(string(gotString1))
 			expected, _ := ioutil.ReadFile(tt.mergeTemplate)
-			expectedString := strings.TrimRight(string(expected), "\r\n")
+			expectedString := strings.TrimSpace(string(expected))
 
 			if gotString != expectedString {
 				t.Errorf("got %v, want %v", gotString, expectedString)
