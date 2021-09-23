@@ -155,7 +155,7 @@ pipeline {
     stage('Run Tests') {
         when {
             expression {
-                return env.RUN_TEST == 'true';
+                return params.RUN_TEST == 'true';
             }
         }
         steps {

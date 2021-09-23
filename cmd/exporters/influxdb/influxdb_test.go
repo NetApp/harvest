@@ -111,6 +111,18 @@ func TestExportDebug(t *testing.T) {
 	}
 }
 
+// test that whitespace is escaped in the  parameters
+// are handled properly to construct server URL
+func TestWhiteSpaceInParameter(t *testing.T) {
+	expectedURL := "http://localhost:8086/api/v2/write?org=harvest%202&bucket=harvest%20%2009&precision=s"
+	exporterName := "influx-test-space"
+	influx := setupInfluxDB(exporterName, t)
+
+	if influx.url != expectedURL {
+		t.Fatalf("FAIL - expected [%s]\n                             got [%s]", expectedURL, influx.url)
+	}
+}
+
 /* Uncomment to test against a running InfluxDB instance
    ! Edit the params values below
    ! Uncomment import "goharvest2/share/tree/node"
