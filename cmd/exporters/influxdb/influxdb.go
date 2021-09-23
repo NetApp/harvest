@@ -1,6 +1,7 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
+
 package influxdb
 
 import (
@@ -10,9 +11,9 @@ import (
 	"goharvest2/pkg/color"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
-	"goharvest2/pkg/util"
 	"io/ioutil"
 	"net/http"
+	url2 "net/url"
 	"strconv"
 	"time"
 )
@@ -113,8 +114,8 @@ func (e *InfluxDB) Init() error {
 
 		urlToUSe := "http://" + *addr + ":" + strconv.Itoa(*port)
 		url = &urlToUSe
-		e.url = fmt.Sprintf("%s/api/v%s/write?org=%s&bucket=%s&precision=%s", *url, *version, util.EscapeUrl(*org),
-			util.EscapeUrl(*bucket), *precision)
+		e.url = fmt.Sprintf("%s/api/v%s/write?org=%s&bucket=%s&precision=%s",
+			*url, *version, url2.PathEscape(*org), url2.PathEscape(*bucket), *precision)
 	} else {
 		e.url = *url
 	}

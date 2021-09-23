@@ -118,9 +118,7 @@ func TestWhiteSpaceInParameter(t *testing.T) {
 	exporterName := "influx-test-space"
 	influx := setupInfluxDB(exporterName, t)
 
-	if influx.url == expectedURL {
-		t.Logf("OK - url: [%s]", expectedURL)
-	} else {
+	if influx.url != expectedURL {
 		t.Fatalf("FAIL - expected [%s]\n                             got [%s]", expectedURL, influx.url)
 	}
 }
