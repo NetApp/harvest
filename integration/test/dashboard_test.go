@@ -32,6 +32,7 @@ type Dashboard struct {
 	Title       string `json:"title"`
 	FolderTitle string `json:"folderTitle"`
 	FolderUrl   string `json:"folderUrl"`
+	FolderId    int64  `json:"folderId"`
 }
 
 func (suite *DashboardImportTestSuite) SetupSuite() {
@@ -127,22 +128,19 @@ func GetFolderId(folderName string, t *testing.T) int64 {
 
 func VerifyDashboards(folderId int64, expectedName []string, t *testing.T) {
 	log.Println(fmt.Sprintf("Find list of dashboard for folder %d", folderId))
-	url := utils.GetGrafanaHttpUrl() + fmt.Sprintf("/api/search?folderIds=%d", folderId)
+	url := utils.GetGrafanaHttpUrl() + "/api/search?type=dash-db"
 	log.Println(url)
 	data, err := utils.GetResponseBody(url)
 	utils.PanicIfNotNil(err)
 	var dataDashboard []Dashboard
 	err = json.Unmarshal(data, &dataDashboard)
 	utils.PanicIfNotNil(err)
-	totalDashboardCount := len(expectedName)
-	assert.True(t, totalDashboardCount == len(dataDashboard), fmt.Sprintf("Expected dashboard %d but found %d dashboards",
-		totalDashboardCount, len(dataDashboard)))
 	var actualNames []string
 	var notFoundList []string
+	log.Println(folderId)
 	for _, values := range dataDashboard {
 		actualNames = append(actualNames, values.Title)
 	}
-
 	for _, title := range expectedName {
 		if !(utils.Contains(actualNames, title)) {
 			notFoundList = append(notFoundList, title)
