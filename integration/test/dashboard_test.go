@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/suite"
 	"log"
 	"testing"
+	"time"
 )
 
 type DashboardImportTestSuite struct {
@@ -45,6 +46,7 @@ func (suite *DashboardImportTestSuite) SetupSuite() {
 	if !status {
 		assert.Fail(suite.T(), "Grafana import operation is failed")
 	}
+	time.Sleep(30 * time.Second)
 }
 
 func (suite *DashboardImportTestSuite) TestImport() {
@@ -63,55 +65,24 @@ func (suite *DashboardImportTestSuite) TestImport() {
 	assert.Fail(suite.T(), "Unable to find harvest folder")
 }
 
-func (suite *DashboardImportTestSuite) TestDashboardCount() {
-	log.Println("Find harvest folder id")
-	data, err := utils.GetResponseBody(utils.GetGrafanaHttpUrl() + "/api/folders?limit=10")
-	utils.PanicIfNotNil(err)
-	var dataFolder []Folder
-	var folderId int64
-	err = json.Unmarshal(data, &dataFolder)
-	utils.PanicIfNotNil(err)
-	for _, values := range dataFolder {
-		if values.Title == "Harvest 2.0" {
-			folderId = values.Id
-			break
-		}
-	}
-	if !(folderId > 0) {
-		assert.Fail(suite.T(), "Folder id is empty or zero.")
-	}
+func (suite *DashboardImportTestSuite) TestCModeDashboardCount() {
+	folderId := GetFolderId("Harvest 2.0", suite.T())
 	expectedName := []string{"Harvest Metadata", "NetApp Detail: Aggregate", "NetApp Detail: Cluster",
 		"NetApp Detail: Disk", "NetApp Detail: LUN", "NetApp Detail: Network", "NetApp Detail: Network  - Details",
 		"NetApp Detail: Network with NVMe/FC", "NetApp Detail: Node", "NetApp Detail: Node - Details",
 		"NetApp Detail: Shelf", "NetApp Detail: SnapMirror", "NetApp Detail: SVM", "NetApp Detail: SVM - Details",
 		"NetApp Detail: Volume", "NetApp Detail: Volume - Details"}
 
-	log.Println(fmt.Sprintf("Find list of dashboard for folder %d", folderId))
-	url := utils.GetGrafanaHttpUrl() + fmt.Sprintf("/api/search?folderIds=%d", folderId)
-	log.Println(url)
-	data, err = utils.GetResponseBody(url)
-	utils.PanicIfNotNil(err)
-	var dataDashboard []Dashboard
-	err = json.Unmarshal(data, &dataDashboard)
-	utils.PanicIfNotNil(err)
-	totalDashboardCount := len(expectedName)
-	assert.True(suite.T(), totalDashboardCount == len(dataDashboard), fmt.Sprintf("Expected dashboard %d but found %d dashboards",
-		totalDashboardCount, len(dataDashboard)))
-	var actualNames []string
-	var notFoundList []string
-	for _, values := range dataDashboard {
-		actualNames = append(actualNames, values.Title)
-	}
+	VerifyDashboards(folderId, expectedName, suite.T())
+}
 
-	for _, title := range expectedName {
-		if !(utils.Contains(actualNames, title)) {
-			notFoundList = append(notFoundList, title)
-		}
-	}
-	if len(notFoundList) > 0 {
-		log.Println("The following dashboards were not imported successfully.")
-		assert.Fail(suite.T(), fmt.Sprintf("One or more dashboards %s were missing/ not imported", notFoundList))
-	}
+func (suite *DashboardImportTestSuite) TestSevenModeDashboardCount() {
+
+	folderId := GetFolderId("7 mode", suite.T())
+	expectedName := []string{"Harvest Metadata 7 mode", "NetApp Detail: Aggregate 7 mode", "NetApp Detail: Cluster 7 mode",
+		"NetApp Detail: Disk 7 mode", "NetApp Detail: LUN 7 mode", "NetApp Detail: Network 7 mode", "NetApp Detail: Network with NVMe/FC 7 mode",
+		"NetApp Detail: Node 7 mode", "NetApp Detail: Shelf 7 mode", "NetApp Detail: Volume 7 mode"}
+	VerifyDashboards(folderId, expectedName, suite.T())
 }
 
 func (suite *DashboardImportTestSuite) TestImportForInvalidJson() {
@@ -132,4 +103,53 @@ func (suite *DashboardImportTestSuite) TestImportForInvalidJson() {
 // a normal test function and pass our suite to suite.Run
 func TestDashboardImportSuite(t *testing.T) {
 	suite.Run(t, new(DashboardImportTestSuite))
+}
+
+func GetFolderId(folderName string, t *testing.T) int64 {
+	log.Println("Find " + folderName + " folder id")
+	data, err := utils.GetResponseBody(utils.GetGrafanaHttpUrl() + "/api/folders?limit=100")
+	utils.PanicIfNotNil(err)
+	var dataFolder []Folder
+	var folderId int64
+	err = json.Unmarshal(data, &dataFolder)
+	utils.PanicIfNotNil(err)
+	for _, values := range dataFolder {
+		if values.Title == folderName {
+			folderId = values.Id
+			break
+		}
+	}
+	if !(folderId > 0) {
+		assert.Fail(t, "Folder id is empty or zero.")
+	}
+	return folderId
+}
+
+func VerifyDashboards(folderId int64, expectedName []string, t *testing.T) {
+	log.Println(fmt.Sprintf("Find list of dashboard for folder %d", folderId))
+	url := utils.GetGrafanaHttpUrl() + fmt.Sprintf("/api/search?folderIds=%d", folderId)
+	log.Println(url)
+	data, err := utils.GetResponseBody(url)
+	utils.PanicIfNotNil(err)
+	var dataDashboard []Dashboard
+	err = json.Unmarshal(data, &dataDashboard)
+	utils.PanicIfNotNil(err)
+	totalDashboardCount := len(expectedName)
+	assert.True(t, totalDashboardCount == len(dataDashboard), fmt.Sprintf("Expected dashboard %d but found %d dashboards",
+		totalDashboardCount, len(dataDashboard)))
+	var actualNames []string
+	var notFoundList []string
+	for _, values := range dataDashboard {
+		actualNames = append(actualNames, values.Title)
+	}
+
+	for _, title := range expectedName {
+		if !(utils.Contains(actualNames, title)) {
+			notFoundList = append(notFoundList, title)
+		}
+	}
+	if len(notFoundList) > 0 {
+		log.Println("The following dashboards were not imported successfully.")
+		assert.Fail(t, fmt.Sprintf("One or more dashboards %s were missing/ not imported", notFoundList))
+	}
 }
