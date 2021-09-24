@@ -290,12 +290,36 @@ func TestNode_PreProcessCollector(t *testing.T) {
 		sourceFile  string
 		compareFile string
 	}{
-		{name: "preprocess template from 21.08.0", sourceFile: "testdata/21.08.0_extend_lun.yaml", compareFile: "preProcessResultData/p_21.08.0_extend_lun.yaml"},
-		{name: "preprocess template after 21.08.0", sourceFile: "testdata/21.08.0_lun.yaml", compareFile: "preProcessResultData/p_21.08.0_lun.yaml"},
-		{name: "process collector template", sourceFile: "testdata/default_collector.yaml", compareFile: "preProcessResultData/p_default_collector.yaml"},
-		{name: "process extended collector template", sourceFile: "testdata/extend_collector.yaml", compareFile: "preProcessResultData/p_extend_collector.yaml"},
-		{name: "process extended object template", sourceFile: "testdata/extend_lun.yaml", compareFile: "preProcessResultData/p_extend_lun.yaml"},
-		{name: "process object template", sourceFile: "testdata/lun.yaml", compareFile: "preProcessResultData/p_lun.yaml"},
+		{
+			name:        "preprocess template from 21.08.0",
+			sourceFile:  "testdata/21.08.0_extend_lun.yaml",
+			compareFile: "preProcessResultData/p_21.08.0_extend_lun.yaml",
+		},
+		{
+			name:        "preprocess template after 21.08.0",
+			sourceFile:  "testdata/21.08.0_lun.yaml",
+			compareFile: "preProcessResultData/p_21.08.0_lun.yaml",
+		},
+		{
+			name:        "process collector template",
+			sourceFile:  "testdata/default_collector.yaml",
+			compareFile: "preProcessResultData/p_default_collector.yaml",
+		},
+		{
+			name:        "process extended collector template",
+			sourceFile:  "testdata/extend_collector.yaml",
+			compareFile: "preProcessResultData/p_extend_collector.yaml",
+		},
+		{
+			name:        "process extended object template",
+			sourceFile:  "testdata/extend_lun.yaml",
+			compareFile: "preProcessResultData/p_extend_lun.yaml",
+		},
+		{
+			name:        "process object template",
+			sourceFile:  "testdata/lun.yaml",
+			compareFile: "preProcessResultData/p_lun.yaml",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -306,7 +330,7 @@ func TestNode_PreProcessCollector(t *testing.T) {
 			gotString := strings.TrimSpace(string(got))
 			expectedString := strings.TrimSpace(string(expected))
 			if gotString != expectedString {
-				t.Errorf("got %v, want %v", gotString, expectedString)
+				t.Errorf("\ngot:\n%v\n\nwant:\n%v", gotString, expectedString)
 			}
 		})
 	}
@@ -320,10 +344,30 @@ func TestNode_PreProcessMergeCollector(t *testing.T) {
 		extendTemplate string
 		mergeTemplate  string
 	}{
-		{name: "Case1: Both base and extended template follow new convention for labelagent which is list", baseTemplate: "testdata/lun.yaml", extendTemplate: "testdata/extend_lun.yaml", mergeTemplate: "mergeTemplates/lun_merge.yaml"},
-		{name: "Case2: base template follow new convention for labelagent and extended template follow 21.08.0", baseTemplate: "testdata/lun.yaml", extendTemplate: "testdata/21.08.0_extend_lun.yaml", mergeTemplate: "mergeTemplates/lun_merge_21.08.0_extended.yaml"},
-		{name: "Case3: base template follow old convention for labelagent and extended template follow 21.08.0", baseTemplate: "testdata/21.08.0_lun.yaml", extendTemplate: "testdata/21.08.0_extend_lun.yaml", mergeTemplate: "mergeTemplates/21.08.0_lun_merge_21.08.0_extended.yaml"},
-		{name: "Case4: base template follow old convention for labelagent and extended template follow new", baseTemplate: "testdata/21.08.0_lun.yaml", extendTemplate: "testdata/extend_lun.yaml", mergeTemplate: "mergeTemplates/21.08.0_lun_merge_extended.yaml"},
+		{
+			name:           "Case1: Both base and extended template follow new convention for labelagent which is list",
+			baseTemplate:   "testdata/lun.yaml",
+			extendTemplate: "testdata/extend_lun.yaml",
+			mergeTemplate:  "mergeTemplates/lun_merge.yaml",
+		},
+		{
+			name:           "Case2: base template follow new convention for labelagent and extended template follow 21.08.0",
+			baseTemplate:   "testdata/lun.yaml",
+			extendTemplate: "testdata/21.08.0_extend_lun.yaml",
+			mergeTemplate:  "mergeTemplates/lun_merge_21.08.0_extended.yaml",
+		},
+		{
+			name:           "Case3: base template follow old convention for labelagent and extended template follow 21.08.0",
+			baseTemplate:   "testdata/21.08.0_lun.yaml",
+			extendTemplate: "testdata/21.08.0_extend_lun.yaml",
+			mergeTemplate:  "mergeTemplates/21.08.0_lun_merge_21.08.0_extended.yaml",
+		},
+		{
+			name:           "Case4: base template follow old convention for labelagent and extended template follow new",
+			baseTemplate:   "testdata/21.08.0_lun.yaml",
+			extendTemplate: "testdata/extend_lun.yaml",
+			mergeTemplate:  "mergeTemplates/21.08.0_lun_merge_extended.yaml",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -338,7 +382,7 @@ func TestNode_PreProcessMergeCollector(t *testing.T) {
 			expectedString := strings.TrimSpace(string(expected))
 
 			if gotString != expectedString {
-				t.Errorf("got %v, want %v", gotString, expectedString)
+				t.Errorf("\ngot:\n%v\n\nwant:\n%v", gotString, expectedString)
 			}
 		})
 	}
