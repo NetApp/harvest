@@ -59,7 +59,7 @@ pipeline {
                 wget -q -O go.tar.gz "https://dl.google.com/go/$(curl https://golang.org/VERSION?m=text).linux-amd64.tar.gz"
                 rm -rf /usr/local/go && tar -C /usr/local -xzf go.tar.gz
                 '''
-                updateStatus(env.COMMIT_ID,"pending",env.BUILD_URL, "Build is running", env.GIT_REPO_STATUS_TOKEN)
+                updateStatus(env.COMMIT_ID,"pending",env.BUILD_URL, "Harvest CI is running", env.GIT_REPO_STATUS_TOKEN)
             }
         }
 
@@ -172,13 +172,13 @@ pipeline {
     }
     post {
         failure {
-            updateStatus(env.COMMIT_ID,"failure",env.BUILD_URL , "The build has completed", env.GIT_REPO_STATUS_TOKEN)
+            updateStatus(env.COMMIT_ID,"failure",env.BUILD_URL , "Harvest CI has completed", env.GIT_REPO_STATUS_TOKEN)
         }
         success {
-            updateStatus(env.COMMIT_ID,"success",env.BUILD_URL, "The build has completed", env.GIT_REPO_STATUS_TOKEN)
+            updateStatus(env.COMMIT_ID,"success",env.BUILD_URL, "Harvest CI has completed", env.GIT_REPO_STATUS_TOKEN)
         }
         aborted {
-            updateStatus(env.COMMIT_ID,"error",env.BUILD_URL, "The build has been aborted", env.GIT_REPO_STATUS_TOKEN)
+            updateStatus(env.COMMIT_ID,"error",env.BUILD_URL, "Harvest CI has been aborted", env.GIT_REPO_STATUS_TOKEN)
         }
     }
 }
