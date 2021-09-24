@@ -36,6 +36,7 @@ pipeline {
         targetParentLocation = "/opt/home/nightly/"
         harvestPath = "harvest"
         imageName = "rahulguptajss/harvest"
+        COMMIT_ID = sh(returnStdout: true, script: 'git rev-parse HEAD')
     }
 
     stages {
@@ -58,6 +59,7 @@ pipeline {
                 wget -q -O go.tar.gz "https://dl.google.com/go/$(curl https://golang.org/VERSION?m=text).linux-amd64.tar.gz"
                 rm -rf /usr/local/go && tar -C /usr/local -xzf go.tar.gz
                 '''
+                updateStatus(env.COMMIT_ID,"pending",env.BUILD_URL, "Harvest CI is running", env.GIT_REPO_STATUS_TOKEN)
             }
         }
 
@@ -152,7 +154,7 @@ pipeline {
           }
       }
 
-    stage('Run Tests') {
+      stage('Run Tests') {
         when {
             expression {
                 return params.RUN_TEST == 'true';
@@ -166,7 +168,18 @@ pipeline {
                 build job: 'harvest2_0/smoke', parameters: [string(name: 'BRANCH', value: "${BRANCH}"), string(name: 'NATIVE', value: "${nativeBuild}"),  string(name: 'RPM', value: "${rpmBuild}"), string(name: 'DOCKER', value: "${dockerBuild}")]
             }
         }
-     }
+      }
+    }
+    post {
+        failure {
+            updateStatus(env.COMMIT_ID,"failure",env.BUILD_URL , "Harvest CI has completed", env.GIT_REPO_STATUS_TOKEN)
+        }
+        success {
+            updateStatus(env.COMMIT_ID,"success",env.BUILD_URL, "Harvest CI has completed", env.GIT_REPO_STATUS_TOKEN)
+        }
+        aborted {
+            updateStatus(env.COMMIT_ID,"error",env.BUILD_URL, "Harvest CI has been aborted", env.GIT_REPO_STATUS_TOKEN)
+        }
     }
 }
 
@@ -175,4 +188,24 @@ def getBranchName(gitBranchName, paramBranchName) {
         return gitBranchName
     }
     return paramBranchName
+}
+
+def updateStatus(def commitId, def statusMsg, def buildUrl, def description, def gitToken) {
+    def post = (HttpURLConnection) new URL("https://api.github.com/repos/NetApp/harvest/statuses/${commitId}").openConnection();
+    def message = '{ "state" :  "'+statusMsg+'", "target_url": "'+buildUrl+'", "description": "'+description+'", "context" : "Integration test result"  }'
+    post.requestMethod = 'POST'
+    post.setDoInput(true);
+    post.setDoOutput(true);
+    post.setRequestProperty("Accept", "application/vnd.github.v3+json")
+    post.setRequestProperty("Authorization", "token ${gitToken}")
+    post.getOutputStream().write(message.getBytes("UTF-8"));
+    println(new String(post.getOutputStream().toByteArray(), "UTF-8"));
+    def postRC = post.getResponseCode();
+    println(postRC);
+    if(postRC.equals(201)) {
+        println(post.getInputStream().getText());
+    }else {
+        throw new RuntimeException("Failed to update GitHub Check "+post.getInputStream().getText())
+    }
+
 }
