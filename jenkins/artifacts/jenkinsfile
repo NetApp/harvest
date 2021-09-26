@@ -23,7 +23,9 @@ pipeline {
         RELEASE =sh (returnStdout: true, script: """
         echo \"${params.RELEASE}\"
         """).trim()
-        BRANCH = getBranchName(env.GIT_BRANCH, params.BRANCH)
+        BRANCH = sh (returnStdout: true, script: """
+                         echo \"${params.BRANCH}\"
+                         """).trim()
 		ASUP_MAKE_TARGET =sh (returnStdout: true, script: """
         echo \"${params.ASUP_MAKE_TARGET}\"
         """).trim()
@@ -109,9 +111,23 @@ pipeline {
                rm -rf dist
                make asup package VERSION=$VERSION RELEASE=$RELEASE ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET GIT_TOKEN=$GIT_TOKEN
                cp -RT ./dist/ $targetLocation
+               cp ./autosupport/asup $targetLocation/asup_linux_amd64
                 '''
             }
         }
+
+        stage('Build Alpine asup binary') {
+           steps {
+               sh '''
+               cd $harvestPath
+               export PATH=$PATH:/usr/local/go/bin
+               targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
+               docker run --rm -v "$PWD":./ -w ./ golang:1.17-alpine apk add --virtual build-dependencies build-base gcc make bash && make asup package VERSION=$VERSION RELEASE=$RELEASE ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET GIT_TOKEN=$GIT_TOKEN
+               cp ./autosupport/asup $targetLocation/asup_alpine_amd64
+                '''
+            }
+      }
+
         stage('Build Docker Image ') {
                 steps {
                   withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
@@ -153,6 +169,8 @@ pipeline {
             }
           }
       }
+
+
 
       stage('Run Tests') {
         when {
