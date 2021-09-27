@@ -16,7 +16,10 @@ plugins:
   - LabelAgent:
     # metric label zapi_value rest_value `default_value`
     value_to_num:
-      - 7mode_status health ok todo `0`
+      - new_status health ok todo `0`
+    exclude_equals:
+      - monitor `controller`
+      - monitor `system`
 
 export_options:
   instance_keys:

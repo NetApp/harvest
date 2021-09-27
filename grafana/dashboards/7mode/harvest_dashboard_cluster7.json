@@ -236,7 +236,7 @@
         },
         {
           "exemplar": false,
-          "expr": "node_7mode_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\",monitor=\"node-connect\"}",
+          "expr": "node_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -418,7 +418,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "node_7mode_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\", monitor=\"node-connect\"}",
+          "expr": "node_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "instant": true,
           "interval": "",
           "legendFormat": "",
