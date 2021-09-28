@@ -37,6 +37,7 @@ pipeline {
         harvestPath = "harvest"
         imageName = "rahulguptajss/harvest"
         COMMIT_ID = sh(returnStdout: true, script: 'git rev-parse HEAD')
+        GO_VERSION = 1.17
     }
 
     stages {
@@ -56,7 +57,7 @@ pipeline {
         stage('Setup GO') {
             steps {
                 sh '''
-                wget -q -O go.tar.gz "https://dl.google.com/go/$(curl https://golang.org/VERSION?m=text).linux-amd64.tar.gz"
+                wget -q -O go.tar.gz "https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz"
                 rm -rf /usr/local/go && tar -C /usr/local -xzf go.tar.gz
                 '''
                 updateStatus(env.COMMIT_ID,"pending",env.BUILD_URL, "Harvest CI is running", env.GIT_REPO_STATUS_TOKEN)
@@ -109,9 +110,23 @@ pipeline {
                rm -rf dist
                make asup package VERSION=$VERSION RELEASE=$RELEASE ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET GIT_TOKEN=$GIT_TOKEN
                cp -RT ./dist/ $targetLocation
+               cp ./autosupport/asup $targetLocation/asup_linux_amd64
                 '''
             }
         }
+
+        stage('Build alpine Autosupport binary') {
+           steps {
+               sh '''
+               cd $harvestPath
+               rm -rf ./autosupport/asup
+               targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
+               docker run --rm -v "$PWD":/$harvestPath -w /$harvestPath golang:${GO_VERSION}-alpine sh -c "apk add --virtual build-dependencies build-base gcc make bash git && export PATH=$PATH:/usr/local/go/bin && make asup VERSION=$VERSION RELEASE=$RELEASE ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET GIT_TOKEN=$GIT_TOKEN"
+               cp ./autosupport/asup $targetLocation/asup_alpine_amd64
+                '''
+            }
+      }
+
         stage('Build Docker Image ') {
                 steps {
                   withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
@@ -184,7 +199,8 @@ pipeline {
 }
 
 def getBranchName(gitBranchName, paramBranchName) {
-    if (gitBranchName?.trim() && gitBranchName != "origin/main") {
+    gitBranchName = gitBranchName.replace('origin/', '')
+    if (gitBranchName?.trim() && gitBranchName != "main") {
         return gitBranchName
     }
     return paramBranchName
