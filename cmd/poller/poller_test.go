@@ -10,7 +10,6 @@ func TestPingParsing(t *testing.T) {
 		out  string
 		ping float32
 		isOK bool
-		want int
 	}
 
 	tests := []test{

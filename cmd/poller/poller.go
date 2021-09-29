@@ -87,7 +87,7 @@ var deprecatedCollectors = map[string]string{
 	"psutil": "Unix",
 }
 
-var pingRegex = regexp.MustCompile(`round-trip min/avg/max = (.*?)/`)
+var pingRegex = regexp.MustCompile(` = (.*?)/`)
 
 // Poller is the instance that starts and monitors a
 // group of collectors and exporters as a single UNIX process
@@ -515,19 +515,12 @@ func (p *Poller) ping() (float32, bool) {
 }
 
 func (p *Poller) parsePing(out string) (float32, bool) {
-	// Non BusyBox systems include mdev in output
-	if x := strings.Split(out, "mdev = "); len(x) > 1 {
-		if y := strings.Split(x[len(x)-1], "/"); len(y) > 1 {
-			if p, err := strconv.ParseFloat(y[0], 32); err == nil {
+	if strings.Contains(out, "min/avg/max") {
+		match := pingRegex.FindStringSubmatch(out)
+		if len(match) > 0 {
+			if p, err := strconv.ParseFloat(match[1], 32); err == nil {
 				return float32(p), true
 			}
-		}
-	}
-	// BusyBox does not include mdev
-	match := pingRegex.FindStringSubmatch(out)
-	if len(match) > 0 {
-		if p, err := strconv.ParseFloat(match[1], 32); err == nil {
-			return float32(p), true
 		}
 	}
 	return 0, false
