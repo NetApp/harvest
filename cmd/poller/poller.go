@@ -50,6 +50,7 @@ import (
 	"os/exec"
 	"os/signal"
 	"path"
+	"regexp"
 	"runtime"
 	"runtime/debug"
 	"strconv"
@@ -85,6 +86,8 @@ var SIGNALS = []os.Signal{
 var deprecatedCollectors = map[string]string{
 	"psutil": "Unix",
 }
+
+var pingRegex = regexp.MustCompile(` = (.*?)/`)
 
 // Poller is the instance that starts and monitors a
 // group of collectors and exporters as a single UNIX process
@@ -504,13 +507,19 @@ func (p *Poller) handleSignals(signalChannel chan os.Signal) {
 func (p *Poller) ping() (float32, bool) {
 
 	cmd := exec.Command("ping", p.target, "-w", "5", "-c", "1", "-q")
+	output, err := cmd.Output()
+	if err != nil {
+		return 0, false
+	}
+	return p.parsePing(string(output))
+}
 
-	if out, err := cmd.Output(); err == nil {
-		if x := strings.Split(string(out), "mdev = "); len(x) > 1 {
-			if y := strings.Split(x[len(x)-1], "/"); len(y) > 1 {
-				if p, err := strconv.ParseFloat(y[0], 32); err == nil {
-					return float32(p), true
-				}
+func (p *Poller) parsePing(out string) (float32, bool) {
+	if strings.Contains(out, "min/avg/max") {
+		match := pingRegex.FindStringSubmatch(out)
+		if len(match) > 0 {
+			if p, err := strconv.ParseFloat(match[1], 32); err == nil {
+				return float32(p), true
 			}
 		}
 	}
