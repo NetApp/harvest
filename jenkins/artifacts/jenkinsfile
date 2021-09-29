@@ -208,6 +208,11 @@ def getBranchName(gitBranchName, paramBranchName) {
 
 def void updateStatus(def commitId, def statusMsg, def buildUrl, def description, def gitToken,
         def jobName) {
+    println("Job Name --> ${jobName}")
+    if(jobName.trim().startsWith("harvest/PR-")) {
+        println("Ignore GitHub check status update")
+        return
+    }
     def post = (HttpURLConnection) new URL("https://api.github.com/repos/NetApp/harvest/statuses/${commitId}").openConnection();
     def message = '{ "state" :  "'+statusMsg+'", "target_url": "'+buildUrl+'", "description": "'+description+'", "context" : "Integration test result"  }'
     post.requestMethod = 'POST'
@@ -217,11 +222,6 @@ def void updateStatus(def commitId, def statusMsg, def buildUrl, def description
     post.setRequestProperty("Authorization", "token ${gitToken}")
     post.getOutputStream().write(message.getBytes("UTF-8"));
     println(new String(post.getOutputStream().toByteArray(), "UTF-8"));
-    println("Job Name --> ${jobName}")
-    if(jobName.trim().startsWith("harvest/PR-")) {
-        println("Ignore GitHub check status update")
-        return
-    }
     def postRC = post.getResponseCode();
     println(postRC);
     if(postRC.equals(201)) {
