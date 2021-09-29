@@ -8,7 +8,6 @@ counters:
   diagnosis-config-info:
     - ^health                       => health
     - ^^monitor                     => monitor
-    - mon-version                   => monitor_version
 
 collect_only_labels: true
 
