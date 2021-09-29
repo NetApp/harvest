@@ -60,7 +60,7 @@ pipeline {
                 wget -q -O go.tar.gz "https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz"
                 rm -rf /usr/local/go && tar -C /usr/local -xzf go.tar.gz
                 '''
-                updateStatus(env.COMMIT_ID,"pending",env.BUILD_URL, "Harvest CI is running", env.GIT_REPO_STATUS_TOKEN)
+                updateStatus(env.COMMIT_ID,"pending",env.BUILD_URL, "Harvest CI is running", env.GIT_REPO_STATUS_TOKEN, env.JOB_NAME)
             }
         }
 
@@ -187,13 +187,13 @@ pipeline {
     }
     post {
         failure {
-            updateStatus(env.COMMIT_ID,"failure",env.BUILD_URL , "Harvest CI has completed", env.GIT_REPO_STATUS_TOKEN)
+            updateStatus(env.COMMIT_ID,"failure",env.BUILD_URL , "Harvest CI has completed", env.GIT_REPO_STATUS_TOKEN, env.JOB_NAME)
         }
         success {
-            updateStatus(env.COMMIT_ID,"success",env.BUILD_URL, "Harvest CI has completed", env.GIT_REPO_STATUS_TOKEN)
+            updateStatus(env.COMMIT_ID,"success",env.BUILD_URL, "Harvest CI has completed", env.GIT_REPO_STATUS_TOKEN, env.JOB_NAME)
         }
         aborted {
-            updateStatus(env.COMMIT_ID,"error",env.BUILD_URL, "Harvest CI has been aborted", env.GIT_REPO_STATUS_TOKEN)
+            updateStatus(env.COMMIT_ID,"error",env.BUILD_URL, "Harvest CI has been aborted", env.GIT_REPO_STATUS_TOKEN, env.JOB_NAME)
         }
     }
 }
@@ -206,7 +206,13 @@ def getBranchName(gitBranchName, paramBranchName) {
     return paramBranchName
 }
 
-def updateStatus(def commitId, def statusMsg, def buildUrl, def description, def gitToken) {
+def void updateStatus(def commitId, def statusMsg, def buildUrl, def description, def gitToken,
+        def jobName) {
+    println("Job Name --> ${jobName}")
+    if(jobName.trim().startsWith("harvest/PR-")) {
+        println("Ignore GitHub check status update")
+        return
+    }
     def post = (HttpURLConnection) new URL("https://api.github.com/repos/NetApp/harvest/statuses/${commitId}").openConnection();
     def message = '{ "state" :  "'+statusMsg+'", "target_url": "'+buildUrl+'", "description": "'+description+'", "context" : "Integration test result"  }'
     post.requestMethod = 'POST'
@@ -223,5 +229,4 @@ def updateStatus(def commitId, def statusMsg, def buildUrl, def description, def
     }else {
         throw new RuntimeException("Failed to update GitHub Check "+post.getInputStream().getText())
     }
-
 }
