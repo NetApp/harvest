@@ -76,6 +76,10 @@ func (my *Shelf) Init() error {
 		my.data[attribute] = matrix.New(my.Parent+".Shelf", "shelf_"+objectName, "shelf_"+objectName)
 		my.data[attribute].SetGlobalLabel("datacenter", my.ParentParams.GetChildContentS("datacenter"))
 		my.data[attribute].SetGlobalLabel("cluster", my.client.Name())
+		// For 7mode cluster is same as node
+		if !my.client.IsClustered() {
+			my.data[attribute].SetGlobalLabel("node", my.client.Name())
+		}
 
 		exportOptions := node.NewS("export_options")
 		instanceLabels := exportOptions.NewChildS("instance_labels", "")

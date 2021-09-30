@@ -134,7 +134,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "sum(count(shelf_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}) by (shelf_id))",
+          "expr": "sum(count(shelf_labels{datacenter=\"$Datacenter\",node=\"$Node\"}) by (shelf_id))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -214,7 +214,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(shelf_temperature_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
+          "expr": "avg(shelf_temperature_reading{datacenter=\"$Datacenter\",node=\"$Node\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -288,7 +288,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(shelf_fan_rpm{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
+          "expr": "avg(shelf_fan_rpm{datacenter=\"$Datacenter\",node=\"$Node\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -362,7 +362,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(shelf_sensor_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
+          "expr": "avg(shelf_sensor_reading{datacenter=\"$Datacenter\",node=\"$Node\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -476,7 +476,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "shelf_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "expr": "shelf_labels{datacenter=\"$Datacenter\",node=\"$Node\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -484,7 +484,7 @@
           "refId": "A"
         },
         {
-          "expr": "shelf_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "expr": "shelf_new_status{datacenter=\"$Datacenter\",node=\"$Node\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -620,7 +620,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "shelf_temperature_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\",shelf=~\"$Shelf\"}",
+          "expr": "shelf_temperature_reading{datacenter=\"$Datacenter\",node=\"$Node\",shelf=~\"$Shelf\"}",
           "interval": "",
           "legendFormat": "{{shelf}} · {{sensor_id}}",
           "refId": "A"
@@ -688,7 +688,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "shelf_fan_rpm{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "expr": "shelf_fan_rpm{datacenter=\"$Datacenter\",node=\"$Node\"}",
           "interval": "",
           "legendFormat": "{{shelf}} · {{fan_id}}",
           "refId": "A"
@@ -771,7 +771,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "shelf_voltage_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "expr": "shelf_voltage_reading{datacenter=\"$Datacenter\",node=\"$Node\"}",
           "interval": "",
           "legendFormat": "{{shelf}} · {{sensor_id}}",
           "refId": "A"
@@ -852,7 +852,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "shelf_sensor_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "expr": "shelf_sensor_reading{datacenter=\"$Datacenter\",node=\"$Node\"}",
           "interval": "",
           "legendFormat": "S{{sensor_id}}",
           "refId": "A"
@@ -919,17 +919,17 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(shelf_labels{datacenter=\"$Datacenter\"}, cluster)",
+        "definition": "label_values(shelf_labels{datacenter=\"$Datacenter\"}, node)",
         "description": null,
         "error": null,
         "hide": 0,
         "includeAll": false,
         "label": null,
         "multi": false,
-        "name": "Cluster",
+        "name": "Node",
         "options": [],
         "query": {
-          "query": "label_values(shelf_labels{datacenter=\"$Datacenter\"}, cluster)",
+          "query": "label_values(shelf_labels{datacenter=\"$Datacenter\"}, node)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -946,7 +946,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(shelf_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}, shelf)",
+        "definition": "label_values(shelf_labels{datacenter=\"$Datacenter\",node=\"$Node\"}, shelf)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -956,7 +956,7 @@
         "name": "Shelf",
         "options": [],
         "query": {
-          "query": "label_values(shelf_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}, shelf)",
+          "query": "label_values(shelf_labels{datacenter=\"$Datacenter\",node=\"$Node\"}, shelf)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,

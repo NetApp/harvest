@@ -120,7 +120,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "sum(count(aggr_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}) by (aggr))",
+          "expr": "sum(count(aggr_labels{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"}) by (aggr))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -193,7 +193,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "sum(aggr_raid_disk_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
+          "expr": "sum(aggr_raid_disk_count{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -266,7 +266,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "sum(aggr_volume_count_flexvol{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
+          "expr": "sum(aggr_volume_count_flexvol{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -330,7 +330,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(aggr_space_total{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
+          "expr": "sum(aggr_space_total{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -388,7 +388,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(aggr_space_available{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
+          "expr": "sum(aggr_space_available{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -445,7 +445,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "avg(aggr_space_used_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
+          "expr": "avg(aggr_space_used_percent{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -664,18 +664,6 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "cluster"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 121
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "volumes"
             },
             "properties": [
@@ -751,7 +739,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "aggr_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
+          "expr": "aggr_new_status{datacenter=\"$Datacenter\",node=~\"$Node\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -760,7 +748,7 @@
           "refId": "A"
         },
         {
-          "expr": "aggr_volume_count_flexvol{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
+          "expr": "aggr_volume_count_flexvol{datacenter=\"$Datacenter\",node=~\"$Node\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -769,7 +757,7 @@
           "refId": "B"
         },
         {
-          "expr": "aggr_raid_disk_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
+          "expr": "aggr_raid_disk_count{datacenter=\"$Datacenter\",node=~\"$Node\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -778,7 +766,7 @@
           "refId": "C"
         },
         {
-          "expr": "aggr_space_total{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
+          "expr": "aggr_space_total{datacenter=\"$Datacenter\",node=~\"$Node\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -787,7 +775,7 @@
           "refId": "D"
         },
         {
-          "expr": "aggr_space_used{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
+          "expr": "aggr_space_used{datacenter=\"$Datacenter\",node=~\"$Node\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -796,7 +784,7 @@
           "refId": "E"
         },
         {
-          "expr": "aggr_space_used_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
+          "expr": "aggr_space_used_percent{datacenter=\"$Datacenter\",node=~\"$Node\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -820,14 +808,13 @@
             },
             "indexByName": {
               "Time": 0,
-              "Value": 8,
+              "Value": 7,
               "__name__": 1,
-              "aggr": 5,
-              "cluster": 3,
+              "aggr": 4,
               "datacenter": 2,
-              "instance": 6,
-              "job": 7,
-              "node": 4
+              "instance": 5,
+              "job": 6,
+              "node": 3
             },
             "renameByName": {}
           }
@@ -889,7 +876,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "aggr_space_used{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_space_used{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -999,7 +986,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "aggr_space_available{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_space_available{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -1108,7 +1095,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "aggr_space_sis_saved{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_space_sis_saved{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -1217,7 +1204,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "aggr_space_sis_saved_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_space_sis_saved_percent{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "hide": false,
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}} - SIS",
@@ -1327,7 +1314,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "aggr_inode_used_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_inode_used_percent{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -1434,13 +1421,13 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "aggr_inode_files_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_inode_files_used{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}} - USED",
           "refId": "A"
         },
         {
-          "expr": "aggr_inode_files_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_inode_files_total{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "hide": false,
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}} - TOTAL",
@@ -1548,13 +1535,13 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "aggr_inode_inodefile_private_capacity{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_inode_inodefile_private_capacity{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}} - PRIVATE",
           "refId": "A"
         },
         {
-          "expr": "aggr_inode_inodefile_public_capacity{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_inode_inodefile_public_capacity{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "hide": false,
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}} - PUBLIC",
@@ -1664,13 +1651,13 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "aggr_snapshot_size_used{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_snapshot_size_used{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}} - USED",
           "refId": "A"
         },
         {
-          "expr": "aggr_snapshot_size_available{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_snapshot_size_available{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "hide": false,
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}} - AVAILABLE",
@@ -1780,7 +1767,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "aggr_snapshot_used_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_snapshot_used_percent{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -1889,7 +1876,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "aggr_snapshot_inode_used_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_snapshot_inode_used_percent{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -1996,13 +1983,13 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "aggr_snapshot_files_total{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_snapshot_files_total{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}} - TOTAL",
           "refId": "A"
         },
         {
-          "expr": "aggr_snapshot_files_used{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_snapshot_files_used{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "hide": false,
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}} - USED",
@@ -2110,20 +2097,20 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "aggr_snapshot_maxfiles_used{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_snapshot_maxfiles_used{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}} - USED",
           "refId": "A"
         },
         {
-          "expr": "aggr_snapshot_maxfiles_possible{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_snapshot_maxfiles_possible{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "hide": false,
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}} - POSSIBLE",
           "refId": "B"
         },
         {
-          "expr": "aggr_snapshot_maxfiles_available{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_snapshot_maxfiles_available{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "hide": false,
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}} - AVAILABLE",
@@ -2239,44 +2226,17 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(aggr_new_status{datacenter=\"$Datacenter\"}, cluster)",
+        "definition": "label_values(aggr_new_status{datacenter=\"$Datacenter\"}, node)",
         "description": null,
         "error": null,
         "hide": 0,
         "includeAll": false,
         "label": null,
         "multi": false,
-        "name": "Cluster",
-        "options": [],
-        "query": {
-          "query": "label_values(aggr_new_status{datacenter=\"$Datacenter\"}, cluster)",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tags": [],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(aggr_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}, node)",
-        "description": null,
-        "error": null,
-        "hide": 0,
-        "includeAll": true,
-        "label": null,
-        "multi": false,
         "name": "Node",
         "options": [],
         "query": {
-          "query": "label_values(aggr_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}, node)",
+          "query": "label_values(aggr_new_status{datacenter=\"$Datacenter\"}, node)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2293,7 +2253,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(aggr_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}, aggr)",
+        "definition": "label_values(aggr_new_status{datacenter=\"$Datacenter\",node=~\"$Node\"}, aggr)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -2303,7 +2263,7 @@
         "name": "Aggregate",
         "options": [],
         "query": {
-          "query": "label_values(aggr_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}, aggr)",
+          "query": "label_values(aggr_new_status{datacenter=\"$Datacenter\",node=~\"$Node\"}, aggr)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,

@@ -80,7 +80,7 @@ func (suite *DashboardImportTestSuite) TestCModeDashboardCount() {
 func (suite *DashboardImportTestSuite) TestSevenModeDashboardCount() {
 
 	folderId := GetFolderId("7 mode", suite.T())
-	expectedName := []string{"Harvest Metadata 7 mode", "NetApp Detail: Aggregate 7 mode", "NetApp Detail: Cluster 7 mode",
+	expectedName := []string{"NetApp Detail: Aggregate 7 mode", "NetApp Detail: Cluster 7 mode",
 		"NetApp Detail: Disk 7 mode", "NetApp Detail: LUN 7 mode", "NetApp Detail: Network 7 mode", "NetApp Detail: Network with NVMe/FC 7 mode",
 		"NetApp Detail: Node 7 mode", "NetApp Detail: Shelf 7 mode", "NetApp Detail: Volume 7 mode"}
 	VerifyDashboards(folderId, expectedName, suite.T())
