@@ -66,11 +66,11 @@ func doExport(_ *cobra.Command, _ []string) {
 	var doesFolderExist = doesGrafanaFolderExist()
 	var err error
 
-	if !(doesFolderExist[opts.cmodeFolder] && doesFolderExist[opts.mode7Folder]) {
-		if !doesFolderExist[opts.cmodeFolder] {
+	if !(doesFolderExist[&opts.cmodeFolder] && doesFolderExist[&opts.mode7Folder]) {
+		if !doesFolderExist[&opts.cmodeFolder] {
 			fmt.Printf("folder [%s] not found in Grafana\n", opts.cmodeFolder.folderName)
 		}
-		if !doesFolderExist[opts.mode7Folder] {
+		if !doesFolderExist[&opts.mode7Folder] {
 			fmt.Printf("folder [%s] not found in Grafana\n", opts.mode7Folder.folderName)
 		}
 		os.Exit(1)
@@ -101,7 +101,7 @@ func checkAndCreateFolder() {
 	for folder, value := range folderExists {
 		if value {
 			fmt.Printf("folder [%s] exists in Grafana - OK\n", folder.folderName)
-		} else if err = createFolder(opts, &folder); err != nil {
+		} else if err = createFolder(opts, folder); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		} else {
@@ -111,8 +111,8 @@ func checkAndCreateFolder() {
 
 }
 
-func doesGrafanaFolderExist() map[Folder]bool {
-	folderExists := make(map[Folder]bool)
+func doesGrafanaFolderExist() map[*Folder]bool {
+	folderExists := make(map[*Folder]bool)
 	var err error
 	if folderExists, err = checkFolder(opts); err != nil {
 		fmt.Println(err)
@@ -549,26 +549,26 @@ func createFolder(opts *options, folder *Folder) error {
 	return nil
 }
 
-func checkFolder(opts *options) (map[Folder]bool, error) {
+func checkFolder(opts *options) (map[*Folder]bool, error) {
 
 	result, status, code, err := sendRequestArray(opts, "GET", "/api/folders?limit=1000", nil)
 
 	if err != nil {
-		return map[Folder]bool{opts.cmodeFolder: false, opts.mode7Folder: false}, err
+		return map[*Folder]bool{&opts.cmodeFolder: false, &opts.mode7Folder: false}, err
 	}
 
 	if code != 200 {
-		return map[Folder]bool{opts.cmodeFolder: false, opts.mode7Folder: false}, errors.New("server response: " + status)
+		return map[*Folder]bool{&opts.cmodeFolder: false, &opts.mode7Folder: false}, errors.New("server response: " + status)
 	}
 
 	if result == nil || len(result) == 0 {
-		return map[Folder]bool{opts.cmodeFolder: false, opts.mode7Folder: false}, nil
+		return map[*Folder]bool{&opts.cmodeFolder: false, &opts.mode7Folder: false}, nil
 	}
 
 	cmodeFolder := folderExist(result, &opts.cmodeFolder)
 	nonCmodeFolder := folderExist(result, &opts.mode7Folder)
 
-	return map[Folder]bool{opts.cmodeFolder: cmodeFolder, opts.mode7Folder: nonCmodeFolder}, nil
+	return map[*Folder]bool{&opts.cmodeFolder: cmodeFolder, &opts.mode7Folder: nonCmodeFolder}, nil
 }
 
 func folderExist(result []map[string]interface{}, folder *Folder) bool {
