@@ -52,7 +52,7 @@ func TestGetPrometheusExporterPortsIssue284(t *testing.T) {
 }
 
 func loadTestData(yml string) {
-	err := loadHarvestConfig(yml)
+	err := TestLoadHarvestConfig(yml)
 	if err != nil {
 		panic(err)
 	}
@@ -225,7 +225,7 @@ func TestCollectorConfig(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := loadHarvestConfig(tt.path)
+			err := TestLoadHarvestConfig(tt.path)
 			if err != nil {
 				panic(err)
 			}
