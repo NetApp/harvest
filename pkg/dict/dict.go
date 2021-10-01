@@ -34,9 +34,11 @@ func (d *Dict) Set(key, val string) {
 
 // Set all global labels if already not exist
 func (d *Dict) SetAll(allKeyVals *Dict) {
-	for key, val := range allKeyVals.dict {
-		if _, has := d.dict[key]; !has {
-			d.dict[key] = val
+	if allKeyVals != nil {
+		for key, val := range allKeyVals.dict {
+			if _, has := d.dict[key]; !has {
+				d.dict[key] = val
+			}
 		}
 	}
 }
