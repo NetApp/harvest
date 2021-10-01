@@ -112,6 +112,10 @@ Pollers:
     datacenter: DC-01
     addr: 10.0.0.2
     collectors: [ Zapi ]
+    labels:
+      - org: abc
+      - site: RTP
+      - floor: 3
 
   unix-01:
     datacenter: local

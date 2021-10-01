@@ -198,6 +198,11 @@ func (me *Zapi) InitMatrix() error {
 
 	// Add system (cluster) name
 	me.Matrix.SetGlobalLabel("cluster", me.Client.Name())
+	if me.Params.HasChildS("labels") {
+		for _, l := range me.Params.GetChildS("labels").GetChildren() {
+			me.Matrix.SetGlobalLabel(l.GetNameS(), l.GetContentS())
+		}
+	}
 	// For 7mode cluster is same as node
 	if !me.Client.IsClustered() {
 		me.Matrix.SetGlobalLabel("node", me.Client.Name())

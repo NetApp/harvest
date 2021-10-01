@@ -60,8 +60,8 @@ var Config = HarvestConfig{}
 var configRead = false
 var ValidatePortInUse = false
 
-// Used by testing code to reload a new config
-func loadHarvestConfig(configPath string) error {
+// TestLoadHarvestConfig is used by testing code to reload a new config
+func TestLoadHarvestConfig(configPath string) error {
 	configRead = false
 	return LoadHarvestConfig(configPath)
 }
@@ -416,22 +416,23 @@ type Collector struct {
 }
 
 type Poller struct {
-	Datacenter     *string      `yaml:"datacenter,omitempty"`
-	Addr           *string      `yaml:"addr,omitempty"`
-	AuthStyle      *string      `yaml:"auth_style,omitempty"`
-	Username       *string      `yaml:"username,omitempty"`
-	Password       string       `yaml:"password,omitempty"`
-	UseInsecureTls *bool        `yaml:"use_insecure_tls,omitempty"`
-	SslCert        *string      `yaml:"ssl_cert,omitempty"`
-	SslKey         *string      `yaml:"ssl_key,omitempty"`
-	LogMaxBytes    *int64       `yaml:"log_max_bytes,omitempty"`
-	LogMaxFiles    *int         `yaml:"log_max_files,omitempty"`
-	Exporters      *[]string    `yaml:"exporters,omitempty"`
-	Collectors     *[]Collector `yaml:"collectors,omitempty"`
-	IsKfs          *bool        `yaml:"is_kfs,omitempty"`
-	PollerSchedule *string      `yaml:"poller_schedule,omitempty"`
-	ClientTimeout  *string      `yaml:"client_timeout,omitempty"`
-	LogSet         *[]string    `yaml:"log,omitempty"`
+	Datacenter     *string               `yaml:"datacenter,omitempty"`
+	Addr           *string               `yaml:"addr,omitempty"`
+	AuthStyle      *string               `yaml:"auth_style,omitempty"`
+	Username       *string               `yaml:"username,omitempty"`
+	Password       string                `yaml:"password,omitempty"`
+	UseInsecureTls *bool                 `yaml:"use_insecure_tls,omitempty"`
+	SslCert        *string               `yaml:"ssl_cert,omitempty"`
+	SslKey         *string               `yaml:"ssl_key,omitempty"`
+	LogMaxBytes    *int64                `yaml:"log_max_bytes,omitempty"`
+	LogMaxFiles    *int                  `yaml:"log_max_files,omitempty"`
+	Exporters      *[]string             `yaml:"exporters,omitempty"`
+	Collectors     *[]Collector          `yaml:"collectors,omitempty"`
+	IsKfs          *bool                 `yaml:"is_kfs,omitempty"`
+	PollerSchedule *string               `yaml:"poller_schedule,omitempty"`
+	ClientTimeout  *string               `yaml:"client_timeout,omitempty"`
+	LogSet         *[]string             `yaml:"log,omitempty"`
+	Labels         *[]*map[string]string `yaml:"labels,omitempty"`
 }
 
 func (p *Poller) Union(defaults *Poller) {

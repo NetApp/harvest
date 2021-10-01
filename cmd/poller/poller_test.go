@@ -1,6 +1,10 @@
 package main
 
-import "testing"
+import (
+	"goharvest2/pkg/conf"
+	"goharvest2/pkg/tree/node"
+	"testing"
+)
 
 func TestPingParsing(t *testing.T) {
 	poller := Poller{}
@@ -50,5 +54,38 @@ round-trip min/avg/max = 0.088/0.088/0.088 ms`,
 				t.Errorf("parsePing isOK got = %v, want %v", b, tt.isOK)
 			}
 		})
+	}
+}
+
+func TestUnion2(t *testing.T) {
+	configPath := "../../cmd/tools/doctor/testdata/testConfig.yml"
+	n := node.NewS("foople")
+	err := conf.TestLoadHarvestConfig(configPath)
+	if err != nil {
+		panic(err)
+	}
+	p, err := conf.GetPoller2(configPath, "infinity2")
+	Union2(n, p)
+	labels := n.GetChildS("labels")
+	if labels == nil {
+		t.Errorf("got nil, want labels")
+	}
+	type label struct {
+		key string
+		val string
+	}
+	wants := []label{
+		{key: "org", val: "abc"},
+		{key: "site", val: "RTP"},
+		{key: "floor", val: "3"},
+	}
+	for i, c := range labels.Children {
+		want := wants[i]
+		if want.key != c.GetNameS() {
+			t.Errorf("got key=%s, want=%s", c.GetNameS(), want.key)
+		}
+		if want.val != c.GetContentS() {
+			t.Errorf("got key=%s, want=%s", c.GetContentS(), want.val)
+		}
 	}
 }
