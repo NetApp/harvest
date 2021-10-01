@@ -75,11 +75,6 @@ func (my *Shelf) Init() error {
 
 		my.data[attribute] = matrix.New(my.Parent+".Shelf", "shelf_"+objectName, "shelf_"+objectName)
 		my.data[attribute].SetGlobalLabel("datacenter", my.ParentParams.GetChildContentS("datacenter"))
-		my.data[attribute].SetGlobalLabel("cluster", my.client.Name())
-		// For 7mode cluster is same as node
-		if !my.client.IsClustered() {
-			my.data[attribute].SetGlobalLabel("node", my.client.Name())
-		}
 
 		exportOptions := node.NewS("export_options")
 		instanceLabels := exportOptions.NewChildS("instance_labels", "")
@@ -143,6 +138,11 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	if result, err = my.client.InvokeRequestString(my.query); err != nil {
 		return nil, err
+	}
+
+	// Set all global labels from zapi.go if already not exist
+	for a, _ := range my.instanceLabels {
+		my.data[a].SetGlobalLabels(data.GetGlobalLabels())
 	}
 
 	if x := result.GetChildS("attributes-list"); x != nil {

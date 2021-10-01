@@ -256,6 +256,11 @@ func (me *Matrix) SetGlobalLabel(label, value string) {
 	me.globalLabels.Set(label, value)
 }
 
+// Set all global labels if already not exist
+func (me *Matrix) SetGlobalLabels(allLabels *dict.Dict) {
+	me.globalLabels.SetAll(allLabels)
+}
+
 func (me *Matrix) GetGlobalLabels() *dict.Dict {
 	return me.globalLabels
 }
