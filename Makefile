@@ -1,12 +1,13 @@
 # Copyright 2021 NetApp, Inc.  All Rights Reserved
 .DEFAULT_GOAL:=help
 
-.PHONY: help deps clean build test fmt vet package asup dev
+.PHONY: help deps clean build test fmt vet package asup dev fetch-asup
 
 ###############################################################################
 # Anything that needs to be done before we build everything
 #  Check for GCC, GO version, etc and anything else we are dependent on.
 ###############################################################################
+SHELL := /bin/bash
 GCC_EXISTS := $(shell which gcc)
 REQUIRED_GO_VERSION := 1.17
 ifneq (, $(shell which go))
@@ -28,6 +29,10 @@ ASUP_TMP := /tmp/asup
 ASUP_MAKE_TARGET ?= build #one of build/production
 GIT_TOKEN ?=
 CURRENT_DIR = $(shell pwd)
+ASUP_BIN = asup
+ASUP_BIN_VERSION ?= main #change it to match tag of release branch
+BIN_PLATFORM ?= linux
+BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 
 
 help:  ## Display this help
@@ -79,7 +84,7 @@ vet: ## run go vet on the source files
 	@echo "Running go vet"
 	go vet ./...
 
-build: clean deps fmt harvest ## Build the project
+build: clean deps fmt harvest fetch-asup ## Build the project
 
 package: clean deps build test dist-tar ## Package Harvest binary
 
@@ -130,7 +135,11 @@ asup:
 	@rm -rf autosupport/asup
 	@rm -rf ${ASUP_TMP}
 	@mkdir ${ASUP_TMP}
-	@git clone https://${GIT_TOKEN}@github.com/NetApp/harvest-private.git ${ASUP_TMP}
+	@if [[ $(shell git ls-remote --heads  https://${GIT_TOKEN}@github.com/NetApp/harvest-private.git ${BRANCH} | wc -l | xargs) == 0 ]]; then\
+		git clone -b main https://${GIT_TOKEN}@github.com/NetApp/harvest-private.git ${ASUP_TMP};\
+	else\
+		git clone -b ${BRANCH} https://${GIT_TOKEN}@github.com/NetApp/harvest-private.git ${ASUP_TMP};\
+	fi
 	@cd ${ASUP_TMP}/harvest-asup && make ${ASUP_MAKE_TARGET} VERSION=${VERSION} RELEASE=${RELEASE}
 	@mkdir -p ${CURRENT_DIR}/autosupport
 	@cp ${ASUP_TMP}/harvest-asup/bin/asup ${CURRENT_DIR}/autosupport
@@ -138,3 +147,9 @@ asup:
 dev: build
 	@echo "Deleting AutoSupport binary"
 	@rm -rf autosupport/asup
+
+fetch-asup:
+	@./.github/fetch-asup ${ASUP_BIN} ${ASUP_BIN_VERSION} 2>/dev/null   #Suppress Error in case of internet connectivity
+
+
+

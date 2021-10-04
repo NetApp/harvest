@@ -31,6 +31,7 @@ cp "$SRC/prom-stack.yml" "$BUILD/harvest/"
 cp "$SRC/harvest.cue" "$BUILD/harvest/"
 cp "$SRC/go.mod" "$BUILD/harvest/"
 cp "$SRC/go.sum" "$BUILD/harvest/"
+cp -r "$SRC/.github/" "$BUILD/harvest/"
 if [ -d "$SRC/vendor" ]; then
     cp -r "$SRC/vendor" "$BUILD/harvest/"
 fi
@@ -42,18 +43,16 @@ cp "$SRC/LICENSE" "$BUILD/harvest/"
 # build binaries
 echo "building binaries"
 cd "$BUILD/harvest"
-if [ -n "$ASUP_MAKE_TARGET" ] && [ -z "$GIT_TOKEN" ]
-then
-      echo "GIT_TOKEN is required when ASUP_MAKE_TARGET is passed!"
-      exit 1
-fi
 
 if [ -n "$ASUP_MAKE_TARGET" ] && [ -n "$GIT_TOKEN" ]
 then
-      make asup build VERSION=$VERSION RELEASE=$RELEASE ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET GIT_TOKEN=$GIT_TOKEN
+      make build asup VERSION=$VERSION RELEASE=$RELEASE ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET GIT_TOKEN=$GIT_TOKEN
 else
       make build VERSION=$HARVEST_VERSION RELEASE=$HARVEST_RELEASE
 fi
+
+rm -rf $BUILD/harvest/asup/*
+
 if [ ! $? -eq 0 ]; then
     echo "build failed, aborting"
     exit 1

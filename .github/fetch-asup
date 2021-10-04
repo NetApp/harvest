@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ $# -ne 2 ]; then
+    echo "You need to provide ASUP_BIN and ASUP_BINARY_VERSION as arguments"
+    exit 1
+fi
+
+ASUP_BIN_DIR=$(pwd)/"$1"
+ASUP_BIN_VERSION="$2"
+mkdir -p "$ASUP_BIN_DIR"
+
+COUNT_REPO_FOLDERS=($(find $ASUP_BIN_DIR/github.com/!net!app -mindepth 1 -maxdepth 1 -type d  | wc -l))
+if [ $COUNT_REPO_FOLDERS -gt 5 ]; then
+  rm -rf $ASUP_BIN_DIR/*
+fi
+GOMODCACHE=$ASUP_BIN_DIR go mod download github.com/NetApp/harvest-metrics@"$ASUP_BIN_VERSION"
+mod_bin=$(find "$ASUP_BIN_DIR" -name "*asup*" -name "*$BIN_PLATFORM*" -exec ls -t {} + | head -n 1)
+if [ -n "${mod_bin}" ]; then
+	cp -f "$mod_bin" ./autosupport/asup
+	chmod +x ./autosupport/asup
+	chmod -R +rw "$ASUP_BIN_DIR/github.com/"
+fi
