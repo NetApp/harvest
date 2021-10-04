@@ -1,6 +1,6 @@
 name:             Sensor
 query:            environment-sensors-get-iter
-object:           sensor
+object:           environment_sensor
 
 metric_type:      int64
 
