@@ -211,6 +211,7 @@ All pollers are defined in `harvest.yml`, the main configuration file of Harvest
 | `username`, `password` | required if `auth_style` is `basic_auth` |  |              |
 | `ssl_cert`, `ssl_key`  | optional if `auth_style` is `certificate_auth` | Absolute paths to SSL (client) certificate and key used to authenticate with the target system.<br /><br />If not provided, the poller will look for `<hostname>.key` and `<hostname>.pem` in `$HARVEST_HOME/cert/`.<br/><br/>To create certificates for ONTAP systems, see [using certificate authentication](docs/AuthAndPermissions.md#using-certificate-authentication)                        |              |
 | `use_insecure_tls`     | optional, bool |  If true, disable TLS verification when connecting to ONTAP cluster  | false         |
+| `labels`               | optional, list of key-value pairs              | each of the key-value pairs will be added to a poller's metrics. Details [below](#labels)                                                                                                                                                                                                                                                                                 |                    |
 | `log_max_bytes`        |  | Maximum size of the log file before it will be rotated | `10000000` (10 mb) |
 | `log_max_files`        |  | Number of rotated log files to keep | `10` |
 | `log`                  | optional, list of collector names              | matching collectors log their ZAPI request/response                                                                                                                                                                                                                                                                                                                         |                    |
@@ -276,3 +277,23 @@ For a list of collector-specific parameters, see the documentation of each colle
 
 ### [Unix](cmd/collectors/unix/README.md)
 
+### Labels
+
+Labels offer a way to add additional key-value pairs to a poller's metrics. These allow you to tag a cluster's metrics in a cross-cutting fashion. Here's an example:
+
+```
+  cluster-03:
+    datacenter: DC-01
+    addr: 10.0.1.1
+    labels:
+      - org: meg       # add an org label with the value "meg"
+      - site: rtp      # add a site label with the value "rtp"
+```
+
+These settings add two key-value pairs to each metric collected from `cluster-03` like this:
+
+```
+node_vol_cifs_write_data{org="meg",site="rtp",datacenter="DC-01",cluster="cluster-03",node="umeng-aff300-05"} 10
+```
+
+Keep in mind that each unique combination of key-value pairs increases the amount of stored data. Use them sparingly. See [PrometheusNaming](https://prometheus.io/docs/practices/naming/#labels) for details.

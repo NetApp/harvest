@@ -2,6 +2,8 @@ package harvest
 
 Exporters: [Name=_]: #Prom | #Influx
 
+label: [string]: string
+
 #Prom: {
 	local_http_addr?: "0.0.0.0" | "localhost" | "127.0.0.1"
 	addr?: string // deprecated
@@ -45,4 +47,5 @@ Pollers: [Name=_]: #Poller
 	collectors?: [...#CollectorDef] | [...string]
 	exporters: [...string]
 	log: [...string]
+	labels?: [...label]
 }
