@@ -119,7 +119,14 @@ func Dump(root *node.Node) ([]byte, error) {
 
 func dumpRecursive(node *node.Node, data *[][]byte, depth int) {
 	indentation := bytes.Repeat([]byte("  "), depth)
-	if len(node.GetName()) != 0 && len(node.GetContent()) != 0 {
+	parentName := "Root"
+	if node.GetParent() != nil {
+		parentName = node.GetParent().GetNameS()
+	}
+	// workaround to handle list of maps
+	if parentName == "labels" {
+		*data = append(*data, joinAll(indentation, []byte("- "), node.GetName(), []byte(": "), node.GetContent()))
+	} else if len(node.GetName()) != 0 && len(node.GetContent()) != 0 && parentName != "labels" {
 		*data = append(*data, joinAll(indentation, node.GetName(), []byte(": "), node.GetContent()))
 	} else if len(node.GetName()) != 0 {
 		*data = append(*data, joinAll(indentation, node.GetName(), []byte(":")))

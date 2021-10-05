@@ -478,7 +478,7 @@ func checkToken(opts *options, ignoreConfig bool) error {
 			}
 			tools.SetChildContentS("grafana_api_token", opts.token)
 			fmt.Printf("saving config file [%s]\n", configPath)
-			if err = conf.SafeConfig(params, configPath); err != nil {
+			if err = conf.SaveConfig(params, configPath); err != nil {
 				return err
 			}
 		}
