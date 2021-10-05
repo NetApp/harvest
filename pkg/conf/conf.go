@@ -92,7 +92,7 @@ func LoadHarvestConfig(configPath string) error {
 	return nil
 }
 
-func SafeConfig(n *node.Node, fp string) error {
+func SaveConfig(n *node.Node, fp string) error {
 	return tree.Export(n, "yaml", fp)
 }
 
