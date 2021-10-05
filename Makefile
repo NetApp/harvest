@@ -149,7 +149,7 @@ dev: build
 	@rm -rf autosupport/asup
 
 fetch-asup:
-	@./.github/fetch-asup ${ASUP_BIN} ${ASUP_BIN_VERSION} 2>/dev/null   #Suppress Error in case of internet connectivity
+	@./.github/fetch-asup ${ASUP_BIN} ${ASUP_BIN_VERSION} ${BIN_PLATFORM} 2>/dev/null   #Suppress Error in case of internet connectivity
 
 
 
