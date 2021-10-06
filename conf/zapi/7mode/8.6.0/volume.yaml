@@ -3,6 +3,9 @@ name: Volume
 query: volume-list-info
 object: volume
 
+global_labels:
+  - system_type: 7mode
+
 counters:
   volume-info:
     - ^name                                  => volume

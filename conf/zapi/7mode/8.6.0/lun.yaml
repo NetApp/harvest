@@ -3,6 +3,9 @@ name:                       Lun
 query:                      lun-list-info
 object:                     lun
 
+global_labels:
+  - system_type: 7mode
+
 counters:
   lun-info:
     - ^node
