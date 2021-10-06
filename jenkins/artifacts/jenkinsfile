@@ -108,7 +108,7 @@ pipeline {
                export PATH=$PATH:/usr/local/go/bin
                targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
                rm -rf dist
-               make asup package VERSION=$VERSION RELEASE=$RELEASE ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET GIT_TOKEN=$GIT_TOKEN
+               make build asup test dist-tar VERSION=$VERSION RELEASE=$RELEASE ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET GIT_TOKEN=$GIT_TOKEN
                cp -RT ./dist/ $targetLocation
                cp ./autosupport/asup $targetLocation/asup_linux_amd64
                 '''
@@ -134,7 +134,7 @@ pipeline {
                     cd $harvestPath
                     targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
                     docker login
-                    docker build -f docker/onePollerPerContainer/Dockerfile --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE -t ${imageName}:latest -t ${imageName}:$VERSION-$RELEASE . --no-cache
+                    docker build -f docker/onePollerPerContainer/Dockerfile --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET --build-arg GIT_TOKEN=$GIT_TOKEN  -t ${imageName}:latest -t ${imageName}:$VERSION-$RELEASE . --no-cache
                     docker save -o ${targetLocation}/docker_harvest.tar ${imageName}:latest
                     '''
                   }
