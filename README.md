@@ -287,13 +287,13 @@ Labels offer a way to add additional key-value pairs to a poller's metrics. Thes
     addr: 10.0.1.1
     labels:
       - org: meg       # add an org label with the value "meg"
-      - site: rtp      # add a site label with the value "rtp"
+      - ns:  rtp       # add a namespace label with the value "rtp"
 ```
 
 These settings add two key-value pairs to each metric collected from `cluster-03` like this:
 
 ```
-node_vol_cifs_write_data{org="meg",site="rtp",datacenter="DC-01",cluster="cluster-03",node="umeng-aff300-05"} 10
+node_vol_cifs_write_data{org="meg",ns="rtp",datacenter="DC-01",cluster="cluster-03",node="umeng-aff300-05"} 10
 ```
 
 Keep in mind that each unique combination of key-value pairs increases the amount of stored data. Use them sparingly. See [PrometheusNaming](https://prometheus.io/docs/practices/naming/#labels) for details.
