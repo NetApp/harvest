@@ -4,6 +4,9 @@ name:       Status_7mode
 query:      diagnosis-config-get-iter
 object:     node
 
+global_labels:
+  - system_type: 7mode
+
 counters:
   diagnosis-config-info:
     - ^health                       => health

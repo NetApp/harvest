@@ -1576,7 +1576,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(node_labels{datacenter=\"$Datacenter\"},node)",
+        "definition": "label_values(node_labels{system_type=\"7mode\",datacenter=\"$Datacenter\"},node)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -1586,7 +1586,7 @@
         "name": "Node",
         "options": [],
         "query": {
-          "query": "label_values(node_labels{datacenter=\"$Datacenter\"},node)",
+          "query": "label_values(node_labels{system_type=\"7mode\",datacenter=\"$Datacenter\"},node)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,

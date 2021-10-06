@@ -3,7 +3,6 @@ name:                       StorageShelf
 query:                      storage-shelf-environment-list-info
 object:                     shelf
 
-
 global_labels:
   - system_type: 7mode
 

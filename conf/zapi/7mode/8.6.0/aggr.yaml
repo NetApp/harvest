@@ -3,6 +3,9 @@ name:               Aggregate
 query:              aggr-list-info
 object:             aggr
 
+global_labels:
+  - system_type: 7mode
+
 counters:
   aggr-info:
     - ^name                                   => aggr

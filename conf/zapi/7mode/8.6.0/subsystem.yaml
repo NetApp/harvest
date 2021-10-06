@@ -4,6 +4,9 @@ name:       Subsystem
 query:      diagnosis-subsystem-config-get-iter
 object:     cluster_subsystem
 
+global_labels:
+  - system_type: 7mode
+
 counters:
   diagnosis-subsystem-config-info:
     - ^health                       => health

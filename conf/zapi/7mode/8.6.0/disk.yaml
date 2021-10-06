@@ -2,6 +2,8 @@ name:         Disk
 query:        disk-list-info
 object:       disk
 
+global_labels:
+  - system_type: 7mode
 
 counters:
   disk-detail-info:

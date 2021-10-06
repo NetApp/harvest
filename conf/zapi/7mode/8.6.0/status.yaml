@@ -4,6 +4,9 @@ name:       Status
 query:      diagnosis-status-get
 object:     cluster
 
+global_labels:
+  - system_type: 7mode
+
 counters:
   - ^status
 
