@@ -1,0 +1,28 @@
+name:             Sensor
+query:            environment-sensors-get-iter
+object:           environment_sensor
+
+metric_type:      int64
+
+counters:
+  environment-sensors-info:
+    - critical-high-threshold           => critical_high
+    - critical-low-threshold            => critical_low
+    - ^discrete-sensor-state            => discrete_state
+    - ^discrete-sensor-value            => discrete_value
+    - ^^node-name                       => node
+    - ^^sensor-name                     => sensor
+    - ^sensor-type                      => type
+    - ^threshold-sensor-state           => threshold_state
+    - threshold-sensor-value            => threshold_value
+    - ^value-units                      => unit
+    - ^warning-high-threshold           => warning_high
+    - ^warning-low-threshold            => warning_low
+
+plugins:
+  - LabelAgent:
+    value_to_num: # metric label zapi_value rest_value `default_value`
+      - status threshold_state normal normal `0`
+
+export_options:
+  include_all_labels: true
