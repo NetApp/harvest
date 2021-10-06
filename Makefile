@@ -135,6 +135,7 @@ asup:
 	@rm -rf autosupport/asup
 	@rm -rf ${ASUP_TMP}
 	@mkdir ${ASUP_TMP}
+	# check if there is an equivalent branch name to harvest. If branch name is not found then take autosupport code from main branch.
 	@if [[ $(shell git ls-remote --heads  https://${GIT_TOKEN}@github.com/NetApp/harvest-private.git ${BRANCH} | wc -l | xargs) == 0 ]]; then\
 		git clone -b main https://${GIT_TOKEN}@github.com/NetApp/harvest-private.git ${ASUP_TMP};\
 	else\
