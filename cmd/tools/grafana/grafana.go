@@ -12,6 +12,8 @@ import (
 	"fmt"
 	"github.com/hashicorp/go-version"
 	"github.com/spf13/cobra"
+	"github.com/tidwall/gjson"
+	"github.com/tidwall/sjson"
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/tree/node"
 	"io"
@@ -52,6 +54,7 @@ type options struct {
 	prefix         string
 	useHttps       bool
 	useInsecureTLS bool
+	labels         []string
 }
 
 type Folder struct {
@@ -78,6 +81,149 @@ func doExport(_ *cobra.Command, _ []string) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+func addLabel(content []byte, label string, labelMap map[string]string) []byte {
+	// extract the list of variables
+	templateList := gjson.GetBytes(content, "templating.list")
+	if !templateList.Exists() {
+		fmt.Printf("No template variables found, ignoring add label")
+		return content
+	}
+	vars := templateList.Array()
+
+	// create a new list of vars and copy the existing ones into it, duplicate the first var since we're going to
+	// overwrite it
+	newVars := make([]gjson.Result, 0)
+	newVars = append(newVars, vars[0])
+	for _, result := range vars {
+		newVars = append(newVars, result)
+	}
+
+	// Assume Datasource is first and insert the new label var as the second element.
+	// If we're wrong, that's OK, no harm
+	newVars[1] = gjson.ParseBytes(newLabelVar(label))
+
+	// Write the variables into a string builder
+	// Modify the existing variables by adding the new label query
+	varsString := strings.Builder{}
+	varsString.WriteString("[")
+	for i, result := range newVars {
+		aStr := addChainedVar(result, label, labelMap)
+		if aStr == "" {
+			varsString.WriteString(result.String())
+		} else {
+			varsString.WriteString(aStr)
+		}
+		if i < len(newVars)-1 {
+			varsString.WriteString(",\n")
+		}
+	}
+	varsString.WriteString("]")
+
+	newContent, err := sjson.SetRawBytes(content, "templating.list", []byte(varsString.String()))
+	if err != nil {
+		fmt.Printf("error inserting label=[%s] into dashboard, err: %+v", label, err)
+		return content
+	}
+	return newContent
+}
+
+func addChainedVar(result gjson.Result, label string, labelMap map[string]string) string {
+	varName := result.Get("name")
+	definition := result.Get("definition")
+	query := result.Get("query.query")
+
+	if !varName.Exists() || !definition.Exists() || !query.Exists() {
+		return ""
+	}
+	// Don't modify the query if this is one of the new labels we're adding since its query is already correct
+	if _, ok := labelMap[varName.String()]; ok {
+		return ""
+	}
+
+	defStr := definition.String()
+	if defStr != query.String() {
+		return ""
+	}
+	chained := toChainedVar(defStr, label)
+	if chained == "" {
+		return ""
+	}
+	rString := result.String()
+	var err error
+	rString, err = sjson.Set(rString, "definition", chained)
+	if err != nil {
+		fmt.Printf("error setting definition of varName=[%s] for label=[%s], err: %+v", varName, label, err)
+		return ""
+	}
+	rString, err = sjson.Set(rString, "query.query", chained)
+	if err != nil {
+		fmt.Printf("error setting query of varName=[%s] for label=[%s], err: %+v", varName, label, err)
+		return ""
+	}
+	return rString
+}
+
+func toChainedVar(defStr string, label string) string {
+	if !strings.Contains(defStr, "label_values") {
+		return ""
+	}
+
+	title := strings.Title(label)
+	lastBracket := strings.LastIndex(defStr, "}")
+	if lastBracket == -1 {
+		lastParen := strings.LastIndex(defStr, ")")
+		if lastParen == -1 {
+			return ""
+		}
+
+		lastComma := strings.LastIndex(defStr, ",")
+		firstParen := strings.Index(defStr, "(")
+		if firstParen == -1 {
+			return ""
+		}
+		if lastComma == -1 {
+			// Case 1: There are not existing labels
+			// label_values(datacenter) becomes label_values({foo=~"$Foo"}, datacenter)
+		} else {
+			// Case 2: There is a single metric
+			// label_values(poller_status, datacenter) becomes label_values(poller_status{org=~"$org"}, datacenter)
+			return defStr[0:lastComma] + "{" + label + `=~"$` + title + `"},` + defStr[lastComma+1:]
+		}
+		if firstParen+1 > len(defStr) {
+			return ""
+		}
+		return defStr[0:firstParen] + "({" + label + `=~"$` + title + `"}, ` + defStr[firstParen+1:]
+	}
+	// Case 2: There are existing metrics
+	// label_values(aggr_new_status{datacenter="$Datacenter",cluster="$Cluster"}, node) becomes
+	// label_values(aggr_new_status{datacenter="$Datacenter",cluster="$Cluster",foo=~"$Foo"}, node)
+	return defStr[0:lastBracket] + "," + label + `=~"$` + title + `"` + defStr[lastBracket:]
+}
+
+func newLabelVar(label string) []byte {
+	return []byte(fmt.Sprintf(`{
+  "allValue": ".*",
+  "current": {
+    "selected": false
+  },
+  "definition": "label_values(%s)",
+  "hide": 0,
+  "includeAll": true,
+  "multi": true,
+  "name": "%s",
+  "options": [],
+  "query": {
+    "query": "label_values(%s)",
+    "refId": "StandardVariableQuery"
+  },
+  "refresh": 1,
+  "regex": "",
+  "skipUrlSync": false,
+  "sort": 0,
+  "type": "query"
+}`, label, strings.Title(label), label))
 }
 
 func doImport(_ *cobra.Command, _ []string) {
@@ -151,9 +297,9 @@ func adjustOptions() {
 
 func exportDashboards(opts *options) error {
 	// Exporting C mode dashboards
-	exportFiles(opts.cmodeFolder)
+	_ = exportFiles(opts.cmodeFolder)
 	// Exporting 7mode dashboards
-	exportFiles(opts.mode7Folder)
+	_ = exportFiles(opts.mode7Folder)
 	return nil
 }
 
@@ -217,9 +363,9 @@ func exportFiles(folder Folder) error {
 
 func importDashboards(opts *options) error {
 	// Importing C mode dashboards
-	importFiles(opts.dir, opts.cmodeFolder)
+	_ = importFiles(opts.dir, opts.cmodeFolder)
 	// Importing 7mode dashboards
-	importFiles(path.Join(opts.dir, strings.ReplaceAll(grafana7modeFolderTitle, " ", "")), opts.mode7Folder)
+	_ = importFiles(path.Join(opts.dir, strings.ReplaceAll(grafana7modeFolderTitle, " ", "")), opts.mode7Folder)
 	return nil
 }
 
@@ -249,8 +395,19 @@ func importFiles(dir string, folder Folder) error {
 
 		data = bytes.ReplaceAll(data, []byte("${DS_PROMETHEUS}"), []byte(opts.datasource))
 
+		// labelMap is used to ensure we don't modify the query of one of the new labels we're adding
+		labelMap := make(map[string]string)
+		for _, label := range opts.labels {
+			labelMap[strings.Title(label)] = label
+		}
+		// The label is inserted in the list of variables first
+		// Iterate backwards so the labels keep the same order as cmdline
+		for i := len(opts.labels) - 1; i >= 0; i-- {
+			data = addLabel(data, opts.labels[i], labelMap)
+		}
+
 		if err = json.Unmarshal(data, &dashboard); err != nil {
-			fmt.Printf("error parsing file [%s]\n", file.Name())
+			fmt.Printf("error parsing file [%s] %+v\n", file.Name(), err)
 			fmt.Println("-------------------------------")
 			fmt.Println(string(data))
 			fmt.Println("-------------------------------")
@@ -704,4 +861,7 @@ func init() {
 	Cmd.PersistentFlags().BoolVarP(&opts.variable, "variable", "v", false, "use datasource as variable, overrides: --datasource")
 	Cmd.PersistentFlags().BoolVarP(&opts.useHttps, "https", "S", false, "use HTTPS")
 	Cmd.PersistentFlags().BoolVarP(&opts.useInsecureTLS, "insecure", "k", false, "Allow insecure server connections when using SSL")
+
+	importCmd.PersistentFlags().StringSliceVar(&opts.labels, "labels", nil,
+		"For each label, create a variable and add as chained query to other variables")
 }

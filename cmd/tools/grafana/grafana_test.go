@@ -1,6 +1,7 @@
 package grafana
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -92,5 +93,31 @@ func TestAddPrefixToMetricNames(t *testing.T) {
 		if result != expected[i] {
 			t.Errorf("\nExpected: [%s]\n     Got: [%s]", expected[i], result)
 		}
+	}
+}
+
+func TestChainedParsing(t *testing.T) {
+	type test struct {
+		name string
+		json string
+		want string
+	}
+	tests := []test{
+		{name: "empty", json: "", want: ``},
+		{name: "no label", json: "label_values(datacenter)", want: `"definition": "label_values({foo=~"$Foo"}, datacenter)"`},
+		{name: "one label", json: "label_values(poller_status, datacenter)",
+			want: `"definition": "label_values(poller_status{foo=~"$Foo"}, datacenter)"`},
+		{name: "typical", json: `label_values(aggr_new_status{datacenter="$Datacenter",cluster="$Cluster"}, node)`,
+			want: `"definition": "label_values(aggr_new_status{datacenter="$Datacenter",cluster="$Cluster",foo=~"$Foo"}, node)"`},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			wrappedInDef := fmt.Sprintf(`"definition": "%s"`, tt.json)
+			got := toChainedVar(wrappedInDef, "foo")
+			if got != tt.want {
+				t.Errorf("TestChainedParsing\n got=[%v]\nwant=[%v]", got, tt.want)
+			}
+		})
 	}
 }
