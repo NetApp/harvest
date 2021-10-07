@@ -17,8 +17,6 @@ counters:
     - ^vendor-id                            => vendor
     - ^product-version                      => version
 
-
-
 export_options:
   require_instance_keys: false
   instance_labels:
