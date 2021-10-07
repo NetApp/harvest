@@ -5,6 +5,9 @@ object:                   processor
 
 instance_key:             name
 
+global_labels:
+  - system_type: 7mode
+
 counters:
   - node_name             => node
   - instance_name

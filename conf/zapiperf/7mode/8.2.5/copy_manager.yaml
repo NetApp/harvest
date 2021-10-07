@@ -4,6 +4,9 @@ object:                   copy_manager
 
 instance_key:             uuid
 
+global_labels:
+  - system_type: 7mode
+
 counters:
   - vserver_name            => svm
   - instance_uuid

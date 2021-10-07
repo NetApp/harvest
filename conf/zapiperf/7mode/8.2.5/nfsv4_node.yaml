@@ -6,6 +6,7 @@ instance_key:             name
 
 global_labels:
   - nfsv: v4
+  - system_type: 7mode
 
 counters:
   - instance_name            => node

@@ -5,6 +5,9 @@ object:                   hostadapter
 
 instance_key:             name
 
+global_labels:
+  - system_type: 7mode
+
 counters:
   - instance_name
   - node_name             => node
