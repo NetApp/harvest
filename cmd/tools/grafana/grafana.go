@@ -29,8 +29,8 @@ import (
 
 const (
 	clientTimeout           = 5
-	grafanaFolderTitle      = "Harvest 2.0"
-	grafana7modeFolderTitle = "7 mode"
+	grafanaFolderTitle      = "Harvest 2.0 - cDOT"
+	grafana7modeFolderTitle = "Harvest 2.0 - 7-mode"
 	grafanaDataSource       = "Prometheus"
 )
 
@@ -43,9 +43,10 @@ type options struct {
 	command        string // one of: import, export, clean
 	addr           string // URL of Grafana server (e.g. "http://localhost:3000")
 	token          string // API token issued by Grafana server
-	dir            string // Directory from which to import dashboards (e.g. "opt/harvest/grafana/dashboards")
-	cmodeFolder    Folder
-	mode7Folder    Folder
+	dir            string // Local directory for import/export-ing cDOT dashboards (e.g. "opt/harvest/grafana/dashboards")
+	dir7mode       string // Local directory for import/export-ing 7mode dashboards (e.g. "opt/harvest/grafana/dashboards")
+	cmodeFolder    Folder // Server-side Grafana folder name for cDOT dashboards
+	mode7Folder    Folder // Server-side Grafana folder name for 7-mode dashboards
 	datasource     string
 	variable       bool
 	client         *http.Client
@@ -362,14 +363,12 @@ func exportFiles(folder Folder) error {
 }
 
 func importDashboards(opts *options) error {
-	// Importing C mode dashboards
-	_ = importFiles(opts.dir, opts.cmodeFolder)
-	// Importing 7mode dashboards
-	_ = importFiles(path.Join(opts.dir, strings.ReplaceAll(grafana7modeFolderTitle, " ", "")), opts.mode7Folder)
+	importFiles(opts.dir, opts.cmodeFolder)
+	importFiles(opts.dir7mode, opts.mode7Folder)
 	return nil
 }
 
-func importFiles(dir string, folder Folder) error {
+func importFiles(dir string, folder Folder) {
 	var (
 		request, dashboard map[string]interface{}
 		files              []os.FileInfo
@@ -380,7 +379,7 @@ func importFiles(dir string, folder Folder) error {
 
 	if files, err = ioutil.ReadDir(dir); err != nil {
 		// TODO check for not exist
-		return err
+		return
 	}
 
 	for _, file := range files {
@@ -390,7 +389,7 @@ func importFiles(dir string, folder Folder) error {
 
 		if data, err = ioutil.ReadFile(path.Join(dir, file.Name())); err != nil {
 			fmt.Printf("error reading file [%s]\n", file.Name())
-			return err
+			return
 		}
 
 		data = bytes.ReplaceAll(data, []byte("${DS_PROMETHEUS}"), []byte(opts.datasource))
@@ -411,7 +410,7 @@ func importFiles(dir string, folder Folder) error {
 			fmt.Println("-------------------------------")
 			fmt.Println(string(data))
 			fmt.Println("-------------------------------")
-			return err
+			return
 		}
 
 		// optionally add prefix to all metric names in the queries
@@ -428,18 +427,17 @@ func importFiles(dir string, folder Folder) error {
 
 		if err != nil {
 			fmt.Printf("error importing [%s]\n", file.Name())
-			return err
+			return
 		}
 
 		if code != 200 {
 			fmt.Printf("error - server response (%d - %s) %v\n", code, status, result)
-			return errors.New(status)
+			return
 		}
-		fmt.Printf("OK - imported [%s]\n", file.Name())
+		fmt.Printf("OK - imported %s / [%s]\n", folder.folderName, file.Name())
 		importedFiles++
 	}
 	fmt.Printf("Imported %d dashboards from %s \n", importedFiles, dir)
-	return nil
 }
 
 // addGlobalPrefix adds the given prefix to all metric names in the
@@ -853,9 +851,10 @@ func init() {
 	Cmd.PersistentFlags().StringVar(&opts.config, "config", "./harvest.yml", "harvest config file path")
 	Cmd.PersistentFlags().StringVarP(&opts.addr, "addr", "a", "http://127.0.0.1:3000", "address of Grafana server (IP, FQDN or hostname)")
 	Cmd.PersistentFlags().StringVarP(&opts.token, "token", "t", "", "API token issued by Grafana server for authentication")
-	Cmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d", "grafana/dashboards/", "when importing, directory that contains dashboards.\nWhen exporting, directory to write dashboards to")
-	Cmd.PersistentFlags().StringVarP(&opts.cmodeFolder.folderName, "folder", "f", grafanaFolderTitle, "Grafana folder name for the C mode dashboards")
-	Cmd.PersistentFlags().StringVarP(&opts.mode7Folder.folderName, "folder-7mode", "", grafana7modeFolderTitle, "Grafana folder name for the 7mode dashboards")
+	Cmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d", "grafana/dashboards/cmode", "when importing, directory that contains cDOT dashboards.\nWhen exporting, directory to write dashboards to")
+	Cmd.PersistentFlags().StringVar(&opts.dir7mode, "seven", "grafana/dashboards/7mode", "when importing, directory that contains 7-mode dashboards.\nWhen exporting, directory to write dashboards to")
+	Cmd.PersistentFlags().StringVarP(&opts.cmodeFolder.folderName, "folder", "f", grafanaFolderTitle, "Grafana folder name for the cDOT dashboards")
+	Cmd.PersistentFlags().StringVarP(&opts.mode7Folder.folderName, "folder-7mode", "", grafana7modeFolderTitle, "Grafana folder name for the 7-mode dashboards")
 	Cmd.PersistentFlags().StringVarP(&opts.prefix, "prefix", "p", "", "Use global metric prefix in queries")
 	Cmd.PersistentFlags().StringVarP(&opts.datasource, "datasource", "s", grafanaDataSource, "Grafana datasource for the dashboards")
 	Cmd.PersistentFlags().BoolVarP(&opts.variable, "variable", "v", false, "use datasource as variable, overrides: --datasource")
