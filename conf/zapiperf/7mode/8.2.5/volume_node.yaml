@@ -3,6 +3,10 @@ name:                     VolumeNode
 query:                    volume
 object:                   node_vol
 instance_key:             name
+
+global_labels:
+  - system_type: 7mode
+
 counters:
   - instance_name
   - cifs_read_data

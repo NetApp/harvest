@@ -5,6 +5,9 @@ object:                   path
 
 instance_key:             uuid
 
+global_labels:
+  - system_type: 7mode
+
 counters:
   - instance_name
   - instance_uuid

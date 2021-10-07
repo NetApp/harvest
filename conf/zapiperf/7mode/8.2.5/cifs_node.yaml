@@ -4,6 +4,9 @@ query:                    cifs
 object:                   node_cifs
 instance_key:             name
 
+global_labels:
+  - system_type: 7mode
+
 counters:
   - instance_name            => node
   - cifs_op_count            => op_count

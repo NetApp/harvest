@@ -3,6 +3,10 @@ name:                     Lun
 query:                    lun
 object:                   lun
 instance_key:             name
+
+global_labels:
+  - system_type: 7mode
+
 counters:
   - display_name   => lun
   - read_data

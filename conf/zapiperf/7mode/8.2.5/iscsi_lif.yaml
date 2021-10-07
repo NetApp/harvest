@@ -5,6 +5,9 @@ object:                   iscsi_lif
 
 instance_key: instance_uuid
 
+global_labels:
+  - system_type: 7mode
+
 counters:
   - instance_name         => lif
   - instance_uuid

@@ -2215,7 +2215,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(datacenter)",
+        "definition": "label_values(snapmirror_labels{system_type!=\"7mode\"},datacenter)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -2225,7 +2225,7 @@
         "name": "Datacenter",
         "options": [],
         "query": {
-          "query": "label_values(datacenter)",
+          "query": "label_values(snapmirror_labels{system_type!=\"7mode\"},datacenter)",
           "refId": "Prometheus-Datacenter-Variable-Query"
         },
         "refresh": 1,
@@ -2242,7 +2242,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(snapmirror_labels{datacenter=\"$Datacenter\"}, cluster)",
+        "definition": "label_values(snapmirror_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"}, cluster)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -2252,7 +2252,7 @@
         "name": "Cluster",
         "options": [],
         "query": {
-          "query": "label_values(snapmirror_labels{datacenter=\"$Datacenter\"}, cluster)",
+          "query": "label_values(snapmirror_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"}, cluster)",
           "refId": "Prometheus-Cluster-Variable-Query"
         },
         "refresh": 1,
@@ -2269,7 +2269,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(snapmirror_labels{datacenter=\"$Datacenter\", cluster=\"$Cluster\"}, destination_node)",
+        "definition": "label_values(snapmirror_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\", cluster=\"$Cluster\"}, destination_node)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -2279,7 +2279,7 @@
         "name": "DestinationNode",
         "options": [],
         "query": {
-          "query": "label_values(snapmirror_labels{datacenter=\"$Datacenter\", cluster=\"$Cluster\"}, destination_node)",
+          "query": "label_values(snapmirror_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\", cluster=\"$Cluster\"}, destination_node)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2296,7 +2296,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(snapmirror_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}, source_node)",
+        "definition": "label_values(snapmirror_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\",cluster=\"$Cluster\"}, source_node)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -2306,7 +2306,7 @@
         "name": "SourceNode",
         "options": [],
         "query": {
-          "query": "label_values(snapmirror_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}, source_node)",
+          "query": "label_values(snapmirror_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\",cluster=\"$Cluster\"}, source_node)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,

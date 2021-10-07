@@ -1174,7 +1174,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(shelf_labels{datacenter=\"$Datacenter\"}, cluster)",
+        "definition": "label_values(shelf_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"}, cluster)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -1184,7 +1184,7 @@
         "name": "Cluster",
         "options": [],
         "query": {
-          "query": "label_values(shelf_labels{datacenter=\"$Datacenter\"}, cluster)",
+          "query": "label_values(shelf_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"}, cluster)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,

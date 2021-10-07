@@ -2410,7 +2410,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(nic_labels{datacenter=\"$Datacenter\"}, cluster)",
+        "definition": "label_values(nic_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"}, cluster)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -2420,7 +2420,7 @@
         "name": "Cluster",
         "options": [],
         "query": {
-          "query": "label_values(nic_labels{datacenter=\"$Datacenter\"}, cluster)",
+          "query": "label_values(nic_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"}, cluster)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2437,7 +2437,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(nic_labels{cluster=\"$Cluster\"}, node)",
+        "definition": "label_values(nic_labels{system_type!=\"7mode\",cluster=\"$Cluster\"}, node)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -2447,7 +2447,7 @@
         "name": "Node",
         "options": [],
         "query": {
-          "query": "label_values(nic_labels{cluster=\"$Cluster\"}, node)",
+          "query": "label_values(nic_labels{system_type!=\"7mode\",cluster=\"$Cluster\"}, node)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,

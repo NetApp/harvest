@@ -3,6 +3,9 @@ name:                     WAFLAggr
 query:                    wafl_hya_per_aggr
 object:                   flashpool
 
+global_labels:
+  - system_type: 7mode
+
 counters:
   - instance_name
   - node_name             => node

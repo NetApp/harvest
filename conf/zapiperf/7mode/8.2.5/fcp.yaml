@@ -6,6 +6,9 @@ object:                   fcp
 
 instance_key:             name
 
+global_labels:
+  - system_type: 7mode
+
 counters:
   - instance_name           => port
   - instance_uuid
