@@ -56,14 +56,14 @@ endif
 	@# Make sure that go exists
 ifeq (${FOUND_GO_VERSION}, )
 	@echo
-	@echo "Harvest requires that the go lang is installed and is at least version: ${REQUIRED_GO_VERSION}"
+	@echo "Harvest requires that Go is installed and at least version: ${REQUIRED_GO_VERSION}"
 	@echo
 	@exit 1
 endif
 	@# Check to make sure that GO is the correct version
 ifeq ("${CORRECT_GO_VERSION}", "0")
 	@echo
-	@echo "Required go lang version is ${REQUIRED_GO_VERSION}, but found ${FOUND_GO_VERSION}"
+	@echo "Required Go version is ${REQUIRED_GO_VERSION}, but found ${FOUND_GO_VERSION}"
 	@echo
 	@exit 1
 endif
