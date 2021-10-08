@@ -228,8 +228,10 @@ func (me *Process) loadSmaps() error {
 		fields    []string
 	)
 
+	// this may fail see https://github.com/NetApp/harvest/issues/249
+	// when it does, ignore so the other /proc checks are given a chance to run
 	if data, err = ioutil.ReadFile(path.Join(me.dirpath, "smaps")); err != nil {
-		return errors.New(FILE_READ, "smaps: "+err.Error())
+		return nil
 	}
 
 	me.mem = make(map[string]uint64)
@@ -263,8 +265,10 @@ func (me *Process) loadIo() error {
 		num    uint64
 	)
 
+	// this may fail see https://github.com/NetApp/harvest/issues/249
+	// when it does, ignore so the other /proc checks are given a chance to run
 	if data, err = ioutil.ReadFile(path.Join(me.dirpath, "io")); err != nil {
-		return errors.New(FILE_READ, "io: "+err.Error())
+		return nil
 	}
 
 	for _, line = range strings.Split(string(data), "\n") {
@@ -274,7 +278,7 @@ func (me *Process) loadIo() error {
 			}
 		}
 	}
-	return err
+	return nil
 }
 
 func (me *Process) loadNetDev() error {
@@ -327,9 +331,11 @@ func (me *Process) loadNetDev() error {
 }
 
 func (me *Process) loadFdinfo() error {
+	// this may fail see https://github.com/NetApp/harvest/issues/249
+	// when it does, ignore so the other /proc checks are given a chance to run
 	files, err := ioutil.ReadDir(path.Join(me.dirpath, "fdinfo"))
 	if err != nil {
-		return errors.New(DIR_READ, "fdinfo: "+err.Error())
+		return nil
 	}
 	me.numFds = uint64(len(files))
 	return nil
