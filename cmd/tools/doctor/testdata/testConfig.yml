@@ -58,6 +58,11 @@ Exporters:
     org: harvest 2
     bucket: harvest  09
     token: REDACTED
+  foo1:
+    exporter: Foo1
+  foo2:
+    exporter: Foo2
+
 Defaults:
   collectors:
     - Zapi
@@ -146,6 +151,14 @@ Pollers:
   issue-271:
     exporters:
       - missing
+
+  overlapping:
+    exporters:
+      - missing
+      - prometheusrange
+      - prometheus
+      - foo1
+      - foo2
 
   pass-with-escape:
     username: admin

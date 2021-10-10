@@ -12,6 +12,7 @@ import (
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/tree/node"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -130,25 +131,30 @@ func validateArgs(strings []string) {
 
 func doCmd(cmd string) {
 	var (
-		err          error
-		item, params *node.Node
-		connection   *client.Client
+		err        error
+		item       *node.Node
+		poller     *conf.Poller
+		connection *client.Client
 	)
 
-	// connect to cluster and retrieve system version
-	if params, err = conf.GetPoller(args.Config, args.Poller); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+	err = conf.LoadHarvestConfig(args.Config)
+	if err != nil {
+		log.Fatal(err)
 	}
-
-	if connection, err = client.New(params); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+	// connect to cluster and retrieve system version
+	if poller, err = conf.PollerNamed(args.Poller); err != nil {
+		log.Fatal(err)
+	}
+	n, err := poller.AsNode()
+	if err != nil {
+		log.Fatal(err)
+	}
+	if connection, err = client.New(n); err != nil {
+		log.Fatal(err)
 	}
 
 	if err = connection.Init(2); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 
 	color.DetectConsole("")
@@ -156,15 +162,13 @@ func doCmd(cmd string) {
 
 	// get requested item
 	if item, err = get(connection, args); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 
 	if cmd == "show" {
 		show(item, args)
 	} else if err = export(item, connection, args); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 }
 
@@ -325,7 +329,7 @@ func getData(c *client.Client, args *Args) (*node.Node, error) {
 var args = &Args{}
 
 func init() {
-	configPath, _ := conf.GetDefaultHarvestConfigPath()
+	configPath := conf.GetDefaultHarvestConfigPath()
 
 	Cmd.AddCommand(showCmd, exportCmd)
 	flags := Cmd.PersistentFlags()

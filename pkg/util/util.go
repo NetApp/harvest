@@ -5,10 +5,13 @@
 package util
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
+	"github.com/rs/zerolog"
+	"github.com/shirou/gopsutil/process"
+	"gopkg.in/yaml.v3"
 	"io/ioutil"
+	"net"
 	"os"
 	"os/exec"
 	"runtime"
@@ -61,59 +64,12 @@ func EqualStringSlice(a, b []string) bool {
 	return true
 }
 
-func readProcFile(path string) (string, error) {
-	data, err := ioutil.ReadFile(path)
+func GetCmdLine(pid int32) (string, error) {
+	newProcess, err := process.NewProcess(pid)
 	if err != nil {
 		return "", err
 	}
-	result := string(bytes.ReplaceAll(data, []byte("\x00"), []byte(" ")))
-	return result, nil
-}
-
-func GetCmdLine(pid int) (string, error) {
-	if runtime.GOOS == "darwin" {
-		return darwinGetCmdLine(pid)
-	}
-	return readProcFile(fmt.Sprintf("/proc/%d/cmdline", pid))
-}
-
-func darwinGetCmdLine(pid int) (string, error) {
-	bin, err := exec.LookPath("ps")
-	if err != nil {
-		return "", err
-	}
-	var ee *exec.ExitError
-	var pe *os.PathError
-	cmd := exec.Command(bin, "-x", "-o", "command", "-p", strconv.Itoa(pid))
-	out, err := cmd.Output()
-	if errors.As(err, &ee) {
-		if ee.Stderr != nil {
-			fmt.Printf("Exit error stderr=%s\n", ee.Stderr)
-		}
-		return "", nil // ran, but non-zero exit code
-	} else if errors.As(err, &pe) {
-		return "", err // "no such file ...", "permission denied" etc.
-	} else if err != nil {
-		return "", err // something really bad happened!
-	}
-	lines := strings.Split(string(out), "\n")
-	var ret [][]string
-	for _, line := range lines[1:] {
-		var lr []string
-		for _, word := range strings.Split(line, " ") {
-			if word == "" {
-				continue
-			}
-			lr = append(lr, strings.TrimSpace(word))
-		}
-		if len(lr) != 0 {
-			ret = append(ret, lr)
-		}
-	}
-	if ret == nil {
-		return "", nil
-	}
-	return strings.Join(ret[0], " "), err
+	return newProcess.Cmdline()
 }
 
 func RemoveEmptyStrings(s []string) []string {
@@ -126,7 +82,7 @@ func RemoveEmptyStrings(s []string) []string {
 	return r
 }
 
-func GetPid(pollerName string) ([]int, error) {
+func GetPid(pollerName string) ([]int32, error) {
 	// ($|\s) is included to match the poller name
 	// followed by a space or end of line - that way unix1 does not match unix11
 	search := fmt.Sprintf(`\-\-poller %s($|\s)`, pollerName)
@@ -136,8 +92,8 @@ func GetPid(pollerName string) ([]int, error) {
 	return GetPids(search)
 }
 
-func GetPids(search string) ([]int, error) {
-	var result []int
+func GetPids(search string) ([]int32, error) {
+	var result []int32
 	var ee *exec.ExitError
 	var pe *os.PathError
 	cmd := exec.Command("pgrep", "-f", search)
@@ -155,14 +111,14 @@ func GetPids(search string) ([]int, error) {
 	sdata := string(data)
 	pids := RemoveEmptyStrings(strings.Split(sdata, "\n"))
 	for _, pid := range pids {
-		p, err := strconv.Atoi(strings.TrimSpace(pid))
+		p64, err := strconv.ParseInt(strings.TrimSpace(pid), 10, 32)
 		if err != nil {
 			return result, err
 		}
 
 		// Validate this is a Harvest process
 		// env check does not work on Darwin or Unix when running as non-root
-		result = append(result, p)
+		result = append(result, int32(p64))
 	}
 	return result, err
 }
@@ -187,4 +143,87 @@ func Contains(s []string, e string) bool {
 		}
 	}
 	return false
+}
+
+func FindLocalIP() (string, error) {
+	conn, err := net.Dial("udp", "1.1.1.1:80")
+	defer func(conn net.Conn) { _ = conn.Close() }(conn)
+	if err != nil {
+		return "", err
+	}
+	localAddr := conn.LocalAddr().(*net.UDPAddr)
+	return localAddr.IP.String(), nil
+}
+
+func CheckCert(certPath string, name string, configPath string, logger zerolog.Logger) {
+	if certPath == "" {
+		logger.Fatal().
+			Str("config", configPath).
+			Str(name, certPath).
+			Msg("TLS is enabled but cert path is empty.")
+	}
+	absPath := certPath
+	if _, err := os.Stat(absPath); err != nil {
+		logger.Fatal().
+			Str("config", configPath).
+			Str(name, absPath).
+			Msg("TLS is enabled but cert path is invalid.")
+	}
+}
+
+// SaveConfig adds or updates the Grafana token in the harvest.yml config
+// and saves it to fp. The Yaml marshaller is ued so comments are preserved
+func SaveConfig(fp string, token string) error {
+	contents, err := ioutil.ReadFile(fp)
+	if err != nil {
+		return err
+	}
+	root := &yaml.Node{}
+	err = yaml.Unmarshal(contents, root)
+	if err != nil {
+		return err
+	}
+
+	// Three cases to consider:
+	//	1. Tools is missing
+	//  2. Tools is present but empty (nil)
+	//  3. Tools is present - overwrite value
+	tokenSet := false
+	if len(root.Content) > 0 {
+		nodes := root.Content[0].Content
+		for i, n := range nodes {
+			if n.Tag == "!!map" && len(n.Content) > 1 && n.Content[0].Value == "grafana_api_token" {
+				// Case 3
+				n.Content[1].SetString(token)
+				tokenSet = true
+				break
+			}
+			if n.Value == "Tools" {
+				if i+1 < len(nodes) && nodes[i+1].Tag == "!!null" {
+					// Case 2
+					n2 := yaml.Node{}
+					_ = n2.Encode(map[string]string{"grafana_api_token": token})
+					nodes[i+1] = &n2
+					tokenSet = true
+					break
+				}
+			}
+		}
+		if !tokenSet {
+			// Case 1
+			tools := yaml.Node{}
+			tools.SetString("Tools")
+			nodes = append(nodes, &tools)
+
+			nToken := yaml.Node{}
+			_ = nToken.Encode(map[string]string{"grafana_api_token": token})
+			nodes = append(nodes, &nToken)
+			root.Content[0].Content = nodes
+		}
+	}
+	marshal, err := yaml.Marshal(root)
+	if err != nil {
+		return err
+	}
+	return ioutil.WriteFile(fp, marshal, 0644)
 }

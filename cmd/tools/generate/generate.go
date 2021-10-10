@@ -93,7 +93,7 @@ func generateDockerCompose(path string) {
 
 func generateDocker(path string, kind int) {
 	pollerTemplate := PollerTemplate{}
-	_, err := conf.GetPollers2(path)
+	err := conf.LoadHarvestConfig(path)
 	if err != nil {
 		panic(err)
 	}

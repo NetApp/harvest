@@ -1,3 +1,20 @@
+Admin:
+  # Listen address for Prometheus HTTP service discovery end-point
+  # The endpoint is reachable at SCHEMA://<listen>/api/v1/sd
+  # See net.Dial for details on the address format https://pkg.go.dev/net#Dial
+  # httpsd:
+    # listen: :8887
+    # listen: localhost:8887
+    
+    # Basic auth for - /api/v1/sd
+    # auth_basic: 
+    #   username: admin
+    #   password: admin
+
+    # create self-signed certs with 'bin/harvest admin tls create server'
+    # tls:
+    #   cert_file: admin-cert.pem
+    #   key_file: admin-key.pem
 
 Tools:
 #  grafana_api_token: 'aaa-bbb-ccc-ddd'
@@ -10,7 +27,7 @@ Exporters:
     port: 12990
   prometheus1:
     exporter: Prometheus
-    port: 12991
+    port_range: 13000-14000
 
 Defaults:
   collectors:
@@ -19,8 +36,8 @@ Defaults:
   use_insecure_tls: false
 
 Pollers:
-  # this is a special/optional poller that provides stats about harvest itself
-  # to remove this poller, simply delete the section "unix"
+  # This is an optional poller that provides stats about harvest itself.
+  # To remove it, simply delete the "unix" section
   unix:
     datacenter: local
     addr: localhost
@@ -29,25 +46,25 @@ Pollers:
     exporters:
       - prometheus
 
-  # add your Cdot / 7Mode pollers below, example:
+  # add your cDOT / 7Mode pollers below, example:
   # cluster-01:
   #   datacenter: DC-01
   #   addr: 10.0.0.1
   #   auth_style: basic_auth
   #   username: myuser
   #   password: mypasw
-  #   use_insecure_tls: true   # since we don't use certificate authentication
-  #    exporters:
-  #      - prometheus1
-  # no need to add collectors, already defined in Defaults!
+  #   use_insecure_tls: true  # Disable TLS verification when connecting to ONTAP cluster
+  #   exporters:
+  #     - prometheus1
+  # no need to add collectors, since they're already defined in Defaults
 
-  # example where we use certificate authentication
+  # example with certificate authentication
+  # See https://github.com/NetApp/harvest/blob/main/docs/AuthAndPermissions.md#using-certificate-authentication
   # cluster-01:
-  #  datacenter: DC-01
-  #  addr: 10.0.0.2
-  #  auth_style: certificate_auth
-  #  ssl_cert: /path/to/cert.pem
-  #  ssl_key: /path/to/key.key
-  #  use_insecure_tls: false  # if harvest should be able to authenticate your server, set this true
-                              # otherwise set it to false (if cluster has no valid server certificates)
-  #  # all the other parameters should be the same
+  #   datacenter: DC-01
+  #   addr: 10.0.0.2
+  #   auth_style: certificate_auth
+  #   ssl_cert: /path/to/cert.pem
+  #   ssl_key: /path/to/key.key
+  #   exporters:
+  #     - prometheus1

@@ -16,6 +16,7 @@ require (
 	github.com/tidwall/gjson v1.9.2
 	github.com/tidwall/sjson v1.2.2
 	github.com/tklauser/go-sysconf v0.3.8 // indirect
+	github.com/zekroTJA/timedmap v1.4.0
 	golang.org/x/term v0.0.0-20210503060354-a79de5458b56
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b

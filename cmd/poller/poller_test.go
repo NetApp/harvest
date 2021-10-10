@@ -60,11 +60,11 @@ round-trip min/avg/max = 0.088/0.088/0.088 ms`,
 func TestUnion2(t *testing.T) {
 	configPath := "../../cmd/tools/doctor/testdata/testConfig.yml"
 	n := node.NewS("foople")
-	err := conf.TestLoadHarvestConfig(configPath)
+	conf.TestLoadHarvestConfig(configPath)
+	p, err := conf.PollerNamed("infinity2")
 	if err != nil {
 		panic(err)
 	}
-	p, err := conf.GetPoller2(configPath, "infinity2")
 	Union2(n, p)
 	labels := n.GetChildS("labels")
 	if labels == nil {

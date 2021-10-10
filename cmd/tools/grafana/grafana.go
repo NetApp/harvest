@@ -15,7 +15,7 @@ import (
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 	"goharvest2/pkg/conf"
-	"goharvest2/pkg/tree/node"
+	"goharvest2/pkg/util"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -278,6 +278,10 @@ func askForToken() {
 
 func adjustOptions() {
 	homePath = conf.GetHarvestHomePath()
+	err := conf.LoadHarvestConfig(opts.config)
+	if err != nil {
+		panic(err)
+	}
 	// full path
 	if opts.command == "import" {
 		opts.dir = path.Join(homePath, opts.dir)
@@ -572,22 +576,20 @@ func checkToken(opts *options, ignoreConfig bool) error {
 	// @TODO check and handle expired API token
 
 	var (
-		params, tools             *node.Node
 		token, configPath, answer string
 		err                       error
 	)
 
 	configPath = opts.config
 
-	if params, err = conf.LoadConfig(configPath); err != nil {
+	err = conf.LoadHarvestConfig(configPath)
+	if err != nil {
 		return err
-	} else if params == nil {
-		return fmt.Errorf("config [%s] not found", configPath)
 	}
 
-	if tools = params.GetChildS("Tools"); tools != nil {
+	if conf.Config.Tools != nil {
 		if !ignoreConfig {
-			token = tools.GetChildContentS("grafana_api_token")
+			token = conf.Config.Tools.GrafanaApiToken
 			fmt.Println("using API token from config")
 		}
 	}
@@ -621,19 +623,19 @@ func checkToken(opts *options, ignoreConfig bool) error {
 		return checkToken(opts, true)
 	}
 
-	// ask user to safe API key
-	if opts.token != tools.GetChildContentS("grafana_api_token") {
+	// ask user to save API key
+	if conf.Config.Tools == nil || opts.token != conf.Config.Tools.GrafanaApiToken {
 
 		fmt.Printf("save API key for later use? [Y/n]: ")
 		_, _ = fmt.Scanf("%s\n", &answer)
 
 		if answer == "Y" || answer == "y" || answer == "yes" || answer == "" {
-			if tools == nil {
-				tools = params.NewChildS("Tools", "")
+			if conf.Config.Tools == nil {
+				conf.Config.Tools = &conf.Tools{}
 			}
-			tools.SetChildContentS("grafana_api_token", opts.token)
+			conf.Config.Tools.GrafanaApiToken = opts.token
 			fmt.Printf("saving config file [%s]\n", configPath)
-			if err = conf.SaveConfig(params, configPath); err != nil {
+			if err = util.SaveConfig(configPath, opts.token); err != nil {
 				return err
 			}
 		}

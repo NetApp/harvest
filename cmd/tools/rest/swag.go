@@ -435,10 +435,3 @@ func showApis(ontapSwag ontap) {
 	}
 	table.Render()
 }
-
-func value(ptr *string, nilValue string) string {
-	if ptr == nil {
-		return nilValue
-	}
-	return *ptr
-}

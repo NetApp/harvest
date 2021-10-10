@@ -12,17 +12,12 @@ A web end-point is required because Prometheus scrapes Harvest by polling that e
 
 In addition to the `/metrics` end-point, the Prometheus exporter also serves an overview of all metrics and collectors available on its root address `http://<ADDR>:<PORT>/`.
 
-Because Prometheus polls Harvest, don't forget to [update your Prometheus configuration](#configure-prometheus-to-scrape-from-harvest) and add a new target for each Prometheus based poller.
-
-## Design
-
-The Exporter runs two goroutines that simultaneously serve requests by collectors and Prometheus scrapers.
-
-<img src="prometheus.png" width="100%" align="center">
+Because Prometheus polls Harvest, don't forget to [update your Prometheus configuration](#configure-prometheus-to-scrape-harvest-pollers) and tell Prometheus how to scrape each poller.
 
 There are two ways to configure the Prometheus exporter: using a `port range` or individual `port`s. 
 
 The `port range` is more flexible and should be used when you want multiple pollers all exporting to the same instance of Prometheus. Both options are explained below.
+
 ## Parameters
 
 All parameters of the exporter are defined in the `Exporters` section of `harvest.yml`. 
@@ -103,7 +98,137 @@ Exporters:
 ```
 will only allow access from the IP4 range `192.168.0.0`-`192.168.0.255`.
 
-## Configure Prometheus to scrape from Harvest
+## Configure Prometheus to scrape Harvest pollers
+
+There are two ways to tell Prometheus how to scrape Harvest: using HTTP service discovery (SD) or listing each poller individually.
+
+HTTP service discovery is the more flexible of the two. It is also less error-prone, and easier to manage. Combined with the port_range configuration described above, SD is the least effort to configure Prometheus and the easiest way to keep both Harvest and Prometheus in sync. 
+
+**NOTE** HTTP service discovery does not work with Docker yet. With Docker, you will need to list each poller individually or if possible, use the [Docker Compose](https://github.com/NetApp/harvest/tree/main/docker) workflow that uses file service discovery to achieve a similar ease-of-use as HTTP service discovery.
+
+See the [example](#prometheus-http-service-discovery-and-port-range) below for how to use HTTP SD and port_range together. 
+
+### Prometheus HTTP Service Discovery
+
+[HTTP service discovery](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#http_sd_config) was introduced in Prometheus version `2.28.0`. Make sure you're using that version or later.
+
+To use HTTP service discovery you need to:
+1. tell [Harvest to start the HTTP service discovery process](#enable-http-service-discovery-in-harvest)
+2. tell [Prometheus to use the HTTP service discovery endpoint](#enable-http-service-discovery-in-prometheus)
+
+#### Enable HTTP service discovery in Harvest
+
+Add the following to your `harvest.yml`
+
+```
+Admin:
+  httpsd:
+    listen: :8887
+```
+
+This tells Harvest to create an HTTP service discovery end-point on interface `0.0.0.0:8887`. If you want to only listen on localhost, use `127.0.0.1:<port>` instead. See [net.Dial](https://pkg.go.dev/net#Dial) for details on the supported listen formats.
+
+Start the SD process by running `bin/harvest admin start`. Once it is started, you can curl the end-point for the list of running Harvest pollers.
+
+```
+curl -s 'http://localhost:8887/api/v1/sd' | jq .
+[
+  {
+    "targets": [
+      "10.0.1.55:12990",
+      "10.0.1.55:15037",
+      "127.0.0.1:15511",
+      "127.0.0.1:15008",
+      "127.0.0.1:15191",
+      "10.0.1.55:15343"
+    ]
+  }
+]
+```
+
+#### Harvest HTTP Service Discovery options
+
+HTTP service discovery (SD) is configured in the `Admin > httpsd` section of your `harvest.yml`.
+
+| parameter              | type         | description                                      | default                |
+|------------------------|--------------|--------------------------------------------------|------------------------|
+| `listen`   | **required** |  Interface and port to listen on, use localhost:PORT or :PORT for all interfaces                 |                        |
+| `auth_basic`           | optional |  If present, enables basic authentication on `/api/v1/sd` end-point                               |                        |
+| auth_basic `username`, `password`     | **required** child of `auth_basic` |                             |                        |
+| `tls`                 | optional |  If present, enables TLS transport                     |                        |
+| tls `cert_file`, `key_file`  | **required** child of `tls` | Relative or absolute path to TLS certificate and key file. TLS 1.3 certificates required.<br />FIPS complaint P-256 TLS 1.3 certificates can be created with `bin/harvest admin tls create server` |   |
+| `ssl_cert`, `ssl_key`  | optional if `auth_style` is `certificate_auth` | Absolute paths to SSL (client) certificate and key used to authenticate with the target system.<br /><br />If not provided, the poller will look for `<hostname>.key` and `<hostname>.pem` in `$HARVEST_HOME/cert/`.<br/><br/>To create certificates for ONTAP systems, see [using certificate authentication](docs/AuthAndPermissions.md#using-certificate-authentication)                        |              |
+| `heart_beat` | optional, [Go Duration format](https://pkg.go.dev/time#ParseDuration) | How frequently each poller sends a heartbeat message to the SD node | 45s |
+| `expire_after` | optional, [Go Duration format](https://pkg.go.dev/time#ParseDuration) | If a poller fails to send a heartbeat, the SD node removes the poller after this duration  | 1m |
+
+#### Enable HTTP service discovery in Prometheus
+
+Edit your `prometheus.yml` and add the following section
+
+`$ vim /etc/prometheus/prometheus.yml`
+
+```
+scrape_configs:
+  - job_name: harvest
+    http_sd_configs:
+    - url: http://localhost:8887/api/v1/sd
+```
+ 
+Harvest and Prometheus both support basic authentication for HTTP SD end-points. To enable basic auth, add the following to your Harvest config.
+
+```
+Admin:
+  httpsd:
+    listen: :8887
+    # Basic auth protects GETs and publishes
+    auth_basic: 
+      username: admin
+      password: admin
+```
+
+Don't forget to also update your Prometheus config with the matching [basic_auth](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#http_sd_config) credentials.
+
+### Prometheus HTTP Service Discovery and Port Range
+
+HTTP SD combined with Harvest's `port_range` feature leads to significantly less configuration in your `harvest.yml`. For example, if your clusters all export to the same Prometheus instance, you can refactor the per-poller exporter into a single exporter shared by all clusters in `Defaults` as shown below:
+
+Notice that none of the pollers specify an exporter. Instead, all the pollers share the single exporter named `prometheus-r` listed in `Defaults`. `prometheus-r` is the only exporter defined and as specified will manage up to 1,000 Harvest Prometheus exporters.
+
+If you add or remove more clusters in the `Pollers` section, you do not have to change Prometheus since it dynamically pulls the targets from the Harvest admin node.
+
+```
+Admin:
+  httpsd:
+    listen: :8887
+
+Exporters:
+  prometheus-r:
+    exporter: Prometheus
+    port_range: 13000-13999
+
+Defaults:
+  collectors:
+    - Zapi
+    - ZapiPerf
+  use_insecure_tls: false
+  auth_style: password
+  username: admin
+  password: pass
+  exporters:
+    - prometheus-r
+
+Pollers:
+  umeng_aff300:
+    datacenter: meg
+    addr: 10.193.48.11
+    
+  F2240-127-26:
+    datacenter: meg
+    addr: 10.193.6.61
+
+  # ... add more clusters
+```
+### Static Scrape Targets
 
 If we define four prometheus exporters at ports: 12990, 12991, 14567, and 14568 you need to add four sections to your `prometheus.yml`.
 

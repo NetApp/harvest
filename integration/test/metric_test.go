@@ -1,4 +1,5 @@
-//+build  regression
+//go:build regression
+// +build regression
 
 package main
 
@@ -13,8 +14,8 @@ import (
 )
 
 func TestPollerMetrics(t *testing.T) {
-	pollerNames, _ := conf.GetPollerNames(installer.HarvestConfigFile)
-	for _, pollerName := range pollerNames {
+	conf.LoadHarvestConfig(installer.HarvestConfigFile)
+	for _, pollerName := range conf.Config.PollersOrdered {
 		port, _ := conf.GetPrometheusExporterPorts(pollerName)
 		portString := strconv.Itoa(port)
 		var validCounters = 0

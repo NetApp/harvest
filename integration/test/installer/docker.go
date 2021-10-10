@@ -22,9 +22,9 @@ func (d *Docker) Init(path string) {
 }
 
 func (d *Docker) Install() bool {
+	_ = conf.LoadHarvestConfig(HarvestConfigFile)
 	log.Println("Docker build : " + d.path)
 	pollerProcessName := "bin/poller"
-	pollerNames, _ := conf.GetPollerNames(HarvestConfigFile)
 	Uninstall()
 	var dockerImageName string
 	if !strings.Contains(d.path, ".tar") {
@@ -47,7 +47,7 @@ func (d *Docker) Install() bool {
 	}
 	log.Println("Docker image name " + dockerImageName)
 	path, _ := os.Getwd()
-	for _, pollerName := range pollerNames {
+	for _, pollerName := range conf.Config.PollersOrdered {
 		port, _ := conf.GetPrometheusExporterPorts(pollerName)
 		portString := strconv.Itoa(port)
 		ipAddress := utils.GetOutboundIP()
@@ -66,7 +66,7 @@ func (d *Docker) Install() bool {
 	for waitCount < 5 {
 		waitCount++
 		time.Sleep(20 * time.Second)
-		if docker.HasAllStarted(pollerProcessName, len(pollerNames)) {
+		if docker.HasAllStarted(pollerProcessName, len(conf.Config.PollersOrdered)) {
 			return true
 		}
 	}

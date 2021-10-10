@@ -94,6 +94,9 @@ github.com/tklauser/go-sysconf
 # github.com/tklauser/numcpus v0.2.3
 ## explicit; go 1.11
 github.com/tklauser/numcpus
+# github.com/zekroTJA/timedmap v1.4.0
+## explicit; go 1.13
+github.com/zekroTJA/timedmap
 # golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4
 ## explicit; go 1.11
 golang.org/x/net/idna

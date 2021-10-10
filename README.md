@@ -202,19 +202,19 @@ All pollers are defined in `harvest.yml`, the main configuration file of Harvest
 
 | parameter              | type         | description                                      | default                |
 |------------------------|--------------|--------------------------------------------------|------------------------|
-| Poller name (header)   | **required** |  poller name, user-defined value                 |                        |
-| `datacenter`           | **required** |  datacenter name, user-defined value                               |                        |
+| Poller name (header)   | **required** |  Poller name, user-defined value                 |                        |
+| `datacenter`           | **required** |  Datacenter name, user-defined value                               |                        |
 | `addr`                 | required by some collectors |  IPv4 or FQDN of the target system                     |                        |
-| `collectors`           | **required** | list of collectors to run for this poller |   |
-| `exporters`            | **required** | list of exporter names from the `Exporters` section. Note: this should be the name of the exporter (e.g. `prometheus1`), not the value of the `exporter` key (e.g. `Prometheus`)   |                   |
-| `auth_style`           | required by Zapi* collectors |  either `basic_auth` or `certificate_auth`  | `basic_auth` |
+| `collectors`           | **required** | List of collectors to run for this poller |   |
+| `exporters`            | **required** | List of exporter names from the `Exporters` section. Note: this should be the name of the exporter (e.g. `prometheus1`), not the value of the `exporter` key (e.g. `Prometheus`)   |                   |
+| `auth_style`           | required by Zapi* collectors |  Either `basic_auth` or `certificate_auth`  | `basic_auth` |
 | `username`, `password` | required if `auth_style` is `basic_auth` |  |              |
 | `ssl_cert`, `ssl_key`  | optional if `auth_style` is `certificate_auth` | Absolute paths to SSL (client) certificate and key used to authenticate with the target system.<br /><br />If not provided, the poller will look for `<hostname>.key` and `<hostname>.pem` in `$HARVEST_HOME/cert/`.<br/><br/>To create certificates for ONTAP systems, see [using certificate authentication](docs/AuthAndPermissions.md#using-certificate-authentication)                        |              |
 | `use_insecure_tls`     | optional, bool |  If true, disable TLS verification when connecting to ONTAP cluster  | false         |
-| `labels`               | optional, list of key-value pairs              | each of the key-value pairs will be added to a poller's metrics. Details [below](#labels)                                                                                                                                                                                                                                                                                 |                    |
+| `labels`               | optional, list of key-value pairs              | Each of the key-value pairs will be added to a poller's metrics. Details [below](#labels)                                                                                                                                                                                                                                                                                 |                    |
 | `log_max_bytes`        |  | Maximum size of the log file before it will be rotated | `10000000` (10 mb) |
 | `log_max_files`        |  | Number of rotated log files to keep | `10` |
-| `log`                  | optional, list of collector names              | matching collectors log their ZAPI request/response                                                                                                                                                                                                                                                                                                                         |                    |
+| `log`                  | optional, list of collector names              | Matching collectors log their ZAPI request/response                                                                                                                                                                                                                                                                                                                         |                    |
 
 ## Defaults
 This section is optional. If there are parameters identical for all your pollers (e.g. datacenter, authentication method, login preferences), they can be grouped under this section. The poller section will be checked first and if the values aren't found there, the defaults will be consulted.

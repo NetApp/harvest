@@ -24,6 +24,11 @@
 package main
 
 import (
+	"bytes"
+	"crypto/tls"
+	"crypto/x509"
+	"encoding/json"
+	e "errors"
 	"fmt"
 	"github.com/spf13/cobra"
 	_ "goharvest2/cmd/collectors/simple"
@@ -43,7 +48,10 @@ import (
 	"goharvest2/pkg/logging"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
+	"goharvest2/pkg/util"
 	"gopkg.in/yaml.v3"
+	"io"
+	"math"
 	"net/http"
 	_ "net/http/pprof" // #nosec since pprof is off by default
 	"os"
@@ -71,7 +79,7 @@ var (
 	asupFirstWrite  = "4m"  // after this time, write 1st autosupport payload (for testing)
 )
 
-// init with default configuration by default it gets logged both to console and  harvest.log
+// init with default configuration that logs to both console and harvest.log
 var logger = logging.Get()
 
 // SIGNALS to catch
@@ -102,6 +110,7 @@ type Poller struct {
 	params         *conf.Poller
 	metadata       *matrix.Matrix
 	status         *matrix.Matrix
+	certPool       *x509.CertPool
 }
 
 // Init starts Poller, reads parameters, opens zeroLog handler, initializes metadata,
@@ -126,22 +135,30 @@ func (p *Poller) Init() error {
 		consoleLoggingEnabled = true
 	}
 
-	if p.params, err = conf.GetPoller2(p.options.Config, p.name); err != nil {
+	err = conf.LoadHarvestConfig(p.options.Config)
+	if err != nil {
 		// separate logger is not yet configured as it depends on setting logMaxMegaBytes, logMaxFiles later
 		// Using default instance of logger which logs below error to harvest.log
-		logging.SubLogger("Poller", p.name).Error().Stack().Err(err).Msg("read config")
+		logging.SubLogger("Poller", p.name).Error().
+			Str("config", p.options.Config).Err(err).Msg("Unable to read config")
+		return err
+	}
+	p.params, err = conf.PollerNamed(p.name)
+	if err != nil {
+		logging.SubLogger("Poller", p.name).Error().
+			Str("config", p.options.Config).Err(err).Msg("Failed to find poller")
 		return err
 	}
 
 	// log handling parameters
 	// size of file before rotating
-	if s := p.params.LogMaxBytes; s != nil {
-		logMaxMegaBytes = int(*s / (1024 * 1024))
+	if p.params.LogMaxBytes != 0 {
+		logMaxMegaBytes = int(p.params.LogMaxBytes / (1024 * 1024))
 	}
 
 	// maximum number of rotated files to keep
-	if s := p.params.LogMaxFiles; s != nil {
-		logMaxBackups = *p.params.LogMaxFiles
+	if p.params.LogMaxFiles != 0 {
+		logMaxBackups = p.params.LogMaxFiles
 	}
 
 	logConfig := logging.LogConfig{ConsoleLoggingEnabled: consoleLoggingEnabled,
@@ -178,6 +195,18 @@ func (p *Poller) Init() error {
 	go p.handleSignals(signalChannel)
 	logger.Debug().Msgf("set signal handler for %v", SIGNALS)
 
+	if conf.Config.Admin.Httpsd.TLS.CertFile != "" {
+		util.CheckCert(conf.Config.Admin.Httpsd.TLS.CertFile, "ssl_cert", p.options.Config, *logger.Logger)
+		cert, err := os.ReadFile(conf.Config.Admin.Httpsd.TLS.CertFile)
+		if err != nil {
+			logger.Fatal().Str("certFile", conf.Config.Admin.Httpsd.TLS.CertFile).Msg("Unable to read cert file")
+		}
+		certPool := x509.NewCertPool()
+		if ok := certPool.AppendCertsFromPEM(cert); !ok {
+			logger.Fatal().Str("certFile", conf.Config.Admin.Httpsd.TLS.CertFile).Msg("Unable to parse cert")
+		}
+		p.certPool = certPool
+	}
 	// announce startup
 	if p.options.Daemon {
 		logger.Info().Msgf("started as daemon [pid=%d]", os.Getpid())
@@ -190,27 +219,26 @@ func (p *Poller) Init() error {
 
 	// each poller is associated with a remote host
 	// if no address is specified, assume that is local host
-	// @TODO: remove, redundant and error-prone
-	if p.params.Addr == nil {
+	if p.params.Addr == "" {
 		p.target = "localhost"
 	} else {
-		p.target = *p.params.Addr
+		p.target = p.params.Addr
 	}
 	// check optional parameter auth_style
 	// if certificates are missing use default paths
-	if p.params.AuthStyle != nil && *p.params.AuthStyle == "certificate_auth" {
-		if p.params.SslCert == nil {
+	if p.params.AuthStyle == "certificate_auth" {
+		if p.params.SslCert == "" {
 			fp := path.Join(p.options.HomePath, "cert/", p.options.Hostname+".pem")
-			p.params.SslCert = &fp
+			p.params.SslCert = fp
 			logger.Debug().Msgf("using default [ssl_cert] path: [%s]", fp)
 			if _, err = os.Stat(fp); err != nil {
 				logger.Error().Stack().Err(err).Msgf("ssl_cert")
 				return errors.New(errors.MISSING_PARAM, "ssl_cert: "+err.Error())
 			}
 		}
-		if p.params.SslKey == nil {
+		if p.params.SslKey == "" {
 			fp := path.Join(p.options.HomePath, "cert/", p.options.Hostname+".key")
-			p.params.SslKey = &fp
+			p.params.SslKey = fp
 			logger.Debug().Msgf("using default [ssl_key] path: [%s]", fp)
 			if _, err = os.Stat(fp); err != nil {
 				logger.Error().Stack().Err(err).Msgf("ssl_key")
@@ -222,20 +250,16 @@ func (p *Poller) Init() error {
 	// initialize our metadata, the metadata will host status of our
 	// collectors and exporters, as well as ping stats to target host
 	p.loadMetadata()
-
-	if p.exporterParams, err = conf.GetExporters2(p.options.Config); err != nil {
-		logger.Warn().Msgf("read exporter params: %v", err)
-		// @TODO just warn or abort?
-	}
+	p.exporterParams = conf.Config.Exporters
 
 	// iterate over list of collectors and initialize them
 	// exporters are initialized on the fly, if at least one collector
 	// has requested them
-	if p.params.Collectors == nil {
+	if len(p.params.Collectors) == 0 {
 		logger.Warn().Msg("no collectors defined for this poller in config")
 		return errors.New(errors.ERR_NO_COLLECTOR, "no collectors")
 	} else {
-		for _, c := range *p.params.Collectors {
+		for _, c := range p.params.Collectors {
 			ok := true
 			// if requested, filter collectors
 			if len(p.options.Collectors) != 0 {
@@ -277,8 +301,8 @@ func (p *Poller) Init() error {
 	// initialize a schedule for the poller, this is the interval at which
 	// we will check the status of collectors, exporters and target system,
 	// and send metadata to exporters
-	if p.params.PollerSchedule != nil {
-		pollerSchedule = *p.params.PollerSchedule
+	if p.params.PollerSchedule != "" {
+		pollerSchedule = p.params.PollerSchedule
 	}
 	p.schedule = schedule.New()
 	if err = p.schedule.NewTaskString("poller", pollerSchedule, nil, true, "poller_"+p.name); err != nil {
@@ -288,15 +312,8 @@ func (p *Poller) Init() error {
 	logger.Debug().Msgf("set poller schedule with %s frequency", pollerSchedule)
 
 	// Check if autosupport is enabled
-	tools, err := conf.GetTools(p.options.Config)
-	if err != nil {
-		logger.Error().Stack().
-			Str("config", p.options.Config).
-			Err(err).Msgf("Failed to load tools from config")
-		return err
-	}
-
-	if tools.AsupDisabled {
+	tools := conf.Config.Tools
+	if tools != nil && tools.AsupDisabled {
 		logger.Info().Msgf("Autosupport is disabled")
 	} else {
 		if p.targetIsOntap() {
@@ -365,6 +382,8 @@ func (p *Poller) Start() {
 		wg  sync.WaitGroup
 		col collector.Collector
 	)
+
+	go p.startHeartBeat()
 
 	// start collectors
 	for _, col = range p.collectors {
@@ -440,17 +459,17 @@ func (p *Poller) Run() {
 			}
 
 			// update status of exporters
-			for _, e := range p.exporters {
-				code, status, msg := e.GetStatus()
-				logger.Debug().Msgf("exporter (%s) status: (%d - %s) %s", e.GetName(), code, status, msg)
+			for _, ee := range p.exporters {
+				code, status, msg := ee.GetStatus()
+				logger.Debug().Msgf("exporter (%s) status: (%d - %s) %s", ee.GetName(), code, status, msg)
 
 				if code == 0 {
 					upe++
 				}
 
-				key := e.GetClass() + "." + e.GetName()
+				key := ee.GetClass() + "." + ee.GetName()
 
-				p.metadata.LazySetValueUint64("count", key, e.GetExportCount())
+				p.metadata.LazySetValueUint64("count", key, ee.GetExportCount())
 				p.metadata.LazySetValueUint8("status", key, code)
 
 				if msg != "" {
@@ -461,11 +480,11 @@ func (p *Poller) Run() {
 			}
 
 			// @TODO if there are no "master" exporters, don't collect metadata
-			for _, e := range p.exporters {
-				if err := e.Export(p.metadata); err != nil {
+			for _, ee := range p.exporters {
+				if err := ee.Export(p.metadata); err != nil {
 					logger.Error().Stack().Err(err).Msg("export component metadata:")
 				}
-				if err := e.Export(p.status); err != nil {
+				if err := ee.Export(p.status); err != nil {
 					logger.Error().Stack().Err(err).Msg("export target metadata:")
 				}
 			}
@@ -480,7 +499,7 @@ func (p *Poller) Run() {
 
 		// asup task will be nil when autosupport is disabled
 		if asuptask != nil && asuptask.IsDue() {
-			asuptask.Run()
+			_, _ = asuptask.Run()
 		}
 
 		p.schedule.Sleep()
@@ -650,7 +669,7 @@ func (p *Poller) loadCollector(c conf.Collector, object string) error {
 		name := col.GetName()
 		obj := col.GetObject()
 
-		for _, expName := range col.WantedExporters(p.options.Config) {
+		for _, expName := range col.WantedExporters(p.params.Exporters) {
 			logger.Trace().Msgf("expName %s", expName)
 			if exp := p.loadExporter(expName); exp != nil {
 				col.LinkExporter(exp)
@@ -753,7 +772,7 @@ func (p *Poller) loadExporter(name string) exporter.Exporter {
 
 	var (
 		err    error
-		class  *string
+		class  string
 		params conf.Exporter
 		exp    exporter.Exporter
 	)
@@ -769,19 +788,19 @@ func (p *Poller) loadExporter(name string) exporter.Exporter {
 		return nil
 	}
 
-	if class = params.Type; class == nil {
+	if class = params.Type; class == "" {
 		logger.Warn().Msgf("exporter (%s) has no exporter class defined", name)
 		return nil
 	}
 
-	absExp := exporter.New(*class, name, p.options, params)
-	switch *class {
+	absExp := exporter.New(class, name, p.options, params)
+	switch class {
 	case "Prometheus":
 		exp = prometheus.New(absExp)
 	case "InfluxDB":
 		exp = influxdb.New(absExp)
 	default:
-		logger.Error().Msgf("no exporter of name:type %s:%s", name, *class)
+		logger.Error().Msgf("no exporter of name:type %s:%s", name, class)
 		return nil
 	}
 	if err = exp.Init(); err != nil {
@@ -857,6 +876,131 @@ func (p *Poller) targetIsOntap() bool {
 	return false
 }
 
+type pollerDetails struct {
+	Name string `json:"Name,omitempty"`
+	Ip   string `json:"Ip,omitempty"`
+	Port int    `json:"Port,omitempty"`
+}
+
+func (p *Poller) publishDetails() {
+	localIp, err := util.FindLocalIP()
+	if err != nil {
+		logger.Err(err).Msg("Unable to find local IP")
+		return
+	}
+	exporterIp := "127.0.0.1"
+	heartBeatUrl := ""
+	for _, exporterName := range p.params.Exporters {
+		exp, ok := p.exporterParams[exporterName]
+		if !ok {
+			continue
+		}
+		if exp.Type != "Prometheus" {
+			continue
+		}
+		if exp.LocalHttpAddr == "localhost" || exp.LocalHttpAddr == "127.0.0.1" {
+			exporterIp = "127.0.0.1"
+		} else {
+			exporterIp = localIp
+		}
+		if exp.HeartBeatUrl != "" {
+			heartBeatUrl = exp.HeartBeatUrl
+		}
+	}
+
+	details := pollerDetails{
+		Name: p.name,
+		Ip:   exporterIp,
+		Port: p.options.PromPort,
+	}
+	payload, err := json.Marshal(details)
+	if err != nil {
+		panic(err)
+	}
+	var client *http.Client
+	var defaultUrl string
+	if conf.Config.Admin.Httpsd.TLS.CertFile != "" {
+		client = &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{
+					RootCAs: p.certPool,
+				},
+			},
+		}
+		defaultUrl = "https://127.0.0.1:8887/api/v1/sd"
+	} else {
+		client = &http.Client{
+			Transport: &http.Transport{},
+		}
+		defaultUrl = "http://127.0.0.1:8887/api/v1/sd"
+	}
+	if heartBeatUrl == "" {
+		heartBeatUrl = defaultUrl
+	}
+	req, err := http.NewRequest("PUT", heartBeatUrl, bytes.NewBuffer(payload))
+	if err != nil {
+		logger.Err(err).Msg("failed to connect to admin")
+		return
+	}
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	user := conf.Config.Admin.Httpsd.AuthBasic.Username
+	if user != "" {
+		req.SetBasicAuth(user, conf.Config.Admin.Httpsd.AuthBasic.Password)
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		rErr := e.Unwrap(err)
+		if rErr == nil {
+			rErr = err
+		}
+		// check if this is a connection error, if so, the admin node is down
+		// log as warning instead of error
+		event := logger.Error()
+		if strings.Contains(rErr.Error(), "connection refused") {
+			event = logger.Warn()
+		}
+		event.Err(rErr).Str("admin", conf.Config.Admin.Httpsd.Listen).Msg("Failed connecting to admin node")
+		return
+	}
+	defer func(Body io.ReadCloser) { _ = Body.Close() }(resp.Body)
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logger.Err(err).Msg("failed to read publishDetails response to admin")
+		return
+	}
+	if resp.StatusCode != 200 {
+		txt := string(body)
+		txt = txt[0:int(math.Min(float64(len(txt)), 48))]
+		logger.Error().
+			Str("admin", conf.Config.Admin.Httpsd.Listen).
+			Str("body", txt).
+			Int("httpStatusCode", resp.StatusCode).
+			Msg("Admin node problem")
+	}
+}
+
+// startHeartBeat never returns
+// Publish the receiver's discovery details to the admin node
+func (p *Poller) startHeartBeat() {
+	if conf.Config.Admin.Httpsd.Listen == "" {
+		return
+	}
+	p.publishDetails()
+	if conf.Config.Admin.Httpsd.HeartBeat == "" {
+		conf.Config.Admin.Httpsd.HeartBeat = "45s"
+	}
+	duration, err := time.ParseDuration(conf.Config.Admin.Httpsd.HeartBeat)
+	if err != nil {
+		logger.Warn().Str("heart_beat", conf.Config.Admin.Httpsd.HeartBeat).
+			Err(err).Msg("Invalid heart_beat using 1m")
+		duration = 1 * time.Minute
+	}
+	tick := time.Tick(duration)
+	for range tick {
+		p.publishDetails()
+	}
+}
+
 func startPoller(_ *cobra.Command, _ []string) {
 	//cmd.DebugFlags()  // uncomment to print flags
 	poller := &Poller{}
@@ -875,7 +1019,7 @@ var args = options.Options{
 }
 
 func init() {
-	configPath, _ := conf.GetDefaultHarvestConfigPath()
+	configPath := conf.GetDefaultHarvestConfigPath()
 
 	var flags = pollerCmd.Flags()
 	flags.StringVarP(&args.Poller, "poller", "p", "", "Poller name as defined in config")
@@ -899,7 +1043,6 @@ func init() {
 
 // start poller, if fails try to write to syslog
 func main() {
-
 	// don't recover if a goroutine has panicked, instead
 	// try to zeroLog as much as possible, since normally it's
 	// not properly logged

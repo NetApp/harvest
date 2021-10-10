@@ -56,7 +56,7 @@ type Collector interface {
 	SetSchedule(*schedule.Schedule)
 	SetMatrix(*matrix.Matrix)
 	SetMetadata(*matrix.Matrix)
-	WantedExporters(configFp string) []string
+	WantedExporters([]string) []string
 	LinkExporter(exporter.Exporter)
 	LoadPlugins(*node.Node, Collector) error
 	LoadPlugin(string, *plugin.AbstractPlugin) plugin.Plugin
@@ -491,14 +491,9 @@ func (me *AbstractCollector) SetMetadata(m *matrix.Matrix) {
 	me.Metadata = m
 }
 
-// WantedExporters retrieves the names of the exporters to which the collector
-// needs to export data
-func (me *AbstractCollector) WantedExporters(configFp string) []string {
-	names, err := conf.GetUniqueExporters(me.Params, configFp)
-	if err != nil {
-		me.Logger.Error().Stack().Err(err).Msg("Error while fetching exporters")
-	}
-	return names
+// WantedExporters returns the list of exporters the receiver will export data to
+func (me *AbstractCollector) WantedExporters(exporters []string) []string {
+	return conf.GetUniqueExporters(exporters)
 }
 
 // LinkExporter appends exporter e to the list of exporters of the collector

@@ -39,7 +39,7 @@ func New(poller *conf.Poller) (*Client, error) {
 		transport      *http.Transport
 		cert           tls.Certificate
 		timeout        time.Duration
-		addr           *string
+		addr           string
 		url            string
 		useInsecureTLS bool
 		err            error
@@ -48,14 +48,14 @@ func New(poller *conf.Poller) (*Client, error) {
 	client = Client{}
 	client.Logger = logging.SubLogger("REST", "Client")
 
-	if addr = poller.Addr; addr == nil {
+	if addr = poller.Addr; addr == "" {
 		return nil, errors.New(errors.MISSING_PARAM, "addr")
 	}
 
-	if poller.IsKfs != nil && *poller.IsKfs {
-		url = "https://" + *addr + ":8443/"
+	if poller.IsKfs {
+		url = "https://" + addr + ":8443/"
 	} else {
-		url = "https://" + *addr + "/"
+		url = "https://" + addr + "/"
 	}
 	client.baseURL = url
 
@@ -67,9 +67,9 @@ func New(poller *conf.Poller) (*Client, error) {
 	}
 
 	// set authentication method
-	if poller.AuthStyle != nil && *poller.AuthStyle == "certificate_auth" {
-		certPath := value(poller.SslCert, "")
-		keyPath := value(poller.SslKey, "")
+	if poller.AuthStyle == "certificate_auth" {
+		certPath := poller.SslCert
+		keyPath := poller.SslKey
 		if certPath == "" {
 			return nil, errors.New(errors.MISSING_PARAM, "ssl_cert")
 		} else if keyPath == "" {
@@ -85,7 +85,7 @@ func New(poller *conf.Poller) (*Client, error) {
 				InsecureSkipVerify: useInsecureTLS},
 		}
 	} else {
-		username := value(poller.Username, "")
+		username := poller.Username
 		password := poller.Password
 		client.username = username
 		client.password = password
@@ -102,8 +102,8 @@ func New(poller *conf.Poller) (*Client, error) {
 	}
 
 	timeout = DefaultTimeout
-	if poller.ClientTimeout != nil {
-		timeout, err = time.ParseDuration(*poller.ClientTimeout)
+	if poller.ClientTimeout != "" {
+		timeout, err = time.ParseDuration(poller.ClientTimeout)
 		if err != nil {
 			client.Logger.Error().Msgf("err paring client timeout of=[%s] err=%+v\n", timeout, err)
 		}

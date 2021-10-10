@@ -18,8 +18,7 @@ import (
 	"fmt"
 	tw "github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
-	"goharvest2/cmd/harvest/config"
-	"goharvest2/cmd/harvest/stub"
+	"goharvest2/cmd/admin"
 	"goharvest2/cmd/harvest/version"
 	"goharvest2/cmd/tools/doctor"
 	"goharvest2/cmd/tools/generate"
@@ -29,6 +28,7 @@ import (
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/set"
 	"goharvest2/pkg/util"
+	"log"
 	"net"
 	_ "net/http/pprof" // #nosec since pprof is off by default
 	"os"
@@ -62,7 +62,7 @@ type options struct {
 
 type pollerStatus struct {
 	status        string
-	pid           int
+	pid           int32
 	profilingPort string
 	promPort      string
 }
@@ -88,7 +88,6 @@ var opts = &options{
 func doManageCmd(cmd *cobra.Command, args []string) {
 	var (
 		poller                                           *conf.Poller
-		pollers                                          map[string]*conf.Poller
 		name                                             string
 		pollerNames, pollersFromCmdLine, pollersFiltered []string
 		pollerNamesSet                                   *set.Set
@@ -97,12 +96,7 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 	)
 	opts.command = cmd.Name()
 	HarvestHomePath = conf.GetHarvestHomePath()
-	HarvestConfigPath, err = conf.GetDefaultHarvestConfigPath()
-
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	HarvestConfigPath = conf.GetDefaultHarvestConfigPath()
 
 	if opts.verbose {
 		_ = cmd.Flags().Set("loglevel", "1")
@@ -113,16 +107,15 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 
 	//cmd.DebugFlags()  // uncomment to print flags
 
-	if pollers, err = conf.GetPollers2(opts.config); err != nil {
+	if err = conf.LoadHarvestConfig(opts.config); err != nil {
 		if os.IsNotExist(err) {
-			fmt.Printf("config [%s]: not found\n", opts.config)
-		} else {
-			fmt.Printf("config [%s]: %v\n", opts.config, err)
+			log.Fatalf("config [%s]: not found\n", opts.config)
 		}
-		os.Exit(1)
+		log.Fatalf("config [%s]: %v\n", opts.config, err)
 	}
 
 	pollerNames = conf.Config.PollersOrdered
+	pollers := conf.Config.Pollers
 
 	// do this before filtering of pollers
 	// stop pollers which may have been renamed or no longer exists in harvest.yml
@@ -181,10 +174,7 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 
 	for _, name = range pollersFiltered {
 
-		var (
-			s          *pollerStatus
-			datacenter string
-		)
+		var s *pollerStatus
 
 		if poller, ok = pollers[name]; !ok {
 			// should never happen
@@ -192,24 +182,20 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 			continue
 		}
 
-		if poller.Datacenter != nil {
-			datacenter = *poller.Datacenter
-		}
-
 		s = getStatus(name)
 		if opts.command == "kill" {
 			s = killPoller(name)
-			printStatus(table, opts.longStatus, datacenter, name, s)
+			printStatus(table, opts.longStatus, poller.Datacenter, name, s)
 			continue
 		}
 
 		if opts.command == "status" {
-			printStatus(table, opts.longStatus, datacenter, name, s)
+			printStatus(table, opts.longStatus, poller.Datacenter, name, s)
 		}
 
 		if opts.command == "stop" || opts.command == "restart" {
 			s = stopPoller(name)
-			printStatus(table, opts.longStatus, datacenter, name, s)
+			printStatus(table, opts.longStatus, poller.Datacenter, name, s)
 		}
 
 		if opts.command == "start" || opts.command == "restart" {
@@ -218,12 +204,12 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 			switch s.status {
 			case "running":
 				// do nothing but print current status, idempotent
-				printStatus(table, opts.longStatus, datacenter, name, s)
+				printStatus(table, opts.longStatus, poller.Datacenter, name, s)
 				break
 			case "not running", "stopped", "killed":
 				promPort := getPollerPrometheusPort(name, opts)
 				s = startPoller(name, promPort, opts)
-				printStatus(table, opts.longStatus, datacenter, name, s)
+				printStatus(table, opts.longStatus, poller.Datacenter, name, s)
 			default:
 				fmt.Printf("can't verify status of [%s]: kill poller and try again\n", name)
 			}
@@ -271,13 +257,13 @@ func getStatus(pollerName string) *pollerStatus {
 
 	// retrieve process with PID and check if running
 	// (error can be safely ignored on Unix)
-	proc, _ := os.FindProcess(s.pid)
+	proc, _ := os.FindProcess(int(s.pid))
 
 	// send signal 0 to check if process is running
 	// returns err if it's not running or permission is denied
 	if err := proc.Signal(syscall.Signal(0)); err != nil {
 		if os.IsPermission(err) {
-			fmt.Println("Insufficient privileges to send signal to process")
+			fmt.Printf("Insufficient privileges to send signal to process pid=[%d]\n", s.pid)
 		}
 		return s
 	}
@@ -329,7 +315,7 @@ func stopGhostPollers(skipPoller []string) {
 		}
 		// if poller doesn't exists in harvest config
 		if !skip {
-			proc, err := os.FindProcess(p)
+			proc, err := os.FindProcess(int(p))
 			if err != nil {
 				fmt.Printf("process not found for pid %d %v \n", p, err)
 				continue
@@ -354,7 +340,7 @@ func killPoller(pollerName string) *pollerStatus {
 
 	// send kill signal
 	// TODO handle already exited
-	proc, _ := os.FindProcess(s.pid)
+	proc, _ := os.FindProcess(int(s.pid))
 	if err := proc.Kill(); err != nil {
 		if strings.HasSuffix(err.Error(), "process already finished") {
 			s.status = "already exited"
@@ -379,7 +365,7 @@ func stopPoller(pollerName string) *pollerStatus {
 		return s
 	}
 
-	proc, _ := os.FindProcess(s.pid)
+	proc, _ := os.FindProcess(int(s.pid))
 
 	// send terminate signal
 	if err := proc.Signal(syscall.SIGTERM); err != nil {
@@ -518,7 +504,7 @@ func printStatus(table *tw.Table, long bool, dc, pn string, ps *pollerStatus) {
 		row = []string{dct, pnt, "", ps.promPort, ps.status}
 	}
 	if ps.pid != 0 {
-		row[2] = strconv.Itoa(ps.pid)
+		row[2] = strconv.Itoa(int(ps.pid))
 	}
 	table.Append(row)
 }
@@ -573,12 +559,13 @@ func init() {
 	rootCmd.AddCommand(manageCmd("stop", true))
 	rootCmd.AddCommand(manageCmd("restart", true))
 	rootCmd.AddCommand(manageCmd("kill", true))
-	rootCmd.AddCommand(config.ConfigCmd, zapi.Cmd, rest.Cmd, grafana.Cmd, stub.NewCmd)
+	rootCmd.AddCommand(zapi.Cmd, rest.Cmd, grafana.Cmd)
 	rootCmd.AddCommand(generate.Cmd)
 	rootCmd.AddCommand(doctor.Cmd)
 	rootCmd.AddCommand(version.Cmd())
+	rootCmd.AddCommand(admin.Cmd())
 
-	rootCmd.PersistentFlags().StringVar(&opts.config, "config", "./harvest.yml", "harvest config file path")
+	rootCmd.PersistentFlags().StringVar(&opts.config, "config", "./harvest.yml", "Harvest config file path")
 	rootCmd.Version = version.String()
 	rootCmd.SetVersionTemplate(version.String())
 	rootCmd.SetUsageTemplate(rootCmd.UsageTemplate() + `

@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/cobra"
 	"goharvest2/pkg/conf"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -103,6 +104,10 @@ func doShow(_ *cobra.Command, a []string) {
 	if !c.isValid {
 		return
 	}
+	err := conf.LoadHarvestConfig(args.Config)
+	if err != nil {
+		log.Fatal(err)
+	}
 	if args.SwaggerPath != "" {
 		doSwagger(*args)
 	} else {
@@ -193,17 +198,16 @@ func getPollerAndAddr() (*conf.Poller, string, error) {
 	var (
 		poller *conf.Poller
 		err    error
-		addr   string
 	)
-	if poller, err = conf.GetPoller2(args.Config, args.Poller); err != nil {
+	if poller, err = conf.PollerNamed(args.Poller); err != nil {
 		fmt.Printf("Poller named [%s] does not exist\n", args.Poller)
 		return nil, "", err
 	}
-	if addr = value(poller.Addr, ""); addr == "" {
-		fmt.Printf("Poller named [%s] does not have a valid addr=[%s]\n", args.Poller, addr)
+	if poller.Addr == "" {
+		fmt.Printf("Poller named [%s] does not have a valid addr=[]\n", args.Poller)
 		return nil, "", err
 	}
-	return poller, addr, nil
+	return poller, poller.Addr, nil
 }
 
 func buildHref() string {
@@ -266,7 +270,7 @@ func stderr(format string, a ...interface{}) {
 }
 
 func init() {
-	configPath, _ := conf.GetDefaultHarvestConfigPath()
+	configPath := conf.GetDefaultHarvestConfigPath()
 
 	Cmd.AddCommand(showCmd)
 	flags := Cmd.PersistentFlags()
