@@ -103,24 +103,8 @@ func GetExporters2(configFp string) (map[string]Exporter, error) {
 	}
 	exporters := Config.Exporters
 
-	if exporters == nil {
-		err = errors.New(errors.ERR_CONFIG, "[Exporters] section not found")
-		return nil, err
-	}
-
-	return *exporters, nil
-}
-
-func GetExporters(configFp string) (*node.Node, error) {
-	var err error
-	var config, exporters *node.Node
-
-	if config, err = LoadConfig(configFp); err != nil {
-		return nil, err
-	}
-
-	if exporters = config.GetChildS("Exporters"); exporters == nil {
-		err = errors.New(errors.ERR_CONFIG, "[Exporters] section not found")
+	if len(exporters) == 0 {
+		err = errors.New(errors.ERR_CONFIG, "[Exporters] section is empty")
 		return nil, err
 	}
 
@@ -277,10 +261,10 @@ func GetPrometheusExporterPorts(pollerName string) (int, error) {
 	}
 
 	exporters := poller.Exporters
-	if exporters != nil && len(*exporters) > 0 {
-		for _, e := range *exporters {
-			exporter := (*Config.Exporters)[e]
-			if exporter.Type != nil && *exporter.Type == "Prometheus" {
+	if exporters != nil && len(exporters) > 0 {
+		for _, e := range exporters {
+			exporter := Config.Exporters[e]
+			if exporter.Type == "Prometheus" {
 				isPrometheusExporterConfigured = true
 				if exporter.PortRange != nil {
 					ports := promPortRangeMapping[e]
@@ -329,9 +313,8 @@ func PortMapFromRange(address string, portRange *IntRange) PortMap {
 var promPortRangeMapping = make(map[string]PortMap)
 
 func loadPrometheusExporterPortRangeMapping() {
-	exporters := *Config.Exporters
-	for k, v := range exporters {
-		if v.Type != nil && *v.Type == "Prometheus" {
+	for k, v := range Config.Exporters {
+		if v.Type == "Prometheus" {
 			if v.PortRange != nil {
 				// we only care about free ports on the localhost
 				promPortRangeMapping[k] = PortMapFromRange("localhost", v.PortRange)
@@ -373,16 +356,15 @@ func GetUniqueExporters(p *node.Node, configFp string) ([]string, error) {
 	exporters := p.GetChildS("exporters")
 	if exporters != nil {
 		exportChildren := exporters.GetAllChildContentS()
-		definedExporters, err := GetExporters(configFp)
+		definedExporters, err := GetExporters2(configFp)
 		if err != nil {
 			return nil, err
 		}
 		exporterMap := make(map[string]string)
 		for _, ec := range exportChildren {
-			e := definedExporters.GetChildS(ec)
-			if e != nil {
-				exporterType := e.GetChildContentS("exporter")
-				exporterMap[exporterType] = ec
+			e, ok := definedExporters[ec]
+			if ok {
+				exporterMap[e.Type] = ec
 			}
 		}
 
@@ -403,6 +385,10 @@ type Consul struct {
 	Host        *string   `yaml:"host,omitempty"`
 	ServiceName *string   `yaml:"service_name,omitempty"`
 	Tags        *[]string `yaml:"tags,omitempty"`
+}
+
+type Admin struct {
+	Address string `yaml:"address"`
 }
 
 type Tools struct {
@@ -426,7 +412,7 @@ type Poller struct {
 	SslKey         *string               `yaml:"ssl_key,omitempty"`
 	LogMaxBytes    *int64                `yaml:"log_max_bytes,omitempty"`
 	LogMaxFiles    *int                  `yaml:"log_max_files,omitempty"`
-	Exporters      *[]string             `yaml:"exporters,omitempty"`
+	Exporters      []string              `yaml:"exporters,omitempty"`
 	Collectors     *[]Collector          `yaml:"collectors,omitempty"`
 	IsKfs          *bool                 `yaml:"is_kfs,omitempty"`
 	PollerSchedule *string               `yaml:"poller_schedule,omitempty"`
@@ -442,10 +428,10 @@ func (p *Poller) Union(defaults *Poller) {
 type Exporter struct {
 	Port              *int      `yaml:"port,omitempty"`
 	PortRange         *IntRange `yaml:"port_range,omitempty"`
-	Type              *string   `yaml:"exporter,omitempty"`
+	Type              string    `yaml:"exporter,omitempty"`
 	Addr              *string   `yaml:"addr,omitempty"`
 	Url               *string   `yaml:"url,omitempty"`
-	LocalHttpAddr     *string   `yaml:"local_http_addr,omitempty"`
+	LocalHttpAddr     string    `yaml:"local_http_addr,omitempty"`
 	GlobalPrefix      *string   `yaml:"global_prefix,omitempty"`
 	AllowedAddrs      *[]string `yaml:"allow_addrs,omitempty"`
 	AllowedAddrsRegex *[]string `yaml:"allow_addrs_regex,omitempty"`
@@ -502,9 +488,10 @@ type OrderedConfig struct {
 }
 
 type HarvestConfig struct {
-	Tools          *Tools               `yaml:"Tools,omitempty"`
-	Exporters      *map[string]Exporter `yaml:"Exporters,omitempty"`
-	Pollers        *map[string]*Poller  `yaml:"Pollers,omitempty"`
-	Defaults       *Poller              `yaml:"Defaults,omitempty"`
-	PollersOrdered []string             // poller names in same order as yaml config
+	Tools          *Tools              `yaml:"Tools,omitempty"`
+	Exporters      map[string]Exporter `yaml:"Exporters,omitempty"`
+	Pollers        *map[string]*Poller `yaml:"Pollers,omitempty"`
+	Defaults       *Poller             `yaml:"Defaults,omitempty"`
+	Admin          Admin               `yaml:"Admin,omitempty"`
+	PollersOrdered []string            // poller names in same order as yaml config
 }

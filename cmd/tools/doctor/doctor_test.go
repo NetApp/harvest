@@ -43,18 +43,18 @@ func TestConfigToStruct(t *testing.T) {
 			*conf.Config.Defaults.Collectors)
 	}
 
-	allowedRegexes := (*conf.Config.Exporters)["prometheus"].AllowedAddrsRegex
+	allowedRegexes := conf.Config.Exporters["prometheus"].AllowedAddrsRegex
 	if (*allowedRegexes)[0] != "^192.168.0.\\d+$" {
 		t.Fatalf(`expected allow_addrs_regex to be ^192.168.0.\d+$ actual=%+v`,
 			(*allowedRegexes)[0])
 	}
 
-	influxyAddr := (*conf.Config.Exporters)["influxy"].Addr
+	influxyAddr := conf.Config.Exporters["influxy"].Addr
 	if (*influxyAddr) != "localhost" {
 		t.Fatalf(`expected addr to be "localhost", actual=%+v`, (*influxyAddr))
 	}
 
-	influxyURL := (*conf.Config.Exporters)["influxz"].Url
+	influxyURL := conf.Config.Exporters["influxz"].Url
 	if (*influxyURL) != "www.example.com/influxdb" {
 		t.Fatalf(`expected addr to be "www.example.com/influxdb", actual=%+v`, (*influxyURL))
 	}
