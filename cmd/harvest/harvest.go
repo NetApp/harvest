@@ -18,6 +18,7 @@ import (
 	"fmt"
 	tw "github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
+	"goharvest2/cmd/admin"
 	"goharvest2/cmd/harvest/config"
 	"goharvest2/cmd/harvest/stub"
 	"goharvest2/cmd/harvest/version"
@@ -277,7 +278,7 @@ func getStatus(pollerName string) *pollerStatus {
 	// returns err if it's not running or permission is denied
 	if err := proc.Signal(syscall.Signal(0)); err != nil {
 		if os.IsPermission(err) {
-			fmt.Println("Insufficient privileges to send signal to process")
+			fmt.Printf("Insufficient privileges to send signal to process pid=[%d]\n", s.pid)
 		}
 		return s
 	}
@@ -577,8 +578,9 @@ func init() {
 	rootCmd.AddCommand(generate.Cmd)
 	rootCmd.AddCommand(doctor.Cmd)
 	rootCmd.AddCommand(version.Cmd())
+	rootCmd.AddCommand(admin.Cmd())
 
-	rootCmd.PersistentFlags().StringVar(&opts.config, "config", "./harvest.yml", "harvest config file path")
+	rootCmd.PersistentFlags().StringVar(&opts.config, "config", "./harvest.yml", "Harvest config file path")
 	rootCmd.Version = version.String()
 	rootCmd.SetVersionTemplate(version.String())
 	rootCmd.SetUsageTemplate(rootCmd.UsageTemplate() + `

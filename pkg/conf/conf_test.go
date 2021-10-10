@@ -69,12 +69,12 @@ func TestPollerStructDefaults(t *testing.T) {
 		if poller.Exporters == nil {
 			t.Fatalf(`expected exporters to not be nil, but it was`)
 		}
-		if len(*poller.Exporters) != 1 {
-			t.Fatalf(`expected 1 exporters but got %v`, *poller.Exporters)
+		if len(poller.Exporters) != 1 {
+			t.Fatalf(`expected 1 exporters but got %v`, poller.Exporters)
 		}
 		expected := []string{"prometheusrange"}
-		if !reflect.DeepEqual(*poller.Exporters, expected) {
-			t.Fatalf(`expected collectors to be %v but was %v`, expected, *poller.Exporters)
+		if !reflect.DeepEqual(poller.Exporters, expected) {
+			t.Fatalf(`expected collectors to be %v but was %v`, expected, poller.Exporters)
 		}
 	})
 
@@ -176,11 +176,11 @@ func TestFlowStyle(t *testing.T) {
 		if (*poller.Collectors)[0].Name != "Zapi" {
 			t.Fatalf(`expected the first collector to be Zapi but got %v`, (*poller.Collectors)[0])
 		}
-		if len(*poller.Exporters) != 1 {
-			t.Fatalf(`expected there to be one exporter but got %v`, len(*poller.Exporters))
+		if len(poller.Exporters) != 1 {
+			t.Fatalf(`expected there to be one exporter but got %v`, len(poller.Exporters))
 		}
 		if (*poller.Collectors)[0].Name != "Zapi" {
-			t.Fatalf(`expected the first exporter to be prom but got %v`, (*poller.Exporters)[0])
+			t.Fatalf(`expected the first exporter to be prom but got %v`, (poller.Exporters)[0])
 		}
 	})
 }

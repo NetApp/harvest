@@ -5,10 +5,9 @@
 package util
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"github.com/shirou/gopsutil/process"
 	"os"
 	"os/exec"
 	"runtime"
@@ -61,59 +60,12 @@ func EqualStringSlice(a, b []string) bool {
 	return true
 }
 
-func readProcFile(path string) (string, error) {
-	data, err := ioutil.ReadFile(path)
-	if err != nil {
-		return "", err
-	}
-	result := string(bytes.ReplaceAll(data, []byte("\x00"), []byte(" ")))
-	return result, nil
-}
-
 func GetCmdLine(pid int) (string, error) {
-	if runtime.GOOS == "darwin" {
-		return darwinGetCmdLine(pid)
-	}
-	return readProcFile(fmt.Sprintf("/proc/%d/cmdline", pid))
-}
-
-func darwinGetCmdLine(pid int) (string, error) {
-	bin, err := exec.LookPath("ps")
+	newProcess, err := process.NewProcess(int32(pid))
 	if err != nil {
 		return "", err
 	}
-	var ee *exec.ExitError
-	var pe *os.PathError
-	cmd := exec.Command(bin, "-x", "-o", "command", "-p", strconv.Itoa(pid))
-	out, err := cmd.Output()
-	if errors.As(err, &ee) {
-		if ee.Stderr != nil {
-			fmt.Printf("Exit error stderr=%s\n", ee.Stderr)
-		}
-		return "", nil // ran, but non-zero exit code
-	} else if errors.As(err, &pe) {
-		return "", err // "no such file ...", "permission denied" etc.
-	} else if err != nil {
-		return "", err // something really bad happened!
-	}
-	lines := strings.Split(string(out), "\n")
-	var ret [][]string
-	for _, line := range lines[1:] {
-		var lr []string
-		for _, word := range strings.Split(line, " ") {
-			if word == "" {
-				continue
-			}
-			lr = append(lr, strings.TrimSpace(word))
-		}
-		if len(lr) != 0 {
-			ret = append(ret, lr)
-		}
-	}
-	if ret == nil {
-		return "", nil
-	}
-	return strings.Join(ret[0], " "), err
+	return newProcess.Cmdline()
 }
 
 func RemoveEmptyStrings(s []string) []string {

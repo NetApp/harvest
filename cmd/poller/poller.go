@@ -748,7 +748,7 @@ func (p *Poller) loadExporter(name string) exporter.Exporter {
 
 	var (
 		err    error
-		class  *string
+		class  string
 		params conf.Exporter
 		exp    exporter.Exporter
 	)
@@ -764,19 +764,19 @@ func (p *Poller) loadExporter(name string) exporter.Exporter {
 		return nil
 	}
 
-	if class = params.Type; class == nil {
+	if class = params.Type; class == "" {
 		logger.Warn().Msgf("exporter (%s) has no exporter class defined", name)
 		return nil
 	}
 
-	absExp := exporter.New(*class, name, p.options, params)
-	switch *class {
+	absExp := exporter.New(class, name, p.options, params)
+	switch class {
 	case "Prometheus":
 		exp = prometheus.New(absExp)
 	case "InfluxDB":
 		exp = influxdb.New(absExp)
 	default:
-		logger.Error().Msgf("no exporter of name:type %s:%s", name, *class)
+		logger.Error().Msgf("no exporter of name:type %s:%s", name, class)
 		return nil
 	}
 	if err = exp.Init(); err != nil {

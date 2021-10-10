@@ -40,10 +40,6 @@ const (
 	cacheMaxKeep = "180s"
 	// apply a prefix to metrics globally (default none)
 	globalPrefix = ""
-	// address of the HTTP service, valid values are
-	// - "localhost" or "127.0.0.1", this limits access to local machine
-	// - "" or "0.0.0.0", allows access from network
-	localHttpAddr = ""
 )
 
 type Prometheus struct {
@@ -174,12 +170,13 @@ func (me *Prometheus) Init() error {
 		return errors.New(errors.INVALID_PARAM, "port")
 	}
 
-	addr := localHttpAddr
-	if x := me.Params.LocalHttpAddr; x != nil {
-		addr = *x
-		me.Logger.Debug().Msgf("using custom local addr [%s]", addr)
+	// The optional parameter LocalHttpAddr is the address of the HTTP service, valid values are:
+	//- "localhost" or "127.0.0.1", this limits access to local machine
+	//- "" (default) or "0.0.0.0", allows access from network
+	addr := me.Params.LocalHttpAddr
+	if addr != "" {
+		me.Logger.Debug().Str("addr", addr).Msg("Using custom local addr")
 	}
-
 	go me.startHttpD(addr, port)
 
 	// @TODO: implement error checking to enter failed state if HTTPd failed

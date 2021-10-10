@@ -44,7 +44,7 @@ var mergeCmd = &cobra.Command{
 	Run:    doMergeCmd,
 }
 
-func doMergeCmd(cmd *cobra.Command, _ []string) {
+func doMergeCmd(_ *cobra.Command, _ []string) {
 	doMerge(opts.BaseTemplate, opts.MergeTemplate)
 }
 
@@ -119,15 +119,15 @@ func checkExporterTypes(config conf.HarvestConfig) validation {
 		return validation{}
 	}
 	invalidTypes := make(map[string]string)
-	for name, exporter := range *config.Exporters {
-		if exporter.Type == nil {
+	for name, exporter := range config.Exporters {
+		if exporter.Type == "" {
 			continue
 		}
-		switch *exporter.Type {
+		switch exporter.Type {
 		case "Prometheus", "InfluxDB":
 			break
 		default:
-			invalidTypes[name] = *exporter.Type
+			invalidTypes[name] = exporter.Type
 		}
 	}
 
@@ -157,9 +157,9 @@ func checkUniquePromPorts(config conf.HarvestConfig) validation {
 	// Add all exporters that have a port to a
 	// map of portNum -> list of names
 	seen := make(map[int][]string)
-	for name, exporter := range *config.Exporters {
+	for name, exporter := range config.Exporters {
 		// ignore configuration with both port and portrange defined. PortRange takes precedence
-		if exporter.Port == nil || exporter.Type == nil || *exporter.Type != "Prometheus" || exporter.PortRange != nil {
+		if exporter.Port == nil || exporter.Type != "Prometheus" || exporter.PortRange != nil {
 			continue
 		}
 		previous := seen[*exporter.Port]
@@ -168,8 +168,8 @@ func checkUniquePromPorts(config conf.HarvestConfig) validation {
 	}
 
 	// Update PortRanges
-	for name, exporter := range *config.Exporters {
-		if exporter.PortRange == nil || exporter.Type == nil || *exporter.Type != "Prometheus" {
+	for name, exporter := range config.Exporters {
+		if exporter.PortRange == nil || exporter.Type != "Prometheus" {
 			continue
 		}
 		portRange := exporter.PortRange
