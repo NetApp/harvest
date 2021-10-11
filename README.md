@@ -277,7 +277,7 @@ For a list of collector-specific parameters, see the documentation of each colle
 
 ### [Unix](cmd/collectors/unix/README.md)
 
-### [Creating/editing templates](conf/README.md)
+### [Templates](conf/README.md)
 
 ### Labels
 
