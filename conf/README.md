@@ -154,7 +154,7 @@ To extend this objectTemplate, create `conf/zapi/custom.yaml` with the lines sho
 
 ```yaml
 objects:
-  Sensor: custom_lun.yaml
+  Lun: custom_lun.yaml
 ```
 
 Create a new objectTemplate `conf/zapi/cdot/9.8.0/custom_lun.yaml` with the lines shown below. 
