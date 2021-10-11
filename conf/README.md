@@ -73,7 +73,7 @@ objects:
 
 After restarting your pollers, `aggr.yaml` and `custom_aggr.yaml` will be merged.
 
-#### 1. Create a new object template
+#### Create a new object template
 
 In this example, Let's imagine that Harvest didn't already collect environment sensor data . If we want to collect sensor metrics from the `environment-sensors-get-iter` API. These are the steps that we need to follow:
 
@@ -103,7 +103,7 @@ export_options:
   include_all_labels: true
 ```
 
-#### 2. Enable the new object template
+#### Enable the new object template
 
 To enable the new objectTemplate, create `conf/zapi/custom.yaml` with the lines shown below.
 
@@ -113,7 +113,7 @@ objects:
 ```
 The Sensor key used in the custom.yaml must match the name defined in our sensor.yaml file. That's what connects this object with the template. In the future, if you add more object Templates, you can add those in this same file.
 
-#### 3. Extend an existing object template
+#### Extend an existing object template
 
 In this example, we want to extend one of the existing object templates that Harvest ships with, `conf/zapi/cdot/9.8.0/lun.yaml` and collect additional information as below: 
 
@@ -233,11 +233,11 @@ To help understand the merging process and resulting template, you can view the 
 bin/harvest doctor merge --template lun.yaml --with custom_lun.yaml
 ```
 
-#### 4. Replace an existing object template
+#### Replace an existing object template
 
 You can only extend existing default template as explained in [How to extend an existing object one](#extend-an-existing-object-template). If you have any such use case, tell us through github issues/ slack.
 
-#### 5. Test your changes and restart pollers
+#### Test your changes and restart pollers
 
 Test your new `Sensor` template with a single poller like this:
 ```
