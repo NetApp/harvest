@@ -63,7 +63,7 @@ type options struct {
 
 type pollerStatus struct {
 	status        string
-	pid           int
+	pid           int32
 	profilingPort string
 	promPort      string
 }
@@ -272,7 +272,7 @@ func getStatus(pollerName string) *pollerStatus {
 
 	// retrieve process with PID and check if running
 	// (error can be safely ignored on Unix)
-	proc, _ := os.FindProcess(s.pid)
+	proc, _ := os.FindProcess(int(s.pid))
 
 	// send signal 0 to check if process is running
 	// returns err if it's not running or permission is denied
@@ -330,7 +330,7 @@ func stopGhostPollers(skipPoller []string) {
 		}
 		// if poller doesn't exists in harvest config
 		if !skip {
-			proc, err := os.FindProcess(p)
+			proc, err := os.FindProcess(int(p))
 			if err != nil {
 				fmt.Printf("process not found for pid %d %v \n", p, err)
 				continue
@@ -355,7 +355,7 @@ func killPoller(pollerName string) *pollerStatus {
 
 	// send kill signal
 	// TODO handle already exited
-	proc, _ := os.FindProcess(s.pid)
+	proc, _ := os.FindProcess(int(s.pid))
 	if err := proc.Kill(); err != nil {
 		if strings.HasSuffix(err.Error(), "process already finished") {
 			s.status = "already exited"
@@ -380,7 +380,7 @@ func stopPoller(pollerName string) *pollerStatus {
 		return s
 	}
 
-	proc, _ := os.FindProcess(s.pid)
+	proc, _ := os.FindProcess(int(s.pid))
 
 	// send terminate signal
 	if err := proc.Signal(syscall.SIGTERM); err != nil {
@@ -519,7 +519,7 @@ func printStatus(table *tw.Table, long bool, dc, pn string, ps *pollerStatus) {
 		row = []string{dct, pnt, "", ps.promPort, ps.status}
 	}
 	if ps.pid != 0 {
-		row[2] = strconv.Itoa(ps.pid)
+		row[2] = strconv.Itoa(int(ps.pid))
 	}
 	table.Append(row)
 }

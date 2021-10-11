@@ -123,7 +123,7 @@ Admin:
   address: :8887
 ```
 
-This tells Harvest to create an HTTP service discovery end-point on interface `0.0.0.0:80`. If you want to restrict to localhost, use `127.0.0.1:<port>`. See [net.Dial](https://pkg.go.dev/net#Dial) for details on the supported address formats.
+This tells Harvest to create an HTTP service discovery end-point on interface `0.0.0.0:8887`. If you want to restrict to localhost, use `127.0.0.1:<port>`. See [net.Dial](https://pkg.go.dev/net#Dial) for details on the supported address formats.
 
 Start the SD process by running `bin/harvest admin`. Once it is started, you can curl the end-point for the list of running Harvest pollers.
 
