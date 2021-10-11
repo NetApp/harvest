@@ -290,7 +290,7 @@ func (me *Unix) PollInstance() (*matrix.Matrix, error) {
 		pid := ""
 		pids, err := util.GetPid(name)
 		if err == nil && len(pids) == 1 {
-			pid = strconv.Itoa(pids[0])
+			pid = strconv.Itoa(int(pids[0]))
 		}
 
 		if instance := me.Matrix.GetInstance(name); instance == nil {

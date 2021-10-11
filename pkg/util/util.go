@@ -60,8 +60,8 @@ func EqualStringSlice(a, b []string) bool {
 	return true
 }
 
-func GetCmdLine(pid int) (string, error) {
-	newProcess, err := process.NewProcess(int32(pid))
+func GetCmdLine(pid int32) (string, error) {
+	newProcess, err := process.NewProcess(pid)
 	if err != nil {
 		return "", err
 	}
@@ -78,7 +78,7 @@ func RemoveEmptyStrings(s []string) []string {
 	return r
 }
 
-func GetPid(pollerName string) ([]int, error) {
+func GetPid(pollerName string) ([]int32, error) {
 	// ($|\s) is included to match the poller name
 	// followed by a space or end of line - that way unix1 does not match unix11
 	search := fmt.Sprintf(`\-\-poller %s($|\s)`, pollerName)
@@ -88,8 +88,8 @@ func GetPid(pollerName string) ([]int, error) {
 	return GetPids(search)
 }
 
-func GetPids(search string) ([]int, error) {
-	var result []int
+func GetPids(search string) ([]int32, error) {
+	var result []int32
 	var ee *exec.ExitError
 	var pe *os.PathError
 	cmd := exec.Command("pgrep", "-f", search)
@@ -107,14 +107,14 @@ func GetPids(search string) ([]int, error) {
 	sdata := string(data)
 	pids := RemoveEmptyStrings(strings.Split(sdata, "\n"))
 	for _, pid := range pids {
-		p, err := strconv.Atoi(strings.TrimSpace(pid))
+		p64, err := strconv.ParseInt(strings.TrimSpace(pid), 10, 32)
 		if err != nil {
 			return result, err
 		}
 
 		// Validate this is a Harvest process
 		// env check does not work on Darwin or Unix when running as non-root
-		result = append(result, p)
+		result = append(result, int32(p64))
 	}
 	return result, err
 }
