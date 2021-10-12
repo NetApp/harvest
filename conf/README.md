@@ -77,7 +77,7 @@ After restarting your pollers, `aggr.yaml` and `custom_aggr.yaml` will be merged
 
 In this example, Let's imagine that Harvest didn't already collect environment sensor data . If we want to collect sensor metrics from the `environment-sensors-get-iter` API. These are the steps that we need to follow:
 
-Create the file `conf/zapi/cdot/9.8.0/sensor.yaml` (optionally replace `9.8.0` with the version of your ONTAP refer [Template Selection Algorithm](#Template-Selection-Algorithm)). Add following content:
+Create the file `conf/zapi/cdot/9.8.0/sensor.yaml` (optionally replace `9.8.0` with the version of your ONTAP refer [Harvest Versioned Templates](#harvest-versioned-templates)). Add following content:
 
 ```yaml
 name:                      Sensor
@@ -265,14 +265,19 @@ sensor_value{datacenter="WDRF",cluster="shopfloor",critical_high="9000",node="sh
 sensor_value{datacenter="WDRF",cluster="shopfloor",node="shopfloor-02",sensor="PSU1 InPwr Monitor",type="unknown",threshold_state="normal",unit="mW"} 132000
 ```
 
-## Template Selection Algorithm
+## Harvest Versioned Templates
 
-Harvest uses closest-matching algorithm to select templates to be used for a poller. The closest-matching algorithm means the same template will be used between multiple versions of ONTAP. Let's say, we are trying to find `lun.yaml` for `Zapi` collector for a cdot cluster.
-Harvest will try to determine the closest ONTAP version directory inside conf/zapi/cdot/, returning the first that matches. 
-A few examples are as follows.
+Harvest ships with a set of versioned templates tailored for specific versions of ONTAP. At runtime, Harvest uses a BestFit heuristic to pick the most appropriate template. The BestFit heuristic compares the list of Harvest templates with the ONTAP version and selects the best match. There are versioned templates for the Zapi collector and a different set for the REST collector. Here's how it works, assume Harvest has these templated versions:
 
-1. ONTAP version: 9.8.1 and template directories 9.8.0, 9.8.1, 9.9.0, 10.10.10. Harvest will select directory 9.8.1
-2. ONTAP version: 9.7.1 and template directories 9.8.0, 9.8.1, 9.9.0, 10.10.10. Harvest will select directory 9.8.0
-3. ONTAP version: 9.9.2 and template directories 9.8.0, 9.8.1, 9.9.0, 10.10.10. Harvest will select directory 9.9.0
-4. ONTAP version: 9.9.2 and template directories 9.8.0, 9.8.1, 9.9.0, 10.10.10. Harvest will select directory 11.11.11
-5. ONTAP version: 9.10.2 and template directories 9.8.0, 9.8.1, 9.9.0, 9.10.1. Harvest will select directory 9.10.1
+- 9.6.0
+- 9.6.1
+- 9.8.0
+- 9.9.0
+- 9.10.1
+
+if you are monitoring a cluster at these versions, Harvest will select the indicated template:
+
+- ONTAP version 9.4.1, Harvest will select the templates for 9.6.0
+- ONTAP version 9.6.0, Harvest will select the templates for 9.6.0
+- ONTAP version 9.7.X, Harvest will select the templates for 9.6.1
+- ONTAP version  9.12, Harvest will select the templates for 9.10.1
