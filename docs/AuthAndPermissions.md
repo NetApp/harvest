@@ -84,7 +84,9 @@ security login role create -role harvest2-role -access readonly -cmddirname "sto
 security login role create -role harvest2-role -access readonly -cmddirname "storage disk"     
 security login role create -role harvest2-role -access readonly -cmddirname "system node"
 security login role create -role harvest2-role -access readonly -cmddirname "storage shelf"
-security login role create -role harvest2-role -access readonly -cmddirname "volume" 
+security login role create -role harvest2-role -access readonly -cmddirname "volume"
+security login role create -role harvest2-role -access readonly -cmddirname "system health status show" 
+security login role create -role harvest2-role -access readonly -cmddirname "system health subsystem show"  
 ```
 
 If you want to create a user with password authentication, type:
