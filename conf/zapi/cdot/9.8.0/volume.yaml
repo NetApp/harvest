@@ -27,7 +27,7 @@ counters:
       - percentage-compression-space-saved    => sis_compress_saved_percent
       - percentage-deduplication-space-saved  => sis_dedup_saved_percent
       - percentage-total-space-saved          => sis_total_saved_percent
-      - ^is-sis-volume                        => is-sis-volume
+      - ^is-sis-volume                        => is_sis_volume
 
     - volume-space-attributes:
       - expected-available
@@ -78,5 +78,5 @@ export_options:
     - style
   instance_labels:
     - state
-    - is-sis-volume
+    - is_sis_volume
 
