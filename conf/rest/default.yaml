@@ -1,0 +1,8 @@
+
+collector:          Rest
+
+schedule:
+  - data: 180s
+
+objects:
+  Disk:             disk.yaml

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"goharvest2/pkg/conf"
+	"goharvest2/pkg/util"
 	"io"
 	"os"
 	"path/filepath"
@@ -165,7 +166,7 @@ func doData() {
 		return
 	}
 
-	if client, err = New(poller); err != nil {
+	if client, err = New(poller, DefaultTimeout); err != nil {
 		fmt.Printf("error creating new client %+v\n", err)
 		os.Exit(1)
 	}
@@ -175,8 +176,14 @@ func doData() {
 		args.Api = args.Api[1:]
 	}
 	var records []interface{}
-	fetchData(client, buildHref(), &records)
+	href := BuildHref(args.Api, args.Fields, args.Field, args.QueryField, args.QueryValue, args.MaxRecords, "")
+	stderr("fetching href=[%s]\n", href)
 
+	err = FetchData(client, href, &records)
+	if err != nil {
+		stderr("error %+v\n", err)
+		return
+	}
 	all := Pagination{
 		Records:    records,
 		NumRecords: len(records),
@@ -199,50 +206,23 @@ func getPollerAndAddr() (*conf.Poller, string, error) {
 		fmt.Printf("Poller named [%s] does not exist\n", args.Poller)
 		return nil, "", err
 	}
-	if addr = value(poller.Addr, ""); addr == "" {
+	if addr = util.Value(poller.Addr, ""); addr == "" {
 		fmt.Printf("Poller named [%s] does not have a valid addr=[%s]\n", args.Poller, addr)
 		return nil, "", err
 	}
 	return poller, addr, nil
 }
 
-func buildHref() string {
-	href := strings.Builder{}
-	href.WriteString("api/")
-	href.WriteString(args.Api)
-	href.WriteString("?return_records=true")
-	addArg(&href, "&fields=", args.Fields)
-	for _, field := range args.Field {
-		addArg(&href, "&", field)
-	}
-	addArg(&href, "&query_fields=", args.QueryField)
-	addArg(&href, "&query=", args.QueryValue)
-	addArg(&href, "&max_records=", args.MaxRecords)
-
-	return href.String()
-}
-
-func addArg(href *strings.Builder, field string, value string) {
-	if value == "" {
-		return
-	}
-	href.WriteString(field)
-	href.WriteString(value)
-}
-
-func fetchData(client *Client, href string, records *[]interface{}) {
-	stderr("fetching href=[%s]\n", href)
+func FetchData(client *Client, href string, records *[]interface{}) error {
 	getRest, err := client.GetRest(href)
 	if err != nil {
-		stderr("error making request api=%s err=%+v\n", href, err)
-		return
+		return fmt.Errorf("error making request api=%s err=%+v\n", href, err)
 	} else {
 		// extract returned records since paginated records need to be merged into a single list
 		var page Pagination
 		err := json.Unmarshal(getRest, &page)
 		if err != nil {
-			stderr("error unmarshalling json %+v\n", err)
-			return
+			return fmt.Errorf("error unmarshalling json %+v\n", err)
 		}
 
 		*records = append(*records, page.Records...)
@@ -253,12 +233,13 @@ func fetchData(client *Client, href string, records *[]interface{}) {
 			if nextLink != "" {
 				if nextLink == href {
 					// nextLink is same as previous link, no progress is being made, exit
-					return
+					return nil
 				}
-				fetchData(client, nextLink, records)
+				FetchData(client, nextLink, records)
 			}
 		}
 	}
+	return nil
 }
 
 func stderr(format string, a ...interface{}) {

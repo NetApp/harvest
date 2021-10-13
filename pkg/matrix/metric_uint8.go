@@ -75,6 +75,16 @@ func (me *MetricUint8) SetValueInt64(i *Instance, v int64) error {
 	return errors.New(OVERFLOW_ERROR, fmt.Sprintf("convert int64 (%d) to uint32", v))
 }
 
+func (me *MetricUint8) SetValueBool(i *Instance, v bool) error {
+	me.record[i.index] = true
+	if v {
+		me.values[i.index] = 1
+	} else {
+		me.values[i.index] = 0
+	}
+	return nil
+}
+
 func (me *MetricUint8) SetValueUint8(i *Instance, v uint8) error {
 	me.record[i.index] = true
 	me.values[i.index] = v

@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"reflect"
 	"runtime"
 	"strconv"
 	"strings"
@@ -180,6 +181,13 @@ func ContainsWholeWord(source string, search string) bool {
 	return false
 }
 
+func Value(ptr *string, nilValue string) string {
+	if ptr == nil {
+		return nilValue
+	}
+	return *ptr
+}
+
 func Contains(s []string, e string) bool {
 	for _, a := range s {
 		if a == e {
@@ -187,4 +195,28 @@ func Contains(s []string, e string) bool {
 		}
 	}
 	return false
+}
+
+func Intersection(a interface{}, b interface{}) ([]interface{}, []interface{}) {
+	matches := make([]interface{}, 0)
+	misses := make([]interface{}, 0)
+	hash := make(map[interface{}]bool)
+	av := reflect.ValueOf(a)
+	bv := reflect.ValueOf(b)
+
+	for i := 0; i < av.Len(); i++ {
+		el := av.Index(i).Interface()
+		hash[el] = true
+	}
+
+	for i := 0; i < bv.Len(); i++ {
+		el := bv.Index(i).Interface()
+		if _, found := hash[el]; found {
+			matches = append(matches, el)
+		} else {
+			misses = append(misses, el)
+		}
+	}
+
+	return matches, misses
 }

@@ -1,0 +1,37 @@
+
+name:             Disk
+query:            storage/disks
+object:           disk
+
+counters:
+  - ^name                     => disk
+  - ^^uid
+  - ^serial_number
+  - ^model
+  - ^vendor
+  - ^firmware_version
+  - usable_size
+  - rated_life_used_percent
+  - ^type
+  - ^container_type
+  - ^pool
+  - ^state
+  - ^node.uuid
+  - ^node.name                => node
+  - ^home_node.uuid
+  - ^home_node.name
+  - ^shelf.uid                => shelf
+  - ^bay                      => shelf_bay
+  - ?self_encrypting
+  - ?fips_certified
+
+export_options:
+  instance_keys:
+    - node
+    - disk
+  instance_labels:
+    - type
+    - model
+    - shelf
+    - shelf_bay
+    - serial_number
