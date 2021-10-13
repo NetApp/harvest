@@ -104,6 +104,8 @@ There are two ways to tell Prometheus how to scrape Harvest: using HTTP service 
 
 HTTP service discovery is the more flexible of the two. It is also less error-prone, and easier to manage. Combined with the port_range configuration described above, SD is the least effort to configure Prometheus and the easiest way to keep both Harvest and Prometheus in sync. 
 
+**NOTE** HTTP service discovery does not work with Docker yet. With Docker, you will need to list each poller individually or if possible, use the [Docker Compose](https://github.com/NetApp/harvest/tree/main/docker) workflow that uses file service discovery to achieve a similar ease-of-use as HTTP service discovery.
+
 See the [example](#prometheus-http-service-discovery-and-port-range) below for how to use HTTP SD and port_range to significantly simplify your Harvest config. 
 
 ### Prometheus HTTP Service Discovery
@@ -125,7 +127,7 @@ Admin:
 
 This tells Harvest to create an HTTP service discovery end-point on interface `0.0.0.0:8887`. If you want to restrict to localhost, use `127.0.0.1:<port>`. See [net.Dial](https://pkg.go.dev/net#Dial) for details on the supported address formats.
 
-Start the SD process by running `bin/harvest admin`. Once it is started, you can curl the end-point for the list of running Harvest pollers.
+Start the SD process by running `bin/harvest admin start`. Once it is started, you can curl the end-point for the list of running Harvest pollers.
 
 ```
 curl -s 'http://localhost:8887/api/v1/sd' | jq .
