@@ -347,7 +347,7 @@ func (me *Unix) PollData() (*matrix.Matrix, error) {
 	for key, instance := range me.Matrix.GetInstances() {
 
 		// assume not running
-		err = me.Matrix.LazySetValueUint8("status", key, 1)
+		err = me.Matrix.LazySetValueUint8("status", key, 0)
 		if err != nil {
 			me.Logger.Error().Stack().Err(err).Msgf("error while parsing metric key [%s]", key)
 		}
@@ -384,7 +384,7 @@ func (me *Unix) PollData() (*matrix.Matrix, error) {
 		}
 
 		// if we got here poller is running
-		err = me.Matrix.LazySetValueUint32("status", key, 0)
+		err = me.Matrix.LazySetValueUint32("status", key, 1)
 		if err != nil {
 			me.Logger.Error().Stack().Err(err).Msgf("error while parsing metric key [%s]", key)
 		}
