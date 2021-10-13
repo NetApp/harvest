@@ -167,12 +167,16 @@ func (a *Admin) findPrometheusPollers() {
 }
 
 func Cmd() *cobra.Command {
-	return &cobra.Command{
+	admin := &cobra.Command{
 		Use:   "admin",
-		Short: "Start Harvest admin node",
-		Long:  "Start Harvest admin node",
-		Run:   doAdmin,
+		Short: "Harvest admin commands",
 	}
+	admin.AddCommand(&cobra.Command{
+		Use:   "start",
+		Short: "Start Harvest admin node",
+		Run:   doAdmin,
+	})
+	return admin
 }
 
 func doAdmin(c *cobra.Command, _ []string) {
