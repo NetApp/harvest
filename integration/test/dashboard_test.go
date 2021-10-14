@@ -59,7 +59,7 @@ func (suite *DashboardImportTestSuite) TestImport() {
 	err = json.Unmarshal(data, &dataFolder)
 	utils.PanicIfNotNil(err)
 	for _, values := range dataFolder {
-		if values.Title == "Harvest 2.0" {
+		if values.Title == "Harvest 2.0 - cDOT" {
 			return
 		}
 	}
