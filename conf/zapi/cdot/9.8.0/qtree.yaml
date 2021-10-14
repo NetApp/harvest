@@ -31,10 +31,7 @@ plugins:
       - soft-disk-limit
       - soft-file-limit
       - threshold
-
-  LabelAgent:
-    value_to_num:
-      - new_status id 0 0 `0`
+    #batch_size: "50"
 
 export_options:
   instance_keys:
