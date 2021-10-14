@@ -554,7 +554,12 @@ func (p *Poller) loadCollector(c conf.Collector, object string) error {
 	if c.Templates != nil {
 		for _, t := range *c.Templates {
 			if subTemplate, err = collector.ImportTemplate(p.options.HomePath, t, class); err != nil {
-				logger.Warn().
+				logEvent := logger.Warn()
+				if t == "custom.yaml" {
+					// make this less noisy since it won't exist for most people
+					logEvent = logger.Debug()
+				}
+				logEvent.
 					Str("err", err.Error()).
 					Msg("Unable to load template.")
 				continue
