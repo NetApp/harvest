@@ -20,3 +20,4 @@ objects:
   Lun:              lun.yaml
   Status_7mode:     status_7.yaml
   Sensor:           sensor.yaml
+  Qtree:            qtree.yaml
