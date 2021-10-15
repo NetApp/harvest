@@ -835,7 +835,7 @@ var importCmd = &cobra.Command{
 	Use:     "import",
 	Short:   "import Grafana dashboards",
 	Run:     doImport,
-	Example: "grafana import --addr my.grafana.server:3000 --directory grafana/dashboards",
+	Example: "grafana import --addr my.grafana.server:3000",
 }
 
 var exportCmd = &cobra.Command{
