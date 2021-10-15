@@ -44,7 +44,7 @@ func (suite *DashboardImportTestSuite) SetupSuite() {
 	if !utils.IsUrlReachable(utils.GetPrometheusUrl()) {
 		panic(fmt.Errorf("Prometheus is not reachable."))
 	}
-	status, _ := new(grafana.GrafanaMgr).Import("grafana/dashboards")
+	status, _ := new(grafana.GrafanaMgr).Import("") //send empty so that it will import all dashboards
 	if !status {
 		assert.Fail(suite.T(), "Grafana import operation is failed")
 	}
