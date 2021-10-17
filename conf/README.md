@@ -1,10 +1,14 @@
 ## Creating/editing templates
 
-1. [How to add a new object template](#create-a-new-object-template)
-2. [How to extend an existing object one](#extend-an-existing-object-template)
-3. [How to replace an existing one](#replace-an-existing-object-template)
+This document covers how to use [Collector](#Collector-templates) and [Object](#Object-templates) templates to extend Harvest.
 
-You can either read [ONTAP's documentation](https://mysupport.netapp.com/documentation/productlibrary/index.html?productID=60427) or use Harvest's `zapi` tool to explore available APIs and metrics on your cluster. Examples:
+1. [How to add a new object template](#create-a-new-object-template)
+2. [How to extend an existing object template](#extend-an-existing-object-template)
+3. [How to replace an existing object template](#replace-an-existing-object-template)
+
+There are a couple of ways to learn about ZAPIs and their attributes:
+- [ONTAP's documentation](https://mysupport.netapp.com/documentation/productlibrary/index.html?productID=60427) 
+- Using Harvest's `zapi` tool to explore available APIs and metrics on your cluster. Examples:
 
 ```sh
 $ harvest zapi --poller <poller> show apis
@@ -18,53 +22,57 @@ $ harvest zapi --poller <poller> show data --api volume-get-iter
 
 (Replace `<poller>` with the name of a poller that can connect to an ONTAP system.)
 
-This document scope is on two kind of template yamls as below. [Collector templates](#Collector-templates)  and [Object templates](#Object-templates)
-
 ## Collector templates
 
-By default, Harvest reads from `conf/zapi/default.yaml` (shipped with harvest) and `conf/zapi/custom.yaml` (used to extend `conf/zapi/default.yaml`). 
-You can define the configuration file of the collector. If no configuration file is specified, the default configuration file (`conf/zapiperf/default.yaml`) will be used and if the file `conf/zapiperf/custom.yaml` is present, it will be merged to the default one. When you specify your own collector configuration file, it can have any name. Your custom template will not be merged, but instead will replace any existing template with the same name.
+Collector templates define which set of objects Harvest should collect from the system being monitored. In your `harvest.yml` configuration file, when you say that you want to use a `Zapi` collector, that collector will read the matching `conf/zapi/default.yaml` - same with `ZapiPerf`, it will read the `conf/zapiperf/default.yaml` file. Belows's a snippet from `conf/zapi/default.yaml`. Each object is mapped to a corresponding [object template](#object-templates) file. For example, the `Node` object searches for the [most appropriate version](#harvest-versioned-templates) of the `node.yaml` file in the `conf/zapi/cdot/**` directory.
 
-Examples:
-1. Define a poller that will run the ZapiPerf collector using its default configuration file:
+```
+collector:          Zapi
+objects:
+  Node:             node.yaml
+  Aggregate:        aggr.yaml
+  Volume:           volume.yaml
+  Disk:             disk.yaml
+```
+
+Each collector will also check if a matching file named, `custom.yaml` exists, and if it does, it will read that file and merge it with `default.yaml`. The `custom.yaml` file should be located beside the matching `default.yaml` file. (eg. `conf/zapi/custom.yaml` is beside `conf/zapi/default.yaml`). 
+
+Let's take a look at some examples.
+
+1. Define a poller that uses the default Zapi collector. Using the default template is the easiest and most used option.
 
 ```yaml
 Pollers:
-  jamaica:  # name of the poller
+  jamaica:
     datacenter: munich
     addr: 10.10.10.10
-    auth_style: basic_auth
-    username: harvest
-    password: pass
     collectors:
       - Zapi # will use conf/zapi/default.yaml and optionally merge with conf/zapi/custom.yaml
 ```
 
-2. Define a poller that will run the Zapi collector using a custom configuration file:
+2. Define a poller that uses the Zapi collector, but with a custom template file:
 
 ```yaml
 Pollers:
-  jamaica:  # name of the poller
+  jamaica:
+    datacenter: munich
     addr: 10.10.10.10
-    auth_style: basic_auth
-    username: harvest
-    password: pass
     collectors:
       - ZapiPerf:
-        - limited.yaml # will use conf/zapi/limited.yaml
-        # if more templates are added, they will be merged
+        - limited.yaml # will use conf/zapiperf/limited.yaml
+        # more templates can be added, they will be merged
 ```
 
-### Object Templates
+## Object Templates
 
-Object templates (Example: `conf/zapi/cdot/9.8.0/lun.yaml`) describe what to collect and export. These templates are used by collectors to gather the metrics and send to your time-series db.
+Object templates (example: `conf/zapi/cdot/9.8.0/lun.yaml`) describe what to collect and export. These templates are used by collectors to gather metrics and send them to your time-series db.
 
 Object templates are made up of the following parts:
-1. the name of the resource to collect
+1. the name of the object (or resource) to collect
 2. the ZAPI or REST query used to collect the object
 3. a list of object counters to collect and how to export them
 
-Instead of editing one of the existing templates, it's better to extend existing templates. That way, your custom template will not be overwritten when upgrading Harvest. For example, if you want to extend `conf/zapi/cdot/9.8.0/aggr.yaml`, first create a copy (e.g., `conf/zapi/cdot/9.8.0/custom_aggr.yaml`), then add these lines to `conf/zapi/custom.yaml`:
+Instead of editing one of the existing templates, it's better to extend one of them. That way, your custom template will not be overwritten when upgrading Harvest. For example, if you want to extend `conf/zapi/cdot/9.8.0/aggr.yaml`, first create a copy (e.g., `conf/zapi/cdot/9.8.0/custom_aggr.yaml`), and then tell Harvest to use your custom template by adding these lines to `conf/zapi/custom.yaml`:
 
 ```yaml
 objects:
@@ -73,16 +81,16 @@ objects:
 
 After restarting your pollers, `aggr.yaml` and `custom_aggr.yaml` will be merged.
 
-#### Create a new object template
+### Create a new object template
 
-In this example, Let's imagine that Harvest didn't already collect environment sensor data . If we want to collect sensor metrics from the `environment-sensors-get-iter` API. These are the steps that we need to follow:
+In this example, imagine that Harvest doesn't already collect environment sensor data and you wanted to collect it. Sensor does comes from the `environment-sensors-get-iter` ZAPI. Here are the steps to add a new object template.
 
-Create the file `conf/zapi/cdot/9.8.0/sensor.yaml` (optionally replace `9.8.0` with the version of your ONTAP refer [Harvest Versioned Templates](#harvest-versioned-templates)). Add following content:
+Create the file `conf/zapi/cdot/9.8.0/sensor.yaml` (optionally replace `9.8.0` with the earliest version of ONTAP that supports sensor data. Refer to [Harvest Versioned Templates](#harvest-versioned-templates) for more information. Add the following content to your new `sensor.yaml` file.
 
 ```yaml
-name:                      Sensor
-query:                     environment-sensors-get-iter
-object:                    sensor
+name:     Sensor                      # this name must match the key in your custom.yaml file
+query:    environment-sensors-get-iter
+object:   sensor
 
 counters:
   environment-sensors-info:
@@ -102,28 +110,55 @@ counters:
 export_options:
   include_all_labels: true
 ```
+### Enable the new object template
 
-#### Enable the new object template
-
-To enable the new objectTemplate, create `conf/zapi/custom.yaml` with the lines shown below.
+To enable the new sensor object template, create the `conf/zapi/custom.yaml` file with the lines shown below.
 
 ```yaml
 objects:
-  Sensor: sensor.yaml
+  Sensor: sensor.yaml                 # this key must match the name in your sensor.yaml file
 ```
-The Sensor key used in the custom.yaml must match the name defined in our sensor.yaml file. That's what connects this object with the template. In the future, if you add more object Templates, you can add those in this same file.
+The `Sensor` key used in the `custom.yaml` must match the name defined in the `sensor.yaml` file. That mapping is what connects this object with its template. In the future, if you add more object templates, you can add those in your existing `custom.yaml` file.
 
-#### Extend an existing object template
+### Test your object template changes
 
-In this example, we want to extend one of the existing object templates that Harvest ships with, `conf/zapi/cdot/9.8.0/lun.yaml` and collect additional information as below: 
+Test your new `Sensor` template with a single poller like this:
+```
+./bin/harvest start <poller> --foreground --verbose --collectors Zapi --objects Sensor
+```
+Replace `<poller>` with the name of one of your ONTAP pollers.
 
-Use Case:
-1. Add `client_timeout` (You want to change default timeout of a lun zapi to splve https://github.com/NetApp/harvest/wiki/Troubleshooting-Harvest#client_timeout)
-2. Add additional counters `multiprotocol-type`, `application`
-3. Configure a new `value_to_num` plugin (Add a new counter which is calculated through plugins)
-4. Add `application` to instance_keys (Add labels to metrics)
+Once you have confirmed that the new template works, restart any already running pollers that you want to use the new template(s).
 
-Let's assume the existing template is located at conf/zapi/cdot/9.8.0/lun.yaml and contains this (so we don't have to change)
+### Check the metrics
+
+If you are using the Prometheus exporter, you can scrape the poller's HTTP endpoint with curl or a web browser. E.g., my poller exports its data on port 15001. Adjust as needed for your exporter.
+```
+curl -s 'http://localhost:15001/metrics' | grep ^sensor_  # sensor_ name matches the object: value in your sensor.yaml file.
+
+sensor_value{datacenter="WDRF",cluster="shopfloor",critical_high="3664",node="shopfloor-02",sensor="P3.3V STBY",type="voltage",warning_low="3040",critical_low="2960",threshold_state="normal",unit="mV",warning_high="3568"} 3280
+sensor_value{datacenter="WDRF",cluster="shopfloor",sensor="P1.2V STBY",type="voltage",threshold_state="normal",warning_high="1299",warning_low="1105",critical_low="1086",node="shopfloor-02",critical_high="1319",unit="mV"} 1193
+sensor_value{datacenter="WDRF",cluster="shopfloor",unit="mV",critical_high="15810",critical_low="0",node="shopfloor-02",sensor="P12V STBY",type="voltage",threshold_state="normal"} 11842
+sensor_value{datacenter="WDRF",cluster="shopfloor",sensor="P12V STBY Curr",type="current",threshold_state="normal",unit="mA",critical_high="3182",critical_low="0",node="shopfloor-02"} 748
+sensor_value{datacenter="WDRF",cluster="shopfloor",critical_low="1470",node="shopfloor-02",sensor="Sysfan2 F2 Speed",type="fan",threshold_state="normal",unit="RPM",warning_low="1560"} 2820
+sensor_value{datacenter="WDRF",cluster="shopfloor",sensor="PSU2 Fan1 Speed",type="fan",threshold_state="normal",unit="RPM",warning_low="4600",critical_low="4500",node="shopfloor-01"} 6900
+sensor_value{datacenter="WDRF",cluster="shopfloor",sensor="PSU1 InPwr Monitor",type="unknown",threshold_state="normal",unit="mW",node="shopfloor-01"} 132000
+sensor_value{datacenter="WDRF",cluster="shopfloor",critical_high="58",type="thermal",unit="C",warning_high="53",critical_low="0",node="shopfloor-01",sensor="Bat Temp",threshold_state="normal",warning_low="5"} 24
+sensor_value{datacenter="WDRF",cluster="shopfloor",critical_high="9000",node="shopfloor-01",sensor="Bat Charge Volt",type="voltage",threshold_state="normal",unit="mV",warning_high="8900"} 8200
+sensor_value{datacenter="WDRF",cluster="shopfloor",node="shopfloor-02",sensor="PSU1 InPwr Monitor",type="unknown",threshold_state="normal",unit="mW"} 132000
+```
+### Extend an existing object template
+
+In this example, we want to extend one of the existing object templates that Harvest ships with, e.g. `conf/zapi/cdot/9.8.0/lun.yaml` and collect additional information as outlined below.
+
+Lets's say you want to extend `lun.yaml` to:
+
+1. Increase `client_timeout` (You want to increase the default timeout of the lun ZAPI because it keeps [timing out](https://github.com/NetApp/harvest/wiki/Troubleshooting-Harvest#client_timeout)
+2. Add additional counters, e.g. `multiprotocol-type`, `application`
+3. Add a new counter to the already collected lun metrics using the `value_to_num` plugin
+4. Add a new `application` instance_keys and labels to the collected metrics
+
+Let's assume the existing template is located at conf/zapi/cdot/9.8.0/lun.yaml and contains the following. 
 
 ```yaml
 name:                       Lun
@@ -144,13 +179,9 @@ counters:
 
 plugins:
   - LabelAgent:
-    value_mapping:
-      - status state online `1`
     # metric label zapi_value rest_value `default_value`
     value_to_num:
       - new_status state online online `0`
-    # path is something like "/vol/vol_georg_fcp401/lun401"
-    # we only want lun name, which is 4th element
     split:
       - path `/` ,,,lun
 
@@ -165,7 +196,7 @@ export_options:
     - state
  ```
 
-To extend this template, create conf/zapi/custom.yaml if it doesn't already exist and add the lines shown below.
+To extend the out-of-the-box `lun.yaml` template, create a `conf/zapi/custom.yaml` file if it doesn't already exist and add the lines shown below:
 
 ```yaml
 objects:
@@ -191,7 +222,8 @@ export_options:
     - application
  ```
 
-Harvest will merge your new template `conf/zapi/cdot/9.8.0/custom_lun.yaml` with the out-of-the-box `conf/zapi/cdot/9.8.0/lun.yaml` one resulting in a combined template like this:
+When you restart your pollers, Harvest will take the out-of-the-box template (`lun.yaml`) and your new one (`custom_lun.yaml`) and merge them into the following:
+
 ```yaml
 name: Lun
 query: lun-get-iter
@@ -211,8 +243,6 @@ counters:
     - ^application
 plugins:
   LabelAgent:
-    value_mapping:
-      - status state online `1`
     value_to_num:
       - new_status state online online `0`
       - custom_status state online online `0`
@@ -228,46 +258,18 @@ export_options:
     - application
 ```
 
-To help understand the merging process and resulting template, you can view the merged ....
+To help understand the merging process and the resulting combined template, you can view the result with:
 ```sh
 bin/harvest doctor merge --template lun.yaml --with custom_lun.yaml
 ```
 
-#### Replace an existing object template
+### Replace an existing object template
 
-You can only extend existing default template as explained in [How to extend an existing object one](#extend-an-existing-object-template). If you have any such use case, tell us through github issues/ slack.
-
-#### Test your changes and restart pollers
-
-Test your new `Sensor` template with a single poller like this:
-```
-./bin/harvest start <poller> --foreground --verbose --collectors Zapi --objects Sensor
-```
-Replace `<poller>` with the name of one of your ONTAP pollers.
-
-Once you have confirmed that the new template works, restart any already running pollers that you want to pick up the new template(s).
-
-### Check the metrics
-
-If you are using the Prometheus exporter, you can scrape the poller's HTTP endpoint with curl or a web browser. E.g., my poller exports its data on port 15001. Adjust as needed for your exporter.
-```
-curl -s 'http://localhost:15001/metrics' | grep sensor_
-
-sensor_value{datacenter="WDRF",cluster="shopfloor",critical_high="3664",node="shopfloor-02",sensor="P3.3V STBY",type="voltage",warning_low="3040",critical_low="2960",threshold_state="normal",unit="mV",warning_high="3568"} 3280
-sensor_value{datacenter="WDRF",cluster="shopfloor",sensor="P1.2V STBY",type="voltage",threshold_state="normal",warning_high="1299",warning_low="1105",critical_low="1086",node="shopfloor-02",critical_high="1319",unit="mV"} 1193
-sensor_value{datacenter="WDRF",cluster="shopfloor",unit="mV",critical_high="15810",critical_low="0",node="shopfloor-02",sensor="P12V STBY",type="voltage",threshold_state="normal"} 11842
-sensor_value{datacenter="WDRF",cluster="shopfloor",sensor="P12V STBY Curr",type="current",threshold_state="normal",unit="mA",critical_high="3182",critical_low="0",node="shopfloor-02"} 748
-sensor_value{datacenter="WDRF",cluster="shopfloor",critical_low="1470",node="shopfloor-02",sensor="Sysfan2 F2 Speed",type="fan",threshold_state="normal",unit="RPM",warning_low="1560"} 2820
-sensor_value{datacenter="WDRF",cluster="shopfloor",sensor="PSU2 Fan1 Speed",type="fan",threshold_state="normal",unit="RPM",warning_low="4600",critical_low="4500",node="shopfloor-01"} 6900
-sensor_value{datacenter="WDRF",cluster="shopfloor",sensor="PSU1 InPwr Monitor",type="unknown",threshold_state="normal",unit="mW",node="shopfloor-01"} 132000
-sensor_value{datacenter="WDRF",cluster="shopfloor",critical_high="58",type="thermal",unit="C",warning_high="53",critical_low="0",node="shopfloor-01",sensor="Bat Temp",threshold_state="normal",warning_low="5"} 24
-sensor_value{datacenter="WDRF",cluster="shopfloor",critical_high="9000",node="shopfloor-01",sensor="Bat Charge Volt",type="voltage",threshold_state="normal",unit="mV",warning_high="8900"} 8200
-sensor_value{datacenter="WDRF",cluster="shopfloor",node="shopfloor-02",sensor="PSU1 InPwr Monitor",type="unknown",threshold_state="normal",unit="mW"} 132000
-```
+You can only extend existing templates as explained [above](#extend-an-existing-object-template). If you need to replace one of the existing object templates, let us know more on Slack or GitHub.
 
 ## Harvest Versioned Templates
 
-Harvest ships with a set of versioned templates tailored for specific versions of ONTAP. At runtime, Harvest uses a BestFit heuristic to pick the most appropriate template. The BestFit heuristic compares the list of Harvest templates with the ONTAP version and selects the best match. There are versioned templates for the Zapi collector and a different set for the REST collector. Here's how it works, assume Harvest has these templated versions:
+Harvest ships with a set of versioned templates tailored for specific versions of ONTAP. At runtime, Harvest uses a BestFit heuristic to pick the most appropriate template. The BestFit heuristic compares the list of Harvest templates with the ONTAP version and selects the best match. There are versioned templates for both the ZAPI and REST collectors. Below is an example of how the BestFit algorithm works - assume Harvest has these templated versions:
 
 - 9.6.0
 - 9.6.1
