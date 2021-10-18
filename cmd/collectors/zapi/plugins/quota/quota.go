@@ -158,6 +158,11 @@ func (my *Quota) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			volume := quota.GetChildContentS("volume")
 			vserver := quota.GetChildContentS("vserver")
 
+			// If quota-type is not a Qtree, then skip
+			if quota.GetChildContentS("quota-type") != "tree" {
+				continue
+			}
+
 			for attribute, m := range my.data.GetMetrics() {
 
 				objectElem := quota.GetChildS(attribute)
@@ -183,6 +188,11 @@ func (my *Quota) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 						if value := qtreeInstance.GetLabel(label); value != "" {
 							instance.SetLabel(label, value)
 						}
+					}
+
+					// If the Qtree is the volume itself, than qtree label is empty, so copy the volume name to qtree.
+					if tree == "" {
+						instance.SetLabel("qtree", volume)
 					}
 
 					// populate numeric data
