@@ -132,7 +132,6 @@ func (my *Quota) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	tag = "initial"
 
 	for {
-
 		result, tag, err = my.client.InvokeBatchRequest(request, tag)
 
 		if err != nil {
@@ -159,7 +158,7 @@ func (my *Quota) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			volume := quota.GetChildContentS("volume")
 			vserver := quota.GetChildContentS("vserver")
 
-			for attribute, _ := range my.data.GetMetrics() {
+			for attribute, m := range my.data.GetMetrics() {
 
 				objectElem := quota.GetChildS(attribute)
 				if objectElem == nil {
@@ -167,7 +166,7 @@ func (my *Quota) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					continue
 				}
 
-				if ok := quota.GetChildContentS(attribute); ok != "" {
+				if attrValue := quota.GetChildContentS(attribute); attrValue != "" {
 					// Ex. InstanceKey: SVMA.vol1Abc.qtree1.5.disk-limit
 					instanceKey := vserver + "." + volume + "." + tree + "." + strconv.Itoa(quotaIndex) + "." + attribute
 					instance, err := my.data.NewInstance(instanceKey)
@@ -186,6 +185,19 @@ func (my *Quota) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 						}
 					}
 
+					// populate numeric data
+					if value := strings.Split(attrValue, " ")[0]; value != "" {
+						// Few quota metrics would have value '-' which means unlimited (ex: disk-limit)
+						if value == "-" {
+							value = "0"
+						}
+						if err := m.SetValueString(instance, value); err != nil {
+							my.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", attribute, value, err)
+						} else {
+							my.Logger.Debug().Msgf("(%s) added value (%s)", attribute, value)
+						}
+					}
+
 				} else {
 					my.Logger.Debug().Msgf("instance without [%s], skipping", attribute)
 				}
@@ -194,41 +206,6 @@ func (my *Quota) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			}
 		}
 
-		//second loop to populate numeric data
-		for key, quota := range quotas {
-
-			tree := quota.GetChildContentS("tree")
-			volume := quota.GetChildContentS("volume")
-			vserver := quota.GetChildContentS("vserver")
-
-			for attribute, m := range my.data.GetMetrics() {
-
-				objectElem := quota.GetChildS(attribute)
-				if objectElem == nil {
-					continue
-				}
-
-				// Ex. InstanceKey: SVMA.vol1Abc.qtree1.5.disk-limit
-				instance := my.data.GetInstance(vserver + "." + volume + "." + tree + "." + strconv.Itoa(key) + "." + attribute)
-
-				if instance == nil {
-					my.Logger.Debug().Msgf("(%s) instance [%s.%s.%s] not found in cache skipping", attribute, vserver, volume, tree)
-					continue
-				}
-
-				if value := strings.Split(quota.GetChildContentS(attribute), " ")[0]; value != "" {
-					// Few quota metrics would have value '-' which means unlimited (ex: disk-limit)
-					if value == "-" {
-						value = "0"
-					}
-					if err := m.SetValueString(instance, value); err != nil {
-						my.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", attribute, value, err)
-					} else {
-						my.Logger.Debug().Msgf("(%s) added value (%s)", attribute, value)
-					}
-				}
-			}
-		}
 	}
 	return output, nil
 }
