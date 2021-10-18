@@ -89,3 +89,36 @@ func TestUnion2(t *testing.T) {
 		}
 	}
 }
+
+func TestPublishUrl(t *testing.T) {
+	poller := Poller{}
+
+	type test struct {
+		name   string
+		isTls  bool
+		listen string
+		want   string
+	}
+
+	tests := []test{
+		{name: "localhost", isTls: false, listen: "localhost:8118", want: "http://localhost:8118/api/v1/sd"},
+		{name: "all interfaces", isTls: false, listen: ":8118", want: "http://127.0.0.1:8118/api/v1/sd"},
+		{name: "ip", isTls: false, listen: "10.0.1.1:8118", want: "http://10.0.1.1:8118/api/v1/sd"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			conf.Config.Admin.Httpsd = conf.Httpsd{}
+			if tt.isTls {
+				conf.Config.Admin.Httpsd.TLS = conf.TLS{
+					CertFile: "a",
+					KeyFile:  "a",
+				}
+			}
+			conf.Config.Admin.Httpsd.Listen = tt.listen
+			got := poller.makePublishUrl()
+			if got != tt.want {
+				t.Errorf("makePublishUrl got = [%v] want [%v]", got, tt.want)
+			}
+		})
+	}
+}

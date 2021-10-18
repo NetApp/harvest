@@ -1,7 +1,7 @@
 Admin:
   # Listen address for Prometheus HTTP service discovery end-point
   # The endpoint is reachable at SCHEMA://<listen>/api/v1/sd
-  # See net.Dial for details on the address format https://pkg.go.dev/net#Dial
+  # Should be one of: localhost:port, :port, or ip:port
   # httpsd:
     # listen: :8887
     # listen: localhost:8887

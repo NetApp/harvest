@@ -918,7 +918,7 @@ func (p *Poller) publishDetails() {
 		panic(err)
 	}
 	var client *http.Client
-	var defaultUrl string
+	defaultUrl := p.makePublishUrl()
 	if conf.Config.Admin.Httpsd.TLS.CertFile != "" {
 		client = &http.Client{
 			Transport: &http.Transport{
@@ -927,12 +927,10 @@ func (p *Poller) publishDetails() {
 				},
 			},
 		}
-		defaultUrl = "https://127.0.0.1:8887/api/v1/sd"
 	} else {
 		client = &http.Client{
 			Transport: &http.Transport{},
 		}
-		defaultUrl = "http://127.0.0.1:8887/api/v1/sd"
 	}
 	if heartBeatUrl == "" {
 		heartBeatUrl = defaultUrl
@@ -998,6 +996,19 @@ func (p *Poller) startHeartBeat() {
 	tick := time.Tick(duration)
 	for range tick {
 		p.publishDetails()
+	}
+}
+
+func (p *Poller) makePublishUrl() string {
+	// Listen will be one of: localhost:port, :port, ip:port
+	schema := "http"
+	if conf.Config.Admin.Httpsd.TLS.CertFile != "" {
+		schema = "https"
+	}
+	if strings.HasPrefix(conf.Config.Admin.Httpsd.Listen, ":") {
+		return fmt.Sprintf("%s://127.0.0.1:%s/api/v1/sd", schema, conf.Config.Admin.Httpsd.Listen[1:])
+	} else {
+		return fmt.Sprintf("%s://%s/api/v1/sd", schema, conf.Config.Admin.Httpsd.Listen)
 	}
 }
 
