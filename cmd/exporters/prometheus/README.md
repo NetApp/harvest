@@ -34,7 +34,7 @@ An overview of all parameters:
 | `allow_addrs_regex` | list of strings, optional                      | allow access only if host address matches at least one of the regular expressions                                                                                                                               |           |
 | `cache_max_keep`    | string (Go duration format), optional          | maximum amount of time metrics are cached (in case Prometheus does not timely collect the metrics)                                                                                                              | `180s`    |
 | `add_meta_tags`     | bool, optional                                 | add `HELP` and `TYPE` [metatags](https://prometheus.io/docs/instrumenting/exposition_formats/#comments-help-text-and-type-information) to metrics (currently no useful information, but required by some tools) | `false`   |
-
+| `heart_beat_url     | string, optional only used with [httpsd](#prometheus-http-service-discovery) |  end-point used to PUT exporter name and ip address | https://127.0.0.1:8887/api/v1/sd when TLS is enabled, http:// otherwise |
 
 A few examples:
 
