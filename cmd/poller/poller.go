@@ -28,7 +28,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/json"
-	e "errors"
+	errors2 "errors"
 	"fmt"
 	"github.com/spf13/cobra"
 	_ "goharvest2/cmd/collectors/simple"
@@ -949,7 +949,7 @@ func (p *Poller) publishDetails() {
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		rErr := e.Unwrap(err)
+		rErr := errors2.Unwrap(err)
 		if rErr == nil {
 			rErr = err
 		}
