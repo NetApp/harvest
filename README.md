@@ -277,6 +277,8 @@ For a list of collector-specific parameters, see the documentation of each colle
 
 ### [Unix](cmd/collectors/unix/README.md)
 
+### [Templates](conf/README.md)
+
 ### Labels
 
 Labels offer a way to add additional key-value pairs to a poller's metrics. These allow you to tag a cluster's metrics in a cross-cutting fashion. Here's an example:
