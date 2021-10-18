@@ -1040,7 +1040,7 @@
                     "from": "0",
                     "id": 0,
                     "operator": "",
-                    "text": "RUNNING",
+                    "text": "STOPPED",
                     "to": "0.999",
                     "type": 2,
                     "value": "0"
@@ -1049,7 +1049,7 @@
                     "from": "",
                     "id": 1,
                     "operator": "",
-                    "text": "STOPPED",
+                    "text": "RUNNING",
                     "to": "",
                     "type": 1,
                     "value": "1"
@@ -1083,11 +1083,11 @@
                       "value": -1
                     },
                     {
-                      "color": "rgb(15, 189, 22)",
+                      "color": "light-orange",
                       "value": 0
                     },
                     {
-                      "color": "light-orange",
+                      "color": "rgb(15, 189, 22)",
                       "value": 1
                     }
                   ]
@@ -1186,7 +1186,7 @@
         "showHeader": true,
         "sortBy": [
           {
-            "desc": false,
+            "desc": true,
             "displayName": "status"
           }
         ]
