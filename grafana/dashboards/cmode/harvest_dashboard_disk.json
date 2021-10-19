@@ -413,6 +413,10 @@
             },
             "properties": [
               {
+                "id": "displayName",
+                "value": "Aggregate"
+              },
+              {
                 "id": "custom.width",
                 "value": 178
               }
@@ -424,6 +428,10 @@
               "options": "node"
             },
             "properties": [
+              {
+                "id": "displayName",
+                "value": "Node"
+              },
               {
                 "id": "custom.width",
                 "value": 128
@@ -437,6 +445,10 @@
             },
             "properties": [
               {
+                "id": "displayName",
+                "value": "Capacity"
+              },
+              {
                 "id": "custom.width",
                 "value": 134
               }
@@ -449,6 +461,10 @@
             },
             "properties": [
               {
+                "id": "displayName",
+                "value": "Max IOPs"
+              },
+              {
                 "id": "custom.width",
                 "value": 154
               }
@@ -460,6 +476,10 @@
               "options": "max utilization"
             },
             "properties": [
+              {
+                "id": "displayName",
+                "value": "Max Utilization"
+              },
               {
                 "id": "custom.width",
                 "value": 167
@@ -493,6 +513,10 @@
             },
             "properties": [
               {
+                "id": "displayName",
+                "value": "Disks"
+              },
+              {
                 "id": "custom.width",
                 "value": 77
               }
@@ -504,6 +528,10 @@
               "options": "capacity used"
             },
             "properties": [
+              {
+                "id": "displayName",
+                "value": "Capacity Used"
+              },
               {
                 "id": "custom.width",
                 "value": 362
@@ -524,7 +552,7 @@
         "sortBy": [
           {
             "desc": true,
-            "displayName": "capacity used"
+            "displayName": "Capacity Used"
           }
         ]
       },
@@ -681,6 +709,10 @@
             },
             "properties": [
               {
+                "id": "displayName",
+                "value": "Max IOPs"
+              },
+              {
                 "id": "custom.width",
                 "value": 153
               }
@@ -692,6 +724,10 @@
               "options": "max utilization"
             },
             "properties": [
+              {
+                "id": "displayName",
+                "value": "Max Utilization"
+              },
               {
                 "id": "custom.width",
                 "value": 349
@@ -705,6 +741,10 @@
             },
             "properties": [
               {
+                "id": "displayName",
+                "value": "Node"
+              },
+              {
                 "id": "custom.width",
                 "value": 148
               }
@@ -716,6 +756,10 @@
               "options": "aggr"
             },
             "properties": [
+              {
+                "id": "displayName",
+                "value": "Aggregate"
+              },
               {
                 "id": "custom.width",
                 "value": 178
@@ -736,7 +780,7 @@
         "sortBy": [
           {
             "desc": true,
-            "displayName": "max IOPs"
+            "displayName": "Max IOPs"
           }
         ]
       },
