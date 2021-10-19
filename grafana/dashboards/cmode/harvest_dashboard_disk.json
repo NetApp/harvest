@@ -409,6 +409,18 @@
           {
             "matcher": {
               "id": "byName",
+              "options": "aggr"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 178
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
               "options": "node"
             },
             "properties": [
@@ -570,7 +582,7 @@
           "options": {
             "include": {
               "names": [
-                "aggregate",
+                "aggr",
                 "node",
                 "Value #A",
                 "Value #D",
@@ -697,6 +709,18 @@
                 "value": 148
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "aggr"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 178
+              }
+            ]
           }
         ]
       },
@@ -746,7 +770,7 @@
           "options": {
             "include": {
               "names": [
-                "aggregate",
+                "aggr",
                 "Value #C",
                 "Value #B",
                 "node"
@@ -815,7 +839,7 @@
         {
           "expr": "max by (node, aggr) (aggr_disk_busy{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "interval": "",
-          "legendFormat": "{{node}} - {{aggregate}}",
+          "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
         }
       ],
@@ -916,7 +940,7 @@
         {
           "expr": "max by (node, aggr) (aggr_disk_total_transfers{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "interval": "",
-          "legendFormat": "{{node}} - {{aggregate}}",
+          "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
         }
       ],
@@ -2043,14 +2067,14 @@
           "value": "$__all"
         },
         "datasource": "Prometheus",
-        "definition": "label_values(aggr_disk_busy{cluster=\"$Cluster\"}, aggr)",
+        "definition": "label_values(aggr_disk_busy{cluster=\"$Cluster\",node=~\"$Node\"}, aggr)",
         "hide": 0,
         "includeAll": true,
         "label": null,
         "multi": false,
         "name": "Aggregate",
         "options": [],
-        "query": "label_values(aggr_disk_busy{cluster=\"$Cluster\"}, aggr)",
+        "query": "label_values(aggr_disk_busy{cluster=\"$Cluster\",node=~\"$Node\"}, aggr)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
