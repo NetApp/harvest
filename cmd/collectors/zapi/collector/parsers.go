@@ -35,20 +35,6 @@ func ParseShortestPath(m *matrix.Matrix, l map[string]string) []string {
 	return prefix
 }
 
-func ParseKeyPrefix(keys [][]string) []string {
-	var prefix []string
-	var i, n int
-	n = util.MinLen(keys) - 1
-	for i = 0; i < n; i += 1 {
-		if util.AllSame(keys, i) {
-			prefix = append(prefix, keys[0][i])
-		} else {
-			break
-		}
-	}
-	return prefix
-}
-
 func (me *Zapi) LoadCounters(counters *node.Node) (bool, *node.Node) {
 	desired := node.NewXmlS("desired-attributes")
 
@@ -133,7 +119,7 @@ func (me *Zapi) HandleCounter(path []string, content string) string {
 			metric, err = me.Matrix.NewMetricUint64(key)
 		}
 		if err != nil {
-			me.Logger.Error().Stack().Err(err).Msgf("add as metric (%s) [%s]: %v", key, display)
+			me.Logger.Error().Stack().Err(err).Msgf("add as metric [%s]: %v", key, display)
 		} else {
 			metric.SetName(display)
 			me.Logger.Trace().Msgf("%sadd as metric (%s) [%s]%s => %v", color.Blue, key, display, color.End, fullPath)

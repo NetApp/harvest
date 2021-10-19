@@ -21,6 +21,7 @@ func TestCheckVersion(t *testing.T) {
 
 func TestHttpsAddr(t *testing.T) {
 	opts.addr = "https://1.1.1.1:3000"
+	opts.config = "../doctor/testdata/testConfig.yml"
 	adjustOptions()
 	if opts.addr != "https://1.1.1.1:3000" {
 		t.Errorf("Expected opts.addr to be %s but got %s", "https://1.1.1.1:3000", opts.addr)

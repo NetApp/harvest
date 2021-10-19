@@ -281,16 +281,16 @@ func (me *Unix) PollInstance() (*matrix.Matrix, error) {
 	currInstances := set.NewFrom(me.Matrix.GetInstanceKeys())
 	currSize := currInstances.Size()
 
-	pollerNames, err := conf.GetPollerNames(me.Options.Config)
+	err := conf.LoadHarvestConfig(me.Options.Config)
 	if err != nil {
 		return nil, err
 	}
 
-	for _, name := range pollerNames {
+	for _, name := range conf.Config.PollersOrdered {
 		pid := ""
 		pids, err := util.GetPid(name)
 		if err == nil && len(pids) == 1 {
-			pid = strconv.Itoa(pids[0])
+			pid = strconv.Itoa(int(pids[0]))
 		}
 
 		if instance := me.Matrix.GetInstance(name); instance == nil {

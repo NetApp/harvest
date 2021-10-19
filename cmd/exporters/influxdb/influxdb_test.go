@@ -14,14 +14,13 @@ import (
 func setupInfluxDB(exporterName string, t *testing.T) *InfluxDB {
 	opts := &options.Options{}
 	opts.Debug = true
-	var exporters map[string]conf.Exporter
 	var err error
 
-	path := "../../tools/doctor/testdata/testConfig.yml"
-	if exporters, err = conf.GetExporters2(path); err != nil {
+	err = conf.LoadHarvestConfig("../../tools/doctor/testdata/testConfig.yml")
+	if err != nil {
 		panic(err)
 	}
-	e, ok := exporters[exporterName]
+	e, ok := conf.Config.Exporters[exporterName]
 	if !ok {
 		t.Fatalf(`exporter (%v) not defined in config`, exporterName)
 	}

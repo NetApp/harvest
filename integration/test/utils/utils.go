@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"goharvest2/pkg/conf"
-	"goharvest2/pkg/tree/node"
 	"io"
 	"log"
 	"net"
@@ -286,19 +285,13 @@ func GetOutboundIP() string {
 }
 
 func WriteToken(token string) {
-	var (
-		params, tools *node.Node
-		err           error
-	)
+	var err error
 	filename := "harvest.yml"
-	if params, err = conf.LoadConfig(filename); err != nil {
-		PanicIfNotNil(err)
-	} else if params == nil {
-		PanicIfNotNil(fmt.Errorf("config [%s] not found", filename))
-	}
-	if tools = params.GetChildS("Tools"); tools != nil {
-		token = tools.GetChildContentS("grafana_api_token")
-		if len(token) > 0 {
+	err = conf.LoadHarvestConfig(filename)
+	PanicIfNotNil(err)
+	tools := conf.Config.Tools
+	if tools != nil {
+		if len(tools.GrafanaApiToken) > 0 {
 			log.Println(filename + "  has an entry for grafana token")
 			return
 		}

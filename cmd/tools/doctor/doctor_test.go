@@ -34,42 +34,40 @@ func TestConfigToStruct(t *testing.T) {
 			conf.Config.Defaults.Addr)
 	}
 
-	if conf.Config.Defaults.Addr != nil {
-		t.Fatalf(`expected harvestConfig.Defaults.Addr to be nil, actual=[%+v]`,
+	if conf.Config.Defaults.Addr != "" {
+		t.Fatalf(`expected harvestConfig.Defaults.addr to be nil, actual=[%+v]`,
 			conf.Config.Defaults.Addr)
 	}
-	if len(*conf.Config.Defaults.Collectors) != 2 {
-		t.Fatalf(`expected two default collectors, actual=%+v`,
-			*conf.Config.Defaults.Collectors)
+	if len(conf.Config.Defaults.Collectors) != 2 {
+		t.Fatalf(`expected two default collectors, actual=%+v`, conf.Config.Defaults.Collectors)
 	}
 
-	allowedRegexes := (*conf.Config.Exporters)["prometheus"].AllowedAddrsRegex
+	allowedRegexes := conf.Config.Exporters["prometheus"].AllowedAddrsRegex
 	if (*allowedRegexes)[0] != "^192.168.0.\\d+$" {
 		t.Fatalf(`expected allow_addrs_regex to be ^192.168.0.\d+$ actual=%+v`,
 			(*allowedRegexes)[0])
 	}
 
-	influxyAddr := (*conf.Config.Exporters)["influxy"].Addr
+	influxyAddr := conf.Config.Exporters["influxy"].Addr
 	if (*influxyAddr) != "localhost" {
-		t.Fatalf(`expected addr to be "localhost", actual=%+v`, (*influxyAddr))
+		t.Fatalf(`expected addr to be "localhost", actual=%+v`, *influxyAddr)
 	}
 
-	influxyURL := (*conf.Config.Exporters)["influxz"].Url
+	influxyURL := conf.Config.Exporters["influxz"].Url
 	if (*influxyURL) != "www.example.com/influxdb" {
-		t.Fatalf(`expected addr to be "www.example.com/influxdb", actual=%+v`, (*influxyURL))
+		t.Fatalf(`expected addr to be "www.example.com/influxdb", actual=%+v`, *influxyURL)
 	}
 
-	infinity := (*conf.Config.Pollers)["infinity2"]
-	collectors := infinity.Collectors
-	if (*collectors)[0].Name != "Zapi" {
-		t.Fatalf(`expected infinity2 collectors to contain Zapi actual=%+v`,
-			(*collectors)[0])
+	infinity2, _ := conf.PollerNamed("infinity2")
+	collectors := infinity2.Collectors
+	if collectors[0].Name != "Zapi" {
+		t.Fatalf(`expected infinity2 collectors to contain Zapi actual=%+v`, collectors[0])
 	}
-	if infinity.IsKfs != nil && !*infinity.IsKfs {
+	if infinity2.IsKfs {
 		t.Fatalf(`expected infinity2 is_kfs to be false, but was true`)
 	}
-	sim1 := (*conf.Config.Pollers)["sim-0001"]
-	if !*sim1.IsKfs {
+	sim1 := conf.Config.Pollers["sim-0001"]
+	if !sim1.IsKfs {
 		t.Fatalf(`expected sim-0001 is_kfs to be true, but was false`)
 	}
 }
@@ -91,8 +89,8 @@ func TestExporterTypesAreValid(t *testing.T) {
 	if valid.isValid {
 		t.Fatalf(`expected isValid to be false since there are invalid exporter types, actual was %+v`, valid)
 	}
-	if valid.invalid[0] != "Foo" {
-		t.Fatalf(`expected invalid exporter of type Foo, actual was %+v`, valid)
+	if len(valid.invalid) != 3 {
+		t.Fatalf(`expected three invalid exporters, got %d`, len(valid.invalid))
 	}
 }
 
