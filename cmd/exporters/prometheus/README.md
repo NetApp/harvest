@@ -109,8 +109,14 @@ See the [example](#prometheus-http-service-discovery-and-port-range) below for h
 
 ### Prometheus HTTP Service Discovery
 
-[HTTP service discovery](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#http_sd_config) was introduced in Prometheus version `2.28.0`. Make sure you're using that version or later.
+[HTTP service discovery](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#http_sd_config) was introduced in Prometheus version 2.28.0. Make sure you're using that version or later.
 
+The way service discovery works is:
+- shortly after a poller starts up, it registers with the SD node (if one exists)
+- the poller sends a heartbeat to the SD node, by default every 45s.
+- if a poller fails to send a heartbeat, the SD node removes the poller from the list of active targets after a minute
+- the SD end-point is reachable via SCHEMA://<listen>/api/v1/sd
+ 
 To use HTTP service discovery you need to:
 1. tell [Harvest to start the HTTP service discovery process](#enable-http-service-discovery-in-harvest)
 2. tell [Prometheus to use the HTTP service discovery endpoint](#enable-http-service-discovery-in-prometheus)
