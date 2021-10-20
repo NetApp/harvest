@@ -145,7 +145,7 @@ func doCmd(cmd string) {
 	if poller, err = conf.PollerNamed(args.Poller); err != nil {
 		log.Fatal(err)
 	}
-	n, err := poller.AsNode()
+	n, err := poller.AsNode(args.Poller)
 	if err != nil {
 		log.Fatal(err)
 	}
