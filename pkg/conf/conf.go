@@ -9,8 +9,8 @@ import (
 	"github.com/imdario/mergo"
 	"goharvest2/pkg/constant"
 	"goharvest2/pkg/errors"
+	"goharvest2/pkg/tree"
 	"goharvest2/pkg/tree/node"
-	yaml2 "goharvest2/pkg/tree/yaml"
 	"goharvest2/pkg/util"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
@@ -23,6 +23,7 @@ import (
 )
 
 var Config = HarvestConfig{}
+var cfp = ""
 var configRead = false
 var ValidatePortInUse = false
 
@@ -40,6 +41,7 @@ func LoadHarvestConfig(configPath string) error {
 		return nil
 	}
 	contents, err := ioutil.ReadFile(configPath)
+	cfp = configPath
 	if err != nil {
 		fmt.Printf("error reading config file=[%s] %+v\n", configPath, err)
 		return err
@@ -290,16 +292,66 @@ func (p *Poller) Union(defaults *Poller) {
 	_ = mergo.Merge(p, defaults)
 }
 
+// TODO remove node code after changing bin/zapi to use Poller
+func loadConfig(configPath string) (*node.Node, error) {
+	configNode, err := tree.Import("yaml", configPath)
+	if configNode != nil {
+		// Load HarvestConfig to rewrite passwords - eventually all the code will be refactored to use HarvestConfig.
+		// This is needed because the current yaml parser does not handle password with special characters.
+		// E.g abc#123, that's because the # is interpreted as the beginning of a comment. The code below overwrites
+		// the incorrect password with the correct one by using a better yaml parser for each Poller and Default section
+		err := LoadHarvestConfig(configPath)
+		if err != nil {
+			return nil, err
+		}
+		pollers := configNode.GetChildS("Pollers")
+		if pollers != nil {
+			for _, poller := range pollers.GetChildren() {
+				password := poller.GetChildContentS("password")
+				pollerStruct := (Config.Pollers)[poller.GetNameS()]
+				if pollerStruct.Password != "" && pollerStruct.Password != password {
+					poller.SetChildContentS("password", pollerStruct.Password)
+				}
+			}
+		}
+		// Check Defaults also
+		defaultNode := configNode.GetChildS("Defaults")
+		if defaultNode != nil {
+			password := defaultNode.GetChildContentS("password")
+			defaultStruct := *Config.Defaults
+			if defaultStruct.Password != "" && defaultStruct.Password != password {
+				defaultNode.SetChildContentS("password", defaultStruct.Password)
+			}
+		}
+	}
+	return configNode, err
+}
+
 // AsNode converts a poller into a node based structure to bridge the struct and node-based code
-func (p *Poller) AsNode() (*node.Node, error) {
+func (p *Poller) AsNode(name string) (*node.Node, error) {
 	if p == nil {
 		return nil, nil
 	}
-	marshal, err := yaml.Marshal(p)
+	cfg, err := loadConfig(cfp)
 	if err != nil {
 		return nil, err
 	}
-	return yaml2.Load(marshal)
+	var pollers, poller, defaults *node.Node
+
+	pollers = cfg.GetChildS("Pollers")
+	defaults = cfg.GetChildS("Defaults")
+
+	if pollers == nil {
+		err = errors.New(errors.ERR_CONFIG, "[Pollers] section not found")
+	} else if defaults != nil { // optional
+		for _, p := range pollers.GetChildren() {
+			p.Union(defaults)
+		}
+	}
+	if poller = pollers.GetChildS(name); poller == nil {
+		err = errors.New(errors.ERR_CONFIG, "poller ["+name+"] not found")
+	}
+	return poller, err
 }
 
 type Exporter struct {
