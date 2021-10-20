@@ -65,7 +65,7 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 5,
+        "w": 4,
         "x": 0,
         "y": 1
       },
@@ -100,7 +100,77 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Total Disks",
+      "title": "Total Disks in Nodes",
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "Prometheus",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [
+            {
+              "id": 0,
+              "op": "=",
+              "text": "0",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgb(31, 176, 196)",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 4,
+        "y": 1
+      },
+      "id": 43,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.2.0",
+      "targets": [
+        {
+          "expr": "sum(aggr_raid_disk_count{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "B"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Total Disks in Aggregates",
       "type": "stat"
     },
     {
@@ -135,8 +205,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 5,
-        "x": 5,
+        "w": 4,
+        "x": 8,
         "y": 1
       },
       "id": 55,
@@ -205,8 +275,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 5,
-        "x": 10,
+        "w": 4,
+        "x": 12,
         "y": 1
       },
       "id": 47,
@@ -275,8 +345,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 5,
-        "x": 15,
+        "w": 4,
+        "x": 16,
         "y": 1
       },
       "id": 48,
@@ -409,9 +479,29 @@
           {
             "matcher": {
               "id": "byName",
+              "options": "aggr"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Aggregate"
+              },
+              {
+                "id": "custom.width",
+                "value": 178
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
               "options": "node"
             },
             "properties": [
+              {
+                "id": "displayName",
+                "value": "Node"
+              },
               {
                 "id": "custom.width",
                 "value": 128
@@ -425,6 +515,10 @@
             },
             "properties": [
               {
+                "id": "displayName",
+                "value": "Capacity"
+              },
+              {
                 "id": "custom.width",
                 "value": 134
               }
@@ -437,6 +531,10 @@
             },
             "properties": [
               {
+                "id": "displayName",
+                "value": "Max IOPs"
+              },
+              {
                 "id": "custom.width",
                 "value": 154
               }
@@ -448,6 +546,10 @@
               "options": "max utilization"
             },
             "properties": [
+              {
+                "id": "displayName",
+                "value": "Max Utilization"
+              },
               {
                 "id": "custom.width",
                 "value": 167
@@ -481,6 +583,10 @@
             },
             "properties": [
               {
+                "id": "displayName",
+                "value": "Disks"
+              },
+              {
                 "id": "custom.width",
                 "value": 77
               }
@@ -492,6 +598,10 @@
               "options": "capacity used"
             },
             "properties": [
+              {
+                "id": "displayName",
+                "value": "Capacity Used"
+              },
               {
                 "id": "custom.width",
                 "value": 362
@@ -512,7 +622,7 @@
         "sortBy": [
           {
             "desc": true,
-            "displayName": "capacity used"
+            "displayName": "Capacity Used"
           }
         ]
       },
@@ -570,7 +680,7 @@
           "options": {
             "include": {
               "names": [
-                "aggregate",
+                "aggr",
                 "node",
                 "Value #A",
                 "Value #D",
@@ -669,6 +779,10 @@
             },
             "properties": [
               {
+                "id": "displayName",
+                "value": "Max IOPs"
+              },
+              {
                 "id": "custom.width",
                 "value": 153
               }
@@ -680,6 +794,10 @@
               "options": "max utilization"
             },
             "properties": [
+              {
+                "id": "displayName",
+                "value": "Max Utilization"
+              },
               {
                 "id": "custom.width",
                 "value": 349
@@ -693,8 +811,28 @@
             },
             "properties": [
               {
+                "id": "displayName",
+                "value": "Node"
+              },
+              {
                 "id": "custom.width",
                 "value": 148
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "aggr"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Aggregate"
+              },
+              {
+                "id": "custom.width",
+                "value": 178
               }
             ]
           }
@@ -712,7 +850,7 @@
         "sortBy": [
           {
             "desc": true,
-            "displayName": "max IOPs"
+            "displayName": "Max IOPs"
           }
         ]
       },
@@ -746,7 +884,7 @@
           "options": {
             "include": {
               "names": [
-                "aggregate",
+                "aggr",
                 "Value #C",
                 "Value #B",
                 "node"
@@ -815,7 +953,7 @@
         {
           "expr": "max by (node, aggr) (aggr_disk_busy{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "interval": "",
-          "legendFormat": "{{node}} - {{aggregate}}",
+          "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
         }
       ],
@@ -916,7 +1054,7 @@
         {
           "expr": "max by (node, aggr) (aggr_disk_total_transfers{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "interval": "",
-          "legendFormat": "{{node}} - {{aggregate}}",
+          "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
         }
       ],
@@ -1247,6 +1385,7 @@
               "__name__": true,
               "cluster": true,
               "datacenter": true,
+              "system_type": true,
               "instance": true,
               "job": true,
               "node": true,
@@ -1259,7 +1398,10 @@
               "shared": true,
               "shelf": true,
               "Value #E": true,
-              "offline": true
+              "offline": true,
+              "plex": true,
+              "raid": true,
+              "raid_type": true
             },
             "indexByName": {
               "Time": 0,

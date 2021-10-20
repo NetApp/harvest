@@ -751,7 +751,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "aggr_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
+          "expr": "aggr_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -760,7 +760,7 @@
           "refId": "A"
         },
         {
-          "expr": "aggr_volume_count_flexvol{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
+          "expr": "aggr_volume_count_flexvol{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -769,7 +769,7 @@
           "refId": "B"
         },
         {
-          "expr": "aggr_raid_disk_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
+          "expr": "aggr_raid_disk_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -778,7 +778,7 @@
           "refId": "C"
         },
         {
-          "expr": "aggr_space_total{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
+          "expr": "aggr_space_total{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -787,7 +787,7 @@
           "refId": "D"
         },
         {
-          "expr": "aggr_space_used{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
+          "expr": "aggr_space_used{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -796,7 +796,7 @@
           "refId": "E"
         },
         {
-          "expr": "aggr_space_used_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
+          "expr": "aggr_space_used_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "format": "table",
           "hide": false,
           "instant": true,
