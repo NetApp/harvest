@@ -718,7 +718,7 @@ func checkFolder(opts *options) (map[*Folder]bool, error) {
 		return map[*Folder]bool{&opts.cmodeFolder: false, &opts.mode7Folder: false}, errors.New("server response: " + status)
 	}
 
-	if result == nil || len(result) == 0 {
+	if len(result) == 0 {
 		return map[*Folder]bool{&opts.cmodeFolder: false, &opts.mode7Folder: false}, nil
 	}
 

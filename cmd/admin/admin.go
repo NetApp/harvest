@@ -24,7 +24,6 @@ type Admin struct {
 	localIP          string
 	pollerToPromAddr *timedmap.TimedMap
 	httpSD           conf.Httpsd
-	updateCacheEvery time.Duration
 	expireAfter      time.Duration
 }
 
