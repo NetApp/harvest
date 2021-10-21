@@ -45,7 +45,6 @@ const maxCol = 40
 
 type options struct {
 	command    string
-	pollers    []string
 	collectors []string
 	objects    []string
 	verbose    bool

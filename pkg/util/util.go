@@ -147,10 +147,10 @@ func Contains(s []string, e string) bool {
 
 func FindLocalIP() (string, error) {
 	conn, err := net.Dial("udp", "1.1.1.1:80")
-	defer func(conn net.Conn) { _ = conn.Close() }(conn)
 	if err != nil {
 		return "", err
 	}
+	defer func(conn net.Conn) { _ = conn.Close() }(conn)
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
 	return localAddr.IP.String(), nil
 }
