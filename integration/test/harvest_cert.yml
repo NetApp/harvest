@@ -5,6 +5,9 @@ Exporters:
   prometheus2:
     exporter: Prometheus
     port: 12991
+  prometheus3:
+    exporter: Prometheus
+    port: 12992
 
 Defaults:
   collectors:
@@ -31,3 +34,10 @@ Pollers:
     password: netapp1!
     exporters:
       - prometheus2
+  unix:
+    datacenter: local
+    addr: localhost
+    collectors:
+      - Unix
+    exporters:
+      - prometheus3

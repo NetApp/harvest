@@ -2,6 +2,7 @@ package installer
 
 import (
 	"fmt"
+	"github.com/Netapp/harvest-automation/test/setup"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"log"
 	"strings"
@@ -39,6 +40,7 @@ func (r *RPM) Install() bool {
 	}
 	utils.Run("mkdir", "-p", path)
 	utils.Run("cp", "-R", utils.GetConfigDir()+"/certificates", HarvestHome)
+	utils.Run("cp", setup.GetZapiPerfFileWithQosCounters(), HarvestHome+"/"+setup.ZapiPerfDefaultFile)
 	copyErr := utils.CopyFile(harvestFile, HarvestHome+"/harvest.yml")
 	if copyErr != nil {
 		return false
