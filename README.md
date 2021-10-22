@@ -33,13 +33,11 @@ We provide pre-compiled binaries for Linux, RPMs, and Debs.
 ## Pre-compiled Binaries
 
 ### Installation 
-Visit the [Releases page](https://github.com/NetApp/harvest/releases) and copy the `tar.gz` link you want to download. For example, to download the `v21.05.2` release:
-
+Visit the [Releases page](https://github.com/NetApp/harvest/releases) and copy the `tar.gz` link you want to download. For example, to download the `v21.08.0` release:
 ```
-RELEASE=harvest-21.05.2-1
-wget https://github.com/NetApp/harvest/releases/latest/download/$RELEASE.tar.gz
-tar -xvf $RELEASE.tar.gz
-cd $RELEASE
+wget https://github.com/NetApp/harvest/releases/download/v21.08.0/harvest-21.08.0-6_linux_amd64.tar.gz
+tar -xvf harvest-21.08.0-6_linux_amd64.tar.gz
+cd harvest-21.08.0-6_linux_amd64
 
 # Run Harvest with the default unix localhost collector
 bin/harvest start
@@ -48,8 +46,12 @@ bin/harvest start
 If you don't have `wget` installed, you can use `curl` like so:
 
 ```
-curl -L -O https://github.com/NetApp/harvest/releases/latest/download/$RELEASE.tar.gz
+curl -L -O https://github.com/NetApp/harvest/releases/download/v21.08.0/harvest-21.08.0-6_linux_amd64.tar.gz
 ```
+
+It's best to run Harvest as a non-root user. Make sure the user running Harvest can write to `/var/log/harvest/` or tell Harvest to write the logs somewhere else with the `HARVEST_LOGS` environment variable.
+
+If something goes wrong, examine the logs files in `/var/log/harvest`, check out the [troubleshooting](https://github.com/NetApp/harvest/wiki/Troubleshooting-Harvest) section of the wiki and jump onto [Slack](https://github.com/NetApp/harvest/blob/main/SUPPORT.md#slack) and ask for help.
 
 ### Upgrade
 Follow the steps below to upgrade Harvest
