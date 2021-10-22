@@ -294,9 +294,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources, volume_avg_latency{datacenter=\"$Datacenter\",node=\"$Node\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",node=\"$Node\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "sum by (node,aggr,volume)(topk($TopResources, volume_avg_latency{datacenter=\"$Datacenter\",node=\"$Node\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",node=\"$Node\",svm=~\"$SVM\",volume=~\"$Volume\"}))",
           "interval": "",
-          "legendFormat": "{{svm}} - {{volume}}",
+          "legendFormat": "{{node}} - {{aggr}} - {{volume}}",
           "refId": "A"
         }
       ],
@@ -397,9 +397,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources,  (volume_read_data+volume_write_data{datacenter=\"$Datacenter\",node=\"$Node\",volume=~\"$Volume\"}) * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",node=\"$Node\",svm=~\"$SVM\",volume=~\"$Volume\"} )",
+          "expr": "sum by (node,aggr,volume)(topk($TopResources,  (volume_read_data+volume_write_data{datacenter=\"$Datacenter\",node=\"$Node\",volume=~\"$Volume\"}) * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",node=\"$Node\",svm=~\"$SVM\",volume=~\"$Volume\"} ))",
           "interval": "",
-          "legendFormat": "{{svm}} - {{volume}}",
+          "legendFormat": "{{node}} - {{aggr}} - {{volume}}",
           "refId": "A"
         }
       ],
@@ -500,9 +500,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources, volume_total_ops{datacenter=\"$Datacenter\",node=\"$Node\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",node=\"$Node\",svm=~\"$SVM\",volume=~\"$Volume\"} )",
+          "expr": "sum by (node,aggr,volume)(topk($TopResources, volume_total_ops{datacenter=\"$Datacenter\",node=\"$Node\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",node=\"$Node\",svm=~\"$SVM\",volume=~\"$Volume\"} ))",
           "interval": "",
-          "legendFormat": "{{svm}} - {{volume}}",
+          "legendFormat": "{{node}} - {{aggr}} - {{volume}}",
           "refId": "A"
         }
       ],
@@ -1586,9 +1586,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources, volume_read_latency{datacenter=\"$Datacenter\",node=\"$Node\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",node=\"$Node\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "sum by (node,aggr,volume)(topk($TopResources, volume_read_latency{datacenter=\"$Datacenter\",node=\"$Node\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",node=\"$Node\",svm=~\"$SVM\",volume=~\"$Volume\"}))",
           "interval": "",
-          "legendFormat": "{{svm}} - {{volume}}",
+          "legendFormat": "{{aggr}} - {{volume}}",
           "refId": "A"
         }
       ],
@@ -1689,10 +1689,10 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources, volume_read_data{datacenter=\"$Datacenter\",node=\"$Node\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",node=\"$Node\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "sum by (node,aggr,volume)(topk($TopResources, volume_read_data{datacenter=\"$Datacenter\",node=\"$Node\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",node=\"$Node\",svm=~\"$SVM\",volume=~\"$Volume\"}))",
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{svm}} - {{volume}}",
+          "legendFormat": "{{aggr}} - {{volume}}",
           "refId": "A"
         }
       ],
@@ -1793,9 +1793,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources, volume_read_ops{datacenter=\"$Datacenter\",node=\"$Node\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",node=\"$Node\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "sum by (node,aggr,volume)(topk($TopResources, volume_read_ops{datacenter=\"$Datacenter\",node=\"$Node\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",node=\"$Node\",svm=~\"$SVM\",volume=~\"$Volume\"}))",
           "interval": "",
-          "legendFormat": "{{svm}} - {{volume}}",
+          "legendFormat": "{{aggr}} - {{volume}}",
           "refId": "A"
         }
       ],
@@ -1896,9 +1896,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources, volume_write_latency{datacenter=\"$Datacenter\",node=\"$Node\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",node=\"$Node\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "sum by (node,aggr,volume)(topk($TopResources, volume_write_latency{datacenter=\"$Datacenter\",node=\"$Node\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",node=\"$Node\",svm=~\"$SVM\",volume=~\"$Volume\"}))",
           "interval": "",
-          "legendFormat": "{{svm}} - {{volume}}",
+          "legendFormat": "{{aggr}} - {{volume}}",
           "refId": "A"
         }
       ],
@@ -1999,9 +1999,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources, volume_write_data{datacenter=\"$Datacenter\",node=\"$Node\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",node=\"$Node\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "sum by (node,aggr,volume)(topk($TopResources, volume_write_data{datacenter=\"$Datacenter\",node=\"$Node\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",node=\"$Node\",svm=~\"$SVM\",volume=~\"$Volume\"}))",
           "interval": "",
-          "legendFormat": "{{svm}} - {{volume}}",
+          "legendFormat": "{{aggr}} - {{volume}}",
           "refId": "A"
         }
       ],
@@ -2102,9 +2102,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources, volume_write_ops{datacenter=\"$Datacenter\",node=\"$Node\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",node=\"$Node\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "sum by (node,aggr,volume)(topk($TopResources, volume_write_ops{datacenter=\"$Datacenter\",node=\"$Node\",volume=~\"$Volume\"} * on  (volume, aggr) group_right() volume_labels{datacenter=\"$Datacenter\",node=\"$Node\",svm=~\"$SVM\",volume=~\"$Volume\"}))",
           "interval": "",
-          "legendFormat": "{{svm}} - {{volume}}",
+          "legendFormat": "{{aggr}} - {{volume}}",
           "refId": "A"
         }
       ],
@@ -2226,18 +2226,18 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_size_total{datacenter=\"$Datacenter\",node=\"$Node\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+          "expr": "sum by (node,aggr,volume)(volume_size_total{datacenter=\"$Datacenter\",node=\"$Node\",svm=~\"$SVM\",volume=~\"$Volume\"})",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{svm}} - {{volume}} - Volume Total Size",
+          "legendFormat": "{{node}} - {{svm}} - {{volume}} - Volume Total Size",
           "refId": "D"
         },
         {
           "exemplar": false,
-          "expr": "volume_size_used{datacenter=\"$Datacenter\",node=\"$Node\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+          "expr": "sum by (node,aggr,volume)(volume_size_used{datacenter=\"$Datacenter\",node=\"$Node\",svm=~\"$SVM\",volume=~\"$Volume\"})",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{svm}} - {{volume}} - Volume Size Used",
+          "legendFormat": "{{node}} - {{svm}} - {{volume}} - Volume Size Used",
           "refId": "A"
         }
       ],
@@ -2336,10 +2336,10 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_size_used_percent{datacenter=\"$Datacenter\",node=\"$Node\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+          "expr": "sum by (node,aggr,volume)(volume_size_used_percent{datacenter=\"$Datacenter\",node=\"$Node\",svm=~\"$SVM\",volume=~\"$Volume\"})",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{svm}} - {{volume}} - Volume Size Used",
+          "legendFormat": "{{node}} - {{svm}} - {{volume}} - Volume Size Used",
           "refId": "A"
         }
       ],
