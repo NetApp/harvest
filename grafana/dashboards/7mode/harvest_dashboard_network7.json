@@ -1,5 +1,4 @@
-{
-  "__inputs": [
+"__inputs": [
     {
       "name": "DS_PROMETHEUS",
       "label": "Prometheus",
@@ -963,7 +962,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources, nic_tx_bytes{datacenter=\"$Datacenter\",node=~\"$Node\"})",
+          "expr": "sum by (node,nic)(topk($TopResources, nic_tx_bytes{datacenter=\"$Datacenter\",node=~\"$Node\"}))",
           "instant": false,
           "interval": "",
           "legendFormat": "{{node}} - {{nic}}",
@@ -1065,7 +1064,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopResources, nic_rx_bytes{datacenter=\"$Datacenter\",node=~\"$Node\"})",
+          "expr": "sum by (node,nic)(topk($TopResources, nic_rx_bytes{datacenter=\"$Datacenter\",node=~\"$Node\"}))",
           "interval": "",
           "legendFormat": "{{node}} - {{nic}}",
           "refId": "A"
@@ -1167,7 +1166,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "nic_util_percent{datacenter=\"$Datacenter\",node=~\"$Node\"}",
+          "expr": "sum by (node,nic)(nic_util_percent{datacenter=\"$Datacenter\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "{{node}} {{nic}}",
           "refId": "A"
@@ -1269,9 +1268,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (node) (nic_tx_total_errors{datacenter=\"$Datacenter\",node=~\"$Node\",nic=~\"$Eth\"})",
+          "expr": "sum by (node,nic) (nic_tx_total_errors{datacenter=\"$Datacenter\",node=~\"$Node\",nic=~\"$Eth\"})",
           "interval": "",
-          "legendFormat": "TOTAL",
+          "legendFormat": "{{node}} - {{nic}} - TOTAL",
           "refId": "A"
         }
       ],
@@ -1370,9 +1369,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (node) (nic_rx_total_errors{datacenter=\"$Datacenter\",node=~\"$Node\",nic=~\"$Eth\"})",
+          "expr": "sum by (node,nic) (nic_rx_total_errors{datacenter=\"$Datacenter\",node=~\"$Node\",nic=~\"$Eth\"})",
           "interval": "",
-          "legendFormat": "TOTAL",
+          "legendFormat": "{{node}} - {{nic}} - TOTAL",
           "refId": "A"
         }
       ],
