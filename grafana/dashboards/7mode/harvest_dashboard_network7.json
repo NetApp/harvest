@@ -1,5 +1,5 @@
 {
-    "__inputs": [
+  "__inputs": [
     {
       "name": "DS_PROMETHEUS",
       "label": "Prometheus",
@@ -662,20 +662,17 @@
                 "id": "mappings",
                 "value": [
                   {
-                    "from": "1",
-                    "id": 1,
-                    "text": "up",
-                    "to": "1.999",
-                    "type": 2,
-                    "value": "0"
-                  },
-                  {
-                    "from": "0",
-                    "id": 2,
-                    "text": "down",
-                    "to": "",
-                    "type": 1,
-                    "value": "1"
+                    "options": {
+                      "0": {
+                        "index": 0,
+                        "text": "down"
+                      },
+                      "1": {
+                        "index": 1,
+                        "text": "up"
+                      }
+                    },
+                    "type": "value"
                   }
                 ]
               },
@@ -685,11 +682,11 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "rgb(75, 155, 35)",
+                      "color": "rgb(225, 90, 40)",
                       "value": null
                     },
                     {
-                      "color": "rgb(225, 90, 40)",
+                      "color": "rgb(75, 155, 35)",
                       "value": 1
                     }
                   ]
