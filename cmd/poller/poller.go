@@ -111,6 +111,7 @@ type Poller struct {
 	metadata       *matrix.Matrix
 	status         *matrix.Matrix
 	certPool       *x509.CertPool
+	client         *http.Client
 }
 
 // Init starts Poller, reads parameters, opens zeroLog handler, initializes metadata,
@@ -888,6 +889,9 @@ func (p *Poller) publishDetails() {
 		logger.Err(err).Msg("Unable to find local IP")
 		return
 	}
+	if p.client == nil {
+		return
+	}
 	exporterIp := "127.0.0.1"
 	heartBeatUrl := ""
 	for _, exporterName := range p.params.Exporters {
@@ -915,23 +919,11 @@ func (p *Poller) publishDetails() {
 	}
 	payload, err := json.Marshal(details)
 	if err != nil {
-		panic(err)
+		logger.Error().Err(err).Str("poller", p.name).Msg("Unable to marshal poller details")
+		return
 	}
-	var client *http.Client
 	defaultUrl := p.makePublishUrl()
-	if conf.Config.Admin.Httpsd.TLS.CertFile != "" {
-		client = &http.Client{
-			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{
-					RootCAs: p.certPool,
-				},
-			},
-		}
-	} else {
-		client = &http.Client{
-			Transport: &http.Transport{},
-		}
-	}
+
 	if heartBeatUrl == "" {
 		heartBeatUrl = defaultUrl
 	}
@@ -945,7 +937,7 @@ func (p *Poller) publishDetails() {
 	if user != "" {
 		req.SetBasicAuth(user, conf.Config.Admin.Httpsd.AuthBasic.Password)
 	}
-	resp, err := client.Do(req)
+	resp, err := p.client.Do(req)
 	if err != nil {
 		rErr := errors2.Unwrap(err)
 		if rErr == nil {
@@ -966,6 +958,7 @@ func (p *Poller) publishDetails() {
 		logger.Err(err).Msg("failed to read publishDetails response to admin")
 		return
 	}
+	p.client.CloseIdleConnections()
 	if resp.StatusCode != 200 {
 		txt := string(body)
 		txt = txt[0:int(math.Min(float64(len(txt)), 48))]
@@ -983,6 +976,7 @@ func (p *Poller) startHeartBeat() {
 	if conf.Config.Admin.Httpsd.Listen == "" {
 		return
 	}
+	p.createClient()
 	p.publishDetails()
 	if conf.Config.Admin.Httpsd.HeartBeat == "" {
 		conf.Config.Admin.Httpsd.HeartBeat = "45s"
@@ -1009,6 +1003,22 @@ func (p *Poller) makePublishUrl() string {
 		return fmt.Sprintf("%s://127.0.0.1:%s/api/v1/sd", schema, conf.Config.Admin.Httpsd.Listen[1:])
 	} else {
 		return fmt.Sprintf("%s://%s/api/v1/sd", schema, conf.Config.Admin.Httpsd.Listen)
+	}
+}
+
+func (p *Poller) createClient() {
+	if conf.Config.Admin.Httpsd.TLS.CertFile != "" {
+		p.client = &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{
+					RootCAs: p.certPool,
+				},
+			},
+		}
+	} else {
+		p.client = &http.Client{
+			Transport: &http.Transport{},
+		}
 	}
 }
 
