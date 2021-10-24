@@ -60,6 +60,9 @@ func LoadHarvestConfig(configPath string) error {
 		return err
 	}
 	Config.PollersOrdered = orderedConfig.Pollers.namesInOrder
+	for i, name := range Config.PollersOrdered {
+		Config.Pollers[name].promIndex = i
+	}
 
 	// Merge pollers and defaults
 	pollers := Config.Pollers
@@ -129,13 +132,20 @@ func GetPrometheusExporterPorts(pollerName string) (int, error) {
 	}
 
 	exporters := poller.Exporters
-	if exporters != nil && len(exporters) > 0 {
+	if len(exporters) > 0 {
 		for _, e := range exporters {
 			exporter := Config.Exporters[e]
 			if exporter.Type == "Prometheus" {
 				isPrometheusExporterConfigured = true
 				if exporter.PortRange != nil {
 					ports := promPortRangeMapping[e]
+					preferredPort := exporter.PortRange.Min + poller.promIndex
+					_, isFree := ports.freePorts[preferredPort]
+					if isFree {
+						port = preferredPort
+						delete(ports.freePorts, preferredPort)
+						break
+					}
 					for k := range ports.freePorts {
 						port = k
 						delete(ports.freePorts, k)
@@ -146,7 +156,6 @@ func GetPrometheusExporterPorts(pollerName string) (int, error) {
 					break
 				}
 			}
-			continue
 		}
 	}
 	if port == 0 && isPrometheusExporterConfigured {
@@ -286,6 +295,7 @@ type Poller struct {
 	SslKey         string                `yaml:"ssl_key,omitempty"`
 	UseInsecureTls *bool                 `yaml:"use_insecure_tls,omitempty"`
 	Username       string                `yaml:"username,omitempty"`
+	promIndex      int
 }
 
 func (p *Poller) Union(defaults *Poller) {
