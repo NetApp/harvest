@@ -104,6 +104,7 @@ func checkAll(path string, contents []byte) {
 
 	anyFailed := false
 	anyFailed = !checkUniquePromPorts(*harvestConfig).isValid || anyFailed
+	anyFailed = !checkPollersExportToUniquePromPorts(*harvestConfig).isValid || anyFailed
 	anyFailed = !checkExporterTypes(*harvestConfig).isValid || anyFailed
 
 	if anyFailed {
@@ -203,6 +204,72 @@ func checkUniquePromPorts(config conf.HarvestConfig) validation {
 			}
 			names := strings.Join(exporterNames, ", ")
 			fmt.Printf("  port: [%s] duplicateExporters: [%s]\n", color.Colorize(port, color.Red), color.Colorize(names, color.Yellow))
+		}
+		fmt.Println()
+	}
+	return valid
+}
+
+// checkPollersExportToUniquePromPorts checks that all pollers that export
+// to a Prometheus exporter, do so to a unique promPort
+func checkPollersExportToUniquePromPorts(config conf.HarvestConfig) validation {
+	if config.Exporters == nil {
+		return validation{}
+	}
+
+	// Add all exporters that have a port to a
+	// map of portNum -> list of names
+	seen := make(map[int][]string)
+	for name, exporter := range config.Exporters {
+		// ignore configuration with both port and portrange defined. PortRange takes precedence
+		if exporter.Port == nil || exporter.Type != "Prometheus" || exporter.PortRange != nil {
+			continue
+		}
+		previous := seen[*exporter.Port]
+		previous = append(previous, name)
+		seen[*exporter.Port] = previous
+	}
+
+	// Look for pollers that export to the same Prometheus exporter that is not a port range exporter
+	pollerExportsTo := make(map[string][]string)
+
+	for name, poller := range config.Pollers {
+		if poller.Exporters == nil {
+			continue
+		}
+		for _, exporterName := range poller.Exporters {
+			exporter, ok := config.Exporters[exporterName]
+			if !ok {
+				continue
+			}
+			if exporter.Type != "Prometheus" || exporter.Port == nil || exporter.PortRange != nil {
+				continue
+			}
+			pollerExportsTo[exporterName] = append(pollerExportsTo[exporterName], name)
+		}
+	}
+
+	valid := validation{isValid: true}
+	for _, pollerNames := range pollerExportsTo {
+		if len(pollerNames) == 1 {
+			continue
+		}
+		valid.isValid = false
+		for _, name := range pollerNames {
+			valid.invalid = append(valid.invalid, name)
+		}
+		break
+	}
+
+	if !valid.isValid {
+		fmt.Printf("%s: Multiple pollers export to the same PromPort\n", color.Colorize("Error", color.Red))
+		fmt.Println("  Each poller should export to a unique Prometheus exporter or use PortRange. Change the following pollers to use unique exporters:")
+		for port, pollerNames := range pollerExportsTo {
+			if len(pollerNames) == 1 {
+				continue
+			}
+			names := strings.Join(pollerNames, ", ")
+			fmt.Printf("  pollers [%s] export to the same static PrometheusExporter: [%s]\n", color.Colorize(names, color.Yellow), color.Colorize(port, color.Red))
 		}
 		fmt.Println()
 	}
