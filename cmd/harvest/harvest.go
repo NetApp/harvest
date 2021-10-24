@@ -206,7 +206,17 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 				printStatus(table, opts.longStatus, poller.Datacenter, name, s)
 				break
 			case "not running", "stopped", "killed":
-				promPort := getPollerPrometheusPort(name, opts)
+				var promPort int
+				if opts.command == "restart" && s.promPort != "" {
+					// if this poller was recently running, it can use its same prometheus port
+					pp, err := strconv.Atoi(s.promPort)
+					if err == nil {
+						promPort = pp
+					}
+				}
+				if promPort == 0 {
+					promPort = getPollerPrometheusPort(name, opts)
+				}
 				s = startPoller(name, promPort, opts)
 				printStatus(table, opts.longStatus, poller.Datacenter, name, s)
 			default:
