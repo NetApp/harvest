@@ -124,7 +124,7 @@ func GetPids(search string) ([]int32, error) {
 	return result, err
 }
 
-var pidAndPollerRegex = regexp.MustCompile(`(\d+).*?poller.*?--poller (\w+)`)
+var pidAndPollerRegex = regexp.MustCompile(`(\d+).*?poller.*?--poller (.*?) .*?--promPort (\d+)`)
 var profRegex = regexp.MustCompile(`--profiling (\d+)`)
 var promRegex = regexp.MustCompile(`--promPort (\d+)`)
 
