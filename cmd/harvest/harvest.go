@@ -34,7 +34,6 @@ import (
 	"os"
 	"os/exec"
 	"path"
-	"regexp"
 	"strconv"
 	"strings"
 	"syscall"
@@ -59,13 +58,6 @@ type options struct {
 	promPort   int
 }
 
-type pollerStatus struct {
-	status        string
-	pid           int32
-	profilingPort string
-	promPort      string
-}
-
 var (
 	HarvestHomePath   string
 	HarvestConfigPath string
@@ -86,7 +78,6 @@ var opts = &options{
 
 func doManageCmd(cmd *cobra.Command, args []string) {
 	var (
-		poller                                           *conf.Poller
 		name                                             string
 		pollerNames, pollersFromCmdLine, pollersFiltered []string
 		pollerNamesSet                                   *set.Set
@@ -104,7 +95,7 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 		_ = cmd.Flags().Set("loglevel", "0")
 	}
 
-	//cmd.DebugFlags()  // uncomment to print flags
+	// cmd.DebugFlags()  // uncomment to print flags
 
 	if err = conf.LoadHarvestConfig(opts.config); err != nil {
 		if os.IsNotExist(err) {
@@ -171,134 +162,115 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 	}
 	table.SetColumnAlignment([]int{tw.ALIGN_LEFT, tw.ALIGN_LEFT, tw.ALIGN_RIGHT, tw.ALIGN_RIGHT, tw.ALIGN_RIGHT})
 
-	for _, name = range pollersFiltered {
+	statusesByName := getPollersStatus()
+	switch opts.command {
+	case "restart":
+		restartPollers(pollersFiltered, statusesByName)
+	case "stop", "kill":
+		stopAllPollers(pollersFiltered, statusesByName)
+	case "start":
+		startAllPollers(pollersFiltered, statusesByName)
+	}
+	printTable(pollersFiltered)
+}
 
-		var s *pollerStatus
-
-		if poller, ok = pollers[name]; !ok {
-			// should never happen
-			fmt.Printf("poller [%s]: missing parameters\n", name)
+func printTable(filteredPollers []string) {
+	table := tw.NewWriter(os.Stdout)
+	table.SetBorder(false)
+	table.SetAutoFormatHeaders(false)
+	if opts.longStatus {
+		table.SetHeader([]string{"Datacenter", "Poller", "PID", "PromPort", "Profiling", "Status"})
+	} else {
+		table.SetHeader([]string{"Datacenter", "Poller", "PID", "PromPort", "Status"})
+	}
+	table.SetColumnAlignment([]int{tw.ALIGN_LEFT, tw.ALIGN_LEFT, tw.ALIGN_RIGHT, tw.ALIGN_RIGHT, tw.ALIGN_RIGHT})
+	notRunning := &util.PollerStatus{Status: util.StatusNotRunning}
+	statusesByName := getPollersStatus()
+	for _, name := range filteredPollers {
+		var (
+			poller       *conf.Poller
+			pollerExists bool
+		)
+		if poller, pollerExists = conf.Config.Pollers[name]; !pollerExists {
+			// should never happen, ignore since this was handled earlier
 			continue
 		}
-
-		s = getStatus(name)
-		if opts.command == "kill" {
-			s = killPoller(name)
-			printStatus(table, opts.longStatus, poller.Datacenter, name, s)
-			continue
-		}
-
-		if opts.command == "status" {
-			printStatus(table, opts.longStatus, poller.Datacenter, name, s)
-		}
-
-		if opts.command == "stop" || opts.command == "restart" {
-			s = stopPoller(name)
-			printStatus(table, opts.longStatus, poller.Datacenter, name, s)
-		}
-
-		if opts.command == "start" || opts.command == "restart" {
-			// only start poller if confirmed that it's not running
-			// if it's running do nothing
-			switch s.status {
-			case "running":
-				// do nothing but print current status, idempotent
-				printStatus(table, opts.longStatus, poller.Datacenter, name, s)
-				break
-			case "not running", "stopped", "killed":
-				var promPort int
-				if opts.command == "restart" && s.promPort != "" {
-					// if this poller was recently running, it can use its same prometheus port
-					pp, err := strconv.Atoi(s.promPort)
-					if err == nil {
-						promPort = pp
-					}
+		if statuses, ok := statusesByName[name]; ok {
+			// print each status, annotate extra rows with a +
+			for i, status := range statuses {
+				if i > 0 {
+					printStatus(table, opts.longStatus, poller.Datacenter, "+"+name, status)
+				} else {
+					printStatus(table, opts.longStatus, poller.Datacenter, name, status)
 				}
-				if promPort == 0 {
-					promPort = getPollerPrometheusPort(name, opts)
-				}
-				s = startPoller(name, promPort, opts)
-				printStatus(table, opts.longStatus, poller.Datacenter, name, s)
-			default:
-				fmt.Printf("can't verify status of [%s]: kill poller and try again\n", name)
 			}
+		} else {
+			// poller not running
+			printStatus(table, opts.longStatus, poller.Datacenter, name, notRunning)
 		}
 	}
-
 	table.Render()
 }
 
-// Get status of a poller. This is partially guesswork and
-// there is no guarantee that this will always be correct.
-// The general logic is:
-// - use prep to find a matching poller
-// - the check that the found pid has a harvest tag in its environ
-//
-// Returns:
-//	@status - status of poller
-//  @pid  - PID of poller (0 means no PID)
-func getStatus(pollerName string) *pollerStatus {
+// stop all pollers then start them instead of stop/starting each individually
+func restartPollers(pollersFiltered []string, statusesByName map[string][]*util.PollerStatus) {
+	stopAllPollers(pollersFiltered, statusesByName)
+	startAllPollers(pollersFiltered, statusesByName)
+}
 
-	s := &pollerStatus{status: "not running"}
+func startAllPollers(pollersFiltered []string, statusesByName map[string][]*util.PollerStatus) {
+	for _, name := range pollersFiltered {
+		if statuses, wasRunning := statusesByName[name]; wasRunning {
+			for _, ss := range statuses {
+				if ss.Status == util.StatusRunning || ss.Status == util.StatusStoppingFailed {
+					continue
+				}
+				// if this poller was just stopped, it can use its same prometheus port
+				var promPort int
+				pp, err := strconv.Atoi(ss.PromPort)
+				if err == nil {
+					promPort = pp
+				} else {
+					promPort = getPollerPrometheusPort(name, opts)
+				}
+				startPoller(name, promPort, opts)
+			}
+		} else {
+			// poller not already running or just stopped
+			promPort := getPollerPrometheusPort(name, opts)
+			startPoller(name, promPort, opts)
+		}
+	}
+}
 
-	// docker dummy status
+func stopAllPollers(pollersFiltered []string, statusesByName map[string][]*util.PollerStatus) {
+	for _, name := range pollersFiltered {
+		if statuses, isRunning := statusesByName[name]; isRunning {
+			for _, s := range statuses {
+				stopPoller(s)
+			}
+		}
+	}
+}
+
+func getPollersStatus() map[string][]*util.PollerStatus {
+	var statuses []util.PollerStatus
+	statusesByName := map[string][]*util.PollerStatus{}
+	// if docker ignore
 	if os.Getenv("HARVEST_DOCKER") == "yes" {
-		s.status = "n/a (docker)"
-		return s
+		return statusesByName
 	}
-
-	pids, err := util.GetPid(pollerName)
+	statuses, err := util.GetPollerStatuses()
 	if err != nil {
-		return s
+		fmt.Printf("Unable to GetPollerStatuses err: %+v\n", err)
+		return nil
 	}
-	if len(pids) != 1 {
-		if len(pids) > 1 {
-			fmt.Printf("expected one pid for %s, instead pids=%+v\n", pollerName, pids)
-		}
-		return s
+	// create map of status names
+	for _, status := range statuses {
+		clone := status
+		statusesByName[status.Name] = append(statusesByName[status.Name], &clone)
 	}
-	s.pid = pids[0]
-
-	// no valid PID stops here
-	if s.pid < 1 {
-		return s
-	}
-
-	// retrieve process with PID and check if running
-	// (error can be safely ignored on Unix)
-	proc, _ := os.FindProcess(int(s.pid))
-
-	// send signal 0 to check if process is running
-	// returns err if it's not running or permission is denied
-	if err := proc.Signal(syscall.Signal(0)); err != nil {
-		if os.IsPermission(err) {
-			fmt.Printf("Insufficient privileges to send signal to process pid=[%d]\n", s.pid)
-		}
-		return s
-	}
-
-	// process is running. GetPid ensures this is the correct poller
-	// Extract cmdline args for status struct
-	if cmdline, err := util.GetCmdLine(s.pid); err == nil {
-		s.status = "running"
-
-		if strings.Contains(cmdline, "--profiling") {
-			r := regexp.MustCompile(`--profiling (\d+)`)
-			matches := r.FindStringSubmatch(cmdline)
-			if len(matches) > 0 {
-				s.profilingPort = matches[1]
-			}
-		}
-
-		if strings.Contains(cmdline, "--promPort") {
-			r := regexp.MustCompile(`--promPort (\d+)`)
-			matches := r.FindStringSubmatch(cmdline)
-			if len(matches) > 0 {
-				s.promPort = matches[1]
-			}
-		}
-	}
-	return s
+	return statusesByName
 }
 
 func stopGhostPollers(skipPoller []string) {
@@ -322,7 +294,7 @@ func stopGhostPollers(skipPoller []string) {
 				break
 			}
 		}
-		// if poller doesn't exists in harvest config
+		// if poller doesn't exist in harvest config
 		if !skip {
 			proc, err := os.FindProcess(int(p))
 			if err != nil {
@@ -339,71 +311,61 @@ func stopGhostPollers(skipPoller []string) {
 	}
 }
 
-func killPoller(pollerName string) *pollerStatus {
-
-	s := getStatus(pollerName)
+func killPoller(ps *util.PollerStatus) {
 	// exit if pid was not found
-	if s.pid < 1 {
-		return s
+	if ps.Pid < 1 {
+		return
 	}
 
 	// send kill signal
-	// TODO handle already exited
-	proc, _ := os.FindProcess(int(s.pid))
+	proc, _ := os.FindProcess(int(ps.Pid))
 	if err := proc.Kill(); err != nil {
 		if strings.HasSuffix(err.Error(), "process already finished") {
-			s.status = "already exited"
+			ps.Status = util.StatusAlreadyExited
 		} else {
 			fmt.Println("kill:", err)
 			os.Exit(1)
 		}
 	} else {
-		s.status = "killed"
+		ps.Status = util.StatusKilled
 	}
-
-	return s
 }
 
-// Stop poller if it's running or it's stoppable
-//
-// Returns: same as get_status()
-func stopPoller(pollerName string) *pollerStatus {
-	var s *pollerStatus
+// Stop the poller if it's stoppable
+func stopPoller(ps *util.PollerStatus) {
 	// if we get no valid PID, assume process is not running
-	if s = getStatus(pollerName); s.pid < 1 {
-		return s
+	if ps.Pid < 1 {
+		return
 	}
 
-	proc, _ := os.FindProcess(int(s.pid))
+	proc, _ := os.FindProcess(int(ps.Pid))
 
 	// send terminate signal
 	if err := proc.Signal(syscall.SIGTERM); err != nil {
 		if os.IsPermission(err) {
-			fmt.Println("Insufficient privileges to terminate process")
-			s.status = "stopping failed"
-			return s
+			fmt.Printf("Insufficient privileges to terminate process for pid=%d poller=%s\n", ps.Pid, ps.Name)
+			ps.Status = util.StatusStoppingFailed
+			return
 		}
 		fmt.Println(err)
-		// other errors, probably mean poller already exited, so double check
-		return getStatus(pollerName)
+		return
 	}
 
-	// give the poller chance to cleanup and exit
-	for i := 0; i < 5; i += 1 {
-		time.Sleep(50 * time.Millisecond)
-		// @TODO, handle situation when PID is regained by some other process
+	// give the poller a chance to clean up and exit
+	for i := 0; i < 5; i++ {
 		if proc.Signal(syscall.Signal(0)) != nil {
-			s.status = "stopped"
-			return s
+			ps.Status = util.StatusStopped
+			return
 		}
+		time.Sleep(10 * time.Millisecond)
 	}
 
 	// couldn't verify poller exited
 	// just try to kill it and cleanup
-	return killPoller(pollerName)
+	killPoller(ps)
 }
 
-func startPoller(pollerName string, promPort int, opts *options) *pollerStatus {
+func startPoller(pollerName string, promPort int, opts *options) {
 
 	argv := make([]string, 5)
 	argv[0] = path.Join(HarvestHomePath, "bin", "poller")
@@ -453,7 +415,6 @@ func startPoller(pollerName string, promPort int, opts *options) *pollerStatus {
 
 	if opts.foreground {
 		cmd := exec.Command(argv[0], argv[1:]...)
-		//fmt.Println(cmd.String())
 		fmt.Println("starting in foreground, enter CTRL+C or close terminal to stop poller")
 		_ = os.Stdout.Sync()
 		cmd.Stdout = os.Stdout
@@ -465,7 +426,6 @@ func startPoller(pollerName string, promPort int, opts *options) *pollerStatus {
 			os.Exit(1)
 		}
 
-		//fmt.Println("stopped")
 		os.Exit(0)
 	}
 
@@ -486,34 +446,23 @@ func startPoller(pollerName string, promPort int, opts *options) *pollerStatus {
 	}
 
 	cmd := exec.Command(path.Join(HarvestHomePath, "bin", "daemonize"), argv...)
-	//fmt.Println(cmd.String())
 	if err := cmd.Start(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-
-	// Allow for some delay and retry checking status a few times
-	for i := 0; i < 2; i += 1 {
-		if s := getStatus(pollerName); s.pid > 0 {
-			return s
-		}
-		time.Sleep(10 * time.Millisecond)
-	}
-
-	return getStatus(pollerName)
 }
 
-func printStatus(table *tw.Table, long bool, dc, pn string, ps *pollerStatus) {
+func printStatus(table *tw.Table, long bool, dc, pn string, ps *util.PollerStatus) {
 	dct := truncate(dc)
 	pnt := truncate(pn)
 	var row []string
 	if long {
-		row = []string{dct, pnt, "", ps.promPort, ps.profilingPort, ps.status}
+		row = []string{dct, pnt, "", ps.PromPort, ps.ProfilingPort, string(ps.Status)}
 	} else {
-		row = []string{dct, pnt, "", ps.promPort, ps.status}
+		row = []string{dct, pnt, "", ps.PromPort, string(ps.Status)}
 	}
-	if ps.pid != 0 {
-		row[2] = strconv.Itoa(int(ps.pid))
+	if ps.Pid != 0 {
+		row[2] = strconv.Itoa(int(ps.Pid))
 	}
 	table.Append(row)
 }
