@@ -293,6 +293,7 @@ func adjustOptions() {
 		exitIfMissing(opts.dir7mode, "directory-7mode")
 	}
 	if opts.dircDOT == "" && opts.dir7mode == "" {
+		opts.dir = path.Join(homePath, opts.dir)
 		exitIfMissing(opts.dir, "directory")
 		opts.dircDOT = path.Join(opts.dir, "/cmode")
 		opts.dir7mode = path.Join(opts.dir, "/7mode")
