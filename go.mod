@@ -13,8 +13,8 @@ require (
 	github.com/shirou/gopsutil v3.21.7+incompatible
 	github.com/shirou/gopsutil/v3 v3.21.7
 	github.com/spf13/cobra v1.2.1
-	github.com/tidwall/gjson v1.9.2
-	github.com/tidwall/sjson v1.2.2
+	github.com/tidwall/gjson v1.10.2
+	github.com/tidwall/sjson v1.2.3
 	github.com/tklauser/go-sysconf v0.3.8 // indirect
 	github.com/zekroTJA/timedmap v1.4.0
 	golang.org/x/term v0.0.0-20210503060354-a79de5458b56
@@ -35,7 +35,7 @@ require (
 	github.com/mailru/easyjson v0.7.6 // indirect
 	github.com/mattn/go-runewidth v0.0.9 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/tidwall/match v1.1.0 // indirect
+	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/tklauser/numcpus v0.2.3 // indirect
 	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4 // indirect
