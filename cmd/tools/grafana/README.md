@@ -11,7 +11,7 @@ Click on `Configuration` in the left menu bar (1), click on `API Keys` (2) and c
 For example, let's say your Grafana server is on `http://my.grafana.server:3000` and you want to import the Prometheus-based dashboards from the `grafana` directory. You would run this:
 
 ```
-$ bin/grafana import --addr my.grafana.server:3000 --directory grafana/dashboards
+$ bin/grafana import --addr my.grafana.server:3000
 ```
 
 Similarly, to export:
@@ -19,4 +19,4 @@ Similarly, to export:
 $ bin/grafana export --addr my.grafana.server:3000 --directory /path/to/export/directory
 ```
 
-By default the dashboards are connected to the `Prometheus` datasource defined in Grafana. If your datasource has a different name, use the `--datasource` flag during import/export.
+By default, the dashboards are connected to the `Prometheus` datasource defined in Grafana. If your datasource has a different name, use the `--datasource` flag during import/export.
