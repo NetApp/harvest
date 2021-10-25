@@ -314,7 +314,7 @@ func adjustOptions() {
 
 func exitIfMissing(fp string, s string) {
 	if _, err := os.Stat(fp); os.IsNotExist(err) {
-		fmt.Printf("%s file [%s] does not exist.\n", s, fp)
+		fmt.Printf("error: %s file [%s] does not exist.\n", s, fp)
 		os.Exit(1)
 	}
 }
