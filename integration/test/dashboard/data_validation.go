@@ -26,8 +26,7 @@ func HasValidData(query string) bool {
 	return false
 }
 
-func AssertIfNoQosDataFound() {
-	query := "qos_latency"
+func AssertIfNotPresent(query string) {
 	maxCount := 10
 	startCount := 1
 	for startCount < maxCount {
