@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/data"
 	"github.com/Netapp/harvest-automation/test/utils"
-	log "github.com/cihub/seelog"
+	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
 	"net/url"
 	"time"
@@ -12,7 +12,8 @@ import (
 
 func HasValidData(query string) bool {
 	timeNow := time.Now().Unix()
-	queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d", data.PrometheusUrl, url.QueryEscape(query), timeNow)
+	queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d", data.PrometheusUrl,
+		url.QueryEscape(query), timeNow)
 	data, err := utils.GetResponse(queryUrl)
 	if err == nil && gjson.Get(data, "status").String() == "success" {
 		value := gjson.Get(data, "data.result")
@@ -20,7 +21,22 @@ func HasValidData(query string) bool {
 			return true
 		}
 	}
-	log.Info("Failed Query --> " + queryUrl)
-	log.Info("Failed Query Response --> " + data)
+	log.Info().Msg("Failed Query --> " + queryUrl)
+	log.Info().Msg("Failed Query Response --> " + data)
 	return false
+}
+
+func AssertIfNoQosDataFound() {
+	query := "qos_latency"
+	maxCount := 10
+	startCount := 1
+	for startCount < maxCount {
+		if HasValidData(query) {
+			log.Info().Int("Iteration", startCount).Msg("Qos counters are present")
+			return
+		}
+		startCount++
+		time.Sleep(30 * time.Second)
+	}
+	panic("No Qos data found after 5 min")
 }

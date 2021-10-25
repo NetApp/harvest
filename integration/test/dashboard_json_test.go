@@ -9,8 +9,8 @@ import (
 	"github.com/Netapp/harvest-automation/test/dashboard"
 	"github.com/Netapp/harvest-automation/test/data"
 	"github.com/Netapp/harvest-automation/test/utils"
-	log "github.com/cihub/seelog"
 	"github.com/julienroland/usg"
+	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"github.com/tidwall/gjson"
@@ -43,14 +43,16 @@ type DashboardJsonTestSuite struct {
 
 func (suite *DashboardJsonTestSuite) SetupSuite() {
 	jsonDir := utils.GetHarvestRootDir() + "/grafana/dashboards"
-	log.Info("Dashboard JSON dir : ", jsonDir)
+	log.Info().Str("Dashboard JSON dir : ", jsonDir).Msg("")
 	fileSet = GetAllJsons(jsonDir)
 	if len(fileSet) == 0 {
 		assert.Fail(suite.T(), "No json file found @ "+jsonDir)
 	}
-	log.Info("No of json files ", len(fileSet))
-	log.Info("Exclude map info")
-	log.Info(counterMap)
+	log.Info().Int("No of json files ", len(fileSet))
+	log.Info().Msg("Exclude map info")
+	log.Info().Str("Exclude Mapping", fmt.Sprint(counterMap)).Msg("List of counter")
+	log.Info().Msgf("Wait for the qos data to be available")
+	dashboard.AssertIfNoQosDataFound()
 }
 
 func (suite *DashboardJsonTestSuite) TestJsonExpression() {
@@ -61,7 +63,7 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 		if IsValidFile(filePath) {
 			continue
 		}
-		log.Info(fmt.Sprintf("Validating JSON file ===> %s", filePath))
+		log.Info().Str("JSON File", filePath).Msg("Started")
 		jsonFile, err := os.Open(filePath)
 		utils.PanicIfNotNil(err)
 		defer jsonFile.Close()
@@ -97,7 +99,7 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 					}
 				}
 
-				if !HasDataInDB(counter) {
+				if !dashboard.HasValidData(counter) {
 					errorInfo := ResultInfo{
 						expression,
 						counter,
@@ -136,18 +138,19 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 		}
 		for _, resultInfo := range errorInfoList {
 			if resultInfo.result {
-				log.Info(usg.Get.Tick, " ", resultInfo.expression)
+				fmt.Println(usg.Get.Tick, resultInfo.expression)
 			} else {
 				isFailed = true
-				log.Info(usg.Get.Cross, fmt.Sprintf(" ERROR: %s for expr [%s]", resultInfo.reason, resultInfo.expression))
+				fmt.Println(usg.Get.Cross, fmt.Sprintf(" ERROR: %s for expr [%s]", resultInfo.reason,
+					resultInfo.expression))
 			}
 		}
-		log.Info("Completed.")
+		log.Info().Msg("Completed.")
 	}
 	if isFailed {
 		assert.Fail(suite.T(), "Test validation is failed. Pls check logs above")
 	} else {
-		log.Info("Everything looks good!!")
+		log.Info().Msg("Everything looks good!!")
 	}
 }
 
@@ -212,9 +215,7 @@ func GetAllJsons(dir string) []string {
 			}
 			return nil
 		})
-	if err != nil {
-		log.Info(err)
-	}
+	utils.PanicIfNotNil(err)
 	return fileSet
 }
 
@@ -243,16 +244,6 @@ func FindStringBetweenTwoChar(stringValue string, startChar string, endChar stri
 	}
 	return counters
 }
-
-func HasDataInDB(query string) bool {
-	timeNow := time.Now().Unix()
-	queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",
-		data.PrometheusUrl, query, timeNow)
-	data, _ := utils.GetResponse(queryUrl)
-	value := gjson.Get(data, "data.result")
-	return (value.Exists() && value.IsArray() && (len(value.Array()) > 0))
-}
-
 func GenerateQueryWithValue(query string, expression string) string {
 	timeNow := time.Now().Unix()
 	queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",

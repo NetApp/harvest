@@ -5,10 +5,13 @@ import (
 	"github.com/Netapp/harvest-automation/test/utils"
 	log "github.com/cihub/seelog"
 	"os"
+	"runtime"
 	"strings"
 )
 
 const ZapiPerfDefaultFile = "conf/zapiperf/default.yaml"
+
+const IsMac = runtime.GOOS == "darwin"
 
 func GetZapiPerfFileWithQosCounters() string {
 	// Create a file for writing
