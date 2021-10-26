@@ -313,4 +313,16 @@ export_options:
     - is_disk_zeroed
 ```
 
-Harvest uses an inbuilt mechanism to give unique display name for label and metric. It is recommended to provide display name for a label and metric to avoid [issue](https://github.com/NetApp/harvest/issues/585)
+Harvest does its best to determine a unique display name for each template's label and metric. Instead of relying on this heuristic, it is better to be explicit in your templates and define a display name using the caret (`^`) mapping. For example, instead of this:
+```
+aggr-spare-disk-info:
+    - ^^disk
+    - ^disk-type
+```
+do this:
+```
+aggr-spare-disk-info:
+    - ^^disk      => disk
+    - ^disk-type  => disk_type
+```
+See also [#585](https://github.com/NetApp/harvest/issues/585)
