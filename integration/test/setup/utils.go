@@ -3,7 +3,7 @@ package setup
 import (
 	"bufio"
 	"github.com/Netapp/harvest-automation/test/utils"
-	log "github.com/cihub/seelog"
+	"github.com/rs/zerolog/log"
 	"os"
 	"runtime"
 	"strings"
@@ -21,7 +21,7 @@ func GetZapiPerfFileWithQosCounters() string {
 	writeBuffer := bufio.NewWriter(writeFile)
 	file, err := os.Open(utils.GetHarvestRootDir() + "/" + ZapiPerfDefaultFile)
 	if err != nil {
-		log.Error(err)
+		log.Error().Err(err)
 	}
 	defer file.Close()
 
@@ -35,7 +35,7 @@ func GetZapiPerfFileWithQosCounters() string {
 		writeBuffer.WriteString(lineString + "\n")
 	}
 	if err := scanner.Err(); err != nil {
-		log.Error(err)
+		log.Error().Err(err)
 	}
 	writeBuffer.Flush()
 	return modifiedFilePath

@@ -5,7 +5,6 @@ go 1.15
 replace goharvest2 => ../
 
 require (
-	github.com/cihub/seelog v0.0.0-20170130134532-f561c5e57575
 	github.com/containerd/containerd v1.5.7 // indirect
 	github.com/docker/docker v20.10.8+incompatible
 	github.com/docker/go-connections v0.4.0 // indirect

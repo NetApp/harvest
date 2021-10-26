@@ -24,13 +24,12 @@ func HasMinRecord(query string, limit int) bool {
 			return true
 		}
 	}
-	log.Info().Str("Query", query).Msg("Failed Query --> " + queryUrl)
-	log.Info().Msg("Failed Query Response --> " + data)
+	log.Info().Str("Query", query).Str("Query Url", queryUrl).Str("Response", data).Msg("failed query info")
 	return false
 }
 
 func AssertIfNotPresent(query string) {
-	maxCount := 10
+	maxCount := 20
 	startCount := 1
 	query = fmt.Sprintf("count(%s)", query)
 	log.Info().Msg("Checking whether data is present or not for counter " + query)
@@ -47,6 +46,7 @@ func AssertIfNotPresent(query string) {
 					totalRecord := metricArray[1].Int()
 					log.Info().Int64("Total Record", totalRecord).Msg("")
 					if totalRecord > 5 {
+						time.Sleep(2 * time.Minute)
 						return
 					}
 				}
@@ -55,5 +55,5 @@ func AssertIfNotPresent(query string) {
 		startCount++
 		time.Sleep(30 * time.Second)
 	}
-	panic("Data for counter " + query + " not found after 5 min")
+	panic("Data for counter " + query + " not found after 10 min")
 }

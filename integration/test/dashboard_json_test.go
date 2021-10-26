@@ -43,15 +43,16 @@ type DashboardJsonTestSuite struct {
 
 func (suite *DashboardJsonTestSuite) SetupSuite() {
 	jsonDir := utils.GetHarvestRootDir() + "/grafana/dashboards"
-	log.Info().Str("Dashboard JSON dir : ", jsonDir).Msg("")
+	log.Info().Str("jsonDir", jsonDir).Msg("Dashboard directory path")
 	fileSet = GetAllJsons(jsonDir)
 	if len(fileSet) == 0 {
 		assert.Fail(suite.T(), "No json file found @ "+jsonDir)
 	}
-	log.Info().Int("No of json files ", len(fileSet))
+	log.Info().Int("fileSet", len(fileSet)).Msg("Json files")
+
 	log.Info().Msg("Exclude map info")
 	log.Info().Str("Exclude Mapping", fmt.Sprint(counterMap)).Msg("List of counter")
-	log.Info().Msgf("Wait for the qos data to be available")
+	log.Info().Msg("Wait until qos data is available")
 	countersToCheck := []string{"qos_read_latency"}
 	for _, counterData := range countersToCheck {
 		dashboard.AssertIfNotPresent(counterData)
