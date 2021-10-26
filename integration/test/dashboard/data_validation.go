@@ -32,10 +32,25 @@ func HasMinRecord(query string, limit int) bool {
 func AssertIfNotPresent(query string) {
 	maxCount := 10
 	startCount := 1
+	query = fmt.Sprintf("count(%s)", query)
+	log.Info().Msg("Checking whether data is present or not for counter " + query)
 	for startCount < maxCount {
-		if HasMinRecord(query, 0) {
-			log.Info().Str("Counter", query).Int("Iteration", startCount).Msg("counters are present")
-			return
+		queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s", data.PrometheusUrl,
+			url.QueryEscape(query))
+		data, err := utils.GetResponse(queryUrl)
+		if err == nil && gjson.Get(data, "status").String() == "success" {
+			value := gjson.Get(data, "data.result")
+			if value.Exists() && value.IsArray() && (len(value.Array()) > 0) {
+				metricArray := gjson.Get(value.Array()[0].String(), "value").Array()
+				fmt.Println(metricArray)
+				if len(metricArray) > 1 {
+					totalRecord := metricArray[1].Int()
+					log.Info().Int64("Total Record", totalRecord).Msg("")
+					if totalRecord > 5 {
+						return
+					}
+				}
+			}
 		}
 		startCount++
 		time.Sleep(30 * time.Second)
