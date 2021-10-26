@@ -40,7 +40,6 @@ func (r *RPM) Install() bool {
 	}
 	utils.Run("mkdir", "-p", path)
 	utils.Run("cp", "-R", utils.GetConfigDir()+"/certificates", HarvestHome)
-	utils.Run("cp", setup.GetZapiPerfFileWithQosCounters(), HarvestHome+"/"+setup.ZapiPerfDefaultFile)
 	copyErr := utils.CopyFile(harvestFile, HarvestHome+"/harvest.yml")
 	if copyErr != nil {
 		return false
@@ -69,6 +68,9 @@ func (r *RPM) Upgrade() bool {
 	if previousVersion == installedVersion {
 		utils.PanicIfNotNil(fmt.Errorf("upgrade is failed"))
 	}
+	utils.Run("cp", setup.GetZapiPerfFileWithQosCounters(), HarvestHome+"/"+setup.ZapiPerfDefaultFile)
+	harvestObj.Stop()
+	harvestObj.StartByHarvestUser()
 	status := harvestObj.AllRunning()
 	return status
 }
