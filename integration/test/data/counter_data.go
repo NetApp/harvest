@@ -14,7 +14,7 @@ func GetCounterMap() map[string][]string {
 	counterMap["NO_DATA_EXACT"] = []string{"fcp_util_percent", "nic_new_status", "svm_read_total",
 		"svm_write_total", "node_cifs_signed_sessions", "metadata_target_ping", "snapmirror_labels",
 		"qos_detail_volume_resource_latency", "qos_detail_resource_latency"}
-	counterMap["NO_DATA_CONTAINS"] = []string{"nvme_lif", "flashpool", "fcp", "snapmirror_"}
+	counterMap["NO_DATA_CONTAINS"] = []string{"nvme_lif", "flashpool", "fcp", "snapmirror_", "node_nfs"}
 	//if docker.IsDockerBasedPoller() || setup.IsMac {
 	counterMap["NO_DATA_CONTAINS"] = append(counterMap["NO_DATA_CONTAINS"], "poller")
 	//}
