@@ -35,7 +35,7 @@ These types implement most of the methods of their respective interfaces. A coll
 
 ### Configuration
 
-One of the tasks of the Poller is to build a config struct from CLI flags and your `harvest.yml` file. This struct is passed to a poller's collectors and exporters:
+One of the tasks of the Poller is to build a model of the configuration from CLI flags and your `harvest.yml` file. This model is passed to a poller's collectors and exporters:
 * Poller Options (type *[poller.Options](cmd/poller/options/options.go))
 * Params (type *[node.Node](pkg/tree/node/node.go))
 
