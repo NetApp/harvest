@@ -283,3 +283,46 @@ if you are monitoring a cluster at these versions, Harvest will select the indic
 - ONTAP version 9.6.0, Harvest will select the templates for 9.6.0
 - ONTAP version 9.7.X, Harvest will select the templates for 9.6.1
 - ONTAP version  9.12, Harvest will select the templates for 9.10.1
+
+### counters
+
+This section contains the complete or partial attribute tree of the queried API. Since the collector does not get counter metadata from the ONTAP system, two additional symbols are used for non-numeric attributes:
+
+- `^` used as a prefix indicates that the attribute should be stored as a label
+- `^^` indicates that the attribute is a label and an instance key (i.e., a label that uniquely identifies an instance, such as `name`, `uuid`). If a single label does not uniquely identify an instance, then multiple instance keys should be indicated.
+
+Additionally, the symbol `=>` can be used to set a custom display name for both instance labels and numeric counters. Example:
+
+```yaml
+name:                     Spare
+query:                    aggr-spare-get-iter
+object:                   spare
+collect_only_labels:      true
+counters:
+  aggr-spare-disk-info:
+    - ^^disk                       #Generates label as aggr-disk
+    - ^disk-type                 #Generates label as aggr-disk-type
+    - ^is-disk-zeroed	 => is_disk_zeroed            #Generates label as is_disk_zeroed
+    - ^^original-owner   => original_owner            #Generates label as original_owner
+export_options:
+  instance_keys:
+    - disk
+    - original_owner
+  instance_labels:
+    - disk_type
+    - is_disk_zeroed
+```
+
+Harvest does its best to determine a unique display name for each template's label and metric. Instead of relying on this heuristic, it is better to be explicit in your templates and define a display name using the caret (`^`) mapping. For example, instead of this:
+```
+aggr-spare-disk-info:
+    - ^^disk
+    - ^disk-type
+```
+do this:
+```
+aggr-spare-disk-info:
+    - ^^disk      => disk
+    - ^disk-type  => disk_type
+```
+See also [#585](https://github.com/NetApp/harvest/issues/585)
