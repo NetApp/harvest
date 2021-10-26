@@ -2,8 +2,6 @@ package data
 
 import (
 	"fmt"
-	"github.com/Netapp/harvest-automation/test/docker"
-	"github.com/Netapp/harvest-automation/test/setup"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/tidwall/gjson"
 	"time"
@@ -17,9 +15,9 @@ func GetCounterMap() map[string][]string {
 		"svm_write_total", "node_cifs_signed_sessions", "metadata_target_ping", "snapmirror_labels",
 		"qos_detail_volume_resource_latency", "qos_detail_resource_latency"}
 	counterMap["NO_DATA_CONTAINS"] = []string{"nvme_lif", "flashpool", "fcp", "snapmirror_"}
-	if docker.IsDockerBasedPoller() || setup.IsMac {
-		counterMap["NO_DATA_CONTAINS"] = append(counterMap["NO_DATA_CONTAINS"], "poller")
-	}
+	//if docker.IsDockerBasedPoller() || setup.IsMac {
+	counterMap["NO_DATA_CONTAINS"] = append(counterMap["NO_DATA_CONTAINS"], "poller")
+	//}
 	return counterMap
 }
 
