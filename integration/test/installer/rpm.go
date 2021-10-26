@@ -45,7 +45,7 @@ func (r *RPM) Install() bool {
 	if copyErr != nil {
 		return false
 	} //use file directly from the repo
-	harvestObj.Start()
+	harvestObj.StartByHarvestUser() //workaround for issue https://github.com/NetApp/harvest/issues/249
 	status := harvestObj.AllRunning()
 	return status
 }

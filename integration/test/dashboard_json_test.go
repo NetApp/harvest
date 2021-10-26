@@ -59,7 +59,7 @@ func (suite *DashboardJsonTestSuite) SetupSuite() {
 }
 
 func (suite *DashboardJsonTestSuite) TestJsonExpression() {
-	//fileSet = []string{"/Users/chinna/harvest/harvest/grafana/dashboards/cmode/harvest_dashboard_svm_details.json"}
+	//fileSet = []string{"/Users/chinna/harvest/harvest/grafana/dashboards/cmode/harvest_dashboard_snapmirror.json"}
 	var isFailed bool = false
 	for _, filePath := range fileSet {
 		var errorInfoList []ResultInfo
@@ -119,6 +119,10 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 					key := fmt.Sprintf("$%s", k)
 					expression = strings.ReplaceAll(expression, key, v)
 				}
+			}
+			if strings.Contains(expression, "resource=\\\"cloud\\\"") ||
+				strings.Contains(expression, "group_type=\\\"vol\\\"") {
+				continue
 			}
 			queryStatus, actualExpression := ValidateExpr(expression)
 			if queryStatus {
@@ -262,14 +266,29 @@ func GenerateQueryWithValue(query string, expression string) string {
 	queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",
 		data.PrometheusUrl, query, timeNow)
 	data, _ := utils.GetResponse(queryUrl)
-	newExpression := strings.ToLower(expression)
-	newExpression = strings.ReplaceAll(newExpression, "$topresources", "1")
+	newExpression := expression
+	/**
+	We are not following standard naming convention for variables in the json
+	*/
+	newExpression = strings.ReplaceAll(newExpression, "$TopResources", "1")
+	newExpression = strings.ReplaceAll(newExpression, "$Topresources", "1")
+	newExpression = strings.ReplaceAll(newExpression, "$Aggregate", "$aggr") //dashboard has $Aggregate
+	newExpression = strings.ReplaceAll(newExpression, "$Eth", "$Nic")
+	newExpression = strings.ReplaceAll(newExpression, "$NFSv", "$Nfsv")
+	newExpression = strings.ReplaceAll(newExpression, "$DestinationNode", "$Destination_node")
+	//newExpression = strings.ReplaceAll(newExpression, "$SourceNode", "$Source_node")
+	//newExpression = strings.ReplaceAll(newExpression, "$Source_node", "$Source_node")
+	newExpression = strings.ReplaceAll(newExpression, "$SourceSVM", "$Source_vserver")
+	newExpression = strings.ReplaceAll(newExpression, "$DestinationSVM", "$Destination_vserver")
+	newExpression = strings.ReplaceAll(newExpression, "$System", "$Cluster")
 	value := gjson.Get(data, "data.result")
 	if value.Exists() && value.IsArray() && (len(value.Array()) > 0) {
 		metricMap := gjson.Get(value.Array()[0].String(), "metric").Map()
 		for k, v := range metricMap {
-			key := fmt.Sprintf("$%s", k)
-			newExpression = strings.ReplaceAll(newExpression, key, v.String())
+			newExpression = strings.ReplaceAll(newExpression, fmt.Sprintf("$%s", strings.Title(k)), v.String())
+			newExpression = strings.ReplaceAll(newExpression, fmt.Sprintf("$%s", k), v.String())
+			newExpression = strings.ReplaceAll(newExpression, fmt.Sprintf("$%s", strings.ToLower(k)), v.String())
+			newExpression = strings.ReplaceAll(newExpression, fmt.Sprintf("$%s", strings.ToUpper(k)), v.String())
 		}
 		return newExpression
 	}

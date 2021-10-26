@@ -11,10 +11,10 @@ import (
 )
 
 func HasValidData(query string) bool {
-	return HasEnoughRecord(query, 0) // to make sure that no syntax error
+	return HasMinRecord(query, 0) // to make sure that no syntax error
 }
 
-func HasEnoughRecord(query string, limit int) bool {
+func HasMinRecord(query string, limit int) bool {
 	queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s", data.PrometheusUrl,
 		url.QueryEscape(query))
 	data, err := utils.GetResponse(queryUrl)
@@ -33,7 +33,7 @@ func AssertIfNotPresent(query string) {
 	maxCount := 10
 	startCount := 1
 	for startCount < maxCount {
-		if HasEnoughRecord(query, 0) {
+		if HasMinRecord(query, 0) {
 			log.Info().Str("Counter", query).Int("Iteration", startCount).Msg("counters are present")
 			return
 		}
