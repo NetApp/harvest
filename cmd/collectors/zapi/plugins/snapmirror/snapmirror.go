@@ -185,11 +185,25 @@ func (my *SnapMirror) updateNodeCache() error {
 	if instances := resp.GetChildS("instances"); instances != nil {
 		for _, i := range instances.GetChildren() {
 			vol := i.GetChildContentS("name")
-			svm := i.GetChildContentS("vserver_name")
-			nodeName := i.GetChildContentS("node_name")
-
-			my.nodeCache.Set(svm+"."+vol, nodeName)
-			count += 1
+			counters := i.GetChildS("counters")
+			if counters != nil {
+				var nodeName string
+				var svm string
+				for _, c := range counters.GetChildren() {
+					name := c.GetChildContentS("name")
+					value := c.GetChildContentS("value")
+					switch name {
+					case "node_name":
+						nodeName = value
+					case "vserver_name":
+						svm = value
+					}
+				}
+				if nodeName != "" && svm != "" {
+					my.nodeCache.Set(svm+"."+vol, nodeName)
+					count += 1
+				}
+			}
 		}
 	}
 
