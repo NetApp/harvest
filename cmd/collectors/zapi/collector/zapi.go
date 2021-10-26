@@ -106,7 +106,7 @@ func (me *Zapi) InitVars() error {
 
 	template, err := me.ImportSubTemplate(model, me.TemplateFn, me.Client.Version())
 	if err != nil {
-		me.Logger.Error().Stack().Err(err).Msgf("Error importing subtemplate: %s", me.TemplateFn)
+		me.Logger.Warn().Stack().Err(err).Msgf("Error importing subtemplate: %s", me.TemplateFn)
 		return err
 	}
 	me.Params.Union(template)
