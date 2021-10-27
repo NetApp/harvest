@@ -230,6 +230,10 @@ func newLabelVar(label string) []byte {
 
 func doImport(_ *cobra.Command, _ []string) {
 	opts.command = "import"
+	err := conf.LoadHarvestConfig(opts.config)
+	if err != nil {
+		return
+	}
 	adjustOptions()
 	askForToken()
 	checkAndCreateFolder()
@@ -279,11 +283,6 @@ func askForToken() {
 
 func adjustOptions() {
 	homePath = conf.GetHarvestHomePath()
-	err := conf.LoadHarvestConfig(opts.config)
-	if err != nil {
-		panic(err)
-	}
-
 	if opts.dircDOT != "" {
 		opts.dircDOT = path.Join(homePath, opts.dircDOT)
 		exitIfMissing(opts.dircDOT, "directory-cdot")
@@ -456,7 +455,7 @@ func importFiles(dir string, folder Folder) {
 		}
 
 		if code != 200 {
-			fmt.Printf("error - server response (%d - %s) %v\n", code, status, result)
+			fmt.Printf("error importing [%s] - server response (%d - %s) %v\n", file.Name(), code, status, result)
 			return
 		}
 		fmt.Printf("OK - imported %s / [%s]\n", folder.folderName, file.Name())
