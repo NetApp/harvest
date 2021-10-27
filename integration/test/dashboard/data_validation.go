@@ -55,5 +55,5 @@ func AssertIfNotPresent(query string) {
 		startCount++
 		time.Sleep(30 * time.Second)
 	}
-	panic("Data for counter " + query + " not found after 10 min")
+	panic("Data for counter " + query + " not found after 10 min. Check Workload counters are uncommented from conf/zapiperf/default.yml")
 }
