@@ -20,24 +20,10 @@
     ]
   },
   "editable": true,
-  "fiscalYearStartMonth": 0,
   "gnetId": null,
   "graphTooltip": 1,
-  "id": 30,
+  "id": null,
   "iteration": 1635345078665,
-  "links": [
-    {
-      "asDropdown": true,
-      "icon": "external link",
-      "includeVars": true,
-      "keepTime": true,
-      "tags": [
-        "NetAppHarvest"
-      ],
-      "title": "Related Dashboards",
-      "type": "dashboards"
-    }
-  ],
   "liveNow": false,
   "panels": [
     {
@@ -2359,9 +2345,6 @@
   "refresh": "",
   "schemaVersion": 31,
   "style": "dark",
-  "tags": [
-    "NetAppHarvest"
-  ],
   "templating": {
     "list": [
       {
