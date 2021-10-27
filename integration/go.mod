@@ -14,7 +14,7 @@ require (
 	github.com/morikuni/aec v1.0.0 // indirect
 	github.com/rs/zerolog v1.25.0
 	github.com/stretchr/testify v1.7.0
-	github.com/tidwall/gjson v1.9.2
+	github.com/tidwall/gjson v1.10.2
 	goharvest2 v0.0.0-00010101000000-000000000000
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
 	google.golang.org/grpc v1.39.1 // indirect
