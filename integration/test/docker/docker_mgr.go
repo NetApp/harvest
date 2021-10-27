@@ -114,6 +114,26 @@ func StoreContainerLog(containerId string, logFile string) {
 	utils.PanicIfNotNil(err)
 }
 
+func ReStartContainers(commandSubString string) {
+	ctx := context.Background()
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		panic(err)
+	}
+	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{})
+	if err != nil {
+		panic(err)
+	}
+	for _, container := range containers {
+		if strings.Contains(container.Command, commandSubString) || strings.Contains(container.Image, commandSubString) {
+			log.Println("Stopping container ", container.ID[:10], "... ")
+			if err := cli.ContainerRestart(ctx, container.ID, nil); err != nil {
+				panic(err)
+			}
+		}
+	}
+}
+
 func StopContainers(commandSubString string) {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
