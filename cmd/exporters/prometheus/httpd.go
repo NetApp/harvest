@@ -183,7 +183,6 @@ func filterMetaTags(metrics [][]byte) [][]byte {
 // this is done in a very inefficient way, by "reverse engineering" the metrics.
 // That's probably ok, since we don't expect this to be called often.
 func (me *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
-	// TODO: also add plugins and plugin metrics
 	start := time.Now()
 
 	if !me.checkAddr(r.RemoteAddr) {
@@ -216,7 +215,7 @@ func (me *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 		me.Logger.Debug().Msgf("(httpd) key => [%s] (%d)", key, len(data))
 		var collector, object string
 
-		if keys := strings.Split(key, "."); len(keys) == 2 {
+		if keys := strings.Split(key, "."); len(keys) == 3 {
 			collector = keys[0]
 			object = keys[1]
 			me.Logger.Debug().Msgf("(httpd) collector [%s] - object [%s]", collector, object)
@@ -250,19 +249,19 @@ func (me *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 			metrics := make([]string, 0)
 			for _, m := range metricNames {
 				if m != "" {
-					metrics = append(metrics, fmt.Sprintf(metric_template, m))
+					metrics = append(metrics, fmt.Sprintf(metricTemplate, m))
 				}
 			}
-			objects = append(objects, fmt.Sprintf(object_template, obj, strings.Join(metrics, "\n")))
+			objects = append(objects, fmt.Sprintf(objectTemplate, obj, strings.Join(metrics, "\n")))
 			numObjects += 1
 		}
 
-		body = append(body, fmt.Sprintf(collector_template, col, strings.Join(objects, "\n")))
+		body = append(body, fmt.Sprintf(collectorTemplate, col, strings.Join(objects, "\n")))
 		numCollectors += 1
 	}
 
 	poller := me.Options.Poller
-	bodyFlat := fmt.Sprintf(html_template, poller, poller, poller, numCollectors, numObjects, numMetrics, strings.Join(body, "\n\n"))
+	bodyFlat := fmt.Sprintf(htmlTemplate, poller, poller, poller, numCollectors, numObjects, numMetrics, strings.Join(body, "\n\n"))
 
 	w.WriteHeader(200)
 	w.Header().Set("content-type", "text/html")
