@@ -2,6 +2,9 @@ name:                     Volume
 query:                    volume-get-iter
 object:                   volume
 
+# increase client timeout for volumes
+client_timeout:           1m
+
 counters:
   volume-attributes:
     - volume-autosize-attributes:

@@ -18,6 +18,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 )
 
 const (
@@ -128,19 +129,10 @@ func New(config *node.Node) (*Client, error) {
 	client.request = request
 
 	// initialize http client
-	if t, err := strconv.Atoi(config.GetChildContentS("client_timeout")); err == nil {
-		timeout = time.Duration(t) * time.Second
-		client.Logger.Debug().Msgf("using timeout [%d] s", t)
-	} else {
-		// default timeout
-		timeout = time.Duration(DefaultTimeout) * time.Second
-		client.Logger.Debug().Msgf("using default timeout [%d] s", DefaultTimeout)
-	}
-
 	httpclient = &http.Client{Transport: transport, Timeout: timeout}
 
 	client.client = httpclient
-
+	client.SetTimeout(config.GetChildContentS("client_timeout"))
 	// ensure that we can change body dynamically
 	request.GetBody = func() (io.ReadCloser, error) {
 		r := bytes.NewReader(client.buffer.Bytes())
@@ -148,6 +140,25 @@ func New(config *node.Node) (*Client, error) {
 	}
 
 	return &client, nil
+}
+
+func parseClientTimeout(clientTimeout string) (time.Duration, error) {
+	// does clientTimeout contain non digits?
+	charIndex := strings.IndexFunc(clientTimeout, func(r rune) bool {
+		return !unicode.IsDigit(r)
+	})
+	if charIndex != -1 {
+		duration, err := time.ParseDuration(clientTimeout)
+		if err != nil {
+			return time.Duration(DefaultTimeout) * time.Second, err
+		}
+		return duration, nil
+	}
+	if t, err := strconv.Atoi(clientTimeout); err == nil {
+		return time.Duration(t) * time.Second, nil
+	} else {
+		return time.Duration(DefaultTimeout) * time.Second, nil
+	}
 }
 
 // Init connects to the cluster and retrieves system info
@@ -217,8 +228,8 @@ func (c *Client) BuildRequest(request *node.Node) error {
 	return c.buildRequest(request, false)
 }
 
-func (my *Client) buildRequestString(request string, forceCluster bool) error {
-	return my.buildRequest(node.NewXmlS(request), forceCluster)
+func (c *Client) buildRequestString(request string, forceCluster bool) error {
+	return c.buildRequest(node.NewXmlS(request), forceCluster)
 }
 
 // build API request from the given node object.
@@ -303,11 +314,11 @@ func (c *Client) InvokeBatchWithTimers(request *node.Node, tag string) (*node.No
 }
 
 // InvokeRequestString builds a request from request and invokes it
-func (me *Client) InvokeRequestString(request string) (*node.Node, error) {
-	if err := me.BuildRequestString(request); err != nil {
+func (c *Client) InvokeRequestString(request string) (*node.Node, error) {
+	if err := c.BuildRequestString(request); err != nil {
 		return nil, err
 	}
-	return me.Invoke()
+	return c.Invoke()
 }
 
 // InvokeRequest builds a request from request and invokes it
@@ -362,7 +373,7 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 		err               error
 	)
 
-	defer c.request.Body.Close()
+	defer func(Body io.ReadCloser) { _ = Body.Close() }(c.request.Body)
 	defer c.buffer.Reset()
 
 	// issue request to server
@@ -388,7 +399,7 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 	}
 
 	// read response body
-	defer response.Body.Close()
+	defer func(Body io.ReadCloser) { _ = Body.Close() }(response.Body)
 
 	if body, err = ioutil.ReadAll(response.Body); err != nil {
 		return result, responseT, parseT, err
@@ -449,4 +460,17 @@ func (c *Client) printRequestAndResponse(req string, response []byte) {
 			Str("Response", res).
 			Msg("")
 	}
+}
+
+func (c *Client) SetTimeout(timeout string) {
+	if c.client == nil {
+		return
+	}
+	newTimeout, err := parseClientTimeout(timeout)
+	if err == nil {
+		c.Logger.Debug().Str("timeout", newTimeout.String()).Msg("Using timeout")
+	} else {
+		c.Logger.Debug().Str("timeout", newTimeout.String()).Msg("Using default timeout")
+	}
+	c.client.Timeout = newTimeout
 }
