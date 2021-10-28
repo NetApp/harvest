@@ -29,7 +29,7 @@ func HasMinRecord(query string, limit int) bool {
 }
 
 func AssertIfNotPresent(query string) {
-	maxCount := 30
+	maxCount := 20
 	startCount := 1
 	query = fmt.Sprintf("count(%s)", query)
 	log.Info().Msg("Checking whether data is present or not for counter " + query)
@@ -45,8 +45,8 @@ func AssertIfNotPresent(query string) {
 				if len(metricArray) > 1 {
 					totalRecord := metricArray[1].Int()
 					log.Info().Int64("Total Record", totalRecord).Msg("")
-					if totalRecord > 5 {
-						time.Sleep(2 * time.Minute)
+					if totalRecord >= 5 {
+						time.Sleep(3 * time.Minute)
 						return
 					}
 				}
