@@ -5,7 +5,9 @@ package rest
 import (
 	"bytes"
 	"crypto/tls"
+	"encoding/json"
 	"fmt"
+	"github.com/tidwall/gjson"
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/logging"
@@ -28,17 +30,24 @@ type Client struct {
 	buffer   *bytes.Buffer
 	Logger   *logging.Logger
 	baseURL  string
+	cluster  Cluster
 	password string
 	username string
 }
 
-func New(poller *conf.Poller) (*Client, error) {
+type Cluster struct {
+	name    string
+	info    string
+	uuid    string
+	version [3]int
+}
+
+func New(poller *conf.Poller, timeout time.Duration) (*Client, error) {
 	var (
 		client         Client
 		httpclient     *http.Client
 		transport      *http.Transport
 		cert           tls.Certificate
-		timeout        time.Duration
 		addr           string
 		url            string
 		useInsecureTLS bool
@@ -193,7 +202,7 @@ func downloadSwagger(poller *conf.Poller, path string, url string) (int64, error
 		return 0, err
 	}
 
-	if restClient, err = New(poller); err != nil {
+	if restClient, err = New(poller, DefaultTimeout); err != nil {
 		return 0, fmt.Errorf("error creating new client %w\n", err)
 	}
 
@@ -212,4 +221,74 @@ func downloadSwagger(poller *conf.Poller, path string, url string) (int64, error
 		return 0, fmt.Errorf("error while downloading %s err=%w\n", url, err)
 	}
 	return n, nil
+}
+
+func (c *Client) Init(retries int) error {
+
+	var (
+		err     error
+		content []byte
+		data    map[string]interface{}
+		i       int
+	)
+
+	for i = 0; i < retries; i++ {
+
+		if content, err = c.GetRest(BuildHref("cluster", "*", nil, "", "", "", "")); err != nil {
+			continue
+		}
+		if err = json.Unmarshal(content, &data); err != nil {
+			return err
+		}
+
+		results := gjson.GetManyBytes(content, "name", "uuid", "version.full", "version.generation", "version.major", "version.minor")
+		c.cluster.name = results[0].String()
+		c.cluster.uuid = results[1].String()
+		c.cluster.info = results[2].String()
+		c.cluster.version[0] = int(results[3].Int())
+		c.cluster.version[1] = int(results[4].Int())
+		c.cluster.version[2] = int(results[5].Int())
+		return nil
+	}
+	return err
+}
+
+func BuildHref(apiPath string, fields string, field []string, queryFields string, queryValue string, maxRecords string, returnTimeout string) string {
+	href := strings.Builder{}
+	href.WriteString("api/")
+	href.WriteString(apiPath)
+	href.WriteString("?return_records=true")
+	addArg(&href, "&fields=", fields)
+	for _, field := range field {
+		addArg(&href, "&", field)
+	}
+	addArg(&href, "&query_fields=", queryFields)
+	addArg(&href, "&query=", queryValue)
+	addArg(&href, "&max_records=", maxRecords)
+	addArg(&href, "&return_timeout=", returnTimeout)
+	return href.String()
+}
+
+func addArg(href *strings.Builder, field string, value string) {
+	if value == "" {
+		return
+	}
+	href.WriteString(field)
+	href.WriteString(value)
+}
+
+func (c *Client) ClusterName() string {
+	return c.cluster.name
+}
+
+func (c *Client) ClusterUUID() string {
+	return c.cluster.uuid
+}
+
+func (c *Client) Info() string {
+	return c.cluster.info
+}
+
+func (c *Client) Version() [3]int {
+	return c.cluster.version
 }

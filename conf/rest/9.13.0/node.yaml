@@ -1,0 +1,64 @@
+
+name:                       Node
+query:                      cluster/nodes
+object:                     node
+
+fields:
+  - metric.processor_utilization
+  - is_capacity_optimized
+  - is_all_flash_optimized
+  - vendor_serial_number   #seems hidden but no response in rest
+  - is_capacity_optimized
+  - is_all_flash_select_optimized
+
+counters:
+  - metric.processor_utilization => cpu_busytime   #hidden field
+  - controller.failed_fan.count => failed_fan
+  - ^controller.failed_fan.message.message => failed_fan
+  - controller.failed_power_supply.count => failed_power
+  - ^controller.failed_power_supply.message.message => failed_power_message
+  - ^controller.over_temperature => over_temperature
+  - ^is_all_flash_optimized => is_all_flash_optimized
+  - ^is_all_flash_select_optimized => is_all_flash_select_optimized
+  - ^is_capacity_optimized => is_capacity_optimized
+  #- ^system-node-get-iter.is-cloud-optimized => is_cloud_optimized #missing mapping
+  #- system-node-get-iter.is-node-cluster-eligible => is_node_cluster_eligible #missing mapping
+  - ^state => healthy
+  - ^is_performance_optimized => is_perf_optimized  #not found in infinity rest call
+  #- ^system-node-get-iter.maximum-aggregate-size => max_aggr_size  #missing mapping
+  #- ^system-node-get-iter.maximum-number-of-volumes => max_vol_num #missing mapping
+  #- ^system-node-get-iter.maximum-volume-size => max_vol_size #missing mapping
+  - ^^name => node
+  - ^location
+  - ^model
+  - ^serial_number => serial
+  - uptime
+  - ^vendor_serial_number => vendor
+  - ^version.full => version
+
+
+plugins:
+  - LabelAgent:
+    value_mapping:
+      - status healthy true `1`
+    # metric label zapi_value rest_value `default_value`
+    value_to_num:
+      - new_status healthy true up `0`
+    join:
+      - warnings `; ` failed_fan_message,failed_power_message,over_temperature
+
+export_options:
+  instance_keys:
+    - node
+  instance_labels:
+    - max_aggr_size
+    - max_vol_size
+    - max_vol_num
+    - warnings
+    - healthy
+    - location
+    - model
+    - serial
+    - uptime
+    - vendor
+    - version

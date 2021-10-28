@@ -1,0 +1,57 @@
+
+name:                         SnapMirror
+query:                        snapmirror/relationships
+object:                       snapmirror
+
+counters:
+  #- snapmirror-get-iter.break-failed-count   #missing mapping
+  #- snapmirror-get-iter.break-successful-count #missing-mapping
+  - ^destination.path  => destination_volume
+  #- ^destination_volume_node       => destination_node #missing-mapping
+  - ^destination.svm.name => destination_vserver
+  - ^healthy
+  - lag_time
+  - transfer.total_duration => last_transfer_duration
+  - transfer.end_time => last_transfer_end_timestamp
+  - transfer.bytes_transferred  => last_transfer_size
+  - ^transfer.bytes_transferred  => last_transfer_size
+  #- newest-snapshot-timestamp #missing mapping
+  - ^^uuid => relationship_id
+  - ^transfer.state => relationship_status
+  #- ^relationship-type  #missing mapping
+  #- ^relationship-group-type      => group_type #missing mapping
+  #- resync-failed-count #missing mapping
+  #- resync-successful-count #missing mapping
+  #- ^schedule  #maps to snapmirror/policies?fields=transfer_schedule.name . will need plugin change
+  - ^source.path => source_volume
+  - ^source.svm.name => source_vserver
+  #- ^source-node #missing mapping
+  #- total-transfer-time-secs #missing mapping
+  - ^unhealthy_reason.0.message => unhealthy_reason
+  #- update-failed-count #missing mapping
+  #- update-successful-count #missing mapping
+
+
+#Need snapmirror plugin development to support missing field in export
+#plugins:
+#  - Snapmirror
+
+export_options:
+  instance_keys:
+    - relationship_id
+    - destination_volume
+    - destination_node
+    - destination_vserver
+    - source_volume
+    - source_vserver
+    - source_node
+  instance_labels:
+    - healthy
+    - unhealthy_reason
+    - last_transfer_type
+    - relationship_status
+    - relationship_type
+    - schedule
+    - destination_node_limit
+    - source_node_limit
+    - group_type

@@ -1,0 +1,17 @@
+name:                     Spare
+query:                    aggr-spare-get-iter
+object:                   spare
+collect_only_labels:      true
+counters:
+  aggr-spare-disk-info:
+    - ^^disk
+    - ^disk-type
+    - ^is-disk-zeroed		=> is_disk_zeroed
+    - ^^original-owner   => original_owner
+export_options:
+  instance_keys:
+    - disk
+    - original_owner
+  instance_labels:
+    - disk_type
+    - is_disk_zeroed
