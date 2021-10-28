@@ -407,6 +407,7 @@ func importFiles(dir string, folder Folder) {
 		return
 	}
 
+	releaseVersion := strings.ReplaceAll(harvestRelease, ".", "-")
 	for _, file := range files {
 		if !strings.HasSuffix(file.Name(), ".json") {
 			continue
@@ -421,9 +422,10 @@ func importFiles(dir string, folder Folder) {
 
 		// Updating the uid of dashboards based in the release
 		uid := gjson.GetBytes(data, "uid").String()
-		data, err = sjson.SetBytes(data, "uid", []byte(uid+"-"+strings.ReplaceAll(harvestRelease, ".", "-")))
+		data, err = sjson.SetBytes(data, "uid", []byte(uid+"-"+releaseVersion))
 		if err != nil {
 			fmt.Printf("error while updating the uid %s into dashboard %s, err: %+v", uid, file.Name(), err)
+			continue
 		}
 
 		// labelMap is used to ensure we don't modify the query of one of the new labels we're adding
