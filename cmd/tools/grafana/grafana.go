@@ -29,8 +29,9 @@ import (
 
 const (
 	clientTimeout           = 5
-	grafanaFolderTitle      = "Harvest 2.0 - cDOT"
-	grafana7modeFolderTitle = "Harvest 2.0 - 7-mode"
+	harvestRelease          = "21.11"
+	grafanaFolderTitle      = "Harvest " + harvestRelease + " - cDOT"
+	grafana7modeFolderTitle = "Harvest " + harvestRelease + " - 7-mode"
 	grafanaDataSource       = "Prometheus"
 )
 
@@ -417,6 +418,13 @@ func importFiles(dir string, folder Folder) {
 		}
 
 		data = bytes.ReplaceAll(data, []byte("${DS_PROMETHEUS}"), []byte(opts.datasource))
+
+		// Updating the uid of dashboards based in the release
+		uid := gjson.GetBytes(data, "uid").String()
+		data, err = sjson.SetBytes(data, "uid", []byte(uid+"-"+strings.ReplaceAll(harvestRelease, ".", "-")))
+		if err != nil {
+			fmt.Printf("error while updating the uid %s into dashboard %s, err: %+v", uid, file.Name(), err)
+		}
 
 		// labelMap is used to ensure we don't modify the query of one of the new labels we're adding
 		labelMap := make(map[string]string)
