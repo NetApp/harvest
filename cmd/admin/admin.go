@@ -14,7 +14,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strings"
 	"time"
 )
 
@@ -101,7 +100,7 @@ func (a *Admin) ApiSD(w http.ResponseWriter, r *http.Request) {
 		a.apiPublish(w, r)
 	} else if r.Method == "GET" {
 		w.WriteHeader(200)
-		_, _ = fmt.Fprintf(w, `[{"targets": [%s]}]`, a.makeTargets())
+		_, _ = w.Write(a.makeTargets())
 	} else {
 		w.WriteHeader(400)
 	}
@@ -136,14 +135,32 @@ func (a *Admin) apiPublish(w http.ResponseWriter, r *http.Request) {
 	_, _ = fmt.Fprintf(w, "OK")
 }
 
-func (a *Admin) makeTargets() string {
-	targets := make([]string, 0)
+type labels struct {
+	MetaPoller string `json:"__meta_poller"`
+}
+
+type sdTarget struct {
+	Targets []string `json:"targets"`
+	Labels  labels   `json:"labels"`
+}
+
+func (a *Admin) makeTargets() []byte {
+	targets := make([]sdTarget, 0)
 	for _, details := range a.pollerToPromAddr.Snapshot() {
 		pd := details.(pollerDetails)
-		targets = append(targets, fmt.Sprintf(`"%s:%d"`, pd.Ip, pd.Port))
+		target := sdTarget{
+			Targets: []string{fmt.Sprintf(`%s:%d`, pd.Ip, pd.Port)},
+			Labels:  labels{MetaPoller: pd.Name},
+		}
+		targets = append(targets, target)
 	}
 	a.logger.Debug().Int("size", len(targets)).Msg("makeTargets")
-	return strings.Join(targets, ",")
+	j, err := json.Marshal(targets)
+	if err != nil {
+		a.logger.Error().Err(err).Msg("Failed to marshal targets")
+		return []byte{}
+	}
+	return j
 }
 
 type tlsOptions struct {
