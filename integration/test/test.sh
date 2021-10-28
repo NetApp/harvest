@@ -5,4 +5,4 @@ cd $SCRIPT_DIR/test
 tag=${1?Specify valid test tag}
 export PATH=$PATH:/usr/local/go/bin
 go mod tidy
-go test -tags=$tag
+go test -timeout 30m -tags=$tag
