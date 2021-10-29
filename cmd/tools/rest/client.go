@@ -20,7 +20,7 @@ import (
 
 const (
 	// DefaultTimeout should be > than ONTAP's default REST timeout, which is 15 seconds for GET requests
-	DefaultTimeout = 30 * time.Second
+	DefaultTimeout = 30
 )
 
 type Client struct {
@@ -108,15 +108,6 @@ func New(poller *conf.Poller, timeout time.Duration) (*Client, error) {
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: useInsecureTLS},
 		}
 	}
-
-	timeout = DefaultTimeout
-	if poller.ClientTimeout != "" {
-		timeout, err = time.ParseDuration(poller.ClientTimeout)
-		if err != nil {
-			client.Logger.Error().Msgf("err paring client timeout of=[%s] err=%+v\n", timeout, err)
-		}
-	}
-	client.Logger.Debug().Msgf("using timeout [%d]", timeout)
 
 	httpclient = &http.Client{Transport: transport, Timeout: timeout}
 	client.client = httpclient

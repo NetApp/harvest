@@ -14,7 +14,6 @@ import (
 	"goharvest2/pkg/tree/node"
 	"goharvest2/pkg/util"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -104,7 +103,6 @@ func (r *Rest) getClient(a *collector.AbstractCollector, config *node.Node) (*re
 		poller *conf.Poller
 		err    error
 		client *rest.Client
-		t      int
 	)
 
 	opt := a.GetOptions()
@@ -117,18 +115,15 @@ func (r *Rest) getClient(a *collector.AbstractCollector, config *node.Node) (*re
 		return nil, errors.New(errors.MISSING_PARAM, "addr")
 	}
 
-	// may need changes with ongoing client_timeout PR
-	timeout := rest.DefaultTimeout
 	clientTimeout := config.GetChildContentS("client_timeout")
-	t, err = strconv.Atoi(clientTimeout)
+	timeout := rest.DefaultTimeout * time.Second
+	duration, err := time.ParseDuration(clientTimeout)
 	if err == nil {
-		timeout = time.Duration(t) * time.Second
+		timeout = duration
+		r.Logger.Info().Str("timeout", timeout.String()).Msg("Using timeout")
 	} else {
-		// default timeout
-		r.Logger.Warn().Msgf("invalid or missing client timeout %s. using default timeout %s", clientTimeout, rest.DefaultTimeout)
-		timeout = rest.DefaultTimeout
+		r.Logger.Info().Str("timeout", timeout.String()).Msg("Using default timeout")
 	}
-
 	if client, err = rest.New(poller, timeout); err != nil {
 		r.Logger.Error().Stack().Err(err).Str("poller", opt.Poller).Msg("error creating new client")
 		os.Exit(1)
@@ -199,11 +194,15 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 			r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
 			return nil, err
 		}
-		r.matchFields(records)
+		err = r.matchFields(records)
+		if err != nil {
+			r.Logger.Warn().Err(err).Msg("Error while matching fields")
+			return nil, err
+		}
 	} else {
 		// Check if fields are set for rest call
 		if len(r.fields) > 0 {
-			href := rest.BuildHref(r.apiPath, strings.Join(r.fields[:], ","), nil, "", "", "", r.returnTimeOut)
+			href := rest.BuildHref(r.apiPath, strings.Join(r.fields, ","), nil, "", "", "", r.returnTimeOut)
 			r.Logger.Debug().Str("href", href).Msg("")
 			err = rest.FetchData(r.client, href, &records)
 			if err != nil {
@@ -218,7 +217,11 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 				r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
 				return nil, err
 			}
-			r.matchFields(records)
+			err = r.matchFields(records)
+			if err != nil {
+				r.Logger.Warn().Err(err).Msg("Error while matching fields")
+				return nil, err
+			}
 		}
 	}
 
