@@ -7,6 +7,7 @@ query:                    workload_volume
 object:                   qos_volume
 
 # recommended to use large interval, since workload objects are expensive
+client_timeout:           1m30s
 schedule:
   - counter: 1200s
   - instance: 600s

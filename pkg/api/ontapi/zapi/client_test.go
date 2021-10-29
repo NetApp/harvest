@@ -3,12 +3,10 @@ package zapi
 import (
 	"goharvest2/pkg/tree/node"
 	"testing"
+	"time"
 )
 
 func TestNew(t *testing.T) {
-	type args struct {
-		config *node.Node
-	}
 
 	type test struct {
 		name    string
@@ -45,16 +43,47 @@ func TestNew(t *testing.T) {
 	basicAuthPollerPass.NewChildS("password", "password")
 
 	tests := []test{
-		test{"missing_certificate_keys", certificatePollerFail, true},
-		test{"correct_certificate_configuration", certificatePollerPass, false},
-		test{"missing_username_password", basicAuthPollerFail, true},
-		test{"correct_basic_auth_configuration", basicAuthPollerPass, false},
+		{"missing_certificate_keys", certificatePollerFail, true},
+		{"correct_certificate_configuration", certificatePollerPass, false},
+		{"missing_username_password", basicAuthPollerFail, true},
+		{"correct_basic_auth_configuration", basicAuthPollerPass, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := New(tt.config)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("New() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
+
+func TestClientTimeout(t *testing.T) {
+
+	type test struct {
+		name         string
+		fromTemplate string
+		want         time.Duration
+		hasErr       bool
+	}
+
+	tests := []test{
+		{"no units", "180", 180 * time.Second, false},
+		{"no units", "123", 123 * time.Second, false},
+		{"empty", "", DefaultTimeout * time.Second, true},
+		{"zero", "0", 0 * time.Second, false},
+		{"with units", "5m4s", 5*time.Minute + 4*time.Second, false},
+		{"invalid", "bob", DefaultTimeout * time.Second, true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			timeout, err := parseClientTimeout(tt.fromTemplate)
+			if err != nil && !tt.hasErr {
+				t.Errorf("parseClientTimeout() error = %v", err)
+			}
+			if timeout != tt.want {
+				t.Errorf("parseClientTimeout got=[%s] want=[%s]", timeout.String(), tt.want.String())
 				return
 			}
 		})

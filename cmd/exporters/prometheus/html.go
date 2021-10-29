@@ -1,9 +1,7 @@
-/*
- * Copyright NetApp Inc, 2021 All rights reserved
- */
+// Package prometheus - Copyright NetApp Inc, 2021 All rights reserved
 package prometheus
 
-var html_template = `
+var htmlTemplate = `
 <!DOCTYPE html>
 <html>
     <head>
@@ -27,12 +25,7 @@ var html_template = `
     </body>
 </html>`
 
-var body_template = `
-        <div style="margin-left:40px; color:#303030">
-            %s
-        </div>`
-
-var collector_template = `
+var collectorTemplate = `
             <h3 style="color:#404040">%s</h3>
             <small><em>collector</em></small>
             <ul>
@@ -40,9 +33,9 @@ var collector_template = `
             </ul>
             `
 
-var object_template = `
+var objectTemplate = `
                 <h4 style="color:#404040">%s</h4>
                 <small><em>object</em></small>
                 %s`
 
-var metric_template = `                <li>%s</li>`
+var metricTemplate = `                <li>%s</li>`

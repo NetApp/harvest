@@ -57,7 +57,7 @@ Additionally, this file contains the parameters that are applied as defaults to 
 | parameter              | type         | description                                      | default                |
 |------------------------|--------------|--------------------------------------------------|------------------------|
 | `use_insecure_tls` | bool, optional | skip verifying TLS certificate of the target system | `false`               |
-| `client_timeout`   | int, optional  | max seconds to wait for server response             | `10`                  |
+| `client_timeout`   | duration (Go-syntax)  | how long to wait for server responses             | 10s                  |
 | `batch_size`       | int, optional  | max instances per API request                       | `500`                 |
 | `latency_io_reqd`  | int, optional  | threshold of IOPs for calculating latency metrics (latencies based on very few IOPs are unreliable) | `100`  |
 | `schedule`         | list, required | the poll frequencies of the collector/object, should include exactly these three elements in the exact same other: | |
