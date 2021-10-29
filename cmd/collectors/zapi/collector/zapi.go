@@ -120,6 +120,11 @@ func (me *Zapi) InitVars() error {
 	if me.Query = me.Params.GetChildContentS("query"); me.Query == "" {
 		return errors.New(errors.MISSING_PARAM, "query")
 	}
+
+	// if the object template includes a client_timeout, use it
+	if timeout := me.Params.GetChildContentS("client_timeout"); timeout != "" {
+		me.Client.SetTimeout(timeout)
+	}
 	return nil
 }
 
@@ -447,9 +452,9 @@ func (me *Zapi) CollectAutoSupport(p *collector.Payload) {
 	}
 
 	clientTimeout := strconv.Itoa(client.DefaultTimeout)
-	clientNode := me.Params.GetChildS("client_timeout")
-	if clientNode != nil {
-		clientTimeout = clientNode.GetContentS()
+	newTimeout := me.Params.GetChildContentS("client_timeout")
+	if newTimeout != "" {
+		clientTimeout = newTimeout
 	}
 
 	// Add collector information

@@ -206,7 +206,7 @@ objects:
 Create a new object template `conf/zapi/cdot/9.8.0/custom_lun.yaml` with the lines shown below.
 
 ```yaml
-client_timeout: 300
+client_timeout: 5m
 counters:
   lun-info:
     - ^multiprotocol-type

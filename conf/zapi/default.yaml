@@ -1,7 +1,5 @@
 
 collector:          Zapi
-  
-client_timeout: 180
 
 # Order here matters!
 schedule:
