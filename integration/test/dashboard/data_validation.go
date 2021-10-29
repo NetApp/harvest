@@ -29,7 +29,7 @@ func HasMinRecord(query string, limit int) bool {
 }
 
 func AssertIfNotPresent(query string) {
-	maxCount := 20
+	maxCount := 10
 	startCount := 1
 	query = fmt.Sprintf("count(%s)", query)
 	log.Info().Msg("Checking whether data is present or not for counter " + query)
@@ -55,5 +55,5 @@ func AssertIfNotPresent(query string) {
 		startCount++
 		time.Sleep(30 * time.Second)
 	}
-	panic("Data for counter " + query + " not found after 15 min. Check Workload counters are uncommented from conf/zapiperf/default.yml")
+	panic("Data for counter " + query + " not found after 8 min. Check Workload counters are uncommented from conf/zapiperf/default.yml")
 }
