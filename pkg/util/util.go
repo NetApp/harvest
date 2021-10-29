@@ -15,7 +15,6 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
-	"reflect"
 	"runtime"
 	"strconv"
 	"strings"
@@ -308,24 +307,21 @@ type PollerStatus struct {
 	PromPort      string
 }
 
-func Intersection(a interface{}, b interface{}) ([]interface{}, []interface{}) {
-	matches := make([]interface{}, 0)
-	misses := make([]interface{}, 0)
-	hash := make(map[interface{}]bool)
-	av := reflect.ValueOf(a)
-	bv := reflect.ValueOf(b)
+// Intersection returns things from b that are common and missing with a
+func Intersection(a []string, b []string) ([]string, []string) {
+	matches := make([]string, 0)
+	misses := make([]string, 0)
+	hash := make(map[string]bool)
 
-	for i := 0; i < av.Len(); i++ {
-		el := av.Index(i).Interface()
-		hash[el] = true
+	for _, aa := range a {
+		hash[aa] = true
 	}
 
-	for i := 0; i < bv.Len(); i++ {
-		el := bv.Index(i).Interface()
-		if _, found := hash[el]; found {
-			matches = append(matches, el)
+	for _, bb := range b {
+		if _, found := hash[bb]; found {
+			matches = append(matches, bb)
 		} else {
-			misses = append(misses, el)
+			misses = append(misses, bb)
 		}
 	}
 

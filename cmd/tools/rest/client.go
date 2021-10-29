@@ -5,7 +5,6 @@ package rest
 import (
 	"bytes"
 	"crypto/tls"
-	"encoding/json"
 	"fmt"
 	"github.com/tidwall/gjson"
 	"goharvest2/pkg/conf"
@@ -36,10 +35,10 @@ type Client struct {
 }
 
 type Cluster struct {
-	name    string
-	info    string
-	uuid    string
-	version [3]int
+	Name    string
+	Info    string
+	Uuid    string
+	Version [3]int
 }
 
 func New(poller *conf.Poller, timeout time.Duration) (*Client, error) {
@@ -228,7 +227,6 @@ func (c *Client) Init(retries int) error {
 	var (
 		err     error
 		content []byte
-		data    map[string]interface{}
 		i       int
 	)
 
@@ -237,17 +235,14 @@ func (c *Client) Init(retries int) error {
 		if content, err = c.GetRest(BuildHref("cluster", "*", nil, "", "", "", "")); err != nil {
 			continue
 		}
-		if err = json.Unmarshal(content, &data); err != nil {
-			return err
-		}
 
 		results := gjson.GetManyBytes(content, "name", "uuid", "version.full", "version.generation", "version.major", "version.minor")
-		c.cluster.name = results[0].String()
-		c.cluster.uuid = results[1].String()
-		c.cluster.info = results[2].String()
-		c.cluster.version[0] = int(results[3].Int())
-		c.cluster.version[1] = int(results[4].Int())
-		c.cluster.version[2] = int(results[5].Int())
+		c.cluster.Name = results[0].String()
+		c.cluster.Uuid = results[1].String()
+		c.cluster.Info = results[2].String()
+		c.cluster.Version[0] = int(results[3].Int())
+		c.cluster.Version[1] = int(results[4].Int())
+		c.cluster.Version[2] = int(results[5].Int())
 		return nil
 	}
 	return err
@@ -259,8 +254,8 @@ func BuildHref(apiPath string, fields string, field []string, queryFields string
 	href.WriteString(apiPath)
 	href.WriteString("?return_records=true")
 	addArg(&href, "&fields=", fields)
-	for _, field := range field {
-		addArg(&href, "&", field)
+	for _, f := range field {
+		addArg(&href, "&", f)
 	}
 	addArg(&href, "&query_fields=", queryFields)
 	addArg(&href, "&query=", queryValue)
@@ -277,18 +272,6 @@ func addArg(href *strings.Builder, field string, value string) {
 	href.WriteString(value)
 }
 
-func (c *Client) ClusterName() string {
-	return c.cluster.name
-}
-
-func (c *Client) ClusterUUID() string {
-	return c.cluster.uuid
-}
-
-func (c *Client) Info() string {
-	return c.cluster.info
-}
-
-func (c *Client) Version() [3]int {
-	return c.cluster.version
+func (c *Client) Cluster() Cluster {
+	return c.cluster
 }

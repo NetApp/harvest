@@ -1,6 +1,7 @@
 
 collector:          Rest
 
+
 schedule:
   - data: 180s
 

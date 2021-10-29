@@ -47,7 +47,12 @@ func (r *Rest) initCache() error {
 
 	for _, c := range counters.GetAllChildContentS() {
 		name, display, kind = parseMetric(c)
-		r.Logger.Debug().Msgf("extracted [%s] (%s) (%s)", kind, name, display)
+		r.Logger.Debug().
+			Str("kind", kind).
+			Str("name", name).
+			Str("display", display).
+			Msg("Collected")
+
 		r.counters[name] = display
 		switch kind {
 		case "key":
@@ -57,14 +62,18 @@ func (r *Rest) initCache() error {
 			r.instanceLabels[name] = display
 		case "bool":
 			if metr, err = r.Matrix.NewMetricUint8(name); err != nil {
-				r.Logger.Error().Msgf("NewMetricUint8 [%s]: %v", name, err)
+				r.Logger.Error().Err(err).
+					Str("name", name).
+					Msg("NewMetricUint8")
 				return err
 			}
 			metr.SetName(display)
 			metr.SetProperty("etl.bool") // to distinct from internally generated metrics, e.g. from plugins
 		case "float":
 			if metr, err = r.Matrix.NewMetricFloat64(name); err != nil {
-				r.Logger.Error().Msgf("NewMetricFloat64 [%s]: %v", name, err)
+				r.Logger.Error().Err(err).
+					Str("name", name).
+					Msg("NewMetricFloat64")
 				return err
 			}
 			metr.SetName(display)
@@ -72,8 +81,8 @@ func (r *Rest) initCache() error {
 		}
 	}
 
-	r.Logger.Info().Msgf("extracted instance keys: %v", r.instanceKeys)
-	r.Logger.Info().Msgf("initialized metric cache with %d metrics and %d labels", len(r.Matrix.GetMetrics()), len(r.instanceLabels))
+	r.Logger.Info().Strs("extracted Instance Keys", r.instanceKeys).Msg("")
+	r.Logger.Info().Int("count metrics", len(r.Matrix.GetMetrics())).Int("count labels", len(r.instanceLabels)).Msg("initialized metric cache")
 
 	if len(r.Matrix.GetMetrics()) == 0 && r.Params.GetChildContentS("collect_only_labels") != "true" {
 		return errors.New(errors.ERR_NO_METRIC, "failed to parse numeric metrics")

@@ -59,7 +59,7 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	if err := r.InitVars(); err != nil {
+	if err = r.InitVars(); err != nil {
 		return err
 	}
 
@@ -67,9 +67,9 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	r.Logger.Info().Msgf("connected to %s: %s", r.client.ClusterName(), r.client.Info())
+	r.Logger.Info().Str("cluster", r.client.Cluster().Name).Msgf("connected to %s", r.client.Cluster().Info)
 
-	r.Matrix.SetGlobalLabel("cluster", r.client.ClusterName())
+	r.Matrix.SetGlobalLabel("cluster", r.client.Cluster().Name)
 
 	if err = r.initCache(); err != nil {
 		return err
@@ -87,11 +87,10 @@ func (r *Rest) InitVars() error {
 	)
 
 	// import template
-	if template, err = r.ImportSubTemplate("", r.getTemplateFn(), r.client.Version()); err != nil {
+	if template, err = r.ImportSubTemplate("", r.getTemplateFn(), r.client.Cluster().Version); err != nil {
 		return err
 	}
 
-	r.Logger.Info().Msg("imported subtemplate")
 	r.Params.Union(template)
 	r.fields = []string{"*"}
 	if x := r.Params.GetChildS("fields"); x != nil {
@@ -105,6 +104,7 @@ func (r *Rest) getClient(a *collector.AbstractCollector, config *node.Node) (*re
 		poller *conf.Poller
 		err    error
 		client *rest.Client
+		t      int
 	)
 
 	opt := a.GetOptions()
@@ -113,21 +113,24 @@ func (r *Rest) getClient(a *collector.AbstractCollector, config *node.Node) (*re
 		return nil, err
 	}
 	if poller.Addr == "" {
-		r.Logger.Error().Stack().Str("poller", opt.Poller).Msg("Invalid address")
+		r.Logger.Error().Stack().Str("poller", opt.Poller).Msg("Address is empty")
 		return nil, errors.New(errors.MISSING_PARAM, "addr")
 	}
 
+	// may need changes with ongoing client_timeout PR
 	timeout := rest.DefaultTimeout
-
-	if t, err := strconv.Atoi(config.GetChildContentS("client_timeout")); err == nil {
+	clientTimeout := config.GetChildContentS("client_timeout")
+	t, err = strconv.Atoi(clientTimeout)
+	if err == nil {
 		timeout = time.Duration(t) * time.Second
 	} else {
 		// default timeout
+		r.Logger.Warn().Msgf("invalid or missing client timeout %s. using default timeout %s", clientTimeout, rest.DefaultTimeout)
 		timeout = rest.DefaultTimeout
 	}
 
 	if client, err = rest.New(poller, timeout); err != nil {
-		fmt.Printf("error creating new client %+v\n", err)
+		r.Logger.Error().Stack().Err(err).Str("poller", opt.Poller).Msg("error creating new client")
 		os.Exit(1)
 	}
 
@@ -143,17 +146,20 @@ func (r *Rest) getTemplateFn() string {
 	return fn
 }
 
-// Returns a slice of keys in do`t notation from json
+// Returns a slice of keys in dot notation from json
 func getFieldName(source string, parent string) []string {
 	res := make([]string, 0)
 	var arr map[string]gjson.Result
 	r := gjson.Parse(source)
 	if r.IsArray() {
-		newR := r.Get("1")
-		arr = gjson.Parse(newR.String()).Map()
+		newR := r.Get("0")
+		arr = newR.Map()
 	} else if r.IsObject() {
-		arr = gjson.Parse(source).Map()
+		arr = r.Map()
 	} else {
+		return []string{parent}
+	}
+	if len(arr) == 0 {
 		return []string{parent}
 	}
 	for key, val := range arr {
@@ -179,18 +185,18 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 		records      []interface{}
 	)
 
-	r.Logger.Info().Msgf("starting data poll")
+	r.Logger.Debug().Msgf("starting data poll")
 	r.Matrix.Reset()
 
 	startTime = time.Now()
 
 	// check if always run fields=* query
 	if allFieldQuery {
-		href := rest.BuildHref(r.apiPath, strings.Join(r.fields[:], ","), nil, "", "", "", r.returnTimeOut)
-		r.Logger.Info().Msgf("rest end point [%s]", href)
+		href := rest.BuildHref(r.apiPath, strings.Join(r.fields, ","), nil, "", "", "", r.returnTimeOut)
+		r.Logger.Debug().Str("href", href).Msg("")
 		err = rest.FetchData(r.client, href, &records)
 		if err != nil {
-			r.Logger.Error().Stack().Err(err).Msgf("")
+			r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
 			return nil, err
 		}
 		r.matchFields(records)
@@ -198,18 +204,18 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 		// Check if fields are set for rest call
 		if len(r.fields) > 0 {
 			href := rest.BuildHref(r.apiPath, strings.Join(r.fields[:], ","), nil, "", "", "", r.returnTimeOut)
-			r.Logger.Info().Msgf("rest end point [%s]", href)
+			r.Logger.Debug().Str("href", href).Msg("")
 			err = rest.FetchData(r.client, href, &records)
 			if err != nil {
-				r.Logger.Error().Stack().Err(err).Msgf("")
+				r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
 				return nil, err
 			}
 		} else {
 			href := rest.BuildHref(r.apiPath, "*", nil, "", "", "", r.returnTimeOut)
-			r.Logger.Info().Msgf("rest end point [%s]", href)
+			r.Logger.Debug().Str("href", href).Msg("")
 			err = rest.FetchData(r.client, href, &records)
 			if err != nil {
-				r.Logger.Error().Stack().Err(err).Msgf("")
+				r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
 				return nil, err
 			}
 			r.matchFields(records)
@@ -218,7 +224,7 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 
 	if len(r.misses) > 0 {
 		r.Logger.Warn().
-			Str("mis-configured counters", strings.Join(r.misses[:], ",")).
+			Str("mis-configured counters", strings.Join(r.misses, ",")).
 			Str("ApiPath", r.apiPath).
 			Msg("")
 	}
@@ -231,7 +237,7 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 
 	content, err = json.Marshal(all)
 	if err != nil {
-		r.Logger.Error().Stack().Err(err).Msgf("")
+		r.Logger.Error().Err(err).Str("ApiPath", r.apiPath).Msg("Unable to marshal rest pagination")
 	}
 
 	startTime = time.Now()
@@ -246,7 +252,7 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 		return nil, errors.New(errors.ERR_NO_INSTANCE, "no "+r.Object+" instances on cluster")
 	}
 
-	r.Logger.Debug().Msgf("extracted %s [%s] instances", numRecords.String(), r.Object)
+	r.Logger.Debug().Str("object", r.Object).Str("number of records extracted", numRecords.String()).Msg("")
 
 	results[1].ForEach(func(key, instanceData gjson.Result) bool {
 		var (
@@ -255,7 +261,7 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 		)
 
 		if !instanceData.IsObject() {
-			r.Logger.Warn().Str("type", instanceData.Type.String()).Msg("skip instance")
+			r.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
 			return true
 		}
 
@@ -278,7 +284,7 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 
 		if instance = r.Matrix.GetInstance(instanceKey); instance == nil {
 			if instance, err = r.Matrix.NewInstance(instanceKey); err != nil {
-				r.Logger.Error().Msgf("NewInstance [key=%s]: %v", instanceKey, err)
+				r.Logger.Error().Err(err).Str("Instance key", instanceKey).Msg("")
 				return true
 			}
 		}
@@ -288,6 +294,9 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 			if value.Exists() {
 				instance.SetLabel(display, value.String())
 				count++
+			} else {
+				// spams a lot currently due to missing label mappings. Moved to debug for now till rest gaps are filled
+				r.Logger.Debug().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
 			}
 		}
 
@@ -297,7 +306,7 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 				b := instanceData.Get(key)
 				if b.Exists() {
 					if err = metric.SetValueBool(instance, b.Bool()); err != nil {
-						r.Logger.Error().Err(err).Str("key", key).Msg("SetValueBool metric")
+						r.Logger.Error().Err(err).Str("key", key).Str("metric", metric.GetName()).Msg("Unable to set bool key on metric")
 					}
 					count++
 				}
@@ -305,7 +314,8 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 				f := instanceData.Get(key)
 				if f.Exists() {
 					if err = metric.SetValueFloat64(instance, f.Float()); err != nil {
-						r.Logger.Error().Err(err).Str("key", key).Msg("SetValueFloat64 metric")
+						r.Logger.Error().Err(err).Str("key", key).Str("metric", metric.GetName()).
+							Msg("Unable to set float key on metric")
 					}
 					count++
 				}
@@ -335,29 +345,30 @@ func (r *Rest) matchFields(records []interface{}) error {
 	}
 	c, err := json.Marshal(all)
 	if err != nil {
-		r.Logger.Error().Stack().Err(err).Msgf("")
+		r.Logger.Error().Err(err).Str("ApiPath", r.apiPath).Msg("Unable to marshal rest pagination")
 		return err
-	} else {
-		results := gjson.GetBytes(c, "records")
-		if len(results.String()) > 0 {
-			// fetch first record from json
-			firstValue := results.Get("1")
-			res := getFieldName(firstValue.String(), "")
-			var searchKeys []string
-			for k := range r.counters {
-				searchKeys = append(searchKeys, k)
-			}
-			// find keys from rest json response which matches counters defined in templates
-			matches, misses := util.Intersection(res, searchKeys)
-			r.queryFields = []string{}
-			r.misses = []string{}
-			for _, param := range matches {
-				r.queryFields = append(r.queryFields, param.(string))
-			}
-			for _, param := range misses {
-				r.misses = append(r.misses, param.(string))
-			}
+	}
+
+	results := gjson.GetBytes(c, "records")
+	if len(results.String()) > 0 {
+		// fetch first record from json
+		firstValue := results.Get("0")
+		res := getFieldName(firstValue.String(), "")
+		var searchKeys []string
+		for k := range r.counters {
+			searchKeys = append(searchKeys, k)
 		}
+		// find keys from rest json response which matches counters defined in templates
+		matches, misses := util.Intersection(res, searchKeys)
+		r.queryFields = []string{}
+		r.misses = []string{}
+		for _, param := range matches {
+			r.queryFields = append(r.queryFields, param)
+		}
+		for _, param := range misses {
+			r.misses = append(r.misses, param)
+		}
+
 	}
 	return nil
 }
@@ -367,7 +378,7 @@ func (me *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugi
 	case "Disk":
 		return disk.New(abc)
 	default:
-		me.Logger.Info().Msgf("no rest plugin found for %s", kind)
+		me.Logger.Warn().Str("kind", kind).Msgf("no rest plugin found ")
 	}
 	return nil
 }
