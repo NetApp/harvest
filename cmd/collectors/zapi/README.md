@@ -26,7 +26,7 @@ aggr-attributes:
     - files-total
 ```
 
-The Zapi collector will convert this tree into two "flat" metrics: `aggr_raid_disk_count` and `aggr_snapshot_files_total`. (The algorithm to generate a name for the metrics will attempt to keep it as simple as possible, but sometimes it's useful to manually set a short display name (see [#counters](#counters)))
+The Zapi collector will convert this tree into two "flat" metrics: `aggr_raid_disk_count` and `aggr_snapshot_files_total`. (The algorithm to generate a name for the metrics will attempt to keep it as simple as possible, but sometimes it's useful to manually set a short display name (see [counters](../../../conf/README.md#counters))
 
 ## Parameters
 
@@ -48,21 +48,3 @@ Parameters different from ZapiPerf:
 ### Object configuration file
 
 The Zapi collector does not have the parameters `instance_key` and `override` parameters. The optional parameter `metric_type` allows you to override the default metric type (`uint64`). The value of this parameter should be one of the metric types supported by [the Matrix data-structure](../../../pkg/matrix/README.md#add-metrics).
-
-#### `counters`
-
-This section contains the complete or partial attribute tree of the queried API. Since the collector does not get counter metadata from the ONTAP system, two additional symbols are used for non-numeric attributes:
-
-- `^` used as a prefix indicates that the attribute should be stored as a label
-- `^^` indicates that the attribute is a label and an instance key (i.e., a label that uniquely identifies an instance, such as `name`, `uuid`). If a single label does not uniquely identify an instance, then multiple instance keys should be indicated.
-
-Additionally, the symbol `=>` can be used to set a custom display name for both instance labels and numeric counters. Example:
-
-```yaml
-aggr-attributes:
-  - aggr-raid-attributes:
-    - ^aggregate-type    => type
-    - disk-count     => disks
-```
-
-will force using `aggr_type` and `aggr_disks` for the label and the metric respectively.

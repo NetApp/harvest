@@ -21,6 +21,7 @@ func TestCheckVersion(t *testing.T) {
 
 func TestHttpsAddr(t *testing.T) {
 	opts.addr = "https://1.1.1.1:3000"
+	opts.dir = "../../../grafana/dashboards"
 	opts.config = "../doctor/testdata/testConfig.yml"
 	adjustOptions()
 	if opts.addr != "https://1.1.1.1:3000" {

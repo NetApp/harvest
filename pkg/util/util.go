@@ -14,6 +14,7 @@ import (
 	"net"
 	"os"
 	"os/exec"
+	"regexp"
 	"reflect"
 	"runtime"
 	"strconv"
@@ -107,10 +108,10 @@ func GetPids(search string) ([]int32, error) {
 	} else if errors.As(err, &pe) {
 		return result, err // "no such file ...", "permission denied" etc.
 	} else if err != nil {
-		return result, err // something really bad happened!
+		return result, err // something unexpected happened!
 	}
-	sdata := string(data)
-	pids := RemoveEmptyStrings(strings.Split(sdata, "\n"))
+	out := string(data)
+	pids := RemoveEmptyStrings(strings.Split(out, "\n"))
 	for _, pid := range pids {
 		p64, err := strconv.ParseInt(strings.TrimSpace(pid), 10, 32)
 		if err != nil {
@@ -124,6 +125,65 @@ func GetPids(search string) ([]int32, error) {
 	return result, err
 }
 
+var pidAndPollerRegex = regexp.MustCompile(`(\d+).*?poller.*?--poller (.*?) .*?--promPort (\d+)`)
+var profRegex = regexp.MustCompile(`--profiling (\d+)`)
+var promRegex = regexp.MustCompile(`--promPort (\d+)`)
+
+func GetPollerStatuses() ([]PollerStatus, error) {
+	var (
+		result []PollerStatus
+		ee     *exec.ExitError
+		pe     *os.PathError
+		cmd    *exec.Cmd
+	)
+	if runtime.GOOS == "darwin" {
+		cmd = exec.Command("pgrep", "-fl", "poller ")
+	} else {
+		cmd = exec.Command("pgrep", "-fa", "poller ")
+	}
+	data, err := cmd.Output()
+	if errors.As(err, &ee) {
+		if ee.Stderr != nil {
+			fmt.Printf("Exit error stderr=%s\n", ee.Stderr)
+		}
+		return result, nil // ran, but non-zero exit code
+	} else if errors.As(err, &pe) {
+		return result, err // "no such file ...", "permission denied" etc.
+	} else if err != nil {
+		return result, err // something unexpected happened!
+	}
+	out := string(data)
+	// read each line of out and extract the pid, poller name, and port
+	for _, line := range strings.Split(out, "\n") {
+		if line == "" {
+			continue
+		}
+		matches := pidAndPollerRegex.FindStringSubmatch(line)
+		if len(matches) == 0 {
+			continue
+		}
+		pid, err := strconv.ParseInt(matches[1], 10, 32)
+		if err != nil {
+			continue
+		}
+		s := PollerStatus{
+			Name:   matches[2],
+			Pid:    int32(pid),
+			Status: "running",
+		}
+		promMatches := promRegex.FindStringSubmatch(line)
+		if len(promMatches) > 0 {
+			s.PromPort = promMatches[1]
+		}
+		profMatches := profRegex.FindStringSubmatch(line)
+		if len(profMatches) > 0 {
+			s.ProfilingPort = profMatches[1]
+		}
+		result = append(result, s)
+	}
+	return result, nil
+}
+
 func ContainsWholeWord(source string, search string) bool {
 	if len(source) == 0 || len(search) == 0 {
 		return false
@@ -135,13 +195,6 @@ func ContainsWholeWord(source string, search string) bool {
 		}
 	}
 	return false
-}
-
-func Value(ptr *string, nilValue string) string {
-	if ptr == nil {
-		return nilValue
-	}
-	return *ptr
 }
 
 func Contains(s []string, e string) bool {
@@ -234,6 +287,25 @@ func SaveConfig(fp string, token string) error {
 		return err
 	}
 	return ioutil.WriteFile(fp, marshal, 0644)
+}
+
+type Status string
+
+const (
+	StatusStopped        Status = "stopped"
+	StatusStoppingFailed Status = "stopping failed"
+	StatusRunning        Status = "running"
+	StatusNotRunning     Status = "not running"
+	StatusKilled         Status = "killed"
+	StatusAlreadyExited  Status = "already exited"
+)
+
+type PollerStatus struct {
+	Name          string
+	Status        Status
+	Pid           int32
+	ProfilingPort string
+	PromPort      string
 }
 
 func Intersection(a interface{}, b interface{}) ([]interface{}, []interface{}) {

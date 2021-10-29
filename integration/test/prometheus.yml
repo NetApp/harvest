@@ -34,3 +34,4 @@ scrape_configs:
       - targets:
           - 'localhost:12990'
           - 'localhost:12991'
+          - 'localhost:12992'

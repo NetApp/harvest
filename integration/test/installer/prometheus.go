@@ -26,7 +26,7 @@ func (d *Prometheus) Install() bool {
 	docker.PullImage(d.image)
 	path, _ := os.Getwd()
 	ipAddress := utils.GetOutboundIP()
-	cmd := exec.Command("docker", "run", "-p", utils.PrometheusPort+":"+utils.PrometheusPort,
+	cmd := exec.Command("docker", "run", "-d", "-p", utils.PrometheusPort+":"+utils.PrometheusPort,
 		"--add-host=localhost:"+ipAddress, "-v",
 		path+"/prometheus.yml:/etc/prometheus/prometheus.yml", "prom/prometheus")
 	cmd.Stdout = os.Stdout

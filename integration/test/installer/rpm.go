@@ -2,6 +2,7 @@ package installer
 
 import (
 	"fmt"
+	"github.com/Netapp/harvest-automation/test/setup"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"log"
 	"strings"
@@ -43,7 +44,7 @@ func (r *RPM) Install() bool {
 	if copyErr != nil {
 		return false
 	} //use file directly from the repo
-	harvestObj.Start()
+	harvestObj.StartByHarvestUser() //workaround for issue https://github.com/NetApp/harvest/issues/249
 	status := harvestObj.AllRunning()
 	return status
 }
@@ -67,6 +68,9 @@ func (r *RPM) Upgrade() bool {
 	if previousVersion == installedVersion {
 		utils.PanicIfNotNil(fmt.Errorf("upgrade is failed"))
 	}
+	utils.Run("cp", setup.GetZapiPerfFileWithQosCounters(), HarvestHome+"/"+setup.ZapiPerfDefaultFile)
+	harvestObj.Stop()
+	harvestObj.StartByHarvestUser()
 	status := harvestObj.AllRunning()
 	return status
 }
