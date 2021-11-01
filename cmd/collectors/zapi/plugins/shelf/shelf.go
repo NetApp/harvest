@@ -7,6 +7,7 @@ import (
 	"goharvest2/cmd/poller/collector"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/pkg/api/ontapi/zapi"
+	"goharvest2/pkg/conf"
 	"goharvest2/pkg/dict"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
@@ -35,7 +36,7 @@ func (my *Shelf) Init() error {
 		return err
 	}
 
-	if my.client, err = zapi.New(my.ParentParams); err != nil {
+	if my.client, err = zapi.New(conf.ZapiPoller(my.ParentParams)); err != nil {
 		my.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
 	}
@@ -141,7 +142,7 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 
 	// Set all global labels from zapi.go if already not exist
-	for a, _ := range my.instanceLabels {
+	for a := range my.instanceLabels {
 		my.data[a].SetGlobalLabels(data.GetGlobalLabels())
 	}
 

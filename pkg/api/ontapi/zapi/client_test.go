@@ -1,6 +1,7 @@
 package zapi
 
 import (
+	"goharvest2/pkg/conf"
 	"goharvest2/pkg/tree/node"
 	"testing"
 	"time"
@@ -50,7 +51,7 @@ func TestNew(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := New(tt.config)
+			_, err := New(conf.ZapiPoller(tt.config))
 			if (err != nil) != tt.wantErr {
 				t.Errorf("New() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -14,6 +14,7 @@ import (
 	"goharvest2/cmd/collectors/zapiperf/plugins/nic"
 	"goharvest2/cmd/collectors/zapiperf/plugins/volume"
 	"goharvest2/cmd/poller/plugin"
+	"goharvest2/pkg/conf"
 	"sort"
 	"strconv"
 	"strings"
@@ -82,7 +83,7 @@ func (me *Zapi) InitVars() error {
 
 	var err error
 
-	if me.Client, err = client.New(me.Params); err != nil { // convert to connection error, so poller aborts
+	if me.Client, err = client.New(conf.ZapiPoller(me.Params)); err != nil { // convert to connection error, so poller aborts
 		return errors.New(errors.ERR_CONNECTION, err.Error())
 	}
 	me.Client.TraceLogSet(me.Name, me.Params)
