@@ -1,5 +1,4 @@
 
-
 # Prometheus Exporter
 
 ## Overview
