@@ -1,12 +1,12 @@
-/*
- * Copyright NetApp Inc, 2021 All rights reserved
- */
+// Copyright NetApp Inc, 2021 All rights reserved
+
 package quota
 
 import (
 	"goharvest2/cmd/poller/collector"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/pkg/api/ontapi/zapi"
+	"goharvest2/pkg/conf"
 	"goharvest2/pkg/dict"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
@@ -15,7 +15,7 @@ import (
 	"strings"
 )
 
-const QuotaBatchSize = "500"
+const BatchSize = "500"
 
 // Quota plugin is needed to match qtrees with quotas.
 type Quota struct {
@@ -40,7 +40,7 @@ func (my *Quota) Init() error {
 		return err
 	}
 
-	if my.client, err = zapi.New(my.ParentParams); err != nil {
+	if my.client, err = zapi.New(conf.ZapiPoller(my.ParentParams)); err != nil {
 		my.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
 	}
@@ -98,8 +98,8 @@ func (my *Quota) Init() error {
 				my.Logger.Info().Msgf("using batch-size [%s]", my.batchSize)
 			}
 		} else {
-			my.batchSize = QuotaBatchSize
-			my.Logger.Trace().Msgf("using default batch-size [%s]", QuotaBatchSize)
+			my.batchSize = BatchSize
+			my.Logger.Trace().Str("BatchSize", BatchSize).Msg("Using default batch-size")
 		}
 	}
 

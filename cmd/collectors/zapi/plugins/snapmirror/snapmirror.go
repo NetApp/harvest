@@ -6,6 +6,7 @@ package snapmirror
 import (
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/pkg/api/ontapi/zapi"
+	"goharvest2/pkg/conf"
 	"goharvest2/pkg/dict"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
@@ -34,7 +35,7 @@ func (my *SnapMirror) Init() error {
 		return err
 	}
 
-	if my.client, err = zapi.New(my.ParentParams); err != nil {
+	if my.client, err = zapi.New(conf.ZapiPoller(my.ParentParams)); err != nil {
 		my.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
 	}

@@ -9,7 +9,6 @@ import (
 	"github.com/imdario/mergo"
 	"goharvest2/pkg/constant"
 	"goharvest2/pkg/errors"
-	"goharvest2/pkg/tree"
 	"goharvest2/pkg/tree/node"
 	"goharvest2/pkg/util"
 	"gopkg.in/yaml.v3"
@@ -23,9 +22,13 @@ import (
 )
 
 var Config = HarvestConfig{}
-var cfp = ""
 var configRead = false
 var ValidatePortInUse = false
+
+const (
+	DefaultApiVersion = "1.3"
+	DefaultTimeout    = "10s"
+)
 
 // TestLoadHarvestConfig is used by testing code to reload a new config
 func TestLoadHarvestConfig(configPath string) {
@@ -41,7 +44,7 @@ func LoadHarvestConfig(configPath string) error {
 		return nil
 	}
 	contents, err := ioutil.ReadFile(configPath)
-	cfp = configPath
+
 	if err != nil {
 		fmt.Printf("error reading config file=[%s] %+v\n", configPath, err)
 		return err
@@ -302,66 +305,65 @@ func (p *Poller) Union(defaults *Poller) {
 	_ = mergo.Merge(p, defaults)
 }
 
-// TODO remove node code after changing bin/zapi to use Poller
-func loadConfig(configPath string) (*node.Node, error) {
-	configNode, err := tree.Import("yaml", configPath)
-	if configNode != nil {
-		// Load HarvestConfig to rewrite passwords - eventually all the code will be refactored to use HarvestConfig.
-		// This is needed because the current yaml parser does not handle password with special characters.
-		// E.g abc#123, that's because the # is interpreted as the beginning of a comment. The code below overwrites
-		// the incorrect password with the correct one by using a better yaml parser for each Poller and Default section
-		err := LoadHarvestConfig(configPath)
-		if err != nil {
-			return nil, err
-		}
-		pollers := configNode.GetChildS("Pollers")
-		if pollers != nil {
-			for _, poller := range pollers.GetChildren() {
-				password := poller.GetChildContentS("password")
-				pollerStruct := (Config.Pollers)[poller.GetNameS()]
-				if pollerStruct.Password != "" && pollerStruct.Password != password {
-					poller.SetChildContentS("password", pollerStruct.Password)
-				}
-			}
-		}
-		// Check Defaults also
-		defaultNode := configNode.GetChildS("Defaults")
-		if defaultNode != nil {
-			password := defaultNode.GetChildContentS("password")
-			defaultStruct := *Config.Defaults
-			if defaultStruct.Password != "" && defaultStruct.Password != password {
-				defaultNode.SetChildContentS("password", defaultStruct.Password)
-			}
-		}
-	}
-	return configNode, err
-}
+// ZapiPoller creates a poller out of a node, this is a bridge between the node and struct-based code
+// Used by ZAPI based code
+func ZapiPoller(n *node.Node) Poller {
+	var p Poller
 
-// AsNode converts a poller into a node based structure to bridge the struct and node-based code
-func (p *Poller) AsNode(name string) (*node.Node, error) {
-	if p == nil {
-		return nil, nil
+	if Config.Defaults != nil {
+		p = *Config.Defaults
+	} else {
+		p = Poller{}
 	}
-	cfg, err := loadConfig(cfp)
-	if err != nil {
-		return nil, err
-	}
-	var pollers, poller, defaults *node.Node
 
-	pollers = cfg.GetChildS("Pollers")
-	defaults = cfg.GetChildS("Defaults")
-
-	if pollers == nil {
-		err = errors.New(errors.ERR_CONFIG, "[Pollers] section not found")
-	} else if defaults != nil { // optional
-		for _, p := range pollers.GetChildren() {
-			p.Union(defaults)
+	if apiVersion := n.GetChildContentS("api_version"); apiVersion != "" {
+		p.ApiVersion = apiVersion
+	} else {
+		if p.ApiVersion == "" {
+			p.ApiVersion = DefaultApiVersion
 		}
 	}
-	if poller = pollers.GetChildS(name); poller == nil {
-		err = errors.New(errors.ERR_CONFIG, "poller ["+name+"] not found")
+	if vfiler := n.GetChildContentS("api_vfiler"); vfiler != "" {
+		p.ApiVfiler = vfiler
 	}
-	return poller, err
+	if addr := n.GetChildContentS("addr"); addr != "" {
+		p.Addr = addr
+	}
+	isKfs := n.GetChildContentS("is_kfs")
+	if isKfs == "true" {
+		p.IsKfs = true
+	} else if isKfs == "false" {
+		p.IsKfs = false
+	}
+	if x := n.GetChildContentS("use_insecure_tls"); x != "" {
+		if insecureTLS, err := strconv.ParseBool(x); err == nil {
+			// err can be ignored since conf was already validated
+			p.UseInsecureTls = &insecureTLS
+		}
+	}
+	if authStyle := n.GetChildContentS("auth_style"); authStyle != "" {
+		p.AuthStyle = authStyle
+	}
+	if sslCert := n.GetChildContentS("ssl_cert"); sslCert != "" {
+		p.SslCert = sslCert
+	}
+	if sslKey := n.GetChildContentS("ssl_key"); sslKey != "" {
+		p.SslKey = sslKey
+	}
+	if username := n.GetChildContentS("username"); username != "" {
+		p.Username = username
+	}
+	if password := n.GetChildContentS("password"); password != "" {
+		p.Password = password
+	}
+	if clientTimeout := n.GetChildContentS("client_timeout"); clientTimeout != "" {
+		p.ClientTimeout = clientTimeout
+	} else {
+		if p.ClientTimeout == "" {
+			p.ClientTimeout = DefaultTimeout
+		}
+	}
+	return p
 }
 
 type Exporter struct {

@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"crypto/tls"
 	"fmt"
+	"goharvest2/pkg/conf"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/logging"
 	"goharvest2/pkg/tree"
@@ -37,7 +38,7 @@ type Client struct {
 	logZapi    bool            // used to log ZAPI request/response
 }
 
-func New(config *node.Node) (*Client, error) {
+func New(poller conf.Poller) (*Client, error) {
 	var (
 		client         Client
 		httpclient     *http.Client
@@ -54,20 +55,20 @@ func New(config *node.Node) (*Client, error) {
 	client.Logger = logging.SubLogger("Zapi", "Client")
 
 	// check required & optional parameters
-	if client.apiVersion = config.GetChildContentS("api_version"); client.apiVersion == "" {
+	if client.apiVersion = poller.ApiVersion; client.apiVersion == "" {
 		client.apiVersion = DefaultApiVersion
 		client.Logger.Debug().Msgf("using default API version [%s]", DefaultApiVersion)
 	}
 
-	if client.vfiler = config.GetChildContentS("api_vfiler"); client.vfiler != "" {
+	if client.vfiler = poller.ApiVfiler; client.vfiler != "" {
 		client.Logger.Debug().Msgf("using vfiler tunneling [%s]", client.vfiler)
 	}
 
-	if addr = config.GetChildContentS("addr"); addr == "" {
+	if addr = poller.Addr; addr == "" {
 		return nil, errors.New(errors.MISSING_PARAM, "addr")
 	}
 
-	if config.GetChildContentS("is_kfs") == "true" {
+	if poller.IsKfs {
 		url = "https://" + addr + ":8443/servlets/netapp.servlets.admin.XMLrequest_filer"
 	} else {
 		url = "https://" + addr + ":443/servlets/netapp.servlets.admin.XMLrequest_filer"
@@ -81,19 +82,16 @@ func New(config *node.Node) (*Client, error) {
 	request.Header.Set("Charset", "utf-8")
 
 	// by default, enforce secure TLS, if not requested otherwise by user
-	if x := config.GetChildContentS("use_insecure_tls"); x != "" {
-		if useInsecureTLS, err = strconv.ParseBool(x); err != nil {
-			client.Logger.Error().Stack().Err(err).Msg("use_insecure_tls")
-		}
-	} else {
-		useInsecureTLS = false
+	useInsecureTLS = false
+	if poller.UseInsecureTls != nil {
+		useInsecureTLS = *poller.UseInsecureTls
 	}
 
 	// set authentication method
-	if config.GetChildContentS("auth_style") == "certificate_auth" {
+	if poller.AuthStyle == "certificate_auth" {
 
-		certPath := config.GetChildContentS("ssl_cert")
-		keyPath := config.GetChildContentS("ssl_key")
+		certPath := poller.SslCert
+		keyPath := poller.SslKey
 
 		if certPath == "" {
 			return nil, errors.New(errors.MISSING_PARAM, "ssl_cert")
@@ -111,16 +109,13 @@ func New(config *node.Node) (*Client, error) {
 		}
 	} else {
 
-		username := config.GetChildContentS("username")
-		password := config.GetChildContentS("password")
-
-		if username == "" {
+		if poller.Username == "" {
 			return nil, errors.New(errors.MISSING_PARAM, "username")
-		} else if password == "" {
+		} else if poller.Password == "" {
 			return nil, errors.New(errors.MISSING_PARAM, "password")
 		}
 
-		request.SetBasicAuth(username, password)
+		request.SetBasicAuth(poller.Username, poller.Password)
 		transport = &http.Transport{
 			Proxy:           http.ProxyFromEnvironment,
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: useInsecureTLS},
@@ -132,7 +127,7 @@ func New(config *node.Node) (*Client, error) {
 	httpclient = &http.Client{Transport: transport, Timeout: timeout}
 
 	client.client = httpclient
-	client.SetTimeout(config.GetChildContentS("client_timeout"))
+	client.SetTimeout(poller.ClientTimeout)
 	// ensure that we can change body dynamically
 	request.GetBody = func() (io.ReadCloser, error) {
 		r := bytes.NewReader(client.buffer.Bytes())

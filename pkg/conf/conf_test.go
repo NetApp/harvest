@@ -2,6 +2,7 @@ package conf
 
 import (
 	"fmt"
+	"goharvest2/pkg/tree/node"
 	"reflect"
 	"sort"
 	"strconv"
@@ -248,4 +249,28 @@ func TestCollectorConfig(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestNodeToPoller(t *testing.T) {
+	testArg := func(t *testing.T, want, got string) {
+		if got != want {
+			t.Errorf("want=[%s] got=[%s]", want, got)
+		}
+	}
+
+	Config.Defaults = &Poller{
+		Username: "bob",
+		Password: "bob",
+	}
+
+	defaultNode := node.NewS("root")
+	defaultNode.NewChildS("password", "pass")
+	defaultNode.NewChildS("use_insecure_tls", "true")
+	poller := ZapiPoller(defaultNode)
+
+	testArg(t, DefaultApiVersion, poller.ApiVersion)
+	testArg(t, "bob", poller.Username)
+	testArg(t, "pass", poller.Password)
+	testArg(t, "10s", poller.ClientTimeout)
+	testArg(t, "true", strconv.FormatBool(*poller.UseInsecureTls))
 }
