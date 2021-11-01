@@ -202,9 +202,7 @@ def void stopAndRemoveDockers() {
     sh '''
         rm -rf /opt/home/nightly/
         mkdir -p /opt/home/nightly/
-        for container_id in $(docker ps -a -q);do docker stop $container_id && docker rm -f $container_id;done
-        for image_id in $(docker images -q);do docker rmi -f $image_id;done
-        for volume_id in $(docker volume ls -q); do docker volume rm -f $volume_id;done
+        docker system prune --all --force --volumes
     '''
 }
 
