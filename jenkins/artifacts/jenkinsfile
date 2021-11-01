@@ -51,7 +51,7 @@ pipeline {
         stage('clean workspace') {
             steps {
                 cleanWs()
-                sh 'rm -rf $targetParentLocation$VERSION$RELEASE'
+                stopAndRemoveDockers()
             }
         }
         stage('Setup GO') {
@@ -197,6 +197,15 @@ pipeline {
         }
     }
 }
+
+def void stopAndRemoveDockers() {
+    sh '''
+        rm -rf /opt/home/nightly/
+        mkdir -p /opt/home/nightly/
+        docker system prune --all --force --volumes
+    '''
+}
+
 
 def getBranchName(gitBranchName, paramBranchName) {
     gitBranchName = gitBranchName.replace('origin/', '')
