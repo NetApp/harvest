@@ -153,7 +153,7 @@ In this example, we want to extend one of the existing object templates that Har
 
 Lets's say you want to extend `lun.yaml` to:
 
-1. Increase `client_timeout` (You want to increase the default timeout of the lun ZAPI because it keeps [timing out](https://github.com/NetApp/harvest/wiki/Troubleshooting-Harvest#client_timeout)
+1. Increase `client_timeout` (You want to increase the default timeout of the lun ZAPI because it keeps [timing out](https://github.com/NetApp/harvest/wiki/Troubleshooting-Harvest#client_timeout))
 2. Add additional counters, e.g. `multiprotocol-type`, `application`
 3. Add a new counter to the already collected lun metrics using the `value_to_num` plugin
 4. Add a new `application` instance_keys and labels to the collected metrics
