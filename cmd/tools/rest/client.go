@@ -192,7 +192,8 @@ func downloadSwagger(poller *conf.Poller, path string, url string) (int64, error
 		return 0, err
 	}
 
-	if restClient, err = New(poller, DefaultTimeout); err != nil {
+	timeout := DefaultTimeout * time.Second
+	if restClient, err = New(poller, timeout); err != nil {
 		return 0, fmt.Errorf("error creating new client %w\n", err)
 	}
 
