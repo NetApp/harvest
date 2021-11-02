@@ -45,6 +45,7 @@ counters:
   - space.snapshot.reserve_size               => snapshot_reserve_size
   - space.snapshot.reserve_percent         => snapshot_reserve_percent
   - space.snapshot.space_used_percent    => snapshot_reserve_used_percent
+  - ^state   => state
 
 
 plugins:
