@@ -8,6 +8,7 @@ import (
 	"goharvest2/pkg/conf"
 	"io"
 	"os"
+	"path/filepath"
 	"text/template"
 )
 
@@ -20,6 +21,7 @@ type PollerInfo struct {
 	ContainerName string
 	ShowPorts     bool
 	IsFull        bool
+	TemplateDir   string
 }
 
 type PollerTemplate struct {
@@ -27,11 +29,12 @@ type PollerTemplate struct {
 }
 
 type options struct {
-	loglevel   int
-	image      string
-	filesdPath string
-	showPorts  bool
-	outputPath string
+	loglevel    int
+	image       string
+	filesdPath  string
+	showPorts   bool
+	outputPath  string
+	templateDir string
 }
 
 var opts = &options{
@@ -97,19 +100,28 @@ func generateDocker(path string, kind int) {
 	if err != nil {
 		panic(err)
 	}
+	configFilePath, err := filepath.Abs(path)
+	if err != nil {
+		panic(err)
+	}
+	templateDirPath, err := filepath.Abs(opts.templateDir)
+	if err != nil {
+		panic(err)
+	}
 	conf.ValidatePortInUse = true
 	var filesd []string
 	for _, v := range conf.Config.PollersOrdered {
 		port, _ := conf.GetPrometheusExporterPorts(v)
 		pollerInfo := PollerInfo{
 			PollerName:    v,
-			ConfigFile:    path,
+			ConfigFile:    configFilePath,
 			Port:          port,
 			LogLevel:      opts.loglevel,
 			Image:         opts.image,
 			ContainerName: "poller_" + v + "_v" + version.VERSION,
 			ShowPorts:     kind == harvest || opts.showPorts,
 			IsFull:        kind == full,
+			TemplateDir:   templateDirPath,
 		}
 		pollerTemplate.Pollers = append(pollerTemplate.Pollers, pollerInfo)
 		filesd = append(filesd, fmt.Sprintf("- targets: ['%s:%d']", pollerInfo.ContainerName, pollerInfo.Port))
@@ -183,6 +195,8 @@ func init() {
 	Cmd.AddCommand(systemdCmd)
 	Cmd.AddCommand(dockerCmd)
 	dockerCmd.AddCommand(fullCmd)
+
+	dockerCmd.PersistentFlags().StringVar(&opts.templateDir, "templatedir", "./conf", "Harvest template dir path")
 
 	dFlags := dockerCmd.PersistentFlags()
 	fFlags := fullCmd.PersistentFlags()
