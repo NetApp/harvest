@@ -3,7 +3,7 @@ apiVersion: 1
 providers:
   - name: 'Harvest 7mode'
     orgId: 1
-    folder: 'Harvest 2.0 - 7-mode'
+    folder: 'Harvest 21.11 - 7-mode'
     type: file
     disableDeletion: false
     editable: true
