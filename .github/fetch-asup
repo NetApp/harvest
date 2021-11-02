@@ -10,9 +10,9 @@ ASUP_BIN_VERSION="$2"
 BIN_PLATFORM="$3"
 mkdir -p "$ASUP_BIN_DIR"
 
-COUNT_REPO_FOLDERS=($(find $ASUP_BIN_DIR/github.com/!net!app -mindepth 1 -maxdepth 1 -type d  | wc -l))
-if [ $COUNT_REPO_FOLDERS -gt 5 ]; then
-  rm -rf $ASUP_BIN_DIR/*
+COUNT_REPO_FOLDERS=( "$(find "$ASUP_BIN_DIR"/github.com/!net!app -mindepth 1 -maxdepth 1 -type d  | wc -l)" )
+if [ "${COUNT_REPO_FOLDERS[*]}" -gt 5 ]; then
+  rm -rf "${ASUP_BIN_DIR:?}"/*
 fi
 GOMODCACHE=$ASUP_BIN_DIR go mod download github.com/NetApp/harvest-metrics@"$ASUP_BIN_VERSION"
 mod_bin=$(find "$ASUP_BIN_DIR" -name "*asup*" -name "*$BIN_PLATFORM*" -exec ls -t {} + | head -n 1)
