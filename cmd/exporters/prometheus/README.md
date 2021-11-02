@@ -1,5 +1,4 @@
 
-
 # Prometheus Exporter
 
 ## Overview
@@ -125,7 +124,7 @@ To use HTTP service discovery you need to:
 
 Add the following to your `harvest.yml`
 
-```
+```yaml
 Admin:
   httpsd:
     listen: :8887
@@ -172,7 +171,7 @@ Edit your `prometheus.yml` and add the following section
 
 `$ vim /etc/prometheus/prometheus.yml`
 
-```
+```yaml
 scrape_configs:
   - job_name: harvest
     http_sd_configs:
@@ -181,7 +180,7 @@ scrape_configs:
  
 Harvest and Prometheus both support basic authentication for HTTP SD end-points. To enable basic auth, add the following to your Harvest config.
 
-```
+```yaml
 Admin:
   httpsd:
     listen: :8887
@@ -201,7 +200,7 @@ Notice that none of the pollers specify an exporter. Instead, all the pollers sh
 
 If you add or remove more clusters in the `Pollers` section, you do not have to change Prometheus since it dynamically pulls the targets from the Harvest admin node.
 
-```
+```yaml
 Admin:
   httpsd:
     listen: :8887
