@@ -51,6 +51,7 @@ type Metric interface {
 	SetValueFloat64(*Instance, float64) error
 	SetValueString(*Instance, string) error
 	SetValueBytes(*Instance, []byte) error
+	SetValueBool(*Instance, bool) error
 
 	AddValueInt(*Instance, int) error
 	AddValueInt32(*Instance, int32) error
@@ -206,5 +207,9 @@ func (me *AbstractMetric) MultiplyByScalar(s int) error {
 }
 
 func (me *AbstractMetric) AddValueString(i *Instance, s string) error {
+	return errors.New(errors.ERR_IMPLEMENT, me.dtype)
+}
+
+func (me *AbstractMetric) SetValueBool(i *Instance, b bool) error {
 	return errors.New(errors.ERR_IMPLEMENT, me.dtype)
 }

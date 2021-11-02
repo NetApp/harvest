@@ -1,0 +1,72 @@
+name:                     Volume
+query:                    storage/volumes
+object:                   volume
+
+fields:
+  - space
+  - autosize
+  - files
+
+counters:
+  - autosize.maximum => maximum_size
+  - autosize.grow_threshold => grow_threshold_percent
+  - ^^uuid => instance_uuid
+  - ^name                       => volume
+  - ^node                       => node  #missing mapping
+  - ^svm.name        => svm
+  - ^aggregates.0.name  => aggr   #zapi maps to field containing-aggregate-name while rest mapping is an array?
+  - ^style             => style
+  - files.used => files_used
+  - files.maximum => files_maximum
+#  - compression-space-saved               => sis_compress_saved #missing mapping
+#  - deduplication-space-saved             => sis_dedup_saved #missing mapping
+#  - total-space-saved                     => sis_total_saved #missing mapping
+#  - percentage-compression-space-saved    => sis_compress_saved_percent #missing mapping
+#  - percentage-deduplication-space-saved  => sis_dedup_saved_percent #missing mapping
+#  - percentage-total-space-saved          => sis_total_saved_percent #missing mapping
+#  - ^is-sis-volume                        => is-sis-volume #missing mapping
+  - space.expected_available => expected_available
+  - space.filesystem_size                       => filesystem_size
+  - space.logical_space.available  => logical_available  #not found in infincity cluster
+  - space.logical_space.used => logical_used
+  - space.logical_space.used_by_afs => logical_used_by_afs
+  - space.logical_space.used_by_snapshots  => logical_used_by_snapshots
+  - space.logical_space.used_percent => logical_used_percent
+  - space.physical_used => physical_used
+  - space.physical_used_percent => physical_used_percent
+  - space.size                          => size
+  - space.available                     => size_available
+  - space.afs_total                          => size_total
+  - space.used                           => size_used
+  - space.percent_used                => size_used_percent
+  - space.snapshot.used              => snapshots_size_used
+  - space.size_available_for_snapshots        => snapshots_size_available
+  - space.snapshot.reserve_available          => snapshot_reserve_available
+  - space.snapshot.reserve_size               => snapshot_reserve_size
+  - space.snapshot.reserve_percent         => snapshot_reserve_percent
+  - space.snapshot.space_used_percent    => snapshot_reserve_used_percent
+  - ^state   => state
+
+
+plugins:
+  LabelAgent:
+    value_to_num:
+      - new_status state online online `0`
+    exclude_equals:
+      - style `flexgroup_constituent`
+    replace:
+      - style style `flexgroup_constituent` `flexgroup`
+  Aggregator:
+    volume<style=flexgroup>volume node,svm,aggr,style
+
+export_options:
+  instance_keys:
+    - volume
+    - node
+    - svm
+    - aggr
+    - style
+  instance_labels:
+    - state
+    #- is-sis-volume
+

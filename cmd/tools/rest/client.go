@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"crypto/tls"
 	"fmt"
+	"github.com/tidwall/gjson"
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/logging"
@@ -19,7 +20,7 @@ import (
 
 const (
 	// DefaultTimeout should be > than ONTAP's default REST timeout, which is 15 seconds for GET requests
-	DefaultTimeout = 30 * time.Second
+	DefaultTimeout = 30
 )
 
 type Client struct {
@@ -28,17 +29,24 @@ type Client struct {
 	buffer   *bytes.Buffer
 	Logger   *logging.Logger
 	baseURL  string
+	cluster  Cluster
 	password string
 	username string
 }
 
-func New(poller *conf.Poller) (*Client, error) {
+type Cluster struct {
+	Name    string
+	Info    string
+	Uuid    string
+	Version [3]int
+}
+
+func New(poller *conf.Poller, timeout time.Duration) (*Client, error) {
 	var (
 		client         Client
 		httpclient     *http.Client
 		transport      *http.Transport
 		cert           tls.Certificate
-		timeout        time.Duration
 		addr           string
 		url            string
 		useInsecureTLS bool
@@ -100,15 +108,6 @@ func New(poller *conf.Poller) (*Client, error) {
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: useInsecureTLS},
 		}
 	}
-
-	timeout = DefaultTimeout
-	if poller.ClientTimeout != "" {
-		timeout, err = time.ParseDuration(poller.ClientTimeout)
-		if err != nil {
-			client.Logger.Error().Msgf("err paring client timeout of=[%s] err=%+v\n", timeout, err)
-		}
-	}
-	client.Logger.Debug().Msgf("using timeout [%d]", timeout)
 
 	httpclient = &http.Client{Transport: transport, Timeout: timeout}
 	client.client = httpclient
@@ -193,7 +192,8 @@ func downloadSwagger(poller *conf.Poller, path string, url string) (int64, error
 		return 0, err
 	}
 
-	if restClient, err = New(poller); err != nil {
+	timeout := DefaultTimeout * time.Second
+	if restClient, err = New(poller, timeout); err != nil {
 		return 0, fmt.Errorf("error creating new client %w\n", err)
 	}
 
@@ -212,4 +212,58 @@ func downloadSwagger(poller *conf.Poller, path string, url string) (int64, error
 		return 0, fmt.Errorf("error while downloading %s err=%w\n", url, err)
 	}
 	return n, nil
+}
+
+func (c *Client) Init(retries int) error {
+
+	var (
+		err     error
+		content []byte
+		i       int
+	)
+
+	for i = 0; i < retries; i++ {
+
+		if content, err = c.GetRest(BuildHref("cluster", "*", nil, "", "", "", "")); err != nil {
+			continue
+		}
+
+		results := gjson.GetManyBytes(content, "name", "uuid", "version.full", "version.generation", "version.major", "version.minor")
+		c.cluster.Name = results[0].String()
+		c.cluster.Uuid = results[1].String()
+		c.cluster.Info = results[2].String()
+		c.cluster.Version[0] = int(results[3].Int())
+		c.cluster.Version[1] = int(results[4].Int())
+		c.cluster.Version[2] = int(results[5].Int())
+		return nil
+	}
+	return err
+}
+
+func BuildHref(apiPath string, fields string, field []string, queryFields string, queryValue string, maxRecords string, returnTimeout string) string {
+	href := strings.Builder{}
+	href.WriteString("api/")
+	href.WriteString(apiPath)
+	href.WriteString("?return_records=true")
+	addArg(&href, "&fields=", fields)
+	for _, f := range field {
+		addArg(&href, "&", f)
+	}
+	addArg(&href, "&query_fields=", queryFields)
+	addArg(&href, "&query=", queryValue)
+	addArg(&href, "&max_records=", maxRecords)
+	addArg(&href, "&return_timeout=", returnTimeout)
+	return href.String()
+}
+
+func addArg(href *strings.Builder, field string, value string) {
+	if value == "" {
+		return
+	}
+	href.WriteString(field)
+	href.WriteString(value)
+}
+
+func (c *Client) Cluster() Cluster {
+	return c.cluster
 }
