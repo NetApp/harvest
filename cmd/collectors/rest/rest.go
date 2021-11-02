@@ -180,7 +180,7 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 		records      []interface{}
 	)
 
-	r.Logger.Debug().Msgf("starting data poll")
+	r.Logger.Debug().Msg("starting data poll")
 	r.Matrix.Reset()
 
 	startTime = time.Now()
@@ -381,7 +381,7 @@ func (me *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugi
 	case "Disk":
 		return disk.New(abc)
 	default:
-		me.Logger.Warn().Str("kind", kind).Msgf("no rest plugin found ")
+		me.Logger.Warn().Str("kind", kind).Msg("no rest plugin found ")
 	}
 	return nil
 }
