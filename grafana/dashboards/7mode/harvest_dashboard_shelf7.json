@@ -425,11 +425,11 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "rgb(224, 47, 47)",
+                      "color": "rgb(118, 204, 49)",
                       "value": null
                     },
                     {
-                      "color": "rgb(118, 204, 49)",
+                      "color": "rgb(224, 47, 47)",
                       "value": 1
                     }
                   ]
@@ -439,20 +439,19 @@
                 "id": "mappings",
                 "value": [
                   {
-                    "from": "0",
-                    "id": 1,
-                    "text": "OFFLINE",
-                    "to": "0.999",
-                    "type": 2,
-                    "value": ""
-                  },
-                  {
-                    "from": "",
-                    "id": 2,
-                    "text": "ONLINE",
-                    "to": "",
-                    "type": 1,
-                    "value": "1"
+                    "options": {
+                      "0": {
+                        "color": "dark-green",
+                        "index": 0,
+                        "text": "ONLINE"
+                      },
+                      "1": {
+                        "color": "dark-red",
+                        "index": 1,
+                        "text": "OFFLINE"
+                      }
+                    },
+                    "type": "value"
                   }
                 ]
               }
