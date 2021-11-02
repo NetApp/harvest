@@ -14,14 +14,14 @@ services:
     command: '--poller {{ .PollerName }} {{if .Port }}--promPort {{ .Port }} {{ end }}
     {{- if ne .LogLevel 2 }}--loglevel {{ .LogLevel }} {{ end}}--config /opt/harvest.yml'
     volumes:
-      - harvest:/opt/harvest/
       - type: bind
-        source: ./{{ .ConfigFile }}
+        source: {{ .TemplateDir }}
+        target: /opt/harvest/conf
+      - type: bind
+        source: {{ .ConfigFile }}
         target: /opt/harvest.yml
     {{- if .IsFull}}
     networks:
       - backend
     {{- end}}
 {{end}}
-volumes:
-  harvest:
