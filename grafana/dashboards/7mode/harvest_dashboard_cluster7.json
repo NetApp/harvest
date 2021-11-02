@@ -226,7 +226,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "node_labels{datacenter=\"$Datacenter\",node=\"$Node\"}",
+          "expr": "node_labels{datacenter=\"$Datacenter\",node=~\"$Node\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -236,7 +236,7 @@
         },
         {
           "exemplar": false,
-          "expr": "node_new_status{datacenter=\"$Datacenter\",node=\"$Node\"}",
+          "expr": "node_new_status{datacenter=\"$Datacenter\",node=~\"$Node\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -418,7 +418,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "node_new_status{datacenter=\"$Datacenter\",node=\"$Node\"}",
+          "expr": "node_new_status{datacenter=\"$Datacenter\",node=~\"$Node\"}",
           "instant": true,
           "interval": "",
           "legendFormat": "",
@@ -498,7 +498,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(node_cpu_busy{datacenter=~\"$Datacenter\",node=\"$Node\"})",
+          "expr": "avg(node_cpu_busy{datacenter=~\"$Datacenter\",node=~\"$Node\"})",
           "instant": false,
           "interval": "",
           "legendFormat": "",
@@ -572,7 +572,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(disk_busy{datacenter=~\"$Datacenter\",node=\"$Node\"})",
+          "expr": "avg(disk_busy{datacenter=~\"$Datacenter\",node=~\"$Node\"})",
           "instant": false,
           "interval": "",
           "legendFormat": "",
@@ -763,7 +763,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "cluster_subsystem_suppressed_alerts{datacenter=\"$Datacenter\",node=\"$Node\"}",
+          "expr": "cluster_subsystem_suppressed_alerts{datacenter=\"$Datacenter\",node=~\"$Node\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -774,7 +774,7 @@
         },
         {
           "exemplar": false,
-          "expr": "cluster_subsystem_outstanding_alerts{datacenter=\"$Datacenter\",node=\"$Node\"}",
+          "expr": "cluster_subsystem_outstanding_alerts{datacenter=\"$Datacenter\",node=~\"$Node\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -785,7 +785,7 @@
         },
         {
           "exemplar": false,
-          "expr": "cluster_subsystem_new_status{datacenter=\"$Datacenter\",node=\"$Node\"}",
+          "expr": "cluster_subsystem_new_status{datacenter=\"$Datacenter\",node=~\"$Node\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -892,7 +892,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "100*sum(aggr_space_used{datacenter=~\"$Datacenter\",node=\"$Node\"})/sum(aggr_space_total{datacenter=~\"$Datacenter\",node=\"$Node\"})",
+          "expr": "100*sum(aggr_space_used{datacenter=~\"$Datacenter\",node=~\"$Node\"})/sum(aggr_space_total{datacenter=~\"$Datacenter\",node=~\"$Node\"})",
           "instant": false,
           "interval": "",
           "legendFormat": "",
@@ -1580,7 +1580,7 @@
         "description": null,
         "error": null,
         "hide": 0,
-        "includeAll": false,
+        "includeAll": true,
         "label": "",
         "multi": false,
         "name": "Node",
