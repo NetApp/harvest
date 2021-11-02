@@ -256,11 +256,12 @@ export_options:
     - volume
     - svm
     - application
+ client_timeout: 5m
 ```
 
 To help understand the merging process and the resulting combined template, you can view the result with:
 ```sh
-bin/harvest doctor merge --template lun.yaml --with custom_lun.yaml
+bin/harvest doctor merge --template conf/zapi/cdot/9.8.0/lun.yaml --with conf/zapi/cdot/9.8.0/custom_lun.yaml
 ```
 
 ### Replace an existing object template
