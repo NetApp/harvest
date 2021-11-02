@@ -92,6 +92,8 @@ name:     Sensor                      # this name must match the key in your cus
 query:    environment-sensors-get-iter
 object:   sensor
 
+metric_type:      int64
+
 counters:
   environment-sensors-info:
     - critical-high-threshold    => critical_high
