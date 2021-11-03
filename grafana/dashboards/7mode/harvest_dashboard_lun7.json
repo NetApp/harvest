@@ -442,7 +442,7 @@
     },
     {
       "collapsed": false,
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -455,7 +455,7 @@
       "type": "row"
     },
     {
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -563,7 +563,7 @@
       "type": "table"
     },
     {
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -656,7 +656,7 @@
       "type": "table"
     },
     {
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -749,7 +749,7 @@
       "type": "table"
     },
     {
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -850,7 +850,7 @@
       "type": "table"
     },
     {
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -943,7 +943,7 @@
       "type": "table"
     },
     {
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1909,7 +1909,7 @@
     },
     {
       "collapsed": false,
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1926,7 +1926,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -2032,7 +2032,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -2135,7 +2135,7 @@
     },
     {
       "collapsed": false,
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2152,7 +2152,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "unit": "percent"
@@ -2251,7 +2251,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "unit": "percentunit"
@@ -2354,7 +2354,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "unit": "percentunit"
@@ -2454,7 +2454,7 @@
     },
     {
       "collapsed": false,
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2467,7 +2467,7 @@
       "type": "row"
     },
     {
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2561,7 +2561,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2655,7 +2655,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2749,7 +2749,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {

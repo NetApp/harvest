@@ -834,7 +834,7 @@
       "type": "bargauge"
     },
     {
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -893,7 +893,7 @@
       "type": "stat"
     },
     {
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -975,7 +975,7 @@
       "type": "stat"
     },
     {
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1290,7 +1290,7 @@
     },
     {
       "collapsed": true,
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1304,7 +1304,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": null,
+           "datasource": "${DS_PROMETHEUS}",
           "description": "",
           "fieldConfig": {
             "defaults": {},
@@ -1404,7 +1404,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": null,
+           "datasource": "${DS_PROMETHEUS}",
           "description": "",
           "fill": 1,
           "fillGradient": 0,
@@ -1500,7 +1500,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": null,
+           "datasource": "${DS_PROMETHEUS}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -1602,7 +1602,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": null,
+           "datasource": "${DS_PROMETHEUS}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -2453,7 +2453,7 @@
     },
     {
       "collapsed": true,
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2463,7 +2463,7 @@
       "id": 88,
       "panels": [
         {
-          "datasource": null,
+           "datasource": "${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2531,7 +2531,7 @@
           "type": "stat"
         },
         {
-          "datasource": null,
+           "datasource": "${DS_PROMETHEUS}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -2600,7 +2600,7 @@
           "type": "stat"
         },
         {
-          "datasource": null,
+           "datasource": "${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2668,7 +2668,7 @@
           "type": "stat"
         },
         {
-          "datasource": null,
+           "datasource": "${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2782,7 +2782,7 @@
           "type": "table"
         },
         {
-          "datasource": null,
+           "datasource": "${DS_PROMETHEUS}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -2910,7 +2910,7 @@
           "type": "table"
         },
         {
-          "datasource": null,
+           "datasource": "${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3005,7 +3005,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": null,
+           "datasource": "${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3100,7 +3100,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": null,
+           "datasource": "${DS_PROMETHEUS}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -4010,7 +4010,7 @@
     },
     {
       "collapsed": true,
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
