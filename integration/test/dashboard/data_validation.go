@@ -11,7 +11,7 @@ import (
 )
 
 func HasValidData(query string) bool {
-	return HasMinRecord(query, 0) // to make sure that no syntax error
+	return HasMinRecord(query, -1) // to make sure that there are no syntax error
 }
 
 func HasMinRecord(query string, limit int) bool {
