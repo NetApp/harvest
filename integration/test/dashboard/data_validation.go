@@ -46,7 +46,7 @@ func AssertIfNotPresent(query string) {
 					totalRecord := metricArray[1].Int()
 					log.Info().Int64("Total Record", totalRecord).Msg("")
 					if totalRecord >= 5 {
-						time.Sleep(3 * time.Minute)
+						time.Sleep(2 * time.Minute)
 						return
 					}
 				}
