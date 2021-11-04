@@ -3,7 +3,7 @@
 [Releases](https://github.com/NetApp/harvest/releases)
 
 ## 21.11.0 / 2021-11-08
-<!-- git log --no-decorate --no-merges --cherry-pick --right-only --oneline release/21.08.0...release/21.11.0 -->
+<!-- git log --no-decorate --no-merges --cherry-pick --right-only --oneline origin/release/21.08.0...origin/release/21.11.0 -->
 
 Highlights of this major release include:
 
@@ -38,7 +38,7 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 
 ### Enhancements
 
-- :construction: Harvest should use REST to collect config data from ONTAP. A REST collector and seven templates are included in this release. These should be considered early access as we continue to improve them. If you try them out or have any feedback, let us know on Slack or [GitHub](https://github.com/NetApp/harvest/discussions). [#402](https://github.com/NetApp/harvest/issues/402)
+- :construction: [ONTAP started moving their APIs from ZAPI to REST](https://devnet.netapp.com/restapi.php) in ONTAP 9.6. Harvest adds an early access ONTAP REST collector in this release (config only). :confetti_ball: This is our first step among several as we prepare for the day that ZAPIs are turned off. The REST collector and seven templates are included in 21.11. These should be considered early access as we continue to improve them. If you try them out or have any feedback, let us know on Slack or [GitHub](https://github.com/NetApp/harvest/discussions). [#402](https://github.com/NetApp/harvest/issues/402)
   
 - Harvest should have a [Prometheus HTTP service discovery](https://github.com/NetApp/harvest/blob/main/cmd/exporters/prometheus/README.md#prometheus-http-service-discovery) end-point to make it easier to add/remove pollers [#575](https://github.com/NetApp/harvest/pull/575)
   
