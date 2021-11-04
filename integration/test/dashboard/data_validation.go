@@ -11,7 +11,7 @@ import (
 )
 
 func HasValidData(query string) bool {
-	return HasMinRecord(query, 0) // to make sure that no syntax error
+	return HasMinRecord(query, -1) // to make sure that there are no syntax error
 }
 
 func HasMinRecord(query string, limit int) bool {
@@ -46,7 +46,7 @@ func AssertIfNotPresent(query string) {
 					totalRecord := metricArray[1].Int()
 					log.Info().Int64("Total Record", totalRecord).Msg("")
 					if totalRecord >= 5 {
-						time.Sleep(3 * time.Minute)
+						time.Sleep(2 * time.Minute)
 						return
 					}
 				}
