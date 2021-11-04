@@ -2,8 +2,20 @@
 
 [Releases](https://github.com/NetApp/harvest/releases)
 
-## 21.08.1 / 2021-??-??
-<!-- git log --no-merges --cherry-pick --right-only --oneline release/21.08.0...release/21.08.1 -->
+## 21.11.0 / 2021-11-08
+<!-- git log --no-decorate --no-merges --cherry-pick --right-only --oneline release/21.08.0...release/21.11.0 -->
+
+Highlights of this major release include:
+
+- Early access to ONTAP REST collector
+- Support for [Prometheus HTTP service discovery](https://github.com/NetApp/harvest/blob/main/cmd/exporters/prometheus/README.md#prometheus-http-service-discovery)
+- New MetroCluster dashboard
+- Qtree and Quotas collection
+- We heard your ask, and we made it happen. We've separated cDOT and 7mode dashboards so each can evolve independently
+- [Label sets](https://github.com/NetApp/harvest#labels) allow you to add additional key-value pairs to a poller's metrics[#538](https://github.com/NetApp/harvest/pull/538) and expose those labels in your dashboards
+- Template merging was improved to keep your template changes separate from Harvest's
+- Harvest poller's are more [deterministic](https://github.com/NetApp/harvest/pull/595) about picking [free ports](https://github.com/NetApp/harvest/pull/596)
+- 37 bug fixes
 
 **IMPORTANT** The LabelAgent `value_mapping` plugin is being deprecated in this
 release and will be removed in the next release of Harvest. Use LabelAgent
@@ -19,6 +31,108 @@ with Docker and native binaries. See
 [#330](https://github.com/NetApp/harvest/issues/330) for details and tell us
 what you think. Several of you have already weighed-in. Thanks! If you haven't,
 please do.
+
+**Known Issues**
+
+The Unix collector is unable to monitor pollers running in containers. See [#249](https://github.com/NetApp/harvest/issues/249) for details.
+
+### Enhancements
+
+- :construction: Harvest should use REST to collect config data from ONTAP. A REST collector and seven templates are included in this release. These should be considered early access as we continue to improve them. If you try them out or have any feedback, let us know on Slack or [GitHub](https://github.com/NetApp/harvest/discussions). [#402](https://github.com/NetApp/harvest/issues/402)
+  
+- Harvest should have a [Prometheus HTTP service discovery](https://github.com/NetApp/harvest/blob/main/cmd/exporters/prometheus/README.md#prometheus-http-service-discovery) end-point to make it easier to add/remove pollers [#575](https://github.com/NetApp/harvest/pull/575)
+  
+- Harvest should include a MetroCluster dashboard [#539](https://github.com/NetApp/harvest/issues/539) Thanks @darthVikes for reporting
+   
+- Harvest should collect Qtree and Quota metrics [#522](https://github.com/NetApp/harvest/issues/522) Thanks @jmg011 for reporting and validating this works in your environment 
+  
+- SVM dashboard: Make NFS version a variable. SVM variable should allow selecting all SVMs for a cluster wide view [#454](https://github.com/NetApp/harvest/pull/454)
+
+- Harvest should monitor ONTAP chassis sensors [#384](https://github.com/NetApp/harvest/issues/384) Thanks to @hashi825 for raising this issue and reviewing the pull request
+
+- Harvest cluster dashboard should include `All` option in dropdown for clusters [#630](https://github.com/NetApp/harvest/pull/630) thanks @TopSpeed for raising this on Slack
+ 
+- Harvest should collect volume `sis status` [#519](https://github.com/NetApp/harvest/issues/519) Thanks to @jmg011 for raising
+
+- Separate cDOT and 7-mode dashboards allowing each to change independently [#489](https://github.com/NetApp/harvest/pull/489) [#501](https://github.com/NetApp/harvest/pull/501) [#547](https://github.com/NetApp/harvest/pull/547)
+
+- Improve collector and object template merging and documentation [#493](https://github.com/NetApp/harvest/issues/493) [#555](https://github.com/NetApp/harvest/pull/555) Thanks @hashi825 for reviewing and suggesting improvements
+ 
+- Harvest should support [label sets](https://github.com/NetApp/harvest#labels), allowing you to add additional key-value pairs to a poller's metrics[#538](https://github.com/NetApp/harvest/pull/538)
+
+- `bin/grafana import` should create a matching label and rewrite queries to use chained variable when using label sets [#550](https://github.com/NetApp/harvest/pull/550)
+
+- Harvest poller's should reuse their previous Prometheus port when restarted and be more deterministic about picking free ports [#596](https://github.com/NetApp/harvest/pull/596) [#595](https://github.com/NetApp/harvest/pull/595) Thanks to @cordelster for reporting
+
+- Harvest's Docker container should use local `conf` directory instead of copying into image. Makes upgrade and changing template files easier. [#511](https://github.com/NetApp/harvest/issues/511)
+  
+- Improve Disk dashboard by showing total number of disks by node and aggregate [#583](https://github.com/NetApp/harvest/pull/583)
+
+- Harvest 7-mode dashboards should be provisioned when using Docker Compose workflow [#544](https://github.com/NetApp/harvest/pull/554)
+  
+- When upgrading, `bin/harvest grafana import` should add dashboards to a release-named folder so earlier dashboards are not overwritten [#616](https://github.com/NetApp/harvest/pull/616)
+
+- `client_timeout` should be overridable in object template files [#563](https://github.com/NetApp/harvest/pull/563)
+
+- Increase ZAPI client timeouts for volume and workloads objects [#617](https://github.com/NetApp/harvest/pull/617)
+
+- Doctor: Ensure that all pollers export to unique Prometheus ports [#597](https://github.com/NetApp/harvest/pull/597)
+
+- Improve execution performance of Harvest management commands :rocket: `bin/harvest start|stop|restart` [#600](https://github.com/NetApp/harvest/pull/600)
+  
+- Include eight cDOT dashboards that use InfluxDB datasource [#466](https://github.com/NetApp/harvest/pull/466). Harvest does not support InfluxDB dashboards for 7-mode. Thanks to @SamyukthaM for working on these
+
+- Docs: Describe how Harvest converts template labels into Prometheus labels [#585](https://github.com/NetApp/harvest/issues/585)
+
+- Docs: Improve Matrix documentation to better align with code [#485](https://github.com/NetApp/harvest/pull/485)
+
+- Docs: Improve [ARCHITECTURE.md](https://github.com/NetApp/harvest/blob/main/ARCHITECTURE.md) [#603](https://github.com/NetApp/harvest/pull/603)
+
+### Fixes
+
+- Poller should report metadata when running on BusyBox [#529](https://github.com/NetApp/harvest/issues/529) Thanks to @charz for reporting issue and providing details
+  
+- Space used % calculation was incorrect for Cluster and Aggregate dashboards [#624](https://github.com/NetApp/harvest/issues/624) Thanks to @faguayot and @jorbour for reporting.  
+
+- When ONTAP indicates a counter is deprecated, but a replacement is not provided, continue using the deprecated counter [#498](https://github.com/NetApp/harvest/pull/498)
+
+- Harvest dashboard panels must specify a Prometheus datasource to correctly handles cases were a non-Prometheus default datasource is defined in Grafana. [#639](https://github.com/NetApp/harvest/issues/639) Thanks for reporting @MrObvious
+ 
+- Prometheus datasource was missing on five dashboards (Network and Disk) [#566](https://github.com/NetApp/harvest/pull/566) Thanks to @survive-wustl for reporting 
+  
+- Document permissions that Harvest requires to monitor ONTAP with a read-only user [#559](https://github.com/NetApp/harvest/pull/559) Thanks to @survive-wustl for reporting and working with us to chase this down. :thumbsup: 
+
+- Metadata dashboard should show correct status for running/stopped pollers [#567](https://github.com/NetApp/harvest/issues/567) Thanks to @cordelster for reporting
+
+- Harvest should serve a human-friendly :corn: overview page of metric types when hitting the Prometheus end-point [#613](https://github.com/NetApp/harvest/issues/613) Thanks @cordelster for reporting
+  
+- SnapMirror plugin should include source_node [#608](https://github.com/NetApp/harvest/issues/608)
+  
+- Disk dashboard should use better labels in table details [#578](https://github.com/NetApp/harvest/pull/578) 
+  
+- SVM dashboard should show correct units and remove duplicate graph [#454](https://github.com/NetApp/harvest/pull/454)
+
+- FCP plugin should work with 7-mode clusters [#464](https://github.com/NetApp/harvest/pull/464)
+
+- Node values are missing from some 7-mode perf counters [#467](https://github.com/NetApp/harvest/pull/467)
+
+- Nic state is missing from several network related dashboards [486](https://github.com/NetApp/harvest/issues/486)
+
+- Reduce log noise when templates are not found since this is often expected [#606](https://github.com/NetApp/harvest/pull/606)
+  
+- Use `diagnosis-config-get-iter` to collect node status from 7-mode systems [#499](https://github.com/NetApp/harvest/pull/499)
+
+- Node status is missing from 7-mode [#527](https://github.com/NetApp/harvest/pull/527)
+
+- Improve 7-mode templates. Remove cluster from 7-mode. `yamllint` all templates  [#531](https://github.com/NetApp/harvest/pull/531)
+
+- When saving Grafana auth token, make sure `bin/grafana` writes valid Yaml [#544](https://github.com/NetApp/harvest/pull/544)
+
+- Improve Yaml parsing when different levels of indention are used in `harvest.yml`. You should see fewer `invalid indentation` messages. :clap: [#626](https://github.com/NetApp/harvest/pull/626)
+
+- Unix poller should ignore `/proc` files that aren't readable [#249](https://github.com/NetApp/harvest/issues/249)
+
+---
 
 ## 21.08.0 / 2021-08-31
 <!-- git log --no-merges --cherry-pick --right-only --oneline release/21.05.4...release/21.08.0 -->
