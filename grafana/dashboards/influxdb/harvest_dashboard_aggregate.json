@@ -69,7 +69,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": null,
+      "datasource": "${DS_INFLUXDB}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1071,7 +1071,7 @@
     },
     {
       "collapsed": false,
-      "datasource": null,
+      "datasource": "${DS_INFLUXDB}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2289,7 +2289,7 @@
     },
     {
       "collapsed": false,
-      "datasource": null,
+      "datasource": "${DS_INFLUXDB}",
       "gridPos": {
         "h": 1,
         "w": 24,

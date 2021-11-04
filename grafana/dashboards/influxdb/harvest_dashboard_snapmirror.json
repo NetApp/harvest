@@ -1945,7 +1945,7 @@
     },
     {
       "collapsed": true,
-      "datasource": null,
+      "datasource": "${DS_INFLUXDB}",
       "gridPos": {
         "h": 1,
         "w": 24,
