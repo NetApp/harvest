@@ -185,19 +185,30 @@ func generateSystemd(path string) {
 	println("Save the following to " + color.Colorize("/etc/systemd/system/harvest.target", color.Green) +
 		" or " + color.Colorize("| sudo tee /etc/systemd/system/harvest.target", color.Green))
 	println("and then run " + color.Colorize("systemctl daemon-reload", color.Green))
-	// reorder list of pollers so that unix is last, see https://github.com/NetApp/harvest/issues/643
-	pollers := conf.Config.PollersOrdered
-	// remove element from slice
-	unixInList := false
-	for i, v := range pollers {
-		if v == "unix" {
-			pollers = append(pollers[:i], pollers[i+1:]...)
-			unixInList = true
-			break
+	// reorder list of pollers so that unix collectors are last, see https://github.com/NetApp/harvest/issues/643
+	pollers := make([]string, 0)
+	unixPollers := make([]string, 0)
+	for _, k := range conf.Config.PollersOrdered {
+		pollers = append(pollers, k)
+	}
+	// iterate over the pollers backwards, so we don't skip any when removing
+	for i := len(pollers) - 1; i >= 0; i-- {
+		pollerName := pollers[i]
+		poller, ok := conf.Config.Pollers[pollerName]
+		if !ok || poller == nil {
+			continue
+		}
+		// if unix is in the poller's list of collectors, remove it from the list of pollers
+		for _, c := range poller.Collectors {
+			if c.Name == "Unix" {
+				pollers = append(pollers[:i], pollers[i+1:]...)
+				unixPollers = append(unixPollers, pollerName)
+				break
+			}
 		}
 	}
-	if unixInList {
-		pollers = append(pollers, "unix")
+	for _, poller := range unixPollers {
+		pollers = append(pollers, poller)
 	}
 	err = t.Execute(os.Stdout, struct {
 		PollersOrdered []string
