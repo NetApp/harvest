@@ -55,4 +55,6 @@ Build Docker Image
 
 ```
 docker build -f docker/onePollerPerContainer/Dockerfile -t harvest:latest . --no-cache
+or
+nerdctl build -f docker/onePollerPerContainer/Dockerfile -t harvest:latest . --no-cache
 ```
