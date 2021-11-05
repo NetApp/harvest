@@ -43,11 +43,6 @@ func LoadHarvestConfig(configPath string) error {
 	if configRead {
 		return nil
 	}
-	// env var has higher precedence than --config cmdline arg
-	fp := os.Getenv("HARVEST_CONFIG")
-	if fp != "" {
-		configPath = fp
-	}
 	contents, err := ioutil.ReadFile(configPath)
 
 	if err != nil {
