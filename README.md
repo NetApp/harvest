@@ -195,6 +195,10 @@ The metric data that's exposed for Prometheus to scrap is available at [http://0
 
 If you can't access the URL, check the logs of your pollers. These are located in `/var/log/harvest/`.
 
+## 5. (Optional) Setup Systemd service files
+
+If you're running Harvest on a system with Systemd, you may want to [take advantage of systemd instantiated units](https://github.com/NetApp/harvest/tree/main/service/contrib) to manage your pollers.  
+
 # Harvest Configuration 
 
 The main configuration file, `harvest.yml`, consists of the following sections, described below:

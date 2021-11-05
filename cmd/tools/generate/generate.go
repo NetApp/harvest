@@ -185,7 +185,25 @@ func generateSystemd(path string) {
 	println("Save the following to " + color.Colorize("/etc/systemd/system/harvest.target", color.Green) +
 		" or " + color.Colorize("| sudo tee /etc/systemd/system/harvest.target", color.Green))
 	println("and then run " + color.Colorize("systemctl daemon-reload", color.Green))
-	err = t.Execute(os.Stdout, conf.Config)
+	// reorder list of pollers so that unix is last, see https://github.com/NetApp/harvest/issues/643
+	pollers := conf.Config.PollersOrdered
+	// remove element from slice
+	unixInList := false
+	for i, v := range pollers {
+		if v == "unix" {
+			pollers = append(pollers[:i], pollers[i+1:]...)
+			unixInList = true
+			break
+		}
+	}
+	if unixInList {
+		pollers = append(pollers, "unix")
+	}
+	err = t.Execute(os.Stdout, struct {
+		PollersOrdered []string
+	}{
+		PollersOrdered: pollers,
+	})
 	if err != nil {
 		panic(err)
 	}
