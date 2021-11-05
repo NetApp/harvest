@@ -68,17 +68,16 @@ var fullCmd = &cobra.Command{
 
 func doDockerFull(cmd *cobra.Command, _ []string) {
 	var config = cmd.Root().PersistentFlags().Lookup("config")
-	generateFullCompose(config.Value.String())
+	generateFullCompose(conf.ConfigPath(config.Value.String()))
 }
-
 func doSystemd(cmd *cobra.Command, _ []string) {
 	var config = cmd.Root().PersistentFlags().Lookup("config")
-	generateSystemd(config.Value.String())
+	generateSystemd(conf.ConfigPath(config.Value.String()))
 }
 
 func doDockerCompose(cmd *cobra.Command, _ []string) {
 	var config = cmd.Root().PersistentFlags().Lookup("config")
-	generateDockerCompose(config.Value.String())
+	generateDockerCompose(conf.ConfigPath(config.Value.String()))
 }
 
 const (
