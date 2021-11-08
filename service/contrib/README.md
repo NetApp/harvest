@@ -8,32 +8,33 @@ Create one instantiated service for a poller. Adjust paths as needed
 
 ```
 echo '[Unit]
-Description="Poller instance %I"
+Description="NetApp Harvest Poller instance %I"
 PartOf=harvest.target
 
 [Service]
+User=harvest
+Group=harvest
 Type=simple
 Restart=on-failure 
-WorkingDirectory=/path/to/harvest
-ExecStart=/path/to/harvest/bin/harvest --config /path/to/harvest/harvest.yml start -f %i' | sudo tee /etc/systemd/system/poller@.service
+WorkingDirectory=/opt/harvest
+ExecStart=/opt/harvest/bin/harvest --config /opt/harvest/harvest.yml start -f %i
+
+[Install]
+WantedBy=harvest.target' | sudo tee /etc/systemd/system/poller@.service
+
 ```
 
 ### Harvest Target
 
 Target files are how systemd groups a set of services together. We'll use it as a way to start|stop all pollers as a single unit. Nice on reboot or upgrade.
 
-This is more tedious to setup and change. We'll add a `harvest systemd generate` command that creates this target from a template.
-
-For now you'll need to create this yourself similar to the example below:
+Harvest provides a `generate` subcommand to make setting up instantiated instances easier. Use like this:
 
 ```
-echo '[Unit]
-Description="Harvest"
-Wants=poller@unix1.service poller@unix2.service poller@unix3.service poller@unix4.service poller@unix5.service poller@unix6.service poller@unix7.service poller@unix8.service poller@unix9.service
-
-[Install]
-WantedBy=multi-user.target' | sudo tee /etc/systemd/system/harvest.target                               
+bin/harvest generate systemd
 ```
+
+If you like the output, redirect like so `bin/harvest generate systemd | sudo tee /etc/systemd/system/harvest.target`
 
 ### How to use
 

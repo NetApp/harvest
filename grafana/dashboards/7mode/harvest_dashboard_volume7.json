@@ -552,7 +552,7 @@
     },
     {
       "collapsed": false,
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -840,7 +840,7 @@
       "type": "table"
     },
     {
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -958,7 +958,7 @@
       "type": "table"
     },
     {
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1069,7 +1069,7 @@
       "type": "table"
     },
     {
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1180,7 +1180,7 @@
       "type": "table"
     },
     {
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1298,7 +1298,7 @@
       "type": "table"
     },
     {
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1409,7 +1409,7 @@
       "type": "table"
     },
     {
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2154,7 +2154,7 @@
     },
     {
       "collapsed": false,
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2171,7 +2171,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {},
@@ -2290,7 +2290,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+       "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {},
