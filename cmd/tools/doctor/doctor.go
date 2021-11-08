@@ -72,7 +72,7 @@ func doMerge(path1 string, path2 string) {
 
 func doDoctorCmd(cmd *cobra.Command, _ []string) {
 	var config = cmd.Root().PersistentFlags().Lookup("config")
-	doDoctor(config.Value.String())
+	doDoctor(conf.ConfigPath(config.Value.String()))
 }
 
 func doDoctor(path string) {
