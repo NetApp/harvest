@@ -6,13 +6,14 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/Netapp/harvest-automation/test/dashboard"
 	"github.com/Netapp/harvest-automation/test/docker"
 	"github.com/Netapp/harvest-automation/test/grafana"
 	"github.com/Netapp/harvest-automation/test/installer"
 	"github.com/Netapp/harvest-automation/test/utils"
+	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"log"
 	"testing"
 	"time"
 )
@@ -26,7 +27,6 @@ type Folder struct {
 	Uid   string `json:"uid"`
 	Title string `json:"title"`
 }
-
 type Dashboard struct {
 	Id          int64  `json:"id"`
 	Uid         string `json:"uid"`
@@ -36,17 +36,19 @@ type Dashboard struct {
 	FolderId    int64  `json:"folderId"`
 }
 
-const cDotFolder = "Harvest 21.11 - cDOT"
-const sevenModeFolder = "Harvest 21.11 - 7-mode"
+var cDotFolder, sevenModeFolder string
 
 func (suite *DashboardImportTestSuite) SetupSuite() {
-	log.Println("Verify Grafana and Prometheus are configured")
+	log.Info().Msg("Verify Grafana and Prometheus are configured")
 	if !utils.IsUrlReachable(utils.GetGrafanaHttpUrl()) {
 		panic(fmt.Errorf("Grafana is not reachable."))
 	}
 	if !utils.IsUrlReachable(utils.GetPrometheusUrl()) {
 		panic(fmt.Errorf("Prometheus is not reachable."))
 	}
+	cDotFolder = dashboard.GetFolderNameFromYml(utils.GetHarvestRootDir() + "/grafana/dashboards/dashboard.yml")
+	sevenModeFolder = dashboard.GetFolderNameFromYml(utils.GetHarvestRootDir() + "/grafana/dashboards/dashboard7.yml")
+	log.Info().Str("cMode", cDotFolder).Str("7mode", sevenModeFolder).Msg("Folder name details")
 	status, _ := new(grafana.GrafanaMgr).Import("") //send empty so that it will import all dashboards
 	if !status {
 		assert.Fail(suite.T(), "Grafana import operation is failed")
@@ -55,7 +57,7 @@ func (suite *DashboardImportTestSuite) SetupSuite() {
 }
 
 func (suite *DashboardImportTestSuite) TestImport() {
-	log.Println("Verify harvest folder")
+	log.Info().Msg("Verify harvest folder")
 	data, err := utils.GetResponseBody(utils.GetGrafanaHttpUrl() + "/api/folders?limit=10")
 	utils.PanicIfNotNil(err)
 	var dataFolder []Folder
@@ -66,7 +68,7 @@ func (suite *DashboardImportTestSuite) TestImport() {
 			return
 		}
 	}
-	log.Println(data)
+	log.Info().Bytes("Data", data).Msg("Folder data")
 	assert.Fail(suite.T(), "Unable to find harvest folder")
 }
 
@@ -111,7 +113,7 @@ func TestDashboardImportSuite(t *testing.T) {
 }
 
 func GetFolderId(folderName string, t *testing.T) int64 {
-	log.Println("Find " + folderName + " folder id")
+	log.Info().Msg("Find " + folderName + " folder id")
 	data, err := utils.GetResponseBody(utils.GetGrafanaHttpUrl() + "/api/folders?limit=100")
 	utils.PanicIfNotNil(err)
 	var dataFolder []Folder
@@ -131,9 +133,9 @@ func GetFolderId(folderName string, t *testing.T) int64 {
 }
 
 func VerifyDashboards(folderId int64, expectedName []string, t *testing.T) {
-	log.Println(fmt.Sprintf("Find list of dashboard for folder %d", folderId))
+	log.Info().Msg(fmt.Sprintf("Find list of dashboard for folder %d", folderId))
 	url := utils.GetGrafanaHttpUrl() + "/api/search?type=dash-db"
-	log.Println(url)
+	log.Info().Msg(url)
 	data, err := utils.GetResponseBody(url)
 	utils.PanicIfNotNil(err)
 	var dataDashboard []Dashboard
@@ -141,7 +143,7 @@ func VerifyDashboards(folderId int64, expectedName []string, t *testing.T) {
 	utils.PanicIfNotNil(err)
 	var actualNames []string
 	var notFoundList []string
-	log.Println(folderId)
+	log.Info().Int64("folderId", folderId).Msg("Folder details")
 	for _, values := range dataDashboard {
 		actualNames = append(actualNames, values.Title)
 	}
@@ -151,7 +153,7 @@ func VerifyDashboards(folderId int64, expectedName []string, t *testing.T) {
 		}
 	}
 	if len(notFoundList) > 0 {
-		log.Println("The following dashboards were not imported successfully.")
+		log.Info().Msg("The following dashboards were not imported successfully.")
 		assert.Fail(t, fmt.Sprintf("One or more dashboards %s were missing/ not imported", notFoundList))
 	}
 }

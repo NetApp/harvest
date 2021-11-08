@@ -6,9 +6,21 @@ import (
 	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
+	"gopkg.in/yaml.v3"
+	"io/ioutil"
 	"net/url"
 	"time"
 )
+
+type GrafanaDb struct {
+	Id        int64      `yaml:"apiVersion"`
+	Providers []Provider `yaml:"providers"`
+}
+
+type Provider struct {
+	Name       string `yaml:"name"`
+	FolderName string `yaml:"folder"`
+}
 
 func HasValidData(query string) bool {
 	return HasMinRecord(query, -1) // to make sure that there are no syntax error
@@ -56,4 +68,17 @@ func AssertIfNotPresent(query string) {
 		time.Sleep(30 * time.Second)
 	}
 	panic("Data for counter " + query + " not found after 8 min. Check Workload counters are uncommented from conf/zapiperf/default.yml")
+}
+
+func GetFolderNameFromYml(filePath string) string {
+	var yamlData GrafanaDb
+	yamlFile, err := ioutil.ReadFile(filePath)
+	utils.PanicIfNotNil(err)
+	err = yaml.Unmarshal(yamlFile, &yamlData)
+	utils.PanicIfNotNil(err)
+	if len(yamlData.Providers) == 0 {
+		log.Error().Msg("No providers found at " + filePath)
+		panic("No providers found at " + filePath)
+	}
+	return yamlData.Providers[0].FolderName
 }
