@@ -190,6 +190,9 @@ def void setupWorkspace() {
     wget --quiet -O go.tar.gz "https://dl.google.com/go/$(curl https://golang.org/VERSION?m=text).linux-amd64.tar.gz"
     rm -rf /usr/local/go && tar -C /usr/local -xzf ./go.tar.gz
     git clone --single-branch --branch $BRANCH https://github.com/NetApp/harvest.git
+    cp /u/mpeg/harvest/harvest_cert.yml $WORKSPACE/harvest/integration/test/
+    cp /u/mpeg/harvest/harvest.yml $WORKSPACE/harvest/integration/test/
+    ls -ltr $WORKSPACE/harvest/integration/test/
 '''
 }
 

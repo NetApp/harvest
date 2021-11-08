@@ -38,7 +38,7 @@ func GetConfigDir() string {
 	if len(value) > 0 {
 		return value
 	}
-	return "/u/cdurai/harvest"
+	return "/u/mpeg/harvest"
 }
 
 func Exec(dir string, command string, arg ...string) string {
