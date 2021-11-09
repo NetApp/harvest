@@ -101,6 +101,7 @@ docker-compose -f prom-stack.yml -f harvest-compose.yml down
 To upgrade Harvest, use the `restart` command - a newer image of Harvest will be pulled if available.
 
 ```
+docker pull rahulguptajss/harvest
 docker-compose -f prom-stack.yml -f harvest-compose.yml restart
 ```
 
