@@ -111,19 +111,19 @@ docker-compose -f prom-stack.yml -f harvest-compose.yml restart
 
 Execute below commands to run harvest artifacts in kubernetes
 
-1. ```bin/harvest generate docker full -p --output harvest-compose.yml```
-2. ```kompose convert -f harvest-compose.yml -f prom-stack.yml -o kub.yaml --volumes hostPath```
-3. ```kubectl apply -f kub.yaml```
+1. ```bin/harvest generate docker full --port --output harvest-compose.yml```
+2. ```kompose convert --file harvest-compose.yml --file prom-stack.yml --out kub.yaml --volumes hostPath```
+3. ```kubectl apply --filename kub.yaml```
 
 #### Stop all containers
 
-```kubectl delete -f kub.yaml```
+```kubectl delete --filename kub.yaml```
 
 ### Helm Chart
 
 Generate helm charts with below command
 
 ```
-kompose convert -f harvest-compose.yml -f prom-stack.yml -c --volumes hostPath
+kompose convert --file harvest-compose.yml --file prom-stack.yml --chart --volumes hostPath
 ```
 
