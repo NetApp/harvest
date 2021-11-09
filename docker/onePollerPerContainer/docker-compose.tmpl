@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
 {{range .Pollers}}
-  {{ .PollerName }}:
+  {{ .ServiceName }}:
     image: {{ .Image }}
     container_name: {{ .ContainerName }}
     restart: unless-stopped

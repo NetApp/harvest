@@ -104,3 +104,17 @@ To upgrade Harvest, use the `restart` command - a newer image of Harvest will be
 docker-compose -f prom-stack.yml -f harvest-compose.yml restart
 ```
 
+## Kubernetes Deployment
+
+### Requirements
+- Kompose: `v1.25` or higher https://github.com/kubernetes/kompose/
+
+Execute below commands to run harvest artifacts in kubernetes
+
+1. ```bin/harvest generate docker full -p --output harvest-compose.yml```
+2. ```kompose convert -f harvest-compose.yml -f prom-stack.yml -o kub.yaml --volumes hostPath```
+3. ```kubectl apply -f kub.yaml```
+
+#### Stop all containers
+
+```kubectl delete -f kub.yaml```

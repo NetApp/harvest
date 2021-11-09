@@ -9,10 +9,13 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strings"
 	"text/template"
 )
 
 type PollerInfo struct {
+	ServiceName   string
 	PollerName    string
 	Port          int
 	ConfigFile    string
@@ -93,6 +96,11 @@ func generateDockerCompose(path string) {
 	generateDocker(path, harvest)
 }
 
+func normalizeContainerNames(name string) string {
+	re := regexp.MustCompile("[._]")
+	return strings.ToLower(re.ReplaceAllString(name, "-"))
+}
+
 func generateDocker(path string, kind int) {
 	pollerTemplate := PollerTemplate{}
 	err := conf.LoadHarvestConfig(path)
@@ -112,18 +120,19 @@ func generateDocker(path string, kind int) {
 	for _, v := range conf.Config.PollersOrdered {
 		port, _ := conf.GetPrometheusExporterPorts(v)
 		pollerInfo := PollerInfo{
+			ServiceName:   normalizeContainerNames(v),
 			PollerName:    v,
 			ConfigFile:    configFilePath,
 			Port:          port,
 			LogLevel:      opts.loglevel,
 			Image:         opts.image,
-			ContainerName: "poller_" + v + "_v" + version.VERSION,
+			ContainerName: normalizeContainerNames("poller_" + v + "_v" + version.VERSION),
 			ShowPorts:     kind == harvest || opts.showPorts,
 			IsFull:        kind == full,
 			TemplateDir:   templateDirPath,
 		}
 		pollerTemplate.Pollers = append(pollerTemplate.Pollers, pollerInfo)
-		filesd = append(filesd, fmt.Sprintf("- targets: ['%s:%d']", pollerInfo.ContainerName, pollerInfo.Port))
+		filesd = append(filesd, fmt.Sprintf("- targets: ['%s:%d']", pollerInfo.ServiceName, pollerInfo.Port))
 	}
 
 	t, err := template.New("docker-compose.tmpl").ParseFiles("docker/onePollerPerContainer/docker-compose.tmpl")
