@@ -36,8 +36,8 @@ type Dashboard struct {
 	FolderId    int64  `json:"folderId"`
 }
 
-const cDotFolder = "Harvest 21.11 - cDOT"
-const sevenModeFolder = "Harvest 21.11 - 7-mode"
+const cDotFolder = "Harvest main - cDOT"
+const sevenModeFolder = "Harvest main - 7-mode"
 
 func (suite *DashboardImportTestSuite) SetupSuite() {
 	log.Println("Verify Grafana and Prometheus are configured")
