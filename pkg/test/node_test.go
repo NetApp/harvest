@@ -93,20 +93,6 @@ func TestNode_MergeCollector(t *testing.T) {
 		t.Errorf("got %v, want %v", got1, want1)
 	}
 
-	// plugins labelagent add new child to existing plugin
-	want2 := 2
-	got2 := 0
-	counters = defaultTemplate.GetChildS("plugins").GetChildS("LabelAgent").GetChildS("value_mapping")
-	if counters != nil {
-		for range counters.GetChildren() {
-			got2 += 1
-		}
-	}
-
-	if got2 != want2 {
-		t.Errorf("got %v, want %v", got2, want2)
-	}
-
 	// plugins labelagent add same child to existing plugin
 	want3 := 1
 	got3 := 0
@@ -226,24 +212,10 @@ func TestNode_MergeCollectorOld(t *testing.T) {
 	customTemplate.PreprocessTemplate()
 	defaultTemplate.Merge(customTemplate, nil)
 
-	// plugins labelagent add new child to existing plugin
-	want2 := 2
-	got2 := 0
-	counters := defaultTemplate.GetChildS("plugins").GetChildS("LabelAgent").GetChildS("value_mapping")
-	if counters != nil {
-		for range counters.GetChildren() {
-			got2 += 1
-		}
-	}
-
-	if got2 != want2 {
-		t.Errorf("got %v, want %v", got2, want2)
-	}
-
 	// plugins labelagent add same child to existing plugin
 	want3 := 1
 	got3 := 0
-	counters = defaultTemplate.GetChildS("plugins").GetChildS("LabelAgent").GetChildS("value_to_num")
+	counters := defaultTemplate.GetChildS("plugins").GetChildS("LabelAgent").GetChildS("value_to_num")
 	if counters != nil {
 		for range counters.GetChildren() {
 			got3 += 1

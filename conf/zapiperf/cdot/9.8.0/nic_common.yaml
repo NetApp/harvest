@@ -30,8 +30,6 @@ override:
 plugins:
   - Nic
   - LabelAgent:
-    value_mapping:
-      - status state up `1`
     # metric label zapi_value rest_value `default_value`
     value_to_num:
       - new_status state up up `0`

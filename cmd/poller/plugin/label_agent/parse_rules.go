@@ -23,7 +23,6 @@ func (me *LabelAgent) parseRules() int {
 	me.excludeContainsRules = make([]excludeContainsRule, 0)
 	me.excludeRegexRules = make([]excludeRegexRule, 0)
 	me.splitPairsRules = make([]splitPairsRule, 0)
-	me.valueMappingRules = make([]valueMappingRule, 0)
 	me.valueToNumRules = make([]valueToNumRule, 0)
 
 	for _, c := range me.Params.GetChildren() {
@@ -53,8 +52,6 @@ func (me *LabelAgent) parseRules() int {
 				me.parseExcludeContainsRule(rule)
 			case "exclude_regex":
 				me.parseExcludeRegexRule(rule)
-			case "value_mapping":
-				me.parseValueMappingRule(rule)
 			case "value_to_num":
 				me.parseValueToNumRule(rule)
 			default:
@@ -111,7 +108,6 @@ func (me *LabelAgent) parseRules() int {
 		count += len(me.excludeRegexRules)
 	}
 
-	count += len(me.valueMappingRules)
 	count += len(me.valueToNumRules)
 
 	return count
@@ -375,48 +371,6 @@ func (me *LabelAgent) parseExcludeRegexRule(rule string) {
 	} else {
 		me.Logger.Error().Stack().Err(nil).Msgf("(exclude_regex) rule definition [%s] should have two fields", rule)
 	}
-}
-
-type valueMappingRule struct {
-	metric       string
-	label        string
-	defaultValue uint8
-	hasDefault   bool
-	mapping      map[string]uint8
-}
-
-// example rule:
-// status state ok,pending,failed `8`
-// will create a new metric "status" of type uint8
-// if value of label "state" is any of ok,pending,failed
-// the metric value will be respectively 0, 1 or 2
-
-func (me *LabelAgent) parseValueMappingRule(rule string) {
-	if fields := strings.Fields(rule); len(fields) == 3 || len(fields) == 4 {
-		r := valueMappingRule{metric: fields[0], label: fields[1]}
-		r.mapping = make(map[string]uint8)
-		for i, v := range strings.Split(fields[2], ",") {
-			r.mapping[v] = uint8(i)
-		}
-
-		if len(fields) == 4 {
-
-			fields[3] = strings.TrimPrefix(strings.TrimSuffix(fields[3], "`"), "`")
-
-			if v, err := strconv.ParseUint(fields[3], 10, 8); err != nil {
-				me.Logger.Error().Stack().Err(err).Msgf("(value_mapping) parse default value (%s): ", fields[3])
-				return
-			} else {
-				r.hasDefault = true
-				r.defaultValue = uint8(v)
-			}
-		}
-
-		me.valueMappingRules = append(me.valueMappingRules, r)
-		me.Logger.Debug().Msgf("(value_mapping) parsed rule [%v]", r)
-		return
-	}
-	me.Logger.Warn().Msgf("(value_mapping) rule has invalid format [%s]", rule)
 }
 
 type valueToNumRule struct {
