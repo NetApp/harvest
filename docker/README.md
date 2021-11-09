@@ -115,6 +115,14 @@ Execute below commands to run harvest artifacts in kubernetes
 2. ```kompose convert -f harvest-compose.yml -f prom-stack.yml -o kub.yaml --volumes hostPath```
 3. ```kubectl apply -f kub.yaml```
 
+### Helm Chart
+
+Generate helm charts with below command
+
+```
+kompose convert -f harvest-compose.yml -f prom-stack.yml -c --volumes hostPath
+```
+
 #### Stop all containers
 
 ```kubectl delete -f kub.yaml```
