@@ -29,7 +29,7 @@ import (
 
 const (
 	clientTimeout           = 5
-	harvestRelease          = "21.11"
+	harvestRelease          = "main"
 	grafanaFolderTitle      = "Harvest " + harvestRelease + " - cDOT"
 	grafana7modeFolderTitle = "Harvest " + harvestRelease + " - 7-mode"
 	grafanaDataSource       = "Prometheus"
