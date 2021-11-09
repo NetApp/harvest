@@ -18,7 +18,6 @@ counters:
 
 plugins:
   - LabelAgent:
-    value_mapping: status online true `1`
     # metric label zapi_value rest_value `default_value`
     value_to_num: new_status online true true `0`
     # path is something like "/vol/vol_georg_fcp401/lun401"

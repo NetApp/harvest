@@ -91,7 +91,7 @@ The plugin tries to intelligently aggregate metrics based on a few rules:
   - metric name has prefix `average_` or `avg_`
   - metric has property (`metric.GetProperty()`) `percent` or `average`
 - **Weighted Average** - applied if metric has property `average` and suffix `_latency` and if there is a matching `_ops` metric. (This is currently only matching to ZapiPerf metrics, which use the Property field of metrics.)
-- **Ignore** - metrics created by some plugins, such as value_mapping by LabelAgent
+- **Ignore** - metrics created by some plugins, such as value_to_num by LabelAgent
 
 # LabelAgent
 LabelAgent allows to manipulate instance labels based on rules. You can define multiple rules, here is an example of what you could add to the yaml file of a collector:
@@ -107,17 +107,22 @@ plugins:
 
 Notice that the rules are executed in the same order as you've added them. List of currently available rules:
 
-- [split](#split)
-- [split_regex](#split_regex)
-- [split_pairs](#split_pairs)
-- [join](#join)
-- [replace](#replace)
-- [replace_regex](#replace_regex)
-- [exclude_equals](#exclude_equals)
-- [exclude_contains](#exclude_contains)
-- [exclude_regex](#exclude_regex)
-- [value_mapping](#value_mapping)
-- [value_to_num](#value_to_num)
+- [Built-in Plugins](#built-in-plugins)
+- [Aggregator](#aggregator)
+    - [Rule syntax](#rule-syntax)
+    - [Aggregation rules](#aggregation-rules)
+- [LabelAgent](#labelagent)
+  - [split](#split)
+  - [split_regex](#split_regex)
+  - [split_pairs](#split_pairs)
+  - [join](#join)
+  - [replace](#replace)
+  - [replace_regex](#replace_regex)
+  - [exclude_equals](#exclude_equals)
+  - [exclude_contains](#exclude_contains)
+  - [exclude_regex](#exclude_regex)
+  - [value_mapping](#value_mapping)
+  - [value_to_num](#value_to_num)
 
 ## split
 
@@ -298,43 +303,14 @@ exclude_equals: vol_type `flexgroup_`
 
 ## value_mapping
 
-value_mapping is deprecated and you should always use value_to_num mapping.
-
-Maps values of a given label to a numeric metric (of type `uint8`). This is sometimes handy to manipulate the data in the DB or Grafana (e.g. change color based on status or create alert).
-
-Note that you don't define the numeric values yourself, instead, you only provide the possible (expected) values, the plugin will map each value to its index in the rule.
-
-Rule syntax:
-
-```yaml
-value_mapping: METRIC LABEL VALUE1,VALUE2 `N`
-# maps values of LABEL to 0 or 1 if it is VALUE1 or VALUE2 (respectively)
-# otherwise value of METRIC is set to N
-```
-The default value `N` is optional, if no default value is given and the label value does not match to any of the given values, the metric value will not be set.
-
-Examples:
-
-```yaml
-value_mapping: status state up,sleeping,unknown,down
-# a new metric will be crreated with the name "status"
-# if an instance has label "state" with value "up", the metric value will be 0,
-# if it's "sleeping", the value will be set to 1, etc.
-```
-
-```yaml
-value_mapping: status state up `1`
-# metric value will be set to 0 if "state" is "up", otherwise to **1**
-```
-
+value_mapping was deprecated in 21.11 and removed in 22.02. Use [value_to_num mapping](#value_to_num) instead.
 
 ## value_to_num
 
-This rule is similar to value_mapping but in this mapping, healthy is mapped to 1 and all non healthy values are mapped to 0.
+Maps values of a given label to a numeric metric (of type `uint8`).
+This rule maps values of a given label to a numeric metric (of type `unit8`). Healthy is mapped to 1 and all non-healthy values are mapped to 0.
 
-Going further, We should always use value_to_num mapping as value_mapping is deprecated.
-
-Maps values of a given label to a numeric metric (of type `uint8`). This is sometimes handy to manipulate the data in the DB or Grafana (e.g. change color based on status or create alert).
+This is handy to manipulate the data in the DB or Grafana (e.g. change color based on status or create alert).
 
 Note that you don't define the numeric values yourself, instead, you only provide the possible (expected) values, the plugin will map each value to its index in the rule.
 
