@@ -303,10 +303,10 @@ object:                   spare
 collect_only_labels:      true
 counters:
   aggr-spare-disk-info:
-    - ^^disk                                 # creates label aggr-disk
-    - ^disk-type                             # creates label aggr-disk-type
-    - ^is-disk-zeroed	 => is_disk_zeroed     # creates label is_disk_zeroed
-    - ^^original-owner   => original_owner   # creates label original_owner
+    - ^^disk                                # creates label aggr-disk
+    - ^disk-type                            # creates label aggr-disk-type
+    - ^is-disk-zeroed   => is_disk_zeroed   # creates label is_disk_zeroed
+    - ^^original-owner  => original_owner   # creates label original_owner
 export_options:
   instance_keys:
     - disk
