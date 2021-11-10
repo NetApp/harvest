@@ -3,7 +3,6 @@ package generate
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"goharvest2/cmd/harvest/version"
 	"goharvest2/pkg/color"
 	"goharvest2/pkg/conf"
 	"io"
@@ -126,7 +125,7 @@ func generateDocker(path string, kind int) {
 			Port:          port,
 			LogLevel:      opts.loglevel,
 			Image:         opts.image,
-			ContainerName: normalizeContainerNames("poller_" + v + "_v" + version.VERSION),
+			ContainerName: normalizeContainerNames("poller_" + v),
 			ShowPorts:     kind == harvest || opts.showPorts,
 			IsFull:        kind == full,
 			TemplateDir:   templateDirPath,
