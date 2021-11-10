@@ -60,7 +60,7 @@ pipeline {
                 wget -q -O go.tar.gz "https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz"
                 rm -rf /usr/local/go && tar -C /usr/local -xzf go.tar.gz
                 '''
-                updateStatus(env.COMMIT_ID,"pending",env.BUILD_URL, "Harvest CI is running", env.GIT_REPO_STATUS_TOKEN, env.JOB_NAME)
+                //updateStatus(env.COMMIT_ID,"pending",env.BUILD_URL, "Harvest CI is running", env.GIT_REPO_STATUS_TOKEN, env.JOB_NAME)
             }
         }
 
@@ -187,13 +187,43 @@ pipeline {
     }
     post {
         failure {
-            updateStatus(env.COMMIT_ID,"failure",env.BUILD_URL , "Harvest CI has completed", env.GIT_REPO_STATUS_TOKEN, env.JOB_NAME)
+            //updateStatus(env.COMMIT_ID,"failure",env.BUILD_URL , "Harvest CI has completed", env.GIT_REPO_STATUS_TOKEN, env.JOB_NAME)
+            echo "Commit Id : ${env.CHANGE_ID}"
+            if(env.CHANGE_ID) {
+                office365ConnectorSend (
+                    status: "SUCCESS",
+                    webhookUrl: "${TEAM_HOOK}",
+                    color: '00ff00',
+                    message: "<b>
+                    <font color='green'>
+                    PR : <a href='https://github.com/NetApp/harvest/pull/${env.CHANGE_ID}'>${env.CHANGE_ID}<br> Job: ${JOB_NAME} - ${BUILD_DISPLAY_NAME}</font></b>")
+            }
         }
         success {
-            updateStatus(env.COMMIT_ID,"success",env.BUILD_URL, "Harvest CI has completed", env.GIT_REPO_STATUS_TOKEN, env.JOB_NAME)
+            //updateStatus(env.COMMIT_ID,"success",env.BUILD_URL, "Harvest CI has completed", env.GIT_REPO_STATUS_TOKEN, env.JOB_NAME)
+            echo "Commit Id : ${env.CHANGE_ID}"
+            if(env.CHANGE_ID) {
+                office365ConnectorSend (
+                    status: "Failed",
+                    webhookUrl: "${TEAM_HOOK}",
+                    color: '00ff00',
+                    message: "<b>
+                    <font color='red'>
+                    PR : <a href='https://github.com/NetApp/harvest/pull/${env.CHANGE_ID}'>${env.CHANGE_ID}<br> Job: ${JOB_NAME} - ${BUILD_DISPLAY_NAME}</font></b>")
+            }
         }
         aborted {
-            updateStatus(env.COMMIT_ID,"error",env.BUILD_URL, "Harvest CI has been aborted", env.GIT_REPO_STATUS_TOKEN, env.JOB_NAME)
+            //updateStatus(env.COMMIT_ID,"error",env.BUILD_URL, "Harvest CI has been aborted", env.GIT_REPO_STATUS_TOKEN, env.JOB_NAME)
+            echo "Commit Id : ${env.CHANGE_ID}"
+            if(env.CHANGE_ID) {
+                office365ConnectorSend (
+                    status: "Aborted",
+                    webhookUrl: "${TEAM_HOOK}",
+                    color: '00ff00',
+                    message: "<b>
+                    <font color='gray'>
+                    PR : <a href='https://github.com/NetApp/harvest/pull/${env.CHANGE_ID}'>${env.CHANGE_ID}<br> Job: ${JOB_NAME} - ${BUILD_DISPLAY_NAME}</font></b>")
+            }
         }
     }
 }
