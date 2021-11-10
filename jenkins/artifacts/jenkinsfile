@@ -191,12 +191,10 @@ pipeline {
             echo "Commit Id : ${env.CHANGE_ID}"
             if(env.CHANGE_ID) {
                 office365ConnectorSend (
-                    status: "SUCCESS",
+                    status: "Failed",
                     webhookUrl: "${TEAM_HOOK}",
                     color: '00ff00',
-                    message: "<b>
-                    <font color='green'>
-                    PR : <a href='https://github.com/NetApp/harvest/pull/${env.CHANGE_ID}'>${env.CHANGE_ID}<br> Job: ${JOB_NAME} - ${BUILD_DISPLAY_NAME}</font></b>")
+                    message: "<b> <font color='red'> PR : <a href='https://github.com/NetApp/harvest/pull/${env.CHANGE_ID}'>${env.CHANGE_ID}<br> Job: ${JOB_NAME} - ${BUILD_DISPLAY_NAME}</font></b>")
             }
         }
         success {
@@ -204,12 +202,10 @@ pipeline {
             echo "Commit Id : ${env.CHANGE_ID}"
             if(env.CHANGE_ID) {
                 office365ConnectorSend (
-                    status: "Failed",
+                    status: "SUCCESS",
                     webhookUrl: "${TEAM_HOOK}",
                     color: '00ff00',
-                    message: "<b>
-                    <font color='red'>
-                    PR : <a href='https://github.com/NetApp/harvest/pull/${env.CHANGE_ID}'>${env.CHANGE_ID}<br> Job: ${JOB_NAME} - ${BUILD_DISPLAY_NAME}</font></b>")
+                    message: "<b> <font color='green'> PR : <a href='https://github.com/NetApp/harvest/pull/${env.CHANGE_ID}'>${env.CHANGE_ID}<br> Job: ${JOB_NAME} - ${BUILD_DISPLAY_NAME}</font></b>")
             }
         }
         aborted {
@@ -220,9 +216,7 @@ pipeline {
                     status: "Aborted",
                     webhookUrl: "${TEAM_HOOK}",
                     color: '00ff00',
-                    message: "<b>
-                    <font color='gray'>
-                    PR : <a href='https://github.com/NetApp/harvest/pull/${env.CHANGE_ID}'>${env.CHANGE_ID}<br> Job: ${JOB_NAME} - ${BUILD_DISPLAY_NAME}</font></b>")
+                    message: "<b> <font color='gray'> PR : <a href='https://github.com/NetApp/harvest/pull/${env.CHANGE_ID}'>${env.CHANGE_ID}<br> Job: ${JOB_NAME} - ${BUILD_DISPLAY_NAME}</font></b>")
             }
         }
     }
