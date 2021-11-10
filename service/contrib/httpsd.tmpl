@@ -1,0 +1,14 @@
+[Unit]
+Description="NetApp Harvest HTTPSD"
+PartOf=harvest.target
+
+[Service]
+User=harvest
+Group=harvest
+Type=simple
+Restart=on-failure
+WorkingDirectory=/opt/harvest
+ExecStart=/opt/harvest/bin/harvest --config {{.}} admin start
+
+[Install]
+WantedBy=harvest.target

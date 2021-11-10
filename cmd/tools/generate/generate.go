@@ -35,6 +35,7 @@ type options struct {
 	showPorts   bool
 	outputPath  string
 	templateDir string
+	httpsdPath  string
 }
 
 var opts = &options{
@@ -184,6 +185,7 @@ func generateSystemd(path string) {
 	println("Save the following to " + color.Colorize("/etc/systemd/system/harvest.target", color.Green) +
 		" or " + color.Colorize("| sudo tee /etc/systemd/system/harvest.target", color.Green))
 	println("and then run " + color.Colorize("systemctl daemon-reload", color.Green))
+	writeAdminSystemd(path)
 	// reorder list of pollers so that unix collectors are last, see https://github.com/NetApp/harvest/issues/643
 	pollers := make([]string, 0)
 	unixPollers := make([]string, 0)
@@ -219,6 +221,29 @@ func generateSystemd(path string) {
 	}
 }
 
+func writeAdminSystemd(configFp string) {
+	if opts.httpsdPath == "" {
+		return
+	}
+	t, err := template.New("httpsd.tmpl").ParseFiles("service/contrib/httpsd.tmpl")
+	if err != nil {
+		panic(err)
+	}
+	// write httpsd.target to file
+	f, err := os.Create(opts.httpsdPath)
+	if err != nil {
+		panic(err)
+	}
+	defer silentClose(f)
+	configAbsPath, err := filepath.Abs(configFp)
+	if err != nil {
+		configAbsPath = "/opt/harvest/harvest.yml"
+	}
+	println(color.Colorize("✓", color.Green) +
+		" HTTP SD service file created to config: " + color.Colorize(configAbsPath, color.Yellow))
+	err = t.Execute(f, configAbsPath)
+}
+
 func init() {
 	Cmd.AddCommand(systemdCmd)
 	Cmd.AddCommand(dockerCmd)
@@ -238,4 +263,7 @@ func init() {
 	_ = fullCmd.MarkPersistentFlagRequired("output")
 	fFlags.StringVar(&opts.filesdPath, "filesdpath", "docker/prometheus/harvest_targets.yml",
 		"Prometheus file_sd target path. Written when the --output is set")
+
+	systemdCmd.PersistentFlags().StringVar(&opts.httpsdPath, "httpsd", "",
+		"Output file path of Harvest admin node service file.")
 }
