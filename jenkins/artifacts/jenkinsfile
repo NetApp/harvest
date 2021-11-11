@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+
 pipeline {
     agent {label 'buildserver'}
 
@@ -60,7 +62,6 @@ pipeline {
                 wget -q -O go.tar.gz "https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz"
                 rm -rf /usr/local/go && tar -C /usr/local -xzf go.tar.gz
                 '''
-                //updateStatus(env.COMMIT_ID,"pending",env.BUILD_URL, "Harvest CI is running", env.GIT_REPO_STATUS_TOKEN, env.JOB_NAME)
             }
         }
 
@@ -81,6 +82,7 @@ pipeline {
                sh '''
                git clone --single-branch --branch $BRANCH https://github.com/NetApp/harvest.git
                 '''
+                sh 'printenv'
             }
         }
 
@@ -187,43 +189,13 @@ pipeline {
     }
     post {
         failure {
-            //updateStatus(env.COMMIT_ID,"failure",env.BUILD_URL , "Harvest CI has completed", env.GIT_REPO_STATUS_TOKEN, env.JOB_NAME)
-            echo "Commit Id : ${env.CHANGE_ID}"
-            script {
-                if (env.CHANGE_ID) {
-                    office365ConnectorSend (
-                        status: "Failed",
-                        webhookUrl: "${TEAM_HOOK}",
-                        color: '00ff00',
-                        message: "<b> <font color='red'> PR : <a href='https://github.com/NetApp/harvest/pull/${env.CHANGE_ID}'>${env.CHANGE_ID}<br> Job: ${JOB_NAME} - ${BUILD_DISPLAY_NAME}</font></b>")
-                }
-            }
+            sendNotification(env.COMMIT_ID, "FAILED", "red")
         }
         success {
-            //updateStatus(env.COMMIT_ID,"success",env.BUILD_URL, "Harvest CI has completed", env.GIT_REPO_STATUS_TOKEN, env.JOB_NAME)
-            echo "Commit Id : ${env.CHANGE_ID}"
-            script {
-                if (env.CHANGE_ID) {
-                    office365ConnectorSend (
-                        status: "SUCCESS",
-                        webhookUrl: "${TEAM_HOOK}",
-                        color: '00ff00',
-                        message: "<b> <font color='green'> PR : <a href='https://github.com/NetApp/harvest/pull/${env.CHANGE_ID}'>${env.CHANGE_ID}<br> Job: ${JOB_NAME} - ${BUILD_DISPLAY_NAME}</font></b>")
-                }
-             }
+            sendNotification(env.COMMIT_ID, "SUCCESS", "green")
         }
         aborted {
-            //updateStatus(env.COMMIT_ID,"error",env.BUILD_URL, "Harvest CI has been aborted", env.GIT_REPO_STATUS_TOKEN, env.JOB_NAME)
-            echo "Commit Id : ${env.CHANGE_ID}"
-            script {
-                if (env.CHANGE_ID) {
-                    office365ConnectorSend (
-                        status: "Aborted",
-                        webhookUrl: "${TEAM_HOOK}",
-                        color: '00ff00',
-                        message: "<b> <font color='gray'> PR : <a href='https://github.com/NetApp/harvest/pull/${env.CHANGE_ID}'>${env.CHANGE_ID}<br> Job: ${JOB_NAME} - ${BUILD_DISPLAY_NAME}</font></b>")
-                }
-            }
+            sendNotification(env.COMMIT_ID, "Aborted", "gray")
         }
     }
 }
@@ -244,6 +216,46 @@ def getBranchName(gitBranchName, paramBranchName) {
         return gitBranchName
     }
     return paramBranchName
+}
+
+def void sendNotification(def commitId, def status, def color) {
+    def prLink = ""
+    def number = getPRNumber()
+    if (number !=null) {
+        office365ConnectorSend (
+          status: status,
+          webhookUrl: "${TEAM_HOOK}",
+          color: color,
+          message: "<b> <font color='${color}'> PR : <a href='https://github.com/NetApp/harvest/pull/${number}'>https://github.com/NetApp/harvest/pull/${number}</a><br> Job: ${JOB_NAME} - ${BUILD_DISPLAY_NAME}</font></b>")
+    } else {
+        office365ConnectorSend (
+            status: status,
+            webhookUrl: "${TEAM_HOOK}",
+            color: color,
+            message: "<b> <font color='${color}'> Job: ${JOB_NAME} - ${BUILD_DISPLAY_NAME}</font></b>")
+    }
+}
+
+def  getPRNumber() {
+    def prNumber = null
+    def get = new URL("https://api.github.com/repos/NetApp/harvest/pulls").openConnection();
+    def getRC = get.getResponseCode();
+    println(getRC);
+    if (getRC.equals(200)) {
+        def responseText =get.getInputStream().getText()
+        def list = (List<Map<Object,Object>>) new JsonSlurper().parseText(responseText)
+        list.any { eachMap ->
+            def number = eachMap.get("number")
+            def refBranchName = eachMap.get("head").get("ref")
+            println("Number : ${number} RefBranch : ${refBranchName}")
+            if ("${BRANCH_NAME}".trim().equals(refBranchName.trim())){
+                prNumber = number
+                return true
+            }
+        }
+    }
+    println("PR number : ${prNumber}")
+    return prNumber
 }
 
 def void updateStatus(def commitId, def statusMsg, def buildUrl, def description, def gitToken,
