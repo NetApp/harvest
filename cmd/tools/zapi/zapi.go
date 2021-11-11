@@ -24,7 +24,7 @@ const (
 )
 
 var (
-	maxSearchDepth  = 1
+	maxSearchDepth  = 5
 	validShowArgs   = []string{"data", "apis", "attrs", "objects", "instances", "counters", "counter", "system"}
 	validExportArgs = []string{"attrs", "counters"}
 	outputFormats   = []string{"xml", "color"}
