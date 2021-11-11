@@ -1,5 +1,3 @@
-import groovy.json.JsonSlurper
-
 pipeline {
     agent {label 'buildserver'}
 
@@ -25,7 +23,7 @@ pipeline {
         RELEASE =sh (returnStdout: true, script: """
         echo \"${params.RELEASE}\"
         """).trim()
-        BRANCH = getBranchName(env.GIT_BRANCH, params.BRANCH)
+        BRANCH = getBranchName(env.CHANGE_BRANCH, params.BRANCH)
 		ASUP_MAKE_TARGET =sh (returnStdout: true, script: """
         echo \"${params.ASUP_MAKE_TARGET}\"
         """).trim()
@@ -50,9 +48,8 @@ pipeline {
             }
         }
 
-        stage('clean workspace') {
+        stage('clean system') {
             steps {
-                cleanWs()
                 stopAndRemoveDockers()
             }
         }
@@ -78,18 +75,24 @@ pipeline {
         }
 
         stage('Git Clone Harvest') {
+            // this stage will be invoked for non PR builds
+            when {
+                expression {
+                    return env.CHANGE_ID == null;
+                }
+            }
             steps {
+               cleanWs()
                sh '''
-               git clone --single-branch --branch $BRANCH https://github.com/NetApp/harvest.git
+                git clone --single-branch --branch $BRANCH https://github.com/NetApp/harvest.git .
                 '''
-                sh 'printenv'
             }
         }
 
         stage('Build Harvest RPM/DEB') {
             steps {
                sh '''
-               cd $harvestPath
+               #cd $harvestPath
                targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
                rm -rf ./dist
                export PATH=$PATH:/usr/local/go/bin
@@ -106,7 +109,7 @@ pipeline {
         stage('Build Harvest Tar gz') {
             steps {
                sh '''
-               cd $harvestPath
+               #cd $harvestPath
                export PATH=$PATH:/usr/local/go/bin
                targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
                rm -rf dist
@@ -120,7 +123,7 @@ pipeline {
         stage('Build alpine Autosupport binary') {
            steps {
                sh '''
-               cd $harvestPath
+               #cd $harvestPath
                rm -rf ./autosupport/asup
                targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
                docker run --rm -v "$PWD":/$harvestPath -w /$harvestPath golang:${GO_VERSION}-alpine sh -c "apk add --virtual build-dependencies build-base gcc make bash git && export PATH=$PATH:/usr/local/go/bin && make asup VERSION=$VERSION RELEASE=$RELEASE ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET GIT_TOKEN=$GIT_TOKEN"
@@ -133,7 +136,7 @@ pipeline {
                 steps {
                   withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
                     sh '''
-                    cd $harvestPath
+                    #cd $harvestPath
                     targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
                     docker login
                     docker build -f docker/onePollerPerContainer/Dockerfile --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET --build-arg GIT_TOKEN=$GIT_TOKEN  -t ${imageName}:latest -t ${imageName}:$VERSION-$RELEASE . --no-cache
@@ -164,8 +167,8 @@ pipeline {
               '''
              script {
              if (OVERWRITE_DOCKER_LATEST_TAG == 'true') {
-               sh 'docker push ${imageName}:latest'
-             }
+                sh 'docker push ${imageName}:latest'
+                }
              }
             }
           }
@@ -189,13 +192,13 @@ pipeline {
     }
     post {
         failure {
-            sendNotification(env.COMMIT_ID, "FAILED", "red")
+            sendNotification("FAILED")
         }
         success {
-            sendNotification(env.COMMIT_ID, "SUCCESS", "green")
+            sendNotification("SUCCESS")
         }
         aborted {
-            sendNotification(env.COMMIT_ID, "Aborted", "gray")
+             sendNotification("Aborted")
         }
     }
 }
@@ -211,52 +214,21 @@ def void stopAndRemoveDockers() {
 
 
 def getBranchName(gitBranchName, paramBranchName) {
-    gitBranchName = gitBranchName.replace('origin/', '')
-    if (gitBranchName?.trim() && gitBranchName != "main") {
-        return gitBranchName
+    if(gitBranchName!=null) {
+        gitBranchName = gitBranchName.replace('origin/', '')
+        if (gitBranchName?.trim() && gitBranchName != "main") {
+            return gitBranchName
+        }
+    }else {
+        return paramBranchName
     }
-    return paramBranchName
 }
 
-def void sendNotification(def commitId, def status, def color) {
-    if("${JOB_NAME}".trim().startsWith("harvest/PR-")) {
-        println("Ignore send notification for PR jobs")
-        return
-    }
-    def prLink = ""
-    def message = "<b> <font color='${color}'> Job: ${JOB_NAME} - ${BUILD_DISPLAY_NAME}</font></b>"
-    def number = getPRNumber()
-    if (number !=null) {
-        message = "<b> <font color='${color}'> PR : <a href='https://github.com/NetApp/harvest/pull/${number}'>https://github.com/NetApp/harvest/pull/${number}</a><br> Job: ${JOB_NAME} - ${BUILD_DISPLAY_NAME}</font></b>"
-    }
+def void sendNotification(def status) {
     office365ConnectorSend (
           status: status,
-          webhookUrl: "${TEAM_HOOK}",
-          color: color,
-          message: message
+          webhookUrl: "${TEAM_HOOK}"
     )
-}
-
-def  getPRNumber() {
-    def prNumber = null
-    def get = new URL("https://api.github.com/repos/NetApp/harvest/pulls").openConnection();
-    def getRC = get.getResponseCode();
-    println(getRC);
-    if (getRC.equals(200)) {
-        def responseText =get.getInputStream().getText()
-        def list = (List<Map<Object,Object>>) new JsonSlurper().parseText(responseText)
-        list.any { eachMap ->
-            def number = eachMap.get("number")
-            def refBranchName = eachMap.get("head").get("ref")
-            println("Number : ${number} RefBranch : ${refBranchName}")
-            if ("${BRANCH_NAME}".trim().equals(refBranchName.trim())){
-                prNumber = number
-                return true
-            }
-        }
-    }
-    println("PR number : ${prNumber}")
-    return prNumber
 }
 
 def void updateStatus(def commitId, def statusMsg, def buildUrl, def description, def gitToken,
