@@ -383,8 +383,8 @@ func (n *Node) Print(depth int) {
 	if len(n.GetContentS()) > 0 && n.GetContentS()[0] != '<' {
 		content = n.GetContentS()
 	}
-	fname := fmt.Sprintf("%s%s%s[%s]%s", strings.Repeat("  ", depth), color.Bold, color.Cyan, name, color.End)
-	fmt.Printf("%-50s - %s%35s%s\n", fname, color.Green, content, color.End)
+	fname := fmt.Sprintf("%s[%s]", strings.Repeat("  ", depth), color.Colorize(name, color.Cyan))
+	fmt.Printf("%-50s - %35s\n", fname, color.Colorize(content, color.Green))
 	for _, child := range n.Children {
 		child.Print(depth + 1)
 	}
