@@ -219,21 +219,22 @@ def getBranchName(gitBranchName, paramBranchName) {
 }
 
 def void sendNotification(def commitId, def status, def color) {
+    if("${JOB_NAME}".trim().startsWith("harvest/PR-")) {
+        println("Ignore send notification for PR jobs")
+        return
+    }
     def prLink = ""
+    def message = "<b> <font color='${color}'> Job: ${JOB_NAME} - ${BUILD_DISPLAY_NAME}</font></b>"
     def number = getPRNumber()
     if (number !=null) {
-        office365ConnectorSend (
+        message = "<b> <font color='${color}'> PR : <a href='https://github.com/NetApp/harvest/pull/${number}'>https://github.com/NetApp/harvest/pull/${number}</a><br> Job: ${JOB_NAME} - ${BUILD_DISPLAY_NAME}</font></b>"
+    }
+    office365ConnectorSend (
           status: status,
           webhookUrl: "${TEAM_HOOK}",
           color: color,
-          message: "<b> <font color='${color}'> PR : <a href='https://github.com/NetApp/harvest/pull/${number}'>https://github.com/NetApp/harvest/pull/${number}</a><br> Job: ${JOB_NAME} - ${BUILD_DISPLAY_NAME}</font></b>")
-    } else {
-        office365ConnectorSend (
-            status: status,
-            webhookUrl: "${TEAM_HOOK}",
-            color: color,
-            message: "<b> <font color='${color}'> Job: ${JOB_NAME} - ${BUILD_DISPLAY_NAME}</font></b>")
-    }
+          message: message
+    )
 }
 
 def  getPRNumber() {
