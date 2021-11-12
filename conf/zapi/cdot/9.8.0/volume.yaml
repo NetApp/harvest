@@ -58,7 +58,15 @@ counters:
       - ^state
       - ^status
 
+    - volume-snapshot-attributes:
+      - ^auto-snapshots-enabled             => auto_snapshots_enabled
+      - ^snapshot-policy
+      - snapshot-count
+
 plugins:
+  Snapshot:
+    objects:
+      - total-schedules
   LabelAgent:
     # metric label zapi_value rest_value `default_value`
     value_to_num:
@@ -80,4 +88,5 @@ export_options:
   instance_labels:
     - state
     - is_sis_volume
+    - snapshot_policy
 

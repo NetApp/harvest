@@ -78,7 +78,7 @@ func (suite *DashboardImportTestSuite) TestCModeDashboardCount() {
 		"NetApp Detail: Disk", "NetApp Detail: LUN", "NetApp Detail: Network", "NetApp Detail: Network  - Details",
 		"NetApp Detail: Network with NVMe/FC", "NetApp Detail: Node", "NetApp Detail: Node - Details",
 		"NetApp Detail: Shelf", "NetApp Detail: SnapMirror", "NetApp Detail: SVM", "NetApp Detail: SVM - Details",
-		"NetApp Detail: Volume", "NetApp Detail: Volume - Details", "NetApp Detail: MetroCluster"}
+		"NetApp Detail: Volume", "NetApp Detail: Volume - Details", "NetApp Detail: MetroCluster", "NetApp Detail: Data Protection"}
 
 	VerifyDashboards(folderId, expectedName, suite.T())
 }
