@@ -1,6 +1,6 @@
 # Containerized Harvest on Linux using Rootless Podman
 
-RHEL 8 ships with [Podman](https://github.com/containers/podman) instead of Docker. There are two ways to run containers with Podman: rootless or with root. Both setups are outlined below. Rootful is easier to setup and seems more reliable. The Podman ecosystem is changing rapidly so the shelf life of these instructions may be short. Make sure you have at least the same [versions](#versions) of the tools listed below. 
+RHEL 8 ships with [Podman](https://github.com/containers/podman) instead of Docker. There are two ways to run containers with Podman: rootless or with root. Both setups are outlined below. The Podman ecosystem is changing rapidly so the shelf life of these instructions may be short. Make sure you have at least the same [versions](#versions) of the tools listed below. 
 
 If you don't want to bother with Podman, you can also install Docker on RHEL 8 and use it to run [Harvest per normal](https://github.com/NetApp/harvest/tree/main/docker).
 
@@ -42,7 +42,7 @@ To run Podman rootless, we'll create a non-root user named: `harvest` to run Har
 usermod --append --groups wheel harvest
 ```
 
-Login with the harvest user, setup the podman.socket, and make sure the curl below works.
+Login with the harvest user, setup the podman.socket, and make sure the curl below works. `su` or `sudo` aren't sufficient, you need to `ssh` into the machine as the harvest user or use `machinectl login`. See [sudo-rootless-podman](https://www.redhat.com/sysadmin/sudo-rootless-podman) for details.
 
 ```bash
 # these must be run as the harvest user
@@ -55,6 +55,13 @@ sudo curl -H "Content-Type: application/json" --unix-socket /var/run/docker.sock
 ```
 
 If the `sudo curl` does not print `OK⏎` troubleshoot before continuing.
+
+Run podman info and make sure `runRoot` points to `/run/user/$UID/containers` (see below). If it doesn't, you'll probably run into problems when restarting the machine. See [errors after rebooting](#errors-after-rebooting).
+
+```bash
+podman info | grep runRoot
+  runRoot: /run/user/1001/containers
+```
 
 ## Running Harvest
 
@@ -103,49 +110,19 @@ PING prometheus (10.88.2.3): 56 data bytes
 64 bytes from 10.88.2.3: seq=0 ttl=42 time=0.059 ms
 64 bytes from 10.88.2.3: seq=1 ttl=42 time=0.065 ms
 ```
-
-After reboot, for reasons I don't understand the `/run/user/$UID/netns/` directory is sometimes missing. Networking won't work if it is missing so create it with
-
-```bash
-mkdir /run/user/$(id -u)/netns/
-```
-
 ### Errors after rebooting
-After restarting the machine, you may see an error like this when running `podman ps`.
-
-One of the ways this can happen is went Podman's `runRoot` is not on a `tmpfs`. Podman stores in-flight (but transitory) data in `runRoot` directory and on reboot, expects that data to be removed. When it isn't, Podman gets confused.
-
-This happens on RHEL 8.4 because the SystemD controlled tmp.mount system is masked. [Details](https://github.com/containers/podman/issues/5306#issuecomment-654681939)
-
-```bash
-systemctl status tmp.mount
-
-● tmp.mount - Temporary Directory (/tmp)
-   Loaded: loaded (/usr/lib/systemd/system/tmp.mount; disabled; vendor preset: disabled)
-   Active: inactive (dead)
-    Where: /tmp
-     What: tmpfs
-```
-
-One way to fix, is rm the run directory after reboot to cleanup the stale Podman data.
-
-```bash
-rm -rf /tmp/run-$(id -u)/ resolve issue without reboot
-```
-
-Verify that the `/run/user/1001/netns/` directory exists, if not, create it
-```
-mkdir /run/user/1001/netns/
-```
+After restarting the machine, I see errors like these when running `podman ps`.
 
 ```
 podman ps -a
 ERRO[0000] error joining network namespace for container 424df6c: error retrieving network namespace at /run/user/1001/netns/cni-5fb97adc-b6ef-17e8-565b-0481b311ba09: failed to Statfs "/run/user/1001/netns/cni-5fb97adc-b6ef-17e8-565b-0481b311ba09": no such file or directory
 ```
 
-Remove this container and try again
-```
-podman rm --force 01809611
+Run `podman info` and make sure `runRoot` points to `/run/user/$UID/containers` (see below). If it instead points to `/tmp/podman-run-$UID` you will likely have problems when restarting the machine. Typically this happens because you used su to become the harvest user or ran podman as root. You can fix this by logging in as the `harvest` user and running `podman system reset`.
+
+```bash
+podman info | grep runRoot
+  runRoot: /run/user/1001/containers
 ```
 
 ### Linger errors
@@ -177,6 +154,7 @@ Red Hat Enterprise Linux release 8.4 (Ootpa)
 
 # References
 - https://github.com/containers/podman
+- https://www.redhat.com/sysadmin/sudo-rootless-podman
 - https://www.redhat.com/sysadmin/podman-docker-compose
 - https://fedoramagazine.org/use-docker-compose-with-podman-to-orchestrate-containers-on-fedora/
 - https://podman.io/getting-started/network.html mentions the need for `podman-plugins`, otherwise rootless containers running in separate containers cannot see each other
