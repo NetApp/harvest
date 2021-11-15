@@ -76,7 +76,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -89,7 +89,7 @@
       "type": "row"
     },
     {
-      "datasource": null,
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -135,7 +135,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(volume_labels{snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{}) )",
+          "expr": "count(volume_labels{snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{})) OR on() vector(0)",
           "instant": false,
           "interval": "",
           "legendFormat": "VOLUMES PROTECTED WITH SNAPSHOT COPIES (LOCAL)",
@@ -143,7 +143,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count(volume_labels{snapshot_policy!=\"\", snapshot_policy!~\"none.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{}) * on (volume, svm) group_right() ( volume_snapshot_reserve_size{} >= 0 and volume_snapshots_size_used{} > 0 and volume_snapshots_size_used{} > volume_snapshot_reserve_size{}))",
+          "expr": "count(volume_labels{snapshot_policy!=\"\", snapshot_policy!~\"none.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{}) * on (volume, svm) group_right() ( volume_snapshot_reserve_size{} >= 0 and volume_snapshots_size_used{} > 0 and volume_snapshots_size_used{} > volume_snapshot_reserve_size{})) OR on() vector(0)",
           "hide": false,
           "instant": false,
           "interval": "",
@@ -231,7 +231,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}) )",
+          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})) OR on() vector(0)",
           "instant": true,
           "interval": "",
           "legendFormat": "protected",
@@ -239,7 +239,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count((volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\", snapshot_policy=~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}) )) ",
+          "expr": "count((volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\", snapshot_policy=~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}))) OR on() vector(0)",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -262,7 +262,7 @@
       "type": "barchart"
     },
     {
-      "datasource": null,
+      "datasource": "Prometheus",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -314,7 +314,7 @@
       },
       "id": 71,
       "options": {
-        "barWidth": 0.52,
+        "barWidth": 0.59,
         "groupWidth": 0.7,
         "legend": {
           "calcs": [],
@@ -334,7 +334,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}) * on (volume, svm) group_right() ( volume_snapshot_reserve_size{datacenter=\"$Datacenter\",cluster=\"$Cluster\"} >= 0 and volume_snapshots_size_used{datacenter=\"$Datacenter\",cluster=\"$Cluster\"} == 0))",
+          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}) * on (volume, svm) group_right() ( volume_snapshot_reserve_size{datacenter=\"$Datacenter\",cluster=\"$Cluster\"} >= 0 and volume_snapshots_size_used{datacenter=\"$Datacenter\",cluster=\"$Cluster\"} == 0)) OR on() vector(0)",
           "instant": true,
           "interval": "",
           "legendFormat": "Not using reserve space",
@@ -342,7 +342,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count((volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})) * on (volume, svm) group_right() (volume_snapshot_reserve_size{datacenter=\"$Datacenter\",cluster=\"$Cluster\"} > 0 and volume_snapshots_size_used{datacenter=\"$Datacenter\",cluster=\"$Cluster\"} > 0 and volume_snapshots_size_used{datacenter=\"$Datacenter\",cluster=\"$Cluster\"} <= volume_snapshot_reserve_size{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}))",
+          "expr": "count((volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})) * on (volume, svm) group_right() (volume_snapshot_reserve_size{datacenter=\"$Datacenter\",cluster=\"$Cluster\"} > 0 and volume_snapshots_size_used{datacenter=\"$Datacenter\",cluster=\"$Cluster\"} > 0 and volume_snapshots_size_used{datacenter=\"$Datacenter\",cluster=\"$Cluster\"} <= volume_snapshot_reserve_size{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})) OR on() vector(0)",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -351,7 +351,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}) * on (volume, svm) group_right() ( volume_snapshot_reserve_size{datacenter=\"$Datacenter\",cluster=\"$Cluster\"} >= 0 and volume_snapshots_size_used{datacenter=\"$Datacenter\",cluster=\"$Cluster\"} > 0 and volume_snapshots_size_used{datacenter=\"$Datacenter\",cluster=\"$Cluster\"} > volume_snapshot_reserve_size{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}))",
+          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}) * on (volume, svm) group_right() ( volume_snapshot_reserve_size{datacenter=\"$Datacenter\",cluster=\"$Cluster\"} >= 0 and volume_snapshots_size_used{datacenter=\"$Datacenter\",cluster=\"$Cluster\"} > 0 and volume_snapshots_size_used{datacenter=\"$Datacenter\",cluster=\"$Cluster\"} > volume_snapshot_reserve_size{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})) OR on() vector(0)",
           "hide": false,
           "instant": false,
           "interval": "",
@@ -374,7 +374,7 @@
       "type": "barchart"
     },
     {
-      "datasource": null,
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -460,7 +460,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count((volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})) * on (volume,svm) (volume_snapshot_count{} > 0 and volume_snapshot_count{} < 10))",
+          "expr": "count((volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})) * on (volume,svm) (volume_snapshot_count{} > 0 and volume_snapshot_count{} < 10)) OR on() vector(0)",
           "instant": true,
           "interval": "",
           "legendFormat": " <10 Copies ",
@@ -468,7 +468,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count((volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})) * on (volume,svm) (volume_snapshot_count{} >= 10 and volume_snapshot_count{} <= 100))",
+          "expr": "count((volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})) * on (volume,svm) (volume_snapshot_count{} >= 10 and volume_snapshot_count{} <= 100)) OR on() vector(0)",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -477,7 +477,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count((volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})) * on (volume,svm) (volume_snapshot_count{} > 100 and volume_snapshot_count{} <= 500))",
+          "expr": "count((volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})) * on (volume,svm) (volume_snapshot_count{} > 100 and volume_snapshot_count{} <= 500)) OR on() vector(0)",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -486,7 +486,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count((volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})) * on (volume,svm) (volume_snapshot_count{} > 500))",
+          "expr": "count((volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})) * on (volume,svm) (volume_snapshot_count{} > 500)) OR on() vector(0)",
           "hide": false,
           "instant": true,
           "interval": "",
