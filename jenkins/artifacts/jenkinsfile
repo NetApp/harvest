@@ -1,10 +1,6 @@
 pipeline {
     agent {label 'buildserver'}
 
-    triggers {
-        cron('@midnight')
-    }
-
     parameters {
         string(name: 'VERSION', defaultValue: '', description: '[Optional] RPM Version should match Harvest version with rc or nightly stripped. If not filled default is YY.mm.ddHH. See https://github.com/NetApp/harvest/wiki/Release-Checklist#version-names for details')
         string(name: 'RELEASE', defaultValue: 'nightly', description: '[Optional] Example: nightly (default) See https://github.com/NetApp/harvest-private/wiki/Release-Checklist#rpm-and-debian-names for details ')
