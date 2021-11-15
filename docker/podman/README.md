@@ -6,6 +6,8 @@ If you don't want to bother with Podman, you can also install Docker on RHEL 8 a
 
 ## Setup
 
+Make sure your OS is up-to-date with `yum update`. Podman's dependencies are updated frequently.
+
 ```bash
 sudo yum remove docker-ce
 sudo yum module enable -y container-tools:rhel8
@@ -21,7 +23,14 @@ sudo chmod +x /usr/local/bin/docker-compose
 sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 ```
 
+After all the packages are installed, start the Podman systemd socket-activated service:
+
+```bash
+sudo systemctl start podman.socket
+```
+
 ## Containerized Harvest on Linux using Rootful Podman
+
 
 Make sure you're able to curl the endpoint.
 
