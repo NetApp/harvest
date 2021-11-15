@@ -105,7 +105,7 @@ docker pull rahulguptajss/harvest
 docker-compose -f prom-stack.yml -f harvest-compose.yml restart
 ```
 
-## local K8 Deployment
+## Local K8 Deployment
 
 ### Requirements
 - Kompose: `v1.25` or higher https://github.com/kubernetes/kompose/
