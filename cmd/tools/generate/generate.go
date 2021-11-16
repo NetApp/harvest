@@ -152,20 +152,15 @@ func generateDocker(path string, kind int) {
 
 	out := os.Stdout
 	color.DetectConsole("")
+	out, err = os.Create(opts.outputPath)
+	if err != nil {
+		panic(err)
+	}
 	if kind == harvest {
-		out, err = os.Create(opts.outputPath)
-		if err != nil {
-			panic(err)
-		}
 		_, _ = fmt.Fprintf(os.Stderr,
 			"Start containers with:\n"+
 				color.Colorize("docker-compose -f "+opts.outputPath+" up -d --remove-orphans\n", color.Green))
 	} else {
-		out, err = os.Create(opts.outputPath)
-		if err != nil {
-			panic(err)
-		}
-
 		pt, err := template.New("prom-stack.tmpl").ParseFiles("prom-stack.tmpl")
 		if err != nil {
 			panic(err)
@@ -269,9 +264,7 @@ func init() {
 	dFlags.StringVarP(&opts.outputPath, "output", "o", "", "Output file path. ")
 
 	fFlags.BoolVarP(&opts.showPorts, "port", "p", false, "Expose poller ports to host machine")
-	fFlags.StringVarP(&opts.outputPath, "output", "o", "", "Output file path. ")
 	_ = dockerCmd.MarkPersistentFlagRequired("output")
-	_ = fullCmd.MarkPersistentFlagRequired("output")
 	fFlags.StringVar(&opts.filesdPath, "filesdpath", "docker/prometheus/harvest_targets.yml",
 		"Prometheus file_sd target path. Written when the --output is set")
 	fFlags.IntVar(&opts.promPort, "promPort", 9090, "Prometheus Port")
