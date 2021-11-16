@@ -26,7 +26,7 @@ docker-compose up -d --remove-orphans
 Stop docker containers
 
 ```
-docker-compose -f harvest-compose.yaml down
+docker-compose down
 ```
 ### Poller per Container
 
