@@ -13,13 +13,13 @@ Harvest collects ONTAP counter information, augments it, and stores it in a time
 These three concepts: ZAPIs, Harvest templates, and Exporters work in unison to collect ONTAP metrics data, prepare it and make it available to Prometheus.
 
 - [Harvest ZAPI Collectors](#harvest-zapi-collectors)
-    - [Handy Tools](#handy-tools)
+  - [Handy Tools](#handy-tools)
 - [ONTAP ZAPI disk example](#ontap-zapi-disk-example)
 - [Harvest Templates](#harvest-templates)
-    - [Instance Keys and Labels](#instance-keys-and-labels)
-    - [Harvest Object Template](#harvest-object-template)
-    - [Control What Labels and Metrics are Exported](#control-what-labels-and-metrics-are-exported)
-        - [Missing Data](#missing-data)
+  - [Instance Keys and Labels](#instance-keys-and-labels)
+  - [Harvest Object Template](#harvest-object-template)
+  - [Control What Labels and Metrics are Exported](#control-what-labels-and-metrics-are-exported)
+    - [Missing Data](#missing-data)
 - [Prometheus Wire Format](#prometheus-wire-format)
 
 We're going to walk through an example from a running system, focusing on the `disk` object.
@@ -27,8 +27,8 @@ We're going to walk through an example from a running system, focusing on the `d
 At a high-level, Harvest templates describe what ZAPIs to send to ONTAP and how to interpret the responses.
 
 - ONTAP defines twos ZAPIs to collect `disk` info
-    - Config information is collected via `storage-disk-get-iter`
-    - Performance counters are collected via `disk:constituent`
+  - Config information is collected via `storage-disk-get-iter`
+  - Performance counters are collected via `disk:constituent`
 - These ZAPIs are found in their corresponding object template file `conf/zapi/cdot/9.8.0/disk.yaml` and `conf/zapiperf/cdot/9.8.0/disk.yaml`. These files also describe how to map the ZAPI responses into a time-series-friendly format
 - Prometheus uniquely identifies a time series by its metric name and optional key-value pairs called labels.
 
@@ -157,9 +157,9 @@ objects:
 - Line `2` is the name of the ZAPI that Harvest will send to collect disk resources
 - Line `3` is the prefix used to export metrics associated with this object. i.e. all metrics will be of the form `disk_*`
 - Line `5` the [counter section](https://github.com/NetApp/harvest/tree/main/conf#counters) is where we define the metrics, labels, and what constitutes instance uniqueness
-- Line `7` the double hat prefix `^^` means this attribute is an instance key used to determine uniqueness. Uuids are good choices for uniqueness
+- Line `7` the double hat prefix `^^` means this attribute is an instance key used to determine uniqueness. Instance keys are also included as labels. Uuids are good choices for uniqueness
 - Line `13` the single hat prefix `^` means this attribute should be stored as a label. That means we can include it in the `export_options` section as one of the key-value pairs in `disk_labels`
-- Rows 10, 11, 23, 24, 25, 26, 27 - these are the metrics rows - metrics are leaf nodes that are not prefixed with a ^ or ^^. If you refer back to the [ONTAP ZAPI disk example](#ontap-zapi-disk-example) above, you'll notice each of these attributes are integer types. That's typical for metrics.
+- Rows 10, 11, 23, 24, 25, 26, 27 - these are the metrics rows - metrics are leaf nodes that are not prefixed with a ^ or ^^. If you refer back to the [ONTAP ZAPI disk example](#ontap-zapi-disk-example) above, you'll notice each of these attributes are integer types. That's because metrics must be one of the number types: float or int.
 - Line 43 defines the set of labels to use when constructing the `disk_labels` metrics. As mentioned [above](#instance-keys-and-labels), these labels capture config-related attributes per instance.
 
 > Output edited for brevity and line numbers added for reference.
