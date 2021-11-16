@@ -1,6 +1,6 @@
 [Unit]
 Description="NetApp Harvest Meta Service"
-Requires={{range .PollersOrdered}}poller@{{.}}.service {{end}}
+Requires={{- .Admin -}}{{range .PollersOrdered}}poller@{{.}}.service {{end}}
 
 [Install]
 WantedBy=multi-user.target

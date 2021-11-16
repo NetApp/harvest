@@ -83,8 +83,9 @@ func doDockerCompose(cmd *cobra.Command, _ []string) {
 }
 
 const (
-	full    = 0
-	harvest = 1
+	full                = 0
+	harvest             = 1
+	harvestAdminService = "harvest-admin.service"
 )
 
 func generateFullCompose(path string) {
@@ -177,6 +178,7 @@ func silentClose(body io.ReadCloser) {
 }
 
 func generateSystemd(path string) {
+	var adminService string
 	err := conf.LoadHarvestConfig(path)
 	if err != nil {
 		return
@@ -191,7 +193,12 @@ func generateSystemd(path string) {
 	color.DetectConsole("")
 	println("Save the following to " + color.Colorize("/etc/systemd/system/harvest.target", color.Green) +
 		" or " + color.Colorize("| sudo tee /etc/systemd/system/harvest.target", color.Green))
+	if conf.Config.Admin.Httpsd.Listen != "" {
+		adminService = harvestAdminService + " "
+		println("and " + color.Colorize("cp "+harvestAdminService+" /etc/systemd/system/", color.Green))
+	}
 	println("and then run " + color.Colorize("systemctl daemon-reload", color.Green))
+	writeAdminSystemd(path)
 	// reorder list of pollers so that unix collectors are last, see https://github.com/NetApp/harvest/issues/643
 	pollers := make([]string, 0)
 	unixPollers := make([]string, 0)
@@ -218,13 +225,36 @@ func generateSystemd(path string) {
 		pollers = append(pollers, poller)
 	}
 	err = t.Execute(os.Stdout, struct {
+		Admin          string
 		PollersOrdered []string
 	}{
+		Admin:          adminService,
 		PollersOrdered: pollers,
 	})
 	if err != nil {
 		panic(err)
 	}
+}
+
+func writeAdminSystemd(configFp string) {
+	if conf.Config.Admin.Httpsd.Listen == "" {
+		return
+	}
+	t, err := template.New("httpsd.tmpl").ParseFiles("service/contrib/httpsd.tmpl")
+	if err != nil {
+		panic(err)
+	}
+	f, err := os.Create(harvestAdminService)
+	if err != nil {
+		panic(err)
+	}
+	defer silentClose(f)
+	configAbsPath, err := filepath.Abs(configFp)
+	if err != nil {
+		configAbsPath = "/opt/harvest/harvest.yml"
+	}
+	err = t.Execute(f, configAbsPath)
+	println(color.Colorize("✓", color.Green) + " HTTP SD file: " + harvestAdminService + " created")
 }
 
 func init() {
