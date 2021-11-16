@@ -18,15 +18,15 @@ Harvest releases are published on [Dockerhub](https://hub.docker.com/r/rahulgupt
 If you want to create a separate container for each poller in your `harvest.yaml` file, download the latest version of Harvest and run 
 
 ```
-bin/harvest generate docker --image "rahulguptajss/harvest" > docker-compose.yml
+bin/harvest generate docker --image "rahulguptajss/harvest" --out harvest-compose.yml
 
-docker-compose up -d --remove-orphans
+docker-compose up -f harvest-compose.yaml -d --remove-orphans
 ```
 
 Stop docker containers
 
 ```
-docker-compose down
+docker-compose -f harvest-compose.yaml down
 ```
 ### Poller per Container
 

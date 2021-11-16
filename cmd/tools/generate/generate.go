@@ -30,6 +30,11 @@ type PollerTemplate struct {
 	Pollers []PollerInfo
 }
 
+type PromTemplate struct {
+	GrafanaPort int
+	PromPort    int
+}
+
 type options struct {
 	loglevel    int
 	image       string
@@ -37,6 +42,8 @@ type options struct {
 	showPorts   bool
 	outputPath  string
 	templateDir string
+	promPort    int
+	grafanaPort int
 }
 
 var opts = &options{
@@ -102,6 +109,10 @@ func normalizeContainerNames(name string) string {
 
 func generateDocker(path string, kind int) {
 	pollerTemplate := PollerTemplate{}
+	promTemplate := PromTemplate{
+		opts.grafanaPort,
+		opts.promPort,
+	}
 	err := conf.LoadHarvestConfig(path)
 	if err != nil {
 		panic(err)
@@ -142,11 +153,26 @@ func generateDocker(path string, kind int) {
 	out := os.Stdout
 	color.DetectConsole("")
 	if kind == harvest {
-		println("Save the following to " + color.Colorize("docker-compose.yml", color.Green) +
-			" or " + color.Colorize("> docker-compose.yml", color.Green))
-		println("and then run " + color.Colorize("docker-compose -f docker-compose.yml up -d --remove-orphans", color.Green))
+		out, err = os.Create(opts.outputPath)
+		if err != nil {
+			panic(err)
+		}
+		_, _ = fmt.Fprintf(os.Stderr,
+			"Start containers with:\n"+
+				color.Colorize("docker-compose -f "+opts.outputPath+" up -d --remove-orphans\n", color.Green))
 	} else {
 		out, err = os.Create(opts.outputPath)
+		if err != nil {
+			panic(err)
+		}
+
+		pt, err := template.New("prom-stack.tmpl").ParseFiles("prom-stack.tmpl")
+		if err != nil {
+			panic(err)
+		}
+
+		promStackOut, err := os.Create("prom-stack.yml")
+		err = pt.Execute(promStackOut, promTemplate)
 		if err != nil {
 			panic(err)
 		}
@@ -168,7 +194,7 @@ func generateDocker(path string, kind int) {
 	if kind == full {
 		_, _ = fmt.Fprintf(os.Stderr,
 			"Start containers with:\n"+
-				color.Colorize("docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans\n", color.Green))
+				color.Colorize("docker-compose -f prom-stack.yml -f "+opts.outputPath+" up -d --remove-orphans\n", color.Green))
 	}
 }
 
@@ -240,10 +266,14 @@ func init() {
 	)
 	dFlags.StringVar(&opts.image, "image", "rahulguptajss/harvest:latest", "Harvest image")
 	dFlags.StringVar(&opts.templateDir, "templatedir", "./conf", "Harvest template dir path")
+	dFlags.StringVarP(&opts.outputPath, "output", "o", "", "Output file path. ")
 
 	fFlags.BoolVarP(&opts.showPorts, "port", "p", false, "Expose poller ports to host machine")
 	fFlags.StringVarP(&opts.outputPath, "output", "o", "", "Output file path. ")
+	_ = dockerCmd.MarkPersistentFlagRequired("output")
 	_ = fullCmd.MarkPersistentFlagRequired("output")
 	fFlags.StringVar(&opts.filesdPath, "filesdpath", "docker/prometheus/harvest_targets.yml",
 		"Prometheus file_sd target path. Written when the --output is set")
+	fFlags.IntVar(&opts.promPort, "promPort", 9090, "Prometheus Port")
+	fFlags.IntVar(&opts.grafanaPort, "grafanaPort", 3000, "Grafana Port")
 }

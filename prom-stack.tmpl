@@ -23,7 +23,7 @@ services:
             - '--web.console.templates=/usr/share/prometheus/consoles'
             # - '--web.enable-admin-api' # Enable to delete time series data from Prometheus see https://www.robustperception.io/deleting-time-series-from-prometheus 
         ports:
-            - 9090:9090
+            - {{ .PromPort }}:9090
         networks:
             - backend
         restart: unless-stopped
@@ -34,7 +34,7 @@ services:
         depends_on:
             - prometheus
         ports:
-            - 3000:3000
+            - {{ .GrafanaPort }}:3000
         volumes:
             - grafana_data:/var/lib/grafana
             - ./grafana:/etc/grafana/provisioning # import Harvest dashboards
