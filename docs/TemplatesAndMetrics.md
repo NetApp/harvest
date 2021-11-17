@@ -19,7 +19,9 @@ These three concepts: ZAPIs, Harvest templates, and Exporters work in unison to 
   - [Instance Keys and Labels](#instance-keys-and-labels)
   - [Harvest Object Template](#harvest-object-template)
   - [Control What Labels and Metrics are Exported](#control-what-labels-and-metrics-are-exported)
-    - [Missing Data](#missing-data)
+- [Common Errors and Troubleshooting](#common-errors-and-troubleshooting)
+  - [1. Failed to parse any metrics](#1-failed-to-parse-any-metrics)
+  - [2. Missing Data](#2-missing-data)
 - [Prometheus Wire Format](#prometheus-wire-format)
 
 We're going to walk through an example from a running system, focusing on the `disk` object.
@@ -92,7 +94,7 @@ To understand templates, there are a few concepts to cover:
 There are three kinds of information included in templates that define what Harvest collects and exports:
 
 1. Configuration information is exported into the `_labels` metric (e.g. `disk_labels` see below)
-2. Metrics data is exported as `disk_"metric name"` e.g. `disk_bytes_per_sector`, `disk_sectors`, etc.
+2. Metrics data is exported as `disk_"metric name"` e.g. `disk_bytes_per_sector`, `disk_sectors`, etc. Metrics are leaf nodes that are not prefixed with a ^ or ^^. Metrics must be one of the number types: float or int.
 3. Plugins may add additional metrics, increasing the number of metrics exported in #2
 
 A resource will typically have multiple instances. Using disk as an example, that means there will be one `disk_labels` and a metric row per instance. If we have 24 disks and the disk template lists seven metrics to capture, Harvest will export a total of 192 rows of Prometheus data.
@@ -159,7 +161,7 @@ objects:
 - Line `5` the [counter section](https://github.com/NetApp/harvest/tree/main/conf#counters) is where we define the metrics, labels, and what constitutes instance uniqueness
 - Line `7` the double hat prefix `^^` means this attribute is an instance key used to determine uniqueness. Instance keys are also included as labels. Uuids are good choices for uniqueness
 - Line `13` the single hat prefix `^` means this attribute should be stored as a label. That means we can include it in the `export_options` section as one of the key-value pairs in `disk_labels`
-- Rows 10, 11, 23, 24, 25, 26, 27 - these are the metrics rows - metrics are leaf nodes that are not prefixed with a ^ or ^^. If you refer back to the [ONTAP ZAPI disk example](#ontap-zapi-disk-example) above, you'll notice each of these attributes are integer types. That's because metrics must be one of the number types: float or int.
+- Rows 10, 11, 23, 24, 25, 26, 27 - these are the metrics rows - metrics are leaf nodes that are not prefixed with a ^ or ^^. If you refer back to the [ONTAP ZAPI disk example](#ontap-zapi-disk-example) above, you'll notice each of these attributes are integer types.
 - Line 43 defines the set of labels to use when constructing the `disk_labels` metrics. As mentioned [above](#instance-keys-and-labels), these labels capture config-related attributes per instance.
 
 > Output edited for brevity and line numbers added for reference.
@@ -281,7 +283,18 @@ Number of rows for each template = number of instances * (number of metrics + 1 
 Number of metrics                = number of counters which are not labels or keys, those without a ^ or ^^
 ```
 
-### Missing Data
+# Common Errors and Troubleshooting
+
+## 1. Failed to parse any metrics
+
+You add a new template to Harvest, restart your poller, and get an error message:
+
+```
+WRN ./poller.go:649 > init collector-object (Zapi:NetPort): no metrics => failed to parse any
+```
+
+This means the collector, `Zapi NetPort`, was unable to find any metrics. [Recall metrics](#harvest-templates) are lines without prefixes. In cases where you don't have any metrics, but still want to collect labels, add the `collect_only_labels: true` key-value to your template. This flag tells Harvest to ignore that you don't have metrics and continue. [Example](https://github.com/NetApp/harvest/blob/7334f11419075bf98b45fd14aee41dc2c16e4531/conf/zapi/cdot/9.8.0/qtree.yaml#L17).
+## 2. Missing Data
 
 1. What happens if an attribute is listed in the list of `instance_labels` (line 43 above), but that label is missing from the list of counters captured at line 5?
 
