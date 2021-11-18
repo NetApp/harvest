@@ -1,6 +1,19 @@
 version: "3.7"
 
 services:
+  {{- if .Admin.Enabled}}
+  {{ .Admin.ServiceName }}:
+    image: {{ .Admin.Image }}
+    container_name: {{ .Admin.ContainerName }}
+    restart: unless-stopped
+    ports:
+      - {{ .Admin.Port }}:{{ .Admin.Port }}
+    entrypoint: ["bin/harvest", "admin", "start", "--config", "/opt/harvest.yml"]
+    volumes:
+      - type: bind
+        source: {{ .Admin.ConfigFile }}
+        target: /opt/harvest.yml
+  {{- end }}
 {{range .Pollers}}
   {{ .ServiceName }}:
     image: {{ .Image }}

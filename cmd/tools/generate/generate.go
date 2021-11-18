@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"text/template"
 )
@@ -26,8 +27,18 @@ type PollerInfo struct {
 	TemplateDir   string
 }
 
+type AdminInfo struct {
+	ServiceName   string
+	Port          int
+	ConfigFile    string
+	Image         string
+	ContainerName string
+	Enabled       bool
+}
+
 type PollerTemplate struct {
 	Pollers []PollerInfo
+	Admin   AdminInfo
 }
 
 type PromTemplate struct {
@@ -40,6 +51,7 @@ type options struct {
 	image       string
 	filesdPath  string
 	showPorts   bool
+	admin       bool
 	outputPath  string
 	templateDir string
 	promPort    int
@@ -157,10 +169,34 @@ func generateDocker(path string, kind int) {
 	if err != nil {
 		panic(err)
 	}
+
 	if kind == harvest {
-		_, _ = fmt.Fprintf(os.Stderr,
-			"Start containers with:\n"+
-				color.Colorize("docker-compose -f "+opts.outputPath+" up -d --remove-orphans\n", color.Green))
+		if opts.admin {
+			httpsd := conf.Config.Admin.Httpsd.Listen
+
+			if httpsd == "" {
+				panic("Missing admin configuration in harvest configuration")
+			}
+			adminPort := 8887
+			if strings.Contains(httpsd, ":") {
+				h := strings.Split(httpsd, ":")
+				adminPort, err = strconv.Atoi(h[len(h)-1])
+				if err != nil {
+					panic(err)
+				}
+			} else {
+				panic("Invalid httpsd listen configuration. Valid configuration are <<addr>>:PORT or :PORT")
+			}
+
+			pollerTemplate.Admin = AdminInfo{
+				ServiceName:   "admin",
+				ConfigFile:    configFilePath,
+				Port:          adminPort,
+				Image:         opts.image,
+				ContainerName: "admin",
+				Enabled:       true,
+			}
+		}
 	} else {
 		pt, err := template.New("prom-stack.tmpl").ParseFiles("prom-stack.tmpl")
 		if err != nil {
@@ -173,6 +209,7 @@ func generateDocker(path string, kind int) {
 			panic(err)
 		}
 	}
+
 	err = t.Execute(out, pollerTemplate)
 	if err != nil {
 		panic(err)
@@ -187,6 +224,12 @@ func generateDocker(path string, kind int) {
 		_, _ = fmt.Fprintln(f, line)
 	}
 	_, _ = fmt.Fprintf(os.Stderr, "Wrote file_sd targets to %s\n", opts.filesdPath)
+
+	if kind == harvest {
+		_, _ = fmt.Fprintf(os.Stderr,
+			"Start containers with:\n"+
+				color.Colorize("docker-compose -f "+opts.outputPath+" up -d --remove-orphans\n", color.Green))
+	}
 	if kind == full {
 		_, _ = fmt.Fprintf(os.Stderr,
 			"Start containers with:\n"+
@@ -292,6 +335,7 @@ func init() {
 	dFlags.StringVar(&opts.image, "image", "rahulguptajss/harvest:latest", "Harvest image")
 	dFlags.StringVar(&opts.templateDir, "templatedir", "./conf", "Harvest template dir path")
 	dFlags.StringVarP(&opts.outputPath, "output", "o", "", "Output file path. ")
+	dFlags.BoolVar(&opts.admin, "admin", false, "Generate admin service")
 
 	fFlags.BoolVarP(&opts.showPorts, "port", "p", false, "Expose poller ports to host machine")
 	_ = dockerCmd.MarkPersistentFlagRequired("output")
