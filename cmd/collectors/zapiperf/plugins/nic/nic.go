@@ -78,11 +78,9 @@ func (me *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			if err != nil {
 				me.Logger.Warn().Msgf("convert speed [%s]", s)
 			} else {
-				// NIC speed value converted from Mbps to bps(bits per second)
-				speed = base * 1000000
+				// NIC speed value converted from Mbps to Bps(bytes per second)
+				speed = base * 125000
 				instance.SetLabel("speed", strconv.Itoa(speed))
-				// For calculation of tx_bytes and rx_bytes percent, speed would be in Bps(bytes per second)
-				speed = speed / 8
 				me.Logger.Debug().Msgf("converted speed (%s) to numeric (%d)", s, speed)
 			}
 		} else if speed, err = strconv.Atoi(s); err != nil {

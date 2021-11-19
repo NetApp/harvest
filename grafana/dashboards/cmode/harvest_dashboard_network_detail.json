@@ -792,6 +792,30 @@
                 "value": 398
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "linkSpeed"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 169
+              },
+              {
+                "id": "unit",
+                "value": "bps"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "displayName",
+                "value": "speed"
+              }
+            ]
           }
         ]
       },
@@ -883,6 +907,60 @@
         {
           "id": "merge",
           "options": {}
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "linkSpeed",
+            "binary": {
+              "left": "speed",
+              "operator": "*",
+              "reducer": "sum",
+              "right": "8"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "speed"
+              ],
+              "reducer": "last"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value": true,
+              "__name__": true,
+              "cluster": true,
+              "datacenter": true,
+              "instance": true,
+              "job": true,
+              "speed": true,
+              "state": true
+            },
+            "indexByName": {
+              "Time": 0,
+              "Value": 12,
+              "Value #B": 4,
+              "Value #C": 5,
+              "Value #D": 6,
+              "Value #E": 7,
+              "__name__": 1,
+              "cluster": 5,
+              "datacenter": 6,
+              "instance": 7,
+              "job": 8,
+              "linkSpeed": 2,
+              "nic": 0,
+              "node": 1,
+              "type": 3
+            },
+            "renameByName": {}
+          }
         }
       ],
       "type": "table"
@@ -1477,7 +1555,7 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "bps"
+                "value": "Bps"
               },
               {
                 "id": "custom.width",
