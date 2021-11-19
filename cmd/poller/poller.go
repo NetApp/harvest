@@ -101,18 +101,19 @@ var pingRegex = regexp.MustCompile(` = (.*?)/`)
 // Poller is the instance that starts and monitors a
 // group of collectors and exporters as a single UNIX process
 type Poller struct {
-	name           string
-	target         string
-	options        *options.Options
-	schedule       *schedule.Schedule
-	collectors     []collector.Collector
-	exporters      []exporter.Exporter
-	exporterParams map[string]conf.Exporter
-	params         *conf.Poller
-	metadata       *matrix.Matrix
-	status         *matrix.Matrix
-	certPool       *x509.CertPool
-	client         *http.Client
+	name            string
+	target          string
+	options         *options.Options
+	schedule        *schedule.Schedule
+	collectors      []collector.Collector
+	exporters       []exporter.Exporter
+	exporterParams  map[string]conf.Exporter
+	params          *conf.Poller
+	metadata        *matrix.Matrix
+	status          *matrix.Matrix
+	certPool        *x509.CertPool
+	client          *http.Client
+	hasPromExporter bool
 }
 
 // Init starts Poller, reads parameters, opens zeroLog handler, initializes metadata,
@@ -903,6 +904,7 @@ func (p *Poller) publishDetails() {
 		if exp.Type != "Prometheus" {
 			continue
 		}
+		p.hasPromExporter = true
 		if exp.LocalHttpAddr == "localhost" || exp.LocalHttpAddr == "127.0.0.1" {
 			exporterIp = "127.0.0.1"
 		} else {
@@ -911,6 +913,11 @@ func (p *Poller) publishDetails() {
 		if exp.HeartBeatUrl != "" {
 			heartBeatUrl = exp.HeartBeatUrl
 		}
+	}
+
+	if !p.hasPromExporter {
+		// no prometheus exporter, don't publish details
+		return
 	}
 
 	details := pollerDetails{
@@ -971,7 +978,7 @@ func (p *Poller) publishDetails() {
 	}
 }
 
-// startHeartBeat never returns
+// startHeartBeat never returns unless the receiver does not have a Prometheus exporter
 // Publish the receiver's discovery details to the admin node
 func (p *Poller) startHeartBeat() {
 	if conf.Config.Admin.Httpsd.Listen == "" {
@@ -979,6 +986,9 @@ func (p *Poller) startHeartBeat() {
 	}
 	p.createClient()
 	p.publishDetails()
+	if !p.hasPromExporter {
+		return
+	}
 	if conf.Config.Admin.Httpsd.HeartBeat == "" {
 		conf.Config.Admin.Httpsd.HeartBeat = "45s"
 	}
