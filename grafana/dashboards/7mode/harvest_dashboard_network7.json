@@ -907,6 +907,26 @@
           "options": {}
         },
         {
+          "id": "calculateField",
+          "options": {
+            "alias": "linkSpeed",
+            "binary": {
+              "left": "speed",
+              "operator": "*",
+              "reducer": "sum",
+              "right": "8"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "speed"
+              ],
+              "reducer": "last"
+            },
+            "replaceFields": false
+          }
+        },
+        {
           "id": "organize",
           "options": {
             "excludeByName": {
