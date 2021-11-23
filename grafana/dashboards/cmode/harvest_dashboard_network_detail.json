@@ -1177,8 +1177,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "links": [],
-          "unit": "percent"
+          "links": []
         },
         "overrides": []
       },
@@ -1249,10 +1248,10 @@
         {
           "$$hashKey": "object:244",
           "decimals": null,
-          "format": "percent",
+          "format": "percentunit",
           "label": null,
           "logBase": 1,
-          "max": "100",
+          "max": "1",
           "min": "0",
           "show": true
         },
