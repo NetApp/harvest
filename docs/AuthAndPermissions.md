@@ -75,18 +75,18 @@ security login role create -role harvest2-role -access readonly -cmddirname "DEF
 If you want to give limited access, type in the following commands one-by-one:
 
 ```bash
-security login role create -role harvest2-role -access readonly -cmddirname "version"
 security login role create -role harvest2-role -access readonly -cmddirname "cluster"
 security login role create -role harvest2-role -access readonly -cmddirname "lun"    
 security login role create -role harvest2-role -access readonly -cmddirname "snapmirror"
 security login role create -role harvest2-role -access readonly -cmddirname "statistics"
 security login role create -role harvest2-role -access readonly -cmddirname "storage aggregate"
 security login role create -role harvest2-role -access readonly -cmddirname "storage disk"     
-security login role create -role harvest2-role -access readonly -cmddirname "system node"
 security login role create -role harvest2-role -access readonly -cmddirname "storage shelf"
-security login role create -role harvest2-role -access readonly -cmddirname "volume"
 security login role create -role harvest2-role -access readonly -cmddirname "system health status show" 
 security login role create -role harvest2-role -access readonly -cmddirname "system health subsystem show"  
+security login role create -role harvest2-role -access readonly -cmddirname "system node"
+security login role create -role harvest2-role -access readonly -cmddirname "version"
+security login role create -role harvest2-role -access readonly -cmddirname "volume"
 ```
 
 If you want to create a user with password authentication, type:
