@@ -679,7 +679,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "label_replace(label_replace(volume_labels{cluster=~\"$Cluster\", snapshot_policy!=\"\", volume!~\"MDV.*\"}, \"Status\", \"Protected\", \"snapshot_policy\", \"(.*)\") , \"Status\", \"Unprotected\", \"snapshot_policy\", \"(none.*)\") * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{})",
+          "expr": "label_replace(label_replace(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", snapshot_policy!=\"\", volume!~\"MDV.*\"}, \"Status\", \"Protected\", \"snapshot_policy\", \"(.*)\") , \"Status\", \"Unprotected\", \"snapshot_policy\", \"(none.*)\") * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{})",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -855,10 +855,10 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", snapshot_policy!=\"\", snapshot_policy!~\"none.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{}) * on (volume, svm, cluster) group_right() ( volume_snapshot_reserve_size{} >= 0 and volume_snapshots_size_used{} >= 0)",
+          "expr": "volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", snapshot_policy!=\"\", snapshot_policy!~\"none.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{}) * on (volume, svm, cluster) group_right() ( volume_snapshot_reserve_size{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"} >= 0 and volume_snapshots_size_used{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"} >= 0)",
           "format": "table",
           "hide": false,
-          "instant": false,
+          "instant": true,
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -869,6 +869,7 @@
           "expr": "volume_snapshots_size_used{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
+          "instant": true,
           "interval": "",
           "legendFormat": "",
           "refId": "B"
