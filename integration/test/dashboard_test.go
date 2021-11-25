@@ -75,10 +75,10 @@ func (suite *DashboardImportTestSuite) TestImport() {
 func (suite *DashboardImportTestSuite) TestCModeDashboardCount() {
 	folderId := GetFolderId(cDotFolder, suite.T())
 	expectedName := []string{"Harvest Metadata", "NetApp Detail: Aggregate", "NetApp Detail: Cluster",
-		"NetApp Detail: Disk", "NetApp Detail: LUN", "NetApp Detail: Network", "NetApp Detail: Network  - Details",
-		"NetApp Detail: Network with NVMe/FC", "NetApp Detail: Node", "NetApp Detail: Node - Details",
-		"NetApp Detail: Shelf", "NetApp Detail: SnapMirror", "NetApp Detail: SVM", "NetApp Detail: SVM - Details",
-		"NetApp Detail: Volume", "NetApp Detail: Volume - Details", "NetApp Detail: MetroCluster"}
+		"NetApp Detail: Disk", "NetApp Detail: LUN", "NetApp Detail: Network  - Details",
+		"NetApp Detail: Network with NVMe/FC", "NetApp Detail: Node - Details",
+		"NetApp Detail: Shelf", "NetApp Detail: SnapMirror", "NetApp Detail: SVM - Details",
+		"NetApp Detail: Volume - Details", "NetApp Detail: MetroCluster"}
 
 	VerifyDashboards(folderId, expectedName, suite.T())
 }
