@@ -66,5 +66,6 @@ Pollers:
   #   auth_style: certificate_auth
   #   ssl_cert: /path/to/cert.pem
   #   ssl_key: /path/to/key.key
+  #   ca_cert: /path/to/server.crt
   #   exporters:
   #     - prometheus1
