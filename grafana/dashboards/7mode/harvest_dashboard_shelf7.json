@@ -134,7 +134,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "sum(count(shelf_labels{datacenter=\"$Datacenter\",node=\"$Node\"}) by (shelf_id))",
+          "expr": "sum(count(shelf_labels{datacenter=\"$Datacenter\",node=\"$Node\",channel=\"$Channel\"}) by (shelf_id))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -214,7 +214,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(shelf_temperature_reading{datacenter=\"$Datacenter\",node=\"$Node\"})",
+          "expr": "avg(shelf_temperature_reading{datacenter=\"$Datacenter\",node=\"$Node\",channel=\"$Channel\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -288,7 +288,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(shelf_fan_rpm{datacenter=\"$Datacenter\",node=\"$Node\"})",
+          "expr": "avg(shelf_fan_rpm{datacenter=\"$Datacenter\",node=\"$Node\",channel=\"$Channel\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -362,7 +362,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(shelf_sensor_reading{datacenter=\"$Datacenter\",node=\"$Node\"})",
+          "expr": "avg(shelf_sensor_reading{datacenter=\"$Datacenter\",node=\"$Node\",channel=\"$Channel\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -476,7 +476,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "shelf_labels{datacenter=\"$Datacenter\",node=\"$Node\"}",
+          "expr": "shelf_labels{datacenter=\"$Datacenter\",node=\"$Node\",channel=\"$Channel\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -484,7 +484,7 @@
           "refId": "A"
         },
         {
-          "expr": "shelf_new_status{datacenter=\"$Datacenter\",node=\"$Node\"}",
+          "expr": "shelf_new_status{datacenter=\"$Datacenter\",node=\"$Node\",channel=\"$Channel\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -507,6 +507,7 @@
                 "module_type",
                 "serial_number",
                 "shelf",
+                "channel",
                 "state",
                 "vendor_name",
                 "Value #A",
@@ -530,12 +531,13 @@
             "indexByName": {
               "Value #A": 9,
               "datacenter": 0,
-              "model": 4,
-              "module_type": 5,
-              "serial_number": 3,
+              "model": 5,
+              "module_type": 6,
+              "serial_number": 4,
               "shelf": 1,
               "state": 8,
-              "vendor_name": 2
+              "vendor_name": 3,
+              "channel": 2
             },
             "renameByName": {
               "Value #A": "",
@@ -620,7 +622,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "shelf_temperature_reading{datacenter=\"$Datacenter\",node=\"$Node\",shelf=~\"$Shelf\"}",
+          "expr": "shelf_temperature_reading{datacenter=\"$Datacenter\",node=\"$Node\",channel=\"$Channel\",shelf=~\"$Shelf\"}",
           "interval": "",
           "legendFormat": "{{shelf}} · {{sensor_id}}",
           "refId": "A"
@@ -688,7 +690,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "shelf_fan_rpm{datacenter=\"$Datacenter\",node=\"$Node\"}",
+          "expr": "shelf_fan_rpm{datacenter=\"$Datacenter\",node=\"$Node\",channel=\"$Channel\",shelf=~\"$Shelf\"}",
           "interval": "",
           "legendFormat": "{{shelf}} · {{fan_id}}",
           "refId": "A"
@@ -771,7 +773,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "shelf_voltage_reading{datacenter=\"$Datacenter\",node=\"$Node\"}",
+          "expr": "shelf_voltage_reading{datacenter=\"$Datacenter\",node=\"$Node\",channel=\"$Channel\",shelf=~\"$Shelf\"}",
           "interval": "",
           "legendFormat": "{{shelf}} · {{sensor_id}}",
           "refId": "A"
@@ -852,9 +854,9 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "shelf_sensor_reading{datacenter=\"$Datacenter\",node=\"$Node\"}",
+          "expr": "shelf_sensor_reading{datacenter=\"$Datacenter\",node=\"$Node\",channel=\"$Channel\",shelf=~\"$Shelf\"}",
           "interval": "",
-          "legendFormat": "S{{sensor_id}}",
+          "legendFormat": "{{shelf}} · {{sensor_id}}",
           "refId": "A"
         }
       ],
@@ -946,7 +948,33 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(shelf_labels{datacenter=\"$Datacenter\",node=\"$Node\"}, shelf)",
+        "definition": "label_values(shelf_labels{datacenter=\"$Datacenter\",node=\"$Node\"}, channel)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "label": null,
+        "multi": true,
+        "name": "Channel",
+        "options": [],
+        "query": {
+          "query": "label_values(shelf_labels{datacenter=\"$Datacenter\",node=\"$Node\"}, channel)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(shelf_labels{datacenter=\"$Datacenter\",node=\"$Node\",channel=\"$Channel\"}, shelf)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -956,7 +984,7 @@
         "name": "Shelf",
         "options": [],
         "query": {
-          "query": "label_values(shelf_labels{datacenter=\"$Datacenter\",node=\"$Node\"}, shelf)",
+          "query": "label_values(shelf_labels{datacenter=\"$Datacenter\",node=\"$Node\",channel=\"$Channel\"}, shelf)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,

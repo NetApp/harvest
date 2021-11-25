@@ -214,7 +214,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(shelf_temperature_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\"})",
+          "expr": "avg(shelf_temperature_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\",shelf=~\"$Shelf\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -813,7 +813,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "shelf_fan_rpm{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "expr": "shelf_fan_rpm{datacenter=\"$Datacenter\",cluster=\"$Cluster\",shelf=~\"$Shelf\"}",
           "interval": "",
           "legendFormat": "{{shelf}} · {{fan_id}}",
           "refId": "A"
@@ -896,7 +896,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "shelf_voltage_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "expr": "shelf_voltage_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\",shelf=~\"$Shelf\"}",
           "interval": "",
           "legendFormat": "{{shelf}} · {{sensor_id}}",
           "refId": "A"
@@ -1107,9 +1107,9 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "shelf_sensor_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "expr": "shelf_sensor_reading{datacenter=\"$Datacenter\",cluster=\"$Cluster\",shelf=~\"$Shelf\"}",
           "interval": "",
-          "legendFormat": "S{{sensor_id}}",
+          "legendFormat": "{{shelf}} · {{sensor_id}}",
           "refId": "A"
         }
       ],
