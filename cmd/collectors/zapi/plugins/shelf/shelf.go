@@ -209,7 +209,7 @@ func (my *Shelf) handleCMode(result *node.Node) ([]*matrix.Matrix, error) {
 						instance, err := data1.NewInstance(instanceKey)
 
 						if err != nil {
-							my.Logger.Error().Msgf("add (%s) instance: %v", attribute, err)
+							my.Logger.Error().Err(err).Str("attribute", attribute).Msg("Failed to add instance")
 							return nil, err
 						}
 						my.Logger.Debug().Msgf("add (%s) instance: %s.%s", attribute, shelfId, key)
@@ -262,7 +262,6 @@ func (my *Shelf) handle7Mode(result *node.Node) ([]*matrix.Matrix, error) {
 	)
 	//fallback to 7mode
 	channels = result.SearchChildren([]string{"shelf-environ-channel-info"})
-	//shelves = result.SearchChildren([]string{"shelf-environ-channel-info", "shelf-environ-shelf-list", "shelf-environ-shelf-info"})
 
 	if len(channels) == 0 {
 		return nil, errors.New(errors.ERR_NO_INSTANCE, "no channels found")
