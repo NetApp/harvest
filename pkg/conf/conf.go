@@ -312,7 +312,19 @@ type Poller struct {
 }
 
 func (p *Poller) Union(defaults *Poller) {
+	// this is needed because of how mergo handles boolean zero values
+	isInsecureNil := true
+	var pUseInsecureTls bool
+	pIsKfs := p.IsKfs
+	if p.UseInsecureTls != nil {
+		isInsecureNil = false
+		pUseInsecureTls = *p.UseInsecureTls
+	}
 	_ = mergo.Merge(p, defaults)
+	if !isInsecureNil {
+		p.UseInsecureTls = &pUseInsecureTls
+	}
+	p.IsKfs = pIsKfs
 }
 
 // ZapiPoller creates a poller out of a node, this is a bridge between the node and struct-based code
