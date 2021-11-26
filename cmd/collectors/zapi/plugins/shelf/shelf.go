@@ -127,9 +127,8 @@ func (my *Shelf) Init() error {
 func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var (
-		result  *node.Node
-		shelves []*node.Node
-		err     error
+		result *node.Node
+		err    error
 	)
 
 	if !my.client.IsClustered() {
@@ -147,12 +146,21 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		my.data[a].SetGlobalLabels(data.GetGlobalLabels())
 	}
 
-	if x := result.GetChildS("attributes-list"); x != nil {
-		shelves = x.GetChildren()
-	} else if !my.client.IsClustered() {
+	if my.client.IsClustered() {
+		return my.handleCMode(result)
+	} else {
 		return my.handle7Mode(result)
 	}
+}
 
+func (my *Shelf) handleCMode(result *node.Node) ([]*matrix.Matrix, error) {
+	var (
+		shelves []*node.Node
+	)
+
+	if x := result.GetChildS("attributes-list"); x != nil {
+		shelves = x.GetChildren()
+	}
 	if len(shelves) == 0 {
 		return nil, errors.New(errors.ERR_NO_INSTANCE, "no shelf instances found")
 	}
@@ -223,57 +231,23 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 							statusMetric.SetValueInt(instance, 0)
 						}
 
+						for metricKey, m := range data1.GetMetrics() {
+
+							if value := strings.Split(obj.GetChildContentS(metricKey), " ")[0]; value != "" {
+								if err := m.SetValueString(instance, value); err != nil {
+									my.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", metricKey, value, err)
+								} else {
+									my.Logger.Debug().Msgf("(%s) added value (%s)", metricKey, value)
+								}
+							}
+						}
+
 					} else {
 						my.Logger.Debug().Msgf("instance without [%s], skipping", my.instanceKeys[attribute])
 					}
 				}
 
 				output = append(output, data1)
-			}
-		}
-	}
-
-	// second loop to populate numeric data
-
-	for _, shelf := range shelves {
-
-		shelfId := shelf.GetChildContentS("shelf-uid")
-		if !my.client.IsClustered() {
-			shelfId = shelf.GetChildContentS("shelf-id")
-		}
-
-		for attribute, data1 := range my.data {
-
-			objectElem := shelf.GetChildS(attribute)
-			if objectElem == nil {
-				continue
-			}
-
-			for _, obj := range objectElem.GetChildren() {
-
-				key := obj.GetChildContentS(my.instanceKeys[attribute])
-
-				if key == "" {
-					continue
-				}
-
-				instance := data1.GetInstance(shelfId + "." + key)
-
-				if instance == nil {
-					my.Logger.Debug().Msgf("(%s) instance [%s.%s] not found in cache skipping", attribute, shelfId, key)
-					continue
-				}
-
-				for metricKey, m := range data1.GetMetrics() {
-
-					if value := strings.Split(obj.GetChildContentS(metricKey), " ")[0]; value != "" {
-						if err := m.SetValueString(instance, value); err != nil {
-							my.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", metricKey, value, err)
-						} else {
-							my.Logger.Debug().Msgf("(%s) added value (%s)", metricKey, value)
-						}
-					}
-				}
 			}
 		}
 	}
@@ -363,6 +337,18 @@ func (my *Shelf) handle7Mode(result *node.Node) ([]*matrix.Matrix, error) {
 								statusMetric.SetValueInt(instance, 0)
 							}
 
+							// populate numeric data
+							for metricKey, m := range data1.GetMetrics() {
+
+								if value := strings.Split(obj.GetChildContentS(metricKey), " ")[0]; value != "" {
+									if err := m.SetValueString(instance, value); err != nil {
+										my.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", metricKey, value, err)
+									} else {
+										my.Logger.Debug().Msgf("(%s) added value (%s)", metricKey, value)
+									}
+								}
+							}
+
 						} else {
 							my.Logger.Debug().Msgf("instance without [%s], skipping", my.instanceKeys[attribute])
 						}
@@ -373,56 +359,5 @@ func (my *Shelf) handle7Mode(result *node.Node) ([]*matrix.Matrix, error) {
 			}
 		}
 	}
-
-	// second loop to populate numeric data
-
-	for _, channel := range channels {
-		channelName := channel.GetChildContentS("channel-name")
-		shelves = channel.SearchChildren([]string{"shelf-environ-shelf-list", "shelf-environ-shelf-info"})
-
-		if len(shelves) == 0 {
-			continue
-		}
-		for _, shelf := range shelves {
-
-			shelfId := shelf.GetChildContentS("shelf-id")
-
-			for attribute, data1 := range my.data {
-
-				objectElem := shelf.GetChildS(attribute)
-				if objectElem == nil {
-					continue
-				}
-
-				for _, obj := range objectElem.GetChildren() {
-
-					key := obj.GetChildContentS(my.instanceKeys[attribute])
-
-					if key == "" {
-						continue
-					}
-
-					instance := data1.GetInstance(shelfId + "." + key + "." + channelName)
-
-					if instance == nil {
-						my.Logger.Debug().Msgf("(%s) instance [%s.%s] not found in cache skipping", attribute, shelfId, key)
-						continue
-					}
-
-					for metricKey, m := range data1.GetMetrics() {
-
-						if value := strings.Split(obj.GetChildContentS(metricKey), " ")[0]; value != "" {
-							if err := m.SetValueString(instance, value); err != nil {
-								my.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", metricKey, value, err)
-							} else {
-								my.Logger.Debug().Msgf("(%s) added value (%s)", metricKey, value)
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
 	return output, nil
 }

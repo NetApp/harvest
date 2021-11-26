@@ -134,7 +134,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "sum(count(shelf_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}) by (shelf_id))",
+          "expr": "sum(count(shelf_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}) by (shelf))",
           "format": "time_series",
           "hide": false,
           "instant": false,
