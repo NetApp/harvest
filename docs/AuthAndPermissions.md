@@ -136,7 +136,7 @@ mkdir -p ca/{private,certs}
 #### Create a root key
 ```
 cd ca
-# generate a private key that we will use to create our self-signed corticate authority
+# generate a private key that we will use to create our self-signed certificate authority
 openssl genrsa -out private/ca.key.pem 4096
 chmod 400 private/ca.key.pem
 ```
