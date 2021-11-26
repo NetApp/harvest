@@ -293,6 +293,7 @@ type Poller struct {
 	ApiVersion     string                `yaml:"api_version,omitempty"`
 	ApiVfiler      string                `yaml:"api_vfiler,omitempty"`
 	AuthStyle      string                `yaml:"auth_style,omitempty"`
+	CaCertPath     string                `yaml:"ca_cert,omitempty"`
 	ClientTimeout  string                `yaml:"client_timeout,omitempty"`
 	Collectors     []Collector           `yaml:"collectors,omitempty"`
 	Datacenter     string                `yaml:"datacenter,omitempty"`
@@ -371,6 +372,9 @@ func ZapiPoller(n *node.Node) Poller {
 	}
 	if sslKey := n.GetChildContentS("ssl_key"); sslKey != "" {
 		p.SslKey = sslKey
+	}
+	if caCert := n.GetChildContentS("ca_cert"); caCert != "" {
+		p.CaCertPath = caCert
 	}
 	if username := n.GetChildContentS("username"); username != "" {
 		p.Username = username
