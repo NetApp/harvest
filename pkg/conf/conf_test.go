@@ -108,31 +108,18 @@ func TestPollerUnion(t *testing.T) {
 	TestLoadHarvestConfig(testYml)
 	addr := "addr"
 	user := "user"
-	no := false
-	yes := true
 	defaults := Poller{
-		Addr:           addr,
-		Collectors:     []Collector{{Name: "0"}, {Name: "1"}, {Name: "2"}, {Name: "3"}},
-		Username:       user,
-		UseInsecureTls: &yes,
-		IsKfs:          true,
+		Addr:       addr,
+		Collectors: []Collector{{Name: "0"}, {Name: "1"}, {Name: "2"}, {Name: "3"}},
+		Username:   user,
 	}
-	p := Poller{
-		UseInsecureTls: &no,
-		IsKfs:          false,
-	}
+	var p Poller
 	p.Union(&defaults)
 	if p.Username != "user" {
 		t.Fatalf(`expected username to be [user] but was [%v]`, p.Username)
 	}
 	if p.Addr != "addr" {
 		t.Fatalf(`expected addr to be [addr] but was [%v]`, p.Addr)
-	}
-	if *p.UseInsecureTls {
-		t.Fatalf(`expected UseInsecureTls to be [false] but was [%v]`, *p.UseInsecureTls)
-	}
-	if p.IsKfs {
-		t.Fatalf(`expected IsKfs to be [false] but was [%v]`, p.IsKfs)
 	}
 	if len(p.Collectors) != 4 {
 		t.Fatalf(`expected collectors to be have four elements but was [%v]`, p.Collectors)
