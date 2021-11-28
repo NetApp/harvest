@@ -71,12 +71,6 @@ pipeline {
         }
 
         stage('Git Clone Harvest') {
-            // this stage will be invoked for non PR builds
-            when {
-                expression {
-                    return env.CHANGE_ID == null;
-                }
-            }
             steps {
                cleanWs()
                sh '''
