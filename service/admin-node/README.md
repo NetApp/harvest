@@ -8,6 +8,8 @@ Adjust paths as needed, and don't forget to enable `httpsd` in your `harvest.yml
 echo '[Unit]
 Description="NetApp Harvest HTTPSD"
 PartOf=harvest.target
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 User=harvest

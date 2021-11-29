@@ -10,6 +10,8 @@ Create one instantiated service for a poller. Adjust paths as needed
 echo '[Unit]
 Description="NetApp Harvest Poller instance %I"
 PartOf=harvest.target
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 User=harvest
