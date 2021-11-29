@@ -1191,7 +1191,7 @@ func parseHistogramLabels(elem *node.Node) ([]string, string) {
 	return labels, msg
 }
 
-// Update instance cache
+// PollInstance updates instance cache
 func (me *ZapiPerf) PollInstance() (*matrix.Matrix, error) {
 
 	var (
@@ -1254,7 +1254,10 @@ func (me *ZapiPerf) PollInstance() (*matrix.Matrix, error) {
 	for {
 
 		if results, batchTag, err = me.Client.InvokeBatchRequest(request, batchTag); err != nil {
-			me.Logger.Error().Stack().Err(err).Msg("instance request")
+			me.Logger.Error().Err(err).
+				Str("request", request.GetNameS()).
+				Str("batchTag", batchTag).
+				Msg("InvokeBatchRequest failed")
 			break
 		}
 
