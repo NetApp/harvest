@@ -85,6 +85,7 @@ export_options:
   instance_keys:
     - shelf
     - shelf_id
+    - channel
   instance_labels:
     - module_type
     - serial_number

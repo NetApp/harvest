@@ -81,6 +81,7 @@ func (my *Shelf) Init() error {
 		instanceLabels := exportOptions.NewChildS("instance_labels", "")
 		instanceKeys := exportOptions.NewChildS("instance_keys", "")
 		instanceKeys.NewChildS("", "shelf")
+		instanceKeys.NewChildS("", "channel")
 
 		// artificial metric for status of child object of shelf
 		my.data[attribute].NewMetricUint8("status")
@@ -126,9 +127,8 @@ func (my *Shelf) Init() error {
 func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var (
-		result  *node.Node
-		shelves []*node.Node
-		err     error
+		result *node.Node
+		err    error
 	)
 
 	if !my.client.IsClustered() {
@@ -146,13 +146,21 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		my.data[a].SetGlobalLabels(data.GetGlobalLabels())
 	}
 
+	if my.client.IsClustered() {
+		return my.handleCMode(result)
+	} else {
+		return my.handle7Mode(result)
+	}
+}
+
+func (my *Shelf) handleCMode(result *node.Node) ([]*matrix.Matrix, error) {
+	var (
+		shelves []*node.Node
+	)
+
 	if x := result.GetChildS("attributes-list"); x != nil {
 		shelves = x.GetChildren()
-	} else if !my.client.IsClustered() {
-		//fallback to 7mode
-		shelves = result.SearchChildren([]string{"shelf-environ-channel-info", "shelf-environ-shelf-list", "shelf-environ-shelf-info"})
 	}
-
 	if len(shelves) == 0 {
 		return nil, errors.New(errors.ERR_NO_INSTANCE, "no shelf instances found")
 	}
@@ -201,7 +209,7 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 						instance, err := data1.NewInstance(instanceKey)
 
 						if err != nil {
-							my.Logger.Debug().Msgf("add (%s) instance: %v", attribute, err)
+							my.Logger.Error().Err(err).Str("attribute", attribute).Msg("Failed to add instance")
 							return nil, err
 						}
 						my.Logger.Debug().Msgf("add (%s) instance: %s.%s", attribute, shelfId, key)
@@ -223,6 +231,17 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 							statusMetric.SetValueInt(instance, 0)
 						}
 
+						for metricKey, m := range data1.GetMetrics() {
+
+							if value := strings.Split(obj.GetChildContentS(metricKey), " ")[0]; value != "" {
+								if err := m.SetValueString(instance, value); err != nil {
+									my.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", metricKey, value, err)
+								} else {
+									my.Logger.Debug().Msgf("(%s) added value (%s)", metricKey, value)
+								}
+							}
+						}
+
 					} else {
 						my.Logger.Debug().Msgf("instance without [%s], skipping", my.instanceKeys[attribute])
 					}
@@ -233,50 +252,111 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 	}
 
-	// second loop to populate numeric data
+	return output, nil
+}
 
-	for _, shelf := range shelves {
+func (my *Shelf) handle7Mode(result *node.Node) ([]*matrix.Matrix, error) {
+	var (
+		shelves  []*node.Node
+		channels []*node.Node
+	)
+	//fallback to 7mode
+	channels = result.SearchChildren([]string{"shelf-environ-channel-info"})
 
-		shelfId := shelf.GetChildContentS("shelf-uid")
-		if !my.client.IsClustered() {
-			shelfId = shelf.GetChildContentS("shelf-id")
+	if len(channels) == 0 {
+		return nil, errors.New(errors.ERR_NO_INSTANCE, "no channels found")
+	}
+
+	var output []*matrix.Matrix
+
+	// Purge and reset data
+	for _, data1 := range my.data {
+		data1.PurgeInstances()
+		data1.Reset()
+	}
+
+	for _, channel := range channels {
+		channelName := channel.GetChildContentS("channel-name")
+		shelves = channel.SearchChildren([]string{"shelf-environ-shelf-list", "shelf-environ-shelf-info"})
+
+		if len(shelves) == 0 {
+			my.Logger.Warn().Str("channel", channelName).Msg("no shelves found")
+			continue
 		}
 
-		for attribute, data1 := range my.data {
+		for _, shelf := range shelves {
 
-			objectElem := shelf.GetChildS(attribute)
-			if objectElem == nil {
-				continue
-			}
+			uid := shelf.GetChildContentS("shelf-id")
+			shelfName := uid // no shelf name in 7mode
+			shelfId := uid
 
-			for _, obj := range objectElem.GetChildren() {
+			for attribute, data1 := range my.data {
+				if statusMetric := data1.GetMetric("status"); statusMetric != nil {
 
-				key := obj.GetChildContentS(my.instanceKeys[attribute])
+					if my.instanceKeys[attribute] == "" {
+						my.Logger.Warn().Str("attribute", attribute).Msg("no instance keys defined")
+						continue
+					}
 
-				if key == "" {
-					continue
-				}
+					objectElem := shelf.GetChildS(attribute)
+					if objectElem == nil {
+						my.Logger.Warn().Str("attribute", attribute).Msg("no instances on this system")
+						continue
+					}
 
-				instance := data1.GetInstance(shelfId + "." + key)
+					my.Logger.Debug().Msgf("fetching %d [%s] instances", len(objectElem.GetChildren()), attribute)
 
-				if instance == nil {
-					my.Logger.Debug().Msgf("(%s) instance [%s.%s] not found in cache skipping", attribute, shelfId, key)
-					continue
-				}
+					for _, obj := range objectElem.GetChildren() {
 
-				for metricKey, m := range data1.GetMetrics() {
+						if key := obj.GetChildContentS(my.instanceKeys[attribute]); key != "" {
+							instanceKey := shelfId + "." + key + "." + channelName
+							instance, err := data1.NewInstance(instanceKey)
 
-					if value := strings.Split(obj.GetChildContentS(metricKey), " ")[0]; value != "" {
-						if err := m.SetValueString(instance, value); err != nil {
-							my.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", metricKey, value, err)
+							if err != nil {
+								my.Logger.Error().Msgf("add (%s) instance: %v", attribute, err)
+								return nil, err
+							}
+							my.Logger.Debug().Msgf("add (%s) instance: %s.%s", attribute, shelfId, key)
+
+							for label, labelDisplay := range my.instanceLabels[attribute].Map() {
+								if value := obj.GetChildContentS(label); value != "" {
+									instance.SetLabel(labelDisplay, value)
+								}
+							}
+
+							instance.SetLabel("shelf", shelfName)
+							instance.SetLabel("shelf_id", shelfId)
+							instance.SetLabel("channel", channelName)
+
+							// Each child would have different possible values which is ugly way to write all of them,
+							// so normal value would be mapped to 1 and rest all are mapped to 0.
+							if instance.GetLabel("status") == "normal" {
+								statusMetric.SetValueInt(instance, 1)
+							} else {
+								statusMetric.SetValueInt(instance, 0)
+							}
+
+							// populate numeric data
+							for metricKey, m := range data1.GetMetrics() {
+
+								if value := strings.Split(obj.GetChildContentS(metricKey), " ")[0]; value != "" {
+									if err := m.SetValueString(instance, value); err != nil {
+										my.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", metricKey, value, err)
+									} else {
+										my.Logger.Debug().Msgf("(%s) added value (%s)", metricKey, value)
+									}
+								}
+							}
+
 						} else {
-							my.Logger.Debug().Msgf("(%s) added value (%s)", metricKey, value)
+							my.Logger.Debug().Msgf("instance without [%s], skipping", my.instanceKeys[attribute])
 						}
 					}
+
+					output = append(output, data1)
 				}
 			}
 		}
 	}
-
 	return output, nil
 }
