@@ -29,7 +29,7 @@ import (
 )
 
 // ImportTemplate retrieves the config (template) of a collector, arguments are:
-// @confDir			- path of Harvest config durectory (usually /etc/harvest)
+// @confDir			- path of Harvest config directory (usually /etc/harvest)
 // @confFn			- template filename (e.g. default.yaml or custom.yaml)
 // @collectorName	- name of the collector
 func ImportTemplate(confPath, confFn, collectorName string) (*node.Node, error) {
@@ -121,12 +121,12 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 		subTemplateFp = path.Join(pathPrefix, selectedVersion, f)
 		c.Logger.Info().Msgf("best-fit template [%s] for [%s]", subTemplateFp, verWithDots)
 		if finalTemplate == nil {
-			finalTemplate, err = tree.Import("yaml", subTemplateFp)
+			finalTemplate, err = tree.ImportYaml(subTemplateFp)
 			if err == nil {
 				finalTemplate.PreprocessTemplate()
 			}
 		} else {
-			tempTemplate, err = tree.Import("yaml", subTemplateFp)
+			tempTemplate, err = tree.ImportYaml(subTemplateFp)
 			if err == nil {
 				tempTemplate.PreprocessTemplate()
 				// merge templates

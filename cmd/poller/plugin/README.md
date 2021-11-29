@@ -33,7 +33,7 @@ plugins:
 # will aggregate a new Matrix based on target label LABEL
 ```
 
-If you want to speficy which labels should be included in the new instances, you can add those space-seperated after `LABEL`:
+If you want to specify which labels should be included in the new instances, you can add those space-seperated after `LABEL`:
 
 ```yaml
     - LABEL LABEL1,LABEL2
@@ -47,7 +47,7 @@ Or include all labels:
     - LABEL ...
 # copy all labels of the original instance
 ```
-By default aggregated metrics will be prefixed with `LABEL`. For example if the object of the original Matrix is `volume` (meaning metrics are prefixed with `volume_`) and `LABEL` is `aggr`, then the metric `volume_read_ops` will become `aggr_volume_read_ops`, etc. You can override this by providing the `<>OBJ` using the following syntax:
+By default, aggregated metrics will be prefixed with `LABEL`. For example if the object of the original Matrix is `volume` (meaning metrics are prefixed with `volume_`) and `LABEL` is `aggr`, then the metric `volume_read_ops` will become `aggr_volume_read_ops`, etc. You can override this by providing the `<>OBJ` using the following syntax:
 
 ```yaml
     - LABEL<>OBJ
@@ -71,14 +71,13 @@ Examples:
 ```yaml
 plugins:
   Aggregator:
+    # will aggregate metrics of the aggregate. The labels "node" and "type" are included in the new instances
     - aggr node type
-# will aggregate metrics of Anggregate level and make sure
-# labels "node" and "type" are included in the new instances
+    # aggregate instances if label "type" has value "flexgroup"
+    # include all original labels
     - type<flexgroup> ...
-# aggregate instances if label "type" has value "flexgroup"
-# include all original labels
+    # aggregate all instances if value of "volume" ends with underscore and 4 digits
     - volume<`_\d{4}$`>
-# aggregate all instances if value of "volume" ends with underscore and 4 digits
 ```
 
 ### Aggregation rules
@@ -94,7 +93,7 @@ The plugin tries to intelligently aggregate metrics based on a few rules:
 - **Ignore** - metrics created by some plugins, such as value_to_num by LabelAgent
 
 # LabelAgent
-LabelAgent allows to manipulate instance labels based on rules. You can define multiple rules, here is an example of what you could add to the yaml file of a collector:
+LabelAgent are used to manipulate instance labels based on rules. You can define multiple rules, here is an example of what you could add to the yaml file of a collector:
 
 
 ```yaml
@@ -130,23 +129,23 @@ Rule syntax:
 
 ```yaml
 split: LABEL `SEP` LABEL1,LABEL2,LABEL3
-# source label - seperator - comma-seperated target labels
+# source label - separator - comma-seperated target labels
 ```
 
-Splits the value of a given label by seperator `SEP` and creates new labels if their number matches to the number of target labels defined in rule. To discard a subvalue, just add a redundant `,` in the names of the target labels. 
+Splits the value of a given label by separator `SEP` and creates new labels if their number matches to the number of target labels defined in rule. To discard a subvalue, just add a redundant `,` in the names of the target labels. 
 
 Example:
 
 ```yaml
 split: node `/` ,aggr,plex,disk
-# will split the value of "node" using seperator "/"
+# will split the value of "node" using separator "/"
 # will expect 4 values: first will be discarded, remaining
 # three will be stored as labels "aggr", "plex" and "disk"
 ```
 
 ## split_regex
 
-Does the same as `split_regex` but uses a regular expression instead of a seperator.
+Does the same as `split_regex` but uses a regular expression instead of a separator.
 
 Rule syntax:
 
@@ -170,7 +169,7 @@ Rule syntax:
 
 ```yaml
 split_pairs: LABEL `SEP1` `SEP2`
-# source label - pair seperator - key-value seperator
+# source label - pair separator - key-value separator
 ```
 
 Extracts key-value pairs from the value of source label `LABEL`. Note that you need to add these keys in the export options, otherwise they will not be exported.
@@ -186,13 +185,13 @@ split_pairs: comment ` ` `:`
 
 ## join
 
-Join multiple label values using seperator `SEP` and create a new label. 
+Join multiple label values using separator `SEP` and create a new label. 
 
 Rule syntax:
 
 ```yaml
 join: LABEL `SEP` LABEL1,LABEL2,LABEL3
-# target label - seperator - comma-seperated source labels
+# target label - separator - comma-seperated source labels
 ```
 
 Example:
@@ -307,7 +306,7 @@ value_mapping was deprecated in 21.11 and removed in 22.02. Use [value_to_num ma
 
 ## value_to_num
 
-Maps values of a given label to a numeric metric (of type `uint8`).
+Map values of a given label to a numeric metric (of type `uint8`).
 This rule maps values of a given label to a numeric metric (of type `unit8`). Healthy is mapped to 1 and all non-healthy values are mapped to 0.
 
 This is handy to manipulate the data in the DB or Grafana (e.g. change color based on status or create alert).
@@ -318,8 +317,8 @@ Rule syntax:
 
 ```yaml
 value_to_num: METRIC LABEL ZAPI_VALUE REST_VALUE `N`
-# maps values of LABEL to 1 if it is ZAPI_VALUE or REST_VALUE
-# otherwise value of METRIC is set to N
+# map values of LABEL to 1 if it is ZAPI_VALUE or REST_VALUE
+# otherwise, value of METRIC is set to N
 ```
 The default value `N` is optional, if no default value is given and the label value does not match any of the given values, the metric value will not be set.
 
@@ -341,6 +340,6 @@ value_to_num: status state up online `4`
 ```yaml
 value_to_num: status outage - - `0` #ok_value is empty value. 
 # metric value will be set to 1 if "outage" is empty, if it's any other value, it will be set to the default, 0
-# '-' is a special symbol in this mapping and it will be converted to blank while processing.
+# '-' is a special symbol in this mapping, and it will be converted to blank while processing.
 ```
 
