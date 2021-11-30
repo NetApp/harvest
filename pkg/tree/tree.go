@@ -4,11 +4,8 @@
 package tree
 
 import (
-	"errors"
-	"goharvest2/pkg/tree/json"
 	"goharvest2/pkg/tree/node"
 	"goharvest2/pkg/tree/xml"
-	"goharvest2/pkg/tree/yaml"
 	y3 "gopkg.in/yaml.v3"
 	"io/ioutil"
 )
@@ -53,26 +50,6 @@ func consume(r *node.Node, key string, y *y3.Node) {
 			consume(s, "", child)
 		}
 	}
-}
-
-func Import(format, filepath string) (*node.Node, error) {
-
-	data, err := ioutil.ReadFile(filepath)
-
-	if err != nil {
-		return nil, err
-	}
-
-	switch format {
-	case "yaml":
-		return yaml.Load(data)
-	case "xml":
-		return xml.Load(data)
-	case "json":
-		return json.Load(data)
-	}
-
-	return nil, errors.New("unknown format: " + format)
 }
 
 func LoadXml(data []byte) (*node.Node, error) {

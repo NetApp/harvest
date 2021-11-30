@@ -55,7 +55,9 @@ func (me *LabelAgent) parseRules() int {
 			case "value_to_num":
 				me.parseValueToNumRule(rule)
 			default:
-				me.Logger.Warn().Msgf("unknown rule (%s)", name)
+				me.Logger.Warn().
+					Str("object", me.ParentParams.GetChildContentS("object")).
+					Str("name", name).Msg("Unknown rule name")
 			}
 		}
 	}

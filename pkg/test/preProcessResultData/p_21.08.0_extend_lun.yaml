@@ -1,5 +1,4 @@
 plugins:
-  - nic
   LabelAgent:
     value_to_num:
       - new_status state online online `0`
