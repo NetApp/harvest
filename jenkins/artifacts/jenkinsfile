@@ -5,7 +5,7 @@ pipeline {
         string(name: 'VERSION', defaultValue: '', description: '[Optional] RPM Version should match Harvest version with rc or nightly stripped. If not filled default is YY.mm.ddHH. See https://github.com/NetApp/harvest/wiki/Release-Checklist#version-names for details')
         string(name: 'RELEASE', defaultValue: 'nightly', description: '[Optional] Example: nightly (default) See https://github.com/NetApp/harvest-private/wiki/Release-Checklist#rpm-and-debian-names for details ')
         string(name: 'BRANCH', defaultValue: 'main', description: '[Optional] Branch name to clone. Default (main) ')
-		string(name: 'ASUP_MAKE_TARGET', defaultValue: 'build', description: 'make target for AutoSupport binary build|production')
+		string(name: 'ASUP_MAKE_TARGET', defaultValue: 'production', description: 'make target for AutoSupport binary build|production')
 		string(name: 'DOCKER_PUBLISH', defaultValue: 'false', description: 'true to publish to dockerhub')
 		string(name: 'RUN_TEST', defaultValue: 'true', description: 'false to skip test')
 		string(name: 'OVERWRITE_DOCKER_LATEST_TAG', defaultValue: 'false', description: 'true to overwrite latest tag at dockerhub. Works only if DOCKER_PUBLISH is true')
@@ -179,7 +179,29 @@ pipeline {
             }
         }
       }
+
+      stage('Publish Nightly Build to GitHub') {
+        when {
+            expression {
+                //return params.RELEASE == 'nightly' && params.BRANCH == 'main' && params.ASUP_MAKE_TARGET == 'production'
+                return params.RELEASE == 'nightly' && params.ASUP_MAKE_TARGET == 'production'
+            }
+        }
+        steps {
+           sh '''
+           targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
+           wget -q -O /opt/home/gh.tar.gz "https://github.com/cli/cli/releases/download/v2.2.0/gh_2.2.0_linux_386.tar.gz"
+           tar -C /opt/home -xzf /opt/home/gh.tar.gz
+           echo $GIT_TOKEN > mytoken.txt
+           /opt/home/gh_2.2.0_linux_386/bin/gh auth login --with-token < mytoken.txt
+           /opt/home/gh_2.2.0_linux_386/bin/gh release delete nightly -y || true
+           /opt/home/gh_2.2.0_linux_386/bin/gh release create nightly $targetLocation/*.rpm $targetLocation/*.deb $targetLocation/*.gz --notes "harvest nightly" --draft
+            '''
+            }
+        }
     }
+
+
     post {
         failure {
             sendNotification("FAILED")
