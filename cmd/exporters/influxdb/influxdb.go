@@ -11,6 +11,7 @@ import (
 	"goharvest2/pkg/color"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
+	"io"
 	"io/ioutil"
 	"net/http"
 	url2 "net/url"
@@ -166,9 +167,12 @@ func (e *InfluxDB) Export(data *matrix.Matrix) error {
 				e.Logger.Debug().Msgf("M= [%s%s%s]", color.Blue, m, color.End)
 			}
 			return nil
-			// otherwise to the actual export: send to the DB
+			// otherwise, to the actual export: send to the DB
 		} else if err = e.Emit(metrics); err != nil {
-			e.Logger.Error().Stack().Err(err).Msgf("(%s.%s) --> %s", data.Object, data.UUID)
+			e.Logger.Error().Stack().Err(err).
+				Str("object", data.Object).
+				Str("uuid", data.UUID).
+				Msg("Failed to emit metrics")
 			return err
 		}
 	}
@@ -208,7 +212,7 @@ func (e *InfluxDB) Emit(data [][]byte) error {
 	}
 
 	if response.StatusCode != expectedResponseCode {
-		defer response.Body.Close()
+		defer func(Body io.ReadCloser) { _ = Body.Close() }(response.Body)
 		if body, err := ioutil.ReadAll(response.Body); err != nil {
 			return errors.New(errors.API_RESPONSE, err.Error())
 		} else {
