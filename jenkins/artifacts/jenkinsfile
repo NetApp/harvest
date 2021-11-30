@@ -183,7 +183,7 @@ pipeline {
       stage('Publish Nightly Build to GitHub') {
         when {
             expression {
-                return params.RELEASE == 'nightly' && params.BRANCH == 'main' && params.ASUP_MAKE_TARGET == 'production'
+                return params.RELEASE == 'nightly' && env.BRANCH == 'main' && params.ASUP_MAKE_TARGET == 'production'
             }
         }
         steps {
