@@ -24,7 +24,6 @@ plugins:
     - aggr
     - node<>node_cpu1
     - nodetest
-  - nic
 export_options:
   instance_keys:
     - node
