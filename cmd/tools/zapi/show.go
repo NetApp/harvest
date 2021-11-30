@@ -34,11 +34,11 @@ func show(n *node.Node, args *Args) {
 }
 
 func showSystem(n *node.Node) {
-	n.Print(0)
+	fmt.Println(n.Print(0))
 }
 
 func showApis(n *node.Node) {
-	n.Print(0)
+	fmt.Println(n.Print(0))
 }
 
 func showObjects(item *node.Node) {
@@ -54,19 +54,19 @@ func showObjects(item *node.Node) {
 }
 
 func showAttrs(n *node.Node) {
-	n.Print(0)
+	fmt.Println(n.Print(0))
 }
 
 func showCounters(n *node.Node) {
-	n.Print(0)
+	fmt.Println(n.Print(0))
 }
 
 func showCounter(n *node.Node) {
-	n.Print(0)
+	fmt.Println(n.Print(0))
 }
 
 func showInstances(n *node.Node) {
-	n.Print(0)
+	fmt.Println(n.Print(0))
 }
 
 func showData(n *node.Node, a *Args) {
@@ -76,6 +76,6 @@ func showData(n *node.Node, a *Args) {
 		fmt.Println(string(n.Content))
 		fmt.Println("</root>")
 	} else {
-		n.Print(0)
+		fmt.Println(n.Print(0))
 	}
 }
