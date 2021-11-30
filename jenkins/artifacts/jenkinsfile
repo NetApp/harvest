@@ -195,7 +195,7 @@ pipeline {
            echo $GIT_TOKEN > mytoken.txt
            /opt/home/gh_2.2.0_linux_386/bin/gh auth login --with-token < mytoken.txt
            /opt/home/gh_2.2.0_linux_386/bin/gh release delete nightly -y || true
-           /opt/home/gh_2.2.0_linux_386/bin/gh release create nightly $targetLocation/*.rpm $targetLocation/*.deb $targetLocation/*.gz --notes "harvest nightly" --prerelease
+           /opt/home/gh_2.2.0_linux_386/bin/gh release create nightly $targetLocation/*.rpm $targetLocation/*.deb $targetLocation/*.gz --notes "This is harvest nightly release builds" --title "Harvest Nightly Release" --prerelease
             '''
             }
         }
