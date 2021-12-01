@@ -14,6 +14,7 @@ import (
 	"goharvest2/cmd/collectors/zapiperf/plugins/headroom"
 	"goharvest2/cmd/collectors/zapiperf/plugins/nic"
 	"goharvest2/cmd/collectors/zapiperf/plugins/volume"
+	"goharvest2/cmd/collectors/zapiperf/plugins/vscan"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/pkg/conf"
 	"sort"
@@ -148,6 +149,8 @@ func (me *Zapi) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugi
 		return quota.New(abc)
 	case "Snapshot":
 		return snapshot.New(abc)
+	case "Vscan":
+		return vscan.New(abc)
 	default:
 		me.Logger.Info().Msgf("no zapi plugin found for %s", kind)
 	}

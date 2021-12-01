@@ -416,6 +416,10 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 			}
 		}
 	}
-	me.Logger.Debug().Msgf("rendered %d data points from %d (%s) instances", len(rendered), len(data.GetInstances()), data.Object)
+	me.Logger.Debug().
+		Str("object", data.Object).
+		Int("rendered", len(rendered)).
+		Int("instances", len(data.GetInstances())).
+		Msg("Rendered data points for instances")
 	return rendered, nil
 }
