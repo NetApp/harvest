@@ -903,10 +903,12 @@ func (p *Poller) publishDetails() {
 		if exp.Type != "Prometheus" {
 			continue
 		}
-		if exp.LocalHttpAddr == "localhost" || exp.LocalHttpAddr == "127.0.0.1" {
+		if exp.LocalHttpAddr == "0.0.0.0" {
+			exporterIp = localIp
+		} else if exp.LocalHttpAddr != "localhost" || exp.LocalHttpAddr == "127.0.0.1" {
 			exporterIp = "127.0.0.1"
 		} else {
-			exporterIp = localIp
+			exporterIp = exp.LocalHttpAddr
 		}
 		if exp.HeartBeatUrl != "" {
 			heartBeatUrl = exp.HeartBeatUrl

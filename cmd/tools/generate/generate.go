@@ -327,6 +327,7 @@ func init() {
 	dockerCmd.AddCommand(fullCmd)
 
 	dFlags := dockerCmd.PersistentFlags()
+	dLocalFlags := dockerCmd.Flags()
 	fFlags := fullCmd.PersistentFlags()
 
 	dFlags.IntVarP(&opts.loglevel, "loglevel", "l", 2,
@@ -335,7 +336,7 @@ func init() {
 	dFlags.StringVar(&opts.image, "image", "rahulguptajss/harvest:latest", "Harvest image")
 	dFlags.StringVar(&opts.templateDir, "templatedir", "./conf", "Harvest template dir path")
 	dFlags.StringVarP(&opts.outputPath, "output", "o", "", "Output file path. ")
-	dFlags.BoolVar(&opts.admin, "admin", false, "Generate admin service")
+	dLocalFlags.BoolVar(&opts.admin, "admin", false, "Generate admin service")
 
 	fFlags.BoolVarP(&opts.showPorts, "port", "p", false, "Expose poller ports to host machine")
 	_ = dockerCmd.MarkPersistentFlagRequired("output")
