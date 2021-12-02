@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"encoding/xml"
 	"fmt"
-	"goharvest2/pkg/color"
 	"goharvest2/pkg/util"
 	"regexp"
 	"strings"
@@ -372,10 +371,15 @@ func simpleName(s string) string {
 	return wordRegex.FindString(s)
 }
 
-func (n *Node) Print(depth int) {
+func (n *Node) Print(depth int) string {
+	builder := strings.Builder{}
+	n.printN(depth, &builder)
+	return builder.String()
+}
+
+func (n *Node) printN(depth int, b *strings.Builder) {
 	name := "* "
 	content := " *"
-
 	if n.GetNameS() != "" {
 		name = n.GetNameS()
 	}
@@ -383,10 +387,10 @@ func (n *Node) Print(depth int) {
 	if len(n.GetContentS()) > 0 && n.GetContentS()[0] != '<' {
 		content = n.GetContentS()
 	}
-	fname := fmt.Sprintf("%s%s%s[%s]%s", strings.Repeat("  ", depth), color.Bold, color.Cyan, name, color.End)
-	fmt.Printf("%-50s - %s%35s%s\n", fname, color.Green, content, color.End)
+	fname := fmt.Sprintf("%s[%s]", strings.Repeat("  ", depth), name)
+	b.WriteString(fmt.Sprintf("%-50s - %35s\n", fname, content))
 	for _, child := range n.Children {
-		child.Print(depth + 1)
+		child.printN(depth+1, b)
 	}
 }
 

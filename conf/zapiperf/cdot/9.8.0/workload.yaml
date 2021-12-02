@@ -15,6 +15,7 @@ schedule:
   - data: 180s
 
 counters:
+  - concurrency
   - instance_name
   - instance_uuid
   - latency

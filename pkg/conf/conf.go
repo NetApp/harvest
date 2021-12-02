@@ -293,6 +293,7 @@ type Poller struct {
 	ApiVersion     string                `yaml:"api_version,omitempty"`
 	ApiVfiler      string                `yaml:"api_vfiler,omitempty"`
 	AuthStyle      string                `yaml:"auth_style,omitempty"`
+	CaCertPath     string                `yaml:"ca_cert,omitempty"`
 	ClientTimeout  string                `yaml:"client_timeout,omitempty"`
 	Collectors     []Collector           `yaml:"collectors,omitempty"`
 	Datacenter     string                `yaml:"datacenter,omitempty"`
@@ -312,7 +313,19 @@ type Poller struct {
 }
 
 func (p *Poller) Union(defaults *Poller) {
+	// this is needed because of how mergo handles boolean zero values
+	isInsecureNil := true
+	var pUseInsecureTls bool
+	pIsKfs := p.IsKfs
+	if p.UseInsecureTls != nil {
+		isInsecureNil = false
+		pUseInsecureTls = *p.UseInsecureTls
+	}
 	_ = mergo.Merge(p, defaults)
+	if !isInsecureNil {
+		p.UseInsecureTls = &pUseInsecureTls
+	}
+	p.IsKfs = pIsKfs
 }
 
 // ZapiPoller creates a poller out of a node, this is a bridge between the node and struct-based code
@@ -359,6 +372,9 @@ func ZapiPoller(n *node.Node) Poller {
 	}
 	if sslKey := n.GetChildContentS("ssl_key"); sslKey != "" {
 		p.SslKey = sslKey
+	}
+	if caCert := n.GetChildContentS("ca_cert"); caCert != "" {
+		p.CaCertPath = caCert
 	}
 	if username := n.GetChildContentS("username"); username != "" {
 		p.Username = username

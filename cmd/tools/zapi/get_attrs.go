@@ -8,28 +8,9 @@ import (
 	"fmt"
 	client "goharvest2/pkg/api/ontapi/zapi"
 	"goharvest2/pkg/errors"
-	"goharvest2/pkg/set"
 	"goharvest2/pkg/tree/node"
 	"strings"
 )
-
-var knownTypes = set.NewFrom([]string{
-	"string",
-	"integer",
-	"boolean",
-	"node-name",
-	"aggr-name",
-	"vserver-name",
-	"volume-name",
-	"uuid", "size",
-	"cache-policy",
-	"junction-path",
-	"volstyle",
-	"repos-constituent-role",
-	"language-code",
-	"snaplocktype",
-	"space-slo-enum",
-})
 
 func getAttrs(c *client.Client, a *Args) (*node.Node, error) {
 
@@ -63,40 +44,40 @@ func getAttrs(c *client.Client, a *Args) (*node.Node, error) {
 	}
 
 	fmt.Println("############################        INPUT        ##########################")
-	input.Print(0)
+	fmt.Println(input.Print(0))
 	fmt.Println()
 	fmt.Println()
 
 	fmt.Println("############################        OUPUT        ##########################")
-	output.Print(0)
+	fmt.Println(output.Print(0))
 	fmt.Println()
 	fmt.Println()
 
 	// fetch root attribute
-	attr_key := ""
-	attr_name := ""
+	attrKey := ""
+	attrName := ""
 
 	for _, x := range output.GetChildren() {
 		if t := x.GetChildContentS("type"); t == "string" || t == "integer" {
 			continue
 		}
 		if name := x.GetChildContentS("name"); true {
-			attr_key = name
-			attr_name = x.GetChildContentS("type")
+			attrKey = name
+			attrName = x.GetChildContentS("type")
 			break
 		}
 	}
 
-	if attr_name == "" {
+	if attrName == "" {
 		fmt.Println("no root attribute, stopping here.")
 		return nil, errors.New(AttributeNotFound, "root attribute")
 	}
 
-	if strings.HasSuffix(attr_name, "[]") {
-		attr_name = strings.TrimSuffix(attr_name, "[]")
+	if strings.HasSuffix(attrName, "[]") {
+		attrName = strings.TrimSuffix(attrName, "[]")
 	}
 
-	fmt.Printf("building tree for attribute [%s] => [%s]\n", attr_key, attr_name)
+	fmt.Printf("building tree for attribute [%s] => [%s]\n", attrKey, attrName)
 
 	if results, err = c.InvokeRequestString("system-api-list-types"); err != nil {
 		return nil, err
@@ -108,27 +89,13 @@ func getAttrs(c *client.Client, a *Args) (*node.Node, error) {
 		return nil, errors.New(AttributeNotFound, "type-entries")
 	}
 
-	attr = node.NewS(attr_name)
-	search_entries(attr, entries)
+	attr = node.NewS(attrName)
+	searchEntries(attr, entries)
 
-	//fmt.Println("############################        ATTR         ##########################")
-	//attr.Print(0)
-	//fmt.Println()
-	/*
-		if args.Export {
-			fn := path.Join("/tmp", args.Api+".yml")
-			if err = tree.Export(attr, "yaml", fn); err != nil {
-				fmt.Printf("failed to export to [%s]:\n", fn)
-				fmt.Println(err)
-			} else {
-				fmt.Printf("exported to [%s]\n", fn)
-			}
-		}
-	*/
 	return attr, nil
 }
 
-func search_entries(root, entries *node.Node) {
+func searchEntries(root, entries *node.Node) {
 
 	cache := make(map[string]*node.Node)
 	cache[root.GetNameS()] = root
@@ -141,9 +108,12 @@ func search_entries(root, entries *node.Node) {
 				if elems := entry.GetChildS("type-elements"); elems != nil {
 					for _, elem := range elems.GetChildren() {
 						child := parent.NewChildS(elem.GetChildContentS("name"), "")
-						attr_type := strings.TrimSuffix(elem.GetChildContentS("type"), "[]")
-						if !knownTypes.Has(attr_type) {
-							cache[attr_type] = child
+						attrType := strings.TrimSuffix(elem.GetChildContentS("type"), "[]")
+						cache[attrType] = child
+						if strings.Contains(attrType, "-info") {
+							child.SetContentS(" ")
+						} else {
+							child.SetContentS(attrType)
 						}
 					}
 				}

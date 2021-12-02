@@ -20,7 +20,6 @@ plugins:
       - path `/` ,,,lun
     new_mapping:
       - xyz
-  - nic
   Aggregator:
     - node<>node_cpu1
     - nodetest

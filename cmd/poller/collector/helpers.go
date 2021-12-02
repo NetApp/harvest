@@ -29,12 +29,12 @@ import (
 )
 
 // ImportTemplate retrieves the config (template) of a collector, arguments are:
-// @confDir			- path of Harvest config durectory (usually /etc/harvest)
+// @confDir			- path of Harvest config directory (usually /etc/harvest)
 // @confFn			- template filename (e.g. default.yaml or custom.yaml)
 // @collectorName	- name of the collector
 func ImportTemplate(confPath, confFn, collectorName string) (*node.Node, error) {
 	fp := path.Join(confPath, "conf/", strings.ToLower(collectorName), confFn)
-	return tree.Import("yaml", fp)
+	return tree.ImportYaml(fp)
 }
 
 // ImportSubTemplate retrieves the best matching subtemplate of a collector object.
@@ -105,7 +105,7 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 			verS, err := version.NewVersion(verWithDots)
 			if err != nil {
 				c.Logger.Trace().Msgf("error parsing ONTAP version: %s err: %s", verWithDots, err)
-				return nil, errors.New("No best-fitting subtemplate version found")
+				return nil, errors.New("no best-fitting subtemplate version found")
 			}
 			// get closest index
 			idx := getClosestIndex(versions, verS)
@@ -115,18 +115,18 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 		}
 
 		if selectedVersion == "" {
-			return nil, errors.New("No best-fit template found")
+			return nil, errors.New("no best-fit template found")
 		}
 
 		subTemplateFp = path.Join(pathPrefix, selectedVersion, f)
 		c.Logger.Info().Msgf("best-fit template [%s] for [%s]", subTemplateFp, verWithDots)
 		if finalTemplate == nil {
-			finalTemplate, err = tree.Import("yaml", subTemplateFp)
+			finalTemplate, err = tree.ImportYaml(subTemplateFp)
 			if err == nil {
 				finalTemplate.PreprocessTemplate()
 			}
 		} else {
-			tempTemplate, err = tree.Import("yaml", subTemplateFp)
+			tempTemplate, err = tree.ImportYaml(subTemplateFp)
 			if err == nil {
 				tempTemplate.PreprocessTemplate()
 				// merge templates

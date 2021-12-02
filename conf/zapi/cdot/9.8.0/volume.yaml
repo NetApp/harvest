@@ -76,7 +76,7 @@ plugins:
     replace:
       - style style `flexgroup_constituent` `flexgroup`
   Aggregator:
-    volume<style=flexgroup>volume node,svm,aggr,style
+    - volume<style=flexgroup>volume node,svm,aggr,style
 
 export_options:
   instance_keys:

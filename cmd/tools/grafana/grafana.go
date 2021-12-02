@@ -283,6 +283,7 @@ func askForToken() {
 }
 
 func adjustOptions() {
+	opts.config = conf.ConfigPath(opts.config)
 	homePath = conf.GetHarvestHomePath()
 	if opts.dircDOT != "" {
 		opts.dircDOT = path.Join(homePath, opts.dircDOT)
