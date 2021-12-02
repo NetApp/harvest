@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"text/template"
 )
@@ -26,8 +27,18 @@ type PollerInfo struct {
 	TemplateDir   string
 }
 
+type AdminInfo struct {
+	ServiceName   string
+	Port          int
+	ConfigFile    string
+	Image         string
+	ContainerName string
+	Enabled       bool
+}
+
 type PollerTemplate struct {
 	Pollers []PollerInfo
+	Admin   AdminInfo
 }
 
 type PromTemplate struct {
@@ -40,6 +51,7 @@ type options struct {
 	image       string
 	filesdPath  string
 	showPorts   bool
+	admin       bool
 	outputPath  string
 	templateDir string
 	promPort    int
@@ -157,10 +169,31 @@ func generateDocker(path string, kind int) {
 	if err != nil {
 		panic(err)
 	}
+
 	if kind == harvest {
-		_, _ = fmt.Fprintf(os.Stderr,
-			"Start containers with:\n"+
-				color.Colorize("docker-compose -f "+opts.outputPath+" up -d --remove-orphans\n", color.Green))
+		// generate admin service if configuration is present in harvest config
+		if conf.Config.Admin.Httpsd.Listen != "" {
+			httpsd := conf.Config.Admin.Httpsd.Listen
+
+			adminPort := 8887
+			if s := strings.Split(httpsd, ":"); len(s) == 2 {
+				adminPort, err = strconv.Atoi(s[1])
+				if err != nil {
+					panic("Invalid httpsd listen configuration. Valid configuration are <<addr>>:PORT or :PORT")
+				}
+			} else {
+				panic("Invalid httpsd listen configuration. Valid configuration are <<addr>>:PORT or :PORT")
+			}
+
+			pollerTemplate.Admin = AdminInfo{
+				ServiceName:   "admin",
+				ConfigFile:    configFilePath,
+				Port:          adminPort,
+				Image:         opts.image,
+				ContainerName: "admin",
+				Enabled:       true,
+			}
+		}
 	} else {
 		pt, err := template.New("prom-stack.tmpl").ParseFiles("prom-stack.tmpl")
 		if err != nil {
@@ -173,6 +206,7 @@ func generateDocker(path string, kind int) {
 			panic(err)
 		}
 	}
+
 	err = t.Execute(out, pollerTemplate)
 	if err != nil {
 		panic(err)
@@ -187,6 +221,12 @@ func generateDocker(path string, kind int) {
 		_, _ = fmt.Fprintln(f, line)
 	}
 	_, _ = fmt.Fprintf(os.Stderr, "Wrote file_sd targets to %s\n", opts.filesdPath)
+
+	if kind == harvest {
+		_, _ = fmt.Fprintf(os.Stderr,
+			"Start containers with:\n"+
+				color.Colorize("docker-compose -f "+opts.outputPath+" up -d --remove-orphans\n", color.Green))
+	}
 	if kind == full {
 		_, _ = fmt.Fprintf(os.Stderr,
 			"Start containers with:\n"+
