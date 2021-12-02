@@ -32,7 +32,6 @@ counters:
     - ^unhealthy-reason
     - update-failed-count
     - update-successful-count
-    - ^destination-location
 
 plugins:
   - Snapmirror
@@ -56,6 +55,3 @@ export_options:
     - destination_node_limit
     - source_node_limit
     - group_type
-    - destination_location
-    - protectedBy
-    - protectionSourceType

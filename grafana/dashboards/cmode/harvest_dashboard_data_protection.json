@@ -141,7 +141,7 @@
       },
       "gridPos": {
         "h": 10,
-        "w": 3,
+        "w": 6,
         "x": 0,
         "y": 1
       },
@@ -216,8 +216,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 3,
-        "x": 3,
+        "w": 6,
+        "x": 6,
         "y": 1
       },
       "id": 75,
@@ -309,8 +309,8 @@
       },
       "gridPos": {
         "h": 10,
-        "w": 3,
-        "x": 6,
+        "w": 6,
+        "x": 12,
         "y": 1
       },
       "id": 13,
@@ -383,8 +383,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 3,
-        "x": 9,
+        "w": 6,
+        "x": 18,
         "y": 1
       },
       "id": 77,
@@ -460,8 +460,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 3,
-        "x": 3,
+        "w": 6,
+        "x": 6,
         "y": 6
       },
       "id": 79,
@@ -537,8 +537,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 3,
-        "x": 9,
+        "w": 6,
+        "x": 18,
         "y": 6
       },
       "id": 81,
@@ -578,7 +578,7 @@
       "type": "stat"
     },
     {
-      "datasource": null,
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -611,6 +611,10 @@
               {
                 "id": "custom.filterable",
                 "value": true
+              },
+              {
+                "id": "custom.width",
+                "value": 150
               }
             ]
           },
@@ -623,6 +627,10 @@
               {
                 "id": "displayName",
                 "value": "Volume"
+              },
+              {
+                "id": "custom.width",
+                "value": 350
               }
             ]
           },
@@ -635,38 +643,34 @@
               {
                 "id": "displayName",
                 "value": "Snapshot Policy"
+              },
+              {
+                "id": "custom.width",
+                "value": 220
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "Snapshot Policy"
+              "options": "svm"
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 141
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Volume"
-            },
-            "properties": [
+                "id": "displayName",
+                "value": "SVM"
+              },
               {
                 "id": "custom.width",
-                "value": 190
+                "value": 250
               }
             ]
           }
         ]
       },
       "gridPos": {
-        "h": 10,
-        "w": 6,
+        "h": 13,
+        "w": 12,
         "x": 0,
         "y": 11
       },
@@ -696,7 +700,8 @@
               "names": [
                 "snapshot_policy",
                 "volume",
-                "Status"
+                "Status",
+                "svm"
               ]
             }
           }
@@ -705,8 +710,9 @@
           "id": "organize",
           "options": {
             "indexByName": {
-              "Status": 2,
-              "snapshot_policy": 1,
+              "Status": 3,
+              "snapshot_policy": 2,
+              "svm": 1,
               "volume": 0
             }
           }
@@ -745,7 +751,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 180
+                "value": 320
               },
               {
                 "id": "displayName",
@@ -769,7 +775,7 @@
               },
               {
                 "id": "custom.width",
-                "value": 90
+                "value": 130
               }
             ]
           },
@@ -789,7 +795,7 @@
               },
               {
                 "id": "custom.width",
-                "value": 90
+                "value": 130
               }
             ]
           },
@@ -832,16 +838,32 @@
               },
               {
                 "id": "custom.width",
-                "value": 120
+                "value": 150
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "svm"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "SVM"
+              },
+              {
+                "id": "custom.width",
+                "value": 240
               }
             ]
           }
         ]
       },
       "gridPos": {
-        "h": 10,
-        "w": 6,
-        "x": 6,
+        "h": 13,
+        "w": 12,
+        "x": 12,
         "y": 11
       },
       "id": 91,
@@ -908,7 +930,8 @@
               "names": [
                 "volume",
                 "Value #A",
-                "Value #B"
+                "Value #B",
+                "svm"
               ]
             }
           }
@@ -932,6 +955,20 @@
               "reducer": "sum"
             }
           }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "Status": 4,
+              "Value #A": 2,
+              "Value #B": 3,
+              "svm": 1,
+              "volume": 0
+            },
+            "renameByName": {}
+          }
         }
       ],
       "type": "table"
@@ -943,7 +980,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 24
       },
       "id": 22,
       "panels": [],
@@ -951,24 +988,281 @@
       "type": "row"
     },
     {
+      "cacheTimeout": null,
+      "datasource": "Prometheus",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgb(31, 176, 196)",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 0,
+        "y": 25
+      },
+      "id": 96,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "count((volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})) * on (volume,svm,cluster) (volume_snapshot_count{} > 0 and volume_snapshot_count{} < 10)) OR on() vector(0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": " <10 Copies ",
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "Prometheus",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgb(31, 176, 196)",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 6,
+        "y": 25
+      },
+      "id": 97,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "count((volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})) * on (volume,svm,cluster) (volume_snapshot_count{} >= 10 and volume_snapshot_count{} <= 100)) OR on() vector(0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "10-100 Copies",
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "Prometheus",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgb(31, 176, 196)",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 12,
+        "y": 25
+      },
+      "id": 98,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "count((volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})) * on (volume,svm,cluster) (volume_snapshot_count{} > 100 and volume_snapshot_count{} <= 500)) OR on() vector(0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "101-500 Copies",
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "Prometheus",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgb(31, 176, 196)",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 18,
+        "y": 25
+      },
+      "id": 99,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "count((volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})) * on (volume,svm,cluster) (volume_snapshot_count{} > 500)) OR on() vector(0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": ">500 Copies",
+      "type": "stat"
+    },
+    {
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "fixedColor": "transparent",
+            "mode": "fixed"
           },
           "custom": {
-            "axisLabel": "",
-            "axisPlacement": "left",
-            "axisSoftMin": 0,
-            "fillOpacity": 68,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineWidth": 1
+            "align": "left",
+            "displayMode": "color-background-solid",
+            "filterable": false
           },
           "mappings": [],
           "thresholds": {
@@ -979,111 +1273,209 @@
                 "value": null
               }
             ]
-          },
-          "unit": "none"
+          }
         },
         "overrides": [
           {
-            "__systemRef": "hideSeriesFrom",
             "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "Last"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
+              "id": "byName",
+              "options": "Bucket"
             },
             "properties": [
               {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": true,
-                  "tooltip": false,
-                  "viz": false
-                }
+                "id": "custom.filterable",
+                "value": true
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "from": 0,
+                      "result": {
+                        "index": 0,
+                        "text": "< 10 Copies"
+                      },
+                      "to": 9
+                    },
+                    "type": "range"
+                  },
+                  {
+                    "options": {
+                      "from": 10,
+                      "result": {
+                        "index": 1,
+                        "text": "10-100 Copies"
+                      },
+                      "to": 100
+                    },
+                    "type": "range"
+                  },
+                  {
+                    "options": {
+                      "from": 101,
+                      "result": {
+                        "index": 2,
+                        "text": "101-500 Copies"
+                      },
+                      "to": 500
+                    },
+                    "type": "range"
+                  },
+                  {
+                    "options": {
+                      "from": 501,
+                      "result": {
+                        "index": 3,
+                        "text": "> 500 Copies"
+                      },
+                      "to": 1e+24
+                    },
+                    "type": "range"
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 290
+              },
+              {
+                "id": "displayName",
+                "value": "Snapshot Copies Bucket"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "volume"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Volume"
+              },
+              {
+                "id": "custom.width",
+                "value": 500
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "svm"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "SVM"
+              },
+              {
+                "id": "custom.width",
+                "value": 500
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Snapshot Copies"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 260
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cluster"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cluster"
+              },
+              {
+                "id": "custom.width",
+                "value": 400
               }
             ]
           }
         ]
       },
       "gridPos": {
-        "h": 8,
-        "w": 12,
+        "h": 15,
+        "w": 24,
         "x": 0,
-        "y": 22
+        "y": 30
       },
-      "id": 73,
+      "id": 94,
       "options": {
-        "barWidth": 0.59,
-        "groupWidth": 0.7,
-        "legend": {
-          "calcs": [],
-          "displayMode": "hidden",
-          "placement": "bottom"
-        },
-        "orientation": "vertical",
-        "showValue": "always",
-        "stacking": "none",
-        "text": {
-          "valueSize": 30
-        },
-        "tooltip": {
-          "mode": "none"
-        }
+        "showHeader": true,
+        "sortBy": []
       },
+      "pluginVersion": "8.1.2",
       "targets": [
         {
-          "exemplar": true,
-          "expr": "count((volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})) * on (volume,svm,cluster) (volume_snapshot_count{} > 0 and volume_snapshot_count{} < 10)) OR on() vector(0)",
+          "exemplar": false,
+          "expr": "(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})) * on (volume,svm,cluster) (volume_snapshot_count{} > 0)",
+          "format": "table",
           "instant": true,
           "interval": "",
-          "legendFormat": " <10 Copies ",
+          "legendFormat": "",
           "refId": "A"
-        },
-        {
-          "exemplar": true,
-          "expr": "count((volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})) * on (volume,svm,cluster) (volume_snapshot_count{} >= 10 and volume_snapshot_count{} <= 100)) OR on() vector(0)",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "10-100 Copies",
-          "refId": "B"
-        },
-        {
-          "exemplar": true,
-          "expr": "count((volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})) * on (volume,svm,cluster) (volume_snapshot_count{} > 100 and volume_snapshot_count{} <= 500)) OR on() vector(0)",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "101-500 Copies",
-          "refId": "C"
-        },
-        {
-          "exemplar": true,
-          "expr": "count((volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_total_schedules{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})) * on (volume,svm,cluster) (volume_snapshot_count{} > 500)) OR on() vector(0)",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": ">500 Copies",
-          "refId": "D"
         }
       ],
-      "title": "Volume count by the number of Snapshot copies",
+      "title": "Volumes Protected With Snapshot Copies (local)",
       "transformations": [
         {
-          "id": "reduce",
+          "id": "filterFieldsByName",
           "options": {
-            "labelsToFields": false,
-            "reducers": [
-              "lastNotNull"
-            ]
+            "include": {
+              "names": [
+                "svm",
+                "volume",
+                "Value",
+                "cluster"
+              ]
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "Value": 3,
+              "cluster": 2,
+              "svm": 1,
+              "volume": 0
+            },
+            "renameByName": {
+              "Value": "Snapshot Copies",
+              "volume": ""
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Bucket",
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "Snapshot Copies"
+              ],
+              "reducer": "last"
+            }
           }
         }
       ],
-      "type": "barchart"
+      "type": "table"
     }
   ],
   "refresh": "",

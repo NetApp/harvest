@@ -106,9 +106,6 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					srcUpdCount += 1
 				}
 			}
-
-			// update the protectedBy and protectionSourceType fields in snapmirror_labels
-			my.updateProtectedfields(instance)
 		} else {
 			// 7 Mode
 			// source / destination nodes can be something like:
@@ -248,44 +245,4 @@ func (my *SnapMirror) updateLimitCache() error {
 	}
 	my.Logger.Debug().Msgf("updated limit cache for %d nodes", count)
 	return nil
-}
-
-func (my *SnapMirror) updateProtectedfields(instance *matrix.Instance) {
-
-	// check for group_type
-	if instance.GetLabel("group_type") != "" {
-
-		groupType := instance.GetLabel("group_type")
-		destinationVolume := instance.GetLabel("destination_volume")
-		sourceVolume := instance.GetLabel("source_volume")
-		destinationLocation := instance.GetLabel("destination_location")
-
-		isSvmDr := groupType == "vserver" && destinationVolume == "" && sourceVolume == ""
-		isCg := groupType == "CONSISTENCYGROUP" && strings.Contains(destinationLocation, ":/cg/")
-		isConstituentVolumeRelationshipWithinSvmDr := groupType == "vserver" && !strings.HasSuffix(destinationLocation, ":")
-		isConstituentVolumeRelationshipWithinCG := groupType == "CONSISTENCYGROUP" && !strings.Contains(destinationLocation, ":/cg/")
-
-		if isSvmDr || isConstituentVolumeRelationshipWithinSvmDr {
-			instance.SetLabel("protectedBy", "storage_vm")
-			my.Logger.Info().Msgf("%s ", "storage_vm")
-		} else if isCg || isConstituentVolumeRelationshipWithinCG {
-			instance.SetLabel("protectedBy", "cg")
-			my.Logger.Info().Msgf("%s ", "cg")
-		} else {
-			instance.SetLabel("protectedBy", "volume")
-			my.Logger.Info().Msgf("%s ", "volume")
-		}
-
-		// SVM-DR related information is populated
-		if isSvmDr {
-			instance.SetLabel("protectionSourceType", "storage_vm")
-			my.Logger.Info().Msgf("%s ", "storage_vm")
-		} else if isCg {
-			instance.SetLabel("protectionSourceType", "cg")
-			my.Logger.Info().Msgf("%s ", "cg")
-		} else if isConstituentVolumeRelationshipWithinSvmDr || isConstituentVolumeRelationshipWithinCG || groupType == "none" || groupType == "flexgroup" {
-			instance.SetLabel("protectionSourceType", "volume")
-			my.Logger.Info().Msgf("%s ", "volume")
-		}
-	}
 }
