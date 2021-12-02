@@ -171,18 +171,15 @@ func generateDocker(path string, kind int) {
 	}
 
 	if kind == harvest {
-		if opts.admin {
+		// generate admin service if configuration is present in harvest config
+		if conf.Config.Admin.Httpsd.Listen != "" {
 			httpsd := conf.Config.Admin.Httpsd.Listen
 
-			if httpsd == "" {
-				panic("Missing admin configuration in harvest configuration")
-			}
 			adminPort := 8887
-			if strings.Contains(httpsd, ":") {
-				h := strings.Split(httpsd, ":")
-				adminPort, err = strconv.Atoi(h[len(h)-1])
+			if s := strings.Split(httpsd, ":"); len(s) == 2 {
+				adminPort, err = strconv.Atoi(s[1])
 				if err != nil {
-					panic(err)
+					panic("Invalid httpsd listen configuration. Valid configuration are <<addr>>:PORT or :PORT")
 				}
 			} else {
 				panic("Invalid httpsd listen configuration. Valid configuration are <<addr>>:PORT or :PORT")
@@ -327,7 +324,6 @@ func init() {
 	dockerCmd.AddCommand(fullCmd)
 
 	dFlags := dockerCmd.PersistentFlags()
-	dLocalFlags := dockerCmd.Flags()
 	fFlags := fullCmd.PersistentFlags()
 
 	dFlags.IntVarP(&opts.loglevel, "loglevel", "l", 2,
@@ -336,7 +332,6 @@ func init() {
 	dFlags.StringVar(&opts.image, "image", "rahulguptajss/harvest:latest", "Harvest image")
 	dFlags.StringVar(&opts.templateDir, "templatedir", "./conf", "Harvest template dir path")
 	dFlags.StringVarP(&opts.outputPath, "output", "o", "", "Output file path. ")
-	dLocalFlags.BoolVar(&opts.admin, "admin", false, "Generate admin service")
 
 	fFlags.BoolVarP(&opts.showPorts, "port", "p", false, "Expose poller ports to host machine")
 	_ = dockerCmd.MarkPersistentFlagRequired("output")

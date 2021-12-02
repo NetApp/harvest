@@ -905,7 +905,7 @@ func (p *Poller) publishDetails() {
 		}
 		if exp.LocalHttpAddr == "0.0.0.0" {
 			exporterIp = localIp
-		} else if exp.LocalHttpAddr != "localhost" || exp.LocalHttpAddr == "127.0.0.1" {
+		} else if exp.LocalHttpAddr == "localhost" || exp.LocalHttpAddr == "127.0.0.1" {
 			exporterIp = "127.0.0.1"
 		} else {
 			exporterIp = exp.LocalHttpAddr
