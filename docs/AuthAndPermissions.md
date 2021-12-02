@@ -269,7 +269,7 @@ vserver            type
 ------------------ -----
 umeng-aff300-05-06 admin
 
-umeng-aff300-05-06::*> ssl modify -vserver umeng-aff300-05-06 -server-enabled true -client-enabled true -serial 67A94AA25B229A68AC5BABACA8939A835AA998A58 -ca ntap
+umeng-aff300-05-06::*> ssl modify -vserver umeng-aff300-05-06 -server-enabled true -serial 67A94AA25B229A68AC5BABACA8939A835AA998A58 -ca ntap
   (security ssl modify)
 ```
 
@@ -336,6 +336,12 @@ CA: cbg
 Serial: B77B59444444CCCC
 
 The certificate's generated name for reference: cbg_B77B59444444CCCC
+```
+
+Now that the client certificate is installed, let's enable it.
+```
+umeng-aff300-05-06::*> ssl modify -vserver umeng-aff300-05-06 -client-enabled true
+  (security ssl modify)
 ```
 
 Verify with a recent version of curl.
