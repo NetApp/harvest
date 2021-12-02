@@ -16,16 +16,10 @@ counters:
 
 plugins:
   - Vscan:
-      metricsPerSVM: true
-      metricsPerScannerNode: false
+      metricsPerScanner: true
 
 export_options:
   instance_keys:
     - svm
     - scanner
     - node
-
-override:
-  - scanner_stats_pct_cpu_used: average
-  - scanner_stats_pct_mem_used: average
-  - scanner_stats_pct_network_used: average
