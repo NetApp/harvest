@@ -8,8 +8,8 @@ fields:
   - files
 
 counters:
-  - autosize.maximum => maximum_size
-  - autosize.grow_threshold => grow_threshold_percent
+  - autosize.maximum => autosize_maximum_size
+  - autosize.grow_threshold => autosize_grow_threshold_percent
   - ^^uuid => instance_uuid
   - ^name                       => volume
   - ^node                       => node  #missing mapping
@@ -24,16 +24,16 @@ counters:
 #  - percentage-compression-space-saved    => sis_compress_saved_percent #missing mapping
 #  - percentage-deduplication-space-saved  => sis_dedup_saved_percent #missing mapping
 #  - percentage-total-space-saved          => sis_total_saved_percent #missing mapping
-#  - ^is-sis-volume                        => is-sis-volume #missing mapping
-  - space.expected_available => expected_available
+#  - ^is-sis-volume                        => is_sis_volume #missing mapping
+  - space.expected_available => space_expected_available
   - space.filesystem_size                       => filesystem_size
-  - space.logical_space.available  => logical_available  #not found in infincity cluster
-  - space.logical_space.used => logical_used
-  - space.logical_space.used_by_afs => logical_used_by_afs
-  - space.logical_space.used_by_snapshots  => logical_used_by_snapshots
-  - space.logical_space.used_percent => logical_used_percent
-  - space.physical_used => physical_used
-  - space.physical_used_percent => physical_used_percent
+  - space.logical_space.available  => space_logical_available  #not found in infinity cluster
+  - space.logical_space.used => space_logical_used
+  - space.logical_space.used_by_afs => space_logical_used_by_afs
+  - space.logical_space.used_by_snapshots  => space_logical_used_by_snapshots
+  - space.logical_space.used_percent => space_logical_used_percent
+  - space.physical_used => space_physical_used
+  - space.physical_used_percent => space_physical_used_percent
   - space.size                          => size
   - space.available                     => size_available
   - space.afs_total                          => size_total
@@ -45,6 +45,7 @@ counters:
   - space.snapshot.reserve_size               => snapshot_reserve_size
   - space.snapshot.reserve_percent         => snapshot_reserve_percent
   - space.snapshot.space_used_percent    => snapshot_reserve_used_percent
+  - ^snapshot_policy.name  => snapshot_policy
   - ^state   => state
 
 
@@ -69,4 +70,6 @@ export_options:
   instance_labels:
     - state
     #- is-sis-volume
+    - snapshot_policy
+
 
