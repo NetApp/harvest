@@ -61,7 +61,9 @@
       }
     ]
   },
+  "description": "",
   "editable": true,
+  "fiscalYearStartMonth": 0,
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
@@ -112,11 +114,11 @@
               },
               {
                 "color": "rgba(245, 150, 40, 0.73)",
-                "value": 20
+                "value": 60
               },
               {
                 "color": "rgba(225, 40, 40, 0.59)",
-                "value": 30
+                "value": 80
               }
             ]
           },
@@ -192,11 +194,11 @@
               },
               {
                 "color": "rgba(245, 150, 40, 0.73)",
-                "value": 2
+                "value": 60
               },
               {
                 "color": "rgba(225, 40, 40, 0.59)",
-                "value": 10
+                "value": 80
               }
             ]
           },
@@ -910,6 +912,12 @@
       "decimals": 2,
       "editable": true,
       "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "µs"
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "grid": {},
@@ -1460,7 +1468,7 @@
       "error": false,
       "fieldConfig": {
         "defaults": {
-          "unit": "µs"
+          "unit": "iops"
         },
         "overrides": []
       },
@@ -1537,7 +1545,7 @@
       },
       "yaxes": [
         {
-          "format": "µs",
+          "format": "iops",
           "label": "IOPs",
           "logBase": 1,
           "max": null,
@@ -1567,7 +1575,7 @@
       "error": false,
       "fieldConfig": {
         "defaults": {
-          "unit": "µs"
+          "unit": "iops"
         },
         "overrides": []
       },
@@ -1644,7 +1652,7 @@
       },
       "yaxes": [
         {
-          "format": "µs",
+          "format": "iops",
           "label": "IOPs",
           "logBase": 1,
           "max": null,
@@ -1675,6 +1683,12 @@
       "datasource": "${DS_PROMETHEUS}",
       "editable": true,
       "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "µs"
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "grid": {},
@@ -1762,7 +1776,7 @@
       },
       "yaxes": [
         {
-          "format": "ms",
+          "format": "µs",
           "label": "",
           "logBase": 1,
           "max": null,
@@ -1794,6 +1808,12 @@
       "datasource": "${DS_PROMETHEUS}",
       "editable": true,
       "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "µs"
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "grid": {},
@@ -1881,7 +1901,7 @@
       },
       "yaxes": [
         {
-          "format": "ms",
+          "format": "µs",
           "label": "",
           "logBase": 1,
           "max": null,
@@ -1903,7 +1923,7 @@
       "zerofill": true
     },
     {
-      "collapsed": false,
+      "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
@@ -1912,481 +1932,484 @@
         "y": 47
       },
       "id": 92,
-      "panels": [],
+      "panels": [
+        {
+          "aliasColors": {},
+          "annotate": {
+            "enable": false
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_PROMETHEUS}",
+          "editable": true,
+          "fieldConfig": {
+            "defaults": {
+              "unit": "Bps"
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "grid": {
+            "max": null,
+            "min": 0
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 16
+          },
+          "hiddenSeries": false,
+          "id": 75,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": false,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "loadingEditor": false,
+          "nullPointMode": "connected",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.2.1",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "resolution": 100,
+          "scale": 1,
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "topk($TopResources,hostadapter_bytes_read{cluster=\"$Cluster\", datacenter=\"$Datacenter\", node=~\"$Node\"}) by (node)",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{node}} - {{hostadapter}}",
+              "refId": "B",
+              "textEditor": true
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Adapter Read Data",
+          "tooltip": {
+            "msResolution": true,
+            "query_as_alias": true,
+            "shared": true,
+            "sort": 0,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "Bps",
+              "label": "MB/s",
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          },
+          "zerofill": true
+        },
+        {
+          "aliasColors": {},
+          "annotate": {
+            "enable": false
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_PROMETHEUS}",
+          "editable": true,
+          "fieldConfig": {
+            "defaults": {
+              "unit": "Bps"
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "grid": {
+            "max": null,
+            "min": 0
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 16
+          },
+          "hiddenSeries": false,
+          "id": 76,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": false,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "loadingEditor": false,
+          "nullPointMode": "connected",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.2.1",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "resolution": 100,
+          "scale": 1,
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "topk($TopResources,hostadapter_bytes_written{cluster=\"$Cluster\", datacenter=\"$Datacenter\", node=~\"$Node\"}) by (node)",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{node}} - {{hostadapter}}",
+              "refId": "B",
+              "textEditor": false
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Adapter Write Data",
+          "tooltip": {
+            "msResolution": true,
+            "query_as_alias": true,
+            "shared": true,
+            "sort": 0,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "Bps",
+              "label": "MB/s",
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          },
+          "zerofill": true
+        }
+      ],
       "repeat": null,
       "title": "Disk and Tape Adapter Drilldown",
       "type": "row"
     },
     {
-      "aliasColors": {},
-      "annotate": {
-        "enable": false
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "editable": true,
-      "fieldConfig": {
-        "defaults": {
-          "unit": "µs"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "grid": {
-        "max": null,
-        "min": 0
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 48
-      },
-      "hiddenSeries": false,
-      "id": 75,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": false,
-        "rightSide": false,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [],
-      "loadingEditor": false,
-      "nullPointMode": "connected",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.2.1",
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "resolution": 100,
-      "scale": 1,
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "topk($TopResources,hostadapter_bytes_read{cluster=\"$Cluster\", datacenter=\"$Datacenter\", node=~\"$Node\"}) by (node)",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{node}} - {{hostadapter}}",
-          "refId": "B",
-          "textEditor": true
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Adapter Read Data",
-      "tooltip": {
-        "msResolution": true,
-        "query_as_alias": true,
-        "shared": true,
-        "sort": 0,
-        "value_type": "cumulative"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "µs",
-          "label": "MB/s",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      },
-      "zerofill": true
-    },
-    {
-      "aliasColors": {},
-      "annotate": {
-        "enable": false
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "editable": true,
-      "fieldConfig": {
-        "defaults": {
-          "unit": "Bps"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "grid": {
-        "max": null,
-        "min": 0
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 48
-      },
-      "hiddenSeries": false,
-      "id": 76,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": false,
-        "rightSide": false,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [],
-      "loadingEditor": false,
-      "nullPointMode": "connected",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.2.1",
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "resolution": 100,
-      "scale": 1,
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "topk($TopResources,hostadapter_bytes_written{cluster=\"$Cluster\", datacenter=\"$Datacenter\", node=~\"$Node\"}) by (node)",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{node}} - {{hostadapter}}",
-          "refId": "B",
-          "textEditor": false
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Adapter Write Data",
-      "tooltip": {
-        "msResolution": true,
-        "query_as_alias": true,
-        "shared": true,
-        "sort": 0,
-        "value_type": "cumulative"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "Bps",
-          "label": "MB/s",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      },
-      "zerofill": true
-    },
-    {
-      "collapsed": false,
+      "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 56
+        "y": 48
       },
       "id": 93,
-      "panels": [],
+      "panels": [
+        {
+          "aliasColors": {},
+          "annotate": {
+            "enable": false
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_PROMETHEUS}",
+          "editable": true,
+          "error": false,
+          "fieldConfig": {
+            "defaults": {
+              "unit": "Bps"
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "grid": {},
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 17
+          },
+          "height": "",
+          "hiddenSeries": false,
+          "id": 86,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.2.1",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "resolution": 100,
+          "scale": 1,
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "hostadapter_bytes_read{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
+              "interval": "",
+              "legendFormat": "{{node}}.{{hostadapter}}",
+              "refId": "A",
+              "textEditor": false
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "FibreBridge/Array WWPN - Read Data",
+          "tooltip": {
+            "msResolution": false,
+            "query_as_alias": true,
+            "shared": true,
+            "sort": 0,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "Bps",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          },
+          "zerofill": true
+        },
+        {
+          "aliasColors": {},
+          "annotate": {
+            "enable": false
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_PROMETHEUS}",
+          "decimals": 2,
+          "editable": true,
+          "error": false,
+          "fieldConfig": {
+            "defaults": {
+              "unit": "Bps"
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "grid": {},
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 17
+          },
+          "height": "",
+          "hiddenSeries": false,
+          "id": 85,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.2.1",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "resolution": 100,
+          "scale": 1,
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "hostadapter_bytes_written{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
+              "interval": "",
+              "legendFormat": "{{node}}.{{hostadapter}}",
+              "refId": "A",
+              "textEditor": false
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "FibreBridge/Array WWPN - Write Data",
+          "tooltip": {
+            "msResolution": true,
+            "query_as_alias": true,
+            "shared": true,
+            "sort": 0,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "Bps",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          },
+          "zerofill": true
+        }
+      ],
       "repeat": null,
       "title": "MetroCluster FibreBridge/Array Drilldown",
       "type": "row"
-    },
-    {
-      "aliasColors": {},
-      "annotate": {
-        "enable": false
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "editable": true,
-      "error": false,
-      "fieldConfig": {
-        "defaults": {
-          "unit": "µs"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "grid": {},
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 0,
-        "y": 57
-      },
-      "height": "",
-      "hiddenSeries": false,
-      "id": 86,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [],
-      "nullPointMode": "connected",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.2.1",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "resolution": 100,
-      "scale": 1,
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "hostadapter_bytes_read{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
-          "interval": "",
-          "legendFormat": "{{node}}.{{hostadapter}}",
-          "refId": "A",
-          "textEditor": false
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "FibreBridge/Array WWPN - Read Data",
-      "tooltip": {
-        "msResolution": false,
-        "query_as_alias": true,
-        "shared": true,
-        "sort": 0,
-        "value_type": "cumulative"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "µs",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      },
-      "zerofill": true
-    },
-    {
-      "aliasColors": {},
-      "annotate": {
-        "enable": false
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "decimals": 2,
-      "editable": true,
-      "error": false,
-      "fieldConfig": {
-        "defaults": {
-          "unit": "Bps"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "grid": {},
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 12,
-        "y": 57
-      },
-      "height": "",
-      "hiddenSeries": false,
-      "id": 85,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [],
-      "nullPointMode": "connected",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.2.1",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "resolution": 100,
-      "scale": 1,
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "hostadapter_bytes_written{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
-          "interval": "",
-          "legendFormat": "{{node}}.{{hostadapter}}",
-          "refId": "A",
-          "textEditor": false
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "FibreBridge/Array WWPN - Write Data",
-      "tooltip": {
-        "msResolution": true,
-        "query_as_alias": true,
-        "shared": true,
-        "sort": 0,
-        "value_type": "cumulative"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "Bps",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      },
-      "zerofill": true
     }
   ],
   "refresh": "",
   "schemaVersion": 31,
   "style": "dark",
+  "tags": [],
   "templating": {
     "list": [
       {
@@ -2414,8 +2437,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "mcc",
-          "value": "mcc"
+          "text": "mcc_cluster",
+          "value": "mcc_cluster"
         },
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(node_labels{system_type!=\"7mode\"}, datacenter)",
@@ -2436,7 +2459,7 @@
         "refresh_on_load": false,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 0,
+        "sort": 1,
         "tagValuesQuery": "",
         "tagsQuery": "",
         "type": "query",
@@ -2447,8 +2470,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "sti8300mcc261262_siteA",
-          "value": "sti8300mcc261262_siteA"
+          "text": "stiA800mccip-20201_siteA",
+          "value": "stiA800mccip-20201_siteA"
         },
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(aggr_new_status{system_type!=\"7mode\",datacenter=\"$Datacenter\"}, cluster)",
@@ -2469,7 +2492,7 @@
         "refresh_on_load": false,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 0,
+        "sort": 1,
         "tagValuesQuery": "",
         "tagsQuery": "",
         "type": "query",
@@ -2499,7 +2522,7 @@
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 0,
+        "sort": 1,
         "type": "query"
       },
       {
@@ -2529,7 +2552,7 @@
         "refresh_on_load": false,
         "regex": "/[0-9]/",
         "skipUrlSync": false,
-        "sort": 0,
+        "sort": 1,
         "tagValuesQuery": "",
         "tagsQuery": "",
         "type": "query",
@@ -2654,5 +2677,5 @@
   "timezone": "browser",
   "title": "NetApp Detail: MetroCluster",
   "uid": "kryI9avnk",
-  "version": 1
+  "version": 2
 }

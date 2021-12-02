@@ -4,6 +4,7 @@
 package json
 
 import (
+	"fmt"
 	"goharvest2/pkg/tree/node"
 	"testing"
 )
@@ -30,7 +31,7 @@ func TestLoad(t *testing.T) {
 		t.Logf("parsed node with %d children:", len(root.GetChildren()))
 	}
 
-	root.Print(0)
+	fmt.Println(root.Print(0))
 }
 
 func TestDump(t *testing.T) {
@@ -46,7 +47,7 @@ func TestDump(t *testing.T) {
 	root.NewChildS("admin", "true")
 
 	t.Logf("dumping node:")
-	root.Print(0)
+	fmt.Println(root.Print(0))
 
 	dump = Dump(root)
 

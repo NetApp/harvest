@@ -7,6 +7,7 @@ package zapi
 import (
 	"bytes"
 	"crypto/tls"
+	"crypto/x509"
 	"fmt"
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/errors"
@@ -90,20 +91,39 @@ func New(poller conf.Poller) (*Client, error) {
 	// set authentication method
 	if poller.AuthStyle == "certificate_auth" {
 
-		certPath := poller.SslCert
+		sslCertPath := poller.SslCert
 		keyPath := poller.SslKey
+		caCertPath := poller.CaCertPath
 
-		if certPath == "" {
+		if sslCertPath == "" {
 			return nil, errors.New(errors.MISSING_PARAM, "ssl_cert")
 		} else if keyPath == "" {
 			return nil, errors.New(errors.MISSING_PARAM, "ssl_key")
-		} else if cert, err = tls.LoadX509KeyPair(certPath, keyPath); err != nil {
+		} else if cert, err = tls.LoadX509KeyPair(sslCertPath, keyPath); err != nil {
 			return nil, err
+		}
+
+		// Create a CA certificate pool and add certificate if specified
+		caCertPool := x509.NewCertPool()
+		if caCertPath != "" {
+			caCert, err := ioutil.ReadFile(caCertPath)
+			if err != nil {
+				client.Logger.Error().Err(err).Str("cacert", caCertPath).Msg("Failed to read ca cert")
+				// continue
+			}
+			if caCert != nil {
+				pem := caCertPool.AppendCertsFromPEM(caCert)
+				if !pem {
+					client.Logger.Error().Err(err).Str("cacert", caCertPath).Msg("Failed to append ca cert")
+					// continue
+				}
+			}
 		}
 
 		transport = &http.Transport{
 			Proxy: http.ProxyFromEnvironment,
 			TLSClientConfig: &tls.Config{
+				RootCAs:            caCertPool,
 				Certificates:       []tls.Certificate{cert},
 				InsecureSkipVerify: useInsecureTLS},
 		}

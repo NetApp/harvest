@@ -32,7 +32,8 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	// create flexgroup instance cache
 	for _, i := range data.GetInstances() {
 		if match := re.FindStringSubmatch(i.GetLabel("volume")); len(match) == 3 {
-			key := i.GetLabel("node") + "." + i.GetLabel("svm") + "." + match[1]
+			// instance key is svm.flexgroup-volume
+			key := i.GetLabel("svm") + "." + match[1]
 			if cache.GetInstance(key) == nil {
 				fg, _ := cache.NewInstance(key)
 				fg.SetLabels(i.GetLabels().Copy())
@@ -53,7 +54,8 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	// create summary
 	for _, i := range data.GetInstances() {
 		if match := re.FindStringSubmatch(i.GetLabel("volume")); len(match) == 3 {
-			key := i.GetLabel("node") + "." + i.GetLabel("svm") + "." + match[1]
+			// instance key is svm.flexgroup-volume
+			key := i.GetLabel("svm") + "." + match[1]
 			fg := cache.GetInstance(key)
 			if fg == nil {
 				me.Logger.Error().Stack().Err(nil).Msgf("instance [%s] not in local cache", key)

@@ -10,8 +10,8 @@ import (
 
 // Merge default.yaml and custom.yaml
 func TestNode_Merge(t *testing.T) {
-	defaultTemplate, _ := tree.Import("yaml", "testdata/default_collector.yaml")
-	customTemplate, _ := tree.Import("yaml", "testdata/extend_collector.yaml")
+	defaultTemplate, _ := tree.ImportYaml("testdata/default_collector.yaml")
+	customTemplate, _ := tree.ImportYaml("testdata/extend_collector.yaml")
 	defaultTemplate.Merge(customTemplate, []string{"objects"})
 
 	// count number of objects post merge
@@ -53,8 +53,8 @@ func TestNode_Merge(t *testing.T) {
 // merge collector templates for 21.08.6+ versions
 // change is LabelAgent child will have list of rules instead of key-value pair
 func TestNode_MergeCollector(t *testing.T) {
-	defaultTemplate, _ := tree.Import("yaml", "testdata/lun.yaml")
-	customTemplate, _ := tree.Import("yaml", "testdata/extend_lun.yaml")
+	defaultTemplate, _ := tree.ImportYaml("testdata/lun.yaml")
+	customTemplate, _ := tree.ImportYaml("testdata/extend_lun.yaml")
 	defaultTemplate.PreprocessTemplate()
 	customTemplate.PreprocessTemplate()
 	defaultTemplate.Merge(customTemplate, nil)
@@ -206,8 +206,8 @@ func TestNode_MergeCollector(t *testing.T) {
 // Merge collector templates where custom templates are from 21.08.6 and before
 // LabelAgent child did have key-value pair of rules instead of a list
 func TestNode_MergeCollectorOld(t *testing.T) {
-	defaultTemplate, _ := tree.Import("yaml", "testdata/lun.yaml")
-	customTemplate, _ := tree.Import("yaml", "testdata/21.08.0_extend_lun.yaml")
+	defaultTemplate, _ := tree.ImportYaml("testdata/lun.yaml")
+	customTemplate, _ := tree.ImportYaml("testdata/21.08.0_extend_lun.yaml")
 	defaultTemplate.PreprocessTemplate()
 	customTemplate.PreprocessTemplate()
 	defaultTemplate.Merge(customTemplate, nil)
@@ -295,7 +295,7 @@ func TestNode_PreProcessCollector(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			template, _ := tree.Import("yaml", tt.sourceFile)
+			template, _ := tree.ImportYaml(tt.sourceFile)
 			template.PreprocessTemplate()
 			got, _ := yaml.Dump(template)
 			expected, _ := ioutil.ReadFile(tt.compareFile)
@@ -343,8 +343,8 @@ func TestNode_PreProcessMergeCollector(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			baseTemplate, _ := tree.Import("yaml", tt.baseTemplate)
-			extendTemplate, _ := tree.Import("yaml", tt.extendTemplate)
+			baseTemplate, _ := tree.ImportYaml(tt.baseTemplate)
+			extendTemplate, _ := tree.ImportYaml(tt.extendTemplate)
 			baseTemplate.PreprocessTemplate()
 			extendTemplate.PreprocessTemplate()
 			baseTemplate.Merge(extendTemplate, nil)

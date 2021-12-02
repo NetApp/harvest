@@ -44,12 +44,12 @@ func getAttrs(c *client.Client, a *Args) (*node.Node, error) {
 	}
 
 	fmt.Println("############################        INPUT        ##########################")
-	input.Print(0)
+	fmt.Println(input.Print(0))
 	fmt.Println()
 	fmt.Println()
 
 	fmt.Println("############################        OUPUT        ##########################")
-	output.Print(0)
+	fmt.Println(output.Print(0))
 	fmt.Println()
 	fmt.Println()
 
