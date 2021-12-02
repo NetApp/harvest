@@ -1430,7 +1430,7 @@
           "refId": "A"
         }
       ],
-      "title": "Volumes Protected With Snapshot Copies (local)",
+      "title": "Volume count by the number of Snapshot copies",
       "transformations": [
         {
           "id": "filterFieldsByName",
