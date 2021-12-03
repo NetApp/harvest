@@ -344,7 +344,7 @@ umeng-aff300-05-06::*> ssl modify -vserver umeng-aff300-05-06 -client-enabled tr
   (security ssl modify)
 ```
 
-Verify with a recent version of curl.
+Verify with a recent version of `curl`. If you are runnin on a Mac [see below]().
 
 ```
 curl --cacert umeng-aff300-05-06.crt --key cert/$(hostname).key --cert cert/$(hostname).pem https://umeng-aff300-05-06-cm.rtp.openenglab.netapp.com/api/storage/disks
@@ -361,6 +361,52 @@ Update the poller section with `auth_style: certificate_auth` like this:
 ```
 
 Restart your poller and enjoy your password-less life-style.
+
+### macOS 
+
+The version of `curl` installed on macOS up through Monterey is not recent enough to work with self-signed SAN certs. You will need to install a newer version of `curl` via Homebrew, MacPorts, source, etc.
+
+Example of failure when running with older version of `curl` - you will see this in [client auth](#install-client-certificates-on-cluster) test step above.
+```
+curl --version
+curl 7.64.1 (x86_64-apple-darwin20.0) libcurl/7.64.1 (SecureTransport) LibreSSL/2.8.3 zlib/1.2.11 nghttp2/1.41.0
+
+curl --cacert umeng-aff300-05-06.crt --key cert/cgrindst-mac-0.key --cert cert/cgrindst-mac-0.pem https://umeng-aff300-05-06-cm.rtp.openenglab.netapp.com/api/storage/disks
+
+curl: (60) SSL certificate problem: unable to get local issuer certificate
+```
+
+Let's install `curl` via Homebrew. Make sure you don't miss the message that Homebrew prints about your path.
+```
+If you need to have curl first in your PATH, run:
+  echo 'export PATH="/usr/local/opt/curl/bin:$PATH"' >> /Users/cgrindst/.bash_profile
+```
+
+Now when we make an client auth request with our self-signed certificate it works! `\o/`
+
+```
+brew install curl
+
+curl --version
+curl 7.80.0 (x86_64-apple-darwin20.6.0) libcurl/7.80.0 (SecureTransport) OpenSSL/1.1.1l zlib/1.2.11 brotli/1.0.9 zstd/1.5.0 libidn2/2.3.2 libssh2/1.10.0 nghttp2/1.46.0 librtmp/2.3 OpenLDAP/2.6.0
+Release-Date: 2021-11-10
+Protocols: dict file ftp ftps gopher gophers http https imap imaps ldap ldaps mqtt pop3 pop3s rtmp rtsp scp sftp smb smbs smtp smtps telnet tftp 
+Features: alt-svc AsynchDNS brotli GSS-API HSTS HTTP2 HTTPS-proxy IDN IPv6 Kerberos Largefile libz MultiSSL NTLM NTLM_WB SPNEGO SSL TLS-SRP UnixSockets zstd
+
+curl --cacert umeng-aff300-05-06.crt --key cert/cgrindst-mac-0.key --cert cert/cgrindst-mac-0.pem https://umeng-aff300-05-06-cm.rtp.openenglab.netapp.com/api/storage/disks
+
+{
+  "records": [
+    {
+      "name": "1.1.22",
+      "_links": {
+        "self": {
+          "href": "/api/storage/disks/1.1.22"
+        }
+      }
+    }
+}
+```
 
 # Reference
 - https://github.com/jcbsmpsn/golang-https-example
