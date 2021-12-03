@@ -16,12 +16,12 @@ counters:
 
 plugins:
   - LabelAgent:
-    value_to_num:
-      - new_status state online online `0`
+      value_to_num:
+        - new_status state online online `0`
     # path is something like "/vol/vol_georg_fcp401/lun401"
     # we only want lun name, which is 4th element
-    split:
-      - path `/` ,,,lun
+      split:
+        - path `/` ,,,lun
 
 export_options:
   instance_keys:

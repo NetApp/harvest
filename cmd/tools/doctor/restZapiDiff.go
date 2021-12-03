@@ -19,25 +19,25 @@ func DoDiffRestZapi(zapiDataCenterName string, restDataCenterName string) {
 	labelDiffMap := labelDiff(zapiDataCenterName, restDataCenterName)
 	fmt.Println("################## Missing Labels ##############")
 	for k, v := range labelDiffMap {
-		fmt.Println(k, " : ", strings.Join(v, `','`))
+		fmt.Println(k, v)
 	}
 
 	fmt.Println("################## Missing Metrics by Object in prometheus ##############")
 	metricDiffMap := metricDiff(zapiDataCenterName, restDataCenterName)
 	for k, v := range metricDiffMap {
-		fmt.Println(k, " : ", strings.Join(v, `','`))
+		fmt.Println(k, v)
 	}
 
 	fmt.Println("################## Missing Metrics from dashboard ##############")
 	dashboardDiffMap := make(map[string][]string)
 	for key, value := range metricDiffMap {
 		for _, v := range value {
-			filepath.Walk("/Users/rahulg2/GolandProjects/harvest/grafana/dashboards/cmode", getWalkFunc(v, dashboardDiffMap, key))
+			filepath.Walk("grafana/dashboards/cmode", getWalkFunc(v, dashboardDiffMap, key))
 		}
 	}
 
 	for k, v := range dashboardDiffMap {
-		fmt.Println(k, " : ", strings.Join(v, `','`))
+		fmt.Println(k, v)
 	}
 	fmt.Println("##################")
 }

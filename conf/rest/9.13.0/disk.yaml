@@ -29,8 +29,8 @@ counters:
 plugins:
   - Disk
   - LabelAgent:
-    value_to_num:
-      - new_status outage - - `0` #ok_value is empty value, '-' would be converted to blank while processing.
+      value_to_num:
+        - new_status outage - - `0` #ok_value is empty value, '-' would be converted to blank while processing.
 
 export_options:
   instance_keys:
@@ -45,5 +45,5 @@ export_options:
     - shelf
     - shelf_bay
     - serial_number
-    - failed
+    - failedb
     - container_type
