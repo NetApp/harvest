@@ -22,6 +22,8 @@ func (v *Vscan) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	if s := v.Params.GetChildContentS("metricsPerScanner"); s != "" {
 		if parseBool, err := strconv.ParseBool(s); err == nil {
 			isPerScanner = parseBool
+		} else {
+			v.Logger.Error().Err(err).Msg("Failed to parse metricsPerScanner")
 		}
 	}
 	v.Logger.Debug().Bool("isPerScanner", isPerScanner).Msg("Vscan options")
@@ -44,6 +46,8 @@ func (v *Vscan) addSvmAndScannerLabels(data *matrix.Matrix) {
 			instance.SetLabel("svm", split[0])
 			instance.SetLabel("scanner", split[1])
 			instance.SetLabel("node", split[2])
+		} else {
+			v.Logger.Warn().Str("ontapName", ontapName).Msg("Failed to parse svm and scanner labels")
 		}
 	}
 }

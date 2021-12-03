@@ -16,6 +16,8 @@ counters:
 
 plugins:
   - Vscan:
+      # when metricsPerScanner is true, the counters are aggregated per scanner
+      # otherwise, they're not
       metricsPerScanner: true
 
 export_options:
