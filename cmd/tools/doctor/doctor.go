@@ -14,10 +14,12 @@ import (
 )
 
 type options struct {
-	ShouldPrintConfig bool
-	Color             string
-	BaseTemplate      string
-	MergeTemplate     string
+	ShouldPrintConfig  bool
+	Color              string
+	BaseTemplate       string
+	MergeTemplate      string
+	zapiDataCenterName string
+	restDataCenterName string
 }
 
 var opts = &options{
@@ -42,6 +44,17 @@ var mergeCmd = &cobra.Command{
 	Hidden: true,
 	Short:  "merge templates",
 	Run:    doMergeCmd,
+}
+
+var diffZapiRestCmd = &cobra.Command{
+	Use:    "diffzapirest",
+	Hidden: true,
+	Short:  "diff between Zapi and Rest metrics",
+	Run:    doDiffRestZapiCmd,
+}
+
+func doDiffRestZapiCmd(_ *cobra.Command, _ []string) {
+	DoDiffRestZapi(opts.zapiDataCenterName, opts.restDataCenterName)
 }
 
 func doMergeCmd(_ *cobra.Command, _ []string) {
@@ -337,7 +350,15 @@ func collectNodes(root *yaml.Node, nodes *[]*yaml.Node) {
 
 func init() {
 	Cmd.AddCommand(mergeCmd)
+	Cmd.AddCommand(diffZapiRestCmd)
+	dFlags := diffZapiRestCmd.PersistentFlags()
 	mFlags := mergeCmd.PersistentFlags()
+
+	dFlags.StringVarP(&opts.zapiDataCenterName, "zapidatacenter", "", "", "Zapi Datacenter Name ")
+	dFlags.StringVarP(&opts.restDataCenterName, "restdatacenter", "", "", "Rest Datacenter path. ")
+
+	_ = diffZapiRestCmd.MarkPersistentFlagRequired("zapidatacenter")
+	_ = diffZapiRestCmd.MarkPersistentFlagRequired("restdatacenter")
 
 	mFlags.StringVarP(&opts.BaseTemplate, "template", "", "", "Base template path ")
 	mFlags.StringVarP(&opts.MergeTemplate, "with", "", "", "Extended file path. ")

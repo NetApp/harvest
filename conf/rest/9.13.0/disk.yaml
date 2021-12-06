@@ -7,15 +7,15 @@ counters:
   - ^^uid
   - ^name                     => disk
   - bytes_per_sector          => bytes_per_sector
-  - sector_count              => sector_count
+  - sector_count              => sectors
   - ^type
   - ^container_type
   - ^model
   - ^serial_number
   - ^shelf.uid                => shelf
   - ^bay                      => shelf_bay
-  - stats.average_latency     => average_latency
-  - stats.throughput          => disk_io_kbps
+  - stats.average_latency     => stats_average_latency
+  - stats.throughput          => stats_io_kbps
   - stats.power_on_hours      => uptime
   #- sectors-read  #missing mapping
   #- sectors-written #missing mapping
@@ -29,8 +29,8 @@ counters:
 plugins:
   - Disk
   - LabelAgent:
-    value_to_num:
-      - new_status outage - - `0` #ok_value is empty value, '-' would be converted to blank while processing.
+      value_to_num:
+        - new_status outage - - `0` #ok_value is empty value, '-' would be converted to blank while processing.
 
 export_options:
   instance_keys:
@@ -46,3 +46,4 @@ export_options:
     - shelf_bay
     - serial_number
     - failed
+    - container_type
