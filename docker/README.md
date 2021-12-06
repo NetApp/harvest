@@ -1,6 +1,20 @@
+# Harvest and Containers
+
+Harvest is container-ready and supports several deployment options:
+
+- [Stand-up Prometheus, Grafana, and Harvest via Docker Compose](#harvest-grafana-prometheus-install). Choose this if you want to hit the ground running. Install, volume and network mounts automatically handled.
+  
+- [Poller-per-container model](https://github.com/NetApp/harvest/tree/main/docker/onePollerPerContainer) that offers more flexibility in configuration. This deployment enables a broad range of orchestrators (Nomad, Mesosphere, Swarm, K8, etc.) since you pick-and-choose what gets built and how it's deployed, stronger familiarity with containers is recommended.
+
+- If you prefer Ansible, David Blackwell created an [Ansible script](https://netapp.io/2021/05/21/monitor-all-of-your-ontap-clusters-with-harvest-easy-mode/) that stands up Harvest, Grafana, and Prometheus.
+
+- Want to run Harvest on a Mac via [containerd and Racher Desktop](https://github.com/NetApp/harvest/tree/main/docker/containerd)? We got you covered.
+
+- [Local K8 Deployment](k8/README.md) via Kompose
+
 # Harvest Grafana Prometheus Install
 
-This is quick way to install and get started with Harvest. Follow the four steps below to:
+This is a quick way to install and get started with Harvest. Follow the four steps below to:
 
 - Setup Harvest, Grafana, and Prometheus via Docker Compose
 - Harvest dashboards are automatically imported and setup in Grafana with a Prometheus data source
@@ -18,7 +32,7 @@ This is quick way to install and get started with Harvest. Follow the four steps
 
 2. Create a `harvest.yml` file with your cluster details, below is an example with annotated comments. Modify as needed for your scenario.
 
-This config is using the Prometheus exporter [port_range](https://github.com/NetApp/harvest/blob/main/cmd/exporters/prometheus/README.md#parameters) feature so you don't have to manage the Prometheus exporter port mappings for each poller.
+This config is using the Prometheus exporter [port_range](https://github.com/NetApp/harvest/blob/main/cmd/exporters/prometheus/README.md#parameters) feature, so you don't have to manage the Prometheus exporter port mappings for each poller.
 
 ```
 Exporters:
@@ -45,7 +59,7 @@ Pollers:
   # next cluster ....  
 ```
    
-## Generate a container per poller
+## Generate a Docker compose for your Pollers
 
 3. Generate a Docker compose file from your `harvest.yml`
    
@@ -67,7 +81,7 @@ docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
 
 ## Config and Using
 
-The `prom-stack.yml` compose file creates a `frontend` and `backend` network. Prometheus and Grafana publish their admin ports on the front-end network and are routable to the local machine. By default, the Harvest pollers are part of the backend network and do not expose their Prometheus web end-points. If you want their end-points exposed, pass the `--port` flag to `generate` like so:
+The `prom-stack.yml` compose file creates a `frontend` and `backend` network. Prometheus and Grafana publish their admin ports on the front-end network and are routable to the local machine. By default, the Harvest pollers are part of the backend network and do not expose their Prometheus web end-points. If you want their end-points exposed, pass the `--port` flag to the `generate` sub-command in the [previous step](#generate-a-docker-compose-for-your-pollers), like so:
 
 ```
 bin/harvest generate docker full --port --output harvest-compose.yml
@@ -77,7 +91,7 @@ bin/harvest generate docker full --port --output harvest-compose.yml
 
 [Grafana](http://localhost:3000/)
 
-Default credentials - you'll be prompted to create a new password the first time you login
+Default credentials - you'll be prompted to create a new password the first time you log in
 
 ```
 username: admin
@@ -96,7 +110,7 @@ password: admin
 docker-compose -f prom-stack.yml -f harvest-compose.yml down
 ```
 
-#### Upgrade Harvest
+### Upgrade Harvest
 
 To upgrade Harvest, use the `restart` command - a newer image of Harvest will be pulled if available.
 
@@ -105,26 +119,4 @@ docker pull rahulguptajss/harvest
 docker-compose -f prom-stack.yml -f harvest-compose.yml restart
 ```
 
-## Local K8 Deployment
-
-### Requirements
-- Kompose: `v1.25` or higher https://github.com/kubernetes/kompose/
-
-Execute below commands to run harvest artifacts in kubernetes
-
-1. ```bin/harvest generate docker full --port --output harvest-compose.yml```
-2. ```kompose convert --file harvest-compose.yml --file prom-stack.yml --out kub.yaml --volumes hostPath```
-3. ```kubectl apply --filename kub.yaml```
-
-#### Stop all containers
-
-```kubectl delete --filename kub.yaml```
-
-### Helm Chart
-
-Generate helm charts with below command
-
-```
-kompose convert --file harvest-compose.yml --file prom-stack.yml --chart --volumes hostPath
-```
-
+You typically do not need to regenerate your `harvest-compose.yml` file when upgrading Harvest. If that's required, it will be noted in the release notes.
