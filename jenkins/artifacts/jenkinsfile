@@ -196,6 +196,14 @@ pipeline {
            /opt/home/gh_2.2.0_linux_386/bin/gh release delete nightly -y || true
            /opt/home/gh_2.2.0_linux_386/bin/gh release create nightly $targetLocation/*.rpm $targetLocation/*.deb $targetLocation/*.gz --notes "Harvest Nightly Release Builds" --title "Harvest Nightly Release" --prerelease
             '''
+          withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
+            sh '''
+            docker login
+            docker build -f docker/onePollerPerContainer/Dockerfile --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET --build-arg GIT_TOKEN=$GIT_TOKEN  -t ${imageName}:latest -t ${imageName}:nightly . --no-cache
+            docker push ${imageName}:nightly
+            '''
+          }
+
             }
         }
     }
