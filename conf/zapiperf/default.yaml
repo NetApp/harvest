@@ -46,6 +46,8 @@ objects:
   ISCSI:                  iscsi_lif.yaml
   FcpLif:                 fcp_lif.yaml
   CopyManager:            copy_manager.yaml
+#  VscanSVM:               vscan_svm.yaml
+#  Vscan:                  vscan.yaml
   WAFLCompBin:            wafl_comp_aggr_vol_bin.yaml
 
 #  Uncomment to collect workload/QOS counters  

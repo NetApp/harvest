@@ -532,8 +532,8 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 		}
 	}
 
-	// calculate timestamp delta first since many counters require it for postprocessing
-	// timestamp has "raw" property, so won't be postprocessed automatically
+	// calculate timestamp delta first since many counters require it for postprocessing.
+	// Timestamp has "raw" property, so it isn't post-processed automatically
 	if err = timestamp.Delta(me.Matrix.GetMetric("timestamp")); err != nil {
 		me.Logger.Error().Stack().Err(err).Msg("(timestamp) calculate delta:")
 		// @TODO terminate since other counters will be incorrect

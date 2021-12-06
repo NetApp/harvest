@@ -1,0 +1,27 @@
+# Offbox vscan counters from a per cluster perspective
+name: Vscan
+query: offbox_vscan_server
+object: vscan
+
+instance_key: uuid
+
+counters:
+  - instance_name
+  - instance_uuid
+  - scanner_stats_pct_cpu_used
+  - scanner_stats_pct_mem_used
+  - scanner_stats_pct_network_used
+  - scan_latency
+  - scan_request_dispatched_rate
+
+plugins:
+  - Vscan:
+      # when metricsPerScanner is true, the counters are aggregated per scanner
+      # otherwise, they're not
+      metricsPerScanner: true
+
+export_options:
+  instance_keys:
+    - svm
+    - scanner
+    - node
