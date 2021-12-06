@@ -45,5 +45,5 @@ export_options:
     - shelf
     - shelf_bay
     - serial_number
-    - failedb
+    - failed
     - container_type
