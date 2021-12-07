@@ -25,6 +25,7 @@ type PollerInfo struct {
 	ShowPorts     bool
 	IsFull        bool
 	TemplateDir   string
+	CertDir       string
 }
 
 type AdminInfo struct {
@@ -54,6 +55,7 @@ type options struct {
 	admin       bool
 	outputPath  string
 	templateDir string
+	certDir     string
 	promPort    int
 	grafanaPort int
 }
@@ -138,6 +140,10 @@ func generateDocker(path string, kind int) {
 	if err != nil {
 		panic(err)
 	}
+	certDirPath, err := filepath.Abs(opts.certDir)
+	if err != nil {
+		panic(err)
+	}
 	conf.ValidatePortInUse = true
 	var filesd []string
 	for _, v := range conf.Config.PollersOrdered {
@@ -153,6 +159,7 @@ func generateDocker(path string, kind int) {
 			ShowPorts:     kind == harvest || opts.showPorts,
 			IsFull:        kind == full,
 			TemplateDir:   templateDirPath,
+			CertDir:       certDirPath,
 		}
 		pollerTemplate.Pollers = append(pollerTemplate.Pollers, pollerInfo)
 		filesd = append(filesd, fmt.Sprintf("- targets: ['%s:%d']", pollerInfo.ServiceName, pollerInfo.Port))
@@ -331,6 +338,7 @@ func init() {
 	)
 	dFlags.StringVar(&opts.image, "image", "rahulguptajss/harvest:latest", "Harvest image")
 	dFlags.StringVar(&opts.templateDir, "templatedir", "./conf", "Harvest template dir path")
+	dFlags.StringVar(&opts.certDir, "certdir", "./cert", "Harvest certificate dir path")
 	dFlags.StringVarP(&opts.outputPath, "output", "o", "", "Output file path. ")
 
 	fFlags.BoolVarP(&opts.showPorts, "port", "p", false, "Expose poller ports to host machine")

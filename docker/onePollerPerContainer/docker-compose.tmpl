@@ -27,12 +27,9 @@ services:
     command: '--poller {{ .PollerName }} {{if .Port }}--promPort {{ .Port }} {{ end }}
     {{- if ne .LogLevel 2 }}--loglevel {{ .LogLevel }} {{ end}}--config /opt/harvest.yml'
     volumes:
-      - type: bind
-        source: {{ .TemplateDir }}
-        target: /opt/harvest/conf
-      - type: bind
-        source: {{ .ConfigFile }}
-        target: /opt/harvest.yml
+      - {{ .TemplateDir }}:/opt/harvest/conf
+      - {{ .CertDir }}:/opt/harvest/cert
+      - {{ .ConfigFile }}:/opt/harvest.yml
     {{- if .IsFull}}
     networks:
       - backend
