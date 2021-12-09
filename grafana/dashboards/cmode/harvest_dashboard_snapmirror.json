@@ -201,7 +201,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "count (count by (relationship_id) (snapmirror_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",group_type=\"vol\"}))",
+          "expr": "count (count by (relationship_id) (snapmirror_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",group_type=\"none\"}))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -271,7 +271,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "count (count by (relationship_id) (snapmirror_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",group_type=\"svm\"}))",
+          "expr": "count (count by (relationship_id) (snapmirror_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",group_type=\"vserver\"}))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -412,7 +412,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "count (count by (relationship_id) (snapmirror_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",is_healthy=\"false\"}))",
+          "expr": "count (count by (relationship_id) (snapmirror_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",healthy=\"false\"}))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -886,7 +886,7 @@
               "destination_volume": false,
               "destination_vserver": false,
               "instance": true,
-              "is_healthy": false,
+              "healthy": false,
               "job": true,
               "last_transfer_type": false,
               "relationship_id": false,
@@ -911,7 +911,7 @@
               "destination_vserver": 6,
               "group_type": 11,
               "instance": 18,
-              "is_healthy": 14,
+              "healthy": 14,
               "job": 19,
               "last_transfer_type": 16,
               "relationship_id": 0,
@@ -933,7 +933,7 @@
               "destination_volume": "Destination Volume",
               "destination_vserver": "Destination SVM",
               "group_type": "Group",
-              "is_healthy": "Health",
+              "healthy": "Health",
               "last_transfer_type": "Last Transfer",
               "relationship_id": "ID",
               "relationship_status": "Status",
