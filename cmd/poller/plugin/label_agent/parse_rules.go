@@ -52,6 +52,12 @@ func (me *LabelAgent) parseRules() int {
 				me.parseExcludeContainsRule(rule)
 			case "exclude_regex":
 				me.parseExcludeRegexRule(rule)
+			case "include_equals":
+				me.parseIncludeEqualsRule(rule)
+			case "include_contains":
+				me.parseIncludeContainsRule(rule)
+			case "include_regex":
+				me.parseIncludeRegexRule(rule)
 			case "value_to_num":
 				me.parseValueToNumRule(rule)
 			default:
@@ -108,6 +114,21 @@ func (me *LabelAgent) parseRules() int {
 	if len(me.excludeRegexRules) != 0 {
 		me.actions = append(me.actions, me.excludeRegex)
 		count += len(me.excludeRegexRules)
+	}
+
+	if len(me.includeEqualsRules) != 0 {
+		me.actions = append(me.actions, me.includeEquals)
+		count += len(me.includeEqualsRules)
+	}
+
+	if len(me.includeContainsRules) != 0 {
+		me.actions = append(me.actions, me.includeContains)
+		count += len(me.includeContainsRules)
+	}
+
+	if len(me.includeRegexRules) != 0 {
+		me.actions = append(me.actions, me.includeRegex)
+		count += len(me.includeRegexRules)
 	}
 
 	count += len(me.valueToNumRules)
@@ -372,6 +393,63 @@ func (me *LabelAgent) parseExcludeRegexRule(rule string) {
 		}
 	} else {
 		me.Logger.Error().Stack().Err(nil).Msgf("(exclude_regex) rule definition [%s] should have two fields", rule)
+	}
+}
+
+type includeEqualsRule struct {
+	label string
+	value string
+}
+
+// example rule
+// vol_type `flexgroup_constituent`
+// all instances with matching label type, will be exported
+
+func (me *LabelAgent) parseIncludeEqualsRule(rule string) {
+	if fields := strings.SplitN(rule, " `", 2); len(fields) == 2 {
+		r := includeEqualsRule{label: fields[0]}
+		r.value = strings.TrimSuffix(fields[1], "`")
+		me.includeEqualsRules = append(me.includeEqualsRules, r)
+		me.Logger.Debug().Msgf("(include_equals) parsed rule [%v]", r)
+	} else {
+		me.Logger.Warn().Msgf("(include_equals) rule definition [%s] should have two fields", rule)
+	}
+}
+
+type includeContainsRule struct {
+	label string
+	value string
+}
+
+func (me *LabelAgent) parseIncludeContainsRule(rule string) {
+	if fields := strings.SplitN(rule, " `", 2); len(fields) == 2 {
+		r := includeContainsRule{label: fields[0]}
+		r.value = strings.TrimSuffix(fields[1], "`")
+		me.includeContainsRules = append(me.includeContainsRules, r)
+		me.Logger.Debug().Msgf("(include_contains) parsed rule [%v]", r)
+	} else {
+		me.Logger.Error().Stack().Err(nil).Msgf("(include_contains) rule definition [%s] should have two fields", rule)
+	}
+}
+
+type includeRegexRule struct {
+	label string
+	reg   *regexp.Regexp
+}
+
+func (me *LabelAgent) parseIncludeRegexRule(rule string) {
+	if fields := strings.SplitN(rule, " `", 2); len(fields) == 2 {
+		r := includeRegexRule{label: fields[0]}
+		var err error
+		if r.reg, err = regexp.Compile(strings.TrimSuffix(fields[1], "`")); err == nil {
+			me.includeRegexRules = append(me.includeRegexRules, r)
+			me.Logger.Debug().Msgf("(include_regex) compiled regex: [%s]", r.reg.String())
+			me.Logger.Debug().Msgf("(include_regex) parsed rule [%v]", r)
+		} else {
+			me.Logger.Error().Stack().Err(err).Msgf("(include_regex) compile regex:")
+		}
+	} else {
+		me.Logger.Error().Stack().Err(nil).Msgf("(include_regex) rule definition [%s] should have two fields", rule)
 	}
 }
 

@@ -24,6 +24,9 @@ type LabelAgent struct {
 	excludeEqualsRules   []excludeEqualsRule
 	excludeContainsRules []excludeContainsRule
 	excludeRegexRules    []excludeRegexRule
+	includeEqualsRules   []includeEqualsRule
+	includeContainsRules []includeContainsRule
+	includeRegexRules    []includeRegexRule
 	valueToNumRules      []valueToNumRule
 }
 
@@ -192,7 +195,40 @@ func (me *LabelAgent) excludeRegex(instance *matrix.Instance) {
 	for _, r := range me.excludeRegexRules {
 		if r.reg.MatchString(instance.GetLabel(r.label)) {
 			instance.SetExportable(false)
-			me.Logger.Trace().Msgf("excludeEquals: (%s) [%s] instance with labels [%s] => excluded", r.label, r.reg.String(), instance.GetLabels().String())
+			me.Logger.Trace().Msgf("excludeRegex: (%s) [%s] instance with labels [%s] => excluded", r.label, r.reg.String(), instance.GetLabels().String())
+			break
+		}
+	}
+}
+
+// if label is not equal to value, set instance as non-exportable
+func (me *LabelAgent) includeEquals(instance *matrix.Instance) {
+	for _, r := range me.includeEqualsRules {
+		if instance.GetLabel(r.label) != r.value {
+			instance.SetExportable(false)
+			me.Logger.Trace().Msgf("includeEquals: (%s) [%s] instance with labels [%s] => excluded", r.label, r.value, instance.GetLabels().String())
+			break
+		}
+	}
+}
+
+// if label does not contains value, set instance as non-exportable
+func (me *LabelAgent) includeContains(instance *matrix.Instance) {
+	for _, r := range me.includeContainsRules {
+		if !strings.Contains(instance.GetLabel(r.label), r.value) {
+			instance.SetExportable(false)
+			me.Logger.Trace().Msgf("includeContains: (%s) [%s] instance with labels [%s] => excluded", r.label, r.value, instance.GetLabels().String())
+			break
+		}
+	}
+}
+
+// if label does not equal to value, set instance as non-exportable
+func (me *LabelAgent) includeRegex(instance *matrix.Instance) {
+	for _, r := range me.includeRegexRules {
+		if !r.reg.MatchString(instance.GetLabel(r.label)) {
+			instance.SetExportable(false)
+			me.Logger.Trace().Msgf("includeRegex: (%s) [%s] instance with labels [%s] => excluded", r.label, r.reg.String(), instance.GetLabels().String())
 			break
 		}
 	}
