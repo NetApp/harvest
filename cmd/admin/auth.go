@@ -17,11 +17,11 @@ import (
 )
 
 func GenerateAdminCerts(opts *tlsOptions, flavor string) {
-	certPath := fmt.Sprintf("%s-cert.pem", flavor)
+	certPath := fmt.Sprintf("cert/%s-cert.pem", flavor)
 	if _, err := os.Stat(certPath); !os.IsNotExist(err) {
 		log.Fatalf("%s already exists. not overwriting\n", certPath)
 	}
-	keyPath := fmt.Sprintf("%s-key.pem", flavor)
+	keyPath := fmt.Sprintf("cert/%s-key.pem", flavor)
 	if _, err := os.Stat(keyPath); !os.IsNotExist(err) {
 		log.Fatalf("%s already exists. not overwriting\n", keyPath)
 	}

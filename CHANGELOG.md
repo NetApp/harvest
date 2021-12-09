@@ -2,6 +2,10 @@
 
 [Releases](https://github.com/NetApp/harvest/releases)
 
+## 22.02.0 / 
+
+**IMPORTANT** Admin certificate through command ```bin/harvest admin tls create server``` will now be generated inside harvest ```cert``` folder instead of harvest root.
+
 ## 21.11.0 / 2021-11-08
 <!-- git log --no-decorate --no-merges --cherry-pick --right-only --oneline origin/release/21.08.0...origin/release/21.11.0 -->
 
