@@ -2,6 +2,10 @@
 
 [Releases](https://github.com/NetApp/harvest/releases)
 
+## 22.02.0 / 
+
+**IMPORTANT** Admin node certificate file location changed. Certificate files have been consolidated into the cert directory. You need to move your admin-cert.pem and admin-key.pem files to the cert directory.
+
 ## 21.11.0 / 2021-11-08
 <!-- git log --no-decorate --no-merges --cherry-pick --right-only --oneline origin/release/21.08.0...origin/release/21.11.0 -->
 
