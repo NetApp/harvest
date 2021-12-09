@@ -13,8 +13,8 @@ Admin:
 
     # create self-signed certs with 'bin/harvest admin tls create server'
     # tls:
-    #   cert_file: admin-cert.pem
-    #   key_file: admin-key.pem
+    #   cert_file: cert/admin-cert.pem
+    #   key_file: cert/admin-key.pem
 
 Tools:
 #  grafana_api_token: 'aaa-bbb-ccc-ddd'
