@@ -849,7 +849,7 @@
           "refId": "C"
         },
         {
-          "expr": "snapmirror_last_transfer_size{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "expr": "avg(snapmirror_last_transfer_size{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}) by (relationship_id)",
           "format": "table",
           "instant": true,
           "interval": "",
