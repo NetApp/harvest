@@ -6,6 +6,11 @@
 
 **IMPORTANT** Admin node certificate file location changed. Certificate files have been consolidated into the cert directory. You need to move your admin-cert.pem and admin-key.pem files to the cert directory.
 
+## 21.11.1 / 2021-12-10
+<!-- git log --no-decorate --no-merges --cherry-pick --right-only --oneline origin/release/21.08.0...origin/release/21.11.0 -->
+
+This release is the same as [21.11.0](https://github.com/NetApp/harvest/releases/tag/v21.11.0) with an FSx dashboard fix for #737. If you are not monitoring an FSx system the 21.11.0 release is the same, no need to upgrade. We reverted a node-labels check in those dashboards because Harvest does not collect node data from FSx systems.
+
 ## 21.11.0 / 2021-11-08
 <!-- git log --no-decorate --no-merges --cherry-pick --right-only --oneline origin/release/21.08.0...origin/release/21.11.0 -->
 
