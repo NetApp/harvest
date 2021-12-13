@@ -412,7 +412,7 @@ func (me *LabelAgent) parseIncludeEqualsRule(rule string) {
 		me.includeEqualsRules = append(me.includeEqualsRules, r)
 		me.Logger.Debug().Msgf("(include_equals) parsed rule [%v]", r)
 	} else {
-		me.Logger.Warn().Msgf("(include_equals) rule definition [%s] should have two fields", rule)
+		me.Logger.Warn().Str("rule", rule).Msg("(include_equals) rule definition should have two fields")
 	}
 }
 
@@ -428,7 +428,7 @@ func (me *LabelAgent) parseIncludeContainsRule(rule string) {
 		me.includeContainsRules = append(me.includeContainsRules, r)
 		me.Logger.Debug().Msgf("(include_contains) parsed rule [%v]", r)
 	} else {
-		me.Logger.Error().Stack().Err(nil).Msgf("(include_contains) rule definition [%s] should have two fields", rule)
+		me.Logger.Error().Stack().Str("rule", rule).Err(nil).Msg("(include_contains) rule definition should have two fields")
 	}
 }
 
@@ -443,13 +443,13 @@ func (me *LabelAgent) parseIncludeRegexRule(rule string) {
 		var err error
 		if r.reg, err = regexp.Compile(strings.TrimSuffix(fields[1], "`")); err == nil {
 			me.includeRegexRules = append(me.includeRegexRules, r)
-			me.Logger.Debug().Msgf("(include_regex) compiled regex: [%s]", r.reg.String())
+			me.Logger.Debug().Str("regex", r.reg.String()).Msg("(include_regex) compiled regex")
 			me.Logger.Debug().Msgf("(include_regex) parsed rule [%v]", r)
 		} else {
 			me.Logger.Error().Stack().Err(err).Msgf("(include_regex) compile regex:")
 		}
 	} else {
-		me.Logger.Error().Stack().Err(nil).Msgf("(include_regex) rule definition [%s] should have two fields", rule)
+		me.Logger.Error().Stack().Str("rule", rule).Err(nil).Msg("(include_regex) rule definition should have two fields")
 	}
 }
 

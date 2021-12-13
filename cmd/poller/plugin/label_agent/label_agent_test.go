@@ -41,6 +41,12 @@ func TestInitPlugin(t *testing.T) {
 	params.NewChildS("exclude_contains", "").AddChild(params.NewChildS("", "A `_aaa_`"))
 	// exclude instance of label value has prefix "aaa_" followed by at least one digit
 	params.NewChildS("exclude_regex", "").AddChild(params.NewChildS("", "A `^aaa_\\d+$`"))
+	// include instance if label "A" has value "aaa bbb ccc"
+	params.NewChildS("include_equals", "").AddChild(params.NewChildS("", "A `aaa bbb ccc`"))
+	// include instance if label "A" contains "_aaa_"
+	params.NewChildS("include_contains", "").AddChild(params.NewChildS("", "A `_aaa_`"))
+	// include instance of label value has prefix "aaa_" followed by at least one digit
+	params.NewChildS("include_regex", "").AddChild(params.NewChildS("", "A `^aaa_\\d+$`"))
 	// create metric "new_status", if label "state" is one of the up/ok[zapi/rest], map metric value to respective index
 	params.NewChildS("value_to_num", "").AddChild(params.NewChildS("", "new_status state up ok"))
 	// create metric "new_stage", but if none of the values is matching, use default value "4"
@@ -208,6 +214,70 @@ func TestExcludeRegexRule(t *testing.T) {
 
 	if !instanceNo.IsExportable() {
 		t.Error("instanceNo should not have been excluded")
+	}
+}
+
+func TestIncludeEqualsRule(t *testing.T) {
+	// should match
+	instanceYes := matrix.NewInstance(0)
+	instanceYes.SetLabel("A", "aaa bbb ccc")
+
+	// should not match
+	instanceNo := matrix.NewInstance(1)
+	instanceNo.SetLabel("A", "aaa bbb")
+	instanceNo.SetLabel("B", "aaa bbb ccc")
+
+	p.includeEquals(instanceYes)
+	p.includeEquals(instanceNo)
+
+	if !instanceYes.IsExportable() {
+		t.Error("InstanceYes should have been included")
+	}
+
+	if instanceNo.IsExportable() {
+		t.Error("instanceNo should not have been included")
+	}
+}
+
+func TestIncludeContainsRule(t *testing.T) {
+	// should match
+	instanceYes := matrix.NewInstance(0)
+	instanceYes.SetLabel("A", "xxx_aaa_xxx")
+
+	// should not match
+	instanceNo := matrix.NewInstance(1)
+	instanceNo.SetLabel("A", "_aaa")
+
+	p.includeContains(instanceYes)
+	p.includeContains(instanceNo)
+
+	if !instanceYes.IsExportable() {
+		t.Error("InstanceYes should have been included")
+	}
+
+	if instanceNo.IsExportable() {
+		t.Error("instanceNo should not have been included")
+	}
+}
+
+func TestIncludeRegexRule(t *testing.T) {
+	// should match
+	instanceYes := matrix.NewInstance(0)
+	instanceYes.SetLabel("A", "aaa_123")
+
+	// should not match
+	instanceNo := matrix.NewInstance(1)
+	instanceNo.SetLabel("A", "aaa_123!")
+
+	p.includeRegex(instanceYes)
+	p.includeRegex(instanceNo)
+
+	if !instanceYes.IsExportable() {
+		t.Error("InstanceYes should have been included")
+	}
+
+	if instanceNo.IsExportable() {
+		t.Error("instanceNo should not have been included")
 	}
 }
 
