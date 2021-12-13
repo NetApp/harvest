@@ -242,7 +242,9 @@ func (me *LabelAgent) includeContains(instance *matrix.Instance) {
 	instance.SetExportable(isExport)
 }
 
-// if label does not equal to value, set instance as non-exportable
+// if label does not match regex, do not export the instance or with fewer negatives
+// only export instances with a matching (regex) label
+// if an instance does not match the regex label it will not be exported
 func (me *LabelAgent) includeRegex(instance *matrix.Instance) {
 	isExport := false
 	for _, r := range me.includeRegexRules {

@@ -304,7 +304,7 @@ exclude_regex: vol_type `^flex`
 
 ## include_equals
 
-Include each instance, if the value of `LABEL` is exactly `VALUE`. Include means that metrics for this instance will be exported.
+Include each instance, if the value of `LABEL` is exactly `VALUE`. Include means that metrics for this instance will be exported and instances that do not match will not be exported.
 
 Rule syntax:
 
@@ -342,7 +342,7 @@ include_contains: vol_type `flexgroup_`
 
 ## include_regex
 
-Same as `include_equals`, but will use a regular expression and all matching instances will be included.
+Same as `include_equals`, but a regular expression will be used for inclusion. Similar to the other includes, all matching instances will be included and all non-matching will not be exported.
 
 Rule syntax:
 
