@@ -24,6 +24,9 @@ type LabelAgent struct {
 	excludeEqualsRules   []excludeEqualsRule
 	excludeContainsRules []excludeContainsRule
 	excludeRegexRules    []excludeRegexRule
+	includeEqualsRules   []includeEqualsRule
+	includeContainsRules []includeContainsRule
+	includeRegexRules    []includeRegexRule
 	valueToNumRules      []valueToNumRule
 }
 
@@ -170,7 +173,10 @@ func (me *LabelAgent) excludeEquals(instance *matrix.Instance) {
 	for _, r := range me.excludeEqualsRules {
 		if instance.GetLabel(r.label) == r.value {
 			instance.SetExportable(false)
-			me.Logger.Trace().Msgf("excludeEquals: (%s) [%s] instance with labels [%s] => excluded", r.label, r.value, instance.GetLabels().String())
+			me.Logger.Trace().Str("label", r.label).
+				Str("value", r.value).
+				Str("instance labels", instance.GetLabels().String()).
+				Msg("excludeEquals: excluded")
 			break
 		}
 	}
@@ -181,7 +187,10 @@ func (me *LabelAgent) excludeContains(instance *matrix.Instance) {
 	for _, r := range me.excludeContainsRules {
 		if strings.Contains(instance.GetLabel(r.label), r.value) {
 			instance.SetExportable(false)
-			me.Logger.Trace().Msgf("excludeContains: (%s) [%s] instance with labels [%s] => excluded", r.label, r.value, instance.GetLabels().String())
+			me.Logger.Trace().Str("label", r.label).
+				Str("value", r.value).
+				Str("instance labels", instance.GetLabels().String()).
+				Msg("excludeContains: excluded")
 			break
 		}
 	}
@@ -192,10 +201,63 @@ func (me *LabelAgent) excludeRegex(instance *matrix.Instance) {
 	for _, r := range me.excludeRegexRules {
 		if r.reg.MatchString(instance.GetLabel(r.label)) {
 			instance.SetExportable(false)
-			me.Logger.Trace().Msgf("excludeEquals: (%s) [%s] instance with labels [%s] => excluded", r.label, r.reg.String(), instance.GetLabels().String())
+			me.Logger.Trace().Str("label", r.label).
+				Str("regex", r.reg.String()).
+				Str("instance labels", instance.GetLabels().String()).
+				Msg("excludeRegex: excluded")
 			break
 		}
 	}
+}
+
+// if label is not equal to value, set instance as non-exportable
+func (me *LabelAgent) includeEquals(instance *matrix.Instance) {
+	isExport := false
+	for _, r := range me.includeEqualsRules {
+		if instance.GetLabel(r.label) == r.value {
+			isExport = true
+			me.Logger.Trace().Str("label", r.label).
+				Str("value", r.value).
+				Str("instance labels", instance.GetLabels().String()).
+				Msg("includeEquals: included")
+			break
+		}
+	}
+	instance.SetExportable(isExport)
+}
+
+// if label does not contains value, set instance as non-exportable
+func (me *LabelAgent) includeContains(instance *matrix.Instance) {
+	isExport := false
+	for _, r := range me.includeContainsRules {
+		if strings.Contains(instance.GetLabel(r.label), r.value) {
+			isExport = true
+			me.Logger.Trace().Str("label", r.label).
+				Str("value", r.value).
+				Str("instance labels", instance.GetLabels().String()).
+				Msg("includeContains: included")
+			break
+		}
+	}
+	instance.SetExportable(isExport)
+}
+
+// if label does not match regex, do not export the instance or with fewer negatives
+// only export instances with a matching (regex) label
+// if an instance does not match the regex label it will not be exported
+func (me *LabelAgent) includeRegex(instance *matrix.Instance) {
+	isExport := false
+	for _, r := range me.includeRegexRules {
+		if r.reg.MatchString(instance.GetLabel(r.label)) {
+			isExport = true
+			me.Logger.Trace().Str("label", r.label).
+				Str("regex", r.reg.String()).
+				Str("instance labels", instance.GetLabels().String()).
+				Msg("includeRegex: included")
+			break
+		}
+	}
+	instance.SetExportable(isExport)
 }
 
 func (me *LabelAgent) mapValues(m *matrix.Matrix) error {

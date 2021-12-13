@@ -120,6 +120,9 @@ Notice that the rules are executed in the same order as you've added them. List 
   - [exclude_equals](#exclude_equals)
   - [exclude_contains](#exclude_contains)
   - [exclude_regex](#exclude_regex)
+  - [include_equals](#include_equals)
+  - [include_contains](#include_contains)
+  - [include_regex](#include_regex)
   - [value_mapping](#value_mapping)
   - [value_to_num](#value_to_num)
 
@@ -275,7 +278,7 @@ exclude_contains: LABEL `VALUE`
 Example:
 
 ```yaml
-exclude_equals: vol_type `flexgroup_`
+exclude_contains: vol_type `flexgroup_`
 # all instances, which have label "vol_type" which contain
 # "flexgroup_" will not be exported
 ```
@@ -287,18 +290,74 @@ Same as `exclude_equals`, but will use a regular expression and all matching ins
 Rule syntax:
 
 ```yaml
-exclude_contains: LABEL `REGEX`
+exclude_regex: LABEL `REGEX`
 # label name - regular expression
 ```
 
 Example:
 
 ```yaml
-exclude_equals: vol_type `flexgroup_`
-# all instances, which have label "vol_type" which contain
-# "flexgroup_" will not be exported
+exclude_regex: vol_type `^flex`
+# all instances, which have label "vol_type" which starts with
+# "flex" will not be exported
 ```
 
+## include_equals
+
+Include each instance, if the value of `LABEL` is exactly `VALUE`. Include means that metrics for this instance will be exported and instances that do not match will not be exported.
+
+Rule syntax:
+
+```yaml
+include_equals: LABEL `VALUE`
+# label name - label value
+```
+
+Example:
+
+```yaml
+include_equals: vol_type `flexgroup_constituent`
+# all instances, which have label "vol_type" with value
+# "flexgroup_constituent" will be exported
+```
+
+## include_contains
+
+Same as `include_equals`, but all labels that *contain* `VALUE` will be included
+
+Rule syntax:
+
+```yaml
+include_contains: LABEL `VALUE`
+# label name - label value
+```
+
+Example:
+
+```yaml
+include_contains: vol_type `flexgroup_`
+# all instances, which have label "vol_type" which contain
+# "flexgroup_" will be exported
+```
+
+## include_regex
+
+Same as `include_equals`, but a regular expression will be used for inclusion. Similar to the other includes, all matching instances will be included and all non-matching will not be exported.
+
+Rule syntax:
+
+```yaml
+include_regex: LABEL `REGEX`
+# label name - regular expression
+```
+
+Example:
+
+```yaml
+include_regex: vol_type `^flex`
+# all instances, which have label "vol_type" which starts with
+# "flex" will be exported
+```
 
 ## value_mapping
 
