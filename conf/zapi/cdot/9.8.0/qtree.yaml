@@ -11,8 +11,8 @@ counters:
     - ^security-style
     - ^status
     - ^^volume
-    - ^^vserver
-    - ^^qtree => qtree
+    - ^^vserver => svm
+    - ^^qtree   => qtree
 
 collect_only_labels: true
 
@@ -37,7 +37,7 @@ export_options:
   instance_keys:
     - qtree
     - volume
-    - vserver
+    - svm
 
   instance_labels:
     - export_policy

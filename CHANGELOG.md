@@ -6,6 +6,8 @@
 
 **IMPORTANT** Admin node certificate file location changed. Certificate files have been consolidated into the cert directory. You need to move your admin-cert.pem and admin-key.pem files to the cert directory.
 
+**IMPORTANT** In earlier versions of Harvest, the Qtree template exported the `vserver` metric. This counter was changed to `svm` to be consistent with other templates. If you are using the qtree `vserver` metric, you will need to update your queries to use `svm` instead.   
+
 ## 21.11.1 / 2021-12-10
 <!-- git log --no-decorate --no-merges --cherry-pick --right-only --oneline origin/release/21.08.0...origin/release/21.11.0 -->
 
