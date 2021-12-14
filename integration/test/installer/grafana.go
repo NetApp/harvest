@@ -24,7 +24,7 @@ func (d *Grafana) Install() bool {
 	docker.StopContainers(imageName)
 	docker.RemoveImage(imageName)
 	docker.PullImage(d.image)
-	cmd := exec.Command("docker", "run", "-d", "-p", utils.GrafanaPort+":"+utils.GrafanaPort, "grafana/grafana")
+	cmd := exec.Command("docker", "run", "-d", "-p", utils.GrafanaPort+":"+utils.GrafanaPort, "grafana/grafana:8.1.7")
 	cmd.Stdout = os.Stdout
 	err := cmd.Start()
 	utils.PanicIfNotNil(err)
