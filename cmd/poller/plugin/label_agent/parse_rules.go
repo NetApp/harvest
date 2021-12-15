@@ -5,7 +5,6 @@
 package label_agent
 
 import (
-	"fmt"
 	"goharvest2/pkg/matrix"
 	"regexp"
 	"strconv"
@@ -74,10 +73,8 @@ func (me *LabelAgent) parseRules() int {
 
 	for _, c := range me.Params.GetChildren() {
 		name := c.GetNameS()
-		fmt.Println("------" + name)
 		switch name {
 		case "split":
-			fmt.Println("---IN---" + name)
 			if len(me.splitSimpleRules) != 0 {
 				me.actions = append(me.actions, me.splitSimple)
 				count += len(me.splitSimpleRules)
@@ -144,7 +141,6 @@ func (me *LabelAgent) parseRules() int {
 			}
 			count += len(me.valueToNumRules)
 		default:
-			fmt.Println("---OUT---" + name)
 			me.Logger.Warn().
 				Str("object", me.ParentParams.GetChildContentS("object")).
 				Str("name", name).Msg("Unknown rule name")
