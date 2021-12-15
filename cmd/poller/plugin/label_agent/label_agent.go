@@ -58,18 +58,9 @@ func (me *LabelAgent) Run(m *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var err error
 
-	// earlier m instances with n actions ==> O(m*n)
-
-	//for _, instance := range m.GetInstances() {
 	for _, foo := range me.actions {
 		foo(m)
 	}
-	//}
-
-	// if any of the value mapping available, then map values with appropriate rules
-	//if len(me.valueToNumRules) != 0 {
-	//	err = me.mapValues(m)
-	//}
 
 	return nil, err
 }
