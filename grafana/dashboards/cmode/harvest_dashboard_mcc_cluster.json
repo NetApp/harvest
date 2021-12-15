@@ -2873,11 +2873,6 @@
       {
         "allFormat": "wildcard",
         "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "mcc_cluster",
-          "value": "mcc_cluster"
-        },
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(node_labels{system_type!=\"7mode\"}, datacenter)",
         "description": null,
@@ -2906,11 +2901,6 @@
       {
         "allFormat": "wildcard",
         "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "stiA900mcc223224_siteA",
-          "value": "stiA900mcc223224_siteA"
-        },
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(aggr_new_status{system_type!=\"7mode\",datacenter=\"$Datacenter\"}, cluster)",
         "description": null,
