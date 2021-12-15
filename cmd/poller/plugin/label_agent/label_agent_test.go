@@ -22,37 +22,37 @@ func TestInitPlugin(t *testing.T) {
 	// define plugin rules
 	params := node.NewS("LabelAgent")
 	// split value of "X" into 4 and take last 2 as new labels
-	params.NewChildS("split", "").AddChild(params.NewChildS("", "X `/` ,,C,D"))
+	params.NewChildS("split", "").NewChildS("", "X `/` ,,C,D")
 	// split value of "X" and take first 2 as new labels
-	params.NewChildS("split_regex", "").AddChild(params.NewChildS("", "X `.*(A\\d+)_(B\\d+)` A,B"))
+	params.NewChildS("split_regex", "").NewChildS("", "X `.*(A\\d+)_(B\\d+)` A,B")
 	// split value of "X" into key-value pairs
-	params.NewChildS("split_pairs", "").AddChild(params.NewChildS("", "X ` ` `:`"))
+	params.NewChildS("split_pairs", "").NewChildS("", "X ` ` `:`")
 	// join values of "A" and "B" and set as label "X"
-	params.NewChildS("join", "").AddChild(params.NewChildS("", "X `_` A,B"))
+	params.NewChildS("join", "").NewChildS("", "X `_` A,B")
 	// replace "aaa_" with "bbb_" and set as label "B"
-	params.NewChildS("replace", "").AddChild(params.NewChildS("", "A B `aaa_` `bbb_`"))
+	params.NewChildS("replace", "").NewChildS("", "A B `aaa_` `bbb_`")
 	// remove occurences of "aaa_" from value of "A"
-	params.NewChildS("replace", "").AddChild(params.NewChildS("", "A A `aaa_` ``"))
+	params.NewChildS("replace", "").NewChildS("", "A A `aaa_` ``")
 	// reverse the order of matching elements, replace underscore with dash and "aaa" with "bbb"
-	params.NewChildS("replace_regex", "").AddChild(params.NewChildS("", "A B `^(aaa)_(\\d+)_(\\w+)$` `$3-$2-bbb`"))
+	params.NewChildS("replace_regex", "").NewChildS("", "A B `^(aaa)_(\\d+)_(\\w+)$` `$3-$2-bbb`")
 	// exclude instance if label "A" has value "aaa bbb ccc"
-	params.NewChildS("exclude_equals", "").AddChild(params.NewChildS("", "A `aaa bbb ccc`"))
+	params.NewChildS("exclude_equals", "").NewChildS("", "A `aaa bbb ccc`")
 	// exclude instance if label "A" contains "_aaa_"
-	params.NewChildS("exclude_contains", "").AddChild(params.NewChildS("", "A `_aaa_`"))
+	params.NewChildS("exclude_contains", "").NewChildS("", "A `_aaa_`")
 	// exclude instance of label value has prefix "aaa_" followed by at least one digit
-	params.NewChildS("exclude_regex", "").AddChild(params.NewChildS("", "A `^aaa_\\d+$`"))
+	params.NewChildS("exclude_regex", "").NewChildS("", "A `^aaa_\\d+$`")
 	// include instance if label "A" has value "aaa bbb ccc"
-	params.NewChildS("include_equals", "").AddChild(params.NewChildS("", "A `aaa bbb ccc`"))
+	params.NewChildS("include_equals", "").NewChildS("", "A `aaa bbb ccc`")
 	// include instance if label "A" contains "_aaa_"
-	params.NewChildS("include_contains", "").AddChild(params.NewChildS("", "A `_aaa_`"))
+	params.NewChildS("include_contains", "").NewChildS("", "A `_aaa_`")
 	// include instance of label value has prefix "aaa_" followed by at least one digit
-	params.NewChildS("include_regex", "").AddChild(params.NewChildS("", "A `^aaa_\\d+$`"))
+	params.NewChildS("include_regex", "").NewChildS("", "A `^aaa_\\d+$`")
 	// create metric "new_status", if label "state" is one of the up/ok[zapi/rest], map metric value to respective index
-	params.NewChildS("value_to_num", "").AddChild(params.NewChildS("", "new_status state up ok"))
+	params.NewChildS("value_to_num", "").NewChildS("", "new_status state up ok")
 	// create metric "new_stage", but if none of the values is matching, use default value "4"
-	params.NewChildS("value_to_num", "").AddChild(params.NewChildS("", "new_stage stage init start `4`"))
+	params.NewChildS("value_to_num", "").NewChildS("", "new_stage stage init start `4`")
 	// create metric "new_outage", if empty value is expected and non empty means wrong, use default value "0"
-	params.NewChildS("value_to_num", "").AddChild(params.NewChildS("", "new_outage outage - - `0`"))
+	params.NewChildS("value_to_num", "").NewChildS("", "new_outage outage - - `0`")
 
 	abc := plugin.New("Test", nil, params, nil)
 	p = &LabelAgent{AbstractPlugin: abc}
@@ -63,11 +63,12 @@ func TestInitPlugin(t *testing.T) {
 }
 
 func TestSplitSimpleRule(t *testing.T) {
-	instance := matrix.NewInstance(0)
+	m := matrix.New("TestLabelAgent", "test", "test")
+	instance, _ := m.NewInstance("0")
 	instance.SetLabel("X", "a/b/c/d")
 
 	t.Logf("before = [%s]\n", instance.GetLabels().String())
-	p.splitSimple(instance)
+	p.splitSimple(m)
 	t.Logf("after  = [%s]\n", instance.GetLabels().String())
 
 	if instance.GetLabel("C") == "c" && instance.GetLabel("D") == "d" {
@@ -78,11 +79,12 @@ func TestSplitSimpleRule(t *testing.T) {
 }
 
 func TestSplitRegexRule(t *testing.T) {
-	instance := matrix.NewInstance(0)
+	m := matrix.New("TestLabelAgent", "test", "test")
+	instance, _ := m.NewInstance("0")
 	instance.SetLabel("X", "xxxA22_B333")
 
 	t.Logf("before = [%s]\n", instance.GetLabels().String())
-	p.splitRegex(instance)
+	p.splitRegex(m)
 	t.Logf("after  = [%s]\n", instance.GetLabels().String())
 
 	if instance.GetLabel("A") == "A22" && instance.GetLabel("B") == "B333" {
@@ -93,11 +95,12 @@ func TestSplitRegexRule(t *testing.T) {
 }
 
 func TestSplitPairsRule(t *testing.T) {
-	instance := matrix.NewInstance(0)
+	m := matrix.New("TestLabelAgent", "test", "test")
+	instance, _ := m.NewInstance("0")
 	instance.SetLabel("X", "owner:jack contact:some@email")
 
 	t.Logf("before = [%s]\n", instance.GetLabels().String())
-	p.splitPairs(instance)
+	p.splitPairs(m)
 	t.Logf("after  = [%s]\n", instance.GetLabels().String())
 
 	if instance.GetLabel("owner") == "jack" && instance.GetLabel("contact") == "some@email" {
@@ -108,12 +111,13 @@ func TestSplitPairsRule(t *testing.T) {
 }
 
 func TestJoinSimpleRule(t *testing.T) {
-	instance := matrix.NewInstance(0)
+	m := matrix.New("TestLabelAgent", "test", "test")
+	instance, _ := m.NewInstance("0")
 	instance.SetLabel("A", "aaa")
 	instance.SetLabel("B", "bbb")
 
 	t.Logf("before = [%s]\n", instance.GetLabels().String())
-	p.joinSimple(instance)
+	p.joinSimple(m)
 	t.Logf("after  = [%s]\n", instance.GetLabels().String())
 
 	if instance.GetLabel("X") == "aaa_bbb" {
@@ -124,11 +128,12 @@ func TestJoinSimpleRule(t *testing.T) {
 }
 
 func TestReplaceSimpleRule(t *testing.T) {
-	instance := matrix.NewInstance(0)
+	m := matrix.New("TestLabelAgent", "test", "test")
+	instance, _ := m.NewInstance("0")
 	instance.SetLabel("A", "aaa_X")
 
 	t.Logf("before = [%s]\n", instance.GetLabels().String())
-	p.replaceSimple(instance)
+	p.replaceSimple(m)
 	t.Logf("after  = [%s]\n", instance.GetLabels().String())
 
 	if instance.GetLabel("A") == "X" && instance.GetLabel("B") == "bbb_X" {
@@ -139,11 +144,12 @@ func TestReplaceSimpleRule(t *testing.T) {
 }
 
 func TestReplaceRegexRule(t *testing.T) {
-	instance := matrix.NewInstance(0)
+	m := matrix.New("TestLabelAgent", "test", "test")
+	instance, _ := m.NewInstance("0")
 	instance.SetLabel("A", "aaa_12345_abcDEF")
 
 	t.Logf("before = [%s]\n", instance.GetLabels().String())
-	p.replaceRegex(instance)
+	p.replaceRegex(m)
 	t.Logf("after  = [%s]\n", instance.GetLabels().String())
 
 	if instance.GetLabel("B") == "abcDEF-12345-bbb" {
@@ -154,17 +160,17 @@ func TestReplaceRegexRule(t *testing.T) {
 }
 
 func TestExcludeEqualsRule(t *testing.T) {
+	m := matrix.New("TestLabelAgent", "test", "test")
 	// should match
-	instanceYes := matrix.NewInstance(0)
+	instanceYes, _ := m.NewInstance("0")
 	instanceYes.SetLabel("A", "aaa bbb ccc")
 
 	// should not match
-	instanceNo := matrix.NewInstance(1)
+	instanceNo, _ := m.NewInstance("1")
 	instanceNo.SetLabel("A", "aaa bbb")
 	instanceNo.SetLabel("B", "aaa bbb ccc")
 
-	p.excludeEquals(instanceYes)
-	p.excludeEquals(instanceNo)
+	p.excludeEquals(m)
 
 	if instanceYes.IsExportable() {
 		t.Error("InstanceYes should have been excluded")
@@ -176,16 +182,16 @@ func TestExcludeEqualsRule(t *testing.T) {
 }
 
 func TestExcludeContainsRule(t *testing.T) {
+	m := matrix.New("TestLabelAgent", "test", "test")
 	// should match
-	instanceYes := matrix.NewInstance(0)
+	instanceYes, _ := m.NewInstance("0")
 	instanceYes.SetLabel("A", "xxx_aaa_xxx")
 
 	// should not match
-	instanceNo := matrix.NewInstance(1)
+	instanceNo, _ := m.NewInstance("1")
 	instanceNo.SetLabel("A", "_aaa")
 
-	p.excludeContains(instanceYes)
-	p.excludeContains(instanceNo)
+	p.excludeContains(m)
 
 	if instanceYes.IsExportable() {
 		t.Error("InstanceYes should have been excluded")
@@ -197,16 +203,16 @@ func TestExcludeContainsRule(t *testing.T) {
 }
 
 func TestExcludeRegexRule(t *testing.T) {
+	m := matrix.New("TestLabelAgent", "test", "test")
 	// should match
-	instanceYes := matrix.NewInstance(0)
+	instanceYes, _ := m.NewInstance("0")
 	instanceYes.SetLabel("A", "aaa_123")
 
 	// should not match
-	instanceNo := matrix.NewInstance(1)
+	instanceNo, _ := m.NewInstance("1")
 	instanceNo.SetLabel("A", "aaa_123!")
 
-	p.excludeRegex(instanceYes)
-	p.excludeRegex(instanceNo)
+	p.excludeRegex(m)
 
 	if instanceYes.IsExportable() {
 		t.Error("InstanceYes should have been excluded")
@@ -218,17 +224,17 @@ func TestExcludeRegexRule(t *testing.T) {
 }
 
 func TestIncludeEqualsRule(t *testing.T) {
+	m := matrix.New("TestLabelAgent", "test", "test")
 	// should match
-	instanceYes := matrix.NewInstance(0)
+	instanceYes, _ := m.NewInstance("0")
 	instanceYes.SetLabel("A", "aaa bbb ccc")
 
 	// should not match
-	instanceNo := matrix.NewInstance(1)
+	instanceNo, _ := m.NewInstance("1")
 	instanceNo.SetLabel("A", "aaa bbb")
 	instanceNo.SetLabel("B", "aaa bbb ccc")
 
-	p.includeEquals(instanceYes)
-	p.includeEquals(instanceNo)
+	p.includeEquals(m)
 
 	if !instanceYes.IsExportable() {
 		t.Error("InstanceYes should have been included")
@@ -240,16 +246,16 @@ func TestIncludeEqualsRule(t *testing.T) {
 }
 
 func TestIncludeContainsRule(t *testing.T) {
+	m := matrix.New("TestLabelAgent", "test", "test")
 	// should match
-	instanceYes := matrix.NewInstance(0)
+	instanceYes, _ := m.NewInstance("0")
 	instanceYes.SetLabel("A", "xxx_aaa_xxx")
 
 	// should not match
-	instanceNo := matrix.NewInstance(1)
+	instanceNo, _ := m.NewInstance("1")
 	instanceNo.SetLabel("A", "_aaa")
 
-	p.includeContains(instanceYes)
-	p.includeContains(instanceNo)
+	p.includeContains(m)
 
 	if !instanceYes.IsExportable() {
 		t.Error("InstanceYes should have been included")
@@ -261,16 +267,16 @@ func TestIncludeContainsRule(t *testing.T) {
 }
 
 func TestIncludeRegexRule(t *testing.T) {
+	m := matrix.New("TestLabelAgent", "test", "test")
 	// should match
-	instanceYes := matrix.NewInstance(0)
+	instanceYes, _ := m.NewInstance("0")
 	instanceYes.SetLabel("A", "aaa_123")
 
 	// should not match
-	instanceNo := matrix.NewInstance(1)
+	instanceNo, _ := m.NewInstance("1")
 	instanceNo.SetLabel("A", "aaa_123!")
 
-	p.includeRegex(instanceYes)
-	p.includeRegex(instanceNo)
+	p.includeRegex(m)
 
 	if !instanceYes.IsExportable() {
 		t.Error("InstanceYes should have been included")

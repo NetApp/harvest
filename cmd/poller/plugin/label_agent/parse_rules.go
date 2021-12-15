@@ -5,6 +5,7 @@
 package label_agent
 
 import (
+	"fmt"
 	"goharvest2/pkg/matrix"
 	"regexp"
 	"strconv"
@@ -68,70 +69,87 @@ func (me *LabelAgent) parseRules() int {
 		}
 	}
 
-	me.actions = make([]func(*matrix.Instance), 0)
+	me.actions = make([]func(matrix2 *matrix.Matrix) error, 0)
 	count := 0
 
-	if len(me.splitSimpleRules) != 0 {
-		me.actions = append(me.actions, me.splitSimple)
-		count += len(me.splitSimpleRules)
+	for _, c := range me.Params.GetChildren() {
+		name := c.GetNameS()
+		fmt.Println("------" + name)
+		switch name {
+		case "split":
+			fmt.Println("---IN---" + name)
+			if len(me.splitSimpleRules) != 0 {
+				me.actions = append(me.actions, me.splitSimple)
+				count += len(me.splitSimpleRules)
+			}
+		case "split_regex":
+			if len(me.splitRegexRules) != 0 {
+				me.actions = append(me.actions, me.splitRegex)
+				count += len(me.splitRegexRules)
+			}
+		case "split_pairs":
+			if len(me.splitPairsRules) != 0 {
+				me.actions = append(me.actions, me.splitPairs)
+				count += len(me.splitPairsRules)
+			}
+		case "join":
+			if len(me.joinSimpleRules) != 0 {
+				me.actions = append(me.actions, me.joinSimple)
+				count += len(me.joinSimpleRules)
+			}
+		case "replace":
+			if len(me.replaceSimpleRules) != 0 {
+				me.actions = append(me.actions, me.replaceSimple)
+				count += len(me.replaceSimpleRules)
+			}
+		case "replace_regex":
+			if len(me.replaceRegexRules) != 0 {
+				me.actions = append(me.actions, me.replaceRegex)
+				count += len(me.replaceRegexRules)
+			}
+		case "exclude_equals":
+			if len(me.excludeEqualsRules) != 0 {
+				me.actions = append(me.actions, me.excludeEquals)
+				count += len(me.excludeEqualsRules)
+			}
+		case "exclude_contains":
+			if len(me.excludeContainsRules) != 0 {
+				me.actions = append(me.actions, me.excludeContains)
+				count += len(me.excludeContainsRules)
+			}
+		case "exclude_regex":
+			if len(me.excludeRegexRules) != 0 {
+				me.actions = append(me.actions, me.excludeRegex)
+				count += len(me.excludeRegexRules)
+			}
+		case "include_equals":
+			if len(me.includeEqualsRules) != 0 {
+				me.actions = append(me.actions, me.includeEquals)
+				count += len(me.includeEqualsRules)
+			}
+		case "include_contains":
+			if len(me.includeContainsRules) != 0 {
+				me.actions = append(me.actions, me.includeContains)
+				count += len(me.includeContainsRules)
+			}
+		case "include_regex":
+			if len(me.includeRegexRules) != 0 {
+				me.actions = append(me.actions, me.includeRegex)
+				count += len(me.includeRegexRules)
+			}
+		case "value_to_num":
+			if len(me.valueToNumRules) != 0 {
+				me.actions = append(me.actions, me.mapValues)
+				count += len(me.includeRegexRules)
+			}
+			count += len(me.valueToNumRules)
+		default:
+			fmt.Println("---OUT---" + name)
+			me.Logger.Warn().
+				Str("object", me.ParentParams.GetChildContentS("object")).
+				Str("name", name).Msg("Unknown rule name")
+		}
 	}
-
-	if len(me.splitRegexRules) != 0 {
-		me.actions = append(me.actions, me.splitRegex)
-		count += len(me.splitRegexRules)
-	}
-
-	if len(me.splitPairsRules) != 0 {
-		me.actions = append(me.actions, me.splitPairs)
-		count += len(me.splitPairsRules)
-	}
-
-	if len(me.joinSimpleRules) != 0 {
-		me.actions = append(me.actions, me.joinSimple)
-		count += len(me.joinSimpleRules)
-	}
-
-	if len(me.replaceSimpleRules) != 0 {
-		me.actions = append(me.actions, me.replaceSimple)
-		count += len(me.replaceSimpleRules)
-	}
-
-	if len(me.replaceRegexRules) != 0 {
-		me.actions = append(me.actions, me.replaceRegex)
-		count += len(me.replaceRegexRules)
-	}
-
-	if len(me.excludeEqualsRules) != 0 {
-		me.actions = append(me.actions, me.excludeEquals)
-		count += len(me.excludeEqualsRules)
-	}
-
-	if len(me.excludeContainsRules) != 0 {
-		me.actions = append(me.actions, me.excludeContains)
-		count += len(me.excludeContainsRules)
-	}
-
-	if len(me.excludeRegexRules) != 0 {
-		me.actions = append(me.actions, me.excludeRegex)
-		count += len(me.excludeRegexRules)
-	}
-
-	if len(me.includeEqualsRules) != 0 {
-		me.actions = append(me.actions, me.includeEquals)
-		count += len(me.includeEqualsRules)
-	}
-
-	if len(me.includeContainsRules) != 0 {
-		me.actions = append(me.actions, me.includeContains)
-		count += len(me.includeContainsRules)
-	}
-
-	if len(me.includeRegexRules) != 0 {
-		me.actions = append(me.actions, me.includeRegex)
-		count += len(me.includeRegexRules)
-	}
-
-	count += len(me.valueToNumRules)
 
 	return count
 }
