@@ -2,9 +2,11 @@ name:                     Namespace
 query:                    namespace
 object:                   namespace
 
+instance_key:             name
+
 counters:
-  - instance_name       => name
-  - vserver_name        => svm
+  - instance_name         => name
+  - vserver_name          => svm
   - read_data
   - write_data
   - read_ops
@@ -19,16 +21,15 @@ counters:
 
 override:
 
-
 plugins:
-#  LabelAgent:
-#    split: namespace `/` ,,volume,namespace
+  LabelAgent:
+    split:
+      - name `/` ,,volume,namespace
 
 export_options:
   instance_keys:
-#    - namespace # edited by plugin
-#    - volume # added by plugin
-    - name
     - svm
+    - volume
+    - namespace
 
 
