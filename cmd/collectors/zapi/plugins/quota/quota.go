@@ -173,42 +173,44 @@ func (my *Quota) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 				if attrValue := quota.GetChildContentS(attribute); attrValue != "" {
 					qtreeInstance := data.GetInstance(tree + "." + volume + "." + vserver)
-					if qtreeInstance.IsExportable() {
-						// Ex. InstanceKey: SVMA.vol1Abc.qtree1.5.disk-limit
-						instanceKey := vserver + "." + volume + "." + tree + "." + strconv.Itoa(quotaIndex) + "." + attribute
-						instance, err := my.data.NewInstance(instanceKey)
+					if !qtreeInstance.IsExportable() {
+						continue
+					}
+					// Ex. InstanceKey: SVMA.vol1Abc.qtree1.5.disk-limit
+					instanceKey := vserver + "." + volume + "." + tree + "." + strconv.Itoa(quotaIndex) + "." + attribute
+					instance, err := my.data.NewInstance(instanceKey)
 
-						if err != nil {
-							my.Logger.Debug().Msgf("add (%s) instance: %v", attribute, err)
-							return nil, err
-						}
+					if err != nil {
+						my.Logger.Debug().Msgf("add (%s) instance: %v", attribute, err)
+						return nil, err
+					}
 
-						my.Logger.Debug().Msgf("add (%s) instance: %s.%s.%s", attribute, vserver, volume, tree)
+					my.Logger.Debug().Msgf("add (%s) instance: %s.%s.%s", attribute, vserver, volume, tree)
 
-						for _, label := range my.data.GetExportOptions().GetChildS("instance_keys").GetAllChildContentS() {
-							if value := qtreeInstance.GetLabel(label); value != "" {
-								instance.SetLabel(label, value)
-							}
-						}
-
-						// If the Qtree is the volume itself, than qtree label is empty, so copy the volume name to qtree.
-						if tree == "" {
-							instance.SetLabel("qtree", volume)
-						}
-
-						// populate numeric data
-						if value := strings.Split(attrValue, " ")[0]; value != "" {
-							// Few quota metrics would have value '-' which means unlimited (ex: disk-limit)
-							if value == "-" {
-								value = "0"
-							}
-							if err := m.SetValueString(instance, value); err != nil {
-								my.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", attribute, value, err)
-							} else {
-								my.Logger.Debug().Msgf("(%s) added value (%s)", attribute, value)
-							}
+					for _, label := range my.data.GetExportOptions().GetChildS("instance_keys").GetAllChildContentS() {
+						if value := qtreeInstance.GetLabel(label); value != "" {
+							instance.SetLabel(label, value)
 						}
 					}
+
+					// If the Qtree is the volume itself, than qtree label is empty, so copy the volume name to qtree.
+					if tree == "" {
+						instance.SetLabel("qtree", volume)
+					}
+
+					// populate numeric data
+					if value := strings.Split(attrValue, " ")[0]; value != "" {
+						// Few quota metrics would have value '-' which means unlimited (ex: disk-limit)
+						if value == "-" {
+							value = "0"
+						}
+						if err := m.SetValueString(instance, value); err != nil {
+							my.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", attribute, value, err)
+						} else {
+							my.Logger.Debug().Msgf("(%s) added value (%s)", attribute, value)
+						}
+					}
+
 				} else {
 					my.Logger.Debug().Msgf("instance without [%s], skipping", attribute)
 				}

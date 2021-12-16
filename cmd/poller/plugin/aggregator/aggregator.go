@@ -145,77 +145,79 @@ func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	for _, instance := range data.GetInstances() {
 
-		if instance.IsExportable() {
-			me.Logger.Trace().Msgf("handling instance with labels [%s]", instance.GetLabels().String())
+		if !instance.IsExportable() {
+			continue
+		}
 
-			for i, rule := range me.rules {
+		me.Logger.Trace().Msgf("handling instance with labels [%s]", instance.GetLabels().String())
 
-				me.Logger.Trace().Msgf("handling rule [%v]", rule)
-				if obj_name = instance.GetLabel(rule.label); obj_name == "" {
-					me.Logger.Warn().Msgf("label name for [%s] missing, skipped", rule.label)
+		for i, rule := range me.rules {
+
+			me.Logger.Trace().Msgf("handling rule [%v]", rule)
+			if obj_name = instance.GetLabel(rule.label); obj_name == "" {
+				me.Logger.Warn().Msgf("label name for [%s] missing, skipped", rule.label)
+				continue
+			}
+
+			if rule.checkLabel != "" {
+				me.Logger.Trace().Msgf("checking label (%s => %s)....", rule.checkLabel, rule.checkValue)
+				if rule.checkRegex != nil {
+					if !rule.checkRegex.MatchString(instance.GetLabel(rule.checkLabel)) {
+						continue
+					}
+				} else if instance.GetLabel(rule.checkLabel) != rule.checkValue {
+					continue
+				}
+			}
+
+			if rule.allLabels {
+				obj_key = strings.Join(instance.GetLabels().Values(), ".")
+			} else if len(rule.includeLabels) != 0 {
+				obj_key = obj_name
+				for _, k := range rule.includeLabels {
+					obj_key += "." + instance.GetLabel(k)
+				}
+			} else {
+				obj_key = obj_name
+			}
+			me.Logger.Trace().Msgf("instance (%s= %s): formatted key [%s]", rule.label, obj_name, obj_key)
+
+			if obj_instance = matrices[i].GetInstance(obj_key); obj_instance == nil {
+				rule.counts[obj_key] = make(map[string]int)
+				if obj_instance, err = matrices[i].NewInstance(obj_key); err != nil {
+					return nil, err
+				}
+				if rule.allLabels {
+					obj_instance.SetLabels(instance.GetLabels())
+				} else if len(rule.includeLabels) != 0 {
+					for _, k := range rule.includeLabels {
+						obj_instance.SetLabel(k, instance.GetLabel(k))
+					}
+					obj_instance.SetLabel(rule.label, obj_name)
+				} else {
+					obj_instance.SetLabel(rule.label, obj_name)
+				}
+			}
+
+			for key, metric := range data.GetMetrics() {
+
+				if value, ok = metric.GetValueFloat64(instance); !ok {
 					continue
 				}
 
-				if rule.checkLabel != "" {
-					me.Logger.Trace().Msgf("checking label (%s => %s)....", rule.checkLabel, rule.checkValue)
-					if rule.checkRegex != nil {
-						if !rule.checkRegex.MatchString(instance.GetLabel(rule.checkLabel)) {
-							continue
-						}
-					} else if instance.GetLabel(rule.checkLabel) != rule.checkValue {
-						continue
-					}
+				if obj_metric = matrices[i].GetMetric(key); obj_metric == nil {
+					me.Logger.Warn().Msgf("metric [%s] not found in [%s] cache", key, rule.label)
+					continue
 				}
 
-				if rule.allLabels {
-					obj_key = strings.Join(instance.GetLabels().Values(), ".")
-				} else if len(rule.includeLabels) != 0 {
-					obj_key = obj_name
-					for _, k := range rule.includeLabels {
-						obj_key += "." + instance.GetLabel(k)
-					}
-				} else {
-					obj_key = obj_name
-				}
-				me.Logger.Trace().Msgf("instance (%s= %s): formatted key [%s]", rule.label, obj_name, obj_key)
+				//logger.Debug(me.Prefix, "(%s) (%s) handling metric [%s] (%s)", obj, obj_name, key, obj_metric.GetName())
+				//obj_metric.Print()
 
-				if obj_instance = matrices[i].GetInstance(obj_key); obj_instance == nil {
-					rule.counts[obj_key] = make(map[string]int)
-					if obj_instance, err = matrices[i].NewInstance(obj_key); err != nil {
-						return nil, err
-					}
-					if rule.allLabels {
-						obj_instance.SetLabels(instance.GetLabels())
-					} else if len(rule.includeLabels) != 0 {
-						for _, k := range rule.includeLabels {
-							obj_instance.SetLabel(k, instance.GetLabel(k))
-						}
-						obj_instance.SetLabel(rule.label, obj_name)
-					} else {
-						obj_instance.SetLabel(rule.label, obj_name)
-					}
+				if err = obj_metric.AddValueFloat64(obj_instance, value); err != nil {
+					me.Logger.Error().Stack().Err(err).Msgf("add value [%s] [%s]:", key, obj_name)
 				}
 
-				for key, metric := range data.GetMetrics() {
-
-					if value, ok = metric.GetValueFloat64(instance); !ok {
-						continue
-					}
-
-					if obj_metric = matrices[i].GetMetric(key); obj_metric == nil {
-						me.Logger.Warn().Msgf("metric [%s] not found in [%s] cache", key, rule.label)
-						continue
-					}
-
-					//logger.Debug(me.Prefix, "(%s) (%s) handling metric [%s] (%s)", obj, obj_name, key, obj_metric.GetName())
-					//obj_metric.Print()
-
-					if err = obj_metric.AddValueFloat64(obj_instance, value); err != nil {
-						me.Logger.Error().Stack().Err(err).Msgf("add value [%s] [%s]:", key, obj_name)
-					}
-
-					rule.counts[obj_key][key]++
-				}
+				rule.counts[obj_key][key]++
 			}
 		}
 	}

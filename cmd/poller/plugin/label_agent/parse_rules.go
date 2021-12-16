@@ -68,7 +68,7 @@ func (me *LabelAgent) parseRules() int {
 		}
 	}
 
-	me.actions = make([]func(matrix2 *matrix.Matrix) error, 0)
+	me.actions = make([]func(matrix *matrix.Matrix) error, 0)
 	count := 0
 
 	for _, c := range me.Params.GetChildren() {
