@@ -295,7 +295,16 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 		for label, display := range r.instanceLabels {
 			value := instanceData.Get(label)
 			if value.Exists() {
-				instance.SetLabel(display, value.String())
+				if value.IsArray() {
+					var labelArray []string
+					for _, r := range value.Array() {
+						labelString := r.String()
+						labelArray = append(labelArray, labelString)
+					}
+					instance.SetLabel(display, strings.Join(labelArray[:], ","))
+				} else {
+					instance.SetLabel(display, value.String())
+				}
 				count++
 			} else {
 				// spams a lot currently due to missing label mappings. Moved to debug for now till rest gaps are filled
