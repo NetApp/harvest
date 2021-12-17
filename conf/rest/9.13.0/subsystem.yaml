@@ -1,0 +1,21 @@
+
+name:       Subsystem
+query:      system/health/subsystem
+object:     cluster_subsystem
+type:       private
+
+counters:
+  - ^health                       => health
+  - ^^subsystem                   => subsystem
+  - outstanding_alert_count       => outstanding_alerts
+  - suppressed_alert_count        => suppressed_alerts
+
+plugins:
+  - LabelAgent:
+      value_to_num:
+        - new_status health ok ok `0`  # REST gap will be filled up later.
+
+export_options:
+  instance_keys:
+    - subsystem
+    - health

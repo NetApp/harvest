@@ -31,6 +31,7 @@ type Args struct {
 	Item          string
 	Poller        string
 	Api           string
+	ApiType       string
 	Config        string
 	SwaggerPath   string
 	Fields        string
@@ -183,7 +184,7 @@ func doData() {
 		args.Api = args.Api[1:]
 	}
 	var records []interface{}
-	href := BuildHref(args.Api, args.Fields, args.Field, args.QueryField, args.QueryValue, args.MaxRecords, "")
+	href := BuildHref(args.Api, args.Fields, args.Field, args.QueryField, args.QueryValue, args.MaxRecords, "", args.ApiType)
 	stderr("fetching href=[%s]\n", href)
 
 	err = FetchData(client, href, &records)
@@ -283,6 +284,7 @@ func init() {
 
 	showFlags := showCmd.Flags()
 	showFlags.StringVarP(&args.Api, "api", "a", "", "REST API PATTERN to show")
+	showFlags.StringVar(&args.ApiType, "apiType", "public", "REST API type (public/private (for private cli))")
 	showFlags.BoolVar(&args.DownloadAll, "all", false, "Collect all records by walking pagination links")
 	showFlags.StringVarP(&args.MaxRecords, "max-records", "m", "", "Limit the number of records returned before providing pagination link")
 	showFlags.BoolVar(&args.ForceDownload, "download", false, "Force download Swagger file instead of using local copy")

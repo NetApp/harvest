@@ -12,7 +12,6 @@ import (
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
-	"goharvest2/pkg/util"
 	"os"
 	"strings"
 	"time"
@@ -26,12 +25,10 @@ type Rest struct {
 	instanceLabels map[string]string
 	counters       map[string]string
 	fields         []string
-	queryFields    []string //TODO remove later. Used for finding missing fields in templates
 	misses         []string
 	returnTimeOut  string
+	apiType        string // public, private
 }
-
-var allFieldQuery = true // Used to query fields=* query during rest call
 
 func init() {
 	plugin.RegisterModule(Rest{})
@@ -91,6 +88,13 @@ func (r *Rest) InitVars() error {
 	}
 
 	r.Params.Union(template)
+	apiType := r.Params.GetChildS("type")
+	if apiType != nil && apiType.GetContentS() == "private" {
+		r.apiType = apiType.GetContentS()
+	} else {
+		r.apiType = "public"
+	}
+
 	r.fields = []string{"*"}
 	if x := r.Params.GetChildS("fields"); x != nil {
 		r.fields = append(r.fields, x.GetAllChildContentS()...)
@@ -185,43 +189,29 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 
 	startTime = time.Now()
 
-	// check if always run fields=* query
-	if allFieldQuery {
-		href := rest.BuildHref(r.apiPath, strings.Join(r.fields, ","), nil, "", "", "", r.returnTimeOut)
+	if r.apiType == "public" {
+		href := rest.BuildHref(r.apiPath, strings.Join(r.fields, ","), nil, "", "", "", r.returnTimeOut, r.apiType)
 		r.Logger.Debug().Str("href", href).Msg("")
 		err = rest.FetchData(r.client, href, &records)
 		if err != nil {
 			r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
 			return nil, err
 		}
-		err = r.matchFields(records)
-		if err != nil {
-			r.Logger.Warn().Err(err).Msg("Error while matching fields")
-			return nil, err
+	}
+
+	if r.apiType == "private" {
+		counterKey := make([]string, len(r.counters))
+		i := 0
+		for k := range r.counters {
+			counterKey[i] = k
+			i++
 		}
-	} else {
-		// Check if fields are set for rest call
-		if len(r.fields) > 0 {
-			href := rest.BuildHref(r.apiPath, strings.Join(r.fields, ","), nil, "", "", "", r.returnTimeOut)
-			r.Logger.Debug().Str("href", href).Msg("")
-			err = rest.FetchData(r.client, href, &records)
-			if err != nil {
-				r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
-				return nil, err
-			}
-		} else {
-			href := rest.BuildHref(r.apiPath, "*", nil, "", "", "", r.returnTimeOut)
-			r.Logger.Debug().Str("href", href).Msg("")
-			err = rest.FetchData(r.client, href, &records)
-			if err != nil {
-				r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
-				return nil, err
-			}
-			err = r.matchFields(records)
-			if err != nil {
-				r.Logger.Warn().Err(err).Msg("Error while matching fields")
-				return nil, err
-			}
+		href := rest.BuildHref(r.apiPath, strings.Join(counterKey, ","), nil, "", "", "", r.returnTimeOut, r.apiType)
+		r.Logger.Debug().Str("href", href).Msg("")
+		err = rest.FetchData(r.client, href, &records)
+		if err != nil {
+			r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
+			return nil, err
 		}
 	}
 
@@ -339,41 +329,6 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 	r.AddCollectCount(count)
 
 	return r.Matrix, nil
-}
-
-func (r *Rest) matchFields(records []interface{}) error {
-	all := rest.Pagination{
-		Records:    records,
-		NumRecords: len(records),
-	}
-	c, err := json.Marshal(all)
-	if err != nil {
-		r.Logger.Error().Err(err).Str("ApiPath", r.apiPath).Msg("Unable to marshal rest pagination")
-		return err
-	}
-
-	results := gjson.GetBytes(c, "records")
-	if len(results.String()) > 0 {
-		// fetch first record from json
-		firstValue := results.Get("0")
-		res := getFieldName(firstValue.String(), "")
-		var searchKeys []string
-		for k := range r.counters {
-			searchKeys = append(searchKeys, k)
-		}
-		// find keys from rest json response which matches counters defined in templates
-		matches, misses := util.Intersection(res, searchKeys)
-		r.queryFields = []string{}
-		r.misses = []string{}
-		for _, param := range matches {
-			r.queryFields = append(r.queryFields, param)
-		}
-		for _, param := range misses {
-			r.misses = append(r.misses, param)
-		}
-
-	}
-	return nil
 }
 
 func (me *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {

@@ -224,7 +224,7 @@ func (c *Client) Init(retries int) error {
 
 	for i = 0; i < retries; i++ {
 
-		if content, err = c.GetRest(BuildHref("cluster", "*", nil, "", "", "", "")); err != nil {
+		if content, err = c.GetRest(BuildHref("cluster", "*", nil, "", "", "", "", "public")); err != nil {
 			continue
 		}
 
@@ -240,9 +240,14 @@ func (c *Client) Init(retries int) error {
 	return err
 }
 
-func BuildHref(apiPath string, fields string, field []string, queryFields string, queryValue string, maxRecords string, returnTimeout string) string {
+func BuildHref(apiPath string, fields string, field []string, queryFields string, queryValue string, maxRecords string, returnTimeout string, apiType string) string {
 	href := strings.Builder{}
-	href.WriteString("api/")
+	if apiType == "public" {
+		href.WriteString("api/")
+	}
+	if apiType == "private" {
+		href.WriteString("api/private/cli/")
+	}
 	href.WriteString(apiPath)
 	href.WriteString("?return_records=true")
 	addArg(&href, "&fields=", fields)

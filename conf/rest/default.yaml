@@ -8,9 +8,10 @@ schedule:
 objects:
   Disk:             disk.yaml
   Lun:              lun.yaml
-  Status:            status.yaml
-  Node:   node.yaml
-  Aggr:  aggr.yaml
+  Status:           status.yaml
+  Node:             node.yaml
+  Aggr:             aggr.yaml
   SnapMirror:       snapmirror.yaml
-  Volume: volume.yaml
+  Volume:           volume.yaml
+  Subsystem:        subsystem.yaml
 
