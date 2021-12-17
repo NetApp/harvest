@@ -1,8 +1,6 @@
-
 name:                         SnapMirror
 query:                        snapmirror-get-iter
 object:                       snapmirror
-
 counters:
   snapmirror-info:
     - break-failed-count
@@ -32,10 +30,11 @@ counters:
     - ^unhealthy-reason
     - update-failed-count
     - update-successful-count
+    - ^destination-location
+    - ^policy-type
 
 plugins:
   - Snapmirror
-
 export_options:
   instance_keys:
     - relationship_id
@@ -55,3 +54,9 @@ export_options:
     - destination_node_limit
     - source_node_limit
     - group_type
+    - destination_location
+    - protectedBy
+    - protectionSourceType
+    - policy_type
+    - derived_relationship_type
+    

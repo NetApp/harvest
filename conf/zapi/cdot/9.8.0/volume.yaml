@@ -18,6 +18,7 @@ counters:
       - ^owning-vserver-name        => svm
       - ^containing-aggregate-name  => aggr
       - ^style-extended             => style
+      - ^type                       => type
 
     - volume-inode-attributes:
       - files-used
@@ -64,9 +65,9 @@ counters:
       - snapshot-count
 
 plugins:
-  Snapshot:
-    objects:
-      - total-schedules
+  SnapmirrorVolume:
+    # TODO: better naming
+    refresh_periodicity: "5"
   LabelAgent:
     # metric label zapi_value rest_value `default_value`
     value_to_num:
@@ -89,4 +90,9 @@ export_options:
     - state
     - is_sis_volume
     - snapshot_policy
+    - type
+    - protectedByStatus
+    - protectedBy
+    - protectionRole
+    - all_sm_healthy
 

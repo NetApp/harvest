@@ -9,7 +9,7 @@ import (
 	"goharvest2/cmd/collectors/zapi/plugins/quota"
 	"goharvest2/cmd/collectors/zapi/plugins/shelf"
 	"goharvest2/cmd/collectors/zapi/plugins/snapmirror"
-	"goharvest2/cmd/collectors/zapi/plugins/snapshot"
+	"goharvest2/cmd/collectors/zapi/plugins/snapmirrorVolume"
 	"goharvest2/cmd/collectors/zapiperf/plugins/fcp"
 	"goharvest2/cmd/collectors/zapiperf/plugins/headroom"
 	"goharvest2/cmd/collectors/zapiperf/plugins/nic"
@@ -147,8 +147,8 @@ func (me *Zapi) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugi
 		return volume.New(abc)
 	case "Qtree":
 		return quota.New(abc)
-	case "Snapshot":
-		return snapshot.New(abc)
+	case "SnapmirrorVolume":
+		return snapmirrorVolume.New(abc)
 	case "Vscan":
 		return vscan.New(abc)
 	default:
