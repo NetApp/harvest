@@ -27,7 +27,7 @@ counters:
   - ^source.svm.name => source_vserver
   #- ^source-node #missing mapping
   #- total-transfer-time-secs #missing mapping
-  - ^unhealthy_reason.0.message => unhealthy_reason
+  - ^unhealthy_reason.#.message => unhealthy_reason
   #- update-failed-count #missing mapping
   #- update-successful-count #missing mapping
 
