@@ -13,7 +13,7 @@ counters:
 plugins:
   - LabelAgent:
       value_to_num:
-        - new_status health ok ok `0`  # REST gap will be filled up later.
+        - new_status health ok ok `0`
 
 export_options:
   instance_keys:
