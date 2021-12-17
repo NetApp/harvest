@@ -145,6 +145,10 @@ func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	for _, instance := range data.GetInstances() {
 
+		if !instance.IsExportable() {
+			continue
+		}
+
 		me.Logger.Trace().Msgf("handling instance with labels [%s]", instance.GetLabels().String())
 
 		for i, rule := range me.rules {

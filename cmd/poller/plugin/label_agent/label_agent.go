@@ -14,7 +14,7 @@ import (
 
 type LabelAgent struct {
 	*plugin.AbstractPlugin
-	actions              []func(*matrix.Instance)
+	actions              []func(*matrix.Matrix) error
 	splitSimpleRules     []splitSimpleRule
 	splitRegexRules      []splitRegexRule
 	splitPairsRules      []splitPairsRule
@@ -58,206 +58,235 @@ func (me *LabelAgent) Run(m *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var err error
 
-	for _, instance := range m.GetInstances() {
-		for _, foo := range me.actions {
-			foo(instance)
-		}
-	}
-
-	// if any of the value mapping available, then map values with appropriate rules
-	if len(me.valueToNumRules) != 0 {
-		err = me.mapValues(m)
+	for _, foo := range me.actions {
+		foo(m)
 	}
 
 	return nil, err
 }
 
-// splits one label value into multiple labels using seperator symbol
-func (me *LabelAgent) splitSimple(instance *matrix.Instance) {
-	for _, r := range me.splitSimpleRules {
-		if values := strings.Split(instance.GetLabel(r.source), r.sep); len(values) >= len(r.targets) {
-			for i := range r.targets {
-				if r.targets[i] != "" && values[i] != "" {
-					instance.SetLabel(r.targets[i], values[i])
-					me.Logger.Trace().Msgf("splitSimple: (%s) [%s] => (%s) [%s]", r.source, instance.GetLabel(r.source), r.targets[i], values[i])
+// splits one label value into multiple labels using separator symbol
+func (me *LabelAgent) splitSimple(matrix *matrix.Matrix) error {
+	for _, instance := range matrix.GetInstances() {
+		for _, r := range me.splitSimpleRules {
+			if values := strings.Split(instance.GetLabel(r.source), r.sep); len(values) >= len(r.targets) {
+				for i := range r.targets {
+					if r.targets[i] != "" && values[i] != "" {
+						instance.SetLabel(r.targets[i], values[i])
+						me.Logger.Trace().Msgf("splitSimple: (%s) [%s] => (%s) [%s]", r.source, instance.GetLabel(r.source), r.targets[i], values[i])
+					}
 				}
 			}
 		}
 	}
+	return nil
 }
 
 // splits one label value into multiple labels based on regex match
-func (me *LabelAgent) splitRegex(instance *matrix.Instance) {
-	for _, r := range me.splitRegexRules {
-		if m := r.reg.FindStringSubmatch(instance.GetLabel(r.source)); m != nil && len(m) == len(r.targets)+1 {
-			for i := range r.targets {
-				if r.targets[i] != "" && m[i+1] != "" {
-					instance.SetLabel(r.targets[i], m[i+1])
-					me.Logger.Trace().Msgf("splitRegex: (%s) [%s] => (%s) [%s]", r.source, instance.GetLabel(r.source), r.targets[i], m[i+1])
+func (me *LabelAgent) splitRegex(matrix *matrix.Matrix) error {
+	for _, instance := range matrix.GetInstances() {
+		for _, r := range me.splitRegexRules {
+			if m := r.reg.FindStringSubmatch(instance.GetLabel(r.source)); m != nil && len(m) == len(r.targets)+1 {
+				for i := range r.targets {
+					if r.targets[i] != "" && m[i+1] != "" {
+						instance.SetLabel(r.targets[i], m[i+1])
+						me.Logger.Trace().Msgf("splitRegex: (%s) [%s] => (%s) [%s]", r.source, instance.GetLabel(r.source), r.targets[i], m[i+1])
+					}
 				}
 			}
 		}
 	}
+	return nil
 }
 
 // splits one label value into multiple key-value pairs
-func (me *LabelAgent) splitPairs(instance *matrix.Instance) {
-	for _, r := range me.splitPairsRules {
-		if value := instance.GetLabel(r.source); value != "" {
-			for _, pair := range strings.Split(value, r.sep1) {
-				if kv := strings.Split(pair, r.sep2); len(kv) == 2 {
-					instance.SetLabel(kv[0], kv[1])
-					//logger.Trace(me.Prefix, "splitPair: ($s) [%s] => (%s) [%s]", r.source, value, kv[0], kv[1])
+func (me *LabelAgent) splitPairs(matrix *matrix.Matrix) error {
+	for _, instance := range matrix.GetInstances() {
+		for _, r := range me.splitPairsRules {
+			if value := instance.GetLabel(r.source); value != "" {
+				for _, pair := range strings.Split(value, r.sep1) {
+					if kv := strings.Split(pair, r.sep2); len(kv) == 2 {
+						instance.SetLabel(kv[0], kv[1])
+						//logger.Trace(me.Prefix, "splitPair: ($s) [%s] => (%s) [%s]", r.source, value, kv[0], kv[1])
+					}
 				}
 			}
 		}
 	}
+	return nil
 }
 
 // joins multiple labels into one label
-func (me *LabelAgent) joinSimple(instance *matrix.Instance) {
-	for _, r := range me.joinSimpleRules {
-		values := make([]string, 0)
-		for _, label := range r.sources {
-			if v := instance.GetLabel(label); v != "" {
-				values = append(values, v)
+func (me *LabelAgent) joinSimple(matrix *matrix.Matrix) error {
+	for _, instance := range matrix.GetInstances() {
+		for _, r := range me.joinSimpleRules {
+			values := make([]string, 0)
+			for _, label := range r.sources {
+				if v := instance.GetLabel(label); v != "" {
+					values = append(values, v)
+				}
+			}
+			if len(values) != 0 {
+				instance.SetLabel(r.target, strings.Join(values, r.sep))
+				me.Logger.Trace().Msgf("joinSimple: (%v) => (%s) [%s]", r.sources, r.target, instance.GetLabel(r.target))
 			}
 		}
-		if len(values) != 0 {
-			instance.SetLabel(r.target, strings.Join(values, r.sep))
-			me.Logger.Trace().Msgf("joinSimple: (%v) => (%s) [%s]", r.sources, r.target, instance.GetLabel(r.target))
-		}
 	}
+	return nil
 }
 
 // replace in source label, if present, and add as new label
-func (me *LabelAgent) replaceSimple(instance *matrix.Instance) {
-	for _, r := range me.replaceSimpleRules {
-		if old := instance.GetLabel(r.source); old != "" {
-			if value := strings.ReplaceAll(old, r.old, r.new); value != old {
-				instance.SetLabel(r.target, value)
-				me.Logger.Trace().Msgf("replaceSimple: (%s) [%s] => (%s) [%s]", r.source, old, r.target, value)
+func (me *LabelAgent) replaceSimple(matrix *matrix.Matrix) error {
+	for _, instance := range matrix.GetInstances() {
+		for _, r := range me.replaceSimpleRules {
+			if old := instance.GetLabel(r.source); old != "" {
+				if value := strings.ReplaceAll(old, r.old, r.new); value != old {
+					instance.SetLabel(r.target, value)
+					me.Logger.Trace().Msgf("replaceSimple: (%s) [%s] => (%s) [%s]", r.source, old, r.target, value)
+				}
 			}
 		}
 	}
+	return nil
 }
 
 // same as replaceSimple, but use regex
-func (me *LabelAgent) replaceRegex(instance *matrix.Instance) {
-	for _, r := range me.replaceRegexRules {
-		old := instance.GetLabel(r.source)
-		if m := r.reg.FindStringSubmatch(old); m != nil {
-			me.Logger.Trace().Msgf("replaceRegex: (%d) matches= %v", len(m)-1, m[1:])
-			s := make([]interface{}, 0)
-			for _, i := range r.indices {
-				if i < len(m)-1 {
-					s = append(s, m[i+1])
-					me.Logger.Trace().Msgf("substring [%d] = (%s)", i, m[i+1])
-				} else {
-					// probably we need to throw warning
-					s = append(s, "")
-					me.Logger.Trace().Msgf("substring [%d] = no match!", i)
+func (me *LabelAgent) replaceRegex(matrix *matrix.Matrix) error {
+	for _, instance := range matrix.GetInstances() {
+		for _, r := range me.replaceRegexRules {
+			old := instance.GetLabel(r.source)
+			if m := r.reg.FindStringSubmatch(old); m != nil {
+				me.Logger.Trace().Msgf("replaceRegex: (%d) matches= %v", len(m)-1, m[1:])
+				s := make([]interface{}, 0)
+				for _, i := range r.indices {
+					if i < len(m)-1 {
+						s = append(s, m[i+1])
+						me.Logger.Trace().Msgf("substring [%d] = (%s)", i, m[i+1])
+					} else {
+						// probably we need to throw warning
+						s = append(s, "")
+						me.Logger.Trace().Msgf("substring [%d] = no match!", i)
+					}
 				}
-			}
-			me.Logger.Trace().Msgf("replaceRegex: (%d) substitution strings= %v", len(s), s)
-			if value := fmt.Sprintf(r.format, s...); value != "" && value != old {
-				instance.SetLabel(r.target, value)
-				me.Logger.Trace().Msgf("replaceRegex: (%s) [%s] => (%s) [%s]", r.source, old, r.target, value)
+				me.Logger.Trace().Msgf("replaceRegex: (%d) substitution strings= %v", len(s), s)
+				if value := fmt.Sprintf(r.format, s...); value != "" && value != old {
+					instance.SetLabel(r.target, value)
+					me.Logger.Trace().Msgf("replaceRegex: (%s) [%s] => (%s) [%s]", r.source, old, r.target, value)
+				}
 			}
 		}
 	}
+	return nil
 }
 
 // if label equals to value, set instance as non-exportable
-func (me *LabelAgent) excludeEquals(instance *matrix.Instance) {
-	for _, r := range me.excludeEqualsRules {
-		if instance.GetLabel(r.label) == r.value {
-			instance.SetExportable(false)
-			me.Logger.Trace().Str("label", r.label).
-				Str("value", r.value).
-				Str("instance labels", instance.GetLabels().String()).
-				Msg("excludeEquals: excluded")
-			break
+func (me *LabelAgent) excludeEquals(matrix *matrix.Matrix) error {
+	for _, instance := range matrix.GetInstances() {
+		for _, r := range me.excludeEqualsRules {
+			if instance.GetLabel(r.label) == r.value {
+				instance.SetExportable(false)
+				me.Logger.Trace().Str("label", r.label).
+					Str("value", r.value).
+					Str("instance labels", instance.GetLabels().String()).
+					Msg("excludeEquals: excluded")
+				break
+			}
 		}
 	}
+	return nil
 }
 
 // if label contains value, set instance as non-exportable
-func (me *LabelAgent) excludeContains(instance *matrix.Instance) {
-	for _, r := range me.excludeContainsRules {
-		if strings.Contains(instance.GetLabel(r.label), r.value) {
-			instance.SetExportable(false)
-			me.Logger.Trace().Str("label", r.label).
-				Str("value", r.value).
-				Str("instance labels", instance.GetLabels().String()).
-				Msg("excludeContains: excluded")
-			break
+func (me *LabelAgent) excludeContains(matrix *matrix.Matrix) error {
+	for _, instance := range matrix.GetInstances() {
+		for _, r := range me.excludeContainsRules {
+			if strings.Contains(instance.GetLabel(r.label), r.value) {
+				instance.SetExportable(false)
+				me.Logger.Trace().Str("label", r.label).
+					Str("value", r.value).
+					Str("instance labels", instance.GetLabels().String()).
+					Msg("excludeContains: excluded")
+				break
+			}
 		}
 	}
+	return nil
 }
 
 // if label equals to value, set instance as non-exportable
-func (me *LabelAgent) excludeRegex(instance *matrix.Instance) {
-	for _, r := range me.excludeRegexRules {
-		if r.reg.MatchString(instance.GetLabel(r.label)) {
-			instance.SetExportable(false)
-			me.Logger.Trace().Str("label", r.label).
-				Str("regex", r.reg.String()).
-				Str("instance labels", instance.GetLabels().String()).
-				Msg("excludeRegex: excluded")
-			break
+func (me *LabelAgent) excludeRegex(matrix *matrix.Matrix) error {
+	for _, instance := range matrix.GetInstances() {
+		for _, r := range me.excludeRegexRules {
+			if r.reg.MatchString(instance.GetLabel(r.label)) {
+				instance.SetExportable(false)
+				me.Logger.Trace().Str("label", r.label).
+					Str("regex", r.reg.String()).
+					Str("instance labels", instance.GetLabels().String()).
+					Msg("excludeRegex: excluded")
+				break
+			}
 		}
 	}
+	return nil
 }
 
 // if label is not equal to value, set instance as non-exportable
-func (me *LabelAgent) includeEquals(instance *matrix.Instance) {
-	isExport := false
-	for _, r := range me.includeEqualsRules {
-		if instance.GetLabel(r.label) == r.value {
-			isExport = true
-			me.Logger.Trace().Str("label", r.label).
-				Str("value", r.value).
-				Str("instance labels", instance.GetLabels().String()).
-				Msg("includeEquals: included")
-			break
+func (me *LabelAgent) includeEquals(matrix *matrix.Matrix) error {
+	for _, instance := range matrix.GetInstances() {
+		isExport := false
+		for _, r := range me.includeEqualsRules {
+			if instance.GetLabel(r.label) == r.value {
+				isExport = true
+				me.Logger.Trace().Str("label", r.label).
+					Str("value", r.value).
+					Str("instance labels", instance.GetLabels().String()).
+					Msg("includeEquals: included")
+				break
+			}
 		}
+		instance.SetExportable(isExport)
 	}
-	instance.SetExportable(isExport)
+	return nil
 }
 
 // if label does not contains value, set instance as non-exportable
-func (me *LabelAgent) includeContains(instance *matrix.Instance) {
-	isExport := false
-	for _, r := range me.includeContainsRules {
-		if strings.Contains(instance.GetLabel(r.label), r.value) {
-			isExport = true
-			me.Logger.Trace().Str("label", r.label).
-				Str("value", r.value).
-				Str("instance labels", instance.GetLabels().String()).
-				Msg("includeContains: included")
-			break
+func (me *LabelAgent) includeContains(matrix *matrix.Matrix) error {
+	for _, instance := range matrix.GetInstances() {
+		isExport := false
+		for _, r := range me.includeContainsRules {
+			if strings.Contains(instance.GetLabel(r.label), r.value) {
+				isExport = true
+				me.Logger.Trace().Str("label", r.label).
+					Str("value", r.value).
+					Str("instance labels", instance.GetLabels().String()).
+					Msg("includeContains: included")
+				break
+			}
 		}
+		instance.SetExportable(isExport)
 	}
-	instance.SetExportable(isExport)
+	return nil
 }
 
 // if label does not match regex, do not export the instance or with fewer negatives
 // only export instances with a matching (regex) label
 // if an instance does not match the regex label it will not be exported
-func (me *LabelAgent) includeRegex(instance *matrix.Instance) {
-	isExport := false
-	for _, r := range me.includeRegexRules {
-		if r.reg.MatchString(instance.GetLabel(r.label)) {
-			isExport = true
-			me.Logger.Trace().Str("label", r.label).
-				Str("regex", r.reg.String()).
-				Str("instance labels", instance.GetLabels().String()).
-				Msg("includeRegex: included")
-			break
+func (me *LabelAgent) includeRegex(matrix *matrix.Matrix) error {
+	for _, instance := range matrix.GetInstances() {
+		isExport := false
+		for _, r := range me.includeRegexRules {
+			if r.reg.MatchString(instance.GetLabel(r.label)) {
+				isExport = true
+				me.Logger.Trace().Str("label", r.label).
+					Str("regex", r.reg.String()).
+					Str("instance labels", instance.GetLabels().String()).
+					Msg("includeRegex: included")
+				break
+			}
 		}
+		instance.SetExportable(isExport)
 	}
-	instance.SetExportable(isExport)
+	return nil
 }
 
 func (me *LabelAgent) mapValues(m *matrix.Matrix) error {

@@ -172,6 +172,10 @@ func (my *Quota) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				}
 
 				if attrValue := quota.GetChildContentS(attribute); attrValue != "" {
+					qtreeInstance := data.GetInstance(tree + "." + volume + "." + vserver)
+					if !qtreeInstance.IsExportable() {
+						continue
+					}
 					// Ex. InstanceKey: SVMA.vol1Abc.qtree1.5.disk-limit
 					instanceKey := vserver + "." + volume + "." + tree + "." + strconv.Itoa(quotaIndex) + "." + attribute
 					instance, err := my.data.NewInstance(instanceKey)
@@ -183,7 +187,6 @@ func (my *Quota) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 					my.Logger.Debug().Msgf("add (%s) instance: %s.%s.%s", attribute, vserver, volume, tree)
 
-					qtreeInstance := data.GetInstance(tree + "." + volume + "." + vserver)
 					for _, label := range my.data.GetExportOptions().GetChildS("instance_keys").GetAllChildContentS() {
 						if value := qtreeInstance.GetLabel(label); value != "" {
 							instance.SetLabel(label, value)
