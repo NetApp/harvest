@@ -14,7 +14,7 @@ counters:
   - ^name                       => volume
   - ^node                       => node  #missing mapping
   - ^svm.name        => svm
-  - ^aggregates.#.name  => aggr
+  - ^aggregates.#.name  => aggr #zapi maps to field containing-aggregate-name while rest mapping is an array?
   - ^style             => style
   - files.used => files_used
   - files.maximum => files_maximum
