@@ -301,7 +301,7 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 						labelString := r.String()
 						labelArray = append(labelArray, labelString)
 					}
-					instance.SetLabel(display, strings.Join(labelArray[:], ","))
+					instance.SetLabel(display, strings.Join(labelArray, ","))
 				} else {
 					instance.SetLabel(display, value.String())
 				}
