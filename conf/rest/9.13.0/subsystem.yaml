@@ -1,6 +1,6 @@
 
 name:       Subsystem
-query:      system/health/subsystem
+query:      cli/system/health/subsystem
 object:     cluster_subsystem
 type:       private
 

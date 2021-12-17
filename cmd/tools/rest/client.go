@@ -246,7 +246,7 @@ func BuildHref(apiPath string, fields string, field []string, queryFields string
 		href.WriteString("api/")
 	}
 	if apiType == "private" {
-		href.WriteString("api/private/cli/")
+		href.WriteString("api/private/")
 	}
 	href.WriteString(apiPath)
 	href.WriteString("?return_records=true")
