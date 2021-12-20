@@ -3,7 +3,7 @@ query:                    volume-get-iter
 object:                   volume
 
 # increase client timeout for volumes
-client_timeout:           1m
+client_timeout:           2m
 
 counters:
   volume-attributes:
@@ -66,8 +66,9 @@ counters:
 
 plugins:
   SnapmirrorVolume:
-    # TODO: better naming
-    refresh_periodicity: "5"
+    schedule:
+      - data: 360s  # should be multiple of 180s
+    #batch_size: "50"
   LabelAgent:
     # metric label zapi_value rest_value `default_value`
     value_to_num:

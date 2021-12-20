@@ -9,16 +9,14 @@ schedule:
 counters:
   snapshot-policy-info:
     - ^^vserver-name     =>  svm
-    - ^^policy           => snapshot_policy
-    - ^comment           => comment
+    - ^^policy           =>  snapshot_policy
+    - ^comment           =>  comment
     - total-schedules    =>  total_schedules
 
-plugins:
-#  SnapmirrorVolume:
-#    refresh_periodicity: 5
-  LabelAgent:
-    replace_regex:
-      - comment comment `^$` `No Comment`
+#plugins:
+#  LabelAgent:
+#    replace_regex:
+#      - comment comment `^$` `No Comment`
 
 export_options:
   instance_keys:

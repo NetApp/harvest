@@ -91,7 +91,7 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			}
 
 			// update the protectedBy and protectionSourceType fields and derivedRelationshipType in snapmirror_labels
-			my.updateProtectedfields(instance)
+			my.updateProtectedFields(instance)
 		} else {
 			// 7 Mode
 			// source / destination nodes can be something like:
@@ -210,7 +210,7 @@ func (my *SnapMirror) updateLimitCache() error {
 	return nil
 }
 
-func (my *SnapMirror) updateProtectedfields(instance *matrix.Instance) {
+func (my *SnapMirror) updateProtectedFields(instance *matrix.Instance) {
 
 	// check for group_type
 	if instance.GetLabel("group_type") != "" {

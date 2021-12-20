@@ -13,21 +13,21 @@ import (
 )
 
 const BatchSize = "500"
-const RefreshPeriodicity = 10
+const DefaultPluginInvocationRate = 10
 
 type SnapmirrorVolume struct {
 	*plugin.AbstractPlugin
-	data               *matrix.Matrix
-	instanceKeys       map[string]string
-	instanceLabels     map[string]*dict.Dict
-	batchSize          string
-	RefreshPeriodicity int // TODO: appropriate names required
-	currentVal         int // TODO: appropriate names required
-	client             *zapi.Client
-	query              string
-	outgoingSM         map[string]string
-	incomingSM         map[string]string
-	isHealthySM        map[string]string
+	data                 *matrix.Matrix
+	instanceKeys         map[string]string
+	instanceLabels       map[string]*dict.Dict
+	batchSize            string
+	pluginInvocationRate int
+	currentVal           int
+	client               *zapi.Client
+	query                string
+	outgoingSM           map[string]string
+	incomingSM           map[string]string
+	isHealthySM          map[string]string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -52,36 +52,28 @@ func (my *SnapmirrorVolume) Init() error {
 	}
 
 	my.query = "snapmirror-get-iter"
-	my.Logger.Info().Msg("plugin connected!")
 	my.data = matrix.New(my.Parent+".Volume", "volume", "volume")
 
 	my.outgoingSM = make(map[string]string)
 	my.incomingSM = make(map[string]string)
 	my.isHealthySM = make(map[string]string)
 
+	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
+	if my.currentVal, err = my.setPluginInterval(); err != nil {
+		my.Logger.Error().Err(err).Stack().Msg("Failed while setting the plugin interval")
+	}
+
 	if my.client.IsClustered() {
 		// batching the request
 		if b := my.Params.GetChildContentS("batch_size"); b != "" {
 			if _, err := strconv.Atoi(b); err == nil {
 				my.batchSize = b
-				my.Logger.Info().Msgf("using batch-size [%s]", my.batchSize)
+				my.Logger.Info().Str("BatchSize", my.batchSize).Msg("using batch-size")
 			}
 		} else {
 			my.batchSize = BatchSize
 			my.Logger.Trace().Str("BatchSize", BatchSize).Msg("Using default batch-size")
 		}
-
-		// refresh interval
-		if r := my.Params.GetChildContentS("refresh_periodicity"); r != "" {
-			if refreshval, err := strconv.Atoi(r); err == nil {
-				my.RefreshPeriodicity = refreshval
-				my.Logger.Info().Msgf("using refresh at [%d]", my.RefreshPeriodicity)
-			}
-		} else {
-			my.RefreshPeriodicity = RefreshPeriodicity
-			my.Logger.Trace().Int("refreshPeriod", RefreshPeriodicity).Msg("Using default refresh")
-		}
-		my.currentVal = my.RefreshPeriodicity
 	}
 
 	return nil
@@ -96,16 +88,16 @@ func (my *SnapmirrorVolume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	// Set all global labels from zapi.go if already not exist
 	my.data.SetGlobalLabels(data.GetGlobalLabels())
 
-	my.Logger.Info().Msgf("periodic refresh count %d current %d", my.RefreshPeriodicity, my.currentVal)
+	my.Logger.Info().Msgf("periodic refresh count %d current %d", my.pluginInvocationRate, my.currentVal)
 
-	if my.currentVal >= my.RefreshPeriodicity {
-		my.Logger.Info().Msgf("current count %d", my.currentVal)
+	if my.currentVal >= my.pluginInvocationRate {
+		my.Logger.Info().Int("CurrentValue", my.currentVal).Msg("current count")
 		my.currentVal = 0
 
 		// invoke snapmirror zapi and populate info in source and destination snapmirror maps
 		smSourceMap, smDestinationMap, err := my.GetSnapMirrors()
 		if err != nil {
-			my.Logger.Error().Msgf("add (%s) instance: %v", err)
+			my.Logger.Error().Stack().Err(err).Msg("Failed to collect snapmirror data")
 		}
 
 		// update internal cache based on volume and SM maps
@@ -117,6 +109,34 @@ func (my *SnapmirrorVolume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	my.currentVal++
 	return nil, nil
+}
+
+func (my *SnapmirrorVolume) setPluginInterval() (int, error) {
+
+	schedule := my.Params.GetChildS("schedule")
+	if schedule == nil {
+		return DefaultPluginInvocationRate, errors.New(errors.MISSING_PARAM, "schedule")
+	}
+
+	dataInterval := schedule.GetChildS("data")
+	if dataInterval == nil {
+		return DefaultPluginInvocationRate, errors.New(errors.MISSING_PARAM, "data")
+	}
+
+	// Convert the interval from str to int and converted to periodicity.
+	// '360s' convert to 360 and converted to 360/180 = 2
+	if intervalStr := dataInterval.GetContentS(); intervalStr != "" {
+		intervalStr = strings.Split(intervalStr, "s")[0]
+		if intervalVal, err := strconv.Atoi(intervalStr); err == nil {
+			my.pluginInvocationRate = intervalVal / 180
+			my.Logger.Info().Int("PluginInvocationInterval", intervalVal).Msg("Plugin invoked at every ")
+		}
+	} else {
+		my.pluginInvocationRate = DefaultPluginInvocationRate
+		my.Logger.Trace().Int("PluginInvocationInterval", DefaultPluginInvocationRate*180).Msg("Using default interval")
+	}
+
+	return my.pluginInvocationRate, nil
 }
 
 func (my *SnapmirrorVolume) updateProtectedfields(instance *matrix.Instance) {
@@ -181,6 +201,7 @@ func (my *SnapmirrorVolume) GetSnapMirrors() (map[string][]*matrix.Instance, map
 		}
 
 		if result == nil {
+			my.Logger.Error().Msg("Snapmirror zapi invocation return nil result")
 			break
 		}
 
@@ -189,10 +210,10 @@ func (my *SnapmirrorVolume) GetSnapMirrors() (map[string][]*matrix.Instance, map
 		}
 
 		if len(snapMirrors) == 0 {
-			return nil, nil, errors.New(errors.ERR_NO_INSTANCE, "no sm info instances found")
+			return nil, nil, errors.New(errors.ERR_NO_INSTANCE, "no snapmirror info instances found")
 		}
 
-		my.Logger.Info().Msgf("fetching %d snapmirrors", len(snapMirrors))
+		my.Logger.Info().Int("snapmirrors", len(snapMirrors)).Msg("fetching snapmirrors")
 
 		for _, snapMirror := range snapMirrors {
 			relationshipId := snapMirror.GetChildContentS("relationship-id")
@@ -209,7 +230,7 @@ func (my *SnapmirrorVolume) GetSnapMirrors() (map[string][]*matrix.Instance, map
 			instance, err := snapmirrorData.NewInstance(instanceKey)
 
 			if err != nil {
-				my.Logger.Debug().Msgf("add (%s) instance: %v", relationshipId, err)
+				my.Logger.Error().Err(err).Stack().Str("relationshipId", relationshipId).Msg("Failed to create snapmirror cache instance")
 				return nil, nil, err
 			}
 
@@ -228,10 +249,12 @@ func (my *SnapmirrorVolume) GetSnapMirrors() (map[string][]*matrix.Instance, map
 
 			// Update source snapmirror and destination snapmirror info in maps
 			if relationshipType == "data_protection" || relationshipType == "extended_data_protection" || relationshipType == "vault" {
+				sourceKey := sourceVolume + "-" + sourceSvm
+				destinationKey := destinationVolume + "-" + destinationSvm
 				if instance.GetLabel("protectionSourceType") == "volume" {
-					smSourceMap[sourceVolume+"-"+sourceSvm] = append(smSourceMap[sourceVolume+"-"+sourceSvm], instance)
+					smSourceMap[sourceKey] = append(smSourceMap[sourceKey], instance)
 				}
-				smDestinationMap[destinationVolume+"-"+destinationSvm] = instance
+				smDestinationMap[destinationKey] = instance
 			}
 		}
 	}
@@ -253,22 +276,23 @@ func (my *SnapmirrorVolume) updateMaps(data *matrix.Matrix, smSourceMap map[stri
 
 		for _, smRelationship := range smSourceMap[key] {
 			// Update outgoingSM map based on the source snapmirror info
-			if my.outgoingSM[key] == "" {
+			if sm, ok := my.outgoingSM[key]; !ok {
 				my.outgoingSM[key] = smRelationship.GetLabel("protectedBy")
 			} else {
-				if my.outgoingSM[key] != smRelationship.GetLabel("protectedBy") {
-					my.outgoingSM[key] = my.outgoingSM[key] + "_and_" + smRelationship.GetLabel("protectedBy")
+				if sm != smRelationship.GetLabel("protectedBy") {
+					my.outgoingSM[key] = sm + "_and_" + smRelationship.GetLabel("protectedBy")
 				}
 			}
 
 			// Update isHealthySM map based on the source snapmirror info
 			if volumeType == "rw" {
-				healthy, _ := strconv.ParseBool(smRelationship.GetLabel("is_healthy"))
-				if my.isHealthySM[key] == "" {
+				if h, ok := my.isHealthySM[key]; !ok {
 					my.isHealthySM[key] = smRelationship.GetLabel("is_healthy")
 				} else {
-					previousVal, _ := strconv.ParseBool(my.isHealthySM[key])
-					my.isHealthySM[key] = strconv.FormatBool(previousVal && healthy)
+					// any relationship in volume is unhealthy would be treated as volume unhealthy category
+					if h != smRelationship.GetLabel("is_healthy") {
+						my.isHealthySM[key] = "false"
+					}
 				}
 			}
 		}
@@ -299,16 +323,16 @@ func (my *SnapmirrorVolume) updateVolumeLabels(data *matrix.Matrix) {
 		}
 
 		// Update protectedBy label in volume
-		if my.outgoingSM[key] != "" {
-			if my.outgoingSM[key] == "volume_and_storage_vm" {
+		if outgoing, ok := my.outgoingSM[key]; ok {
+			if outgoing == "volume_and_storage_vm" {
 				volume.SetLabel("protectedBy", "svmdr_and_snapmirror")
-			} else if my.outgoingSM[key] == "cg_and_volume" {
+			} else if outgoing == "cg_and_volume" {
 				volume.SetLabel("protectedBy", "cg_and_snapmirror")
-			} else if my.outgoingSM[key] == "cg" {
+			} else if outgoing == "cg" {
 				volume.SetLabel("protectedBy", "consistency_group")
-			} else if my.outgoingSM[key] == "storage_vm" {
+			} else if outgoing == "storage_vm" {
 				volume.SetLabel("protectedBy", "storage_vm_dr")
-			} else if my.outgoingSM[key] == "volume" {
+			} else if outgoing == "volume" {
 				volume.SetLabel("protectedBy", "snapmirror")
 			}
 		} else {
@@ -316,10 +340,8 @@ func (my *SnapmirrorVolume) updateVolumeLabels(data *matrix.Matrix) {
 		}
 
 		// Update all_sm_healthy label in volume, when all relationships belongs to this volume are healthy then true, otherwise false
-		if my.isHealthySM[key] == "false" {
-			volume.SetLabel("all_sm_healthy", "false")
-		} else if my.isHealthySM[key] == "true" {
-			volume.SetLabel("all_sm_healthy", "true")
+		if healthy, ok := my.isHealthySM[key]; ok {
+			volume.SetLabel("all_sm_healthy", healthy)
 		}
 
 	}
