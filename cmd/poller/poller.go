@@ -456,7 +456,8 @@ func (p *Poller) Run() {
 
 				if msg != "" {
 					if instance := p.metadata.GetInstance(key); instance != nil {
-						instance.SetLabel("reason", msg)
+						// replace quotes with empty, in case of rest error may have quotes around endpoint which fails prometheus discovery
+						instance.SetLabel("reason", strings.ReplaceAll(msg, "\"", ""))
 					}
 				}
 			}
