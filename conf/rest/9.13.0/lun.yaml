@@ -1,6 +1,6 @@
 
 name:                       Lun
-query:                      storage/luns
+query:                      api/storage/luns
 object:                     lun
 
 counters:

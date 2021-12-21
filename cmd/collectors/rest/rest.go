@@ -88,9 +88,10 @@ func (r *Rest) InitVars() error {
 	}
 
 	r.Params.Union(template)
-	apiType := r.Params.GetChildS("type")
-	if apiType != nil && apiType.GetContentS() == "private" {
-		r.apiType = apiType.GetContentS()
+	// private end point do not support * as fields. We need to pass fields in endpoint
+	query := r.Params.GetChildS("query")
+	if query != nil && strings.Contains(query.GetContentS(), "private") {
+		r.apiType = "private"
 	} else {
 		r.apiType = "public"
 	}
@@ -190,7 +191,7 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 	startTime = time.Now()
 
 	if r.apiType == "public" {
-		href := rest.BuildHref(r.apiPath, strings.Join(r.fields, ","), nil, "", "", "", r.returnTimeOut, r.apiType)
+		href := rest.BuildHref(r.apiPath, strings.Join(r.fields, ","), nil, "", "", "", r.returnTimeOut, r.apiPath)
 		r.Logger.Debug().Str("href", href).Msg("")
 		err = rest.FetchData(r.client, href, &records)
 		if err != nil {
@@ -206,7 +207,7 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 			counterKey[i] = k
 			i++
 		}
-		href := rest.BuildHref(r.apiPath, strings.Join(counterKey, ","), nil, "", "", "", r.returnTimeOut, r.apiType)
+		href := rest.BuildHref(r.apiPath, strings.Join(counterKey, ","), nil, "", "", "", r.returnTimeOut, r.apiPath)
 		r.Logger.Debug().Str("href", href).Msg("")
 		err = rest.FetchData(r.client, href, &records)
 		if err != nil {

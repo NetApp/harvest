@@ -1,8 +1,7 @@
 
 name:       Subsystem
-query:      cli/system/health/subsystem
+query:      api/private/cli/system/health/subsystem
 object:     cluster_subsystem
-type:       private
 
 counters:
   - ^health                       => health

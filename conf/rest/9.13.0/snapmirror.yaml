@@ -1,6 +1,6 @@
 
 name:                         SnapMirror
-query:                        snapmirror/relationships
+query:                        api/snapmirror/relationships
 object:                       snapmirror
 
 counters:

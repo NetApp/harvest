@@ -1,6 +1,6 @@
 
 name:                       Node
-query:                      cluster/nodes
+query:                      api/cluster/nodes
 object:                     node
 
 fields:
