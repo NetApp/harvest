@@ -1,6 +1,6 @@
 
 name:       Status
-query:      cluster
+query:      api/cluster
 object:     cluster
 fields:
   - health

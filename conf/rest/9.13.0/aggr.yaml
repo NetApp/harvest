@@ -1,6 +1,6 @@
 
 name:               Aggregate
-query:              storage/aggregates
+query:              api/storage/aggregates
 object:             aggr
 
 fields:

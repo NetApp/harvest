@@ -1,5 +1,5 @@
 name:                     Volume
-query:                    storage/volumes
+query:                    api/storage/volumes
 object:                   volume
 
 fields:

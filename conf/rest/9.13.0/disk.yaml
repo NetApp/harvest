@@ -1,6 +1,6 @@
 
 name:             Disk
-query:            storage/disks
+query:            api/storage/disks
 object:           disk
 
 counters:

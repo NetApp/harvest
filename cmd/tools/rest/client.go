@@ -163,6 +163,10 @@ func (c *Client) invoke() ([]byte, error) {
 	}
 
 	if response.StatusCode != 200 {
+		if body, err = ioutil.ReadAll(response.Body); err == nil {
+			value := gjson.GetBytes(body, "error.message")
+			return nil, fmt.Errorf("server returned status code: %d error: %s", response.StatusCode, value.String())
+		}
 		return nil, fmt.Errorf("server returned status code %d", response.StatusCode)
 	}
 
@@ -224,7 +228,7 @@ func (c *Client) Init(retries int) error {
 
 	for i = 0; i < retries; i++ {
 
-		if content, err = c.GetRest(BuildHref("cluster", "*", nil, "", "", "", "")); err != nil {
+		if content, err = c.GetRest(BuildHref("cluster", "*", nil, "", "", "", "", "")); err != nil {
 			continue
 		}
 
@@ -240,10 +244,14 @@ func (c *Client) Init(retries int) error {
 	return err
 }
 
-func BuildHref(apiPath string, fields string, field []string, queryFields string, queryValue string, maxRecords string, returnTimeout string) string {
+func BuildHref(apiPath string, fields string, field []string, queryFields string, queryValue string, maxRecords string, returnTimeout string, endpoint string) string {
 	href := strings.Builder{}
-	href.WriteString("api/")
-	href.WriteString(apiPath)
+	if endpoint == "" {
+		href.WriteString("api/")
+		href.WriteString(apiPath)
+	} else {
+		href.WriteString(endpoint)
+	}
 	href.WriteString("?return_records=true")
 	addArg(&href, "&fields=", fields)
 	for _, f := range field {
