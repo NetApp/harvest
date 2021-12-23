@@ -9,12 +9,7 @@ import (
 	"goharvest2/cmd/collectors/zapi/plugins/quota"
 	"goharvest2/cmd/collectors/zapi/plugins/shelf"
 	"goharvest2/cmd/collectors/zapi/plugins/snapmirror"
-	"goharvest2/cmd/collectors/zapi/plugins/snapmirrorVolume"
-	"goharvest2/cmd/collectors/zapiperf/plugins/fcp"
-	"goharvest2/cmd/collectors/zapiperf/plugins/headroom"
-	"goharvest2/cmd/collectors/zapiperf/plugins/nic"
-	"goharvest2/cmd/collectors/zapiperf/plugins/volume"
-	"goharvest2/cmd/collectors/zapiperf/plugins/vscan"
+	"goharvest2/cmd/collectors/zapi/plugins/volume"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/pkg/conf"
 	"sort"
@@ -112,6 +107,7 @@ func (me *Zapi) InitVars() error {
 		me.Logger.Warn().Stack().Err(err).Str("template", me.TemplateFn).Msg("Unable to import template")
 		return err
 	}
+
 	me.Params.Union(template)
 
 	// object name from subtemplate
@@ -137,20 +133,10 @@ func (me *Zapi) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugi
 		return snapmirror.New(abc)
 	case "Shelf":
 		return shelf.New(abc)
-	case "Nic":
-		return nic.New(abc)
-	case "Fcp":
-		return fcp.New(abc)
-	case "Headroom":
-		return headroom.New(abc)
-	case "Volume":
-		return volume.New(abc)
 	case "Qtree":
 		return quota.New(abc)
-	case "SnapmirrorVolume":
-		return snapmirrorVolume.New(abc)
-	case "Vscan":
-		return vscan.New(abc)
+	case "Volume":
+		return volume.New(abc)
 	default:
 		me.Logger.Info().Msgf("no zapi plugin found for %s", kind)
 	}

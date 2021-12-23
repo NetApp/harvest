@@ -170,7 +170,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",protectedBy=~\"snapmirror.*|consistency_group.*|cg_and_snapmirror.*\",protectionRole=\"protected\"})",
+          "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",protectedBy=~\"snapmirror.*|consistency_group.*|cg_and_snapmirror.*\",protectionRole=\"protected\", snapshot_policy!=\"\"})",
           "instant": false,
           "interval": "",
           "legendFormat": "Volume Snapmirror",
@@ -178,7 +178,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",protectedBy=\"storage_vm_dr\",protectionRole=\"protected\"})",
+          "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",protectedBy=\"storage_vm_dr\",protectionRole=\"protected\",snapshot_policy!=\"\"})",
           "hide": false,
           "instant": false,
           "interval": "",
@@ -187,7 +187,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",protectedBy=\"svmdr_and_snapmirror\",protectionRole=\"protected\"})",
+          "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",protectedBy=\"svmdr_and_snapmirror\",protectionRole=\"protected\",snapshot_policy!=\"\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Volume and Storage VM Snapmirror",
@@ -195,7 +195,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",protectionRole=\"unprotected\"})",
+          "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",protectionRole=\"unprotected\",snapshot_policy!=\"\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Unprotected",
@@ -257,7 +257,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",protectedBy=~\"snapmirror.*|consistency_group.*|cg_and_snapmirror.*\",protectionRole=\"protected\"})",
+          "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",protectedBy=~\"snapmirror.*|consistency_group.*|cg_and_snapmirror.*\",protectionRole=\"protected\",snapshot_policy!=\"\"})",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -323,7 +323,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",protectedBy=~\"storage_vm_dr\",protectionRole=\"protected\"})",
+          "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",protectedBy=~\"svmdr_and_snapmirror\",protectionRole=\"protected\",snapshot_policy!=\"\"})",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -420,7 +420,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(sum by (source_volume) (snapmirror_lag_time{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"})  <= 900)",
+          "expr": "count(group by (source_volume) (1 < snapmirror_lag_time{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\")  <= 900))",
           "instant": false,
           "interval": "",
           "legendFormat": "<=15 minutes",
@@ -428,7 +428,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count(900 < sum by (source_volume) (snapmirror_lag_time{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"}) <= 1800)",
+          "expr": "count(group by (source_volume) (900 < snapmirror_lag_time{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\")  <= 1800))",
           "hide": false,
           "instant": false,
           "interval": "",
@@ -437,7 +437,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count(1800 < sum by (source_volume) (snapmirror_lag_time{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"})  <= 3600)",
+          "expr": "count(group by (source_volume) (1800 < snapmirror_lag_time{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\")  <= 3600))",
           "hide": false,
           "interval": "",
           "legendFormat": "31-60 minutes",
@@ -445,7 +445,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count(sum by (source_volume) (snapmirror_lag_time{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"})  >= 3600)",
+          "expr": "count(group by (source_volume) (snapmirror_lag_time{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\") > 3600))",
           "hide": false,
           "interval": "",
           "legendFormat": ">= 60 minutes",
@@ -507,7 +507,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(1 < snapmirror_lag_time{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\")  <= 900)",
+          "expr": "count(group by (source_volume) (1 < snapmirror_lag_time{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\")  <= 900))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -639,7 +639,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",protectedBy=~\"storage_vm_dr\",protectionRole=\"protected\"})",
+          "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",protectedBy=~\"storage_vm_dr\",protectionRole=\"protected\",snapshot_policy!=\"\"})",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -716,7 +716,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",protectionRole=\"unprotected\"})",
+          "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",protectionRole=\"unprotected\",snapshot_policy!=\"\"})",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -848,7 +848,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(snapmirror_lag_time{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\") > 3600)",
+          "expr": "count(group by (source_volume) (snapmirror_lag_time{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\") > 3600))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -987,7 +987,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\", protectionRole != \"destination\"}",
+          "expr": "volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\", protectionRole != \"destination\",snapshot_policy!=\"\"}",
           "format": "table",
           "instant": true,
           "interval": "",

@@ -241,6 +241,8 @@ func (my *SnapMirror) updateProtectedFields(instance *matrix.Instance) {
 			instance.SetLabel("protectionSourceType", "cg")
 		} else if isConstituentVolumeRelationshipWithinSvmDr || isConstituentVolumeRelationshipWithinCG || groupType == "none" || groupType == "flexgroup" {
 			instance.SetLabel("protectionSourceType", "volume")
+		} else {
+			instance.SetLabel("protectionSourceType", "not_mapped")
 		}
 	}
 

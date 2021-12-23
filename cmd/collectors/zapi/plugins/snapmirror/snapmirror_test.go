@@ -16,9 +16,10 @@ func TestProtectedFields(t *testing.T) {
 	testConstituentVolumeWithinSvmdr(instance, t)
 	testCg(instance, t)
 	testConstituentVolumeWithinCg(instance, t)
-	testVolume(instance, t)
-	testVolumeCase1(instance, t)
-	testVolumeCase2(instance, t)
+	testNegativeCase1(instance, t)
+	testNegativeCase2(instance, t)
+	testGroupTypeNone(instance, t)
+	testGroupTypeFlexgroup(instance, t)
 
 	// Test cases for derived_relationship_type
 	testStrictSyncMirror(instance, t)
@@ -29,6 +30,7 @@ func TestProtectedFields(t *testing.T) {
 	testWithNoPolicyType(instance, t)
 }
 
+// Test cases for protectedBy and protectionSourceType
 func testWithoutGroupType(instance *matrix.Instance, t *testing.T) {
 	instance.SetLabel("group_type", "")
 	sm.updateProtectedFields(instance)
@@ -91,32 +93,32 @@ func testConstituentVolumeWithinCg(instance *matrix.Instance, t *testing.T) {
 	}
 }
 
-func testVolume(instance *matrix.Instance, t *testing.T) {
-	instance.SetLabel("group_type", "volume")
+func testNegativeCase1(instance *matrix.Instance, t *testing.T) {
+	instance.SetLabel("group_type", "infinitevol")
 	sm.updateProtectedFields(instance)
 
-	if instance.GetLabel("protectedBy") == "volume" && instance.GetLabel("protectionSourceType") == "volume" {
+	if instance.GetLabel("protectedBy") == "volume" && instance.GetLabel("protectionSourceType") == "not_mapped" {
 		// OK
 	} else {
-		t.Errorf("Labels protectedBy= %s, expected: volume and protectionSourceType= %s, expected: volume", instance.GetLabel("protectedBy"), instance.GetLabel("protectionSourceType"))
+		t.Errorf("Labels protectedBy= %s, expected: volume and protectionSourceType= %s, expected: not_mapped", instance.GetLabel("protectedBy"), instance.GetLabel("protectionSourceType"))
 	}
 }
 
-func testVolumeCase1(instance *matrix.Instance, t *testing.T) {
+func testNegativeCase2(instance *matrix.Instance, t *testing.T) {
 	instance.SetLabel("group_type", "vserver")
 	instance.SetLabel("destination_volume", "destvol")
 	instance.SetLabel("source_volume", "sourcevol")
 	instance.SetLabel("destination_location", "test123:")
 	sm.updateProtectedFields(instance)
 
-	if instance.GetLabel("protectedBy") == "volume" && instance.GetLabel("protectionSourceType") == "volume" {
+	if instance.GetLabel("protectedBy") == "volume" && instance.GetLabel("protectionSourceType") == "not_mapped" {
 		// OK
 	} else {
-		t.Errorf("Labels protectedBy= %s, expected: volume and protectionSourceType= %s, expected: volume", instance.GetLabel("protectedBy"), instance.GetLabel("protectionSourceType"))
+		t.Errorf("Labels protectedBy= %s, expected: volume and protectionSourceType= %s, expected: not_mapped", instance.GetLabel("protectedBy"), instance.GetLabel("protectionSourceType"))
 	}
 }
 
-func testVolumeCase2(instance *matrix.Instance, t *testing.T) {
+func testGroupTypeNone(instance *matrix.Instance, t *testing.T) {
 	instance.SetLabel("group_type", "none")
 	sm.updateProtectedFields(instance)
 
@@ -127,6 +129,18 @@ func testVolumeCase2(instance *matrix.Instance, t *testing.T) {
 	}
 }
 
+func testGroupTypeFlexgroup(instance *matrix.Instance, t *testing.T) {
+	instance.SetLabel("group_type", "flexgroup")
+	sm.updateProtectedFields(instance)
+
+	if instance.GetLabel("protectedBy") == "volume" && instance.GetLabel("protectionSourceType") == "volume" {
+		// OK
+	} else {
+		t.Errorf("Labels protectedBy= %s, expected: volume and protectionSourceType= %s, expected: volume", instance.GetLabel("protectedBy"), instance.GetLabel("protectionSourceType"))
+	}
+}
+
+// Test cases for derived_relationship_type
 func testStrictSyncMirror(instance *matrix.Instance, t *testing.T) {
 	instance.SetLabel("relationship_type", "")
 	instance.SetLabel("policy_type", "strict_sync_mirror")

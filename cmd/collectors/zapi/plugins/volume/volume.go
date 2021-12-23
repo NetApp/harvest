@@ -1,4 +1,4 @@
-package snapmirrorVolume
+package volume
 
 import (
 	"goharvest2/cmd/poller/plugin"
@@ -14,8 +14,9 @@ import (
 
 const BatchSize = "500"
 const DefaultPluginInvocationRate = 10
+const DefaultDataPollDuration = 180
 
-type SnapmirrorVolume struct {
+type Volume struct {
 	*plugin.AbstractPlugin
 	data                 *matrix.Matrix
 	instanceKeys         map[string]string
@@ -25,16 +26,16 @@ type SnapmirrorVolume struct {
 	currentVal           int
 	client               *zapi.Client
 	query                string
-	outgoingSM           map[string]string
+	outgoingSM           map[string][]string
 	incomingSM           map[string]string
-	isHealthySM          map[string]string
+	isHealthySM          map[string]bool
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
-	return &SnapmirrorVolume{AbstractPlugin: p}
+	return &Volume{AbstractPlugin: p}
 }
 
-func (my *SnapmirrorVolume) Init() error {
+func (my *Volume) Init() error {
 
 	var err error
 
@@ -54,9 +55,9 @@ func (my *SnapmirrorVolume) Init() error {
 	my.query = "snapmirror-get-iter"
 	my.data = matrix.New(my.Parent+".Volume", "volume", "volume")
 
-	my.outgoingSM = make(map[string]string)
+	my.outgoingSM = make(map[string][]string)
 	my.incomingSM = make(map[string]string)
-	my.isHealthySM = make(map[string]string)
+	my.isHealthySM = make(map[string]bool)
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
 	if my.currentVal, err = my.setPluginInterval(); err != nil {
@@ -79,7 +80,7 @@ func (my *SnapmirrorVolume) Init() error {
 	return nil
 }
 
-func (my *SnapmirrorVolume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	// Purge and reset data
 	my.data.PurgeInstances()
@@ -111,37 +112,45 @@ func (my *SnapmirrorVolume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	return nil, nil
 }
 
-func (my *SnapmirrorVolume) setPluginInterval() (int, error) {
+func (my *Volume) setPluginInterval() (int, error) {
 
-	schedule := my.Params.GetChildS("schedule")
-	if schedule == nil {
-		return DefaultPluginInvocationRate, errors.New(errors.MISSING_PARAM, "schedule")
-	}
-
-	dataInterval := schedule.GetChildS("data")
-	if dataInterval == nil {
-		return DefaultPluginInvocationRate, errors.New(errors.MISSING_PARAM, "data")
-	}
-
-	// Convert the interval from str to int and converted to periodicity.
-	// '360s' convert to 360 and converted to 360/180 = 2
-	if intervalStr := dataInterval.GetContentS(); intervalStr != "" {
-		intervalStr = strings.Split(intervalStr, "s")[0]
-		if intervalVal, err := strconv.Atoi(intervalStr); err == nil {
-			my.pluginInvocationRate = intervalVal / 180
-			my.Logger.Info().Int("PluginInvocationInterval", intervalVal).Msg("Plugin invoked at every ")
-		}
-	} else {
-		my.pluginInvocationRate = DefaultPluginInvocationRate
-		my.Logger.Trace().Int("PluginInvocationInterval", DefaultPluginInvocationRate*180).Msg("Using default interval")
-	}
+	volumeDataInterval := my.getDataInterval(my.ParentParams, DefaultDataPollDuration)
+	pluginDataInterval := my.getDataInterval(my.Params, DefaultPluginInvocationRate)
+	my.Logger.Info().Int("volume", volumeDataInterval).Int("plugin", pluginDataInterval).Msg("interval")
+	my.pluginInvocationRate = pluginDataInterval / volumeDataInterval
 
 	return my.pluginInvocationRate, nil
 }
 
-func (my *SnapmirrorVolume) updateProtectedfields(instance *matrix.Instance) {
+func (my *Volume) getDataInterval(param *node.Node, defaultInterval int) int {
+	var dataIntervalStr = ""
+	my.Logger.Info().Msgf("C %s", param.GetAllChildNamesS())
+	my.Logger.Info().Msgf("D %s", param.GetChildS("schedule").GetAllChildContentS())
+
+	schedule := param.GetChildS("schedule")
+	my.Logger.Info().Msgf("S %s", schedule)
+	if schedule != nil {
+		dataInterval := schedule.GetChildS("data")
+		my.Logger.Info().Msgf("I %s", dataInterval)
+		if dataInterval != nil {
+			dataIntervalStr = dataInterval.GetContentS()
+		}
+	}
+
+	// Convert the interval from str to int
+	if dataIntervalStr != "" {
+		dataIntervalStr = strings.Split(dataIntervalStr, "s")[0]
+		if intervalVal, err := strconv.Atoi(dataIntervalStr); err == nil {
+			return intervalVal
+		}
+	}
+	return defaultInterval
+}
+
+func (my *Volume) updateProtectedfields(instance *matrix.Instance) {
 
 	// check for group_type
+	// Supported group_type are: "none", "vserver", "infinitevol", "consistencygroup", "flexgroup"
 	if instance.GetLabel("group_type") != "" {
 
 		groupType := instance.GetLabel("group_type")
@@ -170,11 +179,13 @@ func (my *SnapmirrorVolume) updateProtectedfields(instance *matrix.Instance) {
 			instance.SetLabel("protectionSourceType", "cg")
 		} else if isConstituentVolumeRelationshipWithinSvmDr || isConstituentVolumeRelationshipWithinCG || groupType == "none" || groupType == "flexgroup" {
 			instance.SetLabel("protectionSourceType", "volume")
+		} else {
+			instance.SetLabel("protectionSourceType", "not_mapped")
 		}
 	}
 }
 
-func (my *SnapmirrorVolume) GetSnapMirrors() (map[string][]*matrix.Instance, map[string]*matrix.Instance, error) {
+func (my *Volume) GetSnapMirrors() (map[string][]*matrix.Instance, map[string]*matrix.Instance, error) {
 	var (
 		request, result *node.Node
 		snapMirrors     []*node.Node
@@ -201,7 +212,6 @@ func (my *SnapmirrorVolume) GetSnapMirrors() (map[string][]*matrix.Instance, map
 		}
 
 		if result == nil {
-			my.Logger.Error().Msg("Snapmirror zapi invocation return nil result")
 			break
 		}
 
@@ -262,11 +272,11 @@ func (my *SnapmirrorVolume) GetSnapMirrors() (map[string][]*matrix.Instance, map
 	return smSourceMap, smDestinationMap, nil
 }
 
-func (my *SnapmirrorVolume) updateMaps(data *matrix.Matrix, smSourceMap map[string][]*matrix.Instance, smDestinationMap map[string]*matrix.Instance) {
+func (my *Volume) updateMaps(data *matrix.Matrix, smSourceMap map[string][]*matrix.Instance, smDestinationMap map[string]*matrix.Instance) {
 	// Clean all the snapmirror maps
-	my.outgoingSM = make(map[string]string)
+	my.outgoingSM = make(map[string][]string)
 	my.incomingSM = make(map[string]string)
-	my.isHealthySM = make(map[string]string)
+	my.isHealthySM = make(map[string]bool)
 
 	for _, volume := range data.GetInstances() {
 		volumeName := volume.GetLabel("volume")
@@ -276,23 +286,26 @@ func (my *SnapmirrorVolume) updateMaps(data *matrix.Matrix, smSourceMap map[stri
 
 		for _, smRelationship := range smSourceMap[key] {
 			// Update outgoingSM map based on the source snapmirror info
-			if sm, ok := my.outgoingSM[key]; !ok {
-				my.outgoingSM[key] = smRelationship.GetLabel("protectedBy")
-			} else {
-				if sm != smRelationship.GetLabel("protectedBy") {
-					my.outgoingSM[key] = sm + "_and_" + smRelationship.GetLabel("protectedBy")
-				}
-			}
+			my.outgoingSM[key] = append(my.outgoingSM[key], smRelationship.GetLabel("protectedBy"))
+			//if sm, ok := my.outgoingSM[key]; !ok {
+			//	my.outgoingSM[key] = smRelationship.GetLabel("protectedBy")
+			//} else {
+			//	if sm != smRelationship.GetLabel("protectedBy") {
+			//		my.outgoingSM[key] = sm + "_and_" + smRelationship.GetLabel("protectedBy")
+			//	}
+			//}
 
 			// Update isHealthySM map based on the source snapmirror info
 			if volumeType == "rw" {
 				if h, ok := my.isHealthySM[key]; !ok {
-					my.isHealthySM[key] = smRelationship.GetLabel("is_healthy")
+					my.isHealthySM[key], _ = strconv.ParseBool(smRelationship.GetLabel("is_healthy"))
 				} else {
 					// any relationship in volume is unhealthy would be treated as volume unhealthy category
-					if h != smRelationship.GetLabel("is_healthy") {
-						my.isHealthySM[key] = "false"
-					}
+					//if h != smRelationship.GetLabel("is_healthy") {
+					//	my.isHealthySM[key] = "false"
+					//}
+					currentVal, _ := strconv.ParseBool(smRelationship.GetLabel("is_healthy"))
+					my.isHealthySM[key] = h && currentVal
 				}
 			}
 		}
@@ -304,7 +317,7 @@ func (my *SnapmirrorVolume) updateMaps(data *matrix.Matrix, smSourceMap map[stri
 	}
 }
 
-func (my *SnapmirrorVolume) updateVolumeLabels(data *matrix.Matrix) {
+func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
 	for _, volume := range data.GetInstances() {
 		volumeName := volume.GetLabel("volume")
 		svmName := volume.GetLabel("svm")
@@ -312,9 +325,9 @@ func (my *SnapmirrorVolume) updateVolumeLabels(data *matrix.Matrix) {
 		key := volumeName + "-" + svmName
 
 		// Update protectionRole label in volume
-		if volumeType == "rw" && my.incomingSM[key] == "" && my.outgoingSM[key] == "" {
+		if volumeType == "rw" && my.incomingSM[key] == "" && my.outgoingSM[key] == nil {
 			volume.SetLabel("protectionRole", "unprotected")
-		} else if volumeType == "rw" && my.outgoingSM[key] != "" {
+		} else if volumeType == "rw" && my.outgoingSM[key] != nil {
 			volume.SetLabel("protectionRole", "protected")
 		} else if volumeType == "dp" || (volumeType == "rw" && my.incomingSM[key] != "") {
 			volume.SetLabel("protectionRole", "destination")
@@ -324,15 +337,16 @@ func (my *SnapmirrorVolume) updateVolumeLabels(data *matrix.Matrix) {
 
 		// Update protectedBy label in volume
 		if outgoing, ok := my.outgoingSM[key]; ok {
-			if outgoing == "volume_and_storage_vm" {
+			outgoingJoinStr := strings.Join(outgoing, ",")
+			if outgoingJoinStr == "volume,storage_vm" {
 				volume.SetLabel("protectedBy", "svmdr_and_snapmirror")
-			} else if outgoing == "cg_and_volume" {
+			} else if outgoingJoinStr == "cg,volume" {
 				volume.SetLabel("protectedBy", "cg_and_snapmirror")
-			} else if outgoing == "cg" {
+			} else if outgoingJoinStr == "cg" {
 				volume.SetLabel("protectedBy", "consistency_group")
-			} else if outgoing == "storage_vm" {
+			} else if outgoingJoinStr == "storage_vm" {
 				volume.SetLabel("protectedBy", "storage_vm_dr")
-			} else if outgoing == "volume" {
+			} else if outgoingJoinStr == "volume" {
 				volume.SetLabel("protectedBy", "snapmirror")
 			}
 		} else {
@@ -341,7 +355,7 @@ func (my *SnapmirrorVolume) updateVolumeLabels(data *matrix.Matrix) {
 
 		// Update all_sm_healthy label in volume, when all relationships belongs to this volume are healthy then true, otherwise false
 		if healthy, ok := my.isHealthySM[key]; ok {
-			volume.SetLabel("all_sm_healthy", healthy)
+			volume.SetLabel("all_sm_healthy", strconv.FormatBool(healthy))
 		}
 
 	}
