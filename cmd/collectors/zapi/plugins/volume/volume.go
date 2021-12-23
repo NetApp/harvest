@@ -64,17 +64,15 @@ func (my *Volume) Init() error {
 		my.Logger.Error().Err(err).Stack().Msg("Failed while setting the plugin interval")
 	}
 
-	if my.client.IsClustered() {
-		// batching the request
-		if b := my.Params.GetChildContentS("batch_size"); b != "" {
-			if _, err := strconv.Atoi(b); err == nil {
-				my.batchSize = b
-				my.Logger.Info().Str("BatchSize", my.batchSize).Msg("using batch-size")
-			}
-		} else {
-			my.batchSize = BatchSize
-			my.Logger.Trace().Str("BatchSize", BatchSize).Msg("Using default batch-size")
+	// batching the request
+	if b := my.Params.GetChildContentS("batch_size"); b != "" {
+		if _, err := strconv.Atoi(b); err == nil {
+			my.batchSize = b
+			my.Logger.Info().Str("BatchSize", my.batchSize).Msg("using batch-size")
 		}
+	} else {
+		my.batchSize = BatchSize
+		my.Logger.Trace().Str("BatchSize", BatchSize).Msg("Using default batch-size")
 	}
 
 	return nil
