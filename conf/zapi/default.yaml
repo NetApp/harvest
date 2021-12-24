@@ -19,3 +19,4 @@ objects:
   Status_7mode:     status_7.yaml
   Sensor:           sensor.yaml
   Qtree:            qtree.yaml
+  Snapshot:         snapshot.yaml

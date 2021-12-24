@@ -24,6 +24,11 @@
 package zapiperf
 
 import (
+	"goharvest2/cmd/collectors/zapiperf/plugins/fcp"
+	"goharvest2/cmd/collectors/zapiperf/plugins/headroom"
+	"goharvest2/cmd/collectors/zapiperf/plugins/nic"
+	"goharvest2/cmd/collectors/zapiperf/plugins/volume"
+	"goharvest2/cmd/collectors/zapiperf/plugins/vscan"
 	"goharvest2/cmd/poller/collector"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/pkg/color"
@@ -98,6 +103,24 @@ func (me *ZapiPerf) Init(a *collector.AbstractCollector) error {
 	}
 
 	me.Logger.Debug().Msg("initialized")
+	return nil
+}
+
+func (me *ZapiPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {
+	switch kind {
+	case "Nic":
+		return nic.New(abc)
+	case "Fcp":
+		return fcp.New(abc)
+	case "Headroom":
+		return headroom.New(abc)
+	case "Volume":
+		return volume.New(abc)
+	case "Vscan":
+		return vscan.New(abc)
+	default:
+		me.Logger.Info().Msgf("no zapiPerf plugin found for %s", kind)
+	}
 	return nil
 }
 

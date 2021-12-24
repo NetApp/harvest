@@ -1,0 +1,23 @@
+name:                     Snapshot
+query:                    snapshot-policy-get-iter
+object:                   snapshot
+
+schedule:
+  - instance: 1200s
+  - data: 360s
+
+counters:
+  snapshot-policy-info:
+    - ^^vserver-name     =>  svm
+    - ^^policy           =>  snapshot_policy
+    - ^comment           =>  comment
+    - total-schedules    =>  total_schedules
+
+
+export_options:
+  instance_keys:
+    - svm
+    - snapshot_policy
+    - comment
+
+
