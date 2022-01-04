@@ -5,10 +5,6 @@ object:                   volume
 # increase client timeout for volumes
 client_timeout:           1m
 
-# just for testing/ [todo] remove before submit
-schedule:
-  - data: 90s
-
 counters:
   volume-attributes:
     - volume-autosize-attributes:

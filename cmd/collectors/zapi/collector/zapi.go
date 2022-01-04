@@ -108,23 +108,7 @@ func (me *Zapi) InitVars() error {
 		return err
 	}
 
-	// just for testing/ [todo] remove before submit
-	me.Logger.Info().Msgf("parent %s", me.Params.GetAllChildNamesS())
-	me.Logger.Info().Msgf("parent schedule %s", me.Params.GetChildS("schedule").GetAllChildNamesS())
-	me.Logger.Info().Msgf("parent schedule %s", me.Params.GetChildS("schedule").GetAllChildContentS())
-	me.Logger.Info().Msgf("parent client_timeout %s", me.Params.GetChildContentS("client_timeout"))
-	me.Logger.Info().Msgf("child %s", template.GetAllChildNamesS())
-	if template.GetChildS("schedule") != nil {
-		me.Logger.Info().Msgf("child schedule %s", template.GetChildS("schedule").GetAllChildNamesS())
-		me.Logger.Info().Msgf("child schedule %s", template.GetChildS("schedule").GetAllChildContentS())
-	}
-	if template.GetChildS("client_timeout") != nil {
-		me.Logger.Info().Msgf("child client_timeout %s", template.GetChildContentS("client_timeout"))
-	}
 	me.Params.Union(template)
-	me.Logger.Info().Msgf("merged schedule %s", me.Params.GetChildS("schedule").GetAllChildNamesS())
-	me.Logger.Info().Msgf("merged schedule %s", me.Params.GetChildS("schedule").GetAllChildContentS())
-	me.Logger.Info().Msgf("merged client_timeout %s", me.Params.GetChildContentS("client_timeout"))
 
 	// object name from subtemplate
 	if me.object = me.Params.GetChildContentS("object"); me.object == "" {

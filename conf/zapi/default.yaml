@@ -1,9 +1,6 @@
 
 collector:          Zapi
 
-# just for testing/ [todo] remove before submit
-client_timeout:           2m
-
 # Order here matters!
 schedule:
   - instance: 600s

@@ -266,7 +266,7 @@ func (n *Node) Union(source *Node) {
 			n.AddChild(child)
 		} else if child.GetChildren() != nil {
 			// union at child level
-			n.GetChildS(child.GetNameS()).Union(child)
+			n.GetChild(child.GetName()).Union(child)
 		} else {
 			// child template would take precedence over parent
 			n.SetChildContentS(child.GetNameS(), child.GetContentS())
