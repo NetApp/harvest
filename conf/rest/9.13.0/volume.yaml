@@ -18,13 +18,6 @@ counters:
   - ^style             => style
   - files.used => files_used
   - files.maximum => files_maximum
-#  - compression-space-saved               => sis_compress_saved #missing mapping
-#  - deduplication-space-saved             => sis_dedup_saved #missing mapping
-#  - total-space-saved                     => sis_total_saved #missing mapping
-#  - percentage-compression-space-saved    => sis_compress_saved_percent #missing mapping
-#  - percentage-deduplication-space-saved  => sis_dedup_saved_percent #missing mapping
-#  - percentage-total-space-saved          => sis_total_saved_percent #missing mapping
-#  - ^is-sis-volume                        => is_sis_volume #missing mapping
   - space.expected_available => space_expected_available
   - space.filesystem_size                       => filesystem_size
   - space.logical_space.available  => space_logical_available  #not found in infinity cluster
@@ -55,6 +48,13 @@ plugins:
           query: api/private/cli/volume
           counters:
             - snapshot_count
+            - compression_space_saved_percent => sis_compress_saved_percent
+            - dedupe_space_saved_percent => sis_dedup_saved_percent
+            - compression_space_saved => sis_compress_saved
+            - dedupe_space_saved => sis_dedup_saved
+            - sis_space_saved => sis_total_saved
+            - sis_space_saved_percent => sis_total_saved_percent
+            - ^is_sis_volume => is_sis_volume
             - ^^uuid => instance_uuid
   - LabelAgent:
       value_to_num:
@@ -75,7 +75,7 @@ export_options:
     - style
   instance_labels:
     - state
-    #- is-sis-volume
+    - is_sis_volume
     - snapshot_policy
 
 
