@@ -13,7 +13,6 @@ import (
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
-	"goharvest2/pkg/tree/node"
 	"goharvest2/pkg/util"
 	"strings"
 	"time"
@@ -64,7 +63,6 @@ func (me *RestGaps) parseRules() error {
 
 	for _, line := range me.Params.GetChildren() {
 		var (
-			counters            *node.Node
 			display, name, kind string
 		)
 
@@ -83,9 +81,8 @@ func (me *RestGaps) parseRules() error {
 				prop.query = line1.GetContentS()
 			}
 			if line1.GetNameS() == "counters" {
-				counters = line.GetChildS("counters")
 
-				for _, c := range counters.GetAllChildContentS() {
+				for _, c := range line1.GetAllChildContentS() {
 					name, display, kind = util.ParseMetric(c)
 
 					prop.counters[name] = display
