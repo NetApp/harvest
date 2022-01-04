@@ -69,3 +69,82 @@ func makeTree(names ...string) *Node {
 	}
 	return tree.GetChildS(names[0])
 }
+
+func TestNode_Union(t *testing.T) {
+	parent := &Node{
+		name:     []byte("default"),
+		Children: make([]*Node, 0),
+	}
+	child := &Node{
+		name:     []byte("volume"),
+		Children: make([]*Node, 0),
+	}
+
+	testNodeUnionCase1(parent, child, t)
+	testNodeUnionCase2(parent, child, t)
+	testNodeUnionCase3(parent, child, t)
+}
+
+// Parent don't have field and child would have, after the union, parent will be having the field
+func testNodeUnionCase1(parent *Node, child *Node, t *testing.T) {
+	childClientTimeout := &Node{name: []byte("client_timeout"), Content: []byte("2m")}
+	child.AddChild(childClientTimeout)
+
+	parent.Union(child)
+
+	if timeout := parent.GetChildS("client_timeout"); timeout != nil {
+		if timeoutVal := timeout.GetContentS(); timeoutVal != "2m" {
+			t.Errorf("client timeout after union got=[%v], want=[%v]", timeoutVal, "2m")
+		}
+	} else {
+		t.Errorf("client timeout after union got=[%v], want=[%v]", nil, "2m")
+	}
+}
+
+// Parent and child both have field but different in sub-child level, after the union, parent will be having union of both
+func testNodeUnionCase2(parent *Node, child *Node, t *testing.T) {
+	parentScheduleInstance := &Node{name: []byte("instance"), Content: []byte("600s")}
+	parentScheduleData := &Node{name: []byte("data"), Content: []byte("180s")}
+	parentScheduleCounter := &Node{name: []byte("counter"), Content: []byte("1200s")}
+	parentSchedule := &Node{name: []byte("schedule"), Children: []*Node{parentScheduleInstance, parentScheduleData, parentScheduleCounter}}
+	parent.AddChild(parentSchedule)
+
+	childScheduleData := &Node{name: []byte("data"), Content: []byte("360s")}
+	childSchedule := &Node{name: []byte("schedule"), Children: []*Node{childScheduleData}}
+	child.AddChild(childSchedule)
+
+	parent.Union(child)
+
+	if schedule := parent.GetChildS("schedule"); schedule != nil {
+		if instanceVal := schedule.GetChildContentS("instance"); instanceVal != "600s" {
+			t.Errorf("schedule instance value after union got=[%v], want=[%v]", instanceVal, "600s")
+		}
+		if dataVal := schedule.GetChildContentS("data"); dataVal != "360s" {
+			t.Errorf("schedule data value after union got=[%v], want=[%v]", dataVal, "360s")
+		}
+		if counterVal := schedule.GetChildContentS("counter"); counterVal != "1200s" {
+			t.Errorf("schedule counter value after union got=[%v], want=[%v]", counterVal, "1200s")
+		}
+	} else {
+		t.Errorf("schedule after union got=[%v], want=[%v]", nil, "instance: 600s, data: 360s, counter: 1200s")
+	}
+}
+
+// Parent and child both have field but different value, after the union, parent will be having child's value
+func testNodeUnionCase3(parent *Node, child *Node, t *testing.T) {
+	parentClientTimeout := &Node{name: []byte("client_timeout"), Content: []byte("1m")}
+	parent.AddChild(parentClientTimeout)
+
+	childClientTimeout := &Node{name: []byte("client_timeout"), Content: []byte("3m")}
+	child.AddChild(childClientTimeout)
+
+	parent.Union(child)
+
+	if timeout := parent.GetChildS("client_timeout"); timeout != nil {
+		if timeoutVal := timeout.GetContentS(); timeoutVal != "3m" {
+			t.Errorf("client timeout after union got=[%v], want=[%v]", timeoutVal, "3m")
+		}
+	} else {
+		t.Errorf("client timeout after union got=[%v], want=[%v]", nil, "3m")
+	}
+}
