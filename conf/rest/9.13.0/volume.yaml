@@ -47,7 +47,7 @@ plugins:
       - volume:
           query: api/private/cli/volume
           counters:
-            - snapshot_count
+            - snapshot_count => snapshot_count
             - compression_space_saved_percent => sis_compress_saved_percent
             - dedupe_space_saved_percent => sis_dedup_saved_percent
             - compression_space_saved => sis_compress_saved
@@ -55,6 +55,7 @@ plugins:
             - sis_space_saved => sis_total_saved
             - sis_space_saved_percent => sis_total_saved_percent
             - ^is_sis_volume => is_sis_volume
+            - ^node  => node
             - ^^instance_uuid => instance_uuid
   - LabelAgent:
       value_to_num:
