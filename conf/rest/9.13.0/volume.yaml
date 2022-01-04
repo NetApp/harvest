@@ -55,7 +55,7 @@ plugins:
             - sis_space_saved => sis_total_saved
             - sis_space_saved_percent => sis_total_saved_percent
             - ^is_sis_volume => is_sis_volume
-            - ^^uuid => instance_uuid
+            - ^^instance_uuid => instance_uuid
   - LabelAgent:
       value_to_num:
         - new_status state online online `0`
