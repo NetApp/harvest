@@ -25,7 +25,6 @@ type Rest struct {
 	instanceLabels map[string]string
 	counters       map[string]string
 	fields         []string
-	misses         []string
 	returnTimeOut  string
 	apiType        string // public, private
 }
@@ -214,13 +213,6 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 			r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
 			return nil, err
 		}
-	}
-
-	if len(r.misses) > 0 {
-		r.Logger.Warn().
-			Str("mis-configured counters", strings.Join(r.misses, ",")).
-			Str("ApiPath", r.apiPath).
-			Msg("")
 	}
 
 	all := rest.Pagination{

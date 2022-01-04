@@ -327,3 +327,31 @@ func Intersection(a []string, b []string) ([]string, []string) {
 
 	return matches, misses
 }
+
+func ParseMetric(rawName string) (string, string, string) {
+	var (
+		name, display string
+		values        []string
+	)
+	if values = strings.SplitN(rawName, "=>", 2); len(values) == 2 {
+		name = strings.TrimSpace(values[0])
+		display = strings.TrimSpace(values[1])
+	} else {
+		name = rawName
+		display = strings.ReplaceAll(rawName, ".", "_")
+	}
+
+	if strings.HasPrefix(name, "^^") {
+		return strings.TrimPrefix(name, "^^"), strings.TrimPrefix(display, "^^"), "key"
+	}
+
+	if strings.HasPrefix(name, "^") {
+		return strings.TrimPrefix(name, "^"), strings.TrimPrefix(display, "^"), "label"
+	}
+
+	if strings.HasPrefix(name, "?") {
+		return strings.TrimPrefix(name, "?"), strings.TrimPrefix(display, "?"), "bool"
+	}
+
+	return name, display, "float"
+}

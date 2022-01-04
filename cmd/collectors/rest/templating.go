@@ -4,6 +4,7 @@ import (
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
+	"goharvest2/pkg/util"
 	"strings"
 )
 
@@ -46,7 +47,7 @@ func (r *Rest) initCache() error {
 	r.counters = make(map[string]string)
 
 	for _, c := range counters.GetAllChildContentS() {
-		name, display, kind = parseMetric(c)
+		name, display, kind = util.ParseMetric(c)
 		r.Logger.Debug().
 			Str("kind", kind).
 			Str("name", name).
@@ -89,32 +90,4 @@ func (r *Rest) initCache() error {
 	}
 	return nil
 
-}
-
-func parseMetric(rawName string) (string, string, string) {
-	var (
-		name, display string
-		values        []string
-	)
-	if values = strings.SplitN(rawName, "=>", 2); len(values) == 2 {
-		name = strings.TrimSpace(values[0])
-		display = strings.TrimSpace(values[1])
-	} else {
-		name = rawName
-		display = strings.ReplaceAll(rawName, ".", "_")
-	}
-
-	if strings.HasPrefix(name, "^^") {
-		return strings.TrimPrefix(name, "^^"), strings.TrimPrefix(display, "^^"), "key"
-	}
-
-	if strings.HasPrefix(name, "^") {
-		return strings.TrimPrefix(name, "^"), strings.TrimPrefix(display, "^"), "label"
-	}
-
-	if strings.HasPrefix(name, "?") {
-		return strings.TrimPrefix(name, "?"), strings.TrimPrefix(display, "?"), "bool"
-	}
-
-	return name, display, "float"
 }

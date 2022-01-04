@@ -50,15 +50,21 @@ counters:
 
 
 plugins:
-  LabelAgent:
-    value_to_num:
-      - new_status state online online `0`
-    exclude_equals:
-      - style `flexgroup_constituent`
-    replace:
-      - style style `flexgroup_constituent` `flexgroup`
-  Aggregator:
-    - volume<style=flexgroup>volume node,svm,aggr,style
+  - RestGaps:
+      - volume:
+          query: api/private/cli/volume
+          counters:
+            - snapshot_count
+            - ^^uuid => instance_uuid
+  - LabelAgent:
+      value_to_num:
+        - new_status state online online `0`
+      exclude_equals:
+        - style `flexgroup_constituent`
+      replace:
+        - style style `flexgroup_constituent` `flexgroup`
+  - Aggregator:
+      - volume<style=flexgroup>volume node,svm,aggr,style
 
 export_options:
   instance_keys:
