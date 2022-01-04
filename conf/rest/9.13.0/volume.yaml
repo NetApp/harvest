@@ -12,7 +12,6 @@ counters:
   - autosize.grow_threshold => autosize_grow_threshold_percent
   - ^^uuid => instance_uuid
   - ^name                       => volume
-  - ^node                       => node  #missing mapping
   - ^svm.name        => svm
   - ^aggregates.#.name  => aggr #zapi maps to field containing-aggregate-name while rest mapping is an array?
   - ^style             => style
