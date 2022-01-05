@@ -7,7 +7,6 @@ fields:
   - metric.processor_utilization
   - is_capacity_optimized
   - is_all_flash_optimized
-  - vendor_serial_number   #seems hidden but no response in rest
   - is_capacity_optimized
   - is_all_flash_select_optimized
 
@@ -32,12 +31,17 @@ counters:
   - ^location
   - ^model
   - ^serial_number => serial
-  - uptime
-  - ^vendor_serial_number => vendor
+  - ^uptime
   - ^version.full => version
 
 
 plugins:
+  - RestGaps:
+      - node:
+          query: api/private/cli/node
+          counters:
+            - ^^node => node
+            - ^vendor  => vendor
   - LabelAgent:
       value_to_num:
         - new_status healthy true up `0`

@@ -5,7 +5,6 @@ object:                   volume
 fields:
   - space
   - autosize
-  - files
 
 counters:
   - autosize.maximum => autosize_maximum_size
@@ -15,8 +14,6 @@ counters:
   - ^svm.name        => svm
   - ^aggregates.#.name  => aggr #zapi maps to field containing-aggregate-name while rest mapping is an array?
   - ^style             => style
-  - files.used => files_used
-  - files.maximum => files_maximum
   - space.expected_available => space_expected_available
   - space.filesystem_size                       => filesystem_size
   - space.logical_space.available  => space_logical_available  #not found in infinity cluster
@@ -46,6 +43,9 @@ plugins:
       - volume:
           query: api/private/cli/volume
           counters:
+            - ^^instance_uuid => instance_uuid
+            - ^node  => node
+            - ^is_sis_volume => is_sis_volume
             - snapshot_count => snapshot_count
             - compression_space_saved_percent => sis_compress_saved_percent
             - dedupe_space_saved_percent => sis_dedup_saved_percent
@@ -53,9 +53,8 @@ plugins:
             - dedupe_space_saved => sis_dedup_saved
             - sis_space_saved => sis_total_saved
             - sis_space_saved_percent => sis_total_saved_percent
-            - ^is_sis_volume => is_sis_volume
-            - ^node  => node
-            - ^^instance_uuid => instance_uuid
+            - files => inode_files_total
+            - files_used => inode_files_used
   - LabelAgent:
       value_to_num:
         - new_status state online online `0`

@@ -17,8 +17,6 @@ counters:
   - stats.average_latency     => stats_average_latency
   - stats.throughput          => stats_io_kbps
   - stats.power_on_hours      => uptime
-  #- sectors-read  #missing mapping
-  #- sectors-written #missing mapping
   - outage.reason             => outage
   - usable_size
   - ^state
@@ -27,7 +25,13 @@ counters:
   - ^home_node.name           => owner_node
 
 plugins:
-  - Disk
+  - RestGaps:
+      - disk:
+          query: api/private/cli/disk
+          counters:
+            - ^^uid => uid
+            - sectors_read => stats_sectors_read
+            - sectors_written => stats_sectors_written
   - LabelAgent:
       value_to_num:
         - new_status outage - - `0` #ok_value is empty value, '-' would be converted to blank while processing.
