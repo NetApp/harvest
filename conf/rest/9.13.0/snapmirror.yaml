@@ -16,11 +16,10 @@ counters:
   - ^transfer.state => relationship_status
   - ^source.path => source_volume
   - ^source.svm.name => source_vserver
-  #- ^source-node #missing mapping
+  #- ^source-node #missing mapping  ==> Needs plugin development
   - ^unhealthy_reason.#.message => unhealthy_reason
 
 
-#Need snapmirror plugin development to support missing field in export
 plugins:
   - RestGaps:
       - snapmirror:
