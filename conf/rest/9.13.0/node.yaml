@@ -7,7 +7,6 @@ fields:
   - metric.processor_utilization
   - is_capacity_optimized
   - is_all_flash_optimized
-  - is_capacity_optimized
   - is_all_flash_select_optimized
 
 counters:
