@@ -14,7 +14,11 @@ pipeline {
         string(name: 'RPM',     defaultValue: '', description: 'http url of rpm file')
         string(name: 'NATIVE',  defaultValue: '', description: 'http url of native tar file')
     }
-
+    environment {
+        BUILD_ID="dontKillMe"
+        JENKINS_NODE_COOKIE="dontKillMe"    
+    }
+    
     stages {
         stage('Setup') {
             agent {
