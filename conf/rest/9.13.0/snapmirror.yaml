@@ -20,27 +20,25 @@ counters:
   - ^unhealthy_reason.#.message => unhealthy_reason
 
 
-plugins:
-  - RestGaps:
-      - snapmirror:
-          query: api/private/cli/snapmirror
-          counters:
-            - ^^relationship_id => relationship_id
-            - ^destination_volume_node => destination_node
-            - ^type => relationship_type
-            - ^last_transfer_type => last_transfer_type
-            - ^relationship_group_type  => group_type
-            - ^schedule => schedule
-            - total_transfer_time_secs => total_transfer_time_secs
-            - newest_snapshot_timestamp => newest_snapshot_timestamp
-            - resync_successful_count => resync_successful_count
-            - update_successful_count => update_successful_count
-            - resync_failed_count => resync_failed_count
-            - update_failed_count => update_failed_count
-            - break_successful_count => break_successful_count
-            - break_failed_count => break_failed_count
-            - total_transfer_time_secs => total_transfer_time_secs
-            - newest_snapshot_timestamp => newest_snapshot_timestamp
+endpoints:
+  - query: api/private/cli/snapmirror
+    counters:
+      - ^^relationship_id => relationship_id
+      - ^destination_volume_node => destination_node
+      - ^type => relationship_type
+      - ^last_transfer_type => last_transfer_type
+      - ^relationship_group_type  => group_type
+      - ^schedule => schedule
+      - total_transfer_time_secs => total_transfer_time_secs
+      - newest_snapshot_timestamp => newest_snapshot_timestamp
+      - resync_successful_count => resync_successful_count
+      - update_successful_count => update_successful_count
+      - resync_failed_count => resync_failed_count
+      - update_failed_count => update_failed_count
+      - break_successful_count => break_successful_count
+      - break_failed_count => break_failed_count
+      - total_transfer_time_secs => total_transfer_time_secs
+      - newest_snapshot_timestamp => newest_snapshot_timestamp
 
 export_options:
   instance_keys:

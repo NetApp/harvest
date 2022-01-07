@@ -15,7 +15,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/hashicorp/go-version"
-	"goharvest2/cmd/poller/plugin/restgaps"
 	"io/ioutil"
 	"path"
 	"regexp"
@@ -195,10 +194,6 @@ func getBuiltinPlugin(name string, abc *plugin.AbstractPlugin) plugin.Plugin {
 
 	if name == "LabelAgent" {
 		return label_agent.New(abc)
-	}
-
-	if name == "RestGaps" {
-		return restgaps.New(abc)
 	}
 
 	return nil

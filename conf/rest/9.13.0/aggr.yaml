@@ -3,10 +3,6 @@ name:               Aggregate
 query:              api/storage/aggregates
 object:             aggr
 
-fields:
-  - space.block_storage.inactive_user_data
-  - space.block_storage.inactive_user_data_percent
-
 counters:
   - ^name  => aggr
   - ^^uuid  => uuid
@@ -53,6 +49,9 @@ counters:
   - snapshot.size_total => snapshot_size_total  #mapping seems wrong in doc
   - snapshot.size_used => snapshot_size_used  #mapping seems wrong in doc
   - snapshot.percent_snapshot_space => snapshot_reserve_percent #mapping seems wrong in doc
+  - hidden_fields:
+      - space.block_storage.inactive_user_data
+      - space.block_storage.inactive_user_data_percent
 
 plugins:
   LabelAgent:

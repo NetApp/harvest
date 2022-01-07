@@ -8,6 +8,7 @@ import (
 	"goharvest2/pkg/tree/xml"
 	y3 "gopkg.in/yaml.v3"
 	"io/ioutil"
+	"strconv"
 )
 
 func ImportYaml(filepath string) (*node.Node, error) {
@@ -46,8 +47,12 @@ func consume(r *node.Node, key string, y *y3.Node) {
 		}
 	} else { // sequence
 		s := r.NewChildS(key, "")
-		for _, child := range y.Content {
-			consume(s, "", child)
+		for i, child := range y.Content {
+			if key == "endpoints" {
+				consume(s, strconv.Itoa(i), child)
+			} else {
+				consume(s, "", child)
+			}
 		}
 	}
 }
