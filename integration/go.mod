@@ -17,7 +17,7 @@ require (
 require (
 	github.com/Microsoft/go-winio v0.4.17 // indirect
 	github.com/StackExchange/wmi v1.2.1 // indirect
-	github.com/containerd/containerd v1.5.8 // indirect
+	github.com/containerd/containerd v1.5.9 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/distribution v2.7.1+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
@@ -43,7 +43,6 @@ require (
 	github.com/tklauser/numcpus v0.2.3 // indirect
 	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4 // indirect
 	golang.org/x/sys v0.0.0-20210816074244-15123e1e1f71 // indirect
-	golang.org/x/term v0.0.0-20210503060354-a79de5458b56 // indirect
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
 	google.golang.org/genproto v0.0.0-20210602131652-f16073e35f0c // indirect
 	google.golang.org/grpc v1.39.1 // indirect
