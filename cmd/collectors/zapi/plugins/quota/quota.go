@@ -49,7 +49,11 @@ func (my *Quota) Init() error {
 		return err
 	}
 
-	my.query = "quota-report-iter"
+	if my.client.IsClustered() {
+		my.query = "quota-report-iter"
+	} else {
+		my.query = "quota-report"
+	}
 	my.Logger.Debug().Msg("plugin connected!")
 
 	my.data = matrix.New(my.Parent+".Qtree", "qtree", "qtree")
@@ -95,7 +99,7 @@ func (my *Quota) Init() error {
 		if b := my.Params.GetChildContentS("batch_size"); b != "" {
 			if _, err := strconv.Atoi(b); err == nil {
 				my.batchSize = b
-				my.Logger.Info().Msgf("using batch-size [%s]", my.batchSize)
+				my.Logger.Info().Str("BatchSize", my.batchSize).Msg("using batch-size")
 			}
 		} else {
 			my.batchSize = BatchSize
@@ -107,15 +111,12 @@ func (my *Quota) Init() error {
 }
 
 func (my *Quota) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
-
 	var (
 		request, result *node.Node
 		quotas          []*node.Node
-		tag             string
+		output          []*matrix.Matrix
 		err             error
 	)
-
-	var output []*matrix.Matrix
 
 	// Purge and reset data
 	my.data.PurgeInstances()
@@ -125,11 +126,12 @@ func (my *Quota) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	my.data.SetGlobalLabels(data.GetGlobalLabels())
 
 	request = node.NewXmlS(my.query)
+
 	if my.client.IsClustered() && my.batchSize != "" {
 		request.NewChildS("max-records", my.batchSize)
 	}
 
-	tag = "initial"
+	tag := "initial"
 
 	for {
 		result, tag, err = my.client.InvokeBatchRequest(request, tag)
@@ -142,21 +144,29 @@ func (my *Quota) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			break
 		}
 
-		if x := result.GetChildS("attributes-list"); x != nil {
-			quotas = x.GetChildren()
+		if my.client.IsClustered() {
+			if x := result.GetChildS("attributes-list"); x != nil {
+				quotas = x.GetChildren()
+			}
+		} else {
+			quotas = result.SearchChildren([]string{"quota"})
 		}
 
 		if len(quotas) == 0 {
 			return nil, errors.New(errors.ERR_NO_INSTANCE, "no quota instances found")
 		}
 
-		my.Logger.Debug().Msgf("fetching %d quota counters", len(quotas))
+		my.Logger.Debug().Int("quotas", len(quotas)).Msg("fetching quotas")
 
 		for quotaIndex, quota := range quotas {
-
+			var vserver string
 			tree := quota.GetChildContentS("tree")
 			volume := quota.GetChildContentS("volume")
-			vserver := quota.GetChildContentS("vserver")
+			if my.client.IsClustered() {
+				vserver = quota.GetChildContentS("vserver")
+			} else {
+				vserver = quota.GetChildContentS("vfiler")
+			}
 
 			// If quota-type is not a Qtree, then skip
 			if quota.GetChildContentS("quota-type") != "tree" {

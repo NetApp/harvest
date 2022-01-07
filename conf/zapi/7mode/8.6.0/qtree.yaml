@@ -1,0 +1,41 @@
+
+name:                       Qtree
+query:                      qtree-list
+object:                     qtree
+
+global_labels:
+  - system_type: 7mode
+
+counters:
+  qtree-info:
+    - ^export-policy
+    - id
+    - ^oplocks
+    - ^security-style
+    - ^status
+    - ^^volume
+    - ^^owning-vfiler => svm
+    - ^^qtree         => qtree
+
+plugins:
+  Qtree:
+    objects:
+      - disk-limit
+      - disk-used
+      - file-limit
+      - files-used
+      - soft-disk-limit
+      - soft-file-limit
+      - threshold
+
+export_options:
+  instance_keys:
+    - qtree
+    - volume
+    - svm
+
+  instance_labels:
+    - export_policy
+    - oplocks
+    - security_style
+    - status
