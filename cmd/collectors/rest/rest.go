@@ -106,18 +106,30 @@ func (r *Rest) InitVars() error {
 	r.Params.Union(template)
 	// private end point do not support * as fields. We need to pass fields in endpoint
 	query := r.Params.GetChildS("query")
-	if query != nil && strings.Contains(query.GetContentS(), "private") {
-		r.prop.apiType = "private"
-	} else {
-		r.prop.apiType = "public"
+	r.prop.apiType = "public"
+	if query != nil {
+		r.prop.apiType = checkQueryType(query.GetContentS())
 	}
 
-	r.prop.fields = []string{"*"}
-	if c := r.Params.GetChildS("counters"); c != nil {
-		if x := c.GetChildS("hidden_fields"); x != nil {
-			r.prop.fields = append(r.prop.fields, x.GetAllChildContentS()...)
+	if r.prop.apiType == "private" {
+		counterKey := make([]string, len(r.prop.counters))
+		i := 0
+		for k := range r.prop.counters {
+			counterKey[i] = k
+			i++
+		}
+		r.prop.fields = counterKey
+	}
+
+	if r.prop.apiType == "public" {
+		r.prop.fields = []string{"*"}
+		if c := r.Params.GetChildS("counters"); c != nil {
+			if x := c.GetChildS("hidden_fields"); x != nil {
+				r.prop.fields = append(r.prop.fields, x.GetAllChildContentS()...)
+			}
 		}
 	}
+
 	return nil
 }
 
@@ -173,13 +185,14 @@ func (r *Rest) initEndPoints() error {
 			prop.instanceLabels = make(map[string]string)
 			prop.counters = make(map[string]string)
 			prop.metrics = make([]string, 0)
+			prop.apiType = "public"
 
 			for _, line1 := range line.GetChildren() {
 				if line1.GetNameS() == "query" {
 					prop.query = line1.GetContentS()
+					prop.apiType = checkQueryType(prop.query)
 				}
 				if line1.GetNameS() == "counters" {
-
 					for _, c := range line1.GetAllChildContentS() {
 						name, display, kind = ParseMetric(c)
 
@@ -193,6 +206,22 @@ func (r *Rest) initEndPoints() error {
 						default:
 							prop.instanceLabels[name] = display
 							prop.metrics = append(prop.metrics, name)
+						}
+					}
+					if prop.apiType == "private" {
+						counterKey := make([]string, len(prop.counters))
+						i := 0
+						for k := range prop.counters {
+							counterKey[i] = k
+							i++
+						}
+						prop.fields = counterKey
+					}
+
+					if prop.apiType == "public" {
+						prop.fields = []string{"*"}
+						if x := line1.GetChildS("hidden_fields"); x != nil {
+							prop.fields = append(prop.fields, x.GetAllChildContentS()...)
 						}
 					}
 				}
@@ -257,30 +286,17 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 
 	startTime = time.Now()
 
-	if r.prop.apiType == "public" {
-		href := rest.BuildHref(r.prop.query, strings.Join(r.prop.fields, ","), nil, "", "", "", r.prop.returnTimeOut, r.prop.query)
-		r.Logger.Debug().Str("href", href).Msg("")
-		err = rest.FetchData(r.client, href, &records)
-		if err != nil {
-			r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
-			return nil, err
-		}
+	href := rest.BuildHref(r.prop.query, strings.Join(r.prop.fields, ","), nil, "", "", "", r.prop.returnTimeOut, r.prop.query)
+
+	r.Logger.Debug().Str("href", href).Msg("")
+	if href == "" {
+		return nil, errors.New(errors.ERR_CONFIG, "empty url")
 	}
 
-	if r.prop.apiType == "private" {
-		counterKey := make([]string, len(r.prop.counters))
-		i := 0
-		for k := range r.prop.counters {
-			counterKey[i] = k
-			i++
-		}
-		href := rest.BuildHref(r.prop.query, strings.Join(counterKey, ","), nil, "", "", "", r.prop.returnTimeOut, r.prop.query)
-		r.Logger.Debug().Str("href", href).Msg("")
-		err = rest.FetchData(r.client, href, &records)
-		if err != nil {
-			r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
-			return nil, err
-		}
+	err = rest.FetchData(r.client, href, &records)
+	if err != nil {
+		r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
+		return nil, err
 	}
 
 	all := rest.Pagination{
@@ -412,8 +428,14 @@ func (r *Rest) processEndPoints(data *matrix.Matrix) error {
 			counterKey[i] = k
 			i++
 		}
-		href := rest.BuildHref(endpoint.prop.query, strings.Join(counterKey, ","), nil, "", "", "", "", endpoint.prop.query)
+
+		href := rest.BuildHref(endpoint.prop.query, strings.Join(endpoint.prop.fields, ","), nil, "", "", "", r.prop.returnTimeOut, endpoint.prop.query)
+
 		r.Logger.Debug().Str("href", href).Msg("")
+
+		if href == "" {
+			return errors.New(errors.ERR_CONFIG, "empty url")
+		}
 		err = rest.FetchData(r.client, href, &records)
 		if err != nil {
 			r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
@@ -513,6 +535,15 @@ func (r *Rest) processEndPoints(data *matrix.Matrix) error {
 	}
 
 	return nil
+}
+
+// returns private if api endpoint has private keyword in it else public
+func checkQueryType(query string) string {
+	if strings.Contains(query, "private") {
+		return "private"
+	} else {
+		return "public"
+	}
 }
 
 func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {

@@ -54,9 +54,9 @@ counters:
       - space.block_storage.inactive_user_data_percent
 
 plugins:
-  LabelAgent:
-    value_to_num:
-      - new_status state online online `0`
+  - LabelAgent:
+      value_to_num:
+        - new_status state online online `0`
 
 export_options:
   instance_keys:

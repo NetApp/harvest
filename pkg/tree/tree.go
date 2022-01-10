@@ -24,15 +24,30 @@ func ImportYaml(filepath string) (*node.Node, error) {
 		return nil, err
 	}
 	r := node.New([]byte("Root"))
-	consume(r, "", root.Content[0])
+	consume(r, "", root.Content[0], 0)
 	return r, nil
 }
 
-func consume(r *node.Node, key string, y *y3.Node) {
+func consume(r *node.Node, key string, y *y3.Node, level int) {
 	if y.Kind == y3.ScalarNode {
 		r.NewChildS(key, y.Value)
 	} else if y.Kind == y3.MappingNode {
 		var s = r
+		// handles below yaml structure. This induces a parent in between for grouping of child components
+		/*
+			endpoints:
+			  - query: api/private/cli/volume
+			    counters:
+			      - ^^instance_uuid => instance_uuid
+			      - ^node  => node
+			  - query: api/private/cli/svm
+			    counters:
+			      - ^^instance_uuid => instance_uuid
+			      - ^node  => node
+		*/
+		if key == "" && s.GetParent() != nil && len(y.Content) > 2 {
+			key = strconv.Itoa(level)
+		}
 		if key != "" {
 			s = r.NewChildS(key, "")
 		}
@@ -43,16 +58,12 @@ func consume(r *node.Node, key string, y *y3.Node) {
 				s = r.NewChildS(k, "")
 				continue
 			}
-			consume(s, k, y.Content[i+1])
+			consume(s, k, y.Content[i+1], level)
 		}
 	} else { // sequence
 		s := r.NewChildS(key, "")
-		for i, child := range y.Content {
-			if key == "endpoints" {
-				consume(s, strconv.Itoa(i), child)
-			} else {
-				consume(s, "", child)
-			}
+		for level, child := range y.Content {
+			consume(s, "", child, level)
 		}
 	}
 }
