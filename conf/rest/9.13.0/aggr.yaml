@@ -6,6 +6,8 @@ object:             aggr
 fields:
   - space.block_storage.inactive_user_data
   - space.block_storage.inactive_user_data_percent
+  - inode_attributes.file_public_capacity
+  - inode_attributes.file_private_capacity
 
 counters:
   - ^name  => aggr
@@ -17,10 +19,6 @@ counters:
   - block_storage.primary.raid_size => raid_size
   - ^state  => state
   #- aggr-get-iter.aggr-attributes.aggr-inode-attributes.files-private-used  => inode_files_private_used #mapping missing
-  #- aggr-get-iter.aggr-attributes.aggr-inode-attributes.files-total => inode_files_total #mapping missing
-  #- aggr-get-iter.aggr-attributes.aggr-inode-attributes.files-used => inode_files_used #mapping missing
-  #- aggr-get-iter.aggr-attributes.aggr-inode-attributes.inodefile-private-capacity => inodefile_private_capacity #mapping missing
-  #- aggr-get-iter.aggr-attributes.aggr-inode-attributes.inodefile-public-capacity => inodefile_public_capacity #mapping missing
   #- aggr-get-iter.aggr-attributes.aggr-inode-attributes.maxfiles-available => inode_maxfiles_available #mapping missing
   #- aggr-get-iter.aggr-attributes.aggr-inode-attributes.maxfiles-possible => inode_maxfiles_possible #mapping missing
   #- aggr-get-iter.aggr-attributes.aggr-inode-attributes.maxfiles-used => inode_maxfiles_used #mapping missing
@@ -47,17 +45,27 @@ counters:
   - snapshot.files_used => snapshot_files_used
   - snapshot.max_files_available => snapshot_maxfiles_available
   - snapshot.max_files_used => snapshot_maxfiles_used
+  - inode_attributes.used_percent => inode_used_percent
+  - inode_attributes.file_public_capacity => inode_inodefile_public_capacity
+  - inode_attributes.file_private_capacity => inode_inodefile_private_capacity
+  - inode_attributes.files_used => inode_files_used
+  - inode_attributes.files_total => inode_files_total
   #- aggr-get-iter.aggr-attributes.aggr-snapshot-attributes.percent-inode-used-capacity => snapshot_inode_used_percent #missing mapping
-  #- aggr-get-iter.aggr-attributes.aggr-snapshot-attributes.percent-used-capacity => snapshot_used_percent #missing mapping
-  - snapshot.size_available => snapshot_size_available  #mapping seems wrong in doc
+  - space.snapshot.available => snapshot_size_available
+  - space.snapshot.used => snapshot_size_used
+  - space.snapshot.used_percent => snapshot_used_percent
+  - space.snapshot.reserve_percent => snapshot_reserve_percent
   - snapshot.size_total => snapshot_size_total  #mapping seems wrong in doc
-  - snapshot.size_used => snapshot_size_used  #mapping seems wrong in doc
-  - snapshot.percent_snapshot_space => snapshot_reserve_percent #mapping seems wrong in doc
+  - volume_count => volume_count_flexvol
+  - block_storage.primary.disk_count => raid_disk_count
+  #- block_storage.hybrid_cache.disk_count => raid_disk_count  need to sum this and above, handle in plugin
+
 
 plugins:
   LabelAgent:
     value_to_num:
       - new_status state online online `0`
+# aggr_snapshot_maxfiles_possible would be calculated in plugin based on snapshot.max_files_available and snapshot.max_files_used
 
 export_options:
   instance_keys:
