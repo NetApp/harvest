@@ -5,7 +5,7 @@ import (
 )
 
 func TestImportYaml(t *testing.T) {
-	template, _ := ImportYaml("testdata/volume.yaml")
+	template, _ := ImportYaml("testdata/testTemplate.yaml")
 
 	// check key value pairs like
 	// name: Volume
@@ -62,29 +62,6 @@ func TestImportYaml(t *testing.T) {
 	want = 2
 	got = 0
 	if plugins := template.GetChildS("plugins"); plugins != nil {
-		for range plugins.GetChildren() {
-			got += 1
-		}
-
-		if got != want {
-			t.Errorf("got %v, want %v", got, want)
-		}
-
-		aggregator := plugins.GetChildS("Aggregator")
-		aggregatorWant := 2
-		aggregatorGot := 0
-		for range aggregator.GetChildren() {
-			aggregatorGot += 1
-		}
-		if aggregatorGot != aggregatorWant {
-			t.Errorf("got %v, want %v", aggregatorWant, aggregatorGot)
-		}
-	}
-
-	// check plugins zapi format (old backward compatibility)
-	want = 2
-	got = 0
-	if plugins := template.GetChildS("pluginsZapiFormat"); plugins != nil {
 		for range plugins.GetChildren() {
 			got += 1
 		}
@@ -206,6 +183,32 @@ func TestHarvestConfigImportYaml(t *testing.T) {
 		}
 		if unixGot != unixWant {
 			t.Errorf("got %v, want %v", got, want)
+		}
+	}
+}
+
+func TestImport2108Yaml(t *testing.T) {
+	template, _ := ImportYaml("testdata/testTemplate21.08.yaml")
+	// check plugins 21.08 (old backward compatibility)
+	want := 1
+	got := 0
+	if plugins := template.GetChildS("plugins"); plugins != nil {
+		for range plugins.GetChildren() {
+			got += 1
+		}
+
+		if got != want {
+			t.Errorf("got %v, want %v", got, want)
+		}
+
+		labelAgent := plugins.GetChildS("LabelAgent")
+		labelAgentWant := 2
+		labelAgentGot := 0
+		for range labelAgent.GetChildren() {
+			labelAgentGot += 1
+		}
+		if labelAgentGot != labelAgentWant {
+			t.Errorf("got %v, want %v", labelAgentWant, labelAgentGot)
 		}
 	}
 }

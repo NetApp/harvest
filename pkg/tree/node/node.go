@@ -275,7 +275,7 @@ func (n *Node) Union(source *Node) {
 }
 
 //fetchRoot return if a parent name ancestor exists
-func (n *Node) searchAncestor(ancestor string) *Node {
+func (n *Node) SearchAncestor(ancestor string) *Node {
 	if n == nil {
 		return nil
 	}
@@ -286,14 +286,14 @@ func (n *Node) searchAncestor(ancestor string) *Node {
 	if p != nil && p.GetNameS() == ancestor {
 		return n
 	}
-	return p.searchAncestor(ancestor)
+	return p.SearchAncestor(ancestor)
 }
 
 func (me *Node) PreprocessTemplate() {
 	for _, child := range me.Children {
 		mine := me.GetChild(child.GetName())
 		if mine != nil && len(child.GetName()) > 0 {
-			if mine.searchAncestor("LabelAgent") != nil {
+			if mine.SearchAncestor("LabelAgent") != nil {
 				if len(mine.GetContentS()) > 0 {
 					mine.NewChildS("", child.GetContentS())
 					mine.SetContentS("")

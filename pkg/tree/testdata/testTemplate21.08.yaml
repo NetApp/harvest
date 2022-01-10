@@ -1,0 +1,8 @@
+name:                     Volume
+query:                    api/storage/volumes
+object:                   volume
+
+plugins:
+  - LabelAgent:
+    value_to_num: new_status state online online `0`
+    split: path `/` ,,,lun
