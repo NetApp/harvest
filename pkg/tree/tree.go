@@ -8,7 +8,6 @@ import (
 	"goharvest2/pkg/tree/xml"
 	y3 "gopkg.in/yaml.v3"
 	"io/ioutil"
-	"strconv"
 )
 
 func ImportYaml(filepath string) (*node.Node, error) {
@@ -24,33 +23,16 @@ func ImportYaml(filepath string) (*node.Node, error) {
 		return nil, err
 	}
 	r := node.New([]byte("Root"))
-	consume(r, "", root.Content[0], 0)
+	consume(r, "", root.Content[0], false)
 	return r, nil
 }
 
-func consume(r *node.Node, key string, y *y3.Node, level int) {
+func consume(r *node.Node, key string, y *y3.Node, makeNewChild bool) {
 	if y.Kind == y3.ScalarNode {
 		r.NewChildS(key, y.Value)
 	} else if y.Kind == y3.MappingNode {
 		var s = r
-		// handles below yaml structure. This induces a parent in between for grouping of child components
-		/*
-			endpoints:
-			  - query: api/private/cli/volume
-			    counters:
-			      - ^^instance_uuid => instance_uuid
-			      - ^node  => node
-			  - query: api/private/cli/svm
-			    counters:
-			      - ^^instance_uuid => instance_uuid
-			      - ^node  => node
-		*/
-		// condition s.GetNameS() != "plugins" && s.SearchAncestor("LabelAgent") == nil is needed to support 21.08 older format for plugins
-		// this also means , we'll not support this case inside labelagent which we don;t have currently
-		if key == "" && (s.GetParent() != nil && s.GetNameS() != "plugins" && s.SearchAncestor("LabelAgent") == nil) && len(y.Content) > 2 {
-			key = strconv.Itoa(level)
-		}
-		if key != "" {
+		if key != "" || makeNewChild {
 			s = r.NewChildS(key, "")
 		}
 		for i := 0; i < len(y.Content); i += 2 {
@@ -60,12 +42,16 @@ func consume(r *node.Node, key string, y *y3.Node, level int) {
 				s = r.NewChildS(k, "")
 				continue
 			}
-			consume(s, k, y.Content[i+1], level)
+			consume(s, k, y.Content[i+1], false)
 		}
 	} else { // sequence
 		s := r.NewChildS(key, "")
-		for level, child := range y.Content {
-			consume(s, "", child, level)
+		for _, child := range y.Content {
+			makeNewChild := false
+			if child.Tag == "!!map" {
+				makeNewChild = key == "endpoints"
+			}
+			consume(s, "", child, makeNewChild)
 		}
 	}
 }

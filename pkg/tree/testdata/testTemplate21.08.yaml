@@ -2,6 +2,12 @@ name:                     Volume
 query:                    api/storage/volumes
 object:                   volume
 
+counters:
+  volume-attributes:
+    - volume-autosize-attributes:
+        - maximum-size
+        - grow-threshold-percent
+
 plugins:
   - LabelAgent:
     value_to_num: new_status state online online `0`

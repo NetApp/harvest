@@ -211,4 +211,37 @@ func TestImport2108Yaml(t *testing.T) {
 			t.Errorf("got %v, want %v", labelAgentWant, labelAgentGot)
 		}
 	}
+
+	// counters
+	want = 1
+	got = 0
+	if counters := template.GetChildS("counters"); counters != nil {
+		for range counters.GetChildren() {
+			got += 1
+		}
+
+		if got != want {
+			t.Errorf("got %v, want %v", got, want)
+		}
+
+		volumeAttributes := counters.GetChildS("volume-attributes")
+		volumeAttributesWant := 1
+		volumeAttributesGot := 0
+		for range volumeAttributes.GetChildren() {
+			volumeAttributesGot += 1
+		}
+		if volumeAttributesGot != volumeAttributesWant {
+			t.Errorf("got %v, want %v", volumeAttributesWant, volumeAttributesGot)
+		}
+
+		volumeAutoSizeAttributes := volumeAttributes.GetChildS("volume-autosize-attributes")
+		volumeAutoSizeAttributesWant := 2
+		volumeAutoSizeAttributesGot := 0
+		for range volumeAutoSizeAttributes.GetChildren() {
+			volumeAutoSizeAttributesGot += 1
+		}
+		if volumeAutoSizeAttributesGot != volumeAutoSizeAttributesWant {
+			t.Errorf("got %v, want %v", volumeAutoSizeAttributesGot, volumeAttributesGot)
+		}
+	}
 }
