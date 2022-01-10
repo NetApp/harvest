@@ -4,7 +4,6 @@
 package tree
 
 import (
-	"fmt"
 	"goharvest2/pkg/tree/node"
 	"goharvest2/pkg/tree/xml"
 	y3 "gopkg.in/yaml.v3"
@@ -47,8 +46,7 @@ func consume(r *node.Node, key string, y *y3.Node, level int) {
 			      - ^node  => node
 		*/
 		// condition s.GetNameS() != "plugins" && s.SearchAncestor("LabelAgent") == nil is needed to support 21.08 older format for plugins
-		ans := s.SearchAncestor("LabelAgent")
-		fmt.Println(ans)
+		// this also means , we'll not support this case inside labelagent which we don;t have currently
 		if key == "" && (s.GetParent() != nil && s.GetNameS() != "plugins" && s.SearchAncestor("LabelAgent") == nil) && len(y.Content) > 2 {
 			key = strconv.Itoa(level)
 		}
