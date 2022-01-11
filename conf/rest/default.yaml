@@ -14,4 +14,5 @@ objects:
   SnapMirror:       snapmirror.yaml
   Volume:           volume.yaml
   Subsystem:        subsystem.yaml
+  Snapshot:         snapshot.yaml
 

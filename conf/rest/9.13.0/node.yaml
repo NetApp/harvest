@@ -3,14 +3,6 @@ name:                       Node
 query:                      api/cluster/nodes
 object:                     node
 
-fields:
-  - metric.processor_utilization
-  - is_capacity_optimized
-  - is_all_flash_optimized
-  - vendor_serial_number   #seems hidden but no response in rest
-  - is_capacity_optimized
-  - is_all_flash_select_optimized
-
 counters:
   - metric.processor_utilization => cpu_busytime   #hidden field
   - controller.failed_fan.count => failed_fan
@@ -18,13 +10,7 @@ counters:
   - controller.failed_power_supply.count => failed_power
   - ^controller.failed_power_supply.message.message => failed_power_message
   - ^controller.over_temperature => over_temperature
-  - ^is_all_flash_optimized => is_all_flash_optimized
-  - ^is_all_flash_select_optimized => is_all_flash_select_optimized
-  - ^is_capacity_optimized => is_capacity_optimized
-  #- ^system-node-get-iter.is-cloud-optimized => is_cloud_optimized #missing mapping
-  #- system-node-get-iter.is-node-cluster-eligible => is_node_cluster_eligible #missing mapping
   - ^state => healthy
-  - ^is_performance_optimized => is_perf_optimized  #not found in infinity rest call
   #- ^system-node-get-iter.maximum-aggregate-size => max_aggr_size  #missing mapping
   #- ^system-node-get-iter.maximum-number-of-volumes => max_vol_num #missing mapping
   #- ^system-node-get-iter.maximum-volume-size => max_vol_size #missing mapping
@@ -32,10 +18,16 @@ counters:
   - ^location
   - ^model
   - ^serial_number => serial
-  - uptime
-  - ^vendor_serial_number => vendor
+  - ^uptime
   - ^version.full => version
+  - hidden_fields:
+      - metric.processor_utilization
 
+endpoints:
+  - query: api/private/cli/node
+    counters:
+      - ^^node => node
+      - ^vendor  => vendor
 
 plugins:
   - LabelAgent:

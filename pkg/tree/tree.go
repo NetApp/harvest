@@ -23,16 +23,16 @@ func ImportYaml(filepath string) (*node.Node, error) {
 		return nil, err
 	}
 	r := node.New([]byte("Root"))
-	consume(r, "", root.Content[0])
+	consume(r, "", root.Content[0], false)
 	return r, nil
 }
 
-func consume(r *node.Node, key string, y *y3.Node) {
+func consume(r *node.Node, key string, y *y3.Node, makeNewChild bool) {
 	if y.Kind == y3.ScalarNode {
 		r.NewChildS(key, y.Value)
 	} else if y.Kind == y3.MappingNode {
 		var s = r
-		if key != "" {
+		if key != "" || makeNewChild {
 			s = r.NewChildS(key, "")
 		}
 		for i := 0; i < len(y.Content); i += 2 {
@@ -42,12 +42,16 @@ func consume(r *node.Node, key string, y *y3.Node) {
 				s = r.NewChildS(k, "")
 				continue
 			}
-			consume(s, k, y.Content[i+1])
+			consume(s, k, y.Content[i+1], false)
 		}
 	} else { // sequence
 		s := r.NewChildS(key, "")
 		for _, child := range y.Content {
-			consume(s, "", child)
+			makeNewChild := false
+			if child.Tag == "!!map" {
+				makeNewChild = key == "endpoints"
+			}
+			consume(s, "", child, makeNewChild)
 		}
 	}
 }

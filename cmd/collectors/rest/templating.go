@@ -27,7 +27,7 @@ func (r *Rest) initCache() error {
 		r.Matrix.SetExportOptions(e)
 	}
 
-	if r.apiPath = r.Params.GetChildContentS("query"); r.apiPath == "" {
+	if r.prop.query = r.Params.GetChildContentS("query"); r.prop.query == "" {
 		return errors.New(errors.MISSING_PARAM, "query")
 	}
 
@@ -38,60 +38,52 @@ func (r *Rest) initCache() error {
 
 	// default value for ONTAP is 15 sec
 	if returnTimeout := r.Params.GetChildContentS("return_timeout"); returnTimeout != "" {
-		r.returnTimeOut = returnTimeout
+		r.prop.returnTimeOut = returnTimeout
 	}
 
-	r.instanceKeys = make([]string, 0)
-	r.instanceLabels = make(map[string]string)
-	r.counters = make(map[string]string)
+	r.prop.instanceKeys = make([]string, 0)
+	r.prop.instanceLabels = make(map[string]string)
+	r.prop.counters = make(map[string]string)
 
 	for _, c := range counters.GetAllChildContentS() {
-		name, display, kind = parseMetric(c)
-		r.Logger.Debug().
-			Str("kind", kind).
-			Str("name", name).
-			Str("display", display).
-			Msg("Collected")
+		if c != "" {
+			name, display, kind = ParseMetric(c)
+			r.Logger.Debug().
+				Str("kind", kind).
+				Str("name", name).
+				Str("display", display).
+				Msg("Collected")
 
-		r.counters[name] = display
-		switch kind {
-		case "key":
-			r.instanceLabels[name] = display
-			r.instanceKeys = append(r.instanceKeys, name)
-		case "label":
-			r.instanceLabels[name] = display
-		case "bool":
-			if metr, err = r.Matrix.NewMetricUint8(name); err != nil {
-				r.Logger.Error().Err(err).
-					Str("name", name).
-					Msg("NewMetricUint8")
-				return err
+			r.prop.counters[name] = display
+			switch kind {
+			case "key":
+				r.prop.instanceLabels[name] = display
+				r.prop.instanceKeys = append(r.prop.instanceKeys, name)
+			case "label":
+				r.prop.instanceLabels[name] = display
+			case "float":
+				if metr, err = r.Matrix.NewMetricFloat64(name); err != nil {
+					r.Logger.Error().Err(err).
+						Str("name", name).
+						Msg("NewMetricFloat64")
+					return err
+				}
+				metr.SetName(display)
+				metr.SetProperty("etl.float")
 			}
-			metr.SetName(display)
-			metr.SetProperty("etl.bool") // to distinct from internally generated metrics, e.g. from plugins
-		case "float":
-			if metr, err = r.Matrix.NewMetricFloat64(name); err != nil {
-				r.Logger.Error().Err(err).
-					Str("name", name).
-					Msg("NewMetricFloat64")
-				return err
-			}
-			metr.SetName(display)
-			metr.SetProperty("etl.float")
 		}
 	}
 
-	r.Logger.Info().Strs("extracted Instance Keys", r.instanceKeys).Msg("")
-	r.Logger.Info().Int("count metrics", len(r.Matrix.GetMetrics())).Int("count labels", len(r.instanceLabels)).Msg("initialized metric cache")
+	r.Logger.Info().Strs("extracted Instance Keys", r.prop.instanceKeys).Msg("")
+	r.Logger.Info().Int("count metrics", len(r.Matrix.GetMetrics())).Int("count labels", len(r.prop.instanceLabels)).Msg("initialized metric cache")
 
 	if len(r.Matrix.GetMetrics()) == 0 && r.Params.GetChildContentS("collect_only_labels") != "true" {
 		return errors.New(errors.ERR_NO_METRIC, "failed to parse numeric metrics")
 	}
 	return nil
-
 }
 
-func parseMetric(rawName string) (string, string, string) {
+func ParseMetric(rawName string) (string, string, string) {
 	var (
 		name, display string
 		values        []string

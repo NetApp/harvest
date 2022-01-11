@@ -2,29 +2,14 @@ name:                     Volume
 query:                    api/storage/volumes
 object:                   volume
 
-fields:
-  - space
-  - autosize
-  - files
-
 counters:
   - autosize.maximum => autosize_maximum_size
   - autosize.grow_threshold => autosize_grow_threshold_percent
   - ^^uuid => instance_uuid
   - ^name                       => volume
-  - ^node                       => node  #missing mapping
   - ^svm.name        => svm
   - ^aggregates.#.name  => aggr #zapi maps to field containing-aggregate-name while rest mapping is an array?
   - ^style             => style
-  - files.used => files_used
-  - files.maximum => files_maximum
-#  - compression-space-saved               => sis_compress_saved #missing mapping
-#  - deduplication-space-saved             => sis_dedup_saved #missing mapping
-#  - total-space-saved                     => sis_total_saved #missing mapping
-#  - percentage-compression-space-saved    => sis_compress_saved_percent #missing mapping
-#  - percentage-deduplication-space-saved  => sis_dedup_saved_percent #missing mapping
-#  - percentage-total-space-saved          => sis_total_saved_percent #missing mapping
-#  - ^is-sis-volume                        => is_sis_volume #missing mapping
   - space.expected_available => space_expected_available
   - space.filesystem_size                       => filesystem_size
   - space.logical_space.available  => space_logical_available  #not found in infinity cluster
@@ -47,18 +32,36 @@ counters:
   - space.snapshot.space_used_percent    => snapshot_reserve_used_percent
   - ^snapshot_policy.name  => snapshot_policy
   - ^state   => state
+  - hidden_fields:
+    - space
+    - autosize
 
+endpoints:
+  - query: api/private/cli/volume
+    counters:
+      - ^^instance_uuid => instance_uuid
+      - ^node  => node
+      - ^is_sis_volume => is_sis_volume
+      - snapshot_count => snapshot_count
+      - compression_space_saved_percent => sis_compress_saved_percent
+      - dedupe_space_saved_percent => sis_dedup_saved_percent
+      - compression_space_saved => sis_compress_saved
+      - dedupe_space_saved => sis_dedup_saved
+      - sis_space_saved => sis_total_saved
+      - sis_space_saved_percent => sis_total_saved_percent
+      - files => inode_files_total
+      - files_used => inode_files_used
 
 plugins:
-  LabelAgent:
-    value_to_num:
-      - new_status state online online `0`
-    exclude_equals:
-      - style `flexgroup_constituent`
-    replace:
-      - style style `flexgroup_constituent` `flexgroup`
-  Aggregator:
-    - volume<style=flexgroup>volume node,svm,aggr,style
+  - LabelAgent:
+      value_to_num:
+        - new_status state online online `0`
+      exclude_equals:
+        - style `flexgroup_constituent`
+      replace:
+        - style style `flexgroup_constituent` `flexgroup`
+  - Aggregator:
+      - volume<style=flexgroup>volume node,svm,aggr,style
 
 export_options:
   instance_keys:
@@ -69,7 +72,7 @@ export_options:
     - style
   instance_labels:
     - state
-    #- is-sis-volume
+    - is_sis_volume
     - snapshot_policy
 
 

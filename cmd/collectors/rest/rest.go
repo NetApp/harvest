@@ -19,14 +19,24 @@ import (
 
 type Rest struct {
 	*collector.AbstractCollector
-	client         *rest.Client
-	apiPath        string
+	client    *rest.Client
+	prop      *prop
+	endpoints []*endPoint
+}
+
+type endPoint struct {
+	prop *prop
+	name string
+}
+
+type prop struct {
+	query          string
 	instanceKeys   []string
 	instanceLabels map[string]string
+	metrics        []string
 	counters       map[string]string
-	fields         []string
-	misses         []string
 	returnTimeOut  string
+	fields         []string
 	apiType        string // public, private
 }
 
@@ -47,6 +57,8 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 
 	r.AbstractCollector = a
 
+	r.prop = &prop{}
+
 	if r.client, err = r.getClient(a, a.Params); err != nil {
 		return err
 	}
@@ -56,6 +68,10 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 	}
 
 	if err = r.InitVars(); err != nil {
+		return err
+	}
+
+	if err = r.initEndPoints(); err != nil {
 		return err
 	}
 
@@ -90,16 +106,30 @@ func (r *Rest) InitVars() error {
 	r.Params.Union(template)
 	// private end point do not support * as fields. We need to pass fields in endpoint
 	query := r.Params.GetChildS("query")
-	if query != nil && strings.Contains(query.GetContentS(), "private") {
-		r.apiType = "private"
-	} else {
-		r.apiType = "public"
+	r.prop.apiType = "public"
+	if query != nil {
+		r.prop.apiType = checkQueryType(query.GetContentS())
 	}
 
-	r.fields = []string{"*"}
-	if x := r.Params.GetChildS("fields"); x != nil {
-		r.fields = append(r.fields, x.GetAllChildContentS()...)
+	if r.prop.apiType == "private" {
+		counterKey := make([]string, len(r.prop.counters))
+		i := 0
+		for k := range r.prop.counters {
+			counterKey[i] = k
+			i++
+		}
+		r.prop.fields = counterKey
 	}
+
+	if r.prop.apiType == "public" {
+		r.prop.fields = []string{"*"}
+		if c := r.Params.GetChildS("counters"); c != nil {
+			if x := c.GetChildS("hidden_fields"); x != nil {
+				r.prop.fields = append(r.prop.fields, x.GetAllChildContentS()...)
+			}
+		}
+	}
+
 	return nil
 }
 
@@ -135,6 +165,72 @@ func (r *Rest) getClient(a *collector.AbstractCollector, config *node.Node) (*re
 	}
 
 	return client, err
+}
+
+func (r *Rest) initEndPoints() error {
+
+	endpoints := r.Params.GetChildS("endpoints")
+	if endpoints != nil {
+		for _, line := range endpoints.GetChildren() {
+			var (
+				display, name, kind string
+			)
+
+			n := line.GetNameS()
+			e := endPoint{name: n}
+
+			prop := prop{}
+
+			prop.instanceKeys = make([]string, 0)
+			prop.instanceLabels = make(map[string]string)
+			prop.counters = make(map[string]string)
+			prop.metrics = make([]string, 0)
+			prop.apiType = "public"
+
+			for _, line1 := range line.GetChildren() {
+				if line1.GetNameS() == "query" {
+					prop.query = line1.GetContentS()
+					prop.apiType = checkQueryType(prop.query)
+				}
+				if line1.GetNameS() == "counters" {
+					for _, c := range line1.GetAllChildContentS() {
+						name, display, kind = ParseMetric(c)
+
+						prop.counters[name] = display
+						switch kind {
+						case "key":
+							prop.instanceLabels[name] = display
+							prop.instanceKeys = append(prop.instanceKeys, name)
+						case "label":
+							prop.instanceLabels[name] = display
+						default:
+							prop.instanceLabels[name] = display
+							prop.metrics = append(prop.metrics, name)
+						}
+					}
+					if prop.apiType == "private" {
+						counterKey := make([]string, len(prop.counters))
+						i := 0
+						for k := range prop.counters {
+							counterKey[i] = k
+							i++
+						}
+						prop.fields = counterKey
+					}
+
+					if prop.apiType == "public" {
+						prop.fields = []string{"*"}
+						if x := line1.GetChildS("hidden_fields"); x != nil {
+							prop.fields = append(prop.fields, x.GetAllChildContentS()...)
+						}
+					}
+				}
+			}
+			e.prop = &prop
+			r.endpoints = append(r.endpoints, &e)
+		}
+	}
+	return nil
 }
 
 func (r *Rest) getTemplateFn() string {
@@ -190,37 +286,17 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 
 	startTime = time.Now()
 
-	if r.apiType == "public" {
-		href := rest.BuildHref(r.apiPath, strings.Join(r.fields, ","), nil, "", "", "", r.returnTimeOut, r.apiPath)
-		r.Logger.Debug().Str("href", href).Msg("")
-		err = rest.FetchData(r.client, href, &records)
-		if err != nil {
-			r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
-			return nil, err
-		}
+	href := rest.BuildHref(r.prop.query, strings.Join(r.prop.fields, ","), nil, "", "", "", r.prop.returnTimeOut, r.prop.query)
+
+	r.Logger.Debug().Str("href", href).Msg("")
+	if href == "" {
+		return nil, errors.New(errors.ERR_CONFIG, "empty url")
 	}
 
-	if r.apiType == "private" {
-		counterKey := make([]string, len(r.counters))
-		i := 0
-		for k := range r.counters {
-			counterKey[i] = k
-			i++
-		}
-		href := rest.BuildHref(r.apiPath, strings.Join(counterKey, ","), nil, "", "", "", r.returnTimeOut, r.apiPath)
-		r.Logger.Debug().Str("href", href).Msg("")
-		err = rest.FetchData(r.client, href, &records)
-		if err != nil {
-			r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
-			return nil, err
-		}
-	}
-
-	if len(r.misses) > 0 {
-		r.Logger.Warn().
-			Str("mis-configured counters", strings.Join(r.misses, ",")).
-			Str("ApiPath", r.apiPath).
-			Msg("")
+	err = rest.FetchData(r.client, href, &records)
+	if err != nil {
+		r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
+		return nil, err
 	}
 
 	all := rest.Pagination{
@@ -231,12 +307,12 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 
 	content, err = json.Marshal(all)
 	if err != nil {
-		r.Logger.Error().Err(err).Str("ApiPath", r.apiPath).Msg("Unable to marshal rest pagination")
+		r.Logger.Error().Err(err).Str("ApiPath", r.prop.query).Msg("Unable to marshal rest pagination")
 	}
 
 	startTime = time.Now()
 	if !gjson.ValidBytes(content) {
-		return nil, fmt.Errorf("json is not valid for: %s", r.apiPath)
+		return nil, fmt.Errorf("json is not valid for: %s", r.prop.query)
 	}
 	parseD = time.Since(startTime)
 
@@ -260,7 +336,7 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 		}
 
 		// extract instance key(s)
-		for _, k := range r.instanceKeys {
+		for _, k := range r.prop.instanceKeys {
 			value := instanceData.Get(k)
 			if value.Exists() {
 				instanceKey += value.String()
@@ -283,7 +359,7 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 			}
 		}
 
-		for label, display := range r.instanceLabels {
+		for label, display := range r.prop.instanceLabels {
 			value := instanceData.Get(label)
 			if value.Exists() {
 				if value.IsArray() {
@@ -304,28 +380,23 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 		}
 
 		for key, metric := range r.Matrix.GetMetrics() {
-
-			if metric.GetProperty() == "etl.bool" {
-				b := instanceData.Get(key)
-				if b.Exists() {
-					if err = metric.SetValueBool(instance, b.Bool()); err != nil {
-						r.Logger.Error().Err(err).Str("key", key).Str("metric", metric.GetName()).Msg("Unable to set bool key on metric")
-					}
-					count++
+			f := instanceData.Get(key)
+			if f.Exists() {
+				if err = metric.SetValueFloat64(instance, f.Float()); err != nil {
+					r.Logger.Error().Err(err).Str("key", key).Str("metric", metric.GetName()).
+						Msg("Unable to set float key on metric")
 				}
-			} else if metric.GetProperty() == "etl.float" {
-				f := instanceData.Get(key)
-				if f.Exists() {
-					if err = metric.SetValueFloat64(instance, f.Float()); err != nil {
-						r.Logger.Error().Err(err).Str("key", key).Str("metric", metric.GetName()).
-							Msg("Unable to set float key on metric")
-					}
-					count++
-				}
+				count++
 			}
 		}
 		return true
 	})
+
+	// process endpoints
+	err = r.processEndPoints(r.Matrix)
+	if err != nil {
+		r.Logger.Error().Err(err).Msg("Error while processing end points")
+	}
 
 	r.Logger.Info().
 		Uint64("dataPoints", count).
@@ -341,12 +412,146 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 	return r.Matrix, nil
 }
 
-func (me *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {
+func (r *Rest) processEndPoints(data *matrix.Matrix) error {
+	var (
+		err error
+	)
+
+	for _, endpoint := range r.endpoints {
+		var (
+			records []interface{}
+			content []byte
+		)
+		counterKey := make([]string, len(endpoint.prop.counters))
+		i := 0
+		for k := range endpoint.prop.counters {
+			counterKey[i] = k
+			i++
+		}
+
+		href := rest.BuildHref(endpoint.prop.query, strings.Join(endpoint.prop.fields, ","), nil, "", "", "", r.prop.returnTimeOut, endpoint.prop.query)
+
+		r.Logger.Debug().Str("href", href).Msg("")
+
+		if href == "" {
+			return errors.New(errors.ERR_CONFIG, "empty url")
+		}
+		err = rest.FetchData(r.client, href, &records)
+		if err != nil {
+			r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
+			return err
+		}
+
+		all := rest.Pagination{
+			Records:    records,
+			NumRecords: len(records),
+		}
+
+		content, err = json.Marshal(all)
+		if err != nil {
+			r.Logger.Error().Err(err).Str("ApiPath", endpoint.prop.query).Msg("Unable to marshal rest pagination")
+		}
+
+		if !gjson.ValidBytes(content) {
+			return fmt.Errorf("json is not valid for: %s", endpoint.prop.query)
+		}
+
+		results := gjson.GetManyBytes(content, "num_records", "records")
+		numRecords := results[0]
+		if numRecords.Int() == 0 {
+			return errors.New(errors.ERR_NO_INSTANCE, "no "+endpoint.prop.query+" instances on cluster")
+		}
+
+		results[1].ForEach(func(key, instanceData gjson.Result) bool {
+			var (
+				instanceKey string
+				instance    *matrix.Instance
+			)
+
+			if !instanceData.IsObject() {
+				r.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
+				return true
+			}
+
+			// extract instance key(s)
+			for _, k := range endpoint.prop.instanceKeys {
+				value := instanceData.Get(k)
+				if value.Exists() {
+					instanceKey += value.String()
+				} else {
+					r.Logger.Warn().Str("key", k).Msg("skip instance, missing key")
+					break
+				}
+			}
+
+			if instance = data.GetInstance(instanceKey); instance != nil {
+
+				for label, display := range endpoint.prop.instanceLabels {
+					value := instanceData.Get(label)
+					if value.Exists() {
+						if value.IsArray() {
+							var labelArray []string
+							for _, r := range value.Array() {
+								labelString := r.String()
+								labelArray = append(labelArray, labelString)
+							}
+							instance.SetLabel(display, strings.Join(labelArray, ","))
+						} else {
+							instance.SetLabel(display, value.String())
+						}
+					} else {
+						// spams a lot currently due to missing label mappings. Moved to debug for now till rest gaps are filled
+						r.Logger.Debug().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
+					}
+				}
+
+				for _, metric := range endpoint.prop.metrics {
+					f := instanceData.Get(metric)
+					if f.Exists() {
+						if metr, ok := data.GetMetrics()[metric]; !ok {
+							if metr, _ = data.NewMetricFloat64(metric); err != nil {
+								r.Logger.Error().Err(err).
+									Str("name", metric).
+									Msg("NewMetricFloat64")
+							}
+							metr.SetName(endpoint.prop.instanceLabels[metric])
+							if err = metr.SetValueFloat64(instance, f.Float()); err != nil {
+								r.Logger.Error().Err(err).Str("key", metric).Str("metric", endpoint.prop.instanceLabels[metric]).
+									Msg("Unable to set float key on metric")
+							}
+						} else {
+							metr.SetName(endpoint.prop.instanceLabels[metric])
+							if err = metr.SetValueFloat64(instance, f.Float()); err != nil {
+								r.Logger.Error().Err(err).Str("key", metric).Str("metric", endpoint.prop.instanceLabels[metric]).
+									Msg("Unable to set float key on metric")
+							}
+						}
+					}
+				}
+			}
+			return true
+		})
+
+	}
+
+	return nil
+}
+
+// returns private if api endpoint has private keyword in it else public
+func checkQueryType(query string) string {
+	if strings.Contains(query, "private") {
+		return "private"
+	} else {
+		return "public"
+	}
+}
+
+func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {
 	switch kind {
 	case "Disk":
 		return disk.New(abc)
 	default:
-		me.Logger.Warn().Str("kind", kind).Msg("no rest plugin found ")
+		r.Logger.Warn().Str("kind", kind).Msg("no rest plugin found ")
 	}
 	return nil
 }
