@@ -37,7 +37,7 @@ import (
 // Default parameters
 const (
 	// maximum amount of time we will keep metrics in cache
-	cacheMaxKeep = "180s"
+	cacheMaxKeep = "300s"
 	// apply a prefix to metrics globally (default none)
 	globalPrefix = ""
 )
