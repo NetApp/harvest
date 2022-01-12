@@ -2,9 +2,6 @@ name:                     Snapshot
 query:                    snapshot-policy-get-iter
 object:                   snapshot
 
-schedule:
-  - instance: 1200s
-  - data: 360s
 
 counters:
   snapshot-policy-info:
