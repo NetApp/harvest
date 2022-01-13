@@ -29,6 +29,7 @@ import (
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/set"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -361,18 +362,32 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 
 			// @TODO, check at least one label is found?
 			if len(instance_labels) != 0 {
-				label_data := fmt.Sprintf("%s_labels{%s,%s} 1.0", prefix, strings.Join(instance_keys, ","), strings.Join(instance_labels, ","))
+				var labelData string
+				if me.Params.SortLabels {
+					allLabels := make([]string, len(instance_labels))
+					copy(allLabels, instance_labels)
+					for _, instanceKey := range instance_keys {
+						allLabels = append(allLabels, instanceKey)
+					}
+					sort.Strings(allLabels)
+					labelData = fmt.Sprintf("%s_labels{%s} 1.0", prefix, strings.Join(allLabels, ","))
+				} else {
+					labelData = fmt.Sprintf("%s_labels{%s,%s} 1.0", prefix, strings.Join(instance_keys, ","), strings.Join(instance_labels, ","))
+				}
 				if me.addMetaTags && !tagged.Has(prefix+"_labels") {
 					tagged.Add(prefix + "_labels")
 					rendered = append(rendered, []byte("# HELP "+prefix+"_labels Pseudo-metric for "+data.Object+" labels"))
 					rendered = append(rendered, []byte("# TYPE "+prefix+"_labels gauge"))
 				}
-				rendered = append(rendered, []byte(label_data))
+				rendered = append(rendered, []byte(labelData))
 			} else {
 				me.Logger.Trace().Msgf("skip instance labels, no labels parsed (%v) (%v)", instance_keys, instance_labels)
 			}
 		}
 
+		if me.Params.SortLabels {
+			sort.Strings(instance_keys)
+		}
 		for mkey, metric := range data.GetMetrics() {
 
 			if !metric.IsExportable() {
