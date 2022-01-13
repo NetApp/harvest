@@ -125,6 +125,7 @@ Notice that the rules are executed in the same order as you've added them. List 
   - [include_regex](#include_regex)
   - [value_mapping](#value_mapping)
   - [value_to_num](#value_to_num)
+  - [process_field_value](#process_field_value)
 
 ## split
 
@@ -401,4 +402,34 @@ value_to_num: status outage - - `0` #ok_value is empty value.
 # metric value will be set to 1 if "outage" is empty, if it's any other value, it will be set to the default, 0
 # '-' is a special symbol in this mapping, and it will be converted to blank while processing.
 ```
+## process_field_value
+
+This rule creates the custom metric (of type `float64`) using the existing metric values. 
+
+Note that you don't define the numeric values yourself, instead, you only provide the metric names with operation, 
+the plugin will fetch the value of each given metric and store the result of mathematical operation in new given custom metric.
+
+Rule syntax:
+
+```yaml
+process_field_value: METRIC OPERATION METRIC1 METRIC2 METRIC3 
+# target new metric - mathematical operation - input metric names 
+# apply OPERATION on metric values of METRIC1, METRIC2 and METRIC3 and set result in METRIC
+```
+
+Examples:
+
+```yaml
+process_field_value: space_total add space_available space_used
+# a new metric will be created with the name "space_total"
+# if an instance has metric "space_available" with value "1000", and "space_used" with value "400",
+# the resultant value will be "1400" and set to metric "space_total".
+```
+
+```yaml
+process_field_value: disk_count add primary.disk_count secondary.disk_count hybrid.disk_count
+# value of custom metric "disk_count" would be addition of all the given disk_counts metric values. 
+# disk_count = primary.disk_count + secondary.disk_count + hybrid.disk_count
+```
+
 

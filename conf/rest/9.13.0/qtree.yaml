@@ -1,0 +1,27 @@
+
+name:                       Qtree
+query:                      api/storage/qtrees
+object:                     qtree
+
+counters:
+  - ^export_policy.name => export_policy
+  - id => id
+  - ^security_style => security_style
+#  - ^type => status  Workaround fetch via storage/volumes?fields=type
+#Generally within CLI and ZAPI, the way we populate the qtree status is, if the volume is a regular RW volume, the qtree status of all the qtrees in the volume would be "normal".
+# If the volume is DP, then the qtree status would be "readonly"
+  - ^^volume.name => volume
+  - ^^svm.name => svm
+  - ^^name => qtree
+
+
+export_options:
+  instance_keys:
+    - qtree
+    - volume
+    - svm
+
+  instance_labels:
+    - export_policy
+    - security_style
+    - status

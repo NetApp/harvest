@@ -15,4 +15,5 @@ objects:
   Subsystem:        subsystem.yaml
   Snapshot:         snapshot.yaml
   Port:             port.yaml
-
+  Qtree:            qtree.yaml
+  Shelf:            shelf.yaml

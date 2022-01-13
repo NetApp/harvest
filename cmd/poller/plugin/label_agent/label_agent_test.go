@@ -53,6 +53,10 @@ func TestInitPlugin(t *testing.T) {
 	params.NewChildS("value_to_num", "").NewChildS("", "new_stage stage init start `4`")
 	// create metric "new_outage", if empty value is expected and non empty means wrong, use default value "0"
 	params.NewChildS("value_to_num", "").NewChildS("", "new_outage outage - - `0`")
+	// create metric "space_total", which is addition of the metric value of space_available and space_used
+	params.NewChildS("process_field_value", "").NewChildS("", "space_total add space_available space_used")
+	// create metric "disk_count", which is addition of the metric value of primary.disk_count, secondary.disk_count and hybrid.disk_count
+	params.NewChildS("process_field_value", "").NewChildS("", "disk_count add primary.disk_count secondary.disk_count hybrid.disk_count")
 
 	abc := plugin.New("Test", nil, params, nil)
 	p = &LabelAgent{AbstractPlugin: abc}
@@ -385,4 +389,88 @@ func TestValueToNumRule(t *testing.T) {
 	} else {
 		t.Logf("OK - metric [outage]: value for instanceB set to %d", v)
 	}
+}
+
+func TestProcessFieldValueRule(t *testing.T) {
+
+	var (
+		instanceA, instanceB                                   *matrix.Instance
+		metricAvail, metricUsed, metricTotal                   matrix.Metric
+		metricDiskP, metricDiskS, metricDiskH, metricDiskTotal matrix.Metric
+		expected                                               float64
+		err                                                    error
+	)
+	// should match
+	m := matrix.New("TestLabelAgent", "test", "test")
+
+	if instanceA, err = m.NewInstance("A"); err != nil {
+		t.Fatal(err)
+	}
+
+	if metricAvail, err = m.NewMetricFloat64("space_available"); err == nil {
+		metricAvail.SetValueFloat64(instanceA, 1010101010)
+	} else {
+		t.Error("metric [space_available]  not created for InstanceA")
+	}
+
+	if metricUsed, err = m.NewMetricFloat64("space_used"); err == nil {
+		metricUsed.SetValueFloat64(instanceA, 5050505050)
+	} else {
+		t.Error("metric [space_used]  not created for InstanceA")
+	}
+
+	if instanceB, err = m.NewInstance("B"); err != nil {
+		t.Fatal(err)
+	}
+
+	if metricDiskP, err = m.NewMetricFloat64("primary.disk_count"); err == nil {
+		metricDiskP.SetValueFloat64(instanceB, 8)
+	} else {
+		t.Error("metric [primary.disk_coun]  not created for InstanceB")
+	}
+
+	if metricDiskS, err = m.NewMetricFloat64("secondary.disk_count"); err == nil {
+		metricDiskS.SetValueFloat64(instanceB, 10)
+	} else {
+		t.Error("metric [secondary.disk_coun]  not created for InstanceB")
+	}
+
+	if metricDiskH, err = m.NewMetricFloat64("hybrid.disk_count"); err == nil {
+		metricDiskH.SetValueFloat64(instanceB, 4)
+	} else {
+		t.Error("metric [hybrid.disk_count]  not created for InstanceB")
+	}
+
+	if err = p.processFields(m); err != nil {
+		t.Fatal(err)
+	}
+
+	// check "space_total" for instanceA
+	expected = 6060606060
+	if metricTotal = m.GetMetric("space_total"); metricTotal != nil {
+		if metricTotalVal, ok := metricTotal.GetValueFloat64(instanceA); !ok {
+			t.Error("metric [space_total]: value for InstanceA not set")
+		} else if metricTotalVal != expected {
+			t.Errorf("metric [space_total]: value for InstanceA is %f, expected %f", metricTotalVal, expected)
+		} else {
+			t.Logf("OK - metric [space_total]: value for instanceA set to %f", metricTotalVal)
+		}
+	} else {
+		t.Error("metric [space_total] missing")
+	}
+
+	// check "disk_count" for instanceB
+	expected = 22
+	if metricDiskTotal = m.GetMetric("disk_count"); metricDiskTotal != nil {
+		if metricDiskTotalVal, ok := metricDiskTotal.GetValueFloat64(instanceB); !ok {
+			t.Error("metric [disk_count]: value for InstanceB not set")
+		} else if metricDiskTotalVal != expected {
+			t.Errorf("metric [disk_count]: value for InstanceB is %f, expected %f", metricDiskTotalVal, expected)
+		} else {
+			t.Logf("OK - metric [disk_count]: value for instanceB set to %f", metricDiskTotalVal)
+		}
+	} else {
+		t.Error("metric [disk_count] missing")
+	}
+
 }

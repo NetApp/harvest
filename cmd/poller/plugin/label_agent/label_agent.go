@@ -14,20 +14,21 @@ import (
 
 type LabelAgent struct {
 	*plugin.AbstractPlugin
-	actions              []func(*matrix.Matrix) error
-	splitSimpleRules     []splitSimpleRule
-	splitRegexRules      []splitRegexRule
-	splitPairsRules      []splitPairsRule
-	joinSimpleRules      []joinSimpleRule
-	replaceSimpleRules   []replaceSimpleRule
-	replaceRegexRules    []replaceRegexRule
-	excludeEqualsRules   []excludeEqualsRule
-	excludeContainsRules []excludeContainsRule
-	excludeRegexRules    []excludeRegexRule
-	includeEqualsRules   []includeEqualsRule
-	includeContainsRules []includeContainsRule
-	includeRegexRules    []includeRegexRule
-	valueToNumRules      []valueToNumRule
+	actions                []func(*matrix.Matrix) error
+	splitSimpleRules       []splitSimpleRule
+	splitRegexRules        []splitRegexRule
+	splitPairsRules        []splitPairsRule
+	joinSimpleRules        []joinSimpleRule
+	replaceSimpleRules     []replaceSimpleRule
+	replaceRegexRules      []replaceRegexRule
+	excludeEqualsRules     []excludeEqualsRule
+	excludeContainsRules   []excludeContainsRule
+	excludeRegexRules      []excludeRegexRule
+	includeEqualsRules     []includeEqualsRule
+	includeContainsRules   []includeContainsRule
+	includeRegexRules      []includeRegexRule
+	valueToNumRules        []valueToNumRule
+	processFieldValueRules []processFieldValueRule
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -319,5 +320,51 @@ func (me *LabelAgent) mapValues(m *matrix.Matrix) error {
 		}
 	}
 
+	return nil
+}
+
+func (me *LabelAgent) processFields(m *matrix.Matrix) error {
+
+	var (
+		metric    matrix.Metric
+		metricVal matrix.Metric
+		err       error
+	)
+
+	// map values for process_field_value mapping rules
+	for _, r := range me.processFieldValueRules {
+
+		if metric = m.GetMetric(r.metric); metric == nil {
+			if metric, err = m.NewMetricFloat64(r.metric); err != nil {
+				me.Logger.Error().Stack().Err(err).Msgf("processFieldValueMapping: new metric [%s]:", r.metric)
+				return err
+			} else {
+				metric.SetProperty("process_field_value mapping")
+			}
+		}
+
+		for key, instance := range m.GetInstances() {
+			var result float64
+			for _, metricName := range r.metricNames {
+				if metricVal = m.GetMetric(metricName); metricVal != nil {
+					v, _ := metricVal.GetValueFloat64(instance)
+
+					switch r.operation {
+					case "add":
+						result += v
+					default:
+						me.Logger.Warn().
+							Str("operation", r.operation).
+							Msg("Unknown operation")
+					}
+				} else {
+					me.Logger.Warn().Stack().Err(err).Str("metricName", metricName).Msgf("processFieldValueMapping: metric not found")
+				}
+			}
+
+			_ = metric.SetValueFloat64(instance, result)
+			me.Logger.Trace().Msgf("processFieldValueMapping: [%s] [%s] mapped to %f", r.metric, key, result)
+		}
+	}
 	return nil
 }

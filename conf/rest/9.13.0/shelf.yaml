@@ -1,0 +1,32 @@
+
+name:               StorageShelf
+query:              api/storage/shelves
+object:             shelf
+
+counters:
+  - disk_count => disk_count
+  - ^module_type => module_type
+  - ^serial_number => serial_number
+  - ^name => shelf
+  - ^model => model
+  - ^^uid => shelf_uid
+  - ^state => state
+  - ^manufacturer.name => vendor_name
+  #- ^state => op_status
+
+plugins:
+  LabelAgent:
+    # metric label zapi_value rest_value `default_value`
+    value_to_num:
+      - new_status state online ok `0`
+
+export_options:
+  instance_keys:
+    - shelf
+  instance_labels:
+    - module_type
+    - serial_number
+    - model
+    - state
+    - op_status
+    - vendor_name
