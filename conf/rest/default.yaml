@@ -1,7 +1,6 @@
 
 collector:          Rest
 
-
 schedule:
   - data: 180s
 
@@ -15,4 +14,5 @@ objects:
   Volume:           volume.yaml
   Subsystem:        subsystem.yaml
   Snapshot:         snapshot.yaml
+  Port:             port.yaml
 

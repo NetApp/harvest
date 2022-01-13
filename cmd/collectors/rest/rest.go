@@ -67,7 +67,7 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	if err = r.InitVars(); err != nil {
+	if err = r.LoadTemplate(); err != nil {
 		return err
 	}
 
@@ -87,48 +87,6 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 	r.Logger.Info().Msgf("initialized cache with %d metrics", len(r.Matrix.GetMetrics()))
-
-	return nil
-}
-
-func (r *Rest) InitVars() error {
-
-	var (
-		template *node.Node
-		err      error
-	)
-
-	// import template
-	if template, err = r.ImportSubTemplate("", r.getTemplateFn(), r.client.Cluster().Version); err != nil {
-		return err
-	}
-
-	r.Params.Union(template)
-	// private end point do not support * as fields. We need to pass fields in endpoint
-	query := r.Params.GetChildS("query")
-	r.prop.apiType = "public"
-	if query != nil {
-		r.prop.apiType = checkQueryType(query.GetContentS())
-	}
-
-	if r.prop.apiType == "private" {
-		counterKey := make([]string, len(r.prop.counters))
-		i := 0
-		for k := range r.prop.counters {
-			counterKey[i] = k
-			i++
-		}
-		r.prop.fields = counterKey
-	}
-
-	if r.prop.apiType == "public" {
-		r.prop.fields = []string{"*"}
-		if c := r.Params.GetChildS("counters"); c != nil {
-			if x := c.GetChildS("hidden_fields"); x != nil {
-				r.prop.fields = append(r.prop.fields, x.GetAllChildContentS()...)
-			}
-		}
-	}
 
 	return nil
 }

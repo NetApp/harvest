@@ -2,10 +2,6 @@ name:                     Snapshot
 query:                    api/private/cli/snapshot/policy
 object:                   snapshot
 
-schedule:
-  - instance: 1200s
-  - data: 360s
-
 counters:
   - ^^vserver => svm
   - ^^policy  =>  snapshot_policy
@@ -17,5 +13,3 @@ export_options:
     - svm
     - snapshot_policy
     - comment
-
-
