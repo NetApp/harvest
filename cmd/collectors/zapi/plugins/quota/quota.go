@@ -183,6 +183,14 @@ func (my *Quota) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 				if attrValue := quota.GetChildContentS(attribute); attrValue != "" {
 					qtreeInstance := data.GetInstance(tree + "." + volume + "." + vserver)
+					if qtreeInstance == nil {
+						my.Logger.Warn().
+							Str("tree", tree).
+							Str("volume", volume).
+							Str("vserver", vserver).
+							Msg("No instance matching tree.volume.vserver")
+						continue
+					}
 					if !qtreeInstance.IsExportable() {
 						continue
 					}
