@@ -4,14 +4,14 @@ query:              api/storage/shelves
 object:             shelf
 
 counters:
-  - disk_count => disk_count
+  - ^^uid => shelf_uid
   - ^module_type => module_type
   - ^serial_number => serial_number
   - ^name => shelf
   - ^model => model
-  - ^^uid => shelf_uid
   - ^state => state
   - ^manufacturer.name => vendor_name
+  - disk_count => disk_count
   #- ^state => op_status
 
 plugins:
@@ -22,6 +22,7 @@ plugins:
 
 export_options:
   instance_keys:
+    - shelf_uid
     - shelf
   instance_labels:
     - module_type

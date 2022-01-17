@@ -24,7 +24,7 @@ func (me *LabelAgent) parseRules() int {
 	me.excludeRegexRules = make([]excludeRegexRule, 0)
 	me.splitPairsRules = make([]splitPairsRule, 0)
 	me.valueToNumRules = make([]valueToNumRule, 0)
-	me.processFieldValueRules = make([]processFieldValueRule, 0)
+	me.computeMetricRules = make([]computeMetricRule, 0)
 
 	for _, c := range me.Params.GetChildren() {
 		name := c.GetNameS()
@@ -61,8 +61,8 @@ func (me *LabelAgent) parseRules() int {
 				me.parseIncludeRegexRule(rule)
 			case "value_to_num":
 				me.parseValueToNumRule(rule)
-			case "process_field_value":
-				me.parseProcessFieldValueRule(rule)
+			case "compute_metric":
+				me.parseComputeMetricRule(rule)
 			default:
 				me.Logger.Warn().
 					Str("object", me.ParentParams.GetChildContentS("object")).
@@ -142,10 +142,10 @@ func (me *LabelAgent) parseRules() int {
 				me.actions = append(me.actions, me.mapValues)
 				count += len(me.valueToNumRules)
 			}
-		case "process_field_value":
-			if len(me.processFieldValueRules) != 0 {
-				me.actions = append(me.actions, me.processFields)
-				count += len(me.processFieldValueRules)
+		case "compute_metric":
+			if len(me.computeMetricRules) != 0 {
+				me.actions = append(me.actions, me.computeMetrics)
+				count += len(me.computeMetricRules)
 			}
 		default:
 			me.Logger.Warn().
@@ -522,23 +522,23 @@ func (me *LabelAgent) parseValueToNumRule(rule string) {
 	me.Logger.Warn().Msgf("(value_to_num) rule has invalid format [%s]", rule)
 }
 
-type processFieldValueRule struct {
+type computeMetricRule struct {
 	metric      string
 	operation   string
 	metricNames []string
 }
 
-func (me *LabelAgent) parseProcessFieldValueRule(rule string) {
+func (me *LabelAgent) parseComputeMetricRule(rule string) {
 	if fields := strings.Fields(rule); len(fields) >= 4 {
-		r := processFieldValueRule{metric: fields[0], operation: fields[1], metricNames: make([]string, 0)}
+		r := computeMetricRule{metric: fields[0], operation: fields[1], metricNames: make([]string, 0)}
 
 		for i := 2; i < len(fields); i++ {
 			r.metricNames = append(r.metricNames, fields[i])
 		}
 
-		me.processFieldValueRules = append(me.processFieldValueRules, r)
-		me.Logger.Debug().Msgf("(process_field_value) parsed rule [%v]", r)
+		me.computeMetricRules = append(me.computeMetricRules, r)
+		me.Logger.Debug().Msgf("(compute_metric) parsed rule [%v]", r)
 		return
 	}
-	me.Logger.Warn().Msgf("(process_field_value) rule has invalid format [%s]", rule)
+	me.Logger.Warn().Msgf("(compute_metric) rule has invalid format [%s]", rule)
 }

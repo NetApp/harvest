@@ -14,21 +14,21 @@ import (
 
 type LabelAgent struct {
 	*plugin.AbstractPlugin
-	actions                []func(*matrix.Matrix) error
-	splitSimpleRules       []splitSimpleRule
-	splitRegexRules        []splitRegexRule
-	splitPairsRules        []splitPairsRule
-	joinSimpleRules        []joinSimpleRule
-	replaceSimpleRules     []replaceSimpleRule
-	replaceRegexRules      []replaceRegexRule
-	excludeEqualsRules     []excludeEqualsRule
-	excludeContainsRules   []excludeContainsRule
-	excludeRegexRules      []excludeRegexRule
-	includeEqualsRules     []includeEqualsRule
-	includeContainsRules   []includeContainsRule
-	includeRegexRules      []includeRegexRule
-	valueToNumRules        []valueToNumRule
-	processFieldValueRules []processFieldValueRule
+	actions              []func(*matrix.Matrix) error
+	splitSimpleRules     []splitSimpleRule
+	splitRegexRules      []splitRegexRule
+	splitPairsRules      []splitPairsRule
+	joinSimpleRules      []joinSimpleRule
+	replaceSimpleRules   []replaceSimpleRule
+	replaceRegexRules    []replaceRegexRule
+	excludeEqualsRules   []excludeEqualsRule
+	excludeContainsRules []excludeContainsRule
+	excludeRegexRules    []excludeRegexRule
+	includeEqualsRules   []includeEqualsRule
+	includeContainsRules []includeContainsRule
+	includeRegexRules    []includeRegexRule
+	valueToNumRules      []valueToNumRule
+	computeMetricRules   []computeMetricRule
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -323,47 +323,70 @@ func (me *LabelAgent) mapValues(m *matrix.Matrix) error {
 	return nil
 }
 
-func (me *LabelAgent) processFields(m *matrix.Matrix) error {
+func (me *LabelAgent) computeMetrics(m *matrix.Matrix) error {
 
 	var (
-		metric    matrix.Metric
-		metricVal matrix.Metric
-		err       error
+		metric                    matrix.Metric
+		metricVal, firstMetricVal matrix.Metric
+		err                       error
 	)
 
-	// map values for process_field_value mapping rules
-	for _, r := range me.processFieldValueRules {
+	// map values for compute_metric mapping rules
+	for _, r := range me.computeMetricRules {
 
 		if metric = m.GetMetric(r.metric); metric == nil {
 			if metric, err = m.NewMetricFloat64(r.metric); err != nil {
-				me.Logger.Error().Stack().Err(err).Msgf("processFieldValueMapping: new metric [%s]:", r.metric)
+				me.Logger.Error().Stack().Err(err).Msgf("computeMetrics: new metric [%s]:", r.metric)
 				return err
 			} else {
-				metric.SetProperty("process_field_value mapping")
+				metric.SetProperty("compute_metric mapping")
 			}
 		}
 
 		for key, instance := range m.GetInstances() {
 			var result float64
-			for _, metricName := range r.metricNames {
-				if metricVal = m.GetMetric(metricName); metricVal != nil {
+
+			// Parse first operand and store in result for further processing
+			if firstMetricVal = m.GetMetric(r.metricNames[0]); firstMetricVal != nil {
+				if val, ok := firstMetricVal.GetValueFloat64(instance); ok {
+					result = val
+				}
+			} else {
+				me.Logger.Warn().Stack().Err(err).Str("metricName", r.metricNames[0]).Msgf("computeMetrics: metric not found")
+			}
+
+			// Parse other operands and process them
+			for i := 1; i < len(r.metricNames); i++ {
+				if metricVal = m.GetMetric(r.metricNames[i]); metricVal != nil {
 					v, _ := metricVal.GetValueFloat64(instance)
 
 					switch r.operation {
-					case "add":
+					case "ADD":
 						result += v
+					case "SUBTRACT":
+						result -= v
+					case "MULTIPLY":
+						result *= v
+					case "DIVIDE":
+						if v != 0 {
+							result /= v
+						} else {
+							me.Logger.Error().
+								Str("operation", r.operation).
+								Msg("Division by zero operation")
+						}
 					default:
 						me.Logger.Warn().
 							Str("operation", r.operation).
 							Msg("Unknown operation")
 					}
 				} else {
-					me.Logger.Warn().Stack().Err(err).Str("metricName", metricName).Msgf("processFieldValueMapping: metric not found")
+					me.Logger.Warn().Stack().Err(err).Str("metricName", r.metricNames[i]).Msgf("computeMetrics: metric not found")
 				}
 			}
 
 			_ = metric.SetValueFloat64(instance, result)
-			me.Logger.Trace().Msgf("processFieldValueMapping: [%s] [%s] mapped to %f", r.metric, key, result)
+			me.Logger.Trace().Msgf("computeMetrics: [%s] [%s] mapped to %f", r.metric, key, result)
 		}
 	}
 	return nil

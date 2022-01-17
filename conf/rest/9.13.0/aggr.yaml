@@ -59,9 +59,9 @@ plugins:
   - LabelAgent:
       value_to_num:
         - new_status state online online `0`
-      process_field_value:
-        - snapshot_maxfiles_possible add snapshot.max_files_available snapshot.max_files_used
-        - raid_disk_count add block_storage.primary.disk_count block_storage.hybrid_cache.disk_count
+      compute_metric:
+        - snapshot_maxfiles_possible ADD snapshot.max_files_available snapshot.max_files_used
+        - raid_disk_count ADD block_storage.primary.disk_count block_storage.hybrid_cache.disk_count
 
 export_options:
   instance_keys:
