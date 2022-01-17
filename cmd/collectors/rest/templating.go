@@ -2,7 +2,6 @@ package rest
 
 import (
 	"goharvest2/pkg/errors"
-	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
 	"strings"
 )
@@ -28,8 +27,6 @@ func (r *Rest) initCache() error {
 	var (
 		counters            *node.Node
 		display, name, kind string
-		metr                matrix.Metric
-		err                 error
 	)
 
 	if x := r.Params.GetChildContentS("object"); x != "" {
@@ -78,14 +75,8 @@ func (r *Rest) initCache() error {
 			case "label":
 				r.prop.instanceLabels[name] = display
 			case "float":
-				if metr, err = r.Matrix.NewMetricFloat64(name); err != nil {
-					r.Logger.Error().Err(err).
-						Str("name", name).
-						Msg("NewMetricFloat64")
-					return err
-				}
-				metr.SetName(display)
-				metr.SetProperty("etl.float")
+				m := metric{label: display, name: name}
+				r.prop.metrics = append(r.prop.metrics, m)
 			}
 		}
 	}
@@ -117,11 +108,8 @@ func (r *Rest) initCache() error {
 	}
 
 	r.Logger.Info().Strs("extracted Instance Keys", r.prop.instanceKeys).Msg("")
-	r.Logger.Info().Int("count metrics", len(r.Matrix.GetMetrics())).Int("count labels", len(r.prop.instanceLabels)).Msg("initialized metric cache")
+	r.Logger.Info().Int("count metrics", len(r.prop.metrics)).Int("count labels", len(r.prop.instanceLabels)).Msg("initialized metric cache")
 
-	if len(r.Matrix.GetMetrics()) == 0 && r.Params.GetChildContentS("collect_only_labels") != "true" {
-		return errors.New(errors.ERR_NO_METRIC, "failed to parse numeric metrics")
-	}
 	return nil
 }
 

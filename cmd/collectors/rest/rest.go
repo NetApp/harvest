@@ -33,11 +33,16 @@ type prop struct {
 	query          string
 	instanceKeys   []string
 	instanceLabels map[string]string
-	metrics        []string
+	metrics        []metric
 	counters       map[string]string
 	returnTimeOut  string
 	fields         []string
 	apiType        string // public, private
+}
+
+type metric struct {
+	label string
+	name  string
 }
 
 func init() {
@@ -142,7 +147,7 @@ func (r *Rest) initEndPoints() error {
 			prop.instanceKeys = make([]string, 0)
 			prop.instanceLabels = make(map[string]string)
 			prop.counters = make(map[string]string)
-			prop.metrics = make([]string, 0)
+			prop.metrics = make([]metric, 0)
 			prop.apiType = "public"
 
 			for _, line1 := range line.GetChildren() {
@@ -161,9 +166,9 @@ func (r *Rest) initEndPoints() error {
 							prop.instanceKeys = append(prop.instanceKeys, name)
 						case "label":
 							prop.instanceLabels[name] = display
-						default:
-							prop.instanceLabels[name] = display
-							prop.metrics = append(prop.metrics, name)
+						case "float":
+							m := metric{label: display, name: name}
+							prop.metrics = append(prop.metrics, m)
 						}
 					}
 					if prop.apiType == "private" {
@@ -337,12 +342,26 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 			}
 		}
 
-		for key, metric := range r.Matrix.GetMetrics() {
-			f := instanceData.Get(key)
+		for _, metric := range r.prop.metrics {
+			f := instanceData.Get(metric.name)
 			if f.Exists() {
-				if err = metric.SetValueFloat64(instance, f.Float()); err != nil {
-					r.Logger.Error().Err(err).Str("key", key).Str("metric", metric.GetName()).
-						Msg("Unable to set float key on metric")
+				if metr, ok := r.Matrix.GetMetrics()[metric.name]; !ok {
+					if metr, _ = r.Matrix.NewMetricFloat64(metric.name); err != nil {
+						r.Logger.Error().Err(err).
+							Str("name", metric.name).
+							Msg("NewMetricFloat64")
+					}
+					metr.SetName(metric.label)
+					if err = metr.SetValueFloat64(instance, f.Float()); err != nil {
+						r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
+							Msg("Unable to set float key on metric")
+					}
+				} else {
+					metr.SetName(metric.label)
+					if err = metr.SetValueFloat64(instance, f.Float()); err != nil {
+						r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
+							Msg("Unable to set float key on metric")
+					}
 				}
 				count++
 			}
@@ -464,23 +483,23 @@ func (r *Rest) processEndPoints(data *matrix.Matrix) error {
 				}
 
 				for _, metric := range endpoint.prop.metrics {
-					f := instanceData.Get(metric)
+					f := instanceData.Get(metric.name)
 					if f.Exists() {
-						if metr, ok := data.GetMetrics()[metric]; !ok {
-							if metr, _ = data.NewMetricFloat64(metric); err != nil {
+						if metr, ok := data.GetMetrics()[metric.name]; !ok {
+							if metr, _ = data.NewMetricFloat64(metric.name); err != nil {
 								r.Logger.Error().Err(err).
-									Str("name", metric).
+									Str("name", metric.name).
 									Msg("NewMetricFloat64")
 							}
-							metr.SetName(endpoint.prop.instanceLabels[metric])
+							metr.SetName(metric.label)
 							if err = metr.SetValueFloat64(instance, f.Float()); err != nil {
-								r.Logger.Error().Err(err).Str("key", metric).Str("metric", endpoint.prop.instanceLabels[metric]).
+								r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
 									Msg("Unable to set float key on metric")
 							}
 						} else {
-							metr.SetName(endpoint.prop.instanceLabels[metric])
+							metr.SetName(metric.label)
 							if err = metr.SetValueFloat64(instance, f.Float()); err != nil {
-								r.Logger.Error().Err(err).Str("key", metric).Str("metric", endpoint.prop.instanceLabels[metric]).
+								r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
 									Msg("Unable to set float key on metric")
 							}
 						}
