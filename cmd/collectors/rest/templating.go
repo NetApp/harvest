@@ -29,7 +29,7 @@ func (r *Rest) initCache() error {
 		display, name, kind string
 	)
 
-	r.Matrix.Object = r.Object
+	r.Matrix.Object = strings.ToLower(r.Object)
 
 	if e := r.Params.GetChildS("export_options"); e != nil {
 		r.Matrix.SetExportOptions(e)
