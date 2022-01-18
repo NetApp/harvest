@@ -432,10 +432,12 @@ value_to_num:
 ```
 ## compute_metric
 
-This rule creates the custom metric (of type `float64`) using the existing metric values. 
+This rule creates the new metric (of type `float64`) using the existing metric values.
 
 Note that you don't define the numeric values yourself, instead, you only provide the metric names with operation, 
 the plugin will fetch the value of each given metric and store the result of mathematical operation in new given custom metric.
+
+Currently, we support these operations: ADD SUBTRACT MULTIPLY DIVIDE
 
 Rule syntax:
 
@@ -453,33 +455,33 @@ compute_metric:
   - space_total ADD space_available space_used
 # a new metric will be created with the name "space_total"
 # if an instance has metric "space_available" with value "1000", and "space_used" with value "400",
-# the resultant value will be "1400" and set to metric "space_total".
+# the result value will be "1400" and set to metric "space_total".
 ```
 
 ```yaml
 compute_metric:
   - disk_count ADD primary.disk_count secondary.disk_count hybrid.disk_count
-# value of custom metric "disk_count" would be addition of all the given disk_counts metric values.
+# value of metric "disk_count" would be addition of all the given disk_counts metric values.
 # disk_count = primary.disk_count + secondary.disk_count + hybrid.disk_count
 ```
 
 ```yaml
 compute_metric:
   - files_available SUBTRACT files files_used
-# value of custom metric "files_available" would be subtraction of the metric value of files_used from metric value of files.
+# value of metric "files_available" would be subtraction of the metric value of files_used from metric value of files.
 # files_available = files - files_used
 ```
 
 ```yaml
 compute_metric:
   - total_bytes MULTIPLY bytes_per_sector sector_count
-# value of custom metric "total_bytes" would be multiplication of metric value of bytes_per_sector and metric value of sector_count.
+# value of metric "total_bytes" would be multiplication of metric value of bytes_per_sector and metric value of sector_count.
 # total_bytes = bytes_per_sector * sector_count
 ```
 
 ```yaml
 compute_metric:
   - transmission_rate DIVIDE transfer.bytes_transferred transfer.total_duration
-# value of custom metric "transmission_rate" would be division of metric value of transfer.bytes_transferred by metric value of transfer.total_duration.
+# value of metric "transmission_rate" would be division of metric value of transfer.bytes_transferred by metric value of transfer.total_duration.
 # transmission_rate = transfer.bytes_transferred / transfer.total_duration
 ```
