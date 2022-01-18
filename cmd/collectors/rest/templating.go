@@ -29,11 +29,6 @@ func (r *Rest) initCache() error {
 		display, name, kind string
 	)
 
-	if x := r.Params.GetChildContentS("object"); x != "" {
-		r.Object = x
-	} else {
-		r.Object = strings.ToLower(r.Object)
-	}
 	r.Matrix.Object = r.Object
 
 	if e := r.Params.GetChildS("export_options"); e != nil {
