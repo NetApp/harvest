@@ -343,25 +343,20 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 		}
 
 		for _, metric := range r.prop.metrics {
+			metr, ok := r.Matrix.GetMetrics()[metric.name]
+			if !ok {
+				if metr, err = r.Matrix.NewMetricFloat64(metric.name); err != nil {
+					r.Logger.Error().Err(err).
+						Str("name", metric.name).
+						Msg("NewMetricFloat64")
+				}
+			}
 			f := instanceData.Get(metric.name)
 			if f.Exists() {
-				if metr, ok := r.Matrix.GetMetrics()[metric.name]; !ok {
-					if metr, _ = r.Matrix.NewMetricFloat64(metric.name); err != nil {
-						r.Logger.Error().Err(err).
-							Str("name", metric.name).
-							Msg("NewMetricFloat64")
-					}
-					metr.SetName(metric.label)
-					if err = metr.SetValueFloat64(instance, f.Float()); err != nil {
-						r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
-							Msg("Unable to set float key on metric")
-					}
-				} else {
-					metr.SetName(metric.label)
-					if err = metr.SetValueFloat64(instance, f.Float()); err != nil {
-						r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
-							Msg("Unable to set float key on metric")
-					}
+				metr.SetName(metric.label)
+				if err = metr.SetValueFloat64(instance, f.Float()); err != nil {
+					r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
+						Msg("Unable to set float key on metric")
 				}
 				count++
 			}
@@ -483,25 +478,20 @@ func (r *Rest) processEndPoints(data *matrix.Matrix) error {
 				}
 
 				for _, metric := range endpoint.prop.metrics {
+					metr, ok := data.GetMetrics()[metric.name]
+					if !ok {
+						if metr, err = data.NewMetricFloat64(metric.name); err != nil {
+							r.Logger.Error().Err(err).
+								Str("name", metric.name).
+								Msg("NewMetricFloat64")
+						}
+					}
 					f := instanceData.Get(metric.name)
 					if f.Exists() {
-						if metr, ok := data.GetMetrics()[metric.name]; !ok {
-							if metr, _ = data.NewMetricFloat64(metric.name); err != nil {
-								r.Logger.Error().Err(err).
-									Str("name", metric.name).
-									Msg("NewMetricFloat64")
-							}
-							metr.SetName(metric.label)
-							if err = metr.SetValueFloat64(instance, f.Float()); err != nil {
-								r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
-									Msg("Unable to set float key on metric")
-							}
-						} else {
-							metr.SetName(metric.label)
-							if err = metr.SetValueFloat64(instance, f.Float()); err != nil {
-								r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
-									Msg("Unable to set float key on metric")
-							}
+						metr.SetName(metric.label)
+						if err = metr.SetValueFloat64(instance, f.Float()); err != nil {
+							r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
+								Msg("Unable to set float key on metric")
 						}
 					}
 				}
