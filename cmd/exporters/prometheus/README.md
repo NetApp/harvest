@@ -24,7 +24,7 @@ All parameters of the exporter are defined in the `Exporters` section of `harves
 An overview of all parameters:
 
 | parameter           | type                                           | description                                                                                                                                                                                                     | default   |
-| ------------------- | ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+|---------------------|------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|
 | `port_range`        | int-int (range), overrides `port` if specified | lower port to upper port (inclusive) of the HTTP end-point to create when a poller specifies this exporter. Starting at lower port, each free port will be tried sequentially up to the upper port.             |           |
 | `port`              | int, required if port_range is not specified   | port of the HTTP end-point                                                                                                                                                                                      |           |
 | `local_http_addr`   | string, optional                               | address of the HTTP server Harvest starts for Prometheus to scrape:<br />use `localhost` to serve only on the local machine<br />use `0.0.0.0` (default) if Prometheus is scrapping from another machine        | `0.0.0.0` |
@@ -33,6 +33,7 @@ An overview of all parameters:
 | `allow_addrs_regex` | list of strings, optional                      | allow access only if host address matches at least one of the regular expressions                                                                                                                               |           |
 | `cache_max_keep`    | string (Go duration format), optional          | maximum amount of time metrics are cached (in case Prometheus does not timely collect the metrics)                                                                                                              | `300s`    |
 | `add_meta_tags`     | bool, optional                                 | add `HELP` and `TYPE` [metatags](https://prometheus.io/docs/instrumenting/exposition_formats/#comments-help-text-and-type-information) to metrics (currently no useful information, but required by some tools) | `false`   |
+| `sort_labels`       | bool, optional                                 | sort metric labels before exporting. Some [open-metrics scrapers report](https://github.com/NetApp/harvest/issues/756) stale metrics when labels are not sorted.                                                | `false`   |
 
 A few examples:
 
