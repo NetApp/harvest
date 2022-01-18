@@ -30,9 +30,9 @@ func (r *Rest) initCache() error {
 	)
 
 	if x := r.Params.GetChildContentS("object"); x != "" {
-		r.Object = x
+		r.prop.object = x
 	} else {
-		r.Object = strings.ToLower(r.Object)
+		r.prop.object = strings.ToLower(r.Object)
 	}
 
 	if e := r.Params.GetChildS("export_options"); e != nil {
