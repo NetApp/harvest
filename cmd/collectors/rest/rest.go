@@ -84,14 +84,29 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	r.Logger.Info().Str("cluster", r.client.Cluster().Name).Msgf("connected to %s", r.client.Cluster().Info)
-
-	r.Matrix.SetGlobalLabel("cluster", r.client.Cluster().Name)
-
 	if err = r.initCache(); err != nil {
 		return err
 	}
+
+	if err = r.InitMatrix(); err != nil {
+		return err
+	}
 	r.Logger.Info().Msgf("initialized cache with %d metrics", len(r.Matrix.GetMetrics()))
+
+	return nil
+}
+
+func (r *Rest) InitMatrix() error {
+	// overwrite from abstract collector
+	r.Matrix.Object = r.Object
+	// Add system (cluster) name
+	r.Logger.Info().Str("cluster", r.client.Cluster().Name).Msgf("connected to %s", r.client.Cluster().Info)
+	r.Matrix.SetGlobalLabel("cluster", r.client.Cluster().Name)
+	if r.Params.HasChildS("labels") {
+		for _, l := range r.Params.GetChildS("labels").GetChildren() {
+			r.Matrix.SetGlobalLabel(l.GetNameS(), l.GetContentS())
+		}
+	}
 
 	return nil
 }
