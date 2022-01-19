@@ -336,14 +336,14 @@ func (me *LabelAgent) computeMetrics(m *matrix.Matrix) error {
 
 		if metric = m.GetMetric(r.metric); metric == nil {
 			if metric, err = m.NewMetricFloat64(r.metric); err != nil {
-				me.Logger.Error().Stack().Err(err).Msgf("computeMetrics: new metric [%s]:", r.metric)
+				me.Logger.Error().Stack().Err(err).Str("new metric", r.metric).Msg("computeMetrics: failed to create metric")
 				return err
 			} else {
 				metric.SetProperty("compute_metric mapping")
 			}
 		}
 
-		for key, instance := range m.GetInstances() {
+		for _, instance := range m.GetInstances() {
 			var result float64
 
 			// Parse first operand and store in result for further processing
@@ -352,7 +352,7 @@ func (me *LabelAgent) computeMetrics(m *matrix.Matrix) error {
 					result = val
 				}
 			} else {
-				me.Logger.Warn().Stack().Err(err).Str("metricName", r.metricNames[0]).Msgf("computeMetrics: metric not found")
+				me.Logger.Warn().Stack().Err(err).Str("metricName", r.metricNames[0]).Msg("computeMetrics: metric not found")
 			}
 
 			// Parse other operands and process them
@@ -381,12 +381,12 @@ func (me *LabelAgent) computeMetrics(m *matrix.Matrix) error {
 							Msg("Unknown operation")
 					}
 				} else {
-					me.Logger.Warn().Stack().Err(err).Str("metricName", r.metricNames[i]).Msgf("computeMetrics: metric not found")
+					me.Logger.Warn().Stack().Err(err).Str("metricName", r.metricNames[i]).Msg("computeMetrics: metric not found")
 				}
 			}
 
 			_ = metric.SetValueFloat64(instance, result)
-			me.Logger.Trace().Msgf("computeMetrics: [%s] [%s] mapped to %f", r.metric, key, result)
+			me.Logger.Trace().Str("metricName", r.metric).Float64("metricValue", result).Msg("computeMetrics: new metric created")
 		}
 	}
 	return nil
