@@ -8,24 +8,14 @@ counters:
   - ^^uuid  => uuid
   - ^home_node.name  => node
   #- ^aggr-get-iter.aggr-attributes.aggr-raid-attributes.aggregate-type  => raid_type  #mapping missing
-  #- aggr-get-iter.aggr-attributes.aggr-raid-attributes.disk-count   => raid_disk_count #mapping missing
-  #- aggr-get-iter.aggr-attributes.aggr-raid-attributes.plex-count  => raid_plex_count #mapping missing
   - block_storage.primary.raid_size => raid_size
   - ^state  => state
-  #- aggr-get-iter.aggr-attributes.aggr-inode-attributes.files-private-used  => inode_files_private_used #mapping missing
-  #- aggr-get-iter.aggr-attributes.aggr-inode-attributes.files-total => inode_files_total #mapping missing
-  #- aggr-get-iter.aggr-attributes.aggr-inode-attributes.files-used => inode_files_used #mapping missing
-  #- aggr-get-iter.aggr-attributes.aggr-inode-attributes.inodefile-private-capacity => inodefile_private_capacity #mapping missing
-  #- aggr-get-iter.aggr-attributes.aggr-inode-attributes.inodefile-public-capacity => inodefile_public_capacity #mapping missing
-  #- aggr-get-iter.aggr-attributes.aggr-inode-attributes.maxfiles-available => inode_maxfiles_available #mapping missing
-  #- aggr-get-iter.aggr-attributes.aggr-inode-attributes.maxfiles-possible => inode_maxfiles_possible #mapping missing
-  #- aggr-get-iter.aggr-attributes.aggr-inode-attributes.maxfiles-used => inode_maxfiles_used #mapping missing
   #- aggr-get-iter.aggr-attributes.aggr-inode-attributes.percent-inode-used-capacity => percent_inode_used_capacity #mapping missing
   - space.cloud_storage.used => space_capacity_tier_used
   - space.block_storage.data_compacted_count => space_data_compacted_count
   - space.block_storage.data_compaction_space_saved => space_data_compaction_saved
   - space.block_storage.data_compaction_space_saved_percent  => space_data_compaction_saved_percent
-  - space.block_storage.hybrid_cache.size  => hybrid_cache_size_total  #mapping seems wrong in doc
+  - block_storage.hybrid_cache.size  => hybrid_cache_size_total
   - snapshot.percent_used_capacity => space_used_percent #mapping seems wrong in doc
   - space.block_storage.inactive_user_data => space_performance_tier_inactive_user_data
   - space.block_storage.inactive_user_data_percent => space_performance_tier_inactive_user_data_percent
@@ -38,25 +28,40 @@ counters:
   - space.block_storage.size => space_total
   - space.block_storage.used => space_used
   #- aggr-get-iter.aggr-attributes.aggr-space-attributes.total-reserved-space => space_reserved #Missing mapping
-  #- aggr-get-iter.aggr-attributes.aggr-volume-count-attributes.flexvol-count => volume_count_flexvol #Missing mapping
   - snapshot.files_total => snapshot_files_total
   - snapshot.files_used => snapshot_files_used
   - snapshot.max_files_available => snapshot_maxfiles_available
   - snapshot.max_files_used => snapshot_maxfiles_used
+  - inode_attributes.used_percent => inode_used_percent
+  - inode_attributes.file_public_capacity => inode_inodefile_public_capacity
+  - inode_attributes.file_private_capacity => inode_inodefile_private_capacity
+  - inode_attributes.files_used => inode_files_used
+  - inode_attributes.files_total => inode_files_total
+  - inode_attributes.files_private_used => inode_files_private_used
+  - inode_attributes.max_files_available => inode_maxfiles_available
+  - inode_attributes.max_files_possible => inode_maxfiles_possible
+  - inode_attributes.max_files_used => inode_maxfiles_used
   #- aggr-get-iter.aggr-attributes.aggr-snapshot-attributes.percent-inode-used-capacity => snapshot_inode_used_percent #missing mapping
-  #- aggr-get-iter.aggr-attributes.aggr-snapshot-attributes.percent-used-capacity => snapshot_used_percent #missing mapping
-  - snapshot.size_available => snapshot_size_available  #mapping seems wrong in doc
-  - snapshot.size_total => snapshot_size_total  #mapping seems wrong in doc
-  - snapshot.size_used => snapshot_size_used  #mapping seems wrong in doc
-  - snapshot.percent_snapshot_space => snapshot_reserve_percent #mapping seems wrong in doc
+  - space.snapshot.available => snapshot_size_available
+  - space.snapshot.used => snapshot_size_used
+  - space.snapshot.used_percent => snapshot_used_percent
+  - space.snapshot.reserve_percent => snapshot_reserve_percent
+  - space.snapshot.total => snapshot_size_total
+  - volume_count => volume_count_flexvol
+  - block_storage.primary.disk_count => primary_disk_count
+  - block_storage.hybrid_cache.disk_count => hybrid_disk_count
+  - block_storage.plexes.# => raid_plex_count
   - hidden_fields:
-      - space.block_storage.inactive_user_data
-      - space.block_storage.inactive_user_data_percent
+      - space.block_storage
+      - inode_attributes
 
 plugins:
   - LabelAgent:
       value_to_num:
         - new_status state online online `0`
+      compute_metric:
+        - snapshot_maxfiles_possible ADD snapshot.max_files_available snapshot.max_files_used
+        - raid_disk_count ADD block_storage.primary.disk_count block_storage.hybrid_cache.disk_count
 
 export_options:
   instance_keys:

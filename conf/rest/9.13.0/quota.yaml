@@ -1,0 +1,33 @@
+
+name:                       Quota
+query:                      api/storage/quota/reports
+object:                     quota
+
+counters:
+  - ^^svm.name => svm
+  - ^^volume.name => volume
+  - ^^index => quota_id
+  - ^qtree.name => qtree
+  - ^type => quota_type
+  - space.hard_limit => disk_limit
+  - space.soft_limit => soft_disk_limit
+  - space.used.total => disk_used
+  - space.used.hard_limit_percent => disk_used_pct_disk_limit
+  - space.used.soft_limit_percent => disk_used_pct_soft_disk_limit
+#  - space.used.soft_limit_percent => disk_used_pct_threshold  # wrong mapping ??
+  - files.hard_limit => file_limit
+  - files.soft_limit => soft_file_limit
+  - files.used.total => files_used
+  - files.used.hard_limit_percent => files_used_pct_file_limit
+  - files.used.soft_limit_percent => files_used_pct_soft_file_limit
+  #- threshold //deprecated
+
+
+export_options:
+  instance_keys:
+    - svm
+    - volume
+    - quota_id
+  instance_labels:
+    - qtree
+    - quota_type

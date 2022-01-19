@@ -125,13 +125,15 @@ Notice that the rules are executed in the same order as you've added them. List 
   - [include_regex](#include_regex)
   - [value_mapping](#value_mapping)
   - [value_to_num](#value_to_num)
+  - [compute_metric](#compute_metric)
 
 ## split
 
 Rule syntax:
 
 ```yaml
-split: LABEL `SEP` LABEL1,LABEL2,LABEL3
+split: 
+  - LABEL `SEP` LABEL1,LABEL2,LABEL3
 # source label - separator - comma-seperated target labels
 ```
 
@@ -140,7 +142,8 @@ Splits the value of a given label by separator `SEP` and creates new labels if t
 Example:
 
 ```yaml
-split: node `/` ,aggr,plex,disk
+split: 
+  - node `/` ,aggr,plex,disk
 # will split the value of "node" using separator "/"
 # will expect 4 values: first will be discarded, remaining
 # three will be stored as labels "aggr", "plex" and "disk"
@@ -153,13 +156,15 @@ Does the same as `split_regex` but uses a regular expression instead of a separa
 Rule syntax:
 
 ```yaml
-split_simple: LABEL `REGEX` LABEL1,LABEL2,LABEL3
+split_simple: 
+  - LABEL `REGEX` LABEL1,LABEL2,LABEL3
 ```
 
 Example:
 
 ```yaml
-node `.*_(ag\d+)_(p\d+)_(d\d+)` aggr,plex,disk
+split_simple: 
+  - node `.*_(ag\d+)_(p\d+)_(d\d+)` aggr,plex,disk
 # will look for "_ag", "_p", "_d", each followed by one
 # or more numbers, if there is a match, the submatches
 # will be stored as "aggr", "plex" and "disk"
@@ -171,7 +176,8 @@ node `.*_(ag\d+)_(p\d+)_(d\d+)` aggr,plex,disk
 Rule syntax:
 
 ```yaml
-split_pairs: LABEL `SEP1` `SEP2`
+split_pairs: 
+  - LABEL `SEP1` `SEP2`
 # source label - pair separator - key-value separator
 ```
 
@@ -180,7 +186,8 @@ Extracts key-value pairs from the value of source label `LABEL`. Note that you n
 Example:
 
 ```yaml
-split_pairs: comment ` ` `:`
+split_pairs: 
+  - comment ` ` `:`
 # will split pairs using a single space and split key-values using colon
 # e.g. if comment="owner:jack contact:some@email", the result wll be
 # two new labels: owner="jack" and contact="some@email"
@@ -193,14 +200,16 @@ Join multiple label values using separator `SEP` and create a new label.
 Rule syntax:
 
 ```yaml
-join: LABEL `SEP` LABEL1,LABEL2,LABEL3
+join: 
+  - LABEL `SEP` LABEL1,LABEL2,LABEL3
 # target label - separator - comma-seperated source labels
 ```
 
 Example:
 
 ```yaml
-join: plex_long `_` aggr,plex
+join: 
+  - plex_long `_` aggr,plex
 # will look for the values of labels "aggr" and "plex",
 # if they are set, a new "plex_long" label will be added
 # by joining their values with "_"
@@ -213,14 +222,16 @@ Substitute substring `OLD` with `NEW` in label `SOURCE` and store in `TARGET`. N
 Rule syntax:
 
 ```yaml
-replace: SOURCE TARGET `OLD` `NEW`
+replace: 
+  - SOURCE TARGET `OLD` `NEW`
 # source label - target label - substring to replace - replace with
 ```
 
 Example:
 
 ```yaml
-replace: node node_short `node_` ``
+replace: 
+  - node node_short `node_` ``
 # this rule will just remove "node_" from all values of label
 # "node". E.g. if label is "node_jamaica1", it will rewrite it 
 # as "jamaica1"
@@ -232,14 +243,16 @@ Same as `replace_simple`, but will use a regular expression instead of `OLD`. No
 Rule syntax:
 
 ```yaml
-replace_regex: SOURCE TARGET `REGEX` `NEW`
+replace_regex: 
+  - SOURCE TARGET `REGEX` `NEW`
 # source label - target label - substring to replace - replace with
 ```
 
 Example:
 
 ```yaml
-replace_regex: node node `^(node)_(\d+)_.*$` `Node-$2`
+replace_regex: 
+  - node node `^(node)_(\d+)_.*$` `Node-$2`
 # if there is a match, will capitalize "Node" and remove suffixes.
 # E.g. if label is "node_10_dc2", it will rewrite it as
 # will rewrite it as "Node-10"
@@ -252,14 +265,16 @@ Exclude each instance, if the value of `LABEL` is exactly `VALUE`. Exclude means
 Rule syntax:
 
 ```yaml
-exclude_equals: LABEL `VALUE`
+exclude_equals: 
+  - LABEL `VALUE`
 # label name - label value
 ```
 
 Example:
 
 ```yaml
-exclude_equals: vol_type `flexgroup_constituent`
+exclude_equals: 
+  - vol_type `flexgroup_constituent`
 # all instances, which have label "vol_type" with value
 # "flexgroup_constituent" will not be exported
 ```
@@ -271,14 +286,16 @@ Same as `exclude_equals`, but all labels that *contain* `VALUE` will be excluded
 Rule syntax:
 
 ```yaml
-exclude_contains: LABEL `VALUE`
+exclude_contains: 
+  - LABEL `VALUE`
 # label name - label value
 ```
 
 Example:
 
 ```yaml
-exclude_contains: vol_type `flexgroup_`
+exclude_contains: 
+  - vol_type `flexgroup_`
 # all instances, which have label "vol_type" which contain
 # "flexgroup_" will not be exported
 ```
@@ -290,14 +307,16 @@ Same as `exclude_equals`, but will use a regular expression and all matching ins
 Rule syntax:
 
 ```yaml
-exclude_regex: LABEL `REGEX`
+exclude_regex: 
+  - LABEL `REGEX`
 # label name - regular expression
 ```
 
 Example:
 
 ```yaml
-exclude_regex: vol_type `^flex`
+exclude_regex: 
+  - vol_type `^flex`
 # all instances, which have label "vol_type" which starts with
 # "flex" will not be exported
 ```
@@ -309,14 +328,16 @@ Include each instance, if the value of `LABEL` is exactly `VALUE`. Include means
 Rule syntax:
 
 ```yaml
-include_equals: LABEL `VALUE`
+include_equals: 
+  - LABEL `VALUE`
 # label name - label value
 ```
 
 Example:
 
 ```yaml
-include_equals: vol_type `flexgroup_constituent`
+include_equals: 
+  - vol_type `flexgroup_constituent`
 # all instances, which have label "vol_type" with value
 # "flexgroup_constituent" will be exported
 ```
@@ -328,14 +349,16 @@ Same as `include_equals`, but all labels that *contain* `VALUE` will be included
 Rule syntax:
 
 ```yaml
-include_contains: LABEL `VALUE`
+include_contains: 
+  - LABEL `VALUE`
 # label name - label value
 ```
 
 Example:
 
 ```yaml
-include_contains: vol_type `flexgroup_`
+include_contains: 
+  - vol_type `flexgroup_`
 # all instances, which have label "vol_type" which contain
 # "flexgroup_" will be exported
 ```
@@ -347,14 +370,16 @@ Same as `include_equals`, but a regular expression will be used for inclusion. S
 Rule syntax:
 
 ```yaml
-include_regex: LABEL `REGEX`
+include_regex: 
+  - LABEL `REGEX`
 # label name - regular expression
 ```
 
 Example:
 
 ```yaml
-include_regex: vol_type `^flex`
+include_regex: 
+  - vol_type `^flex`
 # all instances, which have label "vol_type" which starts with
 # "flex" will be exported
 ```
@@ -375,7 +400,8 @@ Note that you don't define the numeric values yourself, instead, you only provid
 Rule syntax:
 
 ```yaml
-value_to_num: METRIC LABEL ZAPI_VALUE REST_VALUE `N`
+value_to_num: 
+  - METRIC LABEL ZAPI_VALUE REST_VALUE `N`
 # map values of LABEL to 1 if it is ZAPI_VALUE or REST_VALUE
 # otherwise, value of METRIC is set to N
 ```
@@ -384,7 +410,8 @@ The default value `N` is optional, if no default value is given and the label va
 Examples:
 
 ```yaml
-value_to_num: status state up online `0`
+value_to_num: 
+  - status state up online `0`
 # a new metric will be created with the name "status"
 # if an instance has label "state" with value "up", the metric value will be 1,
 # if it's "online", the value will be set to 1,
@@ -392,13 +419,69 @@ value_to_num: status state up online `0`
 ```
 
 ```yaml
-value_to_num: status state up online `4`
+value_to_num: 
+  - status state up online `4`
 # metric value will be set to 1 if "state" is "up", otherwise to **4**
 ```
 
 ```yaml
-value_to_num: status outage - - `0` #ok_value is empty value. 
+value_to_num: 
+  - status outage - - `0` #ok_value is empty value. 
 # metric value will be set to 1 if "outage" is empty, if it's any other value, it will be set to the default, 0
 # '-' is a special symbol in this mapping, and it will be converted to blank while processing.
 ```
+## compute_metric
 
+This rule creates the new metric (of type `float64`) using the existing metric values.
+
+Note that you don't define the numeric values yourself, instead, you only provide the metric names with operation, 
+the plugin will fetch the value of each given metric and store the result of mathematical operation in new given custom metric.
+
+Currently, we support these operations: ADD SUBTRACT MULTIPLY DIVIDE
+
+Rule syntax:
+
+```yaml
+compute_metric: 
+  - METRIC OPERATION METRIC1 METRIC2 METRIC3 
+# target new metric - mathematical operation - input metric names 
+# apply OPERATION on metric values of METRIC1, METRIC2 and METRIC3 and set result in METRIC
+```
+
+Examples:
+
+```yaml
+compute_metric:
+  - space_total ADD space_available space_used
+# a new metric will be created with the name "space_total"
+# if an instance has metric "space_available" with value "1000", and "space_used" with value "400",
+# the result value will be "1400" and set to metric "space_total".
+```
+
+```yaml
+compute_metric:
+  - disk_count ADD primary.disk_count secondary.disk_count hybrid.disk_count
+# value of metric "disk_count" would be addition of all the given disk_counts metric values.
+# disk_count = primary.disk_count + secondary.disk_count + hybrid.disk_count
+```
+
+```yaml
+compute_metric:
+  - files_available SUBTRACT files files_used
+# value of metric "files_available" would be subtraction of the metric value of files_used from metric value of files.
+# files_available = files - files_used
+```
+
+```yaml
+compute_metric:
+  - total_bytes MULTIPLY bytes_per_sector sector_count
+# value of metric "total_bytes" would be multiplication of metric value of bytes_per_sector and metric value of sector_count.
+# total_bytes = bytes_per_sector * sector_count
+```
+
+```yaml
+compute_metric:
+  - transmission_rate DIVIDE transfer.bytes_transferred transfer.total_duration
+# value of metric "transmission_rate" would be division of metric value of transfer.bytes_transferred by metric value of transfer.total_duration.
+# transmission_rate = transfer.bytes_transferred / transfer.total_duration
+```

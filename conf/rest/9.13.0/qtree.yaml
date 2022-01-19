@@ -1,0 +1,32 @@
+
+name:                       Qtree
+query:                      api/storage/qtrees
+object:                     qtree
+
+counters:
+  - ^^svm.name => svm
+  - ^^volume.name => volume
+  - ^^name => qtree
+  - ^export_policy.name => export_policy
+  - ^security_style => security_style
+  - id => id
+
+
+endpoints:
+  - query: api/private/cli/qtree
+    counters:
+      - ^^vserver => svm
+      - ^^volume => volume
+      - ^^qtree => qtree
+      - ^status => status
+
+
+export_options:
+  instance_keys:
+    - qtree
+    - volume
+    - svm
+  instance_labels:
+    - export_policy
+    - security_style
+    - status
