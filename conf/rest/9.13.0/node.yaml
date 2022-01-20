@@ -4,22 +4,22 @@ query:                      api/cluster/nodes
 object:                     node
 
 counters:
-  - metric.processor_utilization => cpu_busytime   #hidden field
-  - controller.failed_fan.count => failed_fan
+  - ^^name => node
   - ^controller.failed_fan.message.message => failed_fan
-  - controller.failed_power_supply.count => failed_power
   - ^controller.failed_power_supply.message.message => failed_power_message
   - ^controller.over_temperature => over_temperature
   - ^state => healthy
   #- ^system-node-get-iter.maximum-aggregate-size => max_aggr_size  #missing mapping
   #- ^system-node-get-iter.maximum-number-of-volumes => max_vol_num #missing mapping
   #- ^system-node-get-iter.maximum-volume-size => max_vol_size #missing mapping
-  - ^^name => node
   - ^location
   - ^model
   - ^serial_number => serial
-  - ^uptime
   - ^version.full => version
+  - uptime
+  - controller.failed_power_supply.count => failed_power
+  - metric.processor_utilization => cpu_busytime   #hidden field
+  - controller.failed_fan.count => failed_fan
   - hidden_fields:
       - metric.processor_utilization
 

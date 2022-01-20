@@ -15,8 +15,6 @@ counters:
     - ^vlan.base_port.node.name => vlan_node
     - ^vlan.base_port.name => vlan_port
 
-collect_only_labels: true
-
 endpoints:
   - query: api/private/cli/network/port
     counters:

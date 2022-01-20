@@ -7,10 +7,10 @@ counters:
   - ^name  => aggr
   - ^^uuid  => uuid
   - ^home_node.name  => node
-  #- ^aggr-get-iter.aggr-attributes.aggr-raid-attributes.aggregate-type  => raid_type  #mapping missing
-  - block_storage.primary.raid_size => raid_size
   - ^state  => state
-  #- aggr-get-iter.aggr-attributes.aggr-inode-attributes.percent-inode-used-capacity => percent_inode_used_capacity #mapping missing
+  - ^block_storage.primary.disk_type => type
+  - ^block_storage.primary.raid_type => raid_type
+  - block_storage.primary.raid_size => raid_size
   - space.cloud_storage.used => space_capacity_tier_used
   - space.block_storage.data_compacted_count => space_data_compacted_count
   - space.block_storage.data_compaction_space_saved => space_data_compaction_saved

@@ -4,20 +4,20 @@ query:                        api/snapmirror/relationships
 object:                       snapmirror
 
 counters:
+  - ^^uuid => relationship_id
   - ^destination.path  => destination_volume
   - ^destination.svm.name => destination_vserver
   - ^healthy
-  - lag_time
-  - transfer.total_duration => last_transfer_duration
-  - transfer.end_time => last_transfer_end_timestamp
-  - transfer.bytes_transferred  => last_transfer_size
   - ^transfer.bytes_transferred  => last_transfer_size
-  - ^^uuid => relationship_id
   - ^transfer.state => relationship_status
   - ^source.path => source_volume
   - ^source.svm.name => source_vserver
   #- ^source-node #missing mapping  ==> Needs plugin development
   - ^unhealthy_reason.#.message => unhealthy_reason
+  - lag_time
+  - transfer.total_duration => last_transfer_duration
+  - transfer.end_time => last_transfer_end_timestamp
+  - transfer.bytes_transferred  => last_transfer_size
 
 
 endpoints:
@@ -29,7 +29,10 @@ endpoints:
       - ^last_transfer_type => last_transfer_type
       - ^relationship_group_type  => group_type
       - ^schedule => schedule
+      - ^policy_type => policy_type
+      - ^destination_path => destination_location
       - total_transfer_time_secs => total_transfer_time_secs
+      - total_transfer_bytes => total_transfer_bytes
       - newest_snapshot_timestamp => newest_snapshot_timestamp
       - resync_successful_count => resync_successful_count
       - update_successful_count => update_successful_count
@@ -59,3 +62,5 @@ export_options:
     - destination_node_limit
     - source_node_limit
     - group_type
+    - policy_type
+    - destination_location
