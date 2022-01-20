@@ -18,3 +18,4 @@ objects:
   Qtree:            qtree.yaml
   Quota:            quota.yaml
   Shelf:            shelf.yaml
+  Sensor:           sensor.yaml
