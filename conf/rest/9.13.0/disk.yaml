@@ -6,23 +6,23 @@ object:           disk
 counters:
   - ^^uid
   - ^name                     => disk
-  - bytes_per_sector          => bytes_per_sector
-  - sector_count              => sectors
+  - ^state
+  - ^node.uuid
+  - ^node.name                => node
+  - ^home_node.name           => owner_node
   - ^type
   - ^container_type
   - ^model
   - ^serial_number
   - ^shelf.uid                => shelf
   - ^bay                      => shelf_bay
+  - bytes_per_sector          => bytes_per_sector
+  - sector_count              => sectors
   - stats.average_latency     => stats_average_latency
   - stats.throughput          => stats_io_kbps
   - stats.power_on_hours      => uptime
   - outage.reason             => outage
   - usable_size
-  - ^state
-  - ^node.uuid
-  - ^node.name                => node
-  - ^home_node.name           => owner_node
 
 endpoints:
   - query: api/private/cli/disk
@@ -32,6 +32,7 @@ endpoints:
       - sectors_written => stats_sectors_written
 
 plugins:
+  - Disk
   - LabelAgent:
       value_to_num:
         - new_status outage - - `0` #ok_value is empty value, '-' would be converted to blank while processing.

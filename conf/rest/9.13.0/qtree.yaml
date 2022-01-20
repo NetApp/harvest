@@ -19,6 +19,7 @@ endpoints:
       - ^^volume => volume
       - ^^qtree => qtree
       - ^status => status
+      - ^oplock_mode => oplocks
 
 
 export_options:
@@ -30,3 +31,4 @@ export_options:
     - export_policy
     - security_style
     - status
+    - oplocks

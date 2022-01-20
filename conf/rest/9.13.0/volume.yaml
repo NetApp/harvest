@@ -3,13 +3,16 @@ query:                    api/storage/volumes
 object:                   volume
 
 counters:
-  - autosize.maximum => autosize_maximum_size
-  - autosize.grow_threshold => autosize_grow_threshold_percent
   - ^^uuid => instance_uuid
   - ^name                       => volume
   - ^svm.name        => svm
   - ^aggregates.#.name  => aggr #zapi maps to field containing-aggregate-name while rest mapping is an array?
   - ^style             => style
+  - ^type             => type
+  - ^snapshot_policy.name  => snapshot_policy
+  - ^state   => state
+  - autosize.maximum => autosize_maximum_size
+  - autosize.grow_threshold => autosize_grow_threshold_percent
   - space.expected_available => space_expected_available
   - space.filesystem_size                       => filesystem_size
   - space.logical_space.available  => space_logical_available  #not found in infinity cluster
@@ -30,8 +33,6 @@ counters:
   - space.snapshot.reserve_size               => snapshot_reserve_size
   - space.snapshot.reserve_percent         => snapshot_reserve_percent
   - space.snapshot.space_used_percent    => snapshot_reserve_used_percent
-  - ^snapshot_policy.name  => snapshot_policy
-  - ^state   => state
   - hidden_fields:
     - space
     - autosize
@@ -74,5 +75,6 @@ export_options:
     - state
     - is_sis_volume
     - snapshot_policy
+    - type
 
 
