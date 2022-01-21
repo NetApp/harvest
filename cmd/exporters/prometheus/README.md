@@ -258,12 +258,19 @@ Scroll down to near the end of file and add the following lines:
 
 # Prometheus Alerts
 
-## Create Alerting Rules in Prometheus
+Prometheus includes out-of-the-box support for simple alerting. Alert rules are configured in your `prometheus.yml` file. Setup and details can be found in the Prometheus guide on [alerting](https://prometheus.io/docs/prometheus/latest/configuration/alerting/).
+ 
+Harvest also includes [sample alerts](https://github.com/NetApp/harvest/blob/main/docker/prometheus/alert_rules.yml) for reference.
 
-Refer prometheus guide to [alerting rules](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/) for configuring alerts.
-You can also refer [harvest sample alerts](https://github.com/NetApp/harvest/blob/main/docker/prometheus/alert_rules.yml) for reference.
+## Alertmanager
 
-## Sending alert notifications
+Prometheus's builtin alerts are good for simple workflows. They do a nice job telling you what's happening at the moment.
+If you need a richer solution that includes summarization, notification, advanced delivery, deduplication, etc. checkout [Alertmanager](https://prometheus.io/docs/alerting/latest/alertmanager/).
 
-Prometheus's alerting rules are good at figuring what is broken right now, but they are not a fully-fledged notification solution. Another layer is needed to add summarization, notification rate limiting, silencing and alert dependencies on top of the simple alert definitions. In Prometheus's ecosystem, the [Alertmanager](https://prometheus.io/docs/alerting/latest/alertmanager/) takes on this role. Thus, Prometheus may be configured to periodically send information about alert states to an Alertmanager instance, which then takes care of dispatching the right notifications.
-Prometheus can be [configured](https://prometheus.io/docs/prometheus/latest/configuration/configuration/) to automatically discover available Alertmanager instances through its service discovery integrations.
+## Reference
+
+- [Prometheus Alerting](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/)
+- [Alertmanager](https://prometheus.io/docs/alerting/latest/alertmanager/)
+- [Alertmanager's notification metrics](https://utcc.utoronto.ca/~cks/space/blog/sysadmin/AlertmanagerNotificationMetrics)
+- [Prometheus Linter](https://github.com/cloudflare/pint)
+- [Collection of example Prometheus Alerts](https://github.com/samber/awesome-prometheus-alerts)
