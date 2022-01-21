@@ -254,3 +254,23 @@ Scroll down to near the end of file and add the following lines:
         - 'localhost:14568'
 ```
 **NOTE** If Prometheus is not on the same machine as Harvest, then replace `localhost` with the IP address of your Harvest machine. Also note the scrape interval above is set to 60s. That matches the polling frequency of the default Harvest collectors. If you change the polling frequency of a Harvest collector to a lower value, you should also change the scrape interval.
+
+
+# Prometheus Alerts
+
+Prometheus includes out-of-the-box support for simple alerting. Alert rules are configured in your `prometheus.yml` file. Setup and details can be found in the Prometheus guide on [alerting](https://prometheus.io/docs/prometheus/latest/configuration/alerting/).
+ 
+Harvest also includes [sample alerts](https://github.com/NetApp/harvest/blob/main/docker/prometheus/alert_rules.yml) for reference.
+
+## Alertmanager
+
+Prometheus's builtin alerts are good for simple workflows. They do a nice job telling you what's happening at the moment.
+If you need a richer solution that includes summarization, notification, advanced delivery, deduplication, etc. checkout [Alertmanager](https://prometheus.io/docs/alerting/latest/alertmanager/).
+
+## Reference
+
+- [Prometheus Alerting](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/)
+- [Alertmanager](https://prometheus.io/docs/alerting/latest/alertmanager/)
+- [Alertmanager's notification metrics](https://utcc.utoronto.ca/~cks/space/blog/sysadmin/AlertmanagerNotificationMetrics)
+- [Prometheus Linter](https://github.com/cloudflare/pint)
+- [Collection of example Prometheus Alerts](https://github.com/samber/awesome-prometheus-alerts)
