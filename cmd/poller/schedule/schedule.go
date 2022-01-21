@@ -108,7 +108,7 @@ func (s *Schedule) IsStandBy() bool {
 
 // IsTaskStandBy tells if a task in schedule is in IsStandBy.
 func (s *Schedule) IsTaskStandBy(t *task) bool {
-	return s.standByMode && t.Name == s.standByTask.Name
+	return t.Name == s.standByTask.Name
 }
 
 // SetStandByMode initializes StandbyMode: Schedule will suspend all tasks until
