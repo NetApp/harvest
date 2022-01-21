@@ -68,7 +68,7 @@ groups:
 
     # Snapmirror lag time is high
   - alert: Snapmirror lag time is high
-    expr: snapmirror_lag_time > 1800
+    expr: snapmirror_lag_time > 3600
     for: 1m
     labels:
       severity: "critical"
