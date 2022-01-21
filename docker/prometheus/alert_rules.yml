@@ -15,7 +15,7 @@ groups:
       description: "[{{ $labels.instance }}] of job [{{ $labels.job }}] has been down for more than 5 minutes."
 
   # Alert for any instance that has a volume used percentage > 90%
-  - alert: Volume Used Percentage > 90%
+  - alert: Volume Used Percentage Breach
     expr: volume_size_used_percent > 90
     for: 5m
     labels:
