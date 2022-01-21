@@ -27,7 +27,7 @@ groups:
 
   # Alert for offline volume
   - alert: Volume state offline
-    expr: volume_labels{state="offline"}
+    expr: volume_labels{state="offline"} == 1
     for: 5m
     labels:
       severity: "critical"
@@ -37,7 +37,7 @@ groups:
 
     # Alert for offline aggregate
   - alert: Aggregate state is not online
-    expr: aggr_labels{state!="online"}
+    expr: aggr_labels{state!="online"} == 1
     for: 5m
     labels:
       severity: "critical"
@@ -47,7 +47,7 @@ groups:
 
     # Alert for disk failure
   - alert: Disk failure
-    expr: disk_labels{failed="true"}
+    expr: disk_labels{failed="true"} == 1
     for: 5m
     labels:
       severity: "critical"
