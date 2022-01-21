@@ -281,6 +281,13 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 				continue
 			}
 
+			if !me.Schedule.IsTaskStandBy(task) {
+				me.Logger.Info().
+					Str("task", task.Name).
+					Msgf("schedule is in standby mode skipping")
+				continue
+			}
+
 			var (
 				start, pluginStart   time.Time
 				taskTime, pluginTime time.Duration

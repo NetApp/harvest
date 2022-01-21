@@ -106,6 +106,11 @@ func (s *Schedule) IsStandBy() bool {
 	return s.standByMode
 }
 
+// IsTaskStandBy tells if a task in schedule is in IsStandBy.
+func (s *Schedule) IsTaskStandBy(t *task) bool {
+	return s.standByMode && t.Name == s.standByTask.Name
+}
+
 // SetStandByMode initializes StandbyMode: Schedule will suspend all tasks until
 // the critical task t has succeeded. The temporary interval i will be used for
 // the task until Schedule recovers to normal mode.
