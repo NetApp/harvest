@@ -20,6 +20,8 @@ endpoints:
       - ^^qtree => qtree
       - ^status => status
 
+plugins:
+  - Qtree
 
 export_options:
   instance_keys:
