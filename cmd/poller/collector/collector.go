@@ -284,7 +284,7 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 			if me.Schedule.IsStandBy() && !me.Schedule.IsTaskStandBy(task) {
 				me.Logger.Info().
 					Str("task", task.Name).
-					Msgf("schedule is in standby mode skipping")
+					Msg("schedule is in standby mode skipping")
 				continue
 			}
 
