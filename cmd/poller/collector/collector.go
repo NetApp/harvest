@@ -281,7 +281,7 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 				continue
 			}
 
-			if !me.Schedule.IsTaskStandBy(task) {
+			if me.Schedule.IsStandBy() && !me.Schedule.IsTaskStandBy(task) {
 				me.Logger.Info().
 					Str("task", task.Name).
 					Msgf("schedule is in standby mode skipping")
@@ -424,7 +424,7 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 			me.Schedule.Sleep()
 			// log if lagging by more than 50 ms
 			// < is used since larger durations are more negative
-		} else if nd.Milliseconds() <= -50 {
+		} else if nd.Milliseconds() <= -50 && !me.Schedule.IsStandBy() {
 			me.Logger.Warn().Msgf("lagging behind schedule %s", (-nd).String())
 		}
 	}
