@@ -11,8 +11,8 @@ groups:
     labels:
       severity: "critical"
     annotations:
-      summary: "Endpoint {{ $labels.instance }} down"
-      description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes."
+      summary: "Endpoint [{{ $labels.instance }}] down"
+      description: "[{{ $labels.instance }}] of job [{{ $labels.job }}] has been down for more than 5 minutes."
 
   # Alert for any instance that has a volume used percentage > 90%
   - alert: Volume Used Percentage > 90%
@@ -21,5 +21,57 @@ groups:
     labels:
       severity: "critical"
     annotations:
-      summary: "Volume {{ $labels.instance }} 90% used"
-      description: "{{ $labels.instance }} of job {{ $labels.job }}'s volume is > 90 used"
+      summary: "Volume [{{ $labels.volume }}] is [{{$value}}%] used"
+      description: "Volume [{{ $labels.volume }}] is [{{$value}}%] used"
+
+
+  # Alert for offline volume
+  - alert: Volume state offline
+    expr: volume_labels{state="offline"}
+    for: 5m
+    labels:
+      severity: "critical"
+    annotations:
+      summary: "Volume [{{ $labels.volume  }}] is offline"
+      description: "Volume [{{ $labels.volume  }}] is offline"
+
+    # Alert for offline aggregate
+  - alert: Aggregate state is not online
+    expr: aggr_labels{state!="online"}
+    for: 5m
+    labels:
+      severity: "critical"
+    annotations:
+      summary: "Aggregate [{{ $labels.aggr }}] state is [{{ $labels.state }}]"
+      description: "Aggregate [{{ $labels.aggr }}] state is [{{ $labels.state }}]"
+
+    # Alert for disk failure
+  - alert: Disk failure
+    expr: disk_labels{failed="true"}
+    for: 5m
+    labels:
+      severity: "critical"
+    annotations:
+      summary: "Disk [{{ $labels.disk }}] is in failure state"
+      description: "Disk [{{ $labels.disk }}] is in failure state"
+
+
+    # Alert for node nfs latency
+  - alert: Node nfs latency is high
+    expr: node_nfs_latency > 1000
+    for: 5m
+    labels:
+      severity: "critical"
+    annotations:
+      summary: "Node [{{ $labels.node }}] has [{{$value}}] nfs latency"
+      description: "Node [{{ $labels.node }}] has [{{$value}}] nfs latency"
+
+    # Snapmirror lag time is high
+  - alert: Snapmirror lag time is high
+    expr: snapmirror_lag_time > 1800
+    for: 1m
+    labels:
+      severity: "critical"
+    annotations:
+      summary: "Snapmirror [{{ $labels.relationship_id }}] has [{{$value}}] lag time (in secs)"
+      description: "Snapmirror [{{ $labels.relationship_id }}] has [{{$value}}] lag time (in secs)"

@@ -254,3 +254,16 @@ Scroll down to near the end of file and add the following lines:
         - 'localhost:14568'
 ```
 **NOTE** If Prometheus is not on the same machine as Harvest, then replace `localhost` with the IP address of your Harvest machine. Also note the scrape interval above is set to 60s. That matches the polling frequency of the default Harvest collectors. If you change the polling frequency of a Harvest collector to a lower value, you should also change the scrape interval.
+
+
+# Prometheus Alerts
+
+## Create Alerting Rules in Prometheus
+
+Refer prometheus guide to [alerting rules](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/) for configuring alerts.
+You can also refer [harvest sample alerts](https://github.com/NetApp/harvest/blob/main/docker/prometheus/alert_rules.yml) for reference.
+
+## Sending alert notifications
+
+Prometheus's alerting rules are good at figuring what is broken right now, but they are not a fully-fledged notification solution. Another layer is needed to add summarization, notification rate limiting, silencing and alert dependencies on top of the simple alert definitions. In Prometheus's ecosystem, the [Alertmanager](https://prometheus.io/docs/alerting/latest/alertmanager/) takes on this role. Thus, Prometheus may be configured to periodically send information about alert states to an Alertmanager instance, which then takes care of dispatching the right notifications.
+Prometheus can be [configured](https://prometheus.io/docs/prometheus/latest/configuration/configuration/) to automatically discover available Alertmanager instances through its service discovery integrations.
