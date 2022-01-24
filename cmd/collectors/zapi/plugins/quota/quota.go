@@ -159,13 +159,13 @@ func (my *Quota) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		my.Logger.Debug().Int("quotas", len(quotas)).Msg("fetching quotas")
 
 		for quotaIndex, quota := range quotas {
-			var vserver string
+			var vserver, quotaInstanceKey string
+			var qtreeInstance *matrix.Instance
+
 			tree := quota.GetChildContentS("tree")
 			volume := quota.GetChildContentS("volume")
 			if my.client.IsClustered() {
 				vserver = quota.GetChildContentS("vserver")
-			} else {
-				vserver = quota.GetChildContentS("vfiler")
 			}
 
 			// If quota-type is not a Qtree, then skip
@@ -182,7 +182,11 @@ func (my *Quota) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				}
 
 				if attrValue := quota.GetChildContentS(attribute); attrValue != "" {
-					qtreeInstance := data.GetInstance(tree + "." + volume + "." + vserver)
+					if my.client.IsClustered() {
+						qtreeInstance = data.GetInstance(tree + "." + volume + "." + vserver)
+					} else {
+						qtreeInstance = data.GetInstance(tree + "." + volume)
+					}
 					if qtreeInstance == nil {
 						my.Logger.Warn().
 							Str("tree", tree).
@@ -195,8 +199,12 @@ func (my *Quota) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 						continue
 					}
 					// Ex. InstanceKey: SVMA.vol1Abc.qtree1.5.disk-limit
-					instanceKey := vserver + "." + volume + "." + tree + "." + strconv.Itoa(quotaIndex) + "." + attribute
-					instance, err := my.data.NewInstance(instanceKey)
+					if my.client.IsClustered() {
+						quotaInstanceKey = vserver + "." + volume + "." + tree + "." + strconv.Itoa(quotaIndex) + "." + attribute
+					} else {
+						quotaInstanceKey = volume + "." + tree + "." + strconv.Itoa(quotaIndex) + "." + attribute
+					}
+					quotaInstance, err := my.data.NewInstance(quotaInstanceKey)
 
 					if err != nil {
 						my.Logger.Debug().Msgf("add (%s) instance: %v", attribute, err)
@@ -207,13 +215,13 @@ func (my *Quota) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 					for _, label := range my.data.GetExportOptions().GetChildS("instance_keys").GetAllChildContentS() {
 						if value := qtreeInstance.GetLabel(label); value != "" {
-							instance.SetLabel(label, value)
+							quotaInstance.SetLabel(label, value)
 						}
 					}
 
 					// If the Qtree is the volume itself, than qtree label is empty, so copy the volume name to qtree.
 					if tree == "" {
-						instance.SetLabel("qtree", volume)
+						quotaInstance.SetLabel("qtree", volume)
 					}
 
 					// populate numeric data
@@ -222,7 +230,7 @@ func (my *Quota) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 						if value == "-" {
 							value = "0"
 						}
-						if err := m.SetValueString(instance, value); err != nil {
+						if err := m.SetValueString(quotaInstance, value); err != nil {
 							my.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", attribute, value, err)
 						} else {
 							my.Logger.Debug().Msgf("(%s) added value (%s)", attribute, value)
