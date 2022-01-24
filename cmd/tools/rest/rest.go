@@ -174,7 +174,7 @@ func doData() {
 	}
 
 	timeout := DefaultTimeout * time.Second
-	if client, err = New(poller, timeout); err != nil {
+	if client, err = New(*poller, timeout); err != nil {
 		fmt.Printf("error creating new client %+v\n", err)
 		os.Exit(1)
 	}

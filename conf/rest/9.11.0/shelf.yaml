@@ -19,6 +19,7 @@ endpoints:
       - ^^serial_number => serial_number
       - ^op_status  => op_status
 
+
 plugins:
   - Shelf
   - LabelAgent:
