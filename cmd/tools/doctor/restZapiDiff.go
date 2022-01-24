@@ -5,10 +5,12 @@ import (
 	"github.com/tidwall/gjson"
 	"io/ioutil"
 	"log"
+	"math"
 	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -22,8 +24,8 @@ func DoDiffRestZapi(zapiDataCenterName string, restDataCenterName string) {
 		fmt.Println(k, v)
 	}
 
-	fmt.Println("################## Missing Metrics by Object in prometheus ##############")
 	metricDiffMap := metricDiff(zapiDataCenterName, restDataCenterName)
+	fmt.Println("################## Missing Metrics by Object in prometheus ##############")
 	for k, v := range metricDiffMap {
 		fmt.Println(k, v)
 	}
@@ -79,14 +81,90 @@ func metricDiff(zapiDataCenterName string, restDataCenterName string) map[string
 		restKeys = append(restKeys, k)
 	}
 
-	metricDiff := difference(zapiKeys, restKeys)
+	metricDiff, common := difference(zapiKeys, restKeys)
 	// group diff by template type
 	x := make(map[string][]string)
 	for _, label := range metricDiff {
 		k := strings.Split(label, "_")[0]
 		x[k] = append(x[k], label)
 	}
+
+	fmt.Println("################## Metrics Diffs in prometheus ##############")
+	for _, c := range common {
+		metricValueDiff(c)
+	}
 	return x
+}
+
+func metricValueDiff(metricName string) map[string][]string {
+	timeNow := time.Now().Unix()
+	queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",
+		PrometheusUrl, metricName, timeNow)
+	data, _ := getResponse(queryUrl)
+	replacer := strings.NewReplacer("[", "", "]", "", "\"", "")
+	zapiMetric := make(map[string]float64)
+	restMetric := make(map[string]float64)
+	results := make([]gjson.Result, 0)
+	if strings.HasPrefix(metricName, "disk_") {
+		results = gjson.GetMany(data, "data.result.#.metric.disk", "data.result.#.value.1", "data.result.#.metric.datacenter")
+	}
+	if strings.HasPrefix(metricName, "aggr_") {
+		results = gjson.GetMany(data, "data.result.#.metric.aggr", "data.result.#.value.1", "data.result.#.metric.datacenter")
+	}
+	if strings.HasPrefix(metricName, "lun_") {
+		results = gjson.GetMany(data, "data.result.#.metric.lun", "data.result.#.value.1", "data.result.#.metric.datacenter")
+	}
+	if strings.HasPrefix(metricName, "node_") {
+		results = gjson.GetMany(data, "data.result.#.metric.node", "data.result.#.value.1", "data.result.#.metric.datacenter")
+	}
+	// ignore qtree for now as it is under development
+	//if strings.HasPrefix(metricName, "qtree_") && !strings.HasPrefix(metricName, "qtree_id") {
+	//	results = gjson.GetMany(data, "data.result.#.metric.qtree", "data.result.#.value.1", "data.result.#.metric.datacenter")
+	//}
+	if strings.HasPrefix(metricName, "environment_sensor_") {
+		results = gjson.GetMany(data, "data.result.#.metric.sensor", "data.result.#.value.1", "data.result.#.metric.datacenter")
+	}
+	if strings.HasPrefix(metricName, "shelf_") {
+		results = gjson.GetMany(data, "data.result.#.metric.shelf", "data.result.#.value.1", "data.result.#.metric.datacenter")
+	}
+	if strings.HasPrefix(metricName, "snapmirror_") {
+		results = gjson.GetMany(data, "data.result.#.metric.relationship_id", "data.result.#.value.1", "data.result.#.metric.datacenter")
+	}
+	if strings.HasPrefix(metricName, "snapshot_") {
+		results = gjson.GetMany(data, "data.result.#.metric.snapshot_policy", "data.result.#.value.1", "data.result.#.metric.datacenter")
+	}
+	if strings.HasPrefix(metricName, "cluster_subsystem_") {
+		results = gjson.GetMany(data, "data.result.#.metric.subsystem", "data.result.#.value.1", "data.result.#.metric.datacenter")
+	}
+	if strings.HasPrefix(metricName, "volume_") {
+		results = gjson.GetMany(data, "data.result.#.metric.volume", "data.result.#.value.1", "data.result.#.metric.datacenter")
+	}
+	if len(results) > 0 {
+		metric := strings.Split(replacer.Replace(results[0].String()), ",")
+		value := strings.Split(replacer.Replace(results[1].String()), ",")
+		dc := strings.Split(replacer.Replace(results[2].String()), ",")
+		for i, v := range value {
+			f, err := strconv.ParseFloat(v, 64)
+			if err != nil {
+				fmt.Println(err)
+			}
+			if dc[i] == "Zapi" {
+				zapiMetric[metric[i]] = f
+			}
+			if dc[i] == "Rest" {
+				restMetric[metric[i]] = f
+			}
+		}
+		for k, v := range zapiMetric {
+			if v1, ok := restMetric[k]; ok {
+				if math.Abs(v-v1) > 0 {
+					fmt.Printf("%s %s %v -> %v\n", metricName, k, v, v1)
+				}
+			}
+		}
+	}
+
+	return nil
 }
 
 func labelDiff(zapiDataCenterName string, restDataCenterName string) map[string][]string {
@@ -100,7 +178,7 @@ func labelDiff(zapiDataCenterName string, restDataCenterName string) map[string]
 	diffMap := make(map[string][]string)
 	for zk, zv := range zapiMap {
 		if rv, ok := restMap[zk]; ok {
-			diff := difference(zv, rv)
+			diff, _ := difference(zv, rv)
 			diffMap[zk] = diff
 		} else {
 			diffMap[zk] = zv
@@ -157,18 +235,21 @@ func appendIfMissing(slice []string, i string) []string {
 }
 
 // difference returns the elements in `a` that aren't in `b`.
-func difference(a, b []string) []string {
+func difference(a, b []string) ([]string, []string) {
 	mb := make(map[string]struct{}, len(b))
 	for _, x := range b {
 		mb[x] = struct{}{}
 	}
 	var diff []string
+	var common []string
 	for _, x := range a {
 		if _, found := mb[x]; !found {
 			diff = append(diff, x)
+		} else {
+			common = append(common, x)
 		}
 	}
-	return diff
+	return diff, common
 }
 
 func getResponse(url string) (string, error) {
