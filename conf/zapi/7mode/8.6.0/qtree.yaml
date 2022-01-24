@@ -14,7 +14,7 @@ counters:
     - ^security-style
     - ^status
     - ^^volume
-    - ^^owning-vfiler => svm
+    - ^owning-vfiler  => svm
     - ^^qtree         => qtree
 
 plugins:
@@ -32,9 +32,9 @@ export_options:
   instance_keys:
     - qtree
     - volume
-    - svm
 
   instance_labels:
+    - svm
     - export_policy
     - oplocks
     - security_style
