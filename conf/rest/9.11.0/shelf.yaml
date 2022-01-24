@@ -20,9 +20,10 @@ endpoints:
       - ^op_status  => op_status
 
 plugins:
-  LabelAgent:
-    value_to_num:
-      - new_status state online ok `0`
+  - Shelf
+  - LabelAgent:
+      value_to_num:
+        - new_status state online ok `0`
 
 export_options:
   instance_keys:

@@ -21,6 +21,8 @@ endpoints:
       - ^status => status
       - ^oplock_mode => oplocks
 
+plugins:
+  - Qtree
 
 export_options:
   instance_keys:
