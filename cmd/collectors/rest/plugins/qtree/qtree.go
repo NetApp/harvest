@@ -6,7 +6,6 @@ package qtree
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/tidwall/gjson"
 	"goharvest2/cmd/poller/collector"
 	"goharvest2/cmd/poller/plugin"
@@ -16,7 +15,6 @@ import (
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
-	"strings"
 	"time"
 )
 
@@ -40,16 +38,16 @@ func (my *Qtree) Init() error {
 	quotaMetric := []string{
 		"space.hard_limit => disk_limit",
 		"space.used.total => disk_used",
-		"space.used.hard_limit_percent => disk-used-pct-disk-limit",
-		"space.used.soft_limit_percent => disk-used-pct-soft-disk-limit",
-		"space.soft_limit => soft-disk-limit",
-		//"disk-used-pct-threshold"
-		//"files.hard_limit => file-limit",
-		//"files.used.total => files-used",
-		//"files.used.hard_limit_percent => files-used-pct-file-limit",
-		//"files.used.soft_limit_percent => files-used-pct-soft-file-limit",
-		//"files.soft_limit => soft-file-limit",
-		//"threshold",
+		"space.used.hard_limit_percent => disk_used_pct_disk_limit",
+		"space.used.soft_limit_percent => disk_used_pct_soft_disk_limit",
+		"space.soft_limit => soft_disk_limit",
+		//"disk-used-pct-threshold" # deprecated and workaround to use same as disk_used_pct_soft_disk_limit
+		"files.hard_limit => file_limit",
+		"files.used.total => files_used",
+		"files.used.hard_limit_percent => files_used_pct_file_limit",
+		"files.used.soft_limit_percent => files_used_pct_soft_file_limit",
+		"files.soft_limit => soft_file_limit",
+		//"threshold",   # deprecated
 	}
 
 	if err = my.InitAbc(); err != nil {
@@ -86,11 +84,6 @@ func (my *Qtree) Init() error {
 		instanceKeys.NewChildS("", parentLabels)
 	}
 
-	//objects := my.Params.GetChildS("objects")
-	//if objects == nil {
-	//	return errors.New(errors.MISSING_PARAM, "objects")
-	//}
-
 	for _, obj := range quotaMetric {
 		metricName, display := collector.ParseMetricName(obj)
 
@@ -123,10 +116,8 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	my.data.PurgeInstances()
 	my.data.Reset()
 
-	// Set all global labels from zapi.go if already not exist
+	// Set all global labels from Rest.go if already not exist
 	my.data.SetGlobalLabels(data.GetGlobalLabels())
-
-	//request = node.NewXmlS(my.query)
 
 	href := rest.BuildHref("", "*", nil, "", "", "", "", my.query)
 
@@ -147,7 +138,8 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 
 	if !gjson.ValidBytes(content) {
-		return nil, fmt.Errorf("json is not valid for: %s", my.query)
+		my.Logger.Error().Err(err).Str("Api", my.query).Msg("Invalid json")
+		return nil, errors.New(errors.API_RESPONSE, "Invalid json")
 	}
 
 	results := gjson.GetManyBytes(content, "num_records", "records")
@@ -156,13 +148,12 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		return nil, errors.New(errors.ERR_NO_INSTANCE, "no "+my.query+" instances on cluster")
 	}
 
-	//for _, quota := range results[1].Array() {
-	results[1].ForEach(func(quotaKey, quota gjson.Result) bool {
+	for _, quota := range results[1].Array() {
 		var tree string
 
 		if !quota.IsObject() {
-			my.Logger.Warn().Str("type", quota.Type.String()).Msg("Quota is not object, skipping")
-			return true
+			my.Logger.Error().Str("type", quota.Type.String()).Msg("Quota is not an object, skipping")
+			return nil, errors.New(errors.ERR_NO_INSTANCE, "quota is not an object")
 		}
 
 		if quota.Get("qtree").Exists() {
@@ -173,86 +164,69 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		quotaIndex := quota.Get("index").String()
 
 		// If quota-type is not a tree, then skip
-		//if quota.Get("type").String() != "tree" {
-		//	continue
-		//}
+		if quota.Get("type").String() != "tree" {
+			continue
+		}
 
-		// Ex. InstanceKey: SVMA.vol1Abc.qtree1.5989279
-		instanceKey := vserver + "." + volume + "." + tree + "." + quotaIndex
+		// Ex. InstanceKey: vserver1vol1qtree15989279
+		quotaInstanceKey := vserver + volume + tree + quotaIndex
 
-		if quotaInstance = my.data.GetInstance(instanceKey); quotaInstance == nil {
-			if quotaInstance, err = my.data.NewInstance(instanceKey); err != nil {
-				my.Logger.Info().Msgf("add (%s) instance: %v", instanceKey, err)
-				//return nil, err
-				return true
+		if quotaInstance = my.data.GetInstance(quotaInstanceKey); quotaInstance == nil {
+			if quotaInstance, err = my.data.NewInstance(quotaInstanceKey); err != nil {
+				my.Logger.Error().Stack().Err(err).Str("quotaInstanceKey", quotaInstanceKey).Msg("Failed to create quota instance")
+				return nil, err
 			}
-			my.Logger.Info().Msgf("add (%s) instance: %s.%s.%s.%s", instanceKey, vserver, volume, tree, quotaIndex)
+			my.Logger.Info().Msgf("add (%s) quota instance: %s.%s.%s.%s", quotaInstanceKey, vserver, volume, tree, quotaIndex)
+		}
+
+		qtreeInstance := data.GetInstance(vserver + volume + tree)
+		if qtreeInstance == nil {
+			my.Logger.Warn().
+				Str("tree", tree).
+				Str("volume", volume).
+				Str("vserver", vserver).
+				Msg("No instance matching tree.volume.vserver")
+			continue
+		}
+
+		if !qtreeInstance.IsExportable() {
+			continue
+		}
+
+		for _, label := range my.data.GetExportOptions().GetChildS("instance_keys").GetAllChildContentS() {
+			if value := qtreeInstance.GetLabel(label); value != "" {
+				quotaInstance.SetLabel(label, value)
+			}
+		}
+
+		// If the Qtree is the volume itself, than qtree label is empty, so copy the volume name to qtree.
+		if tree == "" {
+			quotaInstance.SetLabel("qtree", volume)
 		}
 
 		for attribute, m := range my.data.GetMetrics() {
-
-			//objectElem := quota.Get(attribute)
-			//if !objectElem.Exists() {
-			//	my.Logger.Warn().Msgf("no [%s] instances on this %s.%s.%s", attribute, vserver, volume, tree)
-			//	continue
-			//}
+			value := 0.0
 
 			if attrValue := quota.Get(attribute); attrValue.Exists() {
-				qtreeInstance := data.GetInstance(tree + "." + volume + "." + vserver)
-				if qtreeInstance == nil {
-					my.Logger.Warn().
-						Str("tree", tree).
-						Str("volume", volume).
-						Str("vserver", vserver).
-						Msg("No instance matching tree.volume.vserver")
-					continue
+				// space limits are in bytes, converted to kilobytes
+				if attribute == "space.hard_limit" || attribute == "space.soft_limit" {
+					value = attrValue.Float() / 1024
+				} else {
+					value = attrValue.Float()
 				}
-				if !qtreeInstance.IsExportable() {
-					continue
-				}
-				// Ex. InstanceKey: SVMA.vol1Abc.qtree1.5.disk-limit
-				//instanceKey := vserver + "." + volume + "." + tree + "." + quotaIndex + "." + attribute
-				//instance, err := my.data.NewInstance(instanceKey)
+			}
 
-				//if err != nil {
-				//	my.Logger.Debug().Msgf("add (%s) instance: %v", attribute, err)
-				//	return nil, err
-				//}
-
-				//my.Logger.Debug().Msgf("add (%s) instance: %s.%s.%s", attribute, vserver, volume, tree)
-
-				for _, label := range my.data.GetExportOptions().GetChildS("instance_keys").GetAllChildContentS() {
-					if value := qtreeInstance.GetLabel(label); value != "" {
-						quotaInstance.SetLabel(label, value)
-					}
-				}
-
-				// If the Qtree is the volume itself, than qtree label is empty, so copy the volume name to qtree.
-				if tree != "" {
-					quotaInstance.SetLabel("qtree", volume)
-				}
-
-				// populate numeric data
-				if value := strings.Split(attrValue.String(), " ")[0]; value != "" {
-					// Few quota metrics would have value '-' which means unlimited (ex: disk-limit)
-					if value == "-" {
-						value = "0"
-					}
-					if err := m.SetValueString(quotaInstance, value); err != nil {
-						my.Logger.Info().Msgf("(%s) failed to parse value (%s): %v", attribute, value, err)
-					} else {
-						my.Logger.Info().Msgf("(%s) added value (%s)", attribute, value)
-					}
-				}
-
+			// populate numeric data
+			if err = m.SetValueFloat64(quotaInstance, value); err != nil {
+				my.Logger.Error().Stack().Err(err).Str("attribute", attribute).Float64("value", value).Msg("Failed to parse value")
 			} else {
-				my.Logger.Info().Msgf("instance without [%s], skipping", attribute)
+				my.Logger.Info().Str("attribute", attribute).Float64("value", value).Msg("added value")
 			}
 
 			output = append(output, my.data)
 		}
-		return true
-	})
+
+	}
 
 	return output, nil
 }
