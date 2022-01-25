@@ -96,7 +96,11 @@ func metricDiff(zapiDataCenterName string, restDataCenterName string) map[string
 	return x
 }
 
-func metricValueDiff(metricName string) map[string][]string {
+func metricValueDiff(metricName string) {
+	if strings.HasSuffix(metricName, "_labels") {
+		return
+	}
+
 	timeNow := time.Now().Unix()
 	queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",
 		PrometheusUrl, metricName, timeNow)
@@ -105,54 +109,78 @@ func metricValueDiff(metricName string) map[string][]string {
 	zapiMetric := make(map[string]float64)
 	restMetric := make(map[string]float64)
 	results := make([]gjson.Result, 0)
+
+	keyIndexes := make([]int, 0)
+
 	if strings.HasPrefix(metricName, "disk_") {
-		results = gjson.GetMany(data, "data.result.#.metric.disk", "data.result.#.value.1", "data.result.#.metric.datacenter")
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.disk")
+		keyIndexes = []int{2}
 	}
 	if strings.HasPrefix(metricName, "aggr_") {
-		results = gjson.GetMany(data, "data.result.#.metric.aggr", "data.result.#.value.1", "data.result.#.metric.datacenter")
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.aggr", "data.result.#.metric.node")
+		keyIndexes = []int{2, 3}
 	}
 	if strings.HasPrefix(metricName, "lun_") {
-		results = gjson.GetMany(data, "data.result.#.metric.lun", "data.result.#.value.1", "data.result.#.metric.datacenter")
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.lun", "data.result.#.metric.svm", "data.result.#.metric.node")
+		keyIndexes = []int{2, 3, 4}
 	}
 	if strings.HasPrefix(metricName, "node_") {
-		results = gjson.GetMany(data, "data.result.#.metric.node", "data.result.#.value.1", "data.result.#.metric.datacenter")
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node")
+		keyIndexes = []int{2}
 	}
 	// ignore qtree for now as it is under development
 	//if strings.HasPrefix(metricName, "qtree_") && !strings.HasPrefix(metricName, "qtree_id") {
-	//	results = gjson.GetMany(data, "data.result.#.metric.qtree", "data.result.#.value.1", "data.result.#.metric.datacenter")
+	//	results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter","data.result.#.metric.qtree")
+	//keyIndexes = []int{2}
 	//}
+
 	if strings.HasPrefix(metricName, "environment_sensor_") {
-		results = gjson.GetMany(data, "data.result.#.metric.sensor", "data.result.#.value.1", "data.result.#.metric.datacenter")
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.sensor", "data.result.#.metric.node")
+		keyIndexes = []int{2, 3}
 	}
 	if strings.HasPrefix(metricName, "shelf_") {
-		results = gjson.GetMany(data, "data.result.#.metric.shelf", "data.result.#.value.1", "data.result.#.metric.datacenter")
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.shelf")
+		keyIndexes = []int{2}
 	}
 	if strings.HasPrefix(metricName, "snapmirror_") {
-		results = gjson.GetMany(data, "data.result.#.metric.relationship_id", "data.result.#.value.1", "data.result.#.metric.datacenter")
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.relationship_id")
+		keyIndexes = []int{2}
 	}
 	if strings.HasPrefix(metricName, "snapshot_") {
-		results = gjson.GetMany(data, "data.result.#.metric.snapshot_policy", "data.result.#.value.1", "data.result.#.metric.datacenter")
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.snapshot_policy", "data.result.#.metric.svm")
+		keyIndexes = []int{2, 3}
 	}
 	if strings.HasPrefix(metricName, "cluster_subsystem_") {
-		results = gjson.GetMany(data, "data.result.#.metric.subsystem", "data.result.#.value.1", "data.result.#.metric.datacenter")
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.subsystem")
+		keyIndexes = []int{2}
 	}
 	if strings.HasPrefix(metricName, "volume_") {
-		results = gjson.GetMany(data, "data.result.#.metric.volume", "data.result.#.value.1", "data.result.#.metric.datacenter")
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.volume", "data.result.#.metric.svm")
+		keyIndexes = []int{2, 3}
 	}
-	if len(results) > 0 {
-		metric := strings.Split(replacer.Replace(results[0].String()), ",")
-		value := strings.Split(replacer.Replace(results[1].String()), ",")
-		dc := strings.Split(replacer.Replace(results[2].String()), ",")
+
+	if len(results) > 0 && len(keyIndexes) > 0 {
+		metrics := make([][]string, 0)
+		for _, i := range keyIndexes {
+			metric := strings.Split(replacer.Replace(results[i].String()), ",")
+			metrics = append(metrics, metric)
+		}
+		value := strings.Split(replacer.Replace(results[0].String()), ",")
+		dc := strings.Split(replacer.Replace(results[1].String()), ",")
 		for i, v := range value {
 			f, err := strconv.ParseFloat(v, 64)
 			if err != nil {
 				fmt.Println(err)
 			}
+			key := ""
+			for x := range metrics {
+				key = key + "_" + metrics[x][i]
+			}
 			if dc[i] == "Zapi" {
-				zapiMetric[metric[i]] = f
+				zapiMetric[key] = f
 			}
 			if dc[i] == "Rest" {
-				restMetric[metric[i]] = f
+				restMetric[key] = f
 			}
 		}
 		for k, v := range zapiMetric {
@@ -163,8 +191,122 @@ func metricValueDiff(metricName string) map[string][]string {
 			}
 		}
 	}
+}
 
-	return nil
+func IndexOf(data []string, search string) int {
+	for i, v := range data {
+		if v == search {
+			return i
+		}
+	}
+	return -1
+}
+
+func labelValueDiff(label string, labelNames []string) {
+	timeNow := time.Now().Unix()
+	queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",
+		PrometheusUrl, label, timeNow)
+	data, _ := getResponse(queryUrl)
+	replacer := strings.NewReplacer("[", "", "]", "", "\"", "")
+	zapiMetric := make(map[string]string)
+	restMetric := make(map[string]string)
+	results := make([]gjson.Result, 0)
+	prefixLabelsName := make([]string, 0)
+	// remove data from slice
+	removeLabels := []string{"__name__", "instance", "job"}
+	finalLabelNames, _ := difference(labelNames, removeLabels)
+	for _, l := range finalLabelNames {
+		l1 := "data.result.#.metric." + l
+		prefixLabelsName = append(prefixLabelsName, l1)
+	}
+	keyIndexes := make([]int, 0)
+	dataCenterIndex := -1
+	skipMatch := make([]string, 0)
+	skipMatch = append(skipMatch, "datacenter")
+
+	if strings.HasPrefix(label, "disk_") || strings.HasPrefix(label, "shelf_") {
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "serial_number"))
+		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
+		results = gjson.GetMany(data, prefixLabelsName...)
+	}
+
+	if strings.HasPrefix(label, "snapmirror_") {
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "relationship_id"))
+		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
+		results = gjson.GetMany(data, prefixLabelsName...)
+	}
+
+	if strings.HasPrefix(label, "volume_") {
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "volume"))
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "svm"))
+		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
+		results = gjson.GetMany(data, prefixLabelsName...)
+	}
+
+	if strings.HasPrefix(label, "aggr_") {
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "aggr"))
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "node"))
+		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
+		results = gjson.GetMany(data, prefixLabelsName...)
+	}
+
+	if strings.HasPrefix(label, "lun_") {
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "lun"))
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "node"))
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "svm"))
+		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
+		results = gjson.GetMany(data, prefixLabelsName...)
+	}
+
+	if strings.HasPrefix(label, "node_") {
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "node"))
+		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
+		results = gjson.GetMany(data, prefixLabelsName...)
+	}
+
+	if strings.HasPrefix(label, "qtree_") {
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "export_policy"))
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "svm"))
+		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
+		results = gjson.GetMany(data, prefixLabelsName...)
+	}
+
+	if len(results) > 0 && len(keyIndexes) > 0 && dataCenterIndex != -1 {
+		metrics := make([][]string, 0)
+		for _, i := range keyIndexes {
+			metric := strings.Split(replacer.Replace(results[i].String()), ",")
+			metrics = append(metrics, metric)
+		}
+		dc := strings.Split(replacer.Replace(results[dataCenterIndex].String()), ",")
+		for i, f := range finalLabelNames {
+			if IndexOf(skipMatch, f) == -1 {
+				value := strings.Split(replacer.Replace(results[i].String()), ",")
+				if len(dc) != len(value) {
+					fmt.Printf("******* Mismatch in label length. Check data %s %s\n", label, f)
+					continue
+				}
+				for i, v := range value {
+					key := ""
+					for x := range metrics {
+						key = key + "_" + metrics[x][i]
+					}
+					if dc[i] == "Zapi" {
+						zapiMetric[key] = v
+					}
+					if dc[i] == "Rest" {
+						restMetric[key] = v
+					}
+				}
+				for k, v := range zapiMetric {
+					if v1, ok := restMetric[k]; ok {
+						if v != v1 {
+							fmt.Printf("%s %s %s %v -> %v\n", label, f, k, v, v1)
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 func labelDiff(zapiDataCenterName string, restDataCenterName string) map[string][]string {
@@ -176,13 +318,19 @@ func labelDiff(zapiDataCenterName string, restDataCenterName string) map[string]
 	restMap := getLabelNames(queryRest)
 
 	diffMap := make(map[string][]string)
+	commonMap := make(map[string][]string)
 	for zk, zv := range zapiMap {
 		if rv, ok := restMap[zk]; ok {
-			diff, _ := difference(zv, rv)
+			diff, common := difference(zv, rv)
 			diffMap[zk] = diff
+			commonMap[zk] = common
 		} else {
 			diffMap[zk] = zv
 		}
+	}
+	fmt.Println("################## Label value Diffs in prometheus ##############")
+	for k, v := range commonMap {
+		labelValueDiff(k, v)
 	}
 
 	return diffMap
