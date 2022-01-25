@@ -41,7 +41,7 @@ type Cluster struct {
 	Version [3]int
 }
 
-func New(poller *conf.Poller, timeout time.Duration) (*Client, error) {
+func New(poller conf.Poller, timeout time.Duration) (*Client, error) {
 	var (
 		client         Client
 		httpclient     *http.Client
@@ -197,7 +197,7 @@ func downloadSwagger(poller *conf.Poller, path string, url string) (int64, error
 	}
 
 	timeout := DefaultTimeout * time.Second
-	if restClient, err = New(poller, timeout); err != nil {
+	if restClient, err = New(*poller, timeout); err != nil {
 		return 0, fmt.Errorf("error creating new client %w\n", err)
 	}
 
