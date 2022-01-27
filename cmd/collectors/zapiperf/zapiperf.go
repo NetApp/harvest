@@ -1000,6 +1000,10 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 					name := x.GetNameS()
 					resource := x.GetContentS()
 
+					if m := me.Matrix.GetMetric(name); m != nil {
+						oldMetrics.Delete(name)
+						continue
+					}
 					if m, err := me.Matrix.NewMetricFloat64(name); err != nil {
 						return nil, err
 					} else {
