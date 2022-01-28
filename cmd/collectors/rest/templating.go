@@ -3,6 +3,7 @@ package rest
 import (
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/tree/node"
+	"goharvest2/pkg/util"
 	"strings"
 )
 
@@ -59,7 +60,7 @@ func (r *Rest) initCache() error {
 
 	for _, c := range counters.GetAllChildContentS() {
 		if c != "" {
-			name, display, kind = ParseMetric(c)
+			name, display, kind = util.ParseMetric(c)
 			r.Logger.Debug().
 				Str("kind", kind).
 				Str("name", name).
@@ -110,32 +111,4 @@ func (r *Rest) initCache() error {
 	r.Logger.Info().Int("count metrics", len(r.prop.metrics)).Int("count labels", len(r.prop.instanceLabels)).Msg("initialized metric cache")
 
 	return nil
-}
-
-func ParseMetric(rawName string) (string, string, string) {
-	var (
-		name, display string
-		values        []string
-	)
-	if values = strings.SplitN(rawName, "=>", 2); len(values) == 2 {
-		name = strings.TrimSpace(values[0])
-		display = strings.TrimSpace(values[1])
-	} else {
-		name = rawName
-		display = strings.ReplaceAll(rawName, ".", "_")
-	}
-
-	if strings.HasPrefix(name, "^^") {
-		return strings.TrimPrefix(name, "^^"), strings.TrimPrefix(display, "^^"), "key"
-	}
-
-	if strings.HasPrefix(name, "^") {
-		return strings.TrimPrefix(name, "^"), strings.TrimPrefix(display, "^"), "label"
-	}
-
-	if strings.HasPrefix(name, "?") {
-		return strings.TrimPrefix(name, "?"), strings.TrimPrefix(display, "?"), "bool"
-	}
-
-	return name, display, "float"
 }

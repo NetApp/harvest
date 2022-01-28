@@ -4,7 +4,6 @@
 package shelf
 
 import (
-	"goharvest2/cmd/poller/collector"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/pkg/api/ontapi/zapi"
 	"goharvest2/pkg/conf"
@@ -12,6 +11,7 @@ import (
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
+	"goharvest2/pkg/util"
 	"strings"
 )
 
@@ -90,20 +90,19 @@ func (my *Shelf) Init() error {
 
 			for _, c := range x.GetAllChildContentS() {
 
-				metricName, display := collector.ParseMetricName(c)
+				metricName, display, kind := util.ParseMetric(c)
 
-				if strings.HasPrefix(c, "^") {
-					if strings.HasPrefix(c, "^^") {
-						my.instanceKeys[attribute] = metricName
-						my.instanceLabels[attribute].Set(metricName, display)
-						instanceKeys.NewChildS("", display)
-						my.Logger.Debug().Msgf("added instance key: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
-					} else {
-						my.instanceLabels[attribute].Set(metricName, display)
-						instanceLabels.NewChildS("", display)
-						my.Logger.Debug().Msgf("added instance label: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
-					}
-				} else {
+				switch kind {
+				case "key":
+					my.instanceKeys[attribute] = metricName
+					my.instanceLabels[attribute].Set(metricName, display)
+					instanceKeys.NewChildS("", display)
+					my.Logger.Debug().Msgf("added instance key: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
+				case "label":
+					my.instanceLabels[attribute].Set(metricName, display)
+					instanceLabels.NewChildS("", display)
+					my.Logger.Debug().Msgf("added instance label: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
+				case "float":
 					metric, err := my.data[attribute].NewMetricFloat64(metricName)
 					if err != nil {
 						my.Logger.Error().Stack().Err(err).Msg("add metric")

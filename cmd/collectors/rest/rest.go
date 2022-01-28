@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"github.com/tidwall/gjson"
 	"goharvest2/cmd/collectors/rest/plugins/disk"
+	"goharvest2/cmd/collectors/rest/plugins/qtree"
+	"goharvest2/cmd/collectors/rest/plugins/shelf"
 	"goharvest2/cmd/poller/collector"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/cmd/tools/rest"
@@ -12,6 +14,7 @@ import (
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
+	"goharvest2/pkg/util"
 	"os"
 	"strings"
 	"time"
@@ -137,7 +140,7 @@ func (r *Rest) getClient(a *collector.AbstractCollector, config *node.Node) (*re
 	} else {
 		r.Logger.Info().Str("timeout", timeout.String()).Msg("Using default timeout")
 	}
-	if client, err = rest.New(poller, timeout); err != nil {
+	if client, err = rest.New(*poller, timeout); err != nil {
 		r.Logger.Error().Stack().Err(err).Str("poller", opt.Poller).Msg("error creating new client")
 		os.Exit(1)
 	}
@@ -172,7 +175,7 @@ func (r *Rest) initEndPoints() error {
 				}
 				if line1.GetNameS() == "counters" {
 					for _, c := range line1.GetAllChildContentS() {
-						name, display, kind = ParseMetric(c)
+						name, display, kind = util.ParseMetric(c)
 
 						prop.counters[name] = display
 						switch kind {
@@ -532,6 +535,10 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 	switch kind {
 	case "Disk":
 		return disk.New(abc)
+	case "Qtree":
+		return qtree.New(abc)
+	case "Shelf":
+		return shelf.New(abc)
 	default:
 		r.Logger.Warn().Str("kind", kind).Msg("no rest plugin found ")
 	}

@@ -16,6 +16,5 @@ objects:
   Snapshot:         snapshot.yaml
   Port:             port.yaml
   Qtree:            qtree.yaml
-  Quota:            quota.yaml
   Shelf:            shelf.yaml
   Sensor:           sensor.yaml
