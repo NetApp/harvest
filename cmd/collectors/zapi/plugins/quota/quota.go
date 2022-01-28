@@ -185,7 +185,7 @@ func (my *Quota) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					if my.client.IsClustered() {
 						qtreeInstance = data.GetInstance(tree + "." + volume + "." + vserver)
 					} else {
-						qtreeInstance = data.GetInstance(tree + "." + volume)
+						qtreeInstance = data.GetInstance(volume + "." + tree)
 					}
 					if qtreeInstance == nil {
 						my.Logger.Warn().
