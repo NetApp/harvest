@@ -342,6 +342,7 @@ func ParseMetric(rawName string) (string, string, string) {
 	} else {
 		name = rawName
 		display = strings.ReplaceAll(rawName, ".", "_")
+		display = strings.ReplaceAll(display, "-", "_")
 	}
 
 	if strings.HasPrefix(name, "^^") {
