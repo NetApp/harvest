@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/tidwall/gjson"
-	"goharvest2/cmd/poller/collector"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/cmd/tools/rest"
 	"goharvest2/pkg/conf"
@@ -12,6 +11,7 @@ import (
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
+	"goharvest2/pkg/util"
 	"strings"
 	"time"
 )
@@ -89,7 +89,6 @@ func (my *Shelf) Init() error {
 	}
 
 	my.query = "api/storage/shelves"
-	my.Logger.Info().Msg("plugin connected!")
 
 	my.data = make(map[string]*matrix.Matrix)
 	my.instanceKeys = make(map[string]string)
@@ -120,36 +119,35 @@ func (my *Shelf) Init() error {
 
 		for _, c := range childObj {
 
-			metricName, display := collector.ParseMetricName(c)
+			metricName, display, kind := util.ParseMetric(c)
 
-			if strings.HasPrefix(c, "^") {
-				if strings.HasPrefix(c, "^^") {
-					my.instanceKeys[attribute] = metricName
-					my.instanceLabels[attribute].Set(metricName, display)
-					instanceKeys.NewChildS("", display)
-					my.Logger.Info().Msgf("added instance key: (%s) [%s]", attribute, display)
-				} else {
-					my.instanceLabels[attribute].Set(metricName, display)
-					instanceLabels.NewChildS("", display)
-					my.Logger.Info().Msgf("added instance label: (%s) [%s]", attribute, display)
-				}
-			} else {
+			switch kind {
+			case "key":
+				my.instanceKeys[attribute] = metricName
+				my.instanceLabels[attribute].Set(metricName, display)
+				instanceKeys.NewChildS("", display)
+				my.Logger.Debug().Msgf("added instance key: (%s) [%s]", attribute, display)
+			case "label":
+				my.instanceLabels[attribute].Set(metricName, display)
+				instanceLabels.NewChildS("", display)
+				my.Logger.Debug().Msgf("added instance label: (%s) [%s]", attribute, display)
+			case "float":
 				metric, err := my.data[attribute].NewMetricFloat64(metricName)
 				if err != nil {
 					my.Logger.Error().Stack().Err(err).Msg("add metric")
 					return err
 				}
 				metric.SetName(display)
-				my.Logger.Info().Msgf("added metric: (%s) [%s]", attribute, display)
+				my.Logger.Debug().Msgf("added metric: (%s) [%s]", attribute, display)
 			}
 		}
 
-		my.Logger.Info().Msgf("added data for [%s] with %d metrics", attribute, len(my.data[attribute].GetMetrics()))
+		my.Logger.Debug().Msgf("added data for [%s] with %d metrics", attribute, len(my.data[attribute].GetMetrics()))
 
 		my.data[attribute].SetExportOptions(exportOptions)
 	}
 
-	my.Logger.Info().Msgf("initialized with data [%d] objects", len(my.data))
+	my.Logger.Debug().Msgf("initialized with data [%d] objects", len(my.data))
 	return nil
 }
 
@@ -194,7 +192,7 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		return nil, errors.New(errors.ERR_NO_INSTANCE, "no "+my.query+" instances on cluster")
 	}
 
-	my.Logger.Info().Msgf("fetching %d shelf counters", numRecords.Int())
+	my.Logger.Debug().Msgf("fetching %d shelf counters", numRecords.Int())
 
 	var output []*matrix.Matrix
 
@@ -218,7 +216,7 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			if statusMetric := data1.GetMetric("status"); statusMetric != nil {
 
 				if my.instanceKeys[attribute] == "" {
-					my.Logger.Warn().Msgf("no instance keys defined for object [%s], skipping", attribute)
+					my.Logger.Warn().Str("attribute", attribute).Msg("no instance keys defined for object, skipping")
 					continue
 				}
 
@@ -240,7 +238,7 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 									my.Logger.Error().Err(err).Str("attribute", attribute).Str("instanceKey", instanceKey).Msg("Failed to add instance")
 									break
 								}
-								my.Logger.Info().Msgf("add (%s) instance: %s.%s.%s", attribute, shelfId, attribute, key)
+								my.Logger.Debug().Msgf("add (%s) instance: %s.%s.%s", attribute, shelfId, attribute, key)
 
 								for label, labelDisplay := range my.instanceLabels[attribute].Map() {
 									if value := obj.Get(label); value.Exists() {
@@ -256,7 +254,7 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 										}
 									} else {
 										// spams a lot currently due to missing label mappings. Moved to debug for now till rest gaps are filled
-										my.Logger.Info().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
+										my.Logger.Debug().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
 									}
 								}
 
@@ -275,17 +273,16 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 									if value := obj.Get(metricKey); value.Exists() {
 										if err = m.SetValueString(shelfChildInstance, value.String()); err != nil { // float
-											my.Logger.Error().Err(err).Str("key", metricKey).Str("metric", m.GetName()).
+											my.Logger.Error().Err(err).Str("key", metricKey).Str("metric", m.GetName()).Str("value", value.String()).
 												Msg("Unable to set float key on metric")
-											my.Logger.Info().Msgf("(%s) failed to parse value (%s): %v", metricKey, value, err)
 										} else {
-											my.Logger.Info().Msgf("(%s) added value (%s)", metricKey, value)
+											my.Logger.Debug().Str("metricKey", metricKey).Str("value", value.String()).Msg("added")
 										}
 									}
 								}
 
 							} else {
-								my.Logger.Info().Msgf("instance without [%s], skipping", my.instanceKeys[attribute])
+								my.Logger.Debug().Msgf("instance without [%s], skipping", my.instanceKeys[attribute])
 							}
 						}
 					}

@@ -14,6 +14,7 @@ import (
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
+	"goharvest2/pkg/util"
 	"os"
 	"strings"
 	"time"
@@ -174,7 +175,7 @@ func (r *Rest) initEndPoints() error {
 				}
 				if line1.GetNameS() == "counters" {
 					for _, c := range line1.GetAllChildContentS() {
-						name, display, kind = ParseMetric(c)
+						name, display, kind = util.ParseMetric(c)
 
 						prop.counters[name] = display
 						switch kind {

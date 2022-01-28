@@ -160,25 +160,6 @@ func getClosestIndex(versions []*version.Version, version *version.Version) int 
 	return idx
 }
 
-// ParseMetricName parses display name from the raw name of the metric as defined in (sub)template.
-// Users can rename a metric with "=>" (e.g. some_long_metric_name => short).
-// Trailing "^" characters are ignored/cleaned as they have special meaning in some collectors.
-func ParseMetricName(raw string) (string, string) {
-
-	var name, display string
-
-	name = strings.ReplaceAll(raw, "^", "")
-
-	if x := strings.Split(name, "=>"); len(x) == 2 {
-		name = strings.TrimSpace(x[0])
-		display = strings.TrimSpace(x[1])
-	} else {
-		display = strings.ReplaceAll(name, "-", "_")
-	}
-
-	return name, display
-}
-
 // getBuiltinPlugin returns built-in plugin with name if it exists, otherwise nil
 func getBuiltinPlugin(name string, abc *plugin.AbstractPlugin) plugin.Plugin {
 

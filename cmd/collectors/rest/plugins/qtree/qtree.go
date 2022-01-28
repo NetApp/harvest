@@ -7,7 +7,6 @@ package qtree
 import (
 	"encoding/json"
 	"github.com/tidwall/gjson"
-	"goharvest2/cmd/poller/collector"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/cmd/tools/rest"
 	"goharvest2/pkg/conf"
@@ -15,6 +14,7 @@ import (
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
+	"goharvest2/pkg/util"
 	"time"
 )
 
@@ -65,7 +65,6 @@ func (my *Qtree) Init() error {
 	}
 
 	my.query = "api/storage/quota/reports"
-	my.Logger.Info().Msg("plugin connected!")
 
 	my.data = matrix.New(my.Parent+".Qtree", "qtree", "qtree")
 	my.instanceKeys = make(map[string]string)
@@ -85,7 +84,7 @@ func (my *Qtree) Init() error {
 	}
 
 	for _, obj := range quotaMetric {
-		metricName, display := collector.ParseMetricName(obj)
+		metricName, display, _ := util.ParseMetric(obj)
 
 		metric, err := my.data.NewMetricFloat64(metricName)
 		if err != nil {
@@ -94,10 +93,10 @@ func (my *Qtree) Init() error {
 		}
 
 		metric.SetName(display)
-		my.Logger.Info().Msgf("added metric: (%s) [%s] %s", metricName, display, metric)
+		my.Logger.Debug().Msgf("added metric: (%s) [%s] %s", metricName, display, metric)
 	}
 
-	my.Logger.Info().Msgf("added data with %d metrics", len(my.data.GetMetrics()))
+	my.Logger.Debug().Msgf("added data with %d metrics", len(my.data.GetMetrics()))
 	my.data.SetExportOptions(exportOptions)
 
 	return nil
@@ -156,7 +155,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			return nil, errors.New(errors.ERR_NO_INSTANCE, "quota is not an object")
 		}
 
-		if quota.Get("qtree").Exists() {
+		if quota.Get("qtree.name").Exists() {
 			tree = quota.Get("qtree.name").String()
 		}
 		volume := quota.Get("volume.name").String()
@@ -164,7 +163,8 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		quotaIndex := quota.Get("index").String()
 
 		// If quota-type is not a tree, then skip
-		if quota.Get("type").String() != "tree" {
+		if quotaType := quota.Get("type").String(); quotaType != "tree" {
+			my.Logger.Trace().Str("quotaType", quotaType).Msg("Quota is not tree type, skipping")
 			continue
 		}
 
@@ -176,7 +176,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				my.Logger.Error().Stack().Err(err).Str("quotaInstanceKey", quotaInstanceKey).Msg("Failed to create quota instance")
 				return nil, err
 			}
-			my.Logger.Info().Msgf("add (%s) quota instance: %s.%s.%s.%s", quotaInstanceKey, vserver, volume, tree, quotaIndex)
+			my.Logger.Debug().Msgf("add (%s) quota instance: %s.%s.%s.%s", quotaInstanceKey, vserver, volume, tree, quotaIndex)
 		}
 
 		qtreeInstance := data.GetInstance(vserver + volume + tree)
@@ -220,7 +220,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			if err = m.SetValueFloat64(quotaInstance, value); err != nil {
 				my.Logger.Error().Stack().Err(err).Str("attribute", attribute).Float64("value", value).Msg("Failed to parse value")
 			} else {
-				my.Logger.Info().Str("attribute", attribute).Float64("value", value).Msg("added value")
+				my.Logger.Debug().Str("attribute", attribute).Float64("value", value).Msg("added value")
 			}
 
 			output = append(output, my.data)

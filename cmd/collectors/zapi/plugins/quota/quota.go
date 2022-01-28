@@ -3,7 +3,6 @@
 package quota
 
 import (
-	"goharvest2/cmd/poller/collector"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/pkg/api/ontapi/zapi"
 	"goharvest2/pkg/conf"
@@ -11,6 +10,7 @@ import (
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
+	"goharvest2/pkg/util"
 	"strconv"
 	"strings"
 )
@@ -79,7 +79,7 @@ func (my *Quota) Init() error {
 	}
 
 	for _, obj := range objects.GetAllChildContentS() {
-		metricName, display := collector.ParseMetricName(obj)
+		metricName, display, _ := util.ParseMetric(obj)
 
 		metric, err := my.data.NewMetricFloat64(metricName)
 		if err != nil {
