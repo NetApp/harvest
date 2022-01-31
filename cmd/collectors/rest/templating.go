@@ -1,10 +1,14 @@
 package rest
 
 import (
+	"fmt"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/tree/node"
 	"goharvest2/pkg/util"
+	"regexp"
+	"strconv"
 	"strings"
+	"time"
 )
 
 func (r *Rest) LoadTemplate() error {
@@ -111,4 +115,82 @@ func (r *Rest) initCache() error {
 	r.Logger.Info().Int("count metrics", len(r.prop.metrics)).Int("count labels", len(r.prop.instanceLabels)).Msg("initialized metric cache")
 
 	return nil
+}
+
+func HandleIfTimeField(value string) float64 {
+	var timestamp time.Time
+	var err error
+	var floatValue float64
+
+	// Example: duration: PT8H35M42S, timestamp: 2020-12-02T18:36:19-08:00
+	timeDurationRegex := `^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)D)?T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:.\d+)?)S)?$`
+	timestampRegex := `[+-]?\d{4}(-[01]\d(-[0-3]\d(T[0-2]\d:[0-5]\d:?([0-5]\d(\.\d+)?)?[+-][0-2]\d:[0-5]\d?)?)?)?`
+
+	if floatValue, err = strconv.ParseFloat(value, 64); err != nil {
+		regexTimeDuration := regexp.MustCompile(timeDurationRegex)
+		if match := regexTimeDuration.MatchString(value); match {
+			// example: PT8H35M42S   ==>  30942
+			matches := regexTimeDuration.FindStringSubmatch(value)
+			if matches == nil {
+				return 0
+			}
+
+			seconds := 0.0
+
+			//years
+			//months
+
+			//days
+			if matches[3] != "" {
+				f, err := strconv.ParseFloat(matches[3], 64)
+				if err != nil {
+					fmt.Printf("%v", err)
+					return 0
+				}
+				seconds += f * 24 * 60 * 60
+			}
+
+			//hours
+			if matches[4] != "" {
+				f, err := strconv.ParseFloat(matches[4], 64)
+				if err != nil {
+					fmt.Printf("%v", err)
+					return 0
+				}
+				seconds += f * 60 * 60
+			}
+
+			//minutes
+			if matches[5] != "" {
+				f, err := strconv.ParseFloat(matches[5], 64)
+				if err != nil {
+					fmt.Printf("%v", err)
+					return 0
+				}
+				seconds += f * 60
+			}
+
+			//seconds & milliseconds
+			if matches[6] != "" {
+				f, err := strconv.ParseFloat(matches[6], 64)
+				if err != nil {
+					fmt.Printf("%v", err)
+					return 0
+				}
+				seconds += f
+			}
+			return seconds
+		}
+
+		regexTimeStamp := regexp.MustCompile(timestampRegex)
+		if match := regexTimeStamp.MatchString(value); match {
+			// example: 2020-12-02T18:36:19-08:00   ==>  1606962979
+			if timestamp, err = time.Parse(time.RFC3339, value); err != nil {
+				fmt.Printf("%v", err)
+				return 0
+			}
+			return float64(timestamp.Unix())
+		}
+	}
+	return floatValue
 }

@@ -1,47 +1,41 @@
 
 name:                         SnapMirror
-query:                        api/snapmirror/relationships
+query:                        api/private/cli/snapmirror
 object:                       snapmirror
 
 counters:
-  - ^^uuid => relationship_id
-  - ^destination.path  => destination_volume
-  - ^destination.svm.name => destination_vserver
-  - ^healthy
-  - ^transfer.bytes_transferred  => last_transfer_size
-  - ^transfer.state => relationship_status
-  - ^source.path => source_volume
-  - ^source.svm.name => source_vserver
-  #- ^source-node #missing mapping  ==> Needs plugin development
-  - ^unhealthy_reason.#.message => unhealthy_reason
-  - lag_time
-  - transfer.total_duration => last_transfer_duration
-  - transfer.end_time => last_transfer_end_timestamp
-  - transfer.bytes_transferred  => last_transfer_size
+  - ^^relationship_id => relationship_id
+  - ^destination_path => destination_location
+  - ^destination_volume_node => destination_node
+  - ^destination_vserver => destination_vserver
+  - ^destination_volume => destination_volume
+  - ^source_vserver => source_vserver
+  - ^source_volume => source_volume
+  - ^type => relationship_type
+  - ^state => relationship_status
+  - ^policy_type => policy_type
+  - ^relationship_group_type  => group_type
+  - ^schedule => schedule
+  - ^healthy => healthy
+  - ^last_transfer_type => last_transfer_type
+  - ^unhealthy_reason => unhealthy_reason
+  - lag_time => lag_time
+  - last_transfer_duration => last_transfer_duration
+  - last_transfer_end_timestamp => last_transfer_end_timestamp
+  - last_transfer_size => last_transfer_size
+  - total_transfer_time_secs => total_transfer_time_secs
+  - total_transfer_bytes => total_transfer_bytes
+  - newest_snapshot_timestamp => newest_snapshot_timestamp
+  - resync_successful_count => resync_successful_count
+  - update_successful_count => update_successful_count
+  - resync_failed_count => resync_failed_count
+  - update_failed_count => update_failed_count
+  - break_successful_count => break_successful_count
+  - break_failed_count => break_failed_count
 
 
-endpoints:
-  - query: api/private/cli/snapmirror
-    counters:
-      - ^^relationship_id => relationship_id
-      - ^destination_volume_node => destination_node
-      - ^type => relationship_type
-      - ^last_transfer_type => last_transfer_type
-      - ^relationship_group_type  => group_type
-      - ^schedule => schedule
-      - ^policy_type => policy_type
-      - ^destination_path => destination_location
-      - total_transfer_time_secs => total_transfer_time_secs
-      - total_transfer_bytes => total_transfer_bytes
-      - newest_snapshot_timestamp => newest_snapshot_timestamp
-      - resync_successful_count => resync_successful_count
-      - update_successful_count => update_successful_count
-      - resync_failed_count => resync_failed_count
-      - update_failed_count => update_failed_count
-      - break_successful_count => break_successful_count
-      - break_failed_count => break_failed_count
-      - total_transfer_time_secs => total_transfer_time_secs
-      - newest_snapshot_timestamp => newest_snapshot_timestamp
+plugins:
+  - Snapmirror
 
 export_options:
   instance_keys:
@@ -59,8 +53,11 @@ export_options:
     - relationship_status
     - relationship_type
     - schedule
-    - destination_node_limit
-    - source_node_limit
+#    - destination_node_limit
+#    - source_node_limit
     - group_type
-    - policy_type
     - destination_location
+    - protectedBy
+    - protectionSourceType
+    - policy_type
+    - derived_relationship_type

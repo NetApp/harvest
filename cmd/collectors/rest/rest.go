@@ -7,6 +7,8 @@ import (
 	"goharvest2/cmd/collectors/rest/plugins/disk"
 	"goharvest2/cmd/collectors/rest/plugins/qtree"
 	"goharvest2/cmd/collectors/rest/plugins/shelf"
+	"goharvest2/cmd/collectors/rest/plugins/snapmirror"
+	"goharvest2/cmd/collectors/rest/plugins/volume"
 	"goharvest2/cmd/poller/collector"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/cmd/tools/rest"
@@ -372,7 +374,8 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 			f := instanceData.Get(metric.name)
 			if f.Exists() {
 				metr.SetName(metric.label)
-				if err = metr.SetValueFloat64(instance, f.Float()); err != nil {
+				floatValue := HandleIfTimeField(f.String())
+				if err = metr.SetValueFloat64(instance, floatValue); err != nil {
 					r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
 						Msg("Unable to set float key on metric")
 				}
@@ -539,6 +542,10 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return qtree.New(abc)
 	case "Shelf":
 		return shelf.New(abc)
+	case "Snapmirror":
+		return snapmirror.New(abc)
+	case "Volume":
+		return volume.New(abc)
 	default:
 		r.Logger.Warn().Str("kind", kind).Msg("no rest plugin found ")
 	}
