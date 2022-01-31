@@ -35,6 +35,7 @@ type Options struct {
 	Objects    []string // objects to load (overrides collector config)
 	Profiling  int      // in case of profiling, the HTTP port used to display results
 	Asup       bool     // if true, invoke autosupport at start up
+	LogTo      string   // One of: auto|file|stdout. Auto means daemon logs to file and foreground to stdout
 }
 
 // String provides a string representation of Options

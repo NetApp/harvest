@@ -131,7 +131,7 @@ func (p *Poller) Init() error {
 	consoleLoggingEnabled := false
 	zeroLogLevel := logging.GetZerologLevel(p.options.LogLevel)
 	// if we are daemon, use file logging
-	if p.options.Daemon {
+	if p.options.Daemon || p.options.LogTo == "file" {
 		logFileName = "poller_" + p.name + ".log"
 		fileLoggingEnabled = true
 	} else {
@@ -1061,6 +1061,7 @@ func init() {
 	flags.BoolVarP(&args.Debug, "debug", "d", false, "Debug mode, no data will be exported")
 	flags.BoolVar(&args.Daemon, "daemon", false, "Start as daemon")
 	flags.IntVarP(&args.LogLevel, "loglevel", "l", 2, "Logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)")
+	flags.StringVar(&args.LogTo, "logto", "auto", "Where to log to. auto|file|stdout. Auto means daemon logs to file and foreground to stdout")
 	flags.IntVar(&args.Profiling, "profiling", 0, "If profiling port > 0, enables profiling via localhost:PORT/debug/pprof/")
 	flags.IntVar(&args.PromPort, "promPort", 0, "Prometheus Port")
 	flags.StringVar(&args.Config, "config", configPath, "Harvest config file path")

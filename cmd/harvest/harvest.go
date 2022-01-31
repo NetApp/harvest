@@ -51,6 +51,7 @@ type options struct {
 	debug      bool
 	foreground bool
 	loglevel   int
+	logTo      string
 	config     string
 	profiling  bool
 	longStatus bool
@@ -374,6 +375,10 @@ func startPoller(pollerName string, promPort int, opts *options) {
 	argv[3] = "--loglevel"
 	argv[4] = strconv.Itoa(opts.loglevel)
 
+	if opts.logTo != "auto" {
+		argv = append(argv, "--logto", opts.logTo)
+	}
+
 	if promPort != 0 {
 		argv = append(argv, "--promPort")
 		argv = append(argv, strconv.Itoa(promPort))
@@ -571,6 +576,12 @@ Feedback
 		"l",
 		2,
 		"logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)",
+	)
+	startCmd.PersistentFlags().StringVar(
+		&opts.logTo,
+		"logto",
+		"auto",
+		"Where to log to. auto|file|stdout. Auto means daemon logs to file and foreground to stdout",
 	)
 	startCmd.PersistentFlags().BoolVar(
 		&opts.profiling,
