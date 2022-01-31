@@ -34,7 +34,7 @@ pipeline {
             parallel {
                 stage('NATIVE') {
                     agent {
-                        label "rhel"
+                        label "native"
                     }
                     stages('Test on RPM Pkg') {
                         stage('Setup') {
@@ -126,7 +126,7 @@ pipeline {
                 }
                 stage('DOCKER') {
                     agent {
-                        label "rhel"
+                        label "docker"
                     }
                     stages('Test on docker Pkg') {
                         stage('Setup') {
