@@ -31,151 +31,149 @@ pipeline {
             }
         }
         stage('Run Tests') {
-            parallel {
-                stage('NATIVE') {
-                    agent {
-                        label "native"
-                    }
-                    stages('Test on RPM Pkg') {
-                        stage('Setup') {
-                            steps {
-                                printNodeInfo()
-                                cleanWs()
-                                stopAndRemoveDockers()
-                                setupWorkspace()
-                            }
-                        }
-                        stage('Install NATIVE pkg') {
-                            steps {
-                                sh '''
-                                echo "Installing"
-                                export BUILD_PATH=$NATIVE
-                                bash $WORKSPACE/harvest/integration/test/test.sh install_native
-                                '''
-                            }
-                        }
-                        stage('Running Test') {
-                            steps {
-                                sh """
-                                bash $WORKSPACE/harvest/integration/test/test.sh regression
-                                """
-                            }
-                            post {
-                                always {
-                                     sh '''
-                                         rm -f native_logs.zip
-                                         zip -r native_logs.zip /var/log/harvest
-                                         '''
-                                     archiveArtifacts artifacts: "native_logs.zip", fingerprint: true
-                                }
-                            }
-                        }
-                    }
-
+            stage('NATIVE') {
+                agent {
+                    label "native"
                 }
-                stage('RPM') {
-                    agent {
-                        label "rhel"
+                stages('Test on RPM Pkg') {
+                    stage('Setup') {
+                        steps {
+                            printNodeInfo()
+                            cleanWs()
+                            stopAndRemoveDockers()
+                            setupWorkspace()
+                        }
                     }
-                    stages('Test on RPM Pkg') {
-                        stage('Setup') {
-                            steps {
-                                printNodeInfo()
-                                cleanWs()
-                                stopAndRemoveDockers()
-                                setupWorkspace()
-                            }
+                    stage('Install NATIVE pkg') {
+                        steps {
+                            sh '''
+                            echo "Installing"
+                            export BUILD_PATH=$NATIVE
+                            bash $WORKSPACE/harvest/integration/test/test.sh install_native
+                            '''
                         }
-                        stage('Install RPM pkg') {
-                            steps {
-                                sh '''
-                                echo "Installing"
-                                export BUILD_PATH=http://harvest-jenkins.rtp.openenglab.netapp.com:8080/job/harvest2_0/job/artifcats/lastSuccessfulBuild/artifact/harvest-21.11.0-1.x86_64.rpm
-                                bash $WORKSPACE/harvest/integration/test/test.sh install_rpm
-                                '''
-                            }
+                    }
+                    stage('Running Test') {
+                        steps {
+                            sh """
+                            bash $WORKSPACE/harvest/integration/test/test.sh regression
+                            """
                         }
-                        stage('Upgrade RPM pkg') {
-                            steps {
-                                sh '''
-                                echo "Upgrading"
-                                export BUILD_PATH=$RPM
-                                bash $WORKSPACE/harvest/integration/test/test.sh upgrade_rpm
-                                sleep 1m
-                                '''
-                            }
-                        }
-                        stage('Running Test') {
-                            steps {
-                                sh """
-                                bash $WORKSPACE/harvest/integration/test/test.sh regression
-                                """
-                            }
-                            post {
-                                always {
-                                     sh '''
-                                          rm -f rpm_logs.zip
-                                          zip -r rpm_logs.zip /var/log/harvest
-                                          '''
-                                      archiveArtifacts artifacts: "rpm_logs.zip", fingerprint: true
-                                }
+                        post {
+                            always {
+                                 sh '''
+                                     rm -f native_logs.zip
+                                     zip -r native_logs.zip /var/log/harvest
+                                     '''
+                                 archiveArtifacts artifacts: "native_logs.zip", fingerprint: true
                             }
                         }
                     }
-
                 }
-                stage('DOCKER') {
-                    agent {
-                        label "docker"
+
+            }
+            stage('RPM') {
+                agent {
+                    label "rhel"
+                }
+                stages('Test on RPM Pkg') {
+                    stage('Setup') {
+                        steps {
+                            printNodeInfo()
+                            cleanWs()
+                            stopAndRemoveDockers()
+                            setupWorkspace()
+                        }
                     }
-                    stages('Test on docker Pkg') {
-                        stage('Setup') {
-                            steps {
-                                printNodeInfo()
-                                cleanWs()
-                                stopAndRemoveDockers()
-                                setupWorkspace()
+                    stage('Install RPM pkg') {
+                        steps {
+                            sh '''
+                            echo "Installing"
+                            export BUILD_PATH=http://harvest-jenkins.rtp.openenglab.netapp.com:8080/job/harvest2_0/job/artifcats/lastSuccessfulBuild/artifact/harvest-21.11.0-1.x86_64.rpm
+                            bash $WORKSPACE/harvest/integration/test/test.sh install_rpm
+                            '''
+                        }
+                    }
+                    stage('Upgrade RPM pkg') {
+                        steps {
+                            sh '''
+                            echo "Upgrading"
+                            export BUILD_PATH=$RPM
+                            bash $WORKSPACE/harvest/integration/test/test.sh upgrade_rpm
+                            sleep 1m
+                            '''
+                        }
+                    }
+                    stage('Running Test') {
+                        steps {
+                            sh """
+                            bash $WORKSPACE/harvest/integration/test/test.sh regression
+                            """
+                        }
+                        post {
+                            always {
+                                 sh '''
+                                      rm -f rpm_logs.zip
+                                      zip -r rpm_logs.zip /var/log/harvest
+                                      '''
+                                  archiveArtifacts artifacts: "rpm_logs.zip", fingerprint: true
                             }
                         }
-                        stage('Install Docker') {
-                            steps {
-                                sh '''
-                                echo "Installing"
-                                export PATH=$PATH:/usr/local/go/bin
-                                #export BUILD_PATH=$DOCKER
-                                cd $WORKSPACE/harvest
-                                cp -rf $WORKSPACE/harvest/integration/test/harvest.yml .
-                                make build
-                                ./bin/harvest stop
-                                ./bin/harvest generate docker full --port --output harvest-compose.yml
-                                docker login -u $DOCKER_USER -p $DOCKER_PWD
-                                docker build -f docker/onePollerPerContainer/Dockerfile -t rahulguptajss/harvest:latest . --no-cache
-                                docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
-                                sleep 1m
-                                bash $WORKSPACE/harvest/integration/test/test.sh install_docker
-                                '''
-                            }
+                    }
+                }
+
+            }
+            stage('DOCKER') {
+                agent {
+                    label "docker"
+                }
+                stages('Test on docker Pkg') {
+                    stage('Setup') {
+                        steps {
+                            printNodeInfo()
+                            cleanWs()
+                            stopAndRemoveDockers()
+                            setupWorkspace()
                         }
-                        stage('Running Test') {
-                            steps {
+                    }
+                    stage('Install Docker') {
+                        steps {
+                            sh '''
+                            echo "Installing"
+                            export PATH=$PATH:/usr/local/go/bin
+                            #export BUILD_PATH=$DOCKER
+                            cd $WORKSPACE/harvest
+                            cp -rf $WORKSPACE/harvest/integration/test/harvest.yml .
+                            make build
+                            ./bin/harvest stop
+                            ./bin/harvest generate docker full --port --output harvest-compose.yml
+                            docker login -u $DOCKER_USER -p $DOCKER_PWD
+                            docker build -f docker/onePollerPerContainer/Dockerfile -t rahulguptajss/harvest:latest . --no-cache
+                            docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
+                            sleep 1m
+                            bash $WORKSPACE/harvest/integration/test/test.sh install_docker
+                            '''
+                        }
+                    }
+                    stage('Running Test') {
+                        steps {
+                            sh """
+                            bash $WORKSPACE/harvest/integration/test/test.sh regression
+                            """
+
+                        }
+                        post {
+                            always {
                                 sh """
-                                bash $WORKSPACE/harvest/integration/test/test.sh regression
+                                    bash $WORKSPACE/harvest/integration/test/test.sh copy_docker_logs
+                                    rm -f docker_logs.zip
+                                    zip -r docker_logs.zip /var/log/harvest
                                 """
-
-                            }
-                            post {
-                                always {
-                                    sh """
-                                        bash $WORKSPACE/harvest/integration/test/test.sh copy_docker_logs
-                                        rm -f docker_logs.zip
-                                        zip -r docker_logs.zip /var/log/harvest
-                                    """
-                                    archiveArtifacts artifacts: "docker_logs.zip", fingerprint: true
-                                }
+                                archiveArtifacts artifacts: "docker_logs.zip", fingerprint: true
                             }
                         }
-
                     }
+
                 }
             }
         }
