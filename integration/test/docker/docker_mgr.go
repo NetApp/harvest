@@ -15,12 +15,14 @@ import (
 )
 
 func PullImage(dockerImageName string) {
+	log.Printf("PullImage start  %s  \n", dockerImageName)
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
 		panic(err)
 	}
 	out, err := cli.ImagePull(ctx, dockerImageName, types.ImagePullOptions{RegistryAuth: GetAuth()})
+	log.Printf("PullImage complete  %s  \n", dockerImageName)
 	if err != nil {
 		panic(err)
 	}
@@ -115,6 +117,7 @@ func StoreContainerLog(containerId string, logFile string) {
 }
 
 func ReStartContainers(commandSubString string) {
+	log.Printf("ReStartContainers start  %s  \n", commandSubString)
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
@@ -132,9 +135,11 @@ func ReStartContainers(commandSubString string) {
 			}
 		}
 	}
+	log.Printf("ReStartContainers complete  %s  \n", commandSubString)
 }
 
 func StopContainers(commandSubString string) {
+	log.Printf("StopContainers start  %s  \n", commandSubString)
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
@@ -152,6 +157,7 @@ func StopContainers(commandSubString string) {
 			}
 		}
 	}
+	log.Printf("StopContainers complete  %s  \n", commandSubString)
 }
 
 func CopyFile(containerId string, src string, dest string) {
@@ -182,6 +188,7 @@ func GetContainerID(commandSubString string) []string {
 }
 
 func RemoveImage(imageName string) {
+	log.Printf("RemoveImage start  %s  \n", imageName)
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
@@ -204,5 +211,6 @@ func RemoveImage(imageName string) {
 			}
 		}
 	}
+	log.Printf("RemoveImage complete  %s  \n", imageName)
 	log.Println("Successfully removed all images")
 }
