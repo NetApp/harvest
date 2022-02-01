@@ -29,6 +29,7 @@ type Options struct {
 	HomePath   string   // path to harvest home (usually "/opt/harvest")
 	LogPath    string   // log files location (usually "/var/log/harvest")
 	LogLevel   int      // logging level, 0 for trace, 5 for fatal
+	LogToFile  bool     // when running in the foreground, log to file instead of stdout
 	Version    string   // harvest version
 	Hostname   string   // hostname of the machine harvest is running
 	Collectors []string // name of collectors to load (override poller config)
