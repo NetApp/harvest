@@ -32,12 +32,12 @@ func (d *Grafana) Install() bool {
 	waitCount := 0
 	for waitCount < 5 {
 		waitCount++
-		time.Sleep(20 * time.Second)
+		time.Sleep(1 * time.Minute)
 		if utils.IsUrlReachable("http://localhost:" + utils.GrafanaPort) {
 			return true
 		}
 	}
-	log.Println("Reached maximum timeout. Grafana is failed to start after 1 min")
+	log.Println("Reached maximum timeout. Grafana is failed to start after 5 min")
 	return false
 }
 
