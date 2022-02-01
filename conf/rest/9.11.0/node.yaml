@@ -9,9 +9,6 @@ counters:
   - ^controller.failed_power_supply.message.message => failed_power_message
   - ^controller.over_temperature => over_temperature
   - ^state => healthy
-  #- ^system-node-get-iter.maximum-aggregate-size => max_aggr_size  #missing mapping
-  #- ^system-node-get-iter.maximum-number-of-volumes => max_vol_num #missing mapping
-  #- ^system-node-get-iter.maximum-volume-size => max_vol_size #missing mapping
   - ^location
   - ^model
   - ^serial_number => serial
@@ -28,6 +25,9 @@ endpoints:
     counters:
       - ^^node => node
       - ^vendor  => vendor
+      - ^max_aggr_size => max_aggr_size
+      - ^max_node_vvols => max_vol_num
+      - ^max_vol_size => max_vol_size
 
 plugins:
   - LabelAgent:
