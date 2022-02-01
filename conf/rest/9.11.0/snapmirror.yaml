@@ -19,13 +19,13 @@ counters:
   - ^healthy => healthy
   - ^last_transfer_type => last_transfer_type
   - ^unhealthy_reason => unhealthy_reason
-  - lag_time => lag_time
-  - last_transfer_duration => last_transfer_duration
-  - last_transfer_end_timestamp => last_transfer_end_timestamp
+  - lag_time(duration) => lag_time
+  - last_transfer_duration(duration) => last_transfer_duration
+  - last_transfer_end_timestamp(timestamp) => last_transfer_end_timestamp
   - last_transfer_size => last_transfer_size
   - total_transfer_time_secs => total_transfer_time_secs
   - total_transfer_bytes => total_transfer_bytes
-  - newest_snapshot_timestamp => newest_snapshot_timestamp
+  - newest_snapshot_timestamp(timestamp) => newest_snapshot_timestamp
   - resync_successful_count => resync_successful_count
   - update_successful_count => update_successful_count
   - resync_failed_count => resync_failed_count

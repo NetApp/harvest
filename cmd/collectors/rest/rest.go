@@ -47,8 +47,9 @@ type prop struct {
 }
 
 type metric struct {
-	label string
-	name  string
+	label      string
+	name       string
+	metricType string
 }
 
 func init() {
@@ -177,7 +178,14 @@ func (r *Rest) initEndPoints() error {
 				}
 				if line1.GetNameS() == "counters" {
 					for _, c := range line1.GetAllChildContentS() {
+						mType := ""
 						name, display, kind = util.ParseMetric(c)
+
+						if strings.Contains(name, "(") {
+							metricName := strings.Split(name, "(")
+							name = metricName[0]
+							mType = strings.TrimRight(metricName[1], ")")
+						}
 
 						prop.counters[name] = display
 						switch kind {
@@ -187,7 +195,7 @@ func (r *Rest) initEndPoints() error {
 						case "label":
 							prop.instanceLabels[name] = display
 						case "float":
-							m := metric{label: display, name: name}
+							m := metric{label: display, name: name, metricType: mType}
 							prop.metrics = append(prop.metrics, m)
 						}
 					}
@@ -374,7 +382,18 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 			f := instanceData.Get(metric.name)
 			if f.Exists() {
 				metr.SetName(metric.label)
-				floatValue := HandleIfTimeField(f.String())
+				var floatValue float64
+				if metric.metricType != "" {
+					switch metric.metricType {
+					case "duration":
+						floatValue = HandleDuration(f.String())
+					case "timestamp":
+						floatValue = HandleTimestamp(f.String())
+					}
+				} else {
+					floatValue = f.Float()
+				}
+
 				if err = metr.SetValueFloat64(instance, floatValue); err != nil {
 					r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
 						Msg("Unable to set float key on metric")
