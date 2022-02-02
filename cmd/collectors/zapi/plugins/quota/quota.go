@@ -79,7 +79,7 @@ func (my *Quota) Init() error {
 	}
 
 	for _, obj := range objects.GetAllChildContentS() {
-		metricName, display, _ := util.ParseMetric(obj)
+		metricName, display, _, _ := util.ParseMetric(obj)
 
 		metric, err := my.data.NewMetricFloat64(metricName)
 		if err != nil {

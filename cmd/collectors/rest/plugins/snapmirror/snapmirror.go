@@ -6,12 +6,12 @@ package snapmirror
 import (
 	"encoding/json"
 	"github.com/tidwall/gjson"
+	"goharvest2/cmd/collectors/rest/plugins"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/cmd/tools/rest"
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
-	"strings"
 	"time"
 )
 
@@ -117,61 +117,6 @@ func (my *SnapMirror) updateNodeCache() error {
 	return nil
 }
 
-func (my *SnapMirror) updateProtectedFields(instance *matrix.Instance) {
-
-	// check for group_type
-	if instance.GetLabel("group_type") != "" {
-		groupType := instance.GetLabel("group_type")
-		destinationVolume := instance.GetLabel("destination_volume")
-		sourceVolume := instance.GetLabel("source_volume")
-		destinationLocation := instance.GetLabel("destination_location")
-
-		isSvmDr := groupType == "vserver" && destinationVolume == "" && sourceVolume == ""
-		isCg := groupType == "CONSISTENCYGROUP" && strings.Contains(destinationLocation, ":/cg/")
-		isConstituentVolumeRelationshipWithinSvmDr := groupType == "vserver" && !strings.HasSuffix(destinationLocation, ":")
-		isConstituentVolumeRelationshipWithinCG := groupType == "CONSISTENCYGROUP" && !strings.Contains(destinationLocation, ":/cg/")
-
-		// Update protectedBy field
-		if isSvmDr || isConstituentVolumeRelationshipWithinSvmDr {
-			instance.SetLabel("protectedBy", "storage_vm")
-		} else if isCg || isConstituentVolumeRelationshipWithinCG {
-			instance.SetLabel("protectedBy", "cg")
-		} else {
-			instance.SetLabel("protectedBy", "volume")
-		}
-
-		// SVM-DR related information is populated
-		// Update protectionSourceType field
-		if isSvmDr {
-			instance.SetLabel("protectionSourceType", "storage_vm")
-		} else if isCg {
-			instance.SetLabel("protectionSourceType", "cg")
-		} else if isConstituentVolumeRelationshipWithinSvmDr || isConstituentVolumeRelationshipWithinCG || groupType == "none" || groupType == "flexgroup" {
-			instance.SetLabel("protectionSourceType", "volume")
-		} else {
-			instance.SetLabel("protectionSourceType", "not_mapped")
-		}
-	}
-
-	// Update derived_relationship_type field based on the policyType
-	relationshipType := instance.GetLabel("relationship_type")
-	if policyType := instance.GetLabel("policy_type"); policyType != "" {
-		if policyType == "strict_sync_mirror" {
-			instance.SetLabel("derived_relationship_type", "sync_mirror_strict")
-		} else if policyType == "sync_mirror" {
-			instance.SetLabel("derived_relationship_type", "sync_mirror")
-		} else if policyType == "mirror_vault" {
-			instance.SetLabel("derived_relationship_type", "mirror_vault")
-		} else if policyType == "automated_failover" {
-			instance.SetLabel("derived_relationship_type", "sync_mirror")
-		} else {
-			instance.SetLabel("derived_relationship_type", relationshipType)
-		}
-	} else {
-		instance.SetLabel("derived_relationship_type", relationshipType)
-	}
-}
-
 func (my *SnapMirror) updateSMLabels(data *matrix.Matrix) {
 	for _, instance := range data.GetInstances() {
 		volumeName := instance.GetLabel("source_volume")
@@ -183,6 +128,6 @@ func (my *SnapMirror) updateSMLabels(data *matrix.Matrix) {
 		}
 
 		// update the protectedBy and protectionSourceType fields and derivedRelationshipType in snapmirror_labels
-		my.updateProtectedFields(instance)
+		plugins.UpdateProtectedFields(instance)
 	}
 }

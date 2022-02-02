@@ -90,7 +90,7 @@ func (my *Shelf) Init() error {
 
 			for _, c := range x.GetAllChildContentS() {
 
-				metricName, display, kind := util.ParseMetric(c)
+				metricName, display, kind, _ := util.ParseMetric(c)
 
 				switch kind {
 				case "key":

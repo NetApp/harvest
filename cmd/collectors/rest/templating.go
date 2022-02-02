@@ -2,7 +2,10 @@ package rest
 
 import (
 	"fmt"
+	"github.com/tidwall/gjson"
+	"goharvest2/cmd/tools/rest"
 	"goharvest2/pkg/errors"
+	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
 	"goharvest2/pkg/util"
 	"regexp"
@@ -30,8 +33,7 @@ func (r *Rest) LoadTemplate() error {
 func (r *Rest) initCache() error {
 
 	var (
-		counters            *node.Node
-		display, name, kind string
+		counters *node.Node
 	)
 
 	if x := r.Params.GetChildContentS("object"); x != "" {
@@ -62,36 +64,6 @@ func (r *Rest) initCache() error {
 	r.prop.instanceLabels = make(map[string]string)
 	r.prop.counters = make(map[string]string)
 
-	for _, c := range counters.GetAllChildContentS() {
-		if c != "" {
-			mType := ""
-			name, display, kind = util.ParseMetric(c)
-			r.Logger.Debug().
-				Str("kind", kind).
-				Str("name", name).
-				Str("display", display).
-				Msg("Collected")
-
-			if strings.Contains(name, "(") {
-				metricName := strings.Split(name, "(")
-				name = metricName[0]
-				mType = strings.TrimRight(metricName[1], ")")
-			}
-
-			r.prop.counters[name] = display
-			switch kind {
-			case "key":
-				r.prop.instanceLabels[name] = display
-				r.prop.instanceKeys = append(r.prop.instanceKeys, name)
-			case "label":
-				r.prop.instanceLabels[name] = display
-			case "float":
-				m := metric{label: display, name: name, metricType: mType}
-				r.prop.metrics = append(r.prop.metrics, m)
-			}
-		}
-	}
-
 	// private end point do not support * as fields. We need to pass fields in endpoint
 	query := r.Params.GetChildS("query")
 	r.prop.apiType = "public"
@@ -99,24 +71,7 @@ func (r *Rest) initCache() error {
 		r.prop.apiType = checkQueryType(query.GetContentS())
 	}
 
-	if r.prop.apiType == "private" {
-		counterKey := make([]string, len(r.prop.counters))
-		i := 0
-		for k := range r.prop.counters {
-			counterKey[i] = k
-			i++
-		}
-		r.prop.fields = counterKey
-	}
-
-	if r.prop.apiType == "public" {
-		r.prop.fields = []string{"*"}
-		if c := r.Params.GetChildS("counters"); c != nil {
-			if x := c.GetChildS("hidden_fields"); x != nil {
-				r.prop.fields = append(r.prop.fields, x.GetAllChildContentS()...)
-			}
-		}
-	}
+	r.ParseRestCounters(counters, r.prop)
 
 	r.Logger.Info().Strs("extracted Instance Keys", r.prop.instanceKeys).Msg("")
 	r.Logger.Info().Int("count metrics", len(r.prop.metrics)).Int("count labels", len(r.prop.instanceLabels)).Msg("initialized metric cache")
@@ -203,4 +158,136 @@ func HandleTimestamp(value string) float64 {
 		return float64(timestamp.Unix())
 	}
 	return 0
+}
+
+func (r *Rest) ParseRestCounters(counter *node.Node, prop *prop) {
+	var (
+		display, name, kind, metricType string
+	)
+
+	for _, c := range counter.GetAllChildContentS() {
+		if c != "" {
+			name, display, kind, metricType = util.ParseMetric(c)
+			r.Logger.Debug().
+				Str("kind", kind).
+				Str("name", name).
+				Str("display", display).
+				Msg("Collected")
+
+			prop.counters[name] = display
+			switch kind {
+			case "key":
+				prop.instanceLabels[name] = display
+				prop.instanceKeys = append(prop.instanceKeys, name)
+			case "label":
+				prop.instanceLabels[name] = display
+			case "float":
+				m := metric{label: display, name: name, metricType: metricType}
+				prop.metrics = append(prop.metrics, m)
+			}
+		}
+	}
+
+	if prop.apiType == "private" {
+		counterKey := make([]string, len(prop.counters))
+		i := 0
+		for k := range prop.counters {
+			counterKey[i] = k
+			i++
+		}
+		prop.fields = counterKey
+	}
+
+	if prop.apiType == "public" {
+		prop.fields = []string{"*"}
+		if counter != nil {
+			if x := counter.GetChildS("hidden_fields"); x != nil {
+				prop.fields = append(prop.fields, x.GetAllChildContentS()...)
+			}
+		}
+	}
+
+}
+
+func (r *Rest) HandleLabelsAndMetrics(instance *matrix.Instance, prop *prop, instanceData gjson.Result, data *matrix.Matrix, instanceKey string) uint64 {
+	var (
+		err   error
+		count uint64
+	)
+
+	for label, display := range prop.instanceLabels {
+		value := instanceData.Get(label)
+		if value.Exists() {
+			if value.IsArray() {
+				var labelArray []string
+				for _, r := range value.Array() {
+					labelString := r.String()
+					labelArray = append(labelArray, labelString)
+				}
+				instance.SetLabel(display, strings.Join(labelArray, ","))
+			} else {
+				instance.SetLabel(display, value.String())
+			}
+			count++
+		} else {
+			// spams a lot currently due to missing label mappings. Moved to debug for now till rest gaps are filled
+			r.Logger.Debug().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
+		}
+	}
+
+	for _, metric := range prop.metrics {
+		metr, ok := data.GetMetrics()[metric.name]
+		if !ok {
+			if metr, err = data.NewMetricFloat64(metric.name); err != nil {
+				r.Logger.Error().Err(err).
+					Str("name", metric.name).
+					Msg("NewMetricFloat64")
+			}
+		}
+		f := instanceData.Get(metric.name)
+		if f.Exists() {
+			metr.SetName(metric.label)
+
+			var floatValue float64
+			switch metric.metricType {
+			case "duration":
+				floatValue = HandleDuration(f.String())
+			case "timestamp":
+				floatValue = HandleTimestamp(f.String())
+			case "":
+				floatValue = f.Float()
+			default:
+				r.Logger.Warn().Str("type", metric.metricType).Str("metric", metric.name).Msg("unknown metric type")
+			}
+
+			if err = metr.SetValueFloat64(instance, floatValue); err != nil {
+				r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
+					Msg("Unable to set float key on metric")
+			}
+			count++
+		}
+	}
+	return count
+}
+
+func (r *Rest) GetRestData(prop *prop, client *rest.Client) ([]interface{}, error) {
+	var (
+		err     error
+		records []interface{}
+	)
+
+	href := rest.BuildHref(prop.query, strings.Join(prop.fields, ","), nil, "", "", "", prop.returnTimeOut, prop.query)
+
+	r.Logger.Debug().Str("href", href).Msg("")
+	if href == "" {
+		return nil, errors.New(errors.ERR_CONFIG, "empty url")
+	}
+
+	err = rest.FetchData(client, href, &records)
+	if err != nil {
+		r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
+		return nil, err
+	}
+
+	return records, nil
 }

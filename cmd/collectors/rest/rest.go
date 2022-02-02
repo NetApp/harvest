@@ -16,7 +16,6 @@ import (
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
-	"goharvest2/pkg/util"
 	"os"
 	"strings"
 	"time"
@@ -156,9 +155,6 @@ func (r *Rest) initEndPoints() error {
 	endpoints := r.Params.GetChildS("endpoints")
 	if endpoints != nil {
 		for _, line := range endpoints.GetChildren() {
-			var (
-				display, name, kind string
-			)
 
 			n := line.GetNameS()
 			e := endPoint{name: n}
@@ -170,6 +166,7 @@ func (r *Rest) initEndPoints() error {
 			prop.counters = make(map[string]string)
 			prop.metrics = make([]metric, 0)
 			prop.apiType = "public"
+			prop.returnTimeOut = r.prop.returnTimeOut
 
 			for _, line1 := range line.GetChildren() {
 				if line1.GetNameS() == "query" {
@@ -177,44 +174,7 @@ func (r *Rest) initEndPoints() error {
 					prop.apiType = checkQueryType(prop.query)
 				}
 				if line1.GetNameS() == "counters" {
-					for _, c := range line1.GetAllChildContentS() {
-						mType := ""
-						name, display, kind = util.ParseMetric(c)
-
-						if strings.Contains(name, "(") {
-							metricName := strings.Split(name, "(")
-							name = metricName[0]
-							mType = strings.TrimRight(metricName[1], ")")
-						}
-
-						prop.counters[name] = display
-						switch kind {
-						case "key":
-							prop.instanceLabels[name] = display
-							prop.instanceKeys = append(prop.instanceKeys, name)
-						case "label":
-							prop.instanceLabels[name] = display
-						case "float":
-							m := metric{label: display, name: name, metricType: mType}
-							prop.metrics = append(prop.metrics, m)
-						}
-					}
-					if prop.apiType == "private" {
-						counterKey := make([]string, len(prop.counters))
-						i := 0
-						for k := range prop.counters {
-							counterKey[i] = k
-							i++
-						}
-						prop.fields = counterKey
-					}
-
-					if prop.apiType == "public" {
-						prop.fields = []string{"*"}
-						if x := line1.GetChildS("hidden_fields"); x != nil {
-							prop.fields = append(prop.fields, x.GetAllChildContentS()...)
-						}
-					}
+					r.ParseRestCounters(line1, &prop)
 				}
 			}
 			e.prop = &prop
@@ -277,16 +237,8 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 
 	startTime = time.Now()
 
-	href := rest.BuildHref(r.prop.query, strings.Join(r.prop.fields, ","), nil, "", "", "", r.prop.returnTimeOut, r.prop.query)
-
-	r.Logger.Debug().Str("href", href).Msg("")
-	if href == "" {
-		return nil, errors.New(errors.ERR_CONFIG, "empty url")
-	}
-
-	err = rest.FetchData(r.client, href, &records)
-	if err != nil {
-		r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
+	if records, err = r.GetRestData(r.prop, r.client); err != nil {
+		r.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
 		return nil, err
 	}
 
@@ -350,57 +302,8 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 			}
 		}
 
-		for label, display := range r.prop.instanceLabels {
-			value := instanceData.Get(label)
-			if value.Exists() {
-				if value.IsArray() {
-					var labelArray []string
-					for _, r := range value.Array() {
-						labelString := r.String()
-						labelArray = append(labelArray, labelString)
-					}
-					instance.SetLabel(display, strings.Join(labelArray, ","))
-				} else {
-					instance.SetLabel(display, value.String())
-				}
-				count++
-			} else {
-				// spams a lot currently due to missing label mappings. Moved to debug for now till rest gaps are filled
-				r.Logger.Debug().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
-			}
-		}
+		count = r.HandleLabelsAndMetrics(instance, r.prop, instanceData, r.Matrix, instanceKey)
 
-		for _, metric := range r.prop.metrics {
-			metr, ok := r.Matrix.GetMetrics()[metric.name]
-			if !ok {
-				if metr, err = r.Matrix.NewMetricFloat64(metric.name); err != nil {
-					r.Logger.Error().Err(err).
-						Str("name", metric.name).
-						Msg("NewMetricFloat64")
-				}
-			}
-			f := instanceData.Get(metric.name)
-			if f.Exists() {
-				metr.SetName(metric.label)
-				var floatValue float64
-				if metric.metricType != "" {
-					switch metric.metricType {
-					case "duration":
-						floatValue = HandleDuration(f.String())
-					case "timestamp":
-						floatValue = HandleTimestamp(f.String())
-					}
-				} else {
-					floatValue = f.Float()
-				}
-
-				if err = metr.SetValueFloat64(instance, floatValue); err != nil {
-					r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
-						Msg("Unable to set float key on metric")
-				}
-				count++
-			}
-		}
 		return true
 	})
 
@@ -441,16 +344,8 @@ func (r *Rest) processEndPoints(data *matrix.Matrix) error {
 			i++
 		}
 
-		href := rest.BuildHref(endpoint.prop.query, strings.Join(endpoint.prop.fields, ","), nil, "", "", "", r.prop.returnTimeOut, endpoint.prop.query)
-
-		r.Logger.Debug().Str("href", href).Msg("")
-
-		if href == "" {
-			return errors.New(errors.ERR_CONFIG, "empty url")
-		}
-		err = rest.FetchData(r.client, href, &records)
-		if err != nil {
-			r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
+		if records, err = r.GetRestData(endpoint.prop, r.client); err != nil {
+			r.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
 			return err
 		}
 
@@ -497,44 +392,7 @@ func (r *Rest) processEndPoints(data *matrix.Matrix) error {
 			}
 
 			if instance = data.GetInstance(instanceKey); instance != nil {
-
-				for label, display := range endpoint.prop.instanceLabels {
-					value := instanceData.Get(label)
-					if value.Exists() {
-						if value.IsArray() {
-							var labelArray []string
-							for _, r := range value.Array() {
-								labelString := r.String()
-								labelArray = append(labelArray, labelString)
-							}
-							instance.SetLabel(display, strings.Join(labelArray, ","))
-						} else {
-							instance.SetLabel(display, value.String())
-						}
-					} else {
-						// spams a lot currently due to missing label mappings. Moved to debug for now till rest gaps are filled
-						r.Logger.Debug().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
-					}
-				}
-
-				for _, metric := range endpoint.prop.metrics {
-					metr, ok := data.GetMetrics()[metric.name]
-					if !ok {
-						if metr, err = data.NewMetricFloat64(metric.name); err != nil {
-							r.Logger.Error().Err(err).
-								Str("name", metric.name).
-								Msg("NewMetricFloat64")
-						}
-					}
-					f := instanceData.Get(metric.name)
-					if f.Exists() {
-						metr.SetName(metric.label)
-						if err = metr.SetValueFloat64(instance, f.Float()); err != nil {
-							r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
-								Msg("Unable to set float key on metric")
-						}
-					}
-				}
+				r.HandleLabelsAndMetrics(instance, endpoint.prop, instanceData, data, instanceKey)
 			}
 			return true
 		})

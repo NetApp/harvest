@@ -7,6 +7,7 @@ package volume
 import (
 	"encoding/json"
 	"github.com/tidwall/gjson"
+	"goharvest2/cmd/collectors/rest/plugins"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/cmd/tools/rest"
 	"goharvest2/pkg/conf"
@@ -19,8 +20,8 @@ import (
 	"time"
 )
 
-const DefaultPluginInvocationRate = 10
-const DefaultDataPollDuration = 180
+const DefaultPluginDuration = 1800 * time.Second
+const DefaultDataPollDuration = 180 * time.Second
 
 type Volume struct {
 	*plugin.AbstractPlugin
@@ -71,6 +72,7 @@ func (my *Volume) Init() error {
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
 	if my.currentVal, err = my.setPluginInterval(); err != nil {
 		my.Logger.Error().Err(err).Stack().Msg("Failed while setting the plugin interval")
+		return err
 	}
 
 	return nil
@@ -89,13 +91,12 @@ func (my *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		my.currentVal = 0
 
 		// invoke snapmirror zapi and populate info in source and destination snapmirror maps
-		smSourceMap, smDestinationMap, err := my.GetSnapMirrors()
-		if err != nil {
+		if smSourceMap, smDestinationMap, err := my.GetSnapMirrors(); err != nil {
 			my.Logger.Error().Stack().Err(err).Msg("Failed to collect snapmirror data")
+		} else {
+			// update internal cache based on volume and SM maps
+			my.updateMaps(data, smSourceMap, smDestinationMap)
 		}
-
-		// update internal cache based on volume and SM maps
-		my.updateMaps(data, smSourceMap, smDestinationMap)
 	}
 
 	// update volume instance labels
@@ -108,69 +109,26 @@ func (my *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 func (my *Volume) setPluginInterval() (int, error) {
 
 	volumeDataInterval := my.getDataInterval(my.ParentParams, DefaultDataPollDuration)
-	pluginDataInterval := my.getDataInterval(my.Params, DefaultPluginInvocationRate)
-	my.Logger.Debug().Int("VolumeDataInterval", volumeDataInterval).Int("PluginDataInterval", pluginDataInterval).Msg("Poll interval duration")
-	my.pluginInvocationRate = pluginDataInterval / volumeDataInterval
+	pluginDataInterval := my.getDataInterval(my.Params, DefaultPluginDuration)
+	my.Logger.Debug().Float64("VolumeDataInterval", volumeDataInterval).Float64("PluginDataInterval", pluginDataInterval).Msg("Poll interval duration")
+	my.pluginInvocationRate = int(pluginDataInterval / volumeDataInterval)
 
 	return my.pluginInvocationRate, nil
 }
 
-func (my *Volume) getDataInterval(param *node.Node, defaultInterval int) int {
+func (my *Volume) getDataInterval(param *node.Node, defaultInterval time.Duration) float64 {
 	var dataIntervalStr = ""
 	schedule := param.GetChildS("schedule")
 	if schedule != nil {
 		dataInterval := schedule.GetChildS("data")
 		if dataInterval != nil {
 			dataIntervalStr = dataInterval.GetContentS()
+			if durationVal, err := time.ParseDuration(dataIntervalStr); err == nil {
+				return durationVal.Seconds()
+			}
 		}
 	}
-
-	// Convert the interval from str to int
-	if dataIntervalStr != "" {
-		dataIntervalStr = strings.Split(dataIntervalStr, "s")[0]
-		if intervalVal, err := strconv.Atoi(dataIntervalStr); err == nil {
-			return intervalVal
-		}
-	}
-	return defaultInterval
-}
-
-func (my *Volume) updateProtectedFields(instance *matrix.Instance) {
-
-	// check for group_type
-	// Supported group_type are: "none", "vserver", "infinitevol", "consistencygroup", "flexgroup"
-	if instance.GetLabel("group_type") != "" {
-
-		groupType := instance.GetLabel("group_type")
-		destinationVolume := instance.GetLabel("destination_volume")
-		sourceVolume := instance.GetLabel("source_volume")
-		destinationLocation := instance.GetLabel("destination_location")
-
-		isSvmDr := groupType == "vserver" && destinationVolume == "" && sourceVolume == ""
-		isCg := groupType == "CONSISTENCYGROUP" && strings.Contains(destinationLocation, ":/cg/")
-		isConstituentVolumeRelationshipWithinSvmDr := groupType == "vserver" && !strings.HasSuffix(destinationLocation, ":")
-		isConstituentVolumeRelationshipWithinCG := groupType == "CONSISTENCYGROUP" && !strings.Contains(destinationLocation, ":/cg/")
-
-		// Update protectedBy label
-		if isSvmDr || isConstituentVolumeRelationshipWithinSvmDr {
-			instance.SetLabel("protectedBy", "storage_vm")
-		} else if isCg || isConstituentVolumeRelationshipWithinCG {
-			instance.SetLabel("protectedBy", "cg")
-		} else {
-			instance.SetLabel("protectedBy", "volume")
-		}
-
-		// SVM-DR related information is populated, Update protectionSourceType label
-		if isSvmDr {
-			instance.SetLabel("protectionSourceType", "storage_vm")
-		} else if isCg {
-			instance.SetLabel("protectionSourceType", "cg")
-		} else if isConstituentVolumeRelationshipWithinSvmDr || isConstituentVolumeRelationshipWithinCG || groupType == "none" || groupType == "flexgroup" {
-			instance.SetLabel("protectionSourceType", "volume")
-		} else {
-			instance.SetLabel("protectionSourceType", "not_mapped")
-		}
-	}
+	return defaultInterval.Seconds()
 }
 
 func (my *Volume) GetSnapMirrors() (map[string][]*matrix.Instance, map[string]*matrix.Instance, error) {
@@ -245,7 +203,7 @@ func (my *Volume) GetSnapMirrors() (map[string][]*matrix.Instance, map[string]*m
 		instance.SetLabel("destination_svm", destinationSvm)
 
 		// Update the protectedBy and protectionSourceType fields in snapmirror
-		my.updateProtectedFields(instance)
+		plugins.UpdateProtectedFields(instance)
 
 		// Update source snapmirror and destination snapmirror info in maps
 		if relationshipType == "data_protection" || relationshipType == "extended_data_protection" || relationshipType == "vault" || relationshipType == "xdp" {
