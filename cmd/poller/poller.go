@@ -135,7 +135,8 @@ func (p *Poller) Init() error {
 		logFileName = "poller_" + p.name + ".log"
 		fileLoggingEnabled = true
 	} else {
-		consoleLoggingEnabled = true
+		consoleLoggingEnabled = !p.options.LogToFile
+		fileLoggingEnabled = p.options.LogToFile
 	}
 
 	err = conf.LoadHarvestConfig(p.options.Config)
@@ -1061,6 +1062,7 @@ func init() {
 	flags.BoolVarP(&args.Debug, "debug", "d", false, "Debug mode, no data will be exported")
 	flags.BoolVar(&args.Daemon, "daemon", false, "Start as daemon")
 	flags.IntVarP(&args.LogLevel, "loglevel", "l", 2, "Logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)")
+	flags.BoolVar(&args.LogToFile, "logtofile", false, "When running in the foreground, log to file instead of stdout")
 	flags.IntVar(&args.Profiling, "profiling", 0, "If profiling port > 0, enables profiling via localhost:PORT/debug/pprof/")
 	flags.IntVar(&args.PromPort, "promPort", 0, "Prometheus Port")
 	flags.StringVar(&args.Config, "config", configPath, "Harvest config file path")
@@ -1074,6 +1076,7 @@ func init() {
 	}
 
 	_ = pollerCmd.MarkFlagRequired("poller")
+	_ = pollerCmd.Flags().MarkHidden("logtofile")
 }
 
 // start poller, if fails try to write to syslog

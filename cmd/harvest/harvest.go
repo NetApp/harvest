@@ -51,6 +51,7 @@ type options struct {
 	debug      bool
 	foreground bool
 	loglevel   int
+	logToFile  bool // only used when running in foreground
 	config     string
 	profiling  bool
 	longStatus bool
@@ -414,6 +415,9 @@ func startPoller(pollerName string, promPort int, opts *options) {
 	}
 
 	if opts.foreground {
+		if opts.logToFile {
+			argv = append(argv, "--logtofile")
+		}
 		cmd := exec.Command(argv[0], argv[1:]...)
 		fmt.Println("starting in foreground, enter CTRL+C or close terminal to stop poller")
 		_ = os.Stdout.Sync()
@@ -573,6 +577,12 @@ Feedback
 		"logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)",
 	)
 	startCmd.PersistentFlags().BoolVar(
+		&opts.logToFile,
+		"logtofile",
+		false,
+		"When running in the foreground, log to file instead of stdout",
+	)
+	startCmd.PersistentFlags().BoolVar(
 		&opts.profiling,
 		"profiling",
 		false,
@@ -598,6 +608,7 @@ Feedback
 		[]string{},
 		"only start these objects (overrides collector config)",
 	)
+	_ = startCmd.PersistentFlags().MarkHidden("logtofile")
 }
 
 // The management commands: start|status|stop|restart|kill
