@@ -9,7 +9,7 @@ if [ ! -n "$VERSION" ]; then
   VERSION="$(date +%Y.%m.%d%H | cut -c 3-)"
 fi
 
-LD_FLAGS="-X 'goharvest2/cmd/harvest/version.VERSION=$VERSION'"
+LD_FLAGS="-X goharvest2/cmd/harvest/version.VERSION=$VERSION"
 echo $LD_FLAGS
 
 go mod tidy
