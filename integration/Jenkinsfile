@@ -148,6 +148,7 @@ pipeline {
                                 echo "Installing"
                                 export PATH=$PATH:/usr/local/go/bin
                                 #export BUILD_PATH=$DOCKER
+                                export VERSION=$VERSION
                                 cd $WORKSPACE/harvest
                                 cp -rf $WORKSPACE/harvest/integration/test/harvest.yml .
                                 make build
