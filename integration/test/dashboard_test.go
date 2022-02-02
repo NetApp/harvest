@@ -6,6 +6,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/Netapp/harvest-automation/test/dashboard"
 	"github.com/Netapp/harvest-automation/test/docker"
 	"github.com/Netapp/harvest-automation/test/grafana"
 	"github.com/Netapp/harvest-automation/test/installer"
@@ -13,7 +14,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"goharvest2/cmd/harvest/version"
 	"testing"
 	"time"
 )
@@ -46,8 +46,8 @@ func (suite *DashboardImportTestSuite) SetupSuite() {
 	if !utils.IsUrlReachable(utils.GetPrometheusUrl()) {
 		panic(fmt.Errorf("Prometheus is not reachable."))
 	}
-	cDotFolder = version.VERSION
-	sevenModeFolder = version.VERSION
+	cDotFolder = dashboard.GetFolderNameFromYml(utils.GetHarvestRootDir() + "/grafana/dashboards/dashboard.yml")
+	sevenModeFolder = dashboard.GetFolderNameFromYml(utils.GetHarvestRootDir() + "/grafana/dashboards/dashboard7.yml")
 	log.Info().Str("cMode", cDotFolder).Str("7mode", sevenModeFolder).Msg("Folder name details")
 	status, _ := new(grafana.GrafanaMgr).Import("") //send empty so that it will import all dashboards
 	if !status {
