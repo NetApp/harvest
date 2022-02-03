@@ -132,11 +132,13 @@ func (p *Poller) Init() error {
 	zeroLogLevel := logging.GetZerologLevel(p.options.LogLevel)
 	// if we are daemon, use file logging
 	if p.options.Daemon {
-		logFileName = "poller_" + p.name + ".log"
 		fileLoggingEnabled = true
 	} else {
 		consoleLoggingEnabled = !p.options.LogToFile
 		fileLoggingEnabled = p.options.LogToFile
+	}
+	if fileLoggingEnabled {
+		logFileName = "poller_" + p.name + ".log"
 	}
 
 	err = conf.LoadHarvestConfig(p.options.Config)
