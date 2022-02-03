@@ -429,6 +429,91 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 	return nil
 }
 
+
+func (r *Rest) HandleLabelsAndMetrics(instance *matrix.Instance, prop *prop, instanceData gjson.Result, data *matrix.Matrix, instanceKey string) uint64 {
+	var (
+		err   error
+		count uint64
+	)
+
+	for label, display := range prop.instanceLabels {
+		value := instanceData.Get(label)
+		if value.Exists() {
+			if value.IsArray() {
+				var labelArray []string
+				for _, r := range value.Array() {
+					labelString := r.String()
+					labelArray = append(labelArray, labelString)
+				}
+				instance.SetLabel(display, strings.Join(labelArray, ","))
+			} else {
+				instance.SetLabel(display, value.String())
+			}
+			count++
+		} else {
+			// spams a lot currently due to missing label mappings. Moved to debug for now till rest gaps are filled
+			r.Logger.Debug().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
+		}
+	}
+
+	for _, metric := range prop.metrics {
+		metr, ok := data.GetMetrics()[metric.name]
+		if !ok {
+			if metr, err = data.NewMetricFloat64(metric.name); err != nil {
+				r.Logger.Error().Err(err).
+					Str("name", metric.name).
+					Msg("NewMetricFloat64")
+			}
+		}
+		f := instanceData.Get(metric.name)
+		if f.Exists() {
+			metr.SetName(metric.label)
+
+			var floatValue float64
+			switch metric.metricType {
+			case "duration":
+				floatValue = HandleDuration(f.String())
+			case "timestamp":
+				floatValue = HandleTimestamp(f.String())
+			case "":
+				floatValue = f.Float()
+			default:
+				r.Logger.Warn().Str("type", metric.metricType).Str("metric", metric.name).Msg("unknown metric type")
+			}
+
+			if err = metr.SetValueFloat64(instance, floatValue); err != nil {
+				r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
+					Msg("Unable to set float key on metric")
+			}
+			count++
+		}
+	}
+	return count
+}
+
+func (r *Rest) GetRestData(prop *prop, client *rest.Client) ([]interface{}, error) {
+	var (
+		err     error
+		records []interface{}
+	)
+
+	href := rest.BuildHref(prop.query, strings.Join(prop.fields, ","), nil, "", "", "", prop.returnTimeOut, prop.query)
+
+	r.Logger.Debug().Str("href", href).Msg("")
+	if href == "" {
+		return nil, errors.New(errors.ERR_CONFIG, "empty url")
+	}
+
+	err = rest.FetchData(client, href, &records)
+	if err != nil {
+		r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
+		return nil, err
+	}
+
+	return records, nil
+}
+
+
 // Interface guards
 var (
 	_ collector.Collector = (*Rest)(nil)
