@@ -456,7 +456,6 @@ func importFiles(dir string, folder Folder) {
 		request = make(map[string]interface{})
 		request["overwrite"] = true
 		request["folderId"] = folder.folderId
-		//delete(dashboard, "id")
 		request["dashboard"] = dashboard
 
 		result, status, code, err := sendRequest(opts, "POST", "/api/dashboards/db", request)
