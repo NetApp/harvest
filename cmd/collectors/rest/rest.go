@@ -429,7 +429,6 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 	return nil
 }
 
-
 func (r *Rest) HandleLabelsAndMetrics(instance *matrix.Instance, prop *prop, instanceData gjson.Result, data *matrix.Matrix, instanceKey string) uint64 {
 	var (
 		err   error
@@ -512,7 +511,6 @@ func (r *Rest) GetRestData(prop *prop, client *rest.Client) ([]interface{}, erro
 
 	return records, nil
 }
-
 
 // Interface guards
 var (
