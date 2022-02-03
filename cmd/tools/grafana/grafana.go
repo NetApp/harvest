@@ -10,10 +10,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/hashicorp/go-version"
+	goversion "github.com/hashicorp/go-version"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
+	"goharvest2/cmd/harvest/version"
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/util"
 	"io"
@@ -28,16 +29,16 @@ import (
 )
 
 const (
-	clientTimeout           = 5
-	harvestRelease          = "main"
-	grafanaFolderTitle      = "Harvest " + harvestRelease + " - cDOT"
-	grafana7modeFolderTitle = "Harvest " + harvestRelease + " - 7-mode"
-	grafanaDataSource       = "Prometheus"
+	clientTimeout     = 5
+	grafanaDataSource = "Prometheus"
 )
 
 var (
-	grafanaMinVers = "7.1.0" // lowest grafana version we require
-	homePath       string
+	grafanaMinVers          = "7.1.0" // lowest grafana version we require
+	homePath                string
+	harvestRelease          = version.VERSION
+	grafanaFolderTitle      = "Harvest " + harvestRelease + " - cDOT"
+	grafana7modeFolderTitle = "Harvest " + harvestRelease + " - 7-mode"
 )
 
 type options struct {
@@ -697,12 +698,12 @@ func checkToken(opts *options, ignoreConfig bool) error {
 }
 
 func checkVersion(inputVersion string) bool {
-	v1, err := version.NewVersion(inputVersion)
+	v1, err := goversion.NewVersion(inputVersion)
 	if err != nil {
 		fmt.Println(err)
 		return false
 	}
-	constraints, err := version.NewConstraint(">= " + grafanaMinVers)
+	constraints, err := goversion.NewConstraint(">= " + grafanaMinVers)
 
 	if err != nil {
 		fmt.Println(err)
