@@ -116,7 +116,7 @@ func (my *SnapMirror) updateNodeCache() error {
 		volumeName := volume.Get("volume").String()
 		vserverName := volume.Get("vserver").String()
 		nodeName := volume.Get("node").String()
-		key := vserverName+volumeName
+		key := vserverName + volumeName
 
 		if _, ok := my.svmVolToNode[key]; ok {
 			my.Logger.Warn().Str("key", key).Msg("Duplicate key found")
