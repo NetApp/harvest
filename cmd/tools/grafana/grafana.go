@@ -430,6 +430,15 @@ func importFiles(dir string, folder Folder) {
 			continue
 		}
 
+		// Updating the id of dashboards, in case id is not null
+		if dashboardId := gjson.GetBytes(data, "id").String(); dashboardId != "" {
+			data, err = sjson.SetBytes(data, "id", []byte(""))
+			if err != nil {
+				fmt.Printf("error while updating the id %s into dashboard %s, err: %+v", dashboardId, file.Name(), err)
+				continue
+			}
+		}
+
 		// labelMap is used to ensure we don't modify the query of one of the new labels we're adding
 		labelMap := make(map[string]string)
 		for _, label := range opts.labels {
