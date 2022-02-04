@@ -253,11 +253,9 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 		r.Logger.Error().Err(err).Str("ApiPath", r.prop.query).Msg("Unable to marshal rest pagination")
 	}
 
-	startTime = time.Now()
 	if !gjson.ValidBytes(content) {
 		return nil, fmt.Errorf("json is not valid for: %s", r.prop.query)
 	}
-	parseD = time.Since(startTime)
 
 	results := gjson.GetManyBytes(content, "num_records", "records")
 	numRecords := results[0]
@@ -267,51 +265,15 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 
 	r.Logger.Debug().Str("object", r.Object).Str("number of records extracted", numRecords.String()).Msg("")
 
-	results[1].ForEach(func(key, instanceData gjson.Result) bool {
-		var (
-			instanceKey string
-			instance    *matrix.Instance
-		)
-
-		if !instanceData.IsObject() {
-			r.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
-			return true
-		}
-
-		// extract instance key(s)
-		for _, k := range r.prop.instanceKeys {
-			value := instanceData.Get(k)
-			if value.Exists() {
-				instanceKey += value.String()
-			} else {
-				r.Logger.Warn().Str("key", k).Msg("skip instance, missing key")
-				break
-			}
-		}
-
-		if r.Params.GetChildContentS("only_cluster_instance") != "true" {
-			if instanceKey == "" {
-				return true
-			}
-		}
-
-		if instance = r.Matrix.GetInstance(instanceKey); instance == nil {
-			if instance, err = r.Matrix.NewInstance(instanceKey); err != nil {
-				r.Logger.Error().Err(err).Str("Instance key", instanceKey).Msg("")
-				return true
-			}
-		}
-
-		count = r.HandleLabelsAndMetrics(instance, r.prop, instanceData, r.Matrix, instanceKey)
-
-		return true
-	})
+	count = r.HandleResults(results[1], r.prop)
 
 	// process endpoints
-	err = r.processEndPoints(r.Matrix)
+	startTime = time.Now()
+	err = r.processEndPoints()
 	if err != nil {
 		r.Logger.Error().Err(err).Msg("Error while processing end points")
 	}
+	parseD = time.Since(startTime)
 
 	r.Logger.Info().
 		Uint64("dataPoints", count).
@@ -327,7 +289,7 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 	return r.Matrix, nil
 }
 
-func (r *Rest) processEndPoints(data *matrix.Matrix) error {
+func (r *Rest) processEndPoints() error {
 	var (
 		err error
 	)
@@ -369,34 +331,7 @@ func (r *Rest) processEndPoints(data *matrix.Matrix) error {
 			return errors.New(errors.ERR_NO_INSTANCE, "no "+endpoint.prop.query+" instances on cluster")
 		}
 
-		results[1].ForEach(func(key, instanceData gjson.Result) bool {
-			var (
-				instanceKey string
-				instance    *matrix.Instance
-			)
-
-			if !instanceData.IsObject() {
-				r.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
-				return true
-			}
-
-			// extract instance key(s)
-			for _, k := range endpoint.prop.instanceKeys {
-				value := instanceData.Get(k)
-				if value.Exists() {
-					instanceKey += value.String()
-				} else {
-					r.Logger.Warn().Str("key", k).Msg("skip instance, missing key")
-					break
-				}
-			}
-
-			if instance = data.GetInstance(instanceKey); instance != nil {
-				r.HandleLabelsAndMetrics(instance, endpoint.prop, instanceData, data, instanceKey)
-			}
-			return true
-		})
-
+		r.HandleResults(results[1], endpoint.prop)
 	}
 
 	return nil
@@ -429,64 +364,102 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 	return nil
 }
 
-func (r *Rest) HandleLabelsAndMetrics(instance *matrix.Instance, prop *prop, instanceData gjson.Result, data *matrix.Matrix, instanceKey string) uint64 {
+func (r *Rest) HandleResults(result gjson.Result, prop *prop) uint64 {
 	var (
 		err   error
 		count uint64
 	)
 
-	for label, display := range prop.instanceLabels {
-		value := instanceData.Get(label)
-		if value.Exists() {
-			if value.IsArray() {
-				var labelArray []string
-				for _, r := range value.Array() {
-					labelString := r.String()
-					labelArray = append(labelArray, labelString)
-				}
-				instance.SetLabel(display, strings.Join(labelArray, ","))
+	result.ForEach(func(key, instanceData gjson.Result) bool {
+		var (
+			instanceKey string
+			instance    *matrix.Instance
+		)
+
+		if !instanceData.IsObject() {
+			r.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
+			return true
+		}
+
+		// extract instance key(s)
+		for _, k := range prop.instanceKeys {
+			value := instanceData.Get(k)
+			if value.Exists() {
+				instanceKey += value.String()
 			} else {
-				instance.SetLabel(display, value.String())
-			}
-			count++
-		} else {
-			// spams a lot currently due to missing label mappings. Moved to debug for now till rest gaps are filled
-			r.Logger.Debug().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
-		}
-	}
-
-	for _, metric := range prop.metrics {
-		metr, ok := data.GetMetrics()[metric.name]
-		if !ok {
-			if metr, err = data.NewMetricFloat64(metric.name); err != nil {
-				r.Logger.Error().Err(err).
-					Str("name", metric.name).
-					Msg("NewMetricFloat64")
+				r.Logger.Warn().Str("key", k).Msg("skip instance, missing key")
+				break
 			}
 		}
-		f := instanceData.Get(metric.name)
-		if f.Exists() {
-			metr.SetName(metric.label)
 
-			var floatValue float64
-			switch metric.metricType {
-			case "duration":
-				floatValue = HandleDuration(f.String())
-			case "timestamp":
-				floatValue = HandleTimestamp(f.String())
-			case "":
-				floatValue = f.Float()
-			default:
-				r.Logger.Warn().Str("type", metric.metricType).Str("metric", metric.name).Msg("unknown metric type")
+		if r.Params.GetChildContentS("only_cluster_instance") != "true" {
+			if instanceKey == "" {
+				return true
 			}
-
-			if err = metr.SetValueFloat64(instance, floatValue); err != nil {
-				r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
-					Msg("Unable to set float key on metric")
-			}
-			count++
 		}
-	}
+
+		if instance = r.Matrix.GetInstance(instanceKey); instance == nil {
+			if instance, err = r.Matrix.NewInstance(instanceKey); err != nil {
+				r.Logger.Error().Err(err).Str("Instance key", instanceKey).Msg("")
+				return true
+			}
+		}
+
+		for label, display := range prop.instanceLabels {
+			value := instanceData.Get(label)
+			if value.Exists() {
+				if value.IsArray() {
+					var labelArray []string
+					for _, r := range value.Array() {
+						labelString := r.String()
+						labelArray = append(labelArray, labelString)
+					}
+					instance.SetLabel(display, strings.Join(labelArray, ","))
+				} else {
+					instance.SetLabel(display, value.String())
+				}
+				count++
+			} else {
+				// spams a lot currently due to missing label mappings. Moved to debug for now till rest gaps are filled
+				r.Logger.Debug().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
+			}
+		}
+
+		for _, metric := range prop.metrics {
+			metr, ok := r.Matrix.GetMetrics()[metric.name]
+			if !ok {
+				if metr, err = r.Matrix.NewMetricFloat64(metric.name); err != nil {
+					r.Logger.Error().Err(err).
+						Str("name", metric.name).
+						Msg("NewMetricFloat64")
+				}
+			}
+			f := instanceData.Get(metric.name)
+			if f.Exists() {
+				metr.SetName(metric.label)
+
+				var floatValue float64
+				switch metric.metricType {
+				case "duration":
+					floatValue = HandleDuration(f.String())
+				case "timestamp":
+					floatValue = HandleTimestamp(f.String())
+				case "":
+					floatValue = f.Float()
+				default:
+					r.Logger.Warn().Str("type", metric.metricType).Str("metric", metric.name).Msg("unknown metric type")
+				}
+
+				if err = metr.SetValueFloat64(instance, floatValue); err != nil {
+					r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
+						Msg("Unable to set float key on metric")
+				}
+				count++
+			}
+		}
+
+		return true
+	})
 	return count
 }
 

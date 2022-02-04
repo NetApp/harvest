@@ -79,6 +79,10 @@ func (my *SnapMirror) updateNodeCache() error {
 		content []byte
 		err     error
 	)
+
+	// Clean svmVolToNode map
+	my.svmVolToNode = make(map[string]string)
+
 	href := rest.BuildHref("", "node", nil, "", "", "", "", my.query)
 
 	err = rest.FetchData(my.client, href, &records)
@@ -112,7 +116,12 @@ func (my *SnapMirror) updateNodeCache() error {
 		volumeName := volume.Get("volume").String()
 		vserverName := volume.Get("vserver").String()
 		nodeName := volume.Get("node").String()
-		my.svmVolToNode[vserverName+volumeName] = nodeName
+		key := vserverName+volumeName
+
+		if _, ok := my.svmVolToNode[key]; ok {
+			my.Logger.Warn().Str("key", key).Msg("Duplicate key found")
+		}
+		my.svmVolToNode[key] = nodeName
 	}
 	return nil
 }

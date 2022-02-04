@@ -2,11 +2,11 @@
 name:       Status
 query:      api/cluster
 object:     cluster
-fields:
-  - health
 
 counters:
   - ^health => status
+  - hidden_fields:
+      - health
 
 collect_only_labels: true
 only_cluster_instance: true

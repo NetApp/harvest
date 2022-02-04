@@ -1,3 +1,4 @@
+# As private cli api has all the fields/metrics which we would need for our use-case, So using private api instead of public.
 
 name:                         SnapMirror
 query:                        api/private/cli/snapmirror
