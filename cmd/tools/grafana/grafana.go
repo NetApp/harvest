@@ -430,7 +430,7 @@ func importFiles(dir string, folder Folder) {
 			continue
 		}
 
-		// Updating the id of dashboards, in case id is not null
+		// If the dashboard has an id defined, change the id to empty string so Grafana treats this as a new dashboard instead of an update to an existing one
 		if dashboardId := gjson.GetBytes(data, "id").String(); dashboardId != "" {
 			data, err = sjson.SetBytes(data, "id", []byte(""))
 			if err != nil {
