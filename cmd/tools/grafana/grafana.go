@@ -712,20 +712,17 @@ func checkVersion(inputVersion string) bool {
 		fmt.Println(err)
 		return false
 	}
-	constraints, err := goversion.NewConstraint(">= " + grafanaMinVers)
 
-	if err != nil {
-		fmt.Println(err)
-		return false
-	}
+	min, _ := goversion.NewVersion(grafanaMinVers)
 
-	// Check if input version is greater than or equal to min version required
-	if constraints.Check(v1) {
-		return true
-	} else {
-		fmt.Printf("%s does not satisfies constraints %s", v1, constraints)
-		return false
+	// Not using a constraint check since a pre-release version (e.g. 8.4.0-beta1) never matches
+	// a constraint specified without a pre-release https://github.com/hashicorp/go-version/pull/35
+
+	satisfies := v1.GreaterThanOrEqual(min)
+	if !satisfies {
+		fmt.Printf("%s is not >= %s", v1, min)
 	}
+	return satisfies
 }
 
 func createFolder(opts *options, folder *Folder) error {
