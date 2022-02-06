@@ -16,7 +16,7 @@ $ bin/grafana import --addr my.grafana.server:3000
 
 Similarly, to export:
 ```
-$ bin/grafana export --addr my.grafana.server:3000 --directory /path/to/export/directory
+$ bin/grafana export --addr my.grafana.server:3000 --directory /path/to/export/directory --serverfolder grafanaFolderName
 ```
 
 By default, the dashboards are connected to the `Prometheus` datasource defined in Grafana. If your datasource has a different name, use the `--datasource` flag during import/export.

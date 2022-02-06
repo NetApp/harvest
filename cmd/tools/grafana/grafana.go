@@ -34,57 +34,170 @@ const (
 )
 
 var (
-	grafanaMinVers          = "7.1.0" // lowest grafana version we require
-	homePath                string
-	harvestRelease          = version.VERSION
-	grafanaFolderTitle      = "Harvest " + harvestRelease + " - cDOT"
-	grafana7modeFolderTitle = "Harvest " + harvestRelease + " - 7-mode"
+	grafanaMinVers = "7.1.0" // lowest grafana version we require
+	homePath       string
+	harvestRelease = version.VERSION
 )
 
 type options struct {
-	command        string // one of: import, export, clean
-	addr           string // URL of Grafana server (e.g. "http://localhost:3000")
-	token          string // API token issued by Grafana server
-	dir            string // Local directory for import/export-ing cDot & 7mode dashboards (e.g. "opt/harvest/grafana/dashboards")
-	dircDOT        string // Local directory for import/export-ing cDOT dashboards (e.g. "opt/harvest/grafana/dashboards/cmode")
-	dir7mode       string // Local directory for import/export-ing 7mode dashboards (e.g. "opt/harvest/grafana/dashboards/7mode")
-	cmodeFolder    Folder // Server-side Grafana folder name for cDOT dashboards
-	mode7Folder    Folder // Server-side Grafana folder name for 7-mode dashboards
-	datasource     string
-	variable       bool
-	client         *http.Client
-	headers        http.Header
-	config         string
-	prefix         string
-	useHttps       bool
-	useInsecureTLS bool
-	labels         []string
+	command             string // one of: import, export, clean
+	addr                string // URL of Grafana server (e.g. "http://localhost:3000")
+	token               string // API token issued by Grafana server
+	dir                 string
+	serverfolder        Folder
+	datasource          string
+	variable            bool
+	client              *http.Client
+	headers             http.Header
+	config              string
+	prefix              string
+	useHttps            bool
+	useInsecureTLS      bool
+	labels              []string
+	dirGrafanaFolderMap map[string]*Folder
 }
 
 type Folder struct {
-	folderName string // Grafana folder where to upload from where to download dashboards
-	folderId   int64
-	folderUid  string
+	name string // Grafana folder where to upload from where to download dashboards
+	id   int64
+	uid  string
+}
+
+func adjustOptions() {
+	opts.config = conf.ConfigPath(opts.config)
+	homePath = conf.GetHarvestHomePath()
+
+	// When opt.addr starts with https don't change it
+	if !strings.HasPrefix(opts.addr, "https://") {
+		opts.addr = strings.TrimPrefix(opts.addr, "http://")
+		opts.addr = strings.TrimPrefix(opts.addr, "https://")
+		opts.addr = strings.TrimSuffix(opts.addr, "/")
+		if opts.useHttps {
+			opts.addr = "https://" + opts.addr
+		} else {
+			opts.addr = "http://" + opts.addr
+		}
+	}
+}
+
+func askForToken() {
+	// ask for API token if not provided as arg and validate
+	if err := checkToken(opts, false); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
 
 func doExport(_ *cobra.Command, _ []string) {
 	adjustOptions()
+	validateExport()
 	askForToken()
-	var doesFolderExist = doesGrafanaFolderExist()
-	var err error
+	initExportVars()
+	fmt.Printf("preparing to export dashboards...\n")
+	exportDashboards(opts)
+}
 
-	if !(doesFolderExist[&opts.cmodeFolder] && doesFolderExist[&opts.mode7Folder]) {
-		if !doesFolderExist[&opts.cmodeFolder] {
-			fmt.Printf("folder [%s] not found in Grafana\n", opts.cmodeFolder.folderName)
-		}
-		if !doesFolderExist[&opts.mode7Folder] {
-			fmt.Printf("folder [%s] not found in Grafana\n", opts.mode7Folder.folderName)
-		}
-		os.Exit(1)
-	} else if err = exportDashboards(opts); err != nil {
-		fmt.Println(err)
+func validateExport() {
+	if opts.serverfolder.name == "" {
+		fmt.Printf("error: serverfolder is empty.\n")
 		os.Exit(1)
 	}
+
+	if opts.dir == "" {
+		fmt.Printf("error: dir is empty.\n")
+		os.Exit(1)
+	}
+
+	if opts.dir != "grafana/dashboards" {
+		exitIfExist(opts.dir, "directory")
+	}
+}
+
+func initExportVars() {
+	opts.dirGrafanaFolderMap = make(map[string]*Folder)
+
+	m := make(map[string]*Folder)
+
+	if opts.serverfolder.name != "" {
+		if opts.dir == "grafana/dashboards" {
+			m[path.Join(opts.dir, opts.serverfolder.name)] = &Folder{name: opts.serverfolder.name}
+		} else {
+			m[opts.dir] = &Folder{name: opts.serverfolder.name}
+		}
+	}
+
+	for k, v := range m {
+		opts.dirGrafanaFolderMap[k] = v
+	}
+}
+
+func exportDashboards(opts *options) {
+	for k, v := range opts.dirGrafanaFolderMap {
+		err := exportFiles(k, v)
+		if err != nil {
+			fmt.Printf("Error during export %v\n", err)
+		}
+	}
+}
+
+func exportFiles(dir string, folder *Folder) error {
+	var (
+		err   error
+		uids  map[string]string
+		count int
+	)
+
+	err = checkFolder(folder)
+	if err != nil {
+		fmt.Printf("error %v\n", err)
+	}
+	if folder.id == 0 {
+		fmt.Printf("error folder %s doesn't exit in grafana\n", folder.name)
+		os.Exit(1)
+	}
+	fmt.Printf("querying for content of folder id [%d]\n", folder.id)
+
+	result, status, code, err := sendRequestArray(opts, "GET", "/api/search?folderIds="+strconv.FormatInt(folder.id, 10), nil)
+	if err != nil && code != 200 {
+		fmt.Printf("server response [%d: %s]: %v\n", code, status, err)
+		return err
+	}
+
+	uids = make(map[string]string)
+	for _, elem := range result {
+		uid := elem["uid"].(string)
+		uri := elem["uri"].(string)
+		if uid != "" && uri != "" {
+			uids[uid] = strings.ReplaceAll(strings.ReplaceAll(uri, "/", "_"), "-", "_")
+		}
+	}
+
+	if err = os.MkdirAll(dir, 0755); err != nil {
+		fmt.Printf("error makedir [%s]: %v\n", dir, err)
+		return err
+	}
+	fmt.Printf("exporting dashboards to directory [%s]\n", dir)
+
+	for uid, uri := range uids {
+		if result, status, code, err := sendRequest(opts, "GET", "/api/dashboards/uid/"+uid, nil); err != nil {
+			fmt.Printf("error requesting [%s]: [%d: %s] %v\n", uid, code, status, err)
+			return err
+		} else if dashboard, ok := result["dashboard"]; ok {
+			fp := path.Join(dir, uri+".json")
+			if data, err := json.Marshal(dashboard); err != nil {
+				fmt.Printf("error marshall dashboard [%s]: %v\n\n", uid, err)
+				return err
+			} else if err = ioutil.WriteFile(fp, data, 0644); err != nil {
+				fmt.Printf("error write to [%s]: %v\n", fp, err)
+				return err
+			} else {
+				fmt.Printf("OK - exported [%s]\n", fp)
+				count++
+			}
+		}
+	}
+	fmt.Printf("exported %d dashboards to [%s]\n", count, dir)
+	return nil
 }
 
 func addLabel(content []byte, label string, labelMap map[string]string) []byte {
@@ -236,9 +349,11 @@ func doImport(_ *cobra.Command, _ []string) {
 	if err != nil {
 		return
 	}
+
 	adjustOptions()
+	validateImport()
 	askForToken()
-	checkAndCreateFolder()
+	initImportVars()
 
 	fmt.Printf("preparing to import dashboards...\n")
 	if err := importDashboards(opts); err != nil {
@@ -247,153 +362,99 @@ func doImport(_ *cobra.Command, _ []string) {
 	}
 }
 
-func checkAndCreateFolder() {
-	var folderExists = doesGrafanaFolderExist()
-	var err error
+func validateImport() {
+	if opts.dir == "" {
+		fmt.Printf("error: dir is empty.\n")
+		os.Exit(1)
+	}
+
+	if opts.dir == "grafana/dashboards" {
+		opts.dir = path.Join(homePath, opts.dir)
+	}
+
+	exitIfMissing(opts.dir, "directory")
+	files, err := ioutil.ReadDir(opts.dir)
+	if err != nil {
+		fmt.Printf("Error while reading dir [%s] is the directory correct?\n", opts.dir)
+		os.Exit(1)
+	}
+	if len(files) == 0 {
+		fmt.Printf("No dashboards found in [%s] is the directory correct?\n", opts.dir)
+		os.Exit(1)
+	}
+}
+
+func initImportVars() {
+	opts.dirGrafanaFolderMap = make(map[string]*Folder)
+
+	m := make(map[string]*Folder)
+
+	if opts.dir == "grafana/dashboards" {
+		// default behaviour
+		if opts.serverfolder.name == "" {
+			m[path.Join(opts.dir, "/cmode")] = &Folder{name: "Harvest-" + harvestRelease + "-cDOT"}
+			m[path.Join(opts.dir, "/7mode")] = &Folder{name: "Harvest-" + harvestRelease + "-7mode"}
+		} else {
+			// set target grafana folder as passed
+			m[path.Join(opts.dir, "/cmode")] = &Folder{name: opts.serverfolder.name}
+			m[path.Join(opts.dir, "/7mode")] = &Folder{name: opts.serverfolder.name}
+		}
+	} else {
+		// if custom dir is passed
+		if opts.serverfolder.name == "" {
+			// auto generate folder name
+			m[opts.dir] = &Folder{name: "Harvest-" + harvestRelease}
+		} else {
+			m[opts.dir] = &Folder{name: opts.serverfolder.name}
+		}
+	}
+
+	for k, v := range m {
+		err := checkAndCreateServerFolder(v)
+		if err != nil {
+			fmt.Print(err)
+			os.Exit(1)
+		}
+		opts.dirGrafanaFolderMap[k] = v
+	}
+}
+
+func checkAndCreateServerFolder(folder *Folder) error {
+	err := checkFolder(folder)
 
 	// first folder is Harvest 2.0 and second folder is 7mode
-	for folder, value := range folderExists {
-		if value {
-			fmt.Printf("folder [%s] exists in Grafana - OK\n", folder.folderName)
-		} else if err = createFolder(opts, folder); err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		} else {
-			fmt.Printf("created Grafana folder [%s] - OK\n", folder.folderName)
-		}
+	if folder.uid != "" && folder.id != 0 {
+		fmt.Printf("folder [%s] exists in Grafana - OK\n", folder.name)
+	} else if err = createServerFolder(folder); err != nil {
+		return err
+	} else {
+		fmt.Printf("created Grafana folder [%s] - OK\n", folder.name)
 	}
-
-}
-
-func doesGrafanaFolderExist() map[*Folder]bool {
-	folderExists := make(map[*Folder]bool)
-	var err error
-	if folderExists, err = checkFolder(opts); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	return folderExists
-}
-
-func askForToken() {
-	// ask for API token if not provided as arg and validate
-	if err := checkToken(opts, false); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-}
-
-func adjustOptions() {
-	opts.config = conf.ConfigPath(opts.config)
-	homePath = conf.GetHarvestHomePath()
-	if opts.dircDOT != "" {
-		opts.dircDOT = path.Join(homePath, opts.dircDOT)
-		exitIfMissing(opts.dircDOT, "directory-cdot")
-	}
-	if opts.dir7mode != "" {
-		opts.dir7mode = path.Join(homePath, opts.dir7mode)
-		exitIfMissing(opts.dir7mode, "directory-7mode")
-	}
-	if opts.dircDOT == "" && opts.dir7mode == "" {
-		opts.dir = path.Join(homePath, opts.dir)
-		exitIfMissing(opts.dir, "directory")
-		opts.dircDOT = path.Join(opts.dir, "/cmode")
-		opts.dir7mode = path.Join(opts.dir, "/7mode")
-	}
-
-	// When opt.addr starts with https don't change it
-	if !strings.HasPrefix(opts.addr, "https://") {
-		opts.addr = strings.TrimPrefix(opts.addr, "http://")
-		opts.addr = strings.TrimPrefix(opts.addr, "https://")
-		opts.addr = strings.TrimSuffix(opts.addr, "/")
-		if opts.useHttps {
-			opts.addr = "https://" + opts.addr
-		} else {
-			opts.addr = "http://" + opts.addr
-		}
-	}
+	return nil
 }
 
 func exitIfMissing(fp string, s string) {
 	if _, err := os.Stat(fp); os.IsNotExist(err) {
-		fmt.Printf("error: %s file [%s] does not exist.\n", s, fp)
+		fmt.Printf("error: %s [%s] does not exist.\n", s, fp)
 		os.Exit(1)
 	}
 }
 
-func exportDashboards(opts *options) error {
-	// Exporting C mode dashboards
-	_ = exportFiles(opts.cmodeFolder)
-	// Exporting 7mode dashboards
-	_ = exportFiles(opts.mode7Folder)
-	return nil
-}
-
-func exportFiles(folder Folder) error {
-	var (
-		err   error
-		uids  map[string]string
-		dir   string
-		count int
-	)
-
-	fmt.Printf("querying for content of folder id [%d]\n", folder.folderId)
-
-	result, status, code, err := sendRequestArray(opts, "GET", "/api/search?folderIds="+strconv.FormatInt(folder.folderId, 10), nil)
-	if err != nil && code != 200 {
-		fmt.Printf("server response [%d: %s]: %v\n", code, status, err)
-		return err
+func exitIfExist(fp string, s string) {
+	if _, err := os.Stat(fp); err == nil {
+		fmt.Printf("error: %s folder [%s] exists. Harvest creates a new folder and avoids overwriting existing one\n", s, fp)
+		os.Exit(1)
 	}
-
-	uids = make(map[string]string)
-	for _, elem := range result {
-		uid := elem["uid"].(string)
-		uri := elem["uri"].(string)
-		if uid != "" && uri != "" {
-			uids[uid] = strings.ReplaceAll(strings.ReplaceAll(uri, "/", "_"), "-", "_")
-		}
-	}
-
-	if opts.dir == "" {
-		dir = path.Join("./", strings.ReplaceAll(folder.folderName, " ", "_"))
-	} else {
-		dir = path.Join(opts.dir, strings.ReplaceAll(folder.folderName, " ", "_"))
-	}
-	if err = os.MkdirAll(dir, 0755); err != nil {
-		fmt.Printf("error makedir [%s]: %v\n", dir, err)
-		return err
-	}
-	fmt.Printf("exporting dashboards to directory [%s]\n", dir)
-
-	for uid, uri := range uids {
-		if result, status, code, err := sendRequest(opts, "GET", "/api/dashboards/uid/"+uid, nil); err != nil {
-			fmt.Printf("error requesting [%s]: [%d: %s] %v\n", uid, code, status, err)
-			return err
-		} else if dashboard, ok := result["dashboard"]; ok {
-			fp := path.Join(dir, uri+".json")
-			if data, err := json.Marshal(dashboard); err != nil {
-				fmt.Printf("error marshall dashboard [%s]: %v\n\n", uid, err)
-				return err
-			} else if err = ioutil.WriteFile(fp, data, 0644); err != nil {
-				fmt.Printf("error write to [%s]: %v\n", fp, err)
-				return err
-			} else {
-				fmt.Printf("OK - exported [%s]\n", fp)
-				count++
-			}
-		}
-	}
-	fmt.Printf("exported %d dashboards to [%s]\n", count, dir)
-	return nil
 }
 
 func importDashboards(opts *options) error {
-	importFiles(opts.dircDOT, opts.cmodeFolder)
-	importFiles(opts.dir7mode, opts.mode7Folder)
+	for k, v := range opts.dirGrafanaFolderMap {
+		importFiles(k, v)
+	}
 	return nil
 }
 
-func importFiles(dir string, folder Folder) {
+func importFiles(dir string, folder *Folder) {
 	var (
 		request, dashboard map[string]interface{}
 		files              []os.FileInfo
@@ -430,15 +491,6 @@ func importFiles(dir string, folder Folder) {
 			continue
 		}
 
-		// If the dashboard has an id defined, change the id to empty string so Grafana treats this as a new dashboard instead of an update to an existing one
-		if dashboardId := gjson.GetBytes(data, "id").String(); dashboardId != "" {
-			data, err = sjson.SetBytes(data, "id", []byte(""))
-			if err != nil {
-				fmt.Printf("error while updating the id %s into dashboard %s, err: %+v", dashboardId, file.Name(), err)
-				continue
-			}
-		}
-
 		// labelMap is used to ensure we don't modify the query of one of the new labels we're adding
 		labelMap := make(map[string]string)
 		for _, label := range opts.labels {
@@ -465,7 +517,7 @@ func importFiles(dir string, folder Folder) {
 
 		request = make(map[string]interface{})
 		request["overwrite"] = true
-		request["folderId"] = folder.folderId
+		request["folderId"] = folder.id
 		request["dashboard"] = dashboard
 
 		result, status, code, err := sendRequest(opts, "POST", "/api/dashboards/db", request)
@@ -479,11 +531,11 @@ func importFiles(dir string, folder Folder) {
 			fmt.Printf("error importing [%s] - server response (%d - %s) %v\n", file.Name(), code, status, result)
 			return
 		}
-		fmt.Printf("OK - imported %s / [%s]\n", folder.folderName, file.Name())
+		fmt.Printf("OK - imported %s / [%s]\n", folder.name, file.Name())
 		importedFiles++
 	}
 	if importedFiles > 0 {
-		fmt.Printf("Imported %d dashboards to [%s] from [%s]\n", importedFiles, folder.folderName, dir)
+		fmt.Printf("Imported %d dashboards to [%s] from [%s]\n", importedFiles, folder.name, dir)
 	} else {
 		fmt.Printf("No dashboards found in [%s] is the directory correct?\n", dir)
 	}
@@ -725,12 +777,44 @@ func checkVersion(inputVersion string) bool {
 	return satisfies
 }
 
-func createFolder(opts *options, folder *Folder) error {
+func checkFolder(folder *Folder) error {
+
+	result, status, code, err := sendRequestArray(opts, "GET", "/api/folders?limit=1000", nil)
+
+	if err != nil {
+		return err
+	}
+
+	if code != 200 {
+		return errors.New("server response: " + status)
+	}
+
+	if len(result) == 0 {
+		return nil
+	}
+
+	for _, x := range result {
+		if name, ok := x["title"]; ok {
+			if name.(string) == folder.name {
+				if id, idExist := x["id"]; idExist {
+					folder.id = int64(id.(float64))
+					if uid, uidExist := x["uid"]; uidExist {
+						folder.uid = uid.(string)
+					}
+				}
+			}
+		}
+	}
+
+	return nil
+}
+
+func createServerFolder(folder *Folder) error {
 
 	var request map[string]interface{}
 	request = make(map[string]interface{})
 
-	request["title"] = folder.folderName
+	request["title"] = folder.name
 
 	result, status, code, err := sendRequest(opts, "POST", "/api/folders", request)
 
@@ -742,51 +826,10 @@ func createFolder(opts *options, folder *Folder) error {
 		return errors.New("server response: " + status)
 	}
 
-	folder.folderId = int64(result["id"].(float64))
-	folder.folderUid = result["uid"].(string)
+	folder.id = int64(result["id"].(float64))
+	folder.uid = result["uid"].(string)
 
 	return nil
-}
-
-func checkFolder(opts *options) (map[*Folder]bool, error) {
-
-	result, status, code, err := sendRequestArray(opts, "GET", "/api/folders?limit=1000", nil)
-
-	if err != nil {
-		return map[*Folder]bool{&opts.cmodeFolder: false, &opts.mode7Folder: false}, err
-	}
-
-	if code != 200 {
-		return map[*Folder]bool{&opts.cmodeFolder: false, &opts.mode7Folder: false}, errors.New("server response: " + status)
-	}
-
-	if len(result) == 0 {
-		return map[*Folder]bool{&opts.cmodeFolder: false, &opts.mode7Folder: false}, nil
-	}
-
-	cmodeFolder := folderExist(result, &opts.cmodeFolder)
-	nonCmodeFolder := folderExist(result, &opts.mode7Folder)
-
-	return map[*Folder]bool{&opts.cmodeFolder: cmodeFolder, &opts.mode7Folder: nonCmodeFolder}, nil
-}
-
-func folderExist(result []map[string]interface{}, folder *Folder) bool {
-	for _, x := range result {
-
-		if name, ok := x["title"]; ok {
-			if name.(string) == folder.folderName {
-				if id, idExist := x["id"]; idExist {
-					folder.folderId = int64(id.(float64))
-					if uid, uidExist := x["uid"]; uidExist {
-						folder.folderUid = uid.(string)
-						return true
-					}
-				}
-			}
-		}
-
-	}
-	return false
 }
 
 func sendRequest(opts *options, method, url string, query map[string]interface{}) (map[string]interface{}, string, int, error) {
@@ -895,11 +938,6 @@ func init() {
 	Cmd.PersistentFlags().StringVar(&opts.config, "config", "./harvest.yml", "harvest config file path")
 	Cmd.PersistentFlags().StringVarP(&opts.addr, "addr", "a", "http://127.0.0.1:3000", "Address of Grafana server (IP, FQDN or hostname)")
 	Cmd.PersistentFlags().StringVarP(&opts.token, "token", "t", "", "API token issued by Grafana server for authentication")
-	Cmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d", "grafana/dashboards", "When importing, import cDOT and 7mode dashboards from this local directory.\nWhen exporting, local directory to write dashboards to")
-	Cmd.PersistentFlags().StringVar(&opts.dircDOT, "directory-cdot", "", "When importing, import cDOT dashboards from this local directory.\nWhen exporting, local directory to write dashboards to")
-	Cmd.PersistentFlags().StringVar(&opts.dir7mode, "directory-7mode", "", "When importing, import 7-mode dashboards from this local directory.\nWhen exporting, local directory to write dashboards to")
-	Cmd.PersistentFlags().StringVarP(&opts.cmodeFolder.folderName, "folder", "f", grafanaFolderTitle, "Grafana folder name for the cDOT dashboards")
-	Cmd.PersistentFlags().StringVarP(&opts.mode7Folder.folderName, "folder-7mode", "", grafana7modeFolderTitle, "Grafana folder name for the 7-mode dashboards")
 	Cmd.PersistentFlags().StringVarP(&opts.prefix, "prefix", "p", "", "Use global metric prefix in queries")
 	Cmd.PersistentFlags().StringVarP(&opts.datasource, "datasource", "s", grafanaDataSource, "Grafana datasource for the dashboards")
 	Cmd.PersistentFlags().BoolVarP(&opts.variable, "variable", "v", false, "Use datasource as variable, overrides: --datasource")
@@ -908,4 +946,11 @@ func init() {
 
 	importCmd.PersistentFlags().StringSliceVar(&opts.labels, "labels", nil,
 		"For each label, create a variable and add as chained query to other variables")
+
+	importCmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d", "grafana/dashboards", "When importing, import cDOT/7mode dashboards from this local directory.\nWhen exporting, local directory to write dashboards to")
+	importCmd.PersistentFlags().StringVarP(&opts.serverfolder.name, "serverfolder", "f", "", "Grafana folder name for dashboards")
+
+	exportCmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d", "grafana/dashboards", "When importing, import cDOT/7mode dashboards from this local directory.\nWhen exporting, local directory to write dashboards to")
+	exportCmd.PersistentFlags().StringVarP(&opts.serverfolder.name, "serverfolder", "f", "", "Grafana folder name for dashboards")
+	_ = exportCmd.MarkPersistentFlagRequired("serverfolder")
 }
