@@ -44,8 +44,8 @@ func (suite *DashboardImportTestSuite) SetupSuite() {
 	if !utils.IsUrlReachable(utils.GetPrometheusUrl()) {
 		panic(fmt.Errorf("Prometheus is not reachable."))
 	}
-	cDotFolder = "Harvest " + version.VERSION + " - cDOT"
-	sevenModeFolder = "Harvest " + version.VERSION + " - 7-mode"
+	cDotFolder = "Harvest-" + version.VERSION + "-cDOT"
+	sevenModeFolder = "Harvest-" + version.VERSION + "-7mode"
 	log.Info().Str("cMode", cDotFolder).Str("7mode", sevenModeFolder).Msg("Folder name details")
 	status, _ := new(grafana.GrafanaMgr).Import("") //send empty so that it will import all dashboards
 	if !status {
