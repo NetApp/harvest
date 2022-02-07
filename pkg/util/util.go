@@ -328,17 +328,20 @@ func Intersection(a []string, b []string) ([]string, []string) {
 	return matches, misses
 }
 
-// ParseMetric parses display name and type of field from the raw name of the metric as defined in (sub)template.
+// ParseMetric parses display name and type of field and metric type from the raw name of the metric as defined in (sub)template.
 // Users can rename a metric with "=>" (e.g. some_long_metric_name => short).
 // Trailing "^" characters are ignored/cleaned as they have special meaning in some collectors.
-func ParseMetric(rawName string) (string, string, string) {
+func ParseMetric(rawName string) (string, string, string, string) {
 	var (
 		name, display string
 		values        []string
 	)
+	metricType := ""
+	// Ex: last_transfer_duration(duration) => last_transfer_duration
 	if values = strings.SplitN(rawName, "=>", 2); len(values) == 2 {
 		name = strings.TrimSpace(values[0])
 		display = strings.TrimSpace(values[1])
+		name, metricType = ParseMetricType(name)
 	} else {
 		name = rawName
 		display = strings.ReplaceAll(rawName, ".", "_")
@@ -346,16 +349,24 @@ func ParseMetric(rawName string) (string, string, string) {
 	}
 
 	if strings.HasPrefix(name, "^^") {
-		return strings.TrimPrefix(name, "^^"), strings.TrimPrefix(display, "^^"), "key"
+		return strings.TrimPrefix(name, "^^"), strings.TrimPrefix(display, "^^"), "key", ""
 	}
 
 	if strings.HasPrefix(name, "^") {
-		return strings.TrimPrefix(name, "^"), strings.TrimPrefix(display, "^"), "label"
+		return strings.TrimPrefix(name, "^"), strings.TrimPrefix(display, "^"), "label", ""
 	}
 
-	if strings.HasPrefix(name, "?") {
-		return strings.TrimPrefix(name, "?"), strings.TrimPrefix(display, "?"), "bool"
-	}
+	return name, display, "float", metricType
+}
 
-	return name, display, "float"
+func ParseMetricType(metricName string) (string, string) {
+	metricTypeRegex := regexp.MustCompile(`(.*)\((.*?)\)`)
+	match := metricTypeRegex.FindAllStringSubmatch(metricName, -1)
+	if match != nil {
+		// For last_transfer_duration(duration), name would have 'last_transfer_duration' and metricType would have 'duration'.
+		name := match[0][1]
+		metricType := match[0][2]
+		return name, metricType
+	}
+	return metricName, ""
 }

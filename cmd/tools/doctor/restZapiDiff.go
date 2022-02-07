@@ -128,12 +128,10 @@ func metricValueDiff(metricName string) {
 		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node")
 		keyIndexes = []int{2}
 	}
-	// ignore qtree for now as it is under development
-	//if strings.HasPrefix(metricName, "qtree_") && !strings.HasPrefix(metricName, "qtree_id") {
-	//	results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter","data.result.#.metric.qtree")
-	//keyIndexes = []int{2}
-	//}
-
+	if strings.HasPrefix(metricName, "qtree_") && !strings.HasPrefix(metricName, "qtree_id") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.qtree")
+		keyIndexes = []int{2}
+	}
 	if strings.HasPrefix(metricName, "environment_sensor_") {
 		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.sensor", "data.result.#.metric.node")
 		keyIndexes = []int{2, 3}
@@ -224,7 +222,8 @@ func labelValueDiff(label string, labelNames []string) {
 	skipMatch := make([]string, 0)
 	skipMatch = append(skipMatch, "datacenter")
 
-	if strings.HasPrefix(label, "disk_") || strings.HasPrefix(label, "shelf_") {
+	// To ignore child labels(ex: shelf_psu_labels) from shelf object, following exact comparison
+	if strings.HasPrefix(label, "disk_") || strings.Compare(label, "shelf_labels") == 0 {
 		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "serial_number"))
 		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
 		results = gjson.GetMany(data, prefixLabelsName...)

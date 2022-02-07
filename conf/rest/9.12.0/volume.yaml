@@ -54,6 +54,9 @@ endpoints:
       - files_used => inode_files_used
 
 plugins:
+  - Volume:
+      schedule:
+        - data: 900s  # should be multiple of data poll duration
   - LabelAgent:
       value_to_num:
         - new_status state online online `0`
@@ -76,5 +79,9 @@ export_options:
     - is_sis_volume
     - snapshot_policy
     - type
+    - protectedByStatus
+    - protectedBy
+    - protectionRole
+    - all_sm_healthy
 
 

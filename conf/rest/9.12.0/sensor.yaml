@@ -12,7 +12,7 @@ counters:
   - ^discrete_value  => discrete_value
   - ^threshold_state  => threshold_state
   - ^value_units => unit
-  - value  => threshold_value
+  - threshold_value  => threshold_value
   - critical_high_threshold => critical_high
   - critical_low_threshold  => critical_low
 
