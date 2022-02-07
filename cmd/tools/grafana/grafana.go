@@ -116,18 +116,12 @@ func validateExport() {
 func initExportVars() {
 	opts.dirGrafanaFolderMap = make(map[string]*Folder)
 
-	m := make(map[string]*Folder)
-
 	if opts.serverfolder.name != "" {
 		if opts.dir == "grafana/dashboards" {
-			m[path.Join(opts.dir, opts.serverfolder.name)] = &Folder{name: opts.serverfolder.name}
+			opts.dirGrafanaFolderMap[path.Join(opts.dir, opts.serverfolder.name)] = &Folder{name: opts.serverfolder.name}
 		} else {
-			m[opts.dir] = &Folder{name: opts.serverfolder.name}
+			opts.dirGrafanaFolderMap[opts.dir] = &Folder{name: opts.serverfolder.name}
 		}
-	}
-
-	for k, v := range m {
-		opts.dirGrafanaFolderMap[k] = v
 	}
 }
 
@@ -150,6 +144,7 @@ func exportFiles(dir string, folder *Folder) error {
 	err = checkFolder(folder)
 	if err != nil {
 		fmt.Printf("error %v\n", err)
+		os.Exit(1)
 	}
 	if folder.id == 0 {
 		fmt.Printf("error folder %s doesn't exit in grafana\n", folder.name)
@@ -421,8 +416,11 @@ func initImportVars() {
 
 func checkAndCreateServerFolder(folder *Folder) error {
 	err := checkFolder(folder)
+	if err != nil {
+		fmt.Printf("error %v\n", err)
+		os.Exit(1)
+	}
 
-	// first folder is Harvest 2.0 and second folder is 7mode
 	if folder.uid != "" && folder.id != 0 {
 		fmt.Printf("folder [%s] exists in Grafana - OK\n", folder.name)
 	} else if err = createServerFolder(folder); err != nil {
