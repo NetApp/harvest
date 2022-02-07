@@ -98,31 +98,12 @@ func doExport(_ *cobra.Command, _ []string) {
 }
 
 func validateExport() {
-	if opts.serverfolder.name == "" {
-		fmt.Printf("error: serverfolder is empty.\n")
-		os.Exit(1)
-	}
-
-	if opts.dir == "" {
-		fmt.Printf("error: dir is empty.\n")
-		os.Exit(1)
-	}
-
-	if opts.dir != "grafana/dashboards" {
-		exitIfExist(opts.dir, "directory")
-	}
+	exitIfExist(opts.dir, "directory")
 }
 
 func initExportVars() {
 	opts.dirGrafanaFolderMap = make(map[string]*Folder)
-
-	if opts.serverfolder.name != "" {
-		if opts.dir == "grafana/dashboards" {
-			opts.dirGrafanaFolderMap[path.Join(opts.dir, opts.serverfolder.name)] = &Folder{name: opts.serverfolder.name}
-		} else {
-			opts.dirGrafanaFolderMap[opts.dir] = &Folder{name: opts.serverfolder.name}
-		}
-	}
+	opts.dirGrafanaFolderMap[opts.dir] = &Folder{name: opts.serverfolder.name}
 }
 
 func exportDashboards(opts *options) {
@@ -358,12 +339,9 @@ func doImport(_ *cobra.Command, _ []string) {
 }
 
 func validateImport() {
-	if opts.dir == "" {
-		fmt.Printf("error: dir is empty.\n")
-		os.Exit(1)
-	}
-
-	if opts.dir == "grafana/dashboards" {
+	// default case
+	if opts.dir == "" && opts.serverfolder.name == "" {
+		opts.dir = "grafana/dashboards"
 		opts.dir = path.Join(homePath, opts.dir)
 	}
 
@@ -384,24 +362,12 @@ func initImportVars() {
 
 	m := make(map[string]*Folder)
 
-	if opts.dir == "grafana/dashboards" {
-		// default behaviour
-		if opts.serverfolder.name == "" {
-			m[path.Join(opts.dir, "/cmode")] = &Folder{name: "Harvest-" + harvestRelease + "-cDOT"}
-			m[path.Join(opts.dir, "/7mode")] = &Folder{name: "Harvest-" + harvestRelease + "-7mode"}
-		} else {
-			// set target grafana folder as passed
-			m[path.Join(opts.dir, "/cmode")] = &Folder{name: opts.serverfolder.name}
-			m[path.Join(opts.dir, "/7mode")] = &Folder{name: opts.serverfolder.name}
-		}
-	} else {
-		// if custom dir is passed
-		if opts.serverfolder.name == "" {
-			// auto generate folder name
-			m[opts.dir] = &Folder{name: "Harvest-" + harvestRelease}
-		} else {
-			m[opts.dir] = &Folder{name: opts.serverfolder.name}
-		}
+	// default behaviour
+	if opts.dir == "grafana/dashboards" && opts.serverfolder.name == "" {
+		m[path.Join(opts.dir, "/cmode")] = &Folder{name: "Harvest-" + harvestRelease + "-cDOT"}
+		m[path.Join(opts.dir, "/7mode")] = &Folder{name: "Harvest-" + harvestRelease + "-7mode"}
+	} else if opts.dir != "" && opts.serverfolder.name != "" {
+		m[opts.dir] = &Folder{name: opts.serverfolder.name}
 	}
 
 	for k, v := range m {
@@ -917,8 +883,16 @@ var Cmd = &cobra.Command{
 }
 
 var importCmd = &cobra.Command{
-	Use:     "import",
-	Short:   "import Grafana dashboards",
+	Use:   "import",
+	Short: "import Grafana dashboards",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		dir := cmd.Flags().Lookup("directory")
+		folder := cmd.Flags().Lookup("serverfolder")
+		if dir.Value.String() == "" && folder.Value.String() == "" {
+			dir.Changed = true
+			folder.Changed = true
+		}
+	},
 	Run:     doImport,
 	Example: "grafana import --addr my.grafana.server:3000",
 }
@@ -927,7 +901,7 @@ var exportCmd = &cobra.Command{
 	Use:     "export",
 	Short:   "export Grafana dashboards",
 	Run:     doExport,
-	Example: "grafana export --addr my.grafana.server:3000 --directory exported_dash",
+	Example: "grafana export --addr my.grafana.server:3000 --directory exportdirectory --serverfolder grafanafoldername",
 }
 
 func init() {
@@ -941,13 +915,12 @@ func init() {
 	Cmd.PersistentFlags().BoolVarP(&opts.variable, "variable", "v", false, "Use datasource as variable, overrides: --datasource")
 	Cmd.PersistentFlags().BoolVarP(&opts.useHttps, "https", "S", false, "Use HTTPS")
 	Cmd.PersistentFlags().BoolVarP(&opts.useInsecureTLS, "insecure", "k", false, "Allow insecure server connections when using SSL")
-	Cmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d", "grafana/dashboards", "When importing, import cDOT/7mode dashboards from this local directory.\nWhen exporting, local directory to write dashboards to")
+	Cmd.PersistentFlags().StringVarP(&opts.serverfolder.name, "serverfolder", "f", "", "Grafana folder name for dashboards")
+	Cmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d", "", "When importing, import dashboards from this local directory.\nWhen exporting, local directory to write dashboards to")
 
 	importCmd.PersistentFlags().StringSliceVar(&opts.labels, "labels", nil,
 		"For each label, create a variable and add as chained query to other variables")
 
-	importCmd.PersistentFlags().StringVarP(&opts.serverfolder.name, "serverfolder", "f", "", "Grafana folder name for dashboards")
-
-	exportCmd.PersistentFlags().StringVarP(&opts.serverfolder.name, "serverfolder", "f", "", "Grafana folder name for dashboards")
-	_ = exportCmd.MarkPersistentFlagRequired("serverfolder")
+	_ = Cmd.MarkPersistentFlagRequired("serverfolder")
+	_ = Cmd.MarkPersistentFlagRequired("directory")
 }
