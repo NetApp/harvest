@@ -943,14 +943,13 @@ func init() {
 	Cmd.PersistentFlags().BoolVarP(&opts.variable, "variable", "v", false, "Use datasource as variable, overrides: --datasource")
 	Cmd.PersistentFlags().BoolVarP(&opts.useHttps, "https", "S", false, "Use HTTPS")
 	Cmd.PersistentFlags().BoolVarP(&opts.useInsecureTLS, "insecure", "k", false, "Allow insecure server connections when using SSL")
+	Cmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d", "grafana/dashboards", "When importing, import cDOT/7mode dashboards from this local directory.\nWhen exporting, local directory to write dashboards to")
 
 	importCmd.PersistentFlags().StringSliceVar(&opts.labels, "labels", nil,
 		"For each label, create a variable and add as chained query to other variables")
 
-	importCmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d", "grafana/dashboards", "When importing, import cDOT/7mode dashboards from this local directory.\nWhen exporting, local directory to write dashboards to")
 	importCmd.PersistentFlags().StringVarP(&opts.serverfolder.name, "serverfolder", "f", "", "Grafana folder name for dashboards")
 
-	exportCmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d", "grafana/dashboards", "When importing, import cDOT/7mode dashboards from this local directory.\nWhen exporting, local directory to write dashboards to")
 	exportCmd.PersistentFlags().StringVarP(&opts.serverfolder.name, "serverfolder", "f", "", "Grafana folder name for dashboards")
 	_ = exportCmd.MarkPersistentFlagRequired("serverfolder")
 }
