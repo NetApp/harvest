@@ -4633,9 +4633,9 @@
           "fillGradient": 0,
           "gridPos": {
             "h": 11,
-            "w": 8,
+            "w": 12,
             "x": 0,
-            "y": 14
+            "y": 50
           },
           "hiddenSeries": false,
           "id": 193,
@@ -4750,9 +4750,9 @@
           "fillGradient": 0,
           "gridPos": {
             "h": 11,
-            "w": 8,
-            "x": 8,
-            "y": 14
+            "w": 12,
+            "x": 12,
+            "y": 50
           },
           "hiddenSeries": false,
           "id": 201,
@@ -4828,122 +4828,6 @@
             },
             {
               "$$hashKey": "object:3726",
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "unit": "iops"
-            },
-            "overrides": []
-          },
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 11,
-            "w": 8,
-            "x": 16,
-            "y": 14
-          },
-          "hiddenSeries": false,
-          "id": 199,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "max": true,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "8.1.1",
-          "pointradius": 2,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "sum(fcp_lif_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
-              "interval": "",
-              "legendFormat": "Read",
-              "refId": "A"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(fcp_lif_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "Write",
-              "refId": "B"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(fcp_lif_other_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "Other",
-              "refId": "C"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "SVM FCP Throughput (IOPs)",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:3953",
-              "format": "iops",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": "0",
-              "show": true
-            },
-            {
-              "$$hashKey": "object:3954",
               "format": "short",
               "label": null,
               "logBase": 1,
@@ -11450,7 +11334,7 @@
       "type": "row"
     },
     {
-      "collapsed": false,
+      "collapsed": true,
        "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
@@ -12301,7 +12185,7 @@
       }
     },
     {
-      "collapsed": false,
+      "collapsed": true,
        "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
@@ -13041,7 +12925,7 @@
         "hide": 0,
         "includeAll": false,
         "label": null,
-        "multi": false,
+        "multi": true,
         "name": "Datacenter",
         "options": [],
         "query": {
@@ -13067,7 +12951,7 @@
         "hide": 0,
         "includeAll": false,
         "label": null,
-        "multi": false,
+        "multi": true,
         "name": "Cluster",
         "options": [],
         "query": {
@@ -13093,7 +12977,7 @@
         "hide": 0,
         "includeAll": false,
         "label": null,
-        "multi": false,
+        "multi": true,
         "name": "SVM",
         "options": [],
         "query": {

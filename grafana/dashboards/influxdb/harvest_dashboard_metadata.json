@@ -4655,7 +4655,7 @@
         "hide": 0,
         "includeAll": true,
         "label": null,
-        "multi": false,
+        "multi": true,
         "name": "Hostname",
         "options": [],
         "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: -1d)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"poller\")\r\n  |> keep(columns: [\"hostname\"])\r\n  |> group()\r\n  |> distinct(column: \"hostname\")",

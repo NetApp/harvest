@@ -10,10 +10,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/hashicorp/go-version"
+	goversion "github.com/hashicorp/go-version"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
+	"goharvest2/cmd/harvest/version"
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/util"
 	"io"
@@ -28,16 +29,16 @@ import (
 )
 
 const (
-	clientTimeout           = 5
-	harvestRelease          = "main"
-	grafanaFolderTitle      = "Harvest " + harvestRelease + " - cDOT"
-	grafana7modeFolderTitle = "Harvest " + harvestRelease + " - 7-mode"
-	grafanaDataSource       = "Prometheus"
+	clientTimeout     = 5
+	grafanaDataSource = "Prometheus"
 )
 
 var (
-	grafanaMinVers = "7.1.0" // lowest grafana version we require
-	homePath       string
+	grafanaMinVers          = "7.1.0" // lowest grafana version we require
+	homePath                string
+	harvestRelease          = version.VERSION
+	grafanaFolderTitle      = "Harvest " + harvestRelease + " - cDOT"
+	grafana7modeFolderTitle = "Harvest " + harvestRelease + " - 7-mode"
 )
 
 type options struct {
@@ -429,6 +430,15 @@ func importFiles(dir string, folder Folder) {
 			continue
 		}
 
+		// If the dashboard has an id defined, change the id to empty string so Grafana treats this as a new dashboard instead of an update to an existing one
+		if dashboardId := gjson.GetBytes(data, "id").String(); dashboardId != "" {
+			data, err = sjson.SetBytes(data, "id", []byte(""))
+			if err != nil {
+				fmt.Printf("error while updating the id %s into dashboard %s, err: %+v", dashboardId, file.Name(), err)
+				continue
+			}
+		}
+
 		// labelMap is used to ensure we don't modify the query of one of the new labels we're adding
 		labelMap := make(map[string]string)
 		for _, label := range opts.labels {
@@ -697,25 +707,22 @@ func checkToken(opts *options, ignoreConfig bool) error {
 }
 
 func checkVersion(inputVersion string) bool {
-	v1, err := version.NewVersion(inputVersion)
-	if err != nil {
-		fmt.Println(err)
-		return false
-	}
-	constraints, err := version.NewConstraint(">= " + grafanaMinVers)
-
+	v1, err := goversion.NewVersion(inputVersion)
 	if err != nil {
 		fmt.Println(err)
 		return false
 	}
 
-	// Check if input version is greater than or equal to min version required
-	if constraints.Check(v1) {
-		return true
-	} else {
-		fmt.Printf("%s does not satisfies constraints %s", v1, constraints)
-		return false
+	min, _ := goversion.NewVersion(grafanaMinVers)
+
+	// Not using a constraint check since a pre-release version (e.g. 8.4.0-beta1) never matches
+	// a constraint specified without a pre-release https://github.com/hashicorp/go-version/pull/35
+
+	satisfies := v1.GreaterThanOrEqual(min)
+	if !satisfies {
+		fmt.Printf("%s is not >= %s", v1, min)
 	}
+	return satisfies
 }
 
 func createFolder(opts *options, folder *Folder) error {
