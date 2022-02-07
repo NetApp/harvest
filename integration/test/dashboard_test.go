@@ -6,9 +6,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/Netapp/harvest-automation/test/docker"
 	"github.com/Netapp/harvest-automation/test/grafana"
-	"github.com/Netapp/harvest-automation/test/installer"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
@@ -91,20 +89,6 @@ func (suite *DashboardImportTestSuite) TestSevenModeDashboardCount() {
 		"NetApp Detail: Disk 7 mode", "NetApp Detail: LUN 7 mode", "NetApp Detail: Network 7 mode", "NetApp Detail: Network with NVMe/FC 7 mode",
 		"NetApp Detail: Node 7 mode", "NetApp Detail: Shelf 7 mode", "NetApp Detail: Volume 7 mode"}
 	VerifyDashboards(folderId, expectedName, suite.T())
-}
-
-func (suite *DashboardImportTestSuite) TestImportForInvalidJson() {
-	jsonDir := "grafana/dashboard_jsons"
-	if docker.IsDockerBasedPoller() {
-		containerId := docker.GetOnePollerContainers()
-		docker.CopyFile(containerId, "dashboard_jsons", "/opt/harvest/"+jsonDir)
-	} else {
-		utils.Run("cp", "-R", "dashboard_jsons", installer.HarvestHome+"/grafana")
-	}
-	status, _ := new(grafana.GrafanaMgr).Import(jsonDir)
-	if status {
-		assert.Fail(suite.T(), "Grafana import should fail but it is succeeded")
-	}
 }
 
 // In order for 'go test' to run this suite, we need to create
