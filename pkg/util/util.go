@@ -341,11 +341,7 @@ func ParseMetric(rawName string) (string, string, string, string) {
 	if values = strings.SplitN(rawName, "=>", 2); len(values) == 2 {
 		name = strings.TrimSpace(values[0])
 		display = strings.TrimSpace(values[1])
-		if strings.Contains(name, "(") {
-			metricName := strings.Split(name, "(")
-			name = metricName[0]
-			metricType = strings.TrimRight(metricName[1], ")")
-		}
+		name, metricType = ParseMetricType(name)
 	} else {
 		name = rawName
 		display = strings.ReplaceAll(rawName, ".", "_")
@@ -361,4 +357,16 @@ func ParseMetric(rawName string) (string, string, string, string) {
 	}
 
 	return name, display, "float", metricType
+}
+
+func ParseMetricType(metricName string) (string, string) {
+	metricTypeRegex := regexp.MustCompile(`(.*)\((.*?)\)`)
+	match := metricTypeRegex.FindAllStringSubmatch(metricName, -1)
+	if match != nil {
+		// For last_transfer_duration(duration), name would have 'last_transfer_duration' and metricType would have 'duration'.
+		name := match[0][1]
+		metricType := match[0][2]
+		return name, metricType
+	}
+	return metricName, ""
 }
