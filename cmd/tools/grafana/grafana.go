@@ -433,6 +433,7 @@ func importFiles(dir string, folder *Folder) {
 	}
 
 	uidSuffix := strings.ReplaceAll(harvestRelease+"-"+folder.name, ".", "-")
+
 	for _, file := range files {
 		if !strings.HasSuffix(file.Name(), ".json") {
 			continue
@@ -447,7 +448,12 @@ func importFiles(dir string, folder *Folder) {
 
 		// Updating the uid of dashboards based in the release
 		uid := gjson.GetBytes(data, "uid").String()
-		data, err = sjson.SetBytes(data, "uid", []byte(uid+"-"+uidSuffix))
+		uid = uid + "-" + uidSuffix
+		// uid length can be max 40 chars
+		if len(uid) > 40 {
+			uid = uid[:40]
+		}
+		data, err = sjson.SetBytes(data, "uid", []byte(uid))
 		if err != nil {
 			fmt.Printf("error while updating the uid %s into dashboard %s, err: %+v", uid, file.Name(), err)
 			continue
