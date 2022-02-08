@@ -265,7 +265,7 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 
 	r.Logger.Debug().Str("object", r.Object).Str("number of records extracted", numRecords.String()).Msg("")
 
-	count = r.HandleResults(results[1], r.prop)
+	count = r.HandleResults(results[1], r.prop, true)
 
 	// process endpoints
 	startTime = time.Now()
@@ -331,7 +331,7 @@ func (r *Rest) processEndPoints() error {
 			return errors.New(errors.ERR_NO_INSTANCE, "no "+endpoint.prop.query+" instances on cluster")
 		}
 
-		r.HandleResults(results[1], endpoint.prop)
+		r.HandleResults(results[1], endpoint.prop, false)
 	}
 
 	return nil
@@ -364,7 +364,9 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 	return nil
 }
 
-func (r *Rest) HandleResults(result gjson.Result, prop *prop) uint64 {
+// HandleResults function is used for handling the rest response for parent as well as endpoints calls,
+// allowInstanceCreation would be true only for the parent rest, as only parent rest can create instance.
+func (r *Rest) HandleResults(result gjson.Result, prop *prop, allowInstanceCreation bool) uint64 {
 	var (
 		err   error
 		count uint64
@@ -398,7 +400,14 @@ func (r *Rest) HandleResults(result gjson.Result, prop *prop) uint64 {
 			}
 		}
 
-		if instance = r.Matrix.GetInstance(instanceKey); instance == nil {
+		instance = r.Matrix.GetInstance(instanceKey)
+
+		if !allowInstanceCreation && instance == nil {
+			r.Logger.Warn().Str("Instance key", instanceKey).Msg("Instance not found")
+			return true
+		}
+
+		if instance == nil {
 			if instance, err = r.Matrix.NewInstance(instanceKey); err != nil {
 				r.Logger.Error().Err(err).Str("Instance key", instanceKey).Msg("")
 				return true
