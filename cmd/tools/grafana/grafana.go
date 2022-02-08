@@ -66,6 +66,7 @@ type Folder struct {
 func adjustOptions() {
 	opts.config = conf.ConfigPath(opts.config)
 	homePath = conf.GetHarvestHomePath()
+	opts.dirGrafanaFolderMap = make(map[string]*Folder)
 
 	// When opt.addr starts with https don't change it
 	if !strings.HasPrefix(opts.addr, "https://") {
@@ -90,19 +91,14 @@ func askForToken() {
 
 func doExport(_ *cobra.Command, _ []string) {
 	adjustOptions()
-	validateExport()
+	exitIfExist(opts.dir, "directory")
 	askForToken()
 	initExportVars()
-	fmt.Printf("preparing to export dashboards...\n")
+	fmt.Printf("preparing to export dashboards from serverfolder %s directory %s\n", opts.serverfolder.name, opts.dir)
 	exportDashboards(opts)
 }
 
-func validateExport() {
-	exitIfExist(opts.dir, "directory")
-}
-
 func initExportVars() {
-	opts.dirGrafanaFolderMap = make(map[string]*Folder)
 	opts.dirGrafanaFolderMap[opts.dir] = &Folder{name: opts.serverfolder.name}
 }
 
@@ -124,14 +120,14 @@ func exportFiles(dir string, folder *Folder) error {
 
 	err = checkFolder(folder)
 	if err != nil {
-		fmt.Printf("error %v\n", err)
+		fmt.Printf("folder %s error %v\n", folder.name, err)
 		os.Exit(1)
 	}
 	if folder.id == 0 {
-		fmt.Printf("error folder %s doesn't exit in grafana\n", folder.name)
+		fmt.Printf("error folder %s doesn't exist in grafana, unable to continue\n", folder.name)
 		os.Exit(1)
 	}
-	fmt.Printf("querying for content of folder id [%d]\n", folder.id)
+	fmt.Printf("querying for content of folder name [%s]\n", folder.name)
 
 	result, status, code, err := sendRequestArray(opts, "GET", "/api/search?folderIds="+strconv.FormatInt(folder.id, 10), nil)
 	if err != nil && code != 200 {
@@ -140,11 +136,12 @@ func exportFiles(dir string, folder *Folder) error {
 	}
 
 	uids = make(map[string]string)
+	rep := strings.NewReplacer("/", "_", "-", "_")
 	for _, elem := range result {
 		uid := elem["uid"].(string)
 		uri := elem["uri"].(string)
 		if uid != "" && uri != "" {
-			uids[uid] = strings.ReplaceAll(strings.ReplaceAll(uri, "/", "_"), "-", "_")
+			uids[uid] = rep.Replace(uri)
 		}
 	}
 
@@ -155,21 +152,24 @@ func exportFiles(dir string, folder *Folder) error {
 	fmt.Printf("exporting dashboards to directory [%s]\n", dir)
 
 	for uid, uri := range uids {
-		if result, status, code, err := sendRequest(opts, "GET", "/api/dashboards/uid/"+uid, nil); err != nil {
+		result, status, code, err := sendRequest(opts, "GET", "/api/dashboards/uid/"+uid, nil)
+		if err != nil {
 			fmt.Printf("error requesting [%s]: [%d: %s] %v\n", uid, code, status, err)
 			return err
-		} else if dashboard, ok := result["dashboard"]; ok {
+		}
+		if dashboard, ok := result["dashboard"]; ok {
 			fp := path.Join(dir, uri+".json")
-			if data, err := json.Marshal(dashboard); err != nil {
+			data, err := json.Marshal(dashboard)
+			if err != nil {
 				fmt.Printf("error marshall dashboard [%s]: %v\n\n", uid, err)
 				return err
-			} else if err = ioutil.WriteFile(fp, data, 0644); err != nil {
+			}
+			if err = ioutil.WriteFile(fp, data, 0644); err != nil {
 				fmt.Printf("error write to [%s]: %v\n", fp, err)
 				return err
-			} else {
-				fmt.Printf("OK - exported [%s]\n", fp)
-				count++
 			}
+			fmt.Printf("OK - exported [%s]\n", fp)
+			count++
 		}
 	}
 	fmt.Printf("exported %d dashboards to [%s]\n", count, dir)
@@ -348,7 +348,7 @@ func validateImport() {
 	exitIfMissing(opts.dir, "directory")
 	files, err := ioutil.ReadDir(opts.dir)
 	if err != nil {
-		fmt.Printf("Error while reading dir [%s] is the directory correct?\n", opts.dir)
+		fmt.Printf("Error %v while reading dir [%s] is the directory correct?\n", err, opts.dir)
 		os.Exit(1)
 	}
 	if len(files) == 0 {
@@ -358,8 +358,6 @@ func validateImport() {
 }
 
 func initImportVars() {
-	opts.dirGrafanaFolderMap = make(map[string]*Folder)
-
 	m := make(map[string]*Folder)
 
 	// default behaviour
@@ -383,7 +381,7 @@ func initImportVars() {
 func checkAndCreateServerFolder(folder *Folder) error {
 	err := checkFolder(folder)
 	if err != nil {
-		fmt.Printf("error %v\n", err)
+		fmt.Printf("error %v for folder %s\n", err, folder.name)
 		os.Exit(1)
 	}
 
@@ -434,7 +432,7 @@ func importFiles(dir string, folder *Folder) {
 		return
 	}
 
-	releaseVersion := strings.ReplaceAll(harvestRelease, ".", "-")
+	uidSuffix := strings.ReplaceAll(folder.name, ".", "-")
 	for _, file := range files {
 		if !strings.HasSuffix(file.Name(), ".json") {
 			continue
@@ -449,10 +447,19 @@ func importFiles(dir string, folder *Folder) {
 
 		// Updating the uid of dashboards based in the release
 		uid := gjson.GetBytes(data, "uid").String()
-		data, err = sjson.SetBytes(data, "uid", []byte(uid+"-"+releaseVersion))
+		data, err = sjson.SetBytes(data, "uid", []byte(uid+"-"+uidSuffix))
 		if err != nil {
 			fmt.Printf("error while updating the uid %s into dashboard %s, err: %+v", uid, file.Name(), err)
 			continue
+		}
+
+		// If the dashboard has an id defined, change the id to empty string so Grafana treats this as a new dashboard instead of an update to an existing one
+		if dashboardId := gjson.GetBytes(data, "id").String(); dashboardId != "" {
+			data, err = sjson.SetBytes(data, "id", []byte(""))
+			if err != nil {
+				fmt.Printf("error while updating the id %s into dashboard %s, err: %+v", dashboardId, file.Name(), err)
+				continue
+			}
 		}
 
 		// labelMap is used to ensure we don't modify the query of one of the new labels we're adding
@@ -885,6 +892,7 @@ var Cmd = &cobra.Command{
 var importCmd = &cobra.Command{
 	Use:   "import",
 	Short: "import Grafana dashboards",
+	// Added so directory and serverfolder are required arguments except when both are empty. When both are empty use long accepted Harvest defaults
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		dir := cmd.Flags().Lookup("directory")
 		folder := cmd.Flags().Lookup("serverfolder")
