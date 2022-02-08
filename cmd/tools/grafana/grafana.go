@@ -907,15 +907,22 @@ var importCmd = &cobra.Command{
 			folder.Changed = true
 		}
 	},
-	Run:     doImport,
-	Example: "grafana import --addr my.grafana.server:3000",
+	Run: doImport,
+	Example: `
+# Add the default set of cDot and 7mode dashboards from local directory grafana/dashboards to my.grafana.server 
+grafana import --addr my.grafana.server:3000
+
+# Add the dashboards from the local directory to the server_folder on my.grafana.server
+grafana import --addr my.grafana.server:3000 --directory [local] --serverfolder [server_folder]`,
 }
 
 var exportCmd = &cobra.Command{
-	Use:     "export",
-	Short:   "export Grafana dashboards",
-	Run:     doExport,
-	Example: "grafana export --addr my.grafana.server:3000 --directory exportdirectory --serverfolder grafanafoldername",
+	Use:   "export",
+	Short: "export Grafana dashboards",
+	Run:   doExport,
+	Example: `
+# Export all of the dashboards contained in the server_folder on my.grafana.server and write them to the local directory
+grafana export --addr my.grafana.server:3000 --serverfolder server_folder --directory local`,
 }
 
 func init() {
