@@ -432,7 +432,7 @@ func importFiles(dir string, folder *Folder) {
 		return
 	}
 
-	uidSuffix := strings.ReplaceAll(folder.name, ".", "-")
+	uidSuffix := strings.ReplaceAll(harvestRelease+"-"+folder.name, ".", "-")
 	for _, file := range files {
 		if !strings.HasSuffix(file.Name(), ".json") {
 			continue
