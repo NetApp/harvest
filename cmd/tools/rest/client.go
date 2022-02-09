@@ -32,6 +32,7 @@ type Client struct {
 	cluster  Cluster
 	password string
 	username string
+	Timeout  time.Duration
 }
 
 type Cluster struct {
@@ -66,6 +67,7 @@ func New(poller conf.Poller, timeout time.Duration) (*Client, error) {
 		url = "https://" + addr + "/"
 	}
 	client.baseURL = url
+	client.Timeout = timeout
 
 	// by default, enforce secure TLS, if not requested otherwise by user
 	if x := poller.UseInsecureTls; x != nil {

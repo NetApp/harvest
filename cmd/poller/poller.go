@@ -876,7 +876,7 @@ var pollerCmd = &cobra.Command{
 // when we add other Ontap collectors, e.g. REST)
 func (p *Poller) targetIsOntap() bool {
 	for _, c := range p.collectors {
-		if c.GetName() == "ZapiPerf" || c.GetName() == "Zapi" {
+		if c.GetName() == "ZapiPerf" || c.GetName() == "Zapi" || c.GetName() == "Rest" {
 			return true
 		}
 	}

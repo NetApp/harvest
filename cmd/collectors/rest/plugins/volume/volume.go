@@ -92,7 +92,7 @@ func (my *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		// invoke snapmirror zapi and populate info in source and destination snapmirror maps
 		if smSourceMap, smDestinationMap, err := my.GetSnapMirrors(); err != nil {
-			my.Logger.Error().Stack().Err(err).Msg("Failed to collect snapmirror data")
+			my.Logger.Warn().Stack().Err(err).Msg("Failed to collect snapmirror data")
 		} else {
 			// update internal cache based on volume and SM maps
 			my.updateMaps(data, smSourceMap, smDestinationMap)
@@ -253,7 +253,7 @@ func (my *Volume) updateMaps(data *matrix.Matrix, smSourceMap map[string][]*matr
 
 		// Update outgoingSM map based on the protectedByMap
 		protectedByValue = nil
-		for protectedByKey, _ := range protectedByMap {
+		for protectedByKey := range protectedByMap {
 			protectedByValue = append(protectedByValue, protectedByKey)
 		}
 		if protectedByValue != nil {
