@@ -53,6 +53,7 @@ type options struct {
 	prefix              string
 	useHttps            bool
 	useInsecureTLS      bool
+	overwrite           bool
 	labels              []string
 	dirGrafanaFolderMap map[string]*Folder
 }
@@ -432,8 +433,6 @@ func importFiles(dir string, folder *Folder) {
 		return
 	}
 
-	uidSuffix := strings.ReplaceAll(harvestRelease+"-"+folder.name, ".", "-")
-
 	for _, file := range files {
 		if !strings.HasSuffix(file.Name(), ".json") {
 			continue
@@ -446,17 +445,13 @@ func importFiles(dir string, folder *Folder) {
 
 		data = bytes.ReplaceAll(data, []byte("${DS_PROMETHEUS}"), []byte(opts.datasource))
 
-		// Updating the uid of dashboards based in the release
-		uid := gjson.GetBytes(data, "uid").String()
-		uid = uid + "-" + uidSuffix
-		// uid length can be max 40 chars
-		if len(uid) > 40 {
-			uid = uid[:40]
-		}
-		data, err = sjson.SetBytes(data, "uid", []byte(uid))
-		if err != nil {
-			fmt.Printf("error while updating the uid %s into dashboard %s, err: %+v", uid, file.Name(), err)
-			continue
+		// If the dashboard has an uid defined, change the uid to empty string. We do comparison for dashboard create/update based on title
+		if dashboardId := gjson.GetBytes(data, "uid").String(); dashboardId != "" {
+			data, err = sjson.SetBytes(data, "uid", []byte(""))
+			if err != nil {
+				fmt.Printf("error while updating the uid %s into dashboard %s, err: %+v", dashboardId, file.Name(), err)
+				continue
+			}
 		}
 
 		// If the dashboard has an id defined, change the id to empty string so Grafana treats this as a new dashboard instead of an update to an existing one
@@ -493,19 +488,22 @@ func importFiles(dir string, folder *Folder) {
 		}
 
 		request = make(map[string]interface{})
-		request["overwrite"] = true
+		request["overwrite"] = opts.overwrite
 		request["folderId"] = folder.id
 		request["dashboard"] = dashboard
 
 		result, status, code, err := sendRequest(opts, "POST", "/api/dashboards/db", request)
 
 		if err != nil {
-			fmt.Printf("error importing [%s]\n", file.Name())
+			fmt.Printf("error importing [%s]  to folder [%s] \n", file.Name(), folder.name)
 			return
 		}
 
 		if code != 200 {
-			fmt.Printf("error importing [%s] - server response (%d - %s) %v\n", file.Name(), code, status, result)
+			fmt.Printf("error importing [%s] to folder [%s] - server response (%d - %s) %v\n", file.Name(), folder.name, code, status, result)
+			if code == 412 {
+				fmt.Printf("If dashboard already exists then you can run grafana import command with --overwrite flag or choose a different grafana folder with --serverfolder flag\n")
+			}
 			return
 		}
 		fmt.Printf("OK - imported %s / [%s]\n", folder.name, file.Name())
@@ -935,6 +933,7 @@ func init() {
 	Cmd.PersistentFlags().StringVarP(&opts.datasource, "datasource", "s", grafanaDataSource, "Grafana datasource for the dashboards")
 	Cmd.PersistentFlags().BoolVarP(&opts.variable, "variable", "v", false, "Use datasource as variable, overrides: --datasource")
 	Cmd.PersistentFlags().BoolVarP(&opts.useHttps, "https", "S", false, "Use HTTPS")
+	Cmd.PersistentFlags().BoolVarP(&opts.overwrite, "overwrite", "o", false, "Overwrite existing dashboard with same title")
 	Cmd.PersistentFlags().BoolVarP(&opts.useInsecureTLS, "insecure", "k", false, "Allow insecure server connections when using SSL")
 	Cmd.PersistentFlags().StringVarP(&opts.serverfolder.name, "serverfolder", "f", "", "Grafana folder name for dashboards")
 	Cmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d", "", "When importing, import dashboards from this local directory.\nWhen exporting, local directory to write dashboards to")
