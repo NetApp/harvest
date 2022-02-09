@@ -445,7 +445,7 @@ func importFiles(dir string, folder *Folder) {
 
 		data = bytes.ReplaceAll(data, []byte("${DS_PROMETHEUS}"), []byte(opts.datasource))
 
-		// If the dashboard has an id defined, change the id to empty string so Grafana treats this as a new dashboard instead of an update to an existing one
+		// If the dashboard has an uid defined, change the uid to empty string. We do comparison for dashboard create/update based on title
 		if dashboardId := gjson.GetBytes(data, "uid").String(); dashboardId != "" {
 			data, err = sjson.SetBytes(data, "uid", []byte(""))
 			if err != nil {
