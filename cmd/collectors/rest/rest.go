@@ -570,7 +570,6 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 			// use the first node's serial number instead (the nodes were ordered in getNodeUuids())
 			if len(nodeIds) > 0 {
 				p.Target.Serial = nodeIds[0].SerialNumber
-				fmt.Println(p.Target.Serial)
 			}
 		} else if r.Object == "Volume" {
 			p.Volumes = &info
