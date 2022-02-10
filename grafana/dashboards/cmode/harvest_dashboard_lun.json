@@ -4475,7 +4475,7 @@
         "hide": 0,
         "includeAll": false,
         "label": null,
-        "multi": true,
+        "multi": false,
         "name": "Datacenter",
         "options": [],
         "query": {
@@ -4501,7 +4501,7 @@
         "hide": 0,
         "includeAll": false,
         "label": null,
-        "multi": true,
+        "multi": false,
         "name": "Cluster",
         "options": [],
         "query": {
@@ -4527,7 +4527,7 @@
         "hide": 0,
         "includeAll": true,
         "label": null,
-        "multi": true,
+        "multi": false,
         "name": "SVM",
         "options": [],
         "query": {
@@ -4553,7 +4553,7 @@
         "hide": 0,
         "includeAll": true,
         "label": null,
-        "multi": true,
+        "multi": false,
         "name": "Volume",
         "options": [],
         "query": {
@@ -4579,7 +4579,7 @@
         "hide": 0,
         "includeAll": true,
         "label": null,
-        "multi": true,
+        "multi": false,
         "name": "LUN",
         "options": [],
         "query": {
@@ -4696,7 +4696,7 @@
         "hide": 2,
         "includeAll": false,
         "label": null,
-        "multi": true,
+        "multi": false,
         "name": "SystemResources",
         "options": [],
         "query": {
