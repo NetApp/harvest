@@ -64,6 +64,14 @@ func (Rest) HarvestModule() plugin.ModuleInfo {
 	}
 }
 
+func (r *Rest) query(p *endPoint) string {
+	return p.prop.query
+}
+
+func (r *Rest) fields(p *endPoint) []string {
+	return p.prop.fields
+}
+
 func (r *Rest) Init(a *collector.AbstractCollector) error {
 
 	var err error
@@ -310,7 +318,7 @@ func (r *Rest) processEndPoints() error {
 			i++
 		}
 
-		if records, err = r.GetRestData(endpoint.prop.query, strings.Join(endpoint.prop.fields, ","), r.prop.returnTimeOut, r.client); err != nil {
+		if records, err = r.GetRestData(r.query(endpoint), strings.Join(r.fields(endpoint), ","), r.prop.returnTimeOut, r.client); err != nil {
 			r.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
 			return err
 		}
@@ -531,7 +539,9 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 		version := r.client.Cluster().Version
 		p.Target.Version = strconv.Itoa(version[0]) + "." + strconv.Itoa(version[1]) + "." + strconv.Itoa(version[2])
 		p.Target.Model = "cdot"
-		p.Target.Serial = r.client.Cluster().Uuid
+		if p.Target.Serial == "" {
+			p.Target.Serial = r.client.Cluster().Uuid
+		}
 		p.Target.ClusterUuid = r.client.Cluster().Uuid
 
 		md := r.GetMetadata()
@@ -556,8 +566,11 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 			info.Ids = nodeIds
 			p.Nodes = &info
 
+			// Since the serial number is bogus in c-mode
+			// use the first node's serial number instead (the nodes were ordered in getNodeUuids())
 			if len(nodeIds) > 0 {
 				p.Target.Serial = nodeIds[0].SerialNumber
+				fmt.Println(p.Target.Serial)
 			}
 		} else if r.Object == "Volume" {
 			p.Volumes = &info
