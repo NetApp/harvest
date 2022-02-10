@@ -19,7 +19,6 @@ counters:
   - bytes_per_sector          => bytes_per_sector
   - sector_count              => sectors
   - stats.average_latency     => stats_average_latency
-  - stats.throughput          => stats_io_kbps
   - stats.power_on_hours      => uptime
   - outage.reason             => outage
   - usable_size
@@ -30,6 +29,7 @@ endpoints:
       - ^^uid => uid
       - sectors_read => stats_sectors_read
       - sectors_written => stats_sectors_written
+      - disk_io_kbps_total => stats_io_kbps
 
 plugins:
   - Disk

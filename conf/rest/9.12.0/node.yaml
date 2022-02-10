@@ -8,17 +8,13 @@ counters:
   - ^controller.failed_fan.message.message => failed_fan
   - ^controller.failed_power_supply.message.message => failed_power_message
   - ^controller.over_temperature => over_temperature
-  - ^state => healthy
   - ^location
   - ^model
   - ^serial_number => serial
   - ^version.full => version
   - uptime
   - controller.failed_power_supply.count => failed_power
-  - metric.processor_utilization => cpu_busytime   #hidden field
   - controller.failed_fan.count => failed_fan
-  - hidden_fields:
-      - metric.processor_utilization
 
 endpoints:
   - query: api/private/cli/node
@@ -28,6 +24,7 @@ endpoints:
       - ^max_aggr_size => max_aggr_size
       - ^max_node_vvols => max_vol_num
       - ^max_vol_size => max_vol_size
+      - ^health => healthy
 
 plugins:
   - LabelAgent:
