@@ -405,7 +405,7 @@ func exitIfMissing(fp string, s string) {
 
 func exitIfExist(fp string, s string) {
 	if _, err := os.Stat(fp); err == nil {
-		fmt.Printf("error: %s folder [%s] exists. Harvest creates a new folder and avoids overwriting existing one\n", s, fp)
+		fmt.Printf("error: %s folder [%s] exists. Please specify an empty or non-existant directory\n", s, fp)
 		os.Exit(1)
 	}
 }
@@ -500,10 +500,16 @@ func importFiles(dir string, folder *Folder) {
 		}
 
 		if code != 200 {
-			fmt.Printf("error importing [%s] to folder [%s] - server response (%d - %s) %v\n", file.Name(), folder.name, code, status, result)
+			fmt.Printf("error importing [%s] to folder [%s] - the server replied with [%s]\n", file.Name(), folder.name, status)
 			if code == 412 {
-				fmt.Printf("If dashboard already exists then you can run grafana import command with --overwrite flag or choose a different grafana folder with --serverfolder flag\n")
+				fmt.Printf("That means you are trying to overwrite an existing dashboard.\n\n")
+				fmt.Printf("If you want to overwrite run with the --overwrite flag or choose a different Grafana folder with the --serverfolder flag\n\n")
 			}
+			fmt.Printf("Server response follows:\n")
+			for k, v := range result {
+				fmt.Printf("    %s => %s\n", k, v)
+			}
+			fmt.Println()
 			return
 		}
 		fmt.Printf("OK - imported %s / [%s]\n", folder.name, file.Name())
