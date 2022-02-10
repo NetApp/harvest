@@ -69,6 +69,7 @@ func (r *Rest) initCache() error {
 	}
 
 	r.ParseRestCounters(counters, r.prop)
+	r.Metadata.NewMetricUint64("datapoint_count")
 
 	r.Logger.Info().Strs("extracted Instance Keys", r.prop.instanceKeys).Msg("")
 	r.Logger.Info().Int("count metrics", len(r.prop.metrics)).Int("count labels", len(r.prop.instanceLabels)).Msg("initialized metric cache")

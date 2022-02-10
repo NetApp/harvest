@@ -17,6 +17,8 @@ import (
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
 	"os"
+	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -60,6 +62,14 @@ func (Rest) HarvestModule() plugin.ModuleInfo {
 		ID:  "harvest.collector.rest",
 		New: func() plugin.Module { return new(Rest) },
 	}
+}
+
+func (r *Rest) query(p *endPoint) string {
+	return p.prop.query
+}
+
+func (r *Rest) fields(p *endPoint) []string {
+	return p.prop.fields
 }
 
 func (r *Rest) Init(a *collector.AbstractCollector) error {
@@ -237,7 +247,7 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 
 	startTime = time.Now()
 
-	if records, err = r.GetRestData(r.prop, r.client); err != nil {
+	if records, err = r.GetRestData(r.prop.query, strings.Join(r.prop.fields, ","), r.prop.returnTimeOut, r.client); err != nil {
 		r.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
 		return nil, err
 	}
@@ -276,14 +286,16 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 	parseD = time.Since(startTime)
 
 	r.Logger.Info().
+		Uint64("instances", numRecords.Uint()).
 		Uint64("dataPoints", count).
 		Str("apiTime", apiD.String()).
 		Str("parseTime", parseD.String()).
 		Msg("Collected")
 
+	_ = r.Metadata.LazySetValueInt64("count", "data", numRecords.Int())
 	_ = r.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
 	_ = r.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
-	_ = r.Metadata.LazySetValueUint64("count", "data", count)
+	_ = r.Metadata.LazySetValueUint64("datapoint_count", "data", count)
 	r.AddCollectCount(count)
 
 	return r.Matrix, nil
@@ -306,7 +318,7 @@ func (r *Rest) processEndPoints() error {
 			i++
 		}
 
-		if records, err = r.GetRestData(endpoint.prop, r.client); err != nil {
+		if records, err = r.GetRestData(r.query(endpoint), strings.Join(r.fields(endpoint), ","), r.prop.returnTimeOut, r.client); err != nil {
 			r.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
 			return err
 		}
@@ -394,12 +406,6 @@ func (r *Rest) HandleResults(result gjson.Result, prop *prop, allowInstanceCreat
 			}
 		}
 
-		if r.Params.GetChildContentS("only_cluster_instance") != "true" {
-			if instanceKey == "" {
-				return true
-			}
-		}
-
 		instance = r.Matrix.GetInstance(instanceKey)
 
 		if !allowInstanceCreation && instance == nil {
@@ -472,13 +478,13 @@ func (r *Rest) HandleResults(result gjson.Result, prop *prop, allowInstanceCreat
 	return count
 }
 
-func (r *Rest) GetRestData(prop *prop, client *rest.Client) ([]interface{}, error) {
+func (r *Rest) GetRestData(query string, fields string, returnTimeOut string, client *rest.Client) ([]interface{}, error) {
 	var (
 		err     error
 		records []interface{}
 	)
 
-	href := rest.BuildHref(prop.query, strings.Join(prop.fields, ","), nil, "", "", "", prop.returnTimeOut, prop.query)
+	href := rest.BuildHref(query, fields, nil, "", "", "", returnTimeOut, query)
 
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {
@@ -492,6 +498,125 @@ func (r *Rest) GetRestData(prop *prop, client *rest.Client) ([]interface{}, erro
 	}
 
 	return records, nil
+}
+
+func (r *Rest) CollectAutoSupport(p *collector.Payload) {
+	var exporterTypes []string
+	for _, exporter := range r.Exporters {
+		exporterTypes = append(exporterTypes, exporter.GetClass())
+	}
+
+	var counters = make([]string, 0)
+	for k := range r.prop.counters {
+		counters = append(counters, k)
+	}
+
+	var schedules = make([]collector.Schedule, 0)
+	tasks := r.Params.GetChildS("schedule")
+	if tasks != nil && len(tasks.GetChildren()) > 0 {
+		for _, task := range tasks.GetChildren() {
+			schedules = append(schedules, collector.Schedule{
+				Name:     task.GetNameS(),
+				Schedule: task.GetContentS(),
+			})
+		}
+	}
+
+	// Add collector information
+	p.AddCollectorAsup(collector.AsupCollector{
+		Name:      r.Name,
+		Query:     r.prop.query,
+		Exporters: exporterTypes,
+		Counters: collector.Counters{
+			Count: len(counters),
+			List:  counters,
+		},
+		Schedules:     schedules,
+		ClientTimeout: r.client.Timeout.String(),
+	})
+
+	if r.Name == "Rest" && (r.Object == "Volume" || r.Object == "Node") {
+		version := r.client.Cluster().Version
+		p.Target.Version = strconv.Itoa(version[0]) + "." + strconv.Itoa(version[1]) + "." + strconv.Itoa(version[2])
+		p.Target.Model = "cdot"
+		if p.Target.Serial == "" {
+			p.Target.Serial = r.client.Cluster().Uuid
+		}
+		p.Target.ClusterUuid = r.client.Cluster().Uuid
+
+		md := r.GetMetadata()
+		info := collector.InstanceInfo{
+			Count:      md.LazyValueInt64("count", "data"),
+			DataPoints: md.LazyValueInt64("datapoint_count", "data"),
+			PollTime:   md.LazyValueInt64("poll_time", "data"),
+			ApiTime:    md.LazyValueInt64("api_time", "data"),
+			ParseTime:  md.LazyValueInt64("parse_time", "data"),
+			PluginTime: md.LazyValueInt64("plugin_time", "data"),
+		}
+
+		if r.Object == "Node" {
+			nodeIds, err := r.getNodeUuids()
+			if err != nil {
+				// log but don't return so the other info below is collected
+				r.Logger.Error().
+					Err(err).
+					Msg("Unable to get nodes.")
+				nodeIds = make([]collector.Id, 0)
+			}
+			info.Ids = nodeIds
+			p.Nodes = &info
+
+			// Since the serial number is bogus in c-mode
+			// use the first node's serial number instead (the nodes were ordered in getNodeUuids())
+			if len(nodeIds) > 0 {
+				p.Target.Serial = nodeIds[0].SerialNumber
+			}
+		} else if r.Object == "Volume" {
+			p.Volumes = &info
+		}
+	}
+}
+
+func (r *Rest) getNodeUuids() ([]collector.Id, error) {
+	var (
+		records []interface{}
+		err     error
+		infos   []collector.Id
+	)
+	query := "api/cluster/nodes"
+
+	if records, err = r.GetRestData(query, "serial_number,system_id", r.prop.returnTimeOut, r.client); err != nil {
+		r.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
+		return nil, err
+	}
+
+	all := rest.Pagination{
+		Records:    records,
+		NumRecords: len(records),
+	}
+
+	content, err := json.Marshal(all)
+	if err != nil {
+		r.Logger.Error().Err(err).Str("ApiPath", query).Msg("Unable to marshal rest pagination")
+	}
+
+	if !gjson.ValidBytes(content) {
+		return nil, fmt.Errorf("json is not valid for: %s", r.prop.query)
+	}
+
+	results := gjson.GetManyBytes(content, "num_records", "records")
+
+	results[1].ForEach(func(key, instanceData gjson.Result) bool {
+		infos = append(infos, collector.Id{SerialNumber: instanceData.Get("serial_number").String(), SystemId: instanceData.Get("system_id").String()})
+		return true
+	})
+
+	// When Harvest monitors a c-mode system, the first node is picked.
+	// Sort so there's a higher chance the same node is picked each time this method is called
+	sort.SliceStable(infos, func(i, j int) bool {
+		return infos[i].SerialNumber < infos[j].SerialNumber
+	})
+	return infos, nil
 }
 
 // Interface guards

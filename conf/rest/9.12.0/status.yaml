@@ -9,7 +9,6 @@ counters:
       - health
 
 collect_only_labels: true
-only_cluster_instance: true
 no_max_records: true
 
 plugins:
