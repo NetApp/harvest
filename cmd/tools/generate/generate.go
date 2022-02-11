@@ -35,6 +35,7 @@ type AdminInfo struct {
 	Image         string
 	ContainerName string
 	Enabled       bool
+	CertDir       string
 }
 
 type PollerTemplate struct {
@@ -199,6 +200,7 @@ func generateDocker(path string, kind int) {
 				Image:         opts.image,
 				ContainerName: "admin",
 				Enabled:       true,
+				CertDir:       certDirPath,
 			}
 		}
 	} else {
