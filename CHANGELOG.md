@@ -3,11 +3,164 @@
 [Releases](https://github.com/NetApp/harvest/releases)
 
 ## 22.02.0 / 
+<!-- git log --no-decorate --no-merges --cherry-pick --right-only --oneline origin/release/21.11.0...origin/release/22.02.0 -->
 
-**IMPORTANT** Admin node certificate file location changed. Certificate files have been consolidated into the cert directory. You need to move your admin-cert.pem and admin-key.pem files to the cert directory.
+:boom: Highlights of this major release include:
+
+- Continued progress on the ONTAP REST config collector. Most of the template changes are in place and we're working on closing the gaps between ZAPI and REST. We've made lots of improvements to the REST collector and the 13 REST templates in this release. The REST collector  should be considered early-access as we continue to improve it. If you try it out or have any feedback, let us know on Slack or [GitHub](https://github.com/NetApp/harvest/discussions). :book: You can find more information about when you should switch from ZAPI to REST, what versions of ONTAP are supported by Harvest's REST collector, and how to fill ONTAP gaps between REST and ZAPI documented [here](https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-collector.md)
+  
+- Many of you asked for nightly builds. [We have them](https://github.com/NetApp/harvest/releases/tag/nightly). :confetti_ball: We're also working on publishing to multiple Docker registries since you've told us you're running into rate-limiting problems with DockerHub. We'll announce here and Slack when we have a solution in place.
+
+- New Data Protection dashboard
+
+- `bin/grafana` cli should not overwrite dashboard changes, making it simpler to import/export dashboards, and enabling round-tripping dashboards (import, export, re-import)
+
+- New `include_contains` plugin allows you to select a subset of objects. e.g. selecting only volumes with custom-defined ONTAP metadata
+
+- We've included more out-of-the-box [Prometheus alerts](https://github.com/NetApp/harvest/blob/main/docker/prometheus/alert_rules.yml). Keep sharing your most useful alerts!
+
+- 7mode workflows continue to be improved :heart: Harvest now collects Qtree and Quotas counters from 7mode filers (these are already collected in cDOT)
+    
+- 28 bug fixes, 52 feature, and 11 documentation commits this release
+
+**IMPORTANT** Admin node certificate file location changed. Certificate files have been consolidated into the `cert` directory. If you created self-signed admin certs, you need to move the `admin-cert.pem` and `admin-key.pem` files into the `cert` directory.
 
 **IMPORTANT** In earlier versions of Harvest, the Qtree template exported the `vserver` metric. This counter was changed to `svm` to be consistent with other templates. If you are using the qtree `vserver` metric, you will need to update your queries to use `svm` instead.   
 
+**IMPORTANT** :bangbang: After upgrade, don't forget to re-import your dashboards so you get all the new enhancements and fixes. 
+You can import via `bin/harvest/grafana import` cli or from the Grafana UI.
+
+**IMPORTANT** The LabelAgent `value_mapping` plugin was deprecated in the `21.11` release and removed in `22.02`.
+Use LabelAgent `value_to_num` instead. See [docs](https://github.com/NetApp/harvest/blob/main/cmd/poller/plugin/README.md#value_to_num)
+for details. 
+
+**Known Issues**
+
+The Unix collector is unable to monitor pollers running in containers. See [#249](https://github.com/NetApp/harvest/issues/249) for details.
+
+### Enhancements
+
+- Harvest should include a Data Protection dashboard that shows volumes protected by snapshots, which ones have exceeded their reserve copy, and which are unprotected #664
+ 
+- Harvest should provide nightly builds to GitHub and DockerHub #713
+
+- Harvest `bin/grafana` cli should not overwrite dashboard changes, making it simpler to import/export dashboards, and enabling round-tripping dashboards (import, export, re-import) #831 Thanks to @luddite516 for reporting and @florianmulatz for iterating with us on a solution
+
+- Harvest should provide a `include_contains` label agent plugin for filtering #735 Thanks to @chadpruden for reporting
+
+- Improve Harvest's container compatibility with K8s via kompose. [#655](https://github.com/NetApp/harvest/pull/655) See [also](https://github.com/NetApp/harvest/tree/main/docker/k8) and [discussion](https://github.com/NetApp/harvest/discussions/827)
+
+- The ZAPI cli tool should include counter types when querying ZAPIs #663
+
+- Harvest should include a richer set of Prometheus alerts #254 Thanks @demalik for raising
+
+- Template plugins should run in the order they are defined and compose better. 
+The output of one plugin can be feed into the input of the next one. #736 Thanks to @chadpruden for raising
+
+- Harvest should collect Antivirus counters when ONTAP offbox vscan is configured [#346](https://github.com/NetApp/harvest/issues/346) Thanks to @burkl and @Falcon667 for reporting
+
+- [Document](https://github.com/NetApp/harvest/tree/main/docker/containerd) how to run Harvest with `containerd` and `Rancher`
+     
+- Qtree counters should be collected for 7-mode filers #766 Thanks to @jmg011 for raising this issue and iterating with us on a solution
+
+- Harvest admin node should work with pollers running in Docker compose [#678](https://github.com/NetApp/harvest/pull/678)
+
+- [Document](https://github.com/NetApp/harvest/tree/main/docker/podman) how to run Harvest with Podman. Several RHEL customers asked about this since Podman ships as the default container runtime on RHEL8+.
+
+- Harvest should include a Systemd service file for the HTTP service discovery admin node [#656](https://github.com/NetApp/harvest/pull/656)
+
+- [Document](https://github.com/NetApp/harvest/blob/main/docs/TemplatesAndMetrics.md) how ZAPI collectors, templates, and exporting work together. Thanks @jmg011 and others for asking for this 
+
+- Remove redundant dashboards (Network, Node, SVM, Volume) [#703](https://github.com/NetApp/harvest/issues/703) Thanks to @mamoep for reporting this
+- 
+- Harvest `generate docker` command should support customer-supplied Prometheus and Grafana ports. [#584](https://github.com/NetApp/harvest/issues/584)
+
+- Harvest certificate authentication should work with self-signed subject alternative name (SAN) certificates. Improve documentation on how to use [certificate authentication](https://github.com/NetApp/harvest/blob/main/docs/AuthAndPermissions.md#using-certificate-authentication). Thanks to @edd1619 for raising this issue
+
+- Workload detail volume collection should not try to create duplicate counters #803 Thanks to @luddite516 for reporting
+
+- Harvest's Prometheus exporter should optionally sort labels. Without sorting, [VictoriaMetrics](https://github.com/VictoriaMetrics/VictoriaMetrics/issues/1857) marks metrics stale. #756 Thanks to @mamoep for reporting and verifying
+
+- Harvest should collect workload concurrency [#714](https://github.com/NetApp/harvest/pull/714) Thanks to @jmg011 for raising this.
+
+- Harvest should optionally log to a file when running in the foreground. Handy for instantiated instances running on OSes that have poor support for `jounalctl` #813 and #810 Thanks to @mamoep for reporting and verifying this works in a nightly build
+
+- Harvest certificate directory should be included in a container's volume mounts #725 
+
+- MetroCluster dashboard should show path object metrics #746
+
+- Harvest should collect namespace resources from ONTAP #749
+
+- Harvest should be more resilient to cluster connectivity issues #480
+
+- Harvest Grafana dashboard version string should match the Harvest release #631
+
+- REST collector improvements
+  - Harvest REST collector should support ONTAP private cli endpoints #766 
+  
+  - REST collector should support ZAPI-like object prefixing #786
+
+  - REST collector should support computing new customer-defined metrics #780
+
+  - REST collector should collect aggregate, qtree and quota counters #780
+
+  - REST collector metrics should be reported in autosupport #841
+    
+  - REST collector should collect sensor counters #789
+
+  - Publish REST collector [document](https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-collector.md) that highlights when you should switch from ZAPI to REST, what versions of ONTAP are supported by Harvest's REST collectors and how to fill ONTAP gaps between REST and ZAPI
+
+  - REST collector should support Qutoa, Shelf, Snapmirror, and Volume plugins #799 and #811
+
+- Improve troubleshooting and documentation on validating certificates from macOS [#723](https://github.com/NetApp/harvest/pull/723)
+
+- Harvest should read its config information from the environment variable `HARVEST_CONFIG` when supplied. This env var has higher precedence than the `--config` command-line argument. #645
+
+### Fixes
+
+- FlexGroup statistics should be aggregated across node and aggregates [#706](https://github.com/NetApp/harvest/issues/706) Thanks to @wally007 for reporting
+  
+- Network Details dashboard should use correct units and support variable sorting [#673](https://github.com/NetApp/harvest/issues/673) Thanks to @mamoep for reporting and reviewing the fix
+ 
+- Harvest Systemd service should wait for network to start [#707](https://github.com/NetApp/harvest/pull/707) Thanks to @mamoep for reporting and fixing
+
+- MetroCluster dashboard should use correct units and support variable sorting [#685](https://github.com/NetApp/harvest/issues/685) Thanks to @mamoep and @chris4789 for reporting this
+    
+- 7mode shelf plugin should handle cases where multiple channels have the same shelf id [#692](https://github.com/NetApp/harvest/issues/692) Thanks to @pilot7777 for reporting this on Slack
+
+- Improve template YAML parsing when indentation varies [#704](https://github.com/NetApp/harvest/issues/704) Thanks to @mamoep for reporting this.
+  
+- Harvest should not include version information in its container name. [#660](https://github.com/NetApp/harvest/issues/660). Thanks to @wally007 for raising this. 
+
+- Ignore missing Qtrees and improve uniqueness check on 7mode filters #782 and #797. Thanks to @jmg011 for reporting
+
+- Qtree instance key order should be the same between 7mode and cDOT #807 Thanks to @jmg011 for reporting
+  
+- Harvest HTTP service discovery node should not attempt to publish Prometheus metrics to InfluxDB [#684](https://github.com/NetApp/harvest/pull/684)
+
+- Grafana import should save auth token to the config file referenced by `HARVEST_CONFIG` when that environnement variable exists [#681](https://github.com/NetApp/harvest/pull/681)
+
+- `bin/zapi` should print output [#715](https://github.com/NetApp/harvest/pull/715)
+
+- Snapmirror dashboard should show correct number of SVM-DR relationships, last transfer, and health status #728 Thanks to Gaël Cantarero on Slack for reporting
+  
+- Ensure that properties defined in object templates override their parent properties #765
+
+- Increase time that metrics are retained in Prometheus exporter from 3 minutes to 5 minutes #778 
+
+- Remove the misplaced `SVM FCP Throughput` panel from the iSCSI drilldown section of the SVM details dashboard #821 Thanks to @florianmulatz for reporting and fixing
+
+- When importing Grafana dashboards, remove the existing `id` so Grafana treats the import as a create instead of an overwrite #825 Thanks to @luddite516 for reporting
+  
+- Relax the Grafana version check constraint so version `8.4.0-beta1` is considered `>=7.1` #828 Thanks to @ybizeul for reporting
+
+- `bin/harvest status` should report `running` for pollers exporting to InfluxDB, instead of reporting that they are not running #835
+  
+- Ensure that private cli endpoints do not create new instances, only modify existing instances #839
+
+- Pin the Grafana and Prometheus versions in the Docker compose workflow instead of pulling latest #822
+
+---
 ## 21.11.1 / 2021-12-10
 <!-- git log --no-decorate --no-merges --cherry-pick --right-only --oneline origin/release/21.08.0...origin/release/21.11.0 -->
 
