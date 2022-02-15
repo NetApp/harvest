@@ -5,7 +5,7 @@ go 1.16
 replace goharvest2 => ../
 
 require (
-	github.com/docker/docker v20.10.8+incompatible
+	github.com/docker/docker v20.10.12+incompatible
 	github.com/julienroland/usg v0.0.0-20160918114137-cb52eabb3d84
 	github.com/rs/zerolog v1.26.1
 	github.com/stretchr/testify v1.7.0
