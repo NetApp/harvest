@@ -40,7 +40,7 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 
 ### Enhancements
 
-- Harvest should include a Data Protection dashboard that shows volumes protected by snapshots, which ones have exceeded their reserve copy, and which are unprotected #664
+- Harvest should include a Data Protection SnapMirror dashboard that shows which volumes are protected, how they're protected, their protection relationship, along with their health and lag durations.
  
 - Harvest should provide nightly builds to GitHub and DockerHub #713
 
@@ -55,7 +55,7 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 - Harvest should include a richer set of Prometheus alerts #254 Thanks @demalik for raising
 
 - Template plugins should run in the order they are defined and compose better. 
-The output of one plugin can be feed into the input of the next one. #736 Thanks to @chadpruden for raising
+The output of one plugin can be fed into the input of the next one. #736 Thanks to @chadpruden for raising
 
 - Harvest should collect Antivirus counters when ONTAP offbox vscan is configured [#346](https://github.com/NetApp/harvest/issues/346) Thanks to @burkl and @Falcon667 for reporting
 
@@ -77,13 +77,11 @@ The output of one plugin can be feed into the input of the next one. #736 Thanks
 
 - Harvest certificate authentication should work with self-signed subject alternative name (SAN) certificates. Improve documentation on how to use [certificate authentication](https://github.com/NetApp/harvest/blob/main/docs/AuthAndPermissions.md#using-certificate-authentication). Thanks to @edd1619 for raising this issue
 
-- Workload detail volume collection should not try to create duplicate counters #803 Thanks to @luddite516 for reporting
-
 - Harvest's Prometheus exporter should optionally sort labels. Without sorting, [VictoriaMetrics](https://github.com/VictoriaMetrics/VictoriaMetrics/issues/1857) marks metrics stale. #756 Thanks to @mamoep for reporting and verifying
 
-- Harvest should collect workload concurrency [#714](https://github.com/NetApp/harvest/pull/714) Thanks to @jmg011 for raising this.
-
 - Harvest should optionally log to a file when running in the foreground. Handy for instantiated instances running on OSes that have poor support for `jounalctl` #813 and #810 Thanks to @mamoep for reporting and verifying this works in a nightly build
+
+- Harvest should collect workload concurrency [#714](https://github.com/NetApp/harvest/pull/714)
 
 - Harvest certificate directory should be included in a container's volume mounts #725 
 
@@ -132,10 +130,12 @@ The output of one plugin can be feed into the input of the next one. #736 Thanks
   
 - Harvest should not include version information in its container name. [#660](https://github.com/NetApp/harvest/issues/660). Thanks to @wally007 for raising this. 
 
-- Ignore missing Qtrees and improve uniqueness check on 7mode filters #782 and #797. Thanks to @jmg011 for reporting
+- Ignore missing Qtrees and improve uniqueness check on 7mode filers #782 and #797. Thanks to @jmg011 for reporting
 
-- Qtree instance key order should be the same between 7mode and cDOT #807 Thanks to @jmg011 for reporting
-  
+- Qtree instance key order should be unified between 7mode and cDOT #807 Thanks to @jmg011 for reporting
+
+- Workload detail volume collection should not try to create duplicate counters #803 Thanks to @luddite516 for reporting
+
 - Harvest HTTP service discovery node should not attempt to publish Prometheus metrics to InfluxDB [#684](https://github.com/NetApp/harvest/pull/684)
 
 - Grafana import should save auth token to the config file referenced by `HARVEST_CONFIG` when that environnement variable exists [#681](https://github.com/NetApp/harvest/pull/681)
