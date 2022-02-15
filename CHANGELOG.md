@@ -7,7 +7,7 @@
 
 :boom: Highlights of this major release include:
 
-- Continued progress on the ONTAP REST config collector. Most of the template changes are in place and we're working on closing the gaps between ZAPI and REST. We've made lots of improvements to the REST collector and the 13 REST templates in this release. The REST collector  should be considered early-access as we continue to improve it. If you try it out or have any feedback, let us know on Slack or [GitHub](https://github.com/NetApp/harvest/discussions). :book: You can find more information about when you should switch from ZAPI to REST, what versions of ONTAP are supported by Harvest's REST collector, and how to fill ONTAP gaps between REST and ZAPI documented [here](https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-collector.md)
+- Continued progress on the ONTAP REST config collector. Most of the template changes are in place and we're working on closing the gaps between ZAPI and REST. We've made lots of improvements to the REST collector and included 13 REST templates in this release. The REST collector  should be considered early-access as we continue to improve it. If you try it out or have any feedback, let us know on Slack or [GitHub](https://github.com/NetApp/harvest/discussions). :book: You can find more information about when you should switch from ZAPI to REST, what versions of ONTAP are supported by Harvest's REST collector, and how to fill ONTAP gaps between REST and ZAPI documented [here](https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-collector.md)
   
 - Many of you asked for nightly builds. [We have them](https://github.com/NetApp/harvest/releases/tag/nightly). :confetti_ball: We're also working on publishing to multiple Docker registries since you've told us you're running into rate-limiting problems with DockerHub. We'll announce here and Slack when we have a solution in place.
 
@@ -108,6 +108,8 @@ The output of one plugin can be fed into the input of the next one. #736 Thanks 
     
   - REST collector should collect sensor counters #789
 
+  - Collect network port interface information not available via ZAPI #691 Thanks to @pilot7777, @mamoep amd @wagneradrian92 for working on this with us
+
   - Publish REST collector [document](https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-collector.md) that highlights when you should switch from ZAPI to REST, what versions of ONTAP are supported by Harvest's REST collectors and how to fill ONTAP gaps between REST and ZAPI
 
   - REST collector should support Qutoa, Shelf, Snapmirror, and Volume plugins #799 and #811
@@ -152,14 +154,12 @@ The output of one plugin can be fed into the input of the next one. #736 Thanks 
 
 - Remove the misplaced `SVM FCP Throughput` panel from the iSCSI drilldown section of the SVM details dashboard #821 Thanks to @florianmulatz for reporting and fixing
 
-- When importing Grafana dashboards, remove the existing `id` so Grafana treats the import as a create instead of an overwrite #825 Thanks to @luddite516 for reporting
+- When importing Grafana dashboards, remove the existing `id` and `uid` so Grafana treats the import as a create instead of an overwrite #825 Thanks to @luddite516 for reporting
   
 - Relax the Grafana version check constraint so version `8.4.0-beta1` is considered `>=7.1` #828 Thanks to @ybizeul for reporting
 
 - `bin/harvest status` should report `running` for pollers exporting to InfluxDB, instead of reporting that they are not running #835
   
-- Ensure that private cli endpoints do not create new instances, only modify existing instances #839
-
 - Pin the Grafana and Prometheus versions in the Docker compose workflow instead of pulling latest #822
 
 ---
