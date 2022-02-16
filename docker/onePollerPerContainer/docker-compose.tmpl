@@ -10,9 +10,8 @@ services:
       - {{ .Admin.Port }}:{{ .Admin.Port }}
     entrypoint: ["bin/harvest", "admin", "start", "--config", "/opt/harvest.yml"]
     volumes:
-      - type: bind
-        source: {{ .Admin.ConfigFile }}
-        target: /opt/harvest.yml
+      - {{ .Admin.ConfigFile }}:/opt/harvest.yml
+      - {{ .Admin.CertDir }}:/opt/harvest/cert
   {{- end }}
 {{range .Pollers}}
   {{ .ServiceName }}:

@@ -2339,7 +2339,7 @@
         "hide": 0,
         "includeAll": false,
         "label": "",
-        "multi": true,
+        "multi": false,
         "name": "Datacenter",
         "options": [],
         "query": {
@@ -2365,7 +2365,7 @@
         "hide": 0,
         "includeAll": false,
         "label": "",
-        "multi": true,
+        "multi": false,
         "name": "Node",
         "options": [],
         "query": {

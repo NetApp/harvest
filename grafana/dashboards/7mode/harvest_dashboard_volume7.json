@@ -2422,7 +2422,7 @@
         "hide": 0,
         "includeAll": false,
         "label": null,
-        "multi": true,
+        "multi": false,
         "name": "Datacenter",
         "options": [],
         "query": {
@@ -2449,7 +2449,7 @@
         "hide": 0,
         "includeAll": false,
         "label": null,
-        "multi": true,
+        "multi": false,
         "name": "Node",
         "options": [],
         "query": {
@@ -2476,7 +2476,7 @@
         "hide": 0,
         "includeAll": true,
         "label": null,
-        "multi": true,
+        "multi": false,
         "name": "SVM",
         "options": [],
         "query": {
@@ -2503,7 +2503,7 @@
         "hide": 0,
         "includeAll": true,
         "label": null,
-        "multi": true,
+        "multi": false,
         "name": "Volume",
         "options": [],
         "query": {
