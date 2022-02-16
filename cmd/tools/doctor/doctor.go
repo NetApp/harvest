@@ -63,12 +63,12 @@ func doMergeCmd(_ *cobra.Command, _ []string) {
 
 func doMerge(path1 string, path2 string) {
 	template, err := tree.ImportYaml(path1)
-	if err != nil {
+	if err != nil || template == nil {
 		fmt.Printf("error reading template file [%s]. err=%+v\n", path1, err)
 		return
 	}
 	subTemplate, err := tree.ImportYaml(path2)
-	if err != nil {
+	if err != nil || subTemplate == nil {
 		fmt.Printf("error reading template file [%s] err=%+v\n", path2, err)
 		return
 	}

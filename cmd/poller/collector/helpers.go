@@ -127,6 +127,11 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 			}
 		} else {
 			tempTemplate, err = tree.ImportYaml(subTemplateFp)
+			if tempTemplate == nil || err != nil {
+				c.Logger.Warn().Err(err).Str("template", subTemplateFp).
+					Msg("Unable to import template file. File is invalid or empty")
+				continue
+			}
 			if err == nil {
 				tempTemplate.PreprocessTemplate()
 				// merge templates

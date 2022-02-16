@@ -4,6 +4,7 @@
 package tree
 
 import (
+	"goharvest2/pkg/errors"
 	"goharvest2/pkg/tree/node"
 	"goharvest2/pkg/tree/xml"
 	y3 "gopkg.in/yaml.v3"
@@ -19,9 +20,14 @@ func ImportYaml(filepath string) (*node.Node, error) {
 
 	root := y3.Node{}
 	err = y3.Unmarshal(data, &root)
-	if err != nil || len(root.Content) == 0 {
+	if err != nil {
 		return nil, err
 	}
+	// treat an empty file as an error
+	if len(root.Content) == 0 {
+		return nil, errors.New(errors.ERR_CONFIG, "template file is empty or does not exist")
+	}
+
 	r := node.New([]byte("Root"))
 	consume(r, "", root.Content[0], false)
 	return r, nil
