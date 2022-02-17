@@ -112,11 +112,15 @@ docker-compose -f prom-stack.yml -f harvest-compose.yml down
 
 ### Upgrade Harvest
 
-To upgrade Harvest, use the `restart` command - a newer image of Harvest will be pulled if available.
+To upgrade Harvest:
+
+1. Download the latest `tar.gz` or packaged version and install it. 
+This is needed since the new version may contain new templates, dashboards, or other files not included in the Docker image.
+2. Check the release notes to see if there are new features or fixes in the `harvest docker generate` command you want to take advantage of.
+If so, regenerate your Docker compose file(s).
+3. Pull new images and restart your containers like so:
 
 ```
 docker pull rahulguptajss/harvest
 docker-compose -f prom-stack.yml -f harvest-compose.yml restart
 ```
-
-You typically do not need to regenerate your `harvest-compose.yml` file when upgrading Harvest. If that's required, it will be noted in the release notes.
