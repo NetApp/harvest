@@ -1,4 +1,4 @@
-name:                     Snapshot
+name:                     SnapshotPolicy
 query:                    api/private/cli/snapshot/policy
 object:                   snapshot_policy
 

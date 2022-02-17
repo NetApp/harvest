@@ -1,4 +1,4 @@
-name:                     Snapshot
+name:                     SnapshotPolicy
 query:                    snapshot-policy-get-iter
 object:                   snapshot_policy
 
