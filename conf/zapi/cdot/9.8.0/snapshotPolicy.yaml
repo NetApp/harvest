@@ -1,6 +1,6 @@
 name:                     Snapshot
 query:                    snapshot-policy-get-iter
-object:                   snapshot
+object:                   snapshot_policy
 
 
 counters:

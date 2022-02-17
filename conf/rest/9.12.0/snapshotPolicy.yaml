@@ -1,6 +1,6 @@
 name:                     Snapshot
 query:                    api/private/cli/snapshot/policy
-object:                   snapshot
+object:                   snapshot_policy
 
 counters:
   - ^^vserver => svm

@@ -224,6 +224,10 @@ func (me *Zapi) PollInstance() (*matrix.Matrix, error) {
 
 	me.Logger.Debug().Msg("starting instance poll")
 
+	if len(me.shortestPathPrefix) == 0 {
+		return nil, errors.New(errors.ERR_TEMPLATE, "There is an issue with template. It could be due to wrong counter structure.")
+	}
+
 	oldCount = uint64(len(me.Matrix.GetInstances()))
 	me.Matrix.PurgeInstances()
 
