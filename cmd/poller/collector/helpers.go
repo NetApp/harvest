@@ -50,7 +50,7 @@ func ImportTemplate(confPath, confFn, collectorName string) (*node.Node, error) 
 // @filename	- name of the subtemplate
 // @version		- ONTAP version triple (generation, major, minor)
 //
-func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int) (*node.Node, error) {
+func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int) (*node.Node, string, error) {
 
 	var (
 		selectedVersion, pathPrefix, subTemplateFp string
@@ -85,7 +85,7 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 				}
 			}
 		} else {
-			return nil, err
+			return nil, "", err
 		}
 		c.Logger.Trace().Msgf("checking for %d available versions: %v", len(availableVersions), availableVersions)
 
@@ -105,7 +105,7 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 			verS, err := version.NewVersion(verWithDots)
 			if err != nil {
 				c.Logger.Trace().Msgf("error parsing ONTAP version: %s err: %s", verWithDots, err)
-				return nil, errors.New("no best-fitting subtemplate version found")
+				return nil, "", errors.New("no best-fitting subtemplate version found")
 			}
 			// get closest index
 			idx := getClosestIndex(versions, verS)
@@ -115,7 +115,7 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 		}
 
 		if selectedVersion == "" {
-			return nil, errors.New("no best-fit template found")
+			return nil, "", errors.New("no best-fit template found")
 		}
 
 		subTemplateFp = path.Join(pathPrefix, selectedVersion, f)
@@ -139,7 +139,7 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 			}
 		}
 	}
-	return finalTemplate, err
+	return finalTemplate, selectedVersion, err
 }
 
 //getClosestIndex returns the closest left match to the sorted list of input versions

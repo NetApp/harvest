@@ -38,6 +38,7 @@ type endPoint struct {
 type prop struct {
 	object         string
 	query          string
+	templatePath   string
 	instanceKeys   []string
 	instanceLabels map[string]string
 	metrics        []metric
@@ -177,6 +178,7 @@ func (r *Rest) initEndPoints() error {
 			prop.metrics = make([]metric, 0)
 			prop.apiType = "public"
 			prop.returnTimeOut = r.prop.returnTimeOut
+			prop.templatePath = r.prop.templatePath
 
 			for _, line1 := range line.GetChildren() {
 				if line1.GetNameS() == "query" {
