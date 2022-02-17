@@ -99,13 +99,15 @@ func (me *Zapi) InitVars() error {
 	version := me.Client.Version()
 	me.HostVersion = strconv.Itoa(version[0]) + "." + strconv.Itoa(version[1]) + "." + strconv.Itoa(version[2])
 	me.HostModel = model
-	template, selectedVersion, err := me.ImportSubTemplate(model, me.Params.GetChildS("objects").GetChildContentS(me.Object), me.Client.Version())
+	templateName := me.Params.GetChildS("objects").GetChildContentS(me.Object)
+
+	template, selectedVersion, err := me.ImportSubTemplate(model, templateName, me.Client.Version())
 	if err != nil {
-		me.Logger.Warn().Stack().Err(err).Str("template", me.TemplatePath).Msg("Unable to import template")
+		me.Logger.Warn().Stack().Err(err).Str("template", templateName).Msg("Unable to import template")
 		return err
 	}
 
-	me.TemplatePath = path.Join(me.Options.HomePath, "conf/", strings.ToLower(me.Name), model, selectedVersion, me.Params.GetChildS("objects").GetChildContentS(me.Object))
+	me.TemplatePath = path.Join(me.Options.HomePath, "conf/", strings.ToLower(me.Name), model, selectedVersion, templateName)
 
 	me.Params.Union(template)
 
