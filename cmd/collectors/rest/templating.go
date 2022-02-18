@@ -14,14 +14,17 @@ import (
 func (r *Rest) LoadTemplate() error {
 
 	var (
-		template *node.Node
-		err      error
+		template     *node.Node
+		templatePath string
+		err          error
 	)
 
 	// import template
-	if template, err = r.ImportSubTemplate("", r.getTemplateFn(), r.client.Cluster().Version); err != nil {
+	if template, templatePath, err = r.ImportSubTemplate("", r.getTemplateFn(), r.client.Cluster().Version); err != nil {
 		return err
 	}
+
+	r.prop.templatePath = templatePath
 
 	r.Params.Union(template)
 	return nil

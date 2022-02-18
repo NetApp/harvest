@@ -15,6 +15,7 @@ const (
 	ERR_CONFIG       = "configuration error"
 	ERR_NO_METRIC    = "no metrics"
 	ERR_NO_INSTANCE  = "no instances"
+	ERR_TEMPLATE     = "invalid template"
 	ERR_NO_COLLECTOR = "no collectors"
 	MATRIX_HASH      = "matrix error"
 	MATRIX_EMPTY     = "empty cache"

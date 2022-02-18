@@ -50,14 +50,14 @@ func ImportTemplate(confPath, confFn, collectorName string) (*node.Node, error) 
 // @filename	- name of the subtemplate
 // @version		- ONTAP version triple (generation, major, minor)
 //
-func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int) (*node.Node, error) {
+func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int) (*node.Node, string, error) {
 
 	var (
-		selectedVersion, pathPrefix, subTemplateFp string
-		availableVersions                          []string
-		err                                        error
-		finalTemplate                              *node.Node
-		tempTemplate                               *node.Node
+		selectedVersion, pathPrefix, templatePath string
+		availableVersions                         []string
+		err                                       error
+		finalTemplate                             *node.Node
+		tempTemplate                              *node.Node
 	)
 
 	//split filename by comma
@@ -65,7 +65,7 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 	filenames := strings.Split(filename, ",")
 
 	for _, f := range filenames {
-		pathPrefix = path.Join(c.Options.HomePath, "conf/", strings.ToLower(c.Name), model)
+		pathPrefix = c.GetTemplatePathPrefix(model)
 		c.Logger.Debug().Msgf("Looking for best-fitting template in [%s]", pathPrefix)
 		verWithDots := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(ver)), "."), "[]")
 
@@ -85,7 +85,7 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 				}
 			}
 		} else {
-			return nil, err
+			return nil, "", err
 		}
 		c.Logger.Trace().Msgf("checking for %d available versions: %v", len(availableVersions), availableVersions)
 
@@ -105,7 +105,7 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 			verS, err := version.NewVersion(verWithDots)
 			if err != nil {
 				c.Logger.Trace().Msgf("error parsing ONTAP version: %s err: %s", verWithDots, err)
-				return nil, errors.New("no best-fitting subtemplate version found")
+				return nil, "", errors.New("no best-fitting subtemplate version found")
 			}
 			// get closest index
 			idx := getClosestIndex(versions, verS)
@@ -115,20 +115,20 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 		}
 
 		if selectedVersion == "" {
-			return nil, errors.New("no best-fit template found")
+			return nil, "", errors.New("no best-fit template found")
 		}
 
-		subTemplateFp = path.Join(pathPrefix, selectedVersion, f)
-		c.Logger.Info().Msgf("best-fit template [%s] for [%s]", subTemplateFp, verWithDots)
+		templatePath = path.Join(pathPrefix, selectedVersion, f)
+		c.Logger.Info().Msgf("best-fit template [%s] for [%s]", templatePath, verWithDots)
 		if finalTemplate == nil {
-			finalTemplate, err = tree.ImportYaml(subTemplateFp)
+			finalTemplate, err = tree.ImportYaml(templatePath)
 			if err == nil {
 				finalTemplate.PreprocessTemplate()
 			}
 		} else {
-			tempTemplate, err = tree.ImportYaml(subTemplateFp)
+			tempTemplate, err = tree.ImportYaml(templatePath)
 			if tempTemplate == nil || err != nil {
-				c.Logger.Warn().Err(err).Str("template", subTemplateFp).
+				c.Logger.Warn().Err(err).Str("template", templatePath).
 					Msg("Unable to import template file. File is invalid or empty")
 				continue
 			}
@@ -139,7 +139,11 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 			}
 		}
 	}
-	return finalTemplate, err
+	return finalTemplate, templatePath, err
+}
+
+func (c *AbstractCollector) GetTemplatePathPrefix(model string) string {
+	return path.Join(c.Options.HomePath, "conf/", strings.ToLower(c.Name), model)
 }
 
 //getClosestIndex returns the closest left match to the sorted list of input versions

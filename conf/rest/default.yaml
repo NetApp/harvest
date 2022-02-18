@@ -13,7 +13,7 @@ objects:
   SnapMirror:       snapmirror.yaml
   Volume:           volume.yaml
   Subsystem:        subsystem.yaml
-  Snapshot:         snapshot.yaml
+  SnapshotPolicy:   snapshotPolicy.yaml
   Port:             port.yaml
   Qtree:            qtree.yaml
   Shelf:            shelf.yaml

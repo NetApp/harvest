@@ -33,8 +33,7 @@ type Zapi struct {
 	Client             *client.Client
 	object             string
 	Query              string
-	TemplateFn         string
-	TemplateType       string
+	TemplatePath       string
 	batchSize          string
 	desiredAttributes  *node.Node
 	instanceKeyPaths   [][]string
@@ -89,8 +88,6 @@ func (me *Zapi) InitVars() error {
 	}
 	me.Logger.Debug().Msgf("connected to: %s", me.Client.Info())
 
-	me.TemplateFn = me.Params.GetChildS("objects").GetChildContentS(me.Object) // @TODO err handling
-
 	model := "cdot"
 	if !me.Client.IsClustered() {
 		model = "7mode"
@@ -101,12 +98,15 @@ func (me *Zapi) InitVars() error {
 	version := me.Client.Version()
 	me.HostVersion = strconv.Itoa(version[0]) + "." + strconv.Itoa(version[1]) + "." + strconv.Itoa(version[2])
 	me.HostModel = model
+	templateName := me.Params.GetChildS("objects").GetChildContentS(me.Object)
 
-	template, err := me.ImportSubTemplate(model, me.TemplateFn, me.Client.Version())
+	template, templatePath, err := me.ImportSubTemplate(model, templateName, me.Client.Version())
 	if err != nil {
-		me.Logger.Warn().Stack().Err(err).Str("template", me.TemplateFn).Msg("Unable to import template")
+		me.Logger.Warn().Stack().Err(err).Str("template", templatePath).Msg("Unable to import template")
 		return err
 	}
+
+	me.TemplatePath = templatePath
 
 	me.Params.Union(template)
 
@@ -223,6 +223,11 @@ func (me *Zapi) PollInstance() (*matrix.Matrix, error) {
 	)
 
 	me.Logger.Debug().Msg("starting instance poll")
+
+	if len(me.shortestPathPrefix) == 0 {
+		msg := fmt.Sprintf("There is an issue with the template [%s]. It could be due to wrong counter structure.", me.TemplatePath)
+		return nil, errors.New(errors.ERR_TEMPLATE, msg)
+	}
 
 	oldCount = uint64(len(me.Matrix.GetInstances()))
 	me.Matrix.PurgeInstances()
