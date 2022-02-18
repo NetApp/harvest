@@ -12,7 +12,6 @@ import (
 	"goharvest2/cmd/collectors/zapi/plugins/volume"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/pkg/conf"
-	"path"
 	"sort"
 	"strconv"
 	"strings"
@@ -101,13 +100,13 @@ func (me *Zapi) InitVars() error {
 	me.HostModel = model
 	templateName := me.Params.GetChildS("objects").GetChildContentS(me.Object)
 
-	template, selectedVersion, err := me.ImportSubTemplate(model, templateName, me.Client.Version())
+	template, templatePath, err := me.ImportSubTemplate(model, templateName, me.Client.Version())
 	if err != nil {
-		me.Logger.Warn().Stack().Err(err).Str("template", templateName).Msg("Unable to import template")
+		me.Logger.Warn().Stack().Err(err).Str("template", templatePath).Msg("Unable to import template")
 		return err
 	}
 
-	me.TemplatePath = path.Join(me.Options.HomePath, "conf/", strings.ToLower(me.Name), model, selectedVersion, templateName)
+	me.TemplatePath = templatePath
 
 	me.Params.Union(template)
 

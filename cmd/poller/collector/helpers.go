@@ -53,11 +53,11 @@ func ImportTemplate(confPath, confFn, collectorName string) (*node.Node, error) 
 func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int) (*node.Node, string, error) {
 
 	var (
-		selectedVersion, pathPrefix, subTemplateFp string
-		availableVersions                          []string
-		err                                        error
-		finalTemplate                              *node.Node
-		tempTemplate                               *node.Node
+		selectedVersion, pathPrefix, templatePath string
+		availableVersions                         []string
+		err                                       error
+		finalTemplate                             *node.Node
+		tempTemplate                              *node.Node
 	)
 
 	//split filename by comma
@@ -65,7 +65,7 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 	filenames := strings.Split(filename, ",")
 
 	for _, f := range filenames {
-		pathPrefix = path.Join(c.Options.HomePath, "conf/", strings.ToLower(c.Name), model)
+		pathPrefix = c.GetTemplatePathPrefix(model)
 		c.Logger.Debug().Msgf("Looking for best-fitting template in [%s]", pathPrefix)
 		verWithDots := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(ver)), "."), "[]")
 
@@ -118,17 +118,17 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 			return nil, "", errors.New("no best-fit template found")
 		}
 
-		subTemplateFp = path.Join(pathPrefix, selectedVersion, f)
-		c.Logger.Info().Msgf("best-fit template [%s] for [%s]", subTemplateFp, verWithDots)
+		templatePath = path.Join(pathPrefix, selectedVersion, f)
+		c.Logger.Info().Msgf("best-fit template [%s] for [%s]", templatePath, verWithDots)
 		if finalTemplate == nil {
-			finalTemplate, err = tree.ImportYaml(subTemplateFp)
+			finalTemplate, err = tree.ImportYaml(templatePath)
 			if err == nil {
 				finalTemplate.PreprocessTemplate()
 			}
 		} else {
-			tempTemplate, err = tree.ImportYaml(subTemplateFp)
+			tempTemplate, err = tree.ImportYaml(templatePath)
 			if tempTemplate == nil || err != nil {
-				c.Logger.Warn().Err(err).Str("template", subTemplateFp).
+				c.Logger.Warn().Err(err).Str("template", templatePath).
 					Msg("Unable to import template file. File is invalid or empty")
 				continue
 			}
@@ -139,7 +139,11 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 			}
 		}
 	}
-	return finalTemplate, selectedVersion, err
+	return finalTemplate, templatePath, err
+}
+
+func (c *AbstractCollector) GetTemplatePathPrefix(model string) string {
+	return path.Join(c.Options.HomePath, "conf/", strings.ToLower(c.Name), model)
 }
 
 //getClosestIndex returns the closest left match to the sorted list of input versions
