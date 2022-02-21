@@ -25,7 +25,7 @@ import (
 
 type Rest struct {
 	*collector.AbstractCollector
-	client    *rest.Client
+	Client    *rest.Client
 	prop      *prop
 	endpoints []*endPoint
 }
@@ -81,15 +81,11 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 
 	r.prop = &prop{}
 
-	if r.client, err = r.getClient(a, a.Params); err != nil {
+	if err = r.InitClient(); err != nil {
 		return err
 	}
 
-	if err = r.client.Init(5); err != nil {
-		return err
-	}
-
-	if err = r.LoadTemplate(); err != nil {
+	if err, r.prop.templatePath = r.LoadTemplate(); err != nil {
 		return err
 	}
 
@@ -101,7 +97,7 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	if err = r.initCache(); err != nil {
+	if err = r.InitCache(); err != nil {
 		return err
 	}
 
@@ -113,11 +109,26 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 	return nil
 }
 
+func (r *Rest) InitClient() error {
+
+	var err error
+	a := r.AbstractCollector
+	if r.Client, err = r.getClient(a, a.Params); err != nil {
+		return err
+	}
+
+	if err = r.Client.Init(5); err != nil {
+		return err
+	}
+
+	return err
+}
+
 func (r *Rest) InitMatrix() error {
 	// overwrite from abstract collector
 	r.Matrix.Object = r.prop.object
 	// Add system (cluster) name
-	r.Matrix.SetGlobalLabel("cluster", r.client.Cluster().Name)
+	r.Matrix.SetGlobalLabel("cluster", r.Client.Cluster().Name)
 	if r.Params.HasChildS("labels") {
 		for _, l := range r.Params.GetChildS("labels").GetChildren() {
 			r.Matrix.SetGlobalLabel(l.GetNameS(), l.GetContentS())
@@ -249,7 +260,7 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 
 	startTime = time.Now()
 
-	if records, err = r.GetRestData(r.prop.query, strings.Join(r.prop.fields, ","), r.prop.returnTimeOut, r.client); err != nil {
+	if records, err = r.GetRestData(r.prop.query, strings.Join(r.prop.fields, ","), r.prop.returnTimeOut, r.Client); err != nil {
 		r.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
 		return nil, err
 	}
@@ -320,7 +331,7 @@ func (r *Rest) processEndPoints() error {
 			i++
 		}
 
-		if records, err = r.GetRestData(r.query(endpoint), strings.Join(r.fields(endpoint), ","), r.prop.returnTimeOut, r.client); err != nil {
+		if records, err = r.GetRestData(r.query(endpoint), strings.Join(r.fields(endpoint), ","), r.prop.returnTimeOut, r.Client); err != nil {
 			r.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
 			return err
 		}
@@ -534,17 +545,17 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 			List:  counters,
 		},
 		Schedules:     schedules,
-		ClientTimeout: r.client.Timeout.String(),
+		ClientTimeout: r.Client.Timeout.String(),
 	})
 
 	if r.Name == "Rest" && (r.Object == "Volume" || r.Object == "Node") {
-		version := r.client.Cluster().Version
+		version := r.Client.Cluster().Version
 		p.Target.Version = strconv.Itoa(version[0]) + "." + strconv.Itoa(version[1]) + "." + strconv.Itoa(version[2])
 		p.Target.Model = "cdot"
 		if p.Target.Serial == "" {
-			p.Target.Serial = r.client.Cluster().Uuid
+			p.Target.Serial = r.Client.Cluster().Uuid
 		}
-		p.Target.ClusterUuid = r.client.Cluster().Uuid
+		p.Target.ClusterUuid = r.Client.Cluster().Uuid
 
 		md := r.GetMetadata()
 		info := collector.InstanceInfo{
@@ -587,7 +598,7 @@ func (r *Rest) getNodeUuids() ([]collector.Id, error) {
 	)
 	query := "api/cluster/nodes"
 
-	if records, err = r.GetRestData(query, "serial_number,system_id", r.prop.returnTimeOut, r.client); err != nil {
+	if records, err = r.GetRestData(query, "serial_number,system_id", r.prop.returnTimeOut, r.Client); err != nil {
 		r.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
 		return nil, err
 	}

@@ -1,0 +1,10 @@
+
+collector:          Rest
+
+# Order here matters!
+schedule:
+  - counter: 1200s
+  - data: 60s
+
+objects:
+  Volume:           volume.yaml

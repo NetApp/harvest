@@ -1,0 +1,34 @@
+
+name:                     Volume
+query:                    api/cluster/counter/tables/volume/rows
+object:                   volume
+
+#instance_key:             uuid
+
+counters:
+  - ^^uuid
+  - ^name
+#  - ^vserver_name          => svm
+#  - ^node_name             => node
+  - ^parent_aggregate           => aggr
+  - read_data
+  - write_data
+  - read_ops
+  - write_ops
+  - other_ops
+  - total_ops
+  - read_latency
+  - write_latency
+  - other_latency
+  - avg_latency
+
+#plugins:
+#  - Volume
+
+export_options:
+  instance_keys:
+    - volume
+    - node
+    - svm
+    - aggr
+    - type

@@ -32,6 +32,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	_ "goharvest2/cmd/collectors/rest"
+	_ "goharvest2/cmd/collectors/restperf"
 	_ "goharvest2/cmd/collectors/simple"
 	_ "goharvest2/cmd/collectors/unix"
 	_ "goharvest2/cmd/collectors/zapi/collector"
