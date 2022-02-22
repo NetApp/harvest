@@ -56,8 +56,9 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 		selectedVersion, pathPrefix, templatePath string
 		availableVersions                         []string
 		err                                       error
+		customTemplateErr                         error
 		finalTemplate                             *node.Node
-		tempTemplate                              *node.Node
+		customTemplate                            *node.Node
 	)
 
 	//split filename by comma
@@ -126,16 +127,16 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 				finalTemplate.PreprocessTemplate()
 			}
 		} else {
-			tempTemplate, err = tree.ImportYaml(templatePath)
-			if tempTemplate == nil || err != nil {
+			customTemplate, customTemplateErr = tree.ImportYaml(templatePath)
+			if customTemplate == nil || customTemplateErr != nil {
 				c.Logger.Warn().Err(err).Str("template", templatePath).
 					Msg("Unable to import template file. File is invalid or empty")
 				continue
 			}
-			if err == nil {
-				tempTemplate.PreprocessTemplate()
+			if customTemplateErr == nil {
+				customTemplate.PreprocessTemplate()
 				// merge templates
-				finalTemplate.Merge(tempTemplate, nil)
+				finalTemplate.Merge(customTemplate, nil)
 			}
 		}
 	}
