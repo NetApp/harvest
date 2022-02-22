@@ -264,7 +264,7 @@ func (me *Zapi) PollInstance() (*matrix.Matrix, error) {
 
 			instances = response.SearchChildren(me.shortestPathPrefix)
 			if len(instances) == 0 {
-				return nil, errors.New(errors.ERR_NO_INSTANCE, "no instances in server response")
+				break
 			}
 
 			me.Logger.Debug().Msgf("fetching %d instances", len(instances))
@@ -383,7 +383,7 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 		instances := response.SearchChildren(me.shortestPathPrefix)
 
 		if len(instances) == 0 {
-			return nil, errors.New(errors.ERR_NO_INSTANCE, "")
+			break
 		}
 
 		me.Logger.Debug().Msgf("fetched %d instance elements", len(instances))
@@ -422,6 +422,10 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 	_ = me.Metadata.LazySetValueInt64("parse_time", "data", parseT.Microseconds())
 	_ = me.Metadata.LazySetValueUint64("count", "data", count)
 	me.AddCollectCount(count)
+
+	if len(me.Matrix.GetInstances()) == 0 {
+		return nil, errors.New(errors.ERR_NO_INSTANCE, "")
+	}
 
 	return me.Matrix, nil
 }
