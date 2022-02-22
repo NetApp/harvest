@@ -127,6 +127,7 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 				finalTemplate.PreprocessTemplate()
 			}
 		} else {
+			// any errors w.r.t customTemplate are warnings and should not be returned to caller
 			customTemplate, customTemplateErr = tree.ImportYaml(templatePath)
 			if customTemplate == nil || customTemplateErr != nil {
 				c.Logger.Warn().Err(err).Str("template", templatePath).
