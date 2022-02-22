@@ -86,7 +86,7 @@ After starting the containers, you can view them with `podman ps -a` or using Co
 ```bash
 podman ps -a
 CONTAINER ID  IMAGE                                   COMMAND               CREATED        STATUS            PORTS                     NAMES
-45fd00307d0a  docker.io/rahulguptajss/harvest:latest  --poller unix --p...  5 seconds ago  Up 5 seconds ago  0.0.0.0:12990->12990/tcp  poller_unix_v21.11.0
+45fd00307d0a  cr.netapp.io/harvest:latest             --poller unix --p...  5 seconds ago  Up 5 seconds ago  0.0.0.0:12990->12990/tcp  poller_unix_v21.11.0
 d40585bb903c  localhost/prom/prometheus:latest        --config.file=/et...  5 seconds ago  Up 5 seconds ago  0.0.0.0:9091->9090/tcp    prometheus
 17a2784bc282  localhost/grafana/grafana:latest                              4 seconds ago  Up 5 seconds ago  0.0.0.0:3000->3000/tcp    grafana
 ```

@@ -121,6 +121,6 @@ If so, regenerate your Docker compose file(s).
 3. Pull new images and restart your containers like so:
 
 ```
-docker pull rahulguptajss/harvest
+docker pull cr.netapp.io/harvest   # or if using Docker Hub: docker pull rahulguptajss/harvest
 docker-compose -f prom-stack.yml -f harvest-compose.yml restart
 ```
