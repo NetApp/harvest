@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/tidwall/gjson"
+	"goharvest2/cmd/collectors/rest/plugins/certificate"
 	"goharvest2/cmd/collectors/rest/plugins/disk"
 	"goharvest2/cmd/collectors/rest/plugins/qtree"
+	"goharvest2/cmd/collectors/rest/plugins/securityaccount"
 	"goharvest2/cmd/collectors/rest/plugins/shelf"
 	"goharvest2/cmd/collectors/rest/plugins/snapmirror"
 	"goharvest2/cmd/collectors/rest/plugins/volume"
@@ -372,6 +374,10 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return snapmirror.New(abc)
 	case "Volume":
 		return volume.New(abc)
+	case "Certificate":
+		return certificate.New(abc)
+	case "SecurityAccount":
+		return securityaccount.New(abc)
 	default:
 		r.Logger.Warn().Str("kind", kind).Msg("no rest plugin found ")
 	}

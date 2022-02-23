@@ -1,0 +1,28 @@
+
+name:             SecurityCert
+query:            api/security/certificates
+object:           security_certificate
+
+counters:
+  - ^^uuid
+  - ^name
+  - ^scope => scope
+  - ^svm.name => svm
+  - ^public_certificate  => certificatePEM
+
+plugins:
+  #- Certificate:
+  - LabelAgent:
+      exclude_regex:
+        - scope `cluster`
+      value_to_num:
+        - status name - - `0`
+
+export_options:
+  instance_keys:
+    - name
+  instance_labels:
+    - certificatePEM
+    - scope
+    - svm
+    - certificateIssuerType

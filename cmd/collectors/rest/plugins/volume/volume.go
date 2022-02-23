@@ -102,6 +102,8 @@ func (my *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	// update volume instance labels
 	my.updateVolumeLabels(data)
 
+	my.updateHardwareEncrypted(data)
+
 	my.currentVal++
 	return nil, nil
 }
@@ -308,5 +310,59 @@ func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
 			volume.SetLabel("all_sm_healthy", strconv.FormatBool(healthy))
 		}
 
+	}
+}
+
+func (my *Volume) updateHardwareEncrypted(data *matrix.Matrix) {
+
+	var (
+		records  []interface{}
+		content  []byte
+		err      error
+		aggrsMap map[string]string
+	)
+
+	aggrsMap = make(map[string]string)
+	diskFields := []string{"aggregates.name", "aggregates.uuid"}
+	query := "api/storage/disks"
+
+	href := rest.BuildHref("", strings.Join(diskFields, ","), []string{"protection_mode=!data|full"}, "", "", "", "", query)
+
+	err = rest.FetchData(my.client, href, &records)
+	if err != nil {
+		my.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
+		//return nil, nil, err
+	}
+
+	all := rest.Pagination{
+		Records:    records,
+		NumRecords: len(records),
+	}
+
+	content, err = json.Marshal(all)
+	if err != nil {
+		my.Logger.Error().Err(err).Str("ApiPath", query).Msg("Unable to marshal rest pagination")
+	}
+
+	if !gjson.ValidBytes(content) {
+		my.Logger.Error().Err(err).Str("Api", query).Msg("Invalid json")
+		//return nil, nil, errors.New(errors.API_RESPONSE, "Invalid json")
+	}
+
+	results := gjson.GetManyBytes(content, "num_records", "records")
+	numRecords := results[0]
+	if numRecords.Int() == 0 {
+		//return nil, nil, errors.New(errors.ERR_NO_INSTANCE, "no "+my.query+" instances on cluster")
+	}
+
+	for _, disk := range results[1].Array() {
+		aggrName := disk.Get("aggregates.name").String()
+		aggrUuid := disk.Get("aggregates.uuid").String()
+		aggrsMap[aggrUuid] = aggrName
+	}
+
+	for _, volume := range data.GetInstances() {
+		_, ok := aggrsMap[volume.GetLabel("aggrUuid")]
+		volume.SetLabel("isHardwareEncrypted", strconv.FormatBool(ok))
 	}
 }
