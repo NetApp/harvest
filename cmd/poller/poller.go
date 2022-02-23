@@ -848,6 +848,9 @@ func (p *Poller) loadMetadata() {
 	p.metadata.SetGlobalLabel("poller", p.name)
 	p.metadata.SetGlobalLabel("version", p.options.Version)
 	p.metadata.SetGlobalLabel("hostname", p.options.Hostname)
+	if p.options.PromPort != 0 {
+		p.metadata.SetGlobalLabel("promport", strconv.Itoa(p.options.PromPort))
+	}
 	p.metadata.SetExportOptions(matrix.DefaultExportOptions())
 
 	// metadata for target system
@@ -861,6 +864,9 @@ func (p *Poller) loadMetadata() {
 	p.status.SetGlobalLabel("poller", p.name)
 	p.status.SetGlobalLabel("version", p.options.Version)
 	p.status.SetGlobalLabel("hostname", p.options.Hostname)
+	if p.options.PromPort != 0 {
+		p.status.SetGlobalLabel("promport", strconv.Itoa(p.options.PromPort))
+	}
 	p.status.SetExportOptions(matrix.DefaultExportOptions())
 }
 
