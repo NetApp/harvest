@@ -1,0 +1,18 @@
+
+name:             ProtocolCifs
+query:            api/protocols/cifs/services
+object:           protocol_cifs
+
+counters:
+  - ^^svm.uuid => svm_uuid
+  - ^svm.name => svm
+  - ^enabled   => enabled
+
+
+plugins:
+  - LabelAgent:
+      value_to_num:
+        - statusc enabled true true `0`
+
+export_options:
+  include_all_labels: true

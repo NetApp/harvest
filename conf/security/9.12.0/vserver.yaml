@@ -1,0 +1,28 @@
+name:                     Vserver
+query:                    api/svm/svms
+object:                   vserver
+
+counters:
+  - ^^uuid => instance_uuid
+  - ^name               => svm
+  - ^aggregates.#.name  => aggr #zapi maps to field containing-aggregate-name while rest mapping is an array?
+  - ^state              => state
+  - ^anti_ransomware_default_volume_state => antiRansomwareState
+#  - hidden_fields:
+#      - anti_ransomware.state
+
+
+plugins:
+  - LabelAgent:
+      value_to_num:
+        - statusc state online online `0`
+
+export_options:
+  instance_keys:
+    - svm
+    - aggr
+  instance_labels:
+    - state
+    - antiRansomwareState
+
+

@@ -1,0 +1,19 @@
+
+name:             SecurityAuditDestination
+query:            api/security/audit/destinations
+object:           security_audit_destination
+
+counters:
+  - ^protocol   => protocol
+
+only_cluster_instance: true
+
+plugins:
+  - LabelAgent:
+      value_to_num:
+        - statusc protocol true true `0`
+
+export_options:
+  include_all_labels: true
+
+# Need to test

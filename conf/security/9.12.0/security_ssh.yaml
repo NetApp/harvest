@@ -1,0 +1,21 @@
+
+name:             securitySsh
+query:            api/security/ssh/svms
+object:           security_ssh
+
+counters:
+  - ^^svm.uuid => svm_uuid
+  - ^svm.name => svm
+  - ^ciphers => ciphers
+
+only_cluster_instance: true
+
+plugins:
+  - LabelAgent:
+#      include_regex:
+#        - ciphers `.*_cbc`
+      value_to_num:
+        - insecurec ciphers - - `0`
+
+export_options:
+  include_all_labels: true

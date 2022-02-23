@@ -1,0 +1,21 @@
+
+collector:          Security
+
+schedule:
+  - data: 600s
+
+objects:
+  Support:         support.yaml
+  Security:        security.yaml
+  SecurityAccount: security_account.yaml
+  ClusterPeer:     clusterpeer.yaml # test pending
+  SecurityCert:    security_certificate.yaml
+  SecurityLogin:    security_login.yaml
+  NtpServer:       ntpserver.yaml  # test pending
+  securitySsh:     security_ssh.yaml
+  SecurityAuditDestination: security_audit_dest.yaml  # test pending
+  ProtocolCifs:     protocol_cifs.yaml
+  ProtocolNfs:      protocol_nfs.yaml
+  ProtocolAudit:    protocol_audit.yaml  # test pending
+
+

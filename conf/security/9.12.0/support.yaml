@@ -1,0 +1,20 @@
+
+name:             Support
+query:            api/support/autosupport
+object:           support
+
+counters:
+  - ^enabled => asupEnabled
+  - ^transport  => asupHttpsConfigured
+  - ^is_minimal => asupPrivateDataRemoved
+
+only_cluster_instance: true
+
+plugins:
+  - LabelAgent:
+      value_to_num:
+#        - asupConfig asupHttpsConfigured https https `0`
+        - statusc asupEnabled true true `0`
+
+export_options:
+  include_all_labels: true

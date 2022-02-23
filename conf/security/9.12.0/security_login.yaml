@@ -1,0 +1,21 @@
+
+name:             SecurityLogin
+query:            api/security/login/messages
+object:           security_login
+
+counters:
+  - ^^uuid => uuid
+  - ^svm.name   => svm
+  - ^scope => scope
+  - ^banner => banner
+
+
+plugins:
+  - LabelAgent:
+#      exclude_regex:
+#        - banner `^$`
+      value_to_num:
+        - clusterc scope cluster cluster `0`
+
+export_options:
+  include_all_labels: true

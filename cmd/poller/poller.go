@@ -32,6 +32,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	_ "goharvest2/cmd/collectors/rest"
+	_ "goharvest2/cmd/collectors/security"
 	_ "goharvest2/cmd/collectors/simple"
 	_ "goharvest2/cmd/collectors/unix"
 	_ "goharvest2/cmd/collectors/zapi/collector"
@@ -876,7 +877,7 @@ var pollerCmd = &cobra.Command{
 // when we add other Ontap collectors, e.g. REST)
 func (p *Poller) targetIsOntap() bool {
 	for _, c := range p.collectors {
-		if c.GetName() == "ZapiPerf" || c.GetName() == "Zapi" || c.GetName() == "Rest" {
+		if c.GetName() == "ZapiPerf" || c.GetName() == "Zapi" || c.GetName() == "Rest" || c.GetName() == "Security" {
 			return true
 		}
 	}
