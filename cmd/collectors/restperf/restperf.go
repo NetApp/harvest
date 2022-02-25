@@ -12,22 +12,27 @@ import (
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
 	"goharvest2/pkg/util"
+	"regexp"
+	"strconv"
 	"strings"
 	"time"
 )
 
+const (
+	latencyIoReqd = 10
+	BILLION       = 1000000000
+)
+
 type RestPerf struct {
-	*rest2.Rest  // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
-	prop         *prop
-	counterInfo  map[string]*counter
-	isCacheEmpty bool
+	*rest2.Rest // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
+	prop        *prop
 }
 
 type counter struct {
 	name        string
 	description string
 	counterType string
-	units       string
+	unit        string
 	denominator string
 }
 
@@ -42,12 +47,21 @@ type prop struct {
 	returnTimeOut  string
 	fields         []string
 	apiType        string // public, private
+	isCacheEmpty   bool
+	counterInfo    map[string]*counter
+	latencyIoReqd  int
 }
 
 type metric struct {
 	label      string
 	name       string
 	metricType string
+}
+
+type metricOntapResponse struct {
+	label   string
+	value   string
+	isArray bool
 }
 
 func init() {
@@ -68,7 +82,7 @@ func (r *RestPerf) Init(a *collector.AbstractCollector) error {
 	r.Rest = &rest2.Rest{AbstractCollector: a}
 
 	r.prop = &prop{}
-	r.counterInfo = make(map[string]*counter)
+	r.prop.counterInfo = make(map[string]*counter)
 
 	if err = r.InitClient(); err != nil {
 		return err
@@ -129,6 +143,9 @@ func (r *RestPerf) InitCache() error {
 		return errors.New(errors.MISSING_PARAM, "query")
 	}
 
+	r.prop.latencyIoReqd = r.loadParamInt("latency_io_reqd", latencyIoReqd)
+	r.prop.isCacheEmpty = true
+
 	// create metric cache
 	if counters = r.Params.GetChildS("counters"); counters == nil {
 		return errors.New(errors.MISSING_PARAM, "counters")
@@ -172,6 +189,40 @@ func (r *RestPerf) InitCache() error {
 	r.Logger.Info().Int("count metrics", len(r.prop.metrics)).Int("count labels", len(r.prop.instanceLabels)).Msg("initialized metric cache")
 
 	return nil
+}
+
+// load a string parameter or use defaultValue
+func (r *RestPerf) loadParamStr(name, defaultValue string) string {
+
+	var x string
+
+	if x = r.Params.GetChildContentS(name); x != "" {
+		r.Logger.Debug().Msgf("using %s = [%s]", name, x)
+		return x
+	}
+	r.Logger.Debug().Msgf("using %s = [%s] (default)", name, defaultValue)
+	return defaultValue
+}
+
+// load an int parameter or use defaultValue
+func (r *RestPerf) loadParamInt(name string, defaultValue int) int {
+
+	var (
+		x string
+		n int
+		e error
+	)
+
+	if x = r.Params.GetChildContentS(name); x != "" {
+		if n, e = strconv.Atoi(x); e == nil {
+			r.Logger.Debug().Msgf("using %s = [%d]", name, n)
+			return n
+		}
+		r.Logger.Warn().Msgf("invalid parameter %s = [%s] (expected integer)", name, x)
+	}
+
+	r.Logger.Debug().Msgf("using %s = [%d] (default)", name, defaultValue)
+	return defaultValue
 }
 
 func (r *RestPerf) PollCounter() (*matrix.Matrix, error) {
@@ -219,14 +270,18 @@ func (r *RestPerf) PollCounter() (*matrix.Matrix, error) {
 
 		name := c.Get("name").String()
 		if _, has := r.prop.metrics[name]; has {
-			if _, ok := r.counterInfo[name]; !ok {
-				r.counterInfo[name] = &counter{
+			if _, ok := r.prop.counterInfo[name]; !ok {
+				r.prop.counterInfo[name] = &counter{
 					name:        c.Get("name").String(),
 					description: c.Get("description").String(),
 					counterType: c.Get("type").String(),
-					units:       c.Get("units").String(),
+					unit:        c.Get("unit").String(),
 					denominator: c.Get("denominator.name").String(),
 				}
+				if p := r.GetOverride(name); p != "" {
+					r.prop.counterInfo[name].counterType = p
+				}
+
 			}
 		} else {
 			r.Logger.Trace().
@@ -263,16 +318,44 @@ func parseProperties(instanceData gjson.Result, property string) gjson.Result {
 	return gjson.Result{}
 }
 
-func parseMetric(instanceData gjson.Result, metric string) gjson.Result {
+func arrayMetricToString(value string) string {
+	metricTypeRegex := regexp.MustCompile(`[(.*?)]`)
+	r := strings.NewReplacer("\n", "", " ", "", "\"", "")
+	s := r.Replace(value)
+
+	match := metricTypeRegex.FindAllStringSubmatch(s, -1)
+	if match != nil {
+		name := match[0][1]
+		return name
+	}
+	return value
+}
+
+func parseMetricOntapResponse(instanceData gjson.Result, metric string) *metricOntapResponse {
 	t := gjson.Get(instanceData.String(), "counters.#.name")
 
 	for _, name := range t.Array() {
 		if name.String() == metric {
 			value := gjson.Get(instanceData.String(), "counters.#(name="+metric+").value")
-			return value
+			if value.String() != "" {
+				return &metricOntapResponse{value: value.String(), label: "", isArray: false}
+			}
+			values := gjson.Get(instanceData.String(), "counters.#(name="+metric+").values")
+			if values.String() != "" {
+				label := gjson.Get(instanceData.String(), "counters.#(name="+metric+").labels")
+				return &metricOntapResponse{value: arrayMetricToString(values.String()), label: arrayMetricToString(label.String()), isArray: true}
+			}
 		}
 	}
-	return gjson.Result{}
+	return &metricOntapResponse{}
+}
+
+// override counter property
+func (r *RestPerf) GetOverride(counter string) string {
+	if o := r.Params.GetChildS("override"); o != nil {
+		return o.GetChildContentS(counter)
+	}
+	return ""
 }
 
 func (r *RestPerf) PollData() (*matrix.Matrix, error) {
@@ -291,13 +374,10 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 	// clone matrix without numeric data
 	newData := r.Matrix.Clone(false, true, true)
 	newData.Reset()
-
 	timestamp := newData.GetMetric("timestamp")
 	if timestamp == nil {
 		return nil, errors.New(errors.ERR_CONFIG, "missing timestamp metric")
 	}
-
-	r.Matrix.Reset()
 
 	startTime = time.Now()
 
@@ -308,6 +388,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 		return nil, errors.New(errors.ERR_CONFIG, "empty url")
 	}
 
+	ts := float64(time.Now().UnixNano()) / BILLION
 	err = rest.FetchData(r.Client, href, &records)
 	if err != nil {
 		r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
@@ -367,12 +448,14 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 			}
 		}
 
-		if instance = r.Matrix.GetInstance(instanceKey); instance == nil {
-			if instance, err = r.Matrix.NewInstance(instanceKey); err != nil {
+		if instance = newData.GetInstance(instanceKey); instance == nil {
+			if instance, err = newData.NewInstance(instanceKey); err != nil {
 				r.Logger.Error().Err(err).Str("Instance key", instanceKey).Msg("")
 				return true
 			}
 		}
+
+		//// add batch timestamp as custom counter
 
 		for label, display := range r.prop.instanceLabels {
 			value := parseProperties(instanceData, label)
@@ -395,23 +478,79 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 		}
 
 		for name, metric := range r.prop.metrics {
-			metr, ok := r.Matrix.GetMetrics()[name]
-			if !ok {
-				if metr, err = r.Matrix.NewMetricFloat64(name); err != nil {
-					r.Logger.Error().Err(err).
-						Str("name", name).
-						Msg("NewMetricFloat64")
+			f := parseMetricOntapResponse(instanceData, name)
+			if f.value != "" {
+				if f.isArray {
+					labels := strings.Split(f.label, ",")
+					values := strings.Split(f.value, ",")
+
+					if len(labels) != len(values) {
+						// warn & skip
+						r.Logger.Error().
+							Stack().
+							Str("labels", f.label).
+							Str("value", f.value).
+							Msg("labels don't match parsed values")
+						continue
+					}
+
+					for i, label := range labels {
+						metr, ok := newData.GetMetrics()[name+"."+label]
+						if !ok {
+							if metr, err = newData.NewMetricFloat64(name + "." + label); err != nil {
+								r.Logger.Error().Err(err).
+									Str("name", name+"."+label).
+									Msg("NewMetricFloat64")
+								continue
+							}
+							metr.SetName(name)
+							metr.SetLabel("metric", label)
+							// differentiate between array and normal counter
+							metr.SetComment(name)
+						}
+						if err = metr.SetValueString(instance, values[i]); err != nil {
+							r.Logger.Error().
+								Stack().
+								Err(err).
+								Str("name", name).
+								Str("label", label).
+								Str("value", values[i]).
+								Msg("Set value failed")
+							continue
+						} else {
+							r.Logger.Trace().
+								Str("name", name).
+								Str("label", label).
+								Str("value", values[i]).
+								Msg("Set name.label = value")
+							count++
+						}
+					}
+				} else {
+					metr, ok := newData.GetMetrics()[name]
+					if !ok {
+						if metr, err = newData.NewMetricFloat64(name); err != nil {
+							r.Logger.Error().Err(err).
+								Str("name", name).
+								Msg("NewMetricFloat64")
+						}
+					}
+					metr.SetName(metric.label)
+					if c, err := strconv.ParseFloat(f.value, 64); err == nil {
+						if err = metr.SetValueFloat64(instance, c); err != nil {
+							r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
+								Msg("Unable to set float key on metric")
+						}
+					} else {
+						r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
+							Msg("Unable to set float key on metric")
+					}
+					count++
 				}
 			}
-			f := parseMetric(instanceData, name)
-			if f.Exists() {
-				metr.SetName(metric.label)
-				if err = metr.SetValueFloat64(instance, f.Float()); err != nil {
-					r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
-						Msg("Unable to set float key on metric")
-				}
-				count++
-			}
+		}
+		if err = newData.GetMetric("timestamp").SetValueFloat64(instance, ts); err != nil {
+			r.Logger.Error().Stack().Err(err).Msg("set timestamp value: ")
 		}
 		return true
 	})
@@ -431,7 +570,180 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 	_ = r.Metadata.LazySetValueUint64("count", "data", count)
 	r.AddCollectCount(count)
 
-	return r.Matrix, nil
+	// skip calculating from delta if no data from previous poll
+	if r.prop.isCacheEmpty {
+		r.Logger.Debug().Msg("skip postprocessing until next poll (previous cache empty)")
+		r.Matrix = newData
+		r.prop.isCacheEmpty = false
+		return nil, nil
+	}
+
+	calcStart := time.Now()
+
+	r.Logger.Debug().Msg("starting delta calculations from previous cache")
+
+	// cache raw data for next poll
+	cachedData := newData.Clone(true, true, true)
+	// order metrics, such that those requiring base counters are processed last
+	orderedMetrics := make([]matrix.Metric, 0, len(newData.GetMetrics()))
+	orderedKeys := make([]string, 0, len(orderedMetrics))
+
+	for key, metric := range newData.GetMetrics() {
+		if metric.GetName() != "timestamp" {
+			counter := r.prop.counterInfo[metric.GetName()]
+			if counter == nil {
+				// check if it is an array counter
+				counter = r.prop.counterInfo[metric.GetComment()]
+			}
+			if counter != nil {
+				if counter.denominator == "" {
+					// does not require base counter
+					orderedMetrics = append(orderedMetrics, metric)
+					orderedKeys = append(orderedKeys, key)
+				}
+			} else {
+				r.Logger.Warn().Str("counter", metric.GetName()).Msg("Misconfiguration in template counter ")
+			}
+		}
+	}
+
+	for key, metric := range newData.GetMetrics() {
+		if metric.GetName() != "timestamp" {
+			counter := r.prop.counterInfo[metric.GetName()]
+			if counter == nil {
+				// check if it is an array counter
+				counter = r.prop.counterInfo[metric.GetComment()]
+			}
+			if counter != nil {
+				if counter.denominator != "" {
+					// does not require base counter
+					orderedMetrics = append(orderedMetrics, metric)
+					orderedKeys = append(orderedKeys, key)
+				}
+			} else {
+				r.Logger.Warn().Str("counter", metric.GetName()).Msg("Misconfiguration in template counter ")
+			}
+		}
+	}
+
+	// calculate timestamp delta first since many counters require it for postprocessing.
+	// Timestamp has "raw" property, so it isn't post-processed automatically
+	if err = timestamp.Delta(r.Matrix.GetMetric("timestamp")); err != nil {
+		r.Logger.Error().Stack().Err(err).Msg("(timestamp) calculate delta:")
+	}
+
+	var base matrix.Metric
+
+	for i, metric := range orderedMetrics {
+		counter := r.prop.counterInfo[metric.GetName()]
+		if counter == nil {
+			// check if it is an array counter
+			counter = r.prop.counterInfo[metric.GetComment()]
+		}
+		if counter == nil {
+			r.Logger.Error().Stack().Err(err).Str("counter", metric.GetName()).Msg("Missing counter:")
+		}
+		property := counter.counterType
+		key := orderedKeys[i]
+
+		// RAW - submit without post-processing
+		if property == "raw" {
+			continue
+		}
+
+		// all other properties - first calculate delta
+		if err = metric.Delta(r.Matrix.GetMetric(key)); err != nil {
+			r.Logger.Error().Stack().Err(err).Str("key", key).Msg("Calculate delta")
+			continue
+		}
+
+		// DELTA - subtract previous value from current
+		if property == "delta" {
+			// already done
+			continue
+		}
+
+		// RATE - delta, normalized by elapsed time
+		if property == "rate" {
+			// defer calculation, so we can first calculate averages/percents
+			// Note: calculating rate before averages are averages/percentages are calculated
+			// used to be a bug in Harvest 2.0 (Alpha, RC1, RC2) resulting in very high latency values
+			continue
+		}
+
+		// For the next two properties we need base counters
+		// We assume that delta of base counters is already calculated
+		// (name of base counter is stored as Comment)
+		if base = newData.GetMetric(counter.denominator); base == nil {
+			r.Logger.Warn().
+				Str("key", key).
+				Str("property", property).
+				Str("denominator", counter.denominator).
+				Msg("Base counter missing")
+			continue
+		}
+
+		// remaining properties: average and percent
+		//
+		// AVERAGE - delta, divided by base-counter delta
+		//
+		// PERCENT - average * 100
+		// special case for latency counter: apply minimum number of iops as threshold
+		if property == "average" || property == "percent" {
+
+			if strings.HasSuffix(metric.GetName(), "latency") {
+				err = metric.DivideWithThreshold(base, r.prop.latencyIoReqd)
+			} else {
+				err = metric.Divide(base)
+			}
+
+			if err != nil {
+				r.Logger.Error().Stack().Err(err).Str("key", key).Msg("Division by base")
+			}
+
+			if property == "average" {
+				continue
+			}
+		}
+
+		if property == "percent" {
+			if err = metric.MultiplyByScalar(100); err != nil {
+				r.Logger.Error().Stack().Err(err).Str("key", key).Msg("Multiply by scalar")
+			}
+			continue
+		}
+		r.Logger.Error().Stack().Err(err).
+			Str("key", key).
+			Str("property", property).
+			Msg("Unknown property")
+	}
+
+	// calculate rates (which we deferred to calculate averages/percents first)
+	for i, metric := range orderedMetrics {
+		counter := r.prop.counterInfo[metric.GetName()]
+		if counter == nil {
+			// check if it is an array counter
+			counter = r.prop.counterInfo[metric.GetComment()]
+		}
+		if counter == nil {
+			r.Logger.Error().Stack().Err(err).Str("counter", metric.GetName()).Msg("Missing counter:")
+		}
+		property := counter.counterType
+		if property == "rate" {
+			if err = metric.Divide(timestamp); err != nil {
+				r.Logger.Error().Stack().Err(err).
+					Int("i", i).
+					Str("key", orderedKeys[i]).
+					Msg("Calculate rate")
+			}
+		}
+	}
+
+	_ = r.Metadata.LazySetValueInt64("calc_time", "data", time.Since(calcStart).Microseconds())
+	// store cache for next poll
+	r.Matrix = cachedData
+
+	return newData, nil
 }
 
 func (r *RestPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {

@@ -8,3 +8,4 @@ schedule:
 
 objects:
   Volume:           volume.yaml
+  CIFSNode:         cifs_node.yaml

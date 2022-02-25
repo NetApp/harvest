@@ -24,6 +24,7 @@
 package zapiperf
 
 import (
+	"fmt"
 	"goharvest2/cmd/collectors/zapiperf/plugins/fcp"
 	"goharvest2/cmd/collectors/zapiperf/plugins/headroom"
 	"goharvest2/cmd/collectors/zapiperf/plugins/nic"
@@ -1154,6 +1155,7 @@ func (me *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled
 			if x := strings.Split(label, "."); len(x) == 2 {
 				m.SetLabel("metric", x[0])
 				m.SetLabel("submetric", x[1])
+				fmt.Println(name + label)
 			} else {
 				m.SetLabel("metric", label)
 			}
