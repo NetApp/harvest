@@ -56,6 +56,7 @@ type options struct {
 	overwrite           bool
 	labels              []string
 	dirGrafanaFolderMap map[string]*Folder
+	addMultiSelect      bool
 }
 
 type Folder struct {
@@ -463,6 +464,14 @@ func importFiles(dir string, folder *Folder) {
 			}
 		}
 
+		if opts.addMultiSelect {
+			data = addMultiSelect(data)
+			if data == nil {
+				fmt.Printf("error while adding multi select into dashboard %s, err: %+v", file.Name(), err)
+				continue
+			}
+		}
+
 		// labelMap is used to ensure we don't modify the query of one of the new labels we're adding
 		labelMap := make(map[string]string)
 		for _, label := range opts.labels {
@@ -473,7 +482,6 @@ func importFiles(dir string, folder *Folder) {
 		for i := len(opts.labels) - 1; i >= 0; i-- {
 			data = addLabel(data, opts.labels[i], labelMap)
 		}
-
 		if err = json.Unmarshal(data, &dashboard); err != nil {
 			fmt.Printf("error parsing file [%s] %+v\n", file.Name(), err)
 			fmt.Println("-------------------------------")
@@ -520,6 +528,105 @@ func importFiles(dir string, folder *Folder) {
 	} else {
 		fmt.Printf("No dashboards found in [%s] is the directory correct?\n", dir)
 	}
+}
+
+type change struct {
+	path string
+	sub  interface{}
+}
+
+// addMultiSelect does the following:
+// 	- sets "mutli: true" for each query variable
+//  - updates the variables definition and query to use a regex equality (=~) instead of an exact match (=)
+//  - updates all panels target's expressions to also use a regex equality (=~) instead of an exact match (=)
+func addMultiSelect(dashboard []byte) []byte {
+	var err error
+	changes := make([]change, 0)
+	gjson.GetBytes(dashboard, "templating.list").ForEach(func(key, value gjson.Result) bool {
+		if value.Get("type").String() != "query" {
+			return true
+		}
+		changes = append(changes, change{
+			path: fmt.Sprintf("templating.list.%s.multi", key.String()),
+			sub:  true,
+		})
+		changeEqualsToRegex(&changes, value, key.String())
+		return true
+	})
+	gjson.GetBytes(dashboard, "panels").ForEach(func(key, value gjson.Result) bool {
+		value.Get("targets").ForEach(func(key2, value2 gjson.Result) bool {
+			if value2.Get("expr").String() != "" {
+				changeExprEqualsToRegex(&changes, value2, fmt.Sprintf("panels.%s.targets.%s.expr",
+					key.String(), key2.String()))
+			}
+			return true
+		})
+		// turtles all the way down, /panels/7/panels/0/targets/0/expr
+		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
+			value2.Get("targets").ForEach(func(key3, value3 gjson.Result) bool {
+				if value3.Get("expr").String() != "" {
+					changeExprEqualsToRegex(&changes, value3, fmt.Sprintf("panels.%s.panels.%s.targets.%s.expr",
+						key.String(), key2.String(), key3.String()))
+				}
+				return true
+			})
+			return true
+		})
+		return true
+	})
+	modifiedDashboard := dashboard
+	for _, c := range changes {
+		modifiedDashboard, err = sjson.SetBytes(modifiedDashboard, c.path, c.sub)
+		if err != nil {
+			fmt.Printf("error while updating the query for variable %s, err: %+v", c.path, err)
+			return nil
+		}
+	}
+	return modifiedDashboard
+}
+
+var equalRegex = regexp.MustCompile(`(\w+)="\$`)
+
+func changeExprEqualsToRegex(changes *[]change, q gjson.Result, key string) {
+	query := q.Get("expr")
+	if query.String() == "" {
+		return
+	}
+	match := equalRegex.FindStringSubmatch(query.String())
+	if len(match) == 0 {
+		return
+	}
+	sub := equalRegex.ReplaceAllString(query.String(), `$1=~"$`)
+	*changes = append(*changes, change{
+		path: key,
+		sub:  sub,
+	})
+}
+
+func changeEqualsToRegex(changes *[]change, q gjson.Result, key string) {
+	jsonPath := "query.query"
+	query := q.Get("query.query")
+	// check if the query or definition need the regex query added
+	// there are two different forms of the query, check for both
+	if query.String() == "" {
+		query = q.Get("query")
+		jsonPath = "query"
+	}
+	if query.String() == "" {
+		return
+	}
+	match := equalRegex.FindStringSubmatch(query.String())
+	if len(match) == 0 {
+		return
+	}
+	sub := equalRegex.ReplaceAllString(query.String(), `$1=~"$`)
+	*changes = append(*changes, change{
+		path: "templating.list." + key + "." + jsonPath,
+		sub:  sub,
+	}, change{
+		path: "templating.list." + key + ".definition",
+		sub:  sub,
+	})
 }
 
 // addGlobalPrefix adds the given prefix to all metric names in the
@@ -946,6 +1053,8 @@ func init() {
 
 	importCmd.PersistentFlags().StringSliceVar(&opts.labels, "labels", nil,
 		"For each label, create a variable and add as chained query to other variables")
+	importCmd.PersistentFlags().BoolVar(&opts.addMultiSelect, "multi", false,
+		"Modify the dashboards to add multi-select dropdowns for each variable")
 
 	_ = Cmd.MarkPersistentFlagRequired("serverfolder")
 	_ = Cmd.MarkPersistentFlagRequired("directory")
