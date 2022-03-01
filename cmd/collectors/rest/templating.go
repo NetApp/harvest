@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func (r *Rest) LoadTemplate() (error, string) {
+func (r *Rest) LoadTemplate() (string, error) {
 
 	var (
 		template     *node.Node
@@ -21,11 +21,11 @@ func (r *Rest) LoadTemplate() (error, string) {
 
 	// import template
 	if template, templatePath, err = r.ImportSubTemplate("", r.getTemplateFn(), r.Client.Cluster().Version); err != nil {
-		return err, ""
+		return "", err
 	}
 
 	r.Params.Union(template)
-	return nil, templatePath
+	return templatePath, nil
 }
 
 func (r *Rest) InitCache() error {

@@ -1,6 +1,6 @@
 
 name:                     CIFSNode
-query:                    api/cluster/counter/tables/cifs:node/rows
+query:                    api/cluster/counter/tables/cifs:node
 object:                   node_cifs
 
 counters:
@@ -12,6 +12,7 @@ counters:
   - latency
   - avg_read_latency        => read_latency
   - avg_write_latency       => write_latency
+  - latency_base
 #  - connections
 #  - established_sessions
 #  - open_files

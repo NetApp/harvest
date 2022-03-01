@@ -1,6 +1,6 @@
 
 name:                     Volume
-query:                    api/cluster/counter/tables/volume/rows
+query:                    api/cluster/counter/tables/volume
 object:                   volume
 
 #instance_key:             uuid

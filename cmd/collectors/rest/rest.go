@@ -85,7 +85,7 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	if err, r.prop.templatePath = r.LoadTemplate(); err != nil {
+	if r.prop.templatePath, err = r.LoadTemplate(); err != nil {
 		return err
 	}
 
@@ -121,7 +121,7 @@ func (r *Rest) InitClient() error {
 		return err
 	}
 
-	return err
+	return nil
 }
 
 func (r *Rest) InitMatrix() error {

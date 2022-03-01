@@ -12,6 +12,7 @@ import (
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
 	"goharvest2/pkg/util"
+	"path"
 	"regexp"
 	"strconv"
 	"strings"
@@ -88,7 +89,7 @@ func (r *RestPerf) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	if err, r.prop.templatePath = r.LoadTemplate(); err != nil {
+	if r.prop.templatePath, err = r.LoadTemplate(); err != nil {
 		return err
 	}
 
@@ -104,7 +105,7 @@ func (r *RestPerf) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	r.Logger.Info().Msgf("initialized cache with %d metrics", len(r.Matrix.GetMetrics()))
+	r.Logger.Info().Str("count", strconv.Itoa(len(r.Matrix.GetMetrics()))).Msg("initialized cache with metrics")
 
 	return nil
 }
@@ -197,10 +198,10 @@ func (r *RestPerf) loadParamStr(name, defaultValue string) string {
 	var x string
 
 	if x = r.Params.GetChildContentS(name); x != "" {
-		r.Logger.Debug().Msgf("using %s = [%s]", name, x)
+		r.Logger.Debug().Str("name", name).Msg("using values")
 		return x
 	}
-	r.Logger.Debug().Msgf("using %s = [%s] (default)", name, defaultValue)
+	r.Logger.Debug().Str("name", name).Str("defaultValue", defaultValue).Msg("using values")
 	return defaultValue
 }
 
@@ -221,7 +222,7 @@ func (r *RestPerf) loadParamInt(name string, defaultValue int) int {
 		r.Logger.Warn().Msgf("invalid parameter %s = [%s] (expected integer)", name, x)
 	}
 
-	r.Logger.Debug().Msgf("using %s = [%d] (default)", name, defaultValue)
+	r.Logger.Debug().Str("name", name).Str("defaultValue", strconv.Itoa(defaultValue)).Msg("using values")
 	return defaultValue
 }
 
@@ -232,9 +233,7 @@ func (r *RestPerf) PollCounter() (*matrix.Matrix, error) {
 		records []interface{}
 	)
 
-	counterQuery := r.prop.query[:strings.LastIndex(r.prop.query, "/")]
-
-	href := rest.BuildHref(counterQuery, "", nil, "", "", "", r.prop.returnTimeOut, counterQuery)
+	href := rest.BuildHref(r.prop.query, "", nil, "", "", "", r.prop.returnTimeOut, r.prop.query)
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {
 		return nil, errors.New(errors.ERR_CONFIG, "empty url")
@@ -318,8 +317,9 @@ func parseProperties(instanceData gjson.Result, property string) gjson.Result {
 	return gjson.Result{}
 }
 
+var metricTypeRegex = regexp.MustCompile(`\[(.*?)\]`)
+
 func arrayMetricToString(value string) string {
-	metricTypeRegex := regexp.MustCompile(`\[(.*?)\]`)
 	r := strings.NewReplacer("\n", "", " ", "", "\"", "")
 	s := r.Replace(value)
 
@@ -381,7 +381,9 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 
 	startTime = time.Now()
 
-	href := rest.BuildHref(r.prop.query, strings.Join(r.prop.fields, ","), nil, "", "", "", r.prop.returnTimeOut, r.prop.query)
+	dataQuery := path.Join(r.prop.query, "rows")
+
+	href := rest.BuildHref(dataQuery, strings.Join(r.prop.fields, ","), nil, "", "", "", r.prop.returnTimeOut, dataQuery)
 
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {
@@ -418,7 +420,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 		return nil, errors.New(errors.ERR_NO_INSTANCE, "no "+r.Object+" instances on cluster")
 	}
 
-	r.Logger.Debug().Str("object", r.Object).Str("number of records extracted", numRecords.String()).Msg("")
+	r.Logger.Debug().Str("object", r.Object).Str("records", numRecords.String()).Msg("Extracted records")
 
 	results[1].ForEach(func(key, instanceData gjson.Result) bool {
 		var (
@@ -543,14 +545,14 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 						}
 					} else {
 						r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
-							Msg("Unable to set float key on metric")
+							Msg("Unable to parse float value")
 					}
 					count++
 				}
 			}
 		}
 		if err = newData.GetMetric("timestamp").SetValueFloat64(instance, ts); err != nil {
-			r.Logger.Error().Stack().Err(err).Msg("set timestamp value: ")
+			r.Logger.Error().Err(err).Msg("Failed to set timestamp")
 		}
 		return true
 	})
@@ -602,7 +604,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 					orderedKeys = append(orderedKeys, key)
 				}
 			} else {
-				r.Logger.Warn().Str("counter", metric.GetName()).Msg("Misconfiguration in template counter ")
+				r.Logger.Warn().Str("counter", metric.GetName()).Msg("Counter is nil. Unable to process. Check template")
 			}
 		}
 	}
@@ -621,7 +623,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 					orderedKeys = append(orderedKeys, key)
 				}
 			} else {
-				r.Logger.Warn().Str("counter", metric.GetName()).Msg("Misconfiguration in template counter ")
+				r.Logger.Warn().Str("counter", metric.GetName()).Msg("Counter is nil. Unable to process. Check template ")
 			}
 		}
 	}
@@ -629,7 +631,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 	// calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
 	if err = timestamp.Delta(r.Matrix.GetMetric("timestamp")); err != nil {
-		r.Logger.Error().Stack().Err(err).Msg("(timestamp) calculate delta:")
+		r.Logger.Error().Err(err).Msg("(timestamp) calculate delta:")
 	}
 
 	var base matrix.Metric
@@ -642,6 +644,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 		}
 		if counter == nil {
 			r.Logger.Error().Stack().Err(err).Str("counter", metric.GetName()).Msg("Missing counter:")
+			continue
 		}
 		property := counter.counterType
 		key := orderedKeys[i]
@@ -699,6 +702,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 
 			if err != nil {
 				r.Logger.Error().Stack().Err(err).Str("key", key).Msg("Division by base")
+				continue
 			}
 
 			if property == "average" {
@@ -712,6 +716,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 			}
 			continue
 		}
+		// If we reach here then one of the earlier clauses should have executed `continue` statement
 		r.Logger.Error().Stack().Err(err).
 			Str("key", key).
 			Str("property", property).
@@ -727,14 +732,17 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 		}
 		if counter == nil {
 			r.Logger.Error().Stack().Err(err).Str("counter", metric.GetName()).Msg("Missing counter:")
+			continue
 		}
 		property := counter.counterType
 		if property == "rate" {
 			if err = metric.Divide(timestamp); err != nil {
 				r.Logger.Error().Stack().Err(err).
 					Int("i", i).
+					Str("metric", metric.GetName()).
 					Str("key", orderedKeys[i]).
 					Msg("Calculate rate")
+				continue
 			}
 		}
 	}
