@@ -319,7 +319,7 @@ func parseProperties(instanceData gjson.Result, property string) gjson.Result {
 }
 
 func arrayMetricToString(value string) string {
-	metricTypeRegex := regexp.MustCompile(`[(.*?)]`)
+	metricTypeRegex := regexp.MustCompile(`\[(.*?)\]`)
 	r := strings.NewReplacer("\n", "", " ", "", "\"", "")
 	s := r.Replace(value)
 
