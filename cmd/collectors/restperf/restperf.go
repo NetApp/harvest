@@ -21,7 +21,7 @@ import (
 
 const (
 	latencyIoReqd = 10
-	BILLION       = 1000000000
+	BILLION       = 1_000_000_000
 )
 
 type RestPerf struct {
@@ -59,7 +59,7 @@ type metric struct {
 	metricType string
 }
 
-type metricOntapResponse struct {
+type metricResponse struct {
 	label   string
 	value   string
 	isArray bool
@@ -331,23 +331,23 @@ func arrayMetricToString(value string) string {
 	return value
 }
 
-func parseMetricOntapResponse(instanceData gjson.Result, metric string) *metricOntapResponse {
+func parseMetricResponse(instanceData gjson.Result, metric string) *metricResponse {
 	t := gjson.Get(instanceData.String(), "counters.#.name")
 
 	for _, name := range t.Array() {
 		if name.String() == metric {
 			value := gjson.Get(instanceData.String(), "counters.#(name="+metric+").value")
 			if value.String() != "" {
-				return &metricOntapResponse{value: value.String(), label: "", isArray: false}
+				return &metricResponse{value: value.String(), label: "", isArray: false}
 			}
 			values := gjson.Get(instanceData.String(), "counters.#(name="+metric+").values")
 			if values.String() != "" {
 				label := gjson.Get(instanceData.String(), "counters.#(name="+metric+").labels")
-				return &metricOntapResponse{value: arrayMetricToString(values.String()), label: arrayMetricToString(label.String()), isArray: true}
+				return &metricResponse{value: arrayMetricToString(values.String()), label: arrayMetricToString(label.String()), isArray: true}
 			}
 		}
 	}
-	return &metricOntapResponse{}
+	return &metricResponse{}
 }
 
 // override counter property
@@ -480,7 +480,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 		}
 
 		for name, metric := range r.prop.metrics {
-			f := parseMetricOntapResponse(instanceData, name)
+			f := parseMetricResponse(instanceData, name)
 			if f.value != "" {
 				if f.isArray {
 					labels := strings.Split(f.label, ",")
@@ -488,7 +488,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 
 					if len(labels) != len(values) {
 						// warn & skip
-						r.Logger.Error().
+						r.Logger.Warn().
 							Stack().
 							Str("labels", f.label).
 							Str("value", f.value).
@@ -556,10 +556,6 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 		}
 		return true
 	})
-
-	if err != nil {
-		r.Logger.Error().Err(err).Msg("Error while processing end points")
-	}
 
 	r.Logger.Info().
 		Uint64("dataPoints", count).
