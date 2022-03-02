@@ -35,6 +35,8 @@ type Metric interface {
 	SetProperty(string)
 	GetComment() string
 	SetComment(string)
+	IsArray() bool
+	SetArray(bool)
 	Clone(bool) Metric
 	// methods for resizing metric storage
 	Reset(int)
@@ -93,6 +95,7 @@ type AbstractMetric struct {
 	dtype      string
 	property   string
 	comment    string
+	array      bool
 	exportable bool
 	labels     *dict.Dict
 	record     []bool
@@ -154,6 +157,14 @@ func (me *AbstractMetric) GetComment() string {
 
 func (me *AbstractMetric) SetComment(c string) {
 	me.comment = c
+}
+
+func (me *AbstractMetric) IsArray() bool {
+	return me.array
+}
+
+func (me *AbstractMetric) SetArray(c bool) {
+	me.array = c
 }
 
 func (me *AbstractMetric) SetLabel(key, value string) {

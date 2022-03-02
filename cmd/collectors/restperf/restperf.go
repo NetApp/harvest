@@ -510,7 +510,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 							metr.SetName(name)
 							metr.SetLabel("metric", label)
 							// differentiate between array and normal counter
-							metr.SetComment(name)
+							metr.SetArray(true)
 						}
 						if err = metr.SetValueString(instance, values[i]); err != nil {
 							r.Logger.Error().
@@ -590,11 +590,14 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 
 	for key, metric := range newData.GetMetrics() {
 		if metric.GetName() != "timestamp" {
-			counter := r.prop.counterInfo[metric.GetName()]
-			if counter == nil {
-				// check if it is an array counter
-				counter = r.prop.counterInfo[metric.GetComment()]
+			var counter *counter
+			if metric.IsArray() {
+				counter = r.prop.counterInfo[metric.GetName()]
+			} else {
+				name := strings.Split(metric.GetName(), ".")[0]
+				counter = r.prop.counterInfo[name]
 			}
+
 			if counter != nil {
 				if counter.denominator == "" {
 					// does not require base counter
@@ -609,10 +612,12 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 
 	for key, metric := range newData.GetMetrics() {
 		if metric.GetName() != "timestamp" {
-			counter := r.prop.counterInfo[metric.GetName()]
-			if counter == nil {
-				// check if it is an array counter
-				counter = r.prop.counterInfo[metric.GetComment()]
+			var counter *counter
+			if metric.IsArray() {
+				counter = r.prop.counterInfo[metric.GetName()]
+			} else {
+				name := strings.Split(metric.GetName(), ".")[0]
+				counter = r.prop.counterInfo[name]
 			}
 			if counter != nil {
 				if counter.denominator != "" {
@@ -635,10 +640,12 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 	var base matrix.Metric
 
 	for i, metric := range orderedMetrics {
-		counter := r.prop.counterInfo[metric.GetName()]
-		if counter == nil {
-			// check if it is an array counter
-			counter = r.prop.counterInfo[metric.GetComment()]
+		var counter *counter
+		if metric.IsArray() {
+			counter = r.prop.counterInfo[metric.GetName()]
+		} else {
+			name := strings.Split(metric.GetName(), ".")[0]
+			counter = r.prop.counterInfo[name]
 		}
 		if counter == nil {
 			r.Logger.Error().Stack().Err(err).Str("counter", metric.GetName()).Msg("Missing counter:")
