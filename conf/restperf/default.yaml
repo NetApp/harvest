@@ -4,6 +4,7 @@ collector:          Rest
 # Order here matters!
 schedule:
   - counter: 1200s
+  - instance: 600s
   - data: 60s
 
 objects:

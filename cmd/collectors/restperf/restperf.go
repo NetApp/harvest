@@ -8,8 +8,10 @@ import (
 	"goharvest2/cmd/poller/collector"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/cmd/tools/rest"
+	"goharvest2/pkg/color"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
+	"goharvest2/pkg/set"
 	"goharvest2/pkg/tree/node"
 	"goharvest2/pkg/util"
 	"path"
@@ -451,10 +453,10 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 		}
 
 		if instance = newData.GetInstance(instanceKey); instance == nil {
-			if instance, err = newData.NewInstance(instanceKey); err != nil {
-				r.Logger.Error().Err(err).Str("Instance key", instanceKey).Msg("")
-				return true
-			}
+			r.Logger.Debug().
+				Str("key", instanceKey).
+				Msg("Skip instance key, not found in cache")
+			return true
 		}
 
 		//// add batch timestamp as custom counter
@@ -756,6 +758,113 @@ func (r *RestPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Pl
 		r.Logger.Warn().Str("kind", kind).Msg("no rest plugin found ")
 	}
 	return nil
+}
+
+// PollInstance updates instance cache
+func (r *RestPerf) PollInstance() (*matrix.Matrix, error) {
+
+	var (
+		err                              error
+		oldInstances                     *set.Set
+		oldSize, newSize, removed, added int
+		records                          []interface{}
+		content                          []byte
+	)
+
+	oldInstances = set.New()
+	for key := range r.Matrix.GetInstances() {
+		oldInstances.Add(key)
+	}
+	oldSize = oldInstances.Size()
+
+	dataQuery := path.Join(r.prop.query, "rows")
+
+	href := rest.BuildHref(dataQuery, "properties", nil, "", "", "", r.prop.returnTimeOut, dataQuery)
+
+	r.Logger.Debug().Str("href", href).Msg("")
+	if href == "" {
+		return nil, errors.New(errors.ERR_CONFIG, "empty url")
+	}
+
+	err = rest.FetchData(r.Client, href, &records)
+	if err != nil {
+		r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
+		return nil, err
+	}
+
+	all := rest.Pagination{
+		Records:    records,
+		NumRecords: len(records),
+	}
+
+	content, err = json.Marshal(all)
+	if err != nil {
+		r.Logger.Error().Err(err).Str("ApiPath", r.prop.query).Msg("Unable to marshal rest pagination")
+	}
+
+	if !gjson.ValidBytes(content) {
+		return nil, fmt.Errorf("json is not valid for: %s", r.prop.query)
+	}
+
+	results := gjson.GetManyBytes(content, "num_records", "records")
+	numRecords := results[0]
+	if numRecords.Int() == 0 {
+		return nil, errors.New(errors.ERR_NO_INSTANCE, "no "+r.Object+" instances on cluster")
+	}
+
+	r.Logger.Debug().Str("object", r.Object).Str("records", numRecords.String()).Msg("Extracted records")
+
+	results[1].ForEach(func(key, instanceData gjson.Result) bool {
+		var (
+			instanceKey string
+		)
+
+		if !instanceData.IsObject() {
+			r.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
+			return true
+		}
+
+		// extract instance key(s)
+		for _, k := range r.prop.instanceKeys {
+			value := parseProperties(instanceData, k)
+			if value.Exists() {
+				instanceKey += value.String()
+			} else {
+				r.Logger.Warn().Str("key", k).Msg("skip instance, missing key")
+				break
+			}
+		}
+
+		if oldInstances.Delete(instanceKey) {
+			// instance already in cache
+			r.Logger.Debug().Msgf("updated instance [%s%s%s%s]", color.Bold, color.Yellow, key, color.End)
+		} else if _, err := r.Matrix.NewInstance(instanceKey); err != nil {
+			r.Logger.Error().Err(err).Str("Instance key", instanceKey).Msg("add instance")
+		} else {
+			r.Logger.Debug().
+				Str("key", instanceKey).
+				Msg("Added new instance")
+		}
+		return true
+
+	})
+
+	for key := range oldInstances.Iter() {
+		r.Matrix.RemoveInstance(key)
+		r.Logger.Debug().Msgf("removed instance [%s]", key)
+	}
+
+	removed = oldInstances.Size()
+	newSize = len(r.Matrix.GetInstances())
+	added = newSize - (oldSize - removed)
+
+	r.Logger.Debug().Msgf("added %d new, removed %d (total instances %d)", added, removed, newSize)
+
+	if newSize == 0 {
+		return nil, errors.New(errors.ERR_NO_INSTANCE, "")
+	}
+
+	return nil, err
 }
 
 // Interface guards
