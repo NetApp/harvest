@@ -621,7 +621,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 			}
 			if counter != nil {
 				if counter.denominator != "" {
-					// does not require base counter
+					// does require base counter
 					orderedMetrics = append(orderedMetrics, metric)
 					orderedKeys = append(orderedKeys, key)
 				}
@@ -730,25 +730,28 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 
 	// calculate rates (which we deferred to calculate averages/percents first)
 	for i, metric := range orderedMetrics {
-		counter := r.prop.counterInfo[metric.GetName()]
-		if counter == nil {
-			// check if it is an array counter
-			counter = r.prop.counterInfo[metric.GetComment()]
+		var counter *counter
+		if metric.IsArray() {
+			counter = r.prop.counterInfo[metric.GetName()]
+		} else {
+			name := strings.Split(metric.GetName(), ".")[0]
+			counter = r.prop.counterInfo[name]
 		}
-		if counter == nil {
-			r.Logger.Error().Stack().Err(err).Str("counter", metric.GetName()).Msg("Missing counter:")
-			continue
-		}
-		property := counter.counterType
-		if property == "rate" {
-			if err = metric.Divide(timestamp); err != nil {
-				r.Logger.Error().Stack().Err(err).
-					Int("i", i).
-					Str("metric", metric.GetName()).
-					Str("key", orderedKeys[i]).
-					Msg("Calculate rate")
-				continue
+		if counter != nil {
+			property := counter.counterType
+			if property == "rate" {
+				if err = metric.Divide(timestamp); err != nil {
+					r.Logger.Error().Stack().Err(err).
+						Int("i", i).
+						Str("metric", metric.GetName()).
+						Str("key", orderedKeys[i]).
+						Msg("Calculate rate")
+					continue
+				}
 			}
+		} else {
+			r.Logger.Warn().Str("counter", metric.GetName()).Msg("Counter is nil. Unable to process. Check template ")
+			continue
 		}
 	}
 
@@ -762,7 +765,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 func (r *RestPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {
 	switch kind {
 	default:
-		r.Logger.Warn().Str("kind", kind).Msg("no rest plugin found ")
+		r.Logger.Warn().Str("kind", kind).Msg("no rest performance plugin found ")
 	}
 	return nil
 }
