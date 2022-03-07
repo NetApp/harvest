@@ -26,7 +26,7 @@ import (
 type Rest struct {
 	*collector.AbstractCollector
 	Client    *rest.Client
-	prop      *prop
+	Prop      *prop
 	endpoints []*endPoint
 }
 
@@ -36,22 +36,22 @@ type endPoint struct {
 }
 
 type prop struct {
-	object         string
-	query          string
-	templatePath   string
-	instanceKeys   []string
-	instanceLabels map[string]string
-	metrics        []metric
-	counters       map[string]string
-	returnTimeOut  string
-	fields         []string
-	apiType        string // public, private
+	Object         string
+	Query          string
+	TemplatePath   string
+	InstanceKeys   []string
+	InstanceLabels map[string]string
+	Metrics        map[string]metric
+	Counters       map[string]string
+	ReturnTimeOut  string
+	Fields         []string
+	ApiType        string // public, private
 }
 
 type metric struct {
-	label      string
-	name       string
-	metricType string
+	Label      string
+	Name       string
+	MetricType string
 }
 
 func init() {
@@ -66,11 +66,11 @@ func (Rest) HarvestModule() plugin.ModuleInfo {
 }
 
 func (r *Rest) query(p *endPoint) string {
-	return p.prop.query
+	return p.prop.Query
 }
 
 func (r *Rest) fields(p *endPoint) []string {
-	return p.prop.fields
+	return p.prop.Fields
 }
 
 func (r *Rest) Init(a *collector.AbstractCollector) error {
@@ -85,7 +85,7 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	if r.prop.templatePath, err = r.LoadTemplate(); err != nil {
+	if r.Prop.TemplatePath, err = r.LoadTemplate(); err != nil {
 		return err
 	}
 
@@ -126,7 +126,7 @@ func (r *Rest) InitClient() error {
 
 func (r *Rest) InitMatrix() error {
 	// overwrite from abstract collector
-	r.Matrix.Object = r.prop.object
+	r.Matrix.Object = r.Prop.Object
 	// Add system (cluster) name
 	r.Matrix.SetGlobalLabel("cluster", r.Client.Cluster().Name)
 	if r.Params.HasChildS("labels") {
@@ -183,18 +183,18 @@ func (r *Rest) initEndPoints() error {
 
 			prop := prop{}
 
-			prop.instanceKeys = make([]string, 0)
-			prop.instanceLabels = make(map[string]string)
-			prop.counters = make(map[string]string)
-			prop.metrics = make([]metric, 0)
-			prop.apiType = "public"
-			prop.returnTimeOut = r.prop.returnTimeOut
-			prop.templatePath = r.prop.templatePath
+			prop.InstanceKeys = make([]string, 0)
+			prop.InstanceLabels = make(map[string]string)
+			prop.Counters = make(map[string]string)
+			prop.Metrics = make(map[string]metric)
+			prop.ApiType = "public"
+			prop.ReturnTimeOut = r.Prop.ReturnTimeOut
+			prop.TemplatePath = r.Prop.TemplatePath
 
 			for _, line1 := range line.GetChildren() {
 				if line1.GetNameS() == "query" {
-					prop.query = line1.GetContentS()
-					prop.apiType = checkQueryType(prop.query)
+					prop.Query = line1.GetContentS()
+					prop.ApiType = checkQueryType(prop.Query)
 				}
 				if line1.GetNameS() == "counters" {
 					r.ParseRestCounters(line1, &prop)
@@ -260,7 +260,7 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 
 	startTime = time.Now()
 
-	href := rest.BuildHref(r.prop.query, strings.Join(r.prop.fields, ","), nil, "", "", "", r.prop.returnTimeOut, r.prop.query)
+	href := rest.BuildHref(r.Prop.Query, strings.Join(r.Prop.Fields, ","), nil, "", "", "", r.Prop.ReturnTimeOut, r.Prop.Query)
 
 	if records, err = r.GetRestData(href); err != nil {
 		r.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
@@ -275,11 +275,11 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 
 	content, err = json.Marshal(all)
 	if err != nil {
-		r.Logger.Error().Err(err).Str("ApiPath", r.prop.query).Msg("Unable to marshal rest pagination")
+		r.Logger.Error().Err(err).Str("ApiPath", r.Prop.Query).Msg("Unable to marshal rest pagination")
 	}
 
 	if !gjson.ValidBytes(content) {
-		return nil, fmt.Errorf("json is not valid for: %s", r.prop.query)
+		return nil, fmt.Errorf("json is not valid for: %s", r.Prop.Query)
 	}
 
 	results := gjson.GetManyBytes(content, "num_records", "records")
@@ -290,7 +290,7 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 
 	r.Logger.Debug().Str("object", r.Object).Str("number of records extracted", numRecords.String()).Msg("")
 
-	count = r.HandleResults(results[1], r.prop, true)
+	count = r.HandleResults(results[1], r.Prop, true)
 
 	// process endpoints
 	startTime = time.Now()
@@ -326,14 +326,14 @@ func (r *Rest) processEndPoints() error {
 			records []interface{}
 			content []byte
 		)
-		counterKey := make([]string, len(endpoint.prop.counters))
+		counterKey := make([]string, len(endpoint.prop.Counters))
 		i := 0
-		for k := range endpoint.prop.counters {
+		for k := range endpoint.prop.Counters {
 			counterKey[i] = k
 			i++
 		}
 
-		href := rest.BuildHref(r.query(endpoint), strings.Join(r.fields(endpoint), ","), nil, "", "", "", r.prop.returnTimeOut, r.query(endpoint))
+		href := rest.BuildHref(r.query(endpoint), strings.Join(r.fields(endpoint), ","), nil, "", "", "", r.Prop.ReturnTimeOut, r.query(endpoint))
 
 		if records, err = r.GetRestData(href); err != nil {
 			r.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
@@ -347,17 +347,17 @@ func (r *Rest) processEndPoints() error {
 
 		content, err = json.Marshal(all)
 		if err != nil {
-			r.Logger.Error().Err(err).Str("ApiPath", endpoint.prop.query).Msg("Unable to marshal rest pagination")
+			r.Logger.Error().Err(err).Str("ApiPath", endpoint.prop.Query).Msg("Unable to marshal rest pagination")
 		}
 
 		if !gjson.ValidBytes(content) {
-			return fmt.Errorf("json is not valid for: %s", endpoint.prop.query)
+			return fmt.Errorf("json is not valid for: %s", endpoint.prop.Query)
 		}
 
 		results := gjson.GetManyBytes(content, "num_records", "records")
 		numRecords := results[0]
 		if numRecords.Int() == 0 {
-			return errors.New(errors.ERR_NO_INSTANCE, "no "+endpoint.prop.query+" instances on cluster")
+			return errors.New(errors.ERR_NO_INSTANCE, "no "+endpoint.prop.Query+" instances on cluster")
 		}
 
 		r.HandleResults(results[1], endpoint.prop, false)
@@ -413,7 +413,7 @@ func (r *Rest) HandleResults(result gjson.Result, prop *prop, allowInstanceCreat
 		}
 
 		// extract instance key(s)
-		for _, k := range prop.instanceKeys {
+		for _, k := range prop.InstanceKeys {
 			value := instanceData.Get(k)
 			if value.Exists() {
 				instanceKey += value.String()
@@ -437,7 +437,7 @@ func (r *Rest) HandleResults(result gjson.Result, prop *prop, allowInstanceCreat
 			}
 		}
 
-		for label, display := range prop.instanceLabels {
+		for label, display := range prop.InstanceLabels {
 			value := instanceData.Get(label)
 			if value.Exists() {
 				if value.IsArray() {
@@ -457,21 +457,21 @@ func (r *Rest) HandleResults(result gjson.Result, prop *prop, allowInstanceCreat
 			}
 		}
 
-		for _, metric := range prop.metrics {
-			metr, ok := r.Matrix.GetMetrics()[metric.name]
+		for _, metric := range prop.Metrics {
+			metr, ok := r.Matrix.GetMetrics()[metric.Name]
 			if !ok {
-				if metr, err = r.Matrix.NewMetricFloat64(metric.name); err != nil {
+				if metr, err = r.Matrix.NewMetricFloat64(metric.Name); err != nil {
 					r.Logger.Error().Err(err).
-						Str("name", metric.name).
+						Str("name", metric.Name).
 						Msg("NewMetricFloat64")
 				}
 			}
-			f := instanceData.Get(metric.name)
+			f := instanceData.Get(metric.Name)
 			if f.Exists() {
-				metr.SetName(metric.label)
+				metr.SetName(metric.Label)
 
 				var floatValue float64
-				switch metric.metricType {
+				switch metric.MetricType {
 				case "duration":
 					floatValue = HandleDuration(f.String())
 				case "timestamp":
@@ -479,11 +479,11 @@ func (r *Rest) HandleResults(result gjson.Result, prop *prop, allowInstanceCreat
 				case "":
 					floatValue = f.Float()
 				default:
-					r.Logger.Warn().Str("type", metric.metricType).Str("metric", metric.name).Msg("unknown metric type")
+					r.Logger.Warn().Str("type", metric.MetricType).Str("metric", metric.Name).Msg("unknown metric type")
 				}
 
 				if err = metr.SetValueFloat64(instance, floatValue); err != nil {
-					r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
+					r.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
 						Msg("Unable to set float key on metric")
 				}
 				count++
@@ -522,7 +522,7 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 	}
 
 	var counters = make([]string, 0)
-	for k := range r.prop.counters {
+	for k := range r.Prop.Counters {
 		counters = append(counters, k)
 	}
 
@@ -540,7 +540,7 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 	// Add collector information
 	p.AddCollectorAsup(collector.AsupCollector{
 		Name:      r.Name,
-		Query:     r.prop.query,
+		Query:     r.Prop.Query,
 		Exporters: exporterTypes,
 		Counters: collector.Counters{
 			Count: len(counters),
@@ -600,7 +600,7 @@ func (r *Rest) getNodeUuids() ([]collector.Id, error) {
 	)
 	query := "api/cluster/nodes"
 
-	href := rest.BuildHref(query, "serial_number,system_id", nil, "", "", "", r.prop.returnTimeOut, query)
+	href := rest.BuildHref(query, "serial_number,system_id", nil, "", "", "", r.Prop.ReturnTimeOut, query)
 
 	if records, err = r.GetRestData(href); err != nil {
 		r.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
@@ -618,7 +618,7 @@ func (r *Rest) getNodeUuids() ([]collector.Id, error) {
 	}
 
 	if !gjson.ValidBytes(content) {
-		return nil, fmt.Errorf("json is not valid for: %s", r.prop.query)
+		return nil, fmt.Errorf("json is not valid for: %s", r.Prop.Query)
 	}
 
 	results := gjson.GetManyBytes(content, "num_records", "records")
@@ -636,16 +636,8 @@ func (r *Rest) getNodeUuids() ([]collector.Id, error) {
 	return infos, nil
 }
 
-func (r *Rest) GetProp() *prop {
-	return r.prop
-}
-
 func (r *Rest) InitProp() {
-	r.prop = &prop{}
-}
-
-func (r *Rest) SetPropCounter(counters map[string]string) {
-	r.prop.counters = counters
+	r.Prop = &prop{}
 }
 
 // Interface guards

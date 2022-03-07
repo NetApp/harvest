@@ -12,8 +12,6 @@ import (
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/set"
-	"goharvest2/pkg/tree/node"
-	"goharvest2/pkg/util"
 	"path"
 	"regexp"
 	"strconv"
@@ -28,7 +26,7 @@ const (
 
 type RestPerf struct {
 	*rest2.Rest // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
-	prop        *prop
+	perfProp    *perfProp
 }
 
 type counter struct {
@@ -39,26 +37,10 @@ type counter struct {
 	denominator string
 }
 
-type prop struct {
-	object         string
-	query          string
-	instanceKeys   []string
-	templatePath   string
-	instanceLabels map[string]string
-	metrics        map[string]metric
-	counters       map[string]string
-	returnTimeOut  string
-	fields         []string
-	apiType        string // public, private
-	isCacheEmpty   bool
-	counterInfo    map[string]*counter
-	latencyIoReqd  int
-}
-
-type metric struct {
-	label      string
-	name       string
-	metricType string
+type perfProp struct {
+	isCacheEmpty  bool
+	counterInfo   map[string]*counter
+	latencyIoReqd int
 }
 
 type metricResponse struct {
@@ -84,14 +66,17 @@ func (r *RestPerf) Init(a *collector.AbstractCollector) error {
 
 	r.Rest = &rest2.Rest{AbstractCollector: a}
 
-	r.prop = &prop{}
-	r.prop.counterInfo = make(map[string]*counter)
+	r.perfProp = &perfProp{}
+
+	r.InitProp()
+
+	r.perfProp.counterInfo = make(map[string]*counter)
 
 	if err = r.InitClient(); err != nil {
 		return err
 	}
 
-	if r.prop.templatePath, err = r.LoadTemplate(); err != nil {
+	if r.Prop.TemplatePath, err = r.LoadTemplate(); err != nil {
 		return err
 	}
 
@@ -113,8 +98,11 @@ func (r *RestPerf) Init(a *collector.AbstractCollector) error {
 }
 
 func (r *RestPerf) InitMatrix() error {
+	//init perf properties
+	r.perfProp.latencyIoReqd = r.loadParamInt("latency_io_reqd", latencyIoReqd)
+	r.perfProp.isCacheEmpty = true
 	// overwrite from abstract collector
-	r.Matrix.Object = r.prop.object
+	r.Matrix.Object = r.Prop.Object
 	// Add system (cluster) name
 	r.Matrix.SetGlobalLabel("cluster", r.Client.Cluster().Name)
 	if r.Params.HasChildS("labels") {
@@ -122,80 +110,6 @@ func (r *RestPerf) InitMatrix() error {
 			r.Matrix.SetGlobalLabel(l.GetNameS(), l.GetContentS())
 		}
 	}
-	return nil
-}
-
-func (r *RestPerf) InitCache() error {
-
-	var (
-		counters                        *node.Node
-		display, name, kind, metricType string
-	)
-
-	if x := r.Params.GetChildContentS("object"); x != "" {
-		r.prop.object = x
-	} else {
-		r.prop.object = strings.ToLower(r.Object)
-	}
-
-	if e := r.Params.GetChildS("export_options"); e != nil {
-		r.Matrix.SetExportOptions(e)
-	}
-
-	if r.prop.query = r.Params.GetChildContentS("query"); r.prop.query == "" {
-		return errors.New(errors.MISSING_PARAM, "query")
-	}
-
-	r.prop.latencyIoReqd = r.loadParamInt("latency_io_reqd", latencyIoReqd)
-	r.prop.isCacheEmpty = true
-
-	// create metric cache
-	if counters = r.Params.GetChildS("counters"); counters == nil {
-		return errors.New(errors.MISSING_PARAM, "counters")
-	}
-
-	// default value for ONTAP is 15 sec
-	if returnTimeout := r.Params.GetChildContentS("return_timeout"); returnTimeout != "" {
-		r.prop.returnTimeOut = returnTimeout
-	}
-
-	r.prop.instanceKeys = make([]string, 0)
-	r.prop.instanceLabels = make(map[string]string)
-	r.prop.counters = make(map[string]string)
-	r.prop.metrics = make(map[string]metric)
-
-	for _, c := range counters.GetAllChildContentS() {
-		if c != "" {
-			name, display, kind, metricType = util.ParseMetric(c)
-			r.Logger.Debug().
-				Str("kind", kind).
-				Str("name", name).
-				Str("display", display).
-				Msg("Collected")
-
-			r.prop.counters[name] = display
-			switch kind {
-			case "key":
-				r.prop.instanceLabels[name] = display
-				r.prop.instanceKeys = append(r.prop.instanceKeys, name)
-			case "label":
-				r.prop.instanceLabels[name] = display
-			case "float":
-				m := metric{label: display, name: name, metricType: metricType}
-				r.prop.metrics[name] = m
-			}
-		}
-	}
-
-	// Used for setting counters in rest prop which is used in common autosupport collection
-	// Alternative would be to use same rest prop struct for rest performance. keeping them separate for now
-	r.Rest.InitProp()
-	r.Rest.SetPropCounter(r.prop.counters)
-
-	r.prop.fields = []string{"*"}
-	r.Logger.Info().Strs("extracted Instance Keys", r.prop.instanceKeys).Msg("")
-	r.Logger.Info().Int("count metrics", len(r.prop.metrics)).Int("count labels", len(r.prop.instanceLabels)).Msg("initialized metric cache")
-
 	return nil
 }
 
@@ -240,7 +154,7 @@ func (r *RestPerf) PollCounter() (*matrix.Matrix, error) {
 		records []interface{}
 	)
 
-	href := rest.BuildHref(r.prop.query, "", nil, "", "", "", r.prop.returnTimeOut, r.prop.query)
+	href := rest.BuildHref(r.Prop.Query, "", nil, "", "", "", r.Prop.ReturnTimeOut, r.Prop.Query)
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {
 		return nil, errors.New(errors.ERR_CONFIG, "empty url")
@@ -258,11 +172,11 @@ func (r *RestPerf) PollCounter() (*matrix.Matrix, error) {
 
 	content, err = json.Marshal(all)
 	if err != nil {
-		r.Logger.Error().Err(err).Str("ApiPath", r.prop.query).Msg("Unable to marshal rest pagination")
+		r.Logger.Error().Err(err).Str("ApiPath", r.Prop.Query).Msg("Unable to marshal rest pagination")
 	}
 
 	if !gjson.ValidBytes(content) {
-		return nil, fmt.Errorf("json is not valid for: %s", r.prop.query)
+		return nil, fmt.Errorf("json is not valid for: %s", r.Prop.Query)
 	}
 
 	results := gjson.GetManyBytes(content, "records.0.counter_schemas", "records.0.name", "records.0.description")
@@ -275,9 +189,9 @@ func (r *RestPerf) PollCounter() (*matrix.Matrix, error) {
 		}
 
 		name := c.Get("name").String()
-		if _, has := r.prop.metrics[name]; has {
-			if _, ok := r.prop.counterInfo[name]; !ok {
-				r.prop.counterInfo[name] = &counter{
+		if _, has := r.Prop.Metrics[name]; has {
+			if _, ok := r.perfProp.counterInfo[name]; !ok {
+				r.perfProp.counterInfo[name] = &counter{
 					name:        c.Get("name").String(),
 					description: c.Get("description").String(),
 					counterType: c.Get("type").String(),
@@ -285,7 +199,7 @@ func (r *RestPerf) PollCounter() (*matrix.Matrix, error) {
 					denominator: c.Get("denominator.name").String(),
 				}
 				if p := r.GetOverride(name); p != "" {
-					r.prop.counterInfo[name].counterType = p
+					r.perfProp.counterInfo[name].counterType = p
 				}
 
 			}
@@ -388,9 +302,9 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 
 	startTime = time.Now()
 
-	dataQuery := path.Join(r.prop.query, "rows")
+	dataQuery := path.Join(r.Prop.Query, "rows")
 
-	href := rest.BuildHref(dataQuery, strings.Join(r.prop.fields, ","), nil, "", "", "", r.prop.returnTimeOut, dataQuery)
+	href := rest.BuildHref(dataQuery, strings.Join(r.Prop.Fields, ","), nil, "", "", "", r.Prop.ReturnTimeOut, dataQuery)
 
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {
@@ -412,12 +326,12 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 
 	content, err = json.Marshal(all)
 	if err != nil {
-		r.Logger.Error().Err(err).Str("ApiPath", r.prop.query).Msg("Unable to marshal rest pagination")
+		r.Logger.Error().Err(err).Str("ApiPath", r.Prop.Query).Msg("Unable to marshal rest pagination")
 	}
 
 	startTime = time.Now()
 	if !gjson.ValidBytes(content) {
-		return nil, fmt.Errorf("json is not valid for: %s", r.prop.query)
+		return nil, fmt.Errorf("json is not valid for: %s", r.Prop.Query)
 	}
 	parseD = time.Since(startTime)
 
@@ -441,7 +355,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 		}
 
 		// extract instance key(s)
-		for _, k := range r.prop.instanceKeys {
+		for _, k := range r.Prop.InstanceKeys {
 			value := parseProperties(instanceData, k)
 			if value.Exists() {
 				instanceKey += value.String()
@@ -466,7 +380,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 
 		//// add batch timestamp as custom counter
 
-		for label, display := range r.prop.instanceLabels {
+		for label, display := range r.Prop.InstanceLabels {
 			value := parseProperties(instanceData, label)
 			if value.Exists() {
 				if value.IsArray() {
@@ -486,7 +400,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 			}
 		}
 
-		for name, metric := range r.prop.metrics {
+		for name, metric := range r.Prop.Metrics {
 			f := parseMetricResponse(instanceData, name)
 			if f.value != "" {
 				if f.isArray {
@@ -544,14 +458,14 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 								Msg("NewMetricFloat64")
 						}
 					}
-					metr.SetName(metric.label)
+					metr.SetName(metric.Label)
 					if c, err := strconv.ParseFloat(f.value, 64); err == nil {
 						if err = metr.SetValueFloat64(instance, c); err != nil {
-							r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
+							r.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
 								Msg("Unable to set float key on metric")
 						}
 					} else {
-						r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
+						r.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
 							Msg("Unable to parse float value")
 					}
 					count++
@@ -576,10 +490,10 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 	r.AddCollectCount(count)
 
 	// skip calculating from delta if no data from previous poll
-	if r.prop.isCacheEmpty {
+	if r.perfProp.isCacheEmpty {
 		r.Logger.Debug().Msg("skip postprocessing until next poll (previous cache empty)")
 		r.Matrix = newData
-		r.prop.isCacheEmpty = false
+		r.perfProp.isCacheEmpty = false
 		return nil, nil
 	}
 
@@ -600,10 +514,10 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 		if metric.GetName() != "timestamp" {
 			var counter *counter
 			if metric.IsArray() {
-				counter = r.prop.counterInfo[metric.GetName()]
+				counter = r.perfProp.counterInfo[metric.GetName()]
 			} else {
 				name := strings.Split(metric.GetName(), ".")[0]
-				counter = r.prop.counterInfo[name]
+				counter = r.perfProp.counterInfo[name]
 			}
 
 			if counter != nil {
@@ -637,10 +551,10 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 	for i, metric := range orderedMetrics {
 		var counter *counter
 		if metric.IsArray() {
-			counter = r.prop.counterInfo[metric.GetName()]
+			counter = r.perfProp.counterInfo[metric.GetName()]
 		} else {
 			name := strings.Split(metric.GetName(), ".")[0]
-			counter = r.prop.counterInfo[name]
+			counter = r.perfProp.counterInfo[name]
 		}
 		if counter == nil {
 			r.Logger.Error().Stack().Err(err).Str("counter", metric.GetName()).Msg("Missing counter:")
@@ -695,7 +609,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 		if property == "average" || property == "percent" {
 
 			if strings.HasSuffix(metric.GetName(), "latency") {
-				err = metric.DivideWithThreshold(base, r.prop.latencyIoReqd)
+				err = metric.DivideWithThreshold(base, r.perfProp.latencyIoReqd)
 			} else {
 				err = metric.Divide(base)
 			}
@@ -727,10 +641,10 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 	for i, metric := range orderedMetrics {
 		var counter *counter
 		if metric.IsArray() {
-			counter = r.prop.counterInfo[metric.GetName()]
+			counter = r.perfProp.counterInfo[metric.GetName()]
 		} else {
 			name := strings.Split(metric.GetName(), ".")[0]
-			counter = r.prop.counterInfo[name]
+			counter = r.perfProp.counterInfo[name]
 		}
 		if counter != nil {
 			property := counter.counterType
@@ -782,9 +696,9 @@ func (r *RestPerf) PollInstance() (*matrix.Matrix, error) {
 	}
 	oldSize = oldInstances.Size()
 
-	dataQuery := path.Join(r.prop.query, "rows")
+	dataQuery := path.Join(r.Prop.Query, "rows")
 
-	href := rest.BuildHref(dataQuery, "properties", nil, "", "", "", r.prop.returnTimeOut, dataQuery)
+	href := rest.BuildHref(dataQuery, "properties", nil, "", "", "", r.Prop.ReturnTimeOut, dataQuery)
 
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {
@@ -804,11 +718,11 @@ func (r *RestPerf) PollInstance() (*matrix.Matrix, error) {
 
 	content, err = json.Marshal(all)
 	if err != nil {
-		r.Logger.Error().Err(err).Str("ApiPath", r.prop.query).Msg("Unable to marshal rest pagination")
+		r.Logger.Error().Err(err).Str("ApiPath", r.Prop.Query).Msg("Unable to marshal rest pagination")
 	}
 
 	if !gjson.ValidBytes(content) {
-		return nil, fmt.Errorf("json is not valid for: %s", r.prop.query)
+		return nil, fmt.Errorf("json is not valid for: %s", r.Prop.Query)
 	}
 
 	results := gjson.GetManyBytes(content, "num_records", "records")
@@ -830,7 +744,7 @@ func (r *RestPerf) PollInstance() (*matrix.Matrix, error) {
 		}
 
 		// extract instance key(s)
-		for _, k := range r.prop.instanceKeys {
+		for _, k := range r.Prop.InstanceKeys {
 			value := parseProperties(instanceData, k)
 			if value.Exists() {
 				instanceKey += value.String()

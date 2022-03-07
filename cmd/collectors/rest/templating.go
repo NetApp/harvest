@@ -35,16 +35,16 @@ func (r *Rest) InitCache() error {
 	)
 
 	if x := r.Params.GetChildContentS("object"); x != "" {
-		r.prop.object = x
+		r.Prop.Object = x
 	} else {
-		r.prop.object = strings.ToLower(r.Object)
+		r.Prop.Object = strings.ToLower(r.Object)
 	}
 
 	if e := r.Params.GetChildS("export_options"); e != nil {
 		r.Matrix.SetExportOptions(e)
 	}
 
-	if r.prop.query = r.Params.GetChildContentS("query"); r.prop.query == "" {
+	if r.Prop.Query = r.Params.GetChildContentS("query"); r.Prop.Query == "" {
 		return errors.New(errors.MISSING_PARAM, "query")
 	}
 
@@ -55,25 +55,26 @@ func (r *Rest) InitCache() error {
 
 	// default value for ONTAP is 15 sec
 	if returnTimeout := r.Params.GetChildContentS("return_timeout"); returnTimeout != "" {
-		r.prop.returnTimeOut = returnTimeout
+		r.Prop.ReturnTimeOut = returnTimeout
 	}
 
-	r.prop.instanceKeys = make([]string, 0)
-	r.prop.instanceLabels = make(map[string]string)
-	r.prop.counters = make(map[string]string)
+	r.Prop.InstanceKeys = make([]string, 0)
+	r.Prop.InstanceLabels = make(map[string]string)
+	r.Prop.Counters = make(map[string]string)
+	r.Prop.Metrics = make(map[string]metric)
 
 	// private end point do not support * as fields. We need to pass fields in endpoint
 	query := r.Params.GetChildS("query")
-	r.prop.apiType = "public"
+	r.Prop.ApiType = "public"
 	if query != nil {
-		r.prop.apiType = checkQueryType(query.GetContentS())
+		r.Prop.ApiType = checkQueryType(query.GetContentS())
 	}
 
-	r.ParseRestCounters(counters, r.prop)
+	r.ParseRestCounters(counters, r.Prop)
 	r.Metadata.NewMetricUint64("datapoint_count")
 
-	r.Logger.Info().Strs("extracted Instance Keys", r.prop.instanceKeys).Msg("")
-	r.Logger.Info().Int("count metrics", len(r.prop.metrics)).Int("count labels", len(r.prop.instanceLabels)).Msg("initialized metric cache")
+	r.Logger.Info().Strs("extracted Instance Keys", r.Prop.InstanceKeys).Msg("")
+	r.Logger.Info().Int("count metrics", len(r.Prop.Metrics)).Int("count labels", len(r.Prop.InstanceLabels)).Msg("initialized metric cache")
 
 	return nil
 }
@@ -173,35 +174,35 @@ func (r *Rest) ParseRestCounters(counter *node.Node, prop *prop) {
 				Str("display", display).
 				Msg("Collected")
 
-			prop.counters[name] = display
+			prop.Counters[name] = display
 			switch kind {
 			case "key":
-				prop.instanceLabels[name] = display
-				prop.instanceKeys = append(prop.instanceKeys, name)
+				prop.InstanceLabels[name] = display
+				prop.InstanceKeys = append(prop.InstanceKeys, name)
 			case "label":
-				prop.instanceLabels[name] = display
+				prop.InstanceLabels[name] = display
 			case "float":
-				m := metric{label: display, name: name, metricType: metricType}
-				prop.metrics = append(prop.metrics, m)
+				m := metric{Label: display, Name: name, MetricType: metricType}
+				prop.Metrics[name] = m
 			}
 		}
 	}
 
-	if prop.apiType == "private" {
-		counterKey := make([]string, len(prop.counters))
+	if prop.ApiType == "private" {
+		counterKey := make([]string, len(prop.Counters))
 		i := 0
-		for k := range prop.counters {
+		for k := range prop.Counters {
 			counterKey[i] = k
 			i++
 		}
-		prop.fields = counterKey
+		prop.Fields = counterKey
 	}
 
-	if prop.apiType == "public" {
-		prop.fields = []string{"*"}
+	if prop.ApiType == "public" {
+		prop.Fields = []string{"*"}
 		if counter != nil {
 			if x := counter.GetChildS("hidden_fields"); x != nil {
-				prop.fields = append(prop.fields, x.GetAllChildContentS()...)
+				prop.Fields = append(prop.Fields, x.GetAllChildContentS()...)
 			}
 		}
 	}
