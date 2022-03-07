@@ -1,0 +1,45 @@
+
+name:             Security
+query:            api/security
+object:           security
+
+counters:
+  - ^management_protocols.telnet_enabled   => telnet_enabled
+  - ^management_protocols.rsh_enabled   => rsh_enabled
+  - ^fips.enabled  => fips_enabled
+
+only_cluster_instance: true
+
+plugins:
+  - Security:
+      objects:
+      - api/support/autosupport => support:
+          - ^^enabled => asupEnabled
+          - ^transport  => asupHttpsConfigured
+          - ^is_minimal => asupPrivateDataRemoved
+          - ^from => from
+      - api/security/login/messages => security_login:
+          - ^^uuid => uuid
+          - ^svm.name  => svm
+          - ^scope => scope
+          - ^banner => banner
+      - api/security/ssh/svms => security_ssh:
+          - ^^svm.uuid => svm_uuid
+          - ^svm.name => svm
+          - ^ciphers => ciphers
+      - api/security/accounts => security_account:
+          - ^^owner.uuid => owner_uuid
+          - ^^name => user_name
+          - ^role.name => role_name
+          - ^password_hash_algorithm  => hash_algorithm
+          - ^locked => locked
+          - ^applications.#.application  => applications
+          - ^applications.#.authentication_methods.0  => methods
+          - InnerPlugin: security_account
+
+export_options:
+  instance_keys:
+    - fips_enabled
+  instance_labels:
+    - telnet_enabled
+    - rsh_enabled

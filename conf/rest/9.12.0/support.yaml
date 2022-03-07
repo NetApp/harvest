@@ -4,17 +4,13 @@ query:            api/support/autosupport
 object:           support
 
 counters:
-  - ^enabled => asupEnabled
-  - ^transport  => asupHttpsConfigured
-  - ^is_minimal => asupPrivateDataRemoved
-
-only_cluster_instance: true
-
-plugins:
-  - LabelAgent:
-      value_to_num:
-#        - asupConfig asupHttpsConfigured https https `0`
-        - status asupEnabled true true `0`
+  - ^enabled => asup_enabled
+  - ^transport  => asup_https_configured
+  - ^is_minimal => asup_private_dataremoved
 
 export_options:
-  include_all_labels: true
+  instance_keys:
+    - asup_enabled
+  instance_labels:
+    - asup_https_configured
+    - asup_private_dataremoved

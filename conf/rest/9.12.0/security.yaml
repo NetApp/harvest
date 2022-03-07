@@ -8,13 +8,9 @@ counters:
   - ^management_protocols.rsh_enabled   => rsh_enabled
   - ^fips.enabled  => fips_enabled
 
-only_cluster_instance: true
-
-plugins:
-  - LabelAgent:
-      value_to_num:
-        - status telnet_enabled true true `0`
-#        - rsh_status rsh_enabled true true `0`
-
 export_options:
-  include_all_labels: true
+  instance_keys:
+    - fips_enabled
+  instance_labels:
+    - telnet_enabled
+    - rsh_enabled

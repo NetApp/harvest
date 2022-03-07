@@ -479,6 +479,8 @@ type valueToNumRule struct {
 	label        string
 	defaultValue uint8
 	hasDefault   bool
+	isRegex      bool
+	regexValue   string
 	mapping      map[string]uint8
 }
 
@@ -491,8 +493,13 @@ type valueToNumRule struct {
 
 func (me *LabelAgent) parseValueToNumRule(rule string) {
 	if fields := strings.Fields(rule); len(fields) == 4 || len(fields) == 5 {
-		r := valueToNumRule{metric: fields[0], label: fields[1]}
+		r := valueToNumRule{metric: fields[0], label: fields[1], isRegex: false}
 		r.mapping = make(map[string]uint8)
+
+		if strings.Contains(fields[3], "*") {
+			r.regexValue = strings.Trim(fields[3], "*")
+			r.isRegex = true
+		}
 
 		// This '-' is used for handling special case in disk.yaml, rest all are handled normally with assigning to 1.
 		for _, v := range strings.Split(fields[2], "-") {

@@ -13,10 +13,26 @@ counters:
 
 
 plugins:
-  - SecurityAccount
+#  - SecurityAccount
   - LabelAgent:
       value_to_num:
-        - defaultAdmin locked false false `0`
+        - samluser methods online *saml* `0`
+        - ldapuser methods online *nsswitch* `0`
+        - certificateuser methods online *certificate* `0`
+        - localuser methods online *password* `0`
+        - activediruser methods online *domain* `0`
 
 export_options:
-  include_all_labels: true
+  instance_keys:
+    - user_name
+  instance_labels:
+    - role_name
+    - hash_algorithm
+    - locked
+    - applications
+    - methods
+#    - samluser
+#    - ldapuser
+#    - certificateuser
+#    - localuser
+#    - activediruser

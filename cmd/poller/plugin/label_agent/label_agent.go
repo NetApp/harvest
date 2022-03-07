@@ -310,13 +310,25 @@ func (me *LabelAgent) mapValues(m *matrix.Matrix) error {
 		}
 
 		for key, instance := range m.GetInstances() {
-			if v, ok := r.mapping[instance.GetLabel(r.label)]; ok {
-				_ = metric.SetValueUint8(instance, v)
-				me.Logger.Trace().Msgf("valueToNumMapping: [%s] [%s] mapped (%s) value to %d", r.metric, key, instance.GetLabel(r.label), v)
-			} else if r.hasDefault {
-				_ = metric.SetValueUint8(instance, r.defaultValue)
-				me.Logger.Trace().Msgf("valueToNumMapping: [%s] [%s] mapped (%s) value to default %d", r.metric, key, instance.GetLabel(r.label), r.defaultValue)
+			value := instance.GetLabel(r.label)
+			if r.isRegex {
+				if v := strings.Contains(value, r.regexValue); v {
+					_ = metric.SetValueUint8(instance, uint8(1))
+					me.Logger.Trace().Msgf("valueToNumMapping: [%s] [%s] mapped (%s) value to %d", r.metric, key, instance.GetLabel(r.label), r.regexValue)
+				} else {
+					_ = metric.SetValueUint8(instance, uint8(0))
+					me.Logger.Trace().Msgf("valueToNumMapping: [%s] [%s] mapped (%s) value to default %d", r.metric, key, instance.GetLabel(r.label), r.regexValue)
+				}
+			} else {
+				if v, ok := r.mapping[instance.GetLabel(r.label)]; ok {
+					_ = metric.SetValueUint8(instance, v)
+					me.Logger.Trace().Msgf("valueToNumMapping: [%s] [%s] mapped (%s) value to %d", r.metric, key, instance.GetLabel(r.label), v)
+				} else if r.hasDefault {
+					_ = metric.SetValueUint8(instance, r.defaultValue)
+					me.Logger.Trace().Msgf("valueToNumMapping: [%s] [%s] mapped (%s) value to default %d", r.metric, key, instance.GetLabel(r.label), r.defaultValue)
+				}
 			}
+
 		}
 	}
 

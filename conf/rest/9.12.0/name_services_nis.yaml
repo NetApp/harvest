@@ -1,0 +1,18 @@
+
+name:             NameservicesNis
+query:            api/name-services/nis
+object:           name_services_nis
+
+counters:
+  - ^^svm.uuid => svm_uuid
+  - ^svm.name => svm
+  - ^domain   => nis_domain
+
+
+plugins:
+  - LabelAgent:
+      value_to_num:
+        - status nis_domain true true `0`
+
+export_options:
+  include_all_labels: true

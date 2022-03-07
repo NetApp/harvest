@@ -7,7 +7,9 @@ counters:
   - ^^svm.uuid => svm_uuid
   - ^svm.name => svm
   - ^enabled   => enabled
-
+  - ^security.smb_encryption => isSmbEncryptionRequired
+  - ^security.smb_signing => isSmbSigningRequired
+  - ^security.lm_compatibility_level => cifsNtlmEnabled
 
 plugins:
   - LabelAgent:
