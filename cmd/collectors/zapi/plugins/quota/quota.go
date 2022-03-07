@@ -129,6 +129,10 @@ func (my *Quota) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	if my.client.IsClustered() && my.batchSize != "" {
 		request.NewChildS("max-records", my.batchSize)
+		// Fetching only tree quotas
+		query := request.NewChildS("query", "")
+		quotaQuery := query.NewChildS("quota", "")
+		quotaQuery.NewChildS("quota-type", "tree")
 	}
 
 	tag := "initial"
@@ -166,11 +170,6 @@ func (my *Quota) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			volume := quota.GetChildContentS("volume")
 			if my.client.IsClustered() {
 				vserver = quota.GetChildContentS("vserver")
-			}
-
-			// If quota-type is not a Qtree, then skip
-			if quota.GetChildContentS("quota-type") != "tree" {
-				continue
 			}
 
 			for attribute, m := range my.data.GetMetrics() {
