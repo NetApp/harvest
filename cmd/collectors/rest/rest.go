@@ -260,7 +260,9 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 
 	startTime = time.Now()
 
-	if records, err = r.GetRestData(r.prop.query, strings.Join(r.prop.fields, ","), r.prop.returnTimeOut, r.Client); err != nil {
+	href := rest.BuildHref(r.prop.query, strings.Join(r.prop.fields, ","), nil, "", "", "", r.prop.returnTimeOut, r.prop.query)
+
+	if records, err = r.GetRestData(href); err != nil {
 		r.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
 		return nil, err
 	}
@@ -331,7 +333,9 @@ func (r *Rest) processEndPoints() error {
 			i++
 		}
 
-		if records, err = r.GetRestData(r.query(endpoint), strings.Join(r.fields(endpoint), ","), r.prop.returnTimeOut, r.Client); err != nil {
+		href := rest.BuildHref(r.query(endpoint), strings.Join(r.fields(endpoint), ","), nil, "", "", "", r.prop.returnTimeOut, r.query(endpoint))
+
+		if records, err = r.GetRestData(href); err != nil {
 			r.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
 			return err
 		}
@@ -491,20 +495,18 @@ func (r *Rest) HandleResults(result gjson.Result, prop *prop, allowInstanceCreat
 	return count
 }
 
-func (r *Rest) GetRestData(query string, fields string, returnTimeOut string, client *rest.Client) ([]interface{}, error) {
+func (r *Rest) GetRestData(href string) ([]interface{}, error) {
 	var (
 		err     error
 		records []interface{}
 	)
-
-	href := rest.BuildHref(query, fields, nil, "", "", "", returnTimeOut, query)
 
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {
 		return nil, errors.New(errors.ERR_CONFIG, "empty url")
 	}
 
-	err = rest.FetchData(client, href, &records)
+	err = rest.FetchData(r.Client, href, &records)
 	if err != nil {
 		r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
 		return nil, err
@@ -598,7 +600,9 @@ func (r *Rest) getNodeUuids() ([]collector.Id, error) {
 	)
 	query := "api/cluster/nodes"
 
-	if records, err = r.GetRestData(query, "serial_number,system_id", r.prop.returnTimeOut, r.Client); err != nil {
+	href := rest.BuildHref(query, "serial_number,system_id", nil, "", "", "", r.prop.returnTimeOut, query)
+
+	if records, err = r.GetRestData(href); err != nil {
 		r.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
 		return nil, err
 	}

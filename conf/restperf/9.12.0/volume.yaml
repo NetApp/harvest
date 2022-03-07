@@ -10,7 +10,7 @@ counters:
   - ^name => volume
 #  - ^svm.name          => svm
 #  - ^node.name          => node
-  - ^parent_aggregate           => aggr
+  - ^parent_aggregate  => aggr
   - bytes_read
   - bytes_written
   - total_read_ops

@@ -584,9 +584,12 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 
 	// cache raw data for next poll
 	cachedData := newData.Clone(true, true, true)
-	// order metrics, such that those requiring base counters are processed last
-	orderedMetrics := make([]matrix.Metric, 0, len(newData.GetMetrics()))
-	orderedKeys := make([]string, 0, len(orderedMetrics))
+
+	orderedNonDenominatorMetrics := make([]matrix.Metric, 0, len(newData.GetMetrics()))
+	orderedNonDenominatorKeys := make([]string, 0, len(orderedNonDenominatorMetrics))
+
+	orderedDenominatorMetrics := make([]matrix.Metric, 0, len(newData.GetMetrics()))
+	orderedDenominatorKeys := make([]string, 0, len(orderedDenominatorMetrics))
 
 	for key, metric := range newData.GetMetrics() {
 		if metric.GetName() != "timestamp" {
@@ -601,8 +604,12 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 			if counter != nil {
 				if counter.denominator == "" {
 					// does not require base counter
-					orderedMetrics = append(orderedMetrics, metric)
-					orderedKeys = append(orderedKeys, key)
+					orderedNonDenominatorMetrics = append(orderedNonDenominatorMetrics, metric)
+					orderedNonDenominatorKeys = append(orderedNonDenominatorKeys, key)
+				} else {
+					// does require base counter
+					orderedDenominatorMetrics = append(orderedDenominatorMetrics, metric)
+					orderedDenominatorKeys = append(orderedDenominatorKeys, key)
 				}
 			} else {
 				r.Logger.Warn().Str("counter", metric.GetName()).Msg("Counter is nil. Unable to process. Check template")
@@ -610,26 +617,9 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 		}
 	}
 
-	for key, metric := range newData.GetMetrics() {
-		if metric.GetName() != "timestamp" {
-			var counter *counter
-			if metric.IsArray() {
-				counter = r.prop.counterInfo[metric.GetName()]
-			} else {
-				name := strings.Split(metric.GetName(), ".")[0]
-				counter = r.prop.counterInfo[name]
-			}
-			if counter != nil {
-				if counter.denominator != "" {
-					// does require base counter
-					orderedMetrics = append(orderedMetrics, metric)
-					orderedKeys = append(orderedKeys, key)
-				}
-			} else {
-				r.Logger.Warn().Str("counter", metric.GetName()).Msg("Counter is nil. Unable to process. Check template ")
-			}
-		}
-	}
+	// order metrics, such that those requiring base counters are processed last
+	orderedMetrics := append(orderedNonDenominatorMetrics, orderedDenominatorMetrics...)
+	orderedKeys := append(orderedNonDenominatorKeys, orderedDenominatorKeys...)
 
 	// calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
