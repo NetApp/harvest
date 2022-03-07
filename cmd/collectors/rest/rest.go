@@ -79,7 +79,7 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 
 	r.AbstractCollector = a
 
-	r.prop = &prop{}
+	r.InitProp()
 
 	if err = r.InitClient(); err != nil {
 		return err
@@ -634,6 +634,18 @@ func (r *Rest) getNodeUuids() ([]collector.Id, error) {
 		return infos[i].SerialNumber < infos[j].SerialNumber
 	})
 	return infos, nil
+}
+
+func (r *Rest) GetProp() *prop {
+	return r.prop
+}
+
+func (r *Rest) InitProp() {
+	r.prop = &prop{}
+}
+
+func (r *Rest) SetPropCounter(counters map[string]string) {
+	r.prop.counters = counters
 }
 
 // Interface guards

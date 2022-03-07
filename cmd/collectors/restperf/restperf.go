@@ -187,6 +187,11 @@ func (r *RestPerf) InitCache() error {
 		}
 	}
 
+	// Used for setting counters in rest prop which is used in common autosupport collection
+	// Alternative would be to use same rest prop struct for rest performance. keeping them separate for now
+	r.Rest.InitProp()
+	r.Rest.SetPropCounter(r.prop.counters)
+
 	r.prop.fields = []string{"*"}
 	r.Logger.Info().Strs("extracted Instance Keys", r.prop.instanceKeys).Msg("")
 	r.Logger.Info().Int("count metrics", len(r.prop.metrics)).Int("count labels", len(r.prop.instanceLabels)).Msg("initialized metric cache")
@@ -865,42 +870,6 @@ func (r *RestPerf) PollInstance() (*matrix.Matrix, error) {
 	}
 
 	return nil, err
-}
-
-func (r *RestPerf) CollectAutoSupport(p *collector.Payload) {
-	var exporterTypes []string
-	for _, exporter := range r.Exporters {
-		exporterTypes = append(exporterTypes, exporter.GetClass())
-	}
-
-	var counters = make([]string, 0)
-	for k := range r.prop.counters {
-		counters = append(counters, k)
-	}
-
-	var schedules = make([]collector.Schedule, 0)
-	tasks := r.Params.GetChildS("schedule")
-	if tasks != nil && len(tasks.GetChildren()) > 0 {
-		for _, task := range tasks.GetChildren() {
-			schedules = append(schedules, collector.Schedule{
-				Name:     task.GetNameS(),
-				Schedule: task.GetContentS(),
-			})
-		}
-	}
-
-	// Add collector information
-	p.AddCollectorAsup(collector.AsupCollector{
-		Name:      r.Name,
-		Query:     r.prop.query,
-		Exporters: exporterTypes,
-		Counters: collector.Counters{
-			Count: len(counters),
-			List:  counters,
-		},
-		Schedules:     schedules,
-		ClientTimeout: r.Client.Timeout.String(),
-	})
 }
 
 // Interface guards
