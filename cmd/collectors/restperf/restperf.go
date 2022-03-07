@@ -512,7 +512,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 
 	for key, metric := range newData.GetMetrics() {
 		if metric.GetName() != "timestamp" {
-			counter := r.counterLookup(metric)
+			counter := r.counterLookup(metric, key)
 			if counter != nil {
 				if counter.denominator == "" {
 					// does not require base counter
@@ -542,13 +542,13 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 	var base matrix.Metric
 
 	for i, metric := range orderedMetrics {
-		counter := r.counterLookup(metric)
+		key := orderedKeys[i]
+		counter := r.counterLookup(metric, key)
 		if counter == nil {
 			r.Logger.Error().Stack().Err(err).Str("counter", metric.GetName()).Msg("Missing counter:")
 			continue
 		}
 		property := counter.counterType
-		key := orderedKeys[i]
 
 		// RAW - submit without post-processing
 		if property == "raw" {
@@ -626,7 +626,8 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 
 	// calculate rates (which we deferred to calculate averages/percents first)
 	for i, metric := range orderedMetrics {
-		counter := r.counterLookup(metric)
+		key := orderedKeys[i]
+		counter := r.counterLookup(metric, key)
 		if counter != nil {
 			property := counter.counterType
 			if property == "rate" {
@@ -652,13 +653,13 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 	return newData, nil
 }
 
-func (r *RestPerf) counterLookup(metric matrix.Metric) *counter {
+func (r *RestPerf) counterLookup(metric matrix.Metric, metricKey string) *counter {
 	var c *counter
 
 	if metric.IsArray() {
-		c = r.perfProp.counterInfo[metric.GetName()]
+		c = r.perfProp.counterInfo[metricKey]
 	} else {
-		name := strings.Split(metric.GetName(), ".")[0]
+		name := strings.Split(metricKey, ".")[0]
 		c = r.perfProp.counterInfo[name]
 	}
 	return c
