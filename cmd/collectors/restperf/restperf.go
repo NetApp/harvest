@@ -478,7 +478,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 		return true
 	})
 
-	r.Logger.Info().
+	r.Logger.Debug().
 		Uint64("dataPoints", count).
 		Str("apiTime", apiD.String()).
 		Str("parseTime", parseD.String()).
@@ -512,14 +512,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 
 	for key, metric := range newData.GetMetrics() {
 		if metric.GetName() != "timestamp" {
-			var counter *counter
-			if metric.IsArray() {
-				counter = r.perfProp.counterInfo[metric.GetName()]
-			} else {
-				name := strings.Split(metric.GetName(), ".")[0]
-				counter = r.perfProp.counterInfo[name]
-			}
-
+			counter := r.counterLookup(metric)
 			if counter != nil {
 				if counter.denominator == "" {
 					// does not require base counter
@@ -549,13 +542,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 	var base matrix.Metric
 
 	for i, metric := range orderedMetrics {
-		var counter *counter
-		if metric.IsArray() {
-			counter = r.perfProp.counterInfo[metric.GetName()]
-		} else {
-			name := strings.Split(metric.GetName(), ".")[0]
-			counter = r.perfProp.counterInfo[name]
-		}
+		counter := r.counterLookup(metric)
 		if counter == nil {
 			r.Logger.Error().Stack().Err(err).Str("counter", metric.GetName()).Msg("Missing counter:")
 			continue
@@ -639,13 +626,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 
 	// calculate rates (which we deferred to calculate averages/percents first)
 	for i, metric := range orderedMetrics {
-		var counter *counter
-		if metric.IsArray() {
-			counter = r.perfProp.counterInfo[metric.GetName()]
-		} else {
-			name := strings.Split(metric.GetName(), ".")[0]
-			counter = r.perfProp.counterInfo[name]
-		}
+		counter := r.counterLookup(metric)
 		if counter != nil {
 			property := counter.counterType
 			if property == "rate" {
@@ -669,6 +650,18 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 	r.Matrix = cachedData
 
 	return newData, nil
+}
+
+func (r *RestPerf) counterLookup(metric matrix.Metric) *counter {
+	var c *counter
+
+	if metric.IsArray() {
+		c = r.perfProp.counterInfo[metric.GetName()]
+	} else {
+		name := strings.Split(metric.GetName(), ".")[0]
+		c = r.perfProp.counterInfo[name]
+	}
+	return c
 }
 
 func (r *RestPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {
