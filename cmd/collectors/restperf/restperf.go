@@ -470,6 +470,8 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 					}
 					count++
 				}
+			} else {
+				r.Logger.Warn().Str("counter", name).Msg("Counter is nil. Unable to process. Check template")
 			}
 		}
 		if err = newData.GetMetric("timestamp").SetValueFloat64(instance, ts); err != nil {
