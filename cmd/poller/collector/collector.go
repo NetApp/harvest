@@ -360,6 +360,8 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 				retryDelay = 1
 				me.SetStatus(0, "running")
 				me.Logger.Info().Str("task", task.Name).Msg("recovered from standby mode, back to normal schedule")
+			} else {
+				me.SetStatus(0, "running")
 			}
 
 			if data != nil {

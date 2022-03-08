@@ -1,0 +1,18 @@
+
+collector:          RestPerf
+
+# Order here matters!
+schedule:
+  - counter: 1200s
+  - instance: 600s
+  - data: 60s
+
+objects:
+  CIFSNode:         cifs_node.yaml
+  HeadroomCPU:      resource_headroom_cpu.yaml
+  HeadroomAggr:     resource_headroom_aggr.yaml
+
+  # SVM-level metrics
+  CIFSvserver:      cifs_vserver.yaml
+  Volume:           volume.yaml
+  CopyManager:      copy_manager.yaml
