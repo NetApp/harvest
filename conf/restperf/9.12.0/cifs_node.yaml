@@ -4,11 +4,11 @@ query:                    api/cluster/counter/tables/cifs:node
 object:                   node_cifs
 
 counters:
-  - ^^instance_name            => node
+  - ^^instance_name          => node
   - op_count
-  - total_ops                 => ops
-  - total_read_ops            => read_ops
-  - total_write_ops           => write_ops
+  - total_ops               => ops
+  - total_read_ops          => read_ops
+  - total_write_ops         => write_ops
   - latency
   - avg_read_latency        => read_latency
   - avg_write_latency       => write_latency

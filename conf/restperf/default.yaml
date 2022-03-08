@@ -8,5 +8,8 @@ schedule:
   - data: 60s
 
 objects:
-  Volume:           volume.yaml
   CIFSNode:         cifs_node.yaml
+
+  # SVM-level metrics
+  CIFSvserver:      cifs_vserver.yaml
+  Volume:           volume.yaml
