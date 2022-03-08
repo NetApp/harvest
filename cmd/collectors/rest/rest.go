@@ -359,7 +359,7 @@ func (r *Rest) processEndPoints() error {
 		results := gjson.GetManyBytes(content, "num_records", "records")
 		numRecords := results[0]
 		if numRecords.Int() == 0 {
-			r.Logger.Warn().Str("ApiPath", endpoint.prop.query).Msg("no " + endpoint.prop.query + " instances on cluster")
+			r.Logger.Warn().Str("ApiPath", endpoint.prop.Query).Msg("no " + endpoint.prop.Query + " instances on cluster")
 			continue
 		}
 
