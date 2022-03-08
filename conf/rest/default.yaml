@@ -2,7 +2,7 @@
 collector:          Rest
 
 schedule:
-  - data: 60s
+  - data: 180s
 
 objects:
   Disk:             disk.yaml
