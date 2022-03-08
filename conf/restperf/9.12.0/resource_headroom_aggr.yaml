@@ -9,8 +9,6 @@ counters:
   - current_latency
   - current_ops
   - current_utilization
-  - current_utilization_denominator
-  - optimal_point.samples
   - optimal_point.latency => optimal_point_latency
   - optimal_point.ops => optimal_point_ops
   - optimal_point.utilization => optimal_point_utilization
