@@ -112,7 +112,7 @@ func GetFolderId(folderName string, t *testing.T) int64 {
 		}
 	}
 	if !(folderId > 0) {
-		assert.Fail(t, "Folder id is empty or zero.")
+		assert.Fail(t, "Folder id is empty or zero for folder=[%s]", folderName)
 	}
 	return folderId
 }
