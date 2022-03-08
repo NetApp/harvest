@@ -426,7 +426,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 									Msg("NewMetricFloat64")
 								continue
 							}
-							metr.SetName(name)
+							metr.SetName(metric.Label)
 							metr.SetLabel("metric", label)
 							// differentiate between array and normal counter
 							metr.SetArray(true)
