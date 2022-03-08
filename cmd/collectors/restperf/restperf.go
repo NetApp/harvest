@@ -659,10 +659,11 @@ func (r *RestPerf) counterLookup(metric matrix.Metric, metricKey string) *counte
 	var c *counter
 
 	if metric.IsArray() {
-		c = r.perfProp.counterInfo[metricKey]
-	} else {
-		name := strings.Split(metricKey, ".")[0]
+		lastInd := strings.LastIndex(metricKey, ".")
+		name := metricKey[:lastInd]
 		c = r.perfProp.counterInfo[name]
+	} else {
+		c = r.perfProp.counterInfo[metricKey]
 	}
 	return c
 }

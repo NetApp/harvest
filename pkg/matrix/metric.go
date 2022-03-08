@@ -108,6 +108,7 @@ func (me *AbstractMetric) Clone(deep bool) *AbstractMetric {
 		property:   me.property,
 		comment:    me.comment,
 		exportable: me.exportable,
+		array:      me.array,
 	}
 	if me.labels != nil {
 		clone.labels = me.labels.Copy()
