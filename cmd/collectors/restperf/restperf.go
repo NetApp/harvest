@@ -192,9 +192,9 @@ func (r *RestPerf) PollCounter() (*matrix.Matrix, error) {
 		if _, has := r.Prop.Metrics[name]; has {
 			d := c.Get("denominator.name").String()
 			if d != "" {
-				// export false
-				m := &rest2.Metric{Label: "", Name: d, MetricType: "", Exportable: false}
 				if _, has := r.Prop.Metrics[d]; !has {
+					// export false
+					m := &rest2.Metric{Label: "", Name: d, MetricType: "", Exportable: false}
 					r.Prop.Metrics[d] = m
 				}
 			}
