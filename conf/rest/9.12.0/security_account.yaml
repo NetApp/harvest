@@ -13,7 +13,6 @@ counters:
 
 
 plugins:
-#  - SecurityAccount
   - LabelAgent:
       value_to_num:
         - samluser methods online *saml* `0`
@@ -31,8 +30,3 @@ export_options:
     - locked
     - applications
     - methods
-#    - samluser
-#    - ldapuser
-#    - certificateuser
-#    - localuser
-#    - activediruser

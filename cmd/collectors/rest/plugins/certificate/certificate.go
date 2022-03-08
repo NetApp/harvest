@@ -35,6 +35,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Certificate{AbstractPlugin: p}
 }
 
+// [TODO] https://opengrok-prd.eng.netapp.com/source/xref/bard_main/modules/dfm-data-access/src/main/java/com/netapp/dfm/entity/platform/event/builtin/ClusterSelfSignedCertificateCheckListener.java#67
 func (my *Certificate) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	// Purge and reset data

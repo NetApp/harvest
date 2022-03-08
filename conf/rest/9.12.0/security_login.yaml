@@ -10,12 +10,10 @@ counters:
   - ^banner => banner
 
 
-plugins:
-  - LabelAgent:
-#      exclude_regex:
-#        - banner `^$`
-      value_to_num:
-        - cluster scope cluster cluster `0`
-
 export_options:
-  include_all_labels: true
+  instance_keys:
+    - uuid
+  instance_labels:
+    - svm
+    - scope
+    - banner

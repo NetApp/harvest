@@ -11,7 +11,7 @@ counters:
   - ^public_certificate  => certificatePEM
 
 plugins:
-  #- Certificate:
+  #- Certificate:  https://opengrok-prd.eng.netapp.com/source/xref/bard_main/modules/dfm-data-access/src/main/java/com/netapp/dfm/entity/platform/event/builtin/ClusterSelfSignedCertificateCheckListener.java#67
   - LabelAgent:
       exclude_regex:
         - scope `cluster`

@@ -7,9 +7,9 @@ import (
 	"goharvest2/cmd/collectors/rest/plugins/certificate"
 	"goharvest2/cmd/collectors/rest/plugins/disk"
 	"goharvest2/cmd/collectors/rest/plugins/qtree"
-	"goharvest2/cmd/collectors/rest/plugins/securityaccount"
 	"goharvest2/cmd/collectors/rest/plugins/shelf"
 	"goharvest2/cmd/collectors/rest/plugins/snapmirror"
+	"goharvest2/cmd/collectors/rest/plugins/svm"
 	"goharvest2/cmd/collectors/rest/plugins/volume"
 	"goharvest2/cmd/poller/collector"
 	"goharvest2/cmd/poller/plugin"
@@ -378,8 +378,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return volume.New(abc)
 	case "Certificate":
 		return certificate.New(abc)
-	case "SecurityAccount":
-		return securityaccount.New(abc)
+	case "SVM":
+		return svm.New(abc)
 	default:
 		r.Logger.Warn().Str("kind", kind).Msg("no rest plugin found ")
 	}

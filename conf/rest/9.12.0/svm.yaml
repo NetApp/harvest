@@ -5,11 +5,10 @@ object:                   svm
 counters:
   - ^^uuid => svm_uuid
   - ^name               => svm
-  - ^aggregates.#.name  => aggr #zapi maps to field containing-aggregate-name while rest mapping is an array?
+  - ^aggregates.#.name  => aggr
   - ^state              => state
   - ^anti_ransomware_default_volume_state => anti_ransomware_state
-  - ^nsswitch.#      => nameservice_database  # need to handle
-  - ^nsswitch.#.0   => nameservice_sources  #need top handle
+  - ^nsswitch     => nameservice_switch
 
 
 endpoints:
@@ -58,11 +57,13 @@ endpoints:
       - ^^svm.uuid => svm_uuid
       - ^enabled   => iscsi_service_enabled
 
-
 plugins:
+  - SVM
   - LabelAgent:
       value_to_num:
         - new_status state online online `0`
+        - ldap_signed ldap_session_security sign sign `0`
+        - ldap_encrypted ldap_session_security seal seal `0`
 
 export_options:
   instance_keys:
@@ -71,8 +72,6 @@ export_options:
   instance_labels:
     - state
     - anti_ransomware_state
-    - nameservice_database
-    - nameservice_sources
     - ciphers
     - cifs_protocol_enabled
     - smb_encryption_required
@@ -87,4 +86,5 @@ export_options:
     - nfs_kerberos_protocol_enabled
     - iscsi_authentication_type
     - iscsi_service_enabled
+    - nis_authentication_enabled
 

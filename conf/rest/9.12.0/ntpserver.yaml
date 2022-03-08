@@ -5,14 +5,11 @@ object:           ntpserver
 
 counters:
   - ^^server => servers
-#  - ^# => count
+  - ^authentication_enabled => authentication
 
-plugins:
-  - LabelAgent:
-      value_to_num:
-        - status servers - - `0`
 
 export_options:
-  include_all_labels: true
-
-# need testing for count
+  instance_keys:
+    - servers
+  instance_labels:
+    - authentication

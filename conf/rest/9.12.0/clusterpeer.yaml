@@ -5,16 +5,12 @@ object:           cluster_peer
 
 counters:
   - ^^uuid
-  - ^encryption.proposed  => proposed
-
-only_cluster_instance: true
-
-plugins:
-  - LabelAgent:
-      value_to_num:
-        - status proposed - - `0`
+  - ^name => name
+  - ^encryption.state  => encryption_state
 
 export_options:
-  include_all_labels: true
-
-# Need to test
+  instance_keys:
+    - uuid
+  instance_labels:
+    - name
+    - encryption_state
