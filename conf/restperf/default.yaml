@@ -13,3 +13,4 @@ objects:
   # SVM-level metrics
   CIFSvserver:      cifs_vserver.yaml
   Volume:           volume.yaml
+  CopyManager:      copy_manager.yaml
