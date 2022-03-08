@@ -27,8 +27,8 @@ import (
 
 type Rest struct {
 	*collector.AbstractCollector
-	client    *rest.Client
-	prop      *prop
+	Client    *rest.Client
+	Prop      *prop
 	endpoints []*endPoint
 }
 
@@ -38,22 +38,22 @@ type endPoint struct {
 }
 
 type prop struct {
-	object         string
-	query          string
-	templatePath   string
-	instanceKeys   []string
-	instanceLabels map[string]string
-	metrics        []metric
-	counters       map[string]string
-	returnTimeOut  string
-	fields         []string
-	apiType        string // public, private
+	Object         string
+	Query          string
+	TemplatePath   string
+	InstanceKeys   []string
+	InstanceLabels map[string]string
+	Metrics        map[string]metric
+	Counters       map[string]string
+	ReturnTimeOut  string
+	Fields         []string
+	ApiType        string // public, private
 }
 
 type metric struct {
-	label      string
-	name       string
-	metricType string
+	Label      string
+	Name       string
+	MetricType string
 }
 
 func init() {
@@ -68,11 +68,11 @@ func (Rest) HarvestModule() plugin.ModuleInfo {
 }
 
 func (r *Rest) query(p *endPoint) string {
-	return p.prop.query
+	return p.prop.Query
 }
 
 func (r *Rest) fields(p *endPoint) []string {
-	return p.prop.fields
+	return p.prop.Fields
 }
 
 func (r *Rest) Init(a *collector.AbstractCollector) error {
@@ -81,17 +81,13 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 
 	r.AbstractCollector = a
 
-	r.prop = &prop{}
+	r.InitProp()
 
-	if r.client, err = r.getClient(a, a.Params); err != nil {
+	if err = r.InitClient(); err != nil {
 		return err
 	}
 
-	if err = r.client.Init(5); err != nil {
-		return err
-	}
-
-	if err = r.LoadTemplate(); err != nil {
+	if r.Prop.TemplatePath, err = r.LoadTemplate(); err != nil {
 		return err
 	}
 
@@ -103,7 +99,7 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	if err = r.initCache(); err != nil {
+	if err = r.InitCache(); err != nil {
 		return err
 	}
 
@@ -115,11 +111,26 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 	return nil
 }
 
+func (r *Rest) InitClient() error {
+
+	var err error
+	a := r.AbstractCollector
+	if r.Client, err = r.getClient(a, a.Params); err != nil {
+		return err
+	}
+
+	if err = r.Client.Init(5); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (r *Rest) InitMatrix() error {
 	// overwrite from abstract collector
-	r.Matrix.Object = r.prop.object
+	r.Matrix.Object = r.Prop.Object
 	// Add system (cluster) name
-	r.Matrix.SetGlobalLabel("cluster", r.client.Cluster().Name)
+	r.Matrix.SetGlobalLabel("cluster", r.Client.Cluster().Name)
 	if r.Params.HasChildS("labels") {
 		for _, l := range r.Params.GetChildS("labels").GetChildren() {
 			r.Matrix.SetGlobalLabel(l.GetNameS(), l.GetContentS())
@@ -174,18 +185,18 @@ func (r *Rest) initEndPoints() error {
 
 			prop := prop{}
 
-			prop.instanceKeys = make([]string, 0)
-			prop.instanceLabels = make(map[string]string)
-			prop.counters = make(map[string]string)
-			prop.metrics = make([]metric, 0)
-			prop.apiType = "public"
-			prop.returnTimeOut = r.prop.returnTimeOut
-			prop.templatePath = r.prop.templatePath
+			prop.InstanceKeys = make([]string, 0)
+			prop.InstanceLabels = make(map[string]string)
+			prop.Counters = make(map[string]string)
+			prop.Metrics = make(map[string]metric)
+			prop.ApiType = "public"
+			prop.ReturnTimeOut = r.Prop.ReturnTimeOut
+			prop.TemplatePath = r.Prop.TemplatePath
 
 			for _, line1 := range line.GetChildren() {
 				if line1.GetNameS() == "query" {
-					prop.query = line1.GetContentS()
-					prop.apiType = checkQueryType(prop.query)
+					prop.Query = line1.GetContentS()
+					prop.ApiType = checkQueryType(prop.Query)
 				}
 				if line1.GetNameS() == "counters" {
 					r.ParseRestCounters(line1, &prop)
@@ -251,7 +262,9 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 
 	startTime = time.Now()
 
-	if records, err = r.GetRestData(r.prop.query, strings.Join(r.prop.fields, ","), r.prop.returnTimeOut, r.client); err != nil {
+	href := rest.BuildHref(r.Prop.Query, strings.Join(r.Prop.Fields, ","), nil, "", "", "", r.Prop.ReturnTimeOut, r.Prop.Query)
+
+	if records, err = r.GetRestData(href); err != nil {
 		r.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
 		return nil, err
 	}
@@ -264,11 +277,11 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 
 	content, err = json.Marshal(all)
 	if err != nil {
-		r.Logger.Error().Err(err).Str("ApiPath", r.prop.query).Msg("Unable to marshal rest pagination")
+		r.Logger.Error().Err(err).Str("ApiPath", r.Prop.Query).Msg("Unable to marshal rest pagination")
 	}
 
 	if !gjson.ValidBytes(content) {
-		return nil, fmt.Errorf("json is not valid for: %s", r.prop.query)
+		return nil, fmt.Errorf("json is not valid for: %s", r.Prop.Query)
 	}
 
 	results := gjson.GetManyBytes(content, "num_records", "records")
@@ -279,7 +292,7 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 
 	r.Logger.Debug().Str("object", r.Object).Str("number of records extracted", numRecords.String()).Msg("")
 
-	count = r.HandleResults(results[1], r.prop, true)
+	count = r.HandleResults(results[1], r.Prop, true)
 
 	// process endpoints
 	startTime = time.Now()
@@ -315,14 +328,16 @@ func (r *Rest) processEndPoints() error {
 			records []interface{}
 			content []byte
 		)
-		counterKey := make([]string, len(endpoint.prop.counters))
+		counterKey := make([]string, len(endpoint.prop.Counters))
 		i := 0
-		for k := range endpoint.prop.counters {
+		for k := range endpoint.prop.Counters {
 			counterKey[i] = k
 			i++
 		}
 
-		if records, err = r.GetRestData(r.query(endpoint), strings.Join(r.fields(endpoint), ","), r.prop.returnTimeOut, r.client); err != nil {
+		href := rest.BuildHref(r.query(endpoint), strings.Join(r.fields(endpoint), ","), nil, "", "", "", r.Prop.ReturnTimeOut, r.query(endpoint))
+
+		if records, err = r.GetRestData(href); err != nil {
 			r.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
 			return err
 		}
@@ -334,11 +349,11 @@ func (r *Rest) processEndPoints() error {
 
 		content, err = json.Marshal(all)
 		if err != nil {
-			r.Logger.Error().Err(err).Str("ApiPath", endpoint.prop.query).Msg("Unable to marshal rest pagination")
+			r.Logger.Error().Err(err).Str("ApiPath", endpoint.prop.Query).Msg("Unable to marshal rest pagination")
 		}
 
 		if !gjson.ValidBytes(content) {
-			return fmt.Errorf("json is not valid for: %s", endpoint.prop.query)
+			return fmt.Errorf("json is not valid for: %s", endpoint.prop.Query)
 		}
 
 		results := gjson.GetManyBytes(content, "num_records", "records")
@@ -346,7 +361,6 @@ func (r *Rest) processEndPoints() error {
 		if numRecords.Int() == 0 {
 			r.Logger.Warn().Str("ApiPath", endpoint.prop.query).Msg("no " + endpoint.prop.query + " instances on cluster")
 			continue
-			//return errors.New(errors.ERR_NO_INSTANCE, "no "+endpoint.prop.query+" instances on cluster")
 		}
 
 		r.HandleResults(results[1], endpoint.prop, false)
@@ -406,7 +420,7 @@ func (r *Rest) HandleResults(result gjson.Result, prop *prop, allowInstanceCreat
 		}
 
 		// extract instance key(s)
-		for _, k := range prop.instanceKeys {
+		for _, k := range prop.InstanceKeys {
 			value := instanceData.Get(k)
 			if value.Exists() {
 				instanceKey += value.String()
@@ -430,7 +444,7 @@ func (r *Rest) HandleResults(result gjson.Result, prop *prop, allowInstanceCreat
 			}
 		}
 
-		for label, display := range prop.instanceLabels {
+		for label, display := range prop.InstanceLabels {
 			value := instanceData.Get(label)
 			if value.Exists() {
 				if value.IsArray() {
@@ -450,21 +464,21 @@ func (r *Rest) HandleResults(result gjson.Result, prop *prop, allowInstanceCreat
 			}
 		}
 
-		for _, metric := range prop.metrics {
-			metr, ok := r.Matrix.GetMetrics()[metric.name]
+		for _, metric := range prop.Metrics {
+			metr, ok := r.Matrix.GetMetrics()[metric.Name]
 			if !ok {
-				if metr, err = r.Matrix.NewMetricFloat64(metric.name); err != nil {
+				if metr, err = r.Matrix.NewMetricFloat64(metric.Name); err != nil {
 					r.Logger.Error().Err(err).
-						Str("name", metric.name).
+						Str("name", metric.Name).
 						Msg("NewMetricFloat64")
 				}
 			}
-			f := instanceData.Get(metric.name)
+			f := instanceData.Get(metric.Name)
 			if f.Exists() {
-				metr.SetName(metric.label)
+				metr.SetName(metric.Label)
 
 				var floatValue float64
-				switch metric.metricType {
+				switch metric.MetricType {
 				case "duration":
 					floatValue = HandleDuration(f.String())
 				case "timestamp":
@@ -472,11 +486,11 @@ func (r *Rest) HandleResults(result gjson.Result, prop *prop, allowInstanceCreat
 				case "":
 					floatValue = f.Float()
 				default:
-					r.Logger.Warn().Str("type", metric.metricType).Str("metric", metric.name).Msg("unknown metric type")
+					r.Logger.Warn().Str("type", metric.MetricType).Str("metric", metric.Name).Msg("unknown metric type")
 				}
 
 				if err = metr.SetValueFloat64(instance, floatValue); err != nil {
-					r.Logger.Error().Err(err).Str("key", metric.name).Str("metric", metric.label).
+					r.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
 						Msg("Unable to set float key on metric")
 				}
 				count++
@@ -488,20 +502,18 @@ func (r *Rest) HandleResults(result gjson.Result, prop *prop, allowInstanceCreat
 	return count
 }
 
-func (r *Rest) GetRestData(query string, fields string, returnTimeOut string, client *rest.Client) ([]interface{}, error) {
+func (r *Rest) GetRestData(href string) ([]interface{}, error) {
 	var (
 		err     error
 		records []interface{}
 	)
-
-	href := rest.BuildHref(query, fields, nil, "", "", "", returnTimeOut, query)
 
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {
 		return nil, errors.New(errors.ERR_CONFIG, "empty url")
 	}
 
-	err = rest.FetchData(client, href, &records)
+	err = rest.FetchData(r.Client, href, &records)
 	if err != nil {
 		r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
 		return nil, err
@@ -517,7 +529,7 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 	}
 
 	var counters = make([]string, 0)
-	for k := range r.prop.counters {
+	for k := range r.Prop.Counters {
 		counters = append(counters, k)
 	}
 
@@ -535,24 +547,24 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 	// Add collector information
 	p.AddCollectorAsup(collector.AsupCollector{
 		Name:      r.Name,
-		Query:     r.prop.query,
+		Query:     r.Prop.Query,
 		Exporters: exporterTypes,
 		Counters: collector.Counters{
 			Count: len(counters),
 			List:  counters,
 		},
 		Schedules:     schedules,
-		ClientTimeout: r.client.Timeout.String(),
+		ClientTimeout: r.Client.Timeout.String(),
 	})
 
 	if r.Name == "Rest" && (r.Object == "Volume" || r.Object == "Node") {
-		version := r.client.Cluster().Version
+		version := r.Client.Cluster().Version
 		p.Target.Version = strconv.Itoa(version[0]) + "." + strconv.Itoa(version[1]) + "." + strconv.Itoa(version[2])
 		p.Target.Model = "cdot"
 		if p.Target.Serial == "" {
-			p.Target.Serial = r.client.Cluster().Uuid
+			p.Target.Serial = r.Client.Cluster().Uuid
 		}
-		p.Target.ClusterUuid = r.client.Cluster().Uuid
+		p.Target.ClusterUuid = r.Client.Cluster().Uuid
 
 		md := r.GetMetadata()
 		info := collector.InstanceInfo{
@@ -595,7 +607,9 @@ func (r *Rest) getNodeUuids() ([]collector.Id, error) {
 	)
 	query := "api/cluster/nodes"
 
-	if records, err = r.GetRestData(query, "serial_number,system_id", r.prop.returnTimeOut, r.client); err != nil {
+	href := rest.BuildHref(query, "serial_number,system_id", nil, "", "", "", r.Prop.ReturnTimeOut, query)
+
+	if records, err = r.GetRestData(href); err != nil {
 		r.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
 		return nil, err
 	}
@@ -611,7 +625,7 @@ func (r *Rest) getNodeUuids() ([]collector.Id, error) {
 	}
 
 	if !gjson.ValidBytes(content) {
-		return nil, fmt.Errorf("json is not valid for: %s", r.prop.query)
+		return nil, fmt.Errorf("json is not valid for: %s", r.Prop.Query)
 	}
 
 	results := gjson.GetManyBytes(content, "num_records", "records")
@@ -627,6 +641,10 @@ func (r *Rest) getNodeUuids() ([]collector.Id, error) {
 		return infos[i].SerialNumber < infos[j].SerialNumber
 	})
 	return infos, nil
+}
+
+func (r *Rest) InitProp() {
+	r.Prop = &prop{}
 }
 
 // Interface guards

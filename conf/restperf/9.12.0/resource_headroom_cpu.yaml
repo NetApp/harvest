@@ -1,0 +1,25 @@
+name:                     HeadroomCPU
+query:                    /api/cluster/counter/tables/headroom_cpu
+object:                   headroom_cpu
+
+counters:
+  - ^^uuid
+  - ^name    => instance_name
+  - ^node.name              => node
+  - current_latency
+  - current_ops
+  - current_utilization
+  - elapsed_time
+  - optimal_point.latency => optimal_point_latency
+  - optimal_point.ops => optimal_point_ops
+  - optimal_point.utilization => optimal_point_utilization
+  - optimal_point.confidence_factor => optimal_point_confidence_factor
+  - optimal_point.samples
+  - ewma.daily => ewma_daily
+  - ewma.hourly => ewma_hourly
+  - ewma.monthly => ewma_monthly
+  - ewma.weekly => ewma_weekly
+
+export_options:
+  instance_keys:
+    - node

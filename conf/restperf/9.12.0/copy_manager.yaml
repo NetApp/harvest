@@ -1,0 +1,19 @@
+name:                     CopyManager
+query:                    api/cluster/counter/tables/copy_manager
+object:                   copy_manager
+
+counters:
+  - ^^instance_uuid
+  - ^name                                              => svm
+  - block_copy_engine_current_copy_count               => bce_copy_count_curr
+  - ontap_copy_subsystem_current_copy_count            => ocs_copy_count_curr
+  - system_continuous_engineering_current_copy_count   => sce_copy_count_curr
+  - spince_current_copy_count                          => spince_copy_count_curr
+  - kb_copied                                          => kb_copied
+
+override:
+  - kb_copied: delta
+
+export_options:
+  instance_keys:
+    - svm
