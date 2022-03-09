@@ -247,6 +247,10 @@ func (r *RestPerf) PollCounter() (*matrix.Matrix, error) {
 }
 
 func parseProperties(instanceData gjson.Result, property string) gjson.Result {
+	if property == "id" {
+		value := gjson.Get(instanceData.String(), "id")
+		return value
+	}
 	t := gjson.Get(instanceData.String(), "properties.#.name")
 
 	for _, name := range t.Array() {
