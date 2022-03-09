@@ -13,7 +13,7 @@ counters:
   - ^snapshot_policy.name  => snapshot_policy
   - ^state   => state
   - ^is_svm_root => svm_root
-  - ^encryption.enabled => isEncrypt
+  - ^encryption.enabled => isEncrypted
   - ^anti_ransomware.state => antiRansomwareState
   - ^snaplock.type => snaplock_type
   - autosize.maximum => autosize_maximum_size
@@ -93,7 +93,7 @@ export_options:
     - protectedBy
     - protectionRole
     - all_sm_healthy
-    - isEncrypt
+    - isEncrypted
     - snaplock_type
     - antiRansomwareState
     - isHardwareEncrypted

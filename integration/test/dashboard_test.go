@@ -72,12 +72,24 @@ func (suite *DashboardImportTestSuite) TestImport() {
 
 func (suite *DashboardImportTestSuite) TestCModeDashboardCount() {
 	folderId := GetFolderId(cDotFolder, suite.T())
-	expectedName := []string{"Harvest Metadata", "NetApp Detail: Aggregate", "NetApp Detail: Cluster",
-		"NetApp Detail: Disk", "NetApp Detail: LUN", "NetApp Detail: Network  - Details",
-		"NetApp Detail: Network with NVMe/FC", "NetApp Detail: Node - Details",
-		"NetApp Detail: Shelf", "NetApp Detail: SnapMirror", "NetApp Detail: SVM - Details",
-		"NetApp Detail: Volume - Details", "NetApp Detail: MetroCluster", "NetApp Detail: Data Protection",
-		"NetApp Detail: Data Protection SnapMirror", "NetApp Detail: Security"}
+	expectedName := []string{
+		"Harvest Metadata",
+		"NetApp Detail: Aggregate",
+		"NetApp Detail: Cluster",
+		"NetApp Detail: Disk",
+		"NetApp Detail: LUN",
+		"NetApp Detail: Network  - Details",
+		"NetApp Detail: Network with NVMe/FC",
+		"NetApp Detail: Node - Details",
+		"NetApp Detail: Shelf",
+		"NetApp Detail: SnapMirror",
+		"NetApp Detail: SVM - Details",
+		"NetApp Detail: Volume - Details",
+		"NetApp Detail: MetroCluster",
+		"NetApp Detail: Data Protection",
+		"NetApp Detail: Data Protection SnapMirror",
+		"NetApp Detail: Security",
+	}
 
 	VerifyDashboards(folderId, expectedName, suite.T())
 }
@@ -85,9 +97,17 @@ func (suite *DashboardImportTestSuite) TestCModeDashboardCount() {
 func (suite *DashboardImportTestSuite) TestSevenModeDashboardCount() {
 
 	folderId := GetFolderId(sevenModeFolder, suite.T())
-	expectedName := []string{"NetApp Detail: Aggregate 7 mode", "NetApp Detail: Cluster 7 mode",
-		"NetApp Detail: Disk 7 mode", "NetApp Detail: LUN 7 mode", "NetApp Detail: Network 7 mode", "NetApp Detail: Network with NVMe/FC 7 mode",
-		"NetApp Detail: Node 7 mode", "NetApp Detail: Shelf 7 mode", "NetApp Detail: Volume 7 mode"}
+	expectedName := []string{
+		"NetApp Detail: Aggregate 7 mode",
+		"NetApp Detail: Cluster 7 mode",
+		"NetApp Detail: Disk 7 mode",
+		"NetApp Detail: LUN 7 mode",
+		"NetApp Detail: Network 7 mode",
+		"NetApp Detail: Network with NVMe/FC 7 mode",
+		"NetApp Detail: Node 7 mode",
+		"NetApp Detail: Shelf 7 mode",
+		"NetApp Detail: Volume 7 mode",
+	}
 	VerifyDashboards(folderId, expectedName, suite.T())
 }
 

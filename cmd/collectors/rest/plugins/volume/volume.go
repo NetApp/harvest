@@ -36,6 +36,7 @@ type Volume struct {
 	outgoingSM           map[string][]string
 	incomingSM           map[string]string
 	isHealthySM          map[string]bool
+	aggrsMap             map[string]string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -68,6 +69,7 @@ func (my *Volume) Init() error {
 	my.outgoingSM = make(map[string][]string)
 	my.incomingSM = make(map[string]string)
 	my.isHealthySM = make(map[string]bool)
+	my.aggrsMap = make(map[string]string)
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
 	if my.currentVal, err = my.setPluginInterval(); err != nil {
@@ -90,19 +92,25 @@ func (my *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	if my.currentVal >= my.pluginInvocationRate {
 		my.currentVal = 0
 
-		// invoke snapmirror zapi and populate info in source and destination snapmirror maps
+		// invoke snapmirror rest and populate info in source and destination snapmirror maps
 		if smSourceMap, smDestinationMap, err := my.GetSnapMirrors(); err != nil {
 			my.Logger.Warn().Stack().Err(err).Msg("Failed to collect snapmirror data")
 		} else {
 			// update internal cache based on volume and SM maps
 			my.updateMaps(data, smSourceMap, smDestinationMap)
 		}
+
+		// invoke disk rest and populate info in aggrsMap
+		if disks, err := my.getDiskData(); err != nil {
+			my.Logger.Warn().Stack().Err(err).Msg("Failed to collect disk data")
+		} else {
+			// update aggrsMap based on disk data
+			my.updateAggrMap(disks)
+		}
 	}
 
 	// update volume instance labels
 	my.updateVolumeLabels(data)
-
-	my.updateHardwareEncrypted(data)
 
 	my.currentVal++
 	return nil, nil
@@ -274,6 +282,7 @@ func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
 		volumeName := volume.GetLabel("volume")
 		svmName := volume.GetLabel("svm")
 		volumeType := volume.GetLabel("type")
+		aggrUuid := volume.GetLabel("aggrUuid")
 		key := volumeName + "-" + svmName
 
 		// Update protectionRole label in volume
@@ -310,19 +319,18 @@ func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
 			volume.SetLabel("all_sm_healthy", strconv.FormatBool(healthy))
 		}
 
+		_, exist := my.aggrsMap[aggrUuid]
+		volume.SetLabel("isHardwareEncrypted", strconv.FormatBool(exist))
 	}
 }
 
-func (my *Volume) updateHardwareEncrypted(data *matrix.Matrix) {
-
+func (my *Volume) getDiskData() ([]gjson.Result, error) {
 	var (
-		records  []interface{}
-		content  []byte
-		err      error
-		aggrsMap map[string]string
+		records []interface{}
+		content []byte
+		err     error
 	)
 
-	aggrsMap = make(map[string]string)
 	diskFields := []string{"aggregates.name", "aggregates.uuid"}
 	query := "api/storage/disks"
 
@@ -331,7 +339,7 @@ func (my *Volume) updateHardwareEncrypted(data *matrix.Matrix) {
 	err = rest.FetchData(my.client, href, &records)
 	if err != nil {
 		my.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
-		//return nil, nil, err
+		return nil, err
 	}
 
 	all := rest.Pagination{
@@ -342,27 +350,29 @@ func (my *Volume) updateHardwareEncrypted(data *matrix.Matrix) {
 	content, err = json.Marshal(all)
 	if err != nil {
 		my.Logger.Error().Err(err).Str("ApiPath", query).Msg("Unable to marshal rest pagination")
+		return nil, err
 	}
 
 	if !gjson.ValidBytes(content) {
 		my.Logger.Error().Err(err).Str("Api", query).Msg("Invalid json")
-		//return nil, nil, errors.New(errors.API_RESPONSE, "Invalid json")
+		return nil, errors.New(errors.API_RESPONSE, "Invalid json")
 	}
 
 	results := gjson.GetManyBytes(content, "num_records", "records")
 	numRecords := results[0]
 	if numRecords.Int() == 0 {
-		//return nil, nil, errors.New(errors.ERR_NO_INSTANCE, "no "+my.query+" instances on cluster")
+		return nil, errors.New(errors.ERR_NO_INSTANCE, "no "+my.query+" instances on cluster")
 	}
+	return results[1].Array(), nil
+}
 
-	for _, disk := range results[1].Array() {
+func (my *Volume) updateAggrMap(disks []gjson.Result) {
+	// Clean aggrsMap map
+	my.aggrsMap = make(map[string]string)
+
+	for _, disk := range disks {
 		aggrName := disk.Get("aggregates.name").String()
 		aggrUuid := disk.Get("aggregates.uuid").String()
-		aggrsMap[aggrUuid] = aggrName
-	}
-
-	for _, volume := range data.GetInstances() {
-		_, ok := aggrsMap[volume.GetLabel("aggrUuid")]
-		volume.SetLabel("isHardwareEncrypted", strconv.FormatBool(ok))
+		my.aggrsMap[aggrUuid] = aggrName
 	}
 }

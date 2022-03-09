@@ -10,11 +10,7 @@ import (
 	"goharvest2/cmd/tools/rest"
 	"goharvest2/pkg/dict"
 	"goharvest2/pkg/matrix"
-	"time"
 )
-
-const DefaultPluginDuration = 1800 * time.Second
-const DefaultDataPollDuration = 180 * time.Second
 
 type Certificate struct {
 	*plugin.AbstractPlugin

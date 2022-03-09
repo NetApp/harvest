@@ -338,8 +338,8 @@ func (r *Rest) processEndPoints() error {
 		href := rest.BuildHref(r.query(endpoint), strings.Join(r.fields(endpoint), ","), nil, "", "", "", r.Prop.ReturnTimeOut, r.query(endpoint))
 
 		if records, err = r.GetRestData(href); err != nil {
-			r.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
-			return err
+			r.Logger.Error().Stack().Err(err).Str("ApiPath", endpoint.prop.Query).Msg("Failed to fetch data")
+			continue
 		}
 
 		all := rest.Pagination{
@@ -350,10 +350,12 @@ func (r *Rest) processEndPoints() error {
 		content, err = json.Marshal(all)
 		if err != nil {
 			r.Logger.Error().Err(err).Str("ApiPath", endpoint.prop.Query).Msg("Unable to marshal rest pagination")
+			continue
 		}
 
 		if !gjson.ValidBytes(content) {
-			return fmt.Errorf("json is not valid for: %s", endpoint.prop.Query)
+			r.Logger.Error().Str("ApiPath", endpoint.prop.Query).Msg("Invalid json")
+			continue
 		}
 
 		results := gjson.GetManyBytes(content, "num_records", "records")
