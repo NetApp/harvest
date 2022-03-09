@@ -11,6 +11,7 @@ objects:
   CIFSNode:         cifs_node.yaml
   HeadroomCPU:      resource_headroom_cpu.yaml
   HeadroomAggr:     resource_headroom_aggr.yaml
+  Qtree:            qtree.yaml
 
   # SVM-level metrics
   CIFSvserver:      cifs_vserver.yaml
