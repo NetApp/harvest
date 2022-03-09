@@ -61,7 +61,7 @@ func (r *Rest) InitCache() error {
 	r.Prop.InstanceKeys = make([]string, 0)
 	r.Prop.InstanceLabels = make(map[string]string)
 	r.Prop.Counters = make(map[string]string)
-	r.Prop.Metrics = make(map[string]metric)
+	r.Prop.Metrics = make(map[string]*Metric)
 
 	// private end point do not support * as fields. We need to pass fields in endpoint
 	query := r.Params.GetChildS("query")
@@ -182,7 +182,7 @@ func (r *Rest) ParseRestCounters(counter *node.Node, prop *prop) {
 			case "label":
 				prop.InstanceLabels[name] = display
 			case "float":
-				m := metric{Label: display, Name: name, MetricType: metricType}
+				m := &Metric{Label: display, Name: name, MetricType: metricType, Exportable: true}
 				prop.Metrics[name] = m
 			}
 		}

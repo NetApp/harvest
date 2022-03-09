@@ -1,0 +1,179 @@
+
+name:                     NFSv41
+query:                    api/cluster/counter/tables/svm_nfs_v41
+object:                   svm_nfs
+
+global_labels:
+  - nfsv: v4.1
+
+counters:
+  - ^^id
+  - ^name                        => svm
+  - latency
+  - total_ops                   => ops
+  - total.read_throughput	    => read_throughput
+  - total.write_throughput	    => throughput
+  - total.throughput	        => write_throughput
+  - access.total => access_total
+  - backchannel_ctl.total => backchannel_ctl_total
+  - bind_conn_to_session.total => bind_conn_to_session_total
+  - close.total => close_total
+  - commit.total => commit_total
+  - create_session.total => create_session_total
+  - create.total => create_total
+  - delegpurge.total => delegpurge_total
+  - delegreturn.total => delegreturn_total
+  - destroy_clientid.total => destroy_clientid_total
+  - destroy_session.total => destroy_session_total
+  - exchange_id.total => exchange_id_total
+  - free_stateid.total => free_stateid_total
+  - get_dir_delegation.total => get_dir_delegation_total
+  - getattr.total => getattr_total
+  - getdeviceinfo.total => getdeviceinfo_total
+  - getdevicelist.total => getdevicelist_total
+  - getfh.total => getfh_total
+  - layoutcommit.total => layoutcommit_total
+  - layoutget.total => layoutget_total
+  - layoutreturn.total => layoutreturn_total
+  - link.total => link_total
+  - lock.total => lock_total
+  - lockt.total => lockt_total
+  - locku.total => locku_total
+  - lookup.total => lookup_total
+  - lookupp.total => lookupp_total
+  - null.total => null_total
+  - nverify.total => nverify_total
+  - open_downgrade.total => open_downgrade_total
+  - open.total => open_total
+  - openattr.total => openattr_total
+  - putfh.total => putfh_total
+  - putpubfh.total => putpubfh_total
+  - putrootfh.total => putrootfh_total
+  - read.total => read_total
+  - readdir.total => readdir_total
+  - readlink.total => readlink_total
+  - reclaim_complete.total => reclaim_complete_total
+  - remove.total => remove_total
+  - rename.total => rename_total
+  - restorefh.total => restorefh_total
+  - savefh.total => savefh_total
+  - secinfo_no_name.total => secinfo_no_name_total
+  - secinfo.total => secinfo_total
+  - sequence.total => sequence_total
+  - set_ssv.total => set_ssv_total
+  - setattr.total => setattr_total
+  - test_stateid.total => test_stateid_total
+  - verify.total => verify_total
+  - want_delegation.total => want_delegation_total
+  - write.total => write_total
+  - access.avg_latency => access_avg_latency
+  - backchannel_ctl.avg_latency => backchannel_ctl_avg_latency
+  - bind_conn_to_session.avg_latency => bind_conn_to_session_avg_latency
+  - close.avg_latency => close_avg_latency
+  - commit.avg_latency => commit_avg_latency
+  - create.avg_latency => create_avg_latency
+  - create_session.avg_latency => create_session_avg_latency
+  - delegpurge.avg_latency => delegpurge_avg_latency
+  - delegreturn.avg_latency => delegreturn_avg_latency
+  - destroy_clientid.avg_latency => destroy_clientid_avg_latency
+  - destroy_session.avg_latency => destroy_session_avg_latency
+  - exchange_id.avg_latency => exchange_id_avg_latency
+  - free_stateid.avg_latency => free_stateid_avg_latency
+  - get_dir_delegation.avg_latency => get_dir_delegation_avg_latency
+  - getattr.avg_latency => getattr_avg_latency
+  - getdeviceinfo.avg_latency => getdeviceinfo_avg_latency
+  - getdevicelist.avg_latency => getdevicelist_avg_latency
+  - getfh.avg_latency => getfh_avg_latency
+  - layoutcommit.avg_latency => layoutcommit_avg_latency
+  - layoutget.avg_latency => layoutget_avg_latency
+  - layoutreturn.avg_latency => layoutreturn_avg_latency
+  - link.avg_latency => link_avg_latency
+  - lock.avg_latency => lock_avg_latency
+  - lockt.avg_latency => lockt_avg_latency
+  - locku.avg_latency => locku_avg_latency
+  - lookup.avg_latency => lookup_avg_latency
+  - lookupp.avg_latency => lookupp_avg_latency
+  - null.avg_latency => null_avg_latency
+  - nverify.avg_latency => nverify_avg_latency
+  - open.avg_latency => open_avg_latency
+  - open_downgrade.avg_latency => open_downgrade_avg_latency
+  - openattr.avg_latency => openattr_avg_latency
+  - putfh.avg_latency => putfh_avg_latency
+  - putpubfh.avg_latency => putpubfh_avg_latency
+  - putrootfh.avg_latency => putrootfh_avg_latency
+  - read.avg_latency => read_avg_latency
+  - readdir.avg_latency => readdir_avg_latency
+  - readlink.avg_latency => readlink_avg_latency
+  - reclaim_complete.avg_latency => reclaim_complete_avg_latency
+  - remove.avg_latency => remove_avg_latency
+  - rename.avg_latency => rename_avg_latency
+  - restorefh.avg_latency => restorefh_avg_latency
+  - savefh.avg_latency => savefh_avg_latency
+  - secinfo.avg_latency => secinfo_avg_latency
+  - secinfo_no_name.avg_latency => secinfo_no_name_avg_latency
+  - sequence.avg_latency => sequence_avg_latency
+  - set_ssv.avg_latency => set_ssv_avg_latency
+  - setattr.avg_latency => setattr_avg_latency
+  - test_stateid.avg_latency => test_stateid_avg_latency
+  - verify.avg_latency => verify_avg_latency
+  - want_delegation.avg_latency => want_delegation_avg_latency
+  - write.avg_latency => write_avg_latency
+
+export_options:
+  instance_keys:
+    - svm
+
+override:
+  - access.total: rate
+  - backchannel_ctl.total: rate
+  - bind_conn_to_session.total: rate
+  - close.total: rate
+  - commit.total: rate
+  - compound.total: rate
+  - create_session.total: rate
+  - create.total: rate
+  - delegpurge.total: rate
+  - delegreturn.total: rate
+  - destroy_clientid.total: rate
+  - destroy_session.total: rate
+  - exchange_id.total: rate
+  - free_stateid.total: rate
+  - get_dir_delegation.total: rate
+  - getattr.total: rate
+  - getdeviceinfo.total: rate
+  - getdevicelist.total: rate
+  - getfh.total: rate
+  - layoutcommit.total: rate
+  - layoutget.total: rate
+  - layoutreturn.total: rate
+  - link.total: rate
+  - lock.total: rate
+  - lockt.total: rate
+  - locku.total: rate
+  - lookup.total: rate
+  - lookupp.total: rate
+  - null.total: rate
+  - nverify.total: rate
+  - open_downgrade.total: rate
+  - open.total: rate
+  - openattr.total: rate
+  - putfh.total: rate
+  - putpubfh.total: rate
+  - putrootfh.total: rate
+  - read.total: rate
+  - readdir.total: rate
+  - readlink.total: rate
+  - reclaim_complete.total: rate
+  - remove.total: rate
+  - rename.total: rate
+  - restorefh.total: rate
+  - savefh.total: rate
+  - secinfo_no_name.total: rate
+  - secinfo.total: rate
+  - sequence.total: rate
+  - set_ssv.total: rate
+  - setattr.total: rate
+  - test_stateid.total: rate
+  - verify.total: rate
+  - want_delegation.total: rate
+  - write.total: rate

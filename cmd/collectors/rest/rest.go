@@ -41,17 +41,18 @@ type prop struct {
 	TemplatePath   string
 	InstanceKeys   []string
 	InstanceLabels map[string]string
-	Metrics        map[string]metric
+	Metrics        map[string]*Metric
 	Counters       map[string]string
 	ReturnTimeOut  string
 	Fields         []string
 	ApiType        string // public, private
 }
 
-type metric struct {
+type Metric struct {
 	Label      string
 	Name       string
 	MetricType string
+	Exportable bool
 }
 
 func init() {
@@ -186,7 +187,7 @@ func (r *Rest) initEndPoints() error {
 			prop.InstanceKeys = make([]string, 0)
 			prop.InstanceLabels = make(map[string]string)
 			prop.Counters = make(map[string]string)
-			prop.Metrics = make(map[string]metric)
+			prop.Metrics = make(map[string]*Metric)
 			prop.ApiType = "public"
 			prop.ReturnTimeOut = r.Prop.ReturnTimeOut
 			prop.TemplatePath = r.Prop.TemplatePath
