@@ -12,6 +12,7 @@ objects:
   HeadroomCPU:      resource_headroom_cpu.yaml
   HeadroomAggr:     resource_headroom_aggr.yaml
   Qtree:            qtree.yaml
+  NFSv3Node:        nfsv3_node.yaml
 
   # SVM-level metrics
   CIFSvserver:      cifs_vserver.yaml
