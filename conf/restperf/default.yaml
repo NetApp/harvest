@@ -19,3 +19,5 @@ objects:
   Volume:           volume.yaml
   CopyManager:      copy_manager.yaml
   NFSv3:            nfsv3.yaml
+  NFSv4:            nfsv4.yaml
+  NFSv41:           nfsv4_1.yaml
