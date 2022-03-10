@@ -23,6 +23,9 @@ endpoints:
 
 plugins:
   - Qtree
+  - LabelAgent:
+      replace:
+        - oplocks oplocks `enable` `enabled`
 
 export_options:
   instance_keys:

@@ -19,7 +19,7 @@ counters:
   - space.block_storage.inactive_user_data => space_performance_tier_inactive_user_data
   - space.block_storage.inactive_user_data_percent => space_performance_tier_inactive_user_data_percent
   - space.block_storage.physical_used => space_physical_used
-  - space.block_storage.physical_used_percent  => space_used_percent
+  - space.block_storage.physical_used_percent  => space_physical_used_percent
   - space.block_storage.volume_deduplication_shared_count => space_sis_shared_count
   - space.block_storage.volume_deduplication_space_saved => space_sis_saved
   - space.block_storage.volume_deduplication_space_saved_percent => space_sis_saved_percent
@@ -39,6 +39,7 @@ counters:
   - inode_attributes.max_files_available => inode_maxfiles_available
   - inode_attributes.max_files_possible => inode_maxfiles_possible
   - inode_attributes.max_files_used => inode_maxfiles_used
+  - inode_attributes.used_percent => snapshot_inode_used_percent
   - space.snapshot.available => snapshot_size_available
   - space.snapshot.used => snapshot_size_used
   - space.snapshot.used_percent => snapshot_used_percent

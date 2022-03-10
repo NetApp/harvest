@@ -23,8 +23,10 @@ endpoints:
 plugins:
   - Shelf
   - LabelAgent:
+      replace:
+        - state state `ok` `online`
       value_to_num:
-        - new_status state online ok `0`
+        - new_status state online online `0`
 
 export_options:
   instance_keys:
