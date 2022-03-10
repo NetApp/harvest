@@ -14,9 +14,9 @@ objects:
   NFSv3Node:        nfsv3_node.yaml
   NFSv4Node:        nfsv4_node.yaml
   NFSv41Node:       nfsv4_1_node.yaml
-#  VolumeNode:       volume_node.yaml
-  WAFL:             wafl.yaml
   Qtree:            qtree.yaml
+#  VolumeNode:       volume_node.yaml
+  WAFL: wafl.yaml
 
   # SVM-level metrics
   CIFSvserver:      cifs_vserver.yaml
