@@ -51,6 +51,7 @@ counters:
   - block_storage.plexes.# => raid_plex_count
   - hidden_fields:
       - inode_attributes
+      - space
 
 plugins:
   - LabelAgent:
