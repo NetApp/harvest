@@ -11,13 +11,17 @@ objects:
   CIFSNode:         cifs_node.yaml
   HeadroomCPU:      resource_headroom_cpu.yaml
   HeadroomAggr:     resource_headroom_aggr.yaml
-  Qtree:            qtree.yaml
   NFSv3Node:        nfsv3_node.yaml
+  NFSv4Node:        nfsv4_node.yaml
+  NFSv41Node:       nfsv4_1_node.yaml
+#  VolumeNode:       volume_node.yaml
+  WAFL:             wafl.yaml
+  Qtree:            qtree.yaml
 
   # SVM-level metrics
   CIFSvserver:      cifs_vserver.yaml
-  Volume:           volume.yaml
   CopyManager:      copy_manager.yaml
   NFSv3:            nfsv3.yaml
   NFSv4:            nfsv4.yaml
   NFSv41:           nfsv4_1.yaml
+  Volume:           volume.yaml
