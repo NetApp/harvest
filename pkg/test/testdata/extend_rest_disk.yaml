@@ -1,0 +1,14 @@
+counters:
+  - ^type
+  - hidden_fields:
+      - usable_size
+
+endpoints:
+  - query: api/private/cli/disk
+    counters:
+      - disk_io_kbps_total => stats_io_kbps
+  - query: api/private/cli/disk1
+    counters:
+      - ^^uid1 => uid
+      - sectors_read1 => stats_sectors_read
+      - sectors_written1 => stats_sectors_written

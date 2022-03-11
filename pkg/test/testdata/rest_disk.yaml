@@ -1,0 +1,13 @@
+counters:
+  - ^^uid
+  - hidden_fields:
+      - serial_number
+
+endpoints:
+  - query: api/private/cli/disk
+    counters:
+      - ^^uid => uid
+      - sectors_read => stats_sectors_read
+      - sectors_written => stats_sectors_written
+
+

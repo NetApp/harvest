@@ -203,6 +203,40 @@ func TestNode_MergeCollector(t *testing.T) {
 	}
 }
 
+func TestNode_RestMergeCollector(t *testing.T) {
+	defaultTemplate, _ := tree.ImportYaml("testdata/rest_disk.yaml")
+	customTemplate, _ := tree.ImportYaml("testdata/extend_rest_disk.yaml")
+	defaultTemplate.PreprocessTemplate()
+	customTemplate.PreprocessTemplate()
+	defaultTemplate.Merge(customTemplate, nil)
+
+	// hidden_field child count
+	want := 2
+	got := 0
+	if hiddenFields := defaultTemplate.GetChildS("counters").GetChildS("hidden_fields"); hiddenFields != nil {
+		for range hiddenFields.GetChildren() {
+			got += 1
+		}
+	}
+
+	if got != want {
+		t.Errorf("got %v, want %v", got, want)
+	}
+
+	// endpoint child
+	want1 := 2
+	got1 := 0
+	if endPoints := defaultTemplate.GetChildS("endpoints").GetChildS(""); endPoints != nil {
+		for range endPoints.GetChildren() {
+			got1 += 1
+		}
+	}
+
+	if got1 != want1 {
+		t.Errorf("got %v, want %v", got1, want1)
+	}
+}
+
 // Merge collector templates where custom templates are from 21.08.6 and before
 // LabelAgent child did have key-value pair of rules instead of a list
 func TestNode_MergeCollectorOld(t *testing.T) {

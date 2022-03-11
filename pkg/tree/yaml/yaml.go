@@ -29,7 +29,11 @@ func dumpRecursive(node *node.Node, data *[][]byte, depth int) {
 	} else if len(node.GetName()) != 0 && len(node.GetContent()) != 0 && parentName != "labels" {
 		*data = append(*data, joinAll(indentation, node.GetName(), []byte(": "), node.GetContent()))
 	} else if len(node.GetName()) != 0 {
-		*data = append(*data, joinAll(indentation, node.GetName(), []byte(":")))
+		if node.GetNameS() == "hidden_fields" && parentName == "counters" {
+			*data = append(*data, joinAll(indentation, []byte("- "), node.GetName(), []byte(":")))
+		} else {
+			*data = append(*data, joinAll(indentation, node.GetName(), []byte(":")))
+		}
 	} else {
 		*data = append(*data, joinAll(indentation, []byte("- "), node.GetContent()))
 	}

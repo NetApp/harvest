@@ -47,6 +47,10 @@ func (n *Node) SetXmlNameS(name string) {
 	n.XMLName = xml.Name{Local: name}
 }
 
+func (n *Node) SetChildren(children []*Node) {
+	n.Children = children
+}
+
 func (n *Node) GetName() []byte {
 	if name := n.GetXmlNameS(); name != "" {
 		return []byte(name)
@@ -319,7 +323,10 @@ func (me *Node) Merge(subtemplate *Node, skipOverwrite []string) {
 			if mine != nil && mine.GetParent() != nil && mine.GetParent().GetChildByContent(child.GetContentS()) == nil {
 				mine.GetParent().AddChild(child)
 			} else {
-				if me.GetChildByContent(child.GetContentS()) == nil {
+				// Overwrite endpoints
+				if mine != nil && mine.GetParent() != nil && mine.GetParent().GetNameS() == "endpoints" {
+					mine.SetChildren(child.Children)
+				} else if me.GetChildByContent(child.GetContentS()) == nil {
 					me.AddChild(child)
 				}
 			}

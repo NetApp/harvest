@@ -266,6 +266,9 @@ To help understand the merging process and the resulting combined template, you 
 bin/harvest doctor merge --template conf/zapi/cdot/9.8.0/lun.yaml --with conf/zapi/cdot/9.8.0/custom_lun.yaml
 ```
 
+####Note: 
+Content under ```endpoints``` in templates are overwritten during merge 
+
 ### Replace an existing object template
 
 You can only extend existing templates as explained [above](#extend-an-existing-object-template). If you need to replace one of the existing object templates, let us know more on Slack or GitHub.
