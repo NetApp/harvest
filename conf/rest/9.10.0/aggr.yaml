@@ -39,6 +39,8 @@ counters:
   - block_storage.primary.disk_count => primary_disk_count
   - block_storage.hybrid_cache.disk_count => hybrid_disk_count
   - block_storage.plexes.# => raid_plex_count
+  - hidden_fields:
+      - space
 
 plugins:
   - LabelAgent:
