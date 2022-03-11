@@ -1,0 +1,138 @@
+
+name:                     NFSv4Node
+query:                    api/cluster/counter/tables/svm_nfs_v4:node
+object:                   node_nfs
+
+global_labels:
+  - nfsv: v4
+
+counters:
+  - ^^id
+  - ^instance_name            => node
+  - latency
+  - total_ops 
+  - total.read_throughput
+  - total.throughput
+  - total.write_throughput
+  - access.total => access_total
+  - close.total => close_total
+  - commit.total => commit_total
+  - create.total => create_total
+  - delegpurge.total => delegpurge_total
+  - delegreturn.total => delegreturn_total
+  - getattr.total => getattr_total
+  - getfh.total => getfh_total
+  - link.total => link_total
+  - lock.total => lock_total
+  - lockt.total => lockt_total
+  - locku.total => locku_total
+  - lookup.total => lookup_total
+  - lookupp.total => lookupp_total
+  - null.total => null_total
+  - nverify.total => nverify_total
+  - open_confirm.total => open_confirm_total
+  - open_downgrade.total => open_downgrade_total
+  - open.total => open_total
+  - openattr.total => openattr_total
+  - putfh.total => putfh_total
+  - putpubfh.total => putpubfh_total
+  - putrootfh.total => putrootfh_total
+  - read.total => read_total
+  - readdir.total => readdir_total
+  - readlink.total => readlink_total
+  - release_lock_owner.total => release_lock_owner_total
+  - remove.total => remove_total
+  - rename.total => rename_total
+  - renew.total => renew_total
+  - restorefh.total => restorefh_total
+  - savefh.total => savefh_total
+  - secinfo.total => secinfo_total
+  - setattr.total => setattr_total
+  - setclientid_confirm.total => setclientid_confirm_total
+  - setclientid.total => setclientid_total
+  - verify.total => verify_total
+  - write.total => write_total
+  - access.avg_latency => access_avg_latency
+  - close.avg_latency => close_avg_latency
+  - commit.avg_latency => commit_avg_latency
+  - create.avg_latency => create_avg_latency
+  - delegpurge.avg_latency => delegpurge_avg_latency
+  - delegreturn.avg_latency => delegreturn_avg_latency
+  - getattr.avg_latency => getattr_avg_latency
+  - getfh.avg_latency => getfh_avg_latency
+  - link.avg_latency => link_avg_latency
+  - lock.avg_latency => lock_avg_latency
+  - lockt.avg_latency => lockt_avg_latency
+  - locku.avg_latency => locku_avg_latency
+  - lookup.avg_latency => lookup_avg_latency
+  - lookupp.avg_latency => lookupp_avg_latency
+  - null.avg_latency => null_avg_latency
+  - nverify.avg_latency => nverify_avg_latency
+  - open.avg_latency => open_avg_latency
+  - open_confirm.avg_latency => open_confirm_avg_latency
+  - open_downgrade.avg_latency => open_downgrade_avg_latency
+  - openattr.avg_latency => openattr_avg_latency
+  - putfh.avg_latency => putfh_avg_latency
+  - putpubfh.avg_latency => putpubfh_avg_latency
+  - putrootfh.avg_latency => putrootfh_avg_latency
+  - read.avg_latency => read_avg_latency
+  - readdir.avg_latency => readdir_avg_latency
+  - readlink.avg_latency => readlink_avg_latency
+  - release_lock_owner.avg_latency => release_lock_owner_avg_latency
+  - remove.avg_latency => remove_avg_latency
+  - rename.avg_latency => rename_avg_latency
+  - renew.avg_latency => renew_avg_latency
+  - restorefh.avg_latency => restorefh_avg_latency
+  - savefh.avg_latency => savefh_avg_latency
+  - secinfo.avg_latency => secinfo_avg_latency
+  - setattr.avg_latency => setattr_avg_latency
+  - setclientid.avg_latency => setclientid_avg_latency
+  - setclientid_confirm.avg_latency => setclientid_confirm_avg_latency
+  - verify.avg_latency => verify_avg_latency
+  - write.avg_latency => write_avg_latency
+
+
+override:
+  - access.total: rate
+  - close.total: rate
+  - commit.total: rate
+  - compound.total: rate
+  - create.total: rate
+  - delegpurge.total: rate
+  - delegreturn.total: rate
+  - getattr.total: rate
+  - getfh.total: rate
+  - link.total: rate
+  - lock.total: rate
+  - lockt.total: rate
+  - locku.total: rate
+  - lookup.total: rate
+  - lookupp.total: rate
+  - null.total: rate
+  - nverify.total: rate
+  - open_confirm.total: rate
+  - open_downgrade.total: rate
+  - open.total: rate
+  - openattr.total: rate
+  - putfh.total: rate
+  - putpubfh.total: rate
+  - putrootfh.total: rate
+  - read.total: rate
+  - readdir.total: rate
+  - readlink.total: rate
+  - release_lock_owner.total: rate
+  - remove.total: rate
+  - rename.total: rate
+  - renew.total: rate
+  - restorefh.total: rate
+  - savefh.total: rate
+  - secinfo.total: rate
+  - setattr.total: rate
+  - setclientid_confirm.total: rate
+  - setclientid.total: rate
+  - verify.total: rate
+  - write.total: rate
+
+export_options:
+  instance_keys:
+    - node

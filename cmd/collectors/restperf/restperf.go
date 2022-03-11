@@ -442,11 +442,12 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 					}
 
 					for i, label := range labels {
-						metr, ok := newData.GetMetrics()[name+"."+label]
+						k := name + "#" + label
+						metr, ok := newData.GetMetrics()[k]
 						if !ok {
-							if metr, err = newData.NewMetricFloat64(name + "." + label); err != nil {
+							if metr, err = newData.NewMetricFloat64(k); err != nil {
 								r.Logger.Error().Err(err).
-									Str("name", name+"."+label).
+									Str("name", k).
 									Msg("NewMetricFloat64")
 								continue
 							}
@@ -685,7 +686,7 @@ func (r *RestPerf) counterLookup(metric matrix.Metric, metricKey string) *counte
 	var c *counter
 
 	if metric.IsArray() {
-		lastInd := strings.LastIndex(metricKey, ".")
+		lastInd := strings.LastIndex(metricKey, "#")
 		name := metricKey[:lastInd]
 		c = r.perfProp.counterInfo[name]
 	} else {
