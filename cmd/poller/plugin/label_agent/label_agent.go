@@ -29,6 +29,7 @@ type LabelAgent struct {
 	includeRegexRules    []includeRegexRule
 	valueToNumRules      []valueToNumRule
 	computeMetricRules   []computeMetricRule
+	valueToNumRegexRules []valueToNumRegexRule
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -234,18 +235,20 @@ func (me *LabelAgent) excludeRegex(matrix *matrix.Matrix) error {
 // if label is not equal to value, set instance as non-exportable
 func (me *LabelAgent) includeEquals(matrix *matrix.Matrix) error {
 	for _, instance := range matrix.GetInstances() {
-		isExport := false
-		for _, r := range me.includeEqualsRules {
-			if instance.GetLabel(r.label) == r.value {
-				isExport = true
-				me.Logger.Trace().Str("label", r.label).
-					Str("value", r.value).
-					Str("instance labels", instance.GetLabels().String()).
-					Msg("includeEquals: included")
-				break
+		if instance.IsExportable() {
+			isExport := false
+			for _, r := range me.includeEqualsRules {
+				if instance.GetLabel(r.label) == r.value {
+					isExport = true
+					me.Logger.Trace().Str("label", r.label).
+						Str("value", r.value).
+						Str("instance labels", instance.GetLabels().String()).
+						Msg("includeEquals: included")
+					break
+				}
 			}
+			instance.SetExportable(isExport)
 		}
-		instance.SetExportable(isExport)
 	}
 	return nil
 }
@@ -253,18 +256,20 @@ func (me *LabelAgent) includeEquals(matrix *matrix.Matrix) error {
 // if label does not contains value, set instance as non-exportable
 func (me *LabelAgent) includeContains(matrix *matrix.Matrix) error {
 	for _, instance := range matrix.GetInstances() {
-		isExport := false
-		for _, r := range me.includeContainsRules {
-			if strings.Contains(instance.GetLabel(r.label), r.value) {
-				isExport = true
-				me.Logger.Trace().Str("label", r.label).
-					Str("value", r.value).
-					Str("instance labels", instance.GetLabels().String()).
-					Msg("includeContains: included")
-				break
+		if instance.IsExportable() {
+			isExport := false
+			for _, r := range me.includeContainsRules {
+				if strings.Contains(instance.GetLabel(r.label), r.value) {
+					isExport = true
+					me.Logger.Trace().Str("label", r.label).
+						Str("value", r.value).
+						Str("instance labels", instance.GetLabels().String()).
+						Msg("includeContains: included")
+					break
+				}
 			}
+			instance.SetExportable(isExport)
 		}
-		instance.SetExportable(isExport)
 	}
 	return nil
 }
@@ -274,23 +279,25 @@ func (me *LabelAgent) includeContains(matrix *matrix.Matrix) error {
 // if an instance does not match the regex label it will not be exported
 func (me *LabelAgent) includeRegex(matrix *matrix.Matrix) error {
 	for _, instance := range matrix.GetInstances() {
-		isExport := false
-		for _, r := range me.includeRegexRules {
-			if r.reg.MatchString(instance.GetLabel(r.label)) {
-				isExport = true
-				me.Logger.Trace().Str("label", r.label).
-					Str("regex", r.reg.String()).
-					Str("instance labels", instance.GetLabels().String()).
-					Msg("includeRegex: included")
-				break
+		if instance.IsExportable() {
+			isExport := false
+			for _, r := range me.includeRegexRules {
+				if r.reg.MatchString(instance.GetLabel(r.label)) {
+					isExport = true
+					me.Logger.Trace().Str("label", r.label).
+						Str("regex", r.reg.String()).
+						Str("instance labels", instance.GetLabels().String()).
+						Msg("includeRegex: included")
+					break
+				}
 			}
+			instance.SetExportable(isExport)
 		}
-		instance.SetExportable(isExport)
 	}
 	return nil
 }
 
-func (me *LabelAgent) mapValues(m *matrix.Matrix) error {
+func (me *LabelAgent) mapValueToNum(m *matrix.Matrix) error {
 
 	var (
 		metric matrix.Metric
@@ -310,25 +317,13 @@ func (me *LabelAgent) mapValues(m *matrix.Matrix) error {
 		}
 
 		for key, instance := range m.GetInstances() {
-			value := instance.GetLabel(r.label)
-			if r.isRegex {
-				if v := strings.Contains(value, r.regexValue); v {
-					_ = metric.SetValueUint8(instance, uint8(1))
-					me.Logger.Trace().Msgf("valueToNumMapping: [%s] [%s] mapped (%s) value to %d", r.metric, key, instance.GetLabel(r.label), r.regexValue)
-				} else {
-					_ = metric.SetValueUint8(instance, uint8(0))
-					me.Logger.Trace().Msgf("valueToNumMapping: [%s] [%s] mapped (%s) value to default %d", r.metric, key, instance.GetLabel(r.label), r.regexValue)
-				}
-			} else {
-				if v, ok := r.mapping[instance.GetLabel(r.label)]; ok {
-					_ = metric.SetValueUint8(instance, v)
-					me.Logger.Trace().Msgf("valueToNumMapping: [%s] [%s] mapped (%s) value to %d", r.metric, key, instance.GetLabel(r.label), v)
-				} else if r.hasDefault {
-					_ = metric.SetValueUint8(instance, r.defaultValue)
-					me.Logger.Trace().Msgf("valueToNumMapping: [%s] [%s] mapped (%s) value to default %d", r.metric, key, instance.GetLabel(r.label), r.defaultValue)
-				}
+			if v, ok := r.mapping[instance.GetLabel(r.label)]; ok {
+				_ = metric.SetValueUint8(instance, v)
+				me.Logger.Trace().Msgf("valueToNumMapping: [%s] [%s] mapped (%s) value to %d", r.metric, key, instance.GetLabel(r.label), v)
+			} else if r.hasDefault {
+				_ = metric.SetValueUint8(instance, r.defaultValue)
+				me.Logger.Trace().Msgf("valueToNumMapping: [%s] [%s] mapped (%s) value to default %d", r.metric, key, instance.GetLabel(r.label), r.defaultValue)
 			}
-
 		}
 	}
 
@@ -362,6 +357,8 @@ func (me *LabelAgent) computeMetrics(m *matrix.Matrix) error {
 			if firstMetricVal = m.GetMetric(r.metricNames[0]); firstMetricVal != nil {
 				if val, ok := firstMetricVal.GetValueFloat64(instance); ok {
 					result = val
+				} else {
+					continue
 				}
 			} else {
 				me.Logger.Warn().Stack().Err(err).Str("metricName", r.metricNames[0]).Msg("computeMetrics: metric not found")
@@ -399,6 +396,37 @@ func (me *LabelAgent) computeMetrics(m *matrix.Matrix) error {
 
 			_ = metric.SetValueFloat64(instance, result)
 			me.Logger.Trace().Str("metricName", r.metric).Float64("metricValue", result).Msg("computeMetrics: new metric created")
+		}
+	}
+	return nil
+}
+
+func (me *LabelAgent) mapValueToNumRegex(m *matrix.Matrix) error {
+	var (
+		metric matrix.Metric
+		err    error
+	)
+
+	// map values for value_to_num mapping rules
+	for _, r := range me.valueToNumRegexRules {
+		if metric = m.GetMetric(r.metric); metric == nil {
+			if metric, err = m.NewMetricUint8(r.metric); err != nil {
+				me.Logger.Error().Stack().Err(err).Msgf("valueToNumRegexMapping: new metric [%s]:", r.metric)
+				return err
+			} else {
+				metric.SetProperty("value_to_num_regex mapping")
+			}
+		}
+
+		for key, instance := range m.GetInstances() {
+			value := instance.GetLabel(r.label)
+			if r.reg[0].MatchString(value) || r.reg[1].MatchString(value) {
+				_ = metric.SetValueUint8(instance, uint8(1))
+				me.Logger.Trace().Msgf("valueToNumRegexMapping: [%s] [%s] mapped (%s) value to %d, regex1: %s, regex2: %s", r.metric, key, value, 1, r.reg[0], r.reg[1])
+			} else if r.hasDefault {
+				_ = metric.SetValueUint8(instance, r.defaultValue)
+				me.Logger.Trace().Msgf("valueToNumRegexMapping: [%s] [%s] mapped (%s) value to default %d, regex1: %s, regex2: %s", r.metric, key, value, r.defaultValue, r.reg[0], r.reg[1])
+			}
 		}
 	}
 	return nil
