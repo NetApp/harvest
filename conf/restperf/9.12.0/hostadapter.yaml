@@ -1,0 +1,15 @@
+
+name:                     HostAdapter
+query:                    api/cluster/counter/tables/host_adapter
+object:                   hostadapter
+
+counters:
+  - ^^id                   => hostadapter #Zapi has values after ":" TODO handle using plugin
+  - ^node.name             => node
+  - bytes_read
+  - bytes_written
+
+export_options:
+  instance_keys:
+    - node
+    - hostadapter
