@@ -709,7 +709,6 @@ func TestExcludeEqualIncludeEqualRuleOrder(t *testing.T) {
 	}
 }
 
-
 func TestIncludeContainExcludeContainRuleOrder(t *testing.T) {
 	m := matrix.New("TestLabelAgent", "test", "test")
 
