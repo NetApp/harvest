@@ -7,9 +7,9 @@ object:                   wafl
 counters:
   - ^^id
   - ^node.name             => node
-  - avg_non_wafl_msg_latency
-  - avg_msg_latency
-  - avg_replication_msg_latency
+  - average_non_wafl_msg_latency
+  - average_msg_latency
+  - average_replication_msg_latency
   - msg_total
   - replication_msg_total
   - non_wafl_msg_total
@@ -24,9 +24,9 @@ counters:
   - reads_from_cloud
   - reads_from_cloud_s2c_bin
   - reads_from_disk
-  - reads_from_ext_cache
+  - reads_from_external_cache
   - reads_from_fc_miss
-  - reads_from_pmem
+  - read_io_type
   - reads_from_ssd
 
 override:

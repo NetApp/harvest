@@ -1,0 +1,46 @@
+name:                     Fcp
+query:                    api/cluster/counter/tables/fcp
+object:                   fcp
+
+counters:
+  - ^^id
+  - name          => port
+  - node.name     => node
+  - average_other_latency
+  - average_read_latency
+  - average_write_latency
+  - read_data
+  - write_data
+  - total_data
+  - read_ops
+  - write_ops
+  - other_ops
+  - total_ops
+  - link.speed             => speed
+  - link.down  => link_down
+  - link.failure => link_failure
+  - loss_of_signal
+  - loss_of_sync
+  - primitive_seq_err
+  - queue_full
+  - reset_count
+  - shared_interrupt_count
+  - spurious_interrupt_count
+  - threshold_full
+  - discarded_frames_count
+  - interrupt_count
+  - invalid.transmission_word => invalid_transmission_word
+  - isr.count => isr_count
+  - invalid.crc => invalid_crc
+
+override:
+  - link.speed: string
+
+#plugins:
+#  - Fcp
+
+export_options:
+  instance_keys:
+    - node
+    - port
+    - speed
