@@ -1,0 +1,25 @@
+
+name:                     Processor
+query:                    api/cluster/counter/tables/processor
+object:                   processor
+
+counters:
+  - ^^id
+  - ^node.name             => node
+  - name => instance_name
+  - domain_busy_percent => domain_busy
+  - busy_percent => processor_busy
+
+plugins:
+  Aggregator:
+    - node<>node_cpu
+
+# only export node-level averages from plugin
+# set this true or comment, to get data for each cpu
+export_data: false
+
+export_options:
+  instance_keys:
+    - node
+    - cpus
+

@@ -9,17 +9,19 @@ schedule:
 
 objects:
   CIFSNode:         cifs_node.yaml
+  Fcp:              fcp.yaml
   HeadroomCPU:      resource_headroom_cpu.yaml
   HeadroomAggr:     resource_headroom_aggr.yaml
   NFSv3Node:        nfsv3_node.yaml
   NFSv4Node:        nfsv4_node.yaml
   NFSv41Node:       nfsv4_1_node.yaml
+  Processor:        processor.yaml
   Qtree:            qtree.yaml
-#  VolumeNode:       volume_node.yaml
-  WAFL: wafl.yaml
+  VolumeNode:       volume_node.yaml
+  WAFL:             wafl.yaml
 
   # SVM-level metrics
-  CIFSvserver:      cifs_vserver.yaml
+  CIFSsvm:          cifs_svm.yaml
   CopyManager:      copy_manager.yaml
   NFSv3:            nfsv3.yaml
   NFSv4:            nfsv4.yaml

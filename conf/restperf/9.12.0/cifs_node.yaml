@@ -1,17 +1,17 @@
 
 name:                     CIFSNode
-query:                    api/cluster/counter/tables/cifs:node
+query:                    api/cluster/counter/tables/svm_cifs:node
 object:                   node_cifs
 
 counters:
-  - ^^instance_name          => node
+  - ^^node.name             => node
   - op_count
   - total_ops               => ops
   - total_read_ops          => read_ops
   - total_write_ops         => write_ops
   - latency
-  - avg_read_latency        => read_latency
-  - avg_write_latency       => write_latency
+  - average_read_latency    => read_latency
+  - average_write_latency       => write_latency
 #  - connections
 #  - established_sessions
 #  - open_files
