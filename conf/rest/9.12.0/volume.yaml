@@ -33,6 +33,7 @@ counters:
   - space.snapshot.reserve_size               => snapshot_reserve_size
   - space.snapshot.reserve_percent         => snapshot_reserve_percent
   - space.snapshot.space_used_percent    => snapshot_reserve_used_percent
+  - snapshot_count
   - hidden_fields:
     - space
     - autosize
@@ -43,7 +44,6 @@ endpoints:
       - ^^instance_uuid => instance_uuid
       - ^node  => node
       - ^is_sis_volume => is_sis_volume
-      - snapshot_count => snapshot_count
       - compression_space_saved_percent => sis_compress_saved_percent
       - dedupe_space_saved_percent => sis_dedup_saved_percent
       - compression_space_saved => sis_compress_saved
