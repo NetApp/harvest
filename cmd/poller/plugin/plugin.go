@@ -121,17 +121,20 @@ func (p *AbstractPlugin) GetName() string {
 }
 
 // Init initializes the plugin by calling InitAbc
-func (me *AbstractPlugin) Init() error {
-	return me.InitAbc()
+func (p *AbstractPlugin) Init() error {
+	return p.InitAbc()
 }
 
 // InitAbc initializes the plugin
-func (me *AbstractPlugin) InitAbc() error {
+func (p *AbstractPlugin) InitAbc() error {
 
-	if me.Name = me.Params.GetNameS(); me.Name == "" {
+	if p.ParentParams != nil {
+		p.ParentParams.NewChildS("poller_name", p.Options.Poller)
+	}
+	if p.Name = p.Params.GetNameS(); p.Name == "" {
 		return errors.New(errors.MISSING_PARAM, "plugin name")
 	}
-	me.Logger = logging.SubLogger("plugin", me.Parent+":"+me.Name)
+	p.Logger = logging.SubLogger("plugin", p.Parent+":"+p.Name)
 
 	return nil
 }

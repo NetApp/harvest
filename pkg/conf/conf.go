@@ -91,11 +91,49 @@ func LoadHarvestConfig(configPath string) error {
 	return nil
 }
 
+func ReadCredentialsFile(credPath string, p *Poller) error {
+	contents, err := ioutil.ReadFile(credPath)
+
+	if p == nil {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	var credConfig HarvestConfig
+	err = yaml.Unmarshal(contents, &credConfig)
+	if err != nil {
+		return err
+	}
+
+	credPoller := credConfig.Pollers[p.Name]
+	if credPoller == nil {
+		return errors.New(errors.INVALID_PARAM, "poller not found in credentials file")
+	}
+	if credPoller.SslKey != "" {
+		p.SslKey = credPoller.SslKey
+	}
+	if credPoller.SslCert != "" {
+		p.SslCert = credPoller.SslCert
+	}
+	if credPoller.CaCertPath != "" {
+		p.CaCertPath = credPoller.CaCertPath
+	}
+	if credPoller.Username != "" {
+		p.Username = credPoller.Username
+	}
+	if credPoller.Password != "" {
+		p.Password = credPoller.Password
+	}
+	return nil
+}
+
 func PollerNamed(name string) (*Poller, error) {
 	poller, ok := Config.Pollers[name]
 	if !ok {
 		return nil, errors.New(errors.ERR_CONFIG, "poller ["+name+"] not found")
 	}
+	poller.Name = name
 	return poller, nil
 }
 
@@ -289,27 +327,29 @@ type Collector struct {
 }
 
 type Poller struct {
-	Addr           string                `yaml:"addr,omitempty"`
-	ApiVersion     string                `yaml:"api_version,omitempty"`
-	ApiVfiler      string                `yaml:"api_vfiler,omitempty"`
-	AuthStyle      string                `yaml:"auth_style,omitempty"`
-	CaCertPath     string                `yaml:"ca_cert,omitempty"`
-	ClientTimeout  string                `yaml:"client_timeout,omitempty"`
-	Collectors     []Collector           `yaml:"collectors,omitempty"`
-	Datacenter     string                `yaml:"datacenter,omitempty"`
-	Exporters      []string              `yaml:"exporters,omitempty"`
-	IsKfs          bool                  `yaml:"is_kfs,omitempty"`
-	Labels         *[]*map[string]string `yaml:"labels,omitempty"`
-	LogMaxBytes    int64                 `yaml:"log_max_bytes,omitempty"`
-	LogMaxFiles    int                   `yaml:"log_max_files,omitempty"`
-	LogSet         *[]string             `yaml:"log,omitempty"`
-	Password       string                `yaml:"password,omitempty"`
-	PollerSchedule string                `yaml:"poller_schedule,omitempty"`
-	SslCert        string                `yaml:"ssl_cert,omitempty"`
-	SslKey         string                `yaml:"ssl_key,omitempty"`
-	UseInsecureTls *bool                 `yaml:"use_insecure_tls,omitempty"`
-	Username       string                `yaml:"username,omitempty"`
-	promIndex      int
+	Addr            string                `yaml:"addr,omitempty"`
+	ApiVersion      string                `yaml:"api_version,omitempty"`
+	ApiVfiler       string                `yaml:"api_vfiler,omitempty"`
+	AuthStyle       string                `yaml:"auth_style,omitempty"`
+	CaCertPath      string                `yaml:"ca_cert,omitempty"`
+	ClientTimeout   string                `yaml:"client_timeout,omitempty"`
+	Collectors      []Collector           `yaml:"collectors,omitempty"`
+	Datacenter      string                `yaml:"datacenter,omitempty"`
+	Exporters       []string              `yaml:"exporters,omitempty"`
+	IsKfs           bool                  `yaml:"is_kfs,omitempty"`
+	Labels          *[]*map[string]string `yaml:"labels,omitempty"`
+	LogMaxBytes     int64                 `yaml:"log_max_bytes,omitempty"`
+	LogMaxFiles     int                   `yaml:"log_max_files,omitempty"`
+	LogSet          *[]string             `yaml:"log,omitempty"`
+	Password        string                `yaml:"password,omitempty"`
+	PollerSchedule  string                `yaml:"poller_schedule,omitempty"`
+	SslCert         string                `yaml:"ssl_cert,omitempty"`
+	SslKey          string                `yaml:"ssl_key,omitempty"`
+	UseInsecureTls  *bool                 `yaml:"use_insecure_tls,omitempty"`
+	Username        string                `yaml:"username,omitempty"`
+	CredentialsFile string                `yaml:"credentials_file,omitempty"`
+	promIndex       int
+	Name            string
 }
 
 func (p *Poller) Union(defaults *Poller) {
@@ -338,7 +378,8 @@ func ZapiPoller(n *node.Node) Poller {
 	} else {
 		p = Poller{}
 	}
-
+	fmt.Printf("ZapiPoller node=%s\n", n.Print(0))
+	p.Name = n.GetChildContentS("poller_name")
 	if apiVersion := n.GetChildContentS("api_version"); apiVersion != "" {
 		p.ApiVersion = apiVersion
 	} else {
@@ -381,6 +422,9 @@ func ZapiPoller(n *node.Node) Poller {
 	}
 	if password := n.GetChildContentS("password"); password != "" {
 		p.Password = password
+	}
+	if credentialsFile := n.GetChildContentS("credentials_file"); credentialsFile != "" {
+		p.CredentialsFile = credentialsFile
 	}
 	if clientTimeout := n.GetChildContentS("client_timeout"); clientTimeout != "" {
 		p.ClientTimeout = clientTimeout
