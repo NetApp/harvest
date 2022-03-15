@@ -692,6 +692,78 @@
                 "value": true
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cluster Certificate Validity"
+            },
+            "properties": [
+              {
+                "id": "custom.filterable",
+                "value": true
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "active": {
+                        "index": 0,
+                        "text": "Active"
+                      },
+                      "expired": {
+                        "index": 2,
+                        "text": "Expired"
+                      },
+                      "expiring": {
+                        "index": 1,
+                        "text": "Active (Expiring < 60 days)"
+                      },
+                      "unknown": {
+                        "index": 3,
+                        "text": "Unknown"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Certificate Issuer Type"
+            },
+            "properties": [
+              {
+                "id": "custom.filterable",
+                "value": true
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "ca_signed": {
+                        "index": 1,
+                        "text": "CA-Signed"
+                      },
+                      "self_signed": {
+                        "index": 0,
+                        "text": "Self-Signed"
+                      },
+                      "unknown": {
+                        "index": 2,
+                        "text": "Unknown"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -710,7 +782,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "support_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", asup_https_configured=\"https\",}",
+          "expr": "support_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", asup_https_configured=\"https\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -771,7 +843,7 @@
           "exemplar": false,
           "expr": "security_audit_destination_status{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
-          "hide": true,
+          "hide": false,
           "instant": true,
           "interval": "",
           "legendFormat": "",
@@ -846,6 +918,16 @@
           "interval": "",
           "legendFormat": "",
           "refId": "N"
+        },
+        {
+          "exemplar": true,
+          "expr": "security_certificate_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "O"
         }
       ],
       "title": "Cluster Compliance",
@@ -870,7 +952,9 @@
                 "Value #I",
                 "Value #L",
                 "Value #M",
-                "Value #N"
+                "Value #N",
+                "certificateExpiryStatus",
+                "certificateIssuerType"
               ]
             }
           }
@@ -908,22 +992,24 @@
               "methods": true
             },
             "indexByName": {
-              "Value #D": 9,
-              "Value #G": 5,
-              "Value #I": 11,
-              "Value #K": 15,
-              "Value #L": 12,
-              "Value #M": 13,
-              "Value #N": 14,
-              "asup_enabled": 6,
-              "banner": 4,
+              "Value #D": 10,
+              "Value #G": 6,
+              "Value #I": 12,
+              "Value #K": 16,
+              "Value #L": 13,
+              "Value #M": 14,
+              "Value #N": 15,
+              "asup_enabled": 7,
+              "banner": 5,
+              "certificateExpiryStatus": 1,
+              "certificateIssuerType": 17,
               "cluster": 0,
-              "encryption_state": 10,
-              "fips_enabled": 1,
-              "locked": 7,
-              "rsh_enabled": 8,
-              "secured": 3,
-              "telnet_enabled": 2
+              "encryption_state": 11,
+              "fips_enabled": 2,
+              "locked": 8,
+              "rsh_enabled": 9,
+              "secured": 4,
+              "telnet_enabled": 3
             },
             "renameByName": {
               "Value #A": "Autosupport Https Transport",
@@ -942,6 +1028,8 @@
               "asupHttpsConfigured": "",
               "asup_enabled": "Autosupport Https Transport",
               "banner": "Login Banner",
+              "certificateExpiryStatus": "Cluster Certificate Validity",
+              "certificateIssuerType": "Certificate Issuer Type",
               "certificateuser": "Certificate Users",
               "ciphers": "Insecure SSH Settings1",
               "cluster": "Cluster",
@@ -1024,9 +1112,19 @@
                   },
                   {
                     "options": {
-                      "match": "nan",
+                      "match": "null",
                       "result": {
                         "index": 1,
+                        "text": "Disabled"
+                      }
+                    },
+                    "type": "special"
+                  },
+                  {
+                    "options": {
+                      "match": "nan",
+                      "result": {
+                        "index": 2,
                         "text": "Enabled"
                       }
                     },
@@ -1467,6 +1565,18 @@
                 "value": true
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "SVM"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 150
+              }
+            ]
           }
         ]
       },
@@ -1675,13 +1785,9 @@
       },
       {
         "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "DC-02",
-          "value": "DC-02"
-        },
+        "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(volume_labels{system_type!=\"7mode\"},datacenter)",
+        "definition": "label_values(svm_labels{system_type!=\"7mode\"},datacenter)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -1691,7 +1797,7 @@
         "name": "Datacenter",
         "options": [],
         "query": {
-          "query": "label_values(volume_labels{system_type!=\"7mode\"},datacenter)",
+          "query": "label_values(svm_labels{system_type!=\"7mode\"},datacenter)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -1705,19 +1811,7 @@
       },
       {
         "allValue": null,
-        "current": {
-          "selected": false,
-          "text": [
-            "F8080-32-25",
-            "ocum-infinity",
-            "sti102nscluster-1"
-          ],
-          "value": [
-            "F8080-32-25",
-            "ocum-infinity",
-            "sti102nscluster-1"
-          ]
-        },
+        "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(svm_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"},cluster)",
         "description": null,
@@ -1743,17 +1837,9 @@
       },
       {
         "allValue": null,
-        "current": {
-          "selected": false,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
+        "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(volume_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\",cluster=~\"$Cluster\"},svm)",
+        "definition": "label_values(svm_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\",cluster=~\"$Cluster\"},svm)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -1763,7 +1849,7 @@
         "name": "SVM",
         "options": [],
         "query": {
-          "query": "label_values(volume_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\",cluster=~\"$Cluster\"},svm)",
+          "query": "label_values(svm_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\",cluster=~\"$Cluster\"},svm)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
