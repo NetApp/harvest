@@ -296,7 +296,7 @@ func (my *Volume) updateMaps(data *matrix.Matrix, smSourceMap map[string][]*matr
 
 		// Update outgoingSM map based on the protectedByMap
 		protectedByValue = nil
-		for protectedByKey, _ := range protectedByMap {
+		for protectedByKey := range protectedByMap {
 			protectedByValue = append(protectedByValue, protectedByKey)
 		}
 		if protectedByValue != nil {
@@ -346,7 +346,7 @@ func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
 			volume.SetLabel("protectedBy", "not_applicable")
 		}
 
-		// Update all_sm_healthy label in volume, when all relationships belongs to this volume are healthy then true, otherwise false
+		// Update all_sm_healthy label in volume, when all relationships belong to this volume are healthy then true, otherwise false
 		if healthy, ok := my.isHealthySM[key]; ok {
 			volume.SetLabel("all_sm_healthy", strconv.FormatBool(healthy))
 		}
