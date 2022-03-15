@@ -378,7 +378,6 @@ func ZapiPoller(n *node.Node) Poller {
 	} else {
 		p = Poller{}
 	}
-	fmt.Printf("ZapiPoller node=%s\n", n.Print(0))
 	p.Name = n.GetChildContentS("poller_name")
 	if apiVersion := n.GetChildContentS("api_version"); apiVersion != "" {
 		p.ApiVersion = apiVersion
