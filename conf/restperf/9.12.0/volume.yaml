@@ -5,15 +5,15 @@ object:                   volume
 
 counters:
   - ^^uuid
-  - ^name => volume
-#  - ^svm.name          => svm
-#  - ^node.name          => node
-  - ^parent_aggregate  => aggr
-  - bytes_read         => read_data
-  - bytes_written      => write_data
-  - total_read_ops     => read_ops
-  - total_write_ops    => write_ops
-  - total_other_ops    => other_ops
+  - ^name                  => volume
+#  - ^svm.name             => svm
+#  - ^node.name            => node
+  - ^parent_aggregate      => aggr
+  - bytes_read             => read_data
+  - bytes_written          => write_data
+  - total_read_ops         => read_ops
+  - total_write_ops        => write_ops
+  - total_other_ops        => other_ops
   - total_ops
   - read_latency
   - write_latency

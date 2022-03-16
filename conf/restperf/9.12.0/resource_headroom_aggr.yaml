@@ -4,19 +4,19 @@ object:                   headroom_aggr
 
 counters:
   # missing uuid
-  - ^^name                  => instance_name
-  - ^^node.name             => node
+  - ^^name                            => instance_name
+  - ^^node.name                       => node
   - current_latency
   - current_ops
   - current_utilization
-  - optimal_point.latency => optimal_point_latency
-  - optimal_point.ops => optimal_point_ops
-  - optimal_point.utilization => optimal_point_utilization
-  - optimal_point.confidence_factor => optimal_point_confidence_factor
-  - ewma.daily => ewma_daily
-  - ewma.hourly => ewma_hourly
-  - ewma.monthly => ewma_monthly
-  - ewma.weekly => ewma_weekly
+  - optimal_point.latency             => optimal_point_latency
+  - optimal_point.ops                 => optimal_point_ops
+  - optimal_point.utilization         => optimal_point_utilization
+  - optimal_point.confidence_factor   => optimal_point_confidence_factor
+  - ewma.daily                        => ewma_daily
+  - ewma.hourly                       => ewma_hourly
+  - ewma.monthly                      => ewma_monthly
+  - ewma.weekly                       => ewma_weekly
 
 
 #plugins:

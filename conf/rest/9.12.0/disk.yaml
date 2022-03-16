@@ -5,31 +5,31 @@ object:           disk
 
 counters:
   - ^^uid
-  - ^name                     => disk
+  - ^name                       => disk
   - ^state
   - ^node.uuid
-  - ^node.name                => node
-  - ^home_node.name           => owner_node
+  - ^node.name                  => node
+  - ^home_node.name             => owner_node
   - ^type
   - ^container_type
   - ^model
   - ^serial_number
-  - ^shelf.uid                => shelf
-  - ^bay                      => shelf_bay
-  - bytes_per_sector          => bytes_per_sector
-  - sector_count              => sectors
-  - stats.average_latency     => stats_average_latency
-  - stats.power_on_hours      => uptime
-  - outage.reason             => outage
+  - ^shelf.uid                  => shelf
+  - ^bay                        => shelf_bay
+  - bytes_per_sector            => bytes_per_sector
+  - sector_count                => sectors
+  - stats.average_latency       => stats_average_latency
+  - stats.power_on_hours        => uptime
+  - outage.reason               => outage
   - usable_size
 
 endpoints:
   - query: api/private/cli/disk
     counters:
-      - ^^uid => uid
-      - sectors_read => stats_sectors_read
-      - sectors_written => stats_sectors_written
-      - disk_io_kbps_total => stats_io_kbps
+      - ^^uid                   => uid
+      - sectors_read            => stats_sectors_read
+      - sectors_written         => stats_sectors_written
+      - disk_io_kbps_total      => stats_io_kbps
 
 plugins:
   - Disk

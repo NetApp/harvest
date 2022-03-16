@@ -3,10 +3,10 @@ query:                    api/private/cli/snapshot/policy
 object:                   snapshot_policy
 
 counters:
-  - ^^vserver => svm
-  - ^^policy  =>  snapshot_policy
-  - ^comment  =>  comment
-  - total_schedules => total_schedules
+  - ^^vserver         => svm
+  - ^^policy          =>  snapshot_policy
+  - ^comment          =>  comment
+  - total_schedules   => total_schedules
 
 export_options:
   instance_keys:
