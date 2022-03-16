@@ -4,10 +4,10 @@ object:                   qtree
 
 counters:
   - ^^id
-  - ^name                 => qtreefull
-  - ^svm.name             => svm
-  - ^node.name            => node
-  - ^parent_volume.name   => volume
+  - ^name                   => qtreefull
+  - ^svm.name               => svm
+  - ^node.name              => node
+  - ^parent_volume.name     => volume
   - cifs_ops
   - nfs_ops
   - internal_ops

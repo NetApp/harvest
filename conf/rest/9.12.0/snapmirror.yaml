@@ -5,34 +5,34 @@ query:                        api/private/cli/snapmirror
 object:                       snapmirror
 
 counters:
-  - ^^relationship_id => relationship_id
-  - ^destination_path => destination_location
-  - ^destination_volume_node => destination_node
-  - ^destination_vserver => destination_vserver
-  - ^destination_volume => destination_volume
-  - ^source_vserver => source_vserver
-  - ^source_volume => source_volume
-  - ^type => relationship_type
-  - ^state => relationship_status
-  - ^policy_type => policy_type
-  - ^relationship_group_type  => group_type
-  - ^schedule => schedule
-  - ^healthy => healthy
-  - ^last_transfer_type => last_transfer_type
-  - ^unhealthy_reason => unhealthy_reason
-  - lag_time(duration) => lag_time
-  - last_transfer_duration(duration) => last_transfer_duration
-  - last_transfer_end_timestamp(timestamp) => last_transfer_end_timestamp
-  - last_transfer_size => last_transfer_size
-  - total_transfer_time_secs => total_transfer_time_secs
-  - total_transfer_bytes => total_transfer_bytes
-  - newest_snapshot_timestamp(timestamp) => newest_snapshot_timestamp
-  - resync_successful_count => resync_successful_count
-  - update_successful_count => update_successful_count
-  - resync_failed_count => resync_failed_count
-  - update_failed_count => update_failed_count
-  - break_successful_count => break_successful_count
-  - break_failed_count => break_failed_count
+  - ^^relationship_id                        => relationship_id
+  - ^destination_path                        => destination_location
+  - ^destination_volume_node                 => destination_node
+  - ^destination_vserver                     => destination_vserver
+  - ^destination_volume                      => destination_volume
+  - ^source_vserver                          => source_vserver
+  - ^source_volume                           => source_volume
+  - ^type                                    => relationship_type
+  - ^state                                   => relationship_status
+  - ^policy_type                             => policy_type
+  - ^relationship_group_type                 => group_type
+  - ^schedule                                => schedule
+  - ^healthy                                 => healthy
+  - ^last_transfer_type                      => last_transfer_type
+  - ^unhealthy_reason                        => unhealthy_reason
+  - lag_time(duration)                       => lag_time
+  - last_transfer_duration(duration)         => last_transfer_duration
+  - last_transfer_end_timestamp(timestamp)   => last_transfer_end_timestamp
+  - last_transfer_size                       => last_transfer_size
+  - total_transfer_time_secs                 => total_transfer_time_secs
+  - total_transfer_bytes                     => total_transfer_bytes
+  - newest_snapshot_timestamp(timestamp)     => newest_snapshot_timestamp
+  - resync_successful_count                  => resync_successful_count
+  - update_successful_count                  => update_successful_count
+  - resync_failed_count                      => resync_failed_count
+  - update_failed_count                      => update_failed_count
+  - break_successful_count                   => break_successful_count
+  - break_failed_count                       => break_failed_count
 
 
 plugins:

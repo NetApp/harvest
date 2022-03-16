@@ -6,7 +6,7 @@ object:                   wafl
 #counter name doesn't exactly with zapiperf but these look better.
 counters:
   - ^^id
-  - ^node.name             => node
+  - ^node.name               => node
   - average_non_wafl_msg_latency
   - average_msg_latency
   - average_replication_msg_latency

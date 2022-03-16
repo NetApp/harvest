@@ -4,8 +4,8 @@ query:                    api/cluster/counter/tables/host_adapter
 object:                   hostadapter
 
 counters:
-  - ^^id                   => hostadapter #Zapi has values after ":" TODO handle using plugin
-  - ^node.name             => node
+  - ^^id                     => hostadapter #Zapi has values after ":" TODO handle using plugin
+  - ^node.name               => node
   - bytes_read
   - bytes_written
 
