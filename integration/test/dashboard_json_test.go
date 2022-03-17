@@ -290,6 +290,7 @@ func GenerateQueryWithValue(query string, expression string) string {
 	if value.Exists() && value.IsArray() && (len(value.Array()) > 0) {
 		metricMap := gjson.Get(value.Array()[0].String(), "metric").Map()
 		//log.Info().Str("metricMap", metricMap).Msg("")
+
 		for k, v := range metricMap {
 			newExpression = strings.ReplaceAll(newExpression, fmt.Sprintf("$%s", strings.Title(k)), v.String())
 			newExpression = strings.ReplaceAll(newExpression, fmt.Sprintf("$%s", k), v.String())
