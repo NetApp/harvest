@@ -51,6 +51,7 @@ Pollers:
   #   datacenter: DC-01
   #   addr: 10.0.0.1
   #   auth_style: basic_auth
+  #   credentials_file: path/to/credentials.yml # read credentials from the file
   #   username: myuser
   #   password: mypasw
   #   use_insecure_tls: true  # Disable TLS verification when connecting to ONTAP cluster

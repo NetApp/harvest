@@ -4,27 +4,29 @@ query:              api/storage/shelves
 object:             shelf
 
 counters:
-  #- ^^uid => shelf_uid
-  - ^^serial_number => serial_number
-  - ^module_type => module_type
-  - ^name => shelf
-  - ^model => model
-  - ^state => state
-  - ^manufacturer.name => vendor_name
-  - disk_count => disk_count
+  #- ^^uid                => shelf_uid
+  - ^^serial_number       => serial_number
+  - ^module_type          => module_type
+  - ^name                 => shelf
+  - ^model                => model
+  - ^state                => state
+  - ^manufacturer.name    => vendor_name
+  - disk_count            => disk_count
 
 endpoints:
   - query: api/private/cli/storage/shelf
     counters:
-      - ^^serial_number => serial_number
-      - ^op_status  => op_status
+      - ^^serial_number   => serial_number
+      - ^op_status        => op_status
 
 
 plugins:
   - Shelf
   - LabelAgent:
+      replace:
+        - state state `ok` `online`
       value_to_num:
-        - new_status state online ok `0`
+        - new_status state online online `0`
 
 export_options:
   instance_keys:

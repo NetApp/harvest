@@ -1,0 +1,91 @@
+
+name:                     NFSv3Node
+query:                    api/cluster/counter/tables/svm_nfs_v3:node
+object:                   node_nfs
+
+global_labels:
+  - nfsv: v3
+
+counters:
+  - ^^id
+  - ^name                          => node
+  - ops
+  - read_ops
+  - write_ops
+  - throughput
+  - read_throughput
+  - write_throughput
+  - read.average_latency           => read_average_latency
+  - write.average_latency          => write_average_latency
+  - latency
+  - access.total                   => access_total
+  - commit.total                   => commit_total
+  - create.total                   => create_total
+  - fsinfo.total                   => fsinfo_total
+  - fsstat.total                   => fsstat_total
+  - getattr.total                  => getattr_total
+  - link.total                     => link_total
+  - lookup.total                   => lookup_total
+  - mkdir.total                    => mkdir_total
+  - mknod.total                    => mknod_total
+  - null.total                     => null_total
+  - pathconf.total                 => pathconf_total
+  - read_symlink.total             => read_symlink_total
+  - read.total                     => read_total
+  - readdir.total                  => readdir_total
+  - readdirplus.total              => readdirplus_total
+  - remove.total                   => remove_total
+  - rename.total                   => rename_total
+  - rmdir.total                    => rmdir_total
+  - setattr.total                  => setattr_total
+  - symlink.total                  => symlink_total
+  - write.total                    => write_total
+  - access.average_latency         => access_average_latency
+  - commit.average_latency         => commit_average_latency
+  - create.average_latency         => create_average_latency
+  - fsinfo.average_latency         => fsinfo_average_latency
+  - fsstat.average_latency         => fsstat_average_latency
+  - getattr.average_latency        => getattr_average_latency
+  - link.average_latency           => link_average_latency
+  - lookup.average_latency         => lookup_average_latency
+  - mkdir.average_latency          => mkdir_average_latency
+  - mknod.average_latency          => mknod_average_latency
+  - null.average_latency           => null_average_latency
+  - pathconf.average_latency       => pathconf_average_latency
+  - read_symlink.average_latency   => read_symlink_average_latency
+  - readdir.average_latency        => readdir_average_latency
+  - readdirplus.average_latency    => readdirplus_average_latency
+  - remove.average_latency         => remove_average_latency
+  - rename.average_latency         => rename_average_latency
+  - rmdir.average_latency          => rmdir_average_latency
+  - setattr.average_latency        => setattr_average_latency
+  - symlink.average_latency        => symlink_average_latency
+
+override:
+  - access.total: rate
+  - commit.total: rate
+  - create.total: rate
+  - fsinfo.total: rate
+  - fsstat.total: rate
+  - getattr.total: rate
+  - link.total: rate
+  - lookup.total: rate
+  - mkdir.total: rate
+  - mknod.total: rate
+  - null.total: rate
+  - pathconf.total: rate
+  - read.symlink_total: rate
+  - read.total: rate
+  - readdir.total: rate
+  - readdirplus.total: rate
+  - remove.total: rate
+  - rename.total: rate
+  - rmdir.total: rate
+  - setattr.total: rate
+  - symlink.total: rate
+  - write.total: rate
+
+
+export_options:
+  instance_keys:
+    - node

@@ -1,0 +1,24 @@
+name:                     Qtree
+query:                    api/cluster/counter/tables/qtree
+object:                   qtree
+
+counters:
+  - ^^id
+  - ^name                   => qtreefull
+  - ^svm.name               => svm
+  - ^node.name              => node
+  - ^parent_volume.name     => volume
+  - cifs_ops
+  - nfs_ops
+  - internal_ops
+  - total_ops
+
+plugins:
+  - LabelAgent:
+    split:
+      - qtreefull `/` ,qtree
+export_options:
+  instance_keys:
+    - qtree
+    - volume
+    - svm

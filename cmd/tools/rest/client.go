@@ -76,6 +76,18 @@ func New(poller conf.Poller, timeout time.Duration) (*Client, error) {
 		useInsecureTLS = false
 	}
 
+	// check if a credentials file is being used and if so, parse and use the values from it
+	if poller.CredentialsFile != "" {
+		err := conf.ReadCredentialsFile(poller.CredentialsFile, &poller)
+		if err != nil {
+			client.Logger.Error().
+				Err(err).
+				Str("credPath", poller.CredentialsFile).
+				Str("poller", poller.Name).
+				Msg("Unable to read credentials file")
+			return nil, err
+		}
+	}
 	// set authentication method
 	if poller.AuthStyle == "certificate_auth" {
 		certPath := poller.SslCert

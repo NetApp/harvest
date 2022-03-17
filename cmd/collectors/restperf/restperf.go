@@ -181,6 +181,27 @@ func (r *RestPerf) PollCounter() (*matrix.Matrix, error) {
 
 	results := gjson.GetManyBytes(content, "records.0.counter_schemas", "records.0.name", "records.0.description")
 
+	// populate denominator metric to prop metrics
+	results[0].ForEach(func(key, c gjson.Result) bool {
+		if !c.IsObject() {
+			r.Logger.Warn().Str("type", c.Type.String()).Msg("Counter is not object, skipping")
+			return true
+		}
+
+		name := c.Get("name").String()
+		if _, has := r.Prop.Metrics[name]; has {
+			d := c.Get("denominator.name").String()
+			if d != "" {
+				if _, has := r.Prop.Metrics[d]; !has {
+					// export false
+					m := &rest2.Metric{Label: "", Name: d, MetricType: "", Exportable: false}
+					r.Prop.Metrics[d] = m
+				}
+			}
+		}
+		return true
+	})
+
 	results[0].ForEach(func(key, c gjson.Result) bool {
 
 		if !c.IsObject() {
@@ -201,7 +222,6 @@ func (r *RestPerf) PollCounter() (*matrix.Matrix, error) {
 				if p := r.GetOverride(name); p != "" {
 					r.perfProp.counterInfo[name].counterType = p
 				}
-
 			}
 		} else {
 			r.Logger.Trace().
@@ -227,6 +247,10 @@ func (r *RestPerf) PollCounter() (*matrix.Matrix, error) {
 }
 
 func parseProperties(instanceData gjson.Result, property string) gjson.Result {
+	if property == "id" {
+		value := gjson.Get(instanceData.String(), "id")
+		return value
+	}
 	t := gjson.Get(instanceData.String(), "properties.#.name")
 
 	for _, name := range t.Array() {
@@ -418,11 +442,12 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 					}
 
 					for i, label := range labels {
-						metr, ok := newData.GetMetrics()[name+"."+label]
+						k := name + "#" + label
+						metr, ok := newData.GetMetrics()[k]
 						if !ok {
-							if metr, err = newData.NewMetricFloat64(name + "." + label); err != nil {
+							if metr, err = newData.NewMetricFloat64(k); err != nil {
 								r.Logger.Error().Err(err).
-									Str("name", name+"."+label).
+									Str("name", k).
 									Msg("NewMetricFloat64")
 								continue
 							}
@@ -430,6 +455,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 							metr.SetLabel("metric", label)
 							// differentiate between array and normal counter
 							metr.SetArray(true)
+							metr.SetExportable(metric.Exportable)
 						}
 						if err = metr.SetValueString(instance, values[i]); err != nil {
 							r.Logger.Error().
@@ -459,6 +485,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 						}
 					}
 					metr.SetName(metric.Label)
+					metr.SetExportable(metric.Exportable)
 					if c, err := strconv.ParseFloat(f.value, 64); err == nil {
 						if err = metr.SetValueFloat64(instance, c); err != nil {
 							r.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
@@ -659,7 +686,7 @@ func (r *RestPerf) counterLookup(metric matrix.Metric, metricKey string) *counte
 	var c *counter
 
 	if metric.IsArray() {
-		lastInd := strings.LastIndex(metricKey, ".")
+		lastInd := strings.LastIndex(metricKey, "#")
 		name := metricKey[:lastInd]
 		c = r.perfProp.counterInfo[name]
 	} else {

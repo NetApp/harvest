@@ -4,27 +4,27 @@ query:                      api/cluster/nodes
 object:                     node
 
 counters:
-  - ^^name => node
-  - ^controller.failed_fan.message.message => failed_fan
-  - ^controller.failed_power_supply.message.message => failed_power_message
-  - ^controller.over_temperature => over_temperature
+  - ^^name                                            => node
+  - ^controller.failed_fan.message.message            => failed_fan
+  - ^controller.failed_power_supply.message.message   => failed_power_message
+  - ^controller.over_temperature                      => over_temperature
   - ^location
   - ^model
-  - ^serial_number => serial
-  - ^version.full => version
+  - ^serial_number                                    => serial
+  - ^version.full                                     => version
   - uptime
-  - controller.failed_power_supply.count => failed_power
-  - controller.failed_fan.count => failed_fan
+  - controller.failed_power_supply.count              => failed_power
+  - controller.failed_fan.count                       => failed_fan
 
 endpoints:
   - query: api/private/cli/node
     counters:
-      - ^^node => node
-      - ^vendor  => vendor
-      - ^max_aggr_size => max_aggr_size
-      - ^max_node_vvols => max_vol_num
-      - ^max_vol_size => max_vol_size
-      - ^health => healthy
+      - ^^node                                        => node
+      - ^vendor                                       => vendor
+      - ^max_aggr_size                                => max_aggr_size
+      - ^max_node_vvols                               => max_vol_num
+      - ^max_vol_size                                 => max_vol_size
+      - ^health                                       => healthy
 
 plugins:
   - LabelAgent:
