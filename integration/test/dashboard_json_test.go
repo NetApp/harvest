@@ -267,7 +267,10 @@ func GenerateQueryWithValue(query string, expression string) string {
 	timeNow := time.Now().Unix()
 	queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",
 		data.PrometheusUrl, query, timeNow)
+	log.Info().Str("queryUrl", queryUrl).Msg("")
 	data, _ := utils.GetResponse(queryUrl)
+	log.Info().Str("data", data).Msg("")
+	log.Info().Str("expression", expression).Msg("")
 	newExpression := expression
 	/**
 	We are not following standard naming convention for variables in the json
@@ -286,6 +289,7 @@ func GenerateQueryWithValue(query string, expression string) string {
 	value := gjson.Get(data, "data.result")
 	if value.Exists() && value.IsArray() && (len(value.Array()) > 0) {
 		metricMap := gjson.Get(value.Array()[0].String(), "metric").Map()
+		log.Info().Str("metricMap", metricMap).Msg("")
 		for k, v := range metricMap {
 			newExpression = strings.ReplaceAll(newExpression, fmt.Sprintf("$%s", strings.Title(k)), v.String())
 			newExpression = strings.ReplaceAll(newExpression, fmt.Sprintf("$%s", k), v.String())
