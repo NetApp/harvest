@@ -58,7 +58,6 @@ func (suite *DashboardJsonTestSuite) SetupSuite() {
 	//for _, counterData := range countersToCheck {
 	//	dashboard.AssertIfNotPresent(counterData)
 	//}
-
 }
 
 func (suite *DashboardJsonTestSuite) TestJsonExpression() {
