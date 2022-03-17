@@ -31,7 +31,11 @@ In the left column, under *Users*, click on *Add* to create a new user. Choose a
 
 If you chose *Password*, you can add the username and password to the Harvest configuration file and start Harvest. If you chose *Certificate* jump to [Using Certificate Authentication](#using-certificate-authentication) to generate certificates files.
 
+
 ### System Manager: Classic interface
+
+<details>
+  <summary>Click to expand</summary>
 
 Open System Manager. Click on the Settings icon on the top-right corner of the window.
 <center><img src="examples/ontap_user_smc_0.png" width="75%"></center>
@@ -65,9 +69,12 @@ Now we need to create a user. Click on *Users* in the left menu bar and *Add*. C
 
 Now add the username and password to `harvest.yml` and start Harvest.
 
+</details>
+
 ### ONTAP CLI
 
-Login to the CLI of your ONTAP system (e.g. using SSH). First, we create a user role. If you want to give the user readonly access to **all** API objects, type in the following command:
+#### CDot CLI
+Login to the CLI of your c-DOT ONTAP system (e.g. using SSH). First, we create a user role. If you want to give the user readonly access to **all** API objects, type in the following command:
 
 ```bash
 security login role create -role harvest2-role -access readonly -cmddirname "DEFAULT"
@@ -101,6 +108,18 @@ If you want to use certificate authentication, type:
 security login create -user-or-group-name harvest2 -application ontapi \
  -role harvest2-role -authentication-method cert
 ```
+
+#### 7-Mode CLI
+Login to the CLI of your 7-Mode ONTAP system (e.g. using SSH). First, we create a user role. If you want to give the user readonly access to **all** API objects, type in the following command:
+
+```bash
+useradmin role modify harvest2-role -a login-http-admin,api-system-get-version, \
+api-system-get-info,api-perf-object-*,api-ems-autosupport-log,api-diagnosis-status-get, \
+api-lun-list-info,api-diagnosis-subsystem-config-get-iter,api-disk-list-info, \
+api-diagnosis-config-get-iter,api-aggr-list-info,api-volume-list-info, \
+api-storage-shelf-environment-list-info,api-qtree-list,api-quota-report
+```
+
 
 # Using Certificate Authentication
 

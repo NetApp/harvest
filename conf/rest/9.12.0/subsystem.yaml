@@ -4,10 +4,10 @@ query:      api/private/cli/system/health/subsystem
 object:     cluster_subsystem
 
 counters:
-  - ^health                       => health
-  - ^^subsystem                   => subsystem
-  - outstanding_alert_count       => outstanding_alerts
-  - suppressed_alert_count        => suppressed_alerts
+  - ^health                         => health
+  - ^^subsystem                     => subsystem
+  - outstanding_alert_count         => outstanding_alerts
+  - suppressed_alert_count          => suppressed_alerts
 
 plugins:
   - LabelAgent:

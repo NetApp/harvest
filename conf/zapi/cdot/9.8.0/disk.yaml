@@ -14,7 +14,7 @@ counters:
       - ^is-shared              => shared
       - ^model                  => model
       - ^serial-number          => serial_number
-      - ^shelf                  => shelf
+      - ^shelf-uid              => shelf
       - ^shelf-bay              => shelf_bay
     - disk-ownership-info:
       - ^home-node-name         => node

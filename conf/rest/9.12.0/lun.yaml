@@ -5,14 +5,14 @@ object:                     lun
 
 counters:
   - ^^uuid
-  - ^location.node.name => node
-  - ^name => path
-  - ^location.qtree.name => qtree
-  - ^status.state => state
-  - ^location.volume.name => volume
-  - ^svm.name => svm
-  - space.size => size
-  - space.used => size_used
+  - ^location.node.name     => node
+  - ^name                   => path
+  - ^location.qtree.name    => qtree
+  - ^status.state           => state
+  - ^location.volume.name   => volume
+  - ^svm.name               => svm
+  - space.size              => size
+  - space.used              => size_used
 
 plugins:
   - LabelAgent:
