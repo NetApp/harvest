@@ -53,7 +53,8 @@ func (suite *DashboardJsonTestSuite) SetupSuite() {
 	log.Info().Msg("Exclude map info")
 	log.Info().Str("Exclude Mapping", fmt.Sprint(counterMap)).Msg("List of counter")
 	log.Info().Msg("Wait until qos data is available")
-	countersToCheck := []string{"qos_read_latency", "svm_nfs_throughput", "copy_manager_kb_copied"}
+	//countersToCheck := []string{"qos_read_latency", "svm_nfs_throughput", "copy_manager_kb_copied"}
+	countersToCheck := []string{""}
 	for _, counterData := range countersToCheck {
 		dashboard.AssertIfNotPresent(counterData)
 	}
