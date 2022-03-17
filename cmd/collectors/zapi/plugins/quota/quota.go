@@ -176,7 +176,6 @@ func (my *Quota) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 				objectElem := quota.GetChildS(attribute)
 				if objectElem == nil {
-					my.Logger.Warn().Msgf("no [%s] instances on this %s.%s.%s", attribute, vserver, volume, tree)
 					continue
 				}
 
