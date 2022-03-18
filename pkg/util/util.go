@@ -8,7 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/rs/zerolog"
-	"github.com/shirou/gopsutil/process"
+	"github.com/shirou/gopsutil/v3/process"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"net"
