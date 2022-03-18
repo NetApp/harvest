@@ -607,6 +607,7 @@ func (p *Poller) loadCollector(c conf.Collector, object string) error {
 	}
 	// add the poller's parameters to the collector's parameters
 	Union2(template, p.params)
+	template.NewChildS("poller_name", p.params.Name)
 
 	// if we don't know object, try load from template
 	if object == "" {
