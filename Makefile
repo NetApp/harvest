@@ -9,7 +9,7 @@
 ###############################################################################
 SHELL := /bin/bash
 GCC_EXISTS := $(shell which gcc)
-REQUIRED_GO_VERSION := 1.17
+REQUIRED_GO_VERSION := 1.18
 ifneq (, $(shell which go))
 FOUND_GO_VERSION := $(shell go version | cut -d" " -f3 | cut -d"o" -f 2)
 CORRECT_GO_VERSION := $(shell expr `go version | cut -d" " -f3 | cut -d"o" -f 2` \>= ${REQUIRED_GO_VERSION})
