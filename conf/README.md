@@ -150,7 +150,7 @@ sensor_value{datacenter="WDRF",cluster="shopfloor",critical_high="9000",node="sh
 sensor_value{datacenter="WDRF",cluster="shopfloor",node="shopfloor-02",sensor="PSU1 InPwr Monitor",type="unknown",threshold_state="normal",unit="mW"} 132000
 ```
 
-### Extend an existing object template (Applicable to Rest/RestPerf Collector)
+### How to extend a Rest/RestPerf collector's existing object template
 
 Instead of editing one of the existing templates, it's better to copy one and edit the copy. That way, your custom template will not be overwritten when upgrading Harvest. For example, if you want to change `conf/rest/cdot/9.12.0/aggr.yaml`, first create a copy (e.g., `conf/rest/cdot/9.12.0/custom_aggr.yaml`), then add these lines to `conf/rest/custom.yaml`:
 
@@ -161,7 +161,7 @@ objects:
 
 After restarting pollers, `aggr.yaml` will be ignored and the new, `custom_aggr.yaml` subtemplate will be used instead.
 
-### Extend an existing object template (Applicable to Zapi/ZapiPerf Collector)
+### How to extend a Zapi/ZapiPerf collector's existing object template
 
 In this example, we want to extend one of the existing object templates that Harvest ships with, e.g. `conf/zapi/cdot/9.8.0/lun.yaml` and collect additional information as outlined below.
 
