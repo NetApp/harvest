@@ -19,7 +19,6 @@ import (
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/logging"
 	"reflect"
-	"runtime/debug"
 	"strconv"
 	"strings"
 	"sync"
@@ -254,12 +253,13 @@ func (me *AbstractCollector) GetHostUUID() string {
 
 // Start will run the collector in an infinity loop
 func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
+	defer wg.Done()
 	defer func() {
 		if r := recover(); r != nil {
-			me.Logger.Error().Err(errors.New(errors.GO_ROUTINE_PANIC, string(debug.Stack()))).Msgf("Collector panicked %s", r)
+			me.Logger.Error().Stack().Err(errors.New(errors.GO_ROUTINE_PANIC, "")).
+				Msgf("Collector panicked %s", r)
 		}
 	}()
-	defer wg.Done()
 
 	// keep track of connection errors
 	// to increment time before retry
