@@ -597,8 +597,12 @@ func (p *Poller) loadCollector(c conf.Collector, object string) error {
 				logger.Debug().
 					Str("template", t).
 					Msg("Merged template.")
-				// do not overwrite child of objects. They will be concatenated
-				template.Merge(subTemplate, []string{"objects"})
+				if c.Name == "Zapi" || c.Name == "ZapiPerf" {
+					// do not overwrite child of objects. They will be concatenated
+					template.Merge(subTemplate, []string{"objects"})
+				} else {
+					template.Merge(subTemplate, []string{""})
+				}
 			}
 		}
 	}
