@@ -4,7 +4,6 @@
 package sensor
 
 import (
-	"fmt"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/pkg/api/ontapi/zapi"
 	"goharvest2/pkg/dict"
@@ -45,16 +44,13 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 }
 
 var ambientRegex = regexp.MustCompile(`^(Ambient Temp|Ambient Temp \d|PSU\d AmbTemp|PSU\d Inlet|PSU\d Inlet Temp|In Flow Temp|Front Temp|System Inlet)$`)
-var powerRegex = regexp.MustCompile(`^PSU\d (InPwr Monitor|InPower|PIN|Power In)$`)
+var powerInRegex = regexp.MustCompile(`^PSU\d (InPwr Monitor|InPower|PIN|Power In)$`)
 var voltageRegex = regexp.MustCompile(`^PSU\d (\d+V|InVoltage|VIN|AC In Volt)$`)
 var currentRegex = regexp.MustCompile(`^PSU\d (\d+V Curr|Curr|InCurrent|Curr IIN|AC In Curr)$`)
 var eMetrics = []string{"power", "ambient_temperature", "max_temperature", "average_temperature", "average_fan_speed", "max_fan_speed", "min_fan_speed"}
 
 func (my *Sensor) Init() error {
-
-	var err error
-
-	if err = my.InitAbc(); err != nil {
+	if err := my.InitAbc(); err != nil {
 		return err
 	}
 
@@ -62,19 +58,11 @@ func (my *Sensor) Init() error {
 	my.instanceKeys = make(map[string]string)
 	my.instanceLabels = make(map[string]*dict.Dict)
 
-	for _, metricName := range eMetrics {
-		metric, err := my.data.NewMetricFloat64(metricName)
-		if err != nil {
-			my.Logger.Error().Stack().Err(err).Msg("add metric")
-			return err
-		}
-
-		metric.SetName(metricName)
-		my.Logger.Debug().Msgf("added metric: (%s) [%s] %s", metricName, metricName, metric)
+	// init environment metrics in plugin matrix
+	// create environment metric if not exists
+	for _, k := range eMetrics {
+		my.createEnvironmentMetric(k)
 	}
-
-	my.Logger.Debug().Msgf("added data with %d metrics", len(my.data.GetMetrics()))
-
 	return nil
 }
 
@@ -90,21 +78,20 @@ func (my *Sensor) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 }
 
 func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Matrix, error) {
-	sensorEnvironmentMetricMap := make(map[string]*sensorEnvironmentMetric, 0)
+	sensorEnvironmentMetricMap := make(map[string]*sensorEnvironmentMetric)
+
 	for k, instance := range data.GetInstances() {
-		lastInd := strings.Index(k, ".")
-		iKey := k[:lastInd]
-		iKey2 := k[lastInd+1:]
+		iKey, iKey2, _ := strings.Cut(k, ".")
 		if _, ok := sensorEnvironmentMetricMap[iKey]; !ok {
 			sensorEnvironmentMetricMap[iKey] = &sensorEnvironmentMetric{key: iKey, ambientTemperature: []float64{}, nonAmbientTemperature: []float64{}, fanSpeed: []float64{}}
 		}
-		for mkey, metric := range data.GetMetrics() {
-			if mkey == "environment-sensors-info.threshold-sensor-value" {
+		for mKey, metric := range data.GetMetrics() {
+			if mKey == "environment-sensors-info.threshold-sensor-value" {
 				sensorType := instance.GetLabel("type")
 				sensorName := instance.GetLabel("sensor")
 				sensorUnit := instance.GetLabel("unit")
 				isAmbientMatch := ambientRegex.MatchString(sensorName)
-				isPowerMatch := powerRegex.MatchString(sensorName)
+				isPowerMatch := powerInRegex.MatchString(sensorName)
 				isVoltageMatch := voltageRegex.MatchString(sensorName)
 				isCurrentMatch := currentRegex.MatchString(sensorName)
 
@@ -129,7 +116,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				if isPowerMatch {
 					if value, ok := metric.GetValueFloat64(instance); ok {
 						if sensorEnvironmentMetricMap[iKey].powerSensor == nil {
-							sensorEnvironmentMetricMap[iKey].powerSensor = make(map[string]*sensorValue, 0)
+							sensorEnvironmentMetricMap[iKey].powerSensor = make(map[string]*sensorValue)
 						}
 						sensorEnvironmentMetricMap[iKey].powerSensor[iKey2] = &sensorValue{name: iKey2, value: value, unit: sensorUnit}
 					}
@@ -138,7 +125,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				if isVoltageMatch {
 					if value, ok := metric.GetValueFloat64(instance); ok {
 						if sensorEnvironmentMetricMap[iKey].voltageSensor == nil {
-							sensorEnvironmentMetricMap[iKey].voltageSensor = make(map[string]*sensorValue, 0)
+							sensorEnvironmentMetricMap[iKey].voltageSensor = make(map[string]*sensorValue)
 						}
 						sensorEnvironmentMetricMap[iKey].voltageSensor[iKey2] = &sensorValue{name: iKey2, value: value, unit: sensorUnit}
 					}
@@ -147,21 +134,22 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				if isCurrentMatch {
 					if value, ok := metric.GetValueFloat64(instance); ok {
 						if sensorEnvironmentMetricMap[iKey].currentSensor == nil {
-							sensorEnvironmentMetricMap[iKey].currentSensor = make(map[string]*sensorValue, 0)
+							sensorEnvironmentMetricMap[iKey].currentSensor = make(map[string]*sensorValue)
 						}
 						sensorEnvironmentMetricMap[iKey].currentSensor[iKey2] = &sensorValue{name: iKey2, value: value, unit: sensorUnit}
 					}
 				}
-
 			}
 		}
 	}
 
-	for _, k := range eMetrics {
-		my.createEnvironmentMetric(k)
-	}
 	for key, v := range sensorEnvironmentMetricMap {
 		instance, err := my.data.NewInstance(key)
+		if err != nil {
+			my.Logger.Warn().Str("key", key).Msg("instance not found")
+			continue
+		}
+		// set node label
 		instance.SetLabel("node", key)
 		for _, k := range eMetrics {
 			m := my.data.GetMetric(k)
@@ -175,7 +163,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 						} else if v1.unit == "W" {
 							sumPower += sumPower + v1.value
 						} else {
-							my.Logger.Warn().Str("unit", v1.unit).Str("value", fmt.Sprintf("%f", v1.value)).Msg("unknown power unit")
+							my.Logger.Warn().Str("unit", v1.unit).Float64("value", v1.value).Msg("unknown power unit")
 						}
 					}
 				} else if len(v.voltageSensor) > 0 && len(v.voltageSensor) == len(v.currentSensor) {
@@ -193,7 +181,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 					}
 					sort.Strings(currentKeys)
 
-					for i, _ := range currentKeys {
+					for i := range currentKeys {
 						currentKey := currentKeys[i]
 						voltageKey := voltageKeys[i]
 
@@ -207,77 +195,91 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 						} else if currentSensorValue.unit == "A" {
 							// do nothing
 						} else {
-							my.Logger.Warn().Str("unit", currentSensorValue.unit).Str("value", fmt.Sprintf("%f", currentSensorValue.value)).Msg("unknown current unit")
+							my.Logger.Warn().Str("unit", currentSensorValue.unit).Float64("value", currentSensorValue.value).Msg("unknown current unit")
 						}
 
 						if voltageSensorValue.unit == "mV" {
 							voltageSensorValue.value = voltageSensorValue.value / 1000
-						} else if voltageSensorValue.unit == "A" {
+						} else if voltageSensorValue.unit == "V" {
 							// do nothing
 						} else {
-							my.Logger.Warn().Str("unit", voltageSensorValue.unit).Str("value", fmt.Sprintf("%f", voltageSensorValue.value)).Msg("unknown voltage unit")
+							my.Logger.Warn().Str("unit", voltageSensorValue.unit).Float64("value", voltageSensorValue.value).Msg("unknown voltage unit")
 						}
 
 						p := currentSensorValue.value * voltageSensorValue.value
 
-						if strings.Contains(voltageSensorValue.name, "in") || strings.Contains(voltageSensorValue.name, "IN") {
-							if strings.Contains(currentSensorValue.name, "in") || strings.Contains(currentSensorValue.name, "IN") {
-								p = p / 0.93
-							}
+						if !strings.EqualFold(voltageSensorValue.name, "in") && !strings.EqualFold(currentSensorValue.name, "in") {
+							p = p / 0.93 //If the sensor names to do NOT contain "IN" or "in", then we need to adjust the power to account for loss in the power supply. We will use 0.93 as the power supply efficiency factor for all systems.
 						}
+
 						sumPower += p
 					}
+				} else {
+					my.Logger.Warn().Msg("current and voltage sensor size is different")
 				}
 				// convert to KW
 				sumPower = sumPower / 1000
 				err = m.SetValueFloat64(instance, sumPower)
 				if err != nil {
-					my.Logger.Error().Stack().Err(err).Msg("error")
+					my.Logger.Error().Float64("power", sumPower).Err(err).Msg("Unable to set power")
+				} else {
+					m.SetLabel("unit", "kW")
 				}
-				m.SetLabel("unit", "kW")
 
 			case "ambient_temperature":
 				if len(v.ambientTemperature) > 0 {
-					err = m.SetValueFloat64(instance, util.SumNumbers(v.ambientTemperature)/float64(len(v.ambientTemperature)))
+					aT := util.SumNumbers(v.ambientTemperature) / float64(len(v.ambientTemperature))
+					err = m.SetValueFloat64(instance, aT)
 					if err != nil {
-						my.Logger.Error().Stack().Err(err).Msg("error")
+						my.Logger.Error().Float64("ambient_temperature", aT).Err(err).Msg("Unable to set ambient_temperature")
+					} else {
+						m.SetLabel("unit", "C")
 					}
 				}
-				m.SetLabel("unit", "C")
 			case "max_temperature":
+				mT := util.Max(v.nonAmbientTemperature)
 				err = m.SetValueFloat64(instance, util.Max(v.nonAmbientTemperature))
 				if err != nil {
-					my.Logger.Error().Stack().Err(err).Msg("error")
+					my.Logger.Error().Float64("max_temperature", mT).Err(err).Msg("Unable to set max_temperature")
+				} else {
+					m.SetLabel("unit", "C")
 				}
-				m.SetLabel("unit", "C")
 			case "average_temperature":
 				if len(v.nonAmbientTemperature) > 0 {
-					err = m.SetValueFloat64(instance, util.SumNumbers(v.nonAmbientTemperature)/float64(len(v.nonAmbientTemperature)))
+					nat := util.SumNumbers(v.nonAmbientTemperature) / float64(len(v.nonAmbientTemperature))
+					err = m.SetValueFloat64(instance, nat)
 					if err != nil {
-						my.Logger.Error().Stack().Err(err).Msg("error")
+						my.Logger.Error().Float64("average_temperature", nat).Err(err).Msg("Unable to set average_temperature")
+					} else {
+						m.SetLabel("unit", "C")
 					}
 				}
-				m.SetLabel("unit", "C")
 			case "average_fan_speed":
 				if len(v.fanSpeed) > 0 {
-					err = m.SetValueFloat64(instance, util.SumNumbers(v.fanSpeed)/float64(len(v.fanSpeed)))
+					afs := util.SumNumbers(v.fanSpeed) / float64(len(v.fanSpeed))
+					err = m.SetValueFloat64(instance, afs)
 					if err != nil {
-						my.Logger.Error().Stack().Err(err).Msg("error")
+						my.Logger.Error().Float64("average_fan_speed", afs).Err(err).Msg("Unable to set average_fan_speed")
+					} else {
+						m.SetLabel("unit", "rpm")
 					}
 				}
-				m.SetLabel("unit", "rpm")
 			case "max_fan_speed":
-				err = m.SetValueFloat64(instance, util.Max(v.fanSpeed))
+				mfs := util.Max(v.fanSpeed)
+				err = m.SetValueFloat64(instance, mfs)
 				if err != nil {
-					my.Logger.Error().Stack().Err(err).Msg("error")
+					my.Logger.Error().Float64("max_fan_speed", mfs).Err(err).Msg("Unable to set max_fan_speed")
+				} else {
+					m.SetLabel("unit", "rpm")
 				}
-				m.SetLabel("unit", "rpm")
 			case "min_fan_speed":
-				err = m.SetValueFloat64(instance, util.Min(v.fanSpeed))
+				mfs := util.Min(v.fanSpeed)
+				err = m.SetValueFloat64(instance, mfs)
 				if err != nil {
-					my.Logger.Error().Stack().Err(err).Msg("error")
+					my.Logger.Error().Float64("min_fan_speed", mfs).Err(err).Msg("Unable to set min_fan_speed")
+				} else {
+					m.SetLabel("unit", "rpm")
 				}
-				m.SetLabel("unit", "rpm")
 			}
 		}
 	}
@@ -289,7 +291,7 @@ func (my *Sensor) createEnvironmentMetric(key string) {
 	at := my.data.GetMetric(key)
 	if at == nil {
 		if at, err = my.data.NewMetricFloat64(key); err != nil {
-			my.Logger.Error().Stack().Err(err).Msg("error")
+			my.Logger.Error().Stack().Str("key", key).Err(err).Msg("unable to createEnvironmentMetric")
 		}
 	}
 }

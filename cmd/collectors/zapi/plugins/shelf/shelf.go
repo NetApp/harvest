@@ -33,6 +33,8 @@ type shelfEnvironmentMetric struct {
 	currentSensor         map[string]float64
 }
 
+var eMetrics = []string{"power", "ambient_temperature", "max_temperature", "average_temperature", "average_fan_speed", "max_fan_speed", "min_fan_speed"}
+
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Shelf{AbstractPlugin: p}
 }
@@ -223,63 +225,87 @@ func (my *Shelf) calculateEnvironmentMetrics(output []*matrix.Matrix, data *matr
 		}
 	}
 
-	eMetrics := []string{"power", "ambient_temperature", "max_temperature", "average_temperature", "average_fan_speed", "max_fan_speed", "min_fan_speed"}
 	for _, k := range eMetrics {
 		my.createEnvironmentMetric(data, k)
 	}
 	for key, v := range shelfEnvironmentMetricMap {
 		for _, k := range eMetrics {
 			m := data.GetMetric(k)
+			instance := data.GetInstance(key)
 			switch k {
 			case "power":
 				var sumPower float64
 				for k1, v1 := range v.voltageSensor {
 					if v2, ok := v.currentSensor[k1]; ok {
+						// in W
 						sumPower += (v1 * v2) / 1000
 					} else {
 						my.Logger.Warn().Str("voltage sensor id", k1).Msg("missing current sensor")
 					}
 				}
-				err = m.SetValueFloat64(data.GetInstance(key), sumPower)
+				// convert to KW
+				sumPower = sumPower / 1000
+
+				err = m.SetValueFloat64(instance, sumPower)
 				if err != nil {
-					my.Logger.Error().Stack().Err(err).Msg("error")
+					my.Logger.Error().Float64("power", sumPower).Err(err).Msg("Unable to set power")
+				} else {
+					m.SetLabel("unit", "kW")
 				}
 
 			case "ambient_temperature":
 				if len(v.ambientTemperature) > 0 {
-					err = m.SetValueFloat64(data.GetInstance(key), util.SumNumbers(v.ambientTemperature)/float64(len(v.ambientTemperature)))
+					aT := util.SumNumbers(v.ambientTemperature) / float64(len(v.ambientTemperature))
+					err = m.SetValueFloat64(instance, aT)
 					if err != nil {
-						my.Logger.Error().Stack().Err(err).Msg("error")
+						my.Logger.Error().Float64("ambient_temperature", aT).Err(err).Msg("Unable to set ambient_temperature")
+					} else {
+						m.SetLabel("unit", "C")
 					}
 				}
 			case "max_temperature":
-				err = m.SetValueFloat64(data.GetInstance(key), util.Max(v.nonAmbientTemperature))
+				mT := util.Max(v.nonAmbientTemperature)
+				err = m.SetValueFloat64(instance, util.Max(v.nonAmbientTemperature))
 				if err != nil {
-					my.Logger.Error().Stack().Err(err).Msg("error")
+					my.Logger.Error().Float64("max_temperature", mT).Err(err).Msg("Unable to set max_temperature")
+				} else {
+					m.SetLabel("unit", "C")
 				}
 			case "average_temperature":
 				if len(v.nonAmbientTemperature) > 0 {
-					err = m.SetValueFloat64(data.GetInstance(key), util.SumNumbers(v.nonAmbientTemperature)/float64(len(v.nonAmbientTemperature)))
+					nat := util.SumNumbers(v.nonAmbientTemperature) / float64(len(v.nonAmbientTemperature))
+					err = m.SetValueFloat64(instance, nat)
 					if err != nil {
-						my.Logger.Error().Stack().Err(err).Msg("error")
+						my.Logger.Error().Float64("average_temperature", nat).Err(err).Msg("Unable to set average_temperature")
+					} else {
+						m.SetLabel("unit", "C")
 					}
 				}
 			case "average_fan_speed":
 				if len(v.fanSpeed) > 0 {
-					err = m.SetValueFloat64(data.GetInstance(key), util.SumNumbers(v.fanSpeed)/float64(len(v.fanSpeed)))
+					afs := util.SumNumbers(v.fanSpeed) / float64(len(v.fanSpeed))
+					err = m.SetValueFloat64(instance, afs)
 					if err != nil {
-						my.Logger.Error().Stack().Err(err).Msg("error")
+						my.Logger.Error().Float64("average_fan_speed", afs).Err(err).Msg("Unable to set average_fan_speed")
+					} else {
+						m.SetLabel("unit", "rpm")
 					}
 				}
 			case "max_fan_speed":
-				err = m.SetValueFloat64(data.GetInstance(key), util.Max(v.fanSpeed))
+				mfs := util.Max(v.fanSpeed)
+				err = m.SetValueFloat64(instance, mfs)
 				if err != nil {
-					my.Logger.Error().Stack().Err(err).Msg("error")
+					my.Logger.Error().Float64("max_fan_speed", mfs).Err(err).Msg("Unable to set max_fan_speed")
+				} else {
+					m.SetLabel("unit", "rpm")
 				}
 			case "min_fan_speed":
-				err = m.SetValueFloat64(data.GetInstance(key), util.Min(v.fanSpeed))
+				mfs := util.Min(v.fanSpeed)
+				err = m.SetValueFloat64(instance, mfs)
 				if err != nil {
-					my.Logger.Error().Stack().Err(err).Msg("error")
+					my.Logger.Error().Float64("min_fan_speed", mfs).Err(err).Msg("Unable to set min_fan_speed")
+				} else {
+					m.SetLabel("unit", "rpm")
 				}
 			}
 		}
