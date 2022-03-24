@@ -228,7 +228,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 
 			case "ambient_temperature":
 				if len(v.ambientTemperature) > 0 {
-					aT := util.SumNumbers(v.ambientTemperature) / float64(len(v.ambientTemperature))
+					aT := util.Avg(v.ambientTemperature)
 					err = m.SetValueFloat64(instance, aT)
 					if err != nil {
 						my.Logger.Error().Float64("ambient_temperature", aT).Err(err).Msg("Unable to set ambient_temperature")
