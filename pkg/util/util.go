@@ -404,3 +404,10 @@ func Min(input []float64) float64 {
 	}
 	return 0
 }
+
+func Avg(input []float64) float64 {
+	if len(input) > 0 {
+		return SumNumbers(input) / float64(len(input))
+	}
+	return 0
+}

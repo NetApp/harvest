@@ -273,7 +273,7 @@ func (my *Shelf) calculateEnvironmentMetrics(output []*matrix.Matrix, data *matr
 				}
 			case "average_temperature":
 				if len(v.nonAmbientTemperature) > 0 {
-					nat := util.SumNumbers(v.nonAmbientTemperature) / float64(len(v.nonAmbientTemperature))
+					nat := util.Avg(v.nonAmbientTemperature)
 					err = m.SetValueFloat64(instance, nat)
 					if err != nil {
 						my.Logger.Error().Float64("average_temperature", nat).Err(err).Msg("Unable to set average_temperature")
@@ -283,7 +283,7 @@ func (my *Shelf) calculateEnvironmentMetrics(output []*matrix.Matrix, data *matr
 				}
 			case "average_fan_speed":
 				if len(v.fanSpeed) > 0 {
-					afs := util.SumNumbers(v.fanSpeed) / float64(len(v.fanSpeed))
+					afs := util.Avg(v.fanSpeed)
 					err = m.SetValueFloat64(instance, afs)
 					if err != nil {
 						my.Logger.Error().Float64("average_fan_speed", afs).Err(err).Msg("Unable to set average_fan_speed")
