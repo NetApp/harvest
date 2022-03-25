@@ -61,7 +61,7 @@ func (my *Sensor) Init() error {
 	// init environment metrics in plugin matrix
 	// create environment metric if not exists
 	for _, k := range eMetrics {
-		my.createEnvironmentMetric(k)
+		matrix.CreateMetric(k, my.data)
 	}
 	return nil
 }
@@ -215,7 +215,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 						sumPower += p
 					}
 				} else {
-					my.Logger.Warn().Msg("current and voltage sensor size is different")
+					my.Logger.Warn().Int("current size", len(v.currentSensor)).Int("voltage size", len(v.voltageSensor)).Msg("current and voltage sensor are ignored")
 				}
 				// convert to KW
 				sumPower = sumPower / 1000
@@ -238,7 +238,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				}
 			case "max_temperature":
 				mT := util.Max(v.nonAmbientTemperature)
-				err = m.SetValueFloat64(instance, util.Max(v.nonAmbientTemperature))
+				err = m.SetValueFloat64(instance, mT)
 				if err != nil {
 					my.Logger.Error().Float64("max_temperature", mT).Err(err).Msg("Unable to set max_temperature")
 				} else {
@@ -284,14 +284,4 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 		}
 	}
 	return []*matrix.Matrix{my.data}, nil
-}
-
-func (my *Sensor) createEnvironmentMetric(key string) {
-	var err error
-	at := my.data.GetMetric(key)
-	if at == nil {
-		if at, err = my.data.NewMetricFloat64(key); err != nil {
-			my.Logger.Error().Stack().Str("key", key).Err(err).Msg("unable to createEnvironmentMetric")
-		}
-	}
 }

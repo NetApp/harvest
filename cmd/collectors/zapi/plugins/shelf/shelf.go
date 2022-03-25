@@ -226,7 +226,7 @@ func (my *Shelf) calculateEnvironmentMetrics(output []*matrix.Matrix, data *matr
 	}
 
 	for _, k := range eMetrics {
-		my.createEnvironmentMetric(data, k)
+		matrix.CreateMetric(k, data)
 	}
 	for key, v := range shelfEnvironmentMetricMap {
 		for _, k := range eMetrics {
@@ -265,7 +265,7 @@ func (my *Shelf) calculateEnvironmentMetrics(output []*matrix.Matrix, data *matr
 				}
 			case "max_temperature":
 				mT := util.Max(v.nonAmbientTemperature)
-				err = m.SetValueFloat64(instance, util.Max(v.nonAmbientTemperature))
+				err = m.SetValueFloat64(instance, mT)
 				if err != nil {
 					my.Logger.Error().Float64("max_temperature", mT).Err(err).Msg("Unable to set max_temperature")
 				} else {
@@ -311,16 +311,6 @@ func (my *Shelf) calculateEnvironmentMetrics(output []*matrix.Matrix, data *matr
 		}
 	}
 	return output, nil
-}
-
-func (my *Shelf) createEnvironmentMetric(data *matrix.Matrix, key string) {
-	var err error
-	at := data.GetMetric(key)
-	if at == nil {
-		if at, err = data.NewMetricFloat64(key); err != nil {
-			my.Logger.Error().Stack().Err(err).Msg("error")
-		}
-	}
 }
 
 func (my *Shelf) handleCMode(result *node.Node) ([]*matrix.Matrix, error) {
