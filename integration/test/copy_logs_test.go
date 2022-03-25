@@ -1,5 +1,4 @@
 //go:build copy_docker_logs
-// +build copy_docker_logs
 
 package main
 

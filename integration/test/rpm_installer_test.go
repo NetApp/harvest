@@ -1,5 +1,4 @@
 //go:build install_rpm
-// +build install_rpm
 
 package main
 

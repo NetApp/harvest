@@ -1,5 +1,4 @@
 //go:build upgrade_rpm
-// +build upgrade_rpm
 
 package main
 
