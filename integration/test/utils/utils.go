@@ -4,6 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/rs/zerolog"
+	zlog "github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/pkgerrors"
 	"goharvest2/pkg/conf"
 	"io"
 	"log"
@@ -348,4 +351,11 @@ func RemoveDuplicateStr(strSlice []string) []string {
 		}
 	}
 	return list
+}
+
+func SetupLogging() {
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
+	zlog.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).
+		With().Caller().Stack().Timestamp().Logger()
 }
