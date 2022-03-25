@@ -1,5 +1,4 @@
 //go:build regression
-// +build regression
 
 package main
 
