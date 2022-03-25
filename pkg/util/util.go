@@ -370,3 +370,44 @@ func ParseMetricType(metricName string) (string, string) {
 	}
 	return metricName, ""
 }
+
+func SumNumbers(s []float64) float64 {
+	var total float64
+	for _, num := range s {
+		total += num
+	}
+	return total
+}
+
+func Max(input []float64) float64 {
+	if len(input) > 0 {
+		max := input[0]
+		for _, v := range input {
+			if v > max {
+				max = v
+			}
+		}
+		return max
+	}
+	return 0
+}
+
+func Min(input []float64) float64 {
+	if len(input) > 0 {
+		min := input[0]
+		for _, v := range input {
+			if v < min {
+				min = v
+			}
+		}
+		return min
+	}
+	return 0
+}
+
+func Avg(input []float64) float64 {
+	if len(input) > 0 {
+		return SumNumbers(input) / float64(len(input))
+	}
+	return 0
+}
