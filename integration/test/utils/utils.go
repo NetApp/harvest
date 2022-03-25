@@ -356,6 +356,6 @@ func RemoveDuplicateStr(strSlice []string) []string {
 func SetupLogging() {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
-	zlog.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).
+	zlog.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr, NoColor: true}).
 		With().Caller().Stack().Timestamp().Logger()
 }
