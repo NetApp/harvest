@@ -1,4 +1,5 @@
-//+build copy_docker_logs
+//go:build copy_docker_logs
+// +build copy_docker_logs
 
 package main
 
@@ -9,6 +10,7 @@ import (
 )
 
 func TestCopyLogs(t *testing.T) {
+	utils.SetupLogging()
 	installer.CleanLogDir()
 	installer.CreateLogDir()
 	pollerProcessName := "bin/poller"

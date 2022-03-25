@@ -14,6 +14,7 @@ import (
 )
 
 func TestPollerMetrics(t *testing.T) {
+	utils.SetupLogging()
 	conf.LoadHarvestConfig(installer.HarvestConfigFile)
 	for _, pollerName := range conf.Config.PollersOrdered {
 		port, _ := conf.GetPrometheusExporterPorts(pollerName)

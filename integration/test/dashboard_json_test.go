@@ -298,6 +298,6 @@ func GenerateQueryWithValue(query string, expression string) string {
 }
 
 func TestDashboardJsonSuite(t *testing.T) {
+	utils.SetupLogging()
 	suite.Run(t, new(DashboardJsonTestSuite))
-
 }

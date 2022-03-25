@@ -1,4 +1,5 @@
-//+build upgrade_rpm
+//go:build upgrade_rpm
+// +build upgrade_rpm
 
 package main
 
@@ -11,6 +12,7 @@ import (
 )
 
 func TestRHELUpgrade(t *testing.T) {
+	utils.SetupLogging()
 	var path = os.Getenv("BUILD_PATH")
 	if len(path) == 0 {
 		panic("BUILD_PATH variable is not set.")
