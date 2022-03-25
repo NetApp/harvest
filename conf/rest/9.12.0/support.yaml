@@ -4,9 +4,9 @@ query:            api/support/autosupport
 object:           support
 
 counters:
-  - ^enabled => asup_enabled
-  - ^transport  => asup_https_configured
-  - ^is_minimal => asup_private_dataremoved
+  - ^enabled      => asup_enabled
+  - ^transport    => asup_https_configured
+  - ^is_minimal   => asup_private_dataremoved
 
 export_options:
   instance_keys:

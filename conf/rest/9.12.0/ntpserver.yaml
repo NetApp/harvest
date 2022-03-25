@@ -4,8 +4,8 @@ query:            api/cluster/ntp/servers
 object:           ntpserver
 
 counters:
-  - ^^server => servers
-  - ^authentication_enabled => authentication
+  - ^^server                  => servers
+  - ^authentication_enabled   => authentication
 
 
 export_options:

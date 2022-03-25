@@ -3,59 +3,59 @@ query:                    api/svm/svms
 object:                   svm
 
 counters:
-  - ^^uuid => svm_uuid
-  - ^name               => svm
-  - ^aggregates.#.name  => aggr
-  - ^state              => state
-  - ^anti_ransomware_default_volume_state => anti_ransomware_state
-  - ^nsswitch     => nameservice_switch
+  - ^^uuid                                  => svm_uuid
+  - ^name                                   => svm
+  - ^aggregates.#.name                      => aggr
+  - ^state                                  => state
+  - ^anti_ransomware_default_volume_state   => anti_ransomware_state
+  - ^nsswitch                               => nameservice_switch
 
 
 endpoints:
   - query: api/security/ssh/svms
     counters:
-      - ^^svm.uuid => svm_uuid
-      - ^ciphers => ciphers
+      - ^^svm.uuid                          => svm_uuid
+      - ^ciphers                            => ciphers
   - query: api/protocols/cifs/services
     counters:
-      - ^^svm.uuid => svm_uuid
-      - ^enabled   => cifs_protocol_enabled
-      - ^security.smb_encryption => smb_encryption_required
-      - ^security.smb_signing => smb_signing_required
-      - ^security.lm_compatibility_level => cifs_ntlm_enabled
+      - ^^svm.uuid                          => svm_uuid
+      - ^enabled                            => cifs_protocol_enabled
+      - ^security.smb_encryption            => smb_encryption_required
+      - ^security.smb_signing               => smb_signing_required
+      - ^security.lm_compatibility_level    => cifs_ntlm_enabled
   - query: api/protocols/nfs/services
     counters:
-      - ^^svm.uuid => svm_uuid
-      - ^enabled   => nfs_protocol_enabled
+      - ^^svm.uuid                          => svm_uuid
+      - ^enabled                            => nfs_protocol_enabled
   - query: api/protocols/audit
     counters:
-      - ^^svm.uuid => svm_uuid
-      - ^enabled   => audit_protocol_enabled
+      - ^^svm.uuid                          => svm_uuid
+      - ^enabled                            => audit_protocol_enabled
   - query: api/protocols/fpolicy     # need to test
     counters:
-      - ^^svm.uuid => svm_uuid
-      - ^policies.enabled   => fpolicy_enabled
-      - ^policies.name => fpolicy_name
+      - ^^svm.uuid                          => svm_uuid
+      - ^policies.enabled                   => fpolicy_enabled
+      - ^policies.name                      => fpolicy_name
   - query: api/name-services/nis
     counters:
-      - ^^svm.uuid => svm_uuid
-      - ^domain   => nis_domain
+      - ^^svm.uuid                          => svm_uuid
+      - ^domain                             => nis_domain
   - query: api/name-services/ldap
     counters:
-      - ^^svm.uuid => svm_uuid
-      - ^session_security   => ldap_session_security
+      - ^^svm.uuid                          => svm_uuid
+      - ^session_security                   => ldap_session_security
   - query: api/protocols/nfs/kerberos/interfaces
     counters:
-      - ^^svm.uuid => svm_uuid
-      - ^enabled   => nfs_kerberos_protocol_enabled
+      - ^^svm.uuid                          => svm_uuid
+      - ^enabled                            => nfs_kerberos_protocol_enabled
   - query: api/protocols/san/iscsi/credentials
     counters:
-      - ^^svm.uuid => svm_uuid
-      - ^authentication_type => iscsi_authentication_type
+      - ^^svm.uuid                          => svm_uuid
+      - ^authentication_type                => iscsi_authentication_type
   - query: api/protocols/san/iscsi/services
     counters:
-      - ^^svm.uuid => svm_uuid
-      - ^enabled   => iscsi_service_enabled
+      - ^^svm.uuid                          => svm_uuid
+      - ^enabled                            => iscsi_service_enabled
 
 plugins:
   - SVM

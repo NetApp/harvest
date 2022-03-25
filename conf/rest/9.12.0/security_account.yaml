@@ -4,12 +4,12 @@ query:            api/security/accounts
 object:           security_account
 
 counters:
-  - ^^name => user_name
-  - ^role.name => role_name
-  - ^password_hash_algorithm  => hash_algorithm
-  - ^locked => locked
-  - ^applications.#.application  => applications
-  - ^applications.#.authentication_methods.0  => methods
+  - ^^name                                      => user_name
+  - ^role.name                                  => role_name
+  - ^password_hash_algorithm                    => hash_algorithm
+  - ^locked                                     => locked
+  - ^applications.#.application                 => applications
+  - ^applications.#.authentication_methods.0    => methods
 
 
 plugins:
