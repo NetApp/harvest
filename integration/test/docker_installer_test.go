@@ -1,5 +1,4 @@
 //go:build install_docker
-// +build install_docker
 
 package main
 

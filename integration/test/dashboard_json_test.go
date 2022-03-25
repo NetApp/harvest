@@ -1,5 +1,4 @@
 //go:build regression || dashboard_json
-// +build regression dashboard_json
 
 package main
 
