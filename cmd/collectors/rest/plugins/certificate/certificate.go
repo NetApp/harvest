@@ -68,34 +68,41 @@ func (my *Certificate) Init() error {
 // For reference: https://opengrok-prd.eng.netapp.com/source/xref/bard_main/modules/dfm-data-access/src/main/java/com/netapp/dfm/entity/platform/event/builtin/ClusterSelfSignedCertificateCheckListener.java#67
 func (my *Certificate) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
+	var (
+		adminVserver       string
+		adminVserverSerial string
+		err                error
+	)
+
 	if my.currentVal >= my.pluginInvocationRate {
 		my.currentVal = 0
 
 		// invoke private vserver cli rest and get admin vserver name
-		if adminVserver, err := my.GetAdminVserver(); err != nil {
+		if adminVserver, err = my.GetAdminVserver(); err != nil {
 			my.Logger.Warn().Stack().Err(err).Msg("Failed to collect admin vserver")
 			return nil, nil
-		} else {
-			// invoke private ssl cli rest and get admin vserver's serial number
-			if adminVserverSerial, err := my.GetSecuritySsl(adminVserver); err != nil {
-				my.Logger.Warn().Stack().Err(err).Msg("Failed to collect admin vserver's serial number")
-				return nil, nil
-			} else {
-				// update certificate instance based on admin vaserver serial
-				for _, certificateInstance := range data.GetInstances() {
-					if certificateInstance.IsExportable() {
-						certificateInstance.SetExportable(false)
-						serialNumber := certificateInstance.GetLabel("serial_number")
+		}
 
-						if serialNumber == adminVserverSerial {
-							certificateInstance.SetExportable(true)
-							my.setCertificateIssuerType(certificateInstance)
-							my.setCertificateValidity(data, certificateInstance)
-						}
-					}
+		// invoke private ssl cli rest and get admin vserver's serial number
+		if adminVserverSerial, err = my.GetSecuritySsl(adminVserver); err != nil {
+			my.Logger.Warn().Stack().Err(err).Msg("Failed to collect admin vserver's serial number")
+			return nil, nil
+		}
+
+		// update certificate instance based on admin vaserver serial
+		for _, certificateInstance := range data.GetInstances() {
+			if certificateInstance.IsExportable() {
+				certificateInstance.SetExportable(false)
+				serialNumber := certificateInstance.GetLabel("serial_number")
+
+				if serialNumber == adminVserverSerial {
+					certificateInstance.SetExportable(true)
+					my.setCertificateIssuerType(certificateInstance)
+					my.setCertificateValidity(data, certificateInstance)
 				}
 			}
 		}
+
 	}
 
 	my.currentVal++
@@ -175,7 +182,7 @@ func (my *Certificate) setPluginInterval() (int, error) {
 
 	volumeDataInterval := my.getDataInterval(my.ParentParams, DefaultDataPollDuration)
 	pluginDataInterval := my.getDataInterval(my.Params, DefaultPluginDuration)
-	my.Logger.Debug().Float64("VolumeDataInterval", volumeDataInterval).Float64("PluginDataInterval", pluginDataInterval).Msg("Poll interval duration")
+	my.Logger.Debug().Float64("VolumeDataInterval", volumeDataInterval).Float64("PluginDataInterval", pluginDataInterval).Msg("Poll intervals in seconds")
 	my.pluginInvocationRate = int(pluginDataInterval / volumeDataInterval)
 
 	return my.pluginInvocationRate, nil

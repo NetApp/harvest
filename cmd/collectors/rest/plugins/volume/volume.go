@@ -36,7 +36,7 @@ type Volume struct {
 	outgoingSM           map[string][]string
 	incomingSM           map[string]string
 	isHealthySM          map[string]bool
-	aggrsMap             map[string]string
+	aggrsMap             map[string]string // aggregate-uuid -> aggregate-name map
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
