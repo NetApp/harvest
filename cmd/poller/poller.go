@@ -597,8 +597,12 @@ func (p *Poller) loadCollector(c conf.Collector, object string) error {
 				logger.Debug().
 					Str("template", t).
 					Msg("Merged template.")
-				// do not overwrite child of objects. They will be concatenated
-				template.Merge(subTemplate, []string{"objects"})
+				if c.Name == "Zapi" || c.Name == "ZapiPerf" {
+					// do not overwrite child of objects. They will be concatenated
+					template.Merge(subTemplate, []string{"objects"})
+				} else {
+					template.Merge(subTemplate, []string{""})
+				}
 			}
 		}
 	}
@@ -607,6 +611,7 @@ func (p *Poller) loadCollector(c conf.Collector, object string) error {
 	}
 	// add the poller's parameters to the collector's parameters
 	Union2(template, p.params)
+	template.NewChildS("poller_name", p.params.Name)
 
 	// if we don't know object, try load from template
 	if object == "" {

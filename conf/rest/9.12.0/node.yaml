@@ -25,6 +25,7 @@ endpoints:
       - ^max_node_vvols                               => max_vol_num
       - ^max_vol_size                                 => max_vol_size
       - ^health                                       => healthy
+      - cpu_busy_time                                 => cpu_busytime
 
 plugins:
   - LabelAgent:

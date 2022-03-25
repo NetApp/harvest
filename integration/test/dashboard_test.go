@@ -88,6 +88,7 @@ func (suite *DashboardImportTestSuite) TestCModeDashboardCount() {
 		"NetApp Detail: MetroCluster",
 		"NetApp Detail: Data Protection",
 		"NetApp Detail: Data Protection SnapMirror",
+    "NetApp Detail: Qtree",
 		"NetApp Detail: Security",
 	}
 
