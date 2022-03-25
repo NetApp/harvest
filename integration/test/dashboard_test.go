@@ -1,5 +1,4 @@
 //go:build regression || dashboard
-// +build regression dashboard
 
 package main
 
