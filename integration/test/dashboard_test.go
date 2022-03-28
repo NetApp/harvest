@@ -1,5 +1,3 @@
-//go:build regression || dashboard
-
 package main
 
 import (
@@ -38,10 +36,10 @@ var cDotFolder, sevenModeFolder string
 func (suite *DashboardImportTestSuite) SetupSuite() {
 	log.Info().Msg("Verify Grafana and Prometheus are configured")
 	if !utils.IsUrlReachable(utils.GetGrafanaHttpUrl()) {
-		panic(fmt.Errorf("Grafana is not reachable."))
+		panic(fmt.Errorf("grafana is not reachable"))
 	}
 	if !utils.IsUrlReachable(utils.GetPrometheusUrl()) {
-		panic(fmt.Errorf("Prometheus is not reachable."))
+		panic(fmt.Errorf("prometheus is not reachable"))
 	}
 	cDotFolder = "Harvest-" + version.VERSION + "-cDOT"
 	sevenModeFolder = "Harvest-" + version.VERSION + "-7mode"

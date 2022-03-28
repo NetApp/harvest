@@ -1,5 +1,3 @@
-//go:build regression || dashboard_json
-
 package main
 
 import (
@@ -23,11 +21,9 @@ import (
 	"time"
 )
 
-var dataMap map[string]string
-
 var fileSet []string
 
-var counterMap map[string][]string = data.GetCounterMap()
+var counterMap = data.GetCounterMap()
 
 type ResultInfo struct {
 	expression  string
@@ -73,8 +69,8 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 		log.Info().Str("dashboard", filePath).Msg("Started")
 		jsonFile, err := os.Open(filePath)
 		utils.PanicIfNotNil(err)
-		defer jsonFile.Close()
 		byteValue, _ := ioutil.ReadAll(jsonFile)
+		_ = jsonFile.Close()
 		var allExpr []string
 		value := gjson.Get(string(byteValue), "panels")
 		if value.IsArray() {
@@ -86,7 +82,7 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 			}
 		}
 		allExpr = utils.RemoveDuplicateStr(allExpr)
-	EXPRESSION_FOR:
+	ExpressionFor:
 		for _, expression := range allExpr {
 			counters := GetAllCounters(expression)
 			for _, counter := range counters {
@@ -96,13 +92,13 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 				// find exact counter which has no data
 				for _, noDataCounter := range counterMap["NO_DATA_EXACT"] {
 					if noDataCounter == counter {
-						continue EXPRESSION_FOR
+						continue ExpressionFor
 					}
 				}
 				// find exact counter which has no data
 				for _, noDataCounter := range counterMap["NO_DATA_CONTAINS"] {
 					if strings.Contains(counter, noDataCounter) {
-						continue EXPRESSION_FOR
+						continue ExpressionFor
 					}
 				}
 
@@ -114,7 +110,7 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 						"No data found in the database",
 					}
 					errorInfoList = append(errorInfoList, errorInfo)
-					continue EXPRESSION_FOR
+					continue ExpressionFor
 				}
 			}
 			if len(counters) == 0 {
@@ -270,16 +266,16 @@ func HasDataInDB(query string) bool {
 	timeNow := time.Now().Unix()
 	queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",
 		data.PrometheusUrl, query, timeNow)
-	data, _ := utils.GetResponse(queryUrl)
-	value := gjson.Get(data, "data.result")
-	return (value.Exists() && value.IsArray() && (len(value.Array()) > 0))
+	response, _ := utils.GetResponse(queryUrl)
+	value := gjson.Get(response, "data.result")
+	return value.Exists() && value.IsArray() && (len(value.Array()) > 0)
 }
 
 func GenerateQueryWithValue(query string, expression string) string {
 	timeNow := time.Now().Unix()
 	queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",
 		data.PrometheusUrl, query, timeNow)
-	data, _ := utils.GetResponse(queryUrl)
+	response, _ := utils.GetResponse(queryUrl)
 	newExpression := expression
 	/**
 	We are not following standard naming convention for variables in the json
@@ -295,7 +291,7 @@ func GenerateQueryWithValue(query string, expression string) string {
 	newExpression = strings.ReplaceAll(newExpression, "$SourceSVM", "$Source_vserver")
 	newExpression = strings.ReplaceAll(newExpression, "$DestinationSVM", "$Destination_vserver")
 	newExpression = strings.ReplaceAll(newExpression, "$System", "$Cluster")
-	value := gjson.Get(data, "data.result")
+	value := gjson.Get(response, "data.result")
 	if value.Exists() && value.IsArray() && (len(value.Array()) > 0) {
 		metricMap := gjson.Get(value.Array()[0].String(), "metric").Map()
 		for k, v := range metricMap {

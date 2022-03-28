@@ -1,5 +1,3 @@
-//go:build regression
-
 package main
 
 import (
@@ -14,13 +12,13 @@ import (
 
 func TestPollerMetrics(t *testing.T) {
 	utils.SetupLogging()
-	conf.LoadHarvestConfig(installer.HarvestConfigFile)
+	_ = conf.LoadHarvestConfig(installer.HarvestConfigFile)
 	for _, pollerName := range conf.Config.PollersOrdered {
 		port, _ := conf.GetPrometheusExporterPorts(pollerName)
 		portString := strconv.Itoa(port)
 		var validCounters = 0
-		sb, error := utils.GetResponse("http://localhost:" + strings.TrimSpace(portString) + "/metrics")
-		if error != nil {
+		sb, err := utils.GetResponse("http://localhost:" + strings.TrimSpace(portString) + "/metrics")
+		if err != nil {
 			panic("Unable to get metric data")
 		}
 		rows := strings.Split(sb, "\n")
@@ -31,12 +29,12 @@ func TestPollerMetrics(t *testing.T) {
 				continue
 			}
 			open := strings.Index(row, "{")
-			close := strings.Index(row, "}")
+			index := strings.Index(row, "}")
 			space := strings.Index(row, " ")
-			if open > 0 && close > 0 && space > 0 {
+			if open > 0 && index > 0 && space > 0 {
 				//objectName := row[0:open]
-				//metricContent := row[open:(close+1)]
-				metricValue, _ := strconv.Atoi(strings.TrimSpace(row[(close + 1):length]))
+				//metricContent := row[open:(index+1)]
+				metricValue, _ := strconv.Atoi(strings.TrimSpace(row[(index + 1):length]))
 				if metricValue > 0 {
 					validCounters++
 				}
