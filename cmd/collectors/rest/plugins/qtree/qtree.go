@@ -5,8 +5,8 @@
 package qtree
 
 import (
-	"encoding/json"
 	"github.com/tidwall/gjson"
+	"goharvest2/cmd/collectors/rest/plugins"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/cmd/tools/rest"
 	"goharvest2/pkg/conf"
@@ -104,8 +104,7 @@ func (my *Qtree) Init() error {
 
 func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	var (
-		records       []interface{}
-		content       []byte
+		result        []gjson.Result
 		quotaInstance *matrix.Instance
 		output        []*matrix.Matrix
 		err           error
@@ -120,34 +119,11 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	href := rest.BuildHref("", "*", nil, "", "", "", "", my.query)
 
-	err = rest.FetchData(my.client, href, &records)
-	if err != nil {
-		my.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
+	if result, err = plugins.InvokeRestCall(my.client, my.query, href, my.Logger); err != nil {
 		return nil, err
 	}
 
-	all := rest.Pagination{
-		Records:    records,
-		NumRecords: len(records),
-	}
-
-	content, err = json.Marshal(all)
-	if err != nil {
-		my.Logger.Error().Err(err).Str("ApiPath", my.query).Msg("Unable to marshal rest pagination")
-	}
-
-	if !gjson.ValidBytes(content) {
-		my.Logger.Error().Err(err).Str("Api", my.query).Msg("Invalid json")
-		return nil, errors.New(errors.API_RESPONSE, "Invalid json")
-	}
-
-	results := gjson.GetManyBytes(content, "num_records", "records")
-	numRecords := results[0]
-	if numRecords.Int() == 0 {
-		return nil, errors.New(errors.ERR_NO_INSTANCE, "no "+my.query+" instances on cluster")
-	}
-
-	for _, quota := range results[1].Array() {
+	for _, quota := range result {
 		var tree string
 
 		if !quota.IsObject() {

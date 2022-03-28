@@ -6,15 +6,13 @@ package certificate
 
 import (
 	"crypto/x509"
-	"encoding/json"
 	"encoding/pem"
 	"github.com/tidwall/gjson"
+	"goharvest2/cmd/collectors/rest/plugins"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/cmd/tools/rest"
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/dict"
-	"goharvest2/pkg/errors"
-	"goharvest2/pkg/logging"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
 	"time"
@@ -65,7 +63,6 @@ func (my *Certificate) Init() error {
 	return nil
 }
 
-// For reference: https://opengrok-prd.eng.netapp.com/source/xref/bard_main/modules/dfm-data-access/src/main/java/com/netapp/dfm/entity/platform/event/builtin/ClusterSelfSignedCertificateCheckListener.java#67
 func (my *Certificate) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var (
@@ -197,6 +194,8 @@ func (my *Certificate) getDataInterval(param *node.Node, defaultInterval time.Du
 			dataIntervalStr = dataInterval.GetContentS()
 			if durationVal, err := time.ParseDuration(dataIntervalStr); err == nil {
 				return durationVal.Seconds()
+			} else {
+				my.Logger.Error().Stack().Err(err).Str("dataInterval", dataIntervalStr).Msg("Failed to parse duration")
 			}
 		}
 	}
@@ -214,7 +213,7 @@ func (my *Certificate) GetAdminVserver() (string, error) {
 	query := "api/private/cli/vserver"
 	href := rest.BuildHref("", "type", []string{"type=admin"}, "", "", "", "", query)
 
-	if result, err = InvokeRestCall(my.client, query, href, my.Logger); err != nil {
+	if result, err = plugins.InvokeRestCall(my.client, query, href, my.Logger); err != nil {
 		return "", err
 	}
 
@@ -236,7 +235,7 @@ func (my *Certificate) GetSecuritySsl(adminSvm string) (string, error) {
 	query := "api/private/cli/security/ssl"
 	href := rest.BuildHref("", "serial", []string{"vserver=" + adminSvm}, "", "", "", "", query)
 
-	if result, err = InvokeRestCall(my.client, query, href, my.Logger); err != nil {
+	if result, err = plugins.InvokeRestCall(my.client, query, href, my.Logger); err != nil {
 		return "", err
 	}
 
@@ -246,42 +245,4 @@ func (my *Certificate) GetSecuritySsl(adminSvm string) (string, error) {
 	}
 
 	return adminSerial, nil
-}
-
-func InvokeRestCall(client *rest.Client, query string, href string, logger *logging.Logger) ([]gjson.Result, error) {
-	var (
-		records []interface{}
-		content []byte
-		err     error
-	)
-
-	err = rest.FetchData(client, href, &records)
-	if err != nil {
-		logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
-		return []gjson.Result{}, err
-	}
-
-	all := rest.Pagination{
-		Records:    records,
-		NumRecords: len(records),
-	}
-
-	content, err = json.Marshal(all)
-	if err != nil {
-		logger.Error().Err(err).Str("ApiPath", query).Msg("Unable to marshal rest pagination")
-		return []gjson.Result{}, err
-	}
-
-	if !gjson.ValidBytes(content) {
-		logger.Error().Err(err).Str("Api", query).Msg("Invalid json")
-		return []gjson.Result{}, errors.New(errors.API_RESPONSE, "Invalid json")
-	}
-
-	results := gjson.GetManyBytes(content, "num_records", "records")
-	numRecords := results[0]
-	if numRecords.Int() == 0 {
-		return []gjson.Result{}, errors.New(errors.ERR_NO_INSTANCE, "no "+query+" instances on cluster")
-	}
-
-	return results[1].Array(), nil
 }
