@@ -66,7 +66,11 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 		if IsValidFile(filePath) {
 			continue
 		}
-		log.Info().Str("JSON File", filePath).Msg("Started")
+		if ShouldSkipDashboard(filePath) {
+			log.Info().Str("dashboard", filePath).Msg("Skipping dashboard")
+			continue
+		}
+		log.Info().Str("dashboard", filePath).Msg("Started")
 		jsonFile, err := os.Open(filePath)
 		utils.PanicIfNotNil(err)
 		defer jsonFile.Close()
@@ -159,6 +163,16 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 	} else {
 		log.Info().Msg("Everything looks good!!")
 	}
+}
+
+func ShouldSkipDashboard(path string) bool {
+	skip := []string{"nfs4storePool_detail"}
+	for _, s := range skip {
+		if strings.Contains(path, s) {
+			return true
+		}
+	}
+	return false
 }
 
 func IsValidFile(filePath string) bool {
