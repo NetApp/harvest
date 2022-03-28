@@ -5,6 +5,7 @@ package main
 import (
 	"github.com/Netapp/harvest-automation/test/docker"
 	"github.com/Netapp/harvest-automation/test/installer"
+	"github.com/Netapp/harvest-automation/test/utils"
 	"testing"
 )
 
