@@ -308,8 +308,8 @@ func WriteToken(token string) {
 		err := f.Close()
 		PanicIfNotNil(err)
 	}(f)
-	fmt.Fprintf(f, "\n%s\n", "Tools:")
-	fmt.Fprintf(f, "  %s: %s\n", GrafanaTokeKey, token)
+	_, _ = fmt.Fprintf(f, "\n%s\n", "Tools:")
+	_, _ = fmt.Fprintf(f, "  %s: %s\n", GrafanaTokeKey, token)
 }
 
 func GetGrafanaHttpUrl() string {

@@ -44,7 +44,7 @@ func (suite *DashboardImportTestSuite) SetupSuite() {
 	cDotFolder = "Harvest-" + version.VERSION + "-cDOT"
 	sevenModeFolder = "Harvest-" + version.VERSION + "-7mode"
 	log.Info().Str("cMode", cDotFolder).Str("7mode", sevenModeFolder).Msg("Folder name details")
-	status, _ := new(grafana.GrafanaMgr).Import("") //send empty so that it will import all dashboards
+	status, _ := new(grafana.Mgr).Import("") //send empty so that it will import all dashboards
 	if !status {
 		assert.Fail(suite.T(), "Grafana import operation is failed")
 	}
@@ -73,20 +73,23 @@ func (suite *DashboardImportTestSuite) TestCModeDashboardCount() {
 		"Harvest Metadata",
 		"NetApp Detail: Aggregate",
 		"NetApp Detail: Cluster",
+		"NetApp Detail: Data Protection SnapMirror",
+		"NetApp Detail: Data Protection",
 		"NetApp Detail: Disk",
 		"NetApp Detail: LUN",
+		"NetApp Detail: MetroCluster",
 		"NetApp Detail: Network  - Details",
 		"NetApp Detail: Network with NVMe/FC",
 		"NetApp Detail: Node - Details",
+		"NetApp Detail: Qtree",
+		"NetApp Detail: Qtree",
+		"NetApp Detail: Security",
+		"NetApp Detail: Security",
 		"NetApp Detail: Shelf",
 		"NetApp Detail: SnapMirror",
 		"NetApp Detail: SVM - Details",
+		"NetApp Detail: SVM - Details",
 		"NetApp Detail: Volume - Details",
-		"NetApp Detail: MetroCluster",
-		"NetApp Detail: Data Protection",
-		"NetApp Detail: Data Protection SnapMirror",
-		"NetApp Detail: Qtree",
-		"NetApp Detail: Security",
 	}
 
 	VerifyDashboards(folderId, expectedName, suite.T())
