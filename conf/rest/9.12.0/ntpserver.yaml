@@ -1,0 +1,15 @@
+
+name:             NtpServer
+query:            api/cluster/ntp/servers
+object:           ntpserver
+
+counters:
+  - ^^server                  => servers
+  - ^authentication_enabled   => authentication
+
+
+export_options:
+  instance_keys:
+    - servers
+  instance_labels:
+    - authentication

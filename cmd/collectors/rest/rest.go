@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/tidwall/gjson"
+	"goharvest2/cmd/collectors/rest/plugins/certificate"
 	"goharvest2/cmd/collectors/rest/plugins/disk"
 	"goharvest2/cmd/collectors/rest/plugins/qtree"
 	"goharvest2/cmd/collectors/rest/plugins/shelf"
 	"goharvest2/cmd/collectors/rest/plugins/snapmirror"
+	"goharvest2/cmd/collectors/rest/plugins/svm"
 	"goharvest2/cmd/collectors/rest/plugins/volume"
 	"goharvest2/cmd/poller/collector"
 	"goharvest2/cmd/poller/plugin"
@@ -337,8 +339,8 @@ func (r *Rest) processEndPoints() error {
 		href := rest.BuildHref(r.query(endpoint), strings.Join(r.fields(endpoint), ","), nil, "", "", "", r.Prop.ReturnTimeOut, r.query(endpoint))
 
 		if records, err = r.GetRestData(href); err != nil {
-			r.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
-			return err
+			r.Logger.Error().Stack().Err(err).Str("ApiPath", endpoint.prop.Query).Msg("Failed to fetch data")
+			continue
 		}
 
 		all := rest.Pagination{
@@ -349,16 +351,19 @@ func (r *Rest) processEndPoints() error {
 		content, err = json.Marshal(all)
 		if err != nil {
 			r.Logger.Error().Err(err).Str("ApiPath", endpoint.prop.Query).Msg("Unable to marshal rest pagination")
+			continue
 		}
 
 		if !gjson.ValidBytes(content) {
-			return fmt.Errorf("json is not valid for: %s", endpoint.prop.Query)
+			r.Logger.Error().Str("ApiPath", endpoint.prop.Query).Msg("Invalid json")
+			continue
 		}
 
 		results := gjson.GetManyBytes(content, "num_records", "records")
 		numRecords := results[0]
 		if numRecords.Int() == 0 {
-			return errors.New(errors.ERR_NO_INSTANCE, "no "+endpoint.prop.Query+" instances on cluster")
+			r.Logger.Warn().Str("ApiPath", endpoint.prop.Query).Msg("no " + endpoint.prop.Query + " instances on cluster")
+			continue
 		}
 
 		r.HandleResults(results[1], endpoint.prop, false)
@@ -388,6 +393,10 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return snapmirror.New(abc)
 	case "Volume":
 		return volume.New(abc)
+	case "Certificate":
+		return certificate.New(abc)
+	case "SVM":
+		return svm.New(abc)
 	default:
 		r.Logger.Warn().Str("kind", kind).Msg("no rest plugin found ")
 	}

@@ -5,14 +5,12 @@
 package volume
 
 import (
-	"encoding/json"
 	"github.com/tidwall/gjson"
 	"goharvest2/cmd/collectors/rest/plugins"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/cmd/tools/rest"
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/dict"
-	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
 	"strconv"
@@ -36,6 +34,7 @@ type Volume struct {
 	outgoingSM           map[string][]string
 	incomingSM           map[string]string
 	isHealthySM          map[string]bool
+	aggrsMap             map[string]string // aggregate-uuid -> aggregate-name map
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -68,6 +67,7 @@ func (my *Volume) Init() error {
 	my.outgoingSM = make(map[string][]string)
 	my.incomingSM = make(map[string]string)
 	my.isHealthySM = make(map[string]bool)
+	my.aggrsMap = make(map[string]string)
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
 	if my.currentVal, err = my.setPluginInterval(); err != nil {
@@ -90,12 +90,20 @@ func (my *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	if my.currentVal >= my.pluginInvocationRate {
 		my.currentVal = 0
 
-		// invoke snapmirror zapi and populate info in source and destination snapmirror maps
+		// invoke snapmirror rest and populate info in source and destination snapmirror maps
 		if smSourceMap, smDestinationMap, err := my.GetSnapMirrors(); err != nil {
 			my.Logger.Warn().Stack().Err(err).Msg("Failed to collect snapmirror data")
 		} else {
 			// update internal cache based on volume and SM maps
 			my.updateMaps(data, smSourceMap, smDestinationMap)
+		}
+
+		// invoke disk rest and populate info in aggrsMap
+		if disks, err := my.getDiskData(); err != nil {
+			my.Logger.Warn().Stack().Err(err).Msg("Failed to collect disk data")
+		} else {
+			// update aggrsMap based on disk data
+			my.updateAggrMap(disks)
 		}
 	}
 
@@ -133,46 +141,21 @@ func (my *Volume) getDataInterval(param *node.Node, defaultInterval time.Duratio
 
 func (my *Volume) GetSnapMirrors() (map[string][]*matrix.Instance, map[string]*matrix.Instance, error) {
 	var (
-		records []interface{}
-		content []byte
-		err     error
+		result []gjson.Result
+		err    error
 	)
 
 	smSourceMap := make(map[string][]*matrix.Instance)
 	smDestinationMap := make(map[string]*matrix.Instance)
 
 	snapmirrorData := matrix.New(my.Parent+".SnapMirror", "sm", "sm")
-
 	href := rest.BuildHref("", strings.Join(my.snapmirrorFields, ","), nil, "", "", "", "", my.query)
 
-	err = rest.FetchData(my.client, href, &records)
-	if err != nil {
-		my.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
+	if result, err = plugins.InvokeRestCall(my.client, my.query, href, my.Logger); err != nil {
 		return nil, nil, err
 	}
 
-	all := rest.Pagination{
-		Records:    records,
-		NumRecords: len(records),
-	}
-
-	content, err = json.Marshal(all)
-	if err != nil {
-		my.Logger.Error().Err(err).Str("ApiPath", my.query).Msg("Unable to marshal rest pagination")
-	}
-
-	if !gjson.ValidBytes(content) {
-		my.Logger.Error().Err(err).Str("Api", my.query).Msg("Invalid json")
-		return nil, nil, errors.New(errors.API_RESPONSE, "Invalid json")
-	}
-
-	results := gjson.GetManyBytes(content, "num_records", "records")
-	numRecords := results[0]
-	if numRecords.Int() == 0 {
-		return nil, nil, errors.New(errors.ERR_NO_INSTANCE, "no "+my.query+" instances on cluster")
-	}
-
-	for _, snapMirror := range results[1].Array() {
+	for _, snapMirror := range result {
 
 		relationshipId := snapMirror.Get("relationship_id").String()
 		groupType := snapMirror.Get("relationship_group_type").String()
@@ -272,6 +255,7 @@ func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
 		volumeName := volume.GetLabel("volume")
 		svmName := volume.GetLabel("svm")
 		volumeType := volume.GetLabel("type")
+		aggrUuid := volume.GetLabel("aggrUuid")
 		key := volumeName + "-" + svmName
 
 		// Update protectionRole label in volume
@@ -308,5 +292,34 @@ func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
 			volume.SetLabel("all_sm_healthy", strconv.FormatBool(healthy))
 		}
 
+		_, exist := my.aggrsMap[aggrUuid]
+		volume.SetLabel("isHardwareEncrypted", strconv.FormatBool(exist))
+	}
+}
+
+func (my *Volume) getDiskData() ([]gjson.Result, error) {
+	var (
+		result []gjson.Result
+		err    error
+	)
+
+	diskFields := []string{"aggregates.name", "aggregates.uuid"}
+	query := "api/storage/disks"
+	href := rest.BuildHref("", strings.Join(diskFields, ","), []string{"protection_mode=!data|full"}, "", "", "", "", query)
+
+	if result, err = plugins.InvokeRestCall(my.client, query, href, my.Logger); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (my *Volume) updateAggrMap(disks []gjson.Result) {
+	// Clean aggrsMap map
+	my.aggrsMap = make(map[string]string)
+
+	for _, disk := range disks {
+		aggrName := disk.Get("aggregates.name").String()
+		aggrUuid := disk.Get("aggregates.uuid").String()
+		my.aggrsMap[aggrUuid] = aggrName
 	}
 }

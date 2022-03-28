@@ -1,0 +1,16 @@
+
+name:             Support
+query:            api/support/autosupport
+object:           support
+
+counters:
+  - ^enabled      => asup_enabled
+  - ^transport    => asup_https_configured
+  - ^is_minimal   => asup_private_dataremoved
+
+export_options:
+  instance_keys:
+    - asup_enabled
+  instance_labels:
+    - asup_https_configured
+    - asup_private_dataremoved

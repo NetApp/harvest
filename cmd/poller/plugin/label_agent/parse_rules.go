@@ -22,9 +22,13 @@ func (me *LabelAgent) parseRules() int {
 	me.excludeEqualsRules = make([]excludeEqualsRule, 0)
 	me.excludeContainsRules = make([]excludeContainsRule, 0)
 	me.excludeRegexRules = make([]excludeRegexRule, 0)
+	me.includeEqualsRules = make([]includeEqualsRule, 0)
+	me.includeContainsRules = make([]includeContainsRule, 0)
+	me.includeRegexRules = make([]includeRegexRule, 0)
 	me.splitPairsRules = make([]splitPairsRule, 0)
 	me.valueToNumRules = make([]valueToNumRule, 0)
 	me.computeMetricRules = make([]computeMetricRule, 0)
+	me.valueToNumRegexRules = make([]valueToNumRegexRule, 0)
 
 	for _, c := range me.Params.GetChildren() {
 		name := c.GetNameS()
@@ -63,6 +67,8 @@ func (me *LabelAgent) parseRules() int {
 				me.parseValueToNumRule(rule)
 			case "compute_metric":
 				me.parseComputeMetricRule(rule)
+			case "value_to_num_regex":
+				me.parseValueToNumRegexRule(rule)
 			default:
 				me.Logger.Warn().
 					Str("object", me.ParentParams.GetChildContentS("object")).
@@ -139,13 +145,18 @@ func (me *LabelAgent) parseRules() int {
 			}
 		case "value_to_num":
 			if len(me.valueToNumRules) != 0 {
-				me.actions = append(me.actions, me.mapValues)
+				me.actions = append(me.actions, me.mapValueToNum)
 				count += len(me.valueToNumRules)
 			}
 		case "compute_metric":
 			if len(me.computeMetricRules) != 0 {
 				me.actions = append(me.actions, me.computeMetrics)
 				count += len(me.computeMetricRules)
+			}
+		case "value_to_num_regex":
+			if len(me.valueToNumRegexRules) != 0 {
+				me.actions = append(me.actions, me.mapValueToNumRegex)
+				count += len(me.valueToNumRegexRules)
 			}
 		default:
 			me.Logger.Warn().
@@ -541,4 +552,50 @@ func (me *LabelAgent) parseComputeMetricRule(rule string) {
 		return
 	}
 	me.Logger.Warn().Msgf("(compute_metric) rule has invalid format [%s]", rule)
+}
+
+type valueToNumRegexRule struct {
+	metric       string
+	label        string
+	defaultValue uint8
+	hasDefault   bool
+	reg          []*regexp.Regexp
+}
+
+// example rule:
+// metric label zapi_value rest_value `default_value`
+// status state ^normal$ ^ok$ `0`
+// will create a new metric "status" of type uint8
+// if value of label "state" contains normal or ok
+// the metric value will be 1, otherwise it will be 0.
+
+func (me *LabelAgent) parseValueToNumRegexRule(rule string) {
+	var err error
+
+	if fields := strings.Fields(rule); len(fields) == 4 || len(fields) == 5 {
+		r := valueToNumRegexRule{metric: fields[0], label: fields[1], reg: make([]*regexp.Regexp, 2)}
+		if r.reg[0], err = regexp.Compile(fields[2]); err != nil {
+			me.Logger.Error().Stack().Err(err).Str("regex", r.reg[0].String()).Str("value", fields[2]).Msg("(value_to_num_regex) compile regex:")
+		}
+
+		if r.reg[1], err = regexp.Compile(fields[3]); err != nil {
+			me.Logger.Error().Stack().Err(err).Str("regex", r.reg[1].String()).Str("value", fields[3]).Msg("(value_to_num_regex) compile regex:")
+		}
+
+		if len(fields) == 5 {
+			fields[4] = strings.TrimPrefix(strings.TrimSuffix(fields[4], "`"), "`")
+			if v, err := strconv.ParseUint(fields[4], 10, 8); err != nil {
+				me.Logger.Error().Stack().Err(err).Msgf("(value_to_num_regex) parse default value (%s): ", fields[4])
+				return
+			} else {
+				r.hasDefault = true
+				r.defaultValue = uint8(v)
+			}
+		}
+
+		me.valueToNumRegexRules = append(me.valueToNumRegexRules, r)
+		me.Logger.Debug().Msgf("(value_to_num_regex) parsed rule [%v]", r)
+		return
+	}
+	me.Logger.Warn().Msgf("(value_to_num_regex) rule has invalid format [%s]", rule)
 }

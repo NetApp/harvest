@@ -63,6 +63,22 @@ func TestInitPlugin(t *testing.T) {
 	params.NewChildS("compute_metric", "").NewChildS("", "total_bytes MULTIPLY bytes_per_sector sector_count")
 	// create metric "transmission_rate", which is division of the metric value of transfer.bytes_transferred by transfer.total_duration
 	params.NewChildS("compute_metric", "").NewChildS("", "transmission_rate DIVIDE transfer.bytes_transferred transfer.total_duration")
+	// create metric "status", if label "state" contains one of the up/ok[zapi/rest], map metric value to respective index
+	params.NewChildS("value_to_num_regex", "").NewChildS("", "status state ^up$ ^ok$ `0`")
+	// create metric "output", if label "stage" matches regex then map to 1 else use default value "4"
+	params.NewChildS("value_to_num_regex", "").NewChildS("", "output stage ^transfer.*$ ^run.*$ `4`")
+	// create metric "result", if label "state" matches regex then map to 1 else use default value "4"
+	params.NewChildS("value_to_num_regex", "").NewChildS("", "result value ^test\\d+ ^error `4`")
+
+	// These both are mutually exclusive, and should honour the above one's filtered result.
+	// exclude instance if label "volstate" has value "offline"
+	params.NewChildS("exclude_equals", "").NewChildS("", "volstate `offline`")
+	// include instance if label "voltype" has value "rw"
+	params.NewChildS("include_equals", "").NewChildS("", "voltype `rw`")
+	// include instance if label "volstyle" has value which starts with "flexvol_"
+	params.NewChildS("include_contains", "").NewChildS("", "volstyle `flexvol`")
+	// exclude instance if label "volstatus" has value which starts with "stopped_"
+	params.NewChildS("exclude_contains", "").NewChildS("", "volstatus `stop`")
 
 	abc := plugin.New("Test", nil, params, nil)
 	p = &LabelAgent{AbstractPlugin: abc}
@@ -323,7 +339,7 @@ func TestValueToNumRule(t *testing.T) {
 	instanceB.SetLabel("stage", "unknown") // "stage" should be 4 (default)
 	instanceB.SetLabel("outage", "failed") // "outage" should be 0 (default)
 
-	if err = p.mapValues(m); err != nil {
+	if err = p.mapValueToNum(m); err != nil {
 		t.Fatal(err)
 	}
 
@@ -353,7 +369,7 @@ func TestValueToNumRule(t *testing.T) {
 	if v, ok = status.GetValueUint8(instanceB); !ok {
 		t.Log("OK - metric [status]: value for InstanceB not set")
 	} else {
-		t.Errorf("metric [status]: value for InstanceA is %d, should not be set", v)
+		t.Errorf("metric [status]: value for InstanceB is %d, should not be set", v)
 	}
 
 	// check "stage" for instanceA
@@ -556,4 +572,171 @@ func TestComputeMetricsRule(t *testing.T) {
 		t.Error("metric [transmission_rate] missing")
 	}
 
+}
+
+func TestValueToNumRegexRule(t *testing.T) {
+
+	var (
+		instanceA, instanceB   *matrix.Instance
+		status, output, result matrix.Metric
+		v, expected            uint8
+		ok                     bool
+		err                    error
+	)
+
+	m := matrix.New("TestLabelAgent", "test", "test")
+
+	if instanceA, err = m.NewInstance("A"); err != nil {
+		t.Fatal(err)
+	}
+	instanceA.SetLabel("state", "up")      // "status" should be 1
+	instanceA.SetLabel("stage", "stopped") // "output" should be 4 (default)
+	instanceA.SetLabel("value", "test11")  // "result" should be 1
+
+	if instanceB, err = m.NewInstance("B"); err != nil {
+		t.Fatal(err)
+	}
+	instanceB.SetLabel("state", "error")   // "status" should be 0 (default)
+	instanceB.SetLabel("stage", "running") // "output" should be 1
+	instanceB.SetLabel("value", "done")    // "result" should be 4 (default)
+
+	if err = p.mapValueToNumRegex(m); err != nil {
+		t.Fatal(err)
+	}
+
+	if status = m.GetMetric("status"); status == nil {
+		t.Error("metric [status] missing")
+	}
+
+	if output = m.GetMetric("output"); output == nil {
+		t.Error("metric [output] missing")
+	}
+
+	if result = m.GetMetric("result"); result == nil {
+		t.Error("metric [result] missing")
+	}
+
+	// check "status" for instanceA
+	expected = 1
+	if v, ok = status.GetValueUint8(instanceA); !ok {
+		t.Error("metric [status]: value for InstanceA not set")
+	} else if v != expected {
+		t.Errorf("metric [status]: value for InstanceA is %d, expected %d", v, expected)
+	} else {
+		t.Logf("OK - metric [status]: value for instanceA set to %d", v)
+	}
+
+	// check "status" for instanceB
+	expected = 0
+	if v, ok = status.GetValueUint8(instanceB); !ok {
+		t.Log("metric [status]: value for InstanceB not set")
+	} else if v != expected {
+		t.Errorf("metric [status]: value for InstanceB is %d, expected %d", v, expected)
+	} else {
+		t.Logf("Ok - metric [status]: value for InstanceB set to %d", v)
+	}
+
+	// check "output" for instanceA
+	expected = 4
+	if v, ok = output.GetValueUint8(instanceA); !ok {
+		t.Error("metric [stage]: value for InstanceA not set")
+	} else if v != expected {
+		t.Errorf("metric [stage]: value for InstanceA is %d, expected %d", v, expected)
+	} else {
+		t.Logf("OK - metric [stage]: value for instanceA set to %d", v)
+	}
+
+	// check "output" for instanceB
+	expected = 1
+	if v, ok = output.GetValueUint8(instanceB); !ok {
+		t.Error("metric [stage]: value for InstanceB not set")
+	} else if v != expected {
+		t.Errorf("metric [stage]: value for InstanceB is %d, expected %d", v, expected)
+	} else {
+		t.Logf("OK - metric [stage]: value for instanceB set to %d", v)
+	}
+
+	// check "result" for instanceA
+	expected = 1
+	if v, ok = result.GetValueUint8(instanceA); !ok {
+		t.Error("metric [outage]: value for InstanceA not set")
+	} else if v != expected {
+		t.Errorf("metric [outage]: value for InstanceA is %d, expected %d", v, expected)
+	} else {
+		t.Logf("OK - metric [outage]: value for instanceA set to %d", v)
+	}
+
+	// check "result" for instanceB
+	expected = 4
+	if v, ok = result.GetValueUint8(instanceB); !ok {
+		t.Error("metric [outage]: value for InstanceB not set")
+	} else if v != expected {
+		t.Errorf("metric [outage]: value for InstanceB is %d, expected %d", v, expected)
+	} else {
+		t.Logf("OK - metric [outage]: value for instanceB set to %d", v)
+	}
+}
+
+func TestExcludeEqualIncludeEqualRuleOrder(t *testing.T) {
+	m := matrix.New("TestLabelAgent", "test", "test")
+
+	instanceOne, _ := m.NewInstance("1")
+	instanceOne.SetLabel("volstate", "offline")
+	instanceOne.SetLabel("voltype", "rw")
+
+	instanceTwo, _ := m.NewInstance("2")
+	instanceTwo.SetLabel("volstate", "online")
+	instanceTwo.SetLabel("voltype", "rw")
+
+	instanceThree, _ := m.NewInstance("3")
+	instanceThree.SetLabel("volstate", "online")
+	instanceThree.SetLabel("voltype", "dp")
+
+	// After the rules, only instanceTwo would be exportable
+	p.excludeEquals(m)
+	p.includeEquals(m)
+
+	if instanceOne.IsExportable() {
+		t.Error("InstanceOne should have been excluded")
+	}
+
+	if !instanceTwo.IsExportable() {
+		t.Error("InstanceTwo should not have been excluded")
+	}
+
+	if instanceThree.IsExportable() {
+		t.Error("instanceThree should have been excluded")
+	}
+}
+
+func TestIncludeContainExcludeContainRuleOrder(t *testing.T) {
+	m := matrix.New("TestLabelAgent", "test", "test")
+
+	instanceFour, _ := m.NewInstance("4")
+	instanceFour.SetLabel("volstyle", "flexvol")
+	instanceFour.SetLabel("volstatus", "running")
+
+	instanceFive, _ := m.NewInstance("5")
+	instanceFive.SetLabel("volstyle", "flexvol")
+	instanceFive.SetLabel("volstatus", "stopped")
+
+	instanceSix, _ := m.NewInstance("6")
+	instanceSix.SetLabel("volstyle", "flexgroup")
+	instanceSix.SetLabel("volstatus", "stopped")
+
+	// After the rules, only instanceFour would be exportable
+	p.includeContains(m)
+	p.excludeContains(m)
+
+	if !instanceFour.IsExportable() {
+		t.Error("InstanceFour should not have been excluded")
+	}
+
+	if instanceFive.IsExportable() {
+		t.Error("InstanceFive should have been excluded")
+	}
+
+	if instanceSix.IsExportable() {
+		t.Error("instanceSix should have been excluded")
+	}
 }

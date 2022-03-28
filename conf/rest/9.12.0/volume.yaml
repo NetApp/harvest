@@ -7,10 +7,15 @@ counters:
   - ^name                                         => volume
   - ^svm.name                                     => svm
   - ^aggregates.#.name                            => aggr #zapi maps to field containing-aggregate-name while rest mapping is an array?
+  - ^aggregates.#.uuid                            => aggrUuid
   - ^style                                        => style
   - ^type                                         => type
   - ^snapshot_policy.name                         => snapshot_policy
   - ^state                                        => state
+  - ^is_svm_root                                  => svm_root
+  - ^encryption.enabled                           => isEncrypted
+  - ^anti_ransomware.state                        => antiRansomwareState
+  - ^snaplock.type                                => snaplock_type
   - autosize.maximum                              => autosize_maximum_size
   - autosize.grow_threshold                       => autosize_grow_threshold_percent
   - space.expected_available                      => space_expected_available
@@ -37,6 +42,10 @@ counters:
   - hidden_fields:
     - space
     - autosize
+    - encryption.enabled
+    - anti_ransomware.state
+    - is_svm_root
+    - snaplock.type
 
 endpoints:
   - query: api/private/cli/volume
@@ -79,9 +88,14 @@ export_options:
     - is_sis_volume
     - snapshot_policy
     - type
+    - svm_root
     - protectedByStatus
     - protectedBy
     - protectionRole
     - all_sm_healthy
+    - isEncrypted
+    - snaplock_type
+    - antiRansomwareState
+    - isHardwareEncrypted
 
 

@@ -1,6 +1,11 @@
 package plugins
 
 import (
+	"encoding/json"
+	"github.com/tidwall/gjson"
+	"goharvest2/cmd/tools/rest"
+	"goharvest2/pkg/errors"
+	"goharvest2/pkg/logging"
 	"goharvest2/pkg/matrix"
 	"strings"
 )
@@ -59,4 +64,42 @@ func UpdateProtectedFields(instance *matrix.Instance) {
 	} else {
 		instance.SetLabel("derived_relationship_type", relationshipType)
 	}
+}
+
+func InvokeRestCall(client *rest.Client, query string, href string, logger *logging.Logger) ([]gjson.Result, error) {
+	var (
+		records []interface{}
+		content []byte
+		err     error
+	)
+
+	err = rest.FetchData(client, href, &records)
+	if err != nil {
+		logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
+		return []gjson.Result{}, err
+	}
+
+	all := rest.Pagination{
+		Records:    records,
+		NumRecords: len(records),
+	}
+
+	content, err = json.Marshal(all)
+	if err != nil {
+		logger.Error().Err(err).Str("ApiPath", query).Msg("Unable to marshal rest pagination")
+		return []gjson.Result{}, err
+	}
+
+	if !gjson.ValidBytes(content) {
+		logger.Error().Err(err).Str("Api", query).Msg("Invalid json")
+		return []gjson.Result{}, errors.New(errors.API_RESPONSE, "Invalid json")
+	}
+
+	results := gjson.GetManyBytes(content, "num_records", "records")
+	numRecords := results[0]
+	if numRecords.Int() == 0 {
+		return []gjson.Result{}, errors.New(errors.ERR_NO_INSTANCE, "no "+query+" instances on cluster")
+	}
+
+	return results[1].Array(), nil
 }

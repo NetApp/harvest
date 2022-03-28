@@ -13,8 +13,21 @@ objects:
   SnapMirror:       snapmirror.yaml
   Volume:           volume.yaml
   Subsystem:        subsystem.yaml
-  SnapshotPolicy:   snapshotPolicy.yaml
+  Snapshot:         snapshot.yaml
   Port:             port.yaml
   Qtree:            qtree.yaml
   Shelf:            shelf.yaml
   Sensor:           sensor.yaml
+  SVM:              svm.yaml
+
+
+
+# for security dashboard at cluster
+  Support:                  support.yaml
+  Security:                 security.yaml
+  SecurityAccount:          security_account.yaml
+  ClusterPeer:              clusterpeer.yaml
+  SecurityCert:             security_certificate.yaml
+  SecurityLogin:            security_login.yaml
+  NtpServer:                ntpserver.yaml
+  SecurityAuditDestination: security_audit_dest.yaml  # test pending

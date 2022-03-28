@@ -1,0 +1,40 @@
+
+name:             SecurityCert
+query:            api/security/certificates
+object:           security_certificate
+
+counters:
+  - ^^uuid
+  - ^name
+  - ^scope                   => scope
+  - ^type                    => type
+  - ^svm.name                => svm
+  - ^public_certificate      => certificatePEM
+  - ^serial_number           => serial_number
+  - expiry_time(timestamp)   => expiry_time
+
+plugins:
+  - LabelAgent:
+      exclude_equals:
+        - scope `svm`
+      include_equals:
+#        - type `server` scope `cluster`   // TODO: To support multiple include with AND clause
+        - type `server`
+      value_to_num:
+        - status name - - `0`
+  - Certificate:
+      schedule:
+        - data: 180s  # should be multiple of data poll duration
+
+export_options:
+  instance_keys:
+    - uuid
+  instance_labels:
+    - name
+    #- certificatePEM   // Need to decide certificatePEM would be exposed or not in prometheus
+    - scope
+    - svm
+    - type
+    - certificateIssuerType
+    - serial_number
+    - certificateExpiryStatus

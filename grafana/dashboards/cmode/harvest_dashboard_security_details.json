@@ -1,0 +1,4527 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "bargauge",
+      "name": "Bar gauge",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "7.5.4"
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "",
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": null,
+  "iteration": 1646736510598,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 152,
+      "panels": [],
+      "title": "Cluster Compliance",
+      "type": "row"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "green",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "filterable": false
+          },
+          "decimals": 0,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Compliant"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "gradient-gauge"
+              },
+              {
+                "id": "max",
+                "value": 100
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 18,
+        "x": 0,
+        "y": 1
+      },
+      "id": 161,
+      "options": {
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "count((security_certificate_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", certificateExpiryStatus=\"active\", certificateIssuerType=\"self_signed\"}  * on(datacenter, cluster) security_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", fips_enabled=\"true\",telnet_enabled=\"false\"} * on (datacenter, cluster) security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", scope=\"cluster\", banner!=\"\"} * on (datacenter, cluster) (count by (datacenter, cluster) (ntpserver_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"}) == 3) * on (datacenter, cluster) support_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", asup_enabled=\"true\"} * on(datacenter, cluster) security_account_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", locked=\"true\"} * on(datacenter, cluster) (sum by (datacenter, cluster) (security_account_certificateuser{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"}) > 0) * on(datacenter, cluster) (sum by (datacenter, cluster) (security_account_samluser{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"}) > 0) * on(datacenter, cluster) (sum by (datacenter, cluster) (security_account_ldapeuser{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"}) > 0) * on(datacenter, cluster) (sum by (datacenter, cluster) (security_account_localuser{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"}) > 0) * on(datacenter, cluster) (sum by (datacenter, cluster) (security_account_activediruser{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"}) > 0) * on(datacenter, cluster) (count by (datacenter, cluster, encryption_state) (cluster_peer_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", encryption_state!=\"\"}) > 0)) unless (count by (datacenter, cluster) (security_account_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", hash_algorithm=\"md5\"}) > 0) unless (count by (datacenter, cluster) (svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", ciphers=~\".*_cbc.*\"}))) or vector(0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "CompliantCluster",
+          "refId": "A"
+        },
+        {
+          "exemplar": false,
+          "expr": "count by (datacenter)(security_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"}) or vector (1)",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "TotalCluster",
+          "refId": "B"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "",
+            "binary": {
+              "left": "CompliantCluster",
+              "operator": "/",
+              "reducer": "sum",
+              "right": "TotalCluster"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "Saml",
+                "Certificate"
+              ],
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Compliant",
+            "binary": {
+              "left": "CompliantCluster / TotalCluster",
+              "operator": "*",
+              "reducer": "sum",
+              "right": "100"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Certificate": true,
+              "Compliant": false,
+              "Compliant / Total": false,
+              "CompliantCluster": true,
+              "CompliantCluster / TotalCluster": true,
+              "Saml": true,
+              "Saml / Certificate": false,
+              "Time": true,
+              "Total": true,
+              "TotalCluster": true,
+              "perc": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "PercentCompliant": "",
+              "Saml / Certificate": "perc",
+              "Time": ""
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "Prometheus",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 18,
+        "y": 1
+      },
+      "id": 166,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "count((security_certificate_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", certificateExpiryStatus=\"active\", certificateIssuerType=\"self_signed\"}  * on(datacenter, cluster) security_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", fips_enabled=\"true\",telnet_enabled=\"false\"} * on (datacenter, cluster) security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", scope=\"cluster\", banner!=\"\"} * on (datacenter, cluster) (count by (datacenter, cluster) (ntpserver_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"}) == 3) * on (datacenter, cluster) support_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", asup_enabled=\"true\"} * on(datacenter, cluster) security_account_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", locked=\"true\"} * on(datacenter, cluster) (sum by (datacenter, cluster) (security_account_certificateuser{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"}) > 0) * on(datacenter, cluster) (sum by (datacenter, cluster) (security_account_samluser{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"}) > 0) * on(datacenter, cluster) (sum by (datacenter, cluster) (security_account_ldapeuser{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"}) > 0) * on(datacenter, cluster) (sum by (datacenter, cluster) (security_account_localuser{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"}) > 0) * on(datacenter, cluster) (sum by (datacenter, cluster) (security_account_activediruser{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"}) > 0) * on(datacenter, cluster) (count by (datacenter, cluster, encryption_state) (cluster_peer_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", encryption_state!=\"\"}) > 0)) unless (count by (datacenter, cluster) (security_account_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", hash_algorithm=\"md5\"}) > 0) unless (count by (datacenter, cluster) (svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", ciphers=~\".*_cbc.*\"}))) or vector(0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Compliant Clusters",
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "Prometheus",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "orange",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 21,
+        "y": 1
+      },
+      "id": 167,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "count by (datacenter) (security_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        },
+        {
+          "exemplar": true,
+          "expr": "count((security_certificate_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", certificateExpiryStatus=\"active\", certificateIssuerType=\"self_signed\"}  * on(datacenter, cluster) security_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", fips_enabled=\"true\",telnet_enabled=\"false\"} * on (datacenter, cluster) security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", scope=\"cluster\", banner!=\"\"} * on (datacenter, cluster) (count by (datacenter, cluster) (ntpserver_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"}) == 3) * on (datacenter, cluster) support_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", asup_enabled=\"true\"} * on(datacenter, cluster) security_account_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", locked=\"true\"} * on(datacenter, cluster) (sum by (datacenter, cluster) (security_account_certificateuser{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"}) > 0) * on(datacenter, cluster) (sum by (datacenter, cluster) (security_account_samluser{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"}) > 0) * on(datacenter, cluster) (sum by (datacenter, cluster) (security_account_ldapeuser{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"}) > 0) * on(datacenter, cluster) (sum by (datacenter, cluster) (security_account_localuser{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"}) > 0) * on(datacenter, cluster) (sum by (datacenter, cluster) (security_account_activediruser{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"}) > 0) * on(datacenter, cluster) (count by (datacenter, cluster, encryption_state) (cluster_peer_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", encryption_state!=\"\"}) > 0)) unless (count by (datacenter, cluster) (security_account_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", hash_algorithm=\"md5\"}) > 0) unless (count by (datacenter, cluster) (svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", ciphers=~\".*_cbc.*\"}))) or vector(0)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "B"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Not Compliant Clusters",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Not Compliant",
+            "binary": {
+              "left": "Value #A",
+              "operator": "-",
+              "reducer": "sum",
+              "right": "Value #B"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "count((security_certificate_labels{datacenter=\"DC-02\", cluster=~\"(F8080-32-25|ocum-infinity|sti102nscluster-1)\", certificateExpiryStatus=\"active\", certificateIssuerType=\"self_signed\"}  * on(datacenter, cluster) security_labels{datacenter=\"DC-02\", cluster=~\"(F8080-32-25|ocum-infinity|sti102nscluster-1)\", fips_enabled=\"true\",telnet_enabled=\"false\"} * on (datacenter, cluster) security_login_labels{datacenter=\"DC-02\", cluster=~\"(F8080-32-25|ocum-infinity|sti102nscluster-1)\", scope=\"cluster\", banner!=\"\"} * on (datacenter, cluster) (count by (datacenter, cluster) (ntpserver_labels{datacenter=\"DC-02\", cluster=~\"(F8080-32-25|ocum-infinity|sti102nscluster-1)\"}) == 3) * on (datacenter, cluster) support_labels{datacenter=\"DC-02\", cluster=~\"(F8080-32-25|ocum-infinity|sti102nscluster-1)\", asup_enabled=\"true\"} * on(datacenter, cluster) security_account_labels{datacenter=\"DC-02\", cluster=~\"(F8080-32-25|ocum-infinity|sti102nscluster-1)\", locked=\"true\"} * on(datacenter, cluster) (sum by (datacenter, cluster) (security_account_certificateuser{datacenter=\"DC-02\", cluster=~\"(F8080-32-25|ocum-infinity|sti102nscluster-1)\"}) > 0) * on(datacenter, cluster) (sum by (datacenter, cluster) (security_account_samluser{datacenter=\"DC-02\", cluster=~\"(F8080-32-25|ocum-infinity|sti102nscluster-1)\"}) > 0) * on(datacenter, cluster) (sum by (datacenter, cluster) (security_account_ldapeuser{datacenter=\"DC-02\", cluster=~\"(F8080-32-25|ocum-infinity|sti102nscluster-1)\"}) > 0) * on(datacenter, cluster) (sum by (datacenter, cluster) (security_account_localuser{datacenter=\"DC-02\", cluster=~\"(F8080-32-25|ocum-infinity|sti102nscluster-1)\"}) > 0) * on(datacenter, cluster) (sum by (datacenter, cluster) (security_account_activediruser{datacenter=\"DC-02\", cluster=~\"(F8080-32-25|ocum-infinity|sti102nscluster-1)\"}) > 0) * on(datacenter, cluster) (count by (datacenter, cluster, encryption_state) (cluster_peer_labels{datacenter=\"DC-02\", cluster=~\"(F8080-32-25|ocum-infinity|sti102nscluster-1)\", encryption_state!=\"\"}) > 0)) unless (count by (datacenter, cluster) (security_account_labels{datacenter=\"DC-02\", cluster=~\"(F8080-32-25|ocum-infinity|sti102nscluster-1)\", hash_algorithm=\"md5\"}) > 0) unless (count by (datacenter, cluster) (svm_labels{datacenter=\"DC-02\", cluster=~\"(F8080-32-25|ocum-infinity|sti102nscluster-1)\", ciphers=~\".*_cbc.*\"}))) or vector(0)"
+              ],
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value #A": true,
+              "Value #B": true,
+              "datacenter": true
+            },
+            "indexByName": {},
+            "renameByName": {}
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "transparent",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "left",
+            "displayMode": "color-background-solid",
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Autosupport Https Transport"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "false": {
+                        "index": 0,
+                        "text": "Disabled"
+                      },
+                      "true": {
+                        "index": 1,
+                        "text": "Enabled"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 231
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Default Admin User"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "false": {
+                        "index": 0,
+                        "text": "Disabled"
+                      },
+                      "true": {
+                        "index": 1,
+                        "text": "Enabled"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              },
+              {
+                "id": "custom.width",
+                "value": 165
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "MD5 in use"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "index": 1,
+                        "text": "No"
+                      },
+                      "1": {
+                        "index": 2,
+                        "text": "Yes"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "null",
+                      "result": {
+                        "index": 0,
+                        "text": "No"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 114
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Remote Shell"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "false": {
+                        "index": 0,
+                        "text": "Disabled"
+                      },
+                      "true": {
+                        "index": 1,
+                        "text": "Enabled"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "empty",
+                      "result": {
+                        "index": 2,
+                        "text": "Disabled"
+                      }
+                    },
+                    "type": "special"
+                  },
+                  {
+                    "options": {
+                      "match": "null",
+                      "result": {
+                        "index": 3,
+                        "text": "Disabled"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 122
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Telnet"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "false": {
+                        "index": 0,
+                        "text": "Disabled"
+                      },
+                      "true": {
+                        "index": 1,
+                        "text": "Enabled"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "null",
+                      "result": {
+                        "index": 2,
+                        "text": "Disabled"
+                      }
+                    },
+                    "type": "special"
+                  },
+                  {
+                    "options": {
+                      "match": "empty",
+                      "result": {
+                        "index": 3,
+                        "text": "Disabled"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 99
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Global FIPS"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "false": {
+                        "index": 0,
+                        "text": "Disabled"
+                      },
+                      "true": {
+                        "index": 1,
+                        "text": "Enabled"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "null",
+                      "result": {
+                        "index": 2,
+                        "text": "Disabled"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 112
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Insecure SSH Settings"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      " ": {
+                        "index": 0,
+                        "text": "No"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "nan",
+                      "result": {
+                        "index": 1,
+                        "text": "Yes"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              },
+              {
+                "id": "custom.width",
+                "value": 186
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Login Banner"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "match": "empty",
+                      "result": {
+                        "index": 0,
+                        "text": "Disabled"
+                      }
+                    },
+                    "type": "special"
+                  },
+                  {
+                    "options": {
+                      "match": "nan",
+                      "result": {
+                        "index": 1,
+                        "text": "Enabled"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 126
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Network Time Protocol"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "index": 0,
+                        "text": "Not Configured"
+                      },
+                      "1": {
+                        "index": 1,
+                        "text": "1 out of 3"
+                      },
+                      "2": {
+                        "index": 2,
+                        "text": "2 out of 3"
+                      },
+                      "3": {
+                        "index": 3,
+                        "text": "Configured"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 169
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Local Users"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "index": 0,
+                        "text": "Unconfigured"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "from": 1,
+                      "result": {
+                        "index": 1,
+                        "text": "Configured"
+                      },
+                      "to": 9999
+                    },
+                    "type": "range"
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 119
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Certificate Users"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "index": 0,
+                        "text": "Unconfigured"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "from": 1,
+                      "result": {
+                        "index": 1,
+                        "text": "Configured"
+                      },
+                      "to": 9999
+                    },
+                    "type": "range"
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 159
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Saml Users"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "index": 0,
+                        "text": "Unconfigured"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "from": 1,
+                      "result": {
+                        "index": 1,
+                        "text": "Configured"
+                      },
+                      "to": 9999
+                    },
+                    "type": "range"
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 121
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Ldap Users"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "index": 0,
+                        "text": "Unconfigured"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "from": 1,
+                      "result": {
+                        "index": 1,
+                        "text": "Configured"
+                      },
+                      "to": 9999
+                    },
+                    "type": "range"
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 124
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Active Directory Users"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "index": 0,
+                        "text": "Unconfigured"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "from": 1,
+                      "result": {
+                        "index": 1,
+                        "text": "Configured"
+                      },
+                      "to": 9999
+                    },
+                    "type": "range"
+                  }
+                ]
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              },
+              {
+                "id": "custom.width",
+                "value": 185
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cluster Peering"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "none": {
+                        "index": 1,
+                        "text": "Not Encrypted"
+                      },
+                      "tls_psk": {
+                        "index": 2,
+                        "text": "Encrypted"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "null",
+                      "result": {
+                        "index": 0,
+                        "text": "Not Peered"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              },
+              {
+                "id": "custom.width",
+                "value": 135
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cluster Certificate Validity"
+            },
+            "properties": [
+              {
+                "id": "custom.filterable",
+                "value": true
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "active": {
+                        "index": 0,
+                        "text": "Active"
+                      },
+                      "expired": {
+                        "index": 2,
+                        "text": "Expired"
+                      },
+                      "expiring": {
+                        "index": 1,
+                        "text": "Active (Expiring < 60 days)"
+                      },
+                      "unknown": {
+                        "index": 3,
+                        "text": "Unknown"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 206
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Certificate Issuer Type"
+            },
+            "properties": [
+              {
+                "id": "custom.filterable",
+                "value": true
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "ca_signed": {
+                        "index": 1,
+                        "text": "CA-Signed"
+                      },
+                      "self_signed": {
+                        "index": 0,
+                        "text": "Self-Signed"
+                      },
+                      "unknown": {
+                        "index": 2,
+                        "text": "Unknown"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 187
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      },
+      "id": 94,
+      "options": {
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "support_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", asup_https_configured=\"https\"}",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        },
+        {
+          "exemplar": false,
+          "expr": "security_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "B"
+        },
+        {
+          "exemplar": true,
+          "expr": "security_account_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", methods=~\".*password.*\",role_name=\"admin\", user_name=\"admin\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "C"
+        },
+        {
+          "exemplar": true,
+          "expr": "count by (datacenter,cluster,hash_algorithm)(security_account_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", hash_algorithm=\"md5\"})",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "D"
+        },
+        {
+          "exemplar": true,
+          "expr": "count by (datacenter, cluster, secured)(label_join(label_replace(svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"}, \"nonsecure\", \"$1\", \"ciphers\", \"(.*)_cbc*\"), \"secured\", \" \", \"nonsecure\", \"NonSupportedField\"))",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "E"
+        },
+        {
+          "exemplar": true,
+          "expr": "security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",scope=\"cluster\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "F"
+        },
+        {
+          "exemplar": false,
+          "expr": "security_audit_destination_status{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "H"
+        },
+        {
+          "exemplar": true,
+          "expr": "count by (datacenter, cluster) (ntpserver_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "G"
+        },
+        {
+          "exemplar": true,
+          "expr": "count by (datacenter, cluster, encryption_state) (cluster_peer_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", encryption_state!=\"\"})",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "J"
+        },
+        {
+          "exemplar": true,
+          "expr": "count by (datacenter, cluster) (security_account_localuser{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "K"
+        },
+        {
+          "exemplar": true,
+          "expr": "count by (datacenter, cluster) (security_account_samluser{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "I"
+        },
+        {
+          "exemplar": true,
+          "expr": "count by (datacenter, cluster) (security_account_activediruser{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "L"
+        },
+        {
+          "exemplar": true,
+          "expr": "count by (datacenter, cluster) (security_account_ldapuser{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "M"
+        },
+        {
+          "exemplar": true,
+          "expr": "count by (datacenter, cluster) (security_account_certificateuser{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "N"
+        },
+        {
+          "exemplar": true,
+          "expr": "security_certificate_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "O"
+        }
+      ],
+      "title": "Cluster Compliance",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "asup_enabled",
+                "cluster",
+                "fips_enabled",
+                "rsh_enabled",
+                "telnet_enabled",
+                "locked",
+                "Value #D",
+                "secured",
+                "banner",
+                "Value #G",
+                "encryption_state",
+                "Value #K",
+                "Value #I",
+                "Value #L",
+                "Value #M",
+                "Value #N",
+                "certificateExpiryStatus",
+                "certificateIssuerType"
+              ]
+            }
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Time 1": true,
+              "Time 2": true,
+              "Value #B": true,
+              "Value #D": false,
+              "Value #E": false,
+              "Value #G": false,
+              "__name__": true,
+              "__name__ 1": true,
+              "__name__ 2": true,
+              "datacenter": true,
+              "datacenter 1": true,
+              "datacenter 2": true,
+              "fips_enabled": false,
+              "hash_algorithm": false,
+              "instance": true,
+              "instance 1": true,
+              "instance 2": true,
+              "job": true,
+              "job 1": true,
+              "job 2": true,
+              "locked": false,
+              "methods": true
+            },
+            "indexByName": {
+              "Value #D": 10,
+              "Value #G": 6,
+              "Value #I": 12,
+              "Value #K": 16,
+              "Value #L": 13,
+              "Value #M": 14,
+              "Value #N": 15,
+              "asup_enabled": 7,
+              "banner": 5,
+              "certificateExpiryStatus": 1,
+              "certificateIssuerType": 17,
+              "cluster": 0,
+              "encryption_state": 11,
+              "fips_enabled": 2,
+              "locked": 8,
+              "rsh_enabled": 9,
+              "secured": 4,
+              "telnet_enabled": 3
+            },
+            "renameByName": {
+              "Value #A": "Autosupport Https Transport",
+              "Value #C": "Default Admin User",
+              "Value #D": "MD5 in use",
+              "Value #E": "Insecure SSH Settings",
+              "Value #F": "Login Banner",
+              "Value #G": "Network Time Protocol",
+              "Value #I": "Saml Users",
+              "Value #K": "Local Users",
+              "Value #L": "Active Directory Users",
+              "Value #M": "Ldap Users",
+              "Value #N": "Certificate Users",
+              "activediruser": "Active Directory Users",
+              "asupEnabled": "",
+              "asupHttpsConfigured": "",
+              "asup_enabled": "Autosupport Https Transport",
+              "banner": "Login Banner",
+              "certificateExpiryStatus": "Cluster Certificate Validity",
+              "certificateIssuerType": "Certificate Issuer Type",
+              "certificateuser": "Certificate Users",
+              "ciphers": "Insecure SSH Settings1",
+              "cluster": "Cluster",
+              "encryption_state": "Cluster Peering",
+              "fips_enabled": "Global FIPS",
+              "insecure": "Insecure SSH Settings",
+              "ldapuser": "Ldap Users",
+              "localuser": "Local Users",
+              "locked": "Default Admin User",
+              "ntp": "Network Time Protocol",
+              "rsh_enabled": "Remote Shell",
+              "samluser": "Saml Users",
+              "secured": "Insecure SSH Settings",
+              "telnet_enabled": "Telnet"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "datasource": "Prometheus",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 12
+      },
+      "id": 15,
+      "panels": [],
+      "title": "Storage VMs Compliance",
+      "type": "row"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "green",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "filterable": false
+          },
+          "decimals": 0,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Compliant"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "gradient-gauge"
+              },
+              {
+                "id": "max",
+                "value": 100
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 18,
+        "x": 0,
+        "y": 13
+      },
+      "id": 165,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "count(svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",svm=~\"$SVM\", audit_protocol_enabled=\"true\", ciphers!~\".*_cbc.*\", cifs_ntlm_enabled=\"\",smb_encryption_required=\"\", smb_signing_required=\"\",scsi_authentication_type!=\"chap\",nfs_kerberos_protocol_enabled=\"\",nis_authentication_enabled=\"false\"} * on(datacenter,cluster,svm) group_left() (svm_ldap_encrypted{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",svm=~\"$SVM\"} < 1) * on(datacenter,cluster,svm) group_left() (svm_ldap_signed{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",svm=~\"$SVM\"} < 1) * on(datacenter,cluster,svm) group_left() (security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",svm=~\"$SVM\",banner!=\"\"})) or vector (0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "CompliantCluster",
+          "refId": "A"
+        },
+        {
+          "exemplar": false,
+          "expr": "count(svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",svm=~\"$SVM\"}) or vector (1) ",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "TotalCluster",
+          "refId": "B"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "",
+            "binary": {
+              "left": "CompliantCluster",
+              "operator": "/",
+              "reducer": "sum",
+              "right": "TotalCluster"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "Saml",
+                "Certificate"
+              ],
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Compliant",
+            "binary": {
+              "left": "CompliantCluster / TotalCluster",
+              "operator": "*",
+              "reducer": "sum",
+              "right": "100"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Certificate": true,
+              "Compliant": false,
+              "Compliant / Total": false,
+              "CompliantCluster": true,
+              "CompliantCluster / TotalCluster": true,
+              "Saml": true,
+              "Saml / Certificate": false,
+              "Time": true,
+              "Total": true,
+              "TotalCluster": true,
+              "perc": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "PercentCompliant": "",
+              "Saml / Certificate": "perc",
+              "Time": ""
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "Prometheus",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 18,
+        "y": 13
+      },
+      "id": 168,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "count(svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",svm=~\"$SVM\", audit_protocol_enabled=\"true\", ciphers!~\".*_cbc.*\", cifs_ntlm_enabled=\"\",smb_encryption_required=\"\", smb_signing_required=\"\",scsi_authentication_type!=\"chap\",nfs_kerberos_protocol_enabled=\"\",nis_authentication_enabled=\"false\"} * on(datacenter,cluster,svm) group_left() (svm_ldap_encrypted{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",svm=~\"$SVM\"} < 1) * on(datacenter,cluster,svm) group_left() (svm_ldap_signed{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",svm=~\"$SVM\"} < 1) * on(datacenter,cluster,svm) group_left() (security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",svm=~\"$SVM\",banner!=\"\"}))",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Compliant SVMs",
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "Prometheus",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "orange",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 21,
+        "y": 13
+      },
+      "id": 164,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "count(svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",svm=~\"$SVM\"}) or vector(0)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        },
+        {
+          "exemplar": true,
+          "expr": "count(svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",svm=~\"$SVM\", audit_protocol_enabled=\"true\", ciphers!~\".*_cbc.*\", cifs_ntlm_enabled=\"\",smb_encryption_required=\"\", smb_signing_required=\"\",scsi_authentication_type!=\"chap\",nfs_kerberos_protocol_enabled=\"\",nis_authentication_enabled=\"false\"} * on(datacenter,cluster,svm) group_left() (svm_ldap_encrypted{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",svm=~\"$SVM\"} < 1) * on(datacenter,cluster,svm) group_left() (svm_ldap_signed{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",svm=~\"$SVM\"} < 1) * on(datacenter,cluster,svm) group_left() (security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",svm=~\"$SVM\",banner!=\"\"})) or vector(0)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "B"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Not Compliant SVMs",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Not Compliant",
+            "binary": {
+              "left": "Value #A",
+              "operator": "-",
+              "reducer": "sum",
+              "right": "Value #B"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value #A": true,
+              "Value #B": true
+            },
+            "indexByName": {},
+            "renameByName": {}
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "transparent",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "left",
+            "displayMode": "color-background-solid",
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cluster"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cluster"
+              },
+              {
+                "id": "custom.width",
+                "value": 300
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Login Banner"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "match": "empty",
+                      "result": {
+                        "index": 0,
+                        "text": "Disabled"
+                      }
+                    },
+                    "type": "special"
+                  },
+                  {
+                    "options": {
+                      "match": "null",
+                      "result": {
+                        "index": 1,
+                        "text": "Disabled"
+                      }
+                    },
+                    "type": "special"
+                  },
+                  {
+                    "options": {
+                      "match": "nan",
+                      "result": {
+                        "index": 2,
+                        "text": "Enabled"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 115
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Audit Log"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "false": {
+                        "index": 1,
+                        "text": "Disabled"
+                      },
+                      "true": {
+                        "index": 0,
+                        "text": "Enabled"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "empty",
+                      "result": {
+                        "index": 2,
+                        "text": "N/A"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 169
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "LDAP Payload Signing"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "index": 0,
+                        "text": "Disabled"
+                      },
+                      "1": {
+                        "index": 1,
+                        "text": "Enabled"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Insecure SSH Settings"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      " ": {
+                        "index": 1,
+                        "text": "No"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "nan",
+                      "result": {
+                        "index": 0,
+                        "text": "Yes"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "NTML Authentication"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 132
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "lm_ntlm_ntlmv2_krb": {
+                        "index": 0,
+                        "text": "Enabled"
+                      },
+                      "ntlm_ntlmv2_krb": {
+                        "index": 1,
+                        "text": "Enabled"
+                      },
+                      "ntlmv2_krb": {
+                        "index": 2,
+                        "text": "Enabled"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "nan",
+                      "result": {
+                        "index": 3,
+                        "text": "Disabled"
+                      }
+                    },
+                    "type": "special"
+                  },
+                  {
+                    "options": {
+                      "match": "empty",
+                      "result": {
+                        "index": 4,
+                        "text": "N/A"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "LDAP Encryption"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "index": 0,
+                        "text": "Disabled"
+                      },
+                      "1": {
+                        "index": 1,
+                        "text": "Enabled"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "SMB Encryption Enabled"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "false": {
+                        "index": 1,
+                        "text": "Disabled"
+                      },
+                      "true": {
+                        "index": 0,
+                        "text": "Enabled"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "empty",
+                      "result": {
+                        "index": 2,
+                        "text": "N/A"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "SMB Signing Enabled"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "index": 0,
+                        "text": "Disabled"
+                      },
+                      "1": {
+                        "index": 1,
+                        "text": "Enabled"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "empty",
+                      "result": {
+                        "index": 2,
+                        "text": "N/A"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Kerberos V5"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "false": {
+                        "index": 1,
+                        "text": "Disabled"
+                      },
+                      "true": {
+                        "index": 0,
+                        "text": "Enabled"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "empty",
+                      "result": {
+                        "index": 2,
+                        "text": "N/A"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CHAP Settings"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "chap": {
+                        "index": 0,
+                        "text": "Enabled"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "nan",
+                      "result": {
+                        "index": 1,
+                        "text": "Disabled"
+                      }
+                    },
+                    "type": "special"
+                  },
+                  {
+                    "options": {
+                      "match": "empty",
+                      "result": {
+                        "index": 2,
+                        "text": "N/A"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "NIS Authentication"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "false": {
+                        "index": 1,
+                        "text": "Disabled"
+                      },
+                      "true": {
+                        "index": 0,
+                        "text": "Enabled"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Fpolicy Status Active"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "false": {
+                        "index": 1,
+                        "text": "Disabled"
+                      },
+                      "true": {
+                        "index": 0,
+                        "text": "Enabled"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "SVM"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 150
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "id": 156,
+      "options": {
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        },
+        {
+          "exemplar": true,
+          "expr": "security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", scope=\"svm\", svm=~\"$SVM\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "C"
+        },
+        {
+          "exemplar": true,
+          "expr": "label_join(label_replace(svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}, \"nonsecure\", \"$1\", \"ciphers\", \"(.*)_cbc*\"), \"secured\", \" \", \"nonsecure\", \"NonSupportedField\")",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "E"
+        },
+        {
+          "exemplar": true,
+          "expr": "svm_ldap_signed{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "G"
+        },
+        {
+          "exemplar": true,
+          "expr": "svm_ldap_encrypted{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "I"
+        }
+      ],
+      "title": "SVM Compliance",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "cifs_ntlm_enabled",
+                "cluster",
+                "nfs_kerberos_protocol_enabled",
+                "nis_authentication_enabled",
+                "smb_encryption_required",
+                "smb_signing_required",
+                "svm",
+                "banner",
+                "secured",
+                "Value #G",
+                "Value #I",
+                "audit_protocol_enabled",
+                "iscsi_authentication_type"
+              ]
+            }
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Time 1": true,
+              "Time 2": true,
+              "Value #B": true,
+              "Value #C": true,
+              "Value #D": false,
+              "Value #E": false,
+              "Value #G": false,
+              "__name__": true,
+              "__name__ 1": true,
+              "__name__ 2": true,
+              "datacenter": true,
+              "datacenter 1": true,
+              "datacenter 2": true,
+              "fips_enabled": false,
+              "hash_algorithm": false,
+              "instance": true,
+              "instance 1": true,
+              "instance 2": true,
+              "job": true,
+              "job 1": true,
+              "job 2": true,
+              "locked": true,
+              "methods": true
+            },
+            "indexByName": {
+              "Value #G": 7,
+              "Value #I": 5,
+              "audit_protocol_enabled": 3,
+              "banner": 2,
+              "cifs_ntlm_enabled": 6,
+              "cluster": 0,
+              "fpolicy_enabled": 13,
+              "iscsi_authentication_type": 10,
+              "nfs_kerberos_protocol_enabled": 11,
+              "nis_domain": 12,
+              "secured": 4,
+              "smb_encryption_required": 8,
+              "smb_signing_required": 9,
+              "svm": 1
+            },
+            "renameByName": {
+              "Value #A": "Autosupport Https Transport",
+              "Value #C": "Login Banner",
+              "Value #D": "MD5 in use",
+              "Value #E": "",
+              "Value #F": "Login Banner",
+              "Value #G": "LDAP Payload Signing",
+              "Value #I": "LDAP Encryption",
+              "activediruser": "Active Directory Users",
+              "asupEnabled": "",
+              "asupHttpsConfigured": "",
+              "audit_protocol_enabled": "Audit Log",
+              "banner": "Login Banner",
+              "certificateuser": "Certificate Users",
+              "cifs_ntlm_enabled": "NTML Authentication",
+              "ciphers": "Insecure SSH Settings",
+              "cluster": "",
+              "fips_enabled": "Global FIPS",
+              "fpolicy_enabled": "Fpolicy Status Active",
+              "insecure": "Insecure SSH Settings",
+              "iscsi_authentication_type": "CHAP Settings",
+              "ldapuser": "Ldap Users",
+              "localuser": "Local Users",
+              "nfs_kerberos_protocol_enabled": "Kerberos V5",
+              "nis_authentication_enabled": "NIS Authentication",
+              "nis_domain": "NIS Authentication",
+              "ntp": "Network Time Protocol",
+              "rsh_enabled": "Remote Shell",
+              "samluser": "Saml Users",
+              "secured": "Insecure SSH Settings",
+              "smb_encryption_required": "SMB Encryption Enabled",
+              "smb_signing_required": "SMB Signing Enabled",
+              "svm": "SVM",
+              "telnet_enabled": "Telnet"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "datasource": "Prometheus",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 29
+      },
+      "id": 153,
+      "panels": [],
+      "title": "Cluster Authentication And Certificates",
+      "type": "row"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "blue",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 18,
+        "x": 0,
+        "y": 30
+      },
+      "id": 154,
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "text": {}
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "count(count by (datacenter, cluster)(security_account_samluser{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"} > 0)) or vector (0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Saml",
+          "refId": "A"
+        },
+        {
+          "exemplar": false,
+          "expr": "count(count by (datacenter, cluster) (security_account_certificateuser{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"} > 0)) or vector (0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Certificate",
+          "refId": "B"
+        },
+        {
+          "exemplar": true,
+          "expr": "count(count by (datacenter, cluster) (security_account_localuser{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"} > 0)) or vector (0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Local",
+          "refId": "C"
+        },
+        {
+          "exemplar": true,
+          "expr": "count(count by (datacenter, cluster) (security_account_ldapuser{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"} > 0)) or vector (0)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Ldap",
+          "refId": "D"
+        },
+        {
+          "exemplar": true,
+          "expr": "count(count by (datacenter, cluster) (security_account_activediruser{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"} > 0)) or vector (0)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Active Directory",
+          "refId": "E"
+        }
+      ],
+      "title": "Authentication Methods",
+      "transformations": [],
+      "type": "bargauge"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "Prometheus",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-yellow",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 3,
+        "x": 18,
+        "y": 30
+      },
+      "id": 158,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "count(security_certificate_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", certificateExpiryStatus=\"expiring\"})",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Expiring in < 60 days",
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "Prometheus",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-red",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 3,
+        "x": 21,
+        "y": 30
+      },
+      "id": 159,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "count(security_certificate_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", certificateExpiryStatus=\"expired\"})",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Expired",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "datasource": "Prometheus",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 36
+      },
+      "id": 12,
+      "panels": [],
+      "title": "Volume Encryption",
+      "type": "row"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "green",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "gradient-gauge",
+            "filterable": false
+          },
+          "decimals": 0,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Encrypted"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "max",
+                "value": 100
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 37
+      },
+      "id": 178,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isEncrypted=\"true\"}) or vector (0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Software",
+          "refId": "A"
+        },
+        {
+          "exemplar": false,
+          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isHardwareEncrypted=\"true\"}) or vector (0) ",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Hardware",
+          "refId": "B"
+        },
+        {
+          "exemplar": false,
+          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"}) or vector (1) ",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Total",
+          "refId": "C"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Both",
+            "binary": {
+              "left": "Software",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "Hardware"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "",
+            "binary": {
+              "left": "Both",
+              "operator": "/",
+              "reducer": "sum",
+              "right": "Total"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "Saml",
+                "Certificate"
+              ],
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Encrypted",
+            "binary": {
+              "left": "Both / Total",
+              "operator": "*",
+              "reducer": "sum",
+              "right": "100"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Both": true,
+              "Both / Total": true,
+              "Certificate": true,
+              "Compliant": false,
+              "Compliant / Total": false,
+              "CompliantCluster": true,
+              "CompliantCluster / TotalCluster": true,
+              "Hardware": true,
+              "Saml": true,
+              "Saml / Certificate": false,
+              "Software": true,
+              "Time": true,
+              "Total": true,
+              "TotalCluster": true,
+              "perc": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "PercentCompliant": "",
+              "Saml / Certificate": "perc",
+              "Time": ""
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "Prometheus",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 0,
+        "y": 40
+      },
+      "id": 163,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isEncrypted=\"true\"}) or vector (0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Software Encrypted",
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "Prometheus",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 6,
+        "y": 40
+      },
+      "id": 170,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isHardwareEncrypted=\"true\"}) or vector (0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Hardware Encrypted",
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "Prometheus",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 12,
+        "y": 40
+      },
+      "id": 169,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isEncrypted=\"true\", isHardwareEncrypted=\"true\"}) or vector (0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Software and Hardware Encrypted",
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "Prometheus",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-yellow",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 18,
+        "y": 40
+      },
+      "id": 171,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"}) or vector (0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Not Encrypted",
+      "type": "stat"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "transparent",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "left",
+            "displayMode": "color-background-solid",
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Encryption Type"
+            },
+            "properties": [
+              {
+                "id": "custom.filterable",
+                "value": true
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "falsefalse": {
+                        "index": 0,
+                        "text": "None"
+                      },
+                      "falsetrue": {
+                        "index": 1,
+                        "text": "Software"
+                      },
+                      "truefalse": {
+                        "index": 2,
+                        "text": "Hardware"
+                      },
+                      "truetrue": {
+                        "index": 3,
+                        "text": "Both"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "empty",
+                      "result": {
+                        "index": 4,
+                        "text": "None"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "State"
+            },
+            "properties": [
+              {
+                "id": "custom.filterable",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 43
+      },
+      "id": 155,
+      "options": {
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Volume Encryption",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "cluster",
+                "isEncrypted",
+                "isHardwareEncrypted",
+                "svm",
+                "volume",
+                "state"
+              ]
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "isEncrypted": false,
+              "isHardwareEncrypted": false
+            },
+            "indexByName": {
+              "cluster": 2,
+              "isEncrypted": 3,
+              "isHardwareEncrypted": 4,
+              "svm": 1,
+              "volume": 0
+            },
+            "renameByName": {
+              "cluster": "Cluster",
+              "isEncrypted": "",
+              "isHardwareEncrypted": "",
+              "state": "State",
+              "svm": "SVM",
+              "volume": "Volume"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Encryption Type",
+            "binary": {
+              "left": "isHardwareEncrypted",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "isEncrypted"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "isEncrypted",
+                "isHardwareEncrypted"
+              ],
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "isEncrypted": true,
+              "isHardwareEncrypted": true
+            },
+            "indexByName": {},
+            "renameByName": {}
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "datasource": "Prometheus",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 50
+      },
+      "id": 16,
+      "panels": [],
+      "title": "Storage VM and Volume Anti-ransomware Status",
+      "type": "row"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "green",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "gradient-gauge",
+            "filterable": false
+          },
+          "decimals": 0,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ENABLED"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "gradient-gauge"
+              },
+              {
+                "id": "max",
+                "value": 100
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 18,
+        "x": 0,
+        "y": 51
+      },
+      "id": 179,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "count(svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", anti_ransomware_state!=\"\", anti_ransomware_state=~\"enabled|dry_run\"}) or vector (0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Anti-ransomware Enabled",
+          "refId": "A"
+        },
+        {
+          "exemplar": false,
+          "expr": "count(svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", anti_ransomware_state!=\"\"}) or vector (1)",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Anti-ransomware Supported",
+          "refId": "B"
+        }
+      ],
+      "title": "Storage VM Status",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "",
+            "binary": {
+              "left": "Anti-ransomware Enabled",
+              "operator": "/",
+              "reducer": "sum",
+              "right": "Anti-ransomware Supported"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "Saml",
+                "Certificate"
+              ],
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "ENABLED",
+            "binary": {
+              "left": "Anti-ransomware Enabled / Anti-ransomware Supported",
+              "operator": "*",
+              "reducer": "sum",
+              "right": "100"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Anti-ransomware Enabled": true,
+              "Anti-ransomware Enabled / Anti-ransomware Supported": true,
+              "Anti-ransomware Supported": true,
+              "Certificate": true,
+              "Compliant": false,
+              "Compliant / Total": false,
+              "CompliantCluster": true,
+              "CompliantCluster / TotalCluster": true,
+              "Saml": true,
+              "Saml / Certificate": false,
+              "Time": true,
+              "Total": true,
+              "TotalCluster": true,
+              "perc": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "ENABLED": "",
+              "PercentCompliant": "",
+              "Saml / Certificate": "perc",
+              "Time": ""
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "Prometheus",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 18,
+        "y": 51
+      },
+      "id": 173,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "count(svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", anti_ransomware_state!=\"\", anti_ransomware_state=~\"enabled|dry_run\"}) or vector (0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Enabled",
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "Prometheus",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-yellow",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 21,
+        "y": 51
+      },
+      "id": 182,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "count(svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", anti_ransomware_state!=\"\", anti_ransomware_state=~\"disabled\"}) or vector (0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Disabled",
+      "type": "stat"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "transparent",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "left",
+            "displayMode": "color-background-solid",
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Anti-ransomware Status"
+            },
+            "properties": [
+              {
+                "id": "custom.filterable",
+                "value": true
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "disabled": {
+                        "index": 2,
+                        "text": "Disabled"
+                      },
+                      "dry_run": {
+                        "index": 1,
+                        "text": "Enabled (Learning mode)"
+                      },
+                      "enabled": {
+                        "index": 0,
+                        "text": "Enabled (Active mode)"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "empty",
+                      "result": {
+                        "index": 3,
+                        "text": "Disabled"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Volume Count"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "match": "null",
+                      "result": {
+                        "index": 0,
+                        "text": "0"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 54
+      },
+      "id": 160,
+      "options": {
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        },
+        {
+          "exemplar": true,
+          "expr": "count by (svm)(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"})",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "B"
+        }
+      ],
+      "title": "Storage VMs Anti-ransomware Status",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "anti_ransomware_state",
+                "cluster",
+                "svm",
+                "Value #B"
+              ]
+            }
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "isEncrypted": false,
+              "isHardwareEncrypted": false
+            },
+            "indexByName": {
+              "Value #B": 2,
+              "anti_ransomware_state": 3,
+              "cluster": 1,
+              "svm": 0
+            },
+            "renameByName": {
+              "Value #B": "Volume Count",
+              "antiRansomwareState": "Anti-ransomware Status",
+              "anti_ransomware_state": "Anti-ransomware Status",
+              "cluster": "Cluster",
+              "isEncrypted": "",
+              "isHardwareEncrypted": "",
+              "state": "State",
+              "svm": "SVM",
+              "volume": "Volume"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "green",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "gradient-gauge",
+            "filterable": false,
+            "minWidth": 50
+          },
+          "decimals": 0,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ENABLED"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "gradient-gauge"
+              },
+              {
+                "id": "max",
+                "value": 100
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 61
+      },
+      "id": 180,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=~\"enabled|dry_run\"}) or vector (0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "antiRansomwareEnabled",
+          "refId": "A"
+        },
+        {
+          "exemplar": false,
+          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\"}) or vector (1)",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "antiRansomwareSupported",
+          "refId": "B"
+        }
+      ],
+      "title": "Volume Status",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "",
+            "binary": {
+              "left": "antiRansomwareEnabled",
+              "operator": "/",
+              "reducer": "sum",
+              "right": "antiRansomwareSupported"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "Saml",
+                "Certificate"
+              ],
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "ENABLED",
+            "binary": {
+              "left": "antiRansomwareEnabled / antiRansomwareSupported",
+              "operator": "*",
+              "reducer": "sum",
+              "right": "100"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Certificate": true,
+              "Compliant": false,
+              "Compliant / Total": false,
+              "CompliantCluster": true,
+              "CompliantCluster / TotalCluster": true,
+              "Saml": true,
+              "Saml / Certificate": false,
+              "Time": true,
+              "Total": true,
+              "TotalCluster": true,
+              "antiRansomwareEnabled": true,
+              "antiRansomwareEnabled / antiRansomwareSupported": true,
+              "antiRansomwareSupported": true,
+              "perc": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "PercentCompliant": "",
+              "Saml / Certificate": "perc",
+              "Time": ""
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "Prometheus",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 0,
+        "y": 64
+      },
+      "id": 172,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=\"enabled\"}) or vector (0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Enabled in active mode",
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "Prometheus",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 6,
+        "y": 64
+      },
+      "id": 181,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=\"dry_run\"}) or vector (0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Enabled in learning mode",
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "Prometheus",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 12,
+        "y": 64
+      },
+      "id": 175,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=~\".*paused.*\"}) or vector (0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Paused",
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "Prometheus",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-yellow",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 18,
+        "y": 64
+      },
+      "id": 176,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=~\"disabled\"}) or vector (0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Disabled",
+      "type": "stat"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "transparent",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "left",
+            "displayMode": "color-background-solid",
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Anti-ransomware Status"
+            },
+            "properties": [
+              {
+                "id": "custom.filterable",
+                "value": true
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "disable_in_progress": {
+                        "index": 3,
+                        "text": "Disabling"
+                      },
+                      "disabled": {
+                        "index": 2,
+                        "text": "Disabled"
+                      },
+                      "dry_run": {
+                        "index": 1,
+                        "text": "Enabled (Learning mode)"
+                      },
+                      "dry_run_paused": {
+                        "index": 5,
+                        "text": "Paused (Learning mode)"
+                      },
+                      "enable_paused": {
+                        "index": 4,
+                        "text": "Paused (Active mode)"
+                      },
+                      "enabled": {
+                        "index": 0,
+                        "text": "Enabled (Active mode)"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "empty",
+                      "result": {
+                        "index": 6,
+                        "text": "Disabled"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "SVM"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": null
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 67
+      },
+      "id": 183,
+      "options": {
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Volume Anti-ransomware Status",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "cluster",
+                "svm",
+                "volume",
+                "antiRansomwareState"
+              ]
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "isEncrypted": false,
+              "isHardwareEncrypted": false
+            },
+            "indexByName": {
+              "cluster": 2,
+              "isEncrypted": 3,
+              "isHardwareEncrypted": 4,
+              "svm": 1,
+              "volume": 0
+            },
+            "renameByName": {
+              "antiRansomwareState": "Anti-ransomware Status",
+              "cluster": "Cluster",
+              "isEncrypted": "",
+              "isHardwareEncrypted": "",
+              "state": "State",
+              "svm": "SVM",
+              "volume": "Volume"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 30,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "Prometheus",
+          "value": "Prometheus"
+        },
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": false,
+        "label": "Data Source",
+        "multi": false,
+        "name": "DS_PROMETHEUS",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(security_labels{system_type!=\"7mode\"},datacenter)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "Datacenter",
+        "options": [],
+        "query": {
+          "query": "label_values(security_labels{system_type!=\"7mode\"},datacenter)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(security_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"},cluster)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Cluster",
+        "options": [],
+        "query": {
+          "query": "label_values(security_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"},cluster)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(svm_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\",cluster=~\"$Cluster\"},svm)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "SVM",
+        "options": [],
+        "query": {
+          "query": "label_values(svm_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\",cluster=~\"$Cluster\"},svm)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "NetApp Detail: Security",
+  "uid": "PMa3dL76n",
+  "version": 1
+}

@@ -1,0 +1,16 @@
+
+name:             ClusterPeer
+query:            api/cluster/peers
+object:           cluster_peer
+
+counters:
+  - ^^uuid
+  - ^name                => name
+  - ^encryption.state    => encryption_state
+
+export_options:
+  instance_keys:
+    - uuid
+  instance_labels:
+    - name
+    - encryption_state
