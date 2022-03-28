@@ -30,6 +30,7 @@ func GetCounterMap() map[string][]string {
 		"nic_",
 		"node_cifs_",
 		"node_nfs",
+		"node_nvmf_ops",
 		"nvme_lif",
 		"path_",
 		"snapmirror_",
