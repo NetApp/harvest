@@ -2,6 +2,25 @@
 
 [Releases](https://github.com/NetApp/harvest/releases)
 
+## 22.05.0 /
+<!-- git log --no-decorate --no-merges --cherry-pick --right-only --oneline origin/release/22.02.0...origin/release/22.05.0 -->
+
+Highlights of this major release include:
+
+**IMPORTANT** :bangbang: After upgrade, don't forget to re-import your dashboards so you get all the new enhancements and fixes.
+You can import via `bin/harvest/grafana import` cli or from the Grafana UI.
+
+**IMPORTANT** The `conf/zapiperf/cdot/9.8.0/object_store_client_op.yaml` ZapiPerf template is being deprecated in this
+release and will be removed in the next release of Harvest. No dashboards use the counters defined in this template, 
+all counters are deprecated by ONTAP, and there are no alternatives in REST. 
+If you are using these counters, please create your own copy of the template.
+
+**Known Issues**
+
+### Enhancements
+
+### Fixes
+
 ## 22.02.0 / 
 <!-- git log --no-decorate --no-merges --cherry-pick --right-only --oneline origin/release/21.11.0...origin/release/22.02.0 -->
 
