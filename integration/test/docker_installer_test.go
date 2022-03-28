@@ -1,5 +1,4 @@
 //go:build install_docker
-// +build install_docker
 
 package main
 
@@ -13,6 +12,7 @@ import (
 )
 
 func TestDockerInstall(t *testing.T) {
+	utils.SetupLogging()
 	//it will create a grafana token and configure it for dashboard export
 	if !utils.IsUrlReachable(utils.GetGrafanaHttpUrl()) {
 		panic(fmt.Errorf("Grafana is not reachable."))
