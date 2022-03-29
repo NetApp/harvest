@@ -23,7 +23,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 1809,
-  "iteration": 1648560061786,
+  "iteration": 1648571426885,
   "links": [],
   "panels": [
     {
@@ -1275,7 +1275,7 @@
           "expr": "environment_sensor_power{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
-          "instant": false,
+          "instant": true,
           "interval": "",
           "legendFormat": "",
           "refId": "D"
@@ -1285,6 +1285,7 @@
           "expr": "environment_sensor_ambient_temperature{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
+          "instant": true,
           "interval": "",
           "legendFormat": "",
           "refId": "E"
@@ -1294,6 +1295,7 @@
           "expr": "environment_sensor_max_temperature{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
+          "instant": true,
           "interval": "",
           "legendFormat": "",
           "refId": "F"
@@ -1303,6 +1305,7 @@
           "expr": "environment_sensor_average_temperature{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
+          "instant": true,
           "interval": "",
           "legendFormat": "",
           "refId": "G"
@@ -1312,6 +1315,7 @@
           "expr": "environment_sensor_max_fan_speed{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
+          "instant": true,
           "interval": "",
           "legendFormat": "",
           "refId": "H"
@@ -1321,6 +1325,7 @@
           "expr": "environment_sensor_average_fan_speed{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
+          "instant": true,
           "interval": "",
           "legendFormat": "",
           "refId": "I"
@@ -1330,6 +1335,7 @@
           "expr": "environment_sensor_min_fan_speed{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
+          "instant": true,
           "interval": "",
           "legendFormat": "",
           "refId": "J"
@@ -1795,7 +1801,7 @@
           "expr": "shelf_disk_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
-          "instant": false,
+          "instant": true,
           "interval": "",
           "legendFormat": "",
           "refId": "B"
@@ -1805,7 +1811,7 @@
           "expr": "shelf_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
-          "instant": false,
+          "instant": true,
           "interval": "",
           "legendFormat": "",
           "refId": "C"
@@ -1815,7 +1821,7 @@
           "expr": "shelf_power{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
-          "instant": false,
+          "instant": true,
           "interval": "",
           "legendFormat": "",
           "refId": "D"
@@ -1825,7 +1831,7 @@
           "expr": "shelf_ambient_temperature{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
-          "instant": false,
+          "instant": true,
           "interval": "",
           "legendFormat": "",
           "refId": "E"
@@ -1835,7 +1841,7 @@
           "expr": "shelf_max_temperature{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
-          "instant": false,
+          "instant": true,
           "interval": "",
           "legendFormat": "",
           "refId": "F"
@@ -1845,6 +1851,7 @@
           "expr": "shelf_average_temperature{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
+          "instant": true,
           "interval": "",
           "legendFormat": "",
           "refId": "G"
@@ -1854,6 +1861,7 @@
           "expr": "shelf_max_fan_speed{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
+          "instant": true,
           "interval": "",
           "legendFormat": "",
           "refId": "H"
@@ -1863,6 +1871,7 @@
           "expr": "shelf_average_fan_speed{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
+          "instant": true,
           "interval": "",
           "legendFormat": "",
           "refId": "I"
@@ -1872,6 +1881,7 @@
           "expr": "shelf_min_fan_speed{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
           "format": "table",
           "hide": false,
+          "instant": true,
           "interval": "",
           "legendFormat": "",
           "refId": "J"
@@ -2141,7 +2151,7 @@
     ]
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {
@@ -2171,5 +2181,5 @@
   "timezone": "",
   "title": "NetApp Detail: Power Dashboard",
   "uid": "iY7zXdynk",
-  "version": 82
+  "version": 84
 }
