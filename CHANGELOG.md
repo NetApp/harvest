@@ -11,9 +11,8 @@ Highlights of this major release include:
 You can import via `bin/harvest/grafana import` cli or from the Grafana UI.
 
 **IMPORTANT** The `conf/zapiperf/cdot/9.8.0/object_store_client_op.yaml` ZapiPerf template is being deprecated in this
-release and will be removed in the next release of Harvest. No dashboards use the counters defined in this template, 
-all counters are deprecated by ONTAP, and there are no alternatives in REST. 
-If you are using these counters, please create your own copy of the template.
+release and will be removed in the next release of Harvest. No dashboards use the counters defined in this template and  
+all counters are being deprecated by ONTAP. If you are using these counters, please create your own copy of the template.
 
 **Known Issues**
 
