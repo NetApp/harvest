@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1648651339515,
+  "iteration": 1648656043988,
   "links": [],
   "panels": [
     {
@@ -696,17 +696,17 @@
               }
             ]
           },
-          "unit": "kwatt"
+          "unit": "celsius"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 7,
         "w": 8,
         "x": 16,
         "y": 6
       },
-      "id": 79,
+      "id": 74,
       "options": {
         "legend": {
           "calcs": [],
@@ -721,16 +721,15 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "topk($TopResources,shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
-          "hide": false,
+          "expr": "topk($TopResources,environment_sensor_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
           "interval": "",
-          "legendFormat": "{{shelf}} ({{cluster}})",
-          "refId": "B"
+          "legendFormat": "{{node}}",
+          "refId": "A"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Total Shelves by Power Consumed (kW)",
+      "title": "Top Nodes by Average Temperature",
       "type": "timeseries"
     },
     {
@@ -783,7 +782,7 @@
               }
             ]
           },
-          "unit": "celsius"
+          "unit": "kwatt"
         },
         "overrides": []
       },
@@ -793,7 +792,7 @@
         "x": 0,
         "y": 14
       },
-      "id": 74,
+      "id": 79,
       "options": {
         "legend": {
           "calcs": [],
@@ -808,15 +807,16 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "topk($TopResources,environment_sensor_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "topk($TopResources,shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "hide": false,
           "interval": "",
-          "legendFormat": "{{node}}",
-          "refId": "A"
+          "legendFormat": "{{shelf}} ({{cluster}})",
+          "refId": "B"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top Nodes by Average Temperature",
+      "title": "Total Shelves by Power Consumed (kW)",
       "type": "timeseries"
     },
     {
@@ -2158,7 +2158,7 @@
     ]
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-4m",
     "to": "now"
   },
   "timepicker": {
@@ -2187,6 +2187,6 @@
   },
   "timezone": "",
   "title": "NetApp Detail: Power",
-  "uid": "vQx5vAy7k",
-  "version": 9
+  "uid": "GXne0Aynz",
+  "version": 1
 }
