@@ -1,0 +1,52 @@
+name:                     NFSv4_pool
+query:                    nfsv4_diag
+object:                   nfs_diag
+
+instance_key:             uuid
+
+global_labels:
+  - nfsv: v4
+
+counters:
+  - instance_uuid
+  - node_name       => node
+  - storePool_ByteLockAlloc
+  - storePool_ByteLockMax
+  - storePool_ClientAlloc
+  - storePool_ClientMax
+  - storePool_ConnectionParentSessionReferenceAlloc
+  - storePool_ConnectionParentSessionReferenceMax
+  - storePool_CopyStateAlloc
+  - storePool_CopyStateMax
+  - storePool_DelegAlloc
+  - storePool_DelegMax
+  - storePool_DelegStateAlloc
+  - storePool_DelegStateMax
+  - storePool_LayoutAlloc
+  - storePool_LayoutMax
+  - storePool_LayoutStateAlloc
+  - storePool_LayoutStateMax
+  - storePool_LockAlloc
+  - storePool_LockStateAlloc
+  - storePool_LockStateMax
+  - storePool_OpenAlloc
+  - storePool_OpenMax
+  - storePool_OpenStateAlloc
+  - storePool_OpenStateMax
+  - storePool_OwnerAlloc
+  - storePool_OwnerMax
+  - storePool_SessionAlloc
+  - storePool_SessionConnectionHolderAlloc
+  - storePool_SessionConnectionHolderMax
+  - storePool_SessionHolderAlloc
+  - storePool_SessionHolderMax
+  - storePool_SessionMax
+  - storePool_StateRefHistoryAlloc
+  - storePool_StateRefHistoryMax
+  - storePool_StringAlloc
+  - storePool_StringMax
+
+export_options:
+  require_instance_keys: false
+  instance_keys:
+    - node
