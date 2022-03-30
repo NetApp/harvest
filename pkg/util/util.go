@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"github.com/rs/zerolog"
 	"github.com/shirou/gopsutil/v3/process"
+	"golang.org/x/sys/unix"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"net"
@@ -124,50 +125,34 @@ func GetPids(search string) ([]int32, error) {
 	return result, err
 }
 
-var pidAndPollerRegex = regexp.MustCompile(`(\d+).*?poller.*?--poller (.*?)\s`)
+var pollerRegex = regexp.MustCompile(`poller\s+--poller\s+(.*?)\s`)
 var profRegex = regexp.MustCompile(`--profiling (\d+)`)
 var promRegex = regexp.MustCompile(`--promPort (\d+)`)
 
 func GetPollerStatuses() ([]PollerStatus, error) {
-	var (
-		result []PollerStatus
-		ee     *exec.ExitError
-		pe     *os.PathError
-		cmd    *exec.Cmd
-	)
-	if runtime.GOOS == "darwin" {
-		cmd = exec.Command("pgrep", "-fl", "poller ")
-	} else {
-		cmd = exec.Command("pgrep", "-fa", "poller ")
+	result := make([]PollerStatus, 0)
+	processes, err := process.Processes()
+	if err != nil {
+		return nil, err
 	}
-	data, err := cmd.Output()
-	if errors.As(err, &ee) {
-		if ee.Stderr != nil {
-			fmt.Printf("Exit error stderr=%s\n", ee.Stderr)
-		}
-		return result, nil // ran, but non-zero exit code
-	} else if errors.As(err, &pe) {
-		return result, err // "no such file ...", "permission denied" etc.
-	} else if err != nil {
-		return result, err // something unexpected happened!
-	}
-	out := string(data)
-	// read each line of out and extract the pid, poller name, and port
-	for _, line := range strings.Split(out, "\n") {
-		if line == "" {
-			continue
-		}
-		matches := pidAndPollerRegex.FindStringSubmatch(line)
-		if len(matches) == 0 {
-			continue
-		}
-		pid, err := strconv.ParseInt(matches[1], 10, 32)
+	for _, p := range processes {
+		line, err := p.Cmdline()
 		if err != nil {
+			if !errors.Is(err, unix.EINVAL) {
+				fmt.Printf("Unable to read process cmdline pid=%d err=%v\n", p.Pid, err)
+			}
+			continue
+		}
+		if !strings.Contains(line, "poller --poller ") {
+			continue
+		}
+		matches := pollerRegex.FindStringSubmatch(line)
+		if len(matches) != 2 {
 			continue
 		}
 		s := PollerStatus{
-			Name:   matches[2],
-			Pid:    int32(pid),
+			Name:   matches[1],
+			Pid:    p.Pid,
 			Status: "running",
 		}
 		promMatches := promRegex.FindStringSubmatch(line)
