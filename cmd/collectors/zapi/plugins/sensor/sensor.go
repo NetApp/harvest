@@ -85,7 +85,11 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 
 	for k, instance := range data.GetInstances() {
 		iKey := instance.GetLabel("node")
-		_, iKey2, _ := strings.Cut(k, iKey+".")
+		_, iKey2, found := strings.Cut(k, iKey+".")
+		if !found {
+			my.Logger.Warn().Str("key", iKey+".").Msg("missing instance key")
+			continue
+		}
 		if _, ok := sensorEnvironmentMetricMap[iKey]; !ok {
 			sensorEnvironmentMetricMap[iKey] = &sensorEnvironmentMetric{key: iKey, ambientTemperature: []float64{}, nonAmbientTemperature: []float64{}, fanSpeed: []float64{}}
 		}
