@@ -2443,7 +2443,7 @@
         "sortBy": [
           {
             "desc": true,
-            "displayName": "Compliance"
+            "displayName": "Compliant"
           }
         ]
       },
