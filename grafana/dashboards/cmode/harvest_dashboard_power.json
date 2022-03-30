@@ -1,4 +1,46 @@
 {
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "7.5.4"
+    },
+    {
+      "type": "panel",
+      "id": "graph",
+      "name": "Graph",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -1919,11 +1961,7 @@
       },
       {
         "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "Zapi",
-          "value": "Zapi"
-        },
+        "current": {},
         "datasource": "Prometheus",
         "definition": "label_values(shelf_labels{system_type!=\"7mode\"}, datacenter)",
         "description": null,
@@ -1949,11 +1987,7 @@
       },
       {
         "allValue": null,
-        "current": {
-          "selected": true,
-          "text": "F2240-127-26_28",
-          "value": "F2240-127-26_28"
-        },
+        "current": {},
         "datasource": "Prometheus",
         "definition": "label_values(shelf_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"}, cluster)",
         "description": null,
@@ -2101,5 +2135,5 @@
   "timezone": "",
   "title": "NetApp Detail: Power",
   "uid": "iY7zXdynk",
-  "version": 97
+  "version": 1
 }
