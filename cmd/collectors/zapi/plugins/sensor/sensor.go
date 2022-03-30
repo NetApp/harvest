@@ -85,6 +85,10 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 
 	for k, instance := range data.GetInstances() {
 		iKey := instance.GetLabel("node")
+		if iKey == "" {
+			my.Logger.Warn().Str("key", k).Msg("missing node label for instance")
+			continue
+		}
 		_, iKey2, found := strings.Cut(k, iKey+".")
 		if !found {
 			my.Logger.Warn().Str("key", iKey+".").Msg("missing instance key")
