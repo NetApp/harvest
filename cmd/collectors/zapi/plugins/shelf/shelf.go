@@ -242,6 +242,7 @@ func (my *Shelf) calculateEnvironmentMetrics(output []*matrix.Matrix, data *matr
 			instance := data.GetInstance(key)
 			if instance == nil {
 				my.Logger.Warn().Str("key", key).Msg("Instance not found")
+				continue
 			}
 			switch k {
 			case "power":
