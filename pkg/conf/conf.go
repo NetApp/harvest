@@ -9,6 +9,7 @@ import (
 	"github.com/imdario/mergo"
 	"goharvest2/pkg/constant"
 	"goharvest2/pkg/errors"
+	"goharvest2/pkg/logging"
 	"goharvest2/pkg/tree/node"
 	"goharvest2/pkg/util"
 	"gopkg.in/yaml.v3"
@@ -111,6 +112,10 @@ func ReadCredentialsFile(credPath string, p *Poller) error {
 		// when the poller is not listed in the file, check if there is a default, and if so, use it
 		if credConfig.Defaults != nil {
 			credPoller = credConfig.Defaults
+			logging.Get().Debug().
+				Str("poller", p.Name).
+				Str("credPath", credPath).
+				Msg("Reading credentials from default for poller")
 		} else {
 			return errors.New(errors.INVALID_PARAM, "poller not found in credentials file")
 		}
