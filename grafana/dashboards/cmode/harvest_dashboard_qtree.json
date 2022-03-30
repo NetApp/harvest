@@ -307,9 +307,7 @@
   "refresh": false,
   "schemaVersion": 30,
   "style": "dark",
-  "tags": [
-    "NetAppHarvest"
-  ],
+  "tags": [],
   "templating": {
     "list": [
       {
