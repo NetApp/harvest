@@ -2576,14 +2576,19 @@
             },
             "indexByName": {
               "Value #B": 0,
-              "Value #G": 7,
-              "Value #I": 6,
               "audit_protocol_enabled": 4,
+              "nis_authentication_enabled": 6,
+              "cifs_ntlm_enabled": 7,
+              "Value #I": 8,
+              "Value #G": 9,
               "banner": 3,
               "cluster": 1,
-              "nis_authentication_enabled": 8,
               "secured": 5,
-              "svm": 2
+              "svm": 2,
+              "iscsi_authentication_type": 10,
+              "nfs_kerberos_protocol_enabled": 11,
+              "smb_encryption_required": 12,
+              "smb_signing_required": 13
             },
             "renameByName": {
               "Value #A": "Autosupport Https Transport",
