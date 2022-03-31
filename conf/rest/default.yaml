@@ -25,9 +25,10 @@ objects:
 # for security dashboard at cluster
   Support:                  support.yaml
   Security:                 security.yaml
+  SecuritySsh:              security_ssh.yaml
   SecurityAccount:          security_account.yaml
   ClusterPeer:              clusterpeer.yaml
   SecurityCert:             security_certificate.yaml
   SecurityLogin:            security_login.yaml
   NtpServer:                ntpserver.yaml
-  SecurityAuditDestination: security_audit_dest.yaml  # test pending
+  SecurityAuditDestination: security_audit_dest.yaml
