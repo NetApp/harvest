@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1648656043988,
+  "iteration": 1648747044919,
   "links": [],
   "panels": [
     {
@@ -961,7 +961,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "blue",
+                      "color": "transparent",
                       "value": null
                     },
                     {
@@ -1005,7 +1005,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "blue",
+                      "color": "transparent",
                       "value": null
                     },
                     {
@@ -1049,7 +1049,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "blue",
+                      "color": "transparent",
                       "value": null
                     },
                     {
@@ -1093,7 +1093,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "blue",
+                      "color": "transparent",
                       "value": null
                     },
                     {
@@ -1137,7 +1137,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "blue",
+                      "color": "transparent",
                       "value": null
                     },
                     {
@@ -1181,7 +1181,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "blue",
+                      "color": "transparent",
                       "value": null
                     },
                     {
@@ -1524,7 +1524,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "blue",
+                      "color": "transparent",
                       "value": null
                     },
                     {
@@ -1568,7 +1568,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "blue",
+                      "color": "transparent",
                       "value": null
                     },
                     {
@@ -1612,7 +1612,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "blue",
+                      "color": "transparent",
                       "value": null
                     },
                     {
@@ -1656,7 +1656,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "blue",
+                      "color": "transparent",
                       "value": null
                     },
                     {
@@ -1700,7 +1700,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "blue",
+                      "color": "transparent",
                       "value": null
                     },
                     {
@@ -1744,7 +1744,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "blue",
+                      "color": "transparent",
                       "value": null
                     },
                     {
@@ -2187,6 +2187,6 @@
   },
   "timezone": "",
   "title": "NetApp Detail: Power",
-  "uid": "GXne0Aynz",
+  "uid": "Pni3I-y7k",
   "version": 1
 }
