@@ -167,7 +167,12 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		return output, err
 	}
 
-	return my.calculateEnvironmentMetrics(output, data)
+	if my.client.IsClustered() {
+		return my.calculateEnvironmentMetrics(output, data)
+	} else {
+		return output, nil
+	}
+
 }
 
 func (my *Shelf) calculateEnvironmentMetrics(output []*matrix.Matrix, data *matrix.Matrix) ([]*matrix.Matrix, error) {
@@ -175,7 +180,7 @@ func (my *Shelf) calculateEnvironmentMetrics(output []*matrix.Matrix, data *matr
 	shelfEnvironmentMetricMap := make(map[string]*shelfEnvironmentMetric, 0)
 	for _, o := range my.data {
 		for k, instance := range o.GetInstances() {
-			lastInd := strings.LastIndex(k, ".")
+			lastInd := strings.LastIndex(k, "#")
 			iKey := k[:lastInd]
 			iKey2 := k[lastInd+1:]
 			if _, ok := shelfEnvironmentMetricMap[iKey]; !ok {
@@ -226,12 +231,19 @@ func (my *Shelf) calculateEnvironmentMetrics(output []*matrix.Matrix, data *matr
 	}
 
 	for _, k := range eMetrics {
-		matrix.CreateMetric(k, data)
+		err := matrix.CreateMetric(k, data)
+		if err != nil {
+			my.Logger.Warn().Err(err).Str("key", k).Msg("error while creating metric")
+		}
 	}
 	for key, v := range shelfEnvironmentMetricMap {
 		for _, k := range eMetrics {
 			m := data.GetMetric(k)
 			instance := data.GetInstance(key)
+			if instance == nil {
+				my.Logger.Warn().Str("key", key).Msg("Instance not found")
+				continue
+			}
 			switch k {
 			case "power":
 				var sumPower float64
@@ -365,7 +377,7 @@ func (my *Shelf) handleCMode(result *node.Node) ([]*matrix.Matrix, error) {
 				for _, obj := range objectElem.GetChildren() {
 
 					if key := obj.GetChildContentS(my.instanceKeys[attribute]); key != "" {
-						instanceKey := shelfId + "." + key
+						instanceKey := shelfId + "#" + key
 						instance, err := data1.NewInstance(instanceKey)
 
 						if err != nil {

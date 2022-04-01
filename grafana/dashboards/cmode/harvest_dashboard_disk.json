@@ -2113,11 +2113,7 @@
       },
       {
         "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "CBC-Munich",
-          "value": "CBC-Munich"
-        },
+        "current": {},
         "datasource": "Prometheus",
         "definition": "label_values(node_labels{system_type!=\"7mode\"},datacenter)",
         "hide": 0,
