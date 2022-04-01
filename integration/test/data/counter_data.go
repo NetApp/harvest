@@ -23,6 +23,7 @@ func GetCounterMap() map[string][]string {
 		"svm_write_total",
 	}
 	counterMap["NO_DATA_CONTAINS"] = []string{
+		"aggr_efficiency_logical_used_wo_",
 		"fcp",
 		"fcvi",
 		"flashcache_",
