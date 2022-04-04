@@ -255,14 +255,12 @@ func (my *Shelf) calculateEnvironmentMetrics(output []*matrix.Matrix, data *matr
 						my.Logger.Warn().Str("voltage sensor id", k1).Msg("missing current sensor")
 					}
 				}
-				// convert to KW
-				sumPower = sumPower / 1000
 
 				err = m.SetValueFloat64(instance, sumPower)
 				if err != nil {
 					my.Logger.Error().Float64("power", sumPower).Err(err).Msg("Unable to set power")
 				} else {
-					m.SetLabel("unit", "kW")
+					m.SetLabel("unit", "W")
 				}
 
 			case "ambient_temperature":

@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1648747044919,
+  "iteration": 1649082083662,
   "links": [],
   "panels": [
     {
@@ -103,7 +103,6 @@
               "type": "special"
             }
           ],
-          "noValue": "0",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -113,7 +112,7 @@
               }
             ]
           },
-          "unit": "kwatt"
+          "unit": "watt"
         },
         "overrides": []
       },
@@ -144,7 +143,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "(sum(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0)) + (sum(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0))",
+          "expr": "(sum(environment_sensor_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0)) + (sum(shelf_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -224,7 +223,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "max(shelf_max_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "max(shelf_max_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -300,7 +299,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "max(environment_sensor_max_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "max(environment_sensor_max_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -373,7 +372,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "max(shelf_max_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "max(shelf_max_fan_speed{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -447,7 +446,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "max(environment_sensor_max_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "max(environment_sensor_max_fan_speed{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -508,7 +507,44 @@
           },
           "unit": "kwatt"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Node"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "watt"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Shelf"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "watt"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "watt"
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 8,
@@ -519,8 +555,12 @@
       "id": 82,
       "options": {
         "legend": {
-          "calcs": [],
-          "displayMode": "list",
+          "calcs": [
+            "max",
+            "mean",
+            "last"
+          ],
+          "displayMode": "table",
           "placement": "bottom"
         },
         "tooltip": {
@@ -531,7 +571,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "sum(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "sum(environment_sensor_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Node",
@@ -539,7 +579,7 @@
         },
         {
           "exemplar": true,
-          "expr": "sum(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "sum(shelf_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Shelf",
@@ -547,7 +587,7 @@
         },
         {
           "exemplar": true,
-          "expr": "(sum(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0)) + (sum(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0))",
+          "expr": "(sum(environment_sensor_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0)) + (sum(shelf_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0))",
           "hide": false,
           "interval": "",
           "legendFormat": "Total",
@@ -556,7 +596,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Total Power Consumed (kW)",
+      "title": "Total Power Consumed",
       "type": "timeseries"
     },
     {
@@ -609,7 +649,7 @@
               }
             ]
           },
-          "unit": "kwatt"
+          "unit": "watt"
         },
         "overrides": []
       },
@@ -622,8 +662,12 @@
       "id": 73,
       "options": {
         "legend": {
-          "calcs": [],
-          "displayMode": "list",
+          "calcs": [
+            "max",
+            "mean",
+            "last"
+          ],
+          "displayMode": "table",
           "placement": "bottom"
         },
         "tooltip": {
@@ -634,7 +678,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "topk($TopResources,environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "topk($TopResources,environment_sensor_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{node}}",
@@ -643,7 +687,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top Nodes by Power Consumed (kW)",
+      "title": "Top Nodes by Power Consumed",
       "type": "timeseries"
     },
     {
@@ -709,8 +753,12 @@
       "id": 74,
       "options": {
         "legend": {
-          "calcs": [],
-          "displayMode": "list",
+          "calcs": [
+            "max",
+            "mean",
+            "last"
+          ],
+          "displayMode": "table",
           "placement": "bottom"
         },
         "tooltip": {
@@ -721,7 +769,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "topk($TopResources,environment_sensor_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "topk($TopResources,environment_sensor_average_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -782,7 +830,7 @@
               }
             ]
           },
-          "unit": "kwatt"
+          "unit": "watt"
         },
         "overrides": []
       },
@@ -795,8 +843,12 @@
       "id": 79,
       "options": {
         "legend": {
-          "calcs": [],
-          "displayMode": "list",
+          "calcs": [
+            "max",
+            "mean",
+            "last"
+          ],
+          "displayMode": "table",
           "placement": "bottom"
         },
         "tooltip": {
@@ -807,7 +859,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "topk($TopResources,shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "topk($TopResources,shelf_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{shelf}} ({{cluster}})",
@@ -816,7 +868,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Total Shelves by Power Consumed (kW)",
+      "title": "Total Shelves by Power Consumed",
       "type": "timeseries"
     },
     {
@@ -882,8 +934,12 @@
       "id": 80,
       "options": {
         "legend": {
-          "calcs": [],
-          "displayMode": "list",
+          "calcs": [
+            "max",
+            "mean",
+            "last"
+          ],
+          "displayMode": "table",
           "placement": "bottom"
         },
         "tooltip": {
@@ -894,7 +950,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "topk($TopResources,shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "topk($TopResources,shelf_average_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
           "interval": "",
           "legendFormat": "{{shelf}} ({{cluster}})",
           "refId": "A"
@@ -965,7 +1021,7 @@
                       "value": null
                     },
                     {
-                      "color": "rgb(118, 204, 49)",
+                      "color": "green",
                       "value": 5
                     },
                     {
@@ -1202,22 +1258,22 @@
                     }
                   ]
                 }
-              },
-              {
-                "id": "custom.align",
-                "value": "right"
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "Power (kW)"
+              "options": "Power"
             },
             "properties": [
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "watt"
               }
             ]
           }
@@ -1240,7 +1296,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "node_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "node_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -1249,7 +1305,7 @@
         },
         {
           "exemplar": true,
-          "expr": "environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "environment_sensor_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1259,7 +1315,7 @@
         },
         {
           "exemplar": true,
-          "expr": "environment_sensor_ambient_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "environment_sensor_ambient_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1269,7 +1325,7 @@
         },
         {
           "exemplar": true,
-          "expr": "environment_sensor_max_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "environment_sensor_max_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1279,7 +1335,7 @@
         },
         {
           "exemplar": true,
-          "expr": "environment_sensor_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "environment_sensor_average_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1289,7 +1345,7 @@
         },
         {
           "exemplar": true,
-          "expr": "environment_sensor_max_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "environment_sensor_max_fan_speed{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1299,7 +1355,7 @@
         },
         {
           "exemplar": true,
-          "expr": "environment_sensor_average_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "environment_sensor_average_fan_speed{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1309,7 +1365,7 @@
         },
         {
           "exemplar": true,
-          "expr": "environment_sensor_min_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "environment_sensor_min_fan_speed{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1373,7 +1429,7 @@
               "Value #A": "",
               "Value #B": "disk_count",
               "Value #C": "state",
-              "Value #D": "Power (kW)",
+              "Value #D": "Power",
               "Value #E": "Ambient Temp (C)",
               "Value #F": "Max Temp (C)",
               "Value #G": "Avg Temp (C)",
@@ -1765,22 +1821,22 @@
                     }
                   ]
                 }
-              },
-              {
-                "id": "custom.align",
-                "value": "right"
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "Power (kW)"
+              "options": "Power"
             },
             "properties": [
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "watt"
               }
             ]
           }
@@ -1802,7 +1858,7 @@
       "pluginVersion": "8.1.2",
       "targets": [
         {
-          "expr": "shelf_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "expr": "shelf_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -1811,7 +1867,7 @@
         },
         {
           "exemplar": true,
-          "expr": "shelf_disk_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "shelf_disk_count{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1821,7 +1877,7 @@
         },
         {
           "exemplar": true,
-          "expr": "shelf_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "shelf_new_status{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1831,7 +1887,7 @@
         },
         {
           "exemplar": true,
-          "expr": "shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "shelf_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1841,7 +1897,7 @@
         },
         {
           "exemplar": true,
-          "expr": "shelf_ambient_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "shelf_ambient_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1851,7 +1907,7 @@
         },
         {
           "exemplar": true,
-          "expr": "shelf_max_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "shelf_max_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1861,7 +1917,7 @@
         },
         {
           "exemplar": true,
-          "expr": "shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "shelf_average_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1871,7 +1927,7 @@
         },
         {
           "exemplar": true,
-          "expr": "shelf_max_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "shelf_max_fan_speed{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1881,7 +1937,7 @@
         },
         {
           "exemplar": true,
-          "expr": "shelf_average_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "shelf_average_fan_speed{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1891,7 +1947,7 @@
         },
         {
           "exemplar": true,
-          "expr": "shelf_min_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "shelf_min_fan_speed{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1969,7 +2025,7 @@
               "Value #A": "",
               "Value #B": "disk_count",
               "Value #C": "state",
-              "Value #D": "Power (kW)",
+              "Value #D": "Power",
               "Value #E": "Ambient Temp (C)",
               "Value #F": "Max Temp (C)",
               "Value #G": "Avg Temp (C)",
@@ -2016,7 +2072,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(shelf_labels{system_type!=\"7mode\"}, datacenter)",
+        "definition": "label_values(node_labels{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -2026,7 +2082,7 @@
         "name": "Datacenter",
         "options": [],
         "query": {
-          "query": "label_values(shelf_labels{system_type!=\"7mode\"}, datacenter)",
+          "query": "label_values(node_labels{system_type!=\"7mode\"}, datacenter)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2042,7 +2098,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(shelf_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"}, cluster)",
+        "definition": "label_values(node_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -2052,7 +2108,7 @@
         "name": "Cluster",
         "options": [],
         "query": {
-          "query": "label_values(shelf_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"}, cluster)",
+          "query": "label_values(node_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2158,7 +2214,7 @@
     ]
   },
   "time": {
-    "from": "now-4m",
+    "from": "now-3h",
     "to": "now"
   },
   "timepicker": {
@@ -2187,6 +2243,6 @@
   },
   "timezone": "",
   "title": "NetApp Detail: Power",
-  "uid": "Pni3I-y7k",
+  "uid": "8pOURCs7z",
   "version": 1
 }

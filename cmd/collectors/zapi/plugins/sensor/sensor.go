@@ -180,9 +180,9 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				if len(v.powerSensor) > 0 {
 					for _, v1 := range v.powerSensor {
 						if v1.unit == "mW" {
-							sumPower += sumPower + (v1.value / 1000)
+							sumPower += v1.value / 1000
 						} else if v1.unit == "W" {
-							sumPower += sumPower + v1.value
+							sumPower += v1.value
 						} else {
 							my.Logger.Warn().Str("unit", v1.unit).Float64("value", v1.value).Msg("unknown power unit")
 						}
@@ -238,13 +238,12 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				} else {
 					my.Logger.Warn().Int("current size", len(v.currentSensor)).Int("voltage size", len(v.voltageSensor)).Msg("current and voltage sensor are ignored")
 				}
-				// convert to KW
-				sumPower = sumPower / 1000
+
 				err = m.SetValueFloat64(instance, sumPower)
 				if err != nil {
 					my.Logger.Error().Float64("power", sumPower).Err(err).Msg("Unable to set power")
 				} else {
-					m.SetLabel("unit", "kW")
+					m.SetLabel("unit", "W")
 				}
 
 			case "ambient_temperature":
