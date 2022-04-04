@@ -7,16 +7,17 @@ schedule:
   - data: 180s
 
 objects:
-  Aggregate:        aggr.yaml
-  Disk:             disk.yaml
-  Lun:              lun.yaml
-  Node:             node.yaml
-  Qtree:            qtree.yaml
-  Sensor:           sensor.yaml
-  Shelf:            shelf.yaml
-  SnapMirror:       snapmirror.yaml
-  SnapshotPolicy:   snapshotPolicy.yaml
-  Status:           status.yaml
-  Status_7mode:     status_7.yaml
-  Subsystem:        subsystem.yaml
-  Volume:           volume.yaml
+  Aggregate:           aggr.yaml
+  AggregateEfficiency: aggr_efficiency.yaml
+  Disk:                disk.yaml
+  Lun:                 lun.yaml
+  Node:                node.yaml
+  Qtree:               qtree.yaml
+  Sensor:              sensor.yaml
+  Shelf:               shelf.yaml
+  SnapMirror:          snapmirror.yaml
+  SnapshotPolicy:      snapshotPolicy.yaml
+  Status:              status.yaml
+  Status_7mode:        status_7.yaml
+  Subsystem:           subsystem.yaml
+  Volume:              volume.yaml
