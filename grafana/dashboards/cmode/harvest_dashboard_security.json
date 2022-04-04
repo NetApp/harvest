@@ -2056,7 +2056,7 @@
         "allValue": null,
         "current": {},
         "datasource": "Prometheus",
-        "definition": "label_values(security_labels{system_type!=\"7mode\"},datacenter)",
+        "definition": "label_values(svm_labels{system_type!=\"7mode\",isHigherThan9_10=\"true\"},datacenter)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -2066,7 +2066,7 @@
         "name": "Datacenter",
         "options": [],
         "query": {
-          "query": "label_values(security_labels{system_type!=\"7mode\"},datacenter)",
+          "query": "label_values(svm_labels{system_type!=\"7mode\",isHigherThan9_10=\"true\"},datacenter)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2082,7 +2082,7 @@
         "allValue": null,
         "current": {},
         "datasource": "Prometheus",
-        "definition": "label_values(security_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"},cluster)",
+        "definition": "label_values(svm_labels{system_type!=\"7mode\",isHigherThan9_10=\"true\",datacenter=\"$Datacenter\"},cluster)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -2092,7 +2092,7 @@
         "name": "Cluster",
         "options": [],
         "query": {
-          "query": "label_values(security_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"},cluster)",
+          "query": "label_values(svm_labels{system_type!=\"7mode\",isHigherThan9_10=\"true\",datacenter=\"$Datacenter\"},cluster)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2108,7 +2108,7 @@
         "allValue": null,
         "current": {},
         "datasource": "Prometheus",
-        "definition": "label_values(svm_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\",cluster=~\"$Cluster\"},svm)",
+        "definition": "label_values(svm_labels{system_type!=\"7mode\",isHigherThan9_10=\"true\",datacenter=\"$Datacenter\",cluster=~\"$Cluster\"},svm)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -2118,7 +2118,7 @@
         "name": "SVM",
         "options": [],
         "query": {
-          "query": "label_values(svm_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\",cluster=~\"$Cluster\"},svm)",
+          "query": "label_values(svm_labels{system_type!=\"7mode\",isHigherThan9_10=\"true\",datacenter=\"$Datacenter\",cluster=~\"$Cluster\"},svm)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,

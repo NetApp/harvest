@@ -87,4 +87,5 @@ export_options:
     - iscsi_authentication_type
     - iscsi_service_enabled
     - nis_authentication_enabled
+    - isHigherThan9_10
 
