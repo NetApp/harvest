@@ -132,9 +132,6 @@ func (r *Rest) InitMatrix() error {
 	r.Matrix.Object = r.Prop.Object
 	// Add system (cluster) name
 	r.Matrix.SetGlobalLabel("cluster", r.Client.Cluster().Name)
-	// Add version
-	verWithDots := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(r.Client.Cluster().Version)), "."), "[]")
-	r.Matrix.SetGlobalLabel("clusterversion", verWithDots)
 
 	if r.Params.HasChildS("labels") {
 		for _, l := range r.Params.GetChildS("labels").GetChildren() {
