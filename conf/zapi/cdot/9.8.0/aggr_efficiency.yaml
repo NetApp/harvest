@@ -1,0 +1,21 @@
+
+name:               AggregateEfficiency
+query:              aggr-efficiency-get-iter
+object:             aggr_efficiency
+
+counters:
+  aggr-efficiency-info:
+    - ^^aggregate                                                         => aggr
+    - ^node                                                               => node
+    - aggr-efficiency-cumulative-info:
+        - total-physical-used                                             => total_physical_used
+        - total-logical-used                                              => total_logical_used
+        - total-data-reduction-logical-used-wo-snapshots                  => logical_used_wo_snapshots
+        - total-data-reduction-logical-used-wo-snapshots-flexclones       => logical_used_wo_snapshots_flexclones
+        - total-data-reduction-physical-used-wo-snapshots                 => physical_used_wo_snapshots
+        - total-data-reduction-physical-used-wo-snapshots-flexclones      => physical_used_wo_snapshots_flexclones
+
+export_options:
+  instance_keys:
+    - aggr
+    - node

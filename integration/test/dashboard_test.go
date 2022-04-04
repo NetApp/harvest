@@ -90,6 +90,7 @@ func (suite *DashboardImportTestSuite) TestCModeDashboardCount() {
 		"NetApp Detail: Qtree",
 		"NetApp Detail: Security",
 		"NetApp Detail: Compliance",
+		"NetApp Detail: Power",
 	}
 
 	VerifyDashboards(folderId, expectedName, suite.T())

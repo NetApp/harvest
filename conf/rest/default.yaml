@@ -5,30 +5,30 @@ schedule:
   - data: 180s
 
 objects:
+  Aggr:             aggr.yaml
   Disk:             disk.yaml
   Lun:              lun.yaml
-  Status:           status.yaml
   Node:             node.yaml
-  Aggr:             aggr.yaml
-  SnapMirror:       snapmirror.yaml
-  Volume:           volume.yaml
-  Subsystem:        subsystem.yaml
-  Snapshot:         snapshot.yaml
   Port:             port.yaml
   Qtree:            qtree.yaml
-  Shelf:            shelf.yaml
-  Sensor:           sensor.yaml
   SVM:              svm.yaml
+  Sensor:           sensor.yaml
+  Shelf:            shelf.yaml
+  SnapMirror:       snapmirror.yaml
+  Snapshot:         snapshot.yaml
+  Status:           status.yaml
+  Subsystem:        subsystem.yaml
+  Volume:           volume.yaml
 
 
 
 # for security dashboard at cluster
-  Support:                  support.yaml
+  ClusterPeer:              clusterpeer.yaml
+  NtpServer:                ntpserver.yaml
   Security:                 security.yaml
   SecuritySsh:              security_ssh.yaml
   SecurityAccount:          security_account.yaml
-  ClusterPeer:              clusterpeer.yaml
+  SecurityAuditDestination: security_audit_dest.yaml  # test pending
   SecurityCert:             security_certificate.yaml
   SecurityLogin:            security_login.yaml
-  NtpServer:                ntpserver.yaml
-  SecurityAuditDestination: security_audit_dest.yaml
+  Support:                  support.yaml

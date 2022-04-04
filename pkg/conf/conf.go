@@ -108,7 +108,12 @@ func ReadCredentialsFile(credPath string, p *Poller) error {
 
 	credPoller := credConfig.Pollers[p.Name]
 	if credPoller == nil {
-		return errors.New(errors.INVALID_PARAM, "poller not found in credentials file")
+		// when the poller is not listed in the file, check if there is a default, and if so, use it
+		if credConfig.Defaults != nil {
+			credPoller = credConfig.Defaults
+		} else {
+			return errors.New(errors.INVALID_PARAM, "poller not found in credentials file")
+		}
 	}
 	if credPoller.SslKey != "" {
 		p.SslKey = credPoller.SslKey

@@ -61,7 +61,10 @@ func (my *Sensor) Init() error {
 	// init environment metrics in plugin matrix
 	// create environment metric if not exists
 	for _, k := range eMetrics {
-		matrix.CreateMetric(k, my.data)
+		err := matrix.CreateMetric(k, my.data)
+		if err != nil {
+			my.Logger.Warn().Err(err).Str("key", k).Msg("error while creating metric")
+		}
 	}
 	return nil
 }
@@ -81,7 +84,16 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 	sensorEnvironmentMetricMap := make(map[string]*sensorEnvironmentMetric)
 
 	for k, instance := range data.GetInstances() {
-		iKey, iKey2, _ := strings.Cut(k, ".")
+		iKey := instance.GetLabel("node")
+		if iKey == "" {
+			my.Logger.Warn().Str("key", k).Msg("missing node label for instance")
+			continue
+		}
+		_, iKey2, found := strings.Cut(k, iKey+".")
+		if !found {
+			my.Logger.Warn().Str("key", iKey+".").Msg("missing instance key")
+			continue
+		}
 		if _, ok := sensorEnvironmentMetricMap[iKey]; !ok {
 			sensorEnvironmentMetricMap[iKey] = &sensorEnvironmentMetric{key: iKey, ambientTemperature: []float64{}, nonAmbientTemperature: []float64{}, fanSpeed: []float64{}}
 		}
@@ -94,6 +106,15 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				isPowerMatch := powerInRegex.MatchString(sensorName)
 				isVoltageMatch := voltageRegex.MatchString(sensorName)
 				isCurrentMatch := currentRegex.MatchString(sensorName)
+
+				my.Logger.Debug().Bool("isAmbientMatch", isAmbientMatch).
+					Bool("isPowerMatch", isPowerMatch).
+					Bool("isVoltageMatch", isVoltageMatch).
+					Bool("isCurrentMatch", isCurrentMatch).
+					Str("sensorType", sensorType).
+					Str("sensorUnit", sensorUnit).
+					Str("sensorName", sensorName).
+					Msg("")
 
 				if sensorType == "thermal" && isAmbientMatch {
 					if value, ok := metric.GetValueFloat64(instance); ok {

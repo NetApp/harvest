@@ -10,12 +10,12 @@ schedule:
 objects:
   CIFSNode:         cifs_node.yaml
   Fcp:              fcp.yaml
-  HeadroomCPU:      resource_headroom_cpu.yaml
   HeadroomAggr:     resource_headroom_aggr.yaml
+  HeadroomCPU:      resource_headroom_cpu.yaml
   HostAdapter:      hostadapter.yaml
   NFSv3Node:        nfsv3_node.yaml
-  NFSv4Node:        nfsv4_node.yaml
   NFSv41Node:       nfsv4_1_node.yaml
+  NFSv4Node:        nfsv4_node.yaml
   Processor:        processor.yaml
   Qtree:            qtree.yaml
   VolumeNode:       volume_node.yaml
@@ -25,6 +25,6 @@ objects:
   CIFSsvm:          cifs_svm.yaml
   CopyManager:      copy_manager.yaml
   NFSv3:            nfsv3.yaml
-  NFSv4:            nfsv4.yaml
   NFSv41:           nfsv4_1.yaml
+  NFSv4:            nfsv4.yaml
   Volume:           volume.yaml

@@ -9,46 +9,46 @@ schedule:
 
 objects:
   # Node-level metrics
-  SystemNode:             system_node.yaml
-  HostAdapter:            hostadapter.yaml
-  Path:                   path.yaml
+  CIFSNode:               cifs_node.yaml
   Disk:                   disk.yaml
-  FCVI:                   fcvi.yaml
   ExtCacheObj:            ext_cache_obj.yaml
+  FCVI:                   fcvi.yaml
+  FcpPort:                fcp.yaml
+  HeadroomAggr:           resource_headroom_aggr.yaml
+  HeadroomCPU:            resource_headroom_cpu.yaml
+  HostAdapter:            hostadapter.yaml
+  NFSv3Node:              nfsv3_node.yaml
+  NFSv41Node:             nfsv4_1_node.yaml
+  NFSv4Node:              nfsv4_node.yaml
+  NVMfLif:                nvmf_lif.yaml
+  Namespace:              namespace.yaml
+  NicCommon:              nic_common.yaml
+  ObjectStoreClient:      object_store_client_op.yaml
+  Path:                   path.yaml
+  Processor:              processor.yaml
+  Qtree:                  qtree.yaml
+  SystemNode:             system_node.yaml
+  TokenManager:           token_manager.yaml
+  VolumeNode:             volume_node.yaml
   WAFL:                   wafl.yaml
   WAFLAggr:               wafl_hya_per_aggr.yaml
   WAFLSizer:              wafl_hya_sizer.yaml
-  NicCommon:              nic_common.yaml
-  Namespace:              namespace.yaml
-  NVMfLif:                nvmf_lif.yaml
-  FcpPort:                fcp.yaml
-  ObjectStoreClient:      object_store_client_op.yaml
-  VolumeNode:             volume_node.yaml
-  TokenManager:           token_manager.yaml
-  HeadroomCPU:            resource_headroom_cpu.yaml
-  HeadroomAggr:           resource_headroom_aggr.yaml
-  Processor:              processor.yaml
-  CIFSNode:               cifs_node.yaml
-  NFSv3Node:              nfsv3_node.yaml
-  NFSv4Node:              nfsv4_node.yaml
-  NFSv41Node:             nfsv4_1_node.yaml
 #  NFSv4Pool:              nfsv4_pool.yaml
-  Qtree:                  qtree.yaml
 
   # SVM-level metrics
-  Volume:                 volume.yaml
+  CIFSvserver:            cifs_vserver.yaml
+  CopyManager:            copy_manager.yaml
+  FcpLif:                 fcp_lif.yaml
+  ISCSI:                  iscsi_lif.yaml
+  LIF:                    lif.yaml
   LUN:                    lun.yaml
   NFSv3:                  nfsv3.yaml
-  NFSv4:                  nfsv4.yaml
   NFSv41:                 nfsv4_1.yaml
-  CIFSvserver:            cifs_vserver.yaml
-  LIF:                    lif.yaml
-  ISCSI:                  iscsi_lif.yaml
-  FcpLif:                 fcp_lif.yaml
-  CopyManager:            copy_manager.yaml
-#  VscanSVM:               vscan_svm.yaml
-#  Vscan:                  vscan.yaml
+  NFSv4:                  nfsv4.yaml
+  Volume:                 volume.yaml
   WAFLCompBin:            wafl_comp_aggr_vol_bin.yaml
+#  Vscan:                  vscan.yaml
+#  VscanSVM:               vscan_svm.yaml
 
 #  Uncomment to collect workload/QOS counters  
 #  Workload:               workload.yaml
