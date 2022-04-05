@@ -19,7 +19,7 @@ func (d *Grafana) Init(image string) {
 }
 
 func (d *Grafana) Install() bool {
-	d.image = "grafana/grafana:8.1.7"
+	d.image = "grafana/grafana:8.1.8"
 	log.Println("Grafana image : " + d.image)
 	imageName := "grafana"
 	docker.StopContainers(imageName)
