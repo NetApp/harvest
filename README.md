@@ -23,7 +23,7 @@ Hardware requirements depend on how many clusters you monitor and the number of 
 Harvest is compatible with:
 - Prometheus: `2.24` or higher
 - InfluxDB: `v2`
-- Grafana: `7.4.2` or higher (for Prometheus-based dashboards) or `v8.1.1` or higher (for InfluxDB-based dashboards)
+- Grafana: `8.1.X` or higher
 - Docker: `20.10.0` or higher
 
 # Installation / Upgrade
