@@ -15,7 +15,7 @@ objects:
   Sensor:           sensor.yaml
   Shelf:            shelf.yaml
   SnapMirror:       snapmirror.yaml
-  Snapshot:         snapshot.yaml
+  SnapshotPolicy:   snapshotPolicy.yaml
   Status:           status.yaml
   Subsystem:        subsystem.yaml
   Volume:           volume.yaml
