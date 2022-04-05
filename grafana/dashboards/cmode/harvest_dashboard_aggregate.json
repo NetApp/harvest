@@ -14,7 +14,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "7.5.4"
+      "version": "8.1.2"
     },
     {
       "type": "panel",
@@ -39,6 +39,12 @@
       "id": "table",
       "name": "Table",
       "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
     }
   ],
   "annotations": {
@@ -50,6 +56,12 @@
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
         "type": "dashboard"
       }
     ]
@@ -59,9 +71,23 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1619514550706,
+  "iteration": 1649094249773,
   "links": [],
   "panels": [
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 37,
+      "panels": [],
+      "title": "Highlights",
+      "type": "row"
+    },
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
@@ -73,11 +99,14 @@
           },
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "0",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "color": "rgb(21, 118, 171)",
+                  "text": "0"
+                }
+              },
+              "type": "special"
             }
           ],
           "noValue": "0",
@@ -98,7 +127,7 @@
         "h": 5,
         "w": 3,
         "x": 0,
-        "y": 0
+        "y": 1
       },
       "id": 20,
       "links": [],
@@ -117,7 +146,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "targets": [
         {
           "expr": "sum(count(aggr_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}) by (aggr))",
@@ -146,11 +175,14 @@
           },
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "0",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "color": "rgb(21, 118, 171)",
+                  "text": "0"
+                }
+              },
+              "type": "special"
             }
           ],
           "noValue": "0",
@@ -171,7 +203,7 @@
         "h": 5,
         "w": 3,
         "x": 3,
-        "y": 0
+        "y": 1
       },
       "id": 21,
       "links": [],
@@ -190,7 +222,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "targets": [
         {
           "expr": "sum(aggr_raid_disk_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
@@ -219,11 +251,14 @@
           },
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "0",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "color": "rgb(21, 118, 171)",
+                  "text": "0"
+                }
+              },
+              "type": "special"
             }
           ],
           "noValue": "0",
@@ -244,7 +279,7 @@
         "h": 5,
         "w": 3,
         "x": 6,
-        "y": 0
+        "y": 1
       },
       "id": 22,
       "links": [],
@@ -263,7 +298,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "targets": [
         {
           "expr": "sum(aggr_volume_count_flexvol{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
@@ -308,7 +343,7 @@
         "h": 5,
         "w": 5,
         "x": 9,
-        "y": 0
+        "y": 1
       },
       "id": 24,
       "options": {
@@ -326,7 +361,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "targets": [
         {
           "exemplar": false,
@@ -366,7 +401,7 @@
         "h": 5,
         "w": 5,
         "x": 14,
-        "y": 0
+        "y": 1
       },
       "id": 25,
       "options": {
@@ -384,7 +419,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "targets": [
         {
           "exemplar": false,
@@ -407,6 +442,8 @@
           },
           "decimals": 2,
           "mappings": [],
+          "max": 100,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -424,7 +461,7 @@
         "h": 5,
         "w": 5,
         "x": 19,
-        "y": 0
+        "y": 1
       },
       "id": 26,
       "options": {
@@ -442,7 +479,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "targets": [
         {
           "expr": "100*sum(aggr_space_used{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})/sum(aggr_space_total{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
@@ -494,20 +531,22 @@
                 "id": "mappings",
                 "value": [
                   {
-                    "from": "0",
-                    "id": 1,
-                    "text": "offline/error",
-                    "to": "0.999",
-                    "type": 2,
-                    "value": "0"
+                    "options": {
+                      "1": {
+                        "text": "online"
+                      }
+                    },
+                    "type": "value"
                   },
                   {
-                    "from": "",
-                    "id": 2,
-                    "text": "online",
-                    "to": "",
-                    "type": 1,
-                    "value": "1"
+                    "options": {
+                      "from": 0,
+                      "result": {
+                        "text": "offline/error"
+                      },
+                      "to": 0.999
+                    },
+                    "type": "range"
                   }
                 ]
               },
@@ -739,7 +778,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 6
       },
       "id": 2,
       "interval": "1m",
@@ -748,7 +787,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "targets": [
         {
           "expr": "aggr_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
@@ -858,7 +897,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 13
+        "y": 14
       },
       "hiddenSeries": false,
       "id": 13,
@@ -879,7 +918,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -889,6 +928,7 @@
       "steppedLine": false,
       "targets": [
         {
+          "exemplar": true,
           "expr": "aggr_space_physical_used{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
@@ -967,7 +1007,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 13
+        "y": 14
       },
       "hiddenSeries": false,
       "id": 14,
@@ -988,7 +1028,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1077,7 +1117,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 13
+        "y": 14
       },
       "hiddenSeries": false,
       "id": 15,
@@ -1098,7 +1138,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1186,7 +1226,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 21
+        "y": 22
       },
       "hiddenSeries": false,
       "id": 16,
@@ -1207,7 +1247,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1295,7 +1335,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 21
+        "y": 22
       },
       "hiddenSeries": false,
       "id": 17,
@@ -1316,7 +1356,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1404,7 +1444,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 21
+        "y": 22
       },
       "hiddenSeries": false,
       "id": 18,
@@ -1425,7 +1465,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1520,7 +1560,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 29
+        "y": 30
       },
       "hiddenSeries": false,
       "id": 4,
@@ -1541,7 +1581,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1617,17 +1657,13 @@
       "dashes": false,
       "datasource": "${DS_PROMETHEUS}",
       "description": "",
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 29
+        "y": 30
       },
       "hiddenSeries": false,
       "id": 35,
@@ -1648,7 +1684,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1731,17 +1767,13 @@
       "dashes": false,
       "datasource": "${DS_PROMETHEUS}",
       "description": "",
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 29
+        "y": 30
       },
       "hiddenSeries": false,
       "id": 6,
@@ -1762,7 +1794,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1857,7 +1889,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 37
+        "y": 38
       },
       "hiddenSeries": false,
       "id": 33,
@@ -1878,7 +1910,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1973,7 +2005,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 37
+        "y": 38
       },
       "hiddenSeries": false,
       "id": 32,
@@ -1994,7 +2026,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2082,7 +2114,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 37
+        "y": 38
       },
       "hiddenSeries": false,
       "id": 31,
@@ -2103,7 +2135,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2191,7 +2223,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 45
+        "y": 46
       },
       "hiddenSeries": false,
       "id": 30,
@@ -2212,7 +2244,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2288,17 +2320,13 @@
       "dashes": false,
       "datasource": "${DS_PROMETHEUS}",
       "description": "",
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 45
+        "y": 46
       },
       "hiddenSeries": false,
       "id": 5,
@@ -2319,7 +2347,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2402,17 +2430,13 @@
       "dashes": false,
       "datasource": "${DS_PROMETHEUS}",
       "description": "",
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 45
+        "y": 46
       },
       "hiddenSeries": false,
       "id": 34,
@@ -2433,7 +2457,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2515,10 +2539,683 @@
         "align": false,
         "alignLevel": null
       }
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 54
+      },
+      "id": 39,
+      "panels": [],
+      "title": "Storage Efficiency Ratios",
+      "type": "row"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 8,
+        "x": 0,
+        "y": 55
+      },
+      "id": 41,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum(aggr_efficiency_total_logical_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"})/sum(aggr_efficiency_total_physical_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"})",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Total",
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 8,
+        "x": 8,
+        "y": 55
+      },
+      "id": 43,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum(aggr_efficiency_logical_used_wo_snapshots{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"})/sum(aggr_efficiency_physical_used_wo_snapshots{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"})",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Total w/o Snapshots",
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 8,
+        "x": 16,
+        "y": 55
+      },
+      "id": 45,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum(aggr_efficiency_logical_used_wo_snapshots_flexclones{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"})/sum(aggr_efficiency_physical_used_wo_snapshots_flexclones{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"})",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Total w/o Snapshots & FlexClones",
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 59
+      },
+      "id": 47,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "aggr_efficiency_total_logical_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "interval": "",
+          "legendFormat": "{{node}} - {{aggr}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Logical Used",
+      "type": "timeseries"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 59
+      },
+      "id": 49,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "aggr_efficiency_total_physical_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "interval": "",
+          "legendFormat": "{{node}} - {{aggr}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Physical Used",
+      "type": "timeseries"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 67
+      },
+      "id": 51,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "aggr_efficiency_logical_used_wo_snapshots{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "interval": "",
+          "legendFormat": "{{node}} - {{aggr}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Logical Used w/o Snapshots",
+      "type": "timeseries"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 67
+      },
+      "id": 53,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "aggr_efficiency_physical_used_wo_snapshots{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "interval": "",
+          "legendFormat": "{{node}} - {{aggr}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Physical Used w/o Snapshots",
+      "type": "timeseries"
+    },
+    {
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 75
+      },
+      "id": 55,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "aggr_efficiency_logical_used_wo_snapshots_flexclones{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "interval": "",
+          "legendFormat": "{{node}} - {{aggr}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Logical Used w/o Snapshots & FlexClones",
+      "type": "timeseries"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 75
+      },
+      "id": 57,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "aggr_efficiency_physical_used_wo_snapshots_flexclones{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "interval": "",
+          "legendFormat": "{{node}} - {{aggr}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Physical Used w/o Snapshots & FlexClones",
+      "type": "timeseries"
     }
   ],
   "refresh": "1m",
-  "schemaVersion": 27,
+  "schemaVersion": 30,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -2529,6 +3226,8 @@
           "text": "Prometheus",
           "value": "Prometheus"
         },
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": false,
         "label": "Data Source",
@@ -2563,7 +3262,6 @@
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -2590,7 +3288,6 @@
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -2617,7 +3314,6 @@
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -2644,7 +3340,6 @@
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -2658,6 +3353,6 @@
   "timepicker": {},
   "timezone": "",
   "title": "NetApp Detail: Aggregate",
-  "uid": "nWYwRcrMk",
-  "version": 1
+  "uid": "e_TibCynz",
+  "version": 2
 }
