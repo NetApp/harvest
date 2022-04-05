@@ -14,7 +14,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "7.5.4"
+      "version": "8.1.2"
     },
     {
       "type": "datasource",
@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1649082083662,
+  "iteration": 1649179659797,
   "links": [],
   "panels": [
     {
@@ -117,8 +117,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
-        "w": 4,
+        "h": 10,
+        "w": 14,
         "x": 0,
         "y": 1
       },
@@ -126,7 +126,7 @@
       "links": [],
       "options": {
         "colorMode": "value",
-        "graphMode": "none",
+        "graphMode": "area",
         "justifyMode": "center",
         "orientation": "horizontal",
         "reduceOptions": {
@@ -200,10 +200,10 @@
       "gridPos": {
         "h": 5,
         "w": 5,
-        "x": 4,
+        "x": 14,
         "y": 1
       },
-      "id": 64,
+      "id": 68,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -223,7 +223,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "max(shelf_max_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "max(environment_sensor_max_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -231,7 +231,80 @@
           "refId": "A"
         }
       ],
-      "title": "Max Shelf temp",
+      "title": "Max Node Temp",
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "transparent",
+                "value": null
+              },
+              {
+                "color": "rgb(84, 184, 45)",
+                "value": 500
+              },
+              {
+                "color": "semi-dark-yellow",
+                "value": 3000
+              },
+              {
+                "color": "semi-dark-orange",
+                "value": 5000
+              },
+              {
+                "color": "dark-red",
+                "value": 6000
+              }
+            ]
+          },
+          "unit": "rotrpm"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 19,
+        "y": 1
+      },
+      "id": 70,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "max(shelf_max_fan_speed{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Max Shelf Fan Speed",
       "type": "stat"
     },
     {
@@ -276,83 +349,10 @@
       "gridPos": {
         "h": 5,
         "w": 5,
-        "x": 9,
-        "y": 1
-      },
-      "id": 68,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.2",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "max(environment_sensor_max_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Max Node temp",
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "transparent",
-                "value": null
-              },
-              {
-                "color": "rgb(84, 184, 45)",
-                "value": 500
-              },
-              {
-                "color": "semi-dark-yellow",
-                "value": 3000
-              },
-              {
-                "color": "semi-dark-orange",
-                "value": 5000
-              },
-              {
-                "color": "dark-red",
-                "value": 6000
-              }
-            ]
-          },
-          "unit": "rotrpm"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 5,
         "x": 14,
-        "y": 1
+        "y": 6
       },
-      "id": 70,
+      "id": 64,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -372,13 +372,15 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "max(shelf_max_fan_speed{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "max(shelf_max_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "format": "time_series",
+          "instant": false,
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Max Shelf Fan Speed",
+      "title": "Max Shelf Temp",
       "type": "stat"
     },
     {
@@ -424,7 +426,7 @@
         "h": 5,
         "w": 5,
         "x": 19,
-        "y": 1
+        "y": 6
       },
       "id": 71,
       "options": {
@@ -550,7 +552,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 6
+        "y": 11
       },
       "id": 82,
       "options": {
@@ -657,7 +659,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 6
+        "y": 11
       },
       "id": 73,
       "options": {
@@ -748,7 +750,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 6
+        "y": 11
       },
       "id": 74,
       "options": {
@@ -838,7 +840,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 14
+        "y": 19
       },
       "id": 79,
       "options": {
@@ -929,7 +931,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 14
+        "y": 19
       },
       "id": 80,
       "options": {
@@ -968,7 +970,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 27
       },
       "id": 76,
       "panels": [],
@@ -1283,7 +1285,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 28
       },
       "id": 33,
       "interval": "1m",
@@ -1452,7 +1454,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 35
       },
       "id": 78,
       "panels": [],
@@ -1846,7 +1848,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 36
       },
       "id": 81,
       "interval": "1m",
@@ -2243,6 +2245,6 @@
   },
   "timezone": "",
   "title": "NetApp Detail: Power",
-  "uid": "8pOURCs7z",
+  "uid": "uFd7ZRUnz",
   "version": 1
 }
