@@ -39,6 +39,12 @@
       "id": "table",
       "name": "Table",
       "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
     }
   ],
   "annotations": {
@@ -50,6 +56,12 @@
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
         "type": "dashboard"
       }
     ]
@@ -59,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1619514558045,
+  "iteration": 1649148617559,
   "links": [],
   "panels": [
     {
@@ -87,11 +99,14 @@
           },
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "0",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "color": "dark-yellow",
+                  "text": "0"
+                }
+              },
+              "type": "special"
             }
           ],
           "noValue": "0",
@@ -110,7 +125,7 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 4,
+        "w": 3,
         "x": 0,
         "y": 1
       },
@@ -131,7 +146,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "targets": [
         {
           "expr": "sum(count(shelf_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}) by (shelf))",
@@ -147,6 +162,158 @@
       "timeFrom": null,
       "timeShift": null,
       "title": "Shelves",
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "color": "dark-yellow",
+                  "text": "0"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-yellow",
+                "value": null
+              }
+            ]
+          },
+          "unit": "watt"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 3,
+        "x": 3,
+        "y": 1
+      },
+      "id": 79,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "(sum(shelf_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Total Power (Shelf)",
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "transparent",
+                "value": null
+              },
+              {
+                "color": "rgb(84, 184, 45)",
+                "value": 5
+              },
+              {
+                "color": "semi-dark-yellow",
+                "value": 45
+              },
+              {
+                "color": "semi-dark-orange",
+                "value": 65
+              },
+              {
+                "color": "dark-red",
+                "value": 75
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 3,
+        "x": 6,
+        "y": 1
+      },
+      "id": 75,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "max(shelf_max_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Max Shelf temp",
       "type": "stat"
     },
     {
@@ -190,8 +357,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 5,
-        "x": 4,
+        "w": 3,
+        "x": 9,
         "y": 1
       },
       "id": 64,
@@ -210,7 +377,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "targets": [
         {
           "exemplar": false,
@@ -264,8 +431,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 5,
-        "x": 9,
+        "w": 3,
+        "x": 12,
         "y": 1
       },
       "id": 65,
@@ -284,7 +451,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "targets": [
         {
           "exemplar": false,
@@ -295,6 +462,79 @@
         }
       ],
       "title": "Fan RPM Avg",
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "transparent",
+                "value": null
+              },
+              {
+                "color": "rgb(84, 184, 45)",
+                "value": 500
+              },
+              {
+                "color": "semi-dark-yellow",
+                "value": 3000
+              },
+              {
+                "color": "semi-dark-orange",
+                "value": 5000
+              },
+              {
+                "color": "dark-red",
+                "value": 6000
+              }
+            ]
+          },
+          "unit": "rotrpm"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 3,
+        "x": 15,
+        "y": 1
+      },
+      "id": 81,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "max(shelf_max_fan_speed{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Max Shelf Fan Speed",
       "type": "stat"
     },
     {
@@ -338,8 +578,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 5,
-        "x": 14,
+        "w": 3,
+        "x": 18,
         "y": 1
       },
       "id": 67,
@@ -358,7 +598,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "targets": [
         {
           "exemplar": false,
@@ -412,8 +652,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 5,
-        "x": 19,
+        "w": 3,
+        "x": 21,
         "y": 1
       },
       "id": 66,
@@ -432,7 +672,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "targets": [
         {
           "exemplar": false,
@@ -446,6 +686,20 @@
       "type": "stat"
     },
     {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      },
+      "id": 77,
+      "panels": [],
+      "title": "Power",
+      "type": "row"
+    },
+    {
       "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
@@ -456,7 +710,7 @@
           "custom": {
             "align": "left",
             "displayMode": "auto",
-            "filterable": false
+            "filterable": true
           },
           "mappings": [],
           "thresholds": {
@@ -492,31 +746,10 @@
               {
                 "id": "custom.displayMode",
                 "value": "json-view"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "op_status"
-            },
-            "properties": [
-              {
-                "id": "custom.displayMode",
-                "value": "color-text"
               },
               {
-                "id": "mappings",
-                "value": [
-                  {
-                    "from": "",
-                    "id": 1,
-                    "text": "",
-                    "to": "",
-                    "type": 1,
-                    "value": ""
-                  }
-                ]
+                "id": "custom.width",
+                "value": null
               }
             ]
           },
@@ -550,22 +783,300 @@
                 "id": "mappings",
                 "value": [
                   {
-                    "from": "0",
-                    "id": 1,
-                    "text": "OFFLINE",
-                    "to": "0.999",
-                    "type": 2,
-                    "value": ""
+                    "options": {
+                      "1": {
+                        "text": "ONLINE"
+                      }
+                    },
+                    "type": "value"
                   },
                   {
-                    "from": "",
-                    "id": 2,
-                    "text": "ONLINE",
-                    "to": "",
-                    "type": 1,
-                    "value": "1"
+                    "options": {
+                      "from": 0,
+                      "result": {
+                        "text": "OFFLINE"
+                      },
+                      "to": 0.999
+                    },
+                    "type": "range"
                   }
                 ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Ambient Temp (C)"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "transparent",
+                      "value": null
+                    },
+                    {
+                      "color": "green",
+                      "value": 5
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 45
+                    },
+                    {
+                      "color": "orange",
+                      "value": 65
+                    },
+                    {
+                      "color": "red",
+                      "value": 75
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.align",
+                "value": "right"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Max Temp (C)"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "transparent",
+                      "value": null
+                    },
+                    {
+                      "color": "green",
+                      "value": 5
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 45
+                    },
+                    {
+                      "color": "orange",
+                      "value": 65
+                    },
+                    {
+                      "color": "red",
+                      "value": 75
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.align",
+                "value": "right"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg Temp (C)"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "transparent",
+                      "value": null
+                    },
+                    {
+                      "color": "green",
+                      "value": 5
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 45
+                    },
+                    {
+                      "color": "orange",
+                      "value": 65
+                    },
+                    {
+                      "color": "red",
+                      "value": 75
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.align",
+                "value": "right"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Max Fan Speed (rpm)"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "transparent",
+                      "value": null
+                    },
+                    {
+                      "color": "green",
+                      "value": 500
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 3000
+                    },
+                    {
+                      "color": "orange",
+                      "value": 5000
+                    },
+                    {
+                      "color": "red",
+                      "value": 8000
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.align",
+                "value": "right"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg Fan Speed (rpm)"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "transparent",
+                      "value": null
+                    },
+                    {
+                      "color": "green",
+                      "value": 500
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 3000
+                    },
+                    {
+                      "color": "orange",
+                      "value": 5000
+                    },
+                    {
+                      "color": "red",
+                      "value": 6000
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.align",
+                "value": "right"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Min Fan Speed (rpm)"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "transparent",
+                      "value": null
+                    },
+                    {
+                      "color": "green",
+                      "value": 500
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 3000
+                    },
+                    {
+                      "color": "orange",
+                      "value": 5000
+                    },
+                    {
+                      "color": "red",
+                      "value": 6000
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Power"
+            },
+            "properties": [
+              {
+                "id": "custom.align",
+                "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "watt"
               }
             ]
           }
@@ -575,19 +1086,19 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 6
+        "y": 7
       },
-      "id": 33,
+      "id": 69,
       "interval": "1m",
       "maxDataPoints": 2,
       "options": {
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "targets": [
         {
-          "expr": "shelf_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "expr": "shelf_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -595,7 +1106,8 @@
           "refId": "A"
         },
         {
-          "expr": "shelf_disk_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "exemplar": true,
+          "expr": "shelf_disk_count{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -604,18 +1116,89 @@
           "refId": "B"
         },
         {
-          "expr": "shelf_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+          "exemplar": true,
+          "expr": "shelf_new_status{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
           "interval": "",
           "legendFormat": "",
           "refId": "C"
+        },
+        {
+          "exemplar": true,
+          "expr": "shelf_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "D"
+        },
+        {
+          "exemplar": true,
+          "expr": "shelf_ambient_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "E"
+        },
+        {
+          "exemplar": true,
+          "expr": "shelf_max_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "F"
+        },
+        {
+          "exemplar": true,
+          "expr": "shelf_average_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "G"
+        },
+        {
+          "exemplar": true,
+          "expr": "shelf_max_fan_speed{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "H"
+        },
+        {
+          "exemplar": true,
+          "expr": "shelf_average_fan_speed{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "I"
+        },
+        {
+          "exemplar": true,
+          "expr": "shelf_min_fan_speed{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "J"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Shelves",
+      "title": "Storage Shelves",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -632,7 +1215,15 @@
                 "vendor_name",
                 "Value #A",
                 "Value #B",
-                "Value #C"
+                "Value #C",
+                "Value #D",
+                "Value #E",
+                "Value #F",
+                "Value #G",
+                "Value #H",
+                "Value #I",
+                "Value #J",
+                "cluster"
               ]
             }
           }
@@ -650,22 +1241,39 @@
               "state": true
             },
             "indexByName": {
-              "Value #A": 9,
-              "Value #B": 6,
+              "Value #A": 17,
+              "Value #B": 14,
+              "Value #C": 18,
+              "Value #D": 4,
+              "Value #E": 5,
+              "Value #F": 6,
+              "Value #G": 7,
+              "Value #H": 8,
+              "Value #I": 9,
+              "Value #J": 10,
+              "cluster": 1,
               "datacenter": 0,
-              "model": 4,
-              "module_type": 5,
-              "op_status": 7,
-              "serial_number": 3,
-              "shelf": 1,
-              "state": 8,
-              "vendor_name": 2
+              "model": 3,
+              "module_type": 13,
+              "op_status": 15,
+              "serial_number": 11,
+              "shelf": 2,
+              "state": 16,
+              "vendor_name": 12
             },
             "renameByName": {
               "Value #A": "",
               "Value #B": "disk_count",
               "Value #C": "state",
+              "Value #D": "Power",
+              "Value #E": "Ambient Temp (C)",
+              "Value #F": "Max Temp (C)",
+              "Value #G": "Avg Temp (C)",
+              "Value #H": "Max Fan Speed (rpm)",
+              "Value #I": "Avg Fan Speed (rpm)",
+              "Value #J": "Min Fan Speed (rpm)",
               "module_type": "",
+              "op_status": "",
               "shelf_id": ""
             }
           }
@@ -674,13 +1282,194 @@
       "type": "table"
     },
     {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "watt"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 14
+      },
+      "id": 71,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "mean",
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "topk($TopResources,shelf_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{shelf}} ({{cluster}})",
+          "refId": "B"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Total Shelves by Power Consumed",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 14
+      },
+      "id": 73,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "mean",
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "topk($TopResources,shelf_average_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "interval": "",
+          "legendFormat": "{{shelf}} ({{cluster}})",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top Shelves by Average Temperature",
+      "type": "timeseries"
+    },
+    {
       "collapsed": false,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 13
+        "y": 22
       },
       "id": 35,
       "panels": [],
@@ -722,7 +1511,7 @@
         "h": 11,
         "w": 13,
         "x": 0,
-        "y": 14
+        "y": 23
       },
       "id": 28,
       "links": [],
@@ -739,7 +1528,7 @@
         "showUnfilled": true,
         "text": {}
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "repeat": "TempShelf",
       "repeatDirection": "h",
       "targets": [
@@ -791,7 +1580,7 @@
         "h": 11,
         "w": 24,
         "x": 0,
-        "y": 25
+        "y": 34
       },
       "id": 29,
       "links": [],
@@ -808,7 +1597,7 @@
         "showUnfilled": true,
         "text": {}
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "repeat": "FanShelf",
       "targets": [
         {
@@ -831,7 +1620,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 36
+        "y": 45
       },
       "id": 37,
       "panels": [],
@@ -874,7 +1663,7 @@
         "h": 11,
         "w": 7,
         "x": 0,
-        "y": 37
+        "y": 46
       },
       "id": 30,
       "links": [],
@@ -891,7 +1680,7 @@
         "showUnfilled": true,
         "text": {}
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "repeat": null,
       "targets": [
         {
@@ -941,7 +1730,7 @@
         "h": 11,
         "w": 4,
         "x": 7,
-        "y": 37
+        "y": 46
       },
       "id": 48,
       "options": {
@@ -957,7 +1746,7 @@
         "showUnfilled": true,
         "text": {}
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "targets": [
         {
           "exemplar": false,
@@ -1006,7 +1795,7 @@
         "h": 11,
         "w": 4,
         "x": 11,
-        "y": 37
+        "y": 46
       },
       "id": 53,
       "options": {
@@ -1022,7 +1811,7 @@
         "showUnfilled": true,
         "text": {}
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "targets": [
         {
           "exemplar": false,
@@ -1044,7 +1833,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 48
+        "y": 57
       },
       "id": 40,
       "panels": [],
@@ -1085,7 +1874,7 @@
         "h": 11,
         "w": 7,
         "x": 0,
-        "y": 49
+        "y": 58
       },
       "id": 31,
       "links": [],
@@ -1102,7 +1891,7 @@
         "showUnfilled": true,
         "text": {}
       },
-      "pluginVersion": "7.5.4",
+      "pluginVersion": "8.1.2",
       "repeat": "SensShelf",
       "targets": [
         {
@@ -1120,7 +1909,7 @@
     }
   ],
   "refresh": "1m",
-  "schemaVersion": 27,
+  "schemaVersion": 30,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -1131,6 +1920,8 @@
           "text": "Prometheus",
           "value": "Prometheus"
         },
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": false,
         "label": "Data Source",
@@ -1165,7 +1956,6 @@
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -1192,7 +1982,6 @@
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -1207,7 +1996,7 @@
         "hide": 0,
         "includeAll": true,
         "label": null,
-        "multi": true,
+        "multi": false,
         "name": "Shelf",
         "options": [],
         "query": {
@@ -1219,10 +2008,100 @@
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": "5",
+          "value": "5"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "TopResources",
+        "options": [
+          {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": false,
+            "text": "2",
+            "value": "2"
+          },
+          {
+            "selected": false,
+            "text": "3",
+            "value": "3"
+          },
+          {
+            "selected": false,
+            "text": "4",
+            "value": "4"
+          },
+          {
+            "selected": true,
+            "text": "5",
+            "value": "5"
+          },
+          {
+            "selected": false,
+            "text": "6",
+            "value": "6"
+          },
+          {
+            "selected": false,
+            "text": "8",
+            "value": "8"
+          },
+          {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          },
+          {
+            "selected": false,
+            "text": "15",
+            "value": "15"
+          },
+          {
+            "selected": false,
+            "text": "25",
+            "value": "25"
+          },
+          {
+            "selected": false,
+            "text": "50",
+            "value": "50"
+          },
+          {
+            "selected": false,
+            "text": "100",
+            "value": "100"
+          },
+          {
+            "selected": false,
+            "text": "250",
+            "value": "250"
+          },
+          {
+            "selected": false,
+            "text": "500",
+            "value": "500"
+          }
+        ],
+        "query": "1,2,3,4,5,6,8,10,15,25,50,100,250,500",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
       }
     ]
   },
@@ -1256,6 +2135,6 @@
   },
   "timezone": "",
   "title": "NetApp Detail: Shelf",
-  "uid": "FnaQeK9Mk",
+  "uid": "6JuiM6snk",
   "version": 2
 }
