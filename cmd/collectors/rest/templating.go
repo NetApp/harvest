@@ -204,6 +204,9 @@ func (r *Rest) ParseRestCounters(counter *node.Node, prop *prop) {
 			if x := counter.GetChildS("hidden_fields"); x != nil {
 				prop.Fields = append(prop.Fields, x.GetAllChildContentS()...)
 			}
+			if x := counter.GetChildS("filter"); x != nil {
+				prop.Filter = append(prop.Filter, x.GetAllChildContentS()...)
+			}
 		}
 	}
 
