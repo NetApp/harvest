@@ -171,7 +171,7 @@
         {
           "exemplar": true,
           "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_policy_total_schedules{})) OR on() vector(0)",
-          "instant": false,
+          "instant": true,
           "interval": "",
           "legendFormat": "Volumes protected",
           "refId": "A"
@@ -180,7 +180,7 @@
           "exemplar": true,
           "expr": "count((volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",snapshot_policy=~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_policy_total_schedules{}))) OR on() vector(0)",
           "hide": false,
-          "instant": false,
+          "instant": true,
           "interval": "",
           "legendFormat": "Volumes not protected",
           "refId": "B"
@@ -244,7 +244,7 @@
           "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_policy_total_schedules{})) OR on() vector(0)",
           "format": "time_series",
           "hide": false,
-          "instant": false,
+          "instant": true,
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -339,7 +339,7 @@
         {
           "exemplar": true,
           "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_policy_total_schedules{}) * on (volume, svm, cluster) group_right() ( volume_snapshot_reserve_size{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"} >= 0 and volume_snapshots_size_used{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"} >= 0 and volume_snapshots_size_used{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"} > volume_snapshot_reserve_size{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"})) OR on() vector(0)",
-          "instant": false,
+          "instant": true,
           "interval": "",
           "legendFormat": "Volumes breached",
           "refId": "A"
@@ -347,7 +347,7 @@
         {
           "exemplar": true,
           "expr": "(count((volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_policy_total_schedules{})) * on (volume, svm, cluster) group_right() (volume_snapshot_reserve_size{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"} >= 0 and volume_snapshots_size_used{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"} >= 0 and volume_snapshots_size_used{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"} <= volume_snapshot_reserve_size{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"})) OR on() vector(0)) + (count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_policy_total_schedules{}) * on (volume, svm, cluster) group_right() ( volume_snapshot_reserve_size{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"} >= 0 and volume_snapshots_size_used{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"} == 0)) OR on() vector(0))",
-          "instant": false,
+          "instant": true,
           "interval": "",
           "legendFormat": "Volumes not breached",
           "refId": "B"
@@ -411,7 +411,7 @@
           "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", snapshot_policy!=\"\", snapshot_policy!~\"none.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_policy_total_schedules{}) * on (volume, svm, cluster) group_right() ( volume_snapshot_reserve_size{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"} >= 0 and volume_snapshots_size_used{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"} >= 0 and volume_snapshots_size_used{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"} > volume_snapshot_reserve_size{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"})) OR on() vector(0)",
           "format": "time_series",
           "hide": false,
-          "instant": false,
+          "instant": true,
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -488,7 +488,7 @@
           "expr": "count((volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",snapshot_policy=~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_policy_total_schedules{}))) OR on() vector(0)",
           "format": "time_series",
           "hide": false,
-          "instant": false,
+          "instant": true,
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -565,7 +565,7 @@
           "expr": "(count((volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", snapshot_policy!=\"\", snapshot_policy!~\"none.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_policy_total_schedules{})) * on (volume, svm, cluster) group_right() (volume_snapshot_reserve_size{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"} > 0 and volume_snapshots_size_used{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"} > 0 and volume_snapshots_size_used{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"} <= volume_snapshot_reserve_size{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"})) OR on() vector(0)) + (count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_policy_total_schedules{}) * on (volume, svm, cluster) group_right() ( volume_snapshot_reserve_size{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"} >= 0 and volume_snapshots_size_used{datacenter=\"$Datacenter\", cluster=~\"$Cluster\"} == 0)) OR on() vector(0))",
           "format": "time_series",
           "hide": false,
-          "instant": false,
+          "instant": true,
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "",
