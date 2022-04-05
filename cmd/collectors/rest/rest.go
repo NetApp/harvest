@@ -48,6 +48,7 @@ type prop struct {
 	ReturnTimeOut  string
 	Fields         []string
 	ApiType        string // public, private
+	Filter         []string
 }
 
 type Metric struct {
@@ -74,6 +75,10 @@ func (r *Rest) query(p *endPoint) string {
 
 func (r *Rest) fields(p *endPoint) []string {
 	return p.prop.Fields
+}
+
+func (r *Rest) filter(p *endPoint) []string {
+	return p.prop.Filter
 }
 
 func (r *Rest) Init(a *collector.AbstractCollector) error {
@@ -264,7 +269,7 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 
 	startTime = time.Now()
 
-	href := rest.BuildHref(r.Prop.Query, strings.Join(r.Prop.Fields, ","), nil, "", "", "", r.Prop.ReturnTimeOut, r.Prop.Query)
+	href := rest.BuildHref(r.Prop.Query, strings.Join(r.Prop.Fields, ","), r.Prop.Filter, "", "", "", r.Prop.ReturnTimeOut, r.Prop.Query)
 
 	if records, err = r.GetRestData(href); err != nil {
 		r.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
@@ -337,7 +342,7 @@ func (r *Rest) processEndPoints() error {
 			i++
 		}
 
-		href := rest.BuildHref(r.query(endpoint), strings.Join(r.fields(endpoint), ","), nil, "", "", "", r.Prop.ReturnTimeOut, r.query(endpoint))
+		href := rest.BuildHref(r.query(endpoint), strings.Join(r.fields(endpoint), ","), r.filter(endpoint), "", "", "", r.Prop.ReturnTimeOut, r.query(endpoint))
 
 		if records, err = r.GetRestData(href); err != nil {
 			r.Logger.Error().Stack().Err(err).Str("ApiPath", endpoint.prop.Query).Msg("Failed to fetch data")
@@ -436,8 +441,10 @@ func (r *Rest) HandleResults(result gjson.Result, prop *prop, allowInstanceCreat
 
 		instance = r.Matrix.GetInstance(instanceKey)
 
+		// Used for endpoints as we don't want to create additional instances
 		if !allowInstanceCreation && instance == nil {
-			r.Logger.Warn().Str("Instance key", instanceKey).Msg("Instance not found")
+			// Moved to trace as with filter, this log may spam
+			r.Logger.Trace().Str("Instance key", instanceKey).Msg("Instance not found")
 			return true
 		}
 
