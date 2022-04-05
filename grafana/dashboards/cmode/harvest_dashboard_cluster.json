@@ -898,7 +898,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "100*sum(aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum(aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "100*sum(aggr_space_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})/sum(aggr_space_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
           "instant": false,
           "interval": "",
           "legendFormat": "",
