@@ -132,6 +132,7 @@ func (r *Rest) InitMatrix() error {
 	r.Matrix.Object = r.Prop.Object
 	// Add system (cluster) name
 	r.Matrix.SetGlobalLabel("cluster", r.Client.Cluster().Name)
+
 	if r.Params.HasChildS("labels") {
 		for _, l := range r.Params.GetChildS("labels").GetChildren() {
 			r.Matrix.SetGlobalLabel(l.GetNameS(), l.GetContentS())

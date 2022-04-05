@@ -26,8 +26,9 @@ objects:
   ClusterPeer:              clusterpeer.yaml
   NtpServer:                ntpserver.yaml
   Security:                 security.yaml
+  SecuritySsh:              security_ssh.yaml
   SecurityAccount:          security_account.yaml
-  SecurityAuditDestination: security_audit_dest.yaml  # test pending
+  SecurityAuditDestination: security_audit_dest.yaml
   SecurityCert:             security_certificate.yaml
   SecurityLogin:            security_login.yaml
   Support:                  support.yaml

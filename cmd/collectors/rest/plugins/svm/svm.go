@@ -42,6 +42,6 @@ func (my *SVM) setNameservice(data *matrix.Matrix) {
 		} else {
 			instance.SetLabel("nis_authentication_enabled", "false")
 		}
-	}
 
+	}
 }
