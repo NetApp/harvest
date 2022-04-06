@@ -30,7 +30,6 @@ plugins:
 
 export_options:
   instance_keys:
-    - shelf_uid
     - shelf
   instance_labels:
     - module_type

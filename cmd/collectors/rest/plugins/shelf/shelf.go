@@ -25,6 +25,17 @@ type Shelf struct {
 	query          string
 }
 
+type shelfEnvironmentMetric struct {
+	key                   string
+	ambientTemperature    []float64
+	nonAmbientTemperature []float64
+	fanSpeed              []float64
+	voltageSensor         map[string]float64
+	currentSensor         map[string]float64
+}
+
+var eMetrics = []string{"power", "ambient_temperature", "max_temperature", "average_temperature", "average_fan_speed", "max_fan_speed", "min_fan_speed"}
+
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Shelf{AbstractPlugin: p}
 }
@@ -210,7 +221,7 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 
 		shelfName := shelf.Get("name").String()
-		shelfId := shelf.Get("uid").String()
+		shelfSerialNumber := shelf.Get("serial_number").String()
 
 		for attribute, data1 := range my.data {
 			if statusMetric := data1.GetMetric("status"); statusMetric != nil {
@@ -231,14 +242,14 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 							}
 
 							if key := obj.Get(my.instanceKeys[attribute]); key.Exists() {
-								instanceKey := shelfId + "." + attribute + "." + key.String()
+								instanceKey := shelfSerialNumber + "#" + attribute + "#" + key.String()
 								shelfChildInstance, errs := data1.NewInstance(instanceKey)
 
 								if errs != nil {
 									my.Logger.Error().Err(err).Str("attribute", attribute).Str("instanceKey", instanceKey).Msg("Failed to add instance")
 									break
 								}
-								my.Logger.Debug().Msgf("add (%s) instance: %s.%s.%s", attribute, shelfId, attribute, key)
+								my.Logger.Debug().Msgf("add (%s) instance: %s.%s.%s", attribute, shelfSerialNumber, attribute, key)
 
 								for label, labelDisplay := range my.instanceLabels[attribute].Map() {
 									if value := obj.Get(label); value.Exists() {
@@ -259,7 +270,6 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 								}
 
 								shelfChildInstance.SetLabel("shelf", shelfName)
-								shelfChildInstance.SetLabel("shelf_id", shelfId)
 
 								// Each child would have different possible values which is ugly way to write all of them,
 								// so normal value would be mapped to 1 and rest all are mapped to 0.
@@ -296,5 +306,154 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		return true
 	})
 
+	return my.calculateEnvironmentMetrics(output, data)
+}
+
+func (my *Shelf) calculateEnvironmentMetrics(output []*matrix.Matrix, data *matrix.Matrix) ([]*matrix.Matrix, error) {
+	var err error
+	shelfEnvironmentMetricMap := make(map[string]*shelfEnvironmentMetric, 0)
+	for _, o := range my.data {
+		for k, instance := range o.GetInstances() {
+			firstInd := strings.Index(k, "#")
+			lastInd := strings.LastIndex(k, "#")
+			iKey := k[:firstInd]
+			iKey2 := k[lastInd+1:]
+			if _, ok := shelfEnvironmentMetricMap[iKey]; !ok {
+				shelfEnvironmentMetricMap[iKey] = &shelfEnvironmentMetric{key: iKey, ambientTemperature: []float64{}, nonAmbientTemperature: []float64{}, fanSpeed: []float64{}}
+			}
+			for mkey, metric := range o.GetMetrics() {
+				if o.Object == "shelf_temperature" {
+					if mkey == "temperature" {
+						isAmbient := instance.GetLabel("temp_is_ambient")
+						if isAmbient == "true" {
+							if value, ok := metric.GetValueFloat64(instance); ok {
+								shelfEnvironmentMetricMap[iKey].ambientTemperature = append(shelfEnvironmentMetricMap[iKey].ambientTemperature, value)
+							}
+						}
+						if isAmbient == "false" {
+							if value, ok := metric.GetValueFloat64(instance); ok {
+								shelfEnvironmentMetricMap[iKey].nonAmbientTemperature = append(shelfEnvironmentMetricMap[iKey].nonAmbientTemperature, value)
+							}
+						}
+					}
+				} else if o.Object == "shelf_fan" {
+					if mkey == "rpm" {
+						if value, ok := metric.GetValueFloat64(instance); ok {
+							shelfEnvironmentMetricMap[iKey].fanSpeed = append(shelfEnvironmentMetricMap[iKey].fanSpeed, value)
+						}
+					}
+				} else if o.Object == "shelf_voltage" {
+					if mkey == "voltage" {
+						if value, ok := metric.GetValueFloat64(instance); ok {
+							if shelfEnvironmentMetricMap[iKey].voltageSensor == nil {
+								shelfEnvironmentMetricMap[iKey].voltageSensor = make(map[string]float64, 0)
+							}
+							shelfEnvironmentMetricMap[iKey].voltageSensor[iKey2] = value
+						}
+					}
+				} else if o.Object == "shelf_sensor" {
+					if mkey == "current" {
+						if value, ok := metric.GetValueFloat64(instance); ok {
+							if shelfEnvironmentMetricMap[iKey].currentSensor == nil {
+								shelfEnvironmentMetricMap[iKey].currentSensor = make(map[string]float64, 0)
+							}
+							shelfEnvironmentMetricMap[iKey].currentSensor[iKey2] = value
+						}
+					}
+				}
+			}
+		}
+	}
+
+	for _, k := range eMetrics {
+		err := matrix.CreateMetric(k, data)
+		if err != nil {
+			my.Logger.Warn().Err(err).Str("key", k).Msg("error while creating metric")
+		}
+	}
+	for key, v := range shelfEnvironmentMetricMap {
+		for _, k := range eMetrics {
+			m := data.GetMetric(k)
+			instance := data.GetInstance(key)
+			if instance == nil {
+				my.Logger.Warn().Str("key", key).Msg("Instance not found")
+				continue
+			}
+			switch k {
+			case "power":
+				var sumPower float64
+				for k1, v1 := range v.voltageSensor {
+					if v2, ok := v.currentSensor[k1]; ok {
+						// in W
+						sumPower += (v1 * v2) / 1000
+					} else {
+						my.Logger.Warn().Str("voltage sensor id", k1).Msg("missing current sensor")
+					}
+				}
+
+				err = m.SetValueFloat64(instance, sumPower)
+				if err != nil {
+					my.Logger.Error().Float64("power", sumPower).Err(err).Msg("Unable to set power")
+				} else {
+					m.SetLabel("unit", "W")
+				}
+
+			case "ambient_temperature":
+				if len(v.ambientTemperature) > 0 {
+					aT := util.Avg(v.ambientTemperature)
+					err = m.SetValueFloat64(instance, aT)
+					if err != nil {
+						my.Logger.Error().Float64("ambient_temperature", aT).Err(err).Msg("Unable to set ambient_temperature")
+					} else {
+						m.SetLabel("unit", "C")
+					}
+				}
+			case "max_temperature":
+				mT := util.Max(v.nonAmbientTemperature)
+				err = m.SetValueFloat64(instance, mT)
+				if err != nil {
+					my.Logger.Error().Float64("max_temperature", mT).Err(err).Msg("Unable to set max_temperature")
+				} else {
+					m.SetLabel("unit", "C")
+				}
+			case "average_temperature":
+				if len(v.nonAmbientTemperature) > 0 {
+					nat := util.Avg(v.nonAmbientTemperature)
+					err = m.SetValueFloat64(instance, nat)
+					if err != nil {
+						my.Logger.Error().Float64("average_temperature", nat).Err(err).Msg("Unable to set average_temperature")
+					} else {
+						m.SetLabel("unit", "C")
+					}
+				}
+			case "average_fan_speed":
+				if len(v.fanSpeed) > 0 {
+					afs := util.Avg(v.fanSpeed)
+					err = m.SetValueFloat64(instance, afs)
+					if err != nil {
+						my.Logger.Error().Float64("average_fan_speed", afs).Err(err).Msg("Unable to set average_fan_speed")
+					} else {
+						m.SetLabel("unit", "rpm")
+					}
+				}
+			case "max_fan_speed":
+				mfs := util.Max(v.fanSpeed)
+				err = m.SetValueFloat64(instance, mfs)
+				if err != nil {
+					my.Logger.Error().Float64("max_fan_speed", mfs).Err(err).Msg("Unable to set max_fan_speed")
+				} else {
+					m.SetLabel("unit", "rpm")
+				}
+			case "min_fan_speed":
+				mfs := util.Min(v.fanSpeed)
+				err = m.SetValueFloat64(instance, mfs)
+				if err != nil {
+					my.Logger.Error().Float64("min_fan_speed", mfs).Err(err).Msg("Unable to set min_fan_speed")
+				} else {
+					m.SetLabel("unit", "rpm")
+				}
+			}
+		}
+	}
 	return output, nil
 }
