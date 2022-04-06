@@ -17,6 +17,7 @@ counters:
   - critical_low_threshold     => critical_low
 
 plugins:
+  - Sensor
   - LabelAgent:
     value_to_num: # metric label zapi_value rest_value `default_value`
       - status threshold_state normal normal `0`

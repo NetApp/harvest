@@ -7,6 +7,7 @@ import (
 	"goharvest2/cmd/collectors/rest/plugins/certificate"
 	"goharvest2/cmd/collectors/rest/plugins/disk"
 	"goharvest2/cmd/collectors/rest/plugins/qtree"
+	"goharvest2/cmd/collectors/rest/plugins/sensor"
 	"goharvest2/cmd/collectors/rest/plugins/shelf"
 	"goharvest2/cmd/collectors/rest/plugins/snapmirror"
 	"goharvest2/cmd/collectors/rest/plugins/svm"
@@ -403,6 +404,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return certificate.New(abc)
 	case "SVM":
 		return svm.New(abc)
+	case "Sensor":
+		return sensor.New(abc)
 	default:
 		r.Logger.Warn().Str("kind", kind).Msg("no rest plugin found ")
 	}

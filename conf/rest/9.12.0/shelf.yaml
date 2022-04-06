@@ -4,7 +4,6 @@ query:              api/storage/shelves
 object:             shelf
 
 counters:
-  #- ^^uid                => shelf_uid
   - ^^serial_number       => serial_number
   - ^module_type          => module_type
   - ^name                 => shelf
@@ -30,7 +29,6 @@ plugins:
 
 export_options:
   instance_keys:
-    - shelf_uid
     - shelf
   instance_labels:
     - module_type
