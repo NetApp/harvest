@@ -306,10 +306,12 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		return true
 	})
 
-	return my.calculateEnvironmentMetrics(output, data)
+	err = my.calculateEnvironmentMetrics(data)
+
+	return output, err
 }
 
-func (my *Shelf) calculateEnvironmentMetrics(output []*matrix.Matrix, data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *Shelf) calculateEnvironmentMetrics(data *matrix.Matrix) error {
 	var err error
 	shelfEnvironmentMetricMap := make(map[string]*shelfEnvironmentMetric, 0)
 	for _, o := range my.data {
@@ -455,5 +457,5 @@ func (my *Shelf) calculateEnvironmentMetrics(output []*matrix.Matrix, data *matr
 			}
 		}
 	}
-	return output, nil
+	return nil
 }
