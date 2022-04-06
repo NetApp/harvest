@@ -4,7 +4,8 @@ query:                    api/cluster/counter/tables/svm_cifs:node
 object:                   node_cifs
 
 counters:
-  - ^^node.name                   => node
+  - ^^id
+  - ^node.name                   => node
   - op_count
   - total_ops                     => ops
   - total_read_ops                => read_ops

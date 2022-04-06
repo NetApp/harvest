@@ -4,7 +4,8 @@ query:                    api/cluster/counter/tables/volume:node
 object:                   node_vol
 
 counters:
-  - instance_name         => node
+  - ^^id
+  - ^node.name            => node
   - cifs.read_data        => cifs_read_data
   - cifs.write_data       => cifs_write_data
   - cifs.read_ops         => cifs_read_ops

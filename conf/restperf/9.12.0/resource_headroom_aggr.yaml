@@ -3,9 +3,9 @@ query:                    /api/cluster/counter/tables/headroom_aggregate
 object:                   headroom_aggr
 
 counters:
-  # missing uuid
-  - ^^name                            => instance_name
-  - ^^node.name                       => node
+  - ^^id
+  - ^name                            => instance_name
+  - ^node.name                       => node
   - current_latency
   - current_ops
   - current_utilization
