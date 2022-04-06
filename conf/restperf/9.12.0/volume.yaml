@@ -6,8 +6,8 @@ object:                   volume
 counters:
   - ^^id
   - ^name                  => volume
-#  - ^svm.name             => svm
-#  - ^node.name            => node
+  - ^svm.name              => svm
+  - ^node.name             => node
   - ^parent_aggregate      => aggr
   - bytes_read             => read_data
   - bytes_written          => write_data
