@@ -5,7 +5,7 @@ object:                   node_vol
 
 counters:
   - ^^id
-  - ^node.name         => node
+  - ^node.name            => node
   - cifs.read_data        => cifs_read_data
   - cifs.write_data       => cifs_write_data
   - cifs.read_ops         => cifs_read_ops
