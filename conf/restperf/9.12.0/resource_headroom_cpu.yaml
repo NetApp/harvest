@@ -3,7 +3,7 @@ query:                    /api/cluster/counter/tables/headroom_cpu
 object:                   headroom_cpu
 
 counters:
-  - ^^uuid
+  - ^^id
   - ^name                             => instance_name
   - ^node.name                        => node
   - current_latency
