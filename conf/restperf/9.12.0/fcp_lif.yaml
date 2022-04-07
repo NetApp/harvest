@@ -1,5 +1,3 @@
-
-
 name:                     FcpLif
 query:                    api/cluster/counter/tables/fcp_lif
 object:                   fcp_lif

@@ -1,4 +1,3 @@
-
 name:                     LIF
 query:                    api/cluster/counter/tables/lif
 object:                   lif
