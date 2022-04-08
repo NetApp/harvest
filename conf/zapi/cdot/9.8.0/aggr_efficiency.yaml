@@ -1,7 +1,7 @@
 
 name:               AggregateEfficiency
 query:              aggr-efficiency-get-iter
-object:             aggr_efficiency
+object:             aggr
 
 counters:
   aggr-efficiency-info:
