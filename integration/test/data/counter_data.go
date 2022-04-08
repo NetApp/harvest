@@ -25,6 +25,7 @@ func GetCounterMap() map[string][]string {
 	counterMap["NO_DATA_CONTAINS"] = []string{
 		"logical_used",
 		"efficiency_savings",
+		"aggr_physical_",
 		"fcp",
 		"fcvi",
 		"flashcache_",
