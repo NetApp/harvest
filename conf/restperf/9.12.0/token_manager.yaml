@@ -1,0 +1,26 @@
+name:                     TokenManager
+query:                    api/cluster/counter/tables/token_manager
+object:                   token
+
+counters:
+  - ^^id                   => token
+  - ^node.name              => node
+  - token_copy.successes   => token_copy_success
+  - token_create.successes => token_create_success
+  - token_zero.successes   => token_zero_success
+  - token_copy.failures    => token_copy_failure
+  - token_create.failures  => token_create_failure
+  - token_zero.failures    => token_zero_failure
+  - token_copy.bytes	   => token_copy_bytes
+  - token_create.bytes	   => token_create_bytes
+  - token_zero.bytes	   => token_zero_bytes
+
+override:
+  - token_copy.bytes: rate
+  - token_create.bytes: rate
+  - token_zero.bytes: rate
+
+export_options:
+  instance_keys:
+    - node
+    - token
