@@ -34,7 +34,7 @@ plugins:
       - raid_group `/` ,aggr,plex,raid
   Aggregator:
   # plugin will create summary/average for each object
-  # any names after the object names will be threated as
+  # any names after the object names will be treated as
   # label names that will be added to instances
     - node
     - aggr ...
