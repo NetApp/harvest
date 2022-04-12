@@ -1,0 +1,15 @@
+name:                     FCVI
+query:                    api/cluster/counter/tables/fcvi
+object:                   fcvi
+
+counters:
+  - ^^id
+  - ^name
+  - ^node.name              => name
+  - rdma.write_throughout   => rdma_write_throughput
+  - rdma.write_ops          => rdma_write_ops
+  - rdma.write_avg_latency  => rdma_write_avg_latency
+
+export_options:
+  instance_keys:
+    - node
