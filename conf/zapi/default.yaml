@@ -13,6 +13,7 @@ objects:
   Lun:                 lun.yaml
   Node:                node.yaml
   Qtree:               qtree.yaml
+  SVM:                svm.yaml
   Sensor:              sensor.yaml
   Shelf:               shelf.yaml
   SnapMirror:          snapmirror.yaml
@@ -21,3 +22,15 @@ objects:
   Status_7mode:        status_7.yaml
   Subsystem:           subsystem.yaml
   Volume:              volume.yaml
+
+
+  # for security dashboard at cluster
+#  ClusterPeer:              clusterpeer.yaml
+  NtpServer:                ntpserver.yaml
+#  Security:                 security.yaml    # security-protocol-get not iter, we need to pass telnet/rsh | security-config-get not iter, we need to pass ssl
+#  SecuritySsh:              security_ssh.yaml    # cipher array handling
+  SecurityAccount:          security_account.yaml
+#  SecurityAuditDestination: security_audit_dest.yaml
+  SecurityCert:             security_certificate.yaml
+  SecurityLogin:            security_login.yaml
+  Support:                  support.yaml

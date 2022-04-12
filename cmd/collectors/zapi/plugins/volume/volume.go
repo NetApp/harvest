@@ -1,19 +1,22 @@
 package volume
 
 import (
+	"goharvest2/cmd/collectors"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/pkg/api/ontapi/zapi"
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/dict"
+	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const BatchSize = "500"
-const DefaultPluginInvocationRate = 10
-const DefaultDataPollDuration = 180
+const DefaultPluginDuration = 1800 * time.Second
+const DefaultDataPollDuration = 180 * time.Second
 
 type Volume struct {
 	*plugin.AbstractPlugin
@@ -28,6 +31,7 @@ type Volume struct {
 	outgoingSM           map[string][]string
 	incomingSM           map[string]string
 	isHealthySM          map[string]bool
+	aggrsMap             map[string]string // aggregate-uuid -> aggregate-name map
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -57,9 +61,10 @@ func (my *Volume) Init() error {
 	my.outgoingSM = make(map[string][]string)
 	my.incomingSM = make(map[string]string)
 	my.isHealthySM = make(map[string]bool)
+	my.aggrsMap = make(map[string]string)
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
-	if my.currentVal, err = my.setPluginInterval(); err != nil {
+	if my.currentVal, err = collectors.SetPluginInterval(my.ParentParams, my.Params, my.Logger, DefaultDataPollDuration, DefaultPluginDuration); err != nil {
 		my.Logger.Error().Err(err).Stack().Msg("Failed while setting the plugin interval")
 	}
 
@@ -90,13 +95,22 @@ func (my *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		my.currentVal = 0
 
 		// invoke snapmirror zapi and populate info in source and destination snapmirror maps
-		smSourceMap, smDestinationMap, err := my.GetSnapMirrors()
-		if err != nil {
-			my.Logger.Error().Stack().Err(err).Msg("Failed to collect snapmirror data")
+		if smSourceMap, smDestinationMap, err := my.GetSnapMirrors(); err != nil {
+			my.Logger.Warn().Stack().Err(err).Msg("Failed to collect snapmirror data")
+		} else {
+			// update internal cache based on volume and SM maps
+			my.updateMaps(data, smSourceMap, smDestinationMap)
 		}
 
-		// update internal cache based on volume and SM maps
-		my.updateMaps(data, smSourceMap, smDestinationMap)
+		// invoke disk rest and populate info in aggrsMap
+		if disks, err := my.getDiskData(); err != nil {
+			my.Logger.Warn().Stack().Err(err).Msg("Failed to collect disk data")
+		} else if aggrDiskMap, err := my.getAggrDiskMapping(); err != nil {
+			my.Logger.Warn().Stack().Err(err).Msg("Failed to collect aggregate-disk mapping data")
+		} else {
+			// update aggrsMap based on disk data
+			my.updateAggrMap(disks, aggrDiskMap)
+		}
 	}
 
 	// update volume instance labels
@@ -106,80 +120,12 @@ func (my *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	return nil, nil
 }
 
-func (my *Volume) setPluginInterval() (int, error) {
-
-	volumeDataInterval := my.getDataInterval(my.ParentParams, DefaultDataPollDuration)
-	pluginDataInterval := my.getDataInterval(my.Params, DefaultPluginInvocationRate)
-	my.Logger.Debug().Int("VolumeDataInterval", volumeDataInterval).Int("PluginDataInterval", pluginDataInterval).Msg("Poll interval duration")
-	my.pluginInvocationRate = pluginDataInterval / volumeDataInterval
-
-	return my.pluginInvocationRate, nil
-}
-
-func (my *Volume) getDataInterval(param *node.Node, defaultInterval int) int {
-	var dataIntervalStr = ""
-	schedule := param.GetChildS("schedule")
-	if schedule != nil {
-		dataInterval := schedule.GetChildS("data")
-		if dataInterval != nil {
-			dataIntervalStr = dataInterval.GetContentS()
-		}
-	}
-
-	// Convert the interval from str to int
-	if dataIntervalStr != "" {
-		dataIntervalStr = strings.Split(dataIntervalStr, "s")[0]
-		if intervalVal, err := strconv.Atoi(dataIntervalStr); err == nil {
-			return intervalVal
-		}
-	}
-	return defaultInterval
-}
-
-func (my *Volume) updateProtectedFields(instance *matrix.Instance) {
-
-	// check for group_type
-	// Supported group_type are: "none", "vserver", "infinitevol", "consistencygroup", "flexgroup"
-	if instance.GetLabel("group_type") != "" {
-
-		groupType := instance.GetLabel("group_type")
-		destinationVolume := instance.GetLabel("destination_volume")
-		sourceVolume := instance.GetLabel("source_volume")
-		destinationLocation := instance.GetLabel("destination_location")
-
-		isSvmDr := groupType == "vserver" && destinationVolume == "" && sourceVolume == ""
-		isCg := groupType == "CONSISTENCYGROUP" && strings.Contains(destinationLocation, ":/cg/")
-		isConstituentVolumeRelationshipWithinSvmDr := groupType == "vserver" && !strings.HasSuffix(destinationLocation, ":")
-		isConstituentVolumeRelationshipWithinCG := groupType == "CONSISTENCYGROUP" && !strings.Contains(destinationLocation, ":/cg/")
-
-		// Update protectedBy label
-		if isSvmDr || isConstituentVolumeRelationshipWithinSvmDr {
-			instance.SetLabel("protectedBy", "storage_vm")
-		} else if isCg || isConstituentVolumeRelationshipWithinCG {
-			instance.SetLabel("protectedBy", "cg")
-		} else {
-			instance.SetLabel("protectedBy", "volume")
-		}
-
-		// SVM-DR related information is populated, Update protectionSourceType label
-		if isSvmDr {
-			instance.SetLabel("protectionSourceType", "storage_vm")
-		} else if isCg {
-			instance.SetLabel("protectionSourceType", "cg")
-		} else if isConstituentVolumeRelationshipWithinSvmDr || isConstituentVolumeRelationshipWithinCG || groupType == "none" || groupType == "flexgroup" {
-			instance.SetLabel("protectionSourceType", "volume")
-		} else {
-			instance.SetLabel("protectionSourceType", "not_mapped")
-		}
-	}
-}
-
 func (my *Volume) GetSnapMirrors() (map[string][]*matrix.Instance, map[string]*matrix.Instance, error) {
 	var (
-		request, result *node.Node
-		snapMirrors     []*node.Node
-		tag             string
-		err             error
+		request *node.Node
+		result  []*node.Node
+		tag     string
+		err     error
 	)
 
 	smSourceMap := make(map[string][]*matrix.Instance)
@@ -194,7 +140,7 @@ func (my *Volume) GetSnapMirrors() (map[string][]*matrix.Instance, map[string]*m
 	snapmirrorData := matrix.New(my.Parent+".SnapMirror", "sm", "sm")
 
 	for {
-		result, tag, err = my.client.InvokeBatchRequest(request, tag)
+		result, tag, err = collectors.InvokeZapiCallWithTag(my.client, request, my.Logger, tag)
 
 		if err != nil {
 			return nil, nil, err
@@ -204,18 +150,7 @@ func (my *Volume) GetSnapMirrors() (map[string][]*matrix.Instance, map[string]*m
 			break
 		}
 
-		if x := result.GetChildS("attributes-list"); x != nil {
-			snapMirrors = x.GetChildren()
-		}
-
-		if len(snapMirrors) == 0 {
-			my.Logger.Info().Msg("no snapmirror instances found on system")
-			break
-		}
-
-		my.Logger.Debug().Int("snapmirrors", len(snapMirrors)).Msg("fetching snapmirrors")
-
-		for _, snapMirror := range snapMirrors {
+		for _, snapMirror := range result {
 			relationshipId := snapMirror.GetChildContentS("relationship-id")
 			groupType := snapMirror.GetChildContentS("relationship-group-type")
 			destinationVolume := snapMirror.GetChildContentS("destination-volume")
@@ -245,7 +180,7 @@ func (my *Volume) GetSnapMirrors() (map[string][]*matrix.Instance, map[string]*m
 			instance.SetLabel("destination_svm", destinationSvm)
 
 			// Update the protectedBy and protectionSourceType fields in snapmirror
-			my.updateProtectedFields(instance)
+			collectors.UpdateProtectedFields(instance)
 
 			// Update source snapmirror and destination snapmirror info in maps
 			if relationshipType == "data_protection" || relationshipType == "extended_data_protection" || relationshipType == "vault" {
@@ -315,6 +250,7 @@ func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
 		volumeName := volume.GetLabel("volume")
 		svmName := volume.GetLabel("svm")
 		volumeType := volume.GetLabel("type")
+		aggrUuid := volume.GetLabel("aggrUuid")
 		key := volumeName + "-" + svmName
 
 		// Update protectionRole label in volume
@@ -351,5 +287,75 @@ func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
 			volume.SetLabel("all_sm_healthy", strconv.FormatBool(healthy))
 		}
 
+		_, exist := my.aggrsMap[aggrUuid]
+		volume.SetLabel("isHardwareEncrypted", strconv.FormatBool(exist))
 	}
+}
+
+func (my *Volume) getDiskData() ([]string, error) {
+	var (
+		result    []*node.Node
+		diskNames []string
+		err       error
+	)
+
+	request := node.NewXmlS("disk-encrypt-get-iter")
+	//algorithm is -- Protection mode needs to be DATA or FULL
+	// Fetching rest of them and add as
+	query := request.NewChildS("query", "")
+	encryptInfoQuery := query.NewChildS("disk-encrypt-info", "")
+	encryptInfoQuery.NewChildS("protection-mode", "open|part|miss")
+
+	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger); err != nil {
+		return nil, err
+	}
+
+	if len(result) == 0 || result == nil {
+		return nil, errors.New(errors.ERR_NO_INSTANCE, "no records found")
+	}
+
+	for _, disk := range result {
+		diskName := disk.GetChildContentS("disk-name")
+		diskNames = append(diskNames, diskName)
+	}
+	return diskNames, nil
+}
+
+func (my *Volume) updateAggrMap(disks []string, aggrDiskMap map[string][]string) {
+	// Clean aggrsMap map
+	my.aggrsMap = make(map[string]string)
+
+	for _, disk := range disks {
+		aggrData := aggrDiskMap[disk]
+		my.aggrsMap[aggrData[1]] = aggrData[0]
+	}
+}
+
+func (my *Volume) getAggrDiskMapping() (map[string][]string, error) {
+	var (
+		result        []*node.Node
+		aggrsDisksMap map[string][]string
+		err           error
+	)
+
+	request := node.NewXmlS("aggr-status-get-iter")
+	// aggrsDisksMap
+	aggrsDisksMap = make(map[string][]string)
+
+	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger); err != nil {
+		return nil, err
+	}
+
+	if len(result) == 0 || result == nil {
+		return nil, errors.New(errors.ERR_NO_INSTANCE, "no records found")
+	}
+
+	for _, aggrDisk := range result {
+		aggrUuid := aggrDisk.GetChildContentS("aaggregate-uuid")
+		aggrName := aggrDisk.GetChildContentS("aggregate")
+		diskName := aggrDisk.GetChildContentS("aggregate")
+		aggrData := []string{aggrName, aggrUuid}
+		aggrsDisksMap[diskName] = aggrData
+	}
+	return aggrsDisksMap, nil
 }

@@ -1,0 +1,33 @@
+
+name:       SVM
+query:      vserver-get-iter
+object:     svm
+
+counters:
+  vserver-info:
+    - ^^uuid                                  => svm_uuid
+    - ^vserver-name                           => svm
+    - ^aggr-list                              => aggr
+    - ^state                                  => state
+    - ^anti-ransomware-default-volume-state   => anti_ransomware_state
+    - name-server-switch:
+        - ^nsswitch                           => nameservice_switch
+#    - ^name-server-switch.nsswitch            => nameservice_switch
+
+
+collect_only_labels: true
+
+plugins:
+  - SVM
+  - LabelAgent:
+      value_to_num:
+        - new_status state online online `0`
+
+export_options:
+  instance_keys:
+    - svm
+    - aggr
+  instance_labels:
+    - state
+    - anti_ransomware_state
+    - nis_authentication_enabled

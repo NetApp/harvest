@@ -6,10 +6,12 @@ package zapi
 
 import (
 	"fmt"
+	"goharvest2/cmd/collectors/zapi/plugins/certificate"
 	"goharvest2/cmd/collectors/zapi/plugins/quota"
 	"goharvest2/cmd/collectors/zapi/plugins/sensor"
 	"goharvest2/cmd/collectors/zapi/plugins/shelf"
 	"goharvest2/cmd/collectors/zapi/plugins/snapmirror"
+	"goharvest2/cmd/collectors/zapi/plugins/svm"
 	"goharvest2/cmd/collectors/zapi/plugins/volume"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/pkg/conf"
@@ -140,6 +142,10 @@ func (me *Zapi) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugi
 		return volume.New(abc)
 	case "Sensor":
 		return sensor.New(abc)
+	case "Certificate":
+		return certificate.New(abc)
+	case "SVM":
+		return svm.New(abc)
 	default:
 		me.Logger.Info().Msgf("no zapi plugin found for %s", kind)
 	}

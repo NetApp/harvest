@@ -63,6 +63,7 @@ counters:
       - ^auto-snapshots-enabled             => auto_snapshots_enabled
       - ^snapshot-policy
       - snapshot-count
+    - ^encrypt                              => isEncrypted
 
 plugins:
   Volume:
@@ -96,4 +97,6 @@ export_options:
     - protectedBy
     - protectionRole
     - all_sm_healthy
+    - isEncrypted
+    - isHardwareEncrypted
 

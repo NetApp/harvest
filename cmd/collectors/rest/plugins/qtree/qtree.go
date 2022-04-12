@@ -6,7 +6,7 @@ package qtree
 
 import (
 	"github.com/tidwall/gjson"
-	"goharvest2/cmd/collectors/rest/plugins"
+	"goharvest2/cmd/collectors"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/cmd/tools/rest"
 	"goharvest2/pkg/conf"
@@ -119,7 +119,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	href := rest.BuildHref("", "*", nil, "", "", "", "", my.query)
 
-	if result, err = plugins.InvokeRestCall(my.client, my.query, href, my.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(my.client, my.query, href, my.Logger); err != nil {
 		return nil, err
 	}
 

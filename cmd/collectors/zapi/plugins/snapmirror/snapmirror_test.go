@@ -1,11 +1,10 @@
 package snapmirror
 
 import (
+	"goharvest2/cmd/collectors"
 	"goharvest2/pkg/matrix"
 	"testing"
 )
-
-var sm *SnapMirror
 
 func TestProtectedFields(t *testing.T) {
 	instance := matrix.NewInstance(0)
@@ -33,7 +32,7 @@ func TestProtectedFields(t *testing.T) {
 // Test cases for protectedBy and protectionSourceType
 func testWithoutGroupType(instance *matrix.Instance, t *testing.T) {
 	instance.SetLabel("group_type", "")
-	sm.updateProtectedFields(instance)
+	collectors.UpdateProtectedFields(instance)
 
 	if instance.GetLabel("protectedBy") == "" && instance.GetLabel("protectionSourceType") == "" {
 		// OK
@@ -46,7 +45,7 @@ func testSvmdr(instance *matrix.Instance, t *testing.T) {
 	instance.SetLabel("group_type", "vserver")
 	instance.SetLabel("destination_volume", "")
 	instance.SetLabel("source_volume", "")
-	sm.updateProtectedFields(instance)
+	collectors.UpdateProtectedFields(instance)
 
 	if instance.GetLabel("protectedBy") == "storage_vm" && instance.GetLabel("protectionSourceType") == "storage_vm" {
 		// OK
@@ -60,7 +59,7 @@ func testConstituentVolumeWithinSvmdr(instance *matrix.Instance, t *testing.T) {
 	instance.SetLabel("destination_volume", "destvol")
 	instance.SetLabel("source_volume", "sourcevol")
 	instance.SetLabel("destination_location", "test1")
-	sm.updateProtectedFields(instance)
+	collectors.UpdateProtectedFields(instance)
 
 	if instance.GetLabel("protectedBy") == "storage_vm" && instance.GetLabel("protectionSourceType") == "volume" {
 		// OK
@@ -72,7 +71,7 @@ func testConstituentVolumeWithinSvmdr(instance *matrix.Instance, t *testing.T) {
 func testCg(instance *matrix.Instance, t *testing.T) {
 	instance.SetLabel("group_type", "CONSISTENCYGROUP")
 	instance.SetLabel("destination_location", "test123:/cg/")
-	sm.updateProtectedFields(instance)
+	collectors.UpdateProtectedFields(instance)
 
 	if instance.GetLabel("protectedBy") == "cg" && instance.GetLabel("protectionSourceType") == "cg" {
 		// OK
@@ -84,7 +83,7 @@ func testCg(instance *matrix.Instance, t *testing.T) {
 func testConstituentVolumeWithinCg(instance *matrix.Instance, t *testing.T) {
 	instance.SetLabel("group_type", "CONSISTENCYGROUP")
 	instance.SetLabel("destination_location", "test123")
-	sm.updateProtectedFields(instance)
+	collectors.UpdateProtectedFields(instance)
 
 	if instance.GetLabel("protectedBy") == "cg" && instance.GetLabel("protectionSourceType") == "volume" {
 		// OK
@@ -95,7 +94,7 @@ func testConstituentVolumeWithinCg(instance *matrix.Instance, t *testing.T) {
 
 func testNegativeCase1(instance *matrix.Instance, t *testing.T) {
 	instance.SetLabel("group_type", "infinitevol")
-	sm.updateProtectedFields(instance)
+	collectors.UpdateProtectedFields(instance)
 
 	if instance.GetLabel("protectedBy") == "volume" && instance.GetLabel("protectionSourceType") == "not_mapped" {
 		// OK
@@ -109,7 +108,7 @@ func testNegativeCase2(instance *matrix.Instance, t *testing.T) {
 	instance.SetLabel("destination_volume", "destvol")
 	instance.SetLabel("source_volume", "sourcevol")
 	instance.SetLabel("destination_location", "test123:")
-	sm.updateProtectedFields(instance)
+	collectors.UpdateProtectedFields(instance)
 
 	if instance.GetLabel("protectedBy") == "volume" && instance.GetLabel("protectionSourceType") == "not_mapped" {
 		// OK
@@ -120,7 +119,7 @@ func testNegativeCase2(instance *matrix.Instance, t *testing.T) {
 
 func testGroupTypeNone(instance *matrix.Instance, t *testing.T) {
 	instance.SetLabel("group_type", "none")
-	sm.updateProtectedFields(instance)
+	collectors.UpdateProtectedFields(instance)
 
 	if instance.GetLabel("protectedBy") == "volume" && instance.GetLabel("protectionSourceType") == "volume" {
 		// OK
@@ -131,7 +130,7 @@ func testGroupTypeNone(instance *matrix.Instance, t *testing.T) {
 
 func testGroupTypeFlexgroup(instance *matrix.Instance, t *testing.T) {
 	instance.SetLabel("group_type", "flexgroup")
-	sm.updateProtectedFields(instance)
+	collectors.UpdateProtectedFields(instance)
 
 	if instance.GetLabel("protectedBy") == "volume" && instance.GetLabel("protectionSourceType") == "volume" {
 		// OK
@@ -144,7 +143,7 @@ func testGroupTypeFlexgroup(instance *matrix.Instance, t *testing.T) {
 func testStrictSyncMirror(instance *matrix.Instance, t *testing.T) {
 	instance.SetLabel("relationship_type", "")
 	instance.SetLabel("policy_type", "strict_sync_mirror")
-	sm.updateProtectedFields(instance)
+	collectors.UpdateProtectedFields(instance)
 
 	if instance.GetLabel("derived_relationship_type") == "sync_mirror_strict" {
 		// OK
@@ -156,7 +155,7 @@ func testStrictSyncMirror(instance *matrix.Instance, t *testing.T) {
 func testSyncMirror(instance *matrix.Instance, t *testing.T) {
 	instance.SetLabel("relationship_type", "")
 	instance.SetLabel("policy_type", "sync_mirror")
-	sm.updateProtectedFields(instance)
+	collectors.UpdateProtectedFields(instance)
 
 	if instance.GetLabel("derived_relationship_type") == "sync_mirror" {
 		// OK
@@ -168,7 +167,7 @@ func testSyncMirror(instance *matrix.Instance, t *testing.T) {
 func testMirrorVault(instance *matrix.Instance, t *testing.T) {
 	instance.SetLabel("relationship_type", "")
 	instance.SetLabel("policy_type", "mirror_vault")
-	sm.updateProtectedFields(instance)
+	collectors.UpdateProtectedFields(instance)
 
 	if instance.GetLabel("derived_relationship_type") == "mirror_vault" {
 		// OK
@@ -180,7 +179,7 @@ func testMirrorVault(instance *matrix.Instance, t *testing.T) {
 func testAutomatedFailover(instance *matrix.Instance, t *testing.T) {
 	instance.SetLabel("relationship_type", "")
 	instance.SetLabel("policy_type", "automated_failover")
-	sm.updateProtectedFields(instance)
+	collectors.UpdateProtectedFields(instance)
 
 	if instance.GetLabel("derived_relationship_type") == "sync_mirror" {
 		// OK
@@ -192,7 +191,7 @@ func testAutomatedFailover(instance *matrix.Instance, t *testing.T) {
 func testOtherPolicyType(instance *matrix.Instance, t *testing.T) {
 	instance.SetLabel("relationship_type", "vault")
 	instance.SetLabel("policy_type", "vault")
-	sm.updateProtectedFields(instance)
+	collectors.UpdateProtectedFields(instance)
 
 	if instance.GetLabel("derived_relationship_type") == "vault" {
 		// OK
@@ -204,7 +203,7 @@ func testOtherPolicyType(instance *matrix.Instance, t *testing.T) {
 func testWithNoPolicyType(instance *matrix.Instance, t *testing.T) {
 	instance.SetLabel("relationship_type", "extended_data_protection")
 	instance.SetLabel("policy_type", "")
-	sm.updateProtectedFields(instance)
+	collectors.UpdateProtectedFields(instance)
 
 	if instance.GetLabel("derived_relationship_type") == "extended_data_protection" {
 		// OK

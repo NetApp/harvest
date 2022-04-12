@@ -1,0 +1,34 @@
+
+name:       SecurityCert
+query:      security-certificate-get-iter
+object:     security_certificate
+
+counters:
+  certificate-info:
+    - ^^cert-name              => name
+    - ^serial-number           => serial_number
+    - ^type                    => type
+    - ^vserver                 => svm
+    - ^public-certificate      => certificatePEM
+    - expiration-date          => expiry_time
+
+plugins:
+  - LabelAgent:
+      include_equals:
+        - type `server`
+      value_to_num:
+        - status name - - `0`
+  - Certificate:
+      schedule:
+        - data: 180s  # should be multiple of data poll duration
+
+export_options:
+  instance_keys:
+    - name
+  instance_labels:
+    - serial_number
+    #- certificatePEM   // Need to decide certificatePEM would be exposed or not in prometheus
+    - svm
+    - type
+    - certificateIssuerType
+    - certificateExpiryStatus

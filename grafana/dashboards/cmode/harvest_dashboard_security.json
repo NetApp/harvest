@@ -774,7 +774,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"}) or vector (0)",
+          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isEncrypted=\"false\", isHardwareEncrypted=\"false\"}) or vector (0)",
           "format": "time_series",
           "hide": false,
           "instant": true,
