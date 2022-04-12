@@ -6,7 +6,7 @@ package zapi
 
 import (
 	"fmt"
-	"goharvest2/cmd/collectors/zapi/plugins/quota"
+	"goharvest2/cmd/collectors/zapi/plugins/qtree"
 	"goharvest2/cmd/collectors/zapi/plugins/sensor"
 	"goharvest2/cmd/collectors/zapi/plugins/shelf"
 	"goharvest2/cmd/collectors/zapi/plugins/snapmirror"
@@ -135,7 +135,7 @@ func (me *Zapi) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugi
 	case "Shelf":
 		return shelf.New(abc)
 	case "Qtree":
-		return quota.New(abc)
+		return qtree.New(abc)
 	case "Volume":
 		return volume.New(abc)
 	case "Sensor":
