@@ -202,7 +202,7 @@ pipeline {
         steps {
            sh '''
            targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
-           wget -q -O /opt/home/gh.tar.gz "https://github.com/cli/cli/releases/download/v2.2.0/gh_2.8.0_linux_386.tar.gz"
+           wget -q -O /opt/home/gh.tar.gz "https://github.com/cli/cli/releases/download/v2.8.0/gh_2.8.0_linux_386.tar.gz"
            tar -C /opt/home -xzf /opt/home/gh.tar.gz
            echo $GIT_TOKEN > mytoken.txt
            /opt/home/gh_2.8.0_linux_386/bin/gh auth login --with-token < mytoken.txt
