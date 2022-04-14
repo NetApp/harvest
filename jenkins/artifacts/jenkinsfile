@@ -202,12 +202,12 @@ pipeline {
         steps {
            sh '''
            targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
-           wget -q -O /opt/home/gh.tar.gz "https://github.com/cli/cli/releases/download/v2.2.0/gh_2.2.0_linux_386.tar.gz"
+           wget -q -O /opt/home/gh.tar.gz "https://github.com/cli/cli/releases/download/v2.2.0/gh_2.8.0_linux_386.tar.gz"
            tar -C /opt/home -xzf /opt/home/gh.tar.gz
            echo $GIT_TOKEN > mytoken.txt
-           /opt/home/gh_2.2.0_linux_386/bin/gh auth login --with-token < mytoken.txt
-           /opt/home/gh_2.2.0_linux_386/bin/gh release delete nightly -y || true
-           /opt/home/gh_2.2.0_linux_386/bin/gh release create nightly $targetLocation/*.rpm $targetLocation/*.deb $targetLocation/*.gz --notes "Nightly builds may include bugs and other issues. You might want to use the stable releases instead." --title "Harvest Nightly Release" --prerelease
+           /opt/home/gh_2.8.0_linux_386/bin/gh auth login --with-token < mytoken.txt
+           /opt/home/gh_2.8.0_linux_386/bin/gh release delete nightly -y || true
+           /opt/home/gh_2.8.0_linux_386/bin/gh release create nightly $targetLocation/*.rpm $targetLocation/*.deb $targetLocation/*.gz --notes "Nightly builds may include bugs and other issues. You might want to use the stable releases instead." --title "Harvest Nightly Release" --prerelease
            docker build -f docker/onePollerPerContainer/Dockerfile --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET --build-arg GIT_TOKEN=$GIT_TOKEN  -t ${imageName}:latest -t ${imageName}:nightly -t ${jfrogImagePrefix}:latest -t ${jfrogImagePrefix}:nightly . --no-cache
             '''
           withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
