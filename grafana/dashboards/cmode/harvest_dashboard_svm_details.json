@@ -3119,7 +3119,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "avg(svm_vscan_scan_noti_received_rate{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
+              "expr": "svm_vscan_scan_noti_received_rate{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"}",
               "interval": "",
               "legendFormat": "",
               "refId": "A"
