@@ -3138,7 +3138,7 @@
         },
         {
           "datasource": null,
-          "description": "connections_active: Sum of connections active from ONTAP nodes to virus scan servers",
+          "description": "connections_active: Number of active connections from ONTAP nodes to virus scan servers",
           "fieldConfig": {
             "defaults": {
               "color": {
