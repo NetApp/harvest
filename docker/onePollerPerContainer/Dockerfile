@@ -1,4 +1,4 @@
-FROM golang:1.18.0-alpine as golangAlpine
+FROM golang:alpine as golangAlpine
 
 RUN apk add curl && apk add --virtual build-dependencies build-base gcc git bash
 
@@ -26,7 +26,7 @@ RUN cp -a $BUILD_DIR/harvest.yml $INSTALL_DIR/harvest.yml
 
 RUN cp -aR bin $BUILD_DIR/conf $BUILD_DIR/docs $BUILD_DIR/grafana $BUILD_DIR/autosupport $INSTALL_DIR
 
-FROM alpine:latest
+FROM alpine@sha256:a777c9c66ba177ccfea23f2a216ff6721e78a662cd17019488c417135299cd89
 
 RUN apk add bash
 
