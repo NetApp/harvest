@@ -1,4 +1,4 @@
-FROM golang:1.17-alpine as golangAlpine
+FROM golang:alpine as golangAlpine
 
 RUN apk add curl && apk add --virtual build-dependencies build-base gcc git bash
 
