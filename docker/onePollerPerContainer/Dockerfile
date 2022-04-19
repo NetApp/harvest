@@ -26,7 +26,7 @@ RUN cp -a $BUILD_DIR/harvest.yml $INSTALL_DIR/harvest.yml
 
 RUN cp -aR bin $BUILD_DIR/conf $BUILD_DIR/docs $BUILD_DIR/grafana $BUILD_DIR/autosupport $INSTALL_DIR
 
-FROM alpine@sha256:a777c9c66ba177ccfea23f2a216ff6721e78a662cd17019488c417135299cd89
+FROM alpine:latest
 
 RUN apk add bash
 
