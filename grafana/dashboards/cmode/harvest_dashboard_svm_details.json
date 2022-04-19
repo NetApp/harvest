@@ -3029,14 +3029,14 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "avg(svm_vscan_dispatch_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
+              "expr": "svm_vscan_dispatch_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"}",
               "interval": "",
               "legendFormat": "",
               "refId": "A"
             },
             {
               "exemplar": true,
-              "expr": "avg(svm_vscan_scan_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
+              "expr": "svm_vscan_scan_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "",
