@@ -3126,7 +3126,7 @@
             },
             {
               "exemplar": true,
-              "expr": "avg(svm_vscan_scan_request_dispatched_rate{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
+              "expr": "svm_vscan_scan_request_dispatched_rate{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "",
@@ -3209,7 +3209,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "avg(svm_vscan_connections_active{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
+              "expr": "svm_vscan_connections_active{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"}",
               "interval": "",
               "legendFormat": "",
               "refId": "A"
