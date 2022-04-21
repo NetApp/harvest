@@ -1,6 +1,7 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
+
 package unix
 
 import (
@@ -23,7 +24,7 @@ import (
 
 // Relying on Wikipedia for the list of supporting platforms
 // https://en.wikipedia.org/wiki/Procfs
-var _SUPPORTED_PLATFORMS = []string{
+var supportedPlatforms = []string{
 	"aix",
 	"android", // available in termux
 	"dragonfly",
@@ -34,9 +35,9 @@ var _SUPPORTED_PLATFORMS = []string{
 	"solaris",
 }
 
-var _MOUNT_POINT = "/proc"
+var mountPoint = "/proc"
 
-var _CLK_TCK float64
+var clkTck float64
 
 // list of histograms provided by the collector, mapped
 // to functions extracting them from a Process instance
@@ -82,10 +83,10 @@ func (Unix) HarvestModule() plugin.ModuleInfo {
 }
 
 func getClockTicks() {
-	_CLK_TCK = 100.0
+	clkTck = 100.0
 	if data, err := exec.Command("getconf", "CLK_TCK").Output(); err == nil {
 		if num, err := strconv.ParseInt(strings.TrimSpace(string(data)), 10, 64); err != nil {
-			_CLK_TCK = float64(num)
+			clkTck = float64(num)
 		}
 	}
 }
@@ -143,7 +144,7 @@ func (me *Unix) Init(a *collector.AbstractCollector) error {
 	me.AbstractCollector = a
 	var err error
 
-	if !set.NewFrom(_SUPPORTED_PLATFORMS).Has(runtime.GOOS) {
+	if !set.NewFrom(supportedPlatforms).Has(runtime.GOOS) {
 		return errors.New(errors.ERR_IMPLEMENT, "platform not supported")
 	}
 
@@ -153,12 +154,12 @@ func (me *Unix) Init(a *collector.AbstractCollector) error {
 
 	// optionally let user define mount point of the fs
 	if mp := me.Params.GetChildContentS("mount_point"); mp != "" {
-		_MOUNT_POINT = mp
+		mountPoint = mp
 	}
 
 	// assert fs is available
-	if fi, err := os.Stat(_MOUNT_POINT); err != nil || !fi.IsDir() {
-		return errors.New(errors.ERR_IMPLEMENT, "filesystem ["+_MOUNT_POINT+"] not available")
+	if fi, err := os.Stat(mountPoint); err != nil || !fi.IsDir() {
+		return errors.New(errors.ERR_IMPLEMENT, "filesystem ["+mountPoint+"] not available")
 	}
 
 	// load list of counters from template
@@ -286,24 +287,33 @@ func (me *Unix) PollInstance() (*matrix.Matrix, error) {
 		return nil, err
 	}
 
-	for _, name := range conf.Config.PollersOrdered {
-		pid := ""
-		pids, err := util.GetPid(name)
-		if err == nil && len(pids) == 1 {
-			pid = strconv.Itoa(int(pids[0]))
-		}
+	statuses, err := util.GetPollerStatuses()
+	if err != nil {
+		return nil, err
+	}
 
+	for _, name := range conf.Config.PollersOrdered {
+		pid := -1
+		for _, pollerStatus := range statuses {
+			if pollerStatus.Name == name {
+				pid = int(pollerStatus.Pid)
+				break
+			}
+		}
+		if pid == -1 {
+			continue
+		}
 		if instance := me.Matrix.GetInstance(name); instance == nil {
 			if instance, err = me.Matrix.NewInstance(name); err != nil {
 				return nil, err
 			}
 			instance.SetLabel("poller", name)
-			instance.SetLabel("pid", pid)
-			me.Logger.Debug().Msgf("add instance (%s) with PID (%s)", name, pid)
+			instance.SetLabel("pid", strconv.Itoa(pid))
+			me.Logger.Debug().Str("name", name).Int("pid", pid).Msg("Add instance")
 		} else {
 			currInstances.Delete(name)
-			instance.SetLabel("pid", pid)
-			me.Logger.Debug().Msgf("update instance (%s) with PID (%s)", name, pid)
+			instance.SetLabel("pid", strconv.Itoa(pid))
+			me.Logger.Debug().Str("name", name).Int("pid", pid).Msg("Update instance")
 		}
 	}
 	rewriteIndexes := currInstances.Size() > 0
