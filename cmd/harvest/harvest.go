@@ -275,31 +275,25 @@ func getPollersStatus() map[string][]*util.PollerStatus {
 }
 
 func stopGhostPollers(skipPoller []string) {
-	pids, err := util.GetPid("")
+	statuses, err := util.GetPollerStatuses()
 	if err != nil {
-		fmt.Printf("Error while executing pgrep %v \n", err)
+		fmt.Printf("Unable to get poller statatuses err=%v\n", err)
 		return
 	}
-	for _, p := range pids {
-		c, err := util.GetCmdLine(p)
-		if err != nil {
-			fmt.Printf("Missing pid %d %v \n", p, err)
-			continue
-		}
-
+	for _, p := range statuses {
 		// skip if this poller is defined in harvest config
 		var skip bool
 		for _, s := range skipPoller {
-			if util.ContainsWholeWord(c, s) {
+			if p.Name == s {
 				skip = true
 				break
 			}
 		}
 		// if poller doesn't exist in harvest config
 		if !skip {
-			proc, err := os.FindProcess(int(p))
+			proc, err := os.FindProcess(int(p.Pid))
 			if err != nil {
-				fmt.Printf("process not found for pid %d %v \n", p, err)
+				fmt.Printf("process not found for pid %d %v \n", p.Pid, err)
 				continue
 			}
 			// send terminate signal

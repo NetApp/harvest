@@ -1,0 +1,23 @@
+name:                     LIF
+query:                    api/cluster/counter/tables/lif
+object:                   lif
+
+counters:
+  - ^^id
+  - ^name
+  - ^node.name               => node
+  - ^svm.name                => svm
+  - ^current_port            => port
+  - received_data            => recv_data
+  - received_packets         => recv_packet
+  - received_errors          => recv_errors
+  - sent_data
+  - sent_packets             => sent_packet
+  - sent_errors
+
+export_options:
+  instance_keys:
+    - lif
+    - node
+    - svm
+    - port

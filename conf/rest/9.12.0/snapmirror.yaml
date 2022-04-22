@@ -12,8 +12,8 @@ counters:
   - ^destination_volume                      => destination_volume
   - ^source_vserver                          => source_vserver
   - ^source_volume                           => source_volume
-  - ^type                                    => relationship_type
-  - ^state                                   => relationship_status
+  - ^relationship_type                       => relationship_type
+  - ^status                                  => relationship_status
   - ^policy_type                             => policy_type
   - ^relationship_group_type                 => group_type
   - ^schedule                                => schedule

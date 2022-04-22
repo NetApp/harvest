@@ -1,6 +1,6 @@
 // Copyright NetApp Inc, 2021 All rights reserved
 
-package quota
+package qtree
 
 import (
 	"goharvest2/cmd/poller/plugin"
@@ -17,8 +17,8 @@ import (
 
 const BatchSize = "500"
 
-// Quota plugin is needed to match qtrees with quotas.
-type Quota struct {
+// Qtree plugin is needed to match qtrees with quotas.
+type Qtree struct {
 	*plugin.AbstractPlugin
 	data           *matrix.Matrix
 	instanceKeys   map[string]string
@@ -29,10 +29,10 @@ type Quota struct {
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
-	return &Quota{AbstractPlugin: p}
+	return &Qtree{AbstractPlugin: p}
 }
 
-func (my *Quota) Init() error {
+func (my *Qtree) Init() error {
 
 	var err error
 
@@ -110,7 +110,7 @@ func (my *Quota) Init() error {
 	return nil
 }
 
-func (my *Quota) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	var (
 		request, result *node.Node
 		quotas          []*node.Node

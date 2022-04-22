@@ -2600,7 +2600,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "sum(aggr_efficiency_total_logical_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"})/sum(aggr_efficiency_total_physical_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"})",
+          "expr": "sum(aggr_total_logical_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"})/sum(aggr_total_physical_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -2655,7 +2655,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "sum(aggr_efficiency_logical_used_wo_snapshots{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"})/sum(aggr_efficiency_physical_used_wo_snapshots{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"})",
+          "expr": "sum(aggr_logical_used_wo_snapshots{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"})/sum(aggr_physical_used_wo_snapshots{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -2710,7 +2710,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "sum(aggr_efficiency_logical_used_wo_snapshots_flexclones{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"})/sum(aggr_efficiency_physical_used_wo_snapshots_flexclones{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"})",
+          "expr": "sum(aggr_logical_used_wo_snapshots_flexclones{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"})/sum(aggr_physical_used_wo_snapshots_flexclones{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -2793,7 +2793,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "aggr_efficiency_total_logical_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_total_logical_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -2875,7 +2875,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "aggr_efficiency_total_physical_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_total_physical_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -2957,7 +2957,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "aggr_efficiency_logical_used_wo_snapshots{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_logical_used_wo_snapshots{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -3039,7 +3039,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "aggr_efficiency_physical_used_wo_snapshots{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_physical_used_wo_snapshots{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -3122,7 +3122,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "aggr_efficiency_logical_used_wo_snapshots_flexclones{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_logical_used_wo_snapshots_flexclones{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -3204,7 +3204,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "aggr_efficiency_physical_used_wo_snapshots_flexclones{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_physical_used_wo_snapshots_flexclones{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"

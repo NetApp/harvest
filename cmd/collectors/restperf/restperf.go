@@ -25,8 +25,14 @@ const (
 	BILLION       = 1_000_000_000
 )
 
-var workloadQuery = []string{"api/cluster/counter/tables/qos", "api/cluster/counter/tables/qos_volume"}
-var workloadDetailQuery = []string{"api/cluster/counter/tables/qos_detail", "api/cluster/counter/tables/qos_detail_volume"}
+var qosQuery = "api/cluster/counter/tables/qos"
+var qosVolumeQuery = "api/cluster/counter/tables/qos_volume"
+var qosDetailQuery = "api/cluster/counter/tables/qos_detail"
+var qosDetailVolumeQuery = "api/cluster/counter/tables/qos_detail_volume"
+var qosWorkloadQuery = "api/storage/qos/workloads"
+
+var qosQueries = []string{qosQuery, qosVolumeQuery}
+var qosDetailQueries = []string{qosDetailQuery, qosDetailVolumeQuery}
 
 type RestPerf struct {
 	*rest2.Rest // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
@@ -329,7 +335,7 @@ func parseMetricResponse(instanceData gjson.Result, metric string) *metricRespon
 	return &metricResponse{}
 }
 
-// override counter property
+// GetOverride override counter property
 func (r *RestPerf) GetOverride(counter string) string {
 	if o := r.Params.GetChildS("override"); o != nil {
 		return o.GetChildContentS(counter)
@@ -385,7 +391,6 @@ func (r *RestPerf) processWorkLoadCounter() (*matrix.Matrix, error) {
 				unit:        r.perfProp.counterInfo[visits.GetName()].unit,
 				denominator: "",
 			}
-			r.Logger.Debug().Msgf("+ [resource_ops] [%s] added workload ops metric with property (%s)", ops.GetName(), ops.GetProperty())
 		}
 
 		service.SetExportable(false)
@@ -415,7 +420,7 @@ func (r *RestPerf) processWorkLoadCounter() (*matrix.Matrix, error) {
 					m.SetName("resource_latency")
 					m.SetLabel("resource", resource)
 
-					r.Logger.Debug().Msgf("+ [%s] (=> %s) added workload latency metric", name, resource)
+					r.Logger.Debug().Str("name", name).Str("resource", resource).Msg("added workload latency metric")
 				}
 			}
 		}
@@ -554,7 +559,13 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 			}
 		}
 
-		if instance = newData.GetInstance(strings.Split(instanceKey, ":")[1]); instance == nil {
+		if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
+			instance = newData.GetInstance(strings.Split(instanceKey, ":")[1])
+		} else {
+			instance = newData.GetInstance(instanceKey)
+		}
+
+		if instance == nil {
 			if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
 				r.Logger.Debug().
 					Str("key", instanceKey).
@@ -898,15 +909,13 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 		content   []byte
 	)
 
-	if r.Prop.Query == "api/cluster/counter/tables/qos_detail" {
-		dataQuery = path.Join("api/cluster/counter/tables/qos", "rows")
+	if r.Prop.Query == qosDetailQuery {
+		dataQuery = path.Join(qosQuery, "rows")
 		object = "qos"
 	} else {
-		dataQuery = path.Join("api/cluster/counter/tables/qos_volume", "rows")
+		dataQuery = path.Join(qosVolumeQuery, "rows")
 		object = "qos_volume"
 	}
-
-	r.Logger.Debug().Msgf("(%s) starting redundancy poll for ops from parent object (%s)", r.Prop.Query, object)
 
 	if ops = data.GetMetric("ops"); ops == nil {
 		r.Logger.Error().Stack().Err(nil).Msgf("ops counter not found in cache")
@@ -972,7 +981,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 		}
 		instance = data.GetInstance(instanceKey)
 		if instance == nil {
-			r.Logger.Trace().Msgf("skip instance [%s], not found in cache", key)
+			r.Logger.Trace().Str("key", key.String()).Msg("skip instance not found in cache")
 			return true
 		}
 
@@ -980,7 +989,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 		f := parseMetricResponse(instanceData, counterName)
 		if f.value != "" {
 			if err = ops.SetValueString(instance, f.value); err != nil {
-				r.Logger.Error().Stack().Err(err).Msgf("set metric (%s) value [%s]", counterName, value)
+				r.Logger.Error().Stack().Err(err).Str("metric", counterName).Str("value", value.String()).Msg("set metric")
 			} else {
 				r.Logger.Trace().Msgf("+ metric (%s) = [%s%s%s]", counterName, color.Cyan, value, color.End)
 			}
@@ -1031,21 +1040,22 @@ func (r *RestPerf) PollInstance() (*matrix.Matrix, error) {
 	dataQuery := path.Join(r.Prop.Query, "rows")
 	instanceKeys := r.Prop.InstanceKeys
 	fields := "properties"
-	dataQuery = "api/storage/qos/workloads"
 	fields = "*"
-
-	if isWorkloadObject(r.Prop.Query) {
-		instanceKeys = []string{"uuid"}
-	}
-	if isWorkloadDetailObject(r.Prop.Query) {
-		instanceKeys = []string{"name"}
-	}
 	var filter []string
-	if r.Prop.Query == "api/cluster/counter/tables/qos_volume" || r.Prop.Query == "api/cluster/counter/tables/qos_volume_detail" {
-		filter = append(filter, "workload-class=autovolume")
-	} else {
-		filter = append(filter, "workload-class=user_defined")
-		//filter = append(filter, "workload-class=system_defined")
+
+	if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
+		dataQuery = qosWorkloadQuery
+		if isWorkloadObject(r.Prop.Query) {
+			instanceKeys = []string{"uuid"}
+		}
+		if isWorkloadDetailObject(r.Prop.Query) {
+			instanceKeys = []string{"name"}
+		}
+		if r.Prop.Query == qosVolumeQuery || r.Prop.Query == qosDetailVolumeQuery {
+			filter = append(filter, "workload-class=autovolume")
+		} else {
+			filter = append(filter, "workload-class=user_defined")
+		}
 	}
 
 	href := rest.BuildHref(dataQuery, fields, filter, "", "", "", r.Prop.ReturnTimeOut, dataQuery)
@@ -1127,7 +1137,7 @@ func (r *RestPerf) PollInstance() (*matrix.Matrix, error) {
 
 					}
 				}
-				r.Logger.Debug().Msgf("(%s) [%s] added QOS labels: %s", r.Prop.Query, key, instance.GetLabels().String())
+				r.Logger.Debug().Str("query", r.Prop.Query).Str("key", key.String()).Str("qos labels", instance.GetLabels().String()).Msg("")
 			}
 		}
 		return true
@@ -1152,11 +1162,11 @@ func (r *RestPerf) PollInstance() (*matrix.Matrix, error) {
 }
 
 func isWorkloadObject(query string) bool {
-	return util.Contains(workloadQuery, query)
+	return util.Contains(qosQueries, query)
 }
 
 func isWorkloadDetailObject(query string) bool {
-	return util.Contains(workloadDetailQuery, query)
+	return util.Contains(qosDetailQueries, query)
 }
 
 // Interface guards
