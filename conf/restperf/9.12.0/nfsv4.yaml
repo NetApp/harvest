@@ -11,9 +11,9 @@ counters:
   - ^name                                 => svm
   - latency
   - total_ops                             => ops
-  - total.read_throughput	                => read_throughput
-  - total.throughput	                     => throughput
-  - total.write_throughput	               => write_throughput
+  - total.read_throughput	              => read_throughput
+  - total.throughput	                  => throughput
+  - total.write_throughput	              => write_throughput
   - access.total                          => access_total
   - close.total                           => close_total
   - commit.total                          => commit_total
