@@ -39,6 +39,12 @@ counters:
   - block_storage.primary.disk_count                               => primary_disk_count
   - block_storage.hybrid_cache.disk_count                          => hybrid_disk_count
   - block_storage.plexes.#                                         => raid_plex_count
+  - space.efficiency.logical_used                                  => total_logical_used
+  - space.efficiency.savings                                       => efficiency_savings
+  - space.efficiency_without_snapshots.logical_used                => logical_used_wo_snapshots
+  - space.efficiency_without_snapshots.savings                     => efficiency_savings_wo_snapshots
+  - space.efficiency_without_snapshots_flexclones.logical_used     => logical_used_wo_snapshots_flexclones
+  - space.efficiency_without_snapshots_flexclones.savings          => efficiency_savings_wo_snapshots_flexclones
   - hidden_fields:
       - space
 
@@ -49,6 +55,9 @@ plugins:
       compute_metric:
         - snapshot_maxfiles_possible ADD snapshot.max_files_available snapshot.max_files_used
         - raid_disk_count ADD block_storage.primary.disk_count block_storage.hybrid_cache.disk_count
+        - total_physical_used SUBTRACT space.efficiency.logical_used space.efficiency.savings
+        - physical_used_wo_snapshots SUBTRACT space.efficiency_without_snapshots.logical_used space.efficiency_without_snapshots.savings
+        - physical_used_wo_snapshots_flexclones SUBTRACT space.efficiency_without_snapshots_flexclones.logical_used space.efficiency_without_snapshots_flexclones.savings
 
 export_options:
   instance_keys:
