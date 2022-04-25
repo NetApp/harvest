@@ -7,8 +7,8 @@ package zapi
 import (
 	"fmt"
 	"goharvest2/cmd/collectors/zapi/plugins/certificate"
-	"goharvest2/cmd/collectors/zapi/plugins/security"
 	"goharvest2/cmd/collectors/zapi/plugins/qtree"
+	"goharvest2/cmd/collectors/zapi/plugins/security"
 	"goharvest2/cmd/collectors/zapi/plugins/sensor"
 	"goharvest2/cmd/collectors/zapi/plugins/shelf"
 	"goharvest2/cmd/collectors/zapi/plugins/snapmirror"
