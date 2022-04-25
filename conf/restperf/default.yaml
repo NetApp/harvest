@@ -9,27 +9,35 @@ schedule:
 
 objects:
   CIFSNode:          cifs_node.yaml
-  Fcp:               fcp.yaml
+  Disk:              disk.yaml
+  ExtCacheObj:       ext_cache_obj.yaml
   FCVI:              fcvi.yaml
+  FcpPort:           fcp.yaml
   HeadroomAggr:      resource_headroom_aggr.yaml
   HeadroomCPU:       resource_headroom_cpu.yaml
   HostAdapter:       hostadapter.yaml
   NFSv3Node:         nfsv3_node.yaml
   NFSv41Node:        nfsv4_1_node.yaml
   NFSv4Node:         nfsv4_node.yaml
+  NicCommon:         nic_common.yaml
   Path:              path.yaml
   Processor:         processor.yaml
   Qtree:             qtree.yaml
+  SystemNode:        system_node.yaml
   TokenManager:      token_manager.yaml
   VolumeNode:        volume_node.yaml
   WAFL:              wafl.yaml
+  WAFLAggr:          wafl_hya_per_aggr.yaml
+  WAFLSizer:         wafl_hya_sizer.yaml
 
   # SVM-level metrics
   CIFSsvm:           cifs_svm.yaml
   CopyManager:       copy_manager.yaml
   FcpLif:            fcp_lif.yaml
   LIF:               lif.yaml
+  LUN:               lun.yaml
   NFSv3:             nfsv3.yaml
   NFSv41:            nfsv4_1.yaml
   NFSv4:             nfsv4.yaml
   Volume:            volume.yaml
+  WAFLCompBin:       wafl_comp_aggr_vol_bin.yaml

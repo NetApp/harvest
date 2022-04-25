@@ -4,8 +4,8 @@ object:                   fcp
 
 counters:
   - ^^id
-  - name                        => port
-  - node.name                   => node
+  - ^name                        => port
+  - ^node.name                   => node
   - average_other_latency
   - average_read_latency
   - average_write_latency
