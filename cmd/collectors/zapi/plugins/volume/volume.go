@@ -5,7 +5,6 @@ import (
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/pkg/api/ontapi/zapi"
 	"goharvest2/pkg/conf"
-	"goharvest2/pkg/dict"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
@@ -15,14 +14,12 @@ import (
 )
 
 const BatchSize = "500"
-const DefaultPluginDuration = 1800 * time.Second
-const DefaultDataPollDuration = 180 * time.Second
+const DefaultPluginDuration = 30 * time.Minute
+const DefaultDataPollDuration = 3 * time.Minute
 
 type Volume struct {
 	*plugin.AbstractPlugin
 	data                 *matrix.Matrix
-	instanceKeys         map[string]string
-	instanceLabels       map[string]*dict.Dict
 	batchSize            string
 	pluginInvocationRate int
 	currentVal           int
@@ -32,6 +29,11 @@ type Volume struct {
 	incomingSM           map[string]string
 	isHealthySM          map[string]bool
 	aggrsMap             map[string]string // aggregate-uuid -> aggregate-name map
+}
+
+type aggrData struct {
+	aggrUuid string
+	aggrName string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -102,15 +104,19 @@ func (my *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			my.updateMaps(data, smSourceMap, smDestinationMap)
 		}
 
-		// invoke disk rest and populate info in aggrsMap
-		if disks, err := my.getDiskData(); err != nil {
-			my.Logger.Warn().Stack().Err(err).Msg("Failed to collect disk data")
-		} else if aggrDiskMap, err := my.getAggrDiskMapping(); err != nil {
-			my.Logger.Warn().Stack().Err(err).Msg("Failed to collect aggregate-disk mapping data")
-		} else {
-			// update aggrsMap based on disk data
-			my.updateAggrMap(disks, aggrDiskMap)
+		// invoke disk-encrypt-get-iter zapi and populate disk info
+		disks, err1 := my.getDiskData()
+		// invoke aggr-status-get-iter zapi and populate aggr disk mapping info
+		aggrDiskMap, err2 := my.getAggrDiskMapping()
+
+		if err1 != nil {
+			my.Logger.Warn().Stack().Err(err1).Msg("Failed to collect disk data")
 		}
+		if err2 != nil {
+			my.Logger.Warn().Stack().Err(err2).Msg("Failed to collect aggregate-disk mapping data")
+		}
+		// update aggrsMap based on disk data and addr disk mapping
+		my.updateAggrMap(disks, aggrDiskMap)
 	}
 
 	// update volume instance labels
@@ -140,13 +146,11 @@ func (my *Volume) GetSnapMirrors() (map[string][]*matrix.Instance, map[string]*m
 	snapmirrorData := matrix.New(my.Parent+".SnapMirror", "sm", "sm")
 
 	for {
-		result, tag, err = collectors.InvokeZapiCallWithTag(my.client, request, my.Logger, tag)
-
-		if err != nil {
+		if result, tag, err = collectors.InvokeZapiCall(my.client, request, my.Logger, tag); err != nil {
 			return nil, nil, err
 		}
 
-		if result == nil {
+		if len(result) == 0 || result == nil {
 			break
 		}
 
@@ -306,7 +310,7 @@ func (my *Volume) getDiskData() ([]string, error) {
 	encryptInfoQuery := query.NewChildS("disk-encrypt-info", "")
 	encryptInfoQuery.NewChildS("protection-mode", "open|part|miss")
 
-	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger); err != nil {
+	if result, _, err = collectors.InvokeZapiCall(my.client, request, my.Logger, ""); err != nil {
 		return nil, err
 	}
 
@@ -321,28 +325,31 @@ func (my *Volume) getDiskData() ([]string, error) {
 	return diskNames, nil
 }
 
-func (my *Volume) updateAggrMap(disks []string, aggrDiskMap map[string][]string) {
-	// Clean aggrsMap map
-	my.aggrsMap = make(map[string]string)
+func (my *Volume) updateAggrMap(disks []string, aggrDiskMap map[string]aggrData) {
+	if disks != nil && aggrDiskMap != nil {
+		// Clean aggrsMap map
+		my.aggrsMap = make(map[string]string)
 
-	for _, disk := range disks {
-		aggrData := aggrDiskMap[disk]
-		my.aggrsMap[aggrData[1]] = aggrData[0]
+		for _, disk := range disks {
+			aggr := aggrDiskMap[disk]
+			my.aggrsMap[aggr.aggrUuid] = aggr.aggrName
+		}
 	}
 }
 
-func (my *Volume) getAggrDiskMapping() (map[string][]string, error) {
+func (my *Volume) getAggrDiskMapping() (map[string]aggrData, error) {
 	var (
 		result        []*node.Node
-		aggrsDisksMap map[string][]string
+		aggrsDisksMap map[string]aggrData
+		diskName      string
 		err           error
 	)
 
 	request := node.NewXmlS("aggr-status-get-iter")
 	// aggrsDisksMap
-	aggrsDisksMap = make(map[string][]string)
+	aggrsDisksMap = make(map[string]aggrData)
 
-	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger); err != nil {
+	if result, _, err = collectors.InvokeZapiCall(my.client, request, my.Logger, ""); err != nil {
 		return nil, err
 	}
 
@@ -350,12 +357,15 @@ func (my *Volume) getAggrDiskMapping() (map[string][]string, error) {
 		return nil, errors.New(errors.ERR_NO_INSTANCE, "no records found")
 	}
 
-	for _, aggrDisk := range result {
-		aggrUuid := aggrDisk.GetChildContentS("aaggregate-uuid")
-		aggrName := aggrDisk.GetChildContentS("aggregate")
-		diskName := aggrDisk.GetChildContentS("aggregate")
-		aggrData := []string{aggrName, aggrUuid}
-		aggrsDisksMap[diskName] = aggrData
+	for _, aggrDiskData := range result {
+		aggrUuid := aggrDiskData.GetChildContentS("aaggregate-uuid")
+		aggrName := aggrDiskData.GetChildContentS("aggregate")
+		aggrDiskList := aggrDiskData.GetChildS("aggr-plex-list").GetChildS("aggr-plex-info").GetChildS("aggr-raidgroup-list").GetChildS("aggr-raidgroup-info").GetChildS("aggr-disk-list").GetChildren()
+		for _, aggrDisk := range aggrDiskList {
+			diskName = aggrDisk.GetChildContentS("disk")
+			my.Logger.Info().Msgf("disk %s", diskName)
+			aggrsDisksMap[diskName] = aggrData{aggrUuid: aggrUuid, aggrName: aggrName}
+		}
 	}
 	return aggrsDisksMap, nil
 }

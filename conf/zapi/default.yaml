@@ -7,30 +7,27 @@ schedule:
   - data: 180s
 
 objects:
-  Aggregate:           aggr.yaml
-  AggregateEfficiency: aggr_efficiency.yaml
-  Disk:                disk.yaml
-  Lun:                 lun.yaml
-  Node:                node.yaml
-  Qtree:               qtree.yaml
-  SVM:                svm.yaml
-  Sensor:              sensor.yaml
-  Shelf:               shelf.yaml
-  SnapMirror:          snapmirror.yaml
-  SnapshotPolicy:      snapshotPolicy.yaml
-  Status:              status.yaml
-  Status_7mode:        status_7.yaml
-  Subsystem:           subsystem.yaml
-  Volume:              volume.yaml
+  Aggregate:                   aggr.yaml
+  AggregateEfficiency:         aggr_efficiency.yaml
+  ClusterPeer:                 clusterpeer.yaml
+  Disk:                        disk.yaml
+  Lun:                         lun.yaml
+  Node:                        node.yaml
+  NtpServer:                   ntpserver.yaml
+  Qtree:                       qtree.yaml
+  Security:                    security.yaml
+  SecurityAccount:             security_account.yaml
+  SecurityAuditDestination:    security_audit_dest.yaml
+  SecurityCert:                security_certificate.yaml
+  SecurityLogin:               security_login.yaml
+  Sensor:                      sensor.yaml
+  Shelf:                       shelf.yaml
+  SnapMirror:                  snapmirror.yaml
+  SnapshotPolicy:              snapshotPolicy.yaml
+  Status:                      status.yaml
+  Status_7mode:                status_7.yaml
+  Subsystem:                   subsystem.yaml
+  Support:                     support.yaml
+  SVM:                         svm.yaml
+  Volume:                      volume.yaml
 
-
-  # for security dashboard at cluster
-#  ClusterPeer:              clusterpeer.yaml
-  NtpServer:                ntpserver.yaml
-#  Security:                 security.yaml    # security-protocol-get not iter, we need to pass telnet/rsh | security-config-get not iter, we need to pass ssl
-#  SecuritySsh:              security_ssh.yaml    # cipher array handling
-  SecurityAccount:          security_account.yaml
-#  SecurityAuditDestination: security_audit_dest.yaml
-  SecurityCert:             security_certificate.yaml
-  SecurityLogin:            security_login.yaml
-  Support:                  support.yaml

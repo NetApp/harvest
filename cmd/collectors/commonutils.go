@@ -51,36 +51,7 @@ func InvokeRestCall(client *rest.Client, query string, href string, logger *logg
 	return results[1].Array(), nil
 }
 
-func InvokeZapiCall(client *zapi.Client, request *node.Node, logger *logging.Logger) ([]*node.Node, error) {
-
-	var (
-		result   *node.Node
-		response []*node.Node
-		err      error
-	)
-
-	if result, err = client.InvokeRequest(request); err != nil {
-		return nil, err
-	}
-
-	if result == nil {
-		return nil, nil
-	}
-
-	if x := result.GetChildS("attributes-list"); x != nil {
-		response = x.GetChildren()
-	}
-
-	if len(response) == 0 {
-		return nil, errors.New(errors.ERR_NO_INSTANCE, "no object instances found")
-	}
-
-	logger.Debug().Int("object", len(response)).Msg("fetching")
-
-	return response, nil
-}
-
-func InvokeZapiCallWithTag(client *zapi.Client, request *node.Node, logger *logging.Logger, tag string) ([]*node.Node, string, error) {
+func InvokeZapiCall(client *zapi.Client, request *node.Node, logger *logging.Logger, tag string) ([]*node.Node, string, error) {
 
 	var (
 		result   *node.Node
@@ -89,8 +60,14 @@ func InvokeZapiCallWithTag(client *zapi.Client, request *node.Node, logger *logg
 		err      error
 	)
 
-	if result, newTag, err = client.InvokeBatchRequest(request, tag); err != nil {
-		return nil, "", err
+	if tag != "" {
+		if result, newTag, err = client.InvokeBatchRequest(request, tag); err != nil {
+			return nil, "", err
+		}
+	} else {
+		if result, err = client.InvokeRequest(request); err != nil {
+			return nil, "", err
+		}
 	}
 
 	if result == nil {
@@ -99,10 +76,13 @@ func InvokeZapiCallWithTag(client *zapi.Client, request *node.Node, logger *logg
 
 	if x := result.GetChildS("attributes-list"); x != nil {
 		response = x.GetChildren()
+	} else if y := result.GetChildS("attributes"); y != nil {
+		// Check for non-list response
+		response = y.GetChildren()
 	}
 
 	if len(response) == 0 {
-		return nil, "", errors.New(errors.ERR_NO_INSTANCE, "no object instances found")
+		return nil, "", nil
 	}
 
 	logger.Debug().Int("object", len(response)).Msg("fetching")
@@ -166,25 +146,21 @@ func UpdateProtectedFields(instance *matrix.Instance) {
 	}
 }
 
-func SetNameservice(data *matrix.Matrix) {
-	for _, instance := range data.GetInstances() {
-		requiredNSDb := false
-		requiredNSSource := false
-		ns := instance.GetLabel("nameservice_switch")
-		nisDomain := instance.GetLabel("nis_domain")
+func SetNameservice(ns_db, ns_source, nis_domain string, instance *matrix.Instance) {
+	requiredNSDb := false
+	requiredNSSource := false
 
-		if strings.Contains(ns, "passwd") || strings.Contains(ns, "group") || strings.Contains(ns, "netgroup") {
-			requiredNSDb = true
-			if strings.Contains(ns, "nis") {
-				requiredNSSource = true
-			}
+	if strings.Contains(ns_db, "passwd") || strings.Contains(ns_db, "group") || strings.Contains(ns_db, "netgroup") {
+		requiredNSDb = true
+		if strings.Contains(ns_source, "nis") {
+			requiredNSSource = true
 		}
+	}
 
-		if nisDomain != "" && requiredNSDb && requiredNSSource {
-			instance.SetLabel("nis_authentication_enabled", "true")
-		} else {
-			instance.SetLabel("nis_authentication_enabled", "false")
-		}
+	if nis_domain != "" && requiredNSDb && requiredNSSource {
+		instance.SetLabel("nis_authentication_enabled", "true")
+	} else {
+		instance.SetLabel("nis_authentication_enabled", "false")
 	}
 }
 
@@ -199,13 +175,11 @@ func SetPluginInterval(parentParams *node.Node, params *node.Node, logger *loggi
 }
 
 func GetDataInterval(param *node.Node, defaultInterval time.Duration) float64 {
-	var dataIntervalStr = ""
 	schedule := param.GetChildS("schedule")
 	if schedule != nil {
-		dataInterval := schedule.GetChildS("data")
-		if dataInterval != nil {
-			dataIntervalStr = dataInterval.GetContentS()
-			if durationVal, err := time.ParseDuration(dataIntervalStr); err == nil {
+		dataInterval := schedule.GetChildContentS("data")
+		if dataInterval != "" {
+			if durationVal, err := time.ParseDuration(dataInterval); err == nil {
 				return durationVal.Seconds()
 			}
 		}

@@ -1450,6 +1450,7 @@
     },
     {
       "datasource": "Prometheus",
+      "description": "This panel would be supported only for cluster version higher than 9.10",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1866,6 +1867,7 @@
     },
     {
       "datasource": "Prometheus",
+      "description": "This panel would be supported only for cluster version higher than 9.10",
       "fieldConfig": {
         "defaults": {
           "color": {

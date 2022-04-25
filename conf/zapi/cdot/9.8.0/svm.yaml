@@ -12,13 +12,13 @@ counters:
     - ^anti-ransomware-default-volume-state   => anti_ransomware_state
     - name-server-switch:
         - ^nsswitch                           => nameservice_switch
-#    - ^name-server-switch.nsswitch            => nameservice_switch
-
 
 collect_only_labels: true
 
 plugins:
-  - SVM
+  - SVM:
+      schedule:
+        - data: 900s  # should be multiple of data poll duration
   - LabelAgent:
       value_to_num:
         - new_status state online online `0`
@@ -31,3 +31,11 @@ export_options:
     - state
     - anti_ransomware_state
     - nis_authentication_enabled
+    - audit_protocol_enabled
+    - cifs_ntlm_enabled
+    - cifs_protocol_enabled
+    - nfs_protocol_enabled
+    - nis_domain
+    - ns_source
+    - ns_db
+    - ciphers

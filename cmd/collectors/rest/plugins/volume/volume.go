@@ -17,8 +17,8 @@ import (
 	"time"
 )
 
-const DefaultPluginDuration = 1800 * time.Second
-const DefaultDataPollDuration = 180 * time.Second
+const DefaultPluginDuration = 30 * time.Minute
+const DefaultDataPollDuration = 3 * time.Minute
 
 type Volume struct {
 	*plugin.AbstractPlugin

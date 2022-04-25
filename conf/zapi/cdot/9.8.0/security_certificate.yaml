@@ -27,7 +27,6 @@ export_options:
     - name
   instance_labels:
     - serial_number
-    #- certificatePEM   // Need to decide certificatePEM would be exposed or not in prometheus
     - svm
     - type
     - certificateIssuerType

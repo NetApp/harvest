@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"goharvest2/cmd/collectors/zapi/plugins/certificate"
 	"goharvest2/cmd/collectors/zapi/plugins/quota"
+	"goharvest2/cmd/collectors/zapi/plugins/security"
 	"goharvest2/cmd/collectors/zapi/plugins/sensor"
 	"goharvest2/cmd/collectors/zapi/plugins/shelf"
 	"goharvest2/cmd/collectors/zapi/plugins/snapmirror"
@@ -146,6 +147,8 @@ func (me *Zapi) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugi
 		return certificate.New(abc)
 	case "SVM":
 		return svm.New(abc)
+	case "Security":
+		return security.New(abc)
 	default:
 		me.Logger.Info().Msgf("no zapi plugin found for %s", kind)
 	}

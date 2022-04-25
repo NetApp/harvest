@@ -11,7 +11,8 @@ counters:
     - ^is-private-data-removed     => asup_private_dataremoved
 
 collect_only_labels: true
-#only_cluster_instance: true
+# at node level, As all the fields are same for both the nodes, we will only pick one node and ignore others
+only_cluster_instance: true
 
 export_options:
   instance_keys:
@@ -20,5 +21,3 @@ export_options:
     - asup_enabled
     - asup_https_configured
     - asup_private_dataremoved
-
-# at node level, need to change to cluster level

@@ -8,6 +8,12 @@ counters:
   - ^name                => name
   - ^encryption.state    => encryption_state
 
+plugins:
+  - LabelAgent:
+    # metric label zapi_value rest_value `default_value`
+    value_to_num:
+      - non_encrypted encryption_state none none `0`
+
 export_options:
   instance_keys:
     - uuid

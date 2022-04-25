@@ -176,7 +176,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "count(group by (datacenter, cluster)(support_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", asup_enabled=\"true\", asup_https_configured!=\"https\"} or security_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", telnet_enabled=\"true\"} or security_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", rsh_enabled=\"true\"} or group by (datacenter, cluster)(security_account_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", hash_algorithm=\"md5\"}) > 0 or cluster_peer_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", encryption_state=\"\"} or cluster_peer_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", encryption_state=\"none\"} or group by (datacenter, cluster) (security_account_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", locked=\"false\"}) > 0 or security_login_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", scope=\"cluster\", banner=\"\"} or security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=\"$Cluster\"} or count by (datacenter, cluster) (ntpserver_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) < 1 or security_audit_destination_status{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", protocol!=\"tcp_encrypted\"} or security_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", fips_enabled=\"false\"} or svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", type=\"admin\", ciphers=~\".*_cbc.*\"} or group by (datacenter, cluster) ((svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", cifs_protocol_enabled=\"true\"} or svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", nfs_protocol_enabled=\"true\"} and svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", audit_protocol_enabled=\"false\"}) or security_ssh_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", ciphers=~\".*_cbc.*\"} or security_login_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", scope=\"svm\", banner=\"\"}))) or vector(0)",
+          "expr": "count(group by (datacenter, cluster)(support_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", asup_enabled=\"true\", asup_https_configured!=\"https\"} or security_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", telnet_enabled=\"true\"} or security_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", rsh_enabled=\"true\"} or group by (datacenter, cluster)(security_account_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", hash_algorithm=\"md5\"}) > 0 or cluster_peer_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", encryption_state=\"\"} or cluster_peer_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", encryption_state=\"none\"} or group by (datacenter, cluster) (security_account_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", locked=\"false\"}) > 0 or security_login_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", scope=\"cluster\", banner=\"\"} or security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=\"$Cluster\"} or count by (datacenter, cluster) (ntpserver_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) < 1 or security_audit_destination_status{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", protocol!=\"tcp_encrypted\"} or security_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", fips_enabled=\"false\"} or svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", type=\"admin\", ciphers=~\".*_cbc.*\"} or group by (datacenter, cluster) ((svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", cifs_protocol_enabled=\"true\"} or svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", nfs_protocol_enabled=\"true\"} and svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", audit_protocol_enabled=\"false\"}) or security_ssh_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", ciphers=~\".*_cbc.*\"} or security_login_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", scope=\"svm\", banner=\"\"} or security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}))) or vector(0)",
           "format": "time_series",
           "hide": false,
           "instant": true,
@@ -366,7 +366,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count(group by (datacenter, cluster)(support_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", asup_enabled=\"true\", asup_https_configured!=\"https\"} or security_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", telnet_enabled=\"true\"} or security_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", rsh_enabled=\"true\"} or group by (datacenter, cluster)(security_account_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", hash_algorithm=\"md5\"}) > 0 or cluster_peer_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", encryption_state=\"\"} or cluster_peer_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", encryption_state=\"none\"} or group by (datacenter, cluster) (security_account_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", locked=\"false\"}) > 0 or security_login_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", scope=\"cluster\", banner=\"\"} or security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=\"$Cluster\"} or count by (datacenter, cluster) (ntpserver_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) < 1 or security_audit_destination_status{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", protocol!=\"tcp_encrypted\"} or security_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", fips_enabled=\"false\"} or svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", type=\"admin\", ciphers=~\".*_cbc.*\"} or group by (datacenter, cluster) ((svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", cifs_protocol_enabled=\"true\"} or svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", nfs_protocol_enabled=\"true\"} and svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", audit_protocol_enabled=\"false\"}) or security_ssh_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", ciphers=~\".*_cbc.*\"} or security_login_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", scope=\"svm\", banner=\"\"}))) or vector(0)",
+          "expr": "count(group by (datacenter, cluster)(support_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", asup_enabled=\"true\", asup_https_configured!=\"https\"} or security_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", telnet_enabled=\"true\"} or security_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", rsh_enabled=\"true\"} or group by (datacenter, cluster)(security_account_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", hash_algorithm=\"md5\"}) > 0 or cluster_peer_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", encryption_state=\"\"} or cluster_peer_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", encryption_state=\"none\"} or group by (datacenter, cluster) (security_account_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", locked=\"false\"}) > 0 or security_login_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", scope=\"cluster\", banner=\"\"} or security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=\"$Cluster\"} or count by (datacenter, cluster) (ntpserver_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) < 1 or security_audit_destination_status{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", protocol!=\"tcp_encrypted\"} or security_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", fips_enabled=\"false\"} or svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", type=\"admin\", ciphers=~\".*_cbc.*\"} or group by (datacenter, cluster) ((svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", cifs_protocol_enabled=\"true\"} or svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", nfs_protocol_enabled=\"true\"} and svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", audit_protocol_enabled=\"false\"}) or security_ssh_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", ciphers=~\".*_cbc.*\"} or security_login_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", scope=\"svm\", banner=\"\"} or security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}))) or vector(0)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -466,7 +466,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(group by (datacenter, cluster)(support_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", asup_enabled=\"true\", asup_https_configured!=\"https\"} or security_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", telnet_enabled=\"true\"} or security_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", rsh_enabled=\"true\"} or group by (datacenter, cluster)(security_account_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", hash_algorithm=\"md5\"}) > 0 or cluster_peer_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", encryption_state=\"\"} or cluster_peer_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", encryption_state=\"none\"} or group by (datacenter, cluster) (security_account_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", locked=\"false\"}) > 0 or security_login_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", scope=\"cluster\", banner=\"\"} or security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=\"$Cluster\"} or count by (datacenter, cluster) (ntpserver_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) < 1 or security_audit_destination_status{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", protocol!=\"tcp_encrypted\"} or security_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", fips_enabled=\"false\"} or svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", type=\"admin\", ciphers=~\".*_cbc.*\"} or group by (datacenter, cluster) ((svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", cifs_protocol_enabled=\"true\"} or svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", nfs_protocol_enabled=\"true\"} and svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", audit_protocol_enabled=\"false\"}) or security_ssh_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", ciphers=~\".*_cbc.*\"} or security_login_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", scope=\"svm\", banner=\"\"}))) or vector(0)",
+          "expr": "count(group by (datacenter, cluster)(support_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", asup_enabled=\"true\", asup_https_configured!=\"https\"} or security_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", telnet_enabled=\"true\"} or security_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", rsh_enabled=\"true\"} or group by (datacenter, cluster)(security_account_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", hash_algorithm=\"md5\"}) > 0 or cluster_peer_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", encryption_state=\"\"} or cluster_peer_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", encryption_state=\"none\"} or group by (datacenter, cluster) (security_account_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", locked=\"false\"}) > 0 or security_login_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", scope=\"cluster\", banner=\"\"} or security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=\"$Cluster\"} or count by (datacenter, cluster) (ntpserver_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) < 1 or security_audit_destination_status{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", protocol!=\"tcp_encrypted\"} or security_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", fips_enabled=\"false\"} or svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", type=\"admin\", ciphers=~\".*_cbc.*\"} or group by (datacenter, cluster) ((svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", cifs_protocol_enabled=\"true\"} or svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", nfs_protocol_enabled=\"true\"} and svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", audit_protocol_enabled=\"false\"}) or security_ssh_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", ciphers=~\".*_cbc.*\"} or security_login_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", scope=\"svm\", banner=\"\"} or security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}))) or vector(0)",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -594,11 +594,6 @@
                         "color": "semi-dark-green",
                         "index": 1,
                         "text": "No"
-                      },
-                      "1": {
-                        "color": "semi-dark-orange",
-                        "index": 2,
-                        "text": "Yes"
                       }
                     },
                     "type": "value"
@@ -613,6 +608,18 @@
                       }
                     },
                     "type": "special"
+                  },
+                  {
+                    "options": {
+                      "from": 1,
+                      "result": {
+                        "color": "semi-dark-orange",
+                        "index": 2,
+                        "text": "Yes"
+                      },
+                      "to": 99999999
+                    },
+                    "type": "range"
                   }
                 ]
               },
@@ -1134,14 +1141,9 @@
                 "value": [
                   {
                     "options": {
-                      "none": {
-                        "color": "semi-dark-orange",
-                        "index": 1,
-                        "text": "Not Encrypted"
-                      },
-                      "tls_psk": {
+                      "0": {
                         "color": "semi-dark-green",
-                        "index": 2,
+                        "index": 1,
                         "text": "Encrypted"
                       }
                     },
@@ -1156,6 +1158,18 @@
                       }
                     },
                     "type": "special"
+                  },
+                  {
+                    "options": {
+                      "from": 1,
+                      "result": {
+                        "color": "semi-dark-orange",
+                        "index": 2,
+                        "text": "Not Encrypted"
+                      },
+                      "to": 9999999999
+                    },
+                    "type": "range"
                   }
                 ]
               },
@@ -1205,6 +1219,16 @@
                       }
                     },
                     "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "null",
+                      "result": {
+                        "index": 4,
+                        "text": "Unknown"
+                      }
+                    },
+                    "type": "special"
                   }
                 ]
               },
@@ -1243,6 +1267,16 @@
                       }
                     },
                     "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "null",
+                      "result": {
+                        "index": 3,
+                        "text": "Unknown"
+                      }
+                    },
+                    "type": "special"
                   }
                 ]
               },
@@ -1356,7 +1390,7 @@
         },
         {
           "exemplar": true,
-          "expr": "security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",scope=\"cluster\"}",
+          "expr": "security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",scope=\"cluster\"} or security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1386,7 +1420,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count by (datacenter, cluster, encryption_state) (cluster_peer_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", encryption_state!=\"\"})",
+          "expr": "sum by (datacenter, cluster) (cluster_peer_non_encrypted{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1456,7 +1490,7 @@
         },
         {
           "exemplar": true,
-          "expr": "group by (datacenter, cluster)(support_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", asup_enabled=\"true\", asup_https_configured!=\"https\"} or security_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", telnet_enabled=\"true\"} or security_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", rsh_enabled=\"true\"} or group by (datacenter, cluster)(security_account_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", hash_algorithm=\"md5\"}) > 0 or cluster_peer_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", encryption_state=\"\"} or cluster_peer_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", encryption_state=\"none\"} or group by (datacenter, cluster) (security_account_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", locked=\"false\"}) > 0 or security_login_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", scope=\"cluster\", banner=\"\"} or security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=\"$Cluster\"} or count by (datacenter, cluster) (ntpserver_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) < 1 or security_audit_destination_status{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", protocol!=\"tcp_encrypted\"} or security_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", fips_enabled=\"false\"} or svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", type=\"admin\", ciphers=~\".*_cbc.*\"} or group by (datacenter, cluster) ((svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", cifs_protocol_enabled=\"true\"} or svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", nfs_protocol_enabled=\"true\"} and svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", audit_protocol_enabled=\"false\"}) or security_ssh_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", ciphers=~\".*_cbc.*\"} or security_login_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", scope=\"svm\", banner=\"\"}))",
+          "expr": "group by (datacenter, cluster)(support_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", asup_enabled=\"true\", asup_https_configured!=\"https\"} or security_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", telnet_enabled=\"true\"} or security_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", rsh_enabled=\"true\"} or group by (datacenter, cluster)(security_account_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", hash_algorithm=\"md5\"}) > 0 or cluster_peer_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", encryption_state=\"\"} or cluster_peer_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", encryption_state=\"none\"} or group by (datacenter, cluster) (security_account_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", locked=\"false\"}) > 0 or security_login_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", scope=\"cluster\", banner=\"\"} or security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$Cluster\"} or count by (datacenter, cluster) (ntpserver_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) < 1 or security_audit_destination_status{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", protocol!=\"tcp_encrypted\"} or security_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", fips_enabled=\"false\"} or svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", type=\"admin\", ciphers=~\".*_cbc.*\"} or group by (datacenter, cluster) ((svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", cifs_protocol_enabled=\"true\"} or svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", nfs_protocol_enabled=\"true\"} and svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", audit_protocol_enabled=\"false\"}) or security_ssh_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", ciphers=~\".*_cbc.*\"} or security_login_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", scope=\"svm\", banner=\"\"} or security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1482,7 +1516,6 @@
                 "secured",
                 "banner",
                 "Value #G",
-                "encryption_state",
                 "Value #K",
                 "Value #I",
                 "Value #L",
@@ -1490,7 +1523,8 @@
                 "Value #N",
                 "certificateExpiryStatus",
                 "certificateIssuerType",
-                "Value #P"
+                "Value #P",
+                "Value #J"
               ]
             }
           }
@@ -1530,6 +1564,7 @@
             "indexByName": {
               "Value #P": 0,
               "Value #D": 11,
+              "Value #J": 12,
               "Value #G": 7,
               "Value #I": 13,
               "Value #K": 17,
@@ -1541,7 +1576,6 @@
               "certificateExpiryStatus": 2,
               "certificateIssuerType": 18,
               "cluster": 1,
-              "encryption_state": 12,
               "fips_enabled": 3,
               "locked": 9,
               "rsh_enabled": 10,
@@ -1556,10 +1590,12 @@
               "Value #F": "Login Banner",
               "Value #G": "Network Time Protocol",
               "Value #I": "Saml Users",
+              "Value #J": "Cluster Peering",
               "Value #K": "Local Users",
               "Value #L": "Active Directory Users",
               "Value #M": "Ldap Users",
               "Value #N": "Certificate Users",
+              "Value #P": "Compliant",
               "activediruser": "Active Directory Users",
               "asupEnabled": "",
               "asupHttpsConfigured": "",
@@ -1580,8 +1616,7 @@
               "rsh_enabled": "Remote Shell",
               "samluser": "Saml Users",
               "secured": "Insecure SSH Settings",
-              "telnet_enabled": "Telnet",
-              "Value #P": "Compliant"
+              "telnet_enabled": "Telnet"
             }
           }
         }
@@ -1666,7 +1701,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "count(group by (datacenter, cluster, svm) ((svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", cifs_protocol_enabled=\"true\"} or svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", nfs_protocol_enabled=\"true\"} and svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", audit_protocol_enabled=\"false\"}) or svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", ciphers=~\".*_cbc.*\"} or security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", scope=\"svm\", banner=\"\"})) or vector(0)",
+          "expr": "count(group by (datacenter, cluster, svm) ((svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", cifs_protocol_enabled=\"true\"} or svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", nfs_protocol_enabled=\"true\"} and svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", audit_protocol_enabled=\"false\"}) or svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", ciphers=~\".*_cbc.*\"} or security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", scope=\"svm\", banner=\"\"} or (svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"} unless on (svm) security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm!=\"$Cluster\", svm=~\"$SVM\"}))) or vector(0)",
           "format": "time_series",
           "hide": false,
           "instant": true,
@@ -1831,7 +1866,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count(group by (datacenter, cluster, svm) ((svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", cifs_protocol_enabled=\"true\"} or svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", nfs_protocol_enabled=\"true\"} and svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", audit_protocol_enabled=\"false\"}) or svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", ciphers=~\".*_cbc.*\"} or security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", scope=\"svm\", banner=\"\"})) or vector(0)",
+          "expr": "count(group by (datacenter, cluster, svm) ((svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", cifs_protocol_enabled=\"true\"} or svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", nfs_protocol_enabled=\"true\"} and svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", audit_protocol_enabled=\"false\"}) or svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", ciphers=~\".*_cbc.*\"} or security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", scope=\"svm\", banner=\"\"} or (svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"} unless on (svm) security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm!=\"$Cluster\", svm=~\"$SVM\"}))) or vector(0)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1928,7 +1963,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(group by (datacenter, cluster, svm) ((svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", cifs_protocol_enabled=\"true\"} or svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", nfs_protocol_enabled=\"true\"} and svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", audit_protocol_enabled=\"false\"}) or svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", ciphers=~\".*_cbc.*\"} or security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", scope=\"svm\", banner=\"\"}))",
+          "expr": "count(group by (datacenter, cluster, svm) ((svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", cifs_protocol_enabled=\"true\"} or svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", nfs_protocol_enabled=\"true\"} and svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", audit_protocol_enabled=\"false\"}) or svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", ciphers=~\".*_cbc.*\"} or security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", scope=\"svm\", banner=\"\"} or (svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"} unless on (svm) security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm!=\"$Cluster\", svm=~\"$SVM\"})))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -2030,10 +2065,6 @@
                 ]
               },
               {
-                "id": "custom.width",
-                "value": 115
-              },
-              {
                 "id": "custom.filterable",
                 "value": true
               }
@@ -2074,10 +2105,6 @@
                     "type": "special"
                   }
                 ]
-              },
-              {
-                "id": "custom.width",
-                "value": 169
               },
               {
                 "id": "custom.filterable",
@@ -2204,10 +2231,6 @@
                     "type": "special"
                   }
                 ]
-              },
-              {
-                "id": "custom.width",
-                "value": 132
               },
               {
                 "id": "custom.filterable",
@@ -2434,6 +2457,16 @@
                       }
                     },
                     "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "empty",
+                      "result": {
+                        "index": 2,
+                        "text": "N/A"
+                      }
+                    },
+                    "type": "special"
                   }
                 ]
               },
@@ -2554,7 +2587,7 @@
         },
         {
           "exemplar": true,
-          "expr": "security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", scope=\"svm\", svm=~\"$SVM\"}",
+          "expr": "security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", scope=\"svm\", svm=~\"$SVM\"} or security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm!=\"$Cluster\", svm=~\"$SVM\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -2594,7 +2627,7 @@
         },
         {
           "exemplar": true,
-          "expr": "group by (datacenter, cluster, svm) ((svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", cifs_protocol_enabled=\"true\"} or svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", nfs_protocol_enabled=\"true\"} and svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", audit_protocol_enabled=\"false\"}) or svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", ciphers=~\".*_cbc.*\"} or security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", scope=\"svm\", banner=\"\"})",
+          "expr": "group by (datacenter, cluster, svm) ((svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", cifs_protocol_enabled=\"true\"} or svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", nfs_protocol_enabled=\"true\"} and svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", audit_protocol_enabled=\"false\"}) or svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", ciphers=~\".*_cbc.*\"} or security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", scope=\"svm\", banner=\"\"} or (svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"} unless on (svm) security_login_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm!=\"$Cluster\", svm=~\"$SVM\"}))",
           "format": "table",
           "hide": false,
           "instant": true,

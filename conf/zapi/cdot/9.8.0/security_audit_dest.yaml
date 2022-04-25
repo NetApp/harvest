@@ -1,0 +1,19 @@
+
+name:       SecurityAuditDestination
+query:      cluster-log-forward-get-iter
+object:     security_audit_destination
+
+counters:
+  cluster-log-forward-info:
+    - ^protocol                  => protocol
+    - port                       => port
+
+only_cluster_instance: true
+
+plugins:
+  - LabelAgent:
+      value_to_num:
+        - status protocol tcp_encrypted tcp_encrypted `0`
+
+export_options:
+  include_all_labels: true

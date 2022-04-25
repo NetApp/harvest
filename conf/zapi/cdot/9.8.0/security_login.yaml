@@ -15,6 +15,3 @@ export_options:
     - svm
   instance_labels:
     - banner
-
-
-  #security_login_labels{datacenter="$Datacenter", cluster=~"$Cluster",scope="cluster"} or security_login_labels{datacenter="$Datacenter", cluster=~"$Cluster", svm="$Cluster"}
