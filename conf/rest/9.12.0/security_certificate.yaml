@@ -18,7 +18,6 @@ plugins:
       exclude_equals:
         - scope `svm`
       include_equals:
-#        - type `server` scope `cluster`   // TODO: To support multiple include with AND clause
         - type `server`
       value_to_num:
         - status name - - `0`

@@ -363,7 +363,6 @@ func (my *Volume) getAggrDiskMapping() (map[string]aggrData, error) {
 		aggrDiskList := aggrDiskData.GetChildS("aggr-plex-list").GetChildS("aggr-plex-info").GetChildS("aggr-raidgroup-list").GetChildS("aggr-raidgroup-info").GetChildS("aggr-disk-list").GetChildren()
 		for _, aggrDisk := range aggrDiskList {
 			diskName = aggrDisk.GetChildContentS("disk")
-			my.Logger.Info().Msgf("disk %s", diskName)
 			aggrsDisksMap[diskName] = aggrData{aggrUuid: aggrUuid, aggrName: aggrName}
 		}
 	}
