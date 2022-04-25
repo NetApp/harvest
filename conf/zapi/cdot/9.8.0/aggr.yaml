@@ -15,6 +15,7 @@ counters:
       - plex-count
       - raid-size
       - ^state                                 => state
+      - ^is-root-aggregate                     => root_aggr
     - aggr-inode-attributes:
       - files-private-used
       - files-total
@@ -63,6 +64,8 @@ plugins:
     # metric label zapi_value rest_value `default_value`
     value_to_num:
       - new_status state online online `0`
+    exclude_equals:
+      - root_aggr `true`
 
 export_options:
   instance_keys:

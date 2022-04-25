@@ -194,22 +194,22 @@ func (me *Process) loadStat() error {
 
 		// utime
 		if num, err = strconv.ParseInt(fields[11], 10, 64); err == nil {
-			me.cpu["user"] = float64(num) / _CLK_TCK
+			me.cpu["user"] = float64(num) / clkTck
 		}
 
 		// stime
 		if num, err = strconv.ParseInt(fields[12], 10, 64); err == nil {
-			me.cpu["system"] = float64(num) / _CLK_TCK
+			me.cpu["system"] = float64(num) / clkTck
 		}
 
 		// delayacct_blkio_ticks
 		if num, err = strconv.ParseInt(fields[39], 10, 64); err == nil {
-			me.cpu["iowait"] = float64(num) / _CLK_TCK
+			me.cpu["iowait"] = float64(num) / clkTck
 		}
 
 		// process start time (since system boot time)
 		if num, err = strconv.ParseInt(fields[19], 10, 64); err == nil {
-			me.startTime = float64(num) / _CLK_TCK
+			me.startTime = float64(num) / clkTck
 		}
 	}
 
