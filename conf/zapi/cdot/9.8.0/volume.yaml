@@ -75,19 +75,19 @@ plugins:
       - new_status state online online `0`
     exclude_equals:
       - style `flexgroup_constituent`
-    # To prevent visibility of temporary volumes, uncomment these below lines
+    # To prevent visibility of temporary volumes, uncomment the following lines
 #    exclude_regex:
-#      # Exclusion for SnapProtect/CommVault Intellisnap, Clone volumes gets a “_CVclone” suffix
+#      # Exclude SnapProtect/CommVault Intellisnap, Clone volumes have a “_CVclone” suffix
 #      - volume `.+_CVclone`
-#      # Exclusion for SnapCenter, Clone volumes gets a “DDMMYYhhmmss” suffix
+#      # Exclude SnapCenter, Clone volumes have a “DDMMYYhhmmss” suffix
 #      - volume `.+(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[012])\d\d[0-9]{6}`
-#      # Exclusion for SnapCreator, This is from creating a clone manually in SnapCreator, Clone volume gets a “cl_” prefix and a “_YYYYMMDDhhmmss” suffix
+#      # Exclude manually created SnapCreator clones, Clone volumes have a “cl_” prefix and a “_YYYYMMDDhhmmss” suffix
 #      - volume `cl_.+_(19|20)\d\d(0[1-9]|1[012])( 0[1-9]|[12][0-9]|3[01])[0-9]{6}`
-#      # Exclusion for SnapDrive/SnapManager, Clone volumes gets a “sdw_cl_” prefix
+#      # Exclude SnapDrive/SnapManager, Clone volumes have a “sdw_cl_” prefix
 #      - volume `sdw_cl_.+`
-#      # Exclusion for Metadata volumes that may also clutter menus, CRS volumes in SVM-DR or MetroCluster get a “MDV_CRS_” prefix
+#      # Exclude Metadata volumes, CRS volumes in SVM-DR or MetroCluster have a “MDV_CRS_” prefix
 #      - volume `MDV_CRS_.+`
-#      # Exclusion for Metadata volumes that may also clutter menus, Audit volumes get a “MDV_aud_” prefix
+#      # Exclude Metadata volumes, Audit volumes have a “MDV_aud_” prefix
 #      - volume `MDV_aud_.+`
     replace:
       - style style `flexgroup_constituent` `flexgroup`
