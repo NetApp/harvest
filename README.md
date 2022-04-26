@@ -13,6 +13,7 @@ Harvest is written in Go, which means it runs on recent Linux systems. It also r
 Optional prerequisites:
 - `dialog` or `whiptail` (used by the `config` utility)
 - `openssl` (used by `config`)
+
   
 Hardware requirements depend on how many clusters you monitor and the number of metrics you chose to collect. With the default configuration, when  monitoring 10 clusters, we recommend:
 
