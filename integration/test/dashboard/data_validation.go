@@ -41,7 +41,7 @@ func HasMinRecord(query string, limit int) bool {
 }
 
 func AssertIfNotPresent(query string) {
-	maxCount := 10
+	maxCount := 20
 	startCount := 1
 	query = fmt.Sprintf("count(%s)", query)
 	log.Info().Msg("Checking whether data is present or not for counter " + query)
