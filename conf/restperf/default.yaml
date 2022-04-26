@@ -12,7 +12,7 @@ objects:
   Disk:              disk.yaml
   ExtCacheObj:       ext_cache_obj.yaml
   FCVI:              fcvi.yaml
-  FcpPort:           fcp.yaml
+  Fcp:               fcp.yaml
   HeadroomAggr:      resource_headroom_aggr.yaml
   HeadroomCPU:       resource_headroom_cpu.yaml
   HostAdapter:       hostadapter.yaml
