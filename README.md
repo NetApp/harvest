@@ -15,6 +15,7 @@ Optional prerequisites:
 - `openssl` (used by `config`)
 
   
+
 Hardware requirements depend on how many clusters you monitor and the number of metrics you chose to collect. With the default configuration, when  monitoring 10 clusters, we recommend:
 
 - CPU: 2 cores
