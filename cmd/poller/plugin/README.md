@@ -489,11 +489,11 @@ compute_metric:
 
 ## value_to_num_regex
 
-Same as value_to_num, but will use a regular expression and all matching are mapped to 1 and other mapped to 0.
+Same as value_to_num, but will use a regular expression. All matches are mapped to 1 and non-matches are mapped to 0.
 
 This is handy to manipulate the data in the DB or Grafana (e.g. change color based on status or create alert).
 
-Note that you don't define the numeric values yourself, instead, you only provide the possible (expected) values, the plugin will map each value to its index in the rule.
+Note that you don't define the numeric values, instead, you provide the expected values and the plugin will map each value to its index in the rule.
 
 Rule syntax:
 
