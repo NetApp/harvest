@@ -75,7 +75,7 @@ plugins:
       - new_status state online online `0`
     exclude_equals:
       - style `flexgroup_constituent`
-    # To prevent visibility of temporary volumes, uncomment the following lines
+    # To prevent visibility of transient volumes, uncomment the following lines
 #    exclude_regex:
 #      # Exclude SnapProtect/CommVault Intellisnap, Clone volumes have a “_CVclone” suffix
 #      - volume `.+_CVclone`
