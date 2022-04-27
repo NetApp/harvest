@@ -1,0 +1,12 @@
+name:                     WAFLSizer
+query:                    api/cluster/counter/tables/wafl_hya_sizer
+object:                   flashpool
+
+counters:
+  - ^^id
+  - ^node.name              => node
+  - cache_stats
+
+export_options:
+  instance_keys:
+    - node

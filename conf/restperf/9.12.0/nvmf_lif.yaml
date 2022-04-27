@@ -1,0 +1,28 @@
+name:                     NVMfLif
+query:                    api/cluster/counter/tables/nvmf_lif
+object:                   nvme_lif
+
+counters:
+  - ^^id
+  - ^name                  => lif
+  - ^svm.name              => svm
+  - ^node.name             => node
+  - port_id                => port
+  - read_data
+  - read_ops
+  - average_read_latency
+  - average_write_latency
+  - average_other_latency
+  - write_data
+  - write_ops
+  - other_ops
+  - total_ops
+  - average_latency
+
+export_options:
+  instance_keys:
+    - lif
+    - svm
+    - node
+    - port
+
