@@ -346,7 +346,6 @@ func (my *Volume) getAggrDiskMapping() (map[string]aggrData, error) {
 	)
 
 	request := node.NewXmlS("aggr-status-get-iter")
-	// aggrsDisksMap
 	aggrsDisksMap = make(map[string]aggrData)
 
 	if result, _, err = collectors.InvokeZapiCall(my.client, request, my.Logger, ""); err != nil {

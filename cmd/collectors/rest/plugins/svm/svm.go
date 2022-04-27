@@ -69,9 +69,10 @@ func (my *SVM) GetNSSwitchInfo(data *matrix.Matrix) (map[string]nsswitch, error)
 		nsswitchConfig := svmInstance.GetLabel("nameservice_switch")
 
 		config := gjson.Result{Type: gjson.JSON, Raw: nsswitchConfig}
+		replaceStr := strings.NewReplacer("[", "", "]", "", "\"", "")
 
 		for nsdb, nssource := range config.Map() {
-			nssourcelist := strings.ReplaceAll(strings.TrimSuffix(strings.TrimPrefix(nssource.String(), "["), "]"), "\"", "")
+			nssourcelist := replaceStr.Replace(nssource.String())
 
 			if ns, ok = vserverNsswitchMap[svmName]; ok {
 				ns.nsdb = append(ns.nsdb, nsdb)
