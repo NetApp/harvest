@@ -12,7 +12,6 @@ import (
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/set"
-	"goharvest2/pkg/util"
 	"path"
 	"regexp"
 	"strconv"
@@ -31,8 +30,14 @@ var qosDetailQuery = "api/cluster/counter/tables/qos_detail"
 var qosDetailVolumeQuery = "api/cluster/counter/tables/qos_detail_volume"
 var qosWorkloadQuery = "api/storage/qos/workloads"
 
-var qosQueries = []string{qosQuery, qosVolumeQuery}
-var qosDetailQueries = []string{qosDetailQuery, qosDetailVolumeQuery}
+var qosQueries = map[string]string{
+	qosQuery:       qosQuery,
+	qosVolumeQuery: qosVolumeQuery,
+}
+var qosDetailQueries = map[string]string{
+	qosDetailQuery:       qosDetailQuery,
+	qosDetailVolumeQuery: qosDetailVolumeQuery,
+}
 
 type RestPerf struct {
 	*rest2.Rest // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
@@ -121,9 +126,10 @@ func (r *RestPerf) InitQOSLabels() error {
 			for _, label := range qosLabels.GetAllChildContentS() {
 
 				display := strings.ReplaceAll(label, "-", "_")
-				if x := strings.Split(label, "=>"); len(x) == 2 {
-					label = strings.TrimSpace(x[0])
-					display = strings.TrimSpace(x[1])
+				before, after, found := strings.Cut(label, "=>")
+				if found {
+					label = strings.TrimSpace(before)
+					display = strings.TrimSpace(after)
 				}
 				r.perfProp.qosLabels[label] = display
 			}
@@ -266,11 +272,6 @@ func (r *RestPerf) PollCounter() (*matrix.Matrix, error) {
 		return true
 	})
 
-	_, err = r.processWorkLoadCounter()
-	if err != nil {
-		return r.Matrix, err
-	}
-
 	// Create an artificial metric to hold timestamp of each instance data.
 	// The reason we don't keep a single timestamp for the whole data
 	// is because we might get instances in different batches
@@ -281,6 +282,11 @@ func (r *RestPerf) PollCounter() (*matrix.Matrix, error) {
 		}
 		m.SetProperty("raw")
 		m.SetExportable(false)
+	}
+
+	_, err = r.processWorkLoadCounter()
+	if err != nil {
+		return r.Matrix, err
 	}
 
 	return r.Matrix, nil
@@ -346,7 +352,7 @@ func (r *RestPerf) GetOverride(counter string) string {
 func (r *RestPerf) processWorkLoadCounter() (*matrix.Matrix, error) {
 	var err error
 	// for these two objects, we need to create latency/ops counters for each of the workload layers
-	// there original counters will be discarded
+	// their original counters will be discarded
 	if isWorkloadDetailObject(r.Prop.Query) {
 
 		for name, metric := range r.Prop.Metrics {
@@ -365,15 +371,15 @@ func (r *RestPerf) processWorkLoadCounter() (*matrix.Matrix, error) {
 		var service, wait, visits, ops matrix.Metric
 
 		if service = r.Matrix.GetMetric("service_time"); service == nil {
-			r.Logger.Error().Stack().Err(nil).Msg("metric [service_time] required to calculate workload missing")
+			r.Logger.Error().Stack().Msg("metric [service_time] required to calculate workload missing")
 		}
 
 		if wait = r.Matrix.GetMetric("wait_time"); wait == nil {
-			r.Logger.Error().Stack().Err(nil).Msg("metric [wait-time] required to calculate workload missing")
+			r.Logger.Error().Stack().Msg("metric [wait-time] required to calculate workload missing")
 		}
 
 		if visits = r.Matrix.GetMetric("visits"); visits == nil {
-			r.Logger.Error().Stack().Err(nil).Msg("metric [visits] required to calculate workload missing")
+			r.Logger.Error().Stack().Msg("metric [visits] required to calculate workload missing")
 		}
 
 		if service == nil || wait == nil || visits == nil {
@@ -535,9 +541,10 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 
 			layer := "" // latency layer (resource) for workloads
 
-			if x := strings.Split(instanceKey, "."); len(x) == 2 {
-				instanceKey = x[0]
-				layer = x[1]
+			before, after, found := strings.Cut(instanceKey, ".")
+			if found {
+				instanceKey = before
+				layer = after
 			} else {
 				r.Logger.Warn().
 					Str("key", instanceKey).
@@ -621,7 +628,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 						}
 						continue
 					}
-					// "visits" are ignored
+					// "visits" are ignored. This counter is only used to set properties of ops counter
 					if name == "visits" {
 						continue
 					}
@@ -1162,11 +1169,13 @@ func (r *RestPerf) PollInstance() (*matrix.Matrix, error) {
 }
 
 func isWorkloadObject(query string) bool {
-	return util.Contains(qosQueries, query)
+	_, ok := qosQueries[query]
+	return ok
 }
 
 func isWorkloadDetailObject(query string) bool {
-	return util.Contains(qosDetailQueries, query)
+	_, ok := qosDetailQueries[query]
+	return ok
 }
 
 // Interface guards
