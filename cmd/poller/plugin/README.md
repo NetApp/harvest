@@ -126,6 +126,7 @@ Notice that the rules are executed in the same order as you've added them. List 
   - [value_mapping](#value_mapping)
   - [value_to_num](#value_to_num)
   - [compute_metric](#compute_metric)
+  - [value_to_num_regex](#value_to_num_regex)
 
 ## split
 
@@ -484,4 +485,39 @@ compute_metric:
   - transmission_rate DIVIDE transfer.bytes_transferred transfer.total_duration
 # value of metric "transmission_rate" would be division of metric value of transfer.bytes_transferred by metric value of transfer.total_duration.
 # transmission_rate = transfer.bytes_transferred / transfer.total_duration
+```
+
+## value_to_num_regex
+
+Same as value_to_num, but will use a regular expression. All matches are mapped to 1 and non-matches are mapped to 0.
+
+This is handy to manipulate the data in the DB or Grafana (e.g. change color based on status or create alert).
+
+Note that you don't define the numeric values, instead, you provide the expected values and the plugin will map each value to its index in the rule.
+
+Rule syntax:
+
+```yaml
+value_to_num_regex:
+  - METRIC LABEL ZAPI_REGEX REST_REGEX `N`
+# map values of LABEL to 1 if it matches ZAPI_REGEX or REST_REGEX
+# otherwise, value of METRIC is set to N
+```
+The default value `N` is optional, if no default value is given and the label value does not match any of the given values, the metric value will not be set.
+
+Examples:
+
+```yaml
+value_to_num_regex:
+  - certificateuser methods .*cert.*$ .*certificate.*$ `0`
+# a new metric will be created with the name "certificateuser"
+# if an instance has label "methods" with value contains "cert", the metric value will be 1,
+# if value contains "certificate", the value will be set to 1,
+# if value doesn't contain "cert" and "certificate", it will be set to the specified default, 0
+```
+
+```yaml
+value_to_num_regex:
+  - status state ^up$ ^ok$ `4`
+# metric value will be set to 1 if label "state" matches regex, otherwise set to **4**
 ```
