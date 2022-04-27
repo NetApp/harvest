@@ -4,8 +4,8 @@ object:                   headroom_aggr
 
 counters:
   - ^^id
-  - ^name                            => instance_name
-  - ^node.name                       => node
+  - ^name                             => instance_name
+  - ^node.name                        => node
   - current_latency
   - current_ops
   - current_utilization

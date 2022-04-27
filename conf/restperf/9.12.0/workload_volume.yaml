@@ -1,0 +1,52 @@
+
+# object provides counters per volume for workloads tracked via "autovol"
+# (i.e. not in a policy group)
+
+name:                     WorkloadVolume
+query:                    api/cluster/counter/tables/qos_volume
+object:                   qos_volume
+
+# recommended to use large interval, since workload objects are expensive
+client_timeout:           1m30s
+schedule:
+  - counter: 1200s
+  - instance: 600s
+  - data: 180s
+
+counters:
+  - ^^id
+  - latency
+  - ops
+  - read_data
+  - read_io_type_percent        => read_io_type
+  - read_latency
+  - read_ops
+  - sequential_reads_percent    => sequential_reads
+  - sequential_writes_percent   => sequential_writes
+  - total_data
+  - write_data
+  - write_latency
+  - write_ops
+
+
+override:
+  - read_io_type_base: delta
+
+qos_labels:
+  - svm.name                   => svm
+  - volume
+  - qtree
+  - lun
+  - file
+  - policy.name                => policy_group
+  - wid
+
+export_options:
+  instance_keys:
+    - wid
+    - svm
+    - volume
+    - qtree
+    - lun
+    - file
+    - policy_group

@@ -13,10 +13,10 @@ counters:
   - latency                  => latency
   - average_read_latency     => read_latency
   - average_write_latency    => write_latency
-  #- connections
-  #- established_sessions
-  #- open_files
-  #- signed_sessions
+  - connections
+  - established_sessions
+  - open_files
+  - signed_sessions
 
 export_options:
   instance_keys:

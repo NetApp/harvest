@@ -24,6 +24,21 @@ const (
 	BILLION       = 1_000_000_000
 )
 
+var qosQuery = "api/cluster/counter/tables/qos"
+var qosVolumeQuery = "api/cluster/counter/tables/qos_volume"
+var qosDetailQuery = "api/cluster/counter/tables/qos_detail"
+var qosDetailVolumeQuery = "api/cluster/counter/tables/qos_detail_volume"
+var qosWorkloadQuery = "api/storage/qos/workloads"
+
+var qosQueries = map[string]string{
+	qosQuery:       qosQuery,
+	qosVolumeQuery: qosVolumeQuery,
+}
+var qosDetailQueries = map[string]string{
+	qosDetailQuery:       qosDetailQuery,
+	qosDetailVolumeQuery: qosDetailVolumeQuery,
+}
+
 type RestPerf struct {
 	*rest2.Rest // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
 	perfProp    *perfProp
@@ -41,6 +56,7 @@ type perfProp struct {
 	isCacheEmpty  bool
 	counterInfo   map[string]*counter
 	latencyIoReqd int
+	qosLabels     map[string]string
 }
 
 type metricResponse struct {
@@ -92,8 +108,33 @@ func (r *RestPerf) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
+	if err = r.InitQOSLabels(); err != nil {
+		return err
+	}
+
 	r.Logger.Info().Str("count", strconv.Itoa(len(r.Matrix.GetMetrics()))).Msg("initialized cache with metrics")
 
+	return nil
+}
+
+func (r *RestPerf) InitQOSLabels() error {
+	if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
+		if qosLabels := r.Params.GetChildS("qos_labels"); qosLabels == nil {
+			return errors.New(errors.MISSING_PARAM, "qos_labels")
+		} else {
+			r.perfProp.qosLabels = make(map[string]string)
+			for _, label := range qosLabels.GetAllChildContentS() {
+
+				display := strings.ReplaceAll(label, "-", "_")
+				before, after, found := strings.Cut(label, "=>")
+				if found {
+					label = strings.TrimSpace(before)
+					display = strings.TrimSpace(after)
+				}
+				r.perfProp.qosLabels[label] = display
+			}
+		}
+	}
 	return nil
 }
 
@@ -243,6 +284,11 @@ func (r *RestPerf) PollCounter() (*matrix.Matrix, error) {
 		m.SetExportable(false)
 	}
 
+	_, err = r.processWorkLoadCounter()
+	if err != nil {
+		return r.Matrix, err
+	}
+
 	return r.Matrix, nil
 }
 
@@ -295,7 +341,7 @@ func parseMetricResponse(instanceData gjson.Result, metric string) *metricRespon
 	return &metricResponse{}
 }
 
-// override counter property
+// GetOverride override counter property
 func (r *RestPerf) GetOverride(counter string) string {
 	if o := r.Params.GetChildS("override"); o != nil {
 		return o.GetChildContentS(counter)
@@ -303,15 +349,102 @@ func (r *RestPerf) GetOverride(counter string) string {
 	return ""
 }
 
+func (r *RestPerf) processWorkLoadCounter() (*matrix.Matrix, error) {
+	var err error
+	// for these two objects, we need to create latency/ops counters for each of the workload layers
+	// their original counters will be discarded
+	if isWorkloadDetailObject(r.Prop.Query) {
+
+		for name, metric := range r.Prop.Metrics {
+			metr, ok := r.Matrix.GetMetrics()[name]
+			if !ok {
+				if metr, err = r.Matrix.NewMetricFloat64(name); err != nil {
+					r.Logger.Error().Err(err).
+						Str("name", name).
+						Msg("NewMetricFloat64")
+				}
+			}
+			metr.SetName(metric.Label)
+			metr.SetExportable(metric.Exportable)
+		}
+
+		var service, wait, visits, ops matrix.Metric
+
+		if service = r.Matrix.GetMetric("service_time"); service == nil {
+			r.Logger.Error().Stack().Msg("metric [service_time] required to calculate workload missing")
+		}
+
+		if wait = r.Matrix.GetMetric("wait_time"); wait == nil {
+			r.Logger.Error().Stack().Msg("metric [wait-time] required to calculate workload missing")
+		}
+
+		if visits = r.Matrix.GetMetric("visits"); visits == nil {
+			r.Logger.Error().Stack().Msg("metric [visits] required to calculate workload missing")
+		}
+
+		if service == nil || wait == nil || visits == nil {
+			return nil, errors.New(errors.MISSING_PARAM, "workload metrics")
+		}
+
+		if ops = r.Matrix.GetMetric("ops"); ops == nil {
+			if ops, err = r.Matrix.NewMetricFloat64("ops"); err != nil {
+				return nil, err
+			}
+			r.perfProp.counterInfo["ops"] = &counter{
+				name:        "ops",
+				description: "",
+				counterType: r.perfProp.counterInfo[visits.GetName()].counterType,
+				unit:        r.perfProp.counterInfo[visits.GetName()].unit,
+				denominator: "",
+			}
+		}
+
+		service.SetExportable(false)
+		wait.SetExportable(false)
+		visits.SetExportable(false)
+
+		if resourceMap := r.Params.GetChildS("resource_map"); resourceMap == nil {
+			return nil, errors.New(errors.MISSING_PARAM, "resource_map")
+		} else {
+			for _, x := range resourceMap.GetChildren() {
+				name := x.GetNameS()
+				resource := x.GetContentS()
+
+				if m := r.Matrix.GetMetric(name); m != nil {
+					continue
+				}
+				if m, err := r.Matrix.NewMetricFloat64(name); err != nil {
+					return nil, err
+				} else {
+					r.perfProp.counterInfo[name] = &counter{
+						name:        "resource_latency",
+						description: "",
+						counterType: r.perfProp.counterInfo[service.GetName()].counterType,
+						unit:        r.perfProp.counterInfo[service.GetName()].unit,
+						denominator: "ops",
+					}
+					m.SetName("resource_latency")
+					m.SetLabel("resource", resource)
+
+					r.Logger.Debug().Str("name", name).Str("resource", resource).Msg("added workload latency metric")
+				}
+			}
+		}
+	}
+	return r.Matrix, nil
+}
+
 func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 
 	var (
-		content      []byte
-		count        uint64
-		apiD, parseD time.Duration
-		startTime    time.Time
-		err          error
-		records      []interface{}
+		content         []byte
+		count           uint64
+		apiD, parseD    time.Duration
+		startTime       time.Time
+		err             error
+		records         []interface{}
+		instanceKeys    []string
+		resourceLatency matrix.Metric // for workload* objects
 	)
 
 	r.Logger.Debug().Msg("updating data cache")
@@ -367,6 +500,19 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 
 	r.Logger.Debug().Str("object", r.Object).Str("records", numRecords.String()).Msg("Extracted records")
 
+	if isWorkloadDetailObject(r.Prop.Query) {
+		if resourceMap := r.Params.GetChildS("resource_map"); resourceMap == nil {
+			return nil, errors.New(errors.MISSING_PARAM, "resource_map")
+		} else {
+			instanceKeys = make([]string, 0)
+			for _, layer := range resourceMap.GetAllChildNamesS() {
+				for key := range r.Matrix.GetInstances() {
+					instanceKeys = append(instanceKeys, key+"."+layer)
+				}
+			}
+		}
+	}
+
 	results[1].ForEach(func(key, instanceData gjson.Result) bool {
 		var (
 			instanceKey string
@@ -389,21 +535,57 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 			}
 		}
 
+		// special case for these two objects
+		// we need to process each latency layer for each instance/counter
+		if isWorkloadDetailObject(r.Prop.Query) {
+
+			layer := "" // latency layer (resource) for workloads
+
+			before, after, found := strings.Cut(instanceKey, ".")
+			if found {
+				instanceKey = before
+				layer = after
+			} else {
+				r.Logger.Warn().
+					Str("key", instanceKey).
+					Msg("Instance key has unexpected format")
+				return true
+			}
+
+			if resourceLatency = newData.GetMetric(layer); resourceLatency == nil {
+				r.Logger.Trace().
+					Str("layer", layer).
+					Msg("Resource-latency metric missing in cache")
+				return true
+			}
+		}
+
 		if r.Params.GetChildContentS("only_cluster_instance") != "true" {
 			if instanceKey == "" {
 				return true
 			}
 		}
 
-		if instance = newData.GetInstance(instanceKey); instance == nil {
-			r.Logger.Debug().
-				Str("key", instanceKey).
-				Msg("Skip instance key, not found in cache")
+		if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
+			instance = newData.GetInstance(strings.Split(instanceKey, ":")[1])
+		} else {
+			instance = newData.GetInstance(instanceKey)
+		}
+
+		if instance == nil {
+			if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
+				r.Logger.Debug().
+					Str("key", instanceKey).
+					Msg("Skip instance key, not found in cache")
+			} else {
+				r.Logger.Warn().
+					Str("key", instanceKey).
+					Msg("Skip instance key, not found in cache")
+			}
 			return true
 		}
 
 		//// add batch timestamp as custom counter
-
 		for label, display := range r.Prop.InstanceLabels {
 			value := parseProperties(instanceData, label)
 			if value.Exists() {
@@ -427,75 +609,100 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 		for name, metric := range r.Prop.Metrics {
 			f := parseMetricResponse(instanceData, name)
 			if f.value != "" {
-				if f.isArray {
-					labels := strings.Split(f.label, ",")
-					values := strings.Split(f.value, ",")
-
-					if len(labels) != len(values) {
-						// warn & skip
-						r.Logger.Warn().
-							Stack().
-							Str("labels", f.label).
-							Str("value", f.value).
-							Msg("labels don't match parsed values")
-						continue
-					}
-
-					for i, label := range labels {
-						k := name + "#" + label
-						metr, ok := newData.GetMetrics()[k]
-						if !ok {
-							if metr, err = newData.NewMetricFloat64(k); err != nil {
-								r.Logger.Error().Err(err).
-									Str("name", k).
-									Msg("NewMetricFloat64")
-								continue
-							}
-							metr.SetName(metric.Label)
-							metr.SetLabel("metric", label)
-							// differentiate between array and normal counter
-							metr.SetArray(true)
-							metr.SetExportable(metric.Exportable)
-						}
-						if err = metr.SetValueString(instance, values[i]); err != nil {
+				// special case for workload_detail
+				if isWorkloadDetailObject(r.Prop.Query) {
+					if name == "wait_time" || name == "service_time" {
+						if err := resourceLatency.AddValueString(instance, f.value); err != nil {
 							r.Logger.Error().
 								Stack().
 								Err(err).
 								Str("name", name).
-								Str("label", label).
-								Str("value", values[i]).
-								Msg("Set value failed")
-							continue
+								Str("value", f.value).
+								Msg("Add resource-latency failed")
 						} else {
 							r.Logger.Trace().
 								Str("name", name).
-								Str("label", label).
-								Str("value", values[i]).
-								Msg("Set name.label = value")
+								Str("value", f.value).
+								Msg("Add resource-latency")
 							count++
 						}
+						continue
+					}
+					// "visits" are ignored. This counter is only used to set properties of ops counter
+					if name == "visits" {
+						continue
 					}
 				} else {
-					metr, ok := newData.GetMetrics()[name]
-					if !ok {
-						if metr, err = newData.NewMetricFloat64(name); err != nil {
-							r.Logger.Error().Err(err).
-								Str("name", name).
-								Msg("NewMetricFloat64")
+					if f.isArray {
+						labels := strings.Split(f.label, ",")
+						values := strings.Split(f.value, ",")
+
+						if len(labels) != len(values) {
+							// warn & skip
+							r.Logger.Warn().
+								Stack().
+								Str("labels", f.label).
+								Str("value", f.value).
+								Msg("labels don't match parsed values")
+							continue
 						}
-					}
-					metr.SetName(metric.Label)
-					metr.SetExportable(metric.Exportable)
-					if c, err := strconv.ParseFloat(f.value, 64); err == nil {
-						if err = metr.SetValueFloat64(instance, c); err != nil {
-							r.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
-								Msg("Unable to set float key on metric")
+
+						for i, label := range labels {
+							k := name + "#" + label
+							metr, ok := newData.GetMetrics()[k]
+							if !ok {
+								if metr, err = newData.NewMetricFloat64(k); err != nil {
+									r.Logger.Error().Err(err).
+										Str("name", k).
+										Msg("NewMetricFloat64")
+									continue
+								}
+								metr.SetName(metric.Label)
+								metr.SetLabel("metric", label)
+								// differentiate between array and normal counter
+								metr.SetArray(true)
+								metr.SetExportable(metric.Exportable)
+							}
+							if err = metr.SetValueString(instance, values[i]); err != nil {
+								r.Logger.Error().
+									Stack().
+									Err(err).
+									Str("name", name).
+									Str("label", label).
+									Str("value", values[i]).
+									Msg("Set value failed")
+								continue
+							} else {
+								r.Logger.Trace().
+									Str("name", name).
+									Str("label", label).
+									Str("value", values[i]).
+									Msg("Set name.label = value")
+								count++
+							}
 						}
 					} else {
-						r.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
-							Msg("Unable to parse float value")
+						metr, ok := newData.GetMetrics()[name]
+						if !ok {
+							if metr, err = newData.NewMetricFloat64(name); err != nil {
+								r.Logger.Error().Err(err).
+									Str("name", name).
+									Msg("NewMetricFloat64")
+							}
+						}
+						metr.SetName(metric.Label)
+						metr.SetExportable(metric.Exportable)
+						if c, err := strconv.ParseFloat(f.value, 64); err == nil {
+							if err = metr.SetValueFloat64(instance, c); err != nil {
+								r.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
+									Msg("Unable to set float key on metric")
+							}
+						} else {
+							r.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
+								Msg("Unable to parse float value")
+						}
+						count++
 					}
-					count++
 				}
 			} else {
 				r.Logger.Warn().Str("counter", name).Msg("Counter is nil. Unable to process. Check template")
@@ -512,6 +719,13 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 		Str("apiTime", apiD.String()).
 		Str("parseTime", parseD.String()).
 		Msg("Collected")
+
+	if isWorkloadDetailObject(r.Prop.Query) {
+		if err := r.getParentOpsCounters(newData); err != nil {
+			// no point to continue as we can't calculate the other counters
+			return nil, err
+		}
+	}
 
 	_ = r.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
 	_ = r.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
@@ -543,8 +757,10 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 		if metric.GetName() != "timestamp" {
 			counter := r.counterLookup(metric, key)
 			if counter != nil {
-				// set metric unit
-				metric.SetLabel("unit", counter.unit)
+				if !isWorkloadDetailObject(r.Prop.Query) {
+					// set metric unit
+					metric.SetLabel("unit", counter.unit)
+				}
 				if counter.denominator == "" {
 					// does not require base counter
 					orderedNonDenominatorMetrics = append(orderedNonDenominatorMetrics, metric)
@@ -684,6 +900,112 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 	return newData, nil
 }
 
+// Poll counter "ops" of the related/parent object, required for objects
+// workload_detail and workload_detail_volume. This counter is already
+// collected by the other collectors, so this poll is redundant
+// (until we implement some sort of inter-collector communication).
+func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
+
+	var (
+		ops    matrix.Metric
+		object string
+		//instanceKeys []string
+		dataQuery string
+		err       error
+		records   []interface{}
+		content   []byte
+	)
+
+	if r.Prop.Query == qosDetailQuery {
+		dataQuery = path.Join(qosQuery, "rows")
+		object = "qos"
+	} else {
+		dataQuery = path.Join(qosVolumeQuery, "rows")
+		object = "qos_volume"
+	}
+
+	if ops = data.GetMetric("ops"); ops == nil {
+		r.Logger.Error().Stack().Err(nil).Msgf("ops counter not found in cache")
+		return errors.New(errors.MISSING_PARAM, "counter ops")
+	}
+
+	//instanceKeys = data.GetInstanceKeys()
+
+	var filter []string
+	filter = append(filter, "counters.name=ops")
+	href := rest.BuildHref(dataQuery, "*", filter, "", "", "", r.Prop.ReturnTimeOut, dataQuery)
+
+	r.Logger.Debug().Str("href", href).Msg("")
+	if href == "" {
+		return errors.New(errors.ERR_CONFIG, "empty url")
+	}
+
+	err = rest.FetchData(r.Client, href, &records)
+	if err != nil {
+		r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
+		return err
+	}
+
+	all := rest.Pagination{
+		Records:    records,
+		NumRecords: len(records),
+	}
+
+	content, err = json.Marshal(all)
+	if err != nil {
+		r.Logger.Error().Err(err).Str("ApiPath", dataQuery).Msg("Unable to marshal rest pagination")
+	}
+
+	if !gjson.ValidBytes(content) {
+		return fmt.Errorf("json is not valid for: %s", dataQuery)
+	}
+
+	results := gjson.GetManyBytes(content, "num_records", "records")
+	numRecords := results[0]
+	if numRecords.Int() == 0 {
+		return errors.New(errors.ERR_NO_INSTANCE, "no "+object+" instances on cluster")
+	}
+
+	r.Logger.Debug().Str("object", r.Object).Str("records", numRecords.String()).Msg("Extracted records")
+
+	results[1].ForEach(func(key, instanceData gjson.Result) bool {
+		var (
+			instanceKey string
+			instance    *matrix.Instance
+		)
+
+		if !instanceData.IsObject() {
+			r.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
+			return true
+		}
+
+		value := parseProperties(instanceData, "name")
+		if value.Exists() {
+			instanceKey += value.String()
+		} else {
+			r.Logger.Warn().Str("key", "name").Msg("skip instance, missing key")
+			return true
+		}
+		instance = data.GetInstance(instanceKey)
+		if instance == nil {
+			r.Logger.Trace().Str("key", key.String()).Msg("skip instance not found in cache")
+			return true
+		}
+
+		counterName := "ops"
+		f := parseMetricResponse(instanceData, counterName)
+		if f.value != "" {
+			if err = ops.SetValueString(instance, f.value); err != nil {
+				r.Logger.Error().Stack().Err(err).Str("metric", counterName).Str("value", value.String()).Msg("set metric")
+			} else {
+				r.Logger.Trace().Msgf("+ metric (%s) = [%s%s%s]", counterName, color.Cyan, value, color.End)
+			}
+		}
+		return true
+	})
+	return nil
+}
+
 func (r *RestPerf) counterLookup(metric matrix.Metric, metricKey string) *counter {
 	var c *counter
 
@@ -723,8 +1045,27 @@ func (r *RestPerf) PollInstance() (*matrix.Matrix, error) {
 	oldSize = oldInstances.Size()
 
 	dataQuery := path.Join(r.Prop.Query, "rows")
+	instanceKeys := r.Prop.InstanceKeys
+	fields := "properties"
+	fields = "*"
+	var filter []string
 
-	href := rest.BuildHref(dataQuery, "properties", nil, "", "", "", r.Prop.ReturnTimeOut, dataQuery)
+	if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
+		dataQuery = qosWorkloadQuery
+		if isWorkloadObject(r.Prop.Query) {
+			instanceKeys = []string{"uuid"}
+		}
+		if isWorkloadDetailObject(r.Prop.Query) {
+			instanceKeys = []string{"name"}
+		}
+		if r.Prop.Query == qosVolumeQuery || r.Prop.Query == qosDetailVolumeQuery {
+			filter = append(filter, "workload-class=autovolume")
+		} else {
+			filter = append(filter, "workload-class=user_defined")
+		}
+	}
+
+	href := rest.BuildHref(dataQuery, fields, filter, "", "", "", r.Prop.ReturnTimeOut, dataQuery)
 
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {
@@ -770,8 +1111,13 @@ func (r *RestPerf) PollInstance() (*matrix.Matrix, error) {
 		}
 
 		// extract instance key(s)
-		for _, k := range r.Prop.InstanceKeys {
-			value := parseProperties(instanceData, k)
+		for _, k := range instanceKeys {
+			var value gjson.Result
+			if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
+				value = instanceData.Get(k)
+			} else {
+				value = parseProperties(instanceData, k)
+			}
 			if value.Exists() {
 				instanceKey += value.String()
 			} else {
@@ -783,15 +1129,25 @@ func (r *RestPerf) PollInstance() (*matrix.Matrix, error) {
 		if oldInstances.Delete(instanceKey) {
 			// instance already in cache
 			r.Logger.Debug().Msgf("updated instance [%s%s%s%s]", color.Bold, color.Yellow, key, color.End)
-		} else if _, err := r.Matrix.NewInstance(instanceKey); err != nil {
+		} else if instance, err := r.Matrix.NewInstance(instanceKey); err != nil {
 			r.Logger.Error().Err(err).Str("Instance key", instanceKey).Msg("add instance")
 		} else {
 			r.Logger.Debug().
 				Str("key", instanceKey).
 				Msg("Added new instance")
+			if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
+				for label, display := range r.perfProp.qosLabels {
+					if value := instanceData.Get(label); value.Exists() {
+						instance.SetLabel(display, value.String())
+					} else {
+						r.Logger.Warn().Str("label", label).Str("instanceKey", instanceKey).Msgf("Missing label")
+
+					}
+				}
+				r.Logger.Debug().Str("query", r.Prop.Query).Str("key", key.String()).Str("qos labels", instance.GetLabels().String()).Msg("")
+			}
 		}
 		return true
-
 	})
 
 	for key := range oldInstances.Iter() {
@@ -810,6 +1166,16 @@ func (r *RestPerf) PollInstance() (*matrix.Matrix, error) {
 	}
 
 	return nil, err
+}
+
+func isWorkloadObject(query string) bool {
+	_, ok := qosQueries[query]
+	return ok
+}
+
+func isWorkloadDetailObject(query string) bool {
+	_, ok := qosDetailQueries[query]
+	return ok
 }
 
 // Interface guards
