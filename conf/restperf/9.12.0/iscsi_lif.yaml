@@ -1,0 +1,29 @@
+name:                     ISCSI
+query:                    api/cluster/counter/tables/iscsi_lif
+object:                   iscsi_lif
+
+counters:
+  - ^^id
+  - ^name                  => lif
+  - ^svm.name              => svm
+  - ^node.name             => node
+  - protocol_errors
+  - read_data
+  - write_data
+  - iscsi_read_ops
+  - average_read_latency
+  - average_write_latency
+  - average_other_latency
+  - iscsi_write_ops
+  - iscsi_other_ops
+  - cmd_transferred
+  - average_latency
+
+override:
+  - cmd_transferred: rate
+
+export_options:
+  instance_keys:
+    - lif
+    - node
+    - svm

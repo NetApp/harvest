@@ -4,8 +4,9 @@ object:                   fcp
 
 counters:
   - ^^id
-  - name                        => port
-  - node.name                   => node
+  - ^name                               => port
+  - ^node.name                          => node
+  - ^link.speed                         => speed
   - average_other_latency
   - average_read_latency
   - average_write_latency
@@ -16,9 +17,8 @@ counters:
   - write_ops
   - other_ops
   - total_ops
-  - link.speed                  => speed
-  - link.down                   => link_down
-  - link.failure                => link_failure
+  - link.down                           => link_down
+  - link.failure                        => link_failure
   - loss_of_signal
   - loss_of_sync
   - primitive_seq_err
@@ -29,9 +29,34 @@ counters:
   - threshold_full
   - discarded_frames_count
   - interrupt_count
-  - invalid.transmission_word   => invalid_transmission_word
-  - isr.count                   => isr_count
-  - invalid.crc                 => invalid_crc
+  - invalid.transmission_word           => invalid_transmission_word
+  - isr.count                           => isr_count
+  - invalid.crc                         => invalid_crc
+  - nvmf.average_other_latency          => nvmf_average_other_latency
+  - nvmf.average_read_latency           => nvmf_average_read_latency
+  - nvmf.average_remote_other_latency   => nvmf_average_read_latency
+  - nvmf.average_remote_read_latency    => nvmf_average_read_latency
+  - nvmf.average_remote_write_latency   => nvmf_average_read_latency
+  - nvmf.average_write_latency          => nvmf_average_read_latency
+  - nvmf.caw_data                       => nvmf_caw_data
+  - nvmf.caw_ops                        => nvmf_caw_ops
+  - nvmf.command_slots                  => nvmf_command_slots
+  - nvmf.other_ops                      => nvmf_other_ops
+  - nvmf.read_data                      => nvmf_read_data
+  - nvmf.read_ops                       => nvmf_read_ops
+  - nvmf_remote.caw_data                => nvmf_remote_caw_data
+  - nvmf_remote.caw_ops                 => nvmf_remote_caw_ops
+  - nvmf_remote.other_ops               => nvmf_remote_other_ops
+  - nvmf_remote.read_data               => nvmf_remote_read_data
+  - nvmf_remote.read_ops                => nvmf_remote_read_ops
+  - nvmf_remote.total_data              => nvmf_remote_total_data
+  - nvmf.remote_total_ops               => nvmf_remote_total_ops    #revisit naming convention is not matching
+  - nvmf_remote.write_data              => nvmf_remote_write_data
+  - nvmf_remote.write_ops               => nvmf_remote_write_ops
+  - nvmf.total_data                     => nvmf_total_data
+  - nvmf.total_ops                      => nvmf_total_ops
+  - nvmf.write_data                     => nvmf_write_data
+  - nvmf.write_ops                      => nvmf_write_ops
 
 override:
   - link.speed: string

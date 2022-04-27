@@ -1,0 +1,41 @@
+name:                     NicCommon
+query:                    api/cluster/counter/tables/nic_common
+object:                   nic
+
+counters:
+  - ^^id
+  - ^node.name              => node
+  - ^link_speed             => speed
+  - ^link_current_state     => state
+  - ^link_up_to_downs
+  - ^type
+  - receive_bytes
+  - transmit_bytes
+  - receive_alignment_errors
+  - receive_crc_errors
+  - receive_length_errors
+  - receive_total_errors
+  - receive_errors
+  - transmit_errors
+  - transmit_hw_errors
+  - transmit_total_errors
+
+override:
+  - link_speed: string
+
+plugins:
+#  - Nic
+  - LabelAgent:
+    # metric label zapi_value rest_value `default_value`
+    value_to_num:
+      - new_status state up up `0`
+
+export_options:
+  instance_keys:
+    - node
+    - nic
+  instance_labels:
+    - speed
+    - state
+    - type
+
