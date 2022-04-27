@@ -87,4 +87,6 @@ export_options:
     - iscsi_authentication_type
     - iscsi_service_enabled
     - nis_authentication_enabled
+    - ns_source
+    - ns_db
 

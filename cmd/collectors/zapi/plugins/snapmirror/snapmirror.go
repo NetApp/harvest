@@ -4,6 +4,7 @@
 package snapmirror
 
 import (
+	"goharvest2/cmd/collectors"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/pkg/api/ontapi/zapi"
 	"goharvest2/pkg/conf"
@@ -91,7 +92,7 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			}
 
 			// update the protectedBy and protectionSourceType fields and derivedRelationshipType in snapmirror_labels
-			my.updateProtectedFields(instance)
+			collectors.UpdateProtectedFields(instance)
 		} else {
 			// 7 Mode
 			// source / destination nodes can be something like:
@@ -208,59 +209,4 @@ func (my *SnapMirror) updateLimitCache() error {
 	}
 	my.Logger.Debug().Msgf("updated limit cache for %d nodes", count)
 	return nil
-}
-
-func (my *SnapMirror) updateProtectedFields(instance *matrix.Instance) {
-
-	// check for group_type
-	if instance.GetLabel("group_type") != "" {
-		groupType := instance.GetLabel("group_type")
-		destinationVolume := instance.GetLabel("destination_volume")
-		sourceVolume := instance.GetLabel("source_volume")
-		destinationLocation := instance.GetLabel("destination_location")
-
-		isSvmDr := groupType == "vserver" && destinationVolume == "" && sourceVolume == ""
-		isCg := groupType == "CONSISTENCYGROUP" && strings.Contains(destinationLocation, ":/cg/")
-		isConstituentVolumeRelationshipWithinSvmDr := groupType == "vserver" && !strings.HasSuffix(destinationLocation, ":")
-		isConstituentVolumeRelationshipWithinCG := groupType == "CONSISTENCYGROUP" && !strings.Contains(destinationLocation, ":/cg/")
-
-		// Update protectedBy field
-		if isSvmDr || isConstituentVolumeRelationshipWithinSvmDr {
-			instance.SetLabel("protectedBy", "storage_vm")
-		} else if isCg || isConstituentVolumeRelationshipWithinCG {
-			instance.SetLabel("protectedBy", "cg")
-		} else {
-			instance.SetLabel("protectedBy", "volume")
-		}
-
-		// SVM-DR related information is populated
-		// Update protectionSourceType field
-		if isSvmDr {
-			instance.SetLabel("protectionSourceType", "storage_vm")
-		} else if isCg {
-			instance.SetLabel("protectionSourceType", "cg")
-		} else if isConstituentVolumeRelationshipWithinSvmDr || isConstituentVolumeRelationshipWithinCG || groupType == "none" || groupType == "flexgroup" {
-			instance.SetLabel("protectionSourceType", "volume")
-		} else {
-			instance.SetLabel("protectionSourceType", "not_mapped")
-		}
-	}
-
-	// Update derived_relationship_type field based on the policyType
-	relationshipType := instance.GetLabel("relationship_type")
-	if policyType := instance.GetLabel("policy_type"); policyType != "" {
-		if policyType == "strict_sync_mirror" {
-			instance.SetLabel("derived_relationship_type", "sync_mirror_strict")
-		} else if policyType == "sync_mirror" {
-			instance.SetLabel("derived_relationship_type", "sync_mirror")
-		} else if policyType == "mirror_vault" {
-			instance.SetLabel("derived_relationship_type", "mirror_vault")
-		} else if policyType == "automated_failover" {
-			instance.SetLabel("derived_relationship_type", "sync_mirror")
-		} else {
-			instance.SetLabel("derived_relationship_type", relationshipType)
-		}
-	} else {
-		instance.SetLabel("derived_relationship_type", relationshipType)
-	}
 }

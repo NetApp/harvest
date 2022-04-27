@@ -5,7 +5,7 @@ package snapmirror
 
 import (
 	"github.com/tidwall/gjson"
-	"goharvest2/cmd/collectors/rest/plugins"
+	"goharvest2/cmd/collectors"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/cmd/tools/rest"
 	"goharvest2/pkg/conf"
@@ -81,7 +81,7 @@ func (my *SnapMirror) updateNodeCache() error {
 	my.svmVolToNode = make(map[string]string)
 	href := rest.BuildHref("", "node", nil, "", "", "", "", my.query)
 
-	if result, err = plugins.InvokeRestCall(my.client, my.query, href, my.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(my.client, my.query, href, my.Logger); err != nil {
 		return err
 	}
 
@@ -110,6 +110,6 @@ func (my *SnapMirror) updateSMLabels(data *matrix.Matrix) {
 		}
 
 		// update the protectedBy and protectionSourceType fields and derivedRelationshipType in snapmirror_labels
-		plugins.UpdateProtectedFields(instance)
+		collectors.UpdateProtectedFields(instance)
 	}
 }

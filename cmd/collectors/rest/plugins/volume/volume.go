@@ -6,20 +6,19 @@ package volume
 
 import (
 	"github.com/tidwall/gjson"
-	"goharvest2/cmd/collectors/rest/plugins"
+	"goharvest2/cmd/collectors"
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/cmd/tools/rest"
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/dict"
 	"goharvest2/pkg/matrix"
-	"goharvest2/pkg/tree/node"
 	"strconv"
 	"strings"
 	"time"
 )
 
-const DefaultPluginDuration = 1800 * time.Second
-const DefaultDataPollDuration = 180 * time.Second
+const DefaultPluginDuration = 30 * time.Minute
+const DefaultDataPollDuration = 3 * time.Minute
 
 type Volume struct {
 	*plugin.AbstractPlugin
@@ -70,7 +69,7 @@ func (my *Volume) Init() error {
 	my.aggrsMap = make(map[string]string)
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
-	if my.currentVal, err = my.setPluginInterval(); err != nil {
+	if my.currentVal, err = collectors.SetPluginInterval(my.ParentParams, my.Params, my.Logger, DefaultDataPollDuration, DefaultPluginDuration); err != nil {
 		my.Logger.Error().Err(err).Stack().Msg("Failed while setting the plugin interval")
 		return err
 	}
@@ -114,31 +113,6 @@ func (my *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	return nil, nil
 }
 
-func (my *Volume) setPluginInterval() (int, error) {
-
-	volumeDataInterval := my.getDataInterval(my.ParentParams, DefaultDataPollDuration)
-	pluginDataInterval := my.getDataInterval(my.Params, DefaultPluginDuration)
-	my.Logger.Debug().Float64("VolumeDataInterval", volumeDataInterval).Float64("PluginDataInterval", pluginDataInterval).Msg("Poll interval duration")
-	my.pluginInvocationRate = int(pluginDataInterval / volumeDataInterval)
-
-	return my.pluginInvocationRate, nil
-}
-
-func (my *Volume) getDataInterval(param *node.Node, defaultInterval time.Duration) float64 {
-	var dataIntervalStr = ""
-	schedule := param.GetChildS("schedule")
-	if schedule != nil {
-		dataInterval := schedule.GetChildS("data")
-		if dataInterval != nil {
-			dataIntervalStr = dataInterval.GetContentS()
-			if durationVal, err := time.ParseDuration(dataIntervalStr); err == nil {
-				return durationVal.Seconds()
-			}
-		}
-	}
-	return defaultInterval.Seconds()
-}
-
 func (my *Volume) GetSnapMirrors() (map[string][]*matrix.Instance, map[string]*matrix.Instance, error) {
 	var (
 		result []gjson.Result
@@ -151,7 +125,7 @@ func (my *Volume) GetSnapMirrors() (map[string][]*matrix.Instance, map[string]*m
 	snapmirrorData := matrix.New(my.Parent+".SnapMirror", "sm", "sm")
 	href := rest.BuildHref("", strings.Join(my.snapmirrorFields, ","), nil, "", "", "", "", my.query)
 
-	if result, err = plugins.InvokeRestCall(my.client, my.query, href, my.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(my.client, my.query, href, my.Logger); err != nil {
 		return nil, nil, err
 	}
 
@@ -186,7 +160,7 @@ func (my *Volume) GetSnapMirrors() (map[string][]*matrix.Instance, map[string]*m
 		instance.SetLabel("destination_svm", destinationSvm)
 
 		// Update the protectedBy and protectionSourceType fields in snapmirror
-		plugins.UpdateProtectedFields(instance)
+		collectors.UpdateProtectedFields(instance)
 
 		// Update source snapmirror and destination snapmirror info in maps
 		if relationshipType == "data_protection" || relationshipType == "extended_data_protection" || relationshipType == "vault" || relationshipType == "xdp" {
@@ -307,7 +281,7 @@ func (my *Volume) getDiskData() ([]gjson.Result, error) {
 	query := "api/storage/disks"
 	href := rest.BuildHref("", strings.Join(diskFields, ","), []string{"protection_mode=!data|full"}, "", "", "", "", query)
 
-	if result, err = plugins.InvokeRestCall(my.client, query, href, my.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(my.client, query, href, my.Logger); err != nil {
 		return nil, err
 	}
 	return result, nil

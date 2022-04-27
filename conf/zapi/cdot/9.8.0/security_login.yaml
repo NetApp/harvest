@@ -1,0 +1,17 @@
+
+name:       SecurityLogin
+query:      vserver-login-banner-get-iter
+object:     security_login
+
+counters:
+  vserver-login-banner-info:
+    - ^^vserver      => svm
+    - ^message       => banner
+
+collect_only_labels: true
+
+export_options:
+  instance_keys:
+    - svm
+  instance_labels:
+    - banner

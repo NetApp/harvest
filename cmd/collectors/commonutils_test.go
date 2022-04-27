@@ -1,4 +1,4 @@
-package plugins
+package collectors
 
 import (
 	"goharvest2/pkg/matrix"

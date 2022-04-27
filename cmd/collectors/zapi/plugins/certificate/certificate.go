@@ -7,19 +7,21 @@ package certificate
 import (
 	"crypto/x509"
 	"encoding/pem"
-	"github.com/tidwall/gjson"
 	"goharvest2/cmd/collectors"
 	"goharvest2/cmd/poller/plugin"
-	"goharvest2/cmd/tools/rest"
+	"goharvest2/pkg/api/ontapi/zapi"
 	"goharvest2/pkg/conf"
 	"goharvest2/pkg/dict"
+	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
 	"goharvest2/pkg/tree/node"
+	"strconv"
 	"time"
 )
 
 const DefaultPluginDuration = 30 * time.Minute
 const DefaultDataPollDuration = 3 * time.Minute
+const BatchSize = "500"
 
 type Certificate struct {
 	*plugin.AbstractPlugin
@@ -28,7 +30,8 @@ type Certificate struct {
 	instanceLabels       map[string]*dict.Dict
 	pluginInvocationRate int
 	currentVal           int
-	client               *rest.Client
+	batchSize            string
+	client               *zapi.Client
 	query                string
 }
 
@@ -44,8 +47,7 @@ func (my *Certificate) Init() error {
 		return err
 	}
 
-	timeout := rest.DefaultTimeout * time.Second
-	if my.client, err = rest.New(conf.ZapiPoller(my.ParentParams), timeout); err != nil {
+	if my.client, err = zapi.New(conf.ZapiPoller(my.ParentParams)); err != nil {
 		my.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
 	}
@@ -55,9 +57,19 @@ func (my *Certificate) Init() error {
 	}
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
-	if my.currentVal, err = my.setPluginInterval(); err != nil {
+	if my.currentVal, err = collectors.SetPluginInterval(my.ParentParams, my.Params, my.Logger, DefaultDataPollDuration, DefaultPluginDuration); err != nil {
 		my.Logger.Error().Err(err).Stack().Msg("Failed while setting the plugin interval")
 		return err
+	}
+
+	if b := my.Params.GetChildContentS("batch_size"); b != "" {
+		if _, err := strconv.Atoi(b); err == nil {
+			my.batchSize = b
+			my.Logger.Info().Str("BatchSize", my.batchSize).Msg("using batch-size")
+		}
+	} else {
+		my.batchSize = BatchSize
+		my.Logger.Trace().Str("BatchSize", BatchSize).Msg("Using default batch-size")
 	}
 
 	return nil
@@ -74,13 +86,13 @@ func (my *Certificate) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	if my.currentVal >= my.pluginInvocationRate {
 		my.currentVal = 0
 
-		// invoke private vserver cli rest and get admin vserver name
+		// invoke vserver-get-iter zapi and get admin vserver name
 		if adminVserver, err = my.GetAdminVserver(); err != nil {
 			my.Logger.Warn().Stack().Err(err).Msg("Failed to collect admin vserver")
 			return nil, nil
 		}
 
-		// invoke private ssl cli rest and get admin vserver's serial number
+		// invoke security-ssl-get-iter zapi and get admin vserver's serial number
 		if adminVserverSerial, err = my.GetSecuritySsl(adminVserver); err != nil {
 			my.Logger.Warn().Stack().Err(err).Msg("Failed to collect admin vserver's serial number")
 			return nil, nil
@@ -151,7 +163,7 @@ func (my *Certificate) setCertificateValidity(data *matrix.Matrix, instance *mat
 
 	instance.SetLabel("certificateExpiryStatus", "unknown")
 
-	if expiryTimeMetric = data.GetMetric("expiry_time"); expiryTimeMetric == nil {
+	if expiryTimeMetric = data.GetMetric("certificate-info.expiration-date"); expiryTimeMetric == nil {
 		my.Logger.Error().Stack().Msg("missing expiry time metric")
 		return
 	}
@@ -175,74 +187,60 @@ func (my *Certificate) setCertificateValidity(data *matrix.Matrix, instance *mat
 
 }
 
-func (my *Certificate) setPluginInterval() (int, error) {
-
-	volumeDataInterval := my.getDataInterval(my.ParentParams, DefaultDataPollDuration)
-	pluginDataInterval := my.getDataInterval(my.Params, DefaultPluginDuration)
-	my.Logger.Debug().Float64("VolumeDataInterval", volumeDataInterval).Float64("PluginDataInterval", pluginDataInterval).Msg("Poll intervals in seconds")
-	my.pluginInvocationRate = int(pluginDataInterval / volumeDataInterval)
-
-	return my.pluginInvocationRate, nil
-}
-
-func (my *Certificate) getDataInterval(param *node.Node, defaultInterval time.Duration) float64 {
-	var dataIntervalStr = ""
-	schedule := param.GetChildS("schedule")
-	if schedule != nil {
-		dataInterval := schedule.GetChildS("data")
-		if dataInterval != nil {
-			dataIntervalStr = dataInterval.GetContentS()
-			if durationVal, err := time.ParseDuration(dataIntervalStr); err == nil {
-				return durationVal.Seconds()
-			} else {
-				my.Logger.Error().Stack().Err(err).Str("dataInterval", dataIntervalStr).Msg("Failed to parse duration")
-			}
-		}
-	}
-	return defaultInterval.Seconds()
-}
-
 func (my *Certificate) GetAdminVserver() (string, error) {
-
 	var (
-		result       []gjson.Result
+		result       []*node.Node
+		request      *node.Node
 		err          error
 		adminVserver string
 	)
 
-	query := "api/private/cli/vserver"
-	href := rest.BuildHref("", "type", []string{"type=admin"}, "", "", "", "", query)
+	request = node.NewXmlS("vserver-get-iter")
+	request.NewChildS("max-records", my.batchSize)
+	// Fetching only admin vserver
+	query := request.NewChildS("query", "")
+	vserverInfo := query.NewChildS("vserver-info", "")
+	vserverInfo.NewChildS("vserver-type", "admin")
 
-	if result, err = collectors.InvokeRestCall(my.client, query, href, my.Logger); err != nil {
+	if result, _, err = collectors.InvokeZapiCall(my.client, request, my.Logger, ""); err != nil {
 		return "", err
 	}
 
+	if len(result) == 0 || result == nil {
+		return "", errors.New(errors.ERR_NO_INSTANCE, "no records found")
+	}
 	// This should be one iteration only as cluster can have one admin vserver
 	for _, svm := range result {
-		adminVserver = svm.Get("vserver").String()
+		adminVserver = svm.GetChildContentS("vserver-name")
 	}
 	return adminVserver, nil
 }
 
 func (my *Certificate) GetSecuritySsl(adminSvm string) (string, error) {
-
 	var (
-		result      []gjson.Result
-		err         error
-		adminSerial string
+		result            []*node.Node
+		request           *node.Node
+		err               error
+		certificateSerial string
 	)
 
-	query := "api/private/cli/security/ssl"
-	href := rest.BuildHref("", "serial", []string{"vserver=" + adminSvm}, "", "", "", "", query)
+	request = node.NewXmlS("security-ssl-get-iter")
+	request.NewChildS("max-records", my.batchSize)
+	// Fetching only admin vserver
+	query := request.NewChildS("query", "")
+	vserverInfo := query.NewChildS("vserver-ssl-info", "")
+	vserverInfo.NewChildS("vserver", adminSvm)
 
-	if result, err = collectors.InvokeRestCall(my.client, query, href, my.Logger); err != nil {
+	if result, _, err = collectors.InvokeZapiCall(my.client, request, my.Logger, ""); err != nil {
 		return "", err
 	}
 
+	if len(result) == 0 || result == nil {
+		return "", errors.New(errors.ERR_NO_INSTANCE, "no records found")
+	}
 	// This should be one iteration only as cluster can have one admin vserver
 	for _, ssl := range result {
-		adminSerial = ssl.Get("serial").String()
+		certificateSerial = ssl.GetChildContentS("certificate-serial-number")
 	}
-
-	return adminSerial, nil
+	return certificateSerial, nil
 }
