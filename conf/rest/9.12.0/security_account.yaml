@@ -15,11 +15,11 @@ counters:
 plugins:
   - LabelAgent:
       value_to_num_regex:
-        - samluser methods .*online.*$ .*saml.*$ `0`
-        - ldapuser methods .*online.*$ .*nsswitch.*$ `0`
-        - certificateuser methods .*online.*$ .*certificate.*$ `0`
-        - localuser methods .*online.*$ .*password.*$ `0`
-        - activediruser methods .*online.*$ .*domain.*$ `0`
+        - samluser methods .*saml.*$ .*saml.*$ `0`
+        - ldapuser methods .*nsswitch.*$ .*nsswitch.*$ `0`
+        - certificateuser methods .*cert.*$ .*certificate.*$ `0`
+        - localuser methods .*password.*$ .*password.*$ `0`
+        - activediruser methods .*domain.*$ .*domain.*$ `0`
 
 export_options:
   instance_keys:
