@@ -24,6 +24,21 @@ counters:
 
 plugins:
   - Volume
+#  - LabelAgent:
+#      # To prevent visibility of transient volumes, uncomment the following lines
+#      exclude_regex:
+#        # Exclude SnapProtect/CommVault Intellisnap, Clone volumes have a “_CVclone” suffix
+#        - volume `.+_CVclone`
+#        # Exclude SnapCenter, Clone volumes have a “DDMMYYhhmmss” suffix
+#        - volume `.+(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[012])\d\d[0-9]{6}`
+#        # Exclude manually created SnapCreator clones, Clone volumes have a “cl_” prefix and a “_YYYYMMDDhhmmss” suffix
+#        - volume `cl_.+_(19|20)\d\d(0[1-9]|1[012])( 0[1-9]|[12][0-9]|3[01])[0-9]{6}`
+#        # Exclude SnapDrive/SnapManager, Clone volumes have a “sdw_cl_” prefix
+#        - volume `sdw_cl_.+`
+#        # Exclude Metadata volumes, CRS volumes in SVM-DR or MetroCluster have a “MDV_CRS_” prefix
+#        - volume `MDV_CRS_.+`
+#        # Exclude Metadata volumes, Audit volumes have a “MDV_aud_” prefix
+#        - volume `MDV_aud_.+`
 
 export_options:
   instance_keys:
