@@ -196,6 +196,11 @@ func (my *Volume) GetSnapMirrors() (map[string][]*matrix.Instance, map[string]*m
 				smDestinationMap[destinationKey] = instance
 			}
 		}
+
+		// To break the batch zapi call when all the records were fetched.
+		if tag == "" {
+			break
+		}
 	}
 
 	return smSourceMap, smDestinationMap, nil
