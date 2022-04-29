@@ -43,8 +43,8 @@ func GetCounterMap() map[string][]string {
 	counterMap["NO_DATA_CONTAINS"] = append(counterMap["NO_DATA_CONTAINS"], "poller", "metadata_exporter_count")
 	//}
 
-	// TODO: counter related to security dashboard, we need to remove this temporary exception list
-	//counterMap["NO_DATA_CONTAINS"] = append(counterMap["NO_DATA_CONTAINS"], "support", "security", "ntpserver", "svm", "cluster_peer")
+	// CI clusters don't have cluster peer and svm ldap/vscan metrics, security_login metrics
+	counterMap["NO_DATA_CONTAINS"] = append(counterMap["NO_DATA_CONTAINS"], "cluster_peer", "svm_ldap", "svm_vscan")
 
 	return counterMap
 }
