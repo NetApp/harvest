@@ -111,7 +111,7 @@ type AbstractPlugin struct {
 // @o		- poller options
 // @p		- plugin parameters
 // @pp		- parent collector parameters
-// @object		- object name
+// @object	- object name
 func New(parent string, o *options.Options, p *node.Node, pp *node.Node, object string) *AbstractPlugin {
 	pl := AbstractPlugin{Parent: parent, Options: o, Params: p, ParentParams: pp, Object: object}
 	return &pl
