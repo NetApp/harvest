@@ -44,7 +44,7 @@ func GetCounterMap() map[string][]string {
 	//}
 
 	// TODO: counter related to security dashboard, we need to remove this temporary exception list
-	counterMap["NO_DATA_CONTAINS"] = append(counterMap["NO_DATA_CONTAINS"], "support", "security", "ntpserver", "svm", "cluster_peer")
+	//counterMap["NO_DATA_CONTAINS"] = append(counterMap["NO_DATA_CONTAINS"], "support", "security", "ntpserver", "svm", "cluster_peer")
 
 	return counterMap
 }
