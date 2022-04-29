@@ -78,15 +78,6 @@ func Get() *Logger {
 }
 
 // SubLogger adds the field key with val as a string to the logger context and returns sublogger
-func SubLogger(key string, value string) *Logger {
-	logger := Get().With().Str(key, value).Logger()
-	subLogger := &Logger{
-		Logger: &logger,
-	}
-	return subLogger
-}
-
-// SubLogger adds the field key with val as a string to the logger context and returns sublogger
 func (l *Logger) SubLogger(key string, value string) *Logger {
 	if l != nil {
 		logger := l.With().Str(key, value).Logger()

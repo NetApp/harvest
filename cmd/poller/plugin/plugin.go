@@ -136,7 +136,7 @@ func (p *AbstractPlugin) InitAbc() error {
 	if p.Name = p.Params.GetNameS(); p.Name == "" {
 		return errors.New(errors.MISSING_PARAM, "plugin name")
 	}
-	p.Logger = logging.SubLogger("plugin", p.Parent+":"+p.Name).SubLogger("object", p.Object)
+	p.Logger = logging.Get().SubLogger("plugin", p.Parent+":"+p.Name).SubLogger("object", p.Object)
 
 	return nil
 }

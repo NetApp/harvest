@@ -53,7 +53,7 @@ func New(poller conf.Poller) (*Client, error) {
 	)
 
 	client = Client{}
-	client.Logger = logging.SubLogger("Zapi", "Client")
+	client.Logger = logging.Get().SubLogger("Zapi", "Client")
 
 	// check required & optional parameters
 	if client.apiVersion = poller.ApiVersion; client.apiVersion == "" {

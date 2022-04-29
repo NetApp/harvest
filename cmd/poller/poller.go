@@ -146,13 +146,13 @@ func (p *Poller) Init() error {
 	if err != nil {
 		// separate logger is not yet configured as it depends on setting logMaxMegaBytes, logMaxFiles later
 		// Using default instance of logger which logs below error to harvest.log
-		logging.SubLogger("Poller", p.name).Error().
+		logging.Get().SubLogger("Poller", p.name).Error().
 			Str("config", p.options.Config).Err(err).Msg("Unable to read config")
 		return err
 	}
 	p.params, err = conf.PollerNamed(p.name)
 	if err != nil {
-		logging.SubLogger("Poller", p.name).Error().
+		logging.Get().SubLogger("Poller", p.name).Error().
 			Str("config", p.options.Config).Err(err).Msg("Failed to find poller")
 		return err
 	}
