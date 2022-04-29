@@ -19,7 +19,7 @@ func TestInitPlugin(t *testing.T) {
 	params := node.NewS("Aggregator")
 	params.NewChildS("", "node")
 
-	abc := plugin.New("Test", nil, params, nil)
+	abc := plugin.New("Test", nil, params, nil, "")
 	p = &Aggregator{AbstractPlugin: abc}
 
 	if err := p.Init(); err != nil {

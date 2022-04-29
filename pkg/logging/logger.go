@@ -86,6 +86,18 @@ func SubLogger(key string, value string) *Logger {
 	return subLogger
 }
 
+// SubLogger adds the field key with val as a string to the logger context and returns sublogger
+func (l *Logger) SubLogger(key string, value string) *Logger {
+	if l != nil {
+		logger := l.With().Str(key, value).Logger()
+		subLogger := &Logger{
+			Logger: &logger,
+		}
+		return subLogger
+	}
+	return l
+}
+
 // Configure sets up the logging framework
 func Configure(config LogConfig) *Logger {
 	var writers []io.Writer
