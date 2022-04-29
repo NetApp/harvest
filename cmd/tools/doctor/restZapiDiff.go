@@ -109,7 +109,6 @@ func metricValueDiff(metricName string) {
 	zapiMetric := make(map[string]float64)
 	restMetric := make(map[string]float64)
 	results := make([]gjson.Result, 0)
-
 	keyIndexes := make([]int, 0)
 
 	if strings.HasPrefix(metricName, "disk_") {
@@ -132,10 +131,7 @@ func metricValueDiff(metricName string) {
 		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.qtree")
 		keyIndexes = []int{2}
 	}
-	if strings.HasPrefix(metricName, "environment_sensor_") {
-		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.sensor", "data.result.#.metric.node")
-		keyIndexes = []int{2, 3}
-	}
+
 	if strings.HasPrefix(metricName, "shelf_") {
 		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.shelf")
 		keyIndexes = []int{2}
