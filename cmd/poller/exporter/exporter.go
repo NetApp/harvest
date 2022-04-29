@@ -64,7 +64,7 @@ func New(c, n string, o *options.Options, p conf.Exporter) *AbstractExporter {
 		Name:     n,
 		Options:  o,
 		Params:   p,
-		Logger:   logging.SubLogger("exporter", n),
+		Logger:   logging.Get().SubLogger("exporter", n),
 		Mutex:    &sync.Mutex{},
 		countMux: &sync.Mutex{},
 	}

@@ -55,7 +55,7 @@ func New(poller conf.Poller, timeout time.Duration) (*Client, error) {
 	)
 
 	client = Client{}
-	client.Logger = logging.SubLogger("REST", "Client")
+	client.Logger = logging.Get().SubLogger("REST", "Client")
 
 	if addr = poller.Addr; addr == "" {
 		return nil, errors.New(errors.MISSING_PARAM, "addr")

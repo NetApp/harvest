@@ -33,7 +33,7 @@ func TestMultipleRule(t *testing.T) {
 					params1.NewChildS("", x2.GetContentS())
 				}
 			}
-			abc := plugin.New("Test", nil, params, nil)
+			abc := plugin.New("Test", nil, params, nil, "")
 			lb = &label_agent.LabelAgent{AbstractPlugin: abc}
 			if err := lb.Init(); err != nil {
 				t.Fatal(err)
@@ -46,7 +46,7 @@ func TestMultipleRule(t *testing.T) {
 			for _, x1 := range x.GetChildren() {
 				params.NewChildS("", x1.GetContentS())
 			}
-			abc := plugin.New("Test", nil, params, nil)
+			abc := plugin.New("Test", nil, params, nil, "")
 			ag := &aggregator.Aggregator{AbstractPlugin: abc}
 
 			if err := ag.Init(); err != nil {

@@ -108,7 +108,7 @@ func New(name, object string, options *options.Options, params *node.Node) *Abst
 		Name:     name,
 		Object:   object,
 		Options:  options,
-		Logger:   logging.SubLogger("collector", name+":"+object),
+		Logger:   logging.Get().SubLogger("collector", name+":"+object),
 		Params:   params,
 		countMux: &sync.Mutex{},
 	}
@@ -530,7 +530,7 @@ func (me *AbstractCollector) LoadPlugins(params *node.Node, c Collector) error {
 			x.SetNameS(name)
 		}
 
-		abc = plugin.New(me.Name, me.Options, x, me.Params)
+		abc = plugin.New(me.Name, me.Options, x, me.Params, me.Object)
 
 		// case 1: available as built-in plugin
 		if p = getBuiltinPlugin(name, abc); p != nil {

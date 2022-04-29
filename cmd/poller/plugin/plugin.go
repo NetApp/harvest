@@ -99,6 +99,7 @@ type ModuleInfo struct {
 type AbstractPlugin struct {
 	Parent       string
 	Name         string
+	Object       string          // object of the collector, describes what that collector is collecting
 	Logger       *logging.Logger // logger used for logging
 	Options      *options.Options
 	Params       *node.Node
@@ -110,8 +111,9 @@ type AbstractPlugin struct {
 // @o		- poller options
 // @p		- plugin parameters
 // @pp		- parent collector parameters
-func New(parent string, o *options.Options, p *node.Node, pp *node.Node) *AbstractPlugin {
-	pl := AbstractPlugin{Parent: parent, Options: o, Params: p, ParentParams: pp}
+// @object	- object name
+func New(parent string, o *options.Options, p *node.Node, pp *node.Node, object string) *AbstractPlugin {
+	pl := AbstractPlugin{Parent: parent, Options: o, Params: p, ParentParams: pp, Object: object}
 	return &pl
 }
 
@@ -134,7 +136,7 @@ func (p *AbstractPlugin) InitAbc() error {
 	if p.Name = p.Params.GetNameS(); p.Name == "" {
 		return errors.New(errors.MISSING_PARAM, "plugin name")
 	}
-	p.Logger = logging.SubLogger("plugin", p.Parent+":"+p.Name)
+	p.Logger = logging.Get().SubLogger("plugin", p.Parent+":"+p.Name).SubLogger("object", p.Object)
 
 	return nil
 }
