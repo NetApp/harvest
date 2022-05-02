@@ -109,6 +109,7 @@ func metricValueDiff(metricName string) {
 	zapiMetric := make(map[string]float64)
 	restMetric := make(map[string]float64)
 	results := make([]gjson.Result, 0)
+	
 	keyIndexes := make([]int, 0)
 
 	if strings.HasPrefix(metricName, "disk_") {
