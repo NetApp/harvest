@@ -24,18 +24,13 @@ type Sensor struct {
 }
 
 type sensorEnvironmentMetric struct {
-	key                   sensorKey
+	key                   string
 	ambientTemperature    []float64
 	nonAmbientTemperature []float64
 	fanSpeed              []float64
 	powerSensor           map[string]*sensorValue
 	voltageSensor         map[string]*sensorValue
 	currentSensor         map[string]*sensorValue
-}
-
-type sensorKey struct {
-	node   string
-	sensor string
 }
 
 type sensorValue struct {
@@ -86,7 +81,7 @@ func (my *Sensor) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 }
 
 func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Matrix, error) {
-	sensorEnvironmentMetricMap := make(map[sensorKey]*sensorEnvironmentMetric)
+	sensorEnvironmentMetricMap := make(map[string]*sensorEnvironmentMetric)
 
 	for k, instance := range data.GetInstances() {
 		iKey := instance.GetLabel("node")
@@ -100,9 +95,8 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 			my.Logger.Warn().Str("key", iKey+".").Msg("missing instance key")
 			continue
 		}
-		nodeSensorKey := sensorKey{node: iKey, sensor: iKey2}
-		if _, ok := sensorEnvironmentMetricMap[nodeSensorKey]; !ok {
-			sensorEnvironmentMetricMap[nodeSensorKey] = &sensorEnvironmentMetric{key: nodeSensorKey, ambientTemperature: []float64{}, nonAmbientTemperature: []float64{}, fanSpeed: []float64{}}
+		if _, ok := sensorEnvironmentMetricMap[iKey]; !ok {
+			sensorEnvironmentMetricMap[iKey] = &sensorEnvironmentMetric{key: iKey, ambientTemperature: []float64{}, nonAmbientTemperature: []float64{}, fanSpeed: []float64{}}
 		}
 		for mKey, metric := range data.GetMetrics() {
 			if mKey == "environment-sensors-info.threshold-sensor-value" {
@@ -125,46 +119,46 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 
 				if sensorType == "thermal" && isAmbientMatch {
 					if value, ok := metric.GetValueFloat64(instance); ok {
-						sensorEnvironmentMetricMap[nodeSensorKey].ambientTemperature = append(sensorEnvironmentMetricMap[nodeSensorKey].ambientTemperature, value)
+						sensorEnvironmentMetricMap[iKey].ambientTemperature = append(sensorEnvironmentMetricMap[iKey].ambientTemperature, value)
 					}
 				}
 
 				if sensorType == "thermal" && !isAmbientMatch {
 					if value, ok := metric.GetValueFloat64(instance); ok {
-						sensorEnvironmentMetricMap[nodeSensorKey].nonAmbientTemperature = append(sensorEnvironmentMetricMap[nodeSensorKey].nonAmbientTemperature, value)
+						sensorEnvironmentMetricMap[iKey].nonAmbientTemperature = append(sensorEnvironmentMetricMap[iKey].nonAmbientTemperature, value)
 					}
 				}
 
 				if sensorType == "fan" {
 					if value, ok := metric.GetValueFloat64(instance); ok {
-						sensorEnvironmentMetricMap[nodeSensorKey].fanSpeed = append(sensorEnvironmentMetricMap[nodeSensorKey].fanSpeed, value)
+						sensorEnvironmentMetricMap[iKey].fanSpeed = append(sensorEnvironmentMetricMap[iKey].fanSpeed, value)
 					}
 				}
 
 				if isPowerMatch {
 					if value, ok := metric.GetValueFloat64(instance); ok {
-						if sensorEnvironmentMetricMap[nodeSensorKey].powerSensor == nil {
-							sensorEnvironmentMetricMap[nodeSensorKey].powerSensor = make(map[string]*sensorValue)
+						if sensorEnvironmentMetricMap[iKey].powerSensor == nil {
+							sensorEnvironmentMetricMap[iKey].powerSensor = make(map[string]*sensorValue)
 						}
-						sensorEnvironmentMetricMap[nodeSensorKey].powerSensor[iKey2] = &sensorValue{name: iKey2, value: value, unit: sensorUnit}
+						sensorEnvironmentMetricMap[iKey].powerSensor[iKey2] = &sensorValue{name: iKey2, value: value, unit: sensorUnit}
 					}
 				}
 
 				if isVoltageMatch {
 					if value, ok := metric.GetValueFloat64(instance); ok {
-						if sensorEnvironmentMetricMap[nodeSensorKey].voltageSensor == nil {
-							sensorEnvironmentMetricMap[nodeSensorKey].voltageSensor = make(map[string]*sensorValue)
+						if sensorEnvironmentMetricMap[iKey].voltageSensor == nil {
+							sensorEnvironmentMetricMap[iKey].voltageSensor = make(map[string]*sensorValue)
 						}
-						sensorEnvironmentMetricMap[nodeSensorKey].voltageSensor[iKey2] = &sensorValue{name: iKey2, value: value, unit: sensorUnit}
+						sensorEnvironmentMetricMap[iKey].voltageSensor[iKey2] = &sensorValue{name: iKey2, value: value, unit: sensorUnit}
 					}
 				}
 
 				if isCurrentMatch {
 					if value, ok := metric.GetValueFloat64(instance); ok {
-						if sensorEnvironmentMetricMap[nodeSensorKey].currentSensor == nil {
-							sensorEnvironmentMetricMap[nodeSensorKey].currentSensor = make(map[string]*sensorValue)
+						if sensorEnvironmentMetricMap[iKey].currentSensor == nil {
+							sensorEnvironmentMetricMap[iKey].currentSensor = make(map[string]*sensorValue)
 						}
-						sensorEnvironmentMetricMap[nodeSensorKey].currentSensor[iKey2] = &sensorValue{name: iKey2, value: value, unit: sensorUnit}
+						sensorEnvironmentMetricMap[iKey].currentSensor[iKey2] = &sensorValue{name: iKey2, value: value, unit: sensorUnit}
 					}
 				}
 			}
@@ -172,16 +166,13 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 	}
 
 	for key, v := range sensorEnvironmentMetricMap {
-		nodeSensorKey := key.node + "." + key.sensor
-		instance, err := my.data.NewInstance(nodeSensorKey)
+		instance, err := my.data.NewInstance(key)
 		if err != nil {
-			my.Logger.Warn().Str("key", nodeSensorKey).Msg("instance not found")
+			my.Logger.Warn().Str("key", key).Msg("instance not found")
 			continue
 		}
 		// set node label
-		instance.SetLabel("node", key.node)
-		// set sensor label
-		instance.SetLabel("sensor", key.sensor)
+		instance.SetLabel("node", key)
 		for _, k := range eMetrics {
 			m := my.data.GetMetric(k)
 			switch k {
