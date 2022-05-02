@@ -131,7 +131,10 @@ func metricValueDiff(metricName string) {
 		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.qtree")
 		keyIndexes = []int{2}
 	}
-
+	if strings.HasPrefix(metricName, "environment_sensor_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.sensor", "data.result.#.metric.node")
+		keyIndexes = []int{2, 3}
+	}
 	if strings.HasPrefix(metricName, "shelf_") {
 		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.shelf")
 		keyIndexes = []int{2}
