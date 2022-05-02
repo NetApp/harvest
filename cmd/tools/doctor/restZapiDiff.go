@@ -112,6 +112,11 @@ func metricValueDiff(metricName string) {
 
 	keyIndexes := make([]int, 0)
 
+	// These plugin generated metrics are node scoped.
+	environmentSensorMetrics := strings.Join([]string{"environment_sensor_power", "environment_sensor_ambient_temperature", "environment_sensor_max_temperature",
+		"environment_sensor_average_temperature", "environment_sensor_average_fan_speed", "environment_sensor_max_fan_speed", "environment_sensor_min_fan_speed"},
+		",")
+
 	if strings.HasPrefix(metricName, "disk_") {
 		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.disk")
 		keyIndexes = []int{2}
@@ -133,8 +138,15 @@ func metricValueDiff(metricName string) {
 		keyIndexes = []int{2}
 	}
 	if strings.HasPrefix(metricName, "environment_sensor_") {
-		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.sensor", "data.result.#.metric.node")
-		keyIndexes = []int{2, 3}
+		if strings.Contains(environmentSensorMetrics, metricName) {
+			// node scoped metrics
+			results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node")
+			keyIndexes = []int{2}
+		} else {
+			// node - sensor scoped metrics
+			results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.sensor", "data.result.#.metric.node")
+			keyIndexes = []int{2, 3}
+		}
 	}
 	if strings.HasPrefix(metricName, "shelf_") {
 		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.shelf")
