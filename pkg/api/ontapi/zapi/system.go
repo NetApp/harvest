@@ -6,7 +6,7 @@ package zapi
 import (
 	"errors"
 	"fmt"
-	"goharvest2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"regexp"
 	"strconv"
 )

@@ -3,14 +3,14 @@
 package qtree
 
 import (
-	"goharvest2/cmd/poller/plugin"
-	"goharvest2/pkg/api/ontapi/zapi"
-	"goharvest2/pkg/conf"
-	"goharvest2/pkg/dict"
-	"goharvest2/pkg/errors"
-	"goharvest2/pkg/matrix"
-	"goharvest2/pkg/tree/node"
-	"goharvest2/pkg/util"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
+	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/dict"
+	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"strconv"
 	"strings"
 )

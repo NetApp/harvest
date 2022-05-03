@@ -4,10 +4,10 @@
 package zapi
 
 import (
-	"goharvest2/pkg/color"
-	"goharvest2/pkg/matrix"
-	"goharvest2/pkg/tree/node"
-	"goharvest2/pkg/util"
+	"github.com/netapp/harvest/v2/pkg/color"
+	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"strings"
 )
 

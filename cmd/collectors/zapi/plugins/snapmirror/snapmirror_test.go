@@ -1,8 +1,8 @@
 package snapmirror
 
 import (
-	"goharvest2/cmd/collectors"
-	"goharvest2/pkg/matrix"
+	"github.com/netapp/harvest/v2/cmd/collectors"
+	"github.com/netapp/harvest/v2/pkg/matrix"
 	"testing"
 )
 

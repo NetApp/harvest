@@ -2,13 +2,13 @@ package collectors
 
 import (
 	"encoding/json"
+	"github.com/netapp/harvest/v2/cmd/tools/rest"
+	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
+	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/logging"
+	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
-	"goharvest2/cmd/tools/rest"
-	"goharvest2/pkg/api/ontapi/zapi"
-	"goharvest2/pkg/errors"
-	"goharvest2/pkg/logging"
-	"goharvest2/pkg/matrix"
-	"goharvest2/pkg/tree/node"
 	"strings"
 	"time"
 )

@@ -12,8 +12,8 @@ Examples:
 package matrix
 
 import (
-	"goharvest2/pkg/dict"
-	"goharvest2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/dict"
+	"github.com/netapp/harvest/v2/pkg/errors"
 )
 
 type Metric interface {

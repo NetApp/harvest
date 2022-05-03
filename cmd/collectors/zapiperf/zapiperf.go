@@ -24,24 +24,24 @@
 package zapiperf
 
 import (
-	"goharvest2/cmd/collectors/zapiperf/plugins/fcp"
-	"goharvest2/cmd/collectors/zapiperf/plugins/headroom"
-	"goharvest2/cmd/collectors/zapiperf/plugins/nic"
-	"goharvest2/cmd/collectors/zapiperf/plugins/volume"
-	"goharvest2/cmd/collectors/zapiperf/plugins/vscan"
-	"goharvest2/cmd/poller/collector"
-	"goharvest2/cmd/poller/plugin"
-	"goharvest2/pkg/color"
-	"goharvest2/pkg/dict"
-	"goharvest2/pkg/errors"
-	"goharvest2/pkg/matrix"
-	"goharvest2/pkg/set"
-	"goharvest2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/fcp"
+	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/headroom"
+	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/nic"
+	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/volume"
+	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/vscan"
+	"github.com/netapp/harvest/v2/cmd/poller/collector"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/color"
+	"github.com/netapp/harvest/v2/pkg/dict"
+	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/set"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"strconv"
 	"strings"
 	"time"
 
-	zapi "goharvest2/cmd/collectors/zapi/collector"
+	zapi "github.com/netapp/harvest/v2/cmd/collectors/zapi/collector"
 )
 
 const (

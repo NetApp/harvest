@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/docker"
 	"github.com/Netapp/harvest-automation/test/utils"
-	"goharvest2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"log"
 	"os"
 	"os/exec"

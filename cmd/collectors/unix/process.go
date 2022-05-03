@@ -7,7 +7,7 @@ package unix
 import (
 	"bytes"
 	"fmt"
-	"goharvest2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errors"
 	"io/ioutil"
 	"os"
 	"path"

@@ -5,16 +5,16 @@
 package qtree
 
 import (
+	"github.com/netapp/harvest/v2/cmd/collectors"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/cmd/tools/rest"
+	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/dict"
+	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
-	"goharvest2/cmd/collectors"
-	"goharvest2/cmd/poller/plugin"
-	"goharvest2/cmd/tools/rest"
-	"goharvest2/pkg/conf"
-	"goharvest2/pkg/dict"
-	"goharvest2/pkg/errors"
-	"goharvest2/pkg/matrix"
-	"goharvest2/pkg/tree/node"
-	"goharvest2/pkg/util"
 	"time"
 )
 

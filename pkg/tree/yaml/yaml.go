@@ -6,7 +6,7 @@ package yaml
 
 import (
 	"bytes"
-	"goharvest2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 )
 
 func Dump(root *node.Node) ([]byte, error) {

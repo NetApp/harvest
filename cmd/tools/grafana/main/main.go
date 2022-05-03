@@ -5,8 +5,8 @@
 package main
 
 import (
+	"github.com/netapp/harvest/v2/cmd/tools/grafana"
 	"github.com/spf13/cobra"
-	"goharvest2/cmd/tools/grafana"
 )
 
 func main() {

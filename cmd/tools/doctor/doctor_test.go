@@ -1,7 +1,7 @@
 package doctor
 
 import (
-	"goharvest2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"strings"
 	"testing"
 )

@@ -6,7 +6,7 @@ package json
 import (
 	"bytes"
 	"errors"
-	"goharvest2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"strconv"
 	"strings"
 )

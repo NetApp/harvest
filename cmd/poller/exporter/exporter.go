@@ -8,10 +8,10 @@
 package exporter
 
 import (
-	"goharvest2/cmd/poller/options"
-	"goharvest2/pkg/conf"
-	"goharvest2/pkg/logging"
-	"goharvest2/pkg/matrix"
+	"github.com/netapp/harvest/v2/cmd/poller/options"
+	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/logging"
+	"github.com/netapp/harvest/v2/pkg/matrix"
 	"strconv"
 	"sync"
 )

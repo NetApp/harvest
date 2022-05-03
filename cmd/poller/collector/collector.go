@@ -16,22 +16,22 @@
 package collector
 
 import (
-	"goharvest2/pkg/conf"
-	"goharvest2/pkg/logging"
+	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/logging"
 	"reflect"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
 
-	"goharvest2/pkg/errors"
-	"goharvest2/pkg/matrix"
-	"goharvest2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 
-	"goharvest2/cmd/poller/exporter"
-	"goharvest2/cmd/poller/options"
-	"goharvest2/cmd/poller/plugin"
-	"goharvest2/cmd/poller/schedule"
+	"github.com/netapp/harvest/v2/cmd/poller/exporter"
+	"github.com/netapp/harvest/v2/cmd/poller/options"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/cmd/poller/schedule"
 )
 
 // Collector defines the attributes of a collector

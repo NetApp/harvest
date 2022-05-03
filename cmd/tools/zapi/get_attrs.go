@@ -6,9 +6,9 @@ package zapi
 
 import (
 	"fmt"
-	client "goharvest2/pkg/api/ontapi/zapi"
-	"goharvest2/pkg/errors"
-	"goharvest2/pkg/tree/node"
+	client "github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
+	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"strings"
 )
 

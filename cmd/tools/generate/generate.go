@@ -2,9 +2,9 @@ package generate
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/pkg/color"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/spf13/cobra"
-	"goharvest2/pkg/color"
-	"goharvest2/pkg/conf"
 	"io"
 	"os"
 	"path/filepath"

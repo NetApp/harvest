@@ -6,8 +6,8 @@ package zapi
 
 import (
 	"fmt"
-	"goharvest2/pkg/color"
-	"goharvest2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/color"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 )
 
 func show(n *node.Node, args *Args) {

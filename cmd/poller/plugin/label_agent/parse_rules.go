@@ -5,7 +5,7 @@
 package label_agent
 
 import (
-	"goharvest2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/matrix"
 	"regexp"
 	"strconv"
 	"strings"

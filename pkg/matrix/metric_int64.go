@@ -6,7 +6,7 @@ package matrix
 
 import (
 	"fmt"
-	"goharvest2/pkg/color"
+	"github.com/netapp/harvest/v2/pkg/color"
 	"strconv"
 )
 

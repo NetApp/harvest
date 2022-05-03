@@ -9,7 +9,7 @@ package prometheus
 import (
 	"bytes"
 	"fmt"
-	"goharvest2/pkg/set"
+	"github.com/netapp/harvest/v2/pkg/set"
 	"net/http"
 	"strings"
 	"time"

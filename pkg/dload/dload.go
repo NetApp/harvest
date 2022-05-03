@@ -4,7 +4,7 @@
 package dload
 
 import (
-	"goharvest2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errors"
 	"io/ioutil"
 	"path"
 	"plugin"

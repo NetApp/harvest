@@ -9,7 +9,7 @@ if [ -z "$VERSION" ]; then
   echo "VERSION not supplied, using $VERSION"
 fi
 
-LD_FLAGS="-X ""'""goharvest2/cmd/harvest/version.VERSION=${VERSION}""'"""
+LD_FLAGS="-X ""'""github.com/netapp/harvest/v2/cmd/harvest/version.VERSION=${VERSION}""'"""
 echo "$LD_FLAGS"
 
 go mod tidy

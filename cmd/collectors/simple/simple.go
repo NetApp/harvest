@@ -3,13 +3,13 @@
 package simple
 
 import (
-	"goharvest2/cmd/harvest/version"
-	"goharvest2/cmd/poller/collector"
-	"goharvest2/cmd/poller/plugin"
-	"goharvest2/pkg/errors"
-	"goharvest2/pkg/matrix"
-	"goharvest2/pkg/set"
-	"goharvest2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/cmd/harvest/version"
+	"github.com/netapp/harvest/v2/cmd/poller/collector"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/set"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"os"
 	"runtime"
 	"strconv"

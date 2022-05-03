@@ -2,9 +2,9 @@ package rest
 
 import (
 	"fmt"
-	"goharvest2/pkg/errors"
-	"goharvest2/pkg/tree/node"
-	"goharvest2/pkg/util"
+	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"regexp"
 	"strconv"
 	"strings"

@@ -14,7 +14,7 @@ package options
 
 import (
 	"fmt"
-	"goharvest2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"os"
 	"strings"
 )

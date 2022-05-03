@@ -4,10 +4,10 @@
 package influxdb
 
 import (
-	"goharvest2/cmd/poller/exporter"
-	"goharvest2/cmd/poller/options"
-	"goharvest2/pkg/conf"
-	"goharvest2/pkg/matrix"
+	"github.com/netapp/harvest/v2/cmd/poller/exporter"
+	"github.com/netapp/harvest/v2/cmd/poller/options"
+	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/matrix"
 	"testing"
 )
 
@@ -124,7 +124,7 @@ func TestWhiteSpaceInParameter(t *testing.T) {
 
 /* Uncomment to test against a running InfluxDB instance
    ! Edit the params values below
-   ! Uncomment import "goharvest2/share/tree/node"
+   ! Uncomment import "github.com/netapp/harvest/v2/share/tree/node"
 func TestExportProduction(t *testing.T) {
 
     logger.SetLevel(0)

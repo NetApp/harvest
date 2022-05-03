@@ -6,8 +6,8 @@ package matrix
 
 import (
 	"fmt"
-	"goharvest2/pkg/color"
-	"goharvest2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/color"
+	"github.com/netapp/harvest/v2/pkg/errors"
 	"strconv"
 )
 

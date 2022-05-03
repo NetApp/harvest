@@ -4,12 +4,12 @@
 package snapmirror
 
 import (
+	"github.com/netapp/harvest/v2/cmd/collectors"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/cmd/tools/rest"
+	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/tidwall/gjson"
-	"goharvest2/cmd/collectors"
-	"goharvest2/cmd/poller/plugin"
-	"goharvest2/cmd/tools/rest"
-	"goharvest2/pkg/conf"
-	"goharvest2/pkg/matrix"
 	"time"
 )
 
