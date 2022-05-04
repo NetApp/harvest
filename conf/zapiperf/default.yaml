@@ -49,6 +49,7 @@ objects:
   NFSv4:                  nfsv4.yaml
   Volume:                 volume.yaml
   WAFLCompBin:            wafl_comp_aggr_vol_bin.yaml
+  VolumeSvm:              volume_svm.yaml
 #  Vscan:                  vscan.yaml
 #  VscanSVM:               vscan_svm.yaml
 
