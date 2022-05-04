@@ -22,11 +22,11 @@ counters:
   - hdd_data_written
   - ssd_data_read
   - ssd_data_written
-  - network_data_recieved
+  - network_data_received
   - network_data_sent
-  - fcp_data_recieved
+  - fcp_data_received
   - fcp_data_sent
-  - nvme_fc_data_recv
+  - nvme_fc_data_received
   - nvme_fc_data_sent
 
 export_options:

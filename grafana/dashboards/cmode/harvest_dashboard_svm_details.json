@@ -59,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1651157362387,
+  "iteration": 1651681173730,
   "links": [],
   "panels": [
     {
@@ -133,7 +133,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(volume_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
+          "expr": "avg(svm_vol_avg_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -191,7 +191,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(volume_read_data+volume_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
+          "expr": "sum(svm_vol_read_data+svm_vol_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -249,7 +249,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(volume_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
+          "expr": "sum(svm_vol_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -315,7 +315,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(volume_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
+          "expr": "avg(svm_vol_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -381,7 +381,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(volume_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
+          "expr": "avg(svm_vol_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -439,7 +439,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(volume_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
+          "expr": "sum(svm_vol_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -497,7 +497,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(volume_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
+          "expr": "sum(svm_vol_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -555,7 +555,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(volume_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
+          "expr": "sum(svm_vol_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -613,7 +613,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(volume_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
+          "expr": "sum(svm_vol_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -697,14 +697,14 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(volume_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
+          "expr": "avg(svm_vol_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
           "interval": "",
           "legendFormat": "Read",
           "refId": "A"
         },
         {
           "exemplar": false,
-          "expr": "avg(volume_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
+          "expr": "avg(svm_vol_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Write",
@@ -712,7 +712,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg(volume_other_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
+          "expr": "avg(svm_vol_other_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Other",
@@ -799,14 +799,14 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(volume_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
+          "expr": "sum(svm_vol_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
           "interval": "",
           "legendFormat": "Read",
           "refId": "A"
         },
         {
           "exemplar": false,
-          "expr": "sum(volume_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
+          "expr": "sum(svm_vol_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Write",
@@ -882,8 +882,8 @@
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "table",
-          "placement": "right"
+          "displayMode": "list",
+          "placement": "bottom"
         },
         "tooltip": {
           "mode": "single"
@@ -893,14 +893,14 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(volume_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
+          "expr": "sum(svm_vol_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
           "interval": "",
           "legendFormat": "Read",
           "refId": "A"
         },
         {
           "exemplar": false,
-          "expr": "sum(volume_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
+          "expr": "sum(svm_vol_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Write",
@@ -908,7 +908,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum(volume_other_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
+          "expr": "sum(svm_vol_other_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Other",
@@ -12736,6 +12736,6 @@
   },
   "timezone": "",
   "title": "NetApp Detail: SVM - Details",
-  "uid": "imu5S_Q7z",
-  "version": 15
+  "uid": "rErZJO_7z",
+  "version": 16
 }

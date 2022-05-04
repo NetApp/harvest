@@ -43,8 +43,8 @@ objects:
   NFSv41:            nfsv4_1.yaml
   NFSv4:             nfsv4.yaml
   Volume:            volume.yaml
+  VolumeSvm:         volume_svm.yaml
   WAFLCompBin:       wafl_comp_aggr_vol_bin.yaml
-
   #  Uncomment to collect workload/QOS counters
 #  Workload:             workload.yaml
 #  WorkloadDetail:       workload_detail.yaml
