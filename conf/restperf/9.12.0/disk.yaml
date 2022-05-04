@@ -9,7 +9,7 @@ counters:
   - ^raid_group          => raid_group
   - ^raid.type           => raid_type
   - ^speed               => disk_speed
-#  - ^physical_disk_name    => disk  // hidden field
+  - ^physical_disk_name  => disk
   - cp_read_chain
   - cp_read_latency
   - cp_read_count        => cp_reads
