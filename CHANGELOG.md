@@ -6,6 +6,21 @@
 <!-- git log --no-decorate --no-merges --cherry-pick --right-only --oneline origin/release/22.02.0...origin/release/22.05.0 -->
 
 Highlights of this major release include:
+- Early access to ONTAP RESTPERF collector
+
+- 5 New dashboards added in this release
+  - 2 security related dashboards
+    - Compliance dashboard
+    - Security dashboard
+  - Other dashboards:
+    - Nfs4 store Pool dashboard
+    - Qtree dashboard
+    - Power dashboard
+
+- New `value_to_num_regex` plugin allows you to map all matching regex to 1 and non-matching to 0.
+
+- 24 bug fixes, 47 feature, and 4 documentation commits this release
+
 
 **IMPORTANT** :bangbang: After upgrade, don't forget to re-import your dashboards so you get all the new enhancements and fixes.
 You can import via `bin/harvest/grafana import` cli or from the Grafana UI.
@@ -16,9 +31,77 @@ all counters are being deprecated by ONTAP. If you are using these counters, ple
 
 **Known Issues**
 
+The Unix collector is unable to monitor pollers running in containers. See [#249](https://github.com/NetApp/harvest/issues/249) for details.
+
 ### Enhancements
 
+- :construction: [ONTAP started moving their APIs from ZAPIPERF to RESTPERF](todo: link) in ONTAP (todo:?.?). Harvest adds an early access ONTAP RESTPERF collector in this release. :confetti_ball: This is our first step among several as we prepare for the day that ZAPIPERFs are turned off. The RESTPERF collector and thirty-nine templates are included in 22.05. These should be considered early access as we continue to improve them. If you try them out or have any feedback, let us know on Slack or [GitHub](https://github.com/NetApp/harvest/discussions) [#881](https://github.com/NetApp/harvest/issues/881)
+
+- Harvest should collect NFS v4.2 counters which newly added in ONTAP 9.11 release [#572](https://github.com/NetApp/harvest/issues/572)
+
+- Improve plugin logging to have object detail [#986](https://github.com/NetApp/harvest/issues/986)
+
+- Conversion of the Graph (old) panels to Time series panels for all the dashboards [#972](https://github.com/NetApp/harvest/issues/972). Thanks to @ybizeul for raising
+
+- New regex based plugin [value_to_num_regex](https://github.com/NetApp/harvest/blob/main/cmd/poller/plugin/README.md#value_to_num_regex) helps map labels to numeric values for Grafana dashboards.
+
+- Harvest should include a Security dashboard that shows authentication methods and certificate expiration detail of clusters, volume encryption and status of anti-ransomwere for volumes and svms [#935](https://github.com/NetApp/harvest/pull/935)
+
+- Harvest should include a Compliance dashboard that shows compliance status of clusters and svms along with all attributes which decides overall compliance status [#935](https://github.com/NetApp/harvest/pull/935)
+
+- SVM dashboard should show antivirus counters in the CIFS drill-down section [#913](https://github.com/NetApp/harvest/issues/913) Thanks to @burkl for reporting
+
+- Cluster and Aggregate dashboard should show Storage Efficiency Ratio metrics [#888](https://github.com/NetApp/harvest/issues/888) Thanks to @Falcon667 for reporting
+
+- Harvest should include power consumed in shelf and cluster dashboards [#903](https://github.com/NetApp/harvest/issues/903)
+
+- Harvest should support the filtering in REST infra [#950](https://github.com/NetApp/harvest/pull/950)
+
+- Harvest status should run on systems without pgrep [#937](https://github.com/NetApp/harvest/pull/937) Thanks to @Dan Butler for reporting this on Slack
+
+- Credentials file in harvest should support the defaults [#936](https://github.com/NetApp/harvest/pull/936)
+
+- Harvest should include nfs4storePool dashboard that shows nfs4v store pool locks and allocation detail [#921](https://github.com/NetApp/harvest/pull/921) Thanks to @Rusty Brown for contributing this dashboard.
+
+- REST collector should report cpu-busytime for node [#918](https://github.com/NetApp/harvest/issues/918) Thanks to @James Fong for reporting this on Slack
+
+- Harvest should include qtree dashboard that shows qtree nfs/cifs metrics [#812](https://github.com/NetApp/harvest/issues/812) Thanks to @ev1963 for reporting
+
+- Harvest should read credentials from external file [#905](https://github.com/NetApp/harvest/pull/905)
+
+- Grafana dashboards should have checkbox to show multiple objects in variable drop-down [#815](https://github.com/NetApp/harvest/issues/815) [#939](https://github.com/NetApp/harvest/issues/939) Thanks to @manuelbock, @bcase303 for reporting
+
+- Harvest should include a Power dashboard that shows power consumed at node and shelf level [#932](https://github.com/NetApp/harvest/pull/932)
+
+- Harvest should include promport to metadata metric [#878](https://github.com/NetApp/harvest/pull/878)
+
+- Harvest should use NetApp's container registry for docker images [#874](https://github.com/NetApp/harvest/pull/874)
+
+- Harvest should integrate jfrog with docker [#869](https://github.com/NetApp/harvest/pull/869)
+
 ### Fixes
+
+- SVM Latency numbers differ significantly on Harvest 1.6 vs Harvest 2.0 [#1003](https://github.com/NetApp/harvest/issues/1003) See [discussion](https://github.com/NetApp/harvest/discussions/940) as well.  Thanks to @jmg011 for reporting
+
+- Ignore transient volumes related to backup [#929](https://github.com/NetApp/harvest/issues/929) Thanks to @ybizeul for reporting
+
+- Exclude OS aggregates from capacity used graph [#327](https://github.com/NetApp/harvest/issues/327) Thanks to @matejzero for raising
+
+- Few panels need to have instant property in Data protection dashboard [#945](https://github.com/NetApp/harvest/pull/945)
+
+- CPU overload when there are several thousands of quotas [#733](https://github.com/NetApp/harvest/issues/733) Thanks to @Flo-Fly for reporting
+
+- Include 7-mode CLI role commands for Harvest user [#891](https://github.com/NetApp/harvest/issues/891) Thanks to @ybizeul for reporting and providing the changes!
+
+- Zapi Collector fails to collect data if number of records on a poller is equal to batch size [#870](https://github.com/NetApp/harvest/issues/870) Thanks to @Leo on Slack for reporting
+
+- Wrong object name used in conf/zapi/cdot/9.8.0/snapshot.yaml [#862](https://github.com/NetApp/harvest/issues/862) Thanks to @pilot7777 for reporting
+
+- Field access-time returned by snapshot-get-iter should be creation-time [#861](https://github.com/NetApp/harvest/issues/861) Thanks to @pilot7777 for reporting
+
+- Harvest panics when trying to merge empty template [#859](https://github.com/NetApp/harvest/issues/859) Thanks to @James Fong on Slack for raising
+
+---
 
 ## 22.02.0 / 
 <!-- git log --no-decorate --no-merges --cherry-pick --right-only --oneline origin/release/21.11.0...origin/release/22.02.0 -->
