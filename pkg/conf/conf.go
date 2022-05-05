@@ -27,7 +27,7 @@ var ValidatePortInUse = false
 
 const (
 	DefaultApiVersion = "1.3"
-	DefaultTimeout    = "10s"
+	DefaultTimeout    = "30s"
 )
 
 // TestLoadHarvestConfig is used by testing code to reload a new config
