@@ -6,7 +6,9 @@
 <!-- git log --no-decorate --no-merges --cherry-pick --right-only --oneline origin/release/22.02.0...origin/release/22.05.0 -->
 
 Highlights of this major release include:
-- Early access to ONTAP RESTPERF collector
+- Early access to ONTAP REST perf collector
+
+- We heard your problem, and we solved it :confetti_ball: You've told us you're running into rate-limiting problems with DockerHub, we have a solution in place. Harvest should use NetApp's container registry for docker images. Going forward Harvest releases are published on [NetApp's Container Registry](https://cr.netapp.io) and [Dockerhub](https://hub.docker.com/r/rahulguptajss/harvest).
 
 - 5 New dashboards added in this release
   - 2 security related dashboards
@@ -35,7 +37,7 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 
 ### Enhancements
 
-- :construction: [ONTAP started moving their APIs from ZAPIPERF to RESTPERF](todo: link) in ONTAP (todo:?.?). Harvest adds an early access ONTAP RESTPERF collector in this release. :confetti_ball: This is our first step among several as we prepare for the day that ZAPIPERFs are turned off. The RESTPERF collector and thirty-nine templates are included in 22.05. These should be considered early access as we continue to improve them. If you try them out or have any feedback, let us know on Slack or [GitHub](https://github.com/NetApp/harvest/discussions) [#881](https://github.com/NetApp/harvest/issues/881)
+- :construction: ONTAP started moving their APIs from ZAPI perf to REST perf. Harvest adds an early access ONTAP REST perf collector in this release with ONTAP version that supports perf REST. :confetti_ball: This is our first step among several as we prepare for the day that ZAPI perfs are turned off. The REST perf collector and thirty-nine templates are included in 22.05. These should be considered early access as we continue to improve them. If you try them out or have any feedback, let us know on Slack or [GitHub](https://github.com/NetApp/harvest/discussions) [#881](https://github.com/NetApp/harvest/issues/881)
 
 - Harvest should collect NFS v4.2 counters which newly added in ONTAP 9.11 release [#572](https://github.com/NetApp/harvest/issues/572)
 
@@ -53,8 +55,6 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 
 - Cluster and Aggregate dashboard should show Storage Efficiency Ratio metrics [#888](https://github.com/NetApp/harvest/issues/888) Thanks to @Falcon667 for reporting
 
-- Harvest should include power consumed in shelf and cluster dashboards [#903](https://github.com/NetApp/harvest/issues/903)
-
 - Harvest should support the filtering in REST infra [#950](https://github.com/NetApp/harvest/pull/950)
 
 - Harvest status should run on systems without pgrep [#937](https://github.com/NetApp/harvest/pull/937) Thanks to @Dan Butler for reporting this on Slack
@@ -71,13 +71,15 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 
 - Grafana dashboards should have checkbox to show multiple objects in variable drop-down [#815](https://github.com/NetApp/harvest/issues/815) [#939](https://github.com/NetApp/harvest/issues/939) Thanks to @manuelbock, @bcase303 for reporting
 
-- Harvest should include a Power dashboard that shows power consumed at node and shelf level [#932](https://github.com/NetApp/harvest/pull/932)
+- Harvest should include a Power dashboard that shows power consumed at node and shelf level [#932](https://github.com/NetApp/harvest/pull/932) and [#903](https://github.com/NetApp/harvest/issues/903)
 
 - Harvest should include promport to metadata metric [#878](https://github.com/NetApp/harvest/pull/878)
 
 - Harvest should use NetApp's container registry for docker images [#874](https://github.com/NetApp/harvest/pull/874)
 
 - Harvest should integrate jfrog with docker [#869](https://github.com/NetApp/harvest/pull/869)
+
+- Increase default ZAPI client timeout and ZAPI client timeout for volume object [#1005](https://github.com/NetApp/harvest/pull/1005)
 
 ### Fixes
 
