@@ -57,13 +57,13 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 
 - Harvest should support the filtering in REST infra [#950](https://github.com/NetApp/harvest/pull/950)
 
-- Harvest status should run on systems without pgrep [#937](https://github.com/NetApp/harvest/pull/937) Thanks to @Dan Butler for reporting this on Slack
+- Harvest status should run on systems without pgrep [#937](https://github.com/NetApp/harvest/pull/937) Thanks to Dan Butler for reporting this on Slack
 
 - Credentials file in harvest should support the defaults [#936](https://github.com/NetApp/harvest/pull/936)
 
-- Harvest should include nfs4storePool dashboard that shows nfs4v store pool locks and allocation detail [#921](https://github.com/NetApp/harvest/pull/921) Thanks to @Rusty Brown for contributing this dashboard.
+- Harvest should include nfs4storePool dashboard that shows nfs4v store pool locks and allocation detail [#921](https://github.com/NetApp/harvest/pull/921) Thanks to Rusty Brown for contributing this dashboard.
 
-- REST collector should report cpu-busytime for node [#918](https://github.com/NetApp/harvest/issues/918) Thanks to @James Fong for reporting this on Slack
+- REST collector should report cpu-busytime for node [#918](https://github.com/NetApp/harvest/issues/918) Thanks to @pilot7777 for reporting this on Slack
 
 - Harvest should include qtree dashboard that shows qtree nfs/cifs metrics [#812](https://github.com/NetApp/harvest/issues/812) Thanks to @ev1963 for reporting
 
@@ -95,13 +95,13 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 
 - Include 7-mode CLI role commands for Harvest user [#891](https://github.com/NetApp/harvest/issues/891) Thanks to @ybizeul for reporting and providing the changes!
 
-- Zapi Collector fails to collect data if number of records on a poller is equal to batch size [#870](https://github.com/NetApp/harvest/issues/870) Thanks to @Leo on Slack for reporting
+- Zapi Collector fails to collect data if number of records on a poller is equal to batch size [#870](https://github.com/NetApp/harvest/issues/870) Thanks to @unbreakabl3 on Slack for reporting
 
 - Wrong object name used in conf/zapi/cdot/9.8.0/snapshot.yaml [#862](https://github.com/NetApp/harvest/issues/862) Thanks to @pilot7777 for reporting
 
 - Field access-time returned by snapshot-get-iter should be creation-time [#861](https://github.com/NetApp/harvest/issues/861) Thanks to @pilot7777 for reporting
 
-- Harvest panics when trying to merge empty template [#859](https://github.com/NetApp/harvest/issues/859) Thanks to @James Fong on Slack for raising
+- Harvest panics when trying to merge empty template [#859](https://github.com/NetApp/harvest/issues/859) Thanks to @pilot7777 on Slack for raising
 
 ---
 
