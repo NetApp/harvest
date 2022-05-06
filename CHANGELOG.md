@@ -5,24 +5,24 @@
 ## 22.05.0 /
 <!-- git log --no-decorate --no-merges --cherry-pick --right-only --oneline origin/release/22.02.0...origin/release/22.05.0 -->
 
-Highlights of this major release include:
+:rocket: Highlights of this major release include:
+
 - Early access to ONTAP REST perf collector
 
-- We heard your problem, and we solved it :confetti_ball: You've told us you're running into rate-limiting problems with DockerHub, we have a solution in place. Harvest should use NetApp's container registry for docker images. Going forward Harvest releases are published on [NetApp's Container Registry](https://cr.netapp.io) and [Dockerhub](https://hub.docker.com/r/rahulguptajss/harvest).
+- :hourglass: New Container Registry - Several of you have mentioned that you are being rate-limited when pulling Harvest Docker images from DockerHub. To alleviate this problem, we're publishing Harvest images to NetApp's container registry (cr.netapp.io). Going forward, we'll publish images to both DockerHub and cr.netapp.io. More information in the [FAQ](https://github.com/NetApp/harvest/wiki/FAQ#where-are-harvest-container-images-published). No action is required unless you want to switch from DockerHub to cr.netapp.io. If so, the FAQ has you covered.
 
-- 5 New dashboards added in this release
-  - 2 security related dashboards
-    - Compliance dashboard
-    - Security dashboard
-  - Other dashboards:
-    - Nfs4 store Pool dashboard
-    - Qtree dashboard
-    - Power dashboard
+- Five new dashboards added in this release
+  - Power dashboard
+  - Compliance dashboard
+  - Security dashboard
+  - Qtree dashboard
+  - Nfs4 Store Pool dashboard (disabled by default)
 
-- New `value_to_num_regex` plugin allows you to map all matching regex to 1 and non-matching to 0.
+- New `value_to_num_regex` plugin allows you to map all matching expressions to 1 and non-matching ones to 0.
 
-- 24 bug fixes, 47 feature, and 4 documentation commits this release
+- Harvest pollers can optionally [read credentials](https://github.com/NetApp/harvest/discussions/884) from a mounted volume or file. This enables [Hashicorp Vault](https://www.vaultproject.io/) support and works especially well with [Vault agent](https://www.vaultproject.io/docs/agent) 
 
+- 24 bug fixes, 47 feature, and 5 documentation commits this release
 
 **IMPORTANT** :bangbang: After upgrade, don't forget to re-import your dashboards so you get all the new enhancements and fixes.
 You can import via `bin/harvest/grafana import` cli or from the Grafana UI.
@@ -37,53 +37,49 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 
 ### Enhancements
 
-- :construction: ONTAP started moving their APIs from ZAPI perf to REST perf. Harvest adds an early access ONTAP REST perf collector in this release with ONTAP version that supports perf REST. :confetti_ball: This is our first step among several as we prepare for the day that ZAPI perfs are turned off. The REST perf collector and thirty-nine templates are included in 22.05. These should be considered early access as we continue to improve them. If you try them out or have any feedback, let us know on Slack or [GitHub](https://github.com/NetApp/harvest/discussions) [#881](https://github.com/NetApp/harvest/issues/881)
+- Harvest should include a [Power dashboard](https://github.com/NetApp/harvest/discussions/951) that shows power consumed, temperatures and fan speeds at a node and shelf level [#932](https://github.com/NetApp/harvest/pull/932) and [#903](https://github.com/NetApp/harvest/issues/903)
 
-- Harvest should collect NFS v4.2 counters which newly added in ONTAP 9.11 release [#572](https://github.com/NetApp/harvest/issues/572)
+- Harvest should include a Security dashboard that shows authentication methods and certificate expiration details for clusters, volume encryption and status of anti-ransomware for volumes and SVMs [#935](https://github.com/NetApp/harvest/pull/935)
 
-- Improve plugin logging to have object detail [#986](https://github.com/NetApp/harvest/issues/986)
-
-- Conversion of the Graph (old) panels to Time series panels for all the dashboards [#972](https://github.com/NetApp/harvest/issues/972). Thanks to @ybizeul for raising
-
-- New regex based plugin [value_to_num_regex](https://github.com/NetApp/harvest/blob/main/cmd/poller/plugin/README.md#value_to_num_regex) helps map labels to numeric values for Grafana dashboards.
-
-- Harvest should include a Security dashboard that shows authentication methods and certificate expiration detail of clusters, volume encryption and status of anti-ransomwere for volumes and svms [#935](https://github.com/NetApp/harvest/pull/935)
-
-- Harvest should include a Compliance dashboard that shows compliance status of clusters and svms along with all attributes which decides overall compliance status [#935](https://github.com/NetApp/harvest/pull/935)
+- Harvest should include a Compliance dashboard that shows compliance status of clusters and SVMs along with individual compliance attributes [#935](https://github.com/NetApp/harvest/pull/935)
 
 - SVM dashboard should show antivirus counters in the CIFS drill-down section [#913](https://github.com/NetApp/harvest/issues/913) Thanks to @burkl for reporting
 
-- Cluster and Aggregate dashboard should show Storage Efficiency Ratio metrics [#888](https://github.com/NetApp/harvest/issues/888) Thanks to @Falcon667 for reporting
+- Cluster and Aggregate dashboards should show Storage Efficiency Ratio metrics [#888](https://github.com/NetApp/harvest/issues/888) Thanks to @Falcon667 for reporting
 
-- Harvest should support the filtering in REST infra [#950](https://github.com/NetApp/harvest/pull/950)
+- :construction: This is another step in the ZAPI to REST road map. In earlier releases, we focused on config ZAPIs and in this release we've added early access to an ONTAP REST perf collector. :confetti_ball: The REST perf collector and thirty-nine templates included in this release, require ONTAP 9.11.1GA+ :astonished: These should be considered early access as we continue to improve them. If you try them out or have any feedback, let us know on Slack or [GitHub](https://github.com/NetApp/harvest/discussions) [#881](https://github.com/NetApp/harvest/issues/881)
+
+- Harvest should collect NFS v4.2 counters which are new in ONTAP 9.11+ releases [#572](https://github.com/NetApp/harvest/issues/572)
+
+- Plugin logging should include object detail [#986](https://github.com/NetApp/harvest/issues/986)
+
+- Harvest dashboards should use Time series panels instead of Graph (old) panels [#972](https://github.com/NetApp/harvest/issues/972). Thanks to @ybizeul for raising
+
+- New regex based plugin [value_to_num_regex](https://github.com/NetApp/harvest/blob/main/cmd/poller/plugin/README.md#value_to_num_regex) helps map labels to numeric values for Grafana dashboards.
 
 - Harvest status should run on systems without pgrep [#937](https://github.com/NetApp/harvest/pull/937) Thanks to Dan Butler for reporting this on Slack
 
-- Credentials file in harvest should support the defaults [#936](https://github.com/NetApp/harvest/pull/936)
+- When using a credentials file and the poller is not found, also consult the defaults section of the `harvest.yml` file [#936](https://github.com/NetApp/harvest/pull/936)
 
-- Harvest should include nfs4storePool dashboard that shows nfs4v store pool locks and allocation detail [#921](https://github.com/NetApp/harvest/pull/921) Thanks to Rusty Brown for contributing this dashboard.
+- Harvest should include an NFSv4 StorePool dashboard that shows NFSv4 store pool locks and allocation detail [#921](https://github.com/NetApp/harvest/pull/921) Thanks to Rusty Brown for contributing this dashboard.
 
 - REST collector should report cpu-busytime for node [#918](https://github.com/NetApp/harvest/issues/918) Thanks to @pilot7777 for reporting this on Slack
 
-- Harvest should include qtree dashboard that shows qtree nfs/cifs metrics [#812](https://github.com/NetApp/harvest/issues/812) Thanks to @ev1963 for reporting
+- Harvest should include a Qtree dashboard that shows Qtree NFS/CIFS metrics [#812](https://github.com/NetApp/harvest/issues/812) Thanks to @ev1963 for reporting
 
-- Harvest should read credentials from external file [#905](https://github.com/NetApp/harvest/pull/905)
+- Harvest should support reading credentials from an external file or mounted volume [#905](https://github.com/NetApp/harvest/pull/905)
 
-- Grafana dashboards should have checkbox to show multiple objects in variable drop-down [#815](https://github.com/NetApp/harvest/issues/815) [#939](https://github.com/NetApp/harvest/issues/939) Thanks to @manuelbock, @bcase303 for reporting
+- Grafana dashboards should have checkbox to show multiple objects in variable drop-down. See [comment](https://github.com/NetApp/harvest/issues/815#issuecomment-1050833081) for details. [#815](https://github.com/NetApp/harvest/issues/815) [#939](https://github.com/NetApp/harvest/issues/939) Thanks to @manuelbock, @bcase303 for reporting
 
-- Harvest should include a Power dashboard that shows power consumed at node and shelf level [#932](https://github.com/NetApp/harvest/pull/932) and [#903](https://github.com/NetApp/harvest/issues/903)
+- Harvest should include Prometheus port (promport) to metadata metric [#878](https://github.com/NetApp/harvest/pull/878)
 
-- Harvest should include promport to metadata metric [#878](https://github.com/NetApp/harvest/pull/878)
+- Harvest should use NetApp's container registry for Docker images [#874](https://github.com/NetApp/harvest/pull/874)
 
-- Harvest should use NetApp's container registry for docker images [#874](https://github.com/NetApp/harvest/pull/874)
-
-- Harvest should integrate jfrog with docker [#869](https://github.com/NetApp/harvest/pull/869)
-
-- Increase default ZAPI client timeout and ZAPI client timeout for volume object [#1005](https://github.com/NetApp/harvest/pull/1005)
+- Increase ZAPI client timeout for default and volume object [#1005](https://github.com/NetApp/harvest/pull/1005)
 
 ### Fixes
 
-- SVM Latency numbers differ significantly on Harvest 1.6 vs Harvest 2.0 [#1003](https://github.com/NetApp/harvest/issues/1003) See [discussion](https://github.com/NetApp/harvest/discussions/940) as well.  Thanks to @jmg011 for reporting
+- SVM Latency numbers differ significantly on Harvest 1.6 vs Harvest 2.0 [#1003](https://github.com/NetApp/harvest/issues/1003) See [discussion](https://github.com/NetApp/harvest/discussions/940) as well. Thanks to @jmg011 for reporting
 
 - Ignore transient volumes related to backup [#929](https://github.com/NetApp/harvest/issues/929) Thanks to @ybizeul for reporting
 
@@ -97,9 +93,9 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 
 - Zapi Collector fails to collect data if number of records on a poller is equal to batch size [#870](https://github.com/NetApp/harvest/issues/870) Thanks to @unbreakabl3 on Slack for reporting
 
-- Wrong object name used in conf/zapi/cdot/9.8.0/snapshot.yaml [#862](https://github.com/NetApp/harvest/issues/862) Thanks to @pilot7777 for reporting
+- Wrong object name used in `conf/zapi/cdot/9.8.0/snapshot.yaml` [#862](https://github.com/NetApp/harvest/issues/862) Thanks to @pilot7777 for reporting
 
-- Field access-time returned by snapshot-get-iter should be creation-time [#861](https://github.com/NetApp/harvest/issues/861) Thanks to @pilot7777 for reporting
+- Field access-time returned by `snapshot-get-iter` should be creation-time [#861](https://github.com/NetApp/harvest/issues/861) Thanks to @pilot7777 for reporting
 
 - Harvest panics when trying to merge empty template [#859](https://github.com/NetApp/harvest/issues/859) Thanks to @pilot7777 on Slack for raising
 
@@ -177,7 +173,7 @@ The output of one plugin can be fed into the input of the next one. #736 Thanks 
 - [Document](https://github.com/NetApp/harvest/blob/main/docs/TemplatesAndMetrics.md) how ZAPI collectors, templates, and exporting work together. Thanks @jmg011 and others for asking for this 
 
 - Remove redundant dashboards (Network, Node, SVM, Volume) [#703](https://github.com/NetApp/harvest/issues/703) Thanks to @mamoep for reporting this
-- 
+ 
 - Harvest `generate docker` command should support customer-supplied Prometheus and Grafana ports. [#584](https://github.com/NetApp/harvest/issues/584)
 
 - Harvest certificate authentication should work with self-signed subject alternative name (SAN) certificates. Improve documentation on how to use [certificate authentication](https://github.com/NetApp/harvest/blob/main/docs/AuthAndPermissions.md#using-certificate-authentication). Thanks to @edd1619 for raising this issue
