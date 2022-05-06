@@ -73,13 +73,20 @@ Now add the username and password to `harvest.yml` and start Harvest.
 
 ### ONTAP CLI
 
-#### CDot CLI
-Login to the CLI of your c-DOT ONTAP system (e.g. using SSH). First, we create a user role. If you want to give the user readonly access to **all** API objects, type in the following command:
+We are going to:
+- create a Harvest role with read-only access to the API objects
+- create a Harvest user and assign it to the role
 
-```bash
-security login role create -role harvest2-role -access readonly -cmddirname "DEFAULT"
-```
-If you want to give limited access, type in the following commands one-by-one:
+You should decide if you want to limit the Harvest role to only the subset of API objects Harvest requires or 
+give Harvest access to all API objects. In both cases, Harvest's access will be read-only.
+
+Either approach is fine, following the principle of least-privilege, we recommended the limited approach.
+
+Login to the CLI of your c-DOT ONTAP system using SSH.
+
+#### Least-privilege approach
+
+Verify there are no errors when you copy/paste these. Warnings are fine.
 
 ```bash
 security login role create -role harvest2-role -access readonly -cmddirname "cluster"
@@ -94,15 +101,29 @@ security login role create -role harvest2-role -access readonly -cmddirname "sys
 security login role create -role harvest2-role -access readonly -cmddirname "system node"
 security login role create -role harvest2-role -access readonly -cmddirname "version"
 security login role create -role harvest2-role -access readonly -cmddirname "volume"
+# New permissions required for Harvest 22.05 security dashboard
+security login role create -role harvest2-role -access readonly -cmddirname "network interface"
+security login role create -role harvest2-role -access readonly -cmddirname "security"
+security login role create -role harvest2-role -access readonly -cmddirname "storage encryption disk"
+security login role create -role harvest2-role -access readonly -cmddirname "vserver"
 ```
 
-If you want to create a user with password authentication, type:
+#### All APIs read-only approach
+
+```bash
+security login role create -role harvest2-role -access readonly -cmddirname "DEFAULT"
+```
+
+#### Create harvest user and associate to role
+
+Use this for password authentication
+
 ```bash
 security login create -user-or-group-name harvest2 -application ontapi \
  -role harvest2-role -authentication-method password
 ```
 
-If you want to use certificate authentication, type:
+Or this for certificate authentication
 
 ```bash
 security login create -user-or-group-name harvest2 -application ontapi \
