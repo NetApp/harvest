@@ -24,7 +24,7 @@ counters:
       - average-latency
       - disk-io-kbps
     #  - disk-iops
-      - power-on-time-interval  => uptime
+      - power-on-time-interval  => uptime_sec
       - sectors-read
       - sectors-written
     - disk-raid-info:
