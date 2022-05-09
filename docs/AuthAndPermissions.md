@@ -80,7 +80,7 @@ We are going to:
 You should decide if you want to limit the Harvest role to only the subset of API objects Harvest requires or 
 give Harvest access to all API objects. In both cases, Harvest's access will be read-only.
 
-Either approach is fine, following the principle of least-privilege, we recommended the limited approach.
+Either approach is fine, following the principle of least-privilege, we recommend the limited approach.
 
 Login to the CLI of your c-DOT ONTAP system using SSH.
 
