@@ -81,6 +81,8 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 
 - Increase ZAPI client timeout for default and volume object [#1005](https://github.com/NetApp/harvest/pull/1005)
 
+- REST collector should support retrieving a subset of objects via template filtering support [#950](https://github.com/NetApp/harvest/pull/950)
+
 ### Fixes
 
 - SVM Latency numbers differ significantly on Harvest 1.6 vs Harvest 2.0 [#1003](https://github.com/NetApp/harvest/issues/1003) See [discussion](https://github.com/NetApp/harvest/discussions/940) as well. Thanks to @jmg011 for reporting
