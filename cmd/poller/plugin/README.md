@@ -433,10 +433,10 @@ value_to_num:
 ```
 ## compute_metric
 
-This rule creates the new metric (of type `float64`) using the existing metric values.
+This rule creates the new metric (of type `float64`) using the numbers or existing metric values.
 
-Note that you don't define the numeric values yourself, instead, you only provide the metric names with operation, 
-the plugin will fetch the value of each given metric and store the result of mathematical operation in new given custom metric.
+You can define the numeric values yourself or provide the metric names with operation, 
+the plugin will fetch the value of given metric and store the result of mathematical operation in new given custom metric.
 
 Currently, we support these operations: ADD SUBTRACT MULTIPLY DIVIDE
 
@@ -447,6 +447,7 @@ compute_metric:
   - METRIC OPERATION METRIC1 METRIC2 METRIC3 
 # target new metric - mathematical operation - input metric names 
 # apply OPERATION on metric values of METRIC1, METRIC2 and METRIC3 and set result in METRIC
+# METRIC1, METRIC2, METRIC3 can be either a numeric or an existing metric name
 ```
 
 Examples:
