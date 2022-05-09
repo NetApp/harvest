@@ -22,6 +22,10 @@
 
 - Harvest pollers can optionally [read credentials](https://github.com/NetApp/harvest/discussions/884) from a mounted volume or file. This enables [Hashicorp Vault](https://www.vaultproject.io/) support and works especially well with [Vault agent](https://www.vaultproject.io/docs/agent) 
 
+- `bin/grafana import` provides a `--multi` flag that rewrites dashboards to include multi-select dropdowns for each variable at the top of the dashboard
+
+- The `conf/rest` collector templates received a lot of attentions this release. All known gaps between the ZAPI and REST collector have been filled and there is full parity between the two. :metal: 
+
 - 24 bug fixes, 47 feature, and 5 documentation commits this release
 
 **IMPORTANT** :bangbang: After upgrade, don't forget to re-import your dashboards so you get all the new enhancements and fixes.
@@ -81,7 +85,7 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 
 - SVM Latency numbers differ significantly on Harvest 1.6 vs Harvest 2.0 [#1003](https://github.com/NetApp/harvest/issues/1003) See [discussion](https://github.com/NetApp/harvest/discussions/940) as well. Thanks to @jmg011 for reporting
 
-- Ignore transient volumes related to backup [#929](https://github.com/NetApp/harvest/issues/929) Thanks to @ybizeul for reporting
+- Harvest should include regex patterns to ignore transient volumes related to backup [#929](https://github.com/NetApp/harvest/issues/929). Not enabled by default, see `conf/zapi/cdot/9.8.0/volume.yaml` for details. Thanks to @ybizeul for reporting
 
 - Exclude OS aggregates from capacity used graph [#327](https://github.com/NetApp/harvest/issues/327) Thanks to @matejzero for raising
 
