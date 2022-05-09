@@ -16,7 +16,7 @@
   - Compliance dashboard
   - Security dashboard
   - Qtree dashboard
-  - Nfs4 Store Pool dashboard (disabled by default)
+  - NFSv4 Store Pool dashboard (disabled by default)
 
 - New `value_to_num_regex` plugin allows you to map all matching expressions to 1 and non-matching ones to 0.
 
