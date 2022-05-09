@@ -4,7 +4,9 @@ query:            api/security/audit/destinations
 object:           security_audit_destination
 
 counters:
-  - ^protocol     => protocol
+  - ^^protocol                   => protocol
+  - ^^address                    => destination
+  - ^facility                    => facility
 
 only_cluster_instance: true
 
@@ -14,4 +16,8 @@ plugins:
         - status protocol tcp_encrypted tcp_encrypted `0`
 
 export_options:
-  include_all_labels: true
+  instance_keys:
+    - protocol
+  instance_labels:
+    - destination
+    - facility
