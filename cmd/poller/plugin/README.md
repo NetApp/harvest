@@ -433,10 +433,9 @@ value_to_num:
 ```
 ## compute_metric
 
-This rule creates the new metric (of type `float64`) using the existing metric values.
+This rule creates a new metric (of type float64) using the provided scalar or an existing metric value combined with a mathematical operation.
 
-Note that you don't define the numeric values yourself, instead, you only provide the metric names with operation, 
-the plugin will fetch the value of each given metric and store the result of mathematical operation in new given custom metric.
+You can provide a numeric value or a metric name with an operation. The plugin will use the provided number or fetch the value of a given metric, perform the requested mathematical operation, and store the result in new custom metric.
 
 Currently, we support these operations: ADD SUBTRACT MULTIPLY DIVIDE
 
@@ -447,6 +446,7 @@ compute_metric:
   - METRIC OPERATION METRIC1 METRIC2 METRIC3 
 # target new metric - mathematical operation - input metric names 
 # apply OPERATION on metric values of METRIC1, METRIC2 and METRIC3 and set result in METRIC
+# METRIC1, METRIC2, METRIC3 can be a scalar or an existing metric name
 ```
 
 Examples:
@@ -477,6 +477,13 @@ compute_metric:
 compute_metric:
   - total_bytes MULTIPLY bytes_per_sector sector_count
 # value of metric "total_bytes" would be multiplication of metric value of bytes_per_sector and metric value of sector_count.
+# total_bytes = bytes_per_sector * sector_count
+```
+
+```yaml
+compute_metric:
+  - uptime MULTIPLY stats.power_on_hours 60 60
+# value of metric "uptime" would be multiplication of metric value of stats.power_on_hours and scalar value of 60 * 60.
 # total_bytes = bytes_per_sector * sector_count
 ```
 

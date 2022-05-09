@@ -19,7 +19,7 @@ counters:
   - bytes_per_sector            => bytes_per_sector
   - sector_count                => sectors
   - stats.average_latency       => stats_average_latency
-  - stats.power_on_hours        => uptime
+  - stats.power_on_hours
   - outage.reason               => outage
   - usable_size
 
@@ -36,6 +36,8 @@ plugins:
   - LabelAgent:
       value_to_num:
         - new_status outage - - `0` #ok_value is empty value, '-' would be converted to blank while processing.
+      compute_metric:
+        - uptime MULTIPLY stats.power_on_hours 60 60 #convert to second for zapi parity
 
 export_options:
   instance_keys:

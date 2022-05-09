@@ -9,6 +9,7 @@ import (
 	"goharvest2/cmd/poller/plugin"
 	"goharvest2/pkg/errors"
 	"goharvest2/pkg/matrix"
+	"strconv"
 	"strings"
 )
 
@@ -366,32 +367,40 @@ func (me *LabelAgent) computeMetrics(m *matrix.Matrix) error {
 
 			// Parse other operands and process them
 			for i := 1; i < len(r.metricNames); i++ {
-				if metricVal = m.GetMetric(r.metricNames[i]); metricVal != nil {
-					v, _ := metricVal.GetValueFloat64(instance)
-
-					switch r.operation {
-					case "ADD":
-						result += v
-					case "SUBTRACT":
-						result -= v
-					case "MULTIPLY":
-						result *= v
-					case "DIVIDE":
-						if v != 0 {
-							result /= v
-						} else {
-							me.Logger.Error().
-								Str("operation", r.operation).
-								Msg("Division by zero operation")
-						}
-					default:
-						me.Logger.Warn().
-							Str("operation", r.operation).
-							Msg("Unknown operation")
-					}
+				var v float64
+				if value, err := strconv.Atoi(r.metricNames[i]); err == nil {
+					v = float64(value)
 				} else {
-					me.Logger.Warn().Stack().Err(err).Str("metricName", r.metricNames[i]).Msg("computeMetrics: metric not found")
+					metricVal = m.GetMetric(r.metricNames[i])
+					if metricVal != nil {
+						v, _ = metricVal.GetValueFloat64(instance)
+					} else {
+						me.Logger.Warn().Stack().Err(err).Str("metricName", r.metricNames[i]).Msg("computeMetrics: metric not found")
+						return nil
+					}
 				}
+
+				switch r.operation {
+				case "ADD":
+					result += v
+				case "SUBTRACT":
+					result -= v
+				case "MULTIPLY":
+					result *= v
+				case "DIVIDE":
+					if v != 0 {
+						result /= v
+					} else {
+						me.Logger.Error().
+							Str("operation", r.operation).
+							Msg("Division by zero operation")
+					}
+				default:
+					me.Logger.Warn().
+						Str("operation", r.operation).
+						Msg("Unknown operation")
+				}
+
 			}
 
 			_ = metric.SetValueFloat64(instance, result)
