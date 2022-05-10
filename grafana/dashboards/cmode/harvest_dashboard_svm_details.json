@@ -2845,7 +2845,8 @@
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -2871,7 +2872,7 @@
               "exemplar": true,
               "expr": "svm_vscan_dispatch_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"}",
               "interval": "",
-              "legendFormat": "",
+              "legendFormat": "{{cluster}} - {{svm}}",
               "refId": "A"
             },
             {
@@ -2879,7 +2880,7 @@
               "expr": "svm_vscan_scan_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "",
+              "legendFormat": "{{cluster}} - {{svm}}",
               "refId": "B"
             }
           ],
@@ -2961,7 +2962,7 @@
               "exemplar": true,
               "expr": "svm_vscan_scan_noti_received_rate{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"}",
               "interval": "",
-              "legendFormat": "",
+              "legendFormat": "{{cluster}} - {{svm}}",
               "refId": "A"
             },
             {
@@ -2969,7 +2970,7 @@
               "expr": "svm_vscan_scan_request_dispatched_rate{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=\"$SVM\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "",
+              "legendFormat": "{{cluster}} - {{svm}}",
               "refId": "B"
             }
           ],
