@@ -8,7 +8,6 @@ counters:
     - ^protocol                  => protocol
     - port                       => port
 
-collect_only_labels: true
 only_cluster_instance: true
 
 plugins:
