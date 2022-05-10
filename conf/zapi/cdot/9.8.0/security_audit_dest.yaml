@@ -5,9 +5,8 @@ object:     security_audit_destination
 
 counters:
   cluster-log-forward-info:
-    - ^^protocol                  => protocol
-    - ^^destination               => destination
-    - ^facility                   => facility
+    - ^protocol                  => protocol
+    - port                       => port
 
 collect_only_labels: true
 only_cluster_instance: true
@@ -18,8 +17,4 @@ plugins:
         - status protocol tcp_encrypted tcp_encrypted `0`
 
 export_options:
-  instance_keys:
-    - protocol
-  instance_labels:
-    - destination
-    - facility
+  include_all_labels: true

@@ -9,7 +9,6 @@ counters:
       - health
 
 collect_only_labels: true
-no_max_records: true
 
 plugins:
   - LabelAgent:

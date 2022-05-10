@@ -43,8 +43,8 @@ func GetCounterMap() map[string][]string {
 	counterMap["NO_DATA_CONTAINS"] = append(counterMap["NO_DATA_CONTAINS"], "poller", "metadata_exporter_count")
 	//}
 
-	// CI clusters don't have cluster peer and svm ldap/vscan metrics, security_login, security_audit_destination metrics
-	counterMap["NO_DATA_CONTAINS"] = append(counterMap["NO_DATA_CONTAINS"], "cluster_peer", "svm_ldap", "svm_vscan", "security_login", "security_audit_destination")
+	// CI clusters don't have cluster peer and svm ldap/vscan metrics, security_login metrics
+	counterMap["NO_DATA_CONTAINS"] = append(counterMap["NO_DATA_CONTAINS"], "cluster_peer", "svm_ldap", "svm_vscan", "security_login")
 
 	return counterMap
 }
