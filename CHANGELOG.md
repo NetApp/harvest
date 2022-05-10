@@ -14,6 +14,12 @@ You can import via `bin/harvest/grafana import` cli or from the Grafana UI.
 release and will be removed in the next release of Harvest. No dashboards use the counters defined in this template and  
 all counters are being deprecated by ONTAP. If you are using these counters, please create your own copy of the template.
 
+**IMPORTANT** 7-mode filers that are not on the latest release of ONTAP may experience TLS connection issues with errors like `tls: server selected unsupported protocol version 301` This is caused by a change in Go 1.18. The [default for TLS client connections was changed to TLS 1.2](https://tip.golang.org/doc/go1.18#tls10) in Go 1.18. Please upgrade your 7-mode filers or set the `GODEBUG=tls10default=1` environment variable before staring Harvest. A future version of Harvest will provide an option to set the TLS minVersion. See #1007. 
+
+**IMPORTANT** The `conf/zapiperf/cdot/9.8.0/object_store_client_op.yaml` ZapiPerf template is being deprecated in this
+release and will be removed in the next release of Harvest. No dashboards use the counters defined in this template and  
+all counters are being deprecated by ONTAP. If you are using these counters, please create your own copy of the template.
+
 **Known Issues**
 
 ### Enhancements
