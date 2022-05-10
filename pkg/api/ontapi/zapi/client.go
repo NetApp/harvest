@@ -137,8 +137,7 @@ func New(poller conf.Poller) (*Client, error) {
 			TLSClientConfig: &tls.Config{
 				RootCAs:            caCertPool,
 				Certificates:       []tls.Certificate{cert},
-				InsecureSkipVerify: useInsecureTLS,
-			},
+				InsecureSkipVerify: useInsecureTLS},
 		}
 	} else {
 
@@ -152,13 +151,6 @@ func New(poller conf.Poller) (*Client, error) {
 		transport = &http.Transport{
 			Proxy:           http.ProxyFromEnvironment,
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: useInsecureTLS},
-		}
-	}
-	if poller.TLSMinVersion != "" {
-		tlsVersion := client.tlsVersion(poller.TLSMinVersion)
-		if tlsVersion != 0 {
-			client.Logger.Info().Uint16("tlsVersion", tlsVersion).Msg("Using TLS version")
-			transport.TLSClientConfig.MinVersion = tlsVersion
 		}
 	}
 	client.request = request
@@ -508,21 +500,4 @@ func (c *Client) SetTimeout(timeout string) {
 		c.Logger.Debug().Str("timeout", newTimeout.String()).Msg("Using default timeout")
 	}
 	c.client.Timeout = newTimeout
-}
-
-func (c *Client) tlsVersion(version string) uint16 {
-	lower := strings.ToLower(version)
-	switch lower {
-	case "tls10":
-		return tls.VersionTLS10
-	case "tls11":
-		return tls.VersionTLS11
-	case "tls12":
-		return tls.VersionTLS12
-	case "tls13":
-		return tls.VersionTLS13
-	default:
-		c.Logger.Warn().Str("version", version).Msg("Unknown TLS version, using default")
-	}
-	return 0
 }
