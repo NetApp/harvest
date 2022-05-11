@@ -8,7 +8,6 @@ require (
 	github.com/hashicorp/go-version v1.4.0
 	github.com/imdario/mergo v0.3.12
 	github.com/olekukonko/tablewriter v0.0.5
-	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.26.1
 	github.com/shirou/gopsutil/v3 v3.22.4
 	github.com/spf13/cobra v1.4.0
@@ -32,6 +31,7 @@ require (
 	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect
 	github.com/mailru/easyjson v0.7.6 // indirect
 	github.com/mattn/go-runewidth v0.0.9 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/tidwall/match v1.1.1 // indirect

@@ -1,10 +1,11 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
+
 package errors
 
 import (
-	"github.com/pkg/errors"
+	"fmt"
 	"strings"
 )
 
@@ -33,7 +34,7 @@ const (
 )
 
 func New(class, msg string) error {
-	return errors.New(class + " => " + msg)
+	return fmt.Errorf("%s => %s", class, msg)
 }
 
 func GetClass(err error) string {
