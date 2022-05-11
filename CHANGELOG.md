@@ -113,7 +113,6 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 
 - Harvest panics when trying to merge empty template [#859](https://github.com/NetApp/harvest/issues/859) Thanks to @pilot7777 for raising
 
-- Harve
 ---
 
 ## 22.02.0 / 
