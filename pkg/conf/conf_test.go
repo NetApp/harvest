@@ -284,6 +284,6 @@ func TestNodeToPoller(t *testing.T) {
 	testArg(t, DefaultApiVersion, poller.ApiVersion)
 	testArg(t, "bob", poller.Username)
 	testArg(t, "pass", poller.Password)
-	testArg(t, "10s", poller.ClientTimeout)
+	testArg(t, "30s", poller.ClientTimeout)
 	testArg(t, "true", strconv.FormatBool(*poller.UseInsecureTls))
 }

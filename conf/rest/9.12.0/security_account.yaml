@@ -5,6 +5,7 @@ object:           security_account
 
 counters:
   - ^^name                                      => user_name
+  - ^^owner.name                                => svm
   - ^role.name                                  => role_name
   - ^password_hash_algorithm                    => hash_algorithm
   - ^locked                                     => locked
@@ -24,6 +25,7 @@ plugins:
 export_options:
   instance_keys:
     - user_name
+    - svm
   instance_labels:
     - role_name
     - hash_algorithm

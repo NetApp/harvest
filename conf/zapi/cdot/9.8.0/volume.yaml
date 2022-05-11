@@ -3,7 +3,7 @@ query:                    volume-get-iter
 object:                   volume
 
 # increase client timeout for volumes
-client_timeout:           1m
+client_timeout:           2m
 
 counters:
   volume-attributes:

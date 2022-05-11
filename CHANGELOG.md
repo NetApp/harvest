@@ -2,7 +2,7 @@
 
 [Releases](https://github.com/NetApp/harvest/releases)
 
-## 22.05.0 /
+## 22.05.0 / 2022-05-11
 <!-- git log --no-decorate --no-merges --cherry-pick --right-only --oneline origin/release/22.02.0...origin/release/22.05.0 -->
 
 :rocket: Highlights of this major release include:
@@ -36,6 +36,12 @@ release and will be removed in the next release of Harvest. No dashboards use th
 all counters are being deprecated by ONTAP. If you are using these counters, please create your own copy of the template.
 
 **Known Issues**
+
+**IMPORTANT** 7-mode filers that are not on the latest release of ONTAP may experience TLS connection issues with
+errors like `tls: server selected unsupported protocol version 301` This is caused by a change in Go 1.18.
+The [default for TLS client connections was changed to TLS 1.2](https://tip.golang.org/doc/go1.18#tls10) in Go 1.18.
+Please upgrade your 7-mode filers (recommended) or set `tls_min_version: tls10` in your `harvest.yml`
+[poller section](https://github.com/NetApp/harvest/tree/release/22.05.0#pollers). See #1007 for more details.
 
 The Unix collector is unable to monitor pollers running in containers. See [#249](https://github.com/NetApp/harvest/issues/249) for details.
 
@@ -82,6 +88,8 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 - Increase ZAPI client timeout for default and volume object [#1005](https://github.com/NetApp/harvest/pull/1005)
 
 - REST collector should support retrieving a subset of objects via template filtering support [#950](https://github.com/NetApp/harvest/pull/950)
+
+- Harvest should support minimum TLS version config [#1007](https://github.com/NetApp/harvest/issues/1007) Thanks to @jmg011 for reporting and verifying this
 
 ### Fixes
 
@@ -179,7 +187,7 @@ The output of one plugin can be fed into the input of the next one. #736 Thanks 
 - [Document](https://github.com/NetApp/harvest/blob/main/docs/TemplatesAndMetrics.md) how ZAPI collectors, templates, and exporting work together. Thanks @jmg011 and others for asking for this 
 
 - Remove redundant dashboards (Network, Node, SVM, Volume) [#703](https://github.com/NetApp/harvest/issues/703) Thanks to @mamoep for reporting this
- 
+
 - Harvest `generate docker` command should support customer-supplied Prometheus and Grafana ports. [#584](https://github.com/NetApp/harvest/issues/584)
 
 - Harvest certificate authentication should work with self-signed subject alternative name (SAN) certificates. Improve documentation on how to use [certificate authentication](https://github.com/NetApp/harvest/blob/main/docs/AuthAndPermissions.md#using-certificate-authentication). Thanks to @edd1619 for raising this issue
