@@ -7,7 +7,7 @@
 
 :rocket: Highlights of this major release include:
 
-- Early access to ONTAP REST perf collector
+- Early access to ONTAP REST perf collector from ONTAP 9.11.1GA+
 
 - :hourglass: New Container Registry - Several of you have mentioned that you are being rate-limited when pulling Harvest Docker images from DockerHub. To alleviate this problem, we're publishing Harvest images to NetApp's container registry (cr.netapp.io). Going forward, we'll publish images to both DockerHub and cr.netapp.io. More information in the [FAQ](https://github.com/NetApp/harvest/wiki/FAQ#where-are-harvest-container-images-published). No action is required unless you want to switch from DockerHub to cr.netapp.io. If so, the FAQ has you covered.
 
@@ -24,24 +24,17 @@
 
 - `bin/grafana import` provides a `--multi` flag that rewrites dashboards to include multi-select dropdowns for each variable at the top of the dashboard
 
-- The `conf/rest` collector templates received a lot of attentions this release. All known gaps between the ZAPI and REST collector have been filled and there is full parity between the two. :metal:
+- The `conf/rest` collector templates received a lot of attentions this release. All known gaps between the ZAPI and REST collector have been filled and there is full parity between the two from ONTAP 9.11+. :metal:
 
 - 24 bug fixes, 48 feature, and 5 documentation commits this release
 
-**IMPORTANT** :bangbang: After upgrade, don't forget to re-import your dashboards so you get all the new enhancements and fixes.
-You can import via `bin/harvest/grafana import` cli or from the Grafana UI.
+**IMPORTANT** :bangbang: After upgrade, don't forget to re-import your dashboards so you get all the new enhancements and fixes. You can import via `bin/harvest/grafana import` cli or from the Grafana UI.
 
-**IMPORTANT** The `conf/zapiperf/cdot/9.8.0/object_store_client_op.yaml` ZapiPerf template is being deprecated in this
-release and will be removed in the next release of Harvest. No dashboards use the counters defined in this template and  
-all counters are being deprecated by ONTAP. If you are using these counters, please create your own copy of the template.
+**IMPORTANT** The `conf/zapiperf/cdot/9.8.0/object_store_client_op.yaml` ZapiPerf template is being deprecated in this release and will be removed in the next release of Harvest. No dashboards use the counters defined in this template and all counters are being deprecated by ONTAP. If you are using these counters, please create your own copy of the template.
 
 **Known Issues**
 
-**IMPORTANT** 7-mode filers that are not on the latest release of ONTAP may experience TLS connection issues with
-errors like `tls: server selected unsupported protocol version 301` This is caused by a change in Go 1.18.
-The [default for TLS client connections was changed to TLS 1.2](https://tip.golang.org/doc/go1.18#tls10) in Go 1.18.
-Please upgrade your 7-mode filers (recommended) or set `tls_min_version: tls10` in your `harvest.yml`
-[poller section](https://github.com/NetApp/harvest/tree/release/22.05.0#pollers). See #1007 for more details.
+**IMPORTANT** 7-mode filers that are not on the latest release of ONTAP may experience TLS connection issues with errors like `tls: server selected unsupported protocol version 301` This is caused by a change in Go 1.18. The [default for TLS client connections was changed to TLS 1.2](https://tip.golang.org/doc/go1.18#tls10) in Go 1.18. Please upgrade your 7-mode filers (recommended) or set `tls_min_version: tls10` in your `harvest.yml` [poller section](https://github.com/NetApp/harvest/tree/release/22.05.0#pollers). See #1007 for more details.
 
 The Unix collector is unable to monitor pollers running in containers. See [#249](https://github.com/NetApp/harvest/issues/249) for details.
 
