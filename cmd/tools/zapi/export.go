@@ -49,14 +49,14 @@ func exportCounters(item *node.Node, c *client.Client, args *Args) error {
 		return err
 	}
 
-	object_display := renderObjectName(args.Object)
-	template.NewChildS("name", object_display)
+	objectDisplay := renderObjectName(args.Object)
+	template.NewChildS("name", objectDisplay)
 	template.NewChildS("query", args.Object)
 	template.NewChildS("object", object)
 
 	counters := template.NewChildS("counters", "")
-	export_options := template.NewChildS("export_options", "")
-	instance_keys := export_options.NewChildS("instance_keys", "")
+	exportOptions := template.NewChildS("export_options", "")
+	instanceKeys := exportOptions.NewChildS("instance_keys", "")
 
 	for _, ch := range item.GetChildren() {
 		if ch.GetChildContentS("is-deprecated") != "true" {
@@ -71,9 +71,9 @@ func exportCounters(item *node.Node, c *client.Client, args *Args) error {
 
 			if name != "instance_uuid" && strings.Contains(prop, "string") {
 				if name == "instance_name" {
-					instance_keys.NewChildS("", object)
+					instanceKeys.NewChildS("", object)
 				} else {
-					instance_keys.NewChildS("", name)
+					instanceKeys.NewChildS("", name)
 				}
 			}
 		}
@@ -113,14 +113,14 @@ func exportCounters(item *node.Node, c *client.Client, args *Args) error {
 		return err
 	}
 
-	template_fp := path.Join(fp...)
+	templateFp := path.Join(fp...)
 
-	if err = ioutil.WriteFile(template_fp, dump, 0644); err != nil {
+	if err = ioutil.WriteFile(templateFp, dump, 0644); err != nil {
 		fmt.Println("writefile")
 		return err
 	}
 
-	fmt.Printf("exported to [%s]\n", template_fp)
+	fmt.Printf("exported to [%s]\n", templateFp)
 
 	answer := ""
 	fmt.Printf("enable template? [y/N]: ")
@@ -138,16 +138,16 @@ func exportCounters(item *node.Node, c *client.Client, args *Args) error {
 		custom.NewChildS("objects", "")
 	}
 
-	custom_fp := path.Join(harvestHomePath, "conf/", "zapiperf/", "custom.yaml")
+	customFp := path.Join(harvestHomePath, "conf/", "zapiperf/", "custom.yaml")
 
 	if objects := custom.GetChildS("objects"); objects != nil {
 
-		if objects.GetChildS(object_display) != nil {
-			fmt.Printf("[%s] already in custom template [%s]\n", object_display, custom_fp)
+		if objects.GetChildS(objectDisplay) != nil {
+			fmt.Printf("[%s] already in custom template [%s]\n", objectDisplay, customFp)
 			return nil
 		}
 
-		objects.NewChildS(object_display, strings.ReplaceAll(args.Object, ":", "_")+".yaml")
+		objects.NewChildS(objectDisplay, strings.ReplaceAll(args.Object, ":", "_")+".yaml")
 	}
 
 	if dump, err = yaml.Dump(custom); err != nil {
@@ -155,29 +155,29 @@ func exportCounters(item *node.Node, c *client.Client, args *Args) error {
 		return err
 	}
 
-	if err = ioutil.WriteFile(custom_fp, dump, 0644); err != nil {
+	if err = ioutil.WriteFile(customFp, dump, 0644); err != nil {
 		fmt.Println("write custom.yaml")
 		return err
 	}
 
-	fmt.Printf("added template to [%s]\n", custom_fp)
+	fmt.Printf("added template to [%s]\n", customFp)
 
 	return nil
 }
 
-func renderObjectName(raw_name string) string {
+func renderObjectName(rawName string) string {
 
-	name := strings.ToUpper(string(raw_name[0]))
+	name := strings.ToUpper(string(rawName[0]))
 	i := 1
-	size := len(raw_name)
+	size := len(rawName)
 
 	for i < size {
 
-		c := string(raw_name[i])
+		c := string(rawName[i])
 
 		if c == "_" || c == ":" || c == "-" {
 			if i < size-1 {
-				name += strings.ToUpper(string(raw_name[i+1]))
+				name += strings.ToUpper(string(rawName[i+1]))
 			}
 			i += 2
 		} else {

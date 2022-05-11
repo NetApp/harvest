@@ -70,7 +70,7 @@ func (my *Shelf) Init() error {
 
 	objects := my.Params.GetChildS("objects")
 	if objects == nil {
-		return errors.New(errors.MISSING_PARAM, "objects")
+		return errors.New(errors.MissingParam, "objects")
 	}
 
 	for _, obj := range objects.GetChildren() {
@@ -332,7 +332,7 @@ func (my *Shelf) handleCMode(result *node.Node) ([]*matrix.Matrix, error) {
 		shelves = x.GetChildren()
 	}
 	if len(shelves) == 0 {
-		return nil, errors.New(errors.ERR_NO_INSTANCE, "no shelf instances found")
+		return nil, errors.New(errors.ErrNoInstance, "no shelf instances found")
 	}
 
 	my.Logger.Debug().Msgf("fetching %d shelf counters", len(shelves))
@@ -434,7 +434,7 @@ func (my *Shelf) handle7Mode(result *node.Node) ([]*matrix.Matrix, error) {
 	channels = result.SearchChildren([]string{"shelf-environ-channel-info"})
 
 	if len(channels) == 0 {
-		return nil, errors.New(errors.ERR_NO_INSTANCE, "no channels found")
+		return nil, errors.New(errors.ErrNoInstance, "no channels found")
 	}
 
 	var output []*matrix.Matrix

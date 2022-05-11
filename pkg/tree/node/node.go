@@ -408,25 +408,25 @@ func (n *Node) SearchContent(prefix []string, paths [][]string) ([]string, bool)
 
 	matches := make([]string, 0)
 
-	search = func(node *Node, current_path []string) {
-		var new_path []string
-		if len(current_path) > 0 || prefix[0] == node.GetNameS() {
-			new_path = append(current_path, node.GetNameS())
+	search = func(node *Node, currentPath []string) {
+		var newPath []string
+		if len(currentPath) > 0 || prefix[0] == node.GetNameS() {
+			newPath = append(currentPath, node.GetNameS())
 		} else {
-			new_path = make([]string, len(current_path))
-			copy(new_path, current_path)
+			newPath = make([]string, len(currentPath))
+			copy(newPath, currentPath)
 		}
 		//fmt.Printf(" -> current_path=%v \t new_path=%v\n", current_path, new_path)
 		for _, path := range paths {
-			if util.EqualStringSlice(new_path, path) {
+			if util.EqualStringSlice(newPath, path) {
 				matches = append(matches, node.GetContentS())
 				//fmt.Println("    MATCH!")
 				break
 			}
 		}
-		if len(new_path) < util.MaxLen(paths) {
+		if len(newPath) < util.MaxLen(paths) {
 			for _, child := range node.GetChildren() {
-				search(child, new_path)
+				search(child, newPath)
 			}
 		}
 	}
@@ -443,19 +443,19 @@ func (n *Node) SearchChildren(path []string) []*Node {
 
 	matches := make([]*Node, 0)
 
-	search = func(node *Node, current_path []string) {
-		var new_path []string
-		if len(current_path) > 0 || path[0] == node.GetNameS() {
-			new_path = append(current_path, node.GetNameS())
+	search = func(node *Node, currentPath []string) {
+		var newPath []string
+		if len(currentPath) > 0 || path[0] == node.GetNameS() {
+			newPath = append(currentPath, node.GetNameS())
 		} else {
-			new_path = make([]string, len(current_path))
-			copy(new_path, current_path)
+			newPath = make([]string, len(currentPath))
+			copy(newPath, currentPath)
 		}
-		if util.EqualStringSlice(new_path, path) {
+		if util.EqualStringSlice(newPath, path) {
 			matches = append(matches, node)
-		} else if len(new_path) < len(path) {
+		} else if len(newPath) < len(path) {
 			for _, child := range node.GetChildren() {
-				search(child, new_path)
+				search(child, newPath)
 			}
 		}
 	}

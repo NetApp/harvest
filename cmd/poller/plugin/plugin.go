@@ -134,7 +134,7 @@ func (p *AbstractPlugin) InitAbc() error {
 		p.ParentParams.NewChildS("poller_name", p.Options.Poller)
 	}
 	if p.Name = p.Params.GetNameS(); p.Name == "" {
-		return errors.New(errors.MISSING_PARAM, "plugin name")
+		return errors.New(errors.MissingParam, "plugin name")
 	}
 	p.Logger = logging.Get().SubLogger("plugin", p.Parent+":"+p.Name).SubLogger("object", p.Object)
 

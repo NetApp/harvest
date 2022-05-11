@@ -326,25 +326,25 @@ func (me *LabelAgent) parseReplaceRegexRule(rule string) {
 			me.Logger.Trace().Msgf("(replace_regex) compiled regular expression [%s]", r.reg.String())
 
 			r.indices = make([]int, 0)
-			err_pos := -1
+			errPos := -1
 
 			if fields[2] = strings.TrimSuffix(fields[2], "`"); len(fields[2]) != 0 {
 				me.Logger.Trace().Msgf("(replace_regex) parsing substitution string [%s] (%d)", fields[2], len(fields[2]))
-				inside_num := false
+				insideNum := false
 				num := ""
 				for i, b := range fields[2] {
 					ch := string(b)
-					if inside_num {
+					if insideNum {
 						if _, err := strconv.Atoi(ch); err == nil {
 							num += ch
 							continue
 						} else if index, err := strconv.Atoi(num); err == nil && index > 0 {
 							r.indices = append(r.indices, index-1)
 							r.format += "%s"
-							inside_num = false
+							insideNum = false
 							num = ""
 						} else {
-							err_pos = i
+							errPos = i
 							break
 						}
 					}
@@ -352,15 +352,15 @@ func (me *LabelAgent) parseReplaceRegexRule(rule string) {
 						if strings.HasSuffix(r.format, `\`) {
 							r.format = strings.TrimSuffix(r.format, `\`) + "$"
 						} else {
-							inside_num = true
+							insideNum = true
 						}
 					} else {
 						r.format += ch
 					}
 				}
 			}
-			if err_pos != -1 {
-				me.Logger.Error().Stack().Err(nil).Msgf("(replace_regex) invalid char in substitution string at pos %d (%s)", err_pos, string(fields[2][err_pos]))
+			if errPos != -1 {
+				me.Logger.Error().Stack().Err(nil).Msgf("(replace_regex) invalid char in substitution string at pos %d (%s)", errPos, string(fields[2][errPos]))
 				return
 			}
 			me.replaceRegexRules = append(me.replaceRegexRules, r)

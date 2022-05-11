@@ -28,14 +28,14 @@ func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	if read = data.GetMetric("read_data"); read == nil {
 		// Check for 7 mode fcp counters, as they starts with fcp_.
 		if read = data.GetMetric("fcp_read_data"); read == nil {
-			return nil, errors.New(errors.ERR_NO_METRIC, "read_data")
+			return nil, errors.New(errors.ErrNoMetric, "read_data")
 		}
 	}
 
 	if write = data.GetMetric("write_data"); write == nil {
 		// Check for 7 mode fcp counters, as they starts with fcp_.
 		if write = data.GetMetric("fcp_write_data"); write == nil {
-			return nil, errors.New(errors.ERR_NO_METRIC, "write_data")
+			return nil, errors.New(errors.ErrNoMetric, "write_data")
 		}
 	}
 
@@ -77,27 +77,27 @@ func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		if speed != 0 {
 
-			var rx_bytes, tx_bytes, rx_percent, tx_percent float64
-			var rx_ok, tx_ok bool
+			var rxBytes, txBytes, rxPercent, txPercent float64
+			var rxOk, txOk bool
 
-			if rx_bytes, rx_ok = write.GetValueFloat64(instance); rx_ok {
-				rx_percent = rx_bytes / float64(speed)
-				err := rx.SetValueFloat64(instance, rx_percent)
+			if rxBytes, rxOk = write.GetValueFloat64(instance); rxOk {
+				rxPercent = rxBytes / float64(speed)
+				err := rx.SetValueFloat64(instance, rxPercent)
 				if err != nil {
 					me.Logger.Error().Stack().Err(err).Msg("error")
 				}
 			}
 
-			if tx_bytes, tx_ok = read.GetValueFloat64(instance); tx_ok {
-				tx_percent = tx_bytes / float64(speed)
-				err := tx.SetValueFloat64(instance, tx_percent)
+			if txBytes, txOk = read.GetValueFloat64(instance); txOk {
+				txPercent = txBytes / float64(speed)
+				err := tx.SetValueFloat64(instance, txPercent)
 				if err != nil {
 					me.Logger.Error().Stack().Err(err).Msg("error")
 				}
 			}
 
-			if rx_ok || tx_ok {
-				err := util.SetValueFloat64(instance, math.Max(rx_percent, tx_percent))
+			if rxOk || txOk {
+				err := util.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
 				if err != nil {
 					me.Logger.Error().Stack().Err(err).Msg("error")
 				}

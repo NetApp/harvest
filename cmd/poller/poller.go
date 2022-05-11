@@ -240,7 +240,7 @@ func (p *Poller) Init() error {
 			logger.Debug().Msgf("using default [ssl_cert] path: [%s]", fp)
 			if _, err = os.Stat(fp); err != nil {
 				logger.Error().Stack().Err(err).Msgf("ssl_cert")
-				return errors.New(errors.MISSING_PARAM, "ssl_cert: "+err.Error())
+				return errors.New(errors.MissingParam, "ssl_cert: "+err.Error())
 			}
 		}
 		if p.params.SslKey == "" {
@@ -249,7 +249,7 @@ func (p *Poller) Init() error {
 			logger.Debug().Msgf("using default [ssl_key] path: [%s]", fp)
 			if _, err = os.Stat(fp); err != nil {
 				logger.Error().Stack().Err(err).Msgf("ssl_key")
-				return errors.New(errors.MISSING_PARAM, "ssl_key: "+err.Error())
+				return errors.New(errors.MissingParam, "ssl_key: "+err.Error())
 			}
 		}
 	}
@@ -264,7 +264,7 @@ func (p *Poller) Init() error {
 	// has requested them
 	if len(p.params.Collectors) == 0 {
 		logger.Warn().Msg("no collectors defined for this poller in config")
-		return errors.New(errors.ERR_NO_COLLECTOR, "no collectors")
+		return errors.New(errors.ErrNoCollector, "no collectors")
 	} else {
 		for _, c := range p.params.Collectors {
 			ok := true
@@ -292,7 +292,7 @@ func (p *Poller) Init() error {
 	// at least one collector should successfully initialize
 	if len(p.collectors) == 0 {
 		logger.Warn().Msg("no collectors initialized, stopping")
-		return errors.New(errors.ERR_NO_COLLECTOR, "no collectors")
+		return errors.New(errors.ErrNoCollector, "no collectors")
 	}
 
 	logger.Debug().Msgf("initialized %d collectors", len(p.collectors))
@@ -658,7 +658,7 @@ func (p *Poller) loadCollector(c conf.Collector, object string) error {
 			}
 			if err != nil {
 				logger.Warn().Msgf("init collector-object (%s:%s): %v", class, object.GetNameS(), err)
-				if errors.IsErr(err, errors.ERR_CONNECTION) {
+				if errors.IsErr(err, errors.ErrConnection) {
 					logger.Warn().Msgf("aborting collector (%s)", class)
 					break
 				}
@@ -668,7 +668,7 @@ func (p *Poller) loadCollector(c conf.Collector, object string) error {
 			}
 		}
 	} else {
-		return errors.New(errors.MISSING_PARAM, "collector object")
+		return errors.New(errors.MissingParam, "collector object")
 	}
 
 	p.collectors = append(p.collectors, collectors...)
@@ -772,7 +772,7 @@ func (p *Poller) newCollector(class string, object string, template *node.Node) 
 	col, ok := inst.(collector.Collector)
 	if !ok {
 		logger.Error().Msgf("collector '%s' is not a Collector", name)
-		return nil, errors.New(errors.ERR_NO_COLLECTOR, "no collectors")
+		return nil, errors.New(errors.ErrNoCollector, "no collectors")
 	}
 	delegate := collector.New(class, object, p.options, template.Copy())
 	err = col.Init(delegate)
@@ -1101,7 +1101,7 @@ func main() {
 	defer func() {
 		//logger.Warn("(main) ", "defer func here")
 		if r := recover(); r != nil {
-			logger.Error().Stack().Err(errors.New(errors.GO_ROUTINE_PANIC, string(debug.Stack()))).Msgf("Poller panicked %s", r)
+			logger.Error().Stack().Err(errors.New(errors.GoRoutinePanic, string(debug.Stack()))).Msgf("Poller panicked %s", r)
 			logger.Fatal().Msg(`(main) terminating abnormally, tip: run in foreground mode (with "--loglevel 0") to debug`)
 
 			os.Exit(1)

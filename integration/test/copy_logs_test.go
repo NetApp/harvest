@@ -14,7 +14,7 @@ func TestCopyLogs(t *testing.T) {
 	installer.CleanLogDir()
 	installer.CreateLogDir()
 	pollerProcessName := "bin/poller"
-	harvestLogDir := installer.LOG_DIR
+	harvestLogDir := installer.LogDir
 	containerIds := docker.GetContainerID(pollerProcessName)
 	for _, containerId := range containerIds {
 		containerShortId := containerId[:10]

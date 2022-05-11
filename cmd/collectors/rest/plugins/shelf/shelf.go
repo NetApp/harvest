@@ -200,7 +200,7 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	results := gjson.GetManyBytes(content, "num_records", "records")
 	numRecords := results[0]
 	if numRecords.Int() == 0 {
-		return nil, errors.New(errors.ERR_NO_INSTANCE, "no "+my.query+" instances on cluster")
+		return nil, errors.New(errors.ErrNoInstance, "no "+my.query+" instances on cluster")
 	}
 
 	my.Logger.Debug().Msgf("fetching %d shelf counters", numRecords.Int())

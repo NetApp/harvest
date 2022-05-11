@@ -75,7 +75,7 @@ func (my *Qtree) Init() error {
 
 	objects := my.Params.GetChildS("objects")
 	if objects == nil {
-		return errors.New(errors.MISSING_PARAM, "objects")
+		return errors.New(errors.MissingParam, "objects")
 	}
 
 	for _, obj := range objects.GetAllChildContentS() {
@@ -157,7 +157,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 
 		if len(quotas) == 0 {
-			return nil, errors.New(errors.ERR_NO_INSTANCE, "no quota instances found")
+			return nil, errors.New(errors.ErrNoInstance, "no quota instances found")
 		}
 
 		my.Logger.Debug().Int("quotas", len(quotas)).Msg("fetching quotas")

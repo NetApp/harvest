@@ -122,7 +122,7 @@ func (me *Prometheus) Init() error {
 		me.allowAddrs = *x
 		if len(me.allowAddrs) == 0 {
 			me.Logger.Error().Stack().Err(nil).Msg("allow_addrs without any")
-			return errors.New(errors.INVALID_PARAM, "allow_addrs")
+			return errors.New(errors.InvalidParam, "allow_addrs")
 		}
 		me.checkAddrs = true
 		me.Logger.Debug().Msgf("added %d plain allow rules", len(me.allowAddrs))
@@ -137,12 +137,12 @@ func (me *Prometheus) Init() error {
 				me.allowAddrsRegex = append(me.allowAddrsRegex, reg)
 			} else {
 				me.Logger.Error().Stack().Err(err).Msg("parse regex")
-				return errors.New(errors.INVALID_PARAM, "allow_addrs_regex")
+				return errors.New(errors.InvalidParam, "allow_addrs_regex")
 			}
 		}
 		if len(me.allowAddrsRegex) == 0 {
 			me.Logger.Error().Stack().Err(nil).Msg("allow_addrs_regex without any")
-			return errors.New(errors.INVALID_PARAM, "allow_addrs")
+			return errors.New(errors.InvalidParam, "allow_addrs")
 		}
 		me.checkAddrs = true
 		me.Logger.Debug().Msgf("added %d regex allow rules", len(me.allowAddrsRegex))
@@ -166,9 +166,9 @@ func (me *Prometheus) Init() error {
 
 	// sanity check on port
 	if port == 0 {
-		return errors.New(errors.MISSING_PARAM, "port")
+		return errors.New(errors.MissingParam, "port")
 	} else if port < 0 {
-		return errors.New(errors.INVALID_PARAM, "port")
+		return errors.New(errors.InvalidParam, "port")
 	}
 
 	// The optional parameter LocalHttpAddr is the address of the HTTP service, valid values are:
@@ -267,15 +267,15 @@ func (me *Prometheus) Export(data *matrix.Matrix) error {
 
 func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 	var (
-		rendered                                          [][]byte
-		tagged                                            *set.Set
-		labels_to_include, keys_to_include, global_labels []string
-		prefix                                            string
-		err                                               error
+		rendered                                     [][]byte
+		tagged                                       *set.Set
+		labelsToInclude, keysToInclude, globalLabels []string
+		prefix                                       string
+		err                                          error
 	)
 
 	rendered = make([][]byte, 0)
-	global_labels = make([]string, 0)
+	globalLabels = make([]string, 0)
 
 	if me.addMetaTags {
 		tagged = set.New()
@@ -284,26 +284,26 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 	options := data.GetExportOptions()
 
 	if x := options.GetChildS("instance_labels"); x != nil {
-		labels_to_include = x.GetAllChildContentS()
-		me.Logger.Debug().Msgf("requested instance_labels : %v", labels_to_include)
+		labelsToInclude = x.GetAllChildContentS()
+		me.Logger.Debug().Msgf("requested instance_labels : %v", labelsToInclude)
 	}
 
 	if x := options.GetChildS("instance_keys"); x != nil {
-		keys_to_include = x.GetAllChildContentS()
-		me.Logger.Debug().Msgf("requested keys_labels : %v", keys_to_include)
+		keysToInclude = x.GetAllChildContentS()
+		me.Logger.Debug().Msgf("requested keys_labels : %v", keysToInclude)
 	}
 
-	include_all_labels := false
-	require_instance_keys := true
+	includeAllLabels := false
+	requireInstanceKeys := true
 
 	if x := options.GetChildContentS("include_all_labels"); x != "" {
-		if include_all_labels, err = strconv.ParseBool(x); err != nil {
+		if includeAllLabels, err = strconv.ParseBool(x); err != nil {
 			me.Logger.Error().Stack().Err(err).Msg("parameter: include_all_labels")
 		}
 	}
 
 	if x := options.GetChildContentS("require_instance_keys"); x != "" {
-		if require_instance_keys, err = strconv.ParseBool(x); err != nil {
+		if requireInstanceKeys, err = strconv.ParseBool(x); err != nil {
 			me.Logger.Error().Stack().Err(err).Msg("parameter: require_instance_keys")
 		}
 	}
@@ -311,7 +311,7 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 	prefix = me.globalPrefix + data.Object
 
 	for key, value := range data.GetGlobalLabels().Map() {
-		global_labels = append(global_labels, fmt.Sprintf("%s=\"%s\"", key, value))
+		globalLabels = append(globalLabels, fmt.Sprintf("%s=\"%s\"", key, value))
 	}
 
 	for key, instance := range data.GetInstances() {
@@ -323,56 +323,56 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 
 		me.Logger.Trace().Msgf("rendering instance [%s] (%v)", key, instance.GetLabels())
 
-		instance_keys := make([]string, len(global_labels))
-		copy(instance_keys, global_labels)
-		instance_keys_ok := false
-		instance_labels := make([]string, 0)
+		instanceKeys := make([]string, len(globalLabels))
+		copy(instanceKeys, globalLabels)
+		instanceKeysOk := false
+		instanceLabels := make([]string, 0)
 
-		if include_all_labels {
+		if includeAllLabels {
 			for label, value := range instance.GetLabels().Map() {
 				// temporary fix for the rarely happening duplicate labels
 				// known case is: ZapiPerf -> 7mode -> disk.yaml
 				// actual cause is the Aggregator plugin, which is adding node as
 				// instance label (even though it's already a global label for 7modes)
 				if !data.GetGlobalLabels().Has(label) {
-					instance_keys = append(instance_keys, fmt.Sprintf("%s=\"%s\"", label, value))
+					instanceKeys = append(instanceKeys, fmt.Sprintf("%s=\"%s\"", label, value))
 				}
 			}
 		} else {
-			for _, key := range keys_to_include {
+			for _, key := range keysToInclude {
 				value := instance.GetLabel(key)
-				instance_keys = append(instance_keys, fmt.Sprintf("%s=\"%s\"", key, value))
-				if !instance_keys_ok && value != "" {
-					instance_keys_ok = true
+				instanceKeys = append(instanceKeys, fmt.Sprintf("%s=\"%s\"", key, value))
+				if !instanceKeysOk && value != "" {
+					instanceKeysOk = true
 				}
 				me.Logger.Trace().Msgf("++ key [%s] (%s) found=%v", key, value, value != "")
 			}
 
-			for _, label := range labels_to_include {
+			for _, label := range labelsToInclude {
 				value := instance.GetLabel(label)
-				instance_labels = append(instance_labels, fmt.Sprintf("%s=\"%s\"", label, value))
+				instanceLabels = append(instanceLabels, fmt.Sprintf("%s=\"%s\"", label, value))
 				me.Logger.Trace().Msgf("++ label [%s] (%s) %t", label, value, value != "")
 			}
 
 			// @TODO, probably be strict, and require all keys to be present
-			if !instance_keys_ok && require_instance_keys {
-				me.Logger.Trace().Msgf("skip instance, no keys parsed (%v) (%v)", instance_keys, instance_labels)
+			if !instanceKeysOk && requireInstanceKeys {
+				me.Logger.Trace().Msgf("skip instance, no keys parsed (%v) (%v)", instanceKeys, instanceLabels)
 				continue
 			}
 
 			// @TODO, check at least one label is found?
-			if len(instance_labels) != 0 {
+			if len(instanceLabels) != 0 {
 				var labelData string
 				if me.Params.SortLabels {
-					allLabels := make([]string, len(instance_labels))
-					copy(allLabels, instance_labels)
-					for _, instanceKey := range instance_keys {
+					allLabels := make([]string, len(instanceLabels))
+					copy(allLabels, instanceLabels)
+					for _, instanceKey := range instanceKeys {
 						allLabels = append(allLabels, instanceKey)
 					}
 					sort.Strings(allLabels)
 					labelData = fmt.Sprintf("%s_labels{%s} 1.0", prefix, strings.Join(allLabels, ","))
 				} else {
-					labelData = fmt.Sprintf("%s_labels{%s,%s} 1.0", prefix, strings.Join(instance_keys, ","), strings.Join(instance_labels, ","))
+					labelData = fmt.Sprintf("%s_labels{%s,%s} 1.0", prefix, strings.Join(instanceKeys, ","), strings.Join(instanceLabels, ","))
 				}
 				if me.addMetaTags && !tagged.Has(prefix+"_labels") {
 					tagged.Add(prefix + "_labels")
@@ -381,12 +381,12 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 				}
 				rendered = append(rendered, []byte(labelData))
 			} else {
-				me.Logger.Trace().Msgf("skip instance labels, no labels parsed (%v) (%v)", instance_keys, instance_labels)
+				me.Logger.Trace().Msgf("skip instance labels, no labels parsed (%v) (%v)", instanceKeys, instanceLabels)
 			}
 		}
 
 		if me.Params.SortLabels {
-			sort.Strings(instance_keys)
+			sort.Strings(instanceKeys)
 		}
 		for mkey, metric := range data.GetMetrics() {
 
@@ -401,11 +401,11 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 
 				// metric is histogram
 				if metric.HasLabels() {
-					metric_labels := make([]string, 0)
+					metricLabels := make([]string, 0)
 					for k, v := range metric.GetLabels().Map() {
-						metric_labels = append(metric_labels, fmt.Sprintf("%s=\"%s\"", k, v))
+						metricLabels = append(metricLabels, fmt.Sprintf("%s=\"%s\"", k, v))
 					}
-					x := fmt.Sprintf("%s_%s{%s,%s} %s", prefix, metric.GetName(), strings.Join(instance_keys, ","), strings.Join(metric_labels, ","), value)
+					x := fmt.Sprintf("%s_%s{%s,%s} %s", prefix, metric.GetName(), strings.Join(instanceKeys, ","), strings.Join(metricLabels, ","), value)
 
 					if me.addMetaTags && !tagged.Has(prefix+"_"+metric.GetName()) {
 						tagged.Add(prefix + "_" + metric.GetName())
@@ -416,7 +416,7 @@ func (me *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 					rendered = append(rendered, []byte(x))
 					// scalar metric
 				} else {
-					x := fmt.Sprintf("%s_%s{%s} %s", prefix, metric.GetName(), strings.Join(instance_keys, ","), value)
+					x := fmt.Sprintf("%s_%s{%s} %s", prefix, metric.GetName(), strings.Join(instanceKeys, ","), value)
 
 					if me.addMetaTags && !tagged.Has(prefix+"_"+metric.GetName()) {
 						tagged.Add(prefix + "_" + metric.GetName())

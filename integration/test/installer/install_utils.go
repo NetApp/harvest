@@ -6,7 +6,7 @@ import (
 	"log"
 )
 
-const LOG_DIR = "/var/log/harvest"
+const LogDir = "/var/log/harvest"
 
 func Uninstall() {
 	log.Println("Check and remove harvest ")
@@ -45,13 +45,13 @@ func UninstallPollerDocker() {
 }
 
 func CleanLogDir() {
-	if utils.FileExists(LOG_DIR) {
-		utils.Run("rm", "-rf", LOG_DIR)
+	if utils.FileExists(LogDir) {
+		utils.Run("rm", "-rf", LogDir)
 	}
 }
 
 func CreateLogDir() {
-	if !utils.FileExists(LOG_DIR) {
-		utils.MkDir(LOG_DIR)
+	if !utils.FileExists(LogDir) {
+		utils.MkDir(LogDir)
 	}
 }

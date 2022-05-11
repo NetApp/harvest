@@ -162,7 +162,7 @@ func (r *Rest) getClient(a *collector.AbstractCollector, config *node.Node) (*re
 	}
 	if poller.Addr == "" {
 		r.Logger.Error().Stack().Str("poller", opt.Poller).Msg("Address is empty")
-		return nil, errors.New(errors.MISSING_PARAM, "addr")
+		return nil, errors.New(errors.MissingParam, "addr")
 	}
 
 	clientTimeout := config.GetChildContentS("client_timeout")
@@ -295,7 +295,7 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 	results := gjson.GetManyBytes(content, "num_records", "records")
 	numRecords := results[0]
 	if numRecords.Int() == 0 {
-		return nil, errors.New(errors.ERR_NO_INSTANCE, "no "+r.Object+" instances on cluster")
+		return nil, errors.New(errors.ErrNoInstance, "no "+r.Object+" instances on cluster")
 	}
 
 	r.Logger.Debug().Str("object", r.Object).Str("number of records extracted", numRecords.String()).Msg("")
@@ -524,7 +524,7 @@ func (r *Rest) GetRestData(href string) ([]interface{}, error) {
 
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {
-		return nil, errors.New(errors.ERR_CONFIG, "empty url")
+		return nil, errors.New(errors.ErrConfig, "empty url")
 	}
 
 	err = rest.FetchData(r.Client, href, &records)

@@ -58,7 +58,7 @@ func New(poller conf.Poller, timeout time.Duration) (*Client, error) {
 	client.Logger = logging.Get().SubLogger("REST", "Client")
 
 	if addr = poller.Addr; addr == "" {
-		return nil, errors.New(errors.MISSING_PARAM, "addr")
+		return nil, errors.New(errors.MissingParam, "addr")
 	}
 
 	if poller.IsKfs {
@@ -93,9 +93,9 @@ func New(poller conf.Poller, timeout time.Duration) (*Client, error) {
 		certPath := poller.SslCert
 		keyPath := poller.SslKey
 		if certPath == "" {
-			return nil, errors.New(errors.MISSING_PARAM, "ssl_cert")
+			return nil, errors.New(errors.MissingParam, "ssl_cert")
 		} else if keyPath == "" {
-			return nil, errors.New(errors.MISSING_PARAM, "ssl_key")
+			return nil, errors.New(errors.MissingParam, "ssl_key")
 		} else if cert, err = tls.LoadX509KeyPair(certPath, keyPath); err != nil {
 			return nil, err
 		}
@@ -112,9 +112,9 @@ func New(poller conf.Poller, timeout time.Duration) (*Client, error) {
 		client.username = username
 		client.password = password
 		if username == "" {
-			return nil, errors.New(errors.MISSING_PARAM, "username")
+			return nil, errors.New(errors.MissingParam, "username")
 		} else if password == "" {
-			return nil, errors.New(errors.MISSING_PARAM, "password")
+			return nil, errors.New(errors.MissingParam, "password")
 		}
 
 		transport = &http.Transport{

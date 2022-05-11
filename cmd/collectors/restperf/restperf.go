@@ -120,7 +120,7 @@ func (r *RestPerf) Init(a *collector.AbstractCollector) error {
 func (r *RestPerf) InitQOSLabels() error {
 	if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
 		if qosLabels := r.Params.GetChildS("qos_labels"); qosLabels == nil {
-			return errors.New(errors.MISSING_PARAM, "qos_labels")
+			return errors.New(errors.MissingParam, "qos_labels")
 		} else {
 			r.perfProp.qosLabels = make(map[string]string)
 			for _, label := range qosLabels.GetAllChildContentS() {
@@ -198,7 +198,7 @@ func (r *RestPerf) PollCounter() (*matrix.Matrix, error) {
 	href := rest.BuildHref(r.Prop.Query, "", nil, "", "", "", r.Prop.ReturnTimeOut, r.Prop.Query)
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {
-		return nil, errors.New(errors.ERR_CONFIG, "empty url")
+		return nil, errors.New(errors.ErrConfig, "empty url")
 	}
 
 	err = rest.FetchData(r.Client, href, &records)
@@ -383,7 +383,7 @@ func (r *RestPerf) processWorkLoadCounter() (*matrix.Matrix, error) {
 		}
 
 		if service == nil || wait == nil || visits == nil {
-			return nil, errors.New(errors.MISSING_PARAM, "workload metrics")
+			return nil, errors.New(errors.MissingParam, "workload metrics")
 		}
 
 		if ops = r.Matrix.GetMetric("ops"); ops == nil {
@@ -404,7 +404,7 @@ func (r *RestPerf) processWorkLoadCounter() (*matrix.Matrix, error) {
 		visits.SetExportable(false)
 
 		if resourceMap := r.Params.GetChildS("resource_map"); resourceMap == nil {
-			return nil, errors.New(errors.MISSING_PARAM, "resource_map")
+			return nil, errors.New(errors.MissingParam, "resource_map")
 		} else {
 			for _, x := range resourceMap.GetChildren() {
 				name := x.GetNameS()
@@ -454,7 +454,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 	newData.Reset()
 	timestamp := newData.GetMetric("timestamp")
 	if timestamp == nil {
-		return nil, errors.New(errors.ERR_CONFIG, "missing timestamp metric")
+		return nil, errors.New(errors.ErrConfig, "missing timestamp metric")
 	}
 
 	startTime = time.Now()
@@ -465,7 +465,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {
-		return nil, errors.New(errors.ERR_CONFIG, "empty url")
+		return nil, errors.New(errors.ErrConfig, "empty url")
 	}
 
 	ts := float64(time.Now().UnixNano()) / BILLION
@@ -495,14 +495,14 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 	results := gjson.GetManyBytes(content, "num_records", "records")
 	numRecords := results[0]
 	if numRecords.Int() == 0 {
-		return nil, errors.New(errors.ERR_NO_INSTANCE, "no "+r.Object+" instances on cluster")
+		return nil, errors.New(errors.ErrNoInstance, "no "+r.Object+" instances on cluster")
 	}
 
 	r.Logger.Debug().Str("object", r.Object).Str("records", numRecords.String()).Msg("Extracted records")
 
 	if isWorkloadDetailObject(r.Prop.Query) {
 		if resourceMap := r.Params.GetChildS("resource_map"); resourceMap == nil {
-			return nil, errors.New(errors.MISSING_PARAM, "resource_map")
+			return nil, errors.New(errors.MissingParam, "resource_map")
 		} else {
 			instanceKeys = make([]string, 0)
 			for _, layer := range resourceMap.GetAllChildNamesS() {
@@ -926,7 +926,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 
 	if ops = data.GetMetric("ops"); ops == nil {
 		r.Logger.Error().Stack().Err(nil).Msgf("ops counter not found in cache")
-		return errors.New(errors.MISSING_PARAM, "counter ops")
+		return errors.New(errors.MissingParam, "counter ops")
 	}
 
 	//instanceKeys = data.GetInstanceKeys()
@@ -937,7 +937,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {
-		return errors.New(errors.ERR_CONFIG, "empty url")
+		return errors.New(errors.ErrConfig, "empty url")
 	}
 
 	err = rest.FetchData(r.Client, href, &records)
@@ -963,7 +963,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 	results := gjson.GetManyBytes(content, "num_records", "records")
 	numRecords := results[0]
 	if numRecords.Int() == 0 {
-		return errors.New(errors.ERR_NO_INSTANCE, "no "+object+" instances on cluster")
+		return errors.New(errors.ErrNoInstance, "no "+object+" instances on cluster")
 	}
 
 	r.Logger.Debug().Str("object", r.Object).Str("records", numRecords.String()).Msg("Extracted records")
@@ -1069,7 +1069,7 @@ func (r *RestPerf) PollInstance() (*matrix.Matrix, error) {
 
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {
-		return nil, errors.New(errors.ERR_CONFIG, "empty url")
+		return nil, errors.New(errors.ErrConfig, "empty url")
 	}
 
 	err = rest.FetchData(r.Client, href, &records)
@@ -1095,7 +1095,7 @@ func (r *RestPerf) PollInstance() (*matrix.Matrix, error) {
 	results := gjson.GetManyBytes(content, "num_records", "records")
 	numRecords := results[0]
 	if numRecords.Int() == 0 {
-		return nil, errors.New(errors.ERR_NO_INSTANCE, "no "+r.Object+" instances on cluster")
+		return nil, errors.New(errors.ErrNoInstance, "no "+r.Object+" instances on cluster")
 	}
 
 	r.Logger.Debug().Str("object", r.Object).Str("records", numRecords.String()).Msg("Extracted records")
@@ -1162,7 +1162,7 @@ func (r *RestPerf) PollInstance() (*matrix.Matrix, error) {
 	r.Logger.Debug().Msgf("added %d new, removed %d (total instances %d)", added, removed, newSize)
 
 	if newSize == 0 {
-		return nil, errors.New(errors.ERR_NO_INSTANCE, "")
+		return nil, errors.New(errors.ErrNoInstance, "")
 	}
 
 	return nil, err

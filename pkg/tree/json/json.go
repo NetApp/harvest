@@ -12,15 +12,15 @@ import (
 )
 
 var (
-	SQUARE_OPEN  = []byte(`[`)
-	SQUARE_CLOSE = []byte(`]`)
-	CURLY_OPEN   = []byte(`{`)
-	CURLY_CLOSE  = []byte(`}`)
-	COMMA        = []byte(`,`)
-	COLON        = []byte(`:`)
-	QUOTE        = []byte(`"`)
-	EMPTY        = []byte(``)
-	SPACE        = []byte(` `)
+	SquareOpen  = []byte(`[`)
+	SquareClose = []byte(`]`)
+	CurlyOpen   = []byte(`{`)
+	CurlyClose  = []byte(`}`)
+	COMMA       = []byte(`,`)
+	COLON       = []byte(`:`)
+	QUOTE       = []byte(`"`)
+	EMPTY       = []byte(``)
+	SPACE       = []byte(` `)
 )
 
 func Load(data []byte) (*node.Node, error) {
@@ -36,10 +36,10 @@ func Dump(n *node.Node) []byte {
 
 func parse(n *node.Node, x []byte) error {
 
-	if bytes.HasPrefix(x, SQUARE_OPEN) && bytes.HasSuffix(x, SQUARE_CLOSE) {
+	if bytes.HasPrefix(x, SquareOpen) && bytes.HasSuffix(x, SquareClose) {
 		// parse as children
-		x = bytes.TrimPrefix(x, SQUARE_OPEN)
-		x = bytes.TrimSuffix(x, SQUARE_CLOSE)
+		x = bytes.TrimPrefix(x, SquareOpen)
+		x = bytes.TrimSuffix(x, SquareClose)
 		if elements := bytes.Split(x, []byte(`],[`)); len(elements) > 1 {
 			for _, e := range elements {
 				child := n.NewChildS("", "")
@@ -48,9 +48,9 @@ func parse(n *node.Node, x []byte) error {
 		} else {
 			return parse(n, elements[0])
 		}
-	} else if bytes.HasPrefix(x, CURLY_OPEN) && bytes.HasSuffix(x, CURLY_CLOSE) {
-		x = bytes.TrimPrefix(x, CURLY_OPEN)
-		x = bytes.TrimSuffix(x, CURLY_CLOSE)
+	} else if bytes.HasPrefix(x, CurlyOpen) && bytes.HasSuffix(x, CurlyClose) {
+		x = bytes.TrimPrefix(x, CurlyOpen)
+		x = bytes.TrimSuffix(x, CurlyClose)
 		if elements := bytes.Split(x, []byte(`},{`)); len(elements) > 1 {
 			for _, e := range elements {
 				child := n.NewChildS("", "")
@@ -79,7 +79,7 @@ func parse(n *node.Node, x []byte) error {
 func dump(n *node.Node) []byte {
 
 	var key []byte
-	var child_values [][]byte
+	var childValues [][]byte
 	var value []byte
 	var err error
 
@@ -102,8 +102,8 @@ func dump(n *node.Node) []byte {
 	}
 
 	for _, ch := range n.GetChildren() {
-		child_values = append(child_values, dump(ch))
+		childValues = append(childValues, dump(ch))
 	}
-	return bytes.Join([][]byte{key, CURLY_OPEN, bytes.Join(child_values, COMMA), CURLY_CLOSE}, EMPTY)
+	return bytes.Join([][]byte{key, CurlyOpen, bytes.Join(childValues, COMMA), CurlyClose}, EMPTY)
 
 }

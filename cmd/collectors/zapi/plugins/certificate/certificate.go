@@ -207,7 +207,7 @@ func (my *Certificate) GetAdminVserver() (string, error) {
 	}
 
 	if len(result) == 0 || result == nil {
-		return "", errors.New(errors.ERR_NO_INSTANCE, "no records found")
+		return "", errors.New(errors.ErrNoInstance, "no records found")
 	}
 	// This should be one iteration only as cluster can have one admin vserver
 	for _, svm := range result {
@@ -236,7 +236,7 @@ func (my *Certificate) GetSecuritySsl(adminSvm string) (string, error) {
 	}
 
 	if len(result) == 0 || result == nil {
-		return "", errors.New(errors.ERR_NO_INSTANCE, "no records found")
+		return "", errors.New(errors.ErrNoInstance, "no records found")
 	}
 	// This should be one iteration only as cluster can have one admin vserver
 	for _, ssl := range result {

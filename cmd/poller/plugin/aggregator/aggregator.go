@@ -107,7 +107,7 @@ func (me *Aggregator) parseRules() error {
 			me.Logger.Debug().Msgf("parsed rule [%v]", r)
 		} else {
 			me.Logger.Warn().Msgf("invalid rule syntax [%s]", line)
-			return errors.New(errors.INVALID_PARAM, "invalid rule")
+			return errors.New(errors.InvalidParam, "invalid rule")
 		}
 	}
 	return nil
@@ -135,12 +135,12 @@ func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	// create instances and summarize metric values
 
 	var (
-		obj_name, obj_key string
-		obj_instance      *matrix.Instance
-		obj_metric        matrix.Metric
-		value             float64
-		ok                bool
-		err               error
+		objName, objKey string
+		objInstance     *matrix.Instance
+		objMetric       matrix.Metric
+		value           float64
+		ok              bool
+		err             error
 	)
 
 	for _, instance := range data.GetInstances() {
@@ -154,7 +154,7 @@ func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		for i, rule := range me.rules {
 
 			me.Logger.Trace().Msgf("handling rule [%v]", rule)
-			if obj_name = instance.GetLabel(rule.label); obj_name == "" {
+			if objName = instance.GetLabel(rule.label); objName == "" {
 				me.Logger.Warn().Msgf("label name for [%s] missing, skipped", rule.label)
 				continue
 			}
@@ -171,31 +171,31 @@ func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			}
 
 			if rule.allLabels {
-				obj_key = strings.Join(instance.GetLabels().Values(), ".")
+				objKey = strings.Join(instance.GetLabels().Values(), ".")
 			} else if len(rule.includeLabels) != 0 {
-				obj_key = obj_name
+				objKey = objName
 				for _, k := range rule.includeLabels {
-					obj_key += "." + instance.GetLabel(k)
+					objKey += "." + instance.GetLabel(k)
 				}
 			} else {
-				obj_key = obj_name
+				objKey = objName
 			}
-			me.Logger.Trace().Msgf("instance (%s= %s): formatted key [%s]", rule.label, obj_name, obj_key)
+			me.Logger.Trace().Msgf("instance (%s= %s): formatted key [%s]", rule.label, objName, objKey)
 
-			if obj_instance = matrices[i].GetInstance(obj_key); obj_instance == nil {
-				rule.counts[obj_key] = make(map[string]int)
-				if obj_instance, err = matrices[i].NewInstance(obj_key); err != nil {
+			if objInstance = matrices[i].GetInstance(objKey); objInstance == nil {
+				rule.counts[objKey] = make(map[string]int)
+				if objInstance, err = matrices[i].NewInstance(objKey); err != nil {
 					return nil, err
 				}
 				if rule.allLabels {
-					obj_instance.SetLabels(instance.GetLabels())
+					objInstance.SetLabels(instance.GetLabels())
 				} else if len(rule.includeLabels) != 0 {
 					for _, k := range rule.includeLabels {
-						obj_instance.SetLabel(k, instance.GetLabel(k))
+						objInstance.SetLabel(k, instance.GetLabel(k))
 					}
-					obj_instance.SetLabel(rule.label, obj_name)
+					objInstance.SetLabel(rule.label, objName)
 				} else {
-					obj_instance.SetLabel(rule.label, obj_name)
+					objInstance.SetLabel(rule.label, objName)
 				}
 			}
 
@@ -205,7 +205,7 @@ func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					continue
 				}
 
-				if obj_metric = matrices[i].GetMetric(key); obj_metric == nil {
+				if objMetric = matrices[i].GetMetric(key); objMetric == nil {
 					me.Logger.Warn().Msgf("metric [%s] not found in [%s] cache", key, rule.label)
 					continue
 				}
@@ -213,11 +213,11 @@ func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				//logger.Debug(me.Prefix, "(%s) (%s) handling metric [%s] (%s)", obj, obj_name, key, obj_metric.GetName())
 				//obj_metric.Print()
 
-				if err = obj_metric.AddValueFloat64(obj_instance, value); err != nil {
-					me.Logger.Error().Stack().Err(err).Msgf("add value [%s] [%s]:", key, obj_name)
+				if err = objMetric.AddValueFloat64(objInstance, value); err != nil {
+					me.Logger.Error().Stack().Err(err).Msgf("add value [%s] [%s]:", key, objName)
 				}
 
-				rule.counts[obj_key][key]++
+				rule.counts[objKey][key]++
 			}
 		}
 	}

@@ -156,12 +156,12 @@ func (my *SVM) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 			// Update nameservice_switch label in svm
 			if nsswitchInfo, ok := my.nsswitchInfo[svmName]; ok {
-				ns_db := strings.Join(nsswitchInfo.nsdb, ",")
-				ns_source := strings.Join(nsswitchInfo.nssource, ",")
-				nis_domain := my.nisInfo[svmName]
-				svmInstance.SetLabel("ns_source", ns_source)
-				svmInstance.SetLabel("ns_db", ns_db)
-				collectors.SetNameservice(ns_db, ns_source, nis_domain, svmInstance)
+				nsDb := strings.Join(nsswitchInfo.nsdb, ",")
+				nsSource := strings.Join(nsswitchInfo.nssource, ",")
+				nisDomain := my.nisInfo[svmName]
+				svmInstance.SetLabel("ns_source", nsSource)
+				svmInstance.SetLabel("ns_db", nsDb)
+				collectors.SetNameservice(nsDb, nsSource, nisDomain, svmInstance)
 			}
 
 			// Update cifs_protocol_enabled label in svm
@@ -204,7 +204,7 @@ func (my *SVM) GetAuditProtocols() (map[string]string, error) {
 	}
 
 	if len(result) == 0 || result == nil {
-		return nil, errors.New(errors.ERR_NO_INSTANCE, "no records found")
+		return nil, errors.New(errors.ErrNoInstance, "no records found")
 	}
 
 	for _, fileServiceAuditConfig := range result {
@@ -233,7 +233,7 @@ func (my *SVM) GetCifsProtocols() (map[string]string, error) {
 	}
 
 	if len(result) == 0 || result == nil {
-		return nil, errors.New(errors.ERR_NO_INSTANCE, "no records found")
+		return nil, errors.New(errors.ErrNoInstance, "no records found")
 	}
 
 	for _, cifsSecurity := range result {
@@ -264,7 +264,7 @@ func (my *SVM) GetNSSwitchInfo() (map[string]nsswitch, error) {
 	}
 
 	if len(result) == 0 || result == nil {
-		return nil, errors.New(errors.ERR_NO_INSTANCE, "no records found")
+		return nil, errors.New(errors.ErrNoInstance, "no records found")
 	}
 
 	for _, nsswitchConfig := range result {
@@ -302,7 +302,7 @@ func (my *SVM) GetNisInfo() (map[string]string, error) {
 	}
 
 	if len(result) == 0 || result == nil {
-		return nil, errors.New(errors.ERR_NO_INSTANCE, "no records found")
+		return nil, errors.New(errors.ErrNoInstance, "no records found")
 	}
 
 	for _, nisData := range result {
@@ -331,7 +331,7 @@ func (my *SVM) GetCifsEnabled() (map[string]bool, error) {
 	}
 
 	if len(result) == 0 || result == nil {
-		return nil, errors.New(errors.ERR_NO_INSTANCE, "no records found")
+		return nil, errors.New(errors.ErrNoInstance, "no records found")
 	}
 
 	for _, cifsConfig := range result {
@@ -360,7 +360,7 @@ func (my *SVM) GetNfsEnabled() (map[string]string, error) {
 	}
 
 	if len(result) == 0 || result == nil {
-		return nil, errors.New(errors.ERR_NO_INSTANCE, "no records found")
+		return nil, errors.New(errors.ErrNoInstance, "no records found")
 	}
 
 	for _, nfsConfig := range result {
@@ -389,7 +389,7 @@ func (my *SVM) GetSshData() (map[string]string, error) {
 	}
 
 	if len(result) == 0 || result == nil {
-		return nil, errors.New(errors.ERR_NO_INSTANCE, "no records found")
+		return nil, errors.New(errors.ErrNoInstance, "no records found")
 	}
 
 	for _, sshData := range result {

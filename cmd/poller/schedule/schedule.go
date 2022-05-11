@@ -169,9 +169,9 @@ func (s *Schedule) NewTask(n string, i time.Duration, f func() (*matrix.Matrix, 
 			s.tasks = append(s.tasks, t)
 			return nil
 		}
-		return errors.New(errors.INVALID_PARAM, "interval :"+i.String())
+		return errors.New(errors.InvalidParam, "interval :"+i.String())
 	}
-	return errors.New(errors.INVALID_PARAM, "duplicate task :"+n)
+	return errors.New(errors.InvalidParam, "duplicate task :"+n)
 }
 
 // NewTaskString creates a new task, the interval is parsed from string i
