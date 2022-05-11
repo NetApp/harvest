@@ -3,8 +3,8 @@
 package main
 
 import (
+	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/spf13/cobra"
-	"goharvest2/cmd/tools/rest"
 )
 
 func main() {

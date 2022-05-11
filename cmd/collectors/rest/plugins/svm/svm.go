@@ -5,10 +5,10 @@
 package svm
 
 import (
+	"github.com/netapp/harvest/v2/cmd/collectors"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/tidwall/gjson"
-	"goharvest2/cmd/collectors"
-	"goharvest2/cmd/poller/plugin"
-	"goharvest2/pkg/matrix"
 	"strings"
 )
 

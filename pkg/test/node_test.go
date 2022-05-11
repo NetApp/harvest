@@ -1,8 +1,8 @@
 package test
 
 import (
-	"goharvest2/pkg/tree"
-	"goharvest2/pkg/tree/yaml"
+	"github.com/netapp/harvest/v2/pkg/tree"
+	"github.com/netapp/harvest/v2/pkg/tree/yaml"
 	"io/ioutil"
 	"strings"
 	"testing"

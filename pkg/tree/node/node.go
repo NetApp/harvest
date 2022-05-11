@@ -8,7 +8,7 @@ import (
 	"bytes"
 	"encoding/xml"
 	"fmt"
-	"goharvest2/pkg/util"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"regexp"
 	"strings"
 )

@@ -1,7 +1,7 @@
 package collectors
 
 import (
-	"goharvest2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/matrix"
 	"testing"
 )
 

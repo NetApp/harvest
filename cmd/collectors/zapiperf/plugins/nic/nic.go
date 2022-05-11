@@ -14,9 +14,9 @@ Package Description:
 package nic
 
 import (
-	"goharvest2/cmd/poller/plugin"
-	"goharvest2/pkg/errors"
-	"goharvest2/pkg/matrix"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/matrix"
 	"math"
 	"strconv"
 	"strings"

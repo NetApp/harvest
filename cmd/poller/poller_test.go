@@ -1,8 +1,8 @@
 package main
 
 import (
-	"goharvest2/pkg/conf"
-	"goharvest2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"testing"
 )
 

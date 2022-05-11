@@ -29,11 +29,11 @@ package plugin
 
 import (
 	"fmt"
-	"goharvest2/cmd/poller/options"
-	"goharvest2/pkg/errors"
-	"goharvest2/pkg/logging"
-	"goharvest2/pkg/matrix"
-	"goharvest2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/cmd/poller/options"
+	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/logging"
+	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"sync"
 )
 

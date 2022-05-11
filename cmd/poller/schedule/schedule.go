@@ -33,8 +33,8 @@
 package schedule
 
 import (
-	"goharvest2/pkg/errors"
-	"goharvest2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/matrix"
 	"time"
 )
 

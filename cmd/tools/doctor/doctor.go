@@ -2,11 +2,11 @@ package doctor
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/pkg/color"
+	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/tree"
+	harvestyaml "github.com/netapp/harvest/v2/pkg/tree/yaml"
 	"github.com/spf13/cobra"
-	"goharvest2/pkg/color"
-	"goharvest2/pkg/conf"
-	"goharvest2/pkg/tree"
-	harvestyaml "goharvest2/pkg/tree/yaml"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"os"

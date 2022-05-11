@@ -5,9 +5,9 @@
 package aggregator
 
 import (
-	"goharvest2/cmd/poller/plugin"
-	"goharvest2/pkg/matrix"
-	"goharvest2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"testing"
 )
 

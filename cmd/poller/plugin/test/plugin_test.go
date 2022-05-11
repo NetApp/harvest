@@ -1,12 +1,12 @@
 package test
 
 import (
-	"goharvest2/cmd/poller/plugin"
-	"goharvest2/cmd/poller/plugin/aggregator"
-	"goharvest2/cmd/poller/plugin/label_agent"
-	"goharvest2/pkg/matrix"
-	"goharvest2/pkg/tree"
-	"goharvest2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin/aggregator"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin/label_agent"
+	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/tree"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"testing"
 )
 

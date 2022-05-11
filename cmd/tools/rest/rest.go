@@ -5,10 +5,10 @@ package rest
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
-	"goharvest2/pkg/conf"
 	"io"
 	"log"
 	"os"

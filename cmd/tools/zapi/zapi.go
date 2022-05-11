@@ -6,12 +6,12 @@ package zapi
 
 import (
 	"fmt"
+	client "github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
+	"github.com/netapp/harvest/v2/pkg/color"
+	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/spf13/cobra"
-	client "goharvest2/pkg/api/ontapi/zapi"
-	"goharvest2/pkg/color"
-	"goharvest2/pkg/conf"
-	"goharvest2/pkg/errors"
-	"goharvest2/pkg/tree/node"
 	"log"
 	"os"
 	"strconv"

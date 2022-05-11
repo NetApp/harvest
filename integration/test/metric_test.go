@@ -5,7 +5,7 @@ package main
 import (
 	"github.com/Netapp/harvest-automation/test/installer"
 	"github.com/Netapp/harvest-automation/test/utils"
-	"goharvest2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"log"
 	"strconv"
 	"strings"

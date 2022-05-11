@@ -1,8 +1,8 @@
 package logging
 
 import (
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/rs/zerolog/pkgerrors"
-	"goharvest2/pkg/conf"
 	"io"
 	"os"
 	"path"

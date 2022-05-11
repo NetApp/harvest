@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/grafana"
 	"github.com/Netapp/harvest-automation/test/utils"
+	"github.com/netapp/harvest/v2/cmd/harvest/version"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"goharvest2/cmd/harvest/version"
 	"testing"
 	"time"
 )

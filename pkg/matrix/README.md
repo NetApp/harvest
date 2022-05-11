@@ -31,7 +31,7 @@ Here is an example from the point of view of a collector:
 
 ```go
 
-import "goharvest2/pkg/matrix"
+import "github.com/netapp/harvest/v2/pkg/matrix"
 
 var myMatrix *matrix.Matrix
 

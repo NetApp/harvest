@@ -2,15 +2,15 @@ module github.com/Netapp/harvest-automation
 
 go 1.18
 
-replace goharvest2 => ../
+replace github.com/netapp/harvest/v2 => ../
 
 require (
 	github.com/docker/docker v20.10.12+incompatible
 	github.com/julienroland/usg v0.0.0-20160918114137-cb52eabb3d84
+	github.com/netapp/harvest/v2 v2.0.0-00010101000000-000000000000
 	github.com/rs/zerolog v1.26.1
 	github.com/stretchr/testify v1.7.0
 	github.com/tidwall/gjson v1.13.0
-	goharvest2 v0.0.0-00010101000000-000000000000
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 

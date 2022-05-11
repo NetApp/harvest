@@ -23,11 +23,11 @@ package prometheus
 
 import (
 	"fmt"
-	"goharvest2/cmd/poller/exporter"
-	"goharvest2/pkg/color"
-	"goharvest2/pkg/errors"
-	"goharvest2/pkg/matrix"
-	"goharvest2/pkg/set"
+	"github.com/netapp/harvest/v2/cmd/poller/exporter"
+	"github.com/netapp/harvest/v2/pkg/color"
+	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/set"
 	"regexp"
 	"sort"
 	"strconv"

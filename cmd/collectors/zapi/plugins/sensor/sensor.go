@@ -4,11 +4,11 @@
 package sensor
 
 import (
-	"goharvest2/cmd/poller/plugin"
-	"goharvest2/pkg/api/ontapi/zapi"
-	"goharvest2/pkg/dict"
-	"goharvest2/pkg/matrix"
-	"goharvest2/pkg/util"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
+	"github.com/netapp/harvest/v2/pkg/dict"
+	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"regexp"
 	"sort"
 	"strings"

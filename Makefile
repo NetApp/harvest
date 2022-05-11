@@ -19,7 +19,7 @@ RELEASE      ?= $(shell git describe --tags $(TAG_COMMIT))
 VERSION      ?= $(shell expr `date +%Y.%m.%d%H | cut -c 3-`)
 COMMIT       := $(shell git rev-parse --short HEAD)
 BUILD_DATE   := `date +%FT%T%z`
-LD_FLAGS     := "-X 'goharvest2/cmd/harvest/version.VERSION=$(VERSION)' -X 'goharvest2/cmd/harvest/version.Release=$(RELEASE)' -X 'goharvest2/cmd/harvest/version.Commit=$(COMMIT)' -X 'goharvest2/cmd/harvest/version.BuildDate=$(BUILD_DATE)'"
+LD_FLAGS     := "-X 'github.com/netapp/harvest/v2/cmd/harvest/version.VERSION=$(VERSION)' -X 'github.com/netapp/harvest/v2/cmd/harvest/version.Release=$(RELEASE)' -X 'github.com/netapp/harvest/v2/cmd/harvest/version.Commit=$(COMMIT)' -X 'github.com/netapp/harvest/v2/cmd/harvest/version.BuildDate=$(BUILD_DATE)'"
 GOARCH ?= amd64
 GOOS ?= linux
 HARVEST_PACKAGE := harvest-${VERSION}-${RELEASE}_${GOOS}_${GOARCH}

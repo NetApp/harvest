@@ -4,7 +4,7 @@
 package matrix
 
 import (
-	"goharvest2/pkg/dict"
+	"github.com/netapp/harvest/v2/pkg/dict"
 )
 
 // Instance struct and related methods
