@@ -16,6 +16,12 @@ all counters are being deprecated by ONTAP. If you are using these counters, ple
 
 **Known Issues**
 
+**IMPORTANT** 7-mode filers that are not on the latest release of ONTAP may experience TLS connection issues with 
+errors like `tls: server selected unsupported protocol version 301` This is caused by a change in Go 1.18. 
+The [default for TLS client connections was changed to TLS 1.2](https://tip.golang.org/doc/go1.18#tls10) in Go 1.18.
+Please upgrade your 7-mode filers (recommended) or set `tls_min_version: tls10` in your `harvest.yml` 
+[poller section](https://github.com/NetApp/harvest/tree/release/22.05.0#pollers). See #1007 for more details.
+
 ### Enhancements
 
 ### Fixes
