@@ -1,0 +1,22 @@
+name:                     VolumeSvm
+query:                    volume:vserver
+object:                   svm_vol
+
+instance_key:             uuid
+
+counters:
+  - instance_name         => svm
+  - read_data
+  - write_data
+  - read_ops
+  - write_ops
+  - other_ops
+  - total_ops
+  - read_latency
+  - write_latency
+  - other_latency
+  - avg_latency
+
+export_options:
+  instance_keys:
+    - svm

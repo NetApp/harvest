@@ -26,7 +26,6 @@ counters:
   - storePool_LayoutMax
   - storePool_LayoutStateAlloc
   - storePool_LayoutStateMax
-  - storePool_LockAlloc
   - storePool_LockStateAlloc
   - storePool_LockStateMax
   - storePool_OpenAlloc
