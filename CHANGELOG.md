@@ -2,7 +2,7 @@
 
 [Releases](https://github.com/NetApp/harvest/releases)
 
-## 22.05.0 /
+## 22.05.0 / 2022-05-11
 <!-- git log --no-decorate --no-merges --cherry-pick --right-only --oneline origin/release/22.02.0...origin/release/22.05.0 -->
 
 :rocket: Highlights of this major release include:
@@ -27,6 +27,28 @@
 - The `conf/rest` collector templates received a lot of attentions this release. All known gaps between the ZAPI and REST collector have been filled and there is full parity between the two. :metal: 
 
 - 24 bug fixes, 47 feature, and 5 documentation commits this release
+:rocket: Highlights of this major release include:
+
+- Early access to ONTAP REST perf collector
+
+- :hourglass: New Container Registry - Several of you have mentioned that you are being rate-limited when pulling Harvest Docker images from DockerHub. To alleviate this problem, we're publishing Harvest images to NetApp's container registry (cr.netapp.io). Going forward, we'll publish images to both DockerHub and cr.netapp.io. More information in the [FAQ](https://github.com/NetApp/harvest/wiki/FAQ#where-are-harvest-container-images-published). No action is required unless you want to switch from DockerHub to cr.netapp.io. If so, the FAQ has you covered.
+
+- Five new dashboards added in this release
+  - Power dashboard
+  - Compliance dashboard
+  - Security dashboard
+  - Qtree dashboard
+  - NFSv4 Store Pool dashboard (disabled by default)
+
+- New `value_to_num_regex` plugin allows you to map all matching expressions to 1 and non-matching ones to 0.
+
+- Harvest pollers can optionally [read credentials](https://github.com/NetApp/harvest/discussions/884) from a mounted volume or file. This enables [Hashicorp Vault](https://www.vaultproject.io/) support and works especially well with [Vault agent](https://www.vaultproject.io/docs/agent)
+
+- `bin/grafana import` provides a `--multi` flag that rewrites dashboards to include multi-select dropdowns for each variable at the top of the dashboard
+
+- The `conf/rest` collector templates received a lot of attentions this release. All known gaps between the ZAPI and REST collector have been filled and there is full parity between the two. :metal:
+
+- 24 bug fixes, 48 feature, and 5 documentation commits this release
 
 **IMPORTANT** :bangbang: After upgrade, don't forget to re-import your dashboards so you get all the new enhancements and fixes.
 You can import via `bin/harvest/grafana import` cli or from the Grafana UI.
@@ -36,6 +58,12 @@ release and will be removed in the next release of Harvest. No dashboards use th
 all counters are being deprecated by ONTAP. If you are using these counters, please create your own copy of the template.
 
 **Known Issues**
+
+**IMPORTANT** 7-mode filers that are not on the latest release of ONTAP may experience TLS connection issues with
+errors like `tls: server selected unsupported protocol version 301` This is caused by a change in Go 1.18.
+The [default for TLS client connections was changed to TLS 1.2](https://tip.golang.org/doc/go1.18#tls10) in Go 1.18.
+Please upgrade your 7-mode filers (recommended) or set `tls_min_version: tls10` in your `harvest.yml`
+[poller section](https://github.com/NetApp/harvest/tree/release/22.05.0#pollers). See #1007 for more details.
 
 The Unix collector is unable to monitor pollers running in containers. See [#249](https://github.com/NetApp/harvest/issues/249) for details.
 
@@ -82,6 +110,8 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 - Increase ZAPI client timeout for default and volume object [#1005](https://github.com/NetApp/harvest/pull/1005)
 
 - REST collector should support retrieving a subset of objects via template filtering support [#950](https://github.com/NetApp/harvest/pull/950)
+
+- Harvest should support minimum TLS version config [#1007](https://github.com/NetApp/harvest/issues/1007) Thanks to @jmg011 for reporting and verifying this
 
 ### Fixes
 
@@ -179,7 +209,7 @@ The output of one plugin can be fed into the input of the next one. #736 Thanks 
 - [Document](https://github.com/NetApp/harvest/blob/main/docs/TemplatesAndMetrics.md) how ZAPI collectors, templates, and exporting work together. Thanks @jmg011 and others for asking for this 
 
 - Remove redundant dashboards (Network, Node, SVM, Volume) [#703](https://github.com/NetApp/harvest/issues/703) Thanks to @mamoep for reporting this
- 
+- 
 - Harvest `generate docker` command should support customer-supplied Prometheus and Grafana ports. [#584](https://github.com/NetApp/harvest/issues/584)
 
 - Harvest certificate authentication should work with self-signed subject alternative name (SAN) certificates. Improve documentation on how to use [certificate authentication](https://github.com/NetApp/harvest/blob/main/docs/AuthAndPermissions.md#using-certificate-authentication). Thanks to @edd1619 for raising this issue

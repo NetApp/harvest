@@ -27,7 +27,7 @@ var ValidatePortInUse = false
 
 const (
 	DefaultApiVersion = "1.3"
-	DefaultTimeout    = "10s"
+	DefaultTimeout    = "30s"
 )
 
 // TestLoadHarvestConfig is used by testing code to reload a new config
@@ -339,6 +339,7 @@ type Poller struct {
 	CaCertPath      string                `yaml:"ca_cert,omitempty"`
 	ClientTimeout   string                `yaml:"client_timeout,omitempty"`
 	Collectors      []Collector           `yaml:"collectors,omitempty"`
+	CredentialsFile string                `yaml:"credentials_file,omitempty"`
 	Datacenter      string                `yaml:"datacenter,omitempty"`
 	Exporters       []string              `yaml:"exporters,omitempty"`
 	IsKfs           bool                  `yaml:"is_kfs,omitempty"`
@@ -350,9 +351,9 @@ type Poller struct {
 	PollerSchedule  string                `yaml:"poller_schedule,omitempty"`
 	SslCert         string                `yaml:"ssl_cert,omitempty"`
 	SslKey          string                `yaml:"ssl_key,omitempty"`
+	TLSMinVersion   string                `yaml:"tls_min_version,omitempty"`
 	UseInsecureTls  *bool                 `yaml:"use_insecure_tls,omitempty"`
 	Username        string                `yaml:"username,omitempty"`
-	CredentialsFile string                `yaml:"credentials_file,omitempty"`
 	promIndex       int
 	Name            string
 }
@@ -436,6 +437,9 @@ func ZapiPoller(n *node.Node) Poller {
 		if p.ClientTimeout == "" {
 			p.ClientTimeout = DefaultTimeout
 		}
+	}
+	if tlsMinVersion := n.GetChildContentS("tls_min_version"); tlsMinVersion != "" {
+		p.TLSMinVersion = tlsMinVersion
 	}
 	return p
 }
