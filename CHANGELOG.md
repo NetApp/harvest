@@ -27,28 +27,6 @@
 - The `conf/rest` collector templates received a lot of attentions this release. All known gaps between the ZAPI and REST collector have been filled and there is full parity between the two. :metal: 
 
 - 24 bug fixes, 47 feature, and 5 documentation commits this release
-:rocket: Highlights of this major release include:
-
-- Early access to ONTAP REST perf collector
-
-- :hourglass: New Container Registry - Several of you have mentioned that you are being rate-limited when pulling Harvest Docker images from DockerHub. To alleviate this problem, we're publishing Harvest images to NetApp's container registry (cr.netapp.io). Going forward, we'll publish images to both DockerHub and cr.netapp.io. More information in the [FAQ](https://github.com/NetApp/harvest/wiki/FAQ#where-are-harvest-container-images-published). No action is required unless you want to switch from DockerHub to cr.netapp.io. If so, the FAQ has you covered.
-
-- Five new dashboards added in this release
-  - Power dashboard
-  - Compliance dashboard
-  - Security dashboard
-  - Qtree dashboard
-  - NFSv4 Store Pool dashboard (disabled by default)
-
-- New `value_to_num_regex` plugin allows you to map all matching expressions to 1 and non-matching ones to 0.
-
-- Harvest pollers can optionally [read credentials](https://github.com/NetApp/harvest/discussions/884) from a mounted volume or file. This enables [Hashicorp Vault](https://www.vaultproject.io/) support and works especially well with [Vault agent](https://www.vaultproject.io/docs/agent)
-
-- `bin/grafana import` provides a `--multi` flag that rewrites dashboards to include multi-select dropdowns for each variable at the top of the dashboard
-
-- The `conf/rest` collector templates received a lot of attentions this release. All known gaps between the ZAPI and REST collector have been filled and there is full parity between the two. :metal:
-
-- 24 bug fixes, 48 feature, and 5 documentation commits this release
 
 **IMPORTANT** :bangbang: After upgrade, don't forget to re-import your dashboards so you get all the new enhancements and fixes.
 You can import via `bin/harvest/grafana import` cli or from the Grafana UI.
