@@ -187,7 +187,7 @@ The output of one plugin can be fed into the input of the next one. #736 Thanks 
 - [Document](https://github.com/NetApp/harvest/blob/main/docs/TemplatesAndMetrics.md) how ZAPI collectors, templates, and exporting work together. Thanks @jmg011 and others for asking for this 
 
 - Remove redundant dashboards (Network, Node, SVM, Volume) [#703](https://github.com/NetApp/harvest/issues/703) Thanks to @mamoep for reporting this
-- 
+
 - Harvest `generate docker` command should support customer-supplied Prometheus and Grafana ports. [#584](https://github.com/NetApp/harvest/issues/584)
 
 - Harvest certificate authentication should work with self-signed subject alternative name (SAN) certificates. Improve documentation on how to use [certificate authentication](https://github.com/NetApp/harvest/blob/main/docs/AuthAndPermissions.md#using-certificate-authentication). Thanks to @edd1619 for raising this issue
