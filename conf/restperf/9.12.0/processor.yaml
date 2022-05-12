@@ -6,7 +6,6 @@ object:                   processor
 counters:
   - ^^id
   - ^node.name               => node
-  - name                     => instance_name
   - domain_busy_percent      => domain_busy
   - busy_percent             => processor_busy
 
