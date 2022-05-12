@@ -72,17 +72,17 @@ func (e *InfluxDB) Init() error {
 	// check required / optional parameters
 
 	if bucket = e.Params.Bucket; bucket == nil {
-		return errors.New(errors.MISSING_PARAM, "bucket")
+		return errors.New(errors.MissingParam, "bucket")
 	}
 	e.Logger.Debug().Msgf("using bucket [%s]", *bucket)
 
 	if org = e.Params.Org; org == nil {
-		return errors.New(errors.MISSING_PARAM, "org")
+		return errors.New(errors.MissingParam, "org")
 	}
 	e.Logger.Debug().Msgf("using organization [%s]", *org)
 
 	if token = e.Params.Token; token == nil {
-		return errors.New(errors.MISSING_PARAM, "token")
+		return errors.New(errors.MissingParam, "token")
 	}
 	e.token = *token
 	e.Logger.Debug().Msg("will use authorization with api token")
@@ -104,7 +104,7 @@ func (e *InfluxDB) Init() error {
 	// addr is expected to include host only (no scheme, no port)
 	if url = e.Params.Url; url == nil {
 		if addr = e.Params.Addr; addr == nil {
-			return errors.New(errors.MISSING_PARAM, "url or addr")
+			return errors.New(errors.MissingParam, "url or addr")
 		}
 
 		if port = e.Params.Port; port == nil {
@@ -214,9 +214,9 @@ func (e *InfluxDB) Emit(data [][]byte) error {
 	if response.StatusCode != expectedResponseCode {
 		defer func(Body io.ReadCloser) { _ = Body.Close() }(response.Body)
 		if body, err := ioutil.ReadAll(response.Body); err != nil {
-			return errors.New(errors.API_RESPONSE, err.Error())
+			return errors.New(errors.ApiResponse, err.Error())
 		} else {
-			return errors.New(errors.API_REQ_REJECTED, string(body))
+			return errors.New(errors.ApiReqRejected, string(body))
 		}
 	}
 	return nil
@@ -233,16 +233,16 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 	object := data.Object
 
 	// user-defined preferences for export
-	var labels_to_include, keys_to_include []string
-	include_all := false
+	var labelsToInclude, keysToInclude []string
+	includeAll := false
 	if data.GetExportOptions().GetChildContentS("include_all_labels") == "true" {
-		include_all = true
+		includeAll = true
 	}
 	if x := data.GetExportOptions().GetChildS("instance_keys"); x != nil {
-		keys_to_include = x.GetAllChildContentS()
+		keysToInclude = x.GetAllChildContentS()
 	}
 	if x := data.GetExportOptions().GetChildS("instance_labels"); x != nil {
-		labels_to_include = x.GetAllChildContentS()
+		labelsToInclude = x.GetAllChildContentS()
 	}
 
 	// measurement that we will not emit
@@ -262,18 +262,18 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 			continue
 		}
 
-		m := NewMeasurement(object, len(global.tag_set))
-		copy(m.tag_set, global.tag_set)
+		m := NewMeasurement(object, len(global.tagSet))
+		copy(m.tagSet, global.tagSet)
 
 		// tag set
-		if include_all {
+		if includeAll {
 			for label, value := range instance.GetLabels().Map() {
 				if value != "" {
 					m.AddTag(label, value)
 				}
 			}
 		} else {
-			for _, key := range keys_to_include {
+			for _, key := range keysToInclude {
 				if value, has := instance.GetLabels().GetHas(key); has && value != "" {
 					m.AddTag(key, value)
 				}
@@ -281,14 +281,14 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 		}
 
 		// skip instance without key tags
-		if len(m.tag_set) == 0 {
+		if len(m.tagSet) == 0 {
 			e.Logger.Debug().Msgf("skip instance (%s), no tag set parsed from labels (%v)", key, instance.GetLabels().Map())
 		}
 
 		// field set
 
 		// strings
-		for _, label := range labels_to_include {
+		for _, label := range labelsToInclude {
 			if value, has := instance.GetLabels().GetHas(label); has && value != "" {
 				if value == "true" || value == "false" {
 					m.AddField(label, value)
@@ -313,26 +313,26 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 				continue
 			}
 
-			field_name := metric.GetName()
+			fieldName := metric.GetName()
 
 			if metric.HasLabels() {
 				for _, label := range metric.GetLabels().Map() {
-					field_name += "_" + label
+					fieldName += "_" + label
 				}
 			}
 
-			if rename, has := protectedFieldNames[field_name]; has {
-				field_name = rename
+			if rename, has := protectedFieldNames[fieldName]; has {
+				fieldName = rename
 			}
 
-			m.AddField(field_name, value)
+			m.AddField(fieldName, value)
 			countTmp++
 		}
 
 		e.Logger.Trace().Msgf("rendering from: %s", m.String())
 
 		// skip instance with no tag set (no metrics)
-		if len(m.field_set) == 0 {
+		if len(m.fieldSet) == 0 {
 			e.Logger.Debug().Msgf("skip instance (%s), no field set parsed", key)
 		} else if r, err := m.Render(); err == nil {
 			rendered = append(rendered, []byte(r))

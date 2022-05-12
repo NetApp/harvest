@@ -1,6 +1,7 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
+
 package influxdb
 
 import (
@@ -10,29 +11,29 @@ import (
 
 type Measurement struct {
 	measurement string
-	tag_set     []string
-	field_set   []string
+	tagSet      []string
+	fieldSet    []string
 	timestamp   string
 }
 
 func NewMeasurement(name string, size int) *Measurement {
 	m := Measurement{measurement: name}
-	m.tag_set = make([]string, size)
-	m.field_set = make([]string, 0)
+	m.tagSet = make([]string, size)
+	m.fieldSet = make([]string, 0)
 	return &m
 }
 
 func (m *Measurement) String() string {
 	format := "\nmeasurement=%s \ntag_set=%v \nfield_set=%v \ntimestamp=%s"
-	return fmt.Sprintf(format, m.measurement, m.tag_set, m.field_set, m.timestamp)
+	return fmt.Sprintf(format, m.measurement, m.tagSet, m.fieldSet, m.timestamp)
 }
 
 func (m *Measurement) AddTag(key, value string) {
-	m.tag_set = append(m.tag_set, escape(key)+"="+escape(value))
+	m.tagSet = append(m.tagSet, escape(key)+"="+escape(value))
 }
 
 func (m *Measurement) AddField(key, value string) {
-	m.field_set = append(m.field_set, escape(key)+"="+value)
+	m.fieldSet = append(m.fieldSet, escape(key)+"="+value)
 }
 
 func (m *Measurement) AddFieldString(key, value string) {
@@ -48,7 +49,7 @@ func (m *Measurement) SetTimestamp(t string) {
 func (m *Measurement) Render() (string, error) {
 	var sep1, sep2 string
 
-	if len(m.tag_set) == 0 {
+	if len(m.tagSet) == 0 {
 		sep1 = ""
 	} else {
 		sep1 = ","
@@ -63,9 +64,9 @@ func (m *Measurement) Render() (string, error) {
 	return joinAll(
 		m.measurement,
 		sep1,
-		strings.Join(m.tag_set, ","),
+		strings.Join(m.tagSet, ","),
 		" ",
-		strings.Join(m.field_set, ","),
+		strings.Join(m.fieldSet, ","),
 		sep2,
 		m.timestamp,
 	), nil

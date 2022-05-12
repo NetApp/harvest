@@ -11,6 +11,7 @@ Package Description:
 		  - "nic_state":     0 if port is up, 1 otherwise
 
 */
+
 package nic
 
 import (
@@ -36,11 +37,11 @@ func (me *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	var err error
 
 	if read = data.GetMetric("rx_bytes"); read == nil {
-		return nil, errors.New(errors.ERR_NO_METRIC, "rx_bytes")
+		return nil, errors.New(errors.ErrNoMetric, "rx_bytes")
 	}
 
 	if write = data.GetMetric("tx_bytes"); write == nil {
-		return nil, errors.New(errors.ERR_NO_METRIC, "tx_bytes")
+		return nil, errors.New(errors.ErrNoMetric, "tx_bytes")
 	}
 
 	if rx = data.GetMetric("rx_percent"); rx == nil {
@@ -89,27 +90,27 @@ func (me *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		if speed != 0 {
 
-			var rx_bytes, tx_bytes, rx_percent, tx_percent float64
-			var rx_ok, tx_ok bool
+			var rxBytes, txBytes, rxPercent, txPercent float64
+			var rxOk, txOk bool
 
-			if rx_bytes, rx_ok = read.GetValueFloat64(instance); rx_ok {
-				rx_percent = rx_bytes / float64(speed)
-				err := rx.SetValueFloat64(instance, rx_percent)
+			if rxBytes, rxOk = read.GetValueFloat64(instance); rxOk {
+				rxPercent = rxBytes / float64(speed)
+				err := rx.SetValueFloat64(instance, rxPercent)
 				if err != nil {
 					me.Logger.Error().Stack().Err(err).Msg("error")
 				}
 			}
 
-			if tx_bytes, tx_ok = write.GetValueFloat64(instance); tx_ok {
-				tx_percent = tx_bytes / float64(speed)
-				err := tx.SetValueFloat64(instance, tx_percent)
+			if txBytes, txOk = write.GetValueFloat64(instance); txOk {
+				txPercent = txBytes / float64(speed)
+				err := tx.SetValueFloat64(instance, txPercent)
 				if err != nil {
 					me.Logger.Error().Stack().Err(err).Msg("error")
 				}
 			}
 
-			if rx_ok || tx_ok {
-				err := util.SetValueFloat64(instance, math.Max(rx_percent, tx_percent))
+			if rxOk || txOk {
+				err := util.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
 				if err != nil {
 					me.Logger.Error().Stack().Err(err).Msg("error")
 				}

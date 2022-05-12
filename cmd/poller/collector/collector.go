@@ -143,7 +143,7 @@ func Init(c Collector) error {
 	// Initialize schedule and tasks (polls)
 	tasks := params.GetChildS("schedule")
 	if tasks == nil || len(tasks.GetChildren()) == 0 {
-		return errors.New(errors.MISSING_PARAM, "schedule")
+		return errors.New(errors.MissingParam, "schedule")
 	}
 
 	s := schedule.New()
@@ -157,13 +157,13 @@ func Init(c Collector) error {
 		if m := reflect.ValueOf(c).MethodByName(methodName); m.IsValid() {
 			if foo, ok := m.Interface().(func() (*matrix.Matrix, error)); ok {
 				if err := s.NewTaskString(task.GetNameS(), task.GetContentS(), foo, true, "Collector_"+c.GetName()+"_"+c.GetObject()); err != nil {
-					return errors.New(errors.INVALID_PARAM, "schedule ("+task.GetNameS()+"): "+err.Error())
+					return errors.New(errors.InvalidParam, "schedule ("+task.GetNameS()+"): "+err.Error())
 				}
 			} else {
-				return errors.New(errors.ERR_IMPLEMENT, methodName+" has not signature 'func() (*matrix.Matrix, error)'")
+				return errors.New(errors.ErrImplement, methodName+" has not signature 'func() (*matrix.Matrix, error)'")
 			}
 		} else {
-			return errors.New(errors.ERR_IMPLEMENT, methodName)
+			return errors.New(errors.ErrImplement, methodName)
 		}
 	}
 	c.SetSchedule(s)
@@ -256,7 +256,7 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 	defer wg.Done()
 	defer func() {
 		if r := recover(); r != nil {
-			me.Logger.Error().Stack().Err(errors.New(errors.GO_ROUTINE_PANIC, "")).
+			me.Logger.Error().Stack().Err(errors.New(errors.GoRoutinePanic, "")).
 				Msgf("Collector panicked %s", r)
 		}
 	}()
@@ -309,7 +309,7 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 				switch {
 				// target system is unreachable
 				// enter standby mode and retry with some delay that will be increased if we fail again
-				case errors.IsErr(err, errors.ERR_CONNECTION):
+				case errors.IsErr(err, errors.ErrConnection):
 					if retryDelay < 1024 {
 						retryDelay *= 4
 					}
@@ -325,18 +325,18 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 						Str("task", task.Name).
 						Msg("Target unreachable, entering standby mode (retry in retryDelay s)")
 					me.Schedule.SetStandByMode(task, time.Duration(retryDelay)*time.Second)
-					me.SetStatus(1, errors.ERR_CONNECTION)
+					me.SetStatus(1, errors.ErrConnection)
 				// there are no instances to collect
-				case errors.IsErr(err, errors.ERR_NO_INSTANCE):
+				case errors.IsErr(err, errors.ErrNoInstance):
 					me.Schedule.SetStandByMode(task, 5*time.Minute)
-					me.SetStatus(1, errors.ERR_NO_INSTANCE)
+					me.SetStatus(1, errors.ErrNoInstance)
 					me.Logger.Info().
 						Str("task", task.Name).
 						Str("object", me.Object).
 						Msg("no instances of object on system, entering standby mode")
 				// no metrics available
-				case errors.IsErr(err, errors.ERR_NO_METRIC):
-					me.SetStatus(1, errors.ERR_NO_METRIC)
+				case errors.IsErr(err, errors.ErrNoMetric):
+					me.SetStatus(1, errors.ErrNoMetric)
 					me.Schedule.SetStandByMode(task, 1*time.Hour)
 					me.Logger.Info().
 						Str("task", task.Name).

@@ -320,7 +320,7 @@ func (my *Volume) getDiskData() ([]string, error) {
 	}
 
 	if len(result) == 0 || result == nil {
-		return nil, errors.New(errors.ERR_NO_INSTANCE, "no records found")
+		return nil, errors.New(errors.ErrNoInstance, "no records found")
 	}
 
 	for _, disk := range result {
@@ -358,7 +358,7 @@ func (my *Volume) getAggrDiskMapping() (map[string]aggrData, error) {
 	}
 
 	if len(result) == 0 || result == nil {
-		return nil, errors.New(errors.ERR_NO_INSTANCE, "no records found")
+		return nil, errors.New(errors.ErrNoInstance, "no records found")
 	}
 
 	for _, aggrDiskData := range result {

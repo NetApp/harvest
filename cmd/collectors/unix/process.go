@@ -37,8 +37,8 @@ type Process struct {
 	ctx         map[string]uint64
 }
 
-// NewProcess - returns an initialzed instance of Process
-// if no process with *pid* exists, returns PROCESS_NOT_FOUND
+// NewProcess - returns an initialized instance of Process
+// if no process with *pid* exists, returns ProcessNotFound
 func NewProcess(pid int) (*Process, error) {
 	me := &Process{pid: pid}
 	me.cpu = make(map[string]float64)
@@ -73,9 +73,9 @@ func (me *Process) Reload() error {
 
 	if s, err := os.Stat(me.dirpath); err != nil || !s.IsDir() {
 		if err == nil {
-			return errors.New(PROCESS_NOT_FOUND, fmt.Sprintf("%s is not dir", me.dirpath))
+			return errors.New(ProcessNotFound, fmt.Sprintf("%s is not dir", me.dirpath))
 		} else {
-			return errors.New(PROCESS_NOT_FOUND, err.Error())
+			return errors.New(ProcessNotFound, err.Error())
 		}
 	}
 
@@ -123,7 +123,7 @@ func (me *Process) loadCmdline() error {
 		err  error
 	)
 	if data, err = ioutil.ReadFile(path.Join(me.dirpath, "cmdline")); err != nil {
-		return errors.New(FILE_READ, err.Error())
+		return errors.New(FileRead, err.Error())
 	}
 	me.cmdline = string(bytes.ReplaceAll(data, []byte("\x00"), []byte(" ")))
 	return nil
@@ -139,7 +139,7 @@ func (me *Process) loadStatus() error {
 	)
 
 	if data, err = ioutil.ReadFile(path.Join(me.dirpath, "status")); err != nil {
-		return errors.New(FILE_READ, "status: "+err.Error())
+		return errors.New(FileRead, "status: "+err.Error())
 	}
 
 	for _, line = range strings.Split(string(data), "\n") {
@@ -182,7 +182,7 @@ func (me *Process) loadStat() error {
 	)
 
 	if data, err = ioutil.ReadFile(path.Join(me.dirpath, "stat")); err != nil {
-		return errors.New(FILE_READ, "stat: "+err.Error())
+		return errors.New(FileRead, "stat: "+err.Error())
 	}
 
 	// store previous values to calculate deltas
@@ -293,7 +293,7 @@ func (me *Process) loadNetDev() error {
 	)
 
 	if data, err = ioutil.ReadFile(path.Join(me.dirpath, "net", "dev")); err != nil {
-		return errors.New(FILE_READ, "net/dev: "+err.Error())
+		return errors.New(FileRead, "net/dev: "+err.Error())
 	}
 
 	me.net = make(map[string]uint64)

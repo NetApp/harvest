@@ -85,11 +85,11 @@ func (s *System) loadStat() error {
 					s.bootTime = float64(num)
 					return nil
 				}
-				return errors.New(FIELD_VALUE, "/proc/stat: btime ["+fields[1]+"]")
+				return errors.New(FieldValue, "/proc/stat: btime ["+fields[1]+"]")
 			}
 		}
 	}
-	return errors.New(FIELD_NOT_FOUND, "/proc/stat: btime")
+	return errors.New(FieldNotFound, "/proc/stat: btime")
 }
 
 // read values from /proc/meminfo - system memory size
@@ -115,5 +115,5 @@ func (s *System) loadMeminfo() error {
 		}
 	}
 
-	return errors.New(FIELD_NOT_FOUND, "/proc/meminfo: MemTotal")
+	return errors.New(FieldNotFound, "/proc/meminfo: MemTotal")
 }

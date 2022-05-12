@@ -62,21 +62,21 @@ func (me *Matrix) SetExportable(b bool) {
 	me.exportable = b
 }
 
-func (me *Matrix) Clone(with_data, with_metrics, with_instances bool) *Matrix {
+func (me *Matrix) Clone(withData, withMetrics, withInstances bool) *Matrix {
 	clone := New(me.UUID, me.Object, me.Identifier)
 	clone.globalLabels = me.globalLabels
 	clone.exportOptions = me.exportOptions
 	clone.exportable = me.exportable
 
-	if with_instances {
+	if withInstances {
 		for key, instance := range me.GetInstances() {
 			clone.instances[key] = instance.Clone()
 		}
 	}
 
-	if with_metrics {
+	if withMetrics {
 		for key, metric := range me.GetMetrics() {
-			clone.metrics[key] = metric.Clone(with_data)
+			clone.metrics[key] = metric.Clone(withData)
 		}
 	}
 
@@ -162,7 +162,7 @@ func (me *Matrix) NewMetricType(key, dtype string) (Metric, error) {
 	case "float64":
 		return me.NewMetricFloat64(key)
 	default:
-		return nil, errors.New(INVALID_DTYPE, dtype)
+		return nil, errors.New(InvalidDtype, dtype)
 	}
 }
 
@@ -173,7 +173,7 @@ func (me *Matrix) ChangeMetricType(key, dtype string) (Metric, error) {
 
 func (me *Matrix) addMetric(key string, metric Metric) error {
 	if _, has := me.metrics[key]; has {
-		return errors.New(DUPLICATE_METRIC_KEY, key)
+		return errors.New(DuplicateMetricKey, key)
 	}
 	metric.Reset(len(me.instances))
 	me.metrics[key] = metric
@@ -212,7 +212,7 @@ func (me *Matrix) NewInstance(key string) (*Instance, error) {
 	var instance *Instance
 
 	if _, has := me.instances[key]; has {
-		return nil, errors.New(DUPLICATE_INSTANCE_KEY, key)
+		return nil, errors.New(DuplicateInstanceKey, key)
 	}
 
 	instance = NewInstance(len(me.instances)) // index is current count of instances

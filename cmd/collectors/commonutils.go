@@ -39,13 +39,13 @@ func InvokeRestCall(client *rest.Client, query string, href string, logger *logg
 
 	if !gjson.ValidBytes(content) {
 		logger.Error().Err(err).Str("Api", query).Msg("Invalid json")
-		return []gjson.Result{}, errors.New(errors.API_RESPONSE, "Invalid json")
+		return []gjson.Result{}, errors.New(errors.ApiResponse, "Invalid json")
 	}
 
 	results := gjson.GetManyBytes(content, "num_records", "records")
 	numRecords := results[0]
 	if numRecords.Int() == 0 {
-		return []gjson.Result{}, errors.New(errors.ERR_NO_INSTANCE, "no "+query+" instances on cluster")
+		return []gjson.Result{}, errors.New(errors.ErrNoInstance, "no "+query+" instances on cluster")
 	}
 
 	return results[1].Array(), nil
@@ -146,18 +146,18 @@ func UpdateProtectedFields(instance *matrix.Instance) {
 	}
 }
 
-func SetNameservice(ns_db, ns_source, nis_domain string, instance *matrix.Instance) {
+func SetNameservice(nsDb, nsSource, nisDomain string, instance *matrix.Instance) {
 	requiredNSDb := false
 	requiredNSSource := false
 
-	if strings.Contains(ns_db, "passwd") || strings.Contains(ns_db, "group") || strings.Contains(ns_db, "netgroup") {
+	if strings.Contains(nsDb, "passwd") || strings.Contains(nsDb, "group") || strings.Contains(nsDb, "netgroup") {
 		requiredNSDb = true
-		if strings.Contains(ns_source, "nis") {
+		if strings.Contains(nsSource, "nis") {
 			requiredNSSource = true
 		}
 	}
 
-	if nis_domain != "" && requiredNSDb && requiredNSSource {
+	if nisDomain != "" && requiredNSDb && requiredNSSource {
 		instance.SetLabel("nis_authentication_enabled", "true")
 	} else {
 		instance.SetLabel("nis_authentication_enabled", "false")

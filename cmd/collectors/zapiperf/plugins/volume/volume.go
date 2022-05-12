@@ -96,13 +96,13 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 					// latency metric: weighted sum
 					// ops_key := strings.Replace(mkey, "avg_latency", "total_ops", 1)
-					ops_key := strings.Replace(mkey, "_latency", "_ops", 1)
-					me.Logger.Trace().Msgf("    > weighted increment <%s * %s>", mkey, ops_key)
+					opsKey := strings.Replace(mkey, "_latency", "_ops", 1)
+					me.Logger.Trace().Msgf("    > weighted increment <%s * %s>", mkey, opsKey)
 
-					if ops := data.GetMetric(ops_key); ops != nil {
-						if ops_value, ok := ops.GetValueFloat64(i); ok {
+					if ops := data.GetMetric(opsKey); ops != nil {
+						if opsValue, ok := ops.GetValueFloat64(i); ok {
 
-							prod := value * ops_value
+							prod := value * opsValue
 							err := fgm.SetValueFloat64(fg, fgv+prod)
 							if err != nil {
 								me.Logger.Error().Stack().Err(err).Msg("error")
@@ -111,7 +111,7 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 							// debugging
 							fgv2, _ := fgm.GetValueFloat64(fg)
 
-							me.Logger.Trace().Msgf("       %f + (%f * %f) (=%f) = %f", fgv, value, ops_value, prod, fgv2)
+							me.Logger.Trace().Msgf("       %f + (%f * %f) (=%f) = %f", fgv, value, opsValue, prod, fgv2)
 						} else {
 							me.Logger.Trace().Msg("       no ops value SKIP")
 						}
@@ -131,12 +131,12 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				if value, ok := m.GetValueFloat64(i); ok {
 
 					//ops_key := strings.Replace(mkey, "avg_latency", "total_ops", 1)
-					ops_key := strings.Replace(mkey, "_latency", "_ops", 1)
+					opsKey := strings.Replace(mkey, "_latency", "_ops", 1)
 
-					if ops := cache.GetMetric(ops_key); ops != nil {
+					if ops := cache.GetMetric(opsKey); ops != nil {
 
-						if ops_value, ok := ops.GetValueFloat64(i); ok && ops_value != 0 {
-							err := m.SetValueFloat64(i, value/ops_value)
+						if opsValue, ok := ops.GetValueFloat64(i); ok && opsValue != 0 {
+							err := m.SetValueFloat64(i, value/opsValue)
 							if err != nil {
 								me.Logger.Error().Stack().Err(err).Msgf("error")
 							}

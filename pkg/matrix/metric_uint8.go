@@ -63,7 +63,7 @@ func (me *MetricUint8) SetValueInt32(i *Instance, v int32) error {
 		me.values[i.index] = uint8(v)
 		return nil
 	}
-	return errors.New(OVERFLOW_ERROR, fmt.Sprintf("convert int32 (%d) to uint32", v))
+	return errors.New(OverflowError, fmt.Sprintf("convert int32 (%d) to uint32", v))
 }
 
 func (me *MetricUint8) SetValueInt64(i *Instance, v int64) error {
@@ -72,7 +72,7 @@ func (me *MetricUint8) SetValueInt64(i *Instance, v int64) error {
 		me.values[i.index] = uint8(v)
 		return nil
 	}
-	return errors.New(OVERFLOW_ERROR, fmt.Sprintf("convert int64 (%d) to uint32", v))
+	return errors.New(OverflowError, fmt.Sprintf("convert int64 (%d) to uint32", v))
 }
 
 func (me *MetricUint8) SetValueBool(i *Instance, v bool) error {
@@ -109,7 +109,7 @@ func (me *MetricUint8) SetValueFloat32(i *Instance, v float32) error {
 		me.values[i.index] = uint8(v)
 		return nil
 	}
-	return errors.New(OVERFLOW_ERROR, fmt.Sprintf("convert float32 (%f) to uint8", v))
+	return errors.New(OverflowError, fmt.Sprintf("convert float32 (%f) to uint8", v))
 }
 
 func (me *MetricUint8) SetValueFloat64(i *Instance, v float64) error {
@@ -118,7 +118,7 @@ func (me *MetricUint8) SetValueFloat64(i *Instance, v float64) error {
 		me.values[i.index] = uint8(v)
 		return nil
 	}
-	return errors.New(OVERFLOW_ERROR, fmt.Sprintf("convert float64 (%f) to uint8", v))
+	return errors.New(OverflowError, fmt.Sprintf("convert float64 (%f) to uint8", v))
 }
 
 func (me *MetricUint8) SetValueString(i *Instance, v string) error {

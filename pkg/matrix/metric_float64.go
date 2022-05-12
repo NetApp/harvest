@@ -219,28 +219,28 @@ func (me *MetricFloat64) GetValuesFloat64() []float64 {
 }
 
 func (me *MetricFloat64) Delta(s Metric) error {
-	s_values := s.GetValuesFloat64()
-	s_record := s.GetRecords()
-	if len(me.values) != len(s_values) {
-		return errors.New(UNEQUAL_VECTORS, fmt.Sprintf("minuend=%d, subtrahend=%d", len(me.values), len(s_values)))
+	sValues := s.GetValuesFloat64()
+	sRecord := s.GetRecords()
+	if len(me.values) != len(sValues) {
+		return errors.New(UnequalVectors, fmt.Sprintf("minuend=%d, subtrahend=%d", len(me.values), len(sValues)))
 	}
 	for i := range me.values {
-		if me.record[i] && s_record[i] {
-			me.values[i] -= s_values[i]
+		if me.record[i] && sRecord[i] {
+			me.values[i] -= sValues[i]
 		}
 	}
 	return nil
 }
 
 func (me *MetricFloat64) Divide(s Metric) error {
-	s_values := s.GetValuesFloat64()
-	s_record := s.GetRecords()
-	if len(me.values) != len(s_values) {
-		return errors.New(UNEQUAL_VECTORS, fmt.Sprintf("minuend=%d, subtrahend=%d", len(me.values), len(s_values)))
+	sValues := s.GetValuesFloat64()
+	sRecord := s.GetRecords()
+	if len(me.values) != len(sValues) {
+		return errors.New(UnequalVectors, fmt.Sprintf("minuend=%d, subtrahend=%d", len(me.values), len(sValues)))
 	}
 	for i := 0; i < len(me.values); i++ {
-		if me.record[i] && s_record[i] && s_values[i] != 0 {
-			me.values[i] /= s_values[i]
+		if me.record[i] && sRecord[i] && sValues[i] != 0 {
+			me.values[i] /= sValues[i]
 		}
 	}
 	return nil
@@ -248,14 +248,14 @@ func (me *MetricFloat64) Divide(s Metric) error {
 
 func (me *MetricFloat64) DivideWithThreshold(s Metric, t int) error {
 	x := float64(t)
-	s_values := s.GetValuesFloat64()
-	s_record := s.GetRecords()
-	if len(me.values) != len(s_values) {
-		return errors.New(UNEQUAL_VECTORS, fmt.Sprintf("minuend=%d, subtrahend=%d", len(me.values), len(s_values)))
+	sValues := s.GetValuesFloat64()
+	sRecord := s.GetRecords()
+	if len(me.values) != len(sValues) {
+		return errors.New(UnequalVectors, fmt.Sprintf("minuend=%d, subtrahend=%d", len(me.values), len(sValues)))
 	}
 	for i := 0; i < len(me.values); i++ {
-		if me.record[i] && s_record[i] && s_values[i] >= x {
-			me.values[i] /= s_values[i]
+		if me.record[i] && sRecord[i] && sValues[i] >= x {
+			me.values[i] /= sValues[i]
 		}
 	}
 	return nil

@@ -45,12 +45,12 @@ func (r *Rest) InitCache() error {
 	}
 
 	if r.Prop.Query = r.Params.GetChildContentS("query"); r.Prop.Query == "" {
-		return errors.New(errors.MISSING_PARAM, "query")
+		return errors.New(errors.MissingParam, "query")
 	}
 
 	// create metric cache
 	if counters = r.Params.GetChildS("counters"); counters == nil {
-		return errors.New(errors.MISSING_PARAM, "counters")
+		return errors.New(errors.MissingParam, "counters")
 	}
 
 	// default value for ONTAP is 15 sec

@@ -47,7 +47,7 @@ func (n *NodeMon) Init(a *collector.AbstractCollector) error {
 			return err
 		}
 	} else {
-		return errors.New(errors.MISSING_PARAM, "counters")
+		return errors.New(errors.MissingParam, "counters")
 	}
 	return nil
 }

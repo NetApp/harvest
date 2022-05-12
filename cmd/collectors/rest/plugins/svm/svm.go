@@ -43,12 +43,12 @@ func (my *SVM) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		// Update nameservice_switch and nis_domain label in svm
 		if nsswitchInfo, ok := my.nsswitchInfo[svmName]; ok {
-			ns_db := strings.Join(nsswitchInfo.nsdb, ",")
-			ns_source := strings.Join(nsswitchInfo.nssource, ",")
-			nis_domain := svmInstance.GetLabel("nis_domain")
-			svmInstance.SetLabel("ns_source", ns_source)
-			svmInstance.SetLabel("ns_db", ns_db)
-			collectors.SetNameservice(ns_db, ns_source, nis_domain, svmInstance)
+			nsDb := strings.Join(nsswitchInfo.nsdb, ",")
+			nsSource := strings.Join(nsswitchInfo.nssource, ",")
+			nisDomain := svmInstance.GetLabel("nis_domain")
+			svmInstance.SetLabel("ns_source", nsSource)
+			svmInstance.SetLabel("ns_db", nsDb)
+			collectors.SetNameservice(nsDb, nsSource, nisDomain, svmInstance)
 		}
 	}
 	return nil, nil

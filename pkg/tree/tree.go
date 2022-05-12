@@ -25,7 +25,7 @@ func ImportYaml(filepath string) (*node.Node, error) {
 	}
 	// treat an empty file as an error
 	if len(root.Content) == 0 {
-		return nil, errors.New(errors.ERR_CONFIG, "template file is empty or does not exist")
+		return nil, errors.New(errors.ErrConfig, "template file is empty or does not exist")
 	}
 
 	r := node.New([]byte("Root"))

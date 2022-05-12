@@ -25,8 +25,8 @@ type Security struct {
 	client               *zapi.Client
 	query                string
 	fipsEnabled          string
-	rsh_enabled          string
-	telnet_enabled       string
+	rshEnabled           string
+	telnetEnabled        string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -75,7 +75,7 @@ func (my *Security) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 
 		// invoke security-protocol-get zapi with 'telnet' and 'rsh' and get
-		if my.telnet_enabled, my.rsh_enabled, err = my.getSecurityProtocols(); err != nil {
+		if my.telnetEnabled, my.rshEnabled, err = my.getSecurityProtocols(); err != nil {
 			my.Logger.Warn().Stack().Err(err).Msg("Failed to collect telnet and rsh enable status")
 			//return nil, nil
 		}
@@ -86,8 +86,8 @@ func (my *Security) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			securityInstance.SetLabel("fips_enabled", my.fipsEnabled)
 
 			// Update telnet_enabled and rsh_enabled label in instance
-			securityInstance.SetLabel("telnet_enabled", my.telnet_enabled)
-			securityInstance.SetLabel("rsh_enabled", my.rsh_enabled)
+			securityInstance.SetLabel("telnet_enabled", my.telnetEnabled)
+			securityInstance.SetLabel("rsh_enabled", my.rshEnabled)
 		}
 	}
 
@@ -112,7 +112,7 @@ func (my *Security) getSecurityConfig() (string, error) {
 	}
 
 	if len(result) == 0 || result == nil {
-		return "", errors.New(errors.ERR_NO_INSTANCE, "no records found")
+		return "", errors.New(errors.ErrNoInstance, "no records found")
 	}
 
 	for _, securityConfig := range result {
@@ -159,7 +159,7 @@ func (my *Security) getEnabledValue(request *node.Node) (string, error) {
 	}
 
 	if len(result) == 0 || result == nil {
-		return "", errors.New(errors.ERR_NO_INSTANCE, "no records found")
+		return "", errors.New(errors.ErrNoInstance, "no records found")
 	}
 
 	for _, securityConfig := range result {
