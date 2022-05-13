@@ -119,8 +119,11 @@ security login role create -role harvest2-role -access readonly -cmddirname "DEF
 Use this for password authentication
 
 ```bash
-security login create -user-or-group-name harvest2 -application ontapi \
- -role harvest2-role -authentication-method password
+# ZAPI based access
+security login create -user-or-group-name harvest2 -application ontapi -role harvest2-role -authentication-method password
+
+# REST based access
+security login create -user-or-group-name harvest2 -application http -role harvest2-role -authentication-method password   
 ```
 
 Or this for certificate authentication
