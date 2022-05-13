@@ -39,7 +39,7 @@ func InvokeRestCall(client *rest.Client, query string, href string, logger *logg
 
 	if !gjson.ValidBytes(content) {
 		logger.Error().Err(err).Str("Api", query).Msg("Invalid json")
-		return []gjson.Result{}, errors.New(errors.ApiResponse, "Invalid json")
+		return []gjson.Result{}, errors.New(errors.APIResponse, "Invalid json")
 	}
 
 	results := gjson.GetManyBytes(content, "num_records", "records")

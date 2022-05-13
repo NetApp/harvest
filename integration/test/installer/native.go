@@ -11,20 +11,20 @@ type Native struct {
 	path string
 }
 
-func (r *Native) Init(path string) {
-	r.path = path
+func (n *Native) Init(path string) {
+	n.path = path
 }
 
-func (r *Native) Install() bool {
+func (n *Native) Install() bool {
 	harvestFile := "harvest.yml"
 	harvestObj := new(Harvest)
 	tarFileName := "harvest.tar.gz"
 	utils.RemoveSafely(tarFileName)
-	err := utils.DownloadFile(tarFileName, r.path)
+	err := utils.DownloadFile(tarFileName, n.path)
 	if err != nil {
 		panic(err)
 	}
-	log.Println("Downloaded: " + r.path)
+	log.Println("Downloaded: " + n.path)
 	Uninstall()
 	log.Println("Installing " + tarFileName)
 	unTarOutput := utils.Run("tar", "-xf", tarFileName, "--one-top-level=harvest", "--strip-components", "1", "-C", "/opt")

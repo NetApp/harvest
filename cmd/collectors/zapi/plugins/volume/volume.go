@@ -137,7 +137,7 @@ func (my *Volume) GetSnapMirrors() (map[string][]*matrix.Instance, map[string]*m
 	smSourceMap := make(map[string][]*matrix.Instance)
 	smDestinationMap := make(map[string]*matrix.Instance)
 
-	request = node.NewXmlS(my.query)
+	request = node.NewXMLS(my.query)
 	if my.client.IsClustered() && my.batchSize != "" {
 		request.NewChildS("max-records", my.batchSize)
 	}
@@ -308,7 +308,7 @@ func (my *Volume) getDiskData() ([]string, error) {
 		err       error
 	)
 
-	request := node.NewXmlS("disk-encrypt-get-iter")
+	request := node.NewXMLS("disk-encrypt-get-iter")
 	//algorithm is -- Protection mode needs to be DATA or FULL
 	// Fetching rest of them and add as
 	query := request.NewChildS("query", "")
@@ -350,7 +350,7 @@ func (my *Volume) getAggrDiskMapping() (map[string]aggrData, error) {
 		err           error
 	)
 
-	request := node.NewXmlS("aggr-status-get-iter")
+	request := node.NewXMLS("aggr-status-get-iter")
 	aggrsDisksMap = make(map[string]aggrData)
 
 	if result, _, err = collectors.InvokeZapiCall(my.client, request, my.Logger, ""); err != nil {

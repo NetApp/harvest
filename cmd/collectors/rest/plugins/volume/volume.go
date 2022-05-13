@@ -131,7 +131,7 @@ func (my *Volume) GetSnapMirrors() (map[string][]*matrix.Instance, map[string]*m
 
 	for _, snapMirror := range result {
 
-		relationshipId := snapMirror.Get("relationship_id").String()
+		relationshipID := snapMirror.Get("relationship_id").String()
 		groupType := snapMirror.Get("relationship_group_type").String()
 		destinationVolume := snapMirror.Get("destination_volume").String()
 		sourceVolume := snapMirror.Get("source_volume").String()
@@ -141,15 +141,15 @@ func (my *Volume) GetSnapMirrors() (map[string][]*matrix.Instance, map[string]*m
 		sourceSvm := snapMirror.Get("source_vserver").String()
 		destinationSvm := snapMirror.Get("destination_vserver").String()
 
-		instanceKey := relationshipId
+		instanceKey := relationshipID
 		instance, err := snapmirrorData.NewInstance(instanceKey)
 
 		if err != nil {
-			my.Logger.Error().Err(err).Stack().Str("relationshipId", relationshipId).Msg("Failed to create snapmirror cache instance")
+			my.Logger.Error().Err(err).Stack().Str("relationshipID", relationshipID).Msg("Failed to create snapmirror cache instance")
 			return nil, nil, err
 		}
 
-		instance.SetLabel("relationship_id", relationshipId)
+		instance.SetLabel("relationship_id", relationshipID)
 		instance.SetLabel("group_type", groupType)
 		instance.SetLabel("destination_volume", destinationVolume)
 		instance.SetLabel("source_volume", sourceVolume)
@@ -229,7 +229,7 @@ func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
 		volumeName := volume.GetLabel("volume")
 		svmName := volume.GetLabel("svm")
 		volumeType := volume.GetLabel("type")
-		aggrUuid := volume.GetLabel("aggrUuid")
+		aggrUUID := volume.GetLabel("aggrUuid")
 		key := volumeName + "-" + svmName
 
 		// Update protectionRole label in volume
@@ -266,7 +266,7 @@ func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
 			volume.SetLabel("all_sm_healthy", strconv.FormatBool(healthy))
 		}
 
-		_, exist := my.aggrsMap[aggrUuid]
+		_, exist := my.aggrsMap[aggrUUID]
 		volume.SetLabel("isHardwareEncrypted", strconv.FormatBool(exist))
 	}
 }
@@ -293,7 +293,7 @@ func (my *Volume) updateAggrMap(disks []gjson.Result) {
 
 	for _, disk := range disks {
 		aggrName := disk.Get("aggregates.name").String()
-		aggrUuid := disk.Get("aggregates.uuid").String()
-		my.aggrsMap[aggrUuid] = aggrName
+		aggrUUID := disk.Get("aggregates.uuid").String()
+		my.aggrsMap[aggrUUID] = aggrName
 	}
 }

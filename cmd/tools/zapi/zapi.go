@@ -38,7 +38,7 @@ type Args struct {
 	// poller that contains parameters of an Ontap cluster
 	Poller string
 	// which API to show (when Item is "api")
-	Api string
+	API string
 	// which attr to show (when Item is "attrs")
 	Attr string
 	// which object to show (when Item is "object")
@@ -99,12 +99,12 @@ func validateArgs(strings []string) {
 		args.Item = strings[0]
 	}
 
-	if args.Item == "data" && args.Api == "" && args.Object == "" {
+	if args.Item == "data" && args.API == "" && args.Object == "" {
 		fmt.Println("show data: requires --api or --object")
 		ok = false
 	}
 
-	if args.Item == "attrs" && args.Api == "" {
+	if args.Item == "attrs" && args.API == "" {
 		fmt.Println("show attrs: requires --api")
 		ok = false
 	}
@@ -233,7 +233,7 @@ func getCounters(c *client.Client, args *Args) (*node.Node, error) {
 		err    error
 	)
 
-	req = node.NewXmlS("perf-object-counter-list-info")
+	req = node.NewXMLS("perf-object-counter-list-info")
 	req.NewChildS("objectname", args.Object)
 
 	if n, err = c.InvokeRequest(req); err != nil {
@@ -269,7 +269,7 @@ func getInstances(c *client.Client, args *Args) (*node.Node, error) {
 		err    error
 	)
 
-	req = node.NewXmlS("perf-object-instance-list-info-iter")
+	req = node.NewXMLS("perf-object-instance-list-info-iter")
 	req.NewChildS("objectname", args.Object)
 
 	if args.MaxRecords != 0 {
@@ -292,16 +292,16 @@ func getData(c *client.Client, args *Args) (*node.Node, error) {
 	var req *node.Node
 
 	// requested data is for an Zapi query
-	if args.Api != "" {
-		req = node.NewXmlS(args.Api)
+	if args.API != "" {
+		req = node.NewXMLS(args.API)
 		// requested data is for a ZapiPerf object
 	} else {
 		if c.IsClustered() {
-			req = node.NewXmlS("perf-object-get-instances")
+			req = node.NewXMLS("perf-object-get-instances")
 			instances := req.NewChildS("instances", "")
 			instances.NewChildS("instance", "*")
 		} else {
-			req = node.NewXmlS("perf-object-get-instances")
+			req = node.NewXMLS("perf-object-get-instances")
 		}
 		req.NewChildS("objectname", args.Object)
 	}
@@ -334,7 +334,7 @@ func init() {
 
 	flags.StringVarP(&args.OutputFormat, "write", "w", "xml",
 		fmt.Sprintf("Output format to use: one of %s", outputFormats))
-	flags.StringVarP(&args.Api, "api", "a", "", "ZAPI query to show")
+	flags.StringVarP(&args.API, "api", "a", "", "ZAPI query to show")
 	flags.StringVarP(&args.Attr, "attr", "t", "", "ZAPI attribute to show")
 	flags.StringVarP(&args.Object, "object", "o", "", "ZapiPerf object to show")
 	flags.StringVarP(&args.Counter, "counter", "c", "", "ZapiPerf counter to show")

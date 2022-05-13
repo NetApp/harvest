@@ -38,7 +38,7 @@ type Client struct {
 type Cluster struct {
 	Name    string
 	Info    string
-	Uuid    string
+	UUID    string
 	Version [3]int
 }
 
@@ -70,8 +70,8 @@ func New(poller conf.Poller, timeout time.Duration) (*Client, error) {
 	client.Timeout = timeout
 
 	// by default, enforce secure TLS, if not requested otherwise by user
-	if x := poller.UseInsecureTls; x != nil {
-		useInsecureTLS = *poller.UseInsecureTls
+	if x := poller.UseInsecureTLS; x != nil {
+		useInsecureTLS = *poller.UseInsecureTLS
 	} else {
 		useInsecureTLS = false
 	}
@@ -212,7 +212,7 @@ func downloadSwagger(poller *conf.Poller, path string, url string) (int64, error
 
 	timeout := DefaultTimeout * time.Second
 	if restClient, err = New(*poller, timeout); err != nil {
-		return 0, fmt.Errorf("error creating new client %w\n", err)
+		return 0, fmt.Errorf("error creating new client %w", err)
 	}
 
 	downClient := &http.Client{Transport: restClient.client.Transport, Timeout: restClient.client.Timeout}
@@ -227,7 +227,7 @@ func downloadSwagger(poller *conf.Poller, path string, url string) (int64, error
 
 	n, err := io.Copy(out, response.Body)
 	if err != nil {
-		return 0, fmt.Errorf("error while downloading %s err=%w\n", url, err)
+		return 0, fmt.Errorf("error while downloading %s err=%w", url, err)
 	}
 	return n, nil
 }
@@ -248,7 +248,7 @@ func (c *Client) Init(retries int) error {
 
 		results := gjson.GetManyBytes(content, "name", "uuid", "version.full", "version.generation", "version.major", "version.minor")
 		c.cluster.Name = results[0].String()
-		c.cluster.Uuid = results[1].String()
+		c.cluster.UUID = results[1].String()
 		c.cluster.Info = results[2].String()
 		c.cluster.Version[0] = int(results[3].Int())
 		c.cluster.Version[1] = int(results[4].Int())

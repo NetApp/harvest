@@ -14,16 +14,16 @@ type Prometheus struct {
 	image string
 }
 
-func (d *Prometheus) Init(image string) {
-	d.image = image
+func (p *Prometheus) Init(image string) {
+	p.image = image
 }
 
-func (d *Prometheus) Install() bool {
-	log.Println("Prometheus image : " + d.image)
+func (p *Prometheus) Install() bool {
+	log.Println("Prometheus image : " + p.image)
 	imageName := "prometheus"
 	docker.StopContainers(imageName)
 	docker.RemoveImage(imageName)
-	docker.PullImage(d.image)
+	docker.PullImage(p.image)
 	path, _ := os.Getwd()
 	ipAddress := utils.GetOutboundIP()
 	cmd := exec.Command("docker", "run", "-d", "-p", utils.PrometheusPort+":"+utils.PrometheusPort,
@@ -36,7 +36,7 @@ func (d *Prometheus) Install() bool {
 	for waitCount < 5 {
 		waitCount++
 		time.Sleep(20 * time.Second)
-		if utils.IsUrlReachable("http://localhost:" + utils.PrometheusPort) {
+		if utils.IsURLReachable("http://localhost:" + utils.PrometheusPort) {
 			return true
 		}
 	}

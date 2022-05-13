@@ -1,7 +1,4 @@
-/*
-	Copyright NetApp Inc, 2021 All rights reserved
-	Package zapi
-*/
+// Package zapi Copyright NetApp Inc, 2021 All rights reserved
 package zapi
 
 import (
@@ -182,7 +179,7 @@ func renderObjectName(rawName string) string {
 			i += 2
 		} else {
 			name += c
-			i += 1
+			i++
 		}
 	}
 

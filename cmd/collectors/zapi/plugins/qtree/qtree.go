@@ -125,7 +125,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	// Set all global labels from zapi.go if already not exist
 	my.data.SetGlobalLabels(data.GetGlobalLabels())
 
-	request = node.NewXmlS(my.query)
+	request = node.NewXMLS(my.query)
 
 	if my.client.IsClustered() && my.batchSize != "" {
 		request.NewChildS("max-records", my.batchSize)

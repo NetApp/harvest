@@ -13,7 +13,7 @@ func TestImportYaml(t *testing.T) {
 	got := 0
 	if name := template.GetChildS("name"); name != nil {
 		for range name.GetChildren() {
-			got += 1
+			got++
 		}
 		if name.GetContentS() == "" {
 			t.Errorf("empty content")
@@ -28,7 +28,7 @@ func TestImportYaml(t *testing.T) {
 	got = 0
 	if name := template.GetChildS("counters"); name != nil {
 		for range name.GetChildren() {
-			got += 1
+			got++
 		}
 		if got != want {
 			t.Errorf("got %v, want %v", got, want)
@@ -38,7 +38,7 @@ func TestImportYaml(t *testing.T) {
 		hiddenFieldsWant := 2
 		hiddenFieldsGot := 0
 		for range hiddenFields.GetChildren() {
-			hiddenFieldsGot += 1
+			hiddenFieldsGot++
 		}
 		if hiddenFieldsGot != hiddenFieldsWant {
 			t.Errorf("got %v, want %v", hiddenFieldsGot, hiddenFieldsWant)
@@ -50,7 +50,7 @@ func TestImportYaml(t *testing.T) {
 	got = 0
 	if endpoints := template.GetChildS("endpoints"); endpoints != nil {
 		for range endpoints.GetChildren() {
-			got += 1
+			got++
 		}
 
 		if got != want {
@@ -63,7 +63,7 @@ func TestImportYaml(t *testing.T) {
 	got = 0
 	if plugins := template.GetChildS("plugins"); plugins != nil {
 		for range plugins.GetChildren() {
-			got += 1
+			got++
 		}
 
 		if got != want {
@@ -74,7 +74,7 @@ func TestImportYaml(t *testing.T) {
 		aggregatorWant := 2
 		aggregatorGot := 0
 		for range aggregator.GetChildren() {
-			aggregatorGot += 1
+			aggregatorGot++
 		}
 		if aggregatorGot != aggregatorWant {
 			t.Errorf("got %v, want %v", aggregatorWant, aggregatorGot)
@@ -86,7 +86,7 @@ func TestImportYaml(t *testing.T) {
 	got = 0
 	if exportOptions := template.GetChildS("export_options"); exportOptions != nil {
 		for range exportOptions.GetChildren() {
-			got += 1
+			got++
 		}
 
 		if got != want {
@@ -97,7 +97,7 @@ func TestImportYaml(t *testing.T) {
 		instanceKeysWant := 2
 		instanceKeysGot := 0
 		for range instanceKeys.GetChildren() {
-			instanceKeysGot += 1
+			instanceKeysGot++
 		}
 		if instanceKeysGot != instanceKeysWant {
 			t.Errorf("got %v, want %v", got, want)
@@ -112,7 +112,7 @@ func TestHarvestConfigImportYaml(t *testing.T) {
 	got := 0
 	if name := template.GetChildS("Tools"); name != nil {
 		for range name.GetChildren() {
-			got += 1
+			got++
 		}
 
 		if got != want {
@@ -124,7 +124,7 @@ func TestHarvestConfigImportYaml(t *testing.T) {
 	got = 0
 	if exporters := template.GetChildS("Exporters"); exporters != nil {
 		for range exporters.GetChildren() {
-			got += 1
+			got++
 		}
 
 		if got != want {
@@ -135,7 +135,7 @@ func TestHarvestConfigImportYaml(t *testing.T) {
 		prometheusWant := 2
 		prometheusGot := 0
 		for range prometheus.GetChildren() {
-			prometheusGot += 1
+			prometheusGot++
 		}
 		if prometheusGot != prometheusWant {
 			t.Errorf("got %v, want %v", got, want)
@@ -146,7 +146,7 @@ func TestHarvestConfigImportYaml(t *testing.T) {
 	got = 0
 	if defaults := template.GetChildS("Defaults"); defaults != nil {
 		for range defaults.GetChildren() {
-			got += 1
+			got++
 		}
 
 		if got != want {
@@ -157,7 +157,7 @@ func TestHarvestConfigImportYaml(t *testing.T) {
 		collectorsWant := 2
 		collectorsGot := 0
 		for range collectors.GetChildren() {
-			collectorsGot += 1
+			collectorsGot++
 		}
 		if collectorsGot != collectorsWant {
 			t.Errorf("got %v, want %v", got, want)
@@ -168,7 +168,7 @@ func TestHarvestConfigImportYaml(t *testing.T) {
 	got = 0
 	if pollers := template.GetChildS("Pollers"); pollers != nil {
 		for range pollers.GetChildren() {
-			got += 1
+			got++
 		}
 
 		if got != want {
@@ -179,7 +179,7 @@ func TestHarvestConfigImportYaml(t *testing.T) {
 		unixWant := 5
 		unixGot := 0
 		for range unix.GetChildren() {
-			unixGot += 1
+			unixGot++
 		}
 		if unixGot != unixWant {
 			t.Errorf("got %v, want %v", got, want)
@@ -194,7 +194,7 @@ func TestImport2108Yaml(t *testing.T) {
 	got := 0
 	if plugins := template.GetChildS("plugins"); plugins != nil {
 		for range plugins.GetChildren() {
-			got += 1
+			got++
 		}
 
 		if got != want {
@@ -205,7 +205,7 @@ func TestImport2108Yaml(t *testing.T) {
 		labelAgentWant := 2
 		labelAgentGot := 0
 		for range labelAgent.GetChildren() {
-			labelAgentGot += 1
+			labelAgentGot++
 		}
 		if labelAgentGot != labelAgentWant {
 			t.Errorf("got %v, want %v", labelAgentWant, labelAgentGot)
@@ -217,7 +217,7 @@ func TestImport2108Yaml(t *testing.T) {
 	got = 0
 	if counters := template.GetChildS("counters"); counters != nil {
 		for range counters.GetChildren() {
-			got += 1
+			got++
 		}
 
 		if got != want {
@@ -228,7 +228,7 @@ func TestImport2108Yaml(t *testing.T) {
 		volumeAttributesWant := 1
 		volumeAttributesGot := 0
 		for range volumeAttributes.GetChildren() {
-			volumeAttributesGot += 1
+			volumeAttributesGot++
 		}
 		if volumeAttributesGot != volumeAttributesWant {
 			t.Errorf("got %v, want %v", volumeAttributesWant, volumeAttributesGot)
@@ -238,7 +238,7 @@ func TestImport2108Yaml(t *testing.T) {
 		volumeAutoSizeAttributesWant := 2
 		volumeAutoSizeAttributesGot := 0
 		for range volumeAutoSizeAttributes.GetChildren() {
-			volumeAutoSizeAttributesGot += 1
+			volumeAutoSizeAttributesGot++
 		}
 		if volumeAutoSizeAttributesGot != volumeAutoSizeAttributesWant {
 			t.Errorf("got %v, want %v", volumeAutoSizeAttributesGot, volumeAttributesGot)

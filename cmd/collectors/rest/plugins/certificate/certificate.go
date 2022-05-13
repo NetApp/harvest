@@ -113,10 +113,10 @@ func (my *Certificate) setCertificateIssuerType(instance *matrix.Instance) {
 	)
 
 	certificatePEM := instance.GetLabel("certificatePEM")
-	certUuid := instance.GetLabel("uuid")
+	certUUID := instance.GetLabel("uuid")
 
 	if certificatePEM == "" {
-		my.Logger.Warn().Str("uuid", certUuid).Msg("Certificate is not found")
+		my.Logger.Warn().Str("uuid", certUUID).Msg("Certificate is not found")
 		instance.SetLabel("certificateIssuerType", "unknown")
 	} else {
 		instance.SetLabel("certificateIssuerType", "self_signed")

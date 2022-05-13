@@ -23,7 +23,7 @@ const (
 	DefaultLogMaxAge          int  = 30
 )
 
-// Configuration for logging
+// LogConfig defines the configuration for logging
 type LogConfig struct {
 	// Enable console logging
 	ConsoleLoggingEnabled bool

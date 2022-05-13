@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-const PrometheusUrl string = "http://localhost:9090"
+const PrometheusURL string = "http://localhost:9090"
 
 func DoDiffRestZapi(zapiDataCenterName string, restDataCenterName string) {
 	labelDiffMap := labelDiff(zapiDataCenterName, restDataCenterName)
@@ -102,9 +102,9 @@ func metricValueDiff(metricName string) {
 	}
 
 	timeNow := time.Now().Unix()
-	queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",
-		PrometheusUrl, metricName, timeNow)
-	data, _ := getResponse(queryUrl)
+	queryURL := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",
+		PrometheusURL, metricName, timeNow)
+	data, _ := getResponse(queryURL)
 	replacer := strings.NewReplacer("[", "", "]", "", "\"", "")
 	zapiMetric := make(map[string]float64)
 	restMetric := make(map[string]float64)
@@ -214,9 +214,9 @@ func IndexOf(data []string, search string) int {
 
 func labelValueDiff(label string, labelNames []string) {
 	timeNow := time.Now().Unix()
-	queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",
-		PrometheusUrl, label, timeNow)
-	data, _ := getResponse(queryUrl)
+	queryURL := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",
+		PrometheusURL, label, timeNow)
+	data, _ := getResponse(queryURL)
 	replacer := strings.NewReplacer("[", "", "]", "", "\"", "")
 	zapiMetric := make(map[string]string)
 	restMetric := make(map[string]string)
@@ -350,9 +350,9 @@ func labelDiff(zapiDataCenterName string, restDataCenterName string) map[string]
 func getMetricNames(query string) map[string]string {
 	var dataMap = make(map[string]string)
 	timeNow := time.Now().Unix()
-	queryUrl := fmt.Sprintf("%s/api/v1/series?%s&time=%d",
-		PrometheusUrl, query, timeNow)
-	data, _ := getResponse(queryUrl)
+	queryURL := fmt.Sprintf("%s/api/v1/series?%s&time=%d",
+		PrometheusURL, query, timeNow)
+	data, _ := getResponse(queryURL)
 	result := gjson.Get(data, "data.#.__name__")
 
 	for _, name := range result.Array() {
@@ -364,9 +364,9 @@ func getMetricNames(query string) map[string]string {
 func getLabelNames(query string) map[string][]string {
 	var dataMap = make(map[string][]string)
 	timeNow := time.Now().Unix()
-	queryUrl := fmt.Sprintf("%s/api/v1/series?%s&time=%d",
-		PrometheusUrl, query, timeNow)
-	data, _ := getResponse(queryUrl)
+	queryURL := fmt.Sprintf("%s/api/v1/series?%s&time=%d",
+		PrometheusURL, query, timeNow)
+	data, _ := getResponse(queryURL)
 
 	result := gjson.Get(data, "data")
 	result.ForEach(func(key, value gjson.Result) bool {

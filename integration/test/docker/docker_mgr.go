@@ -56,11 +56,6 @@ func IsDockerBasedPoller() bool {
 	return len(containerIDs) > 0
 }
 
-func GetOnePollerContainers() string {
-	containerIDs := GetContainerID("poller")
-	return containerIDs[0]
-}
-
 func HasAllStarted(commandSubString string, count int) bool {
 	ctx := context.Background()
 	actualCount := 0
@@ -84,30 +79,12 @@ func HasAllStarted(commandSubString string, count int) bool {
 	return true
 }
 
-func HasStarted(imageName string) bool {
-	ctx := context.Background()
-	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-	if err != nil {
-		panic(err)
-	}
-	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{})
-	if err != nil {
-		panic(err)
-	}
-	for _, container := range containers {
-		if strings.Contains(container.Image, imageName) && container.State == "running" {
-			return true
-		}
-	}
-	return false
-}
-
-func StoreContainerLog(containerId string, logFile string) {
+func StoreContainerLog(containerID string, logFile string) {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	utils.PanicIfNotNil(err)
 	options := types.ContainerLogsOptions{ShowStdout: true, ShowStderr: true}
-	out, containerErr := cli.ContainerLogs(ctx, containerId, options)
+	out, containerErr := cli.ContainerLogs(ctx, containerID, options)
 	utils.PanicIfNotNil(containerErr)
 	fileOut, err := os.Create(logFile)
 	utils.PanicIfNotNil(err)
@@ -162,10 +139,6 @@ func StopContainers(commandSubString string) {
 
 func CopyFile(containerId string, src string, dest string) {
 	utils.Run("docker", "cp", src, containerId+":"+dest)
-}
-
-func CopyFileFromDocker(containerId string, src string, dest string) {
-	utils.Run("docker", "cp", containerId+":"+src, dest)
 }
 
 func GetContainerID(commandSubString string) []string {

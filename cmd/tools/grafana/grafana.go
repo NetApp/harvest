@@ -447,19 +447,19 @@ func importFiles(dir string, folder *Folder) {
 		data = bytes.ReplaceAll(data, []byte("${DS_PROMETHEUS}"), []byte(opts.datasource))
 
 		// If the dashboard has an uid defined, change the uid to empty string. We do comparison for dashboard create/update based on title
-		if dashboardId := gjson.GetBytes(data, "uid").String(); dashboardId != "" {
+		if dashboardID := gjson.GetBytes(data, "uid").String(); dashboardID != "" {
 			data, err = sjson.SetBytes(data, "uid", []byte(""))
 			if err != nil {
-				fmt.Printf("error while updating the uid %s into dashboard %s, err: %+v", dashboardId, file.Name(), err)
+				fmt.Printf("error while updating the uid %s into dashboard %s, err: %+v", dashboardID, file.Name(), err)
 				continue
 			}
 		}
 
 		// If the dashboard has an id defined, change the id to empty string so Grafana treats this as a new dashboard instead of an update to an existing one
-		if dashboardId := gjson.GetBytes(data, "id").String(); dashboardId != "" {
+		if dashboardID := gjson.GetBytes(data, "id").String(); dashboardID != "" {
 			data, err = sjson.SetBytes(data, "id", []byte(""))
 			if err != nil {
-				fmt.Printf("error while updating the id %s into dashboard %s, err: %+v", dashboardId, file.Name(), err)
+				fmt.Printf("error while updating the id %s into dashboard %s, err: %+v", dashboardID, file.Name(), err)
 				continue
 			}
 		}
@@ -774,7 +774,7 @@ func checkToken(opts *options, ignoreConfig bool) error {
 
 	if conf.Config.Tools != nil {
 		if !ignoreConfig {
-			token = conf.Config.Tools.GrafanaApiToken
+			token = conf.Config.Tools.GrafanaAPIToken
 			fmt.Println("using API token from config")
 		}
 	}
@@ -809,7 +809,7 @@ func checkToken(opts *options, ignoreConfig bool) error {
 	}
 
 	// ask user to save API key
-	if conf.Config.Tools == nil || opts.token != conf.Config.Tools.GrafanaApiToken {
+	if conf.Config.Tools == nil || opts.token != conf.Config.Tools.GrafanaAPIToken {
 
 		fmt.Printf("save API key for later use? [Y/n]: ")
 		_, _ = fmt.Scanf("%s\n", &answer)
@@ -818,7 +818,7 @@ func checkToken(opts *options, ignoreConfig bool) error {
 			if conf.Config.Tools == nil {
 				conf.Config.Tools = &conf.Tools{}
 			}
-			conf.Config.Tools.GrafanaApiToken = opts.token
+			conf.Config.Tools.GrafanaAPIToken = opts.token
 			fmt.Printf("saving config file [%s]\n", configPath)
 			if err = util.SaveConfig(configPath, opts.token); err != nil {
 				return err

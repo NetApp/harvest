@@ -18,8 +18,8 @@ const (
 	ErrNoInstance  = "no instances"
 	ErrTemplate    = "invalid template"
 	ErrNoCollector = "no collectors"
-	ApiResponse    = "error reading api response"
-	ApiReqRejected = "api request rejected"
+	APIResponse    = "error reading api response"
+	APIReqRejected = "api request rejected"
 	ErrImplement   = "implementation error"
 	GoRoutinePanic = "goroutine panic"
 )

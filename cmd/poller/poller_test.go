@@ -95,20 +95,20 @@ func TestPublishUrl(t *testing.T) {
 
 	type test struct {
 		name   string
-		isTls  bool
+		isTLS  bool
 		listen string
 		want   string
 	}
 
 	tests := []test{
-		{name: "localhost", isTls: false, listen: "localhost:8118", want: "http://localhost:8118/api/v1/sd"},
-		{name: "all interfaces", isTls: false, listen: ":8118", want: "http://127.0.0.1:8118/api/v1/sd"},
-		{name: "ip", isTls: false, listen: "10.0.1.1:8118", want: "http://10.0.1.1:8118/api/v1/sd"},
+		{name: "localhost", isTLS: false, listen: "localhost:8118", want: "http://localhost:8118/api/v1/sd"},
+		{name: "all interfaces", isTLS: false, listen: ":8118", want: "http://127.0.0.1:8118/api/v1/sd"},
+		{name: "ip", isTLS: false, listen: "10.0.1.1:8118", want: "http://10.0.1.1:8118/api/v1/sd"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			conf.Config.Admin.Httpsd = conf.Httpsd{}
-			if tt.isTls {
+			if tt.isTLS {
 				conf.Config.Admin.Httpsd.TLS = conf.TLS{
 					CertFile: "a",
 					KeyFile:  "a",

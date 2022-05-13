@@ -19,7 +19,7 @@ func TestNode_Merge(t *testing.T) {
 	got := 0
 	if objects := defaultTemplate.GetChildS("objects"); objects != nil {
 		for range objects.GetChildren() {
-			got += 1
+			got++
 		}
 		if got != want {
 			t.Errorf("got %v, want %v", got, want)
@@ -85,7 +85,7 @@ func TestNode_MergeCollector(t *testing.T) {
 
 	if counters != nil {
 		for range counters.GetChildren() {
-			got1 += 1
+			got1++
 		}
 	}
 
@@ -99,7 +99,7 @@ func TestNode_MergeCollector(t *testing.T) {
 	counters = defaultTemplate.GetChildS("plugins").GetChildS("LabelAgent").GetChildS("value_to_num")
 	if counters != nil {
 		for range counters.GetChildren() {
-			got3 += 1
+			got3++
 		}
 	}
 
@@ -113,7 +113,7 @@ func TestNode_MergeCollector(t *testing.T) {
 	counters = defaultTemplate.GetChildS("plugins").GetChildS("LabelAgent").GetChildS("new_mapping")
 	if counters != nil {
 		for range counters.GetChildren() {
-			got4 += 1
+			got4++
 		}
 	}
 
@@ -127,7 +127,7 @@ func TestNode_MergeCollector(t *testing.T) {
 	counters = defaultTemplate.GetChildS("plugins").GetChildS("LabelAgent").GetChildS("split")
 	if counters != nil {
 		for range counters.GetChildren() {
-			got5 += 1
+			got5++
 		}
 	}
 
@@ -141,7 +141,7 @@ func TestNode_MergeCollector(t *testing.T) {
 	counters = defaultTemplate.GetChildS("plugins").GetChildS("Aggregator")
 	if counters != nil {
 		for range counters.GetChildren() {
-			got8 += 1
+			got8++
 		}
 	}
 
@@ -155,7 +155,7 @@ func TestNode_MergeCollector(t *testing.T) {
 	counters = defaultTemplate.GetChildS("export_options").GetChildS("instance_keys")
 	if counters != nil {
 		for range counters.GetChildren() {
-			got6 += 1
+			got6++
 		}
 	}
 
@@ -169,7 +169,7 @@ func TestNode_MergeCollector(t *testing.T) {
 	counters = defaultTemplate.GetChildS("export_options").GetChildS("instance_labels")
 	if counters != nil {
 		for range counters.GetChildren() {
-			got7 += 1
+			got7++
 		}
 	}
 
@@ -183,7 +183,7 @@ func TestNode_MergeCollector(t *testing.T) {
 	counters = defaultTemplate.GetChildS("override")
 	if counters != nil {
 		for range counters.GetChildren() {
-			got9 += 1
+			got9++
 		}
 	}
 
@@ -218,7 +218,7 @@ func TestNode_MergeCollectorOld(t *testing.T) {
 	counters := defaultTemplate.GetChildS("plugins").GetChildS("LabelAgent").GetChildS("value_to_num")
 	if counters != nil {
 		for range counters.GetChildren() {
-			got3 += 1
+			got3++
 		}
 	}
 
@@ -232,7 +232,7 @@ func TestNode_MergeCollectorOld(t *testing.T) {
 	counters = defaultTemplate.GetChildS("plugins").GetChildS("LabelAgent").GetChildS("new_mapping")
 	if counters != nil {
 		for range counters.GetChildren() {
-			got4 += 1
+			got4++
 		}
 	}
 
@@ -246,7 +246,7 @@ func TestNode_MergeCollectorOld(t *testing.T) {
 	counters = defaultTemplate.GetChildS("plugins").GetChildS("Aggregator")
 	if counters != nil {
 		for range counters.GetChildren() {
-			got5 += 1
+			got5++
 		}
 	}
 

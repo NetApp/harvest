@@ -72,7 +72,7 @@ def main():
             time.sleep(a.interval)
 
         if not metrics.endswith('\n'):
-            errors['missing_newlines'] += 1
+            errors['missing_newlines']++
             print('   {}missing newline at the end of metric batch{}'.format(PINK, END))
 
         for m in metrics.splitlines():
@@ -85,12 +85,12 @@ def main():
             if len(m) and m[0] == '#':
                 ok, tag, metric_name = check_metatag(m)
                 if not ok:
-                    errors['corrupt_metatags'] += 1
+                    errors['corrupt_metatags']++
                     print('   corrupt {} metatag:'.format(tag))
                     print('   [{}{}{}]'.format(RED, m, END))
                 elif tag == 'HELP':
                     if help_cache.get(metric_name, False):
-                        errors['duplicate_metatags'] += 1  # count only once
+                        errors['duplicate_metatags']++  # count only once
                         print('   duplicate HELP tag for metric {}'.format(metric_name))
                     help_cache[metric_name] = True
                 elif tag == 'TYPE':
@@ -103,7 +103,7 @@ def main():
             ok, metric_name, raw_labels = check_metric(m)
 
             if not ok:
-                errors['corrupt_metrics'] += 1
+                errors['corrupt_metrics']++
                 print('   corrupt metric format:')
                 print('   [{}{}{}]'.format(RED, m, END))
                 continue
@@ -111,7 +111,7 @@ def main():
             # check labels integrity
             ok, labels = parse_labels(raw_labels) # list
             if not ok:
-                errors['corrupt_metrics'] += 1
+                errors['corrupt_metrics']++
                 print('   corrupt metric format (labels):')
                 print('   [{}{}{}]'.format(RED, m, END))
                 continue
@@ -119,7 +119,7 @@ def main():
             # check for duplicate labels
             duplicates = set([l for l in labels if labels.count(l) > 1])
             if duplicates:
-                errors['duplicate_labels'] += 1
+                errors['duplicate_labels']++
                 print('   duplicate labels ({}):'.format(', '.join(duplicates)))
                 print('   [{}{}{}]'.format(RED, m, END))
 
@@ -133,7 +133,7 @@ def main():
                 missing = cached_labels - labels
                 added = labels - cached_labels
                 if missing or added:
-                    errors['inconsistent_labels'] += 1
+                    errors['inconsistent_labels']++
                     print('   inconsistent labels (cached: {}):'.format(' '.join(cached_labels)))
                     if missing:
                         print('     - missing ({})'.format(', '.join(missing)))
@@ -147,7 +147,7 @@ def main():
                 has_help = help_cache.get(metric_name, False)
                 has_type = type_cache.get(metric_name, False)
                 if not has_help or not has_type:
-                    errors['missing_metatags'] += 1
+                    errors['missing_metatags']++
                     print('   {}missing metatags for metric [{}]{}'.format(RED, metric_name, END))
                     if not has_help:
                         print('     - HELP tag not detected')

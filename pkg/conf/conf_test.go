@@ -114,11 +114,11 @@ func TestPollerUnion(t *testing.T) {
 		Addr:           addr,
 		Collectors:     []Collector{{Name: "0"}, {Name: "1"}, {Name: "2"}, {Name: "3"}},
 		Username:       user,
-		UseInsecureTls: &yes,
+		UseInsecureTLS: &yes,
 		IsKfs:          true,
 	}
 	p := Poller{
-		UseInsecureTls: &no,
+		UseInsecureTLS: &no,
 		IsKfs:          false,
 	}
 	p.Union(&defaults)
@@ -128,8 +128,8 @@ func TestPollerUnion(t *testing.T) {
 	if p.Addr != "addr" {
 		t.Fatalf(`expected addr to be [addr] but was [%v]`, p.Addr)
 	}
-	if *p.UseInsecureTls {
-		t.Fatalf(`expected UseInsecureTls to be [false] but was [%v]`, *p.UseInsecureTls)
+	if *p.UseInsecureTLS {
+		t.Fatalf(`expected UseInsecureTLS to be [false] but was [%v]`, *p.UseInsecureTLS)
 	}
 	if p.IsKfs {
 		t.Fatalf(`expected IsKfs to be [false] but was [%v]`, p.IsKfs)
@@ -281,9 +281,9 @@ func TestNodeToPoller(t *testing.T) {
 	defaultNode.NewChildS("use_insecure_tls", "true")
 	poller := ZapiPoller(defaultNode)
 
-	testArg(t, DefaultApiVersion, poller.ApiVersion)
+	testArg(t, DefaultAPIVersion, poller.APIVersion)
 	testArg(t, "bob", poller.Username)
 	testArg(t, "pass", poller.Password)
 	testArg(t, "30s", poller.ClientTimeout)
-	testArg(t, "true", strconv.FormatBool(*poller.UseInsecureTls))
+	testArg(t, "true", strconv.FormatBool(*poller.UseInsecureTLS))
 }
