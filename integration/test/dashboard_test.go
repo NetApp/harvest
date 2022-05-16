@@ -37,10 +37,10 @@ var cDotFolder, sevenModeFolder string
 
 func (suite *DashboardImportTestSuite) SetupSuite() {
 	log.Info().Msg("Verify Grafana and Prometheus are configured")
-	if !utils.IsUrlReachable(utils.GetGrafanaHttpUrl()) {
+	if !utils.IsURLReachable(utils.GetGrafanaHTTPURL()) {
 		panic(fmt.Errorf("Grafana is not reachable."))
 	}
-	if !utils.IsUrlReachable(utils.GetPrometheusUrl()) {
+	if !utils.IsURLReachable(utils.GetPrometheusURL()) {
 		panic(fmt.Errorf("Prometheus is not reachable."))
 	}
 	cDotFolder = "Harvest-" + version.VERSION + "-cDOT"
@@ -55,7 +55,7 @@ func (suite *DashboardImportTestSuite) SetupSuite() {
 
 func (suite *DashboardImportTestSuite) TestImport() {
 	log.Info().Msg("Verify harvest folder")
-	data, err := utils.GetResponseBody(utils.GetGrafanaHttpUrl() + "/api/folders?limit=10")
+	data, err := utils.GetResponseBody(utils.GetGrafanaHTTPURL() + "/api/folders?limit=10")
 	utils.PanicIfNotNil(err)
 	var dataFolder []Folder
 	err = json.Unmarshal(data, &dataFolder)
@@ -122,7 +122,7 @@ func TestDashboardImportSuite(t *testing.T) {
 
 func GetFolderId(folderName string, t *testing.T) int64 {
 	log.Info().Msg("Find " + folderName + " folder id")
-	data, err := utils.GetResponseBody(utils.GetGrafanaHttpUrl() + "/api/folders?limit=100")
+	data, err := utils.GetResponseBody(utils.GetGrafanaHTTPURL() + "/api/folders?limit=100")
 	utils.PanicIfNotNil(err)
 	var dataFolder []Folder
 	var folderId int64
@@ -142,7 +142,7 @@ func GetFolderId(folderName string, t *testing.T) int64 {
 
 func VerifyDashboards(folderId int64, expectedName []string, t *testing.T) {
 	log.Info().Msg(fmt.Sprintf("Find list of dashboard for folder %d", folderId))
-	url := utils.GetGrafanaHttpUrl() + "/api/search?type=dash-db"
+	url := utils.GetGrafanaHTTPURL() + "/api/search?type=dash-db"
 	log.Info().Msg(url)
 	data, err := utils.GetResponseBody(url)
 	utils.PanicIfNotNil(err)

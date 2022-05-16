@@ -24,7 +24,7 @@ import (
 )
 
 const (
-	DefaultApiVersion = "1.3"
+	DefaultAPIVersion = "1.3"
 	DefaultTimeout    = 10
 )
 
@@ -56,12 +56,12 @@ func New(poller conf.Poller) (*Client, error) {
 	client.Logger = logging.Get().SubLogger("Zapi", "Client")
 
 	// check required & optional parameters
-	if client.apiVersion = poller.ApiVersion; client.apiVersion == "" {
-		client.apiVersion = DefaultApiVersion
-		client.Logger.Debug().Msgf("using default API version [%s]", DefaultApiVersion)
+	if client.apiVersion = poller.APIVersion; client.apiVersion == "" {
+		client.apiVersion = DefaultAPIVersion
+		client.Logger.Debug().Msgf("using default API version [%s]", DefaultAPIVersion)
 	}
 
-	if client.vfiler = poller.ApiVfiler; client.vfiler != "" {
+	if client.vfiler = poller.APIVfiler; client.vfiler != "" {
 		client.Logger.Debug().Msgf("using vfiler tunneling [%s]", client.vfiler)
 	}
 
@@ -84,8 +84,8 @@ func New(poller conf.Poller) (*Client, error) {
 
 	// by default, enforce secure TLS, if not requested otherwise by user
 	useInsecureTLS = false
-	if poller.UseInsecureTls != nil {
-		useInsecureTLS = *poller.UseInsecureTls
+	if poller.UseInsecureTLS != nil {
+		useInsecureTLS = *poller.UseInsecureTLS
 	}
 
 	// check if a credentials file is being used and if so, parse and use the values from it
@@ -189,11 +189,11 @@ func parseClientTimeout(clientTimeout string) (time.Duration, error) {
 		}
 		return duration, nil
 	}
-	if t, err := strconv.Atoi(clientTimeout); err == nil {
-		return time.Duration(t) * time.Second, nil
-	} else {
+	t, err := strconv.Atoi(clientTimeout)
+	if err != nil {
 		return time.Duration(DefaultTimeout) * time.Second, nil
 	}
+	return time.Duration(t) * time.Second, nil
 }
 
 // Init connects to the cluster and retrieves system info
@@ -233,9 +233,9 @@ func (c *Client) Serial() string {
 	return c.system.serial
 }
 
-// ClusterUuid returns the cluster UUID of a c-mode system and system-id for 7-mode
-func (c *Client) ClusterUuid() string {
-	return c.system.clusterUuid
+// ClusterUUID returns the cluster UUID of a c-mode system and system-id for 7-mode
+func (c *Client) ClusterUUID() string {
+	return c.system.clusterUUID
 }
 
 // Info returns a string with details about the ONTAP system identity
@@ -264,7 +264,7 @@ func (c *Client) BuildRequest(request *node.Node) error {
 }
 
 func (c *Client) buildRequestString(request string, forceCluster bool) error {
-	return c.buildRequest(node.NewXmlS(request), forceCluster)
+	return c.buildRequest(node.NewXMLS(request), forceCluster)
 }
 
 // build API request from the given node object.
@@ -276,7 +276,7 @@ func (c *Client) buildRequest(query *node.Node, forceCluster bool) error {
 		err     error
 	)
 
-	request = node.NewXmlS("netapp")
+	request = node.NewXMLS("netapp")
 	request.NewAttrS("xmlns", "http://www.netapp.com/filer/admin")
 	request.NewAttrS("version", c.apiVersion)
 	// optionally use fviler-tunneling, this option is never used in Harvest
@@ -388,7 +388,7 @@ func (c *Client) InvokeRaw() ([]byte, error) {
 	}
 
 	if response.StatusCode != 200 {
-		return body, errors.New(errors.ApiResponse, response.Status)
+		return body, errors.New(errors.APIResponse, response.Status)
 	}
 
 	return ioutil.ReadAll(response.Body)
@@ -430,7 +430,7 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 	}
 
 	if response.StatusCode != 200 {
-		return result, responseT, parseT, errors.New(errors.ApiResponse, response.Status)
+		return result, responseT, parseT, errors.New(errors.APIResponse, response.Status)
 	}
 
 	// read response body
@@ -454,18 +454,18 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 
 	// check if request was successful
 	if result = root.GetChildS("results"); result == nil {
-		return result, responseT, parseT, errors.New(errors.ApiResponse, "missing \"results\"")
+		return result, responseT, parseT, errors.New(errors.APIResponse, "missing \"results\"")
 	}
 
 	if status, found = result.GetAttrValueS("status"); !found {
-		return result, responseT, parseT, errors.New(errors.ApiResponse, "missing status attribute")
+		return result, responseT, parseT, errors.New(errors.APIResponse, "missing status attribute")
 	}
 
 	if status != "passed" {
 		if reason, found = result.GetAttrValueS("reason"); !found {
-			err = errors.New(errors.ApiReqRejected, "no reason")
+			err = errors.New(errors.APIReqRejected, "no reason")
 		} else {
-			err = errors.New(errors.ApiReqRejected, reason)
+			err = errors.New(errors.APIReqRejected, reason)
 		}
 		return result, responseT, parseT, err
 	}

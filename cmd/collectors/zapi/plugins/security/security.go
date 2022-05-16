@@ -104,7 +104,7 @@ func (my *Security) getSecurityConfig() (string, error) {
 		err         error
 	)
 
-	request = node.NewXmlS("security-config-get")
+	request = node.NewXMLS("security-config-get")
 	request.NewChildS("interface", "ssl")
 
 	if result, _, err = collectors.InvokeZapiCall(my.client, request, my.Logger, ""); err != nil {
@@ -131,14 +131,14 @@ func (my *Security) getSecurityProtocols() (string, string, error) {
 	)
 
 	// Zapi call for telnet
-	request = node.NewXmlS("security-protocol-get")
+	request = node.NewXMLS("security-protocol-get")
 	request.NewChildS("application", "telnet")
 	if telnetEnabled, err = my.getEnabledValue(request); err != nil {
 		return "", "", err
 	}
 
 	// Zapi call for rsh
-	request = node.NewXmlS("security-protocol-get")
+	request = node.NewXMLS("security-protocol-get")
 	request.NewChildS("application", "rsh")
 	if rshEnabled, err = my.getEnabledValue(request); err != nil {
 		return "", "", err

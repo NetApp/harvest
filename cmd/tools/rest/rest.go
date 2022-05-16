@@ -30,7 +30,7 @@ var args = &Args{}
 type Args struct {
 	Item          string
 	Poller        string
-	Api           string
+	API           string
 	Endpoint      string
 	Config        string
 	SwaggerPath   string
@@ -180,11 +180,11 @@ func doData() {
 	}
 
 	// strip leading slash
-	if strings.HasPrefix(args.Api, "/") {
-		args.Api = args.Api[1:]
+	if strings.HasPrefix(args.API, "/") {
+		args.API = args.API[1:]
 	}
 	var records []interface{}
-	href := BuildHref(args.Api, args.Fields, args.Field, args.QueryField, args.QueryValue, args.MaxRecords, "", args.Endpoint)
+	href := BuildHref(args.API, args.Fields, args.Field, args.QueryField, args.QueryValue, args.MaxRecords, "", args.Endpoint)
 	stderr("fetching href=[%s]\n", href)
 
 	err = FetchData(client, href, &records)
@@ -223,7 +223,7 @@ func getPollerAndAddr() (*conf.Poller, string, error) {
 func FetchData(client *Client, href string, records *[]interface{}) error {
 	getRest, err := client.GetRest(href)
 	if err != nil {
-		return fmt.Errorf("error making request api=%s err=%+v\n", href, err)
+		return fmt.Errorf("error making request api=%s err=%+v", href, err)
 	}
 
 	isNonIterRestCall := false
@@ -233,15 +233,15 @@ func FetchData(client *Client, href string, records *[]interface{}) error {
 	}
 
 	if isNonIterRestCall {
-		contentJson := `{"records":[]}`
-		response, err := sjson.SetRawBytes([]byte(contentJson), "records.-1", getRest)
+		contentJSON := `{"records":[]}`
+		response, err := sjson.SetRawBytes([]byte(contentJSON), "records.-1", getRest)
 		if err != nil {
-			return fmt.Errorf("error setting record %+v\n", err)
+			return fmt.Errorf("error setting record %+v", err)
 		}
 		var page Pagination
 		err = json.Unmarshal(response, &page)
 		if err != nil {
-			return fmt.Errorf("error unmarshalling json %+v\n", err)
+			return fmt.Errorf("error unmarshalling json %+v", err)
 		}
 		*records = append(*records, page.Records...)
 	} else {
@@ -249,7 +249,7 @@ func FetchData(client *Client, href string, records *[]interface{}) error {
 		var page Pagination
 		err := json.Unmarshal(getRest, &page)
 		if err != nil {
-			return fmt.Errorf("error unmarshalling json %+v\n", err)
+			return fmt.Errorf("error unmarshalling json %+v", err)
 		}
 
 		*records = append(*records, page.Records...)
@@ -283,7 +283,7 @@ func init() {
 	flags.StringVar(&args.Config, "config", configPath, "harvest config file path")
 
 	showFlags := showCmd.Flags()
-	showFlags.StringVarP(&args.Api, "api", "a", "", "REST API PATTERN to show")
+	showFlags.StringVarP(&args.API, "api", "a", "", "REST API PATTERN to show")
 	showFlags.StringVar(&args.Endpoint, "endpoint", "", "By default, /api is appended to passed argument in --api. Use --endpoint instead to pass absolute path of url")
 	showFlags.BoolVar(&args.DownloadAll, "all", false, "Collect all records by walking pagination links")
 	showFlags.StringVarP(&args.MaxRecords, "max-records", "m", "", "Limit the number of records returned before providing pagination link")

@@ -19,9 +19,9 @@ func getAttrs(c *client.Client, a *Args) (*node.Node, error) {
 		err                      error
 	)
 
-	req = node.NewXmlS("system-api-get-elements")
+	req = node.NewXMLS("system-api-get-elements")
 	apis = req.NewChildS("api-list", "")
-	apis.NewChildS("api-list-info", a.Api)
+	apis.NewChildS("api-list-info", a.API)
 
 	if results, err = c.InvokeRequest(req); err != nil {
 		return nil, err
@@ -100,7 +100,7 @@ func searchEntries(root, entries *node.Node) {
 	cache := make(map[string]*node.Node)
 	cache[root.GetNameS()] = root
 
-	for i := 0; i < maxSearchDepth; i += 1 {
+	for i := 0; i < maxSearchDepth; i++ {
 		for _, entry := range entries.GetChildren() {
 			name := entry.GetChildContentS("name")
 			if parent, ok := cache[name]; ok {

@@ -14,18 +14,18 @@ type Grafana struct {
 	image string
 }
 
-func (d *Grafana) Init(image string) {
-	d.image = image
+func (g *Grafana) Init(image string) {
+	g.image = image
 }
 
-func (d *Grafana) Install() bool {
-	d.image = "grafana/grafana:8.1.8"
-	log.Println("Grafana image : " + d.image)
+func (g *Grafana) Install() bool {
+	g.image = "grafana/grafana:8.1.8"
+	log.Println("Grafana image : " + g.image)
 	imageName := "grafana"
 	docker.StopContainers(imageName)
 	docker.RemoveImage(imageName)
-	docker.PullImage(d.image)
-	cmd := exec.Command("docker", "run", "-d", "-p", utils.GrafanaPort+":"+utils.GrafanaPort, d.image)
+	docker.PullImage(g.image)
+	cmd := exec.Command("docker", "run", "-d", "-p", utils.GrafanaPort+":"+utils.GrafanaPort, g.image)
 	cmd.Stdout = os.Stdout
 	err := cmd.Start()
 	utils.PanicIfNotNil(err)
@@ -33,7 +33,7 @@ func (d *Grafana) Install() bool {
 	for waitCount < 5 {
 		waitCount++
 		time.Sleep(1 * time.Minute)
-		if utils.IsUrlReachable("http://localhost:" + utils.GrafanaPort) {
+		if utils.IsURLReachable("http://localhost:" + utils.GrafanaPort) {
 			return true
 		}
 	}

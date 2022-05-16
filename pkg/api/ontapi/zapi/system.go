@@ -1,6 +1,4 @@
-/*
- * Copyright NetApp Inc, 2021 All rights reserved
- */
+// Package zapi Copyright NetApp Inc, 2021 All rights reserved
 package zapi
 
 import (
@@ -14,7 +12,7 @@ import (
 type system struct {
 	name        string
 	serial      string
-	clusterUuid string
+	clusterUUID string
 	release     string
 	version     [3]int
 	clustered   bool
@@ -123,7 +121,7 @@ func (c *Client) getSystem() error {
 		if attrs := response.GetChildS("attributes"); attrs != nil {
 			if info := attrs.GetChildS("cluster-identity-info"); info != nil {
 				s.name = info.GetChildContentS("cluster-name")
-				s.clusterUuid = info.GetChildContentS("cluster-uuid")
+				s.clusterUUID = info.GetChildContentS("cluster-uuid")
 			}
 		}
 	} else {
@@ -131,7 +129,7 @@ func (c *Client) getSystem() error {
 			s.name = info.GetChildContentS("system-name")
 			s.serial = info.GetChildContentS("system-serial-number")
 			// There is no uuid for non cluster mode, using system-id.
-			s.clusterUuid = info.GetChildContentS("system-id")
+			s.clusterUUID = info.GetChildContentS("system-id")
 		}
 	}
 	c.system = &s

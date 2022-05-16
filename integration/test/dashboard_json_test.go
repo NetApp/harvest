@@ -269,7 +269,7 @@ func FindStringBetweenTwoChar(stringValue string, startChar string, endChar stri
 func HasDataInDB(query string) bool {
 	timeNow := time.Now().Unix()
 	queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",
-		data.PrometheusUrl, query, timeNow)
+		data.PrometheusURL, query, timeNow)
 	data, _ := utils.GetResponse(queryUrl)
 	value := gjson.Get(data, "data.result")
 	return (value.Exists() && value.IsArray() && (len(value.Array()) > 0))
@@ -278,7 +278,7 @@ func HasDataInDB(query string) bool {
 func GenerateQueryWithValue(query string, expression string) string {
 	timeNow := time.Now().Unix()
 	queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",
-		data.PrometheusUrl, query, timeNow)
+		data.PrometheusURL, query, timeNow)
 	data, _ := utils.GetResponse(queryUrl)
 	newExpression := expression
 	/**

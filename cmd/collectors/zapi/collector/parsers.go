@@ -25,7 +25,7 @@ func ParseShortestPath(m *matrix.Matrix, l map[string]string) []string {
 
 	max := util.MinLen(keys)
 
-	for i := 0; i < max; i += 1 {
+	for i := 0; i < max; i++ {
 		if util.AllSame(keys, i) {
 			prefix = append(prefix, keys[0][i])
 		} else {
@@ -36,13 +36,13 @@ func ParseShortestPath(m *matrix.Matrix, l map[string]string) []string {
 }
 
 func (me *Zapi) LoadCounters(counters *node.Node) (bool, *node.Node) {
-	desired := node.NewXmlS("desired-attributes")
+	desired := node.NewXMLS("desired-attributes")
 
 	for _, c := range counters.GetChildren() {
 		me.ParseCounters(c, desired, []string{})
 	}
 
-	//counters.SetXmlNameS("desired-attributes")
+	//counters.SetXMLNameS("desired-attributes")
 	//counters.SetContentS("")
 	return len(me.Matrix.GetMetrics()) > 0, desired
 }
@@ -57,12 +57,12 @@ func (me *Zapi) ParseCounters(elem, desired *node.Node, path []string) {
 
 	if len(elem.GetNameS()) != 0 {
 		newPath = append(newPath, name)
-		d = node.NewXmlS(name)
+		d = node.NewXMLS(name)
 	}
 
 	if len(elem.GetContentS()) != 0 {
 		if clean := me.HandleCounter(newPath, elem.GetContentS()); clean != "" {
-			d = node.NewXmlS(clean)
+			d = node.NewXMLS(clean)
 		}
 	}
 

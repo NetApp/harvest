@@ -176,11 +176,11 @@ func (s *Schedule) NewTask(n string, i time.Duration, f func() (*matrix.Matrix, 
 
 // NewTaskString creates a new task, the interval is parsed from string i
 func (s *Schedule) NewTaskString(n, i string, f func() (*matrix.Matrix, error), runNow bool, identifier string) error {
-	if d, err := time.ParseDuration(i); err == nil {
-		return s.NewTask(n, d, f, runNow, identifier)
-	} else {
+	d, err := time.ParseDuration(i)
+	if err != nil {
 		return err
 	}
+	return s.NewTask(n, d, f, runNow, identifier)
 }
 
 // GetTasks returns scheduled tasks

@@ -21,7 +21,7 @@ import (
 func MinLen(elements [][]string) int {
 	var min, i int
 	min = len(elements[0])
-	for i = 1; i < len(elements); i += 1 {
+	for i = 1; i < len(elements); i++ {
 		if len(elements[i]) < min {
 			min = len(elements[i])
 		}
@@ -32,7 +32,7 @@ func MinLen(elements [][]string) int {
 func MaxLen(elements [][]string) int {
 	var max, i int
 	max = len(elements[0])
-	for i = 1; i < len(elements); i += 1 {
+	for i = 1; i < len(elements); i++ {
 		if len(elements[i]) > max {
 			max = len(elements[i])
 		}
@@ -42,7 +42,7 @@ func MaxLen(elements [][]string) int {
 
 func AllSame(elements [][]string, k int) bool {
 	var i int
-	for i = 1; i < len(elements); i += 1 {
+	for i = 1; i < len(elements); i++ {
 		if elements[i][k] != elements[0][k] {
 			return false
 		}
@@ -55,7 +55,7 @@ func EqualStringSlice(a, b []string) bool {
 	if len(a) != len(b) {
 		return false
 	}
-	for i = 0; i < len(a); i += 1 {
+	for i = 0; i < len(a); i++ {
 		if a[i] != b[i] {
 			return false
 		}

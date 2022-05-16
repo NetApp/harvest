@@ -1,6 +1,7 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
+
 package snapmirror
 
 import (
@@ -57,7 +58,7 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	} else if my.nodeUpdCounter > 10 {
 		my.nodeUpdCounter = 0
 	} else {
-		my.nodeUpdCounter += 1
+		my.nodeUpdCounter++
 	}
 	if my.limitUpdCounter == 0 {
 		if err := my.updateLimitCache(); err != nil {
@@ -67,7 +68,7 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	} else if my.limitUpdCounter > 100 {
 		my.limitUpdCounter = 0
 	} else {
-		my.limitUpdCounter += 1
+		my.limitUpdCounter++
 	}
 	destUpdCount := 0
 	srcUpdCount := 0
@@ -79,7 +80,7 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				key := instance.GetLabel("destination_vserver") + "." + instance.GetLabel("destination_volume")
 				if destVol, has := my.nodeCache.GetHas(key); has {
 					instance.SetLabel("destination_node", destVol)
-					destUpdCount += 1
+					destUpdCount++
 				}
 			}
 			// check instances where source node is missing
@@ -87,7 +88,7 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				key := instance.GetLabel("source_vserver") + "." + instance.GetLabel("source_volume")
 				if srcVol, has := my.nodeCache.GetHas(key); has {
 					instance.SetLabel("source_node", srcVol)
-					srcUpdCount += 1
+					srcUpdCount++
 				}
 			}
 
@@ -103,7 +104,7 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					instance.SetLabel("source_node", x[0])
 					if len(x[1]) != 1 {
 						instance.SetLabel("source_volume", x[1])
-						srcUpdCount += 1
+						srcUpdCount++
 					}
 				} else {
 					break
@@ -114,7 +115,7 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					instance.SetLabel("destination_node", x[0])
 					if len(x[1]) != 1 {
 						instance.SetLabel("destination_volume", x[1])
-						destUpdCount += 1
+						destUpdCount++
 					}
 				} else {
 					break
@@ -125,7 +126,7 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		if instance.GetLabel("destination_node_limit") == "" {
 			if limit, has := my.srcLimitCache.GetHas(instance.GetLabel("destination_node")); has {
 				instance.SetLabel("destination_node_limit", limit)
-				limitUpdCount += 1
+				limitUpdCount++
 			}
 		}
 		// check if destination node limit is missing
@@ -144,7 +145,7 @@ func (my *SnapMirror) updateNodeCache() error {
 		err           error
 	)
 	count := 0
-	request = node.NewXmlS("perf-object-get-instances")
+	request = node.NewXMLS("perf-object-get-instances")
 	request.NewChildS("objectname", "volume")
 	//request.CreateChild("max-records", my.batch_size)
 	requestInstances := request.NewChildS("instances", "")
@@ -174,7 +175,7 @@ func (my *SnapMirror) updateNodeCache() error {
 				}
 				if nodeName != "" && svm != "" {
 					my.nodeCache.Set(svm+"."+vol, nodeName)
-					count += 1
+					count++
 				}
 			}
 		}
@@ -187,7 +188,7 @@ func (my *SnapMirror) updateLimitCache() error {
 		request, response *node.Node
 		err               error
 	)
-	request = node.NewXmlS("perf-object-get-instances")
+	request = node.NewXMLS("perf-object-get-instances")
 	request.NewChildS("objectname", "smc_em")
 	requestInstances := request.NewChildS("instances", "")
 	requestInstances.NewChildS("instance", "*")
@@ -204,7 +205,7 @@ func (my *SnapMirror) updateLimitCache() error {
 			nodeName := i.GetChildContentS("node_name")
 			my.destLimitCache.Set(nodeName, i.GetChildContentS("dest_meter_count"))
 			my.srcLimitCache.Set(nodeName, i.GetChildContentS("src_meter_count"))
-			count += 1
+			count++
 		}
 	}
 	my.Logger.Debug().Msgf("updated limit cache for %d nodes", count)

@@ -14,7 +14,7 @@ import (
 func TestDockerInstall(t *testing.T) {
 	utils.SetupLogging()
 	//it will create a grafana token and configure it for dashboard export
-	if !utils.IsUrlReachable(utils.GetGrafanaHttpUrl()) {
+	if !utils.IsURLReachable(utils.GetGrafanaHTTPURL()) {
 		panic(fmt.Errorf("Grafana is not reachable."))
 	}
 	utils.WriteToken(utils.CreateGrafanaToken())

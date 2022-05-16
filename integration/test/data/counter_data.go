@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-const PrometheusUrl string = "http://localhost:9090"
+const PrometheusURL string = "http://localhost:9090"
 
 func GetCounterMap() map[string][]string {
 	counterMap := make(map[string][]string)
@@ -50,11 +50,11 @@ func GetCounterMap() map[string][]string {
 }
 
 func GetCounterMapByQuery(query string) map[string]string {
-	var dataMap map[string]string = make(map[string]string)
+	var dataMap = make(map[string]string)
 	timeNow := time.Now().Unix()
-	queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",
-		PrometheusUrl, query, timeNow)
-	data, _ := utils.GetResponse(queryUrl)
+	queryURL := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",
+		PrometheusURL, query, timeNow)
+	data, _ := utils.GetResponse(queryURL)
 	value := gjson.Get(data, "data.result")
 	if value.Exists() && value.IsArray() && (len(value.Array()) > 0) {
 		metricValue := gjson.Get(value.Array()[0].String(), "metric")

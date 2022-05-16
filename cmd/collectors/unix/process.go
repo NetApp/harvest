@@ -74,9 +74,8 @@ func (me *Process) Reload() error {
 	if s, err := os.Stat(me.dirpath); err != nil || !s.IsDir() {
 		if err == nil {
 			return errors.New(ProcessNotFound, fmt.Sprintf("%s is not dir", me.dirpath))
-		} else {
-			return errors.New(ProcessNotFound, err.Error())
 		}
+		return errors.New(ProcessNotFound, err.Error())
 	}
 
 	if err = me.loadCmdline(); err != nil {

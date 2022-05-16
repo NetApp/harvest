@@ -79,20 +79,19 @@ func isNewerAvailable(current string, remote string) (bool, error) {
 	//fmt.Printf("isNewerAvail cur=%s remote=%s ", current, remote)
 	if remote == current {
 		return false, nil
+	}
+	remoteVersion, err := version.NewVersion(remote)
+	if err != nil {
+		return false, err
+	}
+	currentVersion, err := version.NewVersion(current)
+	if err != nil {
+		return false, err
+	}
+	if currentVersion.GreaterThanOrEqual(remoteVersion) {
+		return false, nil
 	} else {
-		remoteVersion, err := version.NewVersion(remote)
-		if err != nil {
-			return false, err
-		}
-		currentVersion, err := version.NewVersion(current)
-		if err != nil {
-			return false, err
-		}
-		if currentVersion.GreaterThanOrEqual(remoteVersion) {
-			return false, nil
-		} else {
-			return true, nil
-		}
+		return true, nil
 	}
 }
 

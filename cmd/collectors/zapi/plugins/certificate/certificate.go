@@ -125,10 +125,10 @@ func (my *Certificate) setCertificateIssuerType(instance *matrix.Instance) {
 	)
 
 	certificatePEM := instance.GetLabel("certificatePEM")
-	certUuid := instance.GetLabel("uuid")
+	certUUID := instance.GetLabel("uuid")
 
 	if certificatePEM == "" {
-		my.Logger.Warn().Str("uuid", certUuid).Msg("Certificate is not found")
+		my.Logger.Warn().Str("uuid", certUUID).Msg("Certificate is not found")
 		instance.SetLabel("certificateIssuerType", "unknown")
 	} else {
 		instance.SetLabel("certificateIssuerType", "self_signed")
@@ -195,7 +195,7 @@ func (my *Certificate) GetAdminVserver() (string, error) {
 		adminVserver string
 	)
 
-	request = node.NewXmlS("vserver-get-iter")
+	request = node.NewXMLS("vserver-get-iter")
 	request.NewChildS("max-records", my.batchSize)
 	// Fetching only admin vserver
 	query := request.NewChildS("query", "")
@@ -224,7 +224,7 @@ func (my *Certificate) GetSecuritySsl(adminSvm string) (string, error) {
 		certificateSerial string
 	)
 
-	request = node.NewXmlS("security-ssl-get-iter")
+	request = node.NewXMLS("security-ssl-get-iter")
 	request.NewChildS("max-records", my.batchSize)
 	// Fetching only admin vserver
 	query := request.NewChildS("query", "")

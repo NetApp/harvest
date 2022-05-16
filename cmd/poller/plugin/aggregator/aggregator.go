@@ -84,9 +84,8 @@ func (me *Aggregator) parseRules() error {
 					if r.checkRegex, err = regexp.Compile(value); err != nil {
 						me.Logger.Error().Stack().Err(err).Msgf("rule [%s]: compile regex:", line)
 						return err
-					} else {
-						me.Logger.Trace().Msgf("parsed regex: [%s]", r.checkRegex.String())
 					}
+					me.Logger.Trace().Msgf("parsed regex: [%s]", r.checkRegex.String())
 				} else if value != "" {
 					r.checkValue = value
 				}

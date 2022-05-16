@@ -70,9 +70,9 @@ type model struct {
 // cat ontapswagger.yaml | dasel -r yaml -w json | gron | rg 'json.definitions.(.*?)_response.properties.records.items..ref' | wc -l
 // The api argument is tested against the schema name as well as a collection's schema when present
 func showModels(a Args, ontapSwag ontap) {
-	compile, err := regexp.Compile(a.Api)
+	compile, err := regexp.Compile(a.API)
 	if err != nil {
-		fmt.Printf("Error compiling api regex param=[%s] %v\n", a.Api, err)
+		fmt.Printf("Error compiling api regex param=[%s] %v\n", a.API, err)
 		return
 	}
 	seen := map[string]interface{}{}
@@ -214,9 +214,9 @@ func sortApis(schema map[string]spec.PathItem) []string {
 }
 
 func showParams(a Args, ontapSwag ontap) {
-	compile, err := regexp.Compile(a.Api)
+	compile, err := regexp.Compile(a.API)
 	if err != nil {
-		fmt.Printf("Error compiling api regex param=[%s] %v\n", a.Api, err)
+		fmt.Printf("Error compiling api regex param=[%s] %v\n", a.API, err)
 		return
 	}
 	w := wrap.NewWrapper()
@@ -374,7 +374,7 @@ func fixSwagger(path string, b []byte) (spec.Swagger, error) {
 		defer silentClose(out)
 		_, err = io.Copy(out, bytes.NewReader(nb))
 		if err != nil {
-			return spec.Swagger{}, fmt.Errorf("error while saving mutated swagger to %s err=%w\n", path, err)
+			return spec.Swagger{}, fmt.Errorf("error while saving mutated swagger to %s err=%w", path, err)
 		}
 	}
 	return ontapSwag, err

@@ -227,7 +227,7 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 	}
 
 	// build ZAPI request
-	request := node.NewXmlS("perf-object-get-instances")
+	request := node.NewXMLS("perf-object-get-instances")
 	request.NewChildS("objectname", me.Query)
 
 	// load requested counters (metrics + labels)
@@ -694,7 +694,7 @@ func (me *ZapiPerf) getParentOpsCounters(data *matrix.Matrix, KeyAttr string) (t
 	instanceKeys = data.GetInstanceKeys()
 
 	// build ZAPI request
-	request := node.NewXmlS("perf-object-get-instances")
+	request := node.NewXMLS("perf-object-get-instances")
 	request.NewChildS("objectname", object)
 
 	requestCounters := request.NewChildS("counters", "")
@@ -842,7 +842,7 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 		Msg("Updating metric cache")
 
 	// build request
-	request = node.NewXmlS("perf-object-counter-list-info")
+	request = node.NewXMLS("perf-object-counter-list-info")
 	request.NewChildS("objectname", me.Query)
 
 	if err = me.Client.BuildRequest(request); err != nil {
@@ -1202,10 +1202,10 @@ func parseHistogramLabels(elem *node.Node) ([]string, string) {
 	if x := elem.GetChildS("labels"); x == nil {
 		msg = "array labels missing"
 	} else if d := len(x.GetChildren()); d == 1 {
-		labels = strings.Split(node.DecodeHtml(x.GetChildren()[0].GetContentS()), ",")
+		labels = strings.Split(node.DecodeHTML(x.GetChildren()[0].GetContentS()), ",")
 	} else if d == 2 {
-		labelsA := strings.Split(node.DecodeHtml(x.GetChildren()[0].GetContentS()), ",")
-		labelsB := strings.Split(node.DecodeHtml(x.GetChildren()[1].GetContentS()), ",")
+		labelsA := strings.Split(node.DecodeHTML(x.GetChildren()[0].GetContentS()), ",")
+		labelsB := strings.Split(node.DecodeHTML(x.GetChildren()[1].GetContentS()), ",")
 		for _, a := range labelsA {
 			for _, b := range labelsB {
 				labels = append(labels, a+"."+b)
@@ -1243,7 +1243,7 @@ func (me *ZapiPerf) PollInstance() (*matrix.Matrix, error) {
 
 	// hack for workload objects: get instances from Zapi
 	if me.Query == objWorkload || me.Query == objWorkloadDetail || me.Query == objWorkloadVolume || me.Query == objWorkloadDetailVolume {
-		request = node.NewXmlS("qos-workload-get-iter")
+		request = node.NewXMLS("qos-workload-get-iter")
 		queryElem := request.NewChildS("query", "")
 		infoElem := queryElem.NewChildS("qos-workload-info", "")
 		if me.Query == objWorkloadVolume || me.Query == objWorkloadDetailVolume {
@@ -1262,12 +1262,12 @@ func (me *ZapiPerf) PollInstance() (*matrix.Matrix, error) {
 		}
 		// syntax for cdot/perf
 	} else if me.Client.IsClustered() {
-		request = node.NewXmlS("perf-object-instance-list-info-iter")
+		request = node.NewXMLS("perf-object-instance-list-info-iter")
 		request.NewChildS("objectname", me.Query)
 		instancesAttr = "attributes-list"
 		// syntax for 7mode/perf
 	} else {
-		request = node.NewXmlS("perf-object-instance-list-info")
+		request = node.NewXMLS("perf-object-instance-list-info")
 		request.NewChildS("objectname", me.Query)
 		instancesAttr = "instances"
 	}

@@ -265,27 +265,26 @@ func (p *Poller) Init() error {
 	if len(p.params.Collectors) == 0 {
 		logger.Warn().Msg("no collectors defined for this poller in config")
 		return errors.New(errors.ErrNoCollector, "no collectors")
-	} else {
-		for _, c := range p.params.Collectors {
-			ok := true
-			// if requested, filter collectors
-			if len(p.options.Collectors) != 0 {
-				ok = false
-				for _, x := range p.options.Collectors {
-					if x == c.Name {
-						ok = true
-						break
-					}
+	}
+	for _, c := range p.params.Collectors {
+		ok := true
+		// if requested, filter collectors
+		if len(p.options.Collectors) != 0 {
+			ok = false
+			for _, x := range p.options.Collectors {
+				if x == c.Name {
+					ok = true
+					break
 				}
 			}
-			if !ok {
-				logger.Debug().Msgf("skipping collector [%s]", c.Name)
-				continue
-			}
+		}
+		if !ok {
+			logger.Debug().Msgf("skipping collector [%s]", c.Name)
+			continue
+		}
 
-			if err = p.loadCollector(c, ""); err != nil {
-				logger.Error().Stack().Err(err).Msgf("load collector (%s) templates=%s:", c.Name, *c.Templates)
-			}
+		if err = p.loadCollector(c, ""); err != nil {
+			logger.Error().Stack().Err(err).Msgf("load collector (%s) templates=%s:", c.Name, *c.Templates)
 		}
 	}
 
@@ -902,7 +901,7 @@ type pollerDetails struct {
 }
 
 func (p *Poller) publishDetails() {
-	localIp, err := util.FindLocalIP()
+	localIP, err := util.FindLocalIP()
 	if err != nil {
 		logger.Err(err).Msg("Unable to find local IP")
 		return
@@ -910,8 +909,8 @@ func (p *Poller) publishDetails() {
 	if p.client == nil {
 		return
 	}
-	exporterIp := "127.0.0.1"
-	heartBeatUrl := ""
+	exporterIP := "127.0.0.1"
+	heartBeatURL := ""
 	for _, exporterName := range p.params.Exporters {
 		exp, ok := p.exporterParams[exporterName]
 		if !ok {
@@ -921,15 +920,15 @@ func (p *Poller) publishDetails() {
 			continue
 		}
 		p.hasPromExporter = true
-		if exp.LocalHttpAddr == "0.0.0.0" {
-			exporterIp = localIp
-		} else if exp.LocalHttpAddr == "localhost" || exp.LocalHttpAddr == "127.0.0.1" {
-			exporterIp = "127.0.0.1"
+		if exp.LocalHTTPAddr == "0.0.0.0" {
+			exporterIP = localIP
+		} else if exp.LocalHTTPAddr == "localhost" || exp.LocalHTTPAddr == "127.0.0.1" {
+			exporterIP = "127.0.0.1"
 		} else {
-			exporterIp = exp.LocalHttpAddr
+			exporterIP = exp.LocalHTTPAddr
 		}
-		if exp.HeartBeatUrl != "" {
-			heartBeatUrl = exp.HeartBeatUrl
+		if exp.HeartBeatURL != "" {
+			heartBeatURL = exp.HeartBeatURL
 		}
 	}
 
@@ -940,7 +939,7 @@ func (p *Poller) publishDetails() {
 
 	details := pollerDetails{
 		Name: p.name,
-		Ip:   exporterIp,
+		Ip:   exporterIP,
 		Port: p.options.PromPort,
 	}
 	payload, err := json.Marshal(details)
@@ -950,10 +949,10 @@ func (p *Poller) publishDetails() {
 	}
 	defaultUrl := p.makePublishUrl()
 
-	if heartBeatUrl == "" {
-		heartBeatUrl = defaultUrl
+	if heartBeatURL == "" {
+		heartBeatURL = defaultUrl
 	}
-	req, err := http.NewRequest("PUT", heartBeatUrl, bytes.NewBuffer(payload))
+	req, err := http.NewRequest("PUT", heartBeatURL, bytes.NewBuffer(payload))
 	if err != nil {
 		logger.Err(err).Msg("failed to connect to admin")
 		return
@@ -1030,9 +1029,8 @@ func (p *Poller) makePublishUrl() string {
 	}
 	if strings.HasPrefix(conf.Config.Admin.Httpsd.Listen, ":") {
 		return fmt.Sprintf("%s://127.0.0.1:%s/api/v1/sd", schema, conf.Config.Admin.Httpsd.Listen[1:])
-	} else {
-		return fmt.Sprintf("%s://%s/api/v1/sd", schema, conf.Config.Admin.Httpsd.Listen)
 	}
+	return fmt.Sprintf("%s://%s/api/v1/sd", schema, conf.Config.Admin.Httpsd.Listen)
 }
 
 func (p *Poller) createClient() {

@@ -31,8 +31,8 @@ import (
 const (
 	defaultPort          = 8086
 	detaultTimeout       = 5
-	defaultApiVersion    = "2"
-	defaultApiPrecision  = "s"
+	defaultAPIVersion    = "2"
+	defaultAPIPrecision  = "s"
 	expectedResponseCode = 204
 )
 
@@ -88,13 +88,13 @@ func (e *InfluxDB) Init() error {
 	e.Logger.Debug().Msg("will use authorization with api token")
 
 	if version = e.Params.Version; version == nil {
-		v := defaultApiVersion
+		v := defaultAPIVersion
 		version = &v
 	}
 	e.Logger.Debug().Msgf("using api version [%s]", *version)
 
 	if precision = e.Params.Precision; precision == nil {
-		p := defaultApiPrecision
+		p := defaultAPIPrecision
 		precision = &p
 	}
 	e.Logger.Debug().Msgf("using api precision [%s]", *precision)
@@ -102,7 +102,7 @@ func (e *InfluxDB) Init() error {
 	// user should provide either url or addr
 	// url is expected to be the full write URL with all query params specified (optionally with scheme)
 	// addr is expected to include host only (no scheme, no port)
-	if url = e.Params.Url; url == nil {
+	if url = e.Params.URL; url == nil {
 		if addr = e.Params.Addr; addr == nil {
 			return errors.New(errors.MissingParam, "url or addr")
 		}
@@ -214,9 +214,9 @@ func (e *InfluxDB) Emit(data [][]byte) error {
 	if response.StatusCode != expectedResponseCode {
 		defer func(Body io.ReadCloser) { _ = Body.Close() }(response.Body)
 		if body, err := ioutil.ReadAll(response.Body); err != nil {
-			return errors.New(errors.ApiResponse, err.Error())
+			return errors.New(errors.APIResponse, err.Error())
 		} else {
-			return errors.New(errors.ApiReqRejected, string(body))
+			return errors.New(errors.APIReqRejected, string(body))
 		}
 	}
 	return nil

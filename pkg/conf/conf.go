@@ -26,7 +26,7 @@ var configRead = false
 var ValidatePortInUse = false
 
 const (
-	DefaultApiVersion = "1.3"
+	DefaultAPIVersion = "1.3"
 	DefaultTimeout    = "30s"
 )
 
@@ -216,9 +216,8 @@ func GetPrometheusExporterPorts(pollerName string) (int, error) {
 	}
 	if port == 0 && isPrometheusExporterConfigured {
 		return port, errors.New(errors.ErrConfig, "No free port found for poller "+pollerName)
-	} else {
-		return port, nil
 	}
+	return port, nil
 }
 
 type PortMap struct {
@@ -322,7 +321,7 @@ type Admin struct {
 }
 
 type Tools struct {
-	GrafanaApiToken string `yaml:"grafana_api_token,omitempty"`
+	GrafanaAPIToken string `yaml:"grafana_api_token,omitempty"`
 	AsupDisabled    bool   `yaml:"autosupport_disabled,omitempty"`
 }
 
@@ -333,8 +332,8 @@ type Collector struct {
 
 type Poller struct {
 	Addr            string                `yaml:"addr,omitempty"`
-	ApiVersion      string                `yaml:"api_version,omitempty"`
-	ApiVfiler       string                `yaml:"api_vfiler,omitempty"`
+	APIVersion      string                `yaml:"api_version,omitempty"`
+	APIVfiler       string                `yaml:"api_vfiler,omitempty"`
 	AuthStyle       string                `yaml:"auth_style,omitempty"`
 	CaCertPath      string                `yaml:"ca_cert,omitempty"`
 	ClientTimeout   string                `yaml:"client_timeout,omitempty"`
@@ -352,7 +351,7 @@ type Poller struct {
 	SslCert         string                `yaml:"ssl_cert,omitempty"`
 	SslKey          string                `yaml:"ssl_key,omitempty"`
 	TLSMinVersion   string                `yaml:"tls_min_version,omitempty"`
-	UseInsecureTls  *bool                 `yaml:"use_insecure_tls,omitempty"`
+	UseInsecureTLS  *bool                 `yaml:"use_insecure_tls,omitempty"`
 	Username        string                `yaml:"username,omitempty"`
 	promIndex       int
 	Name            string
@@ -361,15 +360,15 @@ type Poller struct {
 func (p *Poller) Union(defaults *Poller) {
 	// this is needed because of how mergo handles boolean zero values
 	isInsecureNil := true
-	var pUseInsecureTls bool
+	var pUseInsecureTLS bool
 	pIsKfs := p.IsKfs
-	if p.UseInsecureTls != nil {
+	if p.UseInsecureTLS != nil {
 		isInsecureNil = false
-		pUseInsecureTls = *p.UseInsecureTls
+		pUseInsecureTLS = *p.UseInsecureTLS
 	}
 	_ = mergo.Merge(p, defaults)
 	if !isInsecureNil {
-		p.UseInsecureTls = &pUseInsecureTls
+		p.UseInsecureTLS = &pUseInsecureTLS
 	}
 	p.IsKfs = pIsKfs
 }
@@ -386,14 +385,14 @@ func ZapiPoller(n *node.Node) Poller {
 	}
 	p.Name = n.GetChildContentS("poller_name")
 	if apiVersion := n.GetChildContentS("api_version"); apiVersion != "" {
-		p.ApiVersion = apiVersion
+		p.APIVersion = apiVersion
 	} else {
-		if p.ApiVersion == "" {
-			p.ApiVersion = DefaultApiVersion
+		if p.APIVersion == "" {
+			p.APIVersion = DefaultAPIVersion
 		}
 	}
 	if vfiler := n.GetChildContentS("api_vfiler"); vfiler != "" {
-		p.ApiVfiler = vfiler
+		p.APIVfiler = vfiler
 	}
 	if addr := n.GetChildContentS("addr"); addr != "" {
 		p.Addr = addr
@@ -407,7 +406,7 @@ func ZapiPoller(n *node.Node) Poller {
 	if x := n.GetChildContentS("use_insecure_tls"); x != "" {
 		if insecureTLS, err := strconv.ParseBool(x); err == nil {
 			// err can be ignored since conf was already validated
-			p.UseInsecureTls = &insecureTLS
+			p.UseInsecureTLS = &insecureTLS
 		}
 	}
 	if authStyle := n.GetChildContentS("auth_style"); authStyle != "" {
@@ -449,8 +448,8 @@ type Exporter struct {
 	PortRange         *IntRange `yaml:"port_range,omitempty"`
 	Type              string    `yaml:"exporter,omitempty"`
 	Addr              *string   `yaml:"addr,omitempty"`
-	Url               *string   `yaml:"url,omitempty"`
-	LocalHttpAddr     string    `yaml:"local_http_addr,omitempty"`
+	URL               *string   `yaml:"url,omitempty"`
+	LocalHTTPAddr     string    `yaml:"local_http_addr,omitempty"`
 	GlobalPrefix      *string   `yaml:"global_prefix,omitempty"`
 	AllowedAddrs      *[]string `yaml:"allow_addrs,omitempty"`
 	AllowedAddrsRegex *[]string `yaml:"allow_addrs_regex,omitempty"`
@@ -458,7 +457,7 @@ type Exporter struct {
 	ShouldAddMetaTags *bool     `yaml:"add_meta_tags,omitempty"`
 
 	// Prometheus specific
-	HeartBeatUrl string `yaml:"heart_beat_url,omitempty"`
+	HeartBeatURL string `yaml:"heart_beat_url,omitempty"`
 	SortLabels   bool   `yaml:"sort_labels,omitempty"`
 
 	// InfluxDB specific

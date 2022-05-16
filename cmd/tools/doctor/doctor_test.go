@@ -53,7 +53,7 @@ func TestConfigToStruct(t *testing.T) {
 		t.Fatalf(`expected addr to be "localhost", actual=%+v`, *influxyAddr)
 	}
 
-	influxyURL := conf.Config.Exporters["influxz"].Url
+	influxyURL := conf.Config.Exporters["influxz"].URL
 	if (*influxyURL) != "www.example.com/influxdb" {
 		t.Fatalf(`expected addr to be "www.example.com/influxdb", actual=%+v`, *influxyURL)
 	}

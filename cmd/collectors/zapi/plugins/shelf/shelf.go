@@ -1,6 +1,4 @@
-/*
- * Copyright NetApp Inc, 2021 All rights reserved
- */
+// Package shelf Copyright NetApp Inc, 2021 All rights reserved
 package shelf
 
 import (
@@ -348,12 +346,12 @@ func (my *Shelf) handleCMode(result *node.Node) ([]*matrix.Matrix, error) {
 	for _, shelf := range shelves {
 
 		shelfName := shelf.GetChildContentS("shelf")
-		shelfId := shelf.GetChildContentS("shelf-uid")
+		shelfID := shelf.GetChildContentS("shelf-uid")
 
 		if !my.client.IsClustered() {
 			uid := shelf.GetChildContentS("shelf-id")
 			shelfName = uid // no shelf name in 7mode
-			shelfId = uid
+			shelfID = uid
 		}
 
 		for attribute, data1 := range my.data {
@@ -375,14 +373,14 @@ func (my *Shelf) handleCMode(result *node.Node) ([]*matrix.Matrix, error) {
 				for _, obj := range objectElem.GetChildren() {
 
 					if key := obj.GetChildContentS(my.instanceKeys[attribute]); key != "" {
-						instanceKey := shelfId + "#" + key
+						instanceKey := shelfID + "#" + key
 						instance, err := data1.NewInstance(instanceKey)
 
 						if err != nil {
 							my.Logger.Error().Err(err).Str("attribute", attribute).Msg("Failed to add instance")
 							return nil, err
 						}
-						my.Logger.Debug().Msgf("add (%s) instance: %s.%s", attribute, shelfId, key)
+						my.Logger.Debug().Msgf("add (%s) instance: %s.%s", attribute, shelfID, key)
 
 						for label, labelDisplay := range my.instanceLabels[attribute].Map() {
 							if value := obj.GetChildContentS(label); value != "" {
@@ -391,7 +389,7 @@ func (my *Shelf) handleCMode(result *node.Node) ([]*matrix.Matrix, error) {
 						}
 
 						instance.SetLabel("shelf", shelfName)
-						instance.SetLabel("shelf_id", shelfId)
+						instance.SetLabel("shelf_id", shelfID)
 
 						// Each child would have different possible values which is ugly way to write all of them,
 						// so normal value would be mapped to 1 and rest all are mapped to 0.
@@ -458,7 +456,7 @@ func (my *Shelf) handle7Mode(result *node.Node) ([]*matrix.Matrix, error) {
 
 			uid := shelf.GetChildContentS("shelf-id")
 			shelfName := uid // no shelf name in 7mode
-			shelfId := uid
+			shelfID := uid
 
 			for attribute, data1 := range my.data {
 				if statusMetric := data1.GetMetric("status"); statusMetric != nil {
@@ -479,14 +477,14 @@ func (my *Shelf) handle7Mode(result *node.Node) ([]*matrix.Matrix, error) {
 					for _, obj := range objectElem.GetChildren() {
 
 						if key := obj.GetChildContentS(my.instanceKeys[attribute]); key != "" {
-							instanceKey := shelfId + "." + key + "." + channelName
+							instanceKey := shelfID + "." + key + "." + channelName
 							instance, err := data1.NewInstance(instanceKey)
 
 							if err != nil {
 								my.Logger.Error().Msgf("add (%s) instance: %v", attribute, err)
 								return nil, err
 							}
-							my.Logger.Debug().Msgf("add (%s) instance: %s.%s", attribute, shelfId, key)
+							my.Logger.Debug().Msgf("add (%s) instance: %s.%s", attribute, shelfID, key)
 
 							for label, labelDisplay := range my.instanceLabels[attribute].Map() {
 								if value := obj.GetChildContentS(label); value != "" {
@@ -495,7 +493,7 @@ func (my *Shelf) handle7Mode(result *node.Node) ([]*matrix.Matrix, error) {
 							}
 
 							instance.SetLabel("shelf", shelfName)
-							instance.SetLabel("shelf_id", shelfId)
+							instance.SetLabel("shelf_id", shelfID)
 							instance.SetLabel("channel", channelName)
 
 							// Each child would have different possible values which is ugly way to write all of them,

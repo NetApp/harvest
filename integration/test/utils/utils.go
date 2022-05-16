@@ -217,7 +217,7 @@ func copyFileContents(src, dst string) (err error) {
 	return
 }
 
-func IsUrlReachable(url string) bool {
+func IsURLReachable(url string) bool {
 	response, errors := http.Get(url)
 	if errors == nil && response.StatusCode == 200 {
 		return true
@@ -227,7 +227,7 @@ func IsUrlReachable(url string) bool {
 
 func AddPrometheusToGrafana() {
 	log.Println("Add Prometheus into Grafana")
-	url := GetGrafanaHttpUrl() + "/api/datasources"
+	url := GetGrafanaHTTPURL() + "/api/datasources"
 	method := "POST"
 	jsonValue := []byte(fmt.Sprintf(`{"name": "Prometheus", "type": "prometheus", "access": "direct",
 		"url": "%s", "isDefault": true, "basicAuth": false}`, "http://"+GetOutboundIP()+":"+PrometheusPort))
@@ -243,7 +243,7 @@ func AddPrometheusToGrafana() {
 
 func CreateGrafanaToken() string {
 	log.Println("Creating grafana API Key.")
-	url := GetGrafanaHttpUrl() + "/api/auth/keys"
+	url := GetGrafanaHTTPURL() + "/api/auth/keys"
 	method := "POST"
 	name := fmt.Sprint(time.Now().Unix())
 	values := map[string]string{"name": name, "role": "Admin"}
@@ -294,7 +294,7 @@ func WriteToken(token string) {
 	PanicIfNotNil(err)
 	tools := conf.Config.Tools
 	if tools != nil {
-		if len(tools.GrafanaApiToken) > 0 {
+		if len(tools.GrafanaAPIToken) > 0 {
 			log.Println(filename + "  has an entry for grafana token")
 			return
 		}
@@ -312,15 +312,15 @@ func WriteToken(token string) {
 	fmt.Fprintf(f, "  %s: %s\n", GrafanaTokeKey, token)
 }
 
-func GetGrafanaHttpUrl() string {
-	return "http://admin:admin@" + GetGrafanaUrl()
+func GetGrafanaHTTPURL() string {
+	return "http://admin:admin@" + GetGrafanaURL()
 }
 
-func GetGrafanaUrl() string {
+func GetGrafanaURL() string {
 	return "localhost:" + GrafanaPort
 }
 
-func GetPrometheusUrl() string {
+func GetPrometheusURL() string {
 	return "http://localhost:" + PrometheusPort
 }
 

@@ -48,7 +48,7 @@ type prop struct {
 	Counters       map[string]string
 	ReturnTimeOut  string
 	Fields         []string
-	ApiType        string // public, private
+	APIType        string // public, private
 	Filter         []string
 }
 
@@ -197,14 +197,14 @@ func (r *Rest) initEndPoints() error {
 			prop.InstanceLabels = make(map[string]string)
 			prop.Counters = make(map[string]string)
 			prop.Metrics = make(map[string]*Metric)
-			prop.ApiType = "public"
+			prop.APIType = "public"
 			prop.ReturnTimeOut = r.Prop.ReturnTimeOut
 			prop.TemplatePath = r.Prop.TemplatePath
 
 			for _, line1 := range line.GetChildren() {
 				if line1.GetNameS() == "query" {
 					prop.Query = line1.GetContentS()
-					prop.ApiType = checkQueryType(prop.Query)
+					prop.APIType = checkQueryType(prop.Query)
 				}
 				if line1.GetNameS() == "counters" {
 					r.ParseRestCounters(line1, &prop)
@@ -383,9 +383,8 @@ func (r *Rest) processEndPoints() error {
 func checkQueryType(query string) string {
 	if strings.Contains(query, "private") {
 		return "private"
-	} else {
-		return "public"
 	}
+	return "public"
 }
 
 func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {
@@ -576,9 +575,9 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 		p.Target.Version = strconv.Itoa(version[0]) + "." + strconv.Itoa(version[1]) + "." + strconv.Itoa(version[2])
 		p.Target.Model = "cdot"
 		if p.Target.Serial == "" {
-			p.Target.Serial = r.Client.Cluster().Uuid
+			p.Target.Serial = r.Client.Cluster().UUID
 		}
-		p.Target.ClusterUuid = r.Client.Cluster().Uuid
+		p.Target.ClusterUuid = r.Client.Cluster().UUID
 
 		md := r.GetMetadata()
 		info := collector.InstanceInfo{

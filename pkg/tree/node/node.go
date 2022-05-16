@@ -30,32 +30,32 @@ func NewS(name string) *Node {
 	return New([]byte(name))
 }
 
-func NewXml(name []byte) *Node {
-	return NewXmlS(string(name))
+func NewXML(name []byte) *Node {
+	return NewXMLS(string(name))
 }
 
-func NewXmlS(name string) *Node {
+func NewXMLS(name string) *Node {
 	// ugly solution to support xml
 	return &Node{XMLName: xml.Name{Local: name}}
 }
 
-func (n *Node) GetXmlNameS() string {
+func (n *Node) GetXMLNameS() string {
 	return n.XMLName.Local
 }
 
-func (n *Node) SetXmlNameS(name string) {
+func (n *Node) SetXMLNameS(name string) {
 	n.XMLName = xml.Name{Local: name}
 }
 
 func (n *Node) GetName() []byte {
-	if name := n.GetXmlNameS(); name != "" {
+	if name := n.GetXMLNameS(); name != "" {
 		return []byte(name)
 	}
 	return n.name
 }
 
 func (n *Node) GetNameS() string {
-	if name := n.GetXmlNameS(); name != "" {
+	if name := n.GetXMLNameS(); name != "" {
 		return name
 	}
 	return string(n.name)
@@ -145,8 +145,8 @@ func (n *Node) PopChildS(name string) *Node {
 
 func (n *Node) NewChild(name, content []byte) *Node {
 	var child *Node
-	if n.GetXmlNameS() != "" {
-		child = NewXml(name)
+	if n.GetXMLNameS() != "" {
+		child = NewXML(name)
 	} else {
 		child = New(name)
 	}
@@ -245,8 +245,8 @@ func (n *Node) SetContentS(content string) {
 
 func (n *Node) Copy() *Node {
 	var clone *Node
-	if n.GetXmlNameS() != "" {
-		clone = NewXml(n.GetName())
+	if n.GetXMLNameS() != "" {
+		clone = NewXML(n.GetName())
 	} else {
 		clone = New(n.GetName())
 	}
@@ -289,9 +289,9 @@ func (n *Node) searchAncestor(ancestor string) *Node {
 	return p.searchAncestor(ancestor)
 }
 
-func (me *Node) PreprocessTemplate() {
-	for _, child := range me.Children {
-		mine := me.GetChild(child.GetName())
+func (n *Node) PreprocessTemplate() {
+	for _, child := range n.Children {
+		mine := n.GetChild(child.GetName())
 		if mine != nil && len(child.GetName()) > 0 {
 			if mine.searchAncestor("LabelAgent") != nil {
 				if len(mine.GetContentS()) > 0 {
@@ -306,25 +306,25 @@ func (me *Node) PreprocessTemplate() {
 
 //Merge method will merge the subtemplate into the receiver, modifying the receiver in-place.
 //skipOverwrite is a readonly list of keys that will not be overwritten in the receiver.
-func (me *Node) Merge(subtemplate *Node, skipOverwrite []string) {
+func (n *Node) Merge(subtemplate *Node, skipOverwrite []string) {
 	if subtemplate == nil {
 		return
 	}
-	if len(me.Content) == 0 {
-		me.Content = subtemplate.Content
+	if len(n.Content) == 0 {
+		n.Content = subtemplate.Content
 	}
 	for _, child := range subtemplate.Children {
-		mine := me.GetChild(child.GetName())
+		mine := n.GetChild(child.GetName())
 		if len(child.GetName()) == 0 {
 			if mine != nil && mine.GetParent() != nil && mine.GetParent().GetChildByContent(child.GetContentS()) == nil {
 				mine.GetParent().AddChild(child)
 			} else {
-				if me.GetChildByContent(child.GetContentS()) == nil {
-					me.AddChild(child)
+				if n.GetChildByContent(child.GetContentS()) == nil {
+					n.AddChild(child)
 				}
 			}
 		} else if mine == nil {
-			me.AddChild(child)
+			n.AddChild(child)
 		} else {
 			if mine.GetParent() != nil && util.Contains(skipOverwrite, mine.GetParent().GetNameS()) {
 				mine.SetContentS(mine.GetContentS() + "," + child.GetContentS())
@@ -463,7 +463,7 @@ func (n *Node) SearchChildren(path []string) []*Node {
 	return matches
 }
 
-func DecodeHtml(x string) string {
+func DecodeHTML(x string) string {
 	x = strings.ReplaceAll(x, "&amp;", "&")
 	x = strings.ReplaceAll(x, "&lt;", "<")
 	x = strings.ReplaceAll(x, "&gt;", ">")

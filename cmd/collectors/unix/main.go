@@ -40,9 +40,9 @@ var mountPoint = "/proc"
 var clkTck float64
 
 // list of histograms provided by the collector, mapped
-// to functions extracting them from a Process instance
-var _HISTOGRAMS = map[string]func(matrix.Metric, string, *matrix.Instance, *Process){
-	"cpu":    setCpu,
+// to function extracting them from a Process instance
+var _Histograms = map[string]func(matrix.Metric, string, *matrix.Instance, *Process){
+	"cpu":    setCPU,
 	"memory": setMemory,
 	"io":     setIo,
 	"net":    setNet,
@@ -50,15 +50,15 @@ var _HISTOGRAMS = map[string]func(matrix.Metric, string, *matrix.Instance, *Proc
 }
 
 // list of (scalar) metrics
-var _METRICS = map[string]func(matrix.Metric, *matrix.Instance, *Process, *System){
+var _Metrics = map[string]func(matrix.Metric, *matrix.Instance, *Process, *System){
 	"start_time":     setStartTime,
-	"cpu_percent":    setCpuPercent,
+	"cpu_percent":    setCPUPercent,
 	"memory_percent": setMemoryPercent,
 	"threads":        setNumThreads,
 	"fds":            setNumFds,
 }
 
-var _DTYPES = map[string]string{
+var _DataTypes = map[string]string{
 	"cpu":            "float64",
 	"memory":         "uint64",
 	"io":             "uint64",
@@ -212,12 +212,12 @@ func (me *Unix) loadMetrics(counters *node.Node) error {
 			name, display = parseMetricName(cnt.GetContentS())
 		}
 
-		dtype := _DTYPES[name]
+		dtype := _DataTypes[name]
 
 		me.Logger.Trace().Msgf("handling (%s) (%s) dtype=%s", name, display, dtype)
 
 		// counter is scalar metric
-		if _, has := _METRICS[name]; has {
+		if _, has := _Metrics[name]; has {
 
 			if metric, err = me.Matrix.NewMetricType(name, dtype); err != nil {
 				return err
@@ -226,7 +226,7 @@ func (me *Unix) loadMetrics(counters *node.Node) error {
 			me.Logger.Debug().Msgf("(%s) added metric (%s)", name, display)
 
 			// counter is histogram
-		} else if _, has := _HISTOGRAMS[name]; has {
+		} else if _, has := _Histograms[name]; has {
 
 			labels = set.NewFrom(getHistogramLabels(proc, name))
 
@@ -402,7 +402,7 @@ func (me *Unix) PollData() (*matrix.Matrix, error) {
 		me.Logger.Debug().Msgf("populating instance [%s]: PID (%d) with [%s]\n", key, pid, cmd)
 
 		// process scalar metrics
-		for key, foo := range _METRICS {
+		for key, foo := range _Metrics {
 			if metric := me.Matrix.GetMetric(key); metric != nil {
 				foo(metric, instance, proc, me.system)
 				//logger.Trace(me.Prefix, "+ (%s) [%f]", key, value)
@@ -411,7 +411,7 @@ func (me *Unix) PollData() (*matrix.Matrix, error) {
 		}
 
 		// process histograms
-		for key, foo := range _HISTOGRAMS {
+		for key, foo := range _Histograms {
 			if labels, ok := me.histogramLabels[key]; ok {
 				//logger.Trace(me.Prefix, "+++ (%s) [%v]", key, values)
 				for _, label := range labels {
@@ -457,7 +457,7 @@ func setMemoryPercent(m matrix.Metric, i *matrix.Instance, p *Process, s *System
 	}
 }
 
-func setCpuPercent(m matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
+func setCPUPercent(m matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
 	if p.elapsedTime != 0 {
 		err := m.SetValueFloat64(i, p.cpuTotal/p.elapsedTime*100)
 		if err != nil {
@@ -471,7 +471,7 @@ func setCpuPercent(m matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
 	}
 }
 
-func setCpu(m matrix.Metric, l string, i *matrix.Instance, p *Process) {
+func setCPU(m matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.cpu[l]; ok {
 		err := m.SetValueFloat64(i, value)
 		if err != nil {

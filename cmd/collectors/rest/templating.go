@@ -65,9 +65,9 @@ func (r *Rest) InitCache() error {
 
 	// private end point do not support * as fields. We need to pass fields in endpoint
 	query := r.Params.GetChildS("query")
-	r.Prop.ApiType = "public"
+	r.Prop.APIType = "public"
 	if query != nil {
-		r.Prop.ApiType = checkQueryType(query.GetContentS())
+		r.Prop.APIType = checkQueryType(query.GetContentS())
 	}
 
 	r.ParseRestCounters(counters, r.Prop)
@@ -188,7 +188,7 @@ func (r *Rest) ParseRestCounters(counter *node.Node, prop *prop) {
 		}
 	}
 
-	if prop.ApiType == "private" {
+	if prop.APIType == "private" {
 		counterKey := make([]string, len(prop.Counters))
 		i := 0
 		for k := range prop.Counters {
@@ -198,7 +198,7 @@ func (r *Rest) ParseRestCounters(counter *node.Node, prop *prop) {
 		prop.Fields = counterKey
 	}
 
-	if prop.ApiType == "public" {
+	if prop.APIType == "public" {
 		prop.Fields = []string{"*"}
 		if counter != nil {
 			if x := counter.GetChildS("hidden_fields"); x != nil {

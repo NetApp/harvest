@@ -255,7 +255,7 @@ func (me *Zapi) PollInstance() (*matrix.Matrix, error) {
 		}
 		count = 1
 	} else {
-		request = node.NewXmlS(me.Query)
+		request = node.NewXMLS(me.Query)
 		if me.Client.IsClustered() && me.batchSize != "" {
 			request.NewChildS("max-records", me.batchSize)
 		}
@@ -295,7 +295,7 @@ func (me *Zapi) PollInstance() (*matrix.Matrix, error) {
 						me.Logger.Error().Stack().Err(err).Msg("")
 					} else {
 						me.Logger.Debug().Msgf("added instance [%s]", strings.Join(keys, "."))
-						count += 1
+						count++
 					}
 				}
 			}
@@ -338,22 +338,22 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 			if label, has := me.instanceLabelPaths[key]; has {
 				instance.SetLabel(label, value)
 				me.Logger.Debug().Msgf(" > %slabel (%s) [%s] set value (%s)%s", color.Yellow, key, label, value, color.End)
-				count += 1
+				count++
 			} else if metric := me.Matrix.GetMetric(key); metric != nil {
 				if err := metric.SetValueString(instance, value); err != nil {
 					me.Logger.Error().Msgf("%smetric (%s) set value (%s): %v%s", color.Red, key, value, err, color.End)
-					skipped += 1
+					skipped++
 				} else {
 					me.Logger.Debug().Msgf(" > %smetric (%s) set value (%s)%s", color.Green, key, value, color.End)
-					count += 1
+					count++
 				}
 			} else {
 				me.Logger.Debug().Msgf(" > %sskipped (%s) with value (%s): not in metric or label cache%s", color.Blue, key, value, color.End)
-				skipped += 1
+				skipped++
 			}
 		} else {
 			me.Logger.Debug().Msgf(" > %sskippped (%s) with no value%s", color.Cyan, key, color.End)
-			skipped += 1
+			skipped++
 		}
 
 		for _, child := range node.GetChildren() {
@@ -365,7 +365,7 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 
 	me.Matrix.Reset()
 
-	request = node.NewXmlS(me.Query)
+	request = node.NewXMLS(me.Query)
 	if me.Client.IsClustered() {
 
 		if me.Params.GetChildContentS("no_desired_attributes") != "true" {
@@ -491,7 +491,7 @@ func (me *Zapi) CollectAutoSupport(p *collector.Payload) {
 		if p.Target.Serial == "" {
 			p.Target.Serial = me.GetHostUUID()
 		}
-		p.Target.ClusterUuid = me.Client.ClusterUuid()
+		p.Target.ClusterUuid = me.Client.ClusterUUID()
 
 		md := me.GetMetadata()
 		info := collector.InstanceInfo{
@@ -539,7 +539,7 @@ func (me *Zapi) getNodeUuids() ([]collector.Id, error) {
 	if !me.Client.IsClustered() {
 		return []collector.Id{{
 			SerialNumber: me.Client.Serial(),
-			SystemId:     me.Client.ClusterUuid(),
+			SystemId:     me.Client.ClusterUUID(),
 		}}, nil
 	}
 	request := "system-node-get-iter"
@@ -554,8 +554,8 @@ func (me *Zapi) getNodeUuids() ([]collector.Id, error) {
 
 	for _, n := range nodes {
 		sn := n.GetChildContentS("node-serial-number")
-		systemId := n.GetChildContentS("node-system-id")
-		infos = append(infos, collector.Id{SerialNumber: sn, SystemId: systemId})
+		systemID := n.GetChildContentS("node-system-id")
+		infos = append(infos, collector.Id{SerialNumber: sn, SystemId: systemID})
 	}
 	// When Harvest monitors a c-mode system, the first node is picked.
 	// Sort so there's a higher chance the same node is picked each time this method is called

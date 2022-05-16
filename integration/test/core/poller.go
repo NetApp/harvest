@@ -20,6 +20,6 @@ func (p *Poller) New(dataCenter string,
 	p.Poller = strings.TrimSpace(poller)
 }
 
-func (p *Poller) MetricUrl() string {
+func (p *Poller) MetricURL() string {
 	return "http://localhost:" + strings.TrimSpace(p.PromPort) + "/metrics"
 }
