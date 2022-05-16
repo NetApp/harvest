@@ -50,7 +50,7 @@ counters:
   - nvmf_remote.read_data               => nvmf_remote_read_data
   - nvmf_remote.read_ops                => nvmf_remote_read_ops
   - nvmf_remote.total_data              => nvmf_remote_total_data
-  - nvmf.remote_total_ops               => nvmf_remote_total_ops    #revisit naming convention is not matching
+  - nvmf_remote.total_ops               => nvmf_remote_total_ops
   - nvmf_remote.write_data              => nvmf_remote_write_data
   - nvmf_remote.write_ops               => nvmf_remote_write_ops
   - nvmf.total_data                     => nvmf_total_data
