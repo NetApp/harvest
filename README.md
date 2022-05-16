@@ -10,10 +10,6 @@ Harvest's architecture is flexible in how it collects, augments, and exports dat
 
 Harvest is written in Go, which means it runs on recent Linux systems. It also runs on Macs, but the process isn't as smooth yet.
 
-Optional prerequisites:
-- `dialog` or `whiptail` (used by the `config` utility)
-- `openssl` (used by `config`)
-  
 Hardware requirements depend on how many clusters you monitor and the number of metrics you chose to collect. With the default configuration, when  monitoring 10 clusters, we recommend:
 
 - CPU: 2 cores
