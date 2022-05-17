@@ -112,7 +112,7 @@ func (r *RestPerf) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	r.Logger.Info().Str("count", strconv.Itoa(len(r.Matrix.GetMetrics()))).Msg("initialized cache with metrics")
+	r.Logger.Info().Str("count", strconv.Itoa(len(r.Matrix[r.Object].GetMetrics()))).Msg("initialized cache with metrics")
 
 	return nil
 }
@@ -139,16 +139,17 @@ func (r *RestPerf) InitQOSLabels() error {
 }
 
 func (r *RestPerf) InitMatrix() error {
+	mat := r.Matrix[r.Object]
 	//init perf properties
 	r.perfProp.latencyIoReqd = r.loadParamInt("latency_io_reqd", latencyIoReqd)
 	r.perfProp.isCacheEmpty = true
 	// overwrite from abstract collector
-	r.Matrix.Object = r.Prop.Object
+	mat.Object = r.Prop.Object
 	// Add system (cluster) name
-	r.Matrix.SetGlobalLabel("cluster", r.Client.Cluster().Name)
+	mat.SetGlobalLabel("cluster", r.Client.Cluster().Name)
 	if r.Params.HasChildS("labels") {
 		for _, l := range r.Params.GetChildS("labels").GetChildren() {
-			r.Matrix.SetGlobalLabel(l.GetNameS(), l.GetContentS())
+			mat.SetGlobalLabel(l.GetNameS(), l.GetContentS())
 		}
 	}
 	return nil
@@ -188,13 +189,14 @@ func (r *RestPerf) loadParamInt(name string, defaultValue int) int {
 	return defaultValue
 }
 
-func (r *RestPerf) PollCounter() (*matrix.Matrix, error) {
+func (r *RestPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	var (
 		content []byte
 		err     error
 		records []interface{}
 	)
 
+	mat := r.Matrix[r.Object]
 	href := rest.BuildHref(r.Prop.Query, "", nil, "", "", "", r.Prop.ReturnTimeOut, r.Prop.Query)
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {
@@ -275,8 +277,8 @@ func (r *RestPerf) PollCounter() (*matrix.Matrix, error) {
 	// Create an artificial metric to hold timestamp of each instance data.
 	// The reason we don't keep a single timestamp for the whole data
 	// is because we might get instances in different batches
-	if r.Matrix.GetMetric("timestamp") == nil {
-		m, err := r.Matrix.NewMetricFloat64("timestamp")
+	if mat.GetMetric("timestamp") == nil {
+		m, err := mat.NewMetricFloat64("timestamp")
 		if err != nil {
 			r.Logger.Error().Stack().Err(err).Msg("add timestamp metric")
 		}
@@ -349,16 +351,17 @@ func (r *RestPerf) GetOverride(counter string) string {
 	return ""
 }
 
-func (r *RestPerf) processWorkLoadCounter() (*matrix.Matrix, error) {
+func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 	var err error
+	mat := r.Matrix[r.Object]
 	// for these two objects, we need to create latency/ops counters for each of the workload layers
 	// their original counters will be discarded
 	if isWorkloadDetailObject(r.Prop.Query) {
 
 		for name, metric := range r.Prop.Metrics {
-			metr, ok := r.Matrix.GetMetrics()[name]
+			metr, ok := mat.GetMetrics()[name]
 			if !ok {
-				if metr, err = r.Matrix.NewMetricFloat64(name); err != nil {
+				if metr, err = mat.NewMetricFloat64(name); err != nil {
 					r.Logger.Error().Err(err).
 						Str("name", name).
 						Msg("NewMetricFloat64")
@@ -370,15 +373,15 @@ func (r *RestPerf) processWorkLoadCounter() (*matrix.Matrix, error) {
 
 		var service, wait, visits, ops matrix.Metric
 
-		if service = r.Matrix.GetMetric("service_time"); service == nil {
+		if service = mat.GetMetric("service_time"); service == nil {
 			r.Logger.Error().Stack().Msg("metric [service_time] required to calculate workload missing")
 		}
 
-		if wait = r.Matrix.GetMetric("wait_time"); wait == nil {
+		if wait = mat.GetMetric("wait_time"); wait == nil {
 			r.Logger.Error().Stack().Msg("metric [wait-time] required to calculate workload missing")
 		}
 
-		if visits = r.Matrix.GetMetric("visits"); visits == nil {
+		if visits = mat.GetMetric("visits"); visits == nil {
 			r.Logger.Error().Stack().Msg("metric [visits] required to calculate workload missing")
 		}
 
@@ -386,8 +389,8 @@ func (r *RestPerf) processWorkLoadCounter() (*matrix.Matrix, error) {
 			return nil, errors.New(errors.MissingParam, "workload metrics")
 		}
 
-		if ops = r.Matrix.GetMetric("ops"); ops == nil {
-			if ops, err = r.Matrix.NewMetricFloat64("ops"); err != nil {
+		if ops = mat.GetMetric("ops"); ops == nil {
+			if ops, err = mat.NewMetricFloat64("ops"); err != nil {
 				return nil, err
 			}
 			r.perfProp.counterInfo["ops"] = &counter{
@@ -410,10 +413,10 @@ func (r *RestPerf) processWorkLoadCounter() (*matrix.Matrix, error) {
 				name := x.GetNameS()
 				resource := x.GetContentS()
 
-				if m := r.Matrix.GetMetric(name); m != nil {
+				if m := mat.GetMetric(name); m != nil {
 					continue
 				}
-				if m, err := r.Matrix.NewMetricFloat64(name); err != nil {
+				if m, err := mat.NewMetricFloat64(name); err != nil {
 					return nil, err
 				} else {
 					r.perfProp.counterInfo[name] = &counter{
@@ -434,7 +437,7 @@ func (r *RestPerf) processWorkLoadCounter() (*matrix.Matrix, error) {
 	return r.Matrix, nil
 }
 
-func (r *RestPerf) PollData() (*matrix.Matrix, error) {
+func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	var (
 		content         []byte
@@ -449,8 +452,9 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 
 	r.Logger.Debug().Msg("updating data cache")
 
+	mat := r.Matrix[r.Object]
 	// clone matrix without numeric data
-	newData := r.Matrix.Clone(false, true, true)
+	newData := mat.Clone(false, true, true)
 	newData.Reset()
 	timestamp := newData.GetMetric("timestamp")
 	if timestamp == nil {
@@ -506,7 +510,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 		} else {
 			instanceKeys = make([]string, 0)
 			for _, layer := range resourceMap.GetAllChildNamesS() {
-				for key := range r.Matrix.GetInstances() {
+				for key := range mat.GetInstances() {
 					instanceKeys = append(instanceKeys, key+"."+layer)
 				}
 			}
@@ -735,7 +739,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 	// skip calculating from delta if no data from previous poll
 	if r.perfProp.isCacheEmpty {
 		r.Logger.Debug().Msg("skip postprocessing until next poll (previous cache empty)")
-		r.Matrix = newData
+		r.Matrix[r.Object] = newData
 		r.perfProp.isCacheEmpty = false
 		return nil, nil
 	}
@@ -782,7 +786,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 
 	// calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
-	if err = timestamp.Delta(r.Matrix.GetMetric("timestamp")); err != nil {
+	if err = timestamp.Delta(mat.GetMetric("timestamp")); err != nil {
 		r.Logger.Error().Err(err).Msg("(timestamp) calculate delta:")
 	}
 
@@ -803,7 +807,7 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 		}
 
 		// all other properties - first calculate delta
-		if err = metric.Delta(r.Matrix.GetMetric(key)); err != nil {
+		if err = metric.Delta(mat.GetMetric(key)); err != nil {
 			r.Logger.Error().Stack().Err(err).Str("key", key).Msg("Calculate delta")
 			continue
 		}
@@ -895,9 +899,11 @@ func (r *RestPerf) PollData() (*matrix.Matrix, error) {
 
 	_ = r.Metadata.LazySetValueInt64("calc_time", "data", time.Since(calcStart).Microseconds())
 	// store cache for next poll
-	r.Matrix = cachedData
+	r.Matrix[r.Object] = cachedData
 
-	return newData, nil
+	newDataMap := make(map[string]*matrix.Matrix)
+	newDataMap[r.Object] = newData
+	return newDataMap, nil
 }
 
 // Poll counter "ops" of the related/parent object, required for objects
@@ -1028,7 +1034,7 @@ func (r *RestPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Pl
 }
 
 // PollInstance updates instance cache
-func (r *RestPerf) PollInstance() (*matrix.Matrix, error) {
+func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 	var (
 		err                              error
@@ -1038,8 +1044,9 @@ func (r *RestPerf) PollInstance() (*matrix.Matrix, error) {
 		content                          []byte
 	)
 
+	mat := r.Matrix[r.Object]
 	oldInstances = set.New()
-	for key := range r.Matrix.GetInstances() {
+	for key := range mat.GetInstances() {
 		oldInstances.Add(key)
 	}
 	oldSize = oldInstances.Size()
@@ -1129,7 +1136,7 @@ func (r *RestPerf) PollInstance() (*matrix.Matrix, error) {
 		if oldInstances.Delete(instanceKey) {
 			// instance already in cache
 			r.Logger.Debug().Msgf("updated instance [%s%s%s%s]", color.Bold, color.Yellow, key, color.End)
-		} else if instance, err := r.Matrix.NewInstance(instanceKey); err != nil {
+		} else if instance, err := mat.NewInstance(instanceKey); err != nil {
 			r.Logger.Error().Err(err).Str("Instance key", instanceKey).Msg("add instance")
 		} else {
 			r.Logger.Debug().
@@ -1151,12 +1158,12 @@ func (r *RestPerf) PollInstance() (*matrix.Matrix, error) {
 	})
 
 	for key := range oldInstances.Iter() {
-		r.Matrix.RemoveInstance(key)
+		mat.RemoveInstance(key)
 		r.Logger.Debug().Msgf("removed instance [%s]", key)
 	}
 
 	removed = oldInstances.Size()
-	newSize = len(r.Matrix.GetInstances())
+	newSize = len(mat.GetInstances())
 	added = newSize - (oldSize - removed)
 
 	r.Logger.Debug().Msgf("added %d new, removed %d (total instances %d)", added, removed, newSize)

@@ -53,7 +53,7 @@ type Collector interface {
 	GetStatus() (uint8, string, string)
 	SetStatus(uint8, string)
 	SetSchedule(*schedule.Schedule)
-	SetMatrix(*matrix.Matrix)
+	SetMatrix(map[string]*matrix.Matrix)
 	SetMetadata(*matrix.Matrix)
 	WantedExporters([]string) []string
 	LinkExporter(exporter.Exporter)
@@ -84,12 +84,12 @@ type AbstractCollector struct {
 	Options *options.Options // poller options
 	Params  *node.Node       // collector parameters
 	// note that this is a merge of poller parameters, collector conf and object conf ("subtemplate")
-	Schedule     *schedule.Schedule  // schedule of the collector
-	Matrix       *matrix.Matrix      // the data storage of the collector
-	Metadata     *matrix.Matrix      // metadata of the collector, such as poll duration, collected data points etc.
-	Exporters    []exporter.Exporter // the exporters that the collector will emit data to
-	Plugins      []plugin.Plugin     // built-in or custom plugins
-	collectCount uint64              // count of collected data points
+	Schedule     *schedule.Schedule         // schedule of the collector
+	Matrix       map[string]*matrix.Matrix  // the data storage of the collector
+	Metadata     *matrix.Matrix             // metadata of the collector, such as poll duration, collected data points etc.
+	Exporters    []exporter.Exporter        // the exporters that the collector will emit data to
+	Plugins      map[string][]plugin.Plugin // built-in or custom plugins
+	collectCount uint64                     // count of collected data points
 	// this is different from what the collector will have in its metadata, since this variable
 	// holds count independent of the poll interval of the collector, used to give stats to Poller
 	countMux    *sync.Mutex // used for atomic access to collectCount
@@ -155,7 +155,7 @@ func Init(c Collector) error {
 		methodName := "Poll" + strings.Title(task.GetNameS())
 
 		if m := reflect.ValueOf(c).MethodByName(methodName); m.IsValid() {
-			if foo, ok := m.Interface().(func() (*matrix.Matrix, error)); ok {
+			if foo, ok := m.Interface().(func() (map[string]*matrix.Matrix, error)); ok {
 				if err := s.NewTaskString(task.GetNameS(), task.GetContentS(), foo, true, "Collector_"+c.GetName()+"_"+c.GetObject()); err != nil {
 					return errors.New(errors.InvalidParam, "schedule ("+task.GetNameS()+"): "+err.Error())
 				}
@@ -190,7 +190,10 @@ func Init(c Collector) error {
 		mx.SetExportable(false)
 	}
 
-	c.SetMatrix(mx)
+	var m = make(map[string]*matrix.Matrix)
+	m[mx.Object] = mx
+
+	c.SetMatrix(m)
 
 	// Initialize Plugins
 	if plugins := params.GetChildS("plugins"); plugins != nil {
@@ -365,21 +368,29 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 			}
 
 			if data != nil {
-				results = append(results, data)
+
+				v := make([]*matrix.Matrix, 0, len(data))
+
+				for _, value := range data {
+					v = append(v, value)
+				}
+				results = append(results, v...)
 
 				// run plugins after data poll
 				if task.Name == "data" {
 
 					pluginStart = time.Now()
 
-					for _, plg := range me.Plugins {
-						if pluginData, err := plg.Run(data); err != nil {
-							me.Logger.Error().Stack().Err(err).Msgf("plugin [%s]: ", plg.GetName())
-						} else if pluginData != nil {
-							results = append(results, pluginData...)
-							me.Logger.Debug().Msgf("plugin [%s] added (%d) data", plg.GetName(), len(pluginData))
-						} else {
-							me.Logger.Debug().Msgf("plugin [%s]: completed", plg.GetName())
+					for k, v := range me.Plugins {
+						for _, plg := range v {
+							if pluginData, err := plg.Run(data[k]); err != nil {
+								me.Logger.Error().Stack().Err(err).Msgf("plugin [%s]: ", plg.GetName())
+							} else if pluginData != nil {
+								results = append(results, pluginData...)
+								me.Logger.Debug().Msgf("plugin [%s] added (%d) data", plg.GetName(), len(pluginData))
+							} else {
+								me.Logger.Debug().Msgf("plugin [%s]: completed", plg.GetName())
+							}
 						}
 					}
 
@@ -491,7 +502,7 @@ func (me *AbstractCollector) SetSchedule(s *schedule.Schedule) {
 }
 
 // SetMatrix set Matrix m as a field of the collector
-func (me *AbstractCollector) SetMatrix(m *matrix.Matrix) {
+func (me *AbstractCollector) SetMatrix(m map[string]*matrix.Matrix) {
 	me.Matrix = m
 }
 
@@ -521,6 +532,8 @@ func (me *AbstractCollector) LoadPlugins(params *node.Node, c Collector) error {
 
 	var p plugin.Plugin
 	var abc *plugin.AbstractPlugin
+	var plugins []plugin.Plugin
+	me.Plugins = make(map[string][]plugin.Plugin)
 
 	for _, x := range params.GetChildren() {
 
@@ -545,8 +558,9 @@ func (me *AbstractCollector) LoadPlugins(params *node.Node, c Collector) error {
 			me.Logger.Error().Stack().Err(err).Msgf("init plugin [%s]:", name)
 			return err
 		}
-		me.Plugins = append(me.Plugins, p)
+		plugins = append(plugins, p)
 	}
+	me.Plugins[me.Object] = plugins
 	me.Logger.Debug().Msgf("initialized %d plugins", len(me.Plugins))
 	return nil
 }

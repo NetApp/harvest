@@ -40,11 +40,11 @@ import (
 
 // Task represents a scheduled task
 type task struct {
-	Name       string                         // name of the task
-	interval   time.Duration                  // the schedule interval
-	timer      time.Time                      // last time task was executed
-	foo        func() (*matrix.Matrix, error) // pointer to the function that executes the task
-	identifier string                         // optional additional information about schedule i.e. collector name
+	Name       string                                    // name of the task
+	interval   time.Duration                             // the schedule interval
+	timer      time.Time                                 // last time task was executed
+	foo        func() (map[string]*matrix.Matrix, error) // pointer to the function that executes the task
+	identifier string                                    // optional additional information about schedule i.e. collector name
 }
 
 // Start marks the task as started by updating timer
@@ -56,7 +56,7 @@ func (t *task) Start() {
 }
 
 // Run marks the task as started and executes it
-func (t *task) Run() (*matrix.Matrix, error) {
+func (t *task) Run() (map[string]*matrix.Matrix, error) {
 	t.Start()
 	return t.foo()
 }
@@ -156,7 +156,7 @@ func (s *Schedule) Recover() {
 // should be positive.
 // The order in which tasks are added is maintained: GetTasks() will
 // return tasks in FIFO order.
-func (s *Schedule) NewTask(n string, i time.Duration, f func() (*matrix.Matrix, error), runNow bool, identifier string) error {
+func (s *Schedule) NewTask(n string, i time.Duration, f func() (map[string]*matrix.Matrix, error), runNow bool, identifier string) error {
 	if s.GetTask(n) == nil {
 		if i > 0 {
 			t := &task{Name: n, interval: i, foo: f, identifier: identifier}
@@ -175,7 +175,7 @@ func (s *Schedule) NewTask(n string, i time.Duration, f func() (*matrix.Matrix, 
 }
 
 // NewTaskString creates a new task, the interval is parsed from string i
-func (s *Schedule) NewTaskString(n, i string, f func() (*matrix.Matrix, error), runNow bool, identifier string) error {
+func (s *Schedule) NewTaskString(n, i string, f func() (map[string]*matrix.Matrix, error), runNow bool, identifier string) error {
 	d, err := time.ParseDuration(i)
 	if err != nil {
 		return err

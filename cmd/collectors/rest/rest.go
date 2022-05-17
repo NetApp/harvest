@@ -113,7 +113,7 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 	if err = r.InitMatrix(); err != nil {
 		return err
 	}
-	r.Logger.Info().Msgf("initialized cache with %d metrics", len(r.Matrix.GetMetrics()))
+	r.Logger.Info().Msgf("initialized cache with %d metrics", len(r.Matrix[r.Object].GetMetrics()))
 
 	return nil
 }
@@ -134,14 +134,15 @@ func (r *Rest) InitClient() error {
 }
 
 func (r *Rest) InitMatrix() error {
+	mat := r.Matrix[r.Object]
 	// overwrite from abstract collector
-	r.Matrix.Object = r.Prop.Object
+	mat.Object = r.Prop.Object
 	// Add system (cluster) name
-	r.Matrix.SetGlobalLabel("cluster", r.Client.Cluster().Name)
+	mat.SetGlobalLabel("cluster", r.Client.Cluster().Name)
 
 	if r.Params.HasChildS("labels") {
 		for _, l := range r.Params.GetChildS("labels").GetChildren() {
-			r.Matrix.SetGlobalLabel(l.GetNameS(), l.GetContentS())
+			mat.SetGlobalLabel(l.GetNameS(), l.GetContentS())
 		}
 	}
 
@@ -254,7 +255,7 @@ func getFieldName(source string, parent string) []string {
 	return res
 }
 
-func (r *Rest) PollData() (*matrix.Matrix, error) {
+func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 
 	var (
 		content      []byte
@@ -266,7 +267,8 @@ func (r *Rest) PollData() (*matrix.Matrix, error) {
 	)
 
 	r.Logger.Debug().Msg("starting data poll")
-	r.Matrix.Reset()
+
+	r.Matrix[r.Object].Reset()
 
 	startTime = time.Now()
 
@@ -419,6 +421,8 @@ func (r *Rest) HandleResults(result gjson.Result, prop *prop, allowInstanceCreat
 		count uint64
 	)
 
+	mat := r.Matrix[r.Object]
+
 	result.ForEach(func(key, instanceData gjson.Result) bool {
 		var (
 			instanceKey string
@@ -441,7 +445,7 @@ func (r *Rest) HandleResults(result gjson.Result, prop *prop, allowInstanceCreat
 			}
 		}
 
-		instance = r.Matrix.GetInstance(instanceKey)
+		instance = mat.GetInstance(instanceKey)
 
 		// Used for endpoints as we don't want to create additional instances
 		if !allowInstanceCreation && instance == nil {
@@ -451,7 +455,7 @@ func (r *Rest) HandleResults(result gjson.Result, prop *prop, allowInstanceCreat
 		}
 
 		if instance == nil {
-			if instance, err = r.Matrix.NewInstance(instanceKey); err != nil {
+			if instance, err = mat.NewInstance(instanceKey); err != nil {
 				r.Logger.Error().Err(err).Str("Instance key", instanceKey).Msg("")
 				return true
 			}
@@ -478,9 +482,9 @@ func (r *Rest) HandleResults(result gjson.Result, prop *prop, allowInstanceCreat
 		}
 
 		for _, metric := range prop.Metrics {
-			metr, ok := r.Matrix.GetMetrics()[metric.Name]
+			metr, ok := mat.GetMetrics()[metric.Name]
 			if !ok {
-				if metr, err = r.Matrix.NewMetricFloat64(metric.Name); err != nil {
+				if metr, err = mat.NewMetricFloat64(metric.Name); err != nil {
 					r.Logger.Error().Err(err).
 						Str("name", metric.Name).
 						Msg("NewMetricFloat64")

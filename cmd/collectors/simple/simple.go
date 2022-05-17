@@ -59,7 +59,7 @@ func (n *NodeMon) loadMetrics(counters *node.Node) error {
 	)
 
 	n.Logger.Debug().Msg("initializing metric cache")
-
+	mat := n.Matrix[n.Object]
 	// fetch list of counters from template
 	for _, cnt := range counters.GetChildren() {
 
@@ -70,18 +70,18 @@ func (n *NodeMon) loadMetrics(counters *node.Node) error {
 		dtype := "int"
 		n.Logger.Trace().Msgf("handling (%s) (%s) dtype=%s", name, display, dtype)
 
-		if metric, err = n.Matrix.NewMetricType(name, dtype); err != nil {
+		if metric, err = mat.NewMetricType(name, dtype); err != nil {
 			return err
 		}
 		metric.SetName(display)
 		n.Logger.Debug().Msgf("(%s) added metric (%s)", name, display)
 	}
 
-	if _, err = n.Matrix.NewMetricUint8("status"); err != nil {
+	if _, err = mat.NewMetricUint8("status"); err != nil {
 		return err
 	}
 
-	n.Logger.Debug().Msgf("initialized cache with %d metrics", len(n.Matrix.GetMetrics()))
+	n.Logger.Debug().Msgf("initialized cache with %d metrics", len(mat.GetMetrics()))
 	return nil
 }
 
@@ -93,15 +93,16 @@ func parseMetricName(name string) (string, string) {
 }
 
 // PollInstance - update instance cache with running pollers
-func (n *NodeMon) PollInstance() (*matrix.Matrix, error) {
+func (n *NodeMon) PollInstance() (map[string]*matrix.Matrix, error) {
+	mat := n.Matrix[n.Object]
 
-	currInstances := set.NewFrom(n.Matrix.GetInstanceKeys())
+	currInstances := set.NewFrom(mat.GetInstanceKeys())
 	currSize := currInstances.Size()
 
 	var err error
 	name := "simple"
-	if instance := n.Matrix.GetInstance(name); instance == nil {
-		if instance, err = n.Matrix.NewInstance(name); err != nil {
+	if instance := mat.GetInstance(name); instance == nil {
+		if instance, err = mat.NewInstance(name); err != nil {
 			return nil, err
 		}
 		instance.SetLabel("poller", name)
@@ -109,7 +110,7 @@ func (n *NodeMon) PollInstance() (*matrix.Matrix, error) {
 		instance.SetLabel("pid", strconv.Itoa(os.Getpid()))
 		n.Logger.Debug().Msgf("add instance (%s)", name)
 	}
-	t := len(n.Matrix.GetInstances())
+	t := len(mat.GetInstances())
 	r := currInstances.Size()
 	a := t - (currSize - r)
 	n.Logger.Debug().Msgf("added %d, removed %d, total instances %d", a, r, t)
@@ -118,18 +119,19 @@ func (n *NodeMon) PollInstance() (*matrix.Matrix, error) {
 }
 
 // PollData - update data cache
-func (n *NodeMon) PollData() (*matrix.Matrix, error) {
-	n.Matrix.Reset()
+func (n *NodeMon) PollData() (map[string]*matrix.Matrix, error) {
+	mat := n.Matrix[n.Object]
+	mat.Reset()
 
 	toQuery := []string{"alloc", "num_gc", "num_cpu"}
 
-	for key, instance := range n.Matrix.GetInstances() {
-		err := n.Matrix.LazySetValueUint32("status", key, 0)
+	for key, instance := range mat.GetInstances() {
+		err := mat.LazySetValueUint32("status", key, 0)
 		if err != nil {
 			n.Logger.Error().Stack().Err(err).Msgf("error while parsing metric key [%s]", key)
 		}
 		for _, key2 := range toQuery {
-			if metric := n.Matrix.GetMetric(key2); metric != nil {
+			if metric := mat.GetMetric(key2); metric != nil {
 				var m runtime.MemStats
 				runtime.ReadMemStats(&m)
 				switch key2 {

@@ -44,7 +44,7 @@ func (me *Zapi) LoadCounters(counters *node.Node) (bool, *node.Node) {
 
 	//counters.SetXMLNameS("desired-attributes")
 	//counters.SetContentS("")
-	return len(me.Matrix.GetMetrics()) > 0, desired
+	return len(me.Matrix[me.Object].GetMetrics()) > 0, desired
 }
 
 func (me *Zapi) ParseCounters(elem, desired *node.Node, path []string) {
@@ -82,6 +82,7 @@ func (me *Zapi) HandleCounter(path []string, content string) string {
 		err                   error
 	)
 
+	mat := me.Matrix[me.Object]
 	splitValues = strings.Split(content, "=>")
 	if len(splitValues) == 1 {
 		name = content
@@ -97,7 +98,7 @@ func (me *Zapi) HandleCounter(path []string, content string) string {
 	key = strings.Join(fullPath, ".")
 
 	if display == "" {
-		display = ParseDisplay(me.Matrix.Object, fullPath)
+		display = ParseDisplay(mat.Object, fullPath)
 	}
 
 	if content[0] == '^' {
@@ -113,10 +114,10 @@ func (me *Zapi) HandleCounter(path []string, content string) string {
 	} else {
 		// use user-defined metric type
 		if t := me.Params.GetChildContentS("metric_type"); t != "" {
-			metric, err = me.Matrix.NewMetricType(key, t)
+			metric, err = mat.NewMetricType(key, t)
 			// use uint64 as default, since nearly all ZAPI counters are unsigned
 		} else {
-			metric, err = me.Matrix.NewMetricUint64(key)
+			metric, err = mat.NewMetricUint64(key)
 		}
 		if err != nil {
 			me.Logger.Error().Stack().Err(err).Msgf("add as metric [%s]: %v", key, display)
