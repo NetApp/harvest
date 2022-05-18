@@ -540,6 +540,9 @@ func (me *AbstractCollector) LoadPlugins(params *node.Node, c Collector) error {
 			p = c.LoadPlugin(name, abc)
 			me.Logger.Debug().Msgf("loaded plugin [%s]", name)
 		}
+		if p == nil {
+			continue
+		}
 
 		if err := p.Init(); err != nil {
 			me.Logger.Error().Stack().Err(err).Msgf("init plugin [%s]:", name)
