@@ -188,7 +188,7 @@
               "expr": "100 * (nfs_diag_storePool_CopyStateAlloc{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_CopyStateMax{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}) > 50",
               "hide": false,
               "interval": "5",
-              "legendFormat": "{{node}} - ConnectionParentSessionReferenceAlloc",
+              "legendFormat": "{{node}} - CopyStateAlloc",
               "refId": "D"
             },
             {
