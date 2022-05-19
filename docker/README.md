@@ -89,7 +89,7 @@ bin/harvest generate docker full --port --output harvest-compose.yml
 
 ### Grafana
 
-[Grafana](http://localhost:3000/)
+After bringing up the `prom-stack.yml` compose file, you can access Grafana at `http://IP_OF_GRAFANA:3000`.
 
 Default credentials - you'll be prompted to create a new password the first time you log in
 
@@ -100,7 +100,7 @@ password: admin
 
 ### Prometheus
 
-- [List of targets](http://localhost:9090/targets)
+After bringing up the `prom-stack.yml` compose file, you can check Prometheus's list of targets at `http://IP_OF_PROMETHEUS:9090/targets`.
 
 ### Managing
 
