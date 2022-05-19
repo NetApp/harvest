@@ -191,6 +191,7 @@ func Init(c Collector) error {
 	}
 
 	var m = make(map[string]*matrix.Matrix)
+
 	m[mx.Object] = mx
 
 	c.SetMatrix(m)
@@ -369,12 +370,9 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 
 			if data != nil {
 
-				v := make([]*matrix.Matrix, 0, len(data))
-
 				for _, value := range data {
-					v = append(v, value)
+					results = append(results, value)
 				}
-				results = append(results, v...)
 
 				// run plugins after data poll
 				if task.Name == "data" {
