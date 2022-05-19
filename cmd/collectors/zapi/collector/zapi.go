@@ -189,7 +189,7 @@ func (me *Zapi) InitCache() error {
 		}
 	}
 
-	me.Logger.Debug().Msgf("initialized cache with %d metrics and %d labels", len(me.Matrix.GetInstances()), len(me.instanceLabelPaths))
+	me.Logger.Debug().Msgf("initialized cache with %d metrics and %d labels", len(me.Matrix[me.GetObject()].GetInstances()), len(me.instanceLabelPaths))
 
 	// unless cluster is the only instance, require instance keys
 	if len(me.instanceKeyPaths) == 0 && me.Params.GetChildContentS("only_cluster_instance") != "true" {
@@ -197,7 +197,7 @@ func (me *Zapi) InitCache() error {
 	}
 
 	// @TODO validate
-	me.shortestPathPrefix = ParseShortestPath(me.Matrix, me.instanceLabelPaths)
+	me.shortestPathPrefix = ParseShortestPath(me.Matrix[me.GetObject()], me.instanceLabelPaths)
 	me.Logger.Debug().Msgf("Parsed Instance Keys: %v", me.instanceKeyPaths)
 	me.Logger.Debug().Msgf("Parsed Instance Key Prefix: %v", me.shortestPathPrefix)
 	return nil
@@ -205,25 +205,24 @@ func (me *Zapi) InitCache() error {
 }
 
 func (me *Zapi) InitMatrix() error {
-	// overwrite from abstract collector
-	//me.Matrix.Collector = me.Matrix.Collector + ":" + me.Matrix.Object
-	me.Matrix.Object = me.object
+	mat := me.Matrix[me.GetObject()]
+	mat.Object = me.object
 
 	// Add system (cluster) name
-	me.Matrix.SetGlobalLabel("cluster", me.Client.Name())
+	mat.SetGlobalLabel("cluster", me.Client.Name())
 	if me.Params.HasChildS("labels") {
 		for _, l := range me.Params.GetChildS("labels").GetChildren() {
-			me.Matrix.SetGlobalLabel(l.GetNameS(), l.GetContentS())
+			mat.SetGlobalLabel(l.GetNameS(), l.GetContentS())
 		}
 	}
 	// For 7mode cluster is same as node
 	if !me.Client.IsClustered() {
-		me.Matrix.SetGlobalLabel("node", me.Client.Name())
+		mat.SetGlobalLabel("node", me.Client.Name())
 	}
 	return nil
 }
 
-func (me *Zapi) PollInstance() (*matrix.Matrix, error) {
+func (me *Zapi) PollInstance() (map[string]*matrix.Matrix, error) {
 	var (
 		request, response *node.Node
 		instances         []*node.Node
@@ -235,21 +234,22 @@ func (me *Zapi) PollInstance() (*matrix.Matrix, error) {
 	)
 
 	me.Logger.Debug().Msg("starting instance poll")
+	mat := me.Matrix[me.Object]
 
 	if len(me.shortestPathPrefix) == 0 {
 		msg := fmt.Sprintf("There is an issue with the template [%s]. It could be due to wrong counter structure.", me.TemplatePath)
 		return nil, errors.New(errors.ErrTemplate, msg)
 	}
 
-	oldCount = uint64(len(me.Matrix.GetInstances()))
-	me.Matrix.PurgeInstances()
+	oldCount = uint64(len(mat.GetInstances()))
+	mat.PurgeInstances()
 
 	count = 0
 
 	// special case when only "instance" is the cluster
 	if me.Params.GetChildContentS("only_cluster_instance") == "true" {
-		if me.Matrix.GetInstance("cluster") == nil {
-			if _, err := me.Matrix.NewInstance("cluster"); err != nil {
+		if mat.GetInstance("cluster") == nil {
+			if _, err := mat.NewInstance("cluster"); err != nil {
 				return nil, err
 			}
 		}
@@ -291,7 +291,7 @@ func (me *Zapi) PollInstance() (*matrix.Matrix, error) {
 				if !found {
 					me.Logger.Debug().Msg("skipping element, no instance keys found")
 				} else {
-					if _, err = me.Matrix.NewInstance(strings.Join(keys, ".")); err != nil {
+					if _, err = mat.NewInstance(strings.Join(keys, ".")); err != nil {
 						me.Logger.Error().Stack().Err(err).Msg("")
 					} else {
 						me.Logger.Debug().Msgf("added instance [%s]", strings.Join(keys, "."))
@@ -308,14 +308,14 @@ func (me *Zapi) PollInstance() (*matrix.Matrix, error) {
 	}
 	me.Logger.Debug().Msgf("added %d instances to cache (old cache had %d)", count, oldCount)
 
-	if len(me.Matrix.GetInstances()) == 0 {
+	if len(mat.GetInstances()) == 0 {
 		return nil, errors.New(errors.ErrNoInstance, "no instances fetched")
 	}
 
 	return nil, nil
 }
 
-func (me *Zapi) PollData() (*matrix.Matrix, error) {
+func (me *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 	var err error
 	var request, response *node.Node
 	var fetch func(*matrix.Instance, *node.Node, []string)
@@ -329,6 +329,8 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 	apiT := 0 * time.Second
 	parseT := 0 * time.Second
 
+	mat := me.Matrix[me.Object]
+
 	fetch = func(instance *matrix.Instance, node *node.Node, path []string) {
 
 		newpath := append(path, node.GetNameS())
@@ -339,7 +341,7 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 				instance.SetLabel(label, value)
 				me.Logger.Debug().Msgf(" > %slabel (%s) [%s] set value (%s)%s", color.Yellow, key, label, value, color.End)
 				count++
-			} else if metric := me.Matrix.GetMetric(key); metric != nil {
+			} else if metric := mat.GetMetric(key); metric != nil {
 				if err := metric.SetValueString(instance, value); err != nil {
 					me.Logger.Error().Msgf("%smetric (%s) set value (%s): %v%s", color.Red, key, value, err, color.End)
 					skipped++
@@ -363,7 +365,7 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 
 	me.Logger.Debug().Msg("starting data poll")
 
-	me.Matrix.Reset()
+	mat.Reset()
 
 	request = node.NewXMLS(me.Query)
 	if me.Client.IsClustered() {
@@ -401,7 +403,7 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 		me.Logger.Debug().Msgf("fetched %d instance elements", len(instances))
 
 		if me.Params.GetChildContentS("only_cluster_instance") == "true" {
-			if instance := me.Matrix.GetInstance("cluster"); instance != nil {
+			if instance := mat.GetInstance("cluster"); instance != nil {
 				fetch(instance, instances[0], make([]string, 0))
 			} else {
 				me.Logger.Error().Stack().Err(nil).Msg("cluster instance not found in cache")
@@ -419,7 +421,7 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 				continue
 			}
 
-			instance := me.Matrix.GetInstance(strings.Join(keys, "."))
+			instance := mat.GetInstance(strings.Join(keys, "."))
 
 			if instance == nil {
 				me.Logger.Error().Stack().Err(nil).Msgf("skipped instance [%s]: not found in cache", strings.Join(keys, "."))
@@ -435,7 +437,7 @@ func (me *Zapi) PollData() (*matrix.Matrix, error) {
 	_ = me.Metadata.LazySetValueUint64("count", "data", count)
 	me.AddCollectCount(count)
 
-	if len(me.Matrix.GetInstances()) == 0 {
+	if len(mat.GetInstances()) == 0 {
 		return nil, errors.New(errors.ErrNoInstance, "")
 	}
 

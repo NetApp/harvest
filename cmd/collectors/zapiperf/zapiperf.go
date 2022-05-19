@@ -137,7 +137,7 @@ func (me *ZapiPerf) InitCache() error {
 	if me.object == "" {
 		me.object = me.Object
 	}
-	me.Matrix.Object = me.object
+	me.Matrix[me.Object].Object = me.object
 	me.Logger.Debug().Msgf("object= %s --> %s", me.Object, me.object)
 	return nil
 }
@@ -178,7 +178,7 @@ func (me *ZapiPerf) loadParamInt(name string, defaultValue int) int {
 
 // PollData updates the data cache of the collector. During first poll, no data will
 // be emitted. Afterwards, final metric values will be calculated from previous poll.
-func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
+func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	var (
 		instanceKeys    []string
@@ -187,9 +187,9 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 	)
 
 	me.Logger.Debug().Msg("updating data cache")
-
+	m := me.Matrix[me.Object]
 	// clone matrix without numeric data
-	newData := me.Matrix.Clone(false, true, true)
+	newData := m.Clone(false, true, true)
 	newData.Reset()
 
 	timestamp := newData.GetMetric("timestamp")
@@ -217,7 +217,7 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 		} else {
 			instanceKeys = make([]string, 0)
 			for _, layer := range resourceMap.GetAllChildNamesS() {
-				for key := range me.Matrix.GetInstances() {
+				for key := range m.GetInstances() {
 					instanceKeys = append(instanceKeys, key+"."+layer)
 				}
 			}
@@ -526,7 +526,7 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 	// skip calculating from delta if no data from previous poll
 	if me.isCacheEmpty {
 		me.Logger.Debug().Msg("skip postprocessing until next poll (previous cache empty)")
-		me.Matrix = newData
+		me.Matrix[me.Object] = newData
 		me.isCacheEmpty = false
 		return nil, nil
 	}
@@ -557,7 +557,7 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 
 	// calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
-	if err = timestamp.Delta(me.Matrix.GetMetric("timestamp")); err != nil {
+	if err = timestamp.Delta(m.GetMetric("timestamp")); err != nil {
 		me.Logger.Error().Stack().Err(err).Msg("(timestamp) calculate delta:")
 		// @TODO terminate since other counters will be incorrect
 	}
@@ -575,7 +575,7 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 		}
 
 		// all other properties - first calculate delta
-		if err = metric.Delta(me.Matrix.GetMetric(key)); err != nil {
+		if err = metric.Delta(m.GetMetric(key)); err != nil {
 			me.Logger.Error().Stack().Err(err).Str("key", key).Msg("Calculate delta")
 			continue
 		}
@@ -656,9 +656,11 @@ func (me *ZapiPerf) PollData() (*matrix.Matrix, error) {
 	_ = me.Metadata.LazySetValueInt64("calc_time", "data", time.Since(calcStart).Microseconds())
 
 	// store cache for next poll
-	me.Matrix = cachedData
+	me.Matrix[me.Object] = cachedData
 
-	return newData, nil
+	newDataMap := make(map[string]*matrix.Matrix)
+	newDataMap[me.Object] = newData
+	return newDataMap, nil
 }
 
 // Poll counter "ops" of the related/parent object, required for objects
@@ -787,7 +789,7 @@ func (me *ZapiPerf) getParentOpsCounters(data *matrix.Matrix, KeyAttr string) (t
 	return apiT, parseT, nil
 }
 
-func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
+func (me *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 
 	var (
 		err                                      error
@@ -806,7 +808,8 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 	missing = set.New()    // required base counters, missing in template
 	replaced = set.New()   // deprecated and replaced counters
 
-	for key := range me.Matrix.GetMetrics() {
+	mat := me.Matrix[me.Object]
+	for key := range mat.GetMetrics() {
 		oldMetrics.Add(key)
 	}
 	oldMetricsSize = oldMetrics.Size()
@@ -944,7 +947,7 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 	// The reason we don't keep a single timestamp for the whole data
 	// is because we might get instances in different batches
 	if !oldMetrics.Has("timestamp") {
-		m, err := me.Matrix.NewMetricFloat64("timestamp")
+		m, err := mat.NewMetricFloat64("timestamp")
 		if err != nil {
 			me.Logger.Error().Stack().Err(err).Msg("add timestamp metric")
 		}
@@ -965,15 +968,15 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 			oldMetrics.Delete("visits")
 			oldMetrics.Delete("ops")
 
-			if service = me.Matrix.GetMetric("service_time"); service == nil {
+			if service = mat.GetMetric("service_time"); service == nil {
 				me.Logger.Error().Stack().Err(nil).Msg("metric [service_time] required to calculate workload missing")
 			}
 
-			if wait = me.Matrix.GetMetric("wait_time"); wait == nil {
+			if wait = mat.GetMetric("wait_time"); wait == nil {
 				me.Logger.Error().Stack().Err(nil).Msg("metric [wait-time] required to calculate workload missing")
 			}
 
-			if visits = me.Matrix.GetMetric("visits"); visits == nil {
+			if visits = mat.GetMetric("visits"); visits == nil {
 				me.Logger.Error().Stack().Err(nil).Msg("metric [visits] required to calculate workload missing")
 			}
 
@@ -981,8 +984,8 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 				return nil, errors.New(errors.MissingParam, "workload metrics")
 			}
 
-			if ops = me.Matrix.GetMetric("ops"); ops == nil {
-				if ops, err = me.Matrix.NewMetricFloat64("ops"); err != nil {
+			if ops = mat.GetMetric("ops"); ops == nil {
+				if ops, err = mat.NewMetricFloat64("ops"); err != nil {
 					return nil, err
 				}
 				ops.SetProperty(visits.GetProperty())
@@ -1000,11 +1003,11 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 					name := x.GetNameS()
 					resource := x.GetContentS()
 
-					if m := me.Matrix.GetMetric(name); m != nil {
+					if m := mat.GetMetric(name); m != nil {
 						oldMetrics.Delete(name)
 						continue
 					}
-					if m, err := me.Matrix.NewMetricFloat64(name); err != nil {
+					if m, err := mat.NewMetricFloat64(name); err != nil {
 						return nil, err
 					} else {
 						m.SetName("resource_latency")
@@ -1042,7 +1045,7 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 		// temporary fix: prevent removing array counters
 		// @TODO
 		if key != "timestamp" && !strings.Contains(key, ".") {
-			me.Matrix.RemoveMetric(key)
+			mat.RemoveMetric(key)
 			me.Logger.Debug().Msgf("removed metric [%s]", key)
 		}
 	}
@@ -1052,13 +1055,13 @@ func (me *ZapiPerf) PollCounter() (*matrix.Matrix, error) {
 		me.Logger.Debug().Msgf("removed label [%s]", key)
 	}
 
-	metricsAdded := len(me.Matrix.GetMetrics()) - (oldMetricsSize - oldMetrics.Size())
+	metricsAdded := len(mat.GetMetrics()) - (oldMetricsSize - oldMetrics.Size())
 	labelsAdded := len(me.instanceLabels) - (oldLabelsSize - oldLabels.Size())
 
-	me.Logger.Debug().Msgf("added %d new, removed %d metrics (total: %d)", metricsAdded, oldMetrics.Size(), len(me.Matrix.GetMetrics()))
+	me.Logger.Debug().Msgf("added %d new, removed %d metrics (total: %d)", metricsAdded, oldMetrics.Size(), len(mat.GetMetrics()))
 	me.Logger.Debug().Msgf("added %d new, removed %d labels (total: %d)", labelsAdded, oldLabels.Size(), len(me.instanceLabels))
 
-	if len(me.Matrix.GetMetrics()) == 0 {
+	if len(mat.GetMetrics()) == 0 {
 		return nil, errors.New(errors.ErrNoMetric, "")
 	}
 
@@ -1072,6 +1075,8 @@ func (me *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled
 		property, baseCounter, unit string
 		err                         error
 	)
+
+	mat := me.Matrix[me.Object]
 
 	p := counter.GetChildContentS("properties")
 	if strings.Contains(p, "raw") {
@@ -1137,9 +1142,9 @@ func (me *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled
 				baseKey += "." + baseLabels[0]
 			}
 
-			if m = me.Matrix.GetMetric(key); m != nil {
+			if m = mat.GetMetric(key); m != nil {
 				me.Logger.Debug().Msgf("updating array metric [%s] attributes", key)
-			} else if m, err = me.Matrix.NewMetricFloat64(key); err == nil {
+			} else if m, err = mat.NewMetricFloat64(key); err == nil {
 				me.Logger.Debug().Msgf("%s+[%s] added array metric (%s), element with label (%s)%s", color.Pink, name, display, label, color.End)
 			} else {
 				me.Logger.Error().Stack().Err(err).Msgf("add array metric element [%s]: ", key)
@@ -1164,9 +1169,9 @@ func (me *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled
 		// counter type is scalar
 	} else {
 		var m matrix.Metric
-		if m = me.Matrix.GetMetric(name); m != nil {
+		if m = mat.GetMetric(name); m != nil {
 			me.Logger.Debug().Msgf("updating scalar metric [%s] attributes", name)
-		} else if m, err = me.Matrix.NewMetricFloat64(name); err == nil {
+		} else if m, err = mat.NewMetricFloat64(name); err == nil {
 			me.Logger.Debug().Msgf("%s+[%s] added scalar metric (%s)%s", color.Cyan, name, display, color.End)
 		} else {
 			me.Logger.Error().Stack().Err(err).Msgf("add scalar metric [%s]", name)
@@ -1219,7 +1224,7 @@ func parseHistogramLabels(elem *node.Node) ([]string, string) {
 }
 
 // PollInstance updates instance cache
-func (me *ZapiPerf) PollInstance() (*matrix.Matrix, error) {
+func (me *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 	var (
 		err                                        error
@@ -1230,7 +1235,8 @@ func (me *ZapiPerf) PollInstance() (*matrix.Matrix, error) {
 	)
 
 	oldInstances = set.New()
-	for key := range me.Matrix.GetInstances() {
+	mat := me.Matrix[me.Object]
+	for key := range mat.GetInstances() {
 		oldInstances.Add(key)
 	}
 	oldSize = oldInstances.Size()
@@ -1309,7 +1315,7 @@ func (me *ZapiPerf) PollInstance() (*matrix.Matrix, error) {
 				// instance already in cache
 				me.Logger.Debug().Msgf("updated instance [%s%s%s%s]", color.Bold, color.Yellow, key, color.End)
 				continue
-			} else if instance, err := me.Matrix.NewInstance(key); err != nil {
+			} else if instance, err := mat.NewInstance(key); err != nil {
 				me.Logger.Error().Err(err).Msg("add instance")
 			} else {
 				me.Logger.Debug().
@@ -1328,12 +1334,12 @@ func (me *ZapiPerf) PollInstance() (*matrix.Matrix, error) {
 	}
 
 	for key := range oldInstances.Iter() {
-		me.Matrix.RemoveInstance(key)
+		mat.RemoveInstance(key)
 		me.Logger.Debug().Msgf("removed instance [%s]", key)
 	}
 
 	removed = oldInstances.Size()
-	newSize = len(me.Matrix.GetInstances())
+	newSize = len(mat.GetInstances())
 	added = newSize - (oldSize - removed)
 
 	me.Logger.Debug().Msgf("added %d new, removed %d (total instances %d)", added, removed, newSize)

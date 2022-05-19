@@ -178,8 +178,8 @@ func (me *Unix) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	me.Matrix.SetGlobalLabel("hostname", me.Options.Hostname)
-	me.Matrix.SetGlobalLabel("datacenter", me.Params.GetChildContentS("datacenter"))
+	me.Matrix[me.Object].SetGlobalLabel("hostname", me.Options.Hostname)
+	me.Matrix[me.Object].SetGlobalLabel("datacenter", me.Params.GetChildContentS("datacenter"))
 
 	me.Logger.Debug().Msg("initialized")
 	return nil
@@ -194,6 +194,7 @@ func (me *Unix) loadMetrics(counters *node.Node) error {
 	)
 
 	me.Logger.Debug().Msg("initializing metric cache")
+	mat := me.Matrix[me.Object]
 
 	me.processes = make(map[string]*Process)
 	me.histogramLabels = make(map[string][]string)
@@ -219,7 +220,7 @@ func (me *Unix) loadMetrics(counters *node.Node) error {
 		// counter is scalar metric
 		if _, has := _Metrics[name]; has {
 
-			if metric, err = me.Matrix.NewMetricType(name, dtype); err != nil {
+			if metric, err = mat.NewMetricType(name, dtype); err != nil {
 				return err
 			}
 			metric.SetName(display)
@@ -252,7 +253,7 @@ func (me *Unix) loadMetrics(counters *node.Node) error {
 					continue
 				}
 
-				if metric, err = me.Matrix.NewMetricType(name+"."+label, dtype); err != nil {
+				if metric, err = mat.NewMetricType(name+"."+label, dtype); err != nil {
 					return err
 				}
 				metric.SetName(name)
@@ -268,18 +269,19 @@ func (me *Unix) loadMetrics(counters *node.Node) error {
 		}
 	}
 
-	if _, err = me.Matrix.NewMetricUint8("status"); err != nil {
+	if _, err = mat.NewMetricUint8("status"); err != nil {
 		return err
 	}
 
-	me.Logger.Debug().Msgf("initialized cache with %d metrics", len(me.Matrix.GetMetrics()))
+	me.Logger.Debug().Msgf("initialized cache with %d metrics", len(mat.GetMetrics()))
 	return nil
 }
 
 // PollInstance - update instance cache with running pollers
-func (me *Unix) PollInstance() (*matrix.Matrix, error) {
+func (me *Unix) PollInstance() (map[string]*matrix.Matrix, error) {
 
-	currInstances := set.NewFrom(me.Matrix.GetInstanceKeys())
+	mat := me.Matrix[me.Object]
+	currInstances := set.NewFrom(mat.GetInstanceKeys())
 	currSize := currInstances.Size()
 
 	err := conf.LoadHarvestConfig(me.Options.Config)
@@ -303,8 +305,8 @@ func (me *Unix) PollInstance() (*matrix.Matrix, error) {
 		if pid == -1 {
 			continue
 		}
-		if instance := me.Matrix.GetInstance(name); instance == nil {
-			if instance, err = me.Matrix.NewInstance(name); err != nil {
+		if instance := mat.GetInstance(name); instance == nil {
+			if instance, err = mat.NewInstance(name); err != nil {
 				return nil, err
 			}
 			instance.SetLabel("poller", name)
@@ -318,18 +320,18 @@ func (me *Unix) PollInstance() (*matrix.Matrix, error) {
 	}
 	rewriteIndexes := currInstances.Size() > 0
 	for name := range currInstances.Iter() {
-		me.Matrix.RemoveInstance(name)
+		mat.RemoveInstance(name)
 		me.Logger.Debug().Msgf("remove instance (%s)", name)
 	}
 	// If there were removals, the indexes need to be rewritten since gaps were created
 	if rewriteIndexes {
-		newMatrix := me.Matrix.Clone(false, true, false)
-		for key := range me.Matrix.GetInstances() {
+		newMatrix := mat.Clone(false, true, false)
+		for key := range mat.GetInstances() {
 			_, _ = newMatrix.NewInstance(key)
 		}
-		me.Matrix = newMatrix
+		mat = newMatrix
 	}
-	t := len(me.Matrix.GetInstances())
+	t := len(mat.GetInstances())
 	r := currInstances.Size()
 	a := t - (currSize - r)
 	me.Logger.Debug().Msgf("added %d, removed %d, total instances %d", a, r, t)
@@ -338,7 +340,7 @@ func (me *Unix) PollInstance() (*matrix.Matrix, error) {
 }
 
 // PollData - update data cache
-func (me *Unix) PollData() (*matrix.Matrix, error) {
+func (me *Unix) PollData() (map[string]*matrix.Matrix, error) {
 
 	var (
 		pid   int
@@ -347,17 +349,17 @@ func (me *Unix) PollData() (*matrix.Matrix, error) {
 		ok    bool
 		proc  *Process
 	)
-
-	me.Matrix.Reset()
+	mat := me.Matrix[me.Object]
+	mat.Reset()
 
 	if err = me.system.Reload(); err != nil {
 		return nil, err
 	}
 
-	for key, instance := range me.Matrix.GetInstances() {
+	for key, instance := range mat.GetInstances() {
 
 		// assume not running
-		err = me.Matrix.LazySetValueUint8("status", key, 0)
+		err = mat.LazySetValueUint8("status", key, 0)
 		if err != nil {
 			me.Logger.Error().Stack().Err(err).Msgf("error while parsing metric key [%s]", key)
 		}
@@ -394,7 +396,7 @@ func (me *Unix) PollData() (*matrix.Matrix, error) {
 		}
 
 		// if we got here poller is running
-		err = me.Matrix.LazySetValueUint32("status", key, 1)
+		err = mat.LazySetValueUint32("status", key, 1)
 		if err != nil {
 			me.Logger.Error().Stack().Err(err).Msgf("error while parsing metric key [%s]", key)
 		}
@@ -403,7 +405,7 @@ func (me *Unix) PollData() (*matrix.Matrix, error) {
 
 		// process scalar metrics
 		for key, foo := range _Metrics {
-			if metric := me.Matrix.GetMetric(key); metric != nil {
+			if metric := mat.GetMetric(key); metric != nil {
 				foo(metric, instance, proc, me.system)
 				//logger.Trace(me.Prefix, "+ (%s) [%f]", key, value)
 				count++
@@ -415,7 +417,7 @@ func (me *Unix) PollData() (*matrix.Matrix, error) {
 			if labels, ok := me.histogramLabels[key]; ok {
 				//logger.Trace(me.Prefix, "+++ (%s) [%v]", key, values)
 				for _, label := range labels {
-					if metric := me.Matrix.GetMetric(key + "." + label); metric != nil {
+					if metric := mat.GetMetric(key + "." + label); metric != nil {
 						foo(metric, label, instance, proc)
 						count++
 					}

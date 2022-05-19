@@ -367,7 +367,7 @@ func (p *Poller) firstAutoSupport() {
 	}
 }
 
-func (p *Poller) startAsup() (*matrix.Matrix, error) {
+func (p *Poller) startAsup() (map[string]*matrix.Matrix, error) {
 	if p.collectors != nil {
 		if err := collector.SendAutosupport(p.collectors, p.status, p.name); err != nil {
 			logger.Error().Err(err).

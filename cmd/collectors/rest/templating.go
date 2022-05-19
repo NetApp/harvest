@@ -41,7 +41,7 @@ func (r *Rest) InitCache() error {
 	}
 
 	if e := r.Params.GetChildS("export_options"); e != nil {
-		r.Matrix.SetExportOptions(e)
+		r.Matrix[r.Object].SetExportOptions(e)
 	}
 
 	if r.Prop.Query = r.Params.GetChildContentS("query"); r.Prop.Query == "" {
