@@ -1488,7 +1488,7 @@
         },
         {
           "exemplar": true,
-          "expr": "environment_sensor_ambient_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "environment_sensor_average_ambient_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,

@@ -1137,7 +1137,7 @@
         },
         {
           "exemplar": true,
-          "expr": "shelf_ambient_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "shelf_average_ambient_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,

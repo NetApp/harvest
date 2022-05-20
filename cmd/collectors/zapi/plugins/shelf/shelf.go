@@ -31,7 +31,7 @@ type shelfEnvironmentMetric struct {
 	currentSensor         map[string]float64
 }
 
-var eMetrics = []string{"power", "ambient_temperature", "max_temperature", "average_temperature", "average_fan_speed", "max_fan_speed", "min_fan_speed"}
+var eMetrics = []string{"power", "average_ambient_temperature", "min_ambient_temperature", "max_temperature", "average_temperature", "min_temperature", "average_fan_speed", "max_fan_speed", "min_fan_speed"}
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Shelf{AbstractPlugin: p}
@@ -261,15 +261,23 @@ func (my *Shelf) calculateEnvironmentMetrics(output []*matrix.Matrix, data *matr
 					m.SetLabel("unit", "W")
 				}
 
-			case "ambient_temperature":
+			case "average_ambient_temperature":
 				if len(v.ambientTemperature) > 0 {
-					aT := util.Avg(v.ambientTemperature)
-					err = m.SetValueFloat64(instance, aT)
+					aaT := util.Avg(v.ambientTemperature)
+					err = m.SetValueFloat64(instance, aaT)
 					if err != nil {
-						my.Logger.Error().Float64("ambient_temperature", aT).Err(err).Msg("Unable to set ambient_temperature")
+						my.Logger.Error().Float64("average_ambient_temperature", aaT).Err(err).Msg("Unable to set average_ambient_temperature")
 					} else {
 						m.SetLabel("unit", "C")
 					}
+				}
+			case "min_ambient_temperature":
+				maT := util.Min(v.ambientTemperature)
+				err = m.SetValueFloat64(instance, maT)
+				if err != nil {
+					my.Logger.Error().Float64("min_ambient_temperature", maT).Err(err).Msg("Unable to set min_ambient_temperature")
+				} else {
+					m.SetLabel("unit", "C")
 				}
 			case "max_temperature":
 				mT := util.Max(v.nonAmbientTemperature)
@@ -288,6 +296,14 @@ func (my *Shelf) calculateEnvironmentMetrics(output []*matrix.Matrix, data *matr
 					} else {
 						m.SetLabel("unit", "C")
 					}
+				}
+			case "min_temperature":
+				mT := util.Min(v.nonAmbientTemperature)
+				err = m.SetValueFloat64(instance, mT)
+				if err != nil {
+					my.Logger.Error().Float64("min_temperature", mT).Err(err).Msg("Unable to set min_temperature")
+				} else {
+					m.SetLabel("unit", "C")
 				}
 			case "average_fan_speed":
 				if len(v.fanSpeed) > 0 {
