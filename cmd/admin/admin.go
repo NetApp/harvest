@@ -6,9 +6,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/pkgerrors"
 	"github.com/spf13/cobra"
 	"github.com/zekroTJA/timedmap"
 	"net/http"
@@ -108,7 +108,7 @@ func (a *Admin) ApiSD(w http.ResponseWriter, r *http.Request) {
 
 func (a *Admin) setupLogger() {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
-	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
+	zerolog.ErrorStackMarshaler = logging.MarshalStack
 
 	a.logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).
 		With().Caller().Timestamp().Logger()
