@@ -55,7 +55,7 @@ func consume(r *node.Node, key string, y *y3.Node, makeNewChild bool) {
 		for _, child := range y.Content {
 			makeNewChild := false
 			if child.Tag == "!!map" {
-				makeNewChild = key == "endpoints"
+				makeNewChild = key == "endpoints" || key == "events" || key == "matches"
 			}
 			consume(s, "", child, makeNewChild)
 		}

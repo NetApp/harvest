@@ -171,8 +171,8 @@ func getClosestIndex(versions []*version.Version, version *version.Version) int 
 	return idx
 }
 
-// getBuiltinPlugin returns built-in plugin with name if it exists, otherwise nil
-func getBuiltinPlugin(name string, abc *plugin.AbstractPlugin) plugin.Plugin {
+// GetBuiltinPlugin returns built-in plugin with name if it exists, otherwise nil
+func GetBuiltinPlugin(name string, abc *plugin.AbstractPlugin) plugin.Plugin {
 
 	if name == "Aggregator" {
 		return aggregator.New(abc)

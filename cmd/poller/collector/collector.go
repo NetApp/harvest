@@ -544,7 +544,7 @@ func (me *AbstractCollector) LoadPlugins(params *node.Node, c Collector) error {
 		abc = plugin.New(me.Name, me.Options, x, me.Params, me.Object)
 
 		// case 1: available as built-in plugin
-		if p = getBuiltinPlugin(name, abc); p != nil {
+		if p = GetBuiltinPlugin(name, abc); p != nil {
 			me.Logger.Debug().Msgf("loaded built-in plugin [%s]", name)
 			// case 2: available as dynamic plugin
 		} else {

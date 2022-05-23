@@ -1,0 +1,10 @@
+
+collector:          Ems
+
+client_timeout: 1m
+schedule:
+  - data: 2m
+
+objects:
+  Ems:                        ems.yaml
+

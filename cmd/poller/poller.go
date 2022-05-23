@@ -30,6 +30,7 @@ import (
 	"encoding/json"
 	errors2 "errors"
 	"fmt"
+	_ "github.com/netapp/harvest/v2/cmd/collectors/ems"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/rest"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/restperf"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/simple"

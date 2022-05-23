@@ -1,0 +1,33 @@
+name:   EMS
+query:  api/support/ems/events
+object: ems
+
+client_timeout: 1m
+schedule:
+  - data: 2m
+
+events:
+  - name: nis.server.not.available
+#    matches:
+#      - name: op
+#        value: disabled
+#    labels: # attach additional Prometheus key/value labels to the exported metric
+#      - severity: info  # exports with info severity, overriding original severity
+#      - abc: def
+    exports:
+      - source
+      - parameters.vserver_name         => svm
+      - time                            => time
+#    plugins:
+#      - LabelAgent:
+#          include_equals:
+#            - node `ocum-infinity-02`
+#          replace_regex:
+#            - severity severity `abc` `info`
+  - name: mgmtgwd.certificate.expiring
+    exports:
+      - parameters.common_name          => common_name
+      - parameters.serial_number        => serial_number
+      - parameters.days                 => days
+      - time                            => time
+
