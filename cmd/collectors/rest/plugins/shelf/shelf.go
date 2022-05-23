@@ -34,7 +34,17 @@ type shelfEnvironmentMetric struct {
 	currentSensor         map[string]float64
 }
 
-var eMetrics = []string{"power", "average_ambient_temperature", "min_ambient_temperature", "max_temperature", "average_temperature", "min_temperature", "average_fan_speed", "max_fan_speed", "min_fan_speed"}
+var eMetrics = []string{
+	"average_ambient_temperature",
+	"average_fan_speed",
+	"average_temperature",
+	"max_fan_speed",
+	"max_temperature",
+	"min_ambient_temperature",
+	"min_fan_speed",
+	"min_temperature",
+	"power",
+}
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Shelf{AbstractPlugin: p}

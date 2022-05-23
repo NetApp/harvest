@@ -1177,7 +1177,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Ambient Temp (C)"
+              "options": "Avg Ambient Temp (C)"
             },
             "properties": [
               {
@@ -1431,6 +1431,10 @@
                     }
                   ]
                 }
+              },
+              {
+                "id": "custom.align",
+                "value": "right"
               }
             ]
           },
@@ -1447,6 +1451,94 @@
               {
                 "id": "unit",
                 "value": "watt"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Min Ambient Temp (C)"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "transparent",
+                      "value": null
+                    },
+                    {
+                      "value": 5,
+                      "color": "green"
+                    },
+                    {
+                      "value": 45,
+                      "color": "yellow"
+                    },
+                    {
+                      "value": 65,
+                      "color": "orange"
+                    },
+                    {
+                      "color": "red",
+                      "value": 75
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.align",
+                "value": "right"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Min Temp (C)"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "transparent",
+                      "value": null
+                    },
+                    {
+                      "value": 5,
+                      "color": "green"
+                    },
+                    {
+                      "value": 45,
+                      "color": "#eab839"
+                    },
+                    {
+                      "value": 65,
+                      "color": "orange"
+                    },
+                    {
+                      "color": "red",
+                      "value": 85
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.align",
+                "value": "right"
               }
             ]
           }
@@ -1497,6 +1589,16 @@
           "refId": "E"
         },
         {
+          "expr": "environment_sensor_min_ambient_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "legendFormat": "",
+          "interval": "",
+          "exemplar": false,
+          "refId": "B",
+          "hide": false,
+          "format": "table",
+          "instant": true
+        },
+        {
           "exemplar": true,
           "expr": "environment_sensor_max_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
@@ -1515,6 +1617,16 @@
           "interval": "",
           "legendFormat": "",
           "refId": "G"
+        },
+        {
+          "expr": "environment_sensor_min_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "legendFormat": "",
+          "interval": "",
+          "exemplar": false,
+          "refId": "C",
+          "hide": false,
+          "format": "table",
+          "instant": true
         },
         {
           "exemplar": true,
@@ -1567,7 +1679,9 @@
                 "Value #I",
                 "Value #J",
                 "node",
-                "cluster"
+                "cluster",
+                "Value #B",
+                "Value #C"
               ]
             }
           }
@@ -1585,14 +1699,16 @@
               "state": true
             },
             "indexByName": {
-              "Value #A": 11,
+              "Value #A": 13,
               "Value #D": 4,
               "Value #E": 5,
-              "Value #F": 6,
-              "Value #G": 7,
-              "Value #H": 8,
-              "Value #I": 9,
-              "Value #J": 10,
+              "Value #B": 6,
+              "Value #F": 7,
+              "Value #G": 8,
+              "Value #C": 9,
+              "Value #H": 10,
+              "Value #I": 11,
+              "Value #J": 12,
               "cluster": 1,
               "datacenter": 0,
               "model": 3,
@@ -1600,10 +1716,10 @@
             },
             "renameByName": {
               "Value #A": "",
-              "Value #B": "disk_count",
-              "Value #C": "state",
+              "Value #B": "Min Ambient Temp (C)",
+              "Value #C": "Min Temp (C)",
               "Value #D": "Power",
-              "Value #E": "Ambient Temp (C)",
+              "Value #E": "Avg Ambient Temp (C)",
               "Value #F": "Max Temp (C)",
               "Value #G": "Avg Temp (C)",
               "Value #H": "Max Fan Speed (rpm)",

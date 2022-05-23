@@ -47,7 +47,17 @@ var ambientRegex = regexp.MustCompile(`^(Ambient Temp|Ambient Temp \d|PSU\d AmbT
 var powerInRegex = regexp.MustCompile(`^PSU\d (InPwr Monitor|InPower|PIN|Power In)$`)
 var voltageRegex = regexp.MustCompile(`^PSU\d (\d+V|InVoltage|VIN|AC In Volt)$`)
 var currentRegex = regexp.MustCompile(`^PSU\d (\d+V Curr|Curr|InCurrent|Curr IIN|AC In Curr)$`)
-var eMetrics = []string{"power", "average_ambient_temperature", "min_ambient_temperature", "max_temperature", "average_temperature", "min_temperature", "average_fan_speed", "max_fan_speed", "min_fan_speed"}
+var eMetrics = []string{
+	"average_ambient_temperature",
+	"average_fan_speed",
+	"average_temperature",
+	"max_fan_speed",
+	"max_temperature",
+	"min_ambient_temperature",
+	"min_fan_speed",
+	"min_temperature",
+	"power",
+}
 
 func (my *Sensor) Init() error {
 	if err := my.InitAbc(); err != nil {
@@ -102,6 +112,15 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				sensorType := instance.GetLabel("type")
 				sensorName := instance.GetLabel("sensor")
 				sensorUnit := instance.GetLabel("unit")
+				warningLowThr := instance.GetLabel("warning_low")
+
+				// Need to choose based on the REST folder version
+				var criticalLowThr float64
+				if criticalLowMetric := data.GetMetric("crit_low"); criticalLowMetric != nil {
+					criticalLowThr, _ = criticalLowMetric.GetValueFloat64(instance)
+				} else {
+					criticalLowThr, _ = data.GetMetric("critical_low_threshold").GetValueFloat64(instance)
+				}
 				isAmbientMatch := ambientRegex.MatchString(sensorName)
 				isPowerMatch := powerInRegex.MatchString(sensorName)
 				isVoltageMatch := voltageRegex.MatchString(sensorName)
@@ -111,6 +130,8 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 					Bool("isPowerMatch", isPowerMatch).
 					Bool("isVoltageMatch", isVoltageMatch).
 					Bool("isCurrentMatch", isCurrentMatch).
+					Str("warningLowThreshold", warningLowThr).
+					Float64("criticalLowThreshold", criticalLowThr).
 					Str("sensorType", sensorType).
 					Str("sensorUnit", sensorUnit).
 					Str("sensorName", sensorName).
@@ -123,8 +144,11 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				}
 
 				if sensorType == "thermal" && !isAmbientMatch {
-					if value, ok := metric.GetValueFloat64(instance); ok {
-						sensorEnvironmentMetricMap[iKey].nonAmbientTemperature = append(sensorEnvironmentMetricMap[iKey].nonAmbientTemperature, value)
+					// For temperature calculations, excluding sensors which contains `Margin`, and excluding sensors which don't have both critical_low_threshold and warning_low_threshold fields.
+					if !strings.Contains(sensorName, "Margin") && !(criticalLowThr == 0.0 && warningLowThr == "") {
+						if value, ok := metric.GetValueFloat64(instance); ok {
+							sensorEnvironmentMetricMap[iKey].nonAmbientTemperature = append(sensorEnvironmentMetricMap[iKey].nonAmbientTemperature, value)
+						}
 					}
 				}
 
