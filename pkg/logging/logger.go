@@ -2,10 +2,10 @@ package logging
 
 import (
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/rs/zerolog/pkgerrors"
 	"io"
 	"os"
 	"path"
+	"runtime"
 	"sync"
 
 	"github.com/rs/zerolog"
@@ -102,7 +102,7 @@ func Configure(config LogConfig) *Logger {
 	multiWriters := zerolog.MultiLevelWriter(writers...)
 
 	zerolog.SetGlobalLevel(config.LogLevel)
-	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
+	zerolog.ErrorStackMarshaler = MarshalStack
 	zeroLogger := zerolog.New(multiWriters).With().Caller().Str(config.PrefixKey, config.PrefixValue).Timestamp().Logger()
 
 	zeroLogger.Debug().
@@ -122,6 +122,25 @@ func Configure(config LogConfig) *Logger {
 		Logger: &zeroLogger,
 	}
 	return logger
+}
+
+func MarshalStack(err error) interface{} {
+	if err == nil {
+		return nil
+	}
+	// We don't know how big the stack trace will be, so start with 10K and double a few times if needed
+	n := 10_000
+	var trace []byte
+	for i := 0; i < 5; i++ {
+		trace = make([]byte, n)
+		bytesWritten := runtime.Stack(trace, false)
+		if bytesWritten < len(trace) {
+			trace = trace[:bytesWritten]
+			break
+		}
+		n *= 2
+	}
+	return string(trace)
 }
 
 //returns lumberjack writer

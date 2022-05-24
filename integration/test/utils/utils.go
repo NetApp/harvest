@@ -6,15 +6,14 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/rs/zerolog"
-	zlog "github.com/rs/zerolog/log"
-	"github.com/rs/zerolog/pkgerrors"
+	"github.com/rs/zerolog/log"
 	"io"
-	"log"
 	"net"
 	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -226,7 +225,7 @@ func IsURLReachable(url string) bool {
 }
 
 func AddPrometheusToGrafana() {
-	log.Println("Add Prometheus into Grafana")
+	log.Info().Msg("Add Prometheus into Grafana")
 	url := GetGrafanaHTTPURL() + "/api/datasources"
 	method := "POST"
 	jsonValue := []byte(fmt.Sprintf(`{"name": "Prometheus", "type": "prometheus", "access": "direct",
@@ -235,14 +234,14 @@ func AddPrometheusToGrafana() {
 	data = SendReqAndGetRes(url, method, jsonValue)
 	key := fmt.Sprintf("%v", data["message"])
 	if key == "Datasource added" {
-		log.Println("Prometheus has been added successfully into Grafana .")
+		log.Info().Msg("Prometheus has been added successfully into Grafana .")
 		return
 	}
 	panic(fmt.Errorf("ERROR: unable to add Prometheus into grafana"))
 }
 
 func CreateGrafanaToken() string {
-	log.Println("Creating grafana API Key.")
+	log.Info().Msg("Creating grafana API Key.")
 	url := GetGrafanaHTTPURL() + "/api/auth/keys"
 	method := "POST"
 	name := fmt.Sprint(time.Now().Unix())
@@ -252,7 +251,7 @@ func CreateGrafanaToken() string {
 	data = SendReqAndGetRes(url, method, jsonValue)
 	key := fmt.Sprintf("%v", data["key"])
 	if len(key) > 0 {
-		log.Println("Grafana: Token has been created successfully.")
+		log.Info().Msg("Grafana: Token has been created successfully.")
 		return key
 	}
 	panic(fmt.Errorf("ERROR: unable to create grafana token"))
@@ -295,7 +294,7 @@ func WriteToken(token string) {
 	tools := conf.Config.Tools
 	if tools != nil {
 		if len(tools.GrafanaAPIToken) > 0 {
-			log.Println(filename + "  has an entry for grafana token")
+			log.Info().Msg(filename + "  has an entry for grafana token")
 			return
 		}
 	}
@@ -308,8 +307,8 @@ func WriteToken(token string) {
 		err := f.Close()
 		PanicIfNotNil(err)
 	}(f)
-	fmt.Fprintf(f, "\n%s\n", "Tools:")
-	fmt.Fprintf(f, "  %s: %s\n", GrafanaTokeKey, token)
+	_, _ = fmt.Fprintf(f, "\n%s\n", "Tools:")
+	_, _ = fmt.Fprintf(f, "  %s: %s\n", GrafanaTokeKey, token)
 }
 
 func GetGrafanaHTTPURL() string {
@@ -355,7 +354,26 @@ func RemoveDuplicateStr(strSlice []string) []string {
 
 func SetupLogging() {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
-	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
-	zlog.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr, NoColor: true}).
+	zerolog.ErrorStackMarshaler = MarshalStack
+	log.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr, NoColor: true}).
 		With().Caller().Stack().Timestamp().Logger()
+}
+
+func MarshalStack(err error) interface{} {
+	if err == nil {
+		return nil
+	}
+	// We don't know how big the stack trace will be, so start with 10K and double a few times if needed
+	n := 10_000
+	var trace []byte
+	for i := 0; i < 5; i++ {
+		trace = make([]byte, n)
+		bytesWritten := runtime.Stack(trace, false)
+		if bytesWritten < len(trace) {
+			trace = trace[:bytesWritten]
+			break
+		}
+		n *= 2
+	}
+	return string(trace)
 }
