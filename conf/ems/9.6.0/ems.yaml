@@ -24,4 +24,12 @@ events:
       - parameters.serial_number        => serial_number
       - parameters.days                 => days
       - time                            => time
+  - name: LUN.offline
+    exports:
+      - parameters.lun_path             => lun_path
+      - parameters.volume_name          => volume_name
+      - parameters.object_uuid          => object_uuid
+      - time                            => time
+    plugins:
+      - abc
 

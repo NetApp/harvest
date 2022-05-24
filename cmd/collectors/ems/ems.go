@@ -126,7 +126,10 @@ func (e *Ems) InitMatrix() error {
 }
 
 func (e *Ems) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {
-	//handle custom plugins
+	switch kind {
+	default:
+		e.Logger.Warn().Str("kind", kind).Msg("no ems plugin found ")
+	}
 	return nil
 }
 
@@ -212,7 +215,7 @@ func (e *Ems) InitCache() error {
 				e.ParseLabels(line1, &prop)
 			}
 			if line1.GetNameS() == "plugins" {
-				if err = e.LoadPlugins(line1, prop.Name); err != nil {
+				if err = e.LoadPlugins(line1, e, prop.Name); err != nil {
 					e.Logger.Error().Stack().Err(err).Msg("Failed to load plugin")
 				}
 			}
