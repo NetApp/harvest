@@ -310,7 +310,7 @@ func parseProperties(instanceData gjson.Result, property string) gjson.Result {
 	return gjson.Result{}
 }
 
-var metricTypeRegex = regexp.MustCompile(`\[(.*?)\]`)
+var metricTypeRegex = regexp.MustCompile(`\[(.*?)]`)
 
 func arrayMetricToString(value string) string {
 	r := strings.NewReplacer("\n", "", " ", "", "\"", "")
@@ -644,7 +644,6 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 						if len(labels) != len(values) {
 							// warn & skip
 							r.Logger.Warn().
-								Stack().
 								Str("labels", f.label).
 								Str("value", f.value).
 								Msg("labels don't match parsed values")
@@ -1025,7 +1024,7 @@ func (r *RestPerf) counterLookup(metric matrix.Metric, metricKey string) *counte
 	return c
 }
 
-func (r *RestPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {
+func (r *RestPerf) LoadPlugin(kind string, _ *plugin.AbstractPlugin) plugin.Plugin {
 	switch kind {
 	default:
 		r.Logger.Warn().Str("kind", kind).Msg("no rest performance plugin found ")

@@ -88,13 +88,13 @@ func (my *Certificate) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		// invoke vserver-get-iter zapi and get admin vserver name
 		if adminVserver, err = my.GetAdminVserver(); err != nil {
-			my.Logger.Warn().Stack().Err(err).Msg("Failed to collect admin vserver")
+			my.Logger.Warn().Err(err).Msg("Failed to collect admin vserver")
 			return nil, nil
 		}
 
 		// invoke security-ssl-get-iter zapi and get admin vserver's serial number
 		if adminVserverSerial, err = my.GetSecuritySsl(adminVserver); err != nil {
-			my.Logger.Warn().Stack().Err(err).Msg("Failed to collect admin vserver's serial number")
+			my.Logger.Warn().Err(err).Msg("Failed to collect admin vserver's serial number")
 			return nil, nil
 		}
 
