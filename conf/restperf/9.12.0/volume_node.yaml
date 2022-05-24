@@ -6,40 +6,38 @@ object:                   node_vol
 counters:
   - ^^id
   - ^node.name            => node
-  - cifs.other_latency    => cifs_other_latency
-  - cifs.other_ops        => cifs_other_ops
   - cifs.read_data        => cifs_read_data
-  - cifs.read_latency     => cifs_read_latency
-  - cifs.read_ops         => cifs_read_ops
   - cifs.write_data       => cifs_write_data
-  - cifs.write_latency    => cifs_write_latency
+  - cifs.read_ops         => cifs_read_ops
   - cifs.write_ops        => cifs_write_ops
-  - fcp.other_latency     => fcp_other_latency
-  - fcp.other_ops         => fcp_other_ops
-  - fcp.read_data         => fcp_read_data
-  - fcp.read_latency      => fcp_read_latency
-  - fcp.read_ops          => fcp_read_ops
-  - fcp.write_data        => fcp_write_data
-  - fcp.write_latency     => fcp_write_latency
-  - fcp.write_ops         => fcp_write_ops
-  - iscsi.other_latency   => iscsi_other_latency
-  - iscsi.other_ops       => iscsi_other_ops
-  - iscsi.read_data       => iscsi_read_data
-  - iscsi.read_latency    => iscsi_read_latency
-  - iscsi.read_ops        => iscsi_read_ops
-  - iscsi.write_data      => iscsi_write_data
-  - iscsi.write_latency   => iscsi_write_latency
-  - iscsi.write_ops       => iscsi_write_ops
-  - nfs.other_latency     => nfs_other_latency
-  - nfs.other_ops         => nfs_other_ops
+  - cifs.other_ops        => cifs_other_ops
+  - cifs.read_latency     => cifs_read_latency
+  - cifs.write_latency    => cifs_write_latency
+  - cifs.other_latency    => cifs_other_latency
   - nfs.read_data         => nfs_read_data
-  - nfs.read_latency      => nfs_read_latency
-  - nfs.read_ops          => nfs_read_ops
   - nfs.write_data        => nfs_write_data
-  - nfs.write_latency     => nfs_write_latency
+  - nfs.read_ops          => nfs_read_ops
   - nfs.write_ops         => nfs_write_ops
-  - read_latency          => read_latency
-  - write_latency         => write_latency
+  - nfs.other_ops         => nfs_other_ops
+  - nfs.read_latency      => nfs_read_latency
+  - nfs.write_latency     => nfs_write_latency
+  - nfs.other_latency     => nfs_other_latency
+  - iscsi.read_data       => iscsi_read_data
+  - iscsi.write_data      => iscsi_write_data
+  - iscsi.read_ops        => iscsi_read_ops
+  - iscsi.write_ops       => iscsi_write_ops
+  - iscsi.other_ops       => iscsi_other_ops
+  - iscsi.read_latency    => iscsi_read_latency
+  - iscsi.write_latency   => iscsi_write_latency
+  - iscsi.other_latency   => iscsi_other_latency
+  - fcp.read_data         => fcp_read_data
+  - fcp.write_data        => fcp_write_data
+  - fcp.read_ops          => fcp_read_ops
+  - fcp.write_ops         => fcp_write_ops
+  - fcp.other_ops         => fcp_other_ops
+  - fcp.read_latency      => fcp_read_latency
+  - fcp.write_latency     => fcp_write_latency
+  - fcp.other_latency     => fcp_other_latency
 
 export_options:
   instance_keys:
