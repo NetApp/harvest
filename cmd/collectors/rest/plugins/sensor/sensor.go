@@ -114,7 +114,8 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				sensorUnit := instance.GetLabel("unit")
 				warningLowThr := instance.GetLabel("warning_low")
 
-				// Need to choose based on the REST folder version
+				// 9.10 REST end point uses private cli for sensor which has different metric names than the 9.12 api/cluster/sensors REST endpoint.
+				// Handle both the cases here
 				var criticalLowThr float64
 				if criticalLowMetric := data.GetMetric("crit_low"); criticalLowMetric != nil {
 					criticalLowThr, _ = criticalLowMetric.GetValueFloat64(instance)
@@ -144,7 +145,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				}
 
 				if sensorType == "thermal" && !isAmbientMatch {
-					// For temperature calculations, excluding sensors which don't have both critical_low_threshold and warning_low_threshold fields.
+					// Exclude temperature sensors that have crit_low=0 and warn_low is missing
 					if !(criticalLowThr == 0.0 && warningLowThr == "") {
 						if value, ok := metric.GetValueFloat64(instance); ok {
 							sensorEnvironmentMetricMap[iKey].nonAmbientTemperature = append(sensorEnvironmentMetricMap[iKey].nonAmbientTemperature, value)
