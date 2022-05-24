@@ -30,7 +30,7 @@ type Ems struct {
 	ReturnTimeOut   string
 	clusterTimezone *time.Location
 	lastFilterTime  string
-	emsBatchSize    int
+	batchSize       int
 }
 
 type Metric struct {
@@ -76,7 +76,7 @@ func (e *Ems) Init(a *collector.AbstractCollector) error {
 
 	e.Rest = &rest2.Rest{AbstractCollector: a}
 	e.Fields = []string{"*"}
-	e.emsBatchSize = 10
+	e.batchSize = 10
 
 	// init Rest props
 	e.InitProp()
@@ -145,10 +145,10 @@ func (e *Ems) InitCache() error {
 
 	if b := e.Params.GetChildContentS("batch_size"); b != "" {
 		if s, err := strconv.Atoi(b); err == nil {
-			e.emsBatchSize = s
+			e.batchSize = s
 		}
 	}
-	e.Logger.Trace().Int("batch_size", e.emsBatchSize).Msgf("")
+	e.Logger.Trace().Int("batch_size", e.batchSize).Msgf("")
 
 	if export := e.Params.GetChildS("export_options"); export != nil {
 		e.Matrix[e.Object].SetExportOptions(export)
@@ -336,7 +336,7 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	// Split names into batches
-	batch := e.emsBatchSize
+	batch := e.batchSize
 
 	for i := 0; i < len(names); i += batch {
 		j := i + batch
