@@ -212,7 +212,7 @@ func (e *Ems) InitCache() error {
 				e.ParseLabels(line1, &prop)
 			}
 			if line1.GetNameS() == "plugins" {
-				if prop.Plugins, err = e.LoadEmsPlugins(line1); err != nil {
+				if err = e.LoadPlugins(line1, prop.Name); err != nil {
 					e.Logger.Error().Stack().Err(err).Msg("Failed to load plugin")
 				}
 				//set plugin at collector level

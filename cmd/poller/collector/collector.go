@@ -57,8 +57,10 @@ type Collector interface {
 	SetMetadata(*matrix.Matrix)
 	WantedExporters([]string) []string
 	LinkExporter(exporter.Exporter)
-	LoadPlugins(*node.Node, Collector) error
+	LoadPlugins(*node.Node, string) error
 	LoadPlugin(string, *plugin.AbstractPlugin) plugin.Plugin
+	GetPlugins() map[string][]plugin.Plugin
+	addPlugins(key string, p []plugin.Plugin)
 	CollectAutoSupport(p *Payload)
 }
 
@@ -198,7 +200,7 @@ func Init(c Collector) error {
 
 	// Initialize Plugins
 	if plugins := params.GetChildS("plugins"); plugins != nil {
-		if err := c.LoadPlugins(plugins, c); err != nil {
+		if err := c.LoadPlugins(plugins, c.GetObject()); err != nil {
 			return err
 		}
 	}
@@ -494,6 +496,18 @@ func (me *AbstractCollector) GetOptions() *options.Options {
 	return me.Options
 }
 
+// GetPlugins returns the plugins of the collector
+func (me *AbstractCollector) GetPlugins() map[string][]plugin.Plugin {
+	return me.Plugins
+}
+
+// addPlugins add plugins of the collector
+func (me *AbstractCollector) addPlugins(key string, p []plugin.Plugin) {
+	if _, ok := me.Plugins[key]; ok {
+		me.Plugins[key] = append(me.Plugins[key], p...)
+	}
+}
+
 // SetSchedule set Schedule s as a field of the collector
 func (me *AbstractCollector) SetSchedule(s *schedule.Schedule) {
 	me.Schedule = s
@@ -526,7 +540,7 @@ func (me *AbstractCollector) LoadPlugin(s string, abc *plugin.AbstractPlugin) pl
 
 //LoadPlugins loads built-in plugins or dynamically loads custom plugins
 //and adds them to the collector
-func (me *AbstractCollector) LoadPlugins(params *node.Node, c Collector) error {
+func (me *AbstractCollector) LoadPlugins(params *node.Node, key string) error {
 
 	var p plugin.Plugin
 	var abc *plugin.AbstractPlugin
@@ -548,7 +562,7 @@ func (me *AbstractCollector) LoadPlugins(params *node.Node, c Collector) error {
 			me.Logger.Debug().Msgf("loaded built-in plugin [%s]", name)
 			// case 2: available as dynamic plugin
 		} else {
-			p = c.LoadPlugin(name, abc)
+			p = me.LoadPlugin(name, abc)
 			me.Logger.Debug().Msgf("loaded plugin [%s]", name)
 		}
 		if p == nil {
@@ -561,8 +575,8 @@ func (me *AbstractCollector) LoadPlugins(params *node.Node, c Collector) error {
 		}
 		plugins = append(plugins, p)
 	}
-	me.Plugins[me.Object] = plugins
 	me.Logger.Debug().Msgf("initialized %d plugins", len(me.Plugins))
+	me.Plugins[key] = plugins
 	return nil
 }
 

@@ -13,17 +13,11 @@ events:
 #        value: ocum-infinity-02
 #    labels: # attach additional Prometheus key/value labels to the exported metric
 #      - severity: info  # exports with info severity, overriding original severity
-#      - abc: def
+#      - abc: def        # adds a label abc with value def
     exports:
       - source
       - parameters.vserver_name         => svm
       - time                            => time
-#    plugins:
-#      - LabelAgent:
-#          include_equals:
-#            - node `ocum-infinity-02`
-#          replace_regex:
-#            - severity severity `abc` `info`
   - name: mgmtgwd.certificate.expiring
     exports:
       - parameters.common_name          => common_name
