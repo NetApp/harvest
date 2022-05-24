@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// default label set collected for each ems
 var defaultLabels = map[string]string{
 	"message.name":     "message",
 	"node.name":        "node",

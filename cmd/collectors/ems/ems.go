@@ -180,12 +180,21 @@ func (e *Ems) InitCache() error {
 		prop.InstanceLabels = make(map[string]string)
 		prop.Metrics = make(map[string]*Metric)
 
-		if line.GetChildS("name") == nil {
-			e.Logger.Warn().Msg("Missing event name for ems")
+		// check if name is present in template
+		if line.GetChildS("name") == nil || line.GetChildS("name").GetContentS() == "" {
+			e.Logger.Warn().Msg("Missing event name")
 			continue
 		}
+
+		//verify if name is duplicate
+		eventName := line.GetChildS("name").GetContentS()
+		if _, ok := e.emsProp[eventName]; ok {
+			e.Logger.Warn().Str("name", eventName).Msg("duplicate event name")
+			continue
+		}
+
 		if line.GetChildS("exports") == nil || len(line.GetChildS("exports").GetAllChildContentS()) == 0 {
-			e.Logger.Warn().Str("name", line.GetChildS("name").GetContentS()).Msg("Missing exports for ems")
+			e.Logger.Warn().Str("name", eventName).Msg("Missing exports")
 			continue
 		}
 
@@ -275,15 +284,19 @@ func (e *Ems) getClusterTimeZone() error {
 	}
 }
 
-// returns timefilter (clustertime - polldata duration)
+// returns time filter (clustertime - polldata duration)
 func (e *Ems) getTimeStampFilter() string {
-	dataDuration, err := GetDataInterval(e.GetParams(), DefaultDataPollDuration)
-	if err != nil {
-		e.Logger.Error().Stack().Err(err).Str("DefaultDataPollDuration", DefaultDataPollDuration.String()).Msg("Failed to parse duration. using default")
-	}
-	fromTime := time.Now().In(e.clusterTimezone).Add(-dataDuration).Format(time.RFC3339)
+	var fromTime string
+	// check if not first request
 	if e.lastFilterTime != "" {
 		fromTime = e.lastFilterTime
+	} else {
+		// if first request fetch cluster time
+		dataDuration, err := GetDataInterval(e.GetParams(), DefaultDataPollDuration)
+		if err != nil {
+			e.Logger.Warn().Stack().Err(err).Str("DefaultDataPollDuration", DefaultDataPollDuration.String()).Msg("Failed to parse duration. using default")
+		}
+		fromTime = time.Now().In(e.clusterTimezone).Add(-dataDuration).Format(time.RFC3339)
 	}
 	return "time=>=" + fromTime
 }
@@ -293,6 +306,7 @@ func (e *Ems) fetchEMSData(names []string, filter []string) ([]interface{}, erro
 		records []interface{}
 		err     error
 	)
+	//event name filter
 	nameFilter := "message.name=" + strings.Join(names[:], ",")
 	filter = append(filter, nameFilter)
 
@@ -318,6 +332,7 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	)
 
 	e.Logger.Debug().Msg("starting data poll")
+	// remove instances from last poll except the parent object
 	for k := range e.Matrix {
 		if strings.HasPrefix(k, emsEventMatrixPrefix) {
 			delete(e.Matrix, k)
@@ -326,10 +341,12 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 
 	startTime = time.Now()
 
+	// add time filter
 	toTime := time.Now().In(e.clusterTimezone).Format(time.RFC3339)
 	timeFilter := e.getTimeStampFilter()
 	filter := append(e.Filter, timeFilter)
-	//build filter
+
+	// collect all event names
 	var names []string
 	for key := range e.emsProp {
 		names = append(names, key)
@@ -390,6 +407,7 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	_ = e.Metadata.LazySetValueUint64("datapoint_count", "data", count)
 	e.AddCollectCount(count)
 
+	// update lastfiltertime to current cluster time
 	e.lastFilterTime = toTime
 	return e.Matrix, nil
 }
@@ -413,12 +431,17 @@ func GetDataInterval(param *node.Node, defaultInterval time.Duration) (time.Dura
 }
 
 func parseProperties(instanceData gjson.Result, property string) gjson.Result {
+
 	if !strings.HasPrefix(property, "parameters.") {
+		// if prefix is not parameters.
 		value := gjson.Get(instanceData.String(), property)
 		return value
 	} else {
+		//strip parameters. from property name
 		property = strings.Replace(property, "parameters.", "", -1)
 	}
+
+	//process parameter search
 	t := gjson.Get(instanceData.String(), "parameters.#.name")
 
 	for _, name := range t.Array() {
@@ -451,12 +474,14 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string]*emsProp) (map[
 			return true
 		}
 		messageName := instanceData.Get("message.name")
+		// verify if message name exists in ontap response
 		if !messageName.Exists() {
 			e.Logger.Warn().Msg("skip instance, missing message name")
 			return true
 		} else {
 			k := emsEventMatrixPrefix + messageName.String()
 			if _, ok := m[k]; !ok {
+				//create matrix if not exists for the ems event
 				mx = matrix.New(messageName.String(), e.Prop.Object, messageName.String())
 				mx.SetGlobalLabels(e.Matrix[e.Object].GetGlobalLabels())
 				m[k] = mx
@@ -465,12 +490,8 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string]*emsProp) (map[
 			}
 		}
 
-		for _, p := range prop {
-
-			if p.Name != messageName.String() {
-				continue
-			}
-
+		//parse ems properties for the instance
+		if p, ok := prop[messageName.String()]; ok {
 			// extract instance key(s)
 			for _, k := range p.InstanceKeys {
 				value := parseProperties(instanceData, k)
@@ -506,8 +527,8 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string]*emsProp) (map[
 					}
 					count++
 				} else {
-					// spams a lot currently due to missing label mappings. Moved to debug for now till rest gaps are filled
-					e.Logger.Debug().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
+					// spams a lot currently due to missing label mappings.
+					e.Logger.Warn().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
 				}
 			}
 
@@ -521,18 +542,20 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string]*emsProp) (map[
 			for _, v := range p.Matches {
 				if value := instance.GetLabel(v.Name); value != "" {
 					if value != v.value {
+						e.Logger.Debug().Str("Instance key", instanceKey).Str("name", v.Name).Str("value", v.value).Msg("removing instance as it doesn't match")
 						isMatch = false
 						break
 					}
 				} else {
 					//value not found
+					e.Logger.Debug().Str("Instance key", instanceKey).Str("name", v.Name).Str("value", v.value).Msg("removing instance as label is not found")
 					isMatch = false
 					break
 				}
 			}
 			if !isMatch {
 				mx.RemoveInstance(instanceKey)
-				continue
+				return true
 			}
 
 			for _, metric := range p.Metrics {
@@ -550,7 +573,7 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string]*emsProp) (map[
 							Msg("Unable to set float key on metric")
 					}
 				} else {
-					// this code may not execute as ems only support events metric
+					// this code will not execute as ems only support events metric
 					f := instanceData.Get(metric.Name)
 					if f.Exists() {
 						if err = metr.SetValueFloat64(instance, f.Float()); err != nil {
