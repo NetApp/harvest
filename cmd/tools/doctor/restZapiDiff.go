@@ -113,8 +113,16 @@ func metricValueDiff(metricName string) {
 	keyIndexes := make([]int, 0)
 
 	// These plugin generated metrics are node scoped.
-	environmentSensorMetrics := strings.Join([]string{"environment_sensor_power", "environment_sensor_ambient_temperature", "environment_sensor_max_temperature",
-		"environment_sensor_average_temperature", "environment_sensor_average_fan_speed", "environment_sensor_max_fan_speed", "environment_sensor_min_fan_speed"},
+	environmentSensorMetrics := strings.Join([]string{
+		"environment_sensor_average_ambient_temperature",
+		"environment_sensor_average_fan_speed",
+		"environment_sensor_average_temperature",
+		"environment_sensor_max_fan_speed",
+		"environment_sensor_max_temperature",
+		"environment_sensor_min_ambient_temperature",
+		"environment_sensor_min_fan_speed",
+		"environment_sensor_min_temperature",
+		"environment_sensor_power"},
 		",")
 
 	if strings.HasPrefix(metricName, "disk_") {
