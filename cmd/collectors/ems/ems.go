@@ -528,7 +528,6 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string]*emsProp) (map[
 					}
 					count++
 				} else {
-					// spams a lot currently due to missing label mappings.
 					e.Logger.Warn().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
 				}
 			}
