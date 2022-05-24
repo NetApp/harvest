@@ -4,7 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"strings"
+	"github.com/netapp/harvest/v2/pkg/util"
 )
 
 // default label set collected for each ems
@@ -50,7 +50,7 @@ func (e *Ems) ParseLabels(labels *node.Node, prop *emsProp) {
 
 func (e *Ems) ParseRestCounters(counter *node.Node, prop *emsProp) {
 	var (
-		display, name, kind string
+		display, name string
 	)
 
 	//load default ems labels
@@ -65,9 +65,8 @@ func (e *Ems) ParseRestCounters(counter *node.Node, prop *emsProp) {
 
 	for _, c := range counter.GetAllChildContentS() {
 		if c != "" {
-			name, display, kind = ParseEmsMetric(c)
+			name, display, _, _ = util.ParseMetric(c)
 			e.Logger.Debug().
-				Str("kind", kind).
 				Str("name", name).
 				Str("display", display).
 				Msg("Collected")
@@ -79,23 +78,6 @@ func (e *Ems) ParseRestCounters(counter *node.Node, prop *emsProp) {
 	// add a placeholder metric for ems
 	m := &Metric{Label: "events", Name: "events", MetricType: "", Exportable: true}
 	prop.Metrics["events"] = m
-}
-
-func ParseEmsMetric(rawName string) (string, string, string) {
-	var (
-		name, display string
-		values        []string
-	)
-	if values = strings.SplitN(rawName, "=>", 2); len(values) == 2 {
-		name = strings.TrimSpace(values[0])
-		display = strings.TrimSpace(values[1])
-	} else {
-		name = rawName
-		display = strings.ReplaceAll(rawName, ".", "_")
-		display = strings.ReplaceAll(display, "-", "_")
-	}
-
-	return name, display, "label"
 }
 
 //LoadEmsPlugins loads built-in plugins or dynamically loads custom plugins
