@@ -303,7 +303,7 @@ func (e *Ems) getTimeStampFilter() string {
 		// if first request fetch cluster time
 		dataDuration, err := GetDataInterval(e.GetParams(), DefaultDataPollDuration)
 		if err != nil {
-			e.Logger.Warn().Stack().Err(err).Str("DefaultDataPollDuration", DefaultDataPollDuration.String()).Msg("Failed to parse duration. using default")
+			e.Logger.Warn().Err(err).Str("DefaultDataPollDuration", DefaultDataPollDuration.String()).Msg("Failed to parse duration. using default")
 		}
 		fromTime = time.Now().In(e.clusterTimezone).Add(-dataDuration).Format(time.RFC3339)
 	}
