@@ -98,7 +98,7 @@ func (my *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		// invoke snapmirror zapi and populate info in source and destination snapmirror maps
 		if smSourceMap, smDestinationMap, err := my.GetSnapMirrors(); err != nil {
-			my.Logger.Warn().Stack().Err(err).Msg("Failed to collect snapmirror data")
+			my.Logger.Warn().Err(err).Msg("Failed to collect snapmirror data")
 		} else {
 			// update internal cache based on volume and SM maps
 			my.updateMaps(data, smSourceMap, smDestinationMap)
@@ -110,10 +110,10 @@ func (my *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		aggrDiskMap, err2 := my.getAggrDiskMapping()
 
 		if err1 != nil {
-			my.Logger.Warn().Stack().Err(err1).Msg("Failed to collect disk data")
+			my.Logger.Warn().Err(err1).Msg("Failed to collect disk data")
 		}
 		if err2 != nil {
-			my.Logger.Warn().Stack().Err(err2).Msg("Failed to collect aggregate-disk mapping data")
+			my.Logger.Warn().Err(err2).Msg("Failed to collect aggregate-disk mapping data")
 		}
 		// update aggrsMap based on disk data and addr disk mapping
 		my.updateAggrMap(disks, aggrDiskMap)

@@ -70,13 +70,13 @@ func (my *Security) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		// invoke security-config-get zapi with 'ssl' interface and get fips status
 		if my.fipsEnabled, err = my.getSecurityConfig(); err != nil {
-			my.Logger.Warn().Stack().Err(err).Msg("Failed to collect fips enable status")
+			my.Logger.Warn().Err(err).Msg("Failed to collect fips enable status")
 			//return nil, nil
 		}
 
 		// invoke security-protocol-get zapi with 'telnet' and 'rsh' and get
 		if my.telnetEnabled, my.rshEnabled, err = my.getSecurityProtocols(); err != nil {
-			my.Logger.Warn().Stack().Err(err).Msg("Failed to collect telnet and rsh enable status")
+			my.Logger.Warn().Err(err).Msg("Failed to collect telnet and rsh enable status")
 			//return nil, nil
 		}
 

@@ -362,7 +362,7 @@ func (me *LabelAgent) computeMetrics(m *matrix.Matrix) error {
 					continue
 				}
 			} else {
-				me.Logger.Warn().Stack().Err(err).Str("metricName", r.metricNames[0]).Msg("computeMetrics: metric not found")
+				me.Logger.Warn().Err(err).Str("metricName", r.metricNames[0]).Msg("computeMetrics: metric not found")
 			}
 
 			// Parse other operands and process them
@@ -375,7 +375,7 @@ func (me *LabelAgent) computeMetrics(m *matrix.Matrix) error {
 					if metricVal != nil {
 						v, _ = metricVal.GetValueFloat64(instance)
 					} else {
-						me.Logger.Warn().Stack().Err(err).Str("metricName", r.metricNames[i]).Msg("computeMetrics: metric not found")
+						me.Logger.Warn().Err(err).Str("metricName", r.metricNames[i]).Msg("computeMetrics: metric not found")
 						return nil
 					}
 				}
