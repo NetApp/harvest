@@ -33,7 +33,7 @@ func (my *SVM) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	// invoke nameservice-nsswitch-get-iter zapi and get nsswitch info
 	if my.nsswitchInfo, err = my.GetNSSwitchInfo(data); err != nil {
-		my.Logger.Warn().Stack().Err(err).Msg("Failed to collect nsswitch info")
+		my.Logger.Warn().Err(err).Msg("Failed to collect nsswitch info")
 		//return nil, nil
 	}
 
