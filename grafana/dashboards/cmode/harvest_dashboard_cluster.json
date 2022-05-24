@@ -933,23 +933,12 @@
           "color": {
             "mode": "thresholds"
           },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "color": "dark-yellow",
-                  "text": "0"
-                }
-              },
-              "type": "special"
-            }
-          ],
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "dark-yellow",
+                "color": "blue",
                 "value": null
               }
             ]
@@ -1014,24 +1003,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "transparent",
+                "color": "blue",
                 "value": null
-              },
-              {
-                "color": "rgb(84, 184, 45)",
-                "value": 5
-              },
-              {
-                "color": "semi-dark-yellow",
-                "value": 45
-              },
-              {
-                "color": "semi-dark-orange",
-                "value": 65
-              },
-              {
-                "color": "dark-red",
-                "value": 75
               }
             ]
           },
@@ -1088,24 +1061,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "transparent",
+                "color": "blue",
                 "value": null
-              },
-              {
-                "color": "rgb(84, 184, 45)",
-                "value": 500
-              },
-              {
-                "color": "semi-dark-yellow",
-                "value": 3000
-              },
-              {
-                "color": "semi-dark-orange",
-                "value": 5000
-              },
-              {
-                "color": "dark-red",
-                "value": 6000
               }
             ]
           },
