@@ -31,6 +31,7 @@ type Ems struct {
 	clusterTimezone *time.Location
 	lastFilterTime  string
 	batchSize       int
+	DefaultLabels   []string
 }
 
 type Metric struct {
@@ -161,7 +162,14 @@ func (e *Ems) InitCache() error {
 		return errors.New(errors.MissingParam, "query")
 	}
 
-	// create metric cache
+	if exports := e.Params.GetChildS("exports"); exports != nil {
+		for _, line := range exports.GetChildren() {
+			if line != nil {
+				e.DefaultLabels = append(e.DefaultLabels, line.GetContentS())
+			}
+		}
+	}
+
 	if events = e.Params.GetChildS("events"); events == nil {
 		return errors.New(errors.MissingParam, "events")
 	}
@@ -548,7 +556,7 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string]*emsProp) (map[
 					}
 				} else {
 					//value not found
-					e.Logger.Debug().Str("Instance key", instanceKey).Str("name", v.Name).Str("value", v.value).Msg("removing instance as label is not found")
+					e.Logger.Warn().Str("Instance key", instanceKey).Str("name", v.Name).Str("value", v.value).Msg("removing instance as label is not found")
 					isMatch = false
 					break
 				}

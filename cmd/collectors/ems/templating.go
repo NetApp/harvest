@@ -5,15 +5,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/util"
 )
 
-// default label set collected for each ems
-var defaultLabels = map[string]string{
-	"message.name":     "message",
-	"node.name":        "node",
-	"message.severity": "severity",
-	"time":             "time",
-	"index":            "index",
-}
-
 var defaultInstanceKey = []string{"index", "message.name"}
 
 func (e *Ems) ParseMatches(matches *node.Node, prop *emsProp) {
@@ -51,17 +42,26 @@ func (e *Ems) ParseRestCounters(counter *node.Node, prop *emsProp) {
 		display, name string
 	)
 
-	//load default ems labels
-	for k, v := range defaultLabels {
-		prop.InstanceLabels[k] = v
-	}
-
 	//load default instance keys
 	for _, v := range defaultInstanceKey {
 		prop.InstanceKeys = append(prop.InstanceKeys, v)
 	}
 
 	for _, c := range counter.GetAllChildContentS() {
+		if c != "" {
+			name, display, _, _ = util.ParseMetric(c)
+			e.Logger.Debug().
+				Str("name", name).
+				Str("display", display).
+				Msg("Collected")
+
+			// EMS only supports labels
+			prop.InstanceLabels[name] = display
+		}
+	}
+
+	//process default labels
+	for _, c := range e.DefaultLabels {
 		if c != "" {
 			name, display, _, _ = util.ParseMetric(c)
 			e.Logger.Debug().

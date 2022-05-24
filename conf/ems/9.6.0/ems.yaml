@@ -6,30 +6,36 @@ client_timeout: 1m
 schedule:
   - data: 2m
 
+exports:
+  - message.name       => message
+  - node.name          => node
+  - message.severity   => severity
+  - index              => index
+
 events:
   - name: nis.server.not.available
-#    matches:
-#      - name: node
-#        value: ocum-infinity-02
 #    labels: # attach additional Prometheus key/value labels to the exported metric
 #      - severity: info  # exports with info severity, overriding original severity
 #      - abc: def        # adds a label abc with value def
+#    matches:
+#      - name: node
+#        value: ocum-infinity-02
     exports:
       - source
       - parameters.vserver_name         => svm
-      - time                            => time
+
+#    labels: # attach additional Prometheus key/value labels to the exported metric
+#      - severity: info  # exports with info severity, overriding original severity
+#      - abc: def        # adds a label abc with value def
   - name: mgmtgwd.certificate.expiring
     exports:
       - parameters.common_name          => common_name
       - parameters.serial_number        => serial_number
       - parameters.days                 => days
-      - time                            => time
   - name: LUN.offline
     exports:
       - parameters.lun_path             => lun_path
       - parameters.volume_name          => volume_name
       - parameters.object_uuid          => object_uuid
-      - time                            => time
-    plugins:
-      - abc
+
 
