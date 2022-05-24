@@ -215,8 +215,6 @@ func (e *Ems) InitCache() error {
 				if err = e.LoadPlugins(line1, prop.Name); err != nil {
 					e.Logger.Error().Stack().Err(err).Msg("Failed to load plugin")
 				}
-				//set plugin at collector level
-				e.Plugins[prop.Name] = prop.Plugins
 			}
 		}
 		e.emsProp[prop.Name] = &prop
