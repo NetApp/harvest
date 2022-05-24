@@ -5,38 +5,40 @@ object:                   node_vol
 
 counters:
   - instance_name           => node
-  - cifs_read_data
-  - cifs_write_data
-  - cifs_read_ops
-  - cifs_write_ops
-  - cifs_other_ops
-  - cifs_read_latency
-  - cifs_write_latency
   - cifs_other_latency
-  - nfs_read_data
-  - nfs_write_data
-  - nfs_read_ops
-  - nfs_write_ops
-  - nfs_other_ops
-  - nfs_read_latency
-  - nfs_write_latency
-  - nfs_other_latency
-  - iscsi_read_data
-  - iscsi_write_data
-  - iscsi_read_ops
-  - iscsi_write_ops
-  - iscsi_other_ops
-  - iscsi_read_latency
-  - iscsi_write_latency
-  - iscsi_other_latency
-  - fcp_read_data
-  - fcp_write_data
-  - fcp_read_ops
-  - fcp_write_ops
-  - fcp_other_ops
-  - fcp_read_latency
-  - fcp_write_latency
+  - cifs_other_ops
+  - cifs_read_data
+  - cifs_read_latency
+  - cifs_read_ops
+  - cifs_write_data
+  - cifs_write_latency
+  - cifs_write_ops
   - fcp_other_latency
+  - fcp_other_ops
+  - fcp_read_data
+  - fcp_read_latency
+  - fcp_read_ops
+  - fcp_write_data
+  - fcp_write_latency
+  - fcp_write_ops
+  - iscsi_other_latency
+  - iscsi_other_ops
+  - iscsi_read_data
+  - iscsi_read_latency
+  - iscsi_read_ops
+  - iscsi_write_data
+  - iscsi_write_latency
+  - iscsi_write_ops
+  - nfs_other_latency
+  - nfs_other_ops
+  - nfs_read_data
+  - nfs_read_latency
+  - nfs_read_ops
+  - nfs_write_data
+  - nfs_write_latency
+  - nfs_write_ops
+  - read_latency
+  - write_latency
 
 export_options:
   instance_keys:

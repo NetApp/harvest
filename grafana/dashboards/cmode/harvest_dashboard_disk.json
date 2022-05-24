@@ -65,16 +65,12 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1651149589286,
+  "iteration": 1653414243253,
   "links": [],
   "panels": [
     {
       "collapsed": false,
       "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1143,10 +1139,6 @@
     {
       "collapsed": false,
       "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1505,10 +1497,6 @@
     {
       "collapsed": false,
       "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1768,7 +1756,48 @@
           },
           "unit": "µs"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "custom.axisLabel",
+                "value": "Back to Back CP Count"
+              },
+              {
+                "id": "unit",
+                "value": "none"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              },
+              {
+                "id": "custom.axisLabel",
+                "value": "Write Latency"
+              },
+              {
+                "id": "unit",
+                "value": "µs"
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 9,
@@ -1794,11 +1823,18 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "sum(wafl_cp_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}) by (subcounter)",
+          "expr": "sum(wafl_cp_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",metric=~\"back_to_back_CP|deferred_back_to_back_CP\"})",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{subcounter}}",
+          "legendFormat": "Back-to-back CP Count",
           "refId": "A"
+        },
+        {
+          "expr": "node_vol_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Write Latency {{node}}",
+          "refId": "B"
         }
       ],
       "timeFrom": null,
@@ -2062,7 +2098,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": false,
+  "refresh": "",
   "schemaVersion": 30,
   "style": "dark",
   "tags": [],
@@ -2330,6 +2366,6 @@
   },
   "timezone": "",
   "title": "NetApp Detail: Disk",
-  "uid": "bylcS_w7k",
-  "version": 22
+  "uid": "DIc93hunk",
+  "version": 23
 }
