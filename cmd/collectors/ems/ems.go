@@ -16,10 +16,9 @@ import (
 	"time"
 )
 
-const DefaultDataPollDuration = 3 * time.Minute
+const DefaultDataPollDuration = 2 * time.Minute
 const severityFilter = "message.severity=alert|emergency|error|informational"
-const emsEventMatrixPrefix = "ems_" //Used to clean up old instances excluding the parent
-var emsBatchSize = 10
+const emsEventMatrixPrefix = "ems#" //Used to clean up old instances excluding the parent
 
 type Ems struct {
 	*rest2.Rest     // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
@@ -31,6 +30,7 @@ type Ems struct {
 	ReturnTimeOut   string
 	clusterTimezone *time.Location
 	lastFilterTime  string
+	emsBatchSize    int
 }
 
 type Metric struct {
@@ -50,7 +50,6 @@ type emsProp struct {
 	InstanceKeys   []string
 	InstanceLabels map[string]string
 	Metrics        map[string]*Metric
-	Counters       map[string]string
 	Plugins        []plugin.Plugin // built-in or custom plugins
 	Matches        []*Matches
 	Labels         map[string]string
@@ -67,15 +66,22 @@ func (Ems) HarvestModule() plugin.ModuleInfo {
 	}
 }
 
+func (e *Ems) InitEmsProp() {
+	e.emsProp = make(map[string]*emsProp)
+}
+
 func (e *Ems) Init(a *collector.AbstractCollector) error {
 
 	var err error
 
 	e.Rest = &rest2.Rest{AbstractCollector: a}
-	e.emsProp = make(map[string]*emsProp)
 	e.Fields = []string{"*"}
+	e.emsBatchSize = 10
 
+	// init Rest props
 	e.InitProp()
+	// init ems props
+	e.InitEmsProp()
 
 	if err = e.InitClient(); err != nil {
 		return err
@@ -139,10 +145,10 @@ func (e *Ems) InitCache() error {
 
 	if b := e.Params.GetChildContentS("batch_size"); b != "" {
 		if s, err := strconv.Atoi(b); err == nil {
-			emsBatchSize = s
+			e.emsBatchSize = s
 		}
 	}
-	e.Logger.Trace().Int("batch_size", emsBatchSize).Msgf("")
+	e.Logger.Trace().Int("batch_size", e.emsBatchSize).Msgf("")
 
 	if export := e.Params.GetChildS("export_options"); export != nil {
 		e.Matrix[e.Object].SetExportOptions(export)
@@ -172,22 +178,22 @@ func (e *Ems) InitCache() error {
 
 		prop.InstanceKeys = make([]string, 0)
 		prop.InstanceLabels = make(map[string]string)
-		prop.Counters = make(map[string]string)
 		prop.Metrics = make(map[string]*Metric)
+
+		if line.GetChildS("name") == nil {
+			e.Logger.Warn().Msg("Missing event name for ems")
+			continue
+		}
+		if line.GetChildS("exports") == nil || len(line.GetChildS("exports").GetAllChildContentS()) == 0 {
+			e.Logger.Warn().Str("name", line.GetChildS("name").GetContentS()).Msg("Missing exports for ems")
+			continue
+		}
 
 		for _, line1 := range line.GetChildren() {
 			if line1.GetNameS() == "name" {
 				prop.Name = line1.GetContentS()
-				if prop.Name == "" {
-					e.Logger.Warn().Msg("Missing event name for ems")
-					continue
-				}
 			}
 			if line1.GetNameS() == "exports" {
-				if len(line1.GetAllChildContentS()) == 0 {
-					e.Logger.Warn().Str("name", prop.Name).Msg("Missing exports for ems")
-					continue
-				}
 				e.ParseRestCounters(line1, &prop)
 			}
 			if line1.GetNameS() == "matches" {
@@ -330,7 +336,7 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	// Split names into batches
-	batch := emsBatchSize
+	batch := e.emsBatchSize
 
 	for i := 0; i < len(names); i += batch {
 		j := i + batch
@@ -465,8 +471,6 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string]*emsProp) (map[
 				continue
 			}
 
-			//TODO matches implementation
-
 			// extract instance key(s)
 			for _, k := range p.InstanceKeys {
 				value := parseProperties(instanceData, k)
@@ -510,6 +514,25 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string]*emsProp) (map[
 			//set labels
 			for k, v := range p.Labels {
 				instance.SetLabel(k, v)
+			}
+
+			isMatch := true
+			//matches filtering
+			for _, v := range p.Matches {
+				if value := instance.GetLabel(v.Name); value != "" {
+					if value != v.value {
+						isMatch = false
+						break
+					}
+				} else {
+					//value not found
+					isMatch = false
+					break
+				}
+			}
+			if !isMatch {
+				mx.RemoveInstance(instanceKey)
+				continue
 			}
 
 			for _, metric := range p.Metrics {

@@ -71,7 +71,6 @@ func (e *Ems) ParseRestCounters(counter *node.Node, prop *emsProp) {
 				Str("display", display).
 				Msg("Collected")
 
-			prop.Counters[name] = display
 			// EMS only supports labels
 			prop.InstanceLabels[name] = display
 		}

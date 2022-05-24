@@ -9,8 +9,8 @@ schedule:
 events:
   - name: nis.server.not.available
 #    matches:
-#      - name: op
-#        value: disabled
+#      - name: node
+#        value: ocum-infinity-02
 #    labels: # attach additional Prometheus key/value labels to the exported metric
 #      - severity: info  # exports with info severity, overriding original severity
 #      - abc: def
