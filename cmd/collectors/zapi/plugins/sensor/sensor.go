@@ -142,6 +142,11 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 						if value, ok := metric.GetValueFloat64(instance); ok {
 							sensorEnvironmentMetricMap[iKey].nonAmbientTemperature = append(sensorEnvironmentMetricMap[iKey].nonAmbientTemperature, value)
 						}
+					} else {
+						my.Logger.Debug().Str("warningLowThreshold", warningLowThr).
+							Float64("criticalLowThreshold", criticalLowThr).
+							Str("sensorName", sensorName).
+							Msg("sensor excluded")
 					}
 				}
 
