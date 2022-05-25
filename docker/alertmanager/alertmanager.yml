@@ -1,0 +1,74 @@
+global:
+  #  smtp_smarthost: smtp.gmail.com:587
+  #  smtp_smarthost: smtp-mail.outlook.com:587
+  resolve_timeout: 3m
+  smtp_smarthost: smtp.gmail.com:465
+  smtp_from: 'hardikpleuva@gmail.com' #[todo] for testing, will remove before submit
+  smtp_auth_username: 'hardikpleuva@gmail.com' #[todo] for testing, will remove before submit
+  smtp_auth_password: 'xxxxxxxxxxxxxxxx' #16 digit passcode
+  smtp_require_tls: false
+
+
+route:
+  group_by: ['alertname', 'cluster', 'message']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 1h
+
+  # A default receiver
+  receiver: admin-mail
+
+  # All the above attributes are inherited by all child routes and can overwritten on each.
+  # The child route trees.
+  routes:
+    # This routes performs a regular expression match on alert labels to catch alerts that are related to a list of messages.
+    - matchers:
+        - message=~"nis.server.not.available|xyz|abc"
+      receiver: info-mails
+      continue: true
+      # The service has a sub-route for critical alerts, any alerts that do not match, i.e. severity != critical, fall-back to the
+      # parent node and are sent to 'info-mails'
+      routes:
+        - matchers:
+            - severity="critical"
+          receiver: error-mails
+
+    - matchers:
+        - message=~"mgmtgwd.certificate.expiring|cde"
+      receiver: info-mails
+      continue: true
+      # The service has a sub-route for critical alerts, any alerts that do not match, i.e. severity != error, fall-back to the
+      # parent node and are sent to 'info-mails'
+      routes:
+        - matchers:
+            - severity="error"
+          receiver: error-mails
+
+
+receivers:
+  - name: 'admin-mail'
+    email_configs:
+      - to: 'hardik.leuva@netapp.com, hardikpleuva@gmail.com'
+        send_resolved: true
+  #    require_tls: yes
+
+  - name: 'info-mails'
+    email_configs:
+      - to: 'hardik.leuva@netapp.com'
+        send_resolved: true
+
+  - name: 'error-mails'
+    email_configs:
+      - to: 'hardikpleuva@gmail.com'
+        send_resolved: true
+
+
+  - name: 'null'
+
+
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['message_severity', 'node', 'cluster']

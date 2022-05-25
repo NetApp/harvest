@@ -75,3 +75,36 @@ groups:
     annotations:
       summary: "Snapmirror [{{ $labels.relationship_id }}] has [{{$value}}] lag time (in secs)"
       description: "Snapmirror [{{ $labels.relationship_id }}] has [{{$value}}] lag time (in secs)"
+
+
+- name: Harvest Ems Alert
+  rules:
+
+  # Alert for lun offline bookend ems
+  # [todo] to validate this end-to-end
+  - alert: EMS for lun offline
+    expr: group by (severity, node, object_uuid) ((count by (severity, node, object_uuid)(ems_events{message="LUN.offline"} offset 5m ) - count by (severity, node, object_uuid) (ems_events{message="LUN.online"})) > 0) or group by (severity, node, object_uuid) (ems_events{message="LUN.offline"} offset 5m unless on (object_uuid) ems_events{message="LUN.online"})
+    for: 0m
+    labels:
+      severity: "critical"
+    annotations:
+      summary: "Node [{{ $labels.node }}] has EMS [LUN.offline] with severity [{{ $labels.severity }}] for uuid [{{ $labels.object_uuid }}]"
+      description: "Node [{{ $labels.node }}] has EMS [LUN.offline] with severity [{{ $labels.severity }}] for uuid [{{ $labels.object_uuid }}]"
+
+  # Alert for nis not available ems
+  - alert: nis not available
+    expr: ems_events{message="nis.server.not.available"} offset 5m == 1
+    labels:
+      severity: "error"
+    annotations:
+      summary: "None of the NIS servers configured for SVM [{{ $labels.svm }}] can be contacted."
+      description: "None of the NIS servers configured for SVM [{{ $labels.svm }}] can be contacted."
+
+  # Alert for certificate expiring ems
+  - alert: certificate expiring
+    expr: ems_events{message="mgmtgwd.certificate.expiring"} offset 5m == 1
+    labels:
+      severity: "error"
+    annotations:
+      summary: "A digital certificate with Serial Number [{{ $labels.serial_number }}] for SVM [{{ $labels.svm }}] will expire in the next [{{ $labels.days }}] day(s)."
+      description: "A digital certificate with Serial Number [{{ $labels.serial_number }}] for SVM [{{ $labels.svm }}] will expire in the next [{{ $labels.days }}] day(s)."
