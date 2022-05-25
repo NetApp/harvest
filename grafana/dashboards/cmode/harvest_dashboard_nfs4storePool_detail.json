@@ -68,7 +68,7 @@
       "id": 57,
       "panels": [
         {
-          "datasource": null,
+          "datasource": "${DS_PROMETHEUS}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -331,7 +331,7 @@
       "type": "row"
     },
     {
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "description": "For each byte-range lock acquired by a client there is a resulting increment in allocation",
       "fieldConfig": {
         "defaults": {
@@ -427,7 +427,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "description": "For each ClientID exchanged with the server/SVM, this allocation is incremented.\nNFS version 4 uses a value of clientid or stateid to represent the current state (instance) of client-held resources such as locks, opens, and host restarts. The client and server pass this state information between them on certain operations, allowing both to agree on the current instance of resources held by the client.\n\nhttps://www.ibm.com/docs/en/zos/2.2.0?topic=introduction-nfs-version-4-state",
       "fieldConfig": {
         "defaults": {
@@ -522,7 +522,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -617,7 +617,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "description": "When NFS copy offload (A feature was added in the Icehouse release of the NetApp unified driver that enables Image service images to be efficiently copied to a destination Block Storage volume) is used, this allocation is incremented.",
       "fieldConfig": {
         "defaults": {
@@ -712,7 +712,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "description": "For each Delegation lock type issued, this allocation is incremented.",
       "fieldConfig": {
         "defaults": {
@@ -807,7 +807,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "description": "When an allocation type includes ‘State’ in the title, an allocation is provided for each StateID associated per the associated lock type.  In this case, when a Delegation type lock is acquired and associated with a specific StateID.  This is incremented once per Delegation type lock.\n\nStateIDs as defined in RFC 5661 –\n8.2.  Stateid Definition\n\n   When the server grants a lock of any type (including opens, byte-\n   range locks, delegations, and layouts), it responds with a unique\n   stateid that represents a set of locks (often a single lock) for the\n   same file, of the same type, and sharing the same ownership\n   characteristics.  Thus, opens of the same file by different open-\n   owners each have an identifying stateid.  Similarly, each set of\n   byte-range locks on a file owned by a specific lock-owner has its own\n   identifying stateid.  Delegations and layouts also have associated\n   stateids by which they may be referenced.  The stateid is used as a\n   shorthand reference to a lock or set of locks, and given a stateid,\n   the server can determine the associated state-owner or state-owners\n   (in the case of an open-owner/lock-owner pair) and the associated\n   filehandle.  When stateids are used, the current filehandle must be\n   the one associated with that stateid.\n",
       "fieldConfig": {
         "defaults": {
@@ -902,7 +902,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "description": "The LayoutAlloc is incremented for each Parallel NFS (pNFS) referral",
       "fieldConfig": {
         "defaults": {
@@ -997,7 +997,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "description": "LayoutStateAlloc is incremented for each StateID associated with each pNFS referral",
       "fieldConfig": {
         "defaults": {
@@ -1092,7 +1092,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "description": "LockStateAlloc is incremented for the last lock request and response on a given state-owner while the lock state exists on the server",
       "fieldConfig": {
         "defaults": {
@@ -1187,7 +1187,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "description": "OpenAlloc is incremented for each Open request",
       "fieldConfig": {
         "defaults": {
@@ -1282,7 +1282,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "description": "OpenStateAlloc is incremented for each StateID associated with each Open request",
       "fieldConfig": {
         "defaults": {
@@ -1377,7 +1377,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "description": "OwnerAlloc is incremented for Owner allocation information such as file name space, file information, chunk information and chunk allocation information. (source - https://dzone.com/articles/overview-and-recommendations)",
       "fieldConfig": {
         "defaults": {
@@ -1472,7 +1472,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1567,7 +1567,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1662,7 +1662,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1757,7 +1757,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1852,7 +1852,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "description": "StringAlloc is incremented for each individual client co_ownerid. \n\nSee section 2.4 of RFC 5661 for more information regarding client generated co_ownerid strings\n",
       "fieldConfig": {
         "defaults": {
