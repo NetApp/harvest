@@ -3,7 +3,7 @@ collector:          Ems
 
 client_timeout: 1m
 schedule:
-  - data: 2m
+  - data: 3m
 
 objects:
   Ems:                        ems.yaml

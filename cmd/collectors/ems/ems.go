@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-const DefaultDataPollDuration = 2 * time.Minute
+const DefaultDataPollDuration = 3 * time.Minute
 const DefaultBatchSize = 25
 const DefaultSeverityFilter = "message.severity=alert|emergency|error|informational|notice"
 const emsEventMatrixPrefix = "ems#" //Used to clean up old instances excluding the parent
