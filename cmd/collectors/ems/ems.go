@@ -162,6 +162,9 @@ func (e *Ems) InitCache() error {
 		return errors.New(errors.MissingParam, "query")
 	}
 
+	// Used for autosupport
+	e.Prop.Query = e.Query
+
 	if exports := e.Params.GetChildS("exports"); exports != nil {
 		for _, line := range exports.GetChildren() {
 			if line != nil {
@@ -203,6 +206,9 @@ func (e *Ems) InitCache() error {
 			e.Logger.Warn().Str("name", eventName).Msg("duplicate event name")
 			continue
 		}
+
+		//populate prop counter for asup
+		e.Prop.Counters[eventName] = eventName
 
 		if line.GetChildS("exports") == nil || len(line.GetChildS("exports").GetAllChildContentS()) == 0 {
 			e.Logger.Warn().Str("name", eventName).Msg("Missing exports")
@@ -401,7 +407,9 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 
 	e.Logger.Debug().Str("object", e.Object).Str("number of records extracted", numRecords.String()).Msg("")
 
+	startTime = time.Now()
 	_, count = e.HandleResults(results[1], e.emsProp)
+	parseD = time.Since(startTime)
 
 	e.Logger.Info().
 		Uint64("instances", numRecords.Uint()).
@@ -421,7 +429,7 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	return e.Matrix, nil
 }
 
-// fetch pollData interval
+// GetDataInterval fetch pollData interval
 func GetDataInterval(param *node.Node, defaultInterval time.Duration) (time.Duration, error) {
 	var dataIntervalStr = ""
 	schedule := param.GetChildS("schedule")
@@ -477,6 +485,8 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string]*emsProp) (map[
 			instanceKey string
 			instance    *matrix.Instance
 		)
+
+		var instanceLabelCount uint64 = 0
 
 		if !instanceData.IsObject() {
 			e.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
@@ -534,7 +544,7 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string]*emsProp) (map[
 					} else {
 						instance.SetLabel(display, value.String())
 					}
-					count++
+					instanceLabelCount++
 				} else {
 					e.Logger.Warn().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
 				}
@@ -591,6 +601,8 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string]*emsProp) (map[
 					}
 				}
 			}
+
+			count += instanceLabelCount
 		}
 		return true
 	})
