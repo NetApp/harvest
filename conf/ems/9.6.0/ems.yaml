@@ -4,38 +4,234 @@ object: ems
 
 client_timeout: 1m
 schedule:
-  - data: 2m
+  - data: 3m
 
 exports:
   - message.name       => message
   - node.name          => node
+  - node.uuid          => node_uuid
   - message.severity   => severity
   - index              => index
 
 events:
-  - name: nis.server.not.available
-#    labels: # attach additional Prometheus key/value labels to the exported metric
-#      - severity: info  # exports with info severity, overriding original severity
-#      - abc: def        # adds a label abc with value def
-#    matches:
-#      - name: node
-#        value: ocum-infinity-02
+  - name: arw.volume.state
+    matches:
+      - name: op
+        value: disable-in-progress
     exports:
-      - source
-      - parameters.vserver_name         => svm
+      - parameters.op                   => op
+      - parameters.volumeUuid           => volumeuuid
 
-#    labels: # attach additional Prometheus key/value labels to the exported metric
-#      - severity: info  # exports with info severity, overriding original severity
-#      - abc: def        # adds a label abc with value def
-  - name: mgmtgwd.certificate.expiring
+  - name: arw.volume.state
+    matches:
+      - name: op
+        value: disabled
     exports:
-      - parameters.common_name          => common_name
-      - parameters.serial_number        => serial_number
-      - parameters.days                 => days
-  - name: LUN.offline
+      - parameters.op                   => op
+      - parameters.volumeUuid           => volumeuuid
+
+  - name: arw.volume.state
+    matches:
+      - name: op
+        value: dry-run
     exports:
-      - parameters.lun_path             => lun_path
-      - parameters.volume_name          => volume_name
+      - parameters.op                   => op
+      - parameters.volumeUuid           => volumeuuid
+
+  - name: arw.volume.state
+    matches:
+      - name: op
+        value: dry-run-paused
+    exports:
+      - parameters.op                   => op
+      - parameters.volumeUuid           => volumeuuid
+
+  - name: arw.volume.state
+    matches:
+      - name: op
+        value: enable-paused
+    exports:
+      - parameters.op                   => op
+      - parameters.volumeUuid           => volumeuuid
+
+  - name: arw.volume.state
+    matches:
+      - name: op
+        value: enabled
+    exports:
+      - parameters.op                   => op
+      - parameters.volumeUuid           => volumeuuid
+
+  - name: arw.vserver.state
+    matches:
+      - name: op
+        value: enabled
+    exports:
+      - parameters.op                   => op
+      - parameters.volumeUuid           => volumeuuid
+
+  - name: arw.vserver.state
+    matches:
+      - name: op
+        value: dry-run
+    exports:
+      - parameters.op                   => op
+      - parameters.volumeUuid           => volumeuuid
+      - parameters.volumeName           => volumeName
+
+
+  - name: callhome.arw.activity.seen
+    exports:
+      - parameters.volUuid              => volumeuuid
+      - parameters.volName              => volumeName
+
+  - name: callhome.battery.low
+
+  - name: callhome.hainterconnect.down
+
+  - name: cifs.shadowcopy.failure
+    exports:
       - parameters.object_uuid          => object_uuid
 
+  - name: cloud.aws.iamNotInitialized
 
+  - name: cluster.switch.pwr.fail
+
+  - name: disk.outOfService
+
+  - name: fabricpool.full
+
+  - name: fabricpool.nearly.full
+
+  - name: gb.netra.ca.check.failed
+    exports:
+      - parameters.aggr_uuid            => aggr_uuid
+
+  - name: LUN.destroy
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: LUN.offline
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: mgmtgwd.rootvolrec.low.space
+
+  - name: monitor.fan.critical
+
+  - name: monitor.fan.failed
+
+  - name: monitor.fan.warning
+
+  - name: Nblade.cifsManyAuths
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: Nblade.cifsMaxOpenSameFile
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: Nblade.cifsMaxSessPerUsrConn
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: Nblade.cifsNbNameConflict
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: Nblade.cifsNoPrivShare
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: Nblade.nfsV4PoolExhaust
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: Nblade.vscanBadUserPrivAccess
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: Nblade.vscanConnBackPressure
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: Nblade.vscanNoRegdScanner
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: Nblade.vscanNoScannerConn
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: Nblade.vscanVirusDetected
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: NVMeNS.destroy
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: NVMeNS.offline
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: NVMeNS.online
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: nvmf.graceperiod.active
+
+  - name: nvmf.graceperiod.expired
+
+  - name: nvmf.graceperiod.start
+
+  - name: object.store.unavailable
+
+  - name: objstore.host.unresolvable
+
+  - name: objstore.interclusterlifDown
+
+  - name: osc.signatureMismatch
+
+  - name: qos.monitor.memory.maxed
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: scsiblade.san.config.active
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: scsitarget.fct.port.full
+    exports:
+      - parameters.portname             => portname
+
+  - name: ses.status.fanError
+
+  - name: sk.panic
+
+  - name: sms.status.out.of.sync
+    exports:
+      - parameters.relationship_id      => relationship_id
+
+  - name: sp.ipmi.lost.shutdown
+
+  - name: sp.notConfigured
+
+  - name: unowned.disk.reminder
+
+  - name: vserver.stop.succeeded
+    exports:
+      - parameters.vserver_name          => svm
+      - parameters.vserver_uuid          => svm_uuid
+
+  - name: wafl.readdir.expired
+
+  - name: wafl.vol.autoSize.done
+
+  - name: wafl.vvol.offline
+    exports:
+      - parameters.instuuid              => instuuid
+
+  - name: wafl.vvol.restrict
+    exports:
+      - parameters.instuuid              => instuuid

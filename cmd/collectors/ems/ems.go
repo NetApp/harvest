@@ -17,14 +17,15 @@ import (
 )
 
 const DefaultDataPollDuration = 2 * time.Minute
-const severityFilter = "message.severity=alert|emergency|error|informational"
+const DefaultBatchSize = 25
+const DefaultSeverityFilter = "message.severity=alert|emergency|error|informational|notice"
 const emsEventMatrixPrefix = "ems#" //Used to clean up old instances excluding the parent
 
 type Ems struct {
 	*rest2.Rest     // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
 	Query           string
 	TemplatePath    string
-	emsProp         map[string]*emsProp
+	emsProp         map[string][]*emsProp
 	Filter          []string
 	Fields          []string
 	ReturnTimeOut   string
@@ -32,6 +33,7 @@ type Ems struct {
 	lastFilterTime  string
 	batchSize       int
 	DefaultLabels   []string
+	severityFilter  string
 }
 
 type Metric struct {
@@ -68,7 +70,7 @@ func (Ems) HarvestModule() plugin.ModuleInfo {
 }
 
 func (e *Ems) InitEmsProp() {
-	e.emsProp = make(map[string]*emsProp)
+	e.emsProp = make(map[string][]*emsProp)
 }
 
 func (e *Ems) Init(a *collector.AbstractCollector) error {
@@ -77,7 +79,8 @@ func (e *Ems) Init(a *collector.AbstractCollector) error {
 
 	e.Rest = &rest2.Rest{AbstractCollector: a}
 	e.Fields = []string{"*"}
-	e.batchSize = 10
+	e.batchSize = DefaultBatchSize
+	e.severityFilter = DefaultSeverityFilter
 
 	// init Rest props
 	e.InitProp()
@@ -117,6 +120,7 @@ func (e *Ems) InitMatrix() error {
 	mat.Object = e.Object
 	// Add system (cluster) name
 	mat.SetGlobalLabel("cluster", e.Client.Cluster().Name)
+	mat.SetGlobalLabel("cluster_uuid", e.Client.Cluster().UUID)
 
 	if e.Params.HasChildS("labels") {
 		for _, l := range e.Params.GetChildS("labels").GetChildren() {
@@ -152,7 +156,12 @@ func (e *Ems) InitCache() error {
 			e.batchSize = s
 		}
 	}
-	e.Logger.Trace().Int("batch_size", e.batchSize).Msgf("")
+	e.Logger.Debug().Int("batch_size", e.batchSize).Msgf("")
+
+	if s := e.Params.GetChildContentS("severity"); s != "" {
+		e.severityFilter = s
+	}
+	e.Logger.Debug().Str("severityFilter", e.severityFilter).Msgf("")
 
 	if export := e.Params.GetChildS("export_options"); export != nil {
 		e.Matrix[e.Object].SetExportOptions(export)
@@ -200,14 +209,8 @@ func (e *Ems) InitCache() error {
 			continue
 		}
 
-		//verify if name is duplicate
-		eventName := line.GetChildS("name").GetContentS()
-		if _, ok := e.emsProp[eventName]; ok {
-			e.Logger.Warn().Str("name", eventName).Msg("duplicate event name")
-			continue
-		}
-
 		//populate prop counter for asup
+		eventName := line.GetChildS("name").GetContentS()
 		e.Prop.Counters[eventName] = eventName
 
 		e.ParseDefaults(&prop)
@@ -231,9 +234,10 @@ func (e *Ems) InitCache() error {
 				}
 			}
 		}
-		e.emsProp[prop.Name] = &prop
+		e.emsProp[prop.Name] = append(e.emsProp[prop.Name], &prop)
 	}
-	e.Filter = append(e.Filter, severityFilter)
+	//add severity filter
+	e.Filter = append(e.Filter, e.severityFilter)
 	return nil
 }
 
@@ -408,8 +412,13 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	_, count = e.HandleResults(results[1], e.emsProp)
 	parseD = time.Since(startTime)
 
+	var instanceCount uint64 = 0
+	for _, v := range e.Matrix {
+		instanceCount += uint64(len(v.GetInstances()))
+	}
+
 	e.Logger.Info().
-		Uint64("instances", numRecords.Uint()).
+		Uint64("instances", instanceCount).
 		Uint64("dataPoints", count).
 		Str("apiTime", apiD.String()).
 		Str("parseTime", parseD.String()).
@@ -468,7 +477,7 @@ func parseProperties(instanceData gjson.Result, property string) gjson.Result {
 }
 
 // HandleResults function is used for handling the rest response for parent as well as endpoints calls,
-func (e *Ems) HandleResults(result gjson.Result, prop map[string]*emsProp) (map[string]*matrix.Matrix, uint64) {
+func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (map[string]*matrix.Matrix, uint64) {
 	var (
 		err   error
 		count uint64
@@ -480,7 +489,6 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string]*emsProp) (map[
 	result.ForEach(func(key, instanceData gjson.Result) bool {
 		var (
 			instanceKey string
-			instance    *matrix.Instance
 		)
 
 		var instanceLabelCount uint64 = 0
@@ -507,98 +515,107 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string]*emsProp) (map[
 		}
 
 		//parse ems properties for the instance
-		if p, ok := prop[messageName.String()]; ok {
-			// extract instance key(s)
-			for _, k := range p.InstanceKeys {
-				value := parseProperties(instanceData, k)
-				if value.Exists() {
-					instanceKey += value.String()
-				} else {
-					e.Logger.Warn().Str("key", k).Msg("skip instance, missing key")
-					break
-				}
-			}
-
-			instance = mx.GetInstance(instanceKey)
-
-			if instance == nil {
-				if instance, err = mx.NewInstance(instanceKey); err != nil {
-					e.Logger.Error().Err(err).Str("Instance key", instanceKey).Msg("")
-					return true
-				}
-			}
-
-			for label, display := range p.InstanceLabels {
-				value := parseProperties(instanceData, label)
-				if value.Exists() {
-					if value.IsArray() {
-						var labelArray []string
-						for _, r := range value.Array() {
-							labelString := r.String()
-							labelArray = append(labelArray, labelString)
-						}
-						instance.SetLabel(display, strings.Join(labelArray, ","))
+		isMatch := false
+		if ps, ok := prop[messageName.String()]; ok {
+			for _, p := range ps {
+				instanceKey = ""
+				instanceLabelCount = 0
+				// extract instance key(s)
+				for _, k := range p.InstanceKeys {
+					value := parseProperties(instanceData, k)
+					if value.Exists() {
+						instanceKey += value.String()
 					} else {
-						instance.SetLabel(display, value.String())
-					}
-					instanceLabelCount++
-				} else {
-					e.Logger.Warn().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
-				}
-			}
-
-			//set labels
-			for k, v := range p.Labels {
-				instance.SetLabel(k, v)
-			}
-
-			isMatch := true
-			//matches filtering
-			for _, v := range p.Matches {
-				if value := instance.GetLabel(v.Name); value != "" {
-					if value != v.value {
-						e.Logger.Debug().Str("Instance key", instanceKey).Str("name", v.Name).Str("value", v.value).Msg("removing instance as it doesn't match")
-						isMatch = false
+						e.Logger.Warn().Str("key", k).Msg("skip instance, missing key")
 						break
 					}
-				} else {
-					//value not found
-					e.Logger.Warn().Str("Instance key", instanceKey).Str("name", v.Name).Str("value", v.value).Msg("removing instance as label is not found")
-					isMatch = false
-					break
 				}
-			}
-			if !isMatch {
-				mx.RemoveInstance(instanceKey)
-				return true
-			}
 
-			for _, metric := range p.Metrics {
-				metr, ok := mx.GetMetrics()[metric.Name]
-				if !ok {
-					if metr, err = mx.NewMetricFloat64(metric.Name); err != nil {
-						e.Logger.Error().Err(err).
-							Str("name", metric.Name).
-							Msg("NewMetricFloat64")
+				instance := mx.GetInstance(instanceKey)
+
+				if instance == nil {
+					if instance, err = mx.NewInstance(instanceKey); err != nil {
+						e.Logger.Error().Err(err).Str("Instance key", instanceKey).Msg("")
+						return true
 					}
 				}
-				if metric.Name == "events" {
-					if err = metr.SetValueFloat64(instance, 1); err != nil {
-						e.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
-							Msg("Unable to set float key on metric")
+
+				for label, display := range p.InstanceLabels {
+					value := parseProperties(instanceData, label)
+					if value.Exists() {
+						if value.IsArray() {
+							var labelArray []string
+							for _, r := range value.Array() {
+								labelString := r.String()
+								labelArray = append(labelArray, labelString)
+							}
+							instance.SetLabel(display, strings.Join(labelArray, ","))
+						} else {
+							instance.SetLabel(display, value.String())
+						}
+						instanceLabelCount++
+					} else {
+						e.Logger.Warn().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
 					}
+				}
+
+				//set labels
+				for k, v := range p.Labels {
+					instance.SetLabel(k, v)
+				}
+
+				//matches filtering
+				if len(p.Matches) == 0 {
+					isMatch = true
 				} else {
-					// this code will not execute as ems only support events metric
-					f := instanceData.Get(metric.Name)
-					if f.Exists() {
-						if err = metr.SetValueFloat64(instance, f.Float()); err != nil {
+					for _, v := range p.Matches {
+						if value := instance.GetLabel(v.Name); value != "" {
+							if value == v.value {
+								isMatch = true
+								break
+							}
+						} else {
+							//value not found
+							e.Logger.Warn().Str("Instance key", instanceKey).Str("name", v.Name).Str("value", v.value).Msg("label is not found")
+						}
+					}
+				}
+				if !isMatch {
+					instanceLabelCount = 0
+					continue
+				}
+
+				for _, metric := range p.Metrics {
+					metr, ok := mx.GetMetrics()[metric.Name]
+					if !ok {
+						if metr, err = mx.NewMetricFloat64(metric.Name); err != nil {
+							e.Logger.Error().Err(err).
+								Str("name", metric.Name).
+								Msg("NewMetricFloat64")
+						}
+					}
+					if metric.Name == "events" {
+						if err = metr.SetValueFloat64(instance, 1); err != nil {
 							e.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
 								Msg("Unable to set float key on metric")
 						}
+					} else {
+						// this code will not execute as ems only support events metric
+						f := instanceData.Get(metric.Name)
+						if f.Exists() {
+							if err = metr.SetValueFloat64(instance, f.Float()); err != nil {
+								e.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
+									Msg("Unable to set float key on metric")
+							}
+						}
 					}
 				}
 			}
-
+		}
+		if !isMatch {
+			mx.RemoveInstance(instanceKey)
+			return true
+		} else {
 			count += instanceLabelCount
 		}
 		return true
