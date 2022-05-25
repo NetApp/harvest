@@ -2797,7 +2797,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": null,
+          "datasource": "${DS_PROMETHEUS}",
           "description": "dispatch_latency: Latency by ONTAP to select a scanner and until the selected scanner pulls the request.\n\nscan_latency: Latency by the scanner after it pulls the request and until it responds, including scan time of the AV software.\n\nNote, the scan latency is per request (file) and not per IOP",
           "fieldConfig": {
             "defaults": {
@@ -2888,7 +2888,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": null,
+          "datasource": "${DS_PROMETHEUS}",
           "description": "scan_request_dispatched_rate: Number of virus-scanning requests sent from Data ONTAP to the Vscan servers per second.\n\nscan_noti_received_rate: Number of virus-scanning requests received back by Data ONTAP from the Vscan servers per second.\n\nIf (dispatched > received) then requests are failing or delayed and deeper troubleshooting is recommended.\n\nNote, the rate is per request (file) and not per IOP",
           "fieldConfig": {
             "defaults": {
@@ -2978,7 +2978,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": null,
+          "datasource": "${DS_PROMETHEUS}",
           "description": "connections_active: Number of active connections from ONTAP nodes to virus scan servers",
           "fieldConfig": {
             "defaults": {
