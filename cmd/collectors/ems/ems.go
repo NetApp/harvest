@@ -16,9 +16,10 @@ import (
 	"time"
 )
 
-const DefaultDataPollDuration = 3 * time.Minute
-const DefaultBatchSize = 25
-const DefaultSeverityFilter = "message.severity=alert|emergency|error|informational|notice"
+const defaultDataPollDuration = 3 * time.Minute
+const defaultBatchSize = 25
+const severityFilterPrefix = "message.severity="
+const defaultSeverityFilter = "alert|emergency|error|informational|notice"
 const emsEventMatrixPrefix = "ems#" //Used to clean up old instances excluding the parent
 
 type Ems struct {
@@ -79,8 +80,8 @@ func (e *Ems) Init(a *collector.AbstractCollector) error {
 
 	e.Rest = &rest2.Rest{AbstractCollector: a}
 	e.Fields = []string{"*"}
-	e.batchSize = DefaultBatchSize
-	e.severityFilter = DefaultSeverityFilter
+	e.batchSize = defaultBatchSize
+	e.severityFilter = severityFilterPrefix + defaultSeverityFilter
 
 	// init Rest props
 	e.InitProp()
@@ -159,7 +160,7 @@ func (e *Ems) InitCache() error {
 	e.Logger.Debug().Int("batch_size", e.batchSize).Msgf("")
 
 	if s := e.Params.GetChildContentS("severity"); s != "" {
-		e.severityFilter = s
+		e.severityFilter = severityFilterPrefix + s
 	}
 	e.Logger.Debug().Str("severityFilter", e.severityFilter).Msgf("")
 
@@ -308,9 +309,9 @@ func (e *Ems) getTimeStampFilter() string {
 		fromTime = e.lastFilterTime
 	} else {
 		// if first request fetch cluster time
-		dataDuration, err := GetDataInterval(e.GetParams(), DefaultDataPollDuration)
+		dataDuration, err := GetDataInterval(e.GetParams(), defaultDataPollDuration)
 		if err != nil {
-			e.Logger.Warn().Err(err).Str("DefaultDataPollDuration", DefaultDataPollDuration.String()).Msg("Failed to parse duration. using default")
+			e.Logger.Warn().Err(err).Str("defaultDataPollDuration", defaultDataPollDuration.String()).Msg("Failed to parse duration. using default")
 		}
 		fromTime = time.Now().In(e.clusterTimezone).Add(-dataDuration).Format(time.RFC3339)
 	}
