@@ -37,7 +37,7 @@ func (e *Ems) ParseLabels(labels *node.Node, prop *emsProp) {
 	}
 }
 
-func (e *Ems) ParseRestCounters(counter *node.Node, prop *emsProp) {
+func (e *Ems) ParseDefaults(prop *emsProp) {
 	var (
 		display, name string
 	)
@@ -45,19 +45,6 @@ func (e *Ems) ParseRestCounters(counter *node.Node, prop *emsProp) {
 	//load default instance keys
 	for _, v := range defaultInstanceKey {
 		prop.InstanceKeys = append(prop.InstanceKeys, v)
-	}
-
-	for _, c := range counter.GetAllChildContentS() {
-		if c != "" {
-			name, display, _, _ = util.ParseMetric(c)
-			e.Logger.Debug().
-				Str("name", name).
-				Str("display", display).
-				Msg("Collected")
-
-			// EMS only supports labels
-			prop.InstanceLabels[name] = display
-		}
 	}
 
 	//process default labels
@@ -73,7 +60,26 @@ func (e *Ems) ParseRestCounters(counter *node.Node, prop *emsProp) {
 			prop.InstanceLabels[name] = display
 		}
 	}
-	// add a placeholder metric for ems
+	// add a default placeholder metric for ems
 	m := &Metric{Label: "events", Name: "events", MetricType: "", Exportable: true}
 	prop.Metrics["events"] = m
+}
+
+func (e *Ems) ParseExports(counter *node.Node, prop *emsProp) {
+	var (
+		display, name string
+	)
+
+	for _, c := range counter.GetAllChildContentS() {
+		if c != "" {
+			name, display, _, _ = util.ParseMetric(c)
+			e.Logger.Debug().
+				Str("name", name).
+				Str("display", display).
+				Msg("Collected")
+
+			// EMS only supports labels
+			prop.InstanceLabels[name] = display
+		}
+	}
 }

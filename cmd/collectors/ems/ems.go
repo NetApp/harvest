@@ -210,17 +210,14 @@ func (e *Ems) InitCache() error {
 		//populate prop counter for asup
 		e.Prop.Counters[eventName] = eventName
 
-		if line.GetChildS("exports") == nil || len(line.GetChildS("exports").GetAllChildContentS()) == 0 {
-			e.Logger.Warn().Str("name", eventName).Msg("Missing exports")
-			continue
-		}
+		e.ParseDefaults(&prop)
 
 		for _, line1 := range line.GetChildren() {
 			if line1.GetNameS() == "name" {
 				prop.Name = line1.GetContentS()
 			}
 			if line1.GetNameS() == "exports" {
-				e.ParseRestCounters(line1, &prop)
+				e.ParseExports(line1, &prop)
 			}
 			if line1.GetNameS() == "matches" {
 				e.ParseMatches(line1, &prop)
