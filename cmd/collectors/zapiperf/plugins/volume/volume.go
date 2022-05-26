@@ -1,6 +1,7 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
+
 package volume
 
 import (
@@ -38,12 +39,12 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				fg, _ := cache.NewInstance(key)
 				fg.SetLabels(i.GetLabels().Copy())
 				fg.SetLabel("volume", match[1])
-				fg.SetLabel("type", "flexgroup")
+				fg.SetLabel("style", "flexgroup")
 			}
-			i.SetLabel("type", "flexgroup_constituent")
+			i.SetLabel("style", "flexgroup_constituent")
 			i.SetExportable(false)
 		} else {
-			i.SetLabel("type", "flexvol")
+			i.SetLabel("style", "flexvol")
 		}
 	}
 
