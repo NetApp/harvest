@@ -404,7 +404,8 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	results := gjson.GetManyBytes(content, "num_records", "records")
 	numRecords := results[0]
 	if numRecords.Int() == 0 {
-		return nil, errors.New(errors.ErrNoInstance, "no "+e.Object+" instances on cluster")
+		e.Logger.Info().Str("object", e.Object).Msg("no  instances on cluster")
+		return nil, nil
 	}
 
 	e.Logger.Debug().Str("object", e.Object).Str("number of records extracted", numRecords.String()).Msg("")
