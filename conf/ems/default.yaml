@@ -3,7 +3,8 @@ collector:          Ems
 
 client_timeout: 1m
 schedule:
-  - data: 3m
+  - instance: 24h
+  - data:     3m
 
 objects:
   Ems:                        ems.yaml

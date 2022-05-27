@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errors"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"strconv"
 	"strings"
@@ -17,7 +18,7 @@ import (
 )
 
 const defaultDataPollDuration = 3 * time.Minute
-const defaultBatchSize = 25
+const maxUrlSize = 8_000 //bytes
 const severityFilterPrefix = "message.severity="
 const defaultSeverityFilter = "alert|emergency|error|informational|notice"
 const emsEventMatrixPrefix = "ems#" //Used to clean up old instances excluding the parent
@@ -32,9 +33,10 @@ type Ems struct {
 	ReturnTimeOut   string
 	clusterTimezone *time.Location
 	lastFilterTime  string
-	batchSize       int
+	maxUrlSize      int
 	DefaultLabels   []string
 	severityFilter  string
+	eventNames      []string //consist of all ems events supported
 }
 
 type Metric struct {
@@ -80,7 +82,7 @@ func (e *Ems) Init(a *collector.AbstractCollector) error {
 
 	e.Rest = &rest2.Rest{AbstractCollector: a}
 	e.Fields = []string{"*"}
-	e.batchSize = defaultBatchSize
+	e.maxUrlSize = maxUrlSize
 	e.severityFilter = severityFilterPrefix + defaultSeverityFilter
 
 	// init Rest props
@@ -152,12 +154,12 @@ func (e *Ems) InitCache() error {
 		e.Prop.Object = strings.ToLower(e.Object)
 	}
 
-	if b := e.Params.GetChildContentS("batch_size"); b != "" {
+	if b := e.Params.GetChildContentS("max_url_size"); b != "" {
 		if s, err := strconv.Atoi(b); err == nil {
-			e.batchSize = s
+			e.maxUrlSize = s
 		}
 	}
-	e.Logger.Debug().Int("batch_size", e.batchSize).Msgf("")
+	e.Logger.Debug().Int("max_url_size", e.maxUrlSize).Msgf("")
 
 	if s := e.Params.GetChildContentS("severity"); s != "" {
 		e.severityFilter = severityFilterPrefix + s
@@ -183,7 +185,7 @@ func (e *Ems) InitCache() error {
 		}
 	}
 
-	if events = e.Params.GetChildS("events"); events == nil {
+	if events = e.Params.GetChildS("events"); events == nil || len(events.GetChildren()) == 0 {
 		return errors.New(errors.MissingParam, "events")
 	}
 
@@ -256,7 +258,6 @@ func (e *Ems) getClusterTimeZone() error {
 	href := rest.BuildHref(query, strings.Join(fields, ","), nil, "", "", "1", e.ReturnTimeOut, "")
 
 	if records, err = e.GetRestData(href); err != nil {
-		e.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
 		return err
 	}
 
@@ -318,23 +319,76 @@ func (e *Ems) getTimeStampFilter() string {
 	return "time=>=" + fromTime
 }
 
-func (e *Ems) fetchEMSData(names []string, filter []string) ([]interface{}, error) {
+func (e *Ems) fetchEMSData(href string) ([]interface{}, error) {
 	var (
 		records []interface{}
 		err     error
 	)
-	//event name filter
-	nameFilter := "message.name=" + strings.Join(names[:], ",")
-	filter = append(filter, nameFilter)
-
-	href := rest.BuildHref(e.Query, strings.Join(e.Fields, ","), filter, "", "", "", e.ReturnTimeOut, e.Query)
-
 	e.Logger.Debug().Str("href", href).Msg("")
 	if records, err = e.GetRestData(href); err != nil {
-		e.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
 		return nil, err
 	}
 	return records, nil
+}
+
+func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
+	var (
+		content []byte
+		err     error
+		records []interface{}
+	)
+
+	query := "api/support/ems/messages"
+	fields := []string{"name"}
+
+	href := rest.BuildHref(query, strings.Join(fields, ","), nil, "", "", "", e.ReturnTimeOut, query)
+
+	if records, err = e.GetRestData(href); err != nil {
+		return nil, err
+	}
+
+	all := rest.Pagination{
+		Records:    records,
+		NumRecords: len(records),
+	}
+
+	content, err = json.Marshal(all)
+	if err != nil {
+		e.Logger.Error().Err(err).Str("ApiPath", e.Query).Msg("Unable to marshal rest pagination")
+	}
+
+	if !gjson.ValidBytes(content) {
+		return nil, fmt.Errorf("json is not valid for: %s", e.Query)
+	}
+
+	results := gjson.GetManyBytes(content, "num_records", "records")
+	numRecords := results[0]
+	if numRecords.Int() == 0 {
+		return nil, errors.New(errors.ErrNoInstance, e.Object+" no ems message found on cluster")
+	}
+
+	var emsEventCatalogue []string
+	results[1].ForEach(func(key, instanceData gjson.Result) bool {
+		name := instanceData.Get("name")
+		if name.Exists() {
+			emsEventCatalogue = append(emsEventCatalogue, name.String())
+		}
+		return true
+	})
+
+	// collect all event names
+	var names []string
+	for key := range e.emsProp {
+		names = append(names, key)
+	}
+
+	//filter out names which exists on the cluster. ONTAP rest ems throws error for a message.name filter if that event is not supported by that cluster
+	filteredNames, _ := util.Intersection(names, emsEventCatalogue)
+	e.Logger.Debug().Strs("querying for events", filteredNames).Msg("")
+	_, missingNames := util.Intersection(filteredNames, names)
+	e.Logger.Debug().Strs("skipped events", missingNames).Msg("")
+	e.eventNames = filteredNames
+	return nil, nil
 }
 
 func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
@@ -363,23 +417,31 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	timeFilter := e.getTimeStampFilter()
 	filter := append(e.Filter, timeFilter)
 
-	// collect all event names
-	var names []string
-	for key := range e.emsProp {
-		names = append(names, key)
-	}
-
-	// Split names into batches
-	batch := e.batchSize
-
-	for i := 0; i < len(names); i += batch {
-		j := i + batch
-		if j > len(names) {
-			j = len(names)
+	// build hrefs based on urlsize
+	var hrefs []string
+	start := 0
+	for end := 0; end < len(e.eventNames); end += 1 {
+		h := e.getHref(e.eventNames[start:end], filter)
+		if len(h) > e.maxUrlSize {
+			if end == 0 {
+				return nil, fmt.Errorf("url size is too small to form queries: %d", e.maxUrlSize)
+			}
+			end = end - 1
+			h = e.getHref(e.eventNames[start:end], filter)
+			hrefs = append(hrefs, h)
+			start = end
+		} else {
+			if end == len(e.eventNames)-1 {
+				end = len(e.eventNames)
+				h = e.getHref(e.eventNames[start:end], filter)
+				hrefs = append(hrefs, h)
+			}
+			continue
 		}
-		r, err := e.fetchEMSData(names[i:j], filter)
+	}
+	for _, h := range hrefs {
+		r, err := e.fetchEMSData(h)
 		if err != nil {
-			e.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
 			return nil, err
 		} else {
 			records = append(records, r...)
@@ -435,6 +497,14 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	// update lastfiltertime to current cluster time
 	e.lastFilterTime = toTime
 	return e.Matrix, nil
+}
+
+func (e *Ems) getHref(names []string, filter []string) string {
+	nameFilter := "message.name=" + strings.Join(names[:], ",")
+	filter = append(filter, nameFilter)
+
+	href := rest.BuildHref(e.Query, strings.Join(e.Fields, ","), filter, "", "", "", e.ReturnTimeOut, e.Query)
+	return href
 }
 
 // GetDataInterval fetch pollData interval
