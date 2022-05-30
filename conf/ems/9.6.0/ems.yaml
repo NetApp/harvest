@@ -2,11 +2,6 @@ name:   EMS
 query:  api/support/ems/events
 object: ems
 
-client_timeout: 1m
-schedule:
-  - instance: 24h
-  - data:     3m
-
 exports:
   - message.name       => message
   - node.name          => node
@@ -231,8 +226,8 @@ events:
 
   - name: wafl.vvol.offline
     exports:
-      - parameters.instuuid              => instuuid
+      - parameters.instuuid              => inst_uuid
 
   - name: wafl.vvol.restrict
     exports:
-      - parameters.instuuid              => instuuid
+      - parameters.instuuid              => inst_uuid

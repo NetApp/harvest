@@ -21,7 +21,6 @@ const defaultDataPollDuration = 3 * time.Minute
 const maxUrlSize = 8_000 //bytes
 const severityFilterPrefix = "message.severity="
 const defaultSeverityFilter = "alert|emergency|error|informational|notice"
-const emsEventMatrixPrefix = "ems#" //Used to clean up old instances excluding the parent
 
 type Ems struct {
 	*rest2.Rest     // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
@@ -107,10 +106,6 @@ func (e *Ems) Init(a *collector.AbstractCollector) error {
 	}
 
 	if err = e.InitMatrix(); err != nil {
-		return err
-	}
-
-	if err = e.getClusterTimeZone(); err != nil {
 		return err
 	}
 
@@ -324,7 +319,6 @@ func (e *Ems) fetchEMSData(href string) ([]interface{}, error) {
 		records []interface{}
 		err     error
 	)
-	e.Logger.Debug().Str("href", href).Msg("")
 	if records, err = e.GetRestData(href); err != nil {
 		return nil, err
 	}
@@ -337,6 +331,10 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 		err     error
 		records []interface{}
 	)
+
+	if err = e.getClusterTimeZone(); err != nil {
+		return nil, err
+	}
 
 	query := "api/support/ems/messages"
 	fields := []string{"name"}
@@ -403,12 +401,11 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	)
 
 	e.Logger.Debug().Msg("starting data poll")
-	// remove instances from last poll except the parent object
-	for k := range e.Matrix {
-		if strings.HasPrefix(k, emsEventMatrixPrefix) {
-			delete(e.Matrix, k)
-		}
-	}
+
+	// remove all ems matrix except parent object
+	mat := e.Matrix[e.Object]
+	e.Matrix = make(map[string]*matrix.Matrix)
+	e.Matrix[e.Object] = mat
 
 	startTime = time.Now()
 
@@ -575,7 +572,7 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (ma
 			e.Logger.Warn().Msg("skip instance, missing message name")
 			return true
 		} else {
-			k := emsEventMatrixPrefix + messageName.String()
+			k := messageName.String()
 			if _, ok := m[k]; !ok {
 				//create matrix if not exists for the ems event
 				mx = matrix.New(messageName.String(), e.Prop.Object, messageName.String())
