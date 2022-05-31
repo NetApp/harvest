@@ -65,8 +65,8 @@ events:
         value: enabled
     exports:
       - parameters.op                   => op
-      - parameters.vserverName          => vserver
-      - parameters.vserverUuid          => vserver_uuid
+      - parameters.vserverName          => svm
+      - parameters.vserverUuid          => svm_uuid
 
   - name: arw.vserver.state
     matches:
@@ -74,8 +74,8 @@ events:
         value: dry-run
     exports:
       - parameters.op                   => op
-      - parameters.vserverName          => vserver
-      - parameters.vserverUuid          => vserver_uuid
+      - parameters.vserverName          => svm
+      - parameters.vserverUuid          => svm_uuid
 
 
   - name: callhome.arw.activity.seen
