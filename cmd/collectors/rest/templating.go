@@ -58,11 +58,6 @@ func (r *Rest) InitCache() error {
 		r.Prop.ReturnTimeOut = returnTimeout
 	}
 
-	r.Prop.InstanceKeys = make([]string, 0)
-	r.Prop.InstanceLabels = make(map[string]string)
-	r.Prop.Counters = make(map[string]string)
-	r.Prop.Metrics = make(map[string]*Metric)
-
 	// private end point do not support * as fields. We need to pass fields in endpoint
 	query := r.Params.GetChildS("query")
 	r.Prop.APIType = "public"

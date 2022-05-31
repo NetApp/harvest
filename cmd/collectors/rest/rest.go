@@ -302,10 +302,10 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 
 	r.Logger.Debug().Str("object", r.Object).Str("number of records extracted", numRecords.String()).Msg("")
 
+	startTime = time.Now()
 	count = r.HandleResults(results[1], r.Prop, true)
 
 	// process endpoints
-	startTime = time.Now()
 	err = r.processEndPoints()
 	if err != nil {
 		r.Logger.Error().Err(err).Msg("Error while processing end points")
@@ -574,7 +574,7 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 		ClientTimeout: r.Client.Timeout.String(),
 	})
 
-	if r.Name == "Rest" && (r.Object == "Volume" || r.Object == "Node") {
+	if (r.Name == "Rest" && (r.Object == "Volume" || r.Object == "Node")) || r.Name == "ems" {
 		version := r.Client.Cluster().Version
 		p.Target.Version = strconv.Itoa(version[0]) + "." + strconv.Itoa(version[1]) + "." + strconv.Itoa(version[2])
 		p.Target.Model = "cdot"
@@ -593,7 +593,7 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 			PluginTime: md.LazyValueInt64("plugin_time", "data"),
 		}
 
-		if r.Object == "Node" {
+		if r.Object == "Node" || r.Name == "ems" {
 			nodeIds, err := r.getNodeUuids()
 			if err != nil {
 				// log but don't return so the other info below is collected
@@ -610,7 +610,8 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 			if len(nodeIds) > 0 {
 				p.Target.Serial = nodeIds[0].SerialNumber
 			}
-		} else if r.Object == "Volume" {
+		}
+		if r.Object == "Volume" {
 			p.Volumes = &info
 		}
 	}
@@ -662,6 +663,10 @@ func (r *Rest) getNodeUuids() ([]collector.Id, error) {
 
 func (r *Rest) InitProp() {
 	r.Prop = &prop{}
+	r.Prop.InstanceKeys = make([]string, 0)
+	r.Prop.InstanceLabels = make(map[string]string)
+	r.Prop.Counters = make(map[string]string)
+	r.Prop.Metrics = make(map[string]*Metric)
 }
 
 // Interface guards
