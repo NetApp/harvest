@@ -232,7 +232,7 @@ func (e *Ems) InitCache() error {
 				e.ParseLabels(line1, &prop)
 			}
 			if line1.GetNameS() == "plugins" {
-				if err = e.LoadPlugins(line1, prop.Name); err != nil {
+				if err = e.LoadPlugins(line1, e, prop.Name); err != nil {
 					e.Logger.Error().Stack().Err(err).Msg("Failed to load plugin")
 				}
 			}
