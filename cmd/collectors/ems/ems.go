@@ -18,7 +18,7 @@ import (
 )
 
 const defaultDataPollDuration = 3 * time.Minute
-const maxUrlSize = 8_000 //bytes
+const maxURLSize = 8_000 //bytes
 const severityFilterPrefix = "message.severity="
 const defaultSeverityFilter = "alert|emergency|error|informational|notice"
 
@@ -32,7 +32,7 @@ type Ems struct {
 	ReturnTimeOut   string
 	clusterTimezone *time.Location
 	lastFilterTime  string
-	maxUrlSize      int
+	maxURLSize      int
 	DefaultLabels   []string
 	severityFilter  string
 	eventNames      []string //consist of all ems events supported
@@ -61,10 +61,10 @@ type emsProp struct {
 }
 
 func init() {
-	plugin.RegisterModule(Ems{})
+	plugin.RegisterModule(&Ems{})
 }
 
-func (Ems) HarvestModule() plugin.ModuleInfo {
+func (e *Ems) HarvestModule() plugin.ModuleInfo {
 	return plugin.ModuleInfo{
 		ID:  "harvest.collector.ems",
 		New: func() plugin.Module { return new(Ems) },
@@ -81,7 +81,7 @@ func (e *Ems) Init(a *collector.AbstractCollector) error {
 
 	e.Rest = &rest2.Rest{AbstractCollector: a}
 	e.Fields = []string{"*"}
-	e.maxUrlSize = maxUrlSize
+	e.maxURLSize = maxURLSize
 	e.severityFilter = severityFilterPrefix + defaultSeverityFilter
 
 	// init Rest props
@@ -128,7 +128,7 @@ func (e *Ems) InitMatrix() error {
 	return nil
 }
 
-func (e *Ems) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {
+func (e *Ems) LoadPlugin(kind string, _ *plugin.AbstractPlugin) plugin.Plugin {
 	switch kind {
 	default:
 		e.Logger.Warn().Str("kind", kind).Msg("no ems plugin found ")
@@ -151,10 +151,10 @@ func (e *Ems) InitCache() error {
 
 	if b := e.Params.GetChildContentS("max_url_size"); b != "" {
 		if s, err := strconv.Atoi(b); err == nil {
-			e.maxUrlSize = s
+			e.maxURLSize = s
 		}
 	}
-	e.Logger.Debug().Int("max_url_size", e.maxUrlSize).Msgf("")
+	e.Logger.Debug().Int("max_url_size", e.maxURLSize).Msgf("")
 
 	if s := e.Params.GetChildContentS("severity"); s != "" {
 		e.severityFilter = severityFilterPrefix + s
@@ -202,13 +202,13 @@ func (e *Ems) InitCache() error {
 		prop.Metrics = make(map[string]*Metric)
 
 		// check if name is present in template
-		if line.GetChildS("name") == nil || line.GetChildS("name").GetContentS() == "" {
+		if line.GetChildContentS("name") == "" {
 			e.Logger.Warn().Msg("Missing event name")
 			continue
 		}
 
 		//populate prop counter for asup
-		eventName := line.GetChildS("name").GetContentS()
+		eventName := line.GetChildContentS("name")
 		e.Prop.Counters[eventName] = eventName
 
 		e.ParseDefaults(&prop)
@@ -243,7 +243,7 @@ func (e *Ems) getClusterTimeZone() error {
 	var (
 		content []byte
 		err     error
-		records []interface{}
+		records []any
 	)
 
 	// /api/cluster?fields=timezone is supported from 9.7. Using private CLI to support 9.6
@@ -281,42 +281,40 @@ func (e *Ems) getClusterTimeZone() error {
 		if timezone.Exists() {
 			loc, err := time.LoadLocation(timezone.String())
 			if err != nil {
-				e.Logger.Error().Stack().Err(err).Msg("Failed to set cluster time")
+				e.Logger.Error().Str("timezone", timezone.String()).Err(err).Msg("Failed to load timezone")
 				return true
-			} else {
-				e.clusterTimezone = loc
 			}
+			e.clusterTimezone = loc
 		}
 		return true
 	})
 	if e.clusterTimezone == nil {
 		return errors.New(errors.ErrNoInstance, e.Object+" timezone not found on cluster")
-	} else {
-		e.Logger.Info().Str("cluster time zone", e.clusterTimezone.String()).Msg("")
-		return nil
 	}
+	e.Logger.Info().Str("cluster time zone", e.clusterTimezone.String()).Msg("")
+	return nil
 }
 
 // returns time filter (clustertime - polldata duration)
 func (e *Ems) getTimeStampFilter() string {
-	var fromTime string
-	// check if not first request
-	if e.lastFilterTime != "" {
-		fromTime = e.lastFilterTime
-	} else {
+	fromTime := e.lastFilterTime
+	// check if this is the first request
+	if e.lastFilterTime == "" {
 		// if first request fetch cluster time
 		dataDuration, err := GetDataInterval(e.GetParams(), defaultDataPollDuration)
 		if err != nil {
-			e.Logger.Warn().Err(err).Str("defaultDataPollDuration", defaultDataPollDuration.String()).Msg("Failed to parse duration. using default")
+			e.Logger.Warn().Err(err).
+				Str("defaultDataPollDuration", defaultDataPollDuration.String()).
+				Msg("Failed to parse duration. using default")
 		}
 		fromTime = time.Now().In(e.clusterTimezone).Add(-dataDuration).Format(time.RFC3339)
 	}
 	return "time=>=" + fromTime
 }
 
-func (e *Ems) fetchEMSData(href string) ([]interface{}, error) {
+func (e *Ems) fetchEMSData(href string) ([]any, error) {
 	var (
-		records []interface{}
+		records []any
 		err     error
 	)
 	if records, err = e.GetRestData(href); err != nil {
@@ -325,11 +323,13 @@ func (e *Ems) fetchEMSData(href string) ([]interface{}, error) {
 	return records, nil
 }
 
+// PollInstance queries the cluster's EMS catalog and intersects that catalog with the EMS template.
+// This is required because ONTAP EMS Rest endpoint fails when queried for an EMS message that does not exist.
 func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 	var (
 		content []byte
 		err     error
-		records []interface{}
+		records []any
 	)
 
 	if err = e.getClusterTimeZone(); err != nil {
@@ -397,7 +397,7 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 		apiD, parseD time.Duration
 		startTime    time.Time
 		err          error
-		records      []interface{}
+		records      []any
 	)
 
 	e.Logger.Debug().Msg("starting data poll")
@@ -414,14 +414,15 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	timeFilter := e.getTimeStampFilter()
 	filter := append(e.Filter, timeFilter)
 
-	// build hrefs based on urlsize
+	// build hrefs up to maxURLSize
 	var hrefs []string
 	start := 0
-	for end := 0; end < len(e.eventNames); end += 1 {
+	for end := 0; end < len(e.eventNames); end++ {
 		h := e.getHref(e.eventNames[start:end], filter)
-		if len(h) > e.maxUrlSize {
+		if len(h) > e.maxURLSize {
 			if end == 0 {
-				return nil, fmt.Errorf("url size is too small to form queries: %d", e.maxUrlSize)
+				return nil, fmt.Errorf("maxURLSize=%d is too small to form queries. Increase it to at least %d",
+					e.maxURLSize, len(h))
 			}
 			end = end - 1
 			h = e.getHref(e.eventNames[start:end], filter)
@@ -433,16 +434,14 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 				h = e.getHref(e.eventNames[start:end], filter)
 				hrefs = append(hrefs, h)
 			}
-			continue
 		}
 	}
 	for _, h := range hrefs {
 		r, err := e.fetchEMSData(h)
 		if err != nil {
 			return nil, err
-		} else {
-			records = append(records, r...)
 		}
+		records = append(records, r...)
 	}
 
 	all := rest.Pagination{
@@ -463,17 +462,19 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	results := gjson.GetManyBytes(content, "num_records", "records")
 	numRecords := results[0]
 	if numRecords.Int() == 0 {
-		e.Logger.Info().Str("object", e.Object).Msg("no  instances on cluster")
+		e.Logger.Info().
+			Int("queried", len(e.eventNames)).
+			Msg("No EMS events returned")
 		return nil, nil
 	}
 
-	e.Logger.Debug().Str("object", e.Object).Str("number of records extracted", numRecords.String()).Msg("")
+	e.Logger.Debug().Int64("numRecords", numRecords.Int()).Msg("Records extracted")
 
 	startTime = time.Now()
 	_, count = e.HandleResults(results[1], e.emsProp)
 	parseD = time.Since(startTime)
 
-	var instanceCount uint64 = 0
+	var instanceCount uint64
 	for _, v := range e.Matrix {
 		instanceCount += uint64(len(v.GetInstances()))
 	}
@@ -491,13 +492,13 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	_ = e.Metadata.LazySetValueUint64("datapoint_count", "data", count)
 	e.AddCollectCount(count)
 
-	// update lastfiltertime to current cluster time
+	// update lastFilterTime to current cluster time
 	e.lastFilterTime = toTime
 	return e.Matrix, nil
 }
 
 func (e *Ems) getHref(names []string, filter []string) string {
-	nameFilter := "message.name=" + strings.Join(names[:], ",")
+	nameFilter := "message.name=" + strings.Join(names, ",")
 	filter = append(filter, nameFilter)
 
 	href := rest.BuildHref(e.Query, strings.Join(e.Fields, ","), filter, "", "", "", e.ReturnTimeOut, e.Query)
@@ -507,16 +508,17 @@ func (e *Ems) getHref(names []string, filter []string) string {
 // GetDataInterval fetch pollData interval
 func GetDataInterval(param *node.Node, defaultInterval time.Duration) (time.Duration, error) {
 	var dataIntervalStr = ""
+	var durationVal time.Duration
+	var err error
 	schedule := param.GetChildS("schedule")
 	if schedule != nil {
 		dataInterval := schedule.GetChildS("data")
 		if dataInterval != nil {
 			dataIntervalStr = dataInterval.GetContentS()
-			if durationVal, err := time.ParseDuration(dataIntervalStr); err == nil {
+			if durationVal, err = time.ParseDuration(dataIntervalStr); err == nil {
 				return durationVal, nil
-			} else {
-				return defaultInterval, err
 			}
+			return defaultInterval, err
 		}
 	}
 	return defaultInterval, nil
@@ -528,9 +530,11 @@ func parseProperties(instanceData gjson.Result, property string) gjson.Result {
 		// if prefix is not parameters.
 		value := gjson.Get(instanceData.String(), property)
 		return value
-	} else {
-		//strip parameters. from property name
-		property = strings.Replace(property, "parameters.", "", -1)
+	}
+	//strip parameters. from property name
+	_, after, found := strings.Cut(property, "parameters.")
+	if found {
+		property = after
 	}
 
 	//process parameter search
@@ -560,27 +564,26 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (ma
 			instanceKey string
 		)
 
-		var instanceLabelCount uint64 = 0
+		var instanceLabelCount uint64
 
 		if !instanceData.IsObject() {
 			e.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
 			return true
 		}
 		messageName := instanceData.Get("message.name")
-		// verify if message name exists in ontap response
+		// verify if message name exists in ONTAP response
 		if !messageName.Exists() {
 			e.Logger.Warn().Msg("skip instance, missing message name")
 			return true
+		}
+		k := messageName.String()
+		if _, ok := m[k]; !ok {
+			//create matrix if not exists for the ems event
+			mx = matrix.New(messageName.String(), e.Prop.Object, messageName.String())
+			mx.SetGlobalLabels(e.Matrix[e.Object].GetGlobalLabels())
+			m[k] = mx
 		} else {
-			k := messageName.String()
-			if _, ok := m[k]; !ok {
-				//create matrix if not exists for the ems event
-				mx = matrix.New(messageName.String(), e.Prop.Object, messageName.String())
-				mx.SetGlobalLabels(e.Matrix[e.Object].GetGlobalLabels())
-				m[k] = mx
-			} else {
-				mx = m[k]
-			}
+			mx = m[k]
 		}
 
 		//parse ems properties for the instance
@@ -637,15 +640,19 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (ma
 				if len(p.Matches) == 0 {
 					isMatch = true
 				} else {
-					for _, v := range p.Matches {
-						if value := instance.GetLabel(v.Name); value != "" {
-							if value == v.value {
+					for _, match := range p.Matches {
+						if value := instance.GetLabel(match.Name); value != "" {
+							if value == match.value {
 								isMatch = true
 								break
 							}
 						} else {
 							//value not found
-							e.Logger.Warn().Str("Instance key", instanceKey).Str("name", v.Name).Str("value", v.value).Msg("label is not found")
+							e.Logger.Warn().
+								Str("Instance key", instanceKey).
+								Str("name", match.Name).
+								Str("value", match.value).
+								Msg("label is not found")
 						}
 					}
 				}
@@ -684,9 +691,8 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (ma
 		if !isMatch {
 			mx.RemoveInstance(instanceKey)
 			return true
-		} else {
-			count += instanceLabelCount
 		}
+		count += instanceLabelCount
 		return true
 	})
 	return m, count

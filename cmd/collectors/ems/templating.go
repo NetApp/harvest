@@ -17,7 +17,7 @@ func (e *Ems) ParseMatches(matches *node.Node, prop *emsProp) {
 				value: value,
 			})
 		} else {
-			e.Logger.Warn().Str("name", prop.Name).Msg("Missing matches for ems")
+			e.Logger.Warn().Str("name", name).Str("value", value).Msg("Match name and value cannot be empty")
 			continue
 		}
 	}
@@ -31,7 +31,11 @@ func (e *Ems) ParseLabels(labels *node.Node, prop *emsProp) {
 		if labelName != "" && labelValue != "" {
 			prop.Labels[labelName] = labelValue
 		} else {
-			e.Logger.Warn().Str("name", prop.Name).Msg("Missing labels for ems")
+			e.Logger.Warn().
+				Str("ems", prop.Name).
+				Str("labelName", labelName).
+				Str("labelValue", labelValue).
+				Msg("Label name and value cannot be empty for ems")
 			continue
 		}
 	}
@@ -54,7 +58,7 @@ func (e *Ems) ParseDefaults(prop *emsProp) {
 			e.Logger.Debug().
 				Str("name", name).
 				Str("display", display).
-				Msg("Collected")
+				Msg("Collected default labels")
 
 			// EMS only supports labels
 			prop.InstanceLabels[name] = display
@@ -76,7 +80,7 @@ func (e *Ems) ParseExports(counter *node.Node, prop *emsProp) {
 			e.Logger.Debug().
 				Str("name", name).
 				Str("display", display).
-				Msg("Collected")
+				Msg("Collected exports")
 
 			// EMS only supports labels
 			prop.InstanceLabels[name] = display

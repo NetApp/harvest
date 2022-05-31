@@ -59,8 +59,6 @@ type Collector interface {
 	LinkExporter(exporter.Exporter)
 	LoadPlugins(*node.Node, Collector, string) error
 	LoadPlugin(string, *plugin.AbstractPlugin) plugin.Plugin
-	GetPlugins() map[string][]plugin.Plugin
-	addPlugins(key string, p []plugin.Plugin)
 	CollectAutoSupport(p *Payload)
 }
 
@@ -494,18 +492,6 @@ func (me *AbstractCollector) GetParams() *node.Node {
 // GetOptions returns the poller options passed to the collector
 func (me *AbstractCollector) GetOptions() *options.Options {
 	return me.Options
-}
-
-// GetPlugins returns the plugins of the collector
-func (me *AbstractCollector) GetPlugins() map[string][]plugin.Plugin {
-	return me.Plugins
-}
-
-// addPlugins add plugins of the collector
-func (me *AbstractCollector) addPlugins(key string, p []plugin.Plugin) {
-	if _, ok := me.Plugins[key]; ok {
-		me.Plugins[key] = append(me.Plugins[key], p...)
-	}
 }
 
 // SetSchedule set Schedule s as a field of the collector
