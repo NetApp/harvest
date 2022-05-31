@@ -2,6 +2,7 @@ name:   EMS
 query:  api/support/ems/events
 object: ems
 
+# default list of exports which gets appended to individual event exports
 exports:
   - message.name       => message
   - node.name          => node
@@ -16,7 +17,7 @@ events:
         value: disable-in-progress
     exports:
       - parameters.op                   => op
-      - parameters.volumeUuid           => volumeuuid
+      - parameters.volumeUuid           => volume_uuid
 
   - name: arw.volume.state
     matches:
@@ -32,7 +33,7 @@ events:
         value: dry-run
     exports:
       - parameters.op                   => op
-      - parameters.volumeUuid           => volumeuuid
+      - parameters.volumeUuid           => volume_uuid
 
   - name: arw.volume.state
     matches:
@@ -40,7 +41,7 @@ events:
         value: dry-run-paused
     exports:
       - parameters.op                   => op
-      - parameters.volumeUuid           => volumeuuid
+      - parameters.volumeUuid           => volume_uuid
 
   - name: arw.volume.state
     matches:
@@ -56,7 +57,7 @@ events:
         value: enabled
     exports:
       - parameters.op                   => op
-      - parameters.volumeUuid           => volumeuuid
+      - parameters.volumeUuid           => volume_uuid
 
   - name: arw.vserver.state
     matches:
@@ -64,7 +65,8 @@ events:
         value: enabled
     exports:
       - parameters.op                   => op
-      - parameters.volumeUuid           => volumeuuid
+      - parameters.vserverName          => vserver
+      - parameters.vserverUuid          => vserver_uuid
 
   - name: arw.vserver.state
     matches:
@@ -72,14 +74,14 @@ events:
         value: dry-run
     exports:
       - parameters.op                   => op
-      - parameters.volumeUuid           => volumeuuid
-      - parameters.volumeName           => volumeName
+      - parameters.vserverName          => vserver
+      - parameters.vserverUuid          => vserver_uuid
 
 
   - name: callhome.arw.activity.seen
     exports:
-      - parameters.volUuid              => volumeuuid
-      - parameters.volName              => volumeName
+      - parameters.volUuid              => volume_uuid
+      - parameters.volName              => volume
 
   - name: callhome.battery.low
 
