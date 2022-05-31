@@ -96,8 +96,10 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					}
 
 					// latency metric: weighted sum
-					// ops_key := strings.Replace(mkey, "avg_latency", "total_ops", 1)
-					opsKey := strings.Replace(mkey, "_latency", "_ops", 1)
+					opsKey := ""
+					if strings.Contains(mkey, "_latency") {
+						opsKey = m.GetComment()
+					}
 					me.Logger.Trace().Msgf("    > weighted increment <%s * %s>", mkey, opsKey)
 
 					if ops := data.GetMetric(opsKey); ops != nil {
@@ -131,8 +133,10 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 				if value, ok := m.GetValueFloat64(i); ok {
 
-					//ops_key := strings.Replace(mkey, "avg_latency", "total_ops", 1)
-					opsKey := strings.Replace(mkey, "_latency", "_ops", 1)
+					opsKey := ""
+					if strings.Contains(mkey, "_latency") {
+						opsKey = m.GetComment()
+					}
 
 					if ops := cache.GetMetric(opsKey); ops != nil {
 
