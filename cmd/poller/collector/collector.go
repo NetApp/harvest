@@ -561,8 +561,8 @@ func (me *AbstractCollector) LoadPlugins(params *node.Node, c Collector, key str
 		}
 		plugins = append(plugins, p)
 	}
-	me.Logger.Debug().Msgf("initialized %d plugins", len(me.Plugins))
 	me.Plugins[key] = plugins
+	me.Logger.Debug().Msgf("initialized %d plugins", len(me.Plugins))
 	return nil
 }
 
