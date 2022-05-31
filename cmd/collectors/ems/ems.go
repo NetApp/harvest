@@ -576,22 +576,14 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (ma
 			e.Logger.Warn().Msg("skip instance, missing message name")
 			return true
 		}
-		k := emsEventMatrixPrefix + messageName.String()
+		k := messageName.String()
 		if _, ok := m[k]; !ok {
-			//create a matrix if one does not exist for the ems event
+			//create matrix if not exists for the ems event
 			mx = matrix.New(messageName.String(), e.Prop.Object, messageName.String())
 			mx.SetGlobalLabels(e.Matrix[e.Object].GetGlobalLabels())
 			m[k] = mx
 		} else {
-			k := messageName.String()
-			if _, ok := m[k]; !ok {
-				//create matrix if not exists for the ems event
-				mx = matrix.New(messageName.String(), e.Prop.Object, messageName.String())
-				mx.SetGlobalLabels(e.Matrix[e.Object].GetGlobalLabels())
-				m[k] = mx
-			} else {
-				mx = m[k]
-			}
+			mx = m[k]
 		}
 
 		//parse ems properties for the instance
