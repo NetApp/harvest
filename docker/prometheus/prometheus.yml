@@ -5,11 +5,11 @@ global:
     monitor: 'harvest'
 
 # Alertmanager configuration
-alerting:
-  alertmanagers:
-    - static_configs:
-        - targets:
-            - 'localhost:9093'
+#alerting:
+#  alertmanagers:
+#    - static_configs:
+#        - targets:
+#            - 'localhost:9093'
 
 # Load and evaluate rules in this file every 'evaluation_interval' seconds.
 rule_files:
