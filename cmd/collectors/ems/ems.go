@@ -289,7 +289,7 @@ func (e *Ems) getClusterTimeZone() error {
 		return true
 	})
 	if e.clusterTimezone == nil {
-		return errors.New(errors.ErrNoInstance, e.Object+" timezone not found on cluster")
+		return errors.New(errors.ErrConfig, e.Object+" timezone not found on cluster")
 	}
 	e.Logger.Info().Str("cluster time zone", e.clusterTimezone.String()).Msg("")
 	return nil

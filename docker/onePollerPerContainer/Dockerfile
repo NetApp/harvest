@@ -28,7 +28,7 @@ RUN cp -aR bin $BUILD_DIR/conf $BUILD_DIR/docs $BUILD_DIR/grafana $BUILD_DIR/aut
 
 FROM alpine:latest
 
-RUN apk add bash
+RUN apk add bash tzdata
 
 ARG INSTALL_DIR=/opt/harvest
 COPY --from=golangAlpine $INSTALL_DIR $INSTALL_DIR
