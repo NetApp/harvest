@@ -1,0 +1,235 @@
+name:   EMS
+query:  api/support/ems/events
+object: ems
+
+# default list of exports which gets appended to individual event exports
+exports:
+  - message.name       => message
+  - node.name          => node
+  - node.uuid          => node_uuid
+  - message.severity   => severity
+  - index              => index
+
+events:
+  - name: arw.volume.state
+    matches:
+      - name: op
+        value: disable-in-progress
+    exports:
+      - parameters.op                   => op
+      - parameters.volumeUuid           => volume_uuid
+
+  - name: arw.volume.state
+    matches:
+      - name: op
+        value: disabled
+    exports:
+      - parameters.op                   => op
+      - parameters.volumeUuid           => volumeuuid
+
+  - name: arw.volume.state
+    matches:
+      - name: op
+        value: dry-run
+    exports:
+      - parameters.op                   => op
+      - parameters.volumeUuid           => volume_uuid
+
+  - name: arw.volume.state
+    matches:
+      - name: op
+        value: dry-run-paused
+    exports:
+      - parameters.op                   => op
+      - parameters.volumeUuid           => volume_uuid
+
+  - name: arw.volume.state
+    matches:
+      - name: op
+        value: enable-paused
+    exports:
+      - parameters.op                   => op
+      - parameters.volumeUuid           => volumeuuid
+
+  - name: arw.volume.state
+    matches:
+      - name: op
+        value: enabled
+    exports:
+      - parameters.op                   => op
+      - parameters.volumeUuid           => volume_uuid
+
+  - name: arw.vserver.state
+    matches:
+      - name: op
+        value: enabled
+    exports:
+      - parameters.op                   => op
+      - parameters.vserverName          => svm
+      - parameters.vserverUuid          => svm_uuid
+
+  - name: arw.vserver.state
+    matches:
+      - name: op
+        value: dry-run
+    exports:
+      - parameters.op                   => op
+      - parameters.vserverName          => svm
+      - parameters.vserverUuid          => svm_uuid
+
+
+  - name: callhome.arw.activity.seen
+    exports:
+      - parameters.volUuid              => volume_uuid
+      - parameters.volName              => volume
+
+  - name: callhome.battery.low
+
+  - name: callhome.hainterconnect.down
+
+  - name: cifs.shadowcopy.failure
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: cloud.aws.iamNotInitialized
+
+  - name: cluster.switch.pwr.fail
+
+  - name: disk.outOfService
+
+  - name: fabricpool.full
+
+  - name: fabricpool.nearly.full
+
+  - name: gb.netra.ca.check.failed
+    exports:
+      - parameters.aggr_uuid            => aggr_uuid
+
+  - name: LUN.destroy
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: LUN.offline
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: mgmtgwd.rootvolrec.low.space
+
+  - name: monitor.fan.critical
+
+  - name: monitor.fan.failed
+
+  - name: monitor.fan.warning
+
+  - name: Nblade.cifsManyAuths
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: Nblade.cifsMaxOpenSameFile
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: Nblade.cifsMaxSessPerUsrConn
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: Nblade.cifsNbNameConflict
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: Nblade.cifsNoPrivShare
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: Nblade.nfsV4PoolExhaust
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: Nblade.vscanBadUserPrivAccess
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: Nblade.vscanConnBackPressure
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: Nblade.vscanNoRegdScanner
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: Nblade.vscanNoScannerConn
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: Nblade.vscanVirusDetected
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: NVMeNS.destroy
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: NVMeNS.offline
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: NVMeNS.online
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: nvmf.graceperiod.active
+
+  - name: nvmf.graceperiod.expired
+
+  - name: nvmf.graceperiod.start
+
+  - name: object.store.unavailable
+
+  - name: objstore.host.unresolvable
+
+  - name: objstore.interclusterlifDown
+
+  - name: osc.signatureMismatch
+
+  - name: qos.monitor.memory.maxed
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: scsiblade.san.config.active
+    exports:
+      - parameters.object_uuid          => object_uuid
+
+  - name: scsitarget.fct.port.full
+    exports:
+      - parameters.portname             => portname
+
+  - name: ses.status.fanError
+
+  - name: sk.panic
+
+  - name: sms.status.out.of.sync
+    exports:
+      - parameters.relationship_id      => relationship_id
+
+  - name: sp.ipmi.lost.shutdown
+
+  - name: sp.notConfigured
+
+  - name: unowned.disk.reminder
+
+  - name: vserver.stop.succeeded
+    exports:
+      - parameters.vserver_name          => svm
+      - parameters.vserver_uuid          => svm_uuid
+
+  - name: wafl.readdir.expired
+
+  - name: wafl.vol.autoSize.done
+
+  - name: wafl.vvol.offline
+    exports:
+      - parameters.instuuid              => inst_uuid
+
+  - name: wafl.vvol.restrict
+    exports:
+      - parameters.instuuid              => inst_uuid

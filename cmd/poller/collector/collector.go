@@ -57,7 +57,7 @@ type Collector interface {
 	SetMetadata(*matrix.Matrix)
 	WantedExporters([]string) []string
 	LinkExporter(exporter.Exporter)
-	LoadPlugins(*node.Node, Collector) error
+	LoadPlugins(*node.Node, Collector, string) error
 	LoadPlugin(string, *plugin.AbstractPlugin) plugin.Plugin
 	CollectAutoSupport(p *Payload)
 }
@@ -198,7 +198,7 @@ func Init(c Collector) error {
 
 	// Initialize Plugins
 	if plugins := params.GetChildS("plugins"); plugins != nil {
-		if err := c.LoadPlugins(plugins, c); err != nil {
+		if err := c.LoadPlugins(plugins, c, c.GetObject()); err != nil {
 			return err
 		}
 	}
@@ -526,7 +526,7 @@ func (me *AbstractCollector) LoadPlugin(s string, abc *plugin.AbstractPlugin) pl
 
 //LoadPlugins loads built-in plugins or dynamically loads custom plugins
 //and adds them to the collector
-func (me *AbstractCollector) LoadPlugins(params *node.Node, c Collector) error {
+func (me *AbstractCollector) LoadPlugins(params *node.Node, c Collector, key string) error {
 
 	var p plugin.Plugin
 	var abc *plugin.AbstractPlugin
@@ -544,7 +544,7 @@ func (me *AbstractCollector) LoadPlugins(params *node.Node, c Collector) error {
 		abc = plugin.New(me.Name, me.Options, x, me.Params, me.Object)
 
 		// case 1: available as built-in plugin
-		if p = getBuiltinPlugin(name, abc); p != nil {
+		if p = GetBuiltinPlugin(name, abc); p != nil {
 			me.Logger.Debug().Msgf("loaded built-in plugin [%s]", name)
 			// case 2: available as dynamic plugin
 		} else {
@@ -561,7 +561,7 @@ func (me *AbstractCollector) LoadPlugins(params *node.Node, c Collector) error {
 		}
 		plugins = append(plugins, p)
 	}
-	me.Plugins[me.Object] = plugins
+	me.Plugins[key] = plugins
 	me.Logger.Debug().Msgf("initialized %d plugins", len(me.Plugins))
 	return nil
 }

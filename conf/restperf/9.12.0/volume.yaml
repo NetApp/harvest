@@ -44,4 +44,4 @@ export_options:
     - node
     - svm
     - aggr
-#    - type
+#    - style
