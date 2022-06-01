@@ -23,19 +23,19 @@ const severityFilterPrefix = "message.severity="
 const defaultSeverityFilter = "alert|emergency|error|informational|notice"
 
 type Ems struct {
-	*rest2.Rest     // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
-	Query           string
-	TemplatePath    string
-	emsProp         map[string][]*emsProp
-	Filter          []string
-	Fields          []string
-	ReturnTimeOut   string
-	clusterTimezone *time.Location
-	lastFilterTime  string
-	maxURLSize      int
-	DefaultLabels   []string
-	severityFilter  string
-	eventNames      []string //consist of all ems events supported
+	*rest2.Rest    // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
+	Query          string
+	TemplatePath   string
+	emsProp        map[string][]*emsProp
+	Filter         []string
+	Fields         []string
+	ReturnTimeOut  string
+	clusterTime    time.Time
+	lastFilterTime string
+	maxURLSize     int
+	DefaultLabels  []string
+	severityFilter string
+	eventNames     []string //consist of all ems events supported
 }
 
 type Metric struct {
@@ -239,16 +239,15 @@ func (e *Ems) InitCache() error {
 	return nil
 }
 
-func (e *Ems) getClusterTimeZone() error {
+func (e *Ems) getClusterTime() error {
 	var (
 		content []byte
 		err     error
 		records []any
 	)
 
-	// /api/cluster?fields=timezone is supported from 9.7. Using private CLI to support 9.6
 	query := "private/cli/cluster/date"
-	fields := []string{"timezone"}
+	fields := []string{"date"}
 
 	href := rest.BuildHref(query, strings.Join(fields, ","), nil, "", "", "1", e.ReturnTimeOut, "")
 
@@ -273,25 +272,23 @@ func (e *Ems) getClusterTimeZone() error {
 	results := gjson.GetManyBytes(content, "num_records", "records")
 	numRecords := results[0]
 	if numRecords.Int() == 0 {
-		return errors.New(errors.ErrNoInstance, e.Object+" timezone not found on cluster")
+		return errors.New(errors.ErrConfig, e.Object+" date not found on cluster")
 	}
 
 	results[1].ForEach(func(key, instanceData gjson.Result) bool {
-		timezone := instanceData.Get("timezone")
-		if timezone.Exists() {
-			loc, err := time.LoadLocation(timezone.String())
+		currentClusterDate := instanceData.Get("date")
+		if currentClusterDate.Exists() {
+			t, err := time.Parse(time.RFC3339, currentClusterDate.String())
 			if err != nil {
-				e.Logger.Error().Str("timezone", timezone.String()).Err(err).Msg("Failed to load timezone")
+				e.Logger.Error().Str("date", currentClusterDate.String()).Err(err).Msg("Failed to load cluster date")
 				return true
 			}
-			e.clusterTimezone = loc
+			e.clusterTime = t
 		}
 		return true
 	})
-	if e.clusterTimezone == nil {
-		return errors.New(errors.ErrNoInstance, e.Object+" timezone not found on cluster")
-	}
-	e.Logger.Info().Str("cluster time zone", e.clusterTimezone.String()).Msg("")
+
+	e.Logger.Info().Str("cluster time", e.clusterTime.String()).Msg("")
 	return nil
 }
 
@@ -307,7 +304,7 @@ func (e *Ems) getTimeStampFilter() string {
 				Str("defaultDataPollDuration", defaultDataPollDuration.String()).
 				Msg("Failed to parse duration. using default")
 		}
-		fromTime = time.Now().In(e.clusterTimezone).Add(-dataDuration).Format(time.RFC3339)
+		fromTime = e.clusterTime.Add(-dataDuration).Format(time.RFC3339)
 	}
 	return "time=>=" + fromTime
 }
@@ -332,7 +329,7 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 		records []any
 	)
 
-	if err = e.getClusterTimeZone(); err != nil {
+	if err = e.getClusterTime(); err != nil {
 		return nil, err
 	}
 
@@ -410,7 +407,7 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	startTime = time.Now()
 
 	// add time filter
-	toTime := time.Now().In(e.clusterTimezone).Format(time.RFC3339)
+	toTime := e.clusterTime.Format(time.RFC3339)
 	timeFilter := e.getTimeStampFilter()
 	filter := append(e.Filter, timeFilter)
 
