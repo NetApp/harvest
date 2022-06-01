@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"runtime"
+	"strconv"
 	"sync"
 
 	"github.com/rs/zerolog"
@@ -13,14 +14,13 @@ import (
 )
 
 const (
-	defaultLogFileName           string = "harvest.log"
-	defaultLogLevel                     = zerolog.InfoLevel
-	defaultConsoleLoggingEnabled bool   = true
-	// DefaultFileLoggingEnabled is intentionally false to avoid opening many file descriptors for same log file
-	defaultFileLoggingEnabled bool = false
-	DefaultLogMaxMegaBytes    int  = 10 // 10MB
-	DefaultLogMaxBackups      int  = 10
-	DefaultLogMaxAge          int  = 30
+	defaultLogFileName           = "harvest.log"
+	defaultLogLevel              = zerolog.InfoLevel
+	defaultConsoleLoggingEnabled = true
+	defaultFileLoggingEnabled    = false // false to avoid opening many file descriptors for same log file
+	DefaultLogMaxMegaBytes       = 5     // 5 MB
+	DefaultLogMaxBackups         = 5
+	DefaultLogMaxAge             = 7
 )
 
 // LogConfig defines the configuration for logging
@@ -103,6 +103,7 @@ func Configure(config LogConfig) *Logger {
 
 	zerolog.SetGlobalLevel(config.LogLevel)
 	zerolog.ErrorStackMarshaler = MarshalStack
+	zerolog.CallerMarshalFunc = ShortFile
 	zeroLogger := zerolog.New(multiWriters).With().Caller().Str(config.PrefixKey, config.PrefixValue).Timestamp().Logger()
 
 	zeroLogger.Debug().
@@ -122,6 +123,17 @@ func Configure(config LogConfig) *Logger {
 		Logger: &zeroLogger,
 	}
 	return logger
+}
+
+func ShortFile(file string, line int) string {
+	short := file
+	for i := len(file) - 1; i > 0; i-- {
+		if file[i] == '/' {
+			short = file[i+1:]
+			break
+		}
+	}
+	return short + ":" + strconv.Itoa(line)
 }
 
 func MarshalStack(err error) interface{} {

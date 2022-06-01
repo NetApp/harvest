@@ -75,7 +75,7 @@ import (
 var (
 	pollerSchedule  = "60s"
 	logFileName     = ""
-	logMaxMegaBytes = logging.DefaultLogMaxMegaBytes // 10MB
+	logMaxMegaBytes = logging.DefaultLogMaxMegaBytes
 	logMaxBackups   = logging.DefaultLogMaxBackups
 	logMaxAge       = logging.DefaultLogMaxAge
 	asupSchedule    = "24h" // send every 24 hours
