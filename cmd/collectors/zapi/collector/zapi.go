@@ -316,12 +316,15 @@ func (me *Zapi) PollInstance() (map[string]*matrix.Matrix, error) {
 }
 
 func (me *Zapi) PollData() (map[string]*matrix.Matrix, error) {
-	var err error
-	var request, response *node.Node
-	var fetch func(*matrix.Instance, *node.Node, []string)
-	var count, skipped uint64
-	var ad, pd time.Duration // Request/API time, Parse time, Fetch time
-	var tag string
+	var (
+		request, response *node.Node
+		count, skipped    uint64
+		tag               string
+		err               error
+		ad, pd            time.Duration // Request/API time, Parse time, Fetch time
+		fetch             func(*matrix.Instance, *node.Node, []string)
+		instances         []*node.Node
+	)
 
 	count = 0
 	skipped = 0
@@ -394,7 +397,7 @@ func (me *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 		apiT += ad
 		parseT += pd
 
-		instances := response.SearchChildren(me.shortestPathPrefix)
+		instances = response.SearchChildren(me.shortestPathPrefix)
 
 		if len(instances) == 0 {
 			break
@@ -430,6 +433,13 @@ func (me *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 			fetch(instance, instanceElem, make([]string, 0))
 		}
 	}
+
+	me.Logger.Info().
+		Int("instances", len(instances)).
+		Uint64("metrics", count).
+		Str("apiD", apiT.Round(time.Millisecond).String()).
+		Str("parseD", parseT.Round(time.Millisecond).String()).
+		Msg("Collected")
 
 	// update metadata
 	_ = me.Metadata.LazySetValueInt64("api_time", "data", apiT.Microseconds())
