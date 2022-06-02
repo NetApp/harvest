@@ -29,8 +29,8 @@ type Ems struct {
 	emsProp        map[string][]*emsProp
 	Filter         []string
 	Fields         []string
-	ReturnTimeOut  string
 	clusterTime    time.Time
+	ReturnTimeOut  string
 	lastFilterTime string
 	maxURLSize     int
 	DefaultLabels  []string
@@ -239,11 +239,12 @@ func (e *Ems) InitCache() error {
 	return nil
 }
 
-func (e *Ems) getClusterTime() error {
+func (e *Ems) getClusterTime() (time.Time, error) {
 	var (
-		content []byte
-		err     error
-		records []any
+		content     []byte
+		err         error
+		records     []any
+		clusterTime time.Time
 	)
 
 	query := "private/cli/cluster/date"
@@ -252,7 +253,7 @@ func (e *Ems) getClusterTime() error {
 	href := rest.BuildHref(query, strings.Join(fields, ","), nil, "", "", "1", e.ReturnTimeOut, "")
 
 	if records, err = e.GetRestData(href); err != nil {
-		return err
+		return clusterTime, err
 	}
 
 	all := rest.Pagination{
@@ -266,13 +267,13 @@ func (e *Ems) getClusterTime() error {
 	}
 
 	if !gjson.ValidBytes(content) {
-		return fmt.Errorf("json is not valid for: %s", e.Query)
+		return clusterTime, fmt.Errorf("json is not valid for: %s", e.Query)
 	}
 
 	results := gjson.GetManyBytes(content, "num_records", "records")
 	numRecords := results[0]
 	if numRecords.Int() == 0 {
-		return errors.New(errors.ErrConfig, e.Object+" date not found on cluster")
+		return clusterTime, errors.New(errors.ErrConfig, e.Object+" date not found on cluster")
 	}
 
 	results[1].ForEach(func(key, instanceData gjson.Result) bool {
@@ -283,13 +284,13 @@ func (e *Ems) getClusterTime() error {
 				e.Logger.Error().Str("date", currentClusterDate.String()).Err(err).Msg("Failed to load cluster date")
 				return true
 			}
-			e.clusterTime = t
+			clusterTime = t
 		}
 		return true
 	})
 
-	e.Logger.Info().Str("cluster time", e.clusterTime.String()).Msg("")
-	return nil
+	e.Logger.Debug().Str("cluster time", clusterTime.String()).Msg("")
+	return clusterTime, nil
 }
 
 // returns time filter (clustertime - polldata duration)
@@ -328,10 +329,6 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 		err     error
 		records []any
 	)
-
-	if err = e.getClusterTime(); err != nil {
-		return nil, err
-	}
 
 	query := "api/support/ems/messages"
 	fields := []string{"name"}
@@ -407,6 +404,10 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	startTime = time.Now()
 
 	// add time filter
+	e.clusterTime, err = e.getClusterTime()
+	if err != nil {
+		return nil, err
+	}
 	toTime := e.clusterTime.Format(time.RFC3339)
 	timeFilter := e.getTimeStampFilter()
 	filter := append(e.Filter, timeFilter)
@@ -462,6 +463,7 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 		e.Logger.Info().
 			Int("queried", len(e.eventNames)).
 			Msg("No EMS events returned")
+		e.lastFilterTime = toTime
 		return nil, nil
 	}
 
