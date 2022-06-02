@@ -127,10 +127,14 @@ func Configure(config LogConfig) *Logger {
 
 func ShortFile(file string, line int) string {
 	short := file
+	slashesSeen := 0
 	for i := len(file) - 1; i > 0; i-- {
 		if file[i] == '/' {
-			short = file[i+1:]
-			break
+			slashesSeen++
+			if slashesSeen == 2 {
+				short = file[i+1:]
+				break
+			}
 		}
 	}
 	return short + ":" + strconv.Itoa(line)
