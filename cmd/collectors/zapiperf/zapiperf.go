@@ -24,6 +24,7 @@
 package zapiperf
 
 import (
+	errors2 "errors"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/fcp"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/headroom"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/nic"
@@ -37,6 +38,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/rs/zerolog"
 	"strconv"
 	"strings"
 	"time"
@@ -1287,7 +1289,13 @@ func (me *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	for {
 
 		if results, batchTag, err = me.Client.InvokeBatchRequest(request, batchTag); err != nil {
-			me.Logger.Error().Err(err).
+			var log *zerolog.Event
+			if errors2.Is(err, errors.APIRequestRejected) {
+				log = me.Logger.Warn()
+			} else {
+				log = me.Logger.Error()
+			}
+			log.Err(err).
 				Str("request", request.GetNameS()).
 				Str("batchTag", batchTag).
 				Msg("InvokeBatchRequest failed")
