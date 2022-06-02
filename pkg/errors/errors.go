@@ -9,6 +9,12 @@ import (
 	"strings"
 )
 
+type apiError string
+
+const APIRequestRejected = apiError("API request rejected")
+
+func (e apiError) Error() string { return string(e) }
+
 const (
 	MissingParam   = "missing parameter"
 	InvalidParam   = "invalid parameter"
@@ -19,7 +25,7 @@ const (
 	ErrTemplate    = "invalid template"
 	ErrNoCollector = "no collectors"
 	APIResponse    = "error reading api response"
-	APIReqRejected = "api request rejected"
+
 	ErrImplement   = "implementation error"
 	GoRoutinePanic = "goroutine panic"
 )
