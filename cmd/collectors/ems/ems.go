@@ -29,7 +29,6 @@ type Ems struct {
 	emsProp        map[string][]*emsProp
 	Filter         []string
 	Fields         []string
-	clusterTime    time.Time
 	ReturnTimeOut  string
 	lastFilterTime string
 	maxURLSize     int
@@ -294,7 +293,7 @@ func (e *Ems) getClusterTime() (time.Time, error) {
 }
 
 // returns time filter (clustertime - polldata duration)
-func (e *Ems) getTimeStampFilter() string {
+func (e *Ems) getTimeStampFilter(clusterTime time.Time) string {
 	fromTime := e.lastFilterTime
 	// check if this is the first request
 	if e.lastFilterTime == "" {
@@ -305,7 +304,7 @@ func (e *Ems) getTimeStampFilter() string {
 				Str("defaultDataPollDuration", defaultDataPollDuration.String()).
 				Msg("Failed to parse duration. using default")
 		}
-		fromTime = e.clusterTime.Add(-dataDuration).Format(time.RFC3339)
+		fromTime = clusterTime.Add(-dataDuration).Format(time.RFC3339)
 	}
 	return "time=>=" + fromTime
 }
@@ -404,12 +403,12 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	startTime = time.Now()
 
 	// add time filter
-	e.clusterTime, err = e.getClusterTime()
+	clusterTime, err := e.getClusterTime()
 	if err != nil {
 		return nil, err
 	}
-	toTime := e.clusterTime.Format(time.RFC3339)
-	timeFilter := e.getTimeStampFilter()
+	toTime := clusterTime.Format(time.RFC3339)
+	timeFilter := e.getTimeStampFilter(clusterTime)
 	filter := append(e.Filter, timeFilter)
 
 	// build hrefs up to maxURLSize
