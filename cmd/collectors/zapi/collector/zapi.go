@@ -106,8 +106,7 @@ func (me *Zapi) InitVars() error {
 
 	template, templatePath, err := me.ImportSubTemplate(model, templateName, me.Client.Version())
 	if err != nil {
-		me.Logger.Warn().Err(err).Str("template", templatePath).Msg("Unable to import template")
-		return err
+		return fmt.Errorf("unable to import template=[%s] %w", templatePath, err)
 	}
 
 	me.TemplatePath = templatePath

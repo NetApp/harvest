@@ -220,10 +220,10 @@ func getPollerAndAddr() (*conf.Poller, string, error) {
 	return poller, poller.Addr, nil
 }
 
-func FetchData(client *Client, href string, records *[]interface{}) error {
+func FetchData(client *Client, href string, records *[]any) error {
 	getRest, err := client.GetRest(href)
 	if err != nil {
-		return fmt.Errorf("error making request api=%s err=%+v", href, err)
+		return fmt.Errorf("error making request %w", err)
 	}
 
 	isNonIterRestCall := false
@@ -262,7 +262,10 @@ func FetchData(client *Client, href string, records *[]interface{}) error {
 					// nextLink is same as previous link, no progress is being made, exit
 					return nil
 				}
-				FetchData(client, nextLink, records)
+				err := FetchData(client, nextLink, records)
+				if err != nil {
+					return err
+				}
 			}
 		}
 	}

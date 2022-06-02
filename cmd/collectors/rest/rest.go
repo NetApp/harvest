@@ -113,7 +113,10 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 	if err = r.InitMatrix(); err != nil {
 		return err
 	}
-	r.Logger.Info().Msgf("initialized cache with %d metrics", len(r.Matrix[r.Object].GetMetrics()))
+	r.Logger.Info().
+		Int("numMetrics", len(r.Prop.Metrics)).
+		Str("timeout", r.Client.Timeout.String()).
+		Msg("initialized cache")
 
 	return nil
 }
@@ -158,11 +161,11 @@ func (r *Rest) getClient(a *collector.AbstractCollector, config *node.Node) (*re
 
 	opt := a.GetOptions()
 	if poller, err = conf.PollerNamed(opt.Poller); err != nil {
-		r.Logger.Error().Stack().Err(err).Str("poller", opt.Poller).Msgf("")
+		r.Logger.Error().Err(err).Str("poller", opt.Poller).Msgf("")
 		return nil, err
 	}
 	if poller.Addr == "" {
-		r.Logger.Error().Stack().Str("poller", opt.Poller).Msg("Address is empty")
+		r.Logger.Error().Str("poller", opt.Poller).Msg("Address is empty")
 		return nil, errors.New(errors.MissingParam, "addr")
 	}
 
@@ -171,12 +174,11 @@ func (r *Rest) getClient(a *collector.AbstractCollector, config *node.Node) (*re
 	duration, err := time.ParseDuration(clientTimeout)
 	if err == nil {
 		timeout = duration
-		r.Logger.Info().Str("timeout", timeout.String()).Msg("Using timeout")
 	} else {
 		r.Logger.Info().Str("timeout", timeout.String()).Msg("Using default timeout")
 	}
 	if client, err = rest.New(*poller, timeout); err != nil {
-		r.Logger.Error().Stack().Err(err).Str("poller", opt.Poller).Msg("error creating new client")
+		r.Logger.Error().Err(err).Str("poller", opt.Poller).Msg("error creating new client")
 		os.Exit(1)
 	}
 
@@ -275,7 +277,6 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 	href := rest.BuildHref(r.Prop.Query, strings.Join(r.Prop.Fields, ","), r.Prop.Filter, "", "", "", r.Prop.ReturnTimeOut, r.Prop.Query)
 
 	if records, err = r.GetRestData(href); err != nil {
-		r.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
 		return nil, err
 	}
 
@@ -348,7 +349,9 @@ func (r *Rest) processEndPoints() error {
 		href := rest.BuildHref(r.query(endpoint), strings.Join(r.fields(endpoint), ","), r.filter(endpoint), "", "", "", r.Prop.ReturnTimeOut, r.query(endpoint))
 
 		if records, err = r.GetRestData(href); err != nil {
-			r.Logger.Error().Stack().Err(err).Str("ApiPath", endpoint.prop.Query).Msg("Failed to fetch data")
+			r.Logger.Error().Err(err).
+				Str("api", endpoint.prop.Query).
+				Msg("")
 			continue
 		}
 
@@ -532,8 +535,7 @@ func (r *Rest) GetRestData(href string) ([]interface{}, error) {
 
 	err = rest.FetchData(r.Client, href, &records)
 	if err != nil {
-		r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
-		return nil, err
+		return nil, fmt.Errorf("failed to fetch data: %w", err)
 	}
 
 	return records, nil
@@ -628,7 +630,6 @@ func (r *Rest) getNodeUuids() ([]collector.Id, error) {
 	href := rest.BuildHref(query, "serial_number,system_id", nil, "", "", "", r.Prop.ReturnTimeOut, query)
 
 	if records, err = r.GetRestData(href); err != nil {
-		r.Logger.Error().Stack().Err(err).Msg("Failed to fetch data")
 		return nil, err
 	}
 
