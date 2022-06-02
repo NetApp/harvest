@@ -653,7 +653,16 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 	}
 
-	_ = me.Metadata.LazySetValueInt64("calc_time", "data", time.Since(calcStart).Microseconds())
+	calcD := time.Since(calcStart)
+	me.Logger.Info().
+		Int("instances", len(instanceKeys)).
+		Uint64("metrics", count).
+		Str("apiD", apiT.Round(time.Millisecond).String()).
+		Str("parseD", parseT.Round(time.Millisecond).String()).
+		Str("calcD", calcD.Round(time.Millisecond).String()).
+		Msg("Collected")
+
+	_ = me.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
 
 	// store cache for next poll
 	me.Matrix[me.Object] = cachedData
