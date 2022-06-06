@@ -68,7 +68,7 @@ func (suite *AlertRulesTestSuite) TestExpression() {
 		assert.Fail(suite.T(), "Alert rules Test validation is failed. Pls check logs above")
 	}
 
-    // Send alert notification
+	// Send alert notification
 	//_, alertDetails := promAlerts.GetAlerts()
 	//for _, alertData := range alertDetails {
 	//	jsonData := promAlerts.GenerateJson(alertData)

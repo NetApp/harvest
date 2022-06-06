@@ -18,17 +18,17 @@ const ContentType string = "application/json; charset=UTF-8"
 
 // AlertBody sent as notification
 type AlertBody struct {
-	alertName string
-	labels map[string]string
+	alertName   string
+	labels      map[string]string
 	annotations map[string]string
 }
 
 func GetAlerts() ([]string, []AlertBody) {
 	var (
-		alerts []AlertBody
-		alertNames []string
-		name string
-		labels map[string]string
+		alerts      []AlertBody
+		alertNames  []string
+		name        string
+		labels      map[string]string
 		annotations map[string]string
 	)
 
@@ -54,9 +54,9 @@ func GetAlerts() ([]string, []AlertBody) {
 			annotations[i] = j.String()
 		}
 
-		alertDetail := AlertBody {
-			alertName: name,
-			labels: labels,
+		alertDetail := AlertBody{
+			alertName:   name,
+			labels:      labels,
 			annotations: annotations,
 		}
 
@@ -108,7 +108,7 @@ func SendNotification(jsonData []byte) {
 	httpURL := TeamChatWebhook //OutlookMailWebhook //TeamChatWebhook
 	//log.Debug().Str("URL", httpURL).Bytes("json", jsonData).Msg("Http json sent")
 
-	response, err := http.Post(httpURL, ContentType, bytes.NewBuffer(jsonData) )
+	response, err := http.Post(httpURL, ContentType, bytes.NewBuffer(jsonData))
 	utils.PanicIfNotNil(err)
 
 	defer response.Body.Close()
@@ -133,8 +133,8 @@ func GetAllAlertRules(dir string) ([]string, []string) {
 	}
 
 	for _, v := range data.GetChildS("groups").GetChildren() {
-		 if v.GetNameS() == "rules"{
-		 	for _, a := range v.GetChildren() {
+		if v.GetNameS() == "rules" {
+			for _, a := range v.GetChildren() {
 				if a.GetNameS() == "alert" {
 					alertname := a.GetContentS()
 					alertNames = append(alertNames, alertname)
