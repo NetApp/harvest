@@ -30,8 +30,7 @@ func (p *Prometheus) Install() bool {
 		"--add-host=localhost:"+ipAddress,
 		"-v", path+"/prometheus.yml:/etc/prometheus/prometheus.yml",
 		"-v", path+"/alert_rules.yml:/etc/prometheus/alert_rules.yml",
-		"prom/prometheus",
-		"-config.file", "/etc/prometheus/prometheus.yml")
+		"prom/prometheus")
 	cmd.Stdout = os.Stdout
 	err := cmd.Start()
 	utils.PanicIfNotNil(err)
