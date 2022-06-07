@@ -233,7 +233,7 @@ func (p *Prometheus) Export(data *matrix.Matrix) error {
 	p.cache.Lock()
 	p.cache.Put(key, metrics)
 	p.cache.Unlock()
-	p.Logger.Debug().Msgf("added to cache with key [%s%s%s%s]", color.Bold, color.Red, key, color.End)
+	p.Logger.Trace().Msgf("added to cache with key [%s%s%s%s]", color.Bold, color.Red, key, color.End)
 
 	// update metadata
 	p.AddExportCount(uint64(len(metrics)))
