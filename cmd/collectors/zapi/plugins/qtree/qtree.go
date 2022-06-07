@@ -13,6 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/util"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const BatchSize = "500"
@@ -94,16 +95,14 @@ func (my *Qtree) Init() error {
 	my.Logger.Debug().Msgf("added data with %d metrics", len(my.data.GetMetrics()))
 	my.data.SetExportOptions(exportOptions)
 
-	// batching the request
+	// setup batchSize for request
 	if my.client.IsClustered() {
 		if b := my.Params.GetChildContentS("batch_size"); b != "" {
 			if _, err := strconv.Atoi(b); err == nil {
 				my.batchSize = b
-				my.Logger.Info().Str("BatchSize", my.batchSize).Msg("using batch-size")
 			}
 		} else {
 			my.batchSize = BatchSize
-			my.Logger.Trace().Str("BatchSize", BatchSize).Msg("Using default batch-size")
 		}
 	}
 
@@ -112,11 +111,16 @@ func (my *Qtree) Init() error {
 
 func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	var (
-		request, result *node.Node
-		quotas          []*node.Node
-		output          []*matrix.Matrix
-		err             error
+		request, response *node.Node
+		quotas            []*node.Node
+		output            []*matrix.Matrix
+		ad, pd            time.Duration // Request/API time, Parse time, Fetch time
+		err               error
+		numMetrics        int
 	)
+
+	apiT := 0 * time.Second
+	parseT := 0 * time.Second
 
 	// Purge and reset data
 	my.data.PurgeInstances()
@@ -138,22 +142,25 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	tag := "initial"
 
 	for {
-		result, tag, err = my.client.InvokeBatchRequest(request, tag)
+		response, tag, ad, pd, err = my.client.InvokeBatchWithTimers(request, tag)
 
 		if err != nil {
 			return nil, err
 		}
 
-		if result == nil {
+		if response == nil {
 			break
 		}
 
+		apiT += ad
+		parseT += pd
+
 		if my.client.IsClustered() {
-			if x := result.GetChildS("attributes-list"); x != nil {
+			if x := response.GetChildS("attributes-list"); x != nil {
 				quotas = x.GetChildren()
 			}
 		} else {
-			quotas = result.SearchChildren([]string{"quota"})
+			quotas = response.SearchChildren([]string{"quota"})
 		}
 
 		if len(quotas) == 0 {
@@ -214,12 +221,14 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					for _, label := range my.data.GetExportOptions().GetChildS("instance_keys").GetAllChildContentS() {
 						if value := qtreeInstance.GetLabel(label); value != "" {
 							quotaInstance.SetLabel(label, value)
+							numMetrics++
 						}
 					}
 
-					// If the Qtree is the volume itself, than qtree label is empty, so copy the volume name to qtree.
+					// If the Qtree is the volume itself, then qtree label is empty, so copy the volume name to qtree.
 					if tree == "" {
 						quotaInstance.SetLabel("qtree", volume)
+						numMetrics++
 					}
 
 					// populate numeric data
@@ -231,10 +240,10 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 						if err := m.SetValueString(quotaInstance, value); err != nil {
 							my.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", attribute, value, err)
 						} else {
+							numMetrics++
 							my.Logger.Debug().Msgf("(%s) added value (%s)", attribute, value)
 						}
 					}
-
 				} else {
 					my.Logger.Debug().Msgf("instance without [%s], skipping", attribute)
 				}
@@ -242,7 +251,15 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				output = append(output, my.data)
 			}
 		}
-
 	}
+
+	my.Logger.Info().
+		Int("numQtrees", len(data.GetInstances())).
+		Int("numQuotas", len(quotas)).
+		Int("metrics", numMetrics).
+		Str("apiD", apiT.Round(time.Millisecond).String()).
+		Str("parseD", parseT.Round(time.Millisecond).String()).
+		Str("batchSize", my.batchSize).
+		Msg("Collected")
 	return output, nil
 }

@@ -255,7 +255,7 @@ func (me *AbstractCollector) GetHostUUID() string {
 	return me.HostUUID
 }
 
-// Start will run the collector in an infinity loop
+// Start will run the collector in an infinite loop
 func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 	defer wg.Done()
 	defer func() {
@@ -288,7 +288,7 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 			if me.Schedule.IsStandBy() && !me.Schedule.IsTaskStandBy(task) {
 				me.Logger.Info().
 					Str("task", task.Name).
-					Msg("schedule is in standby mode skipping")
+					Msg("skip, schedule is in standby")
 				continue
 			}
 
@@ -320,14 +320,14 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 					if !me.Schedule.IsStandBy() {
 						me.Logger.Warn().
 							Str("task", task.Name).
-							Int("retryDelay", retryDelay).
-							Msgf("target unreachable, entering standby mode (retry in retryDelay s)")
+							Int("retryDelaySecs", retryDelay).
+							Msg("target unreachable, entering standby mode and retry")
 					}
 					me.Logger.Debug().
 						Err(err).
-						Int("retryDelay", retryDelay).
 						Str("task", task.Name).
-						Msg("Target unreachable, entering standby mode (retry in retryDelay s)")
+						Int("retryDelaySecs", retryDelay).
+						Msg("target unreachable, entering standby mode and retry")
 					me.Schedule.SetStandByMode(task, time.Duration(retryDelay)*time.Second)
 					me.SetStatus(1, errors.ErrConnection)
 				// there are no instances to collect
@@ -336,8 +336,7 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 					me.SetStatus(1, errors.ErrNoInstance)
 					me.Logger.Info().
 						Str("task", task.Name).
-						Str("object", me.Object).
-						Msg("no instances of object on system, entering standby mode")
+						Msg("no instances, entering standby")
 				// no metrics available
 				case errors.IsErr(err, errors.ErrNoMetric):
 					me.SetStatus(1, errors.ErrNoMetric)
@@ -348,9 +347,9 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 						Msg("no metrics of object on system, entering standby mode")
 				// not an error we are expecting, so enter failed state and terminate
 				default:
-					me.Logger.Error().Stack().Err(err).Str("task", task.Name).Msg("")
-					if errmsg := errors.GetClass(err); errmsg != "" {
-						me.SetStatus(2, errmsg)
+					me.Logger.Error().Err(err).Str("task", task.Name).Msg("")
+					if errMsg := errors.GetClass(err); errMsg != "" {
+						me.SetStatus(2, errMsg)
 					} else {
 						me.SetStatus(2, err.Error())
 					}
@@ -436,7 +435,9 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 			// log if lagging by more than 50 ms
 			// < is used since larger durations are more negative
 		} else if nd.Milliseconds() <= -50 && !me.Schedule.IsStandBy() {
-			me.Logger.Warn().Msgf("lagging behind schedule %s", (-nd).String())
+			me.Logger.Warn().
+				Str("lag", (-nd).String()).
+				Msg("lagging behind schedule")
 		}
 	}
 }
@@ -520,7 +521,7 @@ func (me *AbstractCollector) LinkExporter(e exporter.Exporter) {
 	me.Exporters = append(me.Exporters, e)
 }
 
-func (me *AbstractCollector) LoadPlugin(s string, abc *plugin.AbstractPlugin) plugin.Plugin {
+func (me *AbstractCollector) LoadPlugin(_ string, _ *plugin.AbstractPlugin) plugin.Plugin {
 	return nil
 }
 
