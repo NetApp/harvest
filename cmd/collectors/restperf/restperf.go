@@ -762,7 +762,9 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 			if counter != nil {
 				if !isWorkloadDetailObject(r.Prop.Query) {
 					// set metric unit
-					metric.SetLabel("unit", counter.unit)
+					if counter.unit != "none" {
+						metric.SetLabel("unit", counter.unit)
+					}
 				}
 				if counter.denominator == "" {
 					// does not require base counter
