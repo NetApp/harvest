@@ -285,12 +285,12 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 
 	if x := options.GetChildS("instance_labels"); x != nil {
 		labelsToInclude = x.GetAllChildContentS()
-		p.Logger.Debug().Msgf("requested instance_labels : %v", labelsToInclude)
+		p.Logger.Trace().Msgf("requested instance_labels : %v", labelsToInclude)
 	}
 
 	if x := options.GetChildS("instance_keys"); x != nil {
 		keysToInclude = x.GetAllChildContentS()
-		p.Logger.Debug().Msgf("requested keys_labels : %v", keysToInclude)
+		p.Logger.Trace().Msgf("requested keys_labels : %v", keysToInclude)
 	}
 
 	includeAllLabels := false
@@ -391,7 +391,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 		for mkey, metric := range data.GetMetrics() {
 
 			if !metric.IsExportable() {
-				p.Logger.Debug().Msgf("skip metric [%s]: disabled for export", mkey)
+				p.Logger.Trace().Msgf("skip metric [%s]: disabled for export", mkey)
 				continue
 			}
 

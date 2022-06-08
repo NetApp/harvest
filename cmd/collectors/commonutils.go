@@ -85,7 +85,7 @@ func InvokeZapiCall(client *zapi.Client, request *node.Node, logger *logging.Log
 		return nil, "", nil
 	}
 
-	logger.Debug().Int("object", len(response)).Msg("fetching")
+	logger.Trace().Int("object", len(response)).Msg("fetching")
 
 	return response, newTag, nil
 }

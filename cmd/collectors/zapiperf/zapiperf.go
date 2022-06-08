@@ -188,7 +188,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		err             error
 	)
 
-	me.Logger.Debug().Msg("updating data cache")
+	me.Logger.Trace().Msg("updating data cache")
 	m := me.Matrix[me.Object]
 	// clone matrix without numeric data
 	newData := m.Clone(false, true, true)
@@ -259,7 +259,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 			endIndex = len(instanceKeys)
 		}
 
-		me.Logger.Debug().
+		me.Logger.Trace().
 			Int("startIndex", startIndex).
 			Int("endIndex", endIndex).
 			Msg("Starting batch poll for instances")
@@ -367,7 +367,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 				continue
 			}
 
-			me.Logger.Debug().
+			me.Logger.Trace().
 				Str("key", key).
 				Msg("Fetching data of instance")
 
@@ -504,7 +504,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		} // end loop over instances
 	} // end batch request
 
-	me.Logger.Debug().
+	me.Logger.Trace().
 		Uint64("count", count).
 		Int("batchCount", batchCount).
 		Msg("Collected data points in batch polls")
@@ -882,7 +882,7 @@ func (me *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 
 		// override counter properties from template
 		if p := me.GetOverride(key); p != "" {
-			me.Logger.Debug().Msgf("%soverride counter [%s] property [%s] => [%s]%s", color.Red, key, counter.GetChildContentS("properties"), p, color.End)
+			me.Logger.Trace().Msgf("%soverride counter [%s] property [%s] => [%s]%s", color.Red, key, counter.GetChildContentS("properties"), p, color.End)
 			counter.SetChildContentS("properties", p)
 		}
 
@@ -913,13 +913,13 @@ func (me *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		if strings.Contains(counter.GetChildContentS("properties"), "string") {
 			oldLabels.Delete(key)
 			me.instanceLabels[key] = display
-			me.Logger.Debug().Msgf("%s+[%s] added as label name (%s)%s", color.Yellow, key, display, color.End)
+			me.Logger.Trace().Msgf("%s+[%s] added as label name (%s)%s", color.Yellow, key, display, color.End)
 		} else {
 			// add counter as numeric metric
 			oldMetrics.Delete(key)
 			if r := me.addCounter(counter, key, display, true, counters); r != "" && !wanted.Has(r) {
 				missing.Add(r) // required base counter, missing in template
-				me.Logger.Debug().Msgf("%smarking [%s] as required base counter for [%s]%s", color.Red, r, key, color.End)
+				me.Logger.Trace().Msgf("%smarking [%s] as required base counter for [%s]%s", color.Red, r, key, color.End)
 			}
 		}
 	}
@@ -1112,7 +1112,7 @@ func (me *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled
 		display = strings.ReplaceAll(name, "-", "_") // redundant for zapiperf
 	}
 
-	me.Logger.Debug().Msgf("handling counter [%s] with property [%s] and unit [%s]", name, property, unit)
+	me.Logger.Trace().Msgf("handling counter [%s] with property [%s] and unit [%s]", name, property, unit)
 
 	// counter type is array, each element will be converted to a metric instance
 	if counter.GetChildContentS("type") == "array" {
@@ -1154,9 +1154,9 @@ func (me *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled
 			}
 
 			if m = mat.GetMetric(key); m != nil {
-				me.Logger.Debug().Msgf("updating array metric [%s] attributes", key)
+				me.Logger.Trace().Msgf("updating array metric [%s] attributes", key)
 			} else if m, err = mat.NewMetricFloat64(key); err == nil {
-				me.Logger.Debug().Msgf("%s+[%s] added array metric (%s), element with label (%s)%s", color.Pink, name, display, label, color.End)
+				me.Logger.Trace().Msgf("%s+[%s] added array metric (%s), element with label (%s)%s", color.Pink, name, display, label, color.End)
 			} else {
 				me.Logger.Error().Stack().Err(err).Msgf("add array metric element [%s]: ", key)
 				return ""
@@ -1181,9 +1181,9 @@ func (me *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled
 	} else {
 		var m matrix.Metric
 		if m = mat.GetMetric(name); m != nil {
-			me.Logger.Debug().Msgf("updating scalar metric [%s] attributes", name)
+			me.Logger.Trace().Msgf("updating scalar metric [%s] attributes", name)
 		} else if m, err = mat.NewMetricFloat64(name); err == nil {
-			me.Logger.Debug().Msgf("%s+[%s] added scalar metric (%s)%s", color.Cyan, name, display, color.End)
+			me.Logger.Trace().Msgf("%s+[%s] added scalar metric (%s)%s", color.Cyan, name, display, color.End)
 		} else {
 			me.Logger.Error().Stack().Err(err).Msgf("add scalar metric [%s]", name)
 			return ""
@@ -1330,12 +1330,12 @@ func (me *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 				me.Logger.Debug().Msgf("skip instance, missing key [%s] (name=%s, uuid=%s)", me.instanceKey, name, uuid)
 			} else if oldInstances.Delete(key) {
 				// instance already in cache
-				me.Logger.Debug().Msgf("updated instance [%s%s%s%s]", color.Bold, color.Yellow, key, color.End)
+				me.Logger.Trace().Msgf("updated instance [%s%s%s%s]", color.Bold, color.Yellow, key, color.End)
 				continue
 			} else if instance, err := mat.NewInstance(key); err != nil {
 				me.Logger.Error().Err(err).Msg("add instance")
 			} else {
-				me.Logger.Debug().
+				me.Logger.Trace().
 					Str("key", key).
 					Msg("Added new instance")
 				if me.Query == objWorkload || me.Query == objWorkloadDetail || me.Query == objWorkloadVolume || me.Query == objWorkloadDetailVolume {

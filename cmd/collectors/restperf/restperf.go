@@ -450,7 +450,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		resourceLatency matrix.Metric // for workload* objects
 	)
 
-	r.Logger.Debug().Msg("updating data cache")
+	r.Logger.Trace().Msg("updating data cache")
 
 	mat := r.Matrix[r.Object]
 	// clone matrix without numeric data
@@ -1138,7 +1138,7 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		} else if instance, err := mat.NewInstance(instanceKey); err != nil {
 			r.Logger.Error().Err(err).Str("Instance key", instanceKey).Msg("add instance")
 		} else {
-			r.Logger.Debug().
+			r.Logger.Trace().
 				Str("key", instanceKey).
 				Msg("Added new instance")
 			if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
