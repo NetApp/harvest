@@ -284,8 +284,10 @@ func (me *Zapi) PollInstance() (map[string]*matrix.Matrix, error) {
 				//c.logger.Printf(c.Prefix, "Handling instance element <%v> [%s]", &instance, instance.GetName())
 				keys, found = instance.SearchContent(me.shortestPathPrefix, me.instanceKeyPaths)
 
-				me.Logger.Trace().Msgf("keys=%v keypaths=%v found=%v", keys, me.instanceKeyPaths, found)
-				me.Logger.Trace().Msgf("fetched instance keys (%v): %v", me.instanceKeyPaths, keys)
+				me.Logger.Trace().
+					Strs("keys", keys).
+					Bool("found", found).
+					Msgf("keypaths=%v", me.instanceKeyPaths)
 
 				if !found {
 					me.Logger.Debug().Msg("skipping element, no instance keys found")

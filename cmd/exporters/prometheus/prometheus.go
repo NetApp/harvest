@@ -285,12 +285,12 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 
 	if x := options.GetChildS("instance_labels"); x != nil {
 		labelsToInclude = x.GetAllChildContentS()
-		p.Logger.Trace().Msgf("requested instance_labels : %v", labelsToInclude)
+		p.Logger.Trace().Strs("requested instance_labels", labelsToInclude).Msg("")
 	}
 
 	if x := options.GetChildS("instance_keys"); x != nil {
 		keysToInclude = x.GetAllChildContentS()
-		p.Logger.Trace().Msgf("requested keys_labels : %v", keysToInclude)
+		p.Logger.Trace().Strs("requested keys_labels", keysToInclude).Msg("")
 	}
 
 	includeAllLabels := false
