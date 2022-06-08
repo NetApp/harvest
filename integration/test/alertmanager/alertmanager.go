@@ -1,20 +1,13 @@
 package promAlerts
 
 import (
-	"bytes"
 	"encoding/json"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/netapp/harvest/v2/pkg/tree"
-	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
-	"io/ioutil"
-	"net/http"
 )
 
 const PrometheusAlertURL string = "http://localhost:9090/api/v1/alerts"
-const OutlookMailWebhook string = "https://netapp.webhook.office.com/webhookb2/9510e66b-7ade-40cb-87c5-51d54b76b4a9@4b0911a0-929b-4715-944b-c03745165b3a/IncomingWebhook/df89d716a72c44848de01bff8ce6ef03/e479cae9-a514-4af8-9a73-b097549d675c"
-const TeamChatWebhook string = "https://netapp.webhook.office.com/webhookb2/8d9d27e5-9392-4eef-86d8-a92b1425df71@4b0911a0-929b-4715-944b-c03745165b3a/IncomingWebhook/e60072c905e54adbb2cdcf59a5abf6dd/e479cae9-a514-4af8-9a73-b097549d675c"
-const ContentType string = "application/json; charset=UTF-8"
 
 // AlertBody sent as notification
 type AlertBody struct {
@@ -102,23 +95,6 @@ func GenerateJson(alert AlertBody) []byte {
 	jsonBody, err := json.Marshal(alertJson)
 	utils.PanicIfNotNil(err)
 	return jsonBody
-}
-
-func SendNotification(jsonData []byte) {
-	httpURL := TeamChatWebhook //OutlookMailWebhook //TeamChatWebhook
-	//log.Debug().Str("URL", httpURL).Bytes("json", jsonData).Msg("Http json sent")
-
-	response, err := http.Post(httpURL, ContentType, bytes.NewBuffer(jsonData))
-	utils.PanicIfNotNil(err)
-
-	defer response.Body.Close()
-
-	if response.StatusCode == http.StatusOK {
-		_, err := ioutil.ReadAll(response.Body)
-		utils.PanicIfNotNil(err)
-	} else {
-		log.Error().Str("status", response.Status).Msg("Http post call failed with errors")
-	}
 }
 
 func GetAllAlertRules(dir string) ([]string, []string) {
