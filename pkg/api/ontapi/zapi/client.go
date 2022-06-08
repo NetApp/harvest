@@ -463,9 +463,9 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 
 	if status != "passed" {
 		if reason, found = result.GetAttrValueS("reason"); !found {
-			err = errors.New(errors.APIReqRejected, "no reason")
+			err = fmt.Errorf("%w: %s", errors.APIRequestRejected, "no reason")
 		} else {
-			err = errors.New(errors.APIReqRejected, reason)
+			err = fmt.Errorf("%w: %s", errors.APIRequestRejected, reason)
 		}
 		return result, responseT, parseT, err
 	}

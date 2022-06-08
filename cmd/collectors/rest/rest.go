@@ -314,9 +314,9 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 
 	r.Logger.Info().
 		Uint64("instances", numRecords.Uint()).
-		Uint64("dataPoints", count).
-		Str("apiTime", apiD.String()).
-		Str("parseTime", parseD.String()).
+		Uint64("metrics", count).
+		Str("apiD", apiD.Round(time.Millisecond).String()).
+		Str("parseD", parseD.Round(time.Millisecond).String()).
 		Msg("Collected")
 
 	_ = r.Metadata.LazySetValueInt64("count", "data", numRecords.Int())
