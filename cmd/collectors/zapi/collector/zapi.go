@@ -284,8 +284,10 @@ func (me *Zapi) PollInstance() (map[string]*matrix.Matrix, error) {
 				//c.logger.Printf(c.Prefix, "Handling instance element <%v> [%s]", &instance, instance.GetName())
 				keys, found = instance.SearchContent(me.shortestPathPrefix, me.instanceKeyPaths)
 
-				me.Logger.Debug().Msgf("keys=%v keypaths=%v found=%v", keys, me.instanceKeyPaths, found)
-				me.Logger.Debug().Msgf("fetched instance keys (%v): %v", me.instanceKeyPaths, keys)
+				me.Logger.Trace().
+					Strs("keys", keys).
+					Bool("found", found).
+					Msgf("keypaths=%v", me.instanceKeyPaths)
 
 				if !found {
 					me.Logger.Debug().Msg("skipping element, no instance keys found")
@@ -293,7 +295,7 @@ func (me *Zapi) PollInstance() (map[string]*matrix.Matrix, error) {
 					if _, err = mat.NewInstance(strings.Join(keys, ".")); err != nil {
 						me.Logger.Error().Stack().Err(err).Msg("")
 					} else {
-						me.Logger.Debug().Msgf("added instance [%s]", strings.Join(keys, "."))
+						me.Logger.Trace().Msgf("added instance [%s]", strings.Join(keys, "."))
 						count++
 					}
 				}
@@ -337,26 +339,26 @@ func (me *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 
 		newpath := append(path, node.GetNameS())
 		key := strings.Join(newpath, ".")
-		me.Logger.Debug().Msgf(" > %s(%s)%s <%s%d%s> name=[%s%s%s%s] value=[%s%s%s]", color.Grey, newpath, color.End, color.Red, len(node.GetChildren()), color.End, color.Bold, color.Cyan, node.GetNameS(), color.End, color.Yellow, node.GetContentS(), color.End)
+		me.Logger.Trace().Msgf(" > %s(%s)%s <%s%d%s> name=[%s%s%s%s] value=[%s%s%s]", color.Grey, newpath, color.End, color.Red, len(node.GetChildren()), color.End, color.Bold, color.Cyan, node.GetNameS(), color.End, color.Yellow, node.GetContentS(), color.End)
 		if value := node.GetContentS(); value != "" {
 			if label, has := me.instanceLabelPaths[key]; has {
 				instance.SetLabel(label, value)
-				me.Logger.Debug().Msgf(" > %slabel (%s) [%s] set value (%s)%s", color.Yellow, key, label, value, color.End)
+				me.Logger.Trace().Msgf(" > %slabel (%s) [%s] set value (%s)%s", color.Yellow, key, label, value, color.End)
 				count++
 			} else if metric := mat.GetMetric(key); metric != nil {
 				if err := metric.SetValueString(instance, value); err != nil {
 					me.Logger.Error().Msgf("%smetric (%s) set value (%s): %v%s", color.Red, key, value, err, color.End)
 					skipped++
 				} else {
-					me.Logger.Debug().Msgf(" > %smetric (%s) set value (%s)%s", color.Green, key, value, color.End)
+					me.Logger.Trace().Msgf(" > %smetric (%s) set value (%s)%s", color.Green, key, value, color.End)
 					count++
 				}
 			} else {
-				me.Logger.Debug().Msgf(" > %sskipped (%s) with value (%s): not in metric or label cache%s", color.Blue, key, value, color.End)
+				me.Logger.Trace().Msgf(" > %sskipped (%s) with value (%s): not in metric or label cache%s", color.Blue, key, value, color.End)
 				skipped++
 			}
 		} else {
-			me.Logger.Debug().Msgf(" > %sskippped (%s) with no value%s", color.Cyan, key, color.End)
+			me.Logger.Trace().Msgf(" > %sskippped (%s) with no value%s", color.Cyan, key, color.End)
 			skipped++
 		}
 
@@ -365,7 +367,7 @@ func (me *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 		}
 	}
 
-	me.Logger.Debug().Msg("starting data poll")
+	me.Logger.Trace().Msg("starting data poll")
 
 	mat.Reset()
 
