@@ -73,24 +73,24 @@ func (suite *DashboardImportTestSuite) TestCModeDashboardCount() {
 	folderId := GetFolderId(cDotFolder, suite.T())
 	expectedName := []string{
 		"Harvest Metadata",
-		"NetApp Detail: Aggregate",
-		"NetApp Detail: Cluster",
-		"NetApp Detail: Disk",
-		"NetApp Detail: LUN",
-		"NetApp Detail: Network  - Details",
-		"NetApp Detail: Network with NVMe/FC",
-		"NetApp Detail: Node - Details",
-		"NetApp Detail: Shelf",
-		"NetApp Detail: SnapMirror",
-		"NetApp Detail: SVM - Details",
-		"NetApp Detail: Volume - Details",
-		"NetApp Detail: MetroCluster",
-		"NetApp Detail: Data Protection",
-		"NetApp Detail: Data Protection SnapMirror",
-		"NetApp Detail: Qtree",
-		"NetApp Detail: Security",
-		"NetApp Detail: Compliance",
-		"NetApp Detail: Power",
+		"ONTAP: Aggregate",
+		"ONTAP: Cluster",
+		"ONTAP: Disk",
+		"ONTAP: LUN",
+		"ONTAP: Network",
+		"ONTAP: Network with NVMe/FC",
+		"ONTAP: Node",
+		"ONTAP: Shelf",
+		"ONTAP: SnapMirror",
+		"ONTAP: SVM",
+		"ONTAP: Volume",
+		"ONTAP: MetroCluster",
+		"ONTAP: Data Protection",
+		"ONTAP: Data Protection SnapMirror",
+		"ONTAP: Qtree",
+		"ONTAP: Security",
+		"ONTAP: Compliance",
+		"ONTAP: Power",
 	}
 
 	VerifyDashboards(folderId, expectedName, suite.T())
@@ -100,15 +100,15 @@ func (suite *DashboardImportTestSuite) TestSevenModeDashboardCount() {
 
 	folderId := GetFolderId(sevenModeFolder, suite.T())
 	expectedName := []string{
-		"NetApp Detail: Aggregate 7 mode",
-		"NetApp Detail: Cluster 7 mode",
-		"NetApp Detail: Disk 7 mode",
-		"NetApp Detail: LUN 7 mode",
-		"NetApp Detail: Network 7 mode",
-		"NetApp Detail: Network with NVMe/FC 7 mode",
-		"NetApp Detail: Node 7 mode",
-		"NetApp Detail: Shelf 7 mode",
-		"NetApp Detail: Volume 7 mode",
+		"ONTAP: Aggregate 7 mode",
+		"ONTAP: Cluster 7 mode",
+		"ONTAP: Disk 7 mode",
+		"ONTAP: LUN 7 mode",
+		"ONTAP: Network 7 mode",
+		"ONTAP: Network with NVMe/FC 7 mode",
+		"ONTAP: Node 7 mode",
+		"ONTAP: Shelf 7 mode",
+		"ONTAP: Volume 7 mode",
 	}
 	VerifyDashboards(folderId, expectedName, suite.T())
 }
