@@ -1,0 +1,49 @@
+name:                     NFSv4_pool
+query:                    api/cluster/counter/tables/nfs_v4_diag
+object:                   nfs_diag
+
+global_labels:
+  - nfsv: v4
+
+counters:
+  - ^^uuid
+  - ^node.name                                                   => node
+  - storepool.byte_lock_allocated                                => storePool_ByteLockAlloc
+  - storepool.byte_lock_maximum                                  => storePool_ByteLockMax
+  - storepool.client_allocated                                   => storePool_ClientAlloc
+  - storepool.client_maximum                                     => storePool_ClientMax
+  - storepool.connection_parent_session_reference_allocated      => storePool_ConnectionParentSessionReferenceAlloc
+  - storepool.connection_parent_session_reference_maximum        => storePool_ConnectionParentSessionReferenceMax
+  - storepool.copy_state_allocated                               => storePool_CopyStateAlloc
+  - storepool.copy_state_maximum                                 => storePool_CopyStateMax
+  - storepool.delegation_allocated                               => storePool_DelegAlloc
+  - storepool.delegation_maximum                                 => storePool_DelegMax
+  - storepool.delegation_state_allocated                         => storePool_DelegStateAlloc
+  - storepool.delegation_state_maximum                           => storePool_DelegStateMax
+  - storepool.layout_allocated                                   => storePool_LayoutAlloc
+  - storepool.layout_maximum                                     => storePool_LayoutMax
+  - storepool.layout_state_allocated                             => storePool_LayoutStateAlloc
+  - storepool.layout_state_maximum                               => storePool_LayoutStateMax
+  - storepool.lock_state_allocated                               => storePool_LockStateAlloc
+  - storepool.lock_state_maximum                                 => storePool_LockStateMax
+  - storepool.open_allocated                                     => storePool_OpenAlloc
+  - storepool.open_maximum                                       => storePool_OpenMax
+  - storepool.openstate_allocated                                => storePool_OpenStateAlloc
+  - storepool.openstate_maximum                                  => storePool_OpenStateMax
+  - storepool.owner_allocated                                    => storePool_OwnerAlloc
+  - storepool.owner_maximum                                      => storePool_OwnerMax
+  - storepool.session_allocated                                  => storePool_SessionAlloc
+  - storepool.session_connection_holder_allocated                => storePool_SessionConnectionHolderAlloc
+  - storepool.session_connection_holder_maximum                  => storePool_SessionConnectionHolderMax
+  - storepool.session_holder_allocated                           => storePool_SessionHolderAlloc
+  - storepool.session_holder_maximum                             => storePool_SessionHolderMax
+  - storepool.session_maximum                                    => storePool_SessionMax
+  - storepool.state_reference_history_allocated                  => storePool_StateRefHistoryAlloc
+  - storepool.state_reference_history_maximum                    => storePool_StateRefHistoryMax
+  - storepool.string_allocated                                   => storePool_StringAlloc
+  - storepool.string_maximum                                     => storePool_StringMax
+
+export_options:
+  require_instance_keys: false
+  instance_keys:
+    - node
