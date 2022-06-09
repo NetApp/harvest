@@ -22,7 +22,6 @@ func PullImage(dockerImageName string) {
 		panic(err)
 	}
 	out, err := cli.ImagePull(ctx, dockerImageName, types.ImagePullOptions{RegistryAuth: GetAuth()})
-	log.Printf("PullImage complete  %s  \n", dockerImageName)
 	if err != nil {
 		panic(err)
 	}
@@ -36,6 +35,7 @@ func PullImage(dockerImageName string) {
 	if copyErr != nil {
 		return
 	}
+	log.Printf("PullImage complete  %s  \n", dockerImageName)
 }
 
 func GetAuth() string {

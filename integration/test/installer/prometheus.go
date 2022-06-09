@@ -19,10 +19,10 @@ func (p *Prometheus) Init(image string) {
 }
 
 func (p *Prometheus) Install() bool {
+	p.image = "prom/prometheus:v2.24.0"
 	log.Println("Prometheus image : " + p.image)
 	imageName := "prometheus"
 	docker.StopContainers(imageName)
-	docker.RemoveImage(imageName)
 	docker.PullImage(p.image)
 	path, _ := os.Getwd()
 	ipAddress := utils.GetOutboundIP()
@@ -33,14 +33,15 @@ func (p *Prometheus) Install() bool {
 	err := cmd.Start()
 	utils.PanicIfNotNil(err)
 	waitCount := 0
-	for waitCount < 5 {
+	maxWaitCount := 5
+	for waitCount < maxWaitCount {
 		waitCount++
-		time.Sleep(20 * time.Second)
+		time.Sleep(60 * time.Second)
 		if utils.IsURLReachable("http://localhost:" + utils.PrometheusPort) {
 			return true
 		}
 	}
-	log.Println("Reached maximum timeout. Prometheus is failed to start after 1 min")
+	log.Printf("Reached maximum timeout. Prometheus is failed to start after %d min\n", maxWaitCount)
 	return false
 }
 
