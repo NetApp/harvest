@@ -23,7 +23,7 @@ func (p *Prometheus) Install() bool {
 	log.Println("Prometheus image : " + p.image)
 	imageName := "prometheus"
 	docker.StopContainers(imageName)
-	docker.PullImage(p.image)
+	//docker.PullImage(p.image)
 	path, _ := os.Getwd()
 	ipAddress := utils.GetOutboundIP()
 	cmd := exec.Command("docker", "run", "-d", "-p", utils.PrometheusPort+":"+utils.PrometheusPort,
