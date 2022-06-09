@@ -6,6 +6,7 @@ object:     security_certificate
 counters:
   certificate-info:
     - ^^cert-name              => name
+    - ^^vserver                => svm
     - ^serial-number           => serial_number
     - ^type                    => type
     - ^public-certificate      => certificatePEM
@@ -25,6 +26,7 @@ export_options:
   instance_keys:
     - name
   instance_labels:
+    - svm
     - serial_number
     - type
     - certificateIssuerType
