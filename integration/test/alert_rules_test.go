@@ -16,27 +16,30 @@ import (
 	"testing"
 )
 
-var alertNames []string
+var alertRuleNames []string
 var alertRules []string
 var alerts []string
+var alertResponse []byte
 
 type AlertRulesTestSuite struct {
 	suite.Suite
 }
 
 func (suite *AlertRulesTestSuite) SetupSuite() {
+	// Start the webhook http server
+	promAlerts.StartServer()
 	dir := utils.GetHarvestRootDir() + "/integration/test"
-	//log.Info().Str("Dir", dir).Msg("directory path")
+	log.Info().Str("Dir", dir).Msg("directory path")
 
 	// Fetch alert rules
-	alertNames, alertRules = promAlerts.GetAllAlertRules(dir)
+	alertRuleNames, alertRules = promAlerts.GetAllAlertRules(dir)
 	if len(alertRules) == 0 {
 		assert.Fail(suite.T(), "No alert rules found @ "+dir)
 	}
 	log.Info().Int("rules", len(alertRules)).Msg("Alert Rules")
 
 	// Fetch prometheus alerts
-	alerts, _ = promAlerts.GetAlerts()
+	alerts, alertResponse = promAlerts.GetAlerts()
 	if len(alerts) == 0 {
 		log.Info().Msg("No alerts found in prometheus")
 	}
@@ -49,9 +52,9 @@ func (suite *AlertRulesTestSuite) TestExpression() {
 
 	for index, expr := range alertRules {
 		activeAlertCount := EvaluateExpr(expr)
-		//log.Debug().Msgf("active alerts for %s is %d", alertNames[index], activeAlertCount)
+		log.Debug().Msgf("active alerts for %s is %d", alertRuleNames[index], activeAlertCount)
 		for count := 0; count < activeAlertCount; count++ {
-			activeAlerts = append(activeAlerts, alertNames[index])
+			activeAlerts = append(activeAlerts, alertRuleNames[index])
 		}
 	}
 	log.Info().Msgf("active alerts name: %s", strings.Join(activeAlerts, ", "))
@@ -61,25 +64,21 @@ func (suite *AlertRulesTestSuite) TestExpression() {
 		alertArray := strings.Join(alerts, ",")
 		for _, activeAlert := range activeAlerts {
 			if !strings.Contains(alertArray, activeAlert) {
-				assert.Fail(suite.T(), "Test validation is failed. Pls check logs above")
+				assert.Fail(suite.T(), "Test validation is failed for %s. Pls check logs above", activeAlert)
 			}
 		}
-	} else {
-		assert.Fail(suite.T(), "Alert rules Test validation is failed. Pls check logs above")
-	}
 
-	// Send alert notification
-	//_, alertDetails := promAlerts.GetAlerts()
-	//for _, alertData := range alertDetails {
-	//	jsonData := promAlerts.GenerateJson(alertData)
-	//	promAlerts.SendNotification(jsonData)
-	//}
+		// Send alert notification
+		promAlerts.SendNotification(alertResponse)
+	} else {
+		assert.Fail(suite.T(), "Alert rules Test validation is failed due to count mismatch. Pls check logs above")
+	}
 }
 
 // Evaluate expr and return number of active alert count
 func EvaluateExpr(query string) int {
 	query = fmt.Sprintf("%s", query)
-	//log.Debug().Msg("Evaluating the alert rule " + query)
+	log.Debug().Msg("Evaluating the alert rule " + query)
 	queryURL := fmt.Sprintf("%s/api/v1/query?query=%s", data.PrometheusURL,
 		url.QueryEscape(query))
 	resp, err := utils.GetResponse(queryURL)
