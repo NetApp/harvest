@@ -85,7 +85,7 @@ func (suite *DashboardImportTestSuite) TestCModeDashboardCount() {
 		"ONTAP: SVM",
 		"ONTAP: Volume",
 		"ONTAP: MetroCluster",
-		"ONTAP: Data Protection",
+		"ONTAP: Data Protection Snapshots",
 		"ONTAP: Data Protection SnapMirror",
 		"ONTAP: Qtree",
 		"ONTAP: Security",
