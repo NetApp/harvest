@@ -14,6 +14,7 @@ global:
 # Load and evaluate rules in this file every 'evaluation_interval' seconds.
 rule_files:
   - 'alert_rules.yml'
+  - 'ems_alert_rules.yml'
     
 scrape_configs:
 - job_name: 'prometheus'

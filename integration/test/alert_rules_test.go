@@ -12,7 +12,6 @@ import (
 	"github.com/stretchr/testify/suite"
 	"github.com/tidwall/gjson"
 	"net/url"
-	"strings"
 	"testing"
 )
 
@@ -26,13 +25,14 @@ type AlertRulesTestSuite struct {
 }
 
 func (suite *AlertRulesTestSuite) SetupSuite() {
-	// Start the webhook http server
-	promAlerts.StartServer()
-	dir := utils.GetHarvestRootDir() + "/integration/test"
+	dir := utils.GetHarvestRootDir() + "/docker/prometheus"
 	log.Info().Str("Dir", dir).Msg("directory path")
 
 	// Fetch alert rules
-	alertRuleNames, alertRules = promAlerts.GetAllAlertRules(dir)
+	alertRuleNames = make([]string, 0)
+	alertRules = make([]string, 0)
+	promAlerts.GetAlertRules(&alertRuleNames, &alertRules, dir, "alert_rules.yml")
+	promAlerts.GetAlertRules(&alertRuleNames, &alertRules, dir, "ems_alert_rules.yml")
 	if len(alertRules) == 0 {
 		assert.Fail(suite.T(), "No alert rules found @ "+dir)
 	}
@@ -49,6 +49,7 @@ func (suite *AlertRulesTestSuite) SetupSuite() {
 // Evaluate alert rule expressions
 func (suite *AlertRulesTestSuite) TestExpression() {
 	activeAlerts := make([]string, 0)
+	notMatchingAlerts := make([]string, 0)
 
 	for index, expr := range alertRules {
 		activeAlertCount := EvaluateExpr(expr)
@@ -57,19 +58,19 @@ func (suite *AlertRulesTestSuite) TestExpression() {
 			activeAlerts = append(activeAlerts, alertRuleNames[index])
 		}
 	}
-	log.Info().Msgf("active alerts name: %s", strings.Join(activeAlerts, ", "))
+	log.Info().Msgf("active alerts name: %v", activeAlerts)
 
 	// active alerts should be equal to prometheus alerts
 	if len(activeAlerts) == len(alerts) {
-		alertArray := strings.Join(alerts, ",")
 		for _, activeAlert := range activeAlerts {
-			if !strings.Contains(alertArray, activeAlert) {
-				assert.Fail(suite.T(), "Test validation is failed for %s. Pls check logs above", activeAlert)
+			if !(utils.Contains(alerts, activeAlert)) {
+				notMatchingAlerts = append(notMatchingAlerts, activeAlert)
 			}
 		}
-
-		// Send alert notification
-		promAlerts.SendNotification(alertResponse)
+		if len(notMatchingAlerts) > 0 {
+			log.Info().Msg("The following alerts were not matching successfully.")
+			assert.Fail(suite.T(), fmt.Sprintf("One or more alerts %s were mot matching", notMatchingAlerts))
+		}
 	} else {
 		assert.Fail(suite.T(), "Alert rules Test validation is failed due to count mismatch. Pls check logs above")
 	}

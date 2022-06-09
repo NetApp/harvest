@@ -28,8 +28,7 @@ func (p *Prometheus) Install() bool {
 	ipAddress := utils.GetOutboundIP()
 	cmd := exec.Command("docker", "run", "-d", "-p", utils.PrometheusPort+":"+utils.PrometheusPort,
 		"--add-host=localhost:"+ipAddress,
-		"-v", path+"/prometheus.yml:/etc/prometheus/prometheus.yml",
-		"-v", path+"/alert_rules.yml:/etc/prometheus/alert_rules.yml",
+		"-v", path+"/../../docker/prometheus/:/etc/prometheus/",
 		"prom/prometheus")
 	cmd.Stdout = os.Stdout
 	err := cmd.Start()
