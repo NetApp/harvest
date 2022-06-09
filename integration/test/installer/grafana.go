@@ -29,14 +29,15 @@ func (g *Grafana) Install() bool {
 	err := cmd.Start()
 	utils.PanicIfNotNil(err)
 	waitCount := 0
-	for waitCount < 5 {
+	maxWaitCount := 15
+	for waitCount < maxWaitCount {
 		waitCount++
 		time.Sleep(1 * time.Minute)
 		if utils.IsURLReachable("http://localhost:" + utils.GrafanaPort) {
 			return true
 		}
 	}
-	log.Println("Reached maximum timeout. Grafana is failed to start after 5 min")
+	log.Printf("Reached maximum timeout. Grafana is failed to start after %d min\n", maxWaitCount)
 	return false
 }
 
