@@ -180,9 +180,7 @@ func doData() {
 	}
 
 	// strip leading slash
-	if strings.HasPrefix(args.API, "/") {
-		args.API = args.API[1:]
-	}
+	args.API = strings.TrimPrefix(args.API, "/")
 	var records []interface{}
 	href := BuildHref(args.API, args.Fields, args.Field, args.QueryField, args.QueryValue, args.MaxRecords, "", args.Endpoint)
 	stderr("fetching href=[%s]\n", href)

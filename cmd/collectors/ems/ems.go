@@ -505,7 +505,7 @@ func (e *Ems) getHref(names []string, filter []string) string {
 
 // GetDataInterval fetch pollData interval
 func GetDataInterval(param *node.Node, defaultInterval time.Duration) (time.Duration, error) {
-	var dataIntervalStr = ""
+	var dataIntervalStr string
 	var durationVal time.Duration
 	var err error
 	schedule := param.GetChildS("schedule")

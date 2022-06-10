@@ -47,9 +47,7 @@ func (e *Ems) ParseDefaults(prop *emsProp) {
 	)
 
 	//load default instance keys
-	for _, v := range defaultInstanceKey {
-		prop.InstanceKeys = append(prop.InstanceKeys, v)
-	}
+	prop.InstanceKeys = append(prop.InstanceKeys, defaultInstanceKey...)
 
 	//process default labels
 	for _, c := range e.DefaultLabels {

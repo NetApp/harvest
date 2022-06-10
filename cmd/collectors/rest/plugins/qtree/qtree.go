@@ -23,7 +23,6 @@ type Qtree struct {
 	data           *matrix.Matrix
 	instanceKeys   map[string]string
 	instanceLabels map[string]*dict.Dict
-	batchSize      string
 	client         *rest.Client
 	query          string
 }

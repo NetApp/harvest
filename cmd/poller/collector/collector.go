@@ -18,9 +18,10 @@ package collector
 import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/logging"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	"reflect"
 	"strconv"
-	"strings"
 	"sync"
 	"time"
 
@@ -150,9 +151,10 @@ func Init(c Collector) error {
 
 	// Each task will be mapped to a collector method
 	// Example: "data" will be aligned to method PollData()
+	caser := cases.Title(language.Und)
 	for _, task := range tasks.GetChildren() {
 
-		methodName := "Poll" + strings.Title(task.GetNameS())
+		methodName := "Poll" + caser.String(task.GetNameS())
 
 		if m := reflect.ValueOf(c).MethodByName(methodName); m.IsValid() {
 			if foo, ok := m.Interface().(func() (map[string]*matrix.Matrix, error)); ok {
@@ -353,7 +355,6 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 					} else {
 						me.SetStatus(2, err.Error())
 					}
-					break
 				}
 				// stop here if we had errors
 				continue
@@ -478,7 +479,7 @@ func (me *AbstractCollector) GetStatus() (uint8, string, string) {
 // SetStatus sets the current state of the collector to one
 // of the values defined by CollectorStatus
 func (me *AbstractCollector) SetStatus(status uint8, msg string) {
-	if status < 0 || status >= uint8(len(Status)) {
+	if status >= uint8(len(Status)) {
 		panic("invalid status code " + strconv.Itoa(int(status)))
 	}
 	me.Status = status

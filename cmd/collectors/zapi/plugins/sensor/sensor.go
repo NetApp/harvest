@@ -5,7 +5,6 @@ package sensor
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
-	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
@@ -19,8 +18,6 @@ type Sensor struct {
 	data           *matrix.Matrix
 	instanceKeys   map[string]string
 	instanceLabels map[string]*dict.Dict
-	client         *zapi.Client
-	query          string
 }
 
 type sensorEnvironmentMetric struct {

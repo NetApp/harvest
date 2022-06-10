@@ -168,7 +168,6 @@ func filterMetaTags(metrics [][]byte) [][]byte {
 					filtered = append(filtered, m)
 					if i+1 < len(metrics) {
 						filtered = append(filtered, metrics[i+1])
-						i++
 					}
 				}
 			}

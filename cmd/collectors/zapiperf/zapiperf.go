@@ -301,7 +301,6 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		// fetch instances
 		instances := response.GetChildS("instances")
 		if instances == nil || len(instances.GetChildren()) == 0 {
-			err = errors.New(errors.ErrNoInstance, "")
 			break
 		}
 

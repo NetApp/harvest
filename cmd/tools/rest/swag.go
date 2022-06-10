@@ -277,10 +277,7 @@ func sortParams(pathItem spec.PathItem) func(i int, j int) bool {
 		p2 := pathItem.Get.OperationProps.Parameters[j]
 
 		if p1.Required != p2.Required {
-			if p1.Required {
-				return true
-			}
-			return false
+			return p1.Required
 		}
 		return p1.Name < p2.Name
 	}

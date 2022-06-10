@@ -11,7 +11,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errors"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -25,14 +24,10 @@ const BatchSize = "500"
 
 type Certificate struct {
 	*plugin.AbstractPlugin
-	data                 *matrix.Matrix
-	instanceKeys         map[string]string
-	instanceLabels       map[string]*dict.Dict
 	pluginInvocationRate int
 	currentVal           int
 	batchSize            string
 	client               *zapi.Client
-	query                string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -170,7 +165,7 @@ func (my *Certificate) setCertificateValidity(data *matrix.Matrix, instance *mat
 
 	if expiryTime, ok := expiryTimeMetric.GetValueFloat64(instance); ok {
 		// convert expiryTime from float64 to int64 and find difference
-		timestampDiff := time.Unix(int64(expiryTime), 0).Sub(time.Now()).Hours()
+		timestampDiff := time.Until(time.Unix(int64(expiryTime), 0)).Hours()
 
 		if timestampDiff <= 0 {
 			instance.SetLabel("certificateExpiryStatus", "expired")
