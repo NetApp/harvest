@@ -65,16 +65,12 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1651156792017,
+  "iteration": 1654863008940,
   "links": [],
   "panels": [
     {
       "collapsed": false,
       "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1143,10 +1139,6 @@
     {
       "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1474,10 +1466,6 @@
     {
       "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1536,7 +1524,7 @@
                   }
                 ]
               },
-              "unit": "µs"
+              "unit": "Bps"
             },
             "overrides": []
           },
@@ -1544,7 +1532,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 33
+            "y": 23
           },
           "id": 32,
           "options": {
@@ -1634,7 +1622,7 @@
                   }
                 ]
               },
-              "unit": "µs"
+              "unit": "Bps"
             },
             "overrides": []
           },
@@ -1642,7 +1630,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 33
+            "y": 23
           },
           "id": 34,
           "options": {
@@ -1740,7 +1728,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 33
+            "y": 23
           },
           "id": 40,
           "options": {
@@ -1860,7 +1848,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 42
+            "y": 32
           },
           "id": 36,
           "options": {
@@ -1987,7 +1975,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 42
+            "y": 32
           },
           "id": 38,
           "options": {
@@ -2274,6 +2262,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Disk 7 mode",
-  "uid": "5c6R6_w7k",
-  "version": 2
+  "uid": "gZb-XGj7z",
+  "version": 3
 }
