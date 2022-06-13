@@ -202,9 +202,7 @@ func checkUniquePromPorts(config conf.HarvestConfig) validation {
 			continue
 		}
 		valid.isValid = false
-		for _, name := range exporterNames {
-			valid.invalid = append(valid.invalid, name)
-		}
+		valid.invalid = append(valid.invalid, exporterNames...)
 		break
 	}
 
@@ -268,9 +266,7 @@ func checkPollersExportToUniquePromPorts(config conf.HarvestConfig) validation {
 			continue
 		}
 		valid.isValid = false
-		for _, name := range pollerNames {
-			valid.invalid = append(valid.invalid, name)
-		}
+		valid.invalid = append(valid.invalid, pollerNames...)
 		break
 	}
 

@@ -155,19 +155,6 @@ func (r *RestPerf) InitMatrix() error {
 	return nil
 }
 
-// load a string parameter or use defaultValue
-func (r *RestPerf) loadParamStr(name, defaultValue string) string {
-
-	var x string
-
-	if x = r.Params.GetChildContentS(name); x != "" {
-		r.Logger.Debug().Str("name", name).Msg("using values")
-		return x
-	}
-	r.Logger.Debug().Str("name", name).Str("defaultValue", defaultValue).Msg("using values")
-	return defaultValue
-}
-
 // load an int parameter or use defaultValue
 func (r *RestPerf) loadParamInt(name string, defaultValue int) int {
 
@@ -390,7 +377,7 @@ func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 		}
 
 		if ops = mat.GetMetric("ops"); ops == nil {
-			if ops, err = mat.NewMetricFloat64("ops"); err != nil {
+			if _, err = mat.NewMetricFloat64("ops"); err != nil {
 				return nil, err
 			}
 			r.perfProp.counterInfo["ops"] = &counter{
@@ -507,6 +494,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	if isWorkloadDetailObject(r.Prop.Query) {
 		if resourceMap := r.Params.GetChildS("resource_map"); resourceMap == nil {
 			return nil, errors.New(errors.MissingParam, "resource_map")
+
 		} else {
 			instanceKeys = make([]string, 0)
 			for _, layer := range resourceMap.GetAllChildNamesS() {
@@ -1054,8 +1042,7 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 	dataQuery := path.Join(r.Prop.Query, "rows")
 	instanceKeys := r.Prop.InstanceKeys
-	fields := "properties"
-	fields = "*"
+	fields := "*"
 	var filter []string
 
 	if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {

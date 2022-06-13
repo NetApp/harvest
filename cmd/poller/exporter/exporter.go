@@ -139,7 +139,7 @@ func (me *AbstractExporter) GetStatus() (uint8, string, string) {
 
 // SetStatus sets the current state of exporter
 func (me *AbstractExporter) SetStatus(code uint8, msg string) {
-	if code < 0 || code >= uint8(len(ExporterStatus)) {
+	if code >= uint8(len(ExporterStatus)) {
 		panic("invalid status code " + strconv.Itoa(int(code)))
 	}
 	me.Status = code

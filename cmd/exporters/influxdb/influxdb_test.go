@@ -14,9 +14,8 @@ import (
 func setupInfluxDB(exporterName string, t *testing.T) *InfluxDB {
 	opts := &options.Options{}
 	opts.Debug = true
-	var err error
 
-	err = conf.LoadHarvestConfig("../../tools/doctor/testdata/testConfig.yml")
+	err := conf.LoadHarvestConfig("../../tools/doctor/testdata/testConfig.yml")
 	if err != nil {
 		panic(err)
 	}

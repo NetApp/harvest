@@ -17,6 +17,8 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -191,9 +193,7 @@ func addLabel(content []byte, label string, labelMap map[string]string) []byte {
 	// overwrite it
 	newVars := make([]gjson.Result, 0)
 	newVars = append(newVars, vars[0])
-	for _, result := range vars {
-		newVars = append(newVars, result)
-	}
+	newVars = append(newVars, vars...)
 
 	// Assume Datasource is first and insert the new label var as the second element.
 	// If we're wrong, that's OK, no harm
@@ -265,7 +265,7 @@ func toChainedVar(defStr string, label string) string {
 		return ""
 	}
 
-	title := strings.Title(label)
+	title := cases.Title(language.Und).String(label)
 	lastBracket := strings.LastIndex(defStr, "}")
 	if lastBracket == -1 {
 		lastParen := strings.LastIndex(defStr, ")")
@@ -318,7 +318,7 @@ func newLabelVar(label string) []byte {
   "skipUrlSync": false,
   "sort": 0,
   "type": "query"
-}`, label, strings.Title(label), label))
+}`, label, cases.Title(language.Und).String(label), label))
 }
 
 func doImport(_ *cobra.Command, _ []string) {
@@ -474,8 +474,9 @@ func importFiles(dir string, folder *Folder) {
 
 		// labelMap is used to ensure we don't modify the query of one of the new labels we're adding
 		labelMap := make(map[string]string)
+		caser := cases.Title(language.Und)
 		for _, label := range opts.labels {
-			labelMap[strings.Title(label)] = label
+			labelMap[caser.String(label)] = label
 		}
 		// The label is inserted in the list of variables first
 		// Iterate backwards so the labels keep the same order as cmdline
@@ -827,7 +828,7 @@ func checkToken(opts *options, ignoreConfig bool) error {
 	}
 
 	// get grafana version, we are more or less guaranteed this succeeds
-	if result, status, code, err = sendRequest(opts, "GET", "/api/health", nil); err != nil {
+	if result, _, _, err = sendRequest(opts, "GET", "/api/health", nil); err != nil {
 		return err
 	}
 
@@ -899,8 +900,7 @@ func checkFolder(folder *Folder) error {
 
 func createServerFolder(folder *Folder) error {
 
-	var request map[string]interface{}
-	request = make(map[string]interface{})
+	request := make(map[string]any)
 
 	request["title"] = folder.name
 

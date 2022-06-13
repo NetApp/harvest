@@ -20,7 +20,6 @@ var (
 	COLON       = []byte(`:`)
 	QUOTE       = []byte(`"`)
 	EMPTY       = []byte(``)
-	SPACE       = []byte(` `)
 )
 
 func Load(data []byte) (*node.Node, error) {
