@@ -22,12 +22,6 @@ const maxURLSize = 8_000 //bytes
 const severityFilterPrefix = "message.severity="
 const defaultSeverityFilter = "alert|emergency|error|informational|notice"
 
-// Bookend ems pair, [Resolving ems]: [Issuing ems]-[issuing severity]
-var bookendEmsResolvedMap = map[string]string{
-	"nvram.battery.charging.normal": "callhome.battery.low-alert",
-	"LUN.online":                    "LUN.offline-notice",
-}
-
 type Ems struct {
 	*rest2.Rest    // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
 	Query          string
@@ -63,12 +57,6 @@ type emsProp struct {
 	Plugins        []plugin.Plugin // built-in or custom plugins
 	Matches        []*Matches
 	Labels         map[string]string
-}
-
-type bookendEmsProp struct {
-	Name        string
-	severity    string
-	metricValue float64
 }
 
 func init() {
@@ -136,7 +124,6 @@ func (e *Ems) InitMatrix() error {
 			mat.SetGlobalLabel(l.GetNameS(), l.GetContentS())
 		}
 	}
-
 	return nil
 }
 
@@ -152,6 +139,7 @@ func (e *Ems) InitCache() error {
 
 	var (
 		events *node.Node
+		err error
 	)
 
 	if x := e.Params.GetChildContentS("object"); x != "" {
@@ -205,65 +193,49 @@ func (e *Ems) InitCache() error {
 		e.Plugins = make(map[string][]plugin.Plugin)
 	}
 
-	for _, event := range events.GetChildren() {
-		e.ParseEvents(event)
+	for _, line := range events.GetChildren() {
+		prop := emsProp{}
+
+		prop.InstanceKeys = make([]string, 0)
+		prop.InstanceLabels = make(map[string]string)
+		prop.Metrics = make(map[string]*Metric)
+
+		// check if name is present in template
+		if line.GetChildContentS("name") == "" {
+			e.Logger.Warn().Msg("Missing event name")
+			continue
+		}
+
+		//populate prop counter for asup
+		eventName := line.GetChildContentS("name")
+		e.Prop.Counters[eventName] = eventName
+
+		e.ParseDefaults(&prop)
+
+		for _, line1 := range line.GetChildren() {
+			if line1.GetNameS() == "name" {
+				prop.Name = line1.GetContentS()
+			}
+			if line1.GetNameS() == "exports" {
+				e.ParseExports(line1, &prop)
+			}
+			if line1.GetNameS() == "matches" {
+				e.ParseMatches(line1, &prop)
+			}
+			if line1.GetNameS() == "labels" {
+				e.ParseLabels(line1, &prop)
+			}
+			if line1.GetNameS() == "plugins" {
+				if err = e.LoadPlugins(line1, e, prop.Name); err != nil {
+					e.Logger.Error().Stack().Err(err).Msg("Failed to load plugin")
+				}
+			}
+		}
+		e.emsProp[prop.Name] = append(e.emsProp[prop.Name], &prop)
 	}
 	//add severity filter
 	e.Filter = append(e.Filter, e.severityFilter)
 	return nil
-}
-
-func (e *Ems) ParseEvents(line *node.Node) {
-	prop := emsProp{}
-
-	prop.InstanceKeys = make([]string, 0)
-	prop.InstanceLabels = make(map[string]string)
-	prop.Metrics = make(map[string]*Metric)
-
-	// check if name is present in template
-	if line.GetChildContentS("name") == "" {
-		e.Logger.Warn().Msg("Missing event name")
-		return
-	}
-
-	//populate prop counter for asup
-	eventName := line.GetChildContentS("name")
-	e.Prop.Counters[eventName] = eventName
-
-	e.ParseDefaults(&prop)
-
-	for _, line1 := range line.GetChildren() {
-		if line1.GetNameS() == "name" {
-			prop.Name = line1.GetContentS()
-		}
-		if line1.GetNameS() == "exports" {
-			e.ParseExports(line1, &prop)
-		}
-		if line1.GetNameS() == "matches" {
-			e.ParseMatches(line1, &prop)
-		}
-		if line1.GetNameS() == "labels" {
-			e.ParseLabels(line1, &prop)
-		}
-		if line1.GetNameS() == "plugins" {
-			if err := e.LoadPlugins(line1, e, prop.Name); err != nil {
-				e.Logger.Error().Stack().Err(err).Msg("Failed to load plugin")
-			}
-		}
-		// This is always at last, and resolveBy ems would honors all the labels but name and resolvedBy
-		if line1.GetNameS() == "resolvedBy" {
-			resolvingEmsName := line1.GetContentS()
-			resolvingEms := node.NewS("")
-			resolvingEms.SetChildContentS("name", resolvingEmsName)
-			for _, childName := range line.GetAllChildNamesS() {
-				if childName != "name" && childName != "resolvedBy" {
-					resolvingEms.SetChildContentS(childName, line.GetChildContentS(childName))
-				}
-			}
-			e.ParseEvents(resolvingEms)
-		}
-	}
-	e.emsProp[prop.Name] = append(e.emsProp[prop.Name], &prop)
 }
 
 func (e *Ems) getClusterTime() (time.Time, error) {
@@ -578,6 +550,7 @@ func parseProperties(instanceData gjson.Result, property string) gjson.Result {
 // HandleResults function is used for handling the rest response for parent as well as endpoints calls,
 func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (map[string]*matrix.Matrix, uint64) {
 	var (
+		err error
 		count uint64
 		mx    *matrix.Matrix
 	)
@@ -585,6 +558,11 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (ma
 	var m = e.Matrix
 
 	result.ForEach(func(key, instanceData gjson.Result) bool {
+		var (
+			instanceKey string
+		)
+
+		var instanceLabelCount uint64
 		if !instanceData.IsObject() {
 			e.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
 			return true
@@ -595,155 +573,126 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (ma
 			e.Logger.Warn().Msg("skip instance, missing message name")
 			return true
 		}
-		msgName := messageName.String()
-
-		if resolvedEmsName, ok := bookendEmsResolvedMap[msgName]; ok {
-			resolvedEms := strings.Split(resolvedEmsName, "-")
-			count += e.SetMetricValue(prop, instanceData, mx, m, bookendEmsProp{Name: resolvedEms[0], severity: resolvedEms[1], metricValue: 0})
+		k := messageName.String()
+		if _, ok := m[k]; !ok {
+			//create matrix if not exists for the ems event
+			mx = matrix.New(messageName.String(), e.Prop.Object, messageName.String())
+			mx.SetGlobalLabels(e.Matrix[e.Object].GetGlobalLabels())
+			m[k] = mx
 		} else {
-			count += e.SetMetricValue(prop, instanceData, mx, m, bookendEmsProp{Name: msgName, severity: "", metricValue: 1})
+			mx = m[k]
 		}
 
-		return true
-	})
-	return m, count
-}
-
-func (e *Ems) SetMetricValue(prop map[string][]*emsProp, instanceData gjson.Result, mx *matrix.Matrix, m map[string]*matrix.Matrix, bookendEms bookendEmsProp) uint64 {
-	var (
-		instanceKey        string
-		instanceLabelCount uint64
-		err                error
-	)
-
-	msgName := bookendEms.Name
-	emsValue := bookendEms.metricValue
-	if _, ok := m[msgName]; !ok {
-		//create matrix if not exists for the ems event
-		mx = matrix.New(msgName, e.Prop.Object, msgName)
-		mx.SetGlobalLabels(e.Matrix[e.Object].GetGlobalLabels())
-		m[msgName] = mx
-	} else {
-		mx = m[msgName]
-	}
-
-	//parse ems properties for the instance
-	isMatch := false
-	if ps, ok := prop[msgName]; ok {
-		for _, p := range ps {
-			instanceKey = ""
-			instanceLabelCount = 0
-			// extract instance key(s)
-			for _, k := range p.InstanceKeys {
-				value := parseProperties(instanceData, k)
-				if value.Exists() {
-					instanceKey += value.String()
-				} else {
-					e.Logger.Warn().Str("key", k).Msg("skip instance, missing key")
-					break
-				}
-			}
-
-			instance := mx.GetInstance(instanceKey)
-
-			if instance == nil {
-				if instance, err = mx.NewInstance(instanceKey); err != nil {
-					e.Logger.Error().Err(err).Str("Instance key", instanceKey).Msg("")
-				}
-			}
-
-			for label, display := range p.InstanceLabels {
-				value := parseProperties(instanceData, label)
-				if value.Exists() {
-					if value.IsArray() {
-						var labelArray []string
-						for _, r := range value.Array() {
-							labelString := r.String()
-							labelArray = append(labelArray, labelString)
-						}
-						instance.SetLabel(display, strings.Join(labelArray, ","))
+		//parse ems properties for the instance
+		isMatch := false
+		if ps, ok := prop[messageName.String()]; ok {
+			for _, p := range ps {
+				instanceKey = ""
+				instanceLabelCount = 0
+				// extract instance key(s)
+				for _, k := range p.InstanceKeys {
+					value := parseProperties(instanceData, k)
+					if value.Exists() {
+						instanceKey += value.String()
 					} else {
-						if emsValue == 0 {
-							switch display {
-							case "message":
-								instance.SetLabel(display, msgName)
-							case "severity":
-								instance.SetLabel(display, bookendEms.severity)
-							default:
-								instance.SetLabel(display, value.String())
+						e.Logger.Warn().Str("key", k).Msg("skip instance, missing key")
+						break
+					}
+				}
+
+				instance := mx.GetInstance(instanceKey)
+
+				if instance == nil {
+					if instance, err = mx.NewInstance(instanceKey); err != nil {
+						e.Logger.Error().Err(err).Str("Instance key", instanceKey).Msg("")
+						return true
+					}
+				}
+
+				for label, display := range p.InstanceLabels {
+					value := parseProperties(instanceData, label)
+					if value.Exists() {
+						if value.IsArray() {
+							var labelArray []string
+							for _, r := range value.Array() {
+								labelString := r.String()
+								labelArray = append(labelArray, labelString)
 							}
+							instance.SetLabel(display, strings.Join(labelArray, ","))
 						} else {
 							instance.SetLabel(display, value.String())
 						}
-					}
-					instanceLabelCount++
-				} else {
-					e.Logger.Warn().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
-				}
-			}
-
-			//set labels
-			for k, v := range p.Labels {
-				instance.SetLabel(k, v)
-			}
-
-			//matches filtering
-			if len(p.Matches) == 0 {
-				isMatch = true
-			} else {
-				for _, match := range p.Matches {
-					if value := instance.GetLabel(match.Name); value != "" {
-						if value == match.value {
-							isMatch = true
-							break
-						}
+						instanceLabelCount++
 					} else {
-						//value not found
-						e.Logger.Warn().
-							Str("Instance key", instanceKey).
-							Str("name", match.Name).
-							Str("value", match.value).
-							Msg("label is not found")
+						e.Logger.Warn().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
 					}
 				}
-			}
-			if !isMatch {
-				instanceLabelCount = 0
-				continue
-			}
 
-			for _, metric := range p.Metrics {
-				metr, ok := mx.GetMetrics()[metric.Name]
-				if !ok {
-					if metr, err = mx.NewMetricFloat64(metric.Name); err != nil {
-						e.Logger.Error().Err(err).
-							Str("name", metric.Name).
-							Msg("NewMetricFloat64")
+				//set labels
+				for k, v := range p.Labels {
+					instance.SetLabel(k, v)
+				}
+
+				//matches filtering
+				if len(p.Matches) == 0 {
+					isMatch = true
+				} else {
+					for _, match := range p.Matches {
+						if value := instance.GetLabel(match.Name); value != "" {
+							if value == match.value {
+								isMatch = true
+								break
+							}
+						} else {
+							//value not found
+							e.Logger.Warn().
+								Str("Instance key", instanceKey).
+								Str("name", match.Name).
+								Str("value", match.value).
+								Msg("label is not found")
+						}
 					}
 				}
-				if metric.Name == "events" {
-					if err = metr.SetValueFloat64(instance, emsValue); err != nil {
-						e.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
-							Msg("Unable to set float key on metric")
+				if !isMatch {
+					instanceLabelCount = 0
+					continue
+				}
+
+				for _, metric := range p.Metrics {
+					metr, ok := mx.GetMetrics()[metric.Name]
+					if !ok {
+						if metr, err = mx.NewMetricFloat64(metric.Name); err != nil {
+							e.Logger.Error().Err(err).
+								Str("name", metric.Name).
+								Msg("NewMetricFloat64")
+						}
 					}
-				} else {
-					// this code will not execute as ems only support events metric
-					f := instanceData.Get(metric.Name)
-					if f.Exists() {
-						if err = metr.SetValueFloat64(instance, f.Float()); err != nil {
+					if metric.Name == "events" {
+						if err = metr.SetValueFloat64(instance, 1); err != nil {
 							e.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
 								Msg("Unable to set float key on metric")
+						}
+					} else {
+						// this code will not execute as ems only support events metric
+						f := instanceData.Get(metric.Name)
+						if f.Exists() {
+							if err = metr.SetValueFloat64(instance, f.Float()); err != nil {
+								e.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
+									Msg("Unable to set float key on metric")
+							}
 						}
 					}
 				}
 			}
 		}
-	}
-	if !isMatch {
-		mx.RemoveInstance(instanceKey)
-	}
-
-	return instanceLabelCount
+		if !isMatch {
+			mx.RemoveInstance(instanceKey)
+			return true
+		}
+		count += instanceLabelCount
+		return true
+	})
+	return m, count
 }
 
 // Interface guards

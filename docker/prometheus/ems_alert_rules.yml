@@ -31,15 +31,6 @@ groups:
           summary: "Call-home arw message for Volume uuid [{{ $labels.volume_uuid }}]."
           description: "Call-home arw message for Volume uuid [{{ $labels.volume_uuid }}]."
 
-      # Alert for Call-home battery low bookend ems - will be resolved by nvram battery charging normal
-      - alert: Call-home battery low message received
-        expr: max by (node_uuid) (last_over_time(timestamp(ems_events{message="callhome.battery.low"} == 0)[8w:])) < max by (node_uuid) (last_over_time(timestamp(ems_events{message="callhome.battery.low"} == 1)[8w:])) or group by (node_uuid) (last_over_time(timestamp(ems_events{message="callhome.battery.low"} == 1)[8w:]) unless on (node_uuid) last_over_time(timestamp(ems_events{message="callhome.battery.low"} == 0)[8w:]))
-        labels:
-          severity: "error"
-        annotations:
-          summary: "Call home BATTERY_LOW message for Node uuid [{{ $labels.node_uuid }}]."
-          description: "Call home BATTERY_LOW message for Node uuid [{{ $labels.node_uuid }}]."
-
       # Alert for Call-home hainterconnect down ems
       - alert: Call-home ha interconnect message received
         expr: last_over_time(ems_events{message="callhome.hainterconnect.down"} [1d] ) == 1
@@ -48,12 +39,3 @@ groups:
         annotations:
           summary: "Call-home ha interconnect message for Node uuid [{{ $labels.node_uuid }}]."
           description: "Call-home ha interconnect message for Node uuid [{{ $labels.node_uuid }}]."
-
-      # Alert for Lun offline ems
-      - alert: Lun offline
-        expr: max by (object_uuid) (last_over_time(timestamp(ems_events{message="LUN.offline"} == 0)[8w:])) < max by (object_uuid) (last_over_time(timestamp(ems_events{message="LUN.offline"} == 1)[8w:])) or group by (object_uuid) (last_over_time(timestamp(ems_events{message="LUN.offline"} == 1)[8w:]) unless on (object_uuid) last_over_time(timestamp(ems_events{message="LUN.offline"} == 0)[8w:]))
-        labels:
-          severity: "error"
-        annotations:
-          summary: "Lun offline for Object uuid [{{ $labels.object_uuid }}]."
-          description: "Lun offline for Object uuid [{{ $labels.object_uuid }}]."
