@@ -104,6 +104,7 @@ events:
       - parameters.vserverUuid             => svm_uuid
 
   - name: callhome.battery.low
+    resolvedBy: nvram.battery.charging.normal
 
   - name: callhome.hainterconnect.down
 
@@ -166,6 +167,7 @@ events:
       - parameters.lun_path                 => lun_path
       - parameters.volume_name              => volume
       - parameters.volume_dsid              => volume_ds_id
+    resolvedBy: LUN.online
 
   - name: mgmtgwd.rootvolrec.low.space
     exports:

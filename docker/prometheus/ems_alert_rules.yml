@@ -6,7 +6,7 @@ groups:
 
       # Alert for Anti-ransomware state change ems
       - alert: Anti-ransomware state was changed volume
-        expr: last_over_time(ems_events{message="arw.volume.state"} [15m] ) == 1
+        expr: last_over_time(ems_events{message="arw.volume.state"} [4w] ) == 1
         labels:
           severity: "error"
         annotations:
@@ -15,7 +15,7 @@ groups:
 
       # Alert for Anti-ransomware state change ems
       - alert: Anti-ransomware state was changed svm
-        expr: last_over_time(ems_events{message="arw.vserver.state"} [15m] ) == 1
+        expr: last_over_time(ems_events{message="arw.vserver.state"} [4w] ) == 1
         labels:
           severity: "error"
         annotations:
@@ -24,7 +24,7 @@ groups:
 
       # Alert for Call-home arw message ems
       - alert: Call-home arw message received
-        expr: last_over_time(ems_events{message="callhome.arw.activity.seen"} [15m] ) == 1
+        expr: last_over_time(ems_events{message="callhome.arw.activity.seen"} [4w] ) == 1
         labels:
           severity: "error"
         annotations:
@@ -33,7 +33,7 @@ groups:
 
       # Alert for Call-home battery low bookend ems - will be resolved by nvram battery charging normal
       - alert: Call-home battery low message received
-        expr: (max by(node_uuid) (last_over_time(timestamp(ems_events{message="callhome.battery.low"})[30m:])) - max by(node_uuid) (last_over_time(timestamp(ems_events{message="nvram.battery.charging.normal"})[30m:])) or group by (node_uuid) (last_over_time(timestamp(ems_events{message="callhome.battery.low"})[30m:]) unless on (node_uuid) last_over_time(timestamp(ems_events{message="nvram.battery.charging.normal"})[30m:]))) > 0
+        expr: max by (node_uuid) (last_over_time(timestamp(ems_events{message="callhome.battery.low"} == 0)[8w:])) < max by (node_uuid) (last_over_time(timestamp(ems_events{message="callhome.battery.low"} == 1)[8w:])) or group by (node_uuid) (last_over_time(timestamp(ems_events{message="callhome.battery.low"} == 1)[8w:]) unless on (node_uuid) last_over_time(timestamp(ems_events{message="callhome.battery.low"} == 0)[8w:]))
         labels:
           severity: "error"
         annotations:
@@ -42,9 +42,18 @@ groups:
 
       # Alert for Call-home hainterconnect down ems
       - alert: Call-home ha interconnect message received
-        expr: last_over_time(ems_events{message="callhome.hainterconnect.down"} [15m] ) == 1
+        expr: last_over_time(ems_events{message="callhome.hainterconnect.down"} [1d] ) == 1
         labels:
           severity: "error"
         annotations:
           summary: "Call-home ha interconnect message for Node uuid [{{ $labels.node_uuid }}]."
           description: "Call-home ha interconnect message for Node uuid [{{ $labels.node_uuid }}]."
+
+      # Alert for Lun offline ems
+      - alert: Lun offline
+        expr: max by (object_uuid) (last_over_time(timestamp(ems_events{message="LUN.offline"} == 0)[8w:])) < max by (object_uuid) (last_over_time(timestamp(ems_events{message="LUN.offline"} == 1)[8w:])) or group by (object_uuid) (last_over_time(timestamp(ems_events{message="LUN.offline"} == 1)[8w:]) unless on (object_uuid) last_over_time(timestamp(ems_events{message="LUN.offline"} == 0)[8w:]))
+        labels:
+          severity: "error"
+        annotations:
+          summary: "Lun offline for Object uuid [{{ $labels.object_uuid }}]."
+          description: "Lun offline for Object uuid [{{ $labels.object_uuid }}]."
