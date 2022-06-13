@@ -433,6 +433,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		startTime       time.Time
 		err             error
 		records         []interface{}
+		instanceKeys    []string
 		resourceLatency matrix.Metric // for workload* objects
 	)
 
@@ -493,6 +494,14 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	if isWorkloadDetailObject(r.Prop.Query) {
 		if resourceMap := r.Params.GetChildS("resource_map"); resourceMap == nil {
 			return nil, errors.New(errors.MissingParam, "resource_map")
+
+		} else {
+			instanceKeys = make([]string, 0)
+			for _, layer := range resourceMap.GetAllChildNamesS() {
+				for key := range mat.GetInstances() {
+					instanceKeys = append(instanceKeys, key+"."+layer)
+				}
+			}
 		}
 	}
 
