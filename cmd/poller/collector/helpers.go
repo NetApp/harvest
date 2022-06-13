@@ -120,7 +120,10 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 		}
 
 		templatePath = path.Join(pathPrefix, selectedVersion, f)
-		c.Logger.Info().Msgf("best-fit template [%s] for [%s]", templatePath, verWithDots)
+		c.Logger.Info().
+			Str("path", templatePath).
+			Str("v", verWithDots).
+			Msg("best-fit template")
 		if finalTemplate == nil {
 			finalTemplate, err = tree.ImportYaml(templatePath)
 			if err == nil {

@@ -31,6 +31,7 @@ objects:
   WAFL:              wafl.yaml
   WAFLAggr:          wafl_hya_per_aggr.yaml
   WAFLSizer:         wafl_hya_sizer.yaml
+#  NFSv4Pool:         nfsv4_pool.yaml
 
   # SVM-level metrics
   CIFSsvm:           cifs_svm.yaml

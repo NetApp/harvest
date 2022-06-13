@@ -12,6 +12,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
+	"sort"
 	"strings"
 	"time"
 )
@@ -189,7 +190,7 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	err = rest.FetchData(my.client, href, &records)
 	if err != nil {
-		my.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
+		my.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
 		return nil, err
 	}
 
@@ -216,6 +217,7 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	my.Logger.Debug().Msgf("fetching %d shelf counters", numRecords.Int())
 
 	var output []*matrix.Matrix
+	noSet := make(map[string]any)
 
 	// Purge and reset data
 	for _, data1 := range my.data {
@@ -307,7 +309,7 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 						}
 					}
 				} else {
-					my.Logger.Warn().Msgf("no [%s] instances on this system", attribute)
+					noSet[attribute] = struct{}{}
 					continue
 				}
 				output = append(output, data1)
@@ -316,6 +318,14 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		return true
 	})
 
+	if len(noSet) > 0 {
+		attributes := make([]string, 0)
+		for k := range noSet {
+			attributes = append(attributes, k)
+		}
+		sort.Strings(attributes)
+		my.Logger.Warn().Strs("attributes", attributes).Msg("No instances")
+	}
 	err = my.calculateEnvironmentMetrics(data)
 
 	return output, err

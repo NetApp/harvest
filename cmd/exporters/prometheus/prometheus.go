@@ -233,7 +233,7 @@ func (p *Prometheus) Export(data *matrix.Matrix) error {
 	p.cache.Lock()
 	p.cache.Put(key, metrics)
 	p.cache.Unlock()
-	p.Logger.Debug().Msgf("added to cache with key [%s%s%s%s]", color.Bold, color.Red, key, color.End)
+	p.Logger.Trace().Msgf("added to cache with key [%s%s%s%s]", color.Bold, color.Red, key, color.End)
 
 	// update metadata
 	p.AddExportCount(uint64(len(metrics)))
@@ -285,12 +285,12 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 
 	if x := options.GetChildS("instance_labels"); x != nil {
 		labelsToInclude = x.GetAllChildContentS()
-		p.Logger.Debug().Msgf("requested instance_labels : %v", labelsToInclude)
+		p.Logger.Trace().Strs("requested instance_labels", labelsToInclude).Msg("")
 	}
 
 	if x := options.GetChildS("instance_keys"); x != nil {
 		keysToInclude = x.GetAllChildContentS()
-		p.Logger.Debug().Msgf("requested keys_labels : %v", keysToInclude)
+		p.Logger.Trace().Strs("requested keys_labels", keysToInclude).Msg("")
 	}
 
 	includeAllLabels := false
@@ -391,7 +391,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 		for mkey, metric := range data.GetMetrics() {
 
 			if !metric.IsExportable() {
-				p.Logger.Debug().Msgf("skip metric [%s]: disabled for export", mkey)
+				p.Logger.Trace().Msgf("skip metric [%s]: disabled for export", mkey)
 				continue
 			}
 

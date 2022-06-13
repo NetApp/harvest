@@ -22,7 +22,7 @@ func InvokeRestCall(client *rest.Client, query string, href string, logger *logg
 
 	err = rest.FetchData(client, href, &records)
 	if err != nil {
-		logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
+		logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
 		return []gjson.Result{}, err
 	}
 
@@ -85,7 +85,7 @@ func InvokeZapiCall(client *zapi.Client, request *node.Node, logger *logging.Log
 		return nil, "", nil
 	}
 
-	logger.Debug().Int("object", len(response)).Msg("fetching")
+	logger.Trace().Int("object", len(response)).Msg("fetching")
 
 	return response, newTag, nil
 }

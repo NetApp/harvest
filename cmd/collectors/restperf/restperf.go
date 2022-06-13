@@ -205,7 +205,7 @@ func (r *RestPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 
 	err = rest.FetchData(r.Client, href, &records)
 	if err != nil {
-		r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
+		r.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
 		return nil, err
 	}
 
@@ -280,7 +280,7 @@ func (r *RestPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	if mat.GetMetric("timestamp") == nil {
 		m, err := mat.NewMetricFloat64("timestamp")
 		if err != nil {
-			r.Logger.Error().Stack().Err(err).Msg("add timestamp metric")
+			r.Logger.Error().Err(err).Msg("add timestamp metric")
 		}
 		m.SetProperty("raw")
 		m.SetExportable(false)
@@ -374,15 +374,15 @@ func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 		var service, wait, visits, ops matrix.Metric
 
 		if service = mat.GetMetric("service_time"); service == nil {
-			r.Logger.Error().Stack().Msg("metric [service_time] required to calculate workload missing")
+			r.Logger.Error().Msg("metric [service_time] required to calculate workload missing")
 		}
 
 		if wait = mat.GetMetric("wait_time"); wait == nil {
-			r.Logger.Error().Stack().Msg("metric [wait-time] required to calculate workload missing")
+			r.Logger.Error().Msg("metric [wait-time] required to calculate workload missing")
 		}
 
 		if visits = mat.GetMetric("visits"); visits == nil {
-			r.Logger.Error().Stack().Msg("metric [visits] required to calculate workload missing")
+			r.Logger.Error().Msg("metric [visits] required to calculate workload missing")
 		}
 
 		if service == nil || wait == nil || visits == nil {
@@ -450,7 +450,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		resourceLatency matrix.Metric // for workload* objects
 	)
 
-	r.Logger.Debug().Msg("updating data cache")
+	r.Logger.Trace().Msg("updating data cache")
 
 	mat := r.Matrix[r.Object]
 	// clone matrix without numeric data
@@ -475,7 +475,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	ts := float64(time.Now().UnixNano()) / BILLION
 	err = rest.FetchData(r.Client, href, &records)
 	if err != nil {
-		r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
+		r.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
 		return nil, err
 	}
 
@@ -762,7 +762,9 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 			if counter != nil {
 				if !isWorkloadDetailObject(r.Prop.Query) {
 					// set metric unit
-					metric.SetLabel("unit", counter.unit)
+					if counter.unit != "none" {
+						metric.SetLabel("unit", counter.unit)
+					}
 				}
 				if counter.denominator == "" {
 					// does not require base counter
@@ -795,7 +797,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		key := orderedKeys[i]
 		counter := r.counterLookup(metric, key)
 		if counter == nil {
-			r.Logger.Error().Stack().Err(err).Str("counter", metric.GetName()).Msg("Missing counter:")
+			r.Logger.Error().Err(err).Str("counter", metric.GetName()).Msg("Missing counter:")
 			continue
 		}
 		property := counter.counterType
@@ -807,7 +809,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 		// all other properties - first calculate delta
 		if err = metric.Delta(mat.GetMetric(key)); err != nil {
-			r.Logger.Error().Stack().Err(err).Str("key", key).Msg("Calculate delta")
+			r.Logger.Error().Err(err).Str("key", key).Msg("Calculate delta")
 			continue
 		}
 
@@ -852,7 +854,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 			}
 
 			if err != nil {
-				r.Logger.Error().Stack().Err(err).Str("key", key).Msg("Division by base")
+				r.Logger.Error().Err(err).Str("key", key).Msg("Division by base")
 				continue
 			}
 
@@ -863,12 +865,12 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 		if property == "percent" {
 			if err = metric.MultiplyByScalar(100); err != nil {
-				r.Logger.Error().Stack().Err(err).Str("key", key).Msg("Multiply by scalar")
+				r.Logger.Error().Err(err).Str("key", key).Msg("Multiply by scalar")
 			}
 			continue
 		}
 		// If we reach here then one of the earlier clauses should have executed `continue` statement
-		r.Logger.Error().Stack().Err(err).
+		r.Logger.Error().Err(err).
 			Str("key", key).
 			Str("property", property).
 			Msg("Unknown property")
@@ -882,7 +884,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 			property := counter.counterType
 			if property == "rate" {
 				if err = metric.Divide(timestamp); err != nil {
-					r.Logger.Error().Stack().Err(err).
+					r.Logger.Error().Err(err).
 						Int("i", i).
 						Str("metric", metric.GetName()).
 						Str("key", orderedKeys[i]).
@@ -930,7 +932,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 	}
 
 	if ops = data.GetMetric("ops"); ops == nil {
-		r.Logger.Error().Stack().Err(nil).Msgf("ops counter not found in cache")
+		r.Logger.Error().Err(nil).Msgf("ops counter not found in cache")
 		return errors.New(errors.MissingParam, "counter ops")
 	}
 
@@ -947,7 +949,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 
 	err = rest.FetchData(r.Client, href, &records)
 	if err != nil {
-		r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
+		r.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
 		return err
 	}
 
@@ -1001,7 +1003,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 		f := parseMetricResponse(instanceData, counterName)
 		if f.value != "" {
 			if err = ops.SetValueString(instance, f.value); err != nil {
-				r.Logger.Error().Stack().Err(err).Str("metric", counterName).Str("value", value.String()).Msg("set metric")
+				r.Logger.Error().Err(err).Str("metric", counterName).Str("value", value.String()).Msg("set metric")
 			} else {
 				r.Logger.Trace().Msgf("+ metric (%s) = [%s%s%s]", counterName, color.Cyan, value, color.End)
 			}
@@ -1080,7 +1082,7 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 	err = rest.FetchData(r.Client, href, &records)
 	if err != nil {
-		r.Logger.Error().Stack().Err(err).Str("href", href).Msg("Failed to fetch data")
+		r.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
 		return nil, err
 	}
 
@@ -1138,7 +1140,7 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		} else if instance, err := mat.NewInstance(instanceKey); err != nil {
 			r.Logger.Error().Err(err).Str("Instance key", instanceKey).Msg("add instance")
 		} else {
-			r.Logger.Debug().
+			r.Logger.Trace().
 				Str("key", instanceKey).
 				Msg("Added new instance")
 			if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {

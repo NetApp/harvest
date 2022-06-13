@@ -93,7 +93,7 @@ func (my *Qtree) Init() error {
 		}
 
 		metric.SetName(display)
-		my.Logger.Debug().Msgf("added metric: (%s) [%s] %s", metricName, display, metric)
+		my.Logger.Trace().Msgf("added metric: (%s) [%s] %s", metricName, display, metric)
 	}
 
 	my.Logger.Debug().Msgf("added data with %d metrics", len(my.data.GetMetrics()))
@@ -152,7 +152,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				my.Logger.Error().Stack().Err(err).Str("quotaInstanceKey", quotaInstanceKey).Msg("Failed to create quota instance")
 				return nil, err
 			}
-			my.Logger.Debug().Msgf("add (%s) quota instance: %s.%s.%s.%s", quotaInstanceKey, vserver, volume, tree, quotaIndex)
+			my.Logger.Trace().Msgf("add (%s) quota instance: %s.%s.%s.%s", quotaInstanceKey, vserver, volume, tree, quotaIndex)
 		}
 
 		qtreeInstance := data.GetInstance(vserver + volume + tree)
@@ -196,7 +196,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			if err = m.SetValueFloat64(quotaInstance, value); err != nil {
 				my.Logger.Error().Stack().Err(err).Str("attribute", attribute).Float64("value", value).Msg("Failed to parse value")
 			} else {
-				my.Logger.Debug().Str("attribute", attribute).Float64("value", value).Msg("added value")
+				my.Logger.Trace().Str("attribute", attribute).Float64("value", value).Msg("added value")
 			}
 
 			output = append(output, my.data)
