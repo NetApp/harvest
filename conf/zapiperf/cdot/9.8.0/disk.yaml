@@ -44,15 +44,3 @@ plugins:
 # only export node/aggr aggregations from plugin
 # set this true or comment, to get data for each disk
 export_data: false
-
-export_options:
-  instance_keys:
-    - partition
-    - aggr
-    - node
-    - disk
-    - raid
-    - plex
-  instance_labels:
-    - disk_speed
-    - raid_type

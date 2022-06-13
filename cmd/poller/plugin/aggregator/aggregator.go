@@ -246,7 +246,7 @@ func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				continue
 			}
 
-			me.Logger.Debug().Msgf("[%s] (%s) normalizing values as average", mk, mn)
+			me.Logger.Trace().Msgf("[%s] (%s) normalizing values as average", mk, mn)
 
 			for key, instance := range m.GetInstances() {
 

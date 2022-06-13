@@ -156,10 +156,6 @@ func sendAsupVia(msg *Payload, asupExecPath string) error {
 	}
 
 	if err != nil {
-		logging.Get().Error().
-			Err(err).
-			Str("payloadPath", msg.path).
-			Msg("Unable to execute autosupport binary")
 		return err
 	}
 
