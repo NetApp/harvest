@@ -116,7 +116,9 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	// Set all global labels from Rest.go if already not exist
 	my.data.SetGlobalLabels(data.GetGlobalLabels())
 
-	href := rest.BuildHref("", "*", nil, "", "", "", "", my.query)
+	filter := []string{"type=tree", "qtree.name=!\"\""}
+
+	href := rest.BuildHref("", "*", filter, "", "", "", "", my.query)
 
 	if result, err = collectors.InvokeRestCall(my.client, my.query, href, my.Logger); err != nil {
 		return nil, err
@@ -184,7 +186,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 			if attrValue := quota.Get(attribute); attrValue.Exists() {
 				// space limits are in bytes, converted to kilobytes
-				if attribute == "space.hard_limit" || attribute == "space.soft_limit" {
+				if attribute == "space.hard_limit" || attribute == "space.soft_limit" || attribute == "space.used.total" {
 					value = attrValue.Float() / 1024
 				} else {
 					value = attrValue.Float()
