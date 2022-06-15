@@ -139,7 +139,7 @@ func (e *Ems) InitCache() error {
 
 	var (
 		events *node.Node
-		err error
+		err    error
 	)
 
 	if x := e.Params.GetChildContentS("object"); x != "" {
@@ -550,7 +550,7 @@ func parseProperties(instanceData gjson.Result, property string) gjson.Result {
 // HandleResults function is used for handling the rest response for parent as well as endpoints calls,
 func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (map[string]*matrix.Matrix, uint64) {
 	var (
-		err error
+		err   error
 		count uint64
 		mx    *matrix.Matrix
 	)
