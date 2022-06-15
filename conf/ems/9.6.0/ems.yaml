@@ -162,12 +162,14 @@ events:
 
   - name: LUN.offline
     exports:
-      - parameters.object_uuid              => object_uuid
+      - ^^parameters.object_uuid            => object_uuid
       - parameters.object_type              => object_type
       - parameters.lun_path                 => lun_path
       - parameters.volume_name              => volume
       - parameters.volume_dsid              => volume_ds_id
-    resolvedBy: LUN.online
+    resolvedby: LUN.online
+    resolvedby_exports:
+      - ^^parameters.object_uuid            => object_uuid
 
   - name: mgmtgwd.rootvolrec.low.space
     exports:

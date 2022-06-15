@@ -71,12 +71,12 @@ func (e *Ems) ParseDefaults(prop *emsProp) {
 
 func (e *Ems) ParseExports(counter *node.Node, prop *emsProp) {
 	var (
-		display, name string
+		display, name, key string
 	)
 
 	for _, c := range counter.GetAllChildContentS() {
 		if c != "" {
-			name, display, _, _ = util.ParseMetric(c)
+			name, display, key, _ = util.ParseMetric(c)
 			e.Logger.Debug().
 				Str("name", name).
 				Str("display", display).
@@ -84,6 +84,42 @@ func (e *Ems) ParseExports(counter *node.Node, prop *emsProp) {
 
 			// EMS only supports labels
 			prop.InstanceLabels[name] = display
+
+			if key == "key" {
+				// only supports for bookend EMS
+				prop.BookendKeys[name] = display
+				e.Logger.Debug().
+					Str("name", name).
+					Str("display", display).
+					Msg("Collected bookend keys")
+			}
 		}
 	}
+}
+
+func (e *Ems) ParseResolvedby(event *node.Node) {
+	var resolvedByEmsName string
+	var resolvedByExports *node.Node
+
+	prop := emsProp{}
+	prop.InstanceLabels = make(map[string]string)
+	prop.BookendKeys = make(map[string]string)
+
+	// check if resolvedby is present in template
+	if resolvedByEmsName = event.GetChildContentS("resolvedby"); resolvedByEmsName == "" {
+		e.Logger.Warn().Msg("Missing resolving event name")
+		return
+	}
+	prop.Name = resolvedByEmsName
+
+	// populate prop counter for asup
+	e.Prop.Counters[resolvedByEmsName] = resolvedByEmsName
+
+	// check if resolvedby is present in template
+	if resolvedByExports = event.GetChildS("resolvedby_exports"); resolvedByExports == nil {
+		e.Logger.Warn().Msg("Missing resolving event exports")
+		return
+	}
+	e.ParseExports(resolvedByExports, &prop)
+	e.emsProp[resolvedByEmsName] = append(e.emsProp[resolvedByEmsName], &prop)
 }
