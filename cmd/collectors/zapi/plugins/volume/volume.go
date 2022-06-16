@@ -74,11 +74,9 @@ func (my *Volume) Init() error {
 	if b := my.Params.GetChildContentS("batch_size"); b != "" {
 		if _, err := strconv.Atoi(b); err == nil {
 			my.batchSize = b
-			my.Logger.Info().Str("BatchSize", my.batchSize).Msg("using batch-size")
 		}
 	} else {
 		my.batchSize = BatchSize
-		my.Logger.Trace().Str("BatchSize", BatchSize).Msg("Using default batch-size")
 	}
 
 	return nil
@@ -98,22 +96,22 @@ func (my *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		// invoke snapmirror zapi and populate info in source and destination snapmirror maps
 		if smSourceMap, smDestinationMap, err := my.GetSnapMirrors(); err != nil {
-			my.Logger.Warn().Err(err).Msg("Failed to collect snapmirror data")
+			my.Logger.Debug().Err(err).Msg("Failed to collect snapmirror data")
 		} else {
 			// update internal cache based on volume and SM maps
 			my.updateMaps(data, smSourceMap, smDestinationMap)
 		}
 
 		// invoke disk-encrypt-get-iter zapi and populate disk info
-		disks, err1 := my.getDiskData()
+		disks, err1 := my.getEncryptedDisks()
 		// invoke aggr-status-get-iter zapi and populate aggr disk mapping info
 		aggrDiskMap, err2 := my.getAggrDiskMapping()
 
 		if err1 != nil {
-			my.Logger.Warn().Err(err1).Msg("Failed to collect disk data")
+			my.Logger.Debug().Err(err1).Msg("Failed to collect disk data")
 		}
 		if err2 != nil {
-			my.Logger.Warn().Err(err2).Msg("Failed to collect aggregate-disk mapping data")
+			my.Logger.Debug().Err(err2).Msg("Failed to collect aggregate-disk mapping data")
 		}
 		// update aggrsMap based on disk data and addr disk mapping
 		my.updateAggrMap(disks, aggrDiskMap)
@@ -301,7 +299,7 @@ func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
 	}
 }
 
-func (my *Volume) getDiskData() ([]string, error) {
+func (my *Volume) getEncryptedDisks() ([]string, error) {
 	var (
 		result    []*node.Node
 		diskNames []string

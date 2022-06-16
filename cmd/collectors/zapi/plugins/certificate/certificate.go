@@ -60,11 +60,9 @@ func (my *Certificate) Init() error {
 	if b := my.Params.GetChildContentS("batch_size"); b != "" {
 		if _, err := strconv.Atoi(b); err == nil {
 			my.batchSize = b
-			my.Logger.Info().Str("BatchSize", my.batchSize).Msg("using batch-size")
 		}
 	} else {
 		my.batchSize = BatchSize
-		my.Logger.Trace().Str("BatchSize", BatchSize).Msg("Using default batch-size")
 	}
 
 	return nil
@@ -83,13 +81,13 @@ func (my *Certificate) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		// invoke vserver-get-iter zapi and get admin vserver name
 		if adminVserver, err = my.GetAdminVserver(); err != nil {
-			my.Logger.Warn().Err(err).Msg("Failed to collect admin vserver")
+			my.Logger.Debug().Err(err).Msg("Failed to collect admin vserver")
 			return nil, nil
 		}
 
 		// invoke security-ssl-get-iter zapi and get admin vserver's serial number
 		if adminVserverSerial, err = my.GetSecuritySsl(adminVserver); err != nil {
-			my.Logger.Warn().Err(err).Msg("Failed to collect admin vserver's serial number")
+			my.Logger.Debug().Err(err).Msg("Failed to collect admin vserver's serial number")
 			return nil, nil
 		}
 
@@ -123,19 +121,19 @@ func (my *Certificate) setCertificateIssuerType(instance *matrix.Instance) {
 	certUUID := instance.GetLabel("uuid")
 
 	if certificatePEM == "" {
-		my.Logger.Warn().Str("uuid", certUUID).Msg("Certificate is not found")
+		my.Logger.Debug().Str("uuid", certUUID).Msg("Certificate is not found")
 		instance.SetLabel("certificateIssuerType", "unknown")
 	} else {
 		instance.SetLabel("certificateIssuerType", "self_signed")
 		certDecoded, _ := pem.Decode([]byte(certificatePEM))
 		if certDecoded == nil {
-			my.Logger.Warn().Msg("PEM formatted object is not a X.509 certificate. Only PEM formatted X.509 certificate input is allowed")
+			my.Logger.Debug().Msg("PEM formatted object is not a X.509 certificate. Only PEM formatted X.509 certificate input is allowed")
 			instance.SetLabel("certificateIssuerType", "unknown")
 			return
 		}
 
 		if cert, err = x509.ParseCertificate(certDecoded.Bytes); err != nil {
-			my.Logger.Warn().Msg("PEM formatted object is not a X.509 certificate. Only PEM formatted X.509 certificate input is allowed")
+			my.Logger.Debug().Msg("PEM formatted object is not a X.509 certificate. Only PEM formatted X.509 certificate input is allowed")
 			instance.SetLabel("certificateIssuerType", "unknown")
 			return
 		}

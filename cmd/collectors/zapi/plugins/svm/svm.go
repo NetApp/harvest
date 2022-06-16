@@ -79,11 +79,9 @@ func (my *SVM) Init() error {
 	if b := my.Params.GetChildContentS("batch_size"); b != "" {
 		if _, err := strconv.Atoi(b); err == nil {
 			my.batchSize = b
-			my.Logger.Info().Str("BatchSize", my.batchSize).Msg("using batch-size")
 		}
 	} else {
 		my.batchSize = BatchSize
-		my.Logger.Trace().Str("BatchSize", BatchSize).Msg("Using default batch-size")
 	}
 
 	return nil
@@ -99,44 +97,37 @@ func (my *SVM) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		// invoke fileservice-audit-config-get-iter zapi and get audit protocols
 		if my.auditProtocols, err = my.GetAuditProtocols(); err != nil {
-			my.Logger.Warn().Err(err).Msg("Failed to collect audit protocols")
-			//return nil, nil
+			my.Logger.Debug().Err(err).Msg("Failed to collect audit protocols")
 		}
 
 		// invoke cifs-security-get-iter zapi and get cifs protocols
 		if my.cifsProtocols, err = my.GetCifsProtocols(); err != nil {
-			my.Logger.Warn().Err(err).Msg("Failed to collect cifs protocols")
-			//return nil, nil
+			my.Logger.Debug().Err(err).Msg("Failed to collect cifs protocols")
 		}
 
 		// invoke nameservice-nsswitch-get-iter zapi and get nsswitch info
 		if my.nsswitchInfo, err = my.GetNSSwitchInfo(); err != nil {
-			my.Logger.Warn().Err(err).Msg("Failed to collect nsswitch info")
-			//return nil, nil
+			my.Logger.Debug().Err(err).Msg("Failed to collect nsswitch info")
 		}
 
 		// invoke nis-get-iter zapi and get nisdomain info
 		if my.nisInfo, err = my.GetNisInfo(); err != nil {
-			my.Logger.Warn().Err(err).Msg("Failed to collect nisdomain info")
-			//return nil, nil
+			my.Logger.Debug().Err(err).Msg("Failed to collect nisdomain info")
 		}
 
 		// invoke cifs-server-get-iter zapi and get cifsenabled info
 		if my.cifsEnabled, err = my.GetCifsEnabled(); err != nil {
-			my.Logger.Warn().Err(err).Msg("Failed to collect cifsenabled info")
-			//return nil, nil
+			my.Logger.Debug().Err(err).Msg("Failed to collect cifsenabled info")
 		}
 
 		// invoke nfs-service-get-iter zapi and get cifsenabled info
 		if my.nfsEnabled, err = my.GetNfsEnabled(); err != nil {
-			my.Logger.Warn().Err(err).Msg("Failed to collect nfsenabled info")
-			//return nil, nil
+			my.Logger.Debug().Err(err).Msg("Failed to collect nfsenabled info")
 		}
 
 		// invoke security-ssh-get-iter zapi and get ssh data
 		if my.sshData, err = my.GetSSHData(); err != nil {
-			my.Logger.Warn().Err(err).Msg("Failed to collect ssh data")
-			//return nil, nil
+			my.Logger.Debug().Err(err).Msg("Failed to collect ssh data")
 		}
 
 		// update svm instance based on the above zapi response
