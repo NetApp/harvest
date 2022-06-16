@@ -416,7 +416,7 @@ func (n *Node) SearchContent(prefix []string, paths [][]string) ([]string, bool)
 			newPath = make([]string, len(currentPath))
 			copy(newPath, currentPath)
 		}
-		//fmt.Printf(" -> current_path=%v \t new_path=%v\n", current_path, new_path)
+		//fmt.Printf(" -> current_path=%v \t new_path=%v\n", currentPath, newPath)
 		for _, path := range paths {
 			if util.EqualStringSlice(newPath, path) {
 				matches = append(matches, node.GetContentS())
@@ -434,7 +434,7 @@ func (n *Node) SearchContent(prefix []string, paths [][]string) ([]string, bool)
 	search(n, []string{})
 
 	//fmt.Printf("matches (%d):\n%v\n", len(matches), matches)
-	return matches, len(matches) == len(paths)
+	return matches, len(matches) > 0
 }
 
 func (n *Node) SearchChildren(path []string) []*Node {

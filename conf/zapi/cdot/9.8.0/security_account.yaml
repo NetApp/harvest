@@ -9,6 +9,7 @@ counters:
     - ^^application                               => applications
     - ^^vserver                                   => svm
     - ^^authentication-method                     => methods
+    - ^^remote-switch-ipaddress                   => remote_switch_ipaddress
     - ^role-name                                  => role_name
     - ^password-hash-algorithm                    => hash_algorithm
     - ^is-locked                                  => locked
@@ -30,6 +31,7 @@ export_options:
     - applications
     - svm
     - methods
+    - remote_switch_ipaddress
   instance_labels:
     - role_name
     - hash_algorithm
