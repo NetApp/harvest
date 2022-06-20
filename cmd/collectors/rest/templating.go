@@ -66,7 +66,7 @@ func (r *Rest) InitCache() error {
 	}
 
 	r.ParseRestCounters(counters, r.Prop)
-	r.Metadata.NewMetricUint64("datapoint_count")
+	_, _ = r.Metadata.NewMetricUint64("datapoint_count")
 
 	r.Logger.Debug().
 		Strs("extracted Instance Keys", r.Prop.InstanceKeys).

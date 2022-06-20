@@ -94,7 +94,7 @@ func TestSplitSimpleRule(t *testing.T) {
 	instance.SetLabel("X", "a/b/c/d")
 
 	t.Logf("before = [%s]\n", instance.GetLabels().String())
-	p.splitSimple(m)
+	_ = p.splitSimple(m)
 	t.Logf("after  = [%s]\n", instance.GetLabels().String())
 
 	if instance.GetLabel("C") == "c" && instance.GetLabel("D") == "d" {
@@ -110,7 +110,7 @@ func TestSplitRegexRule(t *testing.T) {
 	instance.SetLabel("X", "xxxA22_B333")
 
 	t.Logf("before = [%s]\n", instance.GetLabels().String())
-	p.splitRegex(m)
+	_ = p.splitRegex(m)
 	t.Logf("after  = [%s]\n", instance.GetLabels().String())
 
 	if instance.GetLabel("A") == "A22" && instance.GetLabel("B") == "B333" {
@@ -126,7 +126,7 @@ func TestSplitPairsRule(t *testing.T) {
 	instance.SetLabel("X", "owner:jack contact:some@email")
 
 	t.Logf("before = [%s]\n", instance.GetLabels().String())
-	p.splitPairs(m)
+	_ = p.splitPairs(m)
 	t.Logf("after  = [%s]\n", instance.GetLabels().String())
 
 	if instance.GetLabel("owner") == "jack" && instance.GetLabel("contact") == "some@email" {
@@ -143,7 +143,7 @@ func TestJoinSimpleRule(t *testing.T) {
 	instance.SetLabel("B", "bbb")
 
 	t.Logf("before = [%s]\n", instance.GetLabels().String())
-	p.joinSimple(m)
+	_ = p.joinSimple(m)
 	t.Logf("after  = [%s]\n", instance.GetLabels().String())
 
 	if instance.GetLabel("X") == "aaa_bbb" {
@@ -159,7 +159,7 @@ func TestReplaceSimpleRule(t *testing.T) {
 	instance.SetLabel("A", "aaa_X")
 
 	t.Logf("before = [%s]\n", instance.GetLabels().String())
-	p.replaceSimple(m)
+	_ = p.replaceSimple(m)
 	t.Logf("after  = [%s]\n", instance.GetLabels().String())
 
 	if instance.GetLabel("A") == "X" && instance.GetLabel("B") == "bbb_X" {
@@ -175,7 +175,7 @@ func TestReplaceRegexRule(t *testing.T) {
 	instance.SetLabel("A", "aaa_12345_abcDEF")
 
 	t.Logf("before = [%s]\n", instance.GetLabels().String())
-	p.replaceRegex(m)
+	_ = p.replaceRegex(m)
 	t.Logf("after  = [%s]\n", instance.GetLabels().String())
 
 	if instance.GetLabel("B") == "abcDEF-12345-bbb" {
@@ -196,7 +196,7 @@ func TestExcludeEqualsRule(t *testing.T) {
 	instanceNo.SetLabel("A", "aaa bbb")
 	instanceNo.SetLabel("B", "aaa bbb ccc")
 
-	p.excludeEquals(m)
+	_ = p.excludeEquals(m)
 
 	if instanceYes.IsExportable() {
 		t.Error("InstanceYes should have been excluded")
@@ -217,7 +217,7 @@ func TestExcludeContainsRule(t *testing.T) {
 	instanceNo, _ := m.NewInstance("1")
 	instanceNo.SetLabel("A", "_aaa")
 
-	p.excludeContains(m)
+	_ = p.excludeContains(m)
 
 	if instanceYes.IsExportable() {
 		t.Error("InstanceYes should have been excluded")
@@ -238,7 +238,7 @@ func TestExcludeRegexRule(t *testing.T) {
 	instanceNo, _ := m.NewInstance("1")
 	instanceNo.SetLabel("A", "aaa_123!")
 
-	p.excludeRegex(m)
+	_ = p.excludeRegex(m)
 
 	if instanceYes.IsExportable() {
 		t.Error("InstanceYes should have been excluded")
@@ -260,7 +260,7 @@ func TestIncludeEqualsRule(t *testing.T) {
 	instanceNo.SetLabel("A", "aaa bbb")
 	instanceNo.SetLabel("B", "aaa bbb ccc")
 
-	p.includeEquals(m)
+	_ = p.includeEquals(m)
 
 	if !instanceYes.IsExportable() {
 		t.Error("InstanceYes should have been included")
@@ -281,7 +281,7 @@ func TestIncludeContainsRule(t *testing.T) {
 	instanceNo, _ := m.NewInstance("1")
 	instanceNo.SetLabel("A", "_aaa")
 
-	p.includeContains(m)
+	_ = p.includeContains(m)
 
 	if !instanceYes.IsExportable() {
 		t.Error("InstanceYes should have been included")
@@ -302,7 +302,7 @@ func TestIncludeRegexRule(t *testing.T) {
 	instanceNo, _ := m.NewInstance("1")
 	instanceNo.SetLabel("A", "aaa_123!")
 
-	p.includeRegex(m)
+	_ = p.includeRegex(m)
 
 	if !instanceYes.IsExportable() {
 		t.Error("InstanceYes should have been included")
@@ -434,23 +434,23 @@ func TestComputeMetricsRule(t *testing.T) {
 
 	// space metric for addition
 	if metricAvail, err = m.NewMetricFloat64("space_available"); err == nil {
-		metricAvail.SetValueFloat64(instanceA, 1010101010)
+		_ = metricAvail.SetValueFloat64(instanceA, 1010101010)
 	} else {
 		t.Error("metric [space_available]  not created for InstanceA")
 	}
 	if metricUsed, err = m.NewMetricFloat64("space_used"); err == nil {
-		metricUsed.SetValueFloat64(instanceA, 5050505050)
+		_ = metricUsed.SetValueFloat64(instanceA, 5050505050)
 	} else {
 		t.Error("metric [space_used]  not created for InstanceA")
 	}
 	// files metric for subtraction
 	if metricFiles, err = m.NewMetricFloat64("files"); err == nil {
-		metricFiles.SetValueFloat64(instanceA, 1024)
+		_ = metricFiles.SetValueFloat64(instanceA, 1024)
 	} else {
 		t.Error("metric [files]  not created for InstanceA")
 	}
 	if metricFilesUsed, err = m.NewMetricFloat64("files_used"); err == nil {
-		metricFilesUsed.SetValueFloat64(instanceA, 216)
+		_ = metricFilesUsed.SetValueFloat64(instanceA, 216)
 	} else {
 		t.Error("metric [files_used]  not created for InstanceA")
 	}
@@ -461,39 +461,39 @@ func TestComputeMetricsRule(t *testing.T) {
 
 	// disk metric for addition
 	if metricDiskP, err = m.NewMetricFloat64("primary.disk_count"); err == nil {
-		metricDiskP.SetValueFloat64(instanceB, 8)
+		_ = metricDiskP.SetValueFloat64(instanceB, 8)
 	} else {
 		t.Error("metric [primary.disk_count]  not created for InstanceB")
 	}
 	if metricDiskS, err = m.NewMetricFloat64("secondary.disk_count"); err == nil {
-		metricDiskS.SetValueFloat64(instanceB, 10)
+		_ = metricDiskS.SetValueFloat64(instanceB, 10)
 	} else {
 		t.Error("metric [secondary.disk_count]  not created for InstanceB")
 	}
 	if metricDiskH, err = m.NewMetricFloat64("hybrid.disk_count"); err == nil {
-		metricDiskH.SetValueFloat64(instanceB, 4)
+		_ = metricDiskH.SetValueFloat64(instanceB, 4)
 	} else {
 		t.Error("metric [hybrid.disk_count]  not created for InstanceB")
 	}
 	// bytes metric for multiplication
 	if metricBytesPSector, err = m.NewMetricFloat64("bytes_per_sector"); err == nil {
-		metricBytesPSector.SetValueFloat64(instanceB, 10000)
+		_ = metricBytesPSector.SetValueFloat64(instanceB, 10000)
 	} else {
 		t.Error("metric [bytes_per_sector]  not created for InstanceB")
 	}
 	if metricSectorCount, err = m.NewMetricFloat64("sector_count"); err == nil {
-		metricSectorCount.SetValueFloat64(instanceB, 12)
+		_ = metricSectorCount.SetValueFloat64(instanceB, 12)
 	} else {
 		t.Error("metric [sector_count]  not created for InstanceB")
 	}
 	// transmission metric for division
 	if metricBytesTransferred, err = m.NewMetricFloat64("transfer.bytes_transferred"); err == nil {
-		metricBytesTransferred.SetValueFloat64(instanceB, 9000000)
+		_ = metricBytesTransferred.SetValueFloat64(instanceB, 9000000)
 	} else {
 		t.Error("metric [transfer.bytes_transferred]  not created for InstanceB")
 	}
 	if metricTotalDuration, err = m.NewMetricFloat64("transfer.total_duration"); err == nil {
-		metricTotalDuration.SetValueFloat64(instanceB, 3600)
+		_ = metricTotalDuration.SetValueFloat64(instanceB, 3600)
 	} else {
 		t.Error("metric [transfer.total_duration]  not created for InstanceB")
 	}
@@ -693,8 +693,8 @@ func TestExcludeEqualIncludeEqualRuleOrder(t *testing.T) {
 	instanceThree.SetLabel("voltype", "dp")
 
 	// After the rules, only instanceTwo would be exportable
-	p.excludeEquals(m)
-	p.includeEquals(m)
+	_ = p.excludeEquals(m)
+	_ = p.includeEquals(m)
 
 	if instanceOne.IsExportable() {
 		t.Error("InstanceOne should have been excluded")
@@ -725,8 +725,8 @@ func TestIncludeContainExcludeContainRuleOrder(t *testing.T) {
 	instanceSix.SetLabel("volstatus", "stopped")
 
 	// After the rules, only instanceFour would be exportable
-	p.includeContains(m)
-	p.excludeContains(m)
+	_ = p.includeContains(m)
+	_ = p.excludeContains(m)
 
 	if !instanceFour.IsExportable() {
 		t.Error("InstanceFour should not have been excluded")

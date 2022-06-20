@@ -495,6 +495,8 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	r.Logger.Debug().Str("object", r.Object).Str("records", numRecords.String()).Msg("Extracted records")
 
+	instanceKeys = r.Prop.InstanceKeys
+
 	if isWorkloadDetailObject(r.Prop.Query) {
 		if resourceMap := r.Params.GetChildS("resource_map"); resourceMap == nil {
 			return nil, errors.New(errors.MissingParam, "resource_map")
@@ -521,7 +523,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		// extract instance key(s)
-		for _, k := range r.Prop.InstanceKeys {
+		for _, k := range instanceKeys {
 			value := parseProperties(instanceData, k)
 			if value.Exists() {
 				instanceKey += value.String()
