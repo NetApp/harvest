@@ -4,6 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
+	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/fcp"
+	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/headroom"
+	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/nic"
+	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
@@ -1014,10 +1018,18 @@ func (r *RestPerf) counterLookup(metric matrix.Metric, metricKey string) *counte
 	return c
 }
 
-func (r *RestPerf) LoadPlugin(kind string, _ *plugin.AbstractPlugin) plugin.Plugin {
+func (r *RestPerf) LoadPlugin(kind string, p *plugin.AbstractPlugin) plugin.Plugin {
 	switch kind {
+	case "Nic":
+		return nic.New(p)
+	case "Fcp":
+		return fcp.New(p)
+	case "Headroom":
+		return headroom.New(p)
+	case "Volume":
+		return volume.New(p)
 	default:
-		r.Logger.Warn().Str("kind", kind).Msg("no rest performance plugin found ")
+		r.Logger.Info().Str("kind", kind).Msg("no Restperf plugin found")
 	}
 	return nil
 }

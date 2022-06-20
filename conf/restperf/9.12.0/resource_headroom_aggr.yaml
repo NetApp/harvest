@@ -19,11 +19,11 @@ counters:
   - ewma.weekly                       => ewma_weekly
 
 
-#plugins:
-#  - Headroom
+plugins:
+  - Headroom
 
 export_options:
   instance_keys:
     - node
     - aggr
-#    - disk_type
+    - disk_type
