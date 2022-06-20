@@ -67,11 +67,16 @@ func (e *Ems) ParseDefaults(prop *emsProp) {
 	// add a default placeholder metric for ems
 	m := &Metric{Label: "events", Name: "events", MetricType: "", Exportable: true}
 	prop.Metrics["events"] = m
+	// add an artificial timestamp metric for ems instances
+	// used for remove the instances from cache after pre-defined time duration
+	timeStampMetric := &Metric{Label: "timestamp", Name: "timestamp", MetricType: "", Exportable: false}
+	prop.Metrics["timestamp"] = timeStampMetric
 }
 
 func (e *Ems) ParseExports(counter *node.Node, prop *emsProp) {
 	var (
 		display, name, key string
+		bookendKeys        []string
 	)
 
 	for _, c := range counter.GetAllChildContentS() {
@@ -86,8 +91,8 @@ func (e *Ems) ParseExports(counter *node.Node, prop *emsProp) {
 			prop.InstanceLabels[name] = display
 
 			if key == "key" {
-				// only supports for bookend EMS
-				prop.BookendKeys[name] = display
+				// only for bookend EMS
+				bookendKeys = append(bookendKeys, name)
 				e.Logger.Debug().
 					Str("name", name).
 					Str("display", display).
@@ -95,31 +100,37 @@ func (e *Ems) ParseExports(counter *node.Node, prop *emsProp) {
 			}
 		}
 	}
+
+	// For bookend case, instanceKeys are replaced with bookendKeys
+	if len(bookendKeys) > 0 {
+		prop.InstanceKeys = bookendKeys
+	}
 }
 
-func (e *Ems) ParseResolvedby(event *node.Node) {
-	var resolvedByEmsName string
-	var resolvedByExports *node.Node
+func (e *Ems) ParseResolveWhenEms(resolveEvent *node.Node, emsName string) {
+	var resolveEmsName string
+	var resolveKey *node.Node
 
 	prop := emsProp{}
 	prop.InstanceLabels = make(map[string]string)
-	prop.BookendKeys = make(map[string]string)
+	prop.InstanceKeys = make([]string, 0)
 
 	// check if resolvedby is present in template
-	if resolvedByEmsName = event.GetChildContentS("resolvedby"); resolvedByEmsName == "" {
+	if resolveEmsName = resolveEvent.GetChildContentS("name"); resolveEmsName == "" {
 		e.Logger.Warn().Msg("Missing resolving event name")
 		return
 	}
-	prop.Name = resolvedByEmsName
+	prop.Name = resolveEmsName
 
 	// populate prop counter for asup
-	e.Prop.Counters[resolvedByEmsName] = resolvedByEmsName
+	e.Prop.Counters[resolveEmsName] = resolveEmsName
 
 	// check if resolvedby is present in template
-	if resolvedByExports = event.GetChildS("resolvedby_exports"); resolvedByExports == nil {
+	if resolveKey = resolveEvent.GetChildS("resolve_key"); resolveKey == nil {
 		e.Logger.Warn().Msg("Missing resolving event exports")
 		return
 	}
-	e.ParseExports(resolvedByExports, &prop)
-	e.emsProp[resolvedByEmsName] = append(e.emsProp[resolvedByEmsName], &prop)
+	e.ParseExports(resolveKey, &prop)
+	e.bookendEmsMap[resolveEmsName] = emsName
+	e.emsProp[resolveEmsName] = append(e.emsProp[resolveEmsName], &prop)
 }
