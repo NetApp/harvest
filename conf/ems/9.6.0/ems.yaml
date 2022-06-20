@@ -184,15 +184,27 @@ events:
 
   - name: monitor.fan.critical
     exports:
-      - parameters.report                   => report
+      - ^^parameters.report                 => report
+    resolve_when_ems:
+      - name: monitor.fan.ok
+        resolve_key:
+          - ^^parameters.report             => report
 
   - name: monitor.fan.failed
     exports:
-      - parameters.report                   => report
+      - ^^parameters.report                 => report
+    resolve_when_ems:
+      - name: monitor.fan.ok
+        resolve_key:
+          - ^^parameters.report             => report
 
   - name: monitor.fan.warning
     exports:
-      - parameters.report                   => report
+      - ^^parameters.report                 => report
+    resolve_when_ems:
+      - name: monitor.fan.ok
+        resolve_key:
+          - ^^parameters.report             => report
 
   - name: Nblade.cifsManyAuths
     exports:

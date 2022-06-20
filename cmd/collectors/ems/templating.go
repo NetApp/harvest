@@ -131,6 +131,6 @@ func (e *Ems) ParseResolveWhenEms(resolveEvent *node.Node, emsName string) {
 		return
 	}
 	e.ParseExports(resolveKey, &prop)
-	e.bookendEmsMap[resolveEmsName] = emsName
+	e.bookendEmsMap[resolveEmsName] = append(e.bookendEmsMap[resolveEmsName], emsName)
 	e.emsProp[resolveEmsName] = append(e.emsProp[resolveEmsName], &prop)
 }

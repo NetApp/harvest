@@ -35,7 +35,7 @@ type Ems struct {
 	DefaultLabels  []string
 	severityFilter string
 	eventNames     []string //consist of all ems events supported
-	bookendEmsMap  map[string]string
+	bookendEmsMap  map[string][]string
 }
 
 type Metric struct {
@@ -89,7 +89,7 @@ func (e *Ems) Init(a *collector.AbstractCollector) error {
 	// init ems props
 	e.InitEmsProp()
 	// init bookend resolve ems map. This is reverse map, [Resolving ems]:[Issuing ems]
-	e.bookendEmsMap = make(map[string]string)
+	e.bookendEmsMap = make(map[string][]string)
 
 	if err = e.InitClient(); err != nil {
 		return err
@@ -390,28 +390,28 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 	e.eventNames = filteredNames
 
 	// check instance timestamp and remove it after -- duration and warning when total instance in cache > 1000 instance
-	for _, emsName := range e.bookendEmsMap {
-		if mx := e.Matrix[emsName]; mx != nil {
-			for instanceKey, instance := range mx.GetInstances() {
-				if metr, ok = mx.GetMetrics()["timestamp"]; !ok {
-					e.Logger.Error().
-						Str("name", "timestamp").
-						Msg("NewMetricFloat64")
+	for _, emsNames := range e.bookendEmsMap {
+		for _, emsName := range emsNames {
+			if mx := e.Matrix[emsName]; mx != nil {
+				for instanceKey, instance := range mx.GetInstances() {
+					if metr, ok = mx.GetMetrics()["timestamp"]; !ok {
+						e.Logger.Error().
+							Str("name", "timestamp").
+							Msg("NewMetricFloat64")
+					}
+					// check instance timestamp and remove it after 28days [4w]
+					if metricTimestamp, ok = metr.GetValueFloat64(instance); ok && (time.Since(time.UnixMicro(int64(metricTimestamp))).Hours()/24) > 28 {
+						mx.RemoveInstance(instanceKey)
+					}
 				}
-				// check instance timestamp and remove it after 28days [4w]
-				if metricTimestamp, ok = metr.GetValueFloat64(instance); ok && (time.Since(time.UnixMicro(int64(metricTimestamp))).Hours()/24) > 28 {
-					e.Logger.Info().Msg("removed instance")
-					mx.RemoveInstance(instanceKey)
+
+				if instances := mx.GetInstances(); len(instances) == 0 {
+					delete(e.Matrix, emsName)
+					continue
 				}
-			}
 
-			if instances := mx.GetInstances(); len(instances) == 0 {
-				delete(e.Matrix, emsName)
-				e.Logger.Info().Msg("removed from cache")
-				continue
+				bookendCacheSize += len(mx.GetInstances())
 			}
-
-			bookendCacheSize += len(mx.GetInstances())
 		}
 	}
 
@@ -616,33 +616,37 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (ma
 		}
 		msgName := messageName.String()
 
-		if emsName, ok := e.bookendEmsMap[msgName]; ok {
+		if emsNames, ok := e.bookendEmsMap[msgName]; ok {
 			// resolving ems would only have 1 prop record
 			p := prop[msgName][0]
 			bookendKey := e.getInstanceKeys(p, instanceData)
 
-			if mx = m[emsName]; mx != nil {
-				if instance := mx.GetInstance(bookendKey); instance != nil {
-					metr, exist := mx.GetMetrics()["events"]
-					if !exist {
-						e.Logger.Error().
-							Str("name", "events").
-							Msg("NewMetricFloat64")
+			for _, emsName := range emsNames {
+				if mx = m[emsName]; mx != nil {
+					if instance := mx.GetInstance(bookendKey); instance != nil {
+						metr, exist := mx.GetMetrics()["events"]
+						if !exist {
+							e.Logger.Error().
+								Str("name", "events").
+								Msg("NewMetricFloat64")
+						}
+						if err = metr.SetValueFloat64(instance, 0); err != nil {
+							e.Logger.Error().Err(err).Str("key", "events").
+								Msg("Unable to set float key on metric")
+						}
+						instance.SetExportable(true)
+					} else {
+						// resolving ems don't find matching issue ems in cache
+						e.Logger.Warn().Str("resolving ems", msgName).Str("issue ems", emsName).
+							Msg("Unable to find matching issue ems instance")
 					}
-					if err = metr.SetValueFloat64(instance, 0); err != nil {
-						e.Logger.Error().Err(err).Str("key", "events").
-							Msg("Unable to set float key on metric")
-					}
-					instance.SetExportable(true)
-				} else {
+				} else if len(emsNames) == 1 {
+					// In case of ems slice, resolving ems can solve all active issuing ems.
+					// This logger could spam for all non-active issuing ems, so avoiding spam in that case
 					// resolving ems don't find matching issue ems in cache
 					e.Logger.Warn().Str("resolving ems", msgName).Str("issue ems", emsName).
-						Msg("Unable to find matching issue ems instance")
+						Msg("Unable to find matching issue ems in cache")
 				}
-			} else {
-				// resolving ems don't find matching issue ems in cache
-				e.Logger.Warn().Str("resolving ems", msgName).Str("issue ems", emsName).
-					Msg("Unable to find matching issue ems in cache")
 			}
 		} else {
 			if _, ok := m[msgName]; !ok {
@@ -791,9 +795,11 @@ func (e *Ems) updateMatrix() {
 
 	tempMap := make(map[string]*matrix.Matrix)
 	// store the bookend ems metric in tempMap
-	for _, emsName := range e.bookendEmsMap {
-		if mx, exist := e.Matrix[emsName]; exist {
-			tempMap[emsName] = mx
+	for _, emsNames := range e.bookendEmsMap {
+		for _, emsName := range emsNames {
+			if mx, exist := e.Matrix[emsName]; exist {
+				tempMap[emsName] = mx
+			}
 		}
 	}
 
