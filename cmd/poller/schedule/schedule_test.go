@@ -7,9 +7,12 @@ import (
 
 func setupSchedule() (s *Schedule) {
 	s = New()
-	s.NewTaskString("counter", "1200s", nil, false, "")
-	s.NewTaskString("data", "180s", nil, false, "")
-	s.NewTaskString("instance", "600s", nil, false, "")
+	err1 := s.NewTaskString("counter", "1200s", nil, false, "")
+	err2 := s.NewTaskString("data", "180s", nil, false, "")
+	err3 := s.NewTaskString("instance", "600s", nil, false, "")
+	if err1 != nil || err2 != nil || err3 != nil {
+		panic("error creating tasks")
+	}
 	return s
 }
 
