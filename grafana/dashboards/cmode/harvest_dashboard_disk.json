@@ -757,7 +757,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Shows Current Value of Highest Disk Utilization per Aggregate",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -960,7 +960,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Highest Disk Utilization per Aggregate",
+      "description": "Shows Highest Disk Utilization per Aggregate Depending on the Time Range selected",
       "fieldConfig": {
         "defaults": {
           "color": {
