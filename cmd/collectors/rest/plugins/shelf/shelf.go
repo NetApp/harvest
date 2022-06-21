@@ -188,7 +188,7 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	href := rest.BuildHref("", "*", nil, "", "", "", "", my.query)
 
-	err = rest.FetchData(my.client, href, &records, true)
+	err = rest.FetchData(my.client, href, &records)
 	if err != nil {
 		my.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
 		return nil, err

@@ -533,7 +533,7 @@ func (r *Rest) GetRestData(href string) ([]interface{}, error) {
 		return nil, errors.New(errors.ErrConfig, "empty url")
 	}
 
-	err = rest.FetchData(r.Client, href, &records, true)
+	err = rest.FetchData(r.Client, href, &records)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch data: %w", err)
 	}

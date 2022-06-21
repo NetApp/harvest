@@ -203,7 +203,7 @@ func (r *RestPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		return nil, errors.New(errors.ErrConfig, "empty url")
 	}
 
-	err = rest.FetchData(r.Client, href, &records, true)
+	err = rest.FetchData(r.Client, href, &records)
 	if err != nil {
 		r.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
 		return nil, err
@@ -445,7 +445,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		apiD, parseD    time.Duration
 		startTime       time.Time
 		err             error
-		perfRecords     []rest.PerfRecord
+		records         []interface{}
 		instanceKeys    []string
 		resourceLatency matrix.Metric // for workload* objects
 	)
@@ -472,23 +472,37 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		return nil, errors.New(errors.ErrConfig, "empty url")
 	}
 
-	// init current time
 	ts := float64(time.Now().UnixNano()) / BILLION
-
-	err = rest.FetchRestPerfData(r.Client, href, &perfRecords)
+	err = rest.FetchData(r.Client, href, &records)
 	if err != nil {
 		r.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
 		return nil, err
 	}
 
+	all := rest.Pagination{
+		Records:    records,
+		NumRecords: len(records),
+	}
 	apiD = time.Since(startTime)
 
+	content, err = json.Marshal(all)
+	if err != nil {
+		r.Logger.Error().Err(err).Str("ApiPath", r.Prop.Query).Msg("Unable to marshal rest pagination")
+	}
+
 	startTime = time.Now()
+	if !gjson.ValidBytes(content) {
+		return nil, fmt.Errorf("json is not valid for: %s", r.Prop.Query)
+	}
 	parseD = time.Since(startTime)
 
-	if len(perfRecords) == 0 {
+	results := gjson.GetManyBytes(content, "num_records", "records")
+	numRecords := results[0]
+	if numRecords.Int() == 0 {
 		return nil, errors.New(errors.ErrNoInstance, "no "+r.Object+" instances on cluster")
 	}
+
+	r.Logger.Debug().Str("object", r.Object).Str("records", numRecords.String()).Msg("Extracted records")
 
 	if isWorkloadDetailObject(r.Prop.Query) {
 		if resourceMap := r.Params.GetChildS("resource_map"); resourceMap == nil {
@@ -503,229 +517,205 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 	}
 
-	numRecords := 0
+	results[1].ForEach(func(key, instanceData gjson.Result) bool {
+		var (
+			instanceKey string
+			instance    *matrix.Instance
+		)
 
-	for _, perfRecord := range perfRecords {
-		content, err = json.Marshal(perfRecord)
-		if err != nil {
-			r.Logger.Error().Err(err).Str("ApiPath", r.Prop.Query).Msg("Unable to marshal records")
+		if !instanceData.IsObject() {
+			r.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
+			return true
 		}
 
-		if !gjson.ValidBytes(content) {
-			return nil, fmt.Errorf("json is not valid for: %s", r.Prop.Query)
-		}
-
-		results := gjson.GetManyBytes(content, "time", "records")
-
-		if results[0].Exists() {
-			ts = float64(results[0].Int()) / BILLION
-		}
-
-		results[1].ForEach(func(key, instanceData gjson.Result) bool {
-			var (
-				instanceKey string
-				instance    *matrix.Instance
-			)
-
-			if !instanceData.IsObject() {
-				r.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
-				return true
-			}
-
-			// extract instance key(s)
-			for _, k := range r.Prop.InstanceKeys {
-				value := parseProperties(instanceData, k)
-				if value.Exists() {
-					instanceKey += value.String()
-				} else {
-					r.Logger.Warn().Str("key", k).Msg("skip instance, missing key")
-					break
-				}
-			}
-
-			// special case for these two objects
-			// we need to process each latency layer for each instance/counter
-			if isWorkloadDetailObject(r.Prop.Query) {
-
-				layer := "" // latency layer (resource) for workloads
-
-				before, after, found := strings.Cut(instanceKey, ".")
-				if found {
-					instanceKey = before
-					layer = after
-				} else {
-					r.Logger.Warn().
-						Str("key", instanceKey).
-						Msg("Instance key has unexpected format")
-					return true
-				}
-
-				if resourceLatency = newData.GetMetric(layer); resourceLatency == nil {
-					r.Logger.Trace().
-						Str("layer", layer).
-						Msg("Resource-latency metric missing in cache")
-					return true
-				}
-			}
-
-			if r.Params.GetChildContentS("only_cluster_instance") != "true" {
-				if instanceKey == "" {
-					return true
-				}
-			}
-
-			if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
-				instance = newData.GetInstance(strings.Split(instanceKey, ":")[1])
+		// extract instance key(s)
+		for _, k := range r.Prop.InstanceKeys {
+			value := parseProperties(instanceData, k)
+			if value.Exists() {
+				instanceKey += value.String()
 			} else {
-				instance = newData.GetInstance(instanceKey)
+				r.Logger.Warn().Str("key", k).Msg("skip instance, missing key")
+				break
 			}
+		}
 
-			if instance == nil {
-				if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
-					r.Logger.Debug().
-						Str("key", instanceKey).
-						Msg("Skip instance key, not found in cache")
-				} else {
-					r.Logger.Warn().
-						Str("key", instanceKey).
-						Msg("Skip instance key, not found in cache")
-				}
+		// special case for these two objects
+		// we need to process each latency layer for each instance/counter
+		if isWorkloadDetailObject(r.Prop.Query) {
+
+			layer := "" // latency layer (resource) for workloads
+
+			before, after, found := strings.Cut(instanceKey, ".")
+			if found {
+				instanceKey = before
+				layer = after
+			} else {
+				r.Logger.Warn().
+					Str("key", instanceKey).
+					Msg("Instance key has unexpected format")
 				return true
 			}
 
-			//// add batch timestamp as custom counter
-			for label, display := range r.Prop.InstanceLabels {
-				value := parseProperties(instanceData, label)
-				if value.Exists() {
-					if value.IsArray() {
-						var labelArray []string
-						for _, r := range value.Array() {
-							labelString := r.String()
-							labelArray = append(labelArray, labelString)
-						}
-						instance.SetLabel(display, strings.Join(labelArray, ","))
-					} else {
-						instance.SetLabel(display, value.String())
-					}
-					count++
-				} else {
-					// spams a lot currently due to missing label mappings. Moved to debug for now till rest gaps are filled
-					r.Logger.Debug().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
-				}
+			if resourceLatency = newData.GetMetric(layer); resourceLatency == nil {
+				r.Logger.Trace().
+					Str("layer", layer).
+					Msg("Resource-latency metric missing in cache")
+				return true
 			}
+		}
 
-			for name, metric := range r.Prop.Metrics {
-				f := parseMetricResponse(instanceData, name)
-				if f.value != "" {
-					// special case for workload_detail
-					if isWorkloadDetailObject(r.Prop.Query) {
-						if name == "wait_time" || name == "service_time" {
-							if err := resourceLatency.AddValueString(instance, f.value); err != nil {
+		if r.Params.GetChildContentS("only_cluster_instance") != "true" {
+			if instanceKey == "" {
+				return true
+			}
+		}
+
+		if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
+			instance = newData.GetInstance(strings.Split(instanceKey, ":")[1])
+		} else {
+			instance = newData.GetInstance(instanceKey)
+		}
+
+		if instance == nil {
+			if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
+				r.Logger.Debug().
+					Str("key", instanceKey).
+					Msg("Skip instance key, not found in cache")
+			} else {
+				r.Logger.Warn().
+					Str("key", instanceKey).
+					Msg("Skip instance key, not found in cache")
+			}
+			return true
+		}
+
+		//// add batch timestamp as custom counter
+		for label, display := range r.Prop.InstanceLabels {
+			value := parseProperties(instanceData, label)
+			if value.Exists() {
+				if value.IsArray() {
+					var labelArray []string
+					for _, r := range value.Array() {
+						labelString := r.String()
+						labelArray = append(labelArray, labelString)
+					}
+					instance.SetLabel(display, strings.Join(labelArray, ","))
+				} else {
+					instance.SetLabel(display, value.String())
+				}
+				count++
+			} else {
+				// spams a lot currently due to missing label mappings. Moved to debug for now till rest gaps are filled
+				r.Logger.Debug().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
+			}
+		}
+
+		for name, metric := range r.Prop.Metrics {
+			f := parseMetricResponse(instanceData, name)
+			if f.value != "" {
+				// special case for workload_detail
+				if isWorkloadDetailObject(r.Prop.Query) {
+					if name == "wait_time" || name == "service_time" {
+						if err := resourceLatency.AddValueString(instance, f.value); err != nil {
+							r.Logger.Error().
+								Stack().
+								Err(err).
+								Str("name", name).
+								Str("value", f.value).
+								Msg("Add resource-latency failed")
+						} else {
+							r.Logger.Trace().
+								Str("name", name).
+								Str("value", f.value).
+								Msg("Add resource-latency")
+							count++
+						}
+						continue
+					}
+					// "visits" are ignored. This counter is only used to set properties of ops counter
+					if name == "visits" {
+						continue
+					}
+				} else {
+					if f.isArray {
+						labels := strings.Split(f.label, ",")
+						values := strings.Split(f.value, ",")
+
+						if len(labels) != len(values) {
+							// warn & skip
+							r.Logger.Warn().
+								Str("labels", f.label).
+								Str("value", f.value).
+								Msg("labels don't match parsed values")
+							continue
+						}
+
+						for i, label := range labels {
+							k := name + "#" + label
+							metr, ok := newData.GetMetrics()[k]
+							if !ok {
+								if metr, err = newData.NewMetricFloat64(k); err != nil {
+									r.Logger.Error().Err(err).
+										Str("name", k).
+										Msg("NewMetricFloat64")
+									continue
+								}
+								metr.SetName(metric.Label)
+								metr.SetLabel("metric", label)
+								// differentiate between array and normal counter
+								metr.SetArray(true)
+								metr.SetExportable(metric.Exportable)
+							}
+							if err = metr.SetValueString(instance, values[i]); err != nil {
 								r.Logger.Error().
 									Stack().
 									Err(err).
 									Str("name", name).
-									Str("value", f.value).
-									Msg("Add resource-latency failed")
+									Str("label", label).
+									Str("value", values[i]).
+									Msg("Set value failed")
+								continue
 							} else {
 								r.Logger.Trace().
 									Str("name", name).
-									Str("value", f.value).
-									Msg("Add resource-latency")
+									Str("label", label).
+									Str("value", values[i]).
+									Msg("Set name.label = value")
 								count++
 							}
-							continue
-						}
-						// "visits" are ignored. This counter is only used to set properties of ops counter
-						if name == "visits" {
-							continue
 						}
 					} else {
-						if f.isArray {
-							labels := strings.Split(f.label, ",")
-							values := strings.Split(f.value, ",")
-
-							if len(labels) != len(values) {
-								// warn & skip
-								r.Logger.Warn().
-									Str("labels", f.label).
-									Str("value", f.value).
-									Msg("labels don't match parsed values")
-								continue
+						metr, ok := newData.GetMetrics()[name]
+						if !ok {
+							if metr, err = newData.NewMetricFloat64(name); err != nil {
+								r.Logger.Error().Err(err).
+									Str("name", name).
+									Msg("NewMetricFloat64")
 							}
-
-							for i, label := range labels {
-								k := name + "#" + label
-								metr, ok := newData.GetMetrics()[k]
-								if !ok {
-									if metr, err = newData.NewMetricFloat64(k); err != nil {
-										r.Logger.Error().Err(err).
-											Str("name", k).
-											Msg("NewMetricFloat64")
-										continue
-									}
-									metr.SetName(metric.Label)
-									metr.SetLabel("metric", label)
-									// differentiate between array and normal counter
-									metr.SetArray(true)
-									metr.SetExportable(metric.Exportable)
-								}
-								if err = metr.SetValueString(instance, values[i]); err != nil {
-									r.Logger.Error().
-										Stack().
-										Err(err).
-										Str("name", name).
-										Str("label", label).
-										Str("value", values[i]).
-										Msg("Set value failed")
-									continue
-								} else {
-									r.Logger.Trace().
-										Str("name", name).
-										Str("label", label).
-										Str("value", values[i]).
-										Msg("Set name.label = value")
-									count++
-								}
+						}
+						metr.SetName(metric.Label)
+						metr.SetExportable(metric.Exportable)
+						if c, err := strconv.ParseFloat(f.value, 64); err == nil {
+							if err = metr.SetValueFloat64(instance, c); err != nil {
+								r.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
+									Msg("Unable to set float key on metric")
 							}
 						} else {
-							metr, ok := newData.GetMetrics()[name]
-							if !ok {
-								if metr, err = newData.NewMetricFloat64(name); err != nil {
-									r.Logger.Error().Err(err).
-										Str("name", name).
-										Msg("NewMetricFloat64")
-								}
-							}
-							metr.SetName(metric.Label)
-							metr.SetExportable(metric.Exportable)
-							if c, err := strconv.ParseFloat(f.value, 64); err == nil {
-								if err = metr.SetValueFloat64(instance, c); err != nil {
-									r.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
-										Msg("Unable to set float key on metric")
-								}
-							} else {
-								r.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
-									Msg("Unable to parse float value")
-							}
-							count++
+							r.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
+								Msg("Unable to parse float value")
 						}
+						count++
 					}
-				} else {
-					r.Logger.Warn().Str("counter", name).Msg("Counter is nil. Unable to process. Check template")
 				}
+			} else {
+				r.Logger.Warn().Str("counter", name).Msg("Counter is nil. Unable to process. Check template")
 			}
-			if err = newData.GetMetric("timestamp").SetValueFloat64(instance, ts); err != nil {
-				r.Logger.Error().Err(err).Msg("Failed to set timestamp")
-			}
-
-			numRecords += 1
-
-			return true
-		})
-	}
-
-	r.Logger.Debug().Str("object", r.Object).Int("records", numRecords).Msg("Extracted records")
+		}
+		if err = newData.GetMetric("timestamp").SetValueFloat64(instance, ts); err != nil {
+			r.Logger.Error().Err(err).Msg("Failed to set timestamp")
+		}
+		return true
+	})
 
 	r.Logger.Debug().
 		Uint64("dataPoints", count).
@@ -957,7 +947,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 		return errors.New(errors.ErrConfig, "empty url")
 	}
 
-	err = rest.FetchData(r.Client, href, &records, true)
+	err = rest.FetchData(r.Client, href, &records)
 	if err != nil {
 		r.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
 		return err
@@ -1090,7 +1080,7 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		return nil, errors.New(errors.ErrConfig, "empty url")
 	}
 
-	err = rest.FetchData(r.Client, href, &records, true)
+	err = rest.FetchData(r.Client, href, &records)
 	if err != nil {
 		r.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
 		return nil, err
