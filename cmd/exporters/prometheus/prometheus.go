@@ -335,13 +335,13 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 				// actual cause is the Aggregator plugin, which is adding node as
 				// instance label (even though it's already a global label for 7modes)
 				if !data.GetGlobalLabels().Has(label) {
-					instanceKeys = append(instanceKeys, fmt.Sprintf("%s=\"%s\"", label, value))
+					instanceKeys = append(instanceKeys, fmt.Sprintf("%s=\"%s\"", label, value)) //nolint:makezero
 				}
 			}
 		} else {
 			for _, key := range keysToInclude {
 				value := instance.GetLabel(key)
-				instanceKeys = append(instanceKeys, fmt.Sprintf("%s=\"%s\"", key, value))
+				instanceKeys = append(instanceKeys, fmt.Sprintf("%s=\"%s\"", key, value)) //nolint:makezero
 				if !instanceKeysOk && value != "" {
 					instanceKeysOk = true
 				}
@@ -366,7 +366,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 				if p.Params.SortLabels {
 					allLabels := make([]string, len(instanceLabels))
 					copy(allLabels, instanceLabels)
-					allLabels = append(allLabels, instanceKeys...)
+					allLabels = append(allLabels, instanceKeys...) //nolint:makezero
 					sort.Strings(allLabels)
 					labelData = fmt.Sprintf("%s_labels{%s} 1.0", prefix, strings.Join(allLabels, ","))
 				} else {

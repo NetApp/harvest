@@ -533,7 +533,7 @@ func (p *Poller) handleSignals(signalChannel chan os.Signal) {
 // and if available, response time
 func (p *Poller) ping() (float32, bool) {
 
-	cmd := exec.Command("ping", p.target, "-w", "5", "-c", "1", "-q")
+	cmd := exec.Command("ping", p.target, "-w", "5", "-c", "1", "-q") //nolint:gosec
 	output, err := cmd.Output()
 	if err != nil {
 		return 0, false
@@ -1039,7 +1039,8 @@ func (p *Poller) createClient() {
 		p.client = &http.Client{
 			Transport: &http.Transport{
 				TLSClientConfig: &tls.Config{
-					RootCAs: p.certPool,
+					RootCAs:    p.certPool,
+					MinVersion: tls.VersionTLS13,
 				},
 			},
 		}

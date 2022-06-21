@@ -11,7 +11,7 @@ import (
 
 type apiError string
 
-const APIRequestRejected = apiError("API request rejected")
+const ErrAPIRequestRejected = apiError("API request rejected")
 
 func (e apiError) Error() string { return string(e) }
 

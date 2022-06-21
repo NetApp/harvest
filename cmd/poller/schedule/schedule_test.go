@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
-func setupSchedule() (s *Schedule) {
-	s = New()
+func setupSchedule() *Schedule {
+	s := New()
 	err1 := s.NewTaskString("counter", "1200s", nil, false, "")
 	err2 := s.NewTaskString("data", "180s", nil, false, "")
 	err3 := s.NewTaskString("instance", "600s", nil, false, "")

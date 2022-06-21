@@ -234,12 +234,12 @@ func FetchData(client *Client, href string, records *[]any) error {
 		contentJSON := `{"records":[]}`
 		response, err := sjson.SetRawBytes([]byte(contentJSON), "records.-1", getRest)
 		if err != nil {
-			return fmt.Errorf("error setting record %+v", err)
+			return fmt.Errorf("error setting record %w", err)
 		}
 		var page Pagination
 		err = json.Unmarshal(response, &page)
 		if err != nil {
-			return fmt.Errorf("error unmarshalling json %+v", err)
+			return fmt.Errorf("error unmarshalling json %w", err)
 		}
 		*records = append(*records, page.Records...)
 	} else {
@@ -247,7 +247,7 @@ func FetchData(client *Client, href string, records *[]any) error {
 		var page Pagination
 		err := json.Unmarshal(getRest, &page)
 		if err != nil {
-			return fmt.Errorf("error unmarshalling json %+v", err)
+			return fmt.Errorf("error unmarshalling json %w", err)
 		}
 
 		*records = append(*records, page.Records...)

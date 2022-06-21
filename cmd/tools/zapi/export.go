@@ -112,7 +112,7 @@ func exportCounters(item *node.Node, c *client.Client, args *Args) error {
 
 	templateFp := path.Join(fp...)
 
-	if err = ioutil.WriteFile(templateFp, dump, 0644); err != nil {
+	if err = ioutil.WriteFile(templateFp, dump, 0600); err != nil {
 		fmt.Println("writefile")
 		return err
 	}
@@ -152,7 +152,7 @@ func exportCounters(item *node.Node, c *client.Client, args *Args) error {
 		return err
 	}
 
-	if err = ioutil.WriteFile(customFp, dump, 0644); err != nil {
+	if err = ioutil.WriteFile(customFp, dump, 0600); err != nil {
 		fmt.Println("write custom.yaml")
 		return err
 	}

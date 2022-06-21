@@ -9,28 +9,29 @@ func TestUpdateProtectedFields(t *testing.T) {
 	instance := matrix.NewInstance(0)
 
 	// Test cases for protectedBy and protectionSourceType
-	testWithoutGroupType(instance, t)
-	testSvmdr(instance, t)
-	testConstituentVolumeWithinSvmdr(instance, t)
-	testCg(instance, t)
-	testConstituentVolumeWithinCg(instance, t)
-	testNegativeCase1(instance, t)
-	testNegativeCase2(instance, t)
-	testGroupTypeNone(instance, t)
-	testGroupTypeFlexgroup(instance, t)
+	testWithoutGroupType(t, instance)
+	testSvmdr(t, instance)
+	testConstituentVolumeWithinSvmdr(t, instance)
+	testCg(t, instance)
+	testConstituentVolumeWithinCg(t, instance)
+	testNegativeCase1(t, instance)
+	testNegativeCase2(t, instance)
+	testGroupTypeNone(t, instance)
+	testGroupTypeFlexgroup(t, instance)
 
 	// Test cases for derived_relationship_type
-	testStrictSyncMirror(instance, t)
-	testSyncMirror(instance, t)
-	testMirrorVault(instance, t)
-	testAutomatedFailover(instance, t)
-	testOtherPolicyType(instance, t)
-	testWithNoPolicyType(instance, t)
-	testWithNoPolicyTypeNoRelationshipType(instance, t)
+	testStrictSyncMirror(t, instance)
+	testSyncMirror(t, instance)
+	testMirrorVault(t, instance)
+	testAutomatedFailover(t, instance)
+	testOtherPolicyType(t, instance)
+	testWithNoPolicyType(t, instance)
+	testWithNoPolicyTypeNoRelationshipType(t, instance)
 }
 
 // Test cases for protectedBy and protectionSourceType
-func testWithoutGroupType(instance *matrix.Instance, t *testing.T) {
+func testWithoutGroupType(t *testing.T, instance *matrix.Instance) {
+	t.Helper()
 	instance.SetLabel("group_type", "")
 	UpdateProtectedFields(instance)
 
@@ -41,7 +42,7 @@ func testWithoutGroupType(instance *matrix.Instance, t *testing.T) {
 	}
 }
 
-func testSvmdr(instance *matrix.Instance, t *testing.T) {
+func testSvmdr(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("group_type", "vserver")
 	instance.SetLabel("destination_volume", "")
 	instance.SetLabel("source_volume", "")
@@ -54,7 +55,7 @@ func testSvmdr(instance *matrix.Instance, t *testing.T) {
 	}
 }
 
-func testConstituentVolumeWithinSvmdr(instance *matrix.Instance, t *testing.T) {
+func testConstituentVolumeWithinSvmdr(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("group_type", "vserver")
 	instance.SetLabel("destination_volume", "destvol")
 	instance.SetLabel("source_volume", "sourcevol")
@@ -68,7 +69,7 @@ func testConstituentVolumeWithinSvmdr(instance *matrix.Instance, t *testing.T) {
 	}
 }
 
-func testCg(instance *matrix.Instance, t *testing.T) {
+func testCg(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("group_type", "CONSISTENCYGROUP")
 	instance.SetLabel("destination_location", "test123:/cg/")
 	UpdateProtectedFields(instance)
@@ -80,7 +81,7 @@ func testCg(instance *matrix.Instance, t *testing.T) {
 	}
 }
 
-func testConstituentVolumeWithinCg(instance *matrix.Instance, t *testing.T) {
+func testConstituentVolumeWithinCg(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("group_type", "CONSISTENCYGROUP")
 	instance.SetLabel("destination_location", "test123")
 	UpdateProtectedFields(instance)
@@ -92,7 +93,7 @@ func testConstituentVolumeWithinCg(instance *matrix.Instance, t *testing.T) {
 	}
 }
 
-func testNegativeCase1(instance *matrix.Instance, t *testing.T) {
+func testNegativeCase1(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("group_type", "infinitevol")
 	UpdateProtectedFields(instance)
 
@@ -103,7 +104,7 @@ func testNegativeCase1(instance *matrix.Instance, t *testing.T) {
 	}
 }
 
-func testNegativeCase2(instance *matrix.Instance, t *testing.T) {
+func testNegativeCase2(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("group_type", "vserver")
 	instance.SetLabel("destination_volume", "destvol")
 	instance.SetLabel("source_volume", "sourcevol")
@@ -117,7 +118,7 @@ func testNegativeCase2(instance *matrix.Instance, t *testing.T) {
 	}
 }
 
-func testGroupTypeNone(instance *matrix.Instance, t *testing.T) {
+func testGroupTypeNone(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("group_type", "none")
 	UpdateProtectedFields(instance)
 
@@ -128,7 +129,7 @@ func testGroupTypeNone(instance *matrix.Instance, t *testing.T) {
 	}
 }
 
-func testGroupTypeFlexgroup(instance *matrix.Instance, t *testing.T) {
+func testGroupTypeFlexgroup(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("group_type", "flexgroup")
 	UpdateProtectedFields(instance)
 
@@ -140,7 +141,7 @@ func testGroupTypeFlexgroup(instance *matrix.Instance, t *testing.T) {
 }
 
 // Test cases for derived_relationship_type
-func testStrictSyncMirror(instance *matrix.Instance, t *testing.T) {
+func testStrictSyncMirror(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("relationship_type", "")
 	instance.SetLabel("policy_type", "strict_sync_mirror")
 	UpdateProtectedFields(instance)
@@ -152,7 +153,7 @@ func testStrictSyncMirror(instance *matrix.Instance, t *testing.T) {
 	}
 }
 
-func testSyncMirror(instance *matrix.Instance, t *testing.T) {
+func testSyncMirror(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("relationship_type", "")
 	instance.SetLabel("policy_type", "sync_mirror")
 	UpdateProtectedFields(instance)
@@ -164,7 +165,7 @@ func testSyncMirror(instance *matrix.Instance, t *testing.T) {
 	}
 }
 
-func testMirrorVault(instance *matrix.Instance, t *testing.T) {
+func testMirrorVault(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("relationship_type", "")
 	instance.SetLabel("policy_type", "mirror_vault")
 	UpdateProtectedFields(instance)
@@ -176,7 +177,7 @@ func testMirrorVault(instance *matrix.Instance, t *testing.T) {
 	}
 }
 
-func testAutomatedFailover(instance *matrix.Instance, t *testing.T) {
+func testAutomatedFailover(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("relationship_type", "")
 	instance.SetLabel("policy_type", "automated_failover")
 	UpdateProtectedFields(instance)
@@ -188,7 +189,7 @@ func testAutomatedFailover(instance *matrix.Instance, t *testing.T) {
 	}
 }
 
-func testOtherPolicyType(instance *matrix.Instance, t *testing.T) {
+func testOtherPolicyType(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("relationship_type", "vault")
 	instance.SetLabel("policy_type", "vault")
 	UpdateProtectedFields(instance)
@@ -200,7 +201,7 @@ func testOtherPolicyType(instance *matrix.Instance, t *testing.T) {
 	}
 }
 
-func testWithNoPolicyType(instance *matrix.Instance, t *testing.T) {
+func testWithNoPolicyType(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("relationship_type", "extended_data_protection")
 	instance.SetLabel("policy_type", "")
 	UpdateProtectedFields(instance)
@@ -212,7 +213,7 @@ func testWithNoPolicyType(instance *matrix.Instance, t *testing.T) {
 	}
 }
 
-func testWithNoPolicyTypeNoRelationshipType(instance *matrix.Instance, t *testing.T) {
+func testWithNoPolicyTypeNoRelationshipType(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("relationship_type", "")
 	instance.SetLabel("policy_type", "")
 	UpdateProtectedFields(instance)

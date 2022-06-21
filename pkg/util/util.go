@@ -195,7 +195,7 @@ func SaveConfig(fp string, token string) error {
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(fp, marshal, 0644)
+	return ioutil.WriteFile(fp, marshal, 0600)
 }
 
 type Status string

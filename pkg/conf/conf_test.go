@@ -265,6 +265,7 @@ func TestCollectorConfig(t *testing.T) {
 }
 
 func TestNodeToPoller(t *testing.T) {
+	t.Helper()
 	testArg := func(t *testing.T, want, got string) {
 		if got != want {
 			t.Errorf("want=[%s] got=[%s]", want, got)

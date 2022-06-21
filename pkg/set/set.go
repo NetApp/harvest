@@ -43,7 +43,7 @@ func (s *Set) Has(value string) bool {
 }
 
 func (s *Set) Values() []string {
-	values := make([]string, len(s.set))
+	values := make([]string, 0, len(s.set))
 	for v := range s.set {
 		values = append(values, v)
 	}

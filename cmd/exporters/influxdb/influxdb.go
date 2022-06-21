@@ -216,7 +216,7 @@ func (e *InfluxDB) Emit(data [][]byte) error {
 		if body, err := ioutil.ReadAll(response.Body); err != nil {
 			return errors.New(errors.APIResponse, err.Error())
 		} else {
-			return fmt.Errorf("%w: %s", errors.APIRequestRejected, string(body))
+			return fmt.Errorf("%w: %s", errors.ErrAPIRequestRejected, string(body))
 		}
 	}
 	return nil
