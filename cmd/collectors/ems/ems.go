@@ -21,12 +21,14 @@ const defaultDataPollDuration = 3 * time.Minute
 const maxURLSize = 8_000 //bytes
 const severityFilterPrefix = "message.severity="
 const defaultSeverityFilter = "alert|emergency|error|informational|notice"
+const MaxBookendInstances = 1000
+const DefaultBookendResolutionDuration = 28 * 24 * time.Hour // 28 days == 672 hours
 
 type Ems struct {
 	*rest2.Rest    // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
 	Query          string
 	TemplatePath   string
-	emsProp        map[string][]*emsProp // array is used here to handle same ems written with different ops, matches or exports
+	emsProp        map[string][]*emsProp // array is used here to handle same ems written with different ops, matches or exports. Example: arw.volume.state ems with op as disabled or dry-run
 	Filter         []string
 	Fields         []string
 	ReturnTimeOut  string
@@ -34,8 +36,9 @@ type Ems struct {
 	maxURLSize     int
 	DefaultLabels  []string
 	severityFilter string
-	eventNames     []string //consist of all ems events supported
-	bookendEmsMap  map[string][]string
+	eventNames     []string            // consist of all ems events supported
+	bookendEmsMap  map[string][]string // This is reverse bookend ems map, [Resolving ems]:[Issuing ems slice]
+	resolveAfter   time.Duration
 }
 
 type Metric struct {
@@ -88,7 +91,7 @@ func (e *Ems) Init(a *collector.AbstractCollector) error {
 	e.InitProp()
 	// init ems props
 	e.InitEmsProp()
-	// init bookend resolve ems map. This is reverse map, [Resolving ems]:[Issuing ems]
+
 	e.bookendEmsMap = make(map[string][]string)
 
 	if err = e.InitClient(); err != nil {
@@ -233,7 +236,7 @@ func (e *Ems) InitCache() error {
 				}
 			}
 			if line1.GetNameS() == "resolve_when_ems" {
-				e.ParseResolveWhenEms(line1, prop.Name)
+				e.ParseResolveEms(line1, prop.Name)
 			}
 		}
 		e.emsProp[prop.Name] = append(e.emsProp[prop.Name], &prop)
@@ -333,7 +336,6 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 		err              error
 		records          []any
 		ok               bool
-		metricTimestamp  float64
 		metr             matrix.Metric
 		bookendCacheSize int
 	)
@@ -390,9 +392,9 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 	e.eventNames = filteredNames
 
 	// check instance timestamp and remove it after -- duration and warning when total instance in cache > 1000 instance
-	for _, emsNames := range e.bookendEmsMap {
-		for _, emsName := range emsNames {
-			if mx := e.Matrix[emsName]; mx != nil {
+	for _, issuingEmsList := range e.bookendEmsMap {
+		for _, issuingEms := range issuingEmsList {
+			if mx := e.Matrix[issuingEms]; mx != nil {
 				for instanceKey, instance := range mx.GetInstances() {
 					if metr, ok = mx.GetMetrics()["timestamp"]; !ok {
 						e.Logger.Error().
@@ -400,13 +402,13 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 							Msg("NewMetricFloat64")
 					}
 					// check instance timestamp and remove it after 28days [4w]
-					if metricTimestamp, ok = metr.GetValueFloat64(instance); ok && (time.Since(time.UnixMicro(int64(metricTimestamp))).Hours()/24) > 28 {
+					if e.InstanceOlderThan(metr, instance) {
 						mx.RemoveInstance(instanceKey)
 					}
 				}
 
 				if instances := mx.GetInstances(); len(instances) == 0 {
-					delete(e.Matrix, emsName)
+					delete(e.Matrix, issuingEms)
 					continue
 				}
 
@@ -415,8 +417,9 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 		}
 	}
 
+	e.Logger.Info().Int("total instances", bookendCacheSize).Msg("")
 	// warning when total instance in cache > 1000 instance
-	if bookendCacheSize >= 1000 {
+	if bookendCacheSize >= MaxBookendInstances {
 		e.Logger.Warn().Int("total instances", bookendCacheSize).Msg("cache has more than 1000 instances")
 	}
 	return nil, nil
@@ -536,8 +539,11 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 func (e *Ems) getHref(names []string, filter []string) string {
 	nameFilter := "message.name=" + strings.Join(names, ",")
 	filter = append(filter, nameFilter)
+	// If both issuing ems and resolving ems would come together in same poll, This index ordering would make sure that latest ems would process last. So, if resolving ems would be latest, it will resolve the issue.
 	// add filter as order by index in ascending order
-	orderByIndexFilter := "order_by=" + "index"
+	orderByIndexFilter := "order_by=" + "index desc"
+	// space need to converted to %20 for REST call
+	orderByIndexFilter = strings.Replace(orderByIndexFilter, " ", "%20", 1)
 	filter = append(filter, orderByIndexFilter)
 
 	href := rest.BuildHref(e.Query, strings.Join(e.Fields, ","), filter, "", "", "", e.ReturnTimeOut, e.Query)
@@ -546,7 +552,7 @@ func (e *Ems) getHref(names []string, filter []string) string {
 
 // GetDataInterval fetch pollData interval
 func GetDataInterval(param *node.Node, defaultInterval time.Duration) (time.Duration, error) {
-	var dataIntervalStr = ""
+	var dataIntervalStr string
 	var durationVal time.Duration
 	var err error
 	schedule := param.GetChildS("schedule")
@@ -616,37 +622,43 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (ma
 		}
 		msgName := messageName.String()
 
-		if emsNames, ok := e.bookendEmsMap[msgName]; ok {
+		if issuingEmsList, ok := e.bookendEmsMap[msgName]; ok {
+			props := prop[msgName]
+			if len(props) == 0 {
+				e.Logger.Warn().Str("resolving ems", msgName).
+					Msg("Ems properties not found")
+				return true
+			}
 			// resolving ems would only have 1 prop record
-			p := prop[msgName][0]
+			p := props[0]
 			bookendKey := e.getInstanceKeys(p, instanceData)
 
-			for _, emsName := range emsNames {
-				if mx = m[emsName]; mx != nil {
+			emsResolved := false
+			for _, issuingEms := range issuingEmsList {
+				if mx = m[issuingEms]; mx != nil {
+					metr, exist := mx.GetMetrics()["events"]
+					if !exist {
+						e.Logger.Warn().
+							Str("name", "events").
+							Msg("NewMetricFloat64")
+						continue
+					}
+
 					if instance := mx.GetInstance(bookendKey); instance != nil {
-						metr, exist := mx.GetMetrics()["events"]
-						if !exist {
-							e.Logger.Error().
-								Str("name", "events").
-								Msg("NewMetricFloat64")
-						}
 						if err = metr.SetValueFloat64(instance, 0); err != nil {
 							e.Logger.Error().Err(err).Str("key", "events").
 								Msg("Unable to set float key on metric")
+							continue
 						}
 						instance.SetExportable(true)
-					} else {
-						// resolving ems don't find matching issue ems in cache
-						e.Logger.Warn().Str("resolving ems", msgName).Str("issue ems", emsName).
-							Msg("Unable to find matching issue ems instance")
+						emsResolved = true
 					}
-				} else if len(emsNames) == 1 {
-					// In case of ems slice, resolving ems can solve all active issuing ems.
-					// This logger could spam for all non-active issuing ems, so avoiding spam in that case
-					// resolving ems don't find matching issue ems in cache
-					e.Logger.Warn().Str("resolving ems", msgName).Str("issue ems", emsName).
-						Msg("Unable to find matching issue ems in cache")
 				}
+			}
+
+			if !emsResolved {
+				e.Logger.Warn().Str("resolving ems", msgName).Str("issue ems", strings.Join(issuingEmsList, ",")).
+					Msg("Unable to find matching issue ems in cache")
 			}
 		} else {
 			if _, ok := m[msgName]; !ok {
@@ -668,6 +680,7 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (ma
 					if instance == nil {
 						if instance, err = mx.NewInstance(instanceKey); err != nil {
 							e.Logger.Error().Err(err).Str("Instance key", instanceKey).Msg("")
+							continue
 						}
 					}
 
@@ -712,6 +725,7 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (ma
 								e.Logger.Error().Err(err).
 									Str("name", metric.Name).
 									Msg("NewMetricFloat64")
+								continue
 							}
 							metr.SetExportable(metric.Exportable)
 						}
@@ -740,6 +754,7 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (ma
 			}
 			if !isMatch {
 				mx.RemoveInstance(instanceKey)
+				return true
 			}
 			count += instanceLabelCount
 		}
@@ -795,10 +810,10 @@ func (e *Ems) updateMatrix() {
 
 	tempMap := make(map[string]*matrix.Matrix)
 	// store the bookend ems metric in tempMap
-	for _, emsNames := range e.bookendEmsMap {
-		for _, emsName := range emsNames {
-			if mx, exist := e.Matrix[emsName]; exist {
-				tempMap[emsName] = mx
+	for _, issuingEmsList := range e.bookendEmsMap {
+		for _, issuingEms := range issuingEmsList {
+			if mx, exist := e.Matrix[issuingEms]; exist {
+				tempMap[issuingEms] = mx
 			}
 		}
 	}
@@ -808,26 +823,27 @@ func (e *Ems) updateMatrix() {
 	e.Matrix = make(map[string]*matrix.Matrix)
 	e.Matrix[e.Object] = mat
 
-	for emsName, mx := range tempMap {
+	for issuingEms, mx := range tempMap {
+		if metr, ok = mx.GetMetrics()["events"]; !ok {
+			e.Logger.Error().
+				Str("name", "events").
+				Msg("NewMetricFloat64")
+			continue
+		}
+
 		for instanceKey, instance := range mx.GetInstances() {
 			// set export to false
 			instance.SetExportable(false)
-
-			if metr, ok = mx.GetMetrics()["events"]; !ok {
-				e.Logger.Error().
-					Str("name", "events").
-					Msg("NewMetricFloat64")
-			}
 
 			if val, ok = metr.GetValueFloat64(instance); ok && val == 0 {
 				mx.RemoveInstance(instanceKey)
 			}
 		}
 		if instances := mx.GetInstances(); len(instances) == 0 {
-			delete(e.Matrix, emsName)
+			delete(e.Matrix, issuingEms)
 			continue
 		}
-		e.Matrix[emsName] = mx
+		e.Matrix[issuingEms] = mx
 	}
 }
 
