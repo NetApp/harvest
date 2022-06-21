@@ -627,37 +627,38 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (ma
 			if len(props) == 0 {
 				e.Logger.Warn().Str("resolving ems", msgName).
 					Msg("Ems properties not found")
+				return true
 			}
 			// resolving ems would only have 1 prop record
 			p := props[0]
 			bookendKey := e.getInstanceKeys(p, instanceData)
 
+			emsResolved := false
 			for _, issuingEms := range issuingEmsList {
 				if mx = m[issuingEms]; mx != nil {
+					metr, exist := mx.GetMetrics()["events"]
+					if !exist {
+						e.Logger.Warn().
+							Str("name", "events").
+							Msg("NewMetricFloat64")
+						continue
+					}
+
 					if instance := mx.GetInstance(bookendKey); instance != nil {
-						metr, exist := mx.GetMetrics()["events"]
-						if !exist {
-							e.Logger.Warn().
-								Str("name", "events").
-								Msg("NewMetricFloat64")
-						}
 						if err = metr.SetValueFloat64(instance, 0); err != nil {
 							e.Logger.Error().Err(err).Str("key", "events").
 								Msg("Unable to set float key on metric")
+							continue
 						}
 						instance.SetExportable(true)
-					} else {
-						// resolving ems don't find matching issue ems in cache
-						e.Logger.Warn().Str("resolving ems", msgName).Str("issue ems", issuingEms).
-							Msg("Unable to find matching issue ems instance")
+						emsResolved = true
 					}
-				} else if len(issuingEmsList) == 1 {
-					// In case of ems slice, resolving ems can solve all active issuing ems.
-					// This logger could spam for all non-active issuing ems, so avoiding spam in that case
-					// resolving ems don't find matching issue ems in cache
-					e.Logger.Warn().Str("resolving ems", msgName).Str("issue ems", issuingEms).
-						Msg("Unable to find matching issue ems in cache")
 				}
+			}
+
+			if !emsResolved {
+				e.Logger.Warn().Str("resolving ems", msgName).Str("issue ems", strings.Join(issuingEmsList, ",")).
+					Msg("Unable to find matching issue ems in cache")
 			}
 		} else {
 			if _, ok := m[msgName]; !ok {
@@ -679,6 +680,7 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (ma
 					if instance == nil {
 						if instance, err = mx.NewInstance(instanceKey); err != nil {
 							e.Logger.Error().Err(err).Str("Instance key", instanceKey).Msg("")
+							continue
 						}
 					}
 
@@ -723,6 +725,7 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (ma
 								e.Logger.Error().Err(err).
 									Str("name", metric.Name).
 									Msg("NewMetricFloat64")
+								continue
 							}
 							metr.SetExportable(metric.Exportable)
 						}
@@ -751,6 +754,7 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (ma
 			}
 			if !isMatch {
 				mx.RemoveInstance(instanceKey)
+				return true
 			}
 			count += instanceLabelCount
 		}
