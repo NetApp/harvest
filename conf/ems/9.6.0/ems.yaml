@@ -176,6 +176,7 @@ events:
       - name: LUN.online
         resolve_key:
           - ^^parameters.object_uuid        => object_uuid
+        resolve_bookend_after: 672h
 
   - name: mgmtgwd.rootvolrec.low.space
     exports:

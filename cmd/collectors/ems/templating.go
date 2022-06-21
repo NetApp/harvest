@@ -1,8 +1,10 @@
 package ems
 
 import (
+	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"time"
 )
 
 var defaultInstanceKey = []string{"index", "message.name"}
@@ -47,9 +49,7 @@ func (e *Ems) ParseDefaults(prop *emsProp) {
 	)
 
 	//load default instance keys
-	for _, v := range defaultInstanceKey {
-		prop.InstanceKeys = append(prop.InstanceKeys, v)
-	}
+	prop.InstanceKeys = append(prop.InstanceKeys, defaultInstanceKey...)
 
 	//process default labels
 	for _, c := range e.DefaultLabels {
@@ -107,8 +107,8 @@ func (e *Ems) ParseExports(counter *node.Node, prop *emsProp) {
 	}
 }
 
-func (e *Ems) ParseResolveWhenEms(resolveEvent *node.Node, emsName string) {
-	var resolveEmsName string
+func (e *Ems) ParseResolveEms(resolveEvent *node.Node, emsName string) {
+	var resolveEmsName, resolveAfter string
 	var resolveKey *node.Node
 
 	prop := emsProp{}
@@ -130,7 +130,26 @@ func (e *Ems) ParseResolveWhenEms(resolveEvent *node.Node, emsName string) {
 		e.Logger.Warn().Msg("Missing resolving event exports")
 		return
 	}
+
+	// check if resolveAfter is present in template
+	e.resolveAfter = DefaultBookendResolutionDuration
+	if resolveAfter = resolveEvent.GetChildContentS("resolve_bookend_after"); resolveAfter != "" {
+		if durationVal, err := time.ParseDuration(resolveAfter); err == nil {
+			e.resolveAfter = durationVal
+		}
+	}
+	e.Logger.Debug().Str("bookend ems resolve After", e.resolveAfter.String()).Msg("")
+
 	e.ParseExports(resolveKey, &prop)
 	e.bookendEmsMap[resolveEmsName] = append(e.bookendEmsMap[resolveEmsName], emsName)
 	e.emsProp[resolveEmsName] = append(e.emsProp[resolveEmsName], &prop)
+}
+
+func (e *Ems) InstanceOlderThan(metr matrix.Metric, instance *matrix.Instance) bool {
+	if metricTimestamp, ok := metr.GetValueFloat64(instance); ok {
+		if time.Since(time.UnixMicro(int64(metricTimestamp))).Hours() > e.resolveAfter.Hours() {
+			return true
+		}
+	}
+	return false
 }
