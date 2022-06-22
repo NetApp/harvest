@@ -688,7 +688,25 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (ma
 
 					// explicitly set to true. for bookend case, it was set as false for the same instance[when multiple ems received]
 					instance.SetExportable(true)
-					instanceLabelCount = e.getInstanceLabels(p, instanceData, instance, instanceKey)
+
+					for label, display := range p.InstanceLabels {
+						value := parseProperties(instanceData, label)
+						if value.Exists() {
+							if value.IsArray() {
+								var labelArray []string
+								for _, r := range value.Array() {
+									labelString := r.String()
+									labelArray = append(labelArray, labelString)
+								}
+								instance.SetLabel(display, strings.Join(labelArray, ","))
+							} else {
+								instance.SetLabel(display, value.String())
+							}
+							instanceLabelCount++
+						} else {
+							e.Logger.Warn().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
+						}
+					}
 
 					//set labels
 					for k, v := range p.Labels {
@@ -778,29 +796,6 @@ func (e *Ems) getInstanceKeys(p *emsProp, instanceData gjson.Result) string {
 		}
 	}
 	return instanceKey
-}
-
-func (e *Ems) getInstanceLabels(p *emsProp, instanceData gjson.Result, instance *matrix.Instance, instanceKey string) uint64 {
-	var instanceLabelCount uint64
-	for label, display := range p.InstanceLabels {
-		value := parseProperties(instanceData, label)
-		if value.Exists() {
-			if value.IsArray() {
-				var labelArray []string
-				for _, r := range value.Array() {
-					labelString := r.String()
-					labelArray = append(labelArray, labelString)
-				}
-				instance.SetLabel(display, strings.Join(labelArray, ","))
-			} else {
-				instance.SetLabel(display, value.String())
-			}
-			instanceLabelCount++
-		} else {
-			e.Logger.Warn().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
-		}
-	}
-	return instanceLabelCount
 }
 
 func (e *Ems) updateMatrix() {
