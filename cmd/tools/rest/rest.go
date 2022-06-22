@@ -153,8 +153,8 @@ func doCmd() {
 }
 
 type Pagination struct {
-	Records    []interface{} `json:"records"`
-	NumRecords int           `json:"num_records"`
+	Records    []any `json:"records"`
+	NumRecords int   `json:"num_records"`
 	Links      *struct {
 		Next struct {
 			Href string `json:"href"`
@@ -163,8 +163,8 @@ type Pagination struct {
 }
 
 type PerfRecord struct {
-	Records   []interface{} `json:"records"`
-	Timestamp int64         `json:"time"`
+	Records   []any `json:"records"`
+	Timestamp int64 `json:"time"`
 }
 
 func doData() {
@@ -185,10 +185,9 @@ func doData() {
 	}
 
 	// strip leading slash
-	if strings.HasPrefix(args.API, "/") {
-		args.API = args.API[1:]
-	}
-	var records []interface{}
+	args.API = strings.TrimPrefix(args.API, "/")
+
+	var records []any
 	href := BuildHref(args.API, args.Fields, args.Field, args.QueryField, args.QueryValue, args.MaxRecords, "", args.Endpoint)
 	stderr("fetching href=[%s]\n", href)
 
@@ -277,7 +276,7 @@ func FetchData(client *Client, href string, records *[]any, downloadAll bool) er
 	return nil
 }
 
-// FetchRestPerfData THis method is used in PerfRest collector. This method returns timestamp per batch
+// FetchRestPerfData This method is used in PerfRest collector. This method returns timestamp per batch
 func FetchRestPerfData(client *Client, href string, records *[]PerfRecord) error {
 	getRest, err := client.GetRest(href)
 	if err != nil {
@@ -314,7 +313,7 @@ func FetchRestPerfData(client *Client, href string, records *[]PerfRecord) error
 	return nil
 }
 
-func stderr(format string, a ...interface{}) {
+func stderr(format string, a ...any) {
 	_, _ = fmt.Fprintf(os.Stderr, format, a...)
 }
 

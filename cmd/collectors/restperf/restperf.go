@@ -512,6 +512,8 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 		if results[0].Exists() {
 			ts = float64(results[0].Int()) / BILLION
+		} else {
+			r.Logger.Warn().Msg("Missing timestamp in response")
 		}
 
 		results[1].ForEach(func(key, instanceData gjson.Result) bool {
@@ -586,7 +588,6 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 				return true
 			}
 
-			//// add batch timestamp as custom counter
 			for label, display := range r.Prop.InstanceLabels {
 				value := parseProperties(instanceData, label)
 				if value.Exists() {
