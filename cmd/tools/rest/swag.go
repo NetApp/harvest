@@ -368,7 +368,7 @@ func fixSwagger(path string, b []byte) (spec.Swagger, error) {
 		if err != nil {
 			return spec.Swagger{}, fmt.Errorf("unable to create %s to save swagger.yaml", path)
 		}
-		defer silentClose(out)
+		defer func(out *os.File) { _ = out.Close() }(out)
 		_, err = io.Copy(out, bytes.NewReader(nb))
 		if err != nil {
 			return spec.Swagger{}, fmt.Errorf("error while saving mutated swagger to %s err=%w", path, err)

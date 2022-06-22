@@ -9,7 +9,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
-	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -96,10 +95,6 @@ func readOrDownloadSwagger() (string, error) {
 	}
 	fmt.Printf("Using downloaded file %s with timestamp %s\n", swaggerPath, swagTime)
 	return swaggerPath, nil
-}
-
-func silentClose(body io.ReadCloser) {
-	_ = body.Close()
 }
 
 func doShow(_ *cobra.Command, a []string) {
