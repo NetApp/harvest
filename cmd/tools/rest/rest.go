@@ -153,13 +153,18 @@ func doCmd() {
 }
 
 type Pagination struct {
-	Records    []interface{} `json:"records"`
-	NumRecords int           `json:"num_records"`
+	Records    []any `json:"records"`
+	NumRecords int   `json:"num_records"`
 	Links      *struct {
 		Next struct {
 			Href string `json:"href"`
 		} `json:"next"`
 	} `json:"_links,omitempty"`
+}
+
+type PerfRecord struct {
+	Records   gjson.Result `json:"records"`
+	Timestamp int64        `json:"time"`
 }
 
 func doData() {
@@ -181,11 +186,12 @@ func doData() {
 
 	// strip leading slash
 	args.API = strings.TrimPrefix(args.API, "/")
-	var records []interface{}
+
+	var records []any
 	href := BuildHref(args.API, args.Fields, args.Field, args.QueryField, args.QueryValue, args.MaxRecords, "", args.Endpoint)
 	stderr("fetching href=[%s]\n", href)
 
-	err = FetchData(client, href, &records)
+	err = FetchData(client, href, &records, args.DownloadAll)
 	if err != nil {
 		stderr("error %+v\n", err)
 		return
@@ -218,7 +224,7 @@ func getPollerAndAddr() (*conf.Poller, string, error) {
 	return poller, poller.Addr, nil
 }
 
-func FetchData(client *Client, href string, records *[]any) error {
+func FetchData(client *Client, href string, records *[]any, downloadAll bool) error {
 	getRest, err := client.GetRest(href)
 	if err != nil {
 		return fmt.Errorf("error making request %w", err)
@@ -253,14 +259,14 @@ func FetchData(client *Client, href string, records *[]any) error {
 		*records = append(*records, page.Records...)
 
 		// If all results are desired and there is a next link, follow it
-		if args.DownloadAll && page.Links != nil {
+		if downloadAll && page.Links != nil {
 			nextLink := page.Links.Next.Href
 			if nextLink != "" {
 				if nextLink == href {
 					// nextLink is same as previous link, no progress is being made, exit
 					return nil
 				}
-				err := FetchData(client, nextLink, records)
+				err := FetchData(client, nextLink, records, downloadAll)
 				if err != nil {
 					return err
 				}
@@ -270,7 +276,43 @@ func FetchData(client *Client, href string, records *[]any) error {
 	return nil
 }
 
-func stderr(format string, a ...interface{}) {
+// FetchRestPerfData This method is used in PerfRest collector. This method returns timestamp per batch
+func FetchRestPerfData(client *Client, href string, perfRecords *[]PerfRecord) error {
+	getRest, err := client.GetRest(href)
+	if err != nil {
+		return fmt.Errorf("error making request %w", err)
+	}
+
+	// extract returned records since paginated records need to be merged into a single list
+	output := gjson.GetManyBytes(getRest, "records", "num_records", "_links.next.href")
+
+	data := output[0]
+	numRecords := output[1]
+	next := output[2]
+
+	if numRecords.Exists() && numRecords.Int() > 0 {
+		p := PerfRecord{Records: data, Timestamp: time.Now().UnixNano()}
+		*perfRecords = append(*perfRecords, p)
+	}
+
+	// If all results are desired and there is a next link, follow it
+	if next.Exists() {
+		nextLink := next.String()
+		if nextLink != "" {
+			if nextLink == href {
+				// nextLink is same as previous link, no progress is being made, exit
+				return nil
+			}
+			err := FetchRestPerfData(client, nextLink, perfRecords)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func stderr(format string, a ...any) {
 	_, _ = fmt.Fprintf(os.Stderr, format, a...)
 }
 
