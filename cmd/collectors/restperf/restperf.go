@@ -431,14 +431,13 @@ func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	var (
-		content         []byte
-		count           uint64
-		apiD, parseD    time.Duration
-		startTime       time.Time
-		err             error
-		perfRecords     []rest.PerfRecord
-		instanceKeys    []string
-		resourceLatency matrix.Metric // for workload* objects
+		count, numRecords uint64
+		apiD, parseD      time.Duration
+		startTime         time.Time
+		err               error
+		perfRecords       []rest.PerfRecord
+		instanceKeys      []string
+		resourceLatency   matrix.Metric // for workload* objects
 	)
 
 	r.Logger.Trace().Msg("updating data cache")
@@ -450,6 +449,21 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	timestamp := newData.GetMetric("timestamp")
 	if timestamp == nil {
 		return nil, errors.New(errors.ErrConfig, "missing timestamp metric")
+	}
+
+	instanceKeys = r.Prop.InstanceKeys
+
+	if isWorkloadDetailObject(r.Prop.Query) {
+		if resourceMap := r.Params.GetChildS("resource_map"); resourceMap == nil {
+			return nil, errors.New(errors.MissingParam, "resource_map")
+		} else {
+			instanceKeys = make([]string, 0)
+			for _, layer := range resourceMap.GetAllChildNamesS() {
+				for key := range mat.GetInstances() {
+					instanceKeys = append(instanceKeys, key+"."+layer)
+				}
+			}
+		}
 	}
 
 	startTime = time.Now()
@@ -481,42 +495,17 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		return nil, errors.New(errors.ErrNoInstance, "no "+r.Object+" instances on cluster")
 	}
 
-	if isWorkloadDetailObject(r.Prop.Query) {
-		if resourceMap := r.Params.GetChildS("resource_map"); resourceMap == nil {
-			return nil, errors.New(errors.MissingParam, "resource_map")
-		} else {
-			instanceKeys = make([]string, 0)
-			for _, layer := range resourceMap.GetAllChildNamesS() {
-				for key := range mat.GetInstances() {
-					instanceKeys = append(instanceKeys, key+"."+layer)
-				}
-			}
-		}
-	}
-
-	numRecords := 0
-
-	instanceKeys = r.Prop.InstanceKeys
-
 	for _, perfRecord := range perfRecords {
-		content, err = json.Marshal(perfRecord)
-		if err != nil {
-			r.Logger.Error().Err(err).Str("ApiPath", r.Prop.Query).Msg("Unable to marshal records")
-		}
+		pr := perfRecord.Records
+		t := perfRecord.Timestamp
 
-		if !gjson.ValidBytes(content) {
-			return nil, fmt.Errorf("json is not valid for: %s", r.Prop.Query)
-		}
-
-		results := gjson.GetManyBytes(content, "time", "records")
-
-		if results[0].Exists() {
-			ts = float64(results[0].Int()) / BILLION
+		if t != 0 {
+			ts = float64(t) / BILLION
 		} else {
 			r.Logger.Warn().Msg("Missing timestamp in response")
 		}
 
-		results[1].ForEach(func(key, instanceData gjson.Result) bool {
+		pr.ForEach(func(key, instanceData gjson.Result) bool {
 			var (
 				instanceKey string
 				instance    *matrix.Instance
@@ -714,15 +703,13 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 			}
 
 			numRecords += 1
-
 			return true
 		})
 	}
 
-	r.Logger.Debug().Str("object", r.Object).Int("records", numRecords).Msg("Extracted records")
-
 	r.Logger.Debug().
 		Uint64("dataPoints", count).
+		Uint64("records", numRecords).
 		Str("apiTime", apiD.String()).
 		Str("parseTime", parseD.String()).
 		Msg("Collected")

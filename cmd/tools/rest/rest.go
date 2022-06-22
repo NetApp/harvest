@@ -163,8 +163,8 @@ type Pagination struct {
 }
 
 type PerfRecord struct {
-	Records   []any `json:"records"`
-	Timestamp int64 `json:"time"`
+	Records   gjson.Result `json:"records"`
+	Timestamp int64        `json:"time"`
 }
 
 func doData() {
@@ -277,39 +277,36 @@ func FetchData(client *Client, href string, records *[]any, downloadAll bool) er
 }
 
 // FetchRestPerfData This method is used in PerfRest collector. This method returns timestamp per batch
-func FetchRestPerfData(client *Client, href string, records *[]PerfRecord) error {
+func FetchRestPerfData(client *Client, href string, perfRecords *[]PerfRecord) error {
 	getRest, err := client.GetRest(href)
 	if err != nil {
 		return fmt.Errorf("error making request %w", err)
 	}
 
 	// extract returned records since paginated records need to be merged into a single list
-	var page Pagination
-	err = json.Unmarshal(getRest, &page)
-	if err != nil {
-		return fmt.Errorf("error unmarshalling json %+v", err)
-	}
+	output := gjson.GetManyBytes(getRest, "records", "num_records", "_links.next.href")
 
-	if len(page.Records) > 0 {
-		p := PerfRecord{Records: page.Records, Timestamp: time.Now().UnixNano()}
-		*records = append(*records, p)
+	data := output[0]
+	numRecords := output[1]
+	next := output[2]
+
+	if numRecords.Exists() && numRecords.Int() > 0 {
+		p := PerfRecord{Records: data, Timestamp: time.Now().UnixNano()}
+		*perfRecords = append(*perfRecords, p)
 	}
 
 	// If all results are desired and there is a next link, follow it
-	if page.Links != nil {
-		nextLink := page.Links.Next.Href
-		if nextLink != "" {
-			if nextLink == href {
-				// nextLink is same as previous link, no progress is being made, exit
-				return nil
-			}
-			err := FetchRestPerfData(client, nextLink, records)
-			if err != nil {
-				return err
-			}
+	if next.Exists() {
+		nextLink := next.String()
+		if nextLink == href {
+			// nextLink is same as previous link, no progress is being made, exit
+			return nil
+		}
+		err := FetchRestPerfData(client, nextLink, perfRecords)
+		if err != nil {
+			return err
 		}
 	}
-
 	return nil
 }
 
