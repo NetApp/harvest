@@ -1,0 +1,31 @@
+linters:
+    disable-all: true
+    enable:
+      - deadcode
+      - errcheck
+      - errname
+      - gosimple
+      - govet
+      - ineffassign
+      - staticcheck
+      - structcheck
+      - typecheck
+      - unused
+      - varcheck
+      - bodyclose
+      - errname
+      - errorlint
+      - exportloopref
+      - gosec
+      - makezero
+      - nolintlint
+      - nonamedreturns
+      - nosprintfhostport
+      - tenv
+      - thelper
+      - unconvert
+
+linters-settings:
+  thelper:
+    test:
+      begin: false

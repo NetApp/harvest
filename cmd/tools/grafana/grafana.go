@@ -168,6 +168,7 @@ func exportFiles(dir string, folder *Folder) error {
 				fmt.Printf("error marshall dashboard [%s]: %v\n\n", uid, err)
 				return err
 			}
+			//#nosec G306 -- creating dashboards with group and other permissions of read are OK
 			if err = ioutil.WriteFile(fp, data, 0644); err != nil {
 				fmt.Printf("error write to [%s]: %v\n", fp, err)
 				return err
@@ -795,7 +796,7 @@ func checkToken(opts *options, ignoreConfig bool) error {
 
 	opts.client = &http.Client{Timeout: time.Duration(clientTimeout) * time.Second}
 	if strings.HasPrefix(opts.addr, "https://") {
-		tlsConfig := &tls.Config{InsecureSkipVerify: opts.useInsecureTLS}
+		tlsConfig := &tls.Config{InsecureSkipVerify: opts.useInsecureTLS} //nolint:gosec
 		opts.client.Transport = &http.Transport{TLSClientConfig: tlsConfig}
 	}
 	// send random request to validate token

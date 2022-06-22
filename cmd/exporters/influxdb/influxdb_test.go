@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func setupInfluxDB(exporterName string, t *testing.T) *InfluxDB {
+func setupInfluxDB(t *testing.T, exporterName string) *InfluxDB {
 	opts := &options.Options{}
 	opts.Debug = true
 
@@ -37,7 +37,7 @@ func setupInfluxDB(exporterName string, t *testing.T) *InfluxDB {
 func TestAddrParameter(t *testing.T) {
 	expectedURL := "http://localhost:8086/api/v2/write?org=netapp&bucket=harvest&precision=s"
 	exporterName := "influx-test-addr"
-	influx := setupInfluxDB(exporterName, t)
+	influx := setupInfluxDB(t, exporterName)
 
 	if influx.url == expectedURL {
 		t.Logf("OK - url: [%s]", expectedURL)
@@ -51,7 +51,7 @@ func TestAddrParameter(t *testing.T) {
 func TestUrlParameter(t *testing.T) {
 	expectedURL := "https://some-valid-domain-name.net:8888/api/v2/write?org=netapp&bucket=harvest&precision=s"
 	exporterName := "influx-test-url"
-	influx := setupInfluxDB(exporterName, t)
+	influx := setupInfluxDB(t, exporterName)
 
 	if influx.url == expectedURL {
 		t.Logf("OK - url: [%s]", expectedURL)
@@ -64,7 +64,7 @@ func TestUrlParameter(t *testing.T) {
 func TestVersionParameter(t *testing.T) {
 	expectedURL := "http://localhost:8088/api/v4/write?org=harvest&bucket=harvest&precision=s"
 	exporterName := "influx-test-version"
-	influx := setupInfluxDB(exporterName, t)
+	influx := setupInfluxDB(t, exporterName)
 
 	if influx.url == expectedURL {
 		t.Logf("OK - url: [%s]", expectedURL)
@@ -78,7 +78,7 @@ func TestVersionParameter(t *testing.T) {
 // rendered data
 func TestExportDebug(t *testing.T) {
 	exporterName := "influx-test-url"
-	influx := setupInfluxDB(exporterName, t)
+	influx := setupInfluxDB(t, exporterName)
 
 	// matrix with fake data
 	data := matrix.New("test_exporter", "influxd_test_data", "influxd_test_data")
@@ -114,7 +114,7 @@ func TestExportDebug(t *testing.T) {
 func TestWhiteSpaceInParameter(t *testing.T) {
 	expectedURL := "http://localhost:8086/api/v2/write?org=harvest%202&bucket=harvest%20%2009&precision=s"
 	exporterName := "influx-test-space"
-	influx := setupInfluxDB(exporterName, t)
+	influx := setupInfluxDB(t, exporterName)
 
 	if influx.url != expectedURL {
 		t.Fatalf("FAIL - expected [%s]\n                             got [%s]", expectedURL, influx.url)

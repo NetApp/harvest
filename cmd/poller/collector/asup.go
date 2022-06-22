@@ -2,7 +2,7 @@ package collector
 
 import (
 	"context"
-	"crypto/sha1"
+	"crypto/sha1" //nolint:gosec // used for sha1sum not for security
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -143,9 +143,10 @@ func sendAsupVia(msg *Payload, asupExecPath string) error {
 		Msg("Fork autosupport binary.")
 
 	exitStatus := 0
-	err := exec.CommandContext(cont, asupExecPath, "--payload", msg.path, "--working-dir", workingDir).Run()
+	err := exec.CommandContext(cont, asupExecPath, "--payload", msg.path, "--working-dir", workingDir).Run() //nolint:gosec
 	if err != nil {
-		if exitError, ok := err.(*exec.ExitError); ok {
+		var exitError *exec.ExitError
+		if ok := errors.Is(err, exitError); ok {
 			exitStatus = exitError.ExitCode()
 		}
 	}
@@ -300,7 +301,7 @@ func getPayloadPath(asupDir string, pollerName string) (string, error) {
 }
 
 func sha1Sum(s string) string {
-	hash := sha1.New()
+	hash := sha1.New() //nolint:gosec // using sha1 for a hash, not a security risk
 	hash.Write([]byte(s))
 	return hex.EncodeToString(hash.Sum(nil))
 }

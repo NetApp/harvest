@@ -104,7 +104,7 @@ func New(poller conf.Poller, timeout time.Duration) (*Client, error) {
 			Proxy: http.ProxyFromEnvironment,
 			TLSClientConfig: &tls.Config{
 				Certificates:       []tls.Certificate{cert},
-				InsecureSkipVerify: useInsecureTLS},
+				InsecureSkipVerify: useInsecureTLS}, //nolint:gosec
 		}
 	} else {
 		username := poller.Username
@@ -119,7 +119,7 @@ func New(poller conf.Poller, timeout time.Duration) (*Client, error) {
 
 		transport = &http.Transport{
 			Proxy:           http.ProxyFromEnvironment,
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: useInsecureTLS},
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: useInsecureTLS}, //nolint:gosec
 		}
 	}
 

@@ -80,13 +80,13 @@ func TestNode_Union(t *testing.T) {
 		Children: make([]*Node, 0),
 	}
 
-	testNodeUnionCase1(parent, child, t)
-	testNodeUnionCase2(parent, child, t)
-	testNodeUnionCase3(parent, child, t)
+	testNodeUnionCase1(t, parent, child)
+	testNodeUnionCase2(t, parent, child)
+	testNodeUnionCase3(t, parent, child)
 }
 
 // Parent don't have field and child would have, after the union, parent will be having the field
-func testNodeUnionCase1(parent *Node, child *Node, t *testing.T) {
+func testNodeUnionCase1(t *testing.T, parent *Node, child *Node) {
 	childClientTimeout := &Node{name: []byte("client_timeout"), Content: []byte("2m")}
 	child.AddChild(childClientTimeout)
 
@@ -102,7 +102,7 @@ func testNodeUnionCase1(parent *Node, child *Node, t *testing.T) {
 }
 
 // Parent and child both have field but different in sub-child level, after the union, parent will be having union of both
-func testNodeUnionCase2(parent *Node, child *Node, t *testing.T) {
+func testNodeUnionCase2(t *testing.T, parent *Node, child *Node) {
 	parentScheduleInstance := &Node{name: []byte("instance"), Content: []byte("600s")}
 	parentScheduleData := &Node{name: []byte("data"), Content: []byte("180s")}
 	parentScheduleCounter := &Node{name: []byte("counter"), Content: []byte("1200s")}
@@ -131,7 +131,7 @@ func testNodeUnionCase2(parent *Node, child *Node, t *testing.T) {
 }
 
 // Parent and child both have field but different value, after the union, parent will be having child's value
-func testNodeUnionCase3(parent *Node, child *Node, t *testing.T) {
+func testNodeUnionCase3(t *testing.T, parent *Node, child *Node) {
 	parentClientTimeout := &Node{name: []byte("client_timeout"), Content: []byte("1m")}
 	parent.AddChild(parentClientTimeout)
 
