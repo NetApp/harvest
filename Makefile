@@ -155,7 +155,7 @@ asup:
 	@mkdir -p ${CURRENT_DIR}/autosupport
 	@cp ${ASUP_TMP}/harvest-asup/bin/asup ${CURRENT_DIR}/autosupport
 
-dev: build
+dev: build lint
 	@echo "Deleting AutoSupport binary"
 	@rm -rf autosupport/asup
 
