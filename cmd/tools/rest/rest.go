@@ -298,13 +298,15 @@ func FetchRestPerfData(client *Client, href string, perfRecords *[]PerfRecord) e
 	// If all results are desired and there is a next link, follow it
 	if next.Exists() {
 		nextLink := next.String()
-		if nextLink == href {
-			// nextLink is same as previous link, no progress is being made, exit
-			return nil
-		}
-		err := FetchRestPerfData(client, nextLink, perfRecords)
-		if err != nil {
-			return err
+		if nextLink != "" {
+			if nextLink == href {
+				// nextLink is same as previous link, no progress is being made, exit
+				return nil
+			}
+			err := FetchRestPerfData(client, nextLink, perfRecords)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil
