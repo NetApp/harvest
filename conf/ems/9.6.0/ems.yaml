@@ -108,8 +108,6 @@ events:
       - ^^node.name                        => node
     resolve_when_ems:
       - name: nvram.battery.charging.normal
-        resolve_key:
-          - ^^node.name                    => node
 
   - name: callhome.hainterconnect.down
 
@@ -174,9 +172,7 @@ events:
       - parameters.volume_dsid              => volume_ds_id
     resolve_when_ems:
       - name: LUN.online
-        resolve_key:
-          - ^^parameters.object_uuid        => object_uuid
-        resolve_bookend_after: 672h
+        resolve_after: 672h
 
   - name: mgmtgwd.rootvolrec.low.space
     exports:
@@ -188,24 +184,18 @@ events:
       - ^^parameters.report                 => report
     resolve_when_ems:
       - name: monitor.fan.ok
-        resolve_key:
-          - ^^parameters.report             => report
 
   - name: monitor.fan.failed
     exports:
       - ^^parameters.report                 => report
     resolve_when_ems:
       - name: monitor.fan.ok
-        resolve_key:
-          - ^^parameters.report             => report
 
   - name: monitor.fan.warning
     exports:
       - ^^parameters.report                 => report
     resolve_when_ems:
       - name: monitor.fan.ok
-        resolve_key:
-          - ^^parameters.report             => report
 
   - name: Nblade.cifsManyAuths
     exports:

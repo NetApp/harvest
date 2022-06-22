@@ -1,7 +1,6 @@
 package ems
 
 import (
-	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"time"
@@ -107,7 +106,7 @@ func (e *Ems) ParseExports(counter *node.Node, prop *emsProp) {
 	}
 }
 
-func (e *Ems) ParseResolveEms(resolveEvent *node.Node, emsName string) {
+func (e *Ems) ParseResolveEms(resolveEvent *node.Node, issueEmsProp emsProp) {
 	var resolveEmsName, resolveAfter string
 	var resolveKey *node.Node
 
@@ -125,31 +124,22 @@ func (e *Ems) ParseResolveEms(resolveEvent *node.Node, emsName string) {
 	// populate prop counter for asup
 	e.Prop.Counters[resolveEmsName] = resolveEmsName
 
-	// check if resolvedby is present in template
+	// check if resolved_key is present in template, if not then use the issue ems resolve key
 	if resolveKey = resolveEvent.GetChildS("resolve_key"); resolveKey == nil {
-		e.Logger.Warn().Msg("Missing resolving event exports")
-		return
+		prop.InstanceKeys = issueEmsProp.InstanceKeys
+	} else {
+		e.ParseExports(resolveKey, &prop)
 	}
 
 	// check if resolveAfter is present in template
 	e.resolveAfter = DefaultBookendResolutionDuration
-	if resolveAfter = resolveEvent.GetChildContentS("resolve_bookend_after"); resolveAfter != "" {
+	if resolveAfter = resolveEvent.GetChildContentS("resolve_after"); resolveAfter != "" {
 		if durationVal, err := time.ParseDuration(resolveAfter); err == nil {
 			e.resolveAfter = durationVal
 		}
 	}
 	e.Logger.Debug().Str("bookend ems resolve After", e.resolveAfter.String()).Msg("")
 
-	e.ParseExports(resolveKey, &prop)
-	e.bookendEmsMap[resolveEmsName] = append(e.bookendEmsMap[resolveEmsName], emsName)
+	e.bookendEmsMap[resolveEmsName] = append(e.bookendEmsMap[resolveEmsName], issueEmsProp.Name)
 	e.emsProp[resolveEmsName] = append(e.emsProp[resolveEmsName], &prop)
-}
-
-func (e *Ems) InstanceOlderThan(metr matrix.Metric, instance *matrix.Instance) bool {
-	if metricTimestamp, ok := metr.GetValueFloat64(instance); ok {
-		if time.Since(time.UnixMicro(int64(metricTimestamp))).Hours() > e.resolveAfter.Hours() {
-			return true
-		}
-	}
-	return false
 }

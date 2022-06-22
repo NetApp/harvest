@@ -3,6 +3,7 @@ package ems
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
@@ -236,7 +237,7 @@ func (e *Ems) InitCache() error {
 				}
 			}
 			if line1.GetNameS() == "resolve_when_ems" {
-				e.ParseResolveEms(line1, prop.Name)
+				e.ParseResolveEms(line1, prop)
 			}
 		}
 		e.emsProp[prop.Name] = append(e.emsProp[prop.Name], &prop)
@@ -338,6 +339,7 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 		ok               bool
 		metr             matrix.Metric
 		bookendCacheSize int
+		metricTimestamp  float64
 	)
 
 	query := "api/support/ems/messages"
@@ -391,7 +393,7 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 	e.Logger.Debug().Strs("skipped events", missingNames).Msg("")
 	e.eventNames = filteredNames
 
-	// check instance timestamp and remove it after -- duration and warning when total instance in cache > 1000 instance
+	// check instance timestamp and remove it after 28days duration and warning when total instance in cache > 1000 instance
 	for _, issuingEmsList := range e.bookendEmsMap {
 		for _, issuingEms := range issuingEmsList {
 			if mx := e.Matrix[issuingEms]; mx != nil {
@@ -401,9 +403,11 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 							Str("name", "timestamp").
 							Msg("NewMetricFloat64")
 					}
-					// check instance timestamp and remove it after 28days [4w]
-					if e.InstanceOlderThan(metr, instance) {
-						mx.RemoveInstance(instanceKey)
+					// check instance timestamp and remove it after given resolve_after value
+					if metricTimestamp, ok = metr.GetValueFloat64(instance); ok {
+						if collectors.IsTimestampOlderThanDuration(metricTimestamp, e.resolveAfter) {
+							mx.RemoveInstance(instanceKey)
+						}
 					}
 				}
 
@@ -540,10 +544,8 @@ func (e *Ems) getHref(names []string, filter []string) string {
 	nameFilter := "message.name=" + strings.Join(names, ",")
 	filter = append(filter, nameFilter)
 	// If both issuing ems and resolving ems would come together in same poll, This index ordering would make sure that latest ems would process last. So, if resolving ems would be latest, it will resolve the issue.
-	// add filter as order by index in ascending order
-	orderByIndexFilter := "order_by=" + "index desc"
-	// space need to converted to %20 for REST call
-	orderByIndexFilter = strings.Replace(orderByIndexFilter, " ", "%20", 1)
+	// add filter as order by index in descending order
+	orderByIndexFilter := "order_by=" + "index%20desc"
 	filter = append(filter, orderByIndexFilter)
 
 	href := rest.BuildHref(e.Query, strings.Join(e.Fields, ","), filter, "", "", "", e.ReturnTimeOut, e.Query)
