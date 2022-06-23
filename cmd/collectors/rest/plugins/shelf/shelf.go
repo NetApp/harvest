@@ -1,8 +1,6 @@
 package shelf
 
 import (
-	"encoding/json"
-	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -11,7 +9,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/tidwall/gjson"
 	"sort"
 	"strings"
 	"time"
@@ -175,12 +172,6 @@ func (my *Shelf) Init() error {
 
 func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
-	var (
-		records []interface{}
-		content []byte
-		err     error
-	)
-
 	// Set all global labels from rest.go if already not exist
 	for a := range my.instanceLabels {
 		my.data[a].SetGlobalLabels(data.GetGlobalLabels())
@@ -188,33 +179,15 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	href := rest.BuildHref("", "*", nil, "", "", "", "", my.query)
 
-	err = rest.FetchData(my.client, href, &records, true)
+	records, err := rest.Fetch(my.client, href)
 	if err != nil {
 		my.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
 		return nil, err
 	}
 
-	all := rest.Pagination{
-		Records:    records,
-		NumRecords: len(records),
-	}
-
-	content, err = json.Marshal(all)
-	if err != nil {
-		my.Logger.Error().Err(err).Str("ApiPath", my.query).Msg("Unable to marshal rest pagination")
-	}
-
-	if !gjson.ValidBytes(content) {
-		return nil, fmt.Errorf("json is not valid for: %s", my.query)
-	}
-
-	results := gjson.GetManyBytes(content, "num_records", "records")
-	numRecords := results[0]
-	if numRecords.Int() == 0 {
+	if len(records) == 0 {
 		return nil, errors.New(errors.ErrNoInstance, "no "+my.query+" instances on cluster")
 	}
-
-	my.Logger.Debug().Msgf("fetching %d shelf counters", numRecords.Int())
 
 	var output []*matrix.Matrix
 	noSet := make(map[string]any)
@@ -224,12 +197,11 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		data1.PurgeInstances()
 		data1.Reset()
 	}
-
-	results[1].ForEach(func(shelfKey, shelf gjson.Result) bool {
+	for _, shelf := range records {
 
 		if !shelf.IsObject() {
 			my.Logger.Warn().Str("type", shelf.Type.String()).Msg("Shelf is not object, skipping")
-			return true
+			continue
 		}
 
 		shelfName := shelf.Get("name").String()
@@ -315,8 +287,7 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				output = append(output, data1)
 			}
 		}
-		return true
-	})
+	}
 
 	if len(noSet) > 0 {
 		attributes := make([]string, 0)
