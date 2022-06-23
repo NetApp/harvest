@@ -186,7 +186,7 @@ func doData() {
 	href := BuildHref(args.API, args.Fields, args.Field, args.QueryField, args.QueryValue, args.MaxRecords, "", args.Endpoint)
 	stderr("fetching href=[%s]\n", href)
 
-	err = FetchData(client, href, &records, args.DownloadAll)
+	err = FetchForCli(client, href, &records, args.DownloadAll)
 	if err != nil {
 		stderr("error %+v\n", err)
 		return
@@ -219,8 +219,8 @@ func getPollerAndAddr() (*conf.Poller, string, error) {
 	return poller, poller.Addr, nil
 }
 
-//FetchData used for CLI only
-func FetchData(client *Client, href string, records *[]any, downloadAll bool) error {
+//FetchForCli used for CLI only
+func FetchForCli(client *Client, href string, records *[]any, downloadAll bool) error {
 	getRest, err := client.GetRest(href)
 	if err != nil {
 		return fmt.Errorf("error making request %w", err)
@@ -262,7 +262,7 @@ func FetchData(client *Client, href string, records *[]any, downloadAll bool) er
 					// nextLink is same as previous link, no progress is being made, exit
 					return nil
 				}
-				err := FetchData(client, nextLink, records, downloadAll)
+				err := FetchForCli(client, nextLink, records, downloadAll)
 				if err != nil {
 					return err
 				}
@@ -272,8 +272,8 @@ func FetchData(client *Client, href string, records *[]any, downloadAll bool) er
 	return nil
 }
 
-// FetchRestData used in Rest Collector
-func FetchRestData(client *Client, href string) ([]gjson.Result, error) {
+// Fetch used in Rest Collector
+func Fetch(client *Client, href string) ([]gjson.Result, error) {
 	var (
 		records []gjson.Result
 		result  []gjson.Result

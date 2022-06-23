@@ -192,7 +192,7 @@ func (r *RestPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		return nil, errors.New(errors.ErrConfig, "empty url")
 	}
 
-	records, err = rest.FetchRestData(r.Client, href)
+	records, err = rest.Fetch(r.Client, href)
 	if err != nil {
 		r.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
 		return nil, err
@@ -925,7 +925,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 		return errors.New(errors.ErrConfig, "empty url")
 	}
 
-	records, err = rest.FetchRestData(r.Client, href)
+	records, err = rest.Fetch(r.Client, href)
 	if err != nil {
 		r.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
 		return err
@@ -1046,7 +1046,7 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		return nil, errors.New(errors.ErrConfig, "empty url")
 	}
 
-	records, err = rest.FetchRestData(r.Client, href)
+	records, err = rest.Fetch(r.Client, href)
 	if err != nil {
 		r.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
 		return nil, err

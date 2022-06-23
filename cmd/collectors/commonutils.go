@@ -13,7 +13,7 @@ import (
 )
 
 func InvokeRestCall(client *rest.Client, query string, href string, logger *logging.Logger) ([]gjson.Result, error) {
-	result, err := rest.FetchRestData(client, href)
+	result, err := rest.Fetch(client, href)
 	if err != nil {
 		logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
 		return []gjson.Result{}, err

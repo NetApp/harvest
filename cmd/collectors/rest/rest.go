@@ -490,7 +490,7 @@ func (r *Rest) GetRestData(href string) ([]gjson.Result, error) {
 		return nil, errors.New(errors.ErrConfig, "empty url")
 	}
 
-	result, err := rest.FetchRestData(r.Client, href)
+	result, err := rest.Fetch(r.Client, href)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch data: %w", err)
 	}
