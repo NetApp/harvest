@@ -5,7 +5,7 @@ package fcp
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"math"
 	"strconv"
@@ -28,14 +28,14 @@ func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	if read = data.GetMetric("read_data"); read == nil {
 		// Check for 7 mode fcp counters, as they starts with fcp_.
 		if read = data.GetMetric("fcp_read_data"); read == nil {
-			return nil, errors.New(errors.ErrNoMetric, "read_data")
+			return nil, errs.New(errs.ErrNoMetric, "read_data")
 		}
 	}
 
 	if write = data.GetMetric("write_data"); write == nil {
 		// Check for 7 mode fcp counters, as they starts with fcp_.
 		if write = data.GetMetric("fcp_write_data"); write == nil {
-			return nil, errors.New(errors.ErrNoMetric, "write_data")
+			return nil, errs.New(errs.ErrNoMetric, "write_data")
 		}
 	}
 

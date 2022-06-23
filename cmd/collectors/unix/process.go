@@ -7,7 +7,7 @@ package unix
 import (
 	"bytes"
 	"fmt"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"io/ioutil"
 	"os"
 	"path"
@@ -38,7 +38,7 @@ type Process struct {
 }
 
 // NewProcess - returns an initialized instance of Process
-// if no process with *pid* exists, returns ProcessNotFound
+// if no process with *pid* exists, returns ErrProcessNotFound
 func NewProcess(pid int) (*Process, error) {
 	me := &Process{pid: pid}
 	me.cpu = make(map[string]float64)
@@ -73,9 +73,9 @@ func (me *Process) Reload() error {
 
 	if s, err := os.Stat(me.dirpath); err != nil || !s.IsDir() {
 		if err == nil {
-			return errors.New(ProcessNotFound, fmt.Sprintf("%s is not dir", me.dirpath))
+			return errs.New(ErrProcessNotFound, fmt.Sprintf("%s is not dir", me.dirpath))
 		}
-		return errors.New(ProcessNotFound, err.Error())
+		return errs.New(ErrProcessNotFound, err.Error())
 	}
 
 	if err = me.loadCmdline(); err != nil {
@@ -122,7 +122,7 @@ func (me *Process) loadCmdline() error {
 		err  error
 	)
 	if data, err = ioutil.ReadFile(path.Join(me.dirpath, "cmdline")); err != nil {
-		return errors.New(FileRead, err.Error())
+		return errs.New(ErrFileRead, err.Error())
 	}
 	me.cmdline = string(bytes.ReplaceAll(data, []byte("\x00"), []byte(" ")))
 	return nil
@@ -138,7 +138,7 @@ func (me *Process) loadStatus() error {
 	)
 
 	if data, err = ioutil.ReadFile(path.Join(me.dirpath, "status")); err != nil {
-		return errors.New(FileRead, "status: "+err.Error())
+		return errs.New(ErrFileRead, "status: "+err.Error())
 	}
 
 	for _, line = range strings.Split(string(data), "\n") {
@@ -181,7 +181,7 @@ func (me *Process) loadStat() error {
 	)
 
 	if data, err = ioutil.ReadFile(path.Join(me.dirpath, "stat")); err != nil {
-		return errors.New(FileRead, "stat: "+err.Error())
+		return errs.New(ErrFileRead, "stat: "+err.Error())
 	}
 
 	// store previous values to calculate deltas
@@ -292,7 +292,7 @@ func (me *Process) loadNetDev() error {
 	)
 
 	if data, err = ioutil.ReadFile(path.Join(me.dirpath, "net", "dev")); err != nil {
-		return errors.New(FileRead, "net/dev: "+err.Error())
+		return errs.New(ErrFileRead, "net/dev: "+err.Error())
 	}
 
 	me.net = make(map[string]uint64)

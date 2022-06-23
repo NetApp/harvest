@@ -16,6 +16,7 @@
 package collector
 
 import (
+	"errors"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"golang.org/x/text/cases"
@@ -25,7 +26,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 
@@ -144,7 +145,7 @@ func Init(c Collector) error {
 	// Initialize schedule and tasks (polls)
 	tasks := params.GetChildS("schedule")
 	if tasks == nil || len(tasks.GetChildren()) == 0 {
-		return errors.New(errors.MissingParam, "schedule")
+		return errs.New(errs.ErrMissingParam, "schedule")
 	}
 
 	s := schedule.New()
@@ -159,13 +160,13 @@ func Init(c Collector) error {
 		if m := reflect.ValueOf(c).MethodByName(methodName); m.IsValid() {
 			if foo, ok := m.Interface().(func() (map[string]*matrix.Matrix, error)); ok {
 				if err := s.NewTaskString(task.GetNameS(), task.GetContentS(), foo, true, "Collector_"+c.GetName()+"_"+c.GetObject()); err != nil {
-					return errors.New(errors.InvalidParam, "schedule ("+task.GetNameS()+"): "+err.Error())
+					return errs.New(errs.ErrInvalidParam, "schedule ("+task.GetNameS()+"): "+err.Error())
 				}
 			} else {
-				return errors.New(errors.ErrImplement, methodName+" has not signature 'func() (*matrix.Matrix, error)'")
+				return errs.New(errs.ErrImplement, methodName+" has not signature 'func() (*matrix.Matrix, error)'")
 			}
 		} else {
-			return errors.New(errors.ErrImplement, methodName)
+			return errs.New(errs.ErrImplement, methodName)
 		}
 	}
 	c.SetSchedule(s)
@@ -262,7 +263,7 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 	defer wg.Done()
 	defer func() {
 		if r := recover(); r != nil {
-			me.Logger.Error().Stack().Err(errors.New(errors.GoRoutinePanic, "")).
+			me.Logger.Error().Stack().Err(errs.New(errs.ErrPanic, "")).
 				Msgf("Collector panicked %s", r)
 		}
 	}()
@@ -308,14 +309,13 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 
 			// poll returned error, try to understand what to do
 			if err != nil {
-
 				if !me.Schedule.IsStandBy() {
 					me.Logger.Debug().Msgf("handling error during [%s] poll...", task.Name)
 				}
 				switch {
 				// target system is unreachable
 				// enter standby mode and retry with some delay that will be increased if we fail again
-				case errors.IsErr(err, errors.ErrConnection):
+				case errors.Is(err, errs.ErrConnection):
 					if retryDelay < 1024 {
 						retryDelay *= 4
 					}
@@ -331,17 +331,17 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 						Int("retryDelaySecs", retryDelay).
 						Msg("target unreachable, entering standby mode and retry")
 					me.Schedule.SetStandByMode(task, time.Duration(retryDelay)*time.Second)
-					me.SetStatus(1, errors.ErrConnection)
+					me.SetStatus(1, errs.ErrConnection.Error())
 				// there are no instances to collect
-				case errors.IsErr(err, errors.ErrNoInstance):
+				case errors.Is(err, errs.ErrNoInstance):
 					me.Schedule.SetStandByMode(task, 5*time.Minute)
-					me.SetStatus(1, errors.ErrNoInstance)
+					me.SetStatus(1, errs.ErrNoInstance.Error())
 					me.Logger.Info().
 						Str("task", task.Name).
 						Msg("no instances, entering standby")
 				// no metrics available
-				case errors.IsErr(err, errors.ErrNoMetric):
-					me.SetStatus(1, errors.ErrNoMetric)
+				case errors.Is(err, errs.ErrNoMetric):
+					me.SetStatus(1, errs.ErrNoMetric.Error())
 					me.Schedule.SetStandByMode(task, 1*time.Hour)
 					me.Logger.Info().
 						Str("task", task.Name).
@@ -349,12 +349,19 @@ func (me *AbstractCollector) Start(wg *sync.WaitGroup) {
 						Msg("no metrics of object on system, entering standby mode")
 				// not an error we are expecting, so enter failed state and terminate
 				default:
-					me.Logger.Error().Err(err).Str("task", task.Name).Msg("")
-					if errMsg := errors.GetClass(err); errMsg != "" {
-						me.SetStatus(2, errMsg)
-					} else {
-						me.SetStatus(2, err.Error())
+					var herr errs.HarvestError
+					errMsg := err.Error()
+
+					if ok := errors.As(err, &herr); ok {
+						errMsg = herr.Inner.Error()
 					}
+					// API was rejected, this happens when a resource is not available or does not exist
+					if errors.Is(err, errs.ErrAPIRequestRejected) {
+						me.Logger.Info().Str("task", task.Name).Msg(err.Error())
+					} else {
+						me.Logger.Error().Err(err).Str("task", task.Name).Msg("")
+					}
+					me.SetStatus(2, errMsg)
 				}
 				// stop here if we had errors
 				continue

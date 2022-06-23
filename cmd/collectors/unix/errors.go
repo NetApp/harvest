@@ -4,9 +4,11 @@
 
 package unix
 
-const (
-	ProcessNotFound = "process not found"
-	FieldNotFound   = "field not found"
-	FieldValue      = "field_value"
-	FileRead        = "read file"
+import "errors"
+
+var (
+	ErrProcessNotFound = errors.New("process not found")
+	ErrFieldNotFound   = errors.New("field not found")
+	ErrFieldValue      = errors.New("field_value")
+	ErrFileRead        = errors.New("read file")
 )

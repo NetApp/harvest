@@ -7,7 +7,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
@@ -165,7 +165,7 @@ func (e *Ems) InitCache() error {
 	}
 
 	if e.Query = e.Params.GetChildContentS("query"); e.Query == "" {
-		return errors.New(errors.MissingParam, "query")
+		return errs.New(errs.ErrMissingParam, "query")
 	}
 
 	// Used for autosupport
@@ -180,7 +180,7 @@ func (e *Ems) InitCache() error {
 	}
 
 	if events = e.Params.GetChildS("events"); events == nil || len(events.GetChildren()) == 0 {
-		return errors.New(errors.MissingParam, "events")
+		return errs.New(errs.ErrMissingParam, "events")
 	}
 
 	// default value for ONTAP is 15 sec
@@ -272,7 +272,7 @@ func (e *Ems) getClusterTime() (time.Time, error) {
 	results := gjson.GetManyBytes(content, "num_records", "records")
 	numRecords := results[0]
 	if numRecords.Int() == 0 {
-		return clusterTime, errors.New(errors.ErrConfig, e.Object+" date not found on cluster")
+		return clusterTime, errs.New(errs.ErrConfig, e.Object+" date not found on cluster")
 	}
 
 	results[1].ForEach(func(key, instanceData gjson.Result) bool {
@@ -355,7 +355,7 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 	results := gjson.GetManyBytes(content, "num_records", "records")
 	numRecords := results[0]
 	if numRecords.Int() == 0 {
-		return nil, errors.New(errors.ErrNoInstance, e.Object+" no ems message found on cluster")
+		return nil, errs.New(errs.ErrNoInstance, e.Object+" no ems message found on cluster")
 	}
 
 	var emsEventCatalogue []string

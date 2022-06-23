@@ -7,7 +7,7 @@ package zapi
 import (
 	"fmt"
 	client "github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"strings"
 )
@@ -70,7 +70,7 @@ func getAttrs(c *client.Client, a *Args) (*node.Node, error) {
 
 	if attrName == "" {
 		fmt.Println("no root attribute, stopping here.")
-		return nil, errors.New(AttributeNotFound, "root attribute")
+		return nil, errs.New(errs.ErrAttributeNotFound, "root attribute")
 	}
 
 	attrName = strings.TrimSuffix(attrName, "[]")
@@ -84,7 +84,7 @@ func getAttrs(c *client.Client, a *Args) (*node.Node, error) {
 	entries := results.GetChildS("type-entries")
 	if entries == nil {
 		fmt.Println("Error: missing [type-entries]")
-		return nil, errors.New(AttributeNotFound, "type-entries")
+		return nil, errs.New(errs.ErrAttributeNotFound, "type-entries")
 	}
 
 	attr = node.NewS(attrName)

@@ -6,7 +6,7 @@ package aggregator
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"regexp"
 	"strings"
@@ -106,7 +106,7 @@ func (me *Aggregator) parseRules() error {
 			me.Logger.Debug().Msgf("parsed rule [%v]", r)
 		} else {
 			me.Logger.Warn().Msgf("invalid rule syntax [%s]", line)
-			return errors.New(errors.InvalidParam, "invalid rule")
+			return errs.New(errs.ErrInvalidParam, "invalid rule")
 		}
 	}
 	return nil

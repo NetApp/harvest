@@ -13,7 +13,7 @@ package matrix
 
 import (
 	"github.com/netapp/harvest/v2/pkg/dict"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 )
 
 type Metric interface {
@@ -21,6 +21,7 @@ type Metric interface {
 	// @TODO, add methods for (convenience of collectors)
 	// Property
 	// BaseCounter
+
 	GetName() string
 	SetName(string)
 	GetType() string
@@ -201,25 +202,25 @@ func (me *AbstractMetric) SetValueNAN(i *Instance) {
 }
 
 func (me *AbstractMetric) Delta(Metric) error {
-	return errors.New(errors.ErrImplement, me.dtype)
+	return errs.New(errs.ErrImplement, me.dtype)
 }
 
 func (me *AbstractMetric) Divide(Metric) error {
-	return errors.New(errors.ErrImplement, me.dtype)
+	return errs.New(errs.ErrImplement, me.dtype)
 }
 
 func (me *AbstractMetric) DivideWithThreshold(Metric, int) error {
-	return errors.New(errors.ErrImplement, me.dtype)
+	return errs.New(errs.ErrImplement, me.dtype)
 }
 
 func (me *AbstractMetric) MultiplyByScalar(int) error {
-	return errors.New(errors.ErrImplement, me.dtype)
+	return errs.New(errs.ErrImplement, me.dtype)
 }
 
 func (me *AbstractMetric) AddValueString(*Instance, string) error {
-	return errors.New(errors.ErrImplement, me.dtype)
+	return errs.New(errs.ErrImplement, me.dtype)
 }
 
 func (me *AbstractMetric) SetValueBool(*Instance, bool) error {
-	return errors.New(errors.ErrImplement, me.dtype)
+	return errs.New(errs.ErrImplement, me.dtype)
 }

@@ -7,11 +7,12 @@ package certificate
 import (
 	"crypto/x509"
 	"encoding/pem"
+	"errors"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"strconv"
@@ -60,11 +61,9 @@ func (my *Certificate) Init() error {
 	if b := my.Params.GetChildContentS("batch_size"); b != "" {
 		if _, err := strconv.Atoi(b); err == nil {
 			my.batchSize = b
-			my.Logger.Info().Str("BatchSize", my.batchSize).Msg("using batch-size")
 		}
 	} else {
 		my.batchSize = BatchSize
-		my.Logger.Trace().Str("BatchSize", BatchSize).Msg("Using default batch-size")
 	}
 
 	return nil
@@ -83,13 +82,21 @@ func (my *Certificate) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		// invoke vserver-get-iter zapi and get admin vserver name
 		if adminVserver, err = my.GetAdminVserver(); err != nil {
-			my.Logger.Warn().Err(err).Msg("Failed to collect admin vserver")
+			if errors.Is(err, errs.ErrNoInstance) {
+				my.Logger.Debug().Err(err).Msg("Failed to collect admin SVM")
+			} else {
+				my.Logger.Error().Err(err).Msg("Failed to collect admin SVM")
+			}
 			return nil, nil
 		}
 
 		// invoke security-ssl-get-iter zapi and get admin vserver's serial number
 		if adminVserverSerial, err = my.GetSecuritySsl(adminVserver); err != nil {
-			my.Logger.Warn().Err(err).Msg("Failed to collect admin vserver's serial number")
+			if errors.Is(err, errs.ErrNoInstance) {
+				my.Logger.Debug().Err(err).Msg("Failed to collect admin SVM's serial number")
+			} else {
+				my.Logger.Error().Err(err).Msg("Failed to collect admin SVM's serial number")
+			}
 			return nil, nil
 		}
 
@@ -123,19 +130,19 @@ func (my *Certificate) setCertificateIssuerType(instance *matrix.Instance) {
 	certUUID := instance.GetLabel("uuid")
 
 	if certificatePEM == "" {
-		my.Logger.Warn().Str("uuid", certUUID).Msg("Certificate is not found")
+		my.Logger.Debug().Str("uuid", certUUID).Msg("Certificate is not found")
 		instance.SetLabel("certificateIssuerType", "unknown")
 	} else {
 		instance.SetLabel("certificateIssuerType", "self_signed")
 		certDecoded, _ := pem.Decode([]byte(certificatePEM))
 		if certDecoded == nil {
-			my.Logger.Warn().Msg("PEM formatted object is not a X.509 certificate. Only PEM formatted X.509 certificate input is allowed")
+			my.Logger.Debug().Msg("PEM formatted object is not a X.509 certificate. Only PEM formatted X.509 certificate input is allowed")
 			instance.SetLabel("certificateIssuerType", "unknown")
 			return
 		}
 
 		if cert, err = x509.ParseCertificate(certDecoded.Bytes); err != nil {
-			my.Logger.Warn().Msg("PEM formatted object is not a X.509 certificate. Only PEM formatted X.509 certificate input is allowed")
+			my.Logger.Debug().Msg("PEM formatted object is not a X.509 certificate. Only PEM formatted X.509 certificate input is allowed")
 			instance.SetLabel("certificateIssuerType", "unknown")
 			return
 		}
@@ -202,7 +209,7 @@ func (my *Certificate) GetAdminVserver() (string, error) {
 	}
 
 	if len(result) == 0 || result == nil {
-		return "", errors.New(errors.ErrNoInstance, "no records found")
+		return "", errs.New(errs.ErrNoInstance, "no records found")
 	}
 	// This should be one iteration only as cluster can have one admin vserver
 	for _, svm := range result {
@@ -231,7 +238,7 @@ func (my *Certificate) GetSecuritySsl(adminSvm string) (string, error) {
 	}
 
 	if len(result) == 0 || result == nil {
-		return "", errors.New(errors.ErrNoInstance, "no records found")
+		return "", errs.New(errs.ErrNoInstance, "no records found")
 	}
 	// This should be one iteration only as cluster can have one admin vserver
 	for _, ssl := range result {

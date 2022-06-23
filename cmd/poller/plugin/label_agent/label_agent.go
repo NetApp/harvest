@@ -7,7 +7,7 @@ package label_agent
 import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"strconv"
 	"strings"
@@ -49,7 +49,7 @@ func (me *LabelAgent) Init() error {
 	}
 
 	if count = me.parseRules(); count == 0 {
-		err = errors.New(errors.MissingParam, "valid rules")
+		err = errs.New(errs.ErrMissingParam, "valid rules")
 	} else {
 		me.Logger.Debug().Msgf("parsed %d rules for %d actions", count, len(me.actions))
 	}

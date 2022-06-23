@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -39,13 +39,13 @@ func InvokeRestCall(client *rest.Client, query string, href string, logger *logg
 
 	if !gjson.ValidBytes(content) {
 		logger.Error().Err(err).Str("Api", query).Msg("Invalid json")
-		return []gjson.Result{}, errors.New(errors.APIResponse, "Invalid json")
+		return []gjson.Result{}, errs.New(errs.ErrAPIResponse, "Invalid json")
 	}
 
 	results := gjson.GetManyBytes(content, "num_records", "records")
 	numRecords := results[0]
 	if numRecords.Int() == 0 {
-		return []gjson.Result{}, errors.New(errors.ErrNoInstance, "no "+query+" instances on cluster")
+		return []gjson.Result{}, errs.New(errs.ErrNoInstance, "no "+query+" instances on cluster")
 	}
 
 	return results[1].Array(), nil
