@@ -401,7 +401,7 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 					if metr, ok = mx.GetMetrics()["timestamp"]; !ok {
 						e.Logger.Error().
 							Str("name", "timestamp").
-							Msg("NewMetricFloat64")
+							Msg("failed to get metric")
 					}
 					// check instance timestamp and remove it after given resolve_after value
 					if metricTimestamp, ok = metr.GetValueFloat64(instance); ok {
@@ -636,13 +636,21 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (ma
 			bookendKey := e.getInstanceKeys(p, instanceData)
 
 			emsResolved := false
+			/* Below logic will evaluate this way:
+			   case 1: For Bookend ems (one to one): [LUN.offline - LUN.offline]
+			     - loop would iterate once
+			     - if issuing ems exist then resolve else log warning as unable to find matching ems in cache
+			   case 2: For Bookend with same resoling ems (many to one): [monitor.fan.critical, monitor.fan.failed, monitor.fan.warning - monitor.fan.ok]
+			     - loop would iterate for all possible issuing ems
+			     - if one or more issuing ems exist then resolve all matching ems else log warning as unable to find matching ems in cache
+			*/
 			for _, issuingEms := range issuingEmsList {
 				if mx = m[issuingEms]; mx != nil {
 					metr, exist := mx.GetMetrics()["events"]
 					if !exist {
 						e.Logger.Warn().
 							Str("name", "events").
-							Msg("NewMetricFloat64")
+							Msg("failed to get metric")
 						continue
 					}
 
@@ -744,7 +752,7 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (ma
 							if metr, err = mx.NewMetricFloat64(metric.Name); err != nil {
 								e.Logger.Error().Err(err).
 									Str("name", metric.Name).
-									Msg("NewMetricFloat64")
+									Msg("failed to get metric")
 								continue
 							}
 							metr.SetExportable(metric.Exportable)
@@ -760,14 +768,9 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (ma
 									Msg("Unable to set timestamp on metric")
 							}
 						} else {
-							// this code will not execute as ems only support events metric
-							f := instanceData.Get(metric.Name)
-							if f.Exists() {
-								if err = metr.SetValueFloat64(instance, f.Float()); err != nil {
-									e.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
-										Msg("Unable to set float key on metric")
-								}
-							}
+							// this code will not execute as ems only support [events, timestamp] metric
+							e.Logger.Warn().Str("key", metric.Name).Str("metric", metric.Label).
+								Msg("Unable to find metric")
 						}
 					}
 				}
@@ -824,7 +827,7 @@ func (e *Ems) updateMatrix() {
 		if metr, ok = mx.GetMetrics()["events"]; !ok {
 			e.Logger.Error().
 				Str("name", "events").
-				Msg("NewMetricFloat64")
+				Msg("failed to get metric")
 			continue
 		}
 
