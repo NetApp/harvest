@@ -6,36 +6,48 @@ groups:
 
       # Alert for Anti-ransomware state change ems
       - alert: Anti-ransomware state was changed volume
-        expr: last_over_time(ems_events{message="arw.volume.state"} [4w] ) == 1
+        expr: last_over_time(ems_events{message="arw.volume.state"} [4w]) == 1
         labels:
           severity: "error"
         annotations:
           summary: "Anti-ransomware state was changed to [{{ $labels.op }}] for Volume uuid [{{ $labels.volumeuuid }}]."
-          description: "Anti-ransomware state was changed to [{{ $labels.op }}] for Volume uuid [{{ $labels.volumeuuid }}]."
 
       # Alert for Anti-ransomware state change ems
       - alert: Anti-ransomware state was changed svm
-        expr: last_over_time(ems_events{message="arw.vserver.state"} [4w] ) == 1
+        expr: last_over_time(ems_events{message="arw.vserver.state"} [4w]) == 1
         labels:
           severity: "error"
         annotations:
           summary: "Anti-ransomware state was changed to [{{ $labels.op }}] for SVM name [{{ $labels.vserverName }}]."
-          description: "Anti-ransomware state was changed to [{{ $labels.op }}] for SVM name [{{ $labels.vserverName }}]."
 
       # Alert for Call-home arw message ems
       - alert: Call-home arw message received
-        expr: last_over_time(ems_events{message="callhome.arw.activity.seen"} [4w] ) == 1
+        expr: last_over_time(ems_events{message="callhome.arw.activity.seen"} [4w]) == 1
         labels:
           severity: "error"
         annotations:
           summary: "Call-home arw message for Volume uuid [{{ $labels.volume_uuid }}]."
-          description: "Call-home arw message for Volume uuid [{{ $labels.volume_uuid }}]."
+
+      # Alert for callhome.battery.low ems
+      - alert: Call-home battery low message received
+        expr: last_over_time(ems_events{message="callhome.battery.low"}[4w]) == 1
+        labels:
+          severity: "error"
+        annotations:
+          summary: "Call-home battery low message for Node uuid [{{ $labels.node_uuid }}]"
 
       # Alert for Call-home hainterconnect down ems
       - alert: Call-home ha interconnect message received
-        expr: last_over_time(ems_events{message="callhome.hainterconnect.down"} [1d] ) == 1
+        expr: last_over_time(ems_events{message="callhome.hainterconnect.down"} [1d]) == 1
         labels:
           severity: "error"
         annotations:
           summary: "Call-home ha interconnect message for Node uuid [{{ $labels.node_uuid }}]."
-          description: "Call-home ha interconnect message for Node uuid [{{ $labels.node_uuid }}]."
+
+      # Alert for Lun offline ems
+      - alert: Lun offline message received
+        expr: last_over_time(ems_events{message="LUN.offline"}[4w]) == 1
+        labels:
+          severity: "error"
+        annotations:
+          summary: "Lun offline for Object uuid [{{ $labels.object_uuid }}]"

@@ -563,6 +563,7 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (ma
 		)
 
 		var instanceLabelCount uint64
+
 		if !instanceData.IsObject() {
 			e.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
 			return true
