@@ -1,29 +1,35 @@
 linters:
-    disable-all: true
-    enable:
-      - deadcode
-      - errcheck
-      - errname
-      - gosimple
-      - govet
-      - ineffassign
-      - staticcheck
-      - structcheck
-      - typecheck
-      - unused
-      - varcheck
-      - bodyclose
-      - errname
-      - errorlint
-      - exportloopref
-      - gosec
-      - makezero
-      - nolintlint
-      - nonamedreturns
-      - nosprintfhostport
-      - tenv
-      - thelper
-      - unconvert
+  disable-all: true
+  enable:
+    # - bodyclose
+    - deadcode
+    - errcheck
+    - errname
+    - errorlint
+    - exportloopref
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - makezero
+    - nolintlint
+    - nonamedreturns
+    - nosprintfhostport
+    - staticcheck
+    - structcheck
+    - tenv
+    - thelper
+    - typecheck
+    - unconvert
+    - unused
+    - varcheck
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
+output:
+  format: github-actions
 
 linters-settings:
   thelper:
