@@ -1,8 +1,6 @@
 package restperf
 
 import (
-	"encoding/json"
-	"fmt"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/fcp"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/headroom"
@@ -182,9 +180,9 @@ func (r *RestPerf) loadParamInt(name string, defaultValue int) int {
 
 func (r *RestPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	var (
-		content []byte
-		err     error
-		records []interface{}
+		err           error
+		records       []gjson.Result
+		counterSchema gjson.Result
 	)
 
 	mat := r.Matrix[r.Object]
@@ -194,29 +192,20 @@ func (r *RestPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		return nil, errors.New(errors.ErrConfig, "empty url")
 	}
 
-	err = rest.FetchData(r.Client, href, &records, true)
+	records, err = rest.FetchRestData(r.Client, href)
 	if err != nil {
 		r.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
 		return nil, err
 	}
 
-	all := rest.Pagination{
-		Records: records,
+	firstRecord := records[0]
+	if firstRecord.Exists() {
+		counterSchema = firstRecord.Get("counter_schemas")
+	} else {
+		return nil, errors.New(errors.ErrConfig, "no data found")
 	}
-
-	content, err = json.Marshal(all)
-	if err != nil {
-		r.Logger.Error().Err(err).Str("ApiPath", r.Prop.Query).Msg("Unable to marshal rest pagination")
-	}
-
-	if !gjson.ValidBytes(content) {
-		return nil, fmt.Errorf("json is not valid for: %s", r.Prop.Query)
-	}
-
-	results := gjson.GetManyBytes(content, "records.0.counter_schemas", "records.0.name", "records.0.description")
-
 	// populate denominator metric to prop metrics
-	results[0].ForEach(func(key, c gjson.Result) bool {
+	counterSchema.ForEach(func(key, c gjson.Result) bool {
 		if !c.IsObject() {
 			r.Logger.Warn().Str("type", c.Type.String()).Msg("Counter is not object, skipping")
 			return true
@@ -236,7 +225,7 @@ func (r *RestPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		return true
 	})
 
-	results[0].ForEach(func(key, c gjson.Result) bool {
+	counterSchema.ForEach(func(key, c gjson.Result) bool {
 
 		if !c.IsObject() {
 			r.Logger.Warn().Str("type", c.Type.String()).Msg("Counter is not object, skipping")
@@ -905,13 +894,11 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 
 	var (
-		ops    matrix.Metric
-		object string
-		//instanceKeys []string
+		ops       matrix.Metric
+		object    string
 		dataQuery string
 		err       error
-		records   []interface{}
-		content   []byte
+		records   []gjson.Result
 	)
 
 	if r.Prop.Query == qosDetailQuery {
@@ -938,35 +925,17 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 		return errors.New(errors.ErrConfig, "empty url")
 	}
 
-	err = rest.FetchData(r.Client, href, &records, true)
+	records, err = rest.FetchRestData(r.Client, href)
 	if err != nil {
 		r.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
 		return err
 	}
 
-	all := rest.Pagination{
-		Records:    records,
-		NumRecords: len(records),
-	}
-
-	content, err = json.Marshal(all)
-	if err != nil {
-		r.Logger.Error().Err(err).Str("ApiPath", dataQuery).Msg("Unable to marshal rest pagination")
-	}
-
-	if !gjson.ValidBytes(content) {
-		return fmt.Errorf("json is not valid for: %s", dataQuery)
-	}
-
-	results := gjson.GetManyBytes(content, "num_records", "records")
-	numRecords := results[0]
-	if numRecords.Int() == 0 {
+	if len(records) == 0 {
 		return errors.New(errors.ErrNoInstance, "no "+object+" instances on cluster")
 	}
 
-	r.Logger.Debug().Str("object", r.Object).Str("records", numRecords.String()).Msg("Extracted records")
-
-	results[1].ForEach(func(key, instanceData gjson.Result) bool {
+	for _, instanceData := range records {
 		var (
 			instanceKey string
 			instance    *matrix.Instance
@@ -974,7 +943,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 
 		if !instanceData.IsObject() {
 			r.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
-			return true
+			continue
 		}
 
 		value := parseProperties(instanceData, "name")
@@ -982,12 +951,12 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 			instanceKey += value.String()
 		} else {
 			r.Logger.Warn().Str("key", "name").Msg("skip instance, missing key")
-			return true
+			continue
 		}
 		instance = data.GetInstance(instanceKey)
 		if instance == nil {
-			r.Logger.Trace().Str("key", key.String()).Msg("skip instance not found in cache")
-			return true
+			r.Logger.Trace().Str("key", instanceKey).Msg("skip instance not found in cache")
+			continue
 		}
 
 		counterName := "ops"
@@ -999,8 +968,8 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 				r.Logger.Trace().Msgf("+ metric (%s) = [%s%s%s]", counterName, color.Cyan, value, color.End)
 			}
 		}
-		return true
-	})
+	}
+
 	return nil
 }
 
@@ -1040,8 +1009,7 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		err                              error
 		oldInstances                     *set.Set
 		oldSize, newSize, removed, added int
-		records                          []interface{}
-		content                          []byte
+		records                          []gjson.Result
 	)
 
 	mat := r.Matrix[r.Object]
@@ -1078,42 +1046,23 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		return nil, errors.New(errors.ErrConfig, "empty url")
 	}
 
-	err = rest.FetchData(r.Client, href, &records, true)
+	records, err = rest.FetchRestData(r.Client, href)
 	if err != nil {
 		r.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
 		return nil, err
 	}
 
-	all := rest.Pagination{
-		Records:    records,
-		NumRecords: len(records),
-	}
-
-	content, err = json.Marshal(all)
-	if err != nil {
-		r.Logger.Error().Err(err).Str("ApiPath", r.Prop.Query).Msg("Unable to marshal rest pagination")
-	}
-
-	if !gjson.ValidBytes(content) {
-		return nil, fmt.Errorf("json is not valid for: %s", r.Prop.Query)
-	}
-
-	results := gjson.GetManyBytes(content, "num_records", "records")
-	numRecords := results[0]
-	if numRecords.Int() == 0 {
+	if len(records) == 0 {
 		return nil, errors.New(errors.ErrNoInstance, "no "+r.Object+" instances on cluster")
 	}
-
-	r.Logger.Debug().Str("object", r.Object).Str("records", numRecords.String()).Msg("Extracted records")
-
-	results[1].ForEach(func(key, instanceData gjson.Result) bool {
+	for _, instanceData := range records {
 		var (
 			instanceKey string
 		)
 
 		if !instanceData.IsObject() {
 			r.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
-			return true
+			continue
 		}
 
 		// extract instance key(s)
@@ -1134,7 +1083,7 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 		if oldInstances.Delete(instanceKey) {
 			// instance already in cache
-			r.Logger.Debug().Msgf("updated instance [%s%s%s%s]", color.Bold, color.Yellow, key, color.End)
+			r.Logger.Debug().Msgf("updated instance [%s%s%s%s]", color.Bold, color.Yellow, instanceKey, color.End)
 		} else if instance, err := mat.NewInstance(instanceKey); err != nil {
 			r.Logger.Error().Err(err).Str("Instance key", instanceKey).Msg("add instance")
 		} else {
@@ -1150,11 +1099,10 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 					}
 				}
-				r.Logger.Debug().Str("query", r.Prop.Query).Str("key", key.String()).Str("qos labels", instance.GetLabels().String()).Msg("")
+				r.Logger.Debug().Str("query", r.Prop.Query).Str("key", instanceKey).Str("qos labels", instance.GetLabels().String()).Msg("")
 			}
 		}
-		return true
-	})
+	}
 
 	for key := range oldInstances.Iter() {
 		mat.RemoveInstance(key)

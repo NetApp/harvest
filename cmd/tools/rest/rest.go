@@ -219,6 +219,7 @@ func getPollerAndAddr() (*conf.Poller, string, error) {
 	return poller, poller.Addr, nil
 }
 
+//FetchData used for CLI only
 func FetchData(client *Client, href string, records *[]any, downloadAll bool) error {
 	getRest, err := client.GetRest(href)
 	if err != nil {
@@ -262,6 +263,70 @@ func FetchData(client *Client, href string, records *[]any, downloadAll bool) er
 					return nil
 				}
 				err := FetchData(client, nextLink, records, downloadAll)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+	return nil
+}
+
+// FetchRestData used in Rest Collector
+func FetchRestData(client *Client, href string) ([]gjson.Result, error) {
+	var (
+		records []gjson.Result
+		result  []gjson.Result
+		err     error
+	)
+	err = fetch(client, href, &records)
+	if err != nil {
+		return nil, err
+	}
+	for _, r := range records {
+		result = append(result, r.Array()...)
+	}
+	return result, nil
+}
+
+func fetch(client *Client, href string, records *[]gjson.Result) error {
+	getRest, err := client.GetRest(href)
+	if err != nil {
+		return fmt.Errorf("error making request %w", err)
+	}
+
+	isNonIterRestCall := false
+	output := gjson.GetManyBytes(getRest, "records", "num_records", "_links.next.href")
+	data := output[0]
+	numRecords := output[1]
+	next := output[2]
+	if !data.Exists() {
+		isNonIterRestCall = true
+	}
+
+	if isNonIterRestCall {
+		contentJSON := `{"records":[]}`
+		response, err := sjson.SetRawBytes([]byte(contentJSON), "records.-1", getRest)
+		if err != nil {
+			return fmt.Errorf("error setting record %w", err)
+		}
+		value := gjson.GetBytes(response, "records")
+		*records = append(*records, value)
+	} else {
+		// extract returned records since paginated records need to be merged into a single lists
+		if numRecords.Exists() && numRecords.Int() > 0 {
+			*records = append(*records, data)
+		}
+
+		// If all results are desired and there is a next link, follow it
+		if next.Exists() {
+			nextLink := next.String()
+			if nextLink != "" {
+				if nextLink == href {
+					// nextLink is same as previous link, no progress is being made, exit
+					return nil
+				}
+				err := fetch(client, nextLink, records)
 				if err != nil {
 					return err
 				}
