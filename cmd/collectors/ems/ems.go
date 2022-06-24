@@ -313,8 +313,12 @@ func (e *Ems) fetchEMSData(href string) ([]gjson.Result, error) {
 // This is required because ONTAP EMS Rest endpoint fails when queried for an EMS message that does not exist.
 func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 	var (
-		err     error
-		records []gjson.Result
+		err              error
+		records          []gjson.Result
+		ok               bool
+		metr             matrix.Metric
+		bookendCacheSize int
+		metricTimestamp  float64
 	)
 
 	query := "api/support/ems/messages"
@@ -570,7 +574,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 			if len(props) == 0 {
 				e.Logger.Warn().Str("resolving ems", msgName).
 					Msg("Ems properties not found")
-				return true
+				continue
 			}
 			// resolving ems would only have 1 prop record
 			p := props[0]
@@ -718,7 +722,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 			}
 			if !isMatch {
 				mx.RemoveInstance(instanceKey)
-				return true
+				continue
 			}
 			count += instanceLabelCount
 		}
@@ -757,7 +761,7 @@ func (e *Ems) updateMatrix() {
 			}
 		}
 	}
-  
+
 	// remove all ems matrix except parent object
 	mat := e.Matrix[e.Object]
 	e.Matrix = make(map[string]*matrix.Matrix)
