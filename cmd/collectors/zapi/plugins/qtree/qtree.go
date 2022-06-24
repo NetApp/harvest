@@ -179,6 +179,11 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				vserver = quota.GetChildContentS("vserver")
 			}
 
+			// If the Qtree is the volume itself, then qtree label is empty, ignore it for quota-type tree as it will always be available. In sync with what system manager shows
+			if tree == "" {
+				continue
+			}
+
 			for attribute, m := range my.data.GetMetrics() {
 
 				objectElem := quota.GetChildS(attribute)
@@ -223,12 +228,6 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 							quotaInstance.SetLabel(label, value)
 							numMetrics++
 						}
-					}
-
-					// If the Qtree is the volume itself, then qtree label is empty, so copy the volume name to qtree.
-					if tree == "" {
-						quotaInstance.SetLabel("qtree", volume)
-						numMetrics++
 					}
 
 					// populate numeric data

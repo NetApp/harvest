@@ -20,8 +20,8 @@ counters:
   - other_latency
   - average_latency
 
-#plugins:
-#  - Volume
+plugins:
+  - Volume
 #  - LabelAgent:
 #      # To prevent visibility of transient volumes, uncomment the following lines
 #      exclude_regex: [todo: need to test after Restperf infra completed]
@@ -44,4 +44,4 @@ export_options:
     - node
     - svm
     - aggr
-#    - style
+    - style

@@ -9,7 +9,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/tidwall/gjson"
 	"strconv"
@@ -23,8 +22,6 @@ const DefaultDataPollDuration = 3 * time.Minute
 type Volume struct {
 	*plugin.AbstractPlugin
 	data                 *matrix.Matrix
-	instanceKeys         map[string]string
-	instanceLabels       map[string]*dict.Dict
 	pluginInvocationRate int
 	currentVal           int
 	client               *rest.Client

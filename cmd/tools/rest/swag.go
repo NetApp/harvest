@@ -277,10 +277,7 @@ func sortParams(pathItem spec.PathItem) func(i int, j int) bool {
 		p2 := pathItem.Get.OperationProps.Parameters[j]
 
 		if p1.Required != p2.Required {
-			if p1.Required {
-				return true
-			}
-			return false
+			return p1.Required
 		}
 		return p1.Name < p2.Name
 	}
@@ -371,7 +368,7 @@ func fixSwagger(path string, b []byte) (spec.Swagger, error) {
 		if err != nil {
 			return spec.Swagger{}, fmt.Errorf("unable to create %s to save swagger.yaml", path)
 		}
-		defer silentClose(out)
+		defer func(out *os.File) { _ = out.Close() }(out)
 		_, err = io.Copy(out, bytes.NewReader(nb))
 		if err != nil {
 			return spec.Swagger{}, fmt.Errorf("error while saving mutated swagger to %s err=%w", path, err)

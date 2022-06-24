@@ -62,7 +62,7 @@ func (me *LabelAgent) Run(m *matrix.Matrix) ([]*matrix.Matrix, error) {
 	var err error
 
 	for _, foo := range me.actions {
-		foo(m)
+		_ = foo(m)
 	}
 
 	return nil, err

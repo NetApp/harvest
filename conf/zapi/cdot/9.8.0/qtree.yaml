@@ -6,7 +6,6 @@ object:               qtree
 counters:
   qtree-info:
     - ^export-policy
-    - id
     - ^oplocks
     - ^security-style
     - ^status
@@ -17,22 +16,24 @@ counters:
 collect_only_labels: true
 
 plugins:
-  Qtree:
-    objects:
-      - disk-limit
-      - disk-used
-      - disk-used-pct-disk-limit
-      - disk-used-pct-soft-disk-limit
-      - disk-used-pct-threshold
-      - file-limit
-      - files-used
-      - files-used-pct-file-limit
-      - files-used-pct-soft-file-limit
-      - soft-disk-limit
-      - soft-file-limit
-      - threshold
+  - LabelAgent:
+      exclude_equals:
+        - qtree ``
+  - Qtree:
+      objects:
+        - disk-limit
+        - disk-used
+        - disk-used-pct-disk-limit
+        - disk-used-pct-soft-disk-limit
+        - disk-used-pct-threshold
+        - file-limit
+        - files-used
+        - files-used-pct-file-limit
+        - files-used-pct-soft-file-limit
+        - soft-disk-limit
+        - soft-file-limit
+        - threshold
     #batch_size: "50"
-
 export_options:
   instance_keys:
     - qtree

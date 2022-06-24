@@ -121,10 +121,8 @@ func getHistogramLabels(p *Process, name string) []string {
 		case "ctx":
 			m = p.ctx
 		}
-		if m != nil {
-			for key := range m {
-				labels = append(labels, key)
-			}
+		for key := range m {
+			labels = append(labels, key)
 		}
 	}
 	return labels

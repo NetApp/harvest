@@ -20,9 +20,7 @@ func (me *MetricFloat64) Clone(deep bool) Metric {
 	clone := MetricFloat64{AbstractMetric: me.AbstractMetric.Clone(deep)}
 	if deep && len(me.values) != 0 {
 		clone.values = make([]float64, len(me.values))
-		for i, v := range me.values {
-			clone.values[i] = v
-		}
+		copy(clone.values, me.values)
 	}
 	return &clone
 }

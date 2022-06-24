@@ -301,7 +301,6 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		// fetch instances
 		instances := response.GetChildS("instances")
 		if instances == nil || len(instances.GetChildren()) == 0 {
-			err = errors.New(errors.ErrNoInstance, "")
 			break
 		}
 
@@ -1299,7 +1298,7 @@ func (me *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 		if results, batchTag, err = me.Client.InvokeBatchRequest(request, batchTag); err != nil {
 			var log *zerolog.Event
-			if errors2.Is(err, errors.APIRequestRejected) {
+			if errors2.Is(err, errors.ErrAPIRequestRejected) {
 				log = me.Logger.Warn()
 			} else {
 				log = me.Logger.Error()

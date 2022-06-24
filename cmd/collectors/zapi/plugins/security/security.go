@@ -1,6 +1,7 @@
 /*
  * Copyright NetApp Inc, 2022 All rights reserved
  */
+
 package security
 
 import (
@@ -21,9 +22,7 @@ type Security struct {
 	*plugin.AbstractPlugin
 	pluginInvocationRate int
 	currentVal           int
-	batchSize            string
 	client               *zapi.Client
-	query                string
 	fipsEnabled          string
 	rshEnabled           string
 	telnetEnabled        string

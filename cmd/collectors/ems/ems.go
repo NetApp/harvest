@@ -1,7 +1,6 @@
 package ems
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
@@ -249,9 +248,8 @@ func (e *Ems) InitCache() error {
 
 func (e *Ems) getClusterTime() (time.Time, error) {
 	var (
-		content     []byte
 		err         error
-		records     []any
+		records     []gjson.Result
 		clusterTime time.Time
 	)
 
@@ -263,39 +261,21 @@ func (e *Ems) getClusterTime() (time.Time, error) {
 	if records, err = e.GetRestData(href); err != nil {
 		return clusterTime, err
 	}
-
-	all := rest.Pagination{
-		Records:    records,
-		NumRecords: len(records),
-	}
-
-	content, err = json.Marshal(all)
-	if err != nil {
-		e.Logger.Error().Err(err).Str("ApiPath", e.Query).Msg("Unable to marshal rest pagination")
-	}
-
-	if !gjson.ValidBytes(content) {
-		return clusterTime, fmt.Errorf("json is not valid for: %s", e.Query)
-	}
-
-	results := gjson.GetManyBytes(content, "num_records", "records")
-	numRecords := results[0]
-	if numRecords.Int() == 0 {
+	if len(records) == 0 {
 		return clusterTime, errors.New(errors.ErrConfig, e.Object+" date not found on cluster")
 	}
 
-	results[1].ForEach(func(key, instanceData gjson.Result) bool {
+	for _, instanceData := range records {
 		currentClusterDate := instanceData.Get("date")
 		if currentClusterDate.Exists() {
 			t, err := time.Parse(time.RFC3339, currentClusterDate.String())
 			if err != nil {
 				e.Logger.Error().Str("date", currentClusterDate.String()).Err(err).Msg("Failed to load cluster date")
-				return true
+				continue
 			}
 			clusterTime = t
 		}
-		return true
-	})
+	}
 
 	e.Logger.Debug().Str("cluster time", clusterTime.String()).Msg("")
 	return clusterTime, nil
@@ -318,9 +298,9 @@ func (e *Ems) getTimeStampFilter(clusterTime time.Time) string {
 	return "time=>=" + fromTime
 }
 
-func (e *Ems) fetchEMSData(href string) ([]any, error) {
+func (e *Ems) fetchEMSData(href string) ([]gjson.Result, error) {
 	var (
-		records []any
+		records []gjson.Result
 		err     error
 	)
 	if records, err = e.GetRestData(href); err != nil {
@@ -333,13 +313,8 @@ func (e *Ems) fetchEMSData(href string) ([]any, error) {
 // This is required because ONTAP EMS Rest endpoint fails when queried for an EMS message that does not exist.
 func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 	var (
-		content          []byte
-		err              error
-		records          []any
-		ok               bool
-		metr             matrix.Metric
-		bookendCacheSize int
-		metricTimestamp  float64
+		err     error
+		records []gjson.Result
 	)
 
 	query := "api/support/ems/messages"
@@ -351,34 +326,17 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 		return nil, err
 	}
 
-	all := rest.Pagination{
-		Records:    records,
-		NumRecords: len(records),
-	}
-
-	content, err = json.Marshal(all)
-	if err != nil {
-		e.Logger.Error().Err(err).Str("ApiPath", e.Query).Msg("Unable to marshal rest pagination")
-	}
-
-	if !gjson.ValidBytes(content) {
-		return nil, fmt.Errorf("json is not valid for: %s", e.Query)
-	}
-
-	results := gjson.GetManyBytes(content, "num_records", "records")
-	numRecords := results[0]
-	if numRecords.Int() == 0 {
+	if len(records) == 0 {
 		return nil, errors.New(errors.ErrNoInstance, e.Object+" no ems message found on cluster")
 	}
 
 	var emsEventCatalogue []string
-	results[1].ForEach(func(key, instanceData gjson.Result) bool {
+	for _, instanceData := range records {
 		name := instanceData.Get("name")
 		if name.Exists() {
 			emsEventCatalogue = append(emsEventCatalogue, name.String())
 		}
-		return true
-	})
+	}
 
 	// collect all event names
 	var names []string
@@ -432,12 +390,11 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 
 	var (
-		content      []byte
 		count        uint64
 		apiD, parseD time.Duration
 		startTime    time.Time
 		err          error
-		records      []any
+		records      []gjson.Result
 	)
 
 	e.Logger.Debug().Msg("starting data poll")
@@ -486,24 +443,9 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 		records = append(records, r...)
 	}
 
-	all := rest.Pagination{
-		Records:    records,
-		NumRecords: len(records),
-	}
 	apiD = time.Since(startTime)
 
-	content, err = json.Marshal(all)
-	if err != nil {
-		e.Logger.Error().Err(err).Str("ApiPath", e.Query).Msg("Unable to marshal rest pagination")
-	}
-
-	if !gjson.ValidBytes(content) {
-		return nil, fmt.Errorf("json is not valid for: %s", e.Query)
-	}
-
-	results := gjson.GetManyBytes(content, "num_records", "records")
-	numRecords := results[0]
-	if numRecords.Int() == 0 {
+	if len(records) == 0 {
 		e.Logger.Info().
 			Int("queried", len(e.eventNames)).
 			Msg("No EMS events returned")
@@ -511,25 +453,24 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 		return nil, nil
 	}
 
-	e.Logger.Debug().Int64("numRecords", numRecords.Int()).Msg("Records extracted")
-
 	startTime = time.Now()
-	_, count = e.HandleResults(results[1], e.emsProp)
+	_, count = e.HandleResults(records, e.emsProp)
+
 	parseD = time.Since(startTime)
 
-	var instanceCount uint64
+	var instanceCount int
 	for _, v := range e.Matrix {
-		instanceCount += uint64(len(v.GetInstances()))
+		instanceCount += len(v.GetInstances())
 	}
 
 	e.Logger.Info().
-		Uint64("instances", instanceCount).
+		Int("instances", instanceCount).
 		Uint64("dataPoints", count).
 		Str("apiTime", apiD.String()).
 		Str("parseTime", parseD.String()).
 		Msg("Collected")
 
-	_ = e.Metadata.LazySetValueInt64("count", "data", numRecords.Int())
+	_ = e.Metadata.LazySetValueInt("count", "data", instanceCount)
 	_ = e.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
 	_ = e.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
 	_ = e.Metadata.LazySetValueUint64("datapoint_count", "data", count)
@@ -597,7 +538,7 @@ func parseProperties(instanceData gjson.Result, property string) gjson.Result {
 }
 
 // HandleResults function is used for handling the rest response for parent as well as endpoints calls,
-func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (map[string]*matrix.Matrix, uint64) {
+func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (map[string]*matrix.Matrix, uint64) {
 	var (
 		err   error
 		count uint64
@@ -606,7 +547,7 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (ma
 
 	var m = e.Matrix
 
-	result.ForEach(func(key, instanceData gjson.Result) bool {
+	for _, instanceData := range result {
 		var (
 			instanceKey string
 		)
@@ -614,13 +555,13 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (ma
 		var instanceLabelCount uint64
 		if !instanceData.IsObject() {
 			e.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
-			return true
+			continue
 		}
 		messageName := instanceData.Get("message.name")
 		// verify if message name exists in ONTAP response
 		if !messageName.Exists() {
 			e.Logger.Warn().Msg("skip instance, missing message name")
-			return true
+			continue
 		}
 		msgName := messageName.String()
 
@@ -781,8 +722,7 @@ func (e *Ems) HandleResults(result gjson.Result, prop map[string][]*emsProp) (ma
 			}
 			count += instanceLabelCount
 		}
-		return true
-	})
+	}
 	return m, count
 }
 
@@ -817,7 +757,7 @@ func (e *Ems) updateMatrix() {
 			}
 		}
 	}
-
+  
 	// remove all ems matrix except parent object
 	mat := e.Matrix[e.Object]
 	e.Matrix = make(map[string]*matrix.Matrix)

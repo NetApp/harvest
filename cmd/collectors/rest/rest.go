@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/certificate"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/disk"
@@ -260,12 +259,11 @@ func getFieldName(source string, parent string) []string {
 func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 
 	var (
-		content      []byte
 		count        uint64
 		apiD, parseD time.Duration
 		startTime    time.Time
 		err          error
-		records      []interface{}
+		records      []gjson.Result
 	)
 
 	r.Logger.Debug().Msg("starting data poll")
@@ -280,31 +278,14 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 		return nil, err
 	}
 
-	all := rest.Pagination{
-		Records:    records,
-		NumRecords: len(records),
-	}
 	apiD = time.Since(startTime)
 
-	content, err = json.Marshal(all)
-	if err != nil {
-		r.Logger.Error().Err(err).Str("ApiPath", r.Prop.Query).Msg("Unable to marshal rest pagination")
-	}
-
-	if !gjson.ValidBytes(content) {
-		return nil, fmt.Errorf("json is not valid for: %s", r.Prop.Query)
-	}
-
-	results := gjson.GetManyBytes(content, "num_records", "records")
-	numRecords := results[0]
-	if numRecords.Int() == 0 {
+	if len(records) == 0 {
 		return nil, errors.New(errors.ErrNoInstance, "no "+r.Object+" instances on cluster")
 	}
 
-	r.Logger.Debug().Str("object", r.Object).Str("number of records extracted", numRecords.String()).Msg("")
-
 	startTime = time.Now()
-	count = r.HandleResults(results[1], r.Prop, true)
+	count = r.HandleResults(records, r.Prop, true)
 
 	// process endpoints
 	err = r.processEndPoints()
@@ -313,14 +294,16 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 	}
 	parseD = time.Since(startTime)
 
+	numRecords := len(r.Matrix[r.Object].GetInstances())
+
 	r.Logger.Info().
-		Uint64("instances", numRecords.Uint()).
+		Int("instances", numRecords).
 		Uint64("metrics", count).
 		Str("apiD", apiD.Round(time.Millisecond).String()).
 		Str("parseD", parseD.Round(time.Millisecond).String()).
 		Msg("Collected")
 
-	_ = r.Metadata.LazySetValueInt64("count", "data", numRecords.Int())
+	_ = r.Metadata.LazySetValueInt("count", "data", numRecords)
 	_ = r.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
 	_ = r.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
 	_ = r.Metadata.LazySetValueUint64("datapoint_count", "data", count)
@@ -336,8 +319,7 @@ func (r *Rest) processEndPoints() error {
 
 	for _, endpoint := range r.endpoints {
 		var (
-			records []interface{}
-			content []byte
+			records []gjson.Result
 		)
 		counterKey := make([]string, len(endpoint.prop.Counters))
 		i := 0
@@ -355,30 +337,11 @@ func (r *Rest) processEndPoints() error {
 			continue
 		}
 
-		all := rest.Pagination{
-			Records:    records,
-			NumRecords: len(records),
-		}
-
-		content, err = json.Marshal(all)
-		if err != nil {
-			r.Logger.Error().Err(err).Str("ApiPath", endpoint.prop.Query).Msg("Unable to marshal rest pagination")
-			continue
-		}
-
-		if !gjson.ValidBytes(content) {
-			r.Logger.Error().Str("ApiPath", endpoint.prop.Query).Msg("Invalid json")
-			continue
-		}
-
-		results := gjson.GetManyBytes(content, "num_records", "records")
-		numRecords := results[0]
-		if numRecords.Int() == 0 {
+		if len(records) == 0 {
 			r.Logger.Warn().Str("ApiPath", endpoint.prop.Query).Msg("no " + endpoint.prop.Query + " instances on cluster")
 			continue
 		}
-
-		r.HandleResults(results[1], endpoint.prop, false)
+		r.HandleResults(records, endpoint.prop, false)
 	}
 
 	return nil
@@ -418,7 +381,7 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 
 // HandleResults function is used for handling the rest response for parent as well as endpoints calls,
 // allowInstanceCreation would be true only for the parent rest, as only parent rest can create instance.
-func (r *Rest) HandleResults(result gjson.Result, prop *prop, allowInstanceCreation bool) uint64 {
+func (r *Rest) HandleResults(result []gjson.Result, prop *prop, allowInstanceCreation bool) uint64 {
 	var (
 		err   error
 		count uint64
@@ -426,7 +389,7 @@ func (r *Rest) HandleResults(result gjson.Result, prop *prop, allowInstanceCreat
 
 	mat := r.Matrix[r.Object]
 
-	result.ForEach(func(key, instanceData gjson.Result) bool {
+	for _, instanceData := range result {
 		var (
 			instanceKey string
 			instance    *matrix.Instance
@@ -434,7 +397,7 @@ func (r *Rest) HandleResults(result gjson.Result, prop *prop, allowInstanceCreat
 
 		if !instanceData.IsObject() {
 			r.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
-			return true
+			continue
 		}
 
 		// extract instance key(s)
@@ -454,13 +417,13 @@ func (r *Rest) HandleResults(result gjson.Result, prop *prop, allowInstanceCreat
 		if !allowInstanceCreation && instance == nil {
 			// Moved to trace as with filter, this log may spam
 			r.Logger.Trace().Str("Instance key", instanceKey).Msg("Instance not found")
-			return true
+			continue
 		}
 
 		if instance == nil {
 			if instance, err = mat.NewInstance(instanceKey); err != nil {
 				r.Logger.Error().Err(err).Str("Instance key", instanceKey).Msg("")
-				return true
+				continue
 			}
 		}
 
@@ -517,28 +480,22 @@ func (r *Rest) HandleResults(result gjson.Result, prop *prop, allowInstanceCreat
 			}
 		}
 
-		return true
-	})
+	}
 	return count
 }
 
-func (r *Rest) GetRestData(href string) ([]interface{}, error) {
-	var (
-		err     error
-		records []interface{}
-	)
-
+func (r *Rest) GetRestData(href string) ([]gjson.Result, error) {
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {
 		return nil, errors.New(errors.ErrConfig, "empty url")
 	}
 
-	err = rest.FetchData(r.Client, href, &records)
+	result, err := rest.Fetch(r.Client, href)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch data: %w", err)
 	}
 
-	return records, nil
+	return result, nil
 }
 
 func (r *Rest) CollectAutoSupport(p *collector.Payload) {
@@ -621,7 +578,7 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 
 func (r *Rest) getNodeUuids() ([]collector.Id, error) {
 	var (
-		records []interface{}
+		records []gjson.Result
 		err     error
 		infos   []collector.Id
 	)
@@ -633,26 +590,9 @@ func (r *Rest) getNodeUuids() ([]collector.Id, error) {
 		return nil, err
 	}
 
-	all := rest.Pagination{
-		Records:    records,
-		NumRecords: len(records),
-	}
-
-	content, err := json.Marshal(all)
-	if err != nil {
-		r.Logger.Error().Err(err).Str("ApiPath", query).Msg("Unable to marshal rest pagination")
-	}
-
-	if !gjson.ValidBytes(content) {
-		return nil, fmt.Errorf("json is not valid for: %s", r.Prop.Query)
-	}
-
-	results := gjson.GetManyBytes(content, "num_records", "records")
-
-	results[1].ForEach(func(key, instanceData gjson.Result) bool {
+	for _, instanceData := range records {
 		infos = append(infos, collector.Id{SerialNumber: instanceData.Get("serial_number").String(), SystemId: instanceData.Get("system_id").String()})
-		return true
-	})
+	}
 
 	// When Harvest monitors a c-mode system, the first node is picked.
 	// Sort so there's a higher chance the same node is picked each time this method is called

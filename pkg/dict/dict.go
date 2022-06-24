@@ -1,6 +1,7 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
+
 package dict
 
 import "strings"
@@ -12,11 +13,6 @@ type Dict struct {
 func New() *Dict {
 	d := Dict{}
 	d.dict = make(map[string]string)
-	return &d
-}
-
-func NewFromMap(m map[string]string) *Dict {
-	d := Dict{dict: m}
 	return &d
 }
 
@@ -32,7 +28,7 @@ func (d *Dict) Set(key, val string) {
 	d.dict[key] = val
 }
 
-// Set all global labels if already not exist
+// SetAll sets all global labels that do not already exist
 func (d *Dict) SetAll(allKeyVals *Dict) {
 	if allKeyVals != nil {
 		for key, val := range allKeyVals.dict {
@@ -81,7 +77,7 @@ func (d *Dict) Map() map[string]string {
 }
 
 func (d *Dict) Keys() []string {
-	keys := make([]string, len(d.dict))
+	keys := make([]string, 0, len(d.dict))
 	for k := range d.dict {
 		keys = append(keys, k)
 	}
@@ -97,7 +93,7 @@ func (d *Dict) String() string {
 }
 
 func (d *Dict) Values() []string {
-	values := make([]string, len(d.dict))
+	values := make([]string, 0, len(d.dict))
 	for _, v := range d.dict {
 		values = append(values, v)
 	}

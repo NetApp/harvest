@@ -14,8 +14,10 @@ counters:
   - total_ops
 plugins:
   - LabelAgent:
-    split:
-      - qtreefull `/` ,qtree
+      split:
+        - qtreefull `/` ,qtree
+      exclude_equals:
+        - qtree ``
 export_options:
   instance_keys:
     - qtree

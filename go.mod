@@ -16,6 +16,7 @@ require (
 	github.com/zekroTJA/timedmap v1.4.0
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a
 	golang.org/x/term v0.0.0-20220526004731-065cf7ba2467
+	golang.org/x/text v0.3.6
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	gopkg.in/yaml.v3 v3.0.0
 )

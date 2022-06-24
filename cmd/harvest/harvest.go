@@ -362,12 +362,13 @@ func stopPoller(ps *util.PollerStatus) {
 
 func startPoller(pollerName string, promPort int, opts *options) {
 
-	argv := make([]string, 5)
-	argv[0] = path.Join(HarvestHomePath, "bin", "poller")
-	argv[1] = "--poller"
-	argv[2] = pollerName
-	argv[3] = "--loglevel"
-	argv[4] = strconv.Itoa(opts.loglevel)
+	argv := []string{
+		path.Join(HarvestHomePath, "bin", "poller"),
+		"--poller",
+		pollerName,
+		"--loglevel",
+		strconv.Itoa(opts.loglevel),
+	}
 
 	if promPort != 0 {
 		argv = append(argv, "--promPort")
@@ -412,7 +413,7 @@ func startPoller(pollerName string, promPort int, opts *options) {
 		if opts.logToFile {
 			argv = append(argv, "--logtofile")
 		}
-		cmd := exec.Command(argv[0], argv[1:]...)
+		cmd := exec.Command(argv[0], argv[1:]...) //nolint:gosec
 		fmt.Println("starting in foreground, enter CTRL+C or close terminal to stop poller")
 		_ = os.Stdout.Sync()
 		cmd.Stdout = os.Stdout
@@ -431,7 +432,7 @@ func startPoller(pollerName string, promPort int, opts *options) {
 
 	// special case if we are in container, don't actually daemonize
 	if os.Getenv("HARVEST_DOCKER") == "yes" {
-		cmd := exec.Command(argv[0], argv[1:]...)
+		cmd := exec.Command(argv[0], argv[1:]...) //nolint:gosec
 		if err := cmd.Start(); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -443,7 +444,7 @@ func startPoller(pollerName string, promPort int, opts *options) {
 		os.Exit(0)
 	}
 
-	cmd := exec.Command(path.Join(HarvestHomePath, "bin", "daemonize"), argv...)
+	cmd := exec.Command(path.Join(HarvestHomePath, "bin", "daemonize"), argv...) //nolint:gosec
 	if err := cmd.Start(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)

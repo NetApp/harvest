@@ -4,8 +4,7 @@
 .PHONY: help deps clean build test fmt vet package asup dev fetch-asup
 
 ###############################################################################
-# Anything that needs to be done before we build everything
-#  Check for GCC, GO version, etc and anything else we are dependent on.
+#  Check for GCC, GO version, etc and anything we are dependent on.
 ###############################################################################
 SHELL := /bin/bash
 GCC_EXISTS := $(shell which gcc)
@@ -33,6 +32,7 @@ ASUP_BIN = asup
 ASUP_BIN_VERSION ?= main #change it to match tag of release branch
 BIN_PLATFORM ?= linux
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
+LINT_EXISTS := $(shell which golangci-lint)
 
 
 help:  ## Display this help
@@ -83,6 +83,16 @@ fmt: ## format the go source files
 vet: ## run go vet on the source files
 	@echo "Running go vet"
 	go vet ./...
+
+lint: ## run golangci-lint on the source files
+ifeq (${LINT_EXISTS}, )
+	@echo
+	@echo "Lint task requires that you have https://golangci-lint.run/ installed."
+	@echo
+	@exit 1
+endif
+	@echo "Running golangci-lint"
+	golangci-lint run
 
 build: clean deps fmt harvest fetch-asup ## Build the project
 
@@ -145,7 +155,7 @@ asup:
 	@mkdir -p ${CURRENT_DIR}/autosupport
 	@cp ${ASUP_TMP}/harvest-asup/bin/asup ${CURRENT_DIR}/autosupport
 
-dev: build
+dev: build lint
 	@echo "Deleting AutoSupport binary"
 	@rm -rf autosupport/asup
 

@@ -108,7 +108,7 @@ func latestRelease() (string, error) {
 	if err != nil {
 		var location *url.URL
 		if resp == nil {
-			return "", fmt.Errorf(" error checking GitHub %s", err)
+			return "", fmt.Errorf(" error checking GitHub %w", err)
 		}
 		if resp.StatusCode == http.StatusFound {
 			location, err = resp.Location()

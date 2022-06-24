@@ -61,8 +61,8 @@ counters:
 override:
   - link.speed: string
 
-#plugins:
-#  - Fcp
+plugins:
+  - Fcp
 
 export_options:
   instance_keys:

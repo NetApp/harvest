@@ -9,7 +9,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
-	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -98,10 +97,6 @@ func readOrDownloadSwagger() (string, error) {
 	return swaggerPath, nil
 }
 
-func silentClose(body io.ReadCloser) {
-	_ = body.Close()
-}
-
 func doShow(_ *cobra.Command, a []string) {
 	c := validateArgs(a)
 	if !c.isValid {
@@ -153,13 +148,18 @@ func doCmd() {
 }
 
 type Pagination struct {
-	Records    []interface{} `json:"records"`
-	NumRecords int           `json:"num_records"`
+	Records    []any `json:"records"`
+	NumRecords int   `json:"num_records"`
 	Links      *struct {
 		Next struct {
 			Href string `json:"href"`
 		} `json:"next"`
 	} `json:"_links,omitempty"`
+}
+
+type PerfRecord struct {
+	Records   gjson.Result `json:"records"`
+	Timestamp int64        `json:"time"`
 }
 
 func doData() {
@@ -180,14 +180,13 @@ func doData() {
 	}
 
 	// strip leading slash
-	if strings.HasPrefix(args.API, "/") {
-		args.API = args.API[1:]
-	}
-	var records []interface{}
+	args.API = strings.TrimPrefix(args.API, "/")
+
+	var records []any
 	href := BuildHref(args.API, args.Fields, args.Field, args.QueryField, args.QueryValue, args.MaxRecords, "", args.Endpoint)
 	stderr("fetching href=[%s]\n", href)
 
-	err = FetchData(client, href, &records)
+	err = FetchForCli(client, href, &records, args.DownloadAll)
 	if err != nil {
 		stderr("error %+v\n", err)
 		return
@@ -220,7 +219,8 @@ func getPollerAndAddr() (*conf.Poller, string, error) {
 	return poller, poller.Addr, nil
 }
 
-func FetchData(client *Client, href string, records *[]any) error {
+//FetchForCli used for CLI only
+func FetchForCli(client *Client, href string, records *[]any, downloadAll bool) error {
 	getRest, err := client.GetRest(href)
 	if err != nil {
 		return fmt.Errorf("error making request %w", err)
@@ -236,12 +236,12 @@ func FetchData(client *Client, href string, records *[]any) error {
 		contentJSON := `{"records":[]}`
 		response, err := sjson.SetRawBytes([]byte(contentJSON), "records.-1", getRest)
 		if err != nil {
-			return fmt.Errorf("error setting record %+v", err)
+			return fmt.Errorf("error setting record %w", err)
 		}
 		var page Pagination
 		err = json.Unmarshal(response, &page)
 		if err != nil {
-			return fmt.Errorf("error unmarshalling json %+v", err)
+			return fmt.Errorf("error unmarshalling json %w", err)
 		}
 		*records = append(*records, page.Records...)
 	} else {
@@ -249,20 +249,20 @@ func FetchData(client *Client, href string, records *[]any) error {
 		var page Pagination
 		err := json.Unmarshal(getRest, &page)
 		if err != nil {
-			return fmt.Errorf("error unmarshalling json %+v", err)
+			return fmt.Errorf("error unmarshalling json %w", err)
 		}
 
 		*records = append(*records, page.Records...)
 
 		// If all results are desired and there is a next link, follow it
-		if args.DownloadAll && page.Links != nil {
+		if downloadAll && page.Links != nil {
 			nextLink := page.Links.Next.Href
 			if nextLink != "" {
 				if nextLink == href {
 					// nextLink is same as previous link, no progress is being made, exit
 					return nil
 				}
-				err := FetchData(client, nextLink, records)
+				err := FetchForCli(client, nextLink, records, downloadAll)
 				if err != nil {
 					return err
 				}
@@ -272,7 +272,107 @@ func FetchData(client *Client, href string, records *[]any) error {
 	return nil
 }
 
-func stderr(format string, a ...interface{}) {
+// Fetch used in Rest Collector
+func Fetch(client *Client, href string) ([]gjson.Result, error) {
+	var (
+		records []gjson.Result
+		result  []gjson.Result
+		err     error
+	)
+	err = fetch(client, href, &records)
+	if err != nil {
+		return nil, err
+	}
+	for _, r := range records {
+		result = append(result, r.Array()...)
+	}
+	return result, nil
+}
+
+func fetch(client *Client, href string, records *[]gjson.Result) error {
+	getRest, err := client.GetRest(href)
+	if err != nil {
+		return fmt.Errorf("error making request %w", err)
+	}
+
+	isNonIterRestCall := false
+	output := gjson.GetManyBytes(getRest, "records", "num_records", "_links.next.href")
+	data := output[0]
+	numRecords := output[1]
+	next := output[2]
+	if !data.Exists() {
+		isNonIterRestCall = true
+	}
+
+	if isNonIterRestCall {
+		contentJSON := `{"records":[]}`
+		response, err := sjson.SetRawBytes([]byte(contentJSON), "records.-1", getRest)
+		if err != nil {
+			return fmt.Errorf("error setting record %w", err)
+		}
+		value := gjson.GetBytes(response, "records")
+		*records = append(*records, value)
+	} else {
+		// extract returned records since paginated records need to be merged into a single lists
+		if numRecords.Exists() && numRecords.Int() > 0 {
+			*records = append(*records, data)
+		}
+
+		// If all results are desired and there is a next link, follow it
+		if next.Exists() {
+			nextLink := next.String()
+			if nextLink != "" {
+				if nextLink == href {
+					// nextLink is same as previous link, no progress is being made, exit
+					return nil
+				}
+				err := fetch(client, nextLink, records)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+	return nil
+}
+
+// FetchRestPerfData This method is used in PerfRest collector. This method returns timestamp per batch
+func FetchRestPerfData(client *Client, href string, perfRecords *[]PerfRecord) error {
+	getRest, err := client.GetRest(href)
+	if err != nil {
+		return fmt.Errorf("error making request %w", err)
+	}
+
+	// extract returned records since paginated records need to be merged into a single list
+	output := gjson.GetManyBytes(getRest, "records", "num_records", "_links.next.href")
+
+	data := output[0]
+	numRecords := output[1]
+	next := output[2]
+
+	if numRecords.Exists() && numRecords.Int() > 0 {
+		p := PerfRecord{Records: data, Timestamp: time.Now().UnixNano()}
+		*perfRecords = append(*perfRecords, p)
+	}
+
+	// If all results are desired and there is a next link, follow it
+	if next.Exists() {
+		nextLink := next.String()
+		if nextLink != "" {
+			if nextLink == href {
+				// nextLink is same as previous link, no progress is being made, exit
+				return nil
+			}
+			err := FetchRestPerfData(client, nextLink, perfRecords)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func stderr(format string, a ...any) {
 	_, _ = fmt.Fprintf(os.Stderr, format, a...)
 }
 

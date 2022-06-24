@@ -103,7 +103,7 @@ func (my *Shelf) Init() error {
 		instanceKeys.NewChildS("", "channel")
 
 		// artificial metric for status of child object of shelf
-		my.data[attribute].NewMetricUint8("status")
+		_, _ = my.data[attribute].NewMetricUint8("status")
 
 		for _, x := range obj.GetChildren() {
 
@@ -420,9 +420,9 @@ func (my *Shelf) handleCMode(result *node.Node) ([]*matrix.Matrix, error) {
 						// Each child would have different possible values which is ugly way to write all of them,
 						// so normal value would be mapped to 1 and rest all are mapped to 0.
 						if instance.GetLabel("status") == "normal" {
-							statusMetric.SetValueInt(instance, 1)
+							_ = statusMetric.SetValueInt(instance, 1)
 						} else {
-							statusMetric.SetValueInt(instance, 0)
+							_ = statusMetric.SetValueInt(instance, 0)
 						}
 
 						for metricKey, m := range data1.GetMetrics() {
@@ -525,9 +525,9 @@ func (my *Shelf) handle7Mode(result *node.Node) ([]*matrix.Matrix, error) {
 							// Each child would have different possible values which is ugly way to write all of them,
 							// so normal value would be mapped to 1 and rest all are mapped to 0.
 							if instance.GetLabel("status") == "normal" {
-								statusMetric.SetValueInt(instance, 1)
+								_ = statusMetric.SetValueInt(instance, 1)
 							} else {
-								statusMetric.SetValueInt(instance, 0)
+								_ = statusMetric.SetValueInt(instance, 0)
 							}
 
 							// populate numeric data

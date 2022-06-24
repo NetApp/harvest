@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1653414243253,
+  "iteration": 1654862696262,
   "links": [],
   "panels": [
     {
@@ -757,7 +757,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Highest Disk Utilization per Aggregate for latest record (independent of time range selected)",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -960,7 +960,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Highest Disk Utilization per Aggregate",
+      "description": "Highest Disk Utilization per Aggregate in the selected time range",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1137,7 +1137,7 @@
       "type": "timeseries"
     },
     {
-      "collapsed": false,
+      "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
@@ -1146,956 +1146,958 @@
         "y": 21
       },
       "id": 22,
-      "panels": [],
-      "title": "List of Disks",
-      "type": "row"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Some Clusters don't report average latency, so the values might be 0s.",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "left",
-            "displayMode": "auto",
-            "filterable": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "rgb(31, 176, 196)",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "disk"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Disk"
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Some Clusters don't report average latency, so the values might be 0s.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": false
               },
-              {
-                "id": "custom.width",
-                "value": 144
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "type"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Type"
-              },
-              {
-                "id": "custom.width",
-                "value": 144
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Model"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 191
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Serial"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 185
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value #B"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Capacity"
-              },
-              {
-                "id": "unit",
-                "value": "decbytes"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value #A"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Avg IOPs"
-              },
-              {
-                "id": "unit",
-                "value": "KiBs"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value #D"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Avg Latency"
-              },
-              {
-                "id": "unit",
-                "value": "ms"
-              },
-              {
-                "id": "decimals",
-                "value": 4
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value #C"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Power On Time"
-              },
-              {
-                "id": "unit",
-                "value": "clocks"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "shelf"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 69
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "container_type"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Container Type"
-              },
-              {
-                "id": "custom.width",
-                "value": 170
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "diskStatus"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Status"
-              },
-              {
-                "id": "mappings",
-                "value": [
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
                   {
-                    "options": {
-                      " ": {
-                        "text": "Ok"
+                    "color": "rgb(31, 176, 196)",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "disk"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Disk"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 144
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "type"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Type"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 144
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Model"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 191
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Serial"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 185
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #B"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Capacity"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "decbytes"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 2
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #A"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Avg IOPs"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "KiBs"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #D"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Avg Latency"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "ms"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 4
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #C"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Power On Time"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "clocks"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 2
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "shelf"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 69
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "container_type"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Container Type"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 170
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "diskStatus"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Status"
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          " ": {
+                            "text": "Ok"
+                          }
+                        },
+                        "type": "value"
                       }
-                    },
-                    "type": "value"
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "shelf_bay"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 95
                   }
                 ]
               }
             ]
           },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "shelf_bay"
-            },
-            "properties": [
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 2
+          },
+          "id": 18,
+          "interval": "1m",
+          "maxDataPoints": 2,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
               {
-                "id": "custom.width",
-                "value": 95
+                "desc": true,
+                "displayName": "Avg IOPs"
               }
             ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 24,
-        "x": 0,
-        "y": 22
-      },
-      "id": 18,
-      "interval": "1m",
-      "maxDataPoints": 2,
-      "options": {
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "Avg IOPs"
-          }
-        ]
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "expr": "disk_bytes_per_sector * disk_sectors{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "B"
-        },
-        {
-          "expr": "disk_stats_io_kbps{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        },
-        {
-          "expr": "disk_stats_average_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "D"
-        },
-        {
-          "expr": "disk_uptime{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "C"
-        },
-        {
-          "exemplar": true,
-          "expr": "label_join(disk_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}, \"diskStatus\", \" \",\"NonSupportedField\", \"outage\")",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "E"
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "expr": "disk_bytes_per_sector * disk_sectors{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "B"
+            },
+            {
+              "expr": "disk_stats_io_kbps{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "expr": "disk_stats_average_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "D"
+            },
+            {
+              "expr": "disk_uptime{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "C"
+            },
+            {
+              "exemplar": true,
+              "expr": "label_join(disk_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}, \"diskStatus\", \" \",\"NonSupportedField\", \"outage\")",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "E"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Disks in Cluster",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value #E": true,
+                  "__name__": true,
+                  "aggr": true,
+                  "cluster": true,
+                  "datacenter": true,
+                  "failed": true,
+                  "instance": true,
+                  "job": true,
+                  "model": true,
+                  "node": true,
+                  "outage": true,
+                  "owner_node": true,
+                  "serial_number": true,
+                  "shared": true,
+                  "shelf": true,
+                  "shelf_bay": true
+                },
+                "indexByName": {
+                  "Time": 0,
+                  "Value": 7,
+                  "cluster": 2,
+                  "datacenter": 1,
+                  "disk": 3,
+                  "instance": 10,
+                  "job": 11,
+                  "model": 4,
+                  "serial_number": 5,
+                  "shelf": 1,
+                  "shelf_bay": 2,
+                  "type": 4
+                },
+                "renameByName": {}
+              }
+            },
+            {
+              "id": "merge",
+              "options": {}
+            }
+          ],
+          "type": "table"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Disks in Cluster",
-      "transformations": [
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Time": true,
-              "Value #E": true,
-              "__name__": true,
-              "aggr": true,
-              "cluster": true,
-              "datacenter": true,
-              "failed": true,
-              "instance": true,
-              "job": true,
-              "model": true,
-              "node": true,
-              "outage": true,
-              "owner_node": true,
-              "serial_number": true,
-              "shared": true,
-              "shelf": true,
-              "shelf_bay": true
-            },
-            "indexByName": {
-              "Time": 0,
-              "Value": 7,
-              "cluster": 2,
-              "datacenter": 1,
-              "disk": 3,
-              "instance": 10,
-              "job": 11,
-              "model": 4,
-              "serial_number": 5,
-              "shelf": 1,
-              "shelf_bay": 2,
-              "type": 4
-            },
-            "renameByName": {}
-          }
-        },
-        {
-          "id": "merge",
-          "options": {}
-        }
-      ],
-      "type": "table"
+      "title": "List of Disks",
+      "type": "row"
     },
     {
-      "collapsed": false,
+      "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 22
       },
       "id": 28,
-      "panels": [],
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "Bps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 8,
+            "x": 0,
+            "y": 3
+          },
+          "id": 32,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "expr": "sum (node_disk_data_read{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}) by (node)",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{node}} - READ",
+              "refId": "A"
+            },
+            {
+              "expr": "sum (node_disk_data_written{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}) by (node)",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{node}} - WRITE",
+              "refId": "B"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Disk Throughput",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "Bps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 8,
+            "x": 8,
+            "y": 3
+          },
+          "id": 34,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "expr": "sum (hostadapter_bytes_written{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}) by (node)",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{node}} - WRITE",
+              "refId": "A"
+            },
+            {
+              "expr": "sum (hostadapter_bytes_read{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}) by (node)",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{node}} - READ",
+              "refId": "B"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Disk and Tape Drives Throughput",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "µs"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byFrameRefID",
+                  "options": "A"
+                },
+                "properties": [
+                  {
+                    "id": "custom.axisPlacement",
+                    "value": "right"
+                  },
+                  {
+                    "id": "custom.axisLabel",
+                    "value": "Back to Back CP Count"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "none"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byFrameRefID",
+                  "options": "B"
+                },
+                "properties": [
+                  {
+                    "id": "custom.axisPlacement",
+                    "value": "left"
+                  },
+                  {
+                    "id": "custom.axisLabel",
+                    "value": "Write Latency"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "µs"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 8,
+            "x": 16,
+            "y": 3
+          },
+          "id": 40,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "expr": "sum(wafl_cp_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",metric=~\"back_to_back_CP|deferred_back_to_back_CP\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Back-to-back CP Count",
+              "refId": "A"
+            },
+            {
+              "expr": "node_vol_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Write Latency {{node}}",
+              "refId": "B"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "CP (Consistency Points) Counts",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "Hit %",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "µs"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "HDD Reads Replaced"
+                },
+                "properties": [
+                  {
+                    "id": "custom.drawStyle",
+                    "value": "bars"
+                  },
+                  {
+                    "id": "custom.fillOpacity",
+                    "value": 100
+                  },
+                  {
+                    "id": "custom.lineWidth",
+                    "value": 0
+                  },
+                  {
+                    "id": "unit",
+                    "value": "short"
+                  },
+                  {
+                    "id": "custom.axisLabel",
+                    "value": "HDD Reads Replaced"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 8,
+            "x": 0,
+            "y": 12
+          },
+          "id": 36,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "expr": "sum (flashcache_hit_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Hit %",
+              "refId": "A"
+            },
+            {
+              "expr": "sum (flashcache_disk_reads_replaced{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "HDD Reads Replaced",
+              "refId": "B"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Flash Cache",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "Hit %",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "µs"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "HDD Reads Replaced"
+                },
+                "properties": [
+                  {
+                    "id": "custom.drawStyle",
+                    "value": "bars"
+                  },
+                  {
+                    "id": "custom.fillOpacity",
+                    "value": 100
+                  },
+                  {
+                    "id": "custom.lineWidth",
+                    "value": 0
+                  },
+                  {
+                    "id": "unit",
+                    "value": "short"
+                  },
+                  {
+                    "id": "custom.axisLabel",
+                    "value": "HDD Reads Replaced"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 8,
+            "x": 8,
+            "y": 12
+          },
+          "id": 38,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "expr": "sum (flashpool_read_ops_replaced_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Hit %",
+              "refId": "A"
+            },
+            {
+              "expr": "sum (flashpool_read_ops_replaced{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "HDD Reads Replaced",
+              "refId": "B"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Flash Pool",
+          "transformations": [],
+          "type": "timeseries"
+        }
+      ],
       "title": "Disk Utilization: Node-level overview",
       "type": "row"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "µs"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 0,
-        "y": 33
-      },
-      "id": 32,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "expr": "sum (node_disk_data_read{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}) by (node)",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{node}} - READ",
-          "refId": "A"
-        },
-        {
-          "expr": "sum (node_disk_data_written{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}) by (node)",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{node}} - WRITE",
-          "refId": "B"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Disk Throughput",
-      "transformations": [],
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "µs"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 8,
-        "y": 33
-      },
-      "id": 34,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "expr": "sum (hostadapter_bytes_written{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}) by (node)",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{node}} - WRITE",
-          "refId": "A"
-        },
-        {
-          "expr": "sum (hostadapter_bytes_read{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}) by (node)",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{node}} - READ",
-          "refId": "B"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Disk and Tape Drives Throughput",
-      "transformations": [],
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "µs"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byFrameRefID",
-              "options": "A"
-            },
-            "properties": [
-              {
-                "id": "custom.axisPlacement",
-                "value": "right"
-              },
-              {
-                "id": "custom.axisLabel",
-                "value": "Back to Back CP Count"
-              },
-              {
-                "id": "unit",
-                "value": "none"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byFrameRefID",
-              "options": "B"
-            },
-            "properties": [
-              {
-                "id": "custom.axisPlacement",
-                "value": "left"
-              },
-              {
-                "id": "custom.axisLabel",
-                "value": "Write Latency"
-              },
-              {
-                "id": "unit",
-                "value": "µs"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 16,
-        "y": 33
-      },
-      "id": 40,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "expr": "sum(wafl_cp_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",metric=~\"back_to_back_CP|deferred_back_to_back_CP\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "Back-to-back CP Count",
-          "refId": "A"
-        },
-        {
-          "expr": "node_vol_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "Write Latency {{node}}",
-          "refId": "B"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "CP (Consistency Points) Counts",
-      "transformations": [],
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "Hit %",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "µs"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "HDD Reads Replaced"
-            },
-            "properties": [
-              {
-                "id": "custom.drawStyle",
-                "value": "bars"
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 100
-              },
-              {
-                "id": "custom.lineWidth",
-                "value": 0
-              },
-              {
-                "id": "unit",
-                "value": "short"
-              },
-              {
-                "id": "custom.axisLabel",
-                "value": "HDD Reads Replaced"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 0,
-        "y": 42
-      },
-      "id": 36,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "expr": "sum (flashcache_hit_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "Hit %",
-          "refId": "A"
-        },
-        {
-          "expr": "sum (flashcache_disk_reads_replaced{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "HDD Reads Replaced",
-          "refId": "B"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Flash Cache",
-      "transformations": [],
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "Hit %",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "µs"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "HDD Reads Replaced"
-            },
-            "properties": [
-              {
-                "id": "custom.drawStyle",
-                "value": "bars"
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 100
-              },
-              {
-                "id": "custom.lineWidth",
-                "value": 0
-              },
-              {
-                "id": "unit",
-                "value": "short"
-              },
-              {
-                "id": "custom.axisLabel",
-                "value": "HDD Reads Replaced"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 8,
-        "y": 42
-      },
-      "id": 38,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "expr": "sum (flashpool_read_ops_replaced_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "Hit %",
-          "refId": "A"
-        },
-        {
-          "expr": "sum (flashpool_read_ops_replaced{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "HDD Reads Replaced",
-          "refId": "B"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Flash Pool",
-      "transformations": [],
-      "type": "timeseries"
     }
   ],
   "refresh": "",
@@ -2366,6 +2368,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Disk",
-  "uid": "DIc93hunk",
-  "version": 23
+  "uid": "Gs1aXGj7k",
+  "version": 24
 }

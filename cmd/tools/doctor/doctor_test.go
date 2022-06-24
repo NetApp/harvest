@@ -19,6 +19,7 @@ func TestRedaction(t *testing.T) {
 }
 
 func assertRedacted(t *testing.T, input, redacted string) {
+	t.Helper()
 	redacted = strings.TrimSpace(redacted)
 	input = printRedactedConfig("test", []byte(input))
 	input = strings.TrimSpace(input)

@@ -11,8 +11,8 @@ func setUpMatrix() *Matrix {
 	instanceNames := []string{"A", "B", "C", "D"}
 	for _, instanceName := range instanceNames {
 		instance, _ := m.NewInstance(instanceName)
-		speed.SetValueInt32(instance, 10)
-		length.SetValueFloat32(instance, 1.0)
+		_ = speed.SetValueInt32(instance, 10)
+		_ = length.SetValueFloat32(instance, 1.0)
 	}
 	return m
 }

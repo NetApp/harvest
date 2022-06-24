@@ -104,7 +104,7 @@ func New(poller conf.Poller, timeout time.Duration) (*Client, error) {
 			Proxy: http.ProxyFromEnvironment,
 			TLSClientConfig: &tls.Config{
 				Certificates:       []tls.Certificate{cert},
-				InsecureSkipVerify: useInsecureTLS},
+				InsecureSkipVerify: useInsecureTLS}, //nolint:gosec
 		}
 	} else {
 		username := poller.Username
@@ -119,7 +119,7 @@ func New(poller conf.Poller, timeout time.Duration) (*Client, error) {
 
 		transport = &http.Transport{
 			Proxy:           http.ProxyFromEnvironment,
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: useInsecureTLS},
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: useInsecureTLS}, //nolint:gosec
 		}
 	}
 
@@ -165,7 +165,7 @@ func (c *Client) invoke() ([]byte, error) {
 	)
 
 	if c.request.Body != nil {
-		defer silentClose(c.request.Body)
+		defer func(Body io.ReadCloser) { _ = Body.Close() }(response.Body)
 	}
 	if c.buffer != nil {
 		defer c.buffer.Reset()
@@ -175,6 +175,7 @@ func (c *Client) invoke() ([]byte, error) {
 	if response, err = c.client.Do(c.request); err != nil {
 		return nil, fmt.Errorf("connection error %w", err)
 	}
+	defer func(Body io.ReadCloser) { _ = Body.Close() }(response.Body)
 
 	if response.StatusCode != 200 {
 		if body, err = ioutil.ReadAll(response.Body); err == nil {
@@ -185,8 +186,6 @@ func (c *Client) invoke() ([]byte, error) {
 	}
 
 	// read response body
-	defer silentClose(response.Body)
-
 	if body, err = ioutil.ReadAll(response.Body); err != nil {
 		return nil, err
 	}
@@ -204,7 +203,7 @@ func downloadSwagger(poller *conf.Poller, path string, url string) (int64, error
 	if err != nil {
 		return 0, fmt.Errorf("unable to create %s to save swagger.yaml", path)
 	}
-	defer silentClose(out)
+	defer func(out *os.File) { _ = out.Close() }(out)
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return 0, err
@@ -223,7 +222,7 @@ func downloadSwagger(poller *conf.Poller, path string, url string) (int64, error
 	if err != nil {
 		return 0, err
 	}
-	defer silentClose(response.Body)
+	defer func(Body io.ReadCloser) { _ = Body.Close() }(response.Body)
 
 	n, err := io.Copy(out, response.Body)
 	if err != nil {

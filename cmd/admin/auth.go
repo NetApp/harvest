@@ -75,7 +75,7 @@ func GenerateAdminCerts(opts *tlsOptions, flavor string) {
 	if pemCert == nil {
 		log.Fatal("Failed to encode certificate to PEM")
 	}
-	if err := os.WriteFile(certPath, pemCert, 0644); err != nil {
+	if err := os.WriteFile(certPath, pemCert, 0600); err != nil {
 		log.Fatal(err)
 	}
 	log.Printf("wrote %s\n", certPath)
