@@ -31,6 +31,9 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				fg, _ := cache.NewInstance(key)
 				fg.SetLabels(i.GetLabels().Copy())
 				fg.SetLabel("volume", match[1])
+				// Flexgroup don't show any aggregate, node
+				fg.SetLabel("aggr", "")
+				fg.SetLabel("node", "")
 				fg.SetLabel("style", "flexgroup")
 			}
 			i.SetLabel("style", "flexgroup_constituent")

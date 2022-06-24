@@ -5,7 +5,6 @@ object:                   svm
 counters:
   - ^^uuid                                  => svm_uuid
   - ^name                                   => svm
-  - ^aggregates.#.name                      => aggr
   - ^state                                  => state
   - ^anti_ransomware_default_volume_state   => anti_ransomware_state
   - ^nsswitch                               => nameservice_switch
@@ -68,7 +67,6 @@ plugins:
 export_options:
   instance_keys:
     - svm
-    - aggr
   instance_labels:
     - state
     - anti_ransomware_state
