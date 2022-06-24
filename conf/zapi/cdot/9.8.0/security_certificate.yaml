@@ -7,7 +7,7 @@ counters:
   certificate-info:
     - ^^cert-name              => name
     - ^^vserver                => svm
-    - ^serial-number           => serial_number
+    - ^^serial-number          => serial_number
     - ^type                    => type
     - ^public-certificate      => certificatePEM
     - expiration-date          => expiry_time
@@ -26,8 +26,8 @@ export_options:
   instance_keys:
     - name
     - svm
-  instance_labels:
     - serial_number
+  instance_labels:
     - type
     - certificateIssuerType
     - certificateExpiryStatus
