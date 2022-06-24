@@ -285,7 +285,7 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	startTime = time.Now()
-	r.HandleResults(records, r.Prop, true)
+	count = r.HandleResults(records, r.Prop, true)
 
 	// process endpoints
 	err = r.processEndPoints()
