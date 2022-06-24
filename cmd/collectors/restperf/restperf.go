@@ -697,8 +697,8 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	r.Logger.Debug().
-		Uint64("dataPoints", count).
-		Uint64("records", numRecords).
+		Uint64("instances", numRecords).
+		Uint64("metrics", count).
 		Str("apiTime", apiD.String()).
 		Str("parseTime", parseD.String()).
 		Msg("Collected")
