@@ -7,7 +7,6 @@ counters:
   vserver-info:
     - ^^uuid                                  => svm_uuid
     - ^vserver-name                           => svm
-    - ^aggr-list                              => aggr
     - ^state                                  => state
     - ^anti-ransomware-default-volume-state   => anti_ransomware_state
     - name-server-switch:
@@ -26,7 +25,6 @@ plugins:
 export_options:
   instance_keys:
     - svm
-    - aggr
   instance_labels:
     - state
     - anti_ransomware_state

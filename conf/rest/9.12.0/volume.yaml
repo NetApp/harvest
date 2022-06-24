@@ -6,8 +6,7 @@ counters:
   - ^^uuid                                        => instance_uuid
   - ^name                                         => volume
   - ^svm.name                                     => svm
-  - ^aggregates.#.name                            => aggr #zapi maps to field containing-aggregate-name while rest mapping is an array?
-  - ^aggregates.#.uuid                            => aggrUuid
+  - ^aggregates.#.uuid                            => aggrUuid        # handled in plugin for flexgroup
   - ^style                                        => style
   - ^type                                         => type
   - ^snapshot_policy.name                         => snapshot_policy
@@ -52,6 +51,7 @@ endpoints:
     counters:
       - ^^instance_uuid                           => instance_uuid
       - ^node                                     => node
+      - ^aggregate                                => aggr
       - ^is_sis_volume                            => is_sis_volume
       - compression_space_saved_percent           => sis_compress_saved_percent
       - dedupe_space_saved_percent                => sis_dedup_saved_percent
