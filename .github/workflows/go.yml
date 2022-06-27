@@ -1,4 +1,4 @@
-name: Build, Test, License
+name: Build, Test, Lint License
 
 on:
   push:
