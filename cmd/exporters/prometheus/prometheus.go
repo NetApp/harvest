@@ -25,7 +25,7 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/exporter"
 	"github.com/netapp/harvest/v2/pkg/color"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"regexp"
@@ -122,7 +122,7 @@ func (p *Prometheus) Init() error {
 		p.allowAddrs = *x
 		if len(p.allowAddrs) == 0 {
 			p.Logger.Error().Stack().Err(nil).Msg("allow_addrs without any")
-			return errors.New(errors.InvalidParam, "allow_addrs")
+			return errs.New(errs.ErrInvalidParam, "allow_addrs")
 		}
 		p.checkAddrs = true
 		p.Logger.Debug().Msgf("added %d plain allow rules", len(p.allowAddrs))
@@ -137,12 +137,12 @@ func (p *Prometheus) Init() error {
 				p.allowAddrsRegex = append(p.allowAddrsRegex, reg)
 			} else {
 				p.Logger.Error().Stack().Err(err).Msg("parse regex")
-				return errors.New(errors.InvalidParam, "allow_addrs_regex")
+				return errs.New(errs.ErrInvalidParam, "allow_addrs_regex")
 			}
 		}
 		if len(p.allowAddrsRegex) == 0 {
 			p.Logger.Error().Stack().Err(nil).Msg("allow_addrs_regex without any")
-			return errors.New(errors.InvalidParam, "allow_addrs")
+			return errs.New(errs.ErrInvalidParam, "allow_addrs")
 		}
 		p.checkAddrs = true
 		p.Logger.Debug().Msgf("added %d regex allow rules", len(p.allowAddrsRegex))
@@ -166,9 +166,9 @@ func (p *Prometheus) Init() error {
 
 	// sanity check on port
 	if port == 0 {
-		return errors.New(errors.MissingParam, "port")
+		return errs.New(errs.ErrMissingParam, "port")
 	} else if port < 0 {
-		return errors.New(errors.InvalidParam, "port")
+		return errs.New(errs.ErrInvalidParam, "port")
 	}
 
 	// The optional parameter LocalHTTPAddr is the address of the HTTP service, valid values are:

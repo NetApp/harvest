@@ -14,7 +14,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
@@ -165,7 +165,7 @@ func (r *Rest) getClient(a *collector.AbstractCollector, config *node.Node) (*re
 	}
 	if poller.Addr == "" {
 		r.Logger.Error().Str("poller", opt.Poller).Msg("Address is empty")
-		return nil, errors.New(errors.MissingParam, "addr")
+		return nil, errs.New(errs.ErrMissingParam, "addr")
 	}
 
 	clientTimeout := config.GetChildContentS("client_timeout")
@@ -281,7 +281,7 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 	apiD = time.Since(startTime)
 
 	if len(records) == 0 {
-		return nil, errors.New(errors.ErrNoInstance, "no "+r.Object+" instances on cluster")
+		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
 	}
 
 	startTime = time.Now()
@@ -487,7 +487,7 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, allowInstanceCre
 func (r *Rest) GetRestData(href string) ([]gjson.Result, error) {
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {
-		return nil, errors.New(errors.ErrConfig, "empty url")
+		return nil, errs.New(errs.ErrConfig, "empty url")
 	}
 
 	result, err := rest.Fetch(r.Client, href)

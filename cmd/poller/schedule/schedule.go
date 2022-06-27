@@ -33,7 +33,7 @@
 package schedule
 
 import (
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"time"
 )
@@ -168,9 +168,9 @@ func (s *Schedule) NewTask(n string, i time.Duration, f func() (map[string]*matr
 			s.tasks = append(s.tasks, t)
 			return nil
 		}
-		return errors.New(errors.InvalidParam, "interval :"+i.String())
+		return errs.New(errs.ErrInvalidParam, "interval :"+i.String())
 	}
-	return errors.New(errors.InvalidParam, "duplicate task :"+n)
+	return errs.New(errs.ErrInvalidParam, "duplicate task :"+n)
 }
 
 // NewTaskString creates a new task, the interval is parsed from string i

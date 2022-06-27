@@ -2,7 +2,7 @@ package rest
 
 import (
 	"fmt"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"regexp"
@@ -45,12 +45,12 @@ func (r *Rest) InitCache() error {
 	}
 
 	if r.Prop.Query = r.Params.GetChildContentS("query"); r.Prop.Query == "" {
-		return errors.New(errors.MissingParam, "query")
+		return errs.New(errs.ErrMissingParam, "query")
 	}
 
 	// create metric cache
 	if counters = r.Params.GetChildS("counters"); counters == nil {
-		return errors.New(errors.MissingParam, "counters")
+		return errs.New(errs.ErrMissingParam, "counters")
 	}
 
 	// default value for ONTAP is 15 sec

@@ -3,7 +3,7 @@ package collectors
 import (
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -20,7 +20,7 @@ func InvokeRestCall(client *rest.Client, query string, href string, logger *logg
 	}
 
 	if len(result) == 0 {
-		return []gjson.Result{}, errors.New(errors.ErrNoInstance, "no "+query+" instances on cluster")
+		return []gjson.Result{}, errs.New(errs.ErrNoInstance, "no "+query+" instances on cluster")
 	}
 
 	return result, nil

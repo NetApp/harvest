@@ -8,7 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
@@ -143,7 +143,7 @@ func (me *Unix) Init(a *collector.AbstractCollector) error {
 	var err error
 
 	if !set.NewFrom(supportedPlatforms).Has(runtime.GOOS) {
-		return errors.New(errors.ErrImplement, "platform not supported")
+		return errs.New(errs.ErrImplement, "platform not supported")
 	}
 
 	if err = collector.Init(me); err != nil {
@@ -157,7 +157,7 @@ func (me *Unix) Init(a *collector.AbstractCollector) error {
 
 	// assert fs is available
 	if fi, err := os.Stat(mountPoint); err != nil || !fi.IsDir() {
-		return errors.New(errors.ErrImplement, "filesystem ["+mountPoint+"] not available")
+		return errs.New(errs.ErrImplement, "filesystem ["+mountPoint+"] not available")
 	}
 
 	// load list of counters from template
@@ -167,7 +167,7 @@ func (me *Unix) Init(a *collector.AbstractCollector) error {
 			return err
 		}
 	} else {
-		return errors.New(errors.MissingParam, "counters")
+		return errs.New(errs.ErrMissingParam, "counters")
 	}
 
 	getClockTicks()

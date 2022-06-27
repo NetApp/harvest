@@ -16,7 +16,7 @@ package nic
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"math"
 	"strconv"
@@ -37,11 +37,11 @@ func (me *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	var err error
 
 	if read = data.GetMetric("rx_bytes"); read == nil {
-		return nil, errors.New(errors.ErrNoMetric, "rx_bytes")
+		return nil, errs.New(errs.ErrNoMetric, "rx_bytes")
 	}
 
 	if write = data.GetMetric("tx_bytes"); write == nil {
-		return nil, errors.New(errors.ErrNoMetric, "tx_bytes")
+		return nil, errs.New(errs.ErrNoMetric, "tx_bytes")
 	}
 
 	if rx = data.GetMetric("rx_percent"); rx == nil {
