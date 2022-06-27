@@ -106,7 +106,7 @@ func (my *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 
 		// invoke disk-encrypt-get-iter zapi and populate disk info
-		disks, err1 := my.getDiskData()
+		disks, err1 := my.getEncryptedDisks()
 		// invoke aggr-status-get-iter zapi and populate aggr disk mapping info
 		aggrDiskMap, err2 := my.getAggrDiskMapping()
 
@@ -310,7 +310,7 @@ func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
 	}
 }
 
-func (my *Volume) getDiskData() ([]string, error) {
+func (my *Volume) getEncryptedDisks() ([]string, error) {
 	var (
 		result    []*node.Node
 		diskNames []string
