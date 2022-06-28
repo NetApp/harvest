@@ -161,3 +161,8 @@ func GetDataInterval(param *node.Node, defaultInterval time.Duration) float64 {
 	}
 	return defaultInterval.Seconds()
 }
+
+// timestamp in micro seconds
+func IsTimestampOlderThanDuration(timestamp float64, duration time.Duration) bool {
+	return time.Since(time.UnixMicro(int64(timestamp))) > duration
+}

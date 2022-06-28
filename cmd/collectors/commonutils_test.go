@@ -3,6 +3,7 @@ package collectors
 import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"testing"
+	"time"
 )
 
 func TestUpdateProtectedFields(t *testing.T) {
@@ -27,6 +28,12 @@ func TestUpdateProtectedFields(t *testing.T) {
 	testOtherPolicyType(t, instance)
 	testWithNoPolicyType(t, instance)
 	testWithNoPolicyTypeNoRelationshipType(t, instance)
+}
+
+func TestIsTimestampOlderThanDuration(t *testing.T) {
+	// Test cases for timestamp comparison with Duration
+	testOlderTimestampThanDuration(t)
+	testNewerTimestampThanDuration(t)
 }
 
 // Test cases for protectedBy and protectionSourceType
@@ -222,5 +229,30 @@ func testWithNoPolicyTypeNoRelationshipType(t *testing.T, instance *matrix.Insta
 		// OK
 	} else {
 		t.Errorf("Labels derived_relationship_type= %s, expected: \"\"(empty)", instance.GetLabel("derived_relationship_type"))
+	}
+}
+
+// Test cases for timestamp comparison with duration
+func testOlderTimestampThanDuration(t *testing.T) {
+	timestamp := float64(time.Now().Add(-20 * time.Minute).UnixMicro())
+	duration := 5 * time.Minute
+	isOlder := IsTimestampOlderThanDuration(timestamp, duration)
+
+	if isOlder {
+		// OK
+	} else {
+		t.Errorf("timestamp= %f is older than duration %s", timestamp, duration.String())
+	}
+}
+
+func testNewerTimestampThanDuration(t *testing.T) {
+	timestamp := float64(time.Now().Add(-1 * time.Hour).UnixMicro())
+	duration := 2 * time.Hour
+	isOlder := IsTimestampOlderThanDuration(timestamp, duration)
+
+	if !isOlder {
+		// OK
+	} else {
+		t.Errorf("timestamp= %f is newer than duration %s", timestamp, duration.String())
 	}
 }
