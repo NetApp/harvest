@@ -355,7 +355,7 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 	e.Logger.Debug().Strs("skipped events", missingNames).Msg("")
 	e.eventNames = filteredNames
 
-	// check instance timestamp and remove it after 28days duration and warning when total instance in cache > 1000 instance
+	// check instance timestamp and remove it after given resolve_after duration and warning when total instance in cache > 1000 instance
 	for _, issuingEmsList := range e.bookendEmsMap {
 		for _, issuingEms := range issuingEmsList {
 			if mx := e.Matrix[issuingEms]; mx != nil {
@@ -385,7 +385,7 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 
 	e.Logger.Info().Int("total instances", bookendCacheSize).Msg("")
 	// warning when total instance in cache > 1000 instance
-	if bookendCacheSize >= MaxBookendInstances {
+	if bookendCacheSize > MaxBookendInstances {
 		e.Logger.Warn().Int("total instances", bookendCacheSize).Msg("cache has more than 1000 instances")
 	}
 	return nil, nil
