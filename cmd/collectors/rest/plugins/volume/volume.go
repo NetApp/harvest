@@ -226,7 +226,13 @@ func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
 		volumeName := volume.GetLabel("volume")
 		svmName := volume.GetLabel("svm")
 		volumeType := volume.GetLabel("type")
+
+		// For flexgroup, aggrUuid in Rest should be empty for parity with Zapi response
+		if volumeStyle := volume.GetLabel("style"); volumeStyle == "flexgroup" {
+			volume.SetLabel("aggrUuid", "")
+		}
 		aggrUUID := volume.GetLabel("aggrUuid")
+
 		key := volumeName + "-" + svmName
 
 		// Update protectionRole label in volume
@@ -285,12 +291,16 @@ func (my *Volume) getDiskData() ([]gjson.Result, error) {
 }
 
 func (my *Volume) updateAggrMap(disks []gjson.Result) {
-	// Clean aggrsMap map
-	my.aggrsMap = make(map[string]string)
+	if disks != nil {
+		// Clean aggrsMap map
+		my.aggrsMap = make(map[string]string)
 
-	for _, disk := range disks {
-		aggrName := disk.Get("aggregates.name").String()
-		aggrUUID := disk.Get("aggregates.uuid").String()
-		my.aggrsMap[aggrUUID] = aggrName
+		for _, disk := range disks {
+			aggrName := disk.Get("aggregates.name").String()
+			aggrUUID := disk.Get("aggregates.uuid").String()
+			if aggrUUID != "" {
+				my.aggrsMap[aggrUUID] = aggrName
+			}
+		}
 	}
 }

@@ -104,6 +104,10 @@ events:
       - parameters.vserverUuid             => svm_uuid
 
   - name: callhome.battery.low
+    exports:
+      - ^^node.name                        => node
+    resolve_when_ems:
+      - name: nvram.battery.charging.normal
 
   - name: callhome.hainterconnect.down
 
@@ -161,11 +165,14 @@ events:
 
   - name: LUN.offline
     exports:
-      - parameters.object_uuid              => object_uuid
+      - ^^parameters.object_uuid            => object_uuid
       - parameters.object_type              => object_type
       - parameters.lun_path                 => lun_path
       - parameters.volume_name              => volume
       - parameters.volume_dsid              => volume_ds_id
+    resolve_when_ems:
+      - name: LUN.online
+        resolve_after: 672h
 
   - name: mgmtgwd.rootvolrec.low.space
     exports:
@@ -174,15 +181,21 @@ events:
 
   - name: monitor.fan.critical
     exports:
-      - parameters.report                   => report
+      - ^^parameters.report                 => report
+    resolve_when_ems:
+      - name: monitor.fan.ok
 
   - name: monitor.fan.failed
     exports:
-      - parameters.report                   => report
+      - ^^parameters.report                 => report
+    resolve_when_ems:
+      - name: monitor.fan.ok
 
   - name: monitor.fan.warning
     exports:
-      - parameters.report                   => report
+      - ^^parameters.report                 => report
+    resolve_when_ems:
+      - name: monitor.fan.ok
 
   - name: Nblade.cifsManyAuths
     exports:
