@@ -34,7 +34,10 @@ func DoDiffRestZapi(zapiDataCenterName string, restDataCenterName string) {
 	dashboardDiffMap := make(map[string][]string)
 	for key, value := range metricDiffMap {
 		for _, v := range value {
-			filepath.Walk("grafana/dashboards/cmode", getWalkFunc(v, dashboardDiffMap, key))
+			err := filepath.Walk("grafana/dashboards/cmode", getWalkFunc(v, dashboardDiffMap, key))
+			if err != nil {
+				log.Fatal("Error walking the path: ", err)
+			}
 		}
 	}
 
@@ -420,6 +423,7 @@ func difference(a, b []string) ([]string, []string) {
 }
 
 func getResponse(url string) (string, error) {
+	//#nosec G107 -- http is default for Prometheus
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Fatalln(err)

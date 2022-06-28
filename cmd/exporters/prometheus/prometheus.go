@@ -157,7 +157,7 @@ func (p *Prometheus) Init() error {
 	// can be passed to us either as an option or as a parameter
 	port := p.Options.PromPort
 	if port == 0 {
-		if promPort := p.Params.Port; p == nil {
+		if promPort := p.Params.Port; promPort == nil {
 			p.Logger.Error().Stack().Err(nil).Msg("Issue while reading prometheus port")
 		} else {
 			port = *promPort
@@ -335,13 +335,13 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 				// actual cause is the Aggregator plugin, which is adding node as
 				// instance label (even though it's already a global label for 7modes)
 				if !data.GetGlobalLabels().Has(label) {
-					instanceKeys = append(instanceKeys, fmt.Sprintf("%s=\"%s\"", label, value))
+					instanceKeys = append(instanceKeys, fmt.Sprintf("%s=\"%s\"", label, value)) //nolint:makezero
 				}
 			}
 		} else {
 			for _, key := range keysToInclude {
 				value := instance.GetLabel(key)
-				instanceKeys = append(instanceKeys, fmt.Sprintf("%s=\"%s\"", key, value))
+				instanceKeys = append(instanceKeys, fmt.Sprintf("%s=\"%s\"", key, value)) //nolint:makezero
 				if !instanceKeysOk && value != "" {
 					instanceKeysOk = true
 				}
@@ -366,9 +366,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 				if p.Params.SortLabels {
 					allLabels := make([]string, len(instanceLabels))
 					copy(allLabels, instanceLabels)
-					for _, instanceKey := range instanceKeys {
-						allLabels = append(allLabels, instanceKey)
-					}
+					allLabels = append(allLabels, instanceKeys...) //nolint:makezero
 					sort.Strings(allLabels)
 					labelData = fmt.Sprintf("%s_labels{%s} 1.0", prefix, strings.Join(allLabels, ","))
 				} else {

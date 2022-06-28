@@ -37,6 +37,8 @@ func ImportTemplate(confPath, confFn, collectorName string) (*node.Node, error) 
 	return tree.ImportYaml(fp)
 }
 
+var versionRegex = regexp.MustCompile(`\d+\.\d+\.\d+`)
+
 // ImportSubTemplate retrieves the best matching subtemplate of a collector object.
 //
 // This method is only applicable to the Zapi/ZapiPerf collectors which have
@@ -73,7 +75,11 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 		// check for available versions, those are the subdirectories that include filename
 		if files, err := ioutil.ReadDir(pathPrefix); err == nil {
 			for _, file := range files {
-				if match, _ := regexp.MatchString(`\d+\.\d+\.\d+`, file.Name()); match == true && file.IsDir() {
+				if !file.IsDir() {
+					continue
+				}
+				submatch := versionRegex.FindStringSubmatch(file.Name())
+				if len(submatch) > 0 {
 					if templates, err := ioutil.ReadDir(path.Join(pathPrefix, file.Name())); err == nil {
 						for _, t := range templates {
 							if t.Name() == f {

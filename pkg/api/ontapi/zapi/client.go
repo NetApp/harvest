@@ -137,7 +137,7 @@ func New(poller conf.Poller) (*Client, error) {
 			TLSClientConfig: &tls.Config{
 				RootCAs:            caCertPool,
 				Certificates:       []tls.Certificate{cert},
-				InsecureSkipVerify: useInsecureTLS,
+				InsecureSkipVerify: useInsecureTLS, //nolint:gosec
 			},
 		}
 	} else {
@@ -151,7 +151,7 @@ func New(poller conf.Poller) (*Client, error) {
 		request.SetBasicAuth(poller.Username, poller.Password)
 		transport = &http.Transport{
 			Proxy:           http.ProxyFromEnvironment,
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: useInsecureTLS},
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: useInsecureTLS}, //nolint:gosec
 		}
 	}
 	if poller.TLSMinVersion != "" {
@@ -386,7 +386,7 @@ func (c *Client) InvokeRaw() ([]byte, error) {
 	if response, err = c.client.Do(c.request); err != nil {
 		return body, errors.New(errors.ErrConnection, err.Error())
 	}
-
+	defer func(Body io.ReadCloser) { _ = Body.Close() }(response.Body)
 	if response.StatusCode != 200 {
 		return body, errors.New(errors.APIResponse, response.Status)
 	}
@@ -425,6 +425,7 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 	if response, err = c.client.Do(c.request); err != nil {
 		return result, responseT, parseT, errors.New(errors.ErrConnection, err.Error())
 	}
+	defer func(Body io.ReadCloser) { _ = Body.Close() }(response.Body)
 	if withTimers {
 		responseT = time.Since(start)
 	}
@@ -434,8 +435,6 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 	}
 
 	// read response body
-	defer func(Body io.ReadCloser) { _ = Body.Close() }(response.Body)
-
 	if body, err = ioutil.ReadAll(response.Body); err != nil {
 		return result, responseT, parseT, err
 	}
@@ -463,9 +462,9 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 
 	if status != "passed" {
 		if reason, found = result.GetAttrValueS("reason"); !found {
-			err = fmt.Errorf("%w: %s", errors.APIRequestRejected, "no reason")
+			err = fmt.Errorf("%w: %s", errors.ErrAPIRequestRejected, "no reason")
 		} else {
-			err = fmt.Errorf("%w: %s", errors.APIRequestRejected, reason)
+			err = fmt.Errorf("%w: %s", errors.ErrAPIRequestRejected, reason)
 		}
 		return result, responseT, parseT, err
 	}

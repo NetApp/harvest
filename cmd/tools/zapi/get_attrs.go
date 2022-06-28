@@ -73,9 +73,7 @@ func getAttrs(c *client.Client, a *Args) (*node.Node, error) {
 		return nil, errors.New(AttributeNotFound, "root attribute")
 	}
 
-	if strings.HasSuffix(attrName, "[]") {
-		attrName = strings.TrimSuffix(attrName, "[]")
-	}
+	attrName = strings.TrimSuffix(attrName, "[]")
 
 	fmt.Printf("building tree for attribute [%s] => [%s]\n", attrKey, attrName)
 

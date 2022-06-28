@@ -431,15 +431,15 @@ func (p *Poller) Run() {
 
 			// ping target system
 			if ping, ok := p.ping(); ok {
-				p.status.LazySetValueUint8("status", "host", 0)
-				p.status.LazySetValueFloat32("ping", "host", ping)
+				_ = p.status.LazySetValueUint8("status", "host", 0)
+				_ = p.status.LazySetValueFloat32("ping", "host", ping)
 			} else {
-				p.status.LazySetValueUint8("status", "host", 1)
+				_ = p.status.LazySetValueUint8("status", "host", 1)
 			}
 
 			// add number of goroutines to metadata
 			// @TODO: cleanup, does not belong to "status"
-			p.status.LazySetValueInt("goroutines", "host", runtime.NumGoroutine())
+			_ = p.status.LazySetValueInt("goroutines", "host", runtime.NumGoroutine())
 
 			upc := 0 // up collectors
 			upe := 0 // up exporters
@@ -455,8 +455,8 @@ func (p *Poller) Run() {
 
 				key := c.GetName() + "." + c.GetObject()
 
-				p.metadata.LazySetValueUint64("count", key, c.GetCollectCount())
-				p.metadata.LazySetValueUint8("status", key, code)
+				_ = p.metadata.LazySetValueUint64("count", key, c.GetCollectCount())
+				_ = p.metadata.LazySetValueUint8("status", key, code)
 
 				if msg != "" {
 					if instance := p.metadata.GetInstance(key); instance != nil {
@@ -477,8 +477,8 @@ func (p *Poller) Run() {
 
 				key := ee.GetClass() + "." + ee.GetName()
 
-				p.metadata.LazySetValueUint64("count", key, ee.GetExportCount())
-				p.metadata.LazySetValueUint8("status", key, code)
+				_ = p.metadata.LazySetValueUint64("count", key, ee.GetExportCount())
+				_ = p.metadata.LazySetValueUint8("status", key, code)
 
 				if msg != "" {
 					if instance := p.metadata.GetInstance(key); instance != nil {
@@ -533,7 +533,7 @@ func (p *Poller) handleSignals(signalChannel chan os.Signal) {
 // and if available, response time
 func (p *Poller) ping() (float32, bool) {
 
-	cmd := exec.Command("ping", p.target, "-w", "5", "-c", "1", "-q")
+	cmd := exec.Command("ping", p.target, "-w", "5", "-c", "1", "-q") //nolint:gosec
 	output, err := cmd.Output()
 	if err != nil {
 		return 0, false
@@ -849,8 +849,8 @@ func (p *Poller) getExporter(name string) exporter.Exporter {
 func (p *Poller) loadMetadata() {
 
 	p.metadata = matrix.New("poller", "metadata_component", "metadata_component")
-	p.metadata.NewMetricUint8("status")
-	p.metadata.NewMetricUint64("count")
+	_, _ = p.metadata.NewMetricUint8("status")
+	_, _ = p.metadata.NewMetricUint64("count")
 	p.metadata.SetGlobalLabel("poller", p.name)
 	p.metadata.SetGlobalLabel("version", p.options.Version)
 	p.metadata.SetGlobalLabel("hostname", p.options.Hostname)
@@ -861,9 +861,9 @@ func (p *Poller) loadMetadata() {
 
 	// metadata for target system
 	p.status = matrix.New("poller", "metadata_target", "metadata_component")
-	p.status.NewMetricUint8("status")
-	p.status.NewMetricFloat32("ping")
-	p.status.NewMetricUint32("goroutines")
+	_, _ = p.status.NewMetricUint8("status")
+	_, _ = p.status.NewMetricFloat32("ping")
+	_, _ = p.status.NewMetricUint32("goroutines")
 
 	instance, _ := p.status.NewInstance("host")
 	instance.SetLabel("addr", p.target)
@@ -1039,7 +1039,8 @@ func (p *Poller) createClient() {
 		p.client = &http.Client{
 			Transport: &http.Transport{
 				TLSClientConfig: &tls.Config{
-					RootCAs: p.certPool,
+					RootCAs:    p.certPool,
+					MinVersion: tls.VersionTLS13,
 				},
 			},
 		}

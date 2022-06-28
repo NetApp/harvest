@@ -51,7 +51,7 @@ func SendReqAndGetRes(url string, method string,
 	PanicIfNotNil(err)
 	log.Println(string(body))
 	var data map[string]interface{}
-	err = json.Unmarshal([]byte(string(body)), &data)
+	err = json.Unmarshal(body, &data)
 	PanicIfNotNil(err)
 	return data
 }

@@ -19,7 +19,7 @@ func TestDatasource(t *testing.T) {
 		if ext != ".json" {
 			return nil
 		}
-		checkDashboardForDatasource(path, t)
+		checkDashboardForDatasource(t, path)
 		return nil
 	})
 	if err != nil {
@@ -27,7 +27,7 @@ func TestDatasource(t *testing.T) {
 	}
 }
 
-func checkDashboardForDatasource(path string, t *testing.T) {
+func checkDashboardForDatasource(t *testing.T, path string) {
 	data, err := ioutil.ReadFile(path)
 	if err != nil {
 		log.Fatalf("failed to read dashboards path=%s err=%v", path, err)

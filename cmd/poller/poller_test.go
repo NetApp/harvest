@@ -68,7 +68,7 @@ func TestUnion2(t *testing.T) {
 	Union2(n, p)
 	labels := n.GetChildS("labels")
 	if labels == nil {
-		t.Errorf("got nil, want labels")
+		t.Fatal("got nil, want labels")
 	}
 	type label struct {
 		key string

@@ -53,7 +53,6 @@ type options struct {
 	image       string
 	filesdPath  string
 	showPorts   bool
-	admin       bool
 	outputPath  string
 	templateDir string
 	certDir     string
@@ -171,7 +170,7 @@ func generateDocker(path string, kind int) {
 		panic(err)
 	}
 
-	out := os.Stdout
+	var out *os.File
 	color.DetectConsole("")
 	out, err = os.Create(opts.outputPath)
 	if err != nil {
@@ -210,6 +209,9 @@ func generateDocker(path string, kind int) {
 		}
 
 		promStackOut, err := os.Create("prom-stack.yml")
+		if err != nil {
+			panic(err)
+		}
 		err = pt.Execute(promStackOut, promTemplate)
 		if err != nil {
 			panic(err)
@@ -272,9 +274,7 @@ func generateSystemd(path string) {
 	// reorder list of pollers so that unix collectors are last, see https://github.com/NetApp/harvest/issues/643
 	pollers := make([]string, 0)
 	unixPollers := make([]string, 0)
-	for _, k := range conf.Config.PollersOrdered {
-		pollers = append(pollers, k)
-	}
+	pollers = append(pollers, conf.Config.PollersOrdered...)
 	// iterate over the pollers backwards, so we don't skip any when removing
 	for i := len(pollers) - 1; i >= 0; i-- {
 		pollerName := pollers[i]
@@ -291,9 +291,7 @@ func generateSystemd(path string) {
 			}
 		}
 	}
-	for _, poller := range unixPollers {
-		pollers = append(pollers, poller)
-	}
+	pollers = append(pollers, unixPollers...)
 	err = t.Execute(os.Stdout, struct {
 		Admin          string
 		PollersOrdered []string
@@ -323,7 +321,7 @@ func writeAdminSystemd(configFp string) {
 	if err != nil {
 		configAbsPath = "/opt/harvest/harvest.yml"
 	}
-	err = t.Execute(f, configAbsPath)
+	_ = t.Execute(f, configAbsPath)
 	println(color.Colorize("✓", color.Green) + " HTTP SD file: " + harvestAdminService + " created")
 }
 

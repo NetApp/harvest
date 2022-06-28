@@ -7,8 +7,8 @@ Package Description:
 Examples:
    Simple name (e.g. "metric_name"), means both name and display are the same
    Custom name (e.g. "metric_name => custom_name") is parsed as display name.
-
 */
+
 package matrix
 
 import (
@@ -18,7 +18,7 @@ import (
 
 type Metric interface {
 	// methods related to metric attributes
-	// @TODO, add methods for (conveniency for some collectors)
+	// @TODO, add methods for (convenience of collectors)
 	// Property
 	// BaseCounter
 	GetName() string
@@ -116,9 +116,7 @@ func (me *AbstractMetric) Clone(deep bool) *AbstractMetric {
 	if deep {
 		if len(me.record) != 0 {
 			clone.record = make([]bool, len(me.record))
-			for i, v := range me.record {
-				clone.record[i] = v
-			}
+			copy(clone.record, me.record)
 		}
 	}
 	return &clone
@@ -202,26 +200,26 @@ func (me *AbstractMetric) SetValueNAN(i *Instance) {
 	me.record[i.index] = false
 }
 
-func (me *AbstractMetric) Delta(s Metric) error {
+func (me *AbstractMetric) Delta(Metric) error {
 	return errors.New(errors.ErrImplement, me.dtype)
 }
 
-func (me *AbstractMetric) Divide(s Metric) error {
+func (me *AbstractMetric) Divide(Metric) error {
 	return errors.New(errors.ErrImplement, me.dtype)
 }
 
-func (me *AbstractMetric) DivideWithThreshold(s Metric, t int) error {
+func (me *AbstractMetric) DivideWithThreshold(Metric, int) error {
 	return errors.New(errors.ErrImplement, me.dtype)
 }
 
-func (me *AbstractMetric) MultiplyByScalar(s int) error {
+func (me *AbstractMetric) MultiplyByScalar(int) error {
 	return errors.New(errors.ErrImplement, me.dtype)
 }
 
-func (me *AbstractMetric) AddValueString(i *Instance, s string) error {
+func (me *AbstractMetric) AddValueString(*Instance, string) error {
 	return errors.New(errors.ErrImplement, me.dtype)
 }
 
-func (me *AbstractMetric) SetValueBool(i *Instance, b bool) error {
+func (me *AbstractMetric) SetValueBool(*Instance, bool) error {
 	return errors.New(errors.ErrImplement, me.dtype)
 }

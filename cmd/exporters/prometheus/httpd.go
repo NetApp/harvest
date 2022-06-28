@@ -21,13 +21,13 @@ func (p *Prometheus) startHTTPD(addr string, port int) {
 	mux.HandleFunc("/", p.ServeInfo)
 	mux.HandleFunc("/metrics", p.ServeMetrics)
 
-	p.Logger.Debug().Msgf("(httpd) starting server at [%s:%s]", addr, port)
+	p.Logger.Debug().Msgf("(httpd) starting server at [%s:%d]", addr, port)
 	server := &http.Server{Addr: addr + ":" + fmt.Sprint(port), Handler: mux}
 
 	if err := server.ListenAndServe(); err != nil {
 		p.Logger.Fatal().Msgf(" (httpd) %v", err.Error())
 	} else {
-		p.Logger.Info().Msgf("(httpd) listening at [http://%s:%s]", addr, port)
+		p.Logger.Info().Msgf("(httpd) listening at [http://%s:%d]", addr, port)
 	}
 }
 
@@ -168,7 +168,6 @@ func filterMetaTags(metrics [][]byte) [][]byte {
 					filtered = append(filtered, m)
 					if i+1 < len(metrics) {
 						filtered = append(filtered, metrics[i+1])
-						i++
 					}
 				}
 			}

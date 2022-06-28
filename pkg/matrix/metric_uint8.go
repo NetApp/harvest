@@ -20,9 +20,7 @@ func (me *MetricUint8) Clone(deep bool) Metric {
 	clone := MetricUint8{AbstractMetric: me.AbstractMetric.Clone(deep)}
 	if deep && len(me.values) != 0 {
 		clone.values = make([]uint8, len(me.values))
-		for i, v := range me.values {
-			clone.values[i] = v
-		}
+		copy(clone.values, me.values)
 	}
 	return &clone
 }

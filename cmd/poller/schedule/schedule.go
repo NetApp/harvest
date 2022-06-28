@@ -87,7 +87,6 @@ type Schedule struct {
 	tasks          []*task                  // list of tasks that Schedule needs to run
 	standByMode    bool                     // if true, Schedule waitsfor a stalled task
 	standByTask    *task                    // stalled task in standByMode
-	standByTimer   time.Time                // timer for stalled task in standByMode
 	cachedInterval map[string]time.Duration // normal interval of the stalled tasks
 }
 
