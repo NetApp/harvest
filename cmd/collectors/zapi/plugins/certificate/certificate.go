@@ -166,7 +166,7 @@ func (my *Certificate) setCertificateValidity(data *matrix.Matrix, instance *mat
 	instance.SetLabel("certificateExpiryStatus", "unknown")
 
 	if expiryTimeMetric = data.GetMetric("certificate-info.expiration-date"); expiryTimeMetric == nil {
-		my.Logger.Error().Stack().Msg("missing expiry time metric")
+		my.Logger.Error().Msg("missing expiry time metric")
 		return
 	}
 

@@ -73,7 +73,7 @@ func (my *Certificate) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		// invoke private vserver cli rest and get admin vserver name
 		if adminVserver, err = my.GetAdminVserver(); err != nil {
 			if ontap.IsApiNotFound(err) {
-				my.Logger.Debug().Msg("Failed to collect admin SVM")
+				my.Logger.Debug().Err(err).Msg("Failed to collect admin SVM")
 			} else {
 				my.Logger.Error().Err(err).Msg("Failed to collect admin SVM")
 			}
@@ -83,7 +83,7 @@ func (my *Certificate) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		// invoke private ssl cli rest and get the admin SVM's serial number
 		if adminVserverSerial, err = my.GetSecuritySsl(adminVserver); err != nil {
 			if ontap.IsApiNotFound(err) {
-				my.Logger.Debug().Msg("Failed to collect admin SVM's serial number")
+				my.Logger.Debug().Err(err).Msg("Failed to collect admin SVM's serial number")
 			} else {
 				my.Logger.Error().Msg("Failed to collect admin SVM's serial number")
 			}
@@ -132,7 +132,7 @@ func (my *Certificate) setCertificateIssuerType(instance *matrix.Instance) {
 		}
 
 		if cert, err = x509.ParseCertificate(certDecoded.Bytes); err != nil {
-			my.Logger.Warn().Msg("PEM formatted object is not a X.509 certificate. Only PEM formatted X.509 certificate input is allowed")
+			my.Logger.Warn().Err(err).Msg("PEM formatted object is not a X.509 certificate. Only PEM formatted X.509 certificate input is allowed")
 			instance.SetLabel("certificateIssuerType", "unknown")
 			return
 		}
@@ -200,7 +200,7 @@ func (my *Certificate) getDataInterval(param *node.Node, defaultInterval time.Du
 			if durationVal, err := time.ParseDuration(dataIntervalStr); err == nil {
 				return durationVal.Seconds()
 			} else {
-				my.Logger.Error().Stack().Err(err).Str("dataInterval", dataIntervalStr).Msg("Failed to parse duration")
+				my.Logger.Error().Err(err).Str("dataInterval", dataIntervalStr).Msg("Failed to parse duration")
 			}
 		}
 	}
