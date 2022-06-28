@@ -75,7 +75,7 @@ func (my *Certificate) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			if ontap.IsApiNotFound(err) {
 				my.Logger.Debug().Msg("Failed to collect admin SVM")
 			} else {
-				my.Logger.Error().Msg("Failed to collect admin SVM")
+				my.Logger.Error().Err(err).Msg("Failed to collect admin SVM")
 			}
 			return nil, nil
 		}
@@ -126,13 +126,13 @@ func (my *Certificate) setCertificateIssuerType(instance *matrix.Instance) {
 		instance.SetLabel("certificateIssuerType", "self_signed")
 		certDecoded, _ := pem.Decode([]byte(certificatePEM))
 		if certDecoded == nil {
-			my.Logger.Debug().Msg("PEM formatted object is not a X.509 certificate. Only PEM formatted X.509 certificate input is allowed")
+			my.Logger.Warn().Msg("PEM formatted object is not a X.509 certificate. Only PEM formatted X.509 certificate input is allowed")
 			instance.SetLabel("certificateIssuerType", "unknown")
 			return
 		}
 
 		if cert, err = x509.ParseCertificate(certDecoded.Bytes); err != nil {
-			my.Logger.Debug().Msg("PEM formatted object is not a X.509 certificate. Only PEM formatted X.509 certificate input is allowed")
+			my.Logger.Warn().Msg("PEM formatted object is not a X.509 certificate. Only PEM formatted X.509 certificate input is allowed")
 			instance.SetLabel("certificateIssuerType", "unknown")
 			return
 		}
