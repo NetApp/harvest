@@ -32,39 +32,39 @@ type rule struct {
 	counts        map[string]map[string]int
 }
 
-func (me *Aggregator) Init() error {
+func (a *Aggregator) Init() error {
 
-	if err := me.AbstractPlugin.Init(); err != nil {
+	if err := a.AbstractPlugin.Init(); err != nil {
 		return err
 	}
 
-	me.rules = make([]*rule, 0)
-	if err := me.parseRules(); err != nil {
+	a.rules = make([]*rule, 0)
+	if err := a.parseRules(); err != nil {
 		return err
 	}
 
-	if len(me.rules) == 1 {
-		me.Logger.Debug().Msg("parsed 1 aggregation rule")
+	if len(a.rules) == 1 {
+		a.Logger.Debug().Msg("parsed 1 aggregation rule")
 	} else {
-		me.Logger.Debug().Msgf("parsed %d aggregation rules", len(me.rules))
+		a.Logger.Debug().Msgf("parsed %d aggregation rules", len(a.rules))
 	}
 	return nil
 }
 
-func (me *Aggregator) parseRules() error {
+func (a *Aggregator) parseRules() error {
 
 	var err error
 
-	for _, line := range me.Params.GetAllChildContentS() {
+	for _, line := range a.Params.GetAllChildContentS() {
 
-		me.Logger.Trace().Msgf("parsing raw rule: [%s]", line)
+		a.Logger.Trace().Msgf("parsing raw rule: [%s]", line)
 
 		r := rule{}
 
 		fields := strings.Fields(line)
 		if len(fields) == 2 || len(fields) == 1 {
 			// parse label, possibly followed by value and object
-			me.Logger.Trace().Msgf("handling first field: [%s]", fields[0])
+			a.Logger.Trace().Msgf("handling first field: [%s]", fields[0])
 			prefix := strings.SplitN(fields[0], "<", 2)
 			r.label = strings.TrimSpace(prefix[0])
 			if len(prefix) == 2 {
@@ -82,10 +82,10 @@ func (me *Aggregator) parseRules() error {
 				if strings.HasPrefix(value, "`") {
 					value = strings.TrimPrefix(strings.TrimSuffix(value, "`"), "`")
 					if r.checkRegex, err = regexp.Compile(value); err != nil {
-						me.Logger.Error().Stack().Err(err).Msgf("rule [%s]: compile regex:", line)
+						a.Logger.Error().Stack().Err(err).Msgf("rule [%s]: compile regex:", line)
 						return err
 					}
-					me.Logger.Trace().Msgf("parsed regex: [%s]", r.checkRegex.String())
+					a.Logger.Trace().Msgf("parsed regex: [%s]", r.checkRegex.String())
 				} else if value != "" {
 					r.checkValue = value
 				}
@@ -95,29 +95,29 @@ func (me *Aggregator) parseRules() error {
 				}
 			}
 			if len(fields) == 2 {
-				me.Logger.Trace().Msgf("handling second field: [%s]", fields[1])
+				a.Logger.Trace().Msgf("handling second field: [%s]", fields[1])
 				if strings.TrimSpace(fields[1]) == "..." {
 					r.allLabels = true
 				} else {
 					r.includeLabels = strings.Split(fields[1], ",")
 				}
 			}
-			me.rules = append(me.rules, &r)
-			me.Logger.Debug().Msgf("parsed rule [%v]", r)
+			a.rules = append(a.rules, &r)
+			a.Logger.Debug().Msgf("parsed rule [%v]", r)
 		} else {
-			me.Logger.Warn().Msgf("invalid rule syntax [%s]", line)
+			a.Logger.Warn().Msgf("invalid rule syntax [%s]", line)
 			return errs.New(errs.ErrInvalidParam, "invalid rule")
 		}
 	}
 	return nil
 }
 
-func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (a *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
-	matrices := make([]*matrix.Matrix, len(me.rules))
+	matrices := make([]*matrix.Matrix, len(a.rules))
 
 	// initialize cache
-	for i, rule := range me.rules {
+	for i, rule := range a.rules {
 
 		matrices[i] = data.Clone(false, true, false)
 		if rule.object != "" {
@@ -148,18 +148,18 @@ func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			continue
 		}
 
-		me.Logger.Trace().Msgf("handling instance with labels [%s]", instance.GetLabels().String())
+		a.Logger.Trace().Msgf("handling instance with labels [%s]", instance.GetLabels().String())
 
-		for i, rule := range me.rules {
+		for i, rule := range a.rules {
 
-			me.Logger.Trace().Msgf("handling rule [%v]", rule)
+			a.Logger.Trace().Msgf("handling rule [%v]", rule)
 			if objName = instance.GetLabel(rule.label); objName == "" {
-				me.Logger.Warn().Msgf("label name for [%s] missing, skipped", rule.label)
+				a.Logger.Warn().Msgf("label name for [%s] missing, skipped", rule.label)
 				continue
 			}
 
 			if rule.checkLabel != "" {
-				me.Logger.Trace().Msgf("checking label (%s => %s)....", rule.checkLabel, rule.checkValue)
+				a.Logger.Trace().Msgf("checking label (%s => %s)....", rule.checkLabel, rule.checkValue)
 				if rule.checkRegex != nil {
 					if !rule.checkRegex.MatchString(instance.GetLabel(rule.checkLabel)) {
 						continue
@@ -179,7 +179,7 @@ func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			} else {
 				objKey = objName
 			}
-			me.Logger.Trace().Msgf("instance (%s= %s): formatted key [%s]", rule.label, objName, objKey)
+			a.Logger.Trace().Msgf("instance (%s= %s): formatted key [%s]", rule.label, objName, objKey)
 
 			if objInstance = matrices[i].GetInstance(objKey); objInstance == nil {
 				rule.counts[objKey] = make(map[string]int)
@@ -205,15 +205,12 @@ func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				}
 
 				if objMetric = matrices[i].GetMetric(key); objMetric == nil {
-					me.Logger.Warn().Msgf("metric [%s] not found in [%s] cache", key, rule.label)
+					a.Logger.Warn().Msgf("metric [%s] not found in [%s] cache", key, rule.label)
 					continue
 				}
 
-				//logger.Debug(me.Prefix, "(%s) (%s) handling metric [%s] (%s)", obj, obj_name, key, obj_metric.GetName())
-				//obj_metric.Print()
-
 				if err = objMetric.AddValueFloat64(objInstance, value); err != nil {
-					me.Logger.Error().Stack().Err(err).Msgf("add value [%s] [%s]:", key, objName)
+					a.Logger.Error().Stack().Err(err).Msgf("add value [%s] [%s]:", key, objName)
 				}
 
 				rule.counts[objKey][key]++
@@ -246,7 +243,7 @@ func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				continue
 			}
 
-			me.Logger.Trace().Msgf("[%s] (%s) normalizing values as average", mk, mn)
+			a.Logger.Trace().Msgf("[%s] (%s) normalizing values as average", mk, mn)
 
 			for key, instance := range m.GetInstances() {
 
@@ -254,12 +251,12 @@ func (me *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					continue
 				}
 
-				if count, ok = me.rules[i].counts[key][mk]; !ok {
+				if count, ok = a.rules[i].counts[key][mk]; !ok {
 					continue
 				}
 
 				if err = metric.SetValueFloat64(instance, value/float64(count)); err != nil {
-					me.Logger.Error().Stack().Err(err).Msgf("set value [%s] [%s]:", mn, key)
+					a.Logger.Error().Stack().Err(err).Msgf("set value [%s] [%s]:", mn, key)
 				}
 			}
 		}
