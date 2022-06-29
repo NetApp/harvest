@@ -7,7 +7,7 @@ counters:
   - ^node.name                => node
   - ^link_speed               => speed
   - ^link_current_state       => state
-  - ^link_up_to_downs
+  - ^link_up_to_down
   - ^type
   - receive_bytes             => rx_bytes
   - transmit_bytes            => tx_bytes
