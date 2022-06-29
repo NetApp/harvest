@@ -13,11 +13,29 @@ Harvest architecture defines three types of plugins:
 
 This documentation gives an overview of builtin plugins. For other plugins, see their respective documentation. For writing your own plugin, see Developer's documentation.
 
-The built-in plugins are:
+**Note:** the rules are executed in the same order as you've added them. The built-in plugins are:
 
 - [Aggregator](#aggregator)
+  - [Rule syntax](#rule-syntax)
+  - [Aggregation rules](#aggregation-rules)
 - [LabelAgent](#labelagent)
+  - [split](#split)
+  - [split_regex](#split_regex)
+  - [split_pairs](#split_pairs)
+  - [join](#join)
+  - [replace](#replace)
+  - [replace_regex](#replace_regex)
+  - [exclude_equals](#exclude_equals)
+  - [exclude_contains](#exclude_contains)
+  - [exclude_regex](#exclude_regex)
+  - [include_equals](#include_equals)
+  - [include_contains](#include_contains)
+  - [include_regex](#include_regex)
+  - [value_mapping](#value_mapping)
+  - [value_to_num](#value_to_num)
+  - [value_to_num_regex](#value_to_num_regex)
 - [MetricAgent](#metricagent)
+  - [compute_metric](#compute_metric)
 
 # Aggregator
 
@@ -104,41 +122,7 @@ plugins:
     replace_regex: node node `^(node)_(\d+)_.*$` `Node-$2`
 ```
 
-# MetricAgent
-MetricAgent are used to manipulate metrics based on rules. You can define multiple rules, here is an example of what you could add to the yaml file of a collector:
-
-```yaml
-plugins:
-  MetricAgent:
-    compute_metric:
-      - snapshot_maxfiles_possible ADD snapshot.max_files_available snapshot.max_files_used
-      - raid_disk_count ADD block_storage.primary.disk_count block_storage.hybrid_cache.disk_count
-```
-
-Notice that the rules are executed in the same order as you've added them. List of currently available rules:
-
-- [Built-in Plugins](#built-in-plugins)
-- [Aggregator](#aggregator)
-    - [Rule syntax](#rule-syntax)
-    - [Aggregation rules](#aggregation-rules)
-- [LabelAgent](#labelagent)
-  - [split](#split)
-  - [split_regex](#split_regex)
-  - [split_pairs](#split_pairs)
-  - [join](#join)
-  - [replace](#replace)
-  - [replace_regex](#replace_regex)
-  - [exclude_equals](#exclude_equals)
-  - [exclude_contains](#exclude_contains)
-  - [exclude_regex](#exclude_regex)
-  - [include_equals](#include_equals)
-  - [include_contains](#include_contains)
-  - [include_regex](#include_regex)
-  - [value_mapping](#value_mapping)
-  - [value_to_num](#value_to_num)
-  - [value_to_num_regex](#value_to_num_regex)
-- [MetricAgent](#metricagent)
-  - [compute_metric](#compute_metric)
+**Note:** Labels for creating new label should use name defined in right side of =>. If not present then left side of => is used.
 
 ## split
 
@@ -479,6 +463,19 @@ value_to_num_regex:
 # metric value will be set to 1 if label "state" matches regex, otherwise set to **4**
 ```
 
+# MetricAgent
+MetricAgent are used to manipulate metrics based on rules. You can define multiple rules, here is an example of what you could add to the yaml file of a collector:
+
+```yaml
+plugins:
+  MetricAgent:
+    compute_metric:
+      - snapshot_maxfiles_possible ADD snapshot.max_files_available snapshot.max_files_used
+      - raid_disk_count ADD block_storage.primary.disk_count block_storage.hybrid_cache.disk_count
+```
+
+**Note:** Metrics for creating new metric should use name defined in left side of =>
+
 ## compute_metric
 
 This rule creates a new metric (of type float64) using the provided scalar or an existing metric value combined with a mathematical operation.
@@ -494,7 +491,7 @@ compute_metric:
   - METRIC OPERATION METRIC1 METRIC2 METRIC3 
 # target new metric - mathematical operation - input metric names 
 # apply OPERATION on metric values of METRIC1, METRIC2 and METRIC3 and set result in METRIC
-# METRIC1, METRIC2, METRIC3 can be a scalar or an existing metric name
+# METRIC1, METRIC2, METRIC3 can be a scalar or an existing metric name.
 ```
 
 Examples:
