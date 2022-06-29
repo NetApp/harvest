@@ -30,7 +30,7 @@ package plugin
 import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -134,7 +134,7 @@ func (p *AbstractPlugin) InitAbc() error {
 		p.ParentParams.NewChildS("poller_name", p.Options.Poller)
 	}
 	if p.Name = p.Params.GetNameS(); p.Name == "" {
-		return errors.New(errors.MissingParam, "plugin name")
+		return errs.New(errs.ErrMissingParam, "plugin name")
 	}
 	p.Logger = logging.Get().SubLogger("plugin", p.Parent+":"+p.Name).SubLogger("object", p.Object)
 

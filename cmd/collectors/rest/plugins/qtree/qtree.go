@@ -10,7 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/dict"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
@@ -129,7 +129,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		if !quota.IsObject() {
 			my.Logger.Error().Str("type", quota.Type.String()).Msg("Quota is not an object, skipping")
-			return nil, errors.New(errors.ErrNoInstance, "quota is not an object")
+			return nil, errs.New(errs.ErrNoInstance, "quota is not an object")
 		}
 
 		if quota.Get("qtree.name").Exists() {

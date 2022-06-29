@@ -10,7 +10,7 @@ import (
 	"crypto/x509"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -66,7 +66,7 @@ func New(poller conf.Poller) (*Client, error) {
 	}
 
 	if addr = poller.Addr; addr == "" {
-		return nil, errors.New(errors.MissingParam, "addr")
+		return nil, errs.New(errs.ErrMissingParam, "addr")
 	}
 
 	if poller.IsKfs {
@@ -108,9 +108,9 @@ func New(poller conf.Poller) (*Client, error) {
 		caCertPath := poller.CaCertPath
 
 		if sslCertPath == "" {
-			return nil, errors.New(errors.MissingParam, "ssl_cert")
+			return nil, errs.New(errs.ErrMissingParam, "ssl_cert")
 		} else if keyPath == "" {
-			return nil, errors.New(errors.MissingParam, "ssl_key")
+			return nil, errs.New(errs.ErrMissingParam, "ssl_key")
 		} else if cert, err = tls.LoadX509KeyPair(sslCertPath, keyPath); err != nil {
 			return nil, err
 		}
@@ -143,9 +143,9 @@ func New(poller conf.Poller) (*Client, error) {
 	} else {
 
 		if poller.Username == "" {
-			return nil, errors.New(errors.MissingParam, "username")
+			return nil, errs.New(errs.ErrMissingParam, "username")
 		} else if poller.Password == "" {
-			return nil, errors.New(errors.MissingParam, "password")
+			return nil, errs.New(errs.ErrMissingParam, "password")
 		}
 
 		request.SetBasicAuth(poller.Username, poller.Password)
@@ -384,11 +384,11 @@ func (c *Client) InvokeRaw() ([]byte, error) {
 	)
 
 	if response, err = c.client.Do(c.request); err != nil {
-		return body, errors.New(errors.ErrConnection, err.Error())
+		return body, errs.New(errs.ErrConnection, err.Error())
 	}
 	defer func(Body io.ReadCloser) { _ = Body.Close() }(response.Body)
 	if response.StatusCode != 200 {
-		return body, errors.New(errors.APIResponse, response.Status)
+		return body, errs.New(errs.ErrAPIResponse, response.Status)
 	}
 
 	return ioutil.ReadAll(response.Body)
@@ -423,7 +423,7 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 	}
 
 	if response, err = c.client.Do(c.request); err != nil {
-		return result, responseT, parseT, errors.New(errors.ErrConnection, err.Error())
+		return result, responseT, parseT, errs.New(errs.ErrConnection, err.Error())
 	}
 	defer func(Body io.ReadCloser) { _ = Body.Close() }(response.Body)
 	if withTimers {
@@ -431,7 +431,7 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 	}
 
 	if response.StatusCode != 200 {
-		return result, responseT, parseT, errors.New(errors.APIResponse, response.Status)
+		return result, responseT, parseT, errs.New(errs.ErrAPIResponse, response.Status)
 	}
 
 	// read response body
@@ -453,19 +453,19 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 
 	// check if request was successful
 	if result = root.GetChildS("results"); result == nil {
-		return result, responseT, parseT, errors.New(errors.APIResponse, "missing \"results\"")
+		return result, responseT, parseT, errs.New(errs.ErrAPIResponse, "missing \"results\"")
 	}
 
 	if status, found = result.GetAttrValueS("status"); !found {
-		return result, responseT, parseT, errors.New(errors.APIResponse, "missing status attribute")
+		return result, responseT, parseT, errs.New(errs.ErrAPIResponse, "missing status attribute")
 	}
 
 	if status != "passed" {
-		if reason, found = result.GetAttrValueS("reason"); !found {
-			err = fmt.Errorf("%w: %s", errors.ErrAPIRequestRejected, "no reason")
-		} else {
-			err = fmt.Errorf("%w: %s", errors.ErrAPIRequestRejected, reason)
+		reason, _ = result.GetAttrValueS("reason")
+		if reason == "" {
+			reason = "no reason"
 		}
+		err = errs.New(errs.ErrAPIRequestRejected, reason)
 		return result, responseT, parseT, err
 	}
 

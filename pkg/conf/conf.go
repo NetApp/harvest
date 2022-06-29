@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"github.com/imdario/mergo"
 	"github.com/netapp/harvest/v2/pkg/constant"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"gopkg.in/yaml.v3"
@@ -82,7 +82,7 @@ func LoadHarvestConfig(configPath string) error {
 	defaults := Config.Defaults
 
 	if pollers == nil {
-		return errors.New(errors.ErrConfig, "[Pollers] section not found")
+		return errs.New(errs.ErrConfig, "[Pollers] section not found")
 	} else if defaults != nil {
 		for _, p := range pollers {
 			p.Union(defaults)
@@ -112,7 +112,7 @@ func ReadCredentialsFile(credPath string, p *Poller) error {
 		if credConfig.Defaults != nil {
 			credPoller = credConfig.Defaults
 		} else {
-			return errors.New(errors.InvalidParam, "poller not found in credentials file")
+			return errs.New(errs.ErrInvalidParam, "poller not found in credentials file")
 		}
 	}
 	if credPoller.SslKey != "" {
@@ -136,7 +136,7 @@ func ReadCredentialsFile(credPath string, p *Poller) error {
 func PollerNamed(name string) (*Poller, error) {
 	poller, ok := Config.Pollers[name]
 	if !ok {
-		return nil, errors.New(errors.ErrConfig, "poller ["+name+"] not found")
+		return nil, errs.New(errs.ErrConfig, "poller ["+name+"] not found")
 	}
 	poller.Name = name
 	return poller, nil
@@ -184,7 +184,7 @@ func GetPrometheusExporterPorts(pollerName string) (int, error) {
 	}
 	poller := Config.Pollers[pollerName]
 	if poller == nil {
-		return 0, errors.New(errors.ErrConfig, "Poller does not exist "+pollerName)
+		return 0, errs.New(errs.ErrConfig, "Poller does not exist "+pollerName)
 	}
 
 	exporters := poller.Exporters
@@ -215,7 +215,7 @@ func GetPrometheusExporterPorts(pollerName string) (int, error) {
 		}
 	}
 	if port == 0 && isPrometheusExporterConfigured {
-		return port, errors.New(errors.ErrConfig, "No free port found for poller "+pollerName)
+		return port, errs.New(errs.ErrConfig, "No free port found for poller "+pollerName)
 	}
 	return port, nil
 }

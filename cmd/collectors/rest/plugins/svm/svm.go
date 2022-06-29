@@ -7,6 +7,7 @@ package svm
 import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/tidwall/gjson"
 	"strings"
@@ -33,8 +34,11 @@ func (my *SVM) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	// invoke nameservice-nsswitch-get-iter zapi and get nsswitch info
 	if my.nsswitchInfo, err = my.GetNSSwitchInfo(data); err != nil {
-		my.Logger.Warn().Err(err).Msg("Failed to collect nsswitch info")
-		//return nil, nil
+		if errs.IsApiNotFound(err) {
+			my.Logger.Debug().Err(err).Msg("Failed to collect nsswitch info")
+		} else {
+			my.Logger.Warn().Err(err).Msg("Failed to collect nsswitch info")
+		}
 	}
 
 	// update svm instance based on the above zapi response

@@ -6,7 +6,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/harvest/version"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -47,7 +47,7 @@ func (n *NodeMon) Init(a *collector.AbstractCollector) error {
 			return err
 		}
 	} else {
-		return errors.New(errors.MissingParam, "counters")
+		return errs.New(errs.ErrMissingParam, "counters")
 	}
 	return nil
 }

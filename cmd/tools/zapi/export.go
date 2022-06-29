@@ -6,7 +6,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	client "github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/tree/yaml"
 	"io/ioutil"
@@ -22,7 +22,7 @@ func export(n *node.Node, c *client.Client, args *Args) error {
 	case "counters":
 		return exportCounters(n, c, args)
 	default:
-		return errors.New(InvalidItem, args.Item)
+		return errs.New(errs.ErrInvalidItem, args.Item)
 	}
 }
 

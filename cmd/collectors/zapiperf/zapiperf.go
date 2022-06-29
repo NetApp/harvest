@@ -24,7 +24,7 @@
 package zapiperf
 
 import (
-	errors2 "errors"
+	"errors"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/fcp"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/headroom"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/nic"
@@ -34,11 +34,10 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/color"
 	"github.com/netapp/harvest/v2/pkg/dict"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/rs/zerolog"
 	"strconv"
 	"strings"
 	"time"
@@ -196,7 +195,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	timestamp := newData.GetMetric("timestamp")
 	if timestamp == nil {
-		return nil, errors.New(errors.ErrConfig, "missing timestamp metric") // @TODO errconfig??
+		return nil, errs.New(errs.ErrConfig, "missing timestamp metric") // @TODO errconfig??
 	}
 
 	// for updating metadata
@@ -215,7 +214,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	// we will request counter data
 	if me.Query == objWorkloadDetail || me.Query == objWorkloadDetailVolume {
 		if resourceMap := me.Params.GetChildS("resource_map"); resourceMap == nil {
-			return nil, errors.New(errors.MissingParam, "resource_map")
+			return nil, errs.New(errs.ErrMissingParam, "resource_map")
 		} else {
 			instanceKeys = make([]string, 0)
 			for _, layer := range resourceMap.GetAllChildNamesS() {
@@ -700,7 +699,7 @@ func (me *ZapiPerf) getParentOpsCounters(data *matrix.Matrix, KeyAttr string) (t
 
 	if ops = data.GetMetric("ops"); ops == nil {
 		me.Logger.Error().Stack().Err(nil).Msgf("ops counter not found in cache")
-		return apiT, parseT, errors.New(errors.MissingParam, "counter ops")
+		return apiT, parseT, errs.New(errs.ErrMissingParam, "counter ops")
 	}
 
 	instanceKeys = data.GetInstanceKeys()
@@ -846,7 +845,7 @@ func (me *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 			}
 		}
 	} else {
-		return nil, errors.New(errors.MissingParam, "counters")
+		return nil, errs.New(errs.ErrMissingParam, "counters")
 	}
 
 	me.Logger.Debug().
@@ -874,7 +873,7 @@ func (me *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 			}
 		}
 	} else {
-		return nil, errors.New(errors.ErrNoMetric, "no counters in response")
+		return nil, errs.New(errs.ErrNoMetric, "no counters in response")
 	}
 
 	for key, counter := range counters {
@@ -991,7 +990,7 @@ func (me *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 			}
 
 			if service == nil || wait == nil || visits == nil {
-				return nil, errors.New(errors.MissingParam, "workload metrics")
+				return nil, errs.New(errs.ErrMissingParam, "workload metrics")
 			}
 
 			if ops = mat.GetMetric("ops"); ops == nil {
@@ -1007,7 +1006,7 @@ func (me *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 			visits.SetExportable(false)
 
 			if resourceMap := me.Params.GetChildS("resource_map"); resourceMap == nil {
-				return nil, errors.New(errors.MissingParam, "resource_map")
+				return nil, errs.New(errs.ErrMissingParam, "resource_map")
 			} else {
 				for _, x := range resourceMap.GetChildren() {
 					name := x.GetNameS()
@@ -1034,7 +1033,7 @@ func (me *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		}
 
 		if qosLabels := me.Params.GetChildS("qos_labels"); qosLabels == nil {
-			return nil, errors.New(errors.MissingParam, "qos_labels")
+			return nil, errs.New(errs.ErrMissingParam, "qos_labels")
 		} else {
 			me.qosLabels = make(map[string]string)
 			for _, label := range qosLabels.GetAllChildContentS() {
@@ -1072,7 +1071,7 @@ func (me *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	me.Logger.Debug().Msgf("added %d new, removed %d labels (total: %d)", labelsAdded, oldLabels.Size(), len(me.instanceLabels))
 
 	if len(mat.GetMetrics()) == 0 {
-		return nil, errors.New(errors.ErrNoMetric, "")
+		return nil, errs.New(errs.ErrNoMetric, "")
 	}
 
 	return nil, nil
@@ -1297,16 +1296,17 @@ func (me *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	for {
 
 		if results, batchTag, err = me.Client.InvokeBatchRequest(request, batchTag); err != nil {
-			var log *zerolog.Event
-			if errors2.Is(err, errors.ErrAPIRequestRejected) {
-				log = me.Logger.Warn()
+			if errors.Is(err, errs.ErrAPIRequestRejected) {
+				me.Logger.Info().
+					Str("request", request.GetNameS()).
+					Msg(err.Error())
 			} else {
-				log = me.Logger.Error()
+				me.Logger.Error().
+					Err(err).
+					Str("request", request.GetNameS()).
+					Str("batchTag", batchTag).
+					Msg("InvokeBatchRequest failed")
 			}
-			log.Err(err).
-				Str("request", request.GetNameS()).
-				Str("batchTag", batchTag).
-				Msg("InvokeBatchRequest failed")
 			break
 		}
 
@@ -1361,7 +1361,7 @@ func (me *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	me.Logger.Debug().Msgf("added %d new, removed %d (total instances %d)", added, removed, newSize)
 
 	if newSize == 0 {
-		return nil, errors.New(errors.ErrNoInstance, "")
+		return nil, errs.New(errs.ErrNoInstance, "")
 	}
 
 	return nil, err

@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/exporter"
 	"github.com/netapp/harvest/v2/pkg/color"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"io"
 	"io/ioutil"
@@ -72,17 +72,17 @@ func (e *InfluxDB) Init() error {
 	// check required / optional parameters
 
 	if bucket = e.Params.Bucket; bucket == nil {
-		return errors.New(errors.MissingParam, "bucket")
+		return errs.New(errs.ErrMissingParam, "bucket")
 	}
 	e.Logger.Debug().Msgf("using bucket [%s]", *bucket)
 
 	if org = e.Params.Org; org == nil {
-		return errors.New(errors.MissingParam, "org")
+		return errs.New(errs.ErrMissingParam, "org")
 	}
 	e.Logger.Debug().Msgf("using organization [%s]", *org)
 
 	if token = e.Params.Token; token == nil {
-		return errors.New(errors.MissingParam, "token")
+		return errs.New(errs.ErrMissingParam, "token")
 	}
 	e.token = *token
 	e.Logger.Debug().Msg("will use authorization with api token")
@@ -104,7 +104,7 @@ func (e *InfluxDB) Init() error {
 	// addr is expected to include host only (no scheme, no port)
 	if url = e.Params.URL; url == nil {
 		if addr = e.Params.Addr; addr == nil {
-			return errors.New(errors.MissingParam, "url or addr")
+			return errs.New(errs.ErrMissingParam, "url or addr")
 		}
 
 		if port = e.Params.Port; port == nil {
@@ -214,9 +214,9 @@ func (e *InfluxDB) Emit(data [][]byte) error {
 	if response.StatusCode != expectedResponseCode {
 		defer func(Body io.ReadCloser) { _ = Body.Close() }(response.Body)
 		if body, err := ioutil.ReadAll(response.Body); err != nil {
-			return errors.New(errors.APIResponse, err.Error())
+			return errs.New(errs.ErrAPIResponse, err.Error())
 		} else {
-			return fmt.Errorf("%w: %s", errors.ErrAPIRequestRejected, string(body))
+			return fmt.Errorf("%w: %s", errs.ErrAPIRequestRejected, string(body))
 		}
 	}
 	return nil

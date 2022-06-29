@@ -4,12 +4,16 @@
 
 package matrix
 
+type matrixError string
+
+func (e matrixError) Error() string { return string(e) }
+
 const (
-	InvalidDtype         = "invalid data type"
-	InvalidMetricKey     = "invalid metric key"
-	InvalidInstanceKey   = "invalid instance key"
-	DuplicateMetricKey   = "duplicate metric key"
-	DuplicateInstanceKey = "duplicate instance key"
-	OverflowError        = "overflow error"
-	UnequalVectors       = "unequal vectors"
+	ErrInvalidDtype         = matrixError("invalid data type")
+	ErrInvalidMetricKey     = matrixError("invalid metric key")
+	ErrInvalidInstanceKey   = matrixError("invalid instance key")
+	ErrDuplicateMetricKey   = matrixError("duplicate metric key")
+	ErrDuplicateInstanceKey = matrixError("duplicate instance key")
+	ErrOverflow             = matrixError("overflow error")
+	ErrUnequalVectors       = matrixError("unequal vectors")
 )

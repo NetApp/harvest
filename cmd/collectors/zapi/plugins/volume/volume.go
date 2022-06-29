@@ -1,11 +1,12 @@
 package volume
 
 import (
+	"errors"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"strconv"
@@ -105,15 +106,23 @@ func (my *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 
 		// invoke disk-encrypt-get-iter zapi and populate disk info
-		disks, err1 := my.getDiskData()
+		disks, err1 := my.getEncryptedDisks()
 		// invoke aggr-status-get-iter zapi and populate aggr disk mapping info
 		aggrDiskMap, err2 := my.getAggrDiskMapping()
 
 		if err1 != nil {
-			my.Logger.Warn().Err(err1).Msg("Failed to collect disk data")
+			if errors.Is(err1, errs.ErrNoInstance) {
+				my.Logger.Debug().Err(err1).Msg("Failed to collect disk data")
+			} else {
+				my.Logger.Error().Err(err1).Msg("Failed to collect disk data")
+			}
 		}
 		if err2 != nil {
-			my.Logger.Warn().Err(err2).Msg("Failed to collect aggregate-disk mapping data")
+			if errors.Is(err1, errs.ErrNoInstance) {
+				my.Logger.Debug().Err(err2).Msg("Failed to collect aggregate-disk mapping data")
+			} else {
+				my.Logger.Error().Err(err2).Msg("Failed to collect aggregate-disk mapping data")
+			}
 		}
 		// update aggrsMap based on disk data and addr disk mapping
 		my.updateAggrMap(disks, aggrDiskMap)
@@ -301,7 +310,7 @@ func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
 	}
 }
 
-func (my *Volume) getDiskData() ([]string, error) {
+func (my *Volume) getEncryptedDisks() ([]string, error) {
 	var (
 		result    []*node.Node
 		diskNames []string
@@ -320,7 +329,7 @@ func (my *Volume) getDiskData() ([]string, error) {
 	}
 
 	if len(result) == 0 || result == nil {
-		return nil, errors.New(errors.ErrNoInstance, "no records found")
+		return nil, errs.New(errs.ErrNoInstance, "no records found")
 	}
 
 	for _, disk := range result {
@@ -358,7 +367,7 @@ func (my *Volume) getAggrDiskMapping() (map[string]aggrData, error) {
 	}
 
 	if len(result) == 0 || result == nil {
-		return nil, errors.New(errors.ErrNoInstance, "no records found")
+		return nil, errs.New(errs.ErrNoInstance, "no records found")
 	}
 
 	for _, aggrDiskData := range result {

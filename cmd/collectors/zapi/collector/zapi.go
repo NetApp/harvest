@@ -23,7 +23,7 @@ import (
 
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/pkg/color"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 
@@ -84,11 +84,11 @@ func (me *Zapi) InitVars() error {
 	var err error
 
 	if me.Client, err = client.New(conf.ZapiPoller(me.Params)); err != nil { // convert to connection error, so poller aborts
-		return errors.New(errors.ErrConnection, err.Error())
+		return errs.New(errs.ErrConnection, err.Error())
 	}
 	me.Client.TraceLogSet(me.Name, me.Params)
 	if err = me.Client.Init(5); err != nil { // 5 retries before giving up to connect
-		return errors.New(errors.ErrConnection, err.Error())
+		return errs.New(errs.ErrConnection, err.Error())
 	}
 	me.Logger.Debug().Msgf("connected to: %s", me.Client.Info())
 
@@ -115,12 +115,12 @@ func (me *Zapi) InitVars() error {
 
 	// object name from subtemplate
 	if me.object = me.Params.GetChildContentS("object"); me.object == "" {
-		return errors.New(errors.MissingParam, "object")
+		return errs.New(errs.ErrMissingParam, "object")
 	}
 
 	// api query literal
 	if me.Query = me.Params.GetChildContentS("query"); me.Query == "" {
-		return errors.New(errors.MissingParam, "query")
+		return errs.New(errs.ErrMissingParam, "query")
 	}
 
 	// if the object template includes a client_timeout, use it
@@ -175,7 +175,7 @@ func (me *Zapi) InitCache() error {
 
 	counters := me.Params.GetChildS("counters")
 	if counters == nil {
-		return errors.New(errors.MissingParam, "counters")
+		return errs.New(errs.ErrMissingParam, "counters")
 	}
 
 	var ok bool
@@ -184,7 +184,7 @@ func (me *Zapi) InitCache() error {
 
 	if ok, me.desiredAttributes = me.LoadCounters(counters); !ok {
 		if me.Params.GetChildContentS("collect_only_labels") != "true" {
-			return errors.New(errors.ErrNoMetric, "failed to parse any")
+			return errs.New(errs.ErrNoMetric, "failed to parse any")
 		}
 	}
 
@@ -192,7 +192,7 @@ func (me *Zapi) InitCache() error {
 
 	// unless cluster is the only instance, require instance keys
 	if len(me.instanceKeyPaths) == 0 && me.Params.GetChildContentS("only_cluster_instance") != "true" {
-		return errors.New(errors.MissingParam, "no instance keys indicated")
+		return errs.New(errs.ErrMissingParam, "no instance keys indicated")
 	}
 
 	// @TODO validate
@@ -237,7 +237,7 @@ func (me *Zapi) PollInstance() (map[string]*matrix.Matrix, error) {
 
 	if len(me.shortestPathPrefix) == 0 {
 		msg := fmt.Sprintf("There is an issue with the template [%s]. It could be due to wrong counter structure.", me.TemplatePath)
-		return nil, errors.New(errors.ErrTemplate, msg)
+		return nil, errs.New(errs.ErrTemplate, msg)
 	}
 
 	oldCount = uint64(len(mat.GetInstances()))
@@ -310,7 +310,7 @@ func (me *Zapi) PollInstance() (map[string]*matrix.Matrix, error) {
 	me.Logger.Debug().Msgf("added %d instances to cache (old cache had %d)", count, oldCount)
 
 	if len(mat.GetInstances()) == 0 {
-		return nil, errors.New(errors.ErrNoInstance, "no instances fetched")
+		return nil, errs.New(errs.ErrNoInstance, "no instances fetched")
 	}
 
 	return nil, nil
@@ -449,7 +449,7 @@ func (me *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 	me.AddCollectCount(count)
 
 	if len(mat.GetInstances()) == 0 {
-		return nil, errors.New(errors.ErrNoInstance, "")
+		return nil, errs.New(errs.ErrNoInstance, "")
 	}
 
 	return me.Matrix, nil

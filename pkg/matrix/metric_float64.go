@@ -7,7 +7,7 @@ package matrix
 import (
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/color"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"strconv"
 )
 
@@ -220,7 +220,7 @@ func (me *MetricFloat64) Delta(s Metric) error {
 	sValues := s.GetValuesFloat64()
 	sRecord := s.GetRecords()
 	if len(me.values) != len(sValues) {
-		return errors.New(UnequalVectors, fmt.Sprintf("minuend=%d, subtrahend=%d", len(me.values), len(sValues)))
+		return errs.New(ErrUnequalVectors, fmt.Sprintf("minuend=%d, subtrahend=%d", len(me.values), len(sValues)))
 	}
 	for i := range me.values {
 		if me.record[i] && sRecord[i] {
@@ -234,7 +234,7 @@ func (me *MetricFloat64) Divide(s Metric) error {
 	sValues := s.GetValuesFloat64()
 	sRecord := s.GetRecords()
 	if len(me.values) != len(sValues) {
-		return errors.New(UnequalVectors, fmt.Sprintf("minuend=%d, subtrahend=%d", len(me.values), len(sValues)))
+		return errs.New(ErrUnequalVectors, fmt.Sprintf("minuend=%d, subtrahend=%d", len(me.values), len(sValues)))
 	}
 	for i := 0; i < len(me.values); i++ {
 		if me.record[i] && sRecord[i] && sValues[i] != 0 {
@@ -249,7 +249,7 @@ func (me *MetricFloat64) DivideWithThreshold(s Metric, t int) error {
 	sValues := s.GetValuesFloat64()
 	sRecord := s.GetRecords()
 	if len(me.values) != len(sValues) {
-		return errors.New(UnequalVectors, fmt.Sprintf("minuend=%d, subtrahend=%d", len(me.values), len(sValues)))
+		return errs.New(ErrUnequalVectors, fmt.Sprintf("minuend=%d, subtrahend=%d", len(me.values), len(sValues)))
 	}
 	for i := 0; i < len(me.values); i++ {
 		if me.record[i] && sRecord[i] && sValues[i] >= x {

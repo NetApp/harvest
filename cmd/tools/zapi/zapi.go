@@ -9,18 +9,13 @@ import (
 	client "github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/color"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/spf13/cobra"
 	"log"
 	"os"
 	"strconv"
 	"strings"
-)
-
-const (
-	AttributeNotFound = "attribute not found"
-	InvalidItem       = "invalid item"
 )
 
 var (
@@ -187,7 +182,7 @@ func get(c *client.Client, args *Args) (*node.Node, error) {
 	case "data":
 		return getData(c, args)
 	default:
-		return nil, errors.New(InvalidItem, args.Item)
+		return nil, errs.New(errs.ErrInvalidItem, args.Item)
 	}
 }
 
@@ -206,7 +201,7 @@ func getApis(c *client.Client) (*node.Node, error) {
 	}
 
 	if n = n.GetChildS("apis"); n == nil {
-		return nil, errors.New(AttributeNotFound, "apis")
+		return nil, errs.New(errs.ErrAttributeNotFound, "apis")
 	}
 	return n, nil
 }
@@ -222,7 +217,7 @@ func getObjects(c *client.Client) (*node.Node, error) {
 	}
 
 	if n = n.GetChildS("objects"); n == nil {
-		return nil, errors.New(AttributeNotFound, "objects")
+		return nil, errs.New(errs.ErrAttributeNotFound, "objects")
 	}
 	return n, nil
 }
@@ -241,7 +236,7 @@ func getCounters(c *client.Client, args *Args) (*node.Node, error) {
 	}
 
 	if n = n.GetChildS("counters"); n == nil {
-		return nil, errors.New(AttributeNotFound, "counters")
+		return nil, errs.New(errs.ErrAttributeNotFound, "counters")
 	}
 	return n, nil
 }
@@ -260,7 +255,7 @@ func getCounter(c *client.Client, args *Args) (*node.Node, error) {
 			return cnt, nil
 		}
 	}
-	return nil, errors.New(AttributeNotFound, args.Counter)
+	return nil, errs.New(errs.ErrAttributeNotFound, args.Counter)
 }
 
 func getInstances(c *client.Client, args *Args) (*node.Node, error) {
@@ -281,7 +276,7 @@ func getInstances(c *client.Client, args *Args) (*node.Node, error) {
 	}
 
 	if n = n.GetChildS("attributes-list"); n == nil {
-		return nil, errors.New(AttributeNotFound, "attributes-list")
+		return nil, errs.New(errs.ErrAttributeNotFound, "attributes-list")
 	}
 	return n, nil
 
