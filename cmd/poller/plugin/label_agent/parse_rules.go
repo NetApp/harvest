@@ -12,24 +12,24 @@ import (
 )
 
 // parse rules from plugin parameters and return number of rules parsed
-func (me *LabelAgent) parseRules() int {
+func (a *LabelAgent) parseRules() int {
 
-	me.splitSimpleRules = make([]splitSimpleRule, 0)
-	me.splitRegexRules = make([]splitRegexRule, 0)
-	me.joinSimpleRules = make([]joinSimpleRule, 0)
-	me.replaceSimpleRules = make([]replaceSimpleRule, 0)
-	me.replaceRegexRules = make([]replaceRegexRule, 0)
-	me.excludeEqualsRules = make([]excludeEqualsRule, 0)
-	me.excludeContainsRules = make([]excludeContainsRule, 0)
-	me.excludeRegexRules = make([]excludeRegexRule, 0)
-	me.includeEqualsRules = make([]includeEqualsRule, 0)
-	me.includeContainsRules = make([]includeContainsRule, 0)
-	me.includeRegexRules = make([]includeRegexRule, 0)
-	me.splitPairsRules = make([]splitPairsRule, 0)
-	me.valueToNumRules = make([]valueToNumRule, 0)
-	me.valueToNumRegexRules = make([]valueToNumRegexRule, 0)
+	a.splitSimpleRules = make([]splitSimpleRule, 0)
+	a.splitRegexRules = make([]splitRegexRule, 0)
+	a.joinSimpleRules = make([]joinSimpleRule, 0)
+	a.replaceSimpleRules = make([]replaceSimpleRule, 0)
+	a.replaceRegexRules = make([]replaceRegexRule, 0)
+	a.excludeEqualsRules = make([]excludeEqualsRule, 0)
+	a.excludeContainsRules = make([]excludeContainsRule, 0)
+	a.excludeRegexRules = make([]excludeRegexRule, 0)
+	a.includeEqualsRules = make([]includeEqualsRule, 0)
+	a.includeContainsRules = make([]includeContainsRule, 0)
+	a.includeRegexRules = make([]includeRegexRule, 0)
+	a.splitPairsRules = make([]splitPairsRule, 0)
+	a.valueToNumRules = make([]valueToNumRule, 0)
+	a.valueToNumRegexRules = make([]valueToNumRegexRule, 0)
 
-	for _, c := range me.Params.GetChildren() {
+	for _, c := range a.Params.GetChildren() {
 		name := c.GetNameS()
 
 		rules := c.GetChildren()
@@ -39,120 +39,120 @@ func (me *LabelAgent) parseRules() int {
 
 			switch name {
 			case "split":
-				me.parseSplitSimpleRule(rule)
+				a.parseSplitSimpleRule(rule)
 			case "split_regex":
-				me.parseSplitRegexRule(rule)
+				a.parseSplitRegexRule(rule)
 			case "split_pairs":
-				me.parseSplitPairsRule(rule)
+				a.parseSplitPairsRule(rule)
 			case "join":
-				me.parseJoinSimpleRule(rule)
+				a.parseJoinSimpleRule(rule)
 			case "replace":
-				me.parseReplaceSimpleRule(rule)
+				a.parseReplaceSimpleRule(rule)
 			case "replace_regex":
-				me.parseReplaceRegexRule(rule)
+				a.parseReplaceRegexRule(rule)
 			case "exclude_equals":
-				me.parseExcludeEqualsRule(rule)
+				a.parseExcludeEqualsRule(rule)
 			case "exclude_contains":
-				me.parseExcludeContainsRule(rule)
+				a.parseExcludeContainsRule(rule)
 			case "exclude_regex":
-				me.parseExcludeRegexRule(rule)
+				a.parseExcludeRegexRule(rule)
 			case "include_equals":
-				me.parseIncludeEqualsRule(rule)
+				a.parseIncludeEqualsRule(rule)
 			case "include_contains":
-				me.parseIncludeContainsRule(rule)
+				a.parseIncludeContainsRule(rule)
 			case "include_regex":
-				me.parseIncludeRegexRule(rule)
+				a.parseIncludeRegexRule(rule)
 			case "value_to_num":
-				me.parseValueToNumRule(rule)
+				a.parseValueToNumRule(rule)
 			case "value_to_num_regex":
-				me.parseValueToNumRegexRule(rule)
+				a.parseValueToNumRegexRule(rule)
 			default:
-				me.Logger.Warn().
-					Str("object", me.ParentParams.GetChildContentS("object")).
+				a.Logger.Warn().
+					Str("object", a.ParentParams.GetChildContentS("object")).
 					Str("name", name).Msg("Unknown rule name")
 			}
 		}
 	}
 
-	me.actions = make([]func(matrix *matrix.Matrix) error, 0)
+	a.actions = make([]func(matrix *matrix.Matrix) error, 0)
 	count := 0
 
-	for _, c := range me.Params.GetChildren() {
+	for _, c := range a.Params.GetChildren() {
 		name := c.GetNameS()
 		switch name {
 		case "split":
-			if len(me.splitSimpleRules) != 0 {
-				me.actions = append(me.actions, me.splitSimple)
-				count += len(me.splitSimpleRules)
+			if len(a.splitSimpleRules) != 0 {
+				a.actions = append(a.actions, a.splitSimple)
+				count += len(a.splitSimpleRules)
 			}
 		case "split_regex":
-			if len(me.splitRegexRules) != 0 {
-				me.actions = append(me.actions, me.splitRegex)
-				count += len(me.splitRegexRules)
+			if len(a.splitRegexRules) != 0 {
+				a.actions = append(a.actions, a.splitRegex)
+				count += len(a.splitRegexRules)
 			}
 		case "split_pairs":
-			if len(me.splitPairsRules) != 0 {
-				me.actions = append(me.actions, me.splitPairs)
-				count += len(me.splitPairsRules)
+			if len(a.splitPairsRules) != 0 {
+				a.actions = append(a.actions, a.splitPairs)
+				count += len(a.splitPairsRules)
 			}
 		case "join":
-			if len(me.joinSimpleRules) != 0 {
-				me.actions = append(me.actions, me.joinSimple)
-				count += len(me.joinSimpleRules)
+			if len(a.joinSimpleRules) != 0 {
+				a.actions = append(a.actions, a.joinSimple)
+				count += len(a.joinSimpleRules)
 			}
 		case "replace":
-			if len(me.replaceSimpleRules) != 0 {
-				me.actions = append(me.actions, me.replaceSimple)
-				count += len(me.replaceSimpleRules)
+			if len(a.replaceSimpleRules) != 0 {
+				a.actions = append(a.actions, a.replaceSimple)
+				count += len(a.replaceSimpleRules)
 			}
 		case "replace_regex":
-			if len(me.replaceRegexRules) != 0 {
-				me.actions = append(me.actions, me.replaceRegex)
-				count += len(me.replaceRegexRules)
+			if len(a.replaceRegexRules) != 0 {
+				a.actions = append(a.actions, a.replaceRegex)
+				count += len(a.replaceRegexRules)
 			}
 		case "exclude_equals":
-			if len(me.excludeEqualsRules) != 0 {
-				me.actions = append(me.actions, me.excludeEquals)
-				count += len(me.excludeEqualsRules)
+			if len(a.excludeEqualsRules) != 0 {
+				a.actions = append(a.actions, a.excludeEquals)
+				count += len(a.excludeEqualsRules)
 			}
 		case "exclude_contains":
-			if len(me.excludeContainsRules) != 0 {
-				me.actions = append(me.actions, me.excludeContains)
-				count += len(me.excludeContainsRules)
+			if len(a.excludeContainsRules) != 0 {
+				a.actions = append(a.actions, a.excludeContains)
+				count += len(a.excludeContainsRules)
 			}
 		case "exclude_regex":
-			if len(me.excludeRegexRules) != 0 {
-				me.actions = append(me.actions, me.excludeRegex)
-				count += len(me.excludeRegexRules)
+			if len(a.excludeRegexRules) != 0 {
+				a.actions = append(a.actions, a.excludeRegex)
+				count += len(a.excludeRegexRules)
 			}
 		case "include_equals":
-			if len(me.includeEqualsRules) != 0 {
-				me.actions = append(me.actions, me.includeEquals)
-				count += len(me.includeEqualsRules)
+			if len(a.includeEqualsRules) != 0 {
+				a.actions = append(a.actions, a.includeEquals)
+				count += len(a.includeEqualsRules)
 			}
 		case "include_contains":
-			if len(me.includeContainsRules) != 0 {
-				me.actions = append(me.actions, me.includeContains)
-				count += len(me.includeContainsRules)
+			if len(a.includeContainsRules) != 0 {
+				a.actions = append(a.actions, a.includeContains)
+				count += len(a.includeContainsRules)
 			}
 		case "include_regex":
-			if len(me.includeRegexRules) != 0 {
-				me.actions = append(me.actions, me.includeRegex)
-				count += len(me.includeRegexRules)
+			if len(a.includeRegexRules) != 0 {
+				a.actions = append(a.actions, a.includeRegex)
+				count += len(a.includeRegexRules)
 			}
 		case "value_to_num":
-			if len(me.valueToNumRules) != 0 {
-				me.actions = append(me.actions, me.mapValueToNum)
-				count += len(me.valueToNumRules)
+			if len(a.valueToNumRules) != 0 {
+				a.actions = append(a.actions, a.mapValueToNum)
+				count += len(a.valueToNumRules)
 			}
 		case "value_to_num_regex":
-			if len(me.valueToNumRegexRules) != 0 {
-				me.actions = append(me.actions, me.mapValueToNumRegex)
-				count += len(me.valueToNumRegexRules)
+			if len(a.valueToNumRegexRules) != 0 {
+				a.actions = append(a.actions, a.mapValueToNumRegex)
+				count += len(a.valueToNumRegexRules)
 			}
 		default:
-			me.Logger.Warn().
-				Str("object", me.ParentParams.GetChildContentS("object")).
+			a.Logger.Warn().
+				Str("object", a.ParentParams.GetChildContentS("object")).
 				Str("name", name).Msg("Unknown rule name")
 		}
 	}
@@ -171,21 +171,21 @@ type splitSimpleRule struct {
 // if node="jamaica1/ag1/p1/d1", then:
 // aggr="ag1", plex="p1", disk="d1"
 
-func (me *LabelAgent) parseSplitSimpleRule(rule string) {
+func (a *LabelAgent) parseSplitSimpleRule(rule string) {
 	if fields := strings.SplitN(rule, " `", 2); len(fields) == 2 {
 		r := splitSimpleRule{source: strings.TrimSpace(fields[0])}
-		me.Logger.Debug().Msgf("fields := %v", fields)
+		a.Logger.Debug().Msgf("fields := %v", fields)
 		if fields = strings.SplitN(fields[1], "` ", 2); len(fields) == 2 {
-			me.Logger.Debug().Msgf("fields = %v", fields)
+			a.Logger.Debug().Msgf("fields = %v", fields)
 			r.sep = fields[0]
 			if r.targets = strings.Split(fields[1], ","); len(r.targets) != 0 {
-				me.splitSimpleRules = append(me.splitSimpleRules, r)
-				me.Logger.Debug().Msgf("(split) parsed rule [%v]", r)
+				a.splitSimpleRules = append(a.splitSimpleRules, r)
+				a.Logger.Debug().Msgf("(split) parsed rule [%v]", r)
 				return
 			}
 		}
 	}
-	me.Logger.Warn().Msgf("(split) rule has invalid format [%s]", rule)
+	a.Logger.Warn().Msgf("(split) rule has invalid format [%s]", rule)
 }
 
 type splitPairsRule struct {
@@ -198,16 +198,16 @@ type splitPairsRule struct {
 // node ` ` `:`
 // will use single space to extract pairs
 // will use colon to extract key-value
-func (me *LabelAgent) parseSplitPairsRule(rule string) {
+func (a *LabelAgent) parseSplitPairsRule(rule string) {
 	if fields := strings.Split(rule, "`"); len(fields) == 5 {
 		r := splitPairsRule{source: strings.TrimSpace(fields[0])}
 		r.sep1 = fields[1]
 		r.sep2 = fields[3]
-		me.Logger.Debug().Msgf("(split_pairs) parsed rule [%v]", r)
-		me.splitPairsRules = append(me.splitPairsRules, r)
+		a.Logger.Debug().Msgf("(split_pairs) parsed rule [%v]", r)
+		a.splitPairsRules = append(a.splitPairsRules, r)
 		return
 	}
-	me.Logger.Warn().Msgf("(split_pairs) rule has invalid format [%s]", rule)
+	a.Logger.Warn().Msgf("(split_pairs) rule has invalid format [%s]", rule)
 }
 
 type splitRegexRule struct {
@@ -221,24 +221,24 @@ type splitRegexRule struct {
 // if node="jamaica1_ag1_p1_d1", then:
 // aggr="ag1", plex="p1", disk="d1"
 
-func (me *LabelAgent) parseSplitRegexRule(rule string) {
+func (a *LabelAgent) parseSplitRegexRule(rule string) {
 	if fields := strings.SplitN(rule, " `", 2); len(fields) == 2 {
 		r := splitRegexRule{source: strings.TrimSpace(fields[0])}
 		if fields = strings.SplitN(fields[1], "` ", 2); len(fields) == 2 {
 			var err error
 			if r.reg, err = regexp.Compile(fields[0]); err != nil {
-				me.Logger.Error().Stack().Err(err).Msg("(split_regex) invalid regex")
+				a.Logger.Error().Stack().Err(err).Msg("(split_regex) invalid regex")
 				return
 			}
-			me.Logger.Trace().Msgf("(split_regex) compule regex [%s]", r.reg.String())
+			a.Logger.Trace().Msgf("(split_regex) compule regex [%s]", r.reg.String())
 			if r.targets = strings.Split(fields[1], ","); len(r.targets) != 0 {
-				me.splitRegexRules = append(me.splitRegexRules, r)
-				me.Logger.Debug().Msgf("(split_regex) parsed rule [%v]", r)
+				a.splitRegexRules = append(a.splitRegexRules, r)
+				a.Logger.Debug().Msgf("(split_regex) parsed rule [%v]", r)
 				return
 			}
 		}
 	}
-	me.Logger.Warn().Msgf("(split_regex) rule has invalid format [%s]", rule)
+	a.Logger.Warn().Msgf("(split_regex) rule has invalid format [%s]", rule)
 }
 
 type joinSimpleRule struct {
@@ -252,19 +252,19 @@ type joinSimpleRule struct {
 // if aggr="aggr1" and plex="plex1"; then
 // plex_long="aggr1_plex1"
 
-func (me *LabelAgent) parseJoinSimpleRule(rule string) {
+func (a *LabelAgent) parseJoinSimpleRule(rule string) {
 	if fields := strings.SplitN(rule, " `", 2); len(fields) == 2 {
 		r := joinSimpleRule{target: strings.TrimSpace(fields[0])}
 		if fields = strings.SplitN(fields[1], "` ", 2); len(fields) == 2 {
 			r.sep = fields[0]
 			if r.sources = strings.Split(fields[1], ","); len(r.sources) != 0 {
-				me.joinSimpleRules = append(me.joinSimpleRules, r)
-				me.Logger.Debug().Msgf("(join) parsed rule [%v]", r)
+				a.joinSimpleRules = append(a.joinSimpleRules, r)
+				a.Logger.Debug().Msgf("(join) parsed rule [%v]", r)
 				return
 			}
 		}
 	}
-	me.Logger.Warn().Msgf("(join) rule has invalid format [%s]", rule)
+	a.Logger.Warn().Msgf("(join) rule has invalid format [%s]", rule)
 }
 
 type replaceSimpleRule struct {
@@ -279,18 +279,18 @@ type replaceSimpleRule struct {
 // if node="node_jamaica1"; then:
 // node_short="jamaica1"
 
-func (me *LabelAgent) parseReplaceSimpleRule(rule string) {
+func (a *LabelAgent) parseReplaceSimpleRule(rule string) {
 	if fields := strings.SplitN(rule, " `", 3); len(fields) == 3 {
 		if labels := strings.Fields(fields[0]); len(labels) == 2 {
 			r := replaceSimpleRule{source: labels[0], target: labels[1]}
 			r.old = strings.TrimSuffix(fields[1], "`")
 			r.new = strings.TrimSuffix(fields[2], "`")
-			me.replaceSimpleRules = append(me.replaceSimpleRules, r)
-			me.Logger.Debug().Msgf("(replace) parsed rule [%v]", r)
+			a.replaceSimpleRules = append(a.replaceSimpleRules, r)
+			a.Logger.Debug().Msgf("(replace) parsed rule [%v]", r)
 			return
 		}
 	}
-	me.Logger.Warn().Msgf("(replace) rule has invalid format [%s]", rule)
+	a.Logger.Warn().Msgf("(replace) rule has invalid format [%s]", rule)
 }
 
 type replaceRegexRule struct {
@@ -306,22 +306,22 @@ type replaceRegexRule struct {
 // if node="node_10_dc2"; then:
 // node="Node-10"
 
-func (me *LabelAgent) parseReplaceRegexRule(rule string) {
+func (a *LabelAgent) parseReplaceRegexRule(rule string) {
 	if fields := strings.SplitN(rule, " `", 3); len(fields) == 3 {
 		if labels := strings.Fields(fields[0]); len(labels) == 2 {
 			r := replaceRegexRule{source: labels[0], target: labels[1]}
 			var err error
 			if r.reg, err = regexp.Compile(strings.TrimSuffix(fields[1], "`")); err != nil {
-				me.Logger.Error().Stack().Err(err).Msg("(replace_regex) invalid regex")
+				a.Logger.Error().Stack().Err(err).Msg("(replace_regex) invalid regex")
 				return
 			}
-			me.Logger.Trace().Msgf("(replace_regex) compiled regular expression [%s]", r.reg.String())
+			a.Logger.Trace().Msgf("(replace_regex) compiled regular expression [%s]", r.reg.String())
 
 			r.indices = make([]int, 0)
 			errPos := -1
 
 			if fields[2] = strings.TrimSuffix(fields[2], "`"); len(fields[2]) != 0 {
-				me.Logger.Trace().Msgf("(replace_regex) parsing substitution string [%s] (%d)", fields[2], len(fields[2]))
+				a.Logger.Trace().Msgf("(replace_regex) parsing substitution string [%s] (%d)", fields[2], len(fields[2]))
 				insideNum := false
 				num := ""
 				for i, b := range fields[2] {
@@ -352,15 +352,15 @@ func (me *LabelAgent) parseReplaceRegexRule(rule string) {
 				}
 			}
 			if errPos != -1 {
-				me.Logger.Error().Stack().Err(nil).Msgf("(replace_regex) invalid char in substitution string at pos %d (%s)", errPos, string(fields[2][errPos]))
+				a.Logger.Error().Stack().Err(nil).Msgf("(replace_regex) invalid char in substitution string at pos %d (%s)", errPos, string(fields[2][errPos]))
 				return
 			}
-			me.replaceRegexRules = append(me.replaceRegexRules, r)
-			me.Logger.Debug().Msgf("(replace_regex) parsed rule [%v]", r)
+			a.replaceRegexRules = append(a.replaceRegexRules, r)
+			a.Logger.Debug().Msgf("(replace_regex) parsed rule [%v]", r)
 			return
 		}
 	}
-	me.Logger.Warn().Msgf("(replace_regex) rule has invalid format [%s]", rule)
+	a.Logger.Warn().Msgf("(replace_regex) rule has invalid format [%s]", rule)
 }
 
 type excludeEqualsRule struct {
@@ -372,14 +372,14 @@ type excludeEqualsRule struct {
 // vol_type `flexgroup_constituent`
 // all instances with matching label type, will not be exported
 
-func (me *LabelAgent) parseExcludeEqualsRule(rule string) {
+func (a *LabelAgent) parseExcludeEqualsRule(rule string) {
 	if fields := strings.SplitN(rule, " `", 2); len(fields) == 2 {
 		r := excludeEqualsRule{label: fields[0]}
 		r.value = strings.TrimSuffix(fields[1], "`")
-		me.excludeEqualsRules = append(me.excludeEqualsRules, r)
-		me.Logger.Debug().Msgf("(exclude_equals) parsed rule [%v]", r)
+		a.excludeEqualsRules = append(a.excludeEqualsRules, r)
+		a.Logger.Debug().Msgf("(exclude_equals) parsed rule [%v]", r)
 	} else {
-		me.Logger.Warn().Msgf("(exclude_equals) rule definition [%s] should have two fields", rule)
+		a.Logger.Warn().Msgf("(exclude_equals) rule definition [%s] should have two fields", rule)
 	}
 }
 
@@ -388,14 +388,14 @@ type excludeContainsRule struct {
 	value string
 }
 
-func (me *LabelAgent) parseExcludeContainsRule(rule string) {
+func (a *LabelAgent) parseExcludeContainsRule(rule string) {
 	if fields := strings.SplitN(rule, " `", 2); len(fields) == 2 {
 		r := excludeContainsRule{label: fields[0]}
 		r.value = strings.TrimSuffix(fields[1], "`")
-		me.excludeContainsRules = append(me.excludeContainsRules, r)
-		me.Logger.Debug().Msgf("(exclude_contains) parsed rule [%v]", r)
+		a.excludeContainsRules = append(a.excludeContainsRules, r)
+		a.Logger.Debug().Msgf("(exclude_contains) parsed rule [%v]", r)
 	} else {
-		me.Logger.Error().Stack().Err(nil).Msgf("(exclude_contains) rule definition [%s] should have two fields", rule)
+		a.Logger.Error().Stack().Err(nil).Msgf("(exclude_contains) rule definition [%s] should have two fields", rule)
 	}
 }
 
@@ -404,19 +404,19 @@ type excludeRegexRule struct {
 	reg   *regexp.Regexp
 }
 
-func (me *LabelAgent) parseExcludeRegexRule(rule string) {
+func (a *LabelAgent) parseExcludeRegexRule(rule string) {
 	if fields := strings.SplitN(rule, " `", 2); len(fields) == 2 {
 		r := excludeRegexRule{label: fields[0]}
 		var err error
 		if r.reg, err = regexp.Compile(strings.TrimSuffix(fields[1], "`")); err == nil {
-			me.excludeRegexRules = append(me.excludeRegexRules, r)
-			me.Logger.Debug().Msgf("(exclude_regex) compiled regex: [%s]", r.reg.String())
-			me.Logger.Debug().Msgf("(exclude_regex) parsed rule [%v]", r)
+			a.excludeRegexRules = append(a.excludeRegexRules, r)
+			a.Logger.Debug().Msgf("(exclude_regex) compiled regex: [%s]", r.reg.String())
+			a.Logger.Debug().Msgf("(exclude_regex) parsed rule [%v]", r)
 		} else {
-			me.Logger.Error().Stack().Err(err).Msgf("(exclude_regex) compile regex:")
+			a.Logger.Error().Stack().Err(err).Msgf("(exclude_regex) compile regex:")
 		}
 	} else {
-		me.Logger.Error().Stack().Err(nil).Msgf("(exclude_regex) rule definition [%s] should have two fields", rule)
+		a.Logger.Error().Stack().Err(nil).Msgf("(exclude_regex) rule definition [%s] should have two fields", rule)
 	}
 }
 
@@ -429,14 +429,14 @@ type includeEqualsRule struct {
 // vol_type `flexgroup_constituent`
 // all instances with matching label type, will be exported
 
-func (me *LabelAgent) parseIncludeEqualsRule(rule string) {
+func (a *LabelAgent) parseIncludeEqualsRule(rule string) {
 	if fields := strings.SplitN(rule, " `", 2); len(fields) == 2 {
 		r := includeEqualsRule{label: fields[0]}
 		r.value = strings.TrimSuffix(fields[1], "`")
-		me.includeEqualsRules = append(me.includeEqualsRules, r)
-		me.Logger.Debug().Msgf("(include_equals) parsed rule [%v]", r)
+		a.includeEqualsRules = append(a.includeEqualsRules, r)
+		a.Logger.Debug().Msgf("(include_equals) parsed rule [%v]", r)
 	} else {
-		me.Logger.Warn().Str("rule", rule).Msg("(include_equals) rule definition should have two fields")
+		a.Logger.Warn().Str("rule", rule).Msg("(include_equals) rule definition should have two fields")
 	}
 }
 
@@ -445,14 +445,14 @@ type includeContainsRule struct {
 	value string
 }
 
-func (me *LabelAgent) parseIncludeContainsRule(rule string) {
+func (a *LabelAgent) parseIncludeContainsRule(rule string) {
 	if fields := strings.SplitN(rule, " `", 2); len(fields) == 2 {
 		r := includeContainsRule{label: fields[0]}
 		r.value = strings.TrimSuffix(fields[1], "`")
-		me.includeContainsRules = append(me.includeContainsRules, r)
-		me.Logger.Debug().Msgf("(include_contains) parsed rule [%v]", r)
+		a.includeContainsRules = append(a.includeContainsRules, r)
+		a.Logger.Debug().Msgf("(include_contains) parsed rule [%v]", r)
 	} else {
-		me.Logger.Error().Stack().Str("rule", rule).Err(nil).Msg("(include_contains) rule definition should have two fields")
+		a.Logger.Error().Stack().Str("rule", rule).Err(nil).Msg("(include_contains) rule definition should have two fields")
 	}
 }
 
@@ -461,19 +461,19 @@ type includeRegexRule struct {
 	reg   *regexp.Regexp
 }
 
-func (me *LabelAgent) parseIncludeRegexRule(rule string) {
+func (a *LabelAgent) parseIncludeRegexRule(rule string) {
 	if fields := strings.SplitN(rule, " `", 2); len(fields) == 2 {
 		r := includeRegexRule{label: fields[0]}
 		var err error
 		if r.reg, err = regexp.Compile(strings.TrimSuffix(fields[1], "`")); err == nil {
-			me.includeRegexRules = append(me.includeRegexRules, r)
-			me.Logger.Debug().Str("regex", r.reg.String()).Msg("(include_regex) compiled regex")
-			me.Logger.Debug().Msgf("(include_regex) parsed rule [%v]", r)
+			a.includeRegexRules = append(a.includeRegexRules, r)
+			a.Logger.Debug().Str("regex", r.reg.String()).Msg("(include_regex) compiled regex")
+			a.Logger.Debug().Msgf("(include_regex) parsed rule [%v]", r)
 		} else {
-			me.Logger.Error().Stack().Err(err).Msgf("(include_regex) compile regex:")
+			a.Logger.Error().Stack().Err(err).Msgf("(include_regex) compile regex:")
 		}
 	} else {
-		me.Logger.Error().Stack().Str("rule", rule).Err(nil).Msg("(include_regex) rule definition should have two fields")
+		a.Logger.Error().Stack().Str("rule", rule).Err(nil).Msg("(include_regex) rule definition should have two fields")
 	}
 }
 
@@ -492,7 +492,7 @@ type valueToNumRule struct {
 // if value of label "state" is normal or ok
 // the metric value will be 1, otherwise it will be 0.
 
-func (me *LabelAgent) parseValueToNumRule(rule string) {
+func (a *LabelAgent) parseValueToNumRule(rule string) {
 	if fields := strings.Fields(rule); len(fields) == 4 || len(fields) == 5 {
 		r := valueToNumRule{metric: fields[0], label: fields[1]}
 		r.mapping = make(map[string]uint8)
@@ -510,7 +510,7 @@ func (me *LabelAgent) parseValueToNumRule(rule string) {
 			fields[4] = strings.TrimPrefix(strings.TrimSuffix(fields[4], "`"), "`")
 
 			if v, err := strconv.ParseUint(fields[4], 10, 8); err != nil {
-				me.Logger.Error().Stack().Err(err).Msgf("(value_to_num) parse default value (%s): ", fields[4])
+				a.Logger.Error().Stack().Err(err).Msgf("(value_to_num) parse default value (%s): ", fields[4])
 				return
 			} else {
 				r.hasDefault = true
@@ -518,11 +518,11 @@ func (me *LabelAgent) parseValueToNumRule(rule string) {
 			}
 		}
 
-		me.valueToNumRules = append(me.valueToNumRules, r)
-		me.Logger.Debug().Msgf("(value_to_num) parsed rule [%v]", r)
+		a.valueToNumRules = append(a.valueToNumRules, r)
+		a.Logger.Debug().Msgf("(value_to_num) parsed rule [%v]", r)
 		return
 	}
-	me.Logger.Warn().Msgf("(value_to_num) rule has invalid format [%s]", rule)
+	a.Logger.Warn().Msgf("(value_to_num) rule has invalid format [%s]", rule)
 }
 
 type valueToNumRegexRule struct {
@@ -540,23 +540,23 @@ type valueToNumRegexRule struct {
 // if value of label "state" contains normal or ok
 // the metric value will be 1, otherwise it will be 0.
 
-func (me *LabelAgent) parseValueToNumRegexRule(rule string) {
+func (a *LabelAgent) parseValueToNumRegexRule(rule string) {
 	var err error
 
 	if fields := strings.Fields(rule); len(fields) == 4 || len(fields) == 5 {
 		r := valueToNumRegexRule{metric: fields[0], label: fields[1], reg: make([]*regexp.Regexp, 2)}
 		if r.reg[0], err = regexp.Compile(fields[2]); err != nil {
-			me.Logger.Error().Stack().Err(err).Str("regex", r.reg[0].String()).Str("value", fields[2]).Msg("(value_to_num_regex) compile regex:")
+			a.Logger.Error().Stack().Err(err).Str("regex", r.reg[0].String()).Str("value", fields[2]).Msg("(value_to_num_regex) compile regex:")
 		}
 
 		if r.reg[1], err = regexp.Compile(fields[3]); err != nil {
-			me.Logger.Error().Stack().Err(err).Str("regex", r.reg[1].String()).Str("value", fields[3]).Msg("(value_to_num_regex) compile regex:")
+			a.Logger.Error().Stack().Err(err).Str("regex", r.reg[1].String()).Str("value", fields[3]).Msg("(value_to_num_regex) compile regex:")
 		}
 
 		if len(fields) == 5 {
 			fields[4] = strings.TrimPrefix(strings.TrimSuffix(fields[4], "`"), "`")
 			if v, err := strconv.ParseUint(fields[4], 10, 8); err != nil {
-				me.Logger.Error().Stack().Err(err).Msgf("(value_to_num_regex) parse default value (%s): ", fields[4])
+				a.Logger.Error().Stack().Err(err).Msgf("(value_to_num_regex) parse default value (%s): ", fields[4])
 				return
 			} else {
 				r.hasDefault = true
@@ -564,9 +564,9 @@ func (me *LabelAgent) parseValueToNumRegexRule(rule string) {
 			}
 		}
 
-		me.valueToNumRegexRules = append(me.valueToNumRegexRules, r)
-		me.Logger.Debug().Msgf("(value_to_num_regex) parsed rule [%v]", r)
+		a.valueToNumRegexRules = append(a.valueToNumRegexRules, r)
+		a.Logger.Debug().Msgf("(value_to_num_regex) parsed rule [%v]", r)
 		return
 	}
-	me.Logger.Warn().Msgf("(value_to_num_regex) rule has invalid format [%s]", rule)
+	a.Logger.Warn().Msgf("(value_to_num_regex) rule has invalid format [%s]", rule)
 }
