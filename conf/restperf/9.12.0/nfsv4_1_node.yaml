@@ -8,7 +8,7 @@ global_labels:
 
 counters:
   - ^^id
-  - ^instance_name                                => node
+  - ^node.name                                => node
   - latency
   - total_ops
   - total.read_throughput

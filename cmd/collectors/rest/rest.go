@@ -442,8 +442,7 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, allowInstanceCre
 				}
 				count++
 			} else {
-				// spams a lot currently due to missing label mappings. Moved to debug for now till rest gaps are filled
-				r.Logger.Debug().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
+				r.Logger.Warn().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
 			}
 		}
 
