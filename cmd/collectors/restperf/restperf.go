@@ -114,8 +114,10 @@ func (r *RestPerf) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	r.Logger.Info().Str("count", strconv.Itoa(len(r.Matrix[r.Object].GetMetrics()))).Msg("initialized cache with metrics")
-
+	r.Logger.Info().
+		Int("numMetrics", len(r.Prop.Metrics)).
+		Str("timeout", r.Client.Timeout.String()).
+		Msg("initialized cache")
 	return nil
 }
 
@@ -581,8 +583,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 					}
 					count++
 				} else {
-					// spams a lot currently due to missing label mappings. Moved to debug for now till rest gaps are filled
-					r.Logger.Debug().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
+					r.Logger.Warn().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
 				}
 			}
 
