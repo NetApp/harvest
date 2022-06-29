@@ -21,38 +21,38 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &MetricAgent{AbstractPlugin: p}
 }
 
-func (me *MetricAgent) Init() error {
+func (a *MetricAgent) Init() error {
 
 	var (
 		err   error
 		count int
 	)
 
-	if err = me.AbstractPlugin.Init(); err != nil {
+	if err = a.AbstractPlugin.Init(); err != nil {
 		return err
 	}
 
-	if count = me.parseRules(); count == 0 {
+	if count = a.parseRules(); count == 0 {
 		err = errs.New(errs.ErrMissingParam, "valid rules")
 	} else {
-		me.Logger.Debug().Msgf("parsed %d rules for %d actions", count, len(me.actions))
+		a.Logger.Debug().Msgf("parsed %d rules for %d actions", count, len(a.actions))
 	}
 
 	return err
 }
 
-func (me *MetricAgent) Run(m *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (a *MetricAgent) Run(m *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var err error
 
-	for _, foo := range me.actions {
+	for _, foo := range a.actions {
 		_ = foo(m)
 	}
 
 	return nil, err
 }
 
-func (me *MetricAgent) computeMetrics(m *matrix.Matrix) error {
+func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 
 	var (
 		metric                    matrix.Metric
@@ -61,11 +61,11 @@ func (me *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 	)
 
 	// map values for compute_metric mapping rules
-	for _, r := range me.computeMetricRules {
+	for _, r := range a.computeMetricRules {
 
 		if metric = m.GetMetric(r.metric); metric == nil {
 			if metric, err = m.NewMetricFloat64(r.metric); err != nil {
-				me.Logger.Error().Stack().Err(err).Str("new metric", r.metric).Msg("computeMetrics: failed to create metric")
+				a.Logger.Error().Stack().Err(err).Str("new metric", r.metric).Msg("computeMetrics: failed to create metric")
 				return err
 			} else {
 				metric.SetProperty("compute_metric mapping")
@@ -83,7 +83,7 @@ func (me *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 					continue
 				}
 			} else {
-				me.Logger.Warn().Err(err).Str("metricName", r.metricNames[0]).Msg("computeMetrics: metric not found")
+				a.Logger.Warn().Err(err).Str("metricName", r.metricNames[0]).Msg("computeMetrics: metric not found")
 			}
 
 			// Parse other operands and process them
@@ -96,7 +96,7 @@ func (me *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 					if metricVal != nil {
 						v, _ = metricVal.GetValueFloat64(instance)
 					} else {
-						me.Logger.Warn().Err(err).Str("metricName", r.metricNames[i]).Msg("computeMetrics: metric not found")
+						a.Logger.Warn().Err(err).Str("metricName", r.metricNames[i]).Msg("computeMetrics: metric not found")
 						return nil
 					}
 				}
@@ -112,12 +112,12 @@ func (me *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 					if v != 0 {
 						result /= v
 					} else {
-						me.Logger.Error().
+						a.Logger.Error().
 							Str("operation", r.operation).
 							Msg("Division by zero operation")
 					}
 				default:
-					me.Logger.Warn().
+					a.Logger.Warn().
 						Str("operation", r.operation).
 						Msg("Unknown operation")
 				}
@@ -125,7 +125,7 @@ func (me *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 			}
 
 			_ = metric.SetValueFloat64(instance, result)
-			me.Logger.Trace().Str("metricName", r.metric).Float64("metricValue", result).Msg("computeMetrics: new metric created")
+			a.Logger.Trace().Str("metricName", r.metric).Float64("metricValue", result).Msg("computeMetrics: new metric created")
 		}
 	}
 	return nil

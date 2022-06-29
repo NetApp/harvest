@@ -10,11 +10,11 @@ import (
 )
 
 // parse rules from plugin parameters and return number of rules parsed
-func (me *MetricAgent) parseRules() int {
+func (a *MetricAgent) parseRules() int {
 
-	me.computeMetricRules = make([]computeMetricRule, 0)
+	a.computeMetricRules = make([]computeMetricRule, 0)
 
-	for _, c := range me.Params.GetChildren() {
+	for _, c := range a.Params.GetChildren() {
 		name := c.GetNameS()
 
 		rules := c.GetChildren()
@@ -24,29 +24,29 @@ func (me *MetricAgent) parseRules() int {
 
 			switch name {
 			case "compute_metric":
-				me.parseComputeMetricRule(rule)
+				a.parseComputeMetricRule(rule)
 			default:
-				me.Logger.Warn().
-					Str("object", me.ParentParams.GetChildContentS("object")).
+				a.Logger.Warn().
+					Str("object", a.ParentParams.GetChildContentS("object")).
 					Str("name", name).Msg("Unknown rule name")
 			}
 		}
 	}
 
-	me.actions = make([]func(matrix *matrix.Matrix) error, 0)
+	a.actions = make([]func(matrix *matrix.Matrix) error, 0)
 	count := 0
 
-	for _, c := range me.Params.GetChildren() {
+	for _, c := range a.Params.GetChildren() {
 		name := c.GetNameS()
 		switch name {
 		case "compute_metric":
-			if len(me.computeMetricRules) != 0 {
-				me.actions = append(me.actions, me.computeMetrics)
-				count += len(me.computeMetricRules)
+			if len(a.computeMetricRules) != 0 {
+				a.actions = append(a.actions, a.computeMetrics)
+				count += len(a.computeMetricRules)
 			}
 		default:
-			me.Logger.Warn().
-				Str("object", me.ParentParams.GetChildContentS("object")).
+			a.Logger.Warn().
+				Str("object", a.ParentParams.GetChildContentS("object")).
 				Str("name", name).Msg("Unknown rule name")
 		}
 	}
@@ -60,7 +60,7 @@ type computeMetricRule struct {
 	metricNames []string
 }
 
-func (me *MetricAgent) parseComputeMetricRule(rule string) {
+func (a *MetricAgent) parseComputeMetricRule(rule string) {
 	if fields := strings.Fields(rule); len(fields) >= 4 {
 		r := computeMetricRule{metric: fields[0], operation: fields[1], metricNames: make([]string, 0)}
 
@@ -68,9 +68,9 @@ func (me *MetricAgent) parseComputeMetricRule(rule string) {
 			r.metricNames = append(r.metricNames, fields[i])
 		}
 
-		me.computeMetricRules = append(me.computeMetricRules, r)
-		me.Logger.Debug().Msgf("(compute_metric) parsed rule [%v]", r)
+		a.computeMetricRules = append(a.computeMetricRules, r)
+		a.Logger.Debug().Msgf("(compute_metric) parsed rule [%v]", r)
 		return
 	}
-	me.Logger.Warn().Msgf("(compute_metric) rule has invalid format [%s]", rule)
+	a.Logger.Warn().Msgf("(compute_metric) rule has invalid format [%s]", rule)
 }
