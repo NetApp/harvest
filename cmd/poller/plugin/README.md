@@ -17,6 +17,7 @@ The built-in plugins are:
 
 - [Aggregator](#aggregator)
 - [LabelAgent](#labelagent)
+- [MetricAgent](#metricagent)
 
 # Aggregator
 
@@ -95,13 +96,23 @@ The plugin tries to intelligently aggregate metrics based on a few rules:
 # LabelAgent
 LabelAgent are used to manipulate instance labels based on rules. You can define multiple rules, here is an example of what you could add to the yaml file of a collector:
 
-
 ```yaml
 plugins:
   LabelAgent:
   # our rules:
     split_simple: node `/` ,aggr,plex,disk
     replace_regex: node node `^(node)_(\d+)_.*$` `Node-$2`
+```
+
+# MetricAgent
+MetricAgent are used to manipulate metrics based on rules. You can define multiple rules, here is an example of what you could add to the yaml file of a collector:
+
+```yaml
+plugins:
+  MetricAgent:
+    compute_metric:
+      - snapshot_maxfiles_possible ADD snapshot.max_files_available snapshot.max_files_used
+      - raid_disk_count ADD block_storage.primary.disk_count block_storage.hybrid_cache.disk_count
 ```
 
 Notice that the rules are executed in the same order as you've added them. List of currently available rules:
@@ -125,8 +136,9 @@ Notice that the rules are executed in the same order as you've added them. List 
   - [include_regex](#include_regex)
   - [value_mapping](#value_mapping)
   - [value_to_num](#value_to_num)
-  - [compute_metric](#compute_metric)
   - [value_to_num_regex](#value_to_num_regex)
+- [MetricAgent](#metricagent)
+  - [compute_metric](#compute_metric)
 
 ## split
 
@@ -431,6 +443,42 @@ value_to_num:
 # metric value will be set to 1 if "outage" is empty, if it's any other value, it will be set to the default, 0
 # '-' is a special symbol in this mapping, and it will be converted to blank while processing.
 ```
+
+## value_to_num_regex
+
+Same as value_to_num, but will use a regular expression. All matches are mapped to 1 and non-matches are mapped to 0.
+
+This is handy to manipulate the data in the DB or Grafana (e.g. change color based on status or create alert).
+
+Note that you don't define the numeric values, instead, you provide the expected values and the plugin will map each value to its index in the rule.
+
+Rule syntax:
+
+```yaml
+value_to_num_regex:
+  - METRIC LABEL ZAPI_REGEX REST_REGEX `N`
+# map values of LABEL to 1 if it matches ZAPI_REGEX or REST_REGEX
+# otherwise, value of METRIC is set to N
+```
+The default value `N` is optional, if no default value is given and the label value does not match any of the given values, the metric value will not be set.
+
+Examples:
+
+```yaml
+value_to_num_regex:
+  - certificateuser methods .*cert.*$ .*certificate.*$ `0`
+# a new metric will be created with the name "certificateuser"
+# if an instance has label "methods" with value contains "cert", the metric value will be 1,
+# if value contains "certificate", the value will be set to 1,
+# if value doesn't contain "cert" and "certificate", it will be set to the specified default, 0
+```
+
+```yaml
+value_to_num_regex:
+  - status state ^up$ ^ok$ `4`
+# metric value will be set to 1 if label "state" matches regex, otherwise set to **4**
+```
+
 ## compute_metric
 
 This rule creates a new metric (of type float64) using the provided scalar or an existing metric value combined with a mathematical operation.
@@ -492,39 +540,4 @@ compute_metric:
   - transmission_rate DIVIDE transfer.bytes_transferred transfer.total_duration
 # value of metric "transmission_rate" would be division of metric value of transfer.bytes_transferred by metric value of transfer.total_duration.
 # transmission_rate = transfer.bytes_transferred / transfer.total_duration
-```
-
-## value_to_num_regex
-
-Same as value_to_num, but will use a regular expression. All matches are mapped to 1 and non-matches are mapped to 0.
-
-This is handy to manipulate the data in the DB or Grafana (e.g. change color based on status or create alert).
-
-Note that you don't define the numeric values, instead, you provide the expected values and the plugin will map each value to its index in the rule.
-
-Rule syntax:
-
-```yaml
-value_to_num_regex:
-  - METRIC LABEL ZAPI_REGEX REST_REGEX `N`
-# map values of LABEL to 1 if it matches ZAPI_REGEX or REST_REGEX
-# otherwise, value of METRIC is set to N
-```
-The default value `N` is optional, if no default value is given and the label value does not match any of the given values, the metric value will not be set.
-
-Examples:
-
-```yaml
-value_to_num_regex:
-  - certificateuser methods .*cert.*$ .*certificate.*$ `0`
-# a new metric will be created with the name "certificateuser"
-# if an instance has label "methods" with value contains "cert", the metric value will be 1,
-# if value contains "certificate", the value will be set to 1,
-# if value doesn't contain "cert" and "certificate", it will be set to the specified default, 0
-```
-
-```yaml
-value_to_num_regex:
-  - status state ^up$ ^ok$ `4`
-# metric value will be set to 1 if label "state" matches regex, otherwise set to **4**
 ```
