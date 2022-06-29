@@ -49,65 +49,66 @@ events:
       - name: op
         value: dry-run-paused
     exports:
-      - parameters.op                      => op
-      - parameters.volumeUuid              => volume_uuid
-      - parameters.volumeName              => volume
-      - parameters.vserverName             => svm
-      - parameters.vserverUuid             => svm_uuid
+      - parameters.op                       => op
+      - parameters.volumeUuid               => volume_uuid
+      - parameters.volumeName               => volume
+      - parameters.vserverName              => svm
+      - parameters.vserverUuid              => svm_uuid
 
   - name: arw.volume.state
     matches:
       - name: op
         value: enable-paused
     exports:
-      - parameters.op                      => op
-      - parameters.volumeUuid              => volume_uuid
-      - parameters.volumeName              => volume
-      - parameters.vserverName             => svm
-      - parameters.vserverUuid             => svm_uuid
+      - parameters.op                       => op
+      - parameters.volumeUuid               => volume_uuid
+      - parameters.volumeName               => volume
+      - parameters.vserverName              => svm
+      - parameters.vserverUuid              => svm_uuid
 
   - name: arw.volume.state
     matches:
       - name: op
         value: enabled
     exports:
-      - parameters.op                      => op
-      - parameters.volumeUuid              => volume_uuid
-      - parameters.volumeName              => volume
-      - parameters.vserverName             => svm
-      - parameters.vserverUuid             => svm_uuid
+      - parameters.op                       => op
+      - parameters.volumeUuid               => volume_uuid
+      - parameters.volumeName               => volume
+      - parameters.vserverName              => svm
+      - parameters.vserverUuid              => svm_uuid
 
   - name: arw.vserver.state
     matches:
       - name: op
         value: enabled
     exports:
-      - parameters.op                      => op
-      - parameters.vserverName             => svm
-      - parameters.vserverUuid             => svm_uuid
+      - parameters.op                       => op
+      - parameters.vserverName              => svm
+      - parameters.vserverUuid              => svm_uuid
 
   - name: arw.vserver.state
     matches:
       - name: op
         value: dry-run
     exports:
-      - parameters.op                      => op
-      - parameters.vserverName             => svm
-      - parameters.vserverUuid             => svm_uuid
+      - parameters.op                       => op
+      - parameters.vserverName              => svm
+      - parameters.vserverUuid              => svm_uuid
 
 
   - name: callhome.arw.activity.seen
     exports:
-      - parameters.volUuid                 => volume_uuid
-      - parameters.volName                 => volume
-      - parameters.vserverName             => svm
-      - parameters.vserverUuid             => svm_uuid
+      - parameters.volUuid                  => volume_uuid
+      - parameters.volName                  => volume
+      - parameters.vserverName              => svm
+      - parameters.vserverUuid              => svm_uuid
 
   - name: callhome.battery.low
     exports:
-      - ^^node.name                        => node
+      - ^^node.name                         => node
     resolve_when_ems:
       - name: nvram.battery.charging.normal
+        resolve_after: 672h
 
   - name: callhome.hainterconnect.down
 
@@ -124,36 +125,36 @@ events:
 
   - name: cloud.aws.iamNotInitialized
     exports:
-      - parameters.nodeUuid                  => node_uuid
+      - parameters.nodeUuid                 => node_uuid
 
   - name: cluster.switch.pwr.fail
     exports:
-      - parameters.switch_name               => switch_name
-      - parameters.pwr_supply_name           => pwr_supply_name
-      - parameters.status                    => status
+      - parameters.switch_name              => switch_name
+      - parameters.pwr_supply_name          => pwr_supply_name
+      - parameters.status                   => status
 
   - name: disk.outOfService
     exports:
-      - parameters.diskName                  => disk
-      - parameters.serialno                  => serial_no
-      - parameters.powerOnHours              => power_on_hours
+      - parameters.diskName                 => disk
+      - parameters.serialno                 => serial_no
+      - parameters.powerOnHours             => power_on_hours
 
   - name: fabricpool.full
     exports:
-      - parameters.cluster_uuid              => cluster_uuid
-      - parameters.used_capacity             => used_capacity
-      - parameters.licensed_capacity         => licensed_capacity
+      - parameters.cluster_uuid             => cluster_uuid
+      - parameters.used_capacity            => used_capacity
+      - parameters.licensed_capacity        => licensed_capacity
 
   - name: fabricpool.nearly.full
     exports:
-      - parameters.cluster_uuid              => cluster_uuid
-      - parameters.used_capacity             => used_capacity
-      - parameters.licensed_capacity         => licensed_capacity
+      - parameters.cluster_uuid             => cluster_uuid
+      - parameters.used_capacity            => used_capacity
+      - parameters.licensed_capacity        => licensed_capacity
 
   - name: gb.netra.ca.check.failed
     exports:
-      - parameters.vol                       => volume
-      - parameters.aggr_uuid                 => aggr_uuid
+      - parameters.vol                      => volume
+      - parameters.aggr_uuid                => aggr_uuid
 
   - name: LUN.destroy
     exports:
@@ -184,18 +185,21 @@ events:
       - ^^parameters.report                 => report
     resolve_when_ems:
       - name: monitor.fan.ok
+        resolve_after: 672h
 
   - name: monitor.fan.failed
     exports:
       - ^^parameters.report                 => report
     resolve_when_ems:
       - name: monitor.fan.ok
+        resolve_after: 672h
 
   - name: monitor.fan.warning
     exports:
       - ^^parameters.report                 => report
     resolve_when_ems:
       - name: monitor.fan.ok
+        resolve_after: 672h
 
   - name: Nblade.cifsManyAuths
     exports:
@@ -329,6 +333,9 @@ events:
     exports:
       - parameters.configname               => config_name
       - parameters.node_uuid                => node_uuid
+    resolve_when_ems:
+      - name: object.store.available
+        resolve_after: 672h
 
   - name: objstore.host.unresolvable
     exports:
@@ -352,6 +359,9 @@ events:
       - parameters.object_uuid              => object_uuid
       - parameters.object_type              => object_type
       - parameters.count                    => count
+    resolve_when_ems:
+      - name: qos.monitor.memory.abated
+        resolve_after: 672h
 
   - name: scsiblade.san.config.active
     exports:
@@ -360,66 +370,89 @@ events:
 
   - name: scsitarget.fct.port.full
     exports:
-      - parameters.portname                  => port
-      - parameters.active_commands           => active_commands
-      - parameters.max_commands              => max_commands
+      - parameters.portname                 => port
+      - parameters.active_commands          => active_commands
+      - parameters.max_commands             => max_commands
 
   - name: ses.status.fanError
     exports:
-      - parameters.prodChannel               => prod_channel
-      - parameters.fanNumber                 => fan_number
+      - parameters.prodChannel              => prod_channel
+      - parameters.fanNumber                => fan_number
+    resolve_when_ems:
+      - name: ses.status.fanInfo
+        resolve_after: 672h
 
   - name: sk.panic
 
   - name: sms.status.out.of.sync
     exports:
-      - parameters.relationship_id           => relationship_id
-      - parameters.srcpath                   => src_path
-      - parameters.dstpath                   => dst_path
+      - parameters.relationship_id          => relationship_id
+      - parameters.srcpath                  => src_path
+      - parameters.dstpath                  => dst_path
+    resolve_when_ems:
+      - name: sms.status.in.sync
+        resolve_after: 672h
 
   - name: sp.ipmi.lost.shutdown
     exports:
-      - parameters.num_minutes               => num_minutes
+      - parameters.num_minutes              => num_minutes
+    resolve_when_ems:
+      - name: sp.heartbeat.resumed
+        resolve_after: 672h
 
   - name: sp.notConfigured
+    exports:
+      - ^^node.name                         => node
+    resolve_when_ems:
+      - name: sp.heartbeat.resumed
+        resolve_after: 672h
 
   - name: unowned.disk.reminder
     exports:
-      - parameters.count                     => count
+      - parameters.count                    => count
 
   - name: vserver.stop.succeeded
     exports:
-      - parameters.vserver_name              => svm
-      - parameters.vserver_uuid              => svm_uuid
+      - parameters.vserver_name             => svm
+      - parameters.vserver_uuid             => svm_uuid
+    resolve_when_ems:
+      - name: vserver.start.succeeded
+        resolve_after: 672h
 
   - name: wafl.readdir.expired
     exports:
-      - parameters.object_uuid               => object_uuid
-      - parameters.volume                    => volume
-      - parameters.app                       => app
-      - parameters.volident                  => vol_ident
-      - parameters.snapid                    => snap_id
-      - parameters.directory_inum            => directory_inum
+      - parameters.object_uuid              => object_uuid
+      - parameters.volume                   => volume
+      - parameters.app                      => app
+      - parameters.volident                 => vol_ident
+      - parameters.snapid                   => snap_id
+      - parameters.directory_inum           => directory_inum
 
   - name: wafl.vol.autoSize.done
     exports:
-      - parameters.object_uuid               => object_uuid
-      - parameters.vol                       => volume
-      - parameters.app                       => app
-      - parameters.volident                  => vol_ident
-      - parameters.size                      => size
-      - parameters.event_type                => event_type
+      - parameters.object_uuid              => object_uuid
+      - parameters.vol                      => volume
+      - parameters.app                      => app
+      - parameters.volident                 => vol_ident
+      - parameters.size                     => size
+      - parameters.event_type               => event_type
 
   - name: wafl.vvol.offline
     exports:
-      - parameters.name                      => volume
-      - parameters.app                       => app
-      - parameters.volident                  => vol_ident
-      - parameters.instuuid                  => inst_uuid
+      - parameters.name                     => volume
+      - parameters.app                      => app
+      - parameters.volident                 => vol_ident
+      - parameters.instuuid                 => inst_uuid
+    resolve_when_ems:
+      - name: wafl.vvol.online
+        resolve_after: 672h
 
   - name: wafl.vvol.restrict
     exports:
-      - parameters.vol                       => volume
-      - parameters.app                       => app
-      - parameters.volident                  => vol_ident
-      - parameters.instuuid                  => inst_uuid
+      - parameters.vol                      => volume
+      - parameters.app                      => app
+      - parameters.volident                 => vol_ident
+      - parameters.instuuid                 => inst_uuid
+    resolve_when_ems:
+      - name: wafl.vvol.online
+        resolve_after: 672h
