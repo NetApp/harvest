@@ -3,8 +3,7 @@ query:                    api/cluster/counter/tables/qtree
 object:                   qtree
 
 counters:
-  - ^^id
-  - ^name                   => qtreefull
+  - ^^id                    => qtreefull
   - ^svm.name               => svm
   - ^node.name              => node
   - ^parent_volume.name     => volume
@@ -15,8 +14,10 @@ counters:
 
 plugins:
   - LabelAgent:
-      split:
-        - qtreefull `/` ,qtree
+      split_regex:
+        # Example: vs0:root_vs0/harvestQtree:ff554fec-e719-11ec-85cd-005056a732ac:1025:1
+        # output: qtree label value will be harvestQtree
+        - qtreefull `(.*?):(.*?)\/(.*?):(.*?):(.*?):(.*?)` ,,qtree,,,
       exclude_equals:
         - qtree ``
 export_options:
