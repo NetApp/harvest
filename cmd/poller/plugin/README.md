@@ -118,7 +118,7 @@ LabelAgent are used to manipulate instance labels based on rules. You can define
 plugins:
   LabelAgent:
   # our rules:
-    split_simple: node `/` ,aggr,plex,disk
+    split: node `/` ,aggr,plex,disk
     replace_regex: node node `^(node)_(\d+)_.*$` `Node-$2`
 ```
 
@@ -148,19 +148,19 @@ split:
 
 ## split_regex
 
-Does the same as `split_regex` but uses a regular expression instead of a separator.
+Does the same as `split` but uses a regular expression instead of a separator.
 
 Rule syntax:
 
 ```yaml
-split_simple: 
+split_regex: 
   - LABEL `REGEX` LABEL1,LABEL2,LABEL3
 ```
 
 Example:
 
 ```yaml
-split_simple: 
+split_regex: 
   - node `.*_(ag\d+)_(p\d+)_(d\d+)` aggr,plex,disk
 # will look for "_ag", "_p", "_d", each followed by one
 # or more numbers, if there is a match, the submatches
@@ -235,7 +235,7 @@ replace:
 ```
 
 ## replace_regex
-Same as `replace_simple`, but will use a regular expression instead of `OLD`. Note you can use `$n` to specify `n`th submatch in `NEW`.
+Same as `replace`, but will use a regular expression instead of `OLD`. Note you can use `$n` to specify `n`th submatch in `NEW`.
 
 Rule syntax:
 
