@@ -313,7 +313,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 	prefix = p.globalPrefix + data.Object
 
 	for key, value := range data.GetGlobalLabels().Map() {
-		globalLabels = append(globalLabels, fmt.Sprintf("%s=\"%s\"", key, value))
+		globalLabels = append(globalLabels, escape(replacer, key, value))
 	}
 
 	for key, instance := range data.GetInstances() {
@@ -352,7 +352,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 
 			for _, label := range labelsToInclude {
 				value := instance.GetLabel(label)
-				instanceLabels = append(instanceLabels, fmt.Sprintf("%s=\"%s\"", label, value))
+				instanceLabels = append(instanceLabels, escape(replacer, label, value))
 				p.Logger.Trace().Msgf("++ label [%s] (%s) %t", label, value, value != "")
 			}
 
@@ -403,7 +403,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 				if metric.HasLabels() {
 					metricLabels := make([]string, 0)
 					for k, v := range metric.GetLabels().Map() {
-						metricLabels = append(metricLabels, fmt.Sprintf("%s=\"%s\"", k, v))
+						metricLabels = append(metricLabels, escape(replacer, k, v))
 					}
 					x := fmt.Sprintf("%s_%s{%s,%s} %s", prefix, metric.GetName(), strings.Join(instanceKeys, ","), strings.Join(metricLabels, ","), value)
 
