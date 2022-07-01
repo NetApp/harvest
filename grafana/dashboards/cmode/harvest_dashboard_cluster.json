@@ -20,7 +20,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "8.1.8"
+      "version": "8.1.2"
     },
     {
       "type": "datasource",
@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1651138883843,
+  "iteration": 1656680432762,
   "links": [],
   "panels": [
     {
@@ -591,6 +591,84 @@
       "type": "bargauge"
     },
     {
+      "cacheTimeout": null,
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-purple",
+                "value": null
+              },
+              {
+                "color": "dark-blue",
+                "value": 75
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 18,
+        "y": 10
+      },
+      "id": 158,
+      "links": [],
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "text": {}
+      },
+      "pluginVersion": "8.1.8",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "100*sum(aggr_space_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})/sum(aggr_space_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Capacity used",
+      "type": "bargauge"
+    },
+    {
       "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
@@ -752,7 +830,7 @@
         "h": 7,
         "w": 18,
         "x": 0,
-        "y": 8
+        "y": 22
       },
       "id": 177,
       "interval": "",
@@ -833,1087 +911,1010 @@
       "type": "table"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 2,
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "semi-dark-purple",
-                "value": null
-              },
-              {
-                "color": "dark-blue",
-                "value": 75
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 18,
-        "y": 10
-      },
-      "id": 158,
-      "links": [],
-      "options": {
-        "displayMode": "gradient",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true,
-        "text": {}
-      },
-      "pluginVersion": "8.1.8",
-      "repeatDirection": "h",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "100*sum(aggr_space_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})/sum(aggr_space_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Capacity used",
-      "type": "bargauge"
-    },
-    {
-      "collapsed": false,
+      "collapsed": true,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 15
+        "y": 29
       },
       "id": 198,
-      "panels": [],
+      "panels": [
+        {
+          "cacheTimeout": null,
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [
+                {
+                  "options": {
+                    "match": "null",
+                    "result": {
+                      "color": "dark-yellow",
+                      "text": "0"
+                    }
+                  },
+                  "type": "special"
+                }
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "dark-yellow",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "watt"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 8,
+            "x": 0,
+            "y": 2
+          },
+          "id": 204,
+          "links": [],
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "(sum(environment_sensor_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0))",
+              "format": "time_series",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Total Power (Node)",
+          "type": "stat"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 1,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "transparent",
+                    "value": null
+                  },
+                  {
+                    "color": "rgb(84, 184, 45)",
+                    "value": 5
+                  },
+                  {
+                    "color": "semi-dark-yellow",
+                    "value": 45
+                  },
+                  {
+                    "color": "semi-dark-orange",
+                    "value": 65
+                  },
+                  {
+                    "color": "dark-red",
+                    "value": 75
+                  }
+                ]
+              },
+              "unit": "celsius"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 8,
+            "x": 8,
+            "y": 2
+          },
+          "id": 206,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "max(environment_sensor_max_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Max Node temp",
+          "type": "stat"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "noValue": "0",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "transparent",
+                    "value": null
+                  },
+                  {
+                    "color": "rgb(84, 184, 45)",
+                    "value": 500
+                  },
+                  {
+                    "color": "semi-dark-yellow",
+                    "value": 3000
+                  },
+                  {
+                    "color": "semi-dark-orange",
+                    "value": 5000
+                  },
+                  {
+                    "color": "dark-red",
+                    "value": 6000
+                  }
+                ]
+              },
+              "unit": "rotrpm"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 8,
+            "x": 16,
+            "y": 2
+          },
+          "id": 208,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "max(environment_sensor_max_fan_speed{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Max Node Fan Speed",
+          "type": "stat"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "semi-dark-yellow",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Avg Ambient Temp (C)"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "transparent",
+                          "value": null
+                        },
+                        {
+                          "color": "green",
+                          "value": 5
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 45
+                        },
+                        {
+                          "color": "orange",
+                          "value": 65
+                        },
+                        {
+                          "color": "red",
+                          "value": 75
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "right"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Max Temp (C)"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "transparent",
+                          "value": null
+                        },
+                        {
+                          "color": "green",
+                          "value": 5
+                        },
+                        {
+                          "color": "#EAB839",
+                          "value": 45
+                        },
+                        {
+                          "color": "orange",
+                          "value": 65
+                        },
+                        {
+                          "color": "red",
+                          "value": 85
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "right"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Avg Temp (C)"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "transparent",
+                          "value": null
+                        },
+                        {
+                          "color": "green",
+                          "value": 5
+                        },
+                        {
+                          "color": "#EAB839",
+                          "value": 45
+                        },
+                        {
+                          "color": "orange",
+                          "value": 65
+                        },
+                        {
+                          "color": "red",
+                          "value": 85
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "right"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Max Fan Speed (rpm)"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "transparent",
+                          "value": null
+                        },
+                        {
+                          "color": "green",
+                          "value": 500
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 3000
+                        },
+                        {
+                          "color": "orange",
+                          "value": 5000
+                        },
+                        {
+                          "color": "red",
+                          "value": 6000
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "right"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Avg Fan Speed (rpm)"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "transparent",
+                          "value": null
+                        },
+                        {
+                          "color": "green",
+                          "value": 500
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 3000
+                        },
+                        {
+                          "color": "orange",
+                          "value": 5000
+                        },
+                        {
+                          "color": "red",
+                          "value": 8000
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "right"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Min Fan Speed (rpm)"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "transparent",
+                          "value": null
+                        },
+                        {
+                          "color": "green",
+                          "value": 500
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 3000
+                        },
+                        {
+                          "color": "orange",
+                          "value": 5000
+                        },
+                        {
+                          "color": "red",
+                          "value": 8000
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "right"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Power"
+                },
+                "properties": [
+                  {
+                    "id": "custom.align",
+                    "value": "right"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "watt"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Min Ambient Temp (C)"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "transparent",
+                          "value": null
+                        },
+                        {
+                          "color": "green",
+                          "value": 5
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 45
+                        },
+                        {
+                          "color": "orange",
+                          "value": 65
+                        },
+                        {
+                          "color": "red",
+                          "value": 75
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "right"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Min Temp (C)"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "transparent",
+                          "value": null
+                        },
+                        {
+                          "color": "green",
+                          "value": 5
+                        },
+                        {
+                          "color": "#eab839",
+                          "value": 45
+                        },
+                        {
+                          "color": "orange",
+                          "value": 65
+                        },
+                        {
+                          "color": "red",
+                          "value": 85
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "right"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 24,
+            "x": 0,
+            "y": 7
+          },
+          "id": 210,
+          "interval": "1m",
+          "maxDataPoints": 2,
+          "options": {
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "node_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "exemplar": true,
+              "expr": "environment_sensor_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "D"
+            },
+            {
+              "exemplar": true,
+              "expr": "environment_sensor_average_ambient_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "E"
+            },
+            {
+              "exemplar": false,
+              "expr": "environment_sensor_min_ambient_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            },
+            {
+              "exemplar": true,
+              "expr": "environment_sensor_max_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "F"
+            },
+            {
+              "exemplar": true,
+              "expr": "environment_sensor_average_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "G"
+            },
+            {
+              "exemplar": false,
+              "expr": "environment_sensor_min_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "C"
+            },
+            {
+              "exemplar": true,
+              "expr": "environment_sensor_max_fan_speed{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "H"
+            },
+            {
+              "exemplar": true,
+              "expr": "environment_sensor_average_fan_speed{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "I"
+            },
+            {
+              "exemplar": true,
+              "expr": "environment_sensor_min_fan_speed{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "J"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Storage Nodes",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "datacenter",
+                    "model",
+                    "Value #A",
+                    "Value #D",
+                    "Value #E",
+                    "Value #F",
+                    "Value #G",
+                    "Value #H",
+                    "Value #I",
+                    "Value #J",
+                    "node",
+                    "cluster",
+                    "Value #B",
+                    "Value #C"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "merge",
+              "options": {}
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Value #A": true,
+                  "shelf_id": true,
+                  "state": true
+                },
+                "indexByName": {
+                  "Value #A": 13,
+                  "Value #B": 6,
+                  "Value #C": 9,
+                  "Value #D": 4,
+                  "Value #E": 5,
+                  "Value #F": 7,
+                  "Value #G": 8,
+                  "Value #H": 10,
+                  "Value #I": 11,
+                  "Value #J": 12,
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "model": 3,
+                  "node": 2
+                },
+                "renameByName": {
+                  "Value #A": "",
+                  "Value #B": "Min Ambient Temp (C)",
+                  "Value #C": "Min Temp (C)",
+                  "Value #D": "Power",
+                  "Value #E": "Avg Ambient Temp (C)",
+                  "Value #F": "Max Temp (C)",
+                  "Value #G": "Avg Temp (C)",
+                  "Value #H": "Max Fan Speed (rpm)",
+                  "Value #I": "Avg Fan Speed (rpm)",
+                  "Value #J": "Min Fan Speed (rpm)",
+                  "module_type": "",
+                  "op_status": "",
+                  "shelf_id": ""
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "watt"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 14
+          },
+          "id": 200,
+          "options": {
+            "legend": {
+              "calcs": [
+                "max",
+                "mean",
+                "last"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "topk($TopResources,environment_sensor_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{node}}",
+              "refId": "B"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top Nodes by Power Consumed",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "celsius"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 14
+          },
+          "id": 202,
+          "options": {
+            "legend": {
+              "calcs": [
+                "max",
+                "mean",
+                "last"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "topk($TopResources,environment_sensor_average_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "interval": "",
+              "legendFormat": "{{node}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top Nodes by Average Temperature",
+          "type": "timeseries"
+        }
+      ],
       "title": "Power",
       "type": "row"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "color": "dark-yellow",
-                  "text": "0"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "dark-yellow",
-                "value": null
-              }
-            ]
-          },
-          "unit": "watt"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 8,
-        "x": 0,
-        "y": 16
-      },
-      "id": 204,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "(sum(environment_sensor_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0))",
-          "format": "time_series",
-          "hide": false,
-          "instant": false,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Total Power (Node)",
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 1,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "transparent",
-                "value": null
-              },
-              {
-                "color": "rgb(84, 184, 45)",
-                "value": 5
-              },
-              {
-                "color": "semi-dark-yellow",
-                "value": 45
-              },
-              {
-                "color": "semi-dark-orange",
-                "value": 65
-              },
-              {
-                "color": "dark-red",
-                "value": 75
-              }
-            ]
-          },
-          "unit": "celsius"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 8,
-        "x": 8,
-        "y": 16
-      },
-      "id": 206,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "max(environment_sensor_max_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Max Node temp",
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "transparent",
-                "value": null
-              },
-              {
-                "color": "rgb(84, 184, 45)",
-                "value": 500
-              },
-              {
-                "color": "semi-dark-yellow",
-                "value": 3000
-              },
-              {
-                "color": "semi-dark-orange",
-                "value": 5000
-              },
-              {
-                "color": "dark-red",
-                "value": 6000
-              }
-            ]
-          },
-          "unit": "rotrpm"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 8,
-        "x": 16,
-        "y": 16
-      },
-      "id": 208,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "max(environment_sensor_max_fan_speed{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Max Node Fan Speed",
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "left",
-            "displayMode": "auto",
-            "filterable": true
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "semi-dark-yellow",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Avg Ambient Temp (C)"
-            },
-            "properties": [
-              {
-                "id": "custom.displayMode",
-                "value": "color-background"
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "transparent",
-                      "value": null
-                    },
-                    {
-                      "color": "green",
-                      "value": 5
-                    },
-                    {
-                      "color": "yellow",
-                      "value": 45
-                    },
-                    {
-                      "color": "orange",
-                      "value": 65
-                    },
-                    {
-                      "color": "red",
-                      "value": 75
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "custom.align",
-                "value": "right"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Max Temp (C)"
-            },
-            "properties": [
-              {
-                "id": "custom.displayMode",
-                "value": "color-background"
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "transparent",
-                      "value": null
-                    },
-                    {
-                      "color": "green",
-                      "value": 5
-                    },
-                    {
-                      "color": "#EAB839",
-                      "value": 45
-                    },
-                    {
-                      "color": "orange",
-                      "value": 65
-                    },
-                    {
-                      "color": "red",
-                      "value": 85
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "custom.align",
-                "value": "right"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Avg Temp (C)"
-            },
-            "properties": [
-              {
-                "id": "custom.displayMode",
-                "value": "color-background"
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "transparent",
-                      "value": null
-                    },
-                    {
-                      "color": "green",
-                      "value": 5
-                    },
-                    {
-                      "color": "#EAB839",
-                      "value": 45
-                    },
-                    {
-                      "color": "orange",
-                      "value": 65
-                    },
-                    {
-                      "color": "red",
-                      "value": 85
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "custom.align",
-                "value": "right"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Max Fan Speed (rpm)"
-            },
-            "properties": [
-              {
-                "id": "custom.displayMode",
-                "value": "color-background"
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "transparent",
-                      "value": null
-                    },
-                    {
-                      "color": "green",
-                      "value": 500
-                    },
-                    {
-                      "color": "yellow",
-                      "value": 3000
-                    },
-                    {
-                      "color": "orange",
-                      "value": 5000
-                    },
-                    {
-                      "color": "red",
-                      "value": 6000
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "custom.align",
-                "value": "right"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Avg Fan Speed (rpm)"
-            },
-            "properties": [
-              {
-                "id": "custom.displayMode",
-                "value": "color-background"
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "transparent",
-                      "value": null
-                    },
-                    {
-                      "color": "green",
-                      "value": 500
-                    },
-                    {
-                      "color": "yellow",
-                      "value": 3000
-                    },
-                    {
-                      "color": "orange",
-                      "value": 5000
-                    },
-                    {
-                      "color": "red",
-                      "value": 8000
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "custom.align",
-                "value": "right"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Min Fan Speed (rpm)"
-            },
-            "properties": [
-              {
-                "id": "custom.displayMode",
-                "value": "color-background"
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "transparent",
-                      "value": null
-                    },
-                    {
-                      "color": "green",
-                      "value": 500
-                    },
-                    {
-                      "color": "yellow",
-                      "value": 3000
-                    },
-                    {
-                      "color": "orange",
-                      "value": 5000
-                    },
-                    {
-                      "color": "red",
-                      "value": 8000
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "custom.align",
-                "value": "right"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Power"
-            },
-            "properties": [
-              {
-                "id": "custom.align",
-                "value": "right"
-              },
-              {
-                "id": "unit",
-                "value": "watt"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Min Ambient Temp (C)"
-            },
-            "properties": [
-              {
-                "id": "custom.displayMode",
-                "value": "color-background"
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "transparent",
-                      "value": null
-                    },
-                    {
-                      "value": 5,
-                      "color": "green"
-                    },
-                    {
-                      "value": 45,
-                      "color": "yellow"
-                    },
-                    {
-                      "value": 65,
-                      "color": "orange"
-                    },
-                    {
-                      "color": "red",
-                      "value": 75
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "custom.align",
-                "value": "right"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Min Temp (C)"
-            },
-            "properties": [
-              {
-                "id": "custom.displayMode",
-                "value": "color-background"
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "transparent",
-                      "value": null
-                    },
-                    {
-                      "value": 5,
-                      "color": "green"
-                    },
-                    {
-                      "value": 45,
-                      "color": "#eab839"
-                    },
-                    {
-                      "value": 65,
-                      "color": "orange"
-                    },
-                    {
-                      "color": "red",
-                      "value": 85
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "custom.align",
-                "value": "right"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 24,
-        "x": 0,
-        "y": 21
-      },
-      "id": 210,
-      "interval": "1m",
-      "maxDataPoints": 2,
-      "options": {
-        "showHeader": true,
-        "sortBy": []
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "node_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
-          "format": "table",
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        },
-        {
-          "exemplar": true,
-          "expr": "environment_sensor_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "D"
-        },
-        {
-          "exemplar": true,
-          "expr": "environment_sensor_average_ambient_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "E"
-        },
-        {
-          "expr": "environment_sensor_min_ambient_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
-          "legendFormat": "",
-          "interval": "",
-          "exemplar": false,
-          "refId": "B",
-          "hide": false,
-          "format": "table",
-          "instant": true
-        },
-        {
-          "exemplar": true,
-          "expr": "environment_sensor_max_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "F"
-        },
-        {
-          "exemplar": true,
-          "expr": "environment_sensor_average_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "G"
-        },
-        {
-          "expr": "environment_sensor_min_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
-          "legendFormat": "",
-          "interval": "",
-          "exemplar": false,
-          "refId": "C",
-          "hide": false,
-          "format": "table",
-          "instant": true
-        },
-        {
-          "exemplar": true,
-          "expr": "environment_sensor_max_fan_speed{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "H"
-        },
-        {
-          "exemplar": true,
-          "expr": "environment_sensor_average_fan_speed{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "I"
-        },
-        {
-          "exemplar": true,
-          "expr": "environment_sensor_min_fan_speed{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "J"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Storage Nodes",
-      "transformations": [
-        {
-          "id": "filterFieldsByName",
-          "options": {
-            "include": {
-              "names": [
-                "datacenter",
-                "model",
-                "Value #A",
-                "Value #D",
-                "Value #E",
-                "Value #F",
-                "Value #G",
-                "Value #H",
-                "Value #I",
-                "Value #J",
-                "node",
-                "cluster",
-                "Value #B",
-                "Value #C"
-              ]
-            }
-          }
-        },
-        {
-          "id": "merge",
-          "options": {}
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Value #A": true,
-              "shelf_id": true,
-              "state": true
-            },
-            "indexByName": {
-              "Value #A": 13,
-              "Value #D": 4,
-              "Value #E": 5,
-              "Value #B": 6,
-              "Value #F": 7,
-              "Value #G": 8,
-              "Value #C": 9,
-              "Value #H": 10,
-              "Value #I": 11,
-              "Value #J": 12,
-              "cluster": 1,
-              "datacenter": 0,
-              "model": 3,
-              "node": 2
-            },
-            "renameByName": {
-              "Value #A": "",
-              "Value #B": "Min Ambient Temp (C)",
-              "Value #C": "Min Temp (C)",
-              "Value #D": "Power",
-              "Value #E": "Avg Ambient Temp (C)",
-              "Value #F": "Max Temp (C)",
-              "Value #G": "Avg Temp (C)",
-              "Value #H": "Max Fan Speed (rpm)",
-              "Value #I": "Avg Fan Speed (rpm)",
-              "Value #J": "Min Fan Speed (rpm)",
-              "module_type": "",
-              "op_status": "",
-              "shelf_id": ""
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "watt"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 28
-      },
-      "id": 200,
-      "options": {
-        "legend": {
-          "calcs": [
-            "max",
-            "mean",
-            "last"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.2",
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "topk($TopResources,environment_sensor_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{node}}",
-          "refId": "B"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top Nodes by Power Consumed",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "celsius"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 28
-      },
-      "id": 202,
-      "options": {
-        "legend": {
-          "calcs": [
-            "max",
-            "mean",
-            "last"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.2",
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "topk($TopResources,environment_sensor_average_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
-          "interval": "",
-          "legendFormat": "{{node}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top Nodes by Average Temperature",
-      "type": "timeseries"
     },
     {
       "collapsed": true,
@@ -1922,7 +1923,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 36
+        "y": 30
       },
       "id": 97,
       "panels": [
@@ -2482,7 +2483,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 37
+        "y": 31
       },
       "id": 184,
       "panels": [
@@ -2510,7 +2511,7 @@
             "h": 4,
             "w": 8,
             "x": 0,
-            "y": 55
+            "y": 4
           },
           "id": 187,
           "options": {
@@ -2565,7 +2566,7 @@
             "h": 4,
             "w": 8,
             "x": 8,
-            "y": 55
+            "y": 4
           },
           "id": 189,
           "options": {
@@ -2620,7 +2621,7 @@
             "h": 4,
             "w": 8,
             "x": 16,
-            "y": 55
+            "y": 4
           },
           "id": 188,
           "options": {
@@ -2705,7 +2706,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 59
+            "y": 8
           },
           "id": 191,
           "options": {
@@ -2787,7 +2788,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 59
+            "y": 8
           },
           "id": 194,
           "options": {
@@ -2869,7 +2870,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 67
+            "y": 16
           },
           "id": 193,
           "options": {
@@ -2951,7 +2952,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 67
+            "y": 16
           },
           "id": 196,
           "options": {
@@ -3034,7 +3035,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 75
+            "y": 24
           },
           "id": 195,
           "options": {
@@ -3116,7 +3117,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 75
+            "y": 24
           },
           "id": 192,
           "options": {
@@ -3147,6 +3148,282 @@
         }
       ],
       "title": "Storage Efficiency Ratios",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 32
+      },
+      "id": 214,
+      "panels": [
+        {
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 1,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 0,
+            "y": 33
+          },
+          "id": 216,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "svm_vol_avg_latency{cluster=~\"$Cluster\", svm=~\"$TopSVMLatency\"}",
+              "interval": "",
+              "legendFormat": "{{cluster}} - {{svm}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top Latency",
+          "type": "timeseries"
+        },
+        {
+          "datasource": null,
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 1,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "Bps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 8,
+            "y": 33
+          },
+          "id": 218,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "svm_vol_read_data{cluster=~\"$Cluster\", svm=~\"$TopSVMs\"}+svm_vol_write_data{cluster=~\"$Cluster\",svm=~\"$TopSVMs\"}",
+              "format": "time_series",
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{cluster}} - {{svm}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top Throughput",
+          "type": "timeseries"
+        },
+        {
+          "datasource": null,
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 1,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 16,
+            "y": 33
+          },
+          "id": 219,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "svm_vol_total_ops{cluster=~\"$Cluster\", svm=~\"$TopSVMIOPs\"}",
+              "format": "time_series",
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{cluster}} - {{svm}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top IOPs",
+          "type": "timeseries"
+        }
+      ],
+      "title": "SVM Performance Drilldown",
       "type": "row"
     }
   ],
@@ -3232,8 +3509,8 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "5",
-          "value": "5"
+          "text": "2",
+          "value": "2"
         },
         "description": null,
         "error": null,
@@ -3249,7 +3526,7 @@
             "value": "1"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "2",
             "value": "2"
           },
@@ -3264,7 +3541,7 @@
             "value": "4"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "5",
             "value": "5"
           },
@@ -3318,6 +3595,75 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(svm_vol_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])+avg_over_time(svm_vol_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": "",
+        "multi": true,
+        "name": "TopSVMs",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(svm_vol_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])+avg_over_time(svm_vol_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*svm=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(svm_vol_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": "",
+        "multi": true,
+        "name": "TopSVMIOPs",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(svm_vol_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*svm=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(svm_vol_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": "",
+        "multi": true,
+        "name": "TopSVMLatency",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(svm_vol_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*svm=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
@@ -3340,6 +3686,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Cluster",
-  "uid": "-f_5IlQ7z",
-  "version": 5
+  "uid": "k5a_L6q7z",
+  "version": 7
 }
