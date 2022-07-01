@@ -272,10 +272,12 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 		labelsToInclude, keysToInclude, globalLabels []string
 		prefix                                       string
 		err                                          error
+		replacer                                     *strings.Replacer
 	)
 
 	rendered = make([][]byte, 0)
 	globalLabels = make([]string, 0)
+	replacer = strings.NewReplacer(`\`, `\\`, `"`, `\"`, "\n", "\\n")
 
 	if p.addMetaTags {
 		tagged = set.New()
@@ -335,13 +337,13 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 				// actual cause is the Aggregator plugin, which is adding node as
 				// instance label (even though it's already a global label for 7modes)
 				if !data.GetGlobalLabels().Has(label) {
-					instanceKeys = append(instanceKeys, fmt.Sprintf("%s=\"%s\"", label, value)) //nolint:makezero
+					instanceKeys = append(instanceKeys, escape(replacer, label, value)) //nolint:makezero
 				}
 			}
 		} else {
 			for _, key := range keysToInclude {
 				value := instance.GetLabel(key)
-				instanceKeys = append(instanceKeys, fmt.Sprintf("%s=\"%s\"", key, value)) //nolint:makezero
+				instanceKeys = append(instanceKeys, escape(replacer, key, value)) //nolint:makezero
 				if !instanceKeysOk && value != "" {
 					instanceKeysOk = true
 				}
@@ -435,4 +437,12 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 		Int("instances", len(data.GetInstances())).
 		Msg("Rendered data points for instances")
 	return rendered, nil
+}
+
+func escape(replacer *strings.Replacer, key string, value string) string {
+	// See https://prometheus.io/docs/instrumenting/exposition_formats/#comments-help-text-and-type-information
+	// label_value can be any sequence of UTF-8 characters, but the backslash (\), double-quote ("),
+	// and line feed (\n) characters have to be escaped as \\, \", and \n, respectively.
+
+	return fmt.Sprintf("%s=\"%s\"", key, replacer.Replace(value))
 }
