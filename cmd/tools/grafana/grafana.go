@@ -829,11 +829,20 @@ func checkToken(opts *options, ignoreConfig bool) error {
 	}
 
 	// get grafana version, we are more or less guaranteed this succeeds
-	if result, _, _, err = sendRequest(opts, "GET", "/api/health", nil); err != nil {
+	if result, _, _, err = sendRequest(opts, "GET", "/api/frontend/settings", nil); err != nil {
 		return err
 	}
 
-	grafanaVersion := result["version"].(string)
+	buildInfo := result["buildInfo"].(map[string]interface{})
+	if buildInfo == nil {
+		fmt.Printf("warning: unable to get grafana version. Ignoring grafana version check")
+		return nil
+	}
+	grafanaVersion := buildInfo["version"].(string)
+	if grafanaVersion == "" {
+		fmt.Printf("warning: unable to get grafana version. Ignoring grafana version check")
+		return nil
+	}
 	fmt.Printf("connected to Grafana server (version: %s)\n", grafanaVersion)
 	// if we are going to import check grafana version
 	if opts.command == "import" && !checkVersion(grafanaVersion) {
