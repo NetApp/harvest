@@ -483,7 +483,7 @@
     },
     {
       "datasource": "Prometheus",
-      "description": "❌  means this attribute is non compliant",
+      "description": "❌  means this attribute is non-compliant",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1956,7 +1956,7 @@
     },
     {
       "datasource": "Prometheus",
-      "description": "❌  means this attribute is non compliant",
+      "description": "❌  means this attribute is non-compliant",
       "fieldConfig": {
         "defaults": {
           "color": {
