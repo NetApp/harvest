@@ -4,9 +4,8 @@ query:            api/security/audit/destinations
 object:           security_audit_destination
 
 counters:
-  - ^protocol     => protocol
+  - ^^protocol    => protocol
 
-only_cluster_instance: true
 
 plugins:
   - LabelAgent:
