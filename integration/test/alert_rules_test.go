@@ -4,7 +4,7 @@ package main
 
 import (
 	"fmt"
-	promAlerts "github.com/Netapp/harvest-automation/test/alertmanager"
+	promAlerts "github.com/Netapp/harvest-automation/test/alert"
 	"github.com/Netapp/harvest-automation/test/data"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/rs/zerolog/log"
