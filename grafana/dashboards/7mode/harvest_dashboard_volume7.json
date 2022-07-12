@@ -938,7 +938,7 @@
               },
               "custom": {
                 "align": "auto",
-                "displayMode": "color-background-solid",
+                "displayMode": "auto",
                 "filterable": false
               },
               "mappings": [],
@@ -1049,7 +1049,7 @@
               },
               "custom": {
                 "align": "auto",
-                "displayMode": "color-background-solid",
+                "displayMode": "auto",
                 "filterable": false
               },
               "mappings": [],
@@ -1278,7 +1278,7 @@
               },
               "custom": {
                 "align": "auto",
-                "displayMode": "color-background-solid",
+                "displayMode": "auto",
                 "filterable": false
               },
               "mappings": [],
@@ -1389,7 +1389,7 @@
               },
               "custom": {
                 "align": "auto",
-                "displayMode": "color-background-solid",
+                "displayMode": "auto",
                 "filterable": false
               },
               "mappings": [],
