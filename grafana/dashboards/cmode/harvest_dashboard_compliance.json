@@ -483,7 +483,7 @@
     },
     {
       "datasource": "Prometheus",
-      "description": "<li>Green means this attribute is compliant<br>\n<li>Orange is non compliant",
+      "description": "❌  means this attribute is non-compliant",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -492,7 +492,7 @@
           },
           "custom": {
             "align": "left",
-            "displayMode": "color-background-solid",
+            "displayMode": "auto",
             "filterable": false
           },
           "mappings": [],
@@ -519,12 +519,10 @@
                   {
                     "options": {
                       "false": {
-                        "color": "semi-dark-orange",
                         "index": 0,
-                        "text": "Disabled"
+                        "text": "❌   Disabled"
                       },
                       "true": {
-                        "color": "semi-dark-green",
                         "index": 1,
                         "text": "Enabled"
                       }
@@ -555,14 +553,12 @@
                   {
                     "options": {
                       "false": {
-                        "color": "semi-dark-green",
                         "index": 0,
                         "text": "Disabled"
                       },
                       "true": {
-                        "color": "semi-dark-orange",
                         "index": 1,
-                        "text": "Enabled"
+                        "text": "❌   Enabled"
                       }
                     },
                     "type": "value"
@@ -591,7 +587,6 @@
                   {
                     "options": {
                       "0": {
-                        "color": "semi-dark-green",
                         "index": 1,
                         "text": "No"
                       }
@@ -602,7 +597,6 @@
                     "options": {
                       "match": "null",
                       "result": {
-                        "color": "semi-dark-green",
                         "index": 0,
                         "text": "No"
                       }
@@ -613,9 +607,8 @@
                     "options": {
                       "from": 1,
                       "result": {
-                        "color": "semi-dark-orange",
                         "index": 2,
-                        "text": "Yes"
+                        "text": "❌   Yes"
                       },
                       "to": 99999999
                     },
@@ -645,14 +638,12 @@
                   {
                     "options": {
                       "false": {
-                        "color": "semi-dark-green",
                         "index": 0,
                         "text": "Disabled"
                       },
                       "true": {
-                        "color": "semi-dark-orange",
                         "index": 1,
-                        "text": "Enabled"
+                        "text": "❌   Enabled"
                       }
                     },
                     "type": "value"
@@ -661,7 +652,6 @@
                     "options": {
                       "match": "empty",
                       "result": {
-                        "color": "semi-dark-green",
                         "index": 2,
                         "text": "Disabled"
                       }
@@ -672,7 +662,6 @@
                     "options": {
                       "match": "null",
                       "result": {
-                        "color": "semi-dark-green",
                         "index": 3,
                         "text": "Disabled"
                       }
@@ -703,14 +692,12 @@
                   {
                     "options": {
                       "false": {
-                        "color": "semi-dark-green",
                         "index": 0,
                         "text": "Disabled"
                       },
                       "true": {
-                        "color": "semi-dark-orange",
                         "index": 1,
-                        "text": "Enabled"
+                        "text": "❌   Enabled"
                       }
                     },
                     "type": "value"
@@ -719,7 +706,6 @@
                     "options": {
                       "match": "null",
                       "result": {
-                        "color": "semi-dark-green",
                         "index": 2,
                         "text": "Disabled"
                       }
@@ -730,7 +716,6 @@
                     "options": {
                       "match": "empty",
                       "result": {
-                        "color": "semi-dark-green",
                         "index": 3,
                         "text": "Disabled"
                       }
@@ -761,12 +746,10 @@
                   {
                     "options": {
                       "false": {
-                        "color": "semi-dark-orange",
                         "index": 0,
-                        "text": "Disabled"
+                        "text": "❌   Disabled"
                       },
                       "true": {
-                        "color": "semi-dark-green",
                         "index": 1,
                         "text": "Enabled"
                       }
@@ -777,9 +760,8 @@
                     "options": {
                       "match": "null",
                       "result": {
-                        "color": "semi-dark-orange",
                         "index": 2,
-                        "text": "Disabled"
+                        "text": "❌   Disabled"
                       }
                     },
                     "type": "special"
@@ -808,7 +790,6 @@
                   {
                     "options": {
                       " ": {
-                        "color": "semi-dark-green",
                         "index": 0,
                         "text": "No"
                       }
@@ -819,9 +800,8 @@
                     "options": {
                       "match": "nan",
                       "result": {
-                        "color": "semi-dark-orange",
                         "index": 1,
-                        "text": "Yes"
+                        "text": "❌   Yes"
                       }
                     },
                     "type": "special"
@@ -851,9 +831,8 @@
                     "options": {
                       "match": "empty",
                       "result": {
-                        "color": "semi-dark-orange",
                         "index": 0,
-                        "text": "Disabled"
+                        "text": "❌   Disabled"
                       }
                     },
                     "type": "special"
@@ -862,7 +841,6 @@
                     "options": {
                       "match": "nan",
                       "result": {
-                        "color": "semi-dark-green",
                         "index": 1,
                         "text": "Enabled"
                       }
@@ -893,33 +871,40 @@
                   {
                     "options": {
                       "0": {
-                        "color": "semi-dark-orange",
                         "index": 0,
-                        "text": "Not Configured"
+                        "text": "❌   Not Configured"
                       },
                       "1": {
-                        "color": "semi-dark-orange",
                         "index": 1,
-                        "text": "1 out of 3"
+                        "text": "❌   1 out of 3"
                       },
                       "2": {
-                        "color": "semi-dark-orange",
                         "index": 2,
-                        "text": "2 out of 3"
-                      },
-                      "3": {
-                        "color": "semi-dark-green",
-                        "index": 3,
-                        "text": "Configured"
+                        "text": "❌   2 out of 3"
                       }
                     },
                     "type": "value"
+                  },
+                  {
+                    "type": "range",
+                    "options": {
+                      "from": 3,
+                      "to": 9999,
+                      "result": {
+                        "text": "Configured",
+                        "index": 3
+                      }
+                    }
                   }
                 ]
               },
               {
                 "id": "custom.width",
                 "value": 169
+              },
+              {
+                "id": "custom.filterable",
+                "value": true
               }
             ]
           },
@@ -1027,7 +1012,6 @@
                     "options": {
                       "from": 1,
                       "result": {
-                        "color": "semi-dark-green",
                         "index": 1,
                         "text": "Configured"
                       },
@@ -1110,7 +1094,6 @@
                     "options": {
                       "from": 1,
                       "result": {
-                        "color": "semi-dark-green",
                         "index": 1,
                         "text": "Configured"
                       },
@@ -1142,7 +1125,6 @@
                   {
                     "options": {
                       "0": {
-                        "color": "semi-dark-green",
                         "index": 1,
                         "text": "Encrypted"
                       }
@@ -1163,9 +1145,8 @@
                     "options": {
                       "from": 1,
                       "result": {
-                        "color": "semi-dark-orange",
                         "index": 2,
-                        "text": "Not Encrypted"
+                        "text": "❌   Not Encrypted"
                       },
                       "to": 9999999999
                     },
@@ -1199,17 +1180,14 @@
                   {
                     "options": {
                       "active": {
-                        "color": "semi-dark-green",
                         "index": 0,
                         "text": "Active"
                       },
                       "expired": {
-                        "color": "semi-dark-orange",
                         "index": 2,
-                        "text": "Expired"
+                        "text": "❌   Expired"
                       },
                       "expiring": {
-                        "color": "semi-dark-green",
                         "index": 1,
                         "text": "Active (Expiring < 60 days)"
                       },
@@ -1303,8 +1281,7 @@
                     "type": "value",
                     "options": {
                       "1": {
-                        "text": "No",
-                        "color": "semi-dark-orange",
+                        "text": "❌   No",
                         "index": 0
                       }
                     }
@@ -1315,7 +1292,6 @@
                       "match": "null",
                       "result": {
                         "text": "Yes",
-                        "color": "semi-dark-green",
                         "index": 1
                       }
                     }
@@ -1970,7 +1946,7 @@
     },
     {
       "datasource": "Prometheus",
-      "description": "<li>Green means this attribute is compliant<br>\n<li>Orange is non compliant",
+      "description": "❌  means this attribute is non-compliant",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1979,7 +1955,7 @@
           },
           "custom": {
             "align": "left",
-            "displayMode": "color-background-solid",
+            "displayMode": "auto",
             "filterable": false
           },
           "mappings": [],
@@ -2023,9 +1999,8 @@
                     "options": {
                       "match": "empty",
                       "result": {
-                        "color": "semi-dark-orange",
                         "index": 0,
-                        "text": "Disabled"
+                        "text": "❌   Disabled"
                       }
                     },
                     "type": "special"
@@ -2034,9 +2009,8 @@
                     "options": {
                       "match": "null",
                       "result": {
-                        "color": "semi-dark-orange",
                         "index": 1,
-                        "text": "Disabled"
+                        "text": "❌   Disabled"
                       }
                     },
                     "type": "special"
@@ -2045,7 +2019,6 @@
                     "options": {
                       "match": "nan",
                       "result": {
-                        "color": "semi-dark-green",
                         "index": 2,
                         "text": "Enabled"
                       }
@@ -2072,12 +2045,10 @@
                   {
                     "options": {
                       "false": {
-                        "color": "semi-dark-orange",
                         "index": 1,
-                        "text": "Disabled"
+                        "text": "❌   Disabled"
                       },
                       "true": {
-                        "color": "semi-dark-green",
                         "index": 0,
                         "text": "Enabled"
                       }
@@ -2144,7 +2115,6 @@
                   {
                     "options": {
                       " ": {
-                        "color": "semi-dark-green",
                         "index": 1,
                         "text": "No"
                       }
@@ -2155,9 +2125,8 @@
                     "options": {
                       "match": "nan",
                       "result": {
-                        "color": "semi-dark-orange",
                         "index": 0,
-                        "text": "Yes"
+                        "text": "❌   Yes"
                       }
                     },
                     "type": "special"
@@ -2182,17 +2151,14 @@
                   {
                     "options": {
                       "lm_ntlm_ntlmv2_krb": {
-                        "color": "semi-dark-green",
                         "index": 0,
                         "text": "Enabled"
                       },
                       "ntlm_ntlmv2_krb": {
-                        "color": "semi-dark-green",
                         "index": 1,
                         "text": "Enabled"
                       },
                       "ntlmv2_krb": {
-                        "color": "semi-dark-green",
                         "index": 2,
                         "text": "Enabled"
                       }
@@ -2203,9 +2169,8 @@
                     "options": {
                       "match": "nan",
                       "result": {
-                        "color": "semi-dark-orange",
                         "index": 3,
-                        "text": "Disabled"
+                        "text": "❌   Disabled"
                       }
                     },
                     "type": "special"
@@ -2436,14 +2401,12 @@
                   {
                     "options": {
                       "false": {
-                        "color": "semi-dark-green",
                         "index": 1,
                         "text": "Disabled"
                       },
                       "true": {
-                        "color": "semi-dark-orange",
                         "index": 0,
-                        "text": "Enabled"
+                        "text": "❌   Enabled"
                       }
                     },
                     "type": "value"
@@ -2524,9 +2487,8 @@
                   {
                     "options": {
                       "1": {
-                        "color": "semi-dark-orange",
                         "index": 1,
-                        "text": "No"
+                        "text": "❌   No"
                       }
                     },
                     "type": "value"
@@ -2535,7 +2497,6 @@
                     "options": {
                       "match": "null",
                       "result": {
-                        "color": "semi-dark-green",
                         "index": 0,
                         "text": "Yes"
                       }
@@ -2795,7 +2756,7 @@
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 0,
+        "sort": 1,
         "tagValuesQuery": "",
         "tagsQuery": "",
         "type": "query",
