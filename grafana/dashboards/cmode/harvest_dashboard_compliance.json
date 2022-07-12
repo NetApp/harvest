@@ -1375,16 +1375,6 @@
           "refId": "F"
         },
         {
-          "exemplar": false,
-          "expr": "security_audit_destination_status{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "H"
-        },
-        {
           "exemplar": true,
           "expr": "count by (datacenter, cluster) (ntpserver_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
           "format": "table",

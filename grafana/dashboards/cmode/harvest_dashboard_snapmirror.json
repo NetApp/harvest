@@ -2880,7 +2880,7 @@
           },
           "custom": {
             "align": "left",
-            "displayMode": "color-background-solid",
+            "displayMode": "auto",
             "filterable": false
           },
           "mappings": [],
@@ -3044,7 +3044,7 @@
           },
           "custom": {
             "align": "left",
-            "displayMode": "color-background-solid",
+            "displayMode": "auto",
             "filterable": false
           },
           "mappings": [],
@@ -3965,7 +3965,7 @@
           },
           "custom": {
             "align": "left",
-            "displayMode": "color-background-solid",
+            "displayMode": "auto",
             "filterable": false
           },
           "mappings": [],
@@ -4131,7 +4131,7 @@
           },
           "custom": {
             "align": "left",
-            "displayMode": "color-background-solid",
+            "displayMode": "auto",
             "filterable": false
           },
           "mappings": [],
