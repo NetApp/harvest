@@ -7,7 +7,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/dict"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
@@ -76,7 +76,7 @@ func (my *Qtree) Init() error {
 
 	objects := my.Params.GetChildS("objects")
 	if objects == nil {
-		return errors.New(errors.MissingParam, "objects")
+		return errs.New(errs.ErrMissingParam, "objects")
 	}
 
 	for _, obj := range objects.GetAllChildContentS() {
@@ -164,7 +164,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 
 		if len(quotas) == 0 {
-			return nil, errors.New(errors.ErrNoInstance, "no quota instances found")
+			return nil, errs.New(errs.ErrNoInstance, "no quota instances found")
 		}
 
 		my.Logger.Debug().Int("quotas", len(quotas)).Msg("fetching quotas")

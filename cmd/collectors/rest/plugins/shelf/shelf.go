@@ -5,7 +5,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/dict"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
@@ -186,7 +186,7 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 
 	if len(records) == 0 {
-		return nil, errors.New(errors.ErrNoInstance, "no "+my.query+" instances on cluster")
+		return nil, errs.New(errs.ErrNoInstance, "no "+my.query+" instances on cluster")
 	}
 
 	var output []*matrix.Matrix
@@ -227,9 +227,9 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 							if key := obj.Get(my.instanceKeys[attribute]); key.Exists() {
 								instanceKey := shelfSerialNumber + "#" + attribute + "#" + key.String()
-								shelfChildInstance, errs := data1.NewInstance(instanceKey)
+								shelfChildInstance, err2 := data1.NewInstance(instanceKey)
 
-								if errs != nil {
+								if err2 != nil {
 									my.Logger.Error().Err(err).Str("attribute", attribute).Str("instanceKey", instanceKey).Msg("Failed to add instance")
 									break
 								}

@@ -7,9 +7,9 @@ counters:
   - ^name                               => port
   - ^node.name                          => node
   - ^link.speed                         => speed
-  - average_other_latency
-  - average_read_latency
-  - average_write_latency
+  - average_other_latency               => avg_other_latency
+  - average_read_latency                => avg_read_latency
+  - average_write_latency               => avg_write_latency
   - read_data
   - write_data
   - total_data
@@ -32,12 +32,12 @@ counters:
   - invalid.transmission_word           => invalid_transmission_word
   - isr.count                           => isr_count
   - invalid.crc                         => invalid_crc
-  - nvmf.average_other_latency          => nvmf_average_other_latency
-  - nvmf.average_read_latency           => nvmf_average_read_latency
-  - nvmf.average_remote_other_latency   => nvmf_average_read_latency
-  - nvmf.average_remote_read_latency    => nvmf_average_read_latency
-  - nvmf.average_remote_write_latency   => nvmf_average_read_latency
-  - nvmf.average_write_latency          => nvmf_average_read_latency
+  - nvmf.average_other_latency          => nvmf_avg_other_latency
+  - nvmf.average_read_latency           => nvmf_avg_read_latency
+  - nvmf.average_remote_other_latency   => nvmf_avg_read_latency
+  - nvmf.average_remote_read_latency    => nvmf_avg_read_latency
+  - nvmf.average_remote_write_latency   => nvmf_avg_read_latency
+  - nvmf.average_write_latency          => nvmf_avg_read_latency
   - nvmf.caw_data                       => nvmf_caw_data
   - nvmf.caw_ops                        => nvmf_caw_ops
   - nvmf.command_slots                  => nvmf_command_slots

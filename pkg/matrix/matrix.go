@@ -13,7 +13,7 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/color"
 	"github.com/netapp/harvest/v2/pkg/dict"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 )
 
@@ -162,7 +162,7 @@ func (me *Matrix) NewMetricType(key, dtype string) (Metric, error) {
 	case "float64":
 		return me.NewMetricFloat64(key)
 	default:
-		return nil, errors.New(InvalidDtype, dtype)
+		return nil, errs.New(ErrInvalidDtype, dtype)
 	}
 }
 
@@ -173,7 +173,7 @@ func (me *Matrix) ChangeMetricType(key, dtype string) (Metric, error) {
 
 func (me *Matrix) addMetric(key string, metric Metric) error {
 	if _, has := me.metrics[key]; has {
-		return errors.New(DuplicateMetricKey, key)
+		return errs.New(ErrDuplicateMetricKey, key)
 	}
 	metric.Reset(len(me.instances))
 	me.metrics[key] = metric
@@ -212,7 +212,7 @@ func (me *Matrix) NewInstance(key string) (*Instance, error) {
 	var instance *Instance
 
 	if _, has := me.instances[key]; has {
-		return nil, errors.New(DuplicateInstanceKey, key)
+		return nil, errs.New(ErrDuplicateInstanceKey, key)
 	}
 
 	instance = NewInstance(len(me.instances)) // index is current count of instances

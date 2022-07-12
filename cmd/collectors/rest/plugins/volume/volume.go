@@ -9,6 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/tidwall/gjson"
 	"strconv"
@@ -88,15 +89,23 @@ func (my *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		// invoke snapmirror rest and populate info in source and destination snapmirror maps
 		if smSourceMap, smDestinationMap, err := my.GetSnapMirrors(); err != nil {
-			my.Logger.Warn().Err(err).Msg("Failed to collect snapmirror data")
+			if errs.IsApiNotFound(err) {
+				my.Logger.Debug().Err(err).Msg("Failed to collect snapmirror data")
+			} else {
+				my.Logger.Error().Err(err).Msg("Failed to collect snapmirror data")
+			}
 		} else {
 			// update internal cache based on volume and SM maps
 			my.updateMaps(data, smSourceMap, smDestinationMap)
 		}
 
 		// invoke disk rest and populate info in aggrsMap
-		if disks, err := my.getDiskData(); err != nil {
-			my.Logger.Warn().Err(err).Msg("Failed to collect disk data")
+		if disks, err := my.getEncryptedDisks(); err != nil {
+			if errs.IsApiNotFound(err) {
+				my.Logger.Debug().Err(err).Msg("Failed to collect disk data")
+			} else {
+				my.Logger.Error().Err(err).Msg("Failed to collect disk data")
+			}
 		} else {
 			// update aggrsMap based on disk data
 			my.updateAggrMap(disks)
@@ -264,7 +273,8 @@ func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
 			volume.SetLabel("protectedBy", "not_applicable")
 		}
 
-		// Update all_sm_healthy label in volume, when all relationships belongs to this volume are healthy then true, otherwise false
+		// Update the all_sm_healthy label in volume
+		// When all relationships belong to this volume are healthy then true, otherwise false
 		if healthy, ok := my.isHealthySM[key]; ok {
 			volume.SetLabel("all_sm_healthy", strconv.FormatBool(healthy))
 		}
@@ -274,7 +284,7 @@ func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
 	}
 }
 
-func (my *Volume) getDiskData() ([]gjson.Result, error) {
+func (my *Volume) getEncryptedDisks() ([]gjson.Result, error) {
 	var (
 		result []gjson.Result
 		err    error

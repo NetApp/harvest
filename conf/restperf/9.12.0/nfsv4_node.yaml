@@ -8,7 +8,7 @@ global_labels:
 
 counters:
   - ^^id
-  - ^instance_name                        => node
+  - ^node.name                            => node
   - latency
   - total_ops 
   - total.read_throughput
@@ -52,44 +52,44 @@ counters:
   - setclientid.total                     => setclientid_total
   - verify.total                          => verify_total
   - write.total                           => write_total
-  - access.average_latency                => access_average_latency
-  - close.average_latency                 => close_average_latency
-  - commit.average_latency                => commit_average_latency
-  - create.average_latency                => create_average_latency
-  - delegpurge.average_latency            => delegpurge_average_latency
-  - delegreturn.average_latency           => delegreturn_average_latency
-  - getattr.average_latency               => getattr_average_latency
-  - getfh.average_latency                 => getfh_average_latency
-  - link.average_latency                  => link_average_latency
-  - lock.average_latency                  => lock_average_latency
-  - lockt.average_latency                 => lockt_average_latency
-  - locku.average_latency                 => locku_average_latency
-  - lookup.average_latency                => lookup_average_latency
-  - lookupp.average_latency               => lookupp_average_latency
-  - null.average_latency                  => null_average_latency
-  - nverify.average_latency               => nverify_average_latency
-  - open.average_latency                  => open_average_latency
-  - open_confirm.average_latency          => open_confirm_average_latency
-  - open_downgrade.average_latency        => open_downgrade_average_latency
-  - openattr.average_latency              => openattr_average_latency
-  - putfh.average_latency                 => putfh_average_latency
-  - putpubfh.average_latency              => putpubfh_average_latency
-  - putrootfh.average_latency             => putrootfh_average_latency
-  - read.average_latency                  => read_average_latency
-  - readdir.average_latency               => readdir_average_latency
-  - readlink.average_latency              => readlink_average_latency
-  - release_lock_owner.average_latency    => release_lock_owner_average_latency
-  - remove.average_latency                => remove_average_latency
-  - rename.average_latency                => rename_average_latency
-  - renew.average_latency                 => renew_average_latency
-  - restorefh.average_latency             => restorefh_average_latency
-  - savefh.average_latency                => savefh_average_latency
-  - secinfo.average_latency               => secinfo_average_latency
-  - setattr.average_latency               => setattr_average_latency
-  - setclientid.average_latency           => setclientid_average_latency
-  - setclientid_confirm.average_latency   => setclientid_confirm_average_latency
-  - verify.average_latency                => verify_average_latency
-  - write.average_latency                 => write_average_latency
+  - access.average_latency                => access_avg_latency
+  - close.average_latency                 => close_avg_latency
+  - commit.average_latency                => commit_avg_latency
+  - create.average_latency                => create_avg_latency
+  - delegpurge.average_latency            => delegpurge_avg_latency
+  - delegreturn.average_latency           => delegreturn_avg_latency
+  - getattr.average_latency               => getattr_avg_latency
+  - getfh.average_latency                 => getfh_avg_latency
+  - link.average_latency                  => link_avg_latency
+  - lock.average_latency                  => lock_avg_latency
+  - lockt.average_latency                 => lockt_avg_latency
+  - locku.average_latency                 => locku_avg_latency
+  - lookup.average_latency                => lookup_avg_latency
+  - lookupp.average_latency               => lookupp_avg_latency
+  - null.average_latency                  => null_avg_latency
+  - nverify.average_latency               => nverify_avg_latency
+  - open.average_latency                  => open_avg_latency
+  - open_confirm.average_latency          => open_confirm_avg_latency
+  - open_downgrade.average_latency        => open_downgrade_avg_latency
+  - openattr.average_latency              => openattr_avg_latency
+  - putfh.average_latency                 => putfh_avg_latency
+  - putpubfh.average_latency              => putpubfh_avg_latency
+  - putrootfh.average_latency             => putrootfh_avg_latency
+  - read.average_latency                  => read_avg_latency
+  - readdir.average_latency               => readdir_avg_latency
+  - readlink.average_latency              => readlink_avg_latency
+  - release_lock_owner.average_latency    => release_lock_owner_avg_latency
+  - remove.average_latency                => remove_avg_latency
+  - rename.average_latency                => rename_avg_latency
+  - renew.average_latency                 => renew_avg_latency
+  - restorefh.average_latency             => restorefh_avg_latency
+  - savefh.average_latency                => savefh_avg_latency
+  - secinfo.average_latency               => secinfo_avg_latency
+  - setattr.average_latency               => setattr_avg_latency
+  - setclientid.average_latency           => setclientid_avg_latency
+  - setclientid_confirm.average_latency   => setclientid_confirm_avg_latency
+  - verify.average_latency                => verify_avg_latency
+  - write.average_latency                 => write_avg_latency
 
 
 override:

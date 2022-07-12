@@ -9,7 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"time"
@@ -111,7 +111,7 @@ func (my *Security) getSecurityConfig() (string, error) {
 	}
 
 	if len(result) == 0 || result == nil {
-		return "", errors.New(errors.ErrNoInstance, "no records found")
+		return "", errs.New(errs.ErrNoInstance, "no records found")
 	}
 
 	for _, securityConfig := range result {
@@ -158,7 +158,7 @@ func (my *Security) getEnabledValue(request *node.Node) (string, error) {
 	}
 
 	if len(result) == 0 || result == nil {
-		return "", errors.New(errors.ErrNoInstance, "no records found")
+		return "", errs.New(errs.ErrNoInstance, "no records found")
 	}
 
 	for _, securityConfig := range result {

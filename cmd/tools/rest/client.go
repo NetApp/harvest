@@ -7,7 +7,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/tidwall/gjson"
 	"io"
@@ -58,7 +58,7 @@ func New(poller conf.Poller, timeout time.Duration) (*Client, error) {
 	client.Logger = logging.Get().SubLogger("REST", "Client")
 
 	if addr = poller.Addr; addr == "" {
-		return nil, errors.New(errors.MissingParam, "addr")
+		return nil, errs.New(errs.ErrMissingParam, "addr")
 	}
 
 	if poller.IsKfs {
@@ -93,9 +93,9 @@ func New(poller conf.Poller, timeout time.Duration) (*Client, error) {
 		certPath := poller.SslCert
 		keyPath := poller.SslKey
 		if certPath == "" {
-			return nil, errors.New(errors.MissingParam, "ssl_cert")
+			return nil, errs.New(errs.ErrMissingParam, "ssl_cert")
 		} else if keyPath == "" {
-			return nil, errors.New(errors.MissingParam, "ssl_key")
+			return nil, errs.New(errs.ErrMissingParam, "ssl_key")
 		} else if cert, err = tls.LoadX509KeyPair(certPath, keyPath); err != nil {
 			return nil, err
 		}
@@ -112,9 +112,9 @@ func New(poller conf.Poller, timeout time.Duration) (*Client, error) {
 		client.username = username
 		client.password = password
 		if username == "" {
-			return nil, errors.New(errors.MissingParam, "username")
+			return nil, errs.New(errs.ErrMissingParam, "username")
 		} else if password == "" {
-			return nil, errors.New(errors.MissingParam, "password")
+			return nil, errs.New(errs.ErrMissingParam, "password")
 		}
 
 		transport = &http.Transport{
@@ -179,10 +179,16 @@ func (c *Client) invoke() ([]byte, error) {
 
 	if response.StatusCode != 200 {
 		if body, err = ioutil.ReadAll(response.Body); err == nil {
-			value := gjson.GetBytes(body, "error.message")
-			return nil, fmt.Errorf("server returned status code: %d error: %s", response.StatusCode, value.String())
+			result := gjson.GetBytes(body, "error")
+			if result.Exists() {
+				message := result.Get("message").String()
+				code := result.Get("code").Int()
+				target := result.Get("target").String()
+				return nil, errs.Rest(response.StatusCode, message, code, target)
+			}
+			return nil, errs.Rest(response.StatusCode, "", 0, "")
 		}
-		return nil, fmt.Errorf("server returned status code %d", response.StatusCode)
+		return nil, errs.Rest(response.StatusCode, err.Error(), 0, "")
 	}
 
 	// read response body

@@ -25,7 +25,7 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/exporter"
 	"github.com/netapp/harvest/v2/pkg/color"
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"regexp"
@@ -122,7 +122,7 @@ func (p *Prometheus) Init() error {
 		p.allowAddrs = *x
 		if len(p.allowAddrs) == 0 {
 			p.Logger.Error().Stack().Err(nil).Msg("allow_addrs without any")
-			return errors.New(errors.InvalidParam, "allow_addrs")
+			return errs.New(errs.ErrInvalidParam, "allow_addrs")
 		}
 		p.checkAddrs = true
 		p.Logger.Debug().Msgf("added %d plain allow rules", len(p.allowAddrs))
@@ -137,12 +137,12 @@ func (p *Prometheus) Init() error {
 				p.allowAddrsRegex = append(p.allowAddrsRegex, reg)
 			} else {
 				p.Logger.Error().Stack().Err(err).Msg("parse regex")
-				return errors.New(errors.InvalidParam, "allow_addrs_regex")
+				return errs.New(errs.ErrInvalidParam, "allow_addrs_regex")
 			}
 		}
 		if len(p.allowAddrsRegex) == 0 {
 			p.Logger.Error().Stack().Err(nil).Msg("allow_addrs_regex without any")
-			return errors.New(errors.InvalidParam, "allow_addrs")
+			return errs.New(errs.ErrInvalidParam, "allow_addrs")
 		}
 		p.checkAddrs = true
 		p.Logger.Debug().Msgf("added %d regex allow rules", len(p.allowAddrsRegex))
@@ -166,9 +166,9 @@ func (p *Prometheus) Init() error {
 
 	// sanity check on port
 	if port == 0 {
-		return errors.New(errors.MissingParam, "port")
+		return errs.New(errs.ErrMissingParam, "port")
 	} else if port < 0 {
-		return errors.New(errors.InvalidParam, "port")
+		return errs.New(errs.ErrInvalidParam, "port")
 	}
 
 	// The optional parameter LocalHTTPAddr is the address of the HTTP service, valid values are:
@@ -272,10 +272,12 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 		labelsToInclude, keysToInclude, globalLabels []string
 		prefix                                       string
 		err                                          error
+		replacer                                     *strings.Replacer
 	)
 
 	rendered = make([][]byte, 0)
 	globalLabels = make([]string, 0)
+	replacer = strings.NewReplacer(`\`, `\\`, `"`, `\"`, "\n", "\\n")
 
 	if p.addMetaTags {
 		tagged = set.New()
@@ -311,7 +313,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 	prefix = p.globalPrefix + data.Object
 
 	for key, value := range data.GetGlobalLabels().Map() {
-		globalLabels = append(globalLabels, fmt.Sprintf("%s=\"%s\"", key, value))
+		globalLabels = append(globalLabels, escape(replacer, key, value))
 	}
 
 	for key, instance := range data.GetInstances() {
@@ -335,13 +337,13 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 				// actual cause is the Aggregator plugin, which is adding node as
 				// instance label (even though it's already a global label for 7modes)
 				if !data.GetGlobalLabels().Has(label) {
-					instanceKeys = append(instanceKeys, fmt.Sprintf("%s=\"%s\"", label, value)) //nolint:makezero
+					instanceKeys = append(instanceKeys, escape(replacer, label, value)) //nolint:makezero
 				}
 			}
 		} else {
 			for _, key := range keysToInclude {
 				value := instance.GetLabel(key)
-				instanceKeys = append(instanceKeys, fmt.Sprintf("%s=\"%s\"", key, value)) //nolint:makezero
+				instanceKeys = append(instanceKeys, escape(replacer, key, value)) //nolint:makezero
 				if !instanceKeysOk && value != "" {
 					instanceKeysOk = true
 				}
@@ -350,7 +352,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 
 			for _, label := range labelsToInclude {
 				value := instance.GetLabel(label)
-				instanceLabels = append(instanceLabels, fmt.Sprintf("%s=\"%s\"", label, value))
+				instanceLabels = append(instanceLabels, escape(replacer, label, value))
 				p.Logger.Trace().Msgf("++ label [%s] (%s) %t", label, value, value != "")
 			}
 
@@ -401,7 +403,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 				if metric.HasLabels() {
 					metricLabels := make([]string, 0)
 					for k, v := range metric.GetLabels().Map() {
-						metricLabels = append(metricLabels, fmt.Sprintf("%s=\"%s\"", k, v))
+						metricLabels = append(metricLabels, escape(replacer, k, v))
 					}
 					x := fmt.Sprintf("%s_%s{%s,%s} %s", prefix, metric.GetName(), strings.Join(instanceKeys, ","), strings.Join(metricLabels, ","), value)
 
@@ -435,4 +437,12 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 		Int("instances", len(data.GetInstances())).
 		Msg("Rendered data points for instances")
 	return rendered, nil
+}
+
+func escape(replacer *strings.Replacer, key string, value string) string {
+	// See https://prometheus.io/docs/instrumenting/exposition_formats/#comments-help-text-and-type-information
+	// label_value can be any sequence of UTF-8 characters, but the backslash (\), double-quote ("),
+	// and line feed (\n) characters have to be escaped as \\, \", and \n, respectively.
+
+	return fmt.Sprintf("%s=\"%s\"", key, replacer.Replace(value))
 }

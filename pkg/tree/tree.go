@@ -4,7 +4,7 @@
 package tree
 
 import (
-	"github.com/netapp/harvest/v2/pkg/errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/tree/xml"
 	y3 "gopkg.in/yaml.v3"
@@ -25,7 +25,7 @@ func ImportYaml(filepath string) (*node.Node, error) {
 	}
 	// treat an empty file as an error
 	if len(root.Content) == 0 {
-		return nil, errors.New(errors.ErrConfig, "template file is empty or does not exist")
+		return nil, errs.New(errs.ErrConfig, "template file is empty or does not exist")
 	}
 
 	r := node.New([]byte("Root"))

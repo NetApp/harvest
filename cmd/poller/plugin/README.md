@@ -13,10 +13,29 @@ Harvest architecture defines three types of plugins:
 
 This documentation gives an overview of builtin plugins. For other plugins, see their respective documentation. For writing your own plugin, see Developer's documentation.
 
-The built-in plugins are:
+**Note:** the rules are executed in the same order as you've added them. The built-in plugins are:
 
 - [Aggregator](#aggregator)
+  - [Rule syntax](#rule-syntax)
+  - [Aggregation rules](#aggregation-rules)
 - [LabelAgent](#labelagent)
+  - [split](#split)
+  - [split_regex](#split_regex)
+  - [split_pairs](#split_pairs)
+  - [join](#join)
+  - [replace](#replace)
+  - [replace_regex](#replace_regex)
+  - [exclude_equals](#exclude_equals)
+  - [exclude_contains](#exclude_contains)
+  - [exclude_regex](#exclude_regex)
+  - [include_equals](#include_equals)
+  - [include_contains](#include_contains)
+  - [include_regex](#include_regex)
+  - [value_mapping](#value_mapping)
+  - [value_to_num](#value_to_num)
+  - [value_to_num_regex](#value_to_num_regex)
+- [MetricAgent](#metricagent)
+  - [compute_metric](#compute_metric)
 
 # Aggregator
 
@@ -95,38 +114,15 @@ The plugin tries to intelligently aggregate metrics based on a few rules:
 # LabelAgent
 LabelAgent are used to manipulate instance labels based on rules. You can define multiple rules, here is an example of what you could add to the yaml file of a collector:
 
-
 ```yaml
 plugins:
   LabelAgent:
   # our rules:
-    split_simple: node `/` ,aggr,plex,disk
+    split: node `/` ,aggr,plex,disk
     replace_regex: node node `^(node)_(\d+)_.*$` `Node-$2`
 ```
 
-Notice that the rules are executed in the same order as you've added them. List of currently available rules:
-
-- [Built-in Plugins](#built-in-plugins)
-- [Aggregator](#aggregator)
-    - [Rule syntax](#rule-syntax)
-    - [Aggregation rules](#aggregation-rules)
-- [LabelAgent](#labelagent)
-  - [split](#split)
-  - [split_regex](#split_regex)
-  - [split_pairs](#split_pairs)
-  - [join](#join)
-  - [replace](#replace)
-  - [replace_regex](#replace_regex)
-  - [exclude_equals](#exclude_equals)
-  - [exclude_contains](#exclude_contains)
-  - [exclude_regex](#exclude_regex)
-  - [include_equals](#include_equals)
-  - [include_contains](#include_contains)
-  - [include_regex](#include_regex)
-  - [value_mapping](#value_mapping)
-  - [value_to_num](#value_to_num)
-  - [compute_metric](#compute_metric)
-  - [value_to_num_regex](#value_to_num_regex)
+**Note:** Labels for creating new label should use name defined in right side of =>. If not present then left side of => is used.
 
 ## split
 
@@ -152,19 +148,19 @@ split:
 
 ## split_regex
 
-Does the same as `split_regex` but uses a regular expression instead of a separator.
+Does the same as `split` but uses a regular expression instead of a separator.
 
 Rule syntax:
 
 ```yaml
-split_simple: 
+split_regex: 
   - LABEL `REGEX` LABEL1,LABEL2,LABEL3
 ```
 
 Example:
 
 ```yaml
-split_simple: 
+split_regex: 
   - node `.*_(ag\d+)_(p\d+)_(d\d+)` aggr,plex,disk
 # will look for "_ag", "_p", "_d", each followed by one
 # or more numbers, if there is a match, the submatches
@@ -239,7 +235,7 @@ replace:
 ```
 
 ## replace_regex
-Same as `replace_simple`, but will use a regular expression instead of `OLD`. Note you can use `$n` to specify `n`th submatch in `NEW`.
+Same as `replace`, but will use a regular expression instead of `OLD`. Note you can use `$n` to specify `n`th submatch in `NEW`.
 
 Rule syntax:
 
@@ -431,6 +427,55 @@ value_to_num:
 # metric value will be set to 1 if "outage" is empty, if it's any other value, it will be set to the default, 0
 # '-' is a special symbol in this mapping, and it will be converted to blank while processing.
 ```
+
+## value_to_num_regex
+
+Same as value_to_num, but will use a regular expression. All matches are mapped to 1 and non-matches are mapped to 0.
+
+This is handy to manipulate the data in the DB or Grafana (e.g. change color based on status or create alert).
+
+Note that you don't define the numeric values, instead, you provide the expected values and the plugin will map each value to its index in the rule.
+
+Rule syntax:
+
+```yaml
+value_to_num_regex:
+  - METRIC LABEL ZAPI_REGEX REST_REGEX `N`
+# map values of LABEL to 1 if it matches ZAPI_REGEX or REST_REGEX
+# otherwise, value of METRIC is set to N
+```
+The default value `N` is optional, if no default value is given and the label value does not match any of the given values, the metric value will not be set.
+
+Examples:
+
+```yaml
+value_to_num_regex:
+  - certificateuser methods .*cert.*$ .*certificate.*$ `0`
+# a new metric will be created with the name "certificateuser"
+# if an instance has label "methods" with value contains "cert", the metric value will be 1,
+# if value contains "certificate", the value will be set to 1,
+# if value doesn't contain "cert" and "certificate", it will be set to the specified default, 0
+```
+
+```yaml
+value_to_num_regex:
+  - status state ^up$ ^ok$ `4`
+# metric value will be set to 1 if label "state" matches regex, otherwise set to **4**
+```
+
+# MetricAgent
+MetricAgent are used to manipulate metrics based on rules. You can define multiple rules, here is an example of what you could add to the yaml file of a collector:
+
+```yaml
+plugins:
+  MetricAgent:
+    compute_metric:
+      - snapshot_maxfiles_possible ADD snapshot.max_files_available snapshot.max_files_used
+      - raid_disk_count ADD block_storage.primary.disk_count block_storage.hybrid_cache.disk_count
+```
+
+**Note:** Metrics for creating new metric should use name defined in left side of =>
+
 ## compute_metric
 
 This rule creates a new metric (of type float64) using the provided scalar or an existing metric value combined with a mathematical operation.
@@ -446,7 +491,7 @@ compute_metric:
   - METRIC OPERATION METRIC1 METRIC2 METRIC3 
 # target new metric - mathematical operation - input metric names 
 # apply OPERATION on metric values of METRIC1, METRIC2 and METRIC3 and set result in METRIC
-# METRIC1, METRIC2, METRIC3 can be a scalar or an existing metric name
+# METRIC1, METRIC2, METRIC3 can be a scalar or an existing metric name.
 ```
 
 Examples:
@@ -492,39 +537,4 @@ compute_metric:
   - transmission_rate DIVIDE transfer.bytes_transferred transfer.total_duration
 # value of metric "transmission_rate" would be division of metric value of transfer.bytes_transferred by metric value of transfer.total_duration.
 # transmission_rate = transfer.bytes_transferred / transfer.total_duration
-```
-
-## value_to_num_regex
-
-Same as value_to_num, but will use a regular expression. All matches are mapped to 1 and non-matches are mapped to 0.
-
-This is handy to manipulate the data in the DB or Grafana (e.g. change color based on status or create alert).
-
-Note that you don't define the numeric values, instead, you provide the expected values and the plugin will map each value to its index in the rule.
-
-Rule syntax:
-
-```yaml
-value_to_num_regex:
-  - METRIC LABEL ZAPI_REGEX REST_REGEX `N`
-# map values of LABEL to 1 if it matches ZAPI_REGEX or REST_REGEX
-# otherwise, value of METRIC is set to N
-```
-The default value `N` is optional, if no default value is given and the label value does not match any of the given values, the metric value will not be set.
-
-Examples:
-
-```yaml
-value_to_num_regex:
-  - certificateuser methods .*cert.*$ .*certificate.*$ `0`
-# a new metric will be created with the name "certificateuser"
-# if an instance has label "methods" with value contains "cert", the metric value will be 1,
-# if value contains "certificate", the value will be set to 1,
-# if value doesn't contain "cert" and "certificate", it will be set to the specified default, 0
-```
-
-```yaml
-value_to_num_regex:
-  - status state ^up$ ^ok$ `4`
-# metric value will be set to 1 if label "state" matches regex, otherwise set to **4**
 ```

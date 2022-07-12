@@ -18,7 +18,7 @@ counters:
   - read_latency
   - write_latency
   - other_latency
-  - average_latency
+  - average_latency        => avg_latency
 
 plugins:
   - Volume
