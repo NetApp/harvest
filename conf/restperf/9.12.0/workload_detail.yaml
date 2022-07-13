@@ -5,8 +5,6 @@ name:                     WorkloadDetail
 query:                    api/cluster/counter/tables/qos_detail
 object:                   qos_detail
 
-instance_key:             name
-
 # recommended to use large interval, since workload objects are expensive
 client_timeout:           1m30s
 schedule:

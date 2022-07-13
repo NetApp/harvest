@@ -95,8 +95,244 @@ func metricDiff(zapiDataCenterName string, restDataCenterName string) map[string
 	fmt.Println("################## Metrics Diffs in prometheus ##############")
 	for _, c := range common {
 		metricValueDiff(c)
+		metricPerfValueDiff(c)
 	}
 	return x
+}
+
+func metricPerfValueDiff(metricName string) {
+	if strings.HasSuffix(metricName, "_labels") {
+		return
+	}
+
+	timeNow := time.Now().Unix()
+	queryURL := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",
+		PrometheusURL, metricName, timeNow)
+	data, _ := getResponse(queryURL)
+	replacer := strings.NewReplacer("[", "", "]", "", "\"", "")
+	zapiMetric := make(map[string]float64)
+	restMetric := make(map[string]float64)
+	results := make([]gjson.Result, 0)
+
+	keyIndexes := make([]int, 0)
+
+	if strings.HasPrefix(metricName, "volume_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node", "data.result.#.metric.volume", "data.result.#.metric.svm")
+		keyIndexes = []int{2, 3, 4}
+	}
+
+	if strings.HasPrefix(metricName, "node_cifs_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node")
+		keyIndexes = []int{2}
+	}
+
+	if strings.HasPrefix(metricName, "svm_cifs_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node", "data.result.#.metric.svm")
+		keyIndexes = []int{2, 3}
+	}
+
+	if strings.HasPrefix(metricName, "copy_manager_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.svm")
+		keyIndexes = []int{2}
+	}
+
+	if strings.HasPrefix(metricName, "aggr_disk_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node", "data.result.#.metric.partition", "data.result.#.metric.disk", "data.result.#.metric.raid_group")
+		keyIndexes = []int{2, 3, 4, 5}
+	}
+
+	if strings.HasPrefix(metricName, "node_disk_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node")
+		keyIndexes = []int{2}
+	}
+
+	if strings.HasPrefix(metricName, "flashcache_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node")
+		keyIndexes = []int{2}
+	}
+
+	if strings.HasPrefix(metricName, "fcp_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node", "data.result.#.metric.port")
+		keyIndexes = []int{2, 3}
+	}
+
+	if strings.HasPrefix(metricName, "fcp_lif_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node", "data.result.#.metric.port", "data.result.#.metric.svm", "data.result.#.metric.lif")
+		keyIndexes = []int{2, 3, 4, 5}
+	}
+
+	if strings.HasPrefix(metricName, "fcvi_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node", "data.result.#.metric.name")
+		keyIndexes = []int{2, 3}
+	}
+
+	if strings.HasPrefix(metricName, "hostadapter_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node", "data.result.#.metric.hostadapter")
+		keyIndexes = []int{2, 3}
+	}
+
+	if strings.HasPrefix(metricName, "iscsi_lif_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node", "data.result.#.metric.lif", "data.result.#.metric.svm")
+		keyIndexes = []int{2, 3, 4}
+	}
+
+	if strings.HasPrefix(metricName, "lif_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node", "data.result.#.metric.lif", "data.result.#.metric.svm", "data.result.#.metric.port")
+		keyIndexes = []int{2, 3, 4, 5}
+	}
+
+	if strings.HasPrefix(metricName, "lun_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.svm")
+		keyIndexes = []int{2}
+	}
+
+	if strings.HasPrefix(metricName, "namespace_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.svm", "data.result.#.metric.name")
+		keyIndexes = []int{2, 3}
+	}
+
+	if strings.HasPrefix(metricName, "svm_nfs_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.svm", "data.result.#.metric.nfsv")
+		keyIndexes = []int{2, 3}
+	}
+
+	if strings.HasPrefix(metricName, "node_nfs_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node", "data.result.#.metric.nfsv")
+		keyIndexes = []int{2, 3}
+	}
+
+	if strings.HasPrefix(metricName, "nfs_diag_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node", "data.result.#.metric.nfsv")
+		keyIndexes = []int{2, 3}
+	}
+
+	if strings.HasPrefix(metricName, "nic_)") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node", "data.result.#.metric.type")
+		keyIndexes = []int{2, 3}
+	}
+
+	if strings.HasPrefix(metricName, "nvmf_lif_)") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node", "data.result.#.metric.lif", "data.result.#.metric.svm", "data.result.#.metric.port")
+		keyIndexes = []int{2, 3, 4, 5}
+	}
+
+	if strings.HasPrefix(metricName, "path_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node")
+		keyIndexes = []int{2}
+	}
+
+	if strings.HasPrefix(metricName, "processor_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node")
+		keyIndexes = []int{2}
+	}
+
+	if strings.HasPrefix(metricName, "qtree_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node", "data.result.#.metric.qtree", "data.result.#.metric.svm", "data.result.#.metric.volume")
+		keyIndexes = []int{2, 3, 4, 5}
+	}
+
+	if strings.HasPrefix(metricName, "headroom_aggr_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node", "data.result.#.metric.aggr", "data.result.#.metric.disk_type")
+		keyIndexes = []int{2, 3, 4}
+	}
+
+	if strings.HasPrefix(metricName, "headroom_cpu_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node")
+		keyIndexes = []int{2}
+	}
+
+	if strings.HasPrefix(metricName, "node_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node")
+		keyIndexes = []int{2}
+	}
+
+	if strings.HasPrefix(metricName, "token_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node", "data.result.#.metric.token")
+		keyIndexes = []int{2, 3}
+	}
+
+	if strings.HasPrefix(metricName, "node_vol_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node")
+		keyIndexes = []int{2}
+	}
+
+	if strings.HasPrefix(metricName, "svm_vol_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.svm")
+		keyIndexes = []int{2}
+	}
+
+	if strings.HasPrefix(metricName, "wafl_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node")
+		keyIndexes = []int{2}
+	}
+
+	if strings.HasPrefix(metricName, "fabricpool_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.svm", "data.result.#.metric.volume")
+		keyIndexes = []int{2, 3}
+	}
+
+	if strings.HasPrefix(metricName, "flashpool_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.node")
+		keyIndexes = []int{2}
+	}
+
+	if strings.HasPrefix(metricName, "qos_") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.svm", "data.result.#.metric.volume", "data.result.#.metric.qtree", "data.result.#.metric.lun", "data.result.#.metric.file", "data.result.#.metric.policy_group", "data.result.#.metric.wid")
+		keyIndexes = []int{2, 3, 4, 5, 6, 7, 8}
+	}
+
+	if strings.HasPrefix(metricName, "qos_detail") {
+		results = gjson.GetMany(data, "data.result.#.value.1", "data.result.#.metric.datacenter", "data.result.#.metric.svm", "data.result.#.metric.volume", "data.result.#.metric.qtree", "data.result.#.metric.lun", "data.result.#.metric.file", "data.result.#.metric.policy_group", "data.result.#.metric.wid", "data.result.#.metric.resource")
+		keyIndexes = []int{2, 3, 4, 5, 6, 7, 8, 9}
+	}
+
+	if len(results) > 0 && len(keyIndexes) > 0 {
+		if results[0].String() == "[]" {
+			return
+		}
+		metrics := make([][]string, 0)
+		for _, i := range keyIndexes {
+			if results[i].String() == "[]" {
+				continue
+			}
+			metric := strings.Split(replacer.Replace(results[i].String()), ",")
+			metrics = append(metrics, metric)
+		}
+
+		value := strings.Split(replacer.Replace(results[0].String()), ",")
+		dc := strings.Split(replacer.Replace(results[1].String()), ",")
+		for i, v := range value {
+			f, err := strconv.ParseFloat(v, 64)
+			if err != nil {
+				fmt.Println(err)
+			}
+			key := ""
+			for x := range metrics {
+				key = key + "_" + metrics[x][i]
+			}
+			if dc[i] == "ZapiPerf" {
+				zapiMetric[key] = f
+			}
+			if dc[i] == "RestPerf" {
+				restMetric[key] = f
+			}
+		}
+		for k, v := range zapiMetric {
+			if v1, ok := restMetric[k]; ok {
+				diff := math.Abs(v - v1)
+				if diff > 0 {
+					if v1 != 0 {
+						p := (diff / v1) * 100
+						if p > 10 {
+							fmt.Printf("%s %s ZapiPerf: %v -> RestPerf: %v  PercentageDiff: %v\n", metricName, k, v, v1, p)
+						}
+					} else {
+						fmt.Printf("%s %s ZapiPerf: %v -> RestPerf: %v\n", metricName, k, v, v1)
+					}
+				}
+			}
+		}
+	}
 }
 
 func metricValueDiff(metricName string) {
@@ -181,8 +417,14 @@ func metricValueDiff(metricName string) {
 	}
 
 	if len(results) > 0 && len(keyIndexes) > 0 {
+		if results[0].String() == "[]" {
+			return
+		}
 		metrics := make([][]string, 0)
 		for _, i := range keyIndexes {
+			if results[i].String() == "[]" {
+				continue
+			}
 			metric := strings.Split(replacer.Replace(results[i].String()), ",")
 			metrics = append(metrics, metric)
 		}
@@ -207,7 +449,7 @@ func metricValueDiff(metricName string) {
 		for k, v := range zapiMetric {
 			if v1, ok := restMetric[k]; ok {
 				if math.Abs(v-v1) > 0 {
-					fmt.Printf("%s %s %v -> %v\n", metricName, k, v, v1)
+					fmt.Printf("%s %s Zapi: %v -> Rest: %v\n", metricName, k, v, v1)
 				}
 			}
 		}
