@@ -782,6 +782,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 			continue
 		}
 		property := counter.counterType
+		metric.SetProperty(property)
 
 		// RAW - submit without post-processing
 		if property == "raw" {
