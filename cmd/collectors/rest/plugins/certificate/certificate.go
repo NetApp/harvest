@@ -98,7 +98,7 @@ func (my *Certificate) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 				if serialNumber == adminVserverSerial {
 					certificateInstance.SetExportable(true)
-					// Admin svm certificate is cluster scope and REST don't have svm name in it, adding for parity with ZAPI.
+					// Admin SVM certificate is cluster scoped, but the REST API does not return the SVM name in its response. Add here for ZAPI parity
 					certificateInstance.SetLabel("svm", adminVserver)
 					my.setCertificateIssuerType(certificateInstance)
 					my.setCertificateValidity(data, certificateInstance)
