@@ -12,13 +12,12 @@ counters:
   - ^public_certificate      => certificatePEM
   - ^serial_number           => serial_number
   - expiry_time(timestamp)   => expiry_time
+  - filter:
+      - scope=!"svm"
+      - type="server"
 
 plugins:
   - LabelAgent:
-      exclude_equals:
-        - scope `svm`
-      include_equals:
-        - type `server`
       value_to_num:
         - status name - - `0`
   - Certificate:
