@@ -98,6 +98,8 @@ func (my *Certificate) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 				if serialNumber == adminVserverSerial {
 					certificateInstance.SetExportable(true)
+					// Admin SVM certificate is cluster scoped, but the REST API does not return the SVM name in its response. Add here for ZAPI parity
+					certificateInstance.SetLabel("svm", adminVserver)
 					my.setCertificateIssuerType(certificateInstance)
 					my.setCertificateValidity(data, certificateInstance)
 				}
