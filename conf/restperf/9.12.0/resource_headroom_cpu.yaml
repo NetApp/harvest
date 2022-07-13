@@ -4,7 +4,7 @@ object:                   headroom_cpu
 
 counters:
   - ^^id
-  - ^name                             => instance_name
+  - ^name                             => headroom
   - ^node.name                        => node
   - current_latency
   - current_ops
@@ -21,3 +21,4 @@ counters:
 export_options:
   instance_keys:
     - node
+    - headroom

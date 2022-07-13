@@ -4,7 +4,7 @@ object:                   lif
 
 counters:
   - ^^id
-  - ^name
+  - ^name                    => lif
   - ^node.name               => node
   - ^svm.name                => svm
   - ^current_port            => port

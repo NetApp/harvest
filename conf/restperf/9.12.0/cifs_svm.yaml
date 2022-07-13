@@ -5,7 +5,8 @@ object:                   svm_cifs
 
 counters:
   - ^^id
-  - ^node.name               => svm
+  - ^node.name               => node
+  - ^svm.name                => svm
   - op_count                 => op_count
   - total_ops                => ops
   - total_read_ops           => read_ops
