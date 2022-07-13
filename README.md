@@ -17,7 +17,7 @@ Hardware requirements depend on how many clusters you monitor and the number of 
 - Disk: 500 MB (mostly used by log files)
 
 Harvest is compatible with:
-- Prometheus: `2.24` or higher
+- Prometheus: `2.26` or higher
 - InfluxDB: `v2`
 - Grafana: `8.1.X` or higher
 - Docker: `20.10.0` or higher
