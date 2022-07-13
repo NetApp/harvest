@@ -897,7 +897,7 @@ func (p *Poller) targetIsOntap() bool {
 
 type pollerDetails struct {
 	Name string `json:"Name,omitempty"`
-	Ip   string `json:"Ip,omitempty"`
+	IP   string `json:"IP,omitempty"`
 	Port int    `json:"Port,omitempty"`
 }
 
@@ -940,7 +940,7 @@ func (p *Poller) publishDetails() {
 
 	details := pollerDetails{
 		Name: p.name,
-		Ip:   exporterIP,
+		IP:   exporterIP,
 		Port: p.options.PromPort,
 	}
 	payload, err := json.Marshal(details)
@@ -948,10 +948,10 @@ func (p *Poller) publishDetails() {
 		logger.Error().Err(err).Str("poller", p.name).Msg("Unable to marshal poller details")
 		return
 	}
-	defaultUrl := p.makePublishUrl()
+	defaultURL := p.makePublishURL()
 
 	if heartBeatURL == "" {
-		heartBeatURL = defaultUrl
+		heartBeatURL = defaultURL
 	}
 	req, err := http.NewRequest("PUT", heartBeatURL, bytes.NewBuffer(payload))
 	if err != nil {
@@ -1022,7 +1022,7 @@ func (p *Poller) startHeartBeat() {
 	}
 }
 
-func (p *Poller) makePublishUrl() string {
+func (p *Poller) makePublishURL() string {
 	// Listen will be one of: localhost:port, :port, ip:port
 	schema := "http"
 	if conf.Config.Admin.Httpsd.TLS.CertFile != "" {

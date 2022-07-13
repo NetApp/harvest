@@ -53,7 +53,7 @@ type options struct {
 	headers             http.Header
 	config              string
 	prefix              string
-	useHttps            bool
+	useHTTPS            bool
 	useInsecureTLS      bool
 	overwrite           bool
 	labels              []string
@@ -77,7 +77,7 @@ func adjustOptions() {
 		opts.addr = strings.TrimPrefix(opts.addr, "http://")
 		opts.addr = strings.TrimPrefix(opts.addr, "https://")
 		opts.addr = strings.TrimSuffix(opts.addr, "/")
-		if opts.useHttps {
+		if opts.useHTTPS {
 			opts.addr = "https://" + opts.addr
 		} else {
 			opts.addr = "http://" + opts.addr
@@ -1055,7 +1055,7 @@ func init() {
 	Cmd.PersistentFlags().StringVarP(&opts.prefix, "prefix", "p", "", "Use global metric prefix in queries")
 	Cmd.PersistentFlags().StringVarP(&opts.datasource, "datasource", "s", grafanaDataSource, "Grafana datasource for the dashboards")
 	Cmd.PersistentFlags().BoolVarP(&opts.variable, "variable", "v", false, "Use datasource as variable, overrides: --datasource")
-	Cmd.PersistentFlags().BoolVarP(&opts.useHttps, "https", "S", false, "Use HTTPS")
+	Cmd.PersistentFlags().BoolVarP(&opts.useHTTPS, "https", "S", false, "Use HTTPS")
 	Cmd.PersistentFlags().BoolVarP(&opts.overwrite, "overwrite", "o", false, "Overwrite existing dashboard with same title")
 	Cmd.PersistentFlags().BoolVarP(&opts.useInsecureTLS, "insecure", "k", false, "Allow insecure server connections when using SSL")
 	Cmd.PersistentFlags().StringVarP(&opts.serverfolder.name, "serverfolder", "f", "", "Grafana folder name for dashboards")

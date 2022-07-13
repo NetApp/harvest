@@ -58,7 +58,7 @@ func GenerateAdminCerts(opts *tlsOptions, flavor string) {
 		}
 	}
 
-	for _, n := range opts.DnsName {
+	for _, n := range opts.DNSName {
 		name := strings.TrimSpace(n)
 		if len(name) > 0 {
 			template.DNSNames = append(template.DNSNames, n)

@@ -539,14 +539,14 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 		if p.Target.Serial == "" {
 			p.Target.Serial = r.Client.Cluster().UUID
 		}
-		p.Target.ClusterUuid = r.Client.Cluster().UUID
+		p.Target.ClusterUUID = r.Client.Cluster().UUID
 
 		md := r.GetMetadata()
 		info := collector.InstanceInfo{
 			Count:      md.LazyValueInt64("count", "data"),
 			DataPoints: md.LazyValueInt64("datapoint_count", "data"),
 			PollTime:   md.LazyValueInt64("poll_time", "data"),
-			ApiTime:    md.LazyValueInt64("api_time", "data"),
+			APITime:    md.LazyValueInt64("api_time", "data"),
 			ParseTime:  md.LazyValueInt64("parse_time", "data"),
 			PluginTime: md.LazyValueInt64("plugin_time", "data"),
 		}
@@ -558,7 +558,7 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 				r.Logger.Error().
 					Err(err).
 					Msg("Unable to get nodes.")
-				nodeIds = make([]collector.Id, 0)
+				nodeIds = make([]collector.ID, 0)
 			}
 			info.Ids = nodeIds
 			p.Nodes = &info
@@ -575,11 +575,11 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 	}
 }
 
-func (r *Rest) getNodeUuids() ([]collector.Id, error) {
+func (r *Rest) getNodeUuids() ([]collector.ID, error) {
 	var (
 		records []gjson.Result
 		err     error
-		infos   []collector.Id
+		infos   []collector.ID
 	)
 	query := "api/cluster/nodes"
 
@@ -590,7 +590,7 @@ func (r *Rest) getNodeUuids() ([]collector.Id, error) {
 	}
 
 	for _, instanceData := range records {
-		infos = append(infos, collector.Id{SerialNumber: instanceData.Get("serial_number").String(), SystemId: instanceData.Get("system_id").String()})
+		infos = append(infos, collector.ID{SerialNumber: instanceData.Get("serial_number").String(), SystemID: instanceData.Get("system_id").String()})
 	}
 
 	// When Harvest monitors a c-mode system, the first node is picked.

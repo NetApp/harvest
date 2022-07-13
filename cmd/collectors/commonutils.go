@@ -121,11 +121,11 @@ func UpdateProtectedFields(instance *matrix.Instance) {
 	}
 }
 
-func SetNameservice(nsDb, nsSource, nisDomain string, instance *matrix.Instance) {
+func SetNameservice(nsDB, nsSource, nisDomain string, instance *matrix.Instance) {
 	requiredNSDb := false
 	requiredNSSource := false
 
-	if strings.Contains(nsDb, "passwd") || strings.Contains(nsDb, "group") || strings.Contains(nsDb, "netgroup") {
+	if strings.Contains(nsDB, "passwd") || strings.Contains(nsDB, "group") || strings.Contains(nsDB, "netgroup") {
 		requiredNSDb = true
 		if strings.Contains(nsSource, "nis") {
 			requiredNSSource = true

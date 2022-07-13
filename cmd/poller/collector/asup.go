@@ -34,22 +34,22 @@ type TargetInfo struct {
 	Model       string
 	Serial      string
 	Ping        float64
-	ClusterUuid string
+	ClusterUUID string
 }
 
-type Id struct {
+type ID struct {
 	SerialNumber string `json:"serial-number"`
-	SystemId     string `json:"system-id"`
+	SystemID     string `json:"system-id"`
 }
 
 type InstanceInfo struct {
 	Count      int64
 	DataPoints int64
 	PollTime   int64
-	ApiTime    int64
+	APITime    int64
 	ParseTime  int64
 	PluginTime int64
-	Ids        []Id `json:"Ids,omitempty"`
+	Ids        []ID `json:"Ids,omitempty"`
 }
 
 type platformInfo struct {
@@ -199,7 +199,7 @@ func BuildAndWriteAutoSupport(collectors []Collector, status *matrix.Matrix, pol
 	// add harvest release info
 	msg.Harvest = &harvestInfo{
 		// harvest uuid creation from sha1 of cluster uuid
-		UUID:        sha1Sum(msg.Target.ClusterUuid),
+		UUID:        sha1Sum(msg.Target.ClusterUUID),
 		Version:     version.VERSION,
 		Release:     version.Release,
 		Commit:      version.Commit,
