@@ -28,7 +28,7 @@ func TestHttpsAddr(t *testing.T) {
 	}
 
 	opts.addr = "https://1.1.1.1:3000"
-	opts.useHttps = false // addr takes precedence over useHttps
+	opts.useHTTPS = false // addr takes precedence over useHTTPS
 	adjustOptions()
 	if opts.addr != "https://1.1.1.1:3000" {
 		t.Errorf("Expected opts.addr to be %s but got %s", "https://1.1.1.1:3000", opts.addr)
@@ -42,7 +42,7 @@ func TestHttpsAddr(t *testing.T) {
 
 	// Old way of specifying https
 	opts.addr = "http://1.1.1.1:3000"
-	opts.useHttps = true
+	opts.useHTTPS = true
 	adjustOptions()
 	if opts.addr != "https://1.1.1.1:3000" {
 		t.Errorf("Expected opts.addr to be %s but got %s", "https://1.1.1.1:3000", opts.addr)

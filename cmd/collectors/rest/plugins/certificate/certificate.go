@@ -72,7 +72,7 @@ func (my *Certificate) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		// invoke private vserver cli rest and get admin vserver name
 		if adminVserver, err = my.GetAdminVserver(); err != nil {
-			if ontap.IsApiNotFound(err) {
+			if ontap.IsAPINotFound(err) {
 				my.Logger.Debug().Err(err).Msg("Failed to collect admin SVM")
 			} else {
 				my.Logger.Error().Err(err).Msg("Failed to collect admin SVM")
@@ -82,7 +82,7 @@ func (my *Certificate) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		// invoke private ssl cli rest and get the admin SVM's serial number
 		if adminVserverSerial, err = my.GetSecuritySsl(adminVserver); err != nil {
-			if ontap.IsApiNotFound(err) {
+			if ontap.IsAPINotFound(err) {
 				my.Logger.Debug().Err(err).Msg("Failed to collect admin SVM's serial number")
 			} else {
 				my.Logger.Error().Msg("Failed to collect admin SVM's serial number")

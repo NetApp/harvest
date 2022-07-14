@@ -178,12 +178,12 @@ func (my *SVM) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 			// Update nameservice_switch label in svm
 			if nsswitchInfo, ok := my.nsswitchInfo[svmName]; ok {
-				nsDb := strings.Join(nsswitchInfo.nsdb, ",")
+				nsDB := strings.Join(nsswitchInfo.nsdb, ",")
 				nsSource := strings.Join(nsswitchInfo.nssource, ",")
 				nisDomain := my.nisInfo[svmName]
 				svmInstance.SetLabel("ns_source", nsSource)
-				svmInstance.SetLabel("ns_db", nsDb)
-				collectors.SetNameservice(nsDb, nsSource, nisDomain, svmInstance)
+				svmInstance.SetLabel("ns_db", nsDB)
+				collectors.SetNameservice(nsDB, nsSource, nisDomain, svmInstance)
 			}
 
 			// Update cifs_protocol_enabled label in svm

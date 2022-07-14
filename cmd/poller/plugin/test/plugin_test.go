@@ -3,7 +3,7 @@ package test
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/aggregator"
-	"github.com/netapp/harvest/v2/cmd/poller/plugin/label_agent"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin/labelagent"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -24,7 +24,7 @@ func TestMultipleRule(t *testing.T) {
 		}
 
 		if name == "LabelAgent" {
-			var lb *label_agent.LabelAgent
+			var lb *labelagent.LabelAgent
 
 			params := node.NewS("LabelAgent")
 			for _, x1 := range x.GetChildren() {
@@ -34,7 +34,7 @@ func TestMultipleRule(t *testing.T) {
 				}
 			}
 			abc := plugin.New("Test", nil, params, nil, "")
-			lb = &label_agent.LabelAgent{AbstractPlugin: abc}
+			lb = &labelagent.LabelAgent{AbstractPlugin: abc}
 			if err := lb.Init(); err != nil {
 				t.Fatal(err)
 			}

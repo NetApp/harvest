@@ -23,8 +23,8 @@ import (
 
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/aggregator"
-	"github.com/netapp/harvest/v2/cmd/poller/plugin/label_agent"
-	"github.com/netapp/harvest/v2/cmd/poller/plugin/metric_agent"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin/labelagent"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin/metricagent"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 )
@@ -195,11 +195,11 @@ func GetBuiltinPlugin(name string, abc *plugin.AbstractPlugin) plugin.Plugin {
 	*/
 
 	if name == "LabelAgent" {
-		return label_agent.New(abc)
+		return labelagent.New(abc)
 	}
 
 	if name == "MetricAgent" {
-		return metric_agent.New(abc)
+		return metricagent.New(abc)
 	}
 
 	return nil

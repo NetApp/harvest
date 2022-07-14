@@ -115,9 +115,9 @@ func TestPublishUrl(t *testing.T) {
 				}
 			}
 			conf.Config.Admin.Httpsd.Listen = tt.listen
-			got := poller.makePublishUrl()
+			got := poller.makePublishURL()
 			if got != tt.want {
-				t.Errorf("makePublishUrl got = [%v] want [%v]", got, tt.want)
+				t.Errorf("makePublishURL got = [%v] want [%v]", got, tt.want)
 			}
 		})
 	}

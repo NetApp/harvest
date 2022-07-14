@@ -2,7 +2,7 @@
  * Copyright NetApp Inc, 2021 All rights reserved
  */
 
-package label_agent
+package labelagent
 
 import (
 	"github.com/netapp/harvest/v2/pkg/matrix"

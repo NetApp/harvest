@@ -62,10 +62,10 @@ func consume(r *node.Node, key string, y *y3.Node, makeNewChild bool) {
 	}
 }
 
-func LoadXml(data []byte) (*node.Node, error) {
+func LoadXML(data []byte) (*node.Node, error) {
 	return xml.Load(data)
 }
 
-func DumpXml(n *node.Node) ([]byte, error) {
+func DumpXML(n *node.Node) ([]byte, error) {
 	return xml.Dump(n)
 }

@@ -504,14 +504,14 @@ func (me *Zapi) CollectAutoSupport(p *collector.Payload) {
 		if p.Target.Serial == "" {
 			p.Target.Serial = me.GetHostUUID()
 		}
-		p.Target.ClusterUuid = me.Client.ClusterUUID()
+		p.Target.ClusterUUID = me.Client.ClusterUUID()
 
 		md := me.GetMetadata()
 		info := collector.InstanceInfo{
 			Count:      md.LazyValueInt64("count", "instance"),
 			DataPoints: md.LazyValueInt64("count", "data"),
 			PollTime:   md.LazyValueInt64("poll_time", "data"),
-			ApiTime:    md.LazyValueInt64("api_time", "data"),
+			APITime:    md.LazyValueInt64("api_time", "data"),
 			ParseTime:  md.LazyValueInt64("parse_time", "data"),
 			PluginTime: md.LazyValueInt64("plugin_time", "data"),
 		}
@@ -523,7 +523,7 @@ func (me *Zapi) CollectAutoSupport(p *collector.Payload) {
 				me.Logger.Error().
 					Err(err).
 					Msg("Unable to get nodes.")
-				nodeIds = make([]collector.Id, 0)
+				nodeIds = make([]collector.ID, 0)
 			}
 			info.Ids = nodeIds
 			p.Nodes = &info
@@ -540,19 +540,19 @@ func (me *Zapi) CollectAutoSupport(p *collector.Payload) {
 	}
 }
 
-func (me *Zapi) getNodeUuids() ([]collector.Id, error) {
+func (me *Zapi) getNodeUuids() ([]collector.ID, error) {
 	var (
 		response *node.Node
 		nodes    []*node.Node
 		err      error
-		infos    []collector.Id
+		infos    []collector.ID
 	)
 
 	// Since 7-mode is like single node, return the ids for it
 	if !me.Client.IsClustered() {
-		return []collector.Id{{
+		return []collector.ID{{
 			SerialNumber: me.Client.Serial(),
-			SystemId:     me.Client.ClusterUUID(),
+			SystemID:     me.Client.ClusterUUID(),
 		}}, nil
 	}
 	request := "system-node-get-iter"
@@ -568,7 +568,7 @@ func (me *Zapi) getNodeUuids() ([]collector.Id, error) {
 	for _, n := range nodes {
 		sn := n.GetChildContentS("node-serial-number")
 		systemID := n.GetChildContentS("node-system-id")
-		infos = append(infos, collector.Id{SerialNumber: sn, SystemId: systemID})
+		infos = append(infos, collector.ID{SerialNumber: sn, SystemID: systemID})
 	}
 	// When Harvest monitors a c-mode system, the first node is picked.
 	// Sort so there's a higher chance the same node is picked each time this method is called

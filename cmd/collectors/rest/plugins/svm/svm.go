@@ -34,7 +34,7 @@ func (my *SVM) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	// invoke nameservice-nsswitch-get-iter zapi and get nsswitch info
 	if my.nsswitchInfo, err = my.GetNSSwitchInfo(data); err != nil {
-		if errs.IsApiNotFound(err) {
+		if errs.IsAPINotFound(err) {
 			my.Logger.Debug().Err(err).Msg("Failed to collect nsswitch info")
 		} else {
 			my.Logger.Warn().Err(err).Msg("Failed to collect nsswitch info")
@@ -47,12 +47,12 @@ func (my *SVM) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		// Update nameservice_switch and nis_domain label in svm
 		if nsswitchInfo, ok := my.nsswitchInfo[svmName]; ok {
-			nsDb := strings.Join(nsswitchInfo.nsdb, ",")
+			nsDB := strings.Join(nsswitchInfo.nsdb, ",")
 			nsSource := strings.Join(nsswitchInfo.nssource, ",")
 			nisDomain := svmInstance.GetLabel("nis_domain")
 			svmInstance.SetLabel("ns_source", nsSource)
-			svmInstance.SetLabel("ns_db", nsDb)
-			collectors.SetNameservice(nsDb, nsSource, nisDomain, svmInstance)
+			svmInstance.SetLabel("ns_db", nsDB)
+			collectors.SetNameservice(nsDB, nsSource, nisDomain, svmInstance)
 		}
 	}
 	return nil, nil

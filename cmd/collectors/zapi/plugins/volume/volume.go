@@ -33,7 +33,7 @@ type Volume struct {
 }
 
 type aggrData struct {
-	aggrUuid string
+	aggrUUID string
 	aggrName string
 }
 
@@ -164,7 +164,7 @@ func (my *Volume) GetSnapMirrors() (map[string][]*matrix.Instance, map[string]*m
 		}
 
 		for _, snapMirror := range result {
-			relationshipId := snapMirror.GetChildContentS("relationship-id")
+			relationshipID := snapMirror.GetChildContentS("relationship-id")
 			groupType := snapMirror.GetChildContentS("relationship-group-type")
 			destinationVolume := snapMirror.GetChildContentS("destination-volume")
 			sourceVolume := snapMirror.GetChildContentS("source-volume")
@@ -174,15 +174,15 @@ func (my *Volume) GetSnapMirrors() (map[string][]*matrix.Instance, map[string]*m
 			sourceSvm := snapMirror.GetChildContentS("source-vserver")
 			destinationSvm := snapMirror.GetChildContentS("destination-vserver")
 
-			instanceKey := relationshipId
+			instanceKey := relationshipID
 			instance, err := snapmirrorData.NewInstance(instanceKey)
 
 			if err != nil {
-				my.Logger.Error().Err(err).Stack().Str("relationshipId", relationshipId).Msg("Failed to create snapmirror cache instance")
+				my.Logger.Error().Err(err).Stack().Str("relationshipID", relationshipID).Msg("Failed to create snapmirror cache instance")
 				return nil, nil, err
 			}
 
-			instance.SetLabel("relationship_id", relationshipId)
+			instance.SetLabel("relationship_id", relationshipID)
 			instance.SetLabel("group_type", groupType)
 			instance.SetLabel("destination_volume", destinationVolume)
 			instance.SetLabel("source_volume", sourceVolume)
@@ -268,7 +268,7 @@ func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
 		volumeName := volume.GetLabel("volume")
 		svmName := volume.GetLabel("svm")
 		volumeType := volume.GetLabel("type")
-		aggrUuid := volume.GetLabel("aggrUuid")
+		aggrUUID := volume.GetLabel("aggrUuid")
 		key := volumeName + "-" + svmName
 
 		// Update protectionRole label in volume
@@ -305,7 +305,7 @@ func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
 			volume.SetLabel("all_sm_healthy", strconv.FormatBool(healthy))
 		}
 
-		_, exist := my.aggrsMap[aggrUuid]
+		_, exist := my.aggrsMap[aggrUUID]
 		volume.SetLabel("isHardwareEncrypted", strconv.FormatBool(exist))
 	}
 }
@@ -346,7 +346,7 @@ func (my *Volume) updateAggrMap(disks []string, aggrDiskMap map[string]aggrData)
 
 		for _, disk := range disks {
 			aggr := aggrDiskMap[disk]
-			my.aggrsMap[aggr.aggrUuid] = aggr.aggrName
+			my.aggrsMap[aggr.aggrUUID] = aggr.aggrName
 		}
 	}
 }
@@ -371,12 +371,12 @@ func (my *Volume) getAggrDiskMapping() (map[string]aggrData, error) {
 	}
 
 	for _, aggrDiskData := range result {
-		aggrUuid := aggrDiskData.GetChildContentS("aaggregate-uuid")
+		aggrUUID := aggrDiskData.GetChildContentS("aaggregate-uuid")
 		aggrName := aggrDiskData.GetChildContentS("aggregate")
 		aggrDiskList := aggrDiskData.GetChildS("aggr-plex-list").GetChildS("aggr-plex-info").GetChildS("aggr-raidgroup-list").GetChildS("aggr-raidgroup-info").GetChildS("aggr-disk-list").GetChildren()
 		for _, aggrDisk := range aggrDiskList {
 			diskName = aggrDisk.GetChildContentS("disk")
-			aggrsDisksMap[diskName] = aggrData{aggrUuid: aggrUuid, aggrName: aggrName}
+			aggrsDisksMap[diskName] = aggrData{aggrUUID: aggrUUID, aggrName: aggrName}
 		}
 	}
 	return aggrsDisksMap, nil

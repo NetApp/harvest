@@ -285,7 +285,7 @@ func (c *Client) buildRequest(query *node.Node, forceCluster bool) error {
 	}
 	request.AddChild(query)
 
-	if data, err = tree.DumpXml(request); err != nil {
+	if data, err = tree.DumpXML(request); err != nil {
 		return err
 	}
 
@@ -444,7 +444,7 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 	if withTimers {
 		start = time.Now()
 	}
-	if root, err = tree.LoadXml(body); err != nil {
+	if root, err = tree.LoadXML(body); err != nil {
 		return result, responseT, parseT, err
 	}
 	if withTimers {

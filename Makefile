@@ -91,7 +91,6 @@ ifeq (${LINT_EXISTS}, )
 	@echo
 	@exit 1
 endif
-	@echo "Running golangci-lint"
 	golangci-lint run
 
 build: clean deps fmt harvest fetch-asup ## Build the project

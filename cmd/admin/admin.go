@@ -28,7 +28,7 @@ type Admin struct {
 
 func (a *Admin) startServer() {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/api/v1/sd", a.ApiSD)
+	mux.HandleFunc("/api/v1/sd", a.APISD)
 
 	a.logger.Debug().Str("listen", a.listen).Msg("Admin node starting")
 	server := &http.Server{
@@ -86,7 +86,7 @@ func (a *Admin) startServer() {
 	a.logger.Info().Msg("Admin node stopped")
 }
 
-func (a *Admin) ApiSD(w http.ResponseWriter, r *http.Request) {
+func (a *Admin) APISD(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "application/json")
 	if a.httpSD.AuthBasic.Username != "" {
 		user, pass, ok := r.BasicAuth()
@@ -116,7 +116,7 @@ func (a *Admin) setupLogger() {
 
 type pollerDetails struct {
 	Name string `json:"Name,omitempty"`
-	Ip   string `json:"Ip,omitempty"`
+	IP   string `json:"IP,omitempty"`
 	Port int    `json:"Port,omitempty"`
 }
 
@@ -130,7 +130,7 @@ func (a *Admin) apiPublish(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	a.pollerToPromAddr.Set(publish.Name, publish, a.expireAfter)
-	a.logger.Debug().Str("name", publish.Name).Str("ip", publish.Ip).Int("port", publish.Port).
+	a.logger.Debug().Str("name", publish.Name).Str("ip", publish.IP).Int("port", publish.Port).
 		Msg("Published poller")
 	_, _ = fmt.Fprintf(w, "OK")
 }
@@ -149,7 +149,7 @@ func (a *Admin) makeTargets() []byte {
 	for _, details := range a.pollerToPromAddr.Snapshot() {
 		pd := details.(pollerDetails)
 		target := sdTarget{
-			Targets: []string{fmt.Sprintf(`%s:%d`, pd.Ip, pd.Port)},
+			Targets: []string{fmt.Sprintf(`%s:%d`, pd.IP, pd.Port)},
 			Labels:  labels{MetaPoller: pd.Name},
 		}
 		targets = append(targets, target)
@@ -164,7 +164,7 @@ func (a *Admin) makeTargets() []byte {
 }
 
 type tlsOptions struct {
-	DnsName   []string
+	DNSName   []string
 	Ipaddress []string
 	Days      int
 }
@@ -197,7 +197,7 @@ func Cmd() *cobra.Command {
 	}
 	tlsCreate.AddCommand(tlsServer)
 	tlsCreate.PersistentFlags().StringSliceVar(
-		&opts.DnsName, "dnsname", []string{},
+		&opts.DNSName, "dnsname", []string{},
 		"Additional dns names for Subject Alternative Names. "+
 			"localhost is always included. Comma-separated list or provide flag multiple times",
 	)
