@@ -37,7 +37,7 @@ func (suite *AlertRulesTestSuite) SetupSuite() {
 	if len(alertRules) == 0 {
 		assert.Fail(suite.T(), "No alert rules found @ "+dir)
 	}
-	log.Info().Int("rules", len(alertRules)).Msg("Alert Rules")
+	log.Info().Int("count", len(alertRules)).Msg("Alert Rules")
 
 	// Fetch prometheus alerts
 	alerts, alertResponse = promAlerts.GetAlerts()
