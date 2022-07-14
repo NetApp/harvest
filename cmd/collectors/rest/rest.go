@@ -131,6 +131,7 @@ func (r *Rest) InitClient() error {
 	if err = r.Client.Init(5); err != nil {
 		return err
 	}
+	r.Client.TraceLogSet(r.Name, r.Params)
 
 	return nil
 }
