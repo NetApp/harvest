@@ -6,7 +6,7 @@ groups:
 
       # Alert for Volume Anti-ransomware state change ems
       - alert: Volume Anti-ransomware Monitoring State Changed
-        expr: last_over_time(ems_events{message="arw.volume.state"} [4w]) == 1
+        expr: last_over_me(ems_events{message="arw.volume.state"} [4w]) == 1
         labels:
           severity: "error"
         annotations:
@@ -110,7 +110,7 @@ groups:
 
       # Alert for Lun offline ems
       - alert: LUN Offline
-        expr: last_over_time(ems_events{message="LUN.offline"}[4w]) == 1
+        expr: last_over_time(ems_events{message="LUN.offline"}[4we]) == 1
         labels:
           severity: "error"
         annotations:

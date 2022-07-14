@@ -7,6 +7,7 @@ import (
 	promAlerts "github.com/Netapp/harvest-automation/test/alert"
 	"github.com/Netapp/harvest-automation/test/data"
 	"github.com/Netapp/harvest-automation/test/utils"
+	"github.com/julienroland/usg"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -50,14 +51,25 @@ func (suite *AlertRulesTestSuite) SetupSuite() {
 func (suite *AlertRulesTestSuite) TestExpression() {
 	activeAlerts := make([]string, 0)
 	notMatchingAlerts := make([]string, 0)
+	var isFailed = false
 
 	for index, expr := range alertRules {
-		activeAlertCount := EvaluateExpr(expr)
+		activeAlertCount, failed := EvaluateExpr(expr)
+		if failed {
+			isFailed = true
+		}
 		log.Debug().Msgf("active alerts for %s is %d", alertRuleNames[index], activeAlertCount)
 		for count := 0; count < activeAlertCount; count++ {
 			activeAlerts = append(activeAlerts, alertRuleNames[index])
 		}
 	}
+
+	if isFailed {
+		assert.Fail(suite.T(), "Alert rules evaluation failed. Pls check logs above")
+	} else {
+		log.Info().Msg("Alert rules look good!")
+	}
+
 	log.Info().Msgf("active alerts name: %v", activeAlerts)
 
 	// active alerts should be equal to prometheus alerts
@@ -76,22 +88,37 @@ func (suite *AlertRulesTestSuite) TestExpression() {
 	}
 }
 
-// Evaluate expr and return number of active alert count
-func EvaluateExpr(query string) int {
+// Evaluate expr and return number of active alert count with API error state
+func EvaluateExpr(query string) (int, bool) {
 	query = fmt.Sprintf("%s", query)
 	log.Debug().Msg("Evaluating the alert rule " + query)
 	queryURL := fmt.Sprintf("%s/api/v1/query?query=%s", data.PrometheusURL,
 		url.QueryEscape(query))
 	resp, err := utils.GetResponse(queryURL)
-	if err == nil && gjson.Get(resp, "status").String() == "success" {
+
+	// when API has been failed
+	if err != nil {
+		fmt.Println(usg.Get.Cross, fmt.Sprintf(" ERROR: Failed to evaluate query [%s], error: %v", query, err))
+		return 0, true
+	}
+
+	// API call succeed, but error due to bad/invalid data or any other reason
+	if err == nil && gjson.Get(resp, "status").String() == "error" {
+		errorType := gjson.Get(resp, "errorType")
+		errorDetail := gjson.Get(resp, "error")
+		if errorType.Exists() && errorDetail.Exists() {
+			fmt.Println(usg.Get.Cross, fmt.Sprintf(" ERROR: Query [%s] has failed with %s, reason: [%s]", query, errorType.String(), errorDetail.String()))
+			return 0, true
+		}
+	} else {
+		// API call succeed with proper data
 		value := gjson.Get(resp, "data.result")
 		if value.Exists() && value.IsArray() && (len(value.Array()) > 0) {
 			length := len(value.Array())
-			return length
+			return length, false
 		}
-		return 0
 	}
-	return 0
+	return 0, false
 }
 
 func TestAlertRulesTestSuite(t *testing.T) {
