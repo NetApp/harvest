@@ -8,6 +8,7 @@ import (
 	"github.com/Netapp/harvest-automation/test/data"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/julienroland/usg"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -51,11 +52,14 @@ func (suite *AlertRulesTestSuite) SetupSuite() {
 func (suite *AlertRulesTestSuite) TestExpression() {
 	activeAlerts := make([]string, 0)
 	notMatchingAlerts := make([]string, 0)
-	var isFailed = false
+	isFailed := false
+	var (
+		activeAlertCount int
+		err error
+	)
 
 	for index, expr := range alertRules {
-		activeAlertCount, failed := EvaluateExpr(expr)
-		if failed {
+		if activeAlertCount, err = EvaluateExpr(expr); err != nil {
 			isFailed = true
 		}
 		log.Debug().Msgf("active alerts for %s is %d", alertRuleNames[index], activeAlertCount)
@@ -88,8 +92,8 @@ func (suite *AlertRulesTestSuite) TestExpression() {
 	}
 }
 
-// Evaluate expr and return number of active alert count with API error state
-func EvaluateExpr(query string) (int, bool) {
+// Evaluate expr and return number of active alert count
+func EvaluateExpr(query string) (int, error) {
 	query = fmt.Sprintf("%s", query)
 	log.Debug().Msg("Evaluating the alert rule " + query)
 	queryURL := fmt.Sprintf("%s/api/v1/query?query=%s", data.PrometheusURL,
@@ -99,7 +103,7 @@ func EvaluateExpr(query string) (int, bool) {
 	// when API has been failed
 	if err != nil {
 		fmt.Println(usg.Get.Cross, fmt.Sprintf(" ERROR: Failed to evaluate query [%s], error: %v", query, err))
-		return 0, true
+		return 0, err
 	}
 
 	// API call succeed, but error due to bad/invalid data or any other reason
@@ -108,17 +112,17 @@ func EvaluateExpr(query string) (int, bool) {
 		errorDetail := gjson.Get(resp, "error")
 		if errorType.Exists() && errorDetail.Exists() {
 			fmt.Println(usg.Get.Cross, fmt.Sprintf(" ERROR: Query [%s] has failed with %s, reason: [%s]", query, errorType.String(), errorDetail.String()))
-			return 0, true
+			return 0, errs.New(errs.ErrInvalidParam, errorDetail.String())
 		}
 	} else {
 		// API call succeed with proper data
 		value := gjson.Get(resp, "data.result")
 		if value.Exists() && value.IsArray() && (len(value.Array()) > 0) {
 			length := len(value.Array())
-			return length, false
+			return length, nil
 		}
 	}
-	return 0, false
+	return 0, nil
 }
 
 func TestAlertRulesTestSuite(t *testing.T) {
