@@ -9,6 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
 	"io"
 	"io/ioutil"
@@ -33,6 +34,8 @@ type Client struct {
 	password string
 	username string
 	Timeout  time.Duration
+	logRest  bool // used to log Rest request/response
+
 }
 
 type Cluster struct {
@@ -129,6 +132,30 @@ func New(poller conf.Poller, timeout time.Duration) (*Client, error) {
 	return &client, nil
 }
 
+func (c *Client) TraceLogSet(collectorName string, config *node.Node) {
+	// check for log sets and enable Rest request logging if collectorName is in the set
+	if llogs := config.GetChildS("log"); llogs != nil {
+		for _, log := range llogs.GetAllChildContentS() {
+			if strings.EqualFold(log, collectorName) {
+				c.logRest = true
+			}
+		}
+	}
+}
+
+func (c *Client) printRequestAndResponse(req string, response []byte) {
+	if c.logRest {
+		res := "<nil>"
+		if response != nil {
+			res = string(response)
+		}
+		c.Logger.Info().
+			Str("Request", req).
+			Str("Response", res).
+			Msg("")
+	}
+}
+
 // GetRest makes a REST request to the cluster and returns a json response as a []byte
 func (c *Client) GetRest(request string) ([]byte, error) {
 	var err error
@@ -171,6 +198,8 @@ func (c *Client) invoke() ([]byte, error) {
 		defer c.buffer.Reset()
 	}
 
+	restReq := c.request.URL.String()
+
 	// send request to server
 	if response, err = c.client.Do(c.request); err != nil {
 		return nil, fmt.Errorf("connection error %w", err)
@@ -195,6 +224,7 @@ func (c *Client) invoke() ([]byte, error) {
 	if body, err = ioutil.ReadAll(response.Body); err != nil {
 		return nil, err
 	}
+	defer c.printRequestAndResponse(restReq, body)
 
 	if err != nil {
 		return nil, err
