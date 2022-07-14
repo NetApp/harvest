@@ -55,7 +55,7 @@ func (suite *AlertRulesTestSuite) TestExpression() {
 	isFailed := false
 	var (
 		activeAlertCount int
-		err error
+		err              error
 	)
 
 	for index, expr := range alertRules {
