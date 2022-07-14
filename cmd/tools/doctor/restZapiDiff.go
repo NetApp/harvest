@@ -330,6 +330,8 @@ func metricPerfValueDiff(metricName string) {
 						fmt.Printf("%s %s ZapiPerf: %v -> RestPerf: %v\n", metricName, k, v, v1)
 					}
 				}
+			} else {
+				fmt.Printf("Missing metric in RestPerf: %s %s %v\n", metricName, k, v)
 			}
 		}
 	}
@@ -451,6 +453,8 @@ func metricValueDiff(metricName string) {
 				if math.Abs(v-v1) > 0 {
 					fmt.Printf("%s %s Zapi: %v -> Rest: %v\n", metricName, k, v, v1)
 				}
+			} else {
+				fmt.Printf("Missing metric in Rest: %s %s %v\n", metricName, k, v)
 			}
 		}
 	}
