@@ -19,7 +19,7 @@ func (p *Prometheus) Init(image string) {
 }
 
 func (p *Prometheus) Install() bool {
-	p.image = "prom/prometheus:v2.24.0"
+	p.image = "prom/prometheus:v2.26.0"
 	log.Println("Prometheus image : " + p.image)
 	imageName := "prometheus"
 	docker.StopContainers(imageName)
@@ -27,8 +27,9 @@ func (p *Prometheus) Install() bool {
 	path, _ := os.Getwd()
 	ipAddress := utils.GetOutboundIP()
 	cmd := exec.Command("docker", "run", "-d", "-p", utils.PrometheusPort+":"+utils.PrometheusPort,
-		"--add-host=localhost:"+ipAddress, "-v",
-		path+"/prometheus.yml:/etc/prometheus/prometheus.yml", p.image)
+		"--add-host=localhost:"+ipAddress,
+		"-v", path+"/../../docker/prometheus/:/etc/prometheus/",
+		p.image)
 	cmd.Stdout = os.Stdout
 	err := cmd.Start()
 	utils.PanicIfNotNil(err)

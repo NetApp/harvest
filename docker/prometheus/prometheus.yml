@@ -4,9 +4,17 @@ global:
   external_labels:
     monitor: 'harvest'
 
+# Alertmanager configuration
+#alerting:
+#  alertmanagers:
+#    - static_configs:
+#        - targets:
+#            - 'localhost:9093'
+
 # Load and evaluate rules in this file every 'evaluation_interval' seconds.
 rule_files:
   - 'alert_rules.yml'
+  - 'ems_alert_rules.yml'
     
 scrape_configs:
 - job_name: 'prometheus'

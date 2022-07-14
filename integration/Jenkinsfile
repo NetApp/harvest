@@ -52,6 +52,7 @@ pipeline {
                                 echo "Installing"
                                 export BUILD_PATH=$NATIVE
                                 export VERSION=$VERSION
+                                cp /u/mpeg/harvest/harvest_targets.yml $WORKSPACE/harvest/docker/prometheus/
                                 bash $WORKSPACE/harvest/integration/test/test.sh install_native
                                 '''
                             }
@@ -61,6 +62,13 @@ pipeline {
                                 sh """
                                 export VERSION=$VERSION
                                 bash $WORKSPACE/harvest/integration/test/test.sh regression
+                                """
+                            }
+                        }
+                        stage('Evaluating Alert Rules') {
+                            steps {
+                                sh """
+                                bash $WORKSPACE/harvest/integration/test/test.sh alerttest
                                 """
                             }
                             post {
@@ -95,6 +103,7 @@ pipeline {
                                 echo "Installing"
                                 export BUILD_PATH=http://harvest-jenkins.rtp.openenglab.netapp.com:8080/job/harvest2_0/job/artifcats/lastSuccessfulBuild/artifact/harvest-21.11.0-1.x86_64.rpm
                                 export VERSION=$VERSION
+                                cp /u/mpeg/harvest/harvest_targets.yml $WORKSPACE/harvest/docker/prometheus/
                                 bash $WORKSPACE/harvest/integration/test/test.sh install_rpm
                                 '''
                             }
@@ -114,6 +123,13 @@ pipeline {
                             steps {
                                 sh """
                                 bash $WORKSPACE/harvest/integration/test/test.sh regression
+                                """
+                            }
+                        }
+                        stage('Evaluating Alert Rules') {
+                            steps {
+                                sh """
+                                bash $WORKSPACE/harvest/integration/test/test.sh alerttest
                                 """
                             }
                             post {
@@ -170,6 +186,13 @@ pipeline {
                                 """
 
                             }
+                        }
+                        stage('Evaluating Alert Rules') {
+                            steps {
+                                sh """
+                                bash $WORKSPACE/harvest/integration/test/test.sh alerttest
+                                """
+                            }
                             post {
                                 always {
                                     sh """
@@ -181,7 +204,6 @@ pipeline {
                                 }
                             }
                         }
-
                     }
                 }
             }
