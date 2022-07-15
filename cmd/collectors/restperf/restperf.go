@@ -782,7 +782,10 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 			continue
 		}
 		property := counter.counterType
+		// used in aggregator plugin
 		metric.SetProperty(property)
+		// used in volume.go plugin
+		metric.SetComment(counter.denominator)
 
 		// RAW - submit without post-processing
 		if property == "raw" {
