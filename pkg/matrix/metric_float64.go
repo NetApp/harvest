@@ -254,6 +254,8 @@ func (me *MetricFloat64) DivideWithThreshold(s Metric, t int) error {
 	for i := 0; i < len(me.values); i++ {
 		if me.record[i] && sRecord[i] && sValues[i] >= x {
 			me.values[i] /= sValues[i]
+		} else {
+			me.values[i] = 0
 		}
 	}
 	return nil
