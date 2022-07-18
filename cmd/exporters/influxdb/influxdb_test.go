@@ -73,6 +73,19 @@ func TestVersionParameter(t *testing.T) {
 	}
 }
 
+// test that `bucket`, `org`, `port`, and `precision` fields are ignored when using the `url` field
+func TestUrlIgnores(t *testing.T) {
+	expectedURL := "https://example.com:8086/api/v2/write?org=harvest&bucket=harvest&precision=s"
+	exporterName := "influx-with-url"
+	influx := setupInfluxDB(t, exporterName)
+
+	if influx.url == expectedURL {
+		t.Logf("OK - url: [%s]", expectedURL)
+	} else {
+		t.Fatalf("FAIL - expected [%s]\n       got [%s]", expectedURL, influx.url)
+	}
+}
+
 // test rendering in debug mode
 // this does not send to influxdb, but simply prints
 // rendered data

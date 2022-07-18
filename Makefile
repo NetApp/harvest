@@ -74,7 +74,7 @@ clean: header ## Cleanup the project binary (bin) folders
 
 test: ## run tests
 	@echo "Running tests"
-	go test -v ./...
+	go test ./...
 
 fmt: ## format the go source files
 	@echo "Running gofmt"
