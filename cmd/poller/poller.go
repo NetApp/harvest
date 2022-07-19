@@ -817,7 +817,7 @@ func (p *Poller) loadExporter(name string) exporter.Exporter {
 		return nil
 	}
 	if err = exp.Init(); err != nil {
-		logger.Error().Msgf("init exporter (%s): %v", name, err)
+		logger.Error().Err(err).Str("name", name).Msg("Unable to init exporter")
 		return nil
 	}
 

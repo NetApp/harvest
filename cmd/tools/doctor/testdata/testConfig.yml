@@ -28,6 +28,10 @@ Exporters:
     bucket: harvest
     org: harvest
     token: abcdefghijklmnopqrstuvwxyz
+  influx-with-url:
+    exporter: InfluxDB
+    url: https://example.com:8086/api/v2/write?org=harvest&bucket=harvest&precision=s
+    token: abcdefghijklmnopqrstuvwxyz
   invalid-type:
     exporter: Foo
   influx-test-addr:
