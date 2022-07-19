@@ -111,11 +111,14 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 					if ops := data.GetMetric(opsKey); ops != nil {
 						if opsValue, ok := ops.GetValueFloat64(i); ok {
+							var tempOpsV float64
 
 							prod := value * opsValue
 							tempOpsKey := opsKeyPrefix + opsKey
-							var tempOpsV float64
+							// Create temp ops metrics. These should not be exported.
+							// A base counter can be part base for multiple metrics hence we should not be changing base counter for weighted average calculation
 							tempOps := cache.GetMetric(tempOpsKey)
+
 							if tempOps == nil {
 								if tempOps, err = cache.NewMetricFloat64(tempOpsKey); err != nil {
 									return nil, err
@@ -124,6 +127,7 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 							} else {
 								tempOpsV, _ = tempOps.GetValueFloat64(fg)
 							}
+							// If latency value is 0 then it's ops value is not used in weighted average calculation
 							if value != 0 {
 								err = tempOps.SetValueFloat64(fg, tempOpsV+opsValue)
 								if err != nil {
@@ -162,6 +166,7 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 						opsKey = m.GetComment()
 					}
 
+					// fetch from temp metrics
 					if ops := cache.GetMetric(opsKeyPrefix + opsKey); ops != nil {
 
 						if opsValue, ok := ops.GetValueFloat64(i); ok && opsValue != 0 {
