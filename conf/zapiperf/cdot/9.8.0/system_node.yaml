@@ -9,7 +9,7 @@ counters:
   - instance_name
   - avg_processor_busy
   - cpu_busy
-  - domain_busy
+  - domain_busy            =>  cpu_domain_busy
   - cpu_elapsed_time
   - memory
   - total_data
