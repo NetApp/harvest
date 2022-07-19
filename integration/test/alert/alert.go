@@ -9,47 +9,46 @@ import (
 
 const PrometheusAlertURL string = "http://localhost:9090/api/v1/alerts"
 
-func GetAlerts() ([]string, []byte) {
-	alertNames := make([]string, 0)
+func GetAlerts() []string {
+	alertsData := make([]string, 0)
 
 	response, err := utils.GetResponseBody(PrometheusAlertURL)
 	utils.PanicIfNotNil(err)
 
 	results := gjson.GetManyBytes(response, "data")
-	alertData := results[0].Get("alerts")
+	if results[0].Exists() {
+		alerts := results[0].Get("alerts")
 
-	for _, alert := range alertData.Array() {
-		for key, value := range alert.Get("labels").Map() {
-			if key == "alertname" {
-				alertNames = append(alertNames, value.String())
-				break
-			}
+		for _, alert := range alerts.Array() {
+			labels := alert.Get("labels").Map()
+			alertData := labels["message"].String()
+			alertsData = append(alertsData, alertData)
 		}
 	}
-	return alertNames, response
+	return alertsData
 }
 
-func GetAlertRules(alertRuleNames *[]string, alertRules *[]string, dir string, fileName string) {
-	alertRulesFilePath := dir + "/" + fileName
-	log.Info().Str("alertRulesFilePath", alertRulesFilePath).Msg("alert rules file path")
+func GetEmsAlerts(dir string, fileName string) ([]string, []string) {
+	totalEmsNames := make([]string, 0)
+	bookendEmsNames := make([]string, 0)
 
-	data, err := tree.ImportYaml(alertRulesFilePath)
+	emsConfigFilePath := dir + "/" + fileName
+	log.Debug().Str("emsConfigFilePath", emsConfigFilePath).Msg("")
+
+	data, err := tree.ImportYaml(emsConfigFilePath)
 	if err != nil {
 		utils.PanicIfNotNil(err)
 	}
 
-	for _, v := range data.GetChildS("groups").GetChildren() {
-		if v.GetNameS() == "rules" {
-			for _, a := range v.GetChildren() {
-				if a.GetNameS() == "alert" {
-					alertname := a.GetContentS()
-					*alertRuleNames = append(*alertRuleNames, alertname)
-				}
-				if a.GetNameS() == "expr" {
-					alertexp := a.GetContentS()
-					*alertRules = append(*alertRules, alertexp)
-				}
-			}
+	for _, child := range data.GetChildS("events").GetChildren() {
+		emsName := child.GetChildContentS("name")
+		totalEmsNames = append(totalEmsNames, emsName)
+
+		if child.GetChildS("resolve_when_ems") != nil {
+			bookendEmsNames = append(bookendEmsNames, emsName)
 		}
 	}
+
+	log.Debug().Msgf("Total ems configured: %d, Bookend ems configured:%d", len(totalEmsNames), len(bookendEmsNames))
+	return totalEmsNames, bookendEmsNames
 }

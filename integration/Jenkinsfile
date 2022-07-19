@@ -67,9 +67,8 @@ pipeline {
                         }
                         stage('Evaluating Alert Rules') {
                             steps {
-                                sh """
-                                bash $WORKSPACE/harvest/integration/test/test.sh alerttest
-                                """
+                                invokeEmsAndTest()
+                                invokeResolveEmsAndTest()
                             }
                             post {
                                 always {
@@ -128,9 +127,8 @@ pipeline {
                         }
                         stage('Evaluating Alert Rules') {
                             steps {
-                                sh """
-                                bash $WORKSPACE/harvest/integration/test/test.sh alerttest
-                                """
+                                invokeEmsAndTest()
+                                invokeResolveEmsAndTest()
                             }
                             post {
                                 always {
@@ -189,9 +187,8 @@ pipeline {
                         }
                         stage('Evaluating Alert Rules') {
                             steps {
-                                sh """
-                                bash $WORKSPACE/harvest/integration/test/test.sh alerttest
-                                """
+                                invokeEmsAndTest()
+                                invokeResolveEmsAndTest()
                             }
                             post {
                                 always {
@@ -225,6 +222,7 @@ def void setupWorkspace() {
     git clone --single-branch --branch $BRANCH https://github.com/NetApp/harvest.git
     cp /u/mpeg/harvest/harvest_cert.yml $WORKSPACE/harvest/integration/test/
     cp /u/mpeg/harvest/harvest.yml $WORKSPACE/harvest/integration/test/
+    cp /u/mpeg/harvest/ems_generation.sh $WORKSPACE/harvest/integration/test/
     ls -ltr $WORKSPACE/harvest/integration/test/
 '''
 }
@@ -234,4 +232,28 @@ def void printNodeInfo() {
         socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
         nodeIp = socket.getLocalAddress().getHostAddress();
         println("The Node IP Address is: ${nodeIp}")
+}
+
+def void invokeEmsAndTest() {
+    sh '''
+        bash $WORKSPACE/harvest/integration/test/ems_generation.sh ALL
+        sleep 3m
+        bash $WORKSPACE/harvest/integration/test/test.sh allemstest
+    '''
+}
+
+def void invokeResolveEmsAndTest() {
+    sh '''
+        bash $WORKSPACE/harvest/integration/test/ems_generation.sh RESOLVE
+        sleep 3m
+        bash $WORKSPACE/harvest/integration/test/test.sh bookendemstest
+    '''
+}
+
+def void invokeResolveEmsAndTest() {
+    sh '''
+        sleep 3m
+        bash $WORKSPACE/harvest/integration/test/ems_generation.sh RESOLVE
+        bash $WORKSPACE/harvest/integration/test/test.sh bookendemstest
+    '''
 }

@@ -286,6 +286,13 @@ events:
       - parameters.clientIp                 => client_ip
       - parameters.SID                      => sid
 
+  - name: Nblade.vscanConnInactive
+    expots:
+      - parameters.object_uuid              => object_uuid
+      - parameters.object_type              => object_type
+      - parameters.vserverName              => svm
+      - parameters.scannerIp                => scannerIp
+
   - name: NVMeNS.destroy
     exports:
       - parameters.object_uuid              => object_uuid
