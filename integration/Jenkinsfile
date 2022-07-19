@@ -250,10 +250,3 @@ def void invokeResolveEmsAndTest() {
     '''
 }
 
-def void invokeResolveEmsAndTest() {
-    sh '''
-        sleep 3m
-        bash $WORKSPACE/harvest/integration/test/ems_generation.sh RESOLVE
-        bash $WORKSPACE/harvest/integration/test/test.sh bookendemstest
-    '''
-}
