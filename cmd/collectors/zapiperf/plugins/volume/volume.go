@@ -25,6 +25,10 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 
 func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
+	var (
+		err error
+	)
+	opsKeyPrefix := "temp_"
 	re := regexp.MustCompile(`^(.*)__(\d{4})$`)
 
 	cache := data.Clone(false, true, false)
@@ -107,9 +111,30 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 					if ops := data.GetMetric(opsKey); ops != nil {
 						if opsValue, ok := ops.GetValueFloat64(i); ok {
+							var tempOpsV float64
 
 							prod := value * opsValue
-							err := fgm.SetValueFloat64(fg, fgv+prod)
+							tempOpsKey := opsKeyPrefix + opsKey
+							// Create temp ops metrics. These should not be exported.
+							// A base counter can be part base for multiple metrics hence we should not be changing base counter for weighted average calculation
+							tempOps := cache.GetMetric(tempOpsKey)
+
+							if tempOps == nil {
+								if tempOps, err = cache.NewMetricFloat64(tempOpsKey); err != nil {
+									return nil, err
+								}
+								tempOps.SetExportable(false)
+							} else {
+								tempOpsV, _ = tempOps.GetValueFloat64(fg)
+							}
+							// If latency value is 0 then it's ops value is not used in weighted average calculation
+							if value != 0 {
+								err = tempOps.SetValueFloat64(fg, tempOpsV+opsValue)
+								if err != nil {
+									me.Logger.Error().Stack().Err(err).Msg("error")
+								}
+							}
+							err = fgm.SetValueFloat64(fg, fgv+prod)
 							if err != nil {
 								me.Logger.Error().Stack().Err(err).Msg("error")
 							}
@@ -141,7 +166,8 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 						opsKey = m.GetComment()
 					}
 
-					if ops := cache.GetMetric(opsKey); ops != nil {
+					// fetch from temp metrics
+					if ops := cache.GetMetric(opsKeyPrefix + opsKey); ops != nil {
 
 						if opsValue, ok := ops.GetValueFloat64(i); ok && opsValue != 0 {
 							err := m.SetValueFloat64(i, value/opsValue)
