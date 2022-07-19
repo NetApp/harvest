@@ -8,6 +8,8 @@ instance_key:             name
 counters:
   - instance_name
   - avg_processor_busy
+  - cpu_busy
+  - domain_busy
   - cpu_elapsed_time
   - memory
   - total_data
