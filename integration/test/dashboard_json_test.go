@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"github.com/tidwall/gjson"
+	"io"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -22,11 +23,9 @@ import (
 	"time"
 )
 
-var dataMap map[string]string
-
 var fileSet []string
 
-var counterMap map[string][]string = data.GetCounterMap()
+var counterMap = data.GetCounterMap()
 
 type ResultInfo struct {
 	expression  string
