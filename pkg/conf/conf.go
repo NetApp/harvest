@@ -12,7 +12,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"gopkg.in/yaml.v3"
-	"io/ioutil"
 	"log"
 	"os"
 	"path"
@@ -53,7 +52,7 @@ func LoadHarvestConfig(configPath string) error {
 		return nil
 	}
 	configPath = ConfigPath(configPath)
-	contents, err := ioutil.ReadFile(configPath)
+	contents, err := os.ReadFile(configPath)
 
 	if err != nil {
 		fmt.Printf("error reading config file=[%s] %+v\n", configPath, err)
@@ -92,7 +91,7 @@ func LoadHarvestConfig(configPath string) error {
 }
 
 func ReadCredentialsFile(credPath string, p *Poller) error {
-	contents, err := ioutil.ReadFile(credPath)
+	contents, err := os.ReadFile(credPath)
 
 	if p == nil {
 		return nil

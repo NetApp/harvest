@@ -11,7 +11,6 @@ import (
 	"github.com/shirou/gopsutil/v3/process"
 	"golang.org/x/sys/unix"
 	"gopkg.in/yaml.v3"
-	"io/ioutil"
 	"net"
 	"os"
 	"regexp"
@@ -144,7 +143,7 @@ func CheckCert(certPath string, name string, configPath string, logger zerolog.L
 // SaveConfig adds or updates the Grafana token in the harvest.yml config
 // and saves it to fp. The Yaml marshaller is ued so comments are preserved
 func SaveConfig(fp string, token string) error {
-	contents, err := ioutil.ReadFile(fp)
+	contents, err := os.ReadFile(fp)
 	if err != nil {
 		return err
 	}
@@ -195,7 +194,7 @@ func SaveConfig(fp string, token string) error {
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(fp, marshal, 0600)
+	return os.WriteFile(fp, marshal, 0600)
 }
 
 type Status string

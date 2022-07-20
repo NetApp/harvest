@@ -6,7 +6,7 @@ package unix
 
 import (
 	"github.com/netapp/harvest/v2/pkg/errs"
-	"io/ioutil"
+	"os"
 	"path"
 	"strconv"
 	"strings"
@@ -46,7 +46,7 @@ func (s *System) loadStat() error {
 		err           error
 	)
 
-	if data, err = ioutil.ReadFile(path.Join("/proc", "stat")); err != nil {
+	if data, err = os.ReadFile(path.Join("/proc", "stat")); err != nil {
 		return err
 	}
 
@@ -95,7 +95,7 @@ func (s *System) loadStat() error {
 // read values from /proc/meminfo - system memory size
 func (s *System) loadMeminfo() error {
 
-	data, err := ioutil.ReadFile(path.Join("/proc", "meminfo"))
+	data, err := os.ReadFile(path.Join("/proc", "meminfo"))
 	if err != nil {
 		return err
 	}

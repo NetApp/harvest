@@ -3,7 +3,7 @@ package doctor
 import (
 	"fmt"
 	"github.com/tidwall/gjson"
-	"io/ioutil"
+	"io"
 	"log"
 	"math"
 	"net/http"
@@ -50,7 +50,7 @@ func DoDiffRestZapi(zapiDataCenterName string, restDataCenterName string) {
 func getWalkFunc(searchKey string, dashboardDiffMap map[string][]string, key string) filepath.WalkFunc {
 	return func(path string, fi os.FileInfo, err error) error {
 		if !fi.IsDir() {
-			b, err := ioutil.ReadFile(path)
+			b, err := os.ReadFile(path)
 			if err != nil {
 				panic(err)
 			}
@@ -674,7 +674,7 @@ func getResponse(url string) (string, error) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatalln(err)
 		return "", err

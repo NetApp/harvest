@@ -13,7 +13,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"github.com/tidwall/gjson"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -74,7 +73,7 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 		jsonFile, err := os.Open(filePath)
 		utils.PanicIfNotNil(err)
 		defer jsonFile.Close()
-		byteValue, _ := ioutil.ReadAll(jsonFile)
+		byteValue, _ := io.ReadAll(jsonFile)
 		var allExpr []string
 		value := gjson.Get(string(byteValue), "panels")
 		if value.IsArray() {

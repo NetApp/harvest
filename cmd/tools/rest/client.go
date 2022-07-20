@@ -12,7 +12,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
@@ -174,7 +173,7 @@ func (c *Client) GetRest(request string) ([]byte, error) {
 	// ensure that we can change body dynamically
 	c.request.GetBody = func() (io.ReadCloser, error) {
 		r := bytes.NewReader(c.buffer.Bytes())
-		return ioutil.NopCloser(r), nil
+		return io.NopCloser(r), nil
 	}
 	if err != nil {
 		return nil, err
@@ -207,7 +206,7 @@ func (c *Client) invoke() ([]byte, error) {
 	defer func(Body io.ReadCloser) { _ = Body.Close() }(response.Body)
 
 	if response.StatusCode != 200 {
-		if body, err = ioutil.ReadAll(response.Body); err == nil {
+		if body, err = io.ReadAll(response.Body); err == nil {
 			result := gjson.GetBytes(body, "error")
 			if result.Exists() {
 				message := result.Get("message").String()
@@ -221,7 +220,7 @@ func (c *Client) invoke() ([]byte, error) {
 	}
 
 	// read response body
-	if body, err = ioutil.ReadAll(response.Body); err != nil {
+	if body, err = io.ReadAll(response.Body); err != nil {
 		return nil, err
 	}
 	defer c.printRequestAndResponse(restReq, body)

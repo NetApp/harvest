@@ -3,7 +3,7 @@ package test
 import (
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/yaml"
-	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 )
@@ -61,7 +61,7 @@ func TestNode_MergeCollector(t *testing.T) {
 
 	gotString1, _ := yaml.Dump(defaultTemplate)
 	gotString := strings.TrimSpace(string(gotString1))
-	expected, _ := ioutil.ReadFile("mergeTemplates/lun_merge.yaml")
+	expected, _ := os.ReadFile("mergeTemplates/lun_merge.yaml")
 	expectedString := strings.TrimSpace(string(expected))
 
 	if gotString != expectedString {
@@ -298,7 +298,7 @@ func TestNode_PreProcessCollector(t *testing.T) {
 			template, _ := tree.ImportYaml(tt.sourceFile)
 			template.PreprocessTemplate()
 			got, _ := yaml.Dump(template)
-			expected, _ := ioutil.ReadFile(tt.compareFile)
+			expected, _ := os.ReadFile(tt.compareFile)
 			gotString := strings.TrimSpace(string(got))
 			expectedString := strings.TrimSpace(string(expected))
 			if gotString != expectedString {
@@ -350,7 +350,7 @@ func TestNode_PreProcessMergeCollector(t *testing.T) {
 			baseTemplate.Merge(extendTemplate, nil)
 			gotString1, _ := yaml.Dump(baseTemplate)
 			gotString := strings.TrimSpace(string(gotString1))
-			expected, _ := ioutil.ReadFile(tt.mergeTemplate)
+			expected, _ := os.ReadFile(tt.mergeTemplate)
 			expectedString := strings.TrimSpace(string(expected))
 
 			if gotString != expectedString {

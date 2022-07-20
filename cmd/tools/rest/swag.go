@@ -12,7 +12,6 @@ import (
 	"gopkg.in/yaml.v3"
 	"html"
 	"io"
-	"io/ioutil"
 	"net/url"
 	"os"
 	"regexp"
@@ -291,7 +290,7 @@ func sortParams(pathItem spec.PathItem) func(i int, j int) bool {
 //  3. converting the []byte into the spec.Swagger struct
 // Step 2 is required because spec.Swagger (un)marshalling code is written with json tags instead of yaml tags
 func readSwagger(args Args) (ontap, error) {
-	contents, err := ioutil.ReadFile(args.SwaggerPath)
+	contents, err := os.ReadFile(args.SwaggerPath)
 	if err != nil {
 		fmt.Printf("error reading swagger file=[%s] err=%+v\n", args.SwaggerPath, err)
 		return ontap{}, err
