@@ -15,7 +15,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/hashicorp/go-version"
-	"io/ioutil"
+	"os"
 	"path"
 	"regexp"
 	"sort"
@@ -74,14 +74,14 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 		verWithDots := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(ver)), "."), "[]")
 
 		// check for available versions, those are the subdirectories that include filename
-		if files, err := ioutil.ReadDir(pathPrefix); err == nil {
+		if files, err := os.ReadDir(pathPrefix); err == nil {
 			for _, file := range files {
 				if !file.IsDir() {
 					continue
 				}
 				submatch := versionRegex.FindStringSubmatch(file.Name())
 				if len(submatch) > 0 {
-					if templates, err := ioutil.ReadDir(path.Join(pathPrefix, file.Name())); err == nil {
+					if templates, err := os.ReadDir(path.Join(pathPrefix, file.Name())); err == nil {
 						for _, t := range templates {
 							if t.Name() == f {
 								c.Logger.Trace().Msgf("available version dir: [%s]", file.Name())

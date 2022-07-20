@@ -12,7 +12,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"io"
-	"io/ioutil"
 	"net/http"
 	url2 "net/url"
 	"strconv"
@@ -216,7 +215,7 @@ func (e *InfluxDB) Emit(data [][]byte) error {
 
 	if response.StatusCode != expectedResponseCode {
 		defer func(Body io.ReadCloser) { _ = Body.Close() }(response.Body)
-		if body, err := ioutil.ReadAll(response.Body); err != nil {
+		if body, err := io.ReadAll(response.Body); err != nil {
 			return errs.New(errs.ErrAPIResponse, err.Error())
 		} else {
 			return fmt.Errorf("%w: %s", errs.ErrAPIRequestRejected, string(body))

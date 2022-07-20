@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"github.com/tidwall/gjson"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -23,11 +23,9 @@ import (
 	"time"
 )
 
-var dataMap map[string]string
-
 var fileSet []string
 
-var counterMap map[string][]string = data.GetCounterMap()
+var counterMap = data.GetCounterMap()
 
 type ResultInfo struct {
 	expression  string
@@ -74,7 +72,7 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 		jsonFile, err := os.Open(filePath)
 		utils.PanicIfNotNil(err)
 		defer jsonFile.Close()
-		byteValue, _ := ioutil.ReadAll(jsonFile)
+		byteValue, _ := io.ReadAll(jsonFile)
 		var allExpr []string
 		value := gjson.Get(string(byteValue), "panels")
 		if value.IsArray() {

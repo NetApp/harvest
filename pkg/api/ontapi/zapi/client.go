@@ -15,8 +15,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"io"
-	"io/ioutil"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -118,7 +118,7 @@ func New(poller conf.Poller) (*Client, error) {
 		// Create a CA certificate pool and add certificate if specified
 		caCertPool := x509.NewCertPool()
 		if caCertPath != "" {
-			caCert, err := ioutil.ReadFile(caCertPath)
+			caCert, err := os.ReadFile(caCertPath)
 			if err != nil {
 				client.Logger.Error().Err(err).Str("cacert", caCertPath).Msg("Failed to read ca cert")
 				// continue
@@ -171,7 +171,7 @@ func New(poller conf.Poller) (*Client, error) {
 	// ensure that we can change body dynamically
 	request.GetBody = func() (io.ReadCloser, error) {
 		r := bytes.NewReader(client.buffer.Bytes())
-		return ioutil.NopCloser(r), nil
+		return io.NopCloser(r), nil
 	}
 
 	return &client, nil
@@ -250,7 +250,7 @@ func (c *Client) Info() string {
 	return fmt.Sprintf("%s %s (serial %s) (%s)", c.Name(), version, c.Serial(), c.Release())
 }
 
-// BuildRequestString builds an API request from the string request
+// BuildRequestString builds an API request from the request.
 // request is usually the API name (e.g. "system-get-info") without any attributes
 func (c *Client) BuildRequestString(request string) error {
 	return c.buildRequestString(request, false)
@@ -291,7 +291,7 @@ func (c *Client) buildRequest(query *node.Node, forceCluster bool) error {
 
 	buffer = bytes.NewBuffer(data)
 	c.buffer = buffer
-	c.request.Body = ioutil.NopCloser(buffer)
+	c.request.Body = io.NopCloser(buffer)
 	c.request.ContentLength = int64(buffer.Len())
 	return nil
 }
@@ -391,7 +391,7 @@ func (c *Client) InvokeRaw() ([]byte, error) {
 		return body, errs.New(errs.ErrAPIResponse, response.Status)
 	}
 
-	return ioutil.ReadAll(response.Body)
+	return io.ReadAll(response.Body)
 }
 
 // invokes the request that has been built with one of the BuildRequest* methods
@@ -435,7 +435,7 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 	}
 
 	// read response body
-	if body, err = ioutil.ReadAll(response.Body); err != nil {
+	if body, err = io.ReadAll(response.Body); err != nil {
 		return result, responseT, parseT, err
 	}
 	defer c.printRequestAndResponse(zapiReq, body)
