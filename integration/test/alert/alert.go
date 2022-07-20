@@ -92,7 +92,7 @@ func GenerateEvents(emsNames []EmsData) map[bool][]string {
 			vserverArwCount++
 		}
 
-		jsonValue := []byte(fmt.Sprintf(`{"message-name": "%s", "values": [%s,2,3,4,5,6,7,8,9], "basicAuth": false}`, emsName.name, value))
+		jsonValue := []byte(fmt.Sprintf(`{"message-name": "%s", "values": [%s,2,3,4,5,6,7,8,9]}`, emsName.name, value))
 		var data map[string]interface{}
 		data = SendPostReqAndGetRes(url, method, jsonValue, user, pass)
 		if response := data["error"]; response != nil {
