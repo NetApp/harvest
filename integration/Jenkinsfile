@@ -236,16 +236,12 @@ def void printNodeInfo() {
 
 def void invokeEmsAndTest() {
     sh '''
-        bash $WORKSPACE/harvest/integration/test/ems_generation.sh ALL
-        sleep 3m
         bash $WORKSPACE/harvest/integration/test/test.sh allemstest
     '''
 }
 
 def void invokeResolveEmsAndTest() {
     sh '''
-        bash $WORKSPACE/harvest/integration/test/ems_generation.sh RESOLVE
-        sleep 3m
         bash $WORKSPACE/harvest/integration/test/test.sh bookendemstest
     '''
 }

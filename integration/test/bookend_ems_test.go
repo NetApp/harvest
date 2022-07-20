@@ -12,9 +12,10 @@ import (
 	"testing"
 )
 
-var alertsData []string
-var totalEmsNames []string
+var resolvingEmsNames []promAlerts.EmsData
 var bookendEmsNames []string
+var supportedEms map[bool][]string
+var alertsData []string
 
 type EmsTestSuite struct {
 	suite.Suite
@@ -25,7 +26,11 @@ func (suite *EmsTestSuite) SetupSuite() {
 	log.Info().Str("EmsConfigDir", emsConfigDir).Msg("Directory path")
 
 	// Fetch ems configured in template
-	totalEmsNames, bookendEmsNames = promAlerts.GetEmsAlerts(emsConfigDir, "ems.yaml")
+	_, resolvingEmsNames = promAlerts.GetEmsAlerts(emsConfigDir, "ems.yaml")
+
+	// Identify supported ems names for the given cluster
+	supportedEms = promAlerts.GenerateEvents(resolvingEmsNames)
+	log.Info().Msgf("Supported Bookend ems:%d", len(supportedEms[true]))
 
 	// Fetch prometheus alerts
 	alertsData = promAlerts.GetAlerts()
@@ -40,8 +45,8 @@ func (suite *EmsTestSuite) TestBookendEmsAlerts() {
 	foundBookendEms := make([]string, 0)
 
 	// active non-bookend ems alerts should be equal to or more than non-bookend ems configured in template
-	if len(alertsData) >= (len(totalEmsNames) - len(bookendEmsNames)) {
-		for _, bookendEmsName := range bookendEmsNames {
+	if len(alertsData) >= (len(supportedEms[false])) {
+		for _, bookendEmsName := range supportedEms[true] {
 			if utils.Contains(alertsData, bookendEmsName) {
 				foundBookendEms = append(foundBookendEms, bookendEmsName)
 			}
