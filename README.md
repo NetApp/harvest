@@ -213,6 +213,7 @@ All pollers are defined in `harvest.yml`, the main configuration file of Harvest
 | `username`, `password` | required if `auth_style` is `basic_auth`       |                                                                                                                                                                                                                                                                                                                                                                             |                    |
 | `ssl_cert`, `ssl_key`  | optional if `auth_style` is `certificate_auth` | Absolute paths to SSL (client) certificate and key used to authenticate with the target system.<br /><br />If not provided, the poller will look for `<hostname>.key` and `<hostname>.pem` in `$HARVEST_HOME/cert/`.<br/><br/>To create certificates for ONTAP systems, see [using certificate authentication](docs/AuthAndPermissions.md#using-certificate-authentication) |                    |
 | `use_insecure_tls`     | optional, bool                                 | If true, disable TLS verification when connecting to ONTAP cluster                                                                                                                                                                                                                                                                                                          | false              |
+| `credentials_file`     | optional, string                               | Path to a yaml file that contains cluster credentials. The file should have the same shape as `harvest.yml`. See [here](#credentials file) for examples. Path can be relative to `harvest.yml` or absolute                                                                                                                                                                  |                    |          
  | `tls_min_version`      | optional, string                               | Minimum TLS version to use when connecting to ONTAP cluster: One of tls10, tls11, tls12 or tls13                                                                                                                                                                                                                                                                            | Platform decides   | 
 | `labels`               | optional, list of key-value pairs              | Each of the key-value pairs will be added to a poller's metrics. Details [below](#labels)                                                                                                                                                                                                                                                                                   |                    |
 | `log_max_bytes`        |                                                | Maximum size of the log file before it will be rotated                                                                                                                                                                                                                                                                                                                      | `5_242_880` (5 MB) |
@@ -302,3 +303,36 @@ node_vol_cifs_write_data{org="meg",ns="rtp",datacenter="DC-01",cluster="cluster-
 ```
 
 Keep in mind that each unique combination of key-value pairs increases the amount of stored data. Use them sparingly. See [PrometheusNaming](https://prometheus.io/docs/practices/naming/#labels) for details.
+
+## Credentials File
+
+If you would rather not list cluster credentials in your `harvest.yml`, you can use the `credentials_file` section
+in your `harvest.yml` to point to a file that contains the credentials. 
+At runtime, the `credentials_file` will be read and the included credentials will be used to authenticate with the matching cluster(s).
+
+This is handy when integrating with 3rd party credential stores. 
+See #884 for examples. 
+
+The format of the `credentials_file` is similar to `harvest.yml` and can contain multiple cluster credentials.
+
+Example:
+
+Snippet from `harvest.yml`:
+
+```yaml
+Pollers:
+ cluster1:
+  addr: 10.193.48.11
+  credentials_file: secrets/cluster1.yml
+  exporters:
+   - prom1 
+```
+
+File `secrets/cluster1.yml`:
+
+```yaml
+Pollers:
+ cluster1:
+  username: harvest
+  password: foo
+```
