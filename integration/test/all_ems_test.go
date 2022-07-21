@@ -17,6 +17,10 @@ var bookendEmsNames []string
 var supportedEms map[bool][]string
 var alertsData []string
 
+// These few ems are node scoped and They won't be raised always from ONTAP even if we simulate via POST call.
+var skippedEmsList = []string{"callhome.hainterconnect.down", "fabricpool.full", "fabricpool.nearly.full", "Nblade.cifsNoPrivShare", "Nblade.nfsV4PoolExhaust",
+	"Nblade.vscanBadUserPrivAccess", "Nblade.vscanNoRegdScanner", "cloud.aws.iamNotInitialized", "scsitarget.fct.port.full"}
+
 type AlertRulesTestSuite struct {
 	suite.Suite
 }
@@ -47,12 +51,12 @@ func (suite *AlertRulesTestSuite) TestEmsAlerts() {
 	// active alerts should be equal to or more than ems configured in template
 	if len(alertsData) >= (len(supportedEms[false]) + len(supportedEms[true])) {
 		for _, emsName := range supportedEms[false] {
-			if !(utils.Contains(alertsData, emsName)) {
+			if !(utils.Contains(alertsData, emsName) || utils.Contains(skippedEmsList, emsName)) {
 				notFoundEms = append(notFoundEms, emsName)
 			}
 		}
 		for _, emsName := range supportedEms[true] {
-			if !(utils.Contains(alertsData, emsName)) {
+			if !(utils.Contains(alertsData, emsName) || utils.Contains(skippedEmsList, emsName)) {
 				notFoundEms = append(notFoundEms, emsName)
 			}
 		}
