@@ -3,7 +3,7 @@ query:                    api/cluster/counter/tables/lun
 object:                   lun
 
 counters:
-  - ^^name
+  - ^^id                        => lunfull
   - ^svm.name                   => svm
   - read_data
   - write_data
@@ -37,8 +37,9 @@ override:
 
 plugins:
   LabelAgent:
-    split:
-      - lun `/` ,,volume,lun
+    #Example: /vol/osc_iscsi_vol01/osc_iscsi_vol01:d32abf06-0327-4d06-bb9d-1c19c8eeea01
+    split_regex:
+      - lunfull `\/(.*?)\/(.*?)\/(.*?):(.*?)` ,,volume,lun,
 
 export_options:
   instance_keys:
