@@ -569,7 +569,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 					}
 					count++
 				} else {
-					// check in metric
+					// check for label value in metric
 					f := parseMetricResponse(instanceData, label)
 					if f.value != "" {
 						instance.SetLabel(display, f.value)
