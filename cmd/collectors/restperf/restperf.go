@@ -1091,7 +1091,7 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 						instance.SetLabel(display, value.String())
 					} else {
 						// lun,file,qtree may not always exist for workload
-						r.Logger.Trace().Str("label", label).Str("instanceKey", instanceKey).Msgf("Missing label")
+						r.Logger.Trace().Str("label", label).Str("instanceKey", instanceKey).Msg("Missing label")
 
 					}
 				}
