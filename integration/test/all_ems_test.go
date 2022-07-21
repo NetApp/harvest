@@ -14,7 +14,7 @@ import (
 
 var totalEmsNames []promAlerts.EmsData
 var bookendEmsNames []string
-var supportedEms map[bool][]string
+var supportedEms []string
 var alertsData []string
 
 // These few ems are node scoped and They won't be raised always from ONTAP even if we simulate via POST call.
@@ -34,7 +34,7 @@ func (suite *AlertRulesTestSuite) SetupSuite() {
 
 	// Identify supported ems names for the given cluster
 	supportedEms = promAlerts.GenerateEvents(totalEmsNames)
-	log.Info().Msgf("Total supported ems: %d, supported Bookend ems:%d", len(supportedEms[true])+len(supportedEms[false]), len(supportedEms[true]))
+	log.Info().Msgf("Total supported ems: %d", len(supportedEms))
 
 	// Fetch prometheus alerts
 	alertsData = promAlerts.GetAlerts()
@@ -49,13 +49,8 @@ func (suite *AlertRulesTestSuite) TestEmsAlerts() {
 	notFoundEms := make([]string, 0)
 
 	// active alerts should be equal to or more than ems configured in template
-	if len(alertsData) >= (len(supportedEms[false]) + len(supportedEms[true])) {
-		for _, emsName := range supportedEms[false] {
-			if !(utils.Contains(alertsData, emsName) || utils.Contains(skippedEmsList, emsName)) {
-				notFoundEms = append(notFoundEms, emsName)
-			}
-		}
-		for _, emsName := range supportedEms[true] {
+	if len(alertsData) >= (len(supportedEms)) {
+		for _, emsName := range supportedEms {
 			if !(utils.Contains(alertsData, emsName) || utils.Contains(skippedEmsList, emsName)) {
 				notFoundEms = append(notFoundEms, emsName)
 			}

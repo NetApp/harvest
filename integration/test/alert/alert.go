@@ -1,17 +1,12 @@
 package promAlerts
 
 import (
-	"bytes"
-	"crypto/tls"
-	"encoding/json"
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
-	"io/ioutil"
-	"net/http"
 	"time"
 )
 
@@ -21,8 +16,8 @@ var volumeArwState = []string{"\"disable-in-progress\"", "\"disabled\"", "\"dry-
 var vserverArwState = []string{"\"enabled\"", "\"dry-run\""}
 
 type EmsData struct {
-	name    string
-	bookend bool
+	EmsName      string
+	resolvingEms string
 }
 
 func GetAlerts() []string {
@@ -47,7 +42,7 @@ func GetAlerts() []string {
 
 func GetEmsAlerts(dir string, fileName string) ([]EmsData, []EmsData) {
 	totalEms := make([]EmsData, 0)
-	resolvingEms := make([]EmsData, 0)
+	bookendEms := make([]EmsData, 0)
 	bookendEmsCount := 0
 
 	emsConfigFilePath := dir + "/" + fileName
@@ -61,77 +56,55 @@ func GetEmsAlerts(dir string, fileName string) ([]EmsData, []EmsData) {
 	for _, child := range data.GetChildS("events").GetChildren() {
 		emsName := child.GetChildContentS("name")
 		if resolveEms := child.GetChildS("resolve_when_ems"); resolveEms != nil {
-			totalEms = append(totalEms, EmsData{name: emsName, bookend: true})
-			resolvingEms = append(resolvingEms, EmsData{name: resolveEms.GetChildContentS("name"), bookend: true})
+			bookendEms = append(bookendEms, EmsData{EmsName: emsName, resolvingEms: resolveEms.GetChildContentS("name")})
 			bookendEmsCount++
-		} else {
-			totalEms = append(totalEms, EmsData{name: emsName, bookend: false})
 		}
+		totalEms = append(totalEms, EmsData{EmsName: emsName})
 	}
 
 	log.Debug().Msgf("Total ems configured: %d, Bookend ems configured:%d", len(totalEms), bookendEmsCount)
-	return totalEms, resolvingEms
+	return totalEms, bookendEms
 }
 
-func GenerateEvents(emsNames []EmsData) map[bool][]string {
-	supportedEmsMap := make(map[bool][]string)
+func GenerateEvents(emsNames []EmsData) []string {
+	supportedEms := make([]string, 0)
 	addr, user, pass := GetPollerDetail()
 	url := "https://" + addr + "/api/private/cli/event/generate"
 	method := "POST"
 
 	volumeArwCount := 0
 	vserverArwCount := 0
-	for _, emsName := range emsNames {
+	for _, e := range emsNames {
 		value := "1"
-		if emsName.name == "arw.volume.state" {
+		ems := ""
+		if ems = e.resolvingEms; ems == "" {
+			ems = e.EmsName
+		}
+		if ems == "arw.volume.state" {
 			value = volumeArwState[volumeArwCount]
 			volumeArwCount++
 		}
-		if emsName.name == "arw.vserver.state" {
+		if ems == "arw.vserver.state" {
 			value = vserverArwState[vserverArwCount]
 			vserverArwCount++
 		}
 
-		jsonValue := []byte(fmt.Sprintf(`{"message-name": "%s", "values": [%s,2,3,4,5,6,7,8,9]}`, emsName.name, value))
+		jsonValue := []byte(fmt.Sprintf(`{"message-name": "%s", "values": [%s,2,3,4,5,6,7,8,9]}`, ems, value))
 		var data map[string]interface{}
-		data = SendPostReqAndGetRes(url, method, jsonValue, user, pass)
+		data = utils.SendPostReqAndGetRes(url, method, jsonValue, user, pass)
 		if response := data["error"]; response != nil {
 			errorDetail := response.(map[string]interface{})
 			code := errorDetail["code"].(string)
 			target := errorDetail["target"].(string)
 			if !(code == "2" && target == "message-name") {
-				supportedEmsMap[emsName.bookend] = append(supportedEmsMap[emsName.bookend], emsName.name)
+				supportedEms = append(supportedEms, e.EmsName)
 			}
 		} else {
-			supportedEmsMap[emsName.bookend] = append(supportedEmsMap[emsName.bookend], emsName.name)
+			supportedEms = append(supportedEms, e.EmsName)
 		}
 	}
 
-	return supportedEmsMap
-}
-
-func SendPostReqAndGetRes(url string, method string,
-	buf []byte, user string, pass string) map[string]interface{} {
-	tlsConfig := &tls.Config{InsecureSkipVerify: true} //nolint:gosec
-	client := &http.Client{
-		Transport: &http.Transport{TLSClientConfig: tlsConfig},
-	}
-	req, err := http.NewRequest(method, url, bytes.NewBuffer(buf))
-	if err != nil {
-		fmt.Println(err)
-		panic(err)
-	}
-	req.Header.Add("Content-Type", "application/json")
-	req.SetBasicAuth(user, pass)
-	res, err := client.Do(req)
-	utils.PanicIfNotNil(err)
-	defer res.Body.Close()
-	body, err := ioutil.ReadAll(res.Body)
-	utils.PanicIfNotNil(err)
-	var data map[string]interface{}
-	err = json.Unmarshal(body, &data)
-	utils.PanicIfNotNil(err)
-	return data
+	return supportedEms
 }
 
 func GetPollerDetail() (string, string, string) {

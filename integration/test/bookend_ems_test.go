@@ -14,7 +14,7 @@ import (
 
 var resolvingEmsNames []promAlerts.EmsData
 var bookendEmsNames []string
-var supportedEms map[bool][]string
+var supportedEms []string
 var alertsData []string
 
 type EmsTestSuite struct {
@@ -30,7 +30,7 @@ func (suite *EmsTestSuite) SetupSuite() {
 
 	// Identify supported ems names for the given cluster
 	supportedEms = promAlerts.GenerateEvents(resolvingEmsNames)
-	log.Info().Msgf("Supported Bookend ems:%d", len(supportedEms[true]))
+	log.Info().Msgf("Supported Bookend ems:%d", len(supportedEms))
 
 	// Fetch prometheus alerts
 	alertsData = promAlerts.GetAlerts()
@@ -44,19 +44,14 @@ func (suite *EmsTestSuite) SetupSuite() {
 func (suite *EmsTestSuite) TestBookendEmsAlerts() {
 	foundBookendEms := make([]string, 0)
 
-	// active non-bookend ems alerts should be equal to or more than non-bookend ems configured in template
-	if len(alertsData) >= (len(supportedEms[false])) {
-		for _, bookendEmsName := range supportedEms[true] {
-			if utils.Contains(alertsData, bookendEmsName) {
-				foundBookendEms = append(foundBookendEms, bookendEmsName)
-			}
+	for _, bookendEmsName := range supportedEms {
+		if utils.Contains(alertsData, bookendEmsName) {
+			foundBookendEms = append(foundBookendEms, bookendEmsName)
 		}
-		if len(foundBookendEms) > 0 {
-			log.Error().Msg("The following bookend ems alerts have found.")
-			assert.Fail(suite.T(), fmt.Sprintf("One or more extra bookend ems alerts %s have been raised", foundBookendEms))
-		}
-	} else {
-		assert.Fail(suite.T(), "Bookend ems test validation is failed due to having extra ems alerts. Pls check logs above")
+	}
+	if len(foundBookendEms) > 0 {
+		log.Error().Msg("The following bookend ems alerts have found.")
+		assert.Fail(suite.T(), fmt.Sprintf("One or more extra bookend ems alerts %s have been raised", foundBookendEms))
 	}
 }
 
