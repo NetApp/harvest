@@ -690,13 +690,6 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		})
 	}
 
-	r.Logger.Debug().
-		Uint64("instances", numRecords).
-		Uint64("metrics", count).
-		Str("apiTime", apiD.String()).
-		Str("parseTime", parseD.String()).
-		Msg("Collected")
-
 	if isWorkloadDetailObject(r.Prop.Query) {
 		if err := r.getParentOpsCounters(newData); err != nil {
 			// no point to continue as we can't calculate the other counters
@@ -875,7 +868,16 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 	}
 
-	_ = r.Metadata.LazySetValueInt64("calc_time", "data", time.Since(calcStart).Microseconds())
+	calcD := time.Since(calcStart)
+	_ = r.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
+
+	r.Logger.Info().
+		Int("instances", len(newData.GetInstances())).
+		Uint64("metrics", count).
+		Str("apiD", apiD.Round(time.Millisecond).String()).
+		Str("parseD", parseD.Round(time.Millisecond).String()).
+		Str("calcD", calcD.Round(time.Millisecond).String()).
+		Msg("Collected")
 	// store cache for next poll
 	r.Matrix[r.Object] = cachedData
 
