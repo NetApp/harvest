@@ -15,13 +15,18 @@ const PrometheusAlertURL string = "http://localhost:9090/api/v1/alerts"
 var volumeArwState = []string{"\"disable-in-progress\"", "\"disabled\"", "\"dry-run\"", "\"dry-run-paused\"", "\"enable-paused\"", "\"enabled\""}
 var vserverArwState = []string{"\"enabled\"", "\"dry-run\""}
 
+type PromAlert struct {
+	message string
+	count   int
+}
 type EmsData struct {
 	EmsName      string
 	resolvingEms string
 }
 
-func GetAlerts() []string {
-	alertsData := make([]string, 0)
+func GetAlerts() (map[string]int, int) {
+	alertsData := make(map[string]int)
+	totalAlerts := 0
 
 	time.Sleep(3 * time.Minute)
 	response, err := utils.GetResponseBody(PrometheusAlertURL)
@@ -34,10 +39,11 @@ func GetAlerts() []string {
 		for _, alert := range alerts.Array() {
 			labels := alert.Get("labels").Map()
 			alertData := labels["message"].String()
-			alertsData = append(alertsData, alertData)
+			alertsData[alertData] = alertsData[alertData] + 1
+			totalAlerts++
 		}
 	}
-	return alertsData
+	return alertsData, totalAlerts
 }
 
 func GetEmsAlerts(dir string, fileName string) ([]EmsData, []EmsData) {
