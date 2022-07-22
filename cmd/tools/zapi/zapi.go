@@ -331,7 +331,7 @@ func init() {
 	flags.StringVarP(&args.API, "api", "a", "", "ZAPI query to show")
 	flags.StringVarP(&args.Attr, "attr", "t", "", "ZAPI attribute to show")
 	flags.StringVarP(&args.Object, "object", "o", "", "ZapiPerf object to show")
-	flags.StringSliceVarP(&args.Counters, "counter", "c", []string{}, "ZapiPerf counter to show")
+	flags.StringSliceVarP(&args.Counters, "counter", "c", []string{}, "ZapiPerf counter(s) to show. Can be specified multiple times")
 	flags.IntVarP(&args.MaxRecords, "max", "m", 100, "max-records: max instances per API request")
 	flags.StringSliceVarP(&args.Parameters, "parameters", "r", []string{}, "parameter to add to the ZAPI query")
 	flags.StringVar(&args.Config, "config", configPath, "harvest config file path")
