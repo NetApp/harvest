@@ -193,7 +193,7 @@ func (me *Matrix) GetInstance(key string) *Instance {
 }
 
 func (me *Matrix) GetInstancesBySubkey(subKey string) []*Instance {
-	instances := make([]*Instance, 0)
+	var instances []*Instance
 	for key, instance := range me.instances {
 		if strings.HasSuffix(key, subKey) {
 			instances = append(instances, instance)

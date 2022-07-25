@@ -23,6 +23,7 @@ const severityFilterPrefix = "message.severity="
 const defaultSeverityFilter = "alert|emergency|error|informational|notice"
 const MaxBookendInstances = 1000
 const DefaultBookendResolutionDuration = 28 * 24 * time.Hour // 28 days == 672 hours
+const Hyphen = "-"
 
 type Ems struct {
 	*rest2.Rest    // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
@@ -739,7 +740,7 @@ func (e *Ems) getInstanceKeys(p *emsProp, instanceData gjson.Result) string {
 	for _, k := range p.InstanceKeys {
 		value := parseProperties(instanceData, k)
 		if value.Exists() {
-			instanceKey += "-" + value.String()
+			instanceKey += Hyphen + value.String()
 		} else {
 			e.Logger.Warn().Str("key", k).Msg("skip instance, missing key")
 			break

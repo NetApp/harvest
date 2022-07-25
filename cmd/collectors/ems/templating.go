@@ -126,8 +126,12 @@ func (e *Ems) ParseResolveEms(resolveEvent *node.Node, issueEmsProp emsProp) {
 
 	// check if resolved_key is present in template, if not then use the issue ems resolve key
 	if resolveKey = resolveEvent.GetChildS("resolve_key"); resolveKey == nil {
-		// resolving ems instance key is keys
-		prop.InstanceKeys = issueEmsProp.InstanceKeys[2:]
+		// IssuingEmsKey: index-messageName-bookendKey, ResolvingEmsKey would be bookendKey
+		if len(issueEmsProp.InstanceKeys) > 2 {
+			prop.InstanceKeys = issueEmsProp.InstanceKeys[2:]
+		} else {
+			e.Logger.Warn().Str("Ems name", issueEmsProp.Name).Msgf("Missing bookend keys")
+		}
 	} else {
 		e.ParseExports(resolveKey, &prop)
 	}
