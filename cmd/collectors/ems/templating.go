@@ -130,6 +130,8 @@ func (e *Ems) ParseResolveEms(resolveEvent *node.Node, issueEmsProp emsProp) {
 		if len(issueEmsProp.InstanceKeys) > 2 {
 			prop.InstanceKeys = issueEmsProp.InstanceKeys[2:]
 		} else {
+			// If bookendKey is missing in IssueEms, the  default bookendKey is index of IssueEMs
+			prop.InstanceKeys = issueEmsProp.InstanceKeys[0:1]
 			e.Logger.Warn().Str("Ems name", issueEmsProp.Name).Msgf("Missing bookend keys")
 		}
 	} else {
