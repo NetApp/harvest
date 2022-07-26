@@ -289,6 +289,9 @@ func getData(c *client.Client, args *Args) (*node.Node, error) {
 	// requested data is for an Zapi query
 	if args.API != "" {
 		req = node.NewXMLS(args.API)
+		if args.MaxRecords != 0 {
+			req.NewChildS("max-records", strconv.Itoa(args.MaxRecords))
+		}
 		// requested data is for a ZapiPerf object
 	} else {
 		if c.IsClustered() {
@@ -297,6 +300,9 @@ func getData(c *client.Client, args *Args) (*node.Node, error) {
 			instances.NewChildS("instance", "*")
 		} else {
 			req = node.NewXMLS("perf-object-get-instances")
+		}
+		if args.MaxRecords != 0 {
+			req.NewChildS("max", strconv.Itoa(args.MaxRecords))
 		}
 		req.NewChildS("objectname", args.Object)
 	}
