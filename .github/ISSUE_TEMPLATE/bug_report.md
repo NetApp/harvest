@@ -16,7 +16,7 @@ Provide accurate information about the environment to help us reproduce the issu
 - Harvest version: [copy paste output of `harvest --version`]
 - Command line arguments used: [e.g. `bin/harvest start --config=foo.yml --collectors Zapi`]
 - OS: [e.g. RHEL 7.6, Ubuntu 21.04, Docker 19.03.1-CE]
-- Install method: [yum, rhel, native, docker]
+- Install method: [debian, rhel, native, docker, NABox]
 - ONTAP Version: [e.g. 9.7, 9.8, 9.9, 7mode]
 - Other:
 
