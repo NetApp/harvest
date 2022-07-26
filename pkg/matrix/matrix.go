@@ -194,9 +194,11 @@ func (me *Matrix) GetInstance(key string) *Instance {
 
 func (me *Matrix) GetInstancesBySubkey(subKey string) []*Instance {
 	var instances []*Instance
-	for key, instance := range me.instances {
-		if strings.HasSuffix(key, subKey) {
-			instances = append(instances, instance)
+	if subKey != "" {
+		for key, instance := range me.instances {
+			if strings.HasSuffix(key, subKey) {
+				instances = append(instances, instance)
+			}
 		}
 	}
 	return instances
