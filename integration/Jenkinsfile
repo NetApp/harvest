@@ -67,8 +67,10 @@ pipeline {
                         }
                         stage('Evaluating Alert Rules') {
                             steps {
-                                invokeEmsAndTest()
-                                invokeResolveEmsAndTest()
+                                sh """
+                                bash $WORKSPACE/harvest/integration/test/test.sh allemstest
+                                bash $WORKSPACE/harvest/integration/test/test.sh bookendemstest
+                                """
                             }
                             post {
                                 always {
@@ -124,12 +126,6 @@ pipeline {
                                 bash $WORKSPACE/harvest/integration/test/test.sh regression
                                 """
                             }
-                        }
-                        stage('Evaluating Alert Rules') {
-                            steps {
-                                invokeEmsAndTest()
-                                invokeResolveEmsAndTest()
-                            }
                             post {
                                 always {
                                      sh '''
@@ -184,12 +180,6 @@ pipeline {
                                 """
 
                             }
-                        }
-                        stage('Evaluating Alert Rules') {
-                            steps {
-                                invokeEmsAndTest()
-                                invokeResolveEmsAndTest()
-                            }
                             post {
                                 always {
                                     sh """
@@ -232,16 +222,3 @@ def void printNodeInfo() {
         nodeIp = socket.getLocalAddress().getHostAddress();
         println("The Node IP Address is: ${nodeIp}")
 }
-
-def void invokeEmsAndTest() {
-    sh '''
-        bash $WORKSPACE/harvest/integration/test/test.sh allemstest
-    '''
-}
-
-def void invokeResolveEmsAndTest() {
-    sh '''
-        bash $WORKSPACE/harvest/integration/test/test.sh bookendemstest
-    '''
-}
-
