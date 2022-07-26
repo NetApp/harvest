@@ -245,14 +245,18 @@ func getCounter(c *client.Client, args *Args) (*node.Node, error) {
 		return nil, err
 	}
 
+	result := node.NewS("counters")
 	for _, cnt = range counters.GetChildren() {
 		for _, counter := range args.Counters {
 			if cnt.GetChildContentS("name") == counter {
-				return cnt, nil
+				result.AddChild(cnt)
 			}
 		}
 	}
-	return nil, errs.New(errs.ErrAttributeNotFound, strings.Join(args.Counters, ","))
+	if len(result.GetChildren()) == 0 {
+		return nil, errs.New(errs.ErrAttributeNotFound, strings.Join(args.Counters, ","))
+	}
+	return result, nil
 }
 
 func getInstances(c *client.Client, args *Args) (*node.Node, error) {
