@@ -41,7 +41,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Sensor{AbstractPlugin: p}
 }
 
-var ambientRegex = regexp.MustCompile(`^(Ambient Temp|Ambient Temp \d|PSU\d AmbTemp|PSU\d Inlet|PSU\d Inlet Temp|In Flow Temp|Front Temp|System Inlet)$`)
+var ambientRegex = regexp.MustCompile(`^(Ambient Temp|Ambient Temp \d|PSU\d AmbTemp|PSU\d Inlet|PSU\d Inlet Temp|In Flow Temp|Front Temp|System Inlet|Bat Ambient \d|Riser Inlet Temp)$`)
 var powerInRegex = regexp.MustCompile(`^PSU\d (InPwr Monitor|InPower|PIN|Power In)$`)
 var voltageRegex = regexp.MustCompile(`^PSU\d (\d+V|InVoltage|VIN|AC In Volt)$`)
 var currentRegex = regexp.MustCompile(`^PSU\d (\d+V Curr|Curr|InCurrent|Curr IIN|AC In Curr)$`)
