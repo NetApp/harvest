@@ -352,5 +352,8 @@ Examples:
   harvest zapi -p infinity show counters --object workload_detail_volume  Query cluster infinity and print performance counter metadata 
   harvest zapi -p infinity show data --object qtree --counter nfs_ops     Query cluster infinity and print performance counters on the 
                                                                           number of NFS operations per second on each qtree
+  harvest zapi --poller aff-900 show data --object lun \
+         --counter avg_read_latency --counter read_ops                    Query cluster aff-900 and print performance counters for average
+                                                                          read latency and number of read operations per second on each LUN
 `)
 }
