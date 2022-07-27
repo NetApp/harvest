@@ -38,15 +38,10 @@ type Args struct {
 	Attr string
 	// which object to show (when Item is "object")
 	Object string
-	// which counter to show (when Item is "counter")
-	Counter string
-	// ???
-	Counters []string
-	// ??
-	Instance string
-	// ??
-	Duration int
-	// ??
+	// which counter(s) to show when "show data" is called
+	Counters   []string
+	Instance   string
+	Duration   int
 	MaxRecords int
 	// additional parameters to add to the ZAPI request, in "key:value" format
 	Parameters   []string
@@ -114,7 +109,7 @@ func validateArgs(strings []string) {
 		ok = false
 	}
 
-	if args.Item == "counter" && (args.Object == "" || args.Counter == "") {
+	if args.Item == "counter" && (args.Object == "" || len(args.Counters) == 0) {
 		fmt.Println("show counter: requires --object and --counter")
 		ok = false
 	}
@@ -250,12 +245,18 @@ func getCounter(c *client.Client, args *Args) (*node.Node, error) {
 		return nil, err
 	}
 
+	result := node.NewS("counters")
 	for _, cnt = range counters.GetChildren() {
-		if cnt.GetChildContentS("name") == args.Counter {
-			return cnt, nil
+		for _, counter := range args.Counters {
+			if cnt.GetChildContentS("name") == counter {
+				result.AddChild(cnt)
+			}
 		}
 	}
-	return nil, errs.New(errs.ErrAttributeNotFound, args.Counter)
+	if len(result.GetChildren()) == 0 {
+		return nil, errs.New(errs.ErrAttributeNotFound, strings.Join(args.Counters, ","))
+	}
+	return result, nil
 }
 
 func getInstances(c *client.Client, args *Args) (*node.Node, error) {
@@ -316,9 +317,11 @@ func getData(c *client.Client, args *Args) (*node.Node, error) {
 		}
 	}
 
-	if args.Counter != "" {
+	if len(args.Counters) > 0 {
 		counters := req.NewChildS("counters", "")
-		counters.NewChildS("counter", args.Counter)
+		for _, counter := range args.Counters {
+			counters.NewChildS("counter", counter)
+		}
 	}
 	return c.InvokeRequest(req)
 }
@@ -338,7 +341,7 @@ func init() {
 	flags.StringVarP(&args.API, "api", "a", "", "ZAPI query to show")
 	flags.StringVarP(&args.Attr, "attr", "t", "", "ZAPI attribute to show")
 	flags.StringVarP(&args.Object, "object", "o", "", "ZapiPerf object to show")
-	flags.StringVarP(&args.Counter, "counter", "c", "", "ZapiPerf counter to show")
+	flags.StringSliceVarP(&args.Counters, "counter", "c", []string{}, "ZapiPerf counter(s) to show. Can be specified multiple times")
 	flags.IntVarP(&args.MaxRecords, "max", "m", 100, "max-records: max instances per API request")
 	flags.StringSliceVarP(&args.Parameters, "parameters", "r", []string{}, "parameter to add to the ZAPI query")
 	flags.StringVar(&args.Config, "config", configPath, "harvest config file path")
@@ -355,5 +358,8 @@ Examples:
   harvest zapi -p infinity show counters --object workload_detail_volume  Query cluster infinity and print performance counter metadata 
   harvest zapi -p infinity show data --object qtree --counter nfs_ops     Query cluster infinity and print performance counters on the 
                                                                           number of NFS operations per second on each qtree
+  harvest zapi --poller aff-900 show data --object lun \
+         --counter avg_read_latency --counter read_ops                    Query cluster aff-900 and print performance counters for average
+                                                                          read latency and number of read operations per second on each LUN
 `)
 }
