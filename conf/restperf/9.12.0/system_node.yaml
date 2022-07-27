@@ -8,6 +8,7 @@ counters:
   - average_processor_busy_percent     => avg_processor_busy
   - cpu_elapsed_time
   - cpu_busy
+  - domain_busy                        => cpu_domain_busy
   - memory
   - total_data
   - total_latency

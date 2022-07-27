@@ -8,7 +8,6 @@ import (
 	harvestyaml "github.com/netapp/harvest/v2/pkg/tree/yaml"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
-	"io/ioutil"
 	"os"
 	"strings"
 )
@@ -89,7 +88,7 @@ func doDoctorCmd(cmd *cobra.Command, _ []string) {
 }
 
 func doDoctor(path string) {
-	contents, err := ioutil.ReadFile(path)
+	contents, err := os.ReadFile(path)
 	if err != nil {
 		fmt.Printf("error reading config file. err=%+v\n", err)
 		return

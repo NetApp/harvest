@@ -32,8 +32,9 @@ func (a *Admin) startServer() {
 
 	a.logger.Debug().Str("listen", a.listen).Msg("Admin node starting")
 	server := &http.Server{
-		Addr:    a.listen,
-		Handler: mux,
+		Addr:              a.listen,
+		Handler:           mux,
+		ReadHeaderTimeout: 60 * time.Second,
 	}
 	if a.httpSD.TLS.KeyFile != "" {
 		server.TLSConfig = &tls.Config{

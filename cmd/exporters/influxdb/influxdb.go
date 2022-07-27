@@ -12,7 +12,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"io"
-	"io/ioutil"
 	"net/http"
 	url2 "net/url"
 	"strconv"
@@ -69,57 +68,60 @@ func (e *InfluxDB) Init() error {
 		port                                              *int
 	)
 
-	// check required / optional parameters
+	// check the required / optional parameters
+	// customer should provide either url or addr
+	// url is expected to be the full write URL with all query params specified (optionally with scheme)
+	// when url is defined, addr, bucket, org, port, and precision are ignored
 
-	if bucket = e.Params.Bucket; bucket == nil {
-		return errs.New(errs.ErrMissingParam, "bucket")
-	}
-	e.Logger.Debug().Msgf("using bucket [%s]", *bucket)
+	// addr is expected to include host only (no scheme, no port)
+	// when addr is defined, bucket, org, port, and precision are required
 
-	if org = e.Params.Org; org == nil {
-		return errs.New(errs.ErrMissingParam, "org")
+	dbEndpoint := "addr"
+	if url = e.Params.URL; url != nil {
+		e.url = *url
+		dbEndpoint = "url"
+	} else {
+		if addr = e.Params.Addr; addr == nil {
+			return errs.New(errs.ErrMissingParam, "url or addr")
+		}
+		if port = e.Params.Port; port == nil {
+			e.Logger.Debug().Msgf("using default port [%d]", defaultPort)
+			defPort := defaultPort
+			port = &defPort
+		}
+		if version = e.Params.Version; version == nil {
+			v := defaultAPIVersion
+			version = &v
+		}
+		e.Logger.Debug().Msgf("using api version [%s]", *version)
+
+		if bucket = e.Params.Bucket; bucket == nil {
+			return errs.New(errs.ErrMissingParam, "bucket")
+		}
+		e.Logger.Debug().Msgf("using bucket [%s]", *bucket)
+
+		if org = e.Params.Org; org == nil {
+			return errs.New(errs.ErrMissingParam, "org")
+		}
+		e.Logger.Debug().Msgf("using organization [%s]", *org)
+
+		if precision = e.Params.Precision; precision == nil {
+			p := defaultAPIPrecision
+			precision = &p
+		}
+		e.Logger.Debug().Msgf("using api precision [%s]", *precision)
+
+		urlToUSe := "http://" + *addr + ":" + strconv.Itoa(*port)
+		url = &urlToUSe
+		e.url = fmt.Sprintf("%s/api/v%s/write?org=%s&bucket=%s&precision=%s",
+			*url, *version, url2.PathEscape(*org), url2.PathEscape(*bucket), *precision)
 	}
-	e.Logger.Debug().Msgf("using organization [%s]", *org)
 
 	if token = e.Params.Token; token == nil {
 		return errs.New(errs.ErrMissingParam, "token")
 	}
 	e.token = *token
 	e.Logger.Debug().Msg("will use authorization with api token")
-
-	if version = e.Params.Version; version == nil {
-		v := defaultAPIVersion
-		version = &v
-	}
-	e.Logger.Debug().Msgf("using api version [%s]", *version)
-
-	if precision = e.Params.Precision; precision == nil {
-		p := defaultAPIPrecision
-		precision = &p
-	}
-	e.Logger.Debug().Msgf("using api precision [%s]", *precision)
-
-	// user should provide either url or addr
-	// url is expected to be the full write URL with all query params specified (optionally with scheme)
-	// addr is expected to include host only (no scheme, no port)
-	if url = e.Params.URL; url == nil {
-		if addr = e.Params.Addr; addr == nil {
-			return errs.New(errs.ErrMissingParam, "url or addr")
-		}
-
-		if port = e.Params.Port; port == nil {
-			e.Logger.Debug().Msgf("using default port [%d]", defaultPort)
-			defPort := defaultPort
-			port = &defPort
-		}
-
-		urlToUSe := "http://" + *addr + ":" + strconv.Itoa(*port)
-		url = &urlToUSe
-		e.url = fmt.Sprintf("%s/api/v%s/write?org=%s&bucket=%s&precision=%s",
-			*url, *version, url2.PathEscape(*org), url2.PathEscape(*bucket), *precision)
-	} else {
-		e.url = *url
-	}
 
 	// timeout parameter
 	timeout := time.Duration(detaultTimeout) * time.Second
@@ -133,7 +135,7 @@ func (e *InfluxDB) Init() error {
 		e.Logger.Debug().Msgf("using default client_timeout: %d s", detaultTimeout)
 	}
 
-	e.Logger.Debug().Msgf("url= [%s]", e.url)
+	e.Logger.Debug().Str("dbEndpoint", dbEndpoint).Str("url", e.url).Msg("")
 
 	// construct HTTP client
 	e.client = &http.Client{Timeout: timeout}
@@ -213,7 +215,7 @@ func (e *InfluxDB) Emit(data [][]byte) error {
 
 	if response.StatusCode != expectedResponseCode {
 		defer func(Body io.ReadCloser) { _ = Body.Close() }(response.Body)
-		if body, err := ioutil.ReadAll(response.Body); err != nil {
+		if body, err := io.ReadAll(response.Body); err != nil {
 			return errs.New(errs.ErrAPIResponse, err.Error())
 		} else {
 			return fmt.Errorf("%w: %s", errs.ErrAPIRequestRejected, string(body))

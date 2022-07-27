@@ -26,7 +26,6 @@ objects:
   NicCommon:              nic_common.yaml
   ObjectStoreClient:      object_store_client_op.yaml
   Path:                   path.yaml
-  Processor:              processor.yaml
   Qtree:                  qtree.yaml
   SystemNode:             system_node.yaml
   TokenManager:           token_manager.yaml

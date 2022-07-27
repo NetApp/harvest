@@ -5,7 +5,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 )
@@ -15,7 +15,7 @@ func GetResponse(url string) (string, error) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatalln(err)
 		return "", err
@@ -28,7 +28,7 @@ func GetResponseBody(url string) ([]byte, error) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatalln(err)
 		return nil, err
@@ -47,8 +47,8 @@ func SendReqAndGetRes(url string, method string,
 	req.Header.Add("Content-Type", "application/json")
 	res, err := client.Do(req)
 	PanicIfNotNil(err)
-	defer res.Body.Close()
-	body, err := ioutil.ReadAll(res.Body)
+	defer func(Body io.ReadCloser) { _ = Body.Close() }(res.Body)
+	body, err := io.ReadAll(res.Body)
 	PanicIfNotNil(err)
 	log.Println(string(body))
 	var data map[string]interface{}

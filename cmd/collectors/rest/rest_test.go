@@ -1,7 +1,7 @@
 package rest
 
 import (
-	"io/ioutil"
+	"os"
 	"testing"
 )
 
@@ -44,6 +44,6 @@ func Test_getFieldName(t *testing.T) {
 }
 
 func readFile(path string) string {
-	b, _ := ioutil.ReadFile(path)
+	b, _ := os.ReadFile(path)
 	return string(b)
 }

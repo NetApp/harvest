@@ -2,7 +2,6 @@ package grafana
 
 import (
 	"github.com/tidwall/gjson"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -28,7 +27,7 @@ func TestDatasource(t *testing.T) {
 }
 
 func checkDashboardForDatasource(t *testing.T, path string) {
-	data, err := ioutil.ReadFile(path)
+	data, err := os.ReadFile(path)
 	if err != nil {
 		log.Fatalf("failed to read dashboards path=%s err=%v", path, err)
 	}

@@ -9,9 +9,9 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
@@ -33,6 +33,8 @@ type Client struct {
 	password string
 	username string
 	Timeout  time.Duration
+	logRest  bool // used to log Rest request/response
+
 }
 
 type Cluster struct {
@@ -129,6 +131,30 @@ func New(poller conf.Poller, timeout time.Duration) (*Client, error) {
 	return &client, nil
 }
 
+func (c *Client) TraceLogSet(collectorName string, config *node.Node) {
+	// check for log sets and enable Rest request logging if collectorName is in the set
+	if llogs := config.GetChildS("log"); llogs != nil {
+		for _, log := range llogs.GetAllChildContentS() {
+			if strings.EqualFold(log, collectorName) {
+				c.logRest = true
+			}
+		}
+	}
+}
+
+func (c *Client) printRequestAndResponse(req string, response []byte) {
+	if c.logRest {
+		res := "<nil>"
+		if response != nil {
+			res = string(response)
+		}
+		c.Logger.Info().
+			Str("Request", req).
+			Str("Response", res).
+			Msg("")
+	}
+}
+
 // GetRest makes a REST request to the cluster and returns a json response as a []byte
 func (c *Client) GetRest(request string) ([]byte, error) {
 	var err error
@@ -147,7 +173,7 @@ func (c *Client) GetRest(request string) ([]byte, error) {
 	// ensure that we can change body dynamically
 	c.request.GetBody = func() (io.ReadCloser, error) {
 		r := bytes.NewReader(c.buffer.Bytes())
-		return ioutil.NopCloser(r), nil
+		return io.NopCloser(r), nil
 	}
 	if err != nil {
 		return nil, err
@@ -171,6 +197,8 @@ func (c *Client) invoke() ([]byte, error) {
 		defer c.buffer.Reset()
 	}
 
+	restReq := c.request.URL.String()
+
 	// send request to server
 	if response, err = c.client.Do(c.request); err != nil {
 		return nil, fmt.Errorf("connection error %w", err)
@@ -178,7 +206,7 @@ func (c *Client) invoke() ([]byte, error) {
 	defer func(Body io.ReadCloser) { _ = Body.Close() }(response.Body)
 
 	if response.StatusCode != 200 {
-		if body, err = ioutil.ReadAll(response.Body); err == nil {
+		if body, err = io.ReadAll(response.Body); err == nil {
 			result := gjson.GetBytes(body, "error")
 			if result.Exists() {
 				message := result.Get("message").String()
@@ -192,9 +220,10 @@ func (c *Client) invoke() ([]byte, error) {
 	}
 
 	// read response body
-	if body, err = ioutil.ReadAll(response.Body); err != nil {
+	if body, err = io.ReadAll(response.Body); err != nil {
 		return nil, err
 	}
+	defer c.printRequestAndResponse(restReq, body)
 
 	if err != nil {
 		return nil, err

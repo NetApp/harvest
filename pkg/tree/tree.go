@@ -1,6 +1,7 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
+
 package tree
 
 import (
@@ -8,11 +9,11 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/tree/xml"
 	y3 "gopkg.in/yaml.v3"
-	"io/ioutil"
+	"os"
 )
 
 func ImportYaml(filepath string) (*node.Node, error) {
-	data, err := ioutil.ReadFile(filepath)
+	data, err := os.ReadFile(filepath)
 
 	if err != nil {
 		return nil, err

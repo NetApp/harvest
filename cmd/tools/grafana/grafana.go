@@ -20,7 +20,6 @@ import (
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
@@ -169,7 +168,7 @@ func exportFiles(dir string, folder *Folder) error {
 				return err
 			}
 			//#nosec G306 -- creating dashboards with group and other permissions of read are OK
-			if err = ioutil.WriteFile(fp, data, 0644); err != nil {
+			if err = os.WriteFile(fp, data, 0644); err != nil {
 				fmt.Printf("error write to [%s]: %v\n", fp, err)
 				return err
 			}
@@ -349,7 +348,7 @@ func validateImport() {
 	}
 
 	exitIfMissing(opts.dir, "directory")
-	files, err := ioutil.ReadDir(opts.dir)
+	files, err := os.ReadDir(opts.dir)
 	if err != nil {
 		fmt.Printf("Error %v while reading dir [%s] is the directory correct?\n", err, opts.dir)
 		os.Exit(1)
@@ -422,7 +421,7 @@ func importDashboards(opts *options) error {
 func importFiles(dir string, folder *Folder) {
 	var (
 		request, dashboard map[string]interface{}
-		files              []os.FileInfo
+		files              []os.DirEntry
 		importedFiles      int
 		data               []byte
 		err                error
@@ -430,7 +429,7 @@ func importFiles(dir string, folder *Folder) {
 	if dir == "" {
 		return
 	}
-	if files, err = ioutil.ReadDir(dir); err != nil {
+	if files, err = os.ReadDir(dir); err != nil {
 		// TODO check for not exist
 		return
 	}
@@ -440,7 +439,7 @@ func importFiles(dir string, folder *Folder) {
 			continue
 		}
 
-		if data, err = ioutil.ReadFile(path.Join(dir, file.Name())); err != nil {
+		if data, err = os.ReadFile(path.Join(dir, file.Name())); err != nil {
 			fmt.Printf("error reading file [%s]\n", file.Name())
 			return
 		}
@@ -1000,7 +999,7 @@ func doRequest(opts *options, method, url string, query map[string]interface{}) 
 	code = response.StatusCode
 
 	defer silentClose(response.Body)
-	data, err = ioutil.ReadAll(response.Body)
+	data, err = io.ReadAll(response.Body)
 	return data, status, code, err
 }
 

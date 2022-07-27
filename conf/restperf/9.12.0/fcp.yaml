@@ -18,7 +18,7 @@ counters:
   - other_ops
   - total_ops
   - link.down                           => link_down
-  - link.failure                        => link_failure
+  - link_failure                        => link_failure
   - loss_of_signal
   - loss_of_sync
   - primitive_seq_err
@@ -57,9 +57,6 @@ counters:
   - nvmf.total_ops                      => nvmf_total_ops
   - nvmf.write_data                     => nvmf_write_data
   - nvmf.write_ops                      => nvmf_write_ops
-
-override:
-  - link.speed: string
 
 plugins:
   - Fcp

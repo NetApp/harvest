@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/errs"
-	"io/ioutil"
 	"os"
 	"path"
 	"strconv"
@@ -121,7 +120,7 @@ func (me *Process) loadCmdline() error {
 		data []byte
 		err  error
 	)
-	if data, err = ioutil.ReadFile(path.Join(me.dirpath, "cmdline")); err != nil {
+	if data, err = os.ReadFile(path.Join(me.dirpath, "cmdline")); err != nil {
 		return errs.New(ErrFileRead, err.Error())
 	}
 	me.cmdline = string(bytes.ReplaceAll(data, []byte("\x00"), []byte(" ")))
@@ -137,7 +136,7 @@ func (me *Process) loadStatus() error {
 		num              uint64
 	)
 
-	if data, err = ioutil.ReadFile(path.Join(me.dirpath, "status")); err != nil {
+	if data, err = os.ReadFile(path.Join(me.dirpath, "status")); err != nil {
 		return errs.New(ErrFileRead, "status: "+err.Error())
 	}
 
@@ -180,7 +179,7 @@ func (me *Process) loadStat() error {
 		after, fields []string
 	)
 
-	if data, err = ioutil.ReadFile(path.Join(me.dirpath, "stat")); err != nil {
+	if data, err = os.ReadFile(path.Join(me.dirpath, "stat")); err != nil {
 		return errs.New(ErrFileRead, "stat: "+err.Error())
 	}
 
@@ -229,7 +228,7 @@ func (me *Process) loadSmaps() error {
 
 	// this may fail see https://github.com/NetApp/harvest/issues/249
 	// when it does, ignore so the other /proc checks are given a chance to run
-	if data, err = ioutil.ReadFile(path.Join(me.dirpath, "smaps")); err != nil {
+	if data, err = os.ReadFile(path.Join(me.dirpath, "smaps")); err != nil {
 		return nil
 	}
 
@@ -266,7 +265,7 @@ func (me *Process) loadIo() error {
 
 	// this may fail see https://github.com/NetApp/harvest/issues/249
 	// when it does, ignore so the other /proc checks are given a chance to run
-	if data, err = ioutil.ReadFile(path.Join(me.dirpath, "io")); err != nil {
+	if data, err = os.ReadFile(path.Join(me.dirpath, "io")); err != nil {
 		return nil
 	}
 
@@ -291,7 +290,7 @@ func (me *Process) loadNetDev() error {
 		err                                error
 	)
 
-	if data, err = ioutil.ReadFile(path.Join(me.dirpath, "net", "dev")); err != nil {
+	if data, err = os.ReadFile(path.Join(me.dirpath, "net", "dev")); err != nil {
 		return errs.New(ErrFileRead, "net/dev: "+err.Error())
 	}
 
@@ -332,7 +331,7 @@ func (me *Process) loadNetDev() error {
 func (me *Process) loadFdinfo() error {
 	// this may fail see https://github.com/NetApp/harvest/issues/249
 	// when it does, ignore so the other /proc checks are given a chance to run
-	files, err := ioutil.ReadDir(path.Join(me.dirpath, "fdinfo"))
+	files, err := os.ReadDir(path.Join(me.dirpath, "fdinfo"))
 	if err != nil {
 		return nil
 	}

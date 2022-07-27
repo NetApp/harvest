@@ -444,19 +444,6 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	instanceKeys = r.Prop.InstanceKeys
 
-	if isWorkloadDetailObject(r.Prop.Query) {
-		if resourceMap := r.Params.GetChildS("resource_map"); resourceMap == nil {
-			return nil, errs.New(errs.ErrMissingParam, "resource_map")
-		} else {
-			instanceKeys = make([]string, 0)
-			for _, layer := range resourceMap.GetAllChildNamesS() {
-				for key := range mat.GetInstances() {
-					instanceKeys = append(instanceKeys, key+"."+layer)
-				}
-			}
-		}
-	}
-
 	startTime = time.Now()
 
 	dataQuery := path.Join(r.Prop.Query, "rows")
@@ -524,6 +511,9 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 				layer := "" // latency layer (resource) for workloads
 
+				// example instanceKey : umeng-aff300-02:test-wid12022.CPU_dblade
+				i := strings.Index(instanceKey, ":")
+				instanceKey = instanceKey[i+1:]
 				before, after, found := strings.Cut(instanceKey, ".")
 				if found {
 					instanceKey = before
@@ -549,11 +539,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 				}
 			}
 
-			if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
-				instance = newData.GetInstance(strings.Split(instanceKey, ":")[1])
-			} else {
-				instance = newData.GetInstance(instanceKey)
-			}
+			instance = newData.GetInstance(instanceKey)
 
 			if instance == nil {
 				if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
@@ -583,7 +569,14 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 					}
 					count++
 				} else {
-					r.Logger.Warn().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
+					// check for label value in metric
+					f := parseMetricResponse(instanceData, label)
+					if f.value != "" {
+						instance.SetLabel(display, f.value)
+						count++
+					} else {
+						r.Logger.Warn().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
+					}
 				}
 			}
 
@@ -697,13 +690,6 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		})
 	}
 
-	r.Logger.Debug().
-		Uint64("instances", numRecords).
-		Uint64("metrics", count).
-		Str("apiTime", apiD.String()).
-		Str("parseTime", parseD.String()).
-		Msg("Collected")
-
 	if isWorkloadDetailObject(r.Prop.Query) {
 		if err := r.getParentOpsCounters(newData); err != nil {
 			// no point to continue as we can't calculate the other counters
@@ -782,7 +768,10 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 			continue
 		}
 		property := counter.counterType
+		// used in aggregator plugin
 		metric.SetProperty(property)
+		// used in volume.go plugin
+		metric.SetComment(counter.denominator)
 
 		// RAW - submit without post-processing
 		if property == "raw" {
@@ -811,7 +800,6 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 		// For the next two properties we need base counters
 		// We assume that delta of base counters is already calculated
-		// (name of base counter is stored as Comment)
 		if base = newData.GetMetric(counter.denominator); base == nil {
 			r.Logger.Warn().
 				Str("key", key).
@@ -880,7 +868,16 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 	}
 
-	_ = r.Metadata.LazySetValueInt64("calc_time", "data", time.Since(calcStart).Microseconds())
+	calcD := time.Since(calcStart)
+	_ = r.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
+
+	r.Logger.Info().
+		Int("instances", len(newData.GetInstances())).
+		Uint64("metrics", count).
+		Str("apiD", apiD.Round(time.Millisecond).String()).
+		Str("parseD", parseD.Round(time.Millisecond).String()).
+		Str("calcD", calcD.Round(time.Millisecond).String()).
+		Msg("Collected")
 	// store cache for next poll
 	r.Matrix[r.Object] = cachedData
 
@@ -915,8 +912,6 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 		r.Logger.Error().Err(nil).Msgf("ops counter not found in cache")
 		return errs.New(errs.ErrMissingParam, "counter ops")
 	}
-
-	//instanceKeys = data.GetInstanceKeys()
 
 	var filter []string
 	filter = append(filter, "counters.name=ops")
@@ -1097,7 +1092,8 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 					if value := instanceData.Get(label); value.Exists() {
 						instance.SetLabel(display, value.String())
 					} else {
-						r.Logger.Warn().Str("label", label).Str("instanceKey", instanceKey).Msgf("Missing label")
+						// lun,file,qtree may not always exist for workload
+						r.Logger.Trace().Str("label", label).Str("instanceKey", instanceKey).Msg("Missing label")
 
 					}
 				}
