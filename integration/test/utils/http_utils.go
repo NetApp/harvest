@@ -72,7 +72,7 @@ func SendPostReqAndGetRes(url string, method string, buf []byte, user string, pa
 	res, err := client.Do(req)
 	PanicIfNotNil(err)
 	defer res.Body.Close()
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	PanicIfNotNil(err)
 	var data map[string]interface{}
 	err = json.Unmarshal(body, &data)

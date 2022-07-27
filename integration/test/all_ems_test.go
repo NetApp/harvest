@@ -18,8 +18,18 @@ var supportedEms []string
 var alertsData map[string]int
 
 // These few ems are node scoped and They won't be raised always from ONTAP even if we simulate via POST call.
-var skippedEmsList = []string{"callhome.hainterconnect.down", "fabricpool.full", "fabricpool.nearly.full", "Nblade.cifsNoPrivShare", "Nblade.nfsV4PoolExhaust",
-	"Nblade.vscanBadUserPrivAccess", "Nblade.vscanNoRegdScanner", "Nblade.vscanConnInactive", "cloud.aws.iamNotInitialized", "scsitarget.fct.port.full"}
+var skippedEmsList = []string{
+	"callhome.hainterconnect.down",
+	"fabricpool.full",
+	"fabricpool.nearly.full",
+	"Nblade.cifsNoPrivShare",
+	"Nblade.nfsV4PoolExhaust",
+	"Nblade.vscanBadUserPrivAccess",
+	"Nblade.vscanNoRegdScanner",
+	"Nblade.vscanConnInactive",
+	"cloud.aws.iamNotInitialized",
+	"scsitarget.fct.port.full",
+}
 
 type AlertRulesTestSuite struct {
 	suite.Suite

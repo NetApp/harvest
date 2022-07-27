@@ -12,8 +12,18 @@ import (
 
 const PrometheusAlertURL string = "http://localhost:9090/api/v1/alerts"
 
-var volumeArwState = []string{"\"disable-in-progress\"", "\"disabled\"", "\"dry-run\"", "\"dry-run-paused\"", "\"enable-paused\"", "\"enabled\""}
-var vserverArwState = []string{"\"enabled\"", "\"dry-run\""}
+var volumeArwState = []string{
+	`"disable-in-progress"`,
+	`"disabled"`,
+	`"dry-run"`,
+	`"dry-run-paused"`,
+	`"enable-paused"`,
+	`"enabled"`,
+}
+var vserverArwState = []string{
+	`"enabled"`,
+	`"dry-run"`,
+}
 
 type PromAlert struct {
 	message string
@@ -115,19 +125,17 @@ func GenerateEvents(emsNames []EmsData) []string {
 
 func GetPollerDetail() (string, string, string) {
 	var (
-		addr string
-		err  error
-		pass string
+		err    error
+		poller *conf.Poller
 	)
 
-	filename := "/harvest.yml"
-	user := "admin"
-	err = conf.LoadHarvestConfig(utils.GetConfigDir() + filename)
-	utils.PanicIfNotNil(err)
-	poller := conf.Config.Pollers["umeng_aff300"]
-	if poller != nil {
-		addr = poller.Addr
-		pass = poller.Password
+	if err = conf.LoadHarvestConfig(utils.GetConfigDir() + "/harvest.yml"); err != nil {
+		utils.PanicIfNotNil(err)
 	}
-	return addr, user, pass
+
+	if poller, err = conf.PollerNamed("umeng_aff300"); err != nil {
+		utils.PanicIfNotNil(err)
+	}
+
+	return poller.Addr, "admin", poller.Password
 }

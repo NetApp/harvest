@@ -601,7 +601,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 					}
 
 					// get all active instances by issuingems-bookendkey
-					if instances := mx.GetInstancesBySubkey(issuingEms + bookendKey); len(instances) != 0 {
+					if instances := mx.GetInstancesBySuffix(issuingEms + bookendKey); len(instances) != 0 {
 						for _, instance := range instances {
 							if err = metr.SetValueFloat64(instance, 0); err != nil {
 								e.Logger.Error().Err(err).Str("key", "events").

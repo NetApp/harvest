@@ -192,7 +192,7 @@ func (me *Matrix) GetInstance(key string) *Instance {
 	return nil
 }
 
-func (me *Matrix) GetInstancesBySubkey(subKey string) []*Instance {
+func (me *Matrix) GetInstancesBySuffix(subKey string) []*Instance {
 	var instances []*Instance
 	if subKey != "" {
 		for key, instance := range me.instances {
