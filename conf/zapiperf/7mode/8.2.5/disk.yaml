@@ -35,6 +35,8 @@ plugins:
       - raid_group `/` ,aggr,plex,raid
   Aggregator:
     - aggr
+  Max:
+    - aggr<>aggr_disk_max ...
 
 export_options:
   instance_keys:

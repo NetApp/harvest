@@ -18,6 +18,8 @@ This documentation gives an overview of builtin plugins. For other plugins, see 
 - [Aggregator](#aggregator)
   - [Rule syntax](#rule-syntax)
   - [Aggregation rules](#aggregation-rules)
+- [Max](#max)
+  - [Max Rule syntax](#max-rule-syntax)
 - [LabelAgent](#labelagent)
   - [split](#split)
   - [split_regex](#split_regex)
@@ -110,6 +112,68 @@ The plugin tries to intelligently aggregate metrics based on a few rules:
   - metric has property (`metric.GetProperty()`) `percent` or `average`
 - **Weighted Average** - applied if metric has property `average` and suffix `_latency` and if there is a matching `_ops` metric. (This is currently only matching to ZapiPerf metrics, which use the Property field of metrics.)
 - **Ignore** - metrics created by some plugins, such as value_to_num by LabelAgent
+
+# Max
+
+Max creates a new collection of metrics (Matrix) by calculating max of metric values from an existing Matrix for a given label. For example, if the collected metrics are for volumes, you can create max at nodes or svms level.
+
+### Max Rule syntax
+
+simplest case:
+
+```yaml
+plugins:
+  Max:
+    - LABEL
+# will create a new Matrix based consisting of max values on target label LABEL
+```
+
+If you want to specify which labels should be included in the new instances, you can add those space-seperated after `LABEL`:
+
+```yaml
+    - LABEL LABEL1,LABEL2
+# same, but LABEL1 and LABEL2 will be copied into the new instances
+# (default is to only copy LABEL and any global labels (such as cluster and datacenter)
+```
+
+Or include all labels:
+
+```yaml
+    - LABEL ...
+# copy all labels of the original instance
+```
+By default, metrics will be prefixed with `LABEL`. For example if the object of the original Matrix is `volume` (meaning metrics are prefixed with `volume_`) and `LABEL` is `aggr`, then the metric `volume_read_ops` will become `aggr_volume_read_ops`, etc. You can override this by providing the `<>OBJ` using the following syntax:
+
+```yaml
+    - LABEL<>OBJ
+# use OBJ as the object of the new matrix, e.g. if the original object is "volume" and you
+# want to leave metric names unchanged, use "volume"
+```
+
+Finally, sometimes you only want to generate instances with a specific label value. You can use `<VALUE>` for that (optionally follow by `OBJ`):
+
+```yaml
+    - LABEL<VALUE>
+# aggregate all instances if LABEL has value VALUE
+    - LABEL<`VALUE`>
+# same, but VALUE is regular expression
+    - LABEL<LABELX=`VALUE`>
+# same, but check against "LABELX" (instead of "LABEL")
+```
+
+Examples:
+
+```yaml
+plugins:
+  Max:
+    # will create max of each metrics of the aggr. All metrics will be prefixed with aggr_disk_max. All labels are included in the new instances
+    - aggr<>aggr_disk_max ...
+    # calculate max instances if label "disk" has value "1.1.0". Prefix with disk_max
+    # include all original labels
+    - disk<1.1.0>disk_max ...
+    # max of all instances if value of "volume" ends with underscore and 4 digits
+    - volume<`_\d{4}$`>
+```
 
 # LabelAgent
 LabelAgent are used to manipulate instance labels based on rules. You can define multiple rules, here is an example of what you could add to the yaml file of a collector:

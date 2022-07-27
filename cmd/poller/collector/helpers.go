@@ -15,6 +15,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/hashicorp/go-version"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin/max"
 	"os"
 	"path"
 	"regexp"
@@ -188,6 +189,9 @@ func GetBuiltinPlugin(name string, abc *plugin.AbstractPlugin) plugin.Plugin {
 		return aggregator.New(abc)
 	}
 
+	if name == "Max" {
+		return max.New(abc)
+	}
 	/* this will be added in soon
 	if name == "Calculator" {
 		return calculator.New(abc)
