@@ -7,7 +7,6 @@ package conf
 import (
 	"fmt"
 	"github.com/imdario/mergo"
-	"github.com/netapp/harvest/v2/pkg/constant"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
@@ -27,6 +26,7 @@ var ValidatePortInUse = false
 const (
 	DefaultAPIVersion = "1.3"
 	DefaultTimeout    = "30s"
+	HarvestYML        = "harvest.yml"
 )
 
 // TestLoadHarvestConfig is used by testing code to reload a new config
@@ -39,12 +39,19 @@ func TestLoadHarvestConfig(configPath string) {
 }
 
 func ConfigPath(path string) string {
-	// env var has higher precedence than --config cmdline arg
-	fp := os.Getenv("HARVEST_CONFIG")
-	if fp != "" {
-		return fp
+	// Harvest uses the following precedence order. Each item takes precedence over the
+	// item below it:
+	// 1. --config command line flag
+	// 2. HARVEST_CONFIG environment variable
+	// 3. no command line argument and no environment variable, use the default path (HarvestYML)
+	if path != HarvestYML && path != "./"+HarvestYML {
+		return path
 	}
-	return path
+	fp := os.Getenv("HARVEST_CONFIG")
+	if fp == "" {
+		return path
+	}
+	return fp
 }
 
 func LoadHarvestConfig(configPath string) error {
@@ -143,14 +150,12 @@ func PollerNamed(name string) (*Poller, error) {
 
 // GetDefaultHarvestConfigPath returns the absolute path of the default harvest config file.
 func GetDefaultHarvestConfigPath() string {
-	var configPath string
-	configFileName := constant.ConfigFileName
-	if configPath = os.Getenv("HARVEST_CONF"); configPath == "" {
-		configPath = path.Join(GetHarvestHomePath(), configFileName)
+	configPath := os.Getenv("HARVEST_CONF")
+	if configPath == "" {
+		return "./" + HarvestYML
 	} else {
-		configPath = path.Join(configPath, configFileName)
+		return path.Join(configPath, HarvestYML)
 	}
-	return configPath
 }
 
 // GetHarvestHomePath returns the value of the env var HARVEST_CONF or ./
@@ -159,10 +164,10 @@ func GetHarvestHomePath() string {
 	if harvestConf == "" {
 		return "./"
 	}
-	if !strings.HasSuffix(harvestConf, "/") {
-		harvestConf += "/"
+	if strings.HasSuffix(harvestConf, "/") {
+		return harvestConf
 	}
-	return harvestConf
+	return harvestConf + "/"
 }
 
 func GetHarvestLogPath() string {
