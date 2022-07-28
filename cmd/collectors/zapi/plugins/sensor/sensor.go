@@ -116,7 +116,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				isVoltageMatch := voltageRegex.MatchString(sensorName)
 				isCurrentMatch := currentRegex.MatchString(sensorName)
 
-				my.Logger.Debug().Bool("isAmbientMatch", isAmbientMatch).
+				my.Logger.Info().Bool("isAmbientMatch", isAmbientMatch).
 					Bool("isPowerMatch", isPowerMatch).
 					Bool("isVoltageMatch", isVoltageMatch).
 					Bool("isCurrentMatch", isCurrentMatch).
@@ -140,7 +140,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 							sensorEnvironmentMetricMap[iKey].nonAmbientTemperature = append(sensorEnvironmentMetricMap[iKey].nonAmbientTemperature, value)
 						}
 					} else {
-						my.Logger.Debug().Str("warningLowThreshold", warningLowThr).
+						my.Logger.Info().Str("warningLowThreshold", warningLowThr).
 							Float64("criticalLowThreshold", criticalLowThr).
 							Str("sensorName", sensorName).
 							Msg("sensor excluded")
