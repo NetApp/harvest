@@ -115,7 +115,7 @@ The plugin tries to intelligently aggregate metrics based on a few rules:
 
 # Max
 
-Max creates a new collection of metrics (Matrix) by calculating max of metric values from an existing Matrix for a given label. For example, if the collected metrics are for volumes, you can create max at nodes or svms level.
+Max creates a new collection of metrics (Matrix) by calculating max of metric values from an existing Matrix for a given label. For example, if the collected metrics are for disks, you can create max at the node or aggregate level. Refer [Max Examples](#max-examples) for more details.
 
 ### Max Rule syntax
 
@@ -125,15 +125,15 @@ simplest case:
 plugins:
   Max:
     - LABEL
-# will create a new Matrix based consisting of max values on target label LABEL
+# create a new Matrix of max values on target label LABEL
 ```
 
 If you want to specify which labels should be included in the new instances, you can add those space-seperated after `LABEL`:
 
 ```yaml
     - LABEL LABEL1,LABEL2
-# same, but LABEL1 and LABEL2 will be copied into the new instances
-# (default is to only copy LABEL and any global labels (such as cluster and datacenter)
+# similar to the above example, but LABEL1 and LABEL2 will be copied into the new instances
+# (default is to only copy LABEL and all global labels (such as cluster and datacenter)
 ```
 
 Or include all labels:
@@ -142,7 +142,8 @@ Or include all labels:
     - LABEL ...
 # copy all labels of the original instance
 ```
-By default, metrics will be prefixed with `LABEL`. For example if the object of the original Matrix is `volume` (meaning metrics are prefixed with `volume_`) and `LABEL` is `aggr`, then the metric `volume_read_ops` will become `aggr_volume_read_ops`, etc. You can override this by providing the `<>OBJ` using the following syntax:
+
+By default, metrics will be prefixed with `LABEL`. For example if the object of the original Matrix is `volume` (meaning metrics are prefixed with `volume_`) and `LABEL` is `aggr`, then the metric `volume_read_ops` will become `aggr_volume_read_ops`. You can override this using the `<>OBJ` pattern shown below:
 
 ```yaml
     - LABEL<>OBJ
@@ -150,7 +151,7 @@ By default, metrics will be prefixed with `LABEL`. For example if the object of 
 # want to leave metric names unchanged, use "volume"
 ```
 
-Finally, sometimes you only want to generate instances with a specific label value. You can use `<VALUE>` for that (optionally follow by `OBJ`):
+Finally, sometimes you only want to generate instances with a specific label value. You can use `<VALUE>` for that (optionally followed by `OBJ`):
 
 ```yaml
     - LABEL<VALUE>
@@ -161,12 +162,12 @@ Finally, sometimes you only want to generate instances with a specific label val
 # same, but check against "LABELX" (instead of "LABEL")
 ```
 
-Examples:
+#### Max Examples:
 
 ```yaml
 plugins:
   Max:
-    # will create max of each metrics of the aggr. All metrics will be prefixed with aggr_disk_max. All labels are included in the new instances
+    # will create max of each aggregate metric. All metrics will be prefixed with aggr_disk_max. All labels are included in the new instances
     - aggr<>aggr_disk_max ...
     # calculate max instances if label "disk" has value "1.1.0". Prefix with disk_max
     # include all original labels

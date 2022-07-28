@@ -1,5 +1,5 @@
 /*
- * Copyright NetApp Inc, 2021 All rights reserved
+ * Copyright NetApp Inc, 2022 All rights reserved
  */
 
 package max
@@ -33,39 +33,39 @@ type rule struct {
 	counts        map[string]map[string]int
 }
 
-func (a *Max) Init() error {
+func (m *Max) Init() error {
 
-	if err := a.AbstractPlugin.Init(); err != nil {
+	if err := m.AbstractPlugin.Init(); err != nil {
 		return err
 	}
 
-	a.rules = make([]*rule, 0)
-	if err := a.parseRules(); err != nil {
+	m.rules = make([]*rule, 0)
+	if err := m.parseRules(); err != nil {
 		return err
 	}
 
-	if len(a.rules) == 1 {
-		a.Logger.Debug().Msg("parsed 1 aggregation rule")
+	if len(m.rules) == 1 {
+		m.Logger.Debug().Msg("parsed 1 max rule")
 	} else {
-		a.Logger.Debug().Msgf("parsed %d aggregation rules", len(a.rules))
+		m.Logger.Debug().Msgf("parsed %d max rules", len(m.rules))
 	}
 	return nil
 }
 
-func (a *Max) parseRules() error {
+func (m *Max) parseRules() error {
 
 	var err error
 
-	for _, line := range a.Params.GetAllChildContentS() {
+	for _, line := range m.Params.GetAllChildContentS() {
 
-		a.Logger.Trace().Msgf("parsing raw rule: [%s]", line)
+		m.Logger.Trace().Msgf("parsing raw rule: [%s]", line)
 
 		r := rule{}
 
 		fields := strings.Fields(line)
 		if len(fields) == 2 || len(fields) == 1 {
 			// parse label, possibly followed by value and object
-			a.Logger.Trace().Msgf("handling first field: [%s]", fields[0])
+			m.Logger.Trace().Msgf("handling first field: [%s]", fields[0])
 			prefix := strings.SplitN(fields[0], "<", 2)
 			r.label = strings.TrimSpace(prefix[0])
 			if len(prefix) == 2 {
@@ -83,10 +83,10 @@ func (a *Max) parseRules() error {
 				if strings.HasPrefix(value, "`") {
 					value = strings.TrimPrefix(strings.TrimSuffix(value, "`"), "`")
 					if r.checkRegex, err = regexp.Compile(value); err != nil {
-						a.Logger.Error().Stack().Err(err).Msgf("rule [%s]: compile regex:", line)
+						m.Logger.Error().Stack().Err(err).Msgf("rule [%s]: compile regex:", line)
 						return err
 					}
-					a.Logger.Trace().Msgf("parsed regex: [%s]", r.checkRegex.String())
+					m.Logger.Trace().Msgf("parsed regex: [%s]", r.checkRegex.String())
 				} else if value != "" {
 					r.checkValue = value
 				}
@@ -96,29 +96,29 @@ func (a *Max) parseRules() error {
 				}
 			}
 			if len(fields) == 2 {
-				a.Logger.Trace().Msgf("handling second field: [%s]", fields[1])
+				m.Logger.Trace().Msgf("handling second field: [%s]", fields[1])
 				if strings.TrimSpace(fields[1]) == "..." {
 					r.allLabels = true
 				} else {
 					r.includeLabels = strings.Split(fields[1], ",")
 				}
 			}
-			a.rules = append(a.rules, &r)
-			a.Logger.Debug().Msgf("parsed rule [%v]", r)
+			m.rules = append(m.rules, &r)
+			m.Logger.Debug().Msgf("parsed rule [%v]", r)
 		} else {
-			a.Logger.Warn().Msgf("invalid rule syntax [%s]", line)
+			m.Logger.Warn().Msgf("invalid rule syntax [%s]", line)
 			return errs.New(errs.ErrInvalidParam, "invalid rule")
 		}
 	}
 	return nil
 }
 
-func (a *Max) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (m *Max) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	matrices := make(map[string]*matrix.Matrix)
 
 	// initialize cache
-	for i, rule := range a.rules {
+	for i, rule := range m.rules {
 
 		for k := range data.GetMetrics() {
 
@@ -157,18 +157,18 @@ func (a *Max) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			continue
 		}
 
-		a.Logger.Trace().Msgf("handling instance with labels [%s]", instance.GetLabels().String())
+		m.Logger.Trace().Msgf("handling instance with labels [%s]", instance.GetLabels().String())
 
-		for i, rule := range a.rules {
+		for i, rule := range m.rules {
 
-			a.Logger.Trace().Msgf("handling rule [%v]", rule)
+			m.Logger.Trace().Msgf("handling rule [%v]", rule)
 			if objName = instance.GetLabel(rule.label); objName == "" {
-				a.Logger.Warn().Msgf("label name for [%s] missing, skipped", rule.label)
+				m.Logger.Warn().Msgf("label name for [%s] missing, skipped", rule.label)
 				continue
 			}
 
 			if rule.checkLabel != "" {
-				a.Logger.Trace().Msgf("checking label (%s => %s)....", rule.checkLabel, rule.checkValue)
+				m.Logger.Trace().Msgf("checking label (%s => %s)....", rule.checkLabel, rule.checkValue)
 				if rule.checkRegex != nil {
 					if !rule.checkRegex.MatchString(instance.GetLabel(rule.checkLabel)) {
 						continue
@@ -179,7 +179,7 @@ func (a *Max) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			}
 
 			objKey = objName
-			a.Logger.Trace().Msgf("instance (%s= %s): formatted key [%s]", rule.label, objName, objKey)
+			m.Logger.Trace().Msgf("instance (%s= %s): formatted key [%s]", rule.label, objName, objKey)
 
 			for key, metric := range data.GetMetrics() {
 
@@ -197,15 +197,15 @@ func (a *Max) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				}
 
 				if objMetric = matrices[matrixKey].GetMetric(key); objMetric == nil {
-					a.Logger.Warn().Msgf("metric [%s] not found in [%s] cache", key, rule.label)
+					m.Logger.Warn().Msgf("metric [%s] not found in [%s] cache", key, rule.label)
 					continue
 				}
 
-				m, _ := objMetric.GetValueFloat64(objInstance)
+				v, _ := objMetric.GetValueFloat64(objInstance)
 
-				if value > m {
+				if value > v {
 					if err = objMetric.SetValueFloat64(objInstance, value); err != nil {
-						a.Logger.Error().Stack().Err(err).Msgf("add value [%s] [%s]:", key, objName)
+						m.Logger.Error().Stack().Err(err).Msgf("add value [%s] [%s]:", key, objName)
 					} else {
 						if rule.allLabels {
 							objInstance.SetLabels(instance.GetLabels())

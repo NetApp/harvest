@@ -587,7 +587,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Max Disk Utilization",
+      "title": "Max Disk Utilization by Node",
       "type": "bargauge"
     },
     {
@@ -2286,7 +2286,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Average Disk Utilization",
+          "title": "Average Disk Utilization by Aggregate",
           "type": "timeseries"
         },
         {

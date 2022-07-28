@@ -587,7 +587,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Max Disk Utilization",
+      "title": "Max Disk Utilization by Node",
       "type": "bargauge"
     },
     {
