@@ -6,6 +6,8 @@ schedule:
   - instance: 24h
   - data:     3m
 
+# More information https://github.com/NetApp/harvest/blob/main/cmd/collectors/ems/README.md
+
 objects:
   Ems:                        ems.yaml
 
