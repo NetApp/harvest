@@ -23,6 +23,7 @@ const severityFilterPrefix = "message.severity="
 const defaultSeverityFilter = "alert|emergency|error|informational|notice"
 const MaxBookendInstances = 1000
 const DefaultBookendResolutionDuration = 28 * 24 * time.Hour // 28 days == 672 hours
+const Hyphen = "-"
 
 type Ems struct {
 	*rest2.Rest    // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
@@ -599,13 +600,16 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 						continue
 					}
 
-					if instance := mx.GetInstance(bookendKey); instance != nil {
-						if err = metr.SetValueFloat64(instance, 0); err != nil {
-							e.Logger.Error().Err(err).Str("key", "events").
-								Msg("Unable to set float key on metric")
-							continue
+					// get all active instances by issuingems-bookendkey
+					if instances := mx.GetInstancesBySuffix(issuingEms + bookendKey); len(instances) != 0 {
+						for _, instance := range instances {
+							if err = metr.SetValueFloat64(instance, 0); err != nil {
+								e.Logger.Error().Err(err).Str("key", "events").
+									Msg("Unable to set float key on metric")
+								continue
+							}
+							instance.SetExportable(true)
 						}
-						instance.SetExportable(true)
 						emsResolved = true
 					}
 				}
@@ -736,7 +740,7 @@ func (e *Ems) getInstanceKeys(p *emsProp, instanceData gjson.Result) string {
 	for _, k := range p.InstanceKeys {
 		value := parseProperties(instanceData, k)
 		if value.Exists() {
-			instanceKey += value.String()
+			instanceKey += Hyphen + value.String()
 		} else {
 			e.Logger.Warn().Str("key", k).Msg("skip instance, missing key")
 			break

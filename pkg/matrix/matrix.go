@@ -15,6 +15,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"strings"
 )
 
 type Matrix struct {
@@ -189,6 +190,18 @@ func (me *Matrix) GetInstance(key string) *Instance {
 		return instance
 	}
 	return nil
+}
+
+func (me *Matrix) GetInstancesBySuffix(subKey string) []*Instance {
+	var instances []*Instance
+	if subKey != "" {
+		for key, instance := range me.instances {
+			if strings.HasSuffix(key, subKey) {
+				instances = append(instances, instance)
+			}
+		}
+	}
+	return instances
 }
 
 func (me *Matrix) GetInstances() map[string]*Instance {

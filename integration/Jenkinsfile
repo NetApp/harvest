@@ -68,7 +68,8 @@ pipeline {
                         stage('Evaluating Alert Rules') {
                             steps {
                                 sh """
-                                bash $WORKSPACE/harvest/integration/test/test.sh alerttest
+                                bash $WORKSPACE/harvest/integration/test/test.sh allemstest
+                                bash $WORKSPACE/harvest/integration/test/test.sh bookendemstest
                                 """
                             }
                             post {
@@ -125,13 +126,6 @@ pipeline {
                                 bash $WORKSPACE/harvest/integration/test/test.sh regression
                                 """
                             }
-                        }
-                        stage('Evaluating Alert Rules') {
-                            steps {
-                                sh """
-                                bash $WORKSPACE/harvest/integration/test/test.sh alerttest
-                                """
-                            }
                             post {
                                 always {
                                      sh '''
@@ -185,13 +179,6 @@ pipeline {
                                 bash $WORKSPACE/harvest/integration/test/test.sh regression
                                 """
 
-                            }
-                        }
-                        stage('Evaluating Alert Rules') {
-                            steps {
-                                sh """
-                                bash $WORKSPACE/harvest/integration/test/test.sh alerttest
-                                """
                             }
                             post {
                                 always {

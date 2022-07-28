@@ -286,6 +286,13 @@ events:
       - parameters.clientIp                 => client_ip
       - parameters.SID                      => sid
 
+  - name: Nblade.vscanConnInactive
+    expots:
+      - parameters.object_uuid              => object_uuid
+      - parameters.object_type              => object_type
+      - parameters.vserverName              => svm
+      - parameters.scannerIp                => scannerIp
+
   - name: NVMeNS.destroy
     exports:
       - parameters.object_uuid              => object_uuid
@@ -332,7 +339,7 @@ events:
   - name: object.store.unavailable
     exports:
       - parameters.configname               => config_name
-      - parameters.node_uuid                => node_uuid
+      - ^^parameters.node_uuid              => node_uuid
     resolve_when_ems:
       - name: object.store.available
         resolve_after: 672h
@@ -356,7 +363,7 @@ events:
 
   - name: qos.monitor.memory.maxed
     exports:
-      - parameters.object_uuid              => object_uuid
+      - ^^parameters.object_uuid            => object_uuid
       - parameters.object_type              => object_type
       - parameters.count                    => count
     resolve_when_ems:
@@ -376,7 +383,7 @@ events:
 
   - name: ses.status.fanError
     exports:
-      - parameters.prodChannel              => prod_channel
+      - ^^parameters.prodChannel            => prod_channel
       - parameters.fanNumber                => fan_number
     resolve_when_ems:
       - name: ses.status.fanInfo
@@ -386,7 +393,7 @@ events:
 
   - name: sms.status.out.of.sync
     exports:
-      - parameters.relationship_id          => relationship_id
+      - ^^parameters.relationship_id        => relationship_id
       - parameters.srcpath                  => src_path
       - parameters.dstpath                  => dst_path
     resolve_when_ems:
@@ -396,6 +403,7 @@ events:
   - name: sp.ipmi.lost.shutdown
     exports:
       - parameters.num_minutes              => num_minutes
+      - ^^node.name                         => node
     resolve_when_ems:
       - name: sp.heartbeat.resumed
         resolve_after: 672h
@@ -413,7 +421,7 @@ events:
 
   - name: vserver.stop.succeeded
     exports:
-      - parameters.vserver_name             => svm
+      - ^^parameters.vserver_name           => svm
       - parameters.vserver_uuid             => svm_uuid
     resolve_when_ems:
       - name: vserver.start.succeeded
@@ -439,17 +447,19 @@ events:
 
   - name: wafl.vvol.offline
     exports:
-      - parameters.name                     => volume
+      - ^^parameters.name                   => volume
       - parameters.app                      => app
       - parameters.volident                 => vol_ident
       - parameters.instuuid                 => inst_uuid
     resolve_when_ems:
       - name: wafl.vvol.online
         resolve_after: 672h
+        resolve_key:
+          - ^^parameters.vol                => volume
 
   - name: wafl.vvol.restrict
     exports:
-      - parameters.vol                      => volume
+      - ^^parameters.vol                    => volume
       - parameters.app                      => app
       - parameters.volident                 => vol_ident
       - parameters.instuuid                 => inst_uuid

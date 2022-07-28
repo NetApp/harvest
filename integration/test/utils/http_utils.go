@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -50,6 +51,29 @@ func SendReqAndGetRes(url string, method string,
 	body, err := io.ReadAll(res.Body)
 	PanicIfNotNil(err)
 	log.Println(string(body))
+	var data map[string]interface{}
+	err = json.Unmarshal(body, &data)
+	PanicIfNotNil(err)
+	return data
+}
+
+func SendPostReqAndGetRes(url string, method string, buf []byte, user string, pass string) map[string]interface{} {
+	tlsConfig := &tls.Config{InsecureSkipVerify: true} //nolint:gosec
+	client := &http.Client{
+		Transport: &http.Transport{TLSClientConfig: tlsConfig},
+	}
+	req, err := http.NewRequest(method, url, bytes.NewBuffer(buf))
+	if err != nil {
+		fmt.Println(err)
+		panic(err)
+	}
+	req.Header.Add("Content-Type", "application/json")
+	req.SetBasicAuth(user, pass)
+	res, err := client.Do(req)
+	PanicIfNotNil(err)
+	defer res.Body.Close()
+	body, err := io.ReadAll(res.Body)
+	PanicIfNotNil(err)
 	var data map[string]interface{}
 	err = json.Unmarshal(body, &data)
 	PanicIfNotNil(err)

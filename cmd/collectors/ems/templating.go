@@ -102,7 +102,7 @@ func (e *Ems) ParseExports(counter *node.Node, prop *emsProp) {
 
 	// For bookend case, instanceKeys are replaced with bookendKeys
 	if len(bookendKeys) > 0 {
-		prop.InstanceKeys = bookendKeys
+		prop.InstanceKeys = append(prop.InstanceKeys, bookendKeys...)
 	}
 }
 
@@ -126,7 +126,14 @@ func (e *Ems) ParseResolveEms(resolveEvent *node.Node, issueEmsProp emsProp) {
 
 	// check if resolved_key is present in template, if not then use the issue ems resolve key
 	if resolveKey = resolveEvent.GetChildS("resolve_key"); resolveKey == nil {
-		prop.InstanceKeys = issueEmsProp.InstanceKeys
+		// IssuingEmsKey: index-messageName-bookendKey, ResolvingEmsKey would be bookendKey
+		if len(issueEmsProp.InstanceKeys) > 2 {
+			prop.InstanceKeys = issueEmsProp.InstanceKeys[2:]
+		} else {
+			// If bookendKey is missing in IssueEms, the  default bookendKey is index of IssueEMs
+			prop.InstanceKeys = issueEmsProp.InstanceKeys[0:1]
+			e.Logger.Warn().Str("Ems name", issueEmsProp.Name).Msg("Missing bookend keys")
+		}
 	} else {
 		e.ParseExports(resolveKey, &prop)
 	}
