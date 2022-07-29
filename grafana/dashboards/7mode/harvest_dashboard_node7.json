@@ -780,7 +780,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(disk_busy{datacenter=\"$Datacenter\",node=~\"$Node\"})",
+          "expr": "max(disk_busy{datacenter=\"$Datacenter\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -788,7 +788,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Disk Utilization",
+      "title": "Max Disk Utilization",
       "type": "bargauge"
     },
     {
@@ -1267,10 +1267,10 @@
             },
             {
               "exemplar": false,
-              "expr": "avg(disk_busy{datacenter=\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "max(disk_busy{datacenter=\"$Datacenter\",node=~\"$Node\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Disk Busy",
+              "legendFormat": "Max Disk Utilization",
               "refId": "B"
             },
             {
@@ -3292,5 +3292,5 @@
   "timezone": "",
   "title": "ONTAP: Node 7 mode",
   "uid": "bheg6_wnz",
-  "version": 3
+  "version": 4
 }

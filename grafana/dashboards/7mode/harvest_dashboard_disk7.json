@@ -712,7 +712,7 @@
           "refId": "A"
         },
         {
-          "expr": "max by (node, aggr) (aggr_disk_total_transfers{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
+          "expr": "max by (node, aggr) (aggr_disk_max_total_transfers{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "format": "table",
           "hide": true,
           "instant": true,
@@ -721,7 +721,7 @@
           "refId": "C"
         },
         {
-          "expr": "max by (node, aggr) (aggr_disk_busy{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
+          "expr": "max by (node, aggr) (aggr_disk_max_busy{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "format": "table",
           "hide": true,
           "instant": true,
@@ -916,7 +916,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "max by (node, aggr) (aggr_disk_total_transfers{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
+          "expr": "max by (node, aggr) (aggr_disk_max_total_transfers{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -925,7 +925,7 @@
           "refId": "C"
         },
         {
-          "expr": "max by (node, aggr) (aggr_disk_busy{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
+          "expr": "max by (node, aggr) (aggr_disk_max_busy{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1036,7 +1036,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "max by (node, aggr) (aggr_disk_busy{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
+          "expr": "max by (node, aggr) (aggr_disk_max_busy{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -1044,7 +1044,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Disk Utiliziation",
+      "title": "Max Disk Utilization Per Aggregate",
       "type": "timeseries"
     },
     {
@@ -1125,7 +1125,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "max by (node, aggr) (aggr_disk_total_transfers{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
+          "expr": "max by (node, aggr) (aggr_disk_max_total_transfers{datacenter=\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -2263,5 +2263,5 @@
   "timezone": "",
   "title": "ONTAP: Disk 7 mode",
   "uid": "gZb-XGj7z",
-  "version": 3
+  "version": 4
 }

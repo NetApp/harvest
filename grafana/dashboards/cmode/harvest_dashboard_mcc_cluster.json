@@ -548,13 +548,13 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "avg(aggr_disk_busy{cluster=\"$Cluster\", datacenter=\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"})",
+          "expr": "max(aggr_disk_max_busy{cluster=\"$Cluster\", datacenter=\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Disk Utilization",
+      "title": "Max Disk Utilization Per Aggregate",
       "type": "gauge"
     },
     {

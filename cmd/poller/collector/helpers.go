@@ -15,18 +15,18 @@ import (
 	"errors"
 	"fmt"
 	"github.com/hashicorp/go-version"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin/aggregator"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin/labelagent"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin/max"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin/metricagent"
+	"github.com/netapp/harvest/v2/pkg/tree"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"os"
 	"path"
 	"regexp"
 	"sort"
 	"strings"
-
-	"github.com/netapp/harvest/v2/cmd/poller/plugin"
-	"github.com/netapp/harvest/v2/cmd/poller/plugin/aggregator"
-	"github.com/netapp/harvest/v2/cmd/poller/plugin/labelagent"
-	"github.com/netapp/harvest/v2/cmd/poller/plugin/metricagent"
-	"github.com/netapp/harvest/v2/pkg/tree"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 )
 
 // ImportTemplate retrieves the config (template) of a collector, arguments are:
@@ -188,8 +188,11 @@ func GetBuiltinPlugin(name string, abc *plugin.AbstractPlugin) plugin.Plugin {
 		return aggregator.New(abc)
 	}
 
+	if name == "Max" {
+		return max.New(abc)
+	}
 	/* this will be added in soon
-	if name == "Calculator" {
+	if name == "Calculator" {--4
 		return calculator.New(abc)
 	}
 	*/

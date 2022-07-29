@@ -71,16 +71,12 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1651155832107,
+  "iteration": 1658914408708,
   "links": [],
   "panels": [
     {
       "collapsed": false,
       "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -582,7 +578,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(disk_busy{datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+          "expr": "max(disk_busy{datacenter=~\"$Datacenter\",node=~\"$Node\"})",
           "instant": false,
           "interval": "",
           "legendFormat": "",
@@ -591,7 +587,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Disk busy",
+      "title": "Max Disk Utilization by Node",
       "type": "bargauge"
     },
     {
@@ -917,10 +913,6 @@
     {
       "collapsed": false,
       "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1282,7 +1274,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(aggr_disk_busy{datacenter=\"$Datacenter\",node=~\"$Node\"}) by (node, aggr)",
+          "expr": "max(aggr_disk_max_busy{datacenter=\"$Datacenter\",node=~\"$Node\"}) by (node, aggr)",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -1290,7 +1282,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Average Disk Utilization",
+      "title": "Max Disk Utilization Per Aggregate",
       "type": "timeseries"
     },
     {
@@ -1465,7 +1457,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(node_cpu_busy{datacenter=\"$Datacenter\",node=~\"$Node\"}) by (node)",
+          "expr": "max(node_cpu_busy{datacenter=\"$Datacenter\",node=~\"$Node\"}) by (node)",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -1473,7 +1465,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Average CPU Utilization",
+      "title": "Max Node CPU Utilization",
       "type": "timeseries"
     }
   ],
@@ -1576,6 +1568,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Cluster 7 mode",
-  "uid": "QKeR6_Q7z",
-  "version": 2
+  "uid": "mITXSmzVz",
+  "version": 3
 }

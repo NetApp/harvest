@@ -39,6 +39,9 @@ plugins:
     - aggr ...
   #  - plex node aggr
   #  - raid node aggr plex
+  Max:
+    - node<>node_disk_max
+    - aggr<>aggr_disk_max ...
 
 # only export node/aggr aggregations from plugin
 # set this true or comment, to get data for each disk
