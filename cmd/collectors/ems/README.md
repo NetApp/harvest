@@ -55,7 +55,7 @@ This configuration file contains the parameters that are applied as defaults to 
 | parameter              | type        | description                                      | default                |
 |------------------------|--------------|--------------------------------------------------|------------------------|
 | `client_timeout`   | duration (Go-syntax)  | how long to wait for server responses             | 1m                  |
-| `schedule`         | list, required | the poll frequencies of the collector/object, should include exactly these three elements in the exact same order: | |
+| `schedule`         | list, required | the poll frequencies of the collector/object, should include exactly these two elements in the exact same order: | |
 |    - `instance`         | duration (Go-syntax) | poll frequency of updating the instance cache (example value: `24h` = `1440m`) | |
 |    - `data`         | duration (Go-syntax) | poll frequency of updating the data cache (example value: `3m`)<br /><br />**Note** Harvest allows defining poll intervals on sub-second level (e.g. `1ms`), however keep in mind the following:<br /><ul><li>API response of an ONTAP system can take several seconds, so the collector is likely to enter failed state if the poll interval is less than `client_timeout`.</li><li>Small poll intervals will create significant workload on the ONTAP system.</li></ul> | |
 
@@ -82,7 +82,7 @@ The Object configuration file ("template") should contain the following paramete
 
 #### `events`
 
-This section defines the list of ems events that will be collected. The exact name of ems with requested labels is fetched from ONTAP and later requested match filter would be applied.
+This section defines the list of ems events which will be collected. The exact name of ems with requested labels is fetched from ONTAP and later requested match filter would be applied.
 
 The display name of a label can be changed with `=>` (e.g., `filePath => file_path`). 
 
@@ -109,18 +109,18 @@ As an example, the `LUN.offline` ems event would provide the following attribute
 ```
 **Note**: values mentioned in the below description are for reference purpose only.
 
-* `name`: name of ems event(Issuing ems in case of bookend) to collect (`LUN.offline`)
+* `name`: name of ems event (Issuing ems in case of Bookend ems) to collect (`LUN.offline`)
 * `matches` (list): name-value pair to filter out this ems event's data-point. Only collect ems event where `volume_name` is `volume_name_1`.
     * `name`: name of label (`volume_name`)
     * `value`: value of the above label (`volume_name_1`)
 * `exports` (list): export all mentioned labels with each data-point 
-  * label starts with `^^` (`object_uuid`) would be used as bookend key in case of bookend ems events
-* `resolve_when_ems*`: resolving ems would resolve the above issuing ems
+  * label starts with `^^` (`object_uuid`) would be used as bookend key in case of Bookend ems events
+* `resolve_when_ems*`: resolving ems detail which would resolve the above issuing ems
   * `name`: name of the resolving ems event to collect (`LUN.online`). As soon as receiving the resolving ems, issuing ems would be resolved.
   * `resolve_after`: issuing ems would be expected to resolve by resolving ems within this duration (`672h` = `28d`), If not then Harvest removes issuing ems from cache. [`optional`] (default: 672h)
-  * `resolve_key` (list): would be used as bookend key in bookend ems events [`optional`] (default: taken from `exports` section where label starts with `^^`)
+  * `resolve_key` (list): would be used as bookend key in Bookend ems events [`optional`] (default: taken from `exports` section where label starts with `^^`)
 
 
 **Note**:
 
-`*` indicates it's only applicable for bookend ems events
+`*` indicates it's only applicable for Bookend ems events
