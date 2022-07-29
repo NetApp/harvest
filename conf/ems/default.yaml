@@ -1,5 +1,4 @@
-
-collector:          Ems
+collector: Ems
 
 client_timeout: 1m
 schedule:
@@ -9,5 +8,5 @@ schedule:
 # More information https://github.com/NetApp/harvest/blob/main/cmd/collectors/ems/README.md
 
 objects:
-  Ems:                        ems.yaml
+  Ems: ems.yaml
 
