@@ -22,13 +22,8 @@ We use GitHub for tracking bugs and feature requests.
 
 # Getting Help
 
-There is a vibrant community of Harvest users on the `#harvest` channel in [NetApp's Slack team](https://netapppub.slack.com/archives/C02072M1UCD). Slack is a great place to ask general questions about the project and discuss related topics with like-minded peers.
-
-## Slack
-
-Join [thePub workspace](https://www.netapp.io/slack). After joining, click the `+` sign next to `Channels` and then click the `Browse Channels` button. Search for `harvest` from the Channel Browser and click `Join`.
-
-![Join channel image](/docs/slack.png)
+There is a vibrant community of Harvest users on the [#harvest](https://discordapp.com/channels/855068651522490400/1001963189124206732) channel on [NetApp's Discord](https://discord.gg/ZmmWPHTBHw) server.
+Discord is a great place to ask general questions about the project and discuss related topics with like-minded peers.
 
 ## Documentation
 
