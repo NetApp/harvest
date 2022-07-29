@@ -164,7 +164,8 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 
 		if len(quotas) == 0 {
-			return nil, errs.New(errs.ErrNoInstance, "no quota instances found")
+			my.Logger.Debug().Msg("no quota instances found")
+			return nil, nil
 		}
 
 		my.Logger.Debug().Int("quotas", len(quotas)).Msg("fetching quotas")
