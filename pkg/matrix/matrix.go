@@ -185,11 +185,12 @@ func (me *Matrix) RemoveMetric(key string) {
 }
 
 func (me *Matrix) RemoveExceptMetric(key string) {
-	for k := range me.metrics {
-		if key != k {
-			delete(me.metrics, k)
-		}
+	prev, ok := me.metrics[key]
+	if !ok {
+		return
 	}
+	me.metrics = make(map[string]Metric)
+	me.metrics[key] = prev
 }
 
 func (me *Matrix) GetInstance(key string) *Instance {
