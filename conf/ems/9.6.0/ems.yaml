@@ -2,7 +2,7 @@ name:   EMS
 query:  api/support/ems/events
 object: ems
 
-# default list of exports which gets appended to individual event exports
+# default list of exports attached to each EMS event
 exports:
   - message.name                            => message
   - node.name                               => node
