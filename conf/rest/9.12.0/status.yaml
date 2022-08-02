@@ -8,8 +8,6 @@ counters:
   - hidden_fields:
       - health
 
-collect_only_labels: true
-
 plugins:
   - LabelAgent:
       value_to_num:

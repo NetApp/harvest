@@ -194,6 +194,11 @@ func (r *Rest) ParseRestCounters(counter *node.Node, prop *prop) {
 			i++
 		}
 		prop.Fields = counterKey
+		if counter != nil {
+			if x := counter.GetChildS("filter"); x != nil {
+				prop.Filter = append(prop.Filter, x.GetAllChildContentS()...)
+			}
+		}
 	}
 
 	if prop.APIType == "public" {
