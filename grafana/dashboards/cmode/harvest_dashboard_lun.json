@@ -805,7 +805,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "lun_avg_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}/1000",
+          "expr": "topk($TopResources, lun_avg_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"})/1000",
           "format": "table",
           "instant": true,
           "interval": "",
