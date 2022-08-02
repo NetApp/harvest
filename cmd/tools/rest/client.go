@@ -203,7 +203,8 @@ func (c *Client) invoke() ([]byte, error) {
 	if response, err = c.client.Do(c.request); err != nil {
 		return nil, fmt.Errorf("connection error %w", err)
 	}
-	defer func(Body io.ReadCloser) { _ = Body.Close() }(response.Body)
+	//goland:noinspection GoUnhandledErrorResult
+	defer response.Body.Close()
 
 	if response.StatusCode != 200 {
 		if body, err = io.ReadAll(response.Body); err == nil {
@@ -257,7 +258,8 @@ func downloadSwagger(poller *conf.Poller, path string, url string) (int64, error
 	if err != nil {
 		return 0, err
 	}
-	defer func(Body io.ReadCloser) { _ = Body.Close() }(response.Body)
+	//goland:noinspection GoUnhandledErrorResult
+	defer response.Body.Close()
 
 	n, err := io.Copy(out, response.Body)
 	if err != nil {

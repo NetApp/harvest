@@ -998,13 +998,10 @@ func doRequest(opts *options, method, url string, query map[string]interface{}) 
 	status = response.Status
 	code = response.StatusCode
 
-	defer silentClose(response.Body)
+	//goland:noinspection GoUnhandledErrorResult
+	defer response.Body.Close()
 	data, err = io.ReadAll(response.Body)
 	return data, status, code, err
-}
-
-func silentClose(body io.ReadCloser) {
-	_ = body.Close()
 }
 
 var opts = &options{}

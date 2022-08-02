@@ -1,7 +1,7 @@
 linters:
   disable-all: true
   enable:
-#    - bodyclose
+    - bodyclose
     - deadcode
     - errcheck
     - errname
@@ -12,11 +12,12 @@ linters:
     - govet
     - ineffassign
     - makezero
+    - nilerr
     - nolintlint
     - nonamedreturns
     - nosprintfhostport
     - staticcheck
-    - structcheck
+#    - structcheck
     - stylecheck
     - tenv
     - thelper

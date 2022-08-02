@@ -229,7 +229,7 @@ func (me *Process) loadSmaps() error {
 	// this may fail see https://github.com/NetApp/harvest/issues/249
 	// when it does, ignore so the other /proc checks are given a chance to run
 	if data, err = os.ReadFile(path.Join(me.dirpath, "smaps")); err != nil {
-		return nil
+		return nil //nolint:nilerr
 	}
 
 	me.mem = make(map[string]uint64)
@@ -266,7 +266,7 @@ func (me *Process) loadIo() error {
 	// this may fail see https://github.com/NetApp/harvest/issues/249
 	// when it does, ignore so the other /proc checks are given a chance to run
 	if data, err = os.ReadFile(path.Join(me.dirpath, "io")); err != nil {
-		return nil
+		return nil //nolint:nilerr
 	}
 
 	for _, line = range strings.Split(string(data), "\n") {
@@ -333,7 +333,7 @@ func (me *Process) loadFdinfo() error {
 	// when it does, ignore so the other /proc checks are given a chance to run
 	files, err := os.ReadDir(path.Join(me.dirpath, "fdinfo"))
 	if err != nil {
-		return nil
+		return nil //nolint:nilerr
 	}
 	me.numFds = uint64(len(files))
 	return nil

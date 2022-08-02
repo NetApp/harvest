@@ -978,7 +978,8 @@ func (p *Poller) publishDetails() {
 		event.Err(rErr).Str("admin", conf.Config.Admin.Httpsd.Listen).Msg("Failed connecting to admin node")
 		return
 	}
-	defer func(Body io.ReadCloser) { _ = Body.Close() }(resp.Body)
+	//goland:noinspection GoUnhandledErrorResult
+	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logger.Err(err).Msg("failed to read publishDetails response to admin")
