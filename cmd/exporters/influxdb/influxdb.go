@@ -212,9 +212,9 @@ func (e *InfluxDB) Emit(data [][]byte) error {
 	if response, err = e.client.Do(request); err != nil {
 		return err
 	}
-
+	//goland:noinspection GoUnhandledErrorResult
+	defer response.Body.Close()
 	if response.StatusCode != expectedResponseCode {
-		defer func(Body io.ReadCloser) { _ = Body.Close() }(response.Body)
 		if body, err := io.ReadAll(response.Body); err != nil {
 			return errs.New(errs.ErrAPIResponse, err.Error())
 		} else {

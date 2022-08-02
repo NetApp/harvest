@@ -191,7 +191,8 @@ func parseClientTimeout(clientTimeout string) (time.Duration, error) {
 	}
 	t, err := strconv.Atoi(clientTimeout)
 	if err != nil {
-		return time.Duration(DefaultTimeout) * time.Second, nil
+		// when there is an error return the default timeout
+		return time.Duration(DefaultTimeout) * time.Second, nil //nolint:nilerr
 	}
 	return time.Duration(t) * time.Second, nil
 }
@@ -386,7 +387,8 @@ func (c *Client) InvokeRaw() ([]byte, error) {
 	if response, err = c.client.Do(c.request); err != nil {
 		return body, errs.New(errs.ErrConnection, err.Error())
 	}
-	defer func(Body io.ReadCloser) { _ = Body.Close() }(response.Body)
+	//goland:noinspection GoUnhandledErrorResult
+	defer response.Body.Close()
 	if response.StatusCode != 200 {
 		return body, errs.New(errs.ErrAPIResponse, response.Status)
 	}
@@ -425,7 +427,8 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 	if response, err = c.client.Do(c.request); err != nil {
 		return result, responseT, parseT, errs.New(errs.ErrConnection, err.Error())
 	}
-	defer func(Body io.ReadCloser) { _ = Body.Close() }(response.Body)
+	//goland:noinspection GoUnhandledErrorResult
+	defer response.Body.Close()
 	if withTimers {
 		responseT = time.Since(start)
 	}

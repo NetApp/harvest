@@ -120,5 +120,7 @@ func latestRelease() (string, error) {
 			return location.String()[lastSlash+1:], nil
 		}
 	}
+	//goland:noinspection GoUnhandledErrorResult
+	defer resp.Body.Close()
 	return "", fmt.Errorf(" error checking GitHub")
 }
