@@ -47,7 +47,9 @@ curl -L -O https://github.com/NetApp/harvest/releases/download/v21.08.0/harvest-
 
 It's best to run Harvest as a non-root user. Make sure the user running Harvest can write to `/var/log/harvest/` or tell Harvest to write the logs somewhere else with the `HARVEST_LOGS` environment variable.
 
-If something goes wrong, examine the logs files in `/var/log/harvest`, check out the [troubleshooting](https://github.com/NetApp/harvest/wiki/Troubleshooting-Harvest) section of the wiki and jump onto [Slack](https://github.com/NetApp/harvest/blob/main/SUPPORT.md#slack) and ask for help.
+If something goes wrong, examine the logs files in `/var/log/harvest`, check out 
+the [troubleshooting](https://github.com/NetApp/harvest/wiki/Troubleshooting-Harvest) section of the wiki and jump 
+onto [Discord](https://github.com/NetApp/harvest/blob/main/SUPPORT.md#getting-help) and ask for help.
 
 ### Upgrade
 Follow the steps below to upgrade Harvest

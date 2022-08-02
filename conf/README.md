@@ -270,7 +270,7 @@ export_options:
     - volume
     - svm
     - application
- client_timeout: 5m
+client_timeout: 5m
 ```
 
 To help understand the merging process and the resulting combined template, you can view the result with:
@@ -280,7 +280,8 @@ bin/harvest doctor merge --template conf/zapi/cdot/9.8.0/lun.yaml --with conf/za
 
 ### Replace an existing object template
 
-You can only extend existing templates as explained [above](#extend-an-existing-object-template). If you need to replace one of the existing object templates, let us know more on Slack or GitHub.
+You can only extend existing templates as explained [above](#extend-an-existing-object-template).
+If you need to replace one of the existing object templates, let us on [Discord](https://github.com/NetApp/harvest/blob/main/SUPPORT.md#getting-help) or GitHub.
 
 ## Harvest Versioned Templates
 
