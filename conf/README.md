@@ -4,7 +4,6 @@ This document covers how to use [Collector](#Collector-templates) and [Object](#
 
 1. [How to add a new object template](#create-a-new-object-template)
 2. [How to extend an existing object template](#extend-an-existing-object-template)
-3. [How to replace an existing object template](#replace-an-existing-object-template)
 
 There are a couple of ways to learn about ZAPIs and their attributes:
 - [ONTAP's documentation](https://mysupport.netapp.com/documentation/productlibrary/index.html?productID=60427) 
@@ -150,7 +149,9 @@ sensor_value{datacenter="WDRF",cluster="shopfloor",critical_high="9000",node="sh
 sensor_value{datacenter="WDRF",cluster="shopfloor",node="shopfloor-02",sensor="PSU1 InPwr Monitor",type="unknown",threshold_state="normal",unit="mW"} 132000
 ```
 
-### How to extend a Rest/RestPerf collector's existing object template
+## Extend an existing object template
+
+### How to extend a Rest/RestPerf/Ems collector's existing object template
 
 Instead of editing one of the existing templates, it's better to copy one and edit the copy. That way, your custom template will not be overwritten when upgrading Harvest. For example, if you want to change `conf/rest/cdot/9.12.0/aggr.yaml`, first create a copy (e.g., `conf/rest/cdot/9.12.0/custom_aggr.yaml`), then add these lines to `conf/rest/custom.yaml`:
 
@@ -165,7 +166,7 @@ After restarting pollers, `aggr.yaml` will be ignored and the new, `custom_aggr.
 
 In this example, we want to extend one of the existing object templates that Harvest ships with, e.g. `conf/zapi/cdot/9.8.0/lun.yaml` and collect additional information as outlined below.
 
-Lets's say you want to extend `lun.yaml` to:
+Let's say you want to extend `lun.yaml` to:
 
 1. Increase `client_timeout` (You want to increase the default timeout of the lun ZAPI because it keeps [timing out](https://github.com/NetApp/harvest/wiki/Troubleshooting-Harvest#client_timeout))
 2. Add additional counters, e.g. `multiprotocol-type`, `application`
@@ -278,10 +279,10 @@ To help understand the merging process and the resulting combined template, you 
 bin/harvest doctor merge --template conf/zapi/cdot/9.8.0/lun.yaml --with conf/zapi/cdot/9.8.0/custom_lun.yaml
 ```
 
-### Replace an existing object template
+### Replace an existing object template for Zapi/ZapiPerf Collector
 
-You can only extend existing templates as explained [above](#extend-an-existing-object-template).
-If you need to replace one of the existing object templates, let us on [Discord](https://github.com/NetApp/harvest/blob/main/SUPPORT.md#getting-help) or GitHub.
+You can only extend existing templates for Zapi/ZapiPerf Collector as explained [above](#extend-an-existing-object-template).
+If you need to replace one of the existing object templates, let us know on [Discord](https://github.com/NetApp/harvest/blob/main/SUPPORT.md#getting-help) or GitHub.
 
 ## Harvest Versioned Templates
 
