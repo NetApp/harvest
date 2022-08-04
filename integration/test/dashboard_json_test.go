@@ -164,7 +164,8 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 }
 
 func ShouldSkipDashboard(path string) bool {
-	skip := []string{"nfs4storePool_detail"}
+	//ignore headroom dashboard from CI as it uses dynamic variables in query
+	skip := []string{"nfs4storePool_detail", "headroom"}
 	for _, s := range skip {
 		if strings.Contains(path, s) {
 			return true
