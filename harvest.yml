@@ -33,6 +33,7 @@ Defaults:
   collectors:
     - Zapi
     - ZapiPerf
+    - Ems
   use_insecure_tls: false
 
 Pollers:
