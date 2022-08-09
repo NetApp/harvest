@@ -21,6 +21,8 @@
 
 **IMPORTANT** :bangbang: NetApp is moving their communities from Slack to [NetApp's Discord](https://discord.gg/ZmmWPHTBHw) with a plan to lock this Slack instance at the end of August. Please join us over there! [#harvest](https://discordapp.com/channels/855068651522490400/1001963189124206732)
 
+**IMPORTANT** :bangbang: Prometheus Version 2.26 or higher is needed for EMS Collector. 
+
 **IMPORTANT** :bangbang: After upgrade, don't forget to re-import your dashboards, so you get all the new enhancements and fixes. You can import via `bin/harvest/grafana import` cli or from the Grafana UI.
 
 **Known Issues**
