@@ -33,7 +33,7 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 
 ### Enhancements
 
-- :sparkler: Harvest adds ONTAP [EMS](https://github.com/NetApp/harvest/blob/main/cmd/collectors/ems/README.md) collector in this release. 
+- :sparkler: Harvest adds ONTAP [EMS](https://github.com/NetApp/harvest/blob/main/cmd/collectors/ems/README.md) collector in this release. It collects ONTAP events and exports to Prometheus database. it also integrates with the Prometheus AlertManager.
 
 - New Harvest Headroom dashboard. [#1039](https://github.com/NetApp/harvest/issues/1039) Thanks to @faguayot for reporting.
 
@@ -69,6 +69,8 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 
 - Lun dashboard should use topk range.[#1184](https://github.com/NetApp/harvest/pull/1184)
 
+- Add filter support for Private Rest CLI.
+
 ### Fixes
 
 - Missing Ambient Temperature for AFF900 in Power Dashboard. [#1173](https://github.com/NetApp/harvest/issues/1173) Thanks to @iStep2Step for reporting.
@@ -102,8 +104,6 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 - InfluxDB exporter should not require bucket, org, port, or precision fields when using url. [#1155](https://github.com/NetApp/harvest/issues/1155) Thanks to `li fi` for reporting.
 
 - `Node CPU Busy` and `Disk Utilization` should match with ONTAP `sysstat -m` CLI. [#1152](https://github.com/NetApp/harvest/issues/1152) Thanks to `Papadopoulos Anastasios` for reporting.
-
-- Add filter support for Private Rest CLI.
 
 ---
 
