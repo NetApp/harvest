@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1658914408708,
+  "iteration": 1660131966678,
   "links": [],
   "panels": [
     {
@@ -587,7 +587,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Max Disk Utilization by Node",
+      "title": "Max Disk Utilization by Cluster",
       "type": "bargauge"
     },
     {
@@ -878,6 +878,84 @@
         "x": 18,
         "y": 10
       },
+      "id": 182,
+      "links": [],
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "text": {}
+      },
+      "pluginVersion": "8.1.8",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "avg(disk_busy{datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Avg Disk Utilization by Cluster",
+      "type": "bargauge"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-purple",
+                "value": null
+              },
+              {
+                "color": "dark-blue",
+                "value": 75
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 18,
+        "y": 13
+      },
       "id": 158,
       "links": [],
       "options": {
@@ -917,7 +995,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 15
+        "y": 16
       },
       "id": 97,
       "panels": [],
@@ -983,7 +1061,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 16
+        "y": 17
       },
       "id": 106,
       "options": {
@@ -1073,7 +1151,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 16
+        "y": 17
       },
       "id": 107,
       "options": {
@@ -1163,7 +1241,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 16
+        "y": 17
       },
       "id": 108,
       "options": {
@@ -1253,7 +1331,7 @@
         "h": 9,
         "w": 8,
         "x": 0,
-        "y": 24
+        "y": 25
       },
       "id": 136,
       "options": {
@@ -1345,7 +1423,7 @@
         "h": 9,
         "w": 8,
         "x": 8,
-        "y": 24
+        "y": 25
       },
       "id": 180,
       "options": {
@@ -1436,7 +1514,7 @@
         "h": 9,
         "w": 8,
         "x": 16,
-        "y": 24
+        "y": 25
       },
       "id": 2,
       "options": {
@@ -1568,6 +1646,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Cluster 7 mode",
-  "uid": "mITXSmzVz",
-  "version": 3
+  "uid": "KJs714m4z",
+  "version": 4
 }

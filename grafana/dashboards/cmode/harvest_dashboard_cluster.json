@@ -20,7 +20,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "8.1.2"
+      "version": "8.1.8"
     },
     {
       "type": "datasource",
@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1656680432762,
+  "iteration": 1660131659137,
   "links": [],
   "panels": [
     {
@@ -587,85 +587,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Max Disk Utilization by Node",
-      "type": "bargauge"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 2,
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "semi-dark-purple",
-                "value": null
-              },
-              {
-                "color": "dark-blue",
-                "value": 75
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 18,
-        "y": 10
-      },
-      "id": 158,
-      "links": [],
-      "options": {
-        "displayMode": "gradient",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true,
-        "text": {}
-      },
-      "pluginVersion": "8.1.8",
-      "repeatDirection": "h",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "100*sum(aggr_space_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})/sum(aggr_space_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Capacity used",
+      "title": "Max Disk Utilization by Cluster",
       "type": "bargauge"
     },
     {
@@ -830,7 +752,7 @@
         "h": 7,
         "w": 18,
         "x": 0,
-        "y": 22
+        "y": 8
       },
       "id": 177,
       "interval": "",
@@ -911,13 +833,169 @@
       "type": "table"
     },
     {
+      "cacheTimeout": null,
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-purple",
+                "value": null
+              },
+              {
+                "color": "dark-blue",
+                "value": 75
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 18,
+        "y": 10
+      },
+      "id": 220,
+      "links": [],
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "text": {}
+      },
+      "pluginVersion": "8.1.8",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "avg(node_disk_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Max Disk Utilization by Cluster",
+      "type": "bargauge"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-purple",
+                "value": null
+              },
+              {
+                "color": "dark-blue",
+                "value": 75
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 18,
+        "y": 13
+      },
+      "id": 158,
+      "links": [],
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "text": {}
+      },
+      "pluginVersion": "8.1.8",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "100*sum(aggr_space_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})/sum(aggr_space_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Capacity used",
+      "type": "bargauge"
+    },
+    {
       "collapsed": true,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 29
+        "y": 16
       },
       "id": 198,
       "panels": [
@@ -1923,7 +2001,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 17
       },
       "id": 97,
       "panels": [
@@ -2483,7 +2561,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 18
       },
       "id": 184,
       "panels": [
@@ -3157,7 +3235,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 19
       },
       "id": 214,
       "panels": [
@@ -3686,6 +3764,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Cluster",
-  "uid": "k5a_L6q7z",
-  "version": 8
+  "uid": "1zy71Vi4z",
+  "version": 9
 }
