@@ -37,7 +37,7 @@ When using `url`,  the `bucket`, `org`, `port`, and `precision` fields will be i
 
 ### Example
 
-snippet from `harvest.yml` using `addr`:
+snippet from `harvest.yml` using `addr`: (supports HTTP only))
 
 ```yaml
 Exporters:
@@ -49,13 +49,13 @@ Exporters:
     token: ZTTrt%24@#WNFM2VZTTNNT25wZWUdtUmhBZEdVUmd3dl@# 
 ```
 
-snippet from `harvest.yml` using `url`:
+snippet from `harvest.yml` using `url`: (supports both HTTP/HTTPS))
 
 ```yaml
 Exporters:
   influx2:
     exporter: InfluxDB
-    url: http://localhost:8086/api/v2/write?org=harvest&bucket=harvest&precision=s
+    url: https://localhost:8086/api/v2/write?org=harvest&bucket=harvest&precision=s
     token: my-token== 
 ```
 
