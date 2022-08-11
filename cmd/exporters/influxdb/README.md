@@ -24,16 +24,16 @@ If `url` is specified, you must add all arguments to the url.
 Harvest will do no additional processing and use exactly what you specify. (e.g. `url: https://influxdb.example.com:8086/write?db=netapp&u=user&p=pass&precision=2`. 
 When using `url`,  the `bucket`, `org`, `port`, and `precision` fields will be ignored.
 
-| parameter        | type                        | description                                                                                        | default |
-|------------------|-----------------------------|----------------------------------------------------------------------------------------------------|---------|
-| `url`            | string                      | URL of the database, format: `SCHEME://HOST[:PORT]`                                                |         |
-| `addr`           | string                      | address of the database, format: `HOST` (HTTP only)                                                |         |
-| `port`           | int, optional               | port of the database                                                                               | `8086`  |
-| `bucket`         | string, required with `url` | InfluxDB bucket to write                                                                           |         |
-| `org`            | string, required with `url` | InfluxDB organization name                                                                         |         |
-| `precision`      | string, required with `url` | Preferred timestamp precision in seconds                                                           | `2`     |
-| `client_timeout` | int, optional               | client timeout in seconds                                                                          | `5`     |
-| `token`          | string                      | [token for authentication](https://docs.influxdata.com/influxdb/v2.0/security/tokens/view-tokens/) |         |
+| parameter        | type                         | description                                                                                        | default |
+|------------------|------------------------------|----------------------------------------------------------------------------------------------------|---------|
+| `url`            | string                       | URL of the database, format: `SCHEME://HOST[:PORT]`                                                |         |
+| `addr`           | string                       | address of the database, format: `HOST` (HTTP only)                                                |         |
+| `port`           | int, optional                | port of the database                                                                               | `8086`  |
+| `bucket`         | string, required with `addr` | InfluxDB bucket to write                                                                           |         |
+| `org`            | string, required with `addr` | InfluxDB organization name                                                                         |         |
+| `precision`      | string, required with `addr` | Preferred timestamp precision in seconds                                                           | `2`     |
+| `client_timeout` | int, optional                | client timeout in seconds                                                                          | `5`     |
+| `token`          | string                       | [token for authentication](https://docs.influxdata.com/influxdb/v2.0/security/tokens/view-tokens/) |         |
 
 ### Example
 
