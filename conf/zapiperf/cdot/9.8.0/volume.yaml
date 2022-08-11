@@ -39,9 +39,6 @@ plugins:
 #        - volume `MDV_CRS_.+`
 #        # Exclude Metadata volumes, Audit volumes have a “MDV_aud_” prefix
 #        - volume `MDV_aud_.+`
-  - MetricAgent:
-      compute_metric:
-        - throughput ADD read_data write_data
 
 export_options:
   instance_keys:
