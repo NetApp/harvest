@@ -27,6 +27,8 @@
 
 **Known Issues**
 
+Podman is unable to pull from repo `cr.netapp.io`. Until [issue](https://github.com/containers/podman/issues/15187) is resolved, Podman users can use harvest container image from repo `podman pull netappdownloads.jfrog.io/oss-docker-harvest-production/harvest:latest`
+
 **IMPORTANT** 7-mode filers that are not on the latest release of ONTAP may experience TLS connection issues with errors like `tls: server selected unsupported protocol version 301` This is caused by a change in Go 1.18. The [default for TLS client connections was changed to TLS 1.2](https://tip.golang.org/doc/go1.18#tls10) in Go 1.18. Please upgrade your 7-mode filers (recommended) or set `tls_min_version: tls10` in your `harvest.yml` [poller section](https://github.com/NetApp/harvest/tree/release/22.05.0#pollers). See #1007 for more details.
 
 The Unix collector is unable to monitor pollers running in containers. See [#249](https://github.com/NetApp/harvest/issues/249) for details.
