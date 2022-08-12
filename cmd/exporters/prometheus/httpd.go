@@ -3,7 +3,7 @@
  */
 
 // Package prometheus creates an HTTP end-point for Prometheus to scrape on `/metrics`
-//It also publishes a list of available metrics for human consumption on `/`
+// It also publishes a list of available metrics for human consumption on `/`
 package prometheus
 
 import (

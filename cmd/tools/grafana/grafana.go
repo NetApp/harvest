@@ -537,9 +537,9 @@ type change struct {
 }
 
 // addMultiSelect does the following:
-// 	- sets "mutli: true" for each query variable
-//  - updates the variables definition and query to use a regex equality (=~) instead of an exact match (=)
-//  - updates all panels target's expressions to also use a regex equality (=~) instead of an exact match (=)
+//   - sets "mutli: true" for each query variable
+//   - updates the variables definition and query to use a regex equality (=~) instead of an exact match (=)
+//   - updates all panels target's expressions to also use a regex equality (=~) instead of an exact match (=)
 func addMultiSelect(dashboard []byte) []byte {
 	var err error
 	changes := make([]change, 0)
