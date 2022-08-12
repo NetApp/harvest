@@ -58,7 +58,7 @@
   "links": [],
   "panels": [
     {
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -444,5 +444,5 @@
   "timezone": "",
   "title": "ONTAP: Quota",
   "uid": "_wtgEViVk1",
-  "version": 14
+  "version": 1
 }
