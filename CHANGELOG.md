@@ -2,32 +2,32 @@
 
 [Releases](https://github.com/NetApp/harvest/releases)
 
-## 22.08.0 / 2022-08-18
+## 22.08.0 / 2022-08-19
 <!-- git log --no-decorate --no-merges --cherry-pick --right-only --oneline origin/release/22.05.0...origin/release/22.08.0 -->
 
 :rocket: Highlights of this major release include:
 
-- :sparkler: ONTAP EMS(event management system) collector
+- :sparkler: an ONTAP event management system (EMS) events collector
 
-- We've made lots of improvements to the REST Perf collector. The REST Perf collector  should be considered early-access as we continue to improve it.
+- New Headroom dashboard added in this release 
 
-- Headroom dashboard 
+- We've made lots of improvements to the REST Perf collector. The REST Perf collector should be considered early-access as we continue to improve it. This feature requires ONTAP versions 9.11.1 and higher.
 
-- New `max` plugin allows creates a new collection of metrics by calculating max of metric values from an existing Matrix for a given label.
+- New [`max` plugin](https://github.com/NetApp/harvest/blob/main/cmd/poller/plugin/README.md#max) that creates new metrics from the maximum of existing metrics by label.
 
-- `compute_metric` plugin is now part of `MetricAgent` from `LabelAgent`. This rule creates a new metric (of type float64) using the provided scalar or an existing metric value combined with a mathematical operation.
+- New [`compute_metric` plugin](https://github.com/NetApp/harvest/blob/main/cmd/poller/plugin/README.md#compute_metric) that creates new metrics by combining existing metrics with mathematical operations.
 
 - 48 feature, 45 bug fixes, and 11 documentation commits this release
 
-**IMPORTANT** :bangbang: NetApp is moving their communities from Slack to [NetApp's Discord](https://discord.gg/ZmmWPHTBHw) with a plan to lock this Slack instance at the end of August. Please join us over there! [#harvest](https://discordapp.com/channels/855068651522490400/1001963189124206732)
+**IMPORTANT** :bangbang: NetApp is moving their communities from Slack to [NetApp's Discord](https://discord.gg/ZmmWPHTBHw) with a plan to lock the Slack channel at the end of August. Please join us on [Discord](https://discordapp.com/channels/855068651522490400/1001963189124206732)!
 
-**IMPORTANT** :bangbang: Prometheus Version 2.26 or higher is needed for EMS Collector. 
+**IMPORTANT** :bangbang: Prometheus version `2.26` or higher is required for the EMS Collector. 
 
-**IMPORTANT** :bangbang: After upgrade, don't forget to re-import your dashboards, so you get all the new enhancements and fixes. You can import via `bin/harvest/grafana import` cli or from the Grafana UI.
+**IMPORTANT** :bangbang: After upgrade, don't forget to re-import your dashboards, so you get all the new enhancements and fixes. You can import them via the `bin/harvest/grafana import` CLI or from the Grafana UI.
 
 **Known Issues**
 
-Podman is unable to pull from repo `cr.netapp.io`. Until [issue](https://github.com/containers/podman/issues/15187) is resolved, Podman users can use harvest container image from repo `podman pull netappdownloads.jfrog.io/oss-docker-harvest-production/harvest:latest`
+Podman is unable to pull from NetApp's container registry `cr.netapp.io`. Until [issue](https://github.com/containers/podman/issues/15187) is resolved, Podman users can pull from a separate proxy like this `podman pull netappdownloads.jfrog.io/oss-docker-harvest-production/harvest:latest`.
 
 **IMPORTANT** 7-mode filers that are not on the latest release of ONTAP may experience TLS connection issues with errors like `tls: server selected unsupported protocol version 301` This is caused by a change in Go 1.18. The [default for TLS client connections was changed to TLS 1.2](https://tip.golang.org/doc/go1.18#tls10) in Go 1.18. Please upgrade your 7-mode filers (recommended) or set `tls_min_version: tls10` in your `harvest.yml` [poller section](https://github.com/NetApp/harvest/tree/release/22.05.0#pollers). See #1007 for more details.
 
@@ -35,77 +35,77 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 
 ### Enhancements
 
-- :sparkler: Harvest adds ONTAP [EMS](https://github.com/NetApp/harvest/blob/main/cmd/collectors/ems/README.md) collector in this release. It collects ONTAP events and exports to Prometheus database. it also integrates with the Prometheus AlertManager.
+- :sparkler: Harvest adds an [ONTAP event management system (EMS) events](https://github.com/NetApp/harvest/blob/main/cmd/collectors/ems/README.md) collector in this release. It collects ONTAP events, exports them to Prometheus, and provides integration with Prometheus AlertManager.
 
 - New Harvest Headroom dashboard. [#1039](https://github.com/NetApp/harvest/issues/1039) Thanks to @faguayot for reporting.
 
 - We've made lots of improvements to the REST Perf collector and filled several gaps in this release. [#881](https://github.com/NetApp/harvest/issues/881)
 
-- Harvest should support request/response logging in Rest/RestPerf Collector.
+- Harvest Power dashboard should include `Min Ambient Temp` and `Min Temp`. Thanks to Papadopoulos Anastasios for reporting. 
 
-- Harvest Power dashboard should show `Min Ambient Temp` and `Min Temp`. 
+- Harvest Disk dashboard should include the `Back-to-back CP Count` and `Write Latency` metrics. [#1040](https://github.com/NetApp/harvest/issues/1040) Thanks to @faguayot for reporting.
 
-- Harvest Disk dashboard should show `Back-to-back CP Count` and `Write Latency`. [#1040](https://github.com/NetApp/harvest/issues/1040) Thanks to @faguayot for reporting.
+- Rest templates should be disabled [by default](https://github.com/NetApp/harvest/blob/main/conf/rest/default.yaml) until ONTAP removes ZAPI support. That way, Harvest does not double collect and store metrics.
 
-- Rest templates in [default.yaml](https://github.com/NetApp/harvest/blob/main/conf/rest/default.yaml) are disabled until ZAPI are removed.
-
-- Harvest max log file size is reduced from 10mb to 5mb. Also max number of log files are reduced from 10 to 5.
-
-- Harvest should consolidate log messages and reduce noise.
-
-- Harvest dashboards name prefix should be `ONTAP:` intead of `NetApp Detail:`. [#1080](https://github.com/NetApp/harvest/pull/1080). Thanks to `Martin Möbius` for reporting.
+- Harvest dashboards name prefix should be `ONTAP:` instead of `NetApp Detail:`. [#1080](https://github.com/NetApp/harvest/pull/1080). Thanks to `Martin Möbius` for reporting.
 
 - Harvest Qtree dashboard should show `Total Qtree IOPs` and `Internal IOPs` panels and `Qtree` filter. [#1079](https://github.com/NetApp/harvest/issues/1079) Thanks to @mamoep for reporting.
 
-- New [MetricAgent](https://github.com/NetApp/harvest/blob/main/cmd/poller/plugin/README.md#metricagent) plugin. It is used to manipulate `metrics` based on rules just like `LabelAgent` for `labels`.
-
 - Harvest Cluster dashboard should show `SVM Performance` panel. [#1117](https://github.com/NetApp/harvest/issues/1117) Thanks to @Falcon667 for reporting.
 
-- Merge `SnapMirror` and `Data Protection` dashboards into one. [#1082](https://github.com/NetApp/harvest/issues/1082). Thanks to `Martin Möbius` for reporting.
+- Combine `SnapMirror` and `Data Protection` dashboards. [#1082](https://github.com/NetApp/harvest/issues/1082). Thanks to `Martin Möbius` for reporting.
 
-- `bin/zapi` supports multiple performance counters. [#1167](https://github.com/NetApp/harvest/pull/1167)
+- `vscan` performance object should be enabled by default. [#1182](https://github.com/NetApp/harvest/pull/1182) Thanks to `Gabriel Conne` for reporting on Slack.
 
-- New [Max](https://github.com/NetApp/harvest/blob/main/cmd/poller/plugin/README.md#max) plugin. It creates a new collection of metrics by calculating max of metric values from an existing Matrix for a given label.
+- Lun dashboard should use `topk` range. [#1184](https://github.com/NetApp/harvest/pull/1184) Thanks to `Papadopoulos Anastasios` for reporting on Slack.
 
-- `vscan` performance object is enabled by default. [#1182](https://github.com/NetApp/harvest/pull/1182) Thanks to `Gabriel Conne` for reporting on Slack.
+- New [MetricAgent](https://github.com/NetApp/harvest/blob/main/cmd/poller/plugin/README.md#metricagent) plugin. It is used to manipulate `metrics` based on a set of rules.
 
-- Lun dashboard should use topk range.[#1184](https://github.com/NetApp/harvest/pull/1184)
+- New [Max](https://github.com/NetApp/harvest/blob/main/cmd/poller/plugin/README.md#max) plugin. It creates a new collection of metrics by calculating max of metric values from an existing matrix for a given label.
 
-- Add filter support for Private Rest CLI.
+- `bin/zapi` should support querying multiple performance counters. [#1167](https://github.com/NetApp/harvest/pull/1167)
+
+- Harvest REST private CLI should include filter support
+
+- Harvest should support request/response logging in Rest/RestPerf Collector.
+
+- Harvest maximum log file size is reduced from 10mb to 5mb. The maximum number of log files are reduced from 10 to 5.
+
+- Harvest should consolidate log messages and reduce noise.
 
 ### Fixes
 
 - Missing Ambient Temperature for AFF900 in Power Dashboard. [#1173](https://github.com/NetApp/harvest/issues/1173) Thanks to @iStep2Step for reporting.
 
-- Zerolog console logger fails to log stack traces. [#1044](https://github.com/NetApp/harvest/pull/1044)
+- Flexgroup latency should match the values reported by ONTAP CLI. [#1060](https://github.com/NetApp/harvest/pull/1060) Thanks to @josepaulog for reporting.
 
-- Flexgroup latency should match with ontap cli. [#1060](https://github.com/NetApp/harvest/pull/1060) Thanks to @josepaulog for reporting.
+- Perf Zapi Volume label should match Zapi Volume label. The label `type` was changed to `style` for Perf ZAPI Volume. [#1055](https://github.com/NetApp/harvest/pull/1055) Thanks to Papadopoulos Anastasios for reporting.
 
-- Perf Zapi volume label should match with Zapi Volume label. The label `type` was changed to `style` for perf zapi volume. [#1055](https://github.com/NetApp/harvest/pull/1055) Thanks to Papadopoulos Anastasios for reporting.
+- Zapi:SecurityCert should handle certificates per SVM instead of reporting `duplicate instance key` errors. [#1075](https://github.com/NetApp/harvest/issues/1075) Thanks to @mamoep for reporting.
 
-- Error `duplicate instance key` for Zapi:SecurityCert. [#1075](https://github.com/NetApp/harvest/issues/1075) Thanks to @mamoep for reporting.
-
-- Error `duplicate instance key` for Zapi:SecurityAccount. [#1088](https://github.com/NetApp/harvest/issues/1088) Thanks to @mamoep for reporting.
+- Zapi:SecurityAccount should handle per switch SNMP users instead of reporting `duplicate instance key` errors. [#1088](https://github.com/NetApp/harvest/issues/1088) Thanks to @mamoep for reporting.
 
 - Wrong throughput units in Disk dashboard. [#1091](https://github.com/NetApp/harvest/issues/1091) Thanks to @Falcon667 for reporting.
 
-- Qtree Dashboard shows no data when svm/volume are selected from dropdown. [#1099](https://github.com/NetApp/harvest/issues/1099) Thanks to `Papadopoulos Anastasios` for reporting.
+- Qtree Dashboard shows no data when SVM/Volume are selected from dropdown. [#1099](https://github.com/NetApp/harvest/issues/1099) Thanks to `Papadopoulos Anastasios` for reporting.
 
 - `Virus Scan connections Active panel` in SVM dashboard shows decimal places in Y axis. [#1101](https://github.com/NetApp/harvest/issues/1101) Thanks to `Rene Meier` for reporting.
 
-- Add description about `Disk Utilization per Aggregate` in Disk Dashboard. [#1193](https://github.com/NetApp/harvest/issues/1193) Thanks to @faguayot for reporting.
+- Add `Disk Utilization per Aggregate` description in Disk Dashboard. [#1193](https://github.com/NetApp/harvest/issues/1193) Thanks to @faguayot for reporting.
 
 - Prometheus exporter should escape label_value. [#1128](https://github.com/NetApp/harvest/issues/1128) Thanks to @vavdoshka for reporting.
 
-- Grafana import dashboard fails if anonymous access is enabled. [@1132](https://github.com/NetApp/harvest/issues/1132) Thanks @istep2step for reporting.
+- Grafana import dashboard fails if anonymous access is enabled. [@1132](https://github.com/NetApp/harvest/issues/1132) Thanks @iStep2Step for reporting.
 
-- Improve color consistency and hover info on Compliance/Data Protection dashboard. [#1083](https://github.com/NetApp/harvest/issues/1083)  Thanks to `Rene Meier` for reporting.
+- Improve color consistency and hover information on Compliance/Data Protection dashboards. [#1083](https://github.com/NetApp/harvest/issues/1083)  Thanks to `Rene Meier` for reporting.
 
-- Compliance & Security Dashboard - Text not readable with Light Theme. [#1078](https://github.com/NetApp/harvest/issues/1078) Thanks to @mamoep for reporting.
+- Compliance & Security Dashboards the text is unreadable with Grafana light theme. [#1078](https://github.com/NetApp/harvest/issues/1078) Thanks to @mamoep for reporting.
 
 - InfluxDB exporter should not require bucket, org, port, or precision fields when using url. [#1155](https://github.com/NetApp/harvest/issues/1155) Thanks to `li fi` for reporting.
 
-- `Node CPU Busy` and `Disk Utilization` should match with ONTAP `sysstat -m` CLI. [#1152](https://github.com/NetApp/harvest/issues/1152) Thanks to `Papadopoulos Anastasios` for reporting.
+- `Node CPU Busy` and `Disk Utilization` should match the same metrics reported by ONTAP `sysstat -m` CLI. [#1152](https://github.com/NetApp/harvest/issues/1152) Thanks to `Papadopoulos Anastasios` for reporting.
+
+- Zerolog console logger fails to log stack traces. [#1044](https://github.com/NetApp/harvest/pull/1044)
 
 ---
 
