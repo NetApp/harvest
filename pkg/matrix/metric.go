@@ -14,6 +14,7 @@ package matrix
 import (
 	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
+	"github.com/netapp/harvest/v2/pkg/logging"
 )
 
 type Metric interface {
@@ -83,7 +84,7 @@ type Metric interface {
 	// currently only supported for float64!
 	GetRecords() []bool
 	GetValuesFloat64() []float64
-	Delta(Metric) error
+	Delta(Metric, *logging.Logger) error
 	Divide(Metric) error
 	DivideWithThreshold(Metric, int) error
 	MultiplyByScalar(int) error
@@ -201,7 +202,7 @@ func (me *AbstractMetric) SetValueNAN(i *Instance) {
 	me.record[i.index] = false
 }
 
-func (me *AbstractMetric) Delta(Metric) error {
+func (me *AbstractMetric) Delta(Metric, *logging.Logger) error {
 	return errs.New(errs.ErrImplement, me.dtype)
 }
 

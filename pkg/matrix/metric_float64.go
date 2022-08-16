@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/color"
 	"github.com/netapp/harvest/v2/pkg/errs"
+	"github.com/netapp/harvest/v2/pkg/logging"
 	"strconv"
 )
 
@@ -216,7 +217,7 @@ func (me *MetricFloat64) GetValuesFloat64() []float64 {
 	return me.values
 }
 
-func (me *MetricFloat64) Delta(s Metric) error {
+func (me *MetricFloat64) Delta(s Metric, logger *logging.Logger) error {
 	sValues := s.GetValuesFloat64()
 	sRecord := s.GetRecords()
 	if len(me.values) != len(sValues) {
@@ -224,7 +225,17 @@ func (me *MetricFloat64) Delta(s Metric) error {
 	}
 	for i := range me.values {
 		if me.record[i] && sRecord[i] {
+			v := me.values[i]
 			me.values[i] -= sValues[i]
+			// if negative counter then set counter value to 0
+			if me.values[i] < 0 {
+				logger.Warn().
+					Str("metric", me.GetName()).
+					Float64("minuend", v).
+					Float64("subtrahend", sValues[i]).
+					Msg("Negative counter detected")
+				me.values[i] = 0
+			}
 		}
 	}
 	return nil
