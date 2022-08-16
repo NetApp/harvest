@@ -754,7 +754,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	// calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
-	if err = timestamp.Delta(mat.GetMetric("timestamp")); err != nil {
+	if err = timestamp.Delta(mat.GetMetric("timestamp"), r.Logger); err != nil {
 		r.Logger.Error().Err(err).Msg("(timestamp) calculate delta:")
 	}
 
@@ -779,7 +779,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		// all other properties - first calculate delta
-		if err = metric.Delta(mat.GetMetric(key)); err != nil {
+		if err = metric.Delta(mat.GetMetric(key), r.Logger); err != nil {
 			r.Logger.Error().Err(err).Str("key", key).Msg("Calculate delta")
 			continue
 		}
