@@ -1,7 +1,8 @@
-
 name:                 QuotaReport
 query:                quota-report-iter
 object:               quota_report
+
+client_timeout:           2m
 
 counters:
   quota:

@@ -21,6 +21,7 @@ func (r *QuotaReport) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		uType := instance.GetLabel("type")
 
 		// ignore default quotas and set user/group
+		// Rest uses service side filtering to remove default records
 		if uType == "user" {
 			uName := instance.GetLabel("user_name")
 			uid := instance.GetLabel("user_id")

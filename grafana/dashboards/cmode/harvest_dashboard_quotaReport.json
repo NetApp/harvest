@@ -54,7 +54,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1660401564403,
+  "iteration": 1660664413256,
   "links": [],
   "panels": [
     {
@@ -319,7 +319,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "transparent",
+                      "color": "text",
                       "value": null
                     },
                     {
@@ -335,7 +335,7 @@
               },
               {
                 "id": "custom.displayMode",
-                "value": "color-background"
+                "value": "color-text"
               }
             ]
           },
@@ -352,6 +352,7 @@
                     "options": {
                       "match": "empty",
                       "result": {
+                        "color": "text",
                         "index": 0,
                         "text": "No hard Limit"
                       }
@@ -366,7 +367,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "transparent",
+                      "color": "text",
                       "value": null
                     },
                     {
@@ -382,7 +383,7 @@
               },
               {
                 "id": "custom.displayMode",
-                "value": "color-background"
+                "value": "color-text"
               },
               {
                 "id": "unit",
@@ -510,7 +511,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(node_labels{system_type!=\"7mode\"}, datacenter)",
+        "definition": "label_values(volume_labels{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -520,7 +521,7 @@
         "name": "Datacenter",
         "options": [],
         "query": {
-          "query": "label_values(node_labels{system_type!=\"7mode\"}, datacenter)",
+          "query": "label_values(volume_labels{system_type!=\"7mode\"}, datacenter)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -537,7 +538,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(node_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"}, cluster)",
+        "definition": "label_values(volume_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"}, cluster)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -548,7 +549,7 @@
         "name": "Cluster",
         "options": [],
         "query": {
-          "query": "label_values(node_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"}, cluster)",
+          "query": "label_values(volume_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"}, cluster)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -629,6 +630,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Quota",
-  "uid": "_wtgEViVk1",
+  "uid": "JEMjALi4k",
   "version": 1
 }
