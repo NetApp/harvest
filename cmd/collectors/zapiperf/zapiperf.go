@@ -557,7 +557,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	// calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
-	if err = timestamp.Delta(m.GetMetric("timestamp")); err != nil {
+	if _, err = timestamp.Delta(m.GetMetric("timestamp")); err != nil {
 		me.Logger.Error().Stack().Err(err).Msg("(timestamp) calculate delta:")
 		// @TODO terminate since other counters will be incorrect
 	}
@@ -575,9 +575,19 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		// all other properties - first calculate delta
-		if err = metric.Delta(m.GetMetric(key)); err != nil {
-			me.Logger.Error().Stack().Err(err).Str("key", key).Msg("Calculate delta")
-			continue
+		if n, err := metric.Delta(m.GetMetric(key)); err != nil {
+			if errors.Is(err, matrix.ErrNegativeCounter) {
+				for k, v := range n {
+					me.Logger.Warn().
+						Str("metric", metric.GetName()).
+						Float64("minuend", k).
+						Float64("subtrahend", v).
+						Msg("Negative counter")
+				}
+			} else {
+				me.Logger.Error().Stack().Err(err).Str("key", key).Msg("Calculate delta")
+				continue
+			}
 		}
 
 		// DELTA - subtract previous value from current

@@ -16,4 +16,5 @@ const (
 	ErrDuplicateInstanceKey = matrixError("duplicate instance key")
 	ErrOverflow             = matrixError("overflow error")
 	ErrUnequalVectors       = matrixError("unequal vectors")
+	ErrNegativeCounter      = matrixError("negative counters")
 )

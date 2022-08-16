@@ -216,18 +216,26 @@ func (me *MetricFloat64) GetValuesFloat64() []float64 {
 	return me.values
 }
 
-func (me *MetricFloat64) Delta(s Metric) error {
+func (me *MetricFloat64) Delta(s Metric) (map[float64]float64, error) {
+	negativeCounterMap := make(map[float64]float64)
 	sValues := s.GetValuesFloat64()
 	sRecord := s.GetRecords()
 	if len(me.values) != len(sValues) {
-		return errs.New(ErrUnequalVectors, fmt.Sprintf("minuend=%d, subtrahend=%d", len(me.values), len(sValues)))
+		return nil, errs.New(ErrUnequalVectors, fmt.Sprintf("minuend=%d, subtrahend=%d", len(me.values), len(sValues)))
 	}
 	for i := range me.values {
 		if me.record[i] && sRecord[i] {
 			me.values[i] -= sValues[i]
+			if me.values[i] < 0 {
+				negativeCounterMap[me.values[i]] = sValues[i]
+				me.values[i] = 0
+			}
 		}
 	}
-	return nil
+	if len(negativeCounterMap) > 0 {
+		return negativeCounterMap, errs.New(ErrNegativeCounter, "")
+	}
+	return nil, nil
 }
 
 func (me *MetricFloat64) Divide(s Metric) error {

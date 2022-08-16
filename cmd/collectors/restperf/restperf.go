@@ -1,6 +1,7 @@
 package restperf
 
 import (
+	"errors"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/fcp"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/headroom"
@@ -754,7 +755,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	// calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
-	if err = timestamp.Delta(mat.GetMetric("timestamp")); err != nil {
+	if _, err = timestamp.Delta(mat.GetMetric("timestamp")); err != nil {
 		r.Logger.Error().Err(err).Msg("(timestamp) calculate delta:")
 	}
 
@@ -779,9 +780,19 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		// all other properties - first calculate delta
-		if err = metric.Delta(mat.GetMetric(key)); err != nil {
-			r.Logger.Error().Err(err).Str("key", key).Msg("Calculate delta")
-			continue
+		if n, err := metric.Delta(mat.GetMetric(key)); err != nil {
+			if errors.Is(err, matrix.ErrNegativeCounter) {
+				for k, v := range n {
+					r.Logger.Warn().
+						Str("metric", metric.GetName()).
+						Float64("minuend", k).
+						Float64("subtrahend", v).
+						Msg("Negative counter")
+				}
+			} else {
+				r.Logger.Error().Err(err).Str("key", key).Msg("Calculate delta")
+				continue
+			}
 		}
 
 		// DELTA - subtract previous value from current

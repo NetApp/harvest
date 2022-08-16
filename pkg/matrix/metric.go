@@ -83,7 +83,7 @@ type Metric interface {
 	// currently only supported for float64!
 	GetRecords() []bool
 	GetValuesFloat64() []float64
-	Delta(Metric) error
+	Delta(Metric) (map[float64]float64, error)
 	Divide(Metric) error
 	DivideWithThreshold(Metric, int) error
 	MultiplyByScalar(int) error
@@ -201,8 +201,8 @@ func (me *AbstractMetric) SetValueNAN(i *Instance) {
 	me.record[i.index] = false
 }
 
-func (me *AbstractMetric) Delta(Metric) error {
-	return errs.New(errs.ErrImplement, me.dtype)
+func (me *AbstractMetric) Delta(Metric) (map[float64]float64, error) {
+	return nil, errs.New(errs.ErrImplement, me.dtype)
 }
 
 func (me *AbstractMetric) Divide(Metric) error {
