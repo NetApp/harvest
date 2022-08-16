@@ -9,7 +9,9 @@
 
 - :sparkler: an ONTAP event management system (EMS) events collector
 
-- New Headroom dashboard added in this release 
+- Two new dashboards added in this release
+  - Headroom dashboard
+  - Quota dashboard
 
 - We've made lots of improvements to the REST Perf collector. The REST Perf collector should be considered early-access as we continue to improve it. This feature requires ONTAP versions 9.11.1 and higher.
 
@@ -38,6 +40,8 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 - :sparkler: Harvest adds an [ONTAP event management system (EMS) events](https://github.com/NetApp/harvest/blob/main/cmd/collectors/ems/README.md) collector in this release. It collects ONTAP events, exports them to Prometheus, and provides integration with Prometheus AlertManager.
 
 - New Harvest Headroom dashboard. [#1039](https://github.com/NetApp/harvest/issues/1039) Thanks to @faguayot for reporting.
+ 
+- New Quota dashboard. [#1111](https://github.com/NetApp/harvest/issues/1111) Thanks to @ev1963 for raising this feature request.
 
 - We've made lots of improvements to the REST Perf collector and filled several gaps in this release. [#881](https://github.com/NetApp/harvest/issues/881)
 
@@ -57,7 +61,7 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 
 - `vscan` performance object should be enabled by default. [#1182](https://github.com/NetApp/harvest/pull/1182) Thanks to `Gabriel Conne` for reporting on Slack.
 
-- Lun dashboard should use `topk` range. [#1184](https://github.com/NetApp/harvest/pull/1184) Thanks to `Papadopoulos Anastasios` for reporting on Slack.
+- Lun and Volume dashboard should use `topk` range. [#1184](https://github.com/NetApp/harvest/pull/1184) Thanks to `Papadopoulos Anastasios` for reporting on Slack. These changes make these dashboards more consistent with Harvest 1.6.
 
 - New [MetricAgent](https://github.com/NetApp/harvest/blob/main/cmd/poller/plugin/README.md#metricagent) plugin. It is used to manipulate `metrics` based on a set of rules.
 
@@ -104,6 +108,8 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 - InfluxDB exporter should not require bucket, org, port, or precision fields when using url. [#1155](https://github.com/NetApp/harvest/issues/1155) Thanks to `li fi` for reporting.
 
 - `Node CPU Busy` and `Disk Utilization` should match the same metrics reported by ONTAP `sysstat -m` CLI. [#1152](https://github.com/NetApp/harvest/issues/1152) Thanks to `Papadopoulos Anastasios` for reporting.
+
+- Harvest should detect counter overflow and report it as `0`. [#762] Thanks to @rodenj1 for reporting.
 
 - Zerolog console logger fails to log stack traces. [#1044](https://github.com/NetApp/harvest/pull/1044)
 
