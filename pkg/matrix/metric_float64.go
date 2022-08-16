@@ -227,6 +227,7 @@ func (me *MetricFloat64) Delta(s Metric, logger *logging.Logger) error {
 		if me.record[i] && sRecord[i] {
 			v := me.values[i]
 			me.values[i] -= sValues[i]
+			// if negative counter then set counter value to 0
 			if me.values[i] < 0 {
 				logger.Warn().
 					Str("metric", me.GetName()).
