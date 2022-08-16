@@ -15,6 +15,7 @@ objects:
   Node:                        node.yaml
   NtpServer:                   ntpserver.yaml
   Qtree:                       qtree.yaml
+  QuotaReport:                 quotaReport.yaml
   Security:                    security.yaml
   SecurityAccount:             security_account.yaml
   SecurityAuditDestination:    security_audit_dest.yaml

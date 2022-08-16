@@ -1,0 +1,48 @@
+name:                 QuotaReport
+query:                api/storage/quota/reports
+object:               quota_report
+
+client_timeout:           2m
+
+counters:
+  - ^^index
+  - ^qtree.name                             => qtree
+  - ^volume.name
+  - ^svm.name                               => svm
+  - ^type
+  - ^space.soft_limit                       => soft_disk_limit
+  - ^files.soft_limit                       => soft_file_limit
+  - ^space.hard_limit                       => disk_limit
+  - ^space.used.total                       => disk_used
+  - ^space.used.hard_limit_percent          => disk_hard_percent_used
+  - ^files.hard_limit                       => file_limit
+  - ^files.used.total                       => files_used
+  - ^files.used.hard_limit_percent          => file_hard_percent_used
+  - ^group.name                             => group_name
+  - ^users.0.name                           => user_name
+  - ^users.0.id                             => user_id
+  - filter:
+      - return_unmatched_nested_array_objects=true
+      - show_default_records=false
+
+
+plugins:
+  - QuotaReport
+
+export_options:
+  instance_keys:
+    - qtree
+    - volume
+    - svm
+  instance_labels:
+    - type
+    - soft_disk_limit
+    - soft_file_limit
+    - disk_limit
+    - disk_used
+    - file_limit
+    - files_used
+    - user
+    - group
+    - disk_hard_percent_used
+    - file_hard_percent_used

@@ -16,6 +16,7 @@ objects:
 #  Node:                        node.yaml
 #  NtpServer:                   ntpserver.yaml
 #  Port:                        port.yaml
+#  QuotaReport:                 quotaReport.yaml
 #  Qtree:                       qtree.yaml
 #  Security:                    security.yaml
 #  SecurityAccount:             security_account.yaml
@@ -32,4 +33,3 @@ objects:
 #  Support:                     support.yaml
 #  SVM:                         svm.yaml
 #  Volume:                      volume.yaml
-
