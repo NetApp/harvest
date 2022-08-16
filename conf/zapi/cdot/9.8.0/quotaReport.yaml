@@ -14,19 +14,14 @@ counters:
     - ^^soft-file-limit                       => soft_file_limit
     - ^^disk-limit                            => disk_limit
     - ^^disk-used                             => disk_used
-    - ^^disk-used-pct-disk-limit              => disk_used_pct_disk_limit
-    - ^^disk-used-pct-soft-disk-limit         => disk_used_pct_soft_disk_limit
+    - ^^disk-used-pct-disk-limit              => disk_hard_percent_used
     - ^^file-limit                            => file_limit
     - ^^files-used                            => files_used
-    - ^^files-used-pct-file-limit             => files_used_pct_file_limit
-    - ^^files-used-pct-soft-file-limit        => files_used_pct_soft_file_limit
-    - ^^security-style                        => security_style
-    - ^^threshold                             => threshold
+    - ^^files-used-pct-file-limit             => file_hard_percent_used
     - quota-users:
         - quota-user:
             - ^quota-user-id                   => user_id
             - ^quota-user-name                 => user_name
-            - ^quota-user-type                 => user_type
 
 plugins:
   - QuotaReport
@@ -44,16 +39,10 @@ export_options:
     - soft_file_limit
     - disk_limit
     - disk_used
-    - disk_used_pct_disk_limit
-    - disk_used_pct_soft_disk_limit
     - file_limit
     - files_used
-    - files_used_pct_file_limit
-    - files_used_pct_soft_file_limit
     - security_style
-    - threshold
-    - user_id
-    - user_name
-    - user_type
     - user
     - group
+    - disk_hard_percent_used
+    - file_hard_percent_used

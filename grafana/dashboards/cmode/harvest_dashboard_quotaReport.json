@@ -54,7 +54,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1660307445723,
+  "iteration": 1660401564403,
   "links": [],
   "panels": [
     {
@@ -97,8 +97,22 @@
                       }
                     },
                     "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "empty",
+                      "result": {
+                        "index": 1,
+                        "text": "Unlimited"
+                      }
+                    },
+                    "type": "special"
                   }
                 ]
+              },
+              {
+                "id": "unit",
+                "value": "decbytes"
               }
             ]
           },
@@ -119,8 +133,22 @@
                       }
                     },
                     "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "empty",
+                      "result": {
+                        "index": 1,
+                        "text": "Unlimited"
+                      }
+                    },
+                    "type": "special"
                   }
                 ]
+              },
+              {
+                "id": "unit",
+                "value": "decbytes"
               }
             ]
           },
@@ -141,6 +169,16 @@
                       }
                     },
                     "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "empty",
+                      "result": {
+                        "index": 1,
+                        "text": "Unlimited"
+                      }
+                    },
+                    "type": "special"
                   }
                 ]
               }
@@ -163,6 +201,16 @@
                       }
                     },
                     "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "empty",
+                      "result": {
+                        "index": 1,
+                        "text": "Unlimited"
+                      }
+                    },
+                    "type": "special"
                   }
                 ]
               }
@@ -201,6 +249,144 @@
               {
                 "id": "noValue",
                 "value": "-"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "qtree"
+            },
+            "properties": [
+              {
+                "id": "noValue",
+                "value": "-"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "disk_used"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": []
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "disk_used"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "disk_hard_percent_used"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "match": "empty",
+                      "result": {
+                        "index": 0,
+                        "text": "No Hard Limit"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "transparent",
+                      "value": null
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 75
+                    },
+                    {
+                      "color": "red",
+                      "value": 100
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "file_hard_percent_used"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "match": "empty",
+                      "result": {
+                        "index": 0,
+                        "text": "No hard Limit"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "transparent",
+                      "value": null
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 75
+                    },
+                    {
+                      "color": "red",
+                      "value": 100
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              },
+              {
+                "id": "unit",
+                "value": "percent"
               }
             ]
           }
@@ -254,36 +440,36 @@
             },
             "indexByName": {
               "Time": 0,
-              "Value": 26,
+              "Value": 20,
               "__name__": 1,
-              "cluster": 2,
-              "datacenter": 3,
-              "disk_limit": 8,
-              "disk_used": 12,
-              "disk_used_pct_disk_limit": 14,
-              "disk_used_pct_soft_disk_limit": 15,
-              "file_limit": 10,
-              "files_used": 13,
-              "files_used_pct_file_limit": 16,
-              "files_used_pct_soft_file_limit": 17,
+              "cluster": 3,
+              "datacenter": 2,
+              "disk_hard_percent_used": 8,
+              "disk_limit": 12,
+              "disk_used": 9,
+              "file_hard_percent_used": 10,
+              "file_limit": 14,
+              "files_used": 11,
               "group": 7,
-              "instance": 18,
-              "job": 19,
+              "instance": 16,
+              "job": 17,
               "qtree": 5,
-              "soft_disk_limit": 9,
-              "soft_file_limit": 11,
+              "soft_disk_limit": 13,
+              "soft_file_limit": 15,
               "svm": 4,
-              "threshold": 20,
-              "type": 25,
+              "type": 19,
               "user": 6,
-              "user_id": 21,
-              "user_name": 23,
-              "user_type": 22,
-              "volume": 24
+              "volume": 18
             },
             "renameByName": {
+              "disk_hard_percent_used": "% Space Used",
               "disk_limit": "Space Hard Limit",
+              "disk_percent_used": "% Space Used",
+              "disk_used": "Space Used",
+              "file_hard_percent_used": "% File Used",
               "file_limit": "Files Hard Limit",
+              "file_percent_used": "% Files Used",
+              "files_used": "Files Used",
               "soft_disk_limit": "Space Soft Limit",
               "soft_file_limit": "Files Soft Limit",
               "user_name": ""
@@ -357,7 +543,7 @@
         "hide": 0,
         "includeAll": true,
         "label": null,
-        "multi": true,
+        "multi": false,
         "multiFormat": "glob",
         "name": "Cluster",
         "options": [],
@@ -382,7 +568,7 @@
         "hide": 0,
         "includeAll": true,
         "label": null,
-        "multi": true,
+        "multi": false,
         "multiFormat": "glob",
         "name": "SVM",
         "options": [],
@@ -398,7 +584,7 @@
         "type": "query"
       },
       {
-        "allValue": null,
+        "allValue": "(.*)",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(quota_report_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"}, qtree)",
@@ -407,7 +593,7 @@
         "hide": 0,
         "includeAll": true,
         "label": null,
-        "multi": true,
+        "multi": false,
         "multiFormat": "glob",
         "name": "Qtree",
         "options": [],
@@ -425,7 +611,7 @@
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {
