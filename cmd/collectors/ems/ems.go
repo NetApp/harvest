@@ -296,7 +296,7 @@ func (e *Ems) getTimeStampFilter(clusterTime time.Time) string {
 		}
 		fromTime = clusterTime.Add(-dataDuration).Unix()
 	}
-	return "time=>=" + strconv.FormatInt(fromTime, 10)
+	return fmt.Sprintf("time=>=%d", fromTime)
 }
 
 func (e *Ems) fetchEMSData(href string) ([]gjson.Result, error) {
