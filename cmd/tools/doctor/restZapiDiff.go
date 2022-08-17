@@ -678,7 +678,7 @@ func getResponse(url string) (string, error) {
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalln(err)
+		log.Panicln(err)
 		return "", err
 	}
 	return string(body), nil
