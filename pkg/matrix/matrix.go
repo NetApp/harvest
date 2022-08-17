@@ -1,12 +1,13 @@
 /*
- * Copyright NetApp Inc, 2021 All rights reserved
+* Copyright NetApp Inc, 2021 All rights reserved
 
-   Package matrix provides the Matrix data-structure and auxiliary structures
-   for high performance storage, manipulation and transmission of numeric
-   metrics and string labels. See detailed documentation in README.md
+	Package matrix provides the Matrix data-structure and auxiliary structures
+	for high performance storage, manipulation and transmission of numeric
+	metrics and string labels. See detailed documentation in README.md
 
-   See attached README for examples
+	See attached README for examples
 */
+
 package matrix
 
 import (

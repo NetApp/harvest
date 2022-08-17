@@ -1,26 +1,27 @@
 /*
-	Copyright NetApp Inc, 2021 All rights reserved
+Copyright NetApp Inc, 2021 All rights reserved
 
-	ZapiPerf collects and processes metrics from the "perf" APIs of the
-	ZAPI protocol. This collector inherits some methods and fields of
-	the Zapi collector (as they use the same protocol). However,
-	ZapiPerf calculates final metric values from the deltas of two
-	consecutive polls.
+ZapiPerf collects and processes metrics from the "perf" APIs of the
+ZAPI protocol. This collector inherits some methods and fields of
+the Zapi collector (as they use the same protocol). However,
+ZapiPerf calculates final metric values from the deltas of two
+consecutive polls.
 
-	The exact formula of doing these calculations, depends on the property
-	of each counter and some counters require a "base-counter" additionally.
+The exact formula of doing these calculations, depends on the property
+of each counter and some counters require a "base-counter" additionally.
 
-	Counter properties and other metadata are fetched from the target system
-	during PollCounter() making the collector ONTAP-version independent.
+Counter properties and other metadata are fetched from the target system
+during PollCounter() making the collector ONTAP-version independent.
 
-	The collector maintains a cache of instances, updated periodically as well,
-	during PollInstance().
+The collector maintains a cache of instances, updated periodically as well,
+during PollInstance().
 
-	The source code prioritizes performance over simplicity/readability.
-	Additionally, some objects (e.g. workloads) come with twists that
-	force the collector to do acrobatics. Don't expect to easily
-	comprehend what comes below.
+The source code prioritizes performance over simplicity/readability.
+Additionally, some objects (e.g. workloads) come with twists that
+force the collector to do acrobatics. Don't expect to easily
+comprehend what comes below.
 */
+
 package zapiperf
 
 import (

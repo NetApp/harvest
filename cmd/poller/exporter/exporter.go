@@ -1,10 +1,11 @@
 /*
-	Copyright NetApp Inc, 2021 All rights reserved
+Copyright NetApp Inc, 2021 All rights reserved
 
-	Package exporter provides the Exporter interface and
-	type AbstractExporter that implements most basic
-	functions.
+Package exporter provides the Exporter interface and
+type AbstractExporter that implements most basic
+functions.
 */
+
 package exporter
 
 import (

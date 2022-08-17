@@ -1,25 +1,25 @@
 /*
-	Copyright NetApp Inc, 2021 All rights reserved
+Copyright NetApp Inc, 2021 All rights reserved
 
-	Package poller implements the program that monitors a target system.
-	This can be either a remote host or the local system. Poller is however
-	agnostic about the target system and the APIs used to communicate with it.
+Package poller implements the program that monitors a target system.
+This can be either a remote host or the local system. Poller is however
+agnostic about the target system and the APIs used to communicate with it.
 
-	Polling the target is done by collectors (sometimes plugins). Conversely,
-	storing collected data is done by exporters. All the poller does is
-	initialize the collectors and exporters defined in its configuration
-	and start them up. All poller parameters are passed on to the collectors.
-	Conversely, exporters get only what is explicitly defined as their
-	parameters.
+Polling the target is done by collectors (sometimes plugins). Conversely,
+storing collected data is done by exporters. All the poller does is
+initialize the collectors and exporters defined in its configuration
+and start them up. All poller parameters are passed on to the collectors.
+Conversely, exporters get only what is explicitly defined as their
+parameters.
 
-	After start-up, poller will periodically check the status of collectors
-	and exporters, ping the target system, generate metadata and do some
-	housekeeping.
+After start-up, poller will periodically check the status of collectors
+and exporters, ping the target system, generate metadata and do some
+housekeeping.
 
-	Usually the poller will run as a daemon. In this case it will
-	write logs to a file. For debugging and testing
-	it can also be started as a foreground process, in this case
-	logs are sent to STDOUT.
+Usually the poller will run as a daemon. In this case it will
+write logs to a file. For debugging and testing
+it can also be started as a foreground process, in this case
+logs are sent to STDOUT.
 */
 package main
 

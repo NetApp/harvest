@@ -285,9 +285,10 @@ func sortParams(pathItem spec.PathItem) func(i int, j int) bool {
 // readSwagger reads the yaml swagger file from the local filesystem and converts it into a spec.Swagger struct
 // and pulls out the collection apis
 // This is done by:
-//	1. unmarshalling the yaml swagger into a map
+//  1. unmarshalling the yaml swagger into a map
 //  2. converting the map into a json []byte
 //  3. converting the []byte into the spec.Swagger struct
+//
 // Step 2 is required because spec.Swagger (un)marshalling code is written with json tags instead of yaml tags
 func readSwagger(args Args) (ontap, error) {
 	contents, err := os.ReadFile(args.SwaggerPath)

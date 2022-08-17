@@ -1,16 +1,18 @@
 /*
- * Copyright NetApp Inc, 2021 All rights reserved
+  - Copyright NetApp Inc, 2021 All rights reserved
 
 NetApp Harvest : the swiss-army-knife for datacenter monitoring
 
 Authors:
-   Georg Mey & Vachagan Gratian
+
+	Georg Mey & Vachagan Gratian
+
 Contact:
-   ng-harvest-maintainers@netapp.com
+
+	ng-harvest-maintainers@netapp.com
 
 This project is based on NetApp Harvest, authored by
 Chris Madden in 2015.
-
 */
 package main
 

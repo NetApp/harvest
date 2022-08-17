@@ -219,7 +219,7 @@ func getPollerAndAddr() (*conf.Poller, string, error) {
 	return poller, poller.Addr, nil
 }
 
-//FetchForCli used for CLI only
+// FetchForCli used for CLI only
 func FetchForCli(client *Client, href string, records *[]any, downloadAll bool) error {
 	getRest, err := client.GetRest(href)
 	if err != nil {

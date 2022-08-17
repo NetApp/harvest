@@ -1,14 +1,16 @@
 /*
-	Copyright NetApp Inc, 2021 All rights reserved
+Copyright NetApp Inc, 2021 All rights reserved
 
-	This file contains helper functions and methods for Poller,
-	AbstractCollector and collectors
+This file contains helper functions and methods for Poller,
+AbstractCollector and collectors
 
-	@TODO: review which functions really belong here
-	@TODO: review which methods should actually be functions
-		(e.g. ImportSubTemplate is not abstract enough to be a method
-		of AbstractCollector)
+@TODO: review which functions really belong here
+@TODO: review which methods should actually be functions
+
+	(e.g. ImportSubTemplate is not abstract enough to be a method
+	of AbstractCollector)
 */
+
 package collector
 
 import (
@@ -52,7 +54,6 @@ var versionRegex = regexp.MustCompile(`\d+\.\d+\.\d+`)
 // @model		- ONTAP model, either cdot or 7mode
 // @filename	- name of the subtemplate
 // @version		- ONTAP version triple (generation, major, minor)
-//
 func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int) (*node.Node, string, error) {
 
 	var (
@@ -158,7 +159,7 @@ func (c *AbstractCollector) GetTemplatePathPrefix(model string) string {
 	return path.Join(c.Options.HomePath, "conf/", strings.ToLower(c.Name), model)
 }
 
-//getClosestIndex returns the closest left match to the sorted list of input versions
+// getClosestIndex returns the closest left match to the sorted list of input versions
 // returns -1 when the versions list is empty
 // returns equal or closest match to the left
 func getClosestIndex(versions []*version.Version, version *version.Version) int {

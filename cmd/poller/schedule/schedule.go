@@ -1,34 +1,34 @@
 /*
-	Copyright NetApp Inc, 2021 All rights reserved
+		Copyright NetApp Inc, 2021 All rights reserved
 
-	Package Schedule provides a mechanism to run tasks at fixed time interals.
-	It is intended to be used by collectors, but can be used by any other
-	package as well. Tasks can be dynamically pointed to the poll functions
-	of the collector. (This why poll functions of collectors are public and
-	have the same signature).
+		Package Schedule provides a mechanism to run tasks at fixed time interals.
+		It is intended to be used by collectors, but can be used by any other
+		package as well. Tasks can be dynamically pointed to the poll functions
+		of the collector. (This why poll functions of collectors are public and
+		have the same signature).
 
-	At least one task should be added to Schedule before it can be used.
-	Tasks are yielded in the same order as added (FIFO). The intervals of tasks
-	can be safely changed any time.
+		At least one task should be added to Schedule before it can be used.
+		Tasks are yielded in the same order as added (FIFO). The intervals of tasks
+		can be safely changed any time.
 
-   	Create Schedule:
-    	- Initialize empty Schedule with New(),
-    	- Add tasks with NewTask() or NewTaskString(),
-        the task is marked as due immediately!
+	   	Create Schedule:
+	    	- Initialize empty Schedule with New(),
+	    	- Add tasks with NewTask() or NewTaskString(),
+	        the task is marked as due immediately!
 
-	Use Schedule (usually in a closed loop):
-    	- iterate over all tasks with GetTasks()
-        	- check if it's time to run the task with IsDue(task)
-        	- run the task with task.Run() or run "manually" with task.Start()
-	   - suspend the goroutine until another task is due Sleep()/Wait()
+		Use Schedule (usually in a closed loop):
+	    	- iterate over all tasks with GetTasks()
+	        	- check if it's time to run the task with IsDue(task)
+	        	- run the task with task.Run() or run "manually" with task.Start()
+		   - suspend the goroutine until another task is due Sleep()/Wait()
 
-	The Schedule can enter standByMode when a critical task has failed. In this
-	scenario all tasks are stalled until the critical task has succeeded. This is
-	sometimes useful when a target system is unreachable and we have to wait
-	until it's up again.
+		The Schedule can enter standByMode when a critical task has failed. In this
+		scenario all tasks are stalled until the critical task has succeeded. This is
+		sometimes useful when a target system is unreachable and we have to wait
+		until it's up again.
 
-	Schedule is meant to be used by at most one goroutine and is not
-	concurrent-safe.
+		Schedule is meant to be used by at most one goroutine and is not
+		concurrent-safe.
 */
 package schedule
 

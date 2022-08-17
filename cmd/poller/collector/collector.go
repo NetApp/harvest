@@ -1,18 +1,19 @@
 /*
-	Copyright NetApp Inc, 2021 All rights reserved
+Copyright NetApp Inc, 2021 All rights reserved
 
-	Package collector provides the Collector interface and
-	the AbstractCollector type which implements most basic
-	attributes.
+Package collector provides the Collector interface and
+the AbstractCollector type which implements most basic
+attributes.
 
-	A Harvest collector should normally "inherit" all these
-	attributes and implement only the PollData function.
-	The AbstractCollector will make sure that the collector
-	is properly initialized, metadata are updated and
-	data poll(s) and plugins run as scheduled. The collector
-	can also choose to override any of the attributes
-	implemented by AbstractCollector.
+A Harvest collector should normally "inherit" all these
+attributes and implement only the PollData function.
+The AbstractCollector will make sure that the collector
+is properly initialized, metadata are updated and
+data poll(s) and plugins run as scheduled. The collector
+can also choose to override any of the attributes
+implemented by AbstractCollector.
 */
+
 package collector
 
 import (
@@ -128,8 +129,9 @@ func New(name, object string, options *options.Options, params *node.Node) *Abst
 // to the corresponding method of the collector. Example, parameter is:
 //
 // schedule:
-//   data: 10s
-//   instance: 20s
+//
+//	data: 10s
+//	instance: 20s
 //
 // then we expect that the collector has methods PollData and PollInstance
 // that need to be invoked every 10 and 20 seconds respectively.
@@ -534,8 +536,8 @@ func (c *AbstractCollector) LoadPlugin(_ string, _ *plugin.AbstractPlugin) plugi
 	return nil
 }
 
-//LoadPlugins loads built-in plugins or dynamically loads custom plugins
-//and adds them to the collector
+// LoadPlugins loads built-in plugins or dynamically loads custom plugins
+// and adds them to the collector
 func (c *AbstractCollector) LoadPlugins(params *node.Node, collector Collector, key string) error {
 
 	var p plugin.Plugin

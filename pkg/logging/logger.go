@@ -159,7 +159,7 @@ func MarshalStack(err error) interface{} {
 	return string(trace)
 }
 
-//returns lumberjack writer
+// returns lumberjack writer
 func newRollingFile(config LogConfig) io.Writer {
 	return &lumberjack.Logger{
 		Filename:   path.Join(config.Directory, config.Filename),

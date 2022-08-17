@@ -274,7 +274,7 @@ func (n *Node) Union(source *Node) {
 	}
 }
 
-//fetchRoot return if a parent name ancestor exists
+// fetchRoot return if a parent name ancestor exists
 func (n *Node) searchAncestor(ancestor string) *Node {
 	if n == nil {
 		return nil
@@ -304,8 +304,8 @@ func (n *Node) PreprocessTemplate() {
 	}
 }
 
-//Merge method will merge the subtemplate into the receiver, modifying the receiver in-place.
-//skipOverwrite is a readonly list of keys that will not be overwritten in the receiver.
+// Merge method will merge the subtemplate into the receiver, modifying the receiver in-place.
+// skipOverwrite is a readonly list of keys that will not be overwritten in the receiver.
 func (n *Node) Merge(subtemplate *Node, skipOverwrite []string) {
 	if subtemplate == nil {
 		return

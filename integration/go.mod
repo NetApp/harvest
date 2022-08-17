@@ -1,6 +1,6 @@
 module github.com/Netapp/harvest-automation
 
-go 1.18
+go 1.19
 
 replace github.com/netapp/harvest/v2 => ../
 
