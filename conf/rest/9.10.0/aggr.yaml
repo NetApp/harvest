@@ -19,7 +19,7 @@ counters:
   - space.block_storage.inactive_user_data                         => space_performance_tier_inactive_user_data
   - space.block_storage.inactive_user_data_percent                 => space_performance_tier_inactive_user_data_percent
   - space.block_storage.physical_used                              => space_physical_used
-  - space.block_storage.physical_used_percent                      => space_used_percent
+  - space.block_storage.physical_used_percent                      => space_physical_used_percent
   - space.block_storage.volume_deduplication_shared_count          => space_sis_shared_count
   - space.block_storage.volume_deduplication_space_saved           => space_sis_saved
   - space.block_storage.volume_deduplication_space_saved_percent   => space_sis_saved_percent
