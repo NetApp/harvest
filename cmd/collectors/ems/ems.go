@@ -33,7 +33,7 @@ type Ems struct {
 	Filter         []string
 	Fields         []string
 	ReturnTimeOut  string
-	lastFilterTime string
+	lastFilterTime int64
 	maxURLSize     int
 	DefaultLabels  []string
 	severityFilter string
@@ -286,7 +286,7 @@ func (e *Ems) getClusterTime() (time.Time, error) {
 func (e *Ems) getTimeStampFilter(clusterTime time.Time) string {
 	fromTime := e.lastFilterTime
 	// check if this is the first request
-	if e.lastFilterTime == "" {
+	if e.lastFilterTime == 0 {
 		// if first request fetch cluster time
 		dataDuration, err := GetDataInterval(e.GetParams(), defaultDataPollDuration)
 		if err != nil {
@@ -294,9 +294,9 @@ func (e *Ems) getTimeStampFilter(clusterTime time.Time) string {
 				Str("defaultDataPollDuration", defaultDataPollDuration.String()).
 				Msg("Failed to parse duration. using default")
 		}
-		fromTime = clusterTime.Add(-dataDuration).Format(time.RFC3339)
+		fromTime = clusterTime.Add(-dataDuration).Unix()
 	}
-	return "time=>=" + fromTime
+	return "time=>=" + strconv.FormatInt(fromTime, 10)
 }
 
 func (e *Ems) fetchEMSData(href string) ([]gjson.Result, error) {
@@ -414,7 +414,7 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	if err != nil {
 		return nil, err
 	}
-	toTime := clusterTime.Format(time.RFC3339)
+	toTime := clusterTime.Unix()
 	timeFilter := e.getTimeStampFilter(clusterTime)
 	filter := append(e.Filter, timeFilter)
 
