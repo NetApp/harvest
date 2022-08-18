@@ -5,7 +5,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/certificate"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/disk"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/qtree"
-	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/quotareport"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/sensor"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/shelf"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/snapmirror"
@@ -375,8 +374,6 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return svm.New(abc)
 	case "Sensor":
 		return sensor.New(abc)
-	case "QuotaReport":
-		return quotareport.New(abc)
 	default:
 		r.Logger.Warn().Str("kind", kind).Msg("no rest plugin found ")
 	}
@@ -446,12 +443,7 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, allowInstanceCre
 				}
 				count++
 			} else {
-				if r.Object == "QuotaReport" {
-					// move to trace for quota_report as fields like soft_limit, hard_limit are not returned in response if not available.
-					r.Logger.Trace().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
-				} else {
-					r.Logger.Warn().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
-				}
+				r.Logger.Warn().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
 			}
 		}
 

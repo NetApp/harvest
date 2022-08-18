@@ -15,6 +15,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
+	"strconv"
 	"time"
 )
 
@@ -36,16 +37,16 @@ func (my *Qtree) Init() error {
 	var err error
 	quotaMetric := []string{
 		"space.hard_limit => disk_limit",
-		//"space.used.total => disk_used",
-		//"space.used.hard_limit_percent => disk_used_pct_disk_limit",
-		//"space.used.soft_limit_percent => disk_used_pct_soft_disk_limit",
-		//"space.soft_limit => soft_disk_limit",
-		////"disk-used-pct-threshold" # deprecated and workaround to use same as disk_used_pct_soft_disk_limit
-		//"files.hard_limit => file_limit",
-		//"files.used.total => files_used",
-		//"files.used.hard_limit_percent => files_used_pct_file_limit",
-		//"files.used.soft_limit_percent => files_used_pct_soft_file_limit",
-		//"files.soft_limit => soft_file_limit",
+		"space.used.total => disk_used",
+		"space.used.hard_limit_percent => disk_used_pct_disk_limit",
+		"space.used.soft_limit_percent => disk_used_pct_soft_disk_limit",
+		"space.soft_limit => soft_disk_limit",
+		//"disk-used-pct-threshold" # deprecated and workaround to use same as disk_used_pct_soft_disk_limit
+		"files.hard_limit => file_limit",
+		"files.used.total => files_used",
+		"files.used.hard_limit_percent => files_used_pct_file_limit",
+		"files.used.soft_limit_percent => files_used_pct_soft_file_limit",
+		"files.soft_limit => soft_file_limit",
 		//"threshold",   # deprecated
 	}
 
@@ -113,7 +114,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 
 	quotaCount := 0
-	for _, quota := range result {
+	for quotaIndex, quota := range result {
 		var tree string
 
 		if !quota.IsObject() {
@@ -127,17 +128,16 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		quotaType := quota.Get("type").String()
 		volume := quota.Get("volume.name").String()
 		vserver := quota.Get("svm.name").String()
-		quotaIndex := quota.Get("index").String()
 		uName := quota.Get("users.0.name").String()
 		uid := quota.Get("users.0.id").String()
 		group := quota.Get("group.name").String()
-		my.Logger.Info().Str("quotaIndex", quotaIndex).Msg("")
 		quotaCount++
 
 		for attribute, m := range my.data.GetMetrics() {
-			value := 0.0
+			// set -1 for unlimited
+			value := -1.0
 
-			quotaInstanceKey := quotaIndex + "." + attribute
+			quotaInstanceKey := strconv.Itoa(quotaIndex) + "." + attribute
 
 			quotaInstance, err := my.data.NewInstance(quotaInstanceKey)
 			if err != nil {
@@ -149,7 +149,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			quotaInstance.SetLabel("qtree", tree)
 			quotaInstance.SetLabel("volume", volume)
 			quotaInstance.SetLabel("svm", vserver)
-			quotaInstance.SetLabel("index", quotaIndex)
+			quotaInstance.SetLabel("index", strconv.Itoa(quotaIndex))
 
 			if quotaType == "user" {
 				quotaInstance.SetLabel("user", uName)
