@@ -118,10 +118,6 @@ counters:
   - want_delegation_avg_latency
   - write_avg_latency
 
-rewrite_as_label:
-  - _avg_latency => request_latency: latency_type
-  - _total => request_total: request_type
-
 export_options:
   instance_keys:
     - svm

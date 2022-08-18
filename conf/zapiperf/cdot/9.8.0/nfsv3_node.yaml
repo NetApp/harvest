@@ -60,10 +60,6 @@ counters:
   - setattr_avg_latency
   - symlink_avg_latency
 
-rewrite_as_label:
-  - _avg_latency => request_latency: latency_type
-  - _total => request_total: request_type
-
 override:
   - access_total: rate
   - commit_total: rate
