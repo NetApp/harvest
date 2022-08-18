@@ -2,8 +2,8 @@ FROM centos:centos7
 MAINTAINER vachagan@netapp.com
 
 ENV GOPATH /go
-ENV GOVERSION 1.15.8
-ENV GOURL https://golang.org/dl/go$GOVERSION.linux-amd64.tar.gz
+ENV GOVERSION 1.19
+ENV GOURL https://go.dev/dl/go$GOVERSION.linux-amd64.tar.gz
 
 RUN \
 #  yum update -y && \
@@ -21,7 +21,6 @@ RUN \
     libc6-dev && \
   yum clean all && \
   curl -fsSL "$GOURL" -o golang.tar.gz && \
-  #echo "$GOSHA golang.tar.gz" | sha256sum -c - && \
   tar -C /usr/local -xzf golang.tar.gz && \
   rm golang.tar.gz && \
   mkdir -p "$GOPATH/src" "$GOPATH/bin" && \
