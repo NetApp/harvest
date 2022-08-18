@@ -233,8 +233,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					if value := strings.Split(attrValue, " ")[0]; value != "" {
 						// Few quota metrics would have value '-' which means unlimited (ex: disk-limit)
 						if value == "-" {
-							value = "0"
-							quotaInstance.SetLabel("isUnlimited", "yes")
+							value = "-1"
 						}
 
 						if attribute == "soft-disk-limit" || attribute == "disk-limit" || attribute == "disk-used" {
