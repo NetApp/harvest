@@ -1059,7 +1059,7 @@ func init() {
 
 	importCmd.PersistentFlags().StringSliceVar(&opts.labels, "labels", nil,
 		"For each label, create a variable and add as chained query to other variables")
-	importCmd.PersistentFlags().BoolVar(&opts.addMultiSelect, "multi", false,
+	importCmd.PersistentFlags().BoolVar(&opts.addMultiSelect, "multi", true,
 		"Modify the dashboards to add multi-select dropdowns for each variable")
 
 	_ = Cmd.MarkPersistentFlagRequired("serverfolder")
