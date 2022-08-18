@@ -62,17 +62,7 @@ func (my *Qtree) Init() error {
 	my.instanceLabels = make(map[string]*dict.Dict)
 
 	exportOptions := node.NewS("export_options")
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-
-	// apply all instance keys, instance labels from parent (qtree.yaml) to all quota metrics
-	//parent instancekeys would be added in plugin metrics
-	for _, parentKeys := range my.ParentParams.GetChildS("export_options").GetChildS("instance_keys").GetAllChildContentS() {
-		instanceKeys.NewChildS("", parentKeys)
-	}
-	// parent instacelabels would be added in plugin metrics
-	for _, parentLabels := range my.ParentParams.GetChildS("export_options").GetChildS("instance_labels").GetAllChildContentS() {
-		instanceKeys.NewChildS("", parentLabels)
-	}
+	exportOptions.NewChildS("include_all_labels", "true")
 
 	objects := my.Params.GetChildS("objects")
 	if objects == nil {
@@ -113,7 +103,6 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	var (
 		request, response *node.Node
 		quotas            []*node.Node
-		output            []*matrix.Matrix
 		ad, pd            time.Duration // Request/API time, Parse time, Fetch time
 		err               error
 		numMetrics        int
@@ -134,9 +123,9 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	if my.client.IsClustered() && my.batchSize != "" {
 		request.NewChildS("max-records", my.batchSize)
 		// Fetching only tree quotas
-		query := request.NewChildS("query", "")
-		quotaQuery := query.NewChildS("quota", "")
-		quotaQuery.NewChildS("quota-type", "tree")
+		//query := request.NewChildS("query", "")
+		//quotaQuery := query.NewChildS("quota", "")
+		//quotaQuery.NewChildS("quota-type", "tree")
 	}
 
 	tag := "initial"
@@ -171,18 +160,36 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		my.Logger.Debug().Int("quotas", len(quotas)).Msg("fetching quotas")
 
 		for quotaIndex, quota := range quotas {
-			var vserver, quotaInstanceKey string
-			var qtreeInstance *matrix.Instance
-
+			var vserver, quotaInstanceKey, uid, uName string
+			quotaType := quota.GetChildContentS("type")
 			tree := quota.GetChildContentS("tree")
 			volume := quota.GetChildContentS("volume")
 			if my.client.IsClustered() {
 				vserver = quota.GetChildContentS("vserver")
 			}
+			users := quota.GetChildS("quota-users")
+			if users != nil {
+				quotaUser := users.GetChildS("quota-user")
+				if quotaUser != nil {
+					uid = quotaUser.GetChildContentS("quota-user-id")
+					uName = quotaUser.GetChildContentS("quota-user-name")
+				}
+			}
 
-			// If the Qtree is the volume itself, then qtree label is empty, ignore it for quota-type tree as it will always be available. In sync with what system manager shows
-			if tree == "" {
-				continue
+			// ignore default quotas and set user/group
+			// Rest uses service side filtering to remove default records
+			if quotaType == "user" {
+				if (uName == "*" && uid == "*") || (uName == "" && uid == "") {
+					continue
+				}
+			} else if quotaType == "group" {
+				if uName == "*" || uName == "" {
+					continue
+				}
+			} else if quotaType == "tree" {
+				if tree == "" {
+					continue
+				}
 			}
 
 			for attribute, m := range my.data.GetMetrics() {
@@ -193,22 +200,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				}
 
 				if attrValue := quota.GetChildContentS(attribute); attrValue != "" {
-					if my.client.IsClustered() {
-						qtreeInstance = data.GetInstance(tree + "." + volume + "." + vserver)
-					} else {
-						qtreeInstance = data.GetInstance(volume + "." + tree)
-					}
-					if qtreeInstance == nil {
-						my.Logger.Warn().
-							Str("tree", tree).
-							Str("volume", volume).
-							Str("vserver", vserver).
-							Msg("No instance matching tree.volume.vserver")
-						continue
-					}
-					if !qtreeInstance.IsExportable() {
-						continue
-					}
+
 					// Ex. InstanceKey: SVMA.vol1Abc.qtree1.5.disk-limit
 					if my.client.IsClustered() {
 						quotaInstanceKey = vserver + "." + volume + "." + tree + "." + strconv.Itoa(quotaIndex) + "." + attribute
@@ -216,26 +208,37 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 						quotaInstanceKey = volume + "." + tree + "." + strconv.Itoa(quotaIndex) + "." + attribute
 					}
 					quotaInstance, err := my.data.NewInstance(quotaInstanceKey)
-
 					if err != nil {
 						my.Logger.Debug().Msgf("add (%s) instance: %v", attribute, err)
 						return nil, err
 					}
+					//set labels
+					quotaInstance.SetLabel("type", quotaType)
+					quotaInstance.SetLabel("tree", tree)
+					quotaInstance.SetLabel("volume", volume)
+					quotaInstance.SetLabel("vserver", vserver)
+					quotaInstance.SetLabel("index", strconv.Itoa(quotaIndex))
+					quotaInstance.SetLabel("user_id", uid)
+					quotaInstance.SetLabel("user_name", uName)
+					if quotaType == "user" {
+						quotaInstance.SetLabel("user", uName)
+					} else if quotaType == "group" {
+						quotaInstance.SetLabel("group", uName)
+					}
 
 					my.Logger.Debug().Msgf("add (%s) instance: %s.%s.%s", attribute, vserver, volume, tree)
-
-					for _, label := range my.data.GetExportOptions().GetChildS("instance_keys").GetAllChildContentS() {
-						if value := qtreeInstance.GetLabel(label); value != "" {
-							quotaInstance.SetLabel(label, value)
-							numMetrics++
-						}
-					}
 
 					// populate numeric data
 					if value := strings.Split(attrValue, " ")[0]; value != "" {
 						// Few quota metrics would have value '-' which means unlimited (ex: disk-limit)
 						if value == "-" {
 							value = "0"
+							quotaInstance.SetLabel("isUnlimited", "yes")
+						}
+
+						if attribute == "soft-disk-limit" || attribute == "disk-limit" || attribute == "disk-used" {
+							value = KbToBytes(value)
+							quotaInstance.SetLabel("unit", "bytes")
 						}
 						if err := m.SetValueString(quotaInstance, value); err != nil {
 							my.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", attribute, value, err)
@@ -247,8 +250,6 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				} else {
 					my.Logger.Debug().Msgf("instance without [%s], skipping", attribute)
 				}
-
-				output = append(output, my.data)
 			}
 		}
 	}
@@ -261,5 +262,14 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		Str("parseD", parseT.Round(time.Millisecond).String()).
 		Str("batchSize", my.batchSize).
 		Msg("Collected")
-	return output, nil
+	return []*matrix.Matrix{my.data}, nil
+}
+
+func KbToBytes(input string) string {
+	intVar, err := strconv.Atoi(input)
+	if err == nil {
+		o := intVar * 1000
+		return strconv.Itoa(o)
+	}
+	return input
 }
