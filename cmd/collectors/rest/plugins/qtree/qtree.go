@@ -36,16 +36,16 @@ func (my *Qtree) Init() error {
 	var err error
 	quotaMetric := []string{
 		"space.hard_limit => disk_limit",
-		"space.used.total => disk_used",
-		"space.used.hard_limit_percent => disk_used_pct_disk_limit",
-		"space.used.soft_limit_percent => disk_used_pct_soft_disk_limit",
-		"space.soft_limit => soft_disk_limit",
-		//"disk-used-pct-threshold" # deprecated and workaround to use same as disk_used_pct_soft_disk_limit
-		"files.hard_limit => file_limit",
-		"files.used.total => files_used",
-		"files.used.hard_limit_percent => files_used_pct_file_limit",
-		"files.used.soft_limit_percent => files_used_pct_soft_file_limit",
-		"files.soft_limit => soft_file_limit",
+		//"space.used.total => disk_used",
+		//"space.used.hard_limit_percent => disk_used_pct_disk_limit",
+		//"space.used.soft_limit_percent => disk_used_pct_soft_disk_limit",
+		//"space.soft_limit => soft_disk_limit",
+		////"disk-used-pct-threshold" # deprecated and workaround to use same as disk_used_pct_soft_disk_limit
+		//"files.hard_limit => file_limit",
+		//"files.used.total => files_used",
+		//"files.used.hard_limit_percent => files_used_pct_file_limit",
+		//"files.used.soft_limit_percent => files_used_pct_soft_file_limit",
+		//"files.soft_limit => soft_file_limit",
 		//"threshold",   # deprecated
 	}
 
@@ -70,17 +70,7 @@ func (my *Qtree) Init() error {
 	my.instanceLabels = make(map[string]*dict.Dict)
 
 	exportOptions := node.NewS("export_options")
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-
-	// apply all instance keys, instance labels from parent (qtree.yaml) to all quota metrics
-	//parent instancekeys would be added in plugin metrics
-	for _, parentKeys := range my.ParentParams.GetChildS("export_options").GetChildS("instance_keys").GetAllChildContentS() {
-		instanceKeys.NewChildS("", parentKeys)
-	}
-	// parent instacelabels would be added in plugin metrics
-	for _, parentLabels := range my.ParentParams.GetChildS("export_options").GetChildS("instance_labels").GetAllChildContentS() {
-		instanceKeys.NewChildS("", parentLabels)
-	}
+	exportOptions.NewChildS("include_all_labels", "true")
 
 	for _, obj := range quotaMetric {
 		metricName, display, _, _ := util.ParseMetric(obj)
@@ -103,12 +93,10 @@ func (my *Qtree) Init() error {
 
 func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	var (
-		result        []gjson.Result
-		quotaInstance *matrix.Instance
-		output        []*matrix.Matrix
-		err           error
+		result     []gjson.Result
+		err        error
+		numMetrics int
 	)
-
 	// Purge and reset data
 	my.data.PurgeInstances()
 	my.data.Reset()
@@ -116,7 +104,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	// Set all global labels from Rest.go if already not exist
 	my.data.SetGlobalLabels(data.GetGlobalLabels())
 
-	filter := []string{"type=tree", "qtree.name=!\"\""}
+	filter := []string{"return_unmatched_nested_array_objects=true", "show_default_records=false"}
 
 	href := rest.BuildHref("", "*", filter, "", "", "", "", my.query)
 
@@ -124,6 +112,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		return nil, err
 	}
 
+	quotaCount := 0
 	for _, quota := range result {
 		var tree string
 
@@ -135,59 +124,46 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		if quota.Get("qtree.name").Exists() {
 			tree = quota.Get("qtree.name").String()
 		}
+		quotaType := quota.Get("type").String()
 		volume := quota.Get("volume.name").String()
 		vserver := quota.Get("svm.name").String()
 		quotaIndex := quota.Get("index").String()
-
-		// If quota-type is not a tree, then skip
-		if quotaType := quota.Get("type").String(); quotaType != "tree" {
-			my.Logger.Trace().Str("quotaType", quotaType).Msg("Quota is not tree type, skipping")
-			continue
-		}
-
-		// Ex. InstanceKey: vserver1vol1qtree15989279
-		quotaInstanceKey := vserver + volume + tree + quotaIndex
-
-		if quotaInstance = my.data.GetInstance(quotaInstanceKey); quotaInstance == nil {
-			if quotaInstance, err = my.data.NewInstance(quotaInstanceKey); err != nil {
-				my.Logger.Error().Stack().Err(err).Str("quotaInstanceKey", quotaInstanceKey).Msg("Failed to create quota instance")
-				return nil, err
-			}
-			my.Logger.Trace().Msgf("add (%s) quota instance: %s.%s.%s.%s", quotaInstanceKey, vserver, volume, tree, quotaIndex)
-		}
-
-		qtreeInstance := data.GetInstance(vserver + volume + tree)
-		if qtreeInstance == nil {
-			my.Logger.Warn().
-				Str("tree", tree).
-				Str("volume", volume).
-				Str("vserver", vserver).
-				Msg("No instance matching tree.volume.vserver")
-			continue
-		}
-
-		if !qtreeInstance.IsExportable() {
-			continue
-		}
-
-		for _, label := range my.data.GetExportOptions().GetChildS("instance_keys").GetAllChildContentS() {
-			if value := qtreeInstance.GetLabel(label); value != "" {
-				quotaInstance.SetLabel(label, value)
-			}
-		}
-
-		// If the Qtree is the volume itself, than qtree label is empty, so copy the volume name to qtree.
-		if tree == "" {
-			quotaInstance.SetLabel("qtree", volume)
-		}
+		uName := quota.Get("users.0.name").String()
+		uid := quota.Get("users.0.id").String()
+		group := quota.Get("group.name").String()
+		my.Logger.Info().Str("quotaIndex", quotaIndex).Msg("")
+		quotaCount++
 
 		for attribute, m := range my.data.GetMetrics() {
 			value := 0.0
+
+			quotaInstanceKey := quotaIndex + "." + attribute
+
+			quotaInstance, err := my.data.NewInstance(quotaInstanceKey)
+			if err != nil {
+				my.Logger.Debug().Msgf("add (%s) instance: %v", attribute, err)
+				return nil, err
+			}
+			//set labels
+			quotaInstance.SetLabel("type", quotaType)
+			quotaInstance.SetLabel("qtree", tree)
+			quotaInstance.SetLabel("volume", volume)
+			quotaInstance.SetLabel("svm", vserver)
+			quotaInstance.SetLabel("index", quotaIndex)
+
+			if quotaType == "user" {
+				quotaInstance.SetLabel("user", uName)
+				quotaInstance.SetLabel("user_id", uid)
+			} else if quotaType == "group" {
+				quotaInstance.SetLabel("group", group)
+				quotaInstance.SetLabel("group_id", uid)
+			}
 
 			if attrValue := quota.Get(attribute); attrValue.Exists() {
 				// space limits are in bytes, converted to kilobytes
 				if attribute == "space.hard_limit" || attribute == "space.soft_limit" || attribute == "space.used.total" {
 					value = attrValue.Float() / 1024
+					quotaInstance.SetLabel("unit", "Kbyte")
 				} else {
 					value = attrValue.Float()
 				}
@@ -197,13 +173,17 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			if err = m.SetValueFloat64(quotaInstance, value); err != nil {
 				my.Logger.Error().Stack().Err(err).Str("attribute", attribute).Float64("value", value).Msg("Failed to parse value")
 			} else {
+				numMetrics++
 				my.Logger.Trace().Str("attribute", attribute).Float64("value", value).Msg("added value")
 			}
-
-			output = append(output, my.data)
 		}
 
 	}
 
-	return output, nil
+	my.Logger.Info().
+		Int("numQuotas", quotaCount).
+		Int("metrics", numMetrics).
+		Msg("Collected")
+
+	return []*matrix.Matrix{my.data}, nil
 }

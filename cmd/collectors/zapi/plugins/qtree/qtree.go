@@ -70,6 +70,7 @@ func (my *Qtree) Init() error {
 	}
 
 	for _, obj := range objects.GetAllChildContentS() {
+
 		metricName, display, _, _ := util.ParseMetric(obj)
 
 		metric, err := my.data.NewMetricFloat64(metricName)
@@ -122,13 +123,10 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	if my.client.IsClustered() && my.batchSize != "" {
 		request.NewChildS("max-records", my.batchSize)
-		// Fetching only tree quotas
-		//query := request.NewChildS("query", "")
-		//quotaQuery := query.NewChildS("quota", "")
-		//quotaQuery.NewChildS("quota-type", "tree")
 	}
 
 	tag := "initial"
+	quotaCount := 0
 
 	for {
 		response, tag, ad, pd, err = my.client.InvokeBatchWithTimers(request, tag)
@@ -161,7 +159,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		for quotaIndex, quota := range quotas {
 			var vserver, quotaInstanceKey, uid, uName string
-			quotaType := quota.GetChildContentS("type")
+			quotaType := quota.GetChildContentS("quota-type")
 			tree := quota.GetChildContentS("tree")
 			volume := quota.GetChildContentS("volume")
 			if my.client.IsClustered() {
@@ -192,6 +190,8 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				}
 			}
 
+			quotaCount++
+
 			for attribute, m := range my.data.GetMetrics() {
 
 				objectElem := quota.GetChildS(attribute)
@@ -214,16 +214,17 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					}
 					//set labels
 					quotaInstance.SetLabel("type", quotaType)
-					quotaInstance.SetLabel("tree", tree)
+					quotaInstance.SetLabel("qtree", tree)
 					quotaInstance.SetLabel("volume", volume)
-					quotaInstance.SetLabel("vserver", vserver)
+					quotaInstance.SetLabel("svm", vserver)
 					quotaInstance.SetLabel("index", strconv.Itoa(quotaIndex))
-					quotaInstance.SetLabel("user_id", uid)
-					quotaInstance.SetLabel("user_name", uName)
+
 					if quotaType == "user" {
 						quotaInstance.SetLabel("user", uName)
+						quotaInstance.SetLabel("user_id", uid)
 					} else if quotaType == "group" {
 						quotaInstance.SetLabel("group", uName)
+						quotaInstance.SetLabel("group_id", uid)
 					}
 
 					my.Logger.Debug().Msgf("add (%s) instance: %s.%s.%s", attribute, vserver, volume, tree)
@@ -237,8 +238,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 						}
 
 						if attribute == "soft-disk-limit" || attribute == "disk-limit" || attribute == "disk-used" {
-							value = KbToBytes(value)
-							quotaInstance.SetLabel("unit", "bytes")
+							quotaInstance.SetLabel("unit", "Kbyte")
 						}
 						if err := m.SetValueString(quotaInstance, value); err != nil {
 							my.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", attribute, value, err)
@@ -255,21 +255,11 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 
 	my.Logger.Info().
-		Int("numQtrees", len(data.GetInstances())).
-		Int("numQuotas", len(quotas)).
+		Int("numQuotas", quotaCount).
 		Int("metrics", numMetrics).
 		Str("apiD", apiT.Round(time.Millisecond).String()).
 		Str("parseD", parseT.Round(time.Millisecond).String()).
 		Str("batchSize", my.batchSize).
 		Msg("Collected")
 	return []*matrix.Matrix{my.data}, nil
-}
-
-func KbToBytes(input string) string {
-	intVar, err := strconv.Atoi(input)
-	if err == nil {
-		o := intVar * 1000
-		return strconv.Itoa(o)
-	}
-	return input
 }
