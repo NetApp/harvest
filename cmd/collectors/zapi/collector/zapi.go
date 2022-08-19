@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/certificate"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/qtree"
-	quotareport "github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/quotareport"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/security"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/sensor"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/shelf"
@@ -149,8 +148,6 @@ func (me *Zapi) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugi
 		return svm.New(abc)
 	case "Security":
 		return security.New(abc)
-	case "QuotaReport":
-		return quotareport.New(abc)
 	default:
 		me.Logger.Info().Msgf("no zapi plugin found for %s", kind)
 	}

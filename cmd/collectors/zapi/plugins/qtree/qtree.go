@@ -27,6 +27,7 @@ type Qtree struct {
 	batchSize      string
 	client         *zapi.Client
 	query          string
+	quotaType      []string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -62,24 +63,23 @@ func (my *Qtree) Init() error {
 	my.instanceLabels = make(map[string]*dict.Dict)
 
 	exportOptions := node.NewS("export_options")
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-
-	// apply all instance keys, instance labels from parent (qtree.yaml) to all quota metrics
-	//parent instancekeys would be added in plugin metrics
-	for _, parentKeys := range my.ParentParams.GetChildS("export_options").GetChildS("instance_keys").GetAllChildContentS() {
-		instanceKeys.NewChildS("", parentKeys)
-	}
-	// parent instacelabels would be added in plugin metrics
-	for _, parentLabels := range my.ParentParams.GetChildS("export_options").GetChildS("instance_labels").GetAllChildContentS() {
-		instanceKeys.NewChildS("", parentLabels)
-	}
+	exportOptions.NewChildS("include_all_labels", "true")
 
 	objects := my.Params.GetChildS("objects")
 	if objects == nil {
 		return errs.New(errs.ErrMissingParam, "objects")
 	}
 
+	quotaType := my.Params.GetChildS("quotaType")
+	if quotaType != nil {
+		my.quotaType = []string{}
+		my.quotaType = append(my.quotaType, quotaType.GetAllChildContentS()...)
+	} else {
+		my.quotaType = []string{"user", "group", "tree"}
+	}
+
 	for _, obj := range objects.GetAllChildContentS() {
+
 		metricName, display, _, _ := util.ParseMetric(obj)
 
 		metric, err := my.data.NewMetricFloat64(metricName)
@@ -113,7 +113,6 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	var (
 		request, response *node.Node
 		quotas            []*node.Node
-		output            []*matrix.Matrix
 		ad, pd            time.Duration // Request/API time, Parse time, Fetch time
 		err               error
 		numMetrics        int
@@ -133,13 +132,14 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	if my.client.IsClustered() && my.batchSize != "" {
 		request.NewChildS("max-records", my.batchSize)
-		// Fetching only tree quotas
+		// add quota filter
 		query := request.NewChildS("query", "")
 		quotaQuery := query.NewChildS("quota", "")
-		quotaQuery.NewChildS("quota-type", "tree")
+		quotaQuery.NewChildS("quota-type", strings.Join(my.quotaType[:], "|"))
 	}
 
 	tag := "initial"
+	quotaCount := 0
 
 	for {
 		response, tag, ad, pd, err = my.client.InvokeBatchWithTimers(request, tag)
@@ -171,19 +171,39 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		my.Logger.Debug().Int("quotas", len(quotas)).Msg("fetching quotas")
 
 		for quotaIndex, quota := range quotas {
-			var vserver, quotaInstanceKey string
-			var qtreeInstance *matrix.Instance
-
+			var vserver, quotaInstanceKey, uid, uName string
+			quotaType := quota.GetChildContentS("quota-type")
 			tree := quota.GetChildContentS("tree")
 			volume := quota.GetChildContentS("volume")
 			if my.client.IsClustered() {
 				vserver = quota.GetChildContentS("vserver")
 			}
-
-			// If the Qtree is the volume itself, then qtree label is empty, ignore it for quota-type tree as it will always be available. In sync with what system manager shows
-			if tree == "" {
-				continue
+			users := quota.GetChildS("quota-users")
+			if users != nil {
+				quotaUser := users.GetChildS("quota-user")
+				if quotaUser != nil {
+					uid = quotaUser.GetChildContentS("quota-user-id")
+					uName = quotaUser.GetChildContentS("quota-user-name")
+				}
 			}
+
+			// ignore default quotas and set user/group
+			// Rest uses service side filtering to remove default records
+			if quotaType == "user" {
+				if (uName == "*" && uid == "*") || (uName == "" && uid == "") {
+					continue
+				}
+			} else if quotaType == "group" {
+				if uName == "*" || uName == "" {
+					continue
+				}
+			} else if quotaType == "tree" {
+				if tree == "" {
+					continue
+				}
+			}
+
+			quotaCount++
 
 			for attribute, m := range my.data.GetMetrics() {
 
@@ -193,22 +213,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				}
 
 				if attrValue := quota.GetChildContentS(attribute); attrValue != "" {
-					if my.client.IsClustered() {
-						qtreeInstance = data.GetInstance(tree + "." + volume + "." + vserver)
-					} else {
-						qtreeInstance = data.GetInstance(volume + "." + tree)
-					}
-					if qtreeInstance == nil {
-						my.Logger.Warn().
-							Str("tree", tree).
-							Str("volume", volume).
-							Str("vserver", vserver).
-							Msg("No instance matching tree.volume.vserver")
-						continue
-					}
-					if !qtreeInstance.IsExportable() {
-						continue
-					}
+
 					// Ex. InstanceKey: SVMA.vol1Abc.qtree1.5.disk-limit
 					if my.client.IsClustered() {
 						quotaInstanceKey = vserver + "." + volume + "." + tree + "." + strconv.Itoa(quotaIndex) + "." + attribute
@@ -216,26 +221,36 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 						quotaInstanceKey = volume + "." + tree + "." + strconv.Itoa(quotaIndex) + "." + attribute
 					}
 					quotaInstance, err := my.data.NewInstance(quotaInstanceKey)
-
 					if err != nil {
 						my.Logger.Debug().Msgf("add (%s) instance: %v", attribute, err)
 						return nil, err
 					}
+					//set labels
+					quotaInstance.SetLabel("type", quotaType)
+					quotaInstance.SetLabel("qtree", tree)
+					quotaInstance.SetLabel("volume", volume)
+					quotaInstance.SetLabel("svm", vserver)
+					quotaInstance.SetLabel("index", strconv.Itoa(quotaIndex))
+
+					if quotaType == "user" {
+						quotaInstance.SetLabel("user", uName)
+						quotaInstance.SetLabel("user_id", uid)
+					} else if quotaType == "group" {
+						quotaInstance.SetLabel("group", uName)
+						quotaInstance.SetLabel("group_id", uid)
+					}
 
 					my.Logger.Debug().Msgf("add (%s) instance: %s.%s.%s", attribute, vserver, volume, tree)
-
-					for _, label := range my.data.GetExportOptions().GetChildS("instance_keys").GetAllChildContentS() {
-						if value := qtreeInstance.GetLabel(label); value != "" {
-							quotaInstance.SetLabel(label, value)
-							numMetrics++
-						}
-					}
 
 					// populate numeric data
 					if value := strings.Split(attrValue, " ")[0]; value != "" {
 						// Few quota metrics would have value '-' which means unlimited (ex: disk-limit)
 						if value == "-" {
-							value = "0"
+							value = "-1"
+						}
+
+						if attribute == "soft-disk-limit" || attribute == "disk-limit" || attribute == "disk-used" {
+							quotaInstance.SetLabel("unit", "Kbyte")
 						}
 						if err := m.SetValueString(quotaInstance, value); err != nil {
 							my.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", attribute, value, err)
@@ -247,19 +262,16 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				} else {
 					my.Logger.Debug().Msgf("instance without [%s], skipping", attribute)
 				}
-
-				output = append(output, my.data)
 			}
 		}
 	}
 
 	my.Logger.Info().
-		Int("numQtrees", len(data.GetInstances())).
-		Int("numQuotas", len(quotas)).
+		Int("numQuotas", quotaCount).
 		Int("metrics", numMetrics).
 		Str("apiD", apiT.Round(time.Millisecond).String()).
 		Str("parseD", parseT.Round(time.Millisecond).String()).
 		Str("batchSize", my.batchSize).
 		Msg("Collected")
-	return output, nil
+	return []*matrix.Matrix{my.data}, nil
 }
