@@ -56,10 +56,6 @@ func (my *Qtree) Init() error {
 		return err
 	}
 
-	//timeout := rest.DefaultTimeout * time.Second
-	//timeout := my.ParentParams.GetChildS("client_timeout")
-	//fmt.Println(timeout)
-
 	clientTimeout := my.ParentParams.GetChildContentS("client_timeout")
 	timeout := rest.DefaultTimeout * time.Second
 	duration, err := time.ParseDuration(clientTimeout)
@@ -89,9 +85,8 @@ func (my *Qtree) Init() error {
 	quotaType := my.Params.GetChildS("quotaType")
 	if quotaType != nil {
 		my.quotaType = []string{}
-		for _, q := range quotaType.GetAllChildContentS() {
-			my.quotaType = append(my.quotaType, q)
-		}
+		my.quotaType = append(my.quotaType, quotaType.GetAllChildContentS()...)
+
 	} else {
 		my.quotaType = []string{"user", "group", "tree"}
 	}

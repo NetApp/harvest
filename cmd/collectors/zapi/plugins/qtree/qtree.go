@@ -73,9 +73,7 @@ func (my *Qtree) Init() error {
 	quotaType := my.Params.GetChildS("quotaType")
 	if quotaType != nil {
 		my.quotaType = []string{}
-		for _, q := range quotaType.GetAllChildContentS() {
-			my.quotaType = append(my.quotaType, q)
-		}
+		my.quotaType = append(my.quotaType, quotaType.GetAllChildContentS()...)
 	} else {
 		my.quotaType = []string{"user", "group", "tree"}
 	}
