@@ -27,6 +27,7 @@ type Qtree struct {
 	batchSize      string
 	client         *zapi.Client
 	query          string
+	quotaType      []string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -67,6 +68,16 @@ func (my *Qtree) Init() error {
 	objects := my.Params.GetChildS("objects")
 	if objects == nil {
 		return errs.New(errs.ErrMissingParam, "objects")
+	}
+
+	quotaType := my.Params.GetChildS("quotaType")
+	if quotaType != nil {
+		my.quotaType = []string{}
+		for _, q := range quotaType.GetAllChildContentS() {
+			my.quotaType = append(my.quotaType, q)
+		}
+	} else {
+		my.quotaType = []string{"user", "group", "tree"}
 	}
 
 	for _, obj := range objects.GetAllChildContentS() {
@@ -123,6 +134,10 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	if my.client.IsClustered() && my.batchSize != "" {
 		request.NewChildS("max-records", my.batchSize)
+		// add quota filter
+		query := request.NewChildS("query", "")
+		quotaQuery := query.NewChildS("quota", "")
+		quotaQuery.NewChildS("quota-type", strings.Join(my.quotaType[:], "|"))
 	}
 
 	tag := "initial"

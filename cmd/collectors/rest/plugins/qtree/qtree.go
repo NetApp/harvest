@@ -16,6 +16,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -26,6 +27,7 @@ type Qtree struct {
 	instanceLabels map[string]*dict.Dict
 	client         *rest.Client
 	query          string
+	quotaType      []string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -54,7 +56,18 @@ func (my *Qtree) Init() error {
 		return err
 	}
 
+	//timeout := rest.DefaultTimeout * time.Second
+	//timeout := my.ParentParams.GetChildS("client_timeout")
+	//fmt.Println(timeout)
+
+	clientTimeout := my.ParentParams.GetChildContentS("client_timeout")
 	timeout := rest.DefaultTimeout * time.Second
+	duration, err := time.ParseDuration(clientTimeout)
+	if err == nil {
+		timeout = duration
+	} else {
+		my.Logger.Info().Str("timeout", timeout.String()).Msg("Using default timeout")
+	}
 	if my.client, err = rest.New(conf.ZapiPoller(my.ParentParams), timeout); err != nil {
 		my.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
@@ -72,6 +85,16 @@ func (my *Qtree) Init() error {
 
 	exportOptions := node.NewS("export_options")
 	exportOptions.NewChildS("include_all_labels", "true")
+
+	quotaType := my.Params.GetChildS("quotaType")
+	if quotaType != nil {
+		my.quotaType = []string{}
+		for _, q := range quotaType.GetAllChildContentS() {
+			my.quotaType = append(my.quotaType, q)
+		}
+	} else {
+		my.quotaType = []string{"user", "group", "tree"}
+	}
 
 	for _, obj := range quotaMetric {
 		metricName, display, _, _ := util.ParseMetric(obj)
@@ -105,7 +128,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	// Set all global labels from Rest.go if already not exist
 	my.data.SetGlobalLabels(data.GetGlobalLabels())
 
-	filter := []string{"return_unmatched_nested_array_objects=true", "show_default_records=false"}
+	filter := []string{"return_unmatched_nested_array_objects=true", "show_default_records=false", "type=" + strings.Join(my.quotaType[:], "|")}
 
 	href := rest.BuildHref("", "*", filter, "", "", "", "", my.query)
 

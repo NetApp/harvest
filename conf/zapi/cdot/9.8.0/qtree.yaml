@@ -3,6 +3,8 @@ name:                 Qtree
 query:                qtree-list-iter
 object:               qtree
 
+client_timeout: 2m
+
 counters:
   qtree-info:
     - ^export-policy
@@ -33,6 +35,10 @@ plugins:
         - soft-disk-limit
         - soft-file-limit
         - threshold
+      quotaType:
+        - tree
+        - user
+        - group
     #batch_size: "50"
 export_options:
   instance_keys:

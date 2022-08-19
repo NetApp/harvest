@@ -1,7 +1,8 @@
-
 name:                       Qtree
 query:                      api/storage/qtrees
 object:                     qtree
+
+client_timeout: 2m
 
 counters:
   - ^^svm.name            => svm
@@ -25,7 +26,11 @@ endpoints:
       - filter:
           - qtree=!""
 plugins:
-  - Qtree
+  - Qtree:
+      quotaType:
+        - tree
+        - user
+        - group
   - LabelAgent:
       replace:
         - oplocks oplocks `enable` `enabled`
