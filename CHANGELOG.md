@@ -7,7 +7,7 @@
 
 :rocket: Highlights of this major release include:
 
-- :sparkler: an ONTAP event management system (EMS) events collector
+- :sparkler: an ONTAP event management system (EMS) events collector with [64 events out-of-the-box](https://github.com/NetApp/harvest/blob/main/conf/ems/9.6.0/ems.yaml)
 
 - Two new dashboards added in this release
   - Headroom dashboard
@@ -37,7 +37,9 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 
 ### Enhancements
 
-- :sparkler: Harvest adds an [ONTAP event management system (EMS) events](https://github.com/NetApp/harvest/blob/main/cmd/collectors/ems/README.md) collector in this release. It collects ONTAP events, exports them to Prometheus, and provides integration with Prometheus AlertManager.
+- :sparkler: Harvest adds an [ONTAP event management system (EMS) events](https://github.com/NetApp/harvest/blob/main/cmd/collectors/ems/README.md) collector in this release.
+It collects ONTAP events, exports them to Prometheus, and provides integration with Prometheus AlertManager.
+[Full list of 64 events](https://github.com/NetApp/harvest/blob/main/conf/ems/9.6.0/ems.yaml)
 
 - New Harvest Headroom dashboard. [#1039](https://github.com/NetApp/harvest/issues/1039) Thanks to @faguayot for reporting.
  
