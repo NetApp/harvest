@@ -54,7 +54,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1660901733016,
+  "iteration": 1660910569138,
   "links": [],
   "panels": [
     {
@@ -155,12 +155,23 @@
                 "value": [
                   {
                     "options": {
-                      "-1": {
+                      "match": "null",
+                      "result": {
                         "index": 0,
                         "text": "No Hard Limit"
                       }
                     },
-                    "type": "value"
+                    "type": "special"
+                  },
+                  {
+                    "options": {
+                      "match": "empty",
+                      "result": {
+                        "index": 1,
+                        "text": "No Hard Limit"
+                      }
+                    },
+                    "type": "special"
                   }
                 ]
               },
@@ -205,12 +216,23 @@
                 "value": [
                   {
                     "options": {
-                      "-1": {
+                      "match": "null",
+                      "result": {
                         "index": 0,
                         "text": "No Hard Limit"
                       }
                     },
-                    "type": "value"
+                    "type": "special"
+                  },
+                  {
+                    "options": {
+                      "match": "empty",
+                      "result": {
+                        "index": 1,
+                        "text": "No Hard Limit"
+                      }
+                    },
+                    "type": "special"
                   }
                 ]
               },
@@ -333,11 +355,34 @@
                 ]
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Qtree"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "match": "empty",
+                      "result": {
+                        "index": 0,
+                        "text": "-"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
       "gridPos": {
-        "h": 10,
+        "h": 21,
         "w": 24,
         "x": 0,
         "y": 0
@@ -359,13 +404,10 @@
           }
         ]
       },
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
           "expr": "qtree_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
           "format": "table",
@@ -376,10 +418,7 @@
           "refId": "A"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
           "expr": "qtree_disk_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
           "format": "table",
@@ -390,10 +429,7 @@
           "refId": "B"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
           "expr": "qtree_file_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
           "format": "table",
@@ -404,10 +440,7 @@
           "refId": "C"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
           "expr": "qtree_files_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
           "format": "table",
@@ -418,10 +451,7 @@
           "refId": "D"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
           "expr": "qtree_soft_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
           "format": "table",
@@ -432,10 +462,7 @@
           "refId": "E"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
           "expr": "qtree_disk_used_pct_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
           "format": "table",
@@ -446,10 +473,7 @@
           "refId": "F"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
           "expr": "qtree_files_used_pct_file_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
           "format": "table",
@@ -460,10 +484,7 @@
           "refId": "G"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
           "expr": "qtree_soft_file_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
           "format": "table",
@@ -569,7 +590,7 @@
     }
   ],
   "refresh": "",
-  "schemaVersion": 34,
+  "schemaVersion": 30,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -580,6 +601,8 @@
           "text": "Prometheus",
           "value": "Prometheus"
         },
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": false,
         "label": "Data Source",
@@ -593,15 +616,16 @@
         "type": "datasource"
       },
       {
+        "allValue": null,
         "current": {},
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
-        },
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(volume_labels{system_type!=\"7mode\"}, datacenter)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": false,
-        "multi": false,
+        "label": null,
+        "multi": true,
         "name": "Datacenter",
         "options": [],
         "query": {
@@ -619,20 +643,21 @@
         "useTags": false
       },
       {
+        "allValue": null,
         "current": {},
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
-        },
-        "definition": "label_values(volume_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"}, cluster)",
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(volume_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
-        "multi": false,
+        "label": null,
+        "multi": true,
         "multiFormat": "glob",
         "name": "Cluster",
         "options": [],
         "query": {
-          "query": "label_values(volume_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"}, cluster)",
+          "query": "label_values(volume_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -643,20 +668,21 @@
         "type": "query"
       },
       {
+        "allValue": null,
         "current": {},
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
-        },
-        "definition": "label_values(quota_report_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}, svm)",
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(qtree_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, svm)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
-        "multi": false,
+        "label": null,
+        "multi": true,
         "multiFormat": "glob",
         "name": "SVM",
         "options": [],
         "query": {
-          "query": "label_values(quota_report_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}, svm)",
+          "query": "label_values(qtree_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, svm)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -669,19 +695,19 @@
       {
         "allValue": "(.*)",
         "current": {},
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
-        },
-        "definition": "label_values(quota_report_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"}, qtree)",
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(qtree_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"}, qtree)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
-        "multi": false,
+        "label": null,
+        "multi": true,
         "multiFormat": "glob",
         "name": "Qtree",
         "options": [],
         "query": {
-          "query": "label_values(quota_report_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"}, qtree)",
+          "query": "label_values(qtree_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"}, qtree)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -712,7 +738,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Quota",
-  "uid": "JEMjALi4k",
-  "version": 45,
-  "weekStart": ""
+  "uid": "aTqLYjiVk",
+  "version": 1
 }
