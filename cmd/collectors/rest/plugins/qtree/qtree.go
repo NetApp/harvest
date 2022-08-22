@@ -170,13 +170,20 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			quotaInstance.SetLabel("index", strconv.Itoa(quotaIndex))
 
 			if quotaType == "user" {
-				quotaInstance.SetLabel("user", uName)
+				if uName != "" {
+					quotaInstance.SetLabel("user", uName)
+				} else if uid != "" {
+					quotaInstance.SetLabel("user", uid)
+				}
 				quotaInstance.SetLabel("user_id", uid)
 			} else if quotaType == "group" {
-				quotaInstance.SetLabel("group", group)
+				if group != "" {
+					quotaInstance.SetLabel("group", group)
+				} else if uid != "" {
+					quotaInstance.SetLabel("group", uid)
+				}
 				quotaInstance.SetLabel("group_id", uid)
 			}
-
 			if attrValue := quota.Get(attribute); attrValue.Exists() {
 				// space limits are in bytes, converted to kilobytes
 				if attribute == "space.hard_limit" || attribute == "space.soft_limit" || attribute == "space.used.total" {
