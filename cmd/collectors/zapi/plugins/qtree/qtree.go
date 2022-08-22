@@ -139,7 +139,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 
 	tag := "initial"
-	quotaCount := 0
+	quotaIndex := 0
 
 	for {
 		response, tag, ad, pd, err = my.client.InvokeBatchWithTimers(request, tag)
@@ -170,7 +170,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		my.Logger.Debug().Int("quotas", len(quotas)).Msg("fetching quotas")
 
-		for quotaIndex, quota := range quotas {
+		for _, quota := range quotas {
 			var vserver, quotaInstanceKey, uid, uName string
 			quotaType := quota.GetChildContentS("quota-type")
 			tree := quota.GetChildContentS("tree")
@@ -203,7 +203,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				}
 			}
 
-			quotaCount++
+			quotaIndex++
 
 			for attribute, m := range my.data.GetMetrics() {
 
@@ -275,7 +275,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 
 	my.Logger.Info().
-		Int("numQuotas", quotaCount).
+		Int("numQuotas", quotaIndex).
 		Int("metrics", numMetrics).
 		Str("apiD", apiT.Round(time.Millisecond).String()).
 		Str("parseD", parseT.Round(time.Millisecond).String()).
