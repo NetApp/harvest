@@ -233,10 +233,18 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					quotaInstance.SetLabel("index", strconv.Itoa(quotaIndex))
 
 					if quotaType == "user" {
-						quotaInstance.SetLabel("user", uName)
+						if uName != "" {
+							quotaInstance.SetLabel("user", uName)
+						} else if uid != "" {
+							quotaInstance.SetLabel("user", uid)
+						}
 						quotaInstance.SetLabel("user_id", uid)
 					} else if quotaType == "group" {
-						quotaInstance.SetLabel("group", uName)
+						if uName != "" {
+							quotaInstance.SetLabel("group", uName)
+						} else if uid != "" {
+							quotaInstance.SetLabel("group", uid)
+						}
 						quotaInstance.SetLabel("group_id", uid)
 					}
 
