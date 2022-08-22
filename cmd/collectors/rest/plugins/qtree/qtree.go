@@ -177,7 +177,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				}
 				quotaInstance.SetLabel("user_id", uid)
 			} else if quotaType == "group" {
-				if uName != "" {
+				if group != "" {
 					quotaInstance.SetLabel("group", group)
 				} else if uid != "" {
 					quotaInstance.SetLabel("group", uid)
