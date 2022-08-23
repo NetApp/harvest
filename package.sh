@@ -5,7 +5,7 @@
 #
 
 BUILD_SOURCE=$(pwd)
-BIN=`basename $0`
+BIN=$(basename "$0")
 
 help() {
     cat <<EOF_PRINT_HELP
@@ -50,9 +50,9 @@ build () {
         info "building [harvest_$VERSION-$RELEASE_$ARCH.$DIST] in container"
 
         if [ "$DIST" == "rpm" ]; then 
-            cd "$BUILD_SOURCE/$DIST/centos"
+            cd "$BUILD_SOURCE/$DIST/centos" || exit
         else
-            cd "$BUILD_SOURCE/$DIST/debian"
+            cd "$BUILD_SOURCE/$DIST/debian" || exit
         fi
 
         if [ ! $? -eq 0 ]; then
@@ -60,13 +60,13 @@ build () {
             exit 1
         fi
 
-        docker build -t harvest2/$DIST .
+        docker build -t harvest2/"$DIST" .
         if [ ! $? -eq 0 ]; then
             error "build docker container"
             exit 1
         fi
 
-        docker run -it -v $BUILD_SOURCE:/tmp/src -e HARVEST_BUILD_SRC="/tmp/src" -e HARVEST_ARCH="$ARCH" -e HARVEST_VERSION="$VERSION" -e HARVEST_RELEASE="$RELEASE" harvest2/$DIST
+        docker run -it -v "$BUILD_SOURCE":/tmp/src -e HARVEST_BUILD_SRC="/tmp/src" -e HARVEST_ARCH="$ARCH" -e HARVEST_VERSION="$VERSION" -e HARVEST_RELEASE="$RELEASE" harvest2/"$DIST"
         if [ ! $? -eq 0 ]; then
             error "run docker container"
             exit 1
@@ -74,7 +74,7 @@ build () {
             info "build in docker complete"
         fi
 
-        cd $BUILD_SOURCE
+        cd "$BUILD_SOURCE" || exit
         exit 0
 
     else
@@ -97,7 +97,7 @@ build () {
             info "build complete"
         fi
 
-        cd $BUILD_SOURCE
+        cd "$BUILD_SOURCE" || exit
         exit 0
     fi
 }
