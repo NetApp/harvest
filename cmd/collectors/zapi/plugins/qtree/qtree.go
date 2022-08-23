@@ -140,10 +140,8 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	tag := "initial"
 	quotaIndex := 0
-	var cluster string
-	if data.GetGlobalLabels().Has("cluster") {
-		cluster = data.GetGlobalLabels().Get("cluster")
-	}
+
+	cluster, _ := data.GetGlobalLabels().GetHas("cluster")
 
 	for {
 		response, tag, ad, pd, err = my.client.InvokeBatchWithTimers(request, tag)
