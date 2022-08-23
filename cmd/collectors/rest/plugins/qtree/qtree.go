@@ -132,6 +132,10 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 
 	quotaCount := 0
+	var cluster string
+	if data.GetGlobalLabels().Has("cluster") {
+		cluster = data.GetGlobalLabels().Get("cluster")
+	}
 	for quotaIndex, quota := range result {
 		var tree string
 
@@ -167,7 +171,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			quotaInstance.SetLabel("qtree", tree)
 			quotaInstance.SetLabel("volume", volume)
 			quotaInstance.SetLabel("svm", vserver)
-			quotaInstance.SetLabel("index", strconv.Itoa(quotaIndex))
+			quotaInstance.SetLabel("index", cluster+"_"+strconv.Itoa(quotaIndex))
 
 			if quotaType == "user" {
 				if uName != "" {
