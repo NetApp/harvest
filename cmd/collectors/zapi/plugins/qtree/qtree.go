@@ -141,6 +141,8 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	tag := "initial"
 	quotaIndex := 0
 
+	cluster, _ := data.GetGlobalLabels().GetHas("cluster")
+
 	for {
 		response, tag, ad, pd, err = my.client.InvokeBatchWithTimers(request, tag)
 
@@ -230,7 +232,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					quotaInstance.SetLabel("qtree", tree)
 					quotaInstance.SetLabel("volume", volume)
 					quotaInstance.SetLabel("svm", vserver)
-					quotaInstance.SetLabel("index", strconv.Itoa(quotaIndex))
+					quotaInstance.SetLabel("index", cluster+"_"+strconv.Itoa(quotaIndex))
 
 					if quotaType == "user" {
 						if uName != "" {
