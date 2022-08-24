@@ -17,12 +17,18 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"os"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
+)
+
+var (
+	//ignore missing label warning in log. In Rest, some fields are not present in response when not applicable.
+	ignoreLabelMissingWarning = []string{"NetPort"}
 )
 
 type Rest struct {
@@ -443,7 +449,9 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, allowInstanceCre
 				}
 				count++
 			} else {
-				r.Logger.Warn().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
+				if !util.Contains(ignoreLabelMissingWarning, r.GetObject()) {
+					r.Logger.Warn().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
+				}
 			}
 		}
 
