@@ -189,7 +189,7 @@ func (p *Poller) Init() error {
 		addr := fmt.Sprintf("localhost:%d", p.options.Profiling)
 		logger.Info().Msgf("profiling enabled on [%s]", addr)
 		go func() {
-			fmt.Println(http.ListenAndServe(addr, nil))
+			fmt.Println(http.ListenAndServe(addr, nil)) //nolint:gosec
 		}()
 	}
 

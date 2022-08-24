@@ -2,7 +2,6 @@ linters:
   disable-all: true
   enable:
     - bodyclose
-    - deadcode
     - errcheck
     - errname
     - errorlint
@@ -17,14 +16,12 @@ linters:
     - nonamedreturns
     - nosprintfhostport
     - staticcheck
-#    - structcheck
     - stylecheck
     - tenv
     - thelper
     - typecheck
     - unconvert
     - unused
-    - varcheck
 
 issues:
   max-issues-per-linter: 0
