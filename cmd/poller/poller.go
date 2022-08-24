@@ -73,13 +73,20 @@ import (
 
 // default params
 var (
-	pollerSchedule  = "60s"
-	logFileName     = ""
-	logMaxMegaBytes = logging.DefaultLogMaxMegaBytes
-	logMaxBackups   = logging.DefaultLogMaxBackups
-	logMaxAge       = logging.DefaultLogMaxAge
-	asupSchedule    = "24h" // send every 24 hours
-	asupFirstWrite  = "4m"  // after this time, write 1st autosupport payload (for testing)
+	pollerSchedule   = "60s"
+	logFileName      = ""
+	logMaxMegaBytes  = logging.DefaultLogMaxMegaBytes
+	logMaxBackups    = logging.DefaultLogMaxBackups
+	logMaxAge        = logging.DefaultLogMaxAge
+	asupSchedule     = "24h" // send every 24 hours
+	asupFirstWrite   = "4m"  // after this time, write 1st autosupport payload (for testing)
+	isOntapCollector = map[string]struct{}{
+		"ZapiPerf": {},
+		"Zapi":     {},
+		"Rest":     {},
+		"RestPerf": {},
+		"Ems":      {},
+	}
 )
 
 // init with default configuration that logs to both console and harvest.log
@@ -886,9 +893,11 @@ var pollerCmd = &cobra.Command{
 // Returns true if at least one collector is known
 // to collect from an Ontap system (needs to be updated
 // when we add other Ontap collectors, e.g. REST)
+
 func (p *Poller) targetIsOntap() bool {
 	for _, c := range p.collectors {
-		if c.GetName() == "ZapiPerf" || c.GetName() == "Zapi" || c.GetName() == "Rest" || c.GetName() == "RestPerf" || c.GetName() == "Ems" {
+		_, ok := isOntapCollector[c.GetName()]
+		if ok {
 			return true
 		}
 	}
