@@ -40,11 +40,11 @@ echo "Architecture: $HARVEST_ARCH" >> "$BUILD/DEBIAN/control"
 cat "$SRC/deb/control" >> "$BUILD/DEBIAN/control"
 
 echo " --> update version & build info in [cmd/harvest/version/version.go]"
-cd "$BUILD/opt/harvest/cmd/harvest/version"
+cd "$BUILD/opt/harvest/cmd/harvest/version" || exit
 
 # build binaries, since arch of build machine might not be the same as the target machine
 # export a variable that Makefile will pass to the go compiler
-cd "$BUILD/opt/harvest/"
+cd "$BUILD/opt/harvest/" || exit
 export GOOS="linux"
 export GOARCH="$HARVEST_ARCH"
 if [ "$HARVEST_ARCH" = "armhf" ]; then
@@ -55,9 +55,9 @@ echo " --> build harvest with envs [GOOS=$GOOS, GOARCH=$GOARCH, GOARM=$GOARM]"
 
 if [ -n "$ASUP_MAKE_TARGET" ] && [ -n "$GIT_TOKEN" ]
 then
-      make build asup VERSION=$VERSION RELEASE=$RELEASE ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET GIT_TOKEN=$GIT_TOKEN
+      make build asup VERSION="$VERSION" RELEASE="$RELEASE" ASUP_MAKE_TARGET="$ASUP_MAKE_TARGET" GIT_TOKEN="$GIT_TOKEN"
 else
-      make build VERSION=$HARVEST_VERSION RELEASE=$HARVEST_RELEASE
+      make build VERSION="$HARVEST_VERSION" RELEASE="$HARVEST_RELEASE"
 fi
 
 rm -rf $BUILD/opt/harvest/asup/*
