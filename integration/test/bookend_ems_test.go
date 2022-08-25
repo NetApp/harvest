@@ -18,6 +18,13 @@ var supportedEms []string
 var oldAlertsData map[string]int
 var newAlertsData map[string]int
 
+// These bookend ems (both issuing and resolving ems) are node scoped and have bookendKey as node-name only. They won't be raised/resolved always from ONTAP even if we simulate via POST call.
+var skippedBookendEmsList = []string{
+	"callhome.battery.low",
+	"sp.ipmi.lost.shutdown",
+	"sp.notConfigured",
+}
+
 type EmsTestSuite struct {
 	suite.Suite
 }
@@ -51,7 +58,7 @@ func (suite *EmsTestSuite) TestBookendEmsAlerts() {
 
 	for _, bookendEmsName := range supportedEms {
 		v := oldAlertsData[bookendEmsName] - newAlertsData[bookendEmsName]
-		if v < 1 {
+		if v < 1 && !utils.Contains(skippedBookendEmsList, bookendEmsName) {
 			foundBookendEms = append(foundBookendEms, bookendEmsName)
 		}
 	}
