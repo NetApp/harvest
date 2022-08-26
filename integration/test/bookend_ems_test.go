@@ -41,7 +41,7 @@ func (suite *EmsTestSuite) SetupSuite() {
 	oldAlertsData, _ = promAlerts.GetAlerts()
 
 	// Identify supported ems names for the given cluster
-	supportedEms = promAlerts.GenerateEvents(resolvingEmsNames)
+	supportedEms = promAlerts.GenerateEvents(resolvingEmsNames, skippedBookendEmsList)
 	log.Info().Msgf("Supported Bookend ems:%d", len(supportedEms))
 
 	// Fetch current prometheus alerts
@@ -58,7 +58,7 @@ func (suite *EmsTestSuite) TestBookendEmsAlerts() {
 
 	for _, bookendEmsName := range supportedEms {
 		v := oldAlertsData[bookendEmsName] - newAlertsData[bookendEmsName]
-		if v < 1 && !utils.Contains(skippedBookendEmsList, bookendEmsName) {
+		if v < 1 {
 			foundBookendEms = append(foundBookendEms, bookendEmsName)
 		}
 	}

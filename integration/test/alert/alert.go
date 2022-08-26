@@ -82,11 +82,13 @@ func GetEmsAlerts(dir string, fileName string) ([]EmsData, []EmsData) {
 	return totalEms, bookendEms
 }
 
-func GenerateEvents(emsNames []EmsData) []string {
+func GenerateEvents(emsNames []EmsData, nodeScopedEms []string) []string {
 	supportedEms := make([]string, 0)
+	var jsonValue []byte
 	addr, user, pass := GetPollerDetail()
 	url := "https://" + addr + "/api/private/cli/event/generate"
 	method := "POST"
+	node_name := "umeng-aff300-06"
 
 	volumeArwCount := 0
 	vserverArwCount := 0
@@ -105,7 +107,12 @@ func GenerateEvents(emsNames []EmsData) []string {
 			vserverArwCount++
 		}
 
-		jsonValue := []byte(fmt.Sprintf(`{"message-name": "%s", "values": [%s,2,3,4,5,6,7,8,9]}`, ems, value))
+		// Handle for node-scoped ems, Passing node-name as input
+		if utils.Contains(nodeScopedEms, ems) {
+			jsonValue = []byte(fmt.Sprintf(`{"message-name": "%s", "values": [%s,2,3,4,5,6,7,8,9]}, "node": "%s"`, ems, value, node_name))
+		}
+
+		jsonValue = []byte(fmt.Sprintf(`{"message-name": "%s", "values": [%s,2,3,4,5,6,7,8,9]}`, ems, value))
 		var data map[string]interface{}
 		data = utils.SendPostReqAndGetRes(url, method, jsonValue, user, pass)
 		if response := data["error"]; response != nil {

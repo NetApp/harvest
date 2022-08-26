@@ -44,7 +44,7 @@ func (suite *AlertRulesTestSuite) SetupSuite() {
 	totalEmsNames, _ = promAlerts.GetEmsAlerts(emsConfigDir, "ems.yaml")
 
 	// Identify supported ems names for the given cluster
-	supportedEms = promAlerts.GenerateEvents(totalEmsNames)
+	supportedEms = promAlerts.GenerateEvents(totalEmsNames, skippedEmsList)
 	log.Info().Msgf("Total supported ems: %d", len(supportedEms))
 
 	// Fetch prometheus alerts
@@ -60,7 +60,7 @@ func (suite *AlertRulesTestSuite) TestEmsAlerts() {
 	notFoundEms := make([]string, 0)
 
 	for _, emsName := range supportedEms {
-		if !(alertsData[emsName] != 0 || utils.Contains(skippedEmsList, emsName)) {
+		if alertsData[emsName] == 0 {
 			notFoundEms = append(notFoundEms, emsName)
 		}
 	}
