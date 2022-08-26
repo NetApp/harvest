@@ -13,6 +13,7 @@ import (
 	"github.com/tidwall/gjson"
 	"io"
 	"net/http"
+	"net/http/httputil"
 	"os"
 	"strings"
 	"time"
@@ -232,7 +233,7 @@ func (c *Client) invoke() ([]byte, error) {
 	return body, nil
 }
 
-func downloadSwagger(poller *conf.Poller, path string, url string) (int64, error) {
+func downloadSwagger(poller *conf.Poller, path string, url string, verbose bool) (int64, error) {
 	var restClient *Client
 
 	out, err := os.Create(path)
@@ -254,6 +255,10 @@ func downloadSwagger(poller *conf.Poller, path string, url string) (int64, error
 	if restClient.username != "" {
 		request.SetBasicAuth(restClient.username, restClient.password)
 	}
+	if verbose {
+		requestOut, _ := httputil.DumpRequestOut(request, false)
+		fmt.Printf("REQUEST: %s BY: %s\n%s\n", url, restClient.username, requestOut)
+	}
 	response, err := downClient.Do(request)
 	if err != nil {
 		return 0, err
@@ -261,6 +266,13 @@ func downloadSwagger(poller *conf.Poller, path string, url string) (int64, error
 	//goland:noinspection GoUnhandledErrorResult
 	defer response.Body.Close()
 
+	if verbose {
+		debugResp, _ := httputil.DumpResponse(response, false)
+		fmt.Printf("RESPONSE: \n%s", debugResp)
+	}
+	if response.StatusCode != 200 {
+		return 0, fmt.Errorf("error making request. server response statusCode=[%d]", response.StatusCode)
+	}
 	n, err := io.Copy(out, response.Body)
 	if err != nil {
 		return 0, fmt.Errorf("error while downloading %s err=%w", url, err)
