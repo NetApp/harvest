@@ -136,7 +136,7 @@ func (my *Volume) GetSnapMirrors() (map[string][]*matrix.Instance, map[string]*m
 	}
 
 	for _, snapMirror := range result {
-
+		var instanceKey string
 		relationshipID := snapMirror.Get("relationship_id").String()
 		groupType := snapMirror.Get("relationship_group_type").String()
 		destinationVolume := snapMirror.Get("destination_volume").String()
@@ -147,7 +147,10 @@ func (my *Volume) GetSnapMirrors() (map[string][]*matrix.Instance, map[string]*m
 		sourceSvm := snapMirror.Get("source_vserver").String()
 		destinationSvm := snapMirror.Get("destination_vserver").String()
 
-		instanceKey := relationshipID
+		if instanceKey = relationshipID; instanceKey == "" {
+			continue
+		}
+
 		instance, err := snapmirrorData.NewInstance(instanceKey)
 
 		if err != nil {
