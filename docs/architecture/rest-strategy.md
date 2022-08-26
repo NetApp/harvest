@@ -16,7 +16,7 @@ This document describes how Harvest is making the ONTAP transition, from ZAPI to
 By default, Harvest will use ZAPIs up until ONTAP removes them in `9.13.1`.
 Starting in `9.13.1` and after, Harvest will use REST.
 
-Harvest includes a full set of REST templates that export the same metrics are ZAPI templates.
+Harvest includes a full set of REST templates that export identical metrics as the included ZAPI templates.
 No changes to dashboards or downstream metric-consumers will be required.
 
 Read on if you want to know how you can use REST sooner, or you want to take advantage of REST-only features in ONTAP.
