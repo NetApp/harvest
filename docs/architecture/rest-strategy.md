@@ -47,9 +47,10 @@ Yes. Several customers already are. There are a few caveats to be aware of:
    That means Harvest's `RestPerf` collector won't work until `9.11.1`.
    ONTAP supports a subset of performance counters in `9.11.1`. The full set is available in `9.12.1`.
 
-2. It's better to publish a set of metrics once instead of multiple times. In other words, don't enable  
-   both the `Zapi` and `Rest` collector for an overlapping set of objects on the same cluster.
-   It will work, but you'll put more load on the cluster and push duplicate metrics to Prometheus.
+2. It's better to publish a set of metrics once instead of multiple times. In other words, it does not make sense to
+   enable both the `Zapi` and `Rest` collector for an overlapping set of objects on the same cluster.
+   It will work, but you'll put more load on the cluster and push duplicate metrics to Prometheus. 
+   See [belo](#can-i-use-the-rest-and-zapi-collectors-at-the-same-time) for details on how to use both collectors at the same time. 
 
 3. There may be metrics missing from versions of ONTAP earlier than `9.11.1`.
 
