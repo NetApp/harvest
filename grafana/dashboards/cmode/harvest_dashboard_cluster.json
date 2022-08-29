@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1660131659137,
+  "iteration": 1661778093058,
   "links": [],
   "panels": [
     {
@@ -749,7 +749,7 @@
         ]
       },
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 18,
         "x": 0,
         "y": 8
@@ -989,13 +989,95 @@
       "type": "bargauge"
     },
     {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "id": 222,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "node_cpu_busy{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "interval": "",
+          "legendFormat": "{{node}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Node CPU Busy",
+      "type": "timeseries"
+    },
+    {
       "collapsed": true,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 16
+        "y": 24
       },
       "id": 198,
       "panels": [
@@ -2001,7 +2083,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 17
+        "y": 25
       },
       "id": 97,
       "panels": [
@@ -2561,7 +2643,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 18
+        "y": 26
       },
       "id": 184,
       "panels": [
@@ -2589,7 +2671,7 @@
             "h": 4,
             "w": 8,
             "x": 0,
-            "y": 4
+            "y": 19
           },
           "id": 187,
           "options": {
@@ -2644,7 +2726,7 @@
             "h": 4,
             "w": 8,
             "x": 8,
-            "y": 4
+            "y": 19
           },
           "id": 189,
           "options": {
@@ -2699,7 +2781,7 @@
             "h": 4,
             "w": 8,
             "x": 16,
-            "y": 4
+            "y": 19
           },
           "id": 188,
           "options": {
@@ -2784,7 +2866,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 8
+            "y": 23
           },
           "id": 191,
           "options": {
@@ -2866,7 +2948,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 8
+            "y": 23
           },
           "id": 194,
           "options": {
@@ -2948,7 +3030,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 16
+            "y": 31
           },
           "id": 193,
           "options": {
@@ -3030,7 +3112,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 16
+            "y": 31
           },
           "id": 196,
           "options": {
@@ -3113,7 +3195,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 24
+            "y": 39
           },
           "id": 195,
           "options": {
@@ -3195,7 +3277,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 24
+            "y": 39
           },
           "id": 192,
           "options": {
@@ -3235,7 +3317,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 27
       },
       "id": 214,
       "panels": [
@@ -3505,7 +3587,7 @@
       "type": "row"
     }
   ],
-  "refresh": "30s",
+  "refresh": "",
   "schemaVersion": 30,
   "style": "dark",
   "tags": [],
@@ -3764,6 +3846,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Cluster",
-  "uid": "1zy71Vi4z",
-  "version": 9
+  "uid": "Puzm8EWVk",
+  "version": 10
 }
