@@ -40,6 +40,7 @@ type Args struct {
 	DownloadAll   bool
 	MaxRecords    string
 	ForceDownload bool
+	Verbose       bool
 }
 
 var Cmd = &cobra.Command{
@@ -86,7 +87,7 @@ func readOrDownloadSwagger() (string, error) {
 	}
 	if shouldDownload {
 		url := "https://" + addr + "/docs/api/swagger.yaml"
-		bytesDownloaded, err := downloadSwagger(poller, swaggerPath, url)
+		bytesDownloaded, err := downloadSwagger(poller, swaggerPath, url, args.Verbose)
 		if err != nil {
 			fmt.Printf("error downloading swagger %s\n", err)
 			return "", err
@@ -389,6 +390,7 @@ func init() {
 	showFlags.StringVarP(&args.API, "api", "a", "", "REST API PATTERN to show")
 	showFlags.StringVar(&args.Endpoint, "endpoint", "", "By default, /api is appended to passed argument in --api. Use --endpoint instead to pass absolute path of url")
 	showFlags.BoolVar(&args.DownloadAll, "all", false, "Collect all records by walking pagination links")
+	showFlags.BoolVarP(&args.Verbose, "verbose", "v", false, "Be verbose")
 	showFlags.StringVarP(&args.MaxRecords, "max-records", "m", "", "Limit the number of records returned before providing pagination link")
 	showFlags.BoolVar(&args.ForceDownload, "download", false, "Force download Swagger file instead of using local copy")
 	showFlags.StringVarP(&args.Fields, "fields", "f", "*", "Fields to return in the response <field>[,...].")

@@ -13,6 +13,7 @@ objects:
 #  ClusterPeer:                 clusterpeer.yaml
 #  Disk:                        disk.yaml
 #  Lun:                         lun.yaml
+#  NetPort:                     netPort.yaml
 #  Node:                        node.yaml
 #  NtpServer:                   ntpserver.yaml
 #  Port:                        port.yaml

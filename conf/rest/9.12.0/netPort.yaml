@@ -1,0 +1,27 @@
+name:                     NetPort
+query:                    api/network/ethernet/ports
+object:                   net_port
+
+counters:
+  - ^^name                                   => port
+  - ^^node.name                              => node
+  - ^broadcast_domain.name                   => broadcast
+  - ^lag.distribution_policy                 => lag_distribution_policy
+  - ^lag.mode                                => lag_mode
+  - ^lag.active_ports.name                   => lag_port
+  - ^broadcast_domain.ipspace.name           => ipspace
+  - ^enabled                                 => admin_up
+  - ^state                                   => status
+  - ^vlan.tag                                => vlan_id
+  - ^vlan.base_port.node.name                => vlan_node
+  - ^vlan.base_port.name                     => vlan_port
+  - mtu                                      => mtu
+  - operational-speed                        => op_speed
+
+plugins:
+  LabelAgent:
+    value_to_num:
+      - status status up up `0`
+
+export_options:
+  include_all_labels: true
