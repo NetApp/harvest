@@ -164,6 +164,7 @@ func (my *Volume) GetSnapMirrors() (map[string][]*matrix.Instance, map[string]*m
 		}
 
 		for _, snapMirror := range result {
+			var instanceKey string
 			relationshipID := snapMirror.GetChildContentS("relationship-id")
 			groupType := snapMirror.GetChildContentS("relationship-group-type")
 			destinationVolume := snapMirror.GetChildContentS("destination-volume")
@@ -174,7 +175,11 @@ func (my *Volume) GetSnapMirrors() (map[string][]*matrix.Instance, map[string]*m
 			sourceSvm := snapMirror.GetChildContentS("source-vserver")
 			destinationSvm := snapMirror.GetChildContentS("destination-vserver")
 
-			instanceKey := relationshipID
+			if instanceKey = relationshipID; instanceKey == "" {
+				my.Logger.Trace().Msg("Instance key is empty, skipping")
+				continue
+			}
+
 			instance, err := snapmirrorData.NewInstance(instanceKey)
 
 			if err != nil {

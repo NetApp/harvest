@@ -418,6 +418,11 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, allowInstanceCre
 			}
 		}
 
+		if instanceKey == "" {
+			r.Logger.Trace().Msg("Instance key is empty, skipping")
+			continue
+		}
+
 		instance = mat.GetInstance(instanceKey)
 
 		// Used for endpoints as we don't want to create additional instances
