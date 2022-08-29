@@ -56,9 +56,15 @@ const (
 	objWorkloadDetail       = "workload_detail"
 	objWorkloadVolume       = "workload_volume"
 	objWorkloadDetailVolume = "workload_detail_volume"
+	BILLION                 = 1000000000
 )
 
-const BILLION = 1000000000
+var (
+	allZeroesMap              = make(map[string]int)
+	checkAllZeroesObjectQuery = map[string]struct{}{
+		"nfsv3": {},
+	}
+)
 
 type ZapiPerf struct {
 	*zapi.Zapi      // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
@@ -247,6 +253,9 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		requestCounters.NewChildS("counter", key)
 	}
 
+	//all Zero Metrics instances
+	allZeroMetricInstancesCount := 0
+
 	// batch indices
 	startIndex := 0
 	endIndex := 0
@@ -314,6 +323,8 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		ts := float64(time.Now().UnixNano()) / BILLION
 
 		for _, i := range instances.GetChildren() {
+
+			isNonZeroMetricExists := true
 
 			key := i.GetChildContentS(me.instanceKey)
 
@@ -425,6 +436,9 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 					for i, label := range labels {
 						if metric := newData.GetMetric(name + "." + label); metric != nil {
+							if values[i] != "0" {
+								isNonZeroMetricExists = true
+							}
 							if err = metric.SetValueString(instance, values[i]); err != nil {
 								me.Logger.Error().
 									Stack().
@@ -455,6 +469,9 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 				// special case for workload_detail
 				if me.Query == objWorkloadDetail || me.Query == objWorkloadDetailVolume {
 					if name == "wait_time" || name == "service_time" {
+						if value != "0" {
+							isNonZeroMetricExists = true
+						}
 						if err := resourceLatency.AddValueString(instance, value); err != nil {
 							me.Logger.Error().
 								Stack().
@@ -479,6 +496,9 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 				// store as scalar metric
 				if metric := newData.GetMetric(name); metric != nil {
+					if value != "0" {
+						isNonZeroMetricExists = true
+					}
 					if err = metric.SetValueString(instance, value); err != nil {
 						me.Logger.Error().
 							Stack().
@@ -495,11 +515,43 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 					}
 					continue
 				}
-
 				me.Logger.Warn().Str("counter", name).Str("value", value).Msg("Counter not found in cache")
-
 			} // end loop over counters
 
+			_, doAllZeroCheck := checkAllZeroesObjectQuery[me.Query]
+			if doAllZeroCheck {
+				// check if all metrics are zero
+				if !isNonZeroMetricExists {
+					allZeroesMap[key] = 1
+					instance.SetExportable(false)
+					allZeroMetricInstancesCount++
+					me.Logger.Warn().
+						Str("Instance Key", key).
+						Str("name", i.GetChildContentS("name")).
+						Msg("All metrics are zero. This instance will not be exported")
+				} else {
+					if v, ok := allZeroesMap[key]; ok {
+						if v == 1 {
+							allZeroesMap[key] = 0
+							instance.SetExportable(false)
+							me.Logger.Warn().
+								Str("Instance Key", key).
+								Str("name", i.GetChildContentS("name")).
+								Msg("Previous poll for this instance had all zero metrics. This instance will not be exported")
+							allZeroMetricInstancesCount++
+						} else {
+							delete(allZeroesMap, key)
+							me.Logger.Warn().
+								Str("Instance Key", key).
+								Str("name", i.GetChildContentS("name")).
+								Msg("Recovered from all zero metrics issue. This instance will be exported.")
+							instance.SetExportable(true)
+						}
+					} else {
+						instance.SetExportable(true)
+					}
+				}
+			}
 		} // end loop over instances
 	} // end batch request
 
@@ -656,7 +708,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	calcD := time.Since(calcStart)
 	me.Logger.Info().
-		Int("instances", len(instanceKeys)).
+		Int("instances", len(instanceKeys)-allZeroMetricInstancesCount).
 		Uint64("metrics", count).
 		Str("apiD", apiT.Round(time.Millisecond).String()).
 		Str("parseD", parseT.Round(time.Millisecond).String()).
