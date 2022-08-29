@@ -26,6 +26,7 @@ package zapiperf
 
 import (
 	"errors"
+	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/fcp"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/headroom"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/nic"
@@ -57,6 +58,8 @@ const (
 	objWorkloadVolume       = "workload_volume"
 	objWorkloadDetailVolume = "workload_detail_volume"
 )
+
+var iteration = 0 // TODO debug remove
 
 const BILLION = 1000000000
 
@@ -187,7 +190,8 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		resourceLatency matrix.Metric // for workload* objects
 		err             error
 	)
-
+	iteration++    // TODO debug remove
+	debugTs := 0.0 // TODO debug remove
 	me.Logger.Trace().Msg("updating data cache")
 	m := me.Matrix[me.Object]
 	// clone matrix without numeric data
@@ -312,6 +316,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		// ignore timestamp from ZAPI which is always integer
 		// we want float, since our poll interval can be float
 		ts := float64(time.Now().UnixNano()) / BILLION
+		debugTs = ts // TODO debug remove
 
 		for _, i := range instances.GetChildren() {
 
@@ -375,11 +380,24 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 				me.Logger.Error().Stack().Err(err).Msg("set timestamp value: ")
 			}
 
+			allCountersAreZero := true
 			for _, cnt := range counters.GetChildren() {
 
 				name := cnt.GetChildContentS("name")
 				value := cnt.GetChildContentS("value")
 
+				// TODO debug remove - begin
+				if (key == "10" && me.object == "svm_nfs") && name != "instance_name" {
+					if iteration == 2 {
+						fmt.Printf("CBG it=%d key=10 counter=%s ONTAP BUG overwrite %s -> 0 ts=%d\n",
+							iteration, name, value, int64(ts))
+						value = "0"
+					} else {
+						fmt.Printf("CBG it=%d nfs instance key=10 counter=%s %s ts=%d\n",
+							iteration, name, value, int64(ts))
+					}
+				}
+				// TODO debug remove - end
 				// sanity check
 				if name == "" || value == "" {
 					me.Logger.Debug().
@@ -408,6 +426,10 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 					continue
 				}
 
+				if value != "0" {
+					allCountersAreZero = false
+				}
+
 				// store as array counter / histogram
 				if labels, has := me.histogramLabels[name]; has {
 
@@ -425,6 +447,9 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 					for i, label := range labels {
 						if metric := newData.GetMetric(name + "." + label); metric != nil {
+							if values[i] != "0" {
+								allCountersAreZero = false
+							}
 							if err = metric.SetValueString(instance, values[i]); err != nil {
 								me.Logger.Error().
 									Stack().
@@ -499,7 +524,37 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 				me.Logger.Warn().Str("counter", name).Str("value", value).Msg("Counter not found in cache")
 
 			} // end loop over counters
-
+			if allCountersAreZero {
+				// Workaround ONTAP bug that sometimes returns zeroes for all counters of an instance
+				// When this happens, use the previous poll's raw values for that instance instead
+				// TODO debug code begin
+				if key == "10" {
+					fmt.Printf("it=%d allCountersAreZero for key=10\n", iteration)
+				}
+				// TODO debug code end
+				prevInst := m.GetInstance(key)
+				// if the prevInst does not exist, ignore
+				if prevInst != nil {
+					for name := range newData.GetMetrics() {
+						if newMetric := newData.GetMetric(name); newMetric != nil {
+							// TODO debug begin
+							prevTSMetric := m.GetMetric("timestamp")
+							prevTS, _ := prevTSMetric.GetValueUint64(prevInst) // debug - used for printing
+							// TODO debug end
+							if prevMetric := m.GetMetric(name); prevMetric != nil {
+								if prevValue, ok := prevMetric.GetValueFloat64(prevInst); ok {
+									curVal, _ := newMetric.GetValueFloat64(instance)
+									fmt.Printf("CBG it=%d key=%s counter=%s fix allZero from %f -> %f ts=%d\n", iteration, key, name, curVal, prevValue, prevTS)
+									newMetric.SetExportable(false)
+									if err = newMetric.SetValueFloat64(instance, prevValue); err != nil {
+										fmt.Printf("err")
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 		} // end loop over instances
 	} // end batch request
 
@@ -580,6 +635,21 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 			me.Logger.Error().Stack().Err(err).Str("key", key).Msg("Calculate delta")
 			continue
 		}
+		//TODO debug remove
+		if key == "total_ops" {
+			instance := newData.GetInstance("10")
+			v, _ := metric.GetValueFloat64(instance)
+
+			tsMetric := newData.GetMetric("timestamp")
+			cookedTS, _ := tsMetric.GetValueUint64(instance)
+
+			prevTSMetric := m.GetMetric("timestamp")
+			prevTS, _ := prevTSMetric.GetValueUint64(instance)
+
+			fmt.Printf("CBG it=%d key=10 counter=%s cooked=%f cookedTs=%d ts=%d prevTs=%d\n",
+				iteration, metric.GetName(), v, cookedTS, int64(debugTs), prevTS)
+		}
+		//TODO debug remove end
 
 		// DELTA - subtract previous value from current
 		if property == "delta" {
