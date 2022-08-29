@@ -31,6 +31,13 @@ var skippedEmsList = []string{
 	"scsitarget.fct.port.full",
 }
 
+// These bookend issuing ems are node scoped and have bookendKey as node-name only.
+var nodeScopedIssuingEmsList = []string{
+	"callhome.battery.low",
+	"sp.ipmi.lost.shutdown",
+	"sp.notConfigured",
+}
+
 type AlertRulesTestSuite struct {
 	suite.Suite
 }
@@ -44,7 +51,7 @@ func (suite *AlertRulesTestSuite) SetupSuite() {
 	totalEmsNames, _ = promAlerts.GetEmsAlerts(emsConfigDir, "ems.yaml")
 
 	// Identify supported ems names for the given cluster
-	supportedEms = promAlerts.GenerateEvents(totalEmsNames, skippedEmsList)
+	supportedEms = promAlerts.GenerateEvents(totalEmsNames, nodeScopedIssuingEmsList)
 	log.Info().Msgf("Total supported ems: %d", len(supportedEms))
 
 	// Fetch prometheus alerts
@@ -60,7 +67,7 @@ func (suite *AlertRulesTestSuite) TestEmsAlerts() {
 	notFoundEms := make([]string, 0)
 
 	for _, emsName := range supportedEms {
-		if alertsData[emsName] == 0 {
+		if !(alertsData[emsName] != 0 || utils.Contains(skippedEmsList, emsName)) {
 			notFoundEms = append(notFoundEms, emsName)
 		}
 	}

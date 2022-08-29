@@ -18,11 +18,10 @@ var supportedEms []string
 var oldAlertsData map[string]int
 var newAlertsData map[string]int
 
-// These bookend ems (both issuing and resolving ems) are node scoped and have bookendKey as node-name only. They won't be raised/resolved always from ONTAP even if we simulate via POST call.
-var skippedBookendEmsList = []string{
-	"callhome.battery.low",
-	"sp.ipmi.lost.shutdown",
-	"sp.notConfigured",
+// These bookend resolving ems are node scoped and have bookendKey as node-name only.
+var nodeScopedResolvingEmsList = []string{
+	"nvram.battery.charging.normal",
+	"sp.heartbeat.resumed",
 }
 
 type EmsTestSuite struct {
@@ -41,7 +40,7 @@ func (suite *EmsTestSuite) SetupSuite() {
 	oldAlertsData, _ = promAlerts.GetAlerts()
 
 	// Identify supported ems names for the given cluster
-	supportedEms = promAlerts.GenerateEvents(resolvingEmsNames, skippedBookendEmsList)
+	supportedEms = promAlerts.GenerateEvents(resolvingEmsNames, nodeScopedResolvingEmsList)
 	log.Info().Msgf("Supported Bookend ems:%d", len(supportedEms))
 
 	// Fetch current prometheus alerts
