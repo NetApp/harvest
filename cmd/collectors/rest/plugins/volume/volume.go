@@ -148,6 +148,7 @@ func (my *Volume) GetSnapMirrors() (map[string][]*matrix.Instance, map[string]*m
 		destinationSvm := snapMirror.Get("destination_vserver").String()
 
 		if instanceKey = relationshipID; instanceKey == "" {
+			my.Logger.Trace().Msg("Instance key is empty, skipping")
 			continue
 		}
 
