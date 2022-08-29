@@ -191,7 +191,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		err             error
 	)
 	iteration++    // TODO debug remove
-	debugTs := 0.0 // TODO debug remove
+	debugTS := 0.0 // TODO debug remove
 	me.Logger.Trace().Msg("updating data cache")
 	m := me.Matrix[me.Object]
 	// clone matrix without numeric data
@@ -316,7 +316,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		// ignore timestamp from ZAPI which is always integer
 		// we want float, since our poll interval can be float
 		ts := float64(time.Now().UnixNano()) / BILLION
-		debugTs = ts // TODO debug remove
+		debugTS = ts // TODO debug remove
 
 		for _, i := range instances.GetChildren() {
 
@@ -647,7 +647,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 			prevTS, _ := prevTSMetric.GetValueUint64(instance)
 
 			fmt.Printf("CBG it=%d key=10 counter=%s cooked=%f cookedTs=%d ts=%d prevTs=%d\n",
-				iteration, metric.GetName(), v, cookedTS, int64(debugTs), prevTS)
+				iteration, metric.GetName(), v, cookedTS, int64(debugTS), prevTS)
 		}
 		//TODO debug remove end
 
