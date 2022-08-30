@@ -91,6 +91,7 @@ Verify there are no errors when you copy/paste these. Warnings are fine.
 ```bash
 security login role create -role harvest2-role -access readonly -cmddirname "cluster"
 security login role create -role harvest2-role -access readonly -cmddirname "lun"    
+security login role create -role harvest2-role -access readonly -cmddirname "qos workload show"
 security login role create -role harvest2-role -access readonly -cmddirname "snapmirror"
 security login role create -role harvest2-role -access readonly -cmddirname "statistics"
 security login role create -role harvest2-role -access readonly -cmddirname "storage aggregate"
@@ -101,7 +102,8 @@ security login role create -role harvest2-role -access readonly -cmddirname "sys
 security login role create -role harvest2-role -access readonly -cmddirname "system node"
 security login role create -role harvest2-role -access readonly -cmddirname "version"
 security login role create -role harvest2-role -access readonly -cmddirname "volume"
-# New permissions required for Harvest 22.05 security dashboard
+
+# Permissions required for Harvest 22.05+ security dashboard
 security login role create -role harvest2-role -access readonly -cmddirname "network interface"
 security login role create -role harvest2-role -access readonly -cmddirname "security"
 security login role create -role harvest2-role -access readonly -cmddirname "storage encryption disk"
