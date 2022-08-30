@@ -57,10 +57,10 @@ const (
 	objWorkloadVolume       = "workload_volume"
 	objWorkloadDetailVolume = "workload_detail_volume"
 	BILLION                 = 1000000000
+	allZeroLabel            = "#allZero" // used to handle an ONTAP bug where an instance may have all zero metrics
 )
 
 var (
-	allZeroesMap              = make(map[string]int)
 	checkAllZeroesObjectQuery = map[string]struct{}{
 		"nfsv3": {},
 	}
@@ -522,7 +522,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 			if doAllZeroCheck {
 				// check if all metrics are zero
 				if !isNonZeroMetricExists {
-					allZeroesMap[key] = 1
+					instance.SetLabel(allZeroLabel, "1")
 					instance.SetExportable(false)
 					allZeroMetricInstancesCount++
 					me.Logger.Warn().
@@ -530,9 +530,10 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 						Str("name", i.GetChildContentS("name")).
 						Msg("All metrics are zero. This instance will not be exported")
 				} else {
-					if v, ok := allZeroesMap[key]; ok {
-						if v == 1 {
-							allZeroesMap[key] = 0
+					v := instance.GetLabel(allZeroLabel)
+					if v != "" {
+						if v == "1" {
+							instance.SetLabel(allZeroLabel, "0")
 							instance.SetExportable(false)
 							me.Logger.Warn().
 								Str("Instance Key", key).
@@ -540,7 +541,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 								Msg("Previous poll for this instance had all zero metrics. This instance will not be exported")
 							allZeroMetricInstancesCount++
 						} else {
-							delete(allZeroesMap, key)
+							instance.GetLabels().Delete(allZeroLabel)
 							me.Logger.Warn().
 								Str("Instance Key", key).
 								Str("name", i.GetChildContentS("name")).
