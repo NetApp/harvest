@@ -13,8 +13,8 @@ This document describes how Harvest is making the ONTAP transition, from ZAPI to
 
 ## Harvest API Transition
 
-By default, Harvest will use ZAPIs up until ONTAP removes them in `9.13.1`.
-Starting in `9.13.1` and after, Harvest will use REST.
+By default, Harvest will use ZAPIs up until ONTAP version `9.12.1`.
+Beginning with ONTAP `9.12.1` and after, Harvest will default to REST.
 
 Harvest includes a full set of REST templates that export identical metrics as the included ZAPI templates.
 No changes to dashboards or downstream metric-consumers will be required.
@@ -52,7 +52,7 @@ Yes. Several customers already are. There are a few caveats to be aware of:
    It will work, but you'll put more load on the cluster and push duplicate metrics to Prometheus. 
    See [belo](#can-i-use-the-rest-and-zapi-collectors-at-the-same-time) for details on how to use both collectors at the same time. 
 
-3. There may be metrics missing from versions of ONTAP earlier than `9.11.1`.
+3. There may be performance metrics missing from versions of ONTAP earlier than `9.11.1`.
 
 ### A counter is missing from REST. What do I do?
 
