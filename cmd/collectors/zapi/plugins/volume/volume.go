@@ -118,7 +118,7 @@ func (my *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			}
 		}
 		if err2 != nil {
-			if errors.Is(err1, errs.ErrNoInstance) {
+			if errors.Is(err2, errs.ErrNoInstance) {
 				my.Logger.Debug().Err(err2).Msg("Failed to collect aggregate-disk mapping data")
 			} else {
 				my.Logger.Error().Err(err2).Msg("Failed to collect aggregate-disk mapping data")
