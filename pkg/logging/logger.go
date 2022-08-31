@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"strconv"
 	"sync"
+	"time"
 
 	"github.com/rs/zerolog"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -94,7 +95,10 @@ func Configure(config LogConfig) *Logger {
 	var writers []io.Writer
 
 	if config.ConsoleLoggingEnabled {
-		writers = append(writers, zerolog.ConsoleWriter{Out: os.Stderr})
+		writers = append(writers, zerolog.ConsoleWriter{
+			Out:        os.Stderr,
+			TimeFormat: time.RFC3339,
+		})
 	}
 	if config.FileLoggingEnabled {
 		writers = append(writers, newRollingFile(config))

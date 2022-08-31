@@ -188,8 +188,11 @@ func (p *Poller) Init() error {
 		MaxAge:             logMaxAge}
 
 	logger = logging.Configure(logConfig)
-	logger.Info().Msgf("log level used: %s", zeroLogLevel.String())
-	logger.Info().Msgf("options config: %s", p.options.Config)
+	logger.Info().
+		Str("logLevel", zeroLogLevel.String()).
+		Str("configPath", p.options.Config).
+		Str("version", version.String()).
+		Msg("Init")
 
 	// if profiling port > 0 start profiling service
 	if p.options.Profiling > 0 {
