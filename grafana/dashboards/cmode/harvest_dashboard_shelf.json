@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1651153685555,
+  "iteration": 1662005797250,
   "links": [],
   "panels": [
     {
@@ -125,7 +125,7 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 3,
+        "w": 4,
         "x": 0,
         "y": 1
       },
@@ -200,8 +200,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 3,
-        "x": 3,
+        "w": 4,
+        "x": 4,
         "y": 1
       },
       "id": 79,
@@ -281,8 +281,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 3,
-        "x": 6,
+        "w": 4,
+        "x": 8,
         "y": 1
       },
       "id": 75,
@@ -358,7 +358,7 @@
       "gridPos": {
         "h": 5,
         "w": 3,
-        "x": 9,
+        "x": 12,
         "y": 1
       },
       "id": 64,
@@ -432,7 +432,7 @@
       "gridPos": {
         "h": 5,
         "w": 3,
-        "x": 12,
+        "x": 15,
         "y": 1
       },
       "id": 65,
@@ -505,7 +505,7 @@
       "gridPos": {
         "h": 5,
         "w": 3,
-        "x": 15,
+        "x": 18,
         "y": 1
       },
       "id": 81,
@@ -579,7 +579,7 @@
       "gridPos": {
         "h": 5,
         "w": 3,
-        "x": 18,
+        "x": 21,
         "y": 1
       },
       "id": 67,
@@ -609,80 +609,6 @@
         }
       ],
       "title": "Custom Sensor Avg",
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "semi-dark-blue",
-                "value": null
-              },
-              {
-                "color": "rgb(84, 184, 45)",
-                "value": 50000
-              },
-              {
-                "color": "semi-dark-yellow",
-                "value": 100000
-              },
-              {
-                "color": "semi-dark-orange",
-                "value": 300000
-              },
-              {
-                "color": "dark-red",
-                "value": 600000
-              }
-            ]
-          },
-          "unit": "watt"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 3,
-        "x": 21,
-        "y": 1
-      },
-      "id": 66,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "sum(sum_over_time(shelf_psu_power_drawn{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}[24h]))",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Power used 24h",
       "type": "stat"
     },
     {
@@ -1104,16 +1030,16 @@
                       "value": null
                     },
                     {
-                      "value": 5,
-                      "color": "green"
+                      "color": "green",
+                      "value": 5
                     },
                     {
-                      "value": 45,
-                      "color": "#eab839"
+                      "color": "#eab839",
+                      "value": 45
                     },
                     {
-                      "value": 65,
-                      "color": "orange"
+                      "color": "orange",
+                      "value": 65
                     },
                     {
                       "color": "red",
@@ -1148,16 +1074,16 @@
                       "value": null
                     },
                     {
-                      "value": 5,
-                      "color": "green"
+                      "color": "green",
+                      "value": 5
                     },
                     {
-                      "value": 45,
-                      "color": "yellow"
+                      "color": "yellow",
+                      "value": 45
                     },
                     {
-                      "value": 65,
-                      "color": "orange"
+                      "color": "orange",
+                      "value": 65
                     },
                     {
                       "color": "red",
@@ -1238,14 +1164,14 @@
           "refId": "E"
         },
         {
-          "expr": "shelf_min_ambient_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
-          "legendFormat": "",
-          "interval": "",
           "exemplar": false,
-          "refId": "K",
-          "hide": false,
+          "expr": "shelf_min_ambient_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
-          "instant": true
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "K"
         },
         {
           "exemplar": true,
@@ -1268,14 +1194,14 @@
           "refId": "G"
         },
         {
-          "expr": "shelf_min_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
-          "legendFormat": "",
-          "interval": "",
           "exemplar": false,
-          "refId": "L",
-          "hide": false,
+          "expr": "shelf_min_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
-          "instant": true
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "L"
         },
         {
           "exemplar": true,
@@ -1360,13 +1286,13 @@
               "Value #C": 20,
               "Value #D": 4,
               "Value #E": 5,
-              "Value #K": 6,
               "Value #F": 7,
               "Value #G": 8,
-              "Value #L": 9,
               "Value #H": 10,
               "Value #I": 11,
               "Value #J": 12,
+              "Value #K": 6,
+              "Value #L": 9,
               "cluster": 1,
               "datacenter": 0,
               "model": 3,
@@ -1388,11 +1314,11 @@
               "Value #H": "Max Fan Speed (rpm)",
               "Value #I": "Avg Fan Speed (rpm)",
               "Value #J": "Min Fan Speed (rpm)",
+              "Value #K": "Min Ambient Temp (C)",
+              "Value #L": "Min Temp (C)",
               "module_type": "",
               "op_status": "",
-              "shelf_id": "",
-              "Value #K": "Min Ambient Temp (C)",
-              "Value #L": "Min Temp (C)"
+              "shelf_id": ""
             }
           }
         }
@@ -2253,6 +2179,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Shelf",
-  "uid": "ee_cI_w7z",
-  "version": 3
+  "uid": "1RBoc3W4z",
+  "version": 4
 }
