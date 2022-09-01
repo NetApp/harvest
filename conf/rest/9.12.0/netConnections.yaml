@@ -1,0 +1,33 @@
+name:                         NetConnection
+query:                        api/private/cli/network/connections/active
+object:                       net_connection
+
+counters:
+  - ^^cid                        => cid
+  - ^blocks_lb                   => blocks_lb
+  - ^lif_name                    => lif
+  - ^local_address               => local_address
+  - ^local_port                  => local_port
+  - ^lru                         => lru
+  - ^node                        => node
+  - ^proto                       => proto
+  - ^remote_ip                   => remote_ip
+  - ^remote_host                 => remote_host
+  - ^service                     => service
+  - ^vserver                     => svm
+
+export_options:
+  instance_keys:
+    - cid
+  instance_labels:
+    - node
+    - svm
+    - lif
+    - local_address
+    - local_port
+    - remote_ip
+    - remote_host
+    - proto
+    - service
+    - lru
+    - blocks_lb
