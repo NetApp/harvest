@@ -18,6 +18,12 @@ var supportedEms []string
 var oldAlertsData map[string]int
 var newAlertsData map[string]int
 
+// These bookend resolving ems are node scoped and have bookendKey as node-name only.
+var nodeScopedResolvingEmsList = []string{
+	"nvram.battery.charging.normal",
+	"sp.heartbeat.resumed",
+}
+
 type EmsTestSuite struct {
 	suite.Suite
 }
@@ -34,7 +40,7 @@ func (suite *EmsTestSuite) SetupSuite() {
 	oldAlertsData, _ = promAlerts.GetAlerts()
 
 	// Identify supported ems names for the given cluster
-	supportedEms = promAlerts.GenerateEvents(resolvingEmsNames)
+	supportedEms = promAlerts.GenerateEvents(resolvingEmsNames, nodeScopedResolvingEmsList)
 	log.Info().Msgf("Supported Bookend ems:%d", len(supportedEms))
 
 	// Fetch current prometheus alerts
