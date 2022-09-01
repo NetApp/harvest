@@ -56,14 +56,8 @@ const (
 	objWorkloadDetail       = "workload_detail"
 	objWorkloadVolume       = "workload_volume"
 	objWorkloadDetailVolume = "workload_detail_volume"
-	BILLION                 = 1000000000
-	allZeroLabel            = "#allZero" // used to handle an ONTAP bug where an instance may have all zero metrics
-)
-
-var (
-	checkAllZeroesObjectQuery = map[string]struct{}{
-		"nfsv3": {},
-	}
+	BILLION                 = 1_000_000_000
+	allZeroLabel            = "#allZero" // used to handle an ONTAP bug where an instance has all zero metrics
 )
 
 type ZapiPerf struct {
@@ -324,7 +318,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 		for _, i := range instances.GetChildren() {
 
-			isNonZeroMetricExists := true
+			allCountersAreZero := true
 
 			key := i.GetChildContentS(me.instanceKey)
 
@@ -419,6 +413,10 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 					continue
 				}
 
+				if value != "0" {
+					allCountersAreZero = false
+				}
+
 				// store as array counter / histogram
 				if labels, has := me.histogramLabels[name]; has {
 
@@ -437,7 +435,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 					for i, label := range labels {
 						if metric := newData.GetMetric(name + "." + label); metric != nil {
 							if values[i] != "0" {
-								isNonZeroMetricExists = true
+								allCountersAreZero = false
 							}
 							if err = metric.SetValueString(instance, values[i]); err != nil {
 								me.Logger.Error().
@@ -469,9 +467,6 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 				// special case for workload_detail
 				if me.Query == objWorkloadDetail || me.Query == objWorkloadDetailVolume {
 					if name == "wait_time" || name == "service_time" {
-						if value != "0" {
-							isNonZeroMetricExists = true
-						}
 						if err := resourceLatency.AddValueString(instance, value); err != nil {
 							me.Logger.Error().
 								Stack().
@@ -496,9 +491,6 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 				// store as scalar metric
 				if metric := newData.GetMetric(name); metric != nil {
-					if value != "0" {
-						isNonZeroMetricExists = true
-					}
 					if err = metric.SetValueString(instance, value); err != nil {
 						me.Logger.Error().
 							Stack().
@@ -518,38 +510,36 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 				me.Logger.Warn().Str("counter", name).Str("value", value).Msg("Counter not found in cache")
 			} // end loop over counters
 
-			_, doAllZeroCheck := checkAllZeroesObjectQuery[me.Query]
-			if doAllZeroCheck {
+			if me.Query == "nfsv3" {
 				// check if all metrics are zero
-				if !isNonZeroMetricExists {
+				if allCountersAreZero {
 					instance.SetLabel(allZeroLabel, "1")
 					instance.SetExportable(false)
 					allZeroMetricInstancesCount++
 					me.Logger.Warn().
-						Str("Instance Key", key).
+						Str("instanceKey", key).
 						Str("name", i.GetChildContentS("name")).
 						Msg("All metrics are zero. This instance will not be exported")
 				} else {
 					v := instance.GetLabel(allZeroLabel)
-					if v != "" {
-						if v == "1" {
-							instance.SetLabel(allZeroLabel, "0")
-							instance.SetExportable(false)
-							me.Logger.Warn().
-								Str("Instance Key", key).
-								Str("name", i.GetChildContentS("name")).
-								Msg("Previous poll for this instance had all zero metrics. This instance will not be exported")
-							allZeroMetricInstancesCount++
-						} else {
-							instance.GetLabels().Delete(allZeroLabel)
-							me.Logger.Warn().
-								Str("Instance Key", key).
-								Str("name", i.GetChildContentS("name")).
-								Msg("Recovered from all zero metrics issue. This instance will be exported.")
-							instance.SetExportable(true)
-						}
-					} else {
+					switch v {
+					case "":
 						instance.SetExportable(true)
+					case "0":
+						instance.GetLabels().Delete(allZeroLabel)
+						instance.SetExportable(true)
+						me.Logger.Warn().
+							Str("instanceKey", key).
+							Str("name", i.GetChildContentS("name")).
+							Msg("Recovered from all zero metrics issue. This instance will be exported")
+					case "1":
+						instance.SetLabel(allZeroLabel, "0")
+						instance.SetExportable(false)
+						allZeroMetricInstancesCount++
+						me.Logger.Warn().
+							Str("instanceKey", key).
+							Str("name", i.GetChildContentS("name")).
+							Msg("Previous poll for this instance had all zero metrics. This instance will not be exported")
 					}
 				}
 			}
