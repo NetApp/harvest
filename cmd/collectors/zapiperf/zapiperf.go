@@ -572,6 +572,18 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 		// RAW - submit without post-processing
 		if property == "raw" {
+			met := m.GetMetric(key)
+			sValues := met.GetValuesFloat64()
+			skips := met.GetSkips()
+			for k := range sValues {
+				// if value is 0 or negative then do not export them
+				if sValues[k] > 0 {
+					// reset skip
+					skips[k] = false
+				} else {
+					skips[k] = true
+				}
+			}
 			continue
 		}
 
@@ -616,9 +628,9 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if property == "average" || property == "percent" {
 
 			if strings.HasSuffix(metric.GetName(), "latency") {
-				err = metric.DivideWithThreshold(base, me.latencyIoReqd)
+				err = metric.DivideWithThreshold(base, me.latencyIoReqd, me.Logger)
 			} else {
-				err = metric.Divide(base)
+				err = metric.Divide(base, me.Logger)
 			}
 
 			if err != nil {
@@ -631,7 +643,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		if property == "percent" {
-			if err = metric.MultiplyByScalar(100); err != nil {
+			if err = metric.MultiplyByScalar(100, me.Logger); err != nil {
 				me.Logger.Error().Stack().Err(err).Str("key", key).Msg("Multiply by scalar")
 			}
 			continue
@@ -645,7 +657,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	// calculate rates (which we deferred to calculate averages/percents first)
 	for i, metric := range orderedMetrics {
 		if metric.GetProperty() == "rate" {
-			if err = metric.Divide(timestamp); err != nil {
+			if err = metric.Divide(timestamp, me.Logger); err != nil {
 				me.Logger.Error().Stack().Err(err).
 					Int("i", i).
 					Str("key", orderedKeys[i]).

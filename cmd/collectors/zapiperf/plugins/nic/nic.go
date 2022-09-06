@@ -93,7 +93,7 @@ func (me *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			var rxBytes, txBytes, rxPercent, txPercent float64
 			var rxOk, txOk bool
 
-			if rxBytes, rxOk = read.GetValueFloat64(instance); rxOk {
+			if rxBytes, rxOk, _ = read.GetValueFloat64(instance); rxOk {
 				rxPercent = rxBytes / float64(speed)
 				err := rx.SetValueFloat64(instance, rxPercent)
 				if err != nil {
@@ -101,7 +101,7 @@ func (me *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				}
 			}
 
-			if txBytes, txOk = write.GetValueFloat64(instance); txOk {
+			if txBytes, txOk, _ = write.GetValueFloat64(instance); txOk {
 				txPercent = txBytes / float64(speed)
 				err := tx.SetValueFloat64(instance, txPercent)
 				if err != nil {

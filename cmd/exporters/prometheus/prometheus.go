@@ -397,7 +397,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 
 			p.Logger.Trace().Msgf("rendering metric [%s]", mkey)
 
-			if value, ok := metric.GetValueString(instance); ok {
+			if value, ok, skip := metric.GetValueString(instance); ok && !skip {
 
 				// metric is histogram
 				if metric.HasLabels() {

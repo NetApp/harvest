@@ -170,7 +170,7 @@ func (my *Certificate) setCertificateValidity(data *matrix.Matrix, instance *mat
 		return
 	}
 
-	if expiryTime, ok := expiryTimeMetric.GetValueFloat64(instance); ok {
+	if expiryTime, ok, _ := expiryTimeMetric.GetValueFloat64(instance); ok {
 		// convert expiryTime from float64 to int64 and find difference
 		timestampDiff := time.Until(time.Unix(int64(expiryTime), 0)).Hours()
 

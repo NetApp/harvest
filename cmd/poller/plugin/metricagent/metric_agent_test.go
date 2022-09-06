@@ -132,7 +132,7 @@ func TestComputeMetricsRule(t *testing.T) {
 	// check "space_total" for instanceA
 	expected = 6060606060
 	if metricTotal = m.GetMetric("space_total"); metricTotal != nil {
-		if metricTotalVal, ok := metricTotal.GetValueFloat64(instanceA); !ok {
+		if metricTotalVal, ok, _ := metricTotal.GetValueFloat64(instanceA); !ok {
 			t.Error("metric [space_total]: value for InstanceA not set")
 		} else if metricTotalVal != expected {
 			t.Errorf("metric [space_total]: value for InstanceA is %f, expected %f", metricTotalVal, expected)
@@ -146,7 +146,7 @@ func TestComputeMetricsRule(t *testing.T) {
 	// check "disk_count" for instanceB
 	expected = 22
 	if metricDiskTotal = m.GetMetric("disk_count"); metricDiskTotal != nil {
-		if metricDiskTotalVal, ok := metricDiskTotal.GetValueFloat64(instanceB); !ok {
+		if metricDiskTotalVal, ok, _ := metricDiskTotal.GetValueFloat64(instanceB); !ok {
 			t.Error("metric [disk_count]: value for InstanceB not set")
 		} else if metricDiskTotalVal != expected {
 			t.Errorf("metric [disk_count]: value for InstanceB is %f, expected %f", metricDiskTotalVal, expected)
@@ -160,7 +160,7 @@ func TestComputeMetricsRule(t *testing.T) {
 	// check "files_available" for instanceA
 	expected = 808
 	if metricFilesAvailable = m.GetMetric("files_available"); metricFilesAvailable != nil {
-		if metricFilesAvailableVal, ok := metricFilesAvailable.GetValueFloat64(instanceA); !ok {
+		if metricFilesAvailableVal, ok, _ := metricFilesAvailable.GetValueFloat64(instanceA); !ok {
 			t.Error("metric [files_available]: value for InstanceA not set")
 		} else if metricFilesAvailableVal != expected {
 			t.Errorf("metric [files_available]: value for InstanceA is %f, expected %f", metricFilesAvailableVal, expected)
@@ -174,7 +174,7 @@ func TestComputeMetricsRule(t *testing.T) {
 	// check "total_bytes" for instanceB
 	expected = 120000
 	if metricTotalBytes = m.GetMetric("total_bytes"); metricTotalBytes != nil {
-		if metricTotalBytesVal, ok := metricTotalBytes.GetValueFloat64(instanceB); !ok {
+		if metricTotalBytesVal, ok, _ := metricTotalBytes.GetValueFloat64(instanceB); !ok {
 			t.Error("metric [total_bytes]: value for InstanceB not set")
 		} else if metricTotalBytesVal != expected {
 			t.Errorf("metric [total_bytes]: value for InstanceB is %f, expected %f", metricTotalBytesVal, expected)
@@ -188,7 +188,7 @@ func TestComputeMetricsRule(t *testing.T) {
 	// check "transmission_rate" for instanceB
 	expected = 2500
 	if metricTransmissionRate = m.GetMetric("transmission_rate"); metricTransmissionRate != nil {
-		if metricTransmissionRateVal, ok := metricTransmissionRate.GetValueFloat64(instanceB); !ok {
+		if metricTransmissionRateVal, ok, _ := metricTransmissionRate.GetValueFloat64(instanceB); !ok {
 			t.Error("metric [transmission_rate]: value for InstanceB not set")
 		} else if metricTransmissionRateVal != expected {
 			t.Errorf("metric [transmission_rate]: value for InstanceB is %f, expected %f", metricTransmissionRateVal, expected)

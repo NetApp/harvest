@@ -101,8 +101,8 @@ func (v *Vscan) aggregatePerScanner(data *matrix.Matrix) ([]*matrix.Matrix, erro
 				continue
 			}
 			v.Logger.Trace().Str("scanner", scanner).Str("metric", mKey).Msg("Handling scanner metric")
-			if value, ok := m.GetValueFloat64(i); ok {
-				fv, _ := psm.GetValueFloat64(ps)
+			if value, ok, _ := m.GetValueFloat64(i); ok {
+				fv, _, _ := psm.GetValueFloat64(ps)
 
 				// sum for scan_request_dispatched_rate
 				if mKey == "scan_request_dispatched_rate" {
@@ -112,7 +112,7 @@ func (v *Vscan) aggregatePerScanner(data *matrix.Matrix) ([]*matrix.Matrix, erro
 							Msg("Error setting metric value")
 					}
 					// for tracing
-					fgv2, _ := psm.GetValueFloat64(ps)
+					fgv2, _, _ := psm.GetValueFloat64(ps)
 					v.Logger.Trace().Float64("fv", fv).
 						Float64("value", value).
 						Float64("fgv2", fgv2).
@@ -121,8 +121,8 @@ func (v *Vscan) aggregatePerScanner(data *matrix.Matrix) ([]*matrix.Matrix, erro
 				} else if strings.HasSuffix(mKey, "_used") {
 					// these need averaging
 					counts[scanner][mKey]++
-					runningTotal, _ := psm.GetValueFloat64(ps)
-					value, _ := m.GetValueFloat64(ps)
+					runningTotal, _, _ := psm.GetValueFloat64(ps)
+					value, _, _ := m.GetValueFloat64(ps)
 					err := psm.SetValueFloat64(ps, runningTotal+value)
 					if err != nil {
 						v.Logger.Error().Err(err).Str("mKey", mKey).Msg("Failed to set value")
@@ -137,7 +137,7 @@ func (v *Vscan) aggregatePerScanner(data *matrix.Matrix) ([]*matrix.Matrix, erro
 		for mKey, m := range cache.GetMetrics() {
 			if m.IsExportable() && strings.HasSuffix(m.GetName(), "_used") {
 				count := counts[scanner][mKey]
-				value, ok := m.GetValueFloat64(i)
+				value, ok, _ := m.GetValueFloat64(i)
 				if !ok {
 					continue
 				}

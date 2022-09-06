@@ -200,7 +200,7 @@ func (a *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 			for key, metric := range data.GetMetrics() {
 
-				if value, ok = metric.GetValueFloat64(instance); !ok {
+				if value, ok, _ = metric.GetValueFloat64(instance); !ok {
 					continue
 				}
 
@@ -247,7 +247,7 @@ func (a *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 			for key, instance := range m.GetInstances() {
 
-				if value, ok = metric.GetValueFloat64(instance); !ok {
+				if value, ok, _ = metric.GetValueFloat64(instance); !ok {
 					continue
 				}
 

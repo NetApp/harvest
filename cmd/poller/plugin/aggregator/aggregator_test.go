@@ -97,7 +97,7 @@ func TestRuleSimpleAggregation(t *testing.T) {
 		t.Fatal("Metric [metricB] missing")
 	}
 
-	if value, ok := metricA.GetValueUint8(instanceA); !ok {
+	if value, ok, _ := metricA.GetValueUint8(instanceA); !ok {
 		t.Error("Value [metricA] missing")
 	} else if value != 20 {
 		t.Errorf("Value [metricA] = (%d) incorrect", value)
@@ -105,7 +105,7 @@ func TestRuleSimpleAggregation(t *testing.T) {
 		t.Logf("Value [metricA] = (%d) correct!", value)
 	}
 
-	if value, ok := metricB.GetValueUint8(instanceA); !ok {
+	if value, ok, _ := metricB.GetValueUint8(instanceA); !ok {
 		t.Error("Value [metricB] missing")
 	} else if value != 10 {
 		t.Errorf("Value [metricB] = (%d) incorrect", value)
@@ -288,7 +288,7 @@ func TestComplexRuleRegex(t *testing.T) {
 		} else {
 			t.Errorf("instance has not expected labels: %v", instance.GetLabels())
 		}
-		if v, ok := metricA.GetValueUint8(instance); !ok {
+		if v, ok, _ := metricA.GetValueUint8(instance); !ok {
 			t.Errorf("value [metricA] not set")
 		} else if v != expected {
 			t.Errorf("value [metricA] = %d, expected %d", v, expected)
@@ -309,7 +309,7 @@ func TestComplexRuleRegex(t *testing.T) {
 			t.Errorf("instance has not expected labels: %v", instance.GetLabels())
 		}
 
-		if v, ok := metricA.GetValueUint8(instance); !ok {
+		if v, ok, _ := metricA.GetValueUint8(instance); !ok {
 			t.Errorf("value [metricA] not set")
 		} else if v != expected {
 			t.Errorf("value [metricA] = %d, expected %d", v, expected)

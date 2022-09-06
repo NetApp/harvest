@@ -775,6 +775,18 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 		// RAW - submit without post-processing
 		if property == "raw" {
+			m := mat.GetMetric(key)
+			sValues := m.GetValuesFloat64()
+			skips := m.GetSkips()
+			for k := range sValues {
+				// if value is 0 or negative then do not export them
+				if sValues[k] > 0 {
+					// reset skip
+					skips[k] = false
+				} else {
+					skips[k] = true
+				}
+			}
 			continue
 		}
 
@@ -818,9 +830,9 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if property == "average" || property == "percent" {
 
 			if strings.HasSuffix(metric.GetName(), "latency") {
-				err = metric.DivideWithThreshold(base, r.perfProp.latencyIoReqd)
+				err = metric.DivideWithThreshold(base, r.perfProp.latencyIoReqd, r.Logger)
 			} else {
-				err = metric.Divide(base)
+				err = metric.Divide(base, r.Logger)
 			}
 
 			if err != nil {
@@ -834,7 +846,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		if property == "percent" {
-			if err = metric.MultiplyByScalar(100); err != nil {
+			if err = metric.MultiplyByScalar(100, r.Logger); err != nil {
 				r.Logger.Error().Err(err).Str("key", key).Msg("Multiply by scalar")
 			}
 			continue
@@ -853,7 +865,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if counter != nil {
 			property := counter.counterType
 			if property == "rate" {
-				if err = metric.Divide(timestamp); err != nil {
+				if err = metric.Divide(timestamp, r.Logger); err != nil {
 					r.Logger.Error().Err(err).
 						Int("i", i).
 						Str("metric", metric.GetName()).
