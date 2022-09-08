@@ -33,7 +33,14 @@ counters:
   - update_failed_count                      => update_failed_count
   - break_successful_count                   => break_successful_count
   - break_failed_count                       => break_failed_count
+  - filter:
+      - expand=true
 
+endpoints:
+  - query: api/snapmirror/relationships
+    counters:
+      - ^^uuid                               => relationship_id
+      - ^source.cluster.name                 => source_cluster
 
 plugins:
   - Snapmirror
@@ -61,4 +68,5 @@ export_options:
     - protectedBy
     - protectionSourceType
     - policy_type
+    - source_cluster
     - derived_relationship_type
