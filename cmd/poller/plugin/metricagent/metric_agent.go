@@ -77,7 +77,7 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 
 			// Parse first operand and store in result for further processing
 			if firstMetricVal = m.GetMetric(r.metricNames[0]); firstMetricVal != nil {
-				if val, ok, _ := firstMetricVal.GetValueFloat64(instance); ok {
+				if val, ok, skip := firstMetricVal.GetValueFloat64(instance); ok && !skip {
 					result = val
 				} else {
 					continue

@@ -148,6 +148,7 @@ func (m *Max) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		objMetric       matrix.Metric
 		value           float64
 		ok              bool
+		skip            bool
 		err             error
 	)
 
@@ -192,7 +193,7 @@ func (m *Max) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					}
 				}
 
-				if value, ok, _ = metric.GetValueFloat64(instance); !ok {
+				if value, ok, skip = metric.GetValueFloat64(instance); !ok || skip {
 					continue
 				}
 

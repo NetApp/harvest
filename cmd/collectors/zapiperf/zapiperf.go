@@ -39,6 +39,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/rs/zerolog"
 	"strconv"
 	"strings"
 	"time"
@@ -675,15 +676,26 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	calcD := time.Since(calcStart)
-	me.Logger.Info().
-		Int("instances", len(instanceKeys)).
-		Uint64("metrics", count).
-		Str("apiD", apiT.Round(time.Millisecond).String()).
-		Str("parseD", parseT.Round(time.Millisecond).String()).
-		Str("calcD", calcD.Round(time.Millisecond).String()).
-		Int("zeroMetric", zeroCount).
-		Int("negativeMetric", negativeCount).
-		Msg("Collected")
+
+	if zerolog.GlobalLevel() == zerolog.DebugLevel {
+		me.Logger.Debug().
+			Int("instances", len(instanceKeys)).
+			Uint64("metrics", count).
+			Str("apiD", apiT.Round(time.Millisecond).String()).
+			Str("parseD", parseT.Round(time.Millisecond).String()).
+			Str("calcD", calcD.Round(time.Millisecond).String()).
+			Int("zeroMetric", zeroCount).
+			Int("zNegativeMetric", negativeCount).
+			Msg("Collected")
+	} else {
+		me.Logger.Info().
+			Int("instances", len(instanceKeys)).
+			Uint64("metrics", count).
+			Str("apiD", apiT.Round(time.Millisecond).String()).
+			Str("parseD", parseT.Round(time.Millisecond).String()).
+			Str("calcD", calcD.Round(time.Millisecond).String()).
+			Msg("Collected")
+	}
 
 	_ = me.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
 
