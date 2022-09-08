@@ -17,6 +17,11 @@ type MetricFloat64 struct {
 	values []float64
 }
 
+type VectorSummary struct {
+	NegativeCount int
+	ZeroCount     int
+}
+
 func (me *MetricFloat64) Clone(deep bool) Metric {
 	clone := MetricFloat64{AbstractMetric: me.AbstractMetric.Clone(deep)}
 	if deep && len(me.values) != 0 {
@@ -221,52 +226,57 @@ func (me *MetricFloat64) GetValuesFloat64() []float64 {
 	return me.values
 }
 
-func (me *MetricFloat64) Delta(s Metric, logger *logging.Logger) error {
-	sValues := s.GetValuesFloat64()
+func (me *MetricFloat64) Delta(s Metric, logger *logging.Logger) (VectorSummary, error) {
+	var vs VectorSummary
+	prevRaw := s.GetValuesFloat64()
 	sRecord := s.GetRecords()
 	skips := me.GetSkips()
-	if len(me.values) != len(sValues) {
-		return errs.New(ErrUnequalVectors, fmt.Sprintf("minuend=%d, subtrahend=%d", len(me.values), len(sValues)))
+	if len(me.values) != len(prevRaw) || len(skips) != len(prevRaw) {
+		return vs, errs.New(ErrUnequalVectors, fmt.Sprintf("minuend=%d, subtrahend=%d", len(me.values), len(prevRaw)))
 	}
 	for i := range me.values {
 		if me.record[i] && sRecord[i] {
 			v := me.values[i]
 			// reset skip
 			skips[i] = false
-			// if current and previous raw is 0 or negative
-			if me.values[i] <= 0 || sValues[i] <= 0 {
-				skips[i] = true
-				if me.values[i] < 0 || sValues[i] < 0 {
-					logger.Trace().
-						Str("metric", me.GetName()).
-						Float64("current", me.values[i]).
-						Float64("previous", sValues[i]).
-						Msg("Negative raw values detected")
-				}
-			}
-			me.values[i] -= sValues[i]
-			// if cooked value is 0 or negative then skip delta
-			if me.values[i] <= 0 {
+			//if current and previous raw are <= 0
+			if me.values[i] <= 0 || prevRaw[i] <= 0 {
 				skips[i] = true
 				if me.values[i] < 0 {
 					logger.Trace().
 						Str("metric", me.GetName()).
+						Float64("current", me.values[i]).
+						Float64("previous", prevRaw[i]).
+						Msg("Negative raw values detected")
+				}
+			}
+			me.values[i] -= prevRaw[i]
+			//if cooked value is <= 0 then skip delta
+			if me.values[i] <= 0 {
+				skips[i] = true
+				if me.values[i] < 0 {
+					vs.NegativeCount += 1
+					logger.Trace().
+						Str("metric", me.GetName()).
 						Float64("current", v).
-						Float64("previous", sValues[i]).
+						Float64("previous", prevRaw[i]).
 						Msg("Negative cooked value detected")
+				} else if me.values[i] == 0 {
+					vs.ZeroCount += 1
 				}
 			}
 		}
 	}
-	return nil
+	return vs, nil
 }
 
-func (me *MetricFloat64) Divide(s Metric, logger *logging.Logger) error {
+func (me *MetricFloat64) Divide(s Metric, logger *logging.Logger) (VectorSummary, error) {
+	var vs VectorSummary
 	sValues := s.GetValuesFloat64()
 	sRecord := s.GetRecords()
 	skips := me.GetSkips()
-	if len(me.values) != len(sValues) {
-		return errs.New(ErrUnequalVectors, fmt.Sprintf("numerator=%d, denominator=%d", len(me.values), len(sValues)))
+	if len(me.values) != len(sValues) || len(skips) != len(sValues) {
+		return vs, errs.New(ErrUnequalVectors, fmt.Sprintf("numerator=%d, denominator=%d", len(me.values), len(sValues)))
 	}
 	for i := 0; i < len(me.values); i++ {
 		if me.record[i] && sRecord[i] && sValues[i] != 0 {
@@ -294,20 +304,24 @@ func (me *MetricFloat64) Divide(s Metric, logger *logging.Logger) error {
 						Float64("numerator", v).
 						Float64("denominator", sValues[i]).
 						Msg("Negative cooked value detected")
+					vs.NegativeCount += 1
+				} else if me.values[i] == 0 {
+					vs.ZeroCount += 1
 				}
 			}
 		}
 	}
-	return nil
+	return vs, nil
 }
 
-func (me *MetricFloat64) DivideWithThreshold(s Metric, t int, logger *logging.Logger) error {
+func (me *MetricFloat64) DivideWithThreshold(s Metric, t int, logger *logging.Logger) (VectorSummary, error) {
+	var vs VectorSummary
 	x := float64(t)
 	sValues := s.GetValuesFloat64()
 	sRecord := s.GetRecords()
 	skips := me.GetSkips()
-	if len(me.values) != len(sValues) {
-		return errs.New(ErrUnequalVectors, fmt.Sprintf("numerator=%d, denominator=%d", len(me.values), len(sValues)))
+	if len(me.values) != len(sValues) || len(skips) != len(sValues) {
+		return vs, errs.New(ErrUnequalVectors, fmt.Sprintf("numerator=%d, denominator=%d", len(me.values), len(sValues)))
 	}
 	for i := 0; i < len(me.values); i++ {
 		v := me.values[i]
@@ -336,13 +350,17 @@ func (me *MetricFloat64) DivideWithThreshold(s Metric, t int, logger *logging.Lo
 					Float64("numerator", v).
 					Float64("denominator", sValues[i]).
 					Msg("Negative cooked value detected")
+				vs.NegativeCount += 1
+			} else if me.values[i] == 0 {
+				vs.ZeroCount += 1
 			}
 		}
 	}
-	return nil
+	return vs, nil
 }
 
-func (me *MetricFloat64) MultiplyByScalar(s int, logger *logging.Logger) error {
+func (me *MetricFloat64) MultiplyByScalar(s int, logger *logging.Logger) (VectorSummary, error) {
+	var vs VectorSummary
 	x := float64(s)
 	skips := me.GetSkips()
 	for i := 0; i < len(me.values); i++ {
@@ -359,10 +377,13 @@ func (me *MetricFloat64) MultiplyByScalar(s int, logger *logging.Logger) error {
 					Str("metric", me.GetName()).
 					Float64("current", me.values[i]).
 					Msg("Negative cooked value detected")
+				vs.NegativeCount += 1
+			} else if me.values[i] == 0 {
+				vs.ZeroCount += 1
 			}
 		}
 	}
-	return nil
+	return vs, nil
 }
 
 func (me *MetricFloat64) Print() {

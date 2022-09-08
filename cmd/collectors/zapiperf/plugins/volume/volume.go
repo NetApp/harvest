@@ -84,7 +84,7 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 				me.Logger.Trace().Msgf("(%s) handling metric (%s)", fg.GetLabel("volume"), mkey)
 
-				if value, ok, _ := m.GetValueFloat64(i); ok {
+				if value, ok, skip := m.GetValueFloat64(i); ok && !skip {
 
 					fgv, _, _ := fgm.GetValueFloat64(fg)
 
@@ -159,7 +159,7 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		for mkey, m := range cache.GetMetrics() {
 			if m.IsExportable() && strings.HasSuffix(m.GetName(), "_latency") {
 
-				if value, ok, _ := m.GetValueFloat64(i); ok {
+				if value, ok, skip := m.GetValueFloat64(i); ok && !skip {
 
 					opsKey := ""
 					if strings.Contains(mkey, "_latency") {

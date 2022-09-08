@@ -101,7 +101,7 @@ func (v *Vscan) aggregatePerScanner(data *matrix.Matrix) ([]*matrix.Matrix, erro
 				continue
 			}
 			v.Logger.Trace().Str("scanner", scanner).Str("metric", mKey).Msg("Handling scanner metric")
-			if value, ok, _ := m.GetValueFloat64(i); ok {
+			if value, ok, skip := m.GetValueFloat64(i); ok && !skip {
 				fv, _, _ := psm.GetValueFloat64(ps)
 
 				// sum for scan_request_dispatched_rate
@@ -137,8 +137,8 @@ func (v *Vscan) aggregatePerScanner(data *matrix.Matrix) ([]*matrix.Matrix, erro
 		for mKey, m := range cache.GetMetrics() {
 			if m.IsExportable() && strings.HasSuffix(m.GetName(), "_used") {
 				count := counts[scanner][mKey]
-				value, ok, _ := m.GetValueFloat64(i)
-				if !ok {
+				value, ok, skip := m.GetValueFloat64(i)
+				if !ok || skip {
 					continue
 				}
 				if err := m.SetValueFloat64(i, value/float64(count)); err != nil {

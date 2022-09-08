@@ -429,6 +429,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		perfRecords       []rest.PerfRecord
 		instanceKeys      []string
 		resourceLatency   matrix.Metric // for workload* objects
+		vs                matrix.VectorSummary
 	)
 
 	r.Logger.Trace().Msg("updating data cache")
@@ -754,11 +755,12 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	// calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
-	if err = timestamp.Delta(mat.GetMetric("timestamp"), r.Logger); err != nil {
+	if _, err = timestamp.Delta(mat.GetMetric("timestamp"), r.Logger); err != nil {
 		r.Logger.Error().Err(err).Msg("(timestamp) calculate delta:")
 	}
 
 	var base matrix.Metric
+	var negativeCount, zeroCount int
 
 	for i, metric := range orderedMetrics {
 		key := orderedKeys[i]
@@ -791,9 +793,12 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		// all other properties - first calculate delta
-		if err = metric.Delta(mat.GetMetric(key), r.Logger); err != nil {
+		if vs, err = metric.Delta(mat.GetMetric(key), r.Logger); err != nil {
 			r.Logger.Error().Err(err).Str("key", key).Msg("Calculate delta")
 			continue
+		} else {
+			negativeCount += vs.NegativeCount
+			zeroCount += vs.ZeroCount
 		}
 
 		// DELTA - subtract previous value from current
@@ -830,14 +835,17 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if property == "average" || property == "percent" {
 
 			if strings.HasSuffix(metric.GetName(), "latency") {
-				err = metric.DivideWithThreshold(base, r.perfProp.latencyIoReqd, r.Logger)
+				vs, err = metric.DivideWithThreshold(base, r.perfProp.latencyIoReqd, r.Logger)
 			} else {
-				err = metric.Divide(base, r.Logger)
+				vs, err = metric.Divide(base, r.Logger)
 			}
 
 			if err != nil {
 				r.Logger.Error().Err(err).Str("key", key).Msg("Division by base")
 				continue
+			} else {
+				negativeCount += vs.NegativeCount
+				zeroCount += vs.ZeroCount
 			}
 
 			if property == "average" {
@@ -846,8 +854,11 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		if property == "percent" {
-			if err = metric.MultiplyByScalar(100, r.Logger); err != nil {
+			if vs, err = metric.MultiplyByScalar(100, r.Logger); err != nil {
 				r.Logger.Error().Err(err).Str("key", key).Msg("Multiply by scalar")
+			} else {
+				negativeCount += vs.NegativeCount
+				zeroCount += vs.ZeroCount
 			}
 			continue
 		}
@@ -865,13 +876,16 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if counter != nil {
 			property := counter.counterType
 			if property == "rate" {
-				if err = metric.Divide(timestamp, r.Logger); err != nil {
+				if vs, err = metric.Divide(timestamp, r.Logger); err != nil {
 					r.Logger.Error().Err(err).
 						Int("i", i).
 						Str("metric", metric.GetName()).
 						Str("key", orderedKeys[i]).
 						Msg("Calculate rate")
 					continue
+				} else {
+					negativeCount += vs.NegativeCount
+					zeroCount += vs.ZeroCount
 				}
 			}
 		} else {
@@ -889,6 +903,8 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		Str("apiD", apiD.Round(time.Millisecond).String()).
 		Str("parseD", parseD.Round(time.Millisecond).String()).
 		Str("calcD", calcD.Round(time.Millisecond).String()).
+		Int("zeroMetric", zeroCount).
+		Int("negativeMetric", negativeCount).
 		Msg("Collected")
 	// store cache for next poll
 	r.Matrix[r.Object] = cachedData

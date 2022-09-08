@@ -186,6 +186,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		instanceKeys    []string
 		resourceLatency matrix.Metric // for workload* objects
 		err             error
+		vs              matrix.VectorSummary
 	)
 
 	me.Logger.Trace().Msg("updating data cache")
@@ -558,12 +559,13 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	// calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
-	if err = timestamp.Delta(m.GetMetric("timestamp"), me.Logger); err != nil {
+	if _, err = timestamp.Delta(m.GetMetric("timestamp"), me.Logger); err != nil {
 		me.Logger.Error().Stack().Err(err).Msg("(timestamp) calculate delta:")
 		// @TODO terminate since other counters will be incorrect
 	}
 
 	var base matrix.Metric
+	var negativeCount, zeroCount int
 
 	for i, metric := range orderedMetrics {
 
@@ -576,21 +578,18 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 			sValues := met.GetValuesFloat64()
 			skips := met.GetSkips()
 			for k := range sValues {
-				// if value is 0 or negative then do not export them
-				if sValues[k] > 0 {
-					// reset skip
-					skips[k] = false
-				} else {
-					skips[k] = true
-				}
+				skips[k] = sValues[k] <= 0
 			}
 			continue
 		}
 
 		// all other properties - first calculate delta
-		if err = metric.Delta(m.GetMetric(key), me.Logger); err != nil {
+		if vs, err = metric.Delta(m.GetMetric(key), me.Logger); err != nil {
 			me.Logger.Error().Stack().Err(err).Str("key", key).Msg("Calculate delta")
 			continue
+		} else {
+			negativeCount += vs.NegativeCount
+			zeroCount += vs.ZeroCount
 		}
 
 		// DELTA - subtract previous value from current
@@ -628,13 +627,16 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if property == "average" || property == "percent" {
 
 			if strings.HasSuffix(metric.GetName(), "latency") {
-				err = metric.DivideWithThreshold(base, me.latencyIoReqd, me.Logger)
+				vs, err = metric.DivideWithThreshold(base, me.latencyIoReqd, me.Logger)
 			} else {
-				err = metric.Divide(base, me.Logger)
+				vs, err = metric.Divide(base, me.Logger)
 			}
 
 			if err != nil {
 				me.Logger.Error().Stack().Err(err).Str("key", key).Msg("Division by base")
+			} else {
+				negativeCount += vs.NegativeCount
+				zeroCount += vs.ZeroCount
 			}
 
 			if property == "average" {
@@ -643,8 +645,11 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		if property == "percent" {
-			if err = metric.MultiplyByScalar(100, me.Logger); err != nil {
+			if vs, err = metric.MultiplyByScalar(100, me.Logger); err != nil {
 				me.Logger.Error().Stack().Err(err).Str("key", key).Msg("Multiply by scalar")
+			} else {
+				negativeCount += vs.NegativeCount
+				zeroCount += vs.ZeroCount
 			}
 			continue
 		}
@@ -657,11 +662,14 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	// calculate rates (which we deferred to calculate averages/percents first)
 	for i, metric := range orderedMetrics {
 		if metric.GetProperty() == "rate" {
-			if err = metric.Divide(timestamp, me.Logger); err != nil {
+			if vs, err = metric.Divide(timestamp, me.Logger); err != nil {
 				me.Logger.Error().Stack().Err(err).
 					Int("i", i).
 					Str("key", orderedKeys[i]).
 					Msg("Calculate rate")
+			} else {
+				negativeCount += vs.NegativeCount
+				zeroCount += vs.ZeroCount
 			}
 		}
 	}
@@ -673,6 +681,8 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		Str("apiD", apiT.Round(time.Millisecond).String()).
 		Str("parseD", parseT.Round(time.Millisecond).String()).
 		Str("calcD", calcD.Round(time.Millisecond).String()).
+		Int("zeroMetric", zeroCount).
+		Int("negativeMetric", negativeCount).
 		Msg("Collected")
 
 	_ = me.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())

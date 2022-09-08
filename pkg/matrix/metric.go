@@ -85,10 +85,10 @@ type Metric interface {
 	GetRecords() []bool
 	GetSkips() []bool
 	GetValuesFloat64() []float64
-	Delta(Metric, *logging.Logger) error
-	Divide(Metric, *logging.Logger) error
-	DivideWithThreshold(Metric, int, *logging.Logger) error
-	MultiplyByScalar(int, *logging.Logger) error
+	Delta(Metric, *logging.Logger) (VectorSummary, error)
+	Divide(Metric, *logging.Logger) (VectorSummary, error)
+	DivideWithThreshold(Metric, int, *logging.Logger) (VectorSummary, error)
+	MultiplyByScalar(int, *logging.Logger) (VectorSummary, error)
 	// debugging
 	Print()
 }
@@ -212,20 +212,20 @@ func (me *AbstractMetric) SetValueNAN(i *Instance) {
 	me.record[i.index] = false
 }
 
-func (me *AbstractMetric) Delta(Metric, *logging.Logger) error {
-	return errs.New(errs.ErrImplement, me.dtype)
+func (me *AbstractMetric) Delta(Metric, *logging.Logger) (VectorSummary, error) {
+	return VectorSummary{}, errs.New(errs.ErrImplement, me.dtype)
 }
 
-func (me *AbstractMetric) Divide(Metric, *logging.Logger) error {
-	return errs.New(errs.ErrImplement, me.dtype)
+func (me *AbstractMetric) Divide(Metric, *logging.Logger) (VectorSummary, error) {
+	return VectorSummary{}, errs.New(errs.ErrImplement, me.dtype)
 }
 
-func (me *AbstractMetric) DivideWithThreshold(Metric, int, *logging.Logger) error {
-	return errs.New(errs.ErrImplement, me.dtype)
+func (me *AbstractMetric) DivideWithThreshold(Metric, int, *logging.Logger) (VectorSummary, error) {
+	return VectorSummary{}, errs.New(errs.ErrImplement, me.dtype)
 }
 
-func (me *AbstractMetric) MultiplyByScalar(int, *logging.Logger) error {
-	return errs.New(errs.ErrImplement, me.dtype)
+func (me *AbstractMetric) MultiplyByScalar(int, *logging.Logger) (VectorSummary, error) {
+	return VectorSummary{}, errs.New(errs.ErrImplement, me.dtype)
 }
 
 func (me *AbstractMetric) AddValueString(*Instance, string) error {
