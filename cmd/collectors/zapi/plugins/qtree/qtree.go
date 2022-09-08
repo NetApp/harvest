@@ -240,14 +240,12 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 						} else if uid != "" {
 							quotaInstance.SetLabel("user", uid)
 						}
-						quotaInstance.SetLabel("user_id", uid)
 					} else if quotaType == "group" {
 						if uName != "" {
 							quotaInstance.SetLabel("group", uName)
 						} else if uid != "" {
 							quotaInstance.SetLabel("group", uid)
 						}
-						quotaInstance.SetLabel("group_id", uid)
 					}
 
 					my.Logger.Debug().Msgf("add (%s) instance: %s.%s.%s", attribute, vserver, volume, tree)
