@@ -3511,7 +3511,7 @@
           "refId": "A"
         }
       ],
-      "datasource": null
+      "datasource": "${DS_PROMETHEUS}"
     },
     {
       "collapsed": false,
