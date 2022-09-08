@@ -28,9 +28,6 @@ counters:
   - miss_directory
   - miss_indirect
 
-override:
-  - hit_percent: average
-
 export_options:
   instance_keys:
     - node
