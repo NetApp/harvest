@@ -579,7 +579,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 			sValues := met.GetValuesFloat64()
 			pass := met.GetPass()
 			for k := range sValues {
-				pass[k] = sValues[k] >= 0
+				pass[k] = sValues[k] > 0
 			}
 			continue
 		}
