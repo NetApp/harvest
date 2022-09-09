@@ -791,10 +791,9 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if vs, err = metric.Delta(mat.GetMetric(key), r.Logger); err != nil {
 			r.Logger.Error().Err(err).Str("key", key).Msg("Calculate delta")
 			continue
-		} else {
-			negativeCount += vs.NegativeCount
-			zeroCount += vs.ZeroCount
 		}
+		negativeCount += vs.NegativeCount
+		zeroCount += vs.ZeroCount
 
 		// DELTA - subtract previous value from current
 		if property == "delta" {
@@ -838,10 +837,9 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 			if err != nil {
 				r.Logger.Error().Err(err).Str("key", key).Msg("Division by base")
 				continue
-			} else {
-				negativeCount += vs.NegativeCount
-				zeroCount += vs.ZeroCount
 			}
+			negativeCount += vs.NegativeCount
+			zeroCount += vs.ZeroCount
 
 			if property == "average" {
 				continue
@@ -878,10 +876,9 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 						Str("key", orderedKeys[i]).
 						Msg("Calculate rate")
 					continue
-				} else {
-					negativeCount += vs.NegativeCount
-					zeroCount += vs.ZeroCount
 				}
+				negativeCount += vs.NegativeCount
+				zeroCount += vs.ZeroCount
 			}
 		} else {
 			r.Logger.Warn().Str("counter", metric.GetName()).Msg("Counter is nil. Unable to process. Check template ")

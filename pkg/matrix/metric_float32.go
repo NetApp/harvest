@@ -111,13 +111,13 @@ func (me *MetricFloat32) SetValueFloat64(i *Instance, v float64) error {
 func (me *MetricFloat32) SetValueString(i *Instance, v string) error {
 	var x float64
 	var err error
-	if x, err = strconv.ParseFloat(v, 32); err == nil {
-		me.record[i.index] = true
-		me.pass[i.index] = true
-		me.values[i.index] = float32(x)
-		return nil
+	if x, err = strconv.ParseFloat(v, 32); err != nil {
+		return err
 	}
-	return err
+	me.record[i.index] = true
+	me.pass[i.index] = true
+	me.values[i.index] = float32(x)
+	return nil
 }
 
 func (me *MetricFloat32) SetValueBytes(i *Instance, v []byte) error {

@@ -588,10 +588,9 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if vs, err = metric.Delta(m.GetMetric(key), me.Logger); err != nil {
 			me.Logger.Error().Stack().Err(err).Str("key", key).Msg("Calculate delta")
 			continue
-		} else {
-			negativeCount += vs.NegativeCount
-			zeroCount += vs.ZeroCount
 		}
+		negativeCount += vs.NegativeCount
+		zeroCount += vs.ZeroCount
 
 		// DELTA - subtract previous value from current
 		if property == "delta" {
@@ -635,10 +634,9 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 			if err != nil {
 				me.Logger.Error().Stack().Err(err).Str("key", key).Msg("Division by base")
-			} else {
-				negativeCount += vs.NegativeCount
-				zeroCount += vs.ZeroCount
 			}
+			negativeCount += vs.NegativeCount
+			zeroCount += vs.ZeroCount
 
 			if property == "average" {
 				continue
@@ -668,10 +666,10 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 					Int("i", i).
 					Str("key", orderedKeys[i]).
 					Msg("Calculate rate")
-			} else {
-				negativeCount += vs.NegativeCount
-				zeroCount += vs.ZeroCount
+				continue
 			}
+			negativeCount += vs.NegativeCount
+			zeroCount += vs.ZeroCount
 		}
 	}
 
