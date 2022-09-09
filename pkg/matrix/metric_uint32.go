@@ -29,13 +29,13 @@ func (me *MetricUint32) Clone(deep bool) Metric {
 
 func (me *MetricUint32) Reset(size int) {
 	me.record = make([]bool, size)
-	me.skip = make([]bool, size)
+	me.pass = make([]bool, size)
 	me.values = make([]uint32, size)
 }
 
 func (me *MetricUint32) Append() {
 	me.record = append(me.record, false)
-	me.skip = append(me.skip, false)
+	me.pass = append(me.pass, false)
 	me.values = append(me.values, 0)
 }
 
@@ -43,11 +43,11 @@ func (me *MetricUint32) Append() {
 func (me *MetricUint32) Remove(index int) {
 	for i := index; i < len(me.values)-1; i++ {
 		me.record[i] = me.record[i+1]
-		me.skip[i] = me.skip[i+1]
+		me.pass[i] = me.pass[i+1]
 		me.values[i] = me.values[i+1]
 	}
 	me.record = me.record[:len(me.record)-1]
-	me.skip = me.skip[:len(me.skip)-1]
+	me.pass = me.pass[:len(me.pass)-1]
 	me.values = me.values[:len(me.values)-1]
 }
 
@@ -55,6 +55,7 @@ func (me *MetricUint32) Remove(index int) {
 
 func (me *MetricUint32) SetValueInt(i *Instance, v int) error {
 	me.record[i.index] = true
+	me.pass[i.index] = true
 	me.values[i.index] = uint32(v)
 	return nil
 }
@@ -62,6 +63,7 @@ func (me *MetricUint32) SetValueInt(i *Instance, v int) error {
 func (me *MetricUint32) SetValueInt32(i *Instance, v int32) error {
 	if v >= 0 {
 		me.record[i.index] = true
+		me.pass[i.index] = true
 		me.values[i.index] = uint32(v)
 		return nil
 	}
@@ -71,6 +73,7 @@ func (me *MetricUint32) SetValueInt32(i *Instance, v int32) error {
 func (me *MetricUint32) SetValueInt64(i *Instance, v int64) error {
 	if v >= 0 {
 		me.record[i.index] = true
+		me.pass[i.index] = true
 		me.values[i.index] = uint32(v)
 		return nil
 	}
@@ -79,18 +82,21 @@ func (me *MetricUint32) SetValueInt64(i *Instance, v int64) error {
 
 func (me *MetricUint32) SetValueUint8(i *Instance, v uint8) error {
 	me.record[i.index] = true
+	me.pass[i.index] = true
 	me.values[i.index] = uint32(v)
 	return nil
 }
 
 func (me *MetricUint32) SetValueUint32(i *Instance, v uint32) error {
 	me.record[i.index] = true
+	me.pass[i.index] = true
 	me.values[i.index] = v
 	return nil
 }
 
 func (me *MetricUint32) SetValueUint64(i *Instance, v uint64) error {
 	me.record[i.index] = true
+	me.pass[i.index] = true
 	me.values[i.index] = uint32(v)
 	return nil
 }
@@ -98,6 +104,7 @@ func (me *MetricUint32) SetValueUint64(i *Instance, v uint64) error {
 func (me *MetricUint32) SetValueFloat32(i *Instance, v float32) error {
 	if v >= 0 {
 		me.record[i.index] = true
+		me.pass[i.index] = true
 		me.values[i.index] = uint32(v)
 		return nil
 	}
@@ -107,6 +114,7 @@ func (me *MetricUint32) SetValueFloat32(i *Instance, v float32) error {
 func (me *MetricUint32) SetValueFloat64(i *Instance, v float64) error {
 	if v >= 0 {
 		me.record[i.index] = true
+		me.pass[i.index] = true
 		me.values[i.index] = uint32(v)
 		return nil
 	}
@@ -118,6 +126,7 @@ func (me *MetricUint32) SetValueString(i *Instance, v string) error {
 	var err error
 	if x, err = strconv.ParseUint(v, 10, 32); err == nil {
 		me.record[i.index] = true
+		me.pass[i.index] = true
 		me.values[i.index] = uint32(x)
 		return nil
 	}
@@ -171,44 +180,44 @@ func (me *MetricUint32) AddValueFloat64(i *Instance, n float64) error {
 // Read methods
 
 func (me *MetricUint32) GetValueInt(i *Instance) (int, bool, bool) {
-	return int(me.values[i.index]), me.record[i.index], me.skip[i.index]
+	return int(me.values[i.index]), me.record[i.index], me.pass[i.index]
 }
 
 func (me *MetricUint32) GetValueInt32(i *Instance) (int32, bool, bool) {
-	return int32(me.values[i.index]), me.record[i.index], me.skip[i.index]
+	return int32(me.values[i.index]), me.record[i.index], me.pass[i.index]
 }
 
 func (me *MetricUint32) GetValueInt64(i *Instance) (int64, bool, bool) {
-	return int64(me.values[i.index]), me.record[i.index], me.skip[i.index]
+	return int64(me.values[i.index]), me.record[i.index], me.pass[i.index]
 }
 
 func (me *MetricUint32) GetValueUint8(i *Instance) (uint8, bool, bool) {
-	return uint8(me.values[i.index]), me.record[i.index], me.skip[i.index]
+	return uint8(me.values[i.index]), me.record[i.index], me.pass[i.index]
 }
 
 func (me *MetricUint32) GetValueUint32(i *Instance) (uint32, bool, bool) {
-	return me.values[i.index], me.record[i.index], me.skip[i.index]
+	return me.values[i.index], me.record[i.index], me.pass[i.index]
 }
 
 func (me *MetricUint32) GetValueUint64(i *Instance) (uint64, bool, bool) {
-	return uint64(me.values[i.index]), me.record[i.index], me.skip[i.index]
+	return uint64(me.values[i.index]), me.record[i.index], me.pass[i.index]
 }
 
 func (me *MetricUint32) GetValueFloat32(i *Instance) (float32, bool, bool) {
-	return float32(me.values[i.index]), me.record[i.index], me.skip[i.index]
+	return float32(me.values[i.index]), me.record[i.index], me.pass[i.index]
 }
 
 func (me *MetricUint32) GetValueFloat64(i *Instance) (float64, bool, bool) {
-	return float64(me.values[i.index]), me.record[i.index], me.skip[i.index]
+	return float64(me.values[i.index]), me.record[i.index], me.pass[i.index]
 }
 
 func (me *MetricUint32) GetValueString(i *Instance) (string, bool, bool) {
-	return strconv.FormatUint(uint64(me.values[i.index]), 10), me.record[i.index], me.skip[i.index]
+	return strconv.FormatUint(uint64(me.values[i.index]), 10), me.record[i.index], me.pass[i.index]
 }
 
 func (me *MetricUint32) GetValueBytes(i *Instance) ([]byte, bool, bool) {
-	s, ok, skip := me.GetValueString(i)
-	return []byte(s), ok, skip
+	s, ok, pass := me.GetValueString(i)
+	return []byte(s), ok, pass
 }
 
 // vector arithmetics
@@ -225,7 +234,7 @@ func (me *MetricUint32) GetValuesFloat64() []float64 {
 
 func (me *MetricUint32) Print() {
 	for i := range me.values {
-		if me.record[i] && me.skip[i] {
+		if me.record[i] && me.pass[i] {
 			fmt.Printf("%s%v%s ", color.Green, me.values[i], color.End)
 		} else {
 			fmt.Printf("%s%v%s ", color.Red, me.values[i], color.End)

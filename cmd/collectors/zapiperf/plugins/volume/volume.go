@@ -84,7 +84,7 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 				me.Logger.Trace().Msgf("(%s) handling metric (%s)", fg.GetLabel("volume"), mkey)
 
-				if value, ok, skip := m.GetValueFloat64(i); ok && !skip {
+				if value, ok, pass := m.GetValueFloat64(i); ok && pass {
 
 					fgv, _, _ := fgm.GetValueFloat64(fg)
 
@@ -110,7 +110,7 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					me.Logger.Trace().Msgf("    > weighted increment <%s * %s>", mkey, opsKey)
 
 					if ops := data.GetMetric(opsKey); ops != nil {
-						if opsValue, ok, skip := ops.GetValueFloat64(i); ok && !skip {
+						if opsValue, ok, pass := ops.GetValueFloat64(i); ok && pass {
 							var tempOpsV float64
 
 							prod := value * opsValue
@@ -158,7 +158,7 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		for mkey, m := range cache.GetMetrics() {
 			if m.IsExportable() && strings.HasSuffix(m.GetName(), "_latency") {
 
-				if value, ok, skip := m.GetValueFloat64(i); ok && !skip {
+				if value, ok, pass := m.GetValueFloat64(i); ok && pass {
 
 					opsKey := ""
 					if strings.Contains(mkey, "_latency") {
@@ -168,7 +168,7 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					// fetch from temp metrics
 					if ops := cache.GetMetric(opsKeyPrefix + opsKey); ops != nil {
 
-						if opsValue, ok, skip := ops.GetValueFloat64(i); ok && !skip && opsValue != 0 {
+						if opsValue, ok, pass := ops.GetValueFloat64(i); ok && pass && opsValue != 0 {
 							err := m.SetValueFloat64(i, value/opsValue)
 							if err != nil {
 								me.Logger.Error().Stack().Err(err).Msgf("error")

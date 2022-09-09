@@ -139,7 +139,7 @@ func (a *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		objMetric       matrix.Metric
 		value           float64
 		ok              bool
-		skip            bool
+		pass            bool
 		err             error
 	)
 
@@ -201,7 +201,7 @@ func (a *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 			for key, metric := range data.GetMetrics() {
 
-				if value, ok, skip = metric.GetValueFloat64(instance); !ok || skip {
+				if value, ok, pass = metric.GetValueFloat64(instance); !ok || !pass {
 					continue
 				}
 
@@ -248,7 +248,7 @@ func (a *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 			for key, instance := range m.GetInstances() {
 
-				if value, ok, skip = metric.GetValueFloat64(instance); !ok || skip {
+				if value, ok, pass = metric.GetValueFloat64(instance); !ok || !pass {
 					continue
 				}
 

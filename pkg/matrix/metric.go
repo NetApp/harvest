@@ -83,7 +83,7 @@ type Metric interface {
 	// methods for doing vector arithmetics
 	// currently only supported for float64!
 	GetRecords() []bool
-	GetSkips() []bool
+	GetPass() []bool
 	GetValuesFloat64() []float64
 	Delta(Metric, *logging.Logger) (VectorSummary, error)
 	Divide(Metric, *logging.Logger) (VectorSummary, error)
@@ -102,7 +102,7 @@ type AbstractMetric struct {
 	exportable bool
 	labels     *dict.Dict
 	record     []bool
-	skip       []bool
+	pass       []bool
 }
 
 func (me *AbstractMetric) Clone(deep bool) *AbstractMetric {
@@ -122,9 +122,9 @@ func (me *AbstractMetric) Clone(deep bool) *AbstractMetric {
 			clone.record = make([]bool, len(me.record))
 			copy(clone.record, me.record)
 		}
-		if len(me.skip) != 0 {
-			clone.skip = make([]bool, len(me.skip))
-			copy(clone.skip, me.skip)
+		if len(me.pass) != 0 {
+			clone.pass = make([]bool, len(me.pass))
+			copy(clone.pass, me.pass)
 		}
 	}
 	return &clone
@@ -204,8 +204,8 @@ func (me *AbstractMetric) GetRecords() []bool {
 	return me.record
 }
 
-func (me *AbstractMetric) GetSkips() []bool {
-	return me.skip
+func (me *AbstractMetric) GetPass() []bool {
+	return me.pass
 }
 
 func (me *AbstractMetric) SetValueNAN(i *Instance) {

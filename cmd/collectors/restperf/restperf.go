@@ -13,6 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
+	"github.com/rs/zerolog"
 	"github.com/tidwall/gjson"
 	"path"
 	"regexp"
@@ -779,15 +780,9 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if property == "raw" {
 			m := mat.GetMetric(key)
 			sValues := m.GetValuesFloat64()
-			skips := m.GetSkips()
+			pass := m.GetPass()
 			for k := range sValues {
-				// if value is 0 or negative then do not export them
-				if sValues[k] > 0 {
-					// reset skip
-					skips[k] = false
-				} else {
-					skips[k] = true
-				}
+				pass[k] = sValues[k] >= 0
 			}
 			continue
 		}
@@ -897,15 +892,25 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	calcD := time.Since(calcStart)
 	_ = r.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
 
-	r.Logger.Info().
-		Int("instances", len(newData.GetInstances())).
-		Uint64("metrics", count).
-		Str("apiD", apiD.Round(time.Millisecond).String()).
-		Str("parseD", parseD.Round(time.Millisecond).String()).
-		Str("calcD", calcD.Round(time.Millisecond).String()).
-		Int("zeroMetric", zeroCount).
-		Int("negativeMetric", negativeCount).
-		Msg("Collected")
+	if int(zerolog.GlobalLevel()) <= int(zerolog.DebugLevel) {
+		r.Logger.Debug().
+			Int("instances", len(instanceKeys)).
+			Uint64("metrics", count).
+			Str("apiD", apiD.Round(time.Millisecond).String()).
+			Str("parseD", parseD.Round(time.Millisecond).String()).
+			Str("calcD", calcD.Round(time.Millisecond).String()).
+			Int("zeroMetric", zeroCount).
+			Int("zNegativeMetric", negativeCount).
+			Msg("Collected")
+	} else {
+		r.Logger.Info().
+			Int("instances", len(instanceKeys)).
+			Uint64("metrics", count).
+			Str("apiD", apiD.Round(time.Millisecond).String()).
+			Str("parseD", parseD.Round(time.Millisecond).String()).
+			Str("calcD", calcD.Round(time.Millisecond).String()).
+			Msg("Collected")
+	}
 	// store cache for next poll
 	r.Matrix[r.Object] = cachedData
 

@@ -577,9 +577,9 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if property == "raw" {
 			met := m.GetMetric(key)
 			sValues := met.GetValuesFloat64()
-			skips := met.GetSkips()
+			pass := met.GetPass()
 			for k := range sValues {
-				skips[k] = sValues[k] <= 0
+				pass[k] = sValues[k] >= 0
 			}
 			continue
 		}
@@ -677,7 +677,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	calcD := time.Since(calcStart)
 
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
+	if int(zerolog.GlobalLevel()) <= int(zerolog.DebugLevel) {
 		me.Logger.Debug().
 			Int("instances", len(instanceKeys)).
 			Uint64("metrics", count).
