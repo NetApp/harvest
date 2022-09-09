@@ -1091,10 +1091,7 @@ func (p *Poller) upgradeCollector(c conf.Collector) (conf.Collector, error) {
 			Msg("Failed to parse version")
 		return c, nil
 	}
-	upgradeVersion := os.Getenv("HARVEST_UPGRADE_REST")
-	if upgradeVersion == "" {
-		upgradeVersion = "9.12.1"
-	}
+	upgradeVersion := "9.12.1"
 	upgradeAfter, err3 := goversion.NewVersion(upgradeVersion)
 	if err3 != nil {
 		logger.Error().Err(err3).
