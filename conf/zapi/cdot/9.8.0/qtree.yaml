@@ -37,8 +37,8 @@ plugins:
         - threshold
       quotaType:
         - tree
-        - user
-        - group
+#        - user
+#        - group
 #      batch_size: "50"
 export_options:
   instance_keys:

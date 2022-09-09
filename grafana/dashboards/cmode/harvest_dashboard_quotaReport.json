@@ -54,11 +54,12 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1660910569138,
+  "iteration": 1662734055395,
   "links": [],
   "panels": [
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Only tree quotas are shown by default. To collect  user/group quotas, enable in qtree.yaml template",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -738,6 +739,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Quota",
-  "uid": "aTqLYjiVk",
-  "version": 1
+  "uid": "l8k65qW4k",
+  "version": 2
 }
