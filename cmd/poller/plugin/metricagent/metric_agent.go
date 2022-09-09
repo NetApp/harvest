@@ -77,7 +77,7 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 
 			// Parse first operand and store in result for further processing
 			if firstMetricVal = m.GetMetric(r.metricNames[0]); firstMetricVal != nil {
-				if val, ok := firstMetricVal.GetValueFloat64(instance); ok {
+				if val, ok, pass := firstMetricVal.GetValueFloat64(instance); ok && pass {
 					result = val
 				} else {
 					continue
@@ -94,7 +94,7 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 				} else {
 					metricVal = m.GetMetric(r.metricNames[i])
 					if metricVal != nil {
-						v, _ = metricVal.GetValueFloat64(instance)
+						v, _, _ = metricVal.GetValueFloat64(instance)
 					} else {
 						a.Logger.Warn().Err(err).Str("metricName", r.metricNames[i]).Msg("computeMetrics: metric not found")
 						return nil

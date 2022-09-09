@@ -69,9 +69,9 @@ func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		if speed != 0 {
 
 			var rxBytes, txBytes, rxPercent, txPercent float64
-			var rxOk, txOk bool
+			var rxOk, txOk, passRx, passTx bool
 
-			if rxBytes, rxOk = write.GetValueFloat64(instance); rxOk {
+			if rxBytes, rxOk, passRx = write.GetValueFloat64(instance); rxOk && passRx {
 				rxPercent = rxBytes / float64(speed)
 				err := rx.SetValueFloat64(instance, rxPercent)
 				if err != nil {
@@ -79,7 +79,7 @@ func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				}
 			}
 
-			if txBytes, txOk = read.GetValueFloat64(instance); txOk {
+			if txBytes, txOk, passTx = read.GetValueFloat64(instance); txOk && passTx {
 				txPercent = txBytes / float64(speed)
 				err := tx.SetValueFloat64(instance, txPercent)
 				if err != nil {
@@ -87,7 +87,7 @@ func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				}
 			}
 
-			if rxOk || txOk {
+			if (rxOk || txOk) && (passRx || passTx) {
 				err := util.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
 				if err != nil {
 					me.Logger.Error().Stack().Err(err).Msg("error")

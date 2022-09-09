@@ -70,24 +70,25 @@ type Metric interface {
 
 	SetValueNAN(*Instance)
 	// methods for reading from metric storage
-	GetValueInt(*Instance) (int, bool)
-	GetValueInt32(*Instance) (int32, bool)
-	GetValueInt64(*Instance) (int64, bool)
-	GetValueUint8(*Instance) (uint8, bool)
-	GetValueUint32(*Instance) (uint32, bool)
-	GetValueUint64(*Instance) (uint64, bool)
-	GetValueFloat32(*Instance) (float32, bool)
-	GetValueFloat64(*Instance) (float64, bool)
-	GetValueString(*Instance) (string, bool)
-	GetValueBytes(*Instance) ([]byte, bool)
+	GetValueInt(*Instance) (int, bool, bool)
+	GetValueInt32(*Instance) (int32, bool, bool)
+	GetValueInt64(*Instance) (int64, bool, bool)
+	GetValueUint8(*Instance) (uint8, bool, bool)
+	GetValueUint32(*Instance) (uint32, bool, bool)
+	GetValueUint64(*Instance) (uint64, bool, bool)
+	GetValueFloat32(*Instance) (float32, bool, bool)
+	GetValueFloat64(*Instance) (float64, bool, bool)
+	GetValueString(*Instance) (string, bool, bool)
+	GetValueBytes(*Instance) ([]byte, bool, bool)
 	// methods for doing vector arithmetics
 	// currently only supported for float64!
 	GetRecords() []bool
+	GetPass() []bool
 	GetValuesFloat64() []float64
-	Delta(Metric, *logging.Logger) error
-	Divide(Metric) error
-	DivideWithThreshold(Metric, int) error
-	MultiplyByScalar(int) error
+	Delta(Metric, *logging.Logger) (VectorSummary, error)
+	Divide(Metric, *logging.Logger) (VectorSummary, error)
+	DivideWithThreshold(Metric, int, *logging.Logger) (VectorSummary, error)
+	MultiplyByScalar(int, *logging.Logger) (VectorSummary, error)
 	// debugging
 	Print()
 }
@@ -101,6 +102,7 @@ type AbstractMetric struct {
 	exportable bool
 	labels     *dict.Dict
 	record     []bool
+	pass       []bool
 }
 
 func (me *AbstractMetric) Clone(deep bool) *AbstractMetric {
@@ -119,6 +121,10 @@ func (me *AbstractMetric) Clone(deep bool) *AbstractMetric {
 		if len(me.record) != 0 {
 			clone.record = make([]bool, len(me.record))
 			copy(clone.record, me.record)
+		}
+		if len(me.pass) != 0 {
+			clone.pass = make([]bool, len(me.pass))
+			copy(clone.pass, me.pass)
 		}
 	}
 	return &clone
@@ -198,24 +204,28 @@ func (me *AbstractMetric) GetRecords() []bool {
 	return me.record
 }
 
+func (me *AbstractMetric) GetPass() []bool {
+	return me.pass
+}
+
 func (me *AbstractMetric) SetValueNAN(i *Instance) {
 	me.record[i.index] = false
 }
 
-func (me *AbstractMetric) Delta(Metric, *logging.Logger) error {
-	return errs.New(errs.ErrImplement, me.dtype)
+func (me *AbstractMetric) Delta(Metric, *logging.Logger) (VectorSummary, error) {
+	return VectorSummary{}, errs.New(errs.ErrImplement, me.dtype)
 }
 
-func (me *AbstractMetric) Divide(Metric) error {
-	return errs.New(errs.ErrImplement, me.dtype)
+func (me *AbstractMetric) Divide(Metric, *logging.Logger) (VectorSummary, error) {
+	return VectorSummary{}, errs.New(errs.ErrImplement, me.dtype)
 }
 
-func (me *AbstractMetric) DivideWithThreshold(Metric, int) error {
-	return errs.New(errs.ErrImplement, me.dtype)
+func (me *AbstractMetric) DivideWithThreshold(Metric, int, *logging.Logger) (VectorSummary, error) {
+	return VectorSummary{}, errs.New(errs.ErrImplement, me.dtype)
 }
 
-func (me *AbstractMetric) MultiplyByScalar(int) error {
-	return errs.New(errs.ErrImplement, me.dtype)
+func (me *AbstractMetric) MultiplyByScalar(int, *logging.Logger) (VectorSummary, error) {
+	return VectorSummary{}, errs.New(errs.ErrImplement, me.dtype)
 }
 
 func (me *AbstractMetric) AddValueString(*Instance, string) error {

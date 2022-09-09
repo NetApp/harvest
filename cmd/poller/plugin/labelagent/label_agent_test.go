@@ -347,7 +347,7 @@ func TestValueToNumRule(t *testing.T) {
 
 	// check "status" for instanceA
 	expected = 1
-	if v, ok = status.GetValueUint8(instanceA); !ok {
+	if v, ok, _ = status.GetValueUint8(instanceA); !ok {
 		t.Error("metric [status]: value for InstanceA not set")
 	} else if v != expected {
 		t.Errorf("metric [status]: value for InstanceA is %d, expected %d", v, expected)
@@ -356,7 +356,7 @@ func TestValueToNumRule(t *testing.T) {
 	}
 
 	// check "status" for instanceB
-	if v, ok = status.GetValueUint8(instanceB); !ok {
+	if v, ok, _ = status.GetValueUint8(instanceB); !ok {
 		t.Log("OK - metric [status]: value for InstanceB not set")
 	} else {
 		t.Errorf("metric [status]: value for InstanceB is %d, should not be set", v)
@@ -364,7 +364,7 @@ func TestValueToNumRule(t *testing.T) {
 
 	// check "stage" for instanceA
 	expected = 1
-	if v, ok = stage.GetValueUint8(instanceA); !ok {
+	if v, ok, _ = stage.GetValueUint8(instanceA); !ok {
 		t.Error("metric [stage]: value for InstanceA not set")
 	} else if v != expected {
 		t.Errorf("metric [stage]: value for InstanceA is %d, expected %d", v, expected)
@@ -374,7 +374,7 @@ func TestValueToNumRule(t *testing.T) {
 
 	// check "stage" for instanceB
 	expected = 4
-	if v, ok = stage.GetValueUint8(instanceB); !ok {
+	if v, ok, _ = stage.GetValueUint8(instanceB); !ok {
 		t.Error("metric [stage]: value for InstanceB not set")
 	} else if v != expected {
 		t.Errorf("metric [stage]: value for InstanceB is %d, expected %d", v, expected)
@@ -384,7 +384,7 @@ func TestValueToNumRule(t *testing.T) {
 
 	// check "outage" for instanceA
 	expected = 1
-	if v, ok = outage.GetValueUint8(instanceA); !ok {
+	if v, ok, _ = outage.GetValueUint8(instanceA); !ok {
 		t.Error("metric [outage]: value for InstanceA not set")
 	} else if v != expected {
 		t.Errorf("metric [outage]: value for InstanceA is %d, expected %d", v, expected)
@@ -394,7 +394,7 @@ func TestValueToNumRule(t *testing.T) {
 
 	// check "outage" for instanceB
 	expected = 0
-	if v, ok = outage.GetValueUint8(instanceB); !ok {
+	if v, ok, _ = outage.GetValueUint8(instanceB); !ok {
 		t.Error("metric [outage]: value for InstanceB not set")
 	} else if v != expected {
 		t.Errorf("metric [outage]: value for InstanceB is %d, expected %d", v, expected)
@@ -447,7 +447,7 @@ func TestValueToNumRegexRule(t *testing.T) {
 
 	// check "status" for instanceA
 	expected = 1
-	if v, ok = status.GetValueUint8(instanceA); !ok {
+	if v, ok, _ = status.GetValueUint8(instanceA); !ok {
 		t.Error("metric [status]: value for InstanceA not set")
 	} else if v != expected {
 		t.Errorf("metric [status]: value for InstanceA is %d, expected %d", v, expected)
@@ -457,7 +457,7 @@ func TestValueToNumRegexRule(t *testing.T) {
 
 	// check "status" for instanceB
 	expected = 0
-	if v, ok = status.GetValueUint8(instanceB); !ok {
+	if v, ok, _ = status.GetValueUint8(instanceB); !ok {
 		t.Log("metric [status]: value for InstanceB not set")
 	} else if v != expected {
 		t.Errorf("metric [status]: value for InstanceB is %d, expected %d", v, expected)
@@ -467,7 +467,7 @@ func TestValueToNumRegexRule(t *testing.T) {
 
 	// check "output" for instanceA
 	expected = 4
-	if v, ok = output.GetValueUint8(instanceA); !ok {
+	if v, ok, _ = output.GetValueUint8(instanceA); !ok {
 		t.Error("metric [stage]: value for InstanceA not set")
 	} else if v != expected {
 		t.Errorf("metric [stage]: value for InstanceA is %d, expected %d", v, expected)
@@ -477,7 +477,7 @@ func TestValueToNumRegexRule(t *testing.T) {
 
 	// check "output" for instanceB
 	expected = 1
-	if v, ok = output.GetValueUint8(instanceB); !ok {
+	if v, ok, _ = output.GetValueUint8(instanceB); !ok {
 		t.Error("metric [stage]: value for InstanceB not set")
 	} else if v != expected {
 		t.Errorf("metric [stage]: value for InstanceB is %d, expected %d", v, expected)
@@ -487,7 +487,7 @@ func TestValueToNumRegexRule(t *testing.T) {
 
 	// check "result" for instanceA
 	expected = 1
-	if v, ok = result.GetValueUint8(instanceA); !ok {
+	if v, ok, _ = result.GetValueUint8(instanceA); !ok {
 		t.Error("metric [outage]: value for InstanceA not set")
 	} else if v != expected {
 		t.Errorf("metric [outage]: value for InstanceA is %d, expected %d", v, expected)
@@ -497,7 +497,7 @@ func TestValueToNumRegexRule(t *testing.T) {
 
 	// check "result" for instanceB
 	expected = 4
-	if v, ok = result.GetValueUint8(instanceB); !ok {
+	if v, ok, _ = result.GetValueUint8(instanceB); !ok {
 		t.Error("metric [outage]: value for InstanceB not set")
 	} else if v != expected {
 		t.Errorf("metric [outage]: value for InstanceB is %d, expected %d", v, expected)

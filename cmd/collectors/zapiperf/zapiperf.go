@@ -39,6 +39,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/rs/zerolog"
 	"strconv"
 	"strings"
 	"time"
@@ -186,6 +187,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		instanceKeys    []string
 		resourceLatency matrix.Metric // for workload* objects
 		err             error
+		vs              matrix.VectorSummary
 	)
 
 	me.Logger.Trace().Msg("updating data cache")
@@ -558,12 +560,13 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	// calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
-	if err = timestamp.Delta(m.GetMetric("timestamp"), me.Logger); err != nil {
+	if _, err = timestamp.Delta(m.GetMetric("timestamp"), me.Logger); err != nil {
 		me.Logger.Error().Stack().Err(err).Msg("(timestamp) calculate delta:")
 		// @TODO terminate since other counters will be incorrect
 	}
 
 	var base matrix.Metric
+	var negativeCount, zeroCount int
 
 	for i, metric := range orderedMetrics {
 
@@ -572,14 +575,22 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 		// RAW - submit without post-processing
 		if property == "raw" {
+			met := m.GetMetric(key)
+			sValues := met.GetValuesFloat64()
+			pass := met.GetPass()
+			for k := range sValues {
+				pass[k] = sValues[k] > 0
+			}
 			continue
 		}
 
 		// all other properties - first calculate delta
-		if err = metric.Delta(m.GetMetric(key), me.Logger); err != nil {
+		if vs, err = metric.Delta(m.GetMetric(key), me.Logger); err != nil {
 			me.Logger.Error().Stack().Err(err).Str("key", key).Msg("Calculate delta")
 			continue
 		}
+		negativeCount += vs.NegativeCount
+		zeroCount += vs.ZeroCount
 
 		// DELTA - subtract previous value from current
 		if property == "delta" {
@@ -616,14 +627,16 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if property == "average" || property == "percent" {
 
 			if strings.HasSuffix(metric.GetName(), "latency") {
-				err = metric.DivideWithThreshold(base, me.latencyIoReqd)
+				vs, err = metric.DivideWithThreshold(base, me.latencyIoReqd, me.Logger)
 			} else {
-				err = metric.Divide(base)
+				vs, err = metric.Divide(base, me.Logger)
 			}
 
 			if err != nil {
 				me.Logger.Error().Stack().Err(err).Str("key", key).Msg("Division by base")
 			}
+			negativeCount += vs.NegativeCount
+			zeroCount += vs.ZeroCount
 
 			if property == "average" {
 				continue
@@ -631,8 +644,11 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		if property == "percent" {
-			if err = metric.MultiplyByScalar(100); err != nil {
+			if vs, err = metric.MultiplyByScalar(100, me.Logger); err != nil {
 				me.Logger.Error().Stack().Err(err).Str("key", key).Msg("Multiply by scalar")
+			} else {
+				negativeCount += vs.NegativeCount
+				zeroCount += vs.ZeroCount
 			}
 			continue
 		}
@@ -645,23 +661,39 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	// calculate rates (which we deferred to calculate averages/percents first)
 	for i, metric := range orderedMetrics {
 		if metric.GetProperty() == "rate" {
-			if err = metric.Divide(timestamp); err != nil {
+			if vs, err = metric.Divide(timestamp, me.Logger); err != nil {
 				me.Logger.Error().Stack().Err(err).
 					Int("i", i).
 					Str("key", orderedKeys[i]).
 					Msg("Calculate rate")
+				continue
 			}
+			negativeCount += vs.NegativeCount
+			zeroCount += vs.ZeroCount
 		}
 	}
 
 	calcD := time.Since(calcStart)
-	me.Logger.Info().
-		Int("instances", len(instanceKeys)).
-		Uint64("metrics", count).
-		Str("apiD", apiT.Round(time.Millisecond).String()).
-		Str("parseD", parseT.Round(time.Millisecond).String()).
-		Str("calcD", calcD.Round(time.Millisecond).String()).
-		Msg("Collected")
+
+	if int(zerolog.GlobalLevel()) <= int(zerolog.DebugLevel) {
+		me.Logger.Debug().
+			Int("instances", len(instanceKeys)).
+			Uint64("metrics", count).
+			Str("apiD", apiT.Round(time.Millisecond).String()).
+			Str("parseD", parseT.Round(time.Millisecond).String()).
+			Str("calcD", calcD.Round(time.Millisecond).String()).
+			Int("zeroMetric", zeroCount).
+			Int("zNegativeMetric", negativeCount).
+			Msg("Collected")
+	} else {
+		me.Logger.Info().
+			Int("instances", len(instanceKeys)).
+			Uint64("metrics", count).
+			Str("apiD", apiT.Round(time.Millisecond).String()).
+			Str("parseD", parseT.Round(time.Millisecond).String()).
+			Str("calcD", calcD.Round(time.Millisecond).String()).
+			Msg("Collected")
+	}
 
 	_ = me.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
 
