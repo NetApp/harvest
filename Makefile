@@ -33,6 +33,7 @@ ASUP_BIN_VERSION ?= main #change it to match tag of release branch
 BIN_PLATFORM ?= linux
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 LINT_EXISTS := $(shell which golangci-lint)
+GOVULNCHECK_EXISTS := $(shell which govulncheck)
 
 
 help:  ## Display this help
@@ -92,6 +93,15 @@ ifeq (${LINT_EXISTS}, )
 	@exit 1
 endif
 	golangci-lint run
+
+govulncheck: ## run govulncheck on the source files
+ifeq (${GOVULNCHECK_EXISTS}, )
+	@echo
+	@echo "govulncheck task requires that you have https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck installed."
+	@echo
+	@exit 1
+endif
+	govulncheck ./...
 
 build: clean deps fmt harvest fetch-asup ## Build the project
 
@@ -154,7 +164,7 @@ asup:
 	@mkdir -p ${CURRENT_DIR}/autosupport
 	@cp ${ASUP_TMP}/harvest-asup/bin/asup ${CURRENT_DIR}/autosupport
 
-dev: build lint
+dev: build lint govulncheck
 	@echo "Deleting AutoSupport binary"
 	@rm -rf autosupport/asup
 
