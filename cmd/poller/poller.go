@@ -30,8 +30,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	goversion "github.com/hashicorp/go-version"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/ems"
-	_ "github.com/netapp/harvest/v2/cmd/collectors/rest"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/restperf"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/simple"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/unix"
@@ -45,6 +46,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/poller/schedule"
+	rest2 "github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
@@ -63,7 +65,6 @@ import (
 	"path"
 	"regexp"
 	"runtime"
-	"runtime/debug"
 	"strconv"
 	"strings"
 	"sync"
@@ -227,13 +228,10 @@ func (p *Poller) Init() error {
 	}
 	// announce startup
 	if p.options.Daemon {
-		logger.Info().Msgf("started as daemon [pid=%d]", os.Getpid())
+		logger.Info().Int("pid", os.Getpid()).Msg("started as daemon")
 	} else {
-		logger.Info().Msgf("started in foreground [pid=%d]", os.Getpid())
+		logger.Info().Int("pid", os.Getpid()).Msg("started in foreground")
 	}
-
-	// load parameters from config (harvest.yml)
-	logger.Debug().Msgf("importing config [%s]", p.options.Config)
 
 	// each poller is associated with a remote host
 	// if no address is specified, assume that is local host
@@ -294,7 +292,7 @@ func (p *Poller) Init() error {
 			continue
 		}
 
-		if err = p.loadCollector(c, ""); err != nil {
+		if err = p.loadCollector(c); err != nil {
 			logger.Error().Stack().Err(err).Msgf("load collector (%s) templates=%s:", c.Name, *c.Templates)
 		}
 	}
@@ -566,7 +564,7 @@ func (p *Poller) parsePing(out string) (float32, bool) {
 // dynamically load and initialize a collector
 // if there are more than one objects defined for a collector,
 // then multiple collectors will be initialized
-func (p *Poller) loadCollector(c conf.Collector, object string) error {
+func (p *Poller) loadCollector(c conf.Collector) error {
 
 	var (
 		class                 string
@@ -576,6 +574,9 @@ func (p *Poller) loadCollector(c conf.Collector, object string) error {
 		col                   collector.Collector
 	)
 
+	if c, err = p.upgradeCollector(c); err != nil {
+		return err
+	}
 	class = c.Name
 	// throw warning for deprecated collectors
 	if r, d := deprecatedCollectors[strings.ToLower(class)]; d {
@@ -623,10 +624,7 @@ func (p *Poller) loadCollector(c conf.Collector, object string) error {
 	Union2(template, p.params)
 	template.NewChildS("poller_name", p.params.Name)
 
-	// if we don't know object, try load from template
-	if object == "" {
-		object = template.GetChildContentS("object")
-	}
+	object := template.GetChildContentS("object")
 
 	// if object is defined, we only initialize 1 sub-collector / object
 	if object != "" {
@@ -1064,6 +1062,79 @@ func (p *Poller) createClient() {
 	}
 }
 
+// upgradeCollector checks if the collector c should be upgraded to a REST collector.
+// If an upgrade is possible, a new collector will be returned, otherwise the original will be.
+//
+// ZAPI collectors should be upgraded to REST collectors when the ONTAP version is >= 9.12.1
+// The check is performed by:
+//   - use the REST API to query the cluster version
+//   - compare the cluster version with the upgradeAfter version
+//
+// If any error happens during the REST query, the upgrade is aborted and the original collector c returned.
+func (p *Poller) upgradeCollector(c conf.Collector) (conf.Collector, error) {
+	// Only attempt to upgrade Zapi* collectors
+	if !strings.HasPrefix(c.Name, "Zapi") {
+		return c, nil
+	}
+	r, err := p.newRestClient()
+	if err != nil {
+		logger.Debug().Err(err).Str("collector", c.Name).Msg("Failed to upgrade to Rest. Use collector")
+		return c, nil
+	}
+	ver := r.Client.Cluster().Version
+	verWithDots := fmt.Sprintf("%d.%d.%d", ver[0], ver[1], ver[2])
+	ontapVersion, err2 := goversion.NewVersion(verWithDots)
+	if err2 != nil {
+		logger.Error().Err(err2).
+			Str("version", verWithDots).
+			Str("collector", c.Name).
+			Msg("Failed to parse version")
+		return c, nil
+	}
+	upgradeVersion := "9.12.1"
+	upgradeAfter, err3 := goversion.NewVersion(upgradeVersion)
+	if err3 != nil {
+		logger.Error().Err(err3).
+			Str("upgradeVersion", upgradeVersion).
+			Str("collector", c.Name).
+			Msg("Failed to parse upgradeVersion")
+		return c, nil
+	}
+
+	if ontapVersion.GreaterThanOrEqual(upgradeAfter) {
+		upgradeCollector := strings.ReplaceAll(c.Name, "Zapi", "Rest")
+		logger.Info().
+			Str("from", c.Name).
+			Str("to", upgradeCollector).
+			Str("v", verWithDots).
+			Str("upgradeVersion", upgradeVersion).
+			Msg("Upgrade collector")
+		return conf.Collector{
+			Name:      upgradeCollector,
+			Templates: c.Templates,
+		}, nil
+	}
+	logger.Debug().
+		Str("collector", c.Name).
+		Str("v", verWithDots).
+		Str("upgradeVersion", upgradeVersion).
+		Msg("Do not upgrade collector")
+	return c, nil
+}
+
+func (p *Poller) newRestClient() (*rest.Rest, error) {
+	params := node.NewS("")
+	// Set client_timeout to suppress logging a msg about the default client_timeout during Rest client creation
+	params.NewChildS("client_timeout", fmt.Sprintf("%ds", rest2.DefaultTimeout))
+	Union2(params, p.params)
+	delegate := collector.New("Rest", "", p.options, params)
+	r := &rest.Rest{
+		AbstractCollector: delegate,
+	}
+	err := r.InitClient()
+	return r, err
+}
+
 func startPoller(_ *cobra.Command, _ []string) {
 	//cmd.DebugFlags()  // uncomment to print flags
 	poller := &Poller{}
@@ -1114,7 +1185,7 @@ func main() {
 	defer func() {
 		//logger.Warn("(main) ", "defer func here")
 		if r := recover(); r != nil {
-			logger.Error().Stack().Err(errs.New(errs.ErrPanic, string(debug.Stack()))).Msgf("Poller panicked %s", r)
+			logger.Error().Stack().Err(errs.ErrPanic).Msgf("Poller panicked %s", r)
 			logger.Fatal().Msg(`(main) terminating abnormally, tip: run in foreground mode (with "--loglevel 0") to debug`)
 
 			os.Exit(1)
