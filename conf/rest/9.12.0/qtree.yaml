@@ -29,8 +29,8 @@ plugins:
   - Qtree:
       quotaType:
         - tree
-        - user
-        - group
+#        - user
+#        - group
   - LabelAgent:
       replace:
         - oplocks oplocks `enable` `enabled`
