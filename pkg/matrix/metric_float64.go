@@ -248,29 +248,29 @@ func (me *MetricFloat64) Delta(s Metric, logger *logging.Logger) (VectorSummary,
 			v := me.values[i]
 			// reset pass
 			pass[i] = true
-			//if current and previous raw are <= 0
+			// if current or previous raw are <= 0
 			if me.values[i] <= 0 || prevRaw[i] <= 0 {
 				pass[i] = false
 				if me.values[i] < 0 {
 					logger.Trace().
 						Str("metric", me.GetName()).
-						Float64("current", me.values[i]).
-						Float64("previous", prevRaw[i]).
-						Msg("Negative raw values detected")
+						Float64("currentRaw", me.values[i]).
+						Float64("previousRaw", prevRaw[i]).
+						Msg("Negative raw values")
 				}
 			}
 			me.values[i] -= prevRaw[i]
-			//if cooked value is <= 0 then pass delta
+			// if cooked value is <= 0 this instance does not pass
 			if me.values[i] <= 0 {
 				pass[i] = false
 				if me.values[i] < 0 {
 					vs.NegativeCount += 1
 					logger.Trace().
 						Str("metric", me.GetName()).
-						Float64("current", v).
-						Float64("previous", prevRaw[i]).
-						Msg("Negative cooked value detected")
-				} else if me.values[i] == 0 {
+						Float64("currentRaw", v).
+						Float64("previousRaw", prevRaw[i]).
+						Msg("Negative cooked value")
+				} else {
 					vs.ZeroCount += 1
 				}
 			}
@@ -292,7 +292,7 @@ func (me *MetricFloat64) Divide(s Metric, logger *logging.Logger) (VectorSummary
 			v := me.values[i]
 			// reset pass
 			pass[i] = true
-			// if numerator/denominator raw is 0 or negative
+			// if numerator/denominator raw is <= 0
 			if me.values[i] <= 0 || sValues[i] <= 0 {
 				pass[i] = false
 				if me.values[i] < 0 || sValues[i] < 0 {
@@ -300,11 +300,11 @@ func (me *MetricFloat64) Divide(s Metric, logger *logging.Logger) (VectorSummary
 						Str("metric", me.GetName()).
 						Float64("numerator", me.values[i]).
 						Float64("denominator", sValues[i]).
-						Msg("Negative raw values detected")
+						Msg("Negative raw values")
 				}
 			}
 			me.values[i] /= sValues[i]
-			// if cooked value is 0 or negative then pass delta
+			// if cooked value is <= 0 this instance does not pass
 			if me.values[i] <= 0 {
 				pass[i] = false
 				if me.values[i] < 0 {
@@ -312,9 +312,9 @@ func (me *MetricFloat64) Divide(s Metric, logger *logging.Logger) (VectorSummary
 						Str("metric", me.GetName()).
 						Float64("numerator", v).
 						Float64("denominator", sValues[i]).
-						Msg("Negative cooked value detected")
+						Msg("Negative cooked value")
 					vs.NegativeCount += 1
-				} else if me.values[i] == 0 {
+				} else {
 					vs.ZeroCount += 1
 				}
 			}
@@ -336,7 +336,7 @@ func (me *MetricFloat64) DivideWithThreshold(s Metric, t int, logger *logging.Lo
 		v := me.values[i]
 		// reset pass
 		pass[i] = true
-		// if numerator/denominator raw is 0 or negative
+		// if numerator/denominator raw is <= 0
 		if me.values[i] <= 0 || sValues[i] <= 0 {
 			pass[i] = false
 			if me.values[i] < 0 || sValues[i] < 0 {
@@ -344,13 +344,13 @@ func (me *MetricFloat64) DivideWithThreshold(s Metric, t int, logger *logging.Lo
 					Str("metric", me.GetName()).
 					Float64("numerator", v).
 					Float64("denominator", sValues[i]).
-					Msg("Negative raw values detected")
+					Msg("Negative raw values")
 			}
 		}
 		if me.record[i] && sRecord[i] && sValues[i] >= x {
 			me.values[i] /= sValues[i]
 		}
-		// if cooked value is 0 or negative then pass delta
+		// if cooked value is <= 0 this instance does not pass
 		if me.values[i] <= 0 {
 			pass[i] = false
 			if me.values[i] < 0 {
@@ -358,9 +358,9 @@ func (me *MetricFloat64) DivideWithThreshold(s Metric, t int, logger *logging.Lo
 					Str("metric", me.GetName()).
 					Float64("numerator", v).
 					Float64("denominator", sValues[i]).
-					Msg("Negative cooked value detected")
+					Msg("Negative cooked value")
 				vs.NegativeCount += 1
-			} else if me.values[i] == 0 {
+			} else {
 				vs.ZeroCount += 1
 			}
 		}
@@ -373,21 +373,32 @@ func (me *MetricFloat64) MultiplyByScalar(s int, logger *logging.Logger) (Vector
 	x := float64(s)
 	pass := me.GetPass()
 	for i := 0; i < len(me.values); i++ {
-		// reset pass
-		pass[i] = true
 		if me.record[i] {
+			// reset pass
+			pass[i] = true
+			// if current is <= 0
+			if me.values[i] <= 0 {
+				pass[i] = false
+				if me.values[i] < 0 {
+					logger.Trace().
+						Str("metric", me.GetName()).
+						Float64("currentRaw", me.values[i]).
+						Int("scalar", s).
+						Msg("Negative raw value")
+				}
+			}
 			me.values[i] *= x
 		}
-		// if cooked value is 0 or negative then pass delta
+		// if cooked value is <= 0 this instance does not pass
 		if me.values[i] <= 0 {
 			pass[i] = false
 			if me.values[i] < 0 {
 				logger.Trace().
 					Str("metric", me.GetName()).
 					Float64("current", me.values[i]).
-					Msg("Negative cooked value detected")
+					Msg("Negative cooked value")
 				vs.NegativeCount += 1
-			} else if me.values[i] == 0 {
+			} else {
 				vs.ZeroCount += 1
 			}
 		}
