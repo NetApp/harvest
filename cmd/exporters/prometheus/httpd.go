@@ -145,7 +145,7 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		p.Logger.Error().Stack().Err(err).Msg("error")
 	}
-	err = p.Metadata.LazySetValueInt("count", "http", count)
+	err = p.Metadata.LazySetValueInt64("count", "http", int64(count))
 	if err != nil {
 		p.Logger.Error().Stack().Err(err).Msg("error")
 	}

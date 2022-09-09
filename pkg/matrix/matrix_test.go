@@ -6,13 +6,11 @@ import (
 
 func setUpMatrix() *Matrix {
 	m := New("TestRemoveInstance", "test", "test")
-	speed, _ := m.NewMetricUint32("max_speed")
-	length, _ := m.NewMetricFloat32("length_in_mm")
+	speed, _ := m.NewMetricUint64("max_speed")
 	instanceNames := []string{"A", "B", "C", "D"}
 	for _, instanceName := range instanceNames {
 		instance, _ := m.NewInstance(instanceName)
-		_ = speed.SetValueInt32(instance, 10)
-		_ = length.SetValueFloat32(instance, 1.0)
+		_ = speed.SetValueInt64(instance, 10)
 	}
 	return m
 }

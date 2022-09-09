@@ -310,7 +310,7 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 		Str("parseD", parseD.Round(time.Millisecond).String()).
 		Msg("Collected")
 
-	_ = r.Metadata.LazySetValueInt("count", "data", numRecords)
+	_ = r.Metadata.LazySetValueInt64("count", "data", int64(numRecords))
 	_ = r.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
 	_ = r.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
 	_ = r.Metadata.LazySetValueUint64("datapoint_count", "data", count)

@@ -440,14 +440,14 @@ func (p *Poller) Run() {
 			// ping target system
 			if ping, ok := p.ping(); ok {
 				_ = p.status.LazySetValueUint8("status", "host", 0)
-				_ = p.status.LazySetValueFloat32("ping", "host", ping)
+				_ = p.status.LazySetValueFloat64("ping", "host", float64(ping))
 			} else {
 				_ = p.status.LazySetValueUint8("status", "host", 1)
 			}
 
 			// add number of goroutines to metadata
 			// @TODO: cleanup, does not belong to "status"
-			_ = p.status.LazySetValueInt("goroutines", "host", runtime.NumGoroutine())
+			_ = p.status.LazySetValueInt64("goroutines", "host", int64(runtime.NumGoroutine()))
 
 			upc := 0 // up collectors
 			upe := 0 // up exporters
@@ -870,8 +870,8 @@ func (p *Poller) loadMetadata() {
 	// metadata for target system
 	p.status = matrix.New("poller", "metadata_target", "metadata_component")
 	_, _ = p.status.NewMetricUint8("status")
-	_, _ = p.status.NewMetricFloat32("ping")
-	_, _ = p.status.NewMetricUint32("goroutines")
+	_, _ = p.status.NewMetricFloat64("ping")
+	_, _ = p.status.NewMetricUint64("goroutines")
 
 	instance, _ := p.status.NewInstance("host")
 	instance.SetLabel("addr", p.target)

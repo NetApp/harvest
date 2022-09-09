@@ -4,9 +4,9 @@
 
 package matrix
 
-func (me *Matrix) InstanceWiseAdditionUint64(toInstance, fromInstance *Instance, fromData *Matrix) {
+func (m *Matrix) InstanceWiseAdditionUint64(toInstance, fromInstance *Instance, fromData *Matrix) {
 	for key, fromMetric := range fromData.GetMetrics() {
-		if toMetric := me.GetMetric(key); toMetric != nil {
+		if toMetric := m.GetMetric(key); toMetric != nil {
 			fromValue, _, _ := fromMetric.GetValueUint64(fromInstance)
 			toValue, _, _ := toMetric.GetValueUint64(toInstance)
 			_ = toMetric.SetValueUint64(toInstance, fromValue+toValue)
