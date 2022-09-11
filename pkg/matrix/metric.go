@@ -19,9 +19,6 @@ import (
 
 type Metric interface {
 	// methods related to metric attributes
-	// @TODO, add methods for (convenience of collectors)
-	// Property
-	// BaseCounter
 
 	GetName() string
 	SetName(string)
@@ -40,56 +37,51 @@ type Metric interface {
 	IsArray() bool
 	SetArray(bool)
 	Clone(bool) Metric
+
 	// methods for resizing metric storage
+
 	Reset(int)
 	Remove(int)
 	Append()
+
 	// methods for writing to metric storage
-	SetValueInt(*Instance, int) error
-	SetValueInt32(*Instance, int32) error
+
 	SetValueInt64(*Instance, int64) error
 	SetValueUint8(*Instance, uint8) error
-	SetValueUint32(*Instance, uint32) error
 	SetValueUint64(*Instance, uint64) error
-	SetValueFloat32(*Instance, float32) error
 	SetValueFloat64(*Instance, float64) error
 	SetValueString(*Instance, string) error
 	SetValueBytes(*Instance, []byte) error
 	SetValueBool(*Instance, bool) error
 
-	AddValueInt(*Instance, int) error
-	AddValueInt32(*Instance, int32) error
 	AddValueInt64(*Instance, int64) error
 	AddValueUint8(*Instance, uint8) error
-	AddValueUint32(*Instance, uint32) error
 	AddValueUint64(*Instance, uint64) error
-	AddValueFloat32(*Instance, float32) error
 	AddValueFloat64(*Instance, float64) error
 	AddValueString(*Instance, string) error
-	//SetValueBytes(*Instance, []byte) error
 
 	SetValueNAN(*Instance)
 	// methods for reading from metric storage
+
 	GetValueInt(*Instance) (int, bool, bool)
-	GetValueInt32(*Instance) (int32, bool, bool)
 	GetValueInt64(*Instance) (int64, bool, bool)
 	GetValueUint8(*Instance) (uint8, bool, bool)
-	GetValueUint32(*Instance) (uint32, bool, bool)
 	GetValueUint64(*Instance) (uint64, bool, bool)
-	GetValueFloat32(*Instance) (float32, bool, bool)
 	GetValueFloat64(*Instance) (float64, bool, bool)
 	GetValueString(*Instance) (string, bool, bool)
 	GetValueBytes(*Instance) ([]byte, bool, bool)
-	// methods for doing vector arithmetics
-	// currently only supported for float64!
 	GetRecords() []bool
 	GetPass() []bool
 	GetValuesFloat64() []float64
+
+	// methods for doing vector arithmetics
+	// currently only supported for float64!
+
 	Delta(Metric, *logging.Logger) (VectorSummary, error)
 	Divide(Metric, *logging.Logger) (VectorSummary, error)
 	DivideWithThreshold(Metric, int, *logging.Logger) (VectorSummary, error)
 	MultiplyByScalar(int, *logging.Logger) (VectorSummary, error)
-	// debugging
+	// Print is used for debugging
 	Print()
 }
 
@@ -105,133 +97,133 @@ type AbstractMetric struct {
 	pass       []bool
 }
 
-func (me *AbstractMetric) Clone(deep bool) *AbstractMetric {
+func (m *AbstractMetric) Clone(deep bool) *AbstractMetric {
 	clone := AbstractMetric{
-		name:       me.name,
-		dtype:      me.dtype,
-		property:   me.property,
-		comment:    me.comment,
-		exportable: me.exportable,
-		array:      me.array,
+		name:       m.name,
+		dtype:      m.dtype,
+		property:   m.property,
+		comment:    m.comment,
+		exportable: m.exportable,
+		array:      m.array,
 	}
-	if me.labels != nil {
-		clone.labels = me.labels.Copy()
+	if m.labels != nil {
+		clone.labels = m.labels.Copy()
 	}
 	if deep {
-		if len(me.record) != 0 {
-			clone.record = make([]bool, len(me.record))
-			copy(clone.record, me.record)
+		if len(m.record) != 0 {
+			clone.record = make([]bool, len(m.record))
+			copy(clone.record, m.record)
 		}
-		if len(me.pass) != 0 {
-			clone.pass = make([]bool, len(me.pass))
-			copy(clone.pass, me.pass)
+		if len(m.pass) != 0 {
+			clone.pass = make([]bool, len(m.pass))
+			copy(clone.pass, m.pass)
 		}
 	}
 	return &clone
 }
 
-func (me *AbstractMetric) GetName() string {
-	return me.name
+func (m *AbstractMetric) GetName() string {
+	return m.name
 }
 
-func (me *AbstractMetric) SetName(name string) {
-	me.name = name
+func (m *AbstractMetric) SetName(name string) {
+	m.name = name
 }
 
-func (me *AbstractMetric) IsExportable() bool {
-	return me.exportable
+func (m *AbstractMetric) IsExportable() bool {
+	return m.exportable
 }
 
-func (me *AbstractMetric) SetExportable(b bool) {
-	me.exportable = b
+func (m *AbstractMetric) SetExportable(b bool) {
+	m.exportable = b
 }
 
-func (me *AbstractMetric) GetType() string {
-	return me.dtype
+func (m *AbstractMetric) GetType() string {
+	return m.dtype
 }
 
-func (me *AbstractMetric) GetProperty() string {
-	return me.property
+func (m *AbstractMetric) GetProperty() string {
+	return m.property
 }
 
-func (me *AbstractMetric) SetProperty(p string) {
-	me.property = p
+func (m *AbstractMetric) SetProperty(p string) {
+	m.property = p
 }
 
-func (me *AbstractMetric) GetComment() string {
-	return me.comment
+func (m *AbstractMetric) GetComment() string {
+	return m.comment
 }
 
-func (me *AbstractMetric) SetComment(c string) {
-	me.comment = c
+func (m *AbstractMetric) SetComment(c string) {
+	m.comment = c
 }
 
-func (me *AbstractMetric) IsArray() bool {
-	return me.array
+func (m *AbstractMetric) IsArray() bool {
+	return m.array
 }
 
-func (me *AbstractMetric) SetArray(c bool) {
-	me.array = c
+func (m *AbstractMetric) SetArray(c bool) {
+	m.array = c
 }
 
-func (me *AbstractMetric) SetLabel(key, value string) {
-	if me.labels == nil {
-		me.labels = dict.New()
+func (m *AbstractMetric) SetLabel(key, value string) {
+	if m.labels == nil {
+		m.labels = dict.New()
 	}
-	me.labels.Set(key, value)
+	m.labels.Set(key, value)
 }
 
-func (me *AbstractMetric) SetLabels(labels *dict.Dict) {
-	me.labels = labels
+func (m *AbstractMetric) SetLabels(labels *dict.Dict) {
+	m.labels = labels
 }
 
-func (me *AbstractMetric) GetLabel(key string) string {
-	if me.labels != nil {
-		return me.labels.Get(key)
+func (m *AbstractMetric) GetLabel(key string) string {
+	if m.labels != nil {
+		return m.labels.Get(key)
 	}
 	return ""
 }
 
-func (me *AbstractMetric) GetLabels() *dict.Dict {
-	return me.labels
+func (m *AbstractMetric) GetLabels() *dict.Dict {
+	return m.labels
 
 }
-func (me *AbstractMetric) HasLabels() bool {
-	return me.labels != nil && me.labels.Size() != 0
+func (m *AbstractMetric) HasLabels() bool {
+	return m.labels != nil && m.labels.Size() != 0
 }
 
-func (me *AbstractMetric) GetRecords() []bool {
-	return me.record
+func (m *AbstractMetric) GetRecords() []bool {
+	return m.record
 }
 
-func (me *AbstractMetric) GetPass() []bool {
-	return me.pass
+func (m *AbstractMetric) GetPass() []bool {
+	return m.pass
 }
 
-func (me *AbstractMetric) SetValueNAN(i *Instance) {
-	me.record[i.index] = false
+func (m *AbstractMetric) SetValueNAN(i *Instance) {
+	m.record[i.index] = false
 }
 
-func (me *AbstractMetric) Delta(Metric, *logging.Logger) (VectorSummary, error) {
-	return VectorSummary{}, errs.New(errs.ErrImplement, me.dtype)
+func (m *AbstractMetric) Delta(Metric, *logging.Logger) (VectorSummary, error) {
+	return VectorSummary{}, errs.New(errs.ErrImplement, m.dtype)
 }
 
-func (me *AbstractMetric) Divide(Metric, *logging.Logger) (VectorSummary, error) {
-	return VectorSummary{}, errs.New(errs.ErrImplement, me.dtype)
+func (m *AbstractMetric) Divide(Metric, *logging.Logger) (VectorSummary, error) {
+	return VectorSummary{}, errs.New(errs.ErrImplement, m.dtype)
 }
 
-func (me *AbstractMetric) DivideWithThreshold(Metric, int, *logging.Logger) (VectorSummary, error) {
-	return VectorSummary{}, errs.New(errs.ErrImplement, me.dtype)
+func (m *AbstractMetric) DivideWithThreshold(Metric, int, *logging.Logger) (VectorSummary, error) {
+	return VectorSummary{}, errs.New(errs.ErrImplement, m.dtype)
 }
 
-func (me *AbstractMetric) MultiplyByScalar(int, *logging.Logger) (VectorSummary, error) {
-	return VectorSummary{}, errs.New(errs.ErrImplement, me.dtype)
+func (m *AbstractMetric) MultiplyByScalar(int, *logging.Logger) (VectorSummary, error) {
+	return VectorSummary{}, errs.New(errs.ErrImplement, m.dtype)
 }
 
-func (me *AbstractMetric) AddValueString(*Instance, string) error {
-	return errs.New(errs.ErrImplement, me.dtype)
+func (m *AbstractMetric) AddValueString(*Instance, string) error {
+	return errs.New(errs.ErrImplement, m.dtype)
 }
 
-func (me *AbstractMetric) SetValueBool(*Instance, bool) error {
-	return errs.New(errs.ErrImplement, me.dtype)
+func (m *AbstractMetric) SetValueBool(*Instance, bool) error {
+	return errs.New(errs.ErrImplement, m.dtype)
 }

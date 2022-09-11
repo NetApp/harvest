@@ -71,7 +71,7 @@ if instance, err = myMatrix.NewInstance("SomeCarMark"); err != nil {
 }
 instance.SetLabel("mark", "SomeCarMark")
 instance.SetLabel("color", "red")
-instance.SetLabel("style", "coupé")
+instance.SetLabel("style", "coupe")
 // add as many labels as you like
 instance.GetLabel("color") // return "red"
 instance.GetLabel("owner") // returns ""
@@ -79,8 +79,8 @@ instance.GetLabel("owner") // returns ""
 
 ## Add Metrics
 ```go
-func (x *Matrix) NewMetricInt(key string) (Metric, error)
-// returns pointer to a new MetricInt, or nil with error (if key is not unique)
+func (x *Matrix) NewMetricInt64(key string) (Metric, error)
+// returns pointer to a new MetricInt64, or nil with error (if key is not unique)
 // note that Metric is an interface
 ```
 
@@ -133,13 +133,9 @@ func (x *Matrix) Reset()
 // flush numeric data from previous poll
 ```
 ```go
-func (m Metric) SetValueInt(i *Instance, v int) error
-func (m Metric) SetValueInt32(i *Instance, v int32) error
 func (m Metric) SetValueInt64(i *Instance, v int64) error
 func (m Metric) SetValueUint8(i *Instance, v uint8) error
-func (m Metric) SetValueUint32(i *Instance, v uint32) error
 func (m Metric) SetValueUint64(i *Instance, v uint64) error
-func (m Metric) SetValueFloat32(i *Instance, v float32) error
 func (m Metric) SetValueFloat64(i *Instance, v float64) error
 func (m Metric) SetValueBytes(i *Instance, v []byte) error
 func (m Metric) SetValueString(i *Instance, v []string) error
@@ -148,7 +144,7 @@ func (m Metric) SetValueString(i *Instance, v []string) error
 
 ```
 ```go
-func (m Metric) AddValueInt(i *Instance, v int) error
+func (m Metric) AddValueInt64(i *Instance, v int64) error
 // increments the numeric value for the instance i by v
 // same signatures for all the types defined above
 ```
@@ -178,7 +174,7 @@ if err = speed.SetValueString(instance, "500"); err != nil {
     logger.Error(me.Prefix, "set speed value: ", err)
 }
 // here we ignore err since type is the metric type
-length.SetValueFloat32(instance, 10000.00)
+length.SetValueFloat64(instance, 10000.00)
 
 // safe to add new instances
 var instance2 matrix.Instance
@@ -187,12 +183,12 @@ if instance2, err = myMatrix.NewInstance("SomeOtherCar"); err != nil {
 }
 
 // possible and safe even though speed has type Float32
-} if err = length.SetValueInt32(instance2, 13000); err != nil {
+} if err = length.SetValueInt64(instance2, 13000); err != nil {
     logger.Error(me.Prefix, "set speed value:", err)
 }
 
 // possible, but will overflow since speed is unsigned
-} if err = speed.SetValueInt32(instance2, -500); err != nil {
+} if err = speed.SetValueInt64(instance2, -500); err != nil {
     logger.Error(me.Prefix, "set length value:", err)
 }
 ```

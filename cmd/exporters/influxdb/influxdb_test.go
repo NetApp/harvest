@@ -98,7 +98,7 @@ func TestExportDebug(t *testing.T) {
 	data.SetExportOptions(matrix.DefaultExportOptions())
 
 	// add metric
-	m, err := data.NewMetricInt("test_metric")
+	m, err := data.NewMetricInt64("test_metric")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -112,7 +112,7 @@ func TestExportDebug(t *testing.T) {
 
 	// add numeric data
 
-	if err := m.SetValueInt(i, 42); err != nil {
+	if err := m.SetValueInt64(i, 42); err != nil {
 		t.Fatal(err)
 	}
 

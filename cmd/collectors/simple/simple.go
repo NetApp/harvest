@@ -21,10 +21,10 @@ type NodeMon struct {
 }
 
 func init() {
-	plugin.RegisterModule(NodeMon{})
+	plugin.RegisterModule(&NodeMon{})
 }
 
-func (NodeMon) HarvestModule() plugin.ModuleInfo {
+func (n *NodeMon) HarvestModule() plugin.ModuleInfo {
 	return plugin.ModuleInfo{
 		ID:  "harvest.collector.simple",
 		New: func() plugin.Module { return new(NodeMon) },
@@ -126,7 +126,7 @@ func (n *NodeMon) PollData() (map[string]*matrix.Matrix, error) {
 	toQuery := []string{"alloc", "num_gc", "num_cpu"}
 
 	for key, instance := range mat.GetInstances() {
-		err := mat.LazySetValueUint32("status", key, 0)
+		err := mat.LazySetValueUint64("status", key, 0)
 		if err != nil {
 			n.Logger.Error().Stack().Err(err).Msgf("error while parsing metric key [%s]", key)
 		}
@@ -138,11 +138,10 @@ func (n *NodeMon) PollData() (map[string]*matrix.Matrix, error) {
 				case "alloc":
 					_ = metric.SetValueUint64(instance, m.Alloc)
 				case "num_gc":
-					_ = metric.SetValueUint32(instance, m.NumGC)
+					_ = metric.SetValueUint64(instance, uint64(m.NumGC))
 				case "num_cpu":
-					_ = metric.SetValueInt(instance, runtime.NumCPU())
+					_ = metric.SetValueInt64(instance, int64(runtime.NumCPU()))
 				}
-				//logger.Trace(me.Prefix, "+ (%s) [%f]", key, value)
 			}
 		}
 	}

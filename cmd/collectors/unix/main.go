@@ -72,10 +72,10 @@ var _DataTypes = map[string]string{
 }
 
 func init() {
-	plugin.RegisterModule(Unix{})
+	plugin.RegisterModule(&Unix{})
 }
 
-func (Unix) HarvestModule() plugin.ModuleInfo {
+func (u *Unix) HarvestModule() plugin.ModuleInfo {
 	return plugin.ModuleInfo{
 		ID:  "harvest.collector.unix",
 		New: func() plugin.Module { return new(Unix) },
@@ -138,20 +138,20 @@ type Unix struct {
 }
 
 // Init - initialize the collector
-func (me *Unix) Init(a *collector.AbstractCollector) error {
-	me.AbstractCollector = a
+func (u *Unix) Init(a *collector.AbstractCollector) error {
+	u.AbstractCollector = a
 	var err error
 
 	if !set.NewFrom(supportedPlatforms).Has(runtime.GOOS) {
 		return errs.New(errs.ErrImplement, "platform not supported")
 	}
 
-	if err = collector.Init(me); err != nil {
+	if err = collector.Init(u); err != nil {
 		return err
 	}
 
 	// optionally let user define mount point of the fs
-	if mp := me.Params.GetChildContentS("mount_point"); mp != "" {
+	if mp := u.Params.GetChildContentS("mount_point"); mp != "" {
 		mountPoint = mp
 	}
 
@@ -161,9 +161,9 @@ func (me *Unix) Init(a *collector.AbstractCollector) error {
 	}
 
 	// load list of counters from template
-	if counters := me.Params.GetChildS("counters"); counters != nil {
-		if err = me.loadMetrics(counters); err != nil {
-			me.Logger.Error().Stack().Err(err).Msg("load metrics")
+	if counters := u.Params.GetChildS("counters"); counters != nil {
+		if err = u.loadMetrics(counters); err != nil {
+			u.Logger.Error().Stack().Err(err).Msg("load metrics")
 			return err
 		}
 	} else {
@@ -171,19 +171,19 @@ func (me *Unix) Init(a *collector.AbstractCollector) error {
 	}
 
 	getClockTicks()
-	if me.system, err = NewSystem(); err != nil {
-		me.Logger.Error().Stack().Err(err).Msg("load system")
+	if u.system, err = NewSystem(); err != nil {
+		u.Logger.Error().Stack().Err(err).Msg("load system")
 		return err
 	}
 
-	me.Matrix[me.Object].SetGlobalLabel("hostname", me.Options.Hostname)
-	me.Matrix[me.Object].SetGlobalLabel("datacenter", me.Params.GetChildContentS("datacenter"))
+	u.Matrix[u.Object].SetGlobalLabel("hostname", u.Options.Hostname)
+	u.Matrix[u.Object].SetGlobalLabel("datacenter", u.Params.GetChildContentS("datacenter"))
 
-	me.Logger.Debug().Msg("initialized")
+	u.Logger.Debug().Msg("initialized")
 	return nil
 }
 
-func (me *Unix) loadMetrics(counters *node.Node) error {
+func (u *Unix) loadMetrics(counters *node.Node) error {
 	var (
 		proc           *Process
 		metric         matrix.Metric
@@ -191,11 +191,11 @@ func (me *Unix) loadMetrics(counters *node.Node) error {
 		err            error
 	)
 
-	me.Logger.Debug().Msg("initializing metric cache")
-	mat := me.Matrix[me.Object]
+	u.Logger.Debug().Msg("initializing metric cache")
+	mat := u.Matrix[u.Object]
 
-	me.processes = make(map[string]*Process)
-	me.histogramLabels = make(map[string][]string)
+	u.processes = make(map[string]*Process)
+	u.histogramLabels = make(map[string][]string)
 
 	// process instance for self, we will use this
 	// to get size/labels of histograms at runtime
@@ -213,7 +213,7 @@ func (me *Unix) loadMetrics(counters *node.Node) error {
 
 		dtype := _DataTypes[name]
 
-		me.Logger.Trace().Msgf("handling (%s) (%s) dtype=%s", name, display, dtype)
+		u.Logger.Trace().Msgf("handling (%s) (%s) dtype=%s", name, display, dtype)
 
 		// counter is scalar metric
 		if _, has := _Metrics[name]; has {
@@ -222,14 +222,14 @@ func (me *Unix) loadMetrics(counters *node.Node) error {
 				return err
 			}
 			metric.SetName(display)
-			me.Logger.Debug().Msgf("(%s) added metric (%s)", name, display)
+			u.Logger.Debug().Msgf("(%s) added metric (%s)", name, display)
 
 			// counter is histogram
 		} else if _, has := _Histograms[name]; has {
 
 			labels = set.NewFrom(getHistogramLabels(proc, name))
 
-			me.histogramLabels[name] = make([]string, 0)
+			u.histogramLabels[name] = make([]string, 0)
 
 			// if template defines labels, only collect those
 			// otherwise get everything available
@@ -246,7 +246,7 @@ func (me *Unix) loadMetrics(counters *node.Node) error {
 				label, ldisplay := parseMetricName(w)
 
 				if !labels.Has(label) {
-					me.Logger.Warn().Msgf("invalid histogram metric [%s]", label)
+					u.Logger.Warn().Msgf("invalid histogram metric [%s]", label)
 					wanted.Delete(w)
 					continue
 				}
@@ -256,14 +256,14 @@ func (me *Unix) loadMetrics(counters *node.Node) error {
 				}
 				metric.SetName(name)
 				metric.SetLabel("metric", ldisplay)
-				me.histogramLabels[name] = append(me.histogramLabels[name], label)
+				u.histogramLabels[name] = append(u.histogramLabels[name], label)
 			}
 
-			me.Logger.Debug().Msgf("(%s) added histogram (%s) with %d submetrics", name, display, len(me.histogramLabels[name]))
+			u.Logger.Debug().Msgf("(%s) added histogram (%s) with %d submetrics", name, display, len(u.histogramLabels[name]))
 
 			// invalid counter
 		} else {
-			me.Logger.Warn().Msgf("(%s) skipped unknown metric", name)
+			u.Logger.Warn().Msgf("(%s) skipped unknown metric", name)
 		}
 	}
 
@@ -271,18 +271,18 @@ func (me *Unix) loadMetrics(counters *node.Node) error {
 		return err
 	}
 
-	me.Logger.Debug().Msgf("initialized cache with %d metrics", len(mat.GetMetrics()))
+	u.Logger.Debug().Msgf("initialized cache with %d metrics", len(mat.GetMetrics()))
 	return nil
 }
 
 // PollInstance - update instance cache with running pollers
-func (me *Unix) PollInstance() (map[string]*matrix.Matrix, error) {
+func (u *Unix) PollInstance() (map[string]*matrix.Matrix, error) {
 
-	mat := me.Matrix[me.Object]
+	mat := u.Matrix[u.Object]
 	currInstances := set.NewFrom(mat.GetInstanceKeys())
 	currSize := currInstances.Size()
 
-	err := conf.LoadHarvestConfig(me.Options.Config)
+	err := conf.LoadHarvestConfig(u.Options.Config)
 	if err != nil {
 		return nil, err
 	}
@@ -309,17 +309,17 @@ func (me *Unix) PollInstance() (map[string]*matrix.Matrix, error) {
 			}
 			instance.SetLabel("poller", name)
 			instance.SetLabel("pid", strconv.Itoa(pid))
-			me.Logger.Debug().Str("name", name).Int("pid", pid).Msg("Add instance")
+			u.Logger.Debug().Str("name", name).Int("pid", pid).Msg("Add instance")
 		} else {
 			currInstances.Delete(name)
 			instance.SetLabel("pid", strconv.Itoa(pid))
-			me.Logger.Debug().Str("name", name).Int("pid", pid).Msg("Update instance")
+			u.Logger.Debug().Str("name", name).Int("pid", pid).Msg("Update instance")
 		}
 	}
 	rewriteIndexes := currInstances.Size() > 0
 	for name := range currInstances.Iter() {
 		mat.RemoveInstance(name)
-		me.Logger.Debug().Msgf("remove instance (%s)", name)
+		u.Logger.Debug().Msgf("remove instance (%s)", name)
 	}
 	// If there were removals, the indexes need to be rewritten since gaps were created
 	if rewriteIndexes {
@@ -332,13 +332,13 @@ func (me *Unix) PollInstance() (map[string]*matrix.Matrix, error) {
 	t := len(mat.GetInstances())
 	r := currInstances.Size()
 	a := t - (currSize - r)
-	me.Logger.Debug().Msgf("added %d, removed %d, total instances %d", a, r, t)
+	u.Logger.Debug().Msgf("added %d, removed %d, total instances %d", a, r, t)
 
 	return nil, nil
 }
 
 // PollData - update data cache
-func (me *Unix) PollData() (map[string]*matrix.Matrix, error) {
+func (u *Unix) PollData() (map[string]*matrix.Matrix, error) {
 
 	var (
 		pid   int
@@ -347,10 +347,10 @@ func (me *Unix) PollData() (map[string]*matrix.Matrix, error) {
 		ok    bool
 		proc  *Process
 	)
-	mat := me.Matrix[me.Object]
+	mat := u.Matrix[u.Object]
 	mat.Reset()
 
-	if err = me.system.Reload(); err != nil {
+	if err = u.system.Reload(); err != nil {
 		return nil, err
 	}
 
@@ -359,61 +359,59 @@ func (me *Unix) PollData() (map[string]*matrix.Matrix, error) {
 		// assume not running
 		err = mat.LazySetValueUint8("status", key, 0)
 		if err != nil {
-			me.Logger.Error().Stack().Err(err).Msgf("error while parsing metric key [%s]", key)
+			u.Logger.Error().Stack().Err(err).Msgf("error while parsing metric key [%s]", key)
 		}
 
-		if proc, ok = me.processes[key]; ok {
+		if proc, ok = u.processes[key]; ok {
 			if err = proc.Reload(); err != nil {
-				delete(me.processes, key)
+				delete(u.processes, key)
 				proc = nil
 			}
 		}
 
 		if proc == nil {
 			if instance.GetLabel("pid") == "" {
-				me.Logger.Debug().Msgf("skip instance [%s]: not running", key)
+				u.Logger.Debug().Msgf("skip instance [%s]: not running", key)
 				continue
 			}
 			if pid, err = strconv.Atoi(instance.GetLabel("pid")); err != nil {
-				me.Logger.Warn().Msgf("skip instance [%s], invalid PID: %v", key, err)
+				u.Logger.Warn().Msgf("skip instance [%s], invalid PID: %v", key, err)
 				continue
 			}
 			if proc, err = NewProcess(pid); err != nil {
-				me.Logger.Warn().Msgf("skip instance [%s], process: %v", key, err)
+				u.Logger.Warn().Msgf("skip instance [%s], process: %v", key, err)
 				continue
 			}
-			me.processes[key] = proc
+			u.processes[key] = proc
 		}
 
 		poller := instance.GetLabel("poller")
 		cmd := proc.Cmdline()
 
 		if !set.NewFrom(strings.Fields(cmd)).Has(poller) {
-			me.Logger.Debug().Msgf("skip instance [%s]: PID (%d) not matched with [%s]", key, pid, cmd)
+			u.Logger.Debug().Msgf("skip instance [%s]: PID (%d) not matched with [%s]", key, pid, cmd)
 			continue
 		}
 
 		// if we got here poller is running
-		err = mat.LazySetValueUint32("status", key, 1)
+		err = mat.LazySetValueUint64("status", key, 1)
 		if err != nil {
-			me.Logger.Error().Stack().Err(err).Msgf("error while parsing metric key [%s]", key)
+			u.Logger.Error().Stack().Err(err).Msgf("error while parsing metric key [%s]", key)
 		}
 
-		me.Logger.Debug().Msgf("populating instance [%s]: PID (%d) with [%s]\n", key, pid, cmd)
+		u.Logger.Debug().Msgf("populating instance [%s]: PID (%d) with [%s]\n", key, pid, cmd)
 
 		// process scalar metrics
 		for key, foo := range _Metrics {
 			if metric := mat.GetMetric(key); metric != nil {
-				foo(metric, instance, proc, me.system)
-				//logger.Trace(me.Prefix, "+ (%s) [%f]", key, value)
+				foo(metric, instance, proc, u.system)
 				count++
 			}
 		}
 
 		// process histograms
 		for key, foo := range _Histograms {
-			if labels, ok := me.histogramLabels[key]; ok {
-				//logger.Trace(me.Prefix, "+++ (%s) [%v]", key, values)
+			if labels, ok := u.histogramLabels[key]; ok {
 				for _, label := range labels {
 					if metric := mat.GetMetric(key + "." + label); metric != nil {
 						foo(metric, label, instance, proc)
@@ -424,9 +422,9 @@ func (me *Unix) PollData() (map[string]*matrix.Matrix, error) {
 		}
 	}
 
-	me.AddCollectCount(count)
-	me.Logger.Debug().Msgf("poll complete, added %d data points", count)
-	return me.Matrix, nil
+	u.AddCollectCount(count)
+	u.Logger.Debug().Msgf("poll complete, added %d data points", count)
+	return u.Matrix, nil
 }
 
 func setStartTime(m matrix.Metric, i *matrix.Instance, p *Process, s *System) {
