@@ -1,14 +1,14 @@
 
-name:                     NFSv41Node
-query:                    api/cluster/counter/tables/svm_nfs_v41:node
+name:                     NFSv42Node
+query:                    api/cluster/counter/tables/svm_nfs_v42:node
 object:                   node_nfs
 
 global_labels:
-  - nfsv: v4.1
+  - nfsv: v4.2
 
 counters:
   - ^^id
-  - ^node.name                                     => node
+  - ^node.name                                    => node
   - latency
   - total_ops
   - total.read_throughput                         => read_throughput
@@ -16,7 +16,7 @@ counters:
   - total.write_throughput                        => write_throughput
   - access.total                                  => access_total
   - backchannel_ctl.total                         => backchannel_ctl_total
-  - bind_connections_to_session.total             => bind_conn_to_session_total
+  - bind_conn_to_session.total                    => bind_conn_to_session_total
   - close.total                                   => close_total
   - commit.total                                  => commit_total
   - create_session.total                          => create_session_total
@@ -68,7 +68,7 @@ counters:
   - write.total                                   => write_total
   - access.average_latency                        => access_avg_latency
   - backchannel_ctl.average_latency               => backchannel_ctl_avg_latency
-  - bind_connections_to_session.average_latency   => bind_conn_to_session_avg_latency
+  - bind_conn_to_session.average_latency          => bind_conn_to_session_avg_latency
   - close.average_latency                         => close_avg_latency
   - commit.average_latency                        => commit_avg_latency
   - create.average_latency                        => create_avg_latency
