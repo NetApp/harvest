@@ -15,7 +15,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/rs/zerolog"
 	"github.com/tidwall/gjson"
-	"os"
 	"path"
 	"regexp"
 	"strconv"
@@ -153,7 +152,7 @@ func (r *RestPerf) InitMatrix() error {
 	r.perfProp.isZeroSuppression = true
 	if x := r.Params.GetChildContentS("zero_suppression_disabled"); x != "" {
 		if zeroSuppressionDisabled, err := strconv.ParseBool(x); err == nil {
-			r.Logger.Debug().Msgf("using %s = [%s]", "zero_suppression_disabled", zeroSuppressionDisabled)
+			r.Logger.Debug().Msgf("using %s = [%t]", "zero_suppression_disabled", zeroSuppressionDisabled)
 			r.perfProp.isZeroSuppression = !zeroSuppressionDisabled
 		}
 	}
@@ -765,7 +764,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	// calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
-	if _, err = timestamp.Delta(mat.GetMetric("timestamp"), r.perfProp.isCacheEmpty, r.Logger); err != nil {
+	if _, err = timestamp.Delta(mat.GetMetric("timestamp"), r.perfProp.isZeroSuppression, r.Logger); err != nil {
 		r.Logger.Error().Err(err).Msg("(timestamp) calculate delta:")
 	}
 
@@ -791,17 +790,17 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 			sValues := m.GetValuesFloat64()
 			pass := m.GetPass()
 			for k := range sValues {
-				if os.Getenv("HARVEST_DISABLE_ZERO_SUPPRESSION") != "" {
-					pass[k] = sValues[k] >= 0
-				} else {
+				if r.perfProp.isZeroSuppression {
 					pass[k] = sValues[k] > 0
+				} else {
+					pass[k] = sValues[k] >= 0
 				}
 			}
 			continue
 		}
 
 		// all other properties - first calculate delta
-		if vs, err = metric.Delta(mat.GetMetric(key), r.perfProp.isCacheEmpty, r.Logger); err != nil {
+		if vs, err = metric.Delta(mat.GetMetric(key), r.perfProp.isZeroSuppression, r.Logger); err != nil {
 			r.Logger.Error().Err(err).Str("key", key).Msg("Calculate delta")
 			continue
 		}
@@ -842,9 +841,9 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if property == "average" || property == "percent" {
 
 			if strings.HasSuffix(metric.GetName(), "latency") {
-				vs, err = metric.DivideWithThreshold(base, r.perfProp.latencyIoReqd, r.perfProp.isCacheEmpty, r.Logger)
+				vs, err = metric.DivideWithThreshold(base, r.perfProp.latencyIoReqd, r.perfProp.isZeroSuppression, r.Logger)
 			} else {
-				vs, err = metric.Divide(base, r.perfProp.isCacheEmpty, r.Logger)
+				vs, err = metric.Divide(base, r.perfProp.isZeroSuppression, r.Logger)
 			}
 
 			if err != nil {
@@ -860,7 +859,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		if property == "percent" {
-			if vs, err = metric.MultiplyByScalar(100, r.perfProp.isCacheEmpty, r.Logger); err != nil {
+			if vs, err = metric.MultiplyByScalar(100, r.perfProp.isZeroSuppression, r.Logger); err != nil {
 				r.Logger.Error().Err(err).Str("key", key).Msg("Multiply by scalar")
 			} else {
 				negativeCount += vs.NegativeCount
@@ -882,7 +881,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if counter != nil {
 			property := counter.counterType
 			if property == "rate" {
-				if vs, err = metric.Divide(timestamp, r.perfProp.isCacheEmpty, r.Logger); err != nil {
+				if vs, err = metric.Divide(timestamp, r.perfProp.isZeroSuppression, r.Logger); err != nil {
 					r.Logger.Error().Err(err).
 						Int("i", i).
 						Str("metric", metric.GetName()).

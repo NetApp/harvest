@@ -136,7 +136,7 @@ func (me *ZapiPerf) InitCache() error {
 	me.isZeroSuppression = true
 	if x := me.Params.GetChildContentS("zero_suppression_disabled"); x != "" {
 		if zeroSuppressionDisabled, err := strconv.ParseBool(x); err == nil {
-			me.Logger.Debug().Msgf("using %s = [%s]", "zero_suppression_disabled", zeroSuppressionDisabled)
+			me.Logger.Debug().Msgf("using %s = [%t]", "zero_suppression_disabled", zeroSuppressionDisabled)
 			me.isZeroSuppression = !zeroSuppressionDisabled
 		}
 	}
