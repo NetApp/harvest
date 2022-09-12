@@ -851,7 +851,7 @@
           "fieldConfig": {
             "defaults": {
               "links": [],
-              "unit": "decbytes"
+              "unit": "bytes"
             },
             "overrides": []
           },
@@ -1263,7 +1263,7 @@
           "fieldConfig": {
             "defaults": {
               "links": [],
-              "unit": "decbytes"
+              "unit": "bytes"
             },
             "overrides": []
           },
@@ -2101,7 +2101,7 @@
           "fieldConfig": {
             "defaults": {
               "links": [],
-              "unit": "decbytes"
+              "unit": "bytes"
             },
             "overrides": []
           },
@@ -2513,7 +2513,7 @@
           "fieldConfig": {
             "defaults": {
               "links": [],
-              "unit": "decbytes"
+              "unit": "bytes"
             },
             "overrides": []
           },
