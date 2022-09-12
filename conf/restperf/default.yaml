@@ -18,6 +18,7 @@ objects:
   HostAdapter:       hostadapter.yaml
   NFSv3Node:         nfsv3_node.yaml
   NFSv41Node:        nfsv4_1_node.yaml
+  NFSv42Node:        nfsv4_2_node.yaml
   NFSv4Node:         nfsv4_node.yaml
   NVMfLif:           nvmf_lif.yaml
   Namespace:         namespace.yaml
@@ -41,6 +42,7 @@ objects:
   LUN:               lun.yaml
   NFSv3:             nfsv3.yaml
   NFSv41:            nfsv4_1.yaml
+  NFSv42:            nfsv4_2.yaml
   NFSv4:             nfsv4.yaml
   Volume:            volume.yaml
   VolumeSvm:         volume_svm.yaml
