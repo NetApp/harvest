@@ -36,6 +36,7 @@ pipeline {
         jfrogRepo = "netappdownloads.jfrog.io"
         COMMIT_ID = sh(returnStdout: true, script: 'git rev-parse HEAD')
         GO_VERSION = 1.19
+        HARVEST_DISABLE_ZERO_SUPPRESSION = "yes"
     }
 
     stages {

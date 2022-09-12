@@ -15,6 +15,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/rs/zerolog"
 	"github.com/tidwall/gjson"
+	"os"
 	"path"
 	"regexp"
 	"strconv"
@@ -782,7 +783,11 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 			sValues := m.GetValuesFloat64()
 			pass := m.GetPass()
 			for k := range sValues {
-				pass[k] = sValues[k] > 0
+				if os.Getenv("HARVEST_DISABLE_ZERO_SUPPRESSION") != "" {
+					pass[k] = sValues[k] >= 0
+				} else {
+					pass[k] = sValues[k] > 0
+				}
 			}
 			continue
 		}

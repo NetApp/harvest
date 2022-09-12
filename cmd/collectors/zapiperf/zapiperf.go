@@ -40,6 +40,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/rs/zerolog"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -57,9 +58,8 @@ const (
 	objWorkloadDetail       = "workload_detail"
 	objWorkloadVolume       = "workload_volume"
 	objWorkloadDetailVolume = "workload_detail_volume"
+	BILLION                 = 1000000000
 )
-
-const BILLION = 1000000000
 
 type ZapiPerf struct {
 	*zapi.Zapi      // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
@@ -579,7 +579,11 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 			sValues := met.GetValuesFloat64()
 			pass := met.GetPass()
 			for k := range sValues {
-				pass[k] = sValues[k] > 0
+				if os.Getenv("HARVEST_DISABLE_ZERO_SUPPRESSION") != "" {
+					pass[k] = sValues[k] >= 0
+				} else {
+					pass[k] = sValues[k] > 0
+				}
 			}
 			continue
 		}
