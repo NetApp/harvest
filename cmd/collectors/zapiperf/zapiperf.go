@@ -40,7 +40,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/rs/zerolog"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -62,16 +61,17 @@ const (
 )
 
 type ZapiPerf struct {
-	*zapi.Zapi      // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
-	object          string
-	batchSize       int
-	latencyIoReqd   int
-	instanceKey     string
-	instanceLabels  map[string]string
-	histogramLabels map[string][]string
-	scalarCounters  []string
-	qosLabels       map[string]string
-	isCacheEmpty    bool
+	*zapi.Zapi        // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
+	object            string
+	batchSize         int
+	latencyIoReqd     int
+	instanceKey       string
+	instanceLabels    map[string]string
+	histogramLabels   map[string][]string
+	scalarCounters    []string
+	qosLabels         map[string]string
+	isCacheEmpty      bool
+	isZeroSuppression bool
 }
 
 func init() {
@@ -133,6 +133,13 @@ func (me *ZapiPerf) InitCache() error {
 	me.instanceKey = me.loadParamStr("instance_key", instanceKey)
 	me.batchSize = me.loadParamInt("batch_size", batchSize)
 	me.latencyIoReqd = me.loadParamInt("latency_io_reqd", latencyIoReqd)
+	me.isZeroSuppression = true
+	if x := me.Params.GetChildContentS("zero_suppression_disabled"); x != "" {
+		if zeroSuppressionDisabled, err := strconv.ParseBool(x); err == nil {
+			me.Logger.Debug().Msgf("using %s = [%s]", "zero_suppression_disabled", zeroSuppressionDisabled)
+			me.isZeroSuppression = !zeroSuppressionDisabled
+		}
+	}
 	me.isCacheEmpty = true
 	me.object = me.loadParamStr("object", "")
 	// hack to override from AbstractCollector
@@ -560,7 +567,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	// calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
-	if _, err = timestamp.Delta(m.GetMetric("timestamp"), me.Logger); err != nil {
+	if _, err = timestamp.Delta(m.GetMetric("timestamp"), me.isZeroSuppression, me.Logger); err != nil {
 		me.Logger.Error().Stack().Err(err).Msg("(timestamp) calculate delta:")
 		// @TODO terminate since other counters will be incorrect
 	}
@@ -579,17 +586,17 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 			sValues := met.GetValuesFloat64()
 			pass := met.GetPass()
 			for k := range sValues {
-				if os.Getenv("HARVEST_DISABLE_ZERO_SUPPRESSION") != "" {
-					pass[k] = sValues[k] >= 0
-				} else {
+				if me.isZeroSuppression {
 					pass[k] = sValues[k] > 0
+				} else {
+					pass[k] = sValues[k] >= 0
 				}
 			}
 			continue
 		}
 
 		// all other properties - first calculate delta
-		if vs, err = metric.Delta(m.GetMetric(key), me.Logger); err != nil {
+		if vs, err = metric.Delta(m.GetMetric(key), me.isZeroSuppression, me.Logger); err != nil {
 			me.Logger.Error().Stack().Err(err).Str("key", key).Msg("Calculate delta")
 			continue
 		}
@@ -631,9 +638,9 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if property == "average" || property == "percent" {
 
 			if strings.HasSuffix(metric.GetName(), "latency") {
-				vs, err = metric.DivideWithThreshold(base, me.latencyIoReqd, me.Logger)
+				vs, err = metric.DivideWithThreshold(base, me.latencyIoReqd, me.isZeroSuppression, me.Logger)
 			} else {
-				vs, err = metric.Divide(base, me.Logger)
+				vs, err = metric.Divide(base, me.isZeroSuppression, me.Logger)
 			}
 
 			if err != nil {
@@ -648,7 +655,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		if property == "percent" {
-			if vs, err = metric.MultiplyByScalar(100, me.Logger); err != nil {
+			if vs, err = metric.MultiplyByScalar(100, me.isZeroSuppression, me.Logger); err != nil {
 				me.Logger.Error().Stack().Err(err).Str("key", key).Msg("Multiply by scalar")
 			} else {
 				negativeCount += vs.NegativeCount
@@ -665,7 +672,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	// calculate rates (which we deferred to calculate averages/percents first)
 	for i, metric := range orderedMetrics {
 		if metric.GetProperty() == "rate" {
-			if vs, err = metric.Divide(timestamp, me.Logger); err != nil {
+			if vs, err = metric.Divide(timestamp, me.isZeroSuppression, me.Logger); err != nil {
 				me.Logger.Error().Stack().Err(err).
 					Int("i", i).
 					Str("key", orderedKeys[i]).

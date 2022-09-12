@@ -335,44 +335,56 @@ type Collector struct {
 }
 
 type Poller struct {
-	Addr            string                `yaml:"addr,omitempty"`
-	APIVersion      string                `yaml:"api_version,omitempty"`
-	APIVfiler       string                `yaml:"api_vfiler,omitempty"`
-	AuthStyle       string                `yaml:"auth_style,omitempty"`
-	CaCertPath      string                `yaml:"ca_cert,omitempty"`
-	ClientTimeout   string                `yaml:"client_timeout,omitempty"`
-	Collectors      []Collector           `yaml:"collectors,omitempty"`
-	CredentialsFile string                `yaml:"credentials_file,omitempty"`
-	Datacenter      string                `yaml:"datacenter,omitempty"`
-	Exporters       []string              `yaml:"exporters,omitempty"`
-	IsKfs           bool                  `yaml:"is_kfs,omitempty"`
-	Labels          *[]*map[string]string `yaml:"labels,omitempty"`
-	LogMaxBytes     int64                 `yaml:"log_max_bytes,omitempty"`
-	LogMaxFiles     int                   `yaml:"log_max_files,omitempty"`
-	LogSet          *[]string             `yaml:"log,omitempty"`
-	Password        string                `yaml:"password,omitempty"`
-	PollerSchedule  string                `yaml:"poller_schedule,omitempty"`
-	SslCert         string                `yaml:"ssl_cert,omitempty"`
-	SslKey          string                `yaml:"ssl_key,omitempty"`
-	TLSMinVersion   string                `yaml:"tls_min_version,omitempty"`
-	UseInsecureTLS  *bool                 `yaml:"use_insecure_tls,omitempty"`
-	Username        string                `yaml:"username,omitempty"`
-	promIndex       int
-	Name            string
+	Addr                    string                `yaml:"addr,omitempty"`
+	APIVersion              string                `yaml:"api_version,omitempty"`
+	APIVfiler               string                `yaml:"api_vfiler,omitempty"`
+	AuthStyle               string                `yaml:"auth_style,omitempty"`
+	CaCertPath              string                `yaml:"ca_cert,omitempty"`
+	ClientTimeout           string                `yaml:"client_timeout,omitempty"`
+	Collectors              []Collector           `yaml:"collectors,omitempty"`
+	CredentialsFile         string                `yaml:"credentials_file,omitempty"`
+	Datacenter              string                `yaml:"datacenter,omitempty"`
+	Exporters               []string              `yaml:"exporters,omitempty"`
+	IsKfs                   bool                  `yaml:"is_kfs,omitempty"`
+	Labels                  *[]*map[string]string `yaml:"labels,omitempty"`
+	LogMaxBytes             int64                 `yaml:"log_max_bytes,omitempty"`
+	LogMaxFiles             int                   `yaml:"log_max_files,omitempty"`
+	LogSet                  *[]string             `yaml:"log,omitempty"`
+	Password                string                `yaml:"password,omitempty"`
+	PollerSchedule          string                `yaml:"poller_schedule,omitempty"`
+	SslCert                 string                `yaml:"ssl_cert,omitempty"`
+	SslKey                  string                `yaml:"ssl_key,omitempty"`
+	TLSMinVersion           string                `yaml:"tls_min_version,omitempty"`
+	UseInsecureTLS          *bool                 `yaml:"use_insecure_tls,omitempty"`
+	ZeroSuppressionDisabled *bool                 `yaml:"zero_suppression_disabled,omitempty"`
+	Username                string                `yaml:"username,omitempty"`
+	promIndex               int
+	Name                    string
 }
 
 func (p *Poller) Union(defaults *Poller) {
 	// this is needed because of how mergo handles boolean zero values
 	isInsecureNil := true
 	var pUseInsecureTLS bool
+
+	isZeroSuppressionDisabledNil := true
+	var pZeroSuppressionDisabled bool
+
 	pIsKfs := p.IsKfs
 	if p.UseInsecureTLS != nil {
 		isInsecureNil = false
 		pUseInsecureTLS = *p.UseInsecureTLS
 	}
+	if p.ZeroSuppressionDisabled != nil {
+		isZeroSuppressionDisabledNil = false
+		pZeroSuppressionDisabled = *p.ZeroSuppressionDisabled
+	}
 	_ = mergo.Merge(p, defaults)
 	if !isInsecureNil {
 		p.UseInsecureTLS = &pUseInsecureTLS
+	}
+	if !isZeroSuppressionDisabledNil {
+		p.ZeroSuppressionDisabled = &pZeroSuppressionDisabled
 	}
 	p.IsKfs = pIsKfs
 }
@@ -411,6 +423,12 @@ func ZapiPoller(n *node.Node) Poller {
 		if insecureTLS, err := strconv.ParseBool(x); err == nil {
 			// err can be ignored since conf was already validated
 			p.UseInsecureTLS = &insecureTLS
+		}
+	}
+	if x := n.GetChildContentS("zero_suppression_disabled"); x != "" {
+		if zeroSuppressionDisabled, err := strconv.ParseBool(x); err == nil {
+			// err can be ignored since conf was already validated
+			p.ZeroSuppressionDisabled = &zeroSuppressionDisabled
 		}
 	}
 	if authStyle := n.GetChildContentS("auth_style"); authStyle != "" {

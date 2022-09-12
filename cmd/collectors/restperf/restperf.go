@@ -57,10 +57,11 @@ type counter struct {
 }
 
 type perfProp struct {
-	isCacheEmpty  bool
-	counterInfo   map[string]*counter
-	latencyIoReqd int
-	qosLabels     map[string]string
+	isCacheEmpty      bool
+	isZeroSuppression bool
+	counterInfo       map[string]*counter
+	latencyIoReqd     int
+	qosLabels         map[string]string
 }
 
 type metricResponse struct {
@@ -149,6 +150,13 @@ func (r *RestPerf) InitMatrix() error {
 	//init perf properties
 	r.perfProp.latencyIoReqd = r.loadParamInt("latency_io_reqd", latencyIoReqd)
 	r.perfProp.isCacheEmpty = true
+	r.perfProp.isZeroSuppression = true
+	if x := r.Params.GetChildContentS("zero_suppression_disabled"); x != "" {
+		if zeroSuppressionDisabled, err := strconv.ParseBool(x); err == nil {
+			r.Logger.Debug().Msgf("using %s = [%s]", "zero_suppression_disabled", zeroSuppressionDisabled)
+			r.perfProp.isZeroSuppression = !zeroSuppressionDisabled
+		}
+	}
 	// overwrite from abstract collector
 	mat.Object = r.Prop.Object
 	// Add system (cluster) name
@@ -757,7 +765,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	// calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
-	if _, err = timestamp.Delta(mat.GetMetric("timestamp"), r.Logger); err != nil {
+	if _, err = timestamp.Delta(mat.GetMetric("timestamp"), r.perfProp.isCacheEmpty, r.Logger); err != nil {
 		r.Logger.Error().Err(err).Msg("(timestamp) calculate delta:")
 	}
 
@@ -793,7 +801,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		// all other properties - first calculate delta
-		if vs, err = metric.Delta(mat.GetMetric(key), r.Logger); err != nil {
+		if vs, err = metric.Delta(mat.GetMetric(key), r.perfProp.isCacheEmpty, r.Logger); err != nil {
 			r.Logger.Error().Err(err).Str("key", key).Msg("Calculate delta")
 			continue
 		}
@@ -834,9 +842,9 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if property == "average" || property == "percent" {
 
 			if strings.HasSuffix(metric.GetName(), "latency") {
-				vs, err = metric.DivideWithThreshold(base, r.perfProp.latencyIoReqd, r.Logger)
+				vs, err = metric.DivideWithThreshold(base, r.perfProp.latencyIoReqd, r.perfProp.isCacheEmpty, r.Logger)
 			} else {
-				vs, err = metric.Divide(base, r.Logger)
+				vs, err = metric.Divide(base, r.perfProp.isCacheEmpty, r.Logger)
 			}
 
 			if err != nil {
@@ -852,7 +860,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		if property == "percent" {
-			if vs, err = metric.MultiplyByScalar(100, r.Logger); err != nil {
+			if vs, err = metric.MultiplyByScalar(100, r.perfProp.isCacheEmpty, r.Logger); err != nil {
 				r.Logger.Error().Err(err).Str("key", key).Msg("Multiply by scalar")
 			} else {
 				negativeCount += vs.NegativeCount
@@ -874,7 +882,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if counter != nil {
 			property := counter.counterType
 			if property == "rate" {
-				if vs, err = metric.Divide(timestamp, r.Logger); err != nil {
+				if vs, err = metric.Divide(timestamp, r.perfProp.isCacheEmpty, r.Logger); err != nil {
 					r.Logger.Error().Err(err).
 						Int("i", i).
 						Str("metric", metric.GetName()).
