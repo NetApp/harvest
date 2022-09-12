@@ -21,17 +21,15 @@ func (p *Prometheus) startHTTPD(addr string, port int) {
 	mux.HandleFunc("/", p.ServeInfo)
 	mux.HandleFunc("/metrics", p.ServeMetrics)
 
-	p.Logger.Debug().Msgf("(httpd) starting server at [%s:%d]", addr, port)
 	server := &http.Server{
 		Addr:              addr + ":" + fmt.Sprint(port),
 		Handler:           mux,
 		ReadHeaderTimeout: 60 * time.Second,
 	}
+	p.Logger.Info().Str("addr", addr).Int("port", port).Msg("http server listen")
 
 	if err := server.ListenAndServe(); err != nil {
-		p.Logger.Fatal().Msgf(" (httpd) %v", err.Error())
-	} else {
-		p.Logger.Info().Msgf("(httpd) listening at [http://%s:%d]", addr, port)
+		p.Logger.Fatal().Err(err).Msg("Failed to start server")
 	}
 }
 
