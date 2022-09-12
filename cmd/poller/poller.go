@@ -931,10 +931,8 @@ func (p *Poller) publishDetails() {
 			continue
 		}
 		p.hasPromExporter = true
-		if exp.LocalHTTPAddr == "0.0.0.0" {
+		if exp.LocalHTTPAddr == "" || exp.LocalHTTPAddr == "0.0.0.0" {
 			exporterIP = localIP
-		} else if exp.LocalHTTPAddr == "localhost" || exp.LocalHTTPAddr == "127.0.0.1" {
-			exporterIP = "127.0.0.1"
 		} else {
 			exporterIP = exp.LocalHTTPAddr
 		}
