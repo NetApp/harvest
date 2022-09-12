@@ -17,7 +17,8 @@ pipeline {
     }
     environment {
         BUILD_ID="dontKillMe"
-        JENKINS_NODE_COOKIE="dontKillMe"    
+        JENKINS_NODE_COOKIE="dontKillMe"
+        HARVEST_DISABLE_ZERO_SUPPRESSION = "yes"
     }
     
     stages {
