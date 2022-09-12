@@ -1295,7 +1295,7 @@ func (me *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		queryElem := request.NewChildS("query", "")
 		infoElem := queryElem.NewChildS("qos-workload-info", "")
 		if me.Query == objWorkloadVolume || me.Query == objWorkloadDetailVolume {
-			infoElem.NewChildS("workload-class", "autovolume")
+			infoElem.NewChildS("workload-class", "autovolume|user-defined")
 		} else {
 			infoElem.NewChildS("workload-class", "user-defined")
 		}
