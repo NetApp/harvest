@@ -8,6 +8,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
+	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -165,4 +167,14 @@ func GetDataInterval(param *node.Node, defaultInterval time.Duration) float64 {
 // timestamp in micro seconds
 func IsTimestampOlderThanDuration(timestamp float64, duration time.Duration) bool {
 	return time.Since(time.UnixMicro(int64(timestamp))) > duration
+}
+
+func IsZeroSuppression() bool {
+	zsd := os.Getenv("ZERO_SUPPRESSION_DISABLED")
+	if zsd != "" {
+		if zeroSuppressionDisabled, err := strconv.ParseBool(zsd); err == nil {
+			return !zeroSuppressionDisabled
+		}
+	}
+	return true
 }

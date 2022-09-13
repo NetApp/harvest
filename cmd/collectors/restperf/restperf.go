@@ -1,6 +1,7 @@
 package restperf
 
 import (
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/fcp"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/headroom"
@@ -149,13 +150,7 @@ func (r *RestPerf) InitMatrix() error {
 	//init perf properties
 	r.perfProp.latencyIoReqd = r.loadParamInt("latency_io_reqd", latencyIoReqd)
 	r.perfProp.isCacheEmpty = true
-	r.perfProp.isZeroSuppression = true
-	if x := r.Params.GetChildContentS("zero_suppression_disabled"); x != "" {
-		if zeroSuppressionDisabled, err := strconv.ParseBool(x); err == nil {
-			r.Logger.Debug().Msgf("using %s = [%t]", "zero_suppression_disabled", zeroSuppressionDisabled)
-			r.perfProp.isZeroSuppression = !zeroSuppressionDisabled
-		}
-	}
+	r.perfProp.isZeroSuppression = collectors.IsZeroSuppression()
 	// overwrite from abstract collector
 	mat.Object = r.Prop.Object
 	// Add system (cluster) name

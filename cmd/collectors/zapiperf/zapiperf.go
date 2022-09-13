@@ -26,6 +26,7 @@ package zapiperf
 
 import (
 	"errors"
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/fcp"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/headroom"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/nic"
@@ -133,13 +134,7 @@ func (me *ZapiPerf) InitCache() error {
 	me.instanceKey = me.loadParamStr("instance_key", instanceKey)
 	me.batchSize = me.loadParamInt("batch_size", batchSize)
 	me.latencyIoReqd = me.loadParamInt("latency_io_reqd", latencyIoReqd)
-	me.isZeroSuppression = true
-	if x := me.Params.GetChildContentS("zero_suppression_disabled"); x != "" {
-		if zeroSuppressionDisabled, err := strconv.ParseBool(x); err == nil {
-			me.Logger.Debug().Msgf("using %s = [%t]", "zero_suppression_disabled", zeroSuppressionDisabled)
-			me.isZeroSuppression = !zeroSuppressionDisabled
-		}
-	}
+	me.isZeroSuppression = collectors.IsZeroSuppression()
 	me.isCacheEmpty = true
 	me.object = me.loadParamStr("object", "")
 	// hack to override from AbstractCollector
