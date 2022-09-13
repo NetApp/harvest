@@ -11,7 +11,7 @@ import (
 
 const HarvestHome = "/opt/harvest"
 const HarvestBin = "./bin/harvest"
-const ZeroSuppressionDisabled = "ZERO_SUPPRESSION_DISABLED=true "
+const ZeroSuppressionDisabled = "ZERO_SUPPRESSION_DISABLED=true"
 
 type Harvest struct {
 }
