@@ -748,7 +748,7 @@
                   "type": "linear"
                 },
                 "showPoints": "auto",
-                "spanNulls": true,
+                "spanNulls": false,
                 "stacking": {
                   "group": "A",
                   "mode": "none"
@@ -840,7 +840,7 @@
                   "type": "linear"
                 },
                 "showPoints": "auto",
-                "spanNulls": true,
+                "spanNulls": false,
                 "stacking": {
                   "group": "A",
                   "mode": "none"
@@ -931,7 +931,7 @@
                   "type": "linear"
                 },
                 "showPoints": "auto",
-                "spanNulls": true,
+                "spanNulls": false,
                 "stacking": {
                   "group": "A",
                   "mode": "none"
@@ -1023,7 +1023,7 @@
                   "type": "linear"
                 },
                 "showPoints": "auto",
-                "spanNulls": true,
+                "spanNulls": false,
                 "stacking": {
                   "group": "A",
                   "mode": "none"
@@ -1114,7 +1114,7 @@
                   "type": "linear"
                 },
                 "showPoints": "auto",
-                "spanNulls": true,
+                "spanNulls": false,
                 "stacking": {
                   "group": "A",
                   "mode": "none"
@@ -1452,7 +1452,7 @@
                   "type": "linear"
                 },
                 "showPoints": "auto",
-                "spanNulls": true,
+                "spanNulls": false,
                 "stacking": {
                   "group": "A",
                   "mode": "none"
@@ -1544,7 +1544,7 @@
                   "type": "linear"
                 },
                 "showPoints": "auto",
-                "spanNulls": true,
+                "spanNulls": false,
                 "stacking": {
                   "group": "A",
                   "mode": "none"
@@ -1636,7 +1636,7 @@
                   "type": "linear"
                 },
                 "showPoints": "auto",
-                "spanNulls": true,
+                "spanNulls": false,
                 "stacking": {
                   "group": "A",
                   "mode": "none"
@@ -1728,7 +1728,7 @@
                   "type": "linear"
                 },
                 "showPoints": "auto",
-                "spanNulls": true,
+                "spanNulls": false,
                 "stacking": {
                   "group": "A",
                   "mode": "none"
@@ -1835,7 +1835,7 @@
                   "type": "linear"
                 },
                 "showPoints": "auto",
-                "spanNulls": true,
+                "spanNulls": false,
                 "stacking": {
                   "group": "A",
                   "mode": "none"
@@ -1927,7 +1927,7 @@
                   "type": "linear"
                 },
                 "showPoints": "auto",
-                "spanNulls": true,
+                "spanNulls": false,
                 "stacking": {
                   "group": "A",
                   "mode": "none"
@@ -2019,7 +2019,7 @@
                   "type": "linear"
                 },
                 "showPoints": "auto",
-                "spanNulls": true,
+                "spanNulls": false,
                 "stacking": {
                   "group": "A",
                   "mode": "none"
@@ -2111,7 +2111,7 @@
                   "type": "linear"
                 },
                 "showPoints": "auto",
-                "spanNulls": true,
+                "spanNulls": false,
                 "stacking": {
                   "group": "A",
                   "mode": "none"
