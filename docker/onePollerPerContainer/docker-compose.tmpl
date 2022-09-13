@@ -4,8 +4,7 @@ services:
   {{- if .Admin.Enabled}}
   {{ .Admin.ServiceName }}:
     image: {{ .Admin.Image }}
-    {{ .EnvFile }}:
-    env_file:
+    {{if .EnvFile }}:env_file:
       - {{ .EnvFile }}
     {{- end}}
     container_name: {{ .Admin.ContainerName }}
@@ -20,8 +19,7 @@ services:
 {{range .Pollers}}
   {{ .ServiceName }}:
     image: {{ .Image }}
-    {{if .EnvFile }}
-    env_file:
+    {{if .EnvFile }}env_file:
       - {{ .EnvFile }}
     {{- end}}
     container_name: {{ .ContainerName }}

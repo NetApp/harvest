@@ -17,7 +17,7 @@ type Harvest struct {
 }
 
 func (h *Harvest) Start() {
-	status := utils.Exec(HarvestHome, ZeroSuppressionDisabled+HarvestBin, "start")
+	status := utils.Exec(HarvestHome, HarvestBin, []string{ZeroSuppressionDisabled}, "start")
 	fmt.Println(status)
 	time.Sleep(30 * time.Second)
 	h.AllRunning()
@@ -25,14 +25,14 @@ func (h *Harvest) Start() {
 }
 
 func (h *Harvest) StartByHarvestUser() {
-	status := utils.Exec(HarvestHome, "sudo", "-u", "harvest", ZeroSuppressionDisabled+HarvestBin, "start")
+	status := utils.Exec(HarvestHome, "sudo", []string{ZeroSuppressionDisabled}, "-u", "harvest", HarvestBin, "start")
 	fmt.Println(status)
 	time.Sleep(30 * time.Second)
 	h.AllRunning()
 
 }
 func (h *Harvest) Stop() {
-	status := utils.Exec(HarvestHome, HarvestBin, "stop")
+	status := utils.Exec(HarvestHome, HarvestBin, nil, "stop")
 	fmt.Println(status)
 }
 
@@ -58,7 +58,7 @@ func (h *Harvest) AllStopped() bool {
 
 func (h *Harvest) GetPollerInfo() []core.Poller {
 	log.Println("Getting all pollers details")
-	harvestStatus := utils.Exec(HarvestHome, HarvestBin, "status")
+	harvestStatus := utils.Exec(HarvestHome, HarvestBin, nil, "status")
 	fmt.Println(harvestStatus)
 	rows := strings.Split(harvestStatus, "\n")
 	var pollerArray []core.Poller

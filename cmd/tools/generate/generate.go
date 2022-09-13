@@ -146,9 +146,12 @@ func generateDocker(path string, kind int) {
 	if err != nil {
 		panic(err)
 	}
-	envFilePath, err := filepath.Abs(opts.envFilePath)
-	if err != nil {
-		panic(err)
+	var envFilePath string
+	if opts.envFilePath != "" {
+		envFilePath, err = filepath.Abs(opts.envFilePath)
+		if err != nil {
+			panic(err)
+		}
 	}
 	conf.ValidatePortInUse = true
 	var filesd []string
