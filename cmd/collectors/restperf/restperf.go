@@ -150,7 +150,7 @@ func (r *RestPerf) InitMatrix() error {
 	//init perf properties
 	r.perfProp.latencyIoReqd = r.loadParamInt("latency_io_reqd", latencyIoReqd)
 	r.perfProp.isCacheEmpty = true
-	r.perfProp.isZeroSuppression = collectors.IsZeroSuppression()
+	r.perfProp.isZeroSuppression = collectors.IsZeroSuppression(r.Logger)
 	// overwrite from abstract collector
 	mat.Object = r.Prop.Object
 	// Add system (cluster) name

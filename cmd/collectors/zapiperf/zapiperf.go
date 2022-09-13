@@ -134,7 +134,8 @@ func (me *ZapiPerf) InitCache() error {
 	me.instanceKey = me.loadParamStr("instance_key", instanceKey)
 	me.batchSize = me.loadParamInt("batch_size", batchSize)
 	me.latencyIoReqd = me.loadParamInt("latency_io_reqd", latencyIoReqd)
-	me.isZeroSuppression = collectors.IsZeroSuppression()
+	me.isZeroSuppression = collectors.IsZeroSuppression(me.Logger)
+	me.Logger.Info().Bool("zeroSuppression", me.isZeroSuppression).Msg("")
 	me.isCacheEmpty = true
 	me.object = me.loadParamStr("object", "")
 	// hack to override from AbstractCollector

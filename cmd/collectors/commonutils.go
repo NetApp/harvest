@@ -169,9 +169,10 @@ func IsTimestampOlderThanDuration(timestamp float64, duration time.Duration) boo
 	return time.Since(time.UnixMicro(int64(timestamp))) > duration
 }
 
-func IsZeroSuppression() bool {
+func IsZeroSuppression(logger *logging.Logger) bool {
 	zsd := os.Getenv("ZERO_SUPPRESSION_DISABLED")
 	if zsd != "" {
+		logger.Info().Str("ZERO_SUPPRESSION_DISABLED", zsd).Msg("")
 		if zeroSuppressionDisabled, err := strconv.ParseBool(zsd); err == nil {
 			return !zeroSuppressionDisabled
 		}
