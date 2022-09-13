@@ -70,7 +70,7 @@ func (r *RPM) Upgrade() bool {
 	}
 	utils.Run("cp", setup.GetZapiPerfFileWithQosCounters(), HarvestHome+"/"+setup.ZapiPerfDefaultFile)
 	harvestObj.Stop()
-	harvestObj.StartByHarvestUser()
+	harvestObj.Start()
 	status := harvestObj.AllRunning()
 	return status
 }
