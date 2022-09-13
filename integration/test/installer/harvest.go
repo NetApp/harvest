@@ -25,7 +25,7 @@ func (h *Harvest) Start() {
 }
 
 func (h *Harvest) StartByHarvestUser() {
-	status := utils.Exec(HarvestHome, "sudo "+ZeroSuppressionDisabled, nil, "-u", "harvest", HarvestBin, "start")
+	status := utils.Exec(HarvestHome, "sudo", nil, "-u", "harvest", HarvestBin, "start")
 	fmt.Println(status)
 	time.Sleep(30 * time.Second)
 	h.AllRunning()
