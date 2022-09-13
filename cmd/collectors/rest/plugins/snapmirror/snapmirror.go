@@ -9,6 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
 	"strings"
 	"time"
@@ -18,6 +19,7 @@ const PluginInvocationRate = 10
 
 type SnapMirror struct {
 	*plugin.AbstractPlugin
+	data           *matrix.Matrix
 	client         *rest.Client
 	query          string
 	nodeUpdCounter int
@@ -51,13 +53,38 @@ func (my *SnapMirror) Init() error {
 	my.svmVolToNode = make(map[string]string)
 	my.svmPeerDataMap = make(map[string]string)
 
+	my.data = matrix.New(my.Parent+".SnapMirror", "snapmirror", "snapmirror")
+
+	exportOptions := node.NewS("export_options")
+	instanceLabels := exportOptions.NewChildS("instance_labels", "")
+	instanceKeys := exportOptions.NewChildS("instance_keys", "")
+
+	if exportOption := my.ParentParams.GetChildS("export_options"); exportOption != nil {
+		if exportedLabels := exportOption.GetChildS("instance_labels"); exportedLabels != nil {
+			for _, l := range exportedLabels.GetAllChildContentS() {
+				instanceLabels.NewChildS("", l)
+			}
+		}
+		if exportedLabels := exportOption.GetChildS("instance_keys"); exportedLabels != nil {
+			for _, k := range exportedLabels.GetAllChildContentS() {
+				instanceKeys.NewChildS("", k)
+			}
+		}
+	}
+	my.data.SetExportOptions(exportOptions)
+
 	// Assigned the value to nodeUpdCounter so that plugin would be invoked first time to populate cache.
 	my.nodeUpdCounter = PluginInvocationRate
-
 	return nil
 }
 
 func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+	// Purge and reset data
+	my.data.PurgeInstances()
+	my.data.Reset()
+
+	// Set all global labels from Rest.go if already not exist
+	my.data.SetGlobalLabels(data.GetGlobalLabels())
 
 	if my.nodeUpdCounter >= PluginInvocationRate {
 		my.nodeUpdCounter = 0
@@ -77,7 +104,7 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	my.updateSMLabels(data)
 	my.nodeUpdCounter++
 
-	return nil, nil
+	return []*matrix.Matrix{my.data}, nil
 }
 
 func (my *SnapMirror) updateNodeCache() error {
@@ -136,14 +163,19 @@ func (my *SnapMirror) getSVMPeerData(cluster string) error {
 }
 
 func (my *SnapMirror) updateSMLabels(data *matrix.Matrix) {
+	var keys []string
 	cluster, _ := data.GetGlobalLabels().GetHas("cluster")
-	for _, instance := range data.GetInstances() {
+
+	for key, instance := range data.GetInstances() {
+		if instance.GetLabel("group_type") == "consistencygroup" {
+			keys = append(keys, key)
+		}
 		volumeName := instance.GetLabel("source_volume")
 		vserverName := instance.GetLabel("source_vserver")
 
 		// Update source_node label in snapmirror
-		if node, ok := my.svmVolToNode[vserverName+volumeName]; ok {
-			instance.SetLabel("source_node", node)
+		if nodeName, ok := my.svmVolToNode[vserverName+volumeName]; ok {
+			instance.SetLabel("source_node", nodeName)
 		}
 
 		// Update source_vserver in snapmirror (In case of inter-cluster SM- vserver name may differ)
@@ -160,4 +192,41 @@ func (my *SnapMirror) updateSMLabels(data *matrix.Matrix) {
 		// update the protectedBy and protectionSourceType fields and derivedRelationshipType in snapmirror_labels
 		collectors.UpdateProtectedFields(instance)
 	}
+
+	// handle CG relationships
+	my.handleCGRelationships(data, keys)
+
+}
+
+func (my *SnapMirror) handleCGRelationships(data *matrix.Matrix, keys []string) {
+
+	for _, key := range keys {
+		instance := data.GetInstance(key)
+		cgItemMappings := instance.GetLabel("cg_item_mappings")
+		cgMappingData := strings.Split(cgItemMappings, ",")
+		for _, cgMapping := range cgMappingData {
+			var (
+				cgVolumeInstance *matrix.Instance
+				err              error
+			)
+			if volumes := strings.Split(cgMapping, ":@"); len(volumes) == 2 {
+				sourceVol := volumes[0]
+				destinationVol := volumes[1]
+				cgInstanceKey := key + sourceVol + destinationVol
+
+				if cgVolumeInstance, err = my.data.NewInstance(cgInstanceKey); err != nil {
+					my.Logger.Error().Err(err).Str("Instance key", cgInstanceKey).Msg("")
+					continue
+				}
+
+				for k, v := range instance.GetLabels().Map() {
+					cgVolumeInstance.SetLabel(k, v)
+				}
+				cgVolumeInstance.SetLabel("relationship_id", cgInstanceKey)
+				cgVolumeInstance.SetLabel("source_volume", sourceVol)
+				cgVolumeInstance.SetLabel("destination_volume", destinationVol)
+			}
+		}
+	}
+
 }

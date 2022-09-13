@@ -33,6 +33,7 @@ counters:
   - update_failed_count                      => update_failed_count
   - break_successful_count                   => break_successful_count
   - break_failed_count                       => break_failed_count
+  - ^cg_item_mappings                        => cg_item_mappings
   - filter:
       - expand=true
 
