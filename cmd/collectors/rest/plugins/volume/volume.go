@@ -25,7 +25,6 @@ type Volume struct {
 	pluginInvocationRate int
 	currentVal           int
 	client               *rest.Client
-	query                string
 	aggrsMap             map[string]string // aggregate-uuid -> aggregate-name map
 }
 
