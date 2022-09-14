@@ -2175,36 +2175,40 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",protectedBy=~\"snapmirror.*|consistency_group.*|cg_and_snapmirror.*\",protectionRole=\"protected\", snapshot_policy!=\"\"})",
+          "expr": "count(group by (source_volume,source_vserver,source_cluster)(snapmirror_labels{source_cluster=~\"$Cluster\",protectedBy=~\"volume.*|cg.*\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\",snapshot_policy!=\"\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\") ) unless on (source_volume,source_vserver,source_cluster) snapmirror_labels{source_cluster=~\"$Cluster\",protectedBy=\"storage_vm\"} ) or vector (0)",
           "instant": true,
           "interval": "",
           "legendFormat": "Volume Snapmirror",
-          "refId": "A"
+          "refId": "A",
+          "format": "time_series"
         },
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",protectedBy=\"storage_vm_dr\",protectionRole=\"protected\",snapshot_policy!=\"\"})",
+          "expr": "count(group by (source_volume,source_vserver,source_cluster)(snapmirror_labels{source_cluster=~\"$Cluster\",protectedBy=\"storage_vm\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\",snapshot_policy!=\"\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\") ) unless on (source_volume,source_vserver,source_cluster) snapmirror_labels{source_cluster=~\"$Cluster\",protectedBy=\"volume\"} ) or vector (0)",
           "hide": false,
           "instant": true,
           "interval": "",
           "legendFormat": "Storage VM Snapmirror",
-          "refId": "B"
+          "refId": "B",
+          "format": "time_series"
         },
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",protectedBy=\"svmdr_and_snapmirror\",protectionRole=\"protected\",snapshot_policy!=\"\"})",
+          "expr": "count(group by (source_volume,source_vserver,source_cluster) (snapmirror_labels{source_cluster=~\"$Cluster\",protectedBy=\"volume\"}) * on(source_volume,source_vserver,source_cluster) group_left() group by (source_volume,source_vserver,source_cluster) (snapmirror_labels{source_cluster=~\"$Cluster\",protectedBy=\"storage_vm\"} )) or vector (0)",
           "hide": false,
           "interval": "",
           "legendFormat": "Volume and Storage VM Snapmirror",
-          "refId": "C"
+          "refId": "C",
+          "format": "time_series"
         },
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",protectionRole=\"unprotected\",snapshot_policy!=\"\"})",
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\",snapshot_policy!=\"\"} unless on (volume,svm)  label_replace( label_replace( snapmirror_labels{source_cluster=~\"$Cluster\"} , \"volume\", \"$1\", \"source_volume\", \"(.*)\") , \"svm\", \"$1\", \"source_vserver\", \"(.*)\") unless on (volume,svm)  label_replace( label_replace( snapmirror_labels{source_cluster=~\"$Cluster\"} , \"volume\", \"$1\", \"destination_volume\", \"(.*)\") , \"svm\", \"$1\", \"destination_vserver\", \"(.*)\") ) or vector (0)",
           "hide": false,
           "interval": "",
           "legendFormat": "Unprotected",
-          "refId": "D"
+          "refId": "D",
+          "format": "time_series"
         }
       ],
       "title": "Protected By Status",
@@ -2250,7 +2254,7 @@
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
-            "count"
+            "last"
           ],
           "fields": "",
           "values": false
@@ -2262,7 +2266,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(group by (source_volume,source_vserver,source_cluster,protectedBy)(snapmirror_labels{source_cluster=~\"$Cluster\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\",snapshot_policy!=\"\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\") ))",
+          "expr": "count(group by (source_volume,source_vserver,source_cluster)(snapmirror_labels{source_cluster=~\"$Cluster\",protectedBy=~\"volume.*|cg.*\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\",snapshot_policy!=\"\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\") ) unless on (source_volume,source_vserver,source_cluster) snapmirror_labels{source_cluster=~\"$Cluster\",protectedBy=\"storage_vm\"} ) or vector (0)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -2274,79 +2278,6 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "transformations": [
-        {
-          "id": "filterFieldsByName",
-          "options": {
-            "include": {
-              "names": [
-                "protectedBy",
-                "source_cluster",
-                "source_volume",
-                "source_vserver"
-              ]
-            }
-          }
-        },
-        {
-          "id": "groupBy",
-          "options": {
-            "fields": {
-              "protectedBy": {
-                "aggregations": [
-                  "allValues"
-                ],
-                "operation": "aggregate"
-              },
-              "source_cluster": {
-                "aggregations": [],
-                "operation": "groupby"
-              },
-              "source_volume": {
-                "aggregations": [],
-                "operation": "groupby"
-              },
-              "source_vserver": {
-                "aggregations": [],
-                "operation": "groupby"
-              }
-            }
-          }
-        },
-        {
-          "id": "filterByValue",
-          "options": {
-            "filters": [
-              {
-                "config": {
-                  "id": "regex",
-                  "options": {
-                    "value": ".*storage_vm.*"
-                  }
-                },
-                "fieldName": "protectedBy (allValues)"
-              }
-            ],
-            "match": "any",
-            "type": "exclude"
-          }
-        },
-        {
-          "id": "calculateField",
-          "options": {
-            "mode": "reduceRow",
-            "reduce": {
-              "include": [
-                "source_cluster",
-                "source_volume",
-                "source_vserver"
-              ],
-              "reducer": "count"
-            },
-            "replaceFields": false
-          }
-        }
-      ],
       "title": "Volume Snapmirror",
       "type": "stat"
     },
@@ -2382,88 +2313,6 @@
       },
       "id": 122,
       "links": [],
-      "transformations": [
-        {
-          "id": "filterFieldsByName",
-          "options": {
-            "include": {
-              "names": [
-                "source_cluster",
-                "source_volume",
-                "source_vserver",
-                "protectedBy"
-              ]
-            }
-          }
-        },
-        {
-          "id": "groupBy",
-          "options": {
-            "fields": {
-              "protectedBy": {
-                "aggregations": [
-                  "allValues"
-                ],
-                "operation": "aggregate"
-              },
-              "source_volume": {
-                "aggregations": [],
-                "operation": "groupby"
-              },
-              "source_vserver": {
-                "aggregations": [],
-                "operation": "groupby"
-              },
-              "source_cluster": {
-                "aggregations": [],
-                "operation": "groupby"
-              }
-            }
-          }
-        },
-        {
-          "id": "filterByValue",
-          "options": {
-            "filters": [
-              {
-                "config": {
-                  "id": "equal",
-                  "options": {
-                    "value": "volume,storage_vm"
-                  }
-                },
-                "fieldName": "protectedBy (allValues)"
-              },
-              {
-                "config": {
-                  "id": "equal",
-                  "options": {
-                    "value": "storage_vm,volume"
-                  }
-                },
-                "fieldName": "protectedBy (allValues)"
-              }
-            ],
-            "type": "include",
-            "match": "any"
-          }
-        },
-        {
-          "id": "calculateField",
-          "options": {
-            "mode": "reduceRow",
-            "reduce": {
-              "include": [
-                "source_volume",
-                "source_vserver",
-                "source_cluster"
-              ],
-              "reducer": "count"
-            },
-            "replaceFields": false
-          }
-        }
-      ],
       "options": {
         "colorMode": "value",
         "graphMode": "none",
@@ -2471,7 +2320,7 @@
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
-            "count"
+            "last"
           ],
           "fields": "",
           "values": false
@@ -2483,7 +2332,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "group by (source_volume,source_vserver,source_cluster,protectedBy)(snapmirror_labels{source_cluster=~\"$Cluster\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\",snapshot_policy!=\"\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\") )",
+          "expr": "count(group by (source_volume,source_vserver,source_cluster) (snapmirror_labels{source_cluster=~\"$Cluster\",protectedBy=\"volume\"}) * on(source_volume,source_vserver,source_cluster) group_left() group by (source_volume,source_vserver,source_cluster) (snapmirror_labels{source_cluster=~\"$Cluster\",protectedBy=\"storage_vm\"} )) or vector (0)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -2500,7 +2349,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Volumes Experiencing Lag",
+      "description": "Volume Relationships Experiencing Lag",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2580,7 +2429,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(group by (source_volume) (1 < snapmirror_lag_time{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\")  <= 900))",
+          "expr": "count((1 < snapmirror_lag_time{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\")  <= 900))",
           "instant": true,
           "interval": "",
           "legendFormat": "<=15 minutes",
@@ -2588,7 +2437,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count(group by (source_volume) (900 < snapmirror_lag_time{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\")  <= 1800))",
+          "expr": "count((900 < snapmirror_lag_time{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\")  <= 1800))",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -2597,7 +2446,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count(group by (source_volume) (1800 < snapmirror_lag_time{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\")  <= 3600))",
+          "expr": "count((1800 < snapmirror_lag_time{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\")  <= 3600))",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -2606,7 +2455,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count(group by (source_volume) (snapmirror_lag_time{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\") > 3600))",
+          "expr": "count((snapmirror_lag_time{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\") > 3600))",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -2669,7 +2518,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(group by (source_volume) (1 < snapmirror_lag_time{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\")  <= 900))",
+          "expr": "count((1 < snapmirror_lag_time{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\")  <= 900))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -2735,7 +2584,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(group by (source_volume) (900 < snapmirror_lag_time{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\")  <= 1800))",
+          "expr": "count((900 < snapmirror_lag_time{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\")  <= 1800))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -2789,7 +2638,7 @@
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
-            "count"
+            "last"
           ],
           "fields": "",
           "values": false
@@ -2801,7 +2650,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(group by (source_volume,source_vserver,source_cluster,protectedBy)(snapmirror_labels{source_cluster=~\"$Cluster\"} * on (source_volume, source_vserver,source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\",snapshot_policy!=\"\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\") ))",
+          "expr": "count(group by (source_volume,source_vserver,source_cluster)(snapmirror_labels{source_cluster=~\"$Cluster\",protectedBy=\"storage_vm\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\",snapshot_policy!=\"\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\") ) unless on (source_volume,source_vserver,source_cluster) snapmirror_labels{source_cluster=~\"$Cluster\",protectedBy=\"volume\"} ) or vector (0)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -2813,79 +2662,6 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "transformations": [
-        {
-          "id": "filterFieldsByName",
-          "options": {
-            "include": {
-              "names": [
-                "source_cluster",
-                "source_volume",
-                "source_vserver",
-                "protectedBy"
-              ]
-            }
-          }
-        },
-        {
-          "id": "groupBy",
-          "options": {
-            "fields": {
-              "protectedBy": {
-                "aggregations": [
-                  "allValues"
-                ],
-                "operation": "aggregate"
-              },
-              "source_cluster": {
-                "aggregations": [],
-                "operation": "groupby"
-              },
-              "source_volume": {
-                "aggregations": [],
-                "operation": "groupby"
-              },
-              "source_vserver": {
-                "aggregations": [],
-                "operation": "groupby"
-              }
-            }
-          }
-        },
-        {
-          "id": "filterByValue",
-          "options": {
-            "filters": [
-              {
-                "config": {
-                  "id": "equal",
-                  "options": {
-                    "value": "storage_vm"
-                  }
-                },
-                "fieldName": "protectedBy (allValues)"
-              }
-            ],
-            "match": "any",
-            "type": "include"
-          }
-        },
-        {
-          "id": "calculateField",
-          "options": {
-            "mode": "reduceRow",
-            "reduce": {
-              "include": [
-                "source_cluster",
-                "source_volume",
-                "source_vserver"
-              ],
-              "reducer": "count"
-            },
-            "replaceFields": false
-          }
-        }
-      ],
       "title": "Storage VM Snapmirror",
       "type": "stat"
     },
@@ -2939,7 +2715,7 @@
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "last"
           ],
           "fields": "",
           "values": false
@@ -2951,7 +2727,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",protectionRole=\"unprotected\",snapshot_policy!=\"\"} unless on (volume,svm)  label_replace( label_replace( snapmirror_labels{source_cluster=~\"$Cluster\"} , \"volume\", \"$1\", \"source_volume\", \"(.*)\") , \"svm\", \"$1\", \"source_vserver\", \"(.*)\") )",
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\",snapshot_policy!=\"\"} unless on (volume,svm)  label_replace( label_replace( snapmirror_labels{source_cluster=~\"$Cluster\"} , \"volume\", \"$1\", \"source_volume\", \"(.*)\") , \"svm\", \"$1\", \"source_vserver\", \"(.*)\") unless on (volume,svm)  label_replace( label_replace( snapmirror_labels{source_cluster=~\"$Cluster\"} , \"volume\", \"$1\", \"destination_volume\", \"(.*)\") , \"svm\", \"$1\", \"destination_vserver\", \"(.*)\") ) or vector (0)",
           "format": "time_series",
           "hide": false,
           "instant": true,
@@ -3017,7 +2793,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(group by (source_volume) (1800 < snapmirror_lag_time{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\")  <= 3600))",
+          "expr": "count((1800 < snapmirror_lag_time{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\")  <= 3600))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -3083,7 +2859,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(group by (source_volume) (snapmirror_lag_time{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\") > 3600))",
+          "expr": "count((snapmirror_lag_time{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\") > 3600))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -3126,7 +2902,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Protected By (allValues)"
+              "options": "Protected By"
             },
             "properties": [
               {
@@ -3135,7 +2911,7 @@
               },
               {
                 "id": "custom.width",
-                "value": 190
+                "value": 150
               },
               {
                 "id": "displayName",
@@ -3145,54 +2921,21 @@
                 "id": "mappings",
                 "value": [
                   {
-                    "type": "regex",
                     "options": {
-                      "pattern": ".*volume,storage_vm.*",
-                      "result": {
-                        "text": "SnapMirror and SVM DR",
-                        "index": 0
+                      "cg": {
+                        "index": 2,
+                        "text": "CG"
+                      },
+                      "storage_vm": {
+                        "index": 0,
+                        "text": "SVM DR"
+                      },
+                      "volume": {
+                        "index": 1,
+                        "text": "SnapMirror"
                       }
-                    }
-                  },
-                  {
-                    "type": "regex",
-                    "options": {
-                      "pattern": ".*storage_vm,volume.*",
-                      "result": {
-                        "text": "SnapMirror and SVM DR",
-                        "index": 1
-                      }
-                    }
-                  },
-                  {
-                    "type": "regex",
-                    "options": {
-                      "pattern": ".*storage_vm.*",
-                      "result": {
-                        "text": "SVM DR",
-                        "index": 2
-                      }
-                    }
-                  },
-                  {
-                    "type": "regex",
-                    "options": {
-                      "pattern": ".*volume.*",
-                      "result": {
-                        "text": "SnapMirror",
-                        "index": 3
-                      }
-                    }
-                  },
-                  {
-                    "type": "regex",
-                    "options": {
-                      "pattern": ".*cg.*",
-                      "result": {
-                        "text": "CG",
-                        "index": 4
-                      }
-                    }
+                    },
+                    "type": "value"
                   }
                 ]
               }
@@ -3201,7 +2944,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Remote (last)"
+              "options": "Remote"
             },
             "properties": [
               {
@@ -3225,18 +2968,10 @@
               {
                 "id": "custom.filterable",
                 "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Source SVM"
-            },
-            "properties": [
+              },
               {
-                "id": "custom.hidden",
-                "value": true
+                "id": "custom.width",
+                "value": 130
               }
             ]
           }
@@ -3272,50 +3007,18 @@
           "options": {
             "include": {
               "names": [
+                "cluster",
                 "destination_volume",
                 "protectedBy",
-                "source_volume",
-                "destination_vserver",
-                "source_vserver",
                 "source_cluster",
-                "cluster"
+                "source_volume"
               ]
-            }
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "destination_vserver": true,
-              "protectedBy": false
-            },
-            "indexByName": {
-              "destination_volume": 2,
-              "destination_vserver": 3,
-              "protectedBy": 4,
-              "source_volume": 0,
-              "source_vserver": 1
-            },
-            "renameByName": {
-              "destination_volume": "Destination Volume",
-              "destination_vserver": "Destination SVM",
-              "protectedBy": "Protected By",
-              "source_volume": "Source Volume",
-              "source_vserver": "Source SVM"
             }
           }
         },
         {
           "id": "calculateField",
           "options": {
-            "alias": "Remote",
-            "binary": {
-              "left": "Source Volume",
-              "operator": "*",
-              "reducer": "sum",
-              "right": "Destination Volume"
-            },
             "mode": "reduceRow",
             "reduce": {
               "include": [
@@ -3324,76 +3027,37 @@
               ],
               "reducer": "distinctCount"
             },
+            "alias": "Remote",
+            "binary": {
+              "left": "Source Volume",
+              "operator": "*",
+              "reducer": "sum",
+              "right": "Destination Volume"
+            },
             "replaceFields": false
           }
         },
         {
-          "id": "groupBy",
+          "id": "organize",
           "options": {
-            "fields": {
-              "Destination Volume": {
-                "aggregations": [],
-                "operation": "groupby"
-              },
-              "Protected By": {
-                "aggregations": [
-                  "allValues"
-                ],
-                "operation": "aggregate"
-              },
-              "Remote": {
-                "aggregations": [
-                  "last"
-                ],
-                "operation": "aggregate"
-              },
-              "Source SVM": {
-                "aggregations": [],
-                "operation": "groupby"
-              },
-              "Source Volume": {
-                "aggregations": [],
-                "operation": "groupby"
-              },
-              "cluster": {
-                "aggregations": []
-              },
-              "destination_volume": {
-                "aggregations": []
-              },
-              "destination_vserver": {
-                "aggregations": []
-              },
-              "protectedBy": {
-                "aggregations": [
-                  "allValues"
-                ],
-                "operation": "aggregate"
-              },
-              "source_cluster": {
-                "aggregations": []
-              },
-              "source_volume": {
-                "aggregations": [],
-                "operation": "groupby"
-              },
-              "source_vserver": {
-                "aggregations": [],
-                "operation": "groupby"
-              }
+            "excludeByName": {
+              "cluster": true,
+              "destination_vserver": true,
+              "protectedBy": false,
+              "source_cluster": true,
+              "source_vserver": true
+            },
+            "indexByName": {
+              "destination_volume": 1,
+              "protectedBy": 2,
+              "source_volume": 0
+            },
+            "renameByName": {
+              "destination_volume": "Destination Volume",
+              "protectedBy": "Protected By",
+              "source_volume": "Source Volume",
+              "Remote": "Local/Remote"
             }
-          }
-        },
-        {
-          "id": "convertFieldType",
-          "options": {
-            "conversions": [
-              {
-                "destinationType": "string",
-                "targetField": "Protected By (allValues)"
-              }
-            ],
-            "fields": {}
           }
         }
       ],
@@ -3501,7 +3165,7 @@
               },
               {
                 "id": "custom.width",
-                "value": 300
+                "value": 270
               }
             ]
           },
@@ -3550,7 +3214,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "snapmirror_lag_time{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\")",
+          "expr": "snapmirror_lag_time{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",source_volume!=\"\"} * on (source_volume, source_vserver, cluster) group_left() label_replace( label_replace(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\") > 0",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -3558,7 +3222,7 @@
           "refId": "A"
         }
       ],
-      "title": "Volumes Experiencing Lag",
+      "title": "Volume Relationships Experiencing Lag",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -3616,7 +3280,7 @@
     {
       "id": 133,
       "gridPos": {
-        "h": 10,
+        "h": 13,
         "w": 12,
         "x": 0,
         "y": 70
@@ -3630,7 +3294,6 @@
             "include": {
               "names": [
                 "cluster",
-                "protectionRole",
                 "svm",
                 "volume"
               ]
@@ -3643,19 +3306,11 @@
             "excludeByName": {},
             "indexByName": {
               "cluster": 2,
-              "protectionRole": 3,
               "svm": 1,
               "volume": 0
             },
             "renameByName": {
               "cluster": "Cluster",
-              "destination_volume": "Destination Volume",
-              "destination_vserver": "Destination SVM",
-              "protectedBy": "Protected By",
-              "protectionRole": "Protection Role",
-              "snapshot_policy": "Snapshot",
-              "source_volume": "Source Volume",
-              "source_vserver": "Source SVM",
               "svm": "SVM",
               "volume": "Volume"
             }
@@ -3686,50 +3341,7 @@
             "mode": "fixed"
           }
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Protected By"
-            },
-            "properties": [
-              {
-                "id": "custom.filterable",
-                "value": true
-              },
-              {
-                "id": "custom.width",
-                "value": 190
-              },
-              {
-                "id": "mappings",
-                "value": [
-                  {
-                    "options": {
-                      "cg": {
-                        "index": 2,
-                        "text": "CG"
-                      },
-                      "not_applicable": {
-                        "index": 3,
-                        "text": "Unprotected"
-                      },
-                      "storage_vm": {
-                        "index": 1,
-                        "text": "SVM DR"
-                      },
-                      "volume": {
-                        "index": 0,
-                        "text": "SnapMirror"
-                      }
-                    },
-                    "type": "value"
-                  }
-                ]
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "options": {
         "showHeader": true,
@@ -3744,7 +3356,7 @@
       },
       "targets": [
         {
-          "expr": "volume_labels{cluster=~\"$Cluster\",volume!~\"MDV.*\",protectionRole=\"unprotected\",snapshot_policy!=\"\"} unless on (volume,svm)  label_replace( label_replace(  label_replace( snapmirror_labels{source_cluster=~\"$Cluster\"} , \"volume\", \"$1\", \"source_volume\", \"(.*)\") , \"svm\", \"$1\", \"source_vserver\", \"(.*)\") , \"cluster\", \"$1\", \"source_cluster\", \"(.*)\") ",
+          "expr": "volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\",snapshot_policy!=\"\"} unless on (volume,svm)  label_replace( label_replace( snapmirror_labels{source_cluster=~\"$Cluster\"} , \"volume\", \"$1\", \"source_volume\", \"(.*)\") , \"svm\", \"$1\", \"source_vserver\", \"(.*)\") unless on (volume,svm)  label_replace( label_replace( snapmirror_labels{source_cluster=~\"$Cluster\"} , \"volume\", \"$1\", \"destination_volume\", \"(.*)\") , \"svm\", \"$1\", \"destination_vserver\", \"(.*)\") ",
           "legendFormat": "",
           "interval": "",
           "exemplar": false,
@@ -3767,7 +3379,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 80
+        "y": 83
       },
       "id": 42,
       "panels": [],
@@ -3798,7 +3410,7 @@
         "h": 12,
         "w": 5,
         "x": 0,
-        "y": 81
+        "y": 84
       },
       "id": 128,
       "options": {
@@ -3868,7 +3480,7 @@
           "refId": "E"
         }
       ],
-      "title": "Volume count by relationship type",
+      "title": "Volume relationship count by relationship type",
       "transformations": [],
       "type": "piechart"
     },
@@ -3900,7 +3512,7 @@
         "h": 6,
         "w": 3,
         "x": 5,
-        "y": 81
+        "y": 84
       },
       "id": 109,
       "links": [],
@@ -3966,7 +3578,7 @@
         "h": 6,
         "w": 3,
         "x": 8,
-        "y": 81
+        "y": 84
       },
       "id": 110,
       "links": [],
@@ -4032,7 +3644,7 @@
         "h": 6,
         "w": 3,
         "x": 11,
-        "y": 81
+        "y": 84
       },
       "id": 111,
       "links": [],
@@ -4092,7 +3704,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Volume Snapmirror"
+              "options": "Healthy"
             },
             "properties": [
               {
@@ -4107,13 +3719,13 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Unprotected"
+              "options": "Unhealthy"
             },
             "properties": [
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "yellow",
+                  "fixedColor": "dark-yellow",
                   "mode": "fixed"
                 }
               }
@@ -4125,7 +3737,7 @@
         "h": 12,
         "w": 5,
         "x": 14,
-        "y": 81
+        "y": 84
       },
       "id": 130,
       "options": {
@@ -4152,24 +3764,25 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(group by (volume)(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", volume!~\"MDV.*\", all_sm_healthy=\"true\"}))",
+          "expr": "count((snapmirror_labels{source_cluster=~\"$Cluster\", healthy=\"true\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\", type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\") )) or vector (0)",
           "instant": true,
           "interval": "",
           "legendFormat": "Healthy",
-          "refId": "A"
+          "refId": "A",
+          "format": "time_series"
         },
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\", all_sm_healthy=\"false\"})",
+          "expr": "count(group by (source_volume,source_vserver,source_cluster)(snapmirror_labels{source_cluster=~\"$Cluster\", healthy=\"false\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\", type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\") ) ) or vector (0)",
           "hide": false,
           "instant": true,
           "interval": "",
           "legendFormat": "Unhealthy",
-          "refId": "B"
+          "refId": "B",
+          "format": "time_series"
         }
       ],
-      "title": "Volume count by relationship health",
-      "transformations": [],
+      "title": "Volume relationship count by relationship health",
       "type": "piechart"
     },
     {
@@ -4200,7 +3813,7 @@
         "h": 6,
         "w": 5,
         "x": 19,
-        "y": 81
+        "y": 84
       },
       "id": 114,
       "links": [],
@@ -4211,7 +3824,7 @@
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "last"
           ],
           "fields": "",
           "values": false
@@ -4222,15 +3835,14 @@
       "pluginVersion": "8.1.2",
       "targets": [
         {
-          "exemplar": true,
-          "expr": "count(group by (volume)(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", volume!~\"MDV.*\", all_sm_healthy=\"true\"}))",
-          "format": "table",
+          "expr": "count((snapmirror_labels{source_cluster=~\"$Cluster\",healthy=\"true\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\", type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\") )) or vector (0)",
           "hide": false,
           "instant": true,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
+          "legendFormat": "Healthy",
+          "refId": "A",
+          "format": "time_series"
         }
       ],
       "timeFrom": null,
@@ -4266,7 +3878,7 @@
         "h": 6,
         "w": 3,
         "x": 5,
-        "y": 87
+        "y": 90
       },
       "id": 113,
       "links": [],
@@ -4332,7 +3944,7 @@
         "h": 6,
         "w": 3,
         "x": 8,
-        "y": 87
+        "y": 90
       },
       "id": 112,
       "links": [],
@@ -4398,7 +4010,7 @@
         "h": 6,
         "w": 5,
         "x": 19,
-        "y": 87
+        "y": 90
       },
       "id": 115,
       "links": [],
@@ -4409,7 +4021,7 @@
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "last"
           ],
           "fields": "",
           "values": false
@@ -4421,7 +4033,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\", all_sm_healthy=\"false\"})",
+          "expr": "count(group by (source_volume,source_vserver,source_cluster)(snapmirror_labels{source_cluster=~\"$Cluster\", healthy=\"false\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\", type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\") ) ) or vector (0)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -4549,7 +4161,7 @@
         "h": 14,
         "w": 14,
         "x": 0,
-        "y": 93
+        "y": 96
       },
       "id": 129,
       "options": {
@@ -4568,7 +4180,7 @@
           "refId": "A"
         }
       ],
-      "title": "Volume count by relationship type",
+      "title": "Volume relationship count by relationship type",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -4630,7 +4242,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "HealthyStatus"
+              "options": "Healthy Status"
             },
             "properties": [
               {
@@ -4669,7 +4281,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 320
+                "value": 310
               }
             ]
           },
@@ -4681,7 +4293,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 320
+                "value": 310
               }
             ]
           }
@@ -4691,7 +4303,7 @@
         "h": 14,
         "w": 10,
         "x": 14,
-        "y": 93
+        "y": 96
       },
       "id": 131,
       "options": {
@@ -4702,7 +4314,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "snapmirror_labels{source_cluster=~\"$Cluster\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\",type=\"rw\",all_sm_healthy!=\"\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\") ",
+          "expr": "snapmirror_labels{source_cluster=~\"$Cluster\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",volume!~\"MDV.*\", type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\") ",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -4710,7 +4322,7 @@
           "refId": "A"
         }
       ],
-      "title": "Volume count by relationship health",
+      "title": "Volume relationship count by relationship health",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -4735,15 +4347,9 @@
               "source_volume": 0
             },
             "renameByName": {
-              "Value": "Lag Duration (seconds)",
-              "all_sm_healthy": "HealthyStatus",
               "destination_volume": "Destination Volume",
-              "destination_vserver": "Destination SVM",
-              "healthy": "HealthyStatus",
-              "source_volume": "Source Volume",
-              "source_vserver": "Source SVM",
-              "svm": "",
-              "volume": ""
+              "healthy": "Healthy Status",
+              "source_volume": "Source Volume"
             }
           }
         }
