@@ -26,7 +26,6 @@ type PollerInfo struct {
 	IsFull        bool
 	TemplateDir   string
 	CertDir       string
-	EnvFile       string
 }
 
 type AdminInfo struct {
@@ -55,7 +54,6 @@ type options struct {
 	filesdPath  string
 	showPorts   bool
 	outputPath  string
-	envFilePath string
 	templateDir string
 	certDir     string
 	promPort    int
@@ -146,13 +144,6 @@ func generateDocker(path string, kind int) {
 	if err != nil {
 		panic(err)
 	}
-	var envFilePath string
-	if opts.envFilePath != "" {
-		envFilePath, err = filepath.Abs(opts.envFilePath)
-		if err != nil {
-			panic(err)
-		}
-	}
 	conf.ValidatePortInUse = true
 	var filesd []string
 	for _, v := range conf.Config.PollersOrdered {
@@ -169,7 +160,6 @@ func generateDocker(path string, kind int) {
 			IsFull:        kind == full,
 			TemplateDir:   templateDirPath,
 			CertDir:       certDirPath,
-			EnvFile:       envFilePath,
 		}
 		pollerTemplate.Pollers = append(pollerTemplate.Pollers, pollerInfo)
 		filesd = append(filesd, fmt.Sprintf("- targets: ['%s:%d']", pollerInfo.ServiceName, pollerInfo.Port))
@@ -347,7 +337,6 @@ func init() {
 		"logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)",
 	)
 	dFlags.StringVar(&opts.image, "image", "cr.netapp.io/harvest:latest", "Harvest image. Use rahulguptajss/harvest:latest to pull from Docker Hub")
-	dFlags.StringVar(&opts.envFilePath, "envfile", "", "Pass env variables")
 	dFlags.StringVar(&opts.templateDir, "templatedir", "./conf", "Harvest template dir path")
 	dFlags.StringVar(&opts.certDir, "certdir", "./cert", "Harvest certificate dir path")
 	dFlags.StringVarP(&opts.outputPath, "output", "o", "", "Output file path. ")

@@ -4,9 +4,6 @@ services:
   {{- if .Admin.Enabled}}
   {{ .Admin.ServiceName }}:
     image: {{ .Admin.Image }}
-    {{if .EnvFile }}:env_file:
-      - {{ .EnvFile }}
-    {{- end}}
     container_name: {{ .Admin.ContainerName }}
     restart: unless-stopped
     ports:
@@ -19,9 +16,6 @@ services:
 {{range .Pollers}}
   {{ .ServiceName }}:
     image: {{ .Image }}
-    {{if .EnvFile }}env_file:
-      - {{ .EnvFile }}
-    {{- end}}
     container_name: {{ .ContainerName }}
     restart: unless-stopped
     {{- if .ShowPorts}}

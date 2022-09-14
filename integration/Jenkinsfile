@@ -177,6 +177,7 @@ pipeline {
                             steps {
                                 sh """
                                 export VERSION=$VERSION
+                                export DISABLE_DASHBOARD_TEST=true
                                 bash $WORKSPACE/harvest/integration/test/test.sh regression
                                 """
 

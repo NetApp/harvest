@@ -50,9 +50,12 @@ func (suite *DashboardJsonTestSuite) SetupSuite() {
 	log.Info().Msg("Exclude map info")
 	log.Info().Str("Exclude Mapping", fmt.Sprint(counterMap)).Msg("List of counter")
 	log.Info().Msg("Wait until qos data is available")
-	countersToCheck := []string{"qos_read_latency", "svm_nfs_throughput", "copy_manager_kb_copied"}
-	for _, counterData := range countersToCheck {
-		dashboard.AssertIfNotPresent(counterData)
+	_, disableDashboardTest := os.LookupEnv("DISABLE_DASHBOARD_TEST")
+	if !disableDashboardTest {
+		countersToCheck := []string{"qos_read_latency", "svm_nfs_throughput", "copy_manager_kb_copied"}
+		for _, counterData := range countersToCheck {
+			dashboard.AssertIfNotPresent(counterData)
+		}
 	}
 }
 
@@ -164,6 +167,10 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 }
 
 func ShouldSkipDashboard(path string) bool {
+	_, disableDashboardTest := os.LookupEnv("DISABLE_DASHBOARD_TEST")
+	if disableDashboardTest {
+		return true
+	}
 	//ignore headroom dashboard from CI as it uses dynamic variables in query
 	skip := []string{"nfs4storePool_detail", "headroom"}
 	for _, s := range skip {

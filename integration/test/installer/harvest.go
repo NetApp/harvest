@@ -11,13 +11,13 @@ import (
 
 const HarvestHome = "/opt/harvest"
 const HarvestBin = "./bin/harvest"
-const ZeroSuppressionDisabled = "ZERO_SUPPRESSION_DISABLED=true"
+const IsCI = "IS_CI=true"
 
 type Harvest struct {
 }
 
 func (h *Harvest) Start() {
-	status := utils.Exec(HarvestHome, HarvestBin, []string{ZeroSuppressionDisabled}, "start")
+	status := utils.Exec(HarvestHome, HarvestBin, []string{IsCI}, "start")
 	fmt.Println(status)
 	time.Sleep(30 * time.Second)
 	h.AllRunning()

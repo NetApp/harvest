@@ -175,7 +175,7 @@ func (m *MetricFloat64) GetValuesFloat64() []float64 {
 	return m.values
 }
 
-func (m *MetricFloat64) Delta(s Metric, isZeroSuppression bool, logger *logging.Logger) (VectorSummary, error) {
+func (m *MetricFloat64) Delta(s Metric, isCI bool, logger *logging.Logger) (VectorSummary, error) {
 	var vs VectorSummary
 	prevRaw := s.GetValuesFloat64()
 	sRecord := s.GetRecords()
@@ -189,7 +189,7 @@ func (m *MetricFloat64) Delta(s Metric, isZeroSuppression bool, logger *logging.
 			// reset pass
 			pass[i] = true
 			// if current or previous raw are <= 0
-			if (!isZeroSuppression && (m.values[i] < 0 || prevRaw[i] < 0)) || (isZeroSuppression && (m.values[i] <= 0 || prevRaw[i] <= 0)) {
+			if !isCI && (m.values[i] <= 0 || prevRaw[i] <= 0) {
 				pass[i] = false
 				if m.values[i] < 0 {
 					logger.Trace().
@@ -201,7 +201,7 @@ func (m *MetricFloat64) Delta(s Metric, isZeroSuppression bool, logger *logging.
 			}
 			m.values[i] -= prevRaw[i]
 			// if cooked value is <= 0 this instance does not pass
-			if (!isZeroSuppression && m.values[i] < 0) || (isZeroSuppression && m.values[i] <= 0) {
+			if !isCI && m.values[i] <= 0 {
 				pass[i] = false
 				if m.values[i] < 0 {
 					vs.NegativeCount += 1
@@ -219,7 +219,7 @@ func (m *MetricFloat64) Delta(s Metric, isZeroSuppression bool, logger *logging.
 	return vs, nil
 }
 
-func (m *MetricFloat64) Divide(s Metric, isZeroSuppression bool, logger *logging.Logger) (VectorSummary, error) {
+func (m *MetricFloat64) Divide(s Metric, isCI bool, logger *logging.Logger) (VectorSummary, error) {
 	var vs VectorSummary
 	sValues := s.GetValuesFloat64()
 	sRecord := s.GetRecords()
@@ -233,7 +233,7 @@ func (m *MetricFloat64) Divide(s Metric, isZeroSuppression bool, logger *logging
 			// reset pass
 			pass[i] = true
 			// if numerator/denominator raw is <= 0
-			if (!isZeroSuppression && (m.values[i] < 0 || sValues[i] < 0)) || (isZeroSuppression && (m.values[i] <= 0 || sValues[i] <= 0)) {
+			if !isCI && (m.values[i] <= 0 || sValues[i] <= 0) {
 				pass[i] = false
 				if m.values[i] < 0 || sValues[i] < 0 {
 					logger.Trace().
@@ -245,7 +245,7 @@ func (m *MetricFloat64) Divide(s Metric, isZeroSuppression bool, logger *logging
 			}
 			m.values[i] /= sValues[i]
 			// if cooked value is <= 0 this instance does not pass
-			if (!isZeroSuppression && m.values[i] < 0) || (isZeroSuppression && m.values[i] <= 0) {
+			if !isCI && m.values[i] <= 0 {
 				pass[i] = false
 				if m.values[i] < 0 {
 					logger.Trace().
@@ -263,7 +263,7 @@ func (m *MetricFloat64) Divide(s Metric, isZeroSuppression bool, logger *logging
 	return vs, nil
 }
 
-func (m *MetricFloat64) DivideWithThreshold(s Metric, t int, isZeroSuppression bool, logger *logging.Logger) (VectorSummary, error) {
+func (m *MetricFloat64) DivideWithThreshold(s Metric, t int, isCI bool, logger *logging.Logger) (VectorSummary, error) {
 	var vs VectorSummary
 	x := float64(t)
 	sValues := s.GetValuesFloat64()
@@ -277,7 +277,7 @@ func (m *MetricFloat64) DivideWithThreshold(s Metric, t int, isZeroSuppression b
 		// reset pass
 		pass[i] = true
 		// if numerator/denominator raw is <= 0
-		if (!isZeroSuppression && (m.values[i] < 0 || sValues[i] < 0)) || (isZeroSuppression && (m.values[i] <= 0 || sValues[i] <= 0)) {
+		if !isCI && (m.values[i] <= 0 || sValues[i] <= 0) {
 			pass[i] = false
 			if m.values[i] < 0 || sValues[i] < 0 {
 				logger.Trace().
@@ -291,7 +291,7 @@ func (m *MetricFloat64) DivideWithThreshold(s Metric, t int, isZeroSuppression b
 			m.values[i] /= sValues[i]
 		}
 		// if cooked value is <= 0 this instance does not pass
-		if (!isZeroSuppression && m.values[i] < 0) || (isZeroSuppression && m.values[i] <= 0) {
+		if !isCI && m.values[i] <= 0 {
 			pass[i] = false
 			if m.values[i] < 0 {
 				logger.Trace().
@@ -308,7 +308,7 @@ func (m *MetricFloat64) DivideWithThreshold(s Metric, t int, isZeroSuppression b
 	return vs, nil
 }
 
-func (m *MetricFloat64) MultiplyByScalar(s int, isZeroSuppression bool, logger *logging.Logger) (VectorSummary, error) {
+func (m *MetricFloat64) MultiplyByScalar(s int, isCI bool, logger *logging.Logger) (VectorSummary, error) {
 	var vs VectorSummary
 	x := float64(s)
 	pass := m.GetPass()
@@ -317,7 +317,7 @@ func (m *MetricFloat64) MultiplyByScalar(s int, isZeroSuppression bool, logger *
 			// reset pass
 			pass[i] = true
 			// if current is <= 0
-			if (!isZeroSuppression && m.values[i] < 0) || (isZeroSuppression && m.values[i] <= 0) {
+			if !isCI && m.values[i] <= 0 {
 				pass[i] = false
 				if m.values[i] < 0 {
 					logger.Trace().
@@ -330,7 +330,7 @@ func (m *MetricFloat64) MultiplyByScalar(s int, isZeroSuppression bool, logger *
 			m.values[i] *= x
 		}
 		// if cooked value is <= 0 this instance does not pass
-		if (!isZeroSuppression && m.values[i] < 0) || (isZeroSuppression && m.values[i] <= 0) {
+		if !isCI && m.values[i] <= 0 {
 			pass[i] = false
 			if m.values[i] < 0 {
 				logger.Trace().
