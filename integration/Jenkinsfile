@@ -61,6 +61,7 @@ pipeline {
                             steps {
                                 sh """
                                 export VERSION=$VERSION
+                                export IS_CI=true
                                 bash $WORKSPACE/harvest/integration/test/test.sh regression
                                 """
                             }
@@ -123,6 +124,7 @@ pipeline {
                         stage('Running Test') {
                             steps {
                                 sh """
+                                export IS_CI=true
                                 bash $WORKSPACE/harvest/integration/test/test.sh regression
                                 """
                             }
