@@ -163,8 +163,6 @@ pipeline {
                                 cp -rf $WORKSPACE/harvest/integration/test/harvest.yml .
                                 make build
                                 ./bin/harvest stop
-                                cp /u/mpeg/harvest/.env .
-                                ./bin/harvest generate docker full --port --output harvest-compose.yml --envfile .env
                                 docker login -u $DOCKER_USER -p $DOCKER_PWD
                                 docker build -f docker/onePollerPerContainer/Dockerfile -t rahulguptajss/harvest:latest -t cr.netapp.io/harvest:latest . --no-cache --build-arg VERSION=$VERSION
                                 docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
