@@ -180,9 +180,10 @@ func (my *SnapMirror) updateSMLabels(data *matrix.Matrix) {
 
 		// Update source_vserver in snapmirror (In case of inter-cluster SM- vserver name may differ)
 		if peerDetail, ok := my.svmPeerDataMap[vserverName]; ok {
-			peerData := strings.Split(peerDetail, ":")
-			instance.SetLabel("source_vserver", peerData[0])
-			instance.SetLabel("source_cluster", peerData[1])
+			if peerData := strings.Split(peerDetail, ":"); len(peerData) == 2 {
+				instance.SetLabel("source_vserver", peerData[0])
+				instance.SetLabel("source_cluster", peerData[1])
+			}
 		}
 
 		if sourceCluster := instance.GetLabel("source_cluster"); sourceCluster == "" {
@@ -201,28 +202,36 @@ func (my *SnapMirror) updateSMLabels(data *matrix.Matrix) {
 func (my *SnapMirror) handleCGRelationships(data *matrix.Matrix, keys []string) {
 
 	for _, key := range keys {
-		instance := data.GetInstance(key)
-		cgItemMappings := instance.GetLabel("cg_item_mappings")
+		cgInstance := data.GetInstance(key)
+		cgItemMappings := cgInstance.GetLabel("cg_item_mappings")
+		// cg_item_mappings would be array of cgMapping. Example: vols1:@vold1,vols2:@vold2
 		cgMappingData := strings.Split(cgItemMappings, ",")
 		for _, cgMapping := range cgMappingData {
 			var (
 				cgVolumeInstance *matrix.Instance
 				err              error
 			)
+			// cgMapping would be {source_volume}:@{destination volume}. Example: vols1:@vold1
 			if volumes := strings.Split(cgMapping, ":@"); len(volumes) == 2 {
 				sourceVol := volumes[0]
 				destinationVol := volumes[1]
-				cgInstanceKey := key + sourceVol + destinationVol
+				/*
+				 * cgVolumeInstanceKey: cgInstance's relationshipId + sourceVol + destinationVol
+				 * Example:
+				 * cgInstance's relationshipId: 958805a8-302a-11ed-a6ad-005056a79f6e, sourceVol: vols1, destinationVol: vold1.
+				 * cgVolumeInstanceKey would be 958805a8-302a-11ed-a6ad-005056a79f6evols1vold1.
+				 */
+				cgVolumeInstanceKey := key + sourceVol + destinationVol
 
-				if cgVolumeInstance, err = my.data.NewInstance(cgInstanceKey); err != nil {
-					my.Logger.Error().Err(err).Str("Instance key", cgInstanceKey).Msg("")
+				if cgVolumeInstance, err = my.data.NewInstance(cgVolumeInstanceKey); err != nil {
+					my.Logger.Error().Err(err).Str("Instance key", cgVolumeInstanceKey).Msg("")
 					continue
 				}
 
-				for k, v := range instance.GetLabels().Map() {
+				for k, v := range cgInstance.GetLabels().Map() {
 					cgVolumeInstance.SetLabel(k, v)
 				}
-				cgVolumeInstance.SetLabel("relationship_id", cgInstanceKey)
+				cgVolumeInstance.SetLabel("relationship_id", cgVolumeInstanceKey)
 				cgVolumeInstance.SetLabel("source_volume", sourceVol)
 				cgVolumeInstance.SetLabel("destination_volume", destinationVol)
 			}
