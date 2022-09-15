@@ -24,7 +24,12 @@ type SnapMirror struct {
 	query          string
 	nodeUpdCounter int
 	svmVolToNode   map[string]string
-	svmPeerDataMap map[string]string // [peer SVM alias name] -> [peer SVM actual name] - [peer cluster name] map
+	svmPeerDataMap map[string]Peer // [peer SVM alias name] -> [peer detail] map
+}
+
+type Peer struct {
+	svm     string
+	cluster string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -51,7 +56,7 @@ func (my *SnapMirror) Init() error {
 
 	my.query = "api/private/cli/volume"
 	my.svmVolToNode = make(map[string]string)
-	my.svmPeerDataMap = make(map[string]string)
+	my.svmPeerDataMap = make(map[string]Peer)
 
 	my.data = matrix.New(my.Parent+".SnapMirror", "snapmirror", "snapmirror")
 
@@ -61,13 +66,13 @@ func (my *SnapMirror) Init() error {
 
 	if exportOption := my.ParentParams.GetChildS("export_options"); exportOption != nil {
 		if exportedLabels := exportOption.GetChildS("instance_labels"); exportedLabels != nil {
-			for _, l := range exportedLabels.GetAllChildContentS() {
-				instanceLabels.NewChildS("", l)
+			for _, label := range exportedLabels.GetAllChildContentS() {
+				instanceLabels.NewChildS("", label)
 			}
 		}
-		if exportedLabels := exportOption.GetChildS("instance_keys"); exportedLabels != nil {
-			for _, k := range exportedLabels.GetAllChildContentS() {
-				instanceKeys.NewChildS("", k)
+		if exportedKeys := exportOption.GetChildS("instance_keys"); exportedKeys != nil {
+			for _, key := range exportedKeys.GetAllChildContentS() {
+				instanceKeys.NewChildS("", key)
 			}
 		}
 	}
@@ -93,11 +98,12 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 		my.Logger.Debug().Msg("updated node cache")
 
-		cluster, _ := data.GetGlobalLabels().GetHas("cluster")
-		if err := my.getSVMPeerData(cluster); err != nil {
-			return nil, err
+		if cluster, ok := data.GetGlobalLabels().GetHas("cluster"); ok {
+			if err := my.getSVMPeerData(cluster); err != nil {
+				return nil, err
+			}
+			my.Logger.Debug().Msg("updated svm peer detail")
 		}
-		my.Logger.Debug().Msg("updated svm peer")
 	}
 
 	// update volume instance labels
@@ -137,7 +143,7 @@ func (my *SnapMirror) updateNodeCache() error {
 
 func (my *SnapMirror) getSVMPeerData(cluster string) error {
 	// Clean svmPeerMap map
-	my.svmPeerDataMap = make(map[string]string)
+	my.svmPeerDataMap = make(map[string]Peer)
 	fields := []string{"name", "peer.svm.name", "peer.cluster.name"}
 	query := "api/svm/peers"
 	href := rest.BuildHref("", strings.Join(fields, ","), []string{"peer.cluster.name=!" + cluster}, "", "", "", "", query)
@@ -157,7 +163,7 @@ func (my *SnapMirror) getSVMPeerData(cluster string) error {
 		localSvmName := peerData.Get("name").String()
 		actualSvmName := peerData.Get("peer.svm.name").String()
 		peerClusterName := peerData.Get("peer.cluster.name").String()
-		my.svmPeerDataMap[localSvmName] = actualSvmName + ":" + peerClusterName
+		my.svmPeerDataMap[localSvmName] = Peer{svm: actualSvmName, cluster: peerClusterName}
 	}
 	return nil
 }
@@ -178,12 +184,10 @@ func (my *SnapMirror) updateSMLabels(data *matrix.Matrix) {
 			instance.SetLabel("source_node", nodeName)
 		}
 
-		// Update source_vserver in snapmirror (In case of inter-cluster SM- vserver name may differ)
+		// Update source_vserver in snapmirror (In case of inter-cluster SM - vserver name may differ)
 		if peerDetail, ok := my.svmPeerDataMap[vserverName]; ok {
-			if peerData := strings.Split(peerDetail, ":"); len(peerData) == 2 {
-				instance.SetLabel("source_vserver", peerData[0])
-				instance.SetLabel("source_cluster", peerData[1])
-			}
+			instance.SetLabel("source_vserver", peerDetail.svm)
+			instance.SetLabel("source_cluster", peerDetail.cluster)
 		}
 
 		if sourceCluster := instance.GetLabel("source_cluster"); sourceCluster == "" {
