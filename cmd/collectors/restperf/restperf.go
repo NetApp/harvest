@@ -786,11 +786,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 			sValues := m.GetValuesFloat64()
 			pass := m.GetPass()
 			for k := range sValues {
-				if r.perfProp.isCI {
-					pass[k] = sValues[k] > 0
-				} else {
-					pass[k] = sValues[k] >= 0
-				}
+				pass[k] = r.perfProp.isCI || sValues[k] > 0
 			}
 			continue
 		}
