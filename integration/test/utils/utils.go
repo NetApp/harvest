@@ -25,7 +25,7 @@ const (
 )
 
 func Run(command string, arg ...string) string {
-	return Exec("", command, arg...)
+	return Exec("", command, nil, arg...)
 }
 
 func MkDir(dirname string) {
@@ -43,13 +43,17 @@ func GetConfigDir() string {
 	return "/u/mpeg/harvest"
 }
 
-func Exec(dir string, command string, arg ...string) string {
+func Exec(dir string, command string, env []string, arg ...string) string {
 	cmdString := command + " "
 	for _, param := range arg {
 		cmdString = cmdString + param + " "
 	}
 	fmt.Println("CMD : " + cmdString)
 	cmd := exec.Command(command, arg...)
+	cmd.Env = os.Environ()
+	for _, v := range env {
+		cmd.Env = append(cmd.Env, v)
+	}
 	if len(dir) > 0 {
 		cmd.Dir = dir
 	}

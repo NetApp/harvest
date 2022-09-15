@@ -34,7 +34,7 @@ func (g *GrafanaMgr) Import(jsonDir string) (bool, string) {
 	if !docker.IsDockerBasedPoller() {
 		//assuming non docker based harvest grafana
 		log.Println("It is non docker based harvest")
-		importOutput = utils.Exec(installer.HarvestHome, "bin/grafana", "import", "--addr", utils.GetGrafanaURL(), directoryOption, jsonDir)
+		importOutput = utils.Exec(installer.HarvestHome, "bin/grafana", nil, "import", "--addr", utils.GetGrafanaURL(), directoryOption, jsonDir)
 	} else {
 		params := []string{"exec", containerIDs[0], "bin/grafana", "import", "--addr", "grafana:3000", directoryOption, jsonDir}
 		importOutput = utils.Run("docker", params...)

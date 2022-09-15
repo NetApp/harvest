@@ -44,7 +44,7 @@ func (r *RPM) Install() bool {
 	if copyErr != nil {
 		return false
 	} //use file directly from the repo
-	harvestObj.StartByHarvestUser() //workaround for issue https://github.com/NetApp/harvest/issues/249
+	harvestObj.Start()
 	status := harvestObj.AllRunning()
 	return status
 }
@@ -70,7 +70,7 @@ func (r *RPM) Upgrade() bool {
 	}
 	utils.Run("cp", setup.GetZapiPerfFileWithQosCounters(), HarvestHome+"/"+setup.ZapiPerfDefaultFile)
 	harvestObj.Stop()
-	harvestObj.StartByHarvestUser()
+	harvestObj.Start()
 	status := harvestObj.AllRunning()
 	return status
 }
