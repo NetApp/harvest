@@ -77,7 +77,7 @@ func testConstituentVolumeWithinSvmdr(t *testing.T, instance *matrix.Instance) {
 }
 
 func testCg(t *testing.T, instance *matrix.Instance) {
-	instance.SetLabel("group_type", "CONSISTENCYGROUP")
+	instance.SetLabel("group_type", "consistencygroup")
 	instance.SetLabel("destination_location", "test123:/cg/")
 	UpdateProtectedFields(instance)
 
@@ -89,7 +89,7 @@ func testCg(t *testing.T, instance *matrix.Instance) {
 }
 
 func testConstituentVolumeWithinCg(t *testing.T, instance *matrix.Instance) {
-	instance.SetLabel("group_type", "CONSISTENCYGROUP")
+	instance.SetLabel("group_type", "consistencygroup")
 	instance.SetLabel("destination_location", "test123")
 	UpdateProtectedFields(instance)
 

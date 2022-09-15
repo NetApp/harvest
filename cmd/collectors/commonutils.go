@@ -77,9 +77,9 @@ func UpdateProtectedFields(instance *matrix.Instance) {
 		destinationLocation := instance.GetLabel("destination_location")
 
 		isSvmDr := groupType == "vserver" && destinationVolume == "" && sourceVolume == ""
-		isCg := groupType == "CONSISTENCYGROUP" && strings.Contains(destinationLocation, ":/cg/")
+		isCg := groupType == "consistencygroup" && strings.Contains(destinationLocation, ":/cg/")
 		isConstituentVolumeRelationshipWithinSvmDr := groupType == "vserver" && !strings.HasSuffix(destinationLocation, ":")
-		isConstituentVolumeRelationshipWithinCG := groupType == "CONSISTENCYGROUP" && !strings.Contains(destinationLocation, ":/cg/")
+		isConstituentVolumeRelationshipWithinCG := groupType == "consistencygroup" && !strings.Contains(destinationLocation, ":/cg/")
 
 		// Update protectedBy label
 		if isSvmDr || isConstituentVolumeRelationshipWithinSvmDr {
