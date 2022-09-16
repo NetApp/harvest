@@ -80,7 +80,7 @@ type Metric interface {
 	Delta(Metric, bool, *logging.Logger) (VectorSummary, error)
 	Divide(Metric, bool, *logging.Logger) (VectorSummary, error)
 	DivideWithThreshold(Metric, int, bool, *logging.Logger) (VectorSummary, error)
-	MultiplyByScalar(int, bool, *logging.Logger) (VectorSummary, error)
+	MultiplyByScalar(uint, bool, *logging.Logger) (VectorSummary, error)
 	// Print is used for debugging
 	Print()
 }
@@ -216,7 +216,7 @@ func (m *AbstractMetric) DivideWithThreshold(Metric, int, bool, *logging.Logger)
 	return VectorSummary{}, errs.New(errs.ErrImplement, m.dtype)
 }
 
-func (m *AbstractMetric) MultiplyByScalar(int, bool, *logging.Logger) (VectorSummary, error) {
+func (m *AbstractMetric) MultiplyByScalar(uint, bool, *logging.Logger) (VectorSummary, error) {
 	return VectorSummary{}, errs.New(errs.ErrImplement, m.dtype)
 }
 

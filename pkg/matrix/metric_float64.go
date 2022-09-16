@@ -200,19 +200,15 @@ func (m *MetricFloat64) Delta(s Metric, isCI bool, logger *logging.Logger) (Vect
 				}
 			}
 			m.values[i] -= prevRaw[i]
-			// if cooked value is <= 0 this instance does not pass
-			if !isCI && m.values[i] <= 0 {
+			// if cooked value is < 0 this instance does not pass
+			if !isCI && m.values[i] < 0 {
 				pass[i] = false
-				if m.values[i] < 0 {
-					vs.NegativeCount += 1
-					logger.Trace().
-						Str("metric", m.GetName()).
-						Float64("currentRaw", v).
-						Float64("previousRaw", prevRaw[i]).
-						Msg("Negative cooked value")
-				} else {
-					vs.ZeroCount += 1
-				}
+				vs.NegativeCount += 1
+				logger.Trace().
+					Str("metric", m.GetName()).
+					Float64("currentRaw", v).
+					Float64("previousRaw", prevRaw[i]).
+					Msg("Negative cooked value")
 			}
 		}
 	}
@@ -229,35 +225,18 @@ func (m *MetricFloat64) Divide(s Metric, isCI bool, logger *logging.Logger) (Vec
 	}
 	for i := 0; i < len(m.values); i++ {
 		if m.record[i] && sRecord[i] && sValues[i] != 0 {
-			v := m.values[i]
 			// reset pass
 			pass[i] = true
-			// if numerator/denominator raw is <= 0
-			if !isCI && (m.values[i] <= 0 || sValues[i] <= 0) {
+			// Don't pass along the value if the numerator is < 0 or the denominator is <= 0
+			if !isCI && (m.values[i] < 0 || sValues[i] <= 0) {
 				pass[i] = false
-				if m.values[i] < 0 || sValues[i] < 0 {
-					logger.Trace().
-						Str("metric", m.GetName()).
-						Float64("numerator", m.values[i]).
-						Float64("denominator", sValues[i]).
-						Msg("Negative raw values")
-				}
+				logger.Trace().
+					Str("metric", m.GetName()).
+					Float64("numerator", m.values[i]).
+					Float64("denominator", sValues[i]).
+					Msg("No pass values")
 			}
 			m.values[i] /= sValues[i]
-			// if cooked value is <= 0 this instance does not pass
-			if !isCI && m.values[i] <= 0 {
-				pass[i] = false
-				if m.values[i] < 0 {
-					logger.Trace().
-						Str("metric", m.GetName()).
-						Float64("numerator", v).
-						Float64("denominator", sValues[i]).
-						Msg("Negative cooked value")
-					vs.NegativeCount += 1
-				} else {
-					vs.ZeroCount += 1
-				}
-			}
 		}
 	}
 	return vs, nil
@@ -276,39 +255,24 @@ func (m *MetricFloat64) DivideWithThreshold(s Metric, t int, isCI bool, logger *
 		v := m.values[i]
 		// reset pass
 		pass[i] = true
-		// if numerator/denominator raw is <= 0
-		if !isCI && (m.values[i] <= 0 || sValues[i] <= 0) {
+		// Don't pass along the value if the numerator is < 0 or the denominator is < 0
+		// It's important to check sValues[i] < 0 and allow a zero so pass=true and m.values[i] remains unchanged
+		if !isCI && (m.values[i] < 0 || sValues[i] < 0) {
 			pass[i] = false
-			if m.values[i] < 0 || sValues[i] < 0 {
-				logger.Trace().
-					Str("metric", m.GetName()).
-					Float64("numerator", v).
-					Float64("denominator", sValues[i]).
-					Msg("Negative raw values")
-			}
+			logger.Trace().
+				Str("metric", m.GetName()).
+				Float64("numerator", v).
+				Float64("denominator", sValues[i]).
+				Msg("Negative values")
 		}
 		if m.record[i] && sRecord[i] && sValues[i] >= x {
 			m.values[i] /= sValues[i]
-		}
-		// if cooked value is <= 0 this instance does not pass
-		if !isCI && m.values[i] <= 0 {
-			pass[i] = false
-			if m.values[i] < 0 {
-				logger.Trace().
-					Str("metric", m.GetName()).
-					Float64("numerator", v).
-					Float64("denominator", sValues[i]).
-					Msg("Negative cooked value")
-				vs.NegativeCount += 1
-			} else {
-				vs.ZeroCount += 1
-			}
 		}
 	}
 	return vs, nil
 }
 
-func (m *MetricFloat64) MultiplyByScalar(s int, isCI bool, logger *logging.Logger) (VectorSummary, error) {
+func (m *MetricFloat64) MultiplyByScalar(s uint, isCI bool, logger *logging.Logger) (VectorSummary, error) {
 	var vs VectorSummary
 	x := float64(s)
 	pass := m.GetPass()
@@ -317,30 +281,15 @@ func (m *MetricFloat64) MultiplyByScalar(s int, isCI bool, logger *logging.Logge
 			// reset pass
 			pass[i] = true
 			// if current is <= 0
-			if !isCI && m.values[i] <= 0 {
+			if !isCI && m.values[i] < 0 {
 				pass[i] = false
-				if m.values[i] < 0 {
-					logger.Trace().
-						Str("metric", m.GetName()).
-						Float64("currentRaw", m.values[i]).
-						Int("scalar", s).
-						Msg("Negative raw value")
-				}
-			}
-			m.values[i] *= x
-		}
-		// if cooked value is <= 0 this instance does not pass
-		if !isCI && m.values[i] <= 0 {
-			pass[i] = false
-			if m.values[i] < 0 {
 				logger.Trace().
 					Str("metric", m.GetName()).
-					Float64("current", m.values[i]).
-					Msg("Negative cooked value")
-				vs.NegativeCount += 1
-			} else {
-				vs.ZeroCount += 1
+					Float64("currentRaw", m.values[i]).
+					Uint("scalar", s).
+					Msg("Negative value")
 			}
+			m.values[i] *= x
 		}
 	}
 	return vs, nil
