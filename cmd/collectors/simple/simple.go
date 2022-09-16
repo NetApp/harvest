@@ -67,7 +67,7 @@ func (n *NodeMon) loadMetrics(counters *node.Node) error {
 		if cnt.GetNameS() == "" {
 			name, display = parseMetricName(cnt.GetContentS())
 		}
-		dtype := "int"
+		dtype := "int64"
 		n.Logger.Trace().Msgf("handling (%s) (%s) dtype=%s", name, display, dtype)
 
 		if metric, err = mat.NewMetricType(name, dtype); err != nil {
