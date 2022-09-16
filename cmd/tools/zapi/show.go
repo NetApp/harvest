@@ -20,14 +20,12 @@ func show(n *node.Node, args *Args) {
 		showObjects(n)
 	case "attrs":
 		showAttrs(n)
-	case "counters":
-		showCounters(n)
+	case "counters", "data":
+		showData(n, args)
 	case "counter":
 		showCounter(n)
 	case "instances":
 		showInstances(n)
-	case "data":
-		showData(n, args)
 	default:
 		fmt.Printf("Sorry, I don't know how to show [%s]\n", args.Item)
 	}
@@ -54,10 +52,6 @@ func showObjects(item *node.Node) {
 }
 
 func showAttrs(n *node.Node) {
-	fmt.Println(n.Print(0))
-}
-
-func showCounters(n *node.Node) {
 	fmt.Println(n.Print(0))
 }
 
