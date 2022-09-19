@@ -72,7 +72,22 @@
   "graphTooltip": 0,
   "id": null,
   "iteration": 1651158530758,
-  "links": [],
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "7mode"
+      ],
+      "targetBlank": false,
+      "title": "Related Dashboards",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
   "panels": [
     {
       "collapsed": false,
@@ -3104,7 +3119,10 @@
   "refresh": false,
   "schemaVersion": 30,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "ontap",
+    "7mode"
+  ],
   "templating": {
     "list": [
       {
@@ -3292,5 +3310,5 @@
   "timezone": "",
   "title": "ONTAP: Node 7 mode",
   "uid": "bheg6_wnz",
-  "version": 4
+  "version": 5
 }

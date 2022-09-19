@@ -55,7 +55,22 @@
   "graphTooltip": 0,
   "id": null,
   "iteration": 1662734055395,
-  "links": [],
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "cdot"
+      ],
+      "targetBlank": false,
+      "title": "Related Dashboards",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
   "panels": [
     {
       "datasource": "${DS_PROMETHEUS}",
@@ -593,7 +608,10 @@
   "refresh": "",
   "schemaVersion": 30,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "ontap",
+    "cdot"
+  ],
   "templating": {
     "list": [
       {
@@ -740,5 +758,5 @@
   "timezone": "",
   "title": "ONTAP: Quota",
   "uid": "l8k65qW4k",
-  "version": 2
+  "version": 3
 }

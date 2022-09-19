@@ -66,7 +66,22 @@
   "graphTooltip": 0,
   "id": 1496,
   "iteration": 1648624960194,
-  "links": [],
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "cdot"
+      ],
+      "targetBlank": false,
+      "title": "Related Dashboards",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
   "panels": [
     {
       "collapsed": false,
@@ -2713,7 +2728,10 @@
   "refresh": "",
   "schemaVersion": 30,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "ontap",
+    "cdot"
+  ],
   "templating": {
     "list": [
       {
@@ -2833,5 +2851,5 @@
   "timezone": "",
   "title": "ONTAP: Compliance",
   "uid": "PMa3daw456",
-  "version": 1
+  "version": 2
 }

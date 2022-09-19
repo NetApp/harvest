@@ -73,7 +73,22 @@
   "graphTooltip": 1,
   "id": null,
   "iteration": 1650888815809,
-  "links": [],
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "cdot"
+      ],
+      "targetBlank": false,
+      "title": "Related Dashboards",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
   "panels": [
     {
       "collapsed": false,
@@ -2473,7 +2488,10 @@
   "refresh": "",
   "schemaVersion": 30,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "ontap",
+    "cdot"
+  ],
   "templating": {
     "list": [
       {
@@ -2725,5 +2743,5 @@
   "timezone": "browser",
   "title": "ONTAP: MetroCluster",
   "uid": "i6KRsKQ7z",
-  "version": 3
+  "version": 4
 }

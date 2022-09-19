@@ -60,7 +60,22 @@
   "graphTooltip": 0,
   "id": null,
   "iteration": 1619514558045,
-  "links": [],
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "7mode"
+      ],
+      "targetBlank": false,
+      "title": "Related Dashboards",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
   "panels": [
     {
       "collapsed": false,
@@ -869,7 +884,10 @@
   "refresh": "1m",
   "schemaVersion": 27,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "ontap",
+    "7mode"
+  ],
   "templating": {
     "list": [
       {
@@ -1030,5 +1048,5 @@
   "timezone": "",
   "title": "ONTAP: Shelf 7 mode",
   "uid": "FnaQeK9Mp",
-  "version": 2
+  "version": 3
 }
