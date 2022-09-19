@@ -66,7 +66,22 @@
   "graphTooltip": 0,
   "id": null,
   "iteration": 1654863008940,
-  "links": [],
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "harvest-7"
+      ],
+      "targetBlank": false,
+      "title": "Related Dashboards",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
   "panels": [
     {
       "collapsed": false,
@@ -2023,7 +2038,9 @@
   "refresh": false,
   "schemaVersion": 30,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "harvest-7"
+  ],
   "templating": {
     "list": [
       {
@@ -2263,5 +2280,5 @@
   "timezone": "",
   "title": "ONTAP: Disk 7 mode",
   "uid": "gZb-XGj7z",
-  "version": 4
+  "version": 5
 }

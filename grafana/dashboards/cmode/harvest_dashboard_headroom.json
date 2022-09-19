@@ -54,7 +54,22 @@
   "graphTooltip": 0,
   "id": null,
   "iteration": 1663335188767,
-  "links": [],
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "harvest"
+      ],
+      "targetBlank": false,
+      "title": "Related Dashboards",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
   "panels": [
     {
       "collapsed": false,
@@ -2201,7 +2216,9 @@
   "refresh": "",
   "schemaVersion": 30,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "harvest"
+  ],
   "templating": {
     "list": [
       {
@@ -2321,5 +2338,5 @@
   "timezone": "",
   "title": "ONTAP: Headroom",
   "uid": "hITA_mnVk",
-  "version": 2
+  "version": 3
 }

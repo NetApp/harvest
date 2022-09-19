@@ -54,7 +54,22 @@
   "graphTooltip": 0,
   "id": null,
   "iteration": 1651152950740,
-  "links": [],
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "harvest"
+      ],
+      "targetBlank": false,
+      "title": "Related Dashboards",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
   "panels": [
     {
       "collapsed": true,
@@ -1950,7 +1965,9 @@
   "refresh": false,
   "schemaVersion": 30,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "harvest"
+  ],
   "templating": {
     "list": [
       {
@@ -2061,5 +2078,5 @@
   "timezone": "",
   "title": "ONTAP: NFSv4 StorePool Monitors",
   "uid": "Lul5S_wnz",
-  "version": 5
+  "version": 6
 }

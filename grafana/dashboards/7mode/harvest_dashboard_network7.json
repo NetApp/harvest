@@ -66,7 +66,22 @@
   "graphTooltip": 0,
   "id": null,
   "iteration": 1651157515890,
-  "links": [],
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "harvest-7"
+      ],
+      "targetBlank": false,
+      "title": "Related Dashboards",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
   "panels": [
     {
       "datasource": "${DS_PROMETHEUS}",
@@ -2058,7 +2073,9 @@
   "refresh": "1m",
   "schemaVersion": 30,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "harvest-7"
+  ],
   "templating": {
     "list": [
       {
@@ -2303,5 +2320,5 @@
   "timezone": "",
   "title": "ONTAP: Network 7 mode",
   "uid": "8p6gelQnk",
-  "version": 2
+  "version": 3
 }

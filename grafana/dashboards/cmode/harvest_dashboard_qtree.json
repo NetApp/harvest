@@ -62,10 +62,13 @@
       "includeVars": true,
       "keepTime": true,
       "tags": [
-        "NetAppHarvest"
+        "harvest"
       ],
+      "targetBlank": false,
       "title": "Related Dashboards",
-      "type": "dashboards"
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
     }
   ],
   "panels": [
@@ -632,7 +635,9 @@
   "refresh": false,
   "schemaVersion": 30,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "harvest"
+  ],
   "templating": {
     "list": [
       {
@@ -880,5 +885,5 @@
   "timezone": "",
   "title": "ONTAP: Qtree",
   "uid": "ukc05GC7z",
-  "version": 3
+  "version": 4
 }

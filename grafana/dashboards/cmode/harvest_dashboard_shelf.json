@@ -72,7 +72,22 @@
   "graphTooltip": 0,
   "id": null,
   "iteration": 1662005797250,
-  "links": [],
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "harvest"
+      ],
+      "targetBlank": false,
+      "title": "Related Dashboards",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
   "panels": [
     {
       "collapsed": false,
@@ -1955,7 +1970,9 @@
   "refresh": "1m",
   "schemaVersion": 30,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "harvest"
+  ],
   "templating": {
     "list": [
       {
@@ -2180,5 +2197,5 @@
   "timezone": "",
   "title": "ONTAP: Shelf",
   "uid": "1RBoc3W4z",
-  "version": 4
+  "version": 5
 }

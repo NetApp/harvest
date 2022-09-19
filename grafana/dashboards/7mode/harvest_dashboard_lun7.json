@@ -66,7 +66,22 @@
   "graphTooltip": 0,
   "id": null,
   "iteration": 1651157130100,
-  "links": [],
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "harvest-7"
+      ],
+      "targetBlank": false,
+      "title": "Related Dashboards",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
   "panels": [
     {
       "collapsed": false,
@@ -2735,7 +2750,9 @@
   "refresh": "1m",
   "schemaVersion": 30,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "harvest-7"
+  ],
   "templating": {
     "list": [
       {
@@ -2975,5 +2992,5 @@
   "timezone": "",
   "title": "ONTAP: LUN 7 mode",
   "uid": "Rpege_Qnk",
-  "version": 2
+  "version": 3
 }
