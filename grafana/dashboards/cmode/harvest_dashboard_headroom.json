@@ -61,7 +61,7 @@
       "includeVars": true,
       "keepTime": true,
       "tags": [
-        "harvest"
+        "cdot"
       ],
       "targetBlank": false,
       "title": "Related Dashboards",
@@ -2217,7 +2217,8 @@
   "schemaVersion": 30,
   "style": "dark",
   "tags": [
-    "harvest"
+    "ontap",
+    "cdot"
   ],
   "templating": {
     "list": [

@@ -73,7 +73,7 @@
       "includeVars": true,
       "keepTime": true,
       "tags": [
-        "harvest-7"
+        "7mode"
       ],
       "targetBlank": false,
       "title": "Related Dashboards",
@@ -2039,7 +2039,8 @@
   "schemaVersion": 30,
   "style": "dark",
   "tags": [
-    "harvest-7"
+    "ontap",
+    "7mode"
   ],
   "templating": {
     "list": [
