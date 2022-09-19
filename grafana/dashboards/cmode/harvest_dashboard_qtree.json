@@ -636,6 +636,7 @@
   "schemaVersion": 30,
   "style": "dark",
   "tags": [
+    "harvest",
     "ontap",
     "cdot"
   ],

@@ -885,6 +885,7 @@
   "schemaVersion": 27,
   "style": "dark",
   "tags": [
+    "harvest",
     "ontap",
     "7mode"
   ],
