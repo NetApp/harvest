@@ -184,19 +184,19 @@ func (m *MetricFloat64) Delta(s Metric, logger *logging.Logger) (VectorSummary, 
 	}
 	for i := range m.values {
 		if m.record[i] && sRecord[i] {
-			v := m.values[i]
+			curRaw := m.values[i]
 			// reset pass
 			pass[i] = true
 			m.values[i] -= prevRaw[i]
-			// if the cooked value is < 0, this instance does not pass
-			if m.values[i] < 0 {
+			// Sometimes ONTAP sends spurious zeroes. Detect and don't publish the negative delta
+			// or the next poll that will show a large spike.
+			// Distinguish invalid zeros from valid ones. Invalid ones happen when the delta != 0
+			if (curRaw == 0 || prevRaw[i] == 0) && m.values[i] != 0 {
 				pass[i] = false
-				// restore the previous value instead of keeping the negative
-				m.values[i] = v
 				vs.NegativeCount += 1
 				logger.Trace().
 					Str("metric", m.GetName()).
-					Float64("currentRaw", v).
+					Float64("currentRaw", curRaw).
 					Float64("previousRaw", prevRaw[i]).
 					Msg("Negative cooked value")
 			}
