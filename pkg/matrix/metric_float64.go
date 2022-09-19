@@ -187,21 +187,12 @@ func (m *MetricFloat64) Delta(s Metric, logger *logging.Logger) (VectorSummary, 
 			v := m.values[i]
 			// reset pass
 			pass[i] = true
-			// if current or previous raw are <= 0
-			if m.values[i] <= 0 || prevRaw[i] <= 0 {
-				pass[i] = false
-				if m.values[i] < 0 {
-					logger.Trace().
-						Str("metric", m.GetName()).
-						Float64("currentRaw", m.values[i]).
-						Float64("previousRaw", prevRaw[i]).
-						Msg("Negative raw values")
-				}
-			}
 			m.values[i] -= prevRaw[i]
-			// if cooked value is < 0 this instance does not pass
+			// if the cooked value is < 0, this instance does not pass
 			if m.values[i] < 0 {
 				pass[i] = false
+				// restore the previous value instead of keeping the negative
+				m.values[i] = v
 				vs.NegativeCount += 1
 				logger.Trace().
 					Str("metric", m.GetName()).
