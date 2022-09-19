@@ -15,7 +15,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/rs/zerolog"
 	"github.com/tidwall/gjson"
-	"os"
 	"path"
 	"regexp"
 	"strconv"
@@ -58,7 +57,6 @@ type counter struct {
 
 type perfProp struct {
 	isCacheEmpty  bool
-	isCI          bool
 	counterInfo   map[string]*counter
 	latencyIoReqd int
 	qosLabels     map[string]string
@@ -150,8 +148,6 @@ func (r *RestPerf) InitMatrix() error {
 	//init perf properties
 	r.perfProp.latencyIoReqd = r.loadParamInt("latency_io_reqd", latencyIoReqd)
 	r.perfProp.isCacheEmpty = true
-	_, r.perfProp.isCI = os.LookupEnv("IS_CI")
-	r.Logger.Debug().Bool("IS_CI", r.perfProp.isCI).Msg("")
 	// overwrite from abstract collector
 	mat.Object = r.Prop.Object
 	// Add system (cluster) name
@@ -760,12 +756,12 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	// calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
-	if _, err = timestamp.Delta(mat.GetMetric("timestamp"), r.perfProp.isCI, r.Logger); err != nil {
+	if _, err = timestamp.Delta(mat.GetMetric("timestamp"), r.Logger); err != nil {
 		r.Logger.Error().Err(err).Msg("(timestamp) calculate delta:")
 	}
 
 	var base matrix.Metric
-	var negativeCount, zeroCount int
+	var negativeCount int
 
 	for i, metric := range orderedMetrics {
 		key := orderedKeys[i]
@@ -782,22 +778,15 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 		// RAW - submit without post-processing
 		if property == "raw" {
-			m := mat.GetMetric(key)
-			sValues := m.GetValuesFloat64()
-			pass := m.GetPass()
-			for k := range sValues {
-				pass[k] = r.perfProp.isCI || sValues[k] > 0
-			}
 			continue
 		}
 
 		// all other properties - first calculate delta
-		if vs, err = metric.Delta(mat.GetMetric(key), r.perfProp.isCI, r.Logger); err != nil {
+		if vs, err = metric.Delta(mat.GetMetric(key), r.Logger); err != nil {
 			r.Logger.Error().Err(err).Str("key", key).Msg("Calculate delta")
 			continue
 		}
 		negativeCount += vs.NegativeCount
-		zeroCount += vs.ZeroCount
 
 		// DELTA - subtract previous value from current
 		if property == "delta" {
@@ -833,9 +822,9 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if property == "average" || property == "percent" {
 
 			if strings.HasSuffix(metric.GetName(), "latency") {
-				vs, err = metric.DivideWithThreshold(base, r.perfProp.latencyIoReqd, r.perfProp.isCI, r.Logger)
+				vs, err = metric.DivideWithThreshold(base, r.perfProp.latencyIoReqd, r.Logger)
 			} else {
-				vs, err = metric.Divide(base, r.perfProp.isCI, r.Logger)
+				vs, err = metric.Divide(base, r.Logger)
 			}
 
 			if err != nil {
@@ -843,7 +832,6 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 				continue
 			}
 			negativeCount += vs.NegativeCount
-			zeroCount += vs.ZeroCount
 
 			if property == "average" {
 				continue
@@ -851,11 +839,10 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		if property == "percent" {
-			if vs, err = metric.MultiplyByScalar(100, r.perfProp.isCI, r.Logger); err != nil {
+			if vs, err = metric.MultiplyByScalar(100, r.Logger); err != nil {
 				r.Logger.Error().Err(err).Str("key", key).Msg("Multiply by scalar")
 			} else {
 				negativeCount += vs.NegativeCount
-				zeroCount += vs.ZeroCount
 			}
 			continue
 		}
@@ -873,7 +860,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if counter != nil {
 			property := counter.counterType
 			if property == "rate" {
-				if vs, err = metric.Divide(timestamp, r.perfProp.isCI, r.Logger); err != nil {
+				if vs, err = metric.Divide(timestamp, r.Logger); err != nil {
 					r.Logger.Error().Err(err).
 						Int("i", i).
 						Str("metric", metric.GetName()).
@@ -882,7 +869,6 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 					continue
 				}
 				negativeCount += vs.NegativeCount
-				zeroCount += vs.ZeroCount
 			}
 		} else {
 			r.Logger.Warn().Str("counter", metric.GetName()).Msg("Counter is nil. Unable to process. Check template ")
@@ -900,7 +886,6 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 			Str("apiD", apiD.Round(time.Millisecond).String()).
 			Str("parseD", parseD.Round(time.Millisecond).String()).
 			Str("calcD", calcD.Round(time.Millisecond).String()).
-			Int("zeroMetric", zeroCount).
 			Int("zNegativeMetric", negativeCount).
 			Msg("Collected")
 	} else {

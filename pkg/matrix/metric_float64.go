@@ -19,7 +19,6 @@ type MetricFloat64 struct {
 
 type VectorSummary struct {
 	NegativeCount int
-	ZeroCount     int
 }
 
 func (m *MetricFloat64) Clone(deep bool) Metric {
@@ -175,7 +174,7 @@ func (m *MetricFloat64) GetValuesFloat64() []float64 {
 	return m.values
 }
 
-func (m *MetricFloat64) Delta(s Metric, isCI bool, logger *logging.Logger) (VectorSummary, error) {
+func (m *MetricFloat64) Delta(s Metric, logger *logging.Logger) (VectorSummary, error) {
 	var vs VectorSummary
 	prevRaw := s.GetValuesFloat64()
 	sRecord := s.GetRecords()
@@ -189,7 +188,7 @@ func (m *MetricFloat64) Delta(s Metric, isCI bool, logger *logging.Logger) (Vect
 			// reset pass
 			pass[i] = true
 			// if current or previous raw are <= 0
-			if !isCI && (m.values[i] <= 0 || prevRaw[i] <= 0) {
+			if m.values[i] <= 0 || prevRaw[i] <= 0 {
 				pass[i] = false
 				if m.values[i] < 0 {
 					logger.Trace().
@@ -201,7 +200,7 @@ func (m *MetricFloat64) Delta(s Metric, isCI bool, logger *logging.Logger) (Vect
 			}
 			m.values[i] -= prevRaw[i]
 			// if cooked value is < 0 this instance does not pass
-			if !isCI && m.values[i] < 0 {
+			if m.values[i] < 0 {
 				pass[i] = false
 				vs.NegativeCount += 1
 				logger.Trace().
@@ -215,7 +214,7 @@ func (m *MetricFloat64) Delta(s Metric, isCI bool, logger *logging.Logger) (Vect
 	return vs, nil
 }
 
-func (m *MetricFloat64) Divide(s Metric, isCI bool, logger *logging.Logger) (VectorSummary, error) {
+func (m *MetricFloat64) Divide(s Metric, logger *logging.Logger) (VectorSummary, error) {
 	var vs VectorSummary
 	sValues := s.GetValuesFloat64()
 	sRecord := s.GetRecords()
@@ -227,8 +226,9 @@ func (m *MetricFloat64) Divide(s Metric, isCI bool, logger *logging.Logger) (Vec
 		if m.record[i] && sRecord[i] && sValues[i] != 0 {
 			// reset pass
 			pass[i] = true
-			// Don't pass along the value if the numerator is < 0 or the denominator is <= 0
-			if !isCI && (m.values[i] < 0 || sValues[i] <= 0) {
+			// Don't pass along the value if the numerator or denominator is < 0
+			// A denominator of zero is fine
+			if m.values[i] < 0 || sValues[i] < 0 {
 				pass[i] = false
 				logger.Trace().
 					Str("metric", m.GetName()).
@@ -242,7 +242,7 @@ func (m *MetricFloat64) Divide(s Metric, isCI bool, logger *logging.Logger) (Vec
 	return vs, nil
 }
 
-func (m *MetricFloat64) DivideWithThreshold(s Metric, t int, isCI bool, logger *logging.Logger) (VectorSummary, error) {
+func (m *MetricFloat64) DivideWithThreshold(s Metric, t int, logger *logging.Logger) (VectorSummary, error) {
 	var vs VectorSummary
 	x := float64(t)
 	sValues := s.GetValuesFloat64()
@@ -255,9 +255,9 @@ func (m *MetricFloat64) DivideWithThreshold(s Metric, t int, isCI bool, logger *
 		v := m.values[i]
 		// reset pass
 		pass[i] = true
-		// Don't pass along the value if the numerator is < 0 or the denominator is < 0
+		// Don't pass along the value if the numerator or denominator is < 0
 		// It's important to check sValues[i] < 0 and allow a zero so pass=true and m.values[i] remains unchanged
-		if !isCI && (m.values[i] < 0 || sValues[i] < 0) {
+		if m.values[i] < 0 || sValues[i] < 0 {
 			pass[i] = false
 			logger.Trace().
 				Str("metric", m.GetName()).
@@ -272,7 +272,7 @@ func (m *MetricFloat64) DivideWithThreshold(s Metric, t int, isCI bool, logger *
 	return vs, nil
 }
 
-func (m *MetricFloat64) MultiplyByScalar(s uint, isCI bool, logger *logging.Logger) (VectorSummary, error) {
+func (m *MetricFloat64) MultiplyByScalar(s uint, logger *logging.Logger) (VectorSummary, error) {
 	var vs VectorSummary
 	x := float64(s)
 	pass := m.GetPass()
@@ -281,7 +281,7 @@ func (m *MetricFloat64) MultiplyByScalar(s uint, isCI bool, logger *logging.Logg
 			// reset pass
 			pass[i] = true
 			// if current is <= 0
-			if !isCI && m.values[i] < 0 {
+			if m.values[i] < 0 {
 				pass[i] = false
 				logger.Trace().
 					Str("metric", m.GetName()).
