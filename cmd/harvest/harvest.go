@@ -403,12 +403,12 @@ func startPoller(pollerName string, promPort int, opts *options) {
 
 	if len(opts.collectors) > 0 {
 		argv = append(argv, "--collectors")
-		argv = append(argv, opts.collectors...)
+		argv = append(argv, strings.Join(opts.collectors, ","))
 	}
 
 	if len(opts.objects) > 0 {
 		argv = append(argv, "--objects")
-		argv = append(argv, opts.objects...)
+		argv = append(argv, strings.Join(opts.objects, ","))
 	}
 
 	if opts.foreground {

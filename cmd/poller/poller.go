@@ -268,30 +268,23 @@ func (p *Poller) Init() error {
 	p.loadMetadata()
 	p.exporterParams = conf.Config.Exporters
 
-	// iterate over list of collectors and initialize them
-	// exporters are initialized on the fly, if at least one collector
-	// has requested them
-	if len(p.params.Collectors) == 0 {
-		logger.Warn().Msg("no collectors defined for this poller in config")
+	// iterate over the list of collectors and initialize them
+	// exporters are initialized on the fly when at least one collector references them
+
+	filteredCollectors := p.params.Collectors
+	// If the customer requested a specific collector, use it
+	if len(p.options.Collectors) > 0 {
+		filteredCollectors = make([]conf.Collector, 0, len(p.options.Collectors))
+		for _, collectorName := range p.options.Collectors {
+			filteredCollectors = append(filteredCollectors, conf.NewCollector(collectorName))
+		}
+	}
+	if len(filteredCollectors) == 0 {
+		logger.Warn().Msg("no collectors defined for this poller in config or CLI")
 		return errs.New(errs.ErrNoCollector, "no collectors")
 	}
-	for _, c := range p.params.Collectors {
-		ok := true
-		// if requested, filter collectors
-		if len(p.options.Collectors) != 0 {
-			ok = false
-			for _, x := range p.options.Collectors {
-				if x == c.Name {
-					ok = true
-					break
-				}
-			}
-		}
-		if !ok {
-			logger.Debug().Msgf("skipping collector [%s]", c.Name)
-			continue
-		}
 
+	for _, c := range filteredCollectors {
 		if err = p.loadCollector(c); err != nil {
 			logger.Error().Stack().Err(err).Msgf("load collector (%s) templates=%s:", c.Name, *c.Templates)
 		}
