@@ -39,7 +39,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/rs/zerolog"
 	"strconv"
 	"strings"
 	"time"
@@ -186,7 +185,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		instanceKeys    []string
 		resourceLatency matrix.Metric // for workload* objects
 		err             error
-		vs              matrix.VectorSummary
+		skips           int
 	)
 
 	me.Logger.Trace().Msg("updating data cache")
@@ -565,7 +564,7 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	var base matrix.Metric
-	var negativeCount int
+	var totalSkips int
 
 	for i, metric := range orderedMetrics {
 
@@ -578,11 +577,11 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		// all other properties - first calculate delta
-		if vs, err = metric.Delta(m.GetMetric(key), me.Logger); err != nil {
+		if skips, err = metric.Delta(m.GetMetric(key), me.Logger); err != nil {
 			me.Logger.Error().Stack().Err(err).Str("key", key).Msg("Calculate delta")
 			continue
 		}
-		negativeCount += vs.NegativeCount
+		totalSkips += skips
 
 		// DELTA - subtract previous value from current
 		if property == "delta" {
@@ -619,15 +618,15 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if property == "average" || property == "percent" {
 
 			if strings.HasSuffix(metric.GetName(), "latency") {
-				vs, err = metric.DivideWithThreshold(base, me.latencyIoReqd, me.Logger)
+				skips, err = metric.DivideWithThreshold(base, me.latencyIoReqd, me.Logger)
 			} else {
-				vs, err = metric.Divide(base, me.Logger)
+				skips, err = metric.Divide(base, me.Logger)
 			}
 
 			if err != nil {
 				me.Logger.Error().Stack().Err(err).Str("key", key).Msg("Division by base")
 			}
-			negativeCount += vs.NegativeCount
+			totalSkips += skips
 
 			if property == "average" {
 				continue
@@ -635,10 +634,10 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		if property == "percent" {
-			if vs, err = metric.MultiplyByScalar(100, me.Logger); err != nil {
+			if skips, err = metric.MultiplyByScalar(100, me.Logger); err != nil {
 				me.Logger.Error().Stack().Err(err).Str("key", key).Msg("Multiply by scalar")
 			} else {
-				negativeCount += vs.NegativeCount
+				totalSkips += skips
 			}
 			continue
 		}
@@ -651,37 +650,27 @@ func (me *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	// calculate rates (which we deferred to calculate averages/percents first)
 	for i, metric := range orderedMetrics {
 		if metric.GetProperty() == "rate" {
-			if vs, err = metric.Divide(timestamp, me.Logger); err != nil {
+			if skips, err = metric.Divide(timestamp, me.Logger); err != nil {
 				me.Logger.Error().Stack().Err(err).
 					Int("i", i).
 					Str("key", orderedKeys[i]).
 					Msg("Calculate rate")
 				continue
 			}
-			negativeCount += vs.NegativeCount
+			totalSkips += skips
 		}
 	}
 
 	calcD := time.Since(calcStart)
 
-	if int(zerolog.GlobalLevel()) <= int(zerolog.DebugLevel) {
-		me.Logger.Debug().
-			Int("instances", len(instanceKeys)).
-			Uint64("metrics", count).
-			Str("apiD", apiT.Round(time.Millisecond).String()).
-			Str("parseD", parseT.Round(time.Millisecond).String()).
-			Str("calcD", calcD.Round(time.Millisecond).String()).
-			Int("zNegativeMetric", negativeCount).
-			Msg("Collected")
-	} else {
-		me.Logger.Info().
-			Int("instances", len(instanceKeys)).
-			Uint64("metrics", count).
-			Str("apiD", apiT.Round(time.Millisecond).String()).
-			Str("parseD", parseT.Round(time.Millisecond).String()).
-			Str("calcD", calcD.Round(time.Millisecond).String()).
-			Msg("Collected")
-	}
+	me.Logger.Info().
+		Int("instances", len(instanceKeys)).
+		Uint64("metrics", count).
+		Str("apiD", apiT.Round(time.Millisecond).String()).
+		Str("parseD", parseT.Round(time.Millisecond).String()).
+		Str("calcD", calcD.Round(time.Millisecond).String()).
+		Int("skips", totalSkips).
+		Msg("Collected")
 
 	_ = me.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
 

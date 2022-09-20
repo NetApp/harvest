@@ -13,7 +13,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
-	"github.com/rs/zerolog"
 	"github.com/tidwall/gjson"
 	"path"
 	"regexp"
@@ -430,7 +429,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		perfRecords       []rest.PerfRecord
 		instanceKeys      []string
 		resourceLatency   matrix.Metric // for workload* objects
-		vs                matrix.VectorSummary
+		skips             int
 	)
 
 	r.Logger.Trace().Msg("updating data cache")
@@ -761,7 +760,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	var base matrix.Metric
-	var negativeCount int
+	var totalSkips int
 
 	for i, metric := range orderedMetrics {
 		key := orderedKeys[i]
@@ -782,11 +781,11 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		// all other properties - first calculate delta
-		if vs, err = metric.Delta(mat.GetMetric(key), r.Logger); err != nil {
+		if skips, err = metric.Delta(mat.GetMetric(key), r.Logger); err != nil {
 			r.Logger.Error().Err(err).Str("key", key).Msg("Calculate delta")
 			continue
 		}
-		negativeCount += vs.NegativeCount
+		totalSkips += skips
 
 		// DELTA - subtract previous value from current
 		if property == "delta" {
@@ -822,16 +821,16 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if property == "average" || property == "percent" {
 
 			if strings.HasSuffix(metric.GetName(), "latency") {
-				vs, err = metric.DivideWithThreshold(base, r.perfProp.latencyIoReqd, r.Logger)
+				skips, err = metric.DivideWithThreshold(base, r.perfProp.latencyIoReqd, r.Logger)
 			} else {
-				vs, err = metric.Divide(base, r.Logger)
+				skips, err = metric.Divide(base, r.Logger)
 			}
 
 			if err != nil {
 				r.Logger.Error().Err(err).Str("key", key).Msg("Division by base")
 				continue
 			}
-			negativeCount += vs.NegativeCount
+			totalSkips += skips
 
 			if property == "average" {
 				continue
@@ -839,10 +838,10 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		if property == "percent" {
-			if vs, err = metric.MultiplyByScalar(100, r.Logger); err != nil {
+			if skips, err = metric.MultiplyByScalar(100, r.Logger); err != nil {
 				r.Logger.Error().Err(err).Str("key", key).Msg("Multiply by scalar")
 			} else {
-				negativeCount += vs.NegativeCount
+				totalSkips += skips
 			}
 			continue
 		}
@@ -860,7 +859,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if counter != nil {
 			property := counter.counterType
 			if property == "rate" {
-				if vs, err = metric.Divide(timestamp, r.Logger); err != nil {
+				if skips, err = metric.Divide(timestamp, r.Logger); err != nil {
 					r.Logger.Error().Err(err).
 						Int("i", i).
 						Str("metric", metric.GetName()).
@@ -868,7 +867,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 						Msg("Calculate rate")
 					continue
 				}
-				negativeCount += vs.NegativeCount
+				totalSkips += skips
 			}
 		} else {
 			r.Logger.Warn().Str("counter", metric.GetName()).Msg("Counter is nil. Unable to process. Check template ")
@@ -879,24 +878,15 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	calcD := time.Since(calcStart)
 	_ = r.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
 
-	if int(zerolog.GlobalLevel()) <= int(zerolog.DebugLevel) {
-		r.Logger.Debug().
-			Int("instances", len(instanceKeys)).
-			Uint64("metrics", count).
-			Str("apiD", apiD.Round(time.Millisecond).String()).
-			Str("parseD", parseD.Round(time.Millisecond).String()).
-			Str("calcD", calcD.Round(time.Millisecond).String()).
-			Int("zNegativeMetric", negativeCount).
-			Msg("Collected")
-	} else {
-		r.Logger.Info().
-			Int("instances", len(instanceKeys)).
-			Uint64("metrics", count).
-			Str("apiD", apiD.Round(time.Millisecond).String()).
-			Str("parseD", parseD.Round(time.Millisecond).String()).
-			Str("calcD", calcD.Round(time.Millisecond).String()).
-			Msg("Collected")
-	}
+	r.Logger.Info().
+		Int("instances", len(instanceKeys)).
+		Uint64("metrics", count).
+		Str("apiD", apiD.Round(time.Millisecond).String()).
+		Str("parseD", parseD.Round(time.Millisecond).String()).
+		Str("calcD", calcD.Round(time.Millisecond).String()).
+		Int("skips", totalSkips).
+		Msg("Collected")
+
 	// store cache for next poll
 	r.Matrix[r.Object] = cachedData
 

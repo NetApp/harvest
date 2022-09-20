@@ -17,10 +17,6 @@ type MetricFloat64 struct {
 	values []float64
 }
 
-type VectorSummary struct {
-	NegativeCount int
-}
-
 func (m *MetricFloat64) Clone(deep bool) Metric {
 	clone := MetricFloat64{AbstractMetric: m.AbstractMetric.Clone(deep)}
 	if deep && len(m.values) != 0 {
@@ -174,13 +170,13 @@ func (m *MetricFloat64) GetValuesFloat64() []float64 {
 	return m.values
 }
 
-func (m *MetricFloat64) Delta(s Metric, logger *logging.Logger) (VectorSummary, error) {
-	var vs VectorSummary
+func (m *MetricFloat64) Delta(s Metric, logger *logging.Logger) (int, error) {
+	var skips int
 	prevRaw := s.GetValuesFloat64()
 	sRecord := s.GetRecords()
 	pass := m.GetPass()
 	if len(m.values) != len(prevRaw) || len(pass) != len(prevRaw) {
-		return vs, errs.New(ErrUnequalVectors, fmt.Sprintf("minuend=%d, subtrahend=%d", len(m.values), len(prevRaw)))
+		return 0, errs.New(ErrUnequalVectors, fmt.Sprintf("minuend=%d, subtrahend=%d", len(m.values), len(prevRaw)))
 	}
 	for i := range m.values {
 		if m.record[i] && sRecord[i] {
@@ -193,7 +189,7 @@ func (m *MetricFloat64) Delta(s Metric, logger *logging.Logger) (VectorSummary, 
 			// Distinguish invalid zeros from valid ones. Invalid ones happen when the delta != 0
 			if (curRaw == 0 || prevRaw[i] == 0) && m.values[i] != 0 {
 				pass[i] = false
-				vs.NegativeCount += 1
+				skips++
 				logger.Trace().
 					Str("metric", m.GetName()).
 					Float64("currentRaw", curRaw).
@@ -202,16 +198,16 @@ func (m *MetricFloat64) Delta(s Metric, logger *logging.Logger) (VectorSummary, 
 			}
 		}
 	}
-	return vs, nil
+	return skips, nil
 }
 
-func (m *MetricFloat64) Divide(s Metric, logger *logging.Logger) (VectorSummary, error) {
-	var vs VectorSummary
+func (m *MetricFloat64) Divide(s Metric, logger *logging.Logger) (int, error) {
+	var skips int
 	sValues := s.GetValuesFloat64()
 	sRecord := s.GetRecords()
 	pass := m.GetPass()
 	if len(m.values) != len(sValues) || len(pass) != len(sValues) {
-		return vs, errs.New(ErrUnequalVectors, fmt.Sprintf("numerator=%d, denominator=%d", len(m.values), len(sValues)))
+		return 0, errs.New(ErrUnequalVectors, fmt.Sprintf("numerator=%d, denominator=%d", len(m.values), len(sValues)))
 	}
 	for i := 0; i < len(m.values); i++ {
 		if m.record[i] && sRecord[i] && sValues[i] != 0 {
@@ -221,6 +217,7 @@ func (m *MetricFloat64) Divide(s Metric, logger *logging.Logger) (VectorSummary,
 			// A denominator of zero is fine
 			if m.values[i] < 0 || sValues[i] < 0 {
 				pass[i] = false
+				skips++
 				logger.Trace().
 					Str("metric", m.GetName()).
 					Float64("numerator", m.values[i]).
@@ -230,17 +227,17 @@ func (m *MetricFloat64) Divide(s Metric, logger *logging.Logger) (VectorSummary,
 			m.values[i] /= sValues[i]
 		}
 	}
-	return vs, nil
+	return skips, nil
 }
 
-func (m *MetricFloat64) DivideWithThreshold(s Metric, t int, logger *logging.Logger) (VectorSummary, error) {
-	var vs VectorSummary
+func (m *MetricFloat64) DivideWithThreshold(s Metric, t int, logger *logging.Logger) (int, error) {
+	var skips int
 	x := float64(t)
 	sValues := s.GetValuesFloat64()
 	sRecord := s.GetRecords()
 	pass := m.GetPass()
 	if len(m.values) != len(sValues) || len(pass) != len(sValues) {
-		return vs, errs.New(ErrUnequalVectors, fmt.Sprintf("numerator=%d, denominator=%d", len(m.values), len(sValues)))
+		return 0, errs.New(ErrUnequalVectors, fmt.Sprintf("numerator=%d, denominator=%d", len(m.values), len(sValues)))
 	}
 	for i := 0; i < len(m.values); i++ {
 		v := m.values[i]
@@ -250,6 +247,7 @@ func (m *MetricFloat64) DivideWithThreshold(s Metric, t int, logger *logging.Log
 		// It's important to check sValues[i] < 0 and allow a zero so pass=true and m.values[i] remains unchanged
 		if m.values[i] < 0 || sValues[i] < 0 {
 			pass[i] = false
+			skips++
 			logger.Trace().
 				Str("metric", m.GetName()).
 				Float64("numerator", v).
@@ -260,17 +258,18 @@ func (m *MetricFloat64) DivideWithThreshold(s Metric, t int, logger *logging.Log
 			m.values[i] /= sValues[i]
 		}
 	}
-	return vs, nil
+	return skips, nil
 }
 
-func (m *MetricFloat64) MultiplyByScalar(s uint, logger *logging.Logger) (VectorSummary, error) {
-	var vs VectorSummary
+func (m *MetricFloat64) MultiplyByScalar(s uint, logger *logging.Logger) (int, error) {
+	var skips int
 	x := float64(s)
 	pass := m.GetPass()
 	for i := 0; i < len(m.values); i++ {
 		if m.record[i] {
 			// reset pass
 			pass[i] = true
+			skips++
 			// if current is <= 0
 			if m.values[i] < 0 {
 				pass[i] = false
@@ -283,7 +282,7 @@ func (m *MetricFloat64) MultiplyByScalar(s uint, logger *logging.Logger) (Vector
 			m.values[i] *= x
 		}
 	}
-	return vs, nil
+	return skips, nil
 }
 
 func (m *MetricFloat64) Print() {
