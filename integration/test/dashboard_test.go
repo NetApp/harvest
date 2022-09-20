@@ -79,6 +79,7 @@ func (suite *DashboardImportTestSuite) TestCModeDashboardCount() {
 		"ONTAP: LUN",
 		"ONTAP: Network",
 		"ONTAP: Network with NVMe/FC",
+		"ONTAP: NFS Clients",
 		"ONTAP: Node",
 		"ONTAP: Shelf",
 		"ONTAP: SnapMirror",
