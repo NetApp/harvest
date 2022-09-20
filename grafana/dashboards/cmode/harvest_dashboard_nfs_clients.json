@@ -140,7 +140,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Total NFS Connection Count",
+      "title": "Total NFS Connections",
       "type": "stat"
     },
     {
@@ -268,7 +268,7 @@
           "refId": "E"
         }
       ],
-      "title": "NFS Connection count by protocol",
+      "title": "NFS Connections by Protocol",
       "transformations": [],
       "type": "piechart"
     },
