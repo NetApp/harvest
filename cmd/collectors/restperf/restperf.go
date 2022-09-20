@@ -68,10 +68,10 @@ type metricResponse struct {
 }
 
 func init() {
-	plugin.RegisterModule(RestPerf{})
+	plugin.RegisterModule(&RestPerf{})
 }
 
-func (RestPerf) HarvestModule() plugin.ModuleInfo {
+func (r *RestPerf) HarvestModule() plugin.ModuleInfo {
 	return plugin.ModuleInfo{
 		ID:  "harvest.collector.restperf",
 		New: func() plugin.Module { return new(RestPerf) },

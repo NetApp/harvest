@@ -1,6 +1,7 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
+
 package zapi
 
 import (
@@ -35,19 +36,19 @@ func ParseShortestPath(m *matrix.Matrix, l map[string]string) []string {
 	return prefix
 }
 
-func (me *Zapi) LoadCounters(counters *node.Node) (bool, *node.Node) {
+func (z *Zapi) LoadCounters(counters *node.Node) (bool, *node.Node) {
 	desired := node.NewXMLS("desired-attributes")
 
 	for _, c := range counters.GetChildren() {
-		me.ParseCounters(c, desired, []string{})
+		z.ParseCounters(c, desired, []string{})
 	}
 
 	//counters.SetXMLNameS("desired-attributes")
 	//counters.SetContentS("")
-	return len(me.Matrix[me.Object].GetMetrics()) > 0, desired
+	return len(z.Matrix[z.Object].GetMetrics()) > 0, desired
 }
 
-func (me *Zapi) ParseCounters(elem, desired *node.Node, path []string) {
+func (z *Zapi) ParseCounters(elem, desired *node.Node, path []string) {
 	//logger.Debug("", "%v Parsing [%s] [%s] with %d values and %d children", new_path, elem.Name, elem.Value, len(elem.Values), len(elem.Children))
 
 	var d *node.Node
@@ -61,7 +62,7 @@ func (me *Zapi) ParseCounters(elem, desired *node.Node, path []string) {
 	}
 
 	if len(elem.GetContentS()) != 0 {
-		if clean := me.HandleCounter(newPath, elem.GetContentS()); clean != "" {
+		if clean := z.HandleCounter(newPath, elem.GetContentS()); clean != "" {
 			d = node.NewXMLS(clean)
 		}
 	}
@@ -70,11 +71,11 @@ func (me *Zapi) ParseCounters(elem, desired *node.Node, path []string) {
 		desired.AddChild(d)
 	}
 	for _, child := range elem.GetChildren() {
-		me.ParseCounters(child, d, newPath)
+		z.ParseCounters(child, d, newPath)
 	}
 }
 
-func (me *Zapi) HandleCounter(path []string, content string) string {
+func (z *Zapi) HandleCounter(path []string, content string) string {
 	var (
 		name, display, key    string
 		splitValues, fullPath []string
@@ -82,7 +83,7 @@ func (me *Zapi) HandleCounter(path []string, content string) string {
 		err                   error
 	)
 
-	mat := me.Matrix[me.Object]
+	mat := z.Matrix[z.Object]
 	splitValues = strings.Split(content, "=>")
 	if len(splitValues) == 1 {
 		name = content
@@ -102,28 +103,28 @@ func (me *Zapi) HandleCounter(path []string, content string) string {
 	}
 
 	if content[0] == '^' {
-		me.instanceLabelPaths[key] = display
+		z.instanceLabelPaths[key] = display
 		//data.AddLabel(key, display)
-		me.Logger.Trace().Msgf("%sadd (%s) as label [%s]%s => %v", color.Yellow, key, display, color.End, fullPath)
+		z.Logger.Trace().Msgf("%sadd (%s) as label [%s]%s => %v", color.Yellow, key, display, color.End, fullPath)
 		if content[1] == '^' {
 			copied := make([]string, len(fullPath))
 			copy(copied, fullPath)
-			me.instanceKeyPaths = append(me.instanceKeyPaths, copied)
-			me.Logger.Trace().Msgf("%sadd (%s) as instance key [%s]%s => %v", color.Red, key, display, color.End, fullPath)
+			z.instanceKeyPaths = append(z.instanceKeyPaths, copied)
+			z.Logger.Trace().Msgf("%sadd (%s) as instance key [%s]%s => %v", color.Red, key, display, color.End, fullPath)
 		}
 	} else {
 		// use user-defined metric type
-		if t := me.Params.GetChildContentS("metric_type"); t != "" {
+		if t := z.Params.GetChildContentS("metric_type"); t != "" {
 			metric, err = mat.NewMetricType(key, t)
 			// use uint64 as default, since nearly all ZAPI counters are unsigned
 		} else {
 			metric, err = mat.NewMetricUint64(key)
 		}
 		if err != nil {
-			me.Logger.Error().Stack().Err(err).Msgf("add as metric [%s]: %v", key, display)
+			z.Logger.Error().Stack().Err(err).Msgf("add as metric [%s]: %v", key, display)
 		} else {
 			metric.SetName(display)
-			me.Logger.Trace().Msgf("%sadd as metric (%s) [%s]%s => %v", color.Blue, key, display, color.End, fullPath)
+			z.Logger.Trace().Msgf("%sadd as metric (%s) [%s]%s => %v", color.Blue, key, display, color.End, fullPath)
 		}
 	}
 
