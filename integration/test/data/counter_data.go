@@ -52,6 +52,7 @@ func GetCounterMap() map[string][]string {
 		"security_login",
 		"qtree_disk_used_pct_disk_limit",
 		"qtree_files_used_pct_file_limit",
+		"nfs_clients_idle_duration",
 	)
 	return counterMap
 }
