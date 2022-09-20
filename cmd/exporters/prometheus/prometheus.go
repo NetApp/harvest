@@ -427,7 +427,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 					rendered = append(rendered, []byte(x))
 				}
 			} else {
-				p.Logger.Trace().Msg("skipped: no data value")
+				p.Logger.Trace().Str("mkey", mkey).Msg("skipped: no data value")
 			}
 		}
 	}
