@@ -11,13 +11,12 @@ import (
 
 const HarvestHome = "/opt/harvest"
 const HarvestBin = "./bin/harvest"
-const IsCI = "IS_CI=true"
 
 type Harvest struct {
 }
 
 func (h *Harvest) Start() {
-	status := utils.Exec(HarvestHome, HarvestBin, []string{IsCI}, "start")
+	status := utils.Exec(HarvestHome, HarvestBin, nil, "start")
 	fmt.Println(status)
 	time.Sleep(30 * time.Second)
 	h.AllRunning()
