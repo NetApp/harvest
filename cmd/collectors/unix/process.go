@@ -49,85 +49,85 @@ func NewProcess(pid int) (*Process, error) {
 }
 
 // Name - common name of the process
-func (me *Process) Name() string {
-	return me.name
+func (p *Process) Name() string {
+	return p.name
 }
 
 // Cmdline - command-line vector of the process
-func (me *Process) Cmdline() string {
-	return me.cmdline
+func (p *Process) Cmdline() string {
+	return p.cmdline
 }
 
 // State - state of the process
-func (me *Process) State() string {
-	return me.state
+func (p *Process) State() string {
+	return p.state
 }
 
 // Reload - load or refresh stats
-func (me *Process) Reload() error {
+func (p *Process) Reload() error {
 
 	var err error
 
-	me.dirpath = path.Join("/proc", strconv.Itoa(me.pid)+"/")
+	p.dirpath = path.Join("/proc", strconv.Itoa(p.pid)+"/")
 
-	if s, err := os.Stat(me.dirpath); err != nil || !s.IsDir() {
+	if s, err := os.Stat(p.dirpath); err != nil || !s.IsDir() {
 		if err == nil {
-			return errs.New(ErrProcessNotFound, fmt.Sprintf("%s is not dir", me.dirpath))
+			return errs.New(ErrProcessNotFound, fmt.Sprintf("%s is not dir", p.dirpath))
 		}
 		return errs.New(ErrProcessNotFound, err.Error())
 	}
 
-	if err = me.loadCmdline(); err != nil {
+	if err = p.loadCmdline(); err != nil {
 		return err
 	}
 
-	if err = me.loadStatus(); err != nil {
+	if err = p.loadStatus(); err != nil {
 		return err
 	}
 
-	if err = me.loadStat(); err != nil {
+	if err = p.loadStat(); err != nil {
 		return err
 	}
 
-	if err = me.loadSmaps(); err != nil {
+	if err = p.loadSmaps(); err != nil {
 		return err
 	}
 
-	if err = me.loadIo(); err != nil {
+	if err = p.loadIo(); err != nil {
 		return err
 	}
 
-	if err = me.loadNetDev(); err != nil {
+	if err = p.loadNetDev(); err != nil {
 		return err
 	}
 
-	if err = me.loadFdinfo(); err != nil {
+	if err = p.loadFdinfo(); err != nil {
 		return err
 	}
 
 	ts := float64(time.Now().Unix())
-	if me.timestamp != 0 {
-		me.elapsedTime = ts - me.timestamp
+	if p.timestamp != 0 {
+		p.elapsedTime = ts - p.timestamp
 	}
-	me.timestamp = ts
+	p.timestamp = ts
 
 	return nil
 }
 
-func (me *Process) loadCmdline() error {
+func (p *Process) loadCmdline() error {
 
 	var (
 		data []byte
 		err  error
 	)
-	if data, err = os.ReadFile(path.Join(me.dirpath, "cmdline")); err != nil {
+	if data, err = os.ReadFile(path.Join(p.dirpath, "cmdline")); err != nil {
 		return errs.New(ErrFileRead, err.Error())
 	}
-	me.cmdline = string(bytes.ReplaceAll(data, []byte("\x00"), []byte(" ")))
+	p.cmdline = string(bytes.ReplaceAll(data, []byte("\x00"), []byte(" ")))
 	return nil
 }
 
-func (me *Process) loadStatus() error {
+func (p *Process) loadStatus() error {
 	var (
 		data             []byte
 		err              error
@@ -136,7 +136,7 @@ func (me *Process) loadStatus() error {
 		num              uint64
 	)
 
-	if data, err = os.ReadFile(path.Join(me.dirpath, "status")); err != nil {
+	if data, err = os.ReadFile(path.Join(p.dirpath, "status")); err != nil {
 		return errs.New(ErrFileRead, "status: "+err.Error())
 	}
 
@@ -148,20 +148,20 @@ func (me *Process) loadStatus() error {
 
 			switch key {
 			case "name":
-				me.name = value
+				p.name = value
 			case "state":
-				me.state = value
+				p.state = value
 			case "threads":
 				if num, err = strconv.ParseUint(value, 10, 32); err == nil {
-					me.numThreads = num
+					p.numThreads = num
 				}
 			case "voluntary_ctxt_switches":
 				if num, err = strconv.ParseUint(value, 10, 64); err == nil {
-					me.ctx["voluntary"] = num
+					p.ctx["voluntary"] = num
 				}
 			case "nonvoluntary_ctxt_switches":
 				if num, err = strconv.ParseUint(value, 10, 64); err == nil {
-					me.ctx["involuntary"] = num
+					p.ctx["involuntary"] = num
 				}
 			}
 		}
@@ -169,7 +169,7 @@ func (me *Process) loadStatus() error {
 	return err
 }
 
-func (me *Process) loadStat() error {
+func (p *Process) loadStat() error {
 
 	var (
 		data          []byte
@@ -179,12 +179,12 @@ func (me *Process) loadStat() error {
 		after, fields []string
 	)
 
-	if data, err = os.ReadFile(path.Join(me.dirpath, "stat")); err != nil {
+	if data, err = os.ReadFile(path.Join(p.dirpath, "stat")); err != nil {
 		return errs.New(ErrFileRead, "stat: "+err.Error())
 	}
 
 	// store previous values to calculate deltas
-	prevTotal = me.cpu["user"] + me.cpu["system"]
+	prevTotal = p.cpu["user"] + p.cpu["system"]
 
 	after = strings.Split(string(data), ")") // anythingn after status field
 
@@ -192,31 +192,31 @@ func (me *Process) loadStat() error {
 
 		// utime
 		if num, err = strconv.ParseInt(fields[11], 10, 64); err == nil {
-			me.cpu["user"] = float64(num) / clkTck
+			p.cpu["user"] = float64(num) / clkTck
 		}
 
 		// stime
 		if num, err = strconv.ParseInt(fields[12], 10, 64); err == nil {
-			me.cpu["system"] = float64(num) / clkTck
+			p.cpu["system"] = float64(num) / clkTck
 		}
 
 		// delayacct_blkio_ticks
 		if num, err = strconv.ParseInt(fields[39], 10, 64); err == nil {
-			me.cpu["iowait"] = float64(num) / clkTck
+			p.cpu["iowait"] = float64(num) / clkTck
 		}
 
 		// process start time (since system boot time)
 		if num, err = strconv.ParseInt(fields[19], 10, 64); err == nil {
-			me.startTime = float64(num) / clkTck
+			p.startTime = float64(num) / clkTck
 		}
 	}
 
-	me.cpuTotal = (me.cpu["user"] + me.cpu["system"]) - prevTotal
+	p.cpuTotal = (p.cpu["user"] + p.cpu["system"]) - prevTotal
 
 	return err
 }
 
-func (me *Process) loadSmaps() error {
+func (p *Process) loadSmaps() error {
 
 	var (
 		data      []byte
@@ -228,11 +228,11 @@ func (me *Process) loadSmaps() error {
 
 	// this may fail see https://github.com/NetApp/harvest/issues/249
 	// when it does, ignore so the other /proc checks are given a chance to run
-	if data, err = os.ReadFile(path.Join(me.dirpath, "smaps")); err != nil {
+	if data, err = os.ReadFile(path.Join(p.dirpath, "smaps")); err != nil {
 		return nil //nolint:nilerr
 	}
 
-	me.mem = make(map[string]uint64)
+	p.mem = make(map[string]uint64)
 
 	for _, line = range strings.Split(string(data), "\n") {
 
@@ -242,9 +242,9 @@ func (me *Process) loadSmaps() error {
 				key = strings.ToLower(strings.TrimSuffix(strings.Split(fields[0], "_")[0], ":"))
 
 				if key == "rss" || key == "swap" || key == "anonymous" || key == "shared" || key == "private" {
-					me.mem[key] += num
+					p.mem[key] += num
 				} else if key == "size" {
-					me.mem["vms"] += num
+					p.mem["vms"] += num
 				}
 
 			}
@@ -253,7 +253,7 @@ func (me *Process) loadSmaps() error {
 	return nil
 }
 
-func (me *Process) loadIo() error {
+func (p *Process) loadIo() error {
 
 	var (
 		data   []byte
@@ -265,21 +265,21 @@ func (me *Process) loadIo() error {
 
 	// this may fail see https://github.com/NetApp/harvest/issues/249
 	// when it does, ignore so the other /proc checks are given a chance to run
-	if data, err = os.ReadFile(path.Join(me.dirpath, "io")); err != nil {
+	if data, err = os.ReadFile(path.Join(p.dirpath, "io")); err != nil {
 		return nil //nolint:nilerr
 	}
 
 	for _, line = range strings.Split(string(data), "\n") {
 		if values = strings.Split(line, ":"); len(values) == 2 {
 			if num, err = strconv.ParseUint(strings.TrimSpace(values[1]), 10, 64); err == nil {
-				me.io[values[0]] = num
+				p.io[values[0]] = num
 			}
 		}
 	}
 	return nil
 }
 
-func (me *Process) loadNetDev() error {
+func (p *Process) loadNetDev() error {
 
 	var (
 		data                               []byte
@@ -290,11 +290,11 @@ func (me *Process) loadNetDev() error {
 		err                                error
 	)
 
-	if data, err = os.ReadFile(path.Join(me.dirpath, "net", "dev")); err != nil {
+	if data, err = os.ReadFile(path.Join(p.dirpath, "net", "dev")); err != nil {
 		return errs.New(ErrFileRead, "net/dev: "+err.Error())
 	}
 
-	me.net = make(map[string]uint64)
+	p.net = make(map[string]uint64)
 
 	labels = make([]string, 0)
 
@@ -317,7 +317,7 @@ func (me *Process) loadNetDev() error {
 			if fields = strings.Fields(line); len(fields) == len(labels)+1 {
 				for i, value = range fields[1:] {
 					if num, err = strconv.ParseUint(value, 10, 64); err == nil {
-						me.net[labels[i]] += num
+						p.net[labels[i]] += num
 					}
 				}
 			}
@@ -328,13 +328,13 @@ func (me *Process) loadNetDev() error {
 
 }
 
-func (me *Process) loadFdinfo() error {
+func (p *Process) loadFdinfo() error {
 	// this may fail see https://github.com/NetApp/harvest/issues/249
 	// when it does, ignore so the other /proc checks are given a chance to run
-	files, err := os.ReadDir(path.Join(me.dirpath, "fdinfo"))
+	files, err := os.ReadDir(path.Join(p.dirpath, "fdinfo"))
 	if err != nil {
 		return nil //nolint:nilerr
 	}
-	me.numFds = uint64(len(files))
+	p.numFds = uint64(len(files))
 	return nil
 }

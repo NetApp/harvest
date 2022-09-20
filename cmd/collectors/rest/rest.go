@@ -65,10 +65,10 @@ type Metric struct {
 }
 
 func init() {
-	plugin.RegisterModule(Rest{})
+	plugin.RegisterModule(&Rest{})
 }
 
-func (Rest) HarvestModule() plugin.ModuleInfo {
+func (r *Rest) HarvestModule() plugin.ModuleInfo {
 	return plugin.ModuleInfo{
 		ID:  "harvest.collector.rest",
 		New: func() plugin.Module { return new(Rest) },

@@ -38,10 +38,10 @@ var cDotFolder, sevenModeFolder string
 func (suite *DashboardImportTestSuite) SetupSuite() {
 	log.Info().Msg("Verify Grafana and Prometheus are configured")
 	if !utils.IsURLReachable(utils.GetGrafanaHTTPURL()) {
-		panic(fmt.Errorf("Grafana is not reachable."))
+		panic(fmt.Errorf("grafana is not reachable"))
 	}
 	if !utils.IsURLReachable(utils.GetPrometheusURL()) {
-		panic(fmt.Errorf("Prometheus is not reachable."))
+		panic(fmt.Errorf("prometheus is not reachable"))
 	}
 	cDotFolder = "Harvest-" + version.VERSION + "-cDOT"
 	sevenModeFolder = "Harvest-" + version.VERSION + "-7mode"
