@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1661778093058,
+  "iteration": 1663774806079,
   "links": [
     {
       "asDropdown": true,
@@ -1134,7 +1134,7 @@
             "h": 5,
             "w": 8,
             "x": 0,
-            "y": 2
+            "y": 25
           },
           "id": 204,
           "links": [],
@@ -1215,7 +1215,7 @@
             "h": 5,
             "w": 8,
             "x": 8,
-            "y": 2
+            "y": 25
           },
           "id": 206,
           "options": {
@@ -1289,7 +1289,7 @@
             "h": 5,
             "w": 8,
             "x": 16,
-            "y": 2
+            "y": 25
           },
           "id": 208,
           "options": {
@@ -1720,7 +1720,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 7
+            "y": 30
           },
           "id": 210,
           "interval": "1m",
@@ -1964,7 +1964,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 14
+            "y": 37
           },
           "id": 200,
           "options": {
@@ -1985,7 +1985,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "topk($TopResources,environment_sensor_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "topk($TopResources,environment_sensor_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$TopEnvSensorPower\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "{{node}}",
@@ -2055,7 +2055,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 14
+            "y": 37
           },
           "id": 202,
           "options": {
@@ -2076,7 +2076,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "topk($TopResources,environment_sensor_average_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "topk($TopResources,environment_sensor_average_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$TopEnvSensorAvgTemp\"})",
               "interval": "",
               "legendFormat": "{{node}}",
               "refId": "A"
@@ -2161,7 +2161,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 37
+            "y": 26
           },
           "id": 106,
           "options": {
@@ -2252,7 +2252,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 37
+            "y": 26
           },
           "id": 107,
           "options": {
@@ -2342,7 +2342,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 37
+            "y": 26
           },
           "id": 108,
           "options": {
@@ -2432,7 +2432,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 45
+            "y": 34
           },
           "id": 136,
           "options": {
@@ -2524,7 +2524,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 45
+            "y": 34
           },
           "id": 180,
           "options": {
@@ -2615,7 +2615,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 45
+            "y": 34
           },
           "id": 2,
           "options": {
@@ -2686,7 +2686,7 @@
             "h": 4,
             "w": 8,
             "x": 0,
-            "y": 19
+            "y": 27
           },
           "id": 187,
           "options": {
@@ -2741,7 +2741,7 @@
             "h": 4,
             "w": 8,
             "x": 8,
-            "y": 19
+            "y": 27
           },
           "id": 189,
           "options": {
@@ -2796,7 +2796,7 @@
             "h": 4,
             "w": 8,
             "x": 16,
-            "y": 19
+            "y": 27
           },
           "id": 188,
           "options": {
@@ -2881,7 +2881,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 23
+            "y": 31
           },
           "id": 191,
           "options": {
@@ -2963,7 +2963,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 23
+            "y": 31
           },
           "id": 194,
           "options": {
@@ -3045,7 +3045,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 31
+            "y": 39
           },
           "id": 193,
           "options": {
@@ -3127,7 +3127,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 31
+            "y": 39
           },
           "id": 196,
           "options": {
@@ -3210,7 +3210,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 39
+            "y": 47
           },
           "id": 195,
           "options": {
@@ -3292,7 +3292,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 39
+            "y": 47
           },
           "id": 192,
           "options": {
@@ -3392,7 +3392,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 33
+            "y": 28
           },
           "id": 216,
           "options": {
@@ -3478,7 +3478,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 33
+            "y": 28
           },
           "id": 218,
           "options": {
@@ -3566,7 +3566,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 33
+            "y": 28
           },
           "id": 219,
           "options": {
@@ -3843,6 +3843,52 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": "",
+        "multi": true,
+        "name": "TopEnvSensorPower",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*node=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(environment_sensor_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": "",
+        "multi": true,
+        "name": "TopEnvSensorAvgTemp",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(environment_sensor_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*node=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
@@ -3865,6 +3911,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Cluster",
-  "uid": "Puzm8EWVk",
-  "version": 11
+  "uid": "XoyDTb7Vk",
+  "version": 12
 }
