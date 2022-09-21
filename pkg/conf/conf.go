@@ -479,6 +479,13 @@ type Pollers struct {
 
 var defaultTemplate = &[]string{"default.yaml", "custom.yaml"}
 
+func NewCollector(name string) Collector {
+	return Collector{
+		Name:      name,
+		Templates: defaultTemplate,
+	}
+}
+
 func (c *Collector) UnmarshalYAML(n *yaml.Node) error {
 	if n.Kind == yaml.ScalarNode && n.ShortTag() == "!!str" {
 		c.Name = n.Value
