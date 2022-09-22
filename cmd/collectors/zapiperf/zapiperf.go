@@ -273,7 +273,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		startIndex = endIndex
 
 		if err = z.Client.BuildRequest(request); err != nil {
-			z.Logger.Error().Stack().Err(err).
+			z.Logger.Error().Err(err).
 				Str("objectname", z.Query).
 				Msg("Build request")
 			return nil, err
@@ -283,7 +283,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if err != nil {
 			// if ONTAP complains about batch size, use a smaller batch size
 			if strings.Contains(err.Error(), "resource limit exceeded") && z.batchSize > 100 {
-				z.Logger.Error().Stack().Err(err)
+				z.Logger.Error().Err(err)
 				z.Logger.Info().
 					Int("oldBatchSize", z.batchSize).
 					Int("newBatchSize", z.batchSize-100).
@@ -313,7 +313,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		// we want float, since our poll interval can be float
 		ts := float64(time.Now().UnixNano()) / BILLION
 
-		for _, i := range instances.GetChildren() {
+		for instIndex, i := range instances.GetChildren() {
 
 			key := i.GetChildContentS(z.instanceKey)
 
@@ -372,7 +372,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 			// add batch timestamp as custom counter
 			if err := timestamp.SetValueFloat64(instance, ts); err != nil {
-				z.Logger.Error().Stack().Err(err).Msg("set timestamp value: ")
+				z.Logger.Error().Err(err).Msg("set timestamp value: ")
 			}
 
 			for _, cnt := range counters.GetChildren() {
@@ -389,12 +389,6 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 					continue
 				}
 
-				z.Logger.Trace().
-					Str("key", key).
-					Str("counter", name).
-					Str("value", value).
-					Msg("Parsing counter")
-
 				// ZAPI counter for us is either instance label (string)
 				// or numeric metric (scalar or histogram)
 
@@ -403,6 +397,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 					instance.SetLabel(display, value)
 					z.Logger.Trace().
 						Str("display", display).
+						Int("instIndex", instIndex).
 						Str("value", value).
 						Msg("SetLabel")
 					continue
@@ -419,6 +414,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 							Stack().
 							Str("labels", name).
 							Str("value", value).
+							Int("instIndex", instIndex).
 							Msg("Histogram labels don't match parsed values")
 						continue
 					}
@@ -432,12 +428,14 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 									Str("name", name).
 									Str("label", label).
 									Str("value", values[i]).
+									Int("instIndex", instIndex).
 									Msg("Set histogram value failed")
 							} else {
 								z.Logger.Trace().
 									Str("name", name).
 									Str("label", label).
 									Str("value", values[i]).
+									Int("instIndex", instIndex).
 									Msg("Set histogram name.label = value")
 								count++
 							}
@@ -446,6 +444,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 								Str("name", name).
 								Str("label", label).
 								Str("value", value).
+								Int("instIndex", instIndex).
 								Msg("Histogram name.label not in cache")
 						}
 					}
@@ -461,11 +460,13 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 								Err(err).
 								Str("name", name).
 								Str("value", value).
+								Int("instIndex", instIndex).
 								Msg("Add resource-latency failed")
 						} else {
 							z.Logger.Trace().
 								Str("name", name).
 								Str("value", value).
+								Int("instIndex", instIndex).
 								Msg("Add resource-latency")
 							count++
 						}
@@ -481,14 +482,16 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 				if metric := newData.GetMetric(name); metric != nil {
 					if err = metric.SetValueString(instance, value); err != nil {
 						z.Logger.Error().
-							Stack().
 							Err(err).
 							Str("name", name).
 							Str("value", value).
+							Int("instIndex", instIndex).
 							Msg("Set metric failed")
 					} else {
 						z.Logger.Trace().
-							Str("name", name).
+							Int("instIndex", instIndex).
+							Str("key", key).
+							Str("counter", name).
 							Str("value", value).
 							Msg("Set metric")
 						count++
@@ -496,10 +499,12 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 					continue
 				}
 
-				z.Logger.Warn().Str("counter", name).Str("value", value).Msg("Counter not found in cache")
-
+				z.Logger.Warn().
+					Int("instIndex", instIndex).
+					Str("counter", name).
+					Str("value", value).
+					Msg("Counter not found in cache")
 			} // end loop over counters
-
 		} // end loop over instances
 	} // end batch request
 
@@ -559,7 +564,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	// calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
 	if _, err = timestamp.Delta(m.GetMetric("timestamp"), z.Logger); err != nil {
-		z.Logger.Error().Stack().Err(err).Msg("(timestamp) calculate delta:")
+		z.Logger.Error().Err(err).Msg("(timestamp) calculate delta:")
 		// @TODO terminate since other counters will be incorrect
 	}
 
@@ -578,7 +583,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 		// all other properties - first calculate delta
 		if skips, err = metric.Delta(m.GetMetric(key), z.Logger); err != nil {
-			z.Logger.Error().Stack().Err(err).Str("key", key).Msg("Calculate delta")
+			z.Logger.Error().Err(err).Str("key", key).Msg("Calculate delta")
 			continue
 		}
 		totalSkips += skips
@@ -624,7 +629,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 			}
 
 			if err != nil {
-				z.Logger.Error().Stack().Err(err).Str("key", key).Msg("Division by base")
+				z.Logger.Error().Err(err).Str("key", key).Msg("Division by base")
 			}
 			totalSkips += skips
 
@@ -635,13 +640,13 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 		if property == "percent" {
 			if skips, err = metric.MultiplyByScalar(100, z.Logger); err != nil {
-				z.Logger.Error().Stack().Err(err).Str("key", key).Msg("Multiply by scalar")
+				z.Logger.Error().Err(err).Str("key", key).Msg("Multiply by scalar")
 			} else {
 				totalSkips += skips
 			}
 			continue
 		}
-		z.Logger.Error().Stack().Err(err).
+		z.Logger.Error().Err(err).
 			Str("key", key).
 			Str("property", property).
 			Msg("Unknown property")
@@ -651,7 +656,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	for i, metric := range orderedMetrics {
 		if metric.GetProperty() == "rate" {
 			if skips, err = metric.Divide(timestamp, z.Logger); err != nil {
-				z.Logger.Error().Stack().Err(err).
+				z.Logger.Error().Err(err).
 					Int("i", i).
 					Str("key", orderedKeys[i]).
 					Msg("Calculate rate")
@@ -708,7 +713,7 @@ func (z *ZapiPerf) getParentOpsCounters(data *matrix.Matrix, KeyAttr string) (ti
 	parseT = 0 * time.Second
 
 	if ops = data.GetMetric("ops"); ops == nil {
-		z.Logger.Error().Stack().Err(nil).Msgf("ops counter not found in cache")
+		z.Logger.Error().Err(nil).Msgf("ops counter not found in cache")
 		return apiT, parseT, errs.New(errs.ErrMissingParam, "counter ops")
 	}
 
@@ -793,13 +798,13 @@ func (z *ZapiPerf) getParentOpsCounters(data *matrix.Matrix, KeyAttr string) (ti
 
 				if name == "ops" {
 					if err = ops.SetValueString(instance, value); err != nil {
-						z.Logger.Error().Stack().Err(err).Msgf("set metric (%s) value [%s]", name, value)
+						z.Logger.Error().Err(err).Msgf("set metric (%s) value [%s]", name, value)
 					} else {
 						z.Logger.Trace().Msgf("+ metric (%s) = [%s%s%s]", name, color.Cyan, value, color.End)
 						count++
 					}
 				} else {
-					z.Logger.Error().Stack().Err(nil).Msgf("unrequested metric (%s)", name)
+					z.Logger.Error().Err(nil).Msgf("unrequested metric (%s)", name)
 				}
 			}
 		}
@@ -968,7 +973,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	if !oldMetrics.Has("timestamp") {
 		m, err := mat.NewMetricFloat64("timestamp")
 		if err != nil {
-			z.Logger.Error().Stack().Err(err).Msg("add timestamp metric")
+			z.Logger.Error().Err(err).Msg("add timestamp metric")
 		}
 		m.SetProperty("raw")
 		m.SetExportable(false)
@@ -988,15 +993,15 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 			oldMetrics.Delete("ops")
 
 			if service = mat.GetMetric("service_time"); service == nil {
-				z.Logger.Error().Stack().Err(nil).Msg("metric [service_time] required to calculate workload missing")
+				z.Logger.Error().Err(nil).Msg("metric [service_time] required to calculate workload missing")
 			}
 
 			if wait = mat.GetMetric("wait_time"); wait == nil {
-				z.Logger.Error().Stack().Err(nil).Msg("metric [wait-time] required to calculate workload missing")
+				z.Logger.Error().Err(nil).Msg("metric [wait-time] required to calculate workload missing")
 			}
 
 			if visits = mat.GetMetric("visits"); visits == nil {
-				z.Logger.Error().Stack().Err(nil).Msg("metric [visits] required to calculate workload missing")
+				z.Logger.Error().Err(nil).Msg("metric [visits] required to calculate workload missing")
 			}
 
 			if service == nil || wait == nil || visits == nil {
@@ -1166,7 +1171,7 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 			} else if m, err = mat.NewMetricFloat64(key); err == nil {
 				z.Logger.Trace().Msgf("%s+[%s] added array metric (%s), element with label (%s)%s", color.Pink, name, display, label, color.End)
 			} else {
-				z.Logger.Error().Stack().Err(err).Msgf("add array metric element [%s]: ", key)
+				z.Logger.Error().Err(err).Msgf("add array metric element [%s]: ", key)
 				return ""
 			}
 
@@ -1193,7 +1198,7 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 		} else if m, err = mat.NewMetricFloat64(name); err == nil {
 			z.Logger.Trace().Msgf("%s+[%s] added scalar metric (%s)%s", color.Cyan, name, display, color.End)
 		} else {
-			z.Logger.Error().Stack().Err(err).Msgf("add scalar metric [%s]", name)
+			z.Logger.Error().Err(err).Msgf("add scalar metric [%s]", name)
 			return ""
 		}
 

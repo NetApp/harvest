@@ -184,16 +184,18 @@ func (m *MetricFloat64) Delta(s Metric, logger *logging.Logger) (int, error) {
 			// reset pass
 			pass[i] = true
 			m.values[i] -= prevRaw[i]
-			// Sometimes ONTAP sends spurious zeroes. Detect and don't publish the negative delta
-			// or the next poll that will show a large spike.
-			// Distinguish invalid zeros from valid ones. Invalid ones happen when the delta != 0
-			if (curRaw == 0 || prevRaw[i] == 0) && m.values[i] != 0 {
+			// Sometimes ONTAP sends spurious zeroes or values less than the previous poll.
+			// Detect and don't publish negative deltas or the subsequent poll will show a large spike.
+			isInvalidZero := (curRaw == 0 || prevRaw[i] == 0) && m.values[i] != 0
+			isNegative := m.values[i] < 0
+			if isInvalidZero || isNegative {
 				pass[i] = false
 				skips++
 				logger.Trace().
 					Str("metric", m.GetName()).
 					Float64("currentRaw", curRaw).
 					Float64("previousRaw", prevRaw[i]).
+					Int("instIndex", i).
 					Msg("Negative cooked value")
 			}
 		}

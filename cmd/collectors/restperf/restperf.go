@@ -430,6 +430,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		instanceKeys      []string
 		resourceLatency   matrix.Metric // for workload* objects
 		skips             int
+		instIndex         int
 	)
 
 	r.Logger.Trace().Msg("updating data cache")
@@ -469,6 +470,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	startTime = time.Now()
 	parseD = time.Since(startTime)
+	instIndex = -1
 
 	if len(perfRecords) == 0 {
 		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
@@ -489,6 +491,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 				instanceKey string
 				instance    *matrix.Instance
 			)
+			instIndex++
 
 			if !instanceData.IsObject() {
 				r.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
@@ -639,11 +642,11 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 								}
 								if err = metr.SetValueString(instance, values[i]); err != nil {
 									r.Logger.Error().
-										Stack().
 										Err(err).
 										Str("name", name).
 										Str("label", label).
 										Str("value", values[i]).
+										Int("instIndex", instIndex).
 										Msg("Set value failed")
 									continue
 								} else {
@@ -651,6 +654,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 										Str("name", name).
 										Str("label", label).
 										Str("value", values[i]).
+										Int("instIndex", instIndex).
 										Msg("Set name.label = value")
 									count++
 								}
@@ -661,6 +665,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 								if metr, err = newData.NewMetricFloat64(name); err != nil {
 									r.Logger.Error().Err(err).
 										Str("name", name).
+										Int("instIndex", instIndex).
 										Msg("NewMetricFloat64")
 								}
 							}
@@ -668,11 +673,24 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 							metr.SetExportable(metric.Exportable)
 							if c, err := strconv.ParseFloat(f.value, 64); err == nil {
 								if err = metr.SetValueFloat64(instance, c); err != nil {
-									r.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
+									r.Logger.Error().Err(err).
+										Str("key", metric.Name).
+										Str("metric", metric.Label).
+										Int("instIndex", instIndex).
 										Msg("Unable to set float key on metric")
+								} else {
+									r.Logger.Trace().
+										Int("instIndex", instIndex).
+										Str("key", instanceKey).
+										Str("counter", name).
+										Str("value", f.value).
+										Msg("Set metric")
 								}
 							} else {
-								r.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
+								r.Logger.Error().Err(err).
+									Str("key", metric.Name).
+									Str("metric", metric.Label).
+									Int("instIndex", instIndex).
 									Msg("Unable to parse float value")
 							}
 							count++
@@ -808,6 +826,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 				Str("key", key).
 				Str("property", property).
 				Str("denominator", counter.denominator).
+				Int("instIndex", instIndex).
 				Msg("Base counter missing")
 			continue
 		}
@@ -849,6 +868,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		r.Logger.Error().Err(err).
 			Str("key", key).
 			Str("property", property).
+			Int("instIndex", instIndex).
 			Msg("Unknown property")
 	}
 
@@ -864,6 +884,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 						Int("i", i).
 						Str("metric", metric.GetName()).
 						Str("key", orderedKeys[i]).
+						Int("instIndex", instIndex).
 						Msg("Calculate rate")
 					continue
 				}
