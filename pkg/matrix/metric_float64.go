@@ -195,6 +195,7 @@ func (m *MetricFloat64) Delta(s Metric, logger *logging.Logger) (int, error) {
 					Str("metric", m.GetName()).
 					Float64("currentRaw", curRaw).
 					Float64("previousRaw", prevRaw[i]).
+					Int("instIndex", i).
 					Msg("Negative cooked value")
 			}
 		}
