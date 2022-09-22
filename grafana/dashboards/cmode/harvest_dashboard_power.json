@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1651153548002,
+  "iteration": 1663838477750,
   "links": [
     {
       "asDropdown": true,
@@ -684,7 +684,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "topk($TopResources,environment_sensor_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "topk($TopResources,environment_sensor_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$TopNodeSensorPower\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{node}}",
@@ -775,7 +775,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "topk($TopResources,environment_sensor_average_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "topk($TopResources,environment_sensor_average_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$TopNodeSensorAvgTemp\"})",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -865,7 +865,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "topk($TopResources,shelf_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "topk($TopResources,shelf_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$TopShelfPower\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{shelf}} ({{cluster}})",
@@ -956,7 +956,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "topk($TopResources,shelf_average_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "topk($TopResources,shelf_average_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$TopShelfAvgTemp\"})",
           "interval": "",
           "legendFormat": "{{shelf}} ({{cluster}})",
           "refId": "A"
@@ -1307,20 +1307,20 @@
                       "value": null
                     },
                     {
-                      "value": 5,
-                      "color": "green"
+                      "color": "green",
+                      "value": 5
                     },
                     {
-                      "value": 45,
-                      "color": "yellow"
+                      "color": "yellow",
+                      "value": 45
                     },
                     {
-                      "value": 65,
-                      "color": "orange"
+                      "color": "orange",
+                      "value": 65
                     },
                     {
-                      "value": 75,
-                      "color": "red"
+                      "color": "red",
+                      "value": 75
                     }
                   ]
                 }
@@ -1351,16 +1351,16 @@
                       "value": null
                     },
                     {
-                      "value": 5,
-                      "color": "green"
+                      "color": "green",
+                      "value": 5
                     },
                     {
-                      "value": 45,
-                      "color": "#eab839"
+                      "color": "#eab839",
+                      "value": 45
                     },
                     {
-                      "value": 65,
-                      "color": "orange"
+                      "color": "orange",
+                      "value": 65
                     },
                     {
                       "color": "red",
@@ -1422,14 +1422,14 @@
           "refId": "E"
         },
         {
-          "expr": "environment_sensor_min_ambient_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
-          "legendFormat": "",
-          "interval": "",
           "exemplar": false,
-          "refId": "B",
+          "expr": "environment_sensor_min_ambient_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "format": "table",
           "hide": false,
           "instant": true,
-          "format": "table"
+          "interval": "",
+          "legendFormat": "",
+          "refId": "B"
         },
         {
           "exemplar": true,
@@ -1452,14 +1452,14 @@
           "refId": "G"
         },
         {
-          "expr": "environment_sensor_min_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
-          "legendFormat": "",
-          "interval": "",
           "exemplar": false,
-          "refId": "C",
-          "hide": false,
+          "expr": "environment_sensor_min_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
-          "instant": true
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "C"
         },
         {
           "exemplar": true,
@@ -1533,6 +1533,8 @@
             },
             "indexByName": {
               "Value #A": 13,
+              "Value #B": 6,
+              "Value #C": 9,
               "Value #D": 4,
               "Value #E": 5,
               "Value #F": 7,
@@ -1543,9 +1545,7 @@
               "cluster": 1,
               "datacenter": 0,
               "model": 3,
-              "node": 2,
-              "Value #B": 6,
-              "Value #C": 9
+              "node": 2
             },
             "renameByName": {
               "Value #A": "",
@@ -1986,16 +1986,16 @@
                       "value": null
                     },
                     {
-                      "value": 5,
-                      "color": "green"
+                      "color": "green",
+                      "value": 5
                     },
                     {
-                      "value": 45,
-                      "color": "#eab839"
+                      "color": "#eab839",
+                      "value": 45
                     },
                     {
-                      "value": 65,
-                      "color": "orange"
+                      "color": "orange",
+                      "value": 65
                     },
                     {
                       "color": "red",
@@ -2030,16 +2030,16 @@
                       "value": null
                     },
                     {
-                      "value": 5,
-                      "color": "green"
+                      "color": "green",
+                      "value": 5
                     },
                     {
-                      "value": 45,
-                      "color": "yellow"
+                      "color": "yellow",
+                      "value": 45
                     },
                     {
-                      "value": 65,
-                      "color": "orange"
+                      "color": "orange",
+                      "value": 65
                     },
                     {
                       "color": "red",
@@ -2118,15 +2118,16 @@
           "interval": "",
           "legendFormat": "",
           "refId": "E"
-        },    {
-          "expr": "shelf_min_ambient_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
-          "legendFormat": "",
-          "interval": "",
+        },
+        {
           "exemplar": false,
-          "refId": "K",
-          "hide": false,
+          "expr": "shelf_min_ambient_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
-          "instant": true
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "K"
         },
         {
           "exemplar": true,
@@ -2149,14 +2150,14 @@
           "refId": "G"
         },
         {
-          "expr": "shelf_min_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
-          "legendFormat": "",
-          "interval": "",
           "exemplar": false,
-          "refId": "L",
-          "hide": false,
+          "expr": "shelf_min_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}",
           "format": "table",
-          "instant": true
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "L"
         },
         {
           "exemplar": true,
@@ -2241,12 +2242,12 @@
               "Value #C": 20,
               "Value #D": 4,
               "Value #E": 5,
-              "Value #K": 6,
               "Value #F": 7,
               "Value #G": 8,
               "Value #H": 10,
               "Value #I": 11,
               "Value #J": 12,
+              "Value #K": 6,
               "Value #L": 9,
               "cluster": 1,
               "datacenter": 0,
@@ -2269,11 +2270,11 @@
               "Value #H": "Max Fan Speed (rpm)",
               "Value #I": "Avg Fan Speed (rpm)",
               "Value #J": "Min Fan Speed (rpm)",
+              "Value #K": "Min Ambient Temp (C)",
+              "Value #L": "Min Temp (C)",
               "module_type": "",
               "op_status": "",
-              "shelf_id": "",
-              "Value #K": "Min Ambient Temp (C)",
-              "Value #L": "Min Temp (C)"
+              "shelf_id": ""
             }
           }
         }
@@ -2366,7 +2367,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "5",
           "value": "5"
         },
@@ -2453,6 +2454,98 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(environment_sensor_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopNodeSensorPower",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(environment_sensor_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*node=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(environment_sensor_average_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopNodeSensorAvgTemp",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(environment_sensor_average_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*node=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(shelf_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopShelfPower",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(shelf_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*shelf=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(shelf_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopShelfAvgTemp",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(shelf_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*shelf=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
@@ -2486,6 +2579,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Power",
-  "uid": "Mq_5Slwnk",
-  "version": 3
+  "uid": "Nlyvox74k",
+  "version": 4
 }

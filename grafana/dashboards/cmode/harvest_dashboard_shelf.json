@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1662005797250,
+  "iteration": 1663840305837,
   "links": [
     {
       "asDropdown": true,
@@ -1419,7 +1419,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "topk($TopResources,shelf_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "topk($TopResources,shelf_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$TopShelfPower\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{shelf}} ({{cluster}})",
@@ -1510,7 +1510,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "topk($TopResources,shelf_average_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "topk($TopResources,shelf_average_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$TopShelfAvgTemp\"})",
           "interval": "",
           "legendFormat": "{{shelf}} ({{cluster}})",
           "refId": "A"
@@ -2078,7 +2078,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "5",
           "value": "5"
         },
@@ -2165,6 +2165,52 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(shelf_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopShelfPower",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(shelf_power{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*shelf=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(shelf_average_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopShelfAvgTemp",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(shelf_average_temperature{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*shelf=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
@@ -2198,6 +2244,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Shelf",
-  "uid": "1RBoc3W4z",
-  "version": 5
+  "uid": "yryDTbnVk",
+  "version": 6
 }

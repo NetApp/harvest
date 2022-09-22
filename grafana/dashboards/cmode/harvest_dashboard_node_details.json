@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1658913927474,
+  "iteration": 1663832272520,
   "links": [
     {
       "asDropdown": true,
@@ -1320,7 +1320,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "topk($TopResources, nic_util_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
+              "expr": "topk($TopResources, nic_util_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$TopNicUtilPercent\"})",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}} - {{node}} - {{nic}}",
               "refId": "A"
@@ -1410,7 +1410,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "topk($TopResources, fcp_util_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
+              "expr": "topk($TopResources, fcp_util_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCUtilPercent\"})",
               "interval": "",
               "legendFormat": "{{cluster}} {{svm}} - {{node}} -{{port}}",
               "refId": "A"
@@ -1500,7 +1500,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "topk($TopResources, nic_rx_bytes+nic_tx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
+              "expr": "topk($TopResources, nic_rx_bytes+nic_tx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$TopNicXPut\"})",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}} - {{node}} - {{nic}}",
               "refId": "A"
@@ -1590,7 +1590,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "topk($TopResources, fcp_read_data+fcp_write_data+fcp_nvmf_read_data+fcp_nvmf_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})",
+              "expr": "topk($TopResources, fcp_read_data+fcp_write_data+fcp_nvmf_read_data+fcp_nvmf_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCUtilXPut\"})",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}} - {{node}} - {{port}}",
               "refId": "A"
@@ -4786,6 +4786,98 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(nic_util_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopNicUtilPercent",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(nic_util_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*nic=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(nic_rx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}[${__range}])+avg_over_time(nic_tx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopNicXPut",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(nic_rx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}[${__range}])+avg_over_time(nic_tx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*nic=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(fcp_util_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopFCUtilPercent",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(fcp_util_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*port=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(fcp_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}[${__range}])+avg_over_time(fcp_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}[${__range}])+avg_over_time(fcp_nvmf_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}[${__range}])+avg_over_time(fcp_nvmf_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopFCUtilXPut",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(fcp_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}[${__range}])+avg_over_time(fcp_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}[${__range}])+avg_over_time(fcp_nvmf_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}[${__range}])+avg_over_time(fcp_nvmf_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*port=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
@@ -4808,6 +4900,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Node",
-  "uid": "DYouSmkVz",
-  "version": 3
+  "uid": "-8svTbnVk",
+  "version": 4
 }
