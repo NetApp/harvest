@@ -54,7 +54,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1651153632612,
+  "iteration": 1663838812554,
   "links": [
     {
       "asDropdown": true,
@@ -165,7 +165,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, qtree_nfs_ops{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"})",
+          "expr": "topk($TopResources, qtree_nfs_ops{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$TopAvgNFSIops\"})",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}} - {{qtree}}",
           "refId": "A"
@@ -253,7 +253,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, qtree_cifs_ops{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"})",
+          "expr": "topk($TopResources, qtree_cifs_ops{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$TopAvgCIFSIops\"})",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -343,7 +343,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, qtree_total_ops{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"})",
+          "expr": "topk($TopResources, qtree_total_ops{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$TopTotalQtreeIops\"})",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -433,7 +433,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, qtree_internal_ops{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"})",
+          "expr": "topk($TopResources, qtree_internal_ops{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$TopInternalQtreeIops\"})",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -532,7 +532,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "topk($TopResources, qtree_disk_used{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"})",
+              "expr": "topk($TopResources, qtree_disk_used{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$TopQtreeDiskUsed\"})",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - {{qtree}}",
               "refId": "A"
@@ -618,7 +618,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "topk($TopResources, qtree_files_used{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"})",
+              "expr": "topk($TopResources, qtree_files_used{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$TopQtreeFileUsed\"})",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - {{qtree}}",
               "refId": "A"
@@ -864,6 +864,144 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(qtree_nfs_ops{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopAvgNFSIops",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(qtree_nfs_ops{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*qtree=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(qtree_cifs_ops{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopAvgCIFSIops",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(qtree_cifs_ops{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*qtree=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(qtree_cifs_ops{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopTotalQtreeIops",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(qtree_cifs_ops{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*qtree=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(qtree_internal_ops{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopInternalQtreeIops",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(qtree_internal_ops{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*qtree=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(qtree_disk_used{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopQtreeDiskUsed",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(qtree_disk_used{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*qtree=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(qtree_files_used{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopQtreeFileUsed",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(qtree_files_used{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*qtree=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
@@ -886,6 +1024,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Qtree",
-  "uid": "ukc05GC7z",
-  "version": 4
+  "uid": "X_svTxn4k",
+  "version": 5
 }
