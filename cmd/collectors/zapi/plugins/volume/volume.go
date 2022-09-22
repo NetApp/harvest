@@ -376,7 +376,7 @@ func (my *Volume) getAggrDiskMapping() (map[string]aggrData, error) {
 	}
 
 	for _, aggrDiskData := range result {
-		aggrUUID := aggrDiskData.GetChildContentS("aaggregate-uuid")
+		aggrUUID := aggrDiskData.GetChildContentS("aggregate-uuid")
 		aggrName := aggrDiskData.GetChildContentS("aggregate")
 		aggrDiskList := aggrDiskData.GetChildS("aggr-plex-list").GetChildS("aggr-plex-info").GetChildS("aggr-raidgroup-list").GetChildS("aggr-raidgroup-info").GetChildS("aggr-disk-list").GetChildren()
 		for _, aggrDisk := range aggrDiskList {

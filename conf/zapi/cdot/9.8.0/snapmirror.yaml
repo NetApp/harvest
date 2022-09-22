@@ -33,6 +33,9 @@ counters:
     - ^destination-location
     - ^policy-type
 
+input_param:
+  - expand: true
+
 plugins:
   - Snapmirror
 export_options:
@@ -58,5 +61,7 @@ export_options:
     - protectedBy
     - protectionSourceType
     - policy_type
+    - source_cluster
     - derived_relationship_type
+    - local
     

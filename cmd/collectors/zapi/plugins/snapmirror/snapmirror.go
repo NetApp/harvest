@@ -23,6 +23,12 @@ type SnapMirror struct {
 	srcLimitCache   *dict.Dict
 	nodeUpdCounter  int
 	limitUpdCounter int
+	svmPeerDataMap  map[string]Peer // [peer SVM alias name] -> [peer detail] map
+}
+
+type Peer struct {
+	svm     string
+	cluster string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -45,6 +51,8 @@ func (my *SnapMirror) Init() error {
 	my.nodeCache = dict.New()
 	my.destLimitCache = dict.New()
 	my.srcLimitCache = dict.New()
+	my.svmPeerDataMap = make(map[string]Peer)
+
 	my.Logger.Debug().Msg("plugin initialized")
 	return nil
 }
@@ -73,6 +81,14 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	destUpdCount := 0
 	srcUpdCount := 0
 	limitUpdCount := 0
+
+	if cluster, ok := data.GetGlobalLabels().GetHas("cluster"); ok {
+		if err := my.getSVMPeerData(cluster); err != nil {
+			return nil, err
+		}
+		my.Logger.Debug().Msg("updated svm peer detail")
+	}
+
 	for _, instance := range data.GetInstances() {
 		if my.client.IsClustered() {
 			// check instances where destination node is missing
@@ -84,12 +100,26 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				}
 			}
 			// check instances where source node is missing
+			vserverName := instance.GetLabel("source_vserver")
+			volumeName := instance.GetLabel("source_volume")
 			if instance.GetLabel("source_node") == "" {
-				key := instance.GetLabel("source_vserver") + "." + instance.GetLabel("source_volume")
+				key := vserverName + "." + volumeName
 				if srcVol, has := my.nodeCache.GetHas(key); has {
 					instance.SetLabel("source_node", srcVol)
 					srcUpdCount++
 				}
+			}
+
+			// Update source_vserver in snapmirror (In case of inter-cluster SM - vserver name may differ)
+			if peerDetail, ok := my.svmPeerDataMap[vserverName]; ok {
+				instance.SetLabel("source_vserver", peerDetail.svm)
+				instance.SetLabel("source_cluster", peerDetail.cluster)
+			}
+
+			// It's local relationship, so updating the source_cluster and local labels
+			if sourceCluster := instance.GetLabel("source_cluster"); sourceCluster == "" {
+				instance.SetLabel("source_cluster", my.client.Name())
+				instance.SetLabel("local", "true")
 			}
 
 			// update the protectedBy and protectionSourceType fields and derivedRelationshipType in snapmirror_labels
@@ -209,5 +239,37 @@ func (my *SnapMirror) updateLimitCache() error {
 		}
 	}
 	my.Logger.Debug().Msgf("updated limit cache for %d nodes", count)
+	return nil
+}
+
+func (my *SnapMirror) getSVMPeerData(cluster string) error {
+	var (
+		result []*node.Node
+		err    error
+	)
+
+	request := node.NewXMLS("vserver-peer-get-iter")
+	// Fetching only remote vserver-peer
+	query := request.NewChildS("query", "")
+	vserverPeerInfo := query.NewChildS("vserver-peer-info", "")
+	vserverPeerInfo.NewChildS("peer-cluster", "!"+cluster)
+
+	// Clean svmPeerMap map
+	my.svmPeerDataMap = make(map[string]Peer)
+
+	if result, _, err = collectors.InvokeZapiCall(my.client, request, my.Logger, ""); err != nil {
+		return err
+	}
+
+	if len(result) == 0 || result == nil {
+		my.Logger.Debug().Msg("No vserver peer found")
+	}
+
+	for _, peerData := range result {
+		localSvmName := peerData.GetChildContentS("peer-vserver")
+		actualSvmName := peerData.GetChildContentS("remote-vserver-name")
+		peerClusterName := peerData.GetChildContentS("peer-cluster")
+		my.svmPeerDataMap[localSvmName] = Peer{svm: actualSvmName, cluster: peerClusterName}
+	}
 	return nil
 }

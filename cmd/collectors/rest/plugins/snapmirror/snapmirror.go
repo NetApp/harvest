@@ -192,6 +192,7 @@ func (my *SnapMirror) updateSMLabels(data *matrix.Matrix) {
 
 		if sourceCluster := instance.GetLabel("source_cluster"); sourceCluster == "" {
 			instance.SetLabel("source_cluster", cluster)
+			instance.SetLabel("local", "true")
 		}
 
 		// update the protectedBy and protectionSourceType fields and derivedRelationshipType in snapmirror_labels
