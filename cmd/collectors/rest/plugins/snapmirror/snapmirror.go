@@ -10,7 +10,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/tidwall/gjson"
 	"strings"
 	"time"
 )
@@ -22,8 +21,7 @@ type SnapMirror struct {
 	data           *matrix.Matrix
 	client         *rest.Client
 	query          string
-	nodeUpdCounter int
-	svmVolToNode   map[string]string
+	currentVal     int
 	svmPeerDataMap map[string]Peer // [peer SVM alias name] -> [peer detail] map
 }
 
@@ -55,7 +53,6 @@ func (my *SnapMirror) Init() error {
 	}
 
 	my.query = "api/private/cli/volume"
-	my.svmVolToNode = make(map[string]string)
 	my.svmPeerDataMap = make(map[string]Peer)
 
 	my.data = matrix.New(my.Parent+".SnapMirror", "snapmirror", "snapmirror")
@@ -78,8 +75,8 @@ func (my *SnapMirror) Init() error {
 	}
 	my.data.SetExportOptions(exportOptions)
 
-	// Assigned the value to nodeUpdCounter so that plugin would be invoked first time to populate cache.
-	my.nodeUpdCounter = PluginInvocationRate
+	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
+	my.currentVal = PluginInvocationRate
 	return nil
 }
 
@@ -91,12 +88,8 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	// Set all global labels from Rest.go if already not exist
 	my.data.SetGlobalLabels(data.GetGlobalLabels())
 
-	if my.nodeUpdCounter >= PluginInvocationRate {
-		my.nodeUpdCounter = 0
-		if err := my.updateNodeCache(); err != nil {
-			return nil, err
-		}
-		my.Logger.Debug().Msg("updated node cache")
+	if my.currentVal >= PluginInvocationRate {
+		my.currentVal = 0
 
 		if cluster, ok := data.GetGlobalLabels().GetHas("cluster"); ok {
 			if err := my.getSVMPeerData(cluster); err != nil {
@@ -108,37 +101,9 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	// update volume instance labels
 	my.updateSMLabels(data)
-	my.nodeUpdCounter++
+	my.currentVal++
 
 	return []*matrix.Matrix{my.data}, nil
-}
-
-func (my *SnapMirror) updateNodeCache() error {
-	var (
-		result []gjson.Result
-		err    error
-	)
-
-	// Clean svmVolToNode map
-	my.svmVolToNode = make(map[string]string)
-	href := rest.BuildHref("", "node", nil, "", "", "", "", my.query)
-
-	if result, err = collectors.InvokeRestCall(my.client, my.query, href, my.Logger); err != nil {
-		return err
-	}
-
-	for _, volume := range result {
-		volumeName := volume.Get("volume").String()
-		vserverName := volume.Get("vserver").String()
-		nodeName := volume.Get("node").String()
-		key := vserverName + volumeName
-
-		if _, ok := my.svmVolToNode[key]; ok {
-			my.Logger.Warn().Str("key", key).Msg("Duplicate key found")
-		}
-		my.svmVolToNode[key] = nodeName
-	}
-	return nil
 }
 
 func (my *SnapMirror) getSVMPeerData(cluster string) error {
@@ -176,13 +141,7 @@ func (my *SnapMirror) updateSMLabels(data *matrix.Matrix) {
 		if instance.GetLabel("group_type") == "consistencygroup" {
 			keys = append(keys, key)
 		}
-		volumeName := instance.GetLabel("source_volume")
 		vserverName := instance.GetLabel("source_vserver")
-
-		// Update source_node label in snapmirror
-		if nodeName, ok := my.svmVolToNode[vserverName+volumeName]; ok {
-			instance.SetLabel("source_node", nodeName)
-		}
 
 		// Update source_vserver in snapmirror (In case of inter-cluster SM - vserver name may differ)
 		if peerDetail, ok := my.svmPeerDataMap[vserverName]; ok {

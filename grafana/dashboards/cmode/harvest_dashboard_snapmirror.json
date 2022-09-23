@@ -1103,7 +1103,7 @@
       "repeatDirection": "h",
       "targets": [
         {
-          "expr": "count by (destination_node, relationship_status) (snapmirror_total_transfer_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_node=~\"$DestinationNode\",destination_node!=\"\"})",
+          "expr": "count by (destination_node, relationship_status) (snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_node=~\"$DestinationNode\",destination_node!=\"\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{destination_node}} - {{relationship_status}}",
@@ -1524,7 +1524,7 @@
       "repeatDirection": "h",
       "targets": [
         {
-          "expr": "count by (source_node, relationship_status) (snapmirror_total_transfer_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",source_node=~\"$SourceNode\",source_node!=\"\"})",
+          "expr": "count by (source_node, relationship_status) (snapmirror_labels{datacenter=~\"$Datacenter\",source_cluster=~\"$Cluster\"} * on (source_volume, source_vserver, source_cluster) group_left(source_node)  label_replace( label_replace( label_replace( label_replace (volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$SourceNode\",node!=\"\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_node\", \"$1\", \"node\", \"(.*)\") , \"source_cluster\", \"$1\", \"cluster\", \"(.*)\") ) ",
           "hide": false,
           "interval": "",
           "legendFormat": "{{source_node}} - {{relationship_status}}",
@@ -1622,7 +1622,7 @@
       "repeatDirection": "h",
       "targets": [
         {
-          "expr": "sum by (source_node) (snapmirror_break_failed_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",source_node=~\"$SourceNode\",source_node!=\"\"})",
+          "expr": "sum by (source_node) (snapmirror_break_failed_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on (source_volume, source_vserver) group_left(source_node)  label_replace( label_replace( label_replace (volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$SourceNode\",node!=\"\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_node\", \"$1\", \"node\", \"(.*)\") ) ",
           "hide": false,
           "interval": "",
           "legendFormat": "{{source_node}} - FAIL",
@@ -1632,7 +1632,7 @@
           "textEditor": false
         },
         {
-          "expr": "sum by (source_node) (snapmirror_break_successful_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",source_node=~\"$SourceNode\",source_node!=\"\"})",
+          "expr": "sum by (source_node) (snapmirror_break_successful_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on (source_volume, source_vserver) group_left(source_node)  label_replace( label_replace( label_replace (volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$SourceNode\",node!=\"\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_node\", \"$1\", \"node\", \"(.*)\") ) ",
           "hide": false,
           "interval": "",
           "legendFormat": "{{source_node}} - SUCCESS",
@@ -1730,7 +1730,7 @@
       "repeatDirection": "h",
       "targets": [
         {
-          "expr": "sum by (source_node) (snapmirror_resync_failed_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",source_node=~\"$SourceNode\",source_node!=\"\"})",
+          "expr": "sum by (source_node) (snapmirror_resync_failed_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on (source_volume, source_vserver) group_left(source_node)  label_replace( label_replace( label_replace (volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$SourceNode\",node!=\"\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_node\", \"$1\", \"node\", \"(.*)\") ) ",
           "hide": false,
           "interval": "",
           "legendFormat": "{{source_node}} - FAIL",
@@ -1740,7 +1740,7 @@
           "textEditor": false
         },
         {
-          "expr": "sum by (source_node) (snapmirror_resync_successful_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",source_node=~\"$SourceNode\",source_node!=\"\"})",
+          "expr": "sum by (source_node) (snapmirror_resync_successful_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on (source_volume, source_vserver) group_left(source_node)  label_replace( label_replace( label_replace (volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$SourceNode\",node!=\"\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_node\", \"$1\", \"node\", \"(.*)\") ) ",
           "hide": false,
           "interval": "",
           "legendFormat": "{{source_node}} - SUCCESS",
@@ -1838,7 +1838,7 @@
       "repeatDirection": "h",
       "targets": [
         {
-          "expr": "sum by (source_node) (snapmirror_update_failed_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",source_node=~\"$SourceNode\",source_node!=\"\"})",
+          "expr": "sum by (source_node) (snapmirror_update_failed_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on (source_volume, source_vserver) group_left(source_node)  label_replace( label_replace( label_replace (volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$SourceNode\",node!=\"\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_node\", \"$1\", \"node\", \"(.*)\") ) ",
           "hide": false,
           "interval": "",
           "legendFormat": "{{source_node}} - FAIL",
@@ -1848,7 +1848,7 @@
           "textEditor": false
         },
         {
-          "expr": "sum by (source_node) (snapmirror_update_successful_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",source_node=~\"$SourceNode\",source_node!=\"\"})",
+          "expr": "sum by (source_node) (snapmirror_update_successful_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on (source_volume, source_vserver) group_left(source_node)  label_replace( label_replace( label_replace (volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$SourceNode\",node!=\"\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_node\", \"$1\", \"node\", \"(.*)\") ) ",
           "hide": false,
           "interval": "",
           "legendFormat": "{{source_node}} - SUCCESS",
@@ -3239,13 +3239,11 @@
           "id": "organize",
           "options": {
             "excludeByName": {
-              "source_node": false
             },
             "indexByName": {
               "Value": 4,
               "destination_volume": 2,
               "destination_vserver": 3,
-              "source_node": 5,
               "source_volume": 0,
               "source_vserver": 1
             },
@@ -4335,7 +4333,6 @@
           "id": "organize",
           "options": {
             "excludeByName": {
-              "source_node": false
             },
             "indexByName": {
               "destination_volume": 1,
@@ -4464,7 +4461,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(snapmirror_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}, source_node)",
+        "definition": "query_result((snapmirror_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\",source_cluster=~\"$Cluster\"} * on (source_volume, source_vserver, source_cluster) group_left(source_node)  label_replace( label_replace( label_replace( label_replace (volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node!=\"\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_node\", \"$1\", \"node\", \"(.*)\") , \"source_cluster\", \"$1\", \"cluster\", \"(.*)\") ) ) \n\n\n",
         "description": null,
         "error": null,
         "hide": 0,
@@ -4474,11 +4471,11 @@
         "name": "SourceNode",
         "options": [],
         "query": {
-          "query": "label_values(snapmirror_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}, source_node)",
+          "query": "query_result((snapmirror_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\",source_cluster=~\"$Cluster\"} * on (source_volume, source_vserver, source_cluster) group_left(source_node)  label_replace( label_replace( label_replace( label_replace (volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node!=\"\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_node\", \"$1\", \"node\", \"(.*)\") , \"source_cluster\", \"$1\", \"cluster\", \"(.*)\") ) ) \n\n\n",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
-        "regex": "",
+        "regex": ".*source_node=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",

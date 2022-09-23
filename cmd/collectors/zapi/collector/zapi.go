@@ -43,7 +43,6 @@ type Zapi struct {
 	instanceKeyPaths   [][]string
 	instanceLabelPaths map[string]string
 	shortestPathPrefix []string
-	inputParams        map[string]string
 }
 
 func init() {
@@ -170,14 +169,6 @@ func (z *Zapi) InitCache() error {
 		} else {
 			z.Logger.Trace().Msg("using default no batch-size")
 		}
-
-		z.inputParams = make(map[string]string)
-		if inputParams := z.Params.GetChildS("input_param"); inputParams != nil {
-			for _, inputParam := range inputParams.GetChildren() {
-				z.inputParams[inputParam.GetNameS()] = inputParam.GetContentS()
-			}
-			z.Logger.Debug().Msgf("using %d input params", len(z.inputParams))
-		}
 	}
 
 	z.instanceLabelPaths = make(map[string]string)
@@ -267,10 +258,9 @@ func (z *Zapi) PollInstance() (map[string]*matrix.Matrix, error) {
 		if z.Client.IsClustered() && z.batchSize != "" {
 			request.NewChildS("max-records", z.batchSize)
 		}
-		if z.Client.IsClustered() && len(z.inputParams) != 0 {
-			for name, value := range z.inputParams {
-				request.NewChildS(name, value)
-			}
+		// special check for snapmirror as we would pass extra input "expand=true"
+		if z.Client.IsClustered() && z.Query == "snapmirror-get-iter" {
+			request.NewChildS("expand", "true")
 		}
 
 		tag = "initial"
@@ -394,10 +384,9 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 		if z.batchSize != "" {
 			request.NewChildS("max-records", z.batchSize)
 		}
-		if len(z.inputParams) != 0 {
-			for name, value := range z.inputParams {
-				request.NewChildS(name, value)
-			}
+		// special check for snapmirror as we would pass extra input "expand=true"
+		if z.Query == "snapmirror-get-iter" {
+			request.NewChildS("expand", "true")
 		}
 	}
 
