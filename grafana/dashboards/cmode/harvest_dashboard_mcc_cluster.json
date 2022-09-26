@@ -72,7 +72,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1664175665568,
+  "iteration": 1664175665573,
   "links": [
     {
       "asDropdown": true,
@@ -2651,7 +2651,7 @@
         "allFormat": "glob",
         "allValue": null,
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "5",
           "value": "5"
         },
@@ -2715,7 +2715,7 @@
             "value": "20"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "40",
             "value": "40"
           }
@@ -2891,7 +2891,7 @@
     ]
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {
