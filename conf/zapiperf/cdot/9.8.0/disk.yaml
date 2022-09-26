@@ -38,6 +38,7 @@ plugins:
   # label names that will be added to instances
     - node
     - aggr ...
+    - plex node,aggr,plex
 
   Max:
   # plugin will create max for each object
