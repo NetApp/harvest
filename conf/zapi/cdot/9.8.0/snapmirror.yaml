@@ -58,5 +58,7 @@ export_options:
     - protectedBy
     - protectionSourceType
     - policy_type
+    - source_cluster
     - derived_relationship_type
+    - local
     

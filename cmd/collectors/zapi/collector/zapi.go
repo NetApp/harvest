@@ -258,6 +258,10 @@ func (z *Zapi) PollInstance() (map[string]*matrix.Matrix, error) {
 		if z.Client.IsClustered() && z.batchSize != "" {
 			request.NewChildS("max-records", z.batchSize)
 		}
+		// special check for snapmirror as we would pass extra input "expand=true"
+		if z.Client.IsClustered() && z.Query == "snapmirror-get-iter" {
+			request.NewChildS("expand", "true")
+		}
 
 		tag = "initial"
 
@@ -379,6 +383,10 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 		}
 		if z.batchSize != "" {
 			request.NewChildS("max-records", z.batchSize)
+		}
+		// special check for snapmirror as we would pass extra input "expand=true"
+		if z.Query == "snapmirror-get-iter" {
+			request.NewChildS("expand", "true")
 		}
 	}
 

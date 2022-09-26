@@ -71,3 +71,4 @@ export_options:
     - policy_type
     - source_cluster
     - derived_relationship_type
+    - local
