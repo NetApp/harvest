@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1664271368325,
+  "iteration": 1664280004316,
   "links": [
     {
       "asDropdown": true,
@@ -810,30 +810,6 @@
                   {
                     "id": "custom.width",
                     "value": 398
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "linkSpeed"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 169
-                  },
-                  {
-                    "id": "unit",
-                    "value": "bps"
-                  },
-                  {
-                    "id": "decimals",
-                    "value": 0
-                  },
-                  {
-                    "id": "displayName",
-                    "value": "speed"
                   }
                 ]
               }
@@ -3660,6 +3636,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Network",
-  "uid": "muslze7Vz",
+  "uid": "pM347mV4z",
   "version": 5
 }

@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1651157515890,
+  "iteration": 1664281595179,
   "links": [
     {
       "asDropdown": true,
@@ -534,10 +534,6 @@
     {
       "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -590,7 +586,7 @@
                 "properties": [
                   {
                     "id": "unit",
-                    "value": "Bps"
+                    "value": "bps"
                   },
                   {
                     "id": "custom.width",
@@ -816,30 +812,6 @@
                     "value": 398
                   }
                 ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "linkSpeed"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 169
-                  },
-                  {
-                    "id": "unit",
-                    "value": "bps"
-                  },
-                  {
-                    "id": "decimals",
-                    "value": 0
-                  },
-                  {
-                    "id": "displayName",
-                    "value": "speed"
-                  }
-                ]
               }
             ]
           },
@@ -847,7 +819,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 11
+            "y": 12
           },
           "id": 58,
           "interval": "",
@@ -933,26 +905,6 @@
               "options": {}
             },
             {
-              "id": "calculateField",
-              "options": {
-                "alias": "linkSpeed",
-                "binary": {
-                  "left": "speed",
-                  "operator": "*",
-                  "reducer": "sum",
-                  "right": "8"
-                },
-                "mode": "binary",
-                "reduce": {
-                  "include": [
-                    "speed"
-                  ],
-                  "reducer": "last"
-                },
-                "replaceFields": false
-              }
-            },
-            {
               "id": "organize",
               "options": {
                 "excludeByName": {
@@ -963,24 +915,17 @@
                   "datacenter": true,
                   "instance": true,
                   "job": true,
-                  "speed": true,
+                  "speed": false,
                   "state": true
                 },
                 "indexByName": {
-                  "Time": 0,
-                  "Value": 12,
                   "Value #B": 4,
                   "Value #C": 5,
                   "Value #D": 6,
                   "Value #E": 7,
-                  "__name__": 1,
-                  "cluster": 5,
-                  "datacenter": 6,
-                  "instance": 7,
-                  "job": 8,
-                  "linkSpeed": 2,
                   "nic": 0,
                   "node": 1,
+                  "speed": 2,
                   "type": 3
                 },
                 "renameByName": {}
@@ -1049,7 +994,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 22
+            "y": 23
           },
           "id": 12,
           "options": {
@@ -1141,7 +1086,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 22
+            "y": 23
           },
           "id": 28,
           "options": {
@@ -1233,7 +1178,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 32
+            "y": 33
           },
           "id": 61,
           "options": {
@@ -1324,7 +1269,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 32
+            "y": 33
           },
           "id": 29,
           "options": {
@@ -1415,7 +1360,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 32
+            "y": 33
           },
           "id": 30,
           "options": {
@@ -1453,10 +1398,6 @@
     {
       "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1509,7 +1450,7 @@
                 "properties": [
                   {
                     "id": "unit",
-                    "value": "Bps"
+                    "value": "bps"
                   },
                   {
                     "id": "custom.width",
@@ -2321,6 +2262,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Network 7 mode",
-  "uid": "8p6gelQnk",
-  "version": 3
+  "uid": "UE3Vni4Vk",
+  "version": 4
 }

@@ -104,7 +104,6 @@ func (suite *DashboardImportTestSuite) TestSevenModeDashboardCount() {
 		"ONTAP: Disk 7 mode",
 		"ONTAP: LUN 7 mode",
 		"ONTAP: Network 7 mode",
-		"ONTAP: Network with NVMe/FC 7 mode",
 		"ONTAP: Node 7 mode",
 		"ONTAP: Shelf 7 mode",
 		"ONTAP: Volume 7 mode",
