@@ -366,6 +366,7 @@ func initImportVars() {
 	if opts.dir == "grafana/dashboards" && opts.serverfolder.name == "" {
 		m[path.Join(opts.dir, "/cmode")] = &Folder{name: "Harvest-" + harvestRelease + "-cDOT"}
 		m[path.Join(opts.dir, "/7mode")] = &Folder{name: "Harvest-" + harvestRelease + "-7mode"}
+		m[path.Join(opts.dir, "/storagegrid")] = &Folder{name: "Harvest-" + harvestRelease + "-StorageGrid"}
 	} else if opts.dir != "" && opts.serverfolder.name != "" {
 		m[opts.dir] = &Folder{name: opts.serverfolder.name}
 	}

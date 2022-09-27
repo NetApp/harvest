@@ -20,7 +20,11 @@ func (r *Rest) LoadTemplate() (string, error) {
 	)
 
 	// import template
-	if template, templatePath, err = r.ImportSubTemplate("", r.getTemplateFn(), r.Client.Cluster().Version); err != nil {
+	if template, templatePath, err = r.ImportSubTemplate(
+		"",
+		TemplateFn(r.Params, r.Object),
+		r.Client.Cluster().Version,
+	); err != nil {
 		return "", err
 	}
 
@@ -139,14 +143,14 @@ func HandleDuration(value string) float64 {
 	return 0
 }
 
+// Example: timestamp: 2020-12-02T18:36:19-08:00
+var regexTimeStamp = regexp.MustCompile(
+	`[+-]?\d{4}(-[01]\d(-[0-3]\d(T[0-2]\d:[0-5]\d:?([0-5]\d(\.\d+)?)?[+-][0-2]\d:[0-5]\d?)?)?)?`)
+
 func HandleTimestamp(value string) float64 {
 	var timestamp time.Time
 	var err error
 
-	// Example: timestamp: 2020-12-02T18:36:19-08:00
-	timestampRegex := `[+-]?\d{4}(-[01]\d(-[0-3]\d(T[0-2]\d:[0-5]\d:?([0-5]\d(\.\d+)?)?[+-][0-2]\d:[0-5]\d?)?)?)?`
-
-	regexTimeStamp := regexp.MustCompile(timestampRegex)
 	if match := regexTimeStamp.MatchString(value); match {
 		// example: 2020-12-02T18:36:19-08:00   ==>  1606962979
 		if timestamp, err = time.Parse(time.RFC3339, value); err != nil {
