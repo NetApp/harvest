@@ -37,6 +37,7 @@ plugins:
   # label names that will be added to instances
     - node
     - aggr ...
+    - plex node,aggr,plex
   #  - plex node aggr
   #  - raid node aggr plex
   Max:
