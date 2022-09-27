@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1663828295762,
+  "iteration": 1664271368325,
   "links": [
     {
       "asDropdown": true,
@@ -532,7 +532,7 @@
       "type": "stat"
     },
     {
-      "collapsed": false,
+      "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
@@ -541,1984 +541,2570 @@
         "y": 10
       },
       "id": 32,
-      "panels": [],
-      "title": "Ethernet Drilldown",
-      "type": "row"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "left",
-            "displayMode": "auto",
-            "filterable": false
-          },
-          "decimals": 2,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "rgb(80, 220, 20)",
-                "value": null
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": false
               },
-              {
-                "color": "light-yellow",
-                "value": 1000000
-              },
-              {
-                "color": "semi-dark-orange",
-                "value": 10000000
-              },
-              {
-                "color": "semi-dark-red",
-                "value": 100000000
-              }
-            ]
-          },
-          "unit": "Bps"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "speed"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "bps"
-              },
-              {
-                "id": "custom.width",
-                "value": 169
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value #C"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "percentunit"
-              },
-              {
-                "id": "custom.displayMode",
-                "value": "gradient-gauge"
-              },
-              {
-                "id": "displayName",
-                "value": "used %"
-              },
-              {
-                "id": "noValue",
-                "value": "n/a"
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "rgb(80, 220, 20)",
-                      "value": null
-                    },
-                    {
-                      "color": "light-yellow",
-                      "value": 50
-                    },
-                    {
-                      "color": "semi-dark-orange",
-                      "value": 75
-                    },
-                    {
-                      "color": "semi-dark-red",
-                      "value": 90
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value #B"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "status"
-              },
-              {
-                "id": "mappings",
-                "value": [
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
                   {
-                    "options": {
-                      "1": {
-                        "text": "up"
-                      }
-                    },
-                    "type": "value"
+                    "color": "rgb(80, 220, 20)",
+                    "value": null
                   },
                   {
-                    "options": {
-                      "from": 0,
-                      "result": {
-                        "text": "down"
-                      },
-                      "to": 0.999
-                    },
-                    "type": "range"
+                    "color": "light-yellow",
+                    "value": 1000000
+                  },
+                  {
+                    "color": "semi-dark-orange",
+                    "value": 10000000
+                  },
+                  {
+                    "color": "semi-dark-red",
+                    "value": 100000000
+                  }
+                ]
+              },
+              "unit": "Bps"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "speed"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bps"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 169
                   }
                 ]
               },
               {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "rgb(199, 48, 66)",
-                      "value": null
-                    },
-                    {
-                      "color": "rgb(74, 163, 52)",
-                      "value": 1
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #C"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percentunit"
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "used %"
+                  },
+                  {
+                    "id": "noValue",
+                    "value": "n/a"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "rgb(80, 220, 20)",
+                          "value": null
+                        },
+                        {
+                          "color": "light-yellow",
+                          "value": 50
+                        },
+                        {
+                          "color": "semi-dark-orange",
+                          "value": 75
+                        },
+                        {
+                          "color": "semi-dark-red",
+                          "value": 90
+                        }
+                      ]
                     }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #B"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "status"
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "1": {
+                            "text": "up"
+                          }
+                        },
+                        "type": "value"
+                      },
+                      {
+                        "options": {
+                          "from": 0,
+                          "result": {
+                            "text": "down"
+                          },
+                          "to": 0.999
+                        },
+                        "type": "range"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "rgb(199, 48, 66)",
+                          "value": null
+                        },
+                        {
+                          "color": "rgb(74, 163, 52)",
+                          "value": 1
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "status"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 153
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "nic"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 122
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "node"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 184
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "type"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 141
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "used %"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 228
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #D"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "send"
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #E"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "receive"
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "send"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 360
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "receive"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 398
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "linkSpeed"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 169
+                  },
+                  {
+                    "id": "unit",
+                    "value": "bps"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 0
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "speed"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 24,
+            "x": 0,
+            "y": 11
+          },
+          "id": 58,
+          "interval": "",
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "send"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "nic_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "expr": "nic_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            },
+            {
+              "expr": "nic_util_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "C"
+            },
+            {
+              "expr": "nic_tx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "D"
+            },
+            {
+              "expr": "nic_rx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "E"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Ethernet ports",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "nic",
+                    "node",
+                    "type",
+                    "Value #B",
+                    "Value #C",
+                    "Value #D",
+                    "Value #E",
+                    "speed"
                   ]
                 }
-              },
-              {
-                "id": "custom.displayMode",
-                "value": "color-background"
               }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "status"
             },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 153
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "nic"
+            {
+              "id": "merge",
+              "options": {}
             },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 122
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true,
+                  "__name__": true,
+                  "cluster": true,
+                  "datacenter": true,
+                  "instance": true,
+                  "job": true,
+                  "speed": false,
+                  "state": true
+                },
+                "indexByName": {
+                  "Value #B": 4,
+                  "Value #C": 5,
+                  "Value #D": 6,
+                  "Value #E": 7,
+                  "nic": 0,
+                  "node": 1,
+                  "speed": 2,
+                  "type": 3
+                },
+                "renameByName": {}
               }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "node"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 184
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "type"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 141
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "used %"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 228
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value #D"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "send"
-              },
-              {
-                "id": "custom.displayMode",
-                "value": "gradient-gauge"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value #E"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "receive"
-              },
-              {
-                "id": "custom.displayMode",
-                "value": "gradient-gauge"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "send"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 360
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "receive"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 398
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "linkSpeed"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 169
-              },
-              {
-                "id": "unit",
-                "value": "bps"
-              },
-              {
-                "id": "decimals",
-                "value": 0
-              },
-              {
-                "id": "displayName",
-                "value": "speed"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 24,
-        "x": 0,
-        "y": 11
-      },
-      "id": 58,
-      "interval": "",
-      "options": {
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "send"
-          }
-        ]
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "expr": "nic_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
-          "format": "table",
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        },
-        {
-          "expr": "nic_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "B"
-        },
-        {
-          "expr": "nic_util_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "C"
-        },
-        {
-          "expr": "nic_tx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "D"
-        },
-        {
-          "expr": "nic_rx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "E"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Ethernet ports",
-      "transformations": [
-        {
-          "id": "filterFieldsByName",
-          "options": {
-            "include": {
-              "names": [
-                "nic",
-                "node",
-                "speed",
-                "type",
-                "Value #B",
-                "Value #C",
-                "Value #D",
-                "Value #E"
-              ]
             }
-          }
+          ],
+          "type": "table"
         },
         {
-          "id": "merge",
-          "options": {}
-        },
-        {
-          "id": "calculateField",
-          "options": {
-            "alias": "linkSpeed",
-            "binary": {
-              "left": "speed",
-              "operator": "*",
-              "reducer": "sum",
-              "right": "8"
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "Bps"
             },
-            "mode": "binary",
-            "reduce": {
-              "include": [
-                "speed"
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 22
+          },
+          "id": 12,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
               ],
-              "reducer": "last"
+              "displayMode": "table",
+              "placement": "bottom"
             },
-            "replaceFields": false
-          }
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "topk($TopResources, nic_tx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$TopEthernetSendXput\"})",
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{node}} - {{nic}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Send Throughput",
+          "type": "timeseries"
         },
         {
-          "id": "organize",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "Bps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 22
+          },
+          "id": 28,
           "options": {
-            "excludeByName": {
-              "Time": true,
-              "Value": true,
-              "__name__": true,
-              "cluster": true,
-              "datacenter": true,
-              "instance": true,
-              "job": true,
-              "speed": true,
-              "state": true
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
             },
-            "indexByName": {
-              "Time": 0,
-              "Value": 12,
-              "Value #B": 4,
-              "Value #C": 5,
-              "Value #D": 6,
-              "Value #E": 7,
-              "__name__": 1,
-              "cluster": 5,
-              "datacenter": 6,
-              "instance": 7,
-              "job": 8,
-              "linkSpeed": 2,
-              "nic": 0,
-              "node": 1,
-              "type": 3
-            },
-            "renameByName": {}
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
+            "tooltip": {
+              "mode": "single"
             }
           },
-          "links": [],
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "Bps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 0,
-        "y": 22
-      },
-      "id": 12,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "topk($TopResources, nic_rx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$TopEthernetReceiveXput\"})",
+              "interval": "",
+              "legendFormat": "{{node}} - {{nic}}",
+              "refId": "A"
+            }
           ],
-          "displayMode": "table",
-          "placement": "bottom"
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Receive Throughput",
+          "type": "timeseries"
         },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
         {
-          "exemplar": true,
-          "expr": "topk($TopResources, nic_tx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$TopEthernetSendXput\"})",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "{{node}} - {{nic}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Send Throughput",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "max": 1,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": []
           },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 0,
+            "y": 32
+          },
+          "id": 61,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
             },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
+            "tooltip": {
+              "mode": "single"
             }
           },
-          "links": [],
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "Bps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 12,
-        "y": 22
-      },
-      "id": 28,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "expr": "nic_util_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
+              "interval": "",
+              "legendFormat": "{{node}} {{nic}}",
+              "refId": "A"
+            }
           ],
-          "displayMode": "table",
-          "placement": "bottom"
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Port Utilization %",
+          "type": "timeseries"
         },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
         {
-          "exemplar": true,
-          "expr": "topk($TopResources, nic_rx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$TopEthernetReceiveXput\"})",
-          "interval": "",
-          "legendFormat": "{{node}} - {{nic}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Receive Throughput",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Summarized on Cluster or Node level. Select Eth to show for a specific Ethernet Port.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
           },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 8,
+            "y": 32
+          },
+          "id": 29,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
             },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
+            "tooltip": {
+              "mode": "single"
             }
           },
-          "links": [],
-          "mappings": [],
-          "max": 1,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 32
-      },
-      "id": 61,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "expr": "sum by (cluster) (nic_tx_total_errors{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
+              "interval": "",
+              "legendFormat": "TOTAL",
+              "refId": "A"
+            },
+            {
+              "expr": "sum by (cluster) (nic_tx_hw_errors{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
+              "interval": "",
+              "legendFormat": "HW",
+              "refId": "D"
+            }
           ],
-          "displayMode": "table",
-          "placement": "bottom"
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Send Errors",
+          "type": "timeseries"
         },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
         {
-          "expr": "nic_util_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
-          "interval": "",
-          "legendFormat": "{{node}} {{nic}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Port Utilization %",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Summarized on Cluster or Node level. Select Eth to show for a specific Ethernet Port.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Summarized on Cluster or Node level. Select Eth to show for a specific Ethernet Port.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
           },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 16,
+            "y": 32
+          },
+          "id": 30,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
             },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
+            "tooltip": {
+              "mode": "single"
             }
           },
-          "links": [],
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 32
-      },
-      "id": 29,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "expr": "sum by (cluster) (nic_tx_total_errors{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
-          "interval": "",
-          "legendFormat": "TOTAL",
-          "refId": "A"
-        },
-        {
-          "expr": "sum by (cluster) (nic_tx_hw_errors{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
-          "interval": "",
-          "legendFormat": "HW",
-          "refId": "D"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Send Errors",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Summarized on Cluster or Node level. Select Eth to show for a specific Ethernet Port.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "expr": "sum by (cluster) (nic_rx_total_errors{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
+              "interval": "",
+              "legendFormat": "TOTAL",
+              "refId": "A"
             },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
+            {
+              "expr": "sum by (cluster) (nic_rx_alignment_errors{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
+              "interval": "",
+              "legendFormat": "ALIGNMENT",
+              "refId": "B"
             },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
+            {
+              "expr": "sum by (cluster) (nic_rx_crc_errors{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
+              "interval": "",
+              "legendFormat": "CRC",
+              "refId": "C"
             },
-            "thresholdsStyle": {
-              "mode": "off"
+            {
+              "expr": "sum by (cluster) (nic_rx_length_errors{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
+              "interval": "",
+              "legendFormat": "LENGTH",
+              "refId": "D"
             }
-          },
-          "links": [],
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 32
-      },
-      "id": 30,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
           ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "expr": "sum by (cluster) (nic_rx_total_errors{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
-          "interval": "",
-          "legendFormat": "TOTAL",
-          "refId": "A"
-        },
-        {
-          "expr": "sum by (cluster) (nic_rx_alignment_errors{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
-          "interval": "",
-          "legendFormat": "ALIGNMENT",
-          "refId": "B"
-        },
-        {
-          "expr": "sum by (cluster) (nic_rx_crc_errors{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
-          "interval": "",
-          "legendFormat": "CRC",
-          "refId": "C"
-        },
-        {
-          "expr": "sum by (cluster) (nic_rx_length_errors{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
-          "interval": "",
-          "legendFormat": "LENGTH",
-          "refId": "D"
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Receive Errors",
+          "type": "timeseries"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Receive Errors",
-      "type": "timeseries"
+      "title": "Ethernet Drilldown",
+      "type": "row"
     },
     {
-      "collapsed": false,
+      "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 11
       },
       "id": 80,
-      "panels": [],
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": false
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "rgb(80, 220, 20)",
+                    "value": null
+                  },
+                  {
+                    "color": "light-yellow",
+                    "value": 1000000
+                  },
+                  {
+                    "color": "semi-dark-orange",
+                    "value": 10000000
+                  },
+                  {
+                    "color": "semi-dark-red",
+                    "value": 100000000
+                  }
+                ]
+              },
+              "unit": "Bps"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "speed"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "Bps"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 169
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #C"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percentunit"
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "used %"
+                  },
+                  {
+                    "id": "noValue",
+                    "value": "n/a"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "rgb(80, 220, 20)",
+                          "value": null
+                        },
+                        {
+                          "color": "light-yellow",
+                          "value": 50
+                        },
+                        {
+                          "color": "semi-dark-orange",
+                          "value": 75
+                        },
+                        {
+                          "color": "semi-dark-red",
+                          "value": 90
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #B"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "send"
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #A"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "receive"
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "port"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 186
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "node"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 214
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 24,
+            "x": 0,
+            "y": 12
+          },
+          "id": 71,
+          "interval": "",
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "send"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "fcp_util_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "C"
+            },
+            {
+              "exemplar": false,
+              "expr": "fcp_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "fcp_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "FC ports",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "node",
+                    "port",
+                    "speed",
+                    "Value #C",
+                    "Value #A",
+                    "Value #B"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "merge",
+              "options": {}
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "Bps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 23
+          },
+          "id": 67,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "topk($TopResources, fcp_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCSendXput\"})",
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{node}} - {{port}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Send Throughput",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "Bps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 23
+          },
+          "id": 69,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "topk($TopResources, fcp_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCReceiveXput\"})",
+              "interval": "",
+              "legendFormat": "{{node}} - {{port}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Receive Throughput",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "µs"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 33
+          },
+          "id": 77,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "topk($TopResources, fcp_avg_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCSendLatency\"})",
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{node}} - {{port}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Send Latency",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "µs"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 33
+          },
+          "id": 78,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "topk($TopResources, fcp_avg_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCReceiveLatency\"})",
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{node}} - {{port}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Receive Latency",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Summarized on Cluster or Node level. Select FCP to show for a specific FibreChannel Port.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 0,
+            "y": 43
+          },
+          "id": 75,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "expr": "sum(fcp_int_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "interrupts",
+              "refId": "B"
+            },
+            {
+              "expr": "sum(fcp_invalid_transmission_word{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "invalid transmission words (blocks)",
+              "refId": "C"
+            },
+            {
+              "expr": "sum(fcp_isr_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "interrupt responses",
+              "refId": "D"
+            },
+            {
+              "expr": "sum(fcp_spurious_int_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "spurious interrupts",
+              "refId": "I"
+            },
+            {
+              "expr": "sum(fcp_invalid_crc{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "invalid CRCs",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Transmission interrupts",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Summarized on Cluster or Node level. Select FCP to show for a specific FibreChannel Port.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 6,
+            "y": 43
+          },
+          "id": 76,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "expr": "sum(fcp_discarded_frames_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+              "interval": "",
+              "legendFormat": "discarded frames",
+              "refId": "A"
+            },
+            {
+              "expr": "sum(fcp_loss_of_signal{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "loss of signal",
+              "refId": "E"
+            },
+            {
+              "expr": "sum(fcp_loss_of_sync{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "loss of sync",
+              "refId": "F"
+            },
+            {
+              "expr": "sum(fcp_prim_seq_err{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "primitive sequence errors",
+              "refId": "G"
+            },
+            {
+              "expr": "sum(fcp_queue_full{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "queue full",
+              "refId": "H"
+            },
+            {
+              "expr": "sum(fcp_threshold_full{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "threshold full",
+              "refId": "J"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Transmission errors",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 12,
+            "y": 43
+          },
+          "id": 73,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "topk($TopResources, fcp_link_down{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCLinkDown\"})",
+              "interval": "",
+              "legendFormat": "{{node}} - {{port}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Link Down",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 18,
+            "y": 43
+          },
+          "id": 74,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "topk($TopResources, fcp_link_failure{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCLinkFailure\"})",
+              "interval": "",
+              "legendFormat": "{{node}} - {{port}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Link Failure",
+          "type": "timeseries"
+        }
+      ],
       "title": "FibreChannel Drilldown",
       "type": "row"
     },
     {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "left",
-            "displayMode": "auto",
-            "filterable": false
-          },
-          "decimals": 2,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "rgb(80, 220, 20)",
-                "value": null
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 12
+      },
+      "id": 96,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": false
               },
-              {
-                "color": "light-yellow",
-                "value": 1000000
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "rgb(80, 220, 20)",
+                    "value": null
+                  },
+                  {
+                    "color": "light-yellow",
+                    "value": 1000000
+                  },
+                  {
+                    "color": "semi-dark-orange",
+                    "value": 10000000
+                  },
+                  {
+                    "color": "semi-dark-red",
+                    "value": 100000000
+                  }
+                ]
               },
-              {
-                "color": "semi-dark-orange",
-                "value": 10000000
-              },
-              {
-                "color": "semi-dark-red",
-                "value": 100000000
-              }
-            ]
-          },
-          "unit": "Bps"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "speed"
+              "unit": "Bps"
             },
-            "properties": [
+            "overrides": [
               {
-                "id": "unit",
-                "value": "Bps"
+                "matcher": {
+                  "id": "byName",
+                  "options": "speed"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "Bps"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 169
+                  }
+                ]
               },
               {
-                "id": "custom.width",
-                "value": 169
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value #C"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "percentunit"
-              },
-              {
-                "id": "custom.displayMode",
-                "value": "gradient-gauge"
-              },
-              {
-                "id": "displayName",
-                "value": "used %"
-              },
-              {
-                "id": "noValue",
-                "value": "n/a"
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "rgb(80, 220, 20)",
-                      "value": null
-                    },
-                    {
-                      "color": "light-yellow",
-                      "value": 50
-                    },
-                    {
-                      "color": "semi-dark-orange",
-                      "value": 75
-                    },
-                    {
-                      "color": "semi-dark-red",
-                      "value": 90
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #C"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percentunit"
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "used %"
+                  },
+                  {
+                    "id": "noValue",
+                    "value": "n/a"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "rgb(80, 220, 20)",
+                          "value": null
+                        },
+                        {
+                          "color": "light-yellow",
+                          "value": 50
+                        },
+                        {
+                          "color": "semi-dark-orange",
+                          "value": 75
+                        },
+                        {
+                          "color": "semi-dark-red",
+                          "value": 90
+                        }
+                      ]
                     }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #B"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "send"
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #A"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "receive"
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "port"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 186
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "node"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 214
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 24,
+            "x": 0,
+            "y": 13
+          },
+          "id": 98,
+          "interval": "",
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "send"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "fcp_nvmf_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "fcp_nvmf_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "NVMe/FC ports",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "node",
+                    "port",
+                    "speed",
+                    "Value #C",
+                    "Value #A",
+                    "Value #B"
                   ]
                 }
               }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value #B"
             },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "send"
-              },
-              {
-                "id": "custom.displayMode",
-                "value": "gradient-gauge"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value #A"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "receive"
-              },
-              {
-                "id": "custom.displayMode",
-                "value": "gradient-gauge"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "port"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 186
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "node"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 214
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 24,
-        "x": 0,
-        "y": 41
-      },
-      "id": 71,
-      "interval": "",
-      "options": {
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "send"
-          }
-        ]
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "fcp_util_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "C"
+            {
+              "id": "merge",
+              "options": {}
+            }
+          ],
+          "type": "table"
         },
         {
-          "exemplar": false,
-          "expr": "fcp_read_data+fcp_nvmf_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "B"
-        },
-        {
-          "exemplar": false,
-          "expr": "fcp_write_data+fcp_nvmf_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "FC ports",
-      "transformations": [
-        {
-          "id": "filterFieldsByName",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "Bps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 24
+          },
+          "id": 100,
           "options": {
-            "include": {
-              "names": [
-                "node",
-                "port",
-                "speed",
-                "Value #C",
-                "Value #A",
-                "Value #B"
-              ]
-            }
-          }
-        },
-        {
-          "id": "merge",
-          "options": {}
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
             },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
+            "tooltip": {
+              "mode": "single"
             }
           },
-          "links": [],
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "Bps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 0,
-        "y": 52
-      },
-      "id": 67,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "topk($TopResources, fcp_nvmf_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCNVSendXPut\"})",
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{node}} - {{port}}",
+              "refId": "A"
+            }
           ],
-          "displayMode": "table",
-          "placement": "bottom"
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Send Throughput",
+          "type": "timeseries"
         },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
         {
-          "exemplar": false,
-          "expr": "topk($TopResources, fcp_read_data+fcp_nvmf_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCSendXput\"})",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "{{node}} - {{port}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Send Throughput",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "Bps"
+            },
+            "overrides": []
           },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 24
+          },
+          "id": 102,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
             },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
+            "tooltip": {
+              "mode": "single"
             }
           },
-          "links": [],
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "Bps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 12,
-        "y": 52
-      },
-      "id": 69,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "topk($TopResources, fcp_nvmf_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCNVReceiveXPut\"})",
+              "interval": "",
+              "legendFormat": "{{node}} - {{port}}",
+              "refId": "A"
+            }
           ],
-          "displayMode": "table",
-          "placement": "bottom"
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Receive Throughput",
+          "type": "timeseries"
         },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
         {
-          "exemplar": false,
-          "expr": "topk($TopResources, fcp_write_data+fcp_nvmf_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCReceiveXput\"})",
-          "interval": "",
-          "legendFormat": "{{node}} - {{port}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Receive Throughput",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "µs"
+            },
+            "overrides": []
           },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 34
+          },
+          "id": 104,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
             },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
+            "tooltip": {
+              "mode": "single"
             }
           },
-          "links": [],
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "µs"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 0,
-        "y": 62
-      },
-      "id": 77,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "topk($TopResources, fcp_nvmf_avg_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCNVSendLatency\"})",
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{node}} - {{port}}",
+              "refId": "A"
+            }
           ],
-          "displayMode": "table",
-          "placement": "bottom"
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Send Latency",
+          "type": "timeseries"
         },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
         {
-          "exemplar": false,
-          "expr": "topk($TopResources, fcp_avg_read_latency+fcp_nvmf_avg_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCSendLatency\"})",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "{{node}} - {{port}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Send Latency",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "µs"
+            },
+            "overrides": []
           },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 34
+          },
+          "id": 106,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
             },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
+            "tooltip": {
+              "mode": "single"
             }
           },
-          "links": [],
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "µs"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 12,
-        "y": 62
-      },
-      "id": 78,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "topk($TopResources, fcp_avg_write_latency+fcp_nvmf_avg_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCReceiveLatency\"})",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "{{node}} - {{port}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Receive Latency",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Summarized on Cluster or Node level. Select FCP to show for a specific FibreChannel Port.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "topk($TopResources, fcp_nvmf_avg_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCNVReceiveLatency\"})",
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{node}} - {{port}}",
+              "refId": "A"
             }
-          },
-          "links": [],
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 6,
-        "x": 0,
-        "y": 72
-      },
-      "id": 75,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
           ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "expr": "sum(fcp_int_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "interrupts",
-          "refId": "B"
-        },
-        {
-          "expr": "sum(fcp_invalid_transmission_word{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "invalid transmission words (blocks)",
-          "refId": "C"
-        },
-        {
-          "expr": "sum(fcp_isr_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "interrupt responses",
-          "refId": "D"
-        },
-        {
-          "expr": "sum(fcp_spurious_int_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "spurious interrupts",
-          "refId": "I"
-        },
-        {
-          "expr": "sum(fcp_invalid_crc{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "invalid CRCs",
-          "refId": "A"
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Receive Latency",
+          "type": "timeseries"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Transmission interrupts",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Summarized on Cluster or Node level. Select FCP to show for a specific FibreChannel Port.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "links": [],
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 6,
-        "x": 6,
-        "y": 72
-      },
-      "id": 76,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "expr": "sum(fcp_discarded_frames_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
-          "interval": "",
-          "legendFormat": "discarded frames",
-          "refId": "A"
-        },
-        {
-          "expr": "sum(fcp_loss_of_signal{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "loss of signal",
-          "refId": "E"
-        },
-        {
-          "expr": "sum(fcp_loss_of_sync{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "loss of sync",
-          "refId": "F"
-        },
-        {
-          "expr": "sum(fcp_prim_seq_err{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "primitive sequence errors",
-          "refId": "G"
-        },
-        {
-          "expr": "sum(fcp_queue_full{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "queue full",
-          "refId": "H"
-        },
-        {
-          "expr": "sum(fcp_threshold_full{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "threshold full",
-          "refId": "J"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Transmission errors",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "links": [],
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 6,
-        "x": 12,
-        "y": 72
-      },
-      "id": 73,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "topk($TopResources, fcp_link_down{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCLinkDown\"})",
-          "interval": "",
-          "legendFormat": "{{node}} - {{port}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Link Down",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "links": [],
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 6,
-        "x": 18,
-        "y": 72
-      },
-      "id": 74,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "topk($TopResources, fcp_link_failure{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCLinkFailure\"})",
-          "interval": "",
-          "legendFormat": "{{node}} - {{port}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Link Failure",
-      "type": "timeseries"
+      "title": "NVMe/FC Drilldown",
+      "type": "row"
     }
   ],
   "refresh": "",
@@ -2827,7 +3413,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}[${__range}])+avg_over_time(fcp_nvmf_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}[${__range}] )))",
+        "definition": "query_result(topk($TopResources, avg_over_time(fcp_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -2837,7 +3423,7 @@
         "name": "TopFCSendXput",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}[${__range}])+avg_over_time(fcp_nvmf_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}[${__range}] )))",
+          "query": "query_result(topk($TopResources, avg_over_time(fcp_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2850,7 +3436,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])+avg_over_time(fcp_nvmf_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}] )))",
+        "definition": "query_result(topk($TopResources, avg_over_time(fcp_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -2860,7 +3446,7 @@
         "name": "TopFCReceiveXput",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])+avg_over_time(fcp_nvmf_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}] )))",
+          "query": "query_result(topk($TopResources, avg_over_time(fcp_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2873,7 +3459,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_avg_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])+avg_over_time(fcp_nvmf_avg_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}] )))",
+        "definition": "query_result(topk($TopResources, avg_over_time(fcp_avg_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -2883,7 +3469,7 @@
         "name": "TopFCSendLatency",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_avg_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])+avg_over_time(fcp_nvmf_avg_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}] )))",
+          "query": "query_result(topk($TopResources, avg_over_time(fcp_avg_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2896,7 +3482,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_avg_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])+avg_over_time(fcp_nvmf_avg_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}] )))",
+        "definition": "query_result(topk($TopResources, avg_over_time(fcp_avg_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -2906,7 +3492,7 @@
         "name": "TopFCReceiveLatency",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_avg_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])+avg_over_time(fcp_nvmf_avg_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}] )))",
+          "query": "query_result(topk($TopResources, avg_over_time(fcp_avg_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2960,6 +3546,98 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_read_data{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopFCNVSendXPut",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_read_data{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*port=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_write_data{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopFCNVReceiveXPut",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_write_data{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*port=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_avg_read_latency{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopFCNVSendLatency",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_avg_read_latency{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*port=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_avg_write_latency{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopFCNVReceiveLatency",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_avg_write_latency{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*port=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
@@ -2982,6 +3660,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Network",
-  "uid": "-EsvTx74k",
-  "version": 4
+  "uid": "muslze7Vz",
+  "version": 5
 }
