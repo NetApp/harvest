@@ -126,8 +126,6 @@ func (me *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				instance.SetLabel("speed", strconv.Itoa(speed))
 				me.Logger.Debug().Msgf("converted speed (%s) to numeric (%d)", s, speed)
 			}
-		} else if speed, err = strconv.Atoi(s); err != nil {
-			me.Logger.Warn().Msgf("convert speed [%s]", s)
 		}
 
 		// truncate redundant prefix in nic type
