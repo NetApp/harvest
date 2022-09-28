@@ -1,5 +1,3 @@
-
-
 name:                     FcpPort
 query:                    fcp_port
 object:                   fcp
@@ -40,7 +38,7 @@ counters:
   - nvmf_avg_read_latency       
   - nvmf_avg_remote_other_latency
   - nvmf_avg_remote_read_latency
-  - nvmf_avg_remote_write_latenc
+  - nvmf_avg_remote_write_latency
   - nvmf_avg_write_latency      
   - nvmf_caw_data
   - nvmf_caw_ops

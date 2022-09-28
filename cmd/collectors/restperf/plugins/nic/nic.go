@@ -29,6 +29,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Nic{AbstractPlugin: p}
 }
 
+// Run speed label is reported in bits-per-second and rx/tx is reported as bytes-per-second
 func (me *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var read, write, rx, tx, util matrix.Metric
@@ -71,47 +72,60 @@ func (me *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		var speed, base int
 		var s string
 		var err error
+		s = instance.GetLabel("speed")
+		if s != "" {
+			if strings.HasSuffix(s, "M") {
+				base, err = strconv.Atoi(strings.TrimSuffix(s, "M"))
+				if err != nil {
+					me.Logger.Warn().Msgf("convert speed [%s]", s)
+				} else {
+					// NIC speed value converted from Mbps to Bps(bytes per second)
+					speed = base * 125000
+					me.Logger.Debug().Msgf("converted speed (%s) to numeric (%d)", s, speed)
+				}
+			} else if speed, err = strconv.Atoi(s); err != nil {
+				me.Logger.Warn().Msgf("convert speed [%s]", s)
+			}
+
+			if speed != 0 {
+
+				var rxBytes, txBytes, rxPercent, txPercent float64
+				var rxOk, txOk, passRx, passTx bool
+
+				if rxBytes, rxOk, passRx = read.GetValueFloat64(instance); rxOk && passRx {
+					rxPercent = rxBytes / float64(speed)
+					err := rx.SetValueFloat64(instance, rxPercent)
+					if err != nil {
+						me.Logger.Error().Stack().Err(err).Msg("error")
+					}
+				}
+
+				if txBytes, txOk, passTx = write.GetValueFloat64(instance); txOk && passTx {
+					txPercent = txBytes / float64(speed)
+					err := tx.SetValueFloat64(instance, txPercent)
+					if err != nil {
+						me.Logger.Error().Stack().Err(err).Msg("error")
+					}
+				}
+
+				if (rxOk || txOk) && (passRx || passTx) {
+					err := util.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
+					if err != nil {
+						me.Logger.Error().Stack().Err(err).Msg("error")
+					}
+				}
+			}
+		}
 
 		if s = instance.GetLabel("speed"); strings.HasSuffix(s, "M") {
 			base, err = strconv.Atoi(strings.TrimSuffix(s, "M"))
 			if err != nil {
 				me.Logger.Warn().Msgf("convert speed [%s]", s)
 			} else {
-				// NIC speed value converted from Mbps to Bps(bytes per second)
-				speed = base * 125000
+				// NIC speed value converted from Mbps to bps(bits per second)
+				speed = base * 1_000_000
 				instance.SetLabel("speed", strconv.Itoa(speed))
 				me.Logger.Debug().Msgf("converted speed (%s) to numeric (%d)", s, speed)
-			}
-		} else if speed, err = strconv.Atoi(s); err != nil {
-			me.Logger.Warn().Msgf("convert speed [%s]", s)
-		}
-
-		if speed != 0 {
-
-			var rxBytes, txBytes, rxPercent, txPercent float64
-			var rxOk, txOk, passRx, passTx bool
-
-			if rxBytes, rxOk, passRx = read.GetValueFloat64(instance); rxOk && passRx {
-				rxPercent = rxBytes / float64(speed)
-				err := rx.SetValueFloat64(instance, rxPercent)
-				if err != nil {
-					me.Logger.Error().Stack().Err(err).Msg("error")
-				}
-			}
-
-			if txBytes, txOk, passTx = write.GetValueFloat64(instance); txOk && passTx {
-				txPercent = txBytes / float64(speed)
-				err := tx.SetValueFloat64(instance, txPercent)
-				if err != nil {
-					me.Logger.Error().Stack().Err(err).Msg("error")
-				}
-			}
-
-			if (rxOk || txOk) && (passRx || passTx) {
-				err := util.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
-				if err != nil {
-					me.Logger.Error().Stack().Err(err).Msg("error")
-				}
 			}
 		}
 
