@@ -73,7 +73,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -86,7 +86,7 @@
       "type": "row"
     },
     {
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "description": "A projection of the amount of available IOP/s each node has with the current workloads before increased hockey stick style latencies are encountered",
       "fieldConfig": {
         "defaults": {
@@ -173,7 +173,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "description": "A projection of the amount of available IOP/s each node has with the current workloads before increased hockey stick style latencies are encountered",
       "fieldConfig": {
         "defaults": {
@@ -261,7 +261,7 @@
     },
     {
       "collapsed": true,
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
