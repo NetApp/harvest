@@ -2766,7 +2766,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Volume Latency from CP(Consistency Point)",
+          "title": "Volume Latency from CP (Consistency Point)",
           "type": "timeseries"
         },
         {
