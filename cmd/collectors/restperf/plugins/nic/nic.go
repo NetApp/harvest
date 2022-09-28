@@ -72,9 +72,9 @@ func (me *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		var speed, base int
 		var s string
 		var err error
-
+		s = instance.GetLabel("speed")
 		if s != "" {
-			if s = instance.GetLabel("speed"); strings.HasSuffix(s, "M") {
+			if strings.HasSuffix(s, "M") {
 				base, err = strconv.Atoi(strings.TrimSuffix(s, "M"))
 				if err != nil {
 					me.Logger.Warn().Msgf("convert speed [%s]", s)
