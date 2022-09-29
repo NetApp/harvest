@@ -160,3 +160,10 @@ Example Output
 }
 ```
 
+# Ems Prometheus Alerts
+
+Prometheus includes out-of-the-box support for simple alerting. Alert rules are configured in your `prometheus.yml` file. Setup and details can be found in the Prometheus guide on [alerting](https://prometheus.io/docs/prometheus/latest/configuration/alerting/).
+
+Harvest includes [ems alerts](https://github.com/NetApp/harvest/blob/main/docker/prometheus/ems_alert_rules.yml) for reference.
+
+
