@@ -50,7 +50,7 @@ Yes. Several customers already are. There are a few caveats to be aware of:
 2. It's better to publish a set of metrics once instead of multiple times. In other words, it does not make sense to
    enable both the `Zapi` and `Rest` collector for an overlapping set of objects on the same cluster.
    It will work, but you'll put more load on the cluster and push duplicate metrics to Prometheus. 
-   See [belo](#can-i-use-the-rest-and-zapi-collectors-at-the-same-time) for details on how to use both collectors at the same time. 
+   See [below](#can-i-use-the-rest-and-zapi-collectors-at-the-same-time) for details on how to use both collectors at the same time. 
 
 3. There may be performance metrics missing from versions of ONTAP earlier than `9.11.1`.
 
