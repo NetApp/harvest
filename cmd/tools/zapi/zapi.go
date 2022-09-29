@@ -268,7 +268,7 @@ func getInstances(c *client.Client, args *Args) (*node.Node, error) {
 	req = node.NewXMLS("perf-object-instance-list-info-iter")
 	req.NewChildS("objectname", args.Object)
 
-	if args.MaxRecords != 0 {
+	if c.IsClustered() && args.MaxRecords != 0 {
 		req.NewChildS("max-records", strconv.Itoa(args.MaxRecords))
 	}
 
@@ -290,7 +290,7 @@ func getData(c *client.Client, args *Args) (*node.Node, error) {
 	// requested data is for an Zapi query
 	if args.API != "" {
 		req = node.NewXMLS(args.API)
-		if args.MaxRecords != 0 {
+		if c.IsClustered() && args.MaxRecords != 0 {
 			req.NewChildS("max-records", strconv.Itoa(args.MaxRecords))
 		}
 		// requested data is for a ZapiPerf object
@@ -299,11 +299,11 @@ func getData(c *client.Client, args *Args) (*node.Node, error) {
 			req = node.NewXMLS("perf-object-get-instances")
 			instances := req.NewChildS("instances", "")
 			instances.NewChildS("instance", "*")
+			if args.MaxRecords != 0 {
+				req.NewChildS("max", strconv.Itoa(args.MaxRecords))
+			}
 		} else {
 			req = node.NewXMLS("perf-object-get-instances")
-		}
-		if args.MaxRecords != 0 {
-			req.NewChildS("max", strconv.Itoa(args.MaxRecords))
 		}
 		req.NewChildS("objectname", args.Object)
 	}
