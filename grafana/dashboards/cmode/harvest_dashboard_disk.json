@@ -726,24 +726,6 @@
           "legendFormat": "",
           "refId": "A"
         },
-        {
-          "expr": "max by (node, aggr) (aggr_disk_max_total_transfers{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
-          "format": "table",
-          "hide": true,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "C"
-        },
-        {
-          "expr": "max by (node, aggr) (aggr_disk_max_busy{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
-          "format": "table",
-          "hide": true,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "B"
-        }
       ],
       "timeFrom": null,
       "timeShift": null,
@@ -1234,7 +1216,7 @@
             "uid": "EO6UabnVz"
           },
           "exemplar": true,
-          "expr": "topk($TopResources, aggr_disk_max_user_read_chain{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\", aggr=~\"$TopDiskUserReadChain\"}) * 4",
+          "expr": "topk($TopResources, aggr_disk_max_user_read_chain{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$TopDiskUserReadChain\"}) * 4",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -1332,7 +1314,7 @@
             "uid": "EO6UabnVz"
           },
           "exemplar": true,
-          "expr": "topk($TopResources, aggr_disk_max_user_write_chain{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\", aggr=~\"$TopDiskUserWriteChain\"}) * 4",
+          "expr": "topk($TopResources, aggr_disk_max_user_write_chain{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$TopDiskUserWriteChain\"}) * 4",
           "format": "time_series",
           "instant": false,
           "interval": "",
