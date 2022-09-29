@@ -45,7 +45,7 @@ plugins:
   # any names after the object names will be treated as
   # label names that will be added to instances
     - node<>node_disk_max
-    - aggr<>aggr_disk_max ...
+    - aggr<>aggr_disk_max aggr,node
 
 # only export node/aggr aggregations from plugin
 # set this true or comment, to get data for each disk
