@@ -1134,6 +1134,7 @@
       "type": "timeseries"
     },
     {
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1211,10 +1212,6 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "EO6UabnVz"
-          },
           "exemplar": true,
           "expr": "topk($TopResources, aggr_disk_max_user_read_chain{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$TopDiskUserReadChain\"}) * 4",
           "format": "time_series",
@@ -1228,6 +1225,7 @@
       "type": "timeseries"
     },
     {
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1309,10 +1307,6 @@
       "pluginVersion": "8.4.11",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "EO6UabnVz"
-          },
           "exemplar": true,
           "expr": "topk($TopResources, aggr_disk_max_user_write_chain{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$TopDiskUserWriteChain\"}) * 4",
           "format": "time_series",
