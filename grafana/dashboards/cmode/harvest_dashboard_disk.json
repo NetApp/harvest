@@ -725,7 +725,7 @@
           "interval": "",
           "legendFormat": "",
           "refId": "A"
-        },
+        }
       ],
       "timeFrom": null,
       "timeShift": null,
