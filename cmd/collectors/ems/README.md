@@ -5,7 +5,7 @@
 The `EMS collector` collects [ONTAP event management system](https://mysupport.netapp.com/documentation/productlibrary/index.html?productID=62286) (EMS) events via the ONTAP REST API.
 
 This collector uses a YAML template file to define which events to collect, export, and what labels to attach to each metric. 
-This means you can collect new EMS events or attach new labels by editing the [default template](../../../conf/ems/9.6.0/ems.yaml) file or creating a `custom.yaml` that will be merged at runtime. 
+This means you can collect new EMS events or attach new labels by editing the [default template](../../../conf/ems/9.6.0/ems.yaml) file or by extending existing templates as mentioned [here](https://github.com/NetApp/harvest/blob/main/conf/README.md#how-to-extend-a-restrestperfems-collectors-existing-object-template) 
 
 The [default template](../../../conf/ems/9.6.0/ems.yaml) file contains 60+ EMS events.
 
@@ -162,8 +162,6 @@ Example Output
 
 # Ems Prometheus Alerts
 
-Prometheus includes out-of-the-box support for simple alerting. Alert rules are configured in your `prometheus.yml` file. Setup and details can be found in the Prometheus guide on [alerting](https://prometheus.io/docs/prometheus/latest/configuration/alerting/).
-
-Harvest includes [ems alerts](https://github.com/NetApp/harvest/blob/main/docker/prometheus/ems_alert_rules.yml) for reference.
+Refer [Prometheus-Alerts](https://github.com/NetApp/harvest/blob/main/cmd/exporters/prometheus/README.md#prometheus-alerts)
 
 
