@@ -396,7 +396,10 @@
   ],
   "schemaVersion": 30,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "harvest",
+    "storagegrid"
+  ],
   "templating": {
     "list": [
       {
