@@ -37,7 +37,7 @@ plugins:
   # any names after the object names will be treated as
   # label names that will be added to instances
     - node
-    - aggr ...
+    - aggr node
     - plex node,aggr,plex
 
   Max:
