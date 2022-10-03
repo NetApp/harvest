@@ -37,6 +37,8 @@ type Metric interface {
 	IsArray() bool
 	SetArray(bool)
 	Clone(bool) Metric
+	SetBuckets(*[]string)
+	Buckets() *[]string
 
 	// methods for resizing metric storage
 
@@ -93,6 +95,7 @@ type AbstractMetric struct {
 	array      bool
 	exportable bool
 	labels     *dict.Dict
+	buckets    *[]string
 	record     []bool
 	pass       []bool
 }
@@ -105,6 +108,7 @@ func (m *AbstractMetric) Clone(deep bool) *AbstractMetric {
 		comment:    m.comment,
 		exportable: m.exportable,
 		array:      m.array,
+		buckets:    m.buckets,
 	}
 	if m.labels != nil {
 		clone.labels = m.labels.Copy()
@@ -171,6 +175,14 @@ func (m *AbstractMetric) SetLabel(key, value string) {
 		m.labels = dict.New()
 	}
 	m.labels.Set(key, value)
+}
+
+func (m *AbstractMetric) Buckets() *[]string {
+	return m.buckets
+}
+
+func (m *AbstractMetric) SetBuckets(buckets *[]string) {
+	m.buckets = buckets
 }
 
 func (m *AbstractMetric) SetLabels(labels *dict.Dict) {

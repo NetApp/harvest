@@ -183,6 +183,7 @@ func (p *Prometheus) Init() error {
 	// @TODO: implement error checking to enter failed state if HTTPd failed
 	// (like we did in Alpha)
 
+	//goland:noinspection HttpUrlsUsage
 	p.Logger.Debug().Msgf("initialized, HTTP daemon started at [http://%s:%d]", addr, port)
 
 	return nil
@@ -267,16 +268,23 @@ func (p *Prometheus) Export(data *matrix.Matrix) error {
 
 func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 	var (
-		rendered                                     [][]byte
-		tagged                                       *set.Set
-		labelsToInclude, keysToInclude, globalLabels []string
-		prefix                                       string
-		err                                          error
-		replacer                                     *strings.Replacer
+		rendered         [][]byte
+		tagged           *set.Set
+		labelsToInclude  []string
+		keysToInclude    []string
+		globalLabels     []string
+		prefix           string
+		err              error
+		replacer         *strings.Replacer
+		histograms       map[string]*histogram
+		areLabelsNormal  map[string]bool     // map of object_metric -> whether labels can be normalized
+		normalizedLabels map[string][]string // cache of histogram normalized labels
 	)
 
 	rendered = make([][]byte, 0)
 	globalLabels = make([]string, 0)
+	areLabelsNormal = make(map[string]bool)
+	normalizedLabels = make(map[string][]string)
 	replacer = strings.NewReplacer(`\`, `\\`, `"`, `\"`, "\n", "\\n")
 
 	if p.addMetaTags {
@@ -388,6 +396,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 		if p.Params.SortLabels {
 			sort.Strings(instanceKeys)
 		}
+		histograms = make(map[string]*histogram)
 		for mkey, metric := range data.GetMetrics() {
 
 			if !metric.IsExportable() {
@@ -399,13 +408,42 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 
 			if value, ok, pass := metric.GetValueString(instance); ok && pass {
 
-				// metric is histogram
+				// metric is array, determine if this is a plain array or histogram
 				if metric.HasLabels() {
-					metricLabels := make([]string, 0)
+					if metric.IsArray() {
+						// metric is histogram. Create a new metric to accumulate
+						// the flattened metrics and export them in order
+						bucketMetric := data.GetMetric(metric.GetName() + ".bucket")
+						if bucketMetric == nil {
+							p.Logger.Debug().
+								Str("metric", metric.GetName()).
+								Msg("Unable to find bucket for metric, skip")
+							continue
+						}
+						metricIndex := metric.GetLabel("comment")
+						index, err := strconv.Atoi(metricIndex)
+						if err != nil {
+							p.Logger.Error().Err(err).
+								Str("metric", metric.GetName()).
+								Str("index", metricIndex).
+								Msg("Unable to find index of metric, skip")
+						}
+						histogram := histogramFromBucket(histograms, bucketMetric)
+						histogram.values[index] = value
+						continue
+					}
+					metricLabels := make([]string, 0, metric.GetLabels().Size())
 					for k, v := range metric.GetLabels().Map() {
 						metricLabels = append(metricLabels, escape(replacer, k, v))
 					}
-					x := fmt.Sprintf("%s_%s{%s,%s} %s", prefix, metric.GetName(), strings.Join(instanceKeys, ","), strings.Join(metricLabels, ","), value)
+					x := fmt.Sprintf(
+						"%s_%s{%s,%s} %s",
+						prefix,
+						metric.GetName(),
+						strings.Join(instanceKeys, ","),
+						strings.Join(metricLabels, ","),
+						value,
+					)
 
 					if p.addMetaTags && !tagged.Has(prefix+"_"+metric.GetName()) {
 						tagged.Add(prefix + "_" + metric.GetName())
@@ -430,6 +468,62 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 				p.Logger.Trace().Str("mkey", mkey).Msg("skipped: no data value")
 			}
 		}
+		// all metrics have been processed and flattened metrics accumulated. Determine which histograms can be
+		// normalized and export
+		for _, h := range histograms {
+			metric := h.metric
+			bucketNames := metric.Buckets()
+			objectMetric := data.Object + "_" + metric.GetName()
+			_, ok := areLabelsNormal[objectMetric]
+			if !ok {
+				canNormalize := true
+				normalizedNames := make([]string, 0, len(*bucketNames))
+				// check if the buckets can be normalized and collect normalized names
+				for _, bucketName := range *bucketNames {
+					normalized := p.normalizeHistogram(metric, bucketName, data.Object)
+					if normalized == "" {
+						canNormalize = false
+						break
+					}
+					normalizedNames = append(normalizedNames, normalized)
+				}
+				areLabelsNormal[objectMetric] = canNormalize
+				normalizedLabels[objectMetric] = normalizedNames
+			}
+
+			if p.addMetaTags && !tagged.Has(prefix+"_"+metric.GetName()) {
+				tagged.Add(prefix + "_" + metric.GetName())
+				rendered = append(rendered, []byte("# HELP "+prefix+"_"+metric.GetName()+" Metric for "+data.Object))
+				rendered = append(rendered, []byte("# TYPE "+prefix+"_"+metric.GetName()+" histogram"))
+			}
+
+			canNormalize := areLabelsNormal[objectMetric]
+			normalizedNames := normalizedLabels[objectMetric]
+			for i, value := range h.values {
+				bucketName := (*bucketNames)[i]
+				var x string
+				if canNormalize {
+					x = fmt.Sprintf(
+						"%s_%s{%s,%s} %s",
+						prefix,
+						metric.GetName()+"_bucket",
+						strings.Join(instanceKeys, ","),
+						`le="`+normalizedNames[i]+`"`,
+						value,
+					)
+				} else {
+					x = fmt.Sprintf(
+						"%s_%s{%s,%s} %s",
+						prefix,
+						metric.GetName(),
+						strings.Join(instanceKeys, ","),
+						escape(replacer, "metric", bucketName),
+						value,
+					)
+				}
+				rendered = append(rendered, []byte(x))
+			}
+		}
 	}
 	p.Logger.Debug().
 		Str("object", data.Object).
@@ -439,10 +533,75 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 	return rendered, nil
 }
 
+var numAndUnitRe = regexp.MustCompile(`(\d+)\s*(\w+)`)
+
+// normalizeHistogram tries to normalize ONTAP values by converting units to multiples of the smallest unit.
+// When the unit can not be determined, return an empty string
+func (p *Prometheus) normalizeHistogram(metric matrix.Metric, ontap string, object string) string {
+	numAndUnit := ontap
+	if strings.HasPrefix(ontap, "<") {
+		numAndUnit = ontap[1:]
+	} else if strings.HasPrefix(ontap, ">") {
+		return "+Inf"
+	}
+	submatch := numAndUnitRe.FindStringSubmatch(numAndUnit)
+	if len(submatch) != 3 {
+		p.Logger.Trace().
+			Str("object", object).
+			Str("metric", metric.GetName()).
+			Str("numAndUnit", numAndUnit).
+			Msg("No units found")
+		return ""
+	}
+	num := submatch[1]
+	unit := submatch[2]
+	float, err := strconv.ParseFloat(num, 64)
+	if err != nil {
+		p.Logger.Trace().Str("num", num).Msg("Unable to convert to float64")
+		return ""
+	}
+	normal := 0.0
+	switch unit {
+	case "us":
+		return num
+	case "ms", "msec":
+		normal = 1_000 * float
+	case "s", "sec":
+		normal = 1_000_000 * float
+	default:
+		p.Logger.Trace().Str("unit", unit).Msg("Unknown unit")
+		return ""
+	}
+	return strconv.FormatFloat(normal, 'f', -1, 64)
+}
+
+func histogramFromBucket(histograms map[string]*histogram, metric matrix.Metric) *histogram {
+	h, ok := histograms[metric.GetName()]
+	if ok {
+		return h
+	}
+	buckets := metric.Buckets()
+	var capacity int
+	if buckets != nil {
+		capacity = len(*buckets)
+	}
+	h = &histogram{
+		metric: metric,
+		values: make([]string, capacity),
+	}
+	histograms[metric.GetName()] = h
+	return h
+}
+
 func escape(replacer *strings.Replacer, key string, value string) string {
 	// See https://prometheus.io/docs/instrumenting/exposition_formats/#comments-help-text-and-type-information
 	// label_value can be any sequence of UTF-8 characters, but the backslash (\), double-quote ("),
 	// and line feed (\n) characters have to be escaped as \\, \", and \n, respectively.
 
 	return fmt.Sprintf("%s=\"%s\"", key, replacer.Replace(value))
+}
+
+type histogram struct {
+	metric matrix.Metric
+	values []string
 }
