@@ -15,7 +15,4 @@ plugins:
   - Bucket
 
 export_options:
-  instance_keys:
-    - id
-  instance_labels:
-    - tenant
+  include_all_labels: true
