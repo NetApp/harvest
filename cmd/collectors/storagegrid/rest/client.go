@@ -239,7 +239,7 @@ func (c *Client) invoke() ([]byte, error) {
 		// check that the auth token has not expired
 		var storageGridErr errs.StorageGridError
 		if errors.As(err, &storageGridErr) {
-			if storageGridErr.Code == 401 {
+			if storageGridErr.IsAuthErr() {
 				err2 := c.fetchToken()
 				if err2 != nil {
 					return nil, err2
@@ -275,7 +275,7 @@ func (c *Client) fetch() ([]byte, error) {
 
 	if response.StatusCode != 200 {
 		if body, err = io.ReadAll(response.Body); err == nil {
-			return nil, errs.NewStorageGridErr(body)
+			return nil, errs.NewStorageGridErr(response.StatusCode, body)
 		}
 		return nil, errs.Rest(response.StatusCode, err.Error(), 0, "")
 	}
@@ -394,13 +394,13 @@ func (c *Client) fetchToken() error {
 		return err
 	}
 
+	if response.StatusCode != 200 {
+		return errs.NewStorageGridErr(response.StatusCode, body)
+	}
+
 	results := gjson.GetManyBytes(body, "data", "message.text")
 	token := results[0]
 	errorMsg := results[1]
-
-	if response.StatusCode != 200 {
-		return errs.New(errs.ErrAuthFailed, errorMsg.String())
-	}
 
 	if token.Exists() {
 		c.token = token.String()
