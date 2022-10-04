@@ -58,21 +58,21 @@ func (s *StorageGrid) Init(a *collector.AbstractCollector) error {
 	s.AbstractCollector = a
 	s.InitProp()
 
-	if err := s.initClient(); err != nil {
+	if err = s.initClient(); err != nil {
 		return err
 	}
 	if s.Props.TemplatePath, err = s.LoadTemplate(); err != nil {
 		return err
 	}
-	if err := collector.Init(s); err != nil {
+	if err = collector.Init(s); err != nil {
 		return err
 	}
 
-	if err := s.InitCache(); err != nil {
+	if err = s.InitCache(); err != nil {
 		return err
 	}
 
-	if err := s.InitMatrix(); err != nil {
+	if err = s.InitMatrix(); err != nil {
 		return err
 	}
 
