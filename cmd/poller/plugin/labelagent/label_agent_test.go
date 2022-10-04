@@ -31,8 +31,8 @@ func TestInitPlugin(t *testing.T) {
 	params.NewChildS("join", "").NewChildS("", "X `_` A,B")
 	// replace "aaa_" with "bbb_" and set as label "B"
 	params.NewChildS("replace", "").NewChildS("", "A B `aaa_` `bbb_`")
-	// remove occurences of "aaa_" from value of "A"
-	params.NewChildS("replace", "").NewChildS("", "A A `aaa_` ``")
+	// remove occurrences of "aaa_" from value of "A"
+	params.NewChildS("replace", "").NewChildS("", "A A `aaa_` ``") //nolint:dupword
 	// reverse the order of matching elements, replace underscore with dash and "aaa" with "bbb"
 	params.NewChildS("replace_regex", "").NewChildS("", "A B `^(aaa)_(\\d+)_(\\w+)$` `$3-$2-bbb`")
 	// exclude instance if label "A" has value "aaa bbb ccc"

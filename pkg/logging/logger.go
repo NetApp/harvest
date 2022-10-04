@@ -35,7 +35,7 @@ type LogConfig struct {
 	PrefixValue string
 	// FileLoggingEnabled makes the framework log to a file
 	FileLoggingEnabled bool
-	// Directory to log to to when filelogging is enabled
+	// Directory to log to when filelogging is enabled
 	Directory string
 	// Filename is the name of the logfile which will be placed inside the directory
 	Filename string
