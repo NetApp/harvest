@@ -29,7 +29,7 @@ import (
 
 const (
 	defaultPort          = 8086
-	detaultTimeout       = 5
+	defaultTimeout       = 5
 	defaultAPIVersion    = "2"
 	defaultAPIPrecision  = "s"
 	expectedResponseCode = 204
@@ -111,6 +111,7 @@ func (e *InfluxDB) Init() error {
 		}
 		e.Logger.Debug().Msgf("using api precision [%s]", *precision)
 
+		//goland:noinspection HttpUrlsUsage
 		urlToUSe := "http://" + *addr + ":" + strconv.Itoa(*port)
 		url = &urlToUSe
 		e.url = fmt.Sprintf("%s/api/v%s/write?org=%s&bucket=%s&precision=%s",
@@ -124,15 +125,15 @@ func (e *InfluxDB) Init() error {
 	e.Logger.Debug().Msg("will use authorization with api token")
 
 	// timeout parameter
-	timeout := time.Duration(detaultTimeout) * time.Second
+	timeout := time.Duration(defaultTimeout) * time.Second
 	if ct := e.Params.ClientTimeout; ct != nil {
 		if t, err := strconv.Atoi(*ct); err == nil {
 			timeout = time.Duration(t) * time.Second
 		} else {
-			e.Logger.Warn().Msgf("invalid client_timeout [%s], using default: %d s", *ct, detaultTimeout)
+			e.Logger.Warn().Msgf("invalid client_timeout [%s], using default: %d s", *ct, defaultTimeout)
 		}
 	} else {
-		e.Logger.Debug().Msgf("using default client_timeout: %d s", detaultTimeout)
+		e.Logger.Debug().Msgf("using default client_timeout: %d s", defaultTimeout)
 	}
 
 	e.Logger.Debug().Str("dbEndpoint", dbEndpoint).Str("url", e.url).Msg("")
