@@ -91,12 +91,898 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
         "y": 0
+      },
+      "id": 225,
+      "panels": [],
+      "title": "Highlights",
+      "type": "row"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "color-background-solid",
+            "filterable": false
+          },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Node"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 137
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 159
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 0,
+        "y": 1
+      },
+      "id": 228,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "8.4.11",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "topk($TopResources, sum(node_volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)) / 1000",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Read Latency",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Avg",
+              "node": "Node"
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Avg",
+                "Node"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "color-background-solid",
+            "filterable": false
+          },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 145
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 4,
+        "y": 1
+      },
+      "id": 233,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "8.4.11",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "topk($TopResources, sum(node_volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)) / 1000",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Write Latency",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Avg",
+              "node": "Node"
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Avg",
+                "Node"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "filterable": false
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "MBs"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 149
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 8,
+        "y": 1
+      },
+      "id": 232,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "8.4.11",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "topk($TopResources, sum(node_volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$TopVolumeTotalData\"}) by (node) + sum(node_volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$TopVolumeTotalData\"}) by(node)) / 1000000",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Throughput",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Avg",
+              "node": "Node"
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Avg",
+                "Node"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "filterable": false
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "iops"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 141
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 12,
+        "y": 1
+      },
+      "id": 230,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "8.4.11",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "topk($TopResources, sum(node_volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$TopVolumeTotalOps\"}) by (node))",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "IOPs",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Avg",
+              "node": "Node"
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Avg",
+                "Node"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "color-background-solid",
+            "filterable": false
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 141
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 16,
+        "y": 1
+      },
+      "id": 236,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "8.4.11",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "topk($TopResources, sum by (node)(node_avg_processor_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}))",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "CPU Utilization",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Avg",
+              "node": "Node"
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Avg",
+                "Node"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "color-background-solid",
+            "filterable": false
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 141
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 20,
+        "y": 1
+      },
+      "id": 237,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "8.4.11",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "topk($TopResources, sum by (node)(node_disk_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}))",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Disk Utilization",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Avg",
+              "node": "Node"
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Avg",
+                "Node"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 30,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "links": [],
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 7
+      },
+      "id": 234,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "7.5.4",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": true,
+          "expr": "topk($TopResources, sum(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node=~\"$TopVolumeAvgLatency\"}) by (node)) / 1000",
+          "interval": "",
+          "legendFormat": "{{node}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Latency",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 30,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "links": [],
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "MBs"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 7
+      },
+      "id": 231,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "7.5.4",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": true,
+          "expr": "topk($TopResources, sum(node_volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node=~\"$TopVolumeTotalData\"}) by (node) + sum(node_volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node=~\"$TopVolumeTotalData\"}) by(node)) / 1000000",
+          "interval": "",
+          "legendFormat": "{{node}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Throughput",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 30,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "links": [],
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "iops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 7
+      },
+      "id": 235,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "7.5.4",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": true,
+          "expr": "topk($TopResources, sum by (node)(node_volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node=~\"$TopVolumeTotalOps\"}))",
+          "interval": "",
+          "legendFormat": "{{node}}",
+          "refId": "A"
+        }
+      ],
+      "title": "IOPs",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 15
       },
       "id": 79,
       "panels": [],
@@ -229,7 +1115,7 @@
         "h": 7,
         "w": 18,
         "x": 0,
-        "y": 1
+        "y": 16
       },
       "id": 52,
       "interval": "",
@@ -406,7 +1292,7 @@
         "h": 3,
         "w": 6,
         "x": 18,
-        "y": 1
+        "y": 16
       },
       "id": 156,
       "links": [],
@@ -493,7 +1379,7 @@
         "h": 3,
         "w": 6,
         "x": 18,
-        "y": 4
+        "y": 19
       },
       "id": 181,
       "links": [],
@@ -571,7 +1457,7 @@
         "h": 3,
         "w": 6,
         "x": 18,
-        "y": 7
+        "y": 22
       },
       "id": 157,
       "links": [],
@@ -767,7 +1653,7 @@
         "h": 8,
         "w": 18,
         "x": 0,
-        "y": 8
+        "y": 23
       },
       "id": 177,
       "interval": "",
@@ -891,7 +1777,7 @@
         "h": 3,
         "w": 6,
         "x": 18,
-        "y": 10
+        "y": 25
       },
       "id": 220,
       "links": [],
@@ -969,7 +1855,7 @@
         "h": 3,
         "w": 6,
         "x": 18,
-        "y": 13
+        "y": 28
       },
       "id": 158,
       "links": [],
@@ -1056,7 +1942,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 16
+        "y": 31
       },
       "id": 222,
       "options": {
@@ -1092,7 +1978,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 24
+        "y": 39
       },
       "id": 198,
       "panels": [
@@ -1215,7 +2101,7 @@
             "h": 5,
             "w": 8,
             "x": 8,
-            "y": 25
+            "y": 40
           },
           "id": 206,
           "options": {
@@ -1289,7 +2175,7 @@
             "h": 5,
             "w": 8,
             "x": 16,
-            "y": 25
+            "y": 40
           },
           "id": 208,
           "options": {
@@ -1720,7 +2606,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 30
+            "y": 45
           },
           "id": 210,
           "interval": "1m",
@@ -1964,7 +2850,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 37
+            "y": 52
           },
           "id": 200,
           "options": {
@@ -2055,7 +2941,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 37
+            "y": 52
           },
           "id": 202,
           "options": {
@@ -2098,7 +2984,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 25
+        "y": 40
       },
       "id": 97,
       "panels": [
@@ -2161,7 +3047,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 26
+            "y": 41
           },
           "id": 106,
           "options": {
@@ -2252,7 +3138,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 26
+            "y": 41
           },
           "id": 107,
           "options": {
@@ -2342,7 +3228,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 26
+            "y": 41
           },
           "id": 108,
           "options": {
@@ -2432,7 +3318,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 34
+            "y": 49
           },
           "id": 136,
           "options": {
@@ -2524,7 +3410,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 34
+            "y": 49
           },
           "id": 180,
           "options": {
@@ -2615,7 +3501,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 34
+            "y": 49
           },
           "id": 2,
           "options": {
@@ -2658,7 +3544,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 26
+        "y": 41
       },
       "id": 184,
       "panels": [
@@ -2686,7 +3572,7 @@
             "h": 4,
             "w": 8,
             "x": 0,
-            "y": 27
+            "y": 42
           },
           "id": 187,
           "options": {
@@ -2741,7 +3627,7 @@
             "h": 4,
             "w": 8,
             "x": 8,
-            "y": 27
+            "y": 42
           },
           "id": 189,
           "options": {
@@ -2796,7 +3682,7 @@
             "h": 4,
             "w": 8,
             "x": 16,
-            "y": 27
+            "y": 42
           },
           "id": 188,
           "options": {
@@ -2881,7 +3767,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 31
+            "y": 46
           },
           "id": 191,
           "options": {
@@ -2963,7 +3849,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 31
+            "y": 46
           },
           "id": 194,
           "options": {
@@ -3045,7 +3931,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 39
+            "y": 54
           },
           "id": 193,
           "options": {
@@ -3127,7 +4013,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 39
+            "y": 54
           },
           "id": 196,
           "options": {
@@ -3210,7 +4096,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 47
+            "y": 62
           },
           "id": 195,
           "options": {
@@ -3292,7 +4178,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 47
+            "y": 62
           },
           "id": 192,
           "options": {
@@ -3332,7 +4218,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 27
+        "y": 42
       },
       "id": 214,
       "panels": [
@@ -3392,7 +4278,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 28
+            "y": 43
           },
           "id": 216,
           "options": {
@@ -3478,7 +4364,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 28
+            "y": 43
           },
           "id": 218,
           "options": {
@@ -3566,7 +4452,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 28
+            "y": 43
           },
           "id": 219,
           "options": {
@@ -3882,6 +4768,60 @@
         "options": [],
         "query": {
           "query": "query_result(topk($TopResources, avg_over_time(environment_sensor_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*node=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[${__range}]))))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopVolumeAvgLatency",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[${__range}]))))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*node=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[${__range}]) + avg_over_time(node_volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[${__range}]))))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopVolumeTotalData",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[${__range}]) + avg_over_time(node_volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[${__range}]))))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*node=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node!=\"\"}[${__range}]))))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopVolumeTotalOps",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node!=\"\"}[${__range}]))))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,

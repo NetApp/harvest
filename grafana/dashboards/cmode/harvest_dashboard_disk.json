@@ -725,24 +725,6 @@
           "interval": "",
           "legendFormat": "",
           "refId": "A"
-        },
-        {
-          "expr": "max by (node, aggr) (aggr_disk_max_total_transfers{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
-          "format": "table",
-          "hide": true,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "C"
-        },
-        {
-          "expr": "max by (node, aggr) (aggr_disk_max_busy{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
-          "format": "table",
-          "hide": true,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "B"
         }
       ],
       "timeFrom": null,
@@ -931,7 +913,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "max by (node, aggr) (aggr_disk_max_total_transfers{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
+          "expr": "topk($TopResources, aggr_disk_max_total_transfers{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$TopDiskTotalTransfers\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -940,7 +922,7 @@
           "refId": "C"
         },
         {
-          "expr": "max by (node, aggr) (aggr_disk_max_busy{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
+          "expr": "topk($TopResources, aggr_disk_max_busy{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$TopDiskBusy\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1051,7 +1033,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "max by (node, aggr) (aggr_disk_max_busy{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
+          "expr": "topk($TopResources, aggr_disk_max_busy{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$TopDiskBusy\"})",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -1140,7 +1122,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "max by (node, aggr) (aggr_disk_max_total_transfers{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
+          "expr": "topk($TopResources, aggr_disk_max_total_transfers{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",aggr=~\"$TopDiskTotalTransfers\"})",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -1152,13 +1134,199 @@
       "type": "timeseries"
     },
     {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 21
+      },
+      "id": 56,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "topk($TopResources, aggr_disk_max_user_read_chain{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$TopDiskUserReadChain\"}) * 4",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{node}} - {{aggr}}",
+          "refId": "A"
+        }
+      ],
+      "title": "User Read IOP Size",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "deckbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 21
+      },
+      "id": 57,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.4.11",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "topk($TopResources, aggr_disk_max_user_write_chain{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$TopDiskUserWriteChain\"}) * 4",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{node}} - {{aggr}}",
+          "refId": "A"
+        }
+      ],
+      "title": "User Write IOP Size",
+      "type": "timeseries"
+    },
+    {
       "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 29
       },
       "id": 22,
       "panels": [
@@ -1517,7 +1685,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 30
       },
       "id": 28,
       "panels": [
@@ -2365,6 +2533,81 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(aggr_disk_max_user_read_chain{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopDiskUserReadChain",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(aggr_disk_max_user_read_chain{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*aggr=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(aggr_disk_max_user_write_chain{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopDiskUserWriteChain",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(aggr_disk_max_user_write_chain{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*aggr=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "query_result(topk($TopResources, avg_over_time(aggr_disk_max_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopDiskBusy",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(aggr_disk_max_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*aggr=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(aggr_disk_max_total_transfers{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopDiskTotalTransfers",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(aggr_disk_max_total_transfers{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*aggr=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
