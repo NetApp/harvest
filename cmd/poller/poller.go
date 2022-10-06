@@ -617,59 +617,45 @@ func (p *Poller) loadCollector(c conf.Collector) error {
 	Union2(template, p.params)
 	template.NewChildS("poller_name", p.params.Name)
 
-	object := template.GetChildContentS("object")
+	objects := make([]string, 0)
+	templateObject := template.GetChildContentS("object")
 
-	// if object is defined, we only initialize 1 sub-collector / object
-	if object != "" {
-		col, err = p.newCollector(class, object, template)
-		if col != nil {
-			if err != nil {
-				logger.Error().Msgf("init collector (%s:%s): %v", class, object, err)
-			} else {
-				collectors = append(collectors, col)
-				logger.Debug().Msgf("initialized collector (%s:%s)", class, object)
-			}
-		}
-		// if template has list of objects, initialize 1 subcollector for each
-	} else if objects := template.GetChildS("objects"); objects != nil {
-		for _, object := range objects.GetChildren() {
-
-			ok := true
-
-			// if requested filter objects
-			if len(p.options.Objects) != 0 {
-				ok = false
-				for _, o := range p.options.Objects {
-					if o == object.GetNameS() {
-						ok = true
-						break
-					}
-				}
-			}
-
-			if !ok {
-				logger.Debug().Msgf("skipping object [%s]", object.GetNameS())
-				continue
-			}
-
-			col, err = p.newCollector(class, object.GetNameS(), template)
-			if col == nil {
-				logger.Warn().Msgf("collector is nil for collector-object (%s:%s)", class, object.GetNameS())
-				continue
-			}
-			if err != nil {
-				logger.Warn().Msgf("init collector-object (%s:%s): %v", class, object.GetNameS(), err)
-				if errors.Is(err, errs.ErrConnection) {
-					logger.Warn().Msgf("aborting collector (%s)", class)
-					break
-				}
-			} else {
-				collectors = append(collectors, col)
-				logger.Debug().Msgf("initialized collector-object (%s:%s)", class, object.GetNameS())
-			}
+	// if `objects` was passed at the cmdline, use them instead of the defaults
+	if len(p.options.Objects) != 0 {
+		objects = append(objects, p.options.Objects...)
+	} else if templateObject != "" {
+		// if object is defined, we only initialize 1 sub-collector / object
+		objects = append(objects, templateObject)
+		// if template has list of objects, initialize 1 sub-collector for each
+	} else if templateObjects := template.GetChildS("objects"); templateObjects != nil {
+		for _, object := range templateObjects.GetChildren() {
+			objects = append(objects, object.GetNameS())
 		}
 	} else {
 		return errs.New(errs.ErrMissingParam, "collector object")
+	}
+
+	for _, object := range objects {
+		col, err = p.newCollector(class, object, template)
+		if err != nil {
+			if errors.Is(err, errs.ErrConnection) {
+				logger.Warn().
+					Str("collector", class).
+					Str("object", object).
+					Msg("abort collector")
+				break
+			}
+			logger.Warn().Err(err).
+				Str("collector", class).
+				Str("object", object).
+				Msg("init collector-object")
+		} else {
+			collectors = append(collectors, col)
+			logger.Debug().
+				Str("collector", class).
+				Str("object", object).
+				Msg("initialized collector-object")
+		}
 	}
 
 	p.collectors = append(p.collectors, collectors...)
@@ -766,13 +752,11 @@ func (p *Poller) newCollector(class string, object string, template *node.Node) 
 	name := "harvest.collector." + strings.ToLower(class)
 	mod, err := plugin.GetModule(name)
 	if err != nil {
-		logger.Error().Msgf("error getting module %s", name)
-		return nil, err
+		return nil, fmt.Errorf("error getting module %s err: %w", name, err)
 	}
 	inst := mod.New()
 	col, ok := inst.(collector.Collector)
 	if !ok {
-		logger.Error().Msgf("collector '%s' is not a Collector", name)
 		return nil, errs.New(errs.ErrNoCollector, "no collectors")
 	}
 	delegate := collector.New(class, object, p.options, template.Copy())
