@@ -51,7 +51,7 @@ func (s *System) loadStat() error {
 	}
 
 	// first line should contain summary of CPU times, example:
-	// cpu  8536493 101888 2291762 23315526 39855 674853 262635 0 0 0
+	//nolint:dupword    // cpu  8536493 101888 2291762 23315526 39855 674853 262635 0 0 0
 	lines = strings.Split(string(data), "\n")
 
 	/* Not used currently

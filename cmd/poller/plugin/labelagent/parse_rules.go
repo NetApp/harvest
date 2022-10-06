@@ -302,7 +302,8 @@ type replaceRegexRule struct {
 }
 
 // example rule:
-// node node `^(node)_(\d+)_.*$` `Node-$2`
+//nolint:dupword
+//node node `^(node)_(\d+)_.*$` `Node-$2`
 // if node="node_10_dc2"; then:
 // node="Node-10"
 

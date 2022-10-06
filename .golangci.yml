@@ -2,6 +2,7 @@ linters:
   disable-all: true
   enable:
     - bodyclose
+    - dupword
     - errcheck
     - errname
     - errorlint
