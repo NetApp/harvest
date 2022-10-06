@@ -23,12 +23,20 @@ ExecStart=/opt/harvest/bin/harvest --config /opt/harvest/harvest.yml start -f %i
 
 [Install]
 WantedBy=harvest.target' | sudo tee /etc/systemd/system/poller@.service
-
 ```
+
+> NOTE: By default, the instantiated service will log to `stdout`, which means the 
+> log messages will be included in `journald`,and on some operating systems (RHEL8),
+> `/var/log/messages`. 
+> 
+> If you want to skip `journald` and `syslog`, you can tell
+> Harvest to log to a file by adding the `--logtofile` command line argument 
+> like so: `ExecStart=/opt/harvest/bin/harvest --config /opt/harvest/harvest.yml start --logtofile -f %i`   
 
 ### Harvest Target
 
-Target files are how systemd groups a set of services together. We'll use it as a way to start|stop all pollers as a single unit. Nice on reboot or upgrade.
+Target files are how systemd groups a set of services together. 
+We'll use it as a way to start|stop all pollers as a single unit. Nice on reboot or upgrade.
 
 Harvest provides a `generate` subcommand to make setting up instantiated instances easier. Use like this:
 
