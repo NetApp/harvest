@@ -129,7 +129,7 @@ func Configure(config LogConfig) *Logger {
 	return logger
 }
 
-func ShortFile(file string, line int) string {
+func ShortFile(_ uintptr, file string, line int) string {
 	short := file
 	slashesSeen := 0
 	for i := len(file) - 1; i > 0; i-- {

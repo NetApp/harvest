@@ -4,15 +4,15 @@ go 1.19
 
 require (
 	github.com/bbrks/wrap/v2 v2.5.0
-	github.com/go-openapi/spec v0.20.6
+	github.com/go-openapi/spec v0.20.7
 	github.com/hashicorp/go-version v1.6.0
 	github.com/imdario/mergo v0.3.13
 	github.com/olekukonko/tablewriter v0.0.5
-	github.com/rs/zerolog v1.27.0
-	github.com/shirou/gopsutil/v3 v3.22.6
+	github.com/rs/zerolog v1.28.0
+	github.com/shirou/gopsutil/v3 v3.22.9
 	github.com/spf13/cobra v1.5.0
-	github.com/tidwall/gjson v1.14.1
-	github.com/tidwall/sjson v1.2.4
+	github.com/tidwall/gjson v1.14.3
+	github.com/tidwall/sjson v1.2.5
 	github.com/zekroTJA/timedmap v1.4.0
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a
 	golang.org/x/term v0.0.0-20220526004731-065cf7ba2467
