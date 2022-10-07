@@ -25,7 +25,7 @@ import (
 
 const (
 	DefaultAPIVersion = "1.3"
-	DefaultTimeout    = 10
+	DefaultTimeout    = 30 // in seconds
 )
 
 type Client struct {
