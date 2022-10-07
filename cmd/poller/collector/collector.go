@@ -126,7 +126,7 @@ func New(name, object string, options *options.Options, params *node.Node) *Abst
 // inside its Init method, or leave it to be called
 // by the poller during dynamic load.
 //
-// The important thing done here is too look what tasks are defined
+// The important thing done here is to look what tasks are defined
 // in the "schedule" parameter of the collector and create a pointer
 // to the corresponding method of the collector. Example, parameter is:
 //

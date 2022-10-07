@@ -64,6 +64,7 @@ func (s *StorageGrid) Init(a *collector.AbstractCollector) error {
 	if s.Props.TemplatePath, err = s.LoadTemplate(); err != nil {
 		return err
 	}
+	s.InitAPIPath()
 	if err = collector.Init(s); err != nil {
 		return err
 	}
@@ -291,9 +292,8 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 
 func (s *StorageGrid) initClient() error {
 	var err error
-	a := s.AbstractCollector
 
-	if s.client, err = srest.NewClient(s.Options.Poller, a.Params.GetChildContentS("client_timeout")); err != nil {
+	if s.client, err = srest.NewClient(s.Options.Poller, s.Params.GetChildContentS("client_timeout")); err != nil {
 		return err
 	}
 
@@ -375,6 +375,20 @@ func (s *StorageGrid) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin
 		s.Logger.Warn().Str("kind", kind).Msg("plugin not found")
 	}
 	return nil
+}
+
+// InitAPIPath reads the REST API version from the template and uses it instead of
+// the DefaultAPIVersion
+func (s *StorageGrid) InitAPIPath() {
+	apiVersion := s.Params.GetChildContentS("api")
+	if !strings.HasSuffix(s.client.APIPath, apiVersion) {
+		cur := s.client.APIPath
+		s.client.APIPath = "/apiVersion/" + apiVersion
+		s.Logger.Debug().
+			Str("clientAPI", cur).
+			Str("templateAPI", apiVersion).
+			Msg("Use template apiVersion")
+	}
 }
 
 // Interface guards

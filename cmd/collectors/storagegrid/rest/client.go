@@ -20,7 +20,8 @@ import (
 )
 
 const (
-	DefaultTimeout = "1m"
+	DefaultTimeout    = "1m"
+	DefaultAPIVersion = "3"
 )
 
 type Client struct {
@@ -35,7 +36,7 @@ type Client struct {
 	token    string
 	Timeout  time.Duration
 	logRest  bool // used to log Rest request/response
-	apiPath  string
+	APIPath  string
 }
 
 type Cluster struct {
@@ -94,7 +95,6 @@ func New(poller conf.Poller, timeout time.Duration) (*Client, error) {
 
 	client.baseURL = href
 	client.Timeout = timeout
-	client.apiPath = "/api/v3/"
 
 	// by default, enforce secure TLS, if not requested otherwise by user
 	if x := poller.UseInsecureTLS; x != nil {
@@ -187,7 +187,7 @@ func (c *Client) Fetch(request string, result *[]gjson.Result) error {
 		err     error
 		fetched []byte
 	)
-	fetched, err = c.GetRest(request)
+	fetched, err = c.GetGridRest(request)
 	if err != nil {
 		return fmt.Errorf("error making request %w", err)
 	}
@@ -200,33 +200,50 @@ func (c *Client) Fetch(request string, result *[]gjson.Result) error {
 	return nil
 }
 
-// GetRest makes a REST request to the cluster and returns a json response as a []byte
+// GetGridRest makes a grid API request to the cluster and returns a json response as a []byte
 // see also Fetch
-func (c *Client) GetRest(request string) ([]byte, error) {
-	var err error
-	u, err := url.JoinPath(c.baseURL, c.apiPath, request)
+func (c *Client) GetGridRest(request string) ([]byte, error) {
+	u, err := url.JoinPath(c.baseURL, c.APIPath, request)
 	if err != nil {
 		return nil, fmt.Errorf("failed to join URL %s err: %w", request, err)
 	}
-	u2, err2 := url.QueryUnescape(u)
-	if err2 != nil {
-		return nil, fmt.Errorf("failed to unescape URL %s err: %w", u, err2)
+	return c.getRest(u)
+}
+
+// GetMetricQuery makes a metrics API request to the cluster and fills the result argument
+func (c *Client) GetMetricQuery(metric string, result *[]gjson.Result) error {
+	u, err := url.JoinPath(c.baseURL, "/metrics/api/v1/query?query="+metric)
+	if err != nil {
+		return fmt.Errorf("failed to query metric %s err: %w", metric, err)
 	}
 
-	c.request, err = http.NewRequest("GET", u2, nil)
+	fetched, err := c.getRest(u)
+	if err != nil {
+		return err
+	}
+	output := gjson.GetManyBytes(fetched, "data")
+	data := output[0]
+	for _, r := range data.Array() {
+		*result = append(*result, r.Array()...)
+	}
+	return nil
+}
+
+// getRest makes a request to the cluster and returns a json response as a []byte
+// see also Fetch
+func (c *Client) getRest(request string) ([]byte, error) {
+	u, err := url.QueryUnescape(request)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unescape %s err: %w", request, err)
+	}
+
+	c.request, err = http.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, err
 	}
 	c.request.Header.Set("accept", "application/json")
 	c.request.Header.Set("Authorization", "Bearer "+c.token)
-	// ensure that we can change body dynamically
-	c.request.GetBody = func() (io.ReadCloser, error) {
-		r := bytes.NewReader(c.buffer.Bytes())
-		return io.NopCloser(r), nil
-	}
-
-	result, err := c.invoke()
-	return result, err
+	return c.invoke()
 }
 
 func (c *Client) invoke() ([]byte, error) {
@@ -292,6 +309,7 @@ func (c *Client) fetch() ([]byte, error) {
 	return body, nil
 }
 
+// Init is responsible for determining the StorageGrid server version, API version, and hostname
 func (c *Client) Init(retries int) error {
 	var (
 		err     error
@@ -299,29 +317,29 @@ func (c *Client) Init(retries int) error {
 		i       int
 	)
 
-	// Product version and cluster name are two separate endpoints
 	for i = 0; i < retries; i++ {
-		if content, err = c.GetRest("grid/config/product-version"); err != nil {
+		// Determine which API versions are supported and then request
+		// product version and cluster name - both of which are separate endpoints
+
+		err = c.sniffAPIVersion(retries)
+		if err != nil {
 			continue
 		}
 
+		if content, err = c.GetGridRest("grid/config/product-version"); err != nil {
+			continue
+		}
 		results := gjson.GetManyBytes(content, "data.productVersion")
 		err = c.SetVersion(results[0].String())
 		if err != nil {
 			return err
 		}
-	}
-	if err != nil {
-		return err
-	}
 
-	err = nil
-	for i = 0; i < retries; i++ {
-		if content, err = c.GetRest("grid/config"); err != nil {
+		if content, err = c.GetGridRest("grid/config"); err != nil {
 			continue
 		}
 
-		results := gjson.GetManyBytes(content, "data.hostname")
+		results = gjson.GetManyBytes(content, "data.hostname")
 		c.Cluster.Name = results[0].String()
 		return nil
 	}
@@ -358,7 +376,7 @@ func (c *Client) fetchToken() error {
 		response *http.Response
 		body     []byte
 	)
-	u, err := url.JoinPath(c.baseURL, c.apiPath, "authorize")
+	u, err := url.JoinPath(c.baseURL, c.APIPath, "authorize")
 	if err != nil {
 		return fmt.Errorf("failed to create auth URL err: %w", err)
 	}
@@ -409,4 +427,36 @@ func (c *Client) fetchToken() error {
 		return errs.New(errs.ErrAuthFailed, errorMsg.String())
 	}
 	return nil
+}
+
+func (c *Client) sniffAPIVersion(retries int) error {
+	// This endpoint does not require auth and uses the /api/ endpoint instead of a versioned one
+
+	var (
+		apiVersion = DefaultAPIVersion
+		u          string
+		err        error
+		i          int
+	)
+
+	u, err = url.JoinPath(c.baseURL, "/api/versions")
+	if err != nil {
+		return fmt.Errorf("failed to join getApiVersions %s err: %w", c.baseURL, err)
+	}
+	for i = 0; i < retries; i++ {
+		result, err := c.getRest(u)
+		if err != nil {
+			continue
+		}
+		versionB := gjson.GetBytes(result, "data")
+		if versionB.Exists() && versionB.IsArray() {
+			versions := versionB.Array()
+			if len(versions) > 0 {
+				apiVersion = versions[len(versions)-1].String()
+			}
+		}
+		c.APIPath = "/api/v" + apiVersion
+		return nil
+	}
+	return err
 }
