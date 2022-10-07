@@ -52,7 +52,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1664465454598,
+  "iteration": 1665158170026,
   "links": [],
   "panels": [
     {
@@ -148,6 +148,30 @@
                 "value": 0
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cluster"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": null
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Objects"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "locale"
+              }
+            ]
           }
         ]
       },
@@ -172,7 +196,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "tenant_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", tenant=~\"$Tenant\"}",
+          "expr": "tenant_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",id=~\"$Id\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -181,7 +205,7 @@
         },
         {
           "exemplar": true,
-          "expr": "tenant_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", tenant=~\"$Tenant\"}",
+          "expr": "tenant_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",id=~\"$Id\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -191,7 +215,7 @@
         },
         {
           "exemplar": true,
-          "expr": "tenant_logical_quota{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", tenant=~\"$Tenant\"}",
+          "expr": "tenant_logical_quota{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",id=~\"$Id\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -201,35 +225,48 @@
         },
         {
           "exemplar": true,
-          "expr": "tenant_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", tenant=~\"$Tenant\"}",
+          "expr": "tenant_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",id=~\"$Id\"}",
           "format": "table",
           "hide": false,
           "instant": true,
           "interval": "",
           "legendFormat": "",
           "refId": "D"
+        },
+        {
+          "exemplar": true,
+          "expr": "tenant_objects{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",id=~\"$Id\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "E"
         }
       ],
       "title": "Tenant Quota",
       "transformations": [
         {
+          "id": "seriesToColumns",
+          "options": {
+            "byField": "id"
+          }
+        },
+        {
           "id": "filterFieldsByName",
           "options": {
             "include": {
               "names": [
-                "cluster",
-                "datacenter",
+                "cluster 1",
+                "datacenter 1",
                 "tenant",
                 "Value #B",
                 "Value #C",
-                "Value #D"
+                "Value #D",
+                "Value #E"
               ]
             }
           }
-        },
-        {
-          "id": "merge",
-          "options": {}
         },
         {
           "id": "organize",
@@ -239,16 +276,19 @@
               "Value #B": 3,
               "Value #C": 4,
               "Value #D": 5,
-              "cluster": 1,
-              "datacenter": 0,
+              "cluster 1": 1,
+              "datacenter 1": 0,
               "tenant": 2
             },
             "renameByName": {
               "Value #B": "Logical Used",
               "Value #C": "Quota",
               "Value #D": "Used %",
+              "Value #E": "Objects",
               "cluster": "Cluster",
+              "cluster 1": "Cluster",
               "datacenter": "Datacenter",
+              "datacenter 1": "Datacenter",
               "tenant": "Tenant"
             }
           }
@@ -329,7 +369,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "bucket_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", tenant=~\"$Tenant\"}",
+          "expr": "bucket_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",tenant=~\"$Tenant\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -338,7 +378,7 @@
         },
         {
           "exemplar": true,
-          "expr": "bucket_objects{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", tenant=~\"$Tenant\"}",
+          "expr": "bucket_objects{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",tenant=~\"$Tenant\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -359,7 +399,8 @@
                 "datacenter",
                 "tenant",
                 "Value #A",
-                "Value #B"
+                "Value #B",
+                "region"
               ]
             }
           }
@@ -386,6 +427,7 @@
               "bucket": "Bucket",
               "cluster": "Cluster",
               "datacenter": "Datacenter",
+              "region": "Region",
               "tenant": "Tenant"
             }
           }
@@ -470,6 +512,29 @@
         "skipUrlSync": false,
         "sort": 1,
         "type": "query"
+      },
+      {
+        "allValue": "",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(tenant_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",tenant=~\"$Tenant\"}, id)",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Id",
+        "options": [],
+        "query": {
+          "query": "label_values(tenant_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",tenant=~\"$Tenant\"}, id)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
@@ -480,6 +545,6 @@
   "timepicker": {},
   "timezone": "",
   "title": "StorageGrid: Tenants",
-  "uid": "IFfVPS4Vz",
+  "uid": "WZExvrV4z",
   "version": 1
 }

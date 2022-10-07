@@ -80,6 +80,7 @@ func (b *Bucket) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			bucketsJSON := record.Get("buckets")
 			for _, bucketJSON := range bucketsJSON.Array() {
 				bucket := bucketJSON.Get("name").String()
+				region := bucketJSON.Get("region").String()
 
 				instanceKey = instKey + "#" + bucket
 				bucketInstance, err2 := b.data.NewInstance(instanceKey)
@@ -90,6 +91,7 @@ func (b *Bucket) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				b.Logger.Debug().Str("instanceKey", instanceKey).Msg("add instance")
 				bucketInstance.SetLabel("bucket", bucket)
 				bucketInstance.SetLabel("tenant", tenantName)
+				bucketInstance.SetLabel("region", region)
 				for metricKey, m := range b.data.GetMetrics() {
 					jsonKey := metricToJSON[metricKey]
 					if value := bucketJSON.Get(jsonKey); value.Exists() {

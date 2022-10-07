@@ -2,6 +2,7 @@
 name:                       Tenant
 query:                      grid/accounts-cache
 object:                     tenant
+api:                        v3
 
 counters:
   - ^^id                    => id
@@ -15,4 +16,7 @@ plugins:
   - Bucket
 
 export_options:
-  include_all_labels: true
+  instance_keys:
+    - id
+  instance_labels:
+    - tenant
