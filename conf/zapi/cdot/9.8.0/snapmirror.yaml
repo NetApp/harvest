@@ -44,6 +44,7 @@ export_options:
     - source_volume
     - source_vserver
     - source_node
+    - source_cluster
   instance_labels:
     - healthy
     - unhealthy_reason
@@ -58,7 +59,6 @@ export_options:
     - protectedBy
     - protectionSourceType
     - policy_type
-    - source_cluster
     - derived_relationship_type
     - local
     
