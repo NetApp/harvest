@@ -277,13 +277,11 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 		err              error
 		replacer         *strings.Replacer
 		histograms       map[string]*histogram
-		areLabelsNormal  map[string]bool     // map of object_metric -> whether labels can be normalized
 		normalizedLabels map[string][]string // cache of histogram normalized labels
 	)
 
 	rendered = make([][]byte, 0)
 	globalLabels = make([]string, 0)
-	areLabelsNormal = make(map[string]bool)
 	normalizedLabels = make(map[string][]string)
 	replacer = strings.NewReplacer(`\`, `\\`, `"`, `\"`, "\n", "\\n")
 
@@ -410,7 +408,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 
 				// metric is array, determine if this is a plain array or histogram
 				if metric.HasLabels() {
-					if metric.IsArray() {
+					if metric.IsHistogram() {
 						// metric is histogram. Create a new metric to accumulate
 						// the flattened metrics and export them in order
 						bucketMetric := data.GetMetric(metric.GetName() + ".bucket")
@@ -474,7 +472,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 			metric := h.metric
 			bucketNames := metric.Buckets()
 			objectMetric := data.Object + "_" + metric.GetName()
-			_, ok := areLabelsNormal[objectMetric]
+			_, ok := normalizedLabels[objectMetric]
 			if !ok {
 				canNormalize := true
 				normalizedNames := make([]string, 0, len(*bucketNames))
@@ -487,8 +485,9 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 					}
 					normalizedNames = append(normalizedNames, normalized)
 				}
-				areLabelsNormal[objectMetric] = canNormalize
-				normalizedLabels[objectMetric] = normalizedNames
+				if canNormalize {
+					normalizedLabels[objectMetric] = normalizedNames
+				}
 			}
 
 			if p.addMetaTags && !tagged.Has(prefix+"_"+metric.GetName()) {
@@ -497,8 +496,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 				rendered = append(rendered, []byte("# TYPE "+prefix+"_"+metric.GetName()+" histogram"))
 			}
 
-			canNormalize := areLabelsNormal[objectMetric]
-			normalizedNames := normalizedLabels[objectMetric]
+			normalizedNames, canNormalize := normalizedLabels[objectMetric]
 			for i, value := range h.values {
 				bucketName := (*bucketNames)[i]
 				var x string

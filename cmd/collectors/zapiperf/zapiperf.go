@@ -1219,7 +1219,7 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 				if isHistogram {
 					// Save the index of this label so the labels can be exported in order
 					m.SetLabel("comment", strconv.Itoa(i))
-					m.SetArray(true)
+					m.SetHistogram(true)
 				}
 			}
 		}
