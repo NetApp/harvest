@@ -352,7 +352,7 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 
 			if instance == nil {
 				if instance, err = mat.NewInstance(key); err != nil {
-					z.Logger.Error().Err(err).Str("Instance key", key).Send()
+					z.Logger.Error().Err(err).Str("instKey", key).Msg("Failed to create new missing instance")
 					continue
 				}
 			}

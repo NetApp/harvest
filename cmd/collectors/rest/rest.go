@@ -429,13 +429,13 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, allowInstanceCre
 		// Used for endpoints as we don't want to create additional instances
 		if !allowInstanceCreation && instance == nil {
 			// Moved to trace as with filter, this log may spam
-			r.Logger.Trace().Str("Instance key", instanceKey).Msg("Instance not found")
+			r.Logger.Trace().Str("instKey", instanceKey).Msg("Instance not found")
 			continue
 		}
 
 		if instance == nil {
 			if instance, err = mat.NewInstance(instanceKey); err != nil {
-				r.Logger.Error().Err(err).Str("Instance key", instanceKey).Msg("")
+				r.Logger.Error().Err(err).Str("instKey", instanceKey).Msg("Failed to create new missing instance")
 				continue
 			}
 		}
@@ -457,7 +457,7 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, allowInstanceCre
 				}
 				count++
 			} else {
-				r.Logger.Trace().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
+				r.Logger.Trace().Str("instKey", instanceKey).Str("label", label).Msg("Missing label value")
 			}
 		}
 
