@@ -16,6 +16,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
 	"os"
@@ -388,7 +389,13 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, allowInstanceCre
 		count uint64
 	)
 
+	oldInstances := set.New()
 	mat := r.Matrix[r.Object]
+
+	// copy keys of current instances. This is used to remove deleted instances from matrix later
+	for key := range mat.GetInstances() {
+		oldInstances.Add(key)
+	}
 
 	for _, instanceData := range result {
 		var (
@@ -432,6 +439,8 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, allowInstanceCre
 				continue
 			}
 		}
+
+		oldInstances.Delete(instanceKey)
 
 		for label, display := range prop.InstanceLabels {
 			value := instanceData.Get(label)
@@ -486,6 +495,12 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, allowInstanceCre
 		}
 
 	}
+	// remove deleted instances
+	for key := range oldInstances.Iter() {
+		mat.RemoveInstance(key)
+		r.Logger.Debug().Str("key", key).Msg("removed instance")
+	}
+
 	return count
 }
 
