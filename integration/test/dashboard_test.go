@@ -90,6 +90,7 @@ func (suite *DashboardImportTestSuite) TestCModeDashboardCount() {
 		"ONTAP: Security",
 		"ONTAP: Compliance",
 		"ONTAP: Power",
+		"ONTAP: Cdot",
 	}
 
 	VerifyDashboards(folderId, expectedName, suite.T())
