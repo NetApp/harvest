@@ -356,7 +356,7 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 					continue
 				}
 			}
-			oldInstances.Delete(key)
+			oldInstances.Remove(key)
 			fetch(instance, instanceElem, make([]string, 0))
 		}
 	}

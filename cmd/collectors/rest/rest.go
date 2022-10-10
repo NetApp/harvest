@@ -440,7 +440,7 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, allowInstanceCre
 			}
 		}
 
-		oldInstances.Delete(instanceKey)
+		oldInstances.Remove(instanceKey)
 
 		for label, display := range prop.InstanceLabels {
 			value := instanceData.Get(label)
