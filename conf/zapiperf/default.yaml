@@ -42,7 +42,7 @@ objects:
   FcpLif:                 fcp_lif.yaml
   ISCSI:                  iscsi_lif.yaml
   LIF:                    lif.yaml
-  LUN:                    lun.yaml
+  Lun:                    lun.yaml
   NFSv3:                  nfsv3.yaml
   NFSv41:                 nfsv4_1.yaml
   NFSv42:                 nfsv4_2.yaml
