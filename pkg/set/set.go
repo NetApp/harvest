@@ -31,19 +31,8 @@ func (s *Set) AddValues(values []string) {
 }
 
 // Remove removes an element from the set
-// See also Delete
 func (s *Set) Remove(value string) {
 	delete(s.set, value)
-}
-
-// Delete removes an element from the set
-// return true if the element was in the set, false otherwise
-func (s *Set) Delete(value string) bool {
-	if s.Has(value) {
-		delete(s.set, value)
-		return true
-	}
-	return false
 }
 
 func (s *Set) Has(value string) bool {
