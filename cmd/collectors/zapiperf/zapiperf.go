@@ -924,12 +924,12 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 
 		// string metric, add as instance label
 		if strings.Contains(counter.GetChildContentS("properties"), "string") {
-			oldLabels.Delete(key)
+			oldLabels.Remove(key)
 			z.instanceLabels[key] = display
 			z.Logger.Trace().Msgf("%s+[%s] added as label name (%s)%s", color.Yellow, key, display, color.End)
 		} else {
 			// add counter as numeric metric
-			oldMetrics.Delete(key)
+			oldMetrics.Remove(key)
 			if r := z.addCounter(counter, key, display, true, counters); r != "" && !wanted.Has(r) {
 				missing.Add(r) // required base counter, missing in template
 				z.Logger.Trace().Msgf("%smarking [%s] as required base counter for [%s]%s", color.Red, r, key, color.End)
@@ -942,7 +942,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		z.Logger.Debug().Msgf("attempting to retrieve metadata of %d replaced counters", replaced.Size())
 		for name, counter := range counters {
 			if replaced.Has(name) {
-				oldMetrics.Delete(name)
+				oldMetrics.Remove(name)
 				z.Logger.Debug().Msgf("adding [%s] (replacement for deprecated counter)", name)
 				if r := z.addCounter(counter, name, name, true, counters); r != "" && !wanted.Has(r) {
 					missing.Add(r) // required base counter, missing in template
@@ -959,7 +959,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 			Msg("Attempting to retrieve metadata of missing base counters")
 		for name, counter := range counters {
 			if missing.Has(name) {
-				oldMetrics.Delete(name)
+				oldMetrics.Remove(name)
 				z.Logger.Debug().Str("name", name).Msg("Adding missing base counter")
 				z.addCounter(counter, name, "", false, counters)
 			}
@@ -987,10 +987,10 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
 
 			var service, wait, visits, ops matrix.Metric
-			oldMetrics.Delete("service_time")
-			oldMetrics.Delete("wait_time")
-			oldMetrics.Delete("visits")
-			oldMetrics.Delete("ops")
+			oldMetrics.Remove("service_time")
+			oldMetrics.Remove("wait_time")
+			oldMetrics.Remove("visits")
+			oldMetrics.Remove("ops")
 
 			if service = mat.GetMetric("service_time"); service == nil {
 				z.Logger.Error().Err(nil).Msg("metric [service_time] required to calculate workload missing")
@@ -1028,7 +1028,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 					resource := x.GetContentS()
 
 					if m := mat.GetMetric(name); m != nil {
-						oldMetrics.Delete(name)
+						oldMetrics.Remove(name)
 						continue
 					}
 					if m, err := mat.NewMetricFloat64(name); err != nil {
@@ -1040,7 +1040,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 						// base counter is the ops of the same resource
 						m.SetComment("ops")
 
-						oldMetrics.Delete(name)
+						oldMetrics.Remove(name)
 						z.Logger.Debug().Msgf("+ [%s] (=> %s) added workload latency metric", name, resource)
 					}
 				}
@@ -1060,7 +1060,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 				}
 				z.qosLabels[label] = display
 				//me.instanceLabels[label] = display
-				//oldLabels.Delete(label)
+				//oldLabels.Remove(label)
 			}
 		}
 	}
@@ -1342,8 +1342,9 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 				name := i.GetChildContentS(nameAttr)
 				uuid := i.GetChildContentS(uuidAttr)
 				z.Logger.Debug().Msgf("skip instance, missing key [%s] (name=%s, uuid=%s)", z.instanceKey, name, uuid)
-			} else if oldInstances.Delete(key) {
+			} else if oldInstances.Has(key) {
 				// instance already in cache
+				oldInstances.Remove(key)
 				z.Logger.Trace().Msgf("updated instance [%s%s%s%s]", color.Bold, color.Yellow, key, color.End)
 				continue
 			} else if instance, err := mat.NewInstance(key); err != nil {
