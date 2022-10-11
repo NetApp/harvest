@@ -21,7 +21,7 @@ import (
 
 const (
 	// DefaultTimeout should be > than ONTAP's default REST timeout, which is 15 seconds for GET requests
-	DefaultTimeout = "30s" // in seconds
+	DefaultTimeout = "30s"
 )
 
 type Client struct {

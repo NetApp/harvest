@@ -131,6 +131,8 @@ func (r *Rest) InitVars(config *node.Node) {
 	duration, err := time.ParseDuration(clientTimeout)
 	if err == nil {
 		r.Client.Timeout = duration
+	} else {
+		r.Logger.Info().Str("timeout", rest.DefaultTimeout).Msg("Using default timeout")
 	}
 }
 
