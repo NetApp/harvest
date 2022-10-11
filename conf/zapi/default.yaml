@@ -3,7 +3,6 @@ collector:          Zapi
 
 # Order here matters!
 schedule:
-  - instance: 600s
   - data: 180s
 
 objects:

@@ -1,15 +1,16 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
+
 package set
 
 type Set struct {
-	set map[string]bool
+	set map[string]struct{}
 }
 
 func New() *Set {
 	s := Set{}
-	s.set = make(map[string]bool)
+	s.set = make(map[string]struct{})
 	return &s
 }
 
@@ -20,21 +21,18 @@ func NewFrom(values []string) *Set {
 }
 
 func (s *Set) Add(value string) {
-	s.set[value] = true
+	s.set[value] = struct{}{}
 }
 
 func (s *Set) AddValues(values []string) {
 	for _, v := range values {
-		s.set[v] = true
+		s.set[v] = struct{}{}
 	}
 }
 
-func (s *Set) Delete(value string) bool {
-	if s.Has(value) {
-		delete(s.set, value)
-		return true
-	}
-	return false
+// Remove removes an element from the set
+func (s *Set) Remove(value string) {
+	delete(s.set, value)
 }
 
 func (s *Set) Has(value string) bool {
@@ -66,6 +64,6 @@ func (s *Set) Slice() []string {
 	return keys
 }
 
-func (s *Set) Iter() map[string]bool {
+func (s *Set) Iter() map[string]struct{} {
 	return s.set
 }
