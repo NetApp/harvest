@@ -410,7 +410,7 @@ func (z *Zapi) CollectAutoSupport(p *collector.Payload) {
 		}
 	}
 
-	clientTimeout := strconv.Itoa(client.DefaultTimeout)
+	clientTimeout := client.DefaultTimeout
 	newTimeout := z.Params.GetChildContentS("client_timeout")
 	if newTimeout != "" {
 		clientTimeout = newTimeout
