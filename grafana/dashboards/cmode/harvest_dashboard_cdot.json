@@ -101,7 +101,7 @@
       },
       "id": 225,
       "panels": [],
-      "title": "Highlights",
+      "title": "Cluster Metrics",
       "type": "row"
     },
     {
@@ -190,7 +190,7 @@
           "refId": "A"
         }
       ],
-      "title": "CIFS Top IOPs",
+      "title": "CIFS Top IOPs by Cluster",
       "transformations": [],
       "type": "timeseries"
     },
@@ -259,7 +259,8 @@
         "legend": {
           "calcs": [
             "mean",
-            "lastNotNull"
+            "lastNotNull",
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom"
@@ -279,7 +280,7 @@
           "refId": "A"
         }
       ],
-      "title": "NFS Top IOPs",
+      "title": "NFS Top IOPs by Cluster",
       "transformations": [],
       "type": "timeseries"
     },
@@ -348,7 +349,8 @@
         "legend": {
           "calcs": [
             "mean",
-            "lastNotNull"
+            "lastNotNull",
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom"
@@ -368,7 +370,7 @@
           "refId": "A"
         }
       ],
-      "title": "Total Top IOPs",
+      "title": "Total Top IOPs by Cluster",
       "transformations": [],
       "type": "timeseries"
     },
@@ -381,7 +383,7 @@
           },
           "custom": {
             "align": "auto",
-            "displayMode": "color-background-solid",
+            "displayMode": "auto",
             "filterable": false
           },
           "decimals": 0,
@@ -390,12 +392,16 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "dark-green",
                 "value": null
               },
               {
-                "color": "red",
+                "color": "dark-orange",
                 "value": 80
+              },
+              {
+                "value": 90,
+                "color": "dark-red"
               }
             ]
           },
@@ -411,6 +417,22 @@
               {
                 "id": "custom.width",
                 "value": 100
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background-solid"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cluster"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 180
               }
             ]
           }
@@ -418,21 +440,19 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 6,
+        "w": 8,
         "x": 0,
-        "y": 9
+        "y": 20
       },
       "id": 233,
       "options": {
-        "footer": {
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
         "showHeader": true,
-        "sortBy": []
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Current"
+          }
+        ]
       },
       "pluginVersion": "8.4.11",
       "targets": [
@@ -451,9 +471,7 @@
         {
           "id": "organize",
           "options": {
-            "excludeByName": {
-              "cluster": true
-            },
+            "excludeByName": {},
             "indexByName": {},
             "renameByName": {
               "Value": "Current",
@@ -469,7 +487,8 @@
             "include": {
               "names": [
                 "Current",
-                "SVM"
+                "SVM",
+                "Cluster"
               ]
             }
           }
@@ -486,7 +505,7 @@
           },
           "custom": {
             "align": "auto",
-            "displayMode": "color-background-solid",
+            "displayMode": "auto",
             "filterable": false
           },
           "decimals": 0,
@@ -495,12 +514,16 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "dark-green",
                 "value": null
               },
               {
-                "color": "red",
-                "value": 90
+                "color": "dark-orange",
+                "value": 80
+              },
+              {
+                "value": 90,
+                "color": "dark-red"
               }
             ]
           },
@@ -516,6 +539,22 @@
               {
                 "id": "custom.width",
                 "value": 100
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background-solid"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cluster"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 180
               }
             ]
           }
@@ -523,19 +562,12 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 6,
-        "x": 6,
-        "y": 9
+        "w": 8,
+        "x": 8,
+        "y": 20
       },
       "id": 242,
       "options": {
-        "footer": {
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
         "showHeader": true,
         "sortBy": [
           {
@@ -565,6 +597,7 @@
             "indexByName": {},
             "renameByName": {
               "Value": "Current",
+              "cluster": "Cluster",
               "node": "Node",
               "volume": "Volume"
             }
@@ -576,13 +609,27 @@
             "include": {
               "names": [
                 "Volume",
-                "Current"
+                "Current",
+                "Cluster"
               ]
             }
           }
         }
       ],
       "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "id": 226,
+      "panels": [],
+      "title": "Capacity Metrics",
+      "type": "row"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
@@ -593,7 +640,7 @@
           },
           "custom": {
             "align": "auto",
-            "displayMode": "color-background-solid",
+            "displayMode": "auto",
             "filterable": false
           },
           "decimals": 0,
@@ -602,12 +649,16 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "dark-green",
                 "value": null
               },
               {
-                "color": "red",
-                "value": 90
+                "color": "dark-orange",
+                "value": 80
+              },
+              {
+                "value": 90,
+                "color": "dark-red"
               }
             ]
           },
@@ -623,6 +674,22 @@
               {
                 "id": "custom.width",
                 "value": 100
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background-solid"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cluster"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 180
               }
             ]
           }
@@ -630,21 +697,19 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 6,
-        "x": 12,
-        "y": 9
+        "w": 8,
+        "x": 16,
+        "y": 20
       },
       "id": 243,
       "options": {
-        "footer": {
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
         "showHeader": true,
-        "sortBy": []
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Current"
+          }
+        ]
       },
       "pluginVersion": "8.4.11",
       "targets": [
@@ -664,12 +729,20 @@
           "id": "organize",
           "options": {
             "excludeByName": {},
-            "indexByName": {},
+            "indexByName": {
+              "Time": 0,
+              "cluster": 1,
+              "aggr": 2,
+              "datacenter": 3,
+              "instance": 4,
+              "job": 5,
+              "node": 6,
+              "Value": 7
+            },
             "renameByName": {
               "Value": "Current",
-              "aggr": "Aggregate",
-              "node": "",
-              "volume": "Volume"
+              "cluster": "Cluster",
+              "aggr": "Aggregate"
             }
           }
         },
@@ -679,206 +752,7 @@
             "include": {
               "names": [
                 "Current",
-                "Aggregate"
-              ]
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "displayMode": "color-background-solid",
-            "filterable": false
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 15000
-              }
-            ]
-          },
-          "unit": "iops"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Current"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 70
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 3,
-        "x": 18,
-        "y": 9
-      },
-      "id": 245,
-      "options": {
-        "footer": {
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true,
-        "sortBy": []
-      },
-      "pluginVersion": "8.4.11",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "topk($TopResources, sum(node_volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
-          "format": "table",
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "IOPs",
-      "transformations": [
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "indexByName": {},
-            "renameByName": {
-              "Value": "Current",
-              "cluster": "Cluster",
-              "node": "Node"
-            }
-          }
-        },
-        {
-          "id": "filterFieldsByName",
-          "options": {
-            "include": {
-              "names": [
-                "Cluster",
-                "Current"
-              ]
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "displayMode": "color-background-solid",
-            "filterable": false
-          },
-          "decimals": 1,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "ms"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Avg"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 70
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 3,
-        "x": 21,
-        "y": 9
-      },
-      "id": 228,
-      "options": {
-        "footer": {
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true,
-        "sortBy": []
-      },
-      "pluginVersion": "8.4.11",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "topk($TopResources, avg(node_volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster)) / 1000",
-          "format": "table",
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Read Latency",
-      "transformations": [
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "indexByName": {},
-            "renameByName": {
-              "Value": "Avg",
-              "cluster": "Cluster",
-              "node": "Node"
-            }
-          }
-        },
-        {
-          "id": "filterFieldsByName",
-          "options": {
-            "include": {
-              "names": [
-                "Avg",
+                "Aggregate",
                 "Cluster"
               ]
             }
@@ -946,7 +820,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 16
+        "y": 9
       },
       "id": 247,
       "options": {
@@ -976,7 +850,7 @@
           "refId": "A"
         }
       ],
-      "title": "Average CPU Utilization",
+      "title": "Average CPU Utilization by Cluster",
       "type": "timeseries"
     },
     {
@@ -1038,7 +912,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 16
+        "y": 9
       },
       "id": 234,
       "options": {
@@ -1066,8 +940,587 @@
           "refId": "A"
         }
       ],
-      "title": "Latency",
+      "title": "Average Latency by Cluster",
       "type": "timeseries"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 26
+      },
+      "id": 256,
+      "panels": [
+        {
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 1,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 0,
+            "y": 2
+          },
+          "id": 250,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "EO6UabnVz"
+              },
+              "exemplar": true,
+              "expr": "svm_vol_avg_latency{cluster=~\"$Cluster\", svm=~\"$TopSVMAvgLatency\"}",
+              "interval": "",
+              "legendFormat": "{{cluster}} - {{svm}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top Average Latency by SVMs",
+          "type": "timeseries"
+        },
+        {
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 1,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "Bps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 8,
+            "y": 2
+          },
+          "id": 252,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "EO6UabnVz"
+              },
+              "exemplar": true,
+              "expr": "svm_vol_read_data{cluster=~\"$Cluster\", svm=~\"$TopSVMTotalThroughput\"}+svm_vol_write_data{cluster=~\"$Cluster\",svm=~\"$TopSVMTotalThroughput\"}",
+              "format": "time_series",
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{cluster}} - {{svm}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top Average Throughput by SVMs",
+          "type": "timeseries"
+        },
+        {
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 1,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 16,
+            "y": 2
+          },
+          "id": 254,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "EO6UabnVz"
+              },
+              "exemplar": true,
+              "expr": "svm_vol_total_ops{cluster=~\"$Cluster\", svm=~\"$TopSVMTotalIops\"}",
+              "format": "time_series",
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{cluster}} - {{svm}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top IOPs by SVMs",
+          "type": "timeseries"
+        }
+      ],
+      "title": "SVM Metrics",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 34
+      },
+      "id": 264,
+      "panels": [
+        {
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "µs"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 0,
+            "y": 1
+          },
+          "id": 258,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "EO6UabnVz"
+              },
+              "exemplar": false,
+              "expr": "topk($TopResources, volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeAvgLatency\"})",
+              "interval": "",
+              "legendFormat": "{{cluster}} - {{svm}} - {{volume}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top Average Latency by Volumes ",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "Bps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 8,
+            "y": 1
+          },
+          "id": 260,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "EO6UabnVz"
+              },
+              "exemplar": true,
+              "expr": "topk($TopResources, volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeAvgThroughput\"})+topk($TopResources, volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeAvgThroughput\"})",
+              "interval": "",
+              "legendFormat": "{{cluster}} - {{svm}} - {{volume}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top Average Throughput by Volumes ",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 16,
+            "y": 1
+          },
+          "id": 262,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "EO6UabnVz"
+              },
+              "exemplar": true,
+              "expr": "topk($TopResources, volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeTotalIops\"})",
+              "interval": "",
+              "legendFormat": "{{cluster}} - {{svm}} - {{volume}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top IOPs by Volumes ",
+          "transformations": [],
+          "type": "timeseries"
+        }
+      ],
+      "title": "Volume Metrics",
+      "type": "row"
     }
   ],
   "refresh": "",
@@ -1226,8 +1679,8 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "2",
-          "value": "2"
+          "text": "5",
+          "value": "5"
         },
         "hide": 0,
         "includeAll": false,
@@ -1366,6 +1819,114 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopVolumeAvgLatency",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])+avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopVolumeAvgThroughput",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])+avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopVolumeTotalIops",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "query_result(topk($TopResources, avg_over_time(svm_vol_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopSVMAvgLatency",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(svm_vol_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*svm=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "query_result(topk($TopResources, avg_over_time(svm_vol_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])+avg_over_time(svm_vol_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopSVMTotalThroughput",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(svm_vol_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])+avg_over_time(svm_vol_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*svm=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "query_result(topk($TopResources, avg_over_time(svm_vol_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopSVMTotalIops",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(svm_vol_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*svm=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
@@ -1389,6 +1950,5 @@
   "timezone": "",
   "title": "ONTAP: cDOT",
   "uid": "Xo2bcT1s",
-  "version": 1,
-  "weekStart": ""
+  "version": 1
 }
