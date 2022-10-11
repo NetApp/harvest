@@ -1100,7 +1100,7 @@ func (p *Poller) upgradeCollector(c conf.Collector) (conf.Collector, error) {
 func (p *Poller) newRestClient() (*rest.Rest, error) {
 	params := node.NewS("")
 	// Set client_timeout to suppress logging a msg about the default client_timeout during Rest client creation
-	params.NewChildS("client_timeout", fmt.Sprintf("%ds", rest2.DefaultTimeout))
+	params.NewChildS("client_timeout", rest2.DefaultTimeout)
 	Union2(params, p.params)
 	delegate := collector.New("Rest", "", p.options, params)
 	r := &rest.Rest{

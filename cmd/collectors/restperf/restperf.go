@@ -98,6 +98,8 @@ func (r *RestPerf) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
+	r.InitVars(a.Params)
+
 	if err = collector.Init(r); err != nil {
 		return err
 	}
@@ -900,7 +902,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	_ = r.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
 
 	r.Logger.Info().
-		Int("instances", len(instanceKeys)).
+		Int("instances", len(newData.GetInstances())).
 		Uint64("metrics", count).
 		Str("apiD", apiD.Round(time.Millisecond).String()).
 		Str("parseD", parseD.Round(time.Millisecond).String()).

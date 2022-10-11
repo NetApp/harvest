@@ -42,7 +42,7 @@ func (my *SnapMirror) Init() error {
 		return err
 	}
 
-	timeout := rest.DefaultTimeout * time.Second
+	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if my.client, err = rest.New(conf.ZapiPoller(my.ParentParams), timeout); err != nil {
 		my.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
