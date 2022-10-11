@@ -57,7 +57,7 @@ func (my *Qtree) Init() error {
 	}
 
 	clientTimeout := my.ParentParams.GetChildContentS("client_timeout")
-	timeout := rest.DefaultTimeout * time.Second
+	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	duration, err := time.ParseDuration(clientTimeout)
 	if err == nil {
 		timeout = duration

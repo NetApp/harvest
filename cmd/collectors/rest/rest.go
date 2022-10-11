@@ -98,6 +98,8 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
+	r.InitVars(a.Params)
+
 	if err = r.initEndPoints(); err != nil {
 		return err
 	}
@@ -121,11 +123,22 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 	return nil
 }
 
+func (r *Rest) InitVars(config *node.Node) {
+
+	var err error
+
+	clientTimeout := config.GetChildContentS("client_timeout")
+	duration, err := time.ParseDuration(clientTimeout)
+	if err == nil {
+		r.Client.Timeout = duration
+	}
+}
+
 func (r *Rest) InitClient() error {
 
 	var err error
 	a := r.AbstractCollector
-	if r.Client, err = r.getClient(a, a.Params); err != nil {
+	if r.Client, err = r.getClient(a); err != nil {
 		return err
 	}
 
@@ -153,7 +166,7 @@ func (r *Rest) InitMatrix() error {
 	return nil
 }
 
-func (r *Rest) getClient(a *collector.AbstractCollector, config *node.Node) (*rest.Client, error) {
+func (r *Rest) getClient(a *collector.AbstractCollector) (*rest.Client, error) {
 	var (
 		poller *conf.Poller
 		err    error
@@ -169,15 +182,7 @@ func (r *Rest) getClient(a *collector.AbstractCollector, config *node.Node) (*re
 		r.Logger.Error().Str("poller", opt.Poller).Msg("Address is empty")
 		return nil, errs.New(errs.ErrMissingParam, "addr")
 	}
-
-	clientTimeout := config.GetChildContentS("client_timeout")
-	timeout := rest.DefaultTimeout * time.Second
-	duration, err := time.ParseDuration(clientTimeout)
-	if err == nil {
-		timeout = duration
-	} else {
-		r.Logger.Info().Str("timeout", timeout.String()).Msg("Using default timeout")
-	}
+	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if client, err = rest.New(*poller, timeout); err != nil {
 		r.Logger.Error().Err(err).Str("poller", opt.Poller).Msg("error creating new client")
 		os.Exit(1)

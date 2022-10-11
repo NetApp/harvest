@@ -25,7 +25,7 @@ import (
 
 const (
 	DefaultAPIVersion = "1.3"
-	DefaultTimeout    = 30 // in seconds
+	DefaultTimeout    = "30s" // in seconds
 )
 
 type Client struct {
@@ -185,14 +185,16 @@ func parseClientTimeout(clientTimeout string) (time.Duration, error) {
 	if charIndex != -1 {
 		duration, err := time.ParseDuration(clientTimeout)
 		if err != nil {
-			return time.Duration(DefaultTimeout) * time.Second, err
+			timeout, _ := time.ParseDuration(DefaultTimeout)
+			return timeout, err
 		}
 		return duration, nil
 	}
 	t, err := strconv.Atoi(clientTimeout)
 	if err != nil {
 		// when there is an error return the default timeout
-		return time.Duration(DefaultTimeout) * time.Second, nil //nolint:nilerr
+		timeout, _ := time.ParseDuration(DefaultTimeout)
+		return timeout, nil //nolint:nilerr
 	}
 	return time.Duration(t) * time.Second, nil
 }

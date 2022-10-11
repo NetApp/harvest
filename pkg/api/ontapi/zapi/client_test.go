@@ -69,13 +69,14 @@ func TestClientTimeout(t *testing.T) {
 		hasErr       bool
 	}
 
+	timeout, _ := time.ParseDuration(DefaultTimeout)
 	tests := []test{
 		{"no units", "180", 180 * time.Second, false},
 		{"no units", "123", 123 * time.Second, false},
-		{"empty", "", DefaultTimeout * time.Second, true},
+		{"empty", "", timeout, true},
 		{"zero", "0", 0 * time.Second, false},
 		{"with units", "5m4s", 5*time.Minute + 4*time.Second, false},
-		{"invalid", "bob", DefaultTimeout * time.Second, true},
+		{"invalid", "bob", timeout, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

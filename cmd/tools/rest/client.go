@@ -21,7 +21,7 @@ import (
 
 const (
 	// DefaultTimeout should be > than ONTAP's default REST timeout, which is 15 seconds for GET requests
-	DefaultTimeout = 30 // in seconds
+	DefaultTimeout = "30s" // in seconds
 )
 
 type Client struct {
@@ -246,7 +246,7 @@ func downloadSwagger(poller *conf.Poller, path string, url string, verbose bool)
 		return 0, err
 	}
 
-	timeout := DefaultTimeout * time.Second
+	timeout, _ := time.ParseDuration(DefaultTimeout)
 	if restClient, err = New(*poller, timeout); err != nil {
 		return 0, fmt.Errorf("error creating new client %w", err)
 	}
