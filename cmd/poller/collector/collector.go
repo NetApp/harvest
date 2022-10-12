@@ -224,8 +224,6 @@ func Init(c Collector) error {
 	_, _ = md.NewMetricInt64("calc_time")
 	_, _ = md.NewMetricInt64("plugin_time")
 	_, _ = md.NewMetricUint64("count")
-	//md.AddLabel("task", "")
-	//md.AddLabel("interval", "")
 
 	// add tasks of the collector as metadata instances
 	for _, task := range s.GetTasks() {
@@ -234,6 +232,9 @@ func Init(c Collector) error {
 		t := task.GetInterval().Seconds()
 		instance.SetLabel("interval", strconv.FormatFloat(t, 'f', 4, 32))
 	}
+
+	// Create the metadata instance named "instance" since autosupport relies on that key
+	_, _ = md.NewInstance("instance")
 
 	md.SetExportOptions(matrix.DefaultExportOptions())
 

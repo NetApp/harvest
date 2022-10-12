@@ -378,6 +378,8 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 	_ = z.Metadata.LazySetValueInt64("api_time", "data", apiT.Microseconds())
 	_ = z.Metadata.LazySetValueInt64("parse_time", "data", parseT.Microseconds())
 	_ = z.Metadata.LazySetValueUint64("count", "data", count)
+	_ = z.Metadata.LazySetValueUint64("count", "instance", uint64(len(instances)))
+
 	z.AddCollectCount(count)
 
 	if len(mat.GetInstances()) == 0 {
