@@ -1130,8 +1130,15 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 	// counter type is array, each element will be converted to a metric instance
 	if counter.GetChildContentS("type") == "array" {
 
-		var labels, baseLabels []string
-		var e string
+		var (
+			labels, baseLabels []string
+			e                  string
+			description        string
+			isHistogram        bool
+			histogramMetric    matrix.Metric
+		)
+
+		description = strings.ToLower(counter.GetChildContentS("desc"))
 
 		if labels, e = parseHistogramLabels(counter); e != "" {
 			z.Logger.Warn().Msgf("skipping [%s] of type array: %s", name, e)
@@ -1156,15 +1163,39 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 			}
 		}
 
-		for _, label := range labels {
+		baseKey := baseCounter
+		if baseCounter != "" && len(baseLabels) != 0 {
+			baseKey += "." + baseLabels[0]
+		}
+
+		// ONTAP does not have a `type` for histogram. Harvest tests the `desc` field to determine
+		// if a counter is a histogram
+		isHistogram = false
+		if len(labels) > 0 && strings.Contains(description, "histogram") {
+			key := name + "." + "bucket"
+			histogramMetric = mat.GetMetric(key)
+			if histogramMetric != nil {
+				z.Logger.Trace().Str("metric", key).Msg("Updating array metric attributes")
+			} else {
+				histogramMetric, err = mat.NewMetricFloat64(key)
+				if err != nil {
+					z.Logger.Error().Err(err).Str("key", key).Msg("unable to create histogram metric")
+					return ""
+				}
+			}
+			histogramMetric.SetName(display)
+			histogramMetric.SetProperty(property)
+			histogramMetric.SetComment(baseKey)
+			histogramMetric.SetExportable(enabled)
+			histogramMetric.SetBuckets(&labels)
+			isHistogram = true
+		}
+
+		for i, label := range labels {
 
 			var m matrix.Metric
 
 			key := name + "." + label
-			baseKey := baseCounter
-			if baseCounter != "" && len(baseLabels) != 0 {
-				baseKey += "." + baseLabels[0]
-			}
 
 			if m = mat.GetMetric(key); m != nil {
 				z.Logger.Trace().Msgf("updating array metric [%s] attributes", key)
@@ -1185,6 +1216,11 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 				m.SetLabel("submetric", x[1])
 			} else {
 				m.SetLabel("metric", label)
+				if isHistogram {
+					// Save the index of this label so the labels can be exported in order
+					m.SetLabel("comment", strconv.Itoa(i))
+					m.SetHistogram(true)
+				}
 			}
 		}
 		// cache labels only when parsing counter was success
