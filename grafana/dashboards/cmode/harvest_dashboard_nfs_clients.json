@@ -99,7 +99,7 @@
       },
       "id": 29,
       "options": {
-        "content": "You must enable the Rest Collector in harvest config and template nfs_clients.yaml in $HARVEST/conf/rest/default.yaml.",
+        "content": "You must enable the Rest collector in your harvest.yml config and uncomment the nfs_clients.yaml section in your $HARVEST/conf/rest/default.yaml file. Please see https://github.com/NetApp/harvest/wiki/FAQ/_edit#nfs-clients-dashboard for more details",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
