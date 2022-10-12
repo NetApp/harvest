@@ -97,6 +97,7 @@ type AbstractMetric struct {
 	histogram  bool
 	exportable bool
 	labels     *dict.Dict
+	buckets    *[]string
 	record     map[string]bool
 	pass       map[string]bool
 }
