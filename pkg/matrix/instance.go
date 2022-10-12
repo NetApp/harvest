@@ -11,13 +11,13 @@ import (
 // Instance struct and related methods
 
 type Instance struct {
-	index      int
+	key        string
 	labels     *dict.Dict
 	exportable bool
 }
 
-func NewInstance(index int) *Instance {
-	me := &Instance{index: index}
+func NewInstance(key string) *Instance {
+	me := &Instance{key: key}
 	me.labels = dict.New()
 	me.exportable = true
 
@@ -49,7 +49,7 @@ func (i *Instance) SetExportable(b bool) {
 }
 
 func (i *Instance) Clone() *Instance {
-	clone := NewInstance(i.index)
+	clone := NewInstance(i.key)
 	clone.labels = i.labels.Copy()
 	clone.exportable = i.exportable
 	return clone

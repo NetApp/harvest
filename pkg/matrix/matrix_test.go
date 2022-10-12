@@ -22,27 +22,22 @@ func TestMatrix_RemoveInstance(t *testing.T) {
 	}
 
 	type test struct {
-		name             string
-		args             args
-		maxInstanceIndex int
+		name          string
+		args          args
+		instanceCount int
 	}
 
 	tests := []test{
-		{"removeExistingKey", args{key: "A"}, 2},
-		{"removeAbsentKey", args{key: "E"}, 3},
+		{"removeExistingKey", args{key: "A"}, 3},
+		{"removeAbsentKey", args{key: "E"}, 4},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			m := setUpMatrix()
 			m.RemoveInstance(tt.args.key)
-			maxIndex := 0
-			for _, i := range m.GetInstances() {
-				if i.index > maxIndex {
-					maxIndex = i.index
-				}
-			}
-			if maxIndex != tt.maxInstanceIndex {
-				t.Errorf("expected = %d, got %d", tt.maxInstanceIndex, maxIndex)
+			instanceCount := len(m.GetInstances())
+			if instanceCount != tt.instanceCount {
+				t.Errorf("expected = %d, got %d", tt.instanceCount, instanceCount)
 			}
 		})
 	}

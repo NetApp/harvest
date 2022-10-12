@@ -210,11 +210,7 @@ func (m *Matrix) NewInstance(key string) (*Instance, error) {
 		return nil, errs.New(ErrDuplicateInstanceKey, key)
 	}
 
-	instance = NewInstance(len(m.instances)) // index is current count of instances
-
-	for _, metric := range m.GetMetrics() {
-		metric.Append()
-	}
+	instance = NewInstance(key) // index is current count of instances
 
 	m.instances[key] = instance
 	return instance, nil
@@ -232,18 +228,9 @@ func (m *Matrix) RemoveInstance(key string) {
 	if instance, has := m.instances[key]; has {
 		// re-arrange columns in metrics
 		for _, metric := range m.GetMetrics() {
-			metric.Remove(instance.index)
+			metric.Remove(instance.key)
 		}
-		deletedIndex := instance.index
 		delete(m.instances, key)
-		// If there were removals, the indexes need to be rewritten since gaps were created
-		// Map is not ordered hence recreating map will cause mapping issue with metrics
-		for _, i := range m.instances {
-			if i.index > deletedIndex {
-				// reduce index by 1
-				i.index = i.index - 1
-			}
-		}
 	}
 }
 

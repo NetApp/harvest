@@ -41,8 +41,7 @@ type Metric interface {
 	// methods for resizing metric storage
 
 	Reset(int)
-	Remove(int)
-	Append()
+	Remove(string)
 
 	// methods for writing to metric storage
 
@@ -70,9 +69,9 @@ type Metric interface {
 	GetValueFloat64(*Instance) (float64, bool, bool)
 	GetValueString(*Instance) (string, bool, bool)
 	GetValueBytes(*Instance) ([]byte, bool, bool)
-	GetRecords() []bool
-	GetPass() []bool
-	GetValuesFloat64() []float64
+	GetRecords() map[string]bool
+	GetPass() map[string]bool
+	GetValuesFloat64() map[string]float64
 
 	// methods for doing vector arithmetics
 	// currently only supported for float64!
@@ -93,8 +92,8 @@ type AbstractMetric struct {
 	array      bool
 	exportable bool
 	labels     *dict.Dict
-	record     []bool
-	pass       []bool
+	record     map[string]bool
+	pass       map[string]bool
 }
 
 func (m *AbstractMetric) Clone(deep bool) *AbstractMetric {
@@ -111,13 +110,25 @@ func (m *AbstractMetric) Clone(deep bool) *AbstractMetric {
 	}
 	if deep {
 		if len(m.record) != 0 {
-			clone.record = make([]bool, len(m.record))
-			copy(clone.record, m.record)
+			clone.record = make(map[string]bool, len(m.record))
+			for key, element := range m.record {
+				clone.record[key] = element
+			}
+		} else {
+			clone.record = make(map[string]bool)
 		}
+
 		if len(m.pass) != 0 {
-			clone.pass = make([]bool, len(m.pass))
-			copy(clone.pass, m.pass)
+			clone.pass = make(map[string]bool, len(m.pass))
+			for key, element := range m.pass {
+				clone.pass[key] = element
+			}
+		} else {
+			clone.pass = make(map[string]bool)
 		}
+	} else {
+		clone.record = make(map[string]bool)
+		clone.pass = make(map[string]bool)
 	}
 	return &clone
 }
@@ -192,16 +203,16 @@ func (m *AbstractMetric) HasLabels() bool {
 	return m.labels != nil && m.labels.Size() != 0
 }
 
-func (m *AbstractMetric) GetRecords() []bool {
+func (m *AbstractMetric) GetRecords() map[string]bool {
 	return m.record
 }
 
-func (m *AbstractMetric) GetPass() []bool {
+func (m *AbstractMetric) GetPass() map[string]bool {
 	return m.pass
 }
 
 func (m *AbstractMetric) SetValueNAN(i *Instance) {
-	m.record[i.index] = false
+	m.record[i.key] = false
 }
 
 func (m *AbstractMetric) Delta(Metric, *logging.Logger) (int, error) {
