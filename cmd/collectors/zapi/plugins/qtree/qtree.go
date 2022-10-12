@@ -58,7 +58,7 @@ func (my *Qtree) Init() error {
 	}
 	my.Logger.Debug().Msg("plugin connected!")
 
-	my.data = matrix.New(my.Parent+".Qtree", "qtree", "qtree")
+	my.data = matrix.New(my.Parent+".Qtree", "quota", "quota")
 	my.instanceKeys = make(map[string]string)
 	my.instanceLabels = make(map[string]*dict.Dict)
 
