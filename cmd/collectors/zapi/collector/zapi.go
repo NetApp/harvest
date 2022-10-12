@@ -16,6 +16,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/set"
 	"sort"
 	"strconv"
 	"strings"
@@ -222,101 +223,7 @@ func (z *Zapi) InitMatrix() error {
 }
 
 func (z *Zapi) PollInstance() (map[string]*matrix.Matrix, error) {
-	var (
-		request, response *node.Node
-		instances         []*node.Node
-		oldCount, count   uint64
-		keys              []string
-		tag               string
-		found             bool
-		err               error
-	)
-
-	z.Logger.Debug().Msg("starting instance poll")
-	mat := z.Matrix[z.Object]
-
-	if len(z.shortestPathPrefix) == 0 {
-		msg := fmt.Sprintf("There is an issue with the template [%s]. It could be due to wrong counter structure.", z.TemplatePath)
-		return nil, errs.New(errs.ErrTemplate, msg)
-	}
-
-	oldCount = uint64(len(mat.GetInstances()))
-	mat.PurgeInstances()
-
-	count = 0
-
-	// special case when only "instance" is the cluster
-	if z.Params.GetChildContentS("only_cluster_instance") == "true" {
-		if mat.GetInstance("cluster") == nil {
-			if _, err := mat.NewInstance("cluster"); err != nil {
-				return nil, err
-			}
-		}
-		count = 1
-	} else {
-		request = node.NewXMLS(z.Query)
-		if z.Client.IsClustered() && z.batchSize != "" {
-			request.NewChildS("max-records", z.batchSize)
-		}
-		// special check for snapmirror as we would pass extra input "expand=true"
-		if z.Client.IsClustered() && z.Query == "snapmirror-get-iter" {
-			request.NewChildS("expand", "true")
-		}
-
-		tag = "initial"
-
-		for {
-
-			response, tag, err = z.Client.InvokeBatchRequest(request, tag)
-
-			if err != nil {
-				return nil, err
-			}
-
-			if response == nil {
-				break
-			}
-
-			instances = response.SearchChildren(z.shortestPathPrefix)
-			if len(instances) == 0 {
-				break
-			}
-
-			z.Logger.Debug().Msgf("fetching %d instances", len(instances))
-
-			for _, instance := range instances {
-				//c.logger.Printf(c.Prefix, "Handling instance element <%v> [%s]", &instance, instance.GetName())
-				keys, found = instance.SearchContent(z.shortestPathPrefix, z.instanceKeyPaths)
-
-				z.Logger.Trace().
-					Strs("keys", keys).
-					Bool("found", found).
-					Msgf("keypaths=%v", z.instanceKeyPaths)
-
-				if !found {
-					z.Logger.Debug().Msg("skipping element, no instance keys found")
-				} else {
-					if _, err = mat.NewInstance(strings.Join(keys, ".")); err != nil {
-						z.Logger.Error().Stack().Err(err).Msg("")
-					} else {
-						z.Logger.Trace().Msgf("added instance [%s]", strings.Join(keys, "."))
-						count++
-					}
-				}
-			}
-		}
-	}
-
-	err = z.Metadata.LazySetValueUint64("count", "instance", count)
-	if err != nil {
-		z.Logger.Error().Stack().Err(err).Msg("error")
-	}
-	z.Logger.Debug().Msgf("added %d instances to cache (old cache had %d)", count, oldCount)
-
-	if len(mat.GetInstances()) == 0 {
-		return nil, errs.New(errs.ErrNoInstance, "no instances fetched")
-	}
-
+	// for backward compatibility
 	return nil, nil
 }
 
@@ -337,7 +244,12 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 	apiT := 0 * time.Second
 	parseT := 0 * time.Second
 
+	oldInstances := set.New()
 	mat := z.Matrix[z.Object]
+	// copy keys of current instances. This is used to remove deleted instances from matrix later
+	for key := range mat.GetInstances() {
+		oldInstances.Add(key)
+	}
 
 	fetch = func(instance *matrix.Instance, node *node.Node, path []string) {
 
@@ -415,11 +327,13 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 		z.Logger.Debug().Msgf("fetched %d instance elements", len(instances))
 
 		if z.Params.GetChildContentS("only_cluster_instance") == "true" {
-			if instance := mat.GetInstance("cluster"); instance != nil {
-				fetch(instance, instances[0], make([]string, 0))
-			} else {
-				z.Logger.Error().Stack().Err(nil).Msg("cluster instance not found in cache")
+			instance := mat.GetInstance("cluster")
+			if instance == nil {
+				if instance, err = mat.NewInstance("cluster"); err != nil {
+					return nil, err
+				}
 			}
+			fetch(instance, instances[0], make([]string, 0))
 			break
 		}
 
@@ -433,14 +347,24 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 				continue
 			}
 
-			instance := mat.GetInstance(strings.Join(keys, "."))
+			key := strings.Join(keys, ".")
+			instance := mat.GetInstance(key)
 
 			if instance == nil {
-				z.Logger.Error().Stack().Err(nil).Msgf("skipped instance [%s]: not found in cache", strings.Join(keys, "."))
-				continue
+				if instance, err = mat.NewInstance(key); err != nil {
+					z.Logger.Error().Err(err).Str("instKey", key).Msg("Failed to create new missing instance")
+					continue
+				}
 			}
+			oldInstances.Remove(key)
 			fetch(instance, instanceElem, make([]string, 0))
 		}
+	}
+
+	// remove deleted instances
+	for key := range oldInstances.Iter() {
+		mat.RemoveInstance(key)
+		z.Logger.Debug().Str("key", key).Msg("removed instance")
 	}
 
 	z.Logger.Info().
@@ -486,7 +410,7 @@ func (z *Zapi) CollectAutoSupport(p *collector.Payload) {
 		}
 	}
 
-	clientTimeout := strconv.Itoa(client.DefaultTimeout)
+	clientTimeout := client.DefaultTimeout
 	newTimeout := z.Params.GetChildContentS("client_timeout")
 	if newTimeout != "" {
 		clientTimeout = newTimeout

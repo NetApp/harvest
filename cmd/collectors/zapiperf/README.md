@@ -54,16 +54,16 @@ This configuration file (the "template") contains a list of objects that should 
 
 Additionally, this file contains the parameters that are applied as defaults to all objects. (As mentioned before, any of these parameters can be defined in the Harvest or object configuration files as well).
 
-| parameter              | type         | description                                      | default                |
-|------------------------|--------------|--------------------------------------------------|------------------------|
-| `use_insecure_tls` | bool, optional | skip verifying TLS certificate of the target system | `false`               |
-| `client_timeout`   | duration (Go-syntax)  | how long to wait for server responses             | 10s                  |
-| `batch_size`       | int, optional  | max instances per API request                       | `500`                 |
-| `latency_io_reqd`  | int, optional  | threshold of IOPs for calculating latency metrics (latencies based on very few IOPs are unreliable) | `100`  |
-| `schedule`         | list, required | the poll frequencies of the collector/object, should include exactly these three elements in the exact same other: | |
-|    - `counter`         | duration (Go-syntax) | poll frequency of updating the counter metadata cache (example value: `1200s` = `20m`) | |
-|    - `instance`         | duration (Go-syntax) | poll frequency of updating the instance cache (example value: `600s` = `10m`) | |
-|    - `data`         | duration (Go-syntax) | poll frequency of updating the data cache (example value: `60s` = `1m`)<br /><br />**Note** Harvest allows defining poll intervals on sub-second level (e.g. `1ms`), however keep in mind the following:<br /><ul><li>API response of an ONTAP system can take several seconds, so the collector is likely to enter failed state if the poll interval is less than `client_timeout`.</li><li>Small poll intervals will create significant workload on the ONTAP system, as many counters are aggregated on-demand.</li><li>Some metric values become less significant if they are calculated for very short intervals (e.g. latencies)</li></ul> | |
+| parameter              | type         | description                                      | default |
+|------------------------|--------------|--------------------------------------------------|---------|
+| `use_insecure_tls` | bool, optional | skip verifying TLS certificate of the target system | `false` |
+| `client_timeout`   | duration (Go-syntax)  | how long to wait for server responses             | 30s     |
+| `batch_size`       | int, optional  | max instances per API request                       | `500`   |
+| `latency_io_reqd`  | int, optional  | threshold of IOPs for calculating latency metrics (latencies based on very few IOPs are unreliable) | `100`   |
+| `schedule`         | list, required | the poll frequencies of the collector/object, should include exactly these three elements in the exact same other: |         |
+|    - `counter`         | duration (Go-syntax) | poll frequency of updating the counter metadata cache (example value: `1200s` = `20m`) |         |
+|    - `instance`         | duration (Go-syntax) | poll frequency of updating the instance cache (example value: `600s` = `10m`) |         |
+|    - `data`         | duration (Go-syntax) | poll frequency of updating the data cache (example value: `60s` = `1m`)<br /><br />**Note** Harvest allows defining poll intervals on sub-second level (e.g. `1ms`), however keep in mind the following:<br /><ul><li>API response of an ONTAP system can take several seconds, so the collector is likely to enter failed state if the poll interval is less than `client_timeout`.</li><li>Small poll intervals will create significant workload on the ONTAP system, as many counters are aggregated on-demand.</li><li>Some metric values become less significant if they are calculated for very short intervals (e.g. latencies)</li></ul> |         |
 
 The template should define objects in the `objects` section. Example:
 

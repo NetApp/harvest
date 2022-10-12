@@ -16,6 +16,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
 	"os"
@@ -97,6 +98,8 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
+	r.InitVars(a.Params)
+
 	if err = r.initEndPoints(); err != nil {
 		return err
 	}
@@ -120,11 +123,24 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 	return nil
 }
 
+func (r *Rest) InitVars(config *node.Node) {
+
+	var err error
+
+	clientTimeout := config.GetChildContentS("client_timeout")
+	duration, err := time.ParseDuration(clientTimeout)
+	if err == nil {
+		r.Client.Timeout = duration
+	} else {
+		r.Logger.Info().Str("timeout", rest.DefaultTimeout).Msg("Using default timeout")
+	}
+}
+
 func (r *Rest) InitClient() error {
 
 	var err error
 	a := r.AbstractCollector
-	if r.Client, err = r.getClient(a, a.Params); err != nil {
+	if r.Client, err = r.getClient(a); err != nil {
 		return err
 	}
 
@@ -152,7 +168,7 @@ func (r *Rest) InitMatrix() error {
 	return nil
 }
 
-func (r *Rest) getClient(a *collector.AbstractCollector, config *node.Node) (*rest.Client, error) {
+func (r *Rest) getClient(a *collector.AbstractCollector) (*rest.Client, error) {
 	var (
 		poller *conf.Poller
 		err    error
@@ -168,15 +184,7 @@ func (r *Rest) getClient(a *collector.AbstractCollector, config *node.Node) (*re
 		r.Logger.Error().Str("poller", opt.Poller).Msg("Address is empty")
 		return nil, errs.New(errs.ErrMissingParam, "addr")
 	}
-
-	clientTimeout := config.GetChildContentS("client_timeout")
-	timeout := rest.DefaultTimeout * time.Second
-	duration, err := time.ParseDuration(clientTimeout)
-	if err == nil {
-		timeout = duration
-	} else {
-		r.Logger.Info().Str("timeout", timeout.String()).Msg("Using default timeout")
-	}
+	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if client, err = rest.New(*poller, timeout); err != nil {
 		r.Logger.Error().Err(err).Str("poller", opt.Poller).Msg("error creating new client")
 		os.Exit(1)
@@ -388,7 +396,13 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, allowInstanceCre
 		count uint64
 	)
 
+	oldInstances := set.New()
 	mat := r.Matrix[r.Object]
+
+	// copy keys of current instances. This is used to remove deleted instances from matrix later
+	for key := range mat.GetInstances() {
+		oldInstances.Add(key)
+	}
 
 	for _, instanceData := range result {
 		var (
@@ -422,16 +436,18 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, allowInstanceCre
 		// Used for endpoints as we don't want to create additional instances
 		if !allowInstanceCreation && instance == nil {
 			// Moved to trace as with filter, this log may spam
-			r.Logger.Trace().Str("Instance key", instanceKey).Msg("Instance not found")
+			r.Logger.Trace().Str("instKey", instanceKey).Msg("Instance not found")
 			continue
 		}
 
 		if instance == nil {
 			if instance, err = mat.NewInstance(instanceKey); err != nil {
-				r.Logger.Error().Err(err).Str("Instance key", instanceKey).Msg("")
+				r.Logger.Error().Err(err).Str("instKey", instanceKey).Msg("Failed to create new missing instance")
 				continue
 			}
 		}
+
+		oldInstances.Remove(instanceKey)
 
 		for label, display := range prop.InstanceLabels {
 			value := instanceData.Get(label)
@@ -448,7 +464,7 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, allowInstanceCre
 				}
 				count++
 			} else {
-				r.Logger.Trace().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
+				r.Logger.Trace().Str("instKey", instanceKey).Str("label", label).Msg("Missing label value")
 			}
 		}
 
@@ -486,6 +502,12 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, allowInstanceCre
 		}
 
 	}
+	// remove deleted instances
+	for key := range oldInstances.Iter() {
+		mat.RemoveInstance(key)
+		r.Logger.Debug().Str("key", key).Msg("removed instance")
+	}
+
 	return count
 }
 

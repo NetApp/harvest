@@ -98,6 +98,8 @@ func (r *RestPerf) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
+	r.InitVars(a.Params)
+
 	if err = collector.Init(r); err != nil {
 		return err
 	}
@@ -900,7 +902,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	_ = r.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
 
 	r.Logger.Info().
-		Int("instances", len(instanceKeys)).
+		Int("instances", len(newData.GetInstances())).
 		Uint64("metrics", count).
 		Str("apiD", apiD.Round(time.Millisecond).String()).
 		Str("parseD", parseD.Round(time.Millisecond).String()).
@@ -1108,8 +1110,9 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 			}
 		}
 
-		if oldInstances.Delete(instanceKey) {
+		if oldInstances.Has(instanceKey) {
 			// instance already in cache
+			oldInstances.Remove(instanceKey)
 			r.Logger.Debug().Msgf("updated instance [%s%s%s%s]", color.Bold, color.Yellow, instanceKey, color.End)
 		} else if instance, err := mat.NewInstance(instanceKey); err != nil {
 			r.Logger.Error().Err(err).Str("Instance key", instanceKey).Msg("add instance")

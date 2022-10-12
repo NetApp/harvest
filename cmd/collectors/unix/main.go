@@ -247,7 +247,7 @@ func (u *Unix) loadMetrics(counters *node.Node) error {
 
 				if !labels.Has(label) {
 					u.Logger.Warn().Msgf("invalid histogram metric [%s]", label)
-					wanted.Delete(w)
+					wanted.Remove(w)
 					continue
 				}
 
@@ -311,7 +311,7 @@ func (u *Unix) PollInstance() (map[string]*matrix.Matrix, error) {
 			instance.SetLabel("pid", strconv.Itoa(pid))
 			u.Logger.Debug().Str("name", name).Int("pid", pid).Msg("Add instance")
 		} else {
-			currInstances.Delete(name)
+			currInstances.Remove(name)
 			instance.SetLabel("pid", strconv.Itoa(pid))
 			u.Logger.Debug().Str("name", name).Int("pid", pid).Msg("Update instance")
 		}
