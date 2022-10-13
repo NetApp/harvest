@@ -506,9 +506,6 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, allowInstanceCre
 		// for endpoints, we want to remove common keys from metric count
 		if !allowInstanceCreation {
 			count -= uint64(len(prop.InstanceKeys))
-			if count < 0 {
-				count = 0
-			}
 		}
 	}
 	// remove deleted instances
