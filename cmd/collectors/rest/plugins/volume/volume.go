@@ -67,7 +67,7 @@ func (my *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		// invoke disk rest and populate info in aggrsMap
 		if disks, err := my.getEncryptedDisks(); err != nil {
-			if errs.IsAPINotFound(err) {
+			if errs.IsRestErr(err, errs.APINotFound) {
 				my.Logger.Debug().Err(err).Msg("Failed to collect disk data")
 			} else {
 				my.Logger.Error().Err(err).Msg("Failed to collect disk data")
