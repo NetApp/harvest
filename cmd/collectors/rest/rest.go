@@ -297,7 +297,8 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 	count = r.HandleResults(records, r.Prop, true)
 
 	// process endpoints
-	err = r.processEndPoints()
+	eCount, err := r.processEndPoints()
+	count += eCount
 	if err != nil {
 		r.Logger.Error().Err(err).Msg("Error while processing end points")
 	}
@@ -321,9 +322,10 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 	return r.Matrix, nil
 }
 
-func (r *Rest) processEndPoints() error {
+func (r *Rest) processEndPoints() (uint64, error) {
 	var (
-		err error
+		err   error
+		count uint64
 	)
 
 	for _, endpoint := range r.endpoints {
@@ -350,10 +352,10 @@ func (r *Rest) processEndPoints() error {
 			r.Logger.Warn().Str("ApiPath", endpoint.prop.Query).Msg("no " + endpoint.prop.Query + " instances on cluster")
 			continue
 		}
-		r.HandleResults(records, endpoint.prop, false)
+		count = r.HandleResults(records, endpoint.prop, false)
 	}
 
-	return nil
+	return count, nil
 }
 
 // returns private if api endpoint has private keyword in it else public
@@ -501,6 +503,10 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, allowInstanceCre
 			}
 		}
 
+		// for endpoints, we want to remove common keys from metric count
+		if !allowInstanceCreation {
+			count -= uint64(len(prop.InstanceKeys))
+		}
 	}
 	// remove deleted instances
 	for key := range oldInstances.Iter() {
