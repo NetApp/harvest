@@ -306,17 +306,10 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 
 	numRecords := len(r.Matrix[r.Object].GetInstances())
 
-	r.Logger.Info().
-		Int("instances", numRecords).
-		Uint64("metrics", count).
-		Str("apiD", apiD.Round(time.Millisecond).String()).
-		Str("parseD", parseD.Round(time.Millisecond).String()).
-		Msg("Collected")
-
-	_ = r.Metadata.LazySetValueInt64("count", "data", int64(numRecords))
 	_ = r.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
 	_ = r.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
-	_ = r.Metadata.LazySetValueUint64("datapoint_count", "data", count)
+	_ = r.Metadata.LazySetValueUint64("metrics", "data", count)
+	_ = r.Metadata.LazySetValueUint64("instances", "data", uint64(numRecords))
 	r.AddCollectCount(count)
 
 	return r.Matrix, nil
@@ -566,7 +559,7 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 		ClientTimeout: r.Client.Timeout.String(),
 	})
 
-	if (r.Name == "Rest" && (r.Object == "Volume" || r.Object == "Node")) || r.Name == "ems" {
+	if (r.Name == "Rest" && (r.Object == "Volume" || r.Object == "Node")) || r.Name == "Ems" {
 		version := r.Client.Cluster().Version
 		p.Target.Version = strconv.Itoa(version[0]) + "." + strconv.Itoa(version[1]) + "." + strconv.Itoa(version[2])
 		p.Target.Model = "cdot"
@@ -577,8 +570,8 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 
 		md := r.GetMetadata()
 		info := collector.InstanceInfo{
-			Count:      md.LazyValueInt64("count", "data"),
-			DataPoints: md.LazyValueInt64("datapoint_count", "data"),
+			Count:      md.LazyValueInt64("instances", "data"),
+			DataPoints: md.LazyValueInt64("metrics", "data"),
 			PollTime:   md.LazyValueInt64("poll_time", "data"),
 			APITime:    md.LazyValueInt64("api_time", "data"),
 			ParseTime:  md.LazyValueInt64("parse_time", "data"),

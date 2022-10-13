@@ -158,6 +158,9 @@ func (r *RestPerf) InitMatrix() error {
 			mat.SetGlobalLabel(l.GetNameS(), l.GetContentS())
 		}
 	}
+
+	// Add metadata metric for skips
+	_, _ = r.Metadata.NewMetricUint64("skips")
 	return nil
 }
 
@@ -720,7 +723,8 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	_ = r.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
 	_ = r.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
-	_ = r.Metadata.LazySetValueUint64("count", "data", count)
+	_ = r.Metadata.LazySetValueUint64("metrics", "data", count)
+	_ = r.Metadata.LazySetValueUint64("instances", "data", numRecords)
 	r.AddCollectCount(count)
 
 	// skip calculating from delta if no data from previous poll
@@ -899,16 +903,9 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	calcD := time.Since(calcStart)
+	_ = r.Metadata.LazySetValueUint64("instances", "data", uint64(len(newData.GetInstances())))
 	_ = r.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
-
-	r.Logger.Info().
-		Int("instances", len(newData.GetInstances())).
-		Uint64("metrics", count).
-		Str("apiD", apiD.Round(time.Millisecond).String()).
-		Str("parseD", parseD.Round(time.Millisecond).String()).
-		Str("calcD", calcD.Round(time.Millisecond).String()).
-		Int("skips", totalSkips).
-		Msg("Collected")
+	_ = r.Metadata.LazySetValueUint64("skips", "data", uint64(totalSkips))
 
 	// store cache for next poll
 	r.Matrix[r.Object] = cachedData

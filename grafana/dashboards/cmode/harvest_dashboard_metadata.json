@@ -3529,7 +3529,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "avg by (collector, object) (metadata_collector_count{hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\"})",
+          "expr": "avg by (collector, object) (metadata_collector_metrics{hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{collector}} - {{object}}",

@@ -67,8 +67,8 @@ objects:
 ```
 
 Even though the EMS mapping shown above references a single file named `ems.yaml`, 
-there may be mutliple versions of that file across subdirectories named after ONTAP releases. 
-See [cdot](`https://github.com/NetApp/harvest/tree/main/conf/zapiperf/cdot`) for examples.
+there may be multiple versions of that file across subdirectories named after ONTAP releases. 
+See [cDOT](`https://github.com/NetApp/harvest/tree/main/conf/zapiperf/cdot`) for examples.
 At runtime, the EMS collector will select the appropriate object configuration file that most closely matches the targeted ONTAP system.
 
 ### EMS Template File
@@ -85,12 +85,12 @@ The EMS template file should contain the following parameters:
 
 #### Event Parameters
 
-This section defines the list of EMS events you want to collect, which properites to export, what labels to attach, and how to handle bookend pairs.
+This section defines the list of EMS events you want to collect, which properties to export, what labels to attach, and how to handle bookend pairs.
 The EMS event template parameters are explained below along with an example for reference.
 
 - `name` is the ONTAP EMS event name. (collect ONTAP EMS events with the name of `LUN.offline`)
 - `matches` list of name-value pairs used to further filter ONTAP events. 
-Some EMS events include arguments and these name-value pairs provide a way to filter on those arugments. 
+Some EMS events include arguments and these name-value pairs provide a way to filter on those arguments. 
 (Only collect ONTAP EMS events where `volume_name` has the value `abc_vol`)
 - `exports` list of EMS event parameters to export. These exported parameters are attached as labels to each matching EMS event.
   - labels that are prefixed with `^^` use that parameter to define [instance uniqueness](https://github.com/NetApp/harvest/blob/main/docs/TemplatesAndMetrics.md#harvest-object-template).  

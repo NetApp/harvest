@@ -152,7 +152,7 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 // filterMetaTags removes duplicate TYPE/HELP tags in the metrics
 // Note: this is a workaround, normally Render() will only add
 // one TYPE/HELP for each metric type, however since some metric
-// types (e.g. metadata_collector_count) are submitted from multiple
+// types (e.g. metadata_collector_metrics) are submitted from multiple
 // collectors, we end up with duplicates in the final batch delivered
 // over HTTP.
 func filterMetaTags(metrics [][]byte) [][]byte {

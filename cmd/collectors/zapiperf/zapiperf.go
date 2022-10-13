@@ -140,6 +140,10 @@ func (z *ZapiPerf) InitCache() error {
 	}
 	z.Matrix[z.Object].Object = z.object
 	z.Logger.Debug().Msgf("object= %s --> %s", z.Object, z.object)
+
+	// Add metadata metric for skips
+	_, _ = z.Metadata.NewMetricUint64("skips")
+
 	return nil
 }
 
@@ -526,7 +530,8 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	// update metadata
 	_ = z.Metadata.LazySetValueInt64("api_time", "data", apiT.Microseconds())
 	_ = z.Metadata.LazySetValueInt64("parse_time", "data", parseT.Microseconds())
-	_ = z.Metadata.LazySetValueUint64("count", "data", count)
+	_ = z.Metadata.LazySetValueUint64("metrics", "data", count)
+	_ = z.Metadata.LazySetValueUint64("instances", "data", uint64(len(instanceKeys)))
 	z.AddCollectCount(count)
 
 	// skip calculating from delta if no data from previous poll
@@ -668,16 +673,8 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	calcD := time.Since(calcStart)
 
-	z.Logger.Info().
-		Int("instances", len(instanceKeys)).
-		Uint64("metrics", count).
-		Str("apiD", apiT.Round(time.Millisecond).String()).
-		Str("parseD", parseT.Round(time.Millisecond).String()).
-		Str("calcD", calcD.Round(time.Millisecond).String()).
-		Int("skips", totalSkips).
-		Msg("Collected")
-
 	_ = z.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
+	_ = z.Metadata.LazySetValueUint64("skips", "data", uint64(totalSkips))
 
 	// store cache for next poll
 	z.Matrix[z.Object] = cachedData
