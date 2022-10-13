@@ -50,8 +50,8 @@ func GetCounterMap() map[string][]string {
 		"svm_ldap",
 		"svm_vscan",
 		"security_login",
-		"quota_disk_used_pct_disk_limit",
 		"quota_files_used_pct_file_limit",
+		"quota_disk_used_pct_disk_limit",
 		"nfs_clients_idle_duration",
 	)
 	return counterMap
