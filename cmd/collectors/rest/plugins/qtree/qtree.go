@@ -12,7 +12,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"strconv"
@@ -75,12 +74,9 @@ func (my *Qtree) Init() error {
 
 	my.query = "api/storage/quota/reports"
 
-	my.data = matrix.New(my.Parent+".Qtree", "qtree", "qtree")
+	my.data = matrix.New(my.Parent+".Qtree", "quota", "quota")
 	my.instanceKeys = make(map[string]string)
 	my.instanceLabels = make(map[string]*dict.Dict)
-
-	exportOptions := node.NewS("export_options")
-	exportOptions.NewChildS("include_all_labels", "true")
 
 	quotaType := my.Params.GetChildS("quotaType")
 	if quotaType != nil {
@@ -105,7 +101,6 @@ func (my *Qtree) Init() error {
 	}
 
 	my.Logger.Debug().Msgf("added data with %d metrics", len(my.data.GetMetrics()))
-	my.data.SetExportOptions(exportOptions)
 
 	return nil
 }
@@ -115,6 +110,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		result     []gjson.Result
 		err        error
 		numMetrics int
+		output     []*matrix.Matrix
 	)
 	// Purge and reset data
 	my.data.PurgeInstances()
@@ -210,5 +206,9 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		Int("metrics", numMetrics).
 		Msg("Collected")
 
-	return []*matrix.Matrix{my.data}, nil
+	// This would generate quota metrics prefix with `qtree_`. These are deprecated now and will be removed later.
+	qtreePluginData := my.data.CloneWithOtherIdentifier(my.Parent+".Qtree", "qtree", "qtree")
+	output = append(output, qtreePluginData)
+	output = append(output, my.data)
+	return output, nil
 }

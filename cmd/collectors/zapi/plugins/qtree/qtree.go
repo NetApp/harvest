@@ -62,9 +62,6 @@ func (my *Qtree) Init() error {
 	my.instanceKeys = make(map[string]string)
 	my.instanceLabels = make(map[string]*dict.Dict)
 
-	exportOptions := node.NewS("export_options")
-	exportOptions.NewChildS("include_all_labels", "true")
-
 	objects := my.Params.GetChildS("objects")
 	if objects == nil {
 		return errs.New(errs.ErrMissingParam, "objects")
@@ -93,7 +90,6 @@ func (my *Qtree) Init() error {
 	}
 
 	my.Logger.Debug().Msgf("added data with %d metrics", len(my.data.GetMetrics()))
-	my.data.SetExportOptions(exportOptions)
 
 	// setup batchSize for request
 	if my.client.IsClustered() {
@@ -116,6 +112,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		ad, pd            time.Duration // Request/API time, Parse time, Fetch time
 		err               error
 		numMetrics        int
+		output            []*matrix.Matrix
 	)
 
 	apiT := 0 * time.Second
@@ -281,5 +278,10 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		Str("parseD", parseT.Round(time.Millisecond).String()).
 		Str("batchSize", my.batchSize).
 		Msg("Collected")
-	return []*matrix.Matrix{my.data}, nil
+
+	// This would generate quota metrics prefix with `qtree_`. These are deprecated now and will be removed later.
+	qtreePluginData := my.data.CloneWithOtherIdentifier(my.Parent+".Qtree", "qtree", "qtree")
+	output = append(output, qtreePluginData)
+	output = append(output, my.data)
+	return output, nil
 }
