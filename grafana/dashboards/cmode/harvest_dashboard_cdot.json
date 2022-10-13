@@ -762,6 +762,7 @@
       "type": "table"
     },
     {
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -849,6 +850,7 @@
       "type": "timeseries"
     },
     {
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -936,6 +938,7 @@
       "type": "timeseries"
     },
     {
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
