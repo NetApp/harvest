@@ -458,7 +458,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, (100 * sum by (cluster, svm) (volume_size_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) /   sum by (cluster, svm) (volume_size_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})))",
+          "expr": "topk($TopResources, (100 * sum by (cluster, svm) (volume_size_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSVMUsed\"}) /   sum by (cluster, svm) (volume_size_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSVMUsed\"})))",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -580,7 +580,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, (100 * volume_size_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} / volume_size_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}))",
+          "expr": "topk($TopResources, (100 * volume_size_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeUsed\"} / volume_size_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeUsed\"}))",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -715,7 +715,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, (100 * aggr_space_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"} / aggr_space_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}))",
+          "expr": "topk($TopResources, (100 * aggr_space_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrUsed\"} / aggr_space_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrUsed\"}))",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -760,6 +760,267 @@
         }
       ],
       "type": "table"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 27
+      },
+      "id": 265,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "sortBy": "Last *",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "topk($TopResources, (100 * sum by (cluster, svm) (volume_size_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSVMUsed\"}) /   sum by (cluster, svm) (volume_size_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSVMUsed\"})))",
+          "interval": "",
+          "legendFormat": "{{cluster}} - {{svm}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top SVM capacity Used Percent",
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 27
+      },
+      "id": 266,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "sortBy": "Last *",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "topk($TopResources, (100 * volume_size_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeUsed\"} / volume_size_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeUsed\"}))",
+          "interval": "",
+          "legendFormat": "{{cluster}} - {{volume}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top Volume Capacity Used Percent",
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 27
+      },
+      "id": 267,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "sortBy": "Last *",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "topk($TopResources, (100 * aggr_space_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrUsed\"} / aggr_space_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrUsed\"}))",
+          "interval": "",
+          "legendFormat": "{{cluster}} - {{aggr}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top Aggregate Capacity Used Percent",
+      "type": "timeseries"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
@@ -949,7 +1210,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 26
+        "y": 35
       },
       "id": 256,
       "panels": [
@@ -1236,7 +1497,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 34
+        "y": 43
       },
       "id": 264,
       "panels": [
@@ -1924,6 +2185,60 @@
         },
         "refresh": 1,
         "regex": ".*svm=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "query_result(topk($TopResources,(100 * sum by (cluster, svm) (volume_size_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) /   sum by (cluster, svm) (volume_size_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}))))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopSVMUsed",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources,(100 * sum by (cluster, svm) (volume_size_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) /   sum by (cluster, svm) (volume_size_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}))))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*svm=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "query_result(topk($TopResources, (100 * volume_size_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} / volume_size_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopVolumeUsed",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, (100 * volume_size_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} / volume_size_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "query_result(topk($TopResources, (100 * aggr_space_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"} / aggr_space_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopAggrUsed",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, (100 * aggr_space_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"} / aggr_space_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*aggr=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
