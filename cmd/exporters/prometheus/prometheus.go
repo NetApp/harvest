@@ -497,6 +497,17 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 			}
 
 			normalizedNames, canNormalize := normalizedLabels[objectMetric]
+			var (
+				countMetric string
+				sumMetric   string
+			)
+			if canNormalize {
+				count, sum := h.computeCountAndSum(normalizedNames)
+				countMetric = fmt.Sprintf("%s_%s{%s} %s",
+					prefix, metric.GetName()+"_count", strings.Join(instanceKeys, ","), count)
+				sumMetric = fmt.Sprintf("%s_%s{%s} %d",
+					prefix, metric.GetName()+"_sum", strings.Join(instanceKeys, ","), sum)
+			}
 			for i, value := range h.values {
 				bucketName := (*bucketNames)[i]
 				var x string
@@ -520,6 +531,10 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 					)
 				}
 				rendered = append(rendered, []byte(x))
+			}
+			if canNormalize {
+				rendered = append(rendered, []byte(countMetric))
+				rendered = append(rendered, []byte(sumMetric))
 			}
 		}
 	}
@@ -602,4 +617,24 @@ func escape(replacer *strings.Replacer, key string, value string) string {
 type histogram struct {
 	metric matrix.Metric
 	values []string
+}
+
+func (h *histogram) computeCountAndSum(normalizedNames []string) (string, int) {
+	// If the buckets are normalizable, iterate through the values to:
+	// 1) calculate Prometheus's cumulative buckets
+	// 2) add _count metric
+	// 3) calculate and add _sum metric
+	cumValues := make([]string, len(h.values))
+	runningTotal := 0
+	sum := 0
+	for i, value := range h.values {
+		num, _ := strconv.Atoi(value)
+		runningTotal += num
+		cumValues[i] = strconv.Itoa(runningTotal)
+		normalName := normalizedNames[i]
+		leValue, _ := strconv.Atoi(normalName)
+		sum += leValue * num
+	}
+	h.values = cumValues
+	return cumValues[len(cumValues)-1], sum
 }

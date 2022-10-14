@@ -219,7 +219,7 @@ func (a *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 	}
 
-	// normalize values into averages if we are able to identify it as an percentage or average metric
+	// normalize values into averages if we are able to identify it as a percentage or average metric
 
 	for i, m := range matrices {
 		for mk, metric := range m.GetMetrics() {
