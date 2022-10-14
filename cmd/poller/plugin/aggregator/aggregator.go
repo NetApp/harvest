@@ -236,7 +236,7 @@ func (a *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				avg = true
 			} else if strings.Contains(mn, "average_") || strings.Contains(mn, "avg_") {
 				avg = true
-			} else if strings.Contains(mn, "_latency") {
+			} else if !metric.IsHistogram() && strings.Contains(mn, "_latency") {
 				avg = true
 			}
 
