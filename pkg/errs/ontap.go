@@ -31,13 +31,14 @@ type OntapRestCode struct {
 }
 
 var (
-	APINotFound = OntapRestCode{"API not found", 3}
+	APINotFound   = OntapRestCode{"API not found", 3}
+	TableNotFound = OntapRestCode{"Table is not found", 8585320}
 )
 
-func IsAPINotFound(err error) bool {
+func IsRestErr(err error, sentinel OntapRestCode) bool {
 	var restErr *RestError
 	if errors.As(err, &restErr) {
-		if restErr.Code == APINotFound.Code {
+		if restErr.Code == sentinel.Code {
 			return true
 		}
 	}

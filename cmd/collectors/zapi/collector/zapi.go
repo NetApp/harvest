@@ -367,19 +367,11 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 		z.Logger.Debug().Str("key", key).Msg("removed instance")
 	}
 
-	z.Logger.Info().
-		Int("instances", len(instances)).
-		Uint64("metrics", count).
-		Str("apiD", apiT.Round(time.Millisecond).String()).
-		Str("parseD", parseT.Round(time.Millisecond).String()).
-		Msg("Collected")
-
 	// update metadata
 	_ = z.Metadata.LazySetValueInt64("api_time", "data", apiT.Microseconds())
 	_ = z.Metadata.LazySetValueInt64("parse_time", "data", parseT.Microseconds())
-	_ = z.Metadata.LazySetValueUint64("count", "data", count)
-	_ = z.Metadata.LazySetValueUint64("count", "instance", uint64(len(instances)))
-
+	_ = z.Metadata.LazySetValueUint64("metrics", "data", count)
+	_ = z.Metadata.LazySetValueUint64("instances", "data", uint64(len(instances)))
 	z.AddCollectCount(count)
 
 	if len(mat.GetInstances()) == 0 {
@@ -442,8 +434,8 @@ func (z *Zapi) CollectAutoSupport(p *collector.Payload) {
 
 		md := z.GetMetadata()
 		info := collector.InstanceInfo{
-			Count:      md.LazyValueInt64("count", "instance"),
-			DataPoints: md.LazyValueInt64("count", "data"),
+			Count:      md.LazyValueInt64("instances", "data"),
+			DataPoints: md.LazyValueInt64("metrics", "data"),
 			PollTime:   md.LazyValueInt64("poll_time", "data"),
 			APITime:    md.LazyValueInt64("api_time", "data"),
 			ParseTime:  md.LazyValueInt64("parse_time", "data"),

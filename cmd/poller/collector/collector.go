@@ -22,8 +22,10 @@ import (
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
+	"math"
 	"reflect"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -223,7 +225,8 @@ func Init(c Collector) error {
 	_, _ = md.NewMetricInt64("parse_time")
 	_, _ = md.NewMetricInt64("calc_time")
 	_, _ = md.NewMetricInt64("plugin_time")
-	_, _ = md.NewMetricUint64("count")
+	_, _ = md.NewMetricUint64("metrics")
+	_, _ = md.NewMetricUint64("instances")
 
 	// add tasks of the collector as metadata instances
 	for _, task := range s.GetTasks() {
@@ -232,9 +235,6 @@ func Init(c Collector) error {
 		t := task.GetInterval().Seconds()
 		instance.SetLabel("interval", strconv.FormatFloat(t, 'f', 4, 32))
 	}
-
-	// Create the metadata instance named "instance" since autosupport relies on that key
-	_, _ = md.NewInstance("instance")
 
 	md.SetExportOptions(matrix.DefaultExportOptions())
 
@@ -407,6 +407,9 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 					_ = c.Metadata.LazySetValueInt64("plugin_time", task.Name, pluginTime.Microseconds())
 				}
 			}
+			if task.Name == "data" {
+				c.logMetadata()
+			}
 
 			// update task metadata
 			_ = c.Metadata.LazySetValueInt64("poll_time", task.Name, task.GetDuration().Microseconds())
@@ -425,7 +428,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 			}
 
 			if err := e.Export(c.Metadata); err != nil {
-				c.Logger.Warn().Msgf("export metadata to [%s]: %s", e.GetName(), err.Error())
+				c.Logger.Warn().Err(err).Str("exporter", e.GetName()).Msg("Unable to export metadata")
 			}
 
 			// continue if metadata failed, since it might be specific to metadata
@@ -452,6 +455,31 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 				Msg("lagging behind schedule")
 		}
 	}
+}
+
+func (c *AbstractCollector) logMetadata() {
+	metrics := c.Metadata.GetMetrics()
+	info := c.Logger.Info()
+	dataInstance := c.Metadata.GetInstance("data")
+	if dataInstance == nil {
+		return
+	}
+	for _, metric := range metrics {
+		mName := metric.GetName()
+		if mName == "poll_time" || mName == "task_time" {
+			// don't log these since they're covered by other durations
+			continue
+		}
+		value, _, _ := metric.GetValueFloat64(dataInstance)
+		if strings.HasSuffix(mName, "_time") {
+			// convert microseconds to milliseconds and names ending with _time into -> *Ms
+			v := int64(math.Round(value / 1000))
+			info.Int64(mName[0:len(mName)-5]+"Ms", v)
+		} else {
+			info.Int64(mName, int64(value))
+		}
+	}
+	info.Msg("Collected")
 }
 
 // GetName returns name of the collector

@@ -455,6 +455,10 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 			Int("queried", len(e.eventNames)).
 			Msg("No EMS events returned")
 		e.lastFilterTime = toTime
+		_ = e.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
+		_ = e.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
+		_ = e.Metadata.LazySetValueUint64("metrics", "data", 0)
+		_ = e.Metadata.LazySetValueUint64("instances", "data", 0)
 		return nil, nil
 	}
 
@@ -475,10 +479,11 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 		Str("parseTime", parseD.String()).
 		Msg("Collected")
 
-	_ = e.Metadata.LazySetValueInt64("count", "data", int64(instanceCount))
 	_ = e.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
 	_ = e.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
-	_ = e.Metadata.LazySetValueUint64("datapoint_count", "data", count)
+	_ = e.Metadata.LazySetValueUint64("metrics", "data", count)
+	_ = e.Metadata.LazySetValueUint64("instances", "data", uint64(instanceCount))
+
 	e.AddCollectCount(count)
 
 	// update lastFilterTime to current cluster time
