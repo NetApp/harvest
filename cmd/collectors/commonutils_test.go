@@ -28,6 +28,9 @@ func TestUpdateProtectedFields(t *testing.T) {
 	testOtherPolicyType(t, instance)
 	testWithNoPolicyType(t, instance)
 	testWithNoPolicyTypeNoRelationshipType(t, instance)
+
+	// Test case for matrix clone
+	testCloneWithOtherIdentifier(t)
 }
 
 func TestIsTimestampOlderThanDuration(t *testing.T) {
@@ -254,5 +257,51 @@ func testNewerTimestampThanDuration(t *testing.T) {
 		// OK
 	} else {
 		t.Errorf("timestamp= %f is newer than duration %s", timestamp, duration.String())
+	}
+}
+
+func testCloneWithOtherIdentifier(t *testing.T) {
+	source := matrix.New("a", "a", "a")
+	source.SetGlobalLabel("cluster", "test_cluster")
+	instance, err := source.NewInstance("test_key")
+	if err != nil {
+		t.Errorf("Instance creation failed")
+	}
+	instance.SetLabel("object", "test_object")
+
+	metric, err := source.NewMetricFloat64("test_metric")
+	if err != nil {
+		t.Errorf("Metric creation failed")
+	}
+	// populate numeric data
+	if err = metric.SetValueFloat64(instance, 20); err != nil {
+		t.Errorf("Failed to set metric value")
+	}
+
+	// clone with different identified
+	dest := CloneWithOtherIdentifier("b", "b", "b", source)
+
+	if len(dest.GetInstances()) == 1 && len(dest.GetMetrics()) == 1 {
+		// OK
+	} else {
+		t.Errorf("Instances or Metrics count are not matching")
+	}
+
+	if label := instance.GetLabel("object"); label == "test_object" {
+		// OK
+	} else {
+		t.Errorf("Labels object= %s, expected: test_object", label)
+	}
+
+	if value, _, _ := metric.GetValueFloat64(instance); value == 20 {
+		// OK
+	} else {
+		t.Errorf("Metric value= %f, expected: 20", value)
+	}
+
+	if label := dest.GetGlobalLabels().Get("cluster"); label == "test_cluster" {
+		// OK
+	} else {
+		t.Errorf("Global label value= %s, expected: test_cluster", label)
 	}
 }

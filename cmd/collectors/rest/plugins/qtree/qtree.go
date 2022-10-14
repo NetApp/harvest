@@ -207,7 +207,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		Msg("Collected")
 
 	// This would generate quota metrics prefix with `qtree_`. These are deprecated now and will be removed later.
-	qtreePluginData := my.data.CloneWithOtherIdentifier(my.Parent+".Qtree", "qtree", "qtree")
+	qtreePluginData := collectors.CloneWithOtherIdentifier(my.Parent+".Qtree", "qtree", "qtree", my.data)
 	output = append(output, qtreePluginData)
 	output = append(output, my.data)
 	return output, nil

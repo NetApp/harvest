@@ -85,23 +85,6 @@ func (m *Matrix) Clone(withData, withMetrics, withInstances bool) *Matrix {
 	return clone
 }
 
-func (m *Matrix) CloneWithOtherIdentifier(uuid, object string, identifier string) *Matrix {
-	clone := New(uuid, object, identifier)
-	clone.globalLabels = m.globalLabels
-	clone.exportOptions = m.exportOptions
-	clone.exportable = m.exportable
-
-	for key, instance := range m.GetInstances() {
-		clone.instances[key] = instance.Clone()
-	}
-
-	for key, metric := range m.GetMetrics() {
-		clone.metrics[key] = metric.Clone(true)
-	}
-
-	return clone
-}
-
 // Reset all data
 func (m *Matrix) Reset() {
 	size := len(m.instances)
@@ -303,4 +286,16 @@ func CreateMetric(key string, data *Matrix) error {
 		}
 	}
 	return nil
+}
+
+func CopyInstances(source *Matrix, dest *Matrix) {
+	for key, instance := range source.GetInstances() {
+		dest.instances[key] = instance.Clone()
+	}
+}
+
+func CopyMetrics(source *Matrix, dest *Matrix) {
+	for key, metric := range source.GetMetrics() {
+		dest.metrics[key] = metric.Clone(true)
+	}
 }
