@@ -275,6 +275,7 @@ func (e *Ems) getClusterTime() (time.Time, error) {
 				continue
 			}
 			clusterTime = t
+			break
 		}
 	}
 
