@@ -287,15 +287,3 @@ func CreateMetric(key string, data *Matrix) error {
 	}
 	return nil
 }
-
-func CopyInstances(source *Matrix, dest *Matrix) {
-	for key, instance := range source.GetInstances() {
-		dest.instances[key] = instance.Clone()
-	}
-}
-
-func CopyMetrics(source *Matrix, dest *Matrix) {
-	for key, metric := range source.GetMetrics() {
-		dest.metrics[key] = metric.Clone(true)
-	}
-}
