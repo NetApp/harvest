@@ -3,7 +3,6 @@
 package qtree
 
 import (
-	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -113,7 +112,6 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		ad, pd            time.Duration // Request/API time, Parse time, Fetch time
 		err               error
 		numMetrics        int
-		output            []*matrix.Matrix
 	)
 
 	apiT := 0 * time.Second
@@ -281,8 +279,9 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		Msg("Collected")
 
 	// This would generate quota metrics prefix with `qtree_`. These are deprecated now and will be removed later.
-	qtreePluginData := collectors.CloneWithOtherIdentifier(my.Parent+".Qtree", "qtree", "qtree", my.data)
-	output = append(output, qtreePluginData)
-	output = append(output, my.data)
-	return output, nil
+	qtreePluginData := my.data.Clone(true, true, true)
+	qtreePluginData.UUID = my.Parent + ".Qtree"
+	qtreePluginData.Object = "qtree"
+	qtreePluginData.Identifier = "qtree"
+	return []*matrix.Matrix{qtreePluginData, my.data}, nil
 }

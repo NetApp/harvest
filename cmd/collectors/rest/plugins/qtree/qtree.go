@@ -110,7 +110,6 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		result     []gjson.Result
 		err        error
 		numMetrics int
-		output     []*matrix.Matrix
 	)
 	// Purge and reset data
 	my.data.PurgeInstances()
@@ -207,8 +206,9 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		Msg("Collected")
 
 	// This would generate quota metrics prefix with `qtree_`. These are deprecated now and will be removed later.
-	qtreePluginData := collectors.CloneWithOtherIdentifier(my.Parent+".Qtree", "qtree", "qtree", my.data)
-	output = append(output, qtreePluginData)
-	output = append(output, my.data)
-	return output, nil
+	qtreePluginData := my.data.Clone(true, true, true)
+	qtreePluginData.UUID = my.Parent + ".Qtree"
+	qtreePluginData.Object = "qtree"
+	qtreePluginData.Identifier = "qtree"
+	return []*matrix.Matrix{qtreePluginData, my.data}, nil
 }

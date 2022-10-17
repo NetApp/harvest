@@ -166,15 +166,3 @@ func GetDataInterval(param *node.Node, defaultInterval time.Duration) float64 {
 func IsTimestampOlderThanDuration(timestamp float64, duration time.Duration) bool {
 	return time.Since(time.UnixMicro(int64(timestamp))) > duration
 }
-
-// This function would clone the matrix with same instances and metrics, but with different indentifier
-func CloneWithOtherIdentifier(uuid, object string, identifier string, source *matrix.Matrix) *matrix.Matrix {
-	clone := matrix.New(uuid, object, identifier)
-	clone.SetGlobalLabels(source.GetGlobalLabels())
-	clone.SetExportOptions(source.GetExportOptions())
-	clone.SetExportable(source.IsExportable())
-	matrix.CopyInstances(source, clone)
-	matrix.CopyMetrics(source, clone)
-
-	return clone
-}
