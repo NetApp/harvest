@@ -7,7 +7,7 @@ counters:
   - ^^id
   - ^node.name                    => node
   - op_count
-  - total_ops                     => ops
+  - total_ops
   - total_read_ops                => read_ops
   - total_write_ops               => write_ops
   - latency

@@ -158,6 +158,9 @@ func (r *RestPerf) InitMatrix() error {
 			mat.SetGlobalLabel(l.GetNameS(), l.GetContentS())
 		}
 	}
+
+	// Add metadata metric for skips
+	_, _ = r.Metadata.NewMetricUint64("skips")
 	return nil
 }
 
@@ -198,8 +201,7 @@ func (r *RestPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 
 	records, err = rest.Fetch(r.Client, href)
 	if err != nil {
-		r.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
-		return nil, err
+		return r.handleError(err, href)
 	}
 
 	firstRecord := records[0]
@@ -720,7 +722,8 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	_ = r.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
 	_ = r.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
-	_ = r.Metadata.LazySetValueUint64("count", "data", count)
+	_ = r.Metadata.LazySetValueUint64("metrics", "data", count)
+	_ = r.Metadata.LazySetValueUint64("instances", "data", numRecords)
 	r.AddCollectCount(count)
 
 	// skip calculating from delta if no data from previous poll
@@ -899,16 +902,9 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	calcD := time.Since(calcStart)
+	_ = r.Metadata.LazySetValueUint64("instances", "data", uint64(len(newData.GetInstances())))
 	_ = r.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
-
-	r.Logger.Info().
-		Int("instances", len(newData.GetInstances())).
-		Uint64("metrics", count).
-		Str("apiD", apiD.Round(time.Millisecond).String()).
-		Str("parseD", parseD.Round(time.Millisecond).String()).
-		Str("calcD", calcD.Round(time.Millisecond).String()).
-		Int("skips", totalSkips).
-		Msg("Collected")
+	_ = r.Metadata.LazySetValueUint64("skips", "data", uint64(totalSkips))
 
 	// store cache for next poll
 	r.Matrix[r.Object] = cachedData
@@ -1077,8 +1073,7 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 	records, err = rest.Fetch(r.Client, href)
 	if err != nil {
-		r.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
-		return nil, err
+		return r.handleError(err, href)
 	}
 
 	if len(records) == 0 {
@@ -1150,6 +1145,16 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		return nil, errs.New(errs.ErrNoInstance, "")
 	}
 
+	return nil, err
+}
+
+func (r *RestPerf) handleError(err error, href string) (map[string]*matrix.Matrix, error) {
+	if errs.IsRestErr(err, errs.TableNotFound) {
+		// the table does not exist, log as info and return no instances so the task goes to stand-by
+		r.Logger.Info().Str("href", href).Msg(err.Error())
+		return nil, errs.New(errs.ErrNoInstance, err.Error())
+	}
+	r.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
 	return nil, err
 }
 

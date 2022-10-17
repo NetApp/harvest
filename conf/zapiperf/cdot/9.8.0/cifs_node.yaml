@@ -6,7 +6,7 @@ object:                   node_cifs
 counters:
   - instance_name            => node
   - cifs_op_count            => op_count
-  - cifs_ops                 => ops
+  - cifs_ops                 => total_ops   # "cifs_ops" already used in system_node.yaml
   - cifs_read_ops            => read_ops
   - cifs_write_ops           => write_ops
   - cifs_latency             => latency
