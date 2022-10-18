@@ -43,7 +43,7 @@ func GetCounterMap() map[string][]string {
 	counterMap["NO_DATA_CONTAINS"] = append(counterMap["NO_DATA_CONTAINS"], "poller", "metadata_exporter_count")
 	//}
 
-	// CI clusters don't have cluster peer and svm ldap/vscan metrics, security_login metrics
+	// CI clusters don't have cluster peer and svm ldap/vscan metrics, security_login metrics, fabricpool metrics
 	counterMap["NO_DATA_CONTAINS"] = append(
 		counterMap["NO_DATA_CONTAINS"],
 		"cluster_peer",
@@ -53,6 +53,8 @@ func GetCounterMap() map[string][]string {
 		"qtree_disk_used_pct_disk_limit",
 		"qtree_files_used_pct_file_limit",
 		"nfs_clients_idle_duration",
+		"fabricpool_cloud_bin_operation",
+		"fabricpool_cloud_bin_op_latency_average",
 	)
 	return counterMap
 }
