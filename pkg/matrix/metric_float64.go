@@ -18,14 +18,10 @@ type MetricFloat64 struct {
 
 func (m *MetricFloat64) Clone(deep bool) Metric {
 	clone := MetricFloat64{AbstractMetric: m.AbstractMetric.Clone(deep)}
-	if deep {
-		if len(m.values) != 0 {
-			clone.values = make(map[string]float64, len(m.values))
-			for key, element := range m.values {
-				clone.values[key] = element
-			}
-		} else {
-			clone.values = make(map[string]float64)
+	if deep && len(m.values) != 0 {
+		clone.values = make(map[string]float64, len(m.values))
+		for key, element := range m.values {
+			clone.values[key] = element
 		}
 	} else {
 		clone.values = make(map[string]float64)
@@ -172,33 +168,33 @@ func (m *MetricFloat64) Delta(s Metric, logger *logging.Logger) (int, error) {
 	prevRecord := s.GetRecords()
 	pass := m.GetPass()
 
-	for key := range m.values {
-		if m.record[key] && prevRecord[key] {
-			curRaw := m.values[key]
-			// reset pass
-			pass[key] = true
-			m.values[key] -= prevRaw[key]
+	for k := range m.values {
+		// reset pass
+		pass[k] = true
+		if m.record[k] && prevRecord[k] {
+			curRaw := m.values[k]
+			m.values[k] -= prevRaw[k]
 			// Sometimes ONTAP sends spurious zeroes or values less than the previous poll.
 			// Detect and don't publish negative deltas or the subsequent poll will show a large spike.
-			isInvalidZero := (curRaw == 0 || prevRaw[key] == 0) && m.values[key] != 0
-			isNegative := m.values[key] < 0
+			isInvalidZero := (curRaw == 0 || prevRaw[k] == 0) && m.values[k] != 0
+			isNegative := m.values[k] < 0
 			if isInvalidZero || isNegative {
-				pass[key] = false
+				pass[k] = false
 				skips++
 				logger.Trace().
 					Str("metric", m.GetName()).
 					Float64("currentRaw", curRaw).
-					Float64("previousRaw", prevRaw[key]).
-					Str("instIndex", key).
+					Float64("previousRaw", prevRaw[k]).
+					Str("instIndex", k).
 					Msg("Negative cooked value")
 			}
 		} else {
 			// It could be a new or deleted instance
-			pass[key] = false
+			pass[k] = false
 			skips++
 			logger.Trace().
 				Str("metric", m.GetName()).
-				Str("instIndex", key).
+				Str("instIndex", k).
 				Msg("New or deleted instance")
 		}
 	}
@@ -211,29 +207,29 @@ func (m *MetricFloat64) Divide(s Metric, logger *logging.Logger) (int, error) {
 	sRecord := s.GetRecords()
 	pass := m.GetPass()
 
-	for key := range m.values {
-		if m.record[key] && sRecord[key] && sValues[key] != 0 {
-			// reset pass
-			pass[key] = true
+	for k := range m.values {
+		// reset pass
+		pass[k] = true
+		if m.record[k] && sRecord[k] && sValues[k] != 0 {
 			// Don't pass along the value if the numerator or denominator is < 0
 			// A denominator of zero is fine
-			if m.values[key] < 0 || sValues[key] < 0 {
-				pass[key] = false
+			if m.values[k] < 0 || sValues[k] < 0 {
+				pass[k] = false
 				skips++
 				logger.Trace().
 					Str("metric", m.GetName()).
-					Float64("numerator", m.values[key]).
-					Float64("denominator", sValues[key]).
+					Float64("numerator", m.values[k]).
+					Float64("denominator", sValues[k]).
 					Msg("No pass values")
 			}
-			m.values[key] /= sValues[key]
+			m.values[k] /= sValues[k]
 		} else {
 			// It could be a new or deleted instance or a 0 denominator
-			pass[key] = false
+			pass[k] = false
 			skips++
 			logger.Trace().
 				Str("metric", m.GetName()).
-				Str("instIndex", key).
+				Str("instIndex", k).
 				Msg("New or deleted instance or zero denominator")
 		}
 	}
@@ -247,32 +243,32 @@ func (m *MetricFloat64) DivideWithThreshold(s Metric, t int, logger *logging.Log
 	sRecord := s.GetRecords()
 	pass := m.GetPass()
 
-	for key := range m.values {
-		if m.record[key] && sRecord[key] {
-			v := m.values[key]
-			// reset pass
-			pass[key] = true
+	for k := range m.values {
+		// reset pass
+		pass[k] = true
+		if m.record[k] && sRecord[k] {
+			v := m.values[k]
 			// Don't pass along the value if the numerator or denominator is < 0
 			// It's important to check sValues[i] < 0 and allow a zero so pass=true and m.values[i] remains unchanged
-			if m.values[key] < 0 || sValues[key] < 0 {
-				pass[key] = false
+			if m.values[k] < 0 || sValues[k] < 0 {
+				pass[k] = false
 				skips++
 				logger.Trace().
 					Str("metric", m.GetName()).
 					Float64("numerator", v).
-					Float64("denominator", sValues[key]).
+					Float64("denominator", sValues[k]).
 					Msg("Negative values")
 			}
-			if sValues[key] >= x {
-				m.values[key] /= sValues[key]
+			if sValues[k] >= x {
+				m.values[k] /= sValues[k]
 			}
 		} else {
 			// It could be a new or deleted instance
-			pass[key] = false
+			pass[k] = false
 			skips++
 			logger.Trace().
 				Str("metric", m.GetName()).
-				Str("instIndex", key).
+				Str("instIndex", k).
 				Msg("New or deleted instance")
 		}
 	}
@@ -283,32 +279,32 @@ func (m *MetricFloat64) MultiplyByScalar(s uint, logger *logging.Logger) (int, e
 	var skips int
 	x := float64(s)
 	pass := m.GetPass()
-	for key := range m.values {
-		if m.record[key] {
-			// reset pass
-			pass[key] = true
+	for k := range m.values {
+		// reset pass
+		pass[k] = true
+		if m.record[k] {
 			skips++
 			// if current is <= 0
-			if m.values[key] < 0 {
-				pass[key] = false
+			if m.values[k] < 0 {
+				pass[k] = false
 				logger.Trace().
 					Str("metric", m.GetName()).
-					Float64("currentRaw", m.values[key]).
+					Float64("currentRaw", m.values[k]).
 					Uint("scalar", s).
 					Msg("Negative value")
 			}
-			m.values[key] *= x
+			m.values[k] *= x
 		}
 	}
 	return skips, nil
 }
 
 func (m *MetricFloat64) Print() {
-	for key := range m.values {
-		if m.record[key] && m.pass[key] {
-			fmt.Printf("%s%v%s ", color.Green, m.values[key], color.End)
+	for k := range m.values {
+		if m.record[k] && m.pass[k] {
+			fmt.Printf("%s%v%s ", color.Green, m.values[k], color.End)
 		} else {
-			fmt.Printf("%s%v%s ", color.Red, m.values[key], color.End)
+			fmt.Printf("%s%v%s ", color.Red, m.values[k], color.End)
 		}
 	}
 }

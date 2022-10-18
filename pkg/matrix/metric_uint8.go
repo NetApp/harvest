@@ -18,14 +18,12 @@ type MetricUint8 struct {
 
 func (u *MetricUint8) Clone(deep bool) Metric {
 	clone := MetricUint8{AbstractMetric: u.AbstractMetric.Clone(deep)}
-	if deep {
+	if deep && len(u.values) != 0 {
 		if len(u.values) != 0 {
 			clone.values = make(map[string]uint8, len(u.values))
 			for key, element := range u.values {
 				clone.values[key] = element
 			}
-		} else {
-			clone.values = make(map[string]uint8)
 		}
 	} else {
 		clone.values = make(map[string]uint8)
