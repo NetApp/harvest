@@ -26,6 +26,7 @@ package zapiperf
 
 import (
 	"errors"
+	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/fabricpool"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/fcp"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/headroom"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/nic"
@@ -119,6 +120,8 @@ func (z *ZapiPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Pl
 		return volume.New(abc)
 	case "Vscan":
 		return vscan.New(abc)
+	case "Fabricpool":
+		return fabricpool.New(abc)
 	default:
 		z.Logger.Info().Msgf("no zapiPerf plugin found for %s", kind)
 	}

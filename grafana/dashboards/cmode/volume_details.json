@@ -4484,12 +4484,9 @@
             "showHeader": true
           },
           "pluginVersion": "8.4.11",
+          "description": "Average request count, per volume, in the chosen time window, to object storage.  Not scaled per second, but a cumulative count (delta) since the previous poll.",
           "targets": [
             {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "EO6UabnVz"
-              },
               "exemplar": false,
               "expr": "topk($TopResources, sum by (volume) (fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\", volume=~\"$TopVolumeCloudBinOperation\"}))",
               "format": "table",
@@ -4529,14 +4526,14 @@
           "type": "table"
         },
         {
-          "description": "",
+          "description": "Average request count, per volume and type to object storage.  Not scaled per second, but a cumulative count (delta) since the previous poll.",
           "fieldConfig": {
             "defaults": {
               "color": {
                 "mode": "palette-classic"
               },
               "custom": {
-                "axisLabel": "IOPs/TB",
+                "axisLabel": "Request Count",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
@@ -4577,7 +4574,7 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "none"
             },
             "overrides": []
           },
@@ -4608,10 +4605,6 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "EO6UabnVz"
-              },
               "exemplar": false,
               "expr": "topk($TopResources, label_join(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\", volume=~\"$Volume\"},\"volRequest\", \"-\", \"volume\", \"metric\"))",
               "hide": false,
@@ -4625,14 +4618,13 @@
           "type": "timeseries"
         },
         {
-          "description": "",
+          "description": "Average latency per GET operation to object storage",
           "fieldConfig": {
             "defaults": {
               "color": {
                 "mode": "palette-classic"
               },
               "custom": {
-                "axisLabel": "IOPs/TB",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
@@ -4673,7 +4665,7 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "ms"
             },
             "overrides": []
           },
@@ -4704,15 +4696,11 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "EO6UabnVz"
-              },
               "exemplar": false,
-              "expr": "topk($TopResources, avg by (svm) (fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSVMCloudBinOpGetLatency\", metric=\"GET\"}))",
+              "expr": "topk($TopResources, fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopCloudBinOpGetLatency\", metric=\"GET\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "{{svm}} ",
+              "legendFormat": "{{volume}} ",
               "refId": "A"
             }
           ],
@@ -4721,14 +4709,14 @@
           "type": "timeseries"
         },
         {
-          "description": "",
+          "description": "Total GET request count, per volume, in the collection interval to object storage.  Not scaled per second, but a cumulative count (delta) since the previous poll.",
           "fieldConfig": {
             "defaults": {
               "color": {
                 "mode": "palette-classic"
               },
               "custom": {
-                "axisLabel": "IOPs/TB",
+                "axisLabel": "Request Count",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
@@ -4769,7 +4757,7 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "none"
             },
             "overrides": []
           },
@@ -4800,15 +4788,11 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "EO6UabnVz"
-              },
               "exemplar": false,
-              "expr": "topk($TopResources, avg by (svm) (fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSVMCloudBinOperationGet\", metric=\"GET\"}))",
+              "expr": "topk($TopResources, fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopCloudBinOperationGet\", metric=\"GET\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "{{svm}} ",
+              "legendFormat": "{{volume}} ",
               "refId": "A"
             }
           ],
@@ -4817,14 +4801,13 @@
           "type": "timeseries"
         },
         {
-          "description": "",
+          "description": "Average latency per PUT operation to object storage",
           "fieldConfig": {
             "defaults": {
               "color": {
                 "mode": "palette-classic"
               },
               "custom": {
-                "axisLabel": "IOPs/TB",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
@@ -4865,7 +4848,7 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "ms"
             },
             "overrides": []
           },
@@ -4896,15 +4879,11 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "EO6UabnVz"
-              },
               "exemplar": false,
-              "expr": "topk($TopResources, avg by (svm) (fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSVMCloudBinOpPutLatency\", metric=\"PUT\"}))",
+              "expr": "topk($TopResources, fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopCloudBinOpPutLatency\", metric=\"PUT\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "{{svm}} ",
+              "legendFormat": "{{volume}} ",
               "refId": "A"
             }
           ],
@@ -4913,14 +4892,14 @@
           "type": "timeseries"
         },
         {
-          "description": "",
+          "description": "Total PUT request count, per volume, in the collection interval to object storage.  Not scaled per second, but a cumulative count (delta) since the previous poll.",
           "fieldConfig": {
             "defaults": {
               "color": {
                 "mode": "palette-classic"
               },
               "custom": {
-                "axisLabel": "IOPs/TB",
+                "axisLabel": "Request Count",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
@@ -4961,7 +4940,7 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "none"
             },
             "overrides": []
           },
@@ -4997,10 +4976,10 @@
                 "uid": "EO6UabnVz"
               },
               "exemplar": false,
-              "expr": "topk($TopResources, avg by (svm) (fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSVMCloudBinOperationPut\", metric=\"PUT\"}))",
+              "expr": "topk($TopResources, fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopCloudBinOperationPut\", metric=\"PUT\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "{{svm}} ",
+              "legendFormat": "{{volume}} ",
               "refId": "A"
             }
           ],
@@ -5882,10 +5861,6 @@
         "sort": 0,
         "type": "query"
       },
-
-
-
-
       {
         "allValue": null,
         "current": {},
@@ -5893,7 +5868,7 @@
         "hide": 2,
         "includeAll": true,
         "multi": true,
-        "name": "TopVolumeCloudBinOperation",
+        "name": "TopCloudBinOperation",
         "options": [],
         "query": {
           "query": "query_result(topk($TopResources, sum by (volume) (avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[${__range}]))))",
@@ -5908,18 +5883,18 @@
       {
         "allValue": null,
         "current": {},
-        "definition": "query_result(topk($TopResources,label_join(avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[${__range}]), \"volReq\", \"-\", \"volume\", \"metric\")))",
+        "definition": "query_result(topk($TopResources,avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[${__range}])))",
         "hide": 2,
         "includeAll": true,
         "multi": true,
-        "name": "TopVolumeCloudBinOperationDetail",
+        "name": "TopCloudBinOperationDetail",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources,label_join(avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[${__range}]), \"volReq\", \"-\", \"volume\", \"metric\")))",
+          "query": "query_result(topk($TopResources,avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
-        "regex": ".*volReq=\\\"(.*?)\\\".*",
+        "regex": ".*volRequest=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
@@ -5927,18 +5902,18 @@
       {
         "allValue": null,
         "current": {},
-        "definition": "query_result(topk($TopResources,avg by (svm) (avg_over_time(fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",metric=\"GET\"}[${__range}]))))",
+        "definition": "query_result(topk($TopResources,avg_over_time(fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\",metric=\"GET\"}[${__range}])))",
         "hide": 2,
         "includeAll": true,
         "multi": true,
-        "name": "TopSVMCloudBinOpGetLatency",
+        "name": "TopCloudBinOpGetLatency",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources,avg by (svm) (avg_over_time(fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",metric=\"GET\"}[${__range}]))))",
+          "query": "query_result(topk($TopResources,avg_over_time(fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\",metric=\"GET\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
+        "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
@@ -5946,18 +5921,18 @@
       {
         "allValue": null,
         "current": {},
-        "definition": "query_result(topk($TopResources,avg by (svm) (avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",metric=\"GET\"}[${__range}]))))",
+        "definition": "query_result(topk($TopResources,avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\",metric=\"GET\"}[${__range}])))",
         "hide": 2,
         "includeAll": true,
         "multi": true,
-        "name": "TopSVMCloudBinOperationGet",
+        "name": "TopCloudBinOperationGet",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources,avg by (svm) (avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",metric=\"GET\"}[${__range}]))))",
+          "query": "query_result(topk($TopResources,avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\",metric=\"GET\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
+        "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
@@ -5965,18 +5940,18 @@
       {
         "allValue": null,
         "current": {},
-        "definition": "query_result(topk($TopResources,avg by (svm) (avg_over_time(fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",metric=\"PUT\"}[${__range}]))))",
+        "definition": "query_result(topk($TopResources,avg_over_time(fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\",metric=\"PUT\"}[${__range}])))",
         "hide": 2,
         "includeAll": true,
         "multi": true,
-        "name": "TopSVMCloudBinOpPutLatency",
+        "name": "TopCloudBinOpPutLatency",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources,avg by (svm) (avg_over_time(fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",metric=\"PUT\"}[${__range}]))))",
+          "query": "query_result(topk($TopResources,avg_over_time(fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\",metric=\"PUT\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
+        "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
@@ -5984,18 +5959,18 @@
       {
         "allValue": null,
         "current": {},
-        "definition": "query_result(topk($TopResources,avg by (svm) (avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",metric=\"PUT\"}[${__range}]))))",
+        "definition": "query_result(topk($TopResources,avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\",metric=\"PUT\"}[${__range}])))",
         "hide": 2,
         "includeAll": true,
         "multi": true,
-        "name": "TopSVMCloudBinOperationPut",
+        "name": "TopCloudBinOperationPut",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources,avg by (svm) (avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",metric=\"PUT\"}[${__range}]))))",
+          "query": "query_result(topk($TopResources,avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\",metric=\"PUT\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
+        "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"

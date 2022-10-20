@@ -11,6 +11,9 @@ counters:
   - cloud_bin_operation
   - cloud_bin_op_latency_average
 
+plugins:
+  - Fabricpool
+
 export_options:
   instance_keys:
     - svm
