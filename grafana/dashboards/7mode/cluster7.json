@@ -243,7 +243,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "node_labels{datacenter=\"$Datacenter\",node=~\"$Node\"}",
+          "expr": "node_labels{datacenter=~\"$Datacenter\",node=~\"$Node\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -253,7 +253,7 @@
         },
         {
           "exemplar": false,
-          "expr": "node_new_status{datacenter=\"$Datacenter\",node=~\"$Node\"}",
+          "expr": "node_new_status{datacenter=~\"$Datacenter\",node=~\"$Node\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -431,7 +431,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "node_new_status{datacenter=\"$Datacenter\",node=~\"$Node\"}",
+          "expr": "node_new_status{datacenter=~\"$Datacenter\",node=~\"$Node\"}",
           "instant": true,
           "interval": "",
           "legendFormat": "",
@@ -780,7 +780,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "cluster_subsystem_suppressed_alerts{datacenter=\"$Datacenter\",node=~\"$Node\"}",
+          "expr": "cluster_subsystem_suppressed_alerts{datacenter=~\"$Datacenter\",node=~\"$Node\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -791,7 +791,7 @@
         },
         {
           "exemplar": false,
-          "expr": "cluster_subsystem_outstanding_alerts{datacenter=\"$Datacenter\",node=~\"$Node\"}",
+          "expr": "cluster_subsystem_outstanding_alerts{datacenter=~\"$Datacenter\",node=~\"$Node\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -802,7 +802,7 @@
         },
         {
           "exemplar": false,
-          "expr": "cluster_subsystem_new_status{datacenter=\"$Datacenter\",node=~\"$Node\"}",
+          "expr": "cluster_subsystem_new_status{datacenter=~\"$Datacenter\",node=~\"$Node\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -1096,7 +1096,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "max(volume_avg_latency{datacenter=\"$Datacenter\",node=~\"$Node\"}) by(node)",
+          "expr": "max(volume_avg_latency{datacenter=~\"$Datacenter\",node=~\"$Node\"}) by(node)",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -1186,7 +1186,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "sum(volume_read_data{datacenter=\"$Datacenter\",node=~\"$Node\"}) by (node) + sum(volume_write_data{datacenter=\"$Datacenter\",node=~\"$Node\"}) by(node)",
+          "expr": "sum(volume_read_data{datacenter=~\"$Datacenter\",node=~\"$Node\"}) by (node) + sum(volume_write_data{datacenter=~\"$Datacenter\",node=~\"$Node\"}) by(node)",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -1276,7 +1276,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "sum(volume_total_ops{datacenter=\"$Datacenter\",node=~\"$Node\"}) by (node)",
+          "expr": "sum(volume_total_ops{datacenter=~\"$Datacenter\",node=~\"$Node\"}) by (node)",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -1367,7 +1367,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "max(aggr_disk_max_busy{datacenter=\"$Datacenter\",node=~\"$Node\"}) by (node, aggr)",
+          "expr": "max(aggr_disk_max_busy{datacenter=~\"$Datacenter\",node=~\"$Node\"}) by (node, aggr)",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -1459,7 +1459,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(aggr_space_used_percent{datacenter=\"$Datacenter\",node=~\"$Node\"}) by (node, aggr)",
+          "expr": "avg(aggr_space_used_percent{datacenter=~\"$Datacenter\",node=~\"$Node\"}) by (node, aggr)",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -1550,7 +1550,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "max(node_cpu_busy{datacenter=\"$Datacenter\",node=~\"$Node\"}) by (node)",
+          "expr": "max(node_cpu_busy{datacenter=~\"$Datacenter\",node=~\"$Node\"}) by (node)",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -1602,7 +1602,7 @@
         "hide": 0,
         "includeAll": false,
         "label": "",
-        "multi": false,
+        "multi": true,
         "name": "Datacenter",
         "options": [],
         "query": {
@@ -1622,17 +1622,17 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(node_labels{system_type=\"7mode\",datacenter=\"$Datacenter\"},node)",
+        "definition": "label_values(node_labels{system_type=\"7mode\",datacenter=~\"$Datacenter\"},node)",
         "description": null,
         "error": null,
         "hide": 0,
         "includeAll": true,
         "label": "",
-        "multi": false,
+        "multi": true,
         "name": "Node",
         "options": [],
         "query": {
-          "query": "label_values(node_labels{system_type=\"7mode\",datacenter=\"$Datacenter\"},node)",
+          "query": "label_values(node_labels{system_type=\"7mode\",datacenter=~\"$Datacenter\"},node)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -1665,6 +1665,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Cluster 7 mode",
-  "uid": "KJs714m4z",
+  "uid": "",
   "version": 5
 }

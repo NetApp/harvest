@@ -154,7 +154,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(nfs_clients_idle_duration{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "count(nfs_clients_idle_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
           "instant": true,
           "interval": "",
           "legendFormat": "",
@@ -248,7 +248,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(nfs_clients_idle_duration{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",protocol=\"nfs\"})",
+          "expr": "count(nfs_clients_idle_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",protocol=\"nfs\"})",
           "instant": true,
           "interval": "",
           "legendFormat": "nfs",
@@ -256,7 +256,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count(nfs_clients_idle_duration{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",protocol=\"nfs3\"})",
+          "expr": "count(nfs_clients_idle_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",protocol=\"nfs3\"})",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -265,7 +265,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count(nfs_clients_idle_duration{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",protocol=\"nfs4\"})",
+          "expr": "count(nfs_clients_idle_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",protocol=\"nfs4\"})",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -274,7 +274,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count(nfs_clients_idle_duration{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",protocol=\"nfs4.1\"})",
+          "expr": "count(nfs_clients_idle_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",protocol=\"nfs4.1\"})",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -283,7 +283,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count(nfs_clients_idle_duration{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",protocol=\"nfs4.2\"})",
+          "expr": "count(nfs_clients_idle_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",protocol=\"nfs4.2\"})",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -460,7 +460,7 @@
         "hide": 0,
         "includeAll": false,
         "label": null,
-        "multi": false,
+        "multi": true,
         "name": "Datacenter",
         "options": [],
         "query": {
@@ -480,17 +480,17 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(volume_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"}, cluster)",
+        "definition": "label_values(volume_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
         "description": null,
         "error": null,
         "hide": 0,
         "includeAll": false,
         "label": null,
-        "multi": false,
+        "multi": true,
         "name": "Cluster",
         "options": [],
         "query": {
-          "query": "label_values(volume_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"}, cluster)",
+          "query": "label_values(volume_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -506,17 +506,17 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}, svm)",
+        "definition": "label_values(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, svm)",
         "description": null,
         "error": null,
         "hide": 0,
         "includeAll": true,
         "label": null,
-        "multi": false,
+        "multi": true,
         "name": "SVM",
         "options": [],
         "query": {
-          "query": "label_values(volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\"}, svm)",
+          "query": "label_values(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, svm)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -532,17 +532,17 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\"}, volume)",
+        "definition": "label_values(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}, volume)",
         "description": null,
         "error": null,
         "hide": 0,
         "includeAll": true,
         "label": null,
-        "multi": false,
+        "multi": true,
         "name": "Volume",
         "options": [],
         "query": {
-          "query": "label_values(volume_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\"}, volume)",
+          "query": "label_values(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}, volume)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -575,6 +575,6 @@
   },
   "timezone": "",
   "title": "ONTAP: NFS Clients",
-  "uid": "m2FeBuVVz",
+  "uid": "",
   "version": 2
 }

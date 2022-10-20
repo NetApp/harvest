@@ -64,7 +64,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "id": 1497,
+  "id": "",
   "iteration": 1648624965825,
   "links": [
     {
@@ -85,7 +85,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "Prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -98,7 +98,7 @@
       "type": "row"
     },
     {
-      "datasource": "Prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -144,7 +144,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "count(count by (datacenter, cluster)(security_account_samluser{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"} > 0)) or vector (0)",
+          "expr": "count(count by (datacenter, cluster)(security_account_samluser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \u003e 0)) or vector (0)",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -154,7 +154,7 @@
         },
         {
           "exemplar": false,
-          "expr": "count(count by (datacenter, cluster) (security_account_certificateuser{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"} > 0)) or vector (0)",
+          "expr": "count(count by (datacenter, cluster) (security_account_certificateuser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \u003e 0)) or vector (0)",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -164,7 +164,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count(count by (datacenter, cluster) (security_account_localuser{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"} > 0)) or vector (0)",
+          "expr": "count(count by (datacenter, cluster) (security_account_localuser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \u003e 0)) or vector (0)",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -174,7 +174,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count(count by (datacenter, cluster) (security_account_ldapuser{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"} > 0)) or vector (0)",
+          "expr": "count(count by (datacenter, cluster) (security_account_ldapuser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \u003e 0)) or vector (0)",
           "hide": false,
           "interval": "",
           "legendFormat": "Ldap",
@@ -182,7 +182,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count(count by (datacenter, cluster) (security_account_activediruser{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"} > 0)) or vector (0)",
+          "expr": "count(count by (datacenter, cluster) (security_account_activediruser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \u003e 0)) or vector (0)",
           "hide": false,
           "interval": "",
           "legendFormat": "Active Directory",
@@ -195,7 +195,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -244,7 +244,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "security_certificate_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", certificateExpiryStatus=\"expiring\"}",
+          "expr": "security_certificate_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", certificateExpiryStatus=\"expiring\"}",
           "format": "table",
           "hide": true,
           "instant": true,
@@ -255,7 +255,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count(security_certificate_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", certificateExpiryStatus=\"expiring\"})",
+          "expr": "count(security_certificate_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", certificateExpiryStatus=\"expiring\"})",
           "format": "time_series",
           "hide": false,
           "instant": true,
@@ -290,7 +290,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -339,7 +339,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(security_certificate_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", certificateExpiryStatus=\"expired\"})",
+          "expr": "count(security_certificate_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", certificateExpiryStatus=\"expired\"})",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -356,7 +356,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "Prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -369,7 +369,7 @@
       "type": "row"
     },
     {
-      "datasource": "Prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -428,7 +428,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isEncrypted=\"true\"}) or vector (0)",
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isEncrypted=\"true\"}) or vector (0)",
           "format": "time_series",
           "hide": false,
           "instant": true,
@@ -438,7 +438,7 @@
         },
         {
           "exemplar": false,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isHardwareEncrypted=\"true\"}) or vector (0) ",
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isHardwareEncrypted=\"true\"}) or vector (0) ",
           "format": "time_series",
           "hide": false,
           "instant": true,
@@ -448,7 +448,7 @@
         },
         {
           "exemplar": false,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"}) or vector (1) ",
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"}) or vector (1) ",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -542,7 +542,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -591,7 +591,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isEncrypted=\"true\"}) or vector (0)",
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isEncrypted=\"true\"}) or vector (0)",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -608,7 +608,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -657,7 +657,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isHardwareEncrypted=\"true\"}) or vector (0)",
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isHardwareEncrypted=\"true\"}) or vector (0)",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -674,7 +674,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -723,7 +723,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isEncrypted=\"true\", isHardwareEncrypted=\"true\"}) or vector (0)",
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isEncrypted=\"true\", isHardwareEncrypted=\"true\"}) or vector (0)",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -740,7 +740,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -789,7 +789,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isEncrypted=\"false\", isHardwareEncrypted=\"false\"}) or vector (0)",
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isEncrypted=\"false\", isHardwareEncrypted=\"false\"}) or vector (0)",
           "format": "time_series",
           "hide": false,
           "instant": true,
@@ -805,7 +805,7 @@
       "type": "stat"
     },
     {
-      "datasource": "Prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -906,7 +906,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}",
+          "expr": "volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -992,7 +992,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "Prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1005,7 +1005,7 @@
       "type": "row"
     },
     {
-      "datasource": "Prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1068,7 +1068,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "count(svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", anti_ransomware_state!=\"\", anti_ransomware_state=~\"enabled|dry_run\"}) or vector (0)",
+          "expr": "count(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", anti_ransomware_state!=\"\", anti_ransomware_state=~\"enabled|dry_run\"}) or vector (0)",
           "format": "time_series",
           "hide": false,
           "instant": true,
@@ -1078,7 +1078,7 @@
         },
         {
           "exemplar": false,
-          "expr": "count(svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", anti_ransomware_state!=\"\"}) or vector (1)",
+          "expr": "count(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", anti_ransomware_state!=\"\"}) or vector (1)",
           "format": "time_series",
           "hide": false,
           "instant": true,
@@ -1158,7 +1158,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1207,7 +1207,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", anti_ransomware_state!=\"\", anti_ransomware_state=~\"enabled|dry_run\"}) or vector (0)",
+          "expr": "count(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", anti_ransomware_state!=\"\", anti_ransomware_state=~\"enabled|dry_run\"}) or vector (0)",
           "format": "time_series",
           "hide": false,
           "instant": true,
@@ -1224,7 +1224,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1273,7 +1273,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(svm_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", anti_ransomware_state!=\"\", anti_ransomware_state=~\"disabled\"}) or vector (0)",
+          "expr": "count(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", anti_ransomware_state!=\"\", anti_ransomware_state=~\"disabled\"}) or vector (0)",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -1289,7 +1289,7 @@
       "type": "stat"
     },
     {
-      "datasource": "Prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1397,7 +1397,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "svm_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}",
+          "expr": "svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -1406,7 +1406,7 @@
         },
         {
           "exemplar": true,
-          "expr": "count by (svm)(volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"})",
+          "expr": "count by (svm)(volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1464,7 +1464,7 @@
       "type": "table"
     },
     {
-      "datasource": "Prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel requires a cluster with ONTAP 9.10+ and the Harvest REST collector",
       "fieldConfig": {
         "defaults": {
@@ -1529,7 +1529,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=~\"enabled|dry_run\"}) or vector (0)",
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=~\"enabled|dry_run\"}) or vector (0)",
           "format": "time_series",
           "hide": false,
           "instant": true,
@@ -1539,7 +1539,7 @@
         },
         {
           "exemplar": false,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\"}) or vector (1)",
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\"}) or vector (1)",
           "format": "time_series",
           "hide": false,
           "instant": true,
@@ -1618,7 +1618,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1667,7 +1667,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=\"enabled\"}) or vector (0)",
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=\"enabled\"}) or vector (0)",
           "format": "time_series",
           "hide": false,
           "instant": true,
@@ -1684,7 +1684,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1733,7 +1733,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=\"dry_run\"}) or vector (0)",
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=\"dry_run\"}) or vector (0)",
           "format": "time_series",
           "hide": false,
           "instant": true,
@@ -1750,7 +1750,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1799,7 +1799,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=~\".*paused.*\"}) or vector (0)",
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=~\".*paused.*\"}) or vector (0)",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -1816,7 +1816,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1865,7 +1865,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(volume_labels{datacenter=\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=~\"disabled\"}) or vector (0)",
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=~\"disabled\"}) or vector (0)",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -1881,7 +1881,7 @@
       "type": "stat"
     },
     {
-      "datasource": "Prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel requires a cluster with ONTAP 9.10+ and the Harvest REST collector",
       "fieldConfig": {
         "defaults": {
@@ -1991,7 +1991,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_labels{datacenter=\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}",
+          "expr": "volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -2076,14 +2076,14 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "Prometheus",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(svm_labels{system_type!=\"7mode\"},datacenter)",
         "description": null,
         "error": null,
         "hide": 0,
         "includeAll": false,
         "label": null,
-        "multi": false,
+        "multi": true,
         "name": "Datacenter",
         "options": [],
         "query": {
@@ -2102,8 +2102,8 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "Prometheus",
-        "definition": "label_values(svm_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"},cluster)",
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(svm_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},cluster)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -2113,7 +2113,7 @@
         "name": "Cluster",
         "options": [],
         "query": {
-          "query": "label_values(svm_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"},cluster)",
+          "query": "label_values(svm_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},cluster)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2128,8 +2128,8 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "Prometheus",
-        "definition": "label_values(svm_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\",cluster=~\"$Cluster\"},svm)",
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(svm_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"},svm)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -2139,7 +2139,7 @@
         "name": "SVM",
         "options": [],
         "query": {
-          "query": "label_values(svm_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\",cluster=~\"$Cluster\"},svm)",
+          "query": "label_values(svm_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"},svm)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2169,6 +2169,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Security",
-  "uid": "h1RE0pynk",
+  "uid": "",
   "version": 2
 }
