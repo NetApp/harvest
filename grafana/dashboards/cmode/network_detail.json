@@ -129,7 +129,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(nic_tx_bytes+nic_rx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
+          "expr": "sum(nic_tx_bytes+nic_rx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
           "interval": "",
           "legendFormat": "Data",
           "refId": "A"
@@ -214,14 +214,14 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(fcp_total_data+fcp_nvmf_total_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+          "expr": "sum(fcp_total_data+fcp_nvmf_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
           "interval": "",
           "legendFormat": "Data",
           "refId": "A"
         },
         {
           "exemplar": false,
-          "expr": "sum(fcp_total_ops+fcp_nvmf_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+          "expr": "sum(fcp_total_ops+fcp_nvmf_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Operations",
@@ -278,7 +278,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "sum(nic_rx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
+          "expr": "sum(nic_rx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -334,7 +334,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "sum(nic_tx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
+          "expr": "sum(nic_tx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -419,14 +419,14 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(fcp_read_data+fcp_nvmf_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+          "expr": "sum(fcp_read_data+fcp_nvmf_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
           "interval": "",
           "legendFormat": "Data",
           "refId": "A"
         },
         {
           "exemplar": false,
-          "expr": "sum(fcp_read_ops+fcp_nvmf_read_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+          "expr": "sum(fcp_read_ops+fcp_nvmf_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Operations",
@@ -512,14 +512,14 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(fcp_write_data+fcp_nvmf_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+          "expr": "sum(fcp_write_data+fcp_nvmf_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
           "interval": "",
           "legendFormat": "Data",
           "refId": "A"
         },
         {
           "exemplar": false,
-          "expr": "sum(fcp_write_ops+fcp_nvmf_write_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+          "expr": "sum(fcp_write_ops+fcp_nvmf_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Operations",
@@ -836,7 +836,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "nic_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
+              "expr": "nic_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -844,7 +844,7 @@
               "refId": "A"
             },
             {
-              "expr": "nic_new_status{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
+              "expr": "nic_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -853,7 +853,7 @@
               "refId": "B"
             },
             {
-              "expr": "nic_util_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
+              "expr": "nic_util_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -862,7 +862,7 @@
               "refId": "C"
             },
             {
-              "expr": "nic_tx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
+              "expr": "nic_tx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -871,7 +871,7 @@
               "refId": "D"
             },
             {
-              "expr": "nic_rx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
+              "expr": "nic_rx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1016,7 +1016,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "topk($TopResources, nic_tx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$TopEthernetSendXput\"})",
+              "expr": "topk($TopResources, nic_tx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$TopEthernetSendXput\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{nic}}",
@@ -1109,7 +1109,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "topk($TopResources, nic_rx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$TopEthernetReceiveXput\"})",
+              "expr": "topk($TopResources, nic_rx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$TopEthernetReceiveXput\"})",
               "interval": "",
               "legendFormat": "{{node}} - {{nic}}",
               "refId": "A"
@@ -1201,7 +1201,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "nic_util_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
+              "expr": "nic_util_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
               "interval": "",
               "legendFormat": "{{node}} {{nic}}",
               "refId": "A"
@@ -1292,13 +1292,13 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "sum by (cluster) (nic_tx_total_errors{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
+              "expr": "sum by (cluster) (nic_tx_total_errors{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
               "interval": "",
               "legendFormat": "TOTAL",
               "refId": "A"
             },
             {
-              "expr": "sum by (cluster) (nic_tx_hw_errors{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
+              "expr": "sum by (cluster) (nic_tx_hw_errors{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
               "interval": "",
               "legendFormat": "HW",
               "refId": "D"
@@ -1389,25 +1389,25 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "sum by (cluster) (nic_rx_total_errors{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
+              "expr": "sum by (cluster) (nic_rx_total_errors{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
               "interval": "",
               "legendFormat": "TOTAL",
               "refId": "A"
             },
             {
-              "expr": "sum by (cluster) (nic_rx_alignment_errors{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
+              "expr": "sum by (cluster) (nic_rx_alignment_errors{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
               "interval": "",
               "legendFormat": "ALIGNMENT",
               "refId": "B"
             },
             {
-              "expr": "sum by (cluster) (nic_rx_crc_errors{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
+              "expr": "sum by (cluster) (nic_rx_crc_errors{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
               "interval": "",
               "legendFormat": "CRC",
               "refId": "C"
             },
             {
-              "expr": "sum by (cluster) (nic_rx_length_errors{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
+              "expr": "sum by (cluster) (nic_rx_length_errors{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"})",
               "interval": "",
               "legendFormat": "LENGTH",
               "refId": "D"
@@ -1612,7 +1612,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "fcp_util_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}",
+              "expr": "fcp_util_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1622,7 +1622,7 @@
             },
             {
               "exemplar": false,
-              "expr": "fcp_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}",
+              "expr": "fcp_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1632,7 +1632,7 @@
             },
             {
               "exemplar": false,
-              "expr": "fcp_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}",
+              "expr": "fcp_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1748,7 +1748,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, fcp_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCSendXput\"})",
+              "expr": "topk($TopResources, fcp_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCSendXput\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
@@ -1841,7 +1841,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, fcp_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCReceiveXput\"})",
+              "expr": "topk($TopResources, fcp_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCReceiveXput\"})",
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
               "refId": "A"
@@ -1933,7 +1933,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, fcp_avg_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCSendLatency\"})",
+              "expr": "topk($TopResources, fcp_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCSendLatency\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
@@ -2026,7 +2026,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, fcp_avg_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCReceiveLatency\"})",
+              "expr": "topk($TopResources, fcp_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCReceiveLatency\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
@@ -2118,35 +2118,35 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "sum(fcp_int_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum(fcp_int_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "interrupts",
               "refId": "B"
             },
             {
-              "expr": "sum(fcp_invalid_transmission_word{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum(fcp_invalid_transmission_word{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "invalid transmission words (blocks)",
               "refId": "C"
             },
             {
-              "expr": "sum(fcp_isr_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum(fcp_isr_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "interrupt responses",
               "refId": "D"
             },
             {
-              "expr": "sum(fcp_spurious_int_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum(fcp_spurious_int_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "spurious interrupts",
               "refId": "I"
             },
             {
-              "expr": "sum(fcp_invalid_crc{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum(fcp_invalid_crc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "invalid CRCs",
@@ -2238,41 +2238,41 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "sum(fcp_discarded_frames_count{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum(fcp_discarded_frames_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
               "interval": "",
               "legendFormat": "discarded frames",
               "refId": "A"
             },
             {
-              "expr": "sum(fcp_loss_of_signal{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum(fcp_loss_of_signal{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "loss of signal",
               "refId": "E"
             },
             {
-              "expr": "sum(fcp_loss_of_sync{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum(fcp_loss_of_sync{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "loss of sync",
               "refId": "F"
             },
             {
-              "expr": "sum(fcp_prim_seq_err{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum(fcp_prim_seq_err{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "primitive sequence errors",
               "refId": "G"
             },
             {
-              "expr": "sum(fcp_queue_full{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum(fcp_queue_full{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "queue full",
               "refId": "H"
             },
             {
-              "expr": "sum(fcp_threshold_full{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum(fcp_threshold_full{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "threshold full",
@@ -2365,7 +2365,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "topk($TopResources, fcp_link_down{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCLinkDown\"})",
+              "expr": "topk($TopResources, fcp_link_down{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCLinkDown\"})",
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
               "refId": "A"
@@ -2457,7 +2457,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "topk($TopResources, fcp_link_failure{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCLinkFailure\"})",
+              "expr": "topk($TopResources, fcp_link_failure{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCLinkFailure\"})",
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
               "refId": "A"
@@ -2662,7 +2662,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "fcp_nvmf_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
+              "expr": "fcp_nvmf_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2672,7 +2672,7 @@
             },
             {
               "exemplar": false,
-              "expr": "fcp_nvmf_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}",
+              "expr": "fcp_nvmf_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2788,7 +2788,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "topk($TopResources, fcp_nvmf_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCNVSendXPut\"})",
+              "expr": "topk($TopResources, fcp_nvmf_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCNVSendXPut\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
@@ -2881,7 +2881,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, fcp_nvmf_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCNVReceiveXPut\"})",
+              "expr": "topk($TopResources, fcp_nvmf_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCNVReceiveXPut\"})",
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
               "refId": "A"
@@ -2973,7 +2973,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "topk($TopResources, fcp_nvmf_avg_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCNVSendLatency\"})",
+              "expr": "topk($TopResources, fcp_nvmf_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCNVSendLatency\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
@@ -3066,7 +3066,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "topk($TopResources, fcp_nvmf_avg_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$TopFCNVReceiveLatency\"})",
+              "expr": "topk($TopResources, fcp_nvmf_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCNVReceiveLatency\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
@@ -3123,7 +3123,7 @@
         "hide": 0,
         "includeAll": false,
         "label": "",
-        "multi": false,
+        "multi": true,
         "name": "Datacenter",
         "options": [],
         "query": {
@@ -3143,17 +3143,17 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(nic_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"}, cluster)",
+        "definition": "label_values(nic_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
         "description": null,
         "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "",
-        "multi": false,
+        "multi": true,
         "name": "Cluster",
         "options": [],
         "query": {
-          "query": "label_values(nic_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"}, cluster)",
+          "query": "label_values(nic_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3169,7 +3169,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(nic_labels{system_type!=\"7mode\",cluster=\"$Cluster\"}, node)",
+        "definition": "label_values(nic_labels{system_type!=\"7mode\",cluster=~\"$Cluster\"}, node)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -3179,7 +3179,7 @@
         "name": "Node",
         "options": [],
         "query": {
-          "query": "label_values(nic_labels{system_type!=\"7mode\",cluster=\"$Cluster\"}, node)",
+          "query": "label_values(nic_labels{system_type!=\"7mode\",cluster=~\"$Cluster\"}, node)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3195,7 +3195,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(nic_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}, nic)",
+        "definition": "label_values(nic_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}, nic)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -3205,7 +3205,7 @@
         "name": "Eth",
         "options": [],
         "query": {
-          "query": "label_values(nic_labels{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}, nic)",
+          "query": "label_values(nic_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}, nic)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3221,7 +3221,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(fcp_total_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}, port)",
+        "definition": "label_values(fcp_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}, port)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -3231,7 +3231,7 @@
         "name": "FCP",
         "options": [],
         "query": {
-          "query": "label_values(fcp_total_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}, port)",
+          "query": "label_values(fcp_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}, port)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3343,7 +3343,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(nic_tx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(nic_tx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3353,7 +3353,7 @@
         "name": "TopEthernetSendXput",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(nic_tx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(nic_tx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3366,7 +3366,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(nic_rx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(nic_rx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3376,7 +3376,7 @@
         "name": "TopEthernetReceiveXput",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(nic_rx_bytes{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(nic_rx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3389,7 +3389,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(fcp_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3399,7 +3399,7 @@
         "name": "TopFCSendXput",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_read_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(fcp_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3412,7 +3412,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(fcp_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3422,7 +3422,7 @@
         "name": "TopFCReceiveXput",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_write_data{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(fcp_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3435,7 +3435,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_avg_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(fcp_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3445,7 +3445,7 @@
         "name": "TopFCSendLatency",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_avg_read_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(fcp_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3458,7 +3458,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_avg_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(fcp_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3468,7 +3468,7 @@
         "name": "TopFCReceiveLatency",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_avg_write_latency{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(fcp_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3481,7 +3481,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_link_down{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(fcp_link_down{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3491,7 +3491,7 @@
         "name": "TopFCLinkDown",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_link_down{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(fcp_link_down{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3504,7 +3504,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_link_failure{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(fcp_link_failure{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3514,7 +3514,7 @@
         "name": "TopFCLinkFailure",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_link_failure{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(fcp_link_failure{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3527,7 +3527,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_read_data{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3537,7 +3537,7 @@
         "name": "TopFCNVSendXPut",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_read_data{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3550,7 +3550,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_write_data{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3560,7 +3560,7 @@
         "name": "TopFCNVReceiveXPut",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_write_data{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3573,7 +3573,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_avg_read_latency{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3583,7 +3583,7 @@
         "name": "TopFCNVSendLatency",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_avg_read_latency{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3596,7 +3596,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_avg_write_latency{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3606,7 +3606,7 @@
         "name": "TopFCNVReceiveLatency",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_avg_write_latency{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3636,6 +3636,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Network",
-  "uid": "pM347mV4z",
+  "uid": "",
   "version": 5
 }

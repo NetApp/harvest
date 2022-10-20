@@ -458,7 +458,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, (100 * sum by (cluster, svm) (volume_size_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSVMUsed\"}) /   sum by (cluster, svm) (volume_size_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSVMUsed\"})))",
+          "expr": "topk($TopResources, (100 * sum by (cluster, svm) (volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSVMUsed\"}) /   sum by (cluster, svm) (volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSVMUsed\"})))",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -580,7 +580,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, (100 * volume_size_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeUsed\"} / volume_size_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeUsed\"}))",
+          "expr": "topk($TopResources, (100 * volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeUsed\"} / volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeUsed\"}))",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -715,7 +715,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, (100 * aggr_space_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrUsed\"} / aggr_space_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrUsed\"}))",
+          "expr": "topk($TopResources, (100 * aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrUsed\"} / aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrUsed\"}))",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -840,7 +840,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "topk($TopResources, (100 * sum by (cluster, svm) (volume_size_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSVMUsed\"}) /   sum by (cluster, svm) (volume_size_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSVMUsed\"})))",
+          "expr": "topk($TopResources, (100 * sum by (cluster, svm) (volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSVMUsed\"}) /   sum by (cluster, svm) (volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSVMUsed\"})))",
           "interval": "",
           "legendFormat": "{{cluster}} - {{svm}}",
           "refId": "A"
@@ -928,7 +928,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "topk($TopResources, (100 * volume_size_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeUsed\"} / volume_size_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeUsed\"}))",
+          "expr": "topk($TopResources, (100 * volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeUsed\"} / volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeUsed\"}))",
           "interval": "",
           "legendFormat": "{{cluster}} - {{volume}}",
           "refId": "A"
@@ -1016,7 +1016,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "topk($TopResources, (100 * aggr_space_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrUsed\"} / aggr_space_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrUsed\"}))",
+          "expr": "topk($TopResources, (100 * aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrUsed\"} / aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrUsed\"}))",
           "interval": "",
           "legendFormat": "{{cluster}} - {{aggr}}",
           "refId": "A"
@@ -1821,7 +1821,7 @@
         "hide": 0,
         "includeAll": false,
         "label": "",
-        "multi": false,
+        "multi": true,
         "name": "Datacenter",
         "options": [],
         "query": {
@@ -1839,15 +1839,15 @@
       },
       {
         "current": {},
-        "definition": "label_values(node_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"},cluster)",
+        "definition": "label_values(node_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},cluster)",
         "hide": 0,
         "includeAll": true,
         "label": "",
-        "multi": false,
+        "multi": true,
         "name": "Cluster",
         "options": [],
         "query": {
-          "query": "label_values(node_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\"},cluster)",
+          "query": "label_values(node_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},cluster)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -1861,7 +1861,7 @@
       },
       {
         "current": {},
-        "definition": "label_values(svm_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\",cluster=~\"$Cluster\"},svm)",
+        "definition": "label_values(svm_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"},svm)",
         "hide": 0,
         "includeAll": true,
         "label": "",
@@ -1869,7 +1869,7 @@
         "name": "SVM",
         "options": [],
         "query": {
-          "query": "label_values(svm_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\",cluster=~\"$Cluster\"},svm)",
+          "query": "label_values(svm_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"},svm)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -1883,7 +1883,7 @@
       },
       {
         "current": {},
-        "definition": "label_values(volume_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"},volume)",
+        "definition": "label_values(volume_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"},volume)",
         "hide": 0,
         "includeAll": true,
         "label": "",
@@ -1891,7 +1891,7 @@
         "name": "Volume",
         "options": [],
         "query": {
-          "query": "label_values(volume_labels{system_type!=\"7mode\",datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"},volume)",
+          "query": "label_values(volume_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"},volume)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2194,14 +2194,14 @@
       },
       {
         "current": {},
-        "definition": "query_result(topk($TopResources,(100 * sum by (cluster, svm) (volume_size_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) /   sum by (cluster, svm) (volume_size_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}))))",
+        "definition": "query_result(topk($TopResources,(100 * sum by (cluster, svm) (volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) /   sum by (cluster, svm) (volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}))))",
         "hide": 2,
         "includeAll": true,
         "multi": true,
         "name": "TopSVMUsed",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources,(100 * sum by (cluster, svm) (volume_size_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) /   sum by (cluster, svm) (volume_size_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}))))",
+          "query": "query_result(topk($TopResources,(100 * sum by (cluster, svm) (volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) /   sum by (cluster, svm) (volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}))))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2212,14 +2212,14 @@
       },
       {
         "current": {},
-        "definition": "query_result(topk($TopResources, (100 * volume_size_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} / volume_size_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})))",
+        "definition": "query_result(topk($TopResources, (100 * volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} / volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})))",
         "hide": 2,
         "includeAll": true,
         "multi": true,
         "name": "TopVolumeUsed",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, (100 * volume_size_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} / volume_size_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})))",
+          "query": "query_result(topk($TopResources, (100 * volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} / volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2230,14 +2230,14 @@
       },
       {
         "current": {},
-        "definition": "query_result(topk($TopResources, (100 * aggr_space_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"} / aggr_space_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})))",
+        "definition": "query_result(topk($TopResources, (100 * aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} / aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})))",
         "hide": 2,
         "includeAll": true,
         "multi": true,
         "name": "TopAggrUsed",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, (100 * aggr_space_used{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"} / aggr_space_total{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"})))",
+          "query": "query_result(topk($TopResources, (100 * aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} / aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2267,6 +2267,6 @@
   },
   "timezone": "",
   "title": "ONTAP: cDOT",
-  "uid": "Xo2bcT1s",
+  "uid": "",
   "version": 1
 }

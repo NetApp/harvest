@@ -149,7 +149,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "sum(count(shelf_labels{datacenter=\"$Datacenter\",node=\"$Node\",channel=\"$Channel\"}) by (shelf_id))",
+          "expr": "sum(count(shelf_labels{datacenter=~\"$Datacenter\",node=~\"$Node\",channel=~\"$Channel\"}) by (shelf_id))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -229,7 +229,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(shelf_temperature_reading{datacenter=\"$Datacenter\",node=\"$Node\",channel=\"$Channel\"})",
+          "expr": "avg(shelf_temperature_reading{datacenter=~\"$Datacenter\",node=~\"$Node\",channel=~\"$Channel\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -303,7 +303,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(shelf_fan_rpm{datacenter=\"$Datacenter\",node=\"$Node\",channel=\"$Channel\"})",
+          "expr": "avg(shelf_fan_rpm{datacenter=~\"$Datacenter\",node=~\"$Node\",channel=~\"$Channel\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -377,7 +377,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(shelf_sensor_reading{datacenter=\"$Datacenter\",node=\"$Node\",channel=\"$Channel\"})",
+          "expr": "avg(shelf_sensor_reading{datacenter=~\"$Datacenter\",node=~\"$Node\",channel=~\"$Channel\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -491,7 +491,7 @@
       "pluginVersion": "7.5.4",
       "targets": [
         {
-          "expr": "shelf_labels{datacenter=\"$Datacenter\",node=\"$Node\",channel=\"$Channel\"}",
+          "expr": "shelf_labels{datacenter=~\"$Datacenter\",node=~\"$Node\",channel=~\"$Channel\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -499,7 +499,7 @@
           "refId": "A"
         },
         {
-          "expr": "shelf_new_status{datacenter=\"$Datacenter\",node=\"$Node\",channel=\"$Channel\"}",
+          "expr": "shelf_new_status{datacenter=~\"$Datacenter\",node=~\"$Node\",channel=~\"$Channel\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -637,7 +637,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "shelf_temperature_reading{datacenter=\"$Datacenter\",node=\"$Node\",channel=\"$Channel\",shelf=~\"$Shelf\"}",
+          "expr": "shelf_temperature_reading{datacenter=~\"$Datacenter\",node=~\"$Node\",channel=~\"$Channel\",shelf=~\"$Shelf\"}",
           "interval": "",
           "legendFormat": "{{shelf}} · {{sensor_id}}",
           "refId": "A"
@@ -705,7 +705,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "shelf_fan_rpm{datacenter=\"$Datacenter\",node=\"$Node\",channel=\"$Channel\",shelf=~\"$Shelf\"}",
+          "expr": "shelf_fan_rpm{datacenter=~\"$Datacenter\",node=~\"$Node\",channel=~\"$Channel\",shelf=~\"$Shelf\"}",
           "interval": "",
           "legendFormat": "{{shelf}} · {{fan_id}}",
           "refId": "A"
@@ -788,7 +788,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "shelf_voltage_reading{datacenter=\"$Datacenter\",node=\"$Node\",channel=\"$Channel\",shelf=~\"$Shelf\"}",
+          "expr": "shelf_voltage_reading{datacenter=~\"$Datacenter\",node=~\"$Node\",channel=~\"$Channel\",shelf=~\"$Shelf\"}",
           "interval": "",
           "legendFormat": "{{shelf}} · {{sensor_id}}",
           "refId": "A"
@@ -869,7 +869,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "shelf_sensor_reading{datacenter=\"$Datacenter\",node=\"$Node\",channel=\"$Channel\",shelf=~\"$Shelf\"}",
+          "expr": "shelf_sensor_reading{datacenter=~\"$Datacenter\",node=~\"$Node\",channel=~\"$Channel\",shelf=~\"$Shelf\"}",
           "interval": "",
           "legendFormat": "{{shelf}} · {{sensor_id}}",
           "refId": "A"
@@ -919,7 +919,7 @@
         "hide": 0,
         "includeAll": false,
         "label": null,
-        "multi": false,
+        "multi": true,
         "name": "Datacenter",
         "options": [],
         "query": {
@@ -940,17 +940,17 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(shelf_labels{system_type=\"7mode\",datacenter=\"$Datacenter\"}, node)",
+        "definition": "label_values(shelf_labels{system_type=\"7mode\",datacenter=~\"$Datacenter\"}, node)",
         "description": null,
         "error": null,
         "hide": 0,
         "includeAll": false,
         "label": null,
-        "multi": false,
+        "multi": true,
         "name": "Node",
         "options": [],
         "query": {
-          "query": "label_values(shelf_labels{system_type=\"7mode\",datacenter=\"$Datacenter\"}, node)",
+          "query": "label_values(shelf_labels{system_type=\"7mode\",datacenter=~\"$Datacenter\"}, node)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -967,7 +967,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(shelf_labels{datacenter=\"$Datacenter\",node=\"$Node\"}, channel)",
+        "definition": "label_values(shelf_labels{datacenter=~\"$Datacenter\",node=~\"$Node\"}, channel)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -976,7 +976,7 @@
         "name": "Channel",
         "options": [],
         "query": {
-          "query": "label_values(shelf_labels{datacenter=\"$Datacenter\",node=\"$Node\"}, channel)",
+          "query": "label_values(shelf_labels{datacenter=~\"$Datacenter\",node=~\"$Node\"}, channel)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -993,7 +993,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(shelf_labels{datacenter=\"$Datacenter\",node=\"$Node\",channel=\"$Channel\"}, shelf)",
+        "definition": "label_values(shelf_labels{datacenter=~\"$Datacenter\",node=~\"$Node\",channel=~\"$Channel\"}, shelf)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -1003,7 +1003,7 @@
         "name": "Shelf",
         "options": [],
         "query": {
-          "query": "label_values(shelf_labels{datacenter=\"$Datacenter\",node=\"$Node\",channel=\"$Channel\"}, shelf)",
+          "query": "label_values(shelf_labels{datacenter=~\"$Datacenter\",node=~\"$Node\",channel=~\"$Channel\"}, shelf)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -1048,6 +1048,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Shelf 7 mode",
-  "uid": "FnaQeK9Mp",
+  "uid": "",
   "version": 3
 }
