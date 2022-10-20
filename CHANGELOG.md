@@ -2,6 +2,17 @@
 
 [Releases](https://github.com/NetApp/harvest/releases)
 
+## 22.11.0 / 2022-11-10
+<!-- git log --no-decorate --no-merges --cherry-pick --right-only --oneline origin/release/22.08.0...origin/release/22.11.0 -->
+
+:rocket: Highlights of this major release include:
+
+**Deprecation**: Earlier versions of Harvest published quota metrics prefixed with qtree. Harvest release 22.11 deprecates the quota metrics prefixed with qtree and instead publishes quota metrics prefixed with quota.
+All dashboards have been updated. If you are consuming these metrics outside the default dashboards, please update them to use the quota prefixed metrics. Harvest release 23.02 will remove the deprecated quota metrics
+prefixed with qtree.
+
+---
+
 ## 22.08.0 / 2022-08-19
 <!-- git log --no-decorate --no-merges --cherry-pick --right-only --oneline origin/release/22.05.0...origin/release/22.08.0 -->
 
