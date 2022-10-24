@@ -4270,7 +4270,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
