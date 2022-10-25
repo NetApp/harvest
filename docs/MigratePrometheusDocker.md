@@ -85,10 +85,10 @@ Output will look something like this:
 
 Before removing the historical data, [start your compose stack](https://github.com/NetApp/harvest/tree/main/docker#start-everything) and make sure everything works.
 
-Once you're satisfied that you can destory the old data, remove it like so.
+Once you're satisfied that you can destroy the old data, remove it like so.
 
 ```bash
-# replace  `HISTORICAL_VOLUME` with the name of the Prometheus volume that contains you historical data found in step 2.
+# replace `HISTORICAL_VOLUME` with the name of the Prometheus volume that contains your historical data found in step 2.
 docker volume rm $HISTORICAL_VOLUME
 ```
 
