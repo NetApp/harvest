@@ -155,10 +155,14 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 
 				if isPowerMatch {
 					if value, ok, _ := metric.GetValueFloat64(instance); ok {
-						if sensorEnvironmentMetricMap[iKey].powerSensor == nil {
-							sensorEnvironmentMetricMap[iKey].powerSensor = make(map[string]*sensorValue)
+						if sensorUnit != "mW" && sensorUnit != "W" {
+							my.Logger.Warn().Str("unit", sensorUnit).Float64("value", value).Msg("unknown power unit")
+						} else {
+							if sensorEnvironmentMetricMap[iKey].powerSensor == nil {
+								sensorEnvironmentMetricMap[iKey].powerSensor = make(map[string]*sensorValue)
+							}
+							sensorEnvironmentMetricMap[iKey].powerSensor[iKey2] = &sensorValue{name: iKey2, value: value, unit: sensorUnit}
 						}
-						sensorEnvironmentMetricMap[iKey].powerSensor[iKey2] = &sensorValue{name: iKey2, value: value, unit: sensorUnit}
 					}
 				}
 
