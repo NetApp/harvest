@@ -219,7 +219,7 @@ func (a *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 	}
 
-	// normalize values into averages if we are able to identify it as an percentage or average metric
+	// normalize values into averages if we are able to identify it as a percentage or average metric
 
 	for i, m := range matrices {
 		for mk, metric := range m.GetMetrics() {
@@ -236,7 +236,7 @@ func (a *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				avg = true
 			} else if strings.Contains(mn, "average_") || strings.Contains(mn, "avg_") {
 				avg = true
-			} else if strings.Contains(mn, "_latency") {
+			} else if !metric.IsHistogram() && strings.Contains(mn, "_latency") {
 				avg = true
 			}
 

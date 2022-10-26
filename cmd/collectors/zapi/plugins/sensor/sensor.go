@@ -155,10 +155,14 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 
 				if isPowerMatch {
 					if value, ok, _ := metric.GetValueFloat64(instance); ok {
-						if sensorEnvironmentMetricMap[iKey].powerSensor == nil {
-							sensorEnvironmentMetricMap[iKey].powerSensor = make(map[string]*sensorValue)
+						if sensorUnit != "mW" && sensorUnit != "W" {
+							my.Logger.Warn().Str("unit", sensorUnit).Float64("value", value).Msg("unknown power unit")
+						} else {
+							if sensorEnvironmentMetricMap[iKey].powerSensor == nil {
+								sensorEnvironmentMetricMap[iKey].powerSensor = make(map[string]*sensorValue)
+							}
+							sensorEnvironmentMetricMap[iKey].powerSensor[iKey2] = &sensorValue{name: iKey2, value: value, unit: sensorUnit}
 						}
-						sensorEnvironmentMetricMap[iKey].powerSensor[iKey2] = &sensorValue{name: iKey2, value: value, unit: sensorUnit}
 					}
 				}
 
@@ -203,7 +207,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 						} else if v1.unit == "W" {
 							sumPower += v1.value
 						} else {
-							my.Logger.Warn().Str("unit", v1.unit).Float64("value", v1.value).Msg("unknown power unit")
+							my.Logger.Warn().Str("node", key).Str("unit", v1.unit).Float64("value", v1.value).Msg("unknown power unit")
 						}
 					}
 				} else if len(v.voltageSensor) > 0 && len(v.voltageSensor) == len(v.currentSensor) {
@@ -235,7 +239,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 						} else if currentSensorValue.unit == "A" {
 							// do nothing
 						} else {
-							my.Logger.Warn().Str("unit", currentSensorValue.unit).Float64("value", currentSensorValue.value).Msg("unknown current unit")
+							my.Logger.Warn().Str("node", key).Str("unit", currentSensorValue.unit).Float64("value", currentSensorValue.value).Msg("unknown current unit")
 						}
 
 						if voltageSensorValue.unit == "mV" {
@@ -243,7 +247,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 						} else if voltageSensorValue.unit == "V" {
 							// do nothing
 						} else {
-							my.Logger.Warn().Str("unit", voltageSensorValue.unit).Float64("value", voltageSensorValue.value).Msg("unknown voltage unit")
+							my.Logger.Warn().Str("node", key).Str("unit", voltageSensorValue.unit).Float64("value", voltageSensorValue.value).Msg("unknown voltage unit")
 						}
 
 						p := currentSensorValue.value * voltageSensorValue.value
@@ -255,7 +259,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 						sumPower += p
 					}
 				} else {
-					my.Logger.Warn().Int("current size", len(v.currentSensor)).Int("voltage size", len(v.voltageSensor)).Msg("current and voltage sensor are ignored")
+					my.Logger.Warn().Str("node", key).Int("current size", len(v.currentSensor)).Int("voltage size", len(v.voltageSensor)).Msg("current and voltage sensor are ignored")
 				}
 
 				err = m.SetValueFloat64(instance, sumPower)

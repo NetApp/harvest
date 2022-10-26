@@ -367,14 +367,15 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 		z.Logger.Debug().Str("key", key).Msg("removed instance")
 	}
 
+	numInstances := len(mat.GetInstances())
 	// update metadata
 	_ = z.Metadata.LazySetValueInt64("api_time", "data", apiT.Microseconds())
 	_ = z.Metadata.LazySetValueInt64("parse_time", "data", parseT.Microseconds())
 	_ = z.Metadata.LazySetValueUint64("metrics", "data", count)
-	_ = z.Metadata.LazySetValueUint64("instances", "data", uint64(len(instances)))
+	_ = z.Metadata.LazySetValueUint64("instances", "data", uint64(numInstances))
 	z.AddCollectCount(count)
 
-	if len(mat.GetInstances()) == 0 {
+	if numInstances == 0 {
 		return nil, errs.New(errs.ErrNoInstance, "")
 	}
 
