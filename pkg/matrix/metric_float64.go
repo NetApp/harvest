@@ -258,6 +258,8 @@ func (m *MetricFloat64) DivideWithThreshold(s Metric, t int, logger *logging.Log
 		}
 		if m.record[i] && sRecord[i] && sValues[i] >= x {
 			m.values[i] /= sValues[i]
+		} else {
+			m.values[i] = 0
 		}
 	}
 	return skips, nil
