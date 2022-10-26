@@ -265,7 +265,7 @@
               }
             ]
           },
-          "unit": "ms"
+          "unit": "µs"
         },
         "overrides": []
       },
@@ -903,7 +903,7 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "string"
         },
         "overrides": []
       },
@@ -985,7 +985,7 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "string"
         },
         "overrides": []
       },
@@ -3635,7 +3635,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "binBps"
             },
             "overrides": []
           },
@@ -4043,7 +4043,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "binBps"
             },
             "overrides": []
           },

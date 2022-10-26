@@ -786,7 +786,7 @@
               },
               {
                 "id": "unit",
-                "value": "decbytes"
+                "value": "bytes"
               },
               {
                 "id": "custom.width",
@@ -806,7 +806,7 @@
               },
               {
                 "id": "unit",
-                "value": "decbytes"
+                "value": "bytes"
               },
               {
                 "id": "custom.width",

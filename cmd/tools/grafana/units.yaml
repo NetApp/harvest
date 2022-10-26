@@ -1,0 +1,143 @@
+#
+# Grafana Notes
+# short  turns 12990 into 13.0 K
+# locale turns 12990 into 12,990
+# string turns 12990 into 12990
+
+- metric: aggr_space_total
+  ontapUnit: bytes
+  grafanaJson: bytes
+  grafanaDisplay: bytes(IEC)
+  comment: ""
+
+- metric: iscsi_lif_avg_write_latency
+  ontapUnit: microsec
+  grafanaJson: µs
+  grafanaDisplay: microseconds(µs)
+  comment: ""
+
+- metric: svm_nfs_throughput
+  ontapUnit: per_sec
+  grafanaJson: ops
+  grafanaDisplay: ops/sec(ops)
+  comment: ""
+
+- metric: snapmirror_lag_time
+  ontapUnit: seconds
+  grafanaJson: s
+  grafanaDisplay: seconds(s)
+  comment: ""
+
+- metric: quota_files_used
+  ontapUnit: none
+  grafanaJson: locale
+  grafanaDisplay: locale
+  comment: "Current number of files used by the quota target"
+
+- metric: quota_file_limit
+  ontapUnit: none
+  grafanaJson: locale
+  grafanaDisplay: locale
+  comment: Maximum number of files allowed for the quota target (hard files limit).  The value is "-" if the limit is unlimited.
+
+- metric: scan_noti_received_rate
+  ontapUnit: per_sec
+  grafanaJson: ops
+  grafanaDisplay: ops/sec(ops)
+  comment: Total number of scan notifications received by the dispatcher per second
+
+- metric: scan_request_dispatched_rate
+  ontapUnit: per_sec
+  grafanaJson: ops
+  grafanaDisplay: ops/sec(ops)
+  comment: Total number of scan requests sent to the Vscanner per second
+
+- metric: svm_nfs_read_throughput
+  ontapUnit: per_sec
+  grafanaJson: ops
+  grafanaDisplay: ops/sec(ops)
+  comment: ""
+
+- metric: svm_nfs_write_throughput
+  ontapUnit: per_sec
+  grafanaJson: ops
+  grafanaDisplay: ops/sec(ops)
+  comment: ""
+
+- metric: volume_avg_latency
+  ontapUnit: microsec
+  grafanaJson: µs
+  grafanaDisplay: microseconds(µs)
+  comment: ""
+
+- metric: volume_read_latency
+  ontapUnit: microsec
+  grafanaJson: µs
+  grafanaDisplay: microseconds(µs)
+  comment: ""
+
+- metric: volume_write_latency
+  ontapUnit: microsec
+  grafanaJson: µs
+  grafanaDisplay: microseconds(µs)
+  comment: ""
+
+- metric: quota_files_used
+  ontapUnit: integer
+  grafanaJson: locale
+  grafanaDisplay: locale
+  comment: ""
+
+- metric: volume_snapshots_size_used
+  ontapUnit: bytes
+  grafanaJson: bytes
+  grafanaDisplay: bytes(IEC)
+  comment: ""
+
+- metric: lun_write_ops
+  ontapUnit: per_sec
+  grafanaJson: iops
+  grafanaDisplay: iops
+  comment: ""
+
+- metric: lun_read_data
+  ontapUnit: b_per_sec
+  grafanaJson: binBps
+  grafanaDisplay: bytes/sec(IEC)
+  comment: ""
+
+- metric: lun_write_data
+  ontapUnit: b_per_sec
+  grafanaJson: binBps
+  grafanaDisplay: bytes/sec(IEC)
+  comment: ""
+
+- metric: hostadapter_bytes_read
+  ontapUnit: per_sec
+  grafanaJson: binBps
+  grafanaDisplay: bytes/sec(IEC)
+  comment: ""
+
+- metric: hostadapter_bytes_write
+  ontapUnit: per_sec
+  grafanaJson: binBps
+  grafanaDisplay: bytes/sec(IEC)
+  comment: ""
+
+- metric: fcp_lif_read_data
+  ontapUnit: b_per_sec
+  grafanaJson: binBps
+  grafanaDisplay: bytes/sec(IEC)
+  comment: ""
+
+- metric: nvme_lif_read_data
+  ontapUnit: b_per_sec
+  grafanaJson: binBps
+  grafanaDisplay: bytes/sec(IEC)
+  comment: ""
+
+- metric: node_avg_processor_busy
+  ontapUnit: percent
+  grafanaJson: percent
+  grafanaDisplay: Percent (0-100)
+  comment: ""

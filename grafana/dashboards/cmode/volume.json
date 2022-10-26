@@ -126,7 +126,7 @@
               }
             ]
           },
-          "unit": "ms"
+          "unit": "µs"
         },
         "overrides": []
       },
@@ -680,17 +680,6 @@
                 },
                 "properties": [
                   {
-                    "id": "unit"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Size"
-                },
-                "properties": [
-                  {
                     "id": "unit",
                     "value": "bytes"
                   }
@@ -991,7 +980,7 @@
                 "properties": [
                   {
                     "id": "unit",
-                    "value": "ms"
+                    "value": "µs"
                   }
                 ]
               }
@@ -1331,7 +1320,7 @@
                 "properties": [
                   {
                     "id": "unit",
-                    "value": "ms"
+                    "value": "µs"
                   }
                 ]
               }

@@ -180,7 +180,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				}
 			}
 			if attrValue := quota.Get(attribute); attrValue.Exists() {
-				// space limits are in bytes, converted to kilobytes
+				// space limits are in bytes, converted to kilobytes to match ZAPI
 				if attribute == "space.hard_limit" || attribute == "space.soft_limit" || attribute == "space.used.total" {
 					value = attrValue.Float() / 1024
 					quotaInstance.SetLabel("unit", "Kbyte")

@@ -454,7 +454,7 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "percent"
         },
         "overrides": []
       },
@@ -532,7 +532,7 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "percent"
         },
         "overrides": []
       },
@@ -1797,7 +1797,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "binBps"
             },
             "overrides": []
           },
@@ -1890,7 +1890,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "binBps"
             },
             "overrides": []
           },

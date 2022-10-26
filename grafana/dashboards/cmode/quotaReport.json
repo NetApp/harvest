@@ -104,7 +104,7 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "deckbytes"
+                "value": "kbytes"
               }
             ]
           },
@@ -347,6 +347,10 @@
                     "type": "value"
                   }
                 ]
+              },
+              {
+                "id": "unit",
+                "value": "locale"
               }
             ]
           },
@@ -369,6 +373,10 @@
                     "type": "value"
                   }
                 ]
+              },
+              {
+                "id": "unit",
+                "value": "locale"
               }
             ]
           },
@@ -392,6 +400,18 @@
                     "type": "special"
                   }
                 ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Files Used"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "locale"
               }
             ]
           }

@@ -1572,6 +1572,10 @@
               {
                 "id": "displayName",
                 "value": "suppressed alerts"
+              },
+              {
+                "id": "unit",
+                "value": "locale"
               }
             ]
           },
@@ -1584,6 +1588,10 @@
               {
                 "id": "displayName",
                 "value": "outstanding alerts"
+              },
+              {
+                "id": "unit",
+                "value": "locale"
               }
             ]
           },
@@ -2273,6 +2281,10 @@
                   {
                     "id": "custom.align",
                     "value": "right"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "celsius"
                   }
                 ]
               },
@@ -2317,6 +2329,10 @@
                   {
                     "id": "custom.align",
                     "value": "right"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "celsius"
                   }
                 ]
               },
@@ -2361,6 +2377,10 @@
                   {
                     "id": "custom.align",
                     "value": "right"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "celsius"
                   }
                 ]
               },
@@ -2405,6 +2425,10 @@
                   {
                     "id": "custom.align",
                     "value": "right"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "rotrpm"
                   }
                 ]
               },
@@ -2449,6 +2473,10 @@
                   {
                     "id": "custom.align",
                     "value": "right"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "rotrpm"
                   }
                 ]
               },
@@ -2493,6 +2521,10 @@
                   {
                     "id": "custom.align",
                     "value": "right"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "rotrpm"
                   }
                 ]
               },
@@ -2553,6 +2585,10 @@
                   {
                     "id": "custom.align",
                     "value": "right"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "celsius"
                   }
                 ]
               },
@@ -2597,6 +2633,10 @@
                   {
                     "id": "custom.align",
                     "value": "right"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "celsius"
                   }
                 ]
               }
