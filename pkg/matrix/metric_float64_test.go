@@ -6,7 +6,7 @@ import (
 )
 
 func setupMatrix(previousRaw float64, currentRaw float64) (*Matrix, *Matrix) {
-	m := New("TestRemoveInstance", "test", "test")
+	m := New("Test", "test", "test")
 	speed, _ := m.NewMetricFloat64("speed")
 	instanceNames := []string{"A"}
 	for _, instanceName := range instanceNames {
@@ -14,7 +14,7 @@ func setupMatrix(previousRaw float64, currentRaw float64) (*Matrix, *Matrix) {
 		_ = speed.SetValueFloat64(instance, previousRaw)
 	}
 
-	m1 := New("TestRemoveInstance", "test", "test")
+	m1 := New("Test", "test", "test")
 	speed1, _ := m1.NewMetricFloat64("speed")
 	instanceNames = []string{"A"}
 	for _, instanceName := range instanceNames {
