@@ -283,10 +283,10 @@ func (m *MetricFloat64) MultiplyByScalar(s uint, logger *logging.Logger) (int, e
 		// reset pass
 		pass[k] = true
 		if m.record[k] {
-			skips++
 			// if current is <= 0
 			if m.values[k] < 0 {
 				pass[k] = false
+				skips++
 				logger.Trace().
 					Str("metric", m.GetName()).
 					Float64("currentRaw", m.values[k]).
