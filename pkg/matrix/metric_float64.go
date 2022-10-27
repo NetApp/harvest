@@ -212,21 +212,25 @@ func (m *MetricFloat64) Divide(s Metric, logger *logging.Logger) (int, error) {
 		return 0, errs.New(ErrUnequalVectors, fmt.Sprintf("numerator=%d, denominator=%d", len(m.values), len(sValues)))
 	}
 	for i := 0; i < len(m.values); i++ {
-		if m.record[i] && sRecord[i] && sValues[i] != 0 {
-			// reset pass
-			pass[i] = true
-			// Don't pass along the value if the numerator or denominator is < 0
-			// A denominator of zero is fine
-			if m.values[i] < 0 || sValues[i] < 0 {
-				pass[i] = false
-				skips++
-				logger.Trace().
-					Str("metric", m.GetName()).
-					Float64("numerator", m.values[i]).
-					Float64("denominator", sValues[i]).
-					Msg("No pass values")
+		if m.record[i] && sRecord[i] {
+			if sValues[i] != 0 {
+				// reset pass
+				pass[i] = true
+				// Don't pass along the value if the numerator or denominator is < 0
+				// A denominator of zero is fine
+				if m.values[i] < 0 || sValues[i] < 0 {
+					pass[i] = false
+					skips++
+					logger.Trace().
+						Str("metric", m.GetName()).
+						Float64("numerator", m.values[i]).
+						Float64("denominator", sValues[i]).
+						Msg("No pass values")
+				}
+				m.values[i] /= sValues[i]
+			} else {
+				m.values[i] = 0
 			}
-			m.values[i] /= sValues[i]
 		}
 	}
 	return skips, nil

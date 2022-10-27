@@ -154,6 +154,38 @@ func TestMetricFloat64_Divide(t *testing.T) {
 	if pass {
 		t.Errorf("expected = %t, got %t", !pass, pass)
 	}
+
+	// When numerator > 0 denominator == 0
+	//      then don't skip and pass is true
+	numerator, denominator = setupMatrix(20, 0)
+	skip, _ = numerator.GetMetric("speed").Divide(denominator.GetMetric("speed"), logging.Get())
+	if skip != 0 {
+		t.Errorf("expected = %d, got %d", 0, skip)
+	}
+	v = numerator.GetMetric("speed").GetValuesFloat64()[0]
+	if v != 0 {
+		t.Errorf("expected = %v, got %v", 0, v)
+	}
+	pass = numerator.GetMetric("speed").GetPass()[0]
+	if !pass {
+		t.Errorf("expected = %t, got %t", pass, !pass)
+	}
+
+	// When numerator == 0 denominator == 0
+	//      then don't skip and pass is true
+	numerator, denominator = setupMatrix(0, 0)
+	skip, _ = numerator.GetMetric("speed").Divide(denominator.GetMetric("speed"), logging.Get())
+	if skip != 0 {
+		t.Errorf("expected = %d, got %d", 0, skip)
+	}
+	v = numerator.GetMetric("speed").GetValuesFloat64()[0]
+	if v != 0 {
+		t.Errorf("expected = %v, got %v", 0, v)
+	}
+	pass = numerator.GetMetric("speed").GetPass()[0]
+	if !pass {
+		t.Errorf("expected = %t, got %t", pass, !pass)
+	}
 }
 
 func TestMetricFloat64_DivideWithThreshold(t *testing.T) {
