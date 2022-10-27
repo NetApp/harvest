@@ -404,7 +404,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 
 			p.Logger.Trace().Msgf("rendering metric [%s]", mkey)
 
-			if value, ok, pass := metric.GetValueString(instance); ok && pass {
+			if value, ok := metric.GetValueString(instance); ok {
 
 				// metric is array, determine if this is a plain array or histogram
 				if metric.HasLabels() {

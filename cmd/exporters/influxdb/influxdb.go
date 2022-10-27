@@ -310,9 +310,9 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 				continue
 			}
 
-			value, ok, pass := metric.GetValueString(instance)
+			value, ok := metric.GetValueString(instance)
 
-			if !ok || !pass {
+			if !ok {
 				continue
 			}
 

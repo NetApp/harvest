@@ -116,9 +116,9 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				// Handle both the cases here
 				var criticalLowThr float64
 				if criticalLowMetric := data.GetMetric("crit_low"); criticalLowMetric != nil {
-					criticalLowThr, _, _ = criticalLowMetric.GetValueFloat64(instance)
+					criticalLowThr, _ = criticalLowMetric.GetValueFloat64(instance)
 				} else {
-					criticalLowThr, _, _ = data.GetMetric("critical_low_threshold").GetValueFloat64(instance)
+					criticalLowThr, _ = data.GetMetric("critical_low_threshold").GetValueFloat64(instance)
 				}
 				isAmbientMatch := ambientRegex.MatchString(sensorName)
 				isPowerMatch := powerInRegex.MatchString(sensorName)
@@ -137,7 +137,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 					Msg("")
 
 				if sensorType == "thermal" && isAmbientMatch {
-					if value, ok, _ := metric.GetValueFloat64(instance); ok {
+					if value, ok := metric.GetValueFloat64(instance); ok {
 						sensorEnvironmentMetricMap[iKey].ambientTemperature = append(sensorEnvironmentMetricMap[iKey].ambientTemperature, value)
 					}
 				}
@@ -145,7 +145,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				if sensorType == "thermal" && !isAmbientMatch {
 					// Exclude temperature sensors that have crit_low=0 and warn_low is missing
 					if !(criticalLowThr == 0.0 && warningLowThr == "") {
-						if value, ok, _ := metric.GetValueFloat64(instance); ok {
+						if value, ok := metric.GetValueFloat64(instance); ok {
 							sensorEnvironmentMetricMap[iKey].nonAmbientTemperature = append(sensorEnvironmentMetricMap[iKey].nonAmbientTemperature, value)
 						}
 					} else {
@@ -157,13 +157,13 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				}
 
 				if sensorType == "fan" {
-					if value, ok, _ := metric.GetValueFloat64(instance); ok {
+					if value, ok := metric.GetValueFloat64(instance); ok {
 						sensorEnvironmentMetricMap[iKey].fanSpeed = append(sensorEnvironmentMetricMap[iKey].fanSpeed, value)
 					}
 				}
 
 				if isPowerMatch {
-					if value, ok, _ := metric.GetValueFloat64(instance); ok {
+					if value, ok := metric.GetValueFloat64(instance); ok {
 						if sensorUnit != "mW" && sensorUnit != "W" {
 							my.Logger.Warn().Str("unit", sensorUnit).Float64("value", value).Msg("unknown power unit")
 						} else {
@@ -176,7 +176,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				}
 
 				if isVoltageMatch {
-					if value, ok, _ := metric.GetValueFloat64(instance); ok {
+					if value, ok := metric.GetValueFloat64(instance); ok {
 						if sensorEnvironmentMetricMap[iKey].voltageSensor == nil {
 							sensorEnvironmentMetricMap[iKey].voltageSensor = make(map[string]*sensorValue)
 						}
@@ -185,7 +185,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				}
 
 				if isCurrentMatch {
-					if value, ok, _ := metric.GetValueFloat64(instance); ok {
+					if value, ok := metric.GetValueFloat64(instance); ok {
 						if sensorEnvironmentMetricMap[iKey].currentSensor == nil {
 							sensorEnvironmentMetricMap[iKey].currentSensor = make(map[string]*sensorValue)
 						}

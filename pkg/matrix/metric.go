@@ -66,15 +66,14 @@ type Metric interface {
 	SetValueNAN(*Instance)
 	// methods for reading from metric storage
 
-	GetValueInt(*Instance) (int, bool, bool)
-	GetValueInt64(*Instance) (int64, bool, bool)
-	GetValueUint8(*Instance) (uint8, bool, bool)
-	GetValueUint64(*Instance) (uint64, bool, bool)
-	GetValueFloat64(*Instance) (float64, bool, bool)
-	GetValueString(*Instance) (string, bool, bool)
-	GetValueBytes(*Instance) ([]byte, bool, bool)
-	GetRecords() map[string]bool
-	GetPass() map[string]bool
+	GetValueInt(*Instance) (int, bool)
+	GetValueInt64(*Instance) (int64, bool)
+	GetValueUint8(*Instance) (uint8, bool)
+	GetValueUint64(*Instance) (uint64, bool)
+	GetValueFloat64(*Instance) (float64, bool)
+	GetValueString(*Instance) (string, bool)
+	GetValueBytes(*Instance) ([]byte, bool)
+	GetSkips() map[string]bool
 	GetValuesFloat64() map[string]float64
 
 	// methods for doing vector arithmetics
@@ -98,8 +97,7 @@ type AbstractMetric struct {
 	exportable bool
 	labels     *dict.Dict
 	buckets    *[]string
-	record     map[string]bool
-	pass       map[string]bool
+	skip       map[string]bool
 }
 
 func (m *AbstractMetric) Clone(deep bool) *AbstractMetric {
@@ -117,26 +115,16 @@ func (m *AbstractMetric) Clone(deep bool) *AbstractMetric {
 		clone.labels = m.labels.Copy()
 	}
 	if deep {
-		if len(m.record) != 0 {
-			clone.record = make(map[string]bool, len(m.record))
-			for key, element := range m.record {
-				clone.record[key] = element
+		if len(m.skip) != 0 {
+			clone.skip = make(map[string]bool, len(m.skip))
+			for key, element := range m.skip {
+				clone.skip[key] = element
 			}
 		} else {
-			clone.record = make(map[string]bool)
-		}
-
-		if len(m.pass) != 0 {
-			clone.pass = make(map[string]bool, len(m.pass))
-			for key, element := range m.pass {
-				clone.pass[key] = element
-			}
-		} else {
-			clone.pass = make(map[string]bool)
+			clone.skip = make(map[string]bool)
 		}
 	} else {
-		clone.record = make(map[string]bool)
-		clone.pass = make(map[string]bool)
+		clone.skip = make(map[string]bool)
 	}
 	return &clone
 }
@@ -227,16 +215,12 @@ func (m *AbstractMetric) HasLabels() bool {
 	return m.labels != nil && m.labels.Size() != 0
 }
 
-func (m *AbstractMetric) GetRecords() map[string]bool {
-	return m.record
-}
-
-func (m *AbstractMetric) GetPass() map[string]bool {
-	return m.pass
+func (m *AbstractMetric) GetSkips() map[string]bool {
+	return m.skip
 }
 
 func (m *AbstractMetric) SetValueNAN(i *Instance) {
-	m.record[i.key] = false
+	m.skip[i.key] = true
 }
 
 func (m *AbstractMetric) Delta(Metric, *logging.Logger) (int, error) {

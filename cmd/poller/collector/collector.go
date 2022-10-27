@@ -470,7 +470,7 @@ func (c *AbstractCollector) logMetadata() {
 			// don't log these since they're covered by other durations
 			continue
 		}
-		value, _, _ := metric.GetValueFloat64(dataInstance)
+		value, _ := metric.GetValueFloat64(dataInstance)
 		if strings.HasSuffix(mName, "_time") {
 			// convert microseconds to milliseconds and names ending with _time into -> *Ms
 			v := int64(math.Round(value / 1000))
