@@ -206,19 +206,23 @@ func (m *MetricFloat64) Divide(s Metric, logger *logging.Logger) (int, error) {
 	sSkip := s.GetSkips()
 
 	for k := range m.values {
-		if !m.skip[k] && !sSkip[k] && sValues[k] != 0 {
-			// Don't pass along the value if the numerator or denominator is < 0
-			// A denominator of zero is fine
-			if m.values[k] < 0 || sValues[k] < 0 {
-				m.skip[k] = true
-				skips++
-				logger.Trace().
-					Str("metric", m.GetName()).
-					Float64("numerator", m.values[k]).
-					Float64("denominator", sValues[k]).
-					Msg("No pass values")
+		if !m.skip[k] && !sSkip[k] {
+			if sValues[k] != 0 {
+				// Don't pass along the value if the numerator or denominator is < 0
+				// A denominator of zero is fine
+				if m.values[k] < 0 || sValues[k] < 0 {
+					m.skip[k] = true
+					skips++
+					logger.Trace().
+						Str("metric", m.GetName()).
+						Float64("numerator", m.values[k]).
+						Float64("denominator", sValues[k]).
+						Msg("No pass values")
+				}
+				m.values[k] /= sValues[k]
+			} else {
+				m.values[k] = 0
 			}
-			m.values[k] /= sValues[k]
 		} else {
 			// It could be a new or deleted instance or a 0 denominator
 			m.skip[k] = true
@@ -254,6 +258,8 @@ func (m *MetricFloat64) DivideWithThreshold(s Metric, t int, logger *logging.Log
 			}
 			if sValues[k] >= x {
 				m.values[k] /= sValues[k]
+			} else {
+				m.values[k] = 0
 			}
 		} else {
 			// It could be a new or deleted instance
