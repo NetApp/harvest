@@ -751,12 +751,6 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if metric.GetName() != "timestamp" {
 			counter := r.counterLookup(metric, key)
 			if counter != nil {
-				if !isWorkloadDetailObject(r.Prop.Query) {
-					// set metric unit
-					if counter.unit != "none" {
-						metric.SetLabel("unit", counter.unit)
-					}
-				}
 				if counter.denominator == "" {
 					// does not require base counter
 					orderedNonDenominatorMetrics = append(orderedNonDenominatorMetrics, metric)
