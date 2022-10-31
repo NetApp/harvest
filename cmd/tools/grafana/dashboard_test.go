@@ -66,9 +66,6 @@ func TestUnitsAndExprMatch(t *testing.T) {
 		"_lag_time": {"", "s", "short"},
 	}
 
-	// This list is a stop-gap until #1374 is fixed. Will be empty after that
-	metricsToExclude := map[string]struct{}{"aggr_disk_busy": {}}
-
 	metricNames := make([]string, 0, len(mt.metricsByUnit))
 	for m := range mt.metricsByUnit {
 		metricNames = append(metricNames, m)
@@ -87,9 +84,6 @@ func TestUnitsAndExprMatch(t *testing.T) {
 					metric, location[0].dashboard, location[0].path, location[0].title)
 			}
 			if numUnits == 1 {
-				continue
-			}
-			if _, ok := metricsToExclude[metric]; ok {
 				continue
 			}
 		locCheck:
