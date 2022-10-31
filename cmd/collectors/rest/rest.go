@@ -128,6 +128,10 @@ func (r *Rest) InitVars(config *node.Node) {
 	var err error
 
 	clientTimeout := config.GetChildContentS("client_timeout")
+	if clientTimeout == "" {
+		clientTimeout = rest.DefaultTimeout
+	}
+
 	duration, err := time.ParseDuration(clientTimeout)
 	if err == nil {
 		r.Client.Timeout = duration
