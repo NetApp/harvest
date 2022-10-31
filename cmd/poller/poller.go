@@ -1052,7 +1052,7 @@ func (p *Poller) upgradeCollector(c conf.Collector) (conf.Collector, error) {
 	if !strings.HasPrefix(c.Name, "Zapi") {
 		return c, nil
 	}
-	noUpgrade := os.Getenv("HARVEST_NO_UPGRADE")
+	noUpgrade := os.Getenv("HARVEST_NO_COLLECTOR_UPGRADE")
 	if noUpgrade != "" {
 		logger.Debug().Str("collector", c.Name).Msg("No upgrade due to env var. Use collector")
 		return c, nil
