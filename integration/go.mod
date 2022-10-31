@@ -8,9 +8,9 @@ require (
 	github.com/docker/docker v20.10.16+incompatible
 	github.com/julienroland/usg v0.0.0-20160918114137-cb52eabb3d84
 	github.com/netapp/harvest/v2 v2.0.0-20220525163428-8d88c5b0f601
-	github.com/rs/zerolog v1.27.0
-	github.com/stretchr/testify v1.7.5
-	github.com/tidwall/gjson v1.14.1
+	github.com/rs/zerolog v1.28.0
+	github.com/stretchr/testify v1.8.0
+	github.com/tidwall/gjson v1.14.3
 )
 
 require (
@@ -34,7 +34,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/power-devops/perfstat v0.0.0-20220216144756-c35f1ee13d7c // indirect
-	github.com/shirou/gopsutil/v3 v3.22.6 // indirect
+	github.com/shirou/gopsutil/v3 v3.22.9 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/spf13/cobra v1.5.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
