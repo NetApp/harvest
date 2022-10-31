@@ -1052,6 +1052,11 @@ func (p *Poller) upgradeCollector(c conf.Collector) (conf.Collector, error) {
 	if !strings.HasPrefix(c.Name, "Zapi") {
 		return c, nil
 	}
+	noUpgrade := os.Getenv("HARVEST_NO_UPGRADE")
+	if noUpgrade != "" {
+		logger.Debug().Str("collector", c.Name).Msg("No upgrade due to env var. Use collector")
+		return c, nil
+	}
 	r, err := p.newRestClient()
 	if err != nil {
 		logger.Debug().Err(err).Str("collector", c.Name).Msg("Failed to upgrade to Rest. Use collector")
