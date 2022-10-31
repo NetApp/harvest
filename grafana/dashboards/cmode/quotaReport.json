@@ -425,7 +425,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "qtree_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
+          "expr": "quota_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -436,7 +436,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "qtree_disk_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
+          "expr": "quota_disk_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -447,7 +447,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "qtree_file_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
+          "expr": "quota_file_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -458,7 +458,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "qtree_files_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
+          "expr": "quota_files_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -469,7 +469,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "qtree_soft_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
+          "expr": "quota_soft_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -480,7 +480,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "qtree_disk_used_pct_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
+          "expr": "quota_disk_used_pct_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -491,7 +491,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "qtree_files_used_pct_file_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
+          "expr": "quota_files_used_pct_file_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -502,7 +502,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "qtree_soft_file_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
+          "expr": "quota_soft_file_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -691,7 +691,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(qtree_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, svm)",
+        "definition": "label_values(quota_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, svm)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -702,7 +702,7 @@
         "name": "SVM",
         "options": [],
         "query": {
-          "query": "label_values(qtree_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, svm)",
+          "query": "label_values(quota_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, svm)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -716,7 +716,7 @@
         "allValue": "(.*)",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(qtree_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"}, qtree)",
+        "definition": "label_values(quota_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"}, qtree)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -727,7 +727,7 @@
         "name": "Qtree",
         "options": [],
         "query": {
-          "query": "label_values(qtree_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"}, qtree)",
+          "query": "label_values(quota_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"}, qtree)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,

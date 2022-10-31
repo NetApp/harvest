@@ -532,7 +532,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "topk($TopResources, qtree_disk_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$TopQtreeDiskUsed\"})",
+              "expr": "topk($TopResources, quota_disk_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$TopQtreeDiskUsed\"})",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - {{qtree}}",
               "refId": "A"
@@ -618,7 +618,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "topk($TopResources, qtree_files_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$TopQtreeFileUsed\"})",
+              "expr": "topk($TopResources, quota_files_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$TopQtreeFileUsed\"})",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - {{qtree}}",
               "refId": "A"
@@ -961,7 +961,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qtree_disk_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(quota_disk_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -971,7 +971,7 @@
         "name": "TopQtreeDiskUsed",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qtree_disk_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(quota_disk_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -984,7 +984,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qtree_files_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(quota_files_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -994,7 +994,7 @@
         "name": "TopQtreeFileUsed",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qtree_files_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(quota_files_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -1024,6 +1024,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Qtree",
-  "uid": "",
+  "uid": "X_svTxn4k",
   "version": 5
 }
