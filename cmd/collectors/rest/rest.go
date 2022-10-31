@@ -228,11 +228,11 @@ func (r *Rest) initEndPoints() error {
 	return nil
 }
 
-func (r *Rest) getTemplateFn() string {
+func TemplateFn(n *node.Node, obj string) string {
 	var fn string
-	objects := r.Params.GetChildS("objects")
+	objects := n.GetChildS("objects")
 	if objects != nil {
-		fn = objects.GetChildContentS(r.Object)
+		fn = objects.GetChildContentS(obj)
 	}
 	return fn
 }

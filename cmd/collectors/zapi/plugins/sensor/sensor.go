@@ -265,8 +265,6 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				err = m.SetValueFloat64(instance, sumPower)
 				if err != nil {
 					my.Logger.Error().Float64("power", sumPower).Err(err).Msg("Unable to set power")
-				} else {
-					m.SetLabel("unit", "W")
 				}
 
 			case "average_ambient_temperature":
@@ -275,8 +273,6 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 					err = m.SetValueFloat64(instance, aaT)
 					if err != nil {
 						my.Logger.Error().Float64("average_ambient_temperature", aaT).Err(err).Msg("Unable to set average_ambient_temperature")
-					} else {
-						m.SetLabel("unit", "C")
 					}
 				}
 			case "min_ambient_temperature":
@@ -284,16 +280,12 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				err = m.SetValueFloat64(instance, maT)
 				if err != nil {
 					my.Logger.Error().Float64("min_ambient_temperature", maT).Err(err).Msg("Unable to set min_ambient_temperature")
-				} else {
-					m.SetLabel("unit", "C")
 				}
 			case "max_temperature":
 				mT := util.Max(v.nonAmbientTemperature)
 				err = m.SetValueFloat64(instance, mT)
 				if err != nil {
 					my.Logger.Error().Float64("max_temperature", mT).Err(err).Msg("Unable to set max_temperature")
-				} else {
-					m.SetLabel("unit", "C")
 				}
 			case "average_temperature":
 				if len(v.nonAmbientTemperature) > 0 {
@@ -301,8 +293,6 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 					err = m.SetValueFloat64(instance, nat)
 					if err != nil {
 						my.Logger.Error().Float64("average_temperature", nat).Err(err).Msg("Unable to set average_temperature")
-					} else {
-						m.SetLabel("unit", "C")
 					}
 				}
 			case "min_temperature":
@@ -310,8 +300,6 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				err = m.SetValueFloat64(instance, mT)
 				if err != nil {
 					my.Logger.Error().Float64("min_temperature", mT).Err(err).Msg("Unable to set min_temperature")
-				} else {
-					m.SetLabel("unit", "C")
 				}
 			case "average_fan_speed":
 				if len(v.fanSpeed) > 0 {
@@ -319,8 +307,6 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 					err = m.SetValueFloat64(instance, afs)
 					if err != nil {
 						my.Logger.Error().Float64("average_fan_speed", afs).Err(err).Msg("Unable to set average_fan_speed")
-					} else {
-						m.SetLabel("unit", "rpm")
 					}
 				}
 			case "max_fan_speed":
@@ -328,16 +314,12 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				err = m.SetValueFloat64(instance, mfs)
 				if err != nil {
 					my.Logger.Error().Float64("max_fan_speed", mfs).Err(err).Msg("Unable to set max_fan_speed")
-				} else {
-					m.SetLabel("unit", "rpm")
 				}
 			case "min_fan_speed":
 				mfs := util.Min(v.fanSpeed)
 				err = m.SetValueFloat64(instance, mfs)
 				if err != nil {
 					my.Logger.Error().Float64("min_fan_speed", mfs).Err(err).Msg("Unable to set min_fan_speed")
-				} else {
-					m.SetLabel("unit", "rpm")
 				}
 			}
 		}

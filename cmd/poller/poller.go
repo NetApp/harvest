@@ -35,6 +35,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/rest"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/restperf"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/simple"
+	_ "github.com/netapp/harvest/v2/cmd/collectors/storagegrid"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/unix"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/zapi/collector"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/zapiperf"
@@ -1051,6 +1052,11 @@ func (p *Poller) upgradeCollector(c conf.Collector) (conf.Collector, error) {
 	if !strings.HasPrefix(c.Name, "Zapi") {
 		return c, nil
 	}
+	noUpgrade := os.Getenv("HARVEST_NO_COLLECTOR_UPGRADE")
+	if noUpgrade != "" {
+		logger.Debug().Str("collector", c.Name).Msg("No upgrade due to env var. Use collector")
+		return c, nil
+	}
 	r, err := p.newRestClient()
 	if err != nil {
 		logger.Debug().Err(err).Str("collector", c.Name).Msg("Failed to upgrade to Rest. Use collector")
@@ -1155,15 +1161,12 @@ func init() {
 // start poller, if fails try to write to syslog
 func main() {
 	// don't recover if a goroutine has panicked, instead
-	// try to zeroLog as much as possible, since normally it's
-	// not properly logged
+	// log as much as possible
 	defer func() {
-		//logger.Warn("(main) ", "defer func here")
 		if r := recover(); r != nil {
-			logger.Error().Stack().Err(errs.ErrPanic).Msgf("Poller panicked %s", r)
+			e := r.(error)
+			logger.Error().Stack().Err(e).Msg("Poller panicked")
 			logger.Fatal().Msg(`(main) terminating abnormally, tip: run in foreground mode (with "--loglevel 0") to debug`)
-
-			os.Exit(1)
 		}
 	}()
 
