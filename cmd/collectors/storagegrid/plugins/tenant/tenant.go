@@ -40,13 +40,13 @@ func (t *Tenant) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	for _, instance := range data.GetInstances() {
 
 		var (
-			usedBytes, quotaBytes, percentage    float64
-			usedOK, usedPass, quotaOK, quotaPass bool
+			usedBytes, quotaBytes, percentage float64
+			usedOK, quotaOK                   bool
 		)
 
-		usedBytes, usedOK, usedPass = used.GetValueFloat64(instance)
-		quotaBytes, quotaOK, quotaPass = quota.GetValueFloat64(instance)
-		if (usedOK || usedPass) && (quotaOK || quotaPass) {
+		usedBytes, usedOK = used.GetValueFloat64(instance)
+		quotaBytes, quotaOK = quota.GetValueFloat64(instance)
+		if (usedOK) && (quotaOK) {
 			percentage = usedBytes / quotaBytes * 100
 			if quotaBytes == 0 {
 				percentage = 0

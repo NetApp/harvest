@@ -210,7 +210,7 @@ func (m *Matrix) NewInstance(key string) (*Instance, error) {
 		return nil, errs.New(ErrDuplicateInstanceKey, key)
 	}
 
-	instance = NewInstance(key) // index is current count of instances
+	instance = NewInstance(key)
 
 	m.instances[key] = instance
 	return instance, nil
@@ -218,7 +218,6 @@ func (m *Matrix) NewInstance(key string) (*Instance, error) {
 
 func (m *Matrix) RemoveInstance(key string) {
 	if instance, has := m.instances[key]; has {
-		// re-arrange columns in metrics
 		for _, metric := range m.GetMetrics() {
 			metric.Remove(instance.key)
 		}
