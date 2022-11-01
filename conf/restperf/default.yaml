@@ -39,7 +39,7 @@ objects:
   FcpLif:            fcp_lif.yaml
   ISCSI:             iscsi_lif.yaml
   LIF:               lif.yaml
-  LUN:               lun.yaml
+  Lun:               lun.yaml
   NFSv3:             nfsv3.yaml
   NFSv41:            nfsv4_1.yaml
   NFSv42:            nfsv4_2.yaml
@@ -47,7 +47,8 @@ objects:
   Volume:            volume.yaml
   VolumeSvm:         volume_svm.yaml
   WAFLCompBin:       wafl_comp_aggr_vol_bin.yaml
-  #  Uncomment to collect workload/QOS counters
+
+#  Uncomment to collect workload/QOS counters
 #  Workload:             workload.yaml
 #  WorkloadDetail:       workload_detail.yaml
 #  WorkloadVolume:       workload_volume.yaml
