@@ -86,6 +86,11 @@ ZAPI performance metrics may be missing in REST. If you have added new metrics o
 You can [check if the performance counter is available](https://docs.netapp.com/us-en/ontap-automation/migrate/performance-counters.html#discover-the-available-performance-counter-tables) 
 or [ask the Harvest team on Discord](#a-counter-is-missing-from-rest-what-do-i-do).
 
+### I'm using ONTAP version 9.12.X, but I want to continue using ZAPIs. How do I do that?
+
+Set the environment variable `HARVEST_NO_COLLECTOR_UPGRADE=1` and Harvest will not 
+upgrade your collector from ZAPI to REST.
+
 ## Reference
 
 Table of ONTAP versions, dates and API notes.
