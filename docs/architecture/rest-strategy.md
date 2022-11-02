@@ -28,12 +28,28 @@ Read on if you want to know how you can use REST sooner, or you want to take adv
 
 ### How does Harvest decide whether to use REST or ZAPI APIs?
 
-Harvest picks the appropriate API based on the following rules:
+Harvest asks the cluster for its ONTAP version:
 
-1. If you specify a particular collector in your `harvest.yml`, Harvest will use it.
-2. Otherwise, Harvest will ask the cluster if it supports ZAPIs.
-If the cluster says yes, Harvest will use ZAPIs, otherwise it will use REST. 
+* If the version is earlier than `9.12.1`, Harvest will use the collector(s) defined in your `harvest.yml`.
+* If the version is `9.12.1`, Harvest will use REST, unless you set the [no-upgrade environment variable](#im-using-ontap-version-912x-but-i-want-to-continue-using-zapis-how-do-i-do-that).
+* If the version is `9.13.1` or later, Harvest will use REST, because ZAPI has been removed.
 
+```mermaid
+graph TD
+A(Harvest asks the cluster<br>for its ONTAP version) --> B(Version before<br>9.12.X?)
+A --> C(9.12.X)
+A --> D(9.13.X)
+
+B --> AA{Does your harvest.yml<br>specify a REST collector?}
+AA -->|No| F(Use ZAPI) 
+AA -->|Yes|G(Use REST)
+
+C --> CC{Is NO_UPGRADE<br>environment<br>variable set?}
+CC --> |No| G
+CC --> |Yes|CZ(Use ZAPI) 
+
+D --> X(Use REST)
+```
 ### Why would I switch to REST before `9.13.1`?
 
 - You have advanced use cases to validate before ONTAP removes ZAPIs in `9.13.1`
