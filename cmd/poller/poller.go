@@ -91,6 +91,10 @@ var (
 	}
 )
 
+const (
+	NoUpgrade = "HARVEST_NO_COLLECTOR_UPGRADE"
+)
+
 // init with default configuration that logs to both console and harvest.log
 var logger = logging.Get()
 
@@ -568,9 +572,7 @@ func (p *Poller) loadCollector(c conf.Collector) error {
 		col                   collector.Collector
 	)
 
-	if c, err = p.upgradeCollector(c); err != nil {
-		return err
-	}
+	c = p.upgradeCollector(c)
 	class = c.Name
 	// throw warning for deprecated collectors
 	if r, d := deprecatedCollectors[strings.ToLower(class)]; d {
@@ -1047,60 +1049,78 @@ func (p *Poller) createClient() {
 //   - compare the cluster version with the upgradeAfter version
 //
 // If any error happens during the REST query, the upgrade is aborted and the original collector c returned.
-func (p *Poller) upgradeCollector(c conf.Collector) (conf.Collector, error) {
+func (p *Poller) upgradeCollector(c conf.Collector) conf.Collector {
 	// Only attempt to upgrade Zapi* collectors
 	if !strings.HasPrefix(c.Name, "Zapi") {
-		return c, nil
+		return c
 	}
-	noUpgrade := os.Getenv("HARVEST_NO_COLLECTOR_UPGRADE")
-	if noUpgrade != "" {
-		logger.Debug().Str("collector", c.Name).Msg("No upgrade due to env var. Use collector")
-		return c, nil
-	}
+
 	r, err := p.newRestClient()
 	if err != nil {
 		logger.Debug().Err(err).Str("collector", c.Name).Msg("Failed to upgrade to Rest. Use collector")
-		return c, nil
+		return c
 	}
 	ver := r.Client.Cluster().Version
 	verWithDots := fmt.Sprintf("%d.%d.%d", ver[0], ver[1], ver[2])
-	ontapVersion, err2 := goversion.NewVersion(verWithDots)
-	if err2 != nil {
-		logger.Error().Err(err2).
-			Str("version", verWithDots).
+
+	return p.negotiateAPI(c, verWithDots)
+}
+
+// clusterVersion should be of the form 9.12.1
+func (p *Poller) negotiateAPI(c conf.Collector, clusterVersion string) conf.Collector {
+	ontapVersion, err := goversion.NewVersion(clusterVersion)
+	if err != nil {
+		logger.Error().Err(err).
+			Str("version", clusterVersion).
 			Str("collector", c.Name).
 			Msg("Failed to parse version")
-		return c, nil
+		return c
 	}
 	upgradeVersion := "9.12.1"
-	upgradeAfter, err3 := goversion.NewVersion(upgradeVersion)
-	if err3 != nil {
-		logger.Error().Err(err3).
-			Str("upgradeVersion", upgradeVersion).
-			Str("collector", c.Name).
-			Msg("Failed to parse upgradeVersion")
-		return c, nil
-	}
+	noUpgradeVersion := "9.13.1"
+	upgradeAfter, _ := goversion.NewVersion(upgradeVersion)
+	noUpgradeAfter, _ := goversion.NewVersion(noUpgradeVersion)
 
+	if ontapVersion.GreaterThanOrEqual(noUpgradeAfter) {
+		logger.Debug().
+			Str("collector", c.Name).
+			Str("v", clusterVersion).
+			Str("noUpgradeVersion", noUpgradeVersion).
+			Msg("Use REST")
+		upgradeCollector := strings.ReplaceAll(c.Name, "Zapi", "Rest")
+		return conf.Collector{
+			Name:      upgradeCollector,
+			Templates: c.Templates,
+		}
+	}
+	noUpgrade := os.Getenv(NoUpgrade)
+	if noUpgrade != "" {
+		logger.Debug().
+			Str("collector", c.Name).
+			Str("v", clusterVersion).
+			Msg("No upgrade due to environment variable. Use collector")
+		return c
+	}
 	if ontapVersion.GreaterThanOrEqual(upgradeAfter) {
 		upgradeCollector := strings.ReplaceAll(c.Name, "Zapi", "Rest")
 		logger.Info().
 			Str("from", c.Name).
 			Str("to", upgradeCollector).
-			Str("v", verWithDots).
+			Str("v", clusterVersion).
 			Str("upgradeVersion", upgradeVersion).
 			Msg("Upgrade collector")
 		return conf.Collector{
 			Name:      upgradeCollector,
 			Templates: c.Templates,
-		}, nil
+		}
 	}
 	logger.Debug().
 		Str("collector", c.Name).
-		Str("v", verWithDots).
+		Str("v", clusterVersion).
 		Str("upgradeVersion", upgradeVersion).
 		Msg("Do not upgrade collector")
-	return c, nil
+
+	return c
 }
 
 func (p *Poller) newRestClient() (*rest.Rest, error) {
