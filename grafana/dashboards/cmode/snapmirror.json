@@ -790,16 +790,6 @@
             },
             "properties": [
               {
-                "id": "links",
-                "value": [
-                  {
-                    "targetBlank": true,
-                    "title": "Click for details",
-                    "url": "/d/SjI7RkHMk/netapp-detail-snapmirror-instance?orgId=1&var-Datacenter=${Datacenter}&var-SourceCluster=${SourceCluster}&var-SnapMirrorID=${__data.fields[relationship_id]}"
-                  }
-                ]
-              },
-              {
                 "id": "custom.width",
                 "value": 66
               }
@@ -850,6 +840,30 @@
               {
                 "id": "custom.width",
                 "value": 227
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Destination Cluster"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 200
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Source Cluster"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 200
               }
             ]
           }
@@ -913,7 +927,7 @@
             "excludeByName": {
               "Time": true,
               "__name__": true,
-              "cluster": true,
+              "cluster": false,
               "datacenter": true,
               "destination_node": true,
               "destination_node_limit": true,
@@ -933,30 +947,18 @@
             },
             "indexByName": {
               "Time": 1,
-              "Value #A": 22,
-              "Value #B": 24,
-              "Value #C": 23,
               "__name__": 2,
-              "cluster": 3,
-              "datacenter": 4,
-              "destination_node": 5,
-              "destination_node_limit": 17,
-              "destination_volume": 7,
-              "destination_vserver": 6,
-              "group_type": 11,
-              "healthy": 14,
-              "instance": 18,
-              "job": 19,
-              "last_transfer_type": 16,
+              "source_cluster": 3,
+              "cluster": 4,
+              "datacenter": 5,
+              "destination_node": 6,
+              "destination_volume": 8,
+              "destination_vserver": 7,
+              "instance": 11,
+              "job": 12,
               "relationship_id": 0,
-              "relationship_status": 12,
-              "relationship_type": 13,
-              "schedule": 20,
-              "source_node": 8,
-              "source_node_limit": 21,
               "source_volume": 10,
-              "source_vserver": 9,
-              "unhealthy_reason": 15
+              "source_vserver": 9
             },
             "renameByName": {
               "Value #A": "Size",
@@ -975,7 +977,9 @@
               "source_node": "Source Node",
               "source_volume": "Source Volume",
               "source_vserver": "Source SVM",
-              "unhealthy_reason": "Error"
+              "unhealthy_reason": "Error",
+              "source_cluster": "Source Cluster",
+              "cluster": "Destination Cluster"
             }
           }
         },
@@ -996,7 +1000,9 @@
                 "Size",
                 "Duration",
                 "Lag",
-                "ID"
+                "ID",
+                "Source Cluster",
+                "Destination Cluster"
               ]
             }
           }
