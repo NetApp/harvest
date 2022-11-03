@@ -31,7 +31,7 @@ counters:
   - fcp_data_recv
   - fcp_data_sent
   - nvmf_data_recv
-  - mvmf_data_sent
+  - nvmf_data_sent
 
 export_options:
   instance_keys:

@@ -986,7 +986,8 @@
       },
       "id": 79,
       "panels": [],
-      "title": "Nodes & Subsystems",
+      "repeat": "Cluster",
+      "title": "Nodes & Subsystems - $Cluster",
       "type": "row"
     },
     {
@@ -1124,8 +1125,6 @@
         "sortBy": []
       },
       "pluginVersion": "8.1.8",
-      "repeat": "Cluster",
-      "repeatDirection": "v",
       "targets": [
         {
           "exemplar": false,
@@ -1312,8 +1311,6 @@
         "textMode": "value"
       },
       "pluginVersion": "8.1.8",
-      "repeat": null,
-      "repeatDirection": "h",
       "targets": [
         {
           "exemplar": false,
@@ -1397,7 +1394,6 @@
         "text": {}
       },
       "pluginVersion": "8.1.8",
-      "repeatDirection": "h",
       "targets": [
         {
           "exemplar": false,
@@ -1475,7 +1471,6 @@
         "text": {}
       },
       "pluginVersion": "8.1.8",
-      "repeatDirection": "h",
       "targets": [
         {
           "exemplar": false,
@@ -1662,7 +1657,6 @@
         "sortBy": []
       },
       "pluginVersion": "8.1.8",
-      "repeatDirection": "v",
       "targets": [
         {
           "exemplar": false,
@@ -1699,7 +1693,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "$Cluster - subsystems",
+      "title": "subsystems",
       "transformations": [
         {
           "id": "organize",
@@ -1808,7 +1802,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Max Disk Utilization by Cluster",
+      "title": "Avg Disk Utilization by Cluster",
       "type": "bargauge"
     },
     {
@@ -1873,7 +1867,6 @@
         "text": {}
       },
       "pluginVersion": "8.1.8",
-      "repeatDirection": "h",
       "targets": [
         {
           "exemplar": false,

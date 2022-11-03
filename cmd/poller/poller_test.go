@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"os"
 	"testing"
 )
 
@@ -118,6 +119,46 @@ func TestPublishUrl(t *testing.T) {
 			got := poller.makePublishURL()
 			if got != tt.want {
 				t.Errorf("makePublishURL got = [%v] want [%v]", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestCollectorUpgrade(t *testing.T) {
+	poller := Poller{}
+
+	type test struct {
+		name           string
+		clusterVersion string
+		askFor         string
+		wantCollector  string
+		setEnvVar      bool
+	}
+
+	tests := []test{
+		{name: "9.11 use ZAPI", clusterVersion: "9.11.1", askFor: "Zapi", wantCollector: "Zapi"},
+		{name: "9.11 use REST", clusterVersion: "9.11.1", askFor: "Rest", wantCollector: "Rest"},
+		{name: "9.12 upgrade", clusterVersion: "9.12.1", askFor: "Zapi", wantCollector: "Rest"},
+		{name: "9.12 w/ envar", clusterVersion: "9.12.1", askFor: "Zapi", wantCollector: "Zapi", setEnvVar: true},
+		{name: "9.12 REST", clusterVersion: "9.12.3", askFor: "Rest", wantCollector: "Rest", setEnvVar: true},
+		{name: "9.13 RestPerf", clusterVersion: "9.13.1", askFor: "ZapiPerf", wantCollector: "RestPerf"},
+		{name: "9.13 REST w/ envar", clusterVersion: "9.13.1", askFor: "Rest", wantCollector: "Rest", setEnvVar: true},
+		{name: "9.13 REST", clusterVersion: "9.13.1", askFor: "Rest", wantCollector: "Rest"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			collector := conf.Collector{
+				Name: tt.askFor,
+			}
+			if tt.setEnvVar {
+				_ = os.Setenv(NoUpgrade, "1")
+			} else {
+				_ = os.Unsetenv(NoUpgrade)
+			}
+			newCollector := poller.negotiateAPI(collector, tt.clusterVersion)
+			if newCollector.Name != tt.wantCollector {
+				t.Errorf("got = [%s] want [%s]", newCollector.Name, tt.wantCollector)
 			}
 		})
 	}

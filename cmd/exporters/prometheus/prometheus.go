@@ -411,7 +411,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 					if metric.IsHistogram() {
 						// metric is histogram. Create a new metric to accumulate
 						// the flattened metrics and export them in order
-						bucketMetric := data.GetMetric(metric.GetName() + ".bucket")
+						bucketMetric := data.GetMetric(metric.GetLabel("bucket"))
 						if bucketMetric == nil {
 							p.Logger.Debug().
 								Str("metric", metric.GetName()).

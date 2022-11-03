@@ -4,35 +4,34 @@ collector:          Rest
 schedule:
   - data: 180s
 
-# These are commented out until ZAPIs are removed from ONTAP in a later release.
-# Feel free to uncomment as needed or add individual objects to your own custom.yaml
-# More information https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-collector.md
+# See https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-strategy.md
+# for details on how Harvest handles the ONTAP transition from ZAPI to REST.
 
 objects:
-#  Aggr:                        aggr.yaml
-#  ClusterPeer:                 clusterpeer.yaml
-#  Disk:                        disk.yaml
-#  Lun:                         lun.yaml
-#  NetConnections:              netConnections.yaml
-#  NetPort:                     netPort.yaml
-#  NFSClients:                  nfs_clients.yaml
-#  Node:                        node.yaml
-#  NtpServer:                   ntpserver.yaml
-#  OntapS3:                     ontap_s3.yaml
-#  Port:                        port.yaml
-#  Qtree:                       qtree.yaml
-#  Security:                    security.yaml
-#  SecurityAccount:             security_account.yaml
-#  SecurityAuditDestination:    security_audit_dest.yaml
-#  SecurityCert:                security_certificate.yaml
-#  SecurityLogin:               security_login.yaml
-#  SecuritySsh:                 security_ssh.yaml
-#  Sensor:                      sensor.yaml
-#  Shelf:                       shelf.yaml
-#  SnapMirror:                  snapmirror.yaml
-#  SnapshotPolicy:              snapshotPolicy.yaml
-#  Status:                      status.yaml
-#  Subsystem:                   subsystem.yaml
-#  Support:                     support.yaml
-#  SVM:                         svm.yaml
-#  Volume:                      volume.yaml
+  Aggr:                        aggr.yaml
+  ClusterPeer:                 clusterpeer.yaml
+  Disk:                        disk.yaml
+  Lun:                         lun.yaml
+  NetConnections:              netConnections.yaml
+  NetPort:                     netPort.yaml
+  NFSClients:                  nfs_clients.yaml
+  Node:                        node.yaml
+  NtpServer:                   ntpserver.yaml
+  OntapS3:                     ontap_s3.yaml
+  Port:                        port.yaml
+  Qtree:                       qtree.yaml
+  Security:                    security.yaml
+  SecurityAccount:             security_account.yaml
+  SecurityAuditDestination:    security_audit_dest.yaml
+  SecurityCert:                security_certificate.yaml
+  SecurityLogin:               security_login.yaml
+  SecuritySsh:                 security_ssh.yaml
+  Sensor:                      sensor.yaml
+  Shelf:                       shelf.yaml
+  SnapMirror:                  snapmirror.yaml
+  SnapshotPolicy:              snapshotPolicy.yaml
+  Status:                      status.yaml
+  Subsystem:                   subsystem.yaml
+  Support:                     support.yaml
+  SVM:                         svm.yaml
+  Volume:                      volume.yaml

@@ -16,6 +16,7 @@ const (
 	ErrAPIRequestRejected = harvestError("API request rejected")
 	ErrAPIResponse        = harvestError("error reading api response")
 	ErrAttributeNotFound  = harvestError("attribute not found")
+	ErrAuthFailed         = harvestError("auth failed")
 	ErrConfig             = harvestError("configuration error")
 	ErrConnection         = harvestError("connection error")
 	ErrImplement          = harvestError("implementation error")
