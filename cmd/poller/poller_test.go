@@ -4,6 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"os"
+	"reflect"
 	"testing"
 )
 
@@ -162,4 +163,37 @@ func TestCollectorUpgrade(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_nonOverlappingCollectors(t *testing.T) {
+	tests := []struct {
+		name string
+		args []objectCollector
+		want []objectCollector
+	}{
+		{name: "empty", args: make([]objectCollector, 0), want: make([]objectCollector, 0)},
+		{name: "one", args: ocs("Rest"), want: ocs("Rest")},
+		{name: "no overlap", args: ocs("Rest", "ZapiPerf"), want: ocs("Rest", "ZapiPerf")},
+		{name: "w overlap1", args: ocs("Rest", "Zapi"), want: ocs("Rest")},
+		{name: "w overlap2", args: ocs("Zapi", "Rest"), want: ocs("Zapi")},
+		{name: "w overlap3",
+			args: ocs("Zapi", "Rest", "Rest", "Rest", "Rest", "Rest", "Zapi", "Zapi", "Zapi", "Zapi", "Zapi"),
+			want: ocs("Zapi")},
+		{name: "non ontap", args: ocs("Rest", "SG"), want: ocs("Rest", "SG")},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := nonOverlappingCollectors(tt.args); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("got=[%v], want=[%v]", got, tt.want)
+			}
+		})
+	}
+}
+
+func ocs(names ...string) []objectCollector {
+	collectors := make([]objectCollector, 0, len(names))
+	for _, n := range names {
+		collectors = append(collectors, objectCollector{class: n})
+	}
+	return collectors
 }
