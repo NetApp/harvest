@@ -4409,6 +4409,482 @@
       ],
       "title": "Per Volume Statistics",
       "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 91,
+      "panels": [
+        {
+          "description": "Average latency per GET operation to object storage",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 0,
+            "y": 19
+          },
+          "id": 93,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "sortBy": "Last *",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "topk($TopResources, fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopCloudBinOpGetLatency\", metric=\"GET\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{volume}} ",
+              "refId": "A"
+            }
+          ],
+          "title": "Object Storage GET Latency",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "description": "Total GET request count, per volume, in the collection interval to object storage.  Not scaled per second, but a cumulative count (delta) since the previous poll.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "Request Count",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 12,
+            "y": 19
+          },
+          "id": 94,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "sortBy": "Last *",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "topk($TopResources, fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopCloudBinOperationGet\", metric=\"GET\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{volume}} ",
+              "refId": "A"
+            }
+          ],
+          "title": "Object Storage GET Request Count",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "description": "Average latency per PUT operation to object storage",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 0,
+            "y": 31
+          },
+          "id": 95,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "sortBy": "Last *",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "topk($TopResources, fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopCloudBinOpPutLatency\", metric=\"PUT\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{volume}} ",
+              "refId": "A"
+            }
+          ],
+          "title": "Object Storage PUT Latency",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "description": "Total PUT request count, per volume, in the collection interval to object storage.  Not scaled per second, but a cumulative count (delta) since the previous poll.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "Request Count",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 12,
+            "y": 31
+          },
+          "id": 96,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "sortBy": "Last *",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "EO6UabnVz"
+              },
+              "exemplar": false,
+              "expr": "topk($TopResources, fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopCloudBinOperationPut\", metric=\"PUT\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{volume}} ",
+              "refId": "A"
+            }
+          ],
+          "title": "Object Storage PUT Request Count",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "color-background-solid",
+                "filterable": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "#EAB839",
+                    "value": 20
+                  },
+                  {
+                    "color": "red",
+                    "value": 30
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 0,
+            "y": 43
+          },
+          "id": 90,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "8.4.11",
+          "description": "Average request count, per volume, in the chosen time window, to object storage.  Not scaled per second, but a cumulative count (delta) since the previous poll.",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "topk($TopResources, sum by (volume) (fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\", volume=~\"$TopCloudBinOperation\"}))",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Top Volumes with Object Storage Requests",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {},
+                "renameByName": {
+                  "Value": "Avg",
+                  "svm": "SVM",
+                  "type": "{{svm}} / {{volume}}",
+                  "volume": "Volume"
+                }
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "Avg",
+                    "Volume"
+                  ]
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Top Volume FabricPool Drilldown",
+      "type": "row"
     }
   ],
   "refresh": "1m",
@@ -5272,6 +5748,101 @@
         "options": [],
         "query": {
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"cp\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "definition": "query_result(topk($TopResources, sum by (volume) (avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[${__range}]))))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopCloudBinOperation",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, sum by (volume) (avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[${__range}]))))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "definition": "query_result(topk($TopResources,avg_over_time(fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\",metric=\"GET\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopCloudBinOpGetLatency",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources,avg_over_time(fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\",metric=\"GET\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "definition": "query_result(topk($TopResources,avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\",metric=\"GET\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopCloudBinOperationGet",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources,avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\",metric=\"GET\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "definition": "query_result(topk($TopResources,avg_over_time(fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\",metric=\"PUT\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopCloudBinOpPutLatency",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources,avg_over_time(fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\",metric=\"PUT\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "definition": "query_result(topk($TopResources,avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\",metric=\"PUT\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopCloudBinOperationPut",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources,avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\",metric=\"PUT\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
