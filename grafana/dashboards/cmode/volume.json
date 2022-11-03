@@ -4550,7 +4550,7 @@
                   }
                 ]
               },
-              "unit": "none"
+              "unit": "locale"
             },
             "overrides": []
           },
@@ -4733,7 +4733,7 @@
                   }
                 ]
               },
-              "unit": "none"
+              "unit": "locale"
             },
             "overrides": []
           },
@@ -4808,7 +4808,8 @@
                     "value": 30
                   }
                 ]
-              }
+              },
+              "unit": "locale"
             },
             "overrides": []
           },
