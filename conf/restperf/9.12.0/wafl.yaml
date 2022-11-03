@@ -3,7 +3,6 @@ name:                     WAFL
 query:                    api/cluster/counter/tables/wafl
 object:                   wafl
 
-#counter name doesn't exactly with zapiperf but these look better.
 counters:
   - ^^id
   - ^node.name                         => node

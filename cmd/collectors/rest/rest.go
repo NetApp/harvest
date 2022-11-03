@@ -128,6 +128,10 @@ func (r *Rest) InitVars(config *node.Node) {
 	var err error
 
 	clientTimeout := config.GetChildContentS("client_timeout")
+	if clientTimeout == "" {
+		clientTimeout = rest.DefaultTimeout
+	}
+
 	duration, err := time.ParseDuration(clientTimeout)
 	if err == nil {
 		r.Client.Timeout = duration
@@ -228,11 +232,11 @@ func (r *Rest) initEndPoints() error {
 	return nil
 }
 
-func (r *Rest) getTemplateFn() string {
+func TemplateFn(n *node.Node, obj string) string {
 	var fn string
-	objects := r.Params.GetChildS("objects")
+	objects := n.GetChildS("objects")
 	if objects != nil {
-		fn = objects.GetChildContentS(r.Object)
+		fn = objects.GetChildContentS(obj)
 	}
 	return fn
 }
@@ -392,6 +396,7 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, allowInstanceCre
 	)
 
 	oldInstances := set.New()
+	currentInstances := set.New()
 	mat := r.Matrix[r.Object]
 
 	// copy keys of current instances. This is used to remove deleted instances from matrix later
@@ -421,11 +426,6 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, allowInstanceCre
 			}
 		}
 
-		if instanceKey == "" {
-			r.Logger.Trace().Msg("Instance key is empty, skipping")
-			continue
-		}
-
 		instance = mat.GetInstance(instanceKey)
 
 		// Used for endpoints as we don't want to create additional instances
@@ -442,6 +442,11 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, allowInstanceCre
 			}
 		}
 
+		if currentInstances.Has(instanceKey) {
+			r.Logger.Warn().Str("instKey", instanceKey).Msg("This instance is already processed. instKey is not unique")
+		} else {
+			currentInstances.Add(instanceKey)
+		}
 		oldInstances.Remove(instanceKey)
 
 		for label, display := range prop.InstanceLabels {

@@ -1056,8 +1056,6 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 					display = strings.TrimSpace(x[1])
 				}
 				z.qosLabels[label] = display
-				//me.instanceLabels[label] = display
-				//oldLabels.Remove(label)
 			}
 		}
 	}
@@ -1169,7 +1167,7 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 		// if a counter is a histogram
 		isHistogram = false
 		if len(labels) > 0 && strings.Contains(description, "histogram") {
-			key := name + "." + "bucket"
+			key := name + ".bucket"
 			histogramMetric = mat.GetMetric(key)
 			if histogramMetric != nil {
 				z.Logger.Trace().Str("metric", key).Msg("Updating array metric attributes")
@@ -1216,6 +1214,8 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 				if isHistogram {
 					// Save the index of this label so the labels can be exported in order
 					m.SetLabel("comment", strconv.Itoa(i))
+					// Save the bucket name so the flattened metrics can find their bucket when exported
+					m.SetLabel("bucket", name+".bucket")
 					m.SetHistogram(true)
 				}
 			}

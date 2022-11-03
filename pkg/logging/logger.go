@@ -97,6 +97,7 @@ func Configure(config LogConfig) *Logger {
 	if config.ConsoleLoggingEnabled {
 		writers = append(writers, zerolog.ConsoleWriter{
 			Out:        os.Stderr,
+			NoColor:    true,
 			TimeFormat: time.RFC3339,
 		})
 	}

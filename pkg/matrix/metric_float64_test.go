@@ -125,3 +125,15 @@ func matrixTest(t *testing.T, tt test, cur *Matrix, skips int, err error) {
 		t.Errorf("passes expected = %t, got %t", tt.passes, passes)
 	}
 }
+
+func TestMetricReset(t *testing.T) {
+	m := New("Test", "test", "test")
+	_, _ = m.NewInstance("task1")
+	_, _ = m.NewMetricInt64("poll_time")
+	_ = m.LazySetValueInt64("poll_time", "task1", 10)
+	m.ResetInstance("task1")
+	_, pass, _ := m.LazyGetValueInt64("poll_time", "task1")
+	if pass {
+		t.Errorf("expected metric to be skipped but passed")
+	}
+}
