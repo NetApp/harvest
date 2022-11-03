@@ -23,7 +23,6 @@ type Volume struct {
 	pluginInvocationRate int
 	currentVal           int
 	client               *zapi.Client
-	query                string
 	aggrsMap             map[string]string // aggregate-uuid -> aggregate-name map
 }
 
