@@ -10,7 +10,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -20,15 +19,11 @@ const DefaultDataPollDuration = 3 * time.Minute
 
 type Volume struct {
 	*plugin.AbstractPlugin
-	data                 *matrix.Matrix
 	batchSize            string
 	pluginInvocationRate int
 	currentVal           int
 	client               *zapi.Client
 	query                string
-	outgoingSM           map[string][]string
-	incomingSM           map[string]string
-	isHealthySM          map[string]bool
 	aggrsMap             map[string]string // aggregate-uuid -> aggregate-name map
 }
 
@@ -58,12 +53,6 @@ func (my *Volume) Init() error {
 		return err
 	}
 
-	my.query = "snapmirror-get-iter"
-	my.data = matrix.New(my.Parent+".Volume", "volume", "volume")
-
-	my.outgoingSM = make(map[string][]string)
-	my.incomingSM = make(map[string]string)
-	my.isHealthySM = make(map[string]bool)
 	my.aggrsMap = make(map[string]string)
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
@@ -87,23 +76,8 @@ func (my *Volume) Init() error {
 
 func (my *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
-	// Purge and reset data
-	my.data.PurgeInstances()
-	my.data.Reset()
-
-	// Set all global labels from zapi.go if already not exist
-	my.data.SetGlobalLabels(data.GetGlobalLabels())
-
 	if my.currentVal >= my.pluginInvocationRate {
 		my.currentVal = 0
-
-		// invoke snapmirror zapi and populate info in source and destination snapmirror maps
-		if smSourceMap, smDestinationMap, err := my.GetSnapMirrors(); err != nil {
-			my.Logger.Warn().Err(err).Msg("Failed to collect snapmirror data")
-		} else {
-			// update internal cache based on volume and SM maps
-			my.updateMaps(data, smSourceMap, smDestinationMap)
-		}
 
 		// invoke disk-encrypt-get-iter zapi and populate disk info
 		disks, err1 := my.getEncryptedDisks()
@@ -135,181 +109,9 @@ func (my *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	return nil, nil
 }
 
-func (my *Volume) GetSnapMirrors() (map[string][]*matrix.Instance, map[string]*matrix.Instance, error) {
-	var (
-		request *node.Node
-		result  []*node.Node
-		tag     string
-		err     error
-	)
-
-	smSourceMap := make(map[string][]*matrix.Instance)
-	smDestinationMap := make(map[string]*matrix.Instance)
-
-	request = node.NewXMLS(my.query)
-	if my.client.IsClustered() && my.batchSize != "" {
-		request.NewChildS("max-records", my.batchSize)
-	}
-
-	tag = "initial"
-	snapmirrorData := matrix.New(my.Parent+".SnapMirror", "sm", "sm")
-
-	for {
-		if result, tag, err = collectors.InvokeZapiCall(my.client, request, my.Logger, tag); err != nil {
-			return nil, nil, err
-		}
-
-		if len(result) == 0 || result == nil {
-			break
-		}
-
-		for _, snapMirror := range result {
-			var instanceKey string
-			relationshipID := snapMirror.GetChildContentS("relationship-id")
-			groupType := snapMirror.GetChildContentS("relationship-group-type")
-			destinationVolume := snapMirror.GetChildContentS("destination-volume")
-			sourceVolume := snapMirror.GetChildContentS("source-volume")
-			destinationLocation := snapMirror.GetChildContentS("destination-location")
-			relationshipType := snapMirror.GetChildContentS("relationship-type")
-			isHealthy := snapMirror.GetChildContentS("is-healthy")
-			sourceSvm := snapMirror.GetChildContentS("source-vserver")
-			destinationSvm := snapMirror.GetChildContentS("destination-vserver")
-
-			if instanceKey = relationshipID; instanceKey == "" {
-				my.Logger.Trace().Msg("Instance key is empty, skipping")
-				continue
-			}
-
-			instance, err := snapmirrorData.NewInstance(instanceKey)
-
-			if err != nil {
-				my.Logger.Error().Err(err).Stack().Str("relationshipID", relationshipID).Msg("Failed to create snapmirror cache instance")
-				return nil, nil, err
-			}
-
-			instance.SetLabel("relationship_id", relationshipID)
-			instance.SetLabel("group_type", groupType)
-			instance.SetLabel("destination_volume", destinationVolume)
-			instance.SetLabel("source_volume", sourceVolume)
-			instance.SetLabel("destination_location", destinationLocation)
-			instance.SetLabel("relationship_type", relationshipType)
-			instance.SetLabel("is_healthy", isHealthy)
-			instance.SetLabel("source_svm", sourceSvm)
-			instance.SetLabel("destination_svm", destinationSvm)
-
-			// Update the protectedBy and protectionSourceType fields in snapmirror
-			collectors.UpdateProtectedFields(instance)
-
-			// Update source snapmirror and destination snapmirror info in maps
-			if relationshipType == "data_protection" || relationshipType == "extended_data_protection" || relationshipType == "vault" {
-				sourceKey := sourceVolume + "-" + sourceSvm
-				destinationKey := destinationVolume + "-" + destinationSvm
-				if instance.GetLabel("protectionSourceType") == "volume" {
-					smSourceMap[sourceKey] = append(smSourceMap[sourceKey], instance)
-				}
-				smDestinationMap[destinationKey] = instance
-			}
-		}
-
-		// To break the batch zapi call when all the records were fetched.
-		if tag == "" {
-			break
-		}
-	}
-
-	return smSourceMap, smDestinationMap, nil
-}
-
-func (my *Volume) updateMaps(data *matrix.Matrix, smSourceMap map[string][]*matrix.Instance, smDestinationMap map[string]*matrix.Instance) {
-	// Clean all the snapmirror maps
-	my.outgoingSM = make(map[string][]string)
-	my.incomingSM = make(map[string]string)
-	my.isHealthySM = make(map[string]bool)
-
-	for _, volume := range data.GetInstances() {
-		volumeName := volume.GetLabel("volume")
-		svmName := volume.GetLabel("svm")
-		volumeType := volume.GetLabel("type")
-		key := volumeName + "-" + svmName
-
-		protectedByMap := make(map[string]string)
-		var protectedByValue []string
-		healthStatus := true
-		for _, smRelationship := range smSourceMap[key] {
-			/* Example: If 3 relationships belongs to a volume, and out of 3, 2 are at snapmirror and one is svmdr,
-			   So, protectedByMap map has 2 records, and outgoingSM map value would be snapmirror, svmdr
-			*/
-			protectedByMap[smRelationship.GetLabel("protectedBy")] = ""
-
-			// Update isHealthySM map based on the source snapmirror info
-			if volumeType == "rw" {
-				/* Example: If 3 relationships belongs to a volume, and out of 3, 2 are healthy and one is not,
-				   So, isHealthySM map value would be unhealthy - false
-				*/
-				currentVal, _ := strconv.ParseBool(smRelationship.GetLabel("is_healthy"))
-				healthStatus = healthStatus && currentVal
-				my.isHealthySM[key] = healthStatus
-			}
-		}
-
-		// Update outgoingSM map based on the protectedByMap
-		protectedByValue = nil
-		for protectedByKey := range protectedByMap {
-			protectedByValue = append(protectedByValue, protectedByKey)
-		}
-		if protectedByValue != nil {
-			my.outgoingSM[key] = protectedByValue
-		}
-
-		// Update incomingSM map based on the destination snapmirror info
-		if smDestinationMap[key] != nil {
-			my.incomingSM[key] = "destination"
-		}
-	}
-}
-
 func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
 	for _, volume := range data.GetInstances() {
-		volumeName := volume.GetLabel("volume")
-		svmName := volume.GetLabel("svm")
-		volumeType := volume.GetLabel("type")
 		aggrUUID := volume.GetLabel("aggrUuid")
-		key := volumeName + "-" + svmName
-
-		// Update protectionRole label in volume
-		if volumeType == "rw" && my.incomingSM[key] == "" && my.outgoingSM[key] == nil {
-			volume.SetLabel("protectionRole", "unprotected")
-		} else if volumeType == "rw" && my.outgoingSM[key] != nil {
-			volume.SetLabel("protectionRole", "protected")
-		} else if volumeType == "dp" || (volumeType == "rw" && my.incomingSM[key] != "") {
-			volume.SetLabel("protectionRole", "destination")
-		} else {
-			volume.SetLabel("protectionRole", "not_applicable")
-		}
-
-		// Update protectedBy label in volume
-		if outgoing, ok := my.outgoingSM[key]; ok {
-			outgoingJoinStr := strings.Join(outgoing, ",")
-			if outgoingJoinStr == "volume,storage_vm" || outgoingJoinStr == "storage_vm,volume" {
-				volume.SetLabel("protectedBy", "svmdr_and_snapmirror")
-			} else if outgoingJoinStr == "cg,volume" || outgoingJoinStr == "volume,cg" {
-				volume.SetLabel("protectedBy", "cg_and_snapmirror")
-			} else if outgoingJoinStr == "cg" {
-				volume.SetLabel("protectedBy", "consistency_group")
-			} else if outgoingJoinStr == "storage_vm" {
-				volume.SetLabel("protectedBy", "storage_vm_dr")
-			} else if outgoingJoinStr == "volume" {
-				volume.SetLabel("protectedBy", "snapmirror")
-			}
-		} else {
-			volume.SetLabel("protectedBy", "not_applicable")
-		}
-
-		// Update all_sm_healthy label in volume, when all relationships belong to this volume are healthy then true, otherwise false
-		if healthy, ok := my.isHealthySM[key]; ok {
-			volume.SetLabel("all_sm_healthy", strconv.FormatBool(healthy))
-		}
-
 		_, exist := my.aggrsMap[aggrUUID]
 		volume.SetLabel("isHardwareEncrypted", strconv.FormatBool(exist))
 	}
