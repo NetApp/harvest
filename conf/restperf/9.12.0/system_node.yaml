@@ -17,7 +17,7 @@ counters:
   - nfs_ops
   - iscsi_ops
   - fcp_ops
-  - nvme_fc_ops                        => nvme_fc_ops          #deprecated counter in zapi nvmf_ops
+  - nvme_fc_ops                        => nvmf_ops
   - disk_data_read
   - disk_data_written
   - hdd_data_read
@@ -28,8 +28,8 @@ counters:
   - network_data_sent                  => net_data_sent
   - fcp_data_received                  => fcp_data_recv
   - fcp_data_sent
-  - nvme_fc_data_received              => nvme_fc_data_recv   #deprecated counter in zapi nvmf_data_recv
-  - nvme_fc_data_sent                  => nvme_fc_data_sent   #deprecated counter in zapi nvmf_data_sent
+  - nvme_fc_data_received              => nvmf_data_recv
+  - nvme_fc_data_sent                  => nvmf_data_sent
 
 export_options:
   instance_keys:
