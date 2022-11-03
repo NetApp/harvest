@@ -212,7 +212,7 @@
           "refId": "A"
         }
       ],
-      "title": "SVM Throughput (Data)",
+      "title": "SVM Throughput",
       "type": "stat"
     },
     {
@@ -270,7 +270,7 @@
           "refId": "A"
         }
       ],
-      "title": "SVM Throughput (IOPs)",
+      "title": "SVM IOPs",
       "type": "stat"
     },
     {
@@ -460,7 +460,7 @@
           "refId": "A"
         }
       ],
-      "title": "SVM Read Throughput (Data)",
+      "title": "SVM Read Throughput",
       "type": "stat"
     },
     {
@@ -518,7 +518,7 @@
           "refId": "A"
         }
       ],
-      "title": "SVM Write Throughput (Data)",
+      "title": "SVM Write Throughput",
       "type": "stat"
     },
     {
@@ -576,7 +576,7 @@
           "refId": "A"
         }
       ],
-      "title": "SVM Read Throughput (IOPs)",
+      "title": "SVM Read IOPs",
       "type": "stat"
     },
     {
@@ -634,7 +634,7 @@
           "refId": "A"
         }
       ],
-      "title": "SVM Write Throughput (IOPs)",
+      "title": "SVM Write IOPs",
       "type": "stat"
     },
     {
@@ -830,7 +830,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "SVM Throughput (Data)",
+      "title": "SVM Throughput",
       "type": "timeseries"
     },
     {
@@ -932,7 +932,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "SVM Throughput (IOPs)",
+      "title": "SVM IOPs",
       "type": "timeseries"
     },
     {
@@ -1122,7 +1122,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Volume Read Throughput (Data)",
+          "title": "Volume Read Throughput",
           "type": "timeseries"
         },
         {
@@ -1211,7 +1211,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Volume Read Throughput (IOPs)",
+          "title": "Volume Read IOPs",
           "type": "timeseries"
         },
         {
@@ -1389,7 +1389,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Volume Write Throughput (Data)",
+          "title": "Volume Write Throughput",
           "type": "timeseries"
         },
         {
@@ -1478,7 +1478,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Volume Write Throughput (IOPs)",
+          "title": "Volume Write IOPs",
           "type": "timeseries"
         }
       ],
@@ -1586,7 +1586,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "NAS LIF Send Throughput (Data)",
+      "title": "NAS LIF Send Throughput",
       "type": "timeseries"
     },
     {
@@ -1676,7 +1676,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "NAS LIF Receive Throughput (Data)",
+      "title": "NAS LIF Receive Throughput",
       "type": "timeseries"
     },
     {
@@ -1729,7 +1729,7 @@
               }
             ]
           },
-          "unit": "Bps"
+          "unit": "binBps"
         },
         "overrides": []
       },
@@ -1766,7 +1766,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "NVMe/FC LIF Send Throughput (Data)",
+      "title": "NVMe/FC LIF Send Throughput",
       "type": "timeseries"
     },
     {
@@ -1819,7 +1819,7 @@
               }
             ]
           },
-          "unit": "Bps"
+          "unit": "binBps"
         },
         "overrides": []
       },
@@ -1856,7 +1856,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "NVMe/FC LIF Receive Throughput (Data)",
+      "title": "NVMe/FC LIF Receive Throughput",
       "type": "timeseries"
     },
     {
@@ -1946,7 +1946,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "iSCSI LIF Send Throughput (Data)",
+      "title": "iSCSI LIF Send Throughput",
       "type": "timeseries"
     },
     {
@@ -2036,7 +2036,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "iSCSI LIF Receive Throughput (Data)",
+      "title": "iSCSI LIF Receive Throughput",
       "type": "timeseries"
     },
     {
@@ -2171,7 +2171,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM CIFS Throughput (IOPs)",
+          "title": "SVM CIFS IOPs",
           "type": "stat"
         },
         {
@@ -2226,7 +2226,7 @@
                   }
                 ]
               },
-              "unit": "none"
+              "unit": "locale"
             },
             "overrides": []
           },
@@ -2461,7 +2461,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM CIFS Read Throughput (IOPs)",
+          "title": "SVM CIFS Read IOPs",
           "type": "stat"
         },
         {
@@ -2519,7 +2519,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM CIFS Write Throughput (IOPs)",
+          "title": "SVM CIFS Write IOPs",
           "type": "stat"
         },
         {
@@ -2725,7 +2725,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "SVM CIFS Throughput (IOPs)",
+          "title": "SVM CIFS IOPs",
           "type": "timeseries"
         },
         {
@@ -2959,7 +2959,8 @@
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unit": "ops"
             },
             "overrides": []
           },
@@ -3051,7 +3052,8 @@
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unit": "locale"
             },
             "overrides": []
           },
@@ -3184,7 +3186,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "binBps"
             },
             "overrides": []
           },
@@ -3220,7 +3222,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM FCP Throughput (Data)",
+          "title": "SVM FCP Throughput",
           "type": "stat"
         },
         {
@@ -3278,7 +3280,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM FCP Throughput (IOPs)",
+          "title": "SVM FCP IOPs",
           "type": "stat"
         },
         {
@@ -3432,7 +3434,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "binBps"
             },
             "overrides": []
           },
@@ -3468,7 +3470,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM FCP Read Throughput (Data)",
+          "title": "SVM FCP Read Throughput",
           "type": "stat"
         },
         {
@@ -3490,7 +3492,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "binBps"
             },
             "overrides": []
           },
@@ -3526,7 +3528,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM FCP Write Throughput (Data)",
+          "title": "SVM FCP Write Throughput",
           "type": "stat"
         },
         {
@@ -3584,7 +3586,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM FCP Read Throughput (IOPs)",
+          "title": "SVM FCP Read IOPs",
           "type": "stat"
         },
         {
@@ -3642,7 +3644,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM FCP Write Throughput (IOPs)",
+          "title": "SVM FCP Write IOPs",
           "type": "stat"
         },
         {
@@ -3810,7 +3812,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "binBps"
             },
             "overrides": []
           },
@@ -3855,7 +3857,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "SVM FCP Throughput (Data)",
+          "title": "SVM FCP Throughput",
           "type": "timeseries"
         },
         {
@@ -3962,7 +3964,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "SVM FCP Throughput (IOPs)",
+          "title": "SVM FCP IOPs",
           "type": "timeseries"
         },
         {
@@ -4015,7 +4017,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "binBps"
             },
             "overrides": []
           },
@@ -4052,7 +4054,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "FCP LIF Send Throughput (Data)",
+          "title": "FCP LIF Send Throughput",
           "type": "timeseries"
         },
         {
@@ -4105,7 +4107,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "binBps"
             },
             "overrides": []
           },
@@ -4142,7 +4144,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "FCP LIF Receive Throughput (Data)",
+          "title": "FCP LIF Receive Throughput",
           "type": "timeseries"
         }
       ],
@@ -4281,7 +4283,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM iSCSI Throughput (Data)",
+          "title": "SVM iSCSI Throughput",
           "type": "stat"
         },
         {
@@ -4339,7 +4341,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM iSCSI Throughput (IOPs)",
+          "title": "SVM iSCSI IOPs",
           "type": "stat"
         },
         {
@@ -4435,7 +4437,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -4529,7 +4531,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM iSCSI Read Throughput (Data)",
+          "title": "SVM iSCSI Read Throughput",
           "type": "stat"
         },
         {
@@ -4587,7 +4589,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM iSCSI Write Throughput (Data)",
+          "title": "SVM iSCSI Write Throughput",
           "type": "stat"
         },
         {
@@ -4645,7 +4647,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM iSCSI Read Throughput (IOPs)",
+          "title": "SVM iSCSI Read IOPs",
           "type": "stat"
         },
         {
@@ -4703,7 +4705,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM iSCSI Write Throughput (IOPs)",
+          "title": "SVM iSCSI Write IOPs",
           "type": "stat"
         },
         {
@@ -4793,7 +4795,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "iSCSI LIF Send Throughput (Data)",
+          "title": "iSCSI LIF Send Throughput",
           "type": "timeseries"
         },
         {
@@ -4883,7 +4885,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "iSCSI LIF Receive Throughput (Data)",
+          "title": "iSCSI LIF Receive Throughput",
           "type": "timeseries"
         },
         {
@@ -5089,7 +5091,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "SVM iSCSI Throughput (Data)",
+          "title": "SVM iSCSI Throughput",
           "type": "timeseries"
         }
       ],
@@ -5207,7 +5209,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "ops"
             },
             "overrides": []
           },
@@ -5247,7 +5249,7 @@
               "refId": "A"
             }
           ],
-          "title": "NFSv3 Throughput (Data)",
+          "title": "NFSv3 Throughput",
           "transformations": [
             {
               "id": "reduce",
@@ -5346,7 +5348,7 @@
               "refId": "Total Ops"
             }
           ],
-          "title": "NFSv3 Throughput (IOPs)",
+          "title": "NFSv3 IOPs",
           "transformations": [
             {
               "id": "reduce",
@@ -5535,7 +5537,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "ops"
             },
             "overrides": []
           },
@@ -5575,7 +5577,7 @@
               "refId": "A"
             }
           ],
-          "title": "NFSv3  Read Throughput (Data)",
+          "title": "NFSv3 Read Throughput",
           "transformations": [
             {
               "id": "reduce",
@@ -5634,7 +5636,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "ops"
             },
             "overrides": []
           },
@@ -5674,7 +5676,7 @@
               "refId": "A"
             }
           ],
-          "title": "NFSv3  Write Throughput (Data)",
+          "title": "NFSv3 Write Throughput",
           "transformations": [
             {
               "id": "reduce",
@@ -5773,7 +5775,7 @@
               "refId": "Total Ops"
             }
           ],
-          "title": "NFSv3 Read Throughput (IOPs)",
+          "title": "NFSv3 Read IOPs",
           "transformations": [
             {
               "id": "reduce",
@@ -5872,7 +5874,7 @@
               "refId": "Total Ops"
             }
           ],
-          "title": "NFSv3 Write Throughput (IOPs)",
+          "title": "NFSv3 Write IOPs",
           "transformations": [
             {
               "id": "reduce",
@@ -6029,7 +6031,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "ops"
             },
             "overrides": []
           },
@@ -6476,7 +6478,7 @@
                   }
                 ]
               },
-              "unit": "KBs"
+              "unit": "ops"
             },
             "overrides": []
           },
@@ -6516,7 +6518,7 @@
               "refId": "A"
             }
           ],
-          "title": "NFSv4 Throughput (Data)",
+          "title": "NFSv4 Throughput",
           "transformations": [
             {
               "id": "reduce",
@@ -6615,7 +6617,7 @@
               "refId": "Total Ops"
             }
           ],
-          "title": "NFSv4 Throughput (IOPs)",
+          "title": "NFSv4 IOPs",
           "transformations": [
             {
               "id": "reduce",
@@ -6804,7 +6806,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "ops"
             },
             "overrides": []
           },
@@ -6844,7 +6846,7 @@
               "refId": "A"
             }
           ],
-          "title": "NFSv4 Read Throughput (Data)",
+          "title": "NFSv4 Read Throughput",
           "transformations": [
             {
               "id": "reduce",
@@ -6903,7 +6905,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "ops"
             },
             "overrides": []
           },
@@ -6943,7 +6945,7 @@
               "refId": "A"
             }
           ],
-          "title": "NFSv4 Write Throughput (Data)",
+          "title": "NFSv4 Write Throughput",
           "transformations": [
             {
               "id": "reduce",
@@ -7042,7 +7044,7 @@
               "refId": "Total Ops"
             }
           ],
-          "title": "NFSv4 Read Throughput (IOPs)",
+          "title": "NFSv4 Read IOPs",
           "transformations": [
             {
               "id": "reduce",
@@ -7141,7 +7143,7 @@
               "refId": "Total Ops"
             }
           ],
-          "title": "NFSv4 Write Throughput (IOPs)",
+          "title": "NFSv4 Write IOPs",
           "transformations": [
             {
               "id": "reduce",
@@ -7310,7 +7312,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "ops"
             },
             "overrides": []
           },
@@ -7352,7 +7354,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "NFSv4 Throughput (Data)",
+          "title": "NFSv4 Throughput",
           "type": "timeseries"
         },
         {
@@ -7764,7 +7766,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "ops"
             },
             "overrides": []
           },
@@ -7804,7 +7806,7 @@
               "refId": "A"
             }
           ],
-          "title": "NFSv4 .1 Throughput (Data)",
+          "title": "NFSv4.1 Throughput",
           "transformations": [
             {
               "id": "reduce",
@@ -7903,7 +7905,7 @@
               "refId": "Total Ops"
             }
           ],
-          "title": "NFSv4.1 Throughput (IOPs)",
+          "title": "NFSv4.1 IOPs",
           "transformations": [
             {
               "id": "reduce",
@@ -8092,7 +8094,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "ops"
             },
             "overrides": []
           },
@@ -8132,7 +8134,7 @@
               "refId": "A"
             }
           ],
-          "title": "NFSv4 .1 Read Throughput (Data)",
+          "title": " NFSv4.1 Read Throughput",
           "transformations": [
             {
               "id": "reduce",
@@ -8191,7 +8193,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "ops"
             },
             "overrides": []
           },
@@ -8231,7 +8233,7 @@
               "refId": "A"
             }
           ],
-          "title": "NFSv4 .1 Write Throughput (Data)",
+          "title": " NFSv4.1 Write Throughput",
           "transformations": [
             {
               "id": "reduce",
@@ -8330,7 +8332,7 @@
               "refId": "Total Ops"
             }
           ],
-          "title": "NFSv4.1 Read Throughput (IOPs)",
+          "title": "NFSv4.1 Read IOPs",
           "transformations": [
             {
               "id": "reduce",
@@ -8429,7 +8431,7 @@
               "refId": "Total Ops"
             }
           ],
-          "title": "NFSv4.1 Write Throughput (IOPs)",
+          "title": "NFSv4.1 Write IOPs",
           "transformations": [
             {
               "id": "reduce",
@@ -8598,7 +8600,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "ops"
             },
             "overrides": []
           },
@@ -8640,7 +8642,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "NFSv4.1 Throughput (Data)",
+          "title": "NFSv4.1 Throughput)",
           "type": "timeseries"
         },
         {
@@ -9045,7 +9047,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "binBps"
             },
             "overrides": []
           },
@@ -9081,7 +9083,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM NVMe/FC Throughput (Data)",
+          "title": "SVM NVMe/FC Throughput",
           "type": "stat"
         },
         {
@@ -9139,7 +9141,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM NVMe/FC Throughput (IOPs)",
+          "title": "SVM NVMe/FC IOPs",
           "type": "stat"
         },
         {
@@ -9293,7 +9295,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "binBps"
             },
             "overrides": []
           },
@@ -9329,7 +9331,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM FCP Read Throughput (Data)",
+          "title": "SVM FCP Read Throughput",
           "type": "stat"
         },
         {
@@ -9351,7 +9353,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "binBps"
             },
             "overrides": []
           },
@@ -9387,7 +9389,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM FCP Write Throughput (Data)",
+          "title": "SVM FCP Write Throughput",
           "type": "stat"
         },
         {
@@ -9445,7 +9447,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM FCP Read Throughput (IOPs)",
+          "title": "SVM FCP Read IOPs",
           "type": "stat"
         },
         {
@@ -9503,7 +9505,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM FCP Write Throughput (IOPs)",
+          "title": "SVM FCP Write IOPs",
           "type": "stat"
         },
         {
@@ -9672,7 +9674,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "binBps"
             },
             "overrides": []
           },
@@ -9717,7 +9719,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "SVM NVMe/FC Throughput (Data)",
+          "title": "SVM NVMe/FC Throughput",
           "type": "timeseries"
         },
         {
@@ -9824,7 +9826,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "SVM NVMe/FC Throughput (IOPs)",
+          "title": "SVM NVMe/FC IOPs",
           "type": "timeseries"
         },
         {
@@ -9877,7 +9879,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "binBps"
             },
             "overrides": []
           },
@@ -9914,7 +9916,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "SVM NVMe/FC LIF Send Throughput (Data)",
+          "title": "SVM NVMe/FC LIF Send Throughput",
           "type": "timeseries"
         },
         {
@@ -9967,7 +9969,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "binBps"
             },
             "overrides": []
           },
@@ -10004,7 +10006,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "SVM NVMe/FC LIF Receive Throughput (Data)",
+          "title": "SVM NVMe/FC LIF Receive Throughput",
           "type": "timeseries"
         }
       ],
@@ -10389,7 +10391,7 @@
               "refId": "A"
             }
           ],
-          "title": "QoS Throughput (Data)",
+          "title": "QoS Throughput",
           "type": "stat"
         },
         {
@@ -10446,7 +10448,7 @@
               "refId": "A"
             }
           ],
-          "title": "QoS Throughput (IOPs)",
+          "title": "QoS IOPs",
           "type": "stat"
         },
         {
@@ -10630,7 +10632,7 @@
               "refId": "A"
             }
           ],
-          "title": "QoS Read Throughput (Data)",
+          "title": "QoS Read Throughput",
           "type": "stat"
         },
         {
@@ -10686,7 +10688,7 @@
               "refId": "A"
             }
           ],
-          "title": "QoS Write Throughput (Data)",
+          "title": "QoS Write Throughput",
           "type": "stat"
         },
         {
@@ -10743,7 +10745,7 @@
               "refId": "A"
             }
           ],
-          "title": "QoS Read Throughput (IOPs)",
+          "title": "QoS Read IOPs",
           "type": "stat"
         },
         {
@@ -10800,7 +10802,7 @@
               "refId": "A"
             }
           ],
-          "title": "QoS Write Throughput (IOPs)",
+          "title": "QoS Write IOPs",
           "type": "stat"
         },
         {
@@ -10986,7 +10988,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "QoS Throughput (Data)",
+          "title": "QoS Throughput",
           "type": "timeseries"
         },
         {
@@ -11080,7 +11082,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "QoS Throughput (IOPs)",
+          "title": "QoS IOPs",
           "type": "timeseries"
         },
         {

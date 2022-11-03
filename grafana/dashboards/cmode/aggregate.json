@@ -280,7 +280,7 @@
               }
             ]
           },
-          "unit": "short"
+          "unit": "locale"
         },
         "overrides": []
       },
@@ -590,6 +590,10 @@
               {
                 "id": "displayName",
                 "value": "volumes"
+              },
+              {
+                "id": "unit",
+                "value": "locale"
               }
             ]
           },
@@ -602,6 +606,10 @@
               {
                 "id": "displayName",
                 "value": "disks"
+              },
+              {
+                "id": "unit",
+                "value": "short"
               }
             ]
           },
@@ -617,7 +625,7 @@
               },
               {
                 "id": "unit",
-                "value": "decbytes"
+                "value": "bytes"
               }
             ]
           },
@@ -633,7 +641,7 @@
               },
               {
                 "id": "unit",
-                "value": "decbytes"
+                "value": "bytes"
               }
             ]
           },
@@ -2369,7 +2377,8 @@
                 "value": null
               }
             ]
-          }
+          },
+          "unit": "short"
         },
         "overrides": []
       },

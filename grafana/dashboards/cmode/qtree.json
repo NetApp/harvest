@@ -590,7 +590,7 @@
                   }
                 ]
               },
-              "unit": "kbytes"
+              "unit": "locale"
             },
             "overrides": []
           },

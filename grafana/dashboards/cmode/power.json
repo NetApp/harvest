@@ -511,7 +511,7 @@
               }
             ]
           },
-          "unit": "kwatt"
+          "unit": "watt"
         },
         "overrides": [
           {
@@ -1048,6 +1048,10 @@
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "celsius"
               }
             ]
           },
@@ -1092,6 +1096,10 @@
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "celsius"
               }
             ]
           },
@@ -1136,6 +1144,10 @@
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "celsius"
               }
             ]
           },
@@ -1180,6 +1192,10 @@
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "rotrpm"
               }
             ]
           },
@@ -1224,6 +1240,10 @@
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "rotrpm"
               }
             ]
           },
@@ -1268,6 +1288,10 @@
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "rotrpm"
               }
             ]
           },
@@ -1328,6 +1352,10 @@
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "celsius"
               }
             ]
           },
@@ -1372,6 +1400,10 @@
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "celsius"
               }
             ]
           }
@@ -1616,6 +1648,10 @@
               {
                 "id": "custom.displayMode",
                 "value": "color-text"
+              },
+              {
+                "id": "unit",
+                "value": "locale"
               }
             ]
           },
@@ -1727,6 +1763,10 @@
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "celsius"
               }
             ]
           },
@@ -1771,6 +1811,10 @@
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "celsius"
               }
             ]
           },
@@ -1815,6 +1859,10 @@
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "celsius"
               }
             ]
           },
@@ -1859,6 +1907,10 @@
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "rotrpm"
               }
             ]
           },
@@ -1903,6 +1955,10 @@
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "rotrpm"
               }
             ]
           },
@@ -1947,6 +2003,10 @@
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "rotrpm"
               }
             ]
           },
@@ -2007,6 +2067,10 @@
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "celsius"
               }
             ]
           },
@@ -2051,6 +2115,10 @@
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "celsius"
               }
             ]
           }

@@ -205,7 +205,7 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "locale"
         },
         "overrides": []
       },
@@ -3500,7 +3500,7 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "locale"
         },
         "overrides": []
       },
@@ -4003,7 +4003,7 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "locale"
         },
         "overrides": []
       },

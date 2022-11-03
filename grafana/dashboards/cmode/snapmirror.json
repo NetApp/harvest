@@ -3163,6 +3163,10 @@
               {
                 "id": "custom.width",
                 "value": 180
+              },
+              {
+                "id": "unit",
+                "value": "s"
               }
             ]
           }

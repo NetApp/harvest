@@ -587,7 +587,7 @@
               }
             ]
           },
-          "unit": "short"
+          "unit": "locale"
         },
         "overrides": []
       },
@@ -675,6 +675,10 @@
               {
                 "id": "custom.displayMode",
                 "value": "color-text"
+              },
+              {
+                "id": "unit",
+                "value": "locale"
               }
             ]
           },
@@ -786,6 +790,10 @@
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "celsius"
               }
             ]
           },
@@ -830,6 +838,10 @@
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "celsius"
               }
             ]
           },
@@ -874,6 +886,10 @@
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "celsius"
               }
             ]
           },
@@ -918,6 +934,10 @@
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "rotrpm"
               }
             ]
           },
@@ -962,6 +982,10 @@
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "rotrpm"
               }
             ]
           },
@@ -1006,6 +1030,10 @@
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "rotrpm"
               }
             ]
           },
@@ -1066,6 +1094,10 @@
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "celsius"
               }
             ]
           },
@@ -1110,6 +1142,10 @@
               {
                 "id": "custom.align",
                 "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "celsius"
               }
             ]
           }
@@ -1631,7 +1667,7 @@
               }
             ]
           },
-          "unit": "RPM"
+          "unit": "rotrpm"
         },
         "overrides": []
       },
@@ -1925,7 +1961,8 @@
                 "value": 6000
               }
             ]
-          }
+          },
+          "unit": "locale"
         },
         "overrides": []
       },
