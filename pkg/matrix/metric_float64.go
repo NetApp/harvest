@@ -45,21 +45,25 @@ func (m *MetricFloat64) Remove(key string) {
 // Write methods
 
 func (m *MetricFloat64) SetValueInt64(i *Instance, v int64) error {
+	delete(m.skip, i.key)
 	m.values[i.key] = float64(v)
 	return nil
 }
 
 func (m *MetricFloat64) SetValueUint8(i *Instance, v uint8) error {
+	delete(m.skip, i.key)
 	m.values[i.key] = float64(v)
 	return nil
 }
 
 func (m *MetricFloat64) SetValueUint64(i *Instance, v uint64) error {
+	delete(m.skip, i.key)
 	m.values[i.key] = float64(v)
 	return nil
 }
 
 func (m *MetricFloat64) SetValueFloat64(i *Instance, v float64) error {
+	delete(m.skip, i.key)
 	m.values[i.key] = v
 	return nil
 }
@@ -68,6 +72,7 @@ func (m *MetricFloat64) SetValueString(i *Instance, v string) error {
 	var x float64
 	var err error
 	if x, err = strconv.ParseFloat(v, 64); err == nil {
+		delete(m.skip, i.key)
 		m.values[i.key] = x
 		return nil
 	}
@@ -168,10 +173,10 @@ func (m *MetricFloat64) Delta(s Metric, logger *logging.Logger) (int, error) {
 	prevRaw := s.GetValuesFloat64()
 	prevSkips := s.GetSkips()
 
-	for k := range m.values {
+	for k, v := range m.values {
 
 		if !m.skip[k] && !prevSkips[k] {
-			curRaw := m.values[k]
+			curRaw := v
 			m.values[k] -= prevRaw[k]
 			// Sometimes ONTAP sends spurious zeroes or values less than the previous poll.
 			// Detect and don't publish negative deltas or the subsequent poll will show a large spike.
@@ -205,12 +210,12 @@ func (m *MetricFloat64) Divide(s Metric, logger *logging.Logger) (int, error) {
 	sValues := s.GetValuesFloat64()
 	sSkip := s.GetSkips()
 
-	for k := range m.values {
+	for k, v := range m.values {
 		if !m.skip[k] && !sSkip[k] {
 			if sValues[k] != 0 {
 				// Don't pass along the value if the numerator or denominator is < 0
 				// A denominator of zero is fine
-				if m.values[k] < 0 || sValues[k] < 0 {
+				if v < 0 || sValues[k] < 0 {
 					m.skip[k] = true
 					skips++
 					logger.Trace().
@@ -242,12 +247,11 @@ func (m *MetricFloat64) DivideWithThreshold(s Metric, t int, logger *logging.Log
 	sValues := s.GetValuesFloat64()
 	sSkip := s.GetSkips()
 
-	for k := range m.values {
+	for k, v := range m.values {
 		if !m.skip[k] && !sSkip[k] {
-			v := m.values[k]
 			// Don't pass along the value if the numerator or denominator is < 0
 			// It's important to check sValues[i] < 0 and allow a zero so pass=true and m.values[i] remains unchanged
-			if m.values[k] < 0 || sValues[k] < 0 {
+			if v < 0 || sValues[k] < 0 {
 				m.skip[k] = true
 				skips++
 				logger.Trace().
@@ -277,15 +281,15 @@ func (m *MetricFloat64) DivideWithThreshold(s Metric, t int, logger *logging.Log
 func (m *MetricFloat64) MultiplyByScalar(s uint, logger *logging.Logger) (int, error) {
 	var skips int
 	x := float64(s)
-	for k := range m.values {
+	for k, v := range m.values {
 		if !m.skip[k] {
 			// if current is <= 0
-			if m.values[k] < 0 {
+			if v < 0 {
 				m.skip[k] = true
 				skips++
 				logger.Trace().
 					Str("metric", m.GetName()).
-					Float64("currentRaw", m.values[k]).
+					Float64("currentRaw", v).
 					Uint("scalar", s).
 					Msg("Negative value")
 			}

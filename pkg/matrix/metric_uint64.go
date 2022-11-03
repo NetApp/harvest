@@ -43,10 +43,10 @@ func (m *MetricUint64) Remove(key string) {
 	delete(m.values, key)
 }
 
-// Write methods
-
+// SetValueInt64 Write methods
 func (m *MetricUint64) SetValueInt64(i *Instance, v int64) error {
 	if v >= 0 {
+		delete(m.skip, i.key)
 		m.values[i.key] = uint64(v)
 		return nil
 	}
@@ -55,17 +55,20 @@ func (m *MetricUint64) SetValueInt64(i *Instance, v int64) error {
 }
 
 func (m *MetricUint64) SetValueUint8(i *Instance, v uint8) error {
+	delete(m.skip, i.key)
 	m.values[i.key] = uint64(v)
 	return nil
 }
 
 func (m *MetricUint64) SetValueUint64(i *Instance, v uint64) error {
+	delete(m.skip, i.key)
 	m.values[i.key] = v
 	return nil
 }
 
 func (m *MetricUint64) SetValueFloat64(i *Instance, v float64) error {
 	if v >= 0 {
+		delete(m.skip, i.key)
 		m.values[i.key] = uint64(v)
 		return nil
 	}
@@ -77,6 +80,7 @@ func (m *MetricUint64) SetValueString(i *Instance, v string) error {
 	var x uint64
 	var err error
 	if x, err = strconv.ParseUint(v, 10, 64); err == nil {
+		delete(m.skip, i.key)
 		m.values[i.key] = x
 		return nil
 	}

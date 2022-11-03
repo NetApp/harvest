@@ -304,6 +304,9 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 				taskTime, pluginTime time.Duration
 			)
 
+			// reset task metadata
+			c.Metadata.ResetInstance(task.Name)
+
 			start = time.Now()
 			data, err := task.Run()
 			taskTime = time.Since(start)

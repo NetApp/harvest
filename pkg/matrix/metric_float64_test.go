@@ -132,7 +132,7 @@ func TestMetricReset(t *testing.T) {
 	_, _ = m.NewMetricInt64("poll_time")
 	_ = m.LazySetValueInt64("poll_time", "task1", 10)
 	m.ResetInstance("task1")
-	_, pass, _ := m.LazyGetValueInt64("poll_time", "task1")
+	_, pass := m.LazyGetValueInt64("poll_time", "task1")
 	if pass {
 		t.Errorf("expected metric to be skipped but passed")
 	}

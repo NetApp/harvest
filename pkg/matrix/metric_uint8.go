@@ -48,6 +48,7 @@ func (u *MetricUint8) Remove(key string) {
 
 func (u *MetricUint8) SetValueInt64(i *Instance, v int64) error {
 	if v >= 0 {
+		delete(u.skip, i.key)
 		u.values[i.key] = uint8(v)
 		return nil
 	}
@@ -56,6 +57,7 @@ func (u *MetricUint8) SetValueInt64(i *Instance, v int64) error {
 }
 
 func (u *MetricUint8) SetValueBool(i *Instance, v bool) error {
+	delete(u.skip, i.key)
 	if v {
 		u.values[i.key] = 1
 	} else {
@@ -65,17 +67,20 @@ func (u *MetricUint8) SetValueBool(i *Instance, v bool) error {
 }
 
 func (u *MetricUint8) SetValueUint8(i *Instance, v uint8) error {
+	delete(u.skip, i.key)
 	u.values[i.key] = v
 	return nil
 }
 
 func (u *MetricUint8) SetValueUint64(i *Instance, v uint64) error {
+	delete(u.skip, i.key)
 	u.values[i.key] = uint8(v)
 	return nil
 }
 
 func (u *MetricUint8) SetValueFloat64(i *Instance, v float64) error {
 	if v >= 0 {
+		delete(u.skip, i.key)
 		u.values[i.key] = uint8(v)
 		return nil
 	}
@@ -87,6 +92,7 @@ func (u *MetricUint8) SetValueString(i *Instance, v string) error {
 	var x uint64
 	var err error
 	if x, err = strconv.ParseUint(v, 10, 8); err == nil {
+		delete(u.skip, i.key)
 		u.values[i.key] = uint8(x)
 		return nil
 	}
