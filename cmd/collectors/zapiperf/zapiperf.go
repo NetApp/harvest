@@ -30,6 +30,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/headroom"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/nic"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/volume"
+	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/volumetag"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/vscan"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
@@ -117,6 +118,8 @@ func (z *ZapiPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Pl
 		return headroom.New(abc)
 	case "Volume":
 		return volume.New(abc)
+	case "VolumeTag":
+		return volumetag.New(abc)
 	case "Vscan":
 		return vscan.New(abc)
 	default:
