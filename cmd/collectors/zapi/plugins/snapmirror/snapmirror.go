@@ -12,6 +12,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"regexp"
 	"strings"
 )
 
@@ -29,6 +30,8 @@ type Peer struct {
 	svm     string
 	cluster string
 }
+
+var flexgroupConstituentName = regexp.MustCompile(`^(.*)__(\d{4})$`)
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &SnapMirror{AbstractPlugin: p}
@@ -78,6 +81,12 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 
 	for _, instance := range data.GetInstances() {
+		// Zapi call with `expand=true` would gives all the constituent's relationships as well, which we don't want to export.
+		if match := flexgroupConstituentName.FindStringSubmatch(instance.GetLabel("destination_volume")); len(match) == 3 {
+			instance.SetExportable(false)
+			continue
+		}
+
 		if my.client.IsClustered() {
 			vserverName := instance.GetLabel("source_vserver")
 			// Update source_vserver in snapmirror (In case of inter-cluster SM - vserver name may differ)
