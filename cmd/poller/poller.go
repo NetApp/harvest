@@ -289,10 +289,29 @@ func (p *Poller) Init() error {
 		return errs.New(errs.ErrNoCollector, "no collectors")
 	}
 
+	objectsToCollectors := make(map[string][]objectCollector)
 	for _, c := range filteredCollectors {
-		if err = p.loadCollector(c); err != nil {
-			logger.Error().Stack().Err(err).Msgf("load collector (%s) templates=%s:", c.Name, *c.Templates)
+		objects, err := p.readObjects(c)
+		if err != nil {
+			logger.Error().Err(err).
+				Str("collector", c.Name).Strs("templates", *c.Templates).Msg("Failed to read objects")
+			continue
 		}
+		for _, oc := range objects {
+			objectsToCollectors[oc.object] = append(objectsToCollectors[oc.object], oc)
+		}
+	}
+
+	// for each object, only allow one of config & perf collectors to start
+	uniqueOCs := make([]objectCollector, 0, len(objectsToCollectors))
+	for _, collectors := range objectsToCollectors {
+		uniqueOCs = append(uniqueOCs, nonOverlappingCollectors(collectors)...)
+	}
+
+	// start the uniqueified collectors
+	err = p.loadCollectorObject(uniqueOCs)
+	if err != nil {
+		logger.Error().Err(err).Msg("Failed to load collector")
 	}
 
 	// at least one collector should successfully initialize
@@ -559,17 +578,13 @@ func (p *Poller) parsePing(out string) (float32, bool) {
 	return 0, false
 }
 
-// dynamically load and initialize a collector
-// if there are more than one objects defined for a collector,
-// then multiple collectors will be initialized
-func (p *Poller) loadCollector(c conf.Collector) error {
-
+// read templates for this collector and return a list of object collectors. If there are
+// multiple objects defined for a collector, multiple object collectors will be returned.
+func (p *Poller) readObjects(c conf.Collector) ([]objectCollector, error) {
 	var (
 		class                 string
 		err                   error
 		template, subTemplate *node.Node
-		collectors            []collector.Collector
-		col                   collector.Collector
 	)
 
 	c = p.upgradeCollector(c)
@@ -593,17 +608,13 @@ func (p *Poller) loadCollector(c conf.Collector) error {
 					// make this less noisy since it won't exist for most people
 					logEvent = logger.Debug()
 				}
-				logEvent.
-					Str("err", err.Error()).
-					Msg("Unable to load template.")
+				logEvent.Str("err", err.Error()).Msg("Unable to load template.")
 				continue
 			}
 			if template == nil {
 				template = subTemplate
 			} else {
-				logger.Debug().
-					Str("template", t).
-					Msg("Merged template.")
+				logger.Debug().Str("template", t).Msg("Merged template.")
 				if c.Name == "Zapi" || c.Name == "ZapiPerf" {
 					// do not overwrite child of objects. They will be concatenated
 					template.Merge(subTemplate, []string{"objects"})
@@ -614,57 +625,74 @@ func (p *Poller) loadCollector(c conf.Collector) error {
 		}
 	}
 	if template == nil {
-		return fmt.Errorf("no templates loaded for %s", c.Name)
+		return nil, fmt.Errorf("no templates loaded for %s", c.Name)
 	}
 	// add the poller's parameters to the collector's parameters
 	Union2(template, p.params)
 	template.NewChildS("poller_name", p.params.Name)
 
-	objects := make([]string, 0)
+	objects := make([]objectCollector, 0)
 	templateObject := template.GetChildContentS("object")
 
 	// if `objects` was passed at the cmdline, use them instead of the defaults
 	if len(p.options.Objects) != 0 {
-		objects = append(objects, p.options.Objects...)
+		for _, object := range p.options.Objects {
+			objects = append(objects, objectCollector{class: class, object: object, template: template})
+		}
 	} else if templateObject != "" {
 		// if object is defined, we only initialize 1 sub-collector / object
-		objects = append(objects, templateObject)
+		objects = append(objects, objectCollector{class: class, object: templateObject, template: template})
 		// if template has list of objects, initialize 1 sub-collector for each
 	} else if templateObjects := template.GetChildS("objects"); templateObjects != nil {
 		for _, object := range templateObjects.GetChildren() {
-			objects = append(objects, object.GetNameS())
+			objects = append(objects, objectCollector{class: class, object: object.GetNameS(), template: template})
 		}
 	} else {
-		return errs.New(errs.ErrMissingParam, "collector object")
+		return nil, errs.New(errs.ErrMissingParam, "collector object")
 	}
 
-	for _, object := range objects {
-		col, err = p.newCollector(class, object, template)
+	return objects, nil
+}
+
+type objectCollector struct {
+	class    string
+	object   string
+	template *node.Node
+}
+
+// dynamically load and initialize a collector
+func (p *Poller) loadCollectorObject(ocs []objectCollector) error {
+
+	var collectors []collector.Collector
+
+	logger.Debug().Int("collectors", len(ocs)).Msg("Starting collectors")
+
+	for _, oc := range ocs {
+		col, err := p.newCollector(oc.class, oc.object, oc.template)
 		if err != nil {
 			if errors.Is(err, errs.ErrConnection) {
 				logger.Warn().
-					Str("collector", class).
-					Str("object", object).
+					Str("collector", oc.class).
+					Str("object", oc.object).
 					Msg("abort collector")
 				break
 			}
 			logger.Warn().Err(err).
-				Str("collector", class).
-				Str("object", object).
+				Str("collector", oc.class).
+				Str("object", oc.object).
 				Msg("init collector-object")
 		} else {
 			collectors = append(collectors, col)
 			logger.Debug().
-				Str("collector", class).
-				Str("object", object).
+				Str("collector", oc.class).
+				Str("object", oc.object).
 				Msg("initialized collector-object")
 		}
 	}
 
 	p.collectors = append(p.collectors, collectors...)
-	logger.Debug().Msgf("initialized (%s) with %d objects", class, len(collectors))
 	// link each collector with requested exporter & update metadata
-	for _, col = range collectors {
+	for _, col := range collectors {
 		if col == nil {
 			logger.Warn().Msg("ignoring nil collector")
 			continue
@@ -694,6 +722,45 @@ func (p *Poller) loadCollector(c conf.Collector) error {
 	}
 
 	return nil
+}
+
+func nonOverlappingCollectors(collectors []objectCollector) []objectCollector {
+	if len(collectors) == 0 {
+		return []objectCollector{}
+	}
+	if len(collectors) == 1 {
+		return collectors
+	}
+
+	unique := make([]objectCollector, 0)
+	conflicts := map[string]string{
+		"Zapi":     "Rest",
+		"ZapiPerf": "RestPerf",
+		"Rest":     "Zapi",
+		"RestPerf": "ZapiPerf",
+	}
+
+	for _, c := range collectors {
+		conflict, ok := conflicts[c.class]
+		if ok {
+			if collectorContains(unique, conflict, c.class) {
+				continue
+			}
+		}
+		unique = append(unique, c)
+	}
+	return unique
+}
+
+func collectorContains(unique []objectCollector, searches ...string) bool {
+	for _, o := range unique {
+		for _, s := range searches {
+			if o.class == s {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // Union2 merges the fields of a Poller with the fields of a node.

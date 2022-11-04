@@ -937,7 +937,7 @@
               "instance": true,
               "job": true,
               "last_transfer_type": false,
-              "relationship_id": false,
+              "relationship_id": true,
               "relationship_type": true,
               "schedule": true,
               "source_node": true,
