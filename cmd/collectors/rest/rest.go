@@ -298,7 +298,7 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	startTime = time.Now()
-	count = r.HandleResults(records, r.Prop, true)
+	count = r.HandleResults(records, r.Prop, false)
 
 	// process endpoints
 	eCount, err := r.processEndPoints()
@@ -349,7 +349,7 @@ func (r *Rest) processEndPoints() (uint64, error) {
 			r.Logger.Warn().Str("ApiPath", endpoint.prop.Query).Msg("no " + endpoint.prop.Query + " instances on cluster")
 			continue
 		}
-		count = r.HandleResults(records, endpoint.prop, false)
+		count = r.HandleResults(records, endpoint.prop, true)
 	}
 
 	return count, nil
@@ -388,8 +388,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 }
 
 // HandleResults function is used for handling the rest response for parent as well as endpoints calls,
-// allowInstanceCreation would be true only for the parent rest, as only parent rest can create instance.
-func (r *Rest) HandleResults(result []gjson.Result, prop *prop, allowInstanceCreation bool) uint64 {
+// isEndPoint would be true only for the endpoint call, and it can't create/delete instance.
+func (r *Rest) HandleResults(result []gjson.Result, prop *prop, isEndPoint bool) uint64 {
 	var (
 		err   error
 		count uint64
@@ -429,7 +429,7 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, allowInstanceCre
 		instance = mat.GetInstance(instanceKey)
 
 		// Used for endpoints as we don't want to create additional instances
-		if !allowInstanceCreation && instance == nil {
+		if isEndPoint && instance == nil {
 			// Moved to trace as with filter, this log may spam
 			r.Logger.Trace().Str("instKey", instanceKey).Msg("Instance not found")
 			continue
@@ -502,14 +502,18 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, allowInstanceCre
 		}
 
 		// for endpoints, we want to remove common keys from metric count
-		if !allowInstanceCreation {
+		if isEndPoint {
 			count -= uint64(len(prop.InstanceKeys))
 		}
 	}
-	// remove deleted instances
-	for key := range oldInstances.Iter() {
-		mat.RemoveInstance(key)
-		r.Logger.Debug().Str("key", key).Msg("removed instance")
+
+	// Used for parent as we don't want to remove instances for endpoints
+	if !isEndPoint {
+		// remove deleted instances
+		for key := range oldInstances.Iter() {
+			mat.RemoveInstance(key)
+			r.Logger.Debug().Str("key", key).Msg("removed instance")
+		}
 	}
 
 	return count
