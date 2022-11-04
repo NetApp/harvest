@@ -61,10 +61,6 @@ func (v *VolumeTag) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			return nil, err
 		}
 
-		if err != nil {
-			return nil, err
-		}
-
 		if result == nil {
 			break
 		}
