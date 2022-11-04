@@ -492,8 +492,10 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 		pr.ForEach(func(key, instanceData gjson.Result) bool {
 			var (
-				instanceKey string
-				instance    *matrix.Instance
+				instanceKey     string
+				instance        *matrix.Instance
+				isHistogram     bool
+				histogramMetric matrix.Metric
 			)
 			instIndex++
 
@@ -628,8 +630,30 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 								continue
 							}
 
+							// ONTAP does not have a `type` for histogram. Harvest tests the `desc` field to determine
+							// if a counter is a histogram
+							isHistogram = false
+							if len(labels) > 0 && strings.Contains(r.perfProp.counterInfo[name].description, "histogram") {
+								key := name + ".bucket"
+								histogramMetric = newData.GetMetric(key)
+								if histogramMetric != nil {
+									r.Logger.Trace().Str("metric", key).Msg("Updating array metric attributes")
+								} else {
+									histogramMetric, err = newData.NewMetricFloat64(key)
+									if err != nil {
+										r.Logger.Error().Err(err).Str("key", key).Msg("unable to create histogram metric")
+										continue
+									}
+								}
+								histogramMetric.SetName(metric.Label)
+								histogramMetric.SetArray(true)
+								histogramMetric.SetExportable(metric.Exportable)
+								histogramMetric.SetBuckets(&labels)
+								isHistogram = true
+							}
+
 							for i, label := range labels {
-								k := name + "#" + label
+								k := name + "." + label
 								metr, ok := newData.GetMetrics()[k]
 								if !ok {
 									if metr, err = newData.NewMetricFloat64(k); err != nil {
@@ -643,6 +667,13 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 									// differentiate between array and normal counter
 									metr.SetArray(true)
 									metr.SetExportable(metric.Exportable)
+									if isHistogram {
+										// Save the index of this label so the labels can be exported in order
+										metr.SetLabel("comment", strconv.Itoa(i))
+										// Save the bucket name so the flattened metrics can find their bucket when exported
+										metr.SetLabel("bucket", name+".bucket")
+										metr.SetHistogram(true)
+									}
 								}
 								if err = metr.SetValueString(instance, values[i]); err != nil {
 									r.Logger.Error().
@@ -996,7 +1027,7 @@ func (r *RestPerf) counterLookup(metric matrix.Metric, metricKey string) *counte
 	var c *counter
 
 	if metric.IsArray() {
-		lastInd := strings.LastIndex(metricKey, "#")
+		lastInd := strings.LastIndex(metricKey, ".")
 		name := metricKey[:lastInd]
 		c = r.perfProp.counterInfo[name]
 	} else {
