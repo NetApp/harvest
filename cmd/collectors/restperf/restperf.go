@@ -510,8 +510,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 				if value.Exists() {
 					instanceKey += value.String()
 				} else {
-					r.Logger.Warn().Str("key", k).Msg("skip instance, missing key")
-					break
+					r.Logger.Warn().Str("key", k).Msg("missing key")
 				}
 			}
 
