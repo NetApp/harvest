@@ -506,10 +506,14 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, allowInstanceCre
 			count -= uint64(len(prop.InstanceKeys))
 		}
 	}
-	// remove deleted instances
-	for key := range oldInstances.Iter() {
-		mat.RemoveInstance(key)
-		r.Logger.Debug().Str("key", key).Msg("removed instance")
+
+	// Used for non-endpoints as we should not remove instances for endpoints
+	if allowInstanceCreation {
+		// remove deleted instances
+		for key := range oldInstances.Iter() {
+			mat.RemoveInstance(key)
+			r.Logger.Debug().Str("key", key).Msg("removed instance")
+		}
 	}
 
 	return count
