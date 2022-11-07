@@ -109,7 +109,7 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 				}
 
 				//Test for Rest
-				query := counter + "{datacenter=~\"" + strings.Join(restDataCollectors[:], "|") + "\"}"
+				query := counter + "{datacenter=~\"" + strings.Join(restDataCollectors, "|") + "\"}"
 
 				if !HasDataInDB(query) {
 					errorInfo := ResultInfo{
@@ -122,7 +122,7 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 				}
 
 				//Test for Zapi
-				query = counter + "{datacenter!~\"" + strings.Join(restDataCollectors[:], "|") + "\"}"
+				query = counter + "{datacenter!~\"" + strings.Join(restDataCollectors, "|") + "\"}"
 				if !HasDataInDB(query) {
 					errorInfo := ResultInfo{
 						expression,
