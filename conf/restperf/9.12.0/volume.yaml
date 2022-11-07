@@ -4,7 +4,7 @@ query:                    api/cluster/counter/tables/volume
 object:                   volume
 
 counters:
-  - ^^id
+  - ^^uuid
   - ^name                  => volume
   - ^svm.name              => svm
   - ^node.name             => node
@@ -28,7 +28,7 @@ plugins:
       - node
 #  - LabelAgent:
 #      # To prevent visibility of transient volumes, uncomment the following lines
-#      exclude_regex: [todo: need to test after Restperf infra completed]
+#      exclude_regex:
 #        # Exclude SnapProtect/CommVault Intellisnap, Clone volumes have a “_CVclone” suffix
 #        - volume `.+_CVclone`
 #        # Exclude SnapCenter, Clone volumes have a “DDMMYYhhmmss” suffix
