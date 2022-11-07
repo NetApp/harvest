@@ -23,6 +23,8 @@ import (
 	"time"
 )
 
+var restDataCollectors = []string{"Rest"}
+
 var fileSet []string
 
 var counterMap = data.GetCounterMap()
@@ -58,9 +60,11 @@ func (suite *DashboardJsonTestSuite) SetupSuite() {
 
 func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 	//fileSet = []string{"/Users/chinna/harvest/harvest/grafana/dashboards/cmode/harvest_dashboard_snapmirror.json"}
-	var isFailed bool = false
+	var isZapiFailed = false
+	var isRestFailed = false
+	var perfErrorInfoList []ResultInfo
+	var zapiErrorInfoList []ResultInfo
 	for _, filePath := range fileSet {
-		var errorInfoList []ResultInfo
 		if IsValidFile(filePath) {
 			continue
 		}
@@ -104,14 +108,29 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 					}
 				}
 
-				if !HasDataInDB(counter) {
+				//Test for Rest
+				query := counter + "{datacenter=~\"" + strings.Join(restDataCollectors[:], "|") + "\"}"
+
+				if !HasDataInDB(query) {
 					errorInfo := ResultInfo{
 						expression,
 						counter,
 						false,
 						"No data found in the database",
 					}
-					errorInfoList = append(errorInfoList, errorInfo)
+					perfErrorInfoList = append(perfErrorInfoList, errorInfo)
+				}
+
+				//Test for Zapi
+				query = counter + "{datacenter!~\"" + strings.Join(restDataCollectors[:], "|") + "\"}"
+				if !HasDataInDB(query) {
+					errorInfo := ResultInfo{
+						expression,
+						counter,
+						false,
+						"No data found in the database",
+					}
+					zapiErrorInfoList = append(zapiErrorInfoList, errorInfo)
 					continue EXPRESSION_FOR
 				}
 			}
@@ -134,7 +153,7 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 					true,
 					"",
 				}
-				errorInfoList = append(errorInfoList, errorInfo)
+				zapiErrorInfoList = append(zapiErrorInfoList, errorInfo)
 			} else {
 				errorInfo := ResultInfo{
 					actualExpression,
@@ -142,24 +161,39 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 					false,
 					"Query execution has failed",
 				}
-				errorInfoList = append(errorInfoList, errorInfo)
-			}
-		}
-		for _, resultInfo := range errorInfoList {
-			if resultInfo.result {
-				fmt.Println(usg.Get.Tick, resultInfo.expression)
-			} else {
-				isFailed = true
-				fmt.Println(usg.Get.Cross, fmt.Sprintf(" ERROR: %s for expr [%s]", resultInfo.reason,
-					resultInfo.expression))
+				zapiErrorInfoList = append(zapiErrorInfoList, errorInfo)
 			}
 		}
 		log.Info().Msg("Completed.")
 	}
-	if isFailed {
-		assert.Fail(suite.T(), "Test validation is failed. Pls check logs above")
+
+	for _, resultInfo := range zapiErrorInfoList {
+		if !resultInfo.result {
+			isZapiFailed = true
+			fmt.Println(usg.Get.Cross, fmt.Sprintf(" Zapi Collector ERROR: %s for expr [%s]", resultInfo.reason,
+				resultInfo.expression))
+		}
+	}
+
+	for _, resultInfo := range perfErrorInfoList {
+		if !resultInfo.result {
+			isRestFailed = true
+			fmt.Println(usg.Get.Cross, fmt.Sprintf(" Rest Collector ERROR: %s for expr [%s]", resultInfo.reason,
+				resultInfo.expression))
+		}
+	}
+
+	if isRestFailed {
+		log.Warn().Msgf("Rest Test validation is failed. Pls check logs above. Total Missing Rest counters %d", len(perfErrorInfoList))
 	} else {
-		log.Info().Msg("Everything looks good!!")
+		log.Info().Msg("Rest Validation looks good!!")
+	}
+
+	// Fail only for Zapi Collector
+	if isZapiFailed {
+		assert.Fail(suite.T(), "Zapi Test validation is failed. Pls check logs above")
+	} else {
+		log.Info().Msg("Zapi Validation looks good!!")
 	}
 }
 
