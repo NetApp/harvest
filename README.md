@@ -28,7 +28,7 @@ We provide pre-compiled binaries for Linux, RPMs, and Debs.
 
 ## Pre-compiled Binaries
 
-### Installation 
+### Installation
 Visit the [Releases page](https://github.com/NetApp/harvest/releases) and copy the `tar.gz` link you want to download. For example, to download the `v21.08.0` release:
 ```
 wget https://github.com/NetApp/harvest/releases/download/v21.08.0/harvest-21.08.0-6_linux_amd64.tar.gz
@@ -47,8 +47,8 @@ curl -L -O https://github.com/NetApp/harvest/releases/download/v21.08.0/harvest-
 
 It's best to run Harvest as a non-root user. Make sure the user running Harvest can write to `/var/log/harvest/` or tell Harvest to write the logs somewhere else with the `HARVEST_LOGS` environment variable.
 
-If something goes wrong, examine the logs files in `/var/log/harvest`, check out 
-the [troubleshooting](https://github.com/NetApp/harvest/wiki/Troubleshooting-Harvest) section of the wiki and jump 
+If something goes wrong, examine the logs files in `/var/log/harvest`, check out
+the [troubleshooting](https://github.com/NetApp/harvest/wiki/Troubleshooting-Harvest) section of the wiki and jump
 onto [Discord](https://github.com/NetApp/harvest/blob/main/SUPPORT.md#getting-help) and ask for help.
 
 ### Upgrade
@@ -87,7 +87,7 @@ Download the latest rpm of [Harvest](https://github.com/NetApp/harvest/releases/
 
 Once the installation has finished, edit the [harvest.yml configuration](#harvest-configuration) file located in `/opt/harvest/harvest.yml`
 
-After editing `/opt/harvest/harvest.yml`, manage Harvest with `systemctl start|stop|restart harvest`. 
+After editing `/opt/harvest/harvest.yml`, manage Harvest with `systemctl start|stop|restart harvest`.
 
 After upgrade, you should re-import all dashboards (either grafana import cli or grafana UI) to get any new enhancements in dashboards.
 
@@ -113,7 +113,7 @@ Download the latest deb of [Harvest](https://github.com/NetApp/harvest/releases/
 
 Once the installation has finished, edit the [harvest.yml configuration](#harvest-configuration) file located in `/opt/harvest/harvest.yml`
 
-After editing `/opt/harvest/harvest.yml`, manage Harvest with `systemctl start|stop|restart harvest`. 
+After editing `/opt/harvest/harvest.yml`, manage Harvest with `systemctl start|stop|restart harvest`.
 
 After upgrade, You should re-import all dashboards (either grafana import cli or grafana UI) to get any new enhancements in dashboards.
 
@@ -187,7 +187,7 @@ Note: the current dashboards specify Prometheus as the datasource. If you use th
 
 ## 4. Verify the metrics
 
-If you use a Prometheus Exporter, open a browser and navigate to [http://0.0.0.0:12990/](http://0.0.0.0:12990/) (replace `12990` with the port number of your poller). This is the Harvest created HTTP end-point for your Prometheus exporter. This page provides a real-time generated list of running collectors and names of exported metrics. 
+If you use a Prometheus Exporter, open a browser and navigate to [http://0.0.0.0:12990/](http://0.0.0.0:12990/) (replace `12990` with the port number of your poller). This is the Harvest created HTTP end-point for your Prometheus exporter. This page provides a real-time generated list of running collectors and names of exported metrics.
 
 The metric data that's exposed for Prometheus to scrap is available at [http://0.0.0.0:12990/metrics/](http://0.0.0.0:12990/metrics/). For more help on how to configure Prometheus DB, see the [Prometheus exporter](cmd/exporters/prometheus/README.md) documentation.
 
@@ -195,32 +195,32 @@ If you can't access the URL, check the logs of your pollers. These are located i
 
 ## 5. (Optional) Setup Systemd service files
 
-If you're running Harvest on a system with Systemd, you may want to [take advantage of systemd instantiated units](https://github.com/NetApp/harvest/tree/main/service/contrib) to manage your pollers.  
+If you're running Harvest on a system with Systemd, you may want to [take advantage of systemd instantiated units](https://github.com/NetApp/harvest/tree/main/service/contrib) to manage your pollers.
 
-# Harvest Configuration 
+# Harvest Configuration
 
 The main configuration file, `harvest.yml`, consists of the following sections, described below:
 
 ## Pollers
-All pollers are defined in `harvest.yml`, the main configuration file of Harvest, under the section `Pollers`. 
+All pollers are defined in `harvest.yml`, the main configuration file of Harvest, under the section `Pollers`.
 
-| parameter              | type                                           | description                                                                                                                                                                                                                                                                                                                                                                 | default            |
-|------------------------|------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------|
-| Poller name (header)   | **required**                                   | Poller name, user-defined value                                                                                                                                                                                                                                                                                                                                             |                    |
-| `datacenter`           | **required**                                   | Datacenter name, user-defined value                                                                                                                                                                                                                                                                                                                                         |                    |
-| `addr`                 | required by some collectors                    | IPv4 or FQDN of the target system                                                                                                                                                                                                                                                                                                                                           |                    |
-| `collectors`           | **required**                                   | List of collectors to run for this poller                                                                                                                                                                                                                                                                                                                                   |                    |
-| `exporters`            | **required**                                   | List of exporter names from the `Exporters` section. Note: this should be the name of the exporter (e.g. `prometheus1`), not the value of the `exporter` key (e.g. `Prometheus`)                                                                                                                                                                                            |                    |
-| `auth_style`           | required by Zapi* collectors                   | Either `basic_auth` or `certificate_auth`                                                                                                                                                                                                                                                                                                                                   | `basic_auth`       |
-| `username`, `password` | required if `auth_style` is `basic_auth`       |                                                                                                                                                                                                                                                                                                                                                                             |                    |
-| `ssl_cert`, `ssl_key`  | optional if `auth_style` is `certificate_auth` | Absolute paths to SSL (client) certificate and key used to authenticate with the target system.<br /><br />If not provided, the poller will look for `<hostname>.key` and `<hostname>.pem` in `$HARVEST_HOME/cert/`.<br/><br/>To create certificates for ONTAP systems, see [using certificate authentication](docs/AuthAndPermissions.md#using-certificate-authentication) |                    |
-| `use_insecure_tls`     | optional, bool                                 | If true, disable TLS verification when connecting to ONTAP cluster                                                                                                                                                                                                                                                                                                          | false              |
-| `credentials_file`     | optional, string                               | Path to a yaml file that contains cluster credentials. The file should have the same shape as `harvest.yml`. See [here](#credentials file) for examples. Path can be relative to `harvest.yml` or absolute                                                                                                                                                                  |                    |          
- | `tls_min_version`      | optional, string                               | Minimum TLS version to use when connecting to ONTAP cluster: One of tls10, tls11, tls12 or tls13                                                                                                                                                                                                                                                                            | Platform decides   | 
-| `labels`               | optional, list of key-value pairs              | Each of the key-value pairs will be added to a poller's metrics. Details [below](#labels)                                                                                                                                                                                                                                                                                   |                    |
-| `log_max_bytes`        |                                                | Maximum size of the log file before it will be rotated                                                                                                                                                                                                                                                                                                                      | `5_242_880` (5 MB) |
-| `log_max_files`        |                                                | Number of rotated log files to keep                                                                                                                                                                                                                                                                                                                                         | `5`                |
-| `log`                  | optional, list of collector names              | Matching collectors log their ZAPI request/response                                                                                                                                                                                                                                                                                                                         |                    |
+| parameter              | type                                           | description                                                                                                                                                                                                                                                                                                                                                                     | default            |
+|------------------------|------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------|
+| Poller name (header)   | **required**                                   | Poller name, user-defined value                                                                                                                                                                                                                                                                                                                                                 |                    |
+| `datacenter`           | **required**                                   | Datacenter name, user-defined value                                                                                                                                                                                                                                                                                                                                             |                    |
+| `addr`                 | required by some collectors                    | IPv4 or FQDN of the target system                                                                                                                                                                                                                                                                                                                                               |                    |
+| `collectors`           | **required**                                   | List of collectors to run for this poller                                                                                                                                                                                                                                                                                                                                       |                    |
+| `exporters`            | **required**                                   | List of exporter names from the `Exporters` section. Note: this should be the name of the exporter (e.g. `prometheus1`), not the value of the `exporter` key (e.g. `Prometheus`)                                                                                                                                                                                                |                    |
+| `auth_style`           | required by Zapi* collectors                   | Either `basic_auth` or `certificate_auth`                                                                                                                                                                                                                                                                                                                                       | `basic_auth`       |
+| `username`, `password` | required if `auth_style` is `basic_auth`       |                                                                                                                                                                                                                                                                                                                                                                                 |                    |
+| `ssl_cert`, `ssl_key`  | optional if `auth_style` is `certificate_auth` | Absolute paths to SSL (client) certificate and key used to authenticate with the target system.<br /><br />If not provided, the poller will look for `<hostname>.key` and `<hostname>.pem` in `$HARVEST_HOME/cert/`.<br/><br/>To create certificates for ONTAP systems, see [using certificate authentication](pkg/docs/AuthAndPermissions.md#using-certificate-authentication) |                    |
+| `use_insecure_tls`     | optional, bool                                 | If true, disable TLS verification when connecting to ONTAP cluster                                                                                                                                                                                                                                                                                                              | false              |
+| `credentials_file`     | optional, string                               | Path to a yaml file that contains cluster credentials. The file should have the same shape as `harvest.yml`. See [here](#credentials file) for examples. Path can be relative to `harvest.yml` or absolute                                                                                                                                                                      |                    |          
+| `tls_min_version`      | optional, string                               | Minimum TLS version to use when connecting to ONTAP cluster: One of tls10, tls11, tls12 or tls13                                                                                                                                                                                                                                                                                | Platform decides   | 
+| `labels`               | optional, list of key-value pairs              | Each of the key-value pairs will be added to a poller's metrics. Details [below](#labels)                                                                                                                                                                                                                                                                                       |                    |
+| `log_max_bytes`        |                                                | Maximum size of the log file before it will be rotated                                                                                                                                                                                                                                                                                                                          | `5_242_880` (5 MB) |
+| `log_max_files`        |                                                | Number of rotated log files to keep                                                                                                                                                                                                                                                                                                                                             | `5`                |
+| `log`                  | optional, list of collector names              | Matching collectors log their ZAPI request/response                                                                                                                                                                                                                                                                                                                             |                    |
 
 ## Defaults
 This section is optional. If there are parameters identical for all your pollers (e.g. datacenter, authentication method, login preferences), they can be grouped under this section. The poller section will be checked first and if the values aren't found there, the defaults will be consulted.
@@ -258,7 +258,7 @@ Tools:
 
 Collectors are configured by their own configuration files (templates), which are stored in subdirectories in [conf/](conf/). Most collectors run concurrently and collect a subset of related metrics. For example, node related metrics are grouped together and run independently of the disk related metrics. Below is a snippet from `conf/zapi/default.yaml`
 
-In this example, the `default.yaml` template contains a list of objects (e.g. Node) that reference sub-templates (e.g. node.yaml). This decomposition groups related metrics together and at runtime, a `Zapi` collector per object will be created and each of these collectors will run concurrently. 
+In this example, the `default.yaml` template contains a list of objects (e.g. Node) that reference sub-templates (e.g. node.yaml). This decomposition groups related metrics together and at runtime, a `Zapi` collector per object will be created and each of these collectors will run concurrently.
 
 Using the snippet below, we  expect there to be four `Zapi` collectors running, each with a different subtemplate and object.
 
@@ -309,11 +309,11 @@ Keep in mind that each unique combination of key-value pairs increases the amoun
 ## Credentials File
 
 If you would rather not list cluster credentials in your `harvest.yml`, you can use the `credentials_file` section
-in your `harvest.yml` to point to a file that contains the credentials. 
+in your `harvest.yml` to point to a file that contains the credentials.
 At runtime, the `credentials_file` will be read and the included credentials will be used to authenticate with the matching cluster(s).
 
-This is handy when integrating with 3rd party credential stores. 
-See #884 for examples. 
+This is handy when integrating with 3rd party credential stores.
+See #884 for examples.
 
 The format of the `credentials_file` is similar to `harvest.yml` and can contain multiple cluster credentials.
 
