@@ -505,14 +505,20 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 				return true
 			}
 
-			// extract instance key(s)
-			for _, k := range instanceKeys {
-				value := parseProperties(instanceData, k)
-				if value.Exists() {
-					instanceKey += value.String()
-				} else {
-					r.Logger.Warn().Str("key", k).Msg("skip instance, missing key")
-					break
+			if len(instanceKeys) != 0 {
+				// extract instance key(s)
+				for _, k := range instanceKeys {
+					value := instanceData.Get(k)
+					if value.Exists() {
+						instanceKey += value.String()
+					} else {
+						r.Logger.Warn().Str("key", k).Msg("missing key")
+					}
+				}
+
+				if instanceKey == "" {
+					r.Logger.Trace().Msg("Instance key is empty, skipping")
+					return true
 				}
 			}
 

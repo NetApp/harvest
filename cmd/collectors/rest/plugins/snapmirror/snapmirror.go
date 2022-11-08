@@ -20,7 +20,6 @@ type SnapMirror struct {
 	*plugin.AbstractPlugin
 	data           *matrix.Matrix
 	client         *rest.Client
-	query          string
 	currentVal     int
 	svmPeerDataMap map[string]Peer // [peer SVM alias name] -> [peer detail] map
 }
@@ -52,7 +51,6 @@ func (my *SnapMirror) Init() error {
 		return err
 	}
 
-	my.query = "api/private/cli/volume"
 	my.svmPeerDataMap = make(map[string]Peer)
 
 	my.data = matrix.New(my.Parent+".SnapMirror", "snapmirror", "snapmirror")
