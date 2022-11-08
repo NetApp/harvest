@@ -17,6 +17,7 @@ objects:
   HeadroomAggr:           resource_headroom_aggr.yaml
   HeadroomCPU:            resource_headroom_cpu.yaml
   HostAdapter:            hostadapter.yaml
+#  Netstat:                netstat.yaml
   NFSv3Node:              nfsv3_node.yaml
   NFSv41Node:             nfsv4_1_node.yaml
   NFSv42Node:             nfsv4_2_node.yaml
