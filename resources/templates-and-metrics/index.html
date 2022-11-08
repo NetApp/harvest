@@ -1,0 +1,1407 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../../assets/harvest.svg">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.8">
+    
+    
+      
+        <title>Templates And Metrics - Harvest</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.20d9efc8.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.815d1a91.min.css">
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="" data-md-color-accent="">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#harvest-templates-and-metrics" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Harvest" class="md-header__button md-logo" aria-label="Harvest" data-md-component="logo">
+      
+  <img src="../../assets/harvest.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Harvest
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Templates And Metrics
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_3" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9h-1.9M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69m-9.15 3.96h2.3L12 9l-1.15 3.65Z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_3">
+          
+            <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/NetApp/harvest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NetApp/harvest
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Harvest" class="md-nav__button md-logo" aria-label="Harvest" data-md-component="logo">
+      
+  <img src="../../assets/harvest.svg" alt="logo">
+
+    </a>
+    Harvest
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/NetApp/harvest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NetApp/harvest
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        What is Harvest?
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/" class="md-nav__link">
+        Quickstart
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/" class="md-nav__link">
+        Installation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-requirements/" class="md-nav__link">
+        System Requirements
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../upgrade/" class="md-nav__link">
+        Upgrade
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          Prepare Monitored Clusters
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Prepare Monitored Clusters" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Prepare Monitored Clusters
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prepare-cdot-clusters/" class="md-nav__link">
+        ONTAP cDOT
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prepare-7mode-clusters/" class="md-nav__link">
+        ONTAP 7mode
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prepare-storagegrid-clusters/" class="md-nav__link">
+        StorageGRID
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-harvest-basic/" class="md-nav__link">
+        Configure Harvest (basic)
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8" type="checkbox" id="__nav_8" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8">
+          Configure Exporters
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Configure Exporters" data-md-level="1">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          Configure Exporters
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prometheus-exporter/" class="md-nav__link">
+        Prometheus
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../influxdb-exporter/" class="md-nav__link">
+        InfluxDB
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-grafana/" class="md-nav__link">
+        Configure Grafana
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10" type="checkbox" id="__nav_10" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10">
+          Configure Collectors
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Configure Collectors" data-md-level="1">
+        <label class="md-nav__title" for="__nav_10">
+          <span class="md-nav__icon md-icon"></span>
+          Configure Collectors
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-zapi/" class="md-nav__link">
+        ZAPI
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-rest/" class="md-nav__link">
+        REST
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-ems/" class="md-nav__link">
+        EMS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-storagegrid/" class="md-nav__link">
+        StorageGRID
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-unix/" class="md-nav__link">
+        Unix
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-templates/" class="md-nav__link">
+        Templates
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dashboards/" class="md-nav__link">
+        Dashboards
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../manage-harvest/" class="md-nav__link">
+        Manage Harvest Pollers
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-harvest-advanced/" class="md-nav__link">
+        Configure Harvest (advanced)
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/" class="md-nav__link">
+        Troubleshoot
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_16" type="checkbox" id="__nav_16" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_16">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_16">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Templates And Metrics
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Templates And Metrics
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#handy-tools" class="md-nav__link">
+    Handy Tools
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ontap-zapi-disk-example" class="md-nav__link">
+    ONTAP ZAPI disk example
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#harvest-templates" class="md-nav__link">
+    Harvest Templates
+  </a>
+  
+    <nav class="md-nav" aria-label="Harvest Templates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#instance-keys-and-labels" class="md-nav__link">
+    Instance Keys and Labels
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#harvest-object-template" class="md-nav__link">
+    Harvest Object Template
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#control-what-labels-and-metrics-are-exported" class="md-nav__link">
+    Control What Labels and Metrics are Exported
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-errors-and-troubleshooting" class="md-nav__link">
+    Common Errors and Troubleshooting
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Errors and Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-failed-to-parse-any-metrics" class="md-nav__link">
+    1. Failed to parse any metrics
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-missing-data" class="md-nav__link">
+    2. Missing Data
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prometheus-wire-format" class="md-nav__link">
+    Prometheus Wire Format
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../matrix/" class="md-nav__link">
+        Matrix
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_17" type="checkbox" id="__nav_17" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_17">
+          About
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="About" data-md-level="1">
+        <label class="md-nav__title" for="__nav_17">
+          <span class="md-nav__icon md-icon"></span>
+          About
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../license/" class="md-nav__link">
+        License
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/" class="md-nav__link">
+        Release Notes
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#handy-tools" class="md-nav__link">
+    Handy Tools
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ontap-zapi-disk-example" class="md-nav__link">
+    ONTAP ZAPI disk example
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#harvest-templates" class="md-nav__link">
+    Harvest Templates
+  </a>
+  
+    <nav class="md-nav" aria-label="Harvest Templates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#instance-keys-and-labels" class="md-nav__link">
+    Instance Keys and Labels
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#harvest-object-template" class="md-nav__link">
+    Harvest Object Template
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#control-what-labels-and-metrics-are-exported" class="md-nav__link">
+    Control What Labels and Metrics are Exported
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-errors-and-troubleshooting" class="md-nav__link">
+    Common Errors and Troubleshooting
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Errors and Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-failed-to-parse-any-metrics" class="md-nav__link">
+    1. Failed to parse any metrics
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-missing-data" class="md-nav__link">
+    2. Missing Data
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prometheus-wire-format" class="md-nav__link">
+    Prometheus Wire Format
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="harvest-templates-and-metrics">Harvest Templates and Metrics<a class="headerlink" href="#harvest-templates-and-metrics" title="Permanent link">&para;</a></h1>
+<p>Harvest collects ONTAP counter information, augments it, and stores it in a time-series DB.</p>
+<pre class="mermaid"><code>flowchart RL
+    Harvest[Harvest&lt;br&gt;Get &amp; Augment] -- REST&lt;br&gt;ZAPI --&gt; ONTAP
+    id1[(Prometheus&lt;br&gt;Store)] -- Scrape --&gt; Harvest</code></pre>
+<p>Three concepts work in unison to collect ONTAP metrics data,
+prepare it and make it available to Prometheus.</p>
+<ul>
+<li>ZAPI/REST</li>
+<li>Harvest templates</li>
+<li>Exporters </li>
+</ul>
+<p>We're going to walk through an example from a running system, focusing on the <code>disk</code> object.</p>
+<p>At a high-level, Harvest templates describe what ZAPIs to send to ONTAP and how to interpret the responses.</p>
+<ul>
+<li>ONTAP defines twos ZAPIs to collect <code>disk</code> info<ul>
+<li>Config information is collected via <code>storage-disk-get-iter</code></li>
+<li>Performance counters are collected via <code>disk:constituent</code></li>
+</ul>
+</li>
+<li>These ZAPIs are found in their corresponding object template file <code>conf/zapi/cdot/9.8.0/disk.yaml</code>
+  and <code>conf/zapiperf/cdot/9.8.0/disk.yaml</code>. These files also describe how to map the ZAPI responses into a
+  time-series-friendly format</li>
+<li>Prometheus uniquely identifies a time series by its metric name and optional key-value pairs called labels.</li>
+</ul>
+<h2 id="handy-tools">Handy Tools<a class="headerlink" href="#handy-tools" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://github.com/TomWright/dasel">dasel</a> is useful to convert between XML, YAML, JSON, etc. We'll use it to make
+  displaying some of the data easier.</li>
+</ul>
+<h2 id="ontap-zapi-disk-example">ONTAP ZAPI disk example<a class="headerlink" href="#ontap-zapi-disk-example" title="Permanent link">&para;</a></h2>
+<p>We'll use the <code>bin/zapi</code> tool to interrogate the cluster and gather information about the counters. This is one way you
+can send ZAPIs to ONTAP and explore the return types and values.</p>
+<div class="highlight"><pre><span></span><code>bin/zapi -p u2 show attrs --api storage-disk-get-iter
+</code></pre></div>
+<blockquote>
+<p>Output edited for brevity and line numbers added on left</p>
+</blockquote>
+<p>The hierarchy and return type of each counter is shown below. We'll use this hierarchy to build a matching Harvest
+template.
+For example, line <code>3</code> is the <code>bytes-per-sector</code> counter, which has an integer value, and is the child
+of <code>storage-disk-info &gt; disk-inventory-info</code>.</p>
+<p>To capture that counter's value as a metric in a Harvest, the ZAPI template must use the same hierarchical path. The
+matching path can be seen <a href="#harvest-object-template">below</a>.</p>
+<div class="highlight"><pre><span></span><code>building tree for attribute [attributes-list] =&gt; [storage-disk-info]
+
+ 1 [storage-disk-info]            -               *
+ 2   [disk-inventory-info]        -                
+ 3     [bytes-per-sector]         -         integer
+ 4     [capacity-sectors]         -         integer
+ 5     [disk-type]                -          string
+ 6     [is-shared]                -         boolean
+ 7     [model]                    -          string
+ 8     [serial-number]            -          string
+ 9     [shelf]                    -          string
+10     [shelf-bay]                -          string
+11   [disk-name]                  -          string
+12   [disk-ownership-info]        -                
+13     [home-node-name]           -          string
+14     [is-failed]                -         boolean
+15     [owner-node-name]          -          string
+16   [disk-raid-info]             -                
+17     [container-type]           -          string
+18     [disk-outage-info]         -                
+19       [is-in-fdr]              -         boolean
+20       [reason]                 -          string  
+21   [disk-stats-info]            -                
+22     [average-latency]          -         integer
+23     [disk-io-kbps]             -         integer
+24     [power-on-time-interval]   -         integer
+25     [sectors-read]             -         integer
+26     [sectors-written]          -         integer
+27   [disk-uid]                   -          string
+28   [node-name]                  -          string
+29   [storage-disk-state]         -         integer
+30   [storage-disk-state-flags]   -         integer
+</code></pre></div>
+<h2 id="harvest-templates">Harvest Templates<a class="headerlink" href="#harvest-templates" title="Permanent link">&para;</a></h2>
+<p>To understand templates, there are a few concepts to cover:</p>
+<p>There are three kinds of information included in templates that define what Harvest collects and exports:</p>
+<ol>
+<li>Configuration information is exported into the <code>_labels</code> metric (e.g. <code>disk_labels</code> see below)</li>
+<li>Metrics data is exported as <code>disk_"metric name"</code> e.g. <code>disk_bytes_per_sector</code>, <code>disk_sectors</code>, etc. Metrics are leaf
+   nodes that are not prefixed with a ^ or ^^. Metrics must be one of the number types: float or int.</li>
+<li>Plugins may add additional metrics, increasing the number of metrics exported in #2</li>
+</ol>
+<p>A resource will typically have multiple instances. Using disk as an example, that means there will be one <code>disk_labels</code>
+and a metric row per instance. If we have 24 disks and the disk template lists seven metrics to capture, Harvest will
+export a total of 192 rows of Prometheus data.</p>
+<p><code>24 instances * (7 metrics per instance + 1 label per instance) = 192 rows</code></p>
+<p>Sum of disk metrics that Harvest exports</p>
+<div class="highlight"><pre><span></span><code>curl -s &#39;http://localhost:14002/metrics&#39; | grep ^disk | cut -d&#39;{&#39; -f1 | sort | uniq -c
+  24 disk_bytes_per_sector
+  24 disk_labels
+  24 disk_sectors
+  24 disk_stats_average_latency
+  24 disk_stats_io_kbps
+  24 disk_stats_sectors_read
+  24 disk_stats_sectors_written
+  24 disk_uptime
+# 192 rows 
+</code></pre></div>
+<p>Read on to see how we control which labels from #1 and which metrics from #2 are included in the exported data.</p>
+<h3 id="instance-keys-and-labels">Instance Keys and Labels<a class="headerlink" href="#instance-keys-and-labels" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Instance key - An instance key defines the set of attributes Harvest uses to construct a key that uniquely identifies
+  an object. For example, the disk template uses the <code>node</code> + <code>disk</code> attributes to determine uniqueness. Using <code>node</code>
+  or <code>disk</code> alone wouldn't be sufficient since disks on separate nodes can have the same name. If a single label does
+  not uniquely identify an instance, combine multiple keys for uniqueness. Instance keys must refer to attributes that
+  are of type <code>string</code>.</li>
+</ul>
+<p>Because instance keys define uniqueness, these keys are also added to each metric as a key-value pair. (
+  see <a href="#control-what-labels-and-metrics-are-exported">Control What Labels and Metrics are Exported</a> for examples)</p>
+<ul>
+<li>Instance label - Labels are key-value pairs used to gather configuration information about each instance. All of the
+  key-value pairs are combined into a single metric named <code>disk_labels</code>. There will be one <code>disk_labels</code> for each
+  monitored instance. Here's an example reformatted so it's easier to read:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>disk_labels{
+  datacenter=&quot;dc-1&quot;,
+  cluster=&quot;umeng-aff300-05-06&quot;,
+  node=&quot;umeng-aff300-06&quot;,
+  disk=&quot;1.1.23&quot;,
+  type=&quot;SSD&quot;,
+  model=&quot;X371_S1643960ATE&quot;,
+  outage=&quot;&quot;,
+  owner_node=&quot;umeng-aff300-06&quot;,
+  shared=&quot;true&quot;,
+  shelf=&quot;1&quot;,
+  shelf_bay=&quot;23&quot;,
+  serial_number=&quot;S3SENE0K500532&quot;,
+  failed=&quot;false&quot;,
+  container_type=&quot;shared&quot;
+}
+</code></pre></div>
+<h3 id="harvest-object-template">Harvest Object Template<a class="headerlink" href="#harvest-object-template" title="Permanent link">&para;</a></h3>
+<p>Continuing with the disk example, below is the <code>conf/zapi/cdot/9.8.0/disk.yaml</code> that tells Harvest which ZAPI to send to
+ONTAP (<code>storage-disk-get-iter</code>) and describes how to interpret and export the response.</p>
+<ul>
+<li>Line <code>1</code> defines the name of this resource and is an exact match to the object defined in your <code>default.yaml</code>
+  or <code>custom.yaml</code> file. Eg.</li>
+</ul>
+<div class="highlight"><pre><span></span><code># default.yaml
+objects:
+  Disk:  disk.yaml
+</code></pre></div>
+<ul>
+<li>Line <code>2</code> is the name of the ZAPI that Harvest will send to collect disk resources</li>
+<li>Line <code>3</code> is the prefix used to export metrics associated with this object. i.e. all metrics will be of the
+  form <code>disk_*</code></li>
+<li>Line <code>5</code> the <a href="https://github.com/NetApp/harvest/tree/main/conf#counters">counter section</a> is where we define the
+  metrics, labels, and what constitutes instance uniqueness</li>
+<li>Line <code>7</code> the double hat prefix <code>^^</code> means this attribute is an instance key used to determine uniqueness. Instance
+  keys are also included as labels. Uuids are good choices for uniqueness</li>
+<li>Line <code>13</code> the single hat prefix <code>^</code> means this attribute should be stored as a label. That means we can include it in
+  the <code>export_options</code> section as one of the key-value pairs in <code>disk_labels</code></li>
+<li>Rows 10, 11, 23, 24, 25, 26, 27 - these are the metrics rows - metrics are leaf nodes that are not prefixed with a ^
+  or ^^. If you refer back to the <a href="#ontap-zapi-disk-example">ONTAP ZAPI disk example</a> above, you'll notice each of these
+  attributes are integer types.</li>
+<li>Line 43 defines the set of labels to use when constructing the <code>disk_labels</code> metrics. As
+  mentioned <a href="#instance-keys-and-labels">above</a>, these labels capture config-related attributes per instance.</li>
+</ul>
+<blockquote>
+<p>Output edited for brevity and line numbers added for reference.</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code> 1  name:             Disk
+ 2  query:            storage-disk-get-iter
+ 3  object:           disk
+ 4  
+ 5  counters:
+ 6    storage-disk-info:
+ 7      - ^^disk-uid
+ 8      - ^^disk-name               =&gt; disk
+ 9      - disk-inventory-info:
+10        - bytes-per-sector        =&gt; bytes_per_sector        # notice this has the same hierarchical path we saw from bin/zapi
+11        - capacity-sectors        =&gt; sectors
+12        - ^disk-type              =&gt; type
+13        - ^is-shared              =&gt; shared
+14        - ^model                  =&gt; model
+15        - ^serial-number          =&gt; serial_number
+16        - ^shelf                  =&gt; shelf
+17        - ^shelf-bay              =&gt; shelf_bay
+18      - disk-ownership-info:
+19        - ^home-node-name         =&gt; node
+20        - ^owner-node-name        =&gt; owner_node
+21        - ^is-failed              =&gt; failed
+22      - disk-stats-info:
+23        - average-latency
+24        - disk-io-kbps
+25        - power-on-time-interval  =&gt; uptime
+26        - sectors-read
+27        - sectors-written
+28      - disk-raid-info:
+29        - ^container-type         =&gt; container_type
+30        - disk-outage-info:
+31          - ^reason               =&gt; outage
+32  
+33  plugins:
+34    - LabelAgent:
+35      # metric label zapi_value rest_value `default_value`
+36      value_to_num:
+37        - new_status outage - - `0` #ok_value is empty value, &#39;-&#39; would be converted to blank while processing.
+38  
+39  export_options:
+40    instance_keys:
+41      - node
+42      - disk
+43    instance_labels:
+44      - type
+45      - model
+46      - outage
+47      - owner_node
+48      - shared
+49      - shelf
+50      - shelf_bay
+51      - serial_number
+52      - failed
+53      - container_type
+</code></pre></div>
+<h3 id="control-what-labels-and-metrics-are-exported">Control What Labels and Metrics are Exported<a class="headerlink" href="#control-what-labels-and-metrics-are-exported" title="Permanent link">&para;</a></h3>
+<p>Let's continue with <code>disk</code> and look at a few examples. We'll use <code>curl</code> to examine the Prometheus wire format that
+Harvest uses to export the metrics from <code>conf/zapi/cdot/9.8.0/disk.yaml</code>.</p>
+<p>The curl below shows all exported disk metrics. There are 24 disks on this cluster, Harvest is collecting seven
+metrics + one disk_labels + one plugin-created metric, <code>disk_new_status</code> for a total of 216 rows.</p>
+<div class="highlight"><pre><span></span><code>curl -s &#39;http://localhost:14002/metrics&#39; | grep ^disk | cut -d&#39;{&#39; -f1 | sort | uniq -c
+  24 disk_bytes_per_sector           # metric
+  24 disk_labels                     # labels 
+  24 disk_new_status                 # plugin created metric 
+  24 disk_sectors                    # metric 
+  24 disk_stats_average_latency      # metric   
+  24 disk_stats_io_kbps              # metric 
+  24 disk_stats_sectors_read         # metric   
+  24 disk_stats_sectors_written      # metric  
+  24 disk_uptime                     # metric
+# sum = ((7 + 1 + 1) * 24 = 216 rows)
+</code></pre></div>
+<p>Here's a <code>disk_labels</code> for one instance, reformated to make it easier to read.</p>
+<div class="highlight"><pre><span></span><code>curl -s &#39;http://localhost:14002/metrics&#39; | grep ^disk_labels | head -1
+
+disk_labels{
+  datacenter = &quot;dc-1&quot;,                 # always included - value taken from datacenter in harvest.yml
+  cluster = &quot;umeng-aff300-05-06&quot;,      # always included
+  node = &quot;umeng-aff300-06&quot;,            # node is in the list of export_options instance_keys
+  disk = &quot;1.1.13&quot;,                     # disk is in the list of export_options instance_keys
+  type = &quot;SSD&quot;,                        # remainder are included because they are listed in the template&#39;s instance_labels
+  model = &quot;X371_S1643960ATE&quot;,
+  outage = &quot;&quot;,
+  owner_node = &quot;umeng-aff300-06&quot;,
+  shared = &quot;true&quot;,
+  shelf = &quot;1&quot;,
+  shelf_bay = &quot;13&quot;,
+  serial_number = &quot;S3SENE0K500572&quot;,
+  failed = &quot;false&quot;,
+  container_type = &quot;&quot;,
+} 1.0
+</code></pre></div>
+<p>Here's the <code>disk_sectors</code> metric for a single instance.</p>
+<div class="highlight"><pre><span></span><code>curl -s &#39;http://localhost:14002/metrics&#39; | grep ^disk_sectors | head -1
+
+disk_sectors{                          # prefix of disk_ + metric name (line 11 in template)
+  datacenter = &quot;dc-1&quot;,                 # always included - value taken from datacenter in harvest.yml
+  cluster = &quot;umeng-aff300-05-06&quot;,      # always included
+  node = &quot;umeng-aff300-06&quot;,            # node is in the list of export_options instance_keys
+  disk = &quot;1.1.17&quot;,                     # disk is in the list of export_options instance_keys
+} 1875385008                           # metric value - number of sectors for this disk instance
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>Number of rows for each template = number of instances * (number of metrics + 1 (for &lt;name&gt;_labels row) + plugin additions)
+Number of metrics                = number of counters which are not labels or keys, those without a ^ or ^^
+</code></pre></div>
+<h2 id="common-errors-and-troubleshooting">Common Errors and Troubleshooting<a class="headerlink" href="#common-errors-and-troubleshooting" title="Permanent link">&para;</a></h2>
+<h3 id="1-failed-to-parse-any-metrics">1. Failed to parse any metrics<a class="headerlink" href="#1-failed-to-parse-any-metrics" title="Permanent link">&para;</a></h3>
+<p>You add a new template to Harvest, restart your poller, and get an error message:</p>
+<div class="highlight"><pre><span></span><code>WRN ./poller.go:649 &gt; init collector-object (Zapi:NetPort): no metrics =&gt; failed to parse any
+</code></pre></div>
+<p>This means the collector, <code>Zapi NetPort</code>, was unable to find any metrics. <a href="#harvest-templates">Recall metrics</a> are lines
+without prefixes. In cases where you don't have any metrics, but still want to collect labels, add
+the <code>collect_only_labels: true</code> key-value to your template. This flag tells Harvest to ignore that you don't have
+metrics and
+continue. <a href="https://github.com/NetApp/harvest/blob/7334f11419075bf98b45fd14aee41dc2c16e4531/conf/zapi/cdot/9.8.0/qtree.yaml#L17">Example</a>.</p>
+<h3 id="2-missing-data">2. Missing Data<a class="headerlink" href="#2-missing-data" title="Permanent link">&para;</a></h3>
+<ol>
+<li>What happens if an attribute is listed in the list of <code>instance_labels</code> (line 43 above), but that label is missing
+   from the list of counters captured at line 5?</li>
+</ol>
+<p>The label will still be written into <code>disk_labels</code>, but the value will be empty since it's missing. e.g if line 29 was
+deleted <code>container_type</code> would still be present in <code>disk_labels{container_type=""}</code>.</p>
+<h2 id="prometheus-wire-format">Prometheus Wire Format<a class="headerlink" href="#prometheus-wire-format" title="Permanent link">&para;</a></h2>
+<p>https://prometheus.io/docs/instrumenting/exposition_formats/</p>
+<p>Keep in mind that Prometheus does not permit dashes (<code>-</code>) in labels. That's why Harvest templates use name replacement
+to convert dashed-names to underscored-names with <code>=&gt;</code>. e.g. <code>bytes-per-sector =&gt; bytes_per_sector</code>
+converts <code>bytes-per-sector</code> into the Prometheus accepted <code>bytes_per_sector</code>.</p>
+<p>Every time series is uniquely identified by its metric name and optional key-value pairs called labels.</p>
+<p>Labels enable Prometheus's dimensional data model: any combination of labels for the same metric name identifies a
+particular dimensional instantiation of that metric (for example: all HTTP requests that used the method POST to the
+/api/tracks handler). The query language allows filtering and aggregation based on these dimensions. Changing any label
+value, including adding or removing a label, will create a new time series.</p>
+<blockquote>
+<p><code>&lt;metric_name&gt;{&lt;label_name&gt;=&lt;label_value&gt;, ...} value [ timestamp ]</code></p>
+<ul>
+<li>metric_name and label_name carry the usual Prometheus expression language restrictions</li>
+<li>label_value can be any sequence of UTF-8 characters, but the backslash (), double-quote ("), and line feed (\n)
+    characters have to be escaped as \, \", and \n, respectively.</li>
+<li>value is a float represented as required by Go's ParseFloat() function. In addition to standard numerical values,
+    NaN, +Inf, and -Inf are valid values representing not a number, positive infinity, and negative infinity,
+    respectively.</li>
+<li>timestamp is an int64 (milliseconds since epoch, i.e. 1970-01-01 00:00:00 UTC, excluding leap seconds), represented
+    as required by Go's ParseInt() function</li>
+</ul>
+<p><a href="https://prometheus.io/docs/instrumenting/exposition_formats/#comments-help-text-and-type-information">Exposition formats</a> </p>
+</blockquote>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="../../troubleshooting/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Troubleshoot" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Troubleshoot
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../matrix/" class="md-footer__link md-footer__link--next" aria-label="Next: Matrix" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Matrix
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; NetApp
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://discordapp.com/channels/855068651522490400/1001963189124206732" target="_blank" rel="noopener" title="discordapp.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M524.531 69.836a1.5 1.5 0 0 0-.764-.7A485.065 485.065 0 0 0 404.081 32.03a1.816 1.816 0 0 0-1.923.91 337.461 337.461 0 0 0-14.9 30.6 447.848 447.848 0 0 0-134.426 0 309.541 309.541 0 0 0-15.135-30.6 1.89 1.89 0 0 0-1.924-.91 483.689 483.689 0 0 0-119.688 37.107 1.712 1.712 0 0 0-.788.676C39.068 183.651 18.186 294.69 28.43 404.354a2.016 2.016 0 0 0 .765 1.375 487.666 487.666 0 0 0 146.825 74.189 1.9 1.9 0 0 0 2.063-.676A348.2 348.2 0 0 0 208.12 430.4a1.86 1.86 0 0 0-1.019-2.588 321.173 321.173 0 0 1-45.868-21.853 1.885 1.885 0 0 1-.185-3.126 251.047 251.047 0 0 0 9.109-7.137 1.819 1.819 0 0 1 1.9-.256c96.229 43.917 200.41 43.917 295.5 0a1.812 1.812 0 0 1 1.924.233 234.533 234.533 0 0 0 9.132 7.16 1.884 1.884 0 0 1-.162 3.126 301.407 301.407 0 0 1-45.89 21.83 1.875 1.875 0 0 0-1 2.611 391.055 391.055 0 0 0 30.014 48.815 1.864 1.864 0 0 0 2.063.7A486.048 486.048 0 0 0 610.7 405.729a1.882 1.882 0 0 0 .765-1.352c12.264-126.783-20.532-236.912-86.934-334.541ZM222.491 337.58c-28.972 0-52.844-26.587-52.844-59.239s23.409-59.241 52.844-59.241c29.665 0 53.306 26.82 52.843 59.239 0 32.654-23.41 59.241-52.843 59.241Zm195.38 0c-28.971 0-52.843-26.587-52.843-59.239s23.409-59.241 52.843-59.241c29.667 0 53.307 26.82 52.844 59.239 0 32.654-23.177 59.241-52.844 59.241Z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://github.com/NetApp/harvest/discussions" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d6c3db9e.min.js"></script>
+      
+    
+  </body>
+</html>

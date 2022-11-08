@@ -1,1 +1,0 @@
-[Harvest's License](https://github.com/NetApp/harvest/blob/main/LICENSE)

@@ -1,2 +1,0 @@
-- [Changelog](https://github.com/NetApp/harvest/blob/main/CHANGELOG.md)
-- [Releases](https://github.com/NetApp/harvest/releases)

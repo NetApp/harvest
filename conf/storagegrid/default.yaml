@@ -1,8 +1,0 @@
-
-collector:         StorageGrid
-
-schedule:
-  - data: 5m
-
-objects:
-  Tenant:          tenant.yaml
