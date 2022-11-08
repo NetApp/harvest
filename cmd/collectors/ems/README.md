@@ -15,7 +15,7 @@ Any cDOT ONTAP system using 9.6 or higher.
 
 ## Requirements
 
-It is recommended to create a read-only user on the ONTAP system. See [authentication and permissions](../../../docs/AuthAndPermissions.md).
+It is recommended to create a read-only user on the ONTAP system. See [authentication and permissions](../../../pkg/docs/AuthAndPermissions.md).
 
 ## Metrics
 

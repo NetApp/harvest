@@ -10,7 +10,7 @@ Note that the [ZapiPerf collector](../zapiperf/README.md) is an extension of thi
 Target system can be any cDot or 7Mode ONTAP system. Any version is supported, however the default configuration files may not completely match with an older system.
 
 ## Requirements
-No SDK or any other requirement. It is recommended to create a read-only user for Harvest on the ONTAP system (see the [Authentication document](../../../docs/AuthAndPermissions.md))
+No SDK or any other requirement. It is recommended to create a read-only user for Harvest on the ONTAP system (see the [Authentication document](../../../pkg/docs/AuthAndPermissions.md))
 
 ## Metrics
 
