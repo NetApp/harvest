@@ -4408,7 +4408,7 @@
         "x": 0,
         "y": 18
       },
-      "id": 91,
+      "id": 92,
       "panels": [
         {
           "description": "Average latency per GET operation to object storage",
