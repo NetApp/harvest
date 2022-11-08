@@ -3,7 +3,6 @@ package collectors
 import (
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
-	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -12,7 +11,7 @@ import (
 	"time"
 )
 
-func InvokeRestCall(client *rest.Client, query string, href string, logger *logging.Logger) ([]gjson.Result, error) {
+func InvokeRestCall(client *rest.Client, href string, logger *logging.Logger) ([]gjson.Result, error) {
 	result, err := rest.Fetch(client, href)
 	if err != nil {
 		logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
@@ -20,7 +19,7 @@ func InvokeRestCall(client *rest.Client, query string, href string, logger *logg
 	}
 
 	if len(result) == 0 {
-		return []gjson.Result{}, errs.New(errs.ErrNoInstance, "no "+query+" instances on cluster")
+		return []gjson.Result{}, nil
 	}
 
 	return result, nil
