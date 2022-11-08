@@ -218,6 +218,7 @@ func Init(c Collector) error {
 	md.SetGlobalLabel("poller", opts.Poller)
 	md.SetGlobalLabel("collector", name)
 	md.SetGlobalLabel("object", object)
+	md.SetGlobalLabel("datacenter", params.GetChildContentS("datacenter"))
 
 	_, _ = md.NewMetricInt64("poll_time")
 	_, _ = md.NewMetricInt64("task_time")

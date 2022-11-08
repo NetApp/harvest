@@ -908,6 +908,7 @@ func (p *Poller) loadMetadata() {
 	_, _ = p.metadata.NewMetricUint64("count")
 	p.metadata.SetGlobalLabel("poller", p.name)
 	p.metadata.SetGlobalLabel("version", p.options.Version)
+	p.metadata.SetGlobalLabel("datacenter", p.params.Datacenter)
 	p.metadata.SetGlobalLabel("hostname", p.options.Hostname)
 	if p.options.PromPort != 0 {
 		p.metadata.SetGlobalLabel("promport", strconv.Itoa(p.options.PromPort))
@@ -924,6 +925,7 @@ func (p *Poller) loadMetadata() {
 	instance.SetLabel("addr", p.target)
 	p.status.SetGlobalLabel("poller", p.name)
 	p.status.SetGlobalLabel("version", p.options.Version)
+	p.status.SetGlobalLabel("datacenter", p.params.Datacenter)
 	p.status.SetGlobalLabel("hostname", p.options.Hostname)
 	if p.options.PromPort != 0 {
 		p.status.SetGlobalLabel("promport", strconv.Itoa(p.options.PromPort))
