@@ -5,7 +5,7 @@ The *swiss-army knife* for monitoring datacenters. The default package collects 
 
 Harvest's architecture is flexible in how it collects, augments, and exports data. Think of it as a framework for running collectors and exporters concurrently. You are more than welcome to contribute your own collector, plugin or exporter (start with our [ARCHITECTURE.md](ARCHITECTURE.md)).
 
-<img src="docs/examples/dashboard_cluster.png" width="40%" align="center"><img src="docs/examples/dashboard_shelf.png" width="40%" align="center">
+<img src="pkg/docs/examples/dashboard_cluster.png" width="40%" align="center"><img src="pkg/docs/examples/dashboard_shelf.png" width="40%" align="center">
 ## Requirements
 
 Harvest is written in Go, which means it runs on recent Linux systems. It also runs on Macs, but the process isn't as smooth yet.
