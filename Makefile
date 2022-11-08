@@ -34,6 +34,7 @@ BIN_PLATFORM ?= linux
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 LINT_EXISTS := $(shell which golangci-lint)
 GOVULNCHECK_EXISTS := $(shell which govulncheck)
+MKDOCS_EXISTS := $(shell which mkdocs)
 
 
 help:  ## Display this help
@@ -103,6 +104,15 @@ ifeq (${GOVULNCHECK_EXISTS}, )
 endif
 	govulncheck ./...
 
+mkdocs:
+ifeq (${MKDOCS_EXISTS}, )
+	@echo
+	@echo "mkdocs task requires that you have https://squidfunk.github.io/mkdocs-material/getting-started/ installed."
+	@echo
+	@exit 1
+endif
+	mkdocs serve
+
 build: clean deps fmt harvest fetch-asup ## Build the project
 
 package: clean deps build test dist-tar ## Package Harvest binary
@@ -171,5 +181,6 @@ dev: build lint govulncheck
 fetch-asup:
 	@./.github/fetch-asup ${ASUP_BIN} ${ASUP_BIN_VERSION} ${BIN_PLATFORM} 2>/dev/null   #Suppress Error in case of internet connectivity
 
+docs: mkdocs ## Serve docs for local dev
 
 
