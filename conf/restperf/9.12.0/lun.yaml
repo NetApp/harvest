@@ -9,23 +9,23 @@ counters:
   - write_data
   - read_ops
   - write_ops
-  - xcopy_requests
+  - xcopy_requests              => xcopy_reqs
   - writesame_requests
   - writesame_unmap_requests
-  - caw_requests
-  - average_read_latency
-  - average_write_latency
-  - average_xcopy_latency
-  - unmap_requests
-  - writesame_unmap_requests
+  - caw_requests                => caw_reqs
+  - average_read_latency        => avg_read_latency
+  - average_write_latency       => avg_write_latency
+  - average_xcopy_latency       => avg_xcopy_latency
+  - unmap_requests              => unmap_reqs
+  - writesame_unmap_requests    => writesame_unmap_reqs
   - enospc
   - queue_full
   - remote_bytes
   - remote_ops
   - read_partial_blocks
   - write_partial_blocks
-  - write_align_histogram
-  - read_align_histogram
+  - write_align_histogram       => write_align_histo
+  - read_align_histogram        => read_align_histo
 
 override:
   - writesame_requests: rate
