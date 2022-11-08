@@ -6,6 +6,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/headroom"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/nic"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/volume"
+	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/volumetag"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
@@ -1046,6 +1047,8 @@ func (r *RestPerf) LoadPlugin(kind string, p *plugin.AbstractPlugin) plugin.Plug
 		return headroom.New(p)
 	case "Volume":
 		return volume.New(p)
+	case "VolumeTag":
+		return volumetag.New(p)
 	default:
 		r.Logger.Info().Str("kind", kind).Msg("no Restperf plugin found")
 	}
