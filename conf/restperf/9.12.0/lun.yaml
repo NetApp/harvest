@@ -10,8 +10,8 @@ counters:
   - read_ops
   - write_ops
   - xcopy_requests              => xcopy_reqs
-  - writesame_requests
-  - writesame_unmap_requests
+  - writesame_requests          => writesame_reqs
+  - writesame_unmap_requests    => writesame_unmap_reqs
   - caw_requests                => caw_reqs
   - average_read_latency        => avg_read_latency
   - average_write_latency       => avg_write_latency
