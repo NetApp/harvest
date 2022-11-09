@@ -351,8 +351,7 @@ func (my *Shelf) calculateEnvironmentMetrics(output []*matrix.Matrix, data *matr
 
 func (my *Shelf) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 	var (
-		numMetrics int
-		output     []*matrix.Matrix
+		output []*matrix.Matrix
 	)
 
 	my.Logger.Debug().Msgf("fetching %d shelf counters", len(shelves))
@@ -425,7 +424,6 @@ func (my *Shelf) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 								if err := m.SetValueString(instance, value); err != nil {
 									my.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", metricKey, value, err)
 								} else {
-									numMetrics++
 									my.Logger.Debug().Msgf("(%s) added value (%s)", metricKey, value)
 								}
 							}
@@ -446,10 +444,9 @@ func (my *Shelf) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 
 func (my *Shelf) handle7Mode(result []*node.Node) ([]*matrix.Matrix, error) {
 	var (
-		shelves    []*node.Node
-		channels   []*node.Node
-		output     []*matrix.Matrix
-		numMetrics int
+		shelves  []*node.Node
+		channels []*node.Node
+		output   []*matrix.Matrix
 	)
 	// fallback to 7mode, here result would be the zapi response itself with only one record.
 	channels = result[0].SearchChildren([]string{"shelf-environ-channel-info"})
@@ -532,7 +529,6 @@ func (my *Shelf) handle7Mode(result []*node.Node) ([]*matrix.Matrix, error) {
 									if err := m.SetValueString(instance, value); err != nil {
 										my.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", metricKey, value, err)
 									} else {
-										numMetrics++
 										my.Logger.Debug().Msgf("(%s) added value (%s)", metricKey, value)
 									}
 								}
