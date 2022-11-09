@@ -70,7 +70,6 @@ plugins:
   Volume:
     schedule:
       - data: 900s  # should be multiple of data poll duration
-    #batch_size: "50"
   LabelAgent:
     # metric label zapi_value rest_value `default_value`
     value_to_num:

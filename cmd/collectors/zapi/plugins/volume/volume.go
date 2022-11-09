@@ -13,13 +13,11 @@ import (
 	"time"
 )
 
-const BatchSize = "500"
 const DefaultPluginDuration = 30 * time.Minute
 const DefaultDataPollDuration = 3 * time.Minute
 
 type Volume struct {
 	*plugin.AbstractPlugin
-	batchSize            string
 	pluginInvocationRate int
 	currentVal           int
 	client               *zapi.Client
@@ -57,17 +55,6 @@ func (my *Volume) Init() error {
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
 	if my.currentVal, err = collectors.SetPluginInterval(my.ParentParams, my.Params, my.Logger, DefaultDataPollDuration, DefaultPluginDuration); err != nil {
 		my.Logger.Error().Err(err).Stack().Msg("Failed while setting the plugin interval")
-	}
-
-	// batching the request
-	if b := my.Params.GetChildContentS("batch_size"); b != "" {
-		if _, err := strconv.Atoi(b); err == nil {
-			my.batchSize = b
-			my.Logger.Info().Str("BatchSize", my.batchSize).Msg("using batch-size")
-		}
-	} else {
-		my.batchSize = BatchSize
-		my.Logger.Trace().Str("BatchSize", BatchSize).Msg("Using default batch-size")
 	}
 
 	return nil
@@ -130,7 +117,8 @@ func (my *Volume) getEncryptedDisks() ([]string, error) {
 	encryptInfoQuery := query.NewChildS("disk-encrypt-info", "")
 	encryptInfoQuery.NewChildS("protection-mode", "open|part|miss")
 
-	if result, _, err = collectors.InvokeZapiCall(my.client, request, my.Logger, ""); err != nil {
+	// fetching only disks whose protection-mode is open/part/miss
+	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger, collectors.DefaultBatchSize); err != nil {
 		return nil, err
 	}
 
@@ -168,7 +156,7 @@ func (my *Volume) getAggrDiskMapping() (map[string]aggrData, error) {
 	request := node.NewXMLS("aggr-status-get-iter")
 	aggrsDisksMap = make(map[string]aggrData)
 
-	if result, _, err = collectors.InvokeZapiCall(my.client, request, my.Logger, ""); err != nil {
+	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger, collectors.DefaultBatchSize); err != nil {
 		return nil, err
 	}
 

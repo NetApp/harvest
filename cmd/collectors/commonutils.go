@@ -12,6 +12,8 @@ import (
 	"time"
 )
 
+const DefaultBatchSize = "500"
+
 func InvokeRestCall(client *rest.Client, query string, href string, logger *logging.Logger) ([]gjson.Result, error) {
 	result, err := rest.Fetch(client, href)
 	if err != nil {
@@ -26,43 +28,61 @@ func InvokeRestCall(client *rest.Client, query string, href string, logger *logg
 	return result, nil
 }
 
-func InvokeZapiCall(client *zapi.Client, request *node.Node, logger *logging.Logger, tag string) ([]*node.Node, string, error) {
+/* For cmode: function output would be the list of objects[qtrees, volumes]
+   For 7mode: function output would be the zapi response itself --> It will be parsed/handled in own plugin
+*/
+
+func InvokeZapiCall(client *zapi.Client, request *node.Node, logger *logging.Logger, batchSize string) ([]*node.Node, error) {
 
 	var (
 		result   *node.Node
 		response []*node.Node
-		newTag   string
+		output   []*node.Node
 		err      error
 	)
 
-	if tag != "" {
-		if result, newTag, err = client.InvokeBatchRequest(request, tag); err != nil {
-			return nil, "", err
-		}
-	} else {
-		if result, err = client.InvokeRequest(request); err != nil {
-			return nil, "", err
+	if client.IsClustered() {
+		if batchSize != "" {
+			request.NewChildS("max-records", batchSize)
+		} else {
+			request.NewChildS("max-records", DefaultBatchSize)
 		}
 	}
 
-	if result == nil {
-		return nil, "", nil
+	tag := "initial"
+
+	for {
+		if result, tag, err = client.InvokeBatchRequest(request, tag); err != nil {
+			return nil, err
+		}
+
+		if result == nil {
+			break
+		}
+
+		// for 7mode, zapi response itself would be the output
+		if !client.IsClustered() {
+			output = append(output, result)
+			break
+		}
+
+		if x := result.GetChildS("attributes-list"); x != nil {
+			response = x.GetChildren()
+		} else if y := result.GetChildS("attributes"); y != nil {
+			// Check for non-list response
+			response = y.GetChildren()
+		}
+
+		if len(response) == 0 {
+			break
+		}
+
+		output = append(output, response...)
 	}
 
-	if x := result.GetChildS("attributes-list"); x != nil {
-		response = x.GetChildren()
-	} else if y := result.GetChildS("attributes"); y != nil {
-		// Check for non-list response
-		response = y.GetChildren()
-	}
+	logger.Trace().Int("object", len(output)).Msg("fetching")
 
-	if len(response) == 0 {
-		return nil, "", nil
-	}
-
-	logger.Trace().Int("object", len(response)).Msg("fetching")
-
-	return response, newTag, nil
+	return output, nil
 }
 
 func UpdateProtectedFields(instance *matrix.Instance) {

@@ -2,6 +2,7 @@
 package shelf
 
 import (
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -12,7 +13,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/util"
 	"strconv"
 	"strings"
-	"time"
 )
 
 const BatchSize = "500"
@@ -146,13 +146,12 @@ func (my *Shelf) Init() error {
 	my.Logger.Debug().Msgf("initialized with data [%d] objects", len(my.data))
 
 	// setup batchSize for request
+	my.batchSize = BatchSize
 	if my.client.IsClustered() {
 		if b := my.Params.GetChildContentS("batch_size"); b != "" {
 			if _, err := strconv.Atoi(b); err == nil {
 				my.batchSize = b
 			}
-		} else {
-			my.batchSize = BatchSize
 		}
 	}
 	return nil
@@ -161,16 +160,10 @@ func (my *Shelf) Init() error {
 func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var (
-		result     *node.Node
-		ad, pd     time.Duration // Request/API time, Parse time, Fetch time
-		output     []*matrix.Matrix
-		shelves    int
-		numMetrics int
-		err        error
+		result []*node.Node
+		output []*matrix.Matrix
+		err    error
 	)
-
-	apiT := 0 * time.Second
-	parseT := 0 * time.Second
 
 	if !my.client.IsClustered() {
 		for _, instance := range data.GetInstances() {
@@ -184,60 +177,33 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 
 	request := node.NewXMLS(my.query)
-	tag := "initial"
-	totalShelves := 0
-	totalMetrics := 0
 
-	if my.client.IsClustered() && my.batchSize != "" {
-		request.NewChildS("max-records", my.batchSize)
+	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger, my.batchSize); err != nil {
+		return nil, err
 	}
 
-	for {
-		if result, tag, ad, pd, err = my.client.InvokeBatchWithTimers(request, tag); err != nil {
-			return nil, err
-		}
-
-		if result == nil {
-			break
-		}
-
-		apiT += ad
-		parseT += pd
-
-		var batchOutput []*matrix.Matrix
-
-		if my.client.IsClustered() {
-			batchOutput, shelves, numMetrics, err = my.handleCMode(result)
-		} else {
-			batchOutput, shelves, numMetrics, err = my.handle7Mode(result)
-		}
-
-		if err != nil {
-			return output, err
-		}
-
-		if my.client.IsClustered() {
-			if err = my.calculateEnvironmentMetrics(data); err != nil {
-				return output, err
-			}
-		}
-		totalShelves += shelves
-		totalMetrics += numMetrics
-		output = append(output, batchOutput...)
+	if len(result) == 0 || result == nil {
+		return nil, errs.New(errs.ErrNoInstance, "no records found")
 	}
 
-	my.Logger.Info().
-		Int("numShelves", totalShelves).
-		Int("metrics", totalMetrics).
-		Str("apiD", apiT.Round(time.Millisecond).String()).
-		Str("parseD", parseT.Round(time.Millisecond).String()).
-		Str("batchSize", my.batchSize).
-		Msg("Collected")
-	return output, nil
+	if my.client.IsClustered() {
+		output, err = my.handleCMode(result)
+	} else {
+		output, err = my.handle7Mode(result)
+	}
 
+	if err != nil {
+		return output, err
+	}
+
+	if my.client.IsClustered() {
+		return my.calculateEnvironmentMetrics(output, data)
+	} else {
+		return output, nil
+	}
 }
 
-func (my *Shelf) calculateEnvironmentMetrics(data *matrix.Matrix) error {
+func (my *Shelf) calculateEnvironmentMetrics(output []*matrix.Matrix, data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	var err error
 	shelfEnvironmentMetricMap := make(map[string]*shelfEnvironmentMetric, 0)
 	for _, o := range my.data {
@@ -380,22 +346,14 @@ func (my *Shelf) calculateEnvironmentMetrics(data *matrix.Matrix) error {
 			}
 		}
 	}
-	return nil
+	return output, nil
 }
 
-func (my *Shelf) handleCMode(result *node.Node) ([]*matrix.Matrix, int, int, error) {
+func (my *Shelf) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 	var (
-		shelves    []*node.Node
 		numMetrics int
 		output     []*matrix.Matrix
 	)
-
-	if x := result.GetChildS("attributes-list"); x != nil {
-		shelves = x.GetChildren()
-	}
-	if len(shelves) == 0 {
-		return nil, 0, 0, errs.New(errs.ErrNoInstance, "no shelf instances found")
-	}
 
 	my.Logger.Debug().Msgf("fetching %d shelf counters", len(shelves))
 
@@ -440,7 +398,7 @@ func (my *Shelf) handleCMode(result *node.Node) ([]*matrix.Matrix, int, int, err
 
 						if err != nil {
 							my.Logger.Error().Err(err).Str("attribute", attribute).Msg("Failed to add instance")
-							return nil, 0, 0, err
+							return nil, err
 						}
 						my.Logger.Debug().Msgf("add (%s) instance: %s.%s", attribute, shelfID, key)
 
@@ -483,21 +441,21 @@ func (my *Shelf) handleCMode(result *node.Node) ([]*matrix.Matrix, int, int, err
 		}
 	}
 
-	return output, len(shelves), numMetrics, nil
+	return output, nil
 }
 
-func (my *Shelf) handle7Mode(result *node.Node) ([]*matrix.Matrix, int, int, error) {
+func (my *Shelf) handle7Mode(result []*node.Node) ([]*matrix.Matrix, error) {
 	var (
 		shelves    []*node.Node
 		channels   []*node.Node
 		output     []*matrix.Matrix
 		numMetrics int
 	)
-	//fallback to 7mode
-	channels = result.SearchChildren([]string{"shelf-environ-channel-info"})
+	// fallback to 7mode, here result would be the zapi response itself with only one record.
+	channels = result[0].SearchChildren([]string{"shelf-environ-channel-info"})
 
 	if len(channels) == 0 {
-		return nil, 0, 0, errs.New(errs.ErrNoInstance, "no channels found")
+		return nil, errs.New(errs.ErrNoInstance, "no channels found")
 	}
 
 	// Purge and reset data
@@ -545,7 +503,7 @@ func (my *Shelf) handle7Mode(result *node.Node) ([]*matrix.Matrix, int, int, err
 
 							if err != nil {
 								my.Logger.Error().Msgf("add (%s) instance: %v", attribute, err)
-								return nil, 0, 0, err
+								return nil, err
 							}
 							my.Logger.Debug().Msgf("add (%s) instance: %s.%s", attribute, shelfID, key)
 
@@ -590,5 +548,5 @@ func (my *Shelf) handle7Mode(result *node.Node) ([]*matrix.Matrix, int, int, err
 			}
 		}
 	}
-	return output, len(shelves), numMetrics, nil
+	return output, nil
 }

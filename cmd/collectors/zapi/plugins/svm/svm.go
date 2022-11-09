@@ -77,13 +77,13 @@ func (my *SVM) Init() error {
 		return err
 	}
 
+	my.batchSize = BatchSize
 	if b := my.Params.GetChildContentS("batch_size"); b != "" {
 		if _, err := strconv.Atoi(b); err == nil {
 			my.batchSize = b
 			my.Logger.Info().Str("BatchSize", my.batchSize).Msg("using batch-size")
 		}
 	} else {
-		my.batchSize = BatchSize
 		my.Logger.Trace().Str("BatchSize", BatchSize).Msg("Using default batch-size")
 	}
 
@@ -219,9 +219,8 @@ func (my *SVM) GetAuditProtocols() (map[string]string, error) {
 	vserverAuditEnableMap = make(map[string]string)
 
 	request = node.NewXMLS("fileservice-audit-config-get-iter")
-	request.NewChildS("max-records", my.batchSize)
 
-	if result, _, err = collectors.InvokeZapiCall(my.client, request, my.Logger, ""); err != nil {
+	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger, my.batchSize); err != nil {
 		return nil, err
 	}
 
@@ -248,9 +247,8 @@ func (my *SVM) GetCifsProtocols() (map[string]string, error) {
 	vserverCifsEnableMap = make(map[string]string)
 
 	request = node.NewXMLS("cifs-security-get-iter")
-	request.NewChildS("max-records", my.batchSize)
 
-	if result, _, err = collectors.InvokeZapiCall(my.client, request, my.Logger, ""); err != nil {
+	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger, my.batchSize); err != nil {
 		return nil, err
 	}
 
@@ -279,9 +277,8 @@ func (my *SVM) GetNSSwitchInfo() (map[string]nsswitch, error) {
 	vserverNsswitchMap = make(map[string]nsswitch)
 
 	request = node.NewXMLS("nameservice-nsswitch-get-iter")
-	request.NewChildS("max-records", my.batchSize)
 
-	if result, _, err = collectors.InvokeZapiCall(my.client, request, my.Logger, ""); err != nil {
+	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger, my.batchSize); err != nil {
 		return nil, err
 	}
 
@@ -317,9 +314,8 @@ func (my *SVM) GetNisInfo() (map[string]string, error) {
 	vserverNisMap = make(map[string]string)
 
 	request = node.NewXMLS("nis-get-iter")
-	request.NewChildS("max-records", my.batchSize)
 
-	if result, _, err = collectors.InvokeZapiCall(my.client, request, my.Logger, ""); err != nil {
+	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger, my.batchSize); err != nil {
 		return nil, err
 	}
 
@@ -346,9 +342,8 @@ func (my *SVM) GetCifsEnabled() (map[string]bool, error) {
 	vserverCifsMap = make(map[string]bool)
 
 	request = node.NewXMLS("cifs-server-get-iter")
-	request.NewChildS("max-records", my.batchSize)
 
-	if result, _, err = collectors.InvokeZapiCall(my.client, request, my.Logger, ""); err != nil {
+	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger, my.batchSize); err != nil {
 		return nil, err
 	}
 
@@ -375,9 +370,8 @@ func (my *SVM) GetNfsEnabled() (map[string]string, error) {
 	vserverNfsMap = make(map[string]string)
 
 	request = node.NewXMLS("nfs-service-get-iter")
-	request.NewChildS("max-records", my.batchSize)
 
-	if result, _, err = collectors.InvokeZapiCall(my.client, request, my.Logger, ""); err != nil {
+	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger, my.batchSize); err != nil {
 		return nil, err
 	}
 
@@ -404,9 +398,8 @@ func (my *SVM) GetSSHData() (map[string]string, error) {
 	sshMap = make(map[string]string)
 
 	request = node.NewXMLS("security-ssh-get-iter")
-	request.NewChildS("max-records", my.batchSize)
 
-	if result, _, err = collectors.InvokeZapiCall(my.client, request, my.Logger, ""); err != nil {
+	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger, my.batchSize); err != nil {
 		return nil, err
 	}
 

@@ -92,13 +92,12 @@ func (my *Qtree) Init() error {
 	my.Logger.Debug().Msgf("added data with %d metrics", len(my.data.GetMetrics()))
 
 	// setup batchSize for request
+	my.batchSize = BatchSize
 	if my.client.IsClustered() {
 		if b := my.Params.GetChildContentS("batch_size"); b != "" {
 			if _, err := strconv.Atoi(b); err == nil {
 				my.batchSize = b
 			}
-		} else {
-			my.batchSize = BatchSize
 		}
 	}
 

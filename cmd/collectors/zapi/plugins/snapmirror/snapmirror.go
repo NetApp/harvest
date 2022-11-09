@@ -193,7 +193,8 @@ func (my *SnapMirror) getSVMPeerData(cluster string) error {
 	// Clean svmPeerMap map
 	my.svmPeerDataMap = make(map[string]Peer)
 
-	if result, _, err = collectors.InvokeZapiCall(my.client, request, my.Logger, ""); err != nil {
+	// fetching only remote vserver peer data
+	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger, collectors.DefaultBatchSize); err != nil {
 		return err
 	}
 

@@ -58,12 +58,11 @@ func (my *Certificate) Init() error {
 		return err
 	}
 
+	my.batchSize = BatchSize
 	if b := my.Params.GetChildContentS("batch_size"); b != "" {
 		if _, err := strconv.Atoi(b); err == nil {
 			my.batchSize = b
 		}
-	} else {
-		my.batchSize = BatchSize
 	}
 
 	return nil
@@ -198,13 +197,13 @@ func (my *Certificate) GetAdminVserver() (string, error) {
 	)
 
 	request = node.NewXMLS("vserver-get-iter")
-	request.NewChildS("max-records", my.batchSize)
 	// Fetching only admin vserver
 	query := request.NewChildS("query", "")
 	vserverInfo := query.NewChildS("vserver-info", "")
 	vserverInfo.NewChildS("vserver-type", "admin")
 
-	if result, _, err = collectors.InvokeZapiCall(my.client, request, my.Logger, ""); err != nil {
+	// Fetching only admin vservers
+	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger, my.batchSize); err != nil {
 		return "", err
 	}
 
@@ -227,13 +226,13 @@ func (my *Certificate) GetSecuritySsl(adminSvm string) (string, error) {
 	)
 
 	request = node.NewXMLS("security-ssl-get-iter")
-	request.NewChildS("max-records", my.batchSize)
 	// Fetching only admin vserver
 	query := request.NewChildS("query", "")
 	vserverInfo := query.NewChildS("vserver-ssl-info", "")
 	vserverInfo.NewChildS("vserver", adminSvm)
 
-	if result, _, err = collectors.InvokeZapiCall(my.client, request, my.Logger, ""); err != nil {
+	// fetching data of only admin vservers
+	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger, my.batchSize); err != nil {
 		return "", err
 	}
 

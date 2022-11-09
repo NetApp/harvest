@@ -106,7 +106,8 @@ func (my *Security) getSecurityConfig() (string, error) {
 	request = node.NewXMLS("security-config-get")
 	request.NewChildS("interface", "ssl")
 
-	if result, _, err = collectors.InvokeZapiCall(my.client, request, my.Logger, ""); err != nil {
+	// fetching only ssl interface
+	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger, collectors.DefaultBatchSize); err != nil {
 		return "", err
 	}
 
@@ -153,7 +154,8 @@ func (my *Security) getEnabledValue(request *node.Node) (string, error) {
 		err     error
 	)
 
-	if result, _, err = collectors.InvokeZapiCall(my.client, request, my.Logger, ""); err != nil {
+	// fetching only telnet/rsh protocols
+	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger, collectors.DefaultBatchSize); err != nil {
 		return "", err
 	}
 
