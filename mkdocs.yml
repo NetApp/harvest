@@ -31,8 +31,9 @@ nav:
   - Configure Harvest (advanced): 'configure-harvest-advanced.md'
   - Troubleshoot: 'troubleshooting.md'
   - Reference:
-      - 'Templates And Metrics': 'resources/templates-and-metrics.md'
+      - 'Plugins': 'plugins.md'
       - 'Matrix': 'resources/matrix.md'
+      - 'Templates And Metrics': 'resources/templates-and-metrics.md'
   - About:
       - 'License': 'license.md'
       - 'Release Notes': 'release-notes.md'
