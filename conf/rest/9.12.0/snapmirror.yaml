@@ -6,7 +6,7 @@ object:                       snapmirror
 
 counters:
   - ^^relationship_id                        => relationship_id
-  - ^destination_path                        => destination_location
+  - ^^destination_path                       => destination_location
   - ^destination_volume_node                 => destination_node
   - ^destination_vserver                     => destination_vserver
   - ^destination_volume                      => destination_volume
@@ -41,6 +41,7 @@ endpoints:
   - query: api/snapmirror/relationships
     counters:
       - ^^uuid                               => relationship_id
+      - ^^destination.path                   => destination_location
       - ^source.cluster.name                 => source_cluster
 
 plugins:
@@ -55,6 +56,8 @@ export_options:
     - source_volume
     - source_vserver
     - source_node
+    - source_cluster
+    - destination_location
   instance_labels:
     - healthy
     - unhealthy_reason
@@ -62,13 +65,9 @@ export_options:
     - relationship_status
     - relationship_type
     - schedule
-#    - destination_node_limit
-#    - source_node_limit
     - group_type
-    - destination_location
     - protectedBy
     - protectionSourceType
     - policy_type
-    - source_cluster
     - derived_relationship_type
     - local

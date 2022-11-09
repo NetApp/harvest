@@ -415,14 +415,20 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, isEndPoint bool)
 			continue
 		}
 
-		// extract instance key(s)
-		for _, k := range prop.InstanceKeys {
-			value := instanceData.Get(k)
-			if value.Exists() {
-				instanceKey += value.String()
-			} else {
-				r.Logger.Warn().Str("key", k).Msg("skip instance, missing key")
-				break
+		if len(prop.InstanceKeys) != 0 {
+			// extract instance key(s)
+			for _, k := range prop.InstanceKeys {
+				value := instanceData.Get(k)
+				if value.Exists() {
+					instanceKey += value.String()
+				} else {
+					r.Logger.Warn().Str("key", k).Msg("missing key")
+				}
+			}
+
+			if instanceKey == "" {
+				r.Logger.Trace().Msg("Instance key is empty, skipping")
+				continue
 			}
 		}
 

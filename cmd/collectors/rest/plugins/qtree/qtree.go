@@ -122,7 +122,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	href := rest.BuildHref("", "*", filter, "", "", "", "", my.query)
 
-	if result, err = collectors.InvokeRestCall(my.client, my.query, href, my.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(my.client, href, my.Logger); err != nil {
 		return nil, err
 	}
 

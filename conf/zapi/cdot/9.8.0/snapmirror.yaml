@@ -30,7 +30,7 @@ counters:
     - ^unhealthy-reason
     - update-failed-count
     - update-successful-count
-    - ^destination-location
+    - ^^destination-location
     - ^policy-type
 
 plugins:
@@ -45,6 +45,7 @@ export_options:
     - source_vserver
     - source_node
     - source_cluster
+    - destination_location
   instance_labels:
     - healthy
     - unhealthy_reason
@@ -55,7 +56,6 @@ export_options:
     - destination_node_limit
     - source_node_limit
     - group_type
-    - destination_location
     - protectedBy
     - protectionSourceType
     - policy_type

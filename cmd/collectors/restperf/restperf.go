@@ -6,6 +6,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/headroom"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/nic"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/volume"
+	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/volumetag"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
@@ -504,14 +505,20 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 				return true
 			}
 
-			// extract instance key(s)
-			for _, k := range instanceKeys {
-				value := parseProperties(instanceData, k)
-				if value.Exists() {
-					instanceKey += value.String()
-				} else {
-					r.Logger.Warn().Str("key", k).Msg("skip instance, missing key")
-					break
+			if len(instanceKeys) != 0 {
+				// extract instance key(s)
+				for _, k := range instanceKeys {
+					value := instanceData.Get(k)
+					if value.Exists() {
+						instanceKey += value.String()
+					} else {
+						r.Logger.Warn().Str("key", k).Msg("missing key")
+					}
+				}
+
+				if instanceKey == "" {
+					r.Logger.Trace().Msg("Instance key is empty, skipping")
+					return true
 				}
 			}
 
@@ -1046,6 +1053,8 @@ func (r *RestPerf) LoadPlugin(kind string, p *plugin.AbstractPlugin) plugin.Plug
 		return headroom.New(p)
 	case "Volume":
 		return volume.New(p)
+	case "VolumeTag":
+		return volumetag.New(p)
 	default:
 		r.Logger.Info().Str("kind", kind).Msg("no Restperf plugin found")
 	}

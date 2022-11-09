@@ -8,7 +8,7 @@ Harvest has a strong emphasis on modular design, the core code-base is isolated 
 
 Harvest consists of several processes/packages. All, except Poller, are short-lived processes. Here is an overview of the important ones:
 
-<center><img src="docs/harvest.svg" width="75%"></center>
+<center><img src="pkg/docs/harvest.svg" width="75%"></center>
 
 * **harvest** the main executable and entry-point. `bin/harvest` manages pollers, imports dashboards, generates required files, checks for potential configuration problem, starts the HTTP service discovery node, and more
 * **poller** daemon process that polls a target system
@@ -19,7 +19,7 @@ Harvest consists of several processes/packages. All, except Poller, are short-li
 
 The Poller is a daemon process that polls metrics from a target system and emits to one or more databases. It is agnostic about the target system, the API used to retrieve data, and how to export to databases. The actual work is delegated to a set of collectors, plugins, and exporters.
 
-<center><img src="docs/poller.png" width="70%" align="center"></center>
+<center><img src="pkg/docs/poller.png" width="70%" align="center"></center>
 
 The package poller provides three interfaces:
 * [Collector](cmd/poller/collector/collector.go)
@@ -39,7 +39,7 @@ One of the tasks of the Poller is to build a model of the configuration from CLI
 * Poller Options (type *[poller.Options](cmd/poller/options/options.go))
 * Params (type *[node.Node](pkg/tree/node/node.go))
 
-<center><img src="docs/config.png" width="60%"></center><br />
+<center><img src="pkg/docs/config.png" width="60%"></center><br />
 
 For exporters, *Params*, is the exact parameters of the exporter as defined in `harvest.yml`. For collectors, *Params*, is a top-down merge of:
 * poller parameters from `harvest.yml` (can include `addr`, `auth_style`, etc.)
