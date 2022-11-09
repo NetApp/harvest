@@ -31,7 +31,7 @@ func InvokeRestCall(client *rest.Client, href string, logger *logging.Logger) ([
    For 7mode: function output would be the zapi response itself --> It will be parsed/handled in own plugin
 */
 
-func InvokeZapiCall(client *zapi.Client, request *node.Node, logger *logging.Logger, batchSize string) ([]*node.Node, error) {
+func InvokeZapiCall(client *zapi.Client, request *node.Node, logger *logging.Logger) ([]*node.Node, error) {
 
 	var (
 		result   *node.Node
@@ -39,14 +39,6 @@ func InvokeZapiCall(client *zapi.Client, request *node.Node, logger *logging.Log
 		output   []*node.Node
 		err      error
 	)
-
-	if client.IsClustered() {
-		if batchSize != "" {
-			request.NewChildS("max-records", batchSize)
-		} else {
-			request.NewChildS("max-records", DefaultBatchSize)
-		}
-	}
 
 	tag := "initial"
 

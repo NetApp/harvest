@@ -177,8 +177,9 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 
 	request := node.NewXMLS(my.query)
+	request.NewChildS("max-records", my.batchSize)
 
-	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger, my.batchSize); err != nil {
+	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger); err != nil {
 		return nil, err
 	}
 

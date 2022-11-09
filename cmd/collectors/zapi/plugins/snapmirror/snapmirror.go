@@ -185,6 +185,7 @@ func (my *SnapMirror) getSVMPeerData(cluster string) error {
 	)
 
 	request := node.NewXMLS("vserver-peer-get-iter")
+	request.NewChildS("max-records", collectors.DefaultBatchSize)
 	// Fetching only remote vserver-peer
 	query := request.NewChildS("query", "")
 	vserverPeerInfo := query.NewChildS("vserver-peer-info", "")
@@ -194,7 +195,7 @@ func (my *SnapMirror) getSVMPeerData(cluster string) error {
 	my.svmPeerDataMap = make(map[string]Peer)
 
 	// fetching only remote vserver peer data
-	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger, collectors.DefaultBatchSize); err != nil {
+	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger); err != nil {
 		return err
 	}
 
