@@ -74,6 +74,16 @@ func New(poller conf.Poller) (*Client, error) {
 	} else {
 		url = "https://" + addr + ":443/servlets/netapp.servlets.admin.XMLrequest_filer"
 	}
+
+	if poller.LogSet != nil {
+		for _, name := range *poller.LogSet {
+			if name == "Zapi" || name == "ZapiPerf" {
+				client.logZapi = true
+				break
+			}
+		}
+	}
+
 	// create a request object that will be used for later requests
 	if request, err = http.NewRequest("POST", url, nil); err != nil {
 		return nil, err
@@ -303,16 +313,16 @@ func (c *Client) buildRequest(query *node.Node, forceCluster bool) error {
 // InvokeZapi will issue API requests with batching
 // The method bails on the first error
 func (c *Client) InvokeZapi(request *node.Node, handle func([]*node.Node) error) error {
-	var (
-		result   *node.Node
-		response []*node.Node
-		output   []*node.Node
-		err      error
-	)
-
+	var output []*node.Node
 	tag := "initial"
 
 	for {
+		var (
+			result   *node.Node
+			response []*node.Node
+			err      error
+		)
+
 		if result, tag, err = c.InvokeBatchRequest(request, tag); err != nil {
 			return err
 		}
