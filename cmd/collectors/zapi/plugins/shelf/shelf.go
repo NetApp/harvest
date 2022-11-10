@@ -160,7 +160,6 @@ func (my *Shelf) Init() error {
 func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var (
-		result []*node.Node
 		output []*matrix.Matrix
 		err    error
 	)
@@ -179,32 +178,14 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	request := node.NewXMLS(my.query)
 	request.NewChildS("max-records", my.batchSize)
 
-	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger); err != nil {
+	if output, err = collectors.InvokeZapi(my.client, request, my.Logger, data, my.parseShelves); err != nil {
 		return nil, err
-	}
-
-	if len(result) == 0 || result == nil {
-		return nil, errs.New(errs.ErrNoInstance, "no records found")
-	}
-
-	if my.client.IsClustered() {
-		output, err = my.handleCMode(result)
-	} else {
-		output, err = my.handle7Mode(result)
-	}
-
-	if err != nil {
-		return output, err
-	}
-
-	if my.client.IsClustered() {
-		return my.calculateEnvironmentMetrics(output, data)
 	} else {
 		return output, nil
 	}
 }
 
-func (my *Shelf) calculateEnvironmentMetrics(output []*matrix.Matrix, data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *Shelf) calculateEnvironmentMetrics(data *matrix.Matrix) error {
 	var err error
 	shelfEnvironmentMetricMap := make(map[string]*shelfEnvironmentMetric, 0)
 	for _, o := range my.data {
@@ -347,7 +328,7 @@ func (my *Shelf) calculateEnvironmentMetrics(output []*matrix.Matrix, data *matr
 			}
 		}
 	}
-	return output, nil
+	return nil
 }
 
 func (my *Shelf) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
@@ -546,4 +527,25 @@ func (my *Shelf) handle7Mode(result []*node.Node) ([]*matrix.Matrix, error) {
 		}
 	}
 	return output, nil
+}
+
+func (my *Shelf) parseShelves(result []*node.Node, output *[]*matrix.Matrix, data *matrix.Matrix) error {
+	var err error
+	if my.client.IsClustered() {
+		*output, err = my.handleCMode(result)
+	} else {
+		*output, err = my.handle7Mode(result)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	if my.client.IsClustered() {
+		if err = my.calculateEnvironmentMetrics(data); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

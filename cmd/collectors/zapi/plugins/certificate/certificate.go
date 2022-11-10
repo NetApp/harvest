@@ -214,6 +214,7 @@ func (my *Certificate) GetAdminVserver() (string, error) {
 	// This should be one iteration only as cluster can have one admin vserver
 	for _, svm := range result {
 		adminVserver = svm.GetChildContentS("vserver-name")
+		break
 	}
 	return adminVserver, nil
 }
@@ -244,6 +245,7 @@ func (my *Certificate) GetSecuritySsl(adminSvm string) (string, error) {
 	// This should be one iteration only as cluster can have one admin vserver
 	for _, ssl := range result {
 		certificateSerial = ssl.GetChildContentS("certificate-serial-number")
+		break
 	}
 	return certificateSerial, nil
 }

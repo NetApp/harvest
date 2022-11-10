@@ -27,10 +27,10 @@ func InvokeRestCall(client *rest.Client, href string, logger *logging.Logger) ([
 	return result, nil
 }
 
-/* For cmode: function output would be the list of objects[qtrees, volumes]
-   For 7mode: function output would be the zapi response itself --> It will be parsed/handled in own plugin
+/*
+For cmode: function output would be the list of objects[qtrees, volumes]
+For 7mode: function output would be the zapi response itself --> It will be parsed/handled in own plugin
 */
-
 func InvokeZapiCall(client *zapi.Client, request *node.Node, logger *logging.Logger) ([]*node.Node, error) {
 
 	var (
@@ -53,11 +53,10 @@ func InvokeZapiCall(client *zapi.Client, request *node.Node, logger *logging.Log
 
 		// for 7mode, zapi response itself would be the output
 		if !client.IsClustered() {
-			output = append(output, result)
-			break
-		}
-
-		if x := result.GetChildS("attributes-list"); x != nil {
+			response = append(response, result)
+			// As 7 mode don't support pagination, only one iteration would be needed. setting tag to break the for loop.
+			tag = ""
+		} else if x := result.GetChildS("attributes-list"); x != nil {
 			response = x.GetChildren()
 		} else if y := result.GetChildS("attributes"); y != nil {
 			// Check for non-list response
@@ -72,6 +71,56 @@ func InvokeZapiCall(client *zapi.Client, request *node.Node, logger *logging.Log
 	}
 
 	logger.Trace().Int("object", len(output)).Msg("fetching")
+
+	return output, nil
+}
+
+/*
+Same as InvokeZapiCall, This function can handle response in closure function call.
+For cmode: function output would be the list of objects[qtrees, volumes]
+For 7mode: function output would be the zapi response itself --> It will be parsed/handled in own plugin
+*/
+func InvokeZapi(client *zapi.Client, request *node.Node, logger *logging.Logger, data *matrix.Matrix, parse func(result []*node.Node, output *[]*matrix.Matrix, data *matrix.Matrix) error) ([]*matrix.Matrix, error) {
+
+	var (
+		result   *node.Node
+		response []*node.Node
+		output   []*matrix.Matrix
+		err      error
+	)
+
+	tag := "initial"
+
+	for {
+		if result, tag, err = client.InvokeBatchRequest(request, tag); err != nil {
+			return nil, err
+		}
+
+		if result == nil {
+			break
+		}
+
+		// for 7mode, zapi response itself would be the output
+		if !client.IsClustered() {
+			response = append(response, result)
+			// As 7 mode don't support pagination, only one iteration would be needed. setting tag to break the for loop.
+			tag = ""
+		} else if x := result.GetChildS("attributes-list"); x != nil {
+			response = x.GetChildren()
+		} else if y := result.GetChildS("attributes"); y != nil {
+			// Check for non-list response
+			response = y.GetChildren()
+		}
+
+		if len(response) == 0 {
+			break
+		}
+
+		logger.Trace().Int("object", len(response)).Msg("fetching")
+		if err = parse(response, &output, data); err != nil {
+			return nil, err
+		}
+	}
 
 	return output, nil
 }

@@ -117,6 +117,7 @@ func (my *Security) getSecurityConfig() (string, error) {
 
 	for _, securityConfig := range result {
 		fipsEnabled = securityConfig.GetChildContentS("is-fips-enabled")
+		break
 	}
 	return fipsEnabled, nil
 }
@@ -165,6 +166,7 @@ func (my *Security) getEnabledValue(request *node.Node) (string, error) {
 
 	for _, securityConfig := range result {
 		enabled = securityConfig.GetChildContentS("enabled")
+		break
 	}
 
 	return enabled, nil
