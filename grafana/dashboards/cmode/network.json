@@ -3133,7 +3133,7 @@
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 0,
+        "sort": 1,
         "tagValuesQuery": "",
         "tagsQuery": "",
         "type": "query",
@@ -3637,5 +3637,5 @@
   "timezone": "",
   "title": "ONTAP: Network",
   "uid": "",
-  "version": 5
+  "version": 6
 }
