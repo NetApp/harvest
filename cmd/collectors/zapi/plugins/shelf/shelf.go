@@ -2,7 +2,6 @@
 package shelf
 
 import (
-	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -178,11 +177,29 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	request := node.NewXMLS(my.query)
 	request.NewChildS("max-records", my.batchSize)
 
-	if output, err = collectors.InvokeZapi(my.client, request, my.Logger, data, my.parseShelves); err != nil {
+	err = my.client.InvokeZapi(request, func(nodes []*node.Node) error {
+		var err error
+		if my.client.IsClustered() {
+			output, err = my.handleCMode(nodes)
+		} else {
+			output, err = my.handle7Mode(nodes)
+		}
+
+		if err != nil {
+			return err
+		}
+
+		if my.client.IsClustered() {
+			if err = my.calculateEnvironmentMetrics(data); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	if err != nil {
 		return nil, err
-	} else {
-		return output, nil
 	}
+	return output, nil
 }
 
 func (my *Shelf) calculateEnvironmentMetrics(data *matrix.Matrix) error {
@@ -527,25 +544,4 @@ func (my *Shelf) handle7Mode(result []*node.Node) ([]*matrix.Matrix, error) {
 		}
 	}
 	return output, nil
-}
-
-func (my *Shelf) parseShelves(result []*node.Node, output *[]*matrix.Matrix, data *matrix.Matrix) error {
-	var err error
-	if my.client.IsClustered() {
-		*output, err = my.handleCMode(result)
-	} else {
-		*output, err = my.handle7Mode(result)
-	}
-
-	if err != nil {
-		return err
-	}
-
-	if my.client.IsClustered() {
-		if err = my.calculateEnvironmentMetrics(data); err != nil {
-			return err
-		}
-	}
-
-	return nil
 }

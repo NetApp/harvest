@@ -2,7 +2,6 @@ package collectors
 
 import (
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
-	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -25,104 +24,6 @@ func InvokeRestCall(client *rest.Client, href string, logger *logging.Logger) ([
 	}
 
 	return result, nil
-}
-
-/*
-For cmode: function output would be the list of objects[qtrees, volumes]
-For 7mode: function output would be the zapi response itself --> It will be parsed/handled in own plugin
-*/
-func InvokeZapiCall(client *zapi.Client, request *node.Node, logger *logging.Logger) ([]*node.Node, error) {
-
-	var (
-		result   *node.Node
-		response []*node.Node
-		output   []*node.Node
-		err      error
-	)
-
-	tag := "initial"
-
-	for {
-		if result, tag, err = client.InvokeBatchRequest(request, tag); err != nil {
-			return nil, err
-		}
-
-		if result == nil {
-			break
-		}
-
-		// for 7mode, zapi response itself would be the output
-		if !client.IsClustered() {
-			response = append(response, result)
-			// As 7 mode don't support pagination, only one iteration would be needed. setting tag to break the for loop.
-			tag = ""
-		} else if x := result.GetChildS("attributes-list"); x != nil {
-			response = x.GetChildren()
-		} else if y := result.GetChildS("attributes"); y != nil {
-			// Check for non-list response
-			response = y.GetChildren()
-		}
-
-		if len(response) == 0 {
-			break
-		}
-
-		output = append(output, response...)
-	}
-
-	logger.Trace().Int("object", len(output)).Msg("fetching")
-
-	return output, nil
-}
-
-/*
-Same as InvokeZapiCall, This function can handle response in closure function call.
-For cmode: function output would be the list of objects[qtrees, volumes]
-For 7mode: function output would be the zapi response itself --> It will be parsed/handled in own plugin
-*/
-func InvokeZapi(client *zapi.Client, request *node.Node, logger *logging.Logger, data *matrix.Matrix, parse func(result []*node.Node, output *[]*matrix.Matrix, data *matrix.Matrix) error) ([]*matrix.Matrix, error) {
-
-	var (
-		result   *node.Node
-		response []*node.Node
-		output   []*matrix.Matrix
-		err      error
-	)
-
-	tag := "initial"
-
-	for {
-		if result, tag, err = client.InvokeBatchRequest(request, tag); err != nil {
-			return nil, err
-		}
-
-		if result == nil {
-			break
-		}
-
-		// for 7mode, zapi response itself would be the output
-		if !client.IsClustered() {
-			response = append(response, result)
-			// As 7 mode don't support pagination, only one iteration would be needed. setting tag to break the for loop.
-			tag = ""
-		} else if x := result.GetChildS("attributes-list"); x != nil {
-			response = x.GetChildren()
-		} else if y := result.GetChildS("attributes"); y != nil {
-			// Check for non-list response
-			response = y.GetChildren()
-		}
-
-		if len(response) == 0 {
-			break
-		}
-
-		logger.Trace().Int("object", len(response)).Msg("fetching")
-		if err = parse(response, &output, data); err != nil {
-			return nil, err
-		}
-	}
-
-	return output, nil
 }
 
 func UpdateProtectedFields(instance *matrix.Instance) {
@@ -222,7 +123,7 @@ func GetDataInterval(param *node.Node, defaultInterval time.Duration) float64 {
 	return defaultInterval.Seconds()
 }
 
-// timestamp in micro seconds
+// IsTimestampOlderThanDuration - timestamp units are micro seconds
 func IsTimestampOlderThanDuration(timestamp float64, duration time.Duration) bool {
 	return time.Since(time.UnixMicro(int64(timestamp))) > duration
 }

@@ -203,8 +203,8 @@ func (my *Certificate) GetAdminVserver() (string, error) {
 	vserverInfo := query.NewChildS("vserver-info", "")
 	vserverInfo.NewChildS("vserver-type", "admin")
 
-	// Fetching only admin vservers
-	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger); err != nil {
+	// Fetching only admin SVMs
+	if result, err = my.client.InvokeZapiCall(request); err != nil {
 		return "", err
 	}
 
@@ -235,7 +235,7 @@ func (my *Certificate) GetSecuritySsl(adminSvm string) (string, error) {
 	vserverInfo.NewChildS("vserver", adminSvm)
 
 	// fetching data of only admin vservers
-	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger); err != nil {
+	if result, err = my.client.InvokeZapiCall(request); err != nil {
 		return "", err
 	}
 
