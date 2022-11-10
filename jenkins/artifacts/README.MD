@@ -10,7 +10,7 @@ There are four release types:
 Examples:
 
 | Type    | Version              | Notes                                                            |
-| :------ | :------------------- | :--------------------------------------------------------------- |
+|:--------|:---------------------|:-----------------------------------------------------------------|
 | Release | `21.05.0`            | a release in May 2021                                            |
 | Release | `21.11.0`            | a release in Nov 2021                                            |
 | Bugfix  | `21.11.1`            | `21.11.0 had a defect, this version fixes it                     |
@@ -27,7 +27,7 @@ When the Harvest version changes, per the rules above, the `RPM Version` will fo
 Examples of RPM version/release and filename values based on the Harvest's version names.
 
 | Harvest            | RPM Version | RPM Release | File name                             |
-| :----------------- | :---------- | :---------- | :------------------------------------ |
+|:-------------------|:------------|:------------|:--------------------------------------|
 | `21.05.0`          | `21.05.0`   | 1           | `harvest-21.05.0-1.x86_64.rpm`        |
 | `21.11.1`          | `21.11.1`   | 1           | `harvest-21.11.1-1.x86_64.rpm`        |
 | `21.05.0-rc1`      | `21.05.0`   | rc1         | `harvest-21.05.0-rc1.x86_64.rpm`      |
@@ -37,7 +37,7 @@ Every release includes the whole project.
 
 ### Build RPM
 
-Refer [RPM and Debian Names](#rpm%20and%20debian%20names) for $VERSION $RELEASE
+Refer [RPM and Debian Names](#rpm-and-debian-names) for $VERSION $RELEASE
 
 `./package.sh rpm x86_64 $VERSION $RELEASE`
 
