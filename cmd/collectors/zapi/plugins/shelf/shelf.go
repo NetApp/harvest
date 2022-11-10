@@ -159,8 +159,8 @@ func (my *Shelf) Init() error {
 func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var (
-		output []*matrix.Matrix
-		err    error
+		results []*matrix.Matrix
+		err     error
 	)
 
 	if !my.client.IsClustered() {
@@ -178,28 +178,32 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	request.NewChildS("max-records", my.batchSize)
 
 	err = my.client.InvokeZapi(request, func(nodes []*node.Node) error {
-		var err error
+		var (
+			err2   error
+			output []*matrix.Matrix
+		)
 		if my.client.IsClustered() {
-			output, err = my.handleCMode(nodes)
+			output, err2 = my.handleCMode(nodes)
 		} else {
-			output, err = my.handle7Mode(nodes)
+			output, err2 = my.handle7Mode(nodes)
 		}
 
-		if err != nil {
-			return err
+		if err2 != nil {
+			return err2
 		}
-
-		if my.client.IsClustered() {
-			if err = my.calculateEnvironmentMetrics(data); err != nil {
-				return err
-			}
-		}
+		results = append(results, output...)
 		return nil
 	})
+
 	if err != nil {
 		return nil, err
 	}
-	return output, nil
+	if my.client.IsClustered() {
+		if err = my.calculateEnvironmentMetrics(data); err != nil {
+			return nil, err
+		}
+	}
+	return results, nil
 }
 
 func (my *Shelf) calculateEnvironmentMetrics(data *matrix.Matrix) error {
