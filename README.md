@@ -14,7 +14,7 @@ and offers [great flexibility](ARCHITECTURE.md) in how you collect, augment, and
 
 To get started, follow our quickstart guide or install Harvest.
 
-<img src="pkg/docs/examples/dashboard_cluster.png" width="40%" align="center"><img src="pkg/docs/examples/dashboard_shelf.png" width="40%" align="center">
+<img src="docs/assets/dashboard_cluster.png" width="40%" align="center"><img src="docs/assets/dashboard_shelf.png" width="40%" align="center">
 
 # Community
 
