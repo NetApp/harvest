@@ -94,12 +94,12 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 	for k, instance := range data.GetInstances() {
 		iKey := instance.GetLabel("node")
 		if iKey == "" {
-			my.Logger.Warn().Str("key", k).Msg("missing node label for instance")
+			my.Logger.Warn().Str("key", k).Msg("missing node for instance")
 			continue
 		}
-		iKey2 := strings.ReplaceAll(k, iKey, "")
-		if iKey2 == "" {
-			my.Logger.Warn().Str("key", iKey+".").Msg("missing instance key")
+		sensorName := instance.GetLabel("sensor")
+		if sensorName == "" {
+			my.Logger.Warn().Str("key", k).Msg("missing sensor name for instance")
 			continue
 		}
 		if _, ok := sensorEnvironmentMetricMap[iKey]; !ok {
@@ -108,7 +108,6 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 		for mKey, metric := range data.GetMetrics() {
 			if mKey == "value" {
 				sensorType := instance.GetLabel("type")
-				sensorName := instance.GetLabel("sensor")
 				sensorUnit := instance.GetLabel("unit")
 				warningLowThr := instance.GetLabel("warning_low")
 
@@ -170,7 +169,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 							if sensorEnvironmentMetricMap[iKey].powerSensor == nil {
 								sensorEnvironmentMetricMap[iKey].powerSensor = make(map[string]*sensorValue)
 							}
-							sensorEnvironmentMetricMap[iKey].powerSensor[iKey2] = &sensorValue{name: iKey2, value: value, unit: sensorUnit}
+							sensorEnvironmentMetricMap[iKey].powerSensor[k] = &sensorValue{name: sensorName, value: value, unit: sensorUnit}
 						}
 					}
 				}
@@ -180,7 +179,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 						if sensorEnvironmentMetricMap[iKey].voltageSensor == nil {
 							sensorEnvironmentMetricMap[iKey].voltageSensor = make(map[string]*sensorValue)
 						}
-						sensorEnvironmentMetricMap[iKey].voltageSensor[iKey2] = &sensorValue{name: iKey2, value: value, unit: sensorUnit}
+						sensorEnvironmentMetricMap[iKey].voltageSensor[k] = &sensorValue{name: sensorName, value: value, unit: sensorUnit}
 					}
 				}
 
@@ -189,7 +188,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 						if sensorEnvironmentMetricMap[iKey].currentSensor == nil {
 							sensorEnvironmentMetricMap[iKey].currentSensor = make(map[string]*sensorValue)
 						}
-						sensorEnvironmentMetricMap[iKey].currentSensor[iKey2] = &sensorValue{name: iKey2, value: value, unit: sensorUnit}
+						sensorEnvironmentMetricMap[iKey].currentSensor[k] = &sensorValue{name: sensorName, value: value, unit: sensorUnit}
 					}
 				}
 			}
