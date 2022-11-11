@@ -309,7 +309,12 @@ func metricPerfValueDiff(metricName string) {
 			}
 			key := ""
 			for x := range metrics {
-				key = key + "_" + metrics[x][i]
+				if x < len(metrics) && i < len(metrics[x]) {
+					key = key + "_" + metrics[x][i]
+				} else {
+					fmt.Printf("error while comparing value for metric %s\n", metricName)
+					continue
+				}
 			}
 			if strings.EqualFold(dc[i], "ZapiPerf") {
 				zapiMetric[key] = f
