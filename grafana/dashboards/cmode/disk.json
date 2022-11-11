@@ -2513,32 +2513,6 @@
         "type": "custom"
       },
       {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(disk_labels{cluster=~\"$Cluster\"}, type)",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "DiskType",
-        "options": [],
-        "query": {
-          "query": "label_values(disk_labels{cluster=~\"$Cluster\"}, type)",
-          "refId": "Prometheus-DiskType-Variable-Query"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, max by (aggr) (avg_over_time(aggr_disk_max_user_read_chain{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[${__range}]))))",

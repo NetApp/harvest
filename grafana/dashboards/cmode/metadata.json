@@ -1832,7 +1832,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "avg by (poller) (metadata_collector_poll_time{task=\"data\"})",
+          "expr": "avg by (poller) (metadata_collector_poll_time{hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{poller}}",
@@ -1923,7 +1923,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "avg by (collector) (metadata_collector_poll_time{task=\"data\"})",
+          "expr": "avg by (collector) (metadata_collector_poll_time{hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{collector}}",
@@ -3438,7 +3438,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "avg by (collector, object) (metadata_collector_poll_time{hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\"})",
+          "expr": "avg by (collector, object) (metadata_collector_poll_time{hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{collector}} - {{object}}",
@@ -3529,7 +3529,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "avg by (collector, object) (metadata_collector_metrics{hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\"})",
+          "expr": "avg by (collector, object) (metadata_collector_metrics{hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{collector}} - {{object}}",
@@ -3620,7 +3620,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "avg by (collector, object) (metadata_collector_api_time{hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\"})",
+          "expr": "avg by (collector, object) (metadata_collector_api_time{hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{collector}} - {{object}}",
@@ -3711,7 +3711,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "avg by (collector, object) (metadata_collector_parse_time{hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\"})",
+          "expr": "avg by (collector, object) (metadata_collector_parse_time{hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{collector}} - {{object}}",
@@ -3802,7 +3802,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "avg by (collector, object) (metadata_collector_calc_time{hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\"})",
+          "expr": "avg by (collector, object) (metadata_collector_calc_time{hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{collector}} - {{object}}",
@@ -4104,7 +4104,7 @@
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 0,
+        "sort": 1,
         "tagValuesQuery": "",
         "tagsQuery": "",
         "type": "query",
@@ -4130,7 +4130,7 @@
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 0,
+        "sort": 1,
         "tagValuesQuery": "",
         "tagsQuery": "",
         "type": "query",
@@ -4156,7 +4156,7 @@
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 0,
+        "sort": 1,
         "tagValuesQuery": "",
         "tagsQuery": "",
         "type": "query",
@@ -4182,7 +4182,7 @@
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 0,
+        "sort": 1,
         "tagValuesQuery": "",
         "tagsQuery": "",
         "type": "query",
@@ -4208,7 +4208,7 @@
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 0,
+        "sort": 1,
         "tagValuesQuery": "",
         "tagsQuery": "",
         "type": "query",
