@@ -508,7 +508,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 			if len(instanceKeys) != 0 {
 				// extract instance key(s)
 				for _, k := range instanceKeys {
-					value := instanceData.Get(k)
+					value := parseProperties(instanceData, k)
 					if value.Exists() {
 						instanceKey += value.String()
 					} else {
