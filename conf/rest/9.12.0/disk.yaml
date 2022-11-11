@@ -10,7 +10,6 @@ counters:
   - ^node.uuid
   - ^node.name                  => node
   - ^home_node.name             => owner_node
-  - ^type
   - ^container_type
   - ^model
   - ^serial_number
@@ -30,6 +29,7 @@ endpoints:
       - sectors_read            => stats_sectors_read
       - sectors_written         => stats_sectors_written
       - disk_io_kbps_total      => stats_io_kbps
+      - ^type
 
 plugins:
   - Disk
