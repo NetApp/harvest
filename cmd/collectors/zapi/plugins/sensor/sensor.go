@@ -4,6 +4,7 @@
 package sensor
 
 import (
+	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/matrix"
@@ -89,6 +90,7 @@ func (my *Sensor) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	sensorEnvironmentMetricMap := make(map[string]*sensorEnvironmentMetric)
+	excludedSensors := make(map[string][]sensorValue)
 
 	for k, instance := range data.GetInstances() {
 		iKey := instance.GetLabel("node")
@@ -134,16 +136,17 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				}
 
 				if sensorType == "thermal" && !isAmbientMatch {
-					// Exclude temperature sensors that have crit_low=0 and warn_low is missing
-					if !(criticalLowThr == 0.0 && warningLowThr == "") {
-						if value, ok, _ := metric.GetValueFloat64(instance); ok {
+					// Exclude temperature sensors that contains sensor name `Margin` and value < 0
+					value, ok, _ := metric.GetValueFloat64(instance)
+					if value > 0 && !strings.Contains(sensorName, "Margin") {
+						if ok {
 							sensorEnvironmentMetricMap[iKey].nonAmbientTemperature = append(sensorEnvironmentMetricMap[iKey].nonAmbientTemperature, value)
 						}
 					} else {
-						my.Logger.Debug().Str("warningLowThreshold", warningLowThr).
-							Float64("criticalLowThreshold", criticalLowThr).
-							Str("sensorName", sensorName).
-							Msg("sensor excluded")
+						excludedSensors[iKey] = append(excludedSensors[iKey], sensorValue{
+							name:  sensorName,
+							value: value,
+						})
 					}
 				}
 
@@ -185,6 +188,15 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				}
 			}
 		}
+	}
+
+	if len(excludedSensors) > 0 {
+		var excludedSensorStr string
+		for k, v := range excludedSensors {
+			excludedSensorStr += " node:" + k + " sensor:" + fmt.Sprintf("%v", v)
+		}
+		my.Logger.Info().Str("sensor", excludedSensorStr).
+			Msg("sensor excluded")
 	}
 
 	for key, v := range sensorEnvironmentMetricMap {
