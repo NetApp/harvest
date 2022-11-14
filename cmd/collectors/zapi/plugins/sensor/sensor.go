@@ -134,14 +134,16 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				}
 
 				if sensorType == "thermal" && !isAmbientMatch {
-					// Exclude temperature sensors that have crit_low=0 and warn_low is missing
-					if !(criticalLowThr == 0.0 && warningLowThr == "") {
-						if value, ok, _ := metric.GetValueFloat64(instance); ok {
+					// Exclude temperature sensors that contains sensor name `Margin` and value < 0
+					value, ok, _ := metric.GetValueFloat64(instance)
+					if !strings.Contains(sensorName, "Margin") && value > 0 {
+						if ok {
 							sensorEnvironmentMetricMap[iKey].nonAmbientTemperature = append(sensorEnvironmentMetricMap[iKey].nonAmbientTemperature, value)
 						}
 					} else {
 						my.Logger.Debug().Str("warningLowThreshold", warningLowThr).
 							Float64("criticalLowThreshold", criticalLowThr).
+							Float64("value", value).
 							Str("sensorName", sensorName).
 							Msg("sensor excluded")
 					}
