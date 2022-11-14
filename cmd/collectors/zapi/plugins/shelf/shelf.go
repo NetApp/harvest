@@ -2,7 +2,6 @@
 package shelf
 
 import (
-	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -160,8 +159,8 @@ func (my *Shelf) Init() error {
 func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var (
-		output []*matrix.Matrix
 		err    error
+		output []*matrix.Matrix
 	)
 
 	if !my.client.IsClustered() {
@@ -178,11 +177,27 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	request := node.NewXMLS(my.query)
 	request.NewChildS("max-records", my.batchSize)
 
-	if output, err = collectors.InvokeZapi(my.client, request, my.Logger, data, my.parseShelves); err != nil {
+	result, err := my.client.InvokeZapiCall(request)
+	if err != nil {
 		return nil, err
-	} else {
-		return output, nil
 	}
+
+	if my.client.IsClustered() {
+		output, err = my.handleCMode(result)
+	} else {
+		output, err = my.handle7Mode(result)
+	}
+	if err != nil {
+		return output, err
+	}
+
+	if my.client.IsClustered() {
+		err := my.calculateEnvironmentMetrics(data)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return output, nil
 }
 
 func (my *Shelf) calculateEnvironmentMetrics(data *matrix.Matrix) error {
@@ -392,7 +407,7 @@ func (my *Shelf) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 						instance.SetLabel("shelf", shelfName)
 						instance.SetLabel("shelf_id", shelfID)
 
-						// Each child would have different possible values which is ugly way to write all of them,
+						// Each child would have different possible values which is an ugly way to write all of them,
 						// so normal value would be mapped to 1 and rest all are mapped to 0.
 						if instance.GetLabel("status") == "normal" {
 							_ = statusMetric.SetValueInt64(instance, 1)
@@ -496,7 +511,7 @@ func (my *Shelf) handle7Mode(result []*node.Node) ([]*matrix.Matrix, error) {
 							instance.SetLabel("shelf_id", shelfID)
 							instance.SetLabel("channel", channelName)
 
-							// Each child would have different possible values which is ugly way to write all of them,
+							// Each child would have different possible values which is an ugly way to write all of them,
 							// so normal value would be mapped to 1 and rest all are mapped to 0.
 							if instance.GetLabel("status") == "normal" {
 								_ = statusMetric.SetValueInt64(instance, 1)
@@ -527,25 +542,4 @@ func (my *Shelf) handle7Mode(result []*node.Node) ([]*matrix.Matrix, error) {
 		}
 	}
 	return output, nil
-}
-
-func (my *Shelf) parseShelves(result []*node.Node, output *[]*matrix.Matrix, data *matrix.Matrix) error {
-	var err error
-	if my.client.IsClustered() {
-		*output, err = my.handleCMode(result)
-	} else {
-		*output, err = my.handle7Mode(result)
-	}
-
-	if err != nil {
-		return err
-	}
-
-	if my.client.IsClustered() {
-		if err = my.calculateEnvironmentMetrics(data); err != nil {
-			return err
-		}
-	}
-
-	return nil
 }

@@ -74,6 +74,16 @@ func New(poller conf.Poller) (*Client, error) {
 	} else {
 		url = "https://" + addr + ":443/servlets/netapp.servlets.admin.XMLrequest_filer"
 	}
+
+	if poller.LogSet != nil {
+		for _, name := range *poller.LogSet {
+			if name == "Zapi" || name == "ZapiPerf" {
+				client.logZapi = true
+				break
+			}
+		}
+	}
+
 	// create a request object that will be used for later requests
 	if request, err = http.NewRequest("POST", url, nil); err != nil {
 		return nil, err
@@ -280,6 +290,7 @@ func (c *Client) buildRequest(query *node.Node, forceCluster bool) error {
 	)
 
 	request = node.NewXMLS("netapp")
+	//goland:noinspection HttpUrlsUsage
 	request.NewAttrS("xmlns", "http://www.netapp.com/filer/admin")
 	request.NewAttrS("version", c.apiVersion)
 	// optionally use fviler-tunneling, this option is never used in Harvest
@@ -297,6 +308,66 @@ func (c *Client) buildRequest(query *node.Node, forceCluster bool) error {
 	c.request.Body = io.NopCloser(buffer)
 	c.request.ContentLength = int64(buffer.Len())
 	return nil
+}
+
+// InvokeZapi will issue API requests with batching
+// The method bails on the first error
+func (c *Client) InvokeZapi(request *node.Node, handle func([]*node.Node) error) error {
+	var output []*node.Node
+	tag := "initial"
+
+	for {
+		var (
+			result   *node.Node
+			response []*node.Node
+			err      error
+		)
+
+		if result, tag, err = c.InvokeBatchRequest(request, tag); err != nil {
+			return err
+		}
+
+		if result == nil {
+			break
+		}
+
+		// for 7mode, the output will be the zapi response since 7mode does not support pagination
+		if !c.IsClustered() {
+			response = append(response, result)
+			// 7mode does not support pagination. set the tag an empty string to break the for loop
+			tag = ""
+		} else if x := result.GetChildS("attributes-list"); x != nil {
+			response = x.GetChildren()
+		} else if y := result.GetChildS("attributes"); y != nil {
+			// Check for non-list response
+			response = y.GetChildren()
+		}
+
+		if len(response) == 0 {
+			break
+		}
+		err = handle(response)
+		if err != nil {
+			return err
+		}
+	}
+
+	c.Logger.Trace().Int("object", len(output)).Msg("fetching")
+
+	return nil
+}
+
+// InvokeZapiCall will issue API requests with batching
+func (c *Client) InvokeZapiCall(request *node.Node) ([]*node.Node, error) {
+	var output []*node.Node
+	err := c.InvokeZapi(request, func(response []*node.Node) error {
+		output = append(output, response...)
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return output, nil
 }
 
 // Invoke will issue the API request and return server response

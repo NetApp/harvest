@@ -119,7 +119,7 @@ func (my *Volume) getEncryptedDisks() ([]string, error) {
 	encryptInfoQuery.NewChildS("protection-mode", "open|part|miss")
 
 	// fetching only disks whose protection-mode is open/part/miss
-	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger); err != nil {
+	if result, err = my.client.InvokeZapiCall(request); err != nil {
 		return nil, err
 	}
 
@@ -158,7 +158,7 @@ func (my *Volume) getAggrDiskMapping() (map[string]aggrData, error) {
 	request.NewChildS("max-records", collectors.DefaultBatchSize)
 	aggrsDisksMap = make(map[string]aggrData)
 
-	if result, err = collectors.InvokeZapiCall(my.client, request, my.Logger); err != nil {
+	if result, err = my.client.InvokeZapiCall(request); err != nil {
 		return nil, err
 	}
 
