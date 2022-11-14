@@ -445,7 +445,12 @@ func (my *Shelf) handle7Mode(result []*node.Node) ([]*matrix.Matrix, error) {
 		channels []*node.Node
 		output   []*matrix.Matrix
 	)
-	// fallback to 7mode, here result would be the zapi response itself with only one record.
+
+	// Result would be the zapi response itself with only one record.
+	if len(result) != 1 {
+		return nil, errs.New(errs.ErrNoInstance, "no shelves found")
+	}
+	// fallback to 7mode
 	channels = result[0].SearchChildren([]string{"shelf-environ-channel-info"})
 
 	if len(channels) == 0 {
