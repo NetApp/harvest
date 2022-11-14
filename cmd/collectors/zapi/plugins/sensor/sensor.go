@@ -136,7 +136,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				if sensorType == "thermal" && !isAmbientMatch {
 					// Exclude temperature sensors that contains sensor name `Margin` and value < 0
 					value, ok, _ := metric.GetValueFloat64(instance)
-					if !strings.Contains(sensorName, "Margin") && value > 0 {
+					if value > 0 && !strings.Contains(sensorName, "Margin") {
 						if ok {
 							sensorEnvironmentMetricMap[iKey].nonAmbientTemperature = append(sensorEnvironmentMetricMap[iKey].nonAmbientTemperature, value)
 						}
