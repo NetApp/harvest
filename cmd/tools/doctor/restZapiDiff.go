@@ -2,6 +2,7 @@ package doctor
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"io"
 	"log"
@@ -308,12 +309,17 @@ func metricPerfValueDiff(metricName string) {
 			}
 			key := ""
 			for x := range metrics {
-				key = key + "_" + metrics[x][i]
+				if x < len(metrics) && i < len(metrics[x]) {
+					key = key + "_" + metrics[x][i]
+				} else {
+					fmt.Printf("error while comparing value for metric %s\n", metricName)
+					continue
+				}
 			}
-			if dc[i] == "ZapiPerf" {
+			if strings.EqualFold(dc[i], "ZapiPerf") {
 				zapiMetric[key] = f
 			}
-			if dc[i] == "RestPerf" {
+			if strings.EqualFold(dc[i], "RestPerf") {
 				restMetric[key] = f
 			}
 		}
@@ -439,12 +445,17 @@ func metricValueDiff(metricName string) {
 			}
 			key := ""
 			for x := range metrics {
-				key = key + "_" + metrics[x][i]
+				if x < len(metrics) && i < len(metrics[x]) {
+					key = key + "_" + metrics[x][i]
+				} else {
+					fmt.Printf("error while comparing value for metric %s\n", metricName)
+					continue
+				}
 			}
-			if dc[i] == "Zapi" {
+			if strings.EqualFold(dc[i], "Zapi") {
 				zapiMetric[key] = f
 			}
-			if dc[i] == "Rest" {
+			if strings.EqualFold(dc[i], "Rest") {
 				restMetric[key] = f
 			}
 		}
@@ -491,8 +502,66 @@ func labelValueDiff(label string, labelNames []string) {
 	skipMatch := make([]string, 0)
 	skipMatch = append(skipMatch, "datacenter")
 
-	// To ignore child labels(ex: shelf_psu_labels) from shelf object, following exact comparison
 	if strings.HasPrefix(label, "disk_") || strings.Compare(label, "shelf_labels") == 0 {
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "serial_number"))
+		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
+		results = gjson.GetMany(data, prefixLabelsName...)
+	}
+
+	if strings.Compare(label, "shelf_psu_labels") == 0 {
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "psu_id"))
+		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
+		results = gjson.GetMany(data, prefixLabelsName...)
+	}
+
+	if strings.Compare(label, "shelf_fan_labels") == 0 {
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "fan_id"))
+		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
+		results = gjson.GetMany(data, prefixLabelsName...)
+	}
+
+	if util.Contains([]string{"shelf_voltage_labels", "shelf_temperature_labels", "shelf_sensor_labels"}, label) {
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "shelf"))
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "sensor_id"))
+		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
+		results = gjson.GetMany(data, prefixLabelsName...)
+	}
+
+	if strings.Compare(label, "ntpserver_labels") == 0 {
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "servers"))
+		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
+		results = gjson.GetMany(data, prefixLabelsName...)
+	}
+
+	if util.Contains([]string{"svm_labels", "security_login_labels"}, label) {
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "svm"))
+		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
+		results = gjson.GetMany(data, prefixLabelsName...)
+	}
+
+	if strings.Compare(label, "security_account_labels") == 0 {
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "user_name"))
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "applications"))
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "svm"))
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "methods"))
+		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
+		results = gjson.GetMany(data, prefixLabelsName...)
+	}
+
+	if strings.Compare(label, "security_labels") == 0 {
+		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
+		results = gjson.GetMany(data, prefixLabelsName...)
+	}
+
+	if strings.Compare(label, "support_labels") == 0 {
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "node"))
+		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
+		results = gjson.GetMany(data, prefixLabelsName...)
+	}
+
+	if strings.Compare(label, "security_certificate_labels") == 0 {
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "name"))
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "svm"))
 		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "serial_number"))
 		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
 		results = gjson.GetMany(data, prefixLabelsName...)
@@ -556,7 +625,12 @@ func labelValueDiff(label string, labelNames []string) {
 				for i, v := range value {
 					key := ""
 					for x := range metrics {
-						key = key + "_" + metrics[x][i]
+						if x < len(metrics) && i < len(metrics[x]) {
+							key = key + "_" + metrics[x][i]
+						} else {
+							fmt.Printf("error while comparing value for label %s\n", label)
+							continue
+						}
 					}
 					if dc[i] == "Zapi" {
 						zapiMetric[key] = v

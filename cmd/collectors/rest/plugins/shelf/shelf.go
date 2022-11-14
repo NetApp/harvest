@@ -245,7 +245,12 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 											}
 											shelfChildInstance.SetLabel(labelDisplay, strings.Join(labelArray, ","))
 										} else {
-											shelfChildInstance.SetLabel(labelDisplay, value.String())
+											valueString := value.String()
+											// For shelf child level objects' status field, Rest `ok` value maps Zapi `normal` value.
+											if labelDisplay == "status" {
+												valueString = strings.ReplaceAll(valueString, "ok", "normal")
+											}
+											shelfChildInstance.SetLabel(labelDisplay, valueString)
 										}
 									} else {
 										// spams a lot currently due to missing label mappings. Moved to debug for now till rest gaps are filled

@@ -21,23 +21,23 @@ counters:
   - link_failure                        => link_failure
   - loss_of_signal
   - loss_of_sync
-  - primitive_seq_err
+  - primitive_seq_err                   => prim_seq_err
   - queue_full
   - reset_count
-  - shared_interrupt_count
-  - spurious_interrupt_count
+  - shared_interrupt_count              => shared_int_count
+  - spurious_interrupt_count            => spurious_int_count
   - threshold_full
   - discarded_frames_count
-  - interrupt_count
+  - interrupt_count                     => int_count
   - invalid.transmission_word           => invalid_transmission_word
   - isr.count                           => isr_count
   - invalid.crc                         => invalid_crc
   - nvmf.average_other_latency          => nvmf_avg_other_latency
   - nvmf.average_read_latency           => nvmf_avg_read_latency
-  - nvmf.average_remote_other_latency   => nvmf_avg_read_latency
-  - nvmf.average_remote_read_latency    => nvmf_avg_read_latency
-  - nvmf.average_remote_write_latency   => nvmf_avg_read_latency
-  - nvmf.average_write_latency          => nvmf_avg_read_latency
+  - nvmf.average_remote_other_latency   => nvmf_avg_remote_other_latency
+  - nvmf.average_remote_read_latency    => nvmf_avg_remote_read_latency
+  - nvmf.average_remote_write_latency   => nvmf_avg_remote_write_latency
+  - nvmf.average_write_latency          => nvmf_avg_write_latency
   - nvmf.caw_data                       => nvmf_caw_data
   - nvmf.caw_ops                        => nvmf_caw_ops
   - nvmf.command_slots                  => nvmf_command_slots
