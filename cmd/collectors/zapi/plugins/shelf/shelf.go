@@ -448,14 +448,14 @@ func (my *Shelf) handle7Mode(result []*node.Node) ([]*matrix.Matrix, error) {
 
 	// Result would be the zapi response itself with only one record.
 	if len(result) != 1 {
-		my.Logger.Warn().Msg("no shelves found")
+		my.Logger.Debug().Msg("no shelves found")
 		return output, nil
 	}
 	// fallback to 7mode
 	channels = result[0].SearchChildren([]string{"shelf-environ-channel-info"})
 
 	if len(channels) == 0 {
-		my.Logger.Warn().Msg("no channels found")
+		my.Logger.Debug().Msg("no channels found")
 		return output, nil
 	}
 
@@ -470,7 +470,7 @@ func (my *Shelf) handle7Mode(result []*node.Node) ([]*matrix.Matrix, error) {
 		shelves = channel.SearchChildren([]string{"shelf-environ-shelf-list", "shelf-environ-shelf-info"})
 
 		if len(shelves) == 0 {
-			my.Logger.Warn().Str("channel", channelName).Msg("no shelves found")
+			my.Logger.Debug().Str("channel", channelName).Msg("no shelves found")
 			continue
 		}
 
