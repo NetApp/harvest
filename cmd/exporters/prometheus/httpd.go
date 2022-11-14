@@ -134,7 +134,7 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 
 	// make sure stream ends with newline
 	if _, err = w.Write([]byte("\n")); err != nil {
-		p.Logger.Error().Stack().Err(err).Msg("write ending newline")
+		p.Logger.Error().Err(err).Msg("write ending newline")
 	}
 
 	// update metadata

@@ -335,6 +335,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 		copy(instanceKeys, globalLabels)
 		instanceKeysOk := false
 		instanceLabels := make([]string, 0)
+		instanceLabelsSet := make(map[string]struct{})
 
 		if includeAllLabels {
 			for label, value := range instance.GetLabels().Map() {
@@ -358,7 +359,13 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 
 			for _, label := range labelsToInclude {
 				value := instance.GetLabel(label)
-				instanceLabels = append(instanceLabels, escape(replacer, label, value))
+				kv := escape(replacer, label, value)
+				_, ok := instanceLabelsSet[kv]
+				if ok {
+					continue
+				}
+				instanceLabelsSet[kv] = struct{}{}
+				instanceLabels = append(instanceLabels, kv)
 				p.Logger.Trace().Msgf("++ label [%s] (%s) %t", label, value, value != "")
 			}
 
@@ -370,16 +377,22 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 
 			// @TODO, check at least one label is found?
 			if len(instanceLabels) != 0 {
-				var labelData string
-				if p.Params.SortLabels {
-					allLabels := make([]string, len(instanceLabels))
-					copy(allLabels, instanceLabels)
-					allLabels = append(allLabels, instanceKeys...) //nolint:makezero
-					sort.Strings(allLabels)
-					labelData = fmt.Sprintf("%s_labels{%s} 1.0", prefix, strings.Join(allLabels, ","))
-				} else {
-					labelData = fmt.Sprintf("%s_labels{%s,%s} 1.0", prefix, strings.Join(instanceKeys, ","), strings.Join(instanceLabels, ","))
+				allLabels := make([]string, len(instanceLabels))
+				copy(allLabels, instanceLabels)
+				// include each instanceKey not already included in the list of labels
+				for _, instanceKey := range instanceKeys {
+					_, ok := instanceLabelsSet[instanceKey]
+					if ok {
+						continue
+					}
+					instanceLabelsSet[instanceKey] = struct{}{}
+					allLabels = append(allLabels, instanceKey) //nolint:makezero
 				}
+				if p.Params.SortLabels {
+					sort.Strings(allLabels)
+				}
+				labelData := fmt.Sprintf("%s_labels{%s} 1.0", prefix, strings.Join(allLabels, ","))
+
 				if p.addMetaTags && !tagged.Has(prefix+"_labels") {
 					tagged.Add(prefix + "_labels")
 					rendered = append(rendered, []byte("# HELP "+prefix+"_labels Pseudo-metric for "+data.Object+" labels"))

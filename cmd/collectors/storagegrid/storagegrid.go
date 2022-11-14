@@ -122,7 +122,6 @@ func (s *StorageGrid) InitCache() error {
 	}
 
 	s.ParseCounters(counters, s.Props)
-	_, _ = s.Metadata.NewMetricUint64("datapoint_count")
 
 	s.Logger.Debug().
 		Strs("extracted Instance Keys", s.Props.InstanceKeys).
@@ -162,17 +161,10 @@ func (s *StorageGrid) PollData() (map[string]*matrix.Matrix, error) {
 
 	numRecords := len(s.Matrix[s.Object].GetInstances())
 
-	s.Logger.Info().
-		Int("instances", numRecords).
-		Uint64("metrics", count).
-		Str("apiD", apiD.Round(time.Millisecond).String()).
-		Str("parseD", parseD.Round(time.Millisecond).String()).
-		Msg("Collected")
-
-	_ = s.Metadata.LazySetValueInt64("count", "data", int64(numRecords))
 	_ = s.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
 	_ = s.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
-	_ = s.Metadata.LazySetValueUint64("datapoint_count", "data", count)
+	_ = s.Metadata.LazySetValueUint64("metrics", "data", count)
+	_ = s.Metadata.LazySetValueInt64("instances", "data", int64(numRecords))
 	s.AddCollectCount(count)
 
 	return s.Matrix, nil
