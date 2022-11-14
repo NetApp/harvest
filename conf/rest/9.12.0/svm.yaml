@@ -1,16 +1,20 @@
+# As private cli api would provide all svms(but system) which we would need for our use-case, So using private api instead of public.
+
 name:                     SVM
-query:                    api/svm/svms
+query:                    api/private/cli/vserver
 object:                   svm
 
 counters:
   - ^^uuid                                  => svm_uuid
-  - ^name                                   => svm
-  - ^state                                  => state
+  - ^vserver                                => svm
   - ^anti_ransomware_default_volume_state   => anti_ransomware_state
-  - ^nsswitch                               => nameservice_switch
-
+  - ^operational_state                      => state
 
 endpoints:
+  - query: api/svm/svms
+    counters:
+      - ^^uuid                              => svm_uuid
+      - ^nsswitch                           => nameservice_switch
   - query: api/security/ssh/svms
     counters:
       - ^^svm.uuid                          => svm_uuid
@@ -55,7 +59,6 @@ endpoints:
     counters:
       - ^^svm.uuid                          => svm_uuid
       - ^enabled                            => iscsi_service_enabled
-
 plugins:
   - SVM
   - LabelAgent:
