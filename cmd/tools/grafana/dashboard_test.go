@@ -378,7 +378,7 @@ func checkUnusedVariables(t *testing.T, path string, data []byte) {
 		})
 		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
 			pathPrefix := fmt.Sprintf("panels[%d].", key.Int())
-			doExpr(pathPrefix, key, value2, func(path string, expr string) {
+			doExpr(pathPrefix, key2, value2, func(path string, expr string) {
 				expressions = append(expressions, expr)
 			})
 			return true
