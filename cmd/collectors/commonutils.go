@@ -2,7 +2,6 @@ package collectors
 
 import (
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
-	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -10,6 +9,8 @@ import (
 	"strings"
 	"time"
 )
+
+const DefaultBatchSize = "500"
 
 func InvokeRestCall(client *rest.Client, href string, logger *logging.Logger) ([]gjson.Result, error) {
 	result, err := rest.Fetch(client, href)
@@ -23,45 +24,6 @@ func InvokeRestCall(client *rest.Client, href string, logger *logging.Logger) ([
 	}
 
 	return result, nil
-}
-
-func InvokeZapiCall(client *zapi.Client, request *node.Node, logger *logging.Logger, tag string) ([]*node.Node, string, error) {
-
-	var (
-		result   *node.Node
-		response []*node.Node
-		newTag   string
-		err      error
-	)
-
-	if tag != "" {
-		if result, newTag, err = client.InvokeBatchRequest(request, tag); err != nil {
-			return nil, "", err
-		}
-	} else {
-		if result, err = client.InvokeRequest(request); err != nil {
-			return nil, "", err
-		}
-	}
-
-	if result == nil {
-		return nil, "", nil
-	}
-
-	if x := result.GetChildS("attributes-list"); x != nil {
-		response = x.GetChildren()
-	} else if y := result.GetChildS("attributes"); y != nil {
-		// Check for non-list response
-		response = y.GetChildren()
-	}
-
-	if len(response) == 0 {
-		return nil, "", nil
-	}
-
-	logger.Trace().Int("object", len(response)).Msg("fetching")
-
-	return response, newTag, nil
 }
 
 func UpdateProtectedFields(instance *matrix.Instance) {
@@ -161,7 +123,7 @@ func GetDataInterval(param *node.Node, defaultInterval time.Duration) float64 {
 	return defaultInterval.Seconds()
 }
 
-// timestamp in micro seconds
+// IsTimestampOlderThanDuration - timestamp units are micro seconds
 func IsTimestampOlderThanDuration(timestamp float64, duration time.Duration) bool {
 	return time.Since(time.UnixMicro(int64(timestamp))) > duration
 }

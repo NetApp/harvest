@@ -58,12 +58,11 @@ func (my *Certificate) Init() error {
 		return err
 	}
 
+	my.batchSize = BatchSize
 	if b := my.Params.GetChildContentS("batch_size"); b != "" {
 		if _, err := strconv.Atoi(b); err == nil {
 			my.batchSize = b
 		}
-	} else {
-		my.batchSize = BatchSize
 	}
 
 	return nil
@@ -204,7 +203,8 @@ func (my *Certificate) GetAdminVserver() (string, error) {
 	vserverInfo := query.NewChildS("vserver-info", "")
 	vserverInfo.NewChildS("vserver-type", "admin")
 
-	if result, _, err = collectors.InvokeZapiCall(my.client, request, my.Logger, ""); err != nil {
+	// Fetching only admin SVMs
+	if result, err = my.client.InvokeZapiCall(request); err != nil {
 		return "", err
 	}
 
@@ -214,6 +214,7 @@ func (my *Certificate) GetAdminVserver() (string, error) {
 	// This should be one iteration only as cluster can have one admin vserver
 	for _, svm := range result {
 		adminVserver = svm.GetChildContentS("vserver-name")
+		break
 	}
 	return adminVserver, nil
 }
@@ -233,7 +234,8 @@ func (my *Certificate) GetSecuritySsl(adminSvm string) (string, error) {
 	vserverInfo := query.NewChildS("vserver-ssl-info", "")
 	vserverInfo.NewChildS("vserver", adminSvm)
 
-	if result, _, err = collectors.InvokeZapiCall(my.client, request, my.Logger, ""); err != nil {
+	// fetching data of only admin vservers
+	if result, err = my.client.InvokeZapiCall(request); err != nil {
 		return "", err
 	}
 
@@ -243,6 +245,7 @@ func (my *Certificate) GetSecuritySsl(adminSvm string) (string, error) {
 	// This should be one iteration only as cluster can have one admin vserver
 	for _, ssl := range result {
 		certificateSerial = ssl.GetChildContentS("certificate-serial-number")
+		break
 	}
 	return certificateSerial, nil
 }

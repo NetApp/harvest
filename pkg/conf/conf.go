@@ -444,6 +444,10 @@ func ZapiPoller(n *node.Node) Poller {
 	if tlsMinVersion := n.GetChildContentS("tls_min_version"); tlsMinVersion != "" {
 		p.TLSMinVersion = tlsMinVersion
 	}
+	if logSet := n.GetChildS("log"); logSet != nil {
+		names := logSet.GetAllChildNamesS()
+		p.LogSet = &names
+	}
 	return p
 }
 

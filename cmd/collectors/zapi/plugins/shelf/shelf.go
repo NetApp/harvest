@@ -10,14 +10,18 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"strconv"
 	"strings"
 )
+
+const BatchSize = "500"
 
 type Shelf struct {
 	*plugin.AbstractPlugin
 	data           map[string]*matrix.Matrix
 	instanceKeys   map[string]string
 	instanceLabels map[string]*dict.Dict
+	batchSize      string
 	client         *zapi.Client
 	query          string
 }
@@ -139,14 +143,24 @@ func (my *Shelf) Init() error {
 	}
 
 	my.Logger.Debug().Msgf("initialized with data [%d] objects", len(my.data))
+
+	// setup batchSize for request
+	my.batchSize = BatchSize
+	if my.client.IsClustered() {
+		if b := my.Params.GetChildContentS("batch_size"); b != "" {
+			if _, err := strconv.Atoi(b); err == nil {
+				my.batchSize = b
+			}
+		}
+	}
 	return nil
 }
 
 func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var (
-		result *node.Node
 		err    error
+		output []*matrix.Matrix
 	)
 
 	if !my.client.IsClustered() {
@@ -155,16 +169,18 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 	}
 
-	if result, err = my.client.InvokeRequestString(my.query); err != nil {
-		return nil, err
-	}
-
 	// Set all global labels from zapi.go if already not exist
 	for a := range my.instanceLabels {
 		my.data[a].SetGlobalLabels(data.GetGlobalLabels())
 	}
 
-	var output []*matrix.Matrix
+	request := node.NewXMLS(my.query)
+	request.NewChildS("max-records", my.batchSize)
+
+	result, err := my.client.InvokeZapiCall(request)
+	if err != nil {
+		return nil, err
+	}
 
 	if my.client.IsClustered() {
 		output, err = my.handleCMode(result)
@@ -176,14 +192,15 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 
 	if my.client.IsClustered() {
-		return my.calculateEnvironmentMetrics(output, data)
-	} else {
-		return output, nil
+		err := my.calculateEnvironmentMetrics(data)
+		if err != nil {
+			return nil, err
+		}
 	}
-
+	return output, nil
 }
 
-func (my *Shelf) calculateEnvironmentMetrics(output []*matrix.Matrix, data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *Shelf) calculateEnvironmentMetrics(data *matrix.Matrix) error {
 	var err error
 	shelfEnvironmentMetricMap := make(map[string]*shelfEnvironmentMetric, 0)
 	for _, o := range my.data {
@@ -326,24 +343,15 @@ func (my *Shelf) calculateEnvironmentMetrics(output []*matrix.Matrix, data *matr
 			}
 		}
 	}
-	return output, nil
+	return nil
 }
 
-func (my *Shelf) handleCMode(result *node.Node) ([]*matrix.Matrix, error) {
+func (my *Shelf) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 	var (
-		shelves []*node.Node
+		output []*matrix.Matrix
 	)
 
-	if x := result.GetChildS("attributes-list"); x != nil {
-		shelves = x.GetChildren()
-	}
-	if len(shelves) == 0 {
-		return nil, errs.New(errs.ErrNoInstance, "no shelf instances found")
-	}
-
 	my.Logger.Debug().Msgf("fetching %d shelf counters", len(shelves))
-
-	var output []*matrix.Matrix
 
 	// Purge and reset data
 	for _, data1 := range my.data {
@@ -399,7 +407,7 @@ func (my *Shelf) handleCMode(result *node.Node) ([]*matrix.Matrix, error) {
 						instance.SetLabel("shelf", shelfName)
 						instance.SetLabel("shelf_id", shelfID)
 
-						// Each child would have different possible values which is ugly way to write all of them,
+						// Each child would have different possible values which is an ugly way to write all of them,
 						// so normal value would be mapped to 1 and rest all are mapped to 0.
 						if instance.GetLabel("status") == "normal" {
 							_ = statusMetric.SetValueInt64(instance, 1)
@@ -431,19 +439,25 @@ func (my *Shelf) handleCMode(result *node.Node) ([]*matrix.Matrix, error) {
 	return output, nil
 }
 
-func (my *Shelf) handle7Mode(result *node.Node) ([]*matrix.Matrix, error) {
+func (my *Shelf) handle7Mode(result []*node.Node) ([]*matrix.Matrix, error) {
 	var (
 		shelves  []*node.Node
 		channels []*node.Node
+		output   []*matrix.Matrix
 	)
-	//fallback to 7mode
-	channels = result.SearchChildren([]string{"shelf-environ-channel-info"})
+
+	// Result would be the zapi response itself with only one record.
+	if len(result) != 1 {
+		my.Logger.Debug().Msg("no shelves found")
+		return output, nil
+	}
+	// fallback to 7mode
+	channels = result[0].SearchChildren([]string{"shelf-environ-channel-info"})
 
 	if len(channels) == 0 {
-		return nil, errs.New(errs.ErrNoInstance, "no channels found")
+		my.Logger.Debug().Msg("no channels found")
+		return output, nil
 	}
-
-	var output []*matrix.Matrix
 
 	// Purge and reset data
 	for _, data1 := range my.data {
@@ -456,7 +470,7 @@ func (my *Shelf) handle7Mode(result *node.Node) ([]*matrix.Matrix, error) {
 		shelves = channel.SearchChildren([]string{"shelf-environ-shelf-list", "shelf-environ-shelf-info"})
 
 		if len(shelves) == 0 {
-			my.Logger.Warn().Str("channel", channelName).Msg("no shelves found")
+			my.Logger.Debug().Str("channel", channelName).Msg("no shelves found")
 			continue
 		}
 
@@ -504,7 +518,7 @@ func (my *Shelf) handle7Mode(result *node.Node) ([]*matrix.Matrix, error) {
 							instance.SetLabel("shelf_id", shelfID)
 							instance.SetLabel("channel", channelName)
 
-							// Each child would have different possible values which is ugly way to write all of them,
+							// Each child would have different possible values which is an ugly way to write all of them,
 							// so normal value would be mapped to 1 and rest all are mapped to 0.
 							if instance.GetLabel("status") == "normal" {
 								_ = statusMetric.SetValueInt64(instance, 1)

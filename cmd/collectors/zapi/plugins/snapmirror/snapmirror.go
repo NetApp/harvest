@@ -81,7 +81,7 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 
 	for _, instance := range data.GetInstances() {
-		// Zapi call with `expand=true` would gives all the constituent's relationships as well, which we don't want to export.
+		// Zapi call with `expand=true` returns all the constituent's relationships. We do not want to export them.
 		if match := flexgroupConstituentName.FindStringSubmatch(instance.GetLabel("destination_volume")); len(match) == 3 {
 			instance.SetExportable(false)
 			continue
@@ -185,6 +185,7 @@ func (my *SnapMirror) getSVMPeerData(cluster string) error {
 	)
 
 	request := node.NewXMLS("vserver-peer-get-iter")
+	request.NewChildS("max-records", collectors.DefaultBatchSize)
 	// Fetching only remote vserver-peer
 	query := request.NewChildS("query", "")
 	vserverPeerInfo := query.NewChildS("vserver-peer-info", "")
@@ -193,7 +194,8 @@ func (my *SnapMirror) getSVMPeerData(cluster string) error {
 	// Clean svmPeerMap map
 	my.svmPeerDataMap = make(map[string]Peer)
 
-	if result, _, err = collectors.InvokeZapiCall(my.client, request, my.Logger, ""); err != nil {
+	// fetching only remote vserver peer data
+	if result, err = my.client.InvokeZapiCall(request); err != nil {
 		return err
 	}
 
