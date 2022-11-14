@@ -13,16 +13,12 @@ import (
 )
 
 func TestDatasource(t *testing.T) {
-	visitDashboards("../../../grafana/dashboards", func(path string) {
-		checkDashboardForDatasource(t, path)
+	visitDashboards("../../../grafana/dashboards", func(path string, data []byte) {
+		checkDashboardForDatasource(t, path, data)
 	})
 }
 
-func checkDashboardForDatasource(t *testing.T, path string) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		log.Fatalf("failed to read dashboards path=%s err=%v", path, err)
-	}
+func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
 		dsResult := value.Get("datasource")
 		if dsResult.Type == gjson.Null {
@@ -36,7 +32,7 @@ func checkDashboardForDatasource(t *testing.T, path string) {
 	})
 }
 
-func visitDashboards(dir string, eachDash func(path string)) {
+func visitDashboards(dir string, eachDash func(path string, data []byte)) {
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			log.Fatal("failed to read directory:", err)
@@ -45,7 +41,11 @@ func visitDashboards(dir string, eachDash func(path string)) {
 		if ext != ".json" {
 			return nil
 		}
-		eachDash(path)
+		data, err := os.ReadFile(path)
+		if err != nil {
+			log.Fatalf("failed to read dashboards path=%s err=%v", path, err)
+		}
+		eachDash(path, data)
 		return nil
 	})
 	if err != nil {
@@ -56,8 +56,8 @@ func visitDashboards(dir string, eachDash func(path string)) {
 func TestUnitsAndExprMatch(t *testing.T) {
 	mt := newMetricsTable()
 	dir := "../../../grafana/dashboards/cmode"
-	visitDashboards(dir, func(path string) {
-		checkUnits(path, mt)
+	visitDashboards(dir, func(path string, data []byte) {
+		checkUnits(path, mt, data)
 	})
 
 	// Exceptions are meant to reduce false negatives
@@ -163,12 +163,7 @@ func newMetricsTable() *metricsTable {
 	}
 }
 
-func checkUnits(dashboardPath string, mt *metricsTable) {
-	data, err := os.ReadFile(dashboardPath)
-	if err != nil {
-		log.Fatalf("failed to read dashboards dashboardPath=%s err=%v", dashboardPath, err)
-	}
-
+func checkUnits(dashboardPath string, mt *metricsTable, data []byte) {
 	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
 		doPanel("", key, value, mt, dashboardPath)
 		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
@@ -202,8 +197,7 @@ func doPanel(pathPrefix string, key gjson.Result, value gjson.Result, mt *metric
 	targetsSlice := value.Get("targets").Array()
 	transformationsSlice := value.Get("transformations").Array()
 	title := value.Get("title").String()
-	splits := strings.Split(dashboardPath, string(filepath.Separator))
-	shortPath := strings.Join(splits[len(splits)-2:], string(filepath.Separator))
+	sPath := shortPath(dashboardPath)
 
 	overrides := make([]override, 0, len(overridesSlice))
 	expressions := make([]expression, 0)
@@ -281,9 +275,14 @@ func doPanel(pathPrefix string, key gjson.Result, value gjson.Result, mt *metric
 			continue
 		}
 		unit := unitForExpr(e, overrides, defaultUnit, valueToName, numExpressions)
-		mt.addMetric(e.metric, unit, path, shortPath, title)
+		mt.addMetric(e.metric, unit, path, sPath, title)
 	}
 	return true
+}
+
+func shortPath(dashPath string) string {
+	splits := strings.Split(dashPath, string(filepath.Separator))
+	return strings.Join(splits[len(splits)-2:], string(filepath.Separator))
 }
 
 func unitForExpr(e expression, overrides []override, defaultUnit string,
@@ -319,4 +318,143 @@ func unitForExpr(e expression, overrides []override, defaultUnit string,
 		}
 	}
 	return defaultUnit
+}
+
+func TestVariablesAreSorted(t *testing.T) {
+	dir := "../../../grafana/dashboards/cmode"
+	visitDashboards(dir, func(path string, data []byte) {
+		checkVariablesAreSorted(t, path, data)
+	})
+}
+
+func checkVariablesAreSorted(t *testing.T, path string, data []byte) {
+	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
+		// The datasource variable does not need to be sorted, ignore
+		if value.Get("type").String() == "datasource" {
+			return true
+		}
+		// If the variable is not visible, ignore
+		if value.Get("hide").Int() != 0 {
+			return true
+		}
+		// If the variable is custom, ignore
+		if value.Get("type").String() == "custom" {
+			return true
+		}
+
+		sortVal := value.Get("sort").Int()
+		if sortVal != 1 {
+			varName := value.Get("name").String()
+			t.Errorf("dashboard=%s path=templating.list[%s].sort variable=%s is not 1. Should be \"sort\": 1,",
+				shortPath(path), key.String(), varName)
+		}
+		return true
+	})
+}
+
+func TestNoUnusedVariables(t *testing.T) {
+	dir := "../../../grafana/dashboards/cmode"
+	visitDashboards(dir, func(path string, data []byte) {
+		checkUnusedVariables(t, path, data)
+	})
+}
+
+func checkUnusedVariables(t *testing.T, path string, data []byte) {
+	// collect are variable names, except data source
+	vars := make([]string, 0)
+	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
+		if value.Get("type").String() == "datasource" {
+			return true
+		}
+		vars = append(vars, value.Get("name").String())
+		return true
+	})
+
+	// collect all expressions
+	expressions := make([]string, 0)
+	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
+		doExpr("", key, value, func(path string, expr string) {
+			expressions = append(expressions, expr)
+		})
+		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
+			pathPrefix := fmt.Sprintf("panels[%d].", key.Int())
+			doExpr(pathPrefix, key2, value2, func(path string, expr string) {
+				expressions = append(expressions, expr)
+			})
+			return true
+		})
+		return true
+	})
+
+	// check that each variable is used in at least one expression
+varLoop:
+	for _, variable := range vars {
+		for _, expr := range expressions {
+			if strings.Contains(expr, variable) {
+				continue varLoop
+			}
+		}
+		t.Errorf("dashboard=%s has unused variable [%s]", shortPath(path), variable)
+	}
+}
+
+func doExpr(pathPrefix string, key gjson.Result, value gjson.Result, exprFunc func(path string, expr string)) {
+	kind := value.Get("type").String()
+	if kind == "row" {
+		return
+	}
+	path := fmt.Sprintf("%spanels[%d]", pathPrefix, key.Int())
+	targetsSlice := value.Get("targets").Array()
+	for _, targetN := range targetsSlice {
+		expr := targetN.Get("expr").String()
+		exprFunc(path, expr)
+	}
+}
+
+func TestIDIsBlank(t *testing.T) {
+	dir := "../../../grafana/dashboards/cmode"
+	visitDashboards(dir, func(path string, data []byte) {
+		checkUIDIsBlank(t, path, data)
+	})
+}
+
+func checkUIDIsBlank(t *testing.T, path string, data []byte) {
+	uid := gjson.GetBytes(data, "uid").String()
+	if uid != "" {
+		t.Errorf(`dashboard=%s uid should be "" but is %s`, shortPath(path), uid)
+	}
+}
+
+func TestUniquePanelIDs(t *testing.T) {
+	dir := "../../../grafana/dashboards/cmode"
+	visitDashboards(dir, func(path string, data []byte) {
+		checkUniquePanelIDs(t, path, data)
+	})
+}
+
+func checkUniquePanelIDs(t *testing.T, path string, data []byte) {
+	ids := make(map[int64]struct{})
+
+	// visit all panel ids
+	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
+		id := value.Get("id").Int()
+		_, ok := ids[id]
+		if ok {
+			t.Errorf(`dashboard=%s path=panels[%d] has multiple panels with id=%d`,
+				shortPath(path), key.Int(), id)
+		}
+		ids[id] = struct{}{}
+		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
+			where := fmt.Sprintf("panels[%d].", key.Int())
+			id := value2.Get("id").Int()
+			_, ok := ids[id]
+			if ok {
+				t.Errorf(`dashboard=%s path=%spanels[%d] has multiple panels with id=%d`,
+					shortPath(path), where, key2.Int(), id)
+			}
+			ids[id] = struct{}{}
+			return true
+		})
+		return true
+	})
 }
