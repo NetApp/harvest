@@ -4,6 +4,7 @@
 package sensor
 
 import (
+	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/matrix"
@@ -89,6 +90,7 @@ func (my *Sensor) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	sensorEnvironmentMetricMap := make(map[string]*sensorEnvironmentMetric)
+	excludedSensors := make(map[string][]sensorValue)
 
 	for k, instance := range data.GetInstances() {
 		iKey := instance.GetLabel("node")
@@ -141,11 +143,10 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 							sensorEnvironmentMetricMap[iKey].nonAmbientTemperature = append(sensorEnvironmentMetricMap[iKey].nonAmbientTemperature, value)
 						}
 					} else {
-						my.Logger.Debug().Str("warningLowThreshold", warningLowThr).
-							Float64("criticalLowThreshold", criticalLowThr).
-							Float64("value", value).
-							Str("sensorName", sensorName).
-							Msg("sensor excluded")
+						excludedSensors[iKey] = append(excludedSensors[iKey], sensorValue{
+							name:  sensorName,
+							value: value,
+						})
 					}
 				}
 
@@ -187,6 +188,15 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				}
 			}
 		}
+	}
+
+	if len(excludedSensors) > 0 {
+		var excludedSensorStr string
+		for k, v := range excludedSensors {
+			excludedSensorStr += " node:" + k + " sensor:" + fmt.Sprintf("%v", v)
+		}
+		my.Logger.Info().Str("sensor", excludedSensorStr).
+			Msg("sensor excluded")
 	}
 
 	for key, v := range sensorEnvironmentMetricMap {
