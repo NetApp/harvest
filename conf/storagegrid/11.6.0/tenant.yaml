@@ -18,5 +18,6 @@ plugins:
 export_options:
   instance_keys:
     - id
+    - tenant
   instance_labels:
     - tenant
