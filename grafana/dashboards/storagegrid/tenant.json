@@ -52,7 +52,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1665158170026,
+  "iteration": 1668531008860,
   "links": [],
   "panels": [
     {
@@ -271,14 +271,24 @@
         {
           "id": "organize",
           "options": {
-            "excludeByName": {},
+            "excludeByName": {
+              "tenant 2": true,
+              "tenant 3": true,
+              "tenant 4": true,
+              "tenant 5": true
+            },
             "indexByName": {
               "Value #B": 3,
               "Value #C": 4,
               "Value #D": 5,
+              "Value #E": 6,
               "cluster 1": 1,
               "datacenter 1": 0,
-              "tenant": 2
+              "tenant 1": 2,
+              "tenant 2": 7,
+              "tenant 3": 8,
+              "tenant 4": 9,
+              "tenant 5": 10
             },
             "renameByName": {
               "Value #B": "Logical Used",
@@ -289,7 +299,7 @@
               "cluster 1": "Cluster",
               "datacenter": "Datacenter",
               "datacenter 1": "Datacenter",
-              "tenant": "Tenant"
+              "tenant 1": "Tenant"
             }
           }
         }
