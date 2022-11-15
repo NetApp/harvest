@@ -334,6 +334,7 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 				}
 			}
 			fetch(instance, instances[0], make([]string, 0))
+			oldInstances.Remove("cluster")
 			break
 		}
 
