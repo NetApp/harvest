@@ -14,7 +14,7 @@ schedule:
   - data: 180s
 
 counters:
-  - ^^id
+  - ^^uuid
   - latency
   - ops
   - read_data
