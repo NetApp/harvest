@@ -12,7 +12,7 @@ schedule:
   - data:     180s
 
 counters:
-  - ^^id
+  - ^^uuid
   - ^name
   - concurrency
   - latency
