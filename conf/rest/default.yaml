@@ -13,7 +13,7 @@ objects:
   Disk:                        disk.yaml
   Lun:                         lun.yaml
   NetConnections:              netConnections.yaml
-  NetPort:                     netPort.yaml
+#  NetPort:                     netPort.yaml
   NFSClients:                  nfs_clients.yaml
   Node:                        node.yaml
   NtpServer:                   ntpserver.yaml
