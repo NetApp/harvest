@@ -16,7 +16,7 @@ counters:
     - ^vlan-id                                 => vlan_id
     - ^vlan-node                               => vlan_node
     - ^vlan-port                               => vlan_port
-    - ^^operational-speed                      => op_speed
+    - ^operational-speed                       => op_speed
     - mtu                                      => mtu
 
 plugins:
