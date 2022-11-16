@@ -86,6 +86,32 @@ func init() {
 	}
 }
 
+// Verified temperature sensor values by parsing, pivoting, etc. externally via dasel, jq, miller
+
+// average_ambient_temperature is
+// cat cmd/collectors/zapi/plugins/sensor/testdata/sensor.xml | dasel -r xml -w json | jq -r '.root."attributes-list"."environment-sensors-info"[] | select(."sensor-type" | test("thermal")) | {node: (."node-name"), name: (."sensor-name"), value: (."threshold-sensor-value")} | [.node, .name, .value] | @csv' | rg "Ambient Temp|Ambient Temp \d|PSU\d AmbTemp|PSU\d Inlet|PSU\d Inlet Temp|In Flow Temp|Front Temp|System Inlet|Bat Ambient \d|Riser Inlet Temp" | rg -v "Fake" | mlr --csv --implicit-csv-header label node,name,value then stats1 -a min,mean,max -f value -g node | mlr --csv --opprint --barred cat
+
+// +------------+-----------+--------------------+-----------+
+// | node       | value_min | value_mean         | value_max |
+// +------------+-----------+--------------------+-----------+
+// | cdot-k3-05 | 21        | 21.666666666666668 | 23        |
+// | cdot-k3-06 | 21        | 22                 | 24        |
+// | cdot-k3-07 | 21        | 21.666666666666668 | 23        |
+// | cdot-k3-08 | 21        | 22.333333333333332 | 24        |
+// +------------+-----------+--------------------+-----------+
+//
+// average_temperature [min, avg, max] is calculated like so
+// cat cmd/collectors/zapi/plugins/sensor/testdata/sensor.xml | dasel -r xml -w json | jq -r '.root."attributes-list"."environment-sensors-info"[] | select(."sensor-type" | test("thermal")) | {node: (."node-name"), name: (."sensor-name"), value: (."threshold-sensor-value")} | [.node, .name, .value] | @csv' | rg -v "Ambient Temp|Ambient Temp \d|PSU\d AmbTemp|PSU\d Inlet|PSU\d Inlet Temp|In Flow Temp|Front Temp|System Inlet|Bat Ambient \d|Riser Inlet Temp" | rg -v "Fake" | mlr --csv --implicit-csv-header label node,name,value then stats1 -a min,mean,max -f value -g node | mlr --csv --opprint --barred cat
+
+// +------------+-----------+------------+-----------+
+// | node       | value_min | value_mean | value_max |
+// +------------+-----------+------------+-----------+
+// | cdot-k3-05 | 19        | 27.1875    | 36        |
+// | cdot-k3-06 | 19        | 26.6875    | 35        |
+// | cdot-k3-07 | 19        | 26.6875    | 35        |
+// | cdot-k3-08 | 20        | 27.5       | 36        |
+// +------------+-----------+------------+-----------+
+
 func TestSensor_Run(t *testing.T) {
 
 	omat, _ := sensor.Run(mat)
