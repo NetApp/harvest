@@ -141,3 +141,9 @@
   grafanaJson: percent
   grafanaDisplay: Percent (0-100)
   comment: ""
+
+- metric: node_disk_data_read
+  ontapUnit: kb_per_sec
+  grafanaJson: KiBs
+  grafanaDisplay: kibibytes/sec
+  comment: ""
