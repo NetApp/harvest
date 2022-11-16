@@ -15,8 +15,8 @@ counters:
   - ^vlan.tag                                => vlan_id
   - ^vlan.base_port.node.name                => vlan_node
   - ^vlan.base_port.name                     => vlan_port
+  - ^operational-speed                       => op_speed
   - mtu                                      => mtu
-  - operational-speed                        => op_speed
 
 plugins:
   LabelAgent:
