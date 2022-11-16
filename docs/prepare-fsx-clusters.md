@@ -11,3 +11,10 @@ That means a limited set of out-of-the-box dashboards are supported and
 some panels may be missing information. 
 
 The dashboards that work with FSx are tagged with `fsx` and listed below:
+
+* ONTAP: Volume
+* ONTAP: SVM
+* ONTAP: Security
+* ONTAP: Data Protection Snapshots
+* ONTAP: Compliance
+* ONTAP: Headroom (Only works for Rest Collector)
