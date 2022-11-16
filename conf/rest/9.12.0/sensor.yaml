@@ -4,7 +4,7 @@ object:           environment_sensor
 
 counters:
   - ^^index
-  - ^node.name                 => node
+  - ^^node.name                => node
   - ^name                      => sensor
   - ^type                      => type
   - ^warning_high_threshold    => warning_high
