@@ -12,6 +12,7 @@ nav:
   - Upgrade: 'upgrade.md'
   - Prepare Monitored Clusters:
       - 'ONTAP cDOT': 'prepare-cdot-clusters.md'
+      - 'Amazon FSx for ONTAP': 'prepare-fsx-clusters.md'
       - 'ONTAP 7mode': 'prepare-7mode-clusters.md'
       - 'StorageGRID': 'prepare-storagegrid-clusters.md'
   - Configure Harvest (basic): 'configure-harvest-basic.md'
