@@ -312,18 +312,51 @@ func arrayMetricToString(value string) string {
 }
 
 func parseMetricResponse(instanceData gjson.Result, metric string) *metricResponse {
-	t := gjson.Get(instanceData.String(), "counters.#.name")
+	instanceDataS := instanceData.String()
+	t := gjson.Get(instanceDataS, "counters.#.name")
 
 	for _, name := range t.Array() {
 		if name.String() == metric {
-			value := gjson.Get(instanceData.String(), "counters.#(name="+metric+").value")
+			value := gjson.Get(instanceDataS, "counters.#(name="+metric+").value")
 			if value.String() != "" {
 				return &metricResponse{value: value.String(), label: "", isArray: false}
 			}
-			values := gjson.Get(instanceData.String(), "counters.#(name="+metric+").values")
+			values := gjson.Get(instanceDataS, "counters.#(name="+metric+").values")
 			if values.String() != "" {
-				label := gjson.Get(instanceData.String(), "counters.#(name="+metric+").labels")
+				label := gjson.Get(instanceDataS, "counters.#(name="+metric+").labels")
 				return &metricResponse{value: arrayMetricToString(values.String()), label: arrayMetricToString(label.String()), isArray: true}
+			}
+
+			// check for sub metrics
+			if gjson.Get(instanceDataS, "counters.#(name="+metric+").counters.#.label").String() != "" {
+				var finalLabels []string
+				var finalValues []string
+				counters := gjson.Get(instanceDataS, "counters.#(name="+metric+")")
+				subLabels := gjson.Get(instanceDataS, "counters.#(name="+metric+").labels")
+				subLabelsS := subLabels.String()
+				subLabelsS = arrayMetricToString(subLabelsS)
+				lv := gjson.GetMany(counters.String(), "counters.#.label", "counters.#.values")
+				subLabelSlice := strings.Split(subLabelsS, ",")
+				ls := lv[0].Array()
+				vs := lv[1].Array()
+
+				var vLen int
+				for i, v := range vs {
+					label := ls[i].String()
+					m := arrayMetricToString(v.String())
+					ms := strings.Split(m, ",")
+					for range ms {
+						finalLabels = append(finalLabels, label+"."+subLabelSlice[vLen])
+						vLen += 1
+					}
+					if vLen > len(subLabelSlice) {
+						break
+					}
+					finalValues = append(finalValues, ms...)
+				}
+				if vLen == len(subLabelSlice) {
+					return &metricResponse{value: strings.Join(finalValues, ","), label: strings.Join(finalLabels, ","), isArray: true}
+				}
 			}
 		}
 	}
@@ -670,7 +703,12 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 										continue
 									}
 									metr.SetName(metric.Label)
-									metr.SetLabel("metric", label)
+									if x := strings.Split(label, "."); len(x) == 2 {
+										metr.SetLabel("metric", x[0])
+										metr.SetLabel("submetric", x[1])
+									} else {
+										metr.SetLabel("metric", label)
+									}
 									// differentiate between array and normal counter
 									metr.SetArray(true)
 									metr.SetExportable(metric.Exportable)
@@ -739,7 +777,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 						}
 					}
 				} else {
-					r.Logger.Warn().Str("counter", name).Msg("Counter is nil. Unable to process. Check template")
+					r.Logger.Warn().Str("counter", name).Msg("Counter is missing or unable to parse.")
 				}
 			}
 			if err = newData.GetMetric("timestamp").SetValueFloat64(instance, ts); err != nil {
