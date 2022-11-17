@@ -21,6 +21,8 @@ plugins:
   - LabelAgent:
       value_to_num:
         - new_status state online online `0`
+        - ldap_signed ldap_session_security sign sign `0`
+        - ldap_encrypted ldap_session_security seal seal `0`
 
 export_options:
   instance_keys:
