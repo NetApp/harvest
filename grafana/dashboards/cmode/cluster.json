@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1663774806079,
+  "iteration": 1668669792078,
   "links": [
     {
       "asDropdown": true,
@@ -111,7 +111,7 @@
           },
           "custom": {
             "align": "auto",
-            "displayMode": "color-background-solid",
+            "displayMode": "auto",
             "filterable": false
           },
           "decimals": 1,
@@ -172,7 +172,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "8.4.11",
+      "pluginVersion": "8.1.8",
       "targets": [
         {
           "datasource": "${DS_PROMETHEUS}",
@@ -221,7 +221,7 @@
           },
           "custom": {
             "align": "auto",
-            "displayMode": "color-background-solid",
+            "displayMode": "auto",
             "filterable": false
           },
           "decimals": 1,
@@ -270,7 +270,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "8.4.11",
+      "pluginVersion": "8.1.8",
       "targets": [
         {
           "datasource": "${DS_PROMETHEUS}",
@@ -368,7 +368,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "8.4.11",
+      "pluginVersion": "8.1.8",
       "targets": [
         {
           "datasource": "${DS_PROMETHEUS}",
@@ -466,7 +466,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "8.4.11",
+      "pluginVersion": "8.1.8",
       "targets": [
         {
           "datasource": "${DS_PROMETHEUS}",
@@ -515,7 +515,7 @@
           },
           "custom": {
             "align": "auto",
-            "displayMode": "color-background-solid",
+            "displayMode": "auto",
             "filterable": false
           },
           "decimals": 0,
@@ -564,7 +564,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "8.4.11",
+      "pluginVersion": "8.1.8",
       "targets": [
         {
           "datasource": "${DS_PROMETHEUS}",
@@ -613,7 +613,7 @@
           },
           "custom": {
             "align": "auto",
-            "displayMode": "color-background-solid",
+            "displayMode": "auto",
             "filterable": false
           },
           "decimals": 0,
@@ -662,7 +662,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "8.4.11",
+      "pluginVersion": "8.1.8",
       "targets": [
         {
           "datasource": "${DS_PROMETHEUS}",
@@ -4810,10 +4810,15 @@
         "type": "query"
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[${__range}]))))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "TopVolumeAvgLatency",
         "options": [],
@@ -4828,10 +4833,15 @@
         "type": "query"
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[${__range}]) + avg_over_time(node_volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[${__range}]))))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "TopVolumeTotalData",
         "options": [],
@@ -4846,10 +4856,15 @@
         "type": "query"
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node!=\"\"}[${__range}]))))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "TopVolumeTotalOps",
         "options": [],
@@ -4885,5 +4900,5 @@
   "timezone": "",
   "title": "ONTAP: Cluster",
   "uid": "",
-  "version": 12
+  "version": 13
 }
