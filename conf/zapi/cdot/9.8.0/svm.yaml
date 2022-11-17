@@ -21,6 +21,8 @@ plugins:
   - LabelAgent:
       value_to_num:
         - new_status state online online `0`
+        - ldap_signed ldap_session_security sign sign `0`
+        - ldap_encrypted ldap_session_security seal seal `0`
 
 export_options:
   instance_keys:
@@ -37,3 +39,11 @@ export_options:
     - ns_source
     - ns_db
     - ciphers
+    - iscsi_authentication_type
+    - iscsi_service_enabled
+    - fpolicy_enabled
+    - fpolicy_name
+    - ldap_session_security
+    - nfs_kerberos_protocol_enabled
+    - smb_encryption_required
+    - smb_signing_required
