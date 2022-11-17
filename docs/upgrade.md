@@ -13,7 +13,7 @@ or
 pgrep --full '\-\-poller'  # should return nothing if all pollers are stopped
 ```
 
-Follow the [installation](install.md) instructions to download and install Harvest and then
+Follow the [installation](install/overview.md) instructions to download and install Harvest and then
 copy your old `harvest.yml` into the new install directory like so:
 
 ```
