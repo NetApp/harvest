@@ -25,7 +25,8 @@ func (b *Bucket) Init() error {
 		return err
 	}
 
-	if b.client, err = rest.NewClient(b.Options.Poller, ""); err != nil {
+	clientTimeout := b.ParentParams.GetChildContentS("client_timeout")
+	if b.client, err = rest.NewClient(b.Options.Poller, clientTimeout); err != nil {
 		b.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
 	}
