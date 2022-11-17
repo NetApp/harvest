@@ -121,7 +121,16 @@ password: admin
 
 ## Manage pollers
 
-#### Stop all containers
+### How do I add a new poller?
+
+1. Add poller to `harvest.yml`
+2. Regenerate compose file by running [`bin/harvest generate`](#generate-a-docker-compose-for-your-pollers)
+3. Run [docker compose up](#start-everything), for example, 
+```bash
+docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
+```
+
+### Stop all containers
 
 ```
 docker-compose -f prom-stack.yml -f harvest-compose.yml down
