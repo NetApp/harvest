@@ -23,9 +23,9 @@ import (
 )
 
 const (
-	latencyIoReqd   = 10
-	BILLION         = 1_000_000_000
-	ARRAY_KEY_TOKEN = "#"
+	latencyIoReqd = 10
+	BILLION       = 1_000_000_000
+	arrayKeyToken = "#"
 )
 
 var qosQuery = "api/cluster/counter/tables/qos"
@@ -347,7 +347,7 @@ func parseMetricResponse(instanceData gjson.Result, metric string) *metricRespon
 					m := arrayMetricToString(v.String())
 					ms := strings.Split(m, ",")
 					for range ms {
-						finalLabels = append(finalLabels, label+ARRAY_KEY_TOKEN+subLabelSlice[vLen])
+						finalLabels = append(finalLabels, label+arrayKeyToken+subLabelSlice[vLen])
 						vLen += 1
 					}
 					if vLen > len(subLabelSlice) {
@@ -694,7 +694,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 							}
 
 							for i, label := range labels {
-								k := name + ARRAY_KEY_TOKEN + label
+								k := name + arrayKeyToken + label
 								metr, ok := newData.GetMetrics()[k]
 								if !ok {
 									if metr, err = newData.NewMetricFloat64(k); err != nil {
@@ -704,7 +704,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 										continue
 									}
 									metr.SetName(metric.Label)
-									if x := strings.Split(label, ARRAY_KEY_TOKEN); len(x) == 2 {
+									if x := strings.Split(label, arrayKeyToken); len(x) == 2 {
 										metr.SetLabel("metric", x[0])
 										metr.SetLabel("submetric", x[1])
 									} else {
@@ -1073,7 +1073,7 @@ func (r *RestPerf) counterLookup(metric matrix.Metric, metricKey string) *counte
 	var c *counter
 
 	if metric.IsArray() {
-		lastInd := strings.Index(metricKey, ARRAY_KEY_TOKEN)
+		lastInd := strings.Index(metricKey, arrayKeyToken)
 		name := metricKey[:lastInd]
 		c = r.perfProp.counterInfo[name]
 	} else {
