@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -405,9 +406,10 @@ func doExpr(pathPrefix string, key gjson.Result, value gjson.Result, exprFunc fu
 	}
 	path := fmt.Sprintf("%spanels[%d]", pathPrefix, key.Int())
 	targetsSlice := value.Get("targets").Array()
-	for _, targetN := range targetsSlice {
+	for i, targetN := range targetsSlice {
 		expr := targetN.Get("expr").String()
-		exprFunc(path, expr)
+		pathWithTarget := path + ".targets[" + strconv.Itoa(i) + "]"
+		exprFunc(pathWithTarget, expr)
 	}
 }
 
@@ -457,4 +459,130 @@ func checkUniquePanelIDs(t *testing.T, path string, data []byte) {
 		})
 		return true
 	})
+}
+
+// - collect all expressions that include "topk". Ignore expressions that are:
+// 		- part of a table or stat or
+//      - calculate a percentage
+// - for each expression - check if any variable used in the expression has a topk range
+//   a) if it does, pass
+//   b) otherwise fail, printing the expression, path, dashboard
+
+func TestTopKRange(t *testing.T) {
+	dir := "../../../grafana/dashboards/cmode"
+	visitDashboards(dir, func(path string, data []byte) {
+		checkTopKRange(t, path, data)
+	})
+}
+
+type exprP struct {
+	path string
+	expr string
+	vars []string
+}
+
+func checkTopKRange(t *testing.T, path string, data []byte) {
+	// collect all expressions
+	expressions := make([]exprP, 0)
+	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
+		doTarget("", key, value, func(path string, expr string, format string) {
+			if format == "table" || format == "stat" {
+				return
+			}
+			expressions = append(expressions, newExpr(path, expr))
+		})
+		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
+			pathPrefix := fmt.Sprintf("panels[%d].", key.Int())
+			doTarget(pathPrefix, key2, value2, func(path string, expr string, format string) {
+				if format == "table" || format == "stat" {
+					return
+				}
+				expressions = append(expressions, newExpr(path, expr))
+			})
+			return true
+		})
+		return true
+	})
+
+	// collect all variables
+	variables := allVariables(data)
+
+	for _, expr := range expressions {
+		if !strings.Contains(expr.expr, "topk") {
+			continue
+		}
+		if strings.Contains(expr.expr, "/") {
+			continue
+		}
+		hasRange := false
+	vars:
+		for _, name := range expr.vars {
+			for _, v := range variables {
+				if v.name == name && strings.Contains(v.query, "__range") {
+					hasRange = true
+					break vars
+				}
+			}
+		}
+		if !hasRange {
+			t.Errorf(`dashboard=%s path=%s use topk but no variable has range. expr=%s`,
+				shortPath(path), expr.path, expr.expr)
+		}
+	}
+}
+
+func doTarget(pathPrefix string, key gjson.Result, value gjson.Result,
+	exprFunc func(path string, expr string, format string)) {
+	kind := value.Get("type").String()
+	if kind == "row" {
+		return
+	}
+	path := fmt.Sprintf("%spanels[%d]", pathPrefix, key.Int())
+	targetsSlice := value.Get("targets").Array()
+	for i, targetN := range targetsSlice {
+		expr := targetN.Get("expr").String()
+		pathWithTarget := path + ".targets[" + strconv.Itoa(i) + "]"
+		exprFunc(pathWithTarget, expr, kind)
+	}
+}
+
+var varRe = regexp.MustCompile(`\$(\w+)`)
+
+func newExpr(path string, expr string) exprP {
+	allMatches := varRe.FindAllStringSubmatch(expr, -1)
+	vars := make([]string, 0, len(allMatches))
+	for _, match := range allMatches {
+		vars = append(vars, match[1])
+	}
+	return exprP{
+		path: path,
+		expr: expr,
+		vars: vars,
+	}
+}
+
+type variable struct {
+	name  string
+	kind  string
+	query string
+	path  string
+}
+
+func allVariables(data []byte) []variable {
+	variables := make([]variable, 0)
+	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
+		// The datasource variable can be ignored
+		if value.Get("type").String() == "datasource" {
+			return true
+		}
+
+		variables = append(variables, variable{
+			name:  value.Get("name").String(),
+			kind:  value.Get("type").String(),
+			query: value.Get("query.query").String(),
+			path:  key.String(),
+		})
+		return true
+	})
+	return variables
 }
