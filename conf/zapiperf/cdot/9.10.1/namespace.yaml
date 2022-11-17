@@ -15,7 +15,6 @@ counters:
   - avg_read_latency
   - avg_write_latency
   - avg_other_latency
-  - queue_full
   - remote_bytes
   - remote_ops
 
