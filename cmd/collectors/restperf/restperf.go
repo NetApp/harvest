@@ -23,8 +23,9 @@ import (
 )
 
 const (
-	latencyIoReqd = 10
-	BILLION       = 1_000_000_000
+	latencyIoReqd   = 10
+	BILLION         = 1_000_000_000
+	ARRAY_KEY_TOKEN = "#"
 )
 
 var qosQuery = "api/cluster/counter/tables/qos"
@@ -346,7 +347,7 @@ func parseMetricResponse(instanceData gjson.Result, metric string) *metricRespon
 					m := arrayMetricToString(v.String())
 					ms := strings.Split(m, ",")
 					for range ms {
-						finalLabels = append(finalLabels, label+"."+subLabelSlice[vLen])
+						finalLabels = append(finalLabels, label+ARRAY_KEY_TOKEN+subLabelSlice[vLen])
 						vLen += 1
 					}
 					if vLen > len(subLabelSlice) {
@@ -693,7 +694,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 							}
 
 							for i, label := range labels {
-								k := name + "." + label
+								k := name + ARRAY_KEY_TOKEN + label
 								metr, ok := newData.GetMetrics()[k]
 								if !ok {
 									if metr, err = newData.NewMetricFloat64(k); err != nil {
@@ -703,7 +704,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 										continue
 									}
 									metr.SetName(metric.Label)
-									if x := strings.Split(label, "."); len(x) == 2 {
+									if x := strings.Split(label, ARRAY_KEY_TOKEN); len(x) == 2 {
 										metr.SetLabel("metric", x[0])
 										metr.SetLabel("submetric", x[1])
 									} else {
@@ -837,7 +838,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 					orderedDenominatorKeys = append(orderedDenominatorKeys, key)
 				}
 			} else {
-				r.Logger.Warn().Str("counter", metric.GetName()).Msg("Counter is nil. Unable to process. Check template")
+				r.Logger.Warn().Str("counter", metric.GetName()).Msg("Counter is missing or unable to parse")
 			}
 		}
 	}
@@ -966,7 +967,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 				totalSkips += skips
 			}
 		} else {
-			r.Logger.Warn().Str("counter", metric.GetName()).Msg("Counter is nil. Unable to process. Check template ")
+			r.Logger.Warn().Str("counter", metric.GetName()).Msg("Counter is missing or unable to parse ")
 			continue
 		}
 	}
@@ -1072,7 +1073,7 @@ func (r *RestPerf) counterLookup(metric matrix.Metric, metricKey string) *counte
 	var c *counter
 
 	if metric.IsArray() {
-		lastInd := strings.LastIndex(metricKey, ".")
+		lastInd := strings.Index(metricKey, ARRAY_KEY_TOKEN)
 		name := metricKey[:lastInd]
 		c = r.perfProp.counterInfo[name]
 	} else {
