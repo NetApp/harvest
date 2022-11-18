@@ -315,32 +315,40 @@ func arrayMetricToString(value string) string {
 func parseMetricResponse(instanceData gjson.Result, metric string) *metricResponse {
 	instanceDataS := instanceData.String()
 	t := gjson.Get(instanceDataS, "counters.#.name")
-
 	for _, name := range t.Array() {
 		if name.String() == metric {
-			value := gjson.Get(instanceDataS, "counters.#(name="+metric+").value")
+			metricPath := "counters.#(name=" + metric + ")"
+			many := gjson.GetMany(instanceDataS,
+				metricPath+".value",
+				metricPath+".values",
+				metricPath+".labels",
+				metricPath+".counters.#.label",
+				metricPath+".counters.#.values",
+			)
+			value := many[0]
+			values := many[1]
+			labels := many[2]
+			subLabels := many[3]
+			subValues := many[4]
 			if value.String() != "" {
 				return &metricResponse{value: value.String(), label: "", isArray: false}
 			}
-			values := gjson.Get(instanceDataS, "counters.#(name="+metric+").values")
 			if values.String() != "" {
-				label := gjson.Get(instanceDataS, "counters.#(name="+metric+").labels")
-				return &metricResponse{value: arrayMetricToString(values.String()), label: arrayMetricToString(label.String()), isArray: true}
+				return &metricResponse{
+					value: arrayMetricToString(values.String()),
+					label: arrayMetricToString(labels.String()), isArray: true,
+				}
 			}
 
 			// check for sub metrics
-			if gjson.Get(instanceDataS, "counters.#(name="+metric+").counters.#.label").String() != "" {
+			if subLabels.String() != "" {
 				var finalLabels []string
 				var finalValues []string
-				counters := gjson.Get(instanceDataS, "counters.#(name="+metric+")")
-				subLabels := gjson.Get(instanceDataS, "counters.#(name="+metric+").labels")
-				subLabelsS := subLabels.String()
+				subLabelsS := labels.String()
 				subLabelsS = arrayMetricToString(subLabelsS)
-				lv := gjson.GetMany(counters.String(), "counters.#.label", "counters.#.values")
 				subLabelSlice := strings.Split(subLabelsS, ",")
-				ls := lv[0].Array()
-				vs := lv[1].Array()
-
+				ls := subLabels.Array()
+				vs := subValues.Array()
 				var vLen int
 				for i, v := range vs {
 					label := ls[i].String()
@@ -1073,8 +1081,7 @@ func (r *RestPerf) counterLookup(metric matrix.Metric, metricKey string) *counte
 	var c *counter
 
 	if metric.IsArray() {
-		lastInd := strings.Index(metricKey, arrayKeyToken)
-		name := metricKey[:lastInd]
+		name, _, _ := strings.Cut(metricKey, arrayKeyToken)
 		c = r.perfProp.counterInfo[name]
 	} else {
 		c = r.perfProp.counterInfo[metricKey]
