@@ -12,6 +12,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -434,7 +435,46 @@ func (s *StorageGrid) CollectAutoSupport(p *collector.Payload) {
 		PluginTime: md.LazyValueInt64("plugin_time", "data"),
 	}
 
+	if s.Object == "Tenant" {
+		nodeIds, err := s.getNodeUuids()
+		if err != nil {
+			// log the error, but don't exit method so the other info below is collected
+			s.Logger.Error().
+				Err(err).
+				Msg("Unable to get nodes.")
+			nodeIds = make([]collector.ID, 0)
+		}
+		info.Ids = nodeIds
+	}
+
 	p.Nodes = &info
+}
+
+func (s *StorageGrid) getNodeUuids() ([]collector.ID, error) {
+	var (
+		err    error
+		infos  []collector.ID
+		health []byte
+	)
+
+	health, err = s.client.GetGridRest("grid/node-health")
+	if err != nil {
+		return nil, err
+	}
+	data := gjson.GetBytes(health, "data").Array()
+
+	for _, each := range data {
+		infos = append(infos, collector.ID{
+			SerialNumber: each.Get("id").String(),
+			SystemID:     each.Get("siteId").String(),
+		})
+	}
+
+	// Sort to make diffing easier
+	sort.SliceStable(infos, func(i, j int) bool {
+		return infos[i].SerialNumber < infos[j].SerialNumber
+	})
+	return infos, nil
 }
 
 // Interface guards
