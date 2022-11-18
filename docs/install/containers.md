@@ -157,5 +157,5 @@ To upgrade Harvest:
 
 ```
 docker pull cr.netapp.io/harvest   # or if using Docker Hub: docker pull rahulguptajss/harvest
-docker-compose -f prom-stack.yml -f harvest-compose.yml restart
+docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
 ```
