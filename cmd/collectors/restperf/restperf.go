@@ -25,6 +25,7 @@ import (
 const (
 	latencyIoReqd = 10
 	BILLION       = 1_000_000_000
+	arrayKeyToken = "#"
 )
 
 var qosQuery = "api/cluster/counter/tables/qos"
@@ -312,18 +313,59 @@ func arrayMetricToString(value string) string {
 }
 
 func parseMetricResponse(instanceData gjson.Result, metric string) *metricResponse {
-	t := gjson.Get(instanceData.String(), "counters.#.name")
-
+	instanceDataS := instanceData.String()
+	t := gjson.Get(instanceDataS, "counters.#.name")
 	for _, name := range t.Array() {
 		if name.String() == metric {
-			value := gjson.Get(instanceData.String(), "counters.#(name="+metric+").value")
+			metricPath := "counters.#(name=" + metric + ")"
+			many := gjson.GetMany(instanceDataS,
+				metricPath+".value",
+				metricPath+".values",
+				metricPath+".labels",
+				metricPath+".counters.#.label",
+				metricPath+".counters.#.values",
+			)
+			value := many[0]
+			values := many[1]
+			labels := many[2]
+			subLabels := many[3]
+			subValues := many[4]
 			if value.String() != "" {
 				return &metricResponse{value: value.String(), label: "", isArray: false}
 			}
-			values := gjson.Get(instanceData.String(), "counters.#(name="+metric+").values")
 			if values.String() != "" {
-				label := gjson.Get(instanceData.String(), "counters.#(name="+metric+").labels")
-				return &metricResponse{value: arrayMetricToString(values.String()), label: arrayMetricToString(label.String()), isArray: true}
+				return &metricResponse{
+					value: arrayMetricToString(values.String()),
+					label: arrayMetricToString(labels.String()), isArray: true,
+				}
+			}
+
+			// check for sub metrics
+			if subLabels.String() != "" {
+				var finalLabels []string
+				var finalValues []string
+				subLabelsS := labels.String()
+				subLabelsS = arrayMetricToString(subLabelsS)
+				subLabelSlice := strings.Split(subLabelsS, ",")
+				ls := subLabels.Array()
+				vs := subValues.Array()
+				var vLen int
+				for i, v := range vs {
+					label := ls[i].String()
+					m := arrayMetricToString(v.String())
+					ms := strings.Split(m, ",")
+					for range ms {
+						finalLabels = append(finalLabels, label+arrayKeyToken+subLabelSlice[vLen])
+						vLen += 1
+					}
+					if vLen > len(subLabelSlice) {
+						break
+					}
+					finalValues = append(finalValues, ms...)
+				}
+				if vLen == len(subLabelSlice) {
+					return &metricResponse{value: strings.Join(finalValues, ","), label: strings.Join(finalLabels, ","), isArray: true}
+				}
 			}
 		}
 	}
@@ -660,7 +702,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 							}
 
 							for i, label := range labels {
-								k := name + "." + label
+								k := name + arrayKeyToken + label
 								metr, ok := newData.GetMetrics()[k]
 								if !ok {
 									if metr, err = newData.NewMetricFloat64(k); err != nil {
@@ -670,7 +712,12 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 										continue
 									}
 									metr.SetName(metric.Label)
-									metr.SetLabel("metric", label)
+									if x := strings.Split(label, arrayKeyToken); len(x) == 2 {
+										metr.SetLabel("metric", x[0])
+										metr.SetLabel("submetric", x[1])
+									} else {
+										metr.SetLabel("metric", label)
+									}
 									// differentiate between array and normal counter
 									metr.SetArray(true)
 									metr.SetExportable(metric.Exportable)
@@ -739,7 +786,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 						}
 					}
 				} else {
-					r.Logger.Warn().Str("counter", name).Msg("Counter is nil. Unable to process. Check template")
+					r.Logger.Warn().Str("counter", name).Msg("Counter is missing or unable to parse.")
 				}
 			}
 			if err = newData.GetMetric("timestamp").SetValueFloat64(instance, ts); err != nil {
@@ -799,7 +846,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 					orderedDenominatorKeys = append(orderedDenominatorKeys, key)
 				}
 			} else {
-				r.Logger.Warn().Str("counter", metric.GetName()).Msg("Counter is nil. Unable to process. Check template")
+				r.Logger.Warn().Str("counter", metric.GetName()).Msg("Counter is missing or unable to parse")
 			}
 		}
 	}
@@ -928,7 +975,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 				totalSkips += skips
 			}
 		} else {
-			r.Logger.Warn().Str("counter", metric.GetName()).Msg("Counter is nil. Unable to process. Check template ")
+			r.Logger.Warn().Str("counter", metric.GetName()).Msg("Counter is missing or unable to parse ")
 			continue
 		}
 	}
@@ -1034,8 +1081,7 @@ func (r *RestPerf) counterLookup(metric matrix.Metric, metricKey string) *counte
 	var c *counter
 
 	if metric.IsArray() {
-		lastInd := strings.LastIndex(metricKey, ".")
-		name := metricKey[:lastInd]
+		name, _, _ := strings.Cut(metricKey, arrayKeyToken)
 		c = r.perfProp.counterInfo[name]
 	} else {
 		c = r.perfProp.counterInfo[metricKey]
