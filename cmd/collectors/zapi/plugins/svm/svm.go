@@ -13,6 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -29,17 +30,33 @@ type SVM struct {
 	batchSize            string
 	client               *zapi.Client
 	auditProtocols       map[string]string
-	cifsProtocols        map[string]string
+	cifsProtocols        map[string]cifsSecurity
 	nsswitchInfo         map[string]nsswitch
 	nisInfo              map[string]string
 	cifsEnabled          map[string]bool
 	nfsEnabled           map[string]string
 	sshData              map[string]string
+	iscsiAuth            map[string]string
+	iscsiService         map[string]string
+	fpolicyData          map[string]fpolicy
+	ldapData             map[string]string
+	kerberosConfig       map[string]string
 }
 
 type nsswitch struct {
 	nsdb     []string
 	nssource []string
+}
+
+type fpolicy struct {
+	name   string
+	enable string
+}
+
+type cifsSecurity struct {
+	cifsNtlmEnabled string
+	smbEncryption   string
+	smbSigning      string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -64,12 +81,17 @@ func (my *SVM) Init() error {
 	}
 
 	my.auditProtocols = make(map[string]string)
-	my.cifsProtocols = make(map[string]string)
+	my.cifsProtocols = make(map[string]cifsSecurity)
 	my.nsswitchInfo = make(map[string]nsswitch)
 	my.nisInfo = make(map[string]string)
 	my.cifsEnabled = make(map[string]bool)
 	my.nfsEnabled = make(map[string]string)
 	my.sshData = make(map[string]string)
+	my.iscsiAuth = make(map[string]string)
+	my.iscsiService = make(map[string]string)
+	my.fpolicyData = make(map[string]fpolicy)
+	my.ldapData = make(map[string]string)
+	my.kerberosConfig = make(map[string]string)
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
 	if my.currentVal, err = collectors.SetPluginInterval(my.ParentParams, my.Params, my.Logger, DefaultDataPollDuration, DefaultPluginDuration); err != nil {
@@ -161,6 +183,51 @@ func (my *SVM) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			}
 		}
 
+		// invoke iscsi-initiator-auth-get-iter zapi and get iscsi_authentication_type
+		if my.iscsiAuth, err = my.GetIscsiInitiatorAuth(); err != nil {
+			if errors.Is(err, errs.ErrNoInstance) {
+				my.Logger.Debug().Err(err).Msg("Failed to collect iscsi authentication type")
+			} else {
+				my.Logger.Error().Err(err).Msg("Failed to collect iscsi authentication type")
+			}
+		}
+
+		// invoke iscsi-service-get-iter zapi and get iscsi_service_enabled
+		if my.iscsiService, err = my.GetIscsiService(); err != nil {
+			if errors.Is(err, errs.ErrNoInstance) {
+				my.Logger.Debug().Err(err).Msg("Failed to collect iscsi service")
+			} else {
+				my.Logger.Error().Err(err).Msg("Failed to collect iscsi service")
+			}
+		}
+
+		// invoke fpolicy-policy-status-get-iter zapi and get fpolicy_enabled, fpolicy_name
+		if my.fpolicyData, err = my.GetFpolicy(); err != nil {
+			if errors.Is(err, errs.ErrNoInstance) {
+				my.Logger.Debug().Err(err).Msg("Failed to collect fpolicy detail")
+			} else {
+				my.Logger.Error().Err(err).Msg("Failed to collect fpolicy detail")
+			}
+		}
+
+		// invoke ldap-client-get-iter zapi and get ldap_session_security
+		if my.ldapData, err = my.GetLdapData(); err != nil {
+			if errors.Is(err, errs.ErrNoInstance) {
+				my.Logger.Debug().Err(err).Msg("Failed to collect ldap session")
+			} else {
+				my.Logger.Error().Err(err).Msg("Failed to collect ldap session")
+			}
+		}
+
+		// invoke kerberos-config-get-iter zapi and get nfs_kerberos_protocol_enabled
+		if my.kerberosConfig, err = my.GetKerberosConfig(); err != nil {
+			if errors.Is(err, errs.ErrNoInstance) {
+				my.Logger.Debug().Err(err).Msg("Failed to collect kerberos config")
+			} else {
+				my.Logger.Error().Err(err).Msg("Failed to collect kerberos config")
+			}
+		}
+
 		// update svm instance based on the above zapi response
 		for _, svmInstance := range data.GetInstances() {
 			svmName := svmInstance.GetLabel("svm")
@@ -169,8 +236,10 @@ func (my *SVM) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			svmInstance.SetLabel("audit_protocol_enabled", my.auditProtocols[svmName])
 
 			// Update cifs_ntlm_enabled label in svm
-			if ntmlEnabled, ok := my.cifsProtocols[svmName]; ok {
-				svmInstance.SetLabel("cifs_ntlm_enabled", ntmlEnabled)
+			if cifsData, ok := my.cifsProtocols[svmName]; ok {
+				svmInstance.SetLabel("cifs_ntlm_enabled", cifsData.cifsNtlmEnabled)
+				svmInstance.SetLabel("smb_encryption_required", cifsData.smbEncryption)
+				svmInstance.SetLabel("smb_signing_required", cifsData.smbSigning)
 			}
 
 			// Update nis_domain label in svm
@@ -178,6 +247,8 @@ func (my *SVM) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 			// Update nameservice_switch label in svm
 			if nsswitchInfo, ok := my.nsswitchInfo[svmName]; ok {
+				sort.Strings(nsswitchInfo.nsdb)
+				sort.Strings(nsswitchInfo.nssource)
 				nsDB := strings.Join(nsswitchInfo.nsdb, ",")
 				nsSource := strings.Join(nsswitchInfo.nssource, ",")
 				nisDomain := my.nisInfo[svmName]
@@ -199,6 +270,32 @@ func (my *SVM) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			// Update ciphers label in svm
 			if sshInfo, ok := my.sshData[svmName]; ok {
 				svmInstance.SetLabel("ciphers", sshInfo)
+			}
+
+			// Update iscsi_authentication_type label in svm
+			if authType, ok := my.iscsiAuth[svmName]; ok {
+				svmInstance.SetLabel("iscsi_authentication_type", authType)
+			}
+
+			// Update iscsi_service_enabled label in svm
+			if available, ok := my.iscsiService[svmName]; ok {
+				svmInstance.SetLabel("iscsi_service_enabled", available)
+			}
+
+			// Update fpolicy_enabled, fpolicy_name label in svm
+			if fpolicyData, ok := my.fpolicyData[svmName]; ok {
+				svmInstance.SetLabel("fpolicy_enabled", fpolicyData.enable)
+				svmInstance.SetLabel("fpolicy_name", fpolicyData.name)
+			}
+
+			// Update ldap_session_security label in svm
+			if ldapSessionSecurity, ok := my.ldapData[svmName]; ok {
+				svmInstance.SetLabel("ldap_session_security", ldapSessionSecurity)
+			}
+
+			// Update nfs_kerberos_protocol_enabled label in svm
+			if kerberosEnabled, ok := my.kerberosConfig[svmName]; ok {
+				svmInstance.SetLabel("nfs_kerberos_protocol_enabled", kerberosEnabled)
 			}
 
 		}
@@ -237,15 +334,15 @@ func (my *SVM) GetAuditProtocols() (map[string]string, error) {
 	return vserverAuditEnableMap, nil
 }
 
-func (my *SVM) GetCifsProtocols() (map[string]string, error) {
+func (my *SVM) GetCifsProtocols() (map[string]cifsSecurity, error) {
 	var (
-		result               []*node.Node
-		request              *node.Node
-		vserverCifsEnableMap map[string]string
-		err                  error
+		result             []*node.Node
+		request            *node.Node
+		vserverCifsDataMap map[string]cifsSecurity
+		err                error
 	)
 
-	vserverCifsEnableMap = make(map[string]string)
+	vserverCifsDataMap = make(map[string]cifsSecurity)
 
 	request = node.NewXMLS("cifs-security-get-iter")
 	request.NewChildS("max-records", my.batchSize)
@@ -258,12 +355,14 @@ func (my *SVM) GetCifsProtocols() (map[string]string, error) {
 		return nil, errs.New(errs.ErrNoInstance, "no records found")
 	}
 
-	for _, cifsSecurity := range result {
-		lmCompatibilityLevel := cifsSecurity.GetChildContentS("lm-compatibility-level")
-		svmName := cifsSecurity.GetChildContentS("vserver")
-		vserverCifsEnableMap[svmName] = lmCompatibilityLevel
+	for _, cifsSecurityData := range result {
+		lmCompatibilityLevel := cifsSecurityData.GetChildContentS("lm-compatibility-level")
+		smbSigning := cifsSecurityData.GetChildContentS("is-signing-required")
+		smbEncryption := cifsSecurityData.GetChildContentS("is-smb-encryption-required")
+		svmName := cifsSecurityData.GetChildContentS("vserver")
+		vserverCifsDataMap[svmName] = cifsSecurity{cifsNtlmEnabled: lmCompatibilityLevel, smbEncryption: smbEncryption, smbSigning: smbSigning}
 	}
-	return vserverCifsEnableMap, nil
+	return vserverCifsDataMap, nil
 }
 
 func (my *SVM) GetNSSwitchInfo() (map[string]nsswitch, error) {
@@ -419,4 +518,150 @@ func (my *SVM) GetSSHData() (map[string]string, error) {
 		sshMap[svmName] = strings.Join(sshList, ",")
 	}
 	return sshMap, nil
+}
+
+func (my *SVM) GetIscsiInitiatorAuth() (map[string]string, error) {
+	var (
+		result              []*node.Node
+		request             *node.Node
+		vserverIscsiAuthMap map[string]string
+		err                 error
+	)
+
+	vserverIscsiAuthMap = make(map[string]string)
+
+	request = node.NewXMLS("iscsi-initiator-auth-get-iter")
+	request.NewChildS("max-records", my.batchSize)
+
+	if result, err = my.client.InvokeZapiCall(request); err != nil {
+		return nil, err
+	}
+
+	if len(result) == 0 || result == nil {
+		return nil, errs.New(errs.ErrNoInstance, "no records found")
+	}
+
+	for _, iscsiSecurityEntry := range result {
+		authType := iscsiSecurityEntry.GetChildContentS("auth-type")
+		svmName := iscsiSecurityEntry.GetChildContentS("vserver")
+		vserverIscsiAuthMap[svmName] = authType
+	}
+	return vserverIscsiAuthMap, nil
+}
+
+func (my *SVM) GetIscsiService() (map[string]string, error) {
+	var (
+		result                 []*node.Node
+		request                *node.Node
+		vserverIscsiServiceMap map[string]string
+		err                    error
+	)
+
+	vserverIscsiServiceMap = make(map[string]string)
+
+	request = node.NewXMLS("iscsi-service-get-iter")
+	request.NewChildS("max-records", my.batchSize)
+
+	if result, err = my.client.InvokeZapiCall(request); err != nil {
+		return nil, err
+	}
+
+	if len(result) == 0 || result == nil {
+		return nil, errs.New(errs.ErrNoInstance, "no records found")
+	}
+
+	for _, iscsiService := range result {
+		available := iscsiService.GetChildContentS("is-available")
+		svmName := iscsiService.GetChildContentS("vserver")
+		vserverIscsiServiceMap[svmName] = available
+	}
+	return vserverIscsiServiceMap, nil
+}
+
+func (my *SVM) GetFpolicy() (map[string]fpolicy, error) {
+	var (
+		result            []*node.Node
+		request           *node.Node
+		vserverFpolicyMap map[string]fpolicy
+		err               error
+	)
+
+	vserverFpolicyMap = make(map[string]fpolicy)
+
+	request = node.NewXMLS("fpolicy-policy-status-get-iter")
+	request.NewChildS("max-records", my.batchSize)
+
+	if result, err = my.client.InvokeZapiCall(request); err != nil {
+		return nil, err
+	}
+
+	if len(result) == 0 || result == nil {
+		return nil, errs.New(errs.ErrNoInstance, "no records found")
+	}
+
+	for _, fpolicyData := range result {
+		name := fpolicyData.GetChildContentS("policy-name")
+		enable := fpolicyData.GetChildContentS("status")
+		svmName := fpolicyData.GetChildContentS("vserver")
+		vserverFpolicyMap[svmName] = fpolicy{name: name, enable: enable}
+	}
+	return vserverFpolicyMap, nil
+}
+
+func (my *SVM) GetLdapData() (map[string]string, error) {
+	var (
+		result         []*node.Node
+		request        *node.Node
+		vserverLdapMap map[string]string
+		err            error
+	)
+
+	vserverLdapMap = make(map[string]string)
+
+	request = node.NewXMLS("ldap-client-get-iter")
+	request.NewChildS("max-records", my.batchSize)
+
+	if result, err = my.client.InvokeZapiCall(request); err != nil {
+		return nil, err
+	}
+
+	if len(result) == 0 || result == nil {
+		return nil, errs.New(errs.ErrNoInstance, "no records found")
+	}
+
+	for _, ldapData := range result {
+		ldapSessionSecurity := ldapData.GetChildContentS("session-security")
+		svmName := ldapData.GetChildContentS("vserver")
+		vserverLdapMap[svmName] = ldapSessionSecurity
+	}
+	return vserverLdapMap, nil
+}
+
+func (my *SVM) GetKerberosConfig() (map[string]string, error) {
+	var (
+		result             []*node.Node
+		request            *node.Node
+		vserverKerberosMap map[string]string
+		err                error
+	)
+
+	vserverKerberosMap = make(map[string]string)
+
+	request = node.NewXMLS("kerberos-config-get-iter")
+	request.NewChildS("max-records", my.batchSize)
+
+	if result, err = my.client.InvokeZapiCall(request); err != nil {
+		return nil, err
+	}
+
+	if len(result) == 0 || result == nil {
+		return nil, errs.New(errs.ErrNoInstance, "no records found")
+	}
+
+	for _, kerberosConfig := range result {
+		enable := kerberosConfig.GetChildContentS("is-kerberos-enabled")
+		svmName := kerberosConfig.GetChildContentS("vserver")
+		vserverKerberosMap[svmName] = enable
+	}
+	return vserverKerberosMap, nil
 }

@@ -422,7 +422,7 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, isEndPoint bool)
 				if value.Exists() {
 					instanceKey += value.String()
 				} else {
-					r.Logger.Warn().Str("key", k).Msg("missing key")
+					r.Logger.Trace().Str("key", k).Msg("missing key")
 				}
 			}
 

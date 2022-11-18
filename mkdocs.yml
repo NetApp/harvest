@@ -7,7 +7,11 @@ edit_uri: ""
 nav:
   - What is Harvest?: 'index.md'
   - Quickstart: 'quickstart.md'
-  - Installation: 'install.md'
+  - Installation:
+      - 'Overview': 'install/overview.md'
+      - 'Package Managers': 'install/package-managers.md'
+      - 'Containers': 'install/containers.md'
+      - 'Native': 'install/native.md'
   - System Requirements: 'system-requirements.md'
   - Upgrade: 'upgrade.md'
   - Prepare Monitored Clusters:

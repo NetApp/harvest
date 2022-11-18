@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/tidwall/gjson"
+	"sort"
 	"strings"
 )
 
@@ -47,6 +48,8 @@ func (my *SVM) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		// Update nameservice_switch and nis_domain label in svm
 		if nsswitchInfo, ok := my.nsswitchInfo[svmName]; ok {
+			sort.Strings(nsswitchInfo.nsdb)
+			sort.Strings(nsswitchInfo.nssource)
 			nsDB := strings.Join(nsswitchInfo.nsdb, ",")
 			nsSource := strings.Join(nsswitchInfo.nssource, ",")
 			nisDomain := svmInstance.GetLabel("nis_domain")
@@ -73,16 +76,16 @@ func (my *SVM) GetNSSwitchInfo(data *matrix.Matrix) (map[string]nsswitch, error)
 		nsswitchConfig := svmInstance.GetLabel("nameservice_switch")
 
 		config := gjson.Result{Type: gjson.JSON, Raw: nsswitchConfig}
-		replaceStr := strings.NewReplacer("[", "", "]", "", "\"", "")
+		replaceStr := strings.NewReplacer("[", "", "]", "", "\"", "", "\n", "", " ", "")
 
 		for nsdb, nssource := range config.Map() {
-			nssourcelist := replaceStr.Replace(nssource.String())
+			nssourcelist := strings.Split(replaceStr.Replace(nssource.String()), ",")
 
 			if ns, ok = vserverNsswitchMap[svmName]; ok {
 				ns.nsdb = append(ns.nsdb, nsdb)
-				ns.nssource = append(ns.nssource, nssourcelist)
+				ns.nssource = append(ns.nssource, nssourcelist...)
 			} else {
-				ns = nsswitch{nsdb: []string{nsdb}, nssource: []string{nssourcelist}}
+				ns = nsswitch{nsdb: []string{nsdb}, nssource: nssourcelist}
 			}
 			vserverNsswitchMap[svmName] = ns
 		}
