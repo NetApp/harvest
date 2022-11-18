@@ -10101,7 +10101,7 @@
               "exemplar": false,
               "expr": "sum(copy_manager_kb_copied{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
               "interval": "",
-              "legendFormat": "",
+              "legendFormat": "Data Size",
               "refId": "A"
             }
           ],
