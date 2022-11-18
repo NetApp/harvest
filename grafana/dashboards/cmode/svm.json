@@ -6697,7 +6697,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(svm_nfs_read_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"})",
+              "expr": "avg(svm_nfs_read_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"})",
               "interval": "",
               "legendFormat": "",
               "refId": "A"
@@ -6762,7 +6762,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(svm_nfs_write_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"})",
+              "expr": "avg(svm_nfs_write_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"})",
               "interval": "",
               "legendFormat": "",
               "refId": "A"

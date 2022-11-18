@@ -1218,6 +1218,7 @@
       "id": 256,
       "panels": [
         {
+          "datasource": "${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1272,9 +1273,9 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 2
+            "y": 36
           },
-          "id": 250,
+          "id": 268,
           "options": {
             "legend": {
               "calcs": [
@@ -1283,7 +1284,9 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "sortBy": "Last *",
+              "sortDesc": true
             },
             "tooltip": {
               "mode": "single",
@@ -1292,12 +1295,8 @@
           },
           "targets": [
             {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "EO6UabnVz"
-              },
               "exemplar": true,
-              "expr": "svm_vol_avg_latency{cluster=~\"$Cluster\", svm=~\"$TopSVMAvgLatency\"}",
+              "expr": "svm_vol_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$TopSVMAvgLatency\"}",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}}",
               "refId": "A"
@@ -1307,7 +1306,7 @@
           "type": "timeseries"
         },
         {
-          "description": "",
+          "datasource": "${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1362,9 +1361,9 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 2
+            "y": 36
           },
-          "id": 252,
+          "id": 269,
           "options": {
             "legend": {
               "calcs": [
@@ -1373,7 +1372,9 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "sortBy": "Last *",
+              "sortDesc": true
             },
             "tooltip": {
               "mode": "single",
@@ -1382,14 +1383,8 @@
           },
           "targets": [
             {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "EO6UabnVz"
-              },
               "exemplar": true,
-              "expr": "svm_vol_read_data{cluster=~\"$Cluster\", svm=~\"$TopSVMTotalThroughput\"}+svm_vol_write_data{cluster=~\"$Cluster\",svm=~\"$TopSVMTotalThroughput\"}",
-              "format": "time_series",
-              "instant": false,
+              "expr": "svm_vol_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$TopSVMTotalThroughput\"}+svm_vol_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSVMTotalThroughput\"}",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}}",
               "refId": "A"
@@ -1399,7 +1394,7 @@
           "type": "timeseries"
         },
         {
-          "description": "",
+          "datasource": "${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1454,9 +1449,9 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 2
+            "y": 36
           },
-          "id": 254,
+          "id": 270,
           "options": {
             "legend": {
               "calcs": [
@@ -1465,7 +1460,9 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "sortBy": "Last *",
+              "sortDesc": true
             },
             "tooltip": {
               "mode": "single",
@@ -1474,14 +1471,8 @@
           },
           "targets": [
             {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "EO6UabnVz"
-              },
               "exemplar": true,
-              "expr": "svm_vol_total_ops{cluster=~\"$Cluster\", svm=~\"$TopSVMTotalIops\"}",
-              "format": "time_series",
-              "instant": false,
+              "expr": "svm_vol_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$TopSVMTotalIops\"}",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}}",
               "refId": "A"
@@ -1582,10 +1573,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "EO6UabnVz"
-              },
+              "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
               "expr": "topk($TopResources, volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeAvgLatency\"})",
               "interval": "",
@@ -1674,10 +1662,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "EO6UabnVz"
-              },
+              "datasource": "${DS_PROMETHEUS}",
               "exemplar": true,
               "expr": "topk($TopResources, volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeAvgThroughput\"})+topk($TopResources, volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeAvgThroughput\"})",
               "interval": "",
@@ -1767,10 +1752,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "EO6UabnVz"
-              },
+              "datasource": "${DS_PROMETHEUS}",
               "exemplar": true,
               "expr": "topk($TopResources, volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeTotalIops\"})",
               "interval": "",

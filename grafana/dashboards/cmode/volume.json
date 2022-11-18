@@ -4764,10 +4764,6 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "EO6UabnVz"
-              },
               "exemplar": false,
               "expr": "topk($TopResources, fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopCloudBinOperationPut\", metric=\"PUT\"})",
               "hide": false,
