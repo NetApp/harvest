@@ -1,15 +1,322 @@
 # Change Log
+## [Releases](https://github.com/NetApp/harvest/releases)
+## 22.11.0 / 2022-11-19
+:pushpin: Highlights of this major release include:
+- :sparkles: Harvest now includes a StorageGRID collector and a Tenant/Buckets dashboard. We're just getting started
+  with StorageGRID dashboards. Please give the collector a try,
+  and [let us know](https://github.com/NetApp/harvest/issues/1420) which StorageGRID dashboards you'd like to see next.
 
-[Releases](https://github.com/NetApp/harvest/releases)
+- :tophat: The REST collectors are ready! We recommend using them for ONTAP versions 9.12.1 and higher.
+  Today, Harvest collects 1,546 metrics via ZAPI. Harvest includes a full set of REST templates that export identical
+  metrics. All 1,546 metrics are available via Harvest's REST templates and no changes to dashboards or downstream
+  metric-consumers is required. :tada:
+  More details
+  on [Harvest's REST strategy](https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-strategy.md).
 
-## 22.11.0 / 2022-11-10
-<!-- git log --no-decorate --no-merges --cherry-pick --right-only --oneline origin/release/22.08.0...origin/release/22.11.0 -->
+- :closed_book: Harvest has a [new documentation site](https://netapp.github.io/harvest/)! This consolidates Harvest
+  documentation into one place and will make it easier to find what you need. Stay tuned for more updates here.
 
-:rocket: Highlights of this major release include:
+- :gem: New dashboards were added in this release
+  - cDOT, high-level cluster overview dashboard
+  - Headroom dashboard
+  - Quota dashboard
+  - Snapmirror dashboard shows source and destination side of relationship
+  - NFS clients dashboard
+  - Fabric Pool panels are now included in Volume dashboard
 
-**Deprecation**: Earlier versions of Harvest published quota metrics prefixed with qtree. Harvest release 22.11 deprecates the quota metrics prefixed with qtree and instead publishes quota metrics prefixed with quota.
-All dashboards have been updated. If you are consuming these metrics outside the default dashboards, please update them to use the quota prefixed metrics. Harvest release 23.02 will remove the deprecated quota metrics
-prefixed with qtree.
+- We added tags to all the default dashboards making it easier to find what you need.
+
+- Additional throughput, ops, and utilization panels were added to the Aggregate, Disk, and Clusters dashboards
+
+- Harvest dashboards updated to enable multi-select variables, shared crosshairs, and all variables are sorted by
+  default.
+
+- :lock: Harvest code is checked for vulnerabilities on every commit
+  using [Go's vulnerability management](https://go.dev/blog/vuln) scanner.
+
+- Harvest collects additional metrics in this release
+  - ONTAP S3 server config metrics
+  - User defined volume workload
+  - Active network connections
+  - NFS connected clients
+  - Network ports
+  - Netstat packet loss
+
+- Harvest now converts ONTAP histograms to Prometheus histograms, making it possible to visualize metrics as heatmaps in
+  Grafana
+
+## Announcements
+
+:bangbang: **IMPORTANT** NetApp moved their communities from Slack to [Discord](https://discord.gg/ZmmWPHTBHw), please
+join us [there](https://discordapp.com/channels/855068651522490400/1001963189124206732)!
+
+:bomb: **Deprecation**: Earlier versions of Harvest published quota metrics prefixed with `qtree`. Harvest release 22.11
+deprecates the quota metrics prefixed with `qtree` and instead publishes quota metrics prefixed with `quota`. All
+dashboards have been updated. If you are consuming these metrics outside the default dashboards, please change
+to `quota` prefixed metrics. Harvest release 23.02 will remove the deprecated quota metrics prefixed with `qtree`.
+
+:bangbang: **IMPORTANT** If using Docker Compose and you want to keep your historical Prometheus data, please
+read [how to migrate your Prometheus volume](https://github.com/NetApp/harvest/blob/main/docs/MigratePrometheusDocker.md)
+
+:bulb: **IMPORTANT** After upgrade, don't forget to re-import your dashboards, so you get all the new enhancements and
+fixes. You can import them via the `bin/harvest/grafana import` CLI, from the Grafana UI, or from
+the `Maintenance > Reset Harvest Dashboards` button in NAbox.
+
+## Known Issues
+
+-Podman is unable to pull from NetApp's container registry `cr.netapp.io`.
+Until [issue](https://github.com/containers/podman/issues/15187) is resolved, Podman users can pull from a separate
+proxy like this `podman pull netappdownloads.jfrog.io/oss-docker-harvest-production/harvest:latest`.
+
+**IMPORTANT** 7-mode filers that are not on the latest release of ONTAP may experience TLS connection issues with errors
+like `tls: server selected unsupported protocol version 301` This is caused by a change in Go 1.18.
+The [default for TLS client connections was changed to TLS 1.2](https://tip.golang.org/doc/go1.18#tls10) in Go 1.18.
+Please upgrade your 7-mode filers (recommended) or set `tls_min_version: tls10` in
+your `harvest.yml` [poller section](https://github.com/NetApp/harvest/tree/release/22.05.0#pollers). See #1007 for more
+details.
+
+The Unix collector is unable to monitor pollers running in containers.
+See [#249](https://github.com/NetApp/harvest/issues/249) for details.
+
+## Thanks to all the awesome contributors
+
+:metal: Thanks to all the people who've opened issues, asked questions on Discord, and contributed code or dashboards
+this release:
+
+- @Falcon667
+- @MrObvious
+- @ReneMeier
+- @Sawall10
+- @T1r0l
+- @chadpruden
+- @demalik
+- @electrocreative
+- @ev1963
+- @faguayot
+- @iStep2Step
+- @jgasher
+- @jmg011
+- @mamoep
+- @matthieu-sudo
+- @merdos
+- @rodenj1
+- Ed Wilts
+- KlausHub
+- MeghanaD
+- Paul P2
+- Rusty Brown
+- Shubham Mer
+- jf38800
+- rcl23
+- troysmuller
+
+- :seedling: This release includes 59 features, 90 bug fixes, 21 documentation, 4 testing, 2 styling, 6 refactoring, 2 miscellaneous, and 6 ci commits.
+
+### :rocket: Features
+- Enable Multi Select By Default ([#1213](https://github.com/NetApp/harvest/pull/1213))
+- Merge Release 22.08 To Main ([#1218](https://github.com/NetApp/harvest/pull/1218))
+- Add Avg Cifs Latency To Svm Dashboard Graph Panel ([#1221](https://github.com/NetApp/harvest/pull/1221))
+- Network Port Templates ([#1231](https://github.com/NetApp/harvest/pull/1231))
+- Add Node Cpu Busy To Cluster Dashboard ([#1243](https://github.com/NetApp/harvest/pull/1243))
+- Improve Poller Startup Logging ([#1254](https://github.com/NetApp/harvest/pull/1254))
+- Add Net Connections Template For Rest Collector ([#1257](https://github.com/NetApp/harvest/pull/1257))
+- Upgrade Zapi Collector To Rest When The Ontap Version Is >= 9.12.1 ([#1261](https://github.com/NetApp/harvest/pull/1261))
+- Run Govulncheck On `Make Dev` ([#1273](https://github.com/NetApp/harvest/pull/1273))
+- Nfsv42 Restperf Templates ([#1275](https://github.com/NetApp/harvest/pull/1275))
+- Enable User Defined Volume Workload ([#1276](https://github.com/NetApp/harvest/pull/1276))
+- Prometheus Exporter Should Log Address And Port ([#1279](https://github.com/NetApp/harvest/pull/1279))
+- Ensure Dashboard Units Align With Ontap's Units ([#1280](https://github.com/NetApp/harvest/pull/1280))
+- Panels Should Connect Null Values ([#1281](https://github.com/NetApp/harvest/pull/1281))
+- Harvest Should Collect Ontap S3 Server Metrics ([#1285](https://github.com/NetApp/harvest/pull/1285))
+- `Bin/Zapi Show Counters` Should Print Xml Results To Make Parsi… ([#1286](https://github.com/NetApp/harvest/pull/1286))
+- Harvest Should Collect Ontap S3 Server Config Metrics ([#1287](https://github.com/NetApp/harvest/pull/1287))
+- Harvest Should Publish Cooked Zero Performance Metrics ([#1292](https://github.com/NetApp/harvest/pull/1292))
+- Add Grafana Tags On Default Dashboards ([#1293](https://github.com/NetApp/harvest/pull/1293))
+- Add Harvest Tags ([#1294](https://github.com/NetApp/harvest/pull/1294))
+- Rest Nfs Connections Dashboard ([#1297](https://github.com/NetApp/harvest/pull/1297))
+- Cmd Line `Objects` And `Collectors` Override Defaults ([#1300](https://github.com/NetApp/harvest/pull/1300))
+- Harvest Should Replace Topk With Topk Range In All Dashboards Part 1 ([#1301](https://github.com/NetApp/harvest/pull/1301))
+- Harvest Should Replace Topk With Topk Range In All Dashboards Part 2 ([#1302](https://github.com/NetApp/harvest/pull/1302))
+- Harvest Should Replace Topk With Topk Range In All Dashboards Part 3 ([#1304](https://github.com/NetApp/harvest/pull/1304))
+- Snapmirror From Source Side [Zapi Changes] ([#1307](https://github.com/NetApp/harvest/pull/1307))
+- Mcc Plex Panel Fix ([#1310](https://github.com/NetApp/harvest/pull/1310))
+- Add Support For Qos Min And Cp In Harvest ([#1316](https://github.com/NetApp/harvest/pull/1316))
+- Add Available Ops To Headroom Dashboard ([#1317](https://github.com/NetApp/harvest/pull/1317))
+- Added Panels In Cluster, Disk For 1.6 Parity ([#1320](https://github.com/NetApp/harvest/pull/1320))
+- Add Storagegrid Collector And Dashboard ([#1322](https://github.com/NetApp/harvest/pull/1322))
+- Export Ontap Histograms As Prometheus Histograms ([#1326](https://github.com/NetApp/harvest/pull/1326))
+- Solution Based Cdot Dashboard ([#1336](https://github.com/NetApp/harvest/pull/1336))
+- Cluster Var Changed To Source_cluster In Snapmirror Dashboard ([#1337](https://github.com/NetApp/harvest/pull/1337))
+- Remove Pollinstance From Zapi Collector ([#1338](https://github.com/NetApp/harvest/pull/1338))
+- Reduce Memory Footprint Of Set ([#1339](https://github.com/NetApp/harvest/pull/1339))
+- Quota Metric Renaming ([#1345](https://github.com/NetApp/harvest/pull/1345))
+- Collectors Should Log Polldata, Plugin Times, And Metadata ([#1347](https://github.com/NetApp/harvest/pull/1347))
+- Export Ontap Histograms As Prometheus Histograms ([#1349](https://github.com/NetApp/harvest/pull/1349))
+- Fabricpool Panels - Parity With 1.6 ([#1352](https://github.com/NetApp/harvest/pull/1352))
+- All Dashboards Should Default To `Shared Crosshair` ([#1359](https://github.com/NetApp/harvest/pull/1359))
+- All Dashboards Should Use Multi-Select Dropdowns For Each Variable ([#1363](https://github.com/NetApp/harvest/pull/1363))
+- Perf Collector Unit Test Cases ([#1373](https://github.com/NetApp/harvest/pull/1373))
+- Remove Metric Labels From Shelf Sensor Plugins ([#1378](https://github.com/NetApp/harvest/pull/1378))
+- Envvar `Harvest_no_upgrade` To Skip Collector Upgrade ([#1385](https://github.com/NetApp/harvest/pull/1385))
+- Rest Collector Should Not Log When Client_timeout Is Missing ([#1387](https://github.com/NetApp/harvest/pull/1387))
+- Enable Rest Collector Templates ([#1391](https://github.com/NetApp/harvest/pull/1391))
+- Harvest Should Use Rest Unconditionally Starting With 9.13.1 ([#1394](https://github.com/NetApp/harvest/pull/1394))
+- Rest Perf Template Fixes ([#1395](https://github.com/NetApp/harvest/pull/1395))
+- Only Allow One Config/Perf Collector Per Object ([#1410](https://github.com/NetApp/harvest/pull/1410))
+- Histogram Support For Restperf ([#1412](https://github.com/NetApp/harvest/pull/1412))
+- Volume Tag Plugin ([#1417](https://github.com/NetApp/harvest/pull/1417))
+- Add Rest Validation In Ci ([#1421](https://github.com/NetApp/harvest/pull/1421))
+- Add Netstat Metrics For Packet Loss ([#1423](https://github.com/NetApp/harvest/pull/1423))
+- Add Datacenter To Metadata ([#1427](https://github.com/NetApp/harvest/pull/1427))
+- Increase Dashboard Quality With More Tests ([#1460](https://github.com/NetApp/harvest/pull/1460))
+- Add Node_disk_data_read To Units.yaml ([#1480](https://github.com/NetApp/harvest/pull/1480))
+- Tag Fsx Dashboards ([#1490](https://github.com/NetApp/harvest/pull/1490))
+- Restperf Submetric ([#1506](https://github.com/NetApp/harvest/pull/1506))
+
+### :bug: Bug Fixes
+- Log.fatalln Will Exit, And `Defer Resp.body.close()` Will Not Run ([#1211](https://github.com/NetApp/harvest/pull/1211))
+- Remove Rewrite_as_label From Templates ([#1212](https://github.com/NetApp/harvest/pull/1212))
+- Set User To Uid If Name Is Missing ([#1223](https://github.com/NetApp/harvest/pull/1223))
+- Duplicate Instance Issue Quota ([#1225](https://github.com/NetApp/harvest/pull/1225))
+- Create Unique Indexes For Quota Dashboard ([#1226](https://github.com/NetApp/harvest/pull/1226))
+- Volume Dashboard Should Use Iec Bytes ([#1229](https://github.com/NetApp/harvest/pull/1229))
+- Skipped Bookend Ems Whose Key Is Node-Name ([#1237](https://github.com/NetApp/harvest/pull/1237))
+- Bin/Rest Should Support Verbose And Return Error When ([#1240](https://github.com/NetApp/harvest/pull/1240))
+- Volume Plugin Should Not Fail When Snapmirror Has Empty Relationship_id ([#1241](https://github.com/NetApp/harvest/pull/1241))
+- Volume.go Plugin Should Check No Instances ([#1253](https://github.com/NetApp/harvest/pull/1253))
+- Remove Power 24H Panel From Shelf Dashboard ([#1256](https://github.com/NetApp/harvest/pull/1256))
+- Govulncheck Scan Issue Go-2021-0113 ([#1259](https://github.com/NetApp/harvest/pull/1259))
+- Negative Counter Fix And Zero Suppression ([#1260](https://github.com/NetApp/harvest/pull/1260))
+- Remove User_id To Reduce Memory Load From Quota ([#1263](https://github.com/NetApp/harvest/pull/1263))
+- Snapmirror Relationships From Source Side ([#1266](https://github.com/NetApp/harvest/pull/1266))
+- Flashcache Dashboard Units Are Incorrect ([#1268](https://github.com/NetApp/harvest/pull/1268))
+- Disable User,Group Quota By Default ([#1271](https://github.com/NetApp/harvest/pull/1271))
+- Enable Dashboard Check In Ci ([#1277](https://github.com/NetApp/harvest/pull/1277))
+- Http Sd Should Publish Local Ip When Exporter Is Blank ([#1278](https://github.com/NetApp/harvest/pull/1278))
+- Headroom Dashboard Utilization Should Be In Percentage ([#1290](https://github.com/NetApp/harvest/pull/1290))
+- Simple Poller Should Use Int64 Metric ([#1291](https://github.com/NetApp/harvest/pull/1291))
+- Remove Label Warning From Rest Collector ([#1299](https://github.com/NetApp/harvest/pull/1299))
+- Ignore Negative Perf Deltas ([#1303](https://github.com/NetApp/harvest/pull/1303))
+- Mcc Plex Panel Fix Rest Template ([#1313](https://github.com/NetApp/harvest/pull/1313))
+- Remove Duplicate Network Dashboards ([#1314](https://github.com/NetApp/harvest/pull/1314))
+- 7Mode Zapi Cli Issue Due To Max ([#1321](https://github.com/NetApp/harvest/pull/1321))
+- Add Scale To Headroom Dashboard ([#1323](https://github.com/NetApp/harvest/pull/1323))
+- Increase Default Zapi Timeout To 30 Seconds ([#1333](https://github.com/NetApp/harvest/pull/1333))
+- Zapiperf Lun Name Should Match Zapi ([#1341](https://github.com/NetApp/harvest/pull/1341))
+- Record Number Of Zapi Instances In Polldata ([#1343](https://github.com/NetApp/harvest/pull/1343))
+- Rest Metric Count ([#1346](https://github.com/NetApp/harvest/pull/1346))
+- Aggregator.go Should Not Change Histogram Properties To Avg ([#1348](https://github.com/NetApp/harvest/pull/1348))
+- Ci Ems Issue ([#1350](https://github.com/NetApp/harvest/pull/1350))
+- Add Node In Warning Logs For Power Calculation ([#1351](https://github.com/NetApp/harvest/pull/1351))
+- Align Aggregate Disk Utilization Panel ([#1355](https://github.com/NetApp/harvest/pull/1355))
+- Correct Skip Count For Perf Percent Property ([#1358](https://github.com/NetApp/harvest/pull/1358))
+- Harvest Should Keep Same Volume Name During Upgrade In Docker-Compose Workflow ([#1361](https://github.com/NetApp/harvest/pull/1361))
+- Zapi Polldata Logged The Wrong Number Of Instances During Batch … ([#1366](https://github.com/NetApp/harvest/pull/1366))
+- Top Latency Units Should Be Microseconds Not Milliseconds ([#1371](https://github.com/NetApp/harvest/pull/1371))
+- Calculate Power From Voltage And Current Sensors When Power Units Are Not Known ([#1372](https://github.com/NetApp/harvest/pull/1372))
+- Don't Add Units As Metric Labels Since It Breaks Influxdb Exporter ([#1376](https://github.com/NetApp/harvest/pull/1376))
+- Handle Raidgroup/Plex Alongwith Other Changes ([#1380](https://github.com/NetApp/harvest/pull/1380))
+- Disable Color Console Logging ([#1382](https://github.com/NetApp/harvest/pull/1382))
+- Restperf Lun Name Should Match Zapi ([#1390](https://github.com/NetApp/harvest/pull/1390))
+- Cluster Dashboard Panel Changes ([#1393](https://github.com/NetApp/harvest/pull/1393))
+- Harvest Should Use Template Display Name When Exporting Histograms ([#1403](https://github.com/NetApp/harvest/pull/1403))
+- Rest Collector Should Collect Cluster Level Instances ([#1404](https://github.com/NetApp/harvest/pull/1404))
+- Remove Protected,Protectionrole,All_healthy Labels From Volume ([#1406](https://github.com/NetApp/harvest/pull/1406))
+- Snapmirror Dashboard Changes ([#1407](https://github.com/NetApp/harvest/pull/1407))
+- System Node Perf Template Fix ([#1409](https://github.com/NetApp/harvest/pull/1409))
+- Svm Records Count ([#1411](https://github.com/NetApp/harvest/pull/1411))
+- Dont Export Constituents Relationships In Sm ([#1414](https://github.com/NetApp/harvest/pull/1414))
+- Handle Ls Relationships + Handle Dashboard ([#1415](https://github.com/NetApp/harvest/pull/1415))
+- Snapmirror Dashboard Should Not Show Id Column ([#1416](https://github.com/NetApp/harvest/pull/1416))
+- Handle Error When No Instances Found For Plugins In Rest ([#1428](https://github.com/NetApp/harvest/pull/1428))
+- Handle Batching In Shelf Plugin ([#1429](https://github.com/NetApp/harvest/pull/1429))
+- Lun Rest Perf Template Fixes ([#1430](https://github.com/NetApp/harvest/pull/1430))
+- Handle Volume Panels ([#1431](https://github.com/NetApp/harvest/pull/1431))
+- Align Rest Start Up Logging As Zapi ([#1435](https://github.com/NetApp/harvest/pull/1435))
+- Handle Aggr_space_used_percent In Aggr ([#1439](https://github.com/NetApp/harvest/pull/1439))
+- Sensor Plugin Rest Changes ([#1440](https://github.com/NetApp/harvest/pull/1440))
+- Disk Dashboard - Variables Are Not Sorted ([#1443](https://github.com/NetApp/harvest/pull/1443))
+- Add Missing Labels For Rest Zapi Diff ([#1445](https://github.com/NetApp/harvest/pull/1445))
+- Shelf Child Obj - Status Ok To Normal ([#1451](https://github.com/NetApp/harvest/pull/1451))
+- Restperf Key Handling ([#1452](https://github.com/NetApp/harvest/pull/1452))
+- Rest Zapi Diff Error Handling ([#1453](https://github.com/NetApp/harvest/pull/1453))
+- Restperf Fcp Template Mapping Fix ([#1455](https://github.com/NetApp/harvest/pull/1455))
+- Disk Type In Lower Case In Rest ([#1456](https://github.com/NetApp/harvest/pull/1456))
+- Power Fix For Cold Sensors ([#1464](https://github.com/NetApp/harvest/pull/1464))
+- Svm With Private Cli ([#1465](https://github.com/NetApp/harvest/pull/1465))
+- Storagegrid Collector Should Use Metadata Collection ([#1468](https://github.com/NetApp/harvest/pull/1468))
+- Fix New Line Char In Headroom Dashboard ([#1473](https://github.com/NetApp/harvest/pull/1473))
+- New_status Gap Issue For Cluster Scoped Zapi Call ([#1477](https://github.com/NetApp/harvest/pull/1477))
+- Merge To Main From Release ([#1479](https://github.com/NetApp/harvest/pull/1479))
+- Tenant Column Should Be In "Tenants And Buckets" Table Once ([#1483](https://github.com/NetApp/harvest/pull/1483))
+- Fsx Headroom Dashboard Support For Rest Collector ([#1484](https://github.com/NetApp/harvest/pull/1484))
+- Qos Rest Template Fix ([#1487](https://github.com/NetApp/harvest/pull/1487))
+- Net Port Template Fix ([#1488](https://github.com/NetApp/harvest/pull/1488))
+- Disable Netport Rest Template ([#1491](https://github.com/NetApp/harvest/pull/1491))
+- Rest Sensor Template Fix ([#1492](https://github.com/NetApp/harvest/pull/1492))
+- Fix Background Color In Cluster, Aggregate Panels ([#1496](https://github.com/NetApp/harvest/pull/1496))
+- Smv_labels Missing In Zapi ([#1499](https://github.com/NetApp/harvest/pull/1499))
+- 7Mode Shelf Plugin Fix ([#1500](https://github.com/NetApp/harvest/pull/1500))
+- Remove Queue_full Counter From Namespace Template ([#1501](https://github.com/NetApp/harvest/pull/1501))
+- Storagegrid Bucket Plugin Should Honor Client Timeout ([#1503](https://github.com/NetApp/harvest/pull/1503))
+- Snapmirror Warn To Trace Log ([#1504](https://github.com/NetApp/harvest/pull/1504))
+- Cdot Svm Panels ([#1515](https://github.com/NetApp/harvest/pull/1515))
+- Svm Nfsv4 Panels Fix ([#1518](https://github.com/NetApp/harvest/pull/1518))
+- Svm Copy Panel Fix ([#1520](https://github.com/NetApp/harvest/pull/1520))
+- Exclude Empty Qtree In Restperf Template Through Regex ([#1522](https://github.com/NetApp/harvest/pull/1522))
+
+### :closed_book: Documentation
+- Rest Strategy Doc ([#1234](https://github.com/NetApp/harvest/pull/1234))
+- Improve Security Panel Info For Ontap 9.10+ ([#1238](https://github.com/NetApp/harvest/pull/1238))
+- Explain How To Enable Qos Collection When Using Least-Privilege… ([#1249](https://github.com/NetApp/harvest/pull/1249))
+- Clarify When Harvest Defaults To Rest ([#1252](https://github.com/NetApp/harvest/pull/1252))
+- Spelling Correction ([#1318](https://github.com/NetApp/harvest/pull/1318))
+- Add Ems Alert To Ems Documentation ([#1319](https://github.com/NetApp/harvest/pull/1319))
+- Explain How To Log To File With Systemd Instantiated Service ([#1325](https://github.com/NetApp/harvest/pull/1325))
+- Add Help Text In Nfs Clients Dashboard About Enabling Rest Collector ([#1334](https://github.com/NetApp/harvest/pull/1334))
+- Describe How To Migrate Historical Prometheus Data Generated Be… ([#1369](https://github.com/NetApp/harvest/pull/1369))
+- Explain What To Do If Zapi Metrics Are Missing In Rest ([#1389](https://github.com/NetApp/harvest/pull/1389))
+- Move Documentation To Separate Site ([#1433](https://github.com/NetApp/harvest/pull/1433))
+- Readme Should Point To Https://Netapp.github.io/Harvest/ ([#1434](https://github.com/NetApp/harvest/pull/1434))
+- Remove Unneeded Readme.md Files ([#1438](https://github.com/NetApp/harvest/pull/1438))
+- Fix Image Links ([#1441](https://github.com/NetApp/harvest/pull/1441))
+- Restore Rest Strategy And Migrate Docs ([#1463](https://github.com/NetApp/harvest/pull/1463))
+- Explain What Negative Available Ops Means ([#1469](https://github.com/NetApp/harvest/pull/1469))
+- Explain What Negative Available Ops Means (#1469) ([#1471](https://github.com/NetApp/harvest/pull/1471))
+- Explain What Negative Available Ops Means ([#1474](https://github.com/NetApp/harvest/pull/1474))
+- Add Amazon Fsx For Ontap Documentation ([#1485](https://github.com/NetApp/harvest/pull/1485))
+- Include Docker Compose Workflow In Docs ([#1507](https://github.com/NetApp/harvest/pull/1507))
+- Docker Upgrade Instructions ([#1511](https://github.com/NetApp/harvest/pull/1511))
+
+### :wrench: Testing
+- Add Unit Test That Finds Metrics Used In Dashboards With Confli… ([#1381](https://github.com/NetApp/harvest/pull/1381))
+- Ensure Resetinstance Causes Metric To Be Skipped ([#1388](https://github.com/NetApp/harvest/pull/1388))
+- Validate Sensor Template Fix ([#1486](https://github.com/NetApp/harvest/pull/1486))
+- Add Unit Test To Detect Topk Without Range ([#1495](https://github.com/NetApp/harvest/pull/1495))
+
+### Styling
+- Address Shellcheck Strong Warnings ([#1228](https://github.com/NetApp/harvest/pull/1228))
+- Correct Spelling And Lint Warning ([#1332](https://github.com/NetApp/harvest/pull/1332))
+
+### Refactoring
+- Use Map Instead Of Loop For `Targetisontap` ([#1235](https://github.com/NetApp/harvest/pull/1235))
+- Remove Unused And Lightly-Used Metrics ([#1274](https://github.com/NetApp/harvest/pull/1274))
+- Remove Warnings ([#1298](https://github.com/NetApp/harvest/pull/1298))
+- Simplify Loadcollector ([#1329](https://github.com/NetApp/harvest/pull/1329))
+- Simplify Set Api ([#1340](https://github.com/NetApp/harvest/pull/1340))
+- Move Docs Out Of The Way To Make Way For New Ones ([#1422](https://github.com/NetApp/harvest/pull/1422))
+
+### Miscellaneous
+- Bump Dependencies ([#1331](https://github.com/NetApp/harvest/pull/1331))
+- Increase Golangci-Lint Timeout ([#1364](https://github.com/NetApp/harvest/pull/1364))
+
+### :hammer: CI
+- Bump Go To 1.19 ([#1201](https://github.com/NetApp/harvest/pull/1201))
+- Bump Go ([#1215](https://github.com/NetApp/harvest/pull/1215))
+- Bump Golangci-Lint And Address Issues ([#1233](https://github.com/NetApp/harvest/pull/1233))
+- Bump Go To 1.19.1 ([#1262](https://github.com/NetApp/harvest/pull/1262))
+- Revert Jenkins File To 1.19 ([#1267](https://github.com/NetApp/harvest/pull/1267))
+- Bump Golangci-Lint ([#1328](https://github.com/NetApp/harvest/pull/1328))
 
 ---
 
