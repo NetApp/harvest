@@ -83,34 +83,10 @@ See [#249](https://github.com/NetApp/harvest/issues/249) for details.
 :metal: Thanks to all the people who've opened issues, asked questions on Discord, and contributed code or dashboards
 this release:
 
-- @Falcon667
-- @MrObvious
-- @ReneMeier
-- @Sawall10
-- @T1r0l
-- @chadpruden
-- @demalik
-- @electrocreative
-- @ev1963
-- @faguayot
-- @iStep2Step
-- @jgasher
-- @jmg011
-- @mamoep
-- @matthieu-sudo
-- @merdos
-- @rodenj1
-- Ed Wilts
-- KlausHub
-- MeghanaD
-- Paul P2
-- Rusty Brown
-- Shubham Mer
-- jf38800
-- rcl23
-- troysmuller
+@Falcon667, @MrObvious, @ReneMeier, @Sawall10, @T1r0l, @chadpruden, @demalik, @electrocreative, @ev1963, @faguayot, @iStep2Step, @jgasher, @jmg011, @mamoep, @matthieu-sudo, @merdos, @rodenj1, Ed Wilts, KlausHub, MeghanaD, Paul P2, Rusty Brown, Shubham Mer, jf38800, rcl23, troysmuller
 
-- :seedling: This release includes 59 features, 90 bug fixes, 21 documentation, 4 testing, 2 styling, 6 refactoring, 2 miscellaneous, and 6 ci commits.
+
+:seedling: This release includes 59 features, 90 bug fixes, 21 documentation, 4 testing, 2 styling, 6 refactoring, 2 miscellaneous, and 6 ci commits.
 
 ### :rocket: Features
 - Enable Multi Select By Default ([#1213](https://github.com/NetApp/harvest/pull/1213))
