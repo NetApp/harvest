@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1666176865129,
+  "iteration": 1668670160259,
   "links": [
     {
       "asDropdown": true,
@@ -2991,7 +2991,7 @@
         "defaults": {
           "custom": {
             "align": "auto",
-            "displayMode": "color-background-solid",
+            "displayMode": "auto",
             "filterable": false
           },
           "decimals": 2,
@@ -3103,7 +3103,7 @@
           "refId": "B"
         }
       ],
-      "title": "Disk Utilization per Aggregate",
+      "title": "Average Disk Utilization per Aggregate",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -3208,7 +3208,7 @@
           "refId": "A"
         }
       ],
-      "title": "Disk Utilization Per Aggregate",
+      "title": "Average Disk Utilization Per Aggregate",
       "type": "timeseries"
     }
   ],
@@ -3379,5 +3379,5 @@
   "timezone": "",
   "title": "ONTAP: Aggregate",
   "uid": "",
-  "version": 5
+  "version": 6
 }

@@ -83,11 +83,12 @@ var (
 	asupSchedule     = "24h" // send every 24 hours
 	asupFirstWrite   = "4m"  // after this time, write 1st autosupport payload (for testing)
 	isOntapCollector = map[string]struct{}{
-		"ZapiPerf": {},
-		"Zapi":     {},
-		"Rest":     {},
-		"RestPerf": {},
-		"Ems":      {},
+		"ZapiPerf":    {},
+		"Zapi":        {},
+		"Rest":        {},
+		"RestPerf":    {},
+		"Ems":         {},
+		"StorageGrid": {},
 	}
 )
 

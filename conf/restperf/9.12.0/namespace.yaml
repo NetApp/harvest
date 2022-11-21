@@ -14,7 +14,6 @@ counters:
   - average_read_latency
   - average_write_latency
   - average_other_latency
-  - queue_full
   - remote.read_data          => remote_read_data
   - remote.read_ops           => remote_read_ops
 

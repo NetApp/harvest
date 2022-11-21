@@ -1,0 +1,442 @@
+{
+  "records": [
+    {
+      "counter_table": {
+        "name": "nic_common"
+      },
+      "id": "sti2750-231:e0a",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "sti2750-231"
+        },
+        {
+          "name": "node.uuid",
+          "value": "fa4fb73d-5d78-11ed-be3d-00a098bef221"
+        },
+        {
+          "name": "type",
+          "value": "nic_ixgbe"
+        },
+        {
+          "name": "link_current_state",
+          "value": "up"
+        },
+        {
+          "name": "link_media_state",
+          "value": "active"
+        },
+        {
+          "name": "link_duplex",
+          "value": "full"
+        },
+        {
+          "name": "link_speed",
+          "value": "10000M"
+        },
+        {
+          "name": "link_flowcontrol",
+          "value": "none"
+        },
+        {
+          "name": "rss_enabled",
+          "value": "yes"
+        }
+      ],
+      "counters": [
+        {
+          "name": "ipspace",
+          "value": 4294967294
+        },
+        {
+          "name": "receive_frames_per_sec",
+          "value": 0
+        },
+        {
+          "name": "receive_frames",
+          "value": 42923529
+        },
+        {
+          "name": "receive_bytes_per_sec",
+          "value": 0
+        },
+        {
+          "name": "receive_bytes",
+          "value": 11702390672
+        },
+        {
+          "name": "receive_errors_per_min",
+          "value": 0
+        },
+        {
+          "name": "receive_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_discards_per_min",
+          "value": 0
+        },
+        {
+          "name": "receive_discards",
+          "value": 0
+        },
+        {
+          "name": "receive_total_frames",
+          "value": 42923529
+        },
+        {
+          "name": "receive_total_bytes",
+          "value": 11702390672
+        },
+        {
+          "name": "receive_total_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_total_discards",
+          "value": 0
+        },
+        {
+          "name": "receive_multicast_broadcast",
+          "value": 443092
+        },
+        {
+          "name": "receive_no_buffers",
+          "value": 0
+        },
+        {
+          "name": "receive_non_primary_unicast",
+          "value": 0
+        },
+        {
+          "name": "receive_lro_segments",
+          "value": 41070557
+        },
+        {
+          "name": "receive_lro_bytes",
+          "value": 10745505246
+        },
+        {
+          "name": "receive_lro6_segments",
+          "value": 0
+        },
+        {
+          "name": "receive_lro6_bytes",
+          "value": 0
+        },
+        {
+          "name": "receive_multicast_v6_solicit",
+          "value": 0
+        },
+        {
+          "name": "receive_tag_drop",
+          "value": 0
+        },
+        {
+          "name": "receive_vlan_tag_drop",
+          "value": 0
+        },
+        {
+          "name": "receive_vlan_untag_drop",
+          "value": 0
+        },
+        {
+          "name": "receive_vlan_forwards",
+          "value": 0
+        },
+        {
+          "name": "receive_vlan_broadcasts",
+          "value": 0
+        },
+        {
+          "name": "receive_vlan_unicasts",
+          "value": 0
+        },
+        {
+          "name": "transmit_frames_per_sec",
+          "value": 0
+        },
+        {
+          "name": "transmit_frames",
+          "value": 43271659
+        },
+        {
+          "name": "transmit_bytes_per_sec",
+          "value": 0
+        },
+        {
+          "name": "transmit_bytes",
+          "value": 9963176026
+        },
+        {
+          "name": "transmit_errors_per_min",
+          "value": 0
+        },
+        {
+          "name": "transmit_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_discards_per_min",
+          "value": 0
+        },
+        {
+          "name": "transmit_discards",
+          "value": 0
+        },
+        {
+          "name": "transmit_total_frames",
+          "value": 43271659
+        },
+        {
+          "name": "transmit_total_bytes",
+          "value": 9963176026
+        },
+        {
+          "name": "transmit_total_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_total_discards",
+          "value": 0
+        },
+        {
+          "name": "transmit_multicast_broadcast",
+          "value": 84785
+        },
+        {
+          "name": "transmit_queue_overflows",
+          "value": 0
+        },
+        {
+          "name": "transmit_no_buffers",
+          "value": 0
+        },
+        {
+          "name": "transmit_frames_queued",
+          "value": 0
+        },
+        {
+          "name": "transmit_buffer_coalesces",
+          "value": 0
+        },
+        {
+          "name": "transmit_mtus_too_big",
+          "value": 0
+        },
+        {
+          "name": "transmit_tso_segments",
+          "value": 113117
+        },
+        {
+          "name": "transmit_tso_bytes",
+          "value": 1792908057
+        },
+        {
+          "name": "transmit_tso6_segments",
+          "value": 0
+        },
+        {
+          "name": "transmit_tso6_bytes",
+          "value": 0
+        },
+        {
+          "name": "transmit_multicast_v6_solicit",
+          "value": 0
+        },
+        {
+          "name": "hwassist",
+          "value": 7711
+        },
+        {
+          "name": "transmit_ltm_fast_path_calls",
+          "value": 0
+        },
+        {
+          "name": "transmit_ltm_busy_calls",
+          "value": 0
+        },
+        {
+          "name": "transmit_ltm_update_calls",
+          "value": 0
+        },
+        {
+          "name": "transmit_ltm_yield_calls",
+          "value": 0
+        },
+        {
+          "name": "transmit_ltm_total_calls",
+          "value": 0
+        },
+        {
+          "name": "total_bytes",
+          "value": 21665566698
+        },
+        {
+          "name": "total_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_crc_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_unsupported_op",
+          "value": 0
+        },
+        {
+          "name": "receive_length_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_runt_frames",
+          "value": 0
+        },
+        {
+          "name": "receive_fragment",
+          "value": 0
+        },
+        {
+          "name": "receive_long_frames",
+          "value": 0
+        },
+        {
+          "name": "receive_jabber",
+          "value": 0
+        },
+        {
+          "name": "receive_illegal_symbol",
+          "value": 0
+        },
+        {
+          "name": "receive_error_symbol",
+          "value": 0
+        },
+        {
+          "name": "receive_alignment_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_bus_overruns",
+          "value": 0
+        },
+        {
+          "name": "receive_xon",
+          "value": 0
+        },
+        {
+          "name": "receive_xoff",
+          "value": 0
+        },
+        {
+          "name": "receive_jumbo",
+          "value": 950923
+        },
+        {
+          "name": "transmit_hw_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_link_down_drop",
+          "value": 0
+        },
+        {
+          "name": "transmit_config_up_down",
+          "value": 2
+        },
+        {
+          "name": "transmit_bus_overruns",
+          "value": 0
+        },
+        {
+          "name": "collisions",
+          "value": 0
+        },
+        {
+          "name": "transmit_max_collisions",
+          "value": 0
+        },
+        {
+          "name": "transmit_single_collisions",
+          "value": 0
+        },
+        {
+          "name": "transmit_multiple_collisions",
+          "value": 0
+        },
+        {
+          "name": "transmit_late_collisions",
+          "value": 0
+        },
+        {
+          "name": "transmit_xon",
+          "value": 0
+        },
+        {
+          "name": "transmit_xoff",
+          "value": 0
+        },
+        {
+          "name": "transmit_jumbo",
+          "value": 339801
+        },
+        {
+          "name": "link_up_to_down",
+          "value": 2
+        },
+        {
+          "name": "rss_itable_updates",
+          "value": 0
+        },
+        {
+          "name": "rss_hash_errors",
+          "value": 0
+        },
+        {
+          "name": "rss_num_of_queues_used",
+          "value": 7
+        },
+        {
+          "name": "rss_matrix",
+          "labels": [
+            "queue_0",
+            "queue_1",
+            "queue_2",
+            "queue_0",
+            "queue_1",
+            "queue_2"
+          ],
+          "counters": [
+            {
+              "label": "tx_frames",
+              "values": [
+                6177010,
+                1605252882,
+                0
+              ]
+            },
+            {
+              "label": "tx_bytes",
+              "values": [
+                3,
+                1,
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "_links": {
+        "self": {
+          "href": "/api/cluster/counter/tables/nic_common/rows/sti2750-231%3Ae0a?fields=**"
+        }
+      }
+    }
+  ],
+  "num_records": 1,
+  "_links": {
+    "self": {
+      "href": "/api/cluster/counter/tables/nic_common/rows?return_records=true&fields=**"
+    }
+  }
+}
