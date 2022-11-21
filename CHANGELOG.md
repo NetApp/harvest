@@ -16,19 +16,17 @@
 - :closed_book: Harvest has a [new documentation site](https://netapp.github.io/harvest/)! This consolidates Harvest
   documentation into one place and will make it easier to find what you need. Stay tuned for more updates here.
 
-- :gem: New dashboards were added in this release
+- :gem: New and improved dashboards
   - cDOT, high-level cluster overview dashboard
   - Headroom dashboard
   - Quota dashboard
   - Snapmirror dashboard shows source and destination side of relationship
   - NFS clients dashboard
   - Fabric Pool panels are now included in Volume dashboard
-
-- We added tags to all the default dashboards making it easier to find what you need.
-
-- Additional throughput, ops, and utilization panels were added to the Aggregate, Disk, and Clusters dashboards
-
-- Harvest dashboards updated to enable multi-select variables, shared crosshairs, better top n resources support, and all variables are sorted by default.
+  - Tags are included for all default dashboards, making it easier to find what you need
+  - Additional throughput, ops, and utilization panels were added to the Aggregate, Disk, and Clusters dashboards
+  - Harvest dashboards updated to enable multi-select variables, shared crosshairs, better top n resources support,
+    and all variables are sorted by default.
 
 - :lock: Harvest code is checked for vulnerabilities on every commit
   using [Go's vulnerability management](https://go.dev/blog/vuln) scanner.

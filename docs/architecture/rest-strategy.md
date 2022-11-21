@@ -2,7 +2,7 @@
 
 ## Status <!-- one of: In Progress, Accepted, Rejected, Superseded, Deprecated -->
 
-In Progress
+Accepted
 
 ## Context
 
