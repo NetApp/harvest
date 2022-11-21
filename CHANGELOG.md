@@ -1,6 +1,6 @@
 # Change Log
 ## [Releases](https://github.com/NetApp/harvest/releases)
-## 22.11.0 / 2022-11-19
+## 22.11.0 / 2022-11-21
 :pushpin: Highlights of this major release include:
 - :sparkles: Harvest now includes a StorageGRID collector and a Tenant/Buckets dashboard. We're just getting started
   with StorageGRID dashboards. Please give the collector a try,
@@ -28,8 +28,7 @@
 
 - Additional throughput, ops, and utilization panels were added to the Aggregate, Disk, and Clusters dashboards
 
-- Harvest dashboards updated to enable multi-select variables, shared crosshairs, and all variables are sorted by
-  default.
+- Harvest dashboards updated to enable multi-select variables, shared crosshairs, better top n resources support, and all variables are sorted by default.
 
 - :lock: Harvest code is checked for vulnerabilities on every commit
   using [Go's vulnerability management](https://go.dev/blog/vuln) scanner.
@@ -64,9 +63,15 @@ the `Maintenance > Reset Harvest Dashboards` button in NAbox.
 
 ## Known Issues
 
--Podman is unable to pull from NetApp's container registry `cr.netapp.io`.
-Until [issue](https://github.com/containers/podman/issues/15187) is resolved, Podman users can pull from a separate
-proxy like this `podman pull netappdownloads.jfrog.io/oss-docker-harvest-production/harvest:latest`.
+- Harvest does not calculate power metrics for AFF A250 systems. This data is not available from ONTAP via ZAPI or REST.
+  See ONTAP bug [1511476](https://burtview.netapp.com/burt/burt-bin/start?burt-id=1511476) for more details.
+
+- ONTAP does not include REST metrics for `offbox_vscan_server` and `offbox_vscan` until ONTAP 9.13.1. See ONTAP bug
+  [1473892](https://burtview.netapp.com/burt/burt-bin/start?burt-id=1473892) for more details.
+
+- Podman is unable to pull from NetApp's container registry `cr.netapp.io`.
+  Until [issue](https://github.com/containers/podman/issues/15187) is resolved, Podman users can pull from a separate
+  proxy like this `podman pull netappdownloads.jfrog.io/oss-docker-harvest-production/harvest:latest`.
 
 **IMPORTANT** 7-mode filers that are not on the latest release of ONTAP may experience TLS connection issues with errors
 like `tls: server selected unsupported protocol version 301` This is caused by a change in Go 1.18.
