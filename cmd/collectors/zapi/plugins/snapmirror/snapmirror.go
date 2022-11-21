@@ -133,7 +133,7 @@ func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 		// check if destination node limit is missing
 		if instance.GetLabel("destination_node_limit") == "" {
-			if limit, has := my.srcLimitCache.GetHas(instance.GetLabel("destination_node")); has {
+			if limit, has := my.destLimitCache.GetHas(instance.GetLabel("destination_node")); has {
 				instance.SetLabel("destination_node_limit", limit)
 				limitUpdCount++
 			}
@@ -162,18 +162,29 @@ func (my *SnapMirror) updateLimitCache() error {
 	requestCounters.NewChildS("counter", "node_name")
 	requestCounters.NewChildS("counter", "dest_meter_count")
 	requestCounters.NewChildS("counter", "src_meter_count")
-	if response, err = my.client.InvokeRequest(request); err != nil {
-		return err
-	}
+
+	batchTag := "initial"
 	count := 0
-	if instances := response.GetChildS("instances"); instances != nil {
-		for _, i := range instances.GetChildren() {
-			nodeName := i.GetChildContentS("node_name")
-			my.destLimitCache.Set(nodeName, i.GetChildContentS("dest_meter_count"))
-			my.srcLimitCache.Set(nodeName, i.GetChildContentS("src_meter_count"))
-			count++
+	for {
+		if response, batchTag, err = my.client.InvokeBatchRequest(request, batchTag); err != nil {
+			return err
+		}
+
+		if response == nil {
+			break
+		}
+
+		// fetch instances
+		if instances := response.GetChildS("instances"); instances != nil {
+			for _, i := range instances.GetChildren() {
+				nodeName := i.GetChildContentS("node_name")
+				my.destLimitCache.Set(nodeName, i.GetChildContentS("dest_meter_count"))
+				my.srcLimitCache.Set(nodeName, i.GetChildContentS("src_meter_count"))
+				count++
+			}
 		}
 	}
+
 	my.Logger.Debug().Msgf("updated limit cache for %d nodes", count)
 	return nil
 }
