@@ -309,7 +309,7 @@ func (c *Client) fetch() ([]byte, error) {
 	return body, nil
 }
 
-// Init is responsible for determining the StorageGrid server version, API version, and hostname
+// Init is responsible for determining the StorageGrid server version, API version, hostname, and systemId
 func (c *Client) Init(retries int) error {
 	var (
 		err     error
@@ -338,9 +338,14 @@ func (c *Client) Init(retries int) error {
 		if content, err = c.GetGridRest("grid/config"); err != nil {
 			continue
 		}
-
 		results = gjson.GetManyBytes(content, "data.hostname")
 		c.Cluster.Name = results[0].String()
+
+		if content, err = c.GetGridRest("grid/license"); err != nil {
+			continue
+		}
+		results = gjson.GetManyBytes(content, "data.systemId")
+		c.Cluster.UUID = results[0].String()
 		return nil
 	}
 

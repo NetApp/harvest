@@ -12,6 +12,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
+	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -381,6 +383,98 @@ func (s *StorageGrid) InitAPIPath() {
 			Str("templateAPI", apiVersion).
 			Msg("Use template apiVersion")
 	}
+}
+
+func (s *StorageGrid) CollectAutoSupport(p *collector.Payload) {
+	var exporterTypes []string
+	for _, exporter := range s.Exporters {
+		exporterTypes = append(exporterTypes, exporter.GetClass())
+	}
+
+	var counters = make([]string, 0)
+	for k := range s.Props.Counters {
+		counters = append(counters, k)
+	}
+
+	var schedules = make([]collector.Schedule, 0)
+	tasks := s.Params.GetChildS("schedule")
+	if tasks != nil && len(tasks.GetChildren()) > 0 {
+		for _, task := range tasks.GetChildren() {
+			schedules = append(schedules, collector.Schedule{
+				Name:     task.GetNameS(),
+				Schedule: task.GetContentS(),
+			})
+		}
+	}
+
+	// Add collector information
+	p.AddCollectorAsup(collector.AsupCollector{
+		Name:      s.Name,
+		Query:     s.Props.Query,
+		Exporters: exporterTypes,
+		Counters: collector.Counters{
+			Count: len(counters),
+			List:  counters,
+		},
+		Schedules:     schedules,
+		ClientTimeout: s.client.Timeout.String(),
+	})
+
+	version := s.client.Cluster.Version
+	p.Target.Version = strconv.Itoa(version[0]) + "." + strconv.Itoa(version[1]) + "." + strconv.Itoa(version[2])
+	p.Target.Model = "storagegrid"
+	p.Target.ClusterUUID = s.client.Cluster.UUID
+
+	md := s.GetMetadata()
+	info := collector.InstanceInfo{
+		Count:      md.LazyValueInt64("instances", "data"),
+		DataPoints: md.LazyValueInt64("metrics", "data"),
+		PollTime:   md.LazyValueInt64("poll_time", "data"),
+		APITime:    md.LazyValueInt64("api_time", "data"),
+		ParseTime:  md.LazyValueInt64("parse_time", "data"),
+		PluginTime: md.LazyValueInt64("plugin_time", "data"),
+	}
+
+	if s.Object == "Tenant" {
+		nodeIds, err := s.getNodeUuids()
+		if err != nil {
+			// log the error, but don't exit method so the other info below is collected
+			s.Logger.Error().
+				Err(err).
+				Msg("Unable to get nodes.")
+			nodeIds = make([]collector.ID, 0)
+		}
+		info.Ids = nodeIds
+	}
+
+	p.Nodes = &info
+}
+
+func (s *StorageGrid) getNodeUuids() ([]collector.ID, error) {
+	var (
+		err    error
+		infos  []collector.ID
+		health []byte
+	)
+
+	health, err = s.client.GetGridRest("grid/node-health")
+	if err != nil {
+		return nil, err
+	}
+	data := gjson.GetBytes(health, "data").Array()
+
+	for _, each := range data {
+		infos = append(infos, collector.ID{
+			SerialNumber: each.Get("id").String(),
+			SystemID:     each.Get("siteId").String(),
+		})
+	}
+
+	// Sort to make diffing easier
+	sort.SliceStable(infos, func(i, j int) bool {
+		return infos[i].SerialNumber < infos[j].SerialNumber
+	})
+	return infos, nil
 }
 
 // Interface guards
