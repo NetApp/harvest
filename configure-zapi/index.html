@@ -1242,13 +1242,13 @@
 <p class="admonition-title">What about REST?</p>
 <p>ZAPI will reach end of availablity in ONTAP  9.13.1 released Q2 2023.
 Don't worry, Harvest has you covered. Switch to Harvest's REST collectors
-and collect idential metrics. See <a href="https://github.com/NetApp/harvest/blob/main/pkg/docs/architecture/rest-strategy.md">REST Strategy</a> for more details. </p>
+and collect idential metrics. See <a href="https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-strategy.md">REST Strategy</a> for more details. </p>
 </div>
 <h2 id="zapi-collector">Zapi Collector<a class="headerlink" href="#zapi-collector" title="Permanent link">&para;</a></h2>
 <p>The Zapi collectors uses the ZAPI protocol to collect data from ONTAP systems. The collector submits data as received
 from the target system, and does not perform any calculations or post-processing. Since the attributes of most APIs have
 an irregular tree structure, sometimes a plugin will be required to collect all metrics from an API.</p>
-<p>The <a href="#zapiperf-collector">ZapiPerf collector</a> is an extension of this collector, therefore the share many parameters
+<p>The <a href="#zapiperf-collector">ZapiPerf collector</a> is an extension of this collector, therefore they share many parameters
 and configuration settings.</p>
 <h3 id="target-system">Target System<a class="headerlink" href="#target-system" title="Permanent link">&para;</a></h3>
 <p>Target system can be any cDot or 7Mode ONTAP system. Any version is supported, however the default configuration files
