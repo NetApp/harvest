@@ -1,0 +1,1608 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../assets/harvest.svg">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.8">
+    
+    
+      
+        <title>Templates - Harvest</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.20d9efc8.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.815d1a91.min.css">
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="" data-md-color-accent="">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#creatingediting-templates" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Harvest" class="md-header__button md-logo" aria-label="Harvest" data-md-component="logo">
+      
+  <img src="../assets/harvest.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Harvest
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Templates
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_3" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9h-1.9M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69m-9.15 3.96h2.3L12 9l-1.15 3.65Z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_3">
+          
+            <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/NetApp/harvest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NetApp/harvest
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Harvest" class="md-nav__button md-logo" aria-label="Harvest" data-md-component="logo">
+      
+  <img src="../assets/harvest.svg" alt="logo">
+
+    </a>
+    Harvest
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/NetApp/harvest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NetApp/harvest
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        What is Harvest?
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        Quickstart
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Installation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Installation" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Installation
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/overview/" class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/package-managers/" class="md-nav__link">
+        Package Managers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/containers/" class="md-nav__link">
+        Containers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/native/" class="md-nav__link">
+        Native
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../system-requirements/" class="md-nav__link">
+        System Requirements
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../upgrade/" class="md-nav__link">
+        Upgrade
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          Prepare Monitored Clusters
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Prepare Monitored Clusters" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Prepare Monitored Clusters
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-cdot-clusters/" class="md-nav__link">
+        ONTAP cDOT
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-fsx-clusters/" class="md-nav__link">
+        Amazon FSx for ONTAP
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-7mode-clusters/" class="md-nav__link">
+        ONTAP 7mode
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-storagegrid-clusters/" class="md-nav__link">
+        StorageGRID
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-harvest-basic/" class="md-nav__link">
+        Configure Harvest (basic)
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8" type="checkbox" id="__nav_8" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8">
+          Configure Exporters
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Configure Exporters" data-md-level="1">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          Configure Exporters
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prometheus-exporter/" class="md-nav__link">
+        Prometheus
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../influxdb-exporter/" class="md-nav__link">
+        InfluxDB
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-grafana/" class="md-nav__link">
+        Configure Grafana
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10" type="checkbox" id="__nav_10" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10">
+          Configure Collectors
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Configure Collectors" data-md-level="1">
+        <label class="md-nav__title" for="__nav_10">
+          <span class="md-nav__icon md-icon"></span>
+          Configure Collectors
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-zapi/" class="md-nav__link">
+        ZAPI
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-rest/" class="md-nav__link">
+        REST
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-ems/" class="md-nav__link">
+        EMS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-storagegrid/" class="md-nav__link">
+        StorageGRID
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-unix/" class="md-nav__link">
+        Unix
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Templates
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Templates
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#creatingediting-templates" class="md-nav__link">
+    Creating/editing templates
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#collector-templates" class="md-nav__link">
+    Collector templates
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#object-templates" class="md-nav__link">
+    Object Templates
+  </a>
+  
+    <nav class="md-nav" aria-label="Object Templates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-a-new-object-template" class="md-nav__link">
+    Create a new object template
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enable-the-new-object-template" class="md-nav__link">
+    Enable the new object template
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-your-object-template-changes" class="md-nav__link">
+    Test your object template changes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-the-metrics" class="md-nav__link">
+    Check the metrics
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extend-an-existing-object-template" class="md-nav__link">
+    Extend an existing object template
+  </a>
+  
+    <nav class="md-nav" aria-label="Extend an existing object template">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-extend-a-restrestperfems-collectors-existing-object-template" class="md-nav__link">
+    How to extend a Rest/RestPerf/Ems collector's existing object template
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-extend-a-zapizapiperf-collectors-existing-object-template" class="md-nav__link">
+    How to extend a Zapi/ZapiPerf collector's existing object template
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#replace-an-existing-object-template-for-zapizapiperf-collector" class="md-nav__link">
+    Replace an existing object template for Zapi/ZapiPerf Collector
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#harvest-versioned-templates" class="md-nav__link">
+    Harvest Versioned Templates
+  </a>
+  
+    <nav class="md-nav" aria-label="Harvest Versioned Templates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#counters" class="md-nav__link">
+    counters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dashboards/" class="md-nav__link">
+        Dashboards
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../manage-harvest/" class="md-nav__link">
+        Manage Harvest Pollers
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-harvest-advanced/" class="md-nav__link">
+        Configure Harvest (advanced)
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        Troubleshoot
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_16" type="checkbox" id="__nav_16" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_16">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_16">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins/" class="md-nav__link">
+        Plugins
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/matrix/" class="md-nav__link">
+        Matrix
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/templates-and-metrics/" class="md-nav__link">
+        Templates And Metrics
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_17" type="checkbox" id="__nav_17" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_17">
+          About
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="About" data-md-level="1">
+        <label class="md-nav__title" for="__nav_17">
+          <span class="md-nav__icon md-icon"></span>
+          About
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../license/" class="md-nav__link">
+        License
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release-notes/" class="md-nav__link">
+        Release Notes
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#creatingediting-templates" class="md-nav__link">
+    Creating/editing templates
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#collector-templates" class="md-nav__link">
+    Collector templates
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#object-templates" class="md-nav__link">
+    Object Templates
+  </a>
+  
+    <nav class="md-nav" aria-label="Object Templates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-a-new-object-template" class="md-nav__link">
+    Create a new object template
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enable-the-new-object-template" class="md-nav__link">
+    Enable the new object template
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-your-object-template-changes" class="md-nav__link">
+    Test your object template changes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-the-metrics" class="md-nav__link">
+    Check the metrics
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extend-an-existing-object-template" class="md-nav__link">
+    Extend an existing object template
+  </a>
+  
+    <nav class="md-nav" aria-label="Extend an existing object template">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-extend-a-restrestperfems-collectors-existing-object-template" class="md-nav__link">
+    How to extend a Rest/RestPerf/Ems collector's existing object template
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-extend-a-zapizapiperf-collectors-existing-object-template" class="md-nav__link">
+    How to extend a Zapi/ZapiPerf collector's existing object template
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#replace-an-existing-object-template-for-zapizapiperf-collector" class="md-nav__link">
+    Replace an existing object template for Zapi/ZapiPerf Collector
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#harvest-versioned-templates" class="md-nav__link">
+    Harvest Versioned Templates
+  </a>
+  
+    <nav class="md-nav" aria-label="Harvest Versioned Templates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#counters" class="md-nav__link">
+    counters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  <h1>Templates</h1>
+
+<h2 id="creatingediting-templates">Creating/editing templates<a class="headerlink" href="#creatingediting-templates" title="Permanent link">&para;</a></h2>
+<p>This document covers how to use <a href="./#collector-templates">Collector</a>
+and <a href="./#object-templates">Object</a> templates to extend Harvest.</p>
+<ol>
+<li><a href="./#create-a-new-object-template">How to add a new object template</a></li>
+<li><a href="./#extend-an-existing-object-template">How to extend an existing object template</a></li>
+</ol>
+<p>There are a couple of ways to learn about ZAPIs and their attributes:</p>
+<ul>
+<li><a href="https://mysupport.netapp.com/documentation/productlibrary/index.html?productID=60427">ONTAP's documentation</a></li>
+<li>Using Harvest's <code>zapi</code> tool to explore available APIs and metrics on your cluster. Examples:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>$ harvest zapi --poller &lt;poller&gt; show apis
+  <span class="c1"># will print list of apis that are available</span>
+  <span class="c1"># usually apis with the &quot;get-iter&quot; suffix can provide useful metrics</span>
+$ harvest zapi --poller &lt;poller&gt; show attrs --api volume-get-iter
+  <span class="c1"># will print the attribute tree of the API</span>
+$ harvest zapi --poller &lt;poller&gt; show data --api volume-get-iter
+  <span class="c1"># will print raw data of the API attribute tree</span>
+</code></pre></div>
+<p>(Replace <code>&lt;poller&gt;</code> with the name of a poller that can connect to an ONTAP system.)</p>
+<h2 id="collector-templates">Collector templates<a class="headerlink" href="#collector-templates" title="Permanent link">&para;</a></h2>
+<p>Collector templates define which set of objects Harvest should collect from the system being monitored.
+In your <code>harvest.yml</code> configuration file, when you say that you want to use a <code>Zapi</code> collector, that
+collector will read the matching <code>conf/zapi/default.yaml</code> - same with <code>ZapiPerf</code>, it will read
+the <code>conf/zapiperf/default.yaml</code> file. Belows's a snippet from <code>conf/zapi/default.yaml</code>. Each object is mapped to a
+corresponding <a href="./#object-templates">object template</a> file. For example, the <code>Node</code> object searches
+for the <a href="./#harvest-versioned-templates">most appropriate version</a> of the <code>node.yaml</code> file in
+the <code>conf/zapi/cdot/**</code> directory.</p>
+<div class="highlight"><pre><span></span><code>collector:          Zapi
+objects:
+  Node:             node.yaml
+  Aggregate:        aggr.yaml
+  Volume:           volume.yaml
+  Disk:             disk.yaml
+</code></pre></div>
+<p>Each collector will also check if a matching file named, <code>custom.yaml</code> exists, and if it does, it will read that file
+and merge it with <code>default.yaml</code>. The <code>custom.yaml</code> file should be located beside the matching <code>default.yaml</code> file. (
+eg. <code>conf/zapi/custom.yaml</code> is beside <code>conf/zapi/default.yaml</code>).</p>
+<p>Let's take a look at some examples.</p>
+<ol>
+<li>Define a poller that uses the default Zapi collector. Using the default template is the easiest and most used option.</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="nt">Pollers</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">jamaica</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">munich</span><span class="w"></span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.10.10.10</span><span class="w"></span>
+<span class="w">    </span><span class="nt">collectors</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Zapi</span><span class="w"> </span><span class="c1"># will use conf/zapi/default.yaml and optionally merge with conf/zapi/custom.yaml</span><span class="w"></span>
+</code></pre></div>
+<ol>
+<li>Define a poller that uses the Zapi collector, but with a custom template file:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="nt">Pollers</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">jamaica</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">munich</span><span class="w"></span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.10.10.10</span><span class="w"></span>
+<span class="w">    </span><span class="nt">collectors</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ZapiPerf</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">limited.yaml</span><span class="w"> </span><span class="c1"># will use conf/zapiperf/limited.yaml</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># more templates can be added, they will be merged</span><span class="w"></span>
+</code></pre></div>
+<h2 id="object-templates">Object Templates<a class="headerlink" href="#object-templates" title="Permanent link">&para;</a></h2>
+<p>Object templates (example: <code>conf/zapi/cdot/9.8.0/lun.yaml</code>) describe what to collect and export. These templates are
+used by collectors to gather metrics and send them to your time-series db.</p>
+<p>Object templates are made up of the following parts:</p>
+<ol>
+<li>the name of the object (or resource) to collect</li>
+<li>the ZAPI or REST query used to collect the object</li>
+<li>a list of object counters to collect and how to export them</li>
+</ol>
+<p>Instead of editing one of the existing templates, it's better to extend one of them. That way, your custom template will
+not be overwritten when upgrading Harvest. For example, if you want to extend <code>conf/zapi/cdot/9.8.0/aggr.yaml</code>, first
+create a copy (e.g., <code>conf/zapi/cdot/9.8.0/custom_aggr.yaml</code>), and then tell Harvest to use your custom template by
+adding these lines to <code>conf/zapi/custom.yaml</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">objects</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">Aggregate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">custom_aggr.yaml</span><span class="w"></span>
+</code></pre></div>
+<p>After restarting your pollers, <code>aggr.yaml</code> and <code>custom_aggr.yaml</code> will be merged.</p>
+<h3 id="create-a-new-object-template">Create a new object template<a class="headerlink" href="#create-a-new-object-template" title="Permanent link">&para;</a></h3>
+<p>In this example, imagine that Harvest doesn't already collect environment sensor data and you wanted to collect it.
+Sensor does comes from the <code>environment-sensors-get-iter</code> ZAPI. Here are the steps to add a new object template.</p>
+<p>Create the file <code>conf/zapi/cdot/9.8.0/sensor.yaml</code> (optionally replace <code>9.8.0</code> with the earliest version of ONTAP that
+supports sensor data. Refer to <a href="./#harvest-versioned-templates">Harvest Versioned Templates</a> for
+more information. Add the following content to your new <code>sensor.yaml</code> file.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Sensor</span><span class="w">                      </span><span class="c1"># this name must match the key in your custom.yaml file</span><span class="w"></span>
+<span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">environment-sensors-get-iter</span><span class="w"></span>
+<span class="nt">object</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sensor</span><span class="w"></span>
+
+<span class="nt">metric_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">int64</span><span class="w"></span>
+
+<span class="nt">counters</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">environment-sensors-info</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">critical-high-threshold    =&gt; critical_high</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">critical-low-threshold     =&gt; critical_low</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^discrete-sensor-state     =&gt; discrete_state</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^discrete-sensor-value     =&gt; discrete_value</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^node-name                =&gt; node</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^sensor-name              =&gt; sensor</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^sensor-type               =&gt; type</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^threshold-sensor-state    =&gt; threshold_state</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">threshold-sensor-value     =&gt; threshold_value</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^value-units               =&gt; unit</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^warning-high-threshold    =&gt; warning_high</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^warning-low-threshold     =&gt; warning_low</span><span class="w"></span>
+
+<span class="nt">export_options</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">include_all_labels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+</code></pre></div>
+<h3 id="enable-the-new-object-template">Enable the new object template<a class="headerlink" href="#enable-the-new-object-template" title="Permanent link">&para;</a></h3>
+<p>To enable the new sensor object template, create the <code>conf/zapi/custom.yaml</code> file with the lines shown below.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">objects</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">Sensor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sensor.yaml</span><span class="w">                 </span><span class="c1"># this key must match the name in your sensor.yaml file</span><span class="w"></span>
+</code></pre></div>
+<p>The <code>Sensor</code> key used in the <code>custom.yaml</code> must match the name defined in the <code>sensor.yaml</code> file. That mapping is what
+connects this object with its template. In the future, if you add more object templates, you can add those in your
+existing <code>custom.yaml</code> file.</p>
+<h3 id="test-your-object-template-changes">Test your object template changes<a class="headerlink" href="#test-your-object-template-changes" title="Permanent link">&para;</a></h3>
+<p>Test your new <code>Sensor</code> template with a single poller like this:</p>
+<div class="highlight"><pre><span></span><code>./bin/harvest start &lt;poller&gt; --foreground --verbose --collectors Zapi --objects Sensor
+</code></pre></div>
+<p>Replace <code>&lt;poller&gt;</code> with the name of one of your ONTAP pollers.</p>
+<p>Once you have confirmed that the new template works, restart any already running pollers that you want to use the new
+template(s).</p>
+<h3 id="check-the-metrics">Check the metrics<a class="headerlink" href="#check-the-metrics" title="Permanent link">&para;</a></h3>
+<p>If you are using the Prometheus exporter, you can scrape the poller's HTTP endpoint with curl or a web browser. E.g., my
+poller exports its data on port 15001. Adjust as needed for your exporter.</p>
+<div class="highlight"><pre><span></span><code>curl -s &#39;http://localhost:15001/metrics&#39; | grep ^sensor_  # sensor_ name matches the object: value in your sensor.yaml file.
+
+sensor_value{datacenter=&quot;WDRF&quot;,cluster=&quot;shopfloor&quot;,critical_high=&quot;3664&quot;,node=&quot;shopfloor-02&quot;,sensor=&quot;P3.3V STBY&quot;,type=&quot;voltage&quot;,warning_low=&quot;3040&quot;,critical_low=&quot;2960&quot;,threshold_state=&quot;normal&quot;,unit=&quot;mV&quot;,warning_high=&quot;3568&quot;} 3280
+sensor_value{datacenter=&quot;WDRF&quot;,cluster=&quot;shopfloor&quot;,sensor=&quot;P1.2V STBY&quot;,type=&quot;voltage&quot;,threshold_state=&quot;normal&quot;,warning_high=&quot;1299&quot;,warning_low=&quot;1105&quot;,critical_low=&quot;1086&quot;,node=&quot;shopfloor-02&quot;,critical_high=&quot;1319&quot;,unit=&quot;mV&quot;} 1193
+sensor_value{datacenter=&quot;WDRF&quot;,cluster=&quot;shopfloor&quot;,unit=&quot;mV&quot;,critical_high=&quot;15810&quot;,critical_low=&quot;0&quot;,node=&quot;shopfloor-02&quot;,sensor=&quot;P12V STBY&quot;,type=&quot;voltage&quot;,threshold_state=&quot;normal&quot;} 11842
+sensor_value{datacenter=&quot;WDRF&quot;,cluster=&quot;shopfloor&quot;,sensor=&quot;P12V STBY Curr&quot;,type=&quot;current&quot;,threshold_state=&quot;normal&quot;,unit=&quot;mA&quot;,critical_high=&quot;3182&quot;,critical_low=&quot;0&quot;,node=&quot;shopfloor-02&quot;} 748
+sensor_value{datacenter=&quot;WDRF&quot;,cluster=&quot;shopfloor&quot;,critical_low=&quot;1470&quot;,node=&quot;shopfloor-02&quot;,sensor=&quot;Sysfan2 F2 Speed&quot;,type=&quot;fan&quot;,threshold_state=&quot;normal&quot;,unit=&quot;RPM&quot;,warning_low=&quot;1560&quot;} 2820
+sensor_value{datacenter=&quot;WDRF&quot;,cluster=&quot;shopfloor&quot;,sensor=&quot;PSU2 Fan1 Speed&quot;,type=&quot;fan&quot;,threshold_state=&quot;normal&quot;,unit=&quot;RPM&quot;,warning_low=&quot;4600&quot;,critical_low=&quot;4500&quot;,node=&quot;shopfloor-01&quot;} 6900
+sensor_value{datacenter=&quot;WDRF&quot;,cluster=&quot;shopfloor&quot;,sensor=&quot;PSU1 InPwr Monitor&quot;,type=&quot;unknown&quot;,threshold_state=&quot;normal&quot;,unit=&quot;mW&quot;,node=&quot;shopfloor-01&quot;} 132000
+sensor_value{datacenter=&quot;WDRF&quot;,cluster=&quot;shopfloor&quot;,critical_high=&quot;58&quot;,type=&quot;thermal&quot;,unit=&quot;C&quot;,warning_high=&quot;53&quot;,critical_low=&quot;0&quot;,node=&quot;shopfloor-01&quot;,sensor=&quot;Bat Temp&quot;,threshold_state=&quot;normal&quot;,warning_low=&quot;5&quot;} 24
+sensor_value{datacenter=&quot;WDRF&quot;,cluster=&quot;shopfloor&quot;,critical_high=&quot;9000&quot;,node=&quot;shopfloor-01&quot;,sensor=&quot;Bat Charge Volt&quot;,type=&quot;voltage&quot;,threshold_state=&quot;normal&quot;,unit=&quot;mV&quot;,warning_high=&quot;8900&quot;} 8200
+sensor_value{datacenter=&quot;WDRF&quot;,cluster=&quot;shopfloor&quot;,node=&quot;shopfloor-02&quot;,sensor=&quot;PSU1 InPwr Monitor&quot;,type=&quot;unknown&quot;,threshold_state=&quot;normal&quot;,unit=&quot;mW&quot;} 132000
+</code></pre></div>
+<h2 id="extend-an-existing-object-template">Extend an existing object template<a class="headerlink" href="#extend-an-existing-object-template" title="Permanent link">&para;</a></h2>
+<h3 id="how-to-extend-a-restrestperfems-collectors-existing-object-template">How to extend a Rest/RestPerf/Ems collector's existing object template<a class="headerlink" href="#how-to-extend-a-restrestperfems-collectors-existing-object-template" title="Permanent link">&para;</a></h3>
+<p>Instead of editing one of the existing templates, it's better to copy one and edit the copy. That way, your custom
+template will not be overwritten when upgrading Harvest. For example, if you want to
+change <code>conf/rest/cdot/9.12.0/aggr.yaml</code>, first create a copy (e.g., <code>conf/rest/cdot/9.12.0/custom_aggr.yaml</code>), then add
+these lines to <code>conf/rest/custom.yaml</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">objects</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">Aggregate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">custom_aggr.yaml</span><span class="w"></span>
+</code></pre></div>
+<p>After restarting pollers, <code>aggr.yaml</code> will be ignored and the new, <code>custom_aggr.yaml</code> subtemplate will be used instead.</p>
+<h3 id="how-to-extend-a-zapizapiperf-collectors-existing-object-template">How to extend a Zapi/ZapiPerf collector's existing object template<a class="headerlink" href="#how-to-extend-a-zapizapiperf-collectors-existing-object-template" title="Permanent link">&para;</a></h3>
+<p>In this example, we want to extend one of the existing object templates that Harvest ships with,
+e.g. <code>conf/zapi/cdot/9.8.0/lun.yaml</code> and collect additional information as outlined below.</p>
+<p>Let's say you want to extend <code>lun.yaml</code> to:</p>
+<ol>
+<li>Increase <code>client_timeout</code> (You want to increase the default timeout of the lun ZAPI because it
+   keeps <a href="https://github.com/NetApp/harvest/wiki/Troubleshooting-Harvest#client_timeout">timing out</a>)</li>
+<li>Add additional counters, e.g. <code>multiprotocol-type</code>, <code>application</code></li>
+<li>Add a new counter to the already collected lun metrics using the <code>value_to_num</code> plugin</li>
+<li>Add a new <code>application</code> instance_keys and labels to the collected metrics</li>
+</ol>
+<p>Let's assume the existing template is located at conf/zapi/cdot/9.8.0/lun.yaml and contains the following.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Lun</span><span class="w"></span>
+<span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lun-get-iter</span><span class="w"></span>
+<span class="nt">object</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lun</span><span class="w"></span>
+
+<span class="nt">counters</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">lun-info</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^node</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^path</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^qtree</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">size</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">size-used</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^state</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^uuid</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^volume</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^vserver =&gt; svm</span><span class="w"></span>
+
+<span class="nt">plugins</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">LabelAgent</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="c1"># metric label zapi_value rest_value `default_value`</span><span class="w"></span>
+<span class="w">    </span><span class="nt">value_to_num</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">new_status state online online `0`</span><span class="w"></span>
+<span class="w">    </span><span class="nt">split</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">path `/` ,,,lun</span><span class="w"></span>
+
+<span class="nt">export_options</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">instance_keys</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">qtree</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lun</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">volume</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">svm</span><span class="w"></span>
+<span class="w">  </span><span class="nt">instance_labels</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">state</span><span class="w"></span>
+<span class="w w-Error"> </span><span class="err">```</span><span class="w"></span>
+
+<span class="l l-Scalar l-Scalar-Plain">To extend the out-of-the-box `lun.yaml` template, create a `conf/zapi/custom.yaml` file if it doesn&#39;t already exist and</span><span class="w"></span>
+<span class="nt">add the lines shown below</span><span class="p">:</span><span class="w"></span>
+
+<span class="err">```</span><span class="l l-Scalar l-Scalar-Plain">yaml</span><span class="w"></span>
+<span class="nt">objects</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">Lun</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">custom_lun.yaml</span><span class="w"></span>
+</code></pre></div>
+<p>Create a new object template <code>conf/zapi/cdot/9.8.0/custom_lun.yaml</code> with the lines shown below.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">client_timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5m</span><span class="w"></span>
+<span class="nt">counters</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">lun-info</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^multiprotocol-type</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^application</span><span class="w"></span>
+
+<span class="nt">plugins</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">LabelAgent</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">value_to_num</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">custom_status state online online `0`</span><span class="w"></span>
+
+<span class="nt">export_options</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">instance_keys</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">application</span><span class="w"></span>
+<span class="w w-Error"> </span><span class="err">```</span><span class="w"></span>
+
+<span class="l l-Scalar l-Scalar-Plain">When you restart your pollers, Harvest will take the out-of-the-box template (`lun.yaml`) and your new</span><span class="w"></span>
+<span class="nt">one (`custom_lun.yaml`) and merge them into the following</span><span class="p">:</span><span class="w"></span>
+
+<span class="err">```</span><span class="l l-Scalar l-Scalar-Plain">yaml</span><span class="w"></span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Lun</span><span class="w"></span>
+<span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lun-get-iter</span><span class="w"></span>
+<span class="nt">object</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lun</span><span class="w"></span>
+<span class="nt">counters</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">lun-info</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^node</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^path</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^qtree</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">size</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">size-used</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^state</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^uuid</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^volume</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^vserver =&gt; svm</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^multiprotocol-type</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^application</span><span class="w"></span>
+<span class="nt">plugins</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">LabelAgent</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">value_to_num</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">new_status state online online `0`</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">custom_status state online online `0`</span><span class="w"></span>
+<span class="w">    </span><span class="nt">split</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">path `/` ,,,lun</span><span class="w"></span>
+<span class="nt">export_options</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">instance_keys</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">qtree</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lun</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">volume</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">svm</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">application</span><span class="w"></span>
+<span class="nt">client_timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5m</span><span class="w"></span>
+</code></pre></div>
+<p>To help understand the merging process and the resulting combined template, you can view the result with:</p>
+<div class="highlight"><pre><span></span><code>bin/harvest doctor merge --template conf/zapi/cdot/9.8.0/lun.yaml --with conf/zapi/cdot/9.8.0/custom_lun.yaml
+</code></pre></div>
+<h3 id="replace-an-existing-object-template-for-zapizapiperf-collector">Replace an existing object template for Zapi/ZapiPerf Collector<a class="headerlink" href="#replace-an-existing-object-template-for-zapizapiperf-collector" title="Permanent link">&para;</a></h3>
+<p>You can only extend existing templates for Zapi/ZapiPerf Collector as
+explained <a href="./#extend-an-existing-object-template">above</a>.
+If you need to replace one of the existing object templates, let us know
+on <a href="https://github.com/NetApp/harvest/blob/main/SUPPORT.md#getting-help">Discord</a> or GitHub.</p>
+<h2 id="harvest-versioned-templates">Harvest Versioned Templates<a class="headerlink" href="#harvest-versioned-templates" title="Permanent link">&para;</a></h2>
+<p>Harvest ships with a set of versioned templates tailored for specific versions of ONTAP. At runtime, Harvest uses a
+BestFit heuristic to pick the most appropriate template. The BestFit heuristic compares the list of Harvest templates
+with the ONTAP version and selects the best match. There are versioned templates for both the ZAPI and REST collectors.
+Below is an example of how the BestFit algorithm works - assume Harvest has these templated versions:</p>
+<ul>
+<li>9.6.0</li>
+<li>9.6.1</li>
+<li>9.8.0</li>
+<li>9.9.0</li>
+<li>9.10.1</li>
+</ul>
+<p>if you are monitoring a cluster at these versions, Harvest will select the indicated template:</p>
+<ul>
+<li>ONTAP version 9.4.1, Harvest will select the templates for 9.6.0</li>
+<li>ONTAP version 9.6.0, Harvest will select the templates for 9.6.0</li>
+<li>ONTAP version 9.7.X, Harvest will select the templates for 9.6.1</li>
+<li>ONTAP version 9.12, Harvest will select the templates for 9.10.1</li>
+</ul>
+<h3 id="counters">counters<a class="headerlink" href="#counters" title="Permanent link">&para;</a></h3>
+<p>This section contains the complete or partial attribute tree of the queried API. Since the collector does not get
+counter metadata from the ONTAP system, two additional symbols are used for non-numeric attributes:</p>
+<ul>
+<li><code>^</code> used as a prefix indicates that the attribute should be stored as a label</li>
+<li><code>^^</code> indicates that the attribute is a label and an instance key (i.e., a label that uniquely identifies an instance,
+  such as <code>name</code>, <code>uuid</code>). If a single label does not uniquely identify an instance, then multiple instance keys should
+  be indicated.</li>
+</ul>
+<p>Additionally, the symbol <code>=&gt;</code> can be used to set a custom display name for both instance labels and numeric counters.
+Example:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Spare</span><span class="w"></span>
+<span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aggr-spare-get-iter</span><span class="w"></span>
+<span class="nt">object</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">spare</span><span class="w"></span>
+<span class="nt">collect_only_labels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<span class="nt">counters</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">aggr-spare-disk-info</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^disk</span><span class="w">                                </span><span class="c1"># creates label aggr-disk</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^disk-type</span><span class="w">                            </span><span class="c1"># creates label aggr-disk-type</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^is-disk-zeroed   =&gt; is_disk_zeroed</span><span class="w">   </span><span class="c1"># creates label is_disk_zeroed</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^original-owner  =&gt; original_owner</span><span class="w">   </span><span class="c1"># creates label original_owner</span><span class="w"></span>
+<span class="nt">export_options</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">instance_keys</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disk</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">original_owner</span><span class="w"></span>
+<span class="w">  </span><span class="nt">instance_labels</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disk_type</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">is_disk_zeroed</span><span class="w"></span>
+</code></pre></div>
+<p>Harvest does its best to determine a unique display name for each template's label and metric. Instead of relying on
+this heuristic, it is better to be explicit in your templates and define a display name using the caret (<code>^</code>) mapping.
+For example, instead of this:</p>
+<div class="highlight"><pre><span></span><code>aggr-spare-disk-info:
+    - ^^disk
+    - ^disk-type
+</code></pre></div>
+<p>do this:</p>
+<div class="highlight"><pre><span></span><code>aggr-spare-disk-info:
+    - ^^disk      =&gt; disk
+    - ^disk-type  =&gt; disk_type
+</code></pre></div>
+<p>See also <a href="https://github.com/NetApp/harvest/issues/585">#585</a></p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="../configure-unix/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Unix" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Unix
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../dashboards/" class="md-footer__link md-footer__link--next" aria-label="Next: Dashboards" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Dashboards
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; NetApp
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://discordapp.com/channels/855068651522490400/1001963189124206732" target="_blank" rel="noopener" title="discordapp.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M524.531 69.836a1.5 1.5 0 0 0-.764-.7A485.065 485.065 0 0 0 404.081 32.03a1.816 1.816 0 0 0-1.923.91 337.461 337.461 0 0 0-14.9 30.6 447.848 447.848 0 0 0-134.426 0 309.541 309.541 0 0 0-15.135-30.6 1.89 1.89 0 0 0-1.924-.91 483.689 483.689 0 0 0-119.688 37.107 1.712 1.712 0 0 0-.788.676C39.068 183.651 18.186 294.69 28.43 404.354a2.016 2.016 0 0 0 .765 1.375 487.666 487.666 0 0 0 146.825 74.189 1.9 1.9 0 0 0 2.063-.676A348.2 348.2 0 0 0 208.12 430.4a1.86 1.86 0 0 0-1.019-2.588 321.173 321.173 0 0 1-45.868-21.853 1.885 1.885 0 0 1-.185-3.126 251.047 251.047 0 0 0 9.109-7.137 1.819 1.819 0 0 1 1.9-.256c96.229 43.917 200.41 43.917 295.5 0a1.812 1.812 0 0 1 1.924.233 234.533 234.533 0 0 0 9.132 7.16 1.884 1.884 0 0 1-.162 3.126 301.407 301.407 0 0 1-45.89 21.83 1.875 1.875 0 0 0-1 2.611 391.055 391.055 0 0 0 30.014 48.815 1.864 1.864 0 0 0 2.063.7A486.048 486.048 0 0 0 610.7 405.729a1.882 1.882 0 0 0 .765-1.352c12.264-126.783-20.532-236.912-86.934-334.541ZM222.491 337.58c-28.972 0-52.844-26.587-52.844-59.239s23.409-59.241 52.844-59.241c29.665 0 53.306 26.82 52.843 59.239 0 32.654-23.41 59.241-52.843 59.241Zm195.38 0c-28.971 0-52.843-26.587-52.843-59.239s23.409-59.241 52.843-59.241c29.667 0 53.307 26.82 52.844 59.239 0 32.654-23.177 59.241-52.844 59.241Z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://github.com/NetApp/harvest/discussions" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d6c3db9e.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1893 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../assets/harvest.svg">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.8">
+    
+    
+      
+        <title>ONTAP cDOT - Harvest</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.20d9efc8.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.815d1a91.min.css">
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="" data-md-color-accent="">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#prepare-ontap-cdot-cluster" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Harvest" class="md-header__button md-logo" aria-label="Harvest" data-md-component="logo">
+      
+  <img src="../assets/harvest.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Harvest
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              ONTAP cDOT
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_3" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9h-1.9M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69m-9.15 3.96h2.3L12 9l-1.15 3.65Z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_3">
+          
+            <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/NetApp/harvest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NetApp/harvest
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Harvest" class="md-nav__button md-logo" aria-label="Harvest" data-md-component="logo">
+      
+  <img src="../assets/harvest.svg" alt="logo">
+
+    </a>
+    Harvest
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/NetApp/harvest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NetApp/harvest
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        What is Harvest?
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        Quickstart
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Installation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Installation" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Installation
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/overview/" class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/package-managers/" class="md-nav__link">
+        Package Managers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/containers/" class="md-nav__link">
+        Containers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/native/" class="md-nav__link">
+        Native
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../system-requirements/" class="md-nav__link">
+        System Requirements
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../upgrade/" class="md-nav__link">
+        Upgrade
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          Prepare Monitored Clusters
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Prepare Monitored Clusters" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Prepare Monitored Clusters
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          ONTAP cDOT
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        ONTAP cDOT
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prepare-ontap-cdot-cluster" class="md-nav__link">
+    Prepare ONTAP cDOT cluster
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-ontap-user" class="md-nav__link">
+    Creating ONTAP user
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating ONTAP user">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#system-manager-new-interface" class="md-nav__link">
+    System Manager: New interface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#system-manager-classic-interface" class="md-nav__link">
+    System Manager: Classic interface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ontap-cli" class="md-nav__link">
+    ONTAP CLI
+  </a>
+  
+    <nav class="md-nav" aria-label="ONTAP CLI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#least-privilege-approach" class="md-nav__link">
+    Least-privilege approach
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#all-apis-read-only-approach" class="md-nav__link">
+    All APIs read-only approach
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-harvest-user-and-associate-to-role" class="md-nav__link">
+    Create harvest user and associate to role
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-mode-cli" class="md-nav__link">
+    7-Mode CLI
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-certificate-authentication" class="md-nav__link">
+    Using Certificate Authentication
+  </a>
+  
+    <nav class="md-nav" aria-label="Using Certificate Authentication">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-self-signed-subject-alternate-name-certificates-for-ontap" class="md-nav__link">
+    Create Self-Signed Subject Alternate Name Certificates for ONTAP
+  </a>
+  
+    <nav class="md-nav" aria-label="Create Self-Signed Subject Alternate Name Certificates for ONTAP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview-of-steps-to-create-a-self-signed-san-certificate-and-make-ontap-use-it" class="md-nav__link">
+    Overview of steps to create a self-signed SAN certificate and make ONTAP use it
+  </a>
+  
+    <nav class="md-nav" aria-label="Overview of steps to create a self-signed SAN certificate and make ONTAP use it">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    Setup
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-a-root-key" class="md-nav__link">
+    Create a root key
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-a-root-certificate-authority-certificate" class="md-nav__link">
+    Create a root certificate authority certificate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-a-san-certificate-for-your-ontap-cluster" class="md-nav__link">
+    Create a SAN certificate for your ONTAP cluster
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install-root-ca-certificate-on-cluster" class="md-nav__link">
+    Install Root CA Certificate On Cluster
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modify-the-admin-svm-to-use-the-new-certificate" class="md-nav__link">
+    Modify the admin SVM to use the new certificate
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-client-certificates-for-password-less-login" class="md-nav__link">
+    Create Client Certificates for Password-less Login
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install-client-certificates-on-cluster" class="md-nav__link">
+    Install Client Certificates on Cluster
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-harvestyml-to-use-client-certificates" class="md-nav__link">
+    Update Harvest.yml to use client certificates
+  </a>
+  
+    <nav class="md-nav" aria-label="Update Harvest.yml to use client certificates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#macos" class="md-nav__link">
+    macOS
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reference" class="md-nav__link">
+    Reference
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-fsx-clusters/" class="md-nav__link">
+        Amazon FSx for ONTAP
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-7mode-clusters/" class="md-nav__link">
+        ONTAP 7mode
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-storagegrid-clusters/" class="md-nav__link">
+        StorageGRID
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-harvest-basic/" class="md-nav__link">
+        Configure Harvest (basic)
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8" type="checkbox" id="__nav_8" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8">
+          Configure Exporters
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Configure Exporters" data-md-level="1">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          Configure Exporters
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prometheus-exporter/" class="md-nav__link">
+        Prometheus
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../influxdb-exporter/" class="md-nav__link">
+        InfluxDB
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-grafana/" class="md-nav__link">
+        Configure Grafana
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10" type="checkbox" id="__nav_10" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10">
+          Configure Collectors
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Configure Collectors" data-md-level="1">
+        <label class="md-nav__title" for="__nav_10">
+          <span class="md-nav__icon md-icon"></span>
+          Configure Collectors
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-zapi/" class="md-nav__link">
+        ZAPI
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-rest/" class="md-nav__link">
+        REST
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-ems/" class="md-nav__link">
+        EMS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-storagegrid/" class="md-nav__link">
+        StorageGRID
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-unix/" class="md-nav__link">
+        Unix
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-templates/" class="md-nav__link">
+        Templates
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dashboards/" class="md-nav__link">
+        Dashboards
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../manage-harvest/" class="md-nav__link">
+        Manage Harvest Pollers
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-harvest-advanced/" class="md-nav__link">
+        Configure Harvest (advanced)
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        Troubleshoot
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_16" type="checkbox" id="__nav_16" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_16">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_16">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins/" class="md-nav__link">
+        Plugins
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/matrix/" class="md-nav__link">
+        Matrix
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/templates-and-metrics/" class="md-nav__link">
+        Templates And Metrics
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_17" type="checkbox" id="__nav_17" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_17">
+          About
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="About" data-md-level="1">
+        <label class="md-nav__title" for="__nav_17">
+          <span class="md-nav__icon md-icon"></span>
+          About
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../license/" class="md-nav__link">
+        License
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release-notes/" class="md-nav__link">
+        Release Notes
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prepare-ontap-cdot-cluster" class="md-nav__link">
+    Prepare ONTAP cDOT cluster
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-ontap-user" class="md-nav__link">
+    Creating ONTAP user
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating ONTAP user">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#system-manager-new-interface" class="md-nav__link">
+    System Manager: New interface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#system-manager-classic-interface" class="md-nav__link">
+    System Manager: Classic interface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ontap-cli" class="md-nav__link">
+    ONTAP CLI
+  </a>
+  
+    <nav class="md-nav" aria-label="ONTAP CLI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#least-privilege-approach" class="md-nav__link">
+    Least-privilege approach
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#all-apis-read-only-approach" class="md-nav__link">
+    All APIs read-only approach
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-harvest-user-and-associate-to-role" class="md-nav__link">
+    Create harvest user and associate to role
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-mode-cli" class="md-nav__link">
+    7-Mode CLI
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-certificate-authentication" class="md-nav__link">
+    Using Certificate Authentication
+  </a>
+  
+    <nav class="md-nav" aria-label="Using Certificate Authentication">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-self-signed-subject-alternate-name-certificates-for-ontap" class="md-nav__link">
+    Create Self-Signed Subject Alternate Name Certificates for ONTAP
+  </a>
+  
+    <nav class="md-nav" aria-label="Create Self-Signed Subject Alternate Name Certificates for ONTAP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview-of-steps-to-create-a-self-signed-san-certificate-and-make-ontap-use-it" class="md-nav__link">
+    Overview of steps to create a self-signed SAN certificate and make ONTAP use it
+  </a>
+  
+    <nav class="md-nav" aria-label="Overview of steps to create a self-signed SAN certificate and make ONTAP use it">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    Setup
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-a-root-key" class="md-nav__link">
+    Create a root key
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-a-root-certificate-authority-certificate" class="md-nav__link">
+    Create a root certificate authority certificate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-a-san-certificate-for-your-ontap-cluster" class="md-nav__link">
+    Create a SAN certificate for your ONTAP cluster
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install-root-ca-certificate-on-cluster" class="md-nav__link">
+    Install Root CA Certificate On Cluster
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modify-the-admin-svm-to-use-the-new-certificate" class="md-nav__link">
+    Modify the admin SVM to use the new certificate
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-client-certificates-for-password-less-login" class="md-nav__link">
+    Create Client Certificates for Password-less Login
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install-client-certificates-on-cluster" class="md-nav__link">
+    Install Client Certificates on Cluster
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-harvestyml-to-use-client-certificates" class="md-nav__link">
+    Update Harvest.yml to use client certificates
+  </a>
+  
+    <nav class="md-nav" aria-label="Update Harvest.yml to use client certificates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#macos" class="md-nav__link">
+    macOS
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reference" class="md-nav__link">
+    Reference
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h2 id="prepare-ontap-cdot-cluster">Prepare ONTAP cDOT cluster<a class="headerlink" href="#prepare-ontap-cdot-cluster" title="Permanent link">&para;</a></h2>
+<p>NetApp Harvest requires login credentials to access monitored hosts. Although, a generic admin account can be used, it
+is best practice to create a dedicated monitoring account with the least privilege access.</p>
+<p>In the examples below, the user, group, roles, etc., use a naming convention of ‘netapp-harvest’. These can be
+modified as needed to match your environment standards.</p>
+<p>There are few steps required to prepare each monitored system for collection.
+Harvest supports two authentication styles (<code>auth_style</code>) to connect to ONTAP clusters.<br />
+They are <code>basic_auth</code> or <code>certificate_auth</code>. Both work well, but if you're starting fresh, the recommendation is to
+create a read-only harvest user on your ONTAP server and use certificate-based TLS authentication.</p>
+<p>Here's a summary of what we're going to do</p>
+<ol>
+<li>Create an ONTAP role with the necessary capabilities that Harvest will use to auth and collect data</li>
+<li>Create a user account using the role created in step #1.</li>
+</ol>
+<h2 id="creating-ontap-user">Creating ONTAP user<a class="headerlink" href="#creating-ontap-user" title="Permanent link">&para;</a></h2>
+<p>There are two ways to create a read-only user:</p>
+<ol>
+<li>Create a user with read-only access to <strong>all</strong> API objects</li>
+<li>Create a user with read-only access to only the APIs Harvest collects today</li>
+</ol>
+<p>The second option has a smaller attack surface, but each time you want to collect counters for a new object, you will
+need to update the user's privileges.</p>
+<p>Below we explain how to create an ONTAP user and role for Harvest using ONTAP System Manager (Classic interface &amp; New
+interface) and CLI.</p>
+<h3 id="system-manager-new-interface">System Manager: New interface<a class="headerlink" href="#system-manager-new-interface" title="Permanent link">&para;</a></h3>
+<p><em>Note: in this section we add a user with read-only access to all API objects. For limited access, use either the
+classic interface or the CLI</em></p>
+<p>Open System Manager. Click on <em>CLUSTER</em> in the left menu bar, <em>Settings</em> and <em>Users and Roles</em>.</p>
+<p><img alt="System Manager Settings" src="../assets/prepare-ontap/ontap_user_sm_0.png" /></p>
+<p>In the right column, under <em>Roles</em>, click on <em>Add</em> to add a new role.</p>
+<p><img alt="System Manager Settings" src="../assets/prepare-ontap/ontap_user_sm_1.png" /></p>
+<p>Choose a role name (e.g. <em>harvest2-role</em>). In the <em>REST API PATH</em> field, type <em>/api</em> and select <em>Read-Only</em> for
+<em>ACCESS</em>. Click on <em>Save</em>.</p>
+<p><img alt="System Manager Settings" src="../assets/prepare-ontap/ontap_user_sm_2.png" /></p>
+<p>In the left column, under <em>Users</em>, click on <em>Add</em> to create a new user. Choose a username. Under <em>Role</em>, select the role
+that we just created. Under <em>User Login Methods</em> select <em>ONTAPI</em>, and select one of the two authentication methods. Type
+in a password if you chose <em>Password</em>. Click on <em>Save</em></p>
+<p><img alt="System Manager Settings" src="../assets/prepare-ontap/ontap_user_sm_3.png" /></p>
+<p>If you chose <em>Password</em>, you can add the username and password to the Harvest configuration file and start Harvest. If
+you chose <em>Certificate</em> jump to <a href="#using-certificate-authentication">Using Certificate Authentication</a> to generate
+certificates files.</p>
+<h3 id="system-manager-classic-interface">System Manager: Classic interface<a class="headerlink" href="#system-manager-classic-interface" title="Permanent link">&para;</a></h3>
+<p>Open System Manager. Click on the Settings icon in the top-right corner of the window.</p>
+<p><img alt="System Manager Classic Settings" src="../assets/prepare-ontap/ontap_user_smc_0.png" /></p>
+<p>Click on <em>Roles</em> in the left menu bar and click <em>Add</em>. Choose a role name (e.g. <em>harvest2-role</em>).</p>
+<p><img alt="System Manager Classic Settings" src="../assets/prepare-ontap/ontap_user_smc_1.png" /></p>
+<p>If you want to give Harvest read-only access to <strong>all</strong> API objects, then under <em>Role Attributes</em> click on <em>Add</em>, under
+<em>Command</em> type <em>DEFAULT</em>, leave <em>Query</em> empty, select <em>readonly</em> under <em>Access Level</em>, click on <em>OK</em> and <em>Add</em>.</p>
+<p>If you want to limit the API objects, then under <em>Role Attributes</em>, add each of the following lines as an entry. All of
+those should be entered under the <em>Command</em> column, <em>Query</em> should be left blank, and <em>Access Level</em> should be selected
+<em>readonly</em>.</p>
+<ul>
+<li>cluster</li>
+<li>lun</li>
+<li>snapmirror</li>
+<li>statistics</li>
+<li>storage aggregate</li>
+<li>storage disk</li>
+<li>storage shelf</li>
+<li>system node</li>
+<li>version</li>
+<li>volume</li>
+</ul>
+<p>After you click on <em>Add</em>, this is what you should see:</p>
+<p><img alt="System Manager Classic Settings" src="../assets/prepare-ontap/ontap_user_smc_2.png" /></p>
+<p>Now we need to create a user. Click on <em>Users</em> in the left menu bar and <em>Add</em>. Choose a username and password. Under
+<em>User Login Methods</em>, click on <em>Add</em>, select <em>ontapi</em> as <em>Application</em> and select the role that we just created as
+<em>Role</em>. Click on <em>Add</em> in the pop-up window to save.</p>
+<p><img alt="System Manager Classic Settings" src="../assets/prepare-ontap/ontap_user_smc_3.png" /></p>
+<p>Now add the username and password to <code>harvest.yml</code> and start Harvest.</p>
+<h3 id="ontap-cli">ONTAP CLI<a class="headerlink" href="#ontap-cli" title="Permanent link">&para;</a></h3>
+<p>We are going to:</p>
+<ul>
+<li>create a Harvest role with read-only access to the API objects</li>
+<li>create a Harvest user and assign it to that role</li>
+</ul>
+<p>You should decide if you want to limit the Harvest role to only the subset of API objects Harvest requires or
+give Harvest access to all API objects. In both cases, Harvest's access will be read-only.</p>
+<p>Either approach is fine, following the principle of least-privilege, we recommend the limited approach.</p>
+<p>Login to the CLI of your c-DOT ONTAP system using SSH.</p>
+<h4 id="least-privilege-approach">Least-privilege approach<a class="headerlink" href="#least-privilege-approach" title="Permanent link">&para;</a></h4>
+<p>Verify there are no errors when you copy/paste these. Warnings are fine.</p>
+<div class="highlight"><pre><span></span><code>security login role create -role harvest2-role -access <span class="nb">readonly</span> -cmddirname <span class="s2">&quot;cluster&quot;</span>
+security login role create -role harvest2-role -access <span class="nb">readonly</span> -cmddirname <span class="s2">&quot;lun&quot;</span>    
+security login role create -role harvest2-role -access <span class="nb">readonly</span> -cmddirname <span class="s2">&quot;qos workload show&quot;</span>
+security login role create -role harvest2-role -access <span class="nb">readonly</span> -cmddirname <span class="s2">&quot;snapmirror&quot;</span>
+security login role create -role harvest2-role -access <span class="nb">readonly</span> -cmddirname <span class="s2">&quot;statistics&quot;</span>
+security login role create -role harvest2-role -access <span class="nb">readonly</span> -cmddirname <span class="s2">&quot;storage aggregate&quot;</span>
+security login role create -role harvest2-role -access <span class="nb">readonly</span> -cmddirname <span class="s2">&quot;storage disk&quot;</span>     
+security login role create -role harvest2-role -access <span class="nb">readonly</span> -cmddirname <span class="s2">&quot;storage shelf&quot;</span>
+security login role create -role harvest2-role -access <span class="nb">readonly</span> -cmddirname <span class="s2">&quot;system health status show&quot;</span> 
+security login role create -role harvest2-role -access <span class="nb">readonly</span> -cmddirname <span class="s2">&quot;system health subsystem show&quot;</span>  
+security login role create -role harvest2-role -access <span class="nb">readonly</span> -cmddirname <span class="s2">&quot;system node&quot;</span>
+security login role create -role harvest2-role -access <span class="nb">readonly</span> -cmddirname <span class="s2">&quot;version&quot;</span>
+security login role create -role harvest2-role -access <span class="nb">readonly</span> -cmddirname <span class="s2">&quot;volume&quot;</span>
+
+<span class="c1"># Permissions required for Harvest 22.05+ security dashboard</span>
+security login role create -role harvest2-role -access <span class="nb">readonly</span> -cmddirname <span class="s2">&quot;network interface&quot;</span>
+security login role create -role harvest2-role -access <span class="nb">readonly</span> -cmddirname <span class="s2">&quot;security&quot;</span>
+security login role create -role harvest2-role -access <span class="nb">readonly</span> -cmddirname <span class="s2">&quot;storage encryption disk&quot;</span>
+security login role create -role harvest2-role -access <span class="nb">readonly</span> -cmddirname <span class="s2">&quot;vserver&quot;</span>
+</code></pre></div>
+<h4 id="all-apis-read-only-approach">All APIs read-only approach<a class="headerlink" href="#all-apis-read-only-approach" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>security login role create -role harvest2-role -access <span class="nb">readonly</span> -cmddirname <span class="s2">&quot;DEFAULT&quot;</span>
+</code></pre></div>
+<h4 id="create-harvest-user-and-associate-to-role">Create harvest user and associate to role<a class="headerlink" href="#create-harvest-user-and-associate-to-role" title="Permanent link">&para;</a></h4>
+<p>Use this for password authentication</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ZAPI based access</span>
+security login create -user-or-group-name harvest2 -application ontapi -role harvest2-role -authentication-method password
+
+<span class="c1"># REST based access</span>
+security login create -user-or-group-name harvest2 -application http -role harvest2-role -authentication-method password   
+</code></pre></div>
+<p>Or this for certificate authentication</p>
+<div class="highlight"><pre><span></span><code>security login create -user-or-group-name harvest2 -application ontapi <span class="se">\</span>
+ -role harvest2-role -authentication-method cert
+</code></pre></div>
+<h4 id="7-mode-cli">7-Mode CLI<a class="headerlink" href="#7-mode-cli" title="Permanent link">&para;</a></h4>
+<p>Login to the CLI of your 7-Mode ONTAP system (e.g. using SSH). First, we create a user role. If you want to give the
+user readonly access to <strong>all</strong> API objects, type in the following command:</p>
+<div class="highlight"><pre><span></span><code>useradmin role modify harvest2-role -a login-http-admin,api-system-get-version, <span class="se">\</span>
+api-system-get-info,api-perf-object-*,api-ems-autosupport-log,api-diagnosis-status-get, <span class="se">\</span>
+api-lun-list-info,api-diagnosis-subsystem-config-get-iter,api-disk-list-info, <span class="se">\</span>
+api-diagnosis-config-get-iter,api-aggr-list-info,api-volume-list-info, <span class="se">\</span>
+api-storage-shelf-environment-list-info,api-qtree-list,api-quota-report
+</code></pre></div>
+<h1 id="using-certificate-authentication">Using Certificate Authentication<a class="headerlink" href="#using-certificate-authentication" title="Permanent link">&para;</a></h1>
+<p>See <a href="https://github.com/NetApp/harvest/issues/314#issuecomment-882120238">comments here for troubleshooting</a> client
+certificate authentication.</p>
+<p>Client certificate authentication allows you to authenticate with your ONTAP cluster without including
+username/passwords in your <code>harvest.yml</code> file. The process to setup client certificates is straightforward, although
+self-signed certificates introduce more work as does Go's strict treatment of common names.</p>
+<p>Unless you've installed production certificates on your ONTAP cluster, you'll need to replace your cluster's
+common-name-based self-signed certificates with a subject alternative name based certificate. After that step is
+completed, we'll create client certificates and add those for passwordless login.</p>
+<p>If you can't or don't want to replace your ONTAP cluster certificates, there are some workarounds. You can</p>
+<ul>
+<li>Use <code>use_insecure_tls: true</code> in your <code>harvest.yml</code> to disable certificate verification</li>
+<li>Change your <code>harvest.yml</code> to connect via hostname instead of IP address</li>
+</ul>
+<h2 id="create-self-signed-subject-alternate-name-certificates-for-ontap">Create Self-Signed Subject Alternate Name Certificates for ONTAP<a class="headerlink" href="#create-self-signed-subject-alternate-name-certificates-for-ontap" title="Permanent link">&para;</a></h2>
+<p>Subject alternate name (SAN) certificates allow multiple hostnames in a single certificate. Starting with Go 1.3, when
+connecting to a cluster via its IP address, the CN field in the server certificate is ignored. This often causes errors
+like this:
+<code>x509: cannot validate certificate for 127.0.0.1 because it doesn't contain any IP SANs</code></p>
+<h3 id="overview-of-steps-to-create-a-self-signed-san-certificate-and-make-ontap-use-it">Overview of steps to create a self-signed SAN certificate and make ONTAP use it<a class="headerlink" href="#overview-of-steps-to-create-a-self-signed-san-certificate-and-make-ontap-use-it" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Create a root key</li>
+<li>Create a root certificate authority certificate</li>
+<li>Create a SAN certificate for your ONTAP cluster, using #2 to create it</li>
+<li>Install root ca certificate created in step #2 on cluster</li>
+<li>Install SAN certificate created in step #3 on your cluster</li>
+<li>Modify you cluster/SVM to use the new certificate installed at step #5</li>
+</ol>
+<h4 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code># create a place to store the certificate authority files, adjust as needed
+mkdir -p ca/{private,certs}
+</code></pre></div>
+<h4 id="create-a-root-key">Create a root key<a class="headerlink" href="#create-a-root-key" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>cd ca
+# generate a private key that we will use to create our self-signed certificate authority
+openssl genrsa -out private/ca.key.pem 4096
+chmod 400 private/ca.key.pem
+</code></pre></div>
+<h4 id="create-a-root-certificate-authority-certificate">Create a root certificate authority certificate<a class="headerlink" href="#create-a-root-certificate-authority-certificate" title="Permanent link">&para;</a></h4>
+<p>Download the sample [samples/openssl.cnf] file and put it in the directory we created in <a href="#setup">setup</a>. Edit line 9,
+changing <code>dir</code> to point to your <code>ca</code> directory created in <a href="#setup">setup</a>.</p>
+<div class="highlight"><pre><span></span><code>openssl req -config openssl.cnf -key private/ca.key.pem -new -x509 -days 7300 -sha256 -extensions v3_ca -out certs/ca.cert.pem
+
+# Verify
+openssl x509 -noout -text -in certs/ca.cert.pem
+
+# Make sure these are present
+    Signature Algorithm: sha256WithRSAEncryption               &lt;======== Signature Algorithm can not be sha-1
+        X509v3 extensions:
+            X509v3 Subject Key Identifier: 
+                --removed
+            X509v3 Authority Key Identifier: 
+                --removed
+
+            X509v3 Basic Constraints: critical
+                CA:TRUE                                        &lt;======== CA must be true
+            X509v3 Key Usage: critical
+                Digital Signature, Certificate Sign, CRL Sign  &lt;======== Digital and certificate signature
+</code></pre></div>
+<h4 id="create-a-san-certificate-for-your-ontap-cluster">Create a SAN certificate for your ONTAP cluster<a class="headerlink" href="#create-a-san-certificate-for-your-ontap-cluster" title="Permanent link">&para;</a></h4>
+<p>First, we'll create the certificate signing request and then the certificate. In this example, the ONTAP cluster is
+named <code>umeng-aff300-05-06</code>, update accordingly.</p>
+<p>Download the sample [samples/server_cert.cnf] file and put it in the directory we created in <a href="#setup">setup</a>. Edit lines
+18-21 to include your ONTAP cluster hostnames and IP addresses. Edit lines 6-11 with new names as needed.</p>
+<div class="highlight"><pre><span></span><code>openssl req -new -newkey rsa:4096 -nodes -sha256 -subj &quot;/&quot; -config server_cert.cnf -outform pem -out umeng-aff300-05-06.csr -keyout umeng-aff300-05-06.key
+
+# Verify
+openssl req -text -noout -in umeng-aff300-05-06.csr
+
+# Make sure these are present
+        Attributes:
+        Requested Extensions:
+            X509v3 Subject Alternative Name:         &lt;======== Section that lists alternate DNS and IP names
+                DNS:umeng-aff300-05-06-cm.rtp.openenglab.netapp.com, DNS:umeng-aff300-05-06, IP Address:10.193.48.11, IP Address:10.193.48.11
+    Signature Algorithm: sha256WithRSAEncryption     &lt;======== Signature Algorithm can not be sha-1
+</code></pre></div>
+<p>We'll now use the certificate signing request and the recently create certificate authority to create a new SAN
+certificate for our cluster.</p>
+<div class="highlight"><pre><span></span><code>openssl x509 -req -sha256 -days 30 -in umeng-aff300-05-06.csr -CA certs/ca.cert.pem -CAkey private/ca.key.pem -CAcreateserial -out umeng-aff300-05-06.crt -extensions req_ext -extfile server_cert.cnf
+
+# Verify
+openssl x509 -text -noout -in umeng-aff300-05-06.crt
+
+# Make sure these are present
+X509v3 extensions:
+            X509v3 Subject Alternative Name:       &lt;======== Section that lists alternate DNS and IP names
+                DNS:umeng-aff300-05-06-cm.rtp.openenglab.netapp.com, DNS:umeng-aff300-05-06, IP Address:10.193.48.11, IP Address:10.193.48.11
+    Signature Algorithm: sha256WithRSAEncryption   &lt;======== Signature Algorithm can not be sha-1
+</code></pre></div>
+<h4 id="install-root-ca-certificate-on-cluster">Install Root CA Certificate On Cluster<a class="headerlink" href="#install-root-ca-certificate-on-cluster" title="Permanent link">&para;</a></h4>
+<p>Login to your cluster with admin credentials and install the server certificate authority.</p>
+<div class="highlight"><pre><span></span><code>ssh admin@IP
+umeng-aff300-05-06::*&gt; security certificate install -type server-ca
+
+Please enter Certificate: Press &lt;Enter&gt; when done
+-----BEGIN CERTIFICATE-----
+...
+-----END CERTIFICATE-----
+
+You should keep a copy of the CA-signed digital certificate for future reference.
+
+The installed certificate&#39;s CA and serial number for reference:
+CA: ntap
+Serial: 46AFFC7A3A9999999E8FB2FEB0
+
+The certificate&#39;s generated name for reference: ntap
+</code></pre></div>
+<p>Now install the server certificate we created above with SAN.</p>
+<div class="highlight"><pre><span></span><code>umeng-aff300-05-06::*&gt; security certificate install -type server
+
+Please enter Certificate: Press &lt;Enter&gt; when done
+-----BEGIN CERTIFICATE-----
+..
+-----END CERTIFICATE-----
+
+Please enter Private Key: Press &lt;Enter&gt; when done
+-----BEGIN PRIVATE KEY-----
+...
+-----END PRIVATE KEY-----
+
+Please enter certificates of Certification Authorities (CA) which form the certificate chain of the server certificate. This starts with the issuing CA certificate of the server certificate and can range up to the root CA certificate.
+
+Do you want to continue entering root and/or intermediate certificates {y|n}: n
+</code></pre></div>
+<p>If ONTAP tells you the provided certificate does not have a common name in the subject field, type the hostname of the
+cluster like this:</p>
+<div class="highlight"><pre><span></span><code>The provided certificate does not have a common name in the subject field.
+
+Enter a valid common name to continue installation of the certificate:
+
+Enter a valid common name to continue installation of the certificate: umeng-aff300-05-06-cm.rtp.openenglab.netapp.com
+
+You should keep a copy of the private key and the CA-signed digital certificate for future reference.
+
+The installed certificate&#39;s CA and serial number for reference:
+CA: ntap
+Serial: 67A94AA25B229A68AC5BABACA8939A835AA998A58
+
+The certificate&#39;s generated name for reference: umeng-aff300-05-06-cm.rtp.openenglab.netapp.com
+</code></pre></div>
+<h4 id="modify-the-admin-svm-to-use-the-new-certificate">Modify the admin SVM to use the new certificate<a class="headerlink" href="#modify-the-admin-svm-to-use-the-new-certificate" title="Permanent link">&para;</a></h4>
+<p>We'll modify the cluster's admin SVM to use the just installed server certificate and certificate authority.</p>
+<div class="highlight"><pre><span></span><code>vserver show -type admin -fields vserver,type
+vserver            type
+------------------ -----
+umeng-aff300-05-06 admin
+
+umeng-aff300-05-06::*&gt; ssl modify -vserver umeng-aff300-05-06 -server-enabled true -serial 67A94AA25B229A68AC5BABACA8939A835AA998A58 -ca ntap
+  (security ssl modify)
+</code></pre></div>
+<p>You can verify the certificate(s) are installed and working by using <code>openssl</code> like so:</p>
+<div class="highlight"><pre><span></span><code>openssl s_client -CAfile certs/ca.cert.pem -showcerts -servername server -connect umeng-aff300-05-06-cm.rtp.openenglab.netapp.com:443
+
+CONNECTED(00000005)
+depth=1 C = US, ST = NC, L = RTP, O = ntap, OU = ntap
+verify return:1
+depth=0 
+verify return:1
+...
+</code></pre></div>
+<p>without the <code>-CAfile</code>, <code>openssl</code> will report</p>
+<div class="highlight"><pre><span></span><code>CONNECTED(00000005)
+depth=0 
+verify error:num=20:unable to get local issuer certificate
+verify return:1
+depth=0 
+verify error:num=21:unable to verify the first certificate
+verify return:1
+---
+</code></pre></div>
+<h2 id="create-client-certificates-for-password-less-login">Create Client Certificates for Password-less Login<a class="headerlink" href="#create-client-certificates-for-password-less-login" title="Permanent link">&para;</a></h2>
+<p>Copy the server certificate we created above into the Harvest install directory.</p>
+<div class="highlight"><pre><span></span><code>cp ca/umeng-aff300-05-06.crt /opt/harvest
+cd /opt/harvest
+</code></pre></div>
+<p>Create a self-signed client key and certificate with the same name as the hostname where Harvest is running. It's not
+required to name the key/cert pair after the hostname, but if you do, Harvest will load them automatically when you
+specify <code>auth_style: certificate_auth</code> otherwise you can point to them directly.
+See <a href="https://github.com/NetApp/harvest#pollers">Pollers</a> for details.</p>
+<p>Change the common name to the ONTAP user you setup with the harvest role above. e.g <code>harvest2</code></p>
+<div class="highlight"><pre><span></span><code>cd /opt/harvest
+mkdir cert
+openssl req -x509 -nodes -days 1095 -newkey rsa:2048 -keyout cert/$(hostname).key -out cert/$(hostname).pem -subj &quot;/CN=harvest2&quot;
+</code></pre></div>
+<h2 id="install-client-certificates-on-cluster">Install Client Certificates on Cluster<a class="headerlink" href="#install-client-certificates-on-cluster" title="Permanent link">&para;</a></h2>
+<p>Login to your cluster with admin credentials and install the client certificate.</p>
+<div class="highlight"><pre><span></span><code>ssh admin@IP
+umeng-aff300-05-06::*&gt;  security certificate install -type client-ca -vserver umeng-aff300-05-06
+
+Please enter Certificate: Press &lt;Enter&gt; when done
+-----BEGIN CERTIFICATE-----
+...
+-----END CERTIFICATE-----
+
+You should keep a copy of the CA-signed digital certificate for future reference.
+
+The installed certificate&#39;s CA and serial number for reference:
+CA: cbg
+Serial: B77B59444444CCCC
+
+The certificate&#39;s generated name for reference: cbg_B77B59444444CCCC
+</code></pre></div>
+<p>Now that the client certificate is installed, let's enable it.</p>
+<div class="highlight"><pre><span></span><code>umeng-aff300-05-06::*&gt; ssl modify -vserver umeng-aff300-05-06 -client-enabled true
+  (security ssl modify)
+</code></pre></div>
+<p>Verify with a recent version of <code>curl</code>. If you are runnin on a Mac <a href="">see below</a>.</p>
+<div class="highlight"><pre><span></span><code>curl --cacert umeng-aff300-05-06.crt --key cert/$(hostname).key --cert cert/$(hostname).pem https://umeng-aff300-05-06-cm.rtp.openenglab.netapp.com/api/storage/disks
+</code></pre></div>
+<h2 id="update-harvestyml-to-use-client-certificates">Update Harvest.yml to use client certificates<a class="headerlink" href="#update-harvestyml-to-use-client-certificates" title="Permanent link">&para;</a></h2>
+<p>Update the poller section with <code>auth_style: certificate_auth</code> like this:</p>
+<div class="highlight"><pre><span></span><code>  u2-cert: 
+    auth_style: certificate_auth
+    addr: umeng-aff300-05-06-cm.rtp.openenglab.netapp.com
+</code></pre></div>
+<p>Restart your poller and enjoy your password-less life-style.</p>
+<h3 id="macos">macOS<a class="headerlink" href="#macos" title="Permanent link">&para;</a></h3>
+<p>The version of <code>curl</code> installed on macOS up through Monterey is not recent enough to work with self-signed SAN certs.
+You will need to install a newer version of <code>curl</code> via Homebrew, MacPorts, source, etc.</p>
+<p>Example of failure when running with older version of <code>curl</code> - you will see this
+in <a href="#install-client-certificates-on-cluster">client auth</a> test step above.</p>
+<div class="highlight"><pre><span></span><code>curl --version
+curl 7.64.1 (x86_64-apple-darwin20.0) libcurl/7.64.1 (SecureTransport) LibreSSL/2.8.3 zlib/1.2.11 nghttp2/1.41.0
+
+curl --cacert umeng-aff300-05-06.crt --key cert/cgrindst-mac-0.key --cert cert/cgrindst-mac-0.pem https://umeng-aff300-05-06-cm.rtp.openenglab.netapp.com/api/storage/disks
+
+curl: (60) SSL certificate problem: unable to get local issuer certificate
+</code></pre></div>
+<p>Let's install <code>curl</code> via Homebrew. Make sure you don't miss the message that Homebrew prints about your path.</p>
+<div class="highlight"><pre><span></span><code>If you need to have curl first in your PATH, run:
+  echo &#39;export PATH=&quot;/usr/local/opt/curl/bin:$PATH&quot;&#39; &gt;&gt; /Users/cgrindst/.bash_profile
+</code></pre></div>
+<p>Now when we make a client auth request with our self-signed certificate it works! <code>\o/</code></p>
+<div class="highlight"><pre><span></span><code>brew install curl
+
+curl --version
+curl 7.80.0 (x86_64-apple-darwin20.6.0) libcurl/7.80.0 (SecureTransport) OpenSSL/1.1.1l zlib/1.2.11 brotli/1.0.9 zstd/1.5.0 libidn2/2.3.2 libssh2/1.10.0 nghttp2/1.46.0 librtmp/2.3 OpenLDAP/2.6.0
+Release-Date: 2021-11-10
+Protocols: dict file ftp ftps gopher gophers http https imap imaps ldap ldaps mqtt pop3 pop3s rtmp rtsp scp sftp smb smbs smtp smtps telnet tftp 
+Features: alt-svc AsynchDNS brotli GSS-API HSTS HTTP2 HTTPS-proxy IDN IPv6 Kerberos Largefile libz MultiSSL NTLM NTLM_WB SPNEGO SSL TLS-SRP UnixSockets zstd
+
+curl --cacert umeng-aff300-05-06.crt --key cert/cgrindst-mac-0.key --cert cert/cgrindst-mac-0.pem https://umeng-aff300-05-06-cm.rtp.openenglab.netapp.com/api/storage/disks
+
+{
+  &quot;records&quot;: [
+    {
+      &quot;name&quot;: &quot;1.1.22&quot;,
+      &quot;_links&quot;: {
+        &quot;self&quot;: {
+          &quot;href&quot;: &quot;/api/storage/disks/1.1.22&quot;
+        }
+      }
+    }
+}
+</code></pre></div>
+<hr />
+<p>Change directory to your Harvest home directory (replace <code>/opt/harvest/</code> if this is not the default):</p>
+<div class="highlight"><pre><span></span><code>$ <span class="nb">cd</span> /opt/harvest/
+</code></pre></div>
+<p>Generate an SSL cert and key pair with the following command. Note that it's preferred to generate these files using the
+hostname of the local machine. The command below assumes <code>debian8</code> as our hostname name and <code>harvest2</code> as the user we
+created in the previous step:</p>
+<div class="highlight"><pre><span></span><code>openssl req -x509 -nodes -days <span class="m">1095</span> -newkey rsa:2048 -keyout cert/debian8.key <span class="se">\</span>
+ -out cert/debian8.pem  -subj <span class="s2">&quot;/CN=harvest2&quot;</span>
+</code></pre></div>
+<p>Next, open the public key (<code>debian8.pem</code> in our example) and copy all of its content. Login into your ONTAP CLI and run
+this command by replacing <strong>CLUSTER</strong> with the name of your cluster.</p>
+<div class="highlight"><pre><span></span><code>security certificate install -type client-ca -vserver CLUSTER
+</code></pre></div>
+<p>Paste the public key content and hit enter. Output should be similar to this:</p>
+<div class="highlight"><pre><span></span><code>jamaica::&gt; security certificate install -type client-ca -vserver jamaica 
+
+Please enter Certificate: Press &lt;Enter&gt; when <span class="k">done</span>
+-----BEGIN CERTIFICATE-----                       
+MIIDETCCAfmgAwIBAgIUP9EUXyl2BDSUOkNEcDU0yqbJ29IwDQYJKoZIhvcNAQEL
+BQAwGDEWMBQGA1UEAwwNaGFydmVzdDItY2xpMzAeFw0yMDEwMDkxMjA0MDhaFw0y
+MzEwMDktcGFueSBMdGQxFzAVBgNVBAMlc3QyLWNsaTMwggEiMA0tcGFueSBGCSqG
+SIb3DQEBAQUAA4IBDwAwggEKAoIBAQCVVy25BeCRoGCJWFOlyUL7Ddkze4Hl2/6u
+qye/3mk5vBNsGuXUrtad5XfBB70Ez9hWl5sraLiY68ro6MyX1icjiUTeaYDvS/76
+Iw7HeXJ5Pyb/fWth1nePunytoLyG/vaTCySINkIV5nlxC+k0X3wWFJdfJzhloPtt
+1Vdm7aCF2q6a2oZRnUEBGQb6t5KyF0/Xh65mvfgB0pl/AS2HY5Gz+~L54Xyvs+BY
+V7UmTop7WBYl0L3QXLieERpHXnyOXmtwlm1vG5g4n/0DVBNTBXjEdvc6oRh8sxBN
+ZlQWRApE7pa/I1bLD7G2AiS4UcPmR4cEpPRVEsOFOaAN3Z3YskvnAgMBAAGjUzBR
+MB0GA1UdDgQWBBQr4syV6TCcgO/5EcU/F8L2YYF15jAfBgNVHSMEGDAWgBQr4syV
+6TCcgO/5EcU/F8L2YYF15jAPBgNVHRMdfdfwerH/MA0GCSqGSIb^ECd3DQEBCwUA
+A4IBAQBjP1BVhClRKkO/M3zlWa2L9Ztce6SuGwSnm6Ebmbs+iMc7o2N9p3RmV6Xl
+h6NcdXRzzPAVrUoK8ewhnBzdghgIPoCI6inAf1CUhcCX2xcnE/osO+CfvKuFnPYE
+WQ7UNLsdfka0a9kTK13r3GMs09z/VsDs0gD8UhPjoeO7LQhdU9tJ/qOaSP3s48pv
+sYzZurHUgKmVOaOE4t9DAdevSECEWCETRETA<span class="nv">$Vbn</span>%@@@%%rcdrctru65ryFaByb+
+hTtGhDnoHwzt/cAGvLGV/RyWdGFAbu7Fb1rV94ceggE7nh1FqbdLH9siot6LlnQN
+MhEWp5PYgndOW49dDYUxoauCCkiA
+-----END CERTIFICATE-----
+
+
+You should keep a copy of the CA-signed digital certificate <span class="k">for</span> future reference.
+
+The installed certificate<span class="s1">&#39;s CA and serial number for reference:</span>
+<span class="s1">CA: harvest2</span>
+<span class="s1">Serial: 3FD1145F2976043012213d3009095534CCRDBD2</span>
+
+<span class="s1">The certificate&#39;</span>s generated name <span class="k">for</span> reference: harvest2
+</code></pre></div>
+<p>Finally, we need to enable SSL authentication with the following command (replace <strong>CLUSTER</strong> with the name of your
+cluster):</p>
+<div class="highlight"><pre><span></span><code>security ssl modify -client-enabled <span class="nb">true</span> -vserver CLUSTER
+</code></pre></div>
+<h2 id="reference">Reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
+<ul>
+<li>https://github.com/jcbsmpsn/golang-https-example</li>
+</ul>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="../upgrade/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Upgrade" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Upgrade
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../prepare-fsx-clusters/" class="md-footer__link md-footer__link--next" aria-label="Next: Amazon FSx for ONTAP" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Amazon FSx for ONTAP
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; NetApp
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://discordapp.com/channels/855068651522490400/1001963189124206732" target="_blank" rel="noopener" title="discordapp.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M524.531 69.836a1.5 1.5 0 0 0-.764-.7A485.065 485.065 0 0 0 404.081 32.03a1.816 1.816 0 0 0-1.923.91 337.461 337.461 0 0 0-14.9 30.6 447.848 447.848 0 0 0-134.426 0 309.541 309.541 0 0 0-15.135-30.6 1.89 1.89 0 0 0-1.924-.91 483.689 483.689 0 0 0-119.688 37.107 1.712 1.712 0 0 0-.788.676C39.068 183.651 18.186 294.69 28.43 404.354a2.016 2.016 0 0 0 .765 1.375 487.666 487.666 0 0 0 146.825 74.189 1.9 1.9 0 0 0 2.063-.676A348.2 348.2 0 0 0 208.12 430.4a1.86 1.86 0 0 0-1.019-2.588 321.173 321.173 0 0 1-45.868-21.853 1.885 1.885 0 0 1-.185-3.126 251.047 251.047 0 0 0 9.109-7.137 1.819 1.819 0 0 1 1.9-.256c96.229 43.917 200.41 43.917 295.5 0a1.812 1.812 0 0 1 1.924.233 234.533 234.533 0 0 0 9.132 7.16 1.884 1.884 0 0 1-.162 3.126 301.407 301.407 0 0 1-45.89 21.83 1.875 1.875 0 0 0-1 2.611 391.055 391.055 0 0 0 30.014 48.815 1.864 1.864 0 0 0 2.063.7A486.048 486.048 0 0 0 610.7 405.729a1.882 1.882 0 0 0 .765-1.352c12.264-126.783-20.532-236.912-86.934-334.541ZM222.491 337.58c-28.972 0-52.844-26.587-52.844-59.239s23.409-59.241 52.844-59.241c29.665 0 53.306 26.82 52.843 59.239 0 32.654-23.41 59.241-52.843 59.241Zm195.38 0c-28.971 0-52.843-26.587-52.843-59.239s23.409-59.241 52.843-59.241c29.667 0 53.307 26.82 52.844 59.239 0 32.654-23.177 59.241-52.844 59.241Z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://github.com/NetApp/harvest/discussions" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d6c3db9e.min.js"></script>
+      
+    
+  </body>
+</html>
