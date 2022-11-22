@@ -3,7 +3,7 @@
 ## Status <!-- one of: In Progress, Accepted, Rejected, Superseded, Deprecated -->
 
 ~~Accepted~~
-Superseded by [REST strategy](https://netapp.github.io/harvest/architecture/rest-strategy)
+Superseded by [REST strategy](https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-strategy.md)
 
 :construction: The exact version of ONTAP that has full ZAPI parity is subject to change. 
 Everywhere you see version 9.12, may become 9.13 or later.

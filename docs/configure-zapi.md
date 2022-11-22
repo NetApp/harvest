@@ -2,7 +2,7 @@
 
     ZAPI will reach end of availablity in ONTAP  9.13.1 released Q2 2023.
     Don't worry, Harvest has you covered. Switch to Harvest's REST collectors
-    and collect idential metrics. See [REST Strategy](/architecture/rest-strategy) for more details. 
+    and collect idential metrics. See [REST Strategy](https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-strategy.md) for more details. 
 
 ## Zapi Collector
 

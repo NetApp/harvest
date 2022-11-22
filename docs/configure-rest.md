@@ -8,7 +8,7 @@ and configuration settings.
 ### Target System
 
 Target system can be cDot ONTAP system. 9.12.1 and after are supported, however the default configuration files
-may not completely match with all versions. See [REST Strategy](/architecture/rest-strategy) for more details.
+may not completely match with all versions. See [REST Strategy](https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-strategy.md) for more details.
 
 ### Requirements
 
