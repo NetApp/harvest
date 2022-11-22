@@ -104,6 +104,7 @@ The Object configuration file ("subtemplate") should contain the following param
 | `query`          | string, **required** | REST endpoint used to issue a REST request                                         |         |
 | `object`         | string, **required** | short name of the object                                                           |         |
 | `api`            | string               | StorageGRID REST endpoint version to use, overrides default management API version | 3       |
+| `counters`       | list                 | list of counters to collect (see notes below)                                      |         |
 | `plugins`        | list                 | plugins and their parameters to run on the collected data                          |         |
 | `export_options` | list                 | parameters to pass to exporters (see notes below)                                  |         |
 
