@@ -1486,7 +1486,7 @@
       "type": "row"
     },
     {
-      "collapsed": false,
+      "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
@@ -2895,7 +2895,7 @@
               "exemplar": true,
               "expr": "svm_vscan_dispatch_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
               "interval": "",
-              "legendFormat": "{{cluster}} - {{svm}}",
+              "legendFormat": "{{cluster}} - {{svm}} - dispatch latency",
               "refId": "A"
             },
             {
@@ -12013,7 +12013,7 @@
       "type": "row"
     },
     {
-      "collapsed": false,
+      "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
