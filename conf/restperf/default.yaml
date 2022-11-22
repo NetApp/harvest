@@ -3,9 +3,9 @@ collector:          RestPerf
 
 # Order here matters!
 schedule:
-  - counter: 1200s
-  - instance: 600s
-  - data: 60s
+  - counter:  20m
+  - instance: 10m
+  - data:      1m
 
 objects:
   CIFSNode:          cifs_node.yaml

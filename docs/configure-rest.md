@@ -1,6 +1,6 @@
 ## Rest Collector
 
-The Rest collectors uses the Rest protocol to collect data from ONTAP systems.
+The Rest collectors uses the REST protocol to collect data from ONTAP systems.
 
 The [RestPerf collector](#restperf-collector) is an extension of this collector, therefore they share many parameters
 and configuration settings.
@@ -8,20 +8,23 @@ and configuration settings.
 ### Target System
 
 Target system can be cDot ONTAP system. 9.12.1 and after are supported, however the default configuration files
-may not completely match with all versions. See [REST Strategy](https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-strategy.md) for more details.
+may not completely match with all versions.
+See [REST Strategy](https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-strategy.md) for more details.
 
 ### Requirements
 
 No SDK or other requirements. It is recommended to create a read-only user for Harvest on the ONTAP system (see
-[prepare monitored clusters](/prepare-cdot-clusters/#all-apis-read-only-approach) for details)
+[prepare monitored clusters](prepare-cdot-clusters.md#all-apis-read-only-approach) for details)
 
 ### Metrics
 
 The collector collects a dynamic set of metrics. ONTAP returns JSON documents and
 Harvest allows you to define templates to extract values from the JSON document via a dot notation path. You can view
-ONTAP's full set of REST APIs by visiting `https://docs.netapp.com/us-en/ontap-automation/reference/api_reference.html#access-a-copy-of-the-ontap-rest-api-reference-documentation`
+ONTAP's full set of REST APIs by
+visiting `https://docs.netapp.com/us-en/ontap-automation/reference/api_reference.html#access-a-copy-of-the-ontap-rest-api-reference-documentation`
 
-As an example, the `/api/storage/aggregates` endpoint, lists all data aggregates in the cluster. Below is an example response from this endpoint:
+As an example, the `/api/storage/aggregates` endpoint, lists all data aggregates in the cluster. Below is an example
+response from this endpoint:
 
 ```json
 {
@@ -36,49 +39,22 @@ As an example, the `/api/storage/aggregates` endpoint, lists all data aggregates
         }
       },
       "state": "online",
-      "volume_count": 36,
-      "_links": {
-        "self": {
-          "href": "/api/storage/aggregates/3e59547d-298a-4967-bd0f-8ae96cead08c"
-        }
-      }
-    },
-    {
-      "uuid": "c1931ba8-bb35-4b12-84dc-1e0643487144",
-      "name": "test",
-      "space": {
-        "block_storage": {
-          "size": 6494318993408,
-          "available": 6468499152896
-        }
-      },
-      "state": "online",
-      "volume_count": 40,
-      "_links": {
-        "self": {
-          "href": "/api/storage/aggregates/c1931ba8-bb35-4b12-84dc-1e0643487144"
-        }
-      }
+      "volume_count": 36
     }
-  ],
-  "num_records": 2,
-  "_links": {
-    "self": {
-      "href": "/api/storage/aggregates?return_records=true&fields=*"
-    }
-  }
+  ]
 }
 ```
 
 The Rest collector will take this document, extract the `records` section and convert the metrics above
-into: `name`, `space.block_storage.size`, `space.block_storage.available`, `state` and `volume_count`. Metric names will be taken, as is, unless you
-specify a short display name. See [counters](configure-templates.md#counters) for more details.
+into: `name`, `space.block_storage.size`, `space.block_storage.available`, `state` and `volume_count`. Metric names will
+be taken, as is, unless you specify a short display name. See [counters](configure-templates.md#counters) for more
+details.
 
 ### Parameters
 
 The parameters of the collector are distributed across three files:
 
-- [Harvest configuration file](/configure-harvest-basic/#pollers) (default: `harvest.yml`)
+- [Harvest configuration file](configure-harvest-basic.md#pollers) (default: `harvest.yml`)
 - Rest configuration file (default: `conf/rest/default.yaml`)
 - Each object has its own configuration file (located in `conf/rest/$version/`)
 
@@ -101,7 +77,7 @@ of these parameters can be defined in the Harvest or object configuration files 
 |------------------|----------------------|-------------------------------------------------------------------------|-----------|
 | `client_timeout` | duration (Go-syntax) | how long to wait for server responses                                   | 30s       |
 | `schedule`       | list, **required**   | how frequently to retrieve metrics from ONTAP                           |           |
-| - `data`         | duration (Go-syntax) | how frequently this collector/object should retrieve metrics from ONTAP | 5 minutes |
+| - `data`         | duration (Go-syntax) | how frequently this collector/object should retrieve metrics from ONTAP | 3 minutes |
 
 The template should define objects in the `objects` section. Example:
 
@@ -128,7 +104,6 @@ The Object configuration file ("subtemplate") should contain the following param
 | `plugins`        | list                 | plugins and their parameters to run on the collected data   |         |
 | `export_options` | list                 | parameters to pass to exporters (see notes below)           |         |
 
-
 #### `counters`
 
 This section defines the list of counters that will be collected. These counters can be labels, numeric metrics or
@@ -147,10 +122,10 @@ exporters, the following parameters can be defined:
 * `instances_keys` (list): display names of labels to export with each data-point
 * `instance_labels` (list): display names of labels to export as a separate data-point
 * `include_all_labels` (bool): export all labels with each data-point (overrides previous two parameters)
-* 
+
 ## RestPerf Collector
 
-RestPerf collects performance metrics from ONTAP systems using the Rest protocol. The collector is designed to be easily
+RestPerf collects performance metrics from ONTAP systems using the REST protocol. The collector is designed to be easily
 extendable to collect new objects or to collect additional counters from already configured objects.
 
 This collector is an extension of the [Rest collector](#rest-collector). The major difference between them is that
@@ -159,7 +134,8 @@ deltas of two subsequent polls.
 
 ## Metrics
 
-Refer [metrics](/configure-zapi/#metrics_1)
+RestPerf metrics are calculated the same as ZapiPerf metrics. More details about how
+performance metrics are calculated can be found [here](configure-zapi.md#metrics_1).
 
 ## Parameters
 
@@ -184,21 +160,21 @@ configuration (explained in the next section).
 Additionally, this file contains the parameters that are applied as defaults to all objects. (As mentioned before, any
 of these parameters can be defined in the Harvest or object configuration files as well).
 
-| parameter          | type                 | description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | default |
-|--------------------|----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
-| `use_insecure_tls` | bool, optional       | skip verifying TLS certificate of the target system                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | `false` |
-| `client_timeout`   | duration (Go-syntax) | how long to wait for server responses                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | 30s     |
-| `latency_io_reqd`  | int, optional        | threshold of IOPs for calculating latency metrics (latencies based on very few IOPs are unreliable)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | `100`   |
-| `schedule`         | list, required       | the poll frequencies of the collector/object, should include exactly these three elements in the exact same other:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |         |
-| - `counter`        | duration (Go-syntax) | poll frequency of updating the counter metadata cache (example value: `1200s` = `20m`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |         |
-| - `instance`       | duration (Go-syntax) | poll frequency of updating the instance cache (example value: `600s` = `10m`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |         |
-| - `data`           | duration (Go-syntax) | poll frequency of updating the data cache (example value: `60s` = `1m`)<br /><br />**Note** Harvest allows defining poll intervals on sub-second level (e.g. `1ms`), however keep in mind the following:<br /><ul><li>API response of an ONTAP system can take several seconds, so the collector is likely to enter failed state if the poll interval is less than `client_timeout`.</li><li>Small poll intervals will create significant workload on the ONTAP system, as many counters are aggregated on-demand.</li><li>Some metric values become less significant if they are calculated for very short intervals (e.g. latencies)</li></ul> |         |
+| parameter          | type                 | description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |    default |
+|--------------------|----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------:|
+| `use_insecure_tls` | bool, optional       | skip verifying TLS certificate of the target system                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |      false |
+| `client_timeout`   | duration (Go-syntax) | how long to wait for server responses                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |        30s |
+| `latency_io_reqd`  | int, optional        | threshold of IOPs for calculating latency metrics (latencies based on very few IOPs are unreliable)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |        100 |
+| `schedule`         | list, required       | the poll frequencies of the collector/object, should include exactly these three elements in the exact same other:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |            |
+| - `counter`        | duration (Go-syntax) | poll frequency of updating the counter metadata cache                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 20 minutes |
+| - `instance`       | duration (Go-syntax) | poll frequency of updating the instance cache                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | 10 minutes |
+| - `data`           | duration (Go-syntax) | poll frequency of updating the data cache <br /><br />**Note** Harvest allows defining poll intervals on sub-second level (e.g. `1ms`), however keep in mind the following:<br /><ul><li>API response of an ONTAP system can take several seconds, so the collector is likely to enter failed state if the poll interval is less than `client_timeout`.</li><li>Small poll intervals will create significant workload on the ONTAP system, as many counters are aggregated on-demand.</li><li>Some metric values become less significant if they are calculated for very short intervals (e.g. latencies)</li></ul> |  1  minute |
 
 The template should define objects in the `objects` section. Example:
 
 ```yaml
 objects:
-  SystemNode:  system_node.yaml
+  SystemNode: system_node.yaml
   HostAdapter: hostadapter.yaml
 ```
 
@@ -210,15 +186,15 @@ RestPerf will fetch and validate counter metadata from the system.)
 
 ### Object configuration file
 
-Refer [Object configuration file](/configure-rest/#object-configuration-file)
+Refer [Object configuration file](configure-rest.md#object-configuration-file)
 
 #### `counters`
 
-Refer [Counters](/configure-rest/#counters)
+Refer [Counters](configure-rest.md#counters)
 
 Some counters require a "base-counter" for post-processing. If the base-counter is missing, RestPerf will still run, but
 the missing data won't be exported.
 
 #### `export_options`
 
-Refer [Export Options](/configure-rest/#export_options)
+Refer [Export Options](configure-rest.md#export_options)
