@@ -10,16 +10,17 @@ import (
 )
 
 const ZapiPerfDefaultFile = "conf/zapiperf/default.yaml"
+const RestPerfDefaultFile = "conf/restperf/default.yaml"
 
 const IsMac = runtime.GOOS == "darwin"
 
-func GetZapiPerfFileWithQosCounters() string {
+func GetPerfFileWithQosCounters(source string, target string) string {
 	// Create a file for writing
-	modifiedFilePath := utils.GetHarvestRootDir() + "/default.yaml"
+	modifiedFilePath := utils.GetHarvestRootDir() + "/" + target
 	utils.RemoveSafely(modifiedFilePath)
 	writeFile, _ := os.Create(modifiedFilePath)
 	writeBuffer := bufio.NewWriter(writeFile)
-	file, err := os.Open(utils.GetHarvestRootDir() + "/" + ZapiPerfDefaultFile)
+	file, err := os.Open(utils.GetHarvestRootDir() + "/" + source)
 	if err != nil {
 		log.Error().Err(err)
 	}

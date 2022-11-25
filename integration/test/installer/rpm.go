@@ -68,7 +68,8 @@ func (r *RPM) Upgrade() bool {
 	if previousVersion == installedVersion {
 		utils.PanicIfNotNil(fmt.Errorf("upgrade is failed"))
 	}
-	utils.Run("cp", setup.GetZapiPerfFileWithQosCounters(), HarvestHome+"/"+setup.ZapiPerfDefaultFile)
+	utils.Run("cp", setup.GetPerfFileWithQosCounters(setup.ZapiPerfDefaultFile, "defaultZapi.yaml"), HarvestHome+"/"+setup.ZapiPerfDefaultFile)
+	utils.Run("cp", setup.GetPerfFileWithQosCounters(setup.RestPerfDefaultFile, "defaultRest.yaml"), HarvestHome+"/"+setup.RestPerfDefaultFile)
 	harvestObj.Stop()
 	harvestObj.Start()
 	status := harvestObj.AllRunning()

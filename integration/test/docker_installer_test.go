@@ -19,10 +19,12 @@ func TestDockerInstall(t *testing.T) {
 	}
 	utils.WriteToken(utils.CreateGrafanaToken())
 	containerIds := docker.GetContainerID("poller")
-	fileName := setup.GetZapiPerfFileWithQosCounters()
+	fileZapiName := setup.GetPerfFileWithQosCounters(setup.ZapiPerfDefaultFile, "defaultZapi.yaml")
+	fileRestName := setup.GetPerfFileWithQosCounters(setup.RestPerfDefaultFile, "defaultRest.yaml")
 	for _, containerId := range containerIds {
 		docker.CopyFile(containerId, installer.HarvestConfigFile, installer.HarvestHome+"/"+installer.HarvestConfigFile)
-		docker.CopyFile(containerId, fileName, installer.HarvestHome+"/"+setup.ZapiPerfDefaultFile)
+		docker.CopyFile(containerId, fileZapiName, installer.HarvestHome+"/"+setup.ZapiPerfDefaultFile)
+		docker.CopyFile(containerId, fileRestName, installer.HarvestHome+"/"+setup.RestPerfDefaultFile)
 	}
 	docker.ReStartContainers("poller")
 }
