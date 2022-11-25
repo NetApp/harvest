@@ -2882,8 +2882,12 @@
           "id": 242,
           "options": {
             "legend": {
-              "calcs": [],
-              "displayMode": "list",
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
               "placement": "bottom"
             },
             "tooltip": {
@@ -2973,8 +2977,12 @@
           "id": 243,
           "options": {
             "legend": {
-              "calcs": [],
-              "displayMode": "list",
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
               "placement": "bottom"
             },
             "tooltip": {
@@ -3066,8 +3074,12 @@
           "id": 244,
           "options": {
             "legend": {
-              "calcs": [],
-              "displayMode": "list",
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
               "placement": "bottom"
             },
             "tooltip": {
@@ -5956,9 +5968,13 @@
           "id": 51,
           "options": {
             "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "right"
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
             },
             "tooltip": {
               "mode": "single"
@@ -5971,7 +5987,7 @@
               "expr": "svm_nfs_read_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Read",
+              "legendFormat": "Read - {{svm}}",
               "refId": "Read Latency"
             },
             {
@@ -5979,7 +5995,7 @@
               "expr": "svm_nfs_write_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write",
+              "legendFormat": "Write - {{svm}}",
               "refId": "Write Latency"
             }
           ],
@@ -6044,9 +6060,13 @@
           "id": 53,
           "options": {
             "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "right"
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
             },
             "tooltip": {
               "mode": "single"
@@ -6059,7 +6079,7 @@
               "expr": "svm_nfs_read_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Read",
+              "legendFormat": "Read - {{svm}}",
               "refId": "Read"
             },
             {
@@ -6067,7 +6087,7 @@
               "expr": "svm_nfs_write_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write",
+              "legendFormat": "Write - {{svm}}",
               "refId": "Write"
             },
             {
@@ -6075,7 +6095,7 @@
               "expr": "svm_nfs_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Total",
+              "legendFormat": "Total - {{svm}}",
               "refId": "Total"
             }
           ],
@@ -6140,9 +6160,13 @@
           "id": 42,
           "options": {
             "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "right"
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
             },
             "tooltip": {
               "mode": "single"
@@ -6155,7 +6179,7 @@
               "expr": "svm_nfs_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Read",
+              "legendFormat": "Read - {{svm}}",
               "refId": "Read Ops"
             },
             {
@@ -6163,14 +6187,14 @@
               "expr": "svm_nfs_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write",
+              "legendFormat": "Write - {{svm}}",
               "refId": "Write Ops"
             },
             {
               "exemplar": false,
               "expr": "svm_nfs_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}",
               "interval": "",
-              "legendFormat": "Total",
+              "legendFormat": "Total - {{svm}}",
               "refId": "Total Ops"
             }
           ],
@@ -6241,7 +6265,7 @@
                 "mean"
               ],
               "displayMode": "table",
-              "placement": "right"
+              "placement": "bottom"
             },
             "tooltip": {
               "mode": "single"
@@ -6334,7 +6358,7 @@
                 "sum"
               ],
               "displayMode": "table",
-              "placement": "right"
+              "placement": "bottom"
             },
             "tooltip": {
               "mode": "single"
@@ -7230,9 +7254,13 @@
           "id": 145,
           "options": {
             "legend": {
-              "calcs": [],
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
               "displayMode": "table",
-              "placement": "right"
+              "placement": "bottom"
             },
             "tooltip": {
               "mode": "single"
@@ -7245,7 +7273,7 @@
               "expr": "svm_nfs_read_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Read",
+              "legendFormat": "Read - {{svm}}",
               "refId": "Read Latency"
             },
             {
@@ -7253,7 +7281,7 @@
               "expr": "svm_nfs_write_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write",
+              "legendFormat": "Write - {{svm}}",
               "refId": "Write Latency"
             }
           ],
@@ -7325,9 +7353,13 @@
           "id": 146,
           "options": {
             "legend": {
-              "calcs": [],
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
               "displayMode": "table",
-              "placement": "right"
+              "placement": "bottom"
             },
             "tooltip": {
               "mode": "single"
@@ -7340,7 +7372,7 @@
               "expr": "svm_nfs_read_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Read",
+              "legendFormat": "Read - {{svm}}",
               "refId": "Read Latency"
             },
             {
@@ -7348,7 +7380,7 @@
               "expr": "svm_nfs_write_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write",
+              "legendFormat": "Write - {{svm}}",
               "refId": "Write Latency"
             }
           ],
@@ -7415,9 +7447,13 @@
           "id": 147,
           "options": {
             "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "right"
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
             },
             "tooltip": {
               "mode": "single"
@@ -7430,7 +7466,7 @@
               "expr": "svm_nfs_read_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Read",
+              "legendFormat": "Read - {{svm}}",
               "refId": "Read Ops"
             },
             {
@@ -7438,14 +7474,14 @@
               "expr": "svm_nfs_write_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write",
+              "legendFormat": "Write - {{svm}}",
               "refId": "Write Ops"
             },
             {
               "exemplar": false,
               "expr": "svm_nfs_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"}",
               "interval": "",
-              "legendFormat": "Total",
+              "legendFormat": "Total - {{svm}}",
               "refId": "Total Ops"
             }
           ],
@@ -7520,7 +7556,7 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "right"
+              "placement": "bottom"
             },
             "tooltip": {
               "mode": "single"
@@ -7620,7 +7656,7 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "right"
+              "placement": "bottom"
             },
             "tooltip": {
               "mode": "single"
@@ -8518,9 +8554,13 @@
           "id": 172,
           "options": {
             "legend": {
-              "calcs": [],
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
               "displayMode": "table",
-              "placement": "right"
+              "placement": "bottom"
             },
             "tooltip": {
               "mode": "single"
@@ -8533,7 +8573,7 @@
               "expr": "svm_nfs_read_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4.1\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Read",
+              "legendFormat": "Read - {{svm}}",
               "refId": "Read Latency"
             },
             {
@@ -8541,7 +8581,7 @@
               "expr": "svm_nfs_write_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4.1\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write",
+              "legendFormat": "Write - {{svm}}",
               "refId": "Write Latency"
             }
           ],
@@ -8613,9 +8653,13 @@
           "id": 173,
           "options": {
             "legend": {
-              "calcs": [],
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
               "displayMode": "table",
-              "placement": "right"
+              "placement": "bottom"
             },
             "tooltip": {
               "mode": "single"
@@ -8628,7 +8672,7 @@
               "expr": "svm_nfs_read_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4.1\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Read",
+              "legendFormat": "Read - {{svm}}",
               "refId": "Read Latency"
             },
             {
@@ -8636,13 +8680,13 @@
               "expr": "svm_nfs_write_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4.1\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write",
+              "legendFormat": "Write - {{svm}}",
               "refId": "Write Latency"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "NFSv4.1 Throughput)",
+          "title": "NFSv4.1 Throughput",
           "type": "timeseries"
         },
         {
@@ -8708,9 +8752,13 @@
           "id": 174,
           "options": {
             "legend": {
-              "calcs": [],
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
               "displayMode": "table",
-              "placement": "right"
+              "placement": "bottom"
             },
             "tooltip": {
               "mode": "single"
@@ -8723,7 +8771,7 @@
               "expr": "svm_nfs_read_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4.1\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Read",
+              "legendFormat": "Read - {{svm}}",
               "refId": "Read Ops"
             },
             {
@@ -8731,14 +8779,14 @@
               "expr": "svm_nfs_write_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4.1\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write",
+              "legendFormat": "Write - {{svm}}",
               "refId": "Write Ops"
             },
             {
               "exemplar": false,
               "expr": "svm_nfs_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4.1\"}",
               "interval": "",
-              "legendFormat": "Total",
+              "legendFormat": "Total - {{svm}}",
               "refId": "Total Ops"
             }
           ],
@@ -8816,7 +8864,7 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "right"
+              "placement": "bottom"
             },
             "tooltip": {
               "mode": "single"
@@ -8916,7 +8964,7 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "right"
+              "placement": "bottom"
             },
             "tooltip": {
               "mode": "single"
@@ -10228,7 +10276,7 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "right"
+              "placement": "bottom"
             },
             "tooltip": {
               "mode": "single"
@@ -10867,9 +10915,13 @@
           "id": 218,
           "options": {
             "legend": {
-              "calcs": [],
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
               "displayMode": "table",
-              "placement": "right"
+              "placement": "bottom"
             },
             "tooltip": {
               "mode": "single"
@@ -10881,7 +10933,7 @@
               "exemplar": false,
               "expr": "avg(qos_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
               "interval": "",
-              "legendFormat": "Read",
+              "legendFormat": "Read - {{svm}}",
               "refId": "A"
             },
             {
@@ -10889,7 +10941,7 @@
               "expr": "avg(qos_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write",
+              "legendFormat": "Write - {{svm}}",
               "refId": "B"
             }
           ],
@@ -10960,9 +11012,13 @@
           "id": 219,
           "options": {
             "legend": {
-              "calcs": [],
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
               "displayMode": "table",
-              "placement": "right"
+              "placement": "bottom"
             },
             "tooltip": {
               "mode": "single"
@@ -10974,7 +11030,7 @@
               "exemplar": false,
               "expr": "sum(qos_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
               "interval": "",
-              "legendFormat": "Read",
+              "legendFormat": "Read - {{svm}}",
               "refId": "A"
             },
             {
@@ -10982,7 +11038,7 @@
               "expr": "sum(qos_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write",
+              "legendFormat": "Write - {{svm}}",
               "refId": "B"
             }
           ],
@@ -11054,9 +11110,13 @@
           "id": 220,
           "options": {
             "legend": {
-              "calcs": [],
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
               "displayMode": "table",
-              "placement": "right"
+              "placement": "bottom"
             },
             "tooltip": {
               "mode": "single"
@@ -11068,7 +11128,7 @@
               "exemplar": false,
               "expr": "sum(qos_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
               "interval": "",
-              "legendFormat": "Read",
+              "legendFormat": "Read - {{svm}}",
               "refId": "A"
             },
             {
@@ -11076,7 +11136,7 @@
               "expr": "sum(qos_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write",
+              "legendFormat": "Write - {{svm}}",
               "refId": "B"
             }
           ],
@@ -11154,7 +11214,7 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "right"
+              "placement": "bottom"
             },
             "tooltip": {
               "mode": "single"
@@ -12617,7 +12677,7 @@
             "lastNotNull"
           ],
           "displayMode": "table",
-          "placement": "right"
+          "placement": "bottom"
         },
         "tooltip": {
           "mode": "single"
@@ -12629,7 +12689,7 @@
           "exemplar": false,
           "expr": "volume_sis_total_saved{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
           "interval": "",
-          "legendFormat": "{{volume}}",
+          "legendFormat": "{{volume}} - {{svm}}",
           "refId": "A"
         }
       ],
