@@ -39,7 +39,8 @@ func (n *Native) Install() bool {
 
 	utils.Run("mkdir", "-p", path)
 	utils.Run("cp", "-R", utils.GetConfigDir()+"/certificates", HarvestHome)
-	utils.Run("cp", setup.GetZapiPerfFileWithQosCounters(), HarvestHome+"/"+setup.ZapiPerfDefaultFile)
+	utils.Run("cp", setup.GetPerfFileWithQosCounters(setup.ZapiPerfDefaultFile, "defaultZapi.yaml"), HarvestHome+"/"+setup.ZapiPerfDefaultFile)
+	utils.Run("cp", setup.GetPerfFileWithQosCounters(setup.RestPerfDefaultFile, "defaultRest.yaml"), HarvestHome+"/"+setup.RestPerfDefaultFile)
 	err = utils.CopyFile(harvestFile, HarvestHome+"/"+harvestFile)
 	if err != nil {
 		panic(err)
