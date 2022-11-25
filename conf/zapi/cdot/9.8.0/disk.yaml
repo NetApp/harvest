@@ -35,13 +35,16 @@ counters:
 plugins:
   - LabelAgent:
     # metric label zapi_value rest_value `default_value`
-    value_to_num:
-      - new_status outage - - `0` #ok_value is empty value, '-' would be converted to blank while processing.
+      value_to_num:
+        - new_status outage - - `0` #ok_value is empty value, '-' would be converted to blank while processing.
+      join:
+        - index `_` node,disk
 
 export_options:
   instance_keys:
     - node
     - disk
+    - index
   instance_labels:
     - type
     - model

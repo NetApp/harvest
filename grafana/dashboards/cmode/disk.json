@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1668089062536,
+  "iteration": 1669283166412,
   "links": [
     {
       "asDropdown": true,
@@ -1333,354 +1333,444 @@
         "y": 29
       },
       "id": 22,
-      "panels": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Some Clusters don't report average latency, so the values might be 0s.",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {
-                "align": "left",
-                "displayMode": "auto",
-                "filterable": false
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "rgb(31, 176, 196)",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "none"
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "disk"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Disk"
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 144
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "type"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Type"
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 144
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Model"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 191
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Serial"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 185
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Value #B"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Capacity"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "decbytes"
-                  },
-                  {
-                    "id": "decimals",
-                    "value": 2
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Value #A"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Avg IOPs"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "KiBs"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Value #D"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Avg Latency"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "ms"
-                  },
-                  {
-                    "id": "decimals",
-                    "value": 4
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Value #C"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Power On Time"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "clocks"
-                  },
-                  {
-                    "id": "decimals",
-                    "value": 2
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "shelf"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 69
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "container_type"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Container Type"
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 170
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "diskStatus"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Status"
-                  },
-                  {
-                    "id": "mappings",
-                    "value": [
-                      {
-                        "options": {
-                          " ": {
-                            "text": "Ok"
-                          }
-                        },
-                        "type": "value"
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "shelf_bay"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 95
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 10,
-            "w": 24,
-            "x": 0,
-            "y": 2
-          },
-          "id": 18,
-          "interval": "1m",
-          "maxDataPoints": 2,
-          "options": {
-            "showHeader": true,
-            "sortBy": [
-              {
-                "desc": true,
-                "displayName": "Avg IOPs"
-              }
-            ]
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "expr": "disk_bytes_per_sector * disk_sectors{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "",
-              "refId": "B"
-            },
-            {
-              "expr": "disk_stats_io_kbps{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "",
-              "refId": "A"
-            },
-            {
-              "expr": "disk_stats_average_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "",
-              "refId": "D"
-            },
-            {
-              "expr": "disk_uptime{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "",
-              "refId": "C"
-            },
-            {
-              "exemplar": true,
-              "expr": "label_join(disk_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, \"diskStatus\", \" \",\"NonSupportedField\", \"outage\")",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "",
-              "refId": "E"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Disks in Cluster",
-          "transformations": [
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {
-                  "Time": true,
-                  "Value #E": true,
-                  "__name__": true,
-                  "aggr": true,
-                  "cluster": true,
-                  "datacenter": true,
-                  "failed": true,
-                  "instance": true,
-                  "job": true,
-                  "model": true,
-                  "node": true,
-                  "outage": true,
-                  "owner_node": true,
-                  "serial_number": true,
-                  "shared": true,
-                  "shelf": true,
-                  "shelf_bay": true
-                },
-                "indexByName": {
-                  "Time": 0,
-                  "Value": 7,
-                  "cluster": 2,
-                  "datacenter": 1,
-                  "disk": 3,
-                  "instance": 10,
-                  "job": 11,
-                  "model": 4,
-                  "serial_number": 5,
-                  "shelf": 1,
-                  "shelf_bay": 2,
-                  "type": 4
-                },
-                "renameByName": {}
-              }
-            },
-            {
-              "id": "merge",
-              "options": {}
-            }
-          ],
-          "type": "table"
-        }
-      ],
+      "panels": [],
       "title": "List of Disks",
       "type": "row"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Some Clusters don't report average latency, so the values might be 0s.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "left",
+            "displayMode": "auto",
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgb(31, 176, 196)",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "disk"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Disk"
+              },
+              {
+                "id": "custom.width",
+                "value": 144
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "type"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Type"
+              },
+              {
+                "id": "custom.width",
+                "value": 144
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Model"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 191
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Serial"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 185
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value #B"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Capacity"
+              },
+              {
+                "id": "unit",
+                "value": "decbytes"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value #A"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Avg IOPs"
+              },
+              {
+                "id": "unit",
+                "value": "KiBs"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value #D"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Avg Latency"
+              },
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "decimals",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value #C"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Power On Time"
+              },
+              {
+                "id": "unit",
+                "value": "clocks"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "shelf"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 69
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "container_type"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Container Type"
+              },
+              {
+                "id": "custom.width",
+                "value": 170
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "diskStatus"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Status"
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      " ": {
+                        "text": "Ok"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "shelf_bay"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 95
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 30
+      },
+      "id": 18,
+      "interval": "1m",
+      "maxDataPoints": 2,
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Avg IOPs"
+          }
+        ]
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "expr": "disk_bytes_per_sector * disk_sectors{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "B"
+        },
+        {
+          "exemplar": true,
+          "expr": "disk_stats_io_kbps{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        },
+        {
+          "expr": "disk_stats_average_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "D"
+        },
+        {
+          "expr": "disk_uptime{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "C"
+        },
+        {
+          "exemplar": true,
+          "expr": "label_join(disk_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, \"diskStatus\", \" \",\"NonSupportedField\", \"outage\")",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "E"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Disks in Cluster",
+      "transformations": [
+        {
+          "id": "seriesToColumns",
+          "options": {
+            "byField": "index"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Time 1": true,
+              "Time 2": true,
+              "Time 4": true,
+              "Time 5": true,
+              "Value #B": false,
+              "Value #C": false,
+              "Value #E": true,
+              "__name__": true,
+              "__name__ 1": true,
+              "__name__ 3": true,
+              "__name__ 4": true,
+              "aggr": true,
+              "cluster": false,
+              "cluster 2": true,
+              "cluster 3": true,
+              "cluster 4": true,
+              "cluster 5": true,
+              "datacenter": false,
+              "datacenter 2": true,
+              "datacenter 3": true,
+              "datacenter 4": true,
+              "datacenter 5": true,
+              "disk 2": true,
+              "disk 3": true,
+              "disk 4": true,
+              "disk 5": true,
+              "failed": true,
+              "index": true,
+              "index 1": true,
+              "instance": true,
+              "instance 1": true,
+              "instance 2": true,
+              "instance 4": true,
+              "instance 5": true,
+              "job": true,
+              "job 1": true,
+              "job 2": true,
+              "job 3": true,
+              "job 4": true,
+              "job 5": true,
+              "model": true,
+              "node": false,
+              "node 2": true,
+              "node 3": true,
+              "node 4": true,
+              "node 5": true,
+              "outage": true,
+              "owner_node": true,
+              "serial_number": true,
+              "shared": true,
+              "shelf": true,
+              "shelf_bay": true
+            },
+            "indexByName": {
+              "Time 1": 6,
+              "Time 2": 9,
+              "Time 3": 18,
+              "Time 4": 27,
+              "Time 5": 36,
+              "Value #A": 17,
+              "Value #B": 5,
+              "Value #C": 35,
+              "Value #D": 26,
+              "Value #E": 54,
+              "__name__ 1": 10,
+              "__name__ 2": 19,
+              "__name__ 3": 28,
+              "__name__ 4": 37,
+              "cluster 1": 1,
+              "cluster 2": 11,
+              "cluster 3": 20,
+              "cluster 4": 29,
+              "cluster 5": 38,
+              "container_type": 40,
+              "datacenter 1": 0,
+              "datacenter 2": 12,
+              "datacenter 3": 21,
+              "datacenter 4": 30,
+              "datacenter 5": 41,
+              "disk 1": 4,
+              "disk 2": 13,
+              "disk 3": 22,
+              "disk 4": 31,
+              "disk 5": 42,
+              "diskStatus": 43,
+              "failed": 44,
+              "index": 3,
+              "instance 1": 7,
+              "instance 2": 14,
+              "instance 3": 23,
+              "instance 4": 32,
+              "instance 5": 45,
+              "job 1": 8,
+              "job 2": 15,
+              "job 3": 24,
+              "job 4": 33,
+              "job 5": 46,
+              "model": 47,
+              "node 1": 2,
+              "node 2": 16,
+              "node 3": 25,
+              "node 4": 34,
+              "node 5": 48,
+              "owner_node": 49,
+              "serial_number": 50,
+              "shared": 51,
+              "shelf": 52,
+              "shelf_bay": 53,
+              "type": 39
+            },
+            "renameByName": {
+              "cluster 1": "Cluster",
+              "datacenter 1": "Datacenter",
+              "disk 1": "Disk",
+              "node 1": "Node"
+            }
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        }
+      ],
+      "type": "table"
     },
     {
       "collapsed": true,
@@ -1689,7 +1779,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 40
       },
       "id": 28,
       "panels": [
@@ -2513,11 +2603,15 @@
         "type": "custom"
       },
       {
+        "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, max by (aggr) (avg_over_time(aggr_disk_max_user_read_chain{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[${__range}]))))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "TopDiskUserReadChain",
         "options": [],
@@ -2532,11 +2626,15 @@
         "type": "query"
       },
       {
+        "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, max by (aggr) (avg_over_time(aggr_disk_max_user_write_chain{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[${__range}]))))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "TopDiskUserWriteChain",
         "options": [],
@@ -2551,10 +2649,15 @@
         "type": "query"
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, max by (aggr) (avg_over_time(aggr_disk_max_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[${__range}]))))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "TopDiskBusy",
         "options": [],
@@ -2569,11 +2672,15 @@
         "type": "query"
       },
       {
+        "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, max by (aggr) (avg_over_time(aggr_disk_max_total_transfers{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[${__range}]))))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "TopDiskTotalTransfers",
         "options": [],
@@ -2609,5 +2716,5 @@
   "timezone": "",
   "title": "ONTAP: Disk",
   "uid": "",
-  "version": 27
+  "version": 28
 }
