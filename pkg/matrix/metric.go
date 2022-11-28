@@ -67,15 +67,14 @@ type Metric interface {
 	SetValueNAN(*Instance)
 	// methods for reading from metric storage
 
-	GetValueInt(*Instance) (int, bool, bool)
-	GetValueInt64(*Instance) (int64, bool, bool)
-	GetValueUint8(*Instance) (uint8, bool, bool)
-	GetValueUint64(*Instance) (uint64, bool, bool)
-	GetValueFloat64(*Instance) (float64, bool, bool)
-	GetValueString(*Instance) (string, bool, bool)
-	GetValueBytes(*Instance) ([]byte, bool, bool)
+	GetValueInt(*Instance) (int, bool)
+	GetValueInt64(*Instance) (int64, bool)
+	GetValueUint8(*Instance) (uint8, bool)
+	GetValueUint64(*Instance) (uint64, bool)
+	GetValueFloat64(*Instance) (float64, bool)
+	GetValueString(*Instance) (string, bool)
+	GetValueBytes(*Instance) ([]byte, bool)
 	GetRecords() []bool
-	GetPass() []bool
 	GetValuesFloat64() []float64
 
 	// methods for doing vector arithmetics
@@ -100,7 +99,6 @@ type AbstractMetric struct {
 	labels     *dict.Dict
 	buckets    *[]string
 	record     []bool
-	pass       []bool
 }
 
 func (m *AbstractMetric) Clone(deep bool) *AbstractMetric {
@@ -121,10 +119,6 @@ func (m *AbstractMetric) Clone(deep bool) *AbstractMetric {
 		if len(m.record) != 0 {
 			clone.record = make([]bool, len(m.record))
 			copy(clone.record, m.record)
-		}
-		if len(m.pass) != 0 {
-			clone.pass = make([]bool, len(m.pass))
-			copy(clone.pass, m.pass)
 		}
 	}
 	return &clone
@@ -218,10 +212,6 @@ func (m *AbstractMetric) HasLabels() bool {
 
 func (m *AbstractMetric) GetRecords() []bool {
 	return m.record
-}
-
-func (m *AbstractMetric) GetPass() []bool {
-	return m.pass
 }
 
 func (m *AbstractMetric) SetValueNAN(i *Instance) {

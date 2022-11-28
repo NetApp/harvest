@@ -131,7 +131,7 @@ func TestSensor_Run(t *testing.T) {
 	for _, k := range eMetrics {
 		metrics := omat[0].GetMetrics()
 		for iKey, v := range omat[0].GetInstances() {
-			got, _, _ := metrics[k].GetValueFloat64(v)
+			got, _ := metrics[k].GetValueFloat64(v)
 			exp := expected[k][iKey]
 			if got != exp {
 				t.Errorf("instance %s metrics %s expected: = %v, got: %v", iKey, k, exp, got)
