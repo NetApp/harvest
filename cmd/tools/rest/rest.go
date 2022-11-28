@@ -52,7 +52,7 @@ var Cmd = &cobra.Command{
 var showCmd = &cobra.Command{
 	Use:       "show",
 	Short:     "item to show, one of: " + strings.Join(validShowArgs, ", "),
-	Args:      cobra.ExactValidArgs(1),
+	Args:      cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 	ValidArgs: validShowArgs,
 	Run:       doShow,
 }
