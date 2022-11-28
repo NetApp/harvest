@@ -159,8 +159,11 @@ security login create -user-or-group-name harvest2 -application http -role harve
 Or this for certificate authentication
 
 ```bash
-security login create -user-or-group-name harvest2 -application ontapi \
- -role harvest2-role -authentication-method cert
+# ZAPI based access
+security login create -user-or-group-name harvest2 -application ontapi -role harvest2-role -authentication-method cert
+ 
+# REST based access
+security login create -user-or-group-name harvest2 -application http -role harvest2-role -authentication-method cert 
 ```
 
 #### 7-Mode CLI
@@ -291,7 +294,7 @@ X509v3 extensions:
 
 #### Install Root CA Certificate On Cluster
 
-Login to your cluster with admin credentials and install the server certificate authority.
+Login to your cluster with admin credentials and install the server certificate authority. Copy from `ca/certs/ca.cert.pem`
 
 ```
 ssh admin@IP
@@ -311,7 +314,7 @@ Serial: 46AFFC7A3A9999999E8FB2FEB0
 The certificate's generated name for reference: ntap
 ```
 
-Now install the server certificate we created above with SAN.
+Now install the server certificate we created above with SAN. Copy certificate from `ca/umeng-aff300-05-06.crt` and private key from `ca/umeng-aff300-05-06.key`
 
 ```
 umeng-aff300-05-06::*> security certificate install -type server
@@ -414,7 +417,7 @@ openssl req -x509 -nodes -days 1095 -newkey rsa:2048 -keyout cert/$(hostname).ke
 
 ## Install Client Certificates on Cluster
 
-Login to your cluster with admin credentials and install the client certificate.
+Login to your cluster with admin credentials and install the client certificate. Copy from `cert/$(hostname).pem`
 
 ```
 ssh admin@IP
@@ -441,7 +444,7 @@ umeng-aff300-05-06::*> ssl modify -vserver umeng-aff300-05-06 -client-enabled tr
   (security ssl modify)
 ```
 
-Verify with a recent version of `curl`. If you are runnin on a Mac [see below]().
+Verify with a recent version of `curl`. If you are running on a Mac [see below](#macos).
 
 ```
 curl --cacert umeng-aff300-05-06.crt --key cert/$(hostname).key --cert cert/$(hostname).pem https://umeng-aff300-05-06-cm.rtp.openenglab.netapp.com/api/storage/disks
