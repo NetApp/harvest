@@ -1039,7 +1039,7 @@
               "exemplar": false,
               "expr": "volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
               "interval": "",
-              "legendFormat": " {{volume}}",
+              "legendFormat": "{{volume}} - {{svm}}",
               "refId": "A"
             }
           ],
@@ -1128,7 +1128,7 @@
               "exemplar": false,
               "expr": "volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
               "interval": "",
-              "legendFormat": "{{volume}}",
+              "legendFormat": "{{volume}} - {{svm}}",
               "refId": "A"
             }
           ],
@@ -1217,7 +1217,7 @@
               "exemplar": false,
               "expr": "volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
               "interval": "",
-              "legendFormat": "{{volume}}",
+              "legendFormat": "{{volume}} - {{svm}}",
               "refId": "A"
             }
           ],
@@ -1306,7 +1306,7 @@
               "exemplar": false,
               "expr": "volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
               "interval": "",
-              "legendFormat": "{{volume}}",
+              "legendFormat": "{{volume}} - {{svm}}",
               "refId": "A"
             }
           ],
@@ -1395,7 +1395,7 @@
               "exemplar": false,
               "expr": "volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
               "interval": "",
-              "legendFormat": "{{volume}}",
+              "legendFormat": "{{volume}} - {{svm}}",
               "refId": "A"
             }
           ],
@@ -1484,7 +1484,7 @@
               "exemplar": false,
               "expr": "volume_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
               "interval": "",
-              "legendFormat": "{{volume}}",
+              "legendFormat": "{{volume}} - {{svm}}",
               "refId": "A"
             }
           ],
@@ -12182,7 +12182,7 @@
           "exemplar": false,
           "expr": "volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
           "interval": "",
-          "legendFormat": "{{volume}}",
+          "legendFormat": "{{volume}} - {{svm}}",
           "refId": "A"
         }
       ],
@@ -12271,7 +12271,7 @@
           "exemplar": false,
           "expr": "volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
           "interval": "",
-          "legendFormat": "{{volume}}",
+          "legendFormat": "{{volume}} - {{svm}}",
           "refId": "A"
         }
       ],
@@ -12360,7 +12360,7 @@
           "exemplar": false,
           "expr": "volume_sis_dedup_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
           "interval": "",
-          "legendFormat": "{{volume}}",
+          "legendFormat": "{{volume}} - {{svm}}",
           "refId": "A"
         }
       ],
@@ -12449,7 +12449,7 @@
           "exemplar": false,
           "expr": "volume_sis_dedup_saved{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
           "interval": "",
-          "legendFormat": "{{volume}}",
+          "legendFormat": "{{volume}} - {{svm}}",
           "refId": "A"
         }
       ],
@@ -12539,7 +12539,7 @@
           "exemplar": false,
           "expr": "volume_sis_compress_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
           "interval": "",
-          "legendFormat": "{{volume}}",
+          "legendFormat": "{{volume}} - {{svm}}",
           "refId": "A"
         }
       ],
@@ -12629,7 +12629,7 @@
           "exemplar": false,
           "expr": "volume_sis_compress_saved{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
           "interval": "",
-          "legendFormat": "{{volume}}",
+          "legendFormat": "{{volume}} - {{svm}}",
           "refId": "A"
         }
       ],
