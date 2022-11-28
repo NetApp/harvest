@@ -2027,7 +2027,7 @@
       "type": "timeseries"
     },
     {
-      "collapsed": false,
+      "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {},
@@ -3342,7 +3342,7 @@
       "type": "timeseries"
     },
     {
-      "collapsed": false,
+      "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {},
@@ -3815,7 +3815,7 @@
       "type": "timeseries"
     },
     {
-      "collapsed": false,
+      "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {},
