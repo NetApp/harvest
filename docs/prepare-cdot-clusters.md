@@ -314,7 +314,7 @@ Serial: 46AFFC7A3A9999999E8FB2FEB0
 The certificate's generated name for reference: ntap
 ```
 
-Now install the server certificate we created above with SAN. Copy certificate from `ca/umeng-aff300-05-06.crt` and private key from `ca/umeng-aff300-01-02.key`
+Now install the server certificate we created above with SAN. Copy certificate from `ca/umeng-aff300-05-06.crt` and private key from `ca/umeng-aff300-05-06.key`
 
 ```
 umeng-aff300-05-06::*> security certificate install -type server
@@ -444,7 +444,7 @@ umeng-aff300-05-06::*> ssl modify -vserver umeng-aff300-05-06 -client-enabled tr
   (security ssl modify)
 ```
 
-Verify with a recent version of `curl`. If you are runnin on a Mac [see below](#macos).
+Verify with a recent version of `curl`. If you are running on a Mac [see below](#macos).
 
 ```
 curl --cacert umeng-aff300-05-06.crt --key cert/$(hostname).key --cert cert/$(hostname).pem https://umeng-aff300-05-06-cm.rtp.openenglab.netapp.com/api/storage/disks
