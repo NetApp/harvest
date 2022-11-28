@@ -28,6 +28,6 @@ and GitHub [discussions](https://github.com/NetApp/harvest/discussions). Come jo
 
 ---
 
-<p align="center">
+<div style="text-align: center">
 Developed with :blue_heart: by <strong><a href="https://netapp.com">NetApp</a></strong> - <a href="https://www.netapp.com/us/company/trust-center/index.aspx">Privacy Policy</a>
-</p>
+</div>
