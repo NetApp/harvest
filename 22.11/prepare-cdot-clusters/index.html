@@ -1462,8 +1462,11 @@ security login create -user-or-group-name harvest2 -application ontapi -role har
 security login create -user-or-group-name harvest2 -application http -role harvest2-role -authentication-method password   
 </code></pre></div>
 <p>Or this for certificate authentication</p>
-<div class="highlight"><pre><span></span><code>security login create -user-or-group-name harvest2 -application ontapi <span class="se">\</span>
- -role harvest2-role -authentication-method cert
+<div class="highlight"><pre><span></span><code><span class="c1"># ZAPI based access</span>
+security login create -user-or-group-name harvest2 -application ontapi -role harvest2-role -authentication-method cert
+
+<span class="c1"># REST based access</span>
+security login create -user-or-group-name harvest2 -application http -role harvest2-role -authentication-method cert 
 </code></pre></div>
 <h4 id="7-mode-cli">7-Mode CLI<a class="headerlink" href="#7-mode-cli" title="Permanent link">&para;</a></h4>
 <p>Login to the CLI of your 7-Mode ONTAP system (e.g. using SSH). First, we create a user role. If you want to give the
@@ -1564,7 +1567,7 @@ X509v3 extensions:
     Signature Algorithm: sha256WithRSAEncryption   &lt;======== Signature Algorithm can not be sha-1
 </code></pre></div>
 <h4 id="install-root-ca-certificate-on-cluster">Install Root CA Certificate On Cluster<a class="headerlink" href="#install-root-ca-certificate-on-cluster" title="Permanent link">&para;</a></h4>
-<p>Login to your cluster with admin credentials and install the server certificate authority.</p>
+<p>Login to your cluster with admin credentials and install the server certificate authority. Copy from <code>ca/certs/ca.cert.pem</code></p>
 <div class="highlight"><pre><span></span><code>ssh admin@IP
 umeng-aff300-05-06::*&gt; security certificate install -type server-ca
 
@@ -1581,7 +1584,7 @@ Serial: 46AFFC7A3A9999999E8FB2FEB0
 
 The certificate&#39;s generated name for reference: ntap
 </code></pre></div>
-<p>Now install the server certificate we created above with SAN.</p>
+<p>Now install the server certificate we created above with SAN. Copy certificate from <code>ca/umeng-aff300-05-06.crt</code> and private key from <code>ca/umeng-aff300-05-06.key</code></p>
 <div class="highlight"><pre><span></span><code>umeng-aff300-05-06::*&gt; security certificate install -type server
 
 Please enter Certificate: Press &lt;Enter&gt; when done
@@ -1659,7 +1662,7 @@ mkdir cert
 openssl req -x509 -nodes -days 1095 -newkey rsa:2048 -keyout cert/$(hostname).key -out cert/$(hostname).pem -subj &quot;/CN=harvest2&quot;
 </code></pre></div>
 <h2 id="install-client-certificates-on-cluster">Install Client Certificates on Cluster<a class="headerlink" href="#install-client-certificates-on-cluster" title="Permanent link">&para;</a></h2>
-<p>Login to your cluster with admin credentials and install the client certificate.</p>
+<p>Login to your cluster with admin credentials and install the client certificate. Copy from <code>cert/$(hostname).pem</code></p>
 <div class="highlight"><pre><span></span><code>ssh admin@IP
 umeng-aff300-05-06::*&gt;  security certificate install -type client-ca -vserver umeng-aff300-05-06
 
@@ -1680,7 +1683,7 @@ The certificate&#39;s generated name for reference: cbg_B77B59444444CCCC
 <div class="highlight"><pre><span></span><code>umeng-aff300-05-06::*&gt; ssl modify -vserver umeng-aff300-05-06 -client-enabled true
   (security ssl modify)
 </code></pre></div>
-<p>Verify with a recent version of <code>curl</code>. If you are runnin on a Mac <a href="">see below</a>.</p>
+<p>Verify with a recent version of <code>curl</code>. If you are running on a Mac <a href="#macos">see below</a>.</p>
 <div class="highlight"><pre><span></span><code>curl --cacert umeng-aff300-05-06.crt --key cert/$(hostname).key --cert cert/$(hostname).pem https://umeng-aff300-05-06-cm.rtp.openenglab.netapp.com/api/storage/disks
 </code></pre></div>
 <h2 id="update-harvestyml-to-use-client-certificates">Update Harvest.yml to use client certificates<a class="headerlink" href="#update-harvestyml-to-use-client-certificates" title="Permanent link">&para;</a></h2>
