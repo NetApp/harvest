@@ -368,7 +368,7 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 							Msg("failed to get metric")
 					}
 					// check instance timestamp and remove it after given resolve_after value
-					if metricTimestamp, ok, _ = metr.GetValueFloat64(instance); ok {
+					if metricTimestamp, ok = metr.GetValueFloat64(instance); ok {
 						if collectors.IsTimestampOlderThanDuration(metricTimestamp, e.resolveAfter) {
 							mx.RemoveInstance(instanceKey)
 						}
@@ -789,7 +789,7 @@ func (e *Ems) updateMatrix() {
 			// set export to false
 			instance.SetExportable(false)
 
-			if val, ok, _ = metr.GetValueFloat64(instance); ok && val == 0 {
+			if val, ok = metr.GetValueFloat64(instance); ok && val == 0 {
 				mx.RemoveInstance(instanceKey)
 			}
 		}

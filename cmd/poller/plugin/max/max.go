@@ -148,7 +148,6 @@ func (m *Max) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		objMetric       matrix.Metric
 		value           float64
 		ok              bool
-		pass            bool
 		err             error
 	)
 
@@ -193,7 +192,7 @@ func (m *Max) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					}
 				}
 
-				if value, ok, pass = metric.GetValueFloat64(instance); !ok || !pass {
+				if value, ok = metric.GetValueFloat64(instance); !ok {
 					continue
 				}
 
@@ -202,7 +201,7 @@ func (m *Max) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					continue
 				}
 
-				v, _, _ := objMetric.GetValueFloat64(objInstance)
+				v, _ := objMetric.GetValueFloat64(objInstance)
 
 				if value > v {
 					if err = objMetric.SetValueFloat64(objInstance, value); err != nil {

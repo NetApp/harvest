@@ -119,7 +119,7 @@ func TestMultipleRule(t *testing.T) {
 	}
 
 	expected = 1
-	if v, ok, pass := status.GetValueUint8(instanceA); !ok || !pass {
+	if v, ok := status.GetValueUint8(instanceA); !ok {
 		t.Error("metric [status]: value for InstanceA not set")
 	} else if v != expected {
 		t.Errorf("metric [status]: value for InstanceA is %d, expected %d", v, expected)
