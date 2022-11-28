@@ -324,25 +324,25 @@ func (my *Shelf) calculateEnvironmentMetrics(data *matrix.Matrix) error {
 					if mkey == "temperature" {
 						isAmbient := instance.GetLabel("temp_is_ambient")
 						if isAmbient == "true" {
-							if value, ok, _ := metric.GetValueFloat64(instance); ok {
+							if value, ok := metric.GetValueFloat64(instance); ok {
 								shelfEnvironmentMetricMap[iKey].ambientTemperature = append(shelfEnvironmentMetricMap[iKey].ambientTemperature, value)
 							}
 						}
 						if isAmbient == "false" {
-							if value, ok, _ := metric.GetValueFloat64(instance); ok {
+							if value, ok := metric.GetValueFloat64(instance); ok {
 								shelfEnvironmentMetricMap[iKey].nonAmbientTemperature = append(shelfEnvironmentMetricMap[iKey].nonAmbientTemperature, value)
 							}
 						}
 					}
 				} else if o.Object == "shelf_fan" {
 					if mkey == "rpm" {
-						if value, ok, _ := metric.GetValueFloat64(instance); ok {
+						if value, ok := metric.GetValueFloat64(instance); ok {
 							shelfEnvironmentMetricMap[iKey].fanSpeed = append(shelfEnvironmentMetricMap[iKey].fanSpeed, value)
 						}
 					}
 				} else if o.Object == "shelf_voltage" {
 					if mkey == "voltage" {
-						if value, ok, _ := metric.GetValueFloat64(instance); ok {
+						if value, ok := metric.GetValueFloat64(instance); ok {
 							if shelfEnvironmentMetricMap[iKey].voltageSensor == nil {
 								shelfEnvironmentMetricMap[iKey].voltageSensor = make(map[string]float64, 0)
 							}
@@ -351,7 +351,7 @@ func (my *Shelf) calculateEnvironmentMetrics(data *matrix.Matrix) error {
 					}
 				} else if o.Object == "shelf_sensor" {
 					if mkey == "current" {
-						if value, ok, _ := metric.GetValueFloat64(instance); ok {
+						if value, ok := metric.GetValueFloat64(instance); ok {
 							if shelfEnvironmentMetricMap[iKey].currentSensor == nil {
 								shelfEnvironmentMetricMap[iKey].currentSensor = make(map[string]float64, 0)
 							}
