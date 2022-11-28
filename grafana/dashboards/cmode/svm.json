@@ -1952,7 +1952,7 @@
           "exemplar": false,
           "expr": "iscsi_lif_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
           "interval": "",
-          "legendFormat": "{{node}} - {{port}} - {{lif}}",
+          "legendFormat": "{{node}} - {{lif}}",
           "refId": "A"
         }
       ],
@@ -2042,7 +2042,7 @@
           "exemplar": false,
           "expr": "iscsi_lif_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
           "interval": "",
-          "legendFormat": "{{node}} - {{port}} - {{lif}}",
+          "legendFormat": "{{node}} - {{lif}}",
           "refId": "A"
         }
       ],
@@ -4813,7 +4813,7 @@
               "exemplar": false,
               "expr": "iscsi_lif_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
               "interval": "",
-              "legendFormat": "{{node}} - {{port}} - {{lif}}",
+              "legendFormat": "{{node}} - {{lif}}",
               "refId": "A"
             }
           ],
@@ -4903,7 +4903,7 @@
               "exemplar": false,
               "expr": "iscsi_lif_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
               "interval": "",
-              "legendFormat": "{{node}} - {{port}} - {{lif}}",
+              "legendFormat": "{{node}} - {{lif}}",
               "refId": "A"
             }
           ],
