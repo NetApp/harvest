@@ -482,11 +482,11 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	r.Logger.Trace().Msg("updating data cache")
 
-	mat := r.Matrix[r.Object]
+	prevMat := r.Matrix[r.Object]
 	// clone matrix without numeric data
-	newData := mat.Clone(false, true, true)
-	newData.Reset()
-	timestamp := newData.GetMetric("timestamp")
+	curMat := prevMat.Clone(false, true, true)
+	curMat.Reset()
+	timestamp := curMat.GetMetric("timestamp")
 	if timestamp == nil {
 		return nil, errs.New(errs.ErrConfig, "missing timestamp metric")
 	}
@@ -584,7 +584,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 					return true
 				}
 
-				if resourceLatency = newData.GetMetric(layer); resourceLatency == nil {
+				if resourceLatency = curMat.GetMetric(layer); resourceLatency == nil {
 					r.Logger.Trace().
 						Str("layer", layer).
 						Msg("Resource-latency metric missing in cache")
@@ -598,7 +598,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 				}
 			}
 
-			instance = newData.GetInstance(instanceKey)
+			instance = curMat.GetInstance(instanceKey)
 
 			if instance == nil {
 				if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
@@ -684,11 +684,11 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 							isHistogram = false
 							if len(labels) > 0 && strings.Contains(r.perfProp.counterInfo[name].description, "histogram") {
 								key := name + ".bucket"
-								histogramMetric = newData.GetMetric(key)
+								histogramMetric = curMat.GetMetric(key)
 								if histogramMetric != nil {
 									r.Logger.Trace().Str("metric", key).Msg("Updating array metric attributes")
 								} else {
-									histogramMetric, err = newData.NewMetricFloat64(key)
+									histogramMetric, err = curMat.NewMetricFloat64(key)
 									if err != nil {
 										r.Logger.Error().Err(err).Str("key", key).Msg("unable to create histogram metric")
 										continue
@@ -703,9 +703,9 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 							for i, label := range labels {
 								k := name + arrayKeyToken + label
-								metr, ok := newData.GetMetrics()[k]
+								metr, ok := curMat.GetMetrics()[k]
 								if !ok {
-									if metr, err = newData.NewMetricFloat64(k); err != nil {
+									if metr, err = curMat.NewMetricFloat64(k); err != nil {
 										r.Logger.Error().Err(err).
 											Str("name", k).
 											Msg("NewMetricFloat64")
@@ -749,9 +749,9 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 								}
 							}
 						} else {
-							metr, ok := newData.GetMetrics()[name]
+							metr, ok := curMat.GetMetrics()[name]
 							if !ok {
-								if metr, err = newData.NewMetricFloat64(name); err != nil {
+								if metr, err = curMat.NewMetricFloat64(name); err != nil {
 									r.Logger.Error().Err(err).
 										Str("name", name).
 										Int("instIndex", instIndex).
@@ -789,7 +789,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 					r.Logger.Warn().Str("counter", name).Msg("Counter is missing or unable to parse.")
 				}
 			}
-			if err = newData.GetMetric("timestamp").SetValueFloat64(instance, ts); err != nil {
+			if err = curMat.GetMetric("timestamp").SetValueFloat64(instance, ts); err != nil {
 				r.Logger.Error().Err(err).Msg("Failed to set timestamp")
 			}
 
@@ -799,7 +799,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	if isWorkloadDetailObject(r.Prop.Query) {
-		if err := r.getParentOpsCounters(newData); err != nil {
+		if err := r.getParentOpsCounters(curMat); err != nil {
 			// no point to continue as we can't calculate the other counters
 			return nil, err
 		}
@@ -814,7 +814,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	// skip calculating from delta if no data from previous poll
 	if r.perfProp.isCacheEmpty {
 		r.Logger.Debug().Msg("skip postprocessing until next poll (previous cache empty)")
-		r.Matrix[r.Object] = newData
+		r.Matrix[r.Object] = curMat
 		r.perfProp.isCacheEmpty = false
 		return nil, nil
 	}
@@ -824,15 +824,15 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	r.Logger.Debug().Msg("starting delta calculations from previous cache")
 
 	// cache raw data for next poll
-	cachedData := newData.Clone(true, true, true)
+	cachedData := curMat.Clone(true, true, true)
 
-	orderedNonDenominatorMetrics := make([]matrix.Metric, 0, len(newData.GetMetrics()))
+	orderedNonDenominatorMetrics := make([]matrix.Metric, 0, len(curMat.GetMetrics()))
 	orderedNonDenominatorKeys := make([]string, 0, len(orderedNonDenominatorMetrics))
 
-	orderedDenominatorMetrics := make([]matrix.Metric, 0, len(newData.GetMetrics()))
+	orderedDenominatorMetrics := make([]matrix.Metric, 0, len(curMat.GetMetrics()))
 	orderedDenominatorKeys := make([]string, 0, len(orderedDenominatorMetrics))
 
-	for key, metric := range newData.GetMetrics() {
+	for key, metric := range curMat.GetMetrics() {
 		if metric.GetName() != "timestamp" {
 			counter := r.counterLookup(metric, key)
 			if counter != nil {
@@ -857,7 +857,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	// calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
-	if _, err = timestamp.Delta(mat.GetMetric("timestamp"), r.Logger); err != nil {
+	if _, err = timestamp.Delta(prevMat.GetMetric("timestamp"), prevMat, curMat, r.Logger); err != nil {
 		r.Logger.Error().Err(err).Msg("(timestamp) calculate delta:")
 	}
 
@@ -883,7 +883,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		// all other properties - first calculate delta
-		if skips, err = metric.Delta(mat.GetMetric(key), r.Logger); err != nil {
+		if skips, err = metric.Delta(prevMat.GetMetric(key), prevMat, curMat, r.Logger); err != nil {
 			r.Logger.Error().Err(err).Str("key", key).Msg("Calculate delta")
 			continue
 		}
@@ -905,7 +905,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 		// For the next two properties we need base counters
 		// We assume that delta of base counters is already calculated
-		if base = newData.GetMetric(counter.denominator); base == nil {
+		if base = curMat.GetMetric(counter.denominator); base == nil {
 			r.Logger.Warn().
 				Str("key", key).
 				Str("property", property).
@@ -981,7 +981,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	calcD := time.Since(calcStart)
-	_ = r.Metadata.LazySetValueUint64("instances", "data", uint64(len(newData.GetInstances())))
+	_ = r.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
 	_ = r.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
 	_ = r.Metadata.LazySetValueUint64("skips", "data", uint64(totalSkips))
 
@@ -989,7 +989,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	r.Matrix[r.Object] = cachedData
 
 	newDataMap := make(map[string]*matrix.Matrix)
-	newDataMap[r.Object] = newData
+	newDataMap[r.Object] = curMat
 	return newDataMap, nil
 }
 

@@ -80,7 +80,7 @@ type Metric interface {
 	// methods for doing vector arithmetics
 	// currently only supported for float64!
 
-	Delta(Metric, *logging.Logger) (int, error)
+	Delta(Metric, *Matrix, *Matrix, *logging.Logger) (int, error)
 	Divide(Metric, *logging.Logger) (int, error)
 	DivideWithThreshold(Metric, int, *logging.Logger) (int, error)
 	MultiplyByScalar(uint, *logging.Logger) (int, error)
@@ -218,7 +218,7 @@ func (m *AbstractMetric) SetValueNAN(i *Instance) {
 	m.record[i.index] = false
 }
 
-func (m *AbstractMetric) Delta(Metric, *logging.Logger) (int, error) {
+func (m *AbstractMetric) Delta(Metric, *Matrix, *Matrix, *logging.Logger) (int, error) {
 	return 0, errs.New(errs.ErrImplement, m.dtype)
 }
 

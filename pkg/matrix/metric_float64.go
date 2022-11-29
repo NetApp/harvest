@@ -161,31 +161,42 @@ func (m *MetricFloat64) GetValuesFloat64() []float64 {
 	return m.values
 }
 
-func (m *MetricFloat64) Delta(s Metric, logger *logging.Logger) (int, error) {
+func (m *MetricFloat64) Delta(prevMetric Metric, prevMat *Matrix, curMat *Matrix, logger *logging.Logger) (int, error) {
 	var skips int
-	prevRaw := s.GetValuesFloat64()
-	sRecord := s.GetRecords()
-	if len(m.values) != len(prevRaw) {
-		return 0, errs.New(ErrUnequalVectors, fmt.Sprintf("minuend=%d, subtrahend=%d", len(m.values), len(prevRaw)))
-	}
-	for i := range m.values {
-		if m.record[i] && sRecord[i] {
-			curRaw := m.values[i]
-			m.values[i] -= prevRaw[i]
-			// Sometimes ONTAP sends spurious zeroes or values less than the previous poll.
-			// Detect and don't publish negative deltas or the subsequent poll will show a large spike.
-			isInvalidZero := (curRaw == 0 || prevRaw[i] == 0) && m.values[i] != 0
-			isNegative := m.values[i] < 0
-			if isInvalidZero || isNegative {
-				m.record[i] = false
-				skips++
-				logger.Trace().
-					Str("metric", m.GetName()).
-					Float64("currentRaw", curRaw).
-					Float64("previousRaw", prevRaw[i]).
-					Int("instIndex", i).
-					Msg("Negative cooked value")
+	prevRaw := prevMetric.GetValuesFloat64()
+	prevRecord := prevMetric.GetRecords()
+	for key, currInstance := range curMat.GetInstances() {
+		// check if this instance key exists in previous matrix
+		prevInstance := prevMat.GetInstance(key)
+		currIndex := currInstance.index
+		curRaw := m.values[currIndex]
+		if prevInstance != nil {
+			prevIndex := prevInstance.index
+			if m.record[currIndex] && prevRecord[prevIndex] {
+				m.values[currIndex] -= prevRaw[prevIndex]
+				// Sometimes ONTAP sends spurious zeroes or values less than the previous poll.
+				// Detect and don't publish negative deltas or the subsequent poll will show a large spike.
+				isInvalidZero := (curRaw == 0 || prevRaw[prevIndex] == 0) && m.values[prevIndex] != 0
+				isNegative := m.values[currIndex] < 0
+				if isInvalidZero || isNegative {
+					m.record[currIndex] = false
+					skips++
+					logger.Trace().
+						Str("metric", m.GetName()).
+						Float64("currentRaw", curRaw).
+						Float64("previousRaw", prevRaw[prevIndex]).
+						Str("instKey", key).
+						Msg("Negative cooked value")
+				}
 			}
+		} else {
+			m.record[currIndex] = false
+			skips++
+			logger.Trace().
+				Str("metric", m.GetName()).
+				Float64("currentRaw", curRaw).
+				Str("instKey", key).
+				Msg("New instance added")
 		}
 	}
 	return skips, nil

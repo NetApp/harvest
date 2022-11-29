@@ -6,19 +6,43 @@ import (
 	"testing"
 )
 
-func setupMatrix(previousRaw float64, currentRaw float64) (*Matrix, *Matrix) {
+type MatrixOp int64
+
+const (
+	SameInstance MatrixOp = iota
+	DeleteInstance
+	AddInstance
+	AddDeleteInstance
+)
+
+func setupMatrix(previousRaw float64, currentRaw float64, mop MatrixOp) (*Matrix, *Matrix) {
+	var instanceNamesPrev []string
+	var instanceNamesCur []string
 	m := New("Test", "test", "test")
 	speed, _ := m.NewMetricFloat64("speed")
-	instanceNames := []string{"A"}
-	for _, instanceName := range instanceNames {
+	switch mop {
+	case SameInstance:
+		instanceNamesPrev = []string{"A"}
+		instanceNamesCur = []string{"A"}
+	case DeleteInstance:
+		instanceNamesPrev = []string{"A", "B"}
+		instanceNamesCur = []string{"A"}
+	case AddInstance:
+		instanceNamesPrev = []string{"A"}
+		instanceNamesCur = []string{"A", "B"}
+	case AddDeleteInstance:
+		instanceNamesPrev = []string{"A"}
+		instanceNamesCur = []string{"C"}
+	}
+	for _, instanceName := range instanceNamesPrev {
 		instance, _ := m.NewInstance(instanceName)
 		_ = speed.SetValueFloat64(instance, previousRaw)
 	}
 
 	m1 := New("Test", "test", "test")
 	speed1, _ := m1.NewMetricFloat64("speed")
-	instanceNames = []string{"A"}
-	for _, instanceName := range instanceNames {
+
+	for _, instanceName := range instanceNamesCur {
 		instance, _ := m1.NewInstance(instanceName)
 		_ = speed1.SetValueFloat64(instance, currentRaw)
 	}
@@ -47,8 +71,56 @@ func TestMetricFloat64_Delta(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			previous, current := setupMatrix(tt.prevRaw, tt.curRaw)
-			skips, err := current.GetMetric("speed").Delta(previous.GetMetric("speed"), logging.Get())
+			previous, current := setupMatrix(tt.prevRaw, tt.curRaw, SameInstance)
+			skips, err := current.GetMetric("speed").Delta(previous.GetMetric("speed"), previous, current, logging.Get())
+			matrixTest(t, tt, current, skips, err)
+		})
+	}
+
+	tests1 := []test{
+		{curRaw: 10, prevRaw: 10, cooked: 0, skips: 0, record: true, name: "no increase"},
+		{curRaw: 20, prevRaw: 10, cooked: 10, skips: 0, record: true, name: "normal increase"},
+		{curRaw: 10, prevRaw: 20, cooked: -10, skips: 1, record: false, name: "bug negative"},
+		{curRaw: 10, prevRaw: 0, cooked: 10, skips: 1, record: false, name: "bug zeroPrev"},
+		{curRaw: 0, prevRaw: 10, cooked: -10, skips: 1, record: false, name: "bug zeroCur"},
+	}
+
+	for _, tt := range tests1 {
+		t.Run(tt.name, func(t *testing.T) {
+			previous, current := setupMatrix(tt.prevRaw, tt.curRaw, DeleteInstance)
+			skips, err := current.GetMetric("speed").Delta(previous.GetMetric("speed"), previous, current, logging.Get())
+			matrixTest(t, tt, current, skips, err)
+		})
+	}
+
+	tests2 := []test{
+		{curRaw: 10, prevRaw: 10, cooked: 0, skips: 1, record: true, name: "no increase"},
+		{curRaw: 20, prevRaw: 10, cooked: 10, skips: 1, record: true, name: "normal increase"},
+		{curRaw: 10, prevRaw: 20, cooked: -10, skips: 2, record: false, name: "bug negative"},
+		{curRaw: 10, prevRaw: 0, cooked: 10, skips: 2, record: false, name: "bug zeroPrev"},
+		{curRaw: 0, prevRaw: 10, cooked: -10, skips: 2, record: false, name: "bug zeroCur"},
+	}
+
+	for _, tt := range tests2 {
+		t.Run(tt.name, func(t *testing.T) {
+			previous, current := setupMatrix(tt.prevRaw, tt.curRaw, AddInstance)
+			skips, err := current.GetMetric("speed").Delta(previous.GetMetric("speed"), previous, current, logging.Get())
+			matrixTest(t, tt, current, skips, err)
+		})
+	}
+
+	tests3 := []test{
+		{curRaw: 10, prevRaw: 10, cooked: 10, skips: 1, record: false, name: "no increase"},
+		{curRaw: 20, prevRaw: 10, cooked: 20, skips: 1, record: false, name: "normal increase"},
+		{curRaw: 10, prevRaw: 20, cooked: 10, skips: 1, record: false, name: "bug negative"},
+		{curRaw: 10, prevRaw: 0, cooked: 10, skips: 1, record: false, name: "bug zeroPrev"},
+		{curRaw: 0, prevRaw: 10, cooked: 0, skips: 1, record: false, name: "bug zeroCur"},
+	}
+
+	for _, tt := range tests3 {
+		t.Run(tt.name, func(t *testing.T) {
+			previous, current := setupMatrix(tt.prevRaw, tt.curRaw, AddDeleteInstance)
+			skips, err := current.GetMetric("speed").Delta(previous.GetMetric("speed"), previous, current, logging.Get())
 			matrixTest(t, tt, current, skips, err)
 		})
 	}
@@ -66,7 +138,7 @@ func TestMetricFloat64_Divide(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			numerator, denominator := setupMatrix(tt.prevRaw, tt.curRaw)
+			numerator, denominator := setupMatrix(tt.prevRaw, tt.curRaw, SameInstance)
 			skips, err := numerator.GetMetric("speed").Divide(denominator.GetMetric("speed"), logging.Get())
 			matrixTest(t, tt, numerator, skips, err)
 		})
@@ -85,7 +157,7 @@ func TestMetricFloat64_DivideWithThreshold(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			numerator, denominator := setupMatrix(tt.prevRaw, tt.curRaw)
+			numerator, denominator := setupMatrix(tt.prevRaw, tt.curRaw, SameInstance)
 			skips, err := numerator.GetMetric("speed").
 				DivideWithThreshold(denominator.GetMetric("speed"), tt.threshold, logging.Get())
 			matrixTest(t, tt, numerator, skips, err)
@@ -101,7 +173,7 @@ func TestMetricFloat64_MultiplyByScalar(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, current := setupMatrix(tt.prevRaw, tt.curRaw)
+			_, current := setupMatrix(tt.prevRaw, tt.curRaw, SameInstance)
 			skips, err := current.GetMetric("speed").MultiplyByScalar(tt.scalar, logging.Get())
 			matrixTest(t, tt, current, skips, err)
 		})
