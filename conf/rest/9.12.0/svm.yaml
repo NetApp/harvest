@@ -5,60 +5,63 @@ query:                    api/private/cli/vserver
 object:                   svm
 
 counters:
-  - ^^uuid                                  => svm_uuid
-  - ^vserver                                => svm
+  - ^^vserver                               => svm
   - ^anti_ransomware_default_volume_state   => anti_ransomware_state
   - ^operational_state                      => state
 
 endpoints:
   - query: api/svm/svms
     counters:
-      - ^^uuid                              => svm_uuid
+      - ^^name                              => svm
       - ^nsswitch                           => nameservice_switch
   - query: api/security/ssh/svms
     counters:
-      - ^^svm.uuid                          => svm_uuid
+      - ^^svm.name                          => svm
       - ^ciphers                            => ciphers
   - query: api/protocols/cifs/services
     counters:
-      - ^^svm.uuid                          => svm_uuid
+      - ^^svm.name                          => svm
       - ^enabled                            => cifs_protocol_enabled
       - ^security.smb_encryption            => smb_encryption_required
       - ^security.smb_signing               => smb_signing_required
-      - ^security.lm_compatibility_level    => cifs_ntlm_enabled
   - query: api/protocols/nfs/services
     counters:
-      - ^^svm.uuid                          => svm_uuid
+      - ^^svm.name                          => svm
       - ^enabled                            => nfs_protocol_enabled
   - query: api/protocols/audit
     counters:
-      - ^^svm.uuid                          => svm_uuid
+      - ^^svm.name                          => svm
       - ^enabled                            => audit_protocol_enabled
   - query: api/protocols/fpolicy     # need to test
     counters:
-      - ^^svm.uuid                          => svm_uuid
+      - ^^svm.name                          => svm
       - ^policies.enabled                   => fpolicy_enabled
       - ^policies.name                      => fpolicy_name
   - query: api/name-services/nis
     counters:
-      - ^^svm.uuid                          => svm_uuid
+      - ^^svm.name                          => svm
       - ^domain                             => nis_domain
   - query: api/name-services/ldap
     counters:
-      - ^^svm.uuid                          => svm_uuid
+      - ^^svm.name                          => svm
       - ^session_security                   => ldap_session_security
   - query: api/protocols/nfs/kerberos/interfaces
     counters:
-      - ^^svm.uuid                          => svm_uuid
+      - ^^svm.name                          => svm
       - ^enabled                            => nfs_kerberos_protocol_enabled
   - query: api/protocols/san/iscsi/credentials
     counters:
-      - ^^svm.uuid                          => svm_uuid
+      - ^^svm.name                          => svm
       - ^authentication_type                => iscsi_authentication_type
   - query: api/protocols/san/iscsi/services
     counters:
-      - ^^svm.uuid                          => svm_uuid
+      - ^^svm.name                          => svm
       - ^enabled                            => iscsi_service_enabled
+  - query: api/private/cli/vserver/cifs/server/security
+    counters:
+      - ^^vserver                           => svm
+      - ^lm_compatibility_level             => cifs_ntlm_enabled
+
 plugins:
   - SVM
   - LabelAgent:
