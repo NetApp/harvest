@@ -2176,14 +2176,14 @@
       },
       {
         "current": {},
-        "definition": "query_result(topk($TopResources,(100 * sum by (cluster, svm) (volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) /   sum by (cluster, svm) (volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}))))",
+        "definition": "query_result(topk($TopResources,(100 * sum by (cluster, svm) (volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) /   sum by (cluster, svm) (volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})) * on (cluster, svm) svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",type!=\"node\"}))",
         "hide": 2,
         "includeAll": true,
         "multi": true,
         "name": "TopSVMUsed",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources,(100 * sum by (cluster, svm) (volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) /   sum by (cluster, svm) (volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}))))",
+          "query": "query_result(topk($TopResources,(100 * sum by (cluster, svm) (volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) /   sum by (cluster, svm) (volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})) * on (cluster, svm) svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",type!=\"node\"}))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2194,14 +2194,14 @@
       },
       {
         "current": {},
-        "definition": "query_result(topk($TopResources, (100 * volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} / volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})))",
+        "definition": "query_result(topk($TopResources, (100 * volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} / volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}) * on (cluster, svm, volume) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume!=\"vol0\"}))",
         "hide": 2,
         "includeAll": true,
         "multi": true,
         "name": "TopVolumeUsed",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, (100 * volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} / volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})))",
+          "query": "query_result(topk($TopResources, (100 * volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} / volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}) * on (cluster, svm, volume) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume!=\"vol0\"}))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,

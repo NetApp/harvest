@@ -8,6 +8,7 @@ counters:
     - ^^uuid                                  => svm_uuid
     - ^vserver-name                           => svm
     - ^state                                  => state
+    - ^vserver-type                           => type
     - ^anti-ransomware-default-volume-state   => anti_ransomware_state
     - name-server-switch:
         - ^nsswitch                           => nameservice_switch
@@ -29,6 +30,7 @@ export_options:
     - svm
   instance_labels:
     - state
+    - type
     - anti_ransomware_state
     - nis_authentication_enabled
     - audit_protocol_enabled

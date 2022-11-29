@@ -9,6 +9,7 @@ counters:
   - ^vserver                                => svm
   - ^anti_ransomware_default_volume_state   => anti_ransomware_state
   - ^operational_state                      => state
+  - ^type                                   => type
 
 endpoints:
   - query: api/svm/svms
@@ -72,6 +73,7 @@ export_options:
     - svm
   instance_labels:
     - state
+    - type
     - anti_ransomware_state
     - ciphers
     - cifs_protocol_enabled
