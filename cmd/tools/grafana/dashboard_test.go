@@ -586,3 +586,59 @@ func allVariables(data []byte) []variable {
 	})
 	return variables
 }
+
+func TestOnlyHighlightsExpanded(t *testing.T) {
+	dir := "../../../grafana/dashboards/cmode"
+
+	exceptions := map[string]int{
+		"cmode/shelf.json":    2,
+		"cmode/security.json": 3,
+	}
+	// count number of expanded sections in dashboard and ensure num expanded = 1
+	visitDashboards(dir, func(path string, data []byte) {
+		checkExpansion(t, exceptions, path, data)
+	})
+}
+
+func checkExpansion(t *testing.T, exceptions map[string]int, path string, data []byte) {
+	pathCollapsed := make(map[string]bool)
+	titles := make([]string, 0)
+	// visit all panel
+	visitAllPanels(data, func(path string, key, value gjson.Result) {
+		collapsed := value.Get("collapsed")
+		if !collapsed.Exists() {
+			return
+		}
+		title := value.Get("title")
+		pathCollapsed[path] = collapsed.Bool()
+		if !collapsed.Bool() {
+			titles = append(titles, title.String())
+		}
+	})
+	if len(titles) == 0 {
+		return
+	}
+	dashPath := shortPath(path)
+	// By default, a single expanded row is allowed.
+	allowed := 1
+	v, ok := exceptions[dashPath]
+	if ok {
+		allowed = v
+	}
+	if len(titles) != allowed {
+		t.Errorf("%s expanded section(s) want=%d got=%d", dashPath, allowed, len(titles))
+	}
+}
+
+func visitAllPanels(data []byte, handle func(path string, key gjson.Result, value gjson.Result)) {
+	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
+		path := fmt.Sprintf("panels[%d]", key.Int())
+		handle(path, key, value)
+		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
+			path2 := fmt.Sprintf("%spanels[%d]", path, key2.Int())
+			handle(path2, key2, value2)
+			return true
+		})
+		return true
+	})
+}
