@@ -390,13 +390,12 @@ func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 		for name, metric := range r.Prop.Metrics {
 			metr, ok := mat.GetMetrics()[name]
 			if !ok {
-				if metr, err = mat.NewMetricFloat64(name); err != nil {
+				if metr, err = mat.NewMetricFloat64(name, metric.Label); err != nil {
 					r.Logger.Error().Err(err).
 						Str("name", name).
 						Msg("NewMetricFloat64")
 				}
 			}
-			metr.SetName(metric.Label)
 			metr.SetExportable(metric.Exportable)
 		}
 
@@ -445,7 +444,7 @@ func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 				if m := mat.GetMetric(name); m != nil {
 					continue
 				}
-				if m, err := mat.NewMetricFloat64(name); err != nil {
+				if m, err := mat.NewMetricFloat64(name, "resource_latency"); err != nil {
 					return nil, err
 				} else {
 					r.perfProp.counterInfo[name] = &counter{
@@ -455,7 +454,6 @@ func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 						unit:        r.perfProp.counterInfo[service.GetName()].unit,
 						denominator: "ops",
 					}
-					m.SetName("resource_latency")
 					m.SetLabel("resource", resource)
 
 					r.Logger.Debug().Str("name", name).Str("resource", resource).Msg("added workload latency metric")
@@ -688,13 +686,12 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 								if histogramMetric != nil {
 									r.Logger.Trace().Str("metric", key).Msg("Updating array metric attributes")
 								} else {
-									histogramMetric, err = curMat.NewMetricFloat64(key)
+									histogramMetric, err = curMat.NewMetricFloat64(key, metric.Label)
 									if err != nil {
 										r.Logger.Error().Err(err).Str("key", key).Msg("unable to create histogram metric")
 										continue
 									}
 								}
-								histogramMetric.SetName(metric.Label)
 								histogramMetric.SetArray(true)
 								histogramMetric.SetExportable(metric.Exportable)
 								histogramMetric.SetBuckets(&labels)
@@ -705,13 +702,12 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 								k := name + arrayKeyToken + label
 								metr, ok := curMat.GetMetrics()[k]
 								if !ok {
-									if metr, err = curMat.NewMetricFloat64(k); err != nil {
+									if metr, err = curMat.NewMetricFloat64(k, metric.Label); err != nil {
 										r.Logger.Error().Err(err).
 											Str("name", k).
 											Msg("NewMetricFloat64")
 										continue
 									}
-									metr.SetName(metric.Label)
 									if x := strings.Split(label, arrayKeyToken); len(x) == 2 {
 										metr.SetLabel("metric", x[0])
 										metr.SetLabel("submetric", x[1])
@@ -751,14 +747,13 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 						} else {
 							metr, ok := curMat.GetMetrics()[name]
 							if !ok {
-								if metr, err = curMat.NewMetricFloat64(name); err != nil {
+								if metr, err = curMat.NewMetricFloat64(name, metric.Label); err != nil {
 									r.Logger.Error().Err(err).
 										Str("name", name).
 										Int("instIndex", instIndex).
 										Msg("NewMetricFloat64")
 								}
 							}
-							metr.SetName(metric.Label)
 							metr.SetExportable(metric.Exportable)
 							if c, err := strconv.ParseFloat(f.value, 64); err == nil {
 								if err = metr.SetValueFloat64(instance, c); err != nil {

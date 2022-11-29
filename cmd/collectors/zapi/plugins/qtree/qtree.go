@@ -79,13 +79,12 @@ func (my *Qtree) Init() error {
 
 		metricName, display, _, _ := util.ParseMetric(obj)
 
-		metric, err := my.data.NewMetricFloat64(metricName)
+		metric, err := my.data.NewMetricFloat64(metricName, display)
 		if err != nil {
 			my.Logger.Error().Stack().Err(err).Msg("add metric")
 			return err
 		}
 
-		metric.SetName(display)
 		my.Logger.Debug().Msgf("added metric: (%s) [%s] %s", metricName, display, metric)
 	}
 

@@ -218,10 +218,9 @@ func (u *Unix) loadMetrics(counters *node.Node) error {
 		// counter is scalar metric
 		if _, has := _Metrics[name]; has {
 
-			if metric, err = mat.NewMetricType(name, dtype); err != nil {
+			if _, err = mat.NewMetricType(name, dtype, display); err != nil {
 				return err
 			}
-			metric.SetName(display)
 			u.Logger.Debug().Msgf("(%s) added metric (%s)", name, display)
 
 			// counter is histogram
@@ -251,10 +250,9 @@ func (u *Unix) loadMetrics(counters *node.Node) error {
 					continue
 				}
 
-				if metric, err = mat.NewMetricType(name+"."+label, dtype); err != nil {
+				if metric, err = mat.NewMetricType(name+"."+label, dtype, name); err != nil {
 					return err
 				}
-				metric.SetName(name)
 				metric.SetLabel("metric", ldisplay)
 				u.histogramLabels[name] = append(u.histogramLabels[name], label)
 			}

@@ -79,7 +79,6 @@ func (z *Zapi) HandleCounter(path []string, content string) string {
 	var (
 		name, display, key    string
 		splitValues, fullPath []string
-		metric                matrix.Metric
 		err                   error
 	)
 
@@ -94,7 +93,6 @@ func (z *Zapi) HandleCounter(path []string, content string) string {
 
 	name = strings.TrimSpace(strings.TrimLeft(name, "^"))
 
-	//full_path = append(path[1:], name)
 	fullPath = append(path, name)
 	key = strings.Join(fullPath, ".")
 
@@ -115,16 +113,16 @@ func (z *Zapi) HandleCounter(path []string, content string) string {
 	} else {
 		// use user-defined metric type
 		if t := z.Params.GetChildContentS("metric_type"); t != "" {
-			metric, err = mat.NewMetricType(key, t)
+			_, err = mat.NewMetricType(key, t, display)
 			// use uint64 as default, since nearly all ZAPI counters are unsigned
 		} else {
-			metric, err = mat.NewMetricUint64(key)
+			_, err = mat.NewMetricUint64(key, display)
 		}
 		if err != nil {
-			z.Logger.Error().Stack().Err(err).Msgf("add as metric [%s]: %v", key, display)
+			z.Logger.Error().Err(err).Str("key", key).Str("display", display).Msg("Failed to add metric")
 		} else {
-			metric.SetName(display)
-			z.Logger.Trace().Msgf("%sadd as metric (%s) [%s]%s => %v", color.Blue, key, display, color.End, fullPath)
+			z.Logger.Trace().Str("key", key).Str("display", display).Strs("fullPath", fullPath).
+				Msg("Add metric")
 		}
 	}
 

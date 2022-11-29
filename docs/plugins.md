@@ -555,7 +555,7 @@ plugins:
       - raid_disk_count ADD block_storage.primary.disk_count block_storage.hybrid_cache.disk_count
 ```
 
-**Note:** Metrics for creating new metric should use name defined in left side of =>
+**Note:** Metric names used to create new metrics can come from the left or right side of the rename operator (`=>`)
 
 ## compute_metric
 
@@ -565,7 +565,7 @@ mathematical operation.
 You can provide a numeric value or a metric name with an operation. The plugin will use the provided number or fetch the
 value of a given metric, perform the requested mathematical operation, and store the result in new custom metric.
 
-Currently, we support these operations: ADD SUBTRACT MULTIPLY DIVIDE
+Currently, we support these operations: ADD SUBTRACT MULTIPLY DIVIDE PERCENT
 
 Rule syntax:
 
@@ -620,4 +620,12 @@ compute_metric:
   - transmission_rate DIVIDE transfer.bytes_transferred transfer.total_duration
 # value of metric "transmission_rate" would be division of metric value of transfer.bytes_transferred by metric value of transfer.total_duration.
 # transmission_rate = transfer.bytes_transferred / transfer.total_duration
+```
+
+```yaml
+compute_metric:
+  - inode_used_percent PERCENT inode_files_used inode_files_total
+# a new metric named "inode_used_percent" will be created by dividing the metric "inode_files_used" by 
+#  "inode_files_total" and multiplying the result by 100.
+# inode_used_percent = inode_files_used / inode_files_total * 100
 ```

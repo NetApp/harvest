@@ -62,10 +62,9 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 
 	// map values for compute_metric mapping rules
 	for _, r := range a.computeMetricRules {
-
-		if metric = m.GetMetric(r.metric); metric == nil {
+		if metric = a.getMetric(m, r.metric); metric == nil {
 			if metric, err = m.NewMetricFloat64(r.metric); err != nil {
-				a.Logger.Error().Stack().Err(err).Str("new metric", r.metric).Msg("computeMetrics: failed to create metric")
+				a.Logger.Error().Err(err).Str("metric", r.metric).Msg("Failed to create metric")
 				return err
 			} else {
 				metric.SetProperty("compute_metric mapping")
@@ -76,7 +75,7 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 			var result float64
 
 			// Parse first operand and store in result for further processing
-			if firstMetricVal = m.GetMetric(r.metricNames[0]); firstMetricVal != nil {
+			if firstMetricVal = a.getMetric(m, r.metricNames[0]); firstMetricVal != nil {
 				if val, ok := firstMetricVal.GetValueFloat64(instance); ok {
 					result = val
 				} else {
@@ -92,7 +91,7 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 				if value, err := strconv.Atoi(r.metricNames[i]); err == nil {
 					v = float64(value)
 				} else {
-					metricVal = m.GetMetric(r.metricNames[i])
+					metricVal = a.getMetric(m, r.metricNames[i])
 					if metricVal != nil {
 						v, _ = metricVal.GetValueFloat64(instance)
 					} else {
@@ -112,16 +111,17 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 					if v != 0 {
 						result /= v
 					} else {
-						a.Logger.Error().
-							Str("operation", r.operation).
-							Msg("Division by zero operation")
+						a.Logger.Error().Str("operation", r.operation).Msg("Division by zero operation")
+					}
+				case "PERCENT":
+					if v != 0 {
+						result = (result / v) * 100
+					} else {
+						a.Logger.Error().Str("operation", r.operation).Msg("Division by zero operation")
 					}
 				default:
-					a.Logger.Warn().
-						Str("operation", r.operation).
-						Msg("Unknown operation")
+					a.Logger.Warn().Str("operation", r.operation).Msg("Unknown operation")
 				}
-
 			}
 
 			_ = metric.SetValueFloat64(instance, result)
@@ -129,4 +129,12 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 		}
 	}
 	return nil
+}
+
+func (a *MetricAgent) getMetric(m *matrix.Matrix, name string) matrix.Metric {
+	metric := m.DisplayMetric(name)
+	if metric != nil {
+		return metric
+	}
+	return m.GetMetric(name)
 }

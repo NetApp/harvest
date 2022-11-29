@@ -126,12 +126,11 @@ func (my *Shelf) Init() error {
 					instanceLabels.NewChildS("", display)
 					my.Logger.Debug().Msgf("added instance label: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
 				case "float":
-					metric, err := my.data[attribute].NewMetricFloat64(metricName)
+					_, err := my.data[attribute].NewMetricFloat64(metricName, display)
 					if err != nil {
 						my.Logger.Error().Stack().Err(err).Msg("add metric")
 						return err
 					}
-					metric.SetName(display)
 					my.Logger.Debug().Msgf("added metric: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
 				}
 			}

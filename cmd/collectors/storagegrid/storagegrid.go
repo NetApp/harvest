@@ -249,7 +249,7 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 		for _, metric := range s.Props.Metrics {
 			metr, ok := mat.GetMetrics()[metric.Name]
 			if !ok {
-				if metr, err = mat.NewMetricFloat64(metric.Name); err != nil {
+				if metr, err = mat.NewMetricFloat64(metric.Name, metric.Label); err != nil {
 					s.Logger.Error().Err(err).
 						Str("name", metric.Name).
 						Msg("NewMetricFloat64")
@@ -257,8 +257,6 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 			}
 			f := instanceData.Get(metric.Name)
 			if f.Exists() {
-				metr.SetName(metric.Label)
-
 				var floatValue float64
 				switch metric.MetricType {
 				case "":

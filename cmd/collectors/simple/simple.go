@@ -54,8 +54,7 @@ func (n *NodeMon) Init(a *collector.AbstractCollector) error {
 
 func (n *NodeMon) loadMetrics(counters *node.Node) error {
 	var (
-		metric matrix.Metric
-		err    error
+		err error
 	)
 
 	n.Logger.Debug().Msg("initializing metric cache")
@@ -70,10 +69,9 @@ func (n *NodeMon) loadMetrics(counters *node.Node) error {
 		dtype := "int64"
 		n.Logger.Trace().Msgf("handling (%s) (%s) dtype=%s", name, display, dtype)
 
-		if metric, err = mat.NewMetricType(name, dtype); err != nil {
+		if _, err = mat.NewMetricType(name, dtype, display); err != nil {
 			return err
 		}
-		metric.SetName(display)
 		n.Logger.Debug().Msgf("(%s) added metric (%s)", name, display)
 	}
 

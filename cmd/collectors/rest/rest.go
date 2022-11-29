@@ -477,7 +477,7 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, isEndPoint bool)
 		for _, metric := range prop.Metrics {
 			metr, ok := mat.GetMetrics()[metric.Name]
 			if !ok {
-				if metr, err = mat.NewMetricFloat64(metric.Name); err != nil {
+				if metr, err = mat.NewMetricFloat64(metric.Name, metric.Label); err != nil {
 					r.Logger.Error().Err(err).
 						Str("name", metric.Name).
 						Msg("NewMetricFloat64")
@@ -485,8 +485,6 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, isEndPoint bool)
 			}
 			f := instanceData.Get(metric.Name)
 			if f.Exists() {
-				metr.SetName(metric.Label)
-
 				var floatValue float64
 				switch metric.MetricType {
 				case "duration":

@@ -21,7 +21,6 @@ type Metric interface {
 	// methods related to metric attributes
 
 	GetName() string
-	SetName(string)
 	GetType() string
 	SetLabel(string, string)
 	SetLabels(*dict.Dict)
@@ -126,10 +125,6 @@ func (m *AbstractMetric) Clone(deep bool) *AbstractMetric {
 
 func (m *AbstractMetric) GetName() string {
 	return m.name
-}
-
-func (m *AbstractMetric) SetName(name string) {
-	m.name = name
 }
 
 func (m *AbstractMetric) IsExportable() bool {
