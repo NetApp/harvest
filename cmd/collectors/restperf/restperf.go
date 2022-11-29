@@ -276,10 +276,10 @@ func (r *RestPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 
 	_, err = r.processWorkLoadCounter()
 	if err != nil {
-		return r.Matrix, err
+		return nil, err
 	}
 
-	return r.Matrix, nil
+	return nil, nil
 }
 
 func parseProperties(instanceData gjson.Result, property string) gjson.Result {
