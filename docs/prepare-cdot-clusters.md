@@ -166,6 +166,25 @@ security login create -user-or-group-name harvest2 -application ontapi -role har
 security login create -user-or-group-name harvest2 -application http -role harvest2-role -authentication-method cert 
 ```
 
+Verify if an entry is present for following commands
+```bash
+# ZAPI based access
+vserver services web access show -role harvest3-role -name ontapi
+ 
+# REST based access
+vserver services web access show -role harvest3-role -name rest
+```
+
+If It is missing then add an entry with following commands
+```bash
+# ZAPI based access
+vserver services web access create -vserver umeng-aff300-01-02 -name ontapi -role harvest2-role
+
+# REST based access
+vserver services web access create -vserver umeng-aff300-01-02 -name rest -role harvest2-role
+```
+
+
 #### 7-Mode CLI
 
 Login to the CLI of your 7-Mode ONTAP system (e.g. using SSH). First, we create a user role. If you want to give the
