@@ -73,12 +73,14 @@ func adjustOptions() {
 
 	// When opt.addr starts with https don't change it
 	if !strings.HasPrefix(opts.addr, "https://") {
+		//goland:noinspection HttpUrlsUsage
 		opts.addr = strings.TrimPrefix(opts.addr, "http://")
 		opts.addr = strings.TrimPrefix(opts.addr, "https://")
 		opts.addr = strings.TrimSuffix(opts.addr, "/")
 		if opts.useHTTPS {
 			opts.addr = "https://" + opts.addr
 		} else {
+			//goland:noinspection HttpUrlsUsage
 			opts.addr = "http://" + opts.addr
 		}
 	}
@@ -447,21 +449,27 @@ func importFiles(dir string, folder *Folder) {
 
 		data = bytes.ReplaceAll(data, []byte("${DS_PROMETHEUS}"), []byte(opts.datasource))
 
-		// If the dashboard has an uid defined, change the uid to empty string. We do comparison for dashboard create/update based on title
-		if dashboardID := gjson.GetBytes(data, "uid").String(); dashboardID != "" {
-			data, err = sjson.SetBytes(data, "uid", []byte(""))
-			if err != nil {
-				fmt.Printf("error while updating the uid %s into dashboard %s, err: %+v", dashboardID, file.Name(), err)
-				continue
+		// If the dashboard has an uid defined, change the uid to empty string unless overwrite was passed
+		// We do comparison for dashboard create/update based on title
+		if !opts.overwrite {
+			if dashboardID := gjson.GetBytes(data, "uid").String(); dashboardID != "" {
+				data, err = sjson.SetBytes(data, "uid", []byte(""))
+				if err != nil {
+					fmt.Printf("error while updating the uid %s into dashboard %s, err: %+v", dashboardID, file.Name(), err)
+					continue
+				}
 			}
 		}
 
-		// If the dashboard has an id defined, change the id to empty string so Grafana treats this as a new dashboard instead of an update to an existing one
-		if dashboardID := gjson.GetBytes(data, "id").String(); dashboardID != "" {
-			data, err = sjson.SetBytes(data, "id", []byte(""))
-			if err != nil {
-				fmt.Printf("error while updating the id %s into dashboard %s, err: %+v", dashboardID, file.Name(), err)
-				continue
+		// If the dashboard has an id defined, change the id to empty string, unless overwrite was passed,
+		// so Grafana treats this as a new dashboard instead of an update to an existing one
+		if !opts.overwrite {
+			if dashboardID := gjson.GetBytes(data, "id").String(); dashboardID != "" {
+				data, err = sjson.SetBytes(data, "id", []byte(""))
+				if err != nil {
+					fmt.Printf("error while updating the id %s into dashboard %s, err: %+v", dashboardID, file.Name(), err)
+					continue
+				}
 			}
 		}
 
@@ -529,7 +537,7 @@ func importFiles(dir string, folder *Folder) {
 //
 // A more reliable implementation of this feature would be, to
 // add a constant prefix to all metrics, before they are pushed
-// to Github, then replace them with a user-defined prefix
+// to GitHub, then replace them with a user-defined prefix
 // (or empty string) when the import tool is used.
 func addGlobalPrefix(db map[string]interface{}, prefix string) {
 
@@ -605,7 +613,7 @@ func addGlobalPrefix(db map[string]interface{}, prefix string) {
 // unchanged if no metric names are identified.
 // Note that this function will only work with the Prometheus-dashboards of Harvest.
 // It will use a number of patterns in which metrics might be used in queries.
-// (E.g. a single metric, multiple metrics used in addition, etc -- for examples
+// (E.g. a single metric, multiple metrics used in addition, etc. -- for examples
 // see the test). If we change queries of our dashboards, we have to review
 // this function as well (or come up with a better solution).
 func addPrefixToMetricNames(expr, prefix string) string {
