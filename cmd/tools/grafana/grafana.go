@@ -513,7 +513,8 @@ func importFiles(dir string, folder *Folder) {
 			fmt.Printf("error importing [%s] to folder [%s] - the server replied with [%s]\n", file.Name(), folder.name, status)
 			if code == 412 {
 				fmt.Printf("That means you are trying to overwrite an existing dashboard.\n\n")
-				fmt.Printf("If you want to overwrite run with the --overwrite flag or choose a different Grafana folder with the --serverfolder flag\n\n")
+				fmt.Printf("If you want to overwrite, run with the --overwrite flag or choose a different Grafana folder with the --serverfolder flag.\n")
+				fmt.Printf("NOTE: If the dashboard already exists, --overwrite will import the changes and increment the dashboard version number.\n\n")
 			}
 			fmt.Printf("Server response follows:\n")
 			for k, v := range result {
