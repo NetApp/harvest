@@ -165,7 +165,10 @@ func (m *Matrix) addMetric(key string, metric Metric) error {
 	}
 	metric.Reset(len(m.instances))
 	m.metrics[key] = metric
-	m.displayMetrics[metric.GetName()] = metric
+	// Histograms and arrays don't support display metrics yet
+	if !metric.IsArray() && !metric.IsHistogram() {
+		m.displayMetrics[metric.GetName()] = metric
+	}
 	return nil
 }
 
