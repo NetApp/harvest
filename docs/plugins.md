@@ -556,6 +556,7 @@ plugins:
 ```
 
 **Note:** Metric names used to create new metrics can come from the left or right side of the rename operator (`=>`)
+**Note:** The metric agent currently does not work for histogram or array metrics.
 
 ## compute_metric
 

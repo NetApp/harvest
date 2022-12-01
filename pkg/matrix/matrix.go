@@ -163,12 +163,10 @@ func (m *Matrix) addMetric(key string, metric Metric) error {
 	if _, has := m.metrics[key]; has { // Fail if a metric with the same key already exists
 		return errs.New(ErrDuplicateMetricKey, key)
 	}
+	// Histograms and arrays don't support display metrics yet, last write wins
 	metric.Reset(len(m.instances))
 	m.metrics[key] = metric
-	// Histograms and arrays don't support display metrics yet
-	if !metric.IsArray() && !metric.IsHistogram() {
-		m.displayMetrics[metric.GetName()] = metric
-	}
+	m.displayMetrics[metric.GetName()] = metric
 	return nil
 }
 
