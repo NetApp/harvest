@@ -955,7 +955,7 @@ func init() {
 	_ = importCmd.PersistentFlags().MarkHidden("multi")
 
 	metricsCmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d",
-		"grafana/dashboards", "local directory that contains dashboards (searched recursively).")
+		"", "local directory that contains dashboards (searched recursively).")
 
 }
 
@@ -973,5 +973,7 @@ func addFlags(commands ...*cobra.Command) {
 		cmd.PersistentFlags().BoolVarP(&opts.useInsecureTLS, "insecure", "k", false, "Allow insecure server connections when using SSL")
 		cmd.PersistentFlags().StringVarP(&opts.serverfolder.name, "serverfolder", "f", "", "Grafana folder name for dashboards")
 		cmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d", "", "When importing, import dashboards from this local directory.\nWhen exporting, local directory to write dashboards to")
+		_ = cmd.MarkPersistentFlagRequired("serverfolder")
+		_ = cmd.MarkPersistentFlagRequired("directory")
 	}
 }
