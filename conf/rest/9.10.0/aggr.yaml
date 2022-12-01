@@ -59,8 +59,7 @@ plugins:
         - total_physical_used SUBTRACT space.efficiency.logical_used space.efficiency.savings
         - physical_used_wo_snapshots SUBTRACT space.efficiency_without_snapshots.logical_used space.efficiency_without_snapshots.savings
         - physical_used_wo_snapshots_flexclones SUBTRACT space.efficiency_without_snapshots_flexclones.logical_used space.efficiency_without_snapshots_flexclones.savings
-        - space_used_percent DIVIDE space.block_storage.used space.block_storage.size
-        - space_used_percent MULTIPLY space_used_percent 100
+        - space_used_percent PERCENT space.block_storage.used space.block_storage.size
 
 
 export_options:

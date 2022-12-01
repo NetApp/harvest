@@ -67,10 +67,13 @@ counters:
     - ^encrypt                              => isEncrypted
 
 plugins:
-  Volume:
-    schedule:
-      - data: 900s  # should be multiple of data poll duration
-  LabelAgent:
+  - Volume:
+      schedule:
+        - data: 900s  # should be multiple of data poll duration
+  - MetricAgent:
+      compute_metric:
+        - inode_used_percent PERCENT inode_files_used inode_files_total
+  - LabelAgent:
     # metric label zapi_value rest_value `default_value`
     value_to_num:
       - new_status state online online `0`
@@ -92,7 +95,7 @@ plugins:
 #      - volume `MDV_aud_.+`
     replace:
       - style style `flexgroup_constituent` `flexgroup`
-  Aggregator:
+  - Aggregator:
     - volume<style=flexgroup>volume node,svm,aggr,style
 
 export_options:

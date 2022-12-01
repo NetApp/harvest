@@ -1031,10 +1031,9 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 						oldMetrics.Remove(name)
 						continue
 					}
-					if m, err := mat.NewMetricFloat64(name); err != nil {
+					if m, err := mat.NewMetricFloat64(name, "resource_latency"); err != nil {
 						return nil, err
 					} else {
-						m.SetName("resource_latency")
 						m.SetLabel("resource", resource)
 						m.SetProperty(service.GetProperty())
 						// base counter is the ops of the same resource
@@ -1175,13 +1174,12 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 			if histogramMetric != nil {
 				z.Logger.Trace().Str("metric", key).Msg("Updating array metric attributes")
 			} else {
-				histogramMetric, err = mat.NewMetricFloat64(key)
+				histogramMetric, err = mat.NewMetricFloat64(key, display)
 				if err != nil {
 					z.Logger.Error().Err(err).Str("key", key).Msg("unable to create histogram metric")
 					return ""
 				}
 			}
-			histogramMetric.SetName(display)
 			histogramMetric.SetProperty(property)
 			histogramMetric.SetComment(baseKey)
 			histogramMetric.SetExportable(enabled)
@@ -1197,14 +1195,13 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 
 			if m = mat.GetMetric(key); m != nil {
 				z.Logger.Trace().Msgf("updating array metric [%s] attributes", key)
-			} else if m, err = mat.NewMetricFloat64(key); err == nil {
+			} else if m, err = mat.NewMetricFloat64(key, display); err == nil {
 				z.Logger.Trace().Msgf("%s+[%s] added array metric (%s), element with label (%s)%s", color.Pink, name, display, label, color.End)
 			} else {
 				z.Logger.Error().Err(err).Msgf("add array metric element [%s]: ", key)
 				return ""
 			}
 
-			m.SetName(display)
 			m.SetProperty(property)
 			m.SetComment(baseKey)
 			m.SetExportable(enabled)
@@ -1231,7 +1228,7 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 		var m matrix.Metric
 		if m = mat.GetMetric(name); m != nil {
 			z.Logger.Trace().Msgf("updating scalar metric [%s] attributes", name)
-		} else if m, err = mat.NewMetricFloat64(name); err == nil {
+		} else if m, err = mat.NewMetricFloat64(name, display); err == nil {
 			z.Logger.Trace().Msgf("%s+[%s] added scalar metric (%s)%s", color.Cyan, name, display, color.End)
 		} else {
 			z.Logger.Error().Err(err).Msgf("add scalar metric [%s]", name)
@@ -1239,7 +1236,6 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 		}
 
 		z.scalarCounters = append(z.scalarCounters, name)
-		m.SetName(display)
 		m.SetProperty(property)
 		m.SetComment(baseCounter)
 		m.SetExportable(enabled)
