@@ -1649,7 +1649,8 @@
             "legend": {
               "calcs": [
                 "mean",
-                "lastNotNull"
+                "lastNotNull",
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom"
@@ -1670,7 +1671,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top Average Throughput by Volumes ",
+          "title": "Top Average Throughput by Volumes",
           "transformations": [],
           "type": "timeseries"
         },
