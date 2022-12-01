@@ -562,9 +562,9 @@
       "options": {
         "legend": {
           "calcs": [
-            "max",
             "mean",
-            "last"
+            "lastNotNull",
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom"
@@ -669,9 +669,9 @@
       "options": {
         "legend": {
           "calcs": [
-            "max",
             "mean",
-            "last"
+            "lastNotNull",
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom"
@@ -760,9 +760,9 @@
       "options": {
         "legend": {
           "calcs": [
-            "max",
             "mean",
-            "last"
+            "lastNotNull",
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom"
@@ -850,9 +850,9 @@
       "options": {
         "legend": {
           "calcs": [
-            "max",
             "mean",
-            "last"
+            "lastNotNull",
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom"
@@ -941,9 +941,9 @@
       "options": {
         "legend": {
           "calcs": [
-            "max",
             "mean",
-            "last"
+            "lastNotNull",
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom"
