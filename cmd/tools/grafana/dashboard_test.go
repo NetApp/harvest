@@ -562,59 +562,60 @@ func TestLegends(t *testing.T) {
 func checkLegends(t *testing.T, path string, data []byte) {
 	// collect all legends
 	dashPath := shortPath(path)
-	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
+
+	visitAllPanels(data, func(path string, key, value gjson.Result) {
 		doLegends(t, value, dashPath)
-		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
-			doLegends(t, value2, dashPath)
-			return true
-		})
-		return true
 	})
 }
 
 func doLegends(t *testing.T, value gjson.Result, dashPath string) {
-	expectedCals := []string{"mean", "lastNotNull", "max"}
-	expectedDisplayMode := "table"
-	expectedPlacement := "bottom"
+	wantDisplayMode := "table"
+	wantPlacement := "bottom"
 
 	kind := value.Get("type").String()
-	if kind == "row" {
+	if kind == "row" || kind == "piechart" {
 		return
 	}
 	optionsData := value.Get("options")
 	if legendData := optionsData.Get("legend"); legendData.Exists() {
-		legendDisplayeMode := legendData.Get("displayMode").String()
+		legendDisplayMode := legendData.Get("displayMode").String()
 		legendPlacementData := legendData.Get("placement").String()
 		title := value.Get("title").String()
-		if calcsData := legendData.Get("calcs"); calcsData.Exists() {
-			var calcsSlice []string
-			calcsData.ForEach(func(key, val gjson.Result) bool {
-				calcsSlice = append(calcsSlice, val.String())
-				return true
-			})
-			checkCalcs(t, calcsSlice, expectedCals, dashPath, title)
+		calcsData := legendData.Get("calcs").Array()
+		var calcsSlice []string
+		for _, result := range calcsData {
+			calcsSlice = append(calcsSlice, result.String())
+		}
+		checkLegendCalculations(t, calcsSlice, dashPath, title)
+
+		// Skip hidden legends
+		if legendDisplayMode == "hidden" {
+			return
+		}
+		if legendDisplayMode != wantDisplayMode {
+			t.Errorf(`dashboard=%s, panel="%s", display mode want=%s got=%s val %v`, dashPath, title, wantDisplayMode, legendDisplayMode, legendData)
 		}
 
-		// Few legends are hidden intentionally, so skipping them for testing
-		if legendDisplayeMode != "hidden" {
-			if legendDisplayeMode != expectedDisplayMode && legendDisplayeMode != "hidden" {
-				t.Errorf("dashboard=%s, panel=%s, display mode want=%s got=%s val %v", dashPath, title, expectedDisplayMode, legendDisplayeMode, legendData)
-			}
-
-			if legendPlacementData != expectedPlacement {
-				t.Errorf("dashboard=%s, panel=%s, legend placement want=%s got=%s val %v", dashPath, title, expectedPlacement, legendPlacementData, legendData)
-			}
+		if legendPlacementData != wantPlacement {
+			t.Errorf(`dashboard=%s, panel="%s", legend placement want=%s got=%s val %v`, dashPath, title, wantPlacement, legendPlacementData, legendData)
 		}
 	}
 }
 
-func checkCalcs(t *testing.T, calcsSlice []string, expected []string, dashPath, title string) {
-	calcsSliceAll := strings.Join(calcsSlice, ",")
-	for _, expectedCal := range expected {
-		// Ignoring when `sum` exist in calculations
-		if !strings.Contains(calcsSliceAll, expectedCal) && !strings.Contains(calcsSliceAll, "sum") {
-			t.Errorf("dashboard=%s, panel=%s, calculation section(s) %s not found", dashPath, title, expectedCal)
+func checkLegendCalculations(t *testing.T, gotLegendCalculations []string, dashPath, title string) {
+	wantLegendNoMin := strings.Join([]string{"mean", "lastNotNull", "max"}, ",")
+	wantLegendWithMin := "min," + wantLegendNoMin
+	got := strings.Join(gotLegendCalculations, ",")
+	if strings.Contains(got, "sum") {
+		return
+	}
+	if strings.Contains(got, "min") {
+		if got != wantLegendWithMin {
+			t.Errorf(`dashboard=%s, panel="%s", got=[%s] want=[%s]`, dashPath, title, got, wantLegendWithMin)
+		}
+	} else {
+		if got != wantLegendNoMin {
+			t.Errorf(`dashboard=%s, panel="%s", got=[%s] want=[%s]`, dashPath, title, got, wantLegendNoMin)
 		}
 	}
-
 }

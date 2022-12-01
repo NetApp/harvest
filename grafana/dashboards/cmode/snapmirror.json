@@ -1096,8 +1096,8 @@
           "calcs": [
             "min",
             "mean",
-            "max",
-            "lastNotNull"
+            "lastNotNull",
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom"
@@ -1194,8 +1194,8 @@
           "calcs": [
             "min",
             "mean",
-            "max",
-            "lastNotNull"
+            "lastNotNull",
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom"
@@ -1302,8 +1302,8 @@
           "calcs": [
             "min",
             "mean",
-            "max",
-            "lastNotNull"
+            "lastNotNull",
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom"
@@ -1409,8 +1409,8 @@
           "calcs": [
             "min",
             "mean",
-            "max",
-            "lastNotNull"
+            "lastNotNull",
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom"
@@ -1514,8 +1514,8 @@
           "calcs": [
             "min",
             "mean",
-            "max",
-            "lastNotNull"
+            "lastNotNull",
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom"
@@ -1612,8 +1612,8 @@
           "calcs": [
             "min",
             "mean",
-            "max",
-            "lastNotNull"
+            "lastNotNull",
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom"
@@ -1719,8 +1719,8 @@
           "calcs": [
             "min",
             "mean",
-            "max",
-            "lastNotNull"
+            "lastNotNull",
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom"
@@ -1826,8 +1826,8 @@
           "calcs": [
             "min",
             "mean",
-            "max",
-            "lastNotNull"
+            "lastNotNull",
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom"
@@ -1949,8 +1949,8 @@
           "calcs": [
             "min",
             "mean",
-            "max",
-            "lastNotNull"
+            "lastNotNull",
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom"
@@ -2046,8 +2046,8 @@
           "calcs": [
             "min",
             "mean",
-            "max",
-            "lastNotNull"
+            "lastNotNull",
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom"
