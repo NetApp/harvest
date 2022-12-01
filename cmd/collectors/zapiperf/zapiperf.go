@@ -196,12 +196,12 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	)
 
 	z.Logger.Trace().Msg("updating data cache")
-	m := z.Matrix[z.Object]
+	prevMat := z.Matrix[z.Object]
 	// clone matrix without numeric data
-	newData := m.Clone(false, true, true)
-	newData.Reset()
+	curMat := prevMat.Clone(false, true, true)
+	curMat.Reset()
 
-	timestamp := newData.GetMetric("timestamp")
+	timestamp := curMat.GetMetric("timestamp")
 	if timestamp == nil {
 		return nil, errs.New(errs.ErrConfig, "missing timestamp metric") // @TODO errconfig??
 	}
@@ -226,13 +226,13 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		} else {
 			instanceKeys = make([]string, 0)
 			for _, layer := range resourceMap.GetAllChildNamesS() {
-				for key := range m.GetInstances() {
+				for key := range prevMat.GetInstances() {
 					instanceKeys = append(instanceKeys, key+"."+layer)
 				}
 			}
 		}
 	} else {
-		instanceKeys = newData.GetInstanceKeys()
+		instanceKeys = curMat.GetInstanceKeys()
 	}
 
 	// build ZAPI request
@@ -340,7 +340,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 					continue
 				}
 
-				if resourceLatency = newData.GetMetric(layer); resourceLatency == nil {
+				if resourceLatency = curMat.GetMetric(layer); resourceLatency == nil {
 					z.Logger.Warn().
 						Str("layer", layer).
 						Msg("Resource-latency metric missing in cache")
@@ -357,7 +357,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 				continue
 			}
 
-			instance := newData.GetInstance(key)
+			instance := curMat.GetInstance(key)
 			if instance == nil {
 				z.Logger.Debug().
 					Str("key", key).
@@ -427,7 +427,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 					}
 
 					for i, label := range labels {
-						if metric := newData.GetMetric(name + "." + label); metric != nil {
+						if metric := curMat.GetMetric(name + "." + label); metric != nil {
 							if err = metric.SetValueString(instance, values[i]); err != nil {
 								z.Logger.Error().
 									Stack().
@@ -452,7 +452,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 								Str("label", label).
 								Str("value", value).
 								Int("instIndex", instIndex).
-								Msg("Histogram name.label not in cache")
+								Msg("Histogram name. Label not in cache")
 						}
 					}
 					continue
@@ -486,7 +486,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 				}
 
 				// store as scalar metric
-				if metric := newData.GetMetric(name); metric != nil {
+				if metric := curMat.GetMetric(name); metric != nil {
 					if err = metric.SetValueString(instance, value); err != nil {
 						z.Logger.Error().
 							Err(err).
@@ -521,7 +521,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		Msg("Collected data points in batch polls")
 
 	if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
-		if rd, pd, err := z.getParentOpsCounters(newData, keyName); err == nil {
+		if rd, pd, err := z.getParentOpsCounters(curMat, keyName); err == nil {
 			apiT += rd
 			parseT += pd
 		} else {
@@ -540,7 +540,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	// skip calculating from delta if no data from previous poll
 	if z.isCacheEmpty {
 		z.Logger.Debug().Msg("skip postprocessing until next poll (previous cache empty)")
-		z.Matrix[z.Object] = newData
+		z.Matrix[z.Object] = curMat
 		z.isCacheEmpty = false
 		return nil, nil
 	}
@@ -550,19 +550,19 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	z.Logger.Debug().Msg("starting delta calculations from previous cache")
 
 	// cache raw data for next poll
-	cachedData := newData.Clone(true, true, true) // @TODO implement copy data
+	cachedData := curMat.Clone(true, true, true) // @TODO implement copy data
 
 	// order metrics, such that those requiring base counters are processed last
-	orderedMetrics := make([]matrix.Metric, 0, len(newData.GetMetrics()))
+	orderedMetrics := make([]matrix.Metric, 0, len(curMat.GetMetrics()))
 	orderedKeys := make([]string, 0, len(orderedMetrics))
 
-	for key, metric := range newData.GetMetrics() {
+	for key, metric := range curMat.GetMetrics() {
 		if metric.GetComment() == "" { // does not require base counter
 			orderedMetrics = append(orderedMetrics, metric)
 			orderedKeys = append(orderedKeys, key)
 		}
 	}
-	for key, metric := range newData.GetMetrics() {
+	for key, metric := range curMat.GetMetrics() {
 		if metric.GetComment() != "" { // requires base counter
 			orderedMetrics = append(orderedMetrics, metric)
 			orderedKeys = append(orderedKeys, key)
@@ -571,7 +571,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	// calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
-	if _, err = timestamp.Delta(m.GetMetric("timestamp"), z.Logger); err != nil {
+	if _, err = timestamp.Delta(prevMat.GetMetric("timestamp"), prevMat, curMat, z.Logger); err != nil {
 		z.Logger.Error().Err(err).Msg("(timestamp) calculate delta:")
 		// @TODO terminate since other counters will be incorrect
 	}
@@ -590,7 +590,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		// all other properties - first calculate delta
-		if skips, err = metric.Delta(m.GetMetric(key), z.Logger); err != nil {
+		if skips, err = metric.Delta(prevMat.GetMetric(key), prevMat, curMat, z.Logger); err != nil {
 			z.Logger.Error().Err(err).Str("key", key).Msg("Calculate delta")
 			continue
 		}
@@ -613,7 +613,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		// For the next two properties we need base counters
 		// We assume that delta of base counters is already calculated
 		// (name of base counter is stored as Comment)
-		if base = newData.GetMetric(metric.GetComment()); base == nil {
+		if base = curMat.GetMetric(metric.GetComment()); base == nil {
 			z.Logger.Warn().
 				Str("key", key).
 				Str("property", property).
@@ -683,7 +683,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	z.Matrix[z.Object] = cachedData
 
 	newDataMap := make(map[string]*matrix.Matrix)
-	newDataMap[z.Object] = newData
+	newDataMap[z.Object] = curMat
 	return newDataMap, nil
 }
 
