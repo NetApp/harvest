@@ -26,7 +26,7 @@ type Matrix struct {
 	globalLabels   *dict.Dict
 	instances      map[string]*Instance
 	metrics        map[string]Metric // ONTAP metric name => metric (in templates, this is left side)
-	displayMetrics map[string]Metric // display name of metric to => metric (in templates, this is right side)
+	displayMetrics map[string]string // display name of metric to => metric name (in templates, this is right side)
 	exportOptions  *node.Node
 	exportable     bool
 }
@@ -36,7 +36,7 @@ func New(uuid, object string, identifier string) *Matrix {
 	me.globalLabels = dict.New()
 	me.instances = make(map[string]*Instance, 0)
 	me.metrics = make(map[string]Metric, 0)
-	me.displayMetrics = make(map[string]Metric, 0)
+	me.displayMetrics = make(map[string]string, 0)
 	me.exportable = true
 	return &me
 }
@@ -82,7 +82,7 @@ func (m *Matrix) Clone(withData, withMetrics, withInstances bool) *Matrix {
 		for key, metric := range m.GetMetrics() {
 			c := metric.Clone(withData)
 			clone.metrics[key] = c
-			clone.displayMetrics[c.GetName()] = c
+			clone.displayMetrics[c.GetName()] = key
 		}
 	}
 
@@ -98,8 +98,8 @@ func (m *Matrix) Reset() {
 }
 
 func (m *Matrix) DisplayMetric(name string) Metric {
-	if metric, has := m.displayMetrics[name]; has {
-		return metric
+	if metricKey, has := m.displayMetrics[name]; has {
+		return m.GetMetric(metricKey)
 	}
 	return nil
 }
@@ -166,7 +166,7 @@ func (m *Matrix) addMetric(key string, metric Metric) error {
 	// Histograms and arrays don't support display metrics yet, last write wins
 	metric.Reset(len(m.instances))
 	m.metrics[key] = metric
-	m.displayMetrics[metric.GetName()] = metric
+	m.displayMetrics[metric.GetName()] = key
 	return nil
 }
 
@@ -180,7 +180,7 @@ func (m *Matrix) RemoveExceptMetric(key string) {
 		return
 	}
 	m.metrics = make(map[string]Metric)
-	m.displayMetrics = make(map[string]Metric)
+	m.displayMetrics = make(map[string]string)
 	_ = m.addMetric(key, prev)
 }
 
