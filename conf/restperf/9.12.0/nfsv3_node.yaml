@@ -9,7 +9,7 @@ global_labels:
 counters:
   - ^^id
   - ^name                          => node
-  - ops
+  - ops                            => total_ops  # "nfs_ops" already used in system_node.yaml
   - read_ops
   - write_ops
   - throughput
