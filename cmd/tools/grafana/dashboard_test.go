@@ -3,9 +3,6 @@ package grafana
 import (
 	"fmt"
 	"github.com/tidwall/gjson"
-	"log"
-	"os"
-	"path/filepath"
 	"regexp"
 	"sort"
 	"strconv"
@@ -31,27 +28,6 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 		}
 		return true
 	})
-}
-
-func visitDashboards(dir string, eachDash func(path string, data []byte)) {
-	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			log.Fatal("failed to read directory:", err)
-		}
-		ext := filepath.Ext(path)
-		if ext != ".json" {
-			return nil
-		}
-		data, err := os.ReadFile(path)
-		if err != nil {
-			log.Fatalf("failed to read dashboards path=%s err=%v", path, err)
-		}
-		eachDash(path, data)
-		return nil
-	})
-	if err != nil {
-		log.Fatal("failed to read dashboards:", err)
-	}
 }
 
 func TestUnitsAndExprMatch(t *testing.T) {
@@ -281,11 +257,6 @@ func doPanel(pathPrefix string, key gjson.Result, value gjson.Result, mt *metric
 	return true
 }
 
-func shortPath(dashPath string) string {
-	splits := strings.Split(dashPath, string(filepath.Separator))
-	return strings.Join(splits[len(splits)-2:], string(filepath.Separator))
-}
-
 func unitForExpr(e expression, overrides []override, defaultUnit string,
 	valueToName map[string]string, numExpressions int) string {
 
@@ -475,12 +446,6 @@ func TestTopKRange(t *testing.T) {
 	})
 }
 
-type exprP struct {
-	path string
-	expr string
-	vars []string
-}
-
 func checkTopKRange(t *testing.T, path string, data []byte) {
 	// collect all expressions
 	expressions := make([]exprP, 0)
@@ -529,62 +494,6 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 				shortPath(path), expr.path, expr.expr)
 		}
 	}
-}
-
-func doTarget(pathPrefix string, key gjson.Result, value gjson.Result,
-	exprFunc func(path string, expr string, format string)) {
-	kind := value.Get("type").String()
-	if kind == "row" {
-		return
-	}
-	path := fmt.Sprintf("%spanels[%d]", pathPrefix, key.Int())
-	targetsSlice := value.Get("targets").Array()
-	for i, targetN := range targetsSlice {
-		expr := targetN.Get("expr").String()
-		pathWithTarget := path + ".targets[" + strconv.Itoa(i) + "]"
-		exprFunc(pathWithTarget, expr, kind)
-	}
-}
-
-var varRe = regexp.MustCompile(`\$(\w+)`)
-
-func newExpr(path string, expr string) exprP {
-	allMatches := varRe.FindAllStringSubmatch(expr, -1)
-	vars := make([]string, 0, len(allMatches))
-	for _, match := range allMatches {
-		vars = append(vars, match[1])
-	}
-	return exprP{
-		path: path,
-		expr: expr,
-		vars: vars,
-	}
-}
-
-type variable struct {
-	name  string
-	kind  string
-	query string
-	path  string
-}
-
-func allVariables(data []byte) []variable {
-	variables := make([]variable, 0)
-	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
-		// The datasource variable can be ignored
-		if value.Get("type").String() == "datasource" {
-			return true
-		}
-
-		variables = append(variables, variable{
-			name:  value.Get("name").String(),
-			kind:  value.Get("type").String(),
-			query: value.Get("query.query").String(),
-			path:  key.String(),
-		})
-		return true
-	})
-	return variables
 }
 
 func TestOnlyHighlightsExpanded(t *testing.T) {
