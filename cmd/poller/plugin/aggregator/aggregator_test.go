@@ -29,7 +29,7 @@ func TestInitPlugin(t *testing.T) {
 
 func TestRuleSimpleAggregation(t *testing.T) {
 
-	// create artifical data
+	// create artificial data
 	m = matrix.New("", "", "")
 	var n *matrix.Matrix
 
@@ -172,7 +172,7 @@ func TestComplexRuleRegex(t *testing.T) {
 
 	var n *matrix.Matrix
 	var A, B, C, D, instance *matrix.Instance
-	var metricA matrix.Metric
+	var metricA *matrix.Metric
 	var err error
 
 	params := node.NewS("Aggregator")

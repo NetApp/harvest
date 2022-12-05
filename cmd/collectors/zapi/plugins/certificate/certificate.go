@@ -159,7 +159,7 @@ func (my *Certificate) setCertificateIssuerType(instance *matrix.Instance) {
 
 func (my *Certificate) setCertificateValidity(data *matrix.Matrix, instance *matrix.Instance) {
 	var (
-		expiryTimeMetric matrix.Metric
+		expiryTimeMetric *matrix.Metric
 	)
 
 	instance.SetLabel("certificateExpiryStatus", "unknown")

@@ -85,7 +85,7 @@ func (my *Qtree) Init() error {
 			return err
 		}
 
-		my.Logger.Debug().Msgf("added metric: (%s) [%s] %s", metricName, display, metric)
+		my.Logger.Debug().Msgf("added metric: (%s) [%s] %v", metricName, display, metric)
 	}
 
 	my.Logger.Debug().Msgf("added data with %d metrics", len(my.data.GetMetrics()))

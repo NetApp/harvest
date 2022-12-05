@@ -1,6 +1,7 @@
 /*
  * Copyright NetApp Inc, 2021 All rights reserved
  */
+
 package fcp
 
 import (
@@ -20,20 +21,20 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Fcp{AbstractPlugin: p}
 }
 
-func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (f *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
-	var rx, tx, util, read, write matrix.Metric
+	var rx, tx, util, read, write *matrix.Metric
 	var err error
 
 	if read = data.GetMetric("read_data"); read == nil {
-		// Check for 7 mode fcp counters, as they starts with fcp_.
+		// Check for 7 mode fcp counters, as they start with fcp_.
 		if read = data.GetMetric("fcp_read_data"); read == nil {
 			return nil, errs.New(errs.ErrNoMetric, "read_data")
 		}
 	}
 
 	if write = data.GetMetric("write_data"); write == nil {
-		// Check for 7 mode fcp counters, as they starts with fcp_.
+		// Check for 7 mode fcp counters, as they start with fcp_.
 		if write = data.GetMetric("fcp_write_data"); write == nil {
 			return nil, errs.New(errs.ErrNoMetric, "write_data")
 		}
@@ -72,7 +73,7 @@ func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		var err error
 
 		if speed, err = strconv.Atoi(instance.GetLabel("speed")); err != nil {
-			me.Logger.Debug().Msgf("skip, can't convert speed (%s) to numeric", s)
+			f.Logger.Debug().Msgf("skip, can't convert speed (%s) to numeric", s)
 		}
 
 		if speed != 0 {
@@ -84,7 +85,7 @@ func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				rxPercent = rxBytes / float64(speed)
 				err := rx.SetValueFloat64(instance, rxPercent)
 				if err != nil {
-					me.Logger.Error().Stack().Err(err).Msg("error")
+					f.Logger.Error().Stack().Err(err).Msg("error")
 				}
 			}
 
@@ -92,14 +93,14 @@ func (me *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				txPercent = txBytes / float64(speed)
 				err := tx.SetValueFloat64(instance, txPercent)
 				if err != nil {
-					me.Logger.Error().Stack().Err(err).Msg("error")
+					f.Logger.Error().Stack().Err(err).Msg("error")
 				}
 			}
 
 			if rxOk || txOk {
 				err := util.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
 				if err != nil {
-					me.Logger.Error().Stack().Err(err).Msg("error")
+					f.Logger.Error().Stack().Err(err).Msg("error")
 				}
 			}
 		}

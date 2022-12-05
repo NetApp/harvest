@@ -32,7 +32,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 // Run speed label is reported in bits-per-second and rx/tx is reported as bytes-per-second
 func (me *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
-	var read, write, rx, tx, util matrix.Metric
+	var read, write, rx, tx, util *matrix.Metric
 	var err error
 
 	if read = data.GetMetric("receive_bytes"); read == nil {

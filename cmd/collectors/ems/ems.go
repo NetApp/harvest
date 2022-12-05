@@ -318,7 +318,7 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 		err              error
 		records          []gjson.Result
 		ok               bool
-		metr             matrix.Metric
+		metr             *matrix.Metric
 		bookendCacheSize int
 		metricTimestamp  float64
 	)
@@ -752,7 +752,7 @@ func (e *Ems) updateMatrix() {
 	var (
 		ok   bool
 		val  float64
-		metr matrix.Metric
+		metr *matrix.Metric
 	)
 
 	tempMap := make(map[string]*matrix.Matrix)

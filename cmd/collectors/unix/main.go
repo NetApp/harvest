@@ -41,7 +41,7 @@ var clkTck float64
 
 // list of histograms provided by the collector, mapped
 // to function extracting them from a Process instance
-var _Histograms = map[string]func(matrix.Metric, string, *matrix.Instance, *Process){
+var _Histograms = map[string]func(*matrix.Metric, string, *matrix.Instance, *Process){
 	"cpu":    setCPU,
 	"memory": setMemory,
 	"io":     setIo,
@@ -50,7 +50,7 @@ var _Histograms = map[string]func(matrix.Metric, string, *matrix.Instance, *Proc
 }
 
 // list of (scalar) metrics
-var _Metrics = map[string]func(matrix.Metric, *matrix.Instance, *Process, *System){
+var _Metrics = map[string]func(*matrix.Metric, *matrix.Instance, *Process, *System){
 	"start_time":     setStartTime,
 	"cpu_percent":    setCPUPercent,
 	"memory_percent": setMemoryPercent,
@@ -186,7 +186,7 @@ func (u *Unix) Init(a *collector.AbstractCollector) error {
 func (u *Unix) loadMetrics(counters *node.Node) error {
 	var (
 		proc           *Process
-		metric         matrix.Metric
+		metric         *matrix.Metric
 		labels, wanted *set.Set
 		err            error
 	)
@@ -425,35 +425,35 @@ func (u *Unix) PollData() (map[string]*matrix.Matrix, error) {
 	return u.Matrix, nil
 }
 
-func setStartTime(m matrix.Metric, i *matrix.Instance, p *Process, s *System) {
+func setStartTime(m *matrix.Metric, i *matrix.Instance, p *Process, s *System) {
 	err := m.SetValueFloat64(i, p.startTime+s.bootTime)
 	if err != nil {
 		logging.Get().Error().Stack().Err(err).Msg("error")
 	}
 }
 
-func setNumThreads(m matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
+func setNumThreads(m *matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
 	err := m.SetValueUint64(i, p.numThreads)
 	if err != nil {
 		logging.Get().Error().Stack().Err(err).Msg("error")
 	}
 }
 
-func setNumFds(m matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
+func setNumFds(m *matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
 	err := m.SetValueUint64(i, p.numFds)
 	if err != nil {
 		logging.Get().Error().Stack().Err(err).Msg("error")
 	}
 }
 
-func setMemoryPercent(m matrix.Metric, i *matrix.Instance, p *Process, s *System) {
+func setMemoryPercent(m *matrix.Metric, i *matrix.Instance, p *Process, s *System) {
 	err := m.SetValueFloat64(i, float64(p.mem["rss"])/float64(s.memTotal)*100)
 	if err != nil {
 		logging.Get().Error().Stack().Err(err).Msg("error")
 	}
 }
 
-func setCPUPercent(m matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
+func setCPUPercent(m *matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
 	if p.elapsedTime != 0 {
 		err := m.SetValueFloat64(i, p.cpuTotal/p.elapsedTime*100)
 		if err != nil {
@@ -467,7 +467,7 @@ func setCPUPercent(m matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
 	}
 }
 
-func setCPU(m matrix.Metric, l string, i *matrix.Instance, p *Process) {
+func setCPU(m *matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.cpu[l]; ok {
 		err := m.SetValueFloat64(i, value)
 		if err != nil {
@@ -476,7 +476,7 @@ func setCPU(m matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	}
 }
 
-func setMemory(m matrix.Metric, l string, i *matrix.Instance, p *Process) {
+func setMemory(m *matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.mem[l]; ok {
 		err := m.SetValueUint64(i, value)
 		if err != nil {
@@ -485,7 +485,7 @@ func setMemory(m matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	}
 }
 
-func setIo(m matrix.Metric, l string, i *matrix.Instance, p *Process) {
+func setIo(m *matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.io[l]; ok {
 		err := m.SetValueUint64(i, value)
 		if err != nil {
@@ -494,7 +494,7 @@ func setIo(m matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	}
 }
 
-func setNet(m matrix.Metric, l string, i *matrix.Instance, p *Process) {
+func setNet(m *matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.net[l]; ok {
 		err := m.SetValueUint64(i, value)
 		if err != nil {
@@ -503,7 +503,7 @@ func setNet(m matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	}
 }
 
-func setCtx(m matrix.Metric, l string, i *matrix.Instance, p *Process) {
+func setCtx(m *matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.ctx[l]; ok {
 		err := m.SetValueUint64(i, value)
 		if err != nil {

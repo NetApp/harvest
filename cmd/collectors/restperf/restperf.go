@@ -399,7 +399,7 @@ func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 			metr.SetExportable(metric.Exportable)
 		}
 
-		var service, wait, visits, ops matrix.Metric
+		var service, wait, visits, ops *matrix.Metric
 
 		if service = mat.GetMetric("service_time"); service == nil {
 			r.Logger.Error().Msg("metric [service_time] required to calculate workload missing")
@@ -473,7 +473,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		err               error
 		perfRecords       []rest.PerfRecord
 		instanceKeys      []string
-		resourceLatency   matrix.Metric // for workload* objects
+		resourceLatency   *matrix.Metric // for workload* objects
 		skips             int
 		instIndex         int
 	)
@@ -536,7 +536,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 				instanceKey     string
 				instance        *matrix.Instance
 				isHistogram     bool
-				histogramMetric matrix.Metric
+				histogramMetric *matrix.Metric
 			)
 			instIndex++
 
@@ -821,10 +821,10 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	// cache raw data for next poll
 	cachedData := curMat.Clone(true, true, true)
 
-	orderedNonDenominatorMetrics := make([]matrix.Metric, 0, len(curMat.GetMetrics()))
+	orderedNonDenominatorMetrics := make([]*matrix.Metric, 0, len(curMat.GetMetrics()))
 	orderedNonDenominatorKeys := make([]string, 0, len(orderedNonDenominatorMetrics))
 
-	orderedDenominatorMetrics := make([]matrix.Metric, 0, len(curMat.GetMetrics()))
+	orderedDenominatorMetrics := make([]*matrix.Metric, 0, len(curMat.GetMetrics()))
 	orderedDenominatorKeys := make([]string, 0, len(orderedDenominatorMetrics))
 
 	for key, metric := range curMat.GetMetrics() {
@@ -856,7 +856,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		r.Logger.Error().Err(err).Msg("(timestamp) calculate delta:")
 	}
 
-	var base matrix.Metric
+	var base *matrix.Metric
 	var totalSkips int
 
 	for i, metric := range orderedMetrics {
@@ -995,7 +995,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 
 	var (
-		ops       matrix.Metric
+		ops       *matrix.Metric
 		object    string
 		dataQuery string
 		err       error
@@ -1072,7 +1072,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 	return nil
 }
 
-func (r *RestPerf) counterLookup(metric matrix.Metric, metricKey string) *counter {
+func (r *RestPerf) counterLookup(metric *matrix.Metric, metricKey string) *counter {
 	var c *counter
 
 	if metric.IsArray() {

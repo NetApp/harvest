@@ -55,8 +55,8 @@ func (a *MetricAgent) Run(m *matrix.Matrix) ([]*matrix.Matrix, error) {
 func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 
 	var (
-		metric                    matrix.Metric
-		metricVal, firstMetricVal matrix.Metric
+		metric                    *matrix.Metric
+		metricVal, firstMetricVal *matrix.Metric
 		err                       error
 	)
 
@@ -131,7 +131,7 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 	return nil
 }
 
-func (a *MetricAgent) getMetric(m *matrix.Matrix, name string) matrix.Metric {
+func (a *MetricAgent) getMetric(m *matrix.Matrix, name string) *matrix.Metric {
 	metric := m.DisplayMetric(name)
 	if metric != nil {
 		return metric

@@ -12,84 +12,16 @@ Examples:
 package matrix
 
 import (
+	"fmt"
 	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
+	"strconv"
 )
 
-type Metric interface {
-	// methods related to metric attributes
-
-	GetName() string
-	GetType() string
-	SetLabel(string, string)
-	SetLabels(*dict.Dict)
-	GetLabel(string) string
-	GetLabels() *dict.Dict
-	HasLabels() bool
-	IsExportable() bool
-	SetExportable(bool)
-	GetProperty() string
-	SetProperty(string)
-	GetComment() string
-	SetComment(string)
-	IsArray() bool
-	SetArray(bool)
-	IsHistogram() bool
-	SetHistogram(bool)
-	Clone(bool) Metric
-	SetBuckets(*[]string)
-	Buckets() *[]string
-
-	// methods for resizing metric storage
-
-	Reset(int)
-	Remove(int)
-	Append()
-
-	// methods for writing to metric storage
-
-	SetValueInt64(*Instance, int64) error
-	SetValueUint8(*Instance, uint8) error
-	SetValueUint64(*Instance, uint64) error
-	SetValueFloat64(*Instance, float64) error
-	SetValueString(*Instance, string) error
-	SetValueBytes(*Instance, []byte) error
-	SetValueBool(*Instance, bool) error
-
-	AddValueInt64(*Instance, int64) error
-	AddValueUint8(*Instance, uint8) error
-	AddValueUint64(*Instance, uint64) error
-	AddValueFloat64(*Instance, float64) error
-	AddValueString(*Instance, string) error
-
-	SetValueNAN(*Instance)
-	// methods for reading from metric storage
-
-	GetValueInt(*Instance) (int, bool)
-	GetValueInt64(*Instance) (int64, bool)
-	GetValueUint8(*Instance) (uint8, bool)
-	GetValueUint64(*Instance) (uint64, bool)
-	GetValueFloat64(*Instance) (float64, bool)
-	GetValueString(*Instance) (string, bool)
-	GetValueBytes(*Instance) ([]byte, bool)
-	GetRecords() []bool
-	GetValuesFloat64() []float64
-
-	// methods for doing vector arithmetics
-	// currently only supported for float64!
-
-	Delta(Metric, *Matrix, *Matrix, *logging.Logger) (int, error)
-	Divide(Metric, *logging.Logger) (int, error)
-	DivideWithThreshold(Metric, int, *logging.Logger) (int, error)
-	MultiplyByScalar(uint, *logging.Logger) (int, error)
-	// Print is used for debugging
-	Print()
-}
-
-type AbstractMetric struct {
+type Metric struct {
 	name       string
-	dtype      string
+	dataType   string
 	property   string
 	comment    string
 	array      bool
@@ -98,12 +30,13 @@ type AbstractMetric struct {
 	labels     *dict.Dict
 	buckets    *[]string
 	record     []bool
+	values     []float64
 }
 
-func (m *AbstractMetric) Clone(deep bool) *AbstractMetric {
-	clone := AbstractMetric{
+func (m *Metric) Clone(deep bool) *Metric {
+	clone := Metric{
 		name:       m.name,
-		dtype:      m.dtype,
+		dataType:   m.dataType,
 		property:   m.property,
 		comment:    m.comment,
 		exportable: m.exportable,
@@ -119,120 +52,372 @@ func (m *AbstractMetric) Clone(deep bool) *AbstractMetric {
 			clone.record = make([]bool, len(m.record))
 			copy(clone.record, m.record)
 		}
+		if len(m.values) != 0 {
+			clone.values = make([]float64, len(m.values))
+			copy(clone.values, m.values)
+		}
 	}
 	return &clone
 }
 
-func (m *AbstractMetric) GetName() string {
+func (m *Metric) GetName() string {
 	return m.name
 }
 
-func (m *AbstractMetric) IsExportable() bool {
+func (m *Metric) IsExportable() bool {
 	return m.exportable
 }
 
-func (m *AbstractMetric) SetExportable(b bool) {
+func (m *Metric) SetExportable(b bool) {
 	m.exportable = b
 }
 
-func (m *AbstractMetric) GetType() string {
-	return m.dtype
+func (m *Metric) GetType() string {
+	return m.dataType
 }
 
-func (m *AbstractMetric) GetProperty() string {
+func (m *Metric) GetProperty() string {
 	return m.property
 }
 
-func (m *AbstractMetric) SetProperty(p string) {
+func (m *Metric) SetProperty(p string) {
 	m.property = p
 }
 
-func (m *AbstractMetric) GetComment() string {
+func (m *Metric) GetComment() string {
 	return m.comment
 }
 
-func (m *AbstractMetric) SetComment(c string) {
+func (m *Metric) SetComment(c string) {
 	m.comment = c
 }
 
-func (m *AbstractMetric) IsArray() bool {
+func (m *Metric) IsArray() bool {
 	return m.array
 }
 
-func (m *AbstractMetric) SetArray(c bool) {
+func (m *Metric) SetArray(c bool) {
 	m.array = c
 }
 
-func (m *AbstractMetric) SetLabel(key, value string) {
+func (m *Metric) SetLabel(key, value string) {
 	if m.labels == nil {
 		m.labels = dict.New()
 	}
 	m.labels.Set(key, value)
 }
 
-func (m *AbstractMetric) SetHistogram(b bool) {
+func (m *Metric) SetHistogram(b bool) {
 	m.histogram = b
 }
 
-func (m *AbstractMetric) IsHistogram() bool {
+func (m *Metric) IsHistogram() bool {
 	return m.histogram
 }
 
-func (m *AbstractMetric) Buckets() *[]string {
+func (m *Metric) Buckets() *[]string {
 	return m.buckets
 }
 
-func (m *AbstractMetric) SetBuckets(buckets *[]string) {
+func (m *Metric) SetBuckets(buckets *[]string) {
 	m.buckets = buckets
 }
 
-func (m *AbstractMetric) SetLabels(labels *dict.Dict) {
+func (m *Metric) SetLabels(labels *dict.Dict) {
 	m.labels = labels
 }
 
-func (m *AbstractMetric) GetLabel(key string) string {
+func (m *Metric) GetLabel(key string) string {
 	if m.labels != nil {
 		return m.labels.Get(key)
 	}
 	return ""
 }
 
-func (m *AbstractMetric) GetLabels() *dict.Dict {
+func (m *Metric) GetLabels() *dict.Dict {
 	return m.labels
 
 }
-func (m *AbstractMetric) HasLabels() bool {
+func (m *Metric) HasLabels() bool {
 	return m.labels != nil && m.labels.Size() != 0
 }
 
-func (m *AbstractMetric) GetRecords() []bool {
+func (m *Metric) GetRecords() []bool {
 	return m.record
 }
 
-func (m *AbstractMetric) SetValueNAN(i *Instance) {
+func (m *Metric) SetValueNAN(i *Instance) {
 	m.record[i.index] = false
 }
 
-func (m *AbstractMetric) Delta(Metric, *Matrix, *Matrix, *logging.Logger) (int, error) {
-	return 0, errs.New(errs.ErrImplement, m.dtype)
+// Storage resizing methods
+
+func (m *Metric) Reset(size int) {
+	m.record = make([]bool, size)
+	m.values = make([]float64, size)
 }
 
-func (m *AbstractMetric) Divide(Metric, *logging.Logger) (int, error) {
-	return 0, errs.New(errs.ErrImplement, m.dtype)
+func (m *Metric) Append() {
+	m.record = append(m.record, false)
+	m.values = append(m.values, 0)
 }
 
-func (m *AbstractMetric) DivideWithThreshold(Metric, int, *logging.Logger) (int, error) {
-	return 0, errs.New(errs.ErrImplement, m.dtype)
+// Remove element at index, shift everything to the left
+func (m *Metric) Remove(index int) {
+	for i := index; i < len(m.values)-1; i++ {
+		m.record[i] = m.record[i+1]
+		m.values[i] = m.values[i+1]
+	}
+	m.record = m.record[:len(m.record)-1]
+	m.values = m.values[:len(m.values)-1]
 }
 
-func (m *AbstractMetric) MultiplyByScalar(uint, *logging.Logger) (int, error) {
-	return 0, errs.New(errs.ErrImplement, m.dtype)
+// Write methods
+
+func (m *Metric) SetValueInt64(i *Instance, v int64) error {
+	m.record[i.index] = true
+	m.values[i.index] = float64(v)
+	return nil
 }
 
-func (m *AbstractMetric) AddValueString(*Instance, string) error {
-	return errs.New(errs.ErrImplement, m.dtype)
+func (m *Metric) SetValueUint8(i *Instance, v uint8) error {
+	m.record[i.index] = true
+	m.values[i.index] = float64(v)
+	return nil
 }
 
-func (m *AbstractMetric) SetValueBool(*Instance, bool) error {
-	return errs.New(errs.ErrImplement, m.dtype)
+func (m *Metric) SetValueUint64(i *Instance, v uint64) error {
+	m.record[i.index] = true
+	m.values[i.index] = float64(v)
+	return nil
+}
+
+func (m *Metric) SetValueFloat64(i *Instance, v float64) error {
+	m.record[i.index] = true
+	m.values[i.index] = v
+	return nil
+}
+
+func (m *Metric) SetValueString(i *Instance, v string) error {
+	var x float64
+	var err error
+	if x, err = strconv.ParseFloat(v, 64); err == nil {
+		m.record[i.index] = true
+		m.values[i.index] = x
+		return nil
+	}
+	return err
+}
+
+func (m *Metric) SetValueBytes(i *Instance, v []byte) error {
+	return m.SetValueString(i, string(v))
+}
+
+func (m *Metric) AddValueInt64(i *Instance, n int64) error {
+	v, _ := m.GetValueInt64(i)
+	return m.SetValueInt64(i, v+n)
+}
+
+func (m *Metric) AddValueUint8(i *Instance, n uint8) error {
+	v, _ := m.GetValueUint8(i)
+	return m.SetValueUint8(i, v+n)
+}
+
+func (m *Metric) AddValueUint64(i *Instance, n uint64) error {
+	v, _ := m.GetValueUint64(i)
+	return m.SetValueUint64(i, v+n)
+}
+
+func (m *Metric) AddValueFloat64(i *Instance, n float64) error {
+	v, _ := m.GetValueFloat64(i)
+	return m.SetValueFloat64(i, v+n)
+}
+
+func (m *Metric) AddValueString(i *Instance, v string) error {
+	var (
+		x, n float64
+		err  error
+		has  bool
+	)
+	if x, err = strconv.ParseFloat(v, 64); err != nil {
+		return err
+	}
+	if n, has = m.GetValueFloat64(i); has {
+		return m.SetValueFloat64(i, x+n)
+	}
+	return m.SetValueFloat64(i, x)
+}
+
+// Read methods
+
+func (m *Metric) GetValueInt(i *Instance) (int, bool) {
+	v := m.values[i.index]
+	val := int(v)
+	return val, m.record[i.index]
+}
+
+func (m *Metric) GetValueInt64(i *Instance) (int64, bool) {
+	v := m.values[i.index]
+	val := int64(v)
+	return val, m.record[i.index]
+}
+
+func (m *Metric) GetValueUint8(i *Instance) (uint8, bool) {
+	v := m.values[i.index]
+	return uint8(v), m.record[i.index]
+}
+
+func (m *Metric) GetValueUint64(i *Instance) (uint64, bool) {
+	v := m.values[i.index]
+	val := uint64(v)
+	return val, m.record[i.index]
+}
+
+func (m *Metric) GetValueFloat64(i *Instance) (float64, bool) {
+	v := m.values[i.index]
+	return v, m.record[i.index]
+}
+
+func (m *Metric) GetValueString(i *Instance) (string, bool) {
+	v := m.values[i.index]
+	return strconv.FormatFloat(v, 'f', -1, 64), m.record[i.index]
+}
+
+func (m *Metric) GetValueBytes(i *Instance) ([]byte, bool) {
+	s, ok := m.GetValueString(i)
+	return []byte(s), ok
+}
+
+// vector arithmetics
+
+func (m *Metric) Delta(prevMetric *Metric, prevMat *Matrix, curMat *Matrix, logger *logging.Logger) (int, error) {
+	var skips int
+	prevRaw := prevMetric.values
+	prevRecord := prevMetric.GetRecords()
+	for key, currInstance := range curMat.GetInstances() {
+		// check if this instance key exists in previous matrix
+		prevInstance := prevMat.GetInstance(key)
+		currIndex := currInstance.index
+		curRaw := m.values[currIndex]
+		if prevInstance != nil {
+			prevIndex := prevInstance.index
+			if m.record[currIndex] && prevRecord[prevIndex] {
+				m.values[currIndex] -= prevRaw[prevIndex]
+				// Sometimes ONTAP sends spurious zeroes or values less than the previous poll.
+				// Detect and don't publish negative deltas or the subsequent poll will show a large spike.
+				isInvalidZero := (curRaw == 0 || prevRaw[prevIndex] == 0) && m.values[prevIndex] != 0
+				isNegative := m.values[currIndex] < 0
+				if isInvalidZero || isNegative {
+					m.record[currIndex] = false
+					skips++
+					logger.Trace().
+						Str("metric", m.GetName()).
+						Float64("currentRaw", curRaw).
+						Float64("previousRaw", prevRaw[prevIndex]).
+						Str("instKey", key).
+						Msg("Negative cooked value")
+				}
+			}
+		} else {
+			m.record[currIndex] = false
+			skips++
+			logger.Trace().
+				Str("metric", m.GetName()).
+				Float64("currentRaw", curRaw).
+				Str("instKey", key).
+				Msg("New instance added")
+		}
+	}
+	return skips, nil
+}
+
+func (m *Metric) Divide(s *Metric, logger *logging.Logger) (int, error) {
+	var skips int
+	sValues := s.values
+	sRecord := s.GetRecords()
+	if len(m.values) != len(sValues) {
+		return 0, errs.New(ErrUnequalVectors, fmt.Sprintf("numerator=%d, denominator=%d", len(m.values), len(sValues)))
+	}
+	for i := 0; i < len(m.values); i++ {
+		if m.record[i] && sRecord[i] {
+			if sValues[i] != 0 {
+				// Don't pass along the value if the numerator or denominator is < 0
+				// A denominator of zero is fine
+				if m.values[i] < 0 || sValues[i] < 0 {
+					m.record[i] = false
+					skips++
+					logger.Trace().
+						Str("metric", m.GetName()).
+						Float64("numerator", m.values[i]).
+						Float64("denominator", sValues[i]).
+						Msg("No pass values")
+				}
+				m.values[i] /= sValues[i]
+			} else {
+				m.values[i] = 0
+			}
+		}
+	}
+	return skips, nil
+}
+
+func (m *Metric) DivideWithThreshold(s *Metric, t int, logger *logging.Logger) (int, error) {
+	var skips int
+	x := float64(t)
+	sValues := s.values
+	sRecord := s.GetRecords()
+	if len(m.values) != len(sValues) {
+		return 0, errs.New(ErrUnequalVectors, fmt.Sprintf("numerator=%d, denominator=%d", len(m.values), len(sValues)))
+	}
+	for i := 0; i < len(m.values); i++ {
+		v := m.values[i]
+		// Don't pass along the value if the numerator or denominator is < 0
+		// It's important to check sValues[i] < 0 and allow a zero so pass=true and m.values[i] remains unchanged
+		if m.values[i] < 0 || sValues[i] < 0 {
+			m.record[i] = false
+			skips++
+			logger.Trace().
+				Str("metric", m.GetName()).
+				Float64("numerator", v).
+				Float64("denominator", sValues[i]).
+				Msg("Negative values")
+		}
+		if m.record[i] && sRecord[i] && sValues[i] >= x {
+			m.values[i] /= sValues[i]
+		} else {
+			m.values[i] = 0
+		}
+	}
+	return skips, nil
+}
+
+func (m *Metric) MultiplyByScalar(s uint, logger *logging.Logger) (int, error) {
+	var skips int
+	x := float64(s)
+	for i := 0; i < len(m.values); i++ {
+		if m.record[i] {
+			// if current is <= 0
+			if m.values[i] < 0 {
+				m.record[i] = false
+				skips++
+				logger.Trace().
+					Str("metric", m.GetName()).
+					Float64("currentRaw", m.values[i]).
+					Uint("scalar", s).
+					Msg("Negative value")
+			}
+			m.values[i] *= x
+		}
+	}
+	return skips, nil
+}
+
+func (m *Metric) Print() {
+	for i := range m.values {
+		if m.record[i] {
+			fmt.Printf("%s%v ", " ", m.values[i])
+		} else {
+			fmt.Printf("%s%v ", "!", m.values[i])
+		}
+	}
 }
