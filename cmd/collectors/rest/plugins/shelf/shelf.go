@@ -261,7 +261,7 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 								// Each child would have different possible values which is ugly way to write all of them,
 								// so normal value would be mapped to 1 and rest all are mapped to 0.
-								if shelfChildInstance.GetLabel("status") == "ok" {
+								if shelfChildInstance.GetLabel("status") == "normal" {
 									_ = statusMetric.SetValueInt64(shelfChildInstance, 1)
 								} else {
 									_ = statusMetric.SetValueInt64(shelfChildInstance, 0)
