@@ -473,13 +473,6 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 		instanceCount += len(v.GetInstances())
 	}
 
-	e.Logger.Info().
-		Int("instances", instanceCount).
-		Uint64("dataPoints", count).
-		Str("apiTime", apiD.String()).
-		Str("parseTime", parseD.String()).
-		Msg("Collected")
-
 	_ = e.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
 	_ = e.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
 	_ = e.Metadata.LazySetValueUint64("metrics", "data", count)
