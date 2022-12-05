@@ -1,0 +1,19 @@
+# Offbox vscan counters from a per SVM perspective
+name:                     VscanSVM
+query:                    api/cluster/counter/tables/svm_vscan
+object:                   svm_vscan
+
+instance_key:             uuid
+
+counters:
+  - ^^id
+  - ^svm.name                        => svm
+  - dispatch.latency                 => dispatch_latency
+  - scan.latency                     => scan_latency
+  - scan.notification_received_rate  => scan_noti_received_rate
+  - scan.request_dispatched_rate     => scan_request_dispatched_rate
+  - connections_active
+
+export_options:
+  instance_keys:
+    - svm
