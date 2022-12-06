@@ -571,7 +571,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	// calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
-	if _, err = timestamp.Delta(prevMat.GetMetric("timestamp"), prevMat, curMat, z.Logger); err != nil {
+	if _, err = curMat.Delta("timestamp", prevMat, z.Logger); err != nil {
 		z.Logger.Error().Err(err).Msg("(timestamp) calculate delta:")
 		// @TODO terminate since other counters will be incorrect
 	}
@@ -590,7 +590,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		// all other properties - first calculate delta
-		if skips, err = metric.Delta(prevMat.GetMetric(key), prevMat, curMat, z.Logger); err != nil {
+		if skips, err = curMat.Delta(key, prevMat, z.Logger); err != nil {
 			z.Logger.Error().Err(err).Str("key", key).Msg("Calculate delta")
 			continue
 		}
@@ -631,9 +631,9 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if property == "average" || property == "percent" {
 
 			if strings.HasSuffix(metric.GetName(), "latency") {
-				skips, err = metric.DivideWithThreshold(base, z.latencyIoReqd, z.Logger)
+				skips, err = curMat.DivideWithThreshold(key, metric.GetComment(), z.latencyIoReqd, z.Logger)
 			} else {
-				skips, err = metric.Divide(base, z.Logger)
+				skips, err = curMat.Divide(key, metric.GetComment(), z.Logger)
 			}
 
 			if err != nil {
@@ -647,7 +647,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		if property == "percent" {
-			if skips, err = metric.MultiplyByScalar(100, z.Logger); err != nil {
+			if skips, err = curMat.MultiplyByScalar(key, 100, z.Logger); err != nil {
 				z.Logger.Error().Err(err).Str("key", key).Msg("Multiply by scalar")
 			} else {
 				totalSkips += skips
@@ -663,7 +663,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	// calculate rates (which we deferred to calculate averages/percents first)
 	for i, metric := range orderedMetrics {
 		if metric.GetProperty() == "rate" {
-			if skips, err = metric.Divide(timestamp, z.Logger); err != nil {
+			if skips, err = curMat.Divide(orderedKeys[i], "timestamp", z.Logger); err != nil {
 				z.Logger.Error().Err(err).
 					Int("i", i).
 					Str("key", orderedKeys[i]).

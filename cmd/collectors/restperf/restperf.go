@@ -852,7 +852,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	// calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
-	if _, err = timestamp.Delta(prevMat.GetMetric("timestamp"), prevMat, curMat, r.Logger); err != nil {
+	if _, err = curMat.Delta("timestamp", prevMat, r.Logger); err != nil {
 		r.Logger.Error().Err(err).Msg("(timestamp) calculate delta:")
 	}
 
@@ -878,7 +878,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		// all other properties - first calculate delta
-		if skips, err = metric.Delta(prevMat.GetMetric(key), prevMat, curMat, r.Logger); err != nil {
+		if skips, err = curMat.Delta(key, prevMat, r.Logger); err != nil {
 			r.Logger.Error().Err(err).Str("key", key).Msg("Calculate delta")
 			continue
 		}
@@ -919,9 +919,9 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if property == "average" || property == "percent" {
 
 			if strings.HasSuffix(metric.GetName(), "latency") {
-				skips, err = metric.DivideWithThreshold(base, r.perfProp.latencyIoReqd, r.Logger)
+				skips, err = curMat.DivideWithThreshold(key, counter.denominator, r.perfProp.latencyIoReqd, r.Logger)
 			} else {
-				skips, err = metric.Divide(base, r.Logger)
+				skips, err = curMat.Divide(key, counter.denominator, r.Logger)
 			}
 
 			if err != nil {
@@ -936,7 +936,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		if property == "percent" {
-			if skips, err = metric.MultiplyByScalar(100, r.Logger); err != nil {
+			if skips, err = curMat.MultiplyByScalar(key, 100, r.Logger); err != nil {
 				r.Logger.Error().Err(err).Str("key", key).Msg("Multiply by scalar")
 			} else {
 				totalSkips += skips
@@ -958,7 +958,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if counter != nil {
 			property := counter.counterType
 			if property == "rate" {
-				if skips, err = metric.Divide(timestamp, r.Logger); err != nil {
+				if skips, err = curMat.Divide(orderedKeys[i], "timestamp", r.Logger); err != nil {
 					r.Logger.Error().Err(err).
 						Int("i", i).
 						Str("metric", metric.GetName()).

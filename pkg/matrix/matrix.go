@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
+	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"strings"
 )
@@ -302,4 +303,170 @@ func CreateMetric(key string, data *Matrix) error {
 		}
 	}
 	return nil
+}
+
+// Delta vector arithmetics
+func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *logging.Logger) (int, error) {
+	var skips int
+	prevMetric := prevMat.GetMetric(metricKey)
+	curMetric := m.GetMetric(metricKey)
+	prevRaw := prevMetric.values
+	prevRecord := prevMetric.GetRecords()
+	for key, currInstance := range m.GetInstances() {
+		// check if this instance key exists in previous matrix
+		prevInstance := prevMat.GetInstance(key)
+		currIndex := currInstance.index
+		curRaw := curMetric.values[currIndex]
+		if prevInstance != nil {
+			prevIndex := prevInstance.index
+			if curMetric.record[currIndex] && prevRecord[prevIndex] {
+				curMetric.values[currIndex] -= prevRaw[prevIndex]
+				// Sometimes ONTAP sends spurious zeroes or values less than the previous poll.
+				// Detect and don't publish negative deltas or the subsequent poll will show a large spike.
+				isInvalidZero := (curRaw == 0 || prevRaw[prevIndex] == 0) && curMetric.values[prevIndex] != 0
+				isNegative := curMetric.values[currIndex] < 0
+				if isInvalidZero || isNegative {
+					curMetric.record[currIndex] = false
+					skips++
+					logger.Trace().
+						Str("metric", curMetric.GetName()).
+						Float64("currentRaw", curRaw).
+						Float64("previousRaw", prevRaw[prevIndex]).
+						Str("instKey", key).
+						Msg("Negative cooked value")
+				}
+			} else {
+				curMetric.record[currIndex] = false
+				skips++
+				logger.Trace().
+					Str("metric", curMetric.GetName()).
+					Float64("currentRaw", curRaw).
+					Float64("previousRaw", prevRaw[prevIndex]).
+					Str("instKey", key).
+					Msg("Delta calculation skipped")
+			}
+		} else {
+			curMetric.record[currIndex] = false
+			skips++
+			logger.Trace().
+				Str("metric", curMetric.GetName()).
+				Float64("currentRaw", curRaw).
+				Str("instKey", key).
+				Msg("New instance added")
+		}
+	}
+	return skips, nil
+}
+
+func (m *Matrix) Divide(metricKey string, baseKey string, logger *logging.Logger) (int, error) {
+	var skips int
+	metric := m.GetMetric(metricKey)
+	base := m.GetMetric(baseKey)
+	sValues := base.values
+	sRecord := base.GetRecords()
+	if len(metric.values) != len(sValues) {
+		return 0, errs.New(ErrUnequalVectors, fmt.Sprintf("numerator=%d, denominator=%d", len(metric.values), len(sValues)))
+	}
+	for i := 0; i < len(metric.values); i++ {
+		if metric.record[i] && sRecord[i] {
+			if sValues[i] != 0 {
+				// Don't pass along the value if the numerator or denominator is < 0
+				// A denominator of zero is fine
+				if metric.values[i] < 0 || sValues[i] < 0 {
+					metric.record[i] = false
+					skips++
+					logger.Trace().
+						Str("metric", metric.GetName()).
+						Float64("numerator", metric.values[i]).
+						Float64("denominator", sValues[i]).
+						Msg("Divide calculation skipped")
+				}
+				metric.values[i] /= sValues[i]
+			} else {
+				metric.values[i] = 0
+			}
+		} else {
+			metric.record[i] = false
+			skips++
+			logger.Trace().
+				Str("metric", metric.GetName()).
+				Float64("numerator", metric.values[i]).
+				Float64("denominator", sValues[i]).
+				Msg("Divide calculation skipped")
+		}
+	}
+	return skips, nil
+}
+
+func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold int, logger *logging.Logger) (int, error) {
+	var skips int
+	x := float64(threshold)
+	metric := m.GetMetric(metricKey)
+	base := m.GetMetric(baseKey)
+	sValues := base.values
+	sRecord := base.GetRecords()
+	if len(metric.values) != len(sValues) {
+		return 0, errs.New(ErrUnequalVectors, fmt.Sprintf("numerator=%d, denominator=%d", len(metric.values), len(sValues)))
+	}
+	for i := 0; i < len(metric.values); i++ {
+		v := metric.values[i]
+		// Don't pass along the value if the numerator or denominator is < 0
+		// It is important to check sValues[i] < 0 and allow a zero so pass=true and m.values[i] remains unchanged
+		if metric.values[i] < 0 || sValues[i] < 0 {
+			metric.record[i] = false
+			skips++
+			logger.Trace().
+				Str("metric", metric.GetName()).
+				Float64("numerator", v).
+				Float64("denominator", sValues[i]).
+				Msg("Negative values")
+			return skips, nil
+		}
+		if metric.record[i] && sRecord[i] {
+			if sValues[i] >= x {
+				metric.values[i] /= sValues[i]
+			} else {
+				metric.values[i] = 0
+			}
+		} else {
+			metric.record[i] = false
+			skips++
+			logger.Trace().
+				Str("metric", metric.GetName()).
+				Float64("numerator", metric.values[i]).
+				Float64("denominator", sValues[i]).
+				Msg("Divide threshold calculation skipped")
+		}
+	}
+	return skips, nil
+}
+
+func (m *Matrix) MultiplyByScalar(metricKey string, s uint, logger *logging.Logger) (int, error) {
+	var skips int
+	x := float64(s)
+	metric := m.GetMetric(metricKey)
+	for i := 0; i < len(metric.values); i++ {
+		if metric.record[i] {
+			// if current is <= 0
+			if metric.values[i] < 0 {
+				metric.record[i] = false
+				skips++
+				logger.Trace().
+					Str("metric", metric.GetName()).
+					Float64("currentRaw", metric.values[i]).
+					Uint("scalar", s).
+					Msg("Negative value")
+			}
+			metric.values[i] *= x
+		} else {
+			metric.record[i] = false
+			skips++
+			logger.Trace().
+				Str("metric", metric.GetName()).
+				Float64("currentRaw", metric.values[i]).
+				Uint("scalar", s).
+				Msg("Scalar multiplication skipped")
+		}
+	}
+	return skips, nil
 }
