@@ -58,6 +58,28 @@ func setupMatrix(previousRaw float64, currentRaw float64, mop matrixOp) (*Matrix
 	return m, m1
 }
 
+func setupMatrixAdv(previousRaw []float64, currentRaw []float64) (*Matrix, *Matrix) {
+	prevMat := New("Test", "test", "test")
+	averageLatency, _ := prevMat.NewMetricFloat64("average_latency")
+	totalOps, _ := prevMat.NewMetricFloat64("total_ops")
+	names := instanceNames[sameInstance]
+	for _, instanceName := range names.prev {
+		instance, _ := prevMat.NewInstance(instanceName)
+		_ = averageLatency.SetValueFloat64(instance, previousRaw[0])
+		_ = totalOps.SetValueFloat64(instance, previousRaw[1])
+	}
+
+	currentMat := New("Test", "test", "test")
+	averageLatency1, _ := currentMat.NewMetricFloat64("average_latency")
+	totalOps1, _ := currentMat.NewMetricFloat64("total_ops")
+	for _, instanceName := range names.cur {
+		instance, _ := currentMat.NewInstance(instanceName)
+		_ = averageLatency1.SetValueFloat64(instance, currentRaw[0])
+		_ = totalOps1.SetValueFloat64(instance, currentRaw[1])
+	}
+	return prevMat, currentMat
+}
+
 type test struct {
 	name      string
 	curRaw    float64
@@ -66,6 +88,16 @@ type test struct {
 	threshold int
 	scalar    uint
 	skips     int
+	record    []bool
+}
+
+type testAdv struct {
+	name      string
+	curRaw    []float64
+	prevRaw   []float64
+	cooked    []float64
+	skips     int
+	threshold int
 	record    []bool
 }
 
@@ -141,14 +173,36 @@ func TestMetricFloat64_Divide(t *testing.T) {
 			matrixTest(t, tt, numerator, skips, err)
 		})
 	}
+
+	testsAdv := []testAdv{
+		{prevRaw: []float64{10, 5}, curRaw: []float64{20, 10}, cooked: []float64{2}, skips: 0, record: []bool{true}, name: "normal"},
+		{prevRaw: []float64{10, 5}, curRaw: []float64{20, 0}, cooked: []float64{10}, skips: 1, record: []bool{false}, name: "denominator record false"},
+		{prevRaw: []float64{10, 5}, curRaw: []float64{5, 10}, cooked: []float64{-5}, skips: 1, record: []bool{false}, name: "numerator record false"},
+		{prevRaw: []float64{10, 5}, curRaw: []float64{20, 0}, cooked: []float64{10}, skips: 1, record: []bool{false}, name: "numerator denominator record false"},
+	}
+
+	for _, tt := range testsAdv {
+		t.Run(tt.name, func(t *testing.T) {
+			prevMat, curMat := setupMatrixAdv(tt.prevRaw, tt.curRaw)
+			for k := range curMat.GetMetrics() {
+				_, err := curMat.GetMetric(k).Delta(prevMat.GetMetric(k), prevMat, curMat, logging.Get())
+				if err != nil {
+					t.Error("unexpected error", err)
+					return
+				}
+			}
+			skips, err := curMat.GetMetric("average_latency").Divide(curMat.GetMetric("total_ops"), logging.Get())
+			matrixTestAdv(t, tt, curMat, skips, err)
+		})
+	}
 }
 
 func TestMetricFloat64_DivideWithThreshold(t *testing.T) {
 	tests := []test{
 		{prevRaw: 20, curRaw: 10, threshold: 5, cooked: []float64{2}, skips: 0, record: []bool{true}, name: "normal"},
 		{prevRaw: 20, curRaw: 10, threshold: 15, cooked: []float64{0}, skips: 0, record: []bool{true}, name: "normal < threshold"},
-		{prevRaw: 20, curRaw: -10, threshold: 5, cooked: []float64{0}, skips: 1, record: []bool{false}, name: "bug negative den"},
-		{prevRaw: -20, curRaw: -10, threshold: 5, cooked: []float64{0}, skips: 1, record: []bool{false}, name: "bug negative both"},
+		{prevRaw: 20, curRaw: -10, threshold: 5, cooked: []float64{20}, skips: 1, record: []bool{false}, name: "bug negative den"},
+		{prevRaw: -20, curRaw: -10, threshold: 5, cooked: []float64{-20}, skips: 1, record: []bool{false}, name: "bug negative both"},
 		{prevRaw: 20, curRaw: 0, threshold: 0, cooked: []float64{math.Inf(1)}, skips: 0, record: []bool{true}, name: "allow no threshold"},
 		{prevRaw: 0, curRaw: 0, threshold: 5, cooked: []float64{0}, skips: 0, record: []bool{true}, name: "allow zero both"},
 	}
@@ -159,6 +213,28 @@ func TestMetricFloat64_DivideWithThreshold(t *testing.T) {
 			skips, err := numerator.GetMetric("speed").
 				DivideWithThreshold(denominator.GetMetric("speed"), tt.threshold, logging.Get())
 			matrixTest(t, tt, numerator, skips, err)
+		})
+	}
+
+	testsAdv := []testAdv{
+		{prevRaw: []float64{10, 5}, curRaw: []float64{20, 10}, threshold: 1, cooked: []float64{2}, skips: 0, record: []bool{true}, name: "normal"},
+		{prevRaw: []float64{10, 5}, curRaw: []float64{20, 0}, threshold: 1, cooked: []float64{10}, skips: 1, record: []bool{false}, name: "denominator record false"},
+		{prevRaw: []float64{10, 5}, curRaw: []float64{5, 10}, threshold: 1, cooked: []float64{-5}, skips: 1, record: []bool{false}, name: "numerator record false"},
+		{prevRaw: []float64{10, 5}, curRaw: []float64{20, 0}, threshold: 1, cooked: []float64{10}, skips: 1, record: []bool{false}, name: "numerator denominator record false"},
+	}
+
+	for _, tt := range testsAdv {
+		t.Run(tt.name, func(t *testing.T) {
+			prevMat, curMat := setupMatrixAdv(tt.prevRaw, tt.curRaw)
+			for k := range curMat.GetMetrics() {
+				_, err := curMat.GetMetric(k).Delta(prevMat.GetMetric(k), prevMat, curMat, logging.Get())
+				if err != nil {
+					t.Error("unexpected error", err)
+					return
+				}
+			}
+			skips, err := curMat.GetMetric("average_latency").DivideWithThreshold(curMat.GetMetric("total_ops"), tt.threshold, logging.Get())
+			matrixTestAdv(t, tt, curMat, skips, err)
 		})
 	}
 }
@@ -175,6 +251,30 @@ func TestMetricFloat64_MultiplyByScalar(t *testing.T) {
 			skips, err := current.GetMetric("speed").MultiplyByScalar(tt.scalar, logging.Get())
 			matrixTest(t, tt, current, skips, err)
 		})
+	}
+}
+
+func matrixTestAdv(t *testing.T, tt testAdv, cur *Matrix, skips int, err error) {
+	if err != nil {
+		t.Error("unexpected error", err)
+		return
+	}
+	if skips != tt.skips {
+		t.Errorf("skips expected = %d, got %d", tt.skips, skips)
+	}
+
+	cooked := cur.GetMetric("average_latency").values
+	for i := range cooked {
+		if cooked[i] != tt.cooked[i] {
+			t.Errorf("cooked expected = %v, got %v", tt.cooked, cooked)
+		}
+	}
+
+	record := cur.GetMetric("average_latency").GetRecords()
+	for i := range record {
+		if record[i] != tt.record[i] {
+			t.Errorf("record expected = %t, got %t", tt.record, record)
+		}
 	}
 }
 

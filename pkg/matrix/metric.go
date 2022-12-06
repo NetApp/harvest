@@ -288,8 +288,7 @@ func (m *Metric) GetValueBytes(i *Instance) ([]byte, bool) {
 	return []byte(s), ok
 }
 
-// vector arithmetics
-
+// Delta vector arithmetics
 func (m *Metric) Delta(prevMetric *Metric, prevMat *Matrix, curMat *Matrix, logger *logging.Logger) (int, error) {
 	var skips int
 	prevRaw := prevMetric.values
@@ -317,6 +316,15 @@ func (m *Metric) Delta(prevMetric *Metric, prevMat *Matrix, curMat *Matrix, logg
 						Str("instKey", key).
 						Msg("Negative cooked value")
 				}
+			} else {
+				m.record[currIndex] = false
+				skips++
+				logger.Trace().
+					Str("metric", m.GetName()).
+					Float64("currentRaw", curRaw).
+					Float64("previousRaw", prevRaw[prevIndex]).
+					Str("instKey", key).
+					Msg("Delta calculation skipped")
 			}
 		} else {
 			m.record[currIndex] = false
@@ -350,12 +358,20 @@ func (m *Metric) Divide(s *Metric, logger *logging.Logger) (int, error) {
 						Str("metric", m.GetName()).
 						Float64("numerator", m.values[i]).
 						Float64("denominator", sValues[i]).
-						Msg("No pass values")
+						Msg("Divide calculation skipped")
 				}
 				m.values[i] /= sValues[i]
 			} else {
 				m.values[i] = 0
 			}
+		} else {
+			m.record[i] = false
+			skips++
+			logger.Trace().
+				Str("metric", m.GetName()).
+				Float64("numerator", m.values[i]).
+				Float64("denominator", sValues[i]).
+				Msg("Divide calculation skipped")
 		}
 	}
 	return skips, nil
@@ -381,11 +397,22 @@ func (m *Metric) DivideWithThreshold(s *Metric, t int, logger *logging.Logger) (
 				Float64("numerator", v).
 				Float64("denominator", sValues[i]).
 				Msg("Negative values")
+			return skips, nil
 		}
-		if m.record[i] && sRecord[i] && sValues[i] >= x {
-			m.values[i] /= sValues[i]
+		if m.record[i] && sRecord[i] {
+			if sValues[i] >= x {
+				m.values[i] /= sValues[i]
+			} else {
+				m.values[i] = 0
+			}
 		} else {
-			m.values[i] = 0
+			m.record[i] = false
+			skips++
+			logger.Trace().
+				Str("metric", m.GetName()).
+				Float64("numerator", m.values[i]).
+				Float64("denominator", sValues[i]).
+				Msg("Divide threshold calculation skipped")
 		}
 	}
 	return skips, nil
@@ -407,6 +434,14 @@ func (m *Metric) MultiplyByScalar(s uint, logger *logging.Logger) (int, error) {
 					Msg("Negative value")
 			}
 			m.values[i] *= x
+		} else {
+			m.record[i] = false
+			skips++
+			logger.Trace().
+				Str("metric", m.GetName()).
+				Float64("currentRaw", m.values[i]).
+				Uint("scalar", s).
+				Msg("Scalar multiplication skipped")
 		}
 	}
 	return skips, nil
