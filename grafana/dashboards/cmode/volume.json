@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1664349159212,
+  "iteration": 1670268827108,
   "links": [
     {
       "asDropdown": true,
@@ -1695,7 +1695,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 38
+            "y": 3
           },
           "id": 30,
           "options": {
@@ -1785,7 +1785,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 38
+            "y": 3
           },
           "id": 31,
           "options": {
@@ -1876,7 +1876,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 38
+            "y": 3
           },
           "id": 32,
           "options": {
@@ -1966,7 +1966,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 47
+            "y": 12
           },
           "id": 33,
           "options": {
@@ -2056,7 +2056,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 47
+            "y": 12
           },
           "id": 34,
           "options": {
@@ -2146,7 +2146,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 47
+            "y": 12
           },
           "id": 35,
           "options": {
@@ -2251,7 +2251,7 @@
             "h": 10,
             "w": 8,
             "x": 0,
-            "y": 16
+            "y": 4
           },
           "id": 72,
           "options": {
@@ -2341,7 +2341,7 @@
             "h": 10,
             "w": 8,
             "x": 8,
-            "y": 16
+            "y": 4
           },
           "id": 74,
           "options": {
@@ -2431,7 +2431,7 @@
             "h": 10,
             "w": 8,
             "x": 16,
-            "y": 16
+            "y": 4
           },
           "id": 76,
           "options": {
@@ -2521,7 +2521,7 @@
             "h": 10,
             "w": 8,
             "x": 0,
-            "y": 26
+            "y": 14
           },
           "id": 73,
           "options": {
@@ -2611,7 +2611,7 @@
             "h": 10,
             "w": 8,
             "x": 8,
-            "y": 26
+            "y": 14
           },
           "id": 75,
           "options": {
@@ -2701,7 +2701,7 @@
             "h": 10,
             "w": 8,
             "x": 16,
-            "y": 26
+            "y": 14
           },
           "id": 77,
           "options": {
@@ -2790,7 +2790,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 36
+            "y": 24
           },
           "id": 79,
           "options": {
@@ -2879,7 +2879,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 36
+            "y": 24
           },
           "id": 80,
           "options": {
@@ -2932,7 +2932,7 @@
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 17
+            "y": 5
           },
           "id": 91,
           "options": {
@@ -3001,7 +3001,7 @@
             "h": 11,
             "w": 8,
             "x": 0,
-            "y": 20
+            "y": 8
           },
           "id": 48,
           "options": {
@@ -3092,7 +3092,7 @@
             "h": 11,
             "w": 8,
             "x": 8,
-            "y": 20
+            "y": 8
           },
           "id": 50,
           "options": {
@@ -3183,7 +3183,7 @@
             "h": 11,
             "w": 8,
             "x": 16,
-            "y": 20
+            "y": 8
           },
           "id": 88,
           "options": {
@@ -3273,7 +3273,7 @@
             "h": 11,
             "w": 8,
             "x": 0,
-            "y": 31
+            "y": 19
           },
           "id": 54,
           "options": {
@@ -3363,7 +3363,7 @@
             "h": 11,
             "w": 8,
             "x": 8,
-            "y": 31
+            "y": 19
           },
           "id": 56,
           "options": {
@@ -3454,7 +3454,7 @@
             "h": 11,
             "w": 8,
             "x": 16,
-            "y": 31
+            "y": 19
           },
           "id": 89,
           "options": {
@@ -3544,7 +3544,7 @@
             "h": 11,
             "w": 8,
             "x": 0,
-            "y": 42
+            "y": 30
           },
           "id": 60,
           "options": {
@@ -3636,7 +3636,7 @@
             "h": 11,
             "w": 8,
             "x": 8,
-            "y": 42
+            "y": 30
           },
           "id": 62,
           "options": {
@@ -3726,7 +3726,7 @@
             "h": 11,
             "w": 8,
             "x": 16,
-            "y": 42
+            "y": 30
           },
           "id": 52,
           "options": {
@@ -3816,7 +3816,7 @@
             "h": 11,
             "w": 8,
             "x": 0,
-            "y": 53
+            "y": 41
           },
           "id": 64,
           "options": {
@@ -3906,7 +3906,7 @@
             "h": 11,
             "w": 8,
             "x": 8,
-            "y": 53
+            "y": 41
           },
           "id": 58,
           "options": {
@@ -4007,7 +4007,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 41
+            "y": 6
           },
           "id": 83,
           "options": {
@@ -4123,7 +4123,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 41
+            "y": 6
           },
           "id": 84,
           "options": {
@@ -4231,7 +4231,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 53
+            "y": 18
           },
           "id": 87,
           "options": {
@@ -4347,7 +4347,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 53
+            "y": 18
           },
           "id": 85,
           "options": {
@@ -4468,7 +4468,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 19
+            "y": 7
           },
           "id": 93,
           "options": {
@@ -4560,7 +4560,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 19
+            "y": 7
           },
           "id": 94,
           "options": {
@@ -4651,7 +4651,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 31
+            "y": 19
           },
           "id": 95,
           "options": {
@@ -4743,7 +4743,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 31
+            "y": 19
           },
           "id": 96,
           "options": {
@@ -4779,6 +4779,7 @@
           "type": "timeseries"
         },
         {
+          "description": "Average request count, per volume, in the chosen time window, to object storage.  Not scaled per second, but a cumulative count (delta) since the previous poll.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4815,7 +4816,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 43
+            "y": 31
           },
           "id": 90,
           "options": {
@@ -4828,8 +4829,7 @@
             },
             "showHeader": true
           },
-          "pluginVersion": "8.4.11",
-          "description": "Average request count, per volume, in the chosen time window, to object storage.  Not scaled per second, but a cumulative count (delta) since the previous poll.",
+          "pluginVersion": "8.1.8",
           "targets": [
             {
               "exemplar": false,
@@ -4872,6 +4872,281 @@
         }
       ],
       "title": "Top Volume FabricPool Drilldown",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "id": 98,
+      "panels": [
+        {
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 8
+          },
+          "id": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "topk($TopResources, volume_inode_files_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeInodeFilesUsed\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - {{volume}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Inode Files Used",
+          "type": "timeseries"
+        },
+        {
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 8
+          },
+          "id": 102,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "topk($TopResources, volume_inode_files_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeInodeFiles\"})",
+              "interval": "",
+              "legendFormat": "{{svm}} - {{volume}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Inode Files Total",
+          "type": "timeseries"
+        },
+        {
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 16
+          },
+          "id": 101,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "topk($TopResources, volume_inode_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeInodeUsedPercent\"})",
+              "interval": "",
+              "legendFormat": "{{svm}} - {{volume}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Inode Files Used Percentage",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Top Inode Drilldown",
       "type": "row"
     }
   ],
@@ -5748,9 +6023,13 @@
       {
         "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, sum by (volume) (avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[${__range}]))))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "TopCloudBinOperation",
         "options": [],
@@ -5767,9 +6046,13 @@
       {
         "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources,avg_over_time(fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\",metric=\"GET\"}[${__range}])))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "TopCloudBinOpGetLatency",
         "options": [],
@@ -5786,9 +6069,13 @@
       {
         "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources,avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\",metric=\"GET\"}[${__range}])))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "TopCloudBinOperationGet",
         "options": [],
@@ -5805,9 +6092,13 @@
       {
         "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources,avg_over_time(fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\",metric=\"PUT\"}[${__range}])))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "TopCloudBinOpPutLatency",
         "options": [],
@@ -5824,14 +6115,87 @@
       {
         "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources,avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\",metric=\"PUT\"}[${__range}])))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "TopCloudBinOperationPut",
         "options": [],
         "query": {
           "query": "query_result(topk($TopResources,avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\",metric=\"PUT\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_inode_files_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopVolumeInodeFiles",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(volume_inode_files_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_inode_files_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopVolumeInodeFilesUsed",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(volume_inode_files_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_inode_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopVolumeInodeUsedPercent",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(volume_inode_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -5862,5 +6226,5 @@
   "timezone": "",
   "title": "ONTAP: Volume",
   "uid": "",
-  "version": 7
+  "version": 8
 }
