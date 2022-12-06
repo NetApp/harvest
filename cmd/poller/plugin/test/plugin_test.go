@@ -112,7 +112,7 @@ func TestMultipleRule(t *testing.T) {
 		t.Errorf("metric [status]: value for InstanceA is %s, expected %s", instanceA.GetLabel("B"), "xyz")
 	}
 
-	var status matrix.Metric
+	var status *matrix.Metric
 	var expected uint8
 	if status = m.GetMetric("new_status"); status == nil {
 		t.Error("metric [status] missing")

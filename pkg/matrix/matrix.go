@@ -12,7 +12,6 @@ package matrix
 
 import (
 	"fmt"
-	"github.com/netapp/harvest/v2/pkg/color"
 	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -25,8 +24,8 @@ type Matrix struct {
 	Identifier     string
 	globalLabels   *dict.Dict
 	instances      map[string]*Instance
-	metrics        map[string]Metric // ONTAP metric name => metric (in templates, this is left side)
-	displayMetrics map[string]string // display name of metric to => metric name (in templates, this is right side)
+	metrics        map[string]*Metric // ONTAP metric name => metric (in templates, this is left side)
+	displayMetrics map[string]string  // display name of metric to => metric name (in templates, this is right side)
 	exportOptions  *node.Node
 	exportable     bool
 }
@@ -35,7 +34,7 @@ func New(uuid, object string, identifier string) *Matrix {
 	me := Matrix{UUID: uuid, Object: object, Identifier: identifier}
 	me.globalLabels = dict.New()
 	me.instances = make(map[string]*Instance, 0)
-	me.metrics = make(map[string]Metric, 0)
+	me.metrics = make(map[string]*Metric, 0)
 	me.displayMetrics = make(map[string]string, 0)
 	me.exportable = true
 	return &me
@@ -49,7 +48,7 @@ func (m *Matrix) Print() {
 	fmt.Println()
 
 	for key, metric := range m.GetMetrics() {
-		fmt.Printf("(%s%s%s%s) (type=%s) (exportable=%v) values= ", color.Bold, color.Cyan, key, color.End, metric.GetType(), metric.IsExportable())
+		fmt.Printf("(%s) (type=%s) (exportable=%v) values= ", key, metric.GetType(), metric.IsExportable())
 		metric.Print()
 		fmt.Println()
 	}
@@ -97,45 +96,45 @@ func (m *Matrix) Reset() {
 	}
 }
 
-func (m *Matrix) DisplayMetric(name string) Metric {
+func (m *Matrix) DisplayMetric(name string) *Metric {
 	if metricKey, has := m.displayMetrics[name]; has {
 		return m.GetMetric(metricKey)
 	}
 	return nil
 }
 
-func (m *Matrix) GetMetric(key string) Metric {
+func (m *Matrix) GetMetric(key string) *Metric {
 	if metric, has := m.metrics[key]; has {
 		return metric
 	}
 	return nil
 }
 
-func (m *Matrix) GetMetrics() map[string]Metric {
+func (m *Matrix) GetMetrics() map[string]*Metric {
 	return m.metrics
 }
 
-func (m *Matrix) NewMetricInt64(key string, display ...string) (Metric, error) {
-	metric := &MetricInt64{AbstractMetric: newAbstract(key, "int64", display...)}
+func (m *Matrix) NewMetricInt64(key string, display ...string) (*Metric, error) {
+	metric := newAbstract(key, "int64", display...)
 	return metric, m.addMetric(key, metric)
 }
 
-func (m *Matrix) NewMetricUint8(key string, display ...string) (Metric, error) {
-	metric := &MetricUint8{AbstractMetric: newAbstract(key, "uint8", display...)}
+func (m *Matrix) NewMetricUint8(key string, display ...string) (*Metric, error) {
+	metric := newAbstract(key, "uint8", display...)
 	return metric, m.addMetric(key, metric)
 }
 
-func (m *Matrix) NewMetricUint64(key string, display ...string) (Metric, error) {
-	metric := &MetricUint64{AbstractMetric: newAbstract(key, "uint64", display...)}
+func (m *Matrix) NewMetricUint64(key string, display ...string) (*Metric, error) {
+	metric := newAbstract(key, "uint64", display...)
 	return metric, m.addMetric(key, metric)
 }
 
-func (m *Matrix) NewMetricFloat64(key string, display ...string) (Metric, error) {
-	metric := &MetricFloat64{AbstractMetric: newAbstract(key, "float64", display...)}
+func (m *Matrix) NewMetricFloat64(key string, display ...string) (*Metric, error) {
+	metric := newAbstract(key, "float64", display...)
 	return metric, m.addMetric(key, metric)
 }
 
-func (m *Matrix) NewMetricType(key string, dataType string, display ...string) (Metric, error) {
+func (m *Matrix) NewMetricType(key string, dataType string, display ...string) (*Metric, error) {
 
 	switch dataType {
 	case "int64":
@@ -151,15 +150,15 @@ func (m *Matrix) NewMetricType(key string, dataType string, display ...string) (
 	}
 }
 
-func newAbstract(key string, dataType string, display ...string) *AbstractMetric {
+func newAbstract(key string, dataType string, display ...string) *Metric {
 	name := key
 	if len(display) > 0 {
 		name = display[0]
 	}
-	return &AbstractMetric{name: name, dtype: dataType, exportable: true}
+	return &Metric{name: name, dataType: dataType, exportable: true}
 }
 
-func (m *Matrix) addMetric(key string, metric Metric) error {
+func (m *Matrix) addMetric(key string, metric *Metric) error {
 	if _, has := m.metrics[key]; has { // Fail if a metric with the same key already exists
 		return errs.New(ErrDuplicateMetricKey, key)
 	}
@@ -179,7 +178,7 @@ func (m *Matrix) RemoveExceptMetric(key string) {
 	if !ok {
 		return
 	}
-	m.metrics = make(map[string]Metric)
+	m.metrics = make(map[string]*Metric)
 	m.displayMetrics = make(map[string]string)
 	_ = m.addMetric(key, prev)
 }

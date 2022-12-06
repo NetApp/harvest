@@ -563,7 +563,7 @@ var numAndUnitRe = regexp.MustCompile(`(\d+)\s*(\w+)`)
 
 // normalizeHistogram tries to normalize ONTAP values by converting units to multiples of the smallest unit.
 // When the unit can not be determined, return an empty string
-func (p *Prometheus) normalizeHistogram(metric matrix.Metric, ontap string, object string) string {
+func (p *Prometheus) normalizeHistogram(metric *matrix.Metric, ontap string, object string) string {
 	numAndUnit := ontap
 	if strings.HasPrefix(ontap, "<") {
 		numAndUnit = ontap[1:]
@@ -601,7 +601,7 @@ func (p *Prometheus) normalizeHistogram(metric matrix.Metric, ontap string, obje
 	return strconv.FormatFloat(normal, 'f', -1, 64)
 }
 
-func histogramFromBucket(histograms map[string]*histogram, metric matrix.Metric) *histogram {
+func histogramFromBucket(histograms map[string]*histogram, metric *matrix.Metric) *histogram {
 	h, ok := histograms[metric.GetName()]
 	if ok {
 		return h
@@ -628,7 +628,7 @@ func escape(replacer *strings.Replacer, key string, value string) string {
 }
 
 type histogram struct {
-	metric matrix.Metric
+	metric *matrix.Metric
 	values []string
 }
 

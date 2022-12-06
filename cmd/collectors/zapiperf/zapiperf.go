@@ -190,7 +190,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	var (
 		instanceKeys    []string
-		resourceLatency matrix.Metric // for workload* objects
+		resourceLatency *matrix.Metric // for workload* objects
 		err             error
 		skips           int
 	)
@@ -317,7 +317,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 		// timestamp for batch instances
 		// ignore timestamp from ZAPI which is always integer
-		// we want float, since our poll interval can be float
+		// we want float, since our poll interval can be a float
 		ts := float64(time.Now().UnixNano()) / BILLION
 
 		for instIndex, i := range instances.GetChildren() {
@@ -553,7 +553,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	cachedData := curMat.Clone(true, true, true) // @TODO implement copy data
 
 	// order metrics, such that those requiring base counters are processed last
-	orderedMetrics := make([]matrix.Metric, 0, len(curMat.GetMetrics()))
+	orderedMetrics := make([]*matrix.Metric, 0, len(curMat.GetMetrics()))
 	orderedKeys := make([]string, 0, len(orderedMetrics))
 
 	for key, metric := range curMat.GetMetrics() {
@@ -576,7 +576,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		// @TODO terminate since other counters will be incorrect
 	}
 
-	var base matrix.Metric
+	var base *matrix.Metric
 	var totalSkips int
 
 	for i, metric := range orderedMetrics {
@@ -694,7 +694,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 func (z *ZapiPerf) getParentOpsCounters(data *matrix.Matrix, KeyAttr string) (time.Duration, time.Duration, error) {
 
 	var (
-		ops          matrix.Metric
+		ops          *matrix.Metric
 		object       string
 		instanceKeys []string
 		apiT, parseT time.Duration
@@ -986,7 +986,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		// there original counters will be discarded
 		if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
 
-			var service, wait, visits, ops matrix.Metric
+			var service, wait, visits, ops *matrix.Metric
 			oldMetrics.Remove("service_time")
 			oldMetrics.Remove("wait_time")
 			oldMetrics.Remove("visits")
@@ -1132,7 +1132,7 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 			e                  string
 			description        string
 			isHistogram        bool
-			histogramMetric    matrix.Metric
+			histogramMetric    *matrix.Metric
 		)
 
 		description = strings.ToLower(counter.GetChildContentS("desc"))
@@ -1189,7 +1189,7 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 
 		for i, label := range labels {
 
-			var m matrix.Metric
+			var m *matrix.Metric
 
 			key := name + "." + label
 
@@ -1225,7 +1225,7 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 
 		// counter type is scalar
 	} else {
-		var m matrix.Metric
+		var m *matrix.Metric
 		if m = mat.GetMetric(name); m != nil {
 			z.Logger.Trace().Msgf("updating scalar metric [%s] attributes", name)
 		} else if m, err = mat.NewMetricFloat64(name, display); err == nil {

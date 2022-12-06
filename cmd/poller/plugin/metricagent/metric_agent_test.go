@@ -44,11 +44,11 @@ func TestComputeMetricsRule(t *testing.T) {
 
 	var (
 		instanceA, instanceB                                                *matrix.Instance
-		metricAvail, metricUsed, metricTotal                                matrix.Metric
-		metricDiskP, metricDiskS, metricDiskH, metricDiskTotal              matrix.Metric
-		metricFiles, metricFilesUsed, metricFilesAvailable                  matrix.Metric
-		metricBytesPSector, metricSectorCount, metricTotalBytes             matrix.Metric
-		metricBytesTransferred, metricTotalDuration, metricTransmissionRate matrix.Metric
+		metricAvail, metricUsed, metricTotal                                *matrix.Metric
+		metricDiskP, metricDiskS, metricDiskH, metricDiskTotal              *matrix.Metric
+		metricFiles, metricFilesUsed, metricFilesAvailable                  *matrix.Metric
+		metricBytesPSector, metricSectorCount, metricTotalBytes             *matrix.Metric
+		metricBytesTransferred, metricTotalDuration, metricTransmissionRate *matrix.Metric
 		expected                                                            float64
 		err                                                                 error
 	)

@@ -307,7 +307,7 @@ func TestValueToNumRule(t *testing.T) {
 
 	var (
 		instanceA, instanceB  *matrix.Instance
-		status, stage, outage matrix.Metric
+		status, stage, outage *matrix.Metric
 		v, expected           uint8
 		ok                    bool
 		err                   error
@@ -407,7 +407,7 @@ func TestValueToNumRegexRule(t *testing.T) {
 
 	var (
 		instanceA, instanceB   *matrix.Instance
-		status, output, result matrix.Metric
+		status, output, result *matrix.Metric
 		v, expected            uint8
 		ok                     bool
 		err                    error

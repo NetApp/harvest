@@ -145,7 +145,7 @@ func (m *Max) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	var (
 		objName, objKey string
 		objInstance     *matrix.Instance
-		objMetric       matrix.Metric
+		objMetric       *matrix.Metric
 		value           float64
 		ok              bool
 		err             error

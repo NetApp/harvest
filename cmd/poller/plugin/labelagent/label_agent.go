@@ -298,7 +298,7 @@ func (a *LabelAgent) includeRegex(matrix *matrix.Matrix) error {
 func (a *LabelAgent) mapValueToNum(m *matrix.Matrix) error {
 
 	var (
-		metric matrix.Metric
+		metric *matrix.Metric
 		err    error
 	)
 
@@ -330,7 +330,7 @@ func (a *LabelAgent) mapValueToNum(m *matrix.Matrix) error {
 
 func (a *LabelAgent) mapValueToNumRegex(m *matrix.Matrix) error {
 	var (
-		metric matrix.Metric
+		metric *matrix.Metric
 		err    error
 	)
 

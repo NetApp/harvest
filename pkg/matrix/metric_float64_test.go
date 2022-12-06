@@ -186,7 +186,7 @@ func matrixTest(t *testing.T, tt test, cur *Matrix, skips int, err error) {
 	if skips != tt.skips {
 		t.Errorf("skips expected = %d, got %d", tt.skips, skips)
 	}
-	cooked := cur.GetMetric("speed").GetValuesFloat64()
+	cooked := cur.GetMetric("speed").values
 	for i := range cooked {
 		if cooked[i] != tt.cooked[i] {
 			t.Errorf("cooked expected = %v, got %v", tt.cooked, cooked)

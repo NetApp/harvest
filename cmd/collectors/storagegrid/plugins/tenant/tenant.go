@@ -17,7 +17,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 func (t *Tenant) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var (
-		used, quota, usedPercent matrix.Metric
+		used, quota, usedPercent *matrix.Metric
 		err                      error
 	)
 
