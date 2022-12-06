@@ -65,6 +65,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#prepare-storagegrid-cluster" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -464,9 +469,59 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          StorageGRID
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         StorageGRID
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prepare-storagegrid-cluster" class="md-nav__link">
+    Prepare StorageGRID cluster
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-storagegrid-group-permissions" class="md-nav__link">
+    Create StorageGRID group permissions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-a-storagegrid-user" class="md-nav__link">
+    Create a StorageGRID user
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reference" class="md-nav__link">
+    Reference
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -906,6 +961,42 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prepare-storagegrid-cluster" class="md-nav__link">
+    Prepare StorageGRID cluster
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-storagegrid-group-permissions" class="md-nav__link">
+    Create StorageGRID group permissions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-a-storagegrid-user" class="md-nav__link">
+    Create a StorageGRID user
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reference" class="md-nav__link">
+    Reference
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -921,7 +1012,45 @@
 
   <h1>StorageGRID</h1>
 
-<p>Coming Soon</p>
+<h2 id="prepare-storagegrid-cluster">Prepare StorageGRID cluster<a class="headerlink" href="#prepare-storagegrid-cluster" title="Permanent link">&para;</a></h2>
+<p>NetApp Harvest requires login credentials to access StorageGRID hosts. Although, a generic admin account can be used, it
+is better to create a dedicated monitoring user with the fewest permissions.</p>
+<p>Here's a summary of what we're going to do</p>
+<ol>
+<li>Create a StorageGRID group with the necessary capabilities that Harvest will use to auth and collect data</li>
+<li>Create a user assigned to the group created in step #1.</li>
+</ol>
+<h2 id="create-storagegrid-group-permissions">Create StorageGRID group permissions<a class="headerlink" href="#create-storagegrid-group-permissions" title="Permanent link">&para;</a></h2>
+<p>These steps are
+documented <a href="https://docs.netapp.com/us-en/storagegrid-116/admin/managing-admin-groups.html#create-an-admin-group">here</a>.</p>
+<p>You will need a root or admin account to create a new group permission.</p>
+<ol>
+<li>Select CONFIGURATION &gt; Access control &gt; Admin groups</li>
+<li>Select <code>Create group</code></li>
+<li>Select <code>Local group</code></li>
+<li>Enter a display name for the group, which you can update later as required. For example, <code>Harvest</code> or <code>monitoring</code>.</li>
+<li>Enter a unique name for the group, which you cannot update later.</li>
+<li>Select <code>Continue</code></li>
+<li>On the <code>Manage group permissions</code> screen, select the permissions you want. At a minimum, Harvest requires
+   the <code>Tenant accounts</code> permission.</li>
+<li>Select <code>Save changes</code></li>
+</ol>
+<p><img alt="StorageGRID create group permissions" src="../assets/prepare-storagegrid/create_group.png" /></p>
+<h2 id="create-a-storagegrid-user">Create a StorageGRID user<a class="headerlink" href="#create-a-storagegrid-user" title="Permanent link">&para;</a></h2>
+<p>These steps are documented <a href="https://docs.netapp.com/us-en/storagegrid-116/admin/managing-users.html">here</a>.</p>
+<p>You will need a root or admin account to create a new user.</p>
+<ol>
+<li>Select CONFIGURATION &gt; Access control &gt; Admin users</li>
+<li>Select <code>Create user</code></li>
+<li>Enter the user’s full name, a unique username, and a password.</li>
+<li>Select <code>Continue</code>.</li>
+<li>Assign the user to the previously created <code>harvest</code> group.</li>
+<li>Select Create user and select Finish.</li>
+</ol>
+<p><img alt="StorageGRID create user" src="../assets/prepare-storagegrid/create_user.png" /></p>
+<h2 id="reference">Reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
+<p>See <a href="https://docs.netapp.com/us-en/storagegrid-116/admin/managing-admin-groups.html#group-permissions">group permissions</a>
+for more information on StorageGRID permissions.</p>
 
 
 
