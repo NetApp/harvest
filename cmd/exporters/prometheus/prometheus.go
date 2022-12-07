@@ -426,6 +426,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 				if metric.GetUnit() != "" {
 					description = description + " UNIT: " + metric.GetUnit()
 				}
+				description = replacer.Replace(description)
 				// metric is array, determine if this is a plain array or histogram
 				if metric.HasLabels() {
 					if metric.IsHistogram() {
@@ -499,6 +500,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 			if metric.GetUnit() != "" {
 				description = description + " UNIT: " + metric.GetUnit()
 			}
+			description = replacer.Replace(description)
 			_, ok := normalizedLabels[objectMetric]
 			if !ok {
 				canNormalize := true
