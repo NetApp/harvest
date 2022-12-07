@@ -22,6 +22,9 @@ var newAlertsData map[string]int
 var nodeScopedResolvingEmsList = []string{
 	"nvram.battery.charging.normal",
 	"sp.heartbeat.resumed",
+	"callhome.battery.low",
+	"sp.ipmi.lost.shutdown",
+	"sp.notConfigured",
 }
 
 type EmsTestSuite struct {
