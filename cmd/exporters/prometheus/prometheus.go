@@ -421,7 +421,10 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 
 				var description string
 				if metric.GetDescription() != "" {
-					description = " COUNTER: " + metric.GetDescription() + " UNIT: " + metric.GetUnit()
+					description = " COUNTER: " + metric.GetDescription()
+				}
+				if metric.GetUnit() != "" {
+					description = description + " UNIT: " + metric.GetUnit()
 				}
 				// metric is array, determine if this is a plain array or histogram
 				if metric.HasLabels() {
@@ -491,7 +494,10 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 			objectMetric := data.Object + "_" + metric.GetName()
 			var description string
 			if metric.GetDescription() != "" {
-				description = " COUNTER: " + metric.GetDescription() + " \\nUNIT: " + metric.GetUnit()
+				description = " COUNTER: " + metric.GetDescription()
+			}
+			if metric.GetUnit() != "" {
+				description = description + " UNIT: " + metric.GetUnit()
 			}
 			_, ok := normalizedLabels[objectMetric]
 			if !ok {
