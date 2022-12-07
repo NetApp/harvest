@@ -557,13 +557,13 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	orderedKeys := make([]string, 0, len(orderedMetrics))
 
 	for key, metric := range curMat.GetMetrics() {
-		if metric.GetComment() == "" { // does not require base counter
+		if metric.GetComment() == "" && !strings.Contains(key, ".bucket") { // does not require base counter
 			orderedMetrics = append(orderedMetrics, metric)
 			orderedKeys = append(orderedKeys, key)
 		}
 	}
 	for key, metric := range curMat.GetMetrics() {
-		if metric.GetComment() != "" { // requires base counter
+		if metric.GetComment() != "" && !strings.Contains(key, ".bucket") { // requires base counter
 			orderedMetrics = append(orderedMetrics, metric)
 			orderedKeys = append(orderedKeys, key)
 		}
@@ -1168,7 +1168,7 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 		// ONTAP does not have a `type` for histogram. Harvest tests the `desc` field to determine
 		// if a counter is a histogram
 		isHistogram = false
-		if len(labels) > 0 && strings.Contains(description, "histogram") {
+		if len(labels) > 0 && strings.Contains(strings.ToLower(description), "histogram") {
 			key := name + ".bucket"
 			histogramMetric = mat.GetMetric(key)
 			if histogramMetric != nil {

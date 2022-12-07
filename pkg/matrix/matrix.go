@@ -153,7 +153,7 @@ func (m *Matrix) NewMetricType(key string, dataType string, display ...string) (
 
 func newAbstract(key string, dataType string, display ...string) *Metric {
 	name := key
-	if len(display) > 0 {
+	if len(display) > 0 && display[0] != "" {
 		name = display[0]
 	}
 	return &Metric{name: name, dataType: dataType, exportable: true}
@@ -330,6 +330,7 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *logging.Logger
 					skips++
 					logger.Trace().
 						Str("metric", curMetric.GetName()).
+						Str("key", key).
 						Float64("currentRaw", curRaw).
 						Float64("previousRaw", prevRaw[prevIndex]).
 						Str("instKey", key).
@@ -340,6 +341,7 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *logging.Logger
 				skips++
 				logger.Trace().
 					Str("metric", curMetric.GetName()).
+					Str("key", key).
 					Float64("currentRaw", curRaw).
 					Float64("previousRaw", prevRaw[prevIndex]).
 					Str("instKey", key).
@@ -350,6 +352,7 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *logging.Logger
 			skips++
 			logger.Trace().
 				Str("metric", curMetric.GetName()).
+				Str("key", key).
 				Float64("currentRaw", curRaw).
 				Str("instKey", key).
 				Msg("New instance added")
@@ -377,6 +380,7 @@ func (m *Matrix) Divide(metricKey string, baseKey string, logger *logging.Logger
 					skips++
 					logger.Trace().
 						Str("metric", metric.GetName()).
+						Str("key", metricKey).
 						Float64("numerator", metric.values[i]).
 						Float64("denominator", sValues[i]).
 						Msg("Divide calculation skipped")
@@ -390,6 +394,7 @@ func (m *Matrix) Divide(metricKey string, baseKey string, logger *logging.Logger
 			skips++
 			logger.Trace().
 				Str("metric", metric.GetName()).
+				Str("key", metricKey).
 				Float64("numerator", metric.values[i]).
 				Float64("denominator", sValues[i]).
 				Msg("Divide calculation skipped")
@@ -417,6 +422,7 @@ func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold
 			skips++
 			logger.Trace().
 				Str("metric", metric.GetName()).
+				Str("key", metricKey).
 				Float64("numerator", v).
 				Float64("denominator", sValues[i]).
 				Msg("Negative values")
@@ -433,6 +439,7 @@ func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold
 			skips++
 			logger.Trace().
 				Str("metric", metric.GetName()).
+				Str("key", metricKey).
 				Float64("numerator", metric.values[i]).
 				Float64("denominator", sValues[i]).
 				Msg("Divide threshold calculation skipped")
@@ -453,6 +460,7 @@ func (m *Matrix) MultiplyByScalar(metricKey string, s uint, logger *logging.Logg
 				skips++
 				logger.Trace().
 					Str("metric", metric.GetName()).
+					Str("key", metricKey).
 					Float64("currentRaw", metric.values[i]).
 					Uint("scalar", s).
 					Msg("Negative value")
@@ -463,6 +471,7 @@ func (m *Matrix) MultiplyByScalar(metricKey string, s uint, logger *logging.Logg
 			skips++
 			logger.Trace().
 				Str("metric", metric.GetName()).
+				Str("key", metricKey).
 				Float64("currentRaw", metric.values[i]).
 				Uint("scalar", s).
 				Msg("Scalar multiplication skipped")
