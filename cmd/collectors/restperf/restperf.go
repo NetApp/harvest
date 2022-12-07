@@ -640,6 +640,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 			for name, metric := range r.Prop.Metrics {
 				f := parseMetricResponse(instanceData, name)
 				if f.value != "" {
+					description := strings.ToLower(r.perfProp.counterInfo[name].description)
 					// special case for workload_detail
 					if isWorkloadDetailObject(r.Prop.Query) {
 						if name == "wait_time" || name == "service_time" {
@@ -680,7 +681,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 							// ONTAP does not have a `type` for histogram. Harvest tests the `desc` field to determine
 							// if a counter is a histogram
 							isHistogram = false
-							if len(labels) > 0 && strings.Contains(strings.ToLower(r.perfProp.counterInfo[name].description), "histogram") {
+							if len(labels) > 0 && strings.Contains(description, "histogram") {
 								key := name + ".bucket"
 								histogramMetric = curMat.GetMetric(key)
 								if histogramMetric != nil {
@@ -828,7 +829,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	orderedDenominatorKeys := make([]string, 0, len(orderedDenominatorMetrics))
 
 	for key, metric := range curMat.GetMetrics() {
-		if metric.GetName() != "timestamp" && !strings.Contains(key, ".bucket") {
+		if metric.GetName() != "timestamp" && metric.Buckets() == nil {
 			counter := r.counterLookup(metric, key)
 			if counter != nil {
 				if counter.denominator == "" {
