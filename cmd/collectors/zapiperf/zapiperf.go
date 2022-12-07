@@ -557,13 +557,13 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	orderedKeys := make([]string, 0, len(orderedMetrics))
 
 	for key, metric := range curMat.GetMetrics() {
-		if metric.GetComment() == "" { // does not require base counter
+		if metric.GetComment() == "" && metric.Buckets() == nil { // does not require base counter
 			orderedMetrics = append(orderedMetrics, metric)
 			orderedKeys = append(orderedKeys, key)
 		}
 	}
 	for key, metric := range curMat.GetMetrics() {
-		if metric.GetComment() != "" { // requires base counter
+		if metric.GetComment() != "" && metric.Buckets() == nil { // requires base counter
 			orderedMetrics = append(orderedMetrics, metric)
 			orderedKeys = append(orderedKeys, key)
 		}
