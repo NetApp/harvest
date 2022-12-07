@@ -1093,13 +1093,14 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled bool, cache map[string]*node.Node) string {
 
 	var (
-		property, baseCounter, unit string
-		err                         error
+		property, baseCounter, unit, description string
+		err                                      error
 	)
 
 	mat := z.Matrix[z.Object]
 
 	p := counter.GetChildContentS("properties")
+	description = strings.ToLower(counter.GetChildContentS("desc"))
 	if strings.Contains(p, "raw") {
 		property = "raw"
 	} else if strings.Contains(p, "delta") {
@@ -1130,12 +1131,9 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 		var (
 			labels, baseLabels []string
 			e                  string
-			description        string
 			isHistogram        bool
 			histogramMetric    *matrix.Metric
 		)
-
-		description = strings.ToLower(counter.GetChildContentS("desc"))
 
 		if labels, e = parseHistogramLabels(counter); e != "" {
 			z.Logger.Warn().Msgf("skipping [%s] of type array: %s", name, e)
@@ -1181,6 +1179,8 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 				}
 			}
 			histogramMetric.SetProperty(property)
+			histogramMetric.SetDescription(description)
+			histogramMetric.SetUnit(unit)
 			histogramMetric.SetComment(baseKey)
 			histogramMetric.SetExportable(enabled)
 			histogramMetric.SetBuckets(&labels)
@@ -1203,6 +1203,8 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 			}
 
 			m.SetProperty(property)
+			m.SetDescription(description)
+			m.SetUnit(unit)
 			m.SetComment(baseKey)
 			m.SetExportable(enabled)
 
@@ -1237,6 +1239,8 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 
 		z.scalarCounters = append(z.scalarCounters, name)
 		m.SetProperty(property)
+		m.SetDescription(description)
+		m.SetUnit(unit)
 		m.SetComment(baseCounter)
 		m.SetExportable(enabled)
 

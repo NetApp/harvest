@@ -419,6 +419,10 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 
 			if value, ok := metric.GetValueString(instance); ok {
 
+				var description string
+				if metric.GetDescription() != "" {
+					description = " COUNTER: " + metric.GetDescription() + " UNIT: " + metric.GetUnit()
+				}
 				// metric is array, determine if this is a plain array or histogram
 				if metric.HasLabels() {
 					if metric.IsHistogram() {
@@ -458,7 +462,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 
 					if p.addMetaTags && !tagged.Has(prefix+"_"+metric.GetName()) {
 						tagged.Add(prefix + "_" + metric.GetName())
-						rendered = append(rendered, []byte("# HELP "+prefix+"_"+metric.GetName()+" Metric for "+data.Object))
+						rendered = append(rendered, []byte("# HELP "+prefix+"_"+metric.GetName()+description+" OBJECT: "+data.Object))
 						rendered = append(rendered, []byte("# TYPE "+prefix+"_"+metric.GetName()+" histogram"))
 					}
 
@@ -469,7 +473,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 
 					if p.addMetaTags && !tagged.Has(prefix+"_"+metric.GetName()) {
 						tagged.Add(prefix + "_" + metric.GetName())
-						rendered = append(rendered, []byte("# HELP "+prefix+"_"+metric.GetName()+" Metric for "+data.Object))
+						rendered = append(rendered, []byte("# HELP "+prefix+"_"+metric.GetName()+description+" OBJECT: "+data.Object))
 						rendered = append(rendered, []byte("# TYPE "+prefix+"_"+metric.GetName()+" gauge"))
 					}
 
@@ -485,6 +489,10 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 			metric := h.metric
 			bucketNames := metric.Buckets()
 			objectMetric := data.Object + "_" + metric.GetName()
+			var description string
+			if metric.GetDescription() != "" {
+				description = " COUNTER: " + metric.GetDescription() + " \\nUNIT: " + metric.GetUnit()
+			}
 			_, ok := normalizedLabels[objectMetric]
 			if !ok {
 				canNormalize := true
@@ -505,7 +513,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 
 			if p.addMetaTags && !tagged.Has(prefix+"_"+metric.GetName()) {
 				tagged.Add(prefix + "_" + metric.GetName())
-				rendered = append(rendered, []byte("# HELP "+prefix+"_"+metric.GetName()+" Metric for "+data.Object))
+				rendered = append(rendered, []byte("# HELP "+prefix+"_"+metric.GetName()+description+" OBJECT: "+data.Object))
 				rendered = append(rendered, []byte("# TYPE "+prefix+"_"+metric.GetName()+" histogram"))
 			}
 

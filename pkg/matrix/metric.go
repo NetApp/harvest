@@ -18,29 +18,33 @@ import (
 )
 
 type Metric struct {
-	name       string
-	dataType   string
-	property   string
-	comment    string
-	array      bool
-	histogram  bool
-	exportable bool
-	labels     *dict.Dict
-	buckets    *[]string
-	record     []bool
-	values     []float64
+	name        string
+	dataType    string
+	property    string
+	comment     string
+	description string
+	unit        string
+	array       bool
+	histogram   bool
+	exportable  bool
+	labels      *dict.Dict
+	buckets     *[]string
+	record      []bool
+	values      []float64
 }
 
 func (m *Metric) Clone(deep bool) *Metric {
 	clone := Metric{
-		name:       m.name,
-		dataType:   m.dataType,
-		property:   m.property,
-		comment:    m.comment,
-		exportable: m.exportable,
-		array:      m.array,
-		histogram:  m.histogram,
-		buckets:    m.buckets,
+		name:        m.name,
+		dataType:    m.dataType,
+		property:    m.property,
+		comment:     m.comment,
+		description: m.description,
+		unit:        m.unit,
+		exportable:  m.exportable,
+		array:       m.array,
+		histogram:   m.histogram,
+		buckets:     m.buckets,
 	}
 	if m.labels != nil {
 		clone.labels = m.labels.Copy()
@@ -88,6 +92,22 @@ func (m *Metric) GetComment() string {
 
 func (m *Metric) SetComment(c string) {
 	m.comment = c
+}
+
+func (m *Metric) GetDescription() string {
+	return m.description
+}
+
+func (m *Metric) SetDescription(c string) {
+	m.description = c
+}
+
+func (m *Metric) GetUnit() string {
+	return m.unit
+}
+
+func (m *Metric) SetUnit(c string) {
+	m.unit = c
 }
 
 func (m *Metric) IsArray() bool {

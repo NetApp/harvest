@@ -867,6 +867,8 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 			continue
 		}
 		property := counter.counterType
+		metric.SetDescription(counter.description)
+		metric.SetUnit(counter.unit)
 		// used in aggregator plugin
 		metric.SetProperty(property)
 		// used in volume.go plugin
