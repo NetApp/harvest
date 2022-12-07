@@ -25,9 +25,11 @@ Exporters:
     exporter: Prometheus
     local_http_addr: 0.0.0.0
     port: 12990
+    add_meta_tags: true
   prometheus1:
     exporter: Prometheus
     port_range: 13000-14000
+    add_meta_tags: true
 
 Defaults:
   collectors:
