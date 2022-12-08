@@ -112,7 +112,7 @@
               "type": "linear"
             },
             "showPoints": "auto",
-            "spanNulls": false,
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -199,7 +199,7 @@
               "type": "linear"
             },
             "showPoints": "auto",
-            "spanNulls": false,
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -2545,5 +2545,5 @@
   "timezone": "",
   "title": "ONTAP: Headroom",
   "uid": "",
-  "version": 5
+  "version": 6
 }

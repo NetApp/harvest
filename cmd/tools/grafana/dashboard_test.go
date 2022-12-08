@@ -619,3 +619,24 @@ func checkLegendCalculations(t *testing.T, gotLegendCalculations []string, dashP
 		}
 	}
 }
+
+func TestConnectNullValues(t *testing.T) {
+	dir := "../../../grafana/dashboards/cmode"
+	visitDashboards(dir, func(path string, data []byte) {
+		checkConnectNullValues(t, path, data)
+	})
+}
+
+func checkConnectNullValues(t *testing.T, path string, data []byte) {
+	dashPath := shortPath(path)
+
+	visitAllPanels(data, func(path string, key, value gjson.Result) {
+		spanNulls := value.Get("fieldConfig.defaults.custom.spanNulls")
+		if !spanNulls.Exists() {
+			return
+		}
+		if !spanNulls.Bool() {
+			t.Errorf(`dashboard=%s panel="%s got=[%s] want=true`, dashPath, value.Get("title").String(), spanNulls.String())
+		}
+	})
+}
