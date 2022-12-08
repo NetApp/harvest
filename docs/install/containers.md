@@ -140,8 +140,8 @@ docker-compose -f prom-stack.yml -f harvest-compose.yml down
 
 > Note: If you want to keep your historical Prometheus data, and you set up your Docker Compose workflow before
 > Harvest `22.11`, please read how
-> to [migrate your Prometheus volume](https://github.com/NetApp/harvest/blob/main/docs/MigratePrometheusDocker.md) before
-> continuing with the upgrade steps below.
+> to [migrate your Prometheus volume](https://github.com/NetApp/harvest/blob/main/docs/MigratePrometheusDocker.md)
+> before continuing with the upgrade steps below.
 
 To upgrade Harvest:
 
@@ -149,11 +149,12 @@ To upgrade Harvest:
    This is needed since the new version may contain new templates, dashboards, or other files not included in the Docker
    image.
 
-2. Check the release notes to see if there are new features or fixes in the `harvest docker generate` command you want
-   to take advantage of.
-   If so, regenerate your Docker compose file(s).
+2. Copy your existing `harvest.yml` into the new Harvest directory created in step #1.
 
-3. Pull new images and restart your containers like so:
+3. Regenerate your `harvest-compose.yml` file by
+   running `bin/harvest generate docker full --port --output harvest-compose.yml`
+
+4. Pull new images and restart your containers like so:
 
 ```
 docker pull cr.netapp.io/harvest   # or if using Docker Hub: docker pull rahulguptajss/harvest
