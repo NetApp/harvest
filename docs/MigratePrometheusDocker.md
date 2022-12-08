@@ -65,7 +65,8 @@ docker volume create --name harvest_prometheus_data
 ## Copy the historical Prometheus data
 
 We will copy the historical Prometheus data from the old volume to the new one by
-mounting both volumes and copying data between them.
+mounting both volumes and copying data between them. **NOTE**: Prometheus only supports copying a single volume. It will
+not work if you attempt to copy multiple volumes into the same destination volume.
 
 ```bash
 # replace  `HISTORICAL_VOLUME` with the name of the Prometheus volume that contains you historical data found in step 2.
