@@ -4,17 +4,8 @@
 ## 22.11.1 / 2022-12-08
 
 :pushpin: This release is the same as [22.11.0](https://github.com/NetApp/harvest/releases/tag/v22.11.0) with a fix that
-makes the REST Perf collector work with the just released ONTAP
-9.12.1+ and the following minor fixes:
-
-- fix: Make RestPerf collector work with ONTAP 9.12.1+ ([#1564](https://github.com/NetApp/harvest/pull/1564))
-- fix: SVM dashboard panel `Virus scan connections` used logarithmic scale instead of
-  linear ([#1550](https://github.com/NetApp/harvest/issues/1550)) Thanks to @Falcon667 for reporting.
-- fix: SnapMirror dashboard should show source clusters with a relationship that spans
-  datacenters ([#1546](https://github.com/NetApp/harvest/pull/1546))
-- fix: node_nfs_ops is exposed twice in Rest, should be published
-  once ([#1570](https://github.com/NetApp/harvest/issues/1570))
-- fix: Rest collector reported wrong status for shelves ([#1589](https://github.com/NetApp/harvest/pull/1589))
+makes the REST Perf collector work with the just released ONTAP 9.12.1+ and a few other minor fixes. **If you are not
+monitoring ONTAP 9.12.1, you can ignore this release.**
 
 ## 22.11.0 / 2022-11-21
 :pushpin: Highlights of this major release include:
