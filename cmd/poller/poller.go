@@ -677,9 +677,8 @@ func (p *Poller) loadCollectorObject(ocs []objectCollector) error {
 					Str("object", oc.object).
 					Msg("abort collector")
 				break
-			}
-			if oc.class == "Zapi" && oc.object == "Status_7mode" {
-				// status_7mode will never be loaded in cdot, suppress logging
+			} else if errors.Is(err, errs.ErrWrongTemplate) {
+				// status_7mode will never be loaded in cdot, ignore
 				logger.Debug().Err(err).Msg("Zapi Status_7mode failed to load")
 			} else {
 				logger.Warn().Err(err).

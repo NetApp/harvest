@@ -28,7 +28,7 @@ const (
 	ErrNoInstance         = harvestError("no instances")
 	ErrNoMetric           = harvestError("no metrics")
 	ErrPanic              = harvestError("goroutine panic")
-	ErrTemplate           = harvestError("invalid template")
+	ErrWrongTemplate      = harvestError("wrong template")
 )
 
 type HarvestError struct {

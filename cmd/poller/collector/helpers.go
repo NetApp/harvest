@@ -22,6 +22,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/labelagent"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/max"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/metricagent"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"os"
@@ -124,6 +125,10 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 		}
 
 		if selectedVersion == "" {
+			// workaround for 7mode template that will always be missing in cdot
+			if filename == "status_7.yaml" && model == "cdot" {
+				return nil, "", errs.New(errs.ErrWrongTemplate, "unable to load status_7.yaml on cdot")
+			}
 			return nil, "", errors.New("no best-fit template found")
 		}
 
