@@ -678,10 +678,15 @@ func (p *Poller) loadCollectorObject(ocs []objectCollector) error {
 					Msg("abort collector")
 				break
 			}
-			logger.Warn().Err(err).
-				Str("collector", oc.class).
-				Str("object", oc.object).
-				Msg("init collector-object")
+			if oc.class == "Zapi" && oc.object == "Status_7mode" {
+				// status_7mode will never be loaded in cdot, suppress logging
+				logger.Debug().Err(err).Msg("Zapi Status_7mode failed to load")
+			} else {
+				logger.Warn().Err(err).
+					Str("collector", oc.class).
+					Str("object", oc.object).
+					Msg("init collector-object")
+			}
 		} else {
 			collectors = append(collectors, col)
 			logger.Debug().
