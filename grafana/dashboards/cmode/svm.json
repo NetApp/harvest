@@ -1037,7 +1037,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
+              "expr": "topk($TopResources, volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeReadLatency\"})",
               "interval": "",
               "legendFormat": "{{volume}} - {{svm}}",
               "refId": "A"
@@ -1126,7 +1126,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
+              "expr": "topk($TopResources, volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeReadThroughput\"})",
               "interval": "",
               "legendFormat": "{{volume}} - {{svm}}",
               "refId": "A"
@@ -1215,7 +1215,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
+              "expr": "topk($TopResources, volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeReadIOPs\"})",
               "interval": "",
               "legendFormat": "{{volume}} - {{svm}}",
               "refId": "A"
@@ -1304,7 +1304,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
+              "expr": "topk($TopResources, volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeWriteLatency\"})",
               "interval": "",
               "legendFormat": "{{volume}} - {{svm}}",
               "refId": "A"
@@ -1393,7 +1393,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
+              "expr": "topk($TopResources, volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeWriteThroughput\"})",
               "interval": "",
               "legendFormat": "{{volume}} - {{svm}}",
               "refId": "A"
@@ -1482,7 +1482,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
+              "expr": "topk($TopResources, volume_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeWriteIOPs\"})",
               "interval": "",
               "legendFormat": "{{volume}} - {{svm}}",
               "refId": "A"
@@ -1588,7 +1588,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lif_sent_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
+              "expr": "topk($TopResources, lif_sent_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",lif=~\"$TopNasLIFSendThroughput\"})",
               "interval": "",
               "legendFormat": "{{node}} - {{port}} - {{lif}}",
               "refId": "A"
@@ -1677,7 +1677,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lif_recv_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
+              "expr": "topk($TopResources, lif_recv_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",lif=~\"$TopNasLIFReceiveThroughput\"})",
               "interval": "",
               "legendFormat": "{{node}} - {{port}} - {{lif}}",
               "refId": "A"
@@ -1766,7 +1766,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "nvme_lif_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
+              "expr": "topk($TopResources, nvme_lif_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",lif=~\"$TopNVMeFCLIFSendThroughput\"})",
               "interval": "",
               "legendFormat": "{{node}} - {{port}} - {{lif}}",
               "refId": "A"
@@ -1855,7 +1855,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "nvme_lif_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
+              "expr": "topk($TopResources, nvme_lif_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",lif=~\"$TopNVMeFCLIFReceiveThroughput\"})",
               "interval": "",
               "legendFormat": "{{node}} - {{port}} - {{lif}}",
               "refId": "A"
@@ -1944,7 +1944,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "iscsi_lif_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
+              "expr": "topk($TopResources, iscsi_lif_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",lif=~\"$TopIscsiLIFSendThroughput\"})",
               "interval": "",
               "legendFormat": "{{node}} - {{lif}}",
               "refId": "A"
@@ -2033,7 +2033,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "iscsi_lif_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
+              "expr": "topk($TopResources, iscsi_lif_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",lif=~\"$TopIscsiLIFReceiveThroughput\"})",
               "interval": "",
               "legendFormat": "{{node}} - {{lif}}",
               "refId": "A"
@@ -12827,6 +12827,334 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": "5",
+          "value": "5"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "TopResources",
+        "options": [
+          {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": false,
+            "text": "2",
+            "value": "2"
+          },
+          {
+            "selected": false,
+            "text": "3",
+            "value": "3"
+          },
+          {
+            "selected": false,
+            "text": "4",
+            "value": "4"
+          },
+          {
+            "selected": true,
+            "text": "5",
+            "value": "5"
+          },
+          {
+            "selected": false,
+            "text": "6",
+            "value": "6"
+          },
+          {
+            "selected": false,
+            "text": "8",
+            "value": "8"
+          },
+          {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          },
+          {
+            "selected": false,
+            "text": "15",
+            "value": "15"
+          },
+          {
+            "selected": false,
+            "text": "25",
+            "value": "25"
+          },
+          {
+            "selected": false,
+            "text": "50",
+            "value": "50"
+          },
+          {
+            "selected": false,
+            "text": "100",
+            "value": "100"
+          },
+          {
+            "selected": false,
+            "text": "250",
+            "value": "250"
+          },
+          {
+            "selected": false,
+            "text": "500",
+            "value": "500"
+          }
+        ],
+        "query": "1,2,3,4,5,6,8,10,15,25,50,100,250,500",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopVolumeReadLatency",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopVolumeReadThroughput",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopVolumeReadIOPs",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopVolumeWriteLatency",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopVolumeWriteThroughput",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopVolumeWriteIOPs",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(volume_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(lif_sent_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopNasLIFSendThroughput",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(lif_sent_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*lif=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(lif_recv_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopNasLIFReceiveThroughput",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(lif_recv_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*lif=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(nvme_lif_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopNVMeFCLIFSendThroughput",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(nvme_lif_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*lif=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(nvme_lif_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopNVMeFCLIFReceiveThroughput",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(nvme_lif_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*lif=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(iscsi_lif_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopIscsiLIFSendThroughput",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(iscsi_lif_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*lif=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(iscsi_lif_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopIscsiLIFReceiveThroughput",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(iscsi_lif_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*lif=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
