@@ -156,7 +156,7 @@ func (p *AbstractPlugin) SetPluginInterval() int {
 	pollInterval := GetInterval(p.ParentParams, DefaultPollInterval)
 	pluginInterval := GetInterval(p.Params, DefaultPluginInterval)
 	p.PluginInvocationRate = int(pluginInterval / pollInterval)
-	p.Logger.Info().Float64("PollInterval", pollInterval).Float64("PluginInterval", pluginInterval).Int("PluginInvocationRate", p.PluginInvocationRate).Send()
+	p.Logger.Debug().Float64("PollInterval", pollInterval).Float64("PluginInterval", pluginInterval).Int("PluginInvocationRate", p.PluginInvocationRate).Send()
 	return p.PluginInvocationRate
 }
 
