@@ -35,7 +35,11 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"sync"
+	"time"
 )
+
+const DefaultPluginInterval = 30 * time.Minute
+const DefaultPollInterval = 3 * time.Minute
 
 // Plugin defines the methods of a plugin
 type Plugin interface {
@@ -97,13 +101,14 @@ type ModuleInfo struct {
 
 // AbstractPlugin implements methods of the Plugin interface, except Run()
 type AbstractPlugin struct {
-	Parent       string
-	Name         string
-	Object       string          // object of the collector, describes what that collector is collecting
-	Logger       *logging.Logger // logger used for logging
-	Options      *options.Options
-	Params       *node.Node
-	ParentParams *node.Node
+	Parent               string
+	Name                 string
+	Object               string          // object of the collector, describes what that collector is collecting
+	Logger               *logging.Logger // logger used for logging
+	Options              *options.Options
+	Params               *node.Node
+	ParentParams         *node.Node
+	PluginInvocationRate int
 }
 
 // New creates an AbstractPlugin with arguments:
@@ -145,4 +150,25 @@ func (p *AbstractPlugin) InitAbc() error {
 // (Since most plugins don't collect data, they will always return nil instead)
 func (p *AbstractPlugin) Run(*matrix.Matrix) ([]*matrix.Matrix, error) {
 	panic(p.Name + " has not implemented Run()")
+}
+
+func (p *AbstractPlugin) SetPluginInterval() int {
+	pollInterval := GetInterval(p.ParentParams, DefaultPollInterval)
+	pluginInterval := GetInterval(p.Params, DefaultPluginInterval)
+	p.PluginInvocationRate = int(pluginInterval / pollInterval)
+	p.Logger.Info().Float64("PollInterval", pollInterval).Float64("PluginInterval", pluginInterval).Int("PluginInvocationRate", p.PluginInvocationRate).Send()
+	return p.PluginInvocationRate
+}
+
+func GetInterval(param *node.Node, defaultInterval time.Duration) float64 {
+	schedule := param.GetChildS("schedule")
+	if schedule != nil {
+		dataInterval := schedule.GetChildContentS("data")
+		if dataInterval != "" {
+			if durationVal, err := time.ParseDuration(dataInterval); err == nil {
+				return durationVal.Seconds()
+			}
+		}
+	}
+	return defaultInterval.Seconds()
 }

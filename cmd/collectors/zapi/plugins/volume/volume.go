@@ -10,18 +10,13 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"strconv"
-	"time"
 )
-
-const DefaultPluginDuration = 30 * time.Minute
-const DefaultDataPollDuration = 3 * time.Minute
 
 type Volume struct {
 	*plugin.AbstractPlugin
-	pluginInvocationRate int
-	currentVal           int
-	client               *zapi.Client
-	aggrsMap             map[string]string // aggregate-uuid -> aggregate-name map
+	currentVal int
+	client     *zapi.Client
+	aggrsMap   map[string]string // aggregate-uuid -> aggregate-name map
 }
 
 type aggrData struct {
@@ -53,16 +48,14 @@ func (my *Volume) Init() error {
 	my.aggrsMap = make(map[string]string)
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
-	if my.currentVal, err = collectors.SetPluginInterval(my.ParentParams, my.Params, my.Logger, DefaultDataPollDuration, DefaultPluginDuration); err != nil {
-		my.Logger.Error().Err(err).Stack().Msg("Failed while setting the plugin interval")
-	}
+	my.currentVal = my.SetPluginInterval()
 
 	return nil
 }
 
 func (my *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
-	if my.currentVal >= my.pluginInvocationRate {
+	if my.currentVal >= my.PluginInvocationRate {
 		my.currentVal = 0
 
 		// invoke disk-encrypt-get-iter zapi and populate disk info
