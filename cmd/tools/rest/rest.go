@@ -273,14 +273,14 @@ func FetchForCli(client *Client, href string, records *[]any, downloadAll bool) 
 	return nil
 }
 
-// Fetch used in Rest Collector
+// Fetch collects all records
 func Fetch(client *Client, href string) ([]gjson.Result, error) {
 	var (
 		records []gjson.Result
 		result  []gjson.Result
 		err     error
 	)
-	err = fetch(client, href, &records)
+	err = fetch(client, href, &records, true)
 	if err != nil {
 		return nil, err
 	}
@@ -290,7 +290,24 @@ func Fetch(client *Client, href string) ([]gjson.Result, error) {
 	return result, nil
 }
 
-func fetch(client *Client, href string, records *[]gjson.Result) error {
+// FetchLimited collects records as specified in URL
+func FetchLimited(client *Client, href string) ([]gjson.Result, error) {
+	var (
+		records []gjson.Result
+		result  []gjson.Result
+		err     error
+	)
+	err = fetch(client, href, &records, false)
+	if err != nil {
+		return nil, err
+	}
+	for _, r := range records {
+		result = append(result, r.Array()...)
+	}
+	return result, nil
+}
+
+func fetch(client *Client, href string, records *[]gjson.Result, downloadAll bool) error {
 	getRest, err := client.GetRest(href)
 	if err != nil {
 		return fmt.Errorf("error making request %w", err)
@@ -320,14 +337,14 @@ func fetch(client *Client, href string, records *[]gjson.Result) error {
 		}
 
 		// If all results are desired and there is a next link, follow it
-		if next.Exists() {
+		if next.Exists() && downloadAll {
 			nextLink := next.String()
 			if nextLink != "" {
 				if nextLink == href {
 					// nextLink is same as previous link, no progress is being made, exit
 					return nil
 				}
-				err := fetch(client, nextLink, records)
+				err := fetch(client, nextLink, records, downloadAll)
 				if err != nil {
 					return err
 				}

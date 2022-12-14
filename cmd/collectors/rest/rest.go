@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/snapmirror"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/svm"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/volume"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/volumeanalytics"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
@@ -375,6 +376,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return snapmirror.New(abc)
 	case "Volume":
 		return volume.New(abc)
+	case "VolumeAnalytics":
+		return volumeanalytics.New(abc)
 	case "Certificate":
 		return certificate.New(abc)
 	case "SVM":

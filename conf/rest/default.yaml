@@ -2,7 +2,7 @@
 collector:          Rest
 
 schedule:
-  - data: 3m
+  - data: 1m
 
 # See https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-strategy.md
 # for details on how Harvest handles the ONTAP transition from ZAPI to REST.
@@ -35,3 +35,4 @@ objects:
   Support:                     support.yaml
   SVM:                         svm.yaml
   Volume:                      volume.yaml
+  VolumeAnalytics:             volume_analytics.yaml

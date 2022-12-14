@@ -14,6 +14,7 @@ import (
 	"net"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -319,4 +320,10 @@ func Avg(input []float64) float64 {
 		return SumNumbers(input) / float64(len(input))
 	}
 	return 0
+}
+
+func AddIntString(input string, value int) string {
+	i, _ := strconv.Atoi(input)
+	i = i + value
+	return strconv.FormatInt(int64(i), 10)
 }

@@ -26,6 +26,20 @@ func InvokeRestCall(client *rest.Client, href string, logger *logging.Logger) ([
 	return result, nil
 }
 
+func InvokeRestCallLimited(client *rest.Client, href string, logger *logging.Logger) ([]gjson.Result, error) {
+	result, err := rest.FetchLimited(client, href)
+	if err != nil {
+		logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
+		return []gjson.Result{}, err
+	}
+
+	if len(result) == 0 {
+		return []gjson.Result{}, nil
+	}
+
+	return result, nil
+}
+
 func UpdateProtectedFields(instance *matrix.Instance) {
 
 	// check for group_type

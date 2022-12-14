@@ -1,0 +1,17 @@
+name:                     VolumeAnalytics
+query:                    api/storage/volumes
+object:                   volume
+
+counters:
+  - ^^uuid                                        => instance_uuid
+  - ^name                                         => volume
+  - ^svm.name                                     => svm
+  - filter:
+      - analytics.state=on
+
+plugins:
+  - VolumeAnalytics
+
+
+
+
