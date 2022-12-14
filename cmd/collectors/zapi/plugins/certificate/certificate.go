@@ -8,7 +8,6 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
-	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -19,16 +18,13 @@ import (
 	"time"
 )
 
-const DefaultPluginDuration = 30 * time.Minute
-const DefaultDataPollDuration = 3 * time.Minute
 const BatchSize = "500"
 
 type Certificate struct {
 	*plugin.AbstractPlugin
-	pluginInvocationRate int
-	currentVal           int
-	batchSize            string
-	client               *zapi.Client
+	currentVal int
+	batchSize  string
+	client     *zapi.Client
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -53,10 +49,7 @@ func (my *Certificate) Init() error {
 	}
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
-	if my.currentVal, err = collectors.SetPluginInterval(my.ParentParams, my.Params, my.Logger, DefaultDataPollDuration, DefaultPluginDuration); err != nil {
-		my.Logger.Error().Err(err).Stack().Msg("Failed while setting the plugin interval")
-		return err
-	}
+	my.currentVal = my.SetPluginInterval()
 
 	my.batchSize = BatchSize
 	if b := my.Params.GetChildContentS("batch_size"); b != "" {
@@ -76,7 +69,7 @@ func (my *Certificate) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		err                error
 	)
 
-	if my.currentVal >= my.pluginInvocationRate {
+	if my.currentVal >= my.PluginInvocationRate {
 		my.currentVal = 0
 
 		// invoke vserver-get-iter zapi and get admin vserver name

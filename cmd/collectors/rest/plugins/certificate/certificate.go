@@ -13,19 +13,14 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	ontap "github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
 	"time"
 )
 
-const DefaultPluginDuration = 30 * time.Minute
-const DefaultDataPollDuration = 3 * time.Minute
-
 type Certificate struct {
 	*plugin.AbstractPlugin
-	pluginInvocationRate int
-	currentVal           int
-	client               *rest.Client
+	currentVal int
+	client     *rest.Client
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -51,10 +46,7 @@ func (my *Certificate) Init() error {
 	}
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
-	if my.currentVal, err = my.setPluginInterval(); err != nil {
-		my.Logger.Error().Err(err).Stack().Msg("Failed while setting the plugin interval")
-		return err
-	}
+	my.currentVal = my.SetPluginInterval()
 
 	return nil
 }
@@ -67,7 +59,7 @@ func (my *Certificate) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		err                error
 	)
 
-	if my.currentVal >= my.pluginInvocationRate {
+	if my.currentVal >= my.PluginInvocationRate {
 		my.currentVal = 0
 
 		// invoke private vserver cli rest and get admin vserver name
@@ -180,33 +172,6 @@ func (my *Certificate) setCertificateValidity(data *matrix.Matrix, instance *mat
 		}
 	}
 
-}
-
-func (my *Certificate) setPluginInterval() (int, error) {
-
-	volumeDataInterval := my.getDataInterval(my.ParentParams, DefaultDataPollDuration)
-	pluginDataInterval := my.getDataInterval(my.Params, DefaultPluginDuration)
-	my.Logger.Debug().Float64("VolumeDataInterval", volumeDataInterval).Float64("PluginDataInterval", pluginDataInterval).Msg("Poll intervals in seconds")
-	my.pluginInvocationRate = int(pluginDataInterval / volumeDataInterval)
-
-	return my.pluginInvocationRate, nil
-}
-
-func (my *Certificate) getDataInterval(param *node.Node, defaultInterval time.Duration) float64 {
-	var dataIntervalStr string
-	schedule := param.GetChildS("schedule")
-	if schedule != nil {
-		dataInterval := schedule.GetChildS("data")
-		if dataInterval != nil {
-			dataIntervalStr = dataInterval.GetContentS()
-			if durationVal, err := time.ParseDuration(dataIntervalStr); err == nil {
-				return durationVal.Seconds()
-			} else {
-				my.Logger.Error().Err(err).Str("dataInterval", dataIntervalStr).Msg("Failed to parse duration")
-			}
-		}
-	}
-	return defaultInterval.Seconds()
 }
 
 func (my *Certificate) GetAdminVserver() (string, error) {

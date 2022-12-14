@@ -5,27 +5,21 @@
 package security
 
 import (
-	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"time"
 )
-
-const DefaultPluginDuration = 30 * time.Minute
-const DefaultDataPollDuration = 3 * time.Minute
 
 type Security struct {
 	*plugin.AbstractPlugin
-	pluginInvocationRate int
-	currentVal           int
-	client               *zapi.Client
-	fipsEnabled          string
-	rshEnabled           string
-	telnetEnabled        string
+	currentVal    int
+	client        *zapi.Client
+	fipsEnabled   string
+	rshEnabled    string
+	telnetEnabled string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -50,10 +44,7 @@ func (my *Security) Init() error {
 	}
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
-	if my.currentVal, err = collectors.SetPluginInterval(my.ParentParams, my.Params, my.Logger, DefaultDataPollDuration, DefaultPluginDuration); err != nil {
-		my.Logger.Error().Err(err).Stack().Msg("Failed while setting the plugin interval")
-		return err
-	}
+	my.currentVal = my.SetPluginInterval()
 
 	return nil
 }
@@ -64,7 +55,7 @@ func (my *Security) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		err error
 	)
 
-	if my.currentVal >= my.pluginInvocationRate {
+	if my.currentVal >= my.PluginInvocationRate {
 		my.currentVal = 0
 
 		// invoke security-config-get zapi with 'ssl' interface and get fips status
