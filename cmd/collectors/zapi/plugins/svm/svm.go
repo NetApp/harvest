@@ -16,31 +16,27 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	"time"
 )
 
-const DefaultPluginDuration = 30 * time.Minute
-const DefaultDataPollDuration = 3 * time.Minute
 const BatchSize = "500"
 
 type SVM struct {
 	*plugin.AbstractPlugin
-	pluginInvocationRate int
-	currentVal           int
-	batchSize            string
-	client               *zapi.Client
-	auditProtocols       map[string]string
-	cifsProtocols        map[string]cifsSecurity
-	nsswitchInfo         map[string]nsswitch
-	nisInfo              map[string]string
-	cifsEnabled          map[string]bool
-	nfsEnabled           map[string]string
-	sshData              map[string]string
-	iscsiAuth            map[string]string
-	iscsiService         map[string]string
-	fpolicyData          map[string]fpolicy
-	ldapData             map[string]string
-	kerberosConfig       map[string]string
+	currentVal     int
+	batchSize      string
+	client         *zapi.Client
+	auditProtocols map[string]string
+	cifsProtocols  map[string]cifsSecurity
+	nsswitchInfo   map[string]nsswitch
+	nisInfo        map[string]string
+	cifsEnabled    map[string]bool
+	nfsEnabled     map[string]string
+	sshData        map[string]string
+	iscsiAuth      map[string]string
+	iscsiService   map[string]string
+	fpolicyData    map[string]fpolicy
+	ldapData       map[string]string
+	kerberosConfig map[string]string
 }
 
 type nsswitch struct {
@@ -94,10 +90,7 @@ func (my *SVM) Init() error {
 	my.kerberosConfig = make(map[string]string)
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
-	if my.currentVal, err = collectors.SetPluginInterval(my.ParentParams, my.Params, my.Logger, DefaultDataPollDuration, DefaultPluginDuration); err != nil {
-		my.Logger.Error().Err(err).Stack().Msg("Failed while setting the plugin interval")
-		return err
-	}
+	my.currentVal = my.SetPluginInterval()
 
 	my.batchSize = BatchSize
 	if b := my.Params.GetChildContentS("batch_size"); b != "" {
@@ -117,7 +110,7 @@ func (my *SVM) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		err error
 	)
 
-	if my.currentVal >= my.pluginInvocationRate {
+	if my.currentVal >= my.PluginInvocationRate {
 		my.currentVal = 0
 
 		// invoke fileservice-audit-config-get-iter zapi and get audit protocols

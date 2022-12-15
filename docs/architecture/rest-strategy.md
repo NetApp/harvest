@@ -44,7 +44,7 @@ B --> AA{Does your harvest.yml<br>specify a REST collector?}
 AA -->|No| F(Use ZAPI) 
 AA -->|Yes|G(Use REST)
 
-C --> CC{Is NO_UPGRADE<br>environment<br>variable set?}
+C --> CC{Is HARVEST_NO_COLLECTOR_UPGRADE<br>environment<br>variable set?}
 CC --> |No| G
 CC --> |Yes|CZ(Use ZAPI) 
 
