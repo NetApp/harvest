@@ -87,7 +87,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "A projection of the amount of available IOP/s each node has with the current workloads before increased hockey stick style latencies are encountered.<br/><br/>This graph displays the difference between Aggregate Utilization and Peak Performance (Optimal Point) as Available Ops (aka Headroom). If the current Available utilization is very low or negative for an extended time, a performance remediation plan might be appropriate. A performance remediation plan might include setting QoS workload limits, moving volumes or LUNs to another storage controller, or expanding the storage cluster.",
+      "description": "A projection of the amount of available IOP/s each aggregate has with the current workloads before increased hockey stick style latencies are encountered.<br/><br/>This graph displays the difference between Aggregate Utilization and Peak Performance (Optimal Point) as Available Ops (aka Headroom). If the current Available utilization is very low or negative for an extended time, a performance remediation plan might be appropriate. A performance remediation plan might include setting QoS workload limits, moving volumes or LUNs to another storage controller, or expanding the storage cluster.",
       "fieldConfig": {
         "defaults": {
           "color": {
