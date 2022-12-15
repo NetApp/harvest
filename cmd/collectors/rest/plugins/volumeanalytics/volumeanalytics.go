@@ -17,8 +17,6 @@ import (
 	"time"
 )
 
-const DefaultPluginDuration = 30 * time.Minute
-const DefaultDataPollDuration = 3 * time.Minute
 const explorer = "volume_analytics"
 const activityFiles = "volume_analytics_files"
 const activityDir = "volume_analytics_dir"
@@ -28,10 +26,9 @@ const MaxDirCollectCount = "101"
 
 type VolumeAnalytics struct {
 	*plugin.AbstractPlugin
-	pluginInvocationRate int
-	currentVal           int
-	client               *rest.Client
-	data                 map[string]*matrix.Matrix
+	currentVal int
+	client     *rest.Client
+	data       map[string]*matrix.Matrix
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -116,17 +113,14 @@ func (v *VolumeAnalytics) Init() error {
 	}
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
-	if v.currentVal, err = collectors.SetPluginInterval(v.ParentParams, v.Params, v.Logger, DefaultDataPollDuration, DefaultPluginDuration); err != nil {
-		v.Logger.Error().Err(err).Stack().Msg("Failed while setting the plugin interval")
-		return err
-	}
+	v.currentVal = v.SetPluginInterval()
 
 	return nil
 }
 
 func (v *VolumeAnalytics) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
-	if v.currentVal >= v.pluginInvocationRate {
+	if v.currentVal >= v.PluginInvocationRate {
 		v.Logger.Info().Msg("Invoking FSA")
 		// Purge and reset data
 		for k := range v.data {
