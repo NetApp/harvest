@@ -178,10 +178,10 @@ vserver services web access show -role harvest2-role -name rest
 If the entry is missing, enable access by running the following
 ```bash
 # ZAPI based access
-vserver services web access create -vserver ADMIN_VSERVER -name ontapi -role harvest2-role
+vserver services web access create -vserver $ADMIN_VSERVER -name ontapi -role harvest2-role
 
 # REST based access
-vserver services web access create -vserver ADMIN_VSERVER -name rest -role harvest2-role
+vserver services web access create -vserver $ADMIN_VSERVER -name rest -role harvest2-role
 ```
 
 #### 7-Mode CLI
