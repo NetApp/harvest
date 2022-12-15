@@ -112,8 +112,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				sensorType := instance.GetLabel("type")
 				sensorName := instance.GetLabel("sensor")
 				sensorUnit := instance.GetLabel("unit")
-				warningLowThr := instance.GetLabel("warning_low")
-				criticalLowThr, _ := data.GetMetric("environment-sensors-info.critical-low-threshold").GetValueFloat64(instance)
+
 				isAmbientMatch := ambientRegex.MatchString(sensorName)
 				isPowerMatch := powerInRegex.MatchString(sensorName)
 				isVoltageMatch := voltageRegex.MatchString(sensorName)
@@ -123,8 +122,6 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 					Bool("isPowerMatch", isPowerMatch).
 					Bool("isVoltageMatch", isVoltageMatch).
 					Bool("isCurrentMatch", isCurrentMatch).
-					Str("warningLowThreshold", warningLowThr).
-					Float64("criticalLowThreshold", criticalLowThr).
 					Str("sensorType", sensorType).
 					Str("sensorUnit", sensorUnit).
 					Str("sensorName", sensorName).
