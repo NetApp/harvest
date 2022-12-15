@@ -129,12 +129,12 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "text/plain")
 	_, err := w.Write(bytes.Join(data, []byte("\n")))
 	if err != nil {
-		p.Logger.Error().Stack().Err(err).Msg("write metrics")
-	}
-
-	// make sure stream ends with newline
-	if _, err = w.Write([]byte("\n")); err != nil {
-		p.Logger.Error().Err(err).Msg("write ending newline")
+		p.Logger.Error().Err(err).Msg("write metrics")
+	} else {
+		// make sure stream ends with newline
+		if _, err2 := w.Write([]byte("\n")); err2 != nil {
+			p.Logger.Error().Err(err2).Msg("write ending newline")
+		}
 	}
 
 	// update metadata

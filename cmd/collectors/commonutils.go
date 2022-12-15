@@ -4,7 +4,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
 	"strings"
 	"time"
@@ -112,29 +111,6 @@ func SetNameservice(nsDB, nsSource, nisDomain string, instance *matrix.Instance)
 	} else {
 		instance.SetLabel("nis_authentication_enabled", "false")
 	}
-}
-
-func SetPluginInterval(parentParams *node.Node, params *node.Node, logger *logging.Logger, defaultDataPollDuration time.Duration, defaultPluginDuration time.Duration) (int, error) {
-
-	volumeDataInterval := GetDataInterval(parentParams, defaultDataPollDuration)
-	pluginDataInterval := GetDataInterval(params, defaultPluginDuration)
-	logger.Debug().Float64("VolumeDataInterval", volumeDataInterval).Float64("PluginDataInterval", pluginDataInterval).Msg("Poll interval duration")
-	pluginInvocationRate := int(pluginDataInterval / volumeDataInterval)
-
-	return pluginInvocationRate, nil
-}
-
-func GetDataInterval(param *node.Node, defaultInterval time.Duration) float64 {
-	schedule := param.GetChildS("schedule")
-	if schedule != nil {
-		dataInterval := schedule.GetChildContentS("data")
-		if dataInterval != "" {
-			if durationVal, err := time.ParseDuration(dataInterval); err == nil {
-				return durationVal.Seconds()
-			}
-		}
-	}
-	return defaultInterval.Seconds()
 }
 
 // IsTimestampOlderThanDuration - timestamp units are micro seconds
