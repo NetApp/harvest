@@ -1011,7 +1011,8 @@ harvest_prometheus_data                      <span class="c1"># it is fine if th
 </code></pre></div>
 <h2 id="copy-the-historical-prometheus-data">Copy the historical Prometheus data<a class="headerlink" href="#copy-the-historical-prometheus-data" title="Permanent link">&para;</a></h2>
 <p>We will copy the historical Prometheus data from the old volume to the new one by
-mounting both volumes and copying data between them.</p>
+mounting both volumes and copying data between them. <strong>NOTE</strong>: Prometheus only supports copying a single volume. It will
+not work if you attempt to copy multiple volumes into the same destination volume.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># replace  `HISTORICAL_VOLUME` with the name of the Prometheus volume that contains you historical data found in step 2.</span>
 docker run --rm -it -v <span class="nv">$HISTORICAL_VOLUME</span>:/from -v harvest_prometheus_data:/to alpine ash -c <span class="s2">&quot;cd /from ; cp -av . /to&quot;</span>
 </code></pre></div>

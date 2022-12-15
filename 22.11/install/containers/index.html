@@ -1294,8 +1294,8 @@ password: admin
 <blockquote>
 <p>Note: If you want to keep your historical Prometheus data, and you set up your Docker Compose workflow before
 Harvest <code>22.11</code>, please read how
-to <a href="https://github.com/NetApp/harvest/blob/main/docs/MigratePrometheusDocker.md">migrate your Prometheus volume</a> before
-continuing with the upgrade steps below.</p>
+to <a href="https://github.com/NetApp/harvest/blob/main/docs/MigratePrometheusDocker.md">migrate your Prometheus volume</a>
+before continuing with the upgrade steps below.</p>
 </blockquote>
 <p>To upgrade Harvest:</p>
 <ol>
@@ -1305,9 +1305,11 @@ continuing with the upgrade steps below.</p>
    image.</p>
 </li>
 <li>
-<p>Check the release notes to see if there are new features or fixes in the <code>harvest docker generate</code> command you want
-   to take advantage of.
-   If so, regenerate your Docker compose file(s).</p>
+<p>Copy your existing <code>harvest.yml</code> into the new Harvest directory created in step #1.</p>
+</li>
+<li>
+<p>Regenerate your <code>harvest-compose.yml</code> file by
+   running <code>bin/harvest generate docker full --port --output harvest-compose.yml</code></p>
 </li>
 <li>
 <p>Pull new images and restart your containers like so:</p>

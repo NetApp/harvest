@@ -1470,17 +1470,17 @@ security login create -user-or-group-name harvest2 -application http -role harve
 </code></pre></div>
 <p>Verify that an entry is present by running the following commands
 <div class="highlight"><pre><span></span><code><span class="c1"># ZAPI based access</span>
-vserver services web access show -role harvest3-role -name ontapi
+vserver services web access show -role harvest2-role -name ontapi
 
 <span class="c1"># REST based access</span>
-vserver services web access show -role harvest3-role -name rest
+vserver services web access show -role harvest2-role -name rest
 </code></pre></div></p>
 <p>If the entry is missing, enable access by running the following
 <div class="highlight"><pre><span></span><code><span class="c1"># ZAPI based access</span>
-vserver services web access create -vserver umeng-aff300-01-02 -name ontapi -role harvest2-role
+vserver services web access create -vserver <span class="nv">$ADMIN_VSERVER</span> -name ontapi -role harvest2-role
 
 <span class="c1"># REST based access</span>
-vserver services web access create -vserver umeng-aff300-01-02 -name rest -role harvest2-role
+vserver services web access create -vserver <span class="nv">$ADMIN_VSERVER</span> -name rest -role harvest2-role
 </code></pre></div></p>
 <h4 id="7-mode-cli">7-Mode CLI<a class="headerlink" href="#7-mode-cli" title="Permanent link">&para;</a></h4>
 <p>Login to the CLI of your 7-Mode ONTAP system (e.g. using SSH). First, we create a user role. If you want to give the
