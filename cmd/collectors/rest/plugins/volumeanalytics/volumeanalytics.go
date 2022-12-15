@@ -151,8 +151,8 @@ func (v *VolumeAnalytics) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			return nil, nil
 		}
 		if ontapVersion.GreaterThanOrEqual(version98After) {
-			for instanceId, dataInstance := range data.GetInstances() {
-				if records, err := v.getAnalyticsData(instanceId); err != nil {
+			for instanceID, dataInstance := range data.GetInstances() {
+				if records, err := v.getAnalyticsData(instanceID); err != nil {
 					if errs.IsRestErr(err, errs.APINotFound) {
 						v.Logger.Debug().Err(err).Msg("API not found")
 					} else {
@@ -165,7 +165,7 @@ func (v *VolumeAnalytics) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 						fileCount := record.Get("analytics.file_count").String()
 						bytesUsed := record.Get("analytics.bytes_used").String()
 						subDirCount := record.Get("analytics.subdir_count").String()
-						instance, err := explorerMatrix.NewInstance(instanceId + name)
+						instance, err := explorerMatrix.NewInstance(instanceID + name)
 						if err != nil {
 							v.Logger.Warn().Str("key", name).Msg("error while creating instance")
 							continue
@@ -176,18 +176,18 @@ func (v *VolumeAnalytics) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 						for k1, v1 := range dataInstance.GetLabels().Map() {
 							instance.SetLabel(k1, v1)
 						}
-						explorerMatrix.GetMetric("dir_bytes_used").SetValueString(instance, bytesUsed)
-						explorerMatrix.GetMetric("dir_file_count").SetValueString(instance, fileCount)
+						err = explorerMatrix.GetMetric("dir_bytes_used").SetValueString(instance, bytesUsed)
+						err = explorerMatrix.GetMetric("dir_file_count").SetValueString(instance, fileCount)
 						if name == "." {
-							explorerMatrix.GetMetric("dir_subdir_count").SetValueString(instance, util.AddIntString(subDirCount, 1))
+							err = explorerMatrix.GetMetric("dir_subdir_count").SetValueString(instance, util.AddIntString(subDirCount, 1))
 						} else {
-							explorerMatrix.GetMetric("dir_subdir_count").SetValueString(instance, subDirCount)
+							err = explorerMatrix.GetMetric("dir_subdir_count").SetValueString(instance, subDirCount)
 						}
 					}
 				}
 				if ontapVersion.GreaterThanOrEqual(version910After) {
 					for _, v1 := range topMetricMap {
-						if records, err := v.getTopMetrics(instanceId, v1.objType, v1.topMetricCounter, v1.fields); err != nil {
+						if records, err := v.getTopMetrics(instanceID, v1.objType, v1.topMetricCounter, v1.fields); err != nil {
 							if errs.IsRestErr(err, errs.APINotFound) {
 								v.Logger.Debug().Err(err).Msg("API not found")
 							} else {
@@ -230,7 +230,7 @@ func (v *VolumeAnalytics) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 									fv := record.Get(f).String()
 									instance.SetLabel(f, fv)
 								}
-								mat.GetMetric(v1.displayName).SetValueString(instance, topMetric)
+								err = mat.GetMetric(v1.displayName).SetValueString(instance, topMetric)
 							}
 						}
 					}
