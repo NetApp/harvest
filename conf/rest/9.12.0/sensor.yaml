@@ -9,13 +9,13 @@ counters:
   - ^type                      => type
   - ^warning_high_threshold    => warning_high
   - ^warning_low_threshold     => warning_low
+  - ^critical_high_threshold   => critical_high
+  - ^critical_low_threshold    => critical_low
   - ^discrete_state            => discrete_state
   - ^discrete_value            => discrete_value
   - ^threshold_state           => threshold_state
   - ^value_units               => unit
   - value                      => threshold_value
-  - critical_high_threshold    => critical_high
-  - critical_low_threshold     => critical_low
 
 plugins:
   - Sensor
