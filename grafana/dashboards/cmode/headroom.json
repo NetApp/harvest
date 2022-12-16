@@ -53,7 +53,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1664471319262,
+  "iteration": 1671173364823,
   "links": [
     {
       "asDropdown": true,
@@ -87,7 +87,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "A projection of the amount of available IOP/s each aggregate has with the current workloads before increased hockey stick style latencies are encountered.<br/><br/>This graph displays the difference between Aggregate Utilization and Peak Performance (Optimal Point) as Available Ops (aka Headroom). If the current Available utilization is very low or negative for an extended time, a performance remediation plan might be appropriate. A performance remediation plan might include setting QoS workload limits, moving volumes or LUNs to another storage controller, or expanding the storage cluster.",
+      "description": "A projection of the amount of available IOP/s each aggregate has with the current workloads before increased hockey stick style latencies are encountered.<br/><br/>This graph displays the difference between Aggregate Utilization and Peak Performance (Optimal Point) as Available Ops (aka Headroom). If the current Available utilization is very low or negative for an extended time, a performance remediation plan might be appropriate. A performance remediation plan might include setting QoS workload limits, moving volumes or LUNs to another storage controller, or expanding the storage cluster.<br/><br/>This graph displays aggregate with confidence factor greater than 1. The confidence factor is used to guage the accuracy of the optimal point for the given resource.Denoted by the following values:<br/>\n1 - Low - Seed value is used for optimal point. There's not enough data to predict optimal point.<br/>\n2 - Medium - Some data to extrapolate optimal point.<br/>\n3 - High - Substantial data which reaches or exceeds optimal point, thereby the \"optimal point\" is known. <br/>\n0 - Unknown - The resource is not available or is not in use, or there's an internal error such that the data cannot be retrieved. <br/>",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -163,7 +163,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "headroom_aggr_optimal_point_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} - headroom_aggr_current_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "headroom_aggr_optimal_point_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$OptimalPointAggr\"} - headroom_aggr_current_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$OptimalPointAggr\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -174,7 +174,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "A projection of the amount of available IOP/s each node has with the current workloads before increased hockey stick style latencies are encountered.<br/><br/>This graph displays the difference between CPU Utilization and Peak Performance (Optimal Point) as Available Ops (aka Headroom). If the current Available utilization is very low or negative for an extended time, a performance remediation plan might be appropriate. A performance remediation plan might include setting QoS workload limits, moving volumes or LUNs to another storage controller, or expanding the storage cluster.",
+      "description": "A projection of the amount of available IOP/s each node has with the current workloads before increased hockey stick style latencies are encountered.<br/><br/>This graph displays the difference between CPU Utilization and Peak Performance (Optimal Point) as Available Ops (aka Headroom). If the current Available utilization is very low or negative for an extended time, a performance remediation plan might be appropriate. A performance remediation plan might include setting QoS workload limits, moving volumes or LUNs to another storage controller, or expanding the storage cluster.<br/><br/>This graph displays node with confidence factor greater than 1. The confidence factor is used to guage the accuracy of the optimal point for the given resource.Denoted by the following values:<br/>\n1 - Low - Seed value is used for optimal point. There's not enough data to predict optimal point.<br/>\n2 - Medium - Some data to extrapolate optimal point.<br/>\n3 - High - Substantial data which reaches or exceeds optimal point, thereby the \"optimal point\" is known. <br/>\n0 - Unknown - The resource is not available or is not in use, or there's an internal error such that the data cannot be retrieved. <br/>",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -250,7 +250,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "headroom_cpu_optimal_point_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} - headroom_cpu_current_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "headroom_cpu_optimal_point_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$OptimalPointCPU\"} - headroom_cpu_current_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$OptimalPointCPU\"}",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -2534,6 +2534,52 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(headroom_aggr_optimal_point_confidence_factor{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} > 1)",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "OptimalPointAggr",
+        "options": [],
+        "query": {
+          "query": "query_result(headroom_aggr_optimal_point_confidence_factor{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} > 1)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*aggr=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(headroom_cpu_optimal_point_confidence_factor{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} > 1)",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "OptimalPointCPU",
+        "options": [],
+        "query": {
+          "query": "query_result(headroom_cpu_optimal_point_confidence_factor{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} > 1)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*node=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
@@ -2545,5 +2591,5 @@
   "timezone": "",
   "title": "ONTAP: Headroom",
   "uid": "",
-  "version": 6
+  "version": 7
 }
