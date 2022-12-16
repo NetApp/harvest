@@ -169,19 +169,19 @@ security login create -user-or-group-name harvest2 -application http -role harve
 Verify that an entry is present by running the following commands
 ```bash
 # ZAPI based access
-vserver services web access show -role harvest3-role -name ontapi
+vserver services web access show -role harvest2-role -name ontapi
  
 # REST based access
-vserver services web access show -role harvest3-role -name rest
+vserver services web access show -role harvest2-role -name rest
 ```
 
 If the entry is missing, enable access by running the following
 ```bash
 # ZAPI based access
-vserver services web access create -vserver umeng-aff300-01-02 -name ontapi -role harvest2-role
+vserver services web access create -vserver $ADMIN_VSERVER -name ontapi -role harvest2-role
 
 # REST based access
-vserver services web access create -vserver umeng-aff300-01-02 -name rest -role harvest2-role
+vserver services web access create -vserver $ADMIN_VSERVER -name rest -role harvest2-role
 ```
 
 #### 7-Mode CLI
