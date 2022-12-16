@@ -358,6 +358,8 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 				}
 			}
 			oldInstances.Remove(key)
+			// clear all instance labels as there are some fields which may be missing between polls
+			instance.ClearLabels()
 			fetch(instance, instanceElem, make([]string, 0))
 		}
 	}

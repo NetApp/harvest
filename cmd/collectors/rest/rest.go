@@ -455,6 +455,11 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, isEndPoint bool)
 		}
 		oldInstances.Remove(instanceKey)
 
+		// clear all instance labels as there are some fields which may be missing between polls
+		// Don't remove instance labels when endpoints are being processed because endpoints uses parent instance only.
+		if !isEndPoint {
+			instance.ClearLabels()
+		}
 		for label, display := range prop.InstanceLabels {
 			value := instanceData.Get(label)
 			if value.Exists() {
