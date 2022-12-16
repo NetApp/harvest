@@ -1,7 +1,7 @@
 apiVersion: 1
 
 providers:
-  - name: 'Harvest cDOT'
+  - name: 'Harvest StorageGrid'
     orgId: 1
     folder: 'Harvest-main-StorageGrid'
     type: file
