@@ -20,7 +20,6 @@ func NewInstance(index int) *Instance {
 	me := &Instance{index: index}
 	me.labels = dict.New()
 	me.exportable = true
-
 	return me
 }
 
@@ -30,6 +29,10 @@ func (i *Instance) GetLabel(key string) string {
 
 func (i *Instance) GetLabels() *dict.Dict {
 	return i.labels
+}
+
+func (i *Instance) ClearLabels() {
+	i.labels = dict.New()
 }
 
 func (i *Instance) SetLabel(key, value string) {
