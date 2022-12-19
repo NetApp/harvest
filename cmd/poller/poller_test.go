@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"os"
@@ -134,7 +135,11 @@ func TestCollectorUpgrade(t *testing.T) {
 		askFor         string
 		wantCollector  string
 		setEnvVar      bool
+		check          func() error
 	}
+
+	zapisExist := func() error { return nil }
+	zapisDoNotExist := func() error { return fmt.Errorf("boom") }
 
 	tests := []test{
 		{name: "9.11 use ZAPI", clusterVersion: "9.11.1", askFor: "Zapi", wantCollector: "Zapi"},
@@ -144,6 +149,9 @@ func TestCollectorUpgrade(t *testing.T) {
 		{name: "9.12 REST", clusterVersion: "9.12.3", askFor: "Rest", wantCollector: "Rest", setEnvVar: true},
 		{name: "9.13 RestPerf", clusterVersion: "9.13.1", askFor: "ZapiPerf", wantCollector: "RestPerf"},
 		{name: "9.13 REST w/ envar", clusterVersion: "9.13.1", askFor: "Rest", wantCollector: "Rest", setEnvVar: true},
+		{name: "9.13 REST w/ envar", clusterVersion: "9.13.1", askFor: "Zapi", wantCollector: "Zapi", setEnvVar: true},
+		{name: "9.13 REST w/ envar", clusterVersion: "9.13.1", askFor: "Rest", wantCollector: "Rest", setEnvVar: true,
+			check: zapisDoNotExist},
 		{name: "9.13 REST", clusterVersion: "9.13.1", askFor: "Rest", wantCollector: "Rest"},
 	}
 
@@ -157,7 +165,10 @@ func TestCollectorUpgrade(t *testing.T) {
 			} else {
 				_ = os.Unsetenv(NoUpgrade)
 			}
-			newCollector := poller.negotiateAPI(collector, tt.clusterVersion)
+			if tt.check == nil {
+				tt.check = zapisExist
+			}
+			newCollector := poller.negotiateAPI(collector, tt.clusterVersion, tt.check)
 			if newCollector.Name != tt.wantCollector {
 				t.Errorf("got = [%s] want [%s]", newCollector.Name, tt.wantCollector)
 			}
