@@ -640,3 +640,28 @@ func checkConnectNullValues(t *testing.T, path string, data []byte) {
 		}
 	})
 }
+
+func TestPanelChildPanels(t *testing.T) {
+	dir := "../../../grafana/dashboards/cmode"
+
+	exceptions := map[string]string{
+		"cmode/shelf.json":    "Power",
+		"cmode/security.json": "Cluster Authentication And Certificates, Volume Encryption, Storage VM and Volume Anti-ransomware Status",
+	}
+
+	visitDashboards(dir, func(path string, data []byte) {
+		checkPanelChildPanels(t, exceptions, shortPath(path), data)
+	})
+}
+
+func checkPanelChildPanels(t *testing.T, exceptions map[string]string, path string, data []byte) {
+	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
+		subPanels := value.Get("panels").Array()
+		title := value.Get("title").String()
+		// Highlights panel is always expanded, so ignore that
+		if value.Get("type").String() == "row" && title != "Highlights" && !strings.Contains(exceptions[path], title) && len(subPanels) == 0 {
+			t.Errorf("dashboard=%s, panel=%s, has child panels outside of row", path, title)
+		}
+		return true
+	})
+}
