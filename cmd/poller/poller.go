@@ -48,6 +48,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/poller/schedule"
 	rest2 "github.com/netapp/harvest/v2/cmd/tools/rest"
+	client "github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
@@ -1117,7 +1118,8 @@ func (p *Poller) createClient() {
 // upgradeCollector checks if the collector c should be upgraded to a REST collector.
 // If an upgrade is possible, a new collector will be returned, otherwise the original will be.
 //
-// ZAPI collectors should be upgraded to REST collectors when the ONTAP version is >= 9.12.1
+// ZAPI collectors should be upgraded to REST collectors when the ONTAP version is >= 9.12.1 unless
+// the HARVEST_NO_COLLECTOR_UPGRADE ENVVAR is set.
 // The check is performed by:
 //   - use the REST API to query the cluster version
 //   - compare the cluster version with the upgradeAfter version
@@ -1137,64 +1139,86 @@ func (p *Poller) upgradeCollector(c conf.Collector) conf.Collector {
 	ver := r.Client.Cluster().Version
 	verWithDots := fmt.Sprintf("%d.%d.%d", ver[0], ver[1], ver[2])
 
-	return p.negotiateAPI(c, verWithDots)
+	return p.negotiateAPI(c, verWithDots, doZAPIsExist)
 }
 
 // clusterVersion should be of the form 9.12.1
-func (p *Poller) negotiateAPI(c conf.Collector, clusterVersion string) conf.Collector {
-	ontapVersion, err := goversion.NewVersion(clusterVersion)
+func (p *Poller) negotiateAPI(c conf.Collector, clusterVersion string, checkZAPIs func() error) conf.Collector {
+	var (
+		ontapVersion *goversion.Version
+		noUpgrade    string
+		err          error
+	)
+	const (
+		upgradeVersion = "9.12.1"
+	)
+	ontapVersion, err = goversion.NewVersion(clusterVersion)
 	if err != nil {
 		logger.Error().Err(err).
-			Str("version", clusterVersion).
+			Str("v", clusterVersion).
 			Str("collector", c.Name).
 			Msg("Failed to parse version")
 		return c
 	}
-	upgradeVersion := "9.12.1"
-	noUpgradeVersion := "9.13.1"
-	upgradeAfter, _ := goversion.NewVersion(upgradeVersion)
-	noUpgradeAfter, _ := goversion.NewVersion(noUpgradeVersion)
 
-	if ontapVersion.GreaterThanOrEqual(noUpgradeAfter) {
+	upgradeAfter, _ := goversion.NewVersion(upgradeVersion)
+	if ontapVersion.LessThan(upgradeAfter) {
 		logger.Debug().
 			Str("collector", c.Name).
-			Str("v", clusterVersion).
-			Str("noUpgradeVersion", noUpgradeVersion).
-			Msg("Use REST")
-		upgradeCollector := strings.ReplaceAll(c.Name, "Zapi", "Rest")
-		return conf.Collector{
-			Name:      upgradeCollector,
-			Templates: c.Templates,
-		}
-	}
-	noUpgrade := os.Getenv(NoUpgrade)
-	if noUpgrade != "" {
-		logger.Debug().
-			Str("collector", c.Name).
-			Str("v", clusterVersion).
-			Msg("No upgrade due to environment variable. Use collector")
-		return c
-	}
-	if ontapVersion.GreaterThanOrEqual(upgradeAfter) {
-		upgradeCollector := strings.ReplaceAll(c.Name, "Zapi", "Rest")
-		logger.Info().
-			Str("from", c.Name).
-			Str("to", upgradeCollector).
 			Str("v", clusterVersion).
 			Str("upgradeVersion", upgradeVersion).
-			Msg("Upgrade collector")
+			Msg("Do not upgrade collector")
+		return c
+	}
+
+	// For ONTAP versions 9.12.1+ use REST unless the HARVEST_NO_COLLECTOR_UPGRADE environment variable is set.
+	// When the environment variable is set, honor that request unless the cluster no longer speaks ZAPI.
+	noUpgrade = os.Getenv(NoUpgrade)
+	if noUpgrade == "" {
+		logger.Info().Str("collector", c.Name).Str("v", clusterVersion).Msg("Use REST")
+		upgradeCollector := strings.ReplaceAll(c.Name, "Zapi", "Rest")
 		return conf.Collector{
 			Name:      upgradeCollector,
 			Templates: c.Templates,
 		}
 	}
-	logger.Debug().
+
+	err = checkZAPIs()
+	// if there is an error talking to ONTAP, assume that is because ZAPIs no longer exist and use REST
+	if err != nil {
+		logger.Warn().Err(err).Str("collector", c.Name).Str("v", clusterVersion).Msg("ZAPI EOA. Use REST")
+		upgradeCollector := strings.ReplaceAll(c.Name, "Zapi", "Rest")
+		return conf.Collector{
+			Name:      upgradeCollector,
+			Templates: c.Templates,
+		}
+	}
+	logger.Info().
 		Str("collector", c.Name).
 		Str("v", clusterVersion).
-		Str("upgradeVersion", upgradeVersion).
-		Msg("Do not upgrade collector")
-
+		Msg("ZAPIs exist and no-upgrade ENVVAR set. Use ZAPIs")
 	return c
+}
+
+func doZAPIsExist() error {
+	var (
+		poller     *conf.Poller
+		connection *client.Client
+		err        error
+	)
+
+	// connect to cluster and retrieve system version
+	if poller, err = conf.PollerNamed(args.Poller); err != nil {
+		return err
+	}
+	if connection, err = client.New(*poller); err != nil {
+		return err
+
+	}
+	if err = connection.Init(2); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (p *Poller) newRestClient() (*rest.Rest, error) {
