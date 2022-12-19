@@ -72,7 +72,7 @@
   ],
   "panels": [
     {
-      "collapsed": false,
+      "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
@@ -81,175 +81,178 @@
         "y": 0
       },
       "id": 43,
-      "panels": [],
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "A projection of the amount of available IOP/s each aggregate has with the current workloads before increased hockey stick style latencies are encountered.<br/><br/>This graph displays the difference between Aggregate Utilization and Peak Performance (Optimal Point) as Available Ops (aka Headroom). If the current Available utilization is very low or negative for an extended time, a performance remediation plan might be appropriate. A performance remediation plan might include setting QoS workload limits, moving volumes or LUNs to another storage controller, or expanding the storage cluster.<br/><br/>This graph displays aggregate with confidence factor greater than 1. The confidence factor is used to guage the accuracy of the optimal point for the given resource.Denoted by the following values:<br/>\n1 - Low - Seed value is used for optimal point. There's not enough data to predict optimal point.<br/>\n2 - Medium - Some data to extrapolate optimal point.<br/>\n3 - High - Substantial data which reaches or exceeds optimal point, thereby the \"optimal point\" is known. <br/>\n0 - Unknown - The resource is not available or is not in use, or there's an internal error such that the data cannot be retrieved. <br/>\nFor more details see \nhttps://kb.netapp.com/Advice_and_Troubleshooting/Data_Storage_Software/ONTAP_OS/Is_my_controller_overloaded%3F",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 1
+          },
+          "id": 45,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "headroom_aggr_optimal_point_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$OptimalPointAggr\"} - headroom_aggr_current_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$OptimalPointAggr\"}",
+              "interval": "",
+              "legendFormat": "{{node}} - {{aggr}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Available Ops: Aggregate",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "A projection of the amount of available IOP/s each node has with the current workloads before increased hockey stick style latencies are encountered.<br/><br/>This graph displays the difference between CPU Utilization and Peak Performance (Optimal Point) as Available Ops (aka Headroom). If the current Available utilization is very low or negative for an extended time, a performance remediation plan might be appropriate. A performance remediation plan might include setting QoS workload limits, moving volumes or LUNs to another storage controller, or expanding the storage cluster.<br/><br/>This graph displays node with confidence factor greater than 1. The confidence factor is used to guage the accuracy of the optimal point for the given resource.Denoted by the following values:<br/>\n1 - Low - Seed value is used for optimal point. There's not enough data to predict optimal point.<br/>\n2 - Medium - Some data to extrapolate optimal point.<br/>\n3 - High - Substantial data which reaches or exceeds optimal point, thereby the \"optimal point\" is known. <br/>\n0 - Unknown - The resource is not available or is not in use, or there's an internal error such that the data cannot be retrieved. <br/>\nFor more details see\nhttps://kb.netapp.com/Advice_and_Troubleshooting/Data_Storage_Software/ONTAP_OS/Is_my_controller_overloaded%3F",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 1
+          },
+          "id": 46,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "headroom_cpu_optimal_point_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$OptimalPointCPU\"} - headroom_cpu_current_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$OptimalPointCPU\"}",
+              "interval": "",
+              "legendFormat": "{{node}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Available Ops: CPU",
+          "type": "timeseries"
+        }
+      ],
       "title": "Available Ops",
       "type": "row"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "A projection of the amount of available IOP/s each aggregate has with the current workloads before increased hockey stick style latencies are encountered.<br/><br/>This graph displays the difference between Aggregate Utilization and Peak Performance (Optimal Point) as Available Ops (aka Headroom). If the current Available utilization is very low or negative for an extended time, a performance remediation plan might be appropriate. A performance remediation plan might include setting QoS workload limits, moving volumes or LUNs to another storage controller, or expanding the storage cluster.<br/><br/>This graph displays aggregate with confidence factor greater than 1. The confidence factor is used to guage the accuracy of the optimal point for the given resource.Denoted by the following values:<br/>\n1 - Low - Seed value is used for optimal point. There's not enough data to predict optimal point.<br/>\n2 - Medium - Some data to extrapolate optimal point.<br/>\n3 - High - Substantial data which reaches or exceeds optimal point, thereby the \"optimal point\" is known. <br/>\n0 - Unknown - The resource is not available or is not in use, or there's an internal error such that the data cannot be retrieved. <br/>\nFor more details see \nhttps://kb.netapp.com/Advice_and_Troubleshooting/Data_Storage_Software/ONTAP_OS/Is_my_controller_overloaded%3F",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "iops"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 1
-      },
-      "id": 45,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "headroom_aggr_optimal_point_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$OptimalPointAggr\"} - headroom_aggr_current_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$OptimalPointAggr\"}",
-          "interval": "",
-          "legendFormat": "{{node}} - {{aggr}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Available Ops: Aggregate",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "A projection of the amount of available IOP/s each node has with the current workloads before increased hockey stick style latencies are encountered.<br/><br/>This graph displays the difference between CPU Utilization and Peak Performance (Optimal Point) as Available Ops (aka Headroom). If the current Available utilization is very low or negative for an extended time, a performance remediation plan might be appropriate. A performance remediation plan might include setting QoS workload limits, moving volumes or LUNs to another storage controller, or expanding the storage cluster.<br/><br/>This graph displays node with confidence factor greater than 1. The confidence factor is used to guage the accuracy of the optimal point for the given resource.Denoted by the following values:<br/>\n1 - Low - Seed value is used for optimal point. There's not enough data to predict optimal point.<br/>\n2 - Medium - Some data to extrapolate optimal point.<br/>\n3 - High - Substantial data which reaches or exceeds optimal point, thereby the \"optimal point\" is known. <br/>\n0 - Unknown - The resource is not available or is not in use, or there's an internal error such that the data cannot be retrieved. <br/>\nFor more details see\nhttps://kb.netapp.com/Advice_and_Troubleshooting/Data_Storage_Software/ONTAP_OS/Is_my_controller_overloaded%3F",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "iops"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 1
-      },
-      "id": 46,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "headroom_cpu_optimal_point_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$OptimalPointCPU\"} - headroom_cpu_current_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$OptimalPointCPU\"}",
-          "interval": "",
-          "legendFormat": "{{node}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Available Ops: CPU",
-      "type": "timeseries"
     },
     {
       "collapsed": true,
