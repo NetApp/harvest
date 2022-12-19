@@ -6,8 +6,8 @@ metric_type:      int64
 
 counters:
   environment-sensors-info:
-    - critical-high-threshold           => critical_high
-    - critical-low-threshold            => critical_low
+    - ^critical-high-threshold          => critical_high
+    - ^critical-low-threshold           => critical_low
     - ^discrete-sensor-state            => discrete_state
     - ^discrete-sensor-value            => discrete_value
     - ^^node-name                       => node

@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1668669792078,
+  "iteration": 1671103687756,
   "links": [
     {
       "asDropdown": true,
@@ -91,6 +91,7 @@
   "panels": [
     {
       "collapsed": false,
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2009,7 +2010,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "dark-yellow",
+                    "color": "blue",
                     "value": null
                   }
                 ]
@@ -2022,7 +2023,7 @@
             "h": 5,
             "w": 8,
             "x": 0,
-            "y": 25
+            "y": 40
           },
           "id": 204,
           "links": [],
@@ -2148,24 +2149,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "transparent",
+                    "color": "blue",
                     "value": null
-                  },
-                  {
-                    "color": "rgb(84, 184, 45)",
-                    "value": 500
-                  },
-                  {
-                    "color": "semi-dark-yellow",
-                    "value": 3000
-                  },
-                  {
-                    "color": "semi-dark-orange",
-                    "value": 5000
-                  },
-                  {
-                    "color": "dark-red",
-                    "value": 6000
                   }
                 ]
               },
@@ -2385,38 +2370,6 @@
                 },
                 "properties": [
                   {
-                    "id": "custom.displayMode",
-                    "value": "color-background"
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "transparent",
-                          "value": null
-                        },
-                        {
-                          "color": "green",
-                          "value": 500
-                        },
-                        {
-                          "color": "yellow",
-                          "value": 3000
-                        },
-                        {
-                          "color": "orange",
-                          "value": 5000
-                        },
-                        {
-                          "color": "red",
-                          "value": 6000
-                        }
-                      ]
-                    }
-                  },
-                  {
                     "id": "custom.align",
                     "value": "right"
                   },
@@ -2433,38 +2386,6 @@
                 },
                 "properties": [
                   {
-                    "id": "custom.displayMode",
-                    "value": "color-background"
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "transparent",
-                          "value": null
-                        },
-                        {
-                          "color": "green",
-                          "value": 500
-                        },
-                        {
-                          "color": "yellow",
-                          "value": 3000
-                        },
-                        {
-                          "color": "orange",
-                          "value": 5000
-                        },
-                        {
-                          "color": "red",
-                          "value": 8000
-                        }
-                      ]
-                    }
-                  },
-                  {
                     "id": "custom.align",
                     "value": "right"
                   },
@@ -2480,38 +2401,6 @@
                   "options": "Min Fan Speed (rpm)"
                 },
                 "properties": [
-                  {
-                    "id": "custom.displayMode",
-                    "value": "color-background"
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "transparent",
-                          "value": null
-                        },
-                        {
-                          "color": "green",
-                          "value": 500
-                        },
-                        {
-                          "color": "yellow",
-                          "value": 3000
-                        },
-                        {
-                          "color": "orange",
-                          "value": 5000
-                        },
-                        {
-                          "color": "red",
-                          "value": 8000
-                        }
-                      ]
-                    }
-                  },
                   {
                     "id": "custom.align",
                     "value": "right"
@@ -4901,5 +4790,5 @@
   "timezone": "",
   "title": "ONTAP: Cluster",
   "uid": "",
-  "version": 13
+  "version": 14
 }

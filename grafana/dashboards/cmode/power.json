@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1663838477750,
+  "iteration": 1671104829932,
   "links": [
     {
       "asDropdown": true,
@@ -251,24 +251,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "transparent",
+                "color": "blue",
                 "value": null
-              },
-              {
-                "color": "rgb(84, 184, 45)",
-                "value": 500
-              },
-              {
-                "color": "semi-dark-yellow",
-                "value": 3000
-              },
-              {
-                "color": "semi-dark-orange",
-                "value": 5000
-              },
-              {
-                "color": "dark-red",
-                "value": 6000
               }
             ]
           },
@@ -401,24 +385,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "transparent",
+                "color": "blue",
                 "value": null
-              },
-              {
-                "color": "rgb(84, 184, 45)",
-                "value": 500
-              },
-              {
-                "color": "semi-dark-yellow",
-                "value": 3000
-              },
-              {
-                "color": "semi-dark-orange",
-                "value": 5000
-              },
-              {
-                "color": "dark-red",
-                "value": 6000
               }
             ]
           },
@@ -969,11 +937,137 @@
     },
     {
       "collapsed": true,
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
         "y": 27
+      },
+      "id": 84,
+      "panels": [
+        {
+          "datasource": null,
+          "description": "Displays sensors with failed state.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "locale"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 28
+          },
+          "id": 86,
+          "options": {
+            "showHeader": true
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "environment_sensor_threshold_value{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",threshold_state!=\"normal\"}",
+              "format": "table",
+              "instant": false,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Sensor Problems",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "cluster",
+                    "critical_high",
+                    "critical_low",
+                    "datacenter",
+                    "node",
+                    "sensor",
+                    "threshold_state",
+                    "type",
+                    "unit",
+                    "warning_high",
+                    "warning_low",
+                    "Value #A"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "critical_high": true,
+                  "critical_low": true,
+                  "threshold_state": false,
+                  "warning_high": true,
+                  "warning_low": true
+                },
+                "indexByName": {
+                  "Value #A": 6,
+                  "cluster": 1,
+                  "critical_high": 8,
+                  "critical_low": 9,
+                  "datacenter": 0,
+                  "node": 2,
+                  "sensor": 3,
+                  "threshold_state": 5,
+                  "type": 4,
+                  "unit": 7,
+                  "warning_high": 10,
+                  "warning_low": 11
+                },
+                "renameByName": {
+                  "Value #A": "Value",
+                  "cluster": "Cluster",
+                  "datacenter": "Datacenter",
+                  "node": "Node",
+                  "sensor": "Sensor Name",
+                  "threshold_state": "State",
+                  "type": "Type"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Sensor Problems",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 28
       },
       "id": 76,
       "panels": [
@@ -1154,38 +1248,6 @@
                 },
                 "properties": [
                   {
-                    "id": "custom.displayMode",
-                    "value": "color-background"
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "transparent",
-                          "value": null
-                        },
-                        {
-                          "color": "green",
-                          "value": 500
-                        },
-                        {
-                          "color": "yellow",
-                          "value": 3000
-                        },
-                        {
-                          "color": "orange",
-                          "value": 5000
-                        },
-                        {
-                          "color": "red",
-                          "value": 6000
-                        }
-                      ]
-                    }
-                  },
-                  {
                     "id": "custom.align",
                     "value": "right"
                   },
@@ -1202,38 +1264,6 @@
                 },
                 "properties": [
                   {
-                    "id": "custom.displayMode",
-                    "value": "color-background"
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "transparent",
-                          "value": null
-                        },
-                        {
-                          "color": "green",
-                          "value": 500
-                        },
-                        {
-                          "color": "yellow",
-                          "value": 3000
-                        },
-                        {
-                          "color": "orange",
-                          "value": 5000
-                        },
-                        {
-                          "color": "red",
-                          "value": 8000
-                        }
-                      ]
-                    }
-                  },
-                  {
                     "id": "custom.align",
                     "value": "right"
                   },
@@ -1249,38 +1279,6 @@
                   "options": "Min Fan Speed (rpm)"
                 },
                 "properties": [
-                  {
-                    "id": "custom.displayMode",
-                    "value": "color-background"
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "transparent",
-                          "value": null
-                        },
-                        {
-                          "color": "green",
-                          "value": 500
-                        },
-                        {
-                          "color": "yellow",
-                          "value": 3000
-                        },
-                        {
-                          "color": "orange",
-                          "value": 5000
-                        },
-                        {
-                          "color": "red",
-                          "value": 8000
-                        }
-                      ]
-                    }
-                  },
                   {
                     "id": "custom.align",
                     "value": "right"
@@ -1409,23 +1407,16 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 28
+            "y": 29
           },
           "id": 33,
           "interval": "1m",
           "maxDataPoints": 2,
           "options": {
-            "footer": {
-              "fields": "",
-              "reducer": [
-                "sum"
-              ],
-              "show": false
-            },
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "8.4.11",
+          "pluginVersion": "8.1.8",
           "targets": [
             {
               "exemplar": true,
@@ -1527,6 +1518,8 @@
               "refId": "J"
             }
           ],
+          "timeFrom": null,
+          "timeShift": null,
           "title": "Storage Nodes",
           "transformations": [
             {
@@ -1606,11 +1599,12 @@
     },
     {
       "collapsed": true,
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 28
+        "y": 29
       },
       "id": 78,
       "panels": [
@@ -1647,10 +1641,6 @@
                 },
                 "properties": [
                   {
-                    "id": "custom.displayMode",
-                    "value": "color-text"
-                  },
-                  {
                     "id": "unit",
                     "value": "locale"
                   }
@@ -1667,7 +1657,8 @@
                     "value": "json-view"
                   },
                   {
-                    "id": "custom.width"
+                    "id": "custom.width",
+                    "value": null
                   }
                 ]
               },
@@ -1873,38 +1864,6 @@
                 },
                 "properties": [
                   {
-                    "id": "custom.displayMode",
-                    "value": "color-background"
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "transparent",
-                          "value": null
-                        },
-                        {
-                          "color": "green",
-                          "value": 500
-                        },
-                        {
-                          "color": "yellow",
-                          "value": 3000
-                        },
-                        {
-                          "color": "orange",
-                          "value": 5000
-                        },
-                        {
-                          "color": "red",
-                          "value": 8000
-                        }
-                      ]
-                    }
-                  },
-                  {
                     "id": "custom.align",
                     "value": "right"
                   },
@@ -1921,38 +1880,6 @@
                 },
                 "properties": [
                   {
-                    "id": "custom.displayMode",
-                    "value": "color-background"
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "transparent",
-                          "value": null
-                        },
-                        {
-                          "color": "green",
-                          "value": 500
-                        },
-                        {
-                          "color": "yellow",
-                          "value": 3000
-                        },
-                        {
-                          "color": "orange",
-                          "value": 5000
-                        },
-                        {
-                          "color": "red",
-                          "value": 6000
-                        }
-                      ]
-                    }
-                  },
-                  {
                     "id": "custom.align",
                     "value": "right"
                   },
@@ -1968,38 +1895,6 @@
                   "options": "Min Fan Speed (rpm)"
                 },
                 "properties": [
-                  {
-                    "id": "custom.displayMode",
-                    "value": "color-background"
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "transparent",
-                          "value": null
-                        },
-                        {
-                          "color": "green",
-                          "value": 500
-                        },
-                        {
-                          "color": "yellow",
-                          "value": 3000
-                        },
-                        {
-                          "color": "orange",
-                          "value": 5000
-                        },
-                        {
-                          "color": "red",
-                          "value": 6000
-                        }
-                      ]
-                    }
-                  },
                   {
                     "id": "custom.align",
                     "value": "right"
@@ -2128,23 +2023,16 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 29
+            "y": 30
           },
           "id": 81,
           "interval": "1m",
           "maxDataPoints": 2,
           "options": {
-            "footer": {
-              "fields": "",
-              "reducer": [
-                "sum"
-              ],
-              "show": false
-            },
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "8.4.11",
+          "pluginVersion": "8.1.8",
           "targets": [
             {
               "expr": "shelf_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
@@ -2265,6 +2153,8 @@
               "refId": "J"
             }
           ],
+          "timeFrom": null,
+          "timeShift": null,
           "title": "Storage Shelves",
           "transformations": [
             {
@@ -2657,5 +2547,5 @@
   "timezone": "",
   "title": "ONTAP: Power",
   "uid": "",
-  "version": 4
+  "version": 5
 }

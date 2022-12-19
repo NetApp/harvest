@@ -111,16 +111,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 			if mKey == "value" {
 				sensorType := instance.GetLabel("type")
 				sensorUnit := instance.GetLabel("unit")
-				warningLowThr := instance.GetLabel("warning_low")
 
-				// 9.10 REST end point uses private cli for sensor which has different metric names than the 9.12 api/cluster/sensors REST endpoint.
-				// Handle both the cases here
-				var criticalLowThr float64
-				if criticalLowMetric := data.GetMetric("crit_low"); criticalLowMetric != nil {
-					criticalLowThr, _ = criticalLowMetric.GetValueFloat64(instance)
-				} else {
-					criticalLowThr, _ = data.GetMetric("critical_low_threshold").GetValueFloat64(instance)
-				}
 				isAmbientMatch := ambientRegex.MatchString(sensorName)
 				isPowerMatch := powerInRegex.MatchString(sensorName)
 				isVoltageMatch := voltageRegex.MatchString(sensorName)
@@ -130,8 +121,6 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 					Bool("isPowerMatch", isPowerMatch).
 					Bool("isVoltageMatch", isVoltageMatch).
 					Bool("isCurrentMatch", isCurrentMatch).
-					Str("warningLowThreshold", warningLowThr).
-					Float64("criticalLowThreshold", criticalLowThr).
 					Str("sensorType", sensorType).
 					Str("sensorUnit", sensorUnit).
 					Str("sensorName", sensorName).
