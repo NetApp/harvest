@@ -108,7 +108,7 @@ func GenerateEvents(emsNames []EmsData, nodeScopedEms []string) []string {
 
 		// Handle for node-scoped ems, Passing node-name as input
 		if utils.Contains(nodeScopedEms, ems) {
-			jsonValue = []byte(fmt.Sprintf(`{"message-name": "%s", "values": [%s,2,3,4,5,6,7,8,9]}, "node": "%s"`, ems, value, nodeName))
+			jsonValue = []byte(fmt.Sprintf(`{"message-name": "%s", "values": [%s,2,3,4,5,6,7,8,9], "node": "%s"}`, ems, value, nodeName))
 		} else {
 			jsonValue = []byte(fmt.Sprintf(`{"message-name": "%s", "values": [%s,2,3,4,5,6,7,8,9]}`, ems, value))
 		}
