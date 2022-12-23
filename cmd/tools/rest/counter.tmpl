@@ -1,0 +1,46 @@
+```yaml
+
+Metrics:{{range .Counters}}
+  - Harvest Metric: {{ .Name }}
+    {{- if .Description }}
+    Description: {{ .Description }}
+    {{- end}}
+    {{- if .ZapiAPI }}
+    ZAPI:
+      {{- if .ZapiAPI }}
+      endpoint: {{ .ZapiAPI }}
+      {{- end}}
+      {{- if .ZapiONTAPCounter }}
+      metric: {{ .ZapiONTAPCounter }}
+      {{- end}}
+      {{- if .ZapiTemplate }}
+      template: {{ .ZapiTemplate }}
+      {{- end}}
+      {{- if .ZapiUnit }}
+      Unit: {{ .ZapiUnit }}
+      {{- end}}
+      {{- if .ZapiType }}
+      Type: {{ .ZapiType }}
+      {{- end}}
+    {{- end}}
+    {{- if .RestAPI }}
+    REST:
+      {{- if .RestAPI }}
+      endpoint: {{ .RestAPI }}
+      {{- end}}
+      {{- if .RestONTAPCounter }}
+      metric: {{ .RestONTAPCounter }}
+      {{- end}}
+      {{- if .RestTemplate }}
+      template: {{ .RestTemplate }}
+      {{- end}}
+      {{- if .RestUnit }}
+      Unit: {{ .RestUnit }}
+      {{- end}}
+      {{- if .RestType }}
+      Type: {{ .RestType }}
+      {{- end}}
+    {{- end}}
+{{end}}
+
+```

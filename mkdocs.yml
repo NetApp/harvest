@@ -33,6 +33,7 @@ nav:
   - Templates: 'configure-templates.md'
   - Dashboards: 'dashboards.md'
   - Manage Harvest Pollers: 'manage-harvest.md'
+  - Metrics: 'metrics.md'
   - Configure Harvest (advanced): 'configure-harvest-advanced.md'
   - Troubleshoot: 'troubleshooting.md'
   - Reference:

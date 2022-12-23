@@ -6,7 +6,7 @@ counters:
   - ^^id
   - ^svm.name                    => svm
   - ^volume.name                 => volume
-  - cloud_bin_operation
+  - cloud_bin_op                 => cloud_bin_operation
   - cloud_bin_op_latency_average
 
 export_options:

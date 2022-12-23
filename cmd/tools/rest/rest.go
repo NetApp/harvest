@@ -5,6 +5,7 @@ package rest
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
@@ -17,7 +18,7 @@ import (
 )
 
 var (
-	validShowArgs = []string{"apis", "params", "models", "data"}
+	validShowArgs = []string{"apis", "params", "models", "data", "mapping"}
 )
 
 type check struct {
@@ -114,6 +115,42 @@ func doShow(_ *cobra.Command, a []string) {
 	}
 }
 
+func doCounterMapping() {
+	var (
+		poller     *conf.Poller
+		err        error
+		client     *Client
+		zapiClient *zapi.Client
+	)
+	if poller, _, err = getPollerAndAddr(); err != nil {
+		return
+	}
+
+	timeout, _ := time.ParseDuration(DefaultTimeout)
+	if client, err = New(*poller, timeout); err != nil {
+		fmt.Printf("error creating new client %+v\n", err)
+		os.Exit(1)
+	}
+
+	if zapiClient, err = zapi.New(*poller); err != nil {
+		fmt.Printf("error creating new client %+v\n", err)
+		os.Exit(1)
+	}
+
+	// read swagger
+	swaggerBytes = readSwaggerJSON()
+	// process rest counters
+	restCounters := processRestCounters(client)
+	// process zapi counters
+	zapiCounters := processZapiCounters(zapiClient)
+	// merge rest/zapi counters
+	counters := mergeRestZapiCounters(restCounters, zapiCounters)
+	// process counters defined in counter.yaml
+	counters = ProcessExternalCounters(counters)
+	// generate counter doc
+	generateCounterTemplate(counters)
+}
+
 func validateArgs(strings []string) check {
 	// One of Poller or SwaggerPath are allowed, but not both
 	if args.Poller != "" && args.SwaggerPath != "" {
@@ -145,6 +182,8 @@ func doCmd() {
 		doSwagger(*args)
 	case "data":
 		doData()
+	case "mapping":
+		doCounterMapping()
 	}
 }
 

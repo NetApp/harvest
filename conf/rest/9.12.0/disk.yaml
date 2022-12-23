@@ -15,11 +15,11 @@ counters:
   - ^serial_number
   - ^shelf.uid                  => shelf
   - ^bay                        => shelf_bay
+  - ^outage.reason              => outage
   - bytes_per_sector            => bytes_per_sector
   - sector_count                => sectors
   - stats.average_latency       => stats_average_latency
-  - stats.power_on_hours
-  - outage.reason               => outage
+  - stats.power_on_hours        => power_on_hours
   - usable_size
 
 endpoints:

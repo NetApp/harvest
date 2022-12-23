@@ -1,0 +1,165 @@
+counters:
+  - Name: aggr_physical_used_wo_snapshots
+    Description: Total Data Reduction Physical Used Without Snapshots
+    RestAPI: NA
+    RestONTAPCounter: Harvest Plugin Generated
+    RestTemplate: conf/rest/9.12.0/aggr.yaml
+
+  - Name: aggr_physical_used_wo_snapshots_flexclones
+    Description: Total Data Reduction Physical Used without snapshots and flexclones
+    RestAPI: NA
+    RestONTAPCounter: Harvest Plugin Generated
+    RestTemplate: conf/rest/9.12.0/aggr.yaml
+
+  - Name: aggr_raid_disk_count
+    Description: Number of disks in the aggregate.
+    RestAPI: NA
+    RestONTAPCounter: Harvest Plugin Generated
+    RestTemplate: conf/rest/9.12.0/aggr.yaml
+
+  - Name: aggr_raid_plex_count
+    Description: Number of plexes in the aggregate
+
+  - Name: aggr_snapshot_maxfiles_possible
+    Description: The largest value to which the maxfiles-available parameter can be increased by reconfiguration, on the referenced file system.
+    RestAPI: NA
+    RestONTAPCounter: Harvest Plugin Generated
+    RestTemplate: conf/rest/9.12.0/aggr.yaml
+
+  - Name: aggr_space_used_percent
+    Description: The percentage of disk space currently in use on the referenced file system
+    RestAPI: NA
+    RestONTAPCounter: Harvest Plugin Generated
+    RestTemplate: conf/rest/9.12.0/aggr.yaml
+
+  - Name: aggr_total_physical_used
+    Description: Total Physical Used
+    RestAPI: NA
+    RestONTAPCounter: Harvest Plugin Generated
+    RestTemplate: conf/rest/9.12.0/aggr.yaml
+
+  - Name: cluster_subsystem_suppressed_alerts
+    Description: Number of suppressed alerts
+
+  - Name: cluster_subsystem_outstanding_alerts
+    Description: Number of outstanding alerts
+
+  - Name: disk_stats_io_kbps
+    Description: Total Disk Throughput in KBPS Across All Active Paths
+    RestAPI: api/private/cli/disk
+    RestONTAPCounter: disk_io_kbps_total
+    RestTemplate: conf/rest/9.12.0/disk.yaml
+
+  - Name: disk_stats_sectors_read
+    Description: Number of Sectors Read
+    RestAPI: api/private/cli/disk
+    RestONTAPCounter: sectors_read
+    RestTemplate: conf/rest/9.12.0/disk.yaml
+
+  - Name: disk_stats_sectors_written
+    Description: Number of Sectors Written
+    RestAPI: api/private/cli/disk
+    RestONTAPCounter: sectors_written
+    RestTemplate: conf/rest/9.12.0/disk.yaml
+
+  - Name: disk_uptime
+    Description: Number of seconds the drive has been powered on
+    RestAPI: NA
+    RestONTAPCounter: Harvest Plugin Generated
+    RestTemplate: conf/rest/9.12.0/disk.yaml
+
+  - Name: node_cpu_busytime
+    Description: The time (in hundredths of a second) that the CPU has been doing useful work since the last boot
+    RestAPI: api/private/cli/node
+    RestONTAPCounter: cpu_busy_time
+    RestTemplate: conf/rest/9.12.0/node.yaml
+
+  - Name: snapmirror_break_failed_count
+    Description: The number of failed SnapMirror break operations for the relationship
+
+  - Name: snapmirror_break_successful_count
+    Description: The number of successful SnapMirror break operations for the relationship
+
+  - Name: snapmirror_lag_time
+    Description: Amount of time since the last snapmirror transfer in seconds
+
+  - Name: snapmirror_last_transfer_duration
+    Description: Duration of the last SnapMirror transfer in seconds
+
+  - Name: snapmirror_last_transfer_end_timestamp
+    Description: The Timestamp of the end of the last transfer
+
+  - Name: snapmirror_last_transfer_size
+    Description: Size in kilobytes (1024 bytes) of the last transfer
+
+  - Name: snapmirror_newest_snapshot_timestamp
+    Description: The timestamp of the newest Snapshot copy on the destination volume
+
+  - Name: snapmirror_total_transfer_time_secs
+    Description: Cumulative total transfer time in seconds for the relationship
+
+  - Name: snapmirror_total_transfer_bytes
+    Description: Cumulative bytes transferred for the relationship
+
+  - Name: snapmirror_resync_successful_count
+    Description: The number of successful SnapMirror resync operations for the relationship
+
+  - Name: snapmirror_resync_failed_count
+    Description: The number of failed SnapMirror resync operations for the relationship
+
+  - Name: snapmirror_update_failed_count
+    Description: The number of successful SnapMirror update operations for the relationship
+
+  - Name: snapmirror_update_successful_count
+    Description: Number of Successful Updates
+
+  - Name: snapshot_policy_total_schedules
+    Description: Total Number of Schedules in this Policy
+
+  - Name: volume_inode_files_total
+    Description: Total user-visible file (inode) count, i.e., current maximum number of user-visible files (inodes) that this volume can currently hold.
+    RestAPI: api/private/cli/volume
+    RestONTAPCounter: files
+    RestTemplate: conf/rest/9.12.0/volume.yaml
+
+  - Name: volume_inode_files_used
+    Description: Number of user-visible files (inodes) used. This field is valid only when the volume is online.
+    RestAPI: api/private/cli/volume
+    RestONTAPCounter: files_used
+    RestTemplate: conf/rest/9.12.0/volume.yaml
+
+  - Name: volume_sis_compress_saved
+    Description: The total disk space (in bytes) that is saved by compressing blocks on the referenced file system.
+    RestAPI: api/private/cli/volume
+    RestONTAPCounter: compression_space_saved
+    RestTemplate: conf/rest/9.12.0/volume.yaml
+
+  - Name: volume_sis_compress_saved_percent
+    Description: Percentage of the total disk space that is saved by compressing blocks on the referenced file system
+    RestAPI: api/private/cli/volume
+    RestONTAPCounter: compression_space_saved_percent
+    RestTemplate: conf/rest/9.12.0/volume.yaml
+
+  - Name: volume_sis_dedup_saved
+    Description: The total disk space (in bytes) that is saved by deduplication and file cloning.
+    RestAPI: api/private/cli/volume
+    RestONTAPCounter: dedupe_space_saved
+    RestTemplate: conf/rest/9.12.0/volume.yaml
+
+  - Name: volume_sis_dedup_saved_percent
+    Description: Percentage of the total disk space that is saved by deduplication and file cloning.
+    RestAPI: api/private/cli/volume
+    RestONTAPCounter: dedupe_space_saved_percent
+    RestTemplate: conf/rest/9.12.0/volume.yaml
+
+  - Name: volume_sis_total_saved
+    Description: Total space saved (in bytes) in the volume due to deduplication, compression, and file cloning.
+    RestAPI: api/private/cli/volume
+    RestONTAPCounter: sis_space_saved
+    RestTemplate: conf/rest/9.12.0/volume.yaml
+
+  - Name: volume_sis_total_saved_percent
+    Description: Percentage of total disk space that is saved by compressing blocks, deduplication and file cloning.
+    RestAPI: api/private/cli/volume
+    RestONTAPCounter: sis_space_saved_percent
+    RestTemplate: conf/rest/9.12.0/volume.yaml
