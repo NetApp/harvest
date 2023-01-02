@@ -543,11 +543,10 @@ func importFiles(dir string, folder *Folder) {
 func addGlobalPrefix(db map[string]interface{}, prefix string) {
 
 	var (
-		panels, targets, templates                 []interface{}
-		panel, target, templating, template, query map[string]interface{}
-		p, t                                       interface{}
-		queryString, definition, expr              string
-		ok, has                                    bool
+		panels, templates, subPanels       []interface{}
+		panel, templating, template, query map[string]interface{}
+		queryString, definition            string
+		ok, has                            bool
 	)
 
 	// make sure prefix ends with _
@@ -560,29 +559,20 @@ func addGlobalPrefix(db map[string]interface{}, prefix string) {
 		return
 	}
 
-	for _, p = range panels {
+	for _, p := range panels {
+		handlingPanels(p, prefix)
+
+		// handling for sub-panels
 		if panel, ok = p.(map[string]interface{}); !ok {
 			continue
 		}
 
-		if _, has = panel["targets"]; !has {
+		if _, has = panel["panels"]; !has {
 			continue
 		}
-
-		if targets, ok = panel["targets"].([]interface{}); !ok {
-			continue
-		}
-
-		for _, t = range targets {
-
-			if target, ok = t.(map[string]interface{}); !ok {
-				continue
-			}
-
-			if _, has = target["expr"]; has {
-				if expr, ok = target["expr"].(string); ok {
-					target["expr"] = addPrefixToMetricNames(expr, prefix)
-				}
+		if subPanels, ok = panel["panels"].([]interface{}); ok {
+			for _, subP := range subPanels {
+				handlingPanels(subP, prefix)
 			}
 		}
 	}
@@ -596,7 +586,7 @@ func addGlobalPrefix(db map[string]interface{}, prefix string) {
 		return
 	}
 
-	for _, t = range templates {
+	for _, t := range templates {
 		if template, ok = t.(map[string]interface{}); ok {
 			if definition, ok = template["definition"].(string); ok {
 				template["definition"] = addPrefixToMetricNames(definition, prefix)
@@ -605,6 +595,37 @@ func addGlobalPrefix(db map[string]interface{}, prefix string) {
 				if queryString, ok = query["query"].(string); ok {
 					query["query"] = addPrefixToMetricNames(queryString, prefix)
 				}
+			}
+		}
+	}
+}
+
+func handlingPanels(p interface{}, prefix string) {
+	var (
+		targets       []interface{}
+		panel, target map[string]interface{}
+		ok, has       bool
+		expr          string
+	)
+	if panel, ok = p.(map[string]interface{}); !ok {
+		return
+	}
+
+	if _, has = panel["targets"]; !has {
+		return
+	}
+
+	if targets, ok = panel["targets"].([]interface{}); !ok {
+		return
+	}
+
+	for _, t := range targets {
+		if target, ok = t.(map[string]interface{}); !ok {
+			continue
+		}
+		if _, has = target["expr"]; has {
+			if expr, ok = target["expr"].(string); ok {
+				target["expr"] = addPrefixToMetricNames(expr, prefix)
 			}
 		}
 	}
