@@ -2301,7 +2301,7 @@
                   }
                 ]
               },
-              "unit": "µs"
+              "unit": "percent"
             },
             "overrides": [
               {
