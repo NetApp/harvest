@@ -5,6 +5,7 @@ object:                   flashpool
 counters:
   - ^^id
   - ^node.name                                      => node
+  - ^hya_aggr_name                                  => aggr
   - ssd_total
   - ssd_total_used
   - ssd_available
