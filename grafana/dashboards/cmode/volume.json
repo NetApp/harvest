@@ -4492,7 +4492,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopCloudBinOpGetLatency\", metric=\"GET\"})",
+              "expr": "topk($TopResources, fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopCloudBinOpGetLatency\",metric=\"GET\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "{{volume}} ",
@@ -4584,7 +4584,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopCloudBinOperationGet\", metric=\"GET\"})",
+              "expr": "topk($TopResources, fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopCloudBinOperationGet\",metric=\"GET\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "{{volume}} ",
@@ -4675,7 +4675,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopCloudBinOpPutLatency\", metric=\"PUT\"})",
+              "expr": "topk($TopResources, fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopCloudBinOpPutLatency\",metric=\"PUT\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "{{volume}} ",
@@ -4767,7 +4767,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopCloudBinOperationPut\", metric=\"PUT\"})",
+              "expr": "topk($TopResources, fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopCloudBinOperationPut\",metric=\"PUT\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "{{volume}} ",
@@ -4833,7 +4833,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, sum by (volume) (fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\", volume=~\"$TopCloudBinOperation\"}))",
+              "expr": "topk($TopResources, sum by (volume) (fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopCloudBinOperation\"}))",
               "format": "table",
               "instant": true,
               "interval": "",

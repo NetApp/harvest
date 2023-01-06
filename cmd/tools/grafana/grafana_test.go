@@ -1,7 +1,11 @@
 package grafana
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/tidwall/gjson"
+	"regexp"
+	"strings"
 	"testing"
 )
 
@@ -49,52 +53,111 @@ func TestHttpsAddr(t *testing.T) {
 	}
 }
 
-// Since there can be many exceptions in how metrics are using in queries,
-// the best we can do is check all queries in dashboards (especially after
-// we have changed them), e.g. by running:
-// $ grep \"expr\": grafana/dashboards*
 func TestAddPrefixToMetricNames(t *testing.T) {
 
 	var (
-		examples, expected []string
-		prefix, result     string
-		i                  int
+		dashboard                      map[string]interface{}
+		oldExpressions, newExpressions []string
+		updatedData                    []byte
+		err                            error
 	)
 
-	prefix = "xx_"
+	prefix := "xx_"
+	dir := "../../../grafana/dashboards/cmode"
+	visitDashboards(dir, func(path string, data []byte) {
+		oldExpressions = readExprs(data)
+		if err = json.Unmarshal(data, &dashboard); err != nil {
+			fmt.Printf("error parsing file [%s] %+v\n", path, err)
+			fmt.Println("-------------------------------")
+			fmt.Println(string(data))
+			fmt.Println("-------------------------------")
+			return
+		}
+		addGlobalPrefix(dashboard, prefix)
 
-	examples = []string{
-		`sum(volume_read_data{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster) + sum(volume_write_data{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) by(cluster)`,
-		`sum(topk($TopResources, volume_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}))`,
-		`volume_size_used_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}`,
-		`avg by(iscsi_lif) (iscsi_lif_iscsi_read_ops+iscsi_lif_iscsi_write_ops+iscsi_lif_iscsi_other_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})`,
-		`label_values(metadata_component_status{type="collector",poller=~"$Poller"}, name)`,
-		`label_values(poller_status, datacenter)`,
-		`label_values(datacenter)`,
-		`label_values(node_uptime{datacenter="$Datacenter"},cluster)`,
-		`label_values (node_uptime{datacenter="$Datacenter"},cluster)`,
-		`label_values(node_uptime {datacenter="$Datacenter"},cluster)`,
-	}
+		if updatedData, err = json.Marshal(dashboard); err != nil {
+			fmt.Printf("error parsing file [%s] %+v\n", path, err)
+			fmt.Println("-------------------------------")
+			fmt.Println(string(updatedData))
+			fmt.Println("-------------------------------")
+			return
+		}
+		newExpressions = readExprs(updatedData)
 
-	expected = []string{
-		`sum(xx_volume_read_data{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster) + sum(xx_volume_write_data{datacenter=\"$Datacenter\",cluster=~\"$Cluster\"}) by(cluster)`,
-		`sum(topk($TopResources, xx_volume_total_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}))`,
-		`xx_volume_size_used_percent{datacenter=\"$Datacenter\",cluster=\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}`,
-		`avg by(iscsi_lif) (xx_iscsi_lif_iscsi_read_ops+xx_iscsi_lif_iscsi_write_ops+xx_iscsi_lif_iscsi_other_ops{datacenter=\"$Datacenter\",cluster=\"$Cluster\",node=~\"$Node\"})`,
-		`label_values(xx_metadata_component_status{type="collector",poller=~"$Poller"}, name)`,
-		`label_values(xx_poller_status, datacenter)`,
-		`label_values(datacenter)`, // no metric name
-		`label_values(xx_node_uptime{datacenter="$Datacenter"},cluster)`,
-		`label_values (xx_node_uptime{datacenter="$Datacenter"},cluster)`,
-		`label_values(xx_node_uptime {datacenter="$Datacenter"},cluster)`,
-	}
+		for i := 0; i < len(newExpressions); i++ {
+			if newExpressions[i] != prefix+oldExpressions[i] {
+				t.Errorf("\nExpected: [%s]\n     Got: [%s]", prefix+oldExpressions[i], newExpressions[i])
+			}
+		}
+	})
+}
 
-	for i = range examples {
-		result = addPrefixToMetricNames(examples[i], prefix)
-		if result != expected[i] {
-			t.Errorf("\nExpected: [%s]\n     Got: [%s]", expected[i], result)
+func getExp(expr string, expressions *[]string) {
+	//if exprs := strings.Split(expr, ", "); len(exprs) > 0 {
+	//	for i := 0; i < len(exprs); i++ {
+	//		//
+	//		if !strings.Contains(exprs[i], "topk") {
+	//			//
+	//			if strings.Contains(exprs[i], " + ") {
+	//				k := strings.Split(exprs[i], " + ")
+	//				for _, k1 := range k {
+	//					*expressions = append(*expressions, k1)
+	//				}
+	//				//
+	//			} else if strings.Contains(exprs[i], " or ") {
+	//				k := strings.Split(exprs[i], " or ")
+	//				for _, k1 := range k {
+	//					*expressions = append(*expressions, k1)
+	//				}
+	//				//
+	//			} else if strings.Contains(exprs[i], "by") {
+	//				k := strings.Split(exprs[i], "(")
+	//				if len(k) > 2 {
+	//					*expressions = append(*expressions, k[2])
+	//				} else {
+	//					t.Errorf("error [%s]", exprs[i])
+	//				}
+	//				//
+	//			} else {
+	//				*expressions = append(*expressions, exprs[i])
+	//			}
+	//		}
+	//	}
+	//}
+
+	// everything else is for graph queries
+	regex := regexp.MustCompile(`([a-zA-Z_+]+)\s?{.+?}`)
+	match := regex.FindAllStringSubmatch(expr, -1)
+	for _, m := range match {
+		// multiple metrics used to summarize
+		if strings.Contains(m[1], "+") {
+			submatch := strings.Split(m[1], "+")
+			for i := range submatch {
+				*expressions = append(*expressions, submatch[i])
+			}
+			// single metric
+		} else {
+			*expressions = append(*expressions, m[1])
 		}
 	}
+}
+
+func readExprs(data []byte) []string {
+	expressions := make([]string, 0)
+	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
+		doExpr("", key, value, func(path string, expr string) {
+			getExp(expr, &expressions)
+		})
+		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
+			pathPrefix := fmt.Sprintf("panels[%d].", key.Int())
+			doExpr(pathPrefix, key2, value2, func(path string, expr string) {
+				getExp(expr, &expressions)
+			})
+			return true
+		})
+		return true
+	})
+	return expressions
 }
 
 func TestChainedParsing(t *testing.T) {
