@@ -93,39 +93,6 @@ func TestAddPrefixToMetricNames(t *testing.T) {
 }
 
 func getExp(expr string, expressions *[]string) {
-	//if exprs := strings.Split(expr, ", "); len(exprs) > 0 {
-	//	for i := 0; i < len(exprs); i++ {
-	//		//
-	//		if !strings.Contains(exprs[i], "topk") {
-	//			//
-	//			if strings.Contains(exprs[i], " + ") {
-	//				k := strings.Split(exprs[i], " + ")
-	//				for _, k1 := range k {
-	//					*expressions = append(*expressions, k1)
-	//				}
-	//				//
-	//			} else if strings.Contains(exprs[i], " or ") {
-	//				k := strings.Split(exprs[i], " or ")
-	//				for _, k1 := range k {
-	//					*expressions = append(*expressions, k1)
-	//				}
-	//				//
-	//			} else if strings.Contains(exprs[i], "by") {
-	//				k := strings.Split(exprs[i], "(")
-	//				if len(k) > 2 {
-	//					*expressions = append(*expressions, k[2])
-	//				} else {
-	//					t.Errorf("error [%s]", exprs[i])
-	//				}
-	//				//
-	//			} else {
-	//				*expressions = append(*expressions, exprs[i])
-	//			}
-	//		}
-	//	}
-	//}
-
-	// everything else is for graph queries
 	regex := regexp.MustCompile(`([a-zA-Z_+]+)\s?{.+?}`)
 	match := regex.FindAllStringSubmatch(expr, -1)
 	for _, m := range match {
