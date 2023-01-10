@@ -1,12 +1,12 @@
 apiVersion: 1
 
 providers:
-  - name: 'Harvest 7mode'
+  - name: 'Harvest StorageGrid'
     orgId: 1
-    folder: 'Harvest main - 7-mode'
+    folder: 'Harvest-main-StorageGrid'
     type: file
     disableDeletion: false
     editable: true
     allowUiUpdates: true
     options:
-      path: /etc/grafana/provisioning/dashboards/7mode
+      path: /etc/grafana/provisioning/dashboards/storagegrid

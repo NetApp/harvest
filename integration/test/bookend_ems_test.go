@@ -59,9 +59,14 @@ func (suite *EmsTestSuite) TestBookendEmsAlerts() {
 	foundBookendEms := make([]string, 0)
 
 	for _, bookendEmsName := range supportedEms {
-		v := oldAlertsData[bookendEmsName] - newAlertsData[bookendEmsName]
-		if v < 1 {
-			foundBookendEms = append(foundBookendEms, bookendEmsName)
+		// If the issuingEms wasn't exist prior then ignore the test-case.
+		if oldAlertsData[bookendEmsName] > 0 {
+			v := oldAlertsData[bookendEmsName] - newAlertsData[bookendEmsName]
+			if v < 1 {
+				foundBookendEms = append(foundBookendEms, bookendEmsName)
+			}
+		} else {
+			log.Info().Msg("There is no active IssuingEms exist")
 		}
 	}
 	if len(foundBookendEms) > 0 {

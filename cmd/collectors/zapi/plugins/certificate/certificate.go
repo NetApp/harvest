@@ -93,14 +93,14 @@ func (my *Certificate) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 
 		// update certificate instance based on admin vaserver serial
-		for _, certificateInstance := range data.GetInstances() {
+		for certificateInstanceKey, certificateInstance := range data.GetInstances() {
 			if certificateInstance.IsExportable() {
 				certificateInstance.SetExportable(false)
 				serialNumber := certificateInstance.GetLabel("serial_number")
 
 				if serialNumber == adminVserverSerial {
 					certificateInstance.SetExportable(true)
-					my.setCertificateIssuerType(certificateInstance)
+					my.setCertificateIssuerType(certificateInstance, certificateInstanceKey)
 					my.setCertificateValidity(data, certificateInstance)
 				}
 			}
@@ -112,17 +112,16 @@ func (my *Certificate) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	return nil, nil
 }
 
-func (my *Certificate) setCertificateIssuerType(instance *matrix.Instance) {
+func (my *Certificate) setCertificateIssuerType(instance *matrix.Instance, certificateInstanceKey string) {
 	var (
 		cert *x509.Certificate
 		err  error
 	)
 
 	certificatePEM := instance.GetLabel("certificatePEM")
-	certUUID := instance.GetLabel("uuid")
 
 	if certificatePEM == "" {
-		my.Logger.Debug().Str("uuid", certUUID).Msg("Certificate is not found")
+		my.Logger.Debug().Str("certificateInstanceKey", certificateInstanceKey).Msg("Certificate is not found")
 		instance.SetLabel("certificateIssuerType", "unknown")
 	} else {
 		instance.SetLabel("certificateIssuerType", "self_signed")

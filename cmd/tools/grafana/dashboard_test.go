@@ -640,3 +640,20 @@ func checkConnectNullValues(t *testing.T, path string, data []byte) {
 		}
 	})
 }
+
+func TestPanelChildPanels(t *testing.T) {
+	dir := "../../../grafana/dashboards/cmode"
+	visitDashboards(dir, func(path string, data []byte) {
+		checkPanelChildPanels(t, shortPath(path), data)
+	})
+}
+
+func checkPanelChildPanels(t *testing.T, path string, data []byte) {
+	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
+		// Check all collapsed panels should have child panels
+		if value.Get("collapsed").Bool() && len(value.Get("panels").Array()) == 0 {
+			t.Errorf("dashboard=%s, panel=%s, has child panels outside of row", path, value.Get("title").String())
+		}
+		return true
+	})
+}

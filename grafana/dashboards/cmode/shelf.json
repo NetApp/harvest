@@ -628,7 +628,6 @@
     },
     {
       "collapsed": false,
-      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -693,8 +692,7 @@
                 "value": "json-view"
               },
               {
-                "id": "custom.width",
-                "value": null
+                "id": "custom.width"
               }
             ]
           },
@@ -1161,10 +1159,17 @@
       "interval": "1m",
       "maxDataPoints": 2,
       "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "8.1.8",
+      "pluginVersion": "8.4.11",
       "targets": [
         {
           "expr": "shelf_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
@@ -1285,8 +1290,6 @@
           "refId": "J"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Storage Shelves",
       "transformations": [
         {
@@ -1448,7 +1451,8 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "pluginVersion": "8.1.2",
@@ -1462,8 +1466,6 @@
           "refId": "B"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Total Shelves by Power Consumed",
       "type": "timeseries"
     },
@@ -1539,7 +1541,8 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "pluginVersion": "8.1.2",
@@ -1552,8 +1555,6 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Top Shelves by Average Temperature",
       "type": "timeseries"
     },
@@ -1564,149 +1565,144 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 7
       },
       "id": 35,
-      "panels": [],
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "rgb(64, 194, 61)",
+                    "value": null
+                  },
+                  {
+                    "color": "rgb(255, 120, 26)",
+                    "value": 45
+                  },
+                  {
+                    "color": "dark-red",
+                    "value": 65
+                  }
+                ]
+              },
+              "unit": "celsius"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 13,
+            "x": 0,
+            "y": 8
+          },
+          "id": 28,
+          "links": [],
+          "options": {
+            "displayMode": "lcd",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "text": {}
+          },
+          "pluginVersion": "8.4.11",
+          "repeat": "TempShelf",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "shelf_temperature_reading{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
+              "interval": "",
+              "legendFormat": "{{shelf}} · {{sensor_id}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Temperature Sensors",
+          "type": "bargauge"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "rgb(66, 191, 47)",
+                    "value": null
+                  },
+                  {
+                    "color": "semi-dark-yellow",
+                    "value": 3000
+                  },
+                  {
+                    "color": "semi-dark-orange",
+                    "value": 3500
+                  }
+                ]
+              },
+              "unit": "rotrpm"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 24,
+            "x": 0,
+            "y": 19
+          },
+          "id": 29,
+          "links": [],
+          "options": {
+            "displayMode": "lcd",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "text": {}
+          },
+          "pluginVersion": "8.4.11",
+          "repeat": "FanShelf",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "shelf_fan_rpm{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
+              "interval": "",
+              "legendFormat": "{{shelf}} · {{fan_id}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Cooling Sensors",
+          "type": "bargauge"
+        }
+      ],
       "title": "Temperature Sensors",
       "type": "row"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "rgb(64, 194, 61)",
-                "value": null
-              },
-              {
-                "color": "rgb(255, 120, 26)",
-                "value": 45
-              },
-              {
-                "color": "dark-red",
-                "value": 65
-              }
-            ]
-          },
-          "unit": "celsius"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 13,
-        "x": 0,
-        "y": 23
-      },
-      "id": 28,
-      "links": [],
-      "options": {
-        "displayMode": "lcd",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true,
-        "text": {}
-      },
-      "pluginVersion": "8.1.8",
-      "repeat": "TempShelf",
-      "repeatDirection": "h",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "shelf_temperature_reading{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
-          "interval": "",
-          "legendFormat": "{{shelf}} · {{sensor_id}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Temperature Sensors",
-      "type": "bargauge"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "rgb(66, 191, 47)",
-                "value": null
-              },
-              {
-                "color": "semi-dark-yellow",
-                "value": 3000
-              },
-              {
-                "color": "semi-dark-orange",
-                "value": 3500
-              }
-            ]
-          },
-          "unit": "rotrpm"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 24,
-        "x": 0,
-        "y": 34
-      },
-      "id": 29,
-      "links": [],
-      "options": {
-        "displayMode": "lcd",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true,
-        "text": {}
-      },
-      "pluginVersion": "8.1.8",
-      "repeat": "FanShelf",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "shelf_fan_rpm{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
-          "interval": "",
-          "legendFormat": "{{shelf}} · {{fan_id}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Cooling Sensors",
-      "type": "bargauge"
     },
     {
       "collapsed": true,
@@ -1715,293 +1711,284 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 45
+        "y": 8
       },
       "id": 37,
-      "panels": [],
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 1,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "rgb(10, 127, 135)",
+                    "value": null
+                  },
+                  {
+                    "color": "rgb(145, 39, 230)",
+                    "value": 13
+                  },
+                  {
+                    "color": "rgb(207, 11, 22)",
+                    "value": 20
+                  }
+                ]
+              },
+              "unit": "volt"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 7,
+            "x": 0,
+            "y": 9
+          },
+          "id": 30,
+          "links": [],
+          "options": {
+            "displayMode": "lcd",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "mean"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "text": {}
+          },
+          "pluginVersion": "8.4.11",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "shelf_voltage_reading{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
+              "interval": "",
+              "legendFormat": "{{shelf}} · {{sensor_id}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Voltage Sensors",
+          "type": "bargauge"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "light-blue",
+                    "value": null
+                  },
+                  {
+                    "color": "semi-dark-blue",
+                    "value": 800
+                  },
+                  {
+                    "color": "rgb(13, 81, 186)",
+                    "value": 1000
+                  }
+                ]
+              },
+              "unit": "watt"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 4,
+            "x": 7,
+            "y": 9
+          },
+          "id": 48,
+          "options": {
+            "displayMode": "lcd",
+            "orientation": "vertical",
+            "reduceOptions": {
+              "calcs": [
+                "mean"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "text": {}
+          },
+          "pluginVersion": "8.4.11",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum(shelf_psu_power_drawn{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (shelf, psu_id)",
+              "interval": "",
+              "legendFormat": "{{shelf}} - PSU {{psu_id}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Energy Drawn from PSUs",
+          "type": "bargauge"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "light-blue",
+                    "value": null
+                  },
+                  {
+                    "color": "semi-dark-blue",
+                    "value": 800
+                  },
+                  {
+                    "color": "rgb(13, 81, 186)",
+                    "value": 1000
+                  }
+                ]
+              },
+              "unit": "watt"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 4,
+            "x": 11,
+            "y": 9
+          },
+          "id": 53,
+          "options": {
+            "displayMode": "lcd",
+            "orientation": "vertical",
+            "reduceOptions": {
+              "calcs": [
+                "mean"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "text": {}
+          },
+          "pluginVersion": "8.4.11",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum(shelf_psu_power_rating{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (shelf, psu_id)",
+              "interval": "",
+              "legendFormat": "{{shelf}} - PSU {{psu_id}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Power Rating from PSUs",
+          "type": "bargauge"
+        }
+      ],
       "title": "Voltage & PSU Sensors",
       "type": "row"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 1,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "rgb(10, 127, 135)",
-                "value": null
-              },
-              {
-                "color": "rgb(145, 39, 230)",
-                "value": 13
-              },
-              {
-                "color": "rgb(207, 11, 22)",
-                "value": 20
-              }
-            ]
-          },
-          "unit": "volt"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 7,
-        "x": 0,
-        "y": 46
-      },
-      "id": 30,
-      "links": [],
-      "options": {
-        "displayMode": "lcd",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true,
-        "text": {}
-      },
-      "pluginVersion": "8.1.8",
-      "repeat": null,
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "shelf_voltage_reading{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
-          "interval": "",
-          "legendFormat": "{{shelf}} · {{sensor_id}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Voltage Sensors",
-      "type": "bargauge"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "light-blue",
-                "value": null
-              },
-              {
-                "color": "semi-dark-blue",
-                "value": 800
-              },
-              {
-                "color": "rgb(13, 81, 186)",
-                "value": 1000
-              }
-            ]
-          },
-          "unit": "watt"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 4,
-        "x": 7,
-        "y": 46
-      },
-      "id": 48,
-      "options": {
-        "displayMode": "lcd",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true,
-        "text": {}
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "sum(shelf_psu_power_drawn{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (shelf, psu_id)",
-          "interval": "",
-          "legendFormat": "{{shelf}} - PSU {{psu_id}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Energy Drawn from PSUs",
-      "type": "bargauge"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "light-blue",
-                "value": null
-              },
-              {
-                "color": "semi-dark-blue",
-                "value": 800
-              },
-              {
-                "color": "rgb(13, 81, 186)",
-                "value": 1000
-              }
-            ]
-          },
-          "unit": "watt"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 4,
-        "x": 11,
-        "y": 46
-      },
-      "id": 53,
-      "options": {
-        "displayMode": "lcd",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true,
-        "text": {}
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "sum(shelf_psu_power_rating{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (shelf, psu_id)",
-          "interval": "",
-          "legendFormat": "{{shelf}} - PSU {{psu_id}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Power Rating from PSUs",
-      "type": "bargauge"
-    },
-    {
       "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 57
+        "y": 9
       },
       "id": 40,
-      "panels": [],
-      "title": "Custom Sensors",
-      "type": "row"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "rgb(72, 173, 56)",
-                "value": null
-              },
-              {
-                "color": "semi-dark-yellow",
-                "value": 5000
-              },
-              {
-                "color": "semi-dark-orange",
-                "value": 6000
-              }
-            ]
-          },
-          "unit": "locale"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 7,
-        "x": 0,
-        "y": 58
-      },
-      "id": 31,
-      "links": [],
-      "options": {
-        "displayMode": "lcd",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true,
-        "text": {}
-      },
-      "pluginVersion": "8.1.8",
-      "repeat": "SensShelf",
-      "targets": [
+      "panels": [
         {
-          "exemplar": false,
-          "expr": "shelf_sensor_reading{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
-          "interval": "",
-          "legendFormat": "{{shelf}} · {{sensor_id}}",
-          "refId": "A"
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "rgb(72, 173, 56)",
+                    "value": null
+                  },
+                  {
+                    "color": "semi-dark-yellow",
+                    "value": 5000
+                  },
+                  {
+                    "color": "semi-dark-orange",
+                    "value": 6000
+                  }
+                ]
+              },
+              "unit": "locale"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 7,
+            "x": 0,
+            "y": 10
+          },
+          "id": 31,
+          "links": [],
+          "options": {
+            "displayMode": "lcd",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "text": {}
+          },
+          "pluginVersion": "8.4.11",
+          "repeat": "SensShelf",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "shelf_sensor_reading{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
+              "interval": "",
+              "legendFormat": "{{shelf}} · {{sensor_id}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Custom Sensors - Shelf",
+          "type": "bargauge"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Custom Sensors - Shelf",
-      "type": "bargauge"
+      "title": "Custom Sensors",
+      "type": "row"
     }
   ],
   "refresh": "1m",
