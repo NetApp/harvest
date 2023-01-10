@@ -3694,6 +3694,13 @@ Metrics:
       Unit: none
       Type: raw
 
+  - Harvest Metric: nfs_clients_idle_duration
+    Description: Specifies an ISO-8601 format of date and time to retrieve the idle time duration in hours, minutes, and seconds format.
+    REST:
+      endpoint: api/protocols/nfs/connected-clients
+      metric: idle_duration
+      template: conf/rest/9.7.0/nfs_clients.yaml
+
   - Harvest Metric: nfs_diag_storePool_ByteLockAlloc
     Description: Current number of byte range lock objects allocated.
     ZAPI:
@@ -8538,6 +8545,12 @@ Metrics:
       Unit: none
       Type: delta
 
+  - Harvest Metric: ontaps3_logical_used_size
+    REST:
+      endpoint: api/protocols/s3/buckets
+      metric: logical_used_size
+      template: conf/rest/9.7.0/ontap_s3.yaml
+
   - Harvest Metric: ontaps3_max_cmds_per_connection
     Description: Maximum commands pipelined at any instance on a connection.
     ZAPI:
@@ -8780,6 +8793,12 @@ Metrics:
       template: conf/zapiperf/cdot/9.8.0/ontap_s3.yaml
       Unit: none
       Type: delta
+
+  - Harvest Metric: ontaps3_size
+    REST:
+      endpoint: api/protocols/s3/buckets
+      metric: size
+      template: conf/rest/9.7.0/ontap_s3.yaml
 
   - Harvest Metric: ontaps3_tagging
     Description: Number of requests with tagging specified.

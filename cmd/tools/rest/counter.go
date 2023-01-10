@@ -96,11 +96,11 @@ func searchDescriptionSwagger(objName string, ontapCounterName string) string {
 
 // processRestCounters parse rest and restperf templates
 func processRestCounters(client *Client) map[string]Counter {
-	restPerfCounters := visitRestTemplates("conf/restperf/9.12.0", client, func(path string, client *Client) map[string]Counter {
+	restPerfCounters := visitRestTemplates("conf/restperf", client, func(path string, client *Client) map[string]Counter {
 		return processRestPerfCounters(path, client)
 	})
 
-	restCounters := visitRestTemplates("conf/rest/9.12.0", client, func(path string, client *Client) map[string]Counter {
+	restCounters := visitRestTemplates("conf/rest", client, func(path string, client *Client) map[string]Counter {
 		return processRestConfigCounters(path, client)
 	})
 
@@ -351,7 +351,7 @@ func visitRestTemplates(dir string, client *Client, eachTemp func(path string, c
 	})
 
 	if err != nil {
-		log.Fatal("failed to read dashboards:", err)
+		log.Fatal("failed to read template:", err)
 		return nil
 	}
 	return result
@@ -376,7 +376,7 @@ func visitZapiTemplates(dir string, client *zapi.Client, eachTemp func(path stri
 	})
 
 	if err != nil {
-		log.Fatal("failed to read dashboards:", err)
+		log.Fatal("failed to read template:", err)
 		return nil
 	}
 	return result
