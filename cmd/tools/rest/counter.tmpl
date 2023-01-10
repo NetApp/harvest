@@ -17,10 +17,10 @@ Metrics:{{range .Counters}}
       template: {{ .ZapiTemplate }}
       {{- end}}
       {{- if .ZapiUnit }}
-      Unit: {{ .ZapiUnit }}
+      unit: {{ .ZapiUnit }}
       {{- end}}
       {{- if .ZapiType }}
-      Type: {{ .ZapiType }}
+      type: {{ .ZapiType }}
       {{- end}}
     {{- end}}
     {{- if .RestAPI }}
@@ -35,10 +35,10 @@ Metrics:{{range .Counters}}
       template: {{ .RestTemplate }}
       {{- end}}
       {{- if .RestUnit }}
-      Unit: {{ .RestUnit }}
+      unit: {{ .RestUnit }}
       {{- end}}
       {{- if .RestType }}
-      Type: {{ .RestType }}
+      type: {{ .RestType }}
       {{- end}}
     {{- end}}
 {{end}}
