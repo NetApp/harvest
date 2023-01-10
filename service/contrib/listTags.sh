@@ -21,8 +21,8 @@ getToken() {
 listTags() {
   local imageName=$1
 
-  curl --silent --header  "Authorization: Bearer $TOKEN" \
-  https://netappdownloads.jfrog.io/artifactory/api/docker/oss-docker/v2/"$imageName"/tags/list | jq .
+  curl --silent --header "Authorization: Bearer $TOKEN" \
+    https://netappdownloads.jfrog.io/artifactory/api/docker/oss-docker/v2/"$imageName"/tags/list | jq .
 }
 
 checkForJq
