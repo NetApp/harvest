@@ -543,11 +543,10 @@ func importFiles(dir string, folder *Folder) {
 func addGlobalPrefix(db map[string]interface{}, prefix string) {
 
 	var (
-		panels, targets, templates                 []interface{}
-		panel, target, templating, template, query map[string]interface{}
-		p, t                                       interface{}
-		queryString, definition, expr              string
-		ok, has                                    bool
+		panels, templates, subPanels       []interface{}
+		panel, templating, template, query map[string]interface{}
+		queryString, definition            string
+		ok, has                            bool
 	)
 
 	// make sure prefix ends with _
@@ -560,29 +559,20 @@ func addGlobalPrefix(db map[string]interface{}, prefix string) {
 		return
 	}
 
-	for _, p = range panels {
+	for _, p := range panels {
+		handlingPanels(p, prefix)
+
+		// handling for sub-panels
 		if panel, ok = p.(map[string]interface{}); !ok {
 			continue
 		}
 
-		if _, has = panel["targets"]; !has {
+		if _, has = panel["panels"]; !has {
 			continue
 		}
-
-		if targets, ok = panel["targets"].([]interface{}); !ok {
-			continue
-		}
-
-		for _, t = range targets {
-
-			if target, ok = t.(map[string]interface{}); !ok {
-				continue
-			}
-
-			if _, has = target["expr"]; has {
-				if expr, ok = target["expr"].(string); ok {
-					target["expr"] = addPrefixToMetricNames(expr, prefix)
-				}
+		if subPanels, ok = panel["panels"].([]interface{}); ok {
+			for _, subP := range subPanels {
+				handlingPanels(subP, prefix)
 			}
 		}
 	}
@@ -596,7 +586,7 @@ func addGlobalPrefix(db map[string]interface{}, prefix string) {
 		return
 	}
 
-	for _, t = range templates {
+	for _, t := range templates {
 		if template, ok = t.(map[string]interface{}); ok {
 			if definition, ok = template["definition"].(string); ok {
 				template["definition"] = addPrefixToMetricNames(definition, prefix)
@@ -605,6 +595,37 @@ func addGlobalPrefix(db map[string]interface{}, prefix string) {
 				if queryString, ok = query["query"].(string); ok {
 					query["query"] = addPrefixToMetricNames(queryString, prefix)
 				}
+			}
+		}
+	}
+}
+
+func handlingPanels(p interface{}, prefix string) {
+	var (
+		targets       []interface{}
+		panel, target map[string]interface{}
+		ok, has       bool
+		expr          string
+	)
+	if panel, ok = p.(map[string]interface{}); !ok {
+		return
+	}
+
+	if _, has = panel["targets"]; !has {
+		return
+	}
+
+	if targets, ok = panel["targets"].([]interface{}); !ok {
+		return
+	}
+
+	for _, t := range targets {
+		if target, ok = t.(map[string]interface{}); !ok {
+			continue
+		}
+		if _, has = target["expr"]; has {
+			if expr, ok = target["expr"].(string); ok {
+				target["expr"] = addPrefixToMetricNames(expr, prefix)
 			}
 		}
 	}
@@ -619,11 +640,12 @@ func addGlobalPrefix(db map[string]interface{}, prefix string) {
 // this function as well (or come up with a better solution).
 func addPrefixToMetricNames(expr, prefix string) string {
 	var (
-		match    [][]string
-		submatch []string
-		isMatch  bool
-		regex    *regexp.Regexp
-		err      error
+		match      [][]string
+		submatch   []string
+		isMatch    bool
+		regex      *regexp.Regexp
+		err        error
+		visitedMap map[string]bool // handles if same query exist in multiple times in one expression.
 	)
 
 	// variable queries
@@ -642,18 +664,21 @@ func addPrefixToMetricNames(expr, prefix string) string {
 	// everything else is for graph queries
 	regex = regexp.MustCompile(`([a-zA-Z_+]+)\s?{.+?}`)
 	match = regex.FindAllStringSubmatch(expr, -1)
-
+	visitedMap = make(map[string]bool)
 	for _, m := range match {
-		// multiple metrics used to summarize
-		if strings.Contains(m[1], "+") {
-			submatch = strings.Split(m[1], "+")
-			for i := range submatch {
-				submatch[i] = prefix + submatch[i]
+		if _, has := visitedMap[m[1]]; !has {
+			// multiple metrics used to summarize
+			if strings.Contains(m[1], "+") {
+				submatch = strings.Split(m[1], "+")
+				for i := range submatch {
+					submatch[i] = prefix + submatch[i]
+				}
+				expr = strings.Replace(expr, m[1], strings.Join(submatch, "+"), -1)
+				// single metric
+			} else {
+				expr = strings.Replace(expr, m[1], prefix+m[1], -1)
 			}
-			expr = strings.Replace(expr, m[1], strings.Join(submatch, "+"), 1)
-			// single metric
-		} else {
-			expr = strings.Replace(expr, m[1], prefix+m[1], 1)
+			visitedMap[m[1]] = true
 		}
 	}
 
