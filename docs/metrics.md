@@ -981,7 +981,7 @@ Metrics:
       template: conf/rest/9.12.0/sensor.yaml
 
   - Harvest Metric: fabricpool_average_latency
-    Description: Note: This counter is deprecated and will be removed in a future release.  Average latencies executed during various phases of command execution. The execution-start latency represents the average time taken to start executing a operation. The request-prepare latency represent the average time taken to prepare the commplete request that needs to be sent to the server. The send latency represents the average time taken to send requests to the server. The execution-start-to-send-complete represents the average time taken to send a operation out since its execution started. The execution-start-to-first-byte-received represent the average time taken to to receive the first byte of a response since the command&apos;s request execution started. These counters can be used to identify performance bottlenecks within the object store client module.
+    Description: Note This counter is deprecated and will be removed in a future release.  Average latencies executed during various phases of command execution. The execution-start latency represents the average time taken to start executing a operation. The request-prepare latency represent the average time taken to prepare the commplete request that needs to be sent to the server. The send latency represents the average time taken to send requests to the server. The execution-start-to-send-complete represents the average time taken to send a operation out since its execution started. The execution-start-to-first-byte-received represent the average time taken to to receive the first byte of a response since the command&apos;s request execution started. These counters can be used to identify performance bottlenecks within the object store client module.
     ZAPI:
       endpoint: perf-object-get-instances object_store_client_op
       metric: average_latency
@@ -1020,7 +1020,7 @@ Metrics:
       Type: delta
 
   - Harvest Metric: fabricpool_get_throughput_bytes
-    Description: Note: This counter is deprecated and will be removed in a future release.  Counter that indicates the throughput for GET command in bytes per second.
+    Description: Note This counter is deprecated and will be removed in a future release.  Counter that indicates the throughput for GET command in bytes per second.
     ZAPI:
       endpoint: perf-object-get-instances object_store_client_op
       metric: get_throughput_bytes
@@ -1029,7 +1029,7 @@ Metrics:
       Type: rate,no-zero-values
 
   - Harvest Metric: fabricpool_put_throughput_bytes
-    Description: Note: This counter is deprecated and will be removed in a future release.  Counter that indicates the throughput for PUT command in bytes per second.
+    Description: Note This counter is deprecated and will be removed in a future release.  Counter that indicates the throughput for PUT command in bytes per second.
     ZAPI:
       endpoint: perf-object-get-instances object_store_client_op
       metric: put_throughput_bytes
@@ -1038,7 +1038,7 @@ Metrics:
       Type: rate,no-zero-values
 
   - Harvest Metric: fabricpool_stats
-    Description: Note: This counter is deprecated and will be removed in a future release.  Counter that indicates the number of object store operations sent, and their success and failure counts. The objstore_client_op_name array indicate the operation name such as PUT, GET, etc. The objstore_client_op_stats_name array contain the total number of operations, their success and failure counter for each operation.
+    Description: Note This counter is deprecated and will be removed in a future release.  Counter that indicates the number of object store operations sent, and their success and failure counts. The objstore_client_op_name array indicate the operation name such as PUT, GET, etc. The objstore_client_op_stats_name array contain the total number of operations, their success and failure counter for each operation.
     ZAPI:
       endpoint: perf-object-get-instances object_store_client_op
       metric: stats

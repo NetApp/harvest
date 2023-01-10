@@ -261,7 +261,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 					}
 				}
 				zapiUnitMap[name] = counter.GetChildContentS("unit")
-				zapiDescMap[name] = counter.GetChildContentS("desc")
+				zapiDescMap[name] = updateDescription(counter.GetChildContentS("desc"))
 				zapiTypeMap[name] = ty
 			}
 		}
