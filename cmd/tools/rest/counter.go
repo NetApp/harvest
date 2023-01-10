@@ -246,6 +246,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 
 	if response, err = client.Invoke(); err != nil {
 		fmt.Printf("error while invoking api %+v\n", err)
+		return nil
 	}
 
 	// fetch counter elements
@@ -388,12 +389,13 @@ func updateDescription(description string) string {
 }
 
 func generateCounterTemplate(counters map[string]Counter) {
+	targetPath := "docs/metrics.md"
 	t, err := template.New("counter.tmpl").ParseFiles("cmd/tools/rest/counter.tmpl")
 	if err != nil {
 		panic(err)
 	}
 	var out *os.File
-	out, err = os.Create("docs/metrics.md")
+	out, err = os.Create(targetPath)
 	if err != nil {
 		panic(err)
 	}
@@ -429,6 +431,8 @@ func generateCounterTemplate(counters map[string]Counter) {
 	err = t.Execute(out, c)
 	if err != nil {
 		panic(err)
+	} else {
+		fmt.Printf("Harvest metric documentation generated at %s \n", targetPath)
 	}
 }
 
