@@ -51,28 +51,21 @@ type Counter struct {
 	ZapiType         string `yaml:"ZapiType"`
 }
 
-// readSwaggerJSON sownloads poller swagger and convert to json format
+// readSwaggerJSON downloads poller swagger and convert to json format
 func readSwaggerJSON() []byte {
-	targetPath := "swagger.json"
+	var f []byte
 	path, err := readOrDownloadSwagger()
 	if err != nil {
 		log.Fatal("failed to download swagger:", err)
 		return nil
 	}
-	cmd := "cat " + path + " | dasel -r yaml -w json > " + targetPath
-
-	_, err = exec.Command("bash", "-c", cmd).Output()
+	cmd := fmt.Sprintf("dasel -f %s -r yaml -w json", path)
+	f, err = exec.Command("bash", "-c", cmd).Output()
 	if err != nil {
 		log.Fatal("Failed to execute command:", cmd, err)
 		return nil
 	}
-	f, err := os.ReadFile(targetPath)
-	if err != nil {
-		log.Fatal("error while reading swagger", err)
-		return nil
-	} else {
-		return f
-	}
+	return f
 }
 
 // searchDescriptionSwagger returns ontap counter description from swagger
@@ -101,7 +94,7 @@ func processRestCounters(client *Client) map[string]Counter {
 	})
 
 	restCounters := visitRestTemplates("conf/rest", client, func(path string, client *Client) map[string]Counter {
-		return processRestConfigCounters(path, client)
+		return processRestConfigCounters(path)
 	})
 
 	for k, v := range restPerfCounters {
@@ -113,7 +106,7 @@ func processRestCounters(client *Client) map[string]Counter {
 // processZapiCounters parse zapi and zapiperf templates
 func processZapiCounters(client *zapi.Client) map[string]Counter {
 	zapiCounters := visitZapiTemplates("conf/zapi/cdot", client, func(path string, client *zapi.Client) map[string]Counter {
-		return processZapiConfigCounters(path, client)
+		return processZapiConfigCounters(path)
 	})
 	zapiPerfCounters := visitZapiTemplates("conf/zapiperf/cdot", client, func(path string, client *zapi.Client) map[string]Counter {
 		return processZAPIPerfCounters(path, client)
@@ -178,7 +171,7 @@ func handleZapiCounter(path []string, content string, object string) (string, st
 }
 
 // processRestConfigCounters process Rest config templates
-func processRestConfigCounters(path string, client *Client) map[string]Counter {
+func processRestConfigCounters(path string) map[string]Counter {
 	var (
 		counters = make(map[string]Counter)
 	)
@@ -298,7 +291,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 	return counters
 }
 
-func processZapiConfigCounters(path string, client *zapi.Client) map[string]Counter {
+func processZapiConfigCounters(path string) map[string]Counter {
 	var (
 		counters = make(map[string]Counter)
 	)

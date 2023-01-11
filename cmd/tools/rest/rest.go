@@ -137,17 +137,11 @@ func doCounterMapping() {
 		os.Exit(1)
 	}
 
-	// read swagger
 	swaggerBytes = readSwaggerJSON()
-	// process rest counters
 	restCounters := processRestCounters(client)
-	// process zapi counters
 	zapiCounters := processZapiCounters(zapiClient)
-	// merge rest/zapi counters
 	counters := mergeRestZapiCounters(restCounters, zapiCounters)
-	// process counters defined in counter.yaml
 	counters = ProcessExternalCounters(counters)
-	// generate counter doc
 	generateCounterTemplate(counters)
 }
 
