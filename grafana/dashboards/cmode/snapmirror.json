@@ -481,7 +481,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Must select SnapMirrorID for detail of single relationship",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -803,24 +803,12 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "ID"
+              "options": "SnapMirrorID"
             },
             "properties": [
               {
                 "id": "custom.width",
-                "value": 66
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Relationship ID"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 34
+                "value": 150
               }
             ]
           },
@@ -881,24 +869,6 @@
               {
                 "id": "custom.width",
                 "value": 200
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "ID"
-            },
-            "properties": [
-              {
-                "id": "links",
-                "value": [
-                  {
-                    "title": "Click for details",
-                    "targetBlank": true,
-                    "url": "/d/RhQGxit4z/ontap-snapmirror?orgId=1&${Datacenter:queryparam}&${SourceCluster:queryparam}&var-SnapMirrorID=${__data.fields[relationship_id]}"
-                  }
-                ]
               }
             ]
           }
@@ -1006,7 +976,7 @@
               "group_type": "Group",
               "healthy": "Health",
               "last_transfer_type": "Last Transfer",
-              "relationship_id": "ID",
+              "relationship_id": "SnapMirrorID",
               "relationship_status": "Status",
               "relationship_type": "Type",
               "source_node": "Source Node",
@@ -1035,7 +1005,7 @@
                 "Size",
                 "Duration",
                 "Lag",
-                "ID",
+                "SnapMirrorID",
                 "Source Cluster",
                 "Destination Cluster"
               ]
@@ -1047,6 +1017,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Must select SnapMirrorID for detail of single relationship",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1144,6 +1115,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Must select SnapMirrorID for detail of single relationship",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1242,6 +1214,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Must select SnapMirrorID for detail of single relationship",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -4822,7 +4795,7 @@
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, relationship_id)",
-        "hide": 2,
+        "hide": 0,
         "includeAll": true,
         "multi": true,
         "name": "SnapMirrorID",
