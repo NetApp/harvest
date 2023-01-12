@@ -25,9 +25,9 @@ counters:
   - evict_destage_rate
 
 override:
-  - read_ops_replaced_percent: average
   - write_blocks_replaced_percent: average
 
 export_options:
   instance_keys:
     - node
+    - aggr

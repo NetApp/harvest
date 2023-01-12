@@ -3236,7 +3236,7 @@
                 "mode": "palette-classic"
               },
               "custom": {
-                "axisLabel": "",
+                "axisLabel": "SSD Hit (%)",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
@@ -3264,8 +3264,6 @@
                 }
               },
               "mappings": [],
-              "max": 100,
-              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -3277,7 +3275,44 @@
               },
               "unit": "percent"
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byFrameRefID",
+                  "options": "B"
+                },
+                "properties": [
+                  {
+                    "id": "custom.axisPlacement",
+                    "value": "right"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "short"
+                  },
+                  {
+                    "id": "min",
+                    "value": 0
+                  },
+                  {
+                    "id": "custom.axisLabel",
+                    "value": "HDD Reads Replaced"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byFrameRefID",
+                  "options": "A"
+                },
+                "properties": [
+                  {
+                    "id": "max",
+                    "value": 100
+                  }
+                ]
+              }
+            ]
           },
           "gridPos": {
             "h": 8,
@@ -3308,7 +3343,7 @@
               "expr": "flashpool_read_ops_replaced_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "SSD Hit (%)",
+              "legendFormat": "SSD Hit (%) - {{aggr}}",
               "refId": "A"
             },
             {
@@ -3318,7 +3353,7 @@
               "hide": false,
               "instant": false,
               "interval": "",
-              "legendFormat": "HDD Reads Replaced",
+              "legendFormat": "HDD Reads Replaced - {{aggr}}",
               "refId": "B"
             }
           ],
@@ -3406,7 +3441,7 @@
               "expr": "flashpool_hya_read_hit_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Avg Hit Latency (SSD)",
+              "legendFormat": "Avg Hit Latency (SSD) - {{aggr}}",
               "refId": "A"
             },
             {
@@ -3416,7 +3451,7 @@
               "hide": false,
               "instant": false,
               "interval": "",
-              "legendFormat": "Avg Miss Latency (HDD)",
+              "legendFormat": "Avg Miss Latency (HDD) - {{aggr}}",
               "refId": "B"
             }
           ],
@@ -3460,9 +3495,9 @@
                   "mode": "off"
                 }
               },
-              "decimals": 2,
+              "decimals": 0,
               "mappings": [],
-              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -3472,7 +3507,7 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "kbytes"
             },
             "overrides": []
           },
@@ -3502,28 +3537,28 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "0.0009765625 * flashpool_ssd_read_cached{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+              "expr": "4 * flashpool_ssd_read_cached{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Read Cached (GB)",
+              "legendFormat": "Read Cached (GB) - {{aggr}}",
               "refId": "A"
             },
             {
               "exemplar": true,
-              "expr": "0.0009765625 * flashpool_ssd_write_cached{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+              "expr": "4 * flashpool_ssd_write_cached{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
               "format": "time_series",
               "hide": false,
               "instant": false,
               "interval": "",
-              "legendFormat": "Write Cached (GB)",
+              "legendFormat": "Write Cached (GB) - {{aggr}}",
               "refId": "B"
             },
             {
               "exemplar": true,
-              "expr": "0.0009765625 * flashpool_ssd_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+              "expr": "4 * flashpool_ssd_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Total Capacity (GB)",
+              "legendFormat": "Total Capacity (GB) - {{aggr}}",
               "refId": "C"
             }
           ],
@@ -3540,7 +3575,7 @@
                 "mode": "palette-classic"
               },
               "custom": {
-                "axisLabel": "Blocks / sec",
+                "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
@@ -3567,9 +3602,9 @@
                   "mode": "off"
                 }
               },
-              "decimals": 2,
+              "decimals": 3,
               "mappings": [],
-              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -3579,9 +3614,22 @@
                   }
                 ]
               },
-              "unit": "ops"
+              "unit": "short"
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byType",
+                  "options": "number"
+                },
+                "properties": [
+                  {
+                    "id": "custom.axisLabel",
+                    "value": "Blocks / sec"
+                  }
+                ]
+              }
+            ]
           },
           "gridPos": {
             "h": 8,
@@ -3612,7 +3660,7 @@
               "expr": "flashpool_read_cache_ins_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Read Cache Insert Rate",
+              "legendFormat": "Read Cache Insert Rate - {{aggr}}",
               "refId": "A"
             },
             {
@@ -3622,7 +3670,7 @@
               "hide": false,
               "instant": false,
               "interval": "",
-              "legendFormat": "Write Cache Insert Rate",
+              "legendFormat": "Write Cache Insert Rate - {{aggr}}",
               "refId": "B"
             }
           ],
@@ -3639,7 +3687,7 @@
                 "mode": "palette-classic"
               },
               "custom": {
-                "axisLabel": "Blocks / sec",
+                "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
@@ -3666,9 +3714,8 @@
                   "mode": "off"
                 }
               },
-              "decimals": 2,
               "mappings": [],
-              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -3678,9 +3725,22 @@
                   }
                 ]
               },
-              "unit": "ops"
+              "unit": "short"
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byType",
+                  "options": "number"
+                },
+                "properties": [
+                  {
+                    "id": "custom.axisLabel",
+                    "value": "Blocks / sec"
+                  }
+                ]
+              }
+            ]
           },
           "gridPos": {
             "h": 8,
@@ -3711,7 +3771,7 @@
               "expr": "flashpool_evict_destage_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Blocks Destaged",
+              "legendFormat": "Blocks Destaged - {{aggr}}",
               "refId": "A"
             },
             {
@@ -3721,7 +3781,7 @@
               "hide": false,
               "instant": false,
               "interval": "",
-              "legendFormat": "Blocks Evicted",
+              "legendFormat": "Blocks Evicted - {{aggr}}",
               "refId": "B"
             }
           ],
