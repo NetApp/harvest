@@ -17,9 +17,6 @@ counters:
       - type="server"
 
 plugins:
-  - LabelAgent:
-      value_to_num:
-        - status name - - `0`
   - Certificate:
       schedule:
         - data: 180s  # should be multiple of data poll duration
