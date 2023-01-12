@@ -59,6 +59,8 @@ counters:
     - volume-state-attributes:
       - ^state
       - ^status
+      - ^is-node-root                       => node_root
+      - ^is-vserver-root                    => svm_root
 
     - volume-snapshot-attributes:
       - ^auto-snapshots-enabled             => auto_snapshots_enabled
@@ -79,6 +81,8 @@ plugins:
       - new_status state online online `0`
     exclude_equals:
       - style `flexgroup_constituent`
+      - node_root `true`
+      - svm_root `true`
     # To prevent visibility of transient volumes, uncomment the following lines
 #    exclude_regex:
 #      # Exclude SnapProtect/CommVault Intellisnap, Clone volumes have a “_CVclone” suffix
@@ -112,4 +116,6 @@ export_options:
     - type
     - isEncrypted
     - isHardwareEncrypted
+    - svm_root
+    - node_root
 
