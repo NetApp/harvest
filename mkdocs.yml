@@ -33,12 +33,12 @@ nav:
   - Templates: 'configure-templates.md'
   - Dashboards: 'dashboards.md'
   - Manage Harvest Pollers: 'manage-harvest.md'
-  - Metrics: 'metrics.md'
   - Configure Harvest (advanced): 'configure-harvest-advanced.md'
   - Troubleshoot: 'troubleshooting.md'
   - Reference:
       - 'Plugins': 'plugins.md'
       - 'Matrix': 'resources/matrix.md'
+      - 'ONTAP Metrics': 'ontap-metrics.md'
       - 'Templates And Metrics': 'resources/templates-and-metrics.md'
   - About:
       - 'License': 'license.md'

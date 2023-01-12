@@ -1,7 +1,8 @@
-package rest
+package generate
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -15,6 +16,7 @@ import (
 	"sort"
 	"strings"
 	"text/template"
+	"time"
 )
 
 var (
@@ -32,8 +34,14 @@ type Counters struct {
 	C []Counter `yaml:"counters"`
 }
 
+type CounterMetaData struct {
+	Date         string
+	OntapVersion string
+}
+
 type CounterTemplate struct {
-	Counters []Counter
+	Counters        []Counter
+	CounterMetaData CounterMetaData
 }
 
 type Counter struct {
@@ -44,17 +52,19 @@ type Counter struct {
 	RestTemplate     string `yaml:"RestTemplate"`
 	RestUnit         string `yaml:"RestUnit"`
 	RestType         string `yaml:"RestType"`
+	RestBaseCounter  string `yaml:"RestBaseCounter"`
 	ZapiAPI          string `yaml:"ZapiAPI"`
 	ZapiONTAPCounter string `yaml:"ZapiONTAPCounter"`
 	ZapiTemplate     string `yaml:"ZapiTemplate"`
 	ZapiUnit         string `yaml:"ZapiUnit"`
 	ZapiType         string `yaml:"ZapiType"`
+	ZapiBaseCounter  string `yaml:"ZapiBaseCounter"`
 }
 
 // readSwaggerJSON downloads poller swagger and convert to json format
 func readSwaggerJSON() []byte {
 	var f []byte
-	path, err := readOrDownloadSwagger()
+	path, err := rest.ReadOrDownloadSwagger(opts.Poller)
 	if err != nil {
 		log.Fatal("failed to download swagger:", err)
 		return nil
@@ -88,12 +98,12 @@ func searchDescriptionSwagger(objName string, ontapCounterName string) string {
 }
 
 // processRestCounters parse rest and restperf templates
-func processRestCounters(client *Client) map[string]Counter {
-	restPerfCounters := visitRestTemplates("conf/restperf", client, func(path string, client *Client) map[string]Counter {
+func processRestCounters(client *rest.Client) map[string]Counter {
+	restPerfCounters := visitRestTemplates("conf/restperf", client, func(path string, client *rest.Client) map[string]Counter {
 		return processRestPerfCounters(path, client)
 	})
 
-	restCounters := visitRestTemplates("conf/rest", client, func(path string, client *Client) map[string]Counter {
+	restCounters := visitRestTemplates("conf/rest", client, func(path string, client *rest.Client) map[string]Counter {
 		return processRestConfigCounters(path)
 	})
 
@@ -211,11 +221,12 @@ func processRestConfigCounters(path string) map[string]Counter {
 // processZAPIPerfCounters process ZapiPerf counters
 func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counter {
 	var (
-		counters          = make(map[string]Counter)
-		request, response *node.Node
-		zapiUnitMap       = make(map[string]string)
-		zapiTypeMap       = make(map[string]string)
-		zapiDescMap       = make(map[string]string)
+		counters           = make(map[string]Counter)
+		request, response  *node.Node
+		zapiUnitMap        = make(map[string]string)
+		zapiTypeMap        = make(map[string]string)
+		zapiDescMap        = make(map[string]string)
+		zapiBaseCounterMap = make(map[string]string)
 	)
 	t, err := tree.ImportYaml(path)
 	if t == nil || err != nil {
@@ -256,6 +267,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 				zapiUnitMap[name] = counter.GetChildContentS("unit")
 				zapiDescMap[name] = updateDescription(counter.GetChildContentS("desc"))
 				zapiTypeMap[name] = ty
+				zapiBaseCounterMap[name] = counter.GetChildContentS("base-counter")
 			}
 		}
 	}
@@ -282,6 +294,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 						ZapiAPI:          strings.Join([]string{"perf-object-get-instances", query}, " "),
 						ZapiType:         zapiTypeMap[name],
 						ZapiUnit:         zapiUnitMap[name],
+						ZapiBaseCounter:  zapiBaseCounterMap[name],
 					}
 					counters[harvestName] = co
 				}
@@ -326,7 +339,7 @@ func processZapiConfigCounters(path string) map[string]Counter {
 	return counters
 }
 
-func visitRestTemplates(dir string, client *Client, eachTemp func(path string, client *Client) map[string]Counter) map[string]Counter {
+func visitRestTemplates(dir string, client *rest.Client, eachTemp func(path string, client *rest.Client) map[string]Counter) map[string]Counter {
 	result := make(map[string]Counter)
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -381,9 +394,9 @@ func updateDescription(description string) string {
 	return s
 }
 
-func generateCounterTemplate(counters map[string]Counter) {
-	targetPath := "docs/metrics.md"
-	t, err := template.New("counter.tmpl").ParseFiles("cmd/tools/rest/counter.tmpl")
+func generateCounterTemplate(counters map[string]Counter, client *rest.Client) {
+	targetPath := "docs/ontap-metrics.md"
+	t, err := template.New("counter.tmpl").ParseFiles("cmd/tools/generate/counter.tmpl")
 	if err != nil {
 		panic(err)
 	}
@@ -420,6 +433,8 @@ func generateCounterTemplate(counters map[string]Counter) {
 
 	c := CounterTemplate{}
 	c.Counters = Values
+	verWithDots := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(client.Cluster().Version)), "."), "[]")
+	c.CounterMetaData = CounterMetaData{Date: time.Now().Format("2006-Jan-02"), OntapVersion: verWithDots}
 
 	err = t.Execute(out, c)
 	if err != nil {
@@ -437,6 +452,7 @@ func mergeRestZapiCounters(restCounters map[string]Counter, zapiCounters map[str
 			v1.ZapiONTAPCounter = v.ZapiONTAPCounter
 			v1.ZapiUnit = v.ZapiUnit
 			v1.ZapiType = v.ZapiType
+			v1.ZapiBaseCounter = v.ZapiBaseCounter
 			restCounters[k] = v1
 		} else {
 			if v.ZapiONTAPCounter == "instance_name" || v.ZapiONTAPCounter == "instance_uuid" {
@@ -450,6 +466,7 @@ func mergeRestZapiCounters(restCounters map[string]Counter, zapiCounters map[str
 				ZapiONTAPCounter: v.ZapiONTAPCounter,
 				ZapiUnit:         v.ZapiUnit,
 				ZapiType:         v.ZapiType,
+				ZapiBaseCounter:  v.ZapiBaseCounter,
 			}
 			restCounters[v.Name] = co
 		}
@@ -457,7 +474,7 @@ func mergeRestZapiCounters(restCounters map[string]Counter, zapiCounters map[str
 	return restCounters
 }
 
-func processRestPerfCounters(path string, client *Client) map[string]Counter {
+func processRestPerfCounters(path string, client *rest.Client) map[string]Counter {
 	var (
 		records       []gjson.Result
 		counterSchema gjson.Result
@@ -486,8 +503,8 @@ func processRestPerfCounters(path string, client *Client) map[string]Counter {
 			}
 		}
 	}
-	href := BuildHref(query, "", nil, "", "", "", "", query)
-	records, err = Fetch(client, href)
+	href := rest.BuildHref(query, "", nil, "", "", "", "", query)
+	records, err = rest.Fetch(client, href)
 	if err != nil {
 		fmt.Printf("error while invoking api %+v\n", err)
 		return nil
@@ -521,6 +538,7 @@ func processRestPerfCounters(path string, client *Client) map[string]Counter {
 				Description:      description,
 				RestType:         ty,
 				RestUnit:         r.Get("unit").String(),
+				RestBaseCounter:  r.Get("denominator.name").String(),
 			}
 			counters[c.Name] = c
 		}
@@ -530,7 +548,7 @@ func processRestPerfCounters(path string, client *Client) map[string]Counter {
 }
 
 func ProcessExternalCounters(counters map[string]Counter) map[string]Counter {
-	dat, err := os.ReadFile("cmd/tools/rest/Counter.yaml")
+	dat, err := os.ReadFile("cmd/tools/generate/counter.yaml")
 	if err != nil {
 		fmt.Printf("error while reading file %v", err)
 		return nil

@@ -5,7 +5,6 @@ package rest
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
@@ -18,7 +17,7 @@ import (
 )
 
 var (
-	validShowArgs = []string{"apis", "params", "models", "data", "mapping"}
+	validShowArgs = []string{"apis", "params", "models", "data"}
 )
 
 type check struct {
@@ -58,7 +57,7 @@ var showCmd = &cobra.Command{
 	Run:       doShow,
 }
 
-func readOrDownloadSwagger() (string, error) {
+func ReadOrDownloadSwagger(pName string) (string, error) {
 	var (
 		poller         *conf.Poller
 		err            error
@@ -67,7 +66,7 @@ func readOrDownloadSwagger() (string, error) {
 		swagTime       time.Time
 	)
 
-	if poller, addr, err = getPollerAndAddr(); err != nil {
+	if poller, addr, err = GetPollerAndAddr(pName); err != nil {
 		return "", err
 	}
 
@@ -115,36 +114,6 @@ func doShow(_ *cobra.Command, a []string) {
 	}
 }
 
-func doCounterMapping() {
-	var (
-		poller     *conf.Poller
-		err        error
-		client     *Client
-		zapiClient *zapi.Client
-	)
-	if poller, _, err = getPollerAndAddr(); err != nil {
-		return
-	}
-
-	timeout, _ := time.ParseDuration(DefaultTimeout)
-	if client, err = New(*poller, timeout); err != nil {
-		fmt.Printf("error creating new client %+v\n", err)
-		os.Exit(1)
-	}
-
-	if zapiClient, err = zapi.New(*poller); err != nil {
-		fmt.Printf("error creating new client %+v\n", err)
-		os.Exit(1)
-	}
-
-	swaggerBytes = readSwaggerJSON()
-	restCounters := processRestCounters(client)
-	zapiCounters := processZapiCounters(zapiClient)
-	counters := mergeRestZapiCounters(restCounters, zapiCounters)
-	counters = ProcessExternalCounters(counters)
-	generateCounterTemplate(counters)
-}
-
 func validateArgs(strings []string) check {
 	// One of Poller or SwaggerPath are allowed, but not both
 	if args.Poller != "" && args.SwaggerPath != "" {
@@ -168,7 +137,7 @@ func validateArgs(strings []string) check {
 func doCmd() {
 	switch args.Item {
 	case "apis", "params", "models":
-		swaggerPath, err := readOrDownloadSwagger()
+		swaggerPath, err := ReadOrDownloadSwagger(args.Poller)
 		if err != nil {
 			return // everything logged earlier
 		}
@@ -176,8 +145,6 @@ func doCmd() {
 		doSwagger(*args)
 	case "data":
 		doData()
-	case "mapping":
-		doCounterMapping()
 	}
 }
 
@@ -203,7 +170,7 @@ func doData() {
 		client *Client
 	)
 
-	if poller, _, err = getPollerAndAddr(); err != nil {
+	if poller, _, err = GetPollerAndAddr(args.Poller); err != nil {
 		return
 	}
 
@@ -237,17 +204,17 @@ func doData() {
 	fmt.Printf("%s\n", pretty)
 }
 
-func getPollerAndAddr() (*conf.Poller, string, error) {
+func GetPollerAndAddr(pName string) (*conf.Poller, string, error) {
 	var (
 		poller *conf.Poller
 		err    error
 	)
-	if poller, err = conf.PollerNamed(args.Poller); err != nil {
-		fmt.Printf("Poller named [%s] does not exist\n", args.Poller)
+	if poller, err = conf.PollerNamed(pName); err != nil {
+		fmt.Printf("Poller named [%s] does not exist\n", pName)
 		return nil, "", err
 	}
 	if poller.Addr == "" {
-		fmt.Printf("Poller named [%s] does not have a valid addr=[]\n", args.Poller)
+		fmt.Printf("Poller named [%s] does not have a valid addr=[]\n", pName)
 		return nil, "", err
 	}
 	return poller, poller.Addr, nil
