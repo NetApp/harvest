@@ -807,6 +807,20 @@
               
   
   
+  
+    <li class="md-nav__item">
+      <a href="../../ontap-metrics/" class="md-nav__link">
+        ONTAP Metrics
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
     
   
   
@@ -1125,7 +1139,7 @@
 
 
 <h1 id="harvest-templates-and-metrics">Harvest Templates and Metrics<a class="headerlink" href="#harvest-templates-and-metrics" title="Permanent link">&para;</a></h1>
-<p>Harvest collects ONTAP counter information, augments it, and stores it in a time-series DB.</p>
+<p>Harvest collects ONTAP counter information, augments it, and stores it in a time-series DB. Refer <a href="../../ontap-metrics/">ONTAP Metrics</a> for details about ONTAP metrics exposed by Harvest. </p>
 <pre class="mermaid"><code>flowchart RL
     Harvest[Harvest&lt;br&gt;Get &amp; Augment] -- REST&lt;br&gt;ZAPI --&gt; ONTAP
     id1[(Prometheus&lt;br&gt;Store)] -- Scrape --&gt; Harvest</code></pre>
@@ -1454,7 +1468,7 @@ value, including adding or removing a label, will create a new time series.</p>
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="../matrix/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Matrix" rel="prev">
+        <a href="../../ontap-metrics/" class="md-footer__link md-footer__link--prev" aria-label="Previous: ONTAP Metrics" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -1463,7 +1477,7 @@ value, including adding or removing a label, will create a new time series.</p>
               <span class="md-footer__direction">
                 Previous
               </span>
-              Matrix
+              ONTAP Metrics
             </div>
           </div>
         </a>
