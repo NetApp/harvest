@@ -1,3 +1,5 @@
+# This api would provide all volumes(but node).
+
 name:                     Volume
 query:                    api/storage/volumes
 object:                   volume
@@ -70,10 +72,11 @@ plugins:
       compute_metric:
         - inode_used_percent PERCENT inode_files_used inode_files_total
   - LabelAgent:
-      value_to_num:
-        - new_status state online online `0`
       exclude_equals:
         - style `flexgroup_constituent`
+        - svm_root `true`
+      value_to_num:
+        - new_status state online online `0`
       replace:
         - style style `flexgroup_constituent` `flexgroup`
       # To prevent visibility of transient volumes, uncomment the following lines

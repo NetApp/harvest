@@ -76,13 +76,13 @@ plugins:
       compute_metric:
         - inode_used_percent PERCENT inode_files_used inode_files_total
   - LabelAgent:
-    # metric label zapi_value rest_value `default_value`
-    value_to_num:
-      - new_status state online online `0`
     exclude_equals:
       - style `flexgroup_constituent`
       - node_root `true`
       - svm_root `true`
+    # metric label zapi_value rest_value `default_value`
+    value_to_num:
+      - new_status state online online `0`
     # To prevent visibility of transient volumes, uncomment the following lines
 #    exclude_regex:
 #      # Exclude SnapProtect/CommVault Intellisnap, Clone volumes have a “_CVclone” suffix
