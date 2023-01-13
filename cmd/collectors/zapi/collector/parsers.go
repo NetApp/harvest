@@ -97,7 +97,7 @@ func (z *Zapi) HandleCounter(path []string, content string) string {
 	key = strings.Join(fullPath, ".")
 
 	if display == "" {
-		display = ParseDisplay(mat.Object, fullPath)
+		display = util.ParseZAPIDisplay(mat.Object, fullPath)
 	}
 
 	if content[0] == '^' {
@@ -127,34 +127,4 @@ func (z *Zapi) HandleCounter(path []string, content string) string {
 	}
 
 	return name
-}
-
-func ParseDisplay(obj string, path []string) string {
-	var (
-		ignore = map[string]int{"attributes": 0, "info": 0, "list": 0, "details": 0, "storage": 0}
-		added  = map[string]int{}
-		words  []string
-	)
-
-	for _, w := range strings.Split(obj, "_") {
-		ignore[w] = 0
-	}
-
-	for _, attribute := range path {
-		split := strings.Split(attribute, "-")
-		for _, word := range split {
-			if word == obj {
-				continue
-			}
-			if _, exists := ignore[word]; exists {
-				continue
-			}
-			if _, exists := added[word]; exists {
-				continue
-			}
-			words = append(words, word)
-			added[word] = 0
-		}
-	}
-	return strings.Join(words, "_")
 }
