@@ -8,9 +8,12 @@ counters:
   - ^svm.name                                     => svm
   - filter:
       - analytics.state=on
+      - order_by=space.used%20desc
+      - max_records=20
 
 plugins:
-  - VolumeAnalytics
+  - VolumeAnalytics:
+      - MaxDirectoryCount: 100
 
 
 

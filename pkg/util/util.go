@@ -327,3 +327,17 @@ func AddIntString(input string, value int) string {
 	i = i + value
 	return strconv.FormatInt(int64(i), 10)
 }
+
+var metricTypeRegex = regexp.MustCompile(`\[(.*?)]`)
+
+func ArrayMetricToString(value string) string {
+	r := strings.NewReplacer("\n", "", " ", "", "\"", "")
+	s := r.Replace(value)
+
+	match := metricTypeRegex.FindAllStringSubmatch(s, -1)
+	if match != nil {
+		name := match[0][1]
+		return name
+	}
+	return value
+}

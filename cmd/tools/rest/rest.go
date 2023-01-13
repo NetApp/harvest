@@ -354,6 +354,41 @@ func fetch(client *Client, href string, records *[]gjson.Result, downloadAll boo
 	return nil
 }
 
+func FetchAnalytics(client *Client, href string, records *[]gjson.Result, analytics *gjson.Result, downloadAll bool) error {
+	getRest, err := client.GetRest(href)
+	if err != nil {
+		return fmt.Errorf("error making request %w", err)
+	}
+
+	output := gjson.GetManyBytes(getRest, "records", "num_records", "_links.next.href", "analytics")
+	data := output[0]
+	numRecords := output[1]
+	next := output[2]
+	*analytics = output[3]
+
+	// extract returned records since paginated records need to be merged into a single lists
+	if numRecords.Exists() && numRecords.Int() > 0 {
+		*records = append(*records, data)
+	}
+
+	// If all results are desired and there is a next link, follow it
+	if next.Exists() && downloadAll {
+		nextLink := next.String()
+		if nextLink != "" {
+			if nextLink == href {
+				// nextLink is same as previous link, no progress is being made, exit
+				return nil
+			}
+			err := fetch(client, nextLink, records, downloadAll)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
 // FetchRestPerfData This method is used in PerfRest collector. This method returns timestamp per batch
 func FetchRestPerfData(client *Client, href string, perfRecords *[]PerfRecord) error {
 	getRest, err := client.GetRest(href)

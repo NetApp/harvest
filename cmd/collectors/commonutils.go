@@ -25,18 +25,26 @@ func InvokeRestCall(client *rest.Client, href string, logger *logging.Logger) ([
 	return result, nil
 }
 
-func InvokeRestCallLimited(client *rest.Client, href string, logger *logging.Logger) ([]gjson.Result, error) {
-	result, err := rest.FetchLimited(client, href)
+func InvokeRestCallAnalyticsLimited(client *rest.Client, href string) ([]gjson.Result, gjson.Result, error) {
+	var (
+		records   []gjson.Result
+		analytics = &gjson.Result{}
+		result    []gjson.Result
+		err       error
+	)
+	err = rest.FetchAnalytics(client, href, &records, analytics, false)
 	if err != nil {
-		logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
-		return []gjson.Result{}, err
+		return nil, gjson.Result{}, err
+	}
+	for _, r := range records {
+		result = append(result, r.Array()...)
 	}
 
 	if len(result) == 0 {
-		return []gjson.Result{}, nil
+		return []gjson.Result{}, gjson.Result{}, nil
 	}
 
-	return result, nil
+	return result, *analytics, nil
 }
 
 func UpdateProtectedFields(instance *matrix.Instance) {
