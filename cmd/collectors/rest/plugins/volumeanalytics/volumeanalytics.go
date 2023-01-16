@@ -305,18 +305,3 @@ func (v *VolumeAnalytics) getAnalyticsData(instanceId string) ([]gjson.Result, g
 	}
 	return result, analytics, nil
 }
-
-//func (v *VolumeAnalytics) getTopMetrics(instanceId string, objType string, topMetric string, fields []string) ([]gjson.Result, error) {
-//	var (
-//		result []gjson.Result
-//		err    error
-//	)
-//
-//	query := path.Join("api/storage/volumes", instanceId, "top-metrics", objType)
-//	href := rest.BuildHref("", strings.Join(fields, ","), []string{"top_metric=" + topMetric, "return_timeout=120"}, "", "", "", "", query)
-//
-//	if result, err = collectors.InvokeRestCallLimited(v.client, href, v.Logger); err != nil {
-//		return nil, err
-//	}
-//	return result, nil
-//}
