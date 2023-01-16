@@ -38,15 +38,6 @@ var metrics = []string{
 	"dir_subdir_count",
 }
 
-type TopMetrics struct {
-	objType          string
-	instanceKey      []string
-	topMetricCounter string
-	displayName      string
-	fields           []string
-	matrixName       string
-}
-
 func (v *VolumeAnalytics) Init() error {
 
 	var err error
@@ -289,7 +280,7 @@ func (v *VolumeAnalytics) getLabelBucket(label string) string {
 	}
 }
 
-func (v *VolumeAnalytics) getAnalyticsData(instanceId string) ([]gjson.Result, gjson.Result, error) {
+func (v *VolumeAnalytics) getAnalyticsData(instanceID string) ([]gjson.Result, gjson.Result, error) {
 	var (
 		result    []gjson.Result
 		analytics gjson.Result
@@ -297,10 +288,10 @@ func (v *VolumeAnalytics) getAnalyticsData(instanceId string) ([]gjson.Result, g
 	)
 
 	fields := []string{"analytics.file_count", "analytics.bytes_used", "analytics.subdir_count", "analytics.by_modified_time.bytes_used", "analytics.by_accessed_time.bytes_used"}
-	query := path.Join("api/storage/volumes", instanceId, "files/")
+	query := path.Join("api/storage/volumes", instanceID, "files/")
 	href := rest.BuildHref(query, strings.Join(fields, ","), []string{"order_by=analytics.bytes_used+desc", "type=directory"}, "", "", MaxDirCollectCount, "", query)
 
-	if result, analytics, err = collectors.InvokeRestCallAnalyticsLimited(v.client, href); err != nil {
+	if result, analytics, err = collectors.InvokeRestCallAnalytics(v.client, href); err != nil {
 		return nil, gjson.Result{}, err
 	}
 	return result, analytics, nil

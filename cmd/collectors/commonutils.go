@@ -25,7 +25,7 @@ func InvokeRestCall(client *rest.Client, href string, logger *logging.Logger) ([
 	return result, nil
 }
 
-func InvokeRestCallAnalyticsLimited(client *rest.Client, href string) ([]gjson.Result, gjson.Result, error) {
+func InvokeRestCallAnalytics(client *rest.Client, href string) ([]gjson.Result, gjson.Result, error) {
 	var (
 		records   []gjson.Result
 		analytics = &gjson.Result{}
