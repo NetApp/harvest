@@ -203,7 +203,7 @@ func (v *VolumeAnalytics) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 							}
 							m.SetLabel("time", mtBytesUsedLabels[i])
 							m.SetLabel("order", strconv.Itoa(i))
-							m.SetLabel("bucket", v.getLabelBucket(atBytesUsedLabels[i]))
+							m.SetLabel("activity", v.getLabelBucket(atBytesUsedLabels[i]))
 							if err = m.SetValueString(instance, mv); err != nil {
 								v.Logger.Error().Err(err).Str("value", mv).Msg("set metric")
 							}
@@ -219,7 +219,7 @@ func (v *VolumeAnalytics) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 							}
 							m.SetLabel("time", mtBytesUsedLabels[i])
 							m.SetLabel("order", strconv.Itoa(i))
-							m.SetLabel("bucket", v.getLabelBucket(atBytesUsedLabels[i]))
+							m.SetLabel("activity", v.getLabelBucket(atBytesUsedLabels[i]))
 							if err = m.SetValueString(instance, mp); err != nil {
 								v.Logger.Error().Err(err).Str("value", mp).Msg("set metric")
 							}
@@ -239,7 +239,7 @@ func (v *VolumeAnalytics) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 							}
 							m.SetLabel("time", atBytesUsedLabels[i])
 							m.SetLabel("order", strconv.Itoa(i))
-							m.SetLabel("bucket", v.getLabelBucket(atBytesUsedLabels[i]))
+							m.SetLabel("activity", v.getLabelBucket(atBytesUsedLabels[i]))
 							if err = m.SetValueString(instance, av); err != nil {
 								v.Logger.Error().Err(err).Str("value", av).Msg("set metric")
 							}
@@ -255,7 +255,7 @@ func (v *VolumeAnalytics) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 							}
 							m.SetLabel("time", atBytesUsedLabels[i])
 							m.SetLabel("order", strconv.Itoa(i))
-							m.SetLabel("bucket", v.getLabelBucket(atBytesUsedLabels[i]))
+							m.SetLabel("activity", v.getLabelBucket(atBytesUsedLabels[i]))
 							if err = m.SetValueString(instance, ap); err != nil {
 								v.Logger.Error().Err(err).Str("value", ap).Msg("set metric")
 							}
