@@ -288,14 +288,8 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 
 	href := rest.BuildHref(r.Prop.Query, strings.Join(r.Prop.Fields, ","), r.Prop.Filter, "", "", "", r.Prop.ReturnTimeOut, r.Prop.Query)
 
-	if strings.Contains(href, "max_records") {
-		if records, err = r.GetRestDataLimited(href); err != nil {
-			return nil, err
-		}
-	} else {
-		if records, err = r.GetRestData(href); err != nil {
-			return nil, err
-		}
+	if records, err = r.GetRestData(href); err != nil {
+		return nil, err
 	}
 
 	apiD = time.Since(startTime)
@@ -544,20 +538,6 @@ func (r *Rest) GetRestData(href string) ([]gjson.Result, error) {
 	}
 
 	result, err := rest.Fetch(r.Client, href)
-	if err != nil {
-		return nil, fmt.Errorf("failed to fetch data: %w", err)
-	}
-
-	return result, nil
-}
-
-func (r *Rest) GetRestDataLimited(href string) ([]gjson.Result, error) {
-	r.Logger.Debug().Str("href", href).Msg("")
-	if href == "" {
-		return nil, errs.New(errs.ErrConfig, "empty url")
-	}
-
-	result, err := rest.FetchLimited(r.Client, href)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch data: %w", err)
 	}

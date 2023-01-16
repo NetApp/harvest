@@ -280,24 +280,11 @@ func Fetch(client *Client, href string) ([]gjson.Result, error) {
 		result  []gjson.Result
 		err     error
 	)
-	err = fetch(client, href, &records, true)
-	if err != nil {
-		return nil, err
+	downloadAll := true
+	if strings.Contains(href, "max_records=") {
+		downloadAll = false
 	}
-	for _, r := range records {
-		result = append(result, r.Array()...)
-	}
-	return result, nil
-}
-
-// FetchLimited collects records as specified in URL
-func FetchLimited(client *Client, href string) ([]gjson.Result, error) {
-	var (
-		records []gjson.Result
-		result  []gjson.Result
-		err     error
-	)
-	err = fetch(client, href, &records, false)
+	err = fetch(client, href, &records, downloadAll)
 	if err != nil {
 		return nil, err
 	}
