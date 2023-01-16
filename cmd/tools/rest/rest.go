@@ -6,12 +6,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -281,10 +283,19 @@ func Fetch(client *Client, href string) ([]gjson.Result, error) {
 		err     error
 	)
 	downloadAll := true
+	maxRecords := 0
 	if strings.Contains(href, "max_records=") {
-		downloadAll = false
+		mr, err := util.ParseURLQuery(href)
+		if err != nil {
+			if mri, err := strconv.Atoi(mr); err == nil {
+				maxRecords = mri
+			}
+		}
+		if maxRecords != 0 {
+			downloadAll = false
+		}
 	}
-	err = fetch(client, href, &records, downloadAll)
+	err = fetch(client, href, &records, downloadAll, int64(maxRecords))
 	if err != nil {
 		return nil, err
 	}
@@ -294,7 +305,42 @@ func Fetch(client *Client, href string) ([]gjson.Result, error) {
 	return result, nil
 }
 
-func fetch(client *Client, href string, records *[]gjson.Result, downloadAll bool) error {
+func FetchAnalytics(client *Client, href string) ([]gjson.Result, gjson.Result, error) {
+	var (
+		records   []gjson.Result
+		analytics = &gjson.Result{}
+		result    []gjson.Result
+		err       error
+	)
+	downloadAll := true
+	maxRecords := 0
+	if strings.Contains(href, "max_records=") {
+		mr, err := util.ParseURLQuery(href)
+		if err != nil {
+			if mri, err := strconv.Atoi(mr); err == nil {
+				maxRecords = mri
+			}
+		}
+		if maxRecords != 0 {
+			downloadAll = false
+		}
+	}
+	err = fetchAnalytics(client, href, &records, analytics, downloadAll, int64(maxRecords))
+	if err != nil {
+		return nil, gjson.Result{}, err
+	}
+	for _, r := range records {
+		result = append(result, r.Array()...)
+	}
+
+	if len(result) == 0 {
+		return []gjson.Result{}, gjson.Result{}, nil
+	}
+
+	return result, *analytics, nil
+}
+
+func fetch(client *Client, href string, records *[]gjson.Result, downloadAll bool, maxRecords int64) error {
 	getRest, err := client.GetRest(href)
 	if err != nil {
 		return fmt.Errorf("error making request %w", err)
@@ -321,6 +367,12 @@ func fetch(client *Client, href string, records *[]gjson.Result, downloadAll boo
 		// extract returned records since paginated records need to be merged into a single lists
 		if numRecords.Exists() && numRecords.Int() > 0 {
 			*records = append(*records, data)
+			if !downloadAll {
+				maxRecords = maxRecords - numRecords.Int()
+			}
+			if maxRecords <= 0 {
+				return nil
+			}
 		}
 
 		// If all results are desired and there is a next link, follow it
@@ -331,7 +383,7 @@ func fetch(client *Client, href string, records *[]gjson.Result, downloadAll boo
 					// nextLink is same as previous link, no progress is being made, exit
 					return nil
 				}
-				err := fetch(client, nextLink, records, downloadAll)
+				err := fetch(client, nextLink, records, downloadAll, maxRecords)
 				if err != nil {
 					return err
 				}
@@ -341,7 +393,7 @@ func fetch(client *Client, href string, records *[]gjson.Result, downloadAll boo
 	return nil
 }
 
-func FetchAnalytics(client *Client, href string, records *[]gjson.Result, analytics *gjson.Result, downloadAll bool) error {
+func fetchAnalytics(client *Client, href string, records *[]gjson.Result, analytics *gjson.Result, downloadAll bool, maxRecords int64) error {
 	getRest, err := client.GetRest(href)
 	if err != nil {
 		return fmt.Errorf("error making request %w", err)
@@ -356,6 +408,12 @@ func FetchAnalytics(client *Client, href string, records *[]gjson.Result, analyt
 	// extract returned records since paginated records need to be merged into a single lists
 	if numRecords.Exists() && numRecords.Int() > 0 {
 		*records = append(*records, data)
+		if !downloadAll {
+			maxRecords = maxRecords - numRecords.Int()
+		}
+		if maxRecords <= 0 {
+			return nil
+		}
 	}
 
 	// If all results are desired and there is a next link, follow it
@@ -366,7 +424,7 @@ func FetchAnalytics(client *Client, href string, records *[]gjson.Result, analyt
 				// nextLink is same as previous link, no progress is being made, exit
 				return nil
 			}
-			err := fetch(client, nextLink, records, downloadAll)
+			err := fetchAnalytics(client, nextLink, records, analytics, downloadAll, maxRecords)
 			if err != nil {
 				return err
 			}

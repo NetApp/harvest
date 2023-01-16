@@ -25,28 +25,6 @@ func InvokeRestCall(client *rest.Client, href string, logger *logging.Logger) ([
 	return result, nil
 }
 
-func InvokeRestCallAnalytics(client *rest.Client, href string) ([]gjson.Result, gjson.Result, error) {
-	var (
-		records   []gjson.Result
-		analytics = &gjson.Result{}
-		result    []gjson.Result
-		err       error
-	)
-	err = rest.FetchAnalytics(client, href, &records, analytics, false)
-	if err != nil {
-		return nil, gjson.Result{}, err
-	}
-	for _, r := range records {
-		result = append(result, r.Array()...)
-	}
-
-	if len(result) == 0 {
-		return []gjson.Result{}, gjson.Result{}, nil
-	}
-
-	return result, *analytics, nil
-}
-
 func UpdateProtectedFields(instance *matrix.Instance) {
 
 	// check for group_type

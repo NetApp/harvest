@@ -3,7 +3,6 @@ package volumeanalytics
 import (
 	"fmt"
 	goversion "github.com/hashicorp/go-version"
-	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -291,7 +290,7 @@ func (v *VolumeAnalytics) getAnalyticsData(instanceID string) ([]gjson.Result, g
 	query := path.Join("api/storage/volumes", instanceID, "files/")
 	href := rest.BuildHref(query, strings.Join(fields, ","), []string{"order_by=analytics.bytes_used+desc", "type=directory"}, "", "", MaxDirCollectCount, "", query)
 
-	if result, analytics, err = collectors.InvokeRestCallAnalytics(v.client, href); err != nil {
+	if result, analytics, err = rest.FetchAnalytics(v.client, href); err != nil {
 		return nil, gjson.Result{}, err
 	}
 	return result, analytics, nil

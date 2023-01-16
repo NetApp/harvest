@@ -12,6 +12,7 @@ import (
 	"golang.org/x/sys/unix"
 	"gopkg.in/yaml.v3"
 	"net"
+	"net/url"
 	"os"
 	"regexp"
 	"strconv"
@@ -370,4 +371,14 @@ func ArrayMetricToString(value string) string {
 		return name
 	}
 	return value
+}
+
+func ParseURLQuery(href string) (string, error) {
+	u, err := url.Parse(href)
+	if err == nil {
+		v := u.Query()
+		mr := v.Get("max_records")
+		return mr, nil
+	}
+	return "", err
 }
