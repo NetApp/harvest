@@ -2,6 +2,8 @@ package generate
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/tools/rest"
+	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/color"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/spf13/cobra"
@@ -12,6 +14,7 @@ import (
 	"strconv"
 	"strings"
 	"text/template"
+	"time"
 )
 
 type PollerInfo struct {
@@ -49,6 +52,7 @@ type PromTemplate struct {
 }
 
 type options struct {
+	Poller      string
 	loglevel    int
 	image       string
 	filesdPath  string
@@ -89,6 +93,13 @@ var fullCmd = &cobra.Command{
 	Run:   doDockerFull,
 }
 
+var metricCmd = &cobra.Command{
+	Use:    "metrics",
+	Short:  "generate Harvest metrics documentation",
+	Hidden: true,
+	Run:    doGenerateMetrics,
+}
+
 func doDockerFull(cmd *cobra.Command, _ []string) {
 	var config = cmd.Root().PersistentFlags().Lookup("config")
 	generateFullCompose(conf.ConfigPath(config.Value.String()))
@@ -101,6 +112,11 @@ func doSystemd(cmd *cobra.Command, _ []string) {
 func doDockerCompose(cmd *cobra.Command, _ []string) {
 	var config = cmd.Root().PersistentFlags().Lookup("config")
 	generateDockerCompose(conf.ConfigPath(config.Value.String()))
+}
+
+func doGenerateMetrics(cmd *cobra.Command, _ []string) {
+	var config = cmd.Root().PersistentFlags().Lookup("config")
+	generateMetrics(conf.ConfigPath(config.Value.String()))
 }
 
 const (
@@ -325,14 +341,57 @@ func writeAdminSystemd(configFp string) {
 	println(color.Colorize("✓", color.Green) + " HTTP SD file: " + harvestAdminService + " created")
 }
 
+func generateMetrics(path string) {
+	var (
+		poller     *conf.Poller
+		err        error
+		restClient *rest.Client
+		zapiClient *zapi.Client
+	)
+
+	err = conf.LoadHarvestConfig(path)
+	if err != nil {
+		panic(err)
+	}
+
+	if poller, _, err = rest.GetPollerAndAddr(opts.Poller); err != nil {
+		return
+	}
+
+	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
+	if restClient, err = rest.New(*poller, timeout); err != nil {
+		fmt.Printf("error creating new client %+v\n", err)
+		os.Exit(1)
+	}
+	if err = restClient.Init(2); err != nil {
+		fmt.Printf("error init rest client %+v\n", err)
+		os.Exit(1)
+	}
+
+	if zapiClient, err = zapi.New(*poller); err != nil {
+		fmt.Printf("error creating new client %+v\n", err)
+		os.Exit(1)
+	}
+
+	swaggerBytes = readSwaggerJSON()
+	restCounters := processRestCounters(restClient)
+	zapiCounters := processZapiCounters(zapiClient)
+	counters := mergeRestZapiCounters(restCounters, zapiCounters)
+	counters = ProcessExternalCounters(counters)
+	generateCounterTemplate(counters, restClient)
+}
+
 func init() {
 	Cmd.AddCommand(systemdCmd)
+	Cmd.AddCommand(metricCmd)
 	Cmd.AddCommand(dockerCmd)
 	dockerCmd.AddCommand(fullCmd)
 
 	dFlags := dockerCmd.PersistentFlags()
 	fFlags := fullCmd.PersistentFlags()
 
+	flags := metricCmd.PersistentFlags()
+	flags.StringVarP(&opts.Poller, "poller", "p", "", "name of poller (cluster), as defined in your harvest config")
 	dFlags.IntVarP(&opts.loglevel, "loglevel", "l", 2,
 		"logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)",
 	)

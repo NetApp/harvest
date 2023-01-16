@@ -11,9 +11,9 @@ counters:
   - ^node.name                            => node
   - latency
   - total_ops 
-  - total.read_throughput
-  - total.throughput
-  - total.write_throughput
+  - total.read_throughput                 => read_throughput
+  - total.throughput                      => throughput
+  - total.write_throughput                => write_throughput
   - access.total                          => access_total
   - close.total                           => close_total
   - commit.total                          => commit_total

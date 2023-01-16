@@ -322,6 +322,36 @@ func Avg(input []float64) float64 {
 	return 0
 }
 
+func ParseZAPIDisplay(obj string, path []string) string {
+	var (
+		ignore = map[string]int{"attributes": 0, "info": 0, "list": 0, "details": 0, "storage": 0}
+		added  = map[string]int{}
+		words  []string
+	)
+
+	for _, w := range strings.Split(obj, "_") {
+		ignore[w] = 0
+	}
+
+	for _, attribute := range path {
+		split := strings.Split(attribute, "-")
+		for _, word := range split {
+			if word == obj {
+				continue
+			}
+			if _, exists := ignore[word]; exists {
+				continue
+			}
+			if _, exists := added[word]; exists {
+				continue
+			}
+			words = append(words, word)
+			added[word] = 0
+		}
+	}
+	return strings.Join(words, "_")
+}
+
 func AddIntString(input string, value int) string {
 	i, _ := strconv.Atoi(input)
 	i = i + value
