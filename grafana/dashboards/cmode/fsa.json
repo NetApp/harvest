@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1673856522503,
+  "iteration": 1673962708519,
   "links": [
     {
       "asDropdown": true,
@@ -682,7 +682,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
+                    "color": "blue",
                     "value": null
                   }
                 ]
@@ -735,7 +735,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(volume_analytics_bytes_used_by_accessed_time{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",activity=~\"$Activity\",dir_name=\".\"}) by (time,order)",
+              "expr": "avg(volume_analytics_bytes_used_by_accessed_time{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",activity=~\"$Activity\",dir_name=\".\"}) by (time,order)",
               "instant": true,
               "interval": "",
               "legendFormat": "{{ volume }}",
@@ -832,7 +832,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
+                    "color": "blue",
                     "value": null
                   }
                 ]
@@ -885,7 +885,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(volume_analytics_bytes_used_percent_by_accessed_time{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",activity=~\"$Activity\",dir_name=\".\"}) by (time,order)",
+              "expr": "avg(volume_analytics_bytes_used_percent_by_accessed_time{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",activity=~\"$Activity\",dir_name=\".\"}) by (time,order)",
               "instant": true,
               "interval": "",
               "legendFormat": "{{ volume }} - {{ time }}",
@@ -983,7 +983,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
+                    "color": "blue",
                     "value": null
                   }
                 ]
@@ -1036,7 +1036,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(volume_analytics_bytes_used_by_modified_time{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",activity=~\"$Activity\",dir_name=\".\"}) by (time,order)",
+              "expr": "avg(volume_analytics_bytes_used_by_modified_time{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",activity=~\"$Activity\",dir_name=\".\"}) by (time,order)",
               "instant": true,
               "interval": "",
               "legendFormat": "{{ volume }}",
@@ -1133,7 +1133,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
+                    "color": "blue",
                     "value": null
                   }
                 ]
@@ -1186,7 +1186,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(volume_analytics_bytes_used_percent_by_modified_time{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",activity=~\"$Activity\",dir_name=\".\"}) by (time,order)",
+              "expr": "avg(volume_analytics_bytes_used_percent_by_modified_time{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",activity=~\"$Activity\",dir_name=\".\"}) by (time,order)",
               "instant": true,
               "interval": "",
               "legendFormat": "{{ volume }}",
@@ -1400,7 +1400,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
             "Weekly"
           ],
@@ -1549,7 +1549,7 @@
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {
