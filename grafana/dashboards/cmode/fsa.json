@@ -42,6 +42,12 @@
     },
     {
       "type": "panel",
+      "id": "text",
+      "name": "Text",
+      "version": ""
+    },
+    {
+      "type": "panel",
       "id": "timeseries",
       "name": "Time series",
       "version": ""
@@ -71,7 +77,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1673962708519,
+  "iteration": 1673969043543,
   "links": [
     {
       "asDropdown": true,
@@ -90,13 +96,30 @@
   ],
   "panels": [
     {
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 99,
+      "options": {
+        "content": "This dashboard works for ONTAP 9.8+. You must enable the Rest collector in your harvest config.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.1.8",
+      "title": "Important Information about FSA dashboard",
+      "type": "text"
+    },
+    {
       "collapsed": false,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 3
       },
       "id": 20,
       "panels": [],
@@ -126,7 +149,7 @@
         "h": 4,
         "w": 8,
         "x": 0,
-        "y": 1
+        "y": 4
       },
       "id": 95,
       "options": {
@@ -182,7 +205,7 @@
         "h": 4,
         "w": 8,
         "x": 8,
-        "y": 1
+        "y": 4
       },
       "id": 96,
       "options": {
@@ -239,7 +262,7 @@
         "h": 4,
         "w": 8,
         "x": 16,
-        "y": 1
+        "y": 4
       },
       "id": 97,
       "options": {
@@ -299,7 +322,7 @@
         "h": 5,
         "w": 4,
         "x": 0,
-        "y": 5
+        "y": 8
       },
       "id": 22,
       "options": {
@@ -388,7 +411,7 @@
         "h": 10,
         "w": 20,
         "x": 4,
-        "y": 5
+        "y": 8
       },
       "id": 86,
       "options": {
@@ -443,7 +466,7 @@
         "h": 5,
         "w": 4,
         "x": 0,
-        "y": 10
+        "y": 13
       },
       "id": 23,
       "options": {
@@ -542,7 +565,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 15
+        "y": 18
       },
       "id": 25,
       "options": {
@@ -653,7 +676,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 25
+        "y": 28
       },
       "id": 90,
       "panels": [
@@ -1402,10 +1425,10 @@
         "current": {
           "selected": true,
           "text": [
-            "Weekly"
+            "Monthly"
           ],
           "value": [
-            "Weekly"
+            "Monthly"
           ]
         },
         "description": null,
@@ -1549,7 +1572,7 @@
     ]
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-6h",
     "to": "now"
   },
   "timepicker": {
