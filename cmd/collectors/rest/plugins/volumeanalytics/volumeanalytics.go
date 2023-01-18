@@ -118,14 +118,6 @@ func (v *VolumeAnalytics) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		v.data[k].SetGlobalLabels(data.GetGlobalLabels())
 	}
 
-	for _, k := range metrics {
-		err := matrix.CreateMetric(k, v.data[explorer])
-		if err != nil {
-			v.Logger.Warn().Err(err).Str("key", k).Msg("error while creating metric")
-			return nil, err
-		}
-	}
-
 	if ontapVersion.GreaterThanOrEqual(version98After) {
 		for instanceID, dataInstance := range data.GetInstances() {
 			if records, analytics, err := v.getAnalyticsData(instanceID); err != nil {

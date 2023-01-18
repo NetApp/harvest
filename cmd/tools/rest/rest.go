@@ -286,7 +286,7 @@ func Fetch(client *Client, href string) ([]gjson.Result, error) {
 	maxRecords := 0
 	if strings.Contains(href, "max_records=") {
 		mr, err := util.ParseURLQuery(href)
-		if err != nil {
+		if err == nil {
 			if mri, err := strconv.Atoi(mr); err == nil {
 				maxRecords = mri
 			}
