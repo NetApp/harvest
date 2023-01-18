@@ -20,8 +20,11 @@ plugins:
       schedule:
         - data: 900s  # should be multiple of data poll duration
   - LabelAgent:
-      include_equals:
-        - type `data`
+      replace:
+        - type root_svm `data` `No`
+        - type root_svm `node` `Yes`
+        - type root_svm `admin` `Yes`
+        - type root_svm `system` `Yes`
       value_to_num:
         - new_status state online online `0`
         - ldap_signed ldap_session_security sign sign `0`
@@ -30,6 +33,7 @@ plugins:
 export_options:
   instance_keys:
     - svm
+    - root_svm
   instance_labels:
     - state
     - anti_ransomware_state
@@ -51,3 +55,4 @@ export_options:
     - smb_encryption_required
     - smb_signing_required
     - type
+

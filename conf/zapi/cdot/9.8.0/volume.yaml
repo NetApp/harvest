@@ -78,8 +78,6 @@ plugins:
   - LabelAgent:
     exclude_equals:
       - style `flexgroup_constituent`
-      - node_root `true`
-      - svm_root `true`
     # metric label zapi_value rest_value `default_value`
     value_to_num:
       - new_status state online online `0`
@@ -99,6 +97,10 @@ plugins:
 #      - volume `MDV_aud_.+`
     replace:
       - style style `flexgroup_constituent` `flexgroup`
+      - node_root root_volume `false` `No`
+      - svm_root root_volume `false` `No`
+      - node_root root_volume `true` `Yes`
+      - svm_root root_volume `true` `Yes`
   - Aggregator:
     - volume<style=flexgroup>volume node,svm,aggr,style
 
@@ -109,6 +111,7 @@ export_options:
     - svm
     - aggr
     - style
+    - root_volume
   instance_labels:
     - state
     - is_sis_volume

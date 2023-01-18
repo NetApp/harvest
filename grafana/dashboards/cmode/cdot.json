@@ -2028,6 +2028,35 @@
         "type": "custom"
       },
       {
+        "current": {
+          "selected": true,
+          "text": "No",
+          "value": "No"
+        },
+        "description": "",
+        "hide": 0,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "ShowRoot",
+        "options": [
+          {
+            "selected": true,
+            "text": "No",
+            "value": "No"
+          },
+          {
+            "selected": false,
+            "text": "Yes",
+            "value": "Yes"
+          }
+        ],
+        "query": "No,Yes",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
         "current": {},
         "definition": "query_result(topk($TopResources, sum by (cluster) (avg_over_time(node_cifs_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]))))",
         "hide": 2,
@@ -2194,14 +2223,14 @@
       },
       {
         "current": {},
-        "definition": "query_result(topk($TopResources,(100 * sum by (cluster, svm) (volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) /   sum by (cluster, svm) (volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}))))",
+        "definition": "query_result(topk($TopResources,((100 * sum by (cluster, svm) (volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) /   sum by (cluster, svm) (volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})) * on(cluster,svm) (svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",root_svm=~\"No|$ShowRoot\"}))))",
         "hide": 2,
         "includeAll": true,
         "multi": true,
         "name": "TopSVMUsed",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources,(100 * sum by (cluster, svm) (volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) /   sum by (cluster, svm) (volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}))))",
+          "query": "query_result(topk($TopResources,((100 * sum by (cluster, svm) (volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) /   sum by (cluster, svm) (volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})) * on(cluster,svm) (svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",root_svm=~\"No|$ShowRoot\"}))))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2212,14 +2241,14 @@
       },
       {
         "current": {},
-        "definition": "query_result(topk($TopResources, (100 * volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} / volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})))",
+        "definition": "query_result(topk($TopResources, (100 * volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",root_volume=~\"No|$ShowRoot\"} / volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",root_volume=~\"No|$ShowRoot\"})))",
         "hide": 2,
         "includeAll": true,
         "multi": true,
         "name": "TopVolumeUsed",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, (100 * volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} / volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})))",
+          "query": "query_result(topk($TopResources, (100 * volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",root_volume=~\"No|$ShowRoot\"} / volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",root_volume=~\"No|$ShowRoot\"})))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,

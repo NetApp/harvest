@@ -74,11 +74,12 @@ plugins:
   - LabelAgent:
       exclude_equals:
         - style `flexgroup_constituent`
-        - svm_root `true`
       value_to_num:
         - new_status state online online `0`
       replace:
         - style style `flexgroup_constituent` `flexgroup`
+        - svm_root root_volume `false` `No`
+        - svm_root root_volume `true` `Yes`
       # To prevent visibility of transient volumes, uncomment the following lines
 #      exclude_regex:
 #        # Exclude SnapProtect/CommVault Intellisnap, Clone volumes have a “_CVclone” suffix
@@ -103,6 +104,7 @@ export_options:
     - svm
     - aggr
     - style
+    - root_volume
   instance_labels:
     - state
     - is_sis_volume
