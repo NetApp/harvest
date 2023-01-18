@@ -481,7 +481,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Must select SnapMirrorID for detail of single relationship",
+      "description": "Must select Source Volume/Destination Volume for detail of single relationship",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -803,18 +803,6 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "SnapMirrorID"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 150
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "Source SVM"
             },
             "properties": [
@@ -894,7 +882,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "avg (snapmirror_last_transfer_duration{source_cluster=~\"$SourceCluster\",relationship_id=~\"$SnapMirrorID\"}) by (relationship_id)",
+          "expr": "avg (snapmirror_last_transfer_duration{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\"}) by (relationship_id)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -902,7 +890,7 @@
           "refId": "C"
         },
         {
-          "expr": "avg(snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",relationship_id=~\"$SnapMirrorID\"}) by (relationship_id)",
+          "expr": "avg(snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\"}) by (relationship_id)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -910,7 +898,7 @@
           "refId": "A"
         },
         {
-          "expr": "snapmirror_lag_time{source_cluster=~\"$SourceCluster\",relationship_id=~\"$SnapMirrorID\"}",
+          "expr": "snapmirror_lag_time{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -976,7 +964,6 @@
               "group_type": "Group",
               "healthy": "Health",
               "last_transfer_type": "Last Transfer",
-              "relationship_id": "SnapMirrorID",
               "relationship_status": "Status",
               "relationship_type": "Type",
               "source_node": "Source Node",
@@ -1005,7 +992,6 @@
                 "Size",
                 "Duration",
                 "Lag",
-                "SnapMirrorID",
                 "Source Cluster",
                 "Destination Cluster"
               ]
@@ -1017,7 +1003,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Must select SnapMirrorID for detail of single relationship",
+      "description": "Must select Source Volume/Destination Volume for detail of single relationship",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1101,7 +1087,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": true,
-          "expr": "snapmirror_last_transfer_duration{source_cluster=~\"$SourceCluster\",relationship_id=~\"$SnapMirrorID\"}",
+          "expr": "snapmirror_last_transfer_duration{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\"}",
           "hide": false,
           "interval": "",
           "legendFormat": "{{destination_volume}} - {{source_volume}}",
@@ -1115,7 +1101,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Must select SnapMirrorID for detail of single relationship",
+      "description": "Must select Source Volume/Destination Volume for detail of single relationship",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1200,7 +1186,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": true,
-          "expr": "snapmirror_lag_time{source_cluster=~\"$SourceCluster\",relationship_id=~\"$SnapMirrorID\"}",
+          "expr": "snapmirror_lag_time{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\"}",
           "hide": false,
           "interval": "",
           "legendFormat": "{{destination_volume}} - {{source_volume}}",
@@ -1214,7 +1200,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Must select SnapMirrorID for detail of single relationship",
+      "description": "Must select Source Volume/Destination Volume for detail of single relationship",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1298,7 +1284,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": true,
-          "expr": "snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",relationship_id=~\"$SnapMirrorID\"}",
+          "expr": "snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\"}",
           "hide": false,
           "interval": "",
           "legendFormat": "{{destination_volume}} - {{source_volume}}",
@@ -4794,14 +4780,43 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, relationship_id)",
+        "definition": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, destination_volume)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
+        "label": null,
         "multi": true,
-        "name": "SnapMirrorID",
+        "name": "DestinationVolume",
         "options": [],
         "query": {
-          "query": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, relationship_id)",
+          "query": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, destination_volume)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, source_volume)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "SourceVolume",
+        "options": [],
+        "query": {
+          "query": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, source_volume)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
