@@ -481,7 +481,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Must select Source Volume/Destination Volume for detail of single relationship",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -803,30 +803,6 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "ID"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 66
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Relationship ID"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 34
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "Source SVM"
             },
             "properties": [
@@ -906,7 +882,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "avg (snapmirror_last_transfer_duration{source_cluster=~\"$SourceCluster\"}) by (relationship_id)",
+          "expr": "avg (snapmirror_last_transfer_duration{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\"}) by (relationship_id)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -914,7 +890,7 @@
           "refId": "C"
         },
         {
-          "expr": "avg(snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\"}) by (relationship_id)",
+          "expr": "avg(snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\"}) by (relationship_id)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -922,7 +898,7 @@
           "refId": "A"
         },
         {
-          "expr": "snapmirror_lag_time{source_cluster=~\"$SourceCluster\"}",
+          "expr": "snapmirror_lag_time{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -954,7 +930,7 @@
               "instance": true,
               "job": true,
               "last_transfer_type": false,
-              "relationship_id": true,
+              "relationship_id": false,
               "relationship_type": true,
               "schedule": true,
               "source_node": true,
@@ -988,7 +964,6 @@
               "group_type": "Group",
               "healthy": "Health",
               "last_transfer_type": "Last Transfer",
-              "relationship_id": "ID",
               "relationship_status": "Status",
               "relationship_type": "Type",
               "source_node": "Source Node",
@@ -1017,7 +992,6 @@
                 "Size",
                 "Duration",
                 "Lag",
-                "ID",
                 "Source Cluster",
                 "Destination Cluster"
               ]
@@ -1028,13 +1002,308 @@
       "type": "table"
     },
     {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Must select Source Volume/Destination Volume for detail of single relationship",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 30,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 17
+      },
+      "id": 136,
+      "links": [],
+      "options": {
+        "legend": {
+          "calcs": [
+            "min",
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": true,
+          "expr": "snapmirror_last_transfer_duration{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{destination_volume}} - {{source_volume}}",
+          "refCount": 0,
+          "refId": "B",
+          "textEditor": false
+        }
+      ],
+      "title": "Transfer Duration",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Must select Source Volume/Destination Volume for detail of single relationship",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 30,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "links": [],
+          "min": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 17
+      },
+      "id": 134,
+      "links": [],
+      "options": {
+        "legend": {
+          "calcs": [
+            "min",
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": true,
+          "expr": "snapmirror_lag_time{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{destination_volume}} - {{source_volume}}",
+          "refCount": 0,
+          "refId": "B",
+          "textEditor": false
+        }
+      ],
+      "title": "Lag Time",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Must select Source Volume/Destination Volume for detail of single relationship",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 30,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 17
+      },
+      "id": 135,
+      "links": [],
+      "options": {
+        "legend": {
+          "calcs": [
+            "min",
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": true,
+          "expr": "snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{destination_volume}} - {{source_volume}}",
+          "refCount": 0,
+          "refId": "B",
+          "textEditor": false
+        }
+      ],
+      "title": "Transfer Data",
+      "type": "timeseries"
+    },
+    {
       "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 17
+        "y": 26
       },
       "id": 5,
       "panels": [
@@ -1097,7 +1366,7 @@
             "h": 9,
             "w": 6,
             "x": 0,
-            "y": 18
+            "y": 27
           },
           "id": 6,
           "links": [],
@@ -1194,7 +1463,7 @@
             "h": 9,
             "w": 6,
             "x": 6,
-            "y": 18
+            "y": 27
           },
           "id": 31,
           "links": [],
@@ -1301,7 +1570,7 @@
             "h": 9,
             "w": 6,
             "x": 12,
-            "y": 18
+            "y": 27
           },
           "id": 32,
           "links": [],
@@ -1407,7 +1676,7 @@
             "h": 9,
             "w": 6,
             "x": 18,
-            "y": 18
+            "y": 27
           },
           "id": 33,
           "links": [],
@@ -1511,7 +1780,7 @@
             "h": 9,
             "w": 6,
             "x": 0,
-            "y": 27
+            "y": 36
           },
           "id": 11,
           "links": [],
@@ -1608,7 +1877,7 @@
             "h": 9,
             "w": 6,
             "x": 6,
-            "y": 27
+            "y": 36
           },
           "id": 34,
           "links": [],
@@ -1714,7 +1983,7 @@
             "h": 9,
             "w": 6,
             "x": 12,
-            "y": 27
+            "y": 36
           },
           "id": 35,
           "links": [],
@@ -1820,7 +2089,7 @@
             "h": 9,
             "w": 6,
             "x": 18,
-            "y": 27
+            "y": 36
           },
           "id": 36,
           "links": [],
@@ -1876,7 +2145,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 18
+        "y": 27
       },
       "id": 8,
       "panels": [
@@ -1939,7 +2208,7 @@
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 19
+            "y": 28
           },
           "id": 9,
           "links": [],
@@ -2035,7 +2304,7 @@
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 19
+            "y": 28
           },
           "id": 10,
           "links": [],
@@ -2082,7 +2351,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 28
       },
       "id": 45,
       "panels": [
@@ -2141,7 +2410,7 @@
             "h": 12,
             "w": 4,
             "x": 0,
-            "y": 20
+            "y": 29
           },
           "id": 101,
           "options": {
@@ -2236,7 +2505,7 @@
             "h": 6,
             "w": 4,
             "x": 4,
-            "y": 20
+            "y": 29
           },
           "id": 120,
           "links": [],
@@ -2299,7 +2568,7 @@
             "h": 6,
             "w": 4,
             "x": 8,
-            "y": 20
+            "y": 29
           },
           "id": 122,
           "links": [],
@@ -2390,7 +2659,7 @@
             "h": 12,
             "w": 4,
             "x": 12,
-            "y": 20
+            "y": 29
           },
           "id": 125,
           "options": {
@@ -2483,7 +2752,7 @@
             "h": 6,
             "w": 4,
             "x": 16,
-            "y": 20
+            "y": 29
           },
           "id": 116,
           "links": [],
@@ -2546,7 +2815,7 @@
             "h": 6,
             "w": 4,
             "x": 20,
-            "y": 20
+            "y": 29
           },
           "id": 117,
           "links": [],
@@ -2609,7 +2878,7 @@
             "h": 6,
             "w": 4,
             "x": 4,
-            "y": 26
+            "y": 35
           },
           "id": 121,
           "links": [],
@@ -2683,7 +2952,7 @@
             "h": 6,
             "w": 4,
             "x": 8,
-            "y": 26
+            "y": 35
           },
           "id": 124,
           "links": [],
@@ -2746,7 +3015,7 @@
             "h": 6,
             "w": 4,
             "x": 16,
-            "y": 26
+            "y": 35
           },
           "id": 118,
           "links": [],
@@ -2809,7 +3078,7 @@
             "h": 6,
             "w": 4,
             "x": 20,
-            "y": 26
+            "y": 35
           },
           "id": 119,
           "links": [],
@@ -2958,7 +3227,7 @@
             "h": 13,
             "w": 12,
             "x": 0,
-            "y": 32
+            "y": 41
           },
           "id": 126,
           "options": {
@@ -3169,7 +3438,7 @@
             "h": 13,
             "w": 12,
             "x": 12,
-            "y": 32
+            "y": 41
           },
           "id": 127,
           "options": {
@@ -3278,7 +3547,7 @@
             "h": 13,
             "w": 12,
             "x": 0,
-            "y": 45
+            "y": 54
           },
           "id": 133,
           "options": {
@@ -3349,7 +3618,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 20
+        "y": 29
       },
       "id": 42,
       "panels": [
@@ -3377,7 +3646,7 @@
             "h": 12,
             "w": 5,
             "x": 0,
-            "y": 21
+            "y": 30
           },
           "id": 128,
           "options": {
@@ -3479,7 +3748,7 @@
             "h": 6,
             "w": 3,
             "x": 5,
-            "y": 21
+            "y": 30
           },
           "id": 109,
           "links": [],
@@ -3542,7 +3811,7 @@
             "h": 6,
             "w": 3,
             "x": 8,
-            "y": 21
+            "y": 30
           },
           "id": 110,
           "links": [],
@@ -3605,7 +3874,7 @@
             "h": 6,
             "w": 3,
             "x": 11,
-            "y": 21
+            "y": 30
           },
           "id": 111,
           "links": [],
@@ -3696,7 +3965,7 @@
             "h": 12,
             "w": 5,
             "x": 14,
-            "y": 21
+            "y": 30
           },
           "id": 130,
           "options": {
@@ -3772,7 +4041,7 @@
             "h": 6,
             "w": 5,
             "x": 19,
-            "y": 21
+            "y": 30
           },
           "id": 114,
           "links": [],
@@ -3834,7 +4103,7 @@
             "h": 6,
             "w": 3,
             "x": 5,
-            "y": 27
+            "y": 36
           },
           "id": 113,
           "links": [],
@@ -3897,7 +4166,7 @@
             "h": 6,
             "w": 3,
             "x": 8,
-            "y": 27
+            "y": 36
           },
           "id": 112,
           "links": [],
@@ -3960,7 +4229,7 @@
             "h": 6,
             "w": 5,
             "x": 19,
-            "y": 27
+            "y": 36
           },
           "id": 115,
           "links": [],
@@ -4109,7 +4378,7 @@
             "h": 14,
             "w": 14,
             "x": 0,
-            "y": 33
+            "y": 42
           },
           "id": 129,
           "options": {
@@ -4258,7 +4527,7 @@
             "h": 14,
             "w": 10,
             "x": 14,
-            "y": 33
+            "y": 42
           },
           "id": 131,
           "options": {
@@ -4496,6 +4765,58 @@
         "options": [],
         "query": {
           "query": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, source_vserver)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, destination_volume)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "DestinationVolume",
+        "options": [],
+        "query": {
+          "query": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, destination_volume)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, source_volume)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "SourceVolume",
+        "options": [],
+        "query": {
+          "query": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, source_volume)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
