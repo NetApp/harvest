@@ -4,11 +4,11 @@ object:                   fcvi
 
 counters:
   - ^^id
-  - ^name                   => fcvi
-  - ^node.name              => node
-  - rdma.write_throughout   => rdma_write_throughput
-  - rdma.write_ops          => rdma_write_ops
-  - rdma.write_avg_latency  => rdma_write_avg_latency
+  - ^name                       => fcvi
+  - ^node.name                  => node
+  - rdma.write_throughput       => rdma_write_throughput
+  - rdma.write_ops              => rdma_write_ops
+  - rdma.write_average_latency  => rdma_write_avg_latency
 
 export_options:
   instance_keys:

@@ -1,6 +1,6 @@
 # Harvest Templates and Metrics
 
-Harvest collects ONTAP counter information, augments it, and stores it in a time-series DB.
+Harvest collects ONTAP counter information, augments it, and stores it in a time-series DB. Refer [ONTAP Metrics](../ontap-metrics.md) for details about ONTAP metrics exposed by Harvest. 
 
 ```mermaid
 flowchart RL

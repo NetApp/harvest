@@ -147,3 +147,27 @@
   grafanaJson: KiBs
   grafanaDisplay: kibibytes/sec
   comment: ""
+
+- metric: flashpool_read_cache_ins_rate
+  ontapUnit: per_sec
+  grafanaJson: ops
+  grafanaDisplay: Blocks/sec(ops)
+  comment: Cache insert rate blks/sec
+
+- metric: flashpool_wc_write_blks_total
+  ontapUnit: per_sec
+  grafanaJson: ops
+  grafanaDisplay: Blocks/sec(ops)
+  comment: Number of write-cache blocks written per second
+
+- metric: flashpool_evict_destage_rate
+  ontapUnit: per_sec
+  grafanaJson: ops
+  grafanaDisplay: Blocks/sec(ops)
+  comment: Number of block destage per second
+
+- metric: flashpool_evict_remove_rate
+  ontapUnit: per_sec
+  grafanaJson: ops
+  grafanaDisplay: Blocks/sec(ops)
+  comment: Number of block free per second

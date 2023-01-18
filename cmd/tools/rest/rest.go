@@ -57,7 +57,7 @@ var showCmd = &cobra.Command{
 	Run:       doShow,
 }
 
-func readOrDownloadSwagger() (string, error) {
+func ReadOrDownloadSwagger(pName string) (string, error) {
 	var (
 		poller         *conf.Poller
 		err            error
@@ -66,7 +66,7 @@ func readOrDownloadSwagger() (string, error) {
 		swagTime       time.Time
 	)
 
-	if poller, addr, err = getPollerAndAddr(); err != nil {
+	if poller, addr, err = GetPollerAndAddr(pName); err != nil {
 		return "", err
 	}
 
@@ -137,7 +137,7 @@ func validateArgs(strings []string) check {
 func doCmd() {
 	switch args.Item {
 	case "apis", "params", "models":
-		swaggerPath, err := readOrDownloadSwagger()
+		swaggerPath, err := ReadOrDownloadSwagger(args.Poller)
 		if err != nil {
 			return // everything logged earlier
 		}
@@ -170,7 +170,7 @@ func doData() {
 		client *Client
 	)
 
-	if poller, _, err = getPollerAndAddr(); err != nil {
+	if poller, _, err = GetPollerAndAddr(args.Poller); err != nil {
 		return
 	}
 
@@ -204,17 +204,17 @@ func doData() {
 	fmt.Printf("%s\n", pretty)
 }
 
-func getPollerAndAddr() (*conf.Poller, string, error) {
+func GetPollerAndAddr(pName string) (*conf.Poller, string, error) {
 	var (
 		poller *conf.Poller
 		err    error
 	)
-	if poller, err = conf.PollerNamed(args.Poller); err != nil {
-		fmt.Printf("Poller named [%s] does not exist\n", args.Poller)
+	if poller, err = conf.PollerNamed(pName); err != nil {
+		fmt.Printf("Poller named [%s] does not exist\n", pName)
 		return nil, "", err
 	}
 	if poller.Addr == "" {
-		fmt.Printf("Poller named [%s] does not have a valid addr=[]\n", args.Poller)
+		fmt.Printf("Poller named [%s] does not have a valid addr=[]\n", pName)
 		return nil, "", err
 	}
 	return poller, poller.Addr, nil

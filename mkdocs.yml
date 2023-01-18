@@ -38,6 +38,7 @@ nav:
   - Reference:
       - 'Plugins': 'plugins.md'
       - 'Matrix': 'resources/matrix.md'
+      - 'ONTAP Metrics': 'ontap-metrics.md'
       - 'Templates And Metrics': 'resources/templates-and-metrics.md'
   - About:
       - 'License': 'license.md'

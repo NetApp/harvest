@@ -13,12 +13,12 @@ counters:
   - invalidates
   - usage
   - hit.total                => hit
-  - hit.normal_level_zero
+  - hit.normal_level_zero    => hit_normal_lev0
   - hit.metadata_file        => hit_metadata_file
   - hit.directory            => hit_directory
   - hit.indirect             => hit_indirect
-  - miss.total               => miss_total
-  - miss.normal_level_zero   => miss_normal_level_zero
+  - miss.total               => miss
+  - miss.normal_level_zero   => miss_normal_lev0
   - miss.metadata_file       => miss_metadata_file
   - miss.directory           => miss_directory
   - miss.indirect            => miss_indirect
