@@ -1,0 +1,84 @@
+This document contains the details about Harvest Metrics and their relevant ONTAP ZAPI and REST API mapping.
+```
+Creation Date : {{ .CounterMetaData.Date }}
+ONTAP Version: {{ .CounterMetaData.OntapVersion }}
+```
+## Understanding the structure
+
+Click on `Details` below to help understand the structure of [Metrics](#metrics).
+<details>
+  <summary>Details</summary>
+
+```yaml
+- Harvest Metric: Name of metric exported by Harvest
+  Description: Description of the metric
+  ZAPI:
+    endpoint: Name of ZAPI invoked to generate this metric
+    metric: Metric name in ZAPI
+    template: ZAPI template path
+    unit: Unit of the counter. Possible values= per_sec, b_per_sec (bytes/s), kb_per_sec (Kbytes/s),mb_per_sec (Mbytes/s), percent, millisec, microsec, sec, or none
+    type: Comma separated list of properties of the counter.  The counter properties determine how raw counter values should be interpreted.Possible values= raw, rate, delta, percent, string,no-display and no-zero-values.
+    base: Name of the counter used as the denominator to calculate values of counters involving averages and percentages.
+  REST:
+    endpoint: Name of REST API invoked to generate this metric
+    metric: Metric name in REST API
+    template: REST template path
+    unit: Unit of the counter. Possible values: per_sec, b_per_sec (bytes/s), kb_per_sec (Kbytes/s),mb_per_sec (Mbytes/s), percent, millisec, microsec, sec, or none
+    type: Comma separated list of properties of the counter.  The counter properties determine how raw counter values should be interpreted.Possible values: raw, rate, delta, percent, string,no-display and no-zero-values.
+    base: Name of the counter used as the denominator to calculate values of counters involving averages and percentages.
+```
+
+</details>
+
+## Metrics
+
+```yaml
+{{range .Counters}}
+- Harvest Metric: {{ .Name }}
+  {{- if .Description }}
+  Description: {{ .Description }}
+  {{- end}}
+  {{- if .ZapiAPI }}
+  ZAPI:
+    {{- if .ZapiAPI }}
+    endpoint: {{ .ZapiAPI }}
+    {{- end}}
+    {{- if .ZapiONTAPCounter }}
+    metric: {{ .ZapiONTAPCounter }}
+    {{- end}}
+    {{- if .ZapiTemplate }}
+    template: {{ .ZapiTemplate }}
+    {{- end}}
+    {{- if .ZapiUnit }}
+    unit: {{ .ZapiUnit }}
+    {{- end}}
+    {{- if .ZapiType }}
+    type: {{ .ZapiType }}
+    {{- end}}
+    {{- if .ZapiBaseCounter }}
+    base: {{ .ZapiBaseCounter }}
+    {{- end}}
+  {{- end}}
+  {{- if .RestAPI }}
+  REST:
+    {{- if .RestAPI }}
+    endpoint: {{ .RestAPI }}
+    {{- end}}
+    {{- if .RestONTAPCounter }}
+    metric: {{ .RestONTAPCounter }}
+    {{- end}}
+    {{- if .RestTemplate }}
+    template: {{ .RestTemplate }}
+    {{- end}}
+    {{- if .RestUnit }}
+    unit: {{ .RestUnit }}
+    {{- end}}
+    {{- if .RestType }}
+    type: {{ .RestType }}
+    {{- end}}
+    {{- if .RestBaseCounter }}
+    base: {{ .RestBaseCounter }}
+    {{- end}}
+  {{- end}}
+{{end}}
+```

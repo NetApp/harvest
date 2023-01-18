@@ -6,6 +6,7 @@ object:                   flashpool
 counters:
   - instance_name
   - node_name             => node
+  - hya_aggr_name         => aggr
   - ssd_total
   - ssd_total_used
   - ssd_available
@@ -25,9 +26,9 @@ counters:
   - evict_destage_rate
 
 override:
-  - read_ops_replaced_percent: average
   - write_blks_replaced_percent: average
 
 export_options:
   instance_keys:
     - node
+    - aggr

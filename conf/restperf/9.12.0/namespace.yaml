@@ -11,11 +11,11 @@ counters:
   - read_ops
   - write_ops
   - other_ops
-  - average_read_latency
-  - average_write_latency
-  - average_other_latency
-  - remote.read_data          => remote_read_data
-  - remote.read_ops           => remote_read_ops
+  - average_read_latency      => avg_read_latency
+  - average_write_latency     => avg_write_latency
+  - average_other_latency     => avg_other_latency
+  - remote.read_data          => remote_bytes
+  - remote.read_ops           => remote_ops
 
 override:
 
