@@ -15,9 +15,9 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"path"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -299,20 +299,6 @@ func parseProperties(instanceData gjson.Result, property string) gjson.Result {
 	return gjson.Result{}
 }
 
-var metricTypeRegex = regexp.MustCompile(`\[(.*?)]`)
-
-func arrayMetricToString(value string) string {
-	r := strings.NewReplacer("\n", "", " ", "", "\"", "")
-	s := r.Replace(value)
-
-	match := metricTypeRegex.FindAllStringSubmatch(s, -1)
-	if match != nil {
-		name := match[0][1]
-		return name
-	}
-	return value
-}
-
 func parseMetricResponse(instanceData gjson.Result, metric string) *metricResponse {
 	instanceDataS := instanceData.String()
 	t := gjson.Get(instanceDataS, "counters.#.name")
@@ -336,8 +322,8 @@ func parseMetricResponse(instanceData gjson.Result, metric string) *metricRespon
 			}
 			if values.String() != "" {
 				return &metricResponse{
-					value: arrayMetricToString(values.String()),
-					label: arrayMetricToString(labels.String()), isArray: true,
+					value: util.ArrayMetricToString(values.String()),
+					label: util.ArrayMetricToString(labels.String()), isArray: true,
 				}
 			}
 
@@ -346,14 +332,14 @@ func parseMetricResponse(instanceData gjson.Result, metric string) *metricRespon
 				var finalLabels []string
 				var finalValues []string
 				subLabelsS := labels.String()
-				subLabelsS = arrayMetricToString(subLabelsS)
+				subLabelsS = util.ArrayMetricToString(subLabelsS)
 				subLabelSlice := strings.Split(subLabelsS, ",")
 				ls := subLabels.Array()
 				vs := subValues.Array()
 				var vLen int
 				for i, v := range vs {
 					label := ls[i].String()
-					m := arrayMetricToString(v.String())
+					m := util.ArrayMetricToString(v.String())
 					ms := strings.Split(m, ",")
 					for range ms {
 						finalLabels = append(finalLabels, label+arrayKeyToken+subLabelSlice[vLen])

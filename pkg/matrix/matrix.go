@@ -174,6 +174,10 @@ func (m *Matrix) RemoveMetric(key string) {
 	delete(m.metrics, key)
 }
 
+func (m *Matrix) PurgeMetrics() {
+	m.metrics = make(map[string]*Metric, 0)
+}
+
 func (m *Matrix) RemoveExceptMetric(key string) {
 	prev, ok := m.metrics[key]
 	if !ok {

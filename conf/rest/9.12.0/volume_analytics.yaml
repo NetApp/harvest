@@ -1,0 +1,20 @@
+name:                     VolumeAnalytics
+query:                    api/storage/volumes
+object:                   volume
+
+counters:
+  - ^^uuid                                        => instance_uuid
+  - ^name                                         => volume
+  - ^svm.name                                     => svm
+  - filter:
+      - analytics.state=on
+      - order_by=space.used desc
+      - max_records=20
+
+plugins:
+  - VolumeAnalytics:
+      - MaxDirectoryCount: 100
+
+
+
+

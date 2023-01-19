@@ -6,12 +6,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -273,14 +275,30 @@ func FetchForCli(client *Client, href string, records *[]any, downloadAll bool) 
 	return nil
 }
 
-// Fetch used in Rest Collector
+// Fetch collects all records
 func Fetch(client *Client, href string) ([]gjson.Result, error) {
 	var (
 		records []gjson.Result
 		result  []gjson.Result
 		err     error
 	)
-	err = fetch(client, href, &records)
+	downloadAll := true
+	maxRecords := 0
+	if strings.Contains(href, "max_records") {
+		mr, err := util.GetQueryParam(href, "max_records")
+		if err != nil {
+			return nil, err
+		}
+		if mr != "" {
+			if mri, err := strconv.Atoi(mr); err != nil {
+				return nil, err
+			} else {
+				maxRecords = mri
+			}
+			downloadAll = maxRecords == 0
+		}
+	}
+	err = fetch(client, href, &records, downloadAll, int64(maxRecords))
 	if err != nil {
 		return nil, err
 	}
@@ -290,7 +308,45 @@ func Fetch(client *Client, href string) ([]gjson.Result, error) {
 	return result, nil
 }
 
-func fetch(client *Client, href string, records *[]gjson.Result) error {
+func FetchAnalytics(client *Client, href string) ([]gjson.Result, gjson.Result, error) {
+	var (
+		records   []gjson.Result
+		analytics = &gjson.Result{}
+		result    []gjson.Result
+		err       error
+	)
+	downloadAll := true
+	maxRecords := 0
+	if strings.Contains(href, "max_records") {
+		mr, err := util.GetQueryParam(href, "max_records")
+		if err != nil {
+			return []gjson.Result{}, gjson.Result{}, err
+		}
+		if mr != "" {
+			if mri, err := strconv.Atoi(mr); err != nil {
+				return []gjson.Result{}, gjson.Result{}, err
+			} else {
+				maxRecords = mri
+			}
+		}
+		downloadAll = maxRecords == 0
+	}
+	err = fetchAnalytics(client, href, &records, analytics, downloadAll, int64(maxRecords))
+	if err != nil {
+		return nil, gjson.Result{}, err
+	}
+	for _, r := range records {
+		result = append(result, r.Array()...)
+	}
+
+	if len(result) == 0 {
+		return []gjson.Result{}, gjson.Result{}, nil
+	}
+
+	return result, *analytics, nil
+}
+
+func fetch(client *Client, href string, records *[]gjson.Result, downloadAll bool, maxRecords int64) error {
 	getRest, err := client.GetRest(href)
 	if err != nil {
 		return fmt.Errorf("error making request %w", err)
@@ -317,23 +373,70 @@ func fetch(client *Client, href string, records *[]gjson.Result) error {
 		// extract returned records since paginated records need to be merged into a single lists
 		if numRecords.Exists() && numRecords.Int() > 0 {
 			*records = append(*records, data)
+			if !downloadAll {
+				maxRecords = maxRecords - numRecords.Int()
+			}
+			if maxRecords <= 0 {
+				return nil
+			}
 		}
 
 		// If all results are desired and there is a next link, follow it
-		if next.Exists() {
+		if next.Exists() && downloadAll {
 			nextLink := next.String()
 			if nextLink != "" {
 				if nextLink == href {
 					// nextLink is same as previous link, no progress is being made, exit
 					return nil
 				}
-				err := fetch(client, nextLink, records)
+				err := fetch(client, nextLink, records, downloadAll, maxRecords)
 				if err != nil {
 					return err
 				}
 			}
 		}
 	}
+	return nil
+}
+
+func fetchAnalytics(client *Client, href string, records *[]gjson.Result, analytics *gjson.Result, downloadAll bool, maxRecords int64) error {
+	getRest, err := client.GetRest(href)
+	if err != nil {
+		return fmt.Errorf("error making request %w", err)
+	}
+
+	output := gjson.GetManyBytes(getRest, "records", "num_records", "_links.next.href", "analytics")
+	data := output[0]
+	numRecords := output[1]
+	next := output[2]
+	*analytics = output[3]
+
+	// extract returned records since paginated records need to be merged into a single lists
+	if numRecords.Exists() && numRecords.Int() > 0 {
+		*records = append(*records, data)
+		if !downloadAll {
+			maxRecords = maxRecords - numRecords.Int()
+		}
+		if maxRecords <= 0 {
+			return nil
+		}
+	}
+
+	// If all results are desired and there is a next link, follow it
+	if next.Exists() && downloadAll {
+		nextLink := next.String()
+		if nextLink != "" {
+			if nextLink == href {
+				// nextLink is same as previous link, no progress is being made, exit
+				return nil
+			}
+			err := fetchAnalytics(client, nextLink, records, analytics, downloadAll, maxRecords)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 }
 

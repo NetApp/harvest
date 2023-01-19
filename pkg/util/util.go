@@ -12,8 +12,10 @@ import (
 	"golang.org/x/sys/unix"
 	"gopkg.in/yaml.v3"
 	"net"
+	"net/url"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -349,4 +351,43 @@ func ParseZAPIDisplay(obj string, path []string) string {
 		}
 	}
 	return strings.Join(words, "_")
+}
+
+func AddIntString(input string, value int) string {
+	i, _ := strconv.Atoi(input)
+	i = i + value
+	return strconv.FormatInt(int64(i), 10)
+}
+
+var metricTypeRegex = regexp.MustCompile(`\[(.*?)]`)
+
+func ArrayMetricToString(value string) string {
+	r := strings.NewReplacer("\n", "", " ", "", "\"", "")
+	s := r.Replace(value)
+
+	match := metricTypeRegex.FindAllStringSubmatch(s, -1)
+	if match != nil {
+		name := match[0][1]
+		return name
+	}
+	return value
+}
+
+func GetQueryParam(href string, query string) (string, error) {
+	u, err := url.Parse(href)
+	if err != nil {
+		return "", err
+	}
+	v := u.Query()
+	mr := v.Get(query)
+	return mr, nil
+}
+
+func EncodeURL(href string) (string, error) {
+	u, err := url.Parse(href)
+	if err != nil {
+		return "", err
+	}
+	u.RawQuery = u.Query().Encode()
+	return u.RequestURI(), nil
 }
