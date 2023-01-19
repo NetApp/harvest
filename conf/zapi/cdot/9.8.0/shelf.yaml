@@ -17,51 +17,6 @@ counters:
     - ^op-status
 
 plugins:
-  Shelf:
-    objects:
-      - cooling-fans => fan:
-          storage-shelf-cooling-fan-info:
-            - ^^fan-id
-            - ^fan-location => location
-            - ^fan-op-status => status
-            - fan-rpm => rpm
-      - current-sensors => sensor:
-          storage-shelf-current-sensor-info:
-            - ^^current-sensor-id    => sensor_id
-            - ^current-sensor-location => location
-            - ^current-op-status => status
-            - current-sensor-reading => reading
-      - power-supply-units => psu:
-          storage-shelf-power-supply-unit-info:
-  #          - ^psu-crest-factor => crest_factor
-  #          - ^psu-fw-version => fw_version
-            - ^^psu-id
-            - ^psu-is-enabled => enabled
-            - ^psu-location => location
-            - ^psu-part-number => part_number
-            - psu-power-drawn => power_drawn
-            - psu-power-rating => power_rating
-  #          - ^psu-reset-capable => reset_capable
-            - ^psu-serial-number => serial
-            - ^psu-type => type
-            - ^psu-op-status => status
-      - temperature-sensors => temperature:
-          storage-shelf-temperature-sensor-info:
-            - ^high-critical-threshold => high_critical
-            - ^high-warning-threshold => high_warning
-            - ^temp-is-ambient
-            - ^temp-low-critical-threshold => low_critical
-            - ^temp-low-warning-threshold => low_warning
-            - ^^temp-sensor-id => sensor_id
-            - ^temp-sens-op-status => status
-            - temp-sensor-reading => reading
-      - voltage-sensors => voltage:
-          storage-shelf-voltage-sensor-info:
-            - ^^voltage-sensor-id => sensor_id
-            - ^voltage-sensor-location => location
-            - ^voltage-op-status => status
-            - voltage-sensor-reading => reading
-
   LabelAgent:
     # metric label zapi_value rest_value `default_value`
     value_to_num:
