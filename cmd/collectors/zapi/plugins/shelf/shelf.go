@@ -10,7 +10,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"strconv"
 	"strings"
 )
 
@@ -24,27 +23,6 @@ type Shelf struct {
 	batchSize      string
 	client         *zapi.Client
 	query          string
-}
-
-type shelfEnvironmentMetric struct {
-	key                   string
-	ambientTemperature    []float64
-	nonAmbientTemperature []float64
-	fanSpeed              []float64
-	voltageSensor         map[string]float64
-	currentSensor         map[string]float64
-}
-
-var eMetrics = []string{
-	"average_ambient_temperature",
-	"average_fan_speed",
-	"average_temperature",
-	"max_fan_speed",
-	"max_temperature",
-	"min_ambient_temperature",
-	"min_fan_speed",
-	"min_temperature",
-	"power",
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -68,11 +46,7 @@ func (my *Shelf) Init() error {
 		return err
 	}
 
-	if my.client.IsClustered() {
-		my.query = "storage-shelf-info-get-iter"
-	} else {
-		my.query = "storage-shelf-environment-list-info"
-	}
+	my.query = "storage-shelf-environment-list-info"
 
 	my.Logger.Debug().Msg("plugin connected!")
 
@@ -145,13 +119,6 @@ func (my *Shelf) Init() error {
 
 	// setup batchSize for request
 	my.batchSize = BatchSize
-	if my.client.IsClustered() {
-		if b := my.Params.GetChildContentS("batch_size"); b != "" {
-			if _, err := strconv.Atoi(b); err == nil {
-				my.batchSize = b
-			}
-		}
-	}
 	return nil
 }
 
@@ -162,10 +129,13 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		output []*matrix.Matrix
 	)
 
-	if !my.client.IsClustered() {
-		for _, instance := range data.GetInstances() {
-			instance.SetLabel("shelf", instance.GetLabel("shelf_id"))
-		}
+	// Only 7mode is supported through this plugin
+	if my.client.IsClustered() {
+		return nil, nil
+	}
+
+	for _, instance := range data.GetInstances() {
+		instance.SetLabel("shelf", instance.GetLabel("shelf_id"))
 	}
 
 	// Set all global labels from zapi.go if already not exist
@@ -174,267 +144,16 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 
 	request := node.NewXMLS(my.query)
-	if my.client.IsClustered() {
-		request.NewChildS("max-records", my.batchSize)
-	}
 
 	result, err := my.client.InvokeZapiCall(request)
 	if err != nil {
 		return nil, err
 	}
 
-	if my.client.IsClustered() {
-		output, err = my.handleCMode(result)
-	} else {
-		output, err = my.handle7Mode(result)
-	}
+	output, err = my.handle7Mode(result)
+
 	if err != nil {
 		return output, err
-	}
-
-	if my.client.IsClustered() {
-		err := my.calculateEnvironmentMetrics(data)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return output, nil
-}
-
-func (my *Shelf) calculateEnvironmentMetrics(data *matrix.Matrix) error {
-	var err error
-	shelfEnvironmentMetricMap := make(map[string]*shelfEnvironmentMetric, 0)
-	for _, o := range my.data {
-		for k, instance := range o.GetInstances() {
-			lastInd := strings.LastIndex(k, "#")
-			iKey := k[:lastInd]
-			iKey2 := k[lastInd+1:]
-			if _, ok := shelfEnvironmentMetricMap[iKey]; !ok {
-				shelfEnvironmentMetricMap[iKey] = &shelfEnvironmentMetric{key: iKey, ambientTemperature: []float64{}, nonAmbientTemperature: []float64{}, fanSpeed: []float64{}}
-			}
-			for mkey, metric := range o.GetMetrics() {
-				if o.Object == "shelf_temperature" {
-					if mkey == "temp-sensor-reading" {
-						isAmbient := instance.GetLabel("temp_is_ambient")
-						if isAmbient == "true" {
-							if value, ok := metric.GetValueFloat64(instance); ok {
-								shelfEnvironmentMetricMap[iKey].ambientTemperature = append(shelfEnvironmentMetricMap[iKey].ambientTemperature, value)
-							}
-						}
-						if isAmbient == "false" {
-							if value, ok := metric.GetValueFloat64(instance); ok {
-								shelfEnvironmentMetricMap[iKey].nonAmbientTemperature = append(shelfEnvironmentMetricMap[iKey].nonAmbientTemperature, value)
-							}
-						}
-					}
-				} else if o.Object == "shelf_fan" {
-					if mkey == "fan-rpm" {
-						if value, ok := metric.GetValueFloat64(instance); ok {
-							shelfEnvironmentMetricMap[iKey].fanSpeed = append(shelfEnvironmentMetricMap[iKey].fanSpeed, value)
-						}
-					}
-				} else if o.Object == "shelf_voltage" {
-					if mkey == "voltage-sensor-reading" {
-						if value, ok := metric.GetValueFloat64(instance); ok {
-							if shelfEnvironmentMetricMap[iKey].voltageSensor == nil {
-								shelfEnvironmentMetricMap[iKey].voltageSensor = make(map[string]float64, 0)
-							}
-							shelfEnvironmentMetricMap[iKey].voltageSensor[iKey2] = value
-						}
-					}
-				} else if o.Object == "shelf_sensor" {
-					if mkey == "current-sensor-reading" {
-						if value, ok := metric.GetValueFloat64(instance); ok {
-							if shelfEnvironmentMetricMap[iKey].currentSensor == nil {
-								shelfEnvironmentMetricMap[iKey].currentSensor = make(map[string]float64, 0)
-							}
-							shelfEnvironmentMetricMap[iKey].currentSensor[iKey2] = value
-						}
-					}
-				}
-			}
-		}
-	}
-
-	for _, k := range eMetrics {
-		err := matrix.CreateMetric(k, data)
-		if err != nil {
-			my.Logger.Warn().Err(err).Str("key", k).Msg("error while creating metric")
-		}
-	}
-	for key, v := range shelfEnvironmentMetricMap {
-		for _, k := range eMetrics {
-			m := data.GetMetric(k)
-			instance := data.GetInstance(key)
-			if instance == nil {
-				my.Logger.Warn().Str("key", key).Msg("Instance not found")
-				continue
-			}
-			switch k {
-			case "power":
-				var sumPower float64
-				for k1, v1 := range v.voltageSensor {
-					if v2, ok := v.currentSensor[k1]; ok {
-						// in W
-						sumPower += (v1 * v2) / 1000
-					} else {
-						my.Logger.Warn().Str("voltage sensor id", k1).Msg("missing current sensor")
-					}
-				}
-
-				err = m.SetValueFloat64(instance, sumPower)
-				if err != nil {
-					my.Logger.Error().Float64("power", sumPower).Err(err).Msg("Unable to set power")
-				}
-
-			case "average_ambient_temperature":
-				if len(v.ambientTemperature) > 0 {
-					aaT := util.Avg(v.ambientTemperature)
-					err = m.SetValueFloat64(instance, aaT)
-					if err != nil {
-						my.Logger.Error().Float64("average_ambient_temperature", aaT).Err(err).Msg("Unable to set average_ambient_temperature")
-					}
-				}
-			case "min_ambient_temperature":
-				maT := util.Min(v.ambientTemperature)
-				err = m.SetValueFloat64(instance, maT)
-				if err != nil {
-					my.Logger.Error().Float64("min_ambient_temperature", maT).Err(err).Msg("Unable to set min_ambient_temperature")
-				}
-			case "max_temperature":
-				mT := util.Max(v.nonAmbientTemperature)
-				err = m.SetValueFloat64(instance, mT)
-				if err != nil {
-					my.Logger.Error().Float64("max_temperature", mT).Err(err).Msg("Unable to set max_temperature")
-				}
-			case "average_temperature":
-				if len(v.nonAmbientTemperature) > 0 {
-					nat := util.Avg(v.nonAmbientTemperature)
-					err = m.SetValueFloat64(instance, nat)
-					if err != nil {
-						my.Logger.Error().Float64("average_temperature", nat).Err(err).Msg("Unable to set average_temperature")
-					}
-				}
-			case "min_temperature":
-				mT := util.Min(v.nonAmbientTemperature)
-				err = m.SetValueFloat64(instance, mT)
-				if err != nil {
-					my.Logger.Error().Float64("min_temperature", mT).Err(err).Msg("Unable to set min_temperature")
-				}
-			case "average_fan_speed":
-				if len(v.fanSpeed) > 0 {
-					afs := util.Avg(v.fanSpeed)
-					err = m.SetValueFloat64(instance, afs)
-					if err != nil {
-						my.Logger.Error().Float64("average_fan_speed", afs).Err(err).Msg("Unable to set average_fan_speed")
-					}
-				}
-			case "max_fan_speed":
-				mfs := util.Max(v.fanSpeed)
-				err = m.SetValueFloat64(instance, mfs)
-				if err != nil {
-					my.Logger.Error().Float64("max_fan_speed", mfs).Err(err).Msg("Unable to set max_fan_speed")
-				}
-			case "min_fan_speed":
-				mfs := util.Min(v.fanSpeed)
-				err = m.SetValueFloat64(instance, mfs)
-				if err != nil {
-					my.Logger.Error().Float64("min_fan_speed", mfs).Err(err).Msg("Unable to set min_fan_speed")
-				}
-			}
-		}
-	}
-	return nil
-}
-
-func (my *Shelf) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
-	var (
-		output []*matrix.Matrix
-	)
-
-	my.Logger.Debug().Msgf("fetching %d shelf counters", len(shelves))
-
-	// Purge and reset data
-	for _, data1 := range my.data {
-		data1.PurgeInstances()
-		data1.Reset()
-	}
-
-	for _, shelf := range shelves {
-
-		shelfName := shelf.GetChildContentS("shelf")
-		shelfID := shelf.GetChildContentS("shelf-uid")
-
-		if !my.client.IsClustered() {
-			uid := shelf.GetChildContentS("shelf-id")
-			shelfName = uid // no shelf name in 7mode
-			shelfID = uid
-		}
-
-		for attribute, data1 := range my.data {
-			if statusMetric := data1.GetMetric("status"); statusMetric != nil {
-
-				if my.instanceKeys[attribute] == "" {
-					my.Logger.Warn().Msgf("no instance keys defined for object [%s], skipping", attribute)
-					continue
-				}
-
-				objectElem := shelf.GetChildS(attribute)
-				if objectElem == nil {
-					my.Logger.Warn().Msgf("no [%s] instances on this system", attribute)
-					continue
-				}
-
-				my.Logger.Debug().Msgf("fetching %d [%s] instances", len(objectElem.GetChildren()), attribute)
-
-				for _, obj := range objectElem.GetChildren() {
-
-					if key := obj.GetChildContentS(my.instanceKeys[attribute]); key != "" {
-						instanceKey := shelfID + "#" + key
-						instance, err := data1.NewInstance(instanceKey)
-
-						if err != nil {
-							my.Logger.Error().Err(err).Str("attribute", attribute).Msg("Failed to add instance")
-							return nil, err
-						}
-						my.Logger.Debug().Msgf("add (%s) instance: %s.%s", attribute, shelfID, key)
-
-						for label, labelDisplay := range my.instanceLabels[attribute].Map() {
-							if value := obj.GetChildContentS(label); value != "" {
-								instance.SetLabel(labelDisplay, value)
-							}
-						}
-
-						instance.SetLabel("shelf", shelfName)
-						instance.SetLabel("shelf_id", shelfID)
-
-						// Each child would have different possible values which is an ugly way to write all of them,
-						// so normal value would be mapped to 1 and rest all are mapped to 0.
-						if instance.GetLabel("status") == "normal" {
-							_ = statusMetric.SetValueInt64(instance, 1)
-						} else {
-							_ = statusMetric.SetValueInt64(instance, 0)
-						}
-
-						for metricKey, m := range data1.GetMetrics() {
-
-							if value := strings.Split(obj.GetChildContentS(metricKey), " ")[0]; value != "" {
-								if err := m.SetValueString(instance, value); err != nil {
-									my.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", metricKey, value, err)
-								} else {
-									my.Logger.Debug().Msgf("(%s) added value (%s)", metricKey, value)
-								}
-							}
-						}
-
-					} else {
-						my.Logger.Debug().Msgf("instance without [%s], skipping", my.instanceKeys[attribute])
-					}
-				}
-
-				output = append(output, data1)
-			}
-		}
 	}
 
 	return output, nil

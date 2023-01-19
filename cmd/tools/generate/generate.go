@@ -376,8 +376,8 @@ func generateMetrics(path string) {
 	swaggerBytes = readSwaggerJSON()
 	restCounters := processRestCounters(restClient)
 	zapiCounters := processZapiCounters(zapiClient)
-	counters := mergeRestZapiCounters(restCounters, zapiCounters)
-	counters = ProcessExternalCounters(counters)
+	counters := mergeCounters(restCounters, zapiCounters)
+	counters = processExternalCounters(counters)
 	generateCounterTemplate(counters, restClient)
 }
 
@@ -391,7 +391,7 @@ func init() {
 	fFlags := fullCmd.PersistentFlags()
 
 	flags := metricCmd.PersistentFlags()
-	flags.StringVarP(&opts.Poller, "poller", "p", "", "name of poller (cluster), as defined in your harvest config")
+	flags.StringVarP(&opts.Poller, "poller", "p", "sar", "name of poller, e.g. 10.193.48.154")
 	dFlags.IntVarP(&opts.loglevel, "loglevel", "l", 2,
 		"logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)",
 	)

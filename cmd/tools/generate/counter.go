@@ -44,21 +44,41 @@ type CounterTemplate struct {
 	CounterMetaData CounterMetaData
 }
 
+type MetricDef struct {
+	API          string `yaml:"API"`
+	Endpoint     string `yaml:"Endpoint"`
+	ONTAPCounter string `yaml:"ONTAPCounter"`
+	Template     string `yaml:"Template"`
+	Unit         string `yaml:"Unit"`
+	Type         string `yaml:"Type"`
+	BaseCounter  string `yaml:"BaseCounter"`
+}
+
+func (m MetricDef) TableRow() string {
+	if strings.Contains(m.Template, "perf") {
+		unitTypeBase := `<br><span class="key">Unit:</span> ` + m.Unit +
+			`<br><span class="key">Type:</span> ` + m.Type +
+			`<br><span class="key">Base:</span> ` + m.BaseCounter
+		return fmt.Sprintf("| %s | `%s` | `%s`%s | %s | ",
+			m.API, m.Endpoint, m.ONTAPCounter, unitTypeBase, m.Template)
+	}
+	return fmt.Sprintf("| %s | `%s` | `%s` | %s |", m.API, m.Endpoint, m.ONTAPCounter, m.Template)
+}
+
 type Counter struct {
-	Name             string `yaml:"Name"`
-	Description      string `yaml:"Description"`
-	RestAPI          string `yaml:"RestAPI"`
-	RestONTAPCounter string `yaml:"RestONTAPCounter"`
-	RestTemplate     string `yaml:"RestTemplate"`
-	RestUnit         string `yaml:"RestUnit"`
-	RestType         string `yaml:"RestType"`
-	RestBaseCounter  string `yaml:"RestBaseCounter"`
-	ZapiAPI          string `yaml:"ZapiAPI"`
-	ZapiONTAPCounter string `yaml:"ZapiONTAPCounter"`
-	ZapiTemplate     string `yaml:"ZapiTemplate"`
-	ZapiUnit         string `yaml:"ZapiUnit"`
-	ZapiType         string `yaml:"ZapiType"`
-	ZapiBaseCounter  string `yaml:"ZapiBaseCounter"`
+	Name        string      `yaml:"Name"`
+	Description string      `yaml:"Description"`
+	APIs        []MetricDef `yaml:"APIs"`
+}
+
+func (c Counter) Header() string {
+	return `
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|`
+}
+
+func (c Counter) HasAPIs() bool {
+	return len(c.APIs) > 0
 }
 
 // readSwaggerJSON downloads poller swagger and convert to json format
@@ -205,11 +225,16 @@ func processRestConfigCounters(path string) map[string]Counter {
 			harvestName := strings.Join([]string{object, display}, "_")
 			if m == "float" {
 				co := Counter{
-					Name:             harvestName,
-					RestONTAPCounter: name,
-					RestTemplate:     path,
-					RestAPI:          query,
-					Description:      description,
+					Name:        harvestName,
+					Description: description,
+					APIs: []MetricDef{
+						{
+							API:          "REST",
+							Endpoint:     query,
+							Template:     path,
+							ONTAPCounter: name,
+						},
+					},
 				}
 				counters[harvestName] = co
 			}
@@ -287,14 +312,19 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 			if m == "float" {
 				if zapiTypeMap[name] != "string" {
 					co := Counter{
-						Name:             harvestName,
-						Description:      zapiDescMap[name],
-						ZapiONTAPCounter: name,
-						ZapiTemplate:     path,
-						ZapiAPI:          strings.Join([]string{"perf-object-get-instances", query}, " "),
-						ZapiType:         zapiTypeMap[name],
-						ZapiUnit:         zapiUnitMap[name],
-						ZapiBaseCounter:  zapiBaseCounterMap[name],
+						Name:        harvestName,
+						Description: zapiDescMap[name],
+						APIs: []MetricDef{
+							{
+								API:          "ZAPI",
+								Endpoint:     strings.Join([]string{"perf-object-get-instances", query}, " "),
+								Template:     path,
+								ONTAPCounter: name,
+								Unit:         zapiUnitMap[name],
+								Type:         zapiTypeMap[name],
+								BaseCounter:  zapiBaseCounterMap[name],
+							},
+						},
 					}
 					counters[harvestName] = co
 				}
@@ -329,10 +359,15 @@ func processZapiConfigCounters(path string) map[string]Counter {
 
 	for k, v := range zc {
 		co := Counter{
-			Name:             k,
-			ZapiONTAPCounter: v,
-			ZapiTemplate:     path,
-			ZapiAPI:          query,
+			Name: k,
+			APIs: []MetricDef{
+				{
+					API:          "ZAPI",
+					Endpoint:     query,
+					Template:     path,
+					ONTAPCounter: v,
+				},
+			},
 		}
 		counters[k] = co
 	}
@@ -412,29 +447,32 @@ func generateCounterTemplate(counters map[string]Counter, client *rest.Client) {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
-	var Values []Counter
+	var values []Counter
 	for _, k := range keys {
 		if k == "" {
 			continue
 		}
-		Values = append(Values, counters[k])
-		temp := counters[k]
-		if temp.ZapiONTAPCounter == "" {
-			fmt.Printf("Missing zapi mapping for %v \n", temp)
-		}
-		if temp.RestONTAPCounter == "" {
-			fmt.Printf("Missing Rest mapping for %v \n", temp)
-		}
+		counter := counters[k]
 
-		if temp.Description == "" {
-			fmt.Printf("Missing Description for %v \n", temp)
+		values = append(values, counter)
+		for _, def := range counter.APIs {
+			if def.ONTAPCounter == "" {
+				fmt.Printf("Missing %s mapping for %v \n", def.API, counter)
+			}
+		}
+		if counter.Description == "" {
+			fmt.Printf("Missing Description for %v \n", counter)
 		}
 	}
 
-	c := CounterTemplate{}
-	c.Counters = Values
 	verWithDots := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(client.Cluster().Version)), "."), "[]")
-	c.CounterMetaData = CounterMetaData{Date: time.Now().Format("2006-Jan-02"), OntapVersion: verWithDots}
+	c := CounterTemplate{
+		Counters: values,
+		CounterMetaData: CounterMetaData{
+			Date:         time.Now().Format("2006-Jan-02"),
+			OntapVersion: verWithDots,
+		},
+	}
 
 	err = t.Execute(out, c)
 	if err != nil {
@@ -444,29 +482,20 @@ func generateCounterTemplate(counters map[string]Counter, client *rest.Client) {
 	}
 }
 
-func mergeRestZapiCounters(restCounters map[string]Counter, zapiCounters map[string]Counter) map[string]Counter {
+func mergeCounters(restCounters map[string]Counter, zapiCounters map[string]Counter) map[string]Counter {
 	for k, v := range zapiCounters {
 		if v1, ok := restCounters[k]; ok {
-			v1.ZapiAPI = v.ZapiAPI
-			v1.ZapiTemplate = v.ZapiTemplate
-			v1.ZapiONTAPCounter = v.ZapiONTAPCounter
-			v1.ZapiUnit = v.ZapiUnit
-			v1.ZapiType = v.ZapiType
-			v1.ZapiBaseCounter = v.ZapiBaseCounter
+			v1.APIs = append(v1.APIs, v.APIs[0])
 			restCounters[k] = v1
 		} else {
-			if v.ZapiONTAPCounter == "instance_name" || v.ZapiONTAPCounter == "instance_uuid" {
+			zapiDef := v.APIs[0]
+			if zapiDef.ONTAPCounter == "instance_name" || zapiDef.ONTAPCounter == "instance_uuid" {
 				continue
 			}
 			co := Counter{
-				Name:             v.Name,
-				Description:      v.Description,
-				ZapiAPI:          v.ZapiAPI,
-				ZapiTemplate:     v.ZapiTemplate,
-				ZapiONTAPCounter: v.ZapiONTAPCounter,
-				ZapiUnit:         v.ZapiUnit,
-				ZapiType:         v.ZapiType,
-				ZapiBaseCounter:  v.ZapiBaseCounter,
+				Name:        v.Name,
+				Description: v.Description,
+				APIs:        []MetricDef{zapiDef},
 			}
 			restCounters[v.Name] = co
 		}
@@ -531,14 +560,19 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 		}
 		if v, ok := counterMap[ontapCounterName]; ok {
 			c := Counter{
-				Name:             v,
-				RestONTAPCounter: ontapCounterName,
-				RestTemplate:     path,
-				RestAPI:          query,
-				Description:      description,
-				RestType:         ty,
-				RestUnit:         r.Get("unit").String(),
-				RestBaseCounter:  r.Get("denominator.name").String(),
+				Name:        v,
+				Description: description,
+				APIs: []MetricDef{
+					{
+						API:          "REST",
+						Endpoint:     query,
+						Template:     path,
+						ONTAPCounter: ontapCounterName,
+						Unit:         r.Get("unit").String(),
+						Type:         ty,
+						BaseCounter:  r.Get("denominator.name").String(),
+					},
+				},
 			}
 			counters[c.Name] = c
 		}
@@ -547,7 +581,7 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 	return counters
 }
 
-func ProcessExternalCounters(counters map[string]Counter) map[string]Counter {
+func processExternalCounters(counters map[string]Counter) map[string]Counter {
 	dat, err := os.ReadFile("cmd/tools/generate/counter.yaml")
 	if err != nil {
 		fmt.Printf("error while reading file %v", err)
@@ -562,57 +596,47 @@ func ProcessExternalCounters(counters map[string]Counter) map[string]Counter {
 	}
 	for _, v := range c.C {
 		if v1, ok := counters[v.Name]; !ok {
-			co := Counter{
-				Name:             v.Name,
-				Description:      v.Description,
-				RestONTAPCounter: v.RestONTAPCounter,
-				RestTemplate:     v.RestTemplate,
-				RestAPI:          v.RestAPI,
-				RestType:         v.RestType,
-				RestUnit:         v.RestUnit,
-				ZapiONTAPCounter: v.ZapiONTAPCounter,
-				ZapiTemplate:     v.ZapiTemplate,
-				ZapiAPI:          v.ZapiAPI,
-				ZapiType:         v.ZapiType,
-				ZapiUnit:         v.ZapiUnit,
-			}
-			counters[v.Name] = co
+			counters[v.Name] = v
 		} else {
 			if v.Description != "" {
 				v1.Description = v.Description
 			}
-			if v.RestONTAPCounter != "" {
-				v1.RestONTAPCounter = v.RestONTAPCounter
-			}
-			if v.RestTemplate != "" {
-				v1.RestTemplate = v.RestTemplate
-			}
-			if v.RestAPI != "" {
-				v1.RestAPI = v.RestAPI
-			}
-			if v.RestType != "" {
-				v1.RestType = v.RestType
-			}
-			if v.RestUnit != "" {
-				v1.RestUnit = v.RestUnit
-			}
-			if v.ZapiONTAPCounter != "" {
-				v1.ZapiONTAPCounter = v.ZapiONTAPCounter
-			}
-			if v.ZapiTemplate != "" {
-				v1.ZapiTemplate = v.ZapiTemplate
-			}
-			if v.ZapiAPI != "" {
-				v1.ZapiAPI = v.ZapiAPI
-			}
-			if v.ZapiType != "" {
-				v1.ZapiType = v.ZapiType
-			}
-			if v.ZapiUnit != "" {
-				v1.ZapiUnit = v.ZapiUnit
+			for _, m := range v.APIs {
+				r := findAPI(v1.APIs, m)
+				if r == nil {
+					v1.APIs = append(v1.APIs, m)
+				} else {
+					if m.ONTAPCounter != "" {
+						r.ONTAPCounter = m.ONTAPCounter
+					}
+					if m.Template != "" {
+						r.Template = m.Template
+					}
+					if m.Endpoint != "" {
+						r.Endpoint = m.Endpoint
+					}
+					if m.Type != "" {
+						r.Type = m.Type
+					}
+					if m.Unit != "" {
+						r.Unit = m.Unit
+					}
+					if m.BaseCounter != "" {
+						r.BaseCounter = m.BaseCounter
+					}
+				}
 			}
 			counters[v.Name] = v1
 		}
 	}
 	return counters
+}
+
+func findAPI(apis []MetricDef, other MetricDef) *MetricDef {
+	for _, a := range apis {
+		if a.API == other.API {
+			return &a
+		}
+	}
+	return nil
 }

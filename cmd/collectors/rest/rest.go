@@ -6,7 +6,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/disk"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/qtree"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/sensor"
-	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/shelf"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/snapmirror"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/svm"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/volume"
@@ -369,8 +368,6 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return disk.New(abc)
 	case "Qtree":
 		return qtree.New(abc)
-	case "Shelf":
-		return shelf.New(abc)
 	case "Snapmirror":
 		return snapmirror.New(abc)
 	case "Volume":

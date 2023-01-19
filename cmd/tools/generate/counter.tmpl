@@ -5,80 +5,39 @@ ONTAP Version: {{ .CounterMetaData.OntapVersion }}
 ```
 ## Understanding the structure
 
-Click on `Details` below to help understand the structure of [Metrics](#metrics).
-<details>
-  <summary>Details</summary>
+Below is an <span class="key">annotated</span> example of how to interpret the structure of each of the [metrics](#metrics).
 
-```yaml
-- Harvest Metric: Name of metric exported by Harvest
-  Description: Description of the metric
-  ZAPI:
-    endpoint: Name of ZAPI invoked to generate this metric
-    metric: Metric name in ZAPI
-    template: ZAPI template path
-    unit: Unit of the counter. Possible values= per_sec, b_per_sec (bytes/s), kb_per_sec (Kbytes/s),mb_per_sec (Mbytes/s), percent, millisec, microsec, sec, or none
-    type: Comma separated list of properties of the counter.  The counter properties determine how raw counter values should be interpreted.Possible values= raw, rate, delta, percent, string,no-display and no-zero-values.
-    base: Name of the counter used as the denominator to calculate values of counters involving averages and percentages.
-  REST:
-    endpoint: Name of REST API invoked to generate this metric
-    metric: Metric name in REST API
-    template: REST template path
-    unit: Unit of the counter. Possible values: per_sec, b_per_sec (bytes/s), kb_per_sec (Kbytes/s),mb_per_sec (Mbytes/s), percent, millisec, microsec, sec, or none
-    type: Comma separated list of properties of the counter.  The counter properties determine how raw counter values should be interpreted.Possible values: raw, rate, delta, percent, string,no-display and no-zero-values.
-    base: Name of the counter used as the denominator to calculate values of counters involving averages and percentages.
-```
+disk_io_queued <span class="key">Name of the metric exported by Harvest</span>
 
-</details>
+Number of I/Os queued to the disk but not yet issued <span class="key">Description of the ONTAP metric</span>
+
+* <span class="key">API</span> will be one of REST or ZAPI depending on which collector is used to collect the metric
+* <span class="key">Endpoint</span> name of the REST or ZAPI API used to collect this metric
+* <span class="key">Metric</span> name of the ONTAP metric
+ <span class="key">Template</span> path of the template that collects the metric
+
+Performance related metrics also include:
+
+- <span class="key">Unit</span> the unit of the metric
+- <span class="key">Type</span> describes how to calculate a cooked metric from two consecutive ONTAP raw metrics
+- <span class="key">Base</span> some counters require a `base counter` for post-processing. When required, this property lists the `base counter`
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+|REST | `api/cluster/counter/tables/disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml|
+|ZAPI | `perf-object-get-instances disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml|
 
 ## Metrics
 
-```yaml
 {{range .Counters}}
-- Harvest Metric: {{ .Name }}
-  {{- if .Description }}
-  Description: {{ .Description }}
-  {{- end}}
-  {{- if .ZapiAPI }}
-  ZAPI:
-    {{- if .ZapiAPI }}
-    endpoint: {{ .ZapiAPI }}
-    {{- end}}
-    {{- if .ZapiONTAPCounter }}
-    metric: {{ .ZapiONTAPCounter }}
-    {{- end}}
-    {{- if .ZapiTemplate }}
-    template: {{ .ZapiTemplate }}
-    {{- end}}
-    {{- if .ZapiUnit }}
-    unit: {{ .ZapiUnit }}
-    {{- end}}
-    {{- if .ZapiType }}
-    type: {{ .ZapiType }}
-    {{- end}}
-    {{- if .ZapiBaseCounter }}
-    base: {{ .ZapiBaseCounter }}
-    {{- end}}
-  {{- end}}
-  {{- if .RestAPI }}
-  REST:
-    {{- if .RestAPI }}
-    endpoint: {{ .RestAPI }}
-    {{- end}}
-    {{- if .RestONTAPCounter }}
-    metric: {{ .RestONTAPCounter }}
-    {{- end}}
-    {{- if .RestTemplate }}
-    template: {{ .RestTemplate }}
-    {{- end}}
-    {{- if .RestUnit }}
-    unit: {{ .RestUnit }}
-    {{- end}}
-    {{- if .RestType }}
-    type: {{ .RestType }}
-    {{- end}}
-    {{- if .RestBaseCounter }}
-    base: {{ .RestBaseCounter }}
-    {{- end}}
-  {{- end}}
+### {{ .Name }}
+
+{{ .Description }}
+
+{{- if .HasAPIs}}
+{{.Header -}}
+{{range .APIs}}
+{{.TableRow -}}
 {{end}}
-```
+{{end}}
+{{end}}
