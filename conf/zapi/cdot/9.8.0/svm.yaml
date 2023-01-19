@@ -33,7 +33,6 @@ plugins:
 export_options:
   instance_keys:
     - svm
-    - root_svm
   instance_labels:
     - state
     - anti_ransomware_state
@@ -55,4 +54,5 @@ export_options:
     - smb_encryption_required
     - smb_signing_required
     - type
+    - root_svm
 

@@ -104,7 +104,6 @@ export_options:
     - svm
     - aggr
     - style
-    - root_volume
   instance_labels:
     - state
     - is_sis_volume
@@ -115,5 +114,4 @@ export_options:
     - snaplock_type
     - antiRansomwareState
     - isHardwareEncrypted
-
-
+    - root_volume

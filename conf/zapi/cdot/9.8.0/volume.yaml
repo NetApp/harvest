@@ -111,7 +111,6 @@ export_options:
     - svm
     - aggr
     - style
-    - root_volume
   instance_labels:
     - state
     - is_sis_volume
@@ -121,4 +120,5 @@ export_options:
     - isHardwareEncrypted
     - svm_root
     - node_root
+    - root_volume
 

@@ -79,7 +79,6 @@ plugins:
 export_options:
   instance_keys:
     - svm
-    - root_svm
   instance_labels:
     - state
     - anti_ransomware_state
@@ -101,4 +100,5 @@ export_options:
     - ns_source
     - ns_db
     - type
+    - root_svm
 
