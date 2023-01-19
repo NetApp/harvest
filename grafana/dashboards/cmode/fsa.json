@@ -17,6 +17,12 @@
       "version": ""
     },
     {
+      "type": "panel",
+      "id": "bargauge",
+      "name": "Bar gauge",
+      "version": ""
+    },
+    {
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
@@ -77,7 +83,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1673969043543,
+  "iteration": 1674108464322,
   "links": [
     {
       "asDropdown": true,
@@ -96,21 +102,35 @@
   ],
   "panels": [
     {
-      "datasource": "${DS_PROMETHEUS}",
+      "collapsed": true,
+      "datasource": null,
       "gridPos": {
-        "h": 3,
+        "h": 1,
         "w": 24,
         "x": 0,
         "y": 0
       },
-      "id": 99,
-      "options": {
-        "content": "This dashboard works for ONTAP 9.8+. You must enable the Rest collector in your harvest config.",
-        "mode": "markdown"
-      },
-      "pluginVersion": "8.1.8",
+      "id": 101,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "gridPos": {
+            "h": 2,
+            "w": 24,
+            "x": 0,
+            "y": 1
+          },
+          "id": 99,
+          "options": {
+            "content": "This dashboard requires ONTAP 9.8+ and the APIs are only available via REST. Please enable the REST collector in your harvest config.",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.1.8",
+          "type": "text"
+        }
+      ],
       "title": "Important Information about FSA dashboard",
-      "type": "text"
+      "type": "row"
     },
     {
       "collapsed": false,
@@ -119,7 +139,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 3
+        "y": 1
       },
       "id": 20,
       "panels": [],
@@ -149,7 +169,7 @@
         "h": 4,
         "w": 8,
         "x": 0,
-        "y": 4
+        "y": 2
       },
       "id": 95,
       "options": {
@@ -170,8 +190,10 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "exemplar": false,
-          "expr": "volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+          "exemplar": true,
+          "expr": "sum(volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "hide": false,
+          "instant": false,
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -180,6 +202,16 @@
       "timeFrom": null,
       "timeShift": null,
       "title": "Used",
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {}
+        }
+      ],
       "type": "stat"
     },
     {
@@ -205,7 +237,7 @@
         "h": 4,
         "w": 8,
         "x": 8,
-        "y": 4
+        "y": 2
       },
       "id": 96,
       "options": {
@@ -227,7 +259,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_size_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+          "expr": "sum(volume_size_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
           "instant": false,
           "interval": "",
           "legendFormat": "",
@@ -262,7 +294,7 @@
         "h": 4,
         "w": 8,
         "x": 16,
-        "y": 4
+        "y": 2
       },
       "id": 97,
       "options": {
@@ -284,7 +316,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+          "expr": "sum(volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
           "instant": true,
           "interval": "",
           "legendFormat": "",
@@ -298,7 +330,68 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Total directory count including the root and the ones present in nested levels ",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      },
+      "id": 103,
+      "options": {
+        "displayMode": "basic",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "text": {}
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "(sum(volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}) * 100) / sum(volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Used Percentage",
+      "type": "bargauge"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Total directory count including the root and children directories",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -322,7 +415,7 @@
         "h": 5,
         "w": 4,
         "x": 0,
-        "y": 8
+        "y": 9
       },
       "id": 22,
       "options": {
@@ -411,7 +504,7 @@
         "h": 10,
         "w": 20,
         "x": 4,
-        "y": 8
+        "y": 9
       },
       "id": 86,
       "options": {
@@ -442,7 +535,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Total files count including the ones present in nested levels ",
+      "description": "Total number of files in root and child directories",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -466,7 +559,7 @@
         "h": 5,
         "w": 4,
         "x": 0,
-        "y": 13
+        "y": 14
       },
       "id": 23,
       "options": {
@@ -565,7 +658,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 18
+        "y": 19
       },
       "id": 25,
       "options": {
@@ -676,7 +769,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 28
+        "y": 29
       },
       "id": 90,
       "panels": [
@@ -731,7 +824,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 26
+            "y": 27
           },
           "id": 88,
           "options": {
@@ -881,7 +974,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 26
+            "y": 27
           },
           "id": 92,
           "options": {
@@ -1032,7 +1125,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 34
+            "y": 35
           },
           "id": 91,
           "options": {
@@ -1182,7 +1275,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 34
+            "y": 35
           },
           "id": 93,
           "options": {
@@ -1423,7 +1516,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
             "Monthly"
           ],
@@ -1445,12 +1538,12 @@
             "value": "$__all"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "Weekly",
             "value": "Weekly"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "Monthly",
             "value": "Monthly"
           },
@@ -1572,7 +1665,7 @@
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {

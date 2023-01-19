@@ -373,12 +373,21 @@ func ArrayMetricToString(value string) string {
 	return value
 }
 
-func ParseURLQuery(href string) (string, error) {
+func GetQueryParam(href string, query string) (string, error) {
 	u, err := url.Parse(href)
-	if err == nil {
-		v := u.Query()
-		mr := v.Get("max_records")
-		return mr, nil
+	if err != nil {
+		return "", err
 	}
-	return "", err
+	v := u.Query()
+	mr := v.Get(query)
+	return mr, nil
+}
+
+func EncodeURL(href string) string {
+	u, err := url.Parse(href)
+	if err != nil {
+		fmt.Println(err)
+	}
+	u.RawQuery = u.Query().Encode()
+	return u.RequestURI()
 }

@@ -1,7 +1,6 @@
 package volumeanalytics
 
 import (
-	"fmt"
 	goversion "github.com/hashicorp/go-version"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
@@ -90,14 +89,19 @@ func (v *VolumeAnalytics) initMatrix() error {
 func (v *VolumeAnalytics) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	cluster, _ := data.GetGlobalLabels().GetHas("cluster")
-	ver := v.client.Cluster().Version
-	clusterVersion := fmt.Sprintf("%d.%d.%d", ver[0], ver[1], ver[2])
+	clusterVersion := v.client.Cluster().GetVersion()
 	ontapVersion, err := goversion.NewVersion(clusterVersion)
-	version98 := "9.8"
-	version98After, _ := goversion.NewVersion(version98)
 	if err != nil {
 		v.Logger.Error().Err(err).
 			Str("version", clusterVersion).
+			Msg("Failed to parse version")
+		return nil, nil
+	}
+	version98 := "9.8"
+	version98After, err := goversion.NewVersion(version98)
+	if err != nil {
+		v.Logger.Error().Err(err).
+			Str("version", version98).
 			Msg("Failed to parse version")
 		return nil, nil
 	}
@@ -118,131 +122,129 @@ func (v *VolumeAnalytics) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		v.data[k].SetGlobalLabels(data.GetGlobalLabels())
 	}
 
-	if ontapVersion.GreaterThanOrEqual(version98After) {
-		for instanceID, dataInstance := range data.GetInstances() {
-			if records, analytics, err := v.getAnalyticsData(instanceID); err != nil {
-				if errs.IsRestErr(err, errs.APINotFound) {
-					v.Logger.Debug().Err(err).Msg("API not found")
-				} else {
-					v.Logger.Error().Err(err).Msg("Failed to collect analytic data")
-				}
+	for instanceID, dataInstance := range data.GetInstances() {
+		if records, analytics, err := v.getAnalyticsData(instanceID); err != nil {
+			if errs.IsRestErr(err, errs.APINotFound) {
+				v.Logger.Debug().Err(err).Msg("API not found")
 			} else {
-				explorerMatrix := v.data[explorer]
-				for index, record := range records {
-					name := record.Get("name").String()
-					fileCount := record.Get("analytics.file_count").String()
-					bytesUsed := record.Get("analytics.bytes_used").String()
-					subDirCount := record.Get("analytics.subdir_count").String()
-					mtBytesUsedValues := strings.Split(util.ArrayMetricToString(record.Get("analytics.by_modified_time.bytes_used.values").String()), ",")
-					mtBytesUsedPercentages := strings.Split(util.ArrayMetricToString(record.Get("analytics.by_modified_time.bytes_used.percentages").String()), ",")
-					mtBytesUsedLabels := strings.Split(util.ArrayMetricToString(analytics.Get("by_modified_time.bytes_used.labels").String()), ",")
+				v.Logger.Error().Err(err).Msg("Failed to collect analytic data")
+			}
+		} else {
+			explorerMatrix := v.data[explorer]
+			for index, record := range records {
+				name := record.Get("name").String()
+				fileCount := record.Get("analytics.file_count").String()
+				bytesUsed := record.Get("analytics.bytes_used").String()
+				subDirCount := record.Get("analytics.subdir_count").String()
+				mtBytesUsedValues := strings.Split(util.ArrayMetricToString(record.Get("analytics.by_modified_time.bytes_used.values").String()), ",")
+				mtBytesUsedPercentages := strings.Split(util.ArrayMetricToString(record.Get("analytics.by_modified_time.bytes_used.percentages").String()), ",")
+				mtBytesUsedLabels := strings.Split(util.ArrayMetricToString(analytics.Get("by_modified_time.bytes_used.labels").String()), ",")
 
-					atBytesUsedValues := strings.Split(util.ArrayMetricToString(record.Get("analytics.by_accessed_time.bytes_used.values").String()), ",")
-					atBytesUsedPercentages := strings.Split(util.ArrayMetricToString(record.Get("analytics.by_accessed_time.bytes_used.percentages").String()), ",")
-					atBytesUsedLabels := strings.Split(util.ArrayMetricToString(analytics.Get("by_accessed_time.bytes_used.labels").String()), ",")
+				atBytesUsedValues := strings.Split(util.ArrayMetricToString(record.Get("analytics.by_accessed_time.bytes_used.values").String()), ",")
+				atBytesUsedPercentages := strings.Split(util.ArrayMetricToString(record.Get("analytics.by_accessed_time.bytes_used.percentages").String()), ",")
+				atBytesUsedLabels := strings.Split(util.ArrayMetricToString(analytics.Get("by_accessed_time.bytes_used.labels").String()), ",")
 
-					instance, err := explorerMatrix.NewInstance(instanceID + name)
-					if err != nil {
-						v.Logger.Warn().Str("key", name).Msg("error while creating instance")
-						continue
+				instance, err := explorerMatrix.NewInstance(instanceID + name)
+				if err != nil {
+					v.Logger.Warn().Str("key", name).Msg("error while creating instance")
+					continue
+				}
+				instance.SetLabel("dir_name", name)
+				instance.SetLabel("index", cluster+"_"+strconv.Itoa(index))
+				// copy all labels
+				for k1, v1 := range dataInstance.GetLabels().Map() {
+					instance.SetLabel(k1, v1)
+				}
+				if bytesUsed != "" {
+					if err = explorerMatrix.GetMetric("dir_bytes_used").SetValueString(instance, bytesUsed); err != nil {
+						v.Logger.Error().Err(err).Str("value", bytesUsed).Msg("set metric")
 					}
-					instance.SetLabel("dir_name", name)
-					instance.SetLabel("index", cluster+"_"+strconv.Itoa(index))
-					// copy all labels
-					for k1, v1 := range dataInstance.GetLabels().Map() {
-						instance.SetLabel(k1, v1)
+				}
+				if fileCount != "" {
+					if err = explorerMatrix.GetMetric("dir_file_count").SetValueString(instance, fileCount); err != nil {
+						v.Logger.Error().Err(err).Str("value", fileCount).Msg("set metric")
 					}
-					if bytesUsed != "" {
-						if err = explorerMatrix.GetMetric("dir_bytes_used").SetValueString(instance, bytesUsed); err != nil {
-							v.Logger.Error().Err(err).Str("value", bytesUsed).Msg("set metric")
+				}
+				if subDirCount != "" {
+					if name == "." {
+						if err = explorerMatrix.GetMetric("dir_subdir_count").SetValueString(instance, util.AddIntString(subDirCount, 1)); err != nil {
+							v.Logger.Error().Err(err).Str("value", subDirCount).Msg("set metric")
 						}
-					}
-					if fileCount != "" {
-						if err = explorerMatrix.GetMetric("dir_file_count").SetValueString(instance, fileCount); err != nil {
-							v.Logger.Error().Err(err).Str("value", fileCount).Msg("set metric")
-						}
-					}
-					if subDirCount != "" {
-						if name == "." {
-							if err = explorerMatrix.GetMetric("dir_subdir_count").SetValueString(instance, util.AddIntString(subDirCount, 1)); err != nil {
-								v.Logger.Error().Err(err).Str("value", subDirCount).Msg("set metric")
-							}
-						} else {
-							if err = explorerMatrix.GetMetric("dir_subdir_count").SetValueString(instance, subDirCount); err != nil {
-								v.Logger.Error().Err(err).Str("value", subDirCount).Msg("set metric")
-							}
-						}
-					}
-					if len(mtBytesUsedValues) == len(mtBytesUsedPercentages) && len(mtBytesUsedValues) == len(mtBytesUsedLabels) {
-
-						for i, mv := range mtBytesUsedValues {
-							key := "modified_value_" + mtBytesUsedLabels[i]
-							m := explorerMatrix.GetMetric(key)
-							if m == nil {
-								if m, err = explorerMatrix.NewMetricFloat64(key, "bytes_used_by_modified_time"); err != nil {
-									return nil, err
-								}
-							}
-							m.SetLabel("time", mtBytesUsedLabels[i])
-							m.SetLabel("order", strconv.Itoa(i))
-							m.SetLabel("activity", v.getLabelBucket(atBytesUsedLabels[i]))
-							if err = m.SetValueString(instance, mv); err != nil {
-								v.Logger.Error().Err(err).Str("value", mv).Msg("set metric")
-							}
-
-						}
-						for i, mp := range mtBytesUsedPercentages {
-							key := "modified_percent_" + mtBytesUsedLabels[i]
-							m := explorerMatrix.GetMetric(key)
-							if m == nil {
-								if m, err = explorerMatrix.NewMetricFloat64(key, "bytes_used_percent_by_modified_time"); err != nil {
-									return nil, err
-								}
-							}
-							m.SetLabel("time", mtBytesUsedLabels[i])
-							m.SetLabel("order", strconv.Itoa(i))
-							m.SetLabel("activity", v.getLabelBucket(atBytesUsedLabels[i]))
-							if err = m.SetValueString(instance, mp); err != nil {
-								v.Logger.Error().Err(err).Str("value", mp).Msg("set metric")
-							}
-
+					} else {
+						if err = explorerMatrix.GetMetric("dir_subdir_count").SetValueString(instance, subDirCount); err != nil {
+							v.Logger.Error().Err(err).Str("value", subDirCount).Msg("set metric")
 						}
 					}
+				}
+				if len(mtBytesUsedValues) == len(mtBytesUsedPercentages) && len(mtBytesUsedValues) == len(mtBytesUsedLabels) {
 
-					if len(atBytesUsedValues) == len(atBytesUsedPercentages) && len(atBytesUsedValues) == len(atBytesUsedLabels) {
-
-						for i, av := range atBytesUsedValues {
-							key := "access_value_" + atBytesUsedLabels[i]
-							m := explorerMatrix.GetMetric(key)
-							if m == nil {
-								if m, err = explorerMatrix.NewMetricFloat64(key, "bytes_used_by_accessed_time"); err != nil {
-									return nil, err
-								}
+					for i, mv := range mtBytesUsedValues {
+						key := "modified_value_" + mtBytesUsedLabels[i]
+						m := explorerMatrix.GetMetric(key)
+						if m == nil {
+							if m, err = explorerMatrix.NewMetricFloat64(key, "bytes_used_by_modified_time"); err != nil {
+								return nil, err
 							}
-							m.SetLabel("time", atBytesUsedLabels[i])
-							m.SetLabel("order", strconv.Itoa(i))
-							m.SetLabel("activity", v.getLabelBucket(atBytesUsedLabels[i]))
-							if err = m.SetValueString(instance, av); err != nil {
-								v.Logger.Error().Err(err).Str("value", av).Msg("set metric")
-							}
-
 						}
-						for i, ap := range atBytesUsedPercentages {
-							key := "access_percent_" + atBytesUsedLabels[i]
-							m := explorerMatrix.GetMetric(key)
-							if m == nil {
-								if m, err = explorerMatrix.NewMetricFloat64(key, "bytes_used_percent_by_accessed_time"); err != nil {
-									return nil, err
-								}
-							}
-							m.SetLabel("time", atBytesUsedLabels[i])
-							m.SetLabel("order", strconv.Itoa(i))
-							m.SetLabel("activity", v.getLabelBucket(atBytesUsedLabels[i]))
-							if err = m.SetValueString(instance, ap); err != nil {
-								v.Logger.Error().Err(err).Str("value", ap).Msg("set metric")
-							}
-
+						m.SetLabel("time", mtBytesUsedLabels[i])
+						m.SetLabel("order", strconv.Itoa(i))
+						m.SetLabel("activity", v.getLabelBucket(atBytesUsedLabels[i]))
+						if err = m.SetValueString(instance, mv); err != nil {
+							v.Logger.Error().Err(err).Str("value", mv).Msg("set metric")
 						}
+
+					}
+					for i, mp := range mtBytesUsedPercentages {
+						key := "modified_percent_" + mtBytesUsedLabels[i]
+						m := explorerMatrix.GetMetric(key)
+						if m == nil {
+							if m, err = explorerMatrix.NewMetricFloat64(key, "bytes_used_percent_by_modified_time"); err != nil {
+								return nil, err
+							}
+						}
+						m.SetLabel("time", mtBytesUsedLabels[i])
+						m.SetLabel("order", strconv.Itoa(i))
+						m.SetLabel("activity", v.getLabelBucket(atBytesUsedLabels[i]))
+						if err = m.SetValueString(instance, mp); err != nil {
+							v.Logger.Error().Err(err).Str("value", mp).Msg("set metric")
+						}
+
+					}
+				}
+
+				if len(atBytesUsedValues) == len(atBytesUsedPercentages) && len(atBytesUsedValues) == len(atBytesUsedLabels) {
+
+					for i, av := range atBytesUsedValues {
+						key := "access_value_" + atBytesUsedLabels[i]
+						m := explorerMatrix.GetMetric(key)
+						if m == nil {
+							if m, err = explorerMatrix.NewMetricFloat64(key, "bytes_used_by_accessed_time"); err != nil {
+								return nil, err
+							}
+						}
+						m.SetLabel("time", atBytesUsedLabels[i])
+						m.SetLabel("order", strconv.Itoa(i))
+						m.SetLabel("activity", v.getLabelBucket(atBytesUsedLabels[i]))
+						if err = m.SetValueString(instance, av); err != nil {
+							v.Logger.Error().Err(err).Str("value", av).Msg("set metric")
+						}
+
+					}
+					for i, ap := range atBytesUsedPercentages {
+						key := "access_percent_" + atBytesUsedLabels[i]
+						m := explorerMatrix.GetMetric(key)
+						if m == nil {
+							if m, err = explorerMatrix.NewMetricFloat64(key, "bytes_used_percent_by_accessed_time"); err != nil {
+								return nil, err
+							}
+						}
+						m.SetLabel("time", atBytesUsedLabels[i])
+						m.SetLabel("order", strconv.Itoa(i))
+						m.SetLabel("activity", v.getLabelBucket(atBytesUsedLabels[i]))
+						if err = m.SetValueString(instance, ap); err != nil {
+							v.Logger.Error().Err(err).Str("value", ap).Msg("set metric")
+						}
+
 					}
 				}
 			}

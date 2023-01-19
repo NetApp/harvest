@@ -284,15 +284,18 @@ func Fetch(client *Client, href string) ([]gjson.Result, error) {
 	)
 	downloadAll := true
 	maxRecords := 0
-	if strings.Contains(href, "max_records=") {
-		mr, err := util.ParseURLQuery(href)
-		if err == nil {
-			if mri, err := strconv.Atoi(mr); err == nil {
+	if strings.Contains(href, "max_records") {
+		mr, err := util.GetQueryParam(href, "max_records")
+		if err != nil {
+			return nil, err
+		}
+		if mr != "" {
+			if mri, err := strconv.Atoi(mr); err != nil {
+				return nil, err
+			} else {
 				maxRecords = mri
 			}
-		}
-		if maxRecords != 0 {
-			downloadAll = false
+			downloadAll = maxRecords == 0
 		}
 	}
 	err = fetch(client, href, &records, downloadAll, int64(maxRecords))
@@ -314,16 +317,19 @@ func FetchAnalytics(client *Client, href string) ([]gjson.Result, gjson.Result, 
 	)
 	downloadAll := true
 	maxRecords := 0
-	if strings.Contains(href, "max_records=") {
-		mr, err := util.ParseURLQuery(href)
+	if strings.Contains(href, "max_records") {
+		mr, err := util.GetQueryParam(href, "max_records")
 		if err != nil {
-			if mri, err := strconv.Atoi(mr); err == nil {
+			return []gjson.Result{}, gjson.Result{}, err
+		}
+		if mr != "" {
+			if mri, err := strconv.Atoi(mr); err != nil {
+				return []gjson.Result{}, gjson.Result{}, err
+			} else {
 				maxRecords = mri
 			}
 		}
-		if maxRecords != 0 {
-			downloadAll = false
-		}
+		downloadAll = maxRecords == 0
 	}
 	err = fetchAnalytics(client, href, &records, analytics, downloadAll, int64(maxRecords))
 	if err != nil {

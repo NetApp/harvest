@@ -8,7 +8,7 @@ counters:
   - ^svm.name                                     => svm
   - filter:
       - analytics.state=on
-      - order_by=space.used%20desc
+      - order_by=space.used desc
       - max_records=20
 
 plugins:
