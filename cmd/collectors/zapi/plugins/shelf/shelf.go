@@ -129,6 +129,7 @@ func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		output []*matrix.Matrix
 	)
 
+	// Only 7mode is supported through this plugin
 	if my.client.IsClustered() {
 		return nil, nil
 	}

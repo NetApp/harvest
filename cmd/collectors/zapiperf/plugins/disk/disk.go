@@ -195,11 +195,7 @@ func (d *Disk) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		return output, err
 	}
 
-	output, err = d.handleShelfPower(result, output)
-	if err != nil {
-		return output, err
-	}
-	return output, nil
+	return d.handleShelfPower(result, output)
 }
 
 func (d *Disk) handleShelfPower(shelves []*node.Node, output []*matrix.Matrix) ([]*matrix.Matrix, error) {

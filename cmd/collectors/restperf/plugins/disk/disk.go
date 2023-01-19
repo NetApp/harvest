@@ -309,12 +309,8 @@ func (d *Disk) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		sort.Strings(attributes)
 		d.Logger.Warn().Strs("attributes", attributes).Msg("No instances")
 	}
-	output, err = d.handleShelfPower(records, output)
-	if err != nil {
-		return output, err
-	}
 
-	return output, err
+	return d.handleShelfPower(records, output)
 }
 
 func (d *Disk) handleShelfPower(shelves []gjson.Result, output []*matrix.Matrix) ([]*matrix.Matrix, error) {
