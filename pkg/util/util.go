@@ -383,11 +383,11 @@ func GetQueryParam(href string, query string) (string, error) {
 	return mr, nil
 }
 
-func EncodeURL(href string) string {
+func EncodeURL(href string) (string, error) {
 	u, err := url.Parse(href)
 	if err != nil {
-		fmt.Println(err)
+		return "", err
 	}
 	u.RawQuery = u.Query().Encode()
-	return u.RequestURI()
+	return u.RequestURI(), nil
 }

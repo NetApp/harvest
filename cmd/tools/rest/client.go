@@ -163,7 +163,10 @@ func (c *Client) GetRest(request string) ([]byte, error) {
 	if strings.Index(request, "/") == 0 {
 		request = request[1:]
 	}
-	request = util.EncodeURL(request)
+	request, err = util.EncodeURL(request)
+	if err != nil {
+		return nil, err
+	}
 	u := c.baseURL + request
 	c.request, err = http.NewRequest("GET", u, nil)
 	if err != nil {
