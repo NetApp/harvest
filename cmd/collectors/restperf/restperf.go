@@ -2,6 +2,7 @@ package restperf
 
 import (
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
+	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/disk"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/fcp"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/headroom"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/nic"
@@ -1097,6 +1098,8 @@ func (r *RestPerf) LoadPlugin(kind string, p *plugin.AbstractPlugin) plugin.Plug
 		return volume.New(p)
 	case "VolumeTag":
 		return volumetag.New(p)
+	case "Disk":
+		return disk.New(p)
 	default:
 		r.Logger.Info().Str("kind", kind).Msg("no Restperf plugin found")
 	}

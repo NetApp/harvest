@@ -28,21 +28,23 @@ counters:
   - user_write_count         => user_writes
 
 plugins:
-  LabelAgent:
-    split:
-      - raid_group `/` ,aggr,plex,raid
-  Aggregator:
-  # plugin will create summary/average for each object
-  # any names after the object names will be treated as
-  # label names that will be added to instances
-    - node
-    - aggr ...
-    - plex node,aggr,plex
-  #  - plex node aggr
-  #  - raid node aggr plex
-  Max:
-    - node<>node_disk_max
-    - aggr<>aggr_disk_max ...
+  - LabelAgent:
+      split:
+        - raid_group `/` ,aggr,plex,raid
+  - Aggregator:
+    # plugin will create summary/average for each object
+    # any names after the object names will be treated as
+    # label names that will be added to instances
+      - node
+      - aggr ...
+      - plex node,aggr,plex
+    #  - plex node aggr
+    #  - raid node aggr plex
+  - Max:
+      - node<>node_disk_max
+      - aggr<>aggr_disk_max ...
+
+  - Disk
 
 # only export node/aggr aggregations from plugin
 # set this true or comment, to get data for each disk
