@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"io"
 	"net/http"
@@ -161,6 +162,10 @@ func (c *Client) GetRest(request string) ([]byte, error) {
 	var err error
 	if strings.Index(request, "/") == 0 {
 		request = request[1:]
+	}
+	request, err = util.EncodeURL(request)
+	if err != nil {
+		return nil, err
 	}
 	u := c.baseURL + request
 	c.request, err = http.NewRequest("GET", u, nil)
@@ -336,4 +341,10 @@ func addArg(href *strings.Builder, field string, value string) {
 
 func (c *Client) Cluster() Cluster {
 	return c.cluster
+}
+
+func (cl Cluster) GetVersion() string {
+	ver := cl.Version
+	return fmt.Sprintf("%d.%d.%d", ver[0], ver[1], ver[2])
+
 }

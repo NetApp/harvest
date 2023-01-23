@@ -35,3 +35,4 @@ objects:
   Support:                     support.yaml
   SVM:                         svm.yaml
   Volume:                      volume.yaml
+  VolumeAnalytics:             volume_analytics.yaml

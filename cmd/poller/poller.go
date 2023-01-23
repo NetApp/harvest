@@ -1136,8 +1136,7 @@ func (p *Poller) upgradeCollector(c conf.Collector) conf.Collector {
 		logger.Debug().Err(err).Str("collector", c.Name).Msg("Failed to upgrade to Rest. Use collector")
 		return c
 	}
-	ver := r.Client.Cluster().Version
-	verWithDots := fmt.Sprintf("%d.%d.%d", ver[0], ver[1], ver[2])
+	verWithDots := r.Client.Cluster().GetVersion()
 
 	return p.negotiateAPI(c, verWithDots, doZAPIsExist)
 }
