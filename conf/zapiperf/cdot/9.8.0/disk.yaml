@@ -16,6 +16,7 @@ counters:
   - io_queued
   - node_name             => node
   - physical_disk_name    => disk
+  - physical_disk_uuid    => disk_uuid
   - raid_group
   - raid_type
   - total_transfers
