@@ -12,5 +12,5 @@ and offers great flexibility in how you collect, augment, and export your datace
 
 !!! note
 
-    Hop onto our [Discord](https://discordapp.com/channels/855068651522490400/1001963189124206732) 
+    Hop onto our [Discord](https://discord.com/channels/855068651522490400/1062050414146625536) 
     or GitHub [discussions](https://github.com/NetApp/harvest/discussions) and say hi. 👋🏽
