@@ -101,6 +101,8 @@ func (d *Disk) Init() error {
 	d.Logger.Debug().Msg("plugin connected!")
 
 	d.shelfData = make(map[string]*matrix.Matrix)
+	d.powerData = make(map[string]*matrix.Matrix)
+
 	d.instanceKeys = make(map[string]string)
 	d.instanceLabels = make(map[string]*dict.Dict)
 
@@ -123,8 +125,6 @@ func (d *Disk) Init() error {
 
 		d.shelfData[attribute] = matrix.New(d.Parent+".Shelf", "shelf_"+objectName, "shelf_"+objectName)
 		d.shelfData[attribute].SetGlobalLabel("datacenter", d.ParentParams.GetChildContentS("datacenter"))
-
-		d.powerData = make(map[string]*matrix.Matrix)
 
 		exportOptions := node.NewS("export_options")
 		instanceLabels := exportOptions.NewChildS("instance_labels", "")
@@ -562,10 +562,10 @@ func (d *Disk) handleShelfPower(shelves []*node.Node, output []*matrix.Matrix) (
 	data.PurgeInstances()
 	data.Reset()
 
-	for _, shelf := range shelves {
-		shelfName := shelf.GetChildContentS("shelf")
-		shelfUID := shelf.GetChildContentS("shelf-uid")
-		shelfID := shelf.GetChildContentS("shelf-id")
+	for _, s := range shelves {
+		shelfName := s.GetChildContentS("shelf")
+		shelfUID := s.GetChildContentS("shelf-uid")
+		shelfID := s.GetChildContentS("shelf-id")
 		instanceKey := shelfUID
 		instance, err := data.NewInstance(instanceKey)
 		if err != nil {
