@@ -287,7 +287,7 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 	}
 	totaliops := make(map[string]float64)
 
-	// calculate power for returned disks in response
+	// calculate power for returned disks in zapiperf response
 	for _, instance := range data.GetInstances() {
 		if v, ok := totalTransfers.GetValueFloat64(instance); ok {
 			diskUUID := instance.GetLabel("disk_uuid")
@@ -354,6 +354,7 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 	aggrData.PurgeInstances()
 	aggrData.Reset()
 
+	// fill aggr power matrix with power calculated above
 	for k, v := range d.aggrMap {
 		instanceKey := k
 		instance, err := aggrData.NewInstance(instanceKey)
