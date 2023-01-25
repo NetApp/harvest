@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1674492708579,
+  "iteration": 1674649463449,
   "links": [
     {
       "asDropdown": true,
@@ -895,7 +895,7 @@
               }
             ]
           },
-          "unit": "watt"
+          "unit": "celsius"
         },
         "overrides": []
       },
@@ -924,7 +924,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "topk($TopResources,shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$TopShelfPower\"})",
+          "expr": "topk($TopResources,shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$TopShelfAvgTemp\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{shelf}} ({{cluster}})",
@@ -933,7 +933,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top Shelves by Power Consumed",
+      "title": "Top Shelves by Average Temperature",
       "type": "timeseries"
     },
     {
