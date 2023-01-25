@@ -9,7 +9,7 @@ new metrics can be collected with a few edits of the included template files.
 
 Harvest is open-source, released under an [Apache2 license](https://github.com/NetApp/harvest/blob/main/LICENSE),
 and offers great flexibility in how you collect, augment, and export your
-datacenter [metrics](https://netapp.github.io/harvest/22.11/ontap-metrics/).
+datacenter [metrics](https://netapp.github.io/harvest/latest/ontap-metrics/).
 
 !!! note
 
