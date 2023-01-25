@@ -332,13 +332,17 @@ func TestNoUnusedVariables(t *testing.T) {
 }
 
 func checkUnusedVariables(t *testing.T, path string, data []byte) {
-	// collect are variable names, except data source
+	// collect are variable names, expressions except data source
 	vars := make([]string, 0)
+	varExpression := make([]string, 0)
 	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
 		if value.Get("type").String() == "datasource" {
 			return true
 		}
+		// name of variable
 		vars = append(vars, value.Get("name").String())
+		// query expression of variable
+		varExpression = append(varExpression, value.Get("definition").String())
 		return true
 	})
 
@@ -366,6 +370,12 @@ varLoop:
 				continue varLoop
 			}
 		}
+		for _, varExpr := range varExpression {
+			if strings.Contains(varExpr, variable) {
+				continue varLoop
+			}
+		}
+
 		t.Errorf("dashboard=%s has unused variable [%s]", shortPath(path), variable)
 	}
 }

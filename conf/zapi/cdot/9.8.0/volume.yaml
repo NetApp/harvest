@@ -59,6 +59,8 @@ counters:
     - volume-state-attributes:
       - ^state
       - ^status
+      - ^is-node-root                       => node_root
+      - ^is-vserver-root                    => svm_root
 
     - volume-snapshot-attributes:
       - ^auto-snapshots-enabled             => auto_snapshots_enabled
@@ -74,11 +76,11 @@ plugins:
       compute_metric:
         - inode_used_percent PERCENT inode_files_used inode_files_total
   - LabelAgent:
+    exclude_equals:
+      - style `flexgroup_constituent`
     # metric label zapi_value rest_value `default_value`
     value_to_num:
       - new_status state online online `0`
-    exclude_equals:
-      - style `flexgroup_constituent`
     # To prevent visibility of transient volumes, uncomment the following lines
 #    exclude_regex:
 #      # Exclude SnapProtect/CommVault Intellisnap, Clone volumes have a “_CVclone” suffix
@@ -95,6 +97,10 @@ plugins:
 #      - volume `MDV_aud_.+`
     replace:
       - style style `flexgroup_constituent` `flexgroup`
+      - node_root root_volume `false` `No`
+      - svm_root root_volume `false` `No`
+      - node_root root_volume `true` `Yes`
+      - svm_root root_volume `true` `Yes`
   - Aggregator:
     - volume<style=flexgroup>volume node,svm,aggr,style
 
@@ -112,4 +118,7 @@ export_options:
     - type
     - isEncrypted
     - isHardwareEncrypted
+    - svm_root
+    - node_root
+    - root_volume
 

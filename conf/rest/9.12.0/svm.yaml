@@ -8,6 +8,7 @@ counters:
   - ^^vserver                               => svm
   - ^anti_ransomware_default_volume_state   => anti_ransomware_state
   - ^operational_state                      => state
+  - ^type                                   => type
 
 endpoints:
   - query: api/svm/svms
@@ -65,6 +66,11 @@ endpoints:
 plugins:
   - SVM
   - LabelAgent:
+      replace:
+        - type root_svm `data` `No`
+        - type root_svm `node` `Yes`
+        - type root_svm `admin` `Yes`
+        - type root_svm `system` `Yes`
       value_to_num:
         - new_status state online online `0`
         - ldap_signed ldap_session_security sign sign `0`
@@ -93,4 +99,6 @@ export_options:
     - nis_authentication_enabled
     - ns_source
     - ns_db
+    - type
+    - root_svm
 
