@@ -8,6 +8,7 @@ counters:
     - ^^uuid                                  => svm_uuid
     - ^vserver-name                           => svm
     - ^state                                  => state
+    - ^vserver-type                           => type
     - ^anti-ransomware-default-volume-state   => anti_ransomware_state
     - name-server-switch:
         - ^nsswitch                           => nameservice_switch
@@ -19,6 +20,11 @@ plugins:
       schedule:
         - data: 900s  # should be multiple of data poll duration
   - LabelAgent:
+      replace:
+        - type root_svm `data` `No`
+        - type root_svm `node` `Yes`
+        - type root_svm `admin` `Yes`
+        - type root_svm `system` `Yes`
       value_to_num:
         - new_status state online online `0`
         - ldap_signed ldap_session_security sign sign `0`
@@ -47,3 +53,6 @@ export_options:
     - nfs_kerberos_protocol_enabled
     - smb_encryption_required
     - smb_signing_required
+    - type
+    - root_svm
+
