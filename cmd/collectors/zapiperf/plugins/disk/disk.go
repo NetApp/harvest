@@ -276,7 +276,7 @@ func (d *Disk) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		return output, err
 	}
 
-	return output, err
+	return output, nil
 }
 
 func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) ([]*matrix.Matrix, error) {
