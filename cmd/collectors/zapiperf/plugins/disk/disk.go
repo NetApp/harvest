@@ -414,7 +414,7 @@ func (d *Disk) getDisks() error {
 	query := "storage-disk-get-iter"
 	tag := "initial"
 	request := node.NewXMLS(query)
-	request.NewChildS("max-records", batchSize)
+	request.NewChildS("max-records", d.batchSize)
 	desired := node.NewXMLS("desired-attributes")
 	storageDiskInfo := node.NewXMLS("storage-disk-info")
 	diskInventoryInfo := node.NewXMLS("disk-inventory-info")
