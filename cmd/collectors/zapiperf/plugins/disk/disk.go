@@ -510,7 +510,7 @@ func (d *Disk) getAggregates() error {
 	query := "aggr-get-iter"
 	tag := "initial"
 	request := node.NewXMLS(query)
-	request.NewChildS("max-records", batchSize)
+	request.NewChildS("max-records", d.batchSize)
 	desired := node.NewXMLS("desired-attributes")
 	aggrAttributes := node.NewXMLS("aggr-attributes")
 	aggrRaidAttributes := node.NewXMLS("aggr-raid-attributes")
