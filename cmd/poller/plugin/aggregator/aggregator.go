@@ -212,9 +212,8 @@ func (a *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				}
 
 				// latency metric: weighted sum
-				opsKey := ""
 				if strings.Contains(key, "_latency") {
-					opsKey = objMetric.GetComment()
+					opsKey := objMetric.GetComment()
 					if opsMetric = data.GetMetric(opsKey); opsMetric == nil {
 						a.Logger.Warn().Msgf("metric [%s] not found in [%s] response", opsKey, rule.label)
 						continue
@@ -224,11 +223,13 @@ func (a *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					}
 					if err = objMetric.AddValueFloat64(objInstance, opsValue*value); err != nil {
 						a.Logger.Error().Stack().Err(err).Msgf("add value [%s] [%s]:", key, objName)
+						continue
 					}
 					rule.counts[objKey][key] += opsValue
 				} else {
 					if err = objMetric.AddValueFloat64(objInstance, value); err != nil {
 						a.Logger.Error().Stack().Err(err).Msgf("add value [%s] [%s]:", key, objName)
+						continue
 					}
 					rule.counts[objKey][key]++
 				}
