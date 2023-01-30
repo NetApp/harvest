@@ -29,7 +29,7 @@ type rule struct {
 	checkRegex    *regexp.Regexp
 	includeLabels []string
 	allLabels     bool
-	counts        map[string]map[string]int
+	counts        map[string]map[string]float64
 }
 
 func (a *Aggregator) Init() error {
@@ -128,7 +128,7 @@ func (a *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		matrices[i].UUID += ".Aggregator"
 		matrices[i].SetExportOptions(matrix.DefaultExportOptions())
 		matrices[i].SetExportable(true)
-		rule.counts = make(map[string]map[string]int)
+		rule.counts = make(map[string]map[string]float64)
 	}
 
 	// create instances and summarize metric values
@@ -137,6 +137,8 @@ func (a *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		objName, objKey string
 		objInstance     *matrix.Instance
 		objMetric       *matrix.Metric
+		opsMetric       *matrix.Metric
+		opsValue        float64
 		value           float64
 		ok              bool
 		err             error
@@ -182,7 +184,7 @@ func (a *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			a.Logger.Trace().Msgf("instance (%s= %s): formatted key [%s]", rule.label, objName, objKey)
 
 			if objInstance = matrices[i].GetInstance(objKey); objInstance == nil {
-				rule.counts[objKey] = make(map[string]int)
+				rule.counts[objKey] = make(map[string]float64)
 				if objInstance, err = matrices[i].NewInstance(objKey); err != nil {
 					return nil, err
 				}
@@ -209,11 +211,28 @@ func (a *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					continue
 				}
 
-				if err = objMetric.AddValueFloat64(objInstance, value); err != nil {
-					a.Logger.Error().Stack().Err(err).Msgf("add value [%s] [%s]:", key, objName)
+				// latency metric: weighted sum
+				if strings.Contains(key, "_latency") {
+					opsKey := objMetric.GetComment()
+					if opsMetric = data.GetMetric(opsKey); opsMetric == nil {
+						a.Logger.Warn().Msgf("metric [%s] not found in [%s] response", opsKey, rule.label)
+						continue
+					}
+					if opsValue, ok = opsMetric.GetValueFloat64(instance); !ok {
+						continue
+					}
+					if err = objMetric.AddValueFloat64(objInstance, opsValue*value); err != nil {
+						a.Logger.Error().Err(err).Msgf("add value [%s] [%s]:", key, objName)
+						continue
+					}
+					rule.counts[objKey][key] += opsValue
+				} else {
+					if err = objMetric.AddValueFloat64(objInstance, value); err != nil {
+						a.Logger.Error().Err(err).Msgf("add value [%s] [%s]:", key, objName)
+						continue
+					}
+					rule.counts[objKey][key]++
 				}
-
-				rule.counts[objKey][key]++
 			}
 		}
 	}
@@ -224,8 +243,8 @@ func (a *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		for mk, metric := range m.GetMetrics() {
 
 			var (
-				value   float64
-				count   int
+				v       float64
+				count   float64
 				ok, avg bool
 				err     error
 			)
@@ -247,7 +266,7 @@ func (a *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 			for key, instance := range m.GetInstances() {
 
-				if value, ok = metric.GetValueFloat64(instance); !ok {
+				if v, ok = metric.GetValueFloat64(instance); !ok {
 					continue
 				}
 
@@ -255,7 +274,7 @@ func (a *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					continue
 				}
 
-				if err = metric.SetValueFloat64(instance, value/float64(count)); err != nil {
+				if err = metric.SetValueFloat64(instance, v/count); err != nil {
 					a.Logger.Error().Stack().Err(err).Msgf("set value [%s] [%s]:", mn, key)
 				}
 			}

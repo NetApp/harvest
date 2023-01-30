@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1663832272520,
+  "iteration": 1674825410278,
   "links": [
     {
       "asDropdown": true,
@@ -1659,14 +1659,10 @@
                   {
                     "color": "green",
                     "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
                   }
                 ]
               },
-              "unit": "µs"
+              "unit": "ms"
             },
             "overrides": []
           },
@@ -1695,21 +1691,21 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg(volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "avg(node_volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) / 1000",
               "interval": "",
               "legendFormat": "Read",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "avg(volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "avg(node_volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) / 1000",
               "interval": "",
               "legendFormat": "Write",
               "refId": "B"
             },
             {
               "exemplar": false,
-              "expr": "avg(volume_other_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "avg(node_volume_other_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) / 1000",
               "interval": "",
               "legendFormat": "Other",
               "refId": "C"
@@ -4901,5 +4897,5 @@
   "timezone": "",
   "title": "ONTAP: Node",
   "uid": "",
-  "version": 4
+  "version": 5
 }
