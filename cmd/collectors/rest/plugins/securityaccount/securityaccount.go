@@ -126,8 +126,7 @@ func (s *SecurityAccount) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					var securityAccountNewInstance *matrix.Instance
 					securityAccountNewKey := securityAccountKey + application + method
 					if securityAccountNewInstance, err = s.data.NewInstance(securityAccountNewKey); err != nil {
-						s.Logger.Debug().Msgf("add instance failed for key %s: %v", securityAccountNewKey, err)
-						s.Logger.Error().Err(err).Str("Instance key", securityAccountNewKey).Msg("")
+						s.Logger.Error().Err(err).Str("add instance failed for instance key", securityAccountNewKey).Msg("")
 						return nil, err
 					}
 
