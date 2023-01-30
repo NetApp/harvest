@@ -6,3 +6,4 @@ schedule:
 
 objects:
   Tenant:          tenant.yaml
+  Prometheus:      storageGridProm.yaml
