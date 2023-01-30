@@ -222,13 +222,13 @@ func (a *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 						continue
 					}
 					if err = objMetric.AddValueFloat64(objInstance, opsValue*value); err != nil {
-						a.Logger.Error().Stack().Err(err).Msgf("add value [%s] [%s]:", key, objName)
+						a.Logger.Error().Err(err).Msgf("add value [%s] [%s]:", key, objName)
 						continue
 					}
 					rule.counts[objKey][key] += opsValue
 				} else {
 					if err = objMetric.AddValueFloat64(objInstance, value); err != nil {
-						a.Logger.Error().Stack().Err(err).Msgf("add value [%s] [%s]:", key, objName)
+						a.Logger.Error().Err(err).Msgf("add value [%s] [%s]:", key, objName)
 						continue
 					}
 					rule.counts[objKey][key]++
