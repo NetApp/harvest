@@ -77,7 +77,7 @@ func GetPollerStatuses() ([]PollerStatus, error) {
 	for _, p := range processes {
 		line, err := p.Cmdline()
 		if err != nil {
-			if !errors.Is(err, unix.EINVAL) {
+			if !errors.Is(err, unix.EINVAL) && !errors.Is(err, unix.ENOENT) {
 				fmt.Printf("Unable to read process cmdline pid=%d err=%v\n", p.Pid, err)
 			}
 			continue
