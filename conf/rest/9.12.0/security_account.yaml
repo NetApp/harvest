@@ -3,17 +3,19 @@ name:             SecurityAccount
 query:            api/security/accounts
 object:           security_account
 
+schedule:
+  - data: 1m
+
 counters:
   - ^^name                                      => user_name
   - ^^owner.name                                => svm
   - ^role.name                                  => role_name
   - ^password_hash_algorithm                    => hash_algorithm
   - ^locked                                     => locked
-  - ^applications.#.application                 => applications
-  - ^applications.#.authentication_methods.0    => methods
 
 
 plugins:
+  - SecurityAccount
   - LabelAgent:
       value_to_num_regex:
         - samluser methods .*saml.*$ .*saml.*$ `0`
@@ -26,9 +28,9 @@ export_options:
   instance_keys:
     - user_name
     - svm
+    - applications
+    - methods
   instance_labels:
     - role_name
     - hash_algorithm
     - locked
-    - applications
-    - methods
