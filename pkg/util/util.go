@@ -6,7 +6,7 @@ package util
 
 import (
 	"errors"
-	"github.com/netapp/harvest/v2/pkg/logging"
+	"fmt"
 	"github.com/rs/zerolog"
 	"github.com/shirou/gopsutil/v3/process"
 	"golang.org/x/sys/unix"
@@ -18,8 +18,6 @@ import (
 	"strconv"
 	"strings"
 )
-
-var logger = logging.Get()
 
 func MinLen(elements [][]string) int {
 	var min, i int
@@ -80,10 +78,7 @@ func GetPollerStatuses() ([]PollerStatus, error) {
 		line, err := p.Cmdline()
 		if err != nil {
 			if !errors.Is(err, unix.EINVAL) && !errors.Is(err, unix.ENOENT) {
-				logger.Error().
-					Err(err).
-					Int32("pid", p.Pid).
-					Msg("Unable to read process cmdline")
+				fmt.Printf("Unable to read process cmdline pid=%d err=%v\n", p.Pid, err)
 			}
 			continue
 		}
