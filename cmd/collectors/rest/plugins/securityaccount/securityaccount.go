@@ -88,7 +88,7 @@ func (s *SecurityAccount) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	// Set all global labels from Rest.go if already not exist
 	s.data.SetGlobalLabels(data.GetGlobalLabels())
 
-	href := rest.BuildHref("", "*", nil, "", "", "", "", s.query)
+	href := rest.BuildHref("", "applications", nil, "", "", "", "", s.query)
 
 	if result, err = collectors.InvokeRestCall(s.client, href, s.Logger); err != nil {
 		return nil, err
