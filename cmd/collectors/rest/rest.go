@@ -5,6 +5,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/certificate"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/disk"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/qtree"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/securityaccount"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/sensor"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/snapmirror"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/svm"
@@ -381,6 +382,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return svm.New(abc)
 	case "Sensor":
 		return sensor.New(abc)
+	case "SecurityAccount":
+		return securityaccount.New(abc)
 	default:
 		r.Logger.Warn().Str("kind", kind).Msg("no rest plugin found ")
 	}
