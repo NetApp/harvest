@@ -12,6 +12,7 @@ import (
 )
 
 var p *Aggregator
+
 var m *matrix.Matrix
 
 func TestInitPlugin(t *testing.T) {
@@ -323,5 +324,108 @@ func TestComplexRuleRegex(t *testing.T) {
 		t.Logf("OK - no instance [%s] added (did not match regex)", key)
 	} else {
 		t.Errorf("instance [%s] was added, however should not match regex", key)
+	}
+}
+
+func TestRuleSimpleLatencyAggregation(t *testing.T) {
+
+	params := node.NewS("Aggregator")
+	params.NewChildS("", "node")
+
+	p.Params = params
+
+	if err := p.Init(); err != nil {
+		t.Fatal(err)
+	}
+
+	// create artificial data
+	m = matrix.New("", "", "")
+	var n *matrix.Matrix
+
+	metricA, err := m.NewMetricUint8("read_latency")
+	if err != nil {
+		t.Fatal(err)
+	}
+	metricA.SetComment("total_read_ops")
+	metricA.SetProperty("average")
+
+	metricB, err := m.NewMetricUint8("total_read_ops")
+	if err != nil {
+		t.Fatal(err)
+	}
+	metricB.SetProperty("rate")
+
+	instanceA, err := m.NewInstance("InstanceA")
+	if err != nil {
+		t.Fatal(err)
+	}
+	instanceA.SetLabel("node", "nodeA")
+
+	instanceB, err := m.NewInstance("InstanceB")
+	if err != nil {
+		t.Fatal(err)
+	}
+	instanceB.SetLabel("node", "nodeA")
+
+	if err = metricA.SetValueUint8(instanceA, 20); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = metricB.SetValueUint8(instanceA, 4); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = metricA.SetValueUint8(instanceB, 30); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = metricB.SetValueUint8(instanceB, 6); err != nil {
+		t.Fatal(err)
+	}
+
+	// run the plugin
+	results, err := p.Run(m)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(results) == 1 {
+		n = results[0]
+	} else {
+		t.Fatalf("Plugin output has %d matrices, 1 was expected\n", len(results))
+	}
+
+	// check aggregated values
+
+	if len(n.GetInstances()) != 1 {
+		t.Fatalf("Number of instances is %d, 1 was expected\n", len(n.GetInstances()))
+	}
+
+	if instanceA = n.GetInstance("nodeA"); instanceA == nil {
+		t.Fatal("Instance [nodeA] missing")
+	}
+
+	if metricA = n.GetMetric("read_latency"); metricA == nil {
+		t.Fatal("Metric [read_latency] missing")
+	}
+
+	if metricB = n.GetMetric("total_read_ops"); metricB == nil {
+		t.Fatal("Metric [total_read_ops] missing")
+	}
+
+	if value, ok := metricA.GetValueUint8(instanceA); !ok {
+		t.Error("Value [read_latency] missing")
+	} else if value != 26 {
+		t.Errorf("Value [read_latency] = (%d) incorrect", value)
+	} else {
+		t.Logf("Value [read_latency] = (%d) correct!", value)
+	}
+
+	if value, ok := metricB.GetValueUint8(instanceA); !ok {
+		t.Error("Value [total_read_ops] missing")
+	} else if value != 10 {
+		t.Errorf("Value [total_read_ops] = (%d) incorrect", value)
+	} else {
+		t.Logf("Value [total_read_ops] = (%d) correct!", value)
 	}
 }
