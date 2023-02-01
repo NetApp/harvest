@@ -31,6 +31,8 @@ plugins:
       - soft-disk-limit
       - soft-file-limit
       - threshold
+    quotaType:
+      - tree
     #batch_size: "50"
 
 export_options:
