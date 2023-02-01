@@ -1,0 +1,25 @@
+name:   Prometheus
+query:  prometheus
+object: storagegrid
+
+schedule:
+  - data: 3m
+
+counters:
+  - node_cpu_seconds_total
+  - storagegrid_ilm_awaiting_client_objects                   =>  ilm_awaiting_client_objects
+  - storagegrid_ilm_objects_processed                         =>  ilm_objects_processed
+  - storagegrid_network_received_bytes                        =>  network_received_bytes
+  - storagegrid_network_transmitted_bytes                     =>  network_transmitted_bytes
+  - storagegrid_private_ilm_awaiting_delete_objects           =>  private_ilm_awaiting_delete_objects
+  - storagegrid_private_load_balancer_storage_request_count   =>  private_load_balancer_storage_request_count
+  - storagegrid_private_load_balancer_storage_request_time    =>  private_load_balancer_storage_request_time
+  - storagegrid_private_s3_total_requests                     =>  private_s3_total_requests
+  - storagegrid_s3_operations_failed                          =>  s3_operations_failed
+  - storagegrid_s3_operations_successful                      =>  s3_operations_successful
+  - storagegrid_s3_operations_unauthorized                    =>  s3_operations_unauthorized
+  - storagegrid_storage_utilization_data_bytes                =>  storage_utilization_data_bytes
+  - storagegrid_storage_utilization_metadata_allowed_bytes    =>  storage_utilization_metadata_allowed_bytes
+  - storagegrid_storage_utilization_metadata_bytes            =>  storage_utilization_metadata_bytes
+  - storagegrid_storage_utilization_usable_space_bytes        =>  storage_utilization_usable_space_bytes
+  - storagegrid_node_cpu_utilization_percentage               =>  node_cpu_utilization_percentage

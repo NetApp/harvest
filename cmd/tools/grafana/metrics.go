@@ -25,7 +25,7 @@ var metricsCmd = &cobra.Command{
 func doMetrics(_ *cobra.Command, _ []string) {
 	adjustOptions()
 	validateImport()
-	visitDashboards(opts.dir, func(path string, data []byte) {
+	visitDashboards([]string{opts.dir}, func(path string, data []byte) {
 		visitExpressionsAndQueries(path, data)
 	})
 }
@@ -149,27 +149,29 @@ func doTarget(pathPrefix string, key gjson.Result, value gjson.Result,
 	}
 }
 
-func visitDashboards(dir string, eachDash func(path string, data []byte)) {
-	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
-		if strings.Contains(path, "influxdb") {
+func visitDashboards(dirs []string, eachDash func(path string, data []byte)) {
+	for _, dir := range dirs {
+		err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+			if strings.Contains(path, "influxdb") {
+				return nil
+			}
+			if err != nil {
+				log.Fatal("failed to read directory:", err)
+			}
+			ext := filepath.Ext(path)
+			if ext != ".json" {
+				return nil
+			}
+			data, err := os.ReadFile(path)
+			if err != nil {
+				log.Fatalf("failed to read dashboards path=%s err=%v", path, err)
+			}
+			eachDash(path, data)
 			return nil
-		}
+		})
 		if err != nil {
-			log.Fatal("failed to read directory:", err)
+			log.Fatal("failed to read dashboards:", err)
 		}
-		ext := filepath.Ext(path)
-		if ext != ".json" {
-			return nil
-		}
-		data, err := os.ReadFile(path)
-		if err != nil {
-			log.Fatalf("failed to read dashboards path=%s err=%v", path, err)
-		}
-		eachDash(path, data)
-		return nil
-	})
-	if err != nil {
-		log.Fatal("failed to read dashboards:", err)
 	}
 }
 

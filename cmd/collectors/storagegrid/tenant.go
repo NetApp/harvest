@@ -6,6 +6,10 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 )
 
+const (
+	lenOfPrefix = 12 // len("storagegrid_")
+)
+
 type Tenant struct {
 	*plugin.AbstractPlugin
 	sg *StorageGrid
@@ -77,9 +81,8 @@ func (t *Tenant) collectPromMetrics(tenantNamesByID map[string]string) []*matrix
 		"storagegrid_tenant_usage_data_bytes",
 		"storagegrid_tenant_usage_quota_bytes",
 	}
-
 	for _, metric := range promMetrics {
-		mat, err := t.sg.GetMetric(metric, metric[12:], tenantNamesByID)
+		mat, err := t.sg.GetMetric(metric, metric[lenOfPrefix:], tenantNamesByID)
 		if err != nil {
 			t.Logger.Error().Err(err).Str("metric", metric).Msg("Unable to get metric")
 			continue

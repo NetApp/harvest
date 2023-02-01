@@ -102,7 +102,6 @@ func (s *StorageGrid) InitMatrix() error {
 func (s *StorageGrid) InitCache() error {
 	var (
 		counters *node.Node
-		metrics  *node.Node
 	)
 
 	if x := s.Params.GetChildContentS("object"); x != "" {
@@ -119,17 +118,10 @@ func (s *StorageGrid) InitCache() error {
 		return errs.New(errs.ErrMissingParam, "query")
 	}
 
-	if strings.ToLower(s.Props.Query) == "prometheus" {
-		if metrics = s.Params.GetChildS("metrics"); metrics == nil {
-			return errs.New(errs.ErrMissingParam, "metrics")
-		}
-		s.ParsePromMetrics(metrics)
-	} else {
-		if counters = s.Params.GetChildS("counters"); counters == nil {
-			return errs.New(errs.ErrMissingParam, "counters")
-		}
-		s.ParseCounters(counters, s.Props)
+	if counters = s.Params.GetChildS("counters"); counters == nil {
+		return errs.New(errs.ErrMissingParam, "counters")
 	}
+	s.ParseCounters(counters, s.Props)
 
 	s.Logger.Debug().
 		Strs("extracted Instance Keys", s.Props.InstanceKeys).
@@ -186,43 +178,6 @@ func (s *StorageGrid) pollPrometheusMetrics() (map[string]*matrix.Matrix, error)
 	s.AddCollectCount(count)
 
 	return metrics, nil
-}
-
-func (s *StorageGrid) ParsePromMetrics(metrics *node.Node) {
-	var (
-		display, name, kind string
-	)
-
-	sProps := s.Props
-
-	for _, c := range metrics.GetAllChildContentS() {
-		if c != "" {
-			name, display, kind = c, c, "float"
-			splits := strings.SplitN(c, "=>", 2)
-			if len(splits) == 2 {
-				name = strings.TrimSpace(splits[0])
-				display = strings.TrimSpace(splits[1])
-			}
-
-			object := s.Props.Object
-			if strings.HasPrefix(display, object) {
-				end := len(object) + 1
-				if end > len(display) {
-					end = len(display)
-				}
-				display = display[end:]
-			}
-			s.Logger.Debug().
-				Str("kind", kind).
-				Str("name", name).
-				Str("display", display).
-				Msg("Collected")
-
-			sProps.Counters[name] = display
-			m := &Metric{Label: display, Name: name, Exportable: true}
-			sProps.Metrics[name] = m
-		}
-	}
 }
 
 func (s *StorageGrid) makePromMetrics(metricName string, result *[]gjson.Result, tenantNamesByID map[string]string) (*matrix.Matrix, error) {

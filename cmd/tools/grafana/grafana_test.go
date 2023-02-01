@@ -10,16 +10,25 @@ import (
 )
 
 func TestCheckVersion(t *testing.T) {
-
-	inputVersion := []string{"8.4.0-beta1", "7.2.3.4", "abc.1.3", "4.5.4", "7.1.0", "7.5.5"}
-	expectedOutPut := []bool{true, true, false, false, true, true}
-
-	for i, s := range inputVersion {
-		c := checkVersion(s)
-		if c != expectedOutPut[i] {
-			t.Errorf("Expected %t but got %t for input %s", expectedOutPut[i], c, inputVersion[i])
+	type vCheck struct {
+		version string
+		want    bool
+	}
+	checks := []vCheck{
+		{version: "8.4.0-beta1", want: true},
+		{version: "7.2.3.4", want: true},
+		{version: "abc.1.3", want: false},
+		{version: "4.5.4", want: false},
+		{version: "7.1.0", want: true},
+		{version: "7.5.5", want: true},
+	}
+	for _, check := range checks {
+		got := checkVersion(check.version)
+		if got != check.want {
+			t.Errorf("Expected %t but got %t for input %s", check.want, got, check.version)
 		}
 	}
+	t.Log("") // required so the test is not marked as terminated
 }
 
 func TestHttpsAddr(t *testing.T) {
@@ -63,33 +72,34 @@ func TestAddPrefixToMetricNames(t *testing.T) {
 	)
 
 	prefix := "xx_"
-	dir := "../../../grafana/dashboards/cmode"
-	visitDashboards(dir, func(path string, data []byte) {
-		oldExpressions = readExprs(data)
-		if err = json.Unmarshal(data, &dashboard); err != nil {
-			fmt.Printf("error parsing file [%s] %+v\n", path, err)
-			fmt.Println("-------------------------------")
-			fmt.Println(string(data))
-			fmt.Println("-------------------------------")
-			return
-		}
-		addGlobalPrefix(dashboard, prefix)
-
-		if updatedData, err = json.Marshal(dashboard); err != nil {
-			fmt.Printf("error parsing file [%s] %+v\n", path, err)
-			fmt.Println("-------------------------------")
-			fmt.Println(string(updatedData))
-			fmt.Println("-------------------------------")
-			return
-		}
-		newExpressions = readExprs(updatedData)
-
-		for i := 0; i < len(newExpressions); i++ {
-			if newExpressions[i] != prefix+oldExpressions[i] {
-				t.Errorf("\nExpected: [%s]\n     Got: [%s]", prefix+oldExpressions[i], newExpressions[i])
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			oldExpressions = readExprs(data)
+			if err = json.Unmarshal(data, &dashboard); err != nil {
+				fmt.Printf("error parsing file [%s] %+v\n", path, err)
+				fmt.Println("-------------------------------")
+				fmt.Println(string(data))
+				fmt.Println("-------------------------------")
+				return
 			}
-		}
-	})
+			addGlobalPrefix(dashboard, prefix)
+
+			if updatedData, err = json.Marshal(dashboard); err != nil {
+				fmt.Printf("error parsing file [%s] %+v\n", path, err)
+				fmt.Println("-------------------------------")
+				fmt.Println(string(updatedData))
+				fmt.Println("-------------------------------")
+				return
+			}
+			newExpressions = readExprs(updatedData)
+
+			for i := 0; i < len(newExpressions); i++ {
+				if newExpressions[i] != prefix+oldExpressions[i] {
+					t.Errorf("\nExpected: [%s]\n     Got: [%s]", prefix+oldExpressions[i], newExpressions[i])
+				}
+			}
+		})
 }
 
 func getExp(expr string, expressions *[]string) {
