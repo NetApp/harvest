@@ -17,16 +17,7 @@ import (
 const batchSize = "500"
 
 type RaidAggrDerivedType string
-
-func (r RaidAggrDerivedType) String() string {
-	return string(r)
-}
-
 type RaidAggrType string
-
-func (r RaidAggrType) String() string {
-	return string(r)
-}
 
 const (
 	radtHDD              RaidAggrDerivedType = "hdd"
@@ -38,6 +29,7 @@ const (
 	radtLUNFLEXARRAY     RaidAggrDerivedType = "lun_flexarray"
 	radtVMDISKSDS        RaidAggrDerivedType = "vmdisk_sds"
 	radtVMDISKFABRICPOOL RaidAggrDerivedType = "vmdisk_fabricpool"
+	radtNotMapped        RaidAggrDerivedType = "not_mapped"
 )
 
 const (
@@ -73,7 +65,7 @@ type aggregate struct {
 	node        string
 	isShared    bool
 	power       float64
-	derivedType string
+	derivedType RaidAggrDerivedType
 	export      bool
 }
 
@@ -399,7 +391,7 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 				continue
 			}
 			instance.SetLabel("aggr", k)
-			instance.SetLabel("derivedType", v.derivedType)
+			instance.SetLabel("derivedType", string(v.derivedType))
 			instance.SetLabel("node", v.node)
 
 			m := aggrData.GetMetric("power")
@@ -594,70 +586,50 @@ func (d *Disk) getAggregates() error {
 				usesSharedDisks := aggrRaidAttr.GetChildContentS("uses-shared-disks")
 				aggregateType := aggrRaidAttr.GetChildContentS("aggregate-type")
 				isC := aggrRaidAttr.GetChildContentS("is-composite")
-				isComposite := false
-				isShared := false
-				isRootAggregate := false
-				if isR == "true" {
-					isRootAggregate = true
-				}
-				if isC == "true" {
-					isComposite = true
-				}
-				if usesSharedDisks == "true" {
-					isShared = true
-				}
+				isComposite := isC == "true"
+				isShared := usesSharedDisks == "true"
+				isRootAggregate := isR == "true"
 				derivedType := getAggregateDerivedType(aggregateType, isComposite, isShared)
-				if isShared {
-					d.aggrMap[aggrName] = &aggregate{
-						name:        aggrName,
-						isShared:    true,
-						derivedType: derivedType,
-						node:        nodeName,
-						export:      !isRootAggregate,
-					}
-				} else {
-					d.aggrMap[aggrName] = &aggregate{
-						name:        aggrName,
-						isShared:    false,
-						derivedType: derivedType,
-						node:        nodeName,
-						export:      !isRootAggregate,
-					}
+				d.aggrMap[aggrName] = &aggregate{
+					name:        aggrName,
+					isShared:    isShared,
+					derivedType: derivedType,
+					node:        nodeName,
+					export:      !isRootAggregate,
 				}
-
 			}
 		}
 	}
 	return nil
 }
 
-func getAggregateDerivedType(aggregateType string, isComposite bool, isShared bool) string {
-	derivedType := "not_mapped"
+func getAggregateDerivedType(aggregateType string, isComposite bool, isShared bool) RaidAggrDerivedType {
+	derivedType := radtNotMapped
 	if aggregateType == "" {
 		return derivedType
 	}
-	switch aggregateType {
-	case ratHDD.String():
-		derivedType = radtHDD.String()
+	switch RaidAggrType(aggregateType) {
+	case ratHDD:
+		derivedType = radtHDD
 		if isComposite {
-			derivedType = radtHDDFABRICPOOL.String()
+			derivedType = radtHDDFABRICPOOL
 		}
-	case ratSSD.String():
-		derivedType = radtSSD.String()
+	case ratSSD:
+		derivedType = radtSSD
 		if isComposite {
-			derivedType = radtSSDFABRICPOOL.String()
+			derivedType = radtSSDFABRICPOOL
 		}
-	case ratHYBRID.String():
-		derivedType = radtHYBRID.String()
+	case ratHYBRID:
+		derivedType = radtHYBRID
 		if isShared {
-			derivedType = radtHYBRIDFLASHPOOL.String()
+			derivedType = radtHYBRIDFLASHPOOL
 		}
-	case ratLUN.String():
-		derivedType = radtLUNFLEXARRAY.String()
-	case ratVMDISK.String():
-		derivedType = radtVMDISKSDS.String()
+	case ratLUN:
+		derivedType = radtLUNFLEXARRAY
+	case ratVMDISK:
+		derivedType = radtVMDISKSDS
 		if isComposite {
-			derivedType = radtVMDISKFABRICPOOL.String()
+			derivedType = radtVMDISKFABRICPOOL
 		}
 	}
 	return derivedType
