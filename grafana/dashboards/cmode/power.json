@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1675327701563,
+  "iteration": 1675341096740,
   "links": [
     {
       "asDropdown": true,
@@ -938,7 +938,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "View the power usage at the aggregate level, track down any \"hot\" aggregates and their corresponding workloads.\n\nThe line chart provides the ability to see how read/write IOs directly affect the power usage of the system.  How much power are you using across your Aggregate disk types?",
+      "description": "View the power usage at the aggregate level, track down any \"hot\" aggregates and their corresponding workloads.\n\nThe line chart provides the ability to see how read/write IOs directly affect the power usage of the system. ",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1029,7 +1029,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Power used across your Aggregate disk types.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1119,356 +1119,517 @@
       "type": "timeseries"
     },
     {
-      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Provides the ability to see how read/write IOs directly affect the power usage of the system.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "iops"
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "Reads  - harvest_vc_aggr (umeng-aff300-05-06)",
+                  "Reads  - umeng_aff300_aggr1 (umeng-aff300-05-06)",
+                  "Writes  - harvest_vc_aggr (umeng-aff300-05-06)"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 13,
+        "x": 0,
+        "y": 43
+      },
+      "id": 94,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum(aggr_disk_user_reads{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrPower\"} and on(aggr,cluster,node) aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrPower\"}) by (aggr,cluster,node)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Reads  - {{aggr}} ({{cluster}})",
+          "refId": "B"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(aggr_disk_user_writes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrPower\"} and on(aggr,cluster,node) aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrPower\"}) by (aggr,cluster,node)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Writes  - {{aggr}} ({{cluster}})",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "IOPs for Top Aggregates by Power Consumed",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 43
+        "y": 51
       },
       "id": 93,
-      "panels": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "custom": {
-                "align": "left",
-                "displayMode": "auto",
-                "filterable": false
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "semi-dark-yellow",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "ops"
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Value #A"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "status"
-                  },
-                  {
-                    "id": "mappings",
-                    "value": [
-                      {
-                        "options": {
-                          "1": {
-                            "text": "online"
-                          }
-                        },
-                        "type": "value"
-                      },
-                      {
-                        "options": {
-                          "from": 0,
-                          "result": {
-                            "text": "offline/error"
-                          },
-                          "to": 0.999
-                        },
-                        "type": "range"
-                      }
-                    ]
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "rgb(199, 48, 66)",
-                          "value": null
-                        },
-                        {
-                          "color": "rgb(74, 163, 52)",
-                          "value": 1
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "id": "custom.displayMode",
-                    "value": "color-background"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Value #D"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "space"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "bytes"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Value #E"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "used"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "bytes"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Value #F"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "used %"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "percent"
-                  },
-                  {
-                    "id": "max",
-                    "value": 100
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "rgb(52, 173, 37)",
-                          "value": null
-                        },
-                        {
-                          "color": "light-orange",
-                          "value": 60
-                        },
-                        {
-                          "color": "semi-dark-orange",
-                          "value": 75
-                        },
-                        {
-                          "color": "semi-dark-red",
-                          "value": 90
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "id": "decimals",
-                    "value": 0
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Value #B"
-                },
-                "properties": [
-                  {
-                    "id": "unit",
-                    "value": "watt"
-                  },
-                  {
-                    "id": "displayName",
-                    "value": "Power"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Value #C"
-                },
-                "properties": [
-                  {
-                    "id": "unit",
-                    "value": "iops"
-                  },
-                  {
-                    "id": "displayName",
-                    "value": "Total IOPs"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Value #G"
-                },
-                "properties": [
-                  {
-                    "id": "unit",
-                    "value": "binBps"
-                  },
-                  {
-                    "id": "displayName",
-                    "value": "Total Throughput"
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 24,
-            "x": 0,
-            "y": 44
-          },
-          "id": 91,
-          "interval": "1m",
-          "maxDataPoints": 2,
-          "options": {
-            "frameIndex": 0,
-            "showHeader": true,
-            "sortBy": [
-              {
-                "desc": false,
-                "displayName": "derivedType"
-              }
-            ]
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": true,
-              "expr": "aggr_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "B"
-            },
-            {
-              "exemplar": true,
-              "expr": "aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "D"
-            },
-            {
-              "exemplar": true,
-              "expr": "aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "E"
-            },
-            {
-              "exemplar": true,
-              "expr": "aggr_space_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "F"
-            },
-            {
-              "exemplar": true,
-              "expr": "sum(aggr_disk_total_transfers{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} and on(aggr,cluster,node) aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (aggr,cluster,node)",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "C"
-            },
-            {
-              "exemplar": true,
-              "expr": "sum(aggr_disk_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} and on(aggr,cluster,node) aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (aggr,cluster,node)",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "G"
-            },
-            {
-              "exemplar": true,
-              "expr": "aggr_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Aggregates",
-          "transformations": [
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {
-                  "Time": true,
-                  "__name__": true,
-                  "instance": true,
-                  "job": true
-                },
-                "indexByName": {
-                  "Time": 0,
-                  "Value": 8,
-                  "__name__": 1,
-                  "aggr": 5,
-                  "cluster": 3,
-                  "datacenter": 2,
-                  "instance": 6,
-                  "job": 7,
-                  "node": 4
-                },
-                "renameByName": {}
-              }
-            },
-            {
-              "id": "merge",
-              "options": {}
-            }
-          ],
-          "type": "table"
-        }
-      ],
+      "panels": [],
       "title": "Aggregate",
       "type": "row"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "left",
+            "displayMode": "auto",
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-yellow",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ops"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value #A"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "status"
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "1": {
+                        "text": "online"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "from": 0,
+                      "result": {
+                        "text": "offline/error"
+                      },
+                      "to": 0.999
+                    },
+                    "type": "range"
+                  }
+                ]
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "rgb(199, 48, 66)",
+                      "value": null
+                    },
+                    {
+                      "color": "rgb(74, 163, 52)",
+                      "value": 1
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value #D"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "space"
+              },
+              {
+                "id": "unit",
+                "value": "bytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value #E"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "used"
+              },
+              {
+                "id": "unit",
+                "value": "bytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value #F"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "used %"
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "max",
+                "value": 100
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "rgb(52, 173, 37)",
+                      "value": null
+                    },
+                    {
+                      "color": "light-orange",
+                      "value": 60
+                    },
+                    {
+                      "color": "semi-dark-orange",
+                      "value": 75
+                    },
+                    {
+                      "color": "semi-dark-red",
+                      "value": 90
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value #B"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "watt"
+              },
+              {
+                "id": "displayName",
+                "value": "Power"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value #C"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "iops"
+              },
+              {
+                "id": "displayName",
+                "value": "Total IOPs"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value #G"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "binBps"
+              },
+              {
+                "id": "displayName",
+                "value": "Total Throughput"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Power"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": null
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total Throughput"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": null
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cluster"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": null
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 52
+      },
+      "id": 91,
+      "interval": "1m",
+      "maxDataPoints": 2,
+      "options": {
+        "frameIndex": 0,
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "derivedType"
+          }
+        ]
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "aggr_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "B"
+        },
+        {
+          "exemplar": true,
+          "expr": "aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "D"
+        },
+        {
+          "exemplar": true,
+          "expr": "aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "E"
+        },
+        {
+          "exemplar": true,
+          "expr": "aggr_space_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "F"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(aggr_disk_total_transfers{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} and on(aggr,cluster,node) aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (aggr,cluster,node)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "C"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(aggr_disk_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} and on(aggr,cluster,node) aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (aggr,cluster,node)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "G"
+        },
+        {
+          "exemplar": true,
+          "expr": "aggr_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Aggregates",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true
+            },
+            "indexByName": {
+              "Time": 0,
+              "Value": 8,
+              "__name__": 1,
+              "aggr": 5,
+              "cluster": 3,
+              "datacenter": 2,
+              "instance": 6,
+              "job": 7,
+              "node": 4
+            },
+            "renameByName": {}
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        }
+      ],
+      "type": "table"
     },
     {
       "collapsed": true,
@@ -1477,7 +1638,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 44
+        "y": 60
       },
       "id": 84,
       "panels": [
@@ -1602,7 +1763,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 45
+        "y": 61
       },
       "id": 76,
       "panels": [
@@ -2139,7 +2300,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 46
+        "y": 62
       },
       "id": 78,
       "panels": [
@@ -2869,7 +3030,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "5",
           "value": "5"
         },
