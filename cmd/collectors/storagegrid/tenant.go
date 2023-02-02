@@ -1,4 +1,4 @@
-package tenant
+package storagegrid
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
@@ -6,12 +6,17 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 )
 
+const (
+	lenOfPrefix = 12 // len("storagegrid_")
+)
+
 type Tenant struct {
 	*plugin.AbstractPlugin
+	sg *StorageGrid
 }
 
-func New(p *plugin.AbstractPlugin) plugin.Plugin {
-	return &Tenant{AbstractPlugin: p}
+func NewTenant(p *plugin.AbstractPlugin, s *StorageGrid) plugin.Plugin {
+	return &Tenant{AbstractPlugin: p, sg: s}
 }
 
 func (t *Tenant) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
@@ -19,6 +24,7 @@ func (t *Tenant) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	var (
 		used, quota, usedPercent *matrix.Metric
 		err                      error
+		tenantNamesByID          map[string]string
 	)
 
 	if used = data.GetMetric("dataBytes"); used == nil {
@@ -37,6 +43,7 @@ func (t *Tenant) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 	}
 
+	tenantNamesByID = make(map[string]string)
 	for _, instance := range data.GetInstances() {
 
 		var (
@@ -56,7 +63,37 @@ func (t *Tenant) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				t.Logger.Error().Err(err).Float64("percentage", percentage).Msg("failed to set percentage")
 			}
 		}
+
+		id := instance.GetLabel("id")
+		name := instance.GetLabel("tenant")
+		if id != "" && name != "" {
+			tenantNamesByID[id] = name
+		}
 	}
 
-	return nil, nil
+	promMetrics := t.collectPromMetrics(tenantNamesByID)
+	return promMetrics, nil
+}
+
+func (t *Tenant) collectPromMetrics(tenantNamesByID map[string]string) []*matrix.Matrix {
+	metrics := make(map[string]*matrix.Matrix)
+	promMetrics := []string{
+		"storagegrid_tenant_usage_data_bytes",
+		"storagegrid_tenant_usage_quota_bytes",
+	}
+	for _, metric := range promMetrics {
+		mat, err := t.sg.GetMetric(metric, metric[lenOfPrefix:], tenantNamesByID)
+		if err != nil {
+			t.Logger.Error().Err(err).Str("metric", metric).Msg("Unable to get metric")
+			continue
+		}
+		mat.Object = "storagegrid"
+		metrics[metric] = mat
+	}
+
+	all := make([]*matrix.Matrix, 0, len(promMetrics))
+	for _, m := range metrics {
+		all = append(all, m)
+	}
+	return all
 }

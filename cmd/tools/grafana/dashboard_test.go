@@ -11,7 +11,7 @@ import (
 )
 
 func TestDatasource(t *testing.T) {
-	visitDashboards("../../../grafana/dashboards", func(path string, data []byte) {
+	visitDashboards([]string{"../../../grafana/dashboards"}, func(path string, data []byte) {
 		checkDashboardForDatasource(t, path, data)
 	})
 }
@@ -32,10 +32,10 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 
 func TestUnitsAndExprMatch(t *testing.T) {
 	mt := newMetricsTable()
-	dir := "../../../grafana/dashboards/cmode"
-	visitDashboards(dir, func(path string, data []byte) {
-		checkUnits(path, mt, data)
-	})
+	visitDashboards([]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkUnits(path, mt, data)
+		})
 
 	// Exceptions are meant to reduce false negatives
 	allowedSuffix := map[string][]string{
@@ -293,10 +293,10 @@ func unitForExpr(e expression, overrides []override, defaultUnit string,
 }
 
 func TestVariablesAreSorted(t *testing.T) {
-	dir := "../../../grafana/dashboards/cmode"
-	visitDashboards(dir, func(path string, data []byte) {
-		checkVariablesAreSorted(t, path, data)
-	})
+	visitDashboards([]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkVariablesAreSorted(t, path, data)
+		})
 }
 
 func checkVariablesAreSorted(t *testing.T, path string, data []byte) {
@@ -325,10 +325,11 @@ func checkVariablesAreSorted(t *testing.T, path string, data []byte) {
 }
 
 func TestNoUnusedVariables(t *testing.T) {
-	dir := "../../../grafana/dashboards/cmode"
-	visitDashboards(dir, func(path string, data []byte) {
-		checkUnusedVariables(t, path, data)
-	})
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkUnusedVariables(t, path, data)
+		})
 }
 
 func checkUnusedVariables(t *testing.T, path string, data []byte) {
@@ -395,10 +396,11 @@ func doExpr(pathPrefix string, key gjson.Result, value gjson.Result, exprFunc fu
 }
 
 func TestIDIsBlank(t *testing.T) {
-	dir := "../../../grafana/dashboards/cmode"
-	visitDashboards(dir, func(path string, data []byte) {
-		checkUIDIsBlank(t, path, data)
-	})
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkUIDIsBlank(t, path, data)
+		})
 }
 
 func checkUIDIsBlank(t *testing.T, path string, data []byte) {
@@ -409,10 +411,11 @@ func checkUIDIsBlank(t *testing.T, path string, data []byte) {
 }
 
 func TestUniquePanelIDs(t *testing.T) {
-	dir := "../../../grafana/dashboards/cmode"
-	visitDashboards(dir, func(path string, data []byte) {
-		checkUniquePanelIDs(t, path, data)
-	})
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkUniquePanelIDs(t, path, data)
+		})
 }
 
 func checkUniquePanelIDs(t *testing.T, path string, data []byte) {
@@ -450,10 +453,11 @@ func checkUniquePanelIDs(t *testing.T, path string, data []byte) {
 //   b) otherwise fail, printing the expression, path, dashboard
 
 func TestTopKRange(t *testing.T) {
-	dir := "../../../grafana/dashboards/cmode"
-	visitDashboards(dir, func(path string, data []byte) {
-		checkTopKRange(t, path, data)
-	})
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkTopKRange(t, path, data)
+		})
 }
 
 func checkTopKRange(t *testing.T, path string, data []byte) {
@@ -507,16 +511,16 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 }
 
 func TestOnlyHighlightsExpanded(t *testing.T) {
-	dir := "../../../grafana/dashboards/cmode"
-
 	exceptions := map[string]int{
 		"cmode/shelf.json":    2,
 		"cmode/security.json": 3,
 	}
 	// count number of expanded sections in dashboard and ensure num expanded = 1
-	visitDashboards(dir, func(path string, data []byte) {
-		checkExpansion(t, exceptions, path, data)
-	})
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkExpansion(t, exceptions, path, data)
+		})
 }
 
 func checkExpansion(t *testing.T, exceptions map[string]int, path string, data []byte) {
@@ -563,10 +567,11 @@ func visitAllPanels(data []byte, handle func(path string, key gjson.Result, valu
 }
 
 func TestLegends(t *testing.T) {
-	dir := "../../../grafana/dashboards/cmode"
-	visitDashboards(dir, func(path string, data []byte) {
-		checkLegends(t, path, data)
-	})
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkLegends(t, path, data)
+		})
 }
 
 func checkLegends(t *testing.T, path string, data []byte) {
@@ -631,10 +636,11 @@ func checkLegendCalculations(t *testing.T, gotLegendCalculations []string, dashP
 }
 
 func TestConnectNullValues(t *testing.T) {
-	dir := "../../../grafana/dashboards/cmode"
-	visitDashboards(dir, func(path string, data []byte) {
-		checkConnectNullValues(t, path, data)
-	})
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkConnectNullValues(t, path, data)
+		})
 }
 
 func checkConnectNullValues(t *testing.T, path string, data []byte) {
@@ -652,10 +658,11 @@ func checkConnectNullValues(t *testing.T, path string, data []byte) {
 }
 
 func TestPanelChildPanels(t *testing.T) {
-	dir := "../../../grafana/dashboards/cmode"
-	visitDashboards(dir, func(path string, data []byte) {
-		checkPanelChildPanels(t, shortPath(path), data)
-	})
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkPanelChildPanels(t, shortPath(path), data)
+		})
 }
 
 func checkPanelChildPanels(t *testing.T, path string, data []byte) {
