@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1675341096740,
+  "iteration": 1675341096743,
   "links": [
     {
       "asDropdown": true,
@@ -1170,34 +1170,7 @@
           },
           "unit": "iops"
         },
-        "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "Reads  - harvest_vc_aggr (umeng-aff300-05-06)",
-                  "Reads  - umeng_aff300_aggr1 (umeng-aff300-05-06)",
-                  "Writes  - harvest_vc_aggr (umeng-aff300-05-06)"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 8,
