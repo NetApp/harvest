@@ -16,6 +16,38 @@ import (
 
 const batchSize = "500"
 
+type RaidAggrDerivedType string
+
+func (r RaidAggrDerivedType) String() string {
+	return string(r)
+}
+
+type RaidAggrType string
+
+func (r RaidAggrType) String() string {
+	return string(r)
+}
+
+const (
+	radtHDD              RaidAggrDerivedType = "hdd"
+	radtHDDFABRICPOOL    RaidAggrDerivedType = "hdd_fabricpool"
+	radtSSD              RaidAggrDerivedType = "ssd"
+	radtSSDFABRICPOOL    RaidAggrDerivedType = "ssd_fabricpool"
+	radtHYBRID           RaidAggrDerivedType = "hybrid"
+	radtHYBRIDFLASHPOOL  RaidAggrDerivedType = "hybrid_flash_pool"
+	radtLUNFLEXARRAY     RaidAggrDerivedType = "lun_flexarray"
+	radtVMDISKSDS        RaidAggrDerivedType = "vmdisk_sds"
+	radtVMDISKFABRICPOOL RaidAggrDerivedType = "vmdisk_fabricpool"
+)
+
+const (
+	ratHDD    RaidAggrType = "hdd"
+	ratSSD    RaidAggrType = "ssd"
+	ratHYBRID RaidAggrType = "hybrid"
+	ratLUN    RaidAggrType = "lun"
+	ratVMDISK RaidAggrType = "vmdisk"
+)
+
 type Disk struct {
 	*plugin.AbstractPlugin
 	shelfData      map[string]*matrix.Matrix
@@ -37,9 +69,12 @@ type shelf struct {
 }
 
 type aggregate struct {
-	name     string
-	isShared bool
-	power    float64
+	name        string
+	node        string
+	isShared    bool
+	power       float64
+	derivedType string
+	export      bool
 }
 
 type disk struct {
@@ -356,19 +391,23 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 
 	// fill aggr power matrix with power calculated above
 	for k, v := range d.aggrMap {
-		instanceKey := k
-		instance, err := aggrData.NewInstance(instanceKey)
-		if err != nil {
-			d.Logger.Error().Err(err).Str("key", instanceKey).Msg("Failed to add instance")
-			continue
-		}
-		instance.SetLabel("aggr", k)
+		if v.export {
+			instanceKey := k
+			instance, err := aggrData.NewInstance(instanceKey)
+			if err != nil {
+				d.Logger.Error().Err(err).Str("key", instanceKey).Msg("Failed to add instance")
+				continue
+			}
+			instance.SetLabel("aggr", k)
+			instance.SetLabel("derivedType", v.derivedType)
+			instance.SetLabel("node", v.node)
 
-		m := aggrData.GetMetric("power")
-		err = m.SetValueFloat64(instance, v.power)
-		if err != nil {
-			d.Logger.Error().Err(err).Str("key", instanceKey).Msg("Failed to set value")
-			continue
+			m := aggrData.GetMetric("power")
+			err = m.SetValueFloat64(instance, v.power)
+			if err != nil {
+				d.Logger.Error().Err(err).Str("key", instanceKey).Msg("Failed to set value")
+				continue
+			}
 		}
 	}
 	output = append(output, aggrData)
@@ -513,9 +552,15 @@ func (d *Disk) getAggregates() error {
 	request.NewChildS("max-records", d.batchSize)
 	desired := node.NewXMLS("desired-attributes")
 	aggrAttributes := node.NewXMLS("aggr-attributes")
+	aggrOwnerAttributes := node.NewXMLS("aggr-ownership-attributes")
+	aggrOwnerAttributes.NewChildS("home-name", "")
 	aggrRaidAttributes := node.NewXMLS("aggr-raid-attributes")
 	aggrRaidAttributes.NewChildS("uses-shared-disks", "")
+	aggrRaidAttributes.NewChildS("aggregate-type", "")
+	aggrRaidAttributes.NewChildS("is-composite", "")
+	aggrRaidAttributes.NewChildS("is-root-aggregate", "")
 	aggrAttributes.AddChild(aggrRaidAttributes)
+	aggrAttributes.AddChild(aggrOwnerAttributes)
 	desired.AddChild(aggrAttributes)
 	request.AddChild(desired)
 
@@ -538,23 +583,84 @@ func (d *Disk) getAggregates() error {
 		for _, aggr := range aggrs {
 			aggrName := aggr.GetChildContentS("aggregate-name")
 			aggrRaidAttr := aggr.GetChildS("aggr-raid-attributes")
+			aggrOwnerAttr := aggr.GetChildS("aggr-ownership-attributes")
+			var nodeName string
+			if aggrOwnerAttr != nil {
+				nodeName = aggrOwnerAttr.GetChildContentS("home-name")
+			}
 			if aggrRaidAttr != nil {
+				isR := aggrRaidAttr.GetChildContentS("is-root-aggregate")
+
 				usesSharedDisks := aggrRaidAttr.GetChildContentS("uses-shared-disks")
+				aggregateType := aggrRaidAttr.GetChildContentS("aggregate-type")
+				isC := aggrRaidAttr.GetChildContentS("is-composite")
+				isComposite := false
+				isShared := false
+				isRootAggregate := false
+				if isR == "true" {
+					isRootAggregate = true
+				}
+				if isC == "true" {
+					isComposite = true
+				}
 				if usesSharedDisks == "true" {
+					isShared = true
+				}
+				derivedType := getAggregateDerivedType(aggregateType, isComposite, isShared)
+				if isShared {
 					d.aggrMap[aggrName] = &aggregate{
-						name:     aggrName,
-						isShared: true,
+						name:        aggrName,
+						isShared:    true,
+						derivedType: derivedType,
+						node:        nodeName,
+						export:      !isRootAggregate,
 					}
 				} else {
 					d.aggrMap[aggrName] = &aggregate{
-						name:     aggrName,
-						isShared: false,
+						name:        aggrName,
+						isShared:    false,
+						derivedType: derivedType,
+						node:        nodeName,
+						export:      !isRootAggregate,
 					}
 				}
+
 			}
 		}
 	}
 	return nil
+}
+
+func getAggregateDerivedType(aggregateType string, isComposite bool, isShared bool) string {
+	derivedType := "not_mapped"
+	if aggregateType == "" {
+		return derivedType
+	}
+	switch aggregateType {
+	case ratHDD.String():
+		derivedType = radtHDD.String()
+		if isComposite {
+			derivedType = radtHDDFABRICPOOL.String()
+		}
+	case ratSSD.String():
+		derivedType = radtSSD.String()
+		if isComposite {
+			derivedType = radtSSDFABRICPOOL.String()
+		}
+	case ratHYBRID.String():
+		derivedType = radtHYBRID.String()
+		if isShared {
+			derivedType = radtHYBRIDFLASHPOOL.String()
+		}
+	case ratLUN.String():
+		derivedType = radtLUNFLEXARRAY.String()
+	case ratVMDISK.String():
+		derivedType = radtVMDISKSDS.String()
+		if isComposite {
+			derivedType = radtVMDISKFABRICPOOL.String()
+		}
+	}
+	return derivedType
 }
 
 func (d *Disk) handleShelfPower(shelves []*node.Node, output []*matrix.Matrix) ([]*matrix.Matrix, error) {
