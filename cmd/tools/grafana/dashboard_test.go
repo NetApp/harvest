@@ -347,21 +347,7 @@ func checkUnusedVariables(t *testing.T, path string, data []byte) {
 		return true
 	})
 
-	// collect all expressions
-	expressions := make([]string, 0)
-	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
-		doExpr("", key, value, func(path string, expr string) {
-			expressions = append(expressions, expr)
-		})
-		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
-			pathPrefix := fmt.Sprintf("panels[%d].", key.Int())
-			doExpr(pathPrefix, key2, value2, func(path string, expr string) {
-				expressions = append(expressions, expr)
-			})
-			return true
-		})
-		return true
-	})
+	expressions := allExpressions(data)
 
 	// check that each variable is used in at least one expression
 varLoop:
@@ -379,6 +365,24 @@ varLoop:
 
 		t.Errorf("dashboard=%s has unused variable [%s]", shortPath(path), variable)
 	}
+}
+
+func allExpressions(data []byte) []string {
+	expressions := make([]string, 0)
+	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
+		doExpr("", key, value, func(path string, expr string) {
+			expressions = append(expressions, expr)
+		})
+		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
+			pathPrefix := fmt.Sprintf("panels[%d].", key.Int())
+			doExpr(pathPrefix, key2, value2, func(path string, expr string) {
+				expressions = append(expressions, expr)
+			})
+			return true
+		})
+		return true
+	})
+	return expressions
 }
 
 func doExpr(pathPrefix string, key gjson.Result, value gjson.Result, exprFunc func(path string, expr string)) {
@@ -673,4 +677,22 @@ func checkPanelChildPanels(t *testing.T, path string, data []byte) {
 		}
 		return true
 	})
+}
+
+func TestRatesAreNot1m(t *testing.T) {
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkRate1m(t, shortPath(path), data)
+		},
+	)
+}
+
+func checkRate1m(t *testing.T, path string, data []byte) {
+	expressions := allExpressions(data)
+	for _, expr := range expressions {
+		if strings.Contains(expr, "[1m]") {
+			t.Errorf("dashboard=%s, expr should not use rate of [1m] expr=%s", path, expr)
+		}
+	}
 }
