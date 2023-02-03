@@ -22,7 +22,7 @@ You will need a root or admin account to create a new group permission.
 5. Enter a unique name for the group, which you cannot update later.
 6. Select `Continue`
 7. On the `Manage group permissions` screen, select the permissions you want. At a minimum, Harvest requires
-   the `Tenant accounts` permission.
+   the `Tenant accounts` and `Metrics query` permissions.
 8. Select `Save changes`
 
 ![StorageGRID create group permissions](assets/prepare-storagegrid/create_group.png)
