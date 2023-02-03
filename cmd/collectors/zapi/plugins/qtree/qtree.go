@@ -69,13 +69,19 @@ func (my *Qtree) Init() error {
 		instanceKeys := exportOptions.NewChildS("instance_keys", "")
 
 		// apply all instance keys, instance labels from parent (qtree.yaml) to all quota metrics
-		//parent instancekeys would be added in plugin metrics
-		for _, parentKeys := range my.ParentParams.GetChildS("export_options").GetChildS("instance_keys").GetAllChildContentS() {
-			instanceKeys.NewChildS("", parentKeys)
-		}
-		// parent instacelabels would be added in plugin metrics
-		for _, parentLabels := range my.ParentParams.GetChildS("export_options").GetChildS("instance_labels").GetAllChildContentS() {
-			instanceKeys.NewChildS("", parentLabels)
+		if exportOption := my.ParentParams.GetChildS("export_options"); exportOption != nil {
+			//parent instancekeys would be added in plugin metrics
+			if parentKeys := exportOption.GetChildS("instance_keys"); parentKeys != nil {
+				for _, parentKey := range parentKeys.GetAllChildContentS() {
+					instanceKeys.NewChildS("", parentKey)
+				}
+			}
+			// parent instacelabels would be added in plugin metrics
+			if parentLabels := exportOption.GetChildS("instance_labels"); parentLabels != nil {
+				for _, parentLabel := range parentLabels.GetAllChildContentS() {
+					instanceKeys.NewChildS("", parentLabel)
+				}
+			}
 		}
 
 		instanceKeys.NewChildS("", "type")
