@@ -59,13 +59,12 @@ func (my *Qtree) Init() error {
 	}
 	my.Logger.Debug().Msg("plugin connected!")
 
+	my.data = matrix.New(my.Parent+".Qtree", "quota", "quota")
 	my.instanceKeys = make(map[string]string)
 	my.instanceLabels = make(map[string]*dict.Dict)
+	my.historicalLabels = false
 
 	if my.Params.HasChildS("historicalLabels") {
-		// Generated metrcis would be qtree_xxxx_xxxx
-		my.data = matrix.New(my.Parent+".Qtree", "qtree", "qtree")
-
 		exportOptions := node.NewS("export_options")
 		instanceKeys := exportOptions.NewChildS("instance_keys", "")
 
@@ -79,12 +78,12 @@ func (my *Qtree) Init() error {
 			instanceKeys.NewChildS("", parentLabels)
 		}
 
+		instanceKeys.NewChildS("", "type")
+		instanceKeys.NewChildS("", "index")
+		instanceKeys.NewChildS("", "unit")
+
 		my.data.SetExportOptions(exportOptions)
 		my.historicalLabels = true
-	} else {
-		// Generated metrics would be quota_xxxx_xxxx
-		my.data = matrix.New(my.Parent+".Qtree", "quota", "quota")
-		my.historicalLabels = false
 	}
 
 	quotaType := my.Params.GetChildS("quotaType")
@@ -200,7 +199,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 		if my.historicalLabels {
 			// In 22.05, populate metrics with qtree prefix and old labels
-			err = my.handlingHistoricalMetrics(quotas, data, &quotaIndex, &numMetrics)
+			err = my.handlingHistoricalMetrics(quotas, data, cluster, &quotaIndex, &numMetrics)
 		} else {
 			// Populate metrics with quota prefix and current labels
 			err = my.handlingQuotaMetrics(quotas, cluster, &quotaIndex, &numMetrics)
@@ -219,24 +218,20 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		Str("batchSize", my.batchSize).
 		Msg("Collected")
 
-	if my.historicalLabels {
-		// In 22.05, only metrics with qtree prefix are available
-		return []*matrix.Matrix{my.data}, nil
-	} else {
-		// metrics with qtree prefix and quota prefix are available to support backward compatibility
-		qtreePluginData := my.data.Clone(true, true, true)
-		qtreePluginData.UUID = my.Parent + ".Qtree"
-		qtreePluginData.Object = "qtree"
-		qtreePluginData.Identifier = "qtree"
-		return []*matrix.Matrix{qtreePluginData, my.data}, nil
-	}
+	// metrics with qtree prefix and quota prefix are available to support backward compatibility
+	qtreePluginData := my.data.Clone(true, true, true)
+	qtreePluginData.UUID = my.Parent + ".Qtree"
+	qtreePluginData.Object = "qtree"
+	qtreePluginData.Identifier = "qtree"
+	return []*matrix.Matrix{qtreePluginData, my.data}, nil
 }
 
-func (my Qtree) handlingHistoricalMetrics(quotas []*node.Node, data *matrix.Matrix, quotaIndex *int, numMetrics *int) error {
+func (my Qtree) handlingHistoricalMetrics(quotas []*node.Node, data *matrix.Matrix, cluster string, quotaIndex *int, numMetrics *int) error {
 	for qIndex, quota := range quotas {
 		var vserver, quotaInstanceKey string
 		var qtreeInstance *matrix.Instance
 
+		quotaType := quota.GetChildContentS("quota-type")
 		tree := quota.GetChildContentS("tree")
 		volume := quota.GetChildContentS("volume")
 		if my.client.IsClustered() {
@@ -289,6 +284,13 @@ func (my Qtree) handlingHistoricalMetrics(quotas []*node.Node, data *matrix.Matr
 					}
 				}
 
+				//set labels
+				quotaInstance.SetLabel("type", quotaType)
+				quotaInstance.SetLabel("qtree", tree)
+				quotaInstance.SetLabel("volume", volume)
+				quotaInstance.SetLabel("svm", vserver)
+				quotaInstance.SetLabel("index", cluster+"_"+strconv.Itoa(*quotaIndex))
+
 				// If the Qtree is the volume itself, than qtree label is empty, so copy the volume name to qtree.
 				if tree == "" {
 					quotaInstance.SetLabel("qtree", volume)
@@ -299,6 +301,9 @@ func (my Qtree) handlingHistoricalMetrics(quotas []*node.Node, data *matrix.Matr
 					// Few quota metrics would have value '-' which means unlimited (ex: disk-limit)
 					if value == "-" {
 						value = "0"
+					}
+					if attribute == "soft-disk-limit" || attribute == "disk-limit" || attribute == "disk-used" {
+						quotaInstance.SetLabel("unit", "Kbyte")
 					}
 					if err := m.SetValueString(quotaInstance, value); err != nil {
 						my.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", attribute, value, err)
