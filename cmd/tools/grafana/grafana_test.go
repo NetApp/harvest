@@ -109,9 +109,7 @@ func getExp(expr string, expressions *[]string) {
 		// multiple metrics used to summarize
 		if strings.Contains(m[1], "+") {
 			submatch := strings.Split(m[1], "+")
-			for i := range submatch {
-				*expressions = append(*expressions, submatch[i])
-			}
+			*expressions = append(*expressions, submatch...)
 			// single metric
 		} else {
 			*expressions = append(*expressions, m[1])
