@@ -26,6 +26,7 @@ counters:
   - user_write_block_count   => user_write_blocks
   - user_write_latency
   - user_write_count         => user_writes
+  - total_data
 
 plugins:
   - LabelAgent:

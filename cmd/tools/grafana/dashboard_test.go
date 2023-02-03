@@ -11,7 +11,7 @@ import (
 )
 
 func TestDatasource(t *testing.T) {
-	visitDashboards("../../../grafana/dashboards", func(path string, data []byte) {
+	visitDashboards([]string{"../../../grafana/dashboards"}, func(path string, data []byte) {
 		checkDashboardForDatasource(t, path, data)
 	})
 }
@@ -32,10 +32,10 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 
 func TestUnitsAndExprMatch(t *testing.T) {
 	mt := newMetricsTable()
-	dir := "../../../grafana/dashboards/cmode"
-	visitDashboards(dir, func(path string, data []byte) {
-		checkUnits(path, mt, data)
-	})
+	visitDashboards([]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkUnits(path, mt, data)
+		})
 
 	// Exceptions are meant to reduce false negatives
 	allowedSuffix := map[string][]string{
@@ -293,10 +293,10 @@ func unitForExpr(e expression, overrides []override, defaultUnit string,
 }
 
 func TestVariablesAreSorted(t *testing.T) {
-	dir := "../../../grafana/dashboards/cmode"
-	visitDashboards(dir, func(path string, data []byte) {
-		checkVariablesAreSorted(t, path, data)
-	})
+	visitDashboards([]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkVariablesAreSorted(t, path, data)
+		})
 }
 
 func checkVariablesAreSorted(t *testing.T, path string, data []byte) {
@@ -325,10 +325,11 @@ func checkVariablesAreSorted(t *testing.T, path string, data []byte) {
 }
 
 func TestNoUnusedVariables(t *testing.T) {
-	dir := "../../../grafana/dashboards/cmode"
-	visitDashboards(dir, func(path string, data []byte) {
-		checkUnusedVariables(t, path, data)
-	})
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkUnusedVariables(t, path, data)
+		})
 }
 
 func checkUnusedVariables(t *testing.T, path string, data []byte) {
@@ -346,21 +347,7 @@ func checkUnusedVariables(t *testing.T, path string, data []byte) {
 		return true
 	})
 
-	// collect all expressions
-	expressions := make([]string, 0)
-	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
-		doExpr("", key, value, func(path string, expr string) {
-			expressions = append(expressions, expr)
-		})
-		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
-			pathPrefix := fmt.Sprintf("panels[%d].", key.Int())
-			doExpr(pathPrefix, key2, value2, func(path string, expr string) {
-				expressions = append(expressions, expr)
-			})
-			return true
-		})
-		return true
-	})
+	expressions := allExpressions(data)
 
 	// check that each variable is used in at least one expression
 varLoop:
@@ -380,6 +367,24 @@ varLoop:
 	}
 }
 
+func allExpressions(data []byte) []string {
+	expressions := make([]string, 0)
+	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
+		doExpr("", key, value, func(path string, expr string) {
+			expressions = append(expressions, expr)
+		})
+		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
+			pathPrefix := fmt.Sprintf("panels[%d].", key.Int())
+			doExpr(pathPrefix, key2, value2, func(path string, expr string) {
+				expressions = append(expressions, expr)
+			})
+			return true
+		})
+		return true
+	})
+	return expressions
+}
+
 func doExpr(pathPrefix string, key gjson.Result, value gjson.Result, exprFunc func(path string, expr string)) {
 	kind := value.Get("type").String()
 	if kind == "row" {
@@ -395,10 +400,11 @@ func doExpr(pathPrefix string, key gjson.Result, value gjson.Result, exprFunc fu
 }
 
 func TestIDIsBlank(t *testing.T) {
-	dir := "../../../grafana/dashboards/cmode"
-	visitDashboards(dir, func(path string, data []byte) {
-		checkUIDIsBlank(t, path, data)
-	})
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkUIDIsBlank(t, path, data)
+		})
 }
 
 func checkUIDIsBlank(t *testing.T, path string, data []byte) {
@@ -409,10 +415,11 @@ func checkUIDIsBlank(t *testing.T, path string, data []byte) {
 }
 
 func TestUniquePanelIDs(t *testing.T) {
-	dir := "../../../grafana/dashboards/cmode"
-	visitDashboards(dir, func(path string, data []byte) {
-		checkUniquePanelIDs(t, path, data)
-	})
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkUniquePanelIDs(t, path, data)
+		})
 }
 
 func checkUniquePanelIDs(t *testing.T, path string, data []byte) {
@@ -450,10 +457,11 @@ func checkUniquePanelIDs(t *testing.T, path string, data []byte) {
 //   b) otherwise fail, printing the expression, path, dashboard
 
 func TestTopKRange(t *testing.T) {
-	dir := "../../../grafana/dashboards/cmode"
-	visitDashboards(dir, func(path string, data []byte) {
-		checkTopKRange(t, path, data)
-	})
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkTopKRange(t, path, data)
+		})
 }
 
 func checkTopKRange(t *testing.T, path string, data []byte) {
@@ -507,16 +515,16 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 }
 
 func TestOnlyHighlightsExpanded(t *testing.T) {
-	dir := "../../../grafana/dashboards/cmode"
-
 	exceptions := map[string]int{
 		"cmode/shelf.json":    2,
 		"cmode/security.json": 3,
 	}
 	// count number of expanded sections in dashboard and ensure num expanded = 1
-	visitDashboards(dir, func(path string, data []byte) {
-		checkExpansion(t, exceptions, path, data)
-	})
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkExpansion(t, exceptions, path, data)
+		})
 }
 
 func checkExpansion(t *testing.T, exceptions map[string]int, path string, data []byte) {
@@ -563,10 +571,11 @@ func visitAllPanels(data []byte, handle func(path string, key gjson.Result, valu
 }
 
 func TestLegends(t *testing.T) {
-	dir := "../../../grafana/dashboards/cmode"
-	visitDashboards(dir, func(path string, data []byte) {
-		checkLegends(t, path, data)
-	})
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkLegends(t, path, data)
+		})
 }
 
 func checkLegends(t *testing.T, path string, data []byte) {
@@ -631,10 +640,11 @@ func checkLegendCalculations(t *testing.T, gotLegendCalculations []string, dashP
 }
 
 func TestConnectNullValues(t *testing.T) {
-	dir := "../../../grafana/dashboards/cmode"
-	visitDashboards(dir, func(path string, data []byte) {
-		checkConnectNullValues(t, path, data)
-	})
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkConnectNullValues(t, path, data)
+		})
 }
 
 func checkConnectNullValues(t *testing.T, path string, data []byte) {
@@ -652,10 +662,11 @@ func checkConnectNullValues(t *testing.T, path string, data []byte) {
 }
 
 func TestPanelChildPanels(t *testing.T) {
-	dir := "../../../grafana/dashboards/cmode"
-	visitDashboards(dir, func(path string, data []byte) {
-		checkPanelChildPanels(t, shortPath(path), data)
-	})
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkPanelChildPanels(t, shortPath(path), data)
+		})
 }
 
 func checkPanelChildPanels(t *testing.T, path string, data []byte) {
@@ -666,4 +677,22 @@ func checkPanelChildPanels(t *testing.T, path string, data []byte) {
 		}
 		return true
 	})
+}
+
+func TestRatesAreNot1m(t *testing.T) {
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkRate1m(t, shortPath(path), data)
+		},
+	)
+}
+
+func checkRate1m(t *testing.T, path string, data []byte) {
+	expressions := allExpressions(data)
+	for _, expr := range expressions {
+		if strings.Contains(expr, "[1m]") {
+			t.Errorf("dashboard=%s, expr should not use rate of [1m] expr=%s", path, expr)
+		}
+	}
 }

@@ -608,7 +608,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "sum(sum_over_time(metadata_component_count{hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"exporter\"}[1m]))",
+          "expr": "sum(sum_over_time(metadata_component_count{hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"exporter\"}[2m]))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -2300,7 +2300,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "sum by (poller, metric) (delta(poller_cpu{hostname=~\"$Hostname\",poller=~\"$Poller\"}[1m]))",
+              "expr": "sum by (poller, metric) (delta(poller_cpu{hostname=~\"$Hostname\",poller=~\"$Poller\"}[2m]))",
               "format": "time_series",
               "hide": false,
               "instant": false,
@@ -2519,7 +2519,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "rate(poller_io{hostname=~\"$Hostname\",poller=~\"$Poller\",metric=\"read_bytes\"}[1m])",
+              "expr": "rate(poller_io{hostname=~\"$Hostname\",poller=~\"$Poller\",metric=\"read_bytes\"}[2m])",
               "format": "time_series",
               "hide": false,
               "instant": false,
@@ -2529,7 +2529,7 @@
               "refId": "A"
             },
             {
-              "expr": "rate(poller_io{hostname=~\"$Hostname\",poller=~\"$Poller\",metric=\"write_bytes\"}[1m])",
+              "expr": "rate(poller_io{hostname=~\"$Hostname\",poller=~\"$Poller\",metric=\"write_bytes\"}[2m])",
               "format": "time_series",
               "hide": false,
               "instant": false,
@@ -2539,7 +2539,7 @@
               "refId": "B"
             },
             {
-              "expr": "rate(poller_io{hostname=~\"$Hostname\",poller=~\"$Poller\",metric=\"cancelled_write_bytes\"}[1m])",
+              "expr": "rate(poller_io{hostname=~\"$Hostname\",poller=~\"$Poller\",metric=\"cancelled_write_bytes\"}[2m])",
               "format": "time_series",
               "hide": false,
               "instant": false,
@@ -2633,7 +2633,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "rate(poller_io{hostname=~\"$Hostname\",poller=~\"$Poller\",metric=\"rchar\"}[1m])",
+              "expr": "rate(poller_io{hostname=~\"$Hostname\",poller=~\"$Poller\",metric=\"rchar\"}[2m])",
               "format": "time_series",
               "hide": false,
               "instant": false,
@@ -2643,7 +2643,7 @@
               "refId": "A"
             },
             {
-              "expr": "rate(poller_io{hostname=~\"$Hostname\",poller=~\"$Poller\",metric=\"wchar\"}[1m])",
+              "expr": "rate(poller_io{hostname=~\"$Hostname\",poller=~\"$Poller\",metric=\"wchar\"}[2m])",
               "format": "time_series",
               "hide": false,
               "instant": false,
@@ -2737,7 +2737,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "rate(poller_io{hostname=~\"$Hostname\",poller=~\"$Poller\",metric=\"syscr\"}[1m])",
+              "expr": "rate(poller_io{hostname=~\"$Hostname\",poller=~\"$Poller\",metric=\"syscr\"}[2m])",
               "format": "time_series",
               "hide": false,
               "instant": false,
@@ -2747,7 +2747,7 @@
               "refId": "A"
             },
             {
-              "expr": "rate(poller_io{hostname=~\"$Hostname\",poller=~\"$Poller\",metric=\"wchar\"}[1m])",
+              "expr": "rate(poller_io{hostname=~\"$Hostname\",poller=~\"$Poller\",metric=\"wchar\"}[2m])",
               "format": "time_series",
               "hide": false,
               "instant": false,
@@ -2841,7 +2841,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "sum by (poller,metric) (rate(poller_net{hostname=~\"$Hostname\",poller=~\"$Poller\",metric=~\".*_bytes\"}[1m]))",
+              "expr": "sum by (poller,metric) (rate(poller_net{hostname=~\"$Hostname\",poller=~\"$Poller\",metric=~\".*_bytes\"}[2m]))",
               "format": "time_series",
               "hide": false,
               "instant": false,
@@ -2935,7 +2935,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "sum by (poller,metric) (rate(poller_net{hostname=~\"$Hostname\",poller=~\"$Poller\",metric=~\".*_packets\"}[1m]))",
+              "expr": "sum by (poller,metric) (rate(poller_net{hostname=~\"$Hostname\",poller=~\"$Poller\",metric=~\".*_packets\"}[2m]))",
               "format": "time_series",
               "hide": false,
               "instant": false,
@@ -3029,7 +3029,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "sum by (poller,metric) (rate(poller_net{hostname=~\"$Hostname\",poller=~\"$Poller\",metric=~\".*_errs\"}[1m]))",
+              "expr": "sum by (poller,metric) (rate(poller_net{hostname=~\"$Hostname\",poller=~\"$Poller\",metric=~\".*_errs\"}[2m]))",
               "format": "time_series",
               "hide": false,
               "instant": false,

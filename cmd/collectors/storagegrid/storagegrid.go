@@ -1,9 +1,9 @@
 package storagegrid
 
 import (
+	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/collectors/storagegrid/plugins/bucket"
-	"github.com/netapp/harvest/v2/cmd/collectors/storagegrid/plugins/tenant"
 	srest "github.com/netapp/harvest/v2/cmd/collectors/storagegrid/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
@@ -118,11 +118,9 @@ func (s *StorageGrid) InitCache() error {
 		return errs.New(errs.ErrMissingParam, "query")
 	}
 
-	// create metric cache
 	if counters = s.Params.GetChildS("counters"); counters == nil {
 		return errs.New(errs.ErrMissingParam, "counters")
 	}
-
 	s.ParseCounters(counters, s.Props)
 
 	s.Logger.Debug().
@@ -135,6 +133,120 @@ func (s *StorageGrid) InitCache() error {
 }
 
 func (s *StorageGrid) PollData() (map[string]*matrix.Matrix, error) {
+	if s.Props.Query == "prometheus" {
+		return s.pollPrometheusMetrics()
+	} else {
+		return s.pollRest()
+	}
+}
+
+func (s *StorageGrid) pollPrometheusMetrics() (map[string]*matrix.Matrix, error) {
+	var (
+		count      uint64
+		numRecords int
+		startTime  time.Time
+		apiD       time.Duration
+	)
+
+	metrics := make(map[string]*matrix.Matrix)
+	s.Logger.Debug().Msg("starting data poll")
+	s.Matrix[s.Object].Reset()
+	startTime = time.Now()
+
+	for _, metric := range s.Props.Metrics {
+		mat, err := s.GetMetric(metric.Name, metric.Label, nil)
+		if err != nil {
+			s.Logger.Error().Err(err).Str("metric", metric.Name).Msg("failed to get metric")
+			continue
+		}
+		metrics[metric.Name] = mat
+		numInstances := len(mat.GetInstances())
+		if numInstances == 0 {
+			s.Logger.Warn().Str("metric", metric.Name).Msg("no instances on storagegrid")
+			continue
+		}
+		count += uint64(numInstances)
+		numRecords += numInstances
+	}
+
+	apiD = time.Since(startTime)
+
+	_ = s.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
+	_ = s.Metadata.LazySetValueInt64("parse_time", "data", 0)
+	_ = s.Metadata.LazySetValueUint64("metrics", "data", count)
+	_ = s.Metadata.LazySetValueInt64("instances", "data", int64(numRecords))
+	s.AddCollectCount(count)
+
+	return metrics, nil
+}
+
+func (s *StorageGrid) makePromMetrics(metricName string, result *[]gjson.Result, tenantNamesByID map[string]string) (*matrix.Matrix, error) {
+	var (
+		metric   *matrix.Metric
+		instance *matrix.Instance
+		err      error
+	)
+
+	mat := s.Matrix[s.Object].Clone(false, false, false)
+	mat.SetExportOptions(matrix.DefaultExportOptions())
+	mat.Object = s.Props.Object
+	mat.UUID += "." + metricName
+
+	r := (*result)[0]
+	resultType := r.Get("resultType").String()
+	if resultType != "vector" {
+		return nil, fmt.Errorf("unexpected resultType=[%s]", resultType)
+	}
+
+	results := r.Get("result").Array()
+	if len(results) == 0 {
+		return mat, nil
+	}
+
+	if metric, err = mat.NewMetricFloat64(metricName); err != nil {
+		return nil, fmt.Errorf("failed to create newMetric float64 metric=[%s]", metricName)
+	}
+
+	instances := r.Get("result").Array()
+	for i, rr := range instances {
+		if instance, err = mat.NewInstance(metricName + "-" + strconv.Itoa(i)); err != nil {
+			s.Logger.Error().Err(err).Str("instanceKey", metricName+"-"+strconv.Itoa(i)).Send()
+			continue
+		}
+		rr.Get("metric").ForEach(func(kk, vv gjson.Result) bool {
+			key := kk.String()
+			value := vv.String()
+
+			if key == "__name__" {
+				return true
+			}
+			if key == "instance" {
+				key = "node"
+			}
+			if tenantNamesByID != nil && key == "tenant_id" {
+				tenantName, ok := tenantNamesByID[value]
+				if ok {
+					instance.SetLabel("tenant", tenantName)
+				}
+			}
+			instance.SetLabel(key, value)
+			return true
+		})
+
+		// copy Prometheus metric value into new metric
+		valueArray := rr.Get("value").Array()
+		if len(valueArray) > 0 {
+			err = metric.SetValueFloat64(instance, valueArray[1].Float())
+			if err != nil {
+				s.Logger.Error().Err(err).Str("metric", metricName).Msg("Unable to set float key on metric")
+				continue
+			}
+		}
+	}
+	return mat, nil
+}
+
+func (s *StorageGrid) pollRest() (map[string]*matrix.Matrix, error) {
 	var (
 		count        uint64
 		apiD, parseD time.Duration
@@ -362,7 +474,7 @@ func (s *StorageGrid) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin
 	case "Bucket":
 		return bucket.New(abc)
 	case "Tenant":
-		return tenant.New(abc)
+		return NewTenant(abc, s)
 	default:
 		s.Logger.Warn().Str("kind", kind).Msg("plugin not found")
 	}
@@ -473,6 +585,23 @@ func (s *StorageGrid) getNodeUuids() ([]collector.ID, error) {
 		return infos[i].SerialNumber < infos[j].SerialNumber
 	})
 	return infos, nil
+}
+
+func (s *StorageGrid) GetMetric(metric string, display string, tenantNamesByID map[string]string) (*matrix.Matrix, error) {
+	var records []gjson.Result
+	err := s.client.GetMetricQuery(metric, &records)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get metric=[%s] error: %w", metric, err)
+	}
+	if len(records) == 0 {
+		s.Logger.Debug().Str("metric", metric).Msg("no metrics on cluster")
+		return nil, nil
+	}
+	nameOfMetric := metric
+	if display != "" {
+		nameOfMetric = display
+	}
+	return s.makePromMetrics(nameOfMetric, &records, tenantNamesByID)
 }
 
 // Interface guards

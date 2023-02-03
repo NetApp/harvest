@@ -122,7 +122,7 @@ func New(name, object string, options *options.Options, params *node.Node) *Abst
 
 // Init initializes a collector and does the trick of "inheritance",
 // hence a function and not a method.
-// A collector can to choose to call this function
+// A collector can choose to call this function
 // inside its Init method, or leave it to be called
 // by the poller during dynamic load.
 //

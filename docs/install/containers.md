@@ -31,8 +31,8 @@ This is a quick way to install and get started with Harvest. Follow the four ste
 
 ### Download and untar
 
-1. Download the latest version of [Harvest](https://github.com/NetApp/harvest#installation), untar, and cd into the
-   harvest directory
+1. Download the latest version of [Harvest](https://netapp.github.io/harvest/latest/install/native/), untar, and
+   cd into the harvest directory.
 
 ### Setup harvest.yml
 
@@ -102,7 +102,6 @@ like so:
 bin/harvest generate docker full --port --output harvest-compose.yml
 ```
 
-
 ### Prometheus
 
 After bringing up the `prom-stack.yml` compose file, you can check Prometheus's list of targets
@@ -125,7 +124,8 @@ password: admin
 
 1. Add poller to `harvest.yml`
 2. Regenerate compose file by running [`bin/harvest generate`](#generate-a-docker-compose-for-your-pollers)
-3. Run [docker compose up](#start-everything), for example, 
+3. Run [docker compose up](#start-everything), for example,
+
 ```bash
 docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
 ```
