@@ -71,3 +71,12 @@ Pollers:
   #   ca_cert: /path/to/server.crt
   #   exporters:
   #     - prometheus1
+
+  # StorageGRID example
+  #  grid-01:
+  #    datacenter: DC-01
+  #    addr: 10.0.0.3
+  #    username: myuser
+  #    password: mypass
+  #    collectors:
+  #      - StorageGrid
