@@ -16,11 +16,6 @@ type Volume struct {
 	*plugin.AbstractPlugin
 }
 
-type AggrMap struct {
-	aggrName string
-	bool     bool
-}
-
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Volume{AbstractPlugin: p}
 }
@@ -66,7 +61,9 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				fg.SetLabel("style", "flexgroup")
 				flexgroupAggrsMap[key] = make(map[string]bool)
 				flexgroupAggrsMap[key][i.GetLabel("aggr")] = true
-				m.SetValueFloat64(i, 1)
+				if err := m.SetValueFloat64(i, 1); err != nil {
+					me.Logger.Error().Stack().Err(err).Msg("error")
+				}
 			} else {
 				// update the aggrMap at each flexgroup constituent
 				aggr := i.GetLabel("aggr")
@@ -78,7 +75,9 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 			i.SetExportable(false)
 		} else {
 			i.SetLabel("style", "flexvol")
-			m.SetValueFloat64(i, 1)
+			if err := m.SetValueFloat64(i, 1); err != nil {
+				me.Logger.Error().Stack().Err(err).Msg("error")
+			}
 		}
 
 	}
@@ -101,7 +100,7 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 			// set aggrs label for flexgroup
 			aggrs := make([]string, 0)
-			for aggr, _ := range flexgroupAggrsMap[key] {
+			for aggr := range flexgroupAggrsMap[key] {
 				aggrs = append(aggrs, aggr)
 			}
 			// make sure the order of aggregate is same for each poll
