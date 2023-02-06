@@ -15,6 +15,30 @@ import (
 	"time"
 )
 
+type RaidAggrDerivedType string
+type RaidAggrType string
+
+const (
+	radtHDD              RaidAggrDerivedType = "hdd"
+	radtHDDFABRICPOOL    RaidAggrDerivedType = "hdd_fabricpool"
+	radtSSD              RaidAggrDerivedType = "ssd"
+	radtSSDFABRICPOOL    RaidAggrDerivedType = "ssd_fabricpool"
+	radtHYBRID           RaidAggrDerivedType = "hybrid"
+	radtHYBRIDFLASHPOOL  RaidAggrDerivedType = "hybrid_flash_pool"
+	radtLUNFLEXARRAY     RaidAggrDerivedType = "lun_flexarray"
+	radtVMDISKSDS        RaidAggrDerivedType = "vmdisk_sds"
+	radtVMDISKFABRICPOOL RaidAggrDerivedType = "vmdisk_fabricpool"
+	radtNotMapped        RaidAggrDerivedType = "not_mapped"
+)
+
+const (
+	ratHDD    RaidAggrType = "hdd"
+	ratSSD    RaidAggrType = "ssd"
+	ratHYBRID RaidAggrType = "hybrid"
+	ratLUN    RaidAggrType = "lun"
+	ratVMDISK RaidAggrType = "vmdisk"
+)
+
 type Disk struct {
 	*plugin.AbstractPlugin
 	shelfData      map[string]*matrix.Matrix
@@ -23,6 +47,33 @@ type Disk struct {
 	instanceLabels map[string]*dict.Dict
 	client         *rest.Client
 	query          string
+	aggrMap        map[string]*aggregate
+	diskMap        map[string]*disk  // disk UID to disk info containing shelf name
+	diskNameMap    map[string]*disk  // disk Name to disk info containing shelf name. Used for 9.12 versions where disk uuid is absent rest perf response
+	ShelfMap       map[string]*shelf // shelf id to power mapping
+}
+
+type shelf struct {
+	iops  float64
+	power float64
+	disks []*disk
+}
+
+type aggregate struct {
+	name        string
+	node        string
+	isShared    bool
+	power       float64
+	derivedType RaidAggrDerivedType
+	export      bool
+}
+
+type disk struct {
+	name       string
+	shelfID    string
+	id         string
+	diskType   string
+	aggregates []string
 }
 
 type shelfEnvironmentMetric struct {
@@ -43,6 +94,10 @@ var shelfMetrics = []string{
 	"min_ambient_temperature",
 	"min_fan_speed",
 	"min_temperature",
+	"power",
+}
+
+var aggrMetrics = []string{
 	"power",
 }
 
@@ -112,6 +167,8 @@ func (d *Disk) Init() error {
 	d.query = "api/storage/shelves"
 
 	d.shelfData = make(map[string]*matrix.Matrix)
+	d.powerData = make(map[string]*matrix.Matrix)
+
 	d.instanceKeys = make(map[string]string)
 	d.instanceLabels = make(map[string]*dict.Dict)
 
@@ -167,6 +224,10 @@ func (d *Disk) Init() error {
 		d.shelfData[attribute].SetExportOptions(exportOptions)
 
 		d.initShelfPowerMatrix()
+
+		d.initAggrPowerMatrix()
+
+		d.initMaps()
 	}
 
 	d.Logger.Debug().Msgf("initialized with shelfData [%d] objects", len(d.shelfData))
@@ -193,8 +254,10 @@ func (d *Disk) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 
 	if len(records) == 0 {
-		return nil, errs.New(errs.ErrNoInstance, "no "+d.query+" instances on cluster")
+		return nil, nil
 	}
+
+	d.initMaps()
 
 	var output []*matrix.Matrix
 	noSet := make(map[string]any)
@@ -310,7 +373,305 @@ func (d *Disk) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		d.Logger.Warn().Strs("attributes", attributes).Msg("No instances")
 	}
 
-	return d.handleShelfPower(records, output)
+	output, err = d.handleShelfPower(records, output)
+	if err != nil {
+		return output, err
+	}
+
+	err = d.getAggregates()
+	if err != nil {
+		return output, err
+	}
+
+	err = d.getDisks()
+	if err != nil {
+		return output, err
+	}
+
+	err = d.populateShelfIOPS(data)
+	if err != nil {
+		return output, err
+	}
+
+	output, err = d.calculateAggrPower(data, output)
+	if err != nil {
+		return output, err
+	}
+
+	return output, nil
+}
+
+func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) ([]*matrix.Matrix, error) {
+
+	totalTransfers := data.GetMetric("total_transfer_count")
+	if totalTransfers == nil {
+		return output, errs.New(errs.ErrNoMetric, "total_transfer_count")
+	}
+	totaliops := make(map[string]float64)
+
+	// calculate power for returned disks in perf response
+	for _, instance := range data.GetInstances() {
+		if v, ok := totalTransfers.GetValueFloat64(instance); ok {
+			diskUUID := instance.GetLabel("disk_uuid")
+			diskName := instance.GetLabel("disk")
+			aggrName := instance.GetLabel("aggr")
+			var a *aggregate
+			a, ok = d.aggrMap[aggrName]
+			if !ok {
+				d.Logger.Warn().Str("aggrName", aggrName).Msg("Missing Aggregate info")
+				continue
+			}
+
+			di, has := d.diskMap[diskUUID]
+			// search via diskName
+			if !has {
+				di, has = d.diskNameMap[diskName]
+			}
+			if has {
+				shelfID := di.shelfID
+				sh, ok := d.ShelfMap[shelfID]
+				if ok {
+					diskPower := v * sh.power / sh.iops
+					totaliops[shelfID] = totaliops[shelfID] + v
+					aggrPower := a.power + diskPower
+					a.power = aggrPower
+				} else {
+					d.Logger.Warn().Str("shelfID", shelfID).Msg("Missing shelf info")
+				}
+			} else {
+				d.Logger.Warn().Str("diskUUID", diskUUID).Msg("Missing disk info")
+			}
+		} else {
+			d.Logger.Warn().Msg("Instance not exported")
+		}
+	}
+
+	// If the storage shelf total IOPS is 0, we can distribute the shelf power to each disk evenly as the disks still consume power when idle.
+	// If disks are spare then they will not have aggregates, and we can not calculate aggr_power in such cases. In such cases sum of aggr_power for a cluster will not match with sum shelf_power
+	for _, v := range d.ShelfMap {
+		if v.iops == 0 && v.power > 0 && len(v.disks) > 0 {
+			// counts disks with aggregate names
+			diskWithAggregateCount := 0
+			for _, v1 := range v.disks {
+				c := len(v1.aggregates)
+				if c > 0 {
+					diskWithAggregateCount += 1
+				}
+			}
+			if diskWithAggregateCount != 0 {
+				powerPerDisk := v.power / float64(diskWithAggregateCount)
+				for _, v1 := range v.disks {
+					if len(v1.aggregates) > 0 {
+						powerPerAggregate := powerPerDisk / float64(len(v1.aggregates))
+						for _, a1 := range v1.aggregates {
+							a, ok := d.aggrMap[a1]
+							if !ok {
+								d.Logger.Warn().Str("aggrName", a1).Msg("Missing Aggregate info")
+								continue
+							}
+							a.power += powerPerAggregate
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Purge and reset data
+	aggrData := d.powerData["aggr"]
+	aggrData.PurgeInstances()
+	aggrData.Reset()
+
+	// fill aggr power matrix with power calculated above
+	for k, v := range d.aggrMap {
+		if v.export {
+			instanceKey := k
+			instance, err := aggrData.NewInstance(instanceKey)
+			if err != nil {
+				d.Logger.Error().Err(err).Str("key", instanceKey).Msg("Failed to add instance")
+				continue
+			}
+			instance.SetLabel("aggr", k)
+			instance.SetLabel("derivedType", string(v.derivedType))
+			instance.SetLabel("node", v.node)
+
+			m := aggrData.GetMetric("power")
+			err = m.SetValueFloat64(instance, v.power)
+			if err != nil {
+				d.Logger.Error().Err(err).Str("key", instanceKey).Msg("Failed to set value")
+				continue
+			}
+		}
+	}
+	output = append(output, aggrData)
+	return output, nil
+
+}
+
+func (d *Disk) populateShelfIOPS(data *matrix.Matrix) error {
+
+	totalTransfers := data.GetMetric("total_transfer_count")
+	if totalTransfers == nil {
+		return errs.New(errs.ErrNoMetric, "total_transfer_count")
+	}
+
+	for _, instance := range data.GetInstances() {
+		if v, ok := totalTransfers.GetValueFloat64(instance); ok {
+			diskUUID := instance.GetLabel("disk_uuid")
+			diskName := instance.GetLabel("disk")
+
+			di, has := d.diskMap[diskUUID]
+			// search via diskName
+			if !has {
+				di, has = d.diskNameMap[diskName]
+			}
+			if has {
+				shelfID := di.shelfID
+				sh, ok := d.ShelfMap[shelfID]
+				if ok {
+					sh.iops += v
+				} else {
+					d.Logger.Warn().Str("shelfID", shelfID).Msg("Missing shelf info")
+				}
+			} else {
+				d.Logger.Warn().Str("diskUUID", diskUUID).Msg("Missing disk info")
+			}
+		}
+	}
+	return nil
+}
+
+func (d *Disk) getDisks() error {
+
+	var (
+		err error
+	)
+
+	query := "api/storage/disks"
+
+	href := rest.BuildHref("", "name,uid,shelf.uid,type,aggregates", nil, "", "", "", "", query)
+
+	records, err := rest.Fetch(d.client, href)
+	if err != nil {
+		d.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
+		return err
+	}
+
+	if len(records) == 0 {
+		return nil
+	}
+
+	for _, v := range records {
+		if !v.IsObject() {
+			d.Logger.Warn().Str("type", v.Type.String()).Msg("Shelf is not object, skipping")
+			continue
+		}
+
+		diskName := v.Get("name").String()
+		diskUID := v.Get("uid").String()
+		shelfID := v.Get("shelf.uid").String()
+
+		diskType := v.Get("type").String()
+		aN := v.Get("aggregates.#.name")
+		var aggrNames []string
+		for _, name := range aN.Array() {
+			aggrNames = append(aggrNames, name.String())
+		}
+
+		dis := &disk{
+			name:       diskName,
+			shelfID:    shelfID,
+			id:         diskUID,
+			aggregates: aggrNames,
+			diskType:   diskType,
+		}
+		d.diskMap[diskUID] = dis
+		d.diskNameMap[diskName] = dis
+
+		sh, ok := d.ShelfMap[shelfID]
+		if ok {
+			sh.disks = append(sh.disks, dis)
+		}
+	}
+	return nil
+}
+
+func (d *Disk) getAggregates() error {
+
+	var (
+		err error
+	)
+
+	query := "api/private/cli/aggr"
+
+	href := rest.BuildHref("", "aggregate,composite,node,uses_shared_disks,root,storage_type", nil, "", "", "", "", query)
+
+	records, err := rest.Fetch(d.client, href)
+	if err != nil {
+		d.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
+		return err
+	}
+
+	if len(records) == 0 {
+		return nil
+	}
+
+	for _, aggr := range records {
+		if !aggr.IsObject() {
+			d.Logger.Warn().Str("type", aggr.Type.String()).Msg("aggregate is not object, skipping")
+			continue
+		}
+		aggrName := aggr.Get("aggregate").String()
+		usesSharedDisks := aggr.Get("uses_shared_disks").String()
+		isC := aggr.Get("composite").String()
+		isR := aggr.Get("root").String()
+		aggregateType := aggr.Get("storage_type").String()
+		nodeName := aggr.Get("node").String()
+		isShared := usesSharedDisks == "true"
+		isRootAggregate := isR == "true"
+		isComposite := isC == "true"
+		derivedType := getAggregateDerivedType(aggregateType, isComposite, isShared)
+		d.aggrMap[aggrName] = &aggregate{
+			name:        aggrName,
+			isShared:    isShared,
+			derivedType: derivedType,
+			node:        nodeName,
+			export:      !isRootAggregate,
+		}
+	}
+	return nil
+}
+
+func getAggregateDerivedType(aggregateType string, isComposite bool, isShared bool) RaidAggrDerivedType {
+	derivedType := radtNotMapped
+	if aggregateType == "" {
+		return derivedType
+	}
+	switch RaidAggrType(aggregateType) {
+	case ratHDD:
+		derivedType = radtHDD
+		if isComposite {
+			derivedType = radtHDDFABRICPOOL
+		}
+	case ratSSD:
+		derivedType = radtSSD
+		if isComposite {
+			derivedType = radtSSDFABRICPOOL
+		}
+	case ratHYBRID:
+		derivedType = radtHYBRID
+		if isShared {
+			derivedType = radtHYBRIDFLASHPOOL
+		}
+	case ratLUN:
+		derivedType = radtLUNFLEXARRAY
+	case ratVMDISK:
+		derivedType = radtVMDISKSDS
+		if isComposite {
+			derivedType = radtVMDISKFABRICPOOL
+		}
+	}
+	return derivedType
 }
 
 func (d *Disk) handleShelfPower(shelves []gjson.Result, output []*matrix.Matrix) ([]*matrix.Matrix, error) {
@@ -319,14 +680,16 @@ func (d *Disk) handleShelfPower(shelves []gjson.Result, output []*matrix.Matrix)
 	data.PurgeInstances()
 	data.Reset()
 
-	for _, shelf := range shelves {
+	for _, s := range shelves {
 
-		if !shelf.IsObject() {
-			d.Logger.Warn().Str("type", shelf.Type.String()).Msg("Shelf is not object, skipping")
+		if !s.IsObject() {
+			d.Logger.Warn().Str("type", s.Type.String()).Msg("Shelf is not object, skipping")
 			continue
 		}
-		shelfName := shelf.Get("name").String()
-		shelfSerialNumber := shelf.Get("serial_number").String()
+		shelfName := s.Get("name").String()
+		shelfSerialNumber := s.Get("serial_number").String()
+		shelfID := s.Get("id").String()
+		shelfUID := s.Get("uid").String()
 		instanceKey := shelfSerialNumber
 		instance, err := data.NewInstance(instanceKey)
 		if err != nil {
@@ -334,7 +697,8 @@ func (d *Disk) handleShelfPower(shelves []gjson.Result, output []*matrix.Matrix)
 			return output, err
 		}
 		instance.SetLabel("shelf", shelfName)
-
+		instance.SetLabel("shelfID", shelfID)
+		instance.SetLabel("shelfUID", shelfUID)
 	}
 	err := d.calculateEnvironmentMetrics(data)
 	if err != nil {
@@ -355,6 +719,29 @@ func (d *Disk) initShelfPowerMatrix() {
 			d.Logger.Warn().Err(err).Str("key", k).Msg("error while creating metric")
 		}
 	}
+}
+
+func (d *Disk) initAggrPowerMatrix() {
+	d.powerData["aggr"] = matrix.New(d.Parent+".Aggr", "aggr", "aggr")
+
+	for _, k := range aggrMetrics {
+		err := matrix.CreateMetric(k, d.powerData["aggr"])
+		if err != nil {
+			d.Logger.Warn().Err(err).Str("key", k).Msg("error while creating metric")
+		}
+	}
+}
+
+func (d *Disk) initMaps() {
+	//reset shelf Power
+	d.ShelfMap = make(map[string]*shelf)
+
+	//reset diskmap
+	d.diskMap = make(map[string]*disk)
+	d.diskNameMap = make(map[string]*disk)
+
+	//reset aggrmap
+	d.aggrMap = make(map[string]*aggregate)
 }
 
 func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) error {
@@ -442,6 +829,8 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) error {
 				err = m.SetValueFloat64(instance, sumPower)
 				if err != nil {
 					d.Logger.Error().Float64("power", sumPower).Err(err).Msg("Unable to set power")
+				} else {
+					d.ShelfMap[instance.GetLabel("shelfUID")] = &shelf{power: sumPower}
 				}
 
 			case "average_ambient_temperature":

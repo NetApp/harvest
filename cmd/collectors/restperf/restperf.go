@@ -619,7 +619,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 						instance.SetLabel(display, f.value)
 						count++
 					} else {
-						r.Logger.Warn().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
+						r.Logger.Debug().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
 					}
 				}
 			}
@@ -769,7 +769,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 						}
 					}
 				} else {
-					r.Logger.Warn().Str("counter", name).Msg("Counter is missing or unable to parse.")
+					r.Logger.Debug().Str("counter", name).Msg("Counter is missing or unable to parse.")
 				}
 			}
 			if err = curMat.GetMetric("timestamp").SetValueFloat64(instance, ts); err != nil {
