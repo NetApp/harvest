@@ -3792,6 +3792,389 @@
       ],
       "title": "Flash Pool Drilldown",
       "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 81
+      },
+      "id": 81,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "For FlexGroup, This panel would show a single consolidated value even when one aggregate is selected in the dropdown.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "Space Used",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 0,
+            "y": 82
+          },
+          "id": 83,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "sortBy": "Last *",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "topk($TopResources, volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", volume=~\"$TopVolumeSizeUsed\"} * on (cluster, svm, volume) group_left(aggr) volume_aggrs{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeSizeUsed\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
+              "refId": "D"
+            }
+          ],
+          "title": "Volume Space Used",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "For FlexGroup, This panel would show a single consolidated value even when one aggregate is selected in the dropdown.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "Space Used %",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 12,
+            "y": 82
+          },
+          "id": 84,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "sortBy": "Last *",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "topk($TopResources, volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$TopVolumeSizeUsedPercent\"} * on (cluster, svm, volume) group_left(aggr) volume_aggrs{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeSizeUsedPercent\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Volume Space Used Percent",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "For FlexGroup, This panel would show a single consolidated value even when one aggregate is selected in the dropdown.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "Snapshot Space Used",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 0,
+            "y": 94
+          },
+          "id": 87,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "sortBy": "Last *",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "topk($TopResources, volume_snapshots_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$TopVolumeSnapshotSizeUsed\"} * on (cluster, svm, volume) group_left(aggr) volume_aggrs{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeSnapshotSizeUsed\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Volume Snapshot Space Used",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "For FlexGroup, This panel would show a single consolidated value even when one aggregate is selected in the dropdown.\n\nNote that in some scenarios, it is possible to pass 100% of the space allocated.\n",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "Snapshot Space Used %",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 12,
+            "y": 94
+          },
+          "id": 85,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "sortBy": "Last *",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "topk($TopResources, volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$TopVolumeSnapshotSizeUsedPercent\"} * on (cluster, svm, volume) group_left(aggr) volume_aggrs{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeSnapshotSizeUsedPercent\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
+              "refId": "C"
+            }
+          ],
+          "title": "Volume Snapshot Space Used Percent",
+          "transformations": [],
+          "type": "timeseries"
+        }
+      ],
+      "title": "Volume Statistics",
+      "type": "row"
     }
   ],
   "refresh": "1m",
@@ -3949,6 +4332,169 @@
         "regex": ".*aggr=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "5",
+          "value": "5"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "TopResources",
+        "options": [
+          {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": false,
+            "text": "2",
+            "value": "2"
+          },
+          {
+            "selected": false,
+            "text": "3",
+            "value": "3"
+          },
+          {
+            "selected": false,
+            "text": "4",
+            "value": "4"
+          },
+          {
+            "selected": true,
+            "text": "5",
+            "value": "5"
+          },
+          {
+            "selected": false,
+            "text": "6",
+            "value": "6"
+          },
+          {
+            "selected": false,
+            "text": "8",
+            "value": "8"
+          },
+          {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          },
+          {
+            "selected": false,
+            "text": "15",
+            "value": "15"
+          },
+          {
+            "selected": false,
+            "text": "25",
+            "value": "25"
+          },
+          {
+            "selected": false,
+            "text": "50",
+            "value": "50"
+          },
+          {
+            "selected": false,
+            "text": "100",
+            "value": "100"
+          },
+          {
+            "selected": false,
+            "text": "250",
+            "value": "250"
+          },
+          {
+            "selected": false,
+            "text": "500",
+            "value": "500"
+          }
+        ],
+        "query": "1,2,3,4,5,6,8,10,15,25,50,100,250,500",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {},
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_aggrs{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))",
+        "hide": 2,
+        "includeAll": true,
+        "label": "",
+        "multi": true,
+        "name": "TopVolumeSizeUsed",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_aggrs{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_aggrs{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+        "hide": 2,
+        "includeAll": true,
+        "label": "",
+        "multi": true,
+        "name": "TopVolumeSizeUsedPercent",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_aggrs{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_snapshots_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_aggrs{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+        "hide": 2,
+        "includeAll": true,
+        "label": "",
+        "multi": true,
+        "name": "TopVolumeSnapshotSizeUsed",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(volume_snapshots_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_aggrs{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_aggrs{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+        "hide": 2,
+        "includeAll": true,
+        "label": "",
+        "multi": true,
+        "name": "TopVolumeSnapshotSizeUsedPercent",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_aggrs{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 1,
         "type": "query"
       }
     ]
