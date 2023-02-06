@@ -78,5 +78,7 @@ Pollers:
   #    addr: 10.0.0.3
   #    username: myuser
   #    password: mypass
+  #    exporters:
+  #      - prometheus1
   #    collectors:
   #      - StorageGrid
