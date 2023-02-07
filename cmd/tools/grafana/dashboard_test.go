@@ -28,6 +28,26 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 		}
 		return true
 	})
+
+	// Check that the variable DS_PROMETHEUS exist
+	doesDsPromExist := false
+	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
+		if value.Get("name").String() == "DS_PROMETHEUS" {
+			doesDsPromExist = true
+			query := value.Get("query").String()
+			if query != "prometheus" {
+				t.Errorf("dashboard=%s var=DS_PROMETHEUS query want=prometheus got=%s", path, query)
+			}
+			theType := value.Get("type").String()
+			if theType != "datasource" {
+				t.Errorf("dashboard=%s var=DS_PROMETHEUS type want=datasource got=%s", path, theType)
+			}
+		}
+		return true
+	})
+	if !doesDsPromExist {
+		t.Errorf("dashboard=%s should define variable has DS_PROMETHEUS", path)
+	}
 }
 
 func TestUnitsAndExprMatch(t *testing.T) {

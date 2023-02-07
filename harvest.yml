@@ -61,7 +61,7 @@ Pollers:
   # no need to add collectors, since they're already defined in Defaults
 
   # example with certificate authentication
-  # See https://github.com/NetApp/harvest/blob/main/docs/AuthAndPermissions.md#using-certificate-authentication
+  # See https://netapp.github.io/harvest/latest/prepare-cdot-clusters/#using-certificate-authentication
   # cluster-01:
   #   datacenter: DC-01
   #   addr: 10.0.0.2
@@ -71,3 +71,14 @@ Pollers:
   #   ca_cert: /path/to/server.crt
   #   exporters:
   #     - prometheus1
+
+  # StorageGRID example
+  #  grid-01:
+  #    datacenter: DC-01
+  #    addr: 10.0.0.3
+  #    username: myuser
+  #    password: mypass
+  #    exporters:
+  #      - prometheus1
+  #    collectors:
+  #      - StorageGrid
