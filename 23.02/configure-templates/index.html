@@ -1392,13 +1392,10 @@ e.g. <code>conf/zapi/cdot/9.8.0/lun.yaml</code> and collect additional informati
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">svm</span>
 <span class="w">  </span><span class="nt">instance_labels</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">state</span>
-<span class="w w-Error"> </span><span class="err">```</span>
-
-<span class="l l-Scalar l-Scalar-Plain">To extend the out-of-the-box `lun.yaml` template, create a `conf/zapi/custom.yaml` file if it doesn&#39;t already exist and</span>
-<span class="nt">add the lines shown below</span><span class="p">:</span>
-
-<span class="err">```</span><span class="l l-Scalar l-Scalar-Plain">yaml</span>
-<span class="nt">objects</span><span class="p">:</span>
+</code></pre></div>
+<p>To extend the out-of-the-box <code>lun.yaml</code> template, create a <code>conf/zapi/custom.yaml</code> file if it doesn't already exist and
+add the lines shown below:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">objects</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">Lun</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">custom_lun.yaml</span>
 </code></pre></div>
 <p>Create a new object template <code>conf/zapi/cdot/9.8.0/custom_lun.yaml</code> with the lines shown below.</p>
@@ -1416,13 +1413,10 @@ e.g. <code>conf/zapi/cdot/9.8.0/lun.yaml</code> and collect additional informati
 <span class="nt">export_options</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">instance_keys</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">application</span>
-<span class="w w-Error"> </span><span class="err">```</span>
-
-<span class="l l-Scalar l-Scalar-Plain">When you restart your pollers, Harvest will take the out-of-the-box template (`lun.yaml`) and your new</span>
-<span class="nt">one (`custom_lun.yaml`) and merge them into the following</span><span class="p">:</span>
-
-<span class="err">```</span><span class="l l-Scalar l-Scalar-Plain">yaml</span>
-<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Lun</span>
+</code></pre></div>
+<p>When you restart your pollers, Harvest will take the out-of-the-box template (<code>lun.yaml</code>) and your new
+one (<code>custom_lun.yaml</code>) and merge them into the following:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Lun</span>
 <span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lun-get-iter</span>
 <span class="nt">object</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lun</span>
 <span class="nt">counters</span><span class="p">:</span>
