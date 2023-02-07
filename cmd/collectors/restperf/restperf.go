@@ -544,7 +544,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 				}
 
 				if instanceKey == "" {
-					r.Logger.Trace().Msg("Instance key is empty, skipping")
+					r.Logger.Trace().Msg("instanceKey is empty, skipping")
 					return true
 				}
 			}
@@ -564,8 +564,8 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 					layer = after
 				} else {
 					r.Logger.Warn().
-						Str("key", instanceKey).
-						Msg("Instance key has unexpected format")
+						Str("instanceKey", instanceKey).
+						Msg("instanceKey has unexpected format")
 					return true
 				}
 
@@ -588,12 +588,12 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 			if instance == nil {
 				if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
 					r.Logger.Debug().
-						Str("key", instanceKey).
-						Msg("Skip instance key, not found in cache")
+						Str("instanceKey", instanceKey).
+						Msg("Skip instanceKey, not found in cache")
 				} else {
 					r.Logger.Warn().
-						Str("key", instanceKey).
-						Msg("Skip instance key, not found in cache")
+						Str("instanceKey", instanceKey).
+						Msg("Skip instanceKey, not found in cache")
 				}
 				return true
 			}
@@ -621,9 +621,9 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 					} else {
 						// ignore physical_disk_id logging as in some of 9.12 versions, this field may be absent
 						if r.Prop.Query == "api/cluster/counter/tables/disk:constituent" && label == "physical_disk_id" {
-							r.Logger.Debug().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
+							r.Logger.Debug().Str("instanceKey", instanceKey).Str("label", label).Msg("Missing label value")
 						} else {
-							r.Logger.Warn().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
+							r.Logger.Warn().Str("instanceKey", instanceKey).Str("label", label).Msg("Missing label value")
 						}
 					}
 				}
@@ -1180,7 +1180,7 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 			oldInstances.Remove(instanceKey)
 			r.Logger.Debug().Msgf("updated instance [%s%s%s%s]", color.Bold, color.Yellow, instanceKey, color.End)
 		} else if instance, err := mat.NewInstance(instanceKey); err != nil {
-			r.Logger.Error().Err(err).Str("Instance key", instanceKey).Msg("add instance")
+			r.Logger.Error().Err(err).Str("instanceKey", instanceKey).Msg("add instance")
 		} else {
 			r.Logger.Trace().
 				Str("key", instanceKey).
