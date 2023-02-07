@@ -619,7 +619,12 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 						instance.SetLabel(display, f.value)
 						count++
 					} else {
-						r.Logger.Debug().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
+						// ignore physical_disk_id logging as in some of 9.12 versions, this field may be absent
+						if r.Prop.Query == "api/cluster/counter/tables/disk:constituent" && label == "physical_disk_id" {
+							r.Logger.Debug().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
+						} else {
+							r.Logger.Warn().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
+						}
 					}
 				}
 			}
@@ -769,7 +774,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 						}
 					}
 				} else {
-					r.Logger.Debug().Str("counter", name).Msg("Counter is missing or unable to parse.")
+					r.Logger.Warn().Str("counter", name).Msg("Counter is missing or unable to parse.")
 				}
 			}
 			if err = curMat.GetMetric("timestamp").SetValueFloat64(instance, ts); err != nil {

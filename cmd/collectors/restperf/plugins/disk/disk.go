@@ -439,7 +439,9 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 					d.Logger.Warn().Str("shelfID", shelfID).Msg("Missing shelf info")
 				}
 			} else {
-				d.Logger.Warn().Str("diskUUID", diskUUID).Msg("Missing disk info")
+				d.Logger.Warn().Str("diskUUID", diskUUID).
+					Str("diskName", diskName).
+					Msg("Missing disk info")
 			}
 		} else {
 			d.Logger.Warn().Msg("Instance not exported")
@@ -534,7 +536,9 @@ func (d *Disk) populateShelfIOPS(data *matrix.Matrix) error {
 					d.Logger.Warn().Str("shelfID", shelfID).Msg("Missing shelf info")
 				}
 			} else {
-				d.Logger.Warn().Str("diskUUID", diskUUID).Msg("Missing disk info")
+				d.Logger.Warn().Str("diskUUID", diskUUID).
+					Str("diskName", diskName).
+					Msg("Missing disk info")
 			}
 		}
 	}
