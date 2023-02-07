@@ -3806,7 +3806,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "For FlexGroup, This panel would show a single consolidated value even when one aggregate is selected in the dropdown.",
+          "description": "Flexgroup by-aggregate filtering does not display the per-aggregate breakdown, instead the sum of all flexgroup aggregates is displayed. This is how ONTAP reports the data, even when an aggregate is selected in the dropdown.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3889,13 +3889,13 @@
               "refId": "D"
             }
           ],
-          "title": "Volume Space Used",
+          "title": "Volume Space Used by Aggregate",
           "transformations": [],
           "type": "timeseries"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "For FlexGroup, This panel would show a single consolidated value even when one aggregate is selected in the dropdown.",
+          "description": "Flexgroup by-aggregate filtering does not display the per-aggregate breakdown, instead the sum of all flexgroup aggregates is displayed. This is how ONTAP reports the data, even when an aggregate is selected in the dropdown.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3988,7 +3988,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "For FlexGroup, This panel would show a single consolidated value even when one aggregate is selected in the dropdown.",
+          "description": "Flexgroup by-aggregate filtering does not display the per-aggregate breakdown, instead the sum of all flexgroup aggregates is displayed. This is how ONTAP reports the data, even when an aggregate is selected in the dropdown.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4081,7 +4081,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "For FlexGroup, This panel would show a single consolidated value even when one aggregate is selected in the dropdown.\n\nNote that in some scenarios, it is possible to pass 100% of the space allocated.\n",
+          "description": "FFlexgroup by-aggregate filtering does not display the per-aggregate breakdown, instead the sum of all flexgroup aggregates is displayed. This is how ONTAP reports the data, even when an aggregate is selected in the dropdown.\n\nNote that in some scenarios, it is possible to exceed 100% of the space allocated.\n",
           "fieldConfig": {
             "defaults": {
               "color": {
