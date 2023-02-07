@@ -241,7 +241,7 @@ export_options:
     - svm
   instance_labels:
     - state
- ```
+```
 
 To extend the out-of-the-box `lun.yaml` template, create a `conf/zapi/custom.yaml` file if it doesn't already exist and
 add the lines shown below:
@@ -268,7 +268,7 @@ plugins:
 export_options:
   instance_keys:
     - application
- ```
+```
 
 When you restart your pollers, Harvest will take the out-of-the-box template (`lun.yaml`) and your new
 one (`custom_lun.yaml`) and merge them into the following:
