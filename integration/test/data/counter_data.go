@@ -38,6 +38,9 @@ func GetCounterMap() map[string][]string {
 		"path_",
 		"snapmirror_",
 		"svm_cifs_",
+		"svm_nfs_latency_hist_bucket",
+		"svm_nfs_read_latency_hist_bucket",
+		"svm_nfs_write_latency_hist_bucket",
 	}
 	//if docker.IsDockerBasedPoller() || setup.IsMac {
 	counterMap["NO_DATA_CONTAINS"] = append(counterMap["NO_DATA_CONTAINS"], "poller", "metadata_exporter_count")
