@@ -10,6 +10,7 @@ counters:
   - ^raid.type               => raid_type
   - ^speed                   => speed
   - ^physical_disk_name      => disk
+  - ^physical_disk_id        => disk_uuid
   - cp_read_chain
   - cp_read_latency
   - cp_read_count            => cp_reads
