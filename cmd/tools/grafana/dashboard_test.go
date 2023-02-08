@@ -220,6 +220,11 @@ func doPanel(pathPrefix string, key gjson.Result, value gjson.Result, mt *metric
 		}
 	}
 
+	// Heatmap units are saved in a different place
+	if kind == "heatmap" && defaultUnit == "" {
+		defaultUnit = value.Get("yAxis.format").String()
+	}
+
 	for _, targetN := range targetsSlice {
 		expr := targetN.Get("expr").String()
 		matches := metricName.FindStringSubmatch(expr)
