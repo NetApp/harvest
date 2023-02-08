@@ -41,7 +41,7 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	metric, err := volumeAggrmetric.NewMetricFloat64(metricName)
 	if err != nil {
-		me.Logger.Error().Stack().Err(err).Msg("add metric")
+		me.Logger.Error().Err(err).Msg("add metric")
 		return nil, err
 	}
 	me.Logger.Trace().Msgf("added metric: (%s) %v", metricName, metric)
@@ -72,14 +72,11 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				flexgroupInstance.SetLabel("node", "")
 				flexgroupInstance.SetLabel("style", "flexgroup")
 				flexgroupAggrsMap[key] = set.New()
-				flexgroupAggrsMap[key].Add(i.GetLabel("aggr"))
 				if err := metric.SetValueFloat64(flexgroupInstance, 1); err != nil {
-					me.Logger.Error().Stack().Err(err).Str("metric", metricName).Msg("Unable to set value on metric")
+					me.Logger.Error().Err(err).Str("metric", metricName).Msg("Unable to set value on metric")
 				}
-			} else {
-				// update the aggrMap at each flexgroup constituent
-				flexgroupAggrsMap[key].Add(i.GetLabel("aggr"))
 			}
+			flexgroupAggrsMap[key].Add(i.GetLabel("aggr"))
 			i.SetLabel("style", "flexgroup_constituent")
 			i.SetExportable(false)
 		} else {
@@ -90,7 +87,7 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				flexvolInstance.SetLabels(i.GetLabels().Copy())
 				flexvolInstance.SetLabel("style", "flexvol")
 				if err := metric.SetValueFloat64(flexvolInstance, 1); err != nil {
-					me.Logger.Error().Stack().Err(err).Str("metric", metricName).Msg("Unable to set value on metric")
+					me.Logger.Error().Err(err).Str("metric", metricName).Msg("Unable to set value on metric")
 				}
 			}
 		}
@@ -118,7 +115,7 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 			fg := cache.GetInstance(key)
 			if fg == nil {
-				me.Logger.Error().Stack().Err(nil).Msgf("instance [%s] not in local cache", key)
+				me.Logger.Error().Err(nil).Msgf("instance [%s] not in local cache", key)
 				continue
 			}
 
@@ -130,7 +127,7 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 				fgm := cache.GetMetric(mkey)
 				if fgm == nil {
-					me.Logger.Error().Stack().Err(nil).Msgf("metric [%s] not in local cache", mkey)
+					me.Logger.Error().Err(nil).Msgf("metric [%s] not in local cache", mkey)
 					continue
 				}
 
@@ -145,7 +142,7 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 						err := fgm.SetValueFloat64(fg, fgv+value)
 						if err != nil {
-							me.Logger.Error().Stack().Err(err).Msg("error")
+							me.Logger.Error().Err(err).Msg("error")
 						}
 						// just for debugging
 						fgv2, _ := fgm.GetValueFloat64(fg)
@@ -183,12 +180,12 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 							if value != 0 {
 								err = tempOps.SetValueFloat64(fg, tempOpsV+opsValue)
 								if err != nil {
-									me.Logger.Error().Stack().Err(err).Msg("error")
+									me.Logger.Error().Err(err).Msg("error")
 								}
 							}
 							err = fgm.SetValueFloat64(fg, fgv+prod)
 							if err != nil {
-								me.Logger.Error().Stack().Err(err).Msg("error")
+								me.Logger.Error().Err(err).Msg("error")
 							}
 
 							// debugging
@@ -222,7 +219,7 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 						if opsValue, ok := ops.GetValueFloat64(i); ok && opsValue != 0 {
 							err := m.SetValueFloat64(i, value/opsValue)
 							if err != nil {
-								me.Logger.Error().Stack().Err(err).Msgf("error")
+								me.Logger.Error().Err(err).Msgf("error")
 							}
 						} else {
 							m.SetValueNAN(i)
