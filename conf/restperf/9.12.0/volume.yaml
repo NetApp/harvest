@@ -21,11 +21,11 @@ counters:
   - average_latency        => avg_latency
 
 plugins:
-  - Volume
   - Aggregator:
       # plugin will create summary/average for each object
       # any names after the object names will be treated as label names that will be added to instances
       - node
+  - Volume
 #  - LabelAgent:
 #      # To prevent visibility of transient volumes, uncomment the following lines
 #      exclude_regex:

@@ -2031,7 +2031,7 @@
             {
               "exemplar": false,
               "expr": "abs(avg(wafl_cp_phase_times{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",metric=\"P2_FLUSH\"}) - 100)",
-              "hide": true,
+              "hide": false,
               "interval": "",
               "legendFormat": "WAFL Write Cleaning",
               "refId": "D"
