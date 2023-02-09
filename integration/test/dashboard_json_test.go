@@ -13,6 +13,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"github.com/tidwall/gjson"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	"io"
 	"os"
 	"path/filepath"
@@ -59,7 +61,6 @@ func (suite *DashboardJsonTestSuite) SetupSuite() {
 }
 
 func (suite *DashboardJsonTestSuite) TestJsonExpression() {
-	//fileSet = []string{"/Users/chinna/harvest/harvest/grafana/dashboards/cmode/harvest_dashboard_snapmirror.json"}
 	var isZapiFailed = false
 	var isRestFailed = false
 	var perfErrorInfoList []ResultInfo
@@ -75,8 +76,8 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 		log.Info().Str("dashboard", filePath).Msg("Started")
 		jsonFile, err := os.Open(filePath)
 		utils.PanicIfNotNil(err)
-		defer jsonFile.Close()
 		byteValue, _ := io.ReadAll(jsonFile)
+		_ = jsonFile.Close()
 		var allExpr []string
 		value := gjson.Get(string(byteValue), "panels")
 		if value.IsArray() {
@@ -88,7 +89,7 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 			}
 		}
 		allExpr = utils.RemoveDuplicateStr(allExpr)
-	EXPRESSION_FOR:
+	ExpressionFor:
 		for _, expression := range allExpr {
 			counters := GetAllCounters(expression)
 			for _, counter := range counters {
@@ -98,13 +99,13 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 				// find exact counter which has no data
 				for _, noDataCounter := range counterMap["NO_DATA_EXACT"] {
 					if noDataCounter == counter {
-						continue EXPRESSION_FOR
+						continue ExpressionFor
 					}
 				}
 				// find exact counter which has no data
 				for _, noDataCounter := range counterMap["NO_DATA_CONTAINS"] {
 					if strings.Contains(counter, noDataCounter) {
-						continue EXPRESSION_FOR
+						continue ExpressionFor
 					}
 				}
 
@@ -131,7 +132,7 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 						"No data found in the database",
 					}
 					zapiErrorInfoList = append(zapiErrorInfoList, errorInfo)
-					continue EXPRESSION_FOR
+					continue ExpressionFor
 				}
 			}
 			if len(counters) == 0 {
@@ -141,8 +142,8 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 					expression = strings.ReplaceAll(expression, key, v)
 				}
 			}
-			if strings.Contains(expression, "resource=\\\"cloud\\\"") ||
-				strings.Contains(expression, "group_type=\\\"vol\\\"") {
+			if strings.Contains(expression, `resource=\"cloud\"`) ||
+				strings.Contains(expression, `group_type=\"vol\"`) {
 				continue
 			}
 			queryStatus, actualExpression := ValidateExpr(expression)
@@ -198,7 +199,7 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 }
 
 func ShouldSkipDashboard(path string) bool {
-	// Ignore headroom dashboard from CI as it uses dynamic variables in query
+	// Ignore dashboards that use dynamic expr variables
 	skip := []string{"nfs4storePool", "headroom", "tenant", "fsa", "overview"}
 	for _, s := range skip {
 		if strings.Contains(path, s) {
@@ -303,16 +304,16 @@ func HasDataInDB(query string) bool {
 	timeNow := time.Now().Unix()
 	queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",
 		data.PrometheusURL, query, timeNow)
-	data, _ := utils.GetResponse(queryUrl)
-	value := gjson.Get(data, "data.result")
-	return (value.Exists() && value.IsArray() && (len(value.Array()) > 0))
+	response, _ := utils.GetResponse(queryUrl)
+	value := gjson.Get(response, "data.result")
+	return value.Exists() && value.IsArray() && (len(value.Array()) > 0)
 }
 
 func GenerateQueryWithValue(query string, expression string) string {
 	timeNow := time.Now().Unix()
 	queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",
 		data.PrometheusURL, query, timeNow)
-	data, _ := utils.GetResponse(queryUrl)
+	response, _ := utils.GetResponse(queryUrl)
 	newExpression := expression
 	/**
 	We are not following standard naming convention for variables in the json
@@ -328,11 +329,12 @@ func GenerateQueryWithValue(query string, expression string) string {
 	newExpression = strings.ReplaceAll(newExpression, "$SourceSVM", "$Source_vserver")
 	newExpression = strings.ReplaceAll(newExpression, "$DestinationSVM", "$Destination_vserver")
 	newExpression = strings.ReplaceAll(newExpression, "$System", "$Cluster")
-	value := gjson.Get(data, "data.result")
+	value := gjson.Get(response, "data.result")
+	caser := cases.Title(language.Und)
 	if value.Exists() && value.IsArray() && (len(value.Array()) > 0) {
 		metricMap := gjson.Get(value.Array()[0].String(), "metric").Map()
 		for k, v := range metricMap {
-			newExpression = strings.ReplaceAll(newExpression, fmt.Sprintf("$%s", strings.Title(k)), v.String())
+			newExpression = strings.ReplaceAll(newExpression, fmt.Sprintf("$%s", caser.String(k)), v.String())
 			newExpression = strings.ReplaceAll(newExpression, fmt.Sprintf("$%s", k), v.String())
 			newExpression = strings.ReplaceAll(newExpression, fmt.Sprintf("$%s", strings.ToLower(k)), v.String())
 			newExpression = strings.ReplaceAll(newExpression, fmt.Sprintf("$%s", strings.ToUpper(k)), v.String())
