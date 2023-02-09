@@ -334,7 +334,7 @@
               }
             ]
           },
-          "unit": "MBs"
+          "unit": "Bps"
         },
         "overrides": [
           {
@@ -374,7 +374,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "topk($TopResources, sum(node_volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$TopVolumeTotalData\"}) by (node) + sum(node_volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$TopVolumeTotalData\"}) by(node)) / 1000000",
+          "expr": "topk($TopResources, sum(node_volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$TopVolumeTotalData\"}) by (node) + sum(node_volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$TopVolumeTotalData\"}) by(node))",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -754,7 +754,7 @@
               }
             ]
           },
-          "unit": "ms"
+          "unit": "µs"
         },
         "overrides": []
       },
@@ -785,7 +785,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": true,
-          "expr": "topk($TopResources, sum(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node=~\"$TopVolumeAvgLatency\"}) by (node)) / 1000",
+          "expr": "topk($TopResources, sum(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node=~\"$TopVolumeAvgLatency\"}) by (node))",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -845,7 +845,7 @@
               }
             ]
           },
-          "unit": "MBs"
+          "unit": "Bps"
         },
         "overrides": []
       },
@@ -876,7 +876,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": true,
-          "expr": "topk($TopResources, sum(node_volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node=~\"$TopVolumeTotalData\"}) by (node) + sum(node_volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node=~\"$TopVolumeTotalData\"}) by(node)) / 1000000",
+          "expr": "topk($TopResources, sum(node_volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node=~\"$TopVolumeTotalData\"}) by (node) + sum(node_volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node=~\"$TopVolumeTotalData\"}) by(node))",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"

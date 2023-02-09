@@ -295,7 +295,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})/1000",
+          "expr": "avg(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})/1000",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -351,7 +351,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(volume_write_data+volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+          "expr": "sum(node_volume_write_data+node_volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -407,7 +407,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+          "expr": "sum(node_volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -553,7 +553,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg by(node) (volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+          "expr": "avg by(node) (node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -644,7 +644,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by (node) (volume_write_data+volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+          "expr": "sum by (node) (node_volume_write_data+node_volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -735,7 +735,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by(node) (volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+          "expr": "sum by(node) (node_volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -1796,7 +1796,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "sum(node_volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "intervalFactor": 1,
               "legendFormat": "Read",
@@ -1804,7 +1804,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "sum(node_volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "intervalFactor": 1,
               "legendFormat": "Write",
@@ -1896,21 +1896,21 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "sum(node_volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "Read",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum(volume_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "sum(node_volume_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "Write",
               "refId": "B"
             },
             {
               "exemplar": false,
-              "expr": "sum(volume_other_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "sum(node_volume_other_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "Other",
               "refId": "C"
@@ -2031,7 +2031,7 @@
             {
               "exemplar": false,
               "expr": "abs(avg(wafl_cp_phase_times{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",metric=\"P2_FLUSH\"}) - 100)",
-              "hide": true,
+              "hide": false,
               "interval": "",
               "legendFormat": "WAFL Write Cleaning",
               "refId": "D"
