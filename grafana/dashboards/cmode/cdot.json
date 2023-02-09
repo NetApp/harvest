@@ -514,7 +514,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -544,7 +544,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "topk($TopResources, avg(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$TopAvgLatency\"}) by (cluster)) / 1000",
+              "expr": "topk($TopResources, avg(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$TopAvgLatency\"}) by (cluster))",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
