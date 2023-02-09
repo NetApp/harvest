@@ -4,7 +4,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"time"
 )
@@ -53,13 +52,13 @@ func (v *VolumeTag) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 
 	if len(records) == 0 {
-		return nil, errs.New(errs.ErrNoInstance, "no "+query+" instances on cluster")
+		return nil, nil
 	}
 
 	for _, volume := range records {
 
 		if !volume.IsObject() {
-			v.Logger.Warn().Str("type", volume.Type.String()).Msg("Shelf is not object, skipping")
+			v.Logger.Warn().Str("type", volume.Type.String()).Msg("volume is not object, skipping")
 			continue
 		}
 		key := volume.Get("uuid").String()
