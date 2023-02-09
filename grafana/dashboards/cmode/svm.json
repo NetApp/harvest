@@ -5944,7 +5944,7 @@
             "y": 17
           },
           "heatmap": {},
-          "hideZeroBuckets": false,
+          "hideZeroBuckets": true,
           "highlightCards": true,
           "id": 246,
           "interval": "6m",
@@ -6013,7 +6013,7 @@
             "y": 17
           },
           "heatmap": {},
-          "hideZeroBuckets": false,
+          "hideZeroBuckets": true,
           "highlightCards": true,
           "id": 249,
           "interval": "6m",
@@ -6082,7 +6082,7 @@
             "y": 17
           },
           "heatmap": {},
-          "hideZeroBuckets": false,
+          "hideZeroBuckets": true,
           "highlightCards": true,
           "id": 250,
           "interval": "6m",
