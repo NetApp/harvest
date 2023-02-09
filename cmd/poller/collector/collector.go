@@ -211,7 +211,7 @@ func Init(c Collector) error {
 	}
 
 	// Initialize metadata
-	md := matrix.New(name, "metadata_collector", "metadata_collector")
+	md := matrix.New(name, "metadata_collector", "metadata_collector"+"_"+object)
 
 	md.SetGlobalLabel("hostname", opts.Hostname)
 	md.SetGlobalLabel("version", opts.Version)
