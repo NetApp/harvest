@@ -14,6 +14,9 @@ counters:
   - nfsv3_throughput         => throughput
   - nfsv3_read_throughput    => read_throughput
   - nfsv3_write_throughput   => write_throughput
+  - nfsv3_latency_hist       => latency_hist
+  - read_latency_hist
+  - write_latency_hist
   - read_avg_latency
   - write_avg_latency
   - latency
