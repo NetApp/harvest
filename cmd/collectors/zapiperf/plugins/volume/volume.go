@@ -64,8 +64,8 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				fg.SetLabel("style", "flexgroup")
 			}
 
-			flexgroupInstance, err := volumeAggrmetric.NewInstance(key)
-			if err == nil {
+			if volumeAggrmetric.GetInstance(key) == nil {
+				flexgroupInstance, _ := volumeAggrmetric.NewInstance(key)
 				flexgroupInstance.SetLabels(i.GetLabels().Copy())
 				flexgroupInstance.SetLabel("volume", match[1])
 				// Flexgroup don't show any node
