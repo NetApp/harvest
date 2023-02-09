@@ -14,7 +14,7 @@ In most cases, no action is required on your part.
 
 ## Harvest API Transition
 
-By default, Harvest will use ZAPIs up until ONTAP version `9.12.1`.
+By default, Harvest will use ZAPIs until ONTAP version `9.12.1`.
 Beginning with ONTAP `9.12.1` and after, Harvest will default to REST.
 
 Harvest includes a full set of REST templates that export identical metrics as the included ZAPI templates.
@@ -31,8 +31,8 @@ Read on if you want to know how you can use REST sooner, or you want to take adv
 Harvest asks the cluster for its ONTAP version:
 
 * If the version is earlier than `9.12.1`, Harvest will use the collector(s) defined in your `harvest.yml`.
-* If the version is `9.12.1`, Harvest will use REST, unless you set the [no-upgrade environment variable](#im-using-ontap-version-912x-but-i-want-to-continue-using-zapis-how-do-i-do-that).
-* If the version is `9.13.1` or later, Harvest will use REST, because ZAPI has been removed.
+* If the version is `9.12.1` or later, Harvest will use REST, unless the [HARVEST_NO_COLLECTOR_UPGRADE](#im-using-ontap-version-912x-but-i-want-to-continue-using-zapis-how-do-i-do-that) environment variable is set.
+  When the environment variable is set, Harvest will use ZAPIs unless the cluster no longer talks ZAPI. 
 
 ```mermaid
 graph TD
@@ -59,19 +59,14 @@ D --> X(Use REST)
 
 ### Can I start using REST before `9.13.1`?
 
-Yes. Several customers already are. There are a few caveats to be aware of:
+Yes. Several customers already are. Be aware of the following limitations:
 
 1. Harvest collects config counters via REST by enabling the `Rest` collector in your `harvest.yml`,
    but ONTAP did not include performance counters via REST until [9.11.1](https://docs.netapp.com/us-en/ontap-automation/migrate/performance-counters.html#accessing-performance-counters-using-the-ontap-rest-api).
    That means Harvest's `RestPerf` collector won't work until `9.11.1`.
    ONTAP supports a subset of performance counters in `9.11.1`. The full set is available in `9.12.1`.
 
-2. It's preferable to publish a set of metrics once, instead of multiple times. Typically, you do not want to
-   enable both the `Zapi` and `Rest` collector for an overlapping set of objects on the same cluster.
-   It will work, but you'll put more load on the cluster and push duplicate metrics to Prometheus. 
-   See [below](#can-i-use-the-rest-and-zapi-collectors-at-the-same-time) for details on how to use both collectors at the same time. 
-
-3. There may be performance metrics missing from versions of ONTAP earlier than `9.11.1`.
+2. There may be performance metrics missing from versions of ONTAP earlier than `9.11.1`.
 
 ### A counter is missing from REST. What do I do?
 
@@ -84,15 +79,29 @@ process to [request new counters](https://kb.netapp.com/Advice_and_Troubleshooti
 
 ### Can I use the REST and ZAPI collectors at the same time?
 
-Yes. 
+Yes. Harvest ensures that the same resources are not collected from both collectors.
 
-It's best when using both collectors to ensure that you aren't collecting the same object(s) multiple times. 
-For example, there is nothing to be gained by collecting `disk` from both collectors. 
-Harvest won't do anything to prevent you from doing that, but our recommendation when using both collectors, is to use a non-overlapping set of objects.
+When there is potential duplication, Harvest resolves the conflict in the order collectors are defined for your poller.
+For example, with the following poller definition, 
 
-Typically, you will use ZAPI collectors with the out-of-the-box templates and add new REST templates for new objects. 
-For example, if you want to [collect controller RAM status](https://github.com/NetApp/harvest/discussions/1187) you must use the REST collector,
-since there is no ZAPI that returns that metric.
+```yaml
+aff-251:
+    datacenter: dc-1
+    addr: 10.1.1.1
+    collectors:
+        - Zapi
+        - Rest
+```
+
+when collecting `disk` resources, the Zapi collector will be used since it is listed first, unless the cluster no longer
+speaks ZAPI, in which case REST will be used.
+
+If you want the REST collector to be selected before the ZAPI one, change the order in the `collectors` section
+so `Rest` comes before `Zapi`.
+
+If the resource does not exist for the first collector, the second one will be tried. For example, when
+collecting `nfs_client` resources, the Zapi collector will not run because `nfs_client` objects are only available via
+REST.
 
 ### I've added counters to existing ZAPI templates. Will those counters work in REST?
 
