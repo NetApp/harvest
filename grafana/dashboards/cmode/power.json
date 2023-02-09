@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1675343950566,
+  "iteration": 1675871743493,
   "links": [
     {
       "asDropdown": true,
@@ -122,7 +122,7 @@
       },
       "gridPos": {
         "h": 10,
-        "w": 14,
+        "w": 9,
         "x": 0,
         "y": 1
       },
@@ -160,6 +160,66 @@
       "timeFrom": null,
       "timeShift": null,
       "title": "Total Power (Node + Shelf)",
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Average Power per used TB",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "Watts/TB"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 7,
+        "x": 9,
+        "y": 1
+      },
+      "id": 71,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "(avg(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0)) / ((sum(aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/1024/1024/1024/1024) / count(sum(node_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})) > 1 or max(aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}/aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Average Power/Used_TB",
       "type": "stat"
     },
     {
@@ -203,8 +263,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 5,
-        "x": 14,
+        "w": 4,
+        "x": 16,
         "y": 1
       },
       "id": 68,
@@ -262,8 +322,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 5,
-        "x": 19,
+        "w": 4,
+        "x": 20,
         "y": 1
       },
       "id": 70,
@@ -293,6 +353,66 @@
         }
       ],
       "title": "Max Shelf Fan Speed",
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Average IOPs per Watt",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "IOPs/Watt"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 7,
+        "x": 9,
+        "y": 6
+      },
+      "id": 96,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "avg(node_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) / (avg(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(1))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Average IOPs/Watt",
       "type": "stat"
     },
     {
@@ -336,8 +456,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 5,
-        "x": 14,
+        "w": 4,
+        "x": 16,
         "y": 6
       },
       "id": 64,
@@ -396,11 +516,11 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 5,
-        "x": 19,
+        "w": 4,
+        "x": 20,
         "y": 6
       },
-      "id": 71,
+      "id": 97,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -3240,5 +3360,5 @@
   "timezone": "",
   "title": "ONTAP: Power",
   "uid": "",
-  "version": 7
+  "version": 8
 }
