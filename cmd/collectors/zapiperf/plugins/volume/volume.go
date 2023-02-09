@@ -35,8 +35,8 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	flexgroupAggrsMap := make(map[string]*set.Set)
 	// new metric would be volume_aggr_labels
-	metricName := "aggr_labels"
-	volumeAggrmetric := matrix.New(".Volume", "volume", "volume")
+	metricName := "labels"
+	volumeAggrmetric := matrix.New(".Volume", "volume_aggr", "volume_aggr")
 	volumeAggrmetric.SetGlobalLabels(data.GetGlobalLabels())
 
 	metric, err := volumeAggrmetric.NewMetricFloat64(metricName)
@@ -64,8 +64,8 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				fg.SetLabel("style", "flexgroup")
 			}
 
-			if volumeAggrmetric.GetInstance(key) == nil {
-				flexgroupInstance, _ := volumeAggrmetric.NewInstance(key)
+			flexgroupInstance, err := volumeAggrmetric.NewInstance(key)
+			if err == nil {
 				flexgroupInstance.SetLabels(i.GetLabels().Copy())
 				flexgroupInstance.SetLabel("volume", match[1])
 				// Flexgroup don't show any node
@@ -82,13 +82,15 @@ func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		} else {
 			i.SetLabel("style", "flexvol")
 			key := i.GetLabel("svm") + "." + i.GetLabel("volume")
-			if volumeAggrmetric.GetInstance(key) == nil {
-				flexvolInstance, _ := volumeAggrmetric.NewInstance(key)
-				flexvolInstance.SetLabels(i.GetLabels().Copy())
-				flexvolInstance.SetLabel("style", "flexvol")
-				if err := metric.SetValueFloat64(flexvolInstance, 1); err != nil {
-					me.Logger.Error().Err(err).Str("metric", metricName).Msg("Unable to set value on metric")
-				}
+			flexvolInstance, err := volumeAggrmetric.NewInstance(key)
+			if err != nil {
+				me.Logger.Error().Err(err).Str("key", key).Msg("Failed to create new instance")
+				continue
+			}
+			flexvolInstance.SetLabels(i.GetLabels().Copy())
+			flexvolInstance.SetLabel("style", "flexvol")
+			if err := metric.SetValueFloat64(flexvolInstance, 1); err != nil {
+				me.Logger.Error().Err(err).Str("metric", metricName).Msg("Unable to set value on metric")
 			}
 		}
 
