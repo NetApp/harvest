@@ -400,7 +400,7 @@ func init() {
 	dFlags.StringVar(&opts.certDir, "certdir", "./cert", "Harvest certificate dir path")
 	dFlags.StringVarP(&opts.outputPath, "output", "o", "", "Output file path. ")
 
-	fFlags.BoolVarP(&opts.showPorts, "port", "p", false, "Expose poller ports to host machine")
+	dFlags.BoolVarP(&opts.showPorts, "port", "p", false, "Expose poller ports to host machine")
 	_ = dockerCmd.MarkPersistentFlagRequired("output")
 	fFlags.StringVar(&opts.filesdPath, "filesdpath", "docker/prometheus/harvest_targets.yml",
 		"Prometheus file_sd target path. Written when the --output is set")
