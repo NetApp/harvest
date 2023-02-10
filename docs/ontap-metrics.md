@@ -1,6 +1,10 @@
-This document contains the details about Harvest Metrics and their relevant ONTAP ZAPI and REST API mapping.
+This document contains details about Harvest metrics and their relevant ONTAP ZAPI and REST API mappings.
+
+Details about which Harvest metrics each dashboard uses can be generated on demand by running `bin/grafana metrics`. See
+[#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
+
 ```
-Creation Date : 2023-Jan-18
+Creation Date : 2023-Feb-10
 ONTAP Version: 9.12.1
 ```
 ## Understanding the structure
@@ -750,6 +754,16 @@ Number of Sectors Written
 |--------|----------|--------|---------|
 | ZAPI | `storage-disk-get-iter` | `storage-disk-info.disk-stats-info.sectors-written` | conf/zapi/cdot/9.8.0/disk.yaml |
 | REST | `api/private/cli/disk` | `sectors_written` | conf/rest/9.12.0/disk.yaml |
+
+
+### disk_total_data
+
+Total throughput for user operations per second
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### disk_total_transfers
@@ -1832,8 +1846,8 @@ Percentage of HDD read operations replace by SSD.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `read_ops_replaced_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops_total | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml | 
-| ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `read_ops_replaced_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops_total | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml | 
+| REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `read_ops_replaced_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> read_ops_total | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml | 
+| ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `read_ops_replaced_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> read_ops_total | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml | 
 
 
 ### flashpool_ssd_available
@@ -7722,6 +7736,15 @@ Average latency of nfsv42 requests. This counter keeps track of the average resp
 | ZAPI | `perf-object-get-instances nfsv4_1` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
+### svm_nfs_latency_hist
+
+Histogram of latency for NFSv3 operations.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances nfsv3` | `nfsv3_latency_hist`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
+
+
 ### svm_nfs_layoutcommit_avg_latency
 
 Average latency of NFSv4.2 LAYOUTCOMMIT operations.
@@ -8160,6 +8183,15 @@ Average latency of NFSv4.2 READ operations.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `read.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `read_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> read_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+
+
+### svm_nfs_read_latency_hist
+
+Histogram of latency for Read operations.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances nfsv3` | `read_latency_hist`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
 
 
 ### svm_nfs_read_ops
@@ -8670,6 +8702,15 @@ Average latency of NFSv4.2 WRITE operations.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `write.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `write_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> write_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+
+
+### svm_nfs_write_latency_hist
+
+Histogram of latency for Write operations.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances nfsv3` | `write_latency_hist`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
 
 
 ### svm_nfs_write_ops
