@@ -5,6 +5,7 @@ package rest
 import (
 	"bytes"
 	"crypto/tls"
+	"crypto/x509"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
@@ -94,19 +95,39 @@ func New(poller conf.Poller, timeout time.Duration) (*Client, error) {
 	}
 	// set authentication method
 	if poller.AuthStyle == "certificate_auth" {
-		certPath := poller.SslCert
+		sslCertPath := poller.SslCert
 		keyPath := poller.SslKey
-		if certPath == "" {
+		caCertPath := poller.CaCertPath
+
+		if sslCertPath == "" {
 			return nil, errs.New(errs.ErrMissingParam, "ssl_cert")
 		} else if keyPath == "" {
 			return nil, errs.New(errs.ErrMissingParam, "ssl_key")
-		} else if cert, err = tls.LoadX509KeyPair(certPath, keyPath); err != nil {
+		} else if cert, err = tls.LoadX509KeyPair(sslCertPath, keyPath); err != nil {
 			return nil, err
+		}
+
+		// Create a CA certificate pool and add certificate if specified
+		caCertPool := x509.NewCertPool()
+		if caCertPath != "" {
+			caCert, err := os.ReadFile(caCertPath)
+			if err != nil {
+				client.Logger.Error().Err(err).Str("cacert", caCertPath).Msg("Failed to read ca cert")
+				// continue
+			}
+			if caCert != nil {
+				pem := caCertPool.AppendCertsFromPEM(caCert)
+				if !pem {
+					client.Logger.Error().Err(err).Str("cacert", caCertPath).Msg("Failed to append ca cert")
+					// continue
+				}
+			}
 		}
 
 		transport = &http.Transport{
 			Proxy: http.ProxyFromEnvironment,
 			TLSClientConfig: &tls.Config{
+				RootCAs:            caCertPool,
 				Certificates:       []tls.Certificate{cert},
 				InsecureSkipVerify: useInsecureTLS}, //nolint:gosec
 		}
