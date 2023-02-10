@@ -79,13 +79,16 @@ process to [request new counters](https://kb.netapp.com/Advice_and_Troubleshooti
 
 ### Can I use the REST and ZAPI collectors at the same time?
 
-Yes. Harvest ensures that the same resources are not collected from both collectors.
+Yes. Harvest ensures that duplicate resources are not collected from both collectors.
 
-When there is potential duplication, Harvest resolves the conflict in the order collectors are defined for your poller.
-For example, with the following poller definition, 
+When there is potential duplication, Harvest first resolves the conflict in the order collectors are defined in your
+poller and then negotiates with the cluster on 
+the most appropriate API to use [per above](#how-does-harvest-decide-whether-to-use-rest-or-zapi-apis).
+
+Let's take a look at a few examples using the following poller definition:
 
 ```yaml
-aff-251:
+cluster-1:
     datacenter: dc-1
     addr: 10.1.1.1
     collectors:
@@ -93,15 +96,28 @@ aff-251:
         - Rest
 ```
 
-when collecting `disk` resources, the Zapi collector will be used since it is listed first, unless the cluster no longer
-speaks ZAPI, in which case REST will be used.
+- When `cluster-1` is running ONTAP `9.9.X` (ONTAP still supports ZAPIs), the Zapi collector will be used since it is
+  listed first in the list of `collectors`. When collecting a REST-only resource like, `nfs_client`, the Rest collector will be used
+  since `nfs_client` objects are only available via REST.
 
-If you want the REST collector to be selected before the ZAPI one, change the order in the `collectors` section
-so `Rest` comes before `Zapi`.
+- When `cluster-1` is running ONTAP `9.12.1` (ONTAP still supports ZAPIs), the Rest collector will be used since
+  Harvest [automatically uses REST](#how-does-harvest-decide-whether-to-use-rest-or-zapi-apis) for clusters at `9.12.1`
+  or later.
 
-If the resource does not exist for the first collector, the second one will be tried. For example, when
-collecting `nfs_client` resources, the Zapi collector will not run because `nfs_client` objects are only available via
-REST.
+- When `cluster-1` is running ONTAP `9.12.1` (ONTAP still supports ZAPIs) and the environment
+  variable `HARVEST_NO_COLLECTOR_UPGRADE` is set, the Zapi collector will be used because of the included environment
+  variable.
+
+- When `cluster-1` is running ONTAP `9.15.1` (ONTAP removed ZAPIs) and the environment
+  variable `HARVEST_NO_COLLECTOR_UPGRADE` is set, the Rest collector will be used since Harvest asks the cluster if it
+  speaks ZAPI and the cluster answers no.
+
+If you want the REST collector to be preferred over the ZAPI one, change the order in
+the `collectors` section so `Rest` comes before `Zapi`.
+
+If the resource does not exist for the first collector, the next collector will be tried. For example, when
+collecting `VolumeAnalytics` resources, the Zapi collector will not run because `VolumeAnalytics` objects are only
+available via REST.
 
 ### I've added counters to existing ZAPI templates. Will those counters work in REST?
 
