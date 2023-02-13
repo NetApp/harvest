@@ -2133,7 +2133,32 @@
           "timeFrom": null,
           "timeShift": null,
           "title": "Reads From",
-          "transformations": [],
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "Time"
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {},
+                "renameByName": {
+                  "Time": "",
+                  "bamboo_ssd": "SSD Aggr",
+                  "cache": "RAM",
+                  "cloud": "FabricPool Object Storage",
+                  "cloud_s2c": "",
+                  "disk": "HDD Aggr",
+                  "ext_cache": "Flash Cache",
+                  "hya_cache": "Flash Pool SSD",
+                  "hya_hdd": "Flash Pool HDD"
+                }
+              }
+            }
+          ],
           "type": "timeseries"
         },
         {
