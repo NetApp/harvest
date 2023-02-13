@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1676298907175,
+  "iteration": 1676298907178,
   "links": [
     {
       "asDropdown": true,
@@ -129,7 +129,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "dark-yellow",
+                "color": "blue",
                 "value": null
               }
             ]
@@ -204,7 +204,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "dark-yellow",
+                "color": "blue",
                 "value": null
               }
             ]
@@ -539,7 +539,7 @@
               }
             ]
           },
-          "unit": "string"
+          "unit": "locale"
         },
         "overrides": []
       },
@@ -1806,9 +1806,9 @@
           },
           "gridPos": {
             "h": 11,
-            "w": 7,
+            "w": 24,
             "x": 0,
-            "y": 10
+            "y": 25
           },
           "id": 31,
           "links": [],
@@ -1825,7 +1825,7 @@
             "showUnfilled": true,
             "text": {}
           },
-          "pluginVersion": "8.4.11",
+          "pluginVersion": "8.1.8",
           "repeat": "SensShelf",
           "targets": [
             {
