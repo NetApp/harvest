@@ -4081,7 +4081,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "FFlexgroup by-aggregate filtering does not display the per-aggregate breakdown, instead the sum of all flexgroup aggregates is displayed. This is how ONTAP reports the data, even when an aggregate is selected in the dropdown.\n\nNote that in some scenarios, it is possible to exceed 100% of the space allocated.\n",
+          "description": "Flexgroup by-aggregate filtering does not display the per-aggregate breakdown, instead the sum of all flexgroup aggregates is displayed. This is how ONTAP reports the data, even when an aggregate is selected in the dropdown.\n\nNote that in some scenarios, it is possible to exceed 100% of the space allocated.\n",
           "fieldConfig": {
             "defaults": {
               "color": {
