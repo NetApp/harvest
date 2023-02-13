@@ -23,8 +23,9 @@ type Payload struct {
 	Target     *TargetInfo
 	Harvest    *harvestInfo
 	Platform   *platformInfo
-	Nodes      *InstanceInfo
-	Volumes    *InstanceInfo
+	Nodes      *InstanceInfo `json:"Nodes,omitempty"`
+	Volumes    *InstanceInfo `json:"Volumes,omitempty"`
+	Tenants    *InstanceInfo `json:"Tenants,omitempty"`
 	Collectors *[]AsupCollector
 	path       string
 }
