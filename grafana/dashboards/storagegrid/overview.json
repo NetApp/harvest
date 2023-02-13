@@ -1178,7 +1178,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "topk($TopResources, avg by(cluster,tenant)(storagegrid_tenant_usage_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",tenant=~\"$TopTenantUsageBytes\"}/storagegrid_tenant_usage_quota_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",tenant=~\"$TopTenantUsageBytes\"}))",
+              "expr": "topk($TopResources, avg by(cluster,tenant)(storagegrid_tenant_usage_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",tenant=~\"$TopTenantUsedPercent\"}/storagegrid_tenant_usage_quota_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",tenant=~\"$TopTenantUsedPercent\"}))",
               "format": "time_series",
               "interval": "",
               "legendFormat": "{{cluster}} - {{tenant}}",
@@ -1755,7 +1755,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg by(tenant)(avg_over_time(storagegrid_tenant_usage_data_bytes[${__range}]))))",
+        "definition": "query_result(topk($TopResources, avg by(tenant)(avg_over_time(storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\"}[${__range}]))))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -1765,7 +1765,7 @@
         "name": "TopTenantUsageBytes",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg by(tenant)(avg_over_time(storagegrid_tenant_usage_data_bytes[${__range}]))))",
+          "query": "query_result(topk($TopResources, avg by(tenant)(avg_over_time(storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\"}[${__range}]))))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -1778,7 +1778,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources,(avg_over_time(storagegrid_storage_utilization_data_bytes[${__range}]))))",
+        "definition": "query_result(topk($TopResources,(avg_over_time(storagegrid_storage_utilization_data_bytes{cluster=~\"$Cluster\"}[${__range}]))))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -1788,7 +1788,7 @@
         "name": "TopNodesByDataUsage",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources,(avg_over_time(storagegrid_storage_utilization_data_bytes[${__range}]))))",
+          "query": "query_result(topk($TopResources,(avg_over_time(storagegrid_storage_utilization_data_bytes{cluster=~\"$Cluster\"}[${__range}]))))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -1801,7 +1801,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources,(avg_over_time(storagegrid_node_cpu_utilization_percentage[${__range}]))))",
+        "definition": "query_result(topk($TopResources,(avg_over_time(storagegrid_node_cpu_utilization_percentage{cluster=~\"$Cluster\"}[${__range}]))))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -1811,11 +1811,34 @@
         "name": "TopNodeByCPU",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources,(avg_over_time(storagegrid_node_cpu_utilization_percentage[${__range}]))))",
+          "query": "query_result(topk($TopResources,(avg_over_time(storagegrid_node_cpu_utilization_percentage{cluster=~\"$Cluster\"}[${__range}]))))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
         "regex": "/.*node=\"(.*?)\".*/",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg by(tenant)(avg_over_time(storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\"}[${__range}])/avg_over_time(storagegrid_tenant_usage_quota_bytes{cluster=~\"$Cluster\"}[${__range}]))))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopTenantUsedPercent",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg by(tenant)(avg_over_time(storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\"}[${__range}])/avg_over_time(storagegrid_tenant_usage_quota_bytes{cluster=~\"$Cluster\"}[${__range}]))))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*tenant=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
