@@ -102,8 +102,7 @@
   ],
   "panels": [
     {
-      "collapsed": true,
-      "datasource": null,
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -111,26 +110,25 @@
         "y": 0
       },
       "id": 101,
-      "panels": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "gridPos": {
-            "h": 2,
-            "w": 24,
-            "x": 0,
-            "y": 1
-          },
-          "id": 99,
-          "options": {
-            "content": "This dashboard requires ONTAP 9.8+ and the APIs are only available via REST. Please enable the REST collector in your harvest config.",
-            "mode": "markdown"
-          },
-          "pluginVersion": "8.1.8",
-          "type": "text"
-        }
-      ],
+      "panels": [],
       "title": "Important Information about FSA dashboard",
       "type": "row"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 99,
+      "options": {
+        "content": "This dashboard requires ONTAP 9.8+ and the APIs are only available via REST. Please enable the REST collector in your harvest config.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.4.11",
+      "type": "text"
     },
     {
       "collapsed": false,
@@ -524,7 +522,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "topk($TopResources,volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeDirUsed\",dir_name!=\".\"})",
+          "expr": "topk($TopResources,volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",dir_name=~\"$TopDirUsed\"})",
           "interval": "",
           "legendFormat": "{{svm}}-{{volume}}-{{dir_name}}",
           "refId": "A"
@@ -668,7 +666,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$Volume\",dir_name!=\".\"}",
+          "expr": "topk($TopResources,volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$Volume\",dir_name=~\"$TopDirUsed\"})",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -677,7 +675,7 @@
         },
         {
           "exemplar": true,
-          "expr": "volume_analytics_dir_file_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$Volume\",dir_name!=\".\"}",
+          "expr": "topk($TopResources,volume_analytics_dir_file_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$Volume\",dir_name=~\"$TopDirUsed\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -687,7 +685,7 @@
         },
         {
           "exemplar": true,
-          "expr": "volume_analytics_dir_subdir_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$Volume\",dir_name!=\".\"}",
+          "expr": "topk($TopResources,volume_analytics_dir_subdir_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$Volume\",dir_name=~\"$TopDirUsed\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1643,21 +1641,18 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])))",
-        "description": null,
-        "error": null,
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",dir_name!=\".\",}[${__range}])))",
         "hide": 2,
-        "includeAll": false,
-        "label": null,
+        "includeAll": true,
         "multi": false,
-        "name": "TopVolumeDirUsed",
+        "name": "TopDirUsed",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",dir_name!=\".\",}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
-        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "regex": ".*dir_name=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"

@@ -543,6 +543,7 @@ func TestOnlyHighlightsExpanded(t *testing.T) {
 	exceptions := map[string]int{
 		"cmode/shelf.json":    2,
 		"cmode/security.json": 3,
+		"cmode/fsa.json":      2,
 	}
 	// count number of expanded sections in dashboard and ensure num expanded = 1
 	visitDashboards(
