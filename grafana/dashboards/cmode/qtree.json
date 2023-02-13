@@ -54,7 +54,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1663838812554,
+  "iteration": 1676298399654,
   "links": [
     {
       "asDropdown": true,
@@ -917,7 +917,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qtree_cifs_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(qtree_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -927,7 +927,7 @@
         "name": "TopTotalQtreeIops",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qtree_cifs_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(qtree_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -1027,5 +1027,5 @@
   "timezone": "",
   "title": "ONTAP: Qtree",
   "uid": "",
-  "version": 5
+  "version": 6
 }
