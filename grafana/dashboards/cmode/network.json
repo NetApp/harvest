@@ -1025,7 +1025,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Send Throughput",
+          "title": "Top $TopResources NICs by Send Throughput",
           "type": "timeseries"
         },
         {
@@ -1117,7 +1117,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Receive Throughput",
+          "title": "Top $TopResources NICs by Receive Throughput",
           "type": "timeseries"
         },
         {
@@ -1209,7 +1209,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Port Utilization %",
+          "title": "Top $TopResources NICs by Port Utilization %",
           "type": "timeseries"
         },
         {
@@ -1306,7 +1306,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Send Errors",
+          "title": "Top $TopResources NICs by Send Errors",
           "type": "timeseries"
         },
         {
@@ -1415,7 +1415,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Receive Errors",
+          "title": "Top $TopResources NICs by Receive Errors",
           "type": "timeseries"
         }
       ],
@@ -1757,7 +1757,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Send Throughput",
+          "title": "Top $TopResources FCPs by Send Throughput",
           "type": "timeseries"
         },
         {
@@ -1849,7 +1849,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Receive Throughput",
+          "title": "Top $TopResources FCPs by Receive Throughput",
           "type": "timeseries"
         },
         {
@@ -1942,7 +1942,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Send Latency",
+          "title": "Top $TopResources FCPs by Send Latency",
           "type": "timeseries"
         },
         {
@@ -2035,7 +2035,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Receive Latency",
+          "title": "Top $TopResources FCPs by Receive Latency",
           "type": "timeseries"
         },
         {
@@ -2155,7 +2155,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Transmission interrupts",
+          "title": "Top $TopResources FCPs by Transmission interrupts",
           "type": "timeseries"
         },
         {
@@ -2281,7 +2281,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Transmission errors",
+          "title": "Top $TopResources FCPs by Transmission errors",
           "type": "timeseries"
         },
         {
@@ -2373,7 +2373,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Link Down",
+          "title": "Top $TopResources FCPs by Link Down",
           "type": "timeseries"
         },
         {
@@ -2465,7 +2465,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Link Failure",
+          "title": "Top $TopResources FCPs by Link Failure",
           "type": "timeseries"
         }
       ],
@@ -2797,7 +2797,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Send Throughput",
+          "title": "Top $TopResources FCP_NVMFs by Send Throughput",
           "type": "timeseries"
         },
         {
@@ -2889,7 +2889,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Receive Throughput",
+          "title": "Top $TopResources FCP_NVMFs by Receive Throughput",
           "type": "timeseries"
         },
         {
@@ -2982,7 +2982,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Send Latency",
+          "title": "Top $TopResources FCP_NVMFs by Send Latency",
           "type": "timeseries"
         },
         {
@@ -3075,7 +3075,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Receive Latency",
+          "title": "Top $TopResources FCP_NVMFs by Receive Latency",
           "type": "timeseries"
         }
       ],

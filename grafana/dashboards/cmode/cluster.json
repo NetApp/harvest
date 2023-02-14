@@ -174,7 +174,7 @@
           "refId": "A"
         }
       ],
-      "title": "Read Latency",
+      "title": "Top $TopResources Nodes by Read Latency",
       "transformations": [
         {
           "id": "organize",
@@ -272,7 +272,7 @@
           "refId": "A"
         }
       ],
-      "title": "Write Latency",
+      "title": "Top $TopResources Nodes by Write Latency",
       "transformations": [
         {
           "id": "organize",
@@ -370,7 +370,7 @@
           "refId": "A"
         }
       ],
-      "title": "Throughput",
+      "title": "Top $TopResources Nodes by Throughput",
       "transformations": [
         {
           "id": "organize",
@@ -468,7 +468,7 @@
           "refId": "A"
         }
       ],
-      "title": "IOPs",
+      "title": "Top $TopResources Nodes by IOPs",
       "transformations": [
         {
           "id": "organize",
@@ -566,7 +566,7 @@
           "refId": "A"
         }
       ],
-      "title": "CPU Utilization",
+      "title": "Top $TopResources Nodes by CPU Utilization",
       "transformations": [
         {
           "id": "organize",
@@ -664,7 +664,7 @@
           "refId": "A"
         }
       ],
-      "title": "Disk Utilization",
+      "title": "Top $TopResources Nodes by Disk Utilization",
       "transformations": [
         {
           "id": "organize",
@@ -779,7 +779,7 @@
           "refId": "A"
         }
       ],
-      "title": "Latency",
+      "title": "Top $TopResources Nodes by Latency",
       "type": "timeseries"
     },
     {
@@ -870,7 +870,7 @@
           "refId": "A"
         }
       ],
-      "title": "Throughput",
+      "title": "Top $TopResources Nodes by Throughput",
       "type": "timeseries"
     },
     {
@@ -961,7 +961,7 @@
           "refId": "A"
         }
       ],
-      "title": "IOPs",
+      "title": "Top $TopResources Nodes by IOPs",
       "type": "timeseries"
     },
     {
@@ -2791,7 +2791,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top Nodes by Power Consumed",
+          "title": "Top $TopResources Nodes by Power Consumed",
           "type": "timeseries"
         },
         {
@@ -2881,7 +2881,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top Nodes by Average Temperature",
+          "title": "Top $TopResources Nodes by Average Temperature",
           "type": "timeseries"
         }
       ],

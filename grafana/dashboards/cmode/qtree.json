@@ -171,7 +171,7 @@
           "refId": "A"
         }
       ],
-      "title": "Top Average NFS IOPs",
+      "title": "Top $TopResources NFSs by IOPs",
       "type": "timeseries"
     },
     {
@@ -261,7 +261,7 @@
           "refId": "A"
         }
       ],
-      "title": "Top Average CIFS IOPs",
+      "title": "Top $TopResources CIFS by IOPs",
       "type": "timeseries"
     },
     {
@@ -351,7 +351,7 @@
           "refId": "A"
         }
       ],
-      "title": "Top Total Qtree IOPs",
+      "title": "Top $TopResources Qtrees by IOPs",
       "type": "timeseries"
     },
     {
@@ -441,7 +441,7 @@
           "refId": "A"
         }
       ],
-      "title": "Top Internal IOPs",
+      "title": "Top $TopResources Qtrees by Internal IOPs",
       "type": "timeseries"
     },
     {
@@ -539,7 +539,7 @@
               "refId": "A"
             }
           ],
-          "title": "Disk Used",
+          "title": "Top $TopResources Quotas by Disk Used",
           "type": "timeseries"
         },
         {
@@ -626,7 +626,7 @@
               "refId": "A"
             }
           ],
-          "title": "Files Used",
+          "title": "Top $TopResources Quotas by Files Used",
           "type": "timeseries"
         }
       ],

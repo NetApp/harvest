@@ -1328,7 +1328,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Ethernet Port Utilization Percent",
+          "title": "Top $TopResources Ethernet Ports by Utilization %",
           "type": "timeseries"
         },
         {
@@ -1418,7 +1418,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "FC Port Utilization Percent",
+          "title": "Top $TopResources FC Ports by Utilization %",
           "type": "timeseries"
         },
         {
@@ -1508,7 +1508,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Ethernet Port Throughput",
+          "title": "Top $TopResources Ethernet Ports by Throughput",
           "type": "timeseries"
         },
         {
@@ -1598,7 +1598,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "FC Port Throughput",
+          "title": "Top $TopResources FC Ports by Throughput",
           "type": "timeseries"
         }
       ],

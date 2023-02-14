@@ -187,7 +187,7 @@
               "refId": "A"
             }
           ],
-          "title": "CIFS Top IOPs by Cluster",
+          "title": "Top $TopResources CIFS IOPs by Cluster",
           "transformations": [],
           "type": "timeseries"
         },
@@ -277,7 +277,7 @@
               "refId": "A"
             }
           ],
-          "title": "NFS Top IOPs by Cluster",
+          "title": "Top $TopResources NFS IOPs by Cluster",
           "transformations": [],
           "type": "timeseries"
         },
@@ -367,7 +367,7 @@
               "refId": "A"
             }
           ],
-          "title": "Total Top IOPs by Cluster",
+          "title": "Top $TopResources Total IOPs by Cluster",
           "transformations": [],
           "type": "timeseries"
         },
@@ -460,7 +460,7 @@
               "refId": "A"
             }
           ],
-          "title": "Average CPU Utilization by Cluster",
+          "title": "Top $TopResources Nodes by Average CPU Utilization by Cluster",
           "type": "timeseries"
         },
         {
@@ -550,7 +550,7 @@
               "refId": "A"
             }
           ],
-          "title": "Average Latency by Cluster",
+          "title": "Top $TopResources Nodes by Average Latency by Cluster",
           "type": "timeseries"
         }
       ],
@@ -665,7 +665,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top SVM capacity Used Percent",
+          "title": "Top $TopResources SVMs by Capacity Used %",
           "transformations": [
             {
               "id": "organize",
@@ -793,7 +793,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top Volume Capacity Used Percent",
+          "title": "Top $TopResources Volumes by Capacity Used %",
           "transformations": [
             {
               "id": "organize",
@@ -921,7 +921,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top Aggregate Capacity Used Percent",
+          "title": "Top $TopResources Aggregates by Capacity Used %",
           "transformations": [
             {
               "id": "organize",
@@ -1043,7 +1043,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top SVM capacity Used Percent",
+          "title": "Top $TopResources SVMs by Capacity Used %",
           "type": "timeseries"
         },
         {
@@ -1130,7 +1130,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top Volume Capacity Used Percent",
+          "title": "Top $TopResources Volumes by Capacity Used %",
           "type": "timeseries"
         },
         {
@@ -1217,7 +1217,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top Aggregate Capacity Used Percent",
+          "title": "Top $TopResources Aggregates by Capacity Used %",
           "type": "timeseries"
         }
       ],
@@ -1598,7 +1598,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top Average Latency by Volumes ",
+          "title": "Top $TopResources Volumes by Average Latency",
           "transformations": [],
           "type": "timeseries"
         },
@@ -1688,7 +1688,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top Average Throughput by Volumes",
+          "title": "Top $TopResources Volumes by Average Throughput",
           "transformations": [],
           "type": "timeseries"
         },
@@ -1778,7 +1778,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top IOPs by Volumes ",
+          "title": "Top $TopResources Volumes by IOPs",
           "transformations": [],
           "type": "timeseries"
         }

@@ -392,6 +392,30 @@ varLoop:
 	}
 }
 
+func allExpressionsWithPath(data []byte) []expression {
+	exprs := make([]expression, 0)
+	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
+		doExpr("", key, value, func(path string, expr string) {
+			exprs = append(exprs, expression{
+				metric: expr,
+				refID:  path,
+			})
+		})
+		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
+			pathPrefix := fmt.Sprintf("panels[%d].", key.Int())
+			doExpr(pathPrefix, key2, value2, func(path string, expr string) {
+				exprs = append(exprs, expression{
+					metric: expr,
+					refID:  path,
+				})
+			})
+			return true
+		})
+		return true
+	})
+	return exprs
+}
+
 func allExpressions(data []byte) []string {
 	expressions := make([]string, 0)
 	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
@@ -721,4 +745,42 @@ func checkRate1m(t *testing.T, path string, data []byte) {
 			t.Errorf("dashboard=%s, expr should not use rate of [1m] expr=%s", path, expr)
 		}
 	}
+}
+
+func TestTitlesOfTopN(t *testing.T) {
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkTitlesOfTopN(t, shortPath(path), data)
+		},
+	)
+}
+
+func checkTitlesOfTopN(t *testing.T, path string, data []byte) {
+	expressions := allExpressionsWithPath(data)
+	for _, expr := range expressions {
+		if !strings.Contains(expr.metric, "topk") {
+			continue
+		}
+		titleRef := asTitle(expr.refID)
+		title := gjson.GetBytes(data, titleRef)
+
+		// Check that the title contains are variable
+		if !strings.Contains(title.String(), "$") {
+			t.Errorf("dashboard=%s, title=%s at=%s does not include TopResource var", path, title, titleRef)
+		}
+	}
+}
+
+func asTitle(id string) string {
+	// Replace the last segment with title and gjson-ify the path
+	// This `panels[26].panels[0].targets[0]` becomes `panels.26.panels.0.title`
+	splits := strings.Split(id, ".")
+	if len(splits) < 2 {
+		return id
+	}
+	splits[len(splits)-1] = "title"
+	path := strings.Join(splits, ".")
+	replacer := strings.NewReplacer("[", ".", "]", "")
+	return replacer.Replace(path)
 }
