@@ -1051,7 +1051,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Volume Read Latency",
+          "title": "Top $TopResources Volumes by Read Latency",
           "type": "timeseries"
         },
         {
@@ -1140,7 +1140,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Volume Read Throughput",
+          "title": "Top $TopResources Volumes by Read Throughput",
           "type": "timeseries"
         },
         {
@@ -1229,7 +1229,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Volume Read IOPs",
+          "title": "Top $TopResources Volumes by Read IOPs",
           "type": "timeseries"
         },
         {
@@ -1318,7 +1318,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Volume Write Latency",
+          "title": "Top $TopResources Volumes by Write Latency",
           "type": "timeseries"
         },
         {
@@ -1407,7 +1407,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Volume Write Throughput",
+          "title": "Top $TopResources Volumes by Write Throughput",
           "type": "timeseries"
         },
         {
@@ -1496,7 +1496,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Volume Write IOPs",
+          "title": "Top $TopResources Volumes by Write IOPs",
           "type": "timeseries"
         }
       ],
@@ -1600,7 +1600,7 @@
               "refId": "A"
             }
           ],
-          "title": "NAS LIF Send Throughput",
+          "title": "Top $TopResources NAS LIFs by Send Throughput",
           "type": "timeseries"
         },
         {
@@ -1689,7 +1689,7 @@
               "refId": "A"
             }
           ],
-          "title": "NAS LIF Receive Throughput",
+          "title": "Top $TopResources NAS LIFs by Receive Throughput",
           "type": "timeseries"
         },
         {
@@ -1778,7 +1778,7 @@
               "refId": "A"
             }
           ],
-          "title": "NVMe/FC LIF Send Throughput",
+          "title": "Top $TopResources NVMe/FC LIFs by Send Throughput",
           "type": "timeseries"
         },
         {
@@ -1867,7 +1867,7 @@
               "refId": "A"
             }
           ],
-          "title": "NVMe/FC LIF Receive Throughput",
+          "title": "Top $TopResources NVMe/FC LIFs by Receive Throughput",
           "type": "timeseries"
         },
         {
@@ -1956,7 +1956,7 @@
               "refId": "A"
             }
           ],
-          "title": "iSCSI LIF Send Throughput",
+          "title": "Top $TopResources iSCSI LIFs by Send Throughput",
           "type": "timeseries"
         },
         {
@@ -2045,7 +2045,7 @@
               "refId": "A"
             }
           ],
-          "title": "iSCSI LIF Receive Throughput",
+          "title": "Top $TopResources iSCSI LIFs by Receive Throughput",
           "type": "timeseries"
         }
       ],
@@ -4078,7 +4078,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "FCP LIF Send Throughput",
+          "title": "Top $TopResources FCP LIFs by Send Throughput",
           "type": "timeseries"
         },
         {
@@ -4168,7 +4168,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "FCP LIF Receive Throughput",
+          "title": "Top $TopResources FCP LIFs by Receive Throughput",
           "type": "timeseries"
         }
       ],
@@ -4819,7 +4819,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "iSCSI LIF Send Throughput",
+          "title": "Top $TopResources iSCSI LIFs by Send Throughput",
           "type": "timeseries"
         },
         {
@@ -4909,7 +4909,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "iSCSI LIF Receive Throughput",
+          "title": "Top $TopResources iSCSI LIFs by Receive Throughput",
           "type": "timeseries"
         },
         {
@@ -6218,7 +6218,7 @@
               "refId": "Write Latency"
             }
           ],
-          "title": "NFSv3 Read and Write Latency",
+          "title": "Top $TopResources NFSv3 SVMs by Read and Write Latency",
           "type": "timeseries"
         },
         {
@@ -6318,7 +6318,7 @@
               "refId": "Total"
             }
           ],
-          "title": "NFSv3 Throughput",
+          "title": "Top $TopResources NFSv3 SVMs by Throughput",
           "type": "timeseries"
         },
         {
@@ -6417,7 +6417,7 @@
               "refId": "Total Ops"
             }
           ],
-          "title": "NFSv3 IOPs",
+          "title": "Top $TopResources NFSv3 SVMs by IOPs",
           "type": "timeseries"
         },
         {
@@ -7508,7 +7508,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "NFSv4 Read and Write Latency",
+          "title": "Top $TopResources NFSv4 SVMs by Read and Write Latency",
           "type": "timeseries"
         },
         {
@@ -7607,7 +7607,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "NFSv4 Throughput",
+          "title": "Top $TopResources NFSv4 SVMs by Throughput",
           "type": "timeseries"
         },
         {
@@ -7706,7 +7706,7 @@
               "refId": "Total Ops"
             }
           ],
-          "title": "NFSv4 IOPs",
+          "title": "Top $TopResources NFSv4 SVMs by IOPs",
           "type": "timeseries"
         },
         {
@@ -7796,7 +7796,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "NFSv4 Latency by Op Type",
+          "title": "Top $TopResources NFSv4 SVMs by Latency by Op Type",
           "transformations": [
             {
               "id": "renameByRegex",
@@ -7896,7 +7896,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "NFSv4 IOPs per Type",
+          "title": "Top $TopResources NFSv4 SVMs by IOPs per Type",
           "transformations": [
             {
               "id": "renameByRegex",
@@ -8808,7 +8808,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "NFSv4.1 Read and Write Latency",
+          "title": "Top $TopResources NFSv4.1 SVMs by Read and Write Latency",
           "type": "timeseries"
         },
         {
@@ -8907,7 +8907,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "NFSv4.1 Throughput",
+          "title": "Top $TopResources NFSv4.1 SVMs by Throughput",
           "type": "timeseries"
         },
         {
@@ -9013,7 +9013,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "NFSv4.1 IOPs",
+          "title": "Top $TopResources NFSv4.1 SVMs by IOPs",
           "type": "timeseries"
         },
         {
@@ -9104,7 +9104,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "NFSv4.1 Latency by Op Type",
+          "title": "Top $TopResources NFSv4.1 SVMs by Latency by Op Type",
           "transformations": [
             {
               "id": "renameByRegex",
@@ -9204,7 +9204,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "NFSv4.1 IOPs per Type",
+          "title": "Top $TopResources NFSv4.1 SVMs by IOPs per Type",
           "transformations": [
             {
               "id": "renameByRegex",
@@ -10185,7 +10185,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "SVM NVMe/FC LIF Send Throughput",
+          "title": "Top $TopResources SVM NVMe/FC LIFs by Send Throughput",
           "type": "timeseries"
         },
         {
@@ -10275,7 +10275,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "SVM NVMe/FC LIF Receive Throughput",
+          "title": "Top $TopResources SVM NVMe/FC LIFs by Receive Throughput",
           "type": "timeseries"
         }
       ],
@@ -11172,7 +11172,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "QoS Latency",
+          "title": "Top $TopResources SVMs by QoS Latency",
           "type": "timeseries"
         },
         {
@@ -11269,7 +11269,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "QoS Throughput",
+          "title": "Top $TopResources SVMs by QoS Throughput",
           "type": "timeseries"
         },
         {
@@ -11367,7 +11367,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "QoS IOPs",
+          "title": "Top $TopResources SVMs by QoS IOPs",
           "type": "timeseries"
         },
         {
@@ -11570,7 +11570,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Workload Latency from Network",
+          "title": "Top $TopResources Workloads by Latency from Network",
           "type": "timeseries"
         },
         {
@@ -11660,7 +11660,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Workload Latency from Throttle",
+          "title": "Top $TopResources Workloads by Latency from Throttle",
           "type": "timeseries"
         },
         {
@@ -11750,7 +11750,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Workload Latency from Frontend",
+          "title": "Top $TopResources Workloads by Latency from Frontend",
           "type": "timeseries"
         },
         {
@@ -11840,7 +11840,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Workload Latency from Backend",
+          "title": "Top $TopResources Workloads by Latency from Backend",
           "type": "timeseries"
         },
         {
@@ -11930,7 +11930,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Workload Latency from Cluster",
+          "title": "Top $TopResources Workloads by Latency from Cluster",
           "type": "timeseries"
         },
         {
@@ -12020,7 +12020,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Workload Latency from Disk",
+          "title": "Top $TopResources Workloads by Latency from Disk",
           "type": "timeseries"
         },
         {
@@ -12110,7 +12110,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Workload Latency from NVLog Mirroring",
+          "title": "Top $TopResources Workloads by Latency from NVLog Mirroring",
           "type": "timeseries"
         },
         {
@@ -12200,7 +12200,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Workload Latency from Suspend",
+          "title": "Top $TopResources Workloads by Latency from Suspend",
           "type": "timeseries"
         },
         {
@@ -12290,7 +12290,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Workload Latency from Cloud",
+          "title": "Top $TopResources Workloads by Latency from Cloud",
           "type": "timeseries"
         }
       ],
@@ -12393,7 +12393,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM Volume Percent Used",
+          "title": "Top $TopResources Volumes by % Used",
           "type": "timeseries"
         },
         {
@@ -12481,7 +12481,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM Volume Snapshot Reserve Percent Used",
+          "title": "Top $TopResources Volumes by Snapshot Reserve % Used",
           "type": "timeseries"
         },
         {
@@ -12569,7 +12569,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM Volume Deduplication Saved Percent",
+          "title": "Top $TopResources Volumes by Deduplication Saved %",
           "type": "timeseries"
         },
         {
@@ -12657,7 +12657,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM Volume Deduplication Savings",
+          "title": "Top $TopResources Volumes by Deduplication Savings",
           "type": "timeseries"
         },
         {
@@ -12746,7 +12746,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM Volume Compression Saved Percent",
+          "title": "Top $TopResources Volumes by Saved %",
           "type": "timeseries"
         },
         {
@@ -12835,7 +12835,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM Volume Compression Savings",
+          "title": "Top $TopResources Volumes by Compression Savings",
           "type": "timeseries"
         },
         {
@@ -12924,7 +12924,7 @@
               "refId": "A"
             }
           ],
-          "title": "SVM Volume Total Efficiency Savings",
+          "title": "Top $TopResources Volumes by Total Efficiency Savings",
           "type": "timeseries"
         }
       ],

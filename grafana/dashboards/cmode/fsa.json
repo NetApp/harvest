@@ -528,7 +528,7 @@
           "refId": "A"
         }
       ],
-      "title": "Directory Growth",
+      "title": "Top $TopResources Volumes by Directory Growth",
       "type": "timeseries"
     },
     {
@@ -694,7 +694,7 @@
           "refId": "C"
         }
       ],
-      "title": "Explorer",
+      "title": "Top $TopResources Volumes by Directory Growth",
       "transformations": [
         {
           "id": "seriesToColumns",

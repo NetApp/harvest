@@ -937,7 +937,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Disk Utilization per Aggregate",
+      "title": "Top $TopResources Aggregates by Disk Utilization",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -1045,7 +1045,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Max Disk Utilization Per Aggregate",
+      "title": "Top $TopResources Aggregates by Max Disk Utilization",
       "type": "timeseries"
     },
     {
@@ -1134,7 +1134,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Disk Transfers",
+      "title": "Top $TopResources Aggregates by Disk Transfers",
       "type": "timeseries"
     },
     {
@@ -1225,7 +1225,7 @@
           "refId": "A"
         }
       ],
-      "title": "User Read IOP Size",
+      "title": "Top $TopResources Aggregates by User Read IOP Size",
       "type": "timeseries"
     },
     {
@@ -1320,7 +1320,7 @@
           "refId": "A"
         }
       ],
-      "title": "User Write IOP Size",
+      "title": "Top $TopResources Aggregates by User Write IOP Size",
       "type": "timeseries"
     },
     {

@@ -679,7 +679,7 @@
           "refId": "B"
         }
       ],
-      "title": "Total Shelves by Power Consumed",
+      "title": "Top $TopResources Shelves by Power Consumed",
       "type": "timeseries"
     },
     {
@@ -768,7 +768,7 @@
           "refId": "A"
         }
       ],
-      "title": "Top Shelves by Average Temperature",
+      "title": "Top $TopResources Shelves by Average Temperature",
       "type": "timeseries"
     },
     {
