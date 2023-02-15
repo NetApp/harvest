@@ -26,6 +26,8 @@ var (
 		"aggr":               "xc_aggregate",
 		"net_port":           "xc_broadcast_domain",
 		"environment_sensor": "sensors",
+		"ontaps3":            "xc_s3_bucket",
+		"security_ssh":       "cluster_ssh_server",
 	}
 	swaggerBytes []byte
 )
