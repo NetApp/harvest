@@ -164,7 +164,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Volumes by Average Latency",
+      "title": "Volume Average Latency",
       "type": "stat"
     },
     {
@@ -222,7 +222,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Volumes by Total Throughput",
+      "title": "Top $TopResources Volumes Total Throughput",
       "type": "stat"
     },
     {

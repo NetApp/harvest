@@ -539,7 +539,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top $TopResources Quotas by Disk Used",
+          "title": "Top $TopResources Qtrees by Disk Used",
           "type": "timeseries"
         },
         {
@@ -626,7 +626,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top $TopResources Quotas by Files Used",
+          "title": "Top $TopResources Qtrees by Files Used",
           "type": "timeseries"
         }
       ],

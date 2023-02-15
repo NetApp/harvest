@@ -6503,7 +6503,7 @@
               "refId": "Read Throughput"
             }
           ],
-          "title": "Top $TopResources NFSv3 SVMs by Op Type",
+          "title": "NFSv3 Latency by Op Type",
           "transformations": [
             {
               "id": "renameByRegex",
@@ -6596,7 +6596,7 @@
               "refId": "Read Throughput"
             }
           ],
-          "title": "Top $TopResources NFSv3 SVMs by IOPs per Type",
+          "title": "NFSv3 IOPs per Type",
           "transformations": [
             {
               "id": "renameByRegex",
@@ -12393,7 +12393,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top $TopResources SVM Volumes by % Used",
+          "title": "Top $TopResources Volumes by % Used",
           "type": "timeseries"
         },
         {
@@ -12481,7 +12481,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top $TopResources SVM Volumes by Snapshot Reserve % Used",
+          "title": "Top $TopResources Volumes by Snapshot Reserve % Used",
           "type": "timeseries"
         },
         {
@@ -12569,7 +12569,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top $TopResources SVM Volumes by Deduplication Saved %",
+          "title": "Top $TopResources Volumes by Deduplication Saved %",
           "type": "timeseries"
         },
         {
@@ -12657,7 +12657,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top $TopResources SVM Volumes by Deduplication Savings",
+          "title": "Top $TopResources Volumes by Deduplication Savings",
           "type": "timeseries"
         },
         {
@@ -12746,7 +12746,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top $TopResources SVM Volumes by Saved %",
+          "title": "Top $TopResources Volumes by Saved %",
           "type": "timeseries"
         },
         {
@@ -12835,7 +12835,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top $TopResources SVM Volumes by Compression Savings",
+          "title": "Top $TopResources Volumes by Compression Savings",
           "type": "timeseries"
         },
         {
@@ -12924,7 +12924,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top $TopResources SVM Volumes by Total Efficiency Savings",
+          "title": "Top $TopResources Volumes by Total Efficiency Savings",
           "type": "timeseries"
         }
       ],

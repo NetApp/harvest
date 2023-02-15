@@ -119,6 +119,7 @@ type override struct {
 type expression struct {
 	metric string
 	refID  string
+	kind   string
 }
 type units struct {
 	units map[string][]*metricLoc
@@ -378,7 +379,7 @@ func checkUnusedVariables(t *testing.T, path string, data []byte) {
 varLoop:
 	for _, variable := range vars {
 		for _, expr := range expressions {
-			if strings.Contains(expr, variable) {
+			if strings.Contains(expr.metric, variable) {
 				continue varLoop
 			}
 		}
@@ -392,22 +393,16 @@ varLoop:
 	}
 }
 
-func allExpressionsWithPath(data []byte) []expression {
+func allExpressions(data []byte) []expression {
 	exprs := make([]expression, 0)
 	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
-		doExpr("", key, value, func(path string, expr string) {
-			exprs = append(exprs, expression{
-				metric: expr,
-				refID:  path,
-			})
+		doExpr("", key, value, func(expr expression) {
+			exprs = append(exprs, expr)
 		})
 		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
 			pathPrefix := fmt.Sprintf("panels[%d].", key.Int())
-			doExpr(pathPrefix, key2, value2, func(path string, expr string) {
-				exprs = append(exprs, expression{
-					metric: expr,
-					refID:  path,
-				})
+			doExpr(pathPrefix, key2, value2, func(expr expression) {
+				exprs = append(exprs, expr)
 			})
 			return true
 		})
@@ -416,25 +411,7 @@ func allExpressionsWithPath(data []byte) []expression {
 	return exprs
 }
 
-func allExpressions(data []byte) []string {
-	expressions := make([]string, 0)
-	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
-		doExpr("", key, value, func(path string, expr string) {
-			expressions = append(expressions, expr)
-		})
-		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
-			pathPrefix := fmt.Sprintf("panels[%d].", key.Int())
-			doExpr(pathPrefix, key2, value2, func(path string, expr string) {
-				expressions = append(expressions, expr)
-			})
-			return true
-		})
-		return true
-	})
-	return expressions
-}
-
-func doExpr(pathPrefix string, key gjson.Result, value gjson.Result, exprFunc func(path string, expr string)) {
+func doExpr(pathPrefix string, key gjson.Result, value gjson.Result, exprFunc func(exp expression)) {
 	kind := value.Get("type").String()
 	if kind == "row" {
 		return
@@ -444,7 +421,11 @@ func doExpr(pathPrefix string, key gjson.Result, value gjson.Result, exprFunc fu
 	for i, targetN := range targetsSlice {
 		expr := targetN.Get("expr").String()
 		pathWithTarget := path + ".targets[" + strconv.Itoa(i) + "]"
-		exprFunc(pathWithTarget, expr)
+		exprFunc(expression{
+			refID:  pathWithTarget,
+			metric: expr,
+			kind:   kind,
+		})
 	}
 }
 
@@ -741,7 +722,7 @@ func TestRatesAreNot1m(t *testing.T) {
 func checkRate1m(t *testing.T, path string, data []byte) {
 	expressions := allExpressions(data)
 	for _, expr := range expressions {
-		if strings.Contains(expr, "[1m]") {
+		if strings.Contains(expr.metric, "[1m]") {
 			t.Errorf("dashboard=%s, expr should not use rate of [1m] expr=%s", path, expr)
 		}
 	}
@@ -757,9 +738,9 @@ func TestTitlesOfTopN(t *testing.T) {
 }
 
 func checkTitlesOfTopN(t *testing.T, path string, data []byte) {
-	expressions := allExpressionsWithPath(data)
+	expressions := allExpressions(data)
 	for _, expr := range expressions {
-		if !strings.Contains(expr.metric, "topk") {
+		if !strings.Contains(expr.metric, "topk") || expr.kind == "stat" {
 			continue
 		}
 		titleRef := asTitle(expr.refID)

@@ -1247,7 +1247,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Disks by Utilization per Plex",
+          "title": "Top $TopResources Plexes by Disk Utilization",
           "type": "timeseries"
         },
         {
@@ -1337,7 +1337,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top $TopResources Disks by Utilization per Plex Table",
+          "title": "Top $TopResources Plexes by Disk Utilization",
           "transformations": [
             {
               "id": "organize",
@@ -1451,7 +1451,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Disks by User Reads per Plex",
+          "title": "Top $TopResources Plexes by User Reads",
           "type": "timeseries"
         },
         {
@@ -1546,7 +1546,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Disks by User Writes per Plex",
+          "title": "Top $TopResources Plexes by User Writes",
           "type": "timeseries"
         },
         {
@@ -1639,7 +1639,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Disks by User Read Latency per 4KB IO per Plex",
+          "title": "Top $TopResources Plexes by User Read Latency per 4KB IO",
           "type": "timeseries"
         },
         {
@@ -1728,7 +1728,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Disks by User Write Latency per 4KB IO per Plex",
+          "title": "Top $TopResources Plexes by User Write Latency per 4KB IO",
           "type": "timeseries"
         }
       ],

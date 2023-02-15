@@ -460,7 +460,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top $TopResources Nodes by Average CPU Utilization by Cluster",
+          "title": "Top $TopResources Clusters by Average CPU Utilization",
           "type": "timeseries"
         },
         {
@@ -550,7 +550,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top $TopResources Nodes by Average Latency by Cluster",
+          "title": "Top $TopResources Clusters by Average Latency",
           "type": "timeseries"
         }
       ],
