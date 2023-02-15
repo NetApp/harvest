@@ -61,7 +61,6 @@ counters:
   - Name: aggr_space_reserved
     Description:  The total disk space in bytes that is reserved on the referenced file system. The reserved space is already counted in the used space, so this element can be used to see what portion of the used space represents space reserved for future use.
 
-
   - Name: aggr_total_physical_used
     Description: Total Physical Used
     APIs:
@@ -346,7 +345,7 @@ counters:
         Template: conf/rest/9.12.0/volume.yaml
 
   - Name: quota_disk_limit
-    Description: The amount of disk space that is reserved for the target.  The value is expressed in kilobytes (1024). The value is -1 if the limit is unlimited.
+    Description: Maximum amount of disk space, in kilobytes, allowed for the quota target (hard disk space limit). The value is -1 if the limit is unlimited.
     APIs:
       - API: REST
         Endpoint: api/storage/quota/reports
@@ -406,7 +405,7 @@ counters:
         Template: conf/zapi/cdot/9.8.0/qtree.yaml
 
   - Name: quota_file_limit
-    Description: The number of files that the target can have. The value is -1 if the limit is unlimited.
+    Description: aximum number of files allowed for the quota target (hard files limit). The value is -1 if the limit is unlimited.
     APIs:
       - API: REST
         Endpoint: api/storage/quota/reports
@@ -419,7 +418,7 @@ counters:
         Template: conf/zapi/cdot/9.8.0/qtree.yaml
 
   - Name: quota_files_used
-    Description: Number of user-visible files (inodes) used. If the volume is restricted or offline, a value 0 returned.
+    Description: Current number of files used by the quota target.
     APIs:
       - API: REST
         Endpoint: api/storage/quota/reports
@@ -432,7 +431,7 @@ counters:
         Template: conf/zapi/cdot/9.8.0/qtree.yaml
 
   - Name: quota_files_used_pct_file_limit
-    Description: Number of user-visible files (inodes) used. If the volume is restricted or offline, a value 0 returned.
+    Description: Current number of files used expressed as a percentage of hard file limit.
     APIs:
       - API: REST
         Endpoint: api/storage/quota/reports
@@ -457,8 +456,8 @@ counters:
         ONTAPCounter: files-used-pct-soft-file-limit
         Template: conf/zapi/cdot/9.8.0/qtree.yaml
 
-  - Name: quota_soft_file_limit
-    Description: The amount of disk space the target would have to exceed before a message is logged and an SNMP trap is generated.  The value is expressed in kilobytes (1024). The value is -1 if the limit is unlimited.
+  - Name: quota_soft_disk_limit
+    Description: soft disk space limit, in kilobytes, for the quota target. The value is -1 if the limit is unlimited.
     APIs:
       - API: REST
         Endpoint: api/storage/quota/reports
@@ -471,7 +470,7 @@ counters:
         Template: conf/zapi/cdot/9.8.0/qtree.yaml
 
   - Name: quota_soft_file_limit
-    Description: The number of files the target would have to exceed before a message is logged and an SNMP trap is generated. The value is -1 if the limit is unlimited.
+    Description: Soft file limit, in number of files, for the quota target. The value is -1 if the limit is unlimited.
     APIs:
       - API: REST
         Endpoint: api/storage/quota/reports
@@ -484,7 +483,7 @@ counters:
         Template: conf/zapi/cdot/9.8.0/qtree.yaml
 
   - Name: quota_threshold
-    Description: The amount of disk space the target would have to exceed before a message is logged.  The value is expressed in kilobytes (1024).  Set the value to -1 if the limit is to be unlimited.
+    Description: Disk space threshold, in kilobytes, for the quota target. The value is -1 if the limit is unlimited.
     APIs:
       - API: ZAPI
         Endpoint: quota-report-iter

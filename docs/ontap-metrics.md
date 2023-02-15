@@ -217,7 +217,7 @@ Power consumed by aggregate in Watts.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
-| ZAPI | `NA` | `Harvest plugin generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### aggr_primary_disk_count
@@ -7140,7 +7140,7 @@ Summation of NFS ops, CIFS ops, CSS ops and internal ops
 
 ### quota_disk_limit
 
-The amount of disk space that is reserved for the target.  The value is expressed in kilobytes (1024). The value is -1 if the limit is unlimited.
+Maximum amount of disk space, in kilobytes, allowed for the quota target (hard disk space limit). The value is -1 if the limit is unlimited.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -7189,7 +7189,7 @@ Current disk space used expressed as a percentage of threshold.
 
 ### quota_file_limit
 
-The number of files that the target can have. The value is -1 if the limit is unlimited.
+aximum number of files allowed for the quota target (hard files limit). The value is -1 if the limit is unlimited.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -7199,7 +7199,7 @@ The number of files that the target can have. The value is -1 if the limit is un
 
 ### quota_files_used
 
-Number of user-visible files (inodes) used. If the volume is restricted or offline, a value 0 returned.
+Current number of files used by the quota target.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -7209,7 +7209,7 @@ Number of user-visible files (inodes) used. If the volume is restricted or offli
 
 ### quota_files_used_pct_file_limit
 
-Number of user-visible files (inodes) used. If the volume is restricted or offline, a value 0 returned.
+Current number of files used expressed as a percentage of hard file limit.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -7227,9 +7227,9 @@ Current number of files used expressed as a percentage of soft file limit.
 | ZAPI | `quota-report-iter` | `files-used-pct-soft-file-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
 
-### quota_soft_file_limit
+### quota_soft_disk_limit
 
-The number of files the target would have to exceed before a message is logged and an SNMP trap is generated. The value is -1 if the limit is unlimited.
+soft disk space limit, in kilobytes, for the quota target. The value is -1 if the limit is unlimited.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -7237,9 +7237,19 @@ The number of files the target would have to exceed before a message is logged a
 | ZAPI | `quota-report-iter` | `soft-disk-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
 
+### quota_soft_file_limit
+
+Soft file limit, in number of files, for the quota target. The value is -1 if the limit is unlimited.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/quota/reports` | `files.soft_limit` | conf/rest/9.12.0/qtree.yaml |
+| ZAPI | `quota-report-iter` | `soft-file-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
+
+
 ### quota_threshold
 
-The amount of disk space the target would have to exceed before a message is logged.  The value is expressed in kilobytes (1024).  Set the value to -1 if the limit is to be unlimited.
+Disk space threshold, in kilobytes, for the quota target. The value is -1 if the limit is unlimited.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
