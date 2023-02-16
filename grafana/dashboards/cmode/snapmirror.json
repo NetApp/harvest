@@ -505,30 +505,6 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "relationship_status"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 158
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "relationship_id"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 338
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "Size"
             },
             "properties": [
@@ -623,180 +599,12 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Dest Node"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 140
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Dest Volume"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 241
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "Source Volume"
             },
             "properties": [
               {
                 "id": "custom.width",
                 "value": 193
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Type"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 213
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Status"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 83
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Health"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 88
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Transfer"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 95
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Health"
-            },
-            "properties": [
-              {
-                "id": "mappings",
-                "value": [
-                  {
-                    "options": {
-                      "0": {
-                        "text": "OK"
-                      },
-                      "1": {
-                        "text": "Unhealthy"
-                      }
-                    },
-                    "type": "value"
-                  }
-                ]
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "rgb(48, 176, 31)",
-                      "value": null
-                    },
-                    {
-                      "color": "rgb(219, 8, 58)",
-                      "value": 1
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "custom.displayMode",
-                "value": "color-text"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Error"
-            },
-            "properties": [
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "rgb(219, 8, 58)",
-                      "value": null
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "custom.displayMode",
-                "value": "color-text"
-              },
-              {
-                "id": "custom.width",
-                "value": 147
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Group"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 80
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Last Transfer"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 119
               }
             ]
           },
@@ -908,25 +716,22 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Last Transfers",
+      "title": "Top $TopResources Last Transfers by Transfer Data Size",
       "transformations": [
         {
           "id": "filterFieldsByName",
           "options": {
             "include": {
               "names": [
-                "datacenter",
-                "destination_location",
+                "cluster",
+                "destination_volume",
+                "destination_vserver",
                 "source_cluster",
                 "source_volume",
                 "source_vserver",
-                "destination_volume",
-                "destination_node",
                 "Value #C",
                 "Value #A",
-                "Value #B",
-                "destination_vserver",
-                "cluster"
+                "Value #B"
               ]
             }
           }
@@ -963,11 +768,8 @@
               "destination_node_limit": true,
               "destination_volume": false,
               "destination_vserver": false,
-              "healthy": false,
               "instance": true,
               "job": true,
-              "last_transfer_type": false,
-              "relationship_id": false,
               "relationship_type": true,
               "schedule": true,
               "source_node": true,
@@ -995,20 +797,11 @@
               "Value #B": "Lag",
               "Value #C": "Duration",
               "cluster": "Destination Cluster",
-              "destination_node": "Destination Node",
-              "destination_node_limit": "",
               "destination_volume": "Destination Volume",
               "destination_vserver": "Destination SVM",
-              "group_type": "Group",
-              "healthy": "Health",
-              "last_transfer_type": "Last Transfer",
-              "relationship_status": "Status",
-              "relationship_type": "Type",
               "source_cluster": "Source Cluster",
-              "source_node": "Source Node",
               "source_volume": "Source Volume",
-              "source_vserver": "Source SVM",
-              "unhealthy_reason": "Error"
+              "source_vserver": "Source SVM"
             }
           }
         }
