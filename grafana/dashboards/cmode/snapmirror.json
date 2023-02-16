@@ -747,8 +747,10 @@
               {
                 "fieldName": "Value #A",
                 "config": {
-                  "id": "isNotNull",
-                  "options": {}
+                  "id": "greaterOrEqual",
+                  "options": {
+                    "value": 0
+                  }
                 }
               }
             ],
