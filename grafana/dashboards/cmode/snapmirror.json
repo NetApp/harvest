@@ -4636,7 +4636,7 @@
         "useTags": false
       },
       {
-        "allValue": null,
+        "allValue": "1000000000000",
         "current": {
           "selected": true,
           "text": "5",
@@ -4645,11 +4645,16 @@
         "description": null,
         "error": null,
         "hide": 0,
-        "includeAll": false,
+        "includeAll": true,
         "label": null,
         "multi": false,
         "name": "TopResources",
         "options": [
+          {
+            "selected": false,
+            "text": "All",
+            "value": "$__all"
+          },
           {
             "selected": false,
             "text": "1",
