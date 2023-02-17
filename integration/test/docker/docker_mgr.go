@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/docker/docker/api/types"
+	con "github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 	"io"
 	"log"
@@ -107,7 +108,7 @@ func ReStartContainers(commandSubString string) {
 	for _, container := range containers {
 		if strings.Contains(container.Command, commandSubString) || strings.Contains(container.Image, commandSubString) {
 			log.Println("Stopping container ", container.ID[:10], "... ")
-			if err := cli.ContainerRestart(ctx, container.ID, nil); err != nil {
+			if err := cli.ContainerRestart(ctx, container.ID, con.StopOptions{}); err != nil {
 				panic(err)
 			}
 		}
@@ -129,7 +130,7 @@ func StopContainers(commandSubString string) {
 	for _, container := range containers {
 		if strings.Contains(container.Command, commandSubString) || strings.Contains(container.Image, commandSubString) {
 			log.Println("Stopping container ", container.ID[:10], "... ")
-			if err := cli.ContainerStop(ctx, container.ID, nil); err != nil {
+			if err := cli.ContainerStop(ctx, container.ID, con.StopOptions{}); err != nil {
 				panic(err)
 			}
 		}
