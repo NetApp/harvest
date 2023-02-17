@@ -1173,7 +1173,7 @@ func (p *Poller) negotiateAPI(c conf.Collector, clusterVersion string, checkZAPI
 	// For ONTAP versions 9.12.1+ use REST unless the HARVEST_NO_COLLECTOR_UPGRADE environment variable is set.
 	// When the environment variable is set, honor that request unless the cluster no longer speaks ZAPI.
 	noUpgrade = os.Getenv(NoUpgrade)
-	if noUpgrade == "" {
+	if noUpgrade == "" && !p.params.PreferZAPI {
 		logger.Info().Str("collector", c.Name).Str("v", clusterVersion).Msg("Use REST")
 		upgradeCollector := strings.ReplaceAll(c.Name, "Zapi", "Rest")
 		return conf.Collector{
@@ -1195,7 +1195,9 @@ func (p *Poller) negotiateAPI(c conf.Collector, clusterVersion string, checkZAPI
 	logger.Info().
 		Str("collector", c.Name).
 		Str("v", clusterVersion).
-		Msg("ZAPIs exist and no-upgrade ENVVAR set. Use ZAPIs")
+		Str(NoUpgrade, noUpgrade).
+		Bool("preferZAPI", p.params.PreferZAPI).
+		Msg("Use ZAPIs")
 	return c
 }
 
