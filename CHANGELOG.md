@@ -1,42 +1,29 @@
 # Change Log
 ## [Releases](https://github.com/NetApp/harvest/releases)
 
-## 23.02.0 / 2023-02-16
+## 23.02.0 / 2023-02-21
 
 :pushpin: Highlights of this major release include:
 
-- :sparkles: Harvest includes a new file system analytics (FSA) dashboard with directory growth, top 100 directories per
-  volume, and volume usage statistics.
+- :sparkles: Harvest includes a new file system analytics (FSA) dashboard with directory growth, top directories per volume, and volume usage statistics.
 
-- Harvest includes a new StorageGRID overview dashboard with performance, storage, information lifecycle management, and
-  node panels. We're collecting suggestions on which StorageGRID dashboards you'd like to see next in
-  issue [#1420](https://github.com/NetApp/harvest/issues/1420).
+- Harvest includes a new StorageGRID overview dashboard with performance, storage, information lifecycle management, and node panels. We're collecting suggestions on which StorageGRID dashboards you'd like to see next in issue [#1420](https://github.com/NetApp/harvest/issues/1420).
 
-- :bulb: Power dashboard includes new panels for total power by aggregate disk type, average power per used TB, average
-  IOPs/Watt, and information on sensor problems.
+- :bulb: Power dashboard includes new panels for total power by aggregate disk type, average power per used TB, average IOPs/Watt, total power by aggregate, and information on sensor problems.
 
-- :tophat: Harvest makes it easy to run with both the ZAPI and REST collectors at the same time. Overlapping resources
-  are deduplicated and only published to Prometheus once. This was the final piece in our journey to REST.
-  See [rest-strategy.md](https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-strategy.md) if you are
-  interested in the details.
+- :tophat: Harvest makes it easy to run with both the ZAPI and REST collectors at the same time. Overlapping resources are deduplicated and only published to Prometheus once. This was the final piece in our journey to REST. See [rest-strategy.md](https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-strategy.md) if you are interested in the details.
 
-- :closed_book: We made lots of improvements to Harvest's [new documentation site](https://netapp.github.io/harvest/)
-  this release including one of the most requested features - a list of Harvest metrics and their corresponding ONTAP
-  ZAPI/REST API mappings. :triangular_ruler: [Check it out](https://netapp.github.io/harvest/latest/ontap-metrics/)
+- :closed_book: We made lots of improvements to Harvest's [new documentation site](https://netapp.github.io/harvest/) this release including one of the most requested features - a list of Harvest metrics and their corresponding ONTAP ZAPI/REST API mappings. :triangular_ruler: [Check it out](https://netapp.github.io/harvest/latest/ontap-metrics/)
 
 - :gem: New dashboards and improvements
-  - A new file system analytics (FSA) dashboard with directory growth, top 100 directories per volume, and volume usage
-    statistics
+  - A new file system analytics (FSA) dashboard with directory growth, top directories per volume, and volume usage statistics
   - A new StorageGRID overview dashboard with performance, storage, information lifecycle management, and node panels
-  - Power dashboard includes new panels for total power by aggregate disk type, average power per used TB, average
-    IOPs/Watt, and information on sensor problems
+  - Power dashboard includes new panels for total power by aggregate disk type, average power per used TB, average IOPs/Watt, total power by aggregate, and information on sensor problems.
   - Disk dashboard shows which node/controller a disk belongs too
   - SVM dashboard shows topK resources in panel drill downs
-  - SnapMirror dashboard includes transfer duration, lag time and transfer data panels in addition to new source and
-    destination volume variables to make it easier to understand SnapMirror relationships
+  - SnapMirror dashboard includes transfer duration, lag time and transfer data panels in addition to new source and destination volume variables to make it easier to understand SnapMirror relationships
   - Aggregate dashboard includes a new flash pool drill down with five new panels
-  - Aggregate dashboard includes four new panels showing volume statistics broken down by flexvol/flexgroup space per
-    aggregate
+  - Aggregate dashboard includes four new panels showing volume statistics broken down by flexvol/flexgroup space per aggregate
   - SVM dashboard includes NFSv3 latency heatmap panels
   - Node dashboard latency panels updated to use weighted average, bringing them inline with ActiveIQ
   - Volume dashboard includes new inode usage panels
@@ -55,6 +42,9 @@ read [how to migrate your Prometheus volume](https://github.com/NetApp/harvest/b
 fixes. You can import them via the `bin/harvest/grafana import` CLI, from the Grafana UI, or from
 the `Maintenance > Reset Harvest Dashboards` button in NAbox.
 
+:sunflower: In the `22.11.0` release notes, we announced that we would be removing quota metrics prefixed with qtree.
+Several of you asked us to leave them. :+1: We will continue publishing them as-is.
+
 ## Known Issues
 
 - Harvest does not calculate power metrics for AFF A250 systems. This data is not available from ONTAP via ZAPI or REST.
@@ -67,8 +57,8 @@ the `Maintenance > Reset Harvest Dashboards` button in NAbox.
 like `tls: server selected unsupported protocol version 301` This is caused by a change in Go 1.18.
 The [default for TLS client connections was changed to TLS 1.2](https://tip.golang.org/doc/go1.18#tls10) in Go 1.18.
 Please upgrade your 7-mode filers (recommended) or set `tls_min_version: tls10` in
-your `harvest.yml` [poller section](https://github.com/NetApp/harvest/tree/release/22.05.0#pollers). See #1007 for more
-details.
+your `harvest.yml` [poller section](https://github.com/NetApp/harvest/tree/release/22.05.0#pollers).
+See [#1007](https://github.com/NetApp/harvest/issues/1007) for more details.
 
 ## Thanks to all the awesome contributors
 
