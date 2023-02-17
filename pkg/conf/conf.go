@@ -357,6 +357,7 @@ type Poller struct {
 	TLSMinVersion   string                `yaml:"tls_min_version,omitempty"`
 	UseInsecureTLS  *bool                 `yaml:"use_insecure_tls,omitempty"`
 	Username        string                `yaml:"username,omitempty"`
+	PreferZAPI      bool                  `yaml:"prefer_zapi,omitempty"`
 	promIndex       int
 	Name            string
 }

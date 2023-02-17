@@ -127,7 +127,7 @@ func TestPublishUrl(t *testing.T) {
 }
 
 func TestCollectorUpgrade(t *testing.T) {
-	poller := Poller{}
+	poller := Poller{params: &conf.Poller{}}
 
 	type test struct {
 		name           string
