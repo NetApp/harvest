@@ -1,0 +1,23 @@
+name:                                   Vscan
+query:                                  api/cluster/counter/tables/vscan
+object:                                 vscan
+
+counters:
+  - ^^id
+  - scanner.stats_percent_cpu_used     => scanner_stats_pct_cpu_used
+  - scanner.stats_percent_mem_used     => scanner_stats_pct_mem_used
+  - scanner.stats_percent_network_used => scanner_stats_pct_network_used
+  - scan.latency                       => scan_latency
+  - scan.request_dispatched_rate       => scan_request_dispatched_rate
+
+plugins:
+  - Vscan:
+      # when metricsPerScanner is true, the counters are aggregated per scanner
+      # otherwise, they're not
+      metricsPerScanner: true
+
+export_options:
+  instance_keys:
+    - svm
+    - scanner
+    - node
