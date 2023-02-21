@@ -1557,7 +1557,8 @@ openssl genrsa -out private/ca.key.pem 4096
 chmod 400 private/ca.key.pem
 </code></pre></div>
 <h4 id="create-a-root-certificate-authority-certificate">Create a root certificate authority certificate<a class="headerlink" href="#create-a-root-certificate-authority-certificate" title="Permanent link">&para;</a></h4>
-<p>Download the sample [samples/openssl.cnf] file and put it in the directory we created in <a href="#setup">setup</a>. Edit line 9,
+<p>Download the sample <a href="https://github.com/NetApp/harvest/blob/main/pkg/docs/samples/openssl.cnf">openssl.cnf</a> file and put
+it in the directory we created in <a href="#setup">setup</a>. Edit line 9,
 changing <code>dir</code> to point to your <code>ca</code> directory created in <a href="#setup">setup</a>.</p>
 <div class="highlight"><pre><span></span><code>openssl req -config openssl.cnf -key private/ca.key.pem -new -x509 -days 7300 -sha256 -extensions v3_ca -out certs/ca.cert.pem
 
@@ -1580,7 +1581,8 @@ openssl x509 -noout -text -in certs/ca.cert.pem
 <h4 id="create-a-san-certificate-for-your-ontap-cluster">Create a SAN certificate for your ONTAP cluster<a class="headerlink" href="#create-a-san-certificate-for-your-ontap-cluster" title="Permanent link">&para;</a></h4>
 <p>First, we'll create the certificate signing request and then the certificate. In this example, the ONTAP cluster is
 named <code>umeng-aff300-05-06</code>, update accordingly.</p>
-<p>Download the sample [samples/server_cert.cnf] file and put it in the directory we created in <a href="#setup">setup</a>. Edit lines
+<p>Download the sample <a href="https://github.com/NetApp/harvest/blob/main/pkg/docs/samples/server_cert.cnf">server_cert.cnf</a> file
+and put it in the directory we created in <a href="#setup">setup</a>. Edit lines
 18-21 to include your ONTAP cluster hostnames and IP addresses. Edit lines 6-11 with new names as needed.</p>
 <div class="highlight"><pre><span></span><code>openssl req -new -newkey rsa:4096 -nodes -sha256 -subj &quot;/&quot; -config server_cert.cnf -outform pem -out umeng-aff300-05-06.csr -keyout umeng-aff300-05-06.key
 
