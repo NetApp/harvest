@@ -535,29 +535,31 @@ func (s *StorageGrid) CollectAutoSupport(p *collector.Payload) {
 	p.Target.Model = "storagegrid"
 	p.Target.ClusterUUID = s.client.Cluster.UUID
 
-	md := s.GetMetadata()
-	info := collector.InstanceInfo{
-		Count:      md.LazyValueInt64("instances", "data"),
-		DataPoints: md.LazyValueInt64("metrics", "data"),
-		PollTime:   md.LazyValueInt64("poll_time", "data"),
-		APITime:    md.LazyValueInt64("api_time", "data"),
-		ParseTime:  md.LazyValueInt64("parse_time", "data"),
-		PluginTime: md.LazyValueInt64("plugin_time", "data"),
+	if p.Nodes == nil {
+		nodeIds, err := s.getNodeUuids()
+		if err != nil {
+			// log the error, but don't exit method so subsequent info is collected
+			s.Logger.Error().Err(err).Msg("Unable to get nodes.")
+			nodeIds = make([]collector.ID, 0)
+		}
+		p.Nodes = &collector.InstanceInfo{
+			Ids:   nodeIds,
+			Count: int64(len(nodeIds)),
+		}
 	}
 
 	if s.Object == "Tenant" {
-		nodeIds, err := s.getNodeUuids()
-		if err != nil {
-			// log the error, but don't exit method so the other info below is collected
-			s.Logger.Error().
-				Err(err).
-				Msg("Unable to get nodes.")
-			nodeIds = make([]collector.ID, 0)
+		md := s.GetMetadata()
+		info := collector.InstanceInfo{
+			Count:      md.LazyValueInt64("instances", "data"),
+			DataPoints: md.LazyValueInt64("metrics", "data"),
+			PollTime:   md.LazyValueInt64("poll_time", "data"),
+			APITime:    md.LazyValueInt64("api_time", "data"),
+			ParseTime:  md.LazyValueInt64("parse_time", "data"),
+			PluginTime: md.LazyValueInt64("plugin_time", "data"),
 		}
-		info.Ids = nodeIds
+		p.Tenants = &info
 	}
-
-	p.Nodes = &info
 }
 
 func (s *StorageGrid) getNodeUuids() ([]collector.ID, error) {

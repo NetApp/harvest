@@ -63,6 +63,7 @@ github.com/rivo/uniseg
 github.com/rs/zerolog
 github.com/rs/zerolog/internal/cbor
 github.com/rs/zerolog/internal/json
+github.com/rs/zerolog/log
 # github.com/shirou/gopsutil/v3 v3.22.12
 ## explicit; go 1.15
 github.com/shirou/gopsutil/v3/cpu

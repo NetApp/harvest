@@ -1247,7 +1247,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Disk Utilization per Plex",
+          "title": "Top $TopResources Plexes by Disk Utilization",
           "type": "timeseries"
         },
         {
@@ -1337,7 +1337,7 @@
               "refId": "A"
             }
           ],
-          "title": "Disk Utilization per Plex Table",
+          "title": "Top $TopResources Plexes by Disk Utilization",
           "transformations": [
             {
               "id": "organize",
@@ -1451,7 +1451,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "User Reads per Disk per Plex",
+          "title": "Top $TopResources Plexes by User Reads",
           "type": "timeseries"
         },
         {
@@ -1546,7 +1546,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "User Writes per Disk per Plex",
+          "title": "Top $TopResources Plexes by User Writes",
           "type": "timeseries"
         },
         {
@@ -1639,7 +1639,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "User Read Latency per 4KB IO per Plex",
+          "title": "Top $TopResources Plexes by User Read Latency per 4KB IO",
           "type": "timeseries"
         },
         {
@@ -1728,7 +1728,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "User Write Latency per 4KB IO per Plex",
+          "title": "Top $TopResources Plexes by User Write Latency per 4KB IO",
           "type": "timeseries"
         }
       ],
@@ -1837,7 +1837,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Adapter Read Data",
+          "title": "Top $TopResources Adapters by Read Data",
           "type": "timeseries"
         },
         {
@@ -1930,7 +1930,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Adapter Write Data",
+          "title": "Top $TopResources Adapters by Write Data",
           "type": "timeseries"
         }
       ],

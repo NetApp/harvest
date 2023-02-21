@@ -673,7 +673,7 @@ func (p *Poller) loadCollectorObject(ocs []objectCollector) error {
 		col, err := p.newCollector(oc.class, oc.object, oc.template)
 		if err != nil {
 			if errors.Is(err, errs.ErrConnection) {
-				logger.Warn().
+				logger.Warn().Err(err).
 					Str("collector", oc.class).
 					Str("object", oc.object).
 					Msg("abort collector")

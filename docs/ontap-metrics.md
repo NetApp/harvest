@@ -1,6 +1,10 @@
-This document contains the details about Harvest Metrics and their relevant ONTAP ZAPI and REST API mapping.
+This document contains details about Harvest metrics and their relevant ONTAP ZAPI and REST API mappings.
+
+Details about which Harvest metrics each dashboard uses can be generated on demand by running `bin/grafana metrics`. See
+[#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
+
 ```
-Creation Date : 2023-Jan-18
+Creation Date : 2023-Feb-15
 ONTAP Version: 9.12.1
 ```
 ## Understanding the structure
@@ -206,6 +210,16 @@ Total Data Reduction Physical Used without snapshots and flexclones
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/aggr.yaml |
 
 
+### aggr_power
+
+Power consumed by aggregate in Watts.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
 ### aggr_primary_disk_count
 
 Number of disks used in the aggregate. This includes parity disks, but excludes disks in the hybrid cache.
@@ -267,7 +281,7 @@ Total files created in Snapshot copies
 
 ### aggr_snapshot_inode_used_percent
 
-
+The percentage of disk space currently in use based on user-visible file (inode) count on the referenced file system.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -446,7 +460,7 @@ Physical used percentage.
 
 ### aggr_space_reserved
 
-
+The total disk space in bytes that is reserved on the referenced file system. The reserved space is already counted in the used space, so this element can be used to see what portion of the used space represents space reserved for future use.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -535,7 +549,7 @@ Total Physical Used
 
 ### aggr_volume_count_flexvol
 
-
+Number of flexvol volumes in the aggregate.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -752,6 +766,16 @@ Number of Sectors Written
 | REST | `api/private/cli/disk` | `sectors_written` | conf/rest/9.12.0/disk.yaml |
 
 
+### disk_total_data
+
+Total throughput for user operations per second
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
 ### disk_total_transfers
 
 Total number of disk operations involving data transfer initiated per second
@@ -774,7 +798,7 @@ Number of seconds the drive has been powered on
 
 ### disk_usable_size
 
-
+Usable size of each disk, in bytes.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -859,6 +883,96 @@ Number of disk write operations initiated each second for storing data or metada
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_write_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_writes`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### environment_sensor_average_ambient_temperature
+
+Average temperature of all ambient sensors for node in Celsius.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/sensor.yaml |
+| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/sensor.yaml |
+
+
+### environment_sensor_average_fan_speed
+
+Average fan speed for node in rpm.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/sensor.yaml |
+| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/sensor.yaml |
+
+
+### environment_sensor_average_temperature
+
+Average temperature of all non-ambient sensors for node in Celsius.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/sensor.yaml |
+| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/sensor.yaml |
+
+
+### environment_sensor_max_fan_speed
+
+Maximum fan speed for node in rpm.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/sensor.yaml |
+| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/sensor.yaml |
+
+
+### environment_sensor_max_temperature
+
+Maximum temperature of all non-ambient sensors for node in Celsius.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/sensor.yaml |
+| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/sensor.yaml |
+
+
+### environment_sensor_min_ambient_temperature
+
+Minimum temperature of all ambient sensors for node in Celsius.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/sensor.yaml |
+| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/sensor.yaml |
+
+
+### environment_sensor_min_fan_speed
+
+Minimum fan speed for node in rpm.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/sensor.yaml |
+| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/sensor.yaml |
+
+
+### environment_sensor_min_temperature
+
+Minimum temperature of all non-ambient sensors for node in Celsius.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/sensor.yaml |
+| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/sensor.yaml |
+
+
+### environment_sensor_power
+
+Power consumed by a node in Watts.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/sensor.yaml |
+| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/sensor.yaml |
 
 
 ### environment_sensor_threshold_value
@@ -1832,8 +1946,8 @@ Percentage of HDD read operations replace by SSD.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `read_ops_replaced_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops_total | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml | 
-| ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `read_ops_replaced_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops_total | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml | 
+| REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `read_ops_replaced_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> read_ops_total | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml | 
+| ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `read_ops_replaced_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> read_ops_total | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml | 
 
 
 ### flashpool_ssd_available
@@ -6272,7 +6386,7 @@ Number of LIST Uploads operations
 
 ### ontaps3_logical_used_size
 
-
+Specifies the bucket logical used size up to this point.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -6524,7 +6638,7 @@ Total number of object store server signature V4 requests
 
 ### ontaps3_size
 
-
+Specifies the bucket size in bytes; ranges from 80MB to 64TB.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -7024,9 +7138,127 @@ Summation of NFS ops, CIFS ops, CSS ops and internal ops
 | ZAPI | `perf-object-get-instances qtree` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/qtree.yaml | 
 
 
+### quota_disk_limit
+
+Maximum amount of disk space, in kilobytes, allowed for the quota target (hard disk space limit). The value is -1 if the limit is unlimited.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/quota/reports` | `space.hard_limit` | conf/rest/9.12.0/qtree.yaml |
+| ZAPI | `quota-report-iter` | `disk-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
+
+
+### quota_disk_used
+
+Current amount of disk space, in kilobytes, used by the quota target.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/quota/reports` | `space.used.total` | conf/rest/9.12.0/qtree.yaml |
+| ZAPI | `quota-report-iter` | `disk-used` | conf/zapi/cdot/9.8.0/qtree.yaml |
+
+
+### quota_disk_used_pct_disk_limit
+
+Current disk space used expressed as a percentage of hard disk limit.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/quota/reports` | `space.used.hard_limit_percent` | conf/rest/9.12.0/qtree.yaml |
+| ZAPI | `quota-report-iter` | `disk-used-pct-disk-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
+
+
+### quota_disk_used_pct_soft_disk_limit
+
+Current disk space used expressed as a percentage of soft disk limit.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/quota/reports` | `space.used.soft_limit_percent` | conf/rest/9.12.0/qtree.yaml |
+| ZAPI | `quota-report-iter` | `disk-used-pct-soft-disk-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
+
+
+### quota_disk_used_pct_threshold
+
+Current disk space used expressed as a percentage of threshold.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `quota-report-iter` | `disk-used-pct-threshold` | conf/zapi/cdot/9.8.0/qtree.yaml |
+
+
+### quota_file_limit
+
+aximum number of files allowed for the quota target (hard files limit). The value is -1 if the limit is unlimited.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/quota/reports` | `files.hard_limit` | conf/rest/9.12.0/qtree.yaml |
+| ZAPI | `quota-report-iter` | `file-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
+
+
+### quota_files_used
+
+Current number of files used by the quota target.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/quota/reports` | `files.used.total` | conf/rest/9.12.0/qtree.yaml |
+| ZAPI | `quota-report-iter` | `files-used` | conf/zapi/cdot/9.8.0/qtree.yaml |
+
+
+### quota_files_used_pct_file_limit
+
+Current number of files used expressed as a percentage of hard file limit.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/quota/reports` | `files.used.hard_limit_percent` | conf/rest/9.12.0/qtree.yaml |
+| ZAPI | `quota-report-iter` | `files-used-pct-file-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
+
+
+### quota_files_used_pct_soft_file_limit
+
+Current number of files used expressed as a percentage of soft file limit.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/quota/reports` | `files.used.soft_limit_percent` | conf/rest/9.12.0/qtree.yaml |
+| ZAPI | `quota-report-iter` | `files-used-pct-soft-file-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
+
+
+### quota_soft_disk_limit
+
+soft disk space limit, in kilobytes, for the quota target. The value is -1 if the limit is unlimited.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/quota/reports` | `space.soft_limit` | conf/rest/9.12.0/qtree.yaml |
+| ZAPI | `quota-report-iter` | `soft-disk-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
+
+
+### quota_soft_file_limit
+
+Soft file limit, in number of files, for the quota target. The value is -1 if the limit is unlimited.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/quota/reports` | `files.soft_limit` | conf/rest/9.12.0/qtree.yaml |
+| ZAPI | `quota-report-iter` | `soft-file-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
+
+
+### quota_threshold
+
+Disk space threshold, in kilobytes, for the quota target. The value is -1 if the limit is unlimited.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `quota-report-iter` | `threshold` | conf/zapi/cdot/9.8.0/qtree.yaml |
+
+
 ### security_audit_destination_port
 
-
+The destination port used to forward the message.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -7045,21 +7277,111 @@ Certificate expiration time. Can be provided on POST if creating self-signed cer
 
 ### security_ssh_max_instances
 
-
+Maximum possible simultaneous connections.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/security/ssh` | `max_instances` | conf/rest/9.12.0/security_ssh.yaml |
 
 
+### shelf_average_ambient_temperature
+
+Average temperature of all ambient sensors for shelf in Celsius.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### shelf_average_fan_speed
+
+Average fan speed for shelf in rpm.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### shelf_average_temperature
+
+Average temperature of all non-ambient sensors for shelf in Celsius.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
 ### shelf_disk_count
 
-
+Disk count in a shelf.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/storage/shelves` | `disk_count` | conf/rest/9.12.0/shelf.yaml |
 | ZAPI | `storage-shelf-info-get-iter` | `storage-shelf-info.disk-count` | conf/zapi/cdot/9.8.0/shelf.yaml |
+
+
+### shelf_max_fan_speed
+
+Maximum fan speed for shelf in rpm.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### shelf_max_temperature
+
+Maximum temperature of all non-ambient sensors for shelf in Celsius.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### shelf_min_ambient_temperature
+
+Minimum temperature of all ambient sensors for shelf in Celsius.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### shelf_min_fan_speed
+
+Minimum fan speed for shelf in rpm.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### shelf_min_temperature
+
+Minimum temperature of all non-ambient sensors for shelf in Celsius.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### shelf_power
+
+Power consumed by shelf in Watts.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### snapmirror_break_failed_count
@@ -7722,6 +8044,15 @@ Average latency of nfsv42 requests. This counter keeps track of the average resp
 | ZAPI | `perf-object-get-instances nfsv4_1` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
+### svm_nfs_latency_hist
+
+Histogram of latency for NFSv3 operations.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances nfsv3` | `nfsv3_latency_hist`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
+
+
 ### svm_nfs_layoutcommit_avg_latency
 
 Average latency of NFSv4.2 LAYOUTCOMMIT operations.
@@ -8160,6 +8491,15 @@ Average latency of NFSv4.2 READ operations.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `read.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `read_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> read_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+
+
+### svm_nfs_read_latency_hist
+
+Histogram of latency for Read operations.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances nfsv3` | `read_latency_hist`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
 
 
 ### svm_nfs_read_ops
@@ -8672,6 +9012,15 @@ Average latency of NFSv4.2 WRITE operations.
 | ZAPI | `perf-object-get-instances nfsv4_1` | `write_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> write_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
+### svm_nfs_write_latency_hist
+
+Histogram of latency for Write operations.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances nfsv3` | `write_latency_hist`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
+
+
 ### svm_nfs_write_ops
 
 Total observed NFSv3 write operations per second.
@@ -8995,6 +9344,16 @@ Number of user-visible files (inodes) used. This field is valid only when the vo
 |--------|----------|--------|---------|
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-inode-attributes.files-used` | conf/zapi/cdot/9.8.0/volume.yaml |
 | REST | `api/private/cli/volume` | `files_used` | conf/rest/9.12.0/volume.yaml |
+
+
+### volume_inode_used_percent
+
+volume_inode_files_used / volume_inode_total
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/volume.yaml |
+| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
 ### volume_other_latency

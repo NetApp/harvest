@@ -249,7 +249,8 @@ chmod 400 private/ca.key.pem
 
 #### Create a root certificate authority certificate
 
-Download the sample [samples/openssl.cnf] file and put it in the directory we created in [setup](#setup). Edit line 9,
+Download the sample [openssl.cnf](https://github.com/NetApp/harvest/blob/main/pkg/docs/samples/openssl.cnf) file and put
+it in the directory we created in [setup](#setup). Edit line 9,
 changing `dir` to point to your `ca` directory created in [setup](#setup).
 
 ```
@@ -277,7 +278,8 @@ openssl x509 -noout -text -in certs/ca.cert.pem
 First, we'll create the certificate signing request and then the certificate. In this example, the ONTAP cluster is
 named `umeng-aff300-05-06`, update accordingly.
 
-Download the sample [samples/server_cert.cnf] file and put it in the directory we created in [setup](#setup). Edit lines
+Download the sample [server_cert.cnf](https://github.com/NetApp/harvest/blob/main/pkg/docs/samples/server_cert.cnf) file
+and put it in the directory we created in [setup](#setup). Edit lines
 18-21 to include your ONTAP cluster hostnames and IP addresses. Edit lines 6-11 with new names as needed.
 
 ```
