@@ -67,7 +67,7 @@ this release:
 
 @Falcon667, @MrObvious, @ReneMeier, @Sawall10, @T1r0l, @aticatac, @chadpruden, @demalik, @electrocreative, @ev1963, @faguayot, @iStep2Step, @jgasher, @jmg011, @mamoep, @matejzero, @matthieu-sudo, @merdos, @rodenj1, Ed Wilts, KlausHub, MeghanaD, Paul P2, Rusty Brown, Shubham Mer, Tudor Pascu, jf38800, jfong, rcl23, troysmuller, twodot0h
 
-:seedling: This release includes 42 features, 42 bug fixes, 18 documentation, 2 testing, 1 styling, 5 miscellaneous, and 7 ci pull requests.
+:seedling: This release includes 43 features, 43 bug fixes, 19 documentation, 2 testing, 1 styling, 5 miscellaneous, and 7 ci pull requests.
 
 ### :rocket: Features
 - Add Information To Which Node/Controller A Disk Belongs ([#1542](https://github.com/NetApp/harvest/pull/1542))
@@ -112,6 +112,7 @@ this release:
 - Include Sg Cluster In Panels ([#1725](https://github.com/NetApp/harvest/pull/1725))
 - Shelf Power Panel Alignment Issue ([#1728](https://github.com/NetApp/harvest/pull/1728))
 - Topk Panels Should Use Topresources Var In Their Titles ([#1733](https://github.com/NetApp/harvest/pull/1733))
+- Pollers Should Allow Customers To Opt Out Of Rest Upgrade (#1744) ([#1747](https://github.com/NetApp/harvest/pull/1747))
 
 ### :bug: Bug Fixes
 - Collapse All But Highlights In Svm Dashboard ([#1540](https://github.com/NetApp/harvest/pull/1540))
@@ -156,6 +157,7 @@ this release:
 - Topk Suppport In 3 Panels In Snapmirror Dashboard ([#1735](https://github.com/NetApp/harvest/pull/1735))
 - Remove Power Panel From Cluster Dashboard ([#1736](https://github.com/NetApp/harvest/pull/1736))
 - Storagegrid Cluster Name Should Be Grid Name Instead Of Admin No… ([#1737](https://github.com/NetApp/harvest/pull/1737))
+- Changed Filter From Not Nil To Greater Than 0 ([#1741](https://github.com/NetApp/harvest/pull/1741))
 
 ### :closed_book: Documentation
 - Add Storagegrid Collector And Prepare Docs ([#1532](https://github.com/NetApp/harvest/pull/1532))
@@ -176,6 +178,7 @@ this release:
 - Fix Yaml Formatting For Configure-Templates.md ([#1693](https://github.com/NetApp/harvest/pull/1693))
 - Update Ontap Metrics And Mention How To Generate Grafana Metrics ([#1712](https://github.com/NetApp/harvest/pull/1712))
 - Document Plugin Generated Metrics ([#1734](https://github.com/NetApp/harvest/pull/1734))
+- Fix Links To Openssl Samples ([#1743](https://github.com/NetApp/harvest/pull/1743))
 
 ### :wrench: Testing
 - Ensure Dashboards Use Spannull = True ([#1602](https://github.com/NetApp/harvest/pull/1602))
