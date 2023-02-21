@@ -9,7 +9,7 @@ transforms them, and routes them to your choice of time-series database.
 The included Grafana dashboards deliver the datacenter insights you need, while
 new metrics can be collected with a few edits of the included template files.
 
-Harvest is open-source, released under an [Apache2 license](https://github.com/NetApp/harvest/blob/main/LICENSE),
+Harvest is open-source, built with Go, released under an [Apache2 license](https://github.com/NetApp/harvest/blob/main/LICENSE),
 and offers [great flexibility](ARCHITECTURE.md) in how you collect, augment, and export your datacenter metrics.
 
 To get started, follow our quickstart guide or install Harvest.
