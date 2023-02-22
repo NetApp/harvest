@@ -54,7 +54,7 @@ func TestUnitsAndExprMatch(t *testing.T) {
 	mt := newMetricsTable()
 	visitDashboards([]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
 		func(path string, data []byte) {
-			checkUnits(path, mt, data)
+			checkUnits(t, path, mt, data)
 		})
 
 	// Exceptions are meant to reduce false negatives
@@ -161,12 +161,12 @@ func newMetricsTable() *metricsTable {
 	}
 }
 
-func checkUnits(dashboardPath string, mt *metricsTable, data []byte) {
+func checkUnits(t *testing.T, dashboardPath string, mt *metricsTable, data []byte) {
 	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
-		doPanel("", key, value, mt, dashboardPath)
+		doPanel(t, "", key, value, mt, dashboardPath)
 		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
 			pathPrefix := fmt.Sprintf("panels[%d].", key.Int())
-			doPanel(pathPrefix, key2, value2, mt, dashboardPath)
+			doPanel(t, pathPrefix, key2, value2, mt, dashboardPath)
 			return true
 		})
 		return true
@@ -184,7 +184,7 @@ var metricDivideMetric2 = regexp.MustCompile(`(\w+)/.*?(\w+){`)
 // detects arrays
 var metricWithArray = regexp.MustCompile(`metric=~*"(.*?)"`)
 
-func doPanel(pathPrefix string, key gjson.Result, value gjson.Result, mt *metricsTable, dashboardPath string) bool {
+func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Result, mt *metricsTable, dashboardPath string) bool {
 	kind := value.Get("type").String()
 	if kind == "row" {
 		return true
@@ -197,17 +197,22 @@ func doPanel(pathPrefix string, key gjson.Result, value gjson.Result, mt *metric
 	title := value.Get("title").String()
 	sPath := shortPath(dashboardPath)
 
+	propertiesMap := make(map[string]map[string]string)
 	overrides := make([]override, 0, len(overridesSlice))
 	expressions := make([]expression, 0)
 	valueToName := make(map[string]string) // only used with panels[*].transformations[*].options.renameByName
 
 	for oi, overrideN := range overridesSlice {
 		matcherID := overrideN.Get("matcher.id")
+		// make sure that mapKey is unique for each override element
+		propertiesMapKey := matcherID.String() + strconv.Itoa(oi)
+		propertiesMap[propertiesMapKey] = make(map[string]string)
 		matcherOptions := overrideN.Get("matcher.options")
 		propertiesN := overrideN.Get("properties").Array()
 		for pi, propN := range propertiesN {
 			propID := propN.Get("id").String()
 			propVal := propN.Get("value").String()
+			propertiesMap[propertiesMapKey][propID] = propVal
 			if propID == "unit" {
 				o := override{
 					id:      matcherID.String(),
@@ -217,6 +222,18 @@ func doPanel(pathPrefix string, key gjson.Result, value gjson.Result, mt *metric
 						path, key.Int(), oi, pi),
 				}
 				overrides = append(overrides, o)
+			}
+		}
+	}
+
+	// In case of gradient-gauge and percent(0.0-1.0), we must override min and max value
+	for _, properties := range propertiesMap {
+		if properties["unit"] == "percentunit" && properties["custom.displayMode"] == "gradient-gauge" {
+			if maxVal, exist := properties["max"]; !exist || maxVal != "1" {
+				t.Errorf("dashboard=%s, title=%s should have max value 1", sPath, title)
+			}
+			if minVal, exist := properties["min"]; !exist || minVal != "0" {
+				t.Errorf("dashboard=%s, title=%s should have min value 0", sPath, title)
 			}
 		}
 	}
