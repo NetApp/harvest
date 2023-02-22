@@ -4,37 +4,37 @@ go 1.20
 
 require (
 	github.com/bbrks/wrap/v2 v2.5.0
-	github.com/go-openapi/spec v0.20.7
+	github.com/go-openapi/spec v0.20.8
 	github.com/hashicorp/go-version v1.6.0
 	github.com/imdario/mergo v0.3.13
 	github.com/olekukonko/tablewriter v0.0.5
-	github.com/rs/zerolog v1.28.0
-	github.com/shirou/gopsutil/v3 v3.22.12
+	github.com/rs/zerolog v1.29.0
+	github.com/shirou/gopsutil/v3 v3.23.1
 	github.com/spf13/cobra v1.6.1
 	github.com/tidwall/gjson v1.14.4
 	github.com/tidwall/sjson v1.2.5
 	github.com/zekroTJA/timedmap v1.4.0
-	golang.org/x/sys v0.4.0
-	golang.org/x/term v0.4.0
-	golang.org/x/text v0.6.0
+	golang.org/x/sys v0.5.0
+	golang.org/x/term v0.5.0
+	golang.org/x/text v0.7.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
 	github.com/go-ole/go-ole v1.2.6 // indirect
-	github.com/go-openapi/jsonpointer v0.19.5 // indirect
-	github.com/go-openapi/jsonreference v0.20.0 // indirect
+	github.com/go-openapi/jsonpointer v0.19.6 // indirect
+	github.com/go-openapi/jsonreference v0.20.2 // indirect
 	github.com/go-openapi/swag v0.22.3 // indirect
-	github.com/inconshreveable/mousetrap v1.0.1 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
-	github.com/lufia/plan9stats v0.0.0-20220913051719-115f729f3c8c // indirect
+	github.com/lufia/plan9stats v0.0.0-20230110061619-bbe2e5e100de // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.16 // indirect
+	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/mattn/go-runewidth v0.0.14 // indirect
-	github.com/power-devops/perfstat v0.0.0-20220216144756-c35f1ee13d7c // indirect
-	github.com/rivo/uniseg v0.4.3 // indirect
+	github.com/power-devops/perfstat v0.0.0-20221212215047-62379fc7944b // indirect
+	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
