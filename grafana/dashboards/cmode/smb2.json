@@ -59,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1676976978057,
+  "iteration": 1677054562546,
   "links": [
     {
       "asDropdown": true,
@@ -173,7 +173,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum(smb2_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
+          "expr": "sum(smb2_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "write_ops",
@@ -716,7 +716,7 @@
         }
       ],
       "timeFrom": null,
-      "title": "Create Latency Histogram Heatmap",
+      "title": "Create Latency Heatmap",
       "tooltip": {
         "show": true,
         "showHistogram": false
@@ -854,7 +854,7 @@
         }
       ],
       "timeFrom": null,
-      "title": "Lock Latency HistogramHeatmap",
+      "title": "Lock Latency Heatmap",
       "tooltip": {
         "show": true,
         "showHistogram": false
@@ -1061,7 +1061,7 @@
         }
       ],
       "timeFrom": null,
-      "title": "Set Info Latency Histogram",
+      "title": "Set Info Latency Heatmap",
       "tooltip": {
         "show": true,
         "showHistogram": false
@@ -1120,7 +1120,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "sum(increase(smb2_oplock_break_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
+          "expr": "sum(increase(smb2_session_setup_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
           "format": "heatmap",
           "instant": false,
           "interval": "",
