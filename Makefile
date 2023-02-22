@@ -98,7 +98,8 @@ endif
 govulncheck: ## run govulncheck on the source files
 ifeq (${GOVULNCHECK_EXISTS}, )
 	@echo
-	@echo "govulncheck task requires that you have https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck installed."
+	@echo "govulncheck task requires that you have https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck installed. Run"
+	@echo "go install golang.org/x/vuln/cmd/govulncheck@latest"
 	@echo
 	@exit 1
 endif
