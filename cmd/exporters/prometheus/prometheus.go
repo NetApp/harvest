@@ -212,9 +212,8 @@ func (p *Prometheus) Export(data *matrix.Matrix) error {
 
 	// render metrics into Prometheus format
 	start := time.Now()
-	if metrics, err = p.render(data); err != nil {
-		return err
-	}
+	metrics = p.render(data)
+
 	// fix render time for metadata
 	d := time.Since(start)
 
@@ -266,7 +265,7 @@ func (p *Prometheus) Export(data *matrix.Matrix) error {
 // volume_read_ops{node="my-node",vol="some_vol"} 2523
 // fcp_lif_read_ops{vserver="nas_svm",port_id="e02"} 771
 
-func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
+func (p *Prometheus) render(data *matrix.Matrix) [][]byte {
 	var (
 		rendered         [][]byte
 		tagged           *set.Set
@@ -556,7 +555,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, error) {
 		Int("rendered", len(rendered)).
 		Int("instances", len(data.GetInstances())).
 		Msg("Rendered data points for instances")
-	return rendered, nil
+	return rendered
 }
 
 var numAndUnitRe = regexp.MustCompile(`(\d+)\s*(\w+)`)

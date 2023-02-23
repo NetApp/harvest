@@ -184,10 +184,10 @@ var metricDivideMetric2 = regexp.MustCompile(`(\w+)/.*?(\w+){`)
 // detects arrays
 var metricWithArray = regexp.MustCompile(`metric=~*"(.*?)"`)
 
-func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Result, mt *metricsTable, dashboardPath string) bool {
+func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Result, mt *metricsTable, dashboardPath string) {
 	kind := value.Get("type").String()
 	if kind == "row" {
-		return true
+		return
 	}
 	path := fmt.Sprintf("%spanels[%d]", pathPrefix, key.Int())
 	defaultUnit := value.Get("fieldConfig.defaults.unit").String()
@@ -298,7 +298,6 @@ func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Resu
 		unit := unitForExpr(e, overrides, defaultUnit, valueToName, numExpressions)
 		mt.addMetric(e.metric, unit, path, sPath, title)
 	}
-	return true
 }
 
 func unitForExpr(e expression, overrides []override, defaultUnit string,

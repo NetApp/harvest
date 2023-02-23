@@ -654,16 +654,13 @@ func (d *Disk) handleShelfPower(shelves []*node.Node, output []*matrix.Matrix) (
 		instance.SetLabel("shelf", shelfName)
 		instance.SetLabel("shelfID", shelfID)
 	}
-	err := d.calculateEnvironmentMetrics(data)
-	if err != nil {
-		return output, err
-	}
+	d.calculateEnvironmentMetrics(data)
 
 	output = append(output, data)
 	return output, nil
 }
 
-func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) error {
+func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 	var err error
 	shelfEnvironmentMetricMap := make(map[string]*shelfEnvironmentMetric, 0)
 	for _, o := range d.shelfData {
@@ -802,7 +799,6 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) error {
 			}
 		}
 	}
-	return nil
 }
 
 func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
