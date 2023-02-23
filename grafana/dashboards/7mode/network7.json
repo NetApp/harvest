@@ -708,18 +708,6 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "status"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 153
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
                   "options": "nic"
                 },
                 "properties": [
@@ -756,18 +744,6 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "used %"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 228
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
                   "options": "Value #D"
                 },
                 "properties": [
@@ -794,30 +770,6 @@
                   {
                     "id": "custom.displayMode",
                     "value": "gradient-gauge"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "send"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 360
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "receive"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 398
                   }
                 ]
               }
