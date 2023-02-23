@@ -106,12 +106,9 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 
 	// serve our own metadata
 	// notice that some values are always taken from previous session
-	if md, err := p.render(p.Metadata); err == nil {
-		data = append(data, md...)
-		count += len(md)
-	} else {
-		p.Logger.Error().Stack().Err(err).Msg("(httpd) render metadata")
-	}
+	md := p.render(p.Metadata)
+	data = append(data, md...)
+	count += len(md)
 	/*
 
 		e.Metadata.SetValueSS("count", "render", float64(count))
