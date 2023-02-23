@@ -8,7 +8,7 @@
 ###############################################################################
 SHELL := /bin/bash
 GCC_EXISTS := $(shell which gcc)
-REQUIRED_GO_VERSION := 1.19
+REQUIRED_GO_VERSION := 1.20
 ifneq (, $(shell which go))
 FOUND_GO_VERSION := $(shell go version | cut -d" " -f3 | cut -d"o" -f 2)
 CORRECT_GO_VERSION := $(shell expr `go version | cut -d" " -f3 | cut -d"o" -f 2` \>= ${REQUIRED_GO_VERSION})
@@ -98,7 +98,8 @@ endif
 govulncheck: ## run govulncheck on the source files
 ifeq (${GOVULNCHECK_EXISTS}, )
 	@echo
-	@echo "govulncheck task requires that you have https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck installed."
+	@echo "govulncheck task requires that you have https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck installed. Run"
+	@echo "go install golang.org/x/vuln/cmd/govulncheck@latest"
 	@echo
 	@exit 1
 endif

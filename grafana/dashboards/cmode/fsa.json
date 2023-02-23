@@ -124,7 +124,7 @@
       },
       "id": 99,
       "options": {
-        "content": "This dashboard requires ONTAP 9.8+ and the APIs are only available via REST. Please enable the REST collector in your harvest config.",
+        "content": "This dashboard requires ONTAP 9.8+ and the APIs are only available via REST. Please enable the REST collector in your harvest config. To collect and display usage data such as capacity analytics, you need to enable File System Analytics on a volume. Please see https://docs.netapp.com/us-en/ontap/task_nas_file_system_analytics_enable.html for more details.",
         "mode": "markdown"
       },
       "pluginVersion": "8.4.11",
