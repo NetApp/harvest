@@ -704,10 +704,7 @@ func (d *Disk) handleShelfPower(shelves []gjson.Result, output []*matrix.Matrix)
 		instance.SetLabel("shelfID", shelfID)
 		instance.SetLabel("shelfUID", shelfUID)
 	}
-	err := d.calculateEnvironmentMetrics(data)
-	if err != nil {
-		return output, err
-	}
+	d.calculateEnvironmentMetrics(data)
 
 	output = append(output, data)
 	return output, nil
@@ -748,7 +745,7 @@ func (d *Disk) initMaps() {
 	d.aggrMap = make(map[string]*aggregate)
 }
 
-func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) error {
+func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 	var err error
 	shelfEnvironmentMetricMap := make(map[string]*shelfEnvironmentMetric, 0)
 	for _, o := range d.shelfData {
@@ -894,5 +891,4 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) error {
 			}
 		}
 	}
-	return nil
 }

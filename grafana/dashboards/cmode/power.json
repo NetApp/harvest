@@ -159,7 +159,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Total Power (Node + Shelf)",
+      "title": "Cluster Power (Node + Shelf)",
       "type": "stat"
     },
     {
@@ -781,7 +781,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top Nodes by Power Consumed",
+      "title": "Top $TopResources Nodes by Power Consumed",
       "type": "timeseries"
     },
     {
@@ -871,7 +871,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top Nodes by Average Temperature",
+      "title": "Top $TopResources Nodes by Average Temperature",
       "type": "timeseries"
     },
     {
@@ -962,7 +962,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top Shelves by Power Consumed",
+      "title": "Top $TopResources Shelves by Power Consumed",
       "type": "timeseries"
     },
     {
@@ -1053,7 +1053,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top Shelves by Average Temperature",
+      "title": "Top $TopResources Shelves by Average Temperature",
       "type": "timeseries"
     },
     {
@@ -1144,7 +1144,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top Aggregates by Power Consumed",
+      "title": "Top $TopResources Aggregates by Power Consumed",
       "type": "timeseries"
     },
     {
@@ -1235,7 +1235,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Total Power by Aggregate Disk Type",
+      "title": "Total $TopResources Aggregates by Power Disk Type",
       "type": "timeseries"
     },
     {
@@ -1334,7 +1334,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "IOPs for Top Aggregates by Power Consumed",
+      "title": "Top $TopResources Aggregates by IOPS per Power Consumed",
       "type": "timeseries"
     },
     {

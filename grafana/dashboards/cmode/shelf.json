@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1663840305837,
+  "iteration": 1676298907178,
   "links": [
     {
       "asDropdown": true,
@@ -129,7 +129,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "dark-yellow",
+                "color": "blue",
                 "value": null
               }
             ]
@@ -204,7 +204,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "dark-yellow",
+                "color": "blue",
                 "value": null
               }
             ]
@@ -421,22 +421,6 @@
               {
                 "color": "semi-dark-blue",
                 "value": null
-              },
-              {
-                "color": "rgb(84, 184, 45)",
-                "value": 500
-              },
-              {
-                "color": "semi-dark-yellow",
-                "value": 3000
-              },
-              {
-                "color": "semi-dark-orange",
-                "value": 5000
-              },
-              {
-                "color": "dark-red",
-                "value": 6000
               }
             ]
           },
@@ -492,24 +476,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "transparent",
+                "color": "blue",
                 "value": null
-              },
-              {
-                "color": "rgb(84, 184, 45)",
-                "value": 500
-              },
-              {
-                "color": "semi-dark-yellow",
-                "value": 3000
-              },
-              {
-                "color": "semi-dark-orange",
-                "value": 5000
-              },
-              {
-                "color": "dark-red",
-                "value": 6000
               }
             ]
           },
@@ -568,22 +536,6 @@
               {
                 "color": "semi-dark-blue",
                 "value": null
-              },
-              {
-                "color": "rgb(84, 184, 45)",
-                "value": 500
-              },
-              {
-                "color": "semi-dark-yellow",
-                "value": 3000
-              },
-              {
-                "color": "semi-dark-orange",
-                "value": 5000
-              },
-              {
-                "color": "dark-red",
-                "value": 6000
               }
             ]
           },
@@ -628,6 +580,7 @@
     },
     {
       "collapsed": false,
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -638,6 +591,185 @@
       "panels": [],
       "title": "Power",
       "type": "row"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "watt"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 7
+      },
+      "id": 71,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "topk($TopResources,shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$TopShelfPower\"})",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{shelf}} ({{cluster}})",
+          "refId": "B"
+        }
+      ],
+      "title": "Top $TopResources Shelves by Power Consumed",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 7
+      },
+      "id": 73,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "topk($TopResources,shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$TopShelfAvgTemp\"})",
+          "interval": "",
+          "legendFormat": "{{shelf}} ({{cluster}})",
+          "refId": "A"
+        }
+      ],
+      "title": "Top $TopResources Shelves by Average Temperature",
+      "type": "timeseries"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
@@ -671,10 +803,6 @@
               "options": "disk_count"
             },
             "properties": [
-              {
-                "id": "custom.displayMode",
-                "value": "color-text"
-              },
               {
                 "id": "unit",
                 "value": "locale"
@@ -898,38 +1026,6 @@
             },
             "properties": [
               {
-                "id": "custom.displayMode",
-                "value": "color-background"
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "transparent",
-                      "value": null
-                    },
-                    {
-                      "color": "green",
-                      "value": 500
-                    },
-                    {
-                      "color": "yellow",
-                      "value": 3000
-                    },
-                    {
-                      "color": "orange",
-                      "value": 5000
-                    },
-                    {
-                      "color": "red",
-                      "value": 8000
-                    }
-                  ]
-                }
-              },
-              {
                 "id": "custom.align",
                 "value": "right"
               },
@@ -946,38 +1042,6 @@
             },
             "properties": [
               {
-                "id": "custom.displayMode",
-                "value": "color-background"
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "transparent",
-                      "value": null
-                    },
-                    {
-                      "color": "green",
-                      "value": 500
-                    },
-                    {
-                      "color": "yellow",
-                      "value": 3000
-                    },
-                    {
-                      "color": "orange",
-                      "value": 5000
-                    },
-                    {
-                      "color": "red",
-                      "value": 6000
-                    }
-                  ]
-                }
-              },
-              {
                 "id": "custom.align",
                 "value": "right"
               },
@@ -993,38 +1057,6 @@
               "options": "Min Fan Speed (rpm)"
             },
             "properties": [
-              {
-                "id": "custom.displayMode",
-                "value": "color-background"
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "transparent",
-                      "value": null
-                    },
-                    {
-                      "color": "green",
-                      "value": 500
-                    },
-                    {
-                      "color": "yellow",
-                      "value": 3000
-                    },
-                    {
-                      "color": "orange",
-                      "value": 5000
-                    },
-                    {
-                      "color": "red",
-                      "value": 6000
-                    }
-                  ]
-                }
-              },
               {
                 "id": "custom.align",
                 "value": "right"
@@ -1153,7 +1185,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 7
+        "y": 15
       },
       "id": 69,
       "interval": "1m",
@@ -1169,7 +1201,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "8.4.11",
+      "pluginVersion": "8.1.8",
       "targets": [
         {
           "expr": "shelf_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
@@ -1380,192 +1412,13 @@
       "type": "table"
     },
     {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "watt"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 14
-      },
-      "id": 71,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "8.1.2",
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "topk($TopResources,shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$TopShelfPower\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{shelf}} ({{cluster}})",
-          "refId": "B"
-        }
-      ],
-      "title": "Total Shelves by Power Consumed",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "celsius"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 14
-      },
-      "id": 73,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "8.1.2",
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "topk($TopResources,shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$TopShelfAvgTemp\"})",
-          "interval": "",
-          "legendFormat": "{{shelf}} ({{cluster}})",
-          "refId": "A"
-        }
-      ],
-      "title": "Top Shelves by Average Temperature",
-      "type": "timeseries"
-    },
-    {
       "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 7
+        "y": 22
       },
       "id": 35,
       "panels": [
@@ -1711,7 +1564,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 8
+        "y": 23
       },
       "id": 37,
       "panels": [
@@ -1917,7 +1770,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 9
+        "y": 24
       },
       "id": 40,
       "panels": [
@@ -1953,9 +1806,9 @@
           },
           "gridPos": {
             "h": 11,
-            "w": 7,
+            "w": 24,
             "x": 0,
-            "y": 10
+            "y": 25
           },
           "id": 31,
           "links": [],
@@ -1972,7 +1825,7 @@
             "showUnfilled": true,
             "text": {}
           },
-          "pluginVersion": "8.4.11",
+          "pluginVersion": "8.1.8",
           "repeat": "SensShelf",
           "targets": [
             {
@@ -2269,5 +2122,5 @@
   "timezone": "",
   "title": "ONTAP: Shelf",
   "uid": "",
-  "version": 6
+  "version": 7
 }

@@ -336,10 +336,7 @@ func doImport(_ *cobra.Command, _ []string) {
 	initImportVars()
 
 	fmt.Printf("preparing to import dashboards...\n")
-	if err := importDashboards(opts); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	importDashboards(opts)
 }
 
 func validateImport() {
@@ -414,11 +411,10 @@ func exitIfExist(fp string, s string) {
 	}
 }
 
-func importDashboards(opts *options) error {
+func importDashboards(opts *options) {
 	for k, v := range opts.dirGrafanaFolderMap {
 		importFiles(k, v)
 	}
-	return nil
 }
 
 func importFiles(dir string, folder *Folder) {

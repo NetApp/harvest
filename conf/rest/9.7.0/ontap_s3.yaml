@@ -10,6 +10,12 @@ counters:
   - logical_used_size
   - size
 
+endpoints:
+  - query: api/private/cli/vserver/object-store-server/bucket
+    counters:
+      - ^^uuid
+      - object_count
+
 export_options:
   instance_keys:
     - bucket

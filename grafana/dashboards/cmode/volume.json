@@ -222,7 +222,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Volume Total Throughput",
+      "title": "Top $TopResources Volumes Total Throughput",
       "type": "stat"
     },
     {
@@ -277,7 +277,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Volume Total IOPs",
+      "title": "Top $TopResources Volumes by Total IOPs",
       "type": "stat"
     },
     {
@@ -367,7 +367,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Volume Top Average Latency",
+      "title": "Top $TopResources Volumes by Average Latency",
       "transformations": [],
       "type": "timeseries"
     },
@@ -458,7 +458,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Volume Top Average Throughput",
+      "title": "Top $TopResources Volumes by Average Throughput",
       "transformations": [],
       "type": "timeseries"
     },
@@ -549,7 +549,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Volume Top IOPs",
+      "title": "Top $TopResources Volumes by IOPs",
       "transformations": [],
       "type": "timeseries"
     },
@@ -1010,7 +1010,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top Volume Read Latency",
+          "title": "Top $TopResources Volumes by Read Latency",
           "transformations": [
             {
               "id": "calculateField",
@@ -1121,7 +1121,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top Volume Read Throughput",
+          "title": "Top $TopResources Volumes by Read Throughput",
           "transformations": [
             {
               "id": "calculateField",
@@ -1232,7 +1232,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top Volume Read IOPS",
+          "title": "Top $TopResources Volumes by Read IOPS",
           "transformations": [
             {
               "id": "calculateField",
@@ -1350,7 +1350,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top Volume Write Latency",
+          "title": "Top $TopResources Volumes by Write Latency",
           "transformations": [
             {
               "id": "calculateField",
@@ -1461,7 +1461,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top Volume Write Throughput",
+          "title": "Top $TopResources Volumes by Write Throughput",
           "transformations": [
             {
               "id": "calculateField",
@@ -1572,7 +1572,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top Volume Write IOPS",
+          "title": "Top $TopResources Volumes by Write IOPS",
           "transformations": [
             {
               "id": "calculateField",
@@ -1723,7 +1723,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Read Latency",
+          "title": "Top $TopResources Volumes by Read Latency",
           "transformations": [],
           "type": "timeseries"
         },
@@ -1814,7 +1814,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Read Throughput",
+          "title": "Top $TopResources Volumes by Read Throughput",
           "transformations": [],
           "type": "timeseries"
         },
@@ -1904,7 +1904,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Read IOPs",
+          "title": "Top $TopResources Volumes by Read IOPs",
           "transformations": [],
           "type": "timeseries"
         },
@@ -1994,7 +1994,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Write Latency",
+          "title": "Top $TopResources Volumes by Write Latency",
           "transformations": [],
           "type": "timeseries"
         },
@@ -2084,7 +2084,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Write Throughput",
+          "title": "Top $TopResources Volumes by Write Throughput",
           "transformations": [],
           "type": "timeseries"
         },
@@ -2174,7 +2174,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Write IOPs",
+          "title": "Top $TopResources Volumes by Write IOPs",
           "transformations": [],
           "type": "timeseries"
         }
@@ -2280,7 +2280,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "QoS Volume Read Latency",
+          "title": "Top $TopResources Volumes by QoS Volume Read Latency",
           "type": "timeseries"
         },
         {
@@ -2370,7 +2370,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "QoS Volume Read Throughput",
+          "title": "Top $TopResources Volumes by QoS Volume Read Throughput",
           "type": "timeseries"
         },
         {
@@ -2460,7 +2460,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "QoS Volume Read IOPS",
+          "title": "Top $TopResources Volumes by QoS Volume Read IOPS",
           "type": "timeseries"
         },
         {
@@ -2550,7 +2550,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "QoS Volume Write Latency",
+          "title": "Top $TopResources Volumes by QoS Volume Write Latency",
           "type": "timeseries"
         },
         {
@@ -2640,7 +2640,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "QoS Volume Write Throughput",
+          "title": "Top $TopResources Volumes by QoS Volume Write Throughput",
           "type": "timeseries"
         },
         {
@@ -2730,7 +2730,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "QoS Volume Write IOPS",
+          "title": "Top $TopResources Volumes by QoS Volume Write IOPS",
           "type": "timeseries"
         },
         {
@@ -2819,7 +2819,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "QoS Volume Sequential Reads",
+          "title": "Top $TopResources Volumes by QoS Volume Sequential Reads",
           "type": "timeseries"
         },
         {
@@ -2908,7 +2908,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "QoS Volume Sequential Writes",
+          "title": "Top $TopResources Volumes by QoS Volume Sequential Writes",
           "type": "timeseries"
         }
       ],
@@ -3030,7 +3030,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Volume Latency from Network",
+          "title": "Top $TopResources Volumes by Latency from Network",
           "type": "timeseries"
         },
         {
@@ -3121,7 +3121,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Volume Latency from Throttle",
+          "title": "Top $TopResources Volumes by Latency from Throttle",
           "type": "timeseries"
         },
         {
@@ -3212,7 +3212,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Volume Latency from Qos Min",
+          "title": "Top $TopResources Volumes by Latency from Qos Min",
           "type": "timeseries"
         },
         {
@@ -3302,7 +3302,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Volume Latency from Cluster",
+          "title": "Top $TopResources Volumes by Latency from Cluster",
           "type": "timeseries"
         },
         {
@@ -3392,7 +3392,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Volume Latency from Backend",
+          "title": "Top $TopResources Volumes by Latency from Backend",
           "type": "timeseries"
         },
         {
@@ -3483,7 +3483,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Volume Latency from CP (Consistency Point)",
+          "title": "Top $TopResources Volumes by Latency from CP (Consistency Point)",
           "type": "timeseries"
         },
         {
@@ -3574,7 +3574,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Volume Latency from Suspend",
+          "title": "Top $TopResources Volumes by Latency from Suspend",
           "type": "timeseries"
         },
         {
@@ -3665,7 +3665,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Volume Latency from Cloud",
+          "title": "Top $TopResources Volumes by Latency from Cloud",
           "type": "timeseries"
         },
         {
@@ -3755,7 +3755,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Volume Latency from Frontend",
+          "title": "Top $TopResources Volumes by Latency from Frontend",
           "type": "timeseries"
         },
         {
@@ -3845,7 +3845,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Volume Latency from NVLog Mirroring",
+          "title": "Top $TopResources Volumes by Latency from NVLog Mirroring",
           "type": "timeseries"
         },
         {
@@ -3935,7 +3935,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Volume Latency from Disk",
+          "title": "Top $TopResources Volumes by Latency from Disk",
           "type": "timeseries"
         }
       ],
@@ -4499,7 +4499,7 @@
               "refId": "A"
             }
           ],
-          "title": "Object Storage GET Latency",
+          "title": "Top $TopResources Volumes by Object Storage GET Latency",
           "transformations": [],
           "type": "timeseries"
         },
@@ -4591,7 +4591,7 @@
               "refId": "A"
             }
           ],
-          "title": "Object Storage GET Request Count",
+          "title": "Top $TopResources Volumes by Object Storage GET Request Count",
           "transformations": [],
           "type": "timeseries"
         },
@@ -4682,7 +4682,7 @@
               "refId": "A"
             }
           ],
-          "title": "Object Storage PUT Latency",
+          "title": "Top $TopResources Volumes by Object Storage PUT Latency",
           "transformations": [],
           "type": "timeseries"
         },
@@ -4774,7 +4774,7 @@
               "refId": "A"
             }
           ],
-          "title": "Object Storage PUT Request Count",
+          "title": "Top $TopResources Volumes by Object Storage PUT Request Count",
           "transformations": [],
           "type": "timeseries"
         },
@@ -4841,7 +4841,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top Volumes with Object Storage Requests",
+          "title": "Top $TopResources Volumes by Object Storage Requests",
           "transformations": [
             {
               "id": "organize",
@@ -4969,7 +4969,7 @@
               "refId": "A"
             }
           ],
-          "title": "Inode Files Used",
+          "title": "Top $TopResources Volumes by Inode Files Used",
           "type": "timeseries"
         },
         {
@@ -5055,7 +5055,7 @@
               "refId": "A"
             }
           ],
-          "title": "Inode Files Total",
+          "title": "Top $TopResources Volumes by Inode Files Total",
           "type": "timeseries"
         },
         {
@@ -5142,7 +5142,7 @@
               "refId": "A"
             }
           ],
-          "title": "Inode Files Used Percentage",
+          "title": "Top $TopResources Volumes by Inode Files Used Percentage",
           "type": "timeseries"
         }
       ],

@@ -487,7 +487,7 @@
           "custom": {
             "align": "left",
             "displayMode": "auto",
-            "filterable": false
+            "filterable": true
           },
           "links": [],
           "mappings": [],
@@ -505,30 +505,6 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "relationship_status"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 158
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "relationship_id"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 338
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "Size"
             },
             "properties": [
@@ -538,7 +514,7 @@
               },
               {
                 "id": "unit",
-                "value": "decbytes"
+                "value": "bytes"
               },
               {
                 "id": "mappings",
@@ -623,180 +599,12 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Dest Node"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 140
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Dest Volume"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 241
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "Source Volume"
             },
             "properties": [
               {
                 "id": "custom.width",
                 "value": 193
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Type"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 213
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Status"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 83
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Health"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 88
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Transfer"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 95
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Health"
-            },
-            "properties": [
-              {
-                "id": "mappings",
-                "value": [
-                  {
-                    "options": {
-                      "0": {
-                        "text": "OK"
-                      },
-                      "1": {
-                        "text": "Unhealthy"
-                      }
-                    },
-                    "type": "value"
-                  }
-                ]
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "rgb(48, 176, 31)",
-                      "value": null
-                    },
-                    {
-                      "color": "rgb(219, 8, 58)",
-                      "value": 1
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "custom.displayMode",
-                "value": "color-text"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Error"
-            },
-            "properties": [
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "rgb(219, 8, 58)",
-                      "value": null
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "custom.displayMode",
-                "value": "color-text"
-              },
-              {
-                "id": "custom.width",
-                "value": 147
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Group"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 80
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Last Transfer"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 119
               }
             ]
           },
@@ -882,7 +690,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "avg (snapmirror_last_transfer_duration{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\"}) by (relationship_id)",
+          "expr": "snapmirror_last_transfer_duration{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -890,7 +698,7 @@
           "refId": "C"
         },
         {
-          "expr": "avg(snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\"}) by (relationship_id)",
+          "expr": "snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\",relationship_id=~\"$TopTransferDataById\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -908,11 +716,47 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Last Transfers",
+      "title": "Top $TopResources Last Transfers by Transfer Data Size",
       "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "cluster",
+                "destination_volume",
+                "destination_vserver",
+                "source_cluster",
+                "source_volume",
+                "source_vserver",
+                "Value #C",
+                "Value #A",
+                "Value #B"
+              ]
+            }
+          }
+        },
         {
           "id": "merge",
           "options": {}
+        },
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "fieldName": "Value #A",
+                "config": {
+                  "id": "greaterOrEqual",
+                  "options": {
+                    "value": 0
+                  }
+                }
+              }
+            ],
+            "type": "include",
+            "match": "any"
+          }
         },
         {
           "id": "organize",
@@ -926,11 +770,8 @@
               "destination_node_limit": true,
               "destination_volume": false,
               "destination_vserver": false,
-              "healthy": false,
               "instance": true,
               "job": true,
-              "last_transfer_type": false,
-              "relationship_id": false,
               "relationship_type": true,
               "schedule": true,
               "source_node": true,
@@ -941,7 +782,6 @@
             "indexByName": {
               "Time": 1,
               "__name__": 2,
-              "source_cluster": 3,
               "cluster": 4,
               "datacenter": 5,
               "destination_node": 6,
@@ -950,6 +790,7 @@
               "instance": 11,
               "job": 12,
               "relationship_id": 0,
+              "source_cluster": 3,
               "source_volume": 10,
               "source_vserver": 9
             },
@@ -957,44 +798,12 @@
               "Value #A": "Size",
               "Value #B": "Lag",
               "Value #C": "Duration",
-              "destination_node": "Destination Node",
-              "destination_node_limit": "",
+              "cluster": "Destination Cluster",
               "destination_volume": "Destination Volume",
               "destination_vserver": "Destination SVM",
-              "group_type": "Group",
-              "healthy": "Health",
-              "last_transfer_type": "Last Transfer",
-              "relationship_status": "Status",
-              "relationship_type": "Type",
-              "source_node": "Source Node",
-              "source_volume": "Source Volume",
-              "source_vserver": "Source SVM",
-              "unhealthy_reason": "Error",
               "source_cluster": "Source Cluster",
-              "cluster": "Destination Cluster"
-            }
-          }
-        },
-        {
-          "id": "filterFieldsByName",
-          "options": {
-            "include": {
-              "names": [
-                "Destination SVM",
-                "Destination Volume",
-                "Source SVM",
-                "Source Volume",
-                "Group",
-                "Status",
-                "Health",
-                "Error",
-                "Last Transfer",
-                "Size",
-                "Duration",
-                "Lag",
-                "Source Cluster",
-                "Destination Cluster"
-              ]
+              "source_volume": "Source Volume",
+              "source_vserver": "Source SVM"
             }
           }
         }
@@ -1087,7 +896,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": true,
-          "expr": "snapmirror_last_transfer_duration{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\"}",
+          "expr": "topk($TopResources, snapmirror_last_transfer_duration{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\",relationship_id=~\"$TopTransferDurationById\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{destination_volume}} - {{source_volume}}",
@@ -1096,7 +905,7 @@
           "textEditor": false
         }
       ],
-      "title": "Transfer Duration",
+      "title": "Top $TopResources Relationships by Transfer Duration",
       "type": "timeseries"
     },
     {
@@ -1186,7 +995,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": true,
-          "expr": "snapmirror_lag_time{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\"}",
+          "expr": "topk($TopResources, snapmirror_lag_time{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\",relationship_id=~\"$TopLagTimeById\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{destination_volume}} - {{source_volume}}",
@@ -1195,7 +1004,7 @@
           "textEditor": false
         }
       ],
-      "title": "Lag Time",
+      "title": "Top $TopResources Relationships by Lag Time",
       "type": "timeseries"
     },
     {
@@ -1250,7 +1059,7 @@
               }
             ]
           },
-          "unit": "decbytes"
+          "unit": "bytes"
         },
         "overrides": []
       },
@@ -1284,7 +1093,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": true,
-          "expr": "snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\"}",
+          "expr": "topk($TopResources, snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\",relationship_id=~\"$TopTransferDataById\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{destination_volume}} - {{source_volume}}",
@@ -1293,7 +1102,7 @@
           "textEditor": false
         }
       ],
-      "title": "Transfer Data",
+      "title": "Top $TopResources Relationships by Transfer Data",
       "type": "timeseries"
     },
     {
@@ -4827,6 +4636,171 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "allValue": "1000000000000",
+        "current": {
+          "selected": true,
+          "text": "5",
+          "value": "5"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": false,
+        "name": "TopResources",
+        "options": [
+          {
+            "selected": false,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": false,
+            "text": "2",
+            "value": "2"
+          },
+          {
+            "selected": false,
+            "text": "3",
+            "value": "3"
+          },
+          {
+            "selected": false,
+            "text": "4",
+            "value": "4"
+          },
+          {
+            "selected": true,
+            "text": "5",
+            "value": "5"
+          },
+          {
+            "selected": false,
+            "text": "6",
+            "value": "6"
+          },
+          {
+            "selected": false,
+            "text": "8",
+            "value": "8"
+          },
+          {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          },
+          {
+            "selected": false,
+            "text": "15",
+            "value": "15"
+          },
+          {
+            "selected": false,
+            "text": "25",
+            "value": "25"
+          },
+          {
+            "selected": false,
+            "text": "50",
+            "value": "50"
+          },
+          {
+            "selected": false,
+            "text": "100",
+            "value": "100"
+          },
+          {
+            "selected": false,
+            "text": "250",
+            "value": "250"
+          },
+          {
+            "selected": false,
+            "text": "500",
+            "value": "500"
+          }
+        ],
+        "query": "1,2,3,4,5,6,8,10,15,25,50,100,250,500",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(snapmirror_last_transfer_duration{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopTransferDurationById",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(snapmirror_last_transfer_duration{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*relationship_id=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(snapmirror_lag_time{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopLagTimeById",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(snapmirror_lag_time{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*relationship_id=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopTransferDataById",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*relationship_id=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },

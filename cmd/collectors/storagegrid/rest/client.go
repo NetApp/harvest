@@ -335,11 +335,11 @@ func (c *Client) Init(retries int) error {
 			return err
 		}
 
-		if content, err = c.GetGridRest("grid/config"); err != nil {
+		if content, err = c.GetGridRest("grid/health/topology?depth=grid"); err != nil {
 			continue
 		}
-		results = gjson.GetManyBytes(content, "data.hostname")
-		c.Cluster.Name = results[0].String()
+		results = gjson.GetManyBytes(content, "data.name")
+		c.Cluster.Name = strings.ReplaceAll(results[0].String(), " ", "_")
 
 		if content, err = c.GetGridRest("grid/license"); err != nil {
 			continue

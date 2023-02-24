@@ -54,7 +54,7 @@ func TestUnitsAndExprMatch(t *testing.T) {
 	mt := newMetricsTable()
 	visitDashboards([]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
 		func(path string, data []byte) {
-			checkUnits(path, mt, data)
+			checkUnits(t, path, mt, data)
 		})
 
 	// Exceptions are meant to reduce false negatives
@@ -119,6 +119,7 @@ type override struct {
 type expression struct {
 	metric string
 	refID  string
+	kind   string
 }
 type units struct {
 	units map[string][]*metricLoc
@@ -160,12 +161,12 @@ func newMetricsTable() *metricsTable {
 	}
 }
 
-func checkUnits(dashboardPath string, mt *metricsTable, data []byte) {
+func checkUnits(t *testing.T, dashboardPath string, mt *metricsTable, data []byte) {
 	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
-		doPanel("", key, value, mt, dashboardPath)
+		doPanel(t, "", key, value, mt, dashboardPath)
 		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
 			pathPrefix := fmt.Sprintf("panels[%d].", key.Int())
-			doPanel(pathPrefix, key2, value2, mt, dashboardPath)
+			doPanel(t, pathPrefix, key2, value2, mt, dashboardPath)
 			return true
 		})
 		return true
@@ -183,10 +184,10 @@ var metricDivideMetric2 = regexp.MustCompile(`(\w+)/.*?(\w+){`)
 // detects arrays
 var metricWithArray = regexp.MustCompile(`metric=~*"(.*?)"`)
 
-func doPanel(pathPrefix string, key gjson.Result, value gjson.Result, mt *metricsTable, dashboardPath string) bool {
+func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Result, mt *metricsTable, dashboardPath string) {
 	kind := value.Get("type").String()
 	if kind == "row" {
-		return true
+		return
 	}
 	path := fmt.Sprintf("%spanels[%d]", pathPrefix, key.Int())
 	defaultUnit := value.Get("fieldConfig.defaults.unit").String()
@@ -196,17 +197,22 @@ func doPanel(pathPrefix string, key gjson.Result, value gjson.Result, mt *metric
 	title := value.Get("title").String()
 	sPath := shortPath(dashboardPath)
 
+	propertiesMap := make(map[string]map[string]string)
 	overrides := make([]override, 0, len(overridesSlice))
 	expressions := make([]expression, 0)
 	valueToName := make(map[string]string) // only used with panels[*].transformations[*].options.renameByName
 
 	for oi, overrideN := range overridesSlice {
 		matcherID := overrideN.Get("matcher.id")
+		// make sure that mapKey is unique for each override element
+		propertiesMapKey := matcherID.String() + strconv.Itoa(oi)
+		propertiesMap[propertiesMapKey] = make(map[string]string)
 		matcherOptions := overrideN.Get("matcher.options")
 		propertiesN := overrideN.Get("properties").Array()
 		for pi, propN := range propertiesN {
 			propID := propN.Get("id").String()
 			propVal := propN.Get("value").String()
+			propertiesMap[propertiesMapKey][propID] = propVal
 			if propID == "unit" {
 				o := override{
 					id:      matcherID.String(),
@@ -216,6 +222,19 @@ func doPanel(pathPrefix string, key gjson.Result, value gjson.Result, mt *metric
 						path, key.Int(), oi, pi),
 				}
 				overrides = append(overrides, o)
+			}
+		}
+	}
+
+	// In case of gradient-gauge and percent(0.0-1.0), we must override min and max value
+	for _, properties := range propertiesMap {
+		displayMode := properties["custom.displayMode"]
+		if properties["unit"] == "percentunit" && (displayMode == "gradient-gauge" || displayMode == "lcd-gauge" || displayMode == "basic") {
+			if maxVal, exist := properties["max"]; !exist || maxVal != "1" {
+				t.Errorf("dashboard=%s, title=%s should have max value 1", sPath, title)
+			}
+			if minVal, exist := properties["min"]; !exist || minVal != "0" {
+				t.Errorf("dashboard=%s, title=%s should have min value 0", sPath, title)
 			}
 		}
 	}
@@ -279,7 +298,6 @@ func doPanel(pathPrefix string, key gjson.Result, value gjson.Result, mt *metric
 		unit := unitForExpr(e, overrides, defaultUnit, valueToName, numExpressions)
 		mt.addMetric(e.metric, unit, path, sPath, title)
 	}
-	return true
 }
 
 func unitForExpr(e expression, overrides []override, defaultUnit string,
@@ -378,7 +396,7 @@ func checkUnusedVariables(t *testing.T, path string, data []byte) {
 varLoop:
 	for _, variable := range vars {
 		for _, expr := range expressions {
-			if strings.Contains(expr, variable) {
+			if strings.Contains(expr.metric, variable) {
 				continue varLoop
 			}
 		}
@@ -392,25 +410,25 @@ varLoop:
 	}
 }
 
-func allExpressions(data []byte) []string {
-	expressions := make([]string, 0)
+func allExpressions(data []byte) []expression {
+	exprs := make([]expression, 0)
 	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
-		doExpr("", key, value, func(path string, expr string) {
-			expressions = append(expressions, expr)
+		doExpr("", key, value, func(expr expression) {
+			exprs = append(exprs, expr)
 		})
 		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
 			pathPrefix := fmt.Sprintf("panels[%d].", key.Int())
-			doExpr(pathPrefix, key2, value2, func(path string, expr string) {
-				expressions = append(expressions, expr)
+			doExpr(pathPrefix, key2, value2, func(expr expression) {
+				exprs = append(exprs, expr)
 			})
 			return true
 		})
 		return true
 	})
-	return expressions
+	return exprs
 }
 
-func doExpr(pathPrefix string, key gjson.Result, value gjson.Result, exprFunc func(path string, expr string)) {
+func doExpr(pathPrefix string, key gjson.Result, value gjson.Result, exprFunc func(exp expression)) {
 	kind := value.Get("type").String()
 	if kind == "row" {
 		return
@@ -420,7 +438,11 @@ func doExpr(pathPrefix string, key gjson.Result, value gjson.Result, exprFunc fu
 	for i, targetN := range targetsSlice {
 		expr := targetN.Get("expr").String()
 		pathWithTarget := path + ".targets[" + strconv.Itoa(i) + "]"
-		exprFunc(pathWithTarget, expr)
+		exprFunc(expression{
+			refID:  pathWithTarget,
+			metric: expr,
+			kind:   kind,
+		})
 	}
 }
 
@@ -543,6 +565,7 @@ func TestOnlyHighlightsExpanded(t *testing.T) {
 	exceptions := map[string]int{
 		"cmode/shelf.json":    2,
 		"cmode/security.json": 3,
+		"cmode/fsa.json":      2,
 	}
 	// count number of expanded sections in dashboard and ensure num expanded = 1
 	visitDashboards(
@@ -716,8 +739,46 @@ func TestRatesAreNot1m(t *testing.T) {
 func checkRate1m(t *testing.T, path string, data []byte) {
 	expressions := allExpressions(data)
 	for _, expr := range expressions {
-		if strings.Contains(expr, "[1m]") {
+		if strings.Contains(expr.metric, "[1m]") {
 			t.Errorf("dashboard=%s, expr should not use rate of [1m] expr=%s", path, expr)
 		}
 	}
+}
+
+func TestTitlesOfTopN(t *testing.T) {
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkTitlesOfTopN(t, shortPath(path), data)
+		},
+	)
+}
+
+func checkTitlesOfTopN(t *testing.T, path string, data []byte) {
+	expressions := allExpressions(data)
+	for _, expr := range expressions {
+		if !strings.Contains(expr.metric, "topk") || expr.kind == "stat" {
+			continue
+		}
+		titleRef := asTitle(expr.refID)
+		title := gjson.GetBytes(data, titleRef)
+
+		// Check that the title contains are variable
+		if !strings.Contains(title.String(), "$") {
+			t.Errorf("dashboard=%s, title=%s at=%s does not include TopResource var", path, title, titleRef)
+		}
+	}
+}
+
+func asTitle(id string) string {
+	// Replace the last segment with title and gjson-ify the path
+	// This `panels[26].panels[0].targets[0]` becomes `panels.26.panels.0.title`
+	splits := strings.Split(id, ".")
+	if len(splits) < 2 {
+		return id
+	}
+	splits[len(splits)-1] = "title"
+	path := strings.Join(splits, ".")
+	replacer := strings.NewReplacer("[", ".", "]", "")
+	return replacer.Replace(path)
 }

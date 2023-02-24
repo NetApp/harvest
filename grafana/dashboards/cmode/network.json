@@ -639,6 +639,14 @@
                         }
                       ]
                     }
+                  },
+                  {
+                    "id": "max",
+                    "value": 1
+                  },
+                  {
+                    "id": "min",
+                    "value": 0
                   }
                 ]
               },
@@ -700,18 +708,6 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "status"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 153
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
                   "options": "nic"
                 },
                 "properties": [
@@ -748,18 +744,6 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "used %"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 228
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
                   "options": "Value #D"
                 },
                 "properties": [
@@ -786,30 +770,6 @@
                   {
                     "id": "custom.displayMode",
                     "value": "gradient-gauge"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "send"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 360
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "receive"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 398
                   }
                 ]
               }
@@ -1025,7 +985,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Send Throughput",
+          "title": "Top $TopResources NICs by Send Throughput",
           "type": "timeseries"
         },
         {
@@ -1117,7 +1077,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Receive Throughput",
+          "title": "Top $TopResources NICs by Receive Throughput",
           "type": "timeseries"
         },
         {
@@ -1209,7 +1169,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Port Utilization %",
+          "title": "Top $TopResources NICs by Port Utilization %",
           "type": "timeseries"
         },
         {
@@ -1306,7 +1266,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Send Errors",
+          "title": "Top $TopResources NICs by Send Errors",
           "type": "timeseries"
         },
         {
@@ -1415,7 +1375,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Receive Errors",
+          "title": "Top $TopResources NICs by Receive Errors",
           "type": "timeseries"
         }
       ],
@@ -1530,6 +1490,14 @@
                         }
                       ]
                     }
+                  },
+                  {
+                    "id": "max",
+                    "value": 1
+                  },
+                  {
+                    "id": "min",
+                    "value": 0
                   }
                 ]
               },
@@ -1757,7 +1725,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Send Throughput",
+          "title": "Top $TopResources FCPs by Send Throughput",
           "type": "timeseries"
         },
         {
@@ -1849,7 +1817,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Receive Throughput",
+          "title": "Top $TopResources FCPs by Receive Throughput",
           "type": "timeseries"
         },
         {
@@ -1942,7 +1910,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Send Latency",
+          "title": "Top $TopResources FCPs by Send Latency",
           "type": "timeseries"
         },
         {
@@ -2035,7 +2003,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Receive Latency",
+          "title": "Top $TopResources FCPs by Receive Latency",
           "type": "timeseries"
         },
         {
@@ -2155,7 +2123,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Transmission interrupts",
+          "title": "Top $TopResources FCPs by Transmission interrupts",
           "type": "timeseries"
         },
         {
@@ -2281,7 +2249,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Transmission errors",
+          "title": "Top $TopResources FCPs by Transmission errors",
           "type": "timeseries"
         },
         {
@@ -2373,7 +2341,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Link Down",
+          "title": "Top $TopResources FCPs by Link Down",
           "type": "timeseries"
         },
         {
@@ -2465,7 +2433,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Link Failure",
+          "title": "Top $TopResources FCPs by Link Failure",
           "type": "timeseries"
         }
       ],
@@ -2532,54 +2500,6 @@
                   {
                     "id": "custom.width",
                     "value": 169
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Value #C"
-                },
-                "properties": [
-                  {
-                    "id": "unit",
-                    "value": "percentunit"
-                  },
-                  {
-                    "id": "custom.displayMode",
-                    "value": "gradient-gauge"
-                  },
-                  {
-                    "id": "displayName",
-                    "value": "used %"
-                  },
-                  {
-                    "id": "noValue",
-                    "value": "n/a"
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "rgb(80, 220, 20)",
-                          "value": null
-                        },
-                        {
-                          "color": "light-yellow",
-                          "value": 50
-                        },
-                        {
-                          "color": "semi-dark-orange",
-                          "value": 75
-                        },
-                        {
-                          "color": "semi-dark-red",
-                          "value": 90
-                        }
-                      ]
-                    }
                   }
                 ]
               },
@@ -2693,7 +2613,6 @@
                     "node",
                     "port",
                     "speed",
-                    "Value #C",
                     "Value #A",
                     "Value #B"
                   ]
@@ -2797,7 +2716,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Send Throughput",
+          "title": "Top $TopResources FCP_NVMFs by Send Throughput",
           "type": "timeseries"
         },
         {
@@ -2889,7 +2808,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Receive Throughput",
+          "title": "Top $TopResources FCP_NVMFs by Receive Throughput",
           "type": "timeseries"
         },
         {
@@ -2982,7 +2901,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Send Latency",
+          "title": "Top $TopResources FCP_NVMFs by Send Latency",
           "type": "timeseries"
         },
         {
@@ -3075,7 +2994,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Receive Latency",
+          "title": "Top $TopResources FCP_NVMFs by Receive Latency",
           "type": "timeseries"
         }
       ],

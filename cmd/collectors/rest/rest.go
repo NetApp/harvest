@@ -302,11 +302,8 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 	count = r.HandleResults(records, r.Prop, false)
 
 	// process endpoints
-	eCount, err := r.processEndPoints()
+	eCount := r.processEndPoints()
 	count += eCount
-	if err != nil {
-		r.Logger.Error().Err(err).Msg("Error while processing end points")
-	}
 	parseD = time.Since(startTime)
 
 	numRecords := len(r.Matrix[r.Object].GetInstances())
@@ -320,7 +317,7 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 	return r.Matrix, nil
 }
 
-func (r *Rest) processEndPoints() (uint64, error) {
+func (r *Rest) processEndPoints() uint64 {
 	var (
 		err   error
 		count uint64
@@ -353,7 +350,7 @@ func (r *Rest) processEndPoints() (uint64, error) {
 		count = r.HandleResults(records, endpoint.prop, true)
 	}
 
-	return count, nil
+	return count
 }
 
 // returns private if api endpoint has private keyword in it else public

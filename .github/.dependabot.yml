@@ -1,0 +1,18 @@
+version: 2
+updates:
+  - package-ecosystem: "gomod"
+    open-pull-requests-limit: 10
+    directory: "/"
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "chore"
+
+
+  - package-ecosystem: "gomod"
+    open-pull-requests-limit: 10
+    directory: "/integration"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "chore"

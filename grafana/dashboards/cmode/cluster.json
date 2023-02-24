@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1671103687756,
+  "iteration": 1676473456527,
   "links": [
     {
       "asDropdown": true,
@@ -132,24 +132,12 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Node"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 137
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "Avg"
             },
             "properties": [
               {
                 "id": "custom.width",
-                "value": 159
+                "value": null
               }
             ]
           }
@@ -157,11 +145,11 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 4,
+        "w": 8,
         "x": 0,
         "y": 1
       },
-      "id": 228,
+      "id": 238,
       "options": {
         "footer": {
           "fields": "",
@@ -186,7 +174,7 @@
           "refId": "A"
         }
       ],
-      "title": "Read Latency",
+      "title": "Top $TopResources Nodes by Read Latency",
       "transformations": [
         {
           "id": "organize",
@@ -247,7 +235,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 145
+                "value": null
               }
             ]
           }
@@ -255,8 +243,8 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 4,
-        "x": 4,
+        "w": 8,
+        "x": 8,
         "y": 1
       },
       "id": 233,
@@ -284,7 +272,7 @@
           "refId": "A"
         }
       ],
-      "title": "Write Latency",
+      "title": "Top $TopResources Nodes by Write Latency",
       "transformations": [
         {
           "id": "organize",
@@ -345,7 +333,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 149
+                "value": null
               }
             ]
           }
@@ -353,8 +341,8 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 4,
-        "x": 8,
+        "w": 8,
+        "x": 16,
         "y": 1
       },
       "id": 232,
@@ -382,7 +370,7 @@
           "refId": "A"
         }
       ],
-      "title": "Throughput",
+      "title": "Top $TopResources Nodes by Throughput",
       "transformations": [
         {
           "id": "organize",
@@ -443,7 +431,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 141
+                "value": null
               }
             ]
           }
@@ -451,9 +439,9 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 4,
-        "x": 12,
-        "y": 1
+        "w": 8,
+        "x": 0,
+        "y": 7
       },
       "id": 230,
       "options": {
@@ -480,7 +468,7 @@
           "refId": "A"
         }
       ],
-      "title": "IOPs",
+      "title": "Top $TopResources Nodes by IOPs",
       "transformations": [
         {
           "id": "organize",
@@ -541,7 +529,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 141
+                "value": null
               }
             ]
           }
@@ -549,9 +537,9 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 4,
-        "x": 16,
-        "y": 1
+        "w": 8,
+        "x": 8,
+        "y": 7
       },
       "id": 236,
       "options": {
@@ -578,7 +566,7 @@
           "refId": "A"
         }
       ],
-      "title": "CPU Utilization",
+      "title": "Top $TopResources Nodes by CPU Utilization",
       "transformations": [
         {
           "id": "organize",
@@ -639,7 +627,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 141
+                "value": null
               }
             ]
           }
@@ -647,9 +635,9 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 4,
-        "x": 20,
-        "y": 1
+        "w": 8,
+        "x": 16,
+        "y": 7
       },
       "id": 237,
       "options": {
@@ -676,7 +664,7 @@
           "refId": "A"
         }
       ],
-      "title": "Disk Utilization",
+      "title": "Top $TopResources Nodes by Disk Utilization",
       "transformations": [
         {
           "id": "organize",
@@ -762,7 +750,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 7
+        "y": 13
       },
       "id": 234,
       "options": {
@@ -791,7 +779,7 @@
           "refId": "A"
         }
       ],
-      "title": "Latency",
+      "title": "Top $TopResources Nodes by Latency",
       "type": "timeseries"
     },
     {
@@ -853,7 +841,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 7
+        "y": 13
       },
       "id": 231,
       "options": {
@@ -882,7 +870,7 @@
           "refId": "A"
         }
       ],
-      "title": "Throughput",
+      "title": "Top $TopResources Nodes by Throughput",
       "type": "timeseries"
     },
     {
@@ -944,7 +932,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 7
+        "y": 13
       },
       "id": 235,
       "options": {
@@ -973,7 +961,7 @@
           "refId": "A"
         }
       ],
-      "title": "IOPs",
+      "title": "Top $TopResources Nodes by IOPs",
       "type": "timeseries"
     },
     {
@@ -983,7 +971,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 15
+        "y": 21
       },
       "id": 79,
       "panels": [
@@ -1055,7 +1043,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 292
+                    "value": null
                   }
                 ]
               },
@@ -1067,7 +1055,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 240
+                    "value": null
                   }
                 ]
               },
@@ -1079,7 +1067,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 224
+                    "value": null
                   }
                 ]
               },
@@ -1091,7 +1079,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 384
+                    "value": null
                   }
                 ]
               },
@@ -1103,7 +1091,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 205
+                    "value": null
                   }
                 ]
               }
@@ -1551,7 +1539,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 384
+                    "value": null
                   }
                 ]
               },
@@ -1595,7 +1583,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 187
+                    "value": null
                   }
                 ]
               },
@@ -1607,7 +1595,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 301
+                    "value": null
                   }
                 ]
               },
@@ -1619,7 +1607,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 321
+                    "value": null
                   }
                 ]
               },
@@ -1631,7 +1619,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 254
+                    "value": null
                   }
                 ]
               },
@@ -1643,7 +1631,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 225
+                    "value": null
                   }
                 ]
               }
@@ -1976,938 +1964,12 @@
     },
     {
       "collapsed": true,
-      "datasource": null,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 39
-      },
-      "id": 198,
-      "panels": [
-        {
-          "cacheTimeout": null,
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [
-                {
-                  "options": {
-                    "match": "null",
-                    "result": {
-                      "color": "dark-yellow",
-                      "text": "0"
-                    }
-                  },
-                  "type": "special"
-                }
-              ],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "blue",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "watt"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 5,
-            "w": 8,
-            "x": 0,
-            "y": 40
-          },
-          "id": 204,
-          "links": [],
-          "options": {
-            "colorMode": "value",
-            "graphMode": "none",
-            "justifyMode": "center",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "text": {},
-            "textMode": "auto"
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "(sum(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Total Power (Node)",
-          "type": "stat"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "decimals": 1,
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "transparent",
-                    "value": null
-                  },
-                  {
-                    "color": "rgb(84, 184, 45)",
-                    "value": 5
-                  },
-                  {
-                    "color": "semi-dark-yellow",
-                    "value": 45
-                  },
-                  {
-                    "color": "semi-dark-orange",
-                    "value": 65
-                  },
-                  {
-                    "color": "dark-red",
-                    "value": 75
-                  }
-                ]
-              },
-              "unit": "celsius"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 5,
-            "w": 8,
-            "x": 8,
-            "y": 40
-          },
-          "id": 206,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "text": {},
-            "textMode": "auto"
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "max(environment_sensor_max_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
-              "interval": "",
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ],
-          "title": "Max Node temp",
-          "type": "stat"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [],
-              "noValue": "0",
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "blue",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "rotrpm"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 5,
-            "w": 8,
-            "x": 16,
-            "y": 40
-          },
-          "id": 208,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "text": {},
-            "textMode": "auto"
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "max(environment_sensor_max_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
-              "interval": "",
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ],
-          "title": "Max Node Fan Speed",
-          "type": "stat"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "custom": {
-                "align": "left",
-                "displayMode": "auto",
-                "filterable": true
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "semi-dark-yellow",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "none"
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Avg Ambient Temp (C)"
-                },
-                "properties": [
-                  {
-                    "id": "custom.displayMode",
-                    "value": "color-background"
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "transparent",
-                          "value": null
-                        },
-                        {
-                          "color": "green",
-                          "value": 5
-                        },
-                        {
-                          "color": "yellow",
-                          "value": 45
-                        },
-                        {
-                          "color": "orange",
-                          "value": 65
-                        },
-                        {
-                          "color": "red",
-                          "value": 75
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "id": "custom.align",
-                    "value": "right"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "celsius"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Max Temp (C)"
-                },
-                "properties": [
-                  {
-                    "id": "custom.displayMode",
-                    "value": "color-background"
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "transparent",
-                          "value": null
-                        },
-                        {
-                          "color": "green",
-                          "value": 5
-                        },
-                        {
-                          "color": "#EAB839",
-                          "value": 45
-                        },
-                        {
-                          "color": "orange",
-                          "value": 65
-                        },
-                        {
-                          "color": "red",
-                          "value": 85
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "id": "custom.align",
-                    "value": "right"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "celsius"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Avg Temp (C)"
-                },
-                "properties": [
-                  {
-                    "id": "custom.displayMode",
-                    "value": "color-background"
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "transparent",
-                          "value": null
-                        },
-                        {
-                          "color": "green",
-                          "value": 5
-                        },
-                        {
-                          "color": "#EAB839",
-                          "value": 45
-                        },
-                        {
-                          "color": "orange",
-                          "value": 65
-                        },
-                        {
-                          "color": "red",
-                          "value": 85
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "id": "custom.align",
-                    "value": "right"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "celsius"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Max Fan Speed (rpm)"
-                },
-                "properties": [
-                  {
-                    "id": "custom.align",
-                    "value": "right"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "rotrpm"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Avg Fan Speed (rpm)"
-                },
-                "properties": [
-                  {
-                    "id": "custom.align",
-                    "value": "right"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "rotrpm"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Min Fan Speed (rpm)"
-                },
-                "properties": [
-                  {
-                    "id": "custom.align",
-                    "value": "right"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "rotrpm"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Power"
-                },
-                "properties": [
-                  {
-                    "id": "custom.align",
-                    "value": "right"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "watt"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Min Ambient Temp (C)"
-                },
-                "properties": [
-                  {
-                    "id": "custom.displayMode",
-                    "value": "color-background"
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "transparent",
-                          "value": null
-                        },
-                        {
-                          "color": "green",
-                          "value": 5
-                        },
-                        {
-                          "color": "yellow",
-                          "value": 45
-                        },
-                        {
-                          "color": "orange",
-                          "value": 65
-                        },
-                        {
-                          "color": "red",
-                          "value": 75
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "id": "custom.align",
-                    "value": "right"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "celsius"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Min Temp (C)"
-                },
-                "properties": [
-                  {
-                    "id": "custom.displayMode",
-                    "value": "color-background"
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "transparent",
-                          "value": null
-                        },
-                        {
-                          "color": "green",
-                          "value": 5
-                        },
-                        {
-                          "color": "#eab839",
-                          "value": 45
-                        },
-                        {
-                          "color": "orange",
-                          "value": 65
-                        },
-                        {
-                          "color": "red",
-                          "value": 85
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "id": "custom.align",
-                    "value": "right"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "celsius"
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 24,
-            "x": 0,
-            "y": 45
-          },
-          "id": 210,
-          "interval": "1m",
-          "maxDataPoints": 2,
-          "options": {
-            "showHeader": true,
-            "sortBy": []
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": true,
-              "expr": "node_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
-              "format": "table",
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "A"
-            },
-            {
-              "exemplar": true,
-              "expr": "environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "D"
-            },
-            {
-              "exemplar": true,
-              "expr": "environment_sensor_average_ambient_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "E"
-            },
-            {
-              "exemplar": false,
-              "expr": "environment_sensor_min_ambient_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "B"
-            },
-            {
-              "exemplar": true,
-              "expr": "environment_sensor_max_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "F"
-            },
-            {
-              "exemplar": true,
-              "expr": "environment_sensor_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "G"
-            },
-            {
-              "exemplar": false,
-              "expr": "environment_sensor_min_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "C"
-            },
-            {
-              "exemplar": true,
-              "expr": "environment_sensor_max_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "H"
-            },
-            {
-              "exemplar": true,
-              "expr": "environment_sensor_average_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "I"
-            },
-            {
-              "exemplar": true,
-              "expr": "environment_sensor_min_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "J"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Storage Nodes",
-          "transformations": [
-            {
-              "id": "filterFieldsByName",
-              "options": {
-                "include": {
-                  "names": [
-                    "datacenter",
-                    "model",
-                    "Value #A",
-                    "Value #D",
-                    "Value #E",
-                    "Value #F",
-                    "Value #G",
-                    "Value #H",
-                    "Value #I",
-                    "Value #J",
-                    "node",
-                    "cluster",
-                    "Value #B",
-                    "Value #C"
-                  ]
-                }
-              }
-            },
-            {
-              "id": "merge",
-              "options": {}
-            },
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {
-                  "Value #A": true,
-                  "shelf_id": true,
-                  "state": true
-                },
-                "indexByName": {
-                  "Value #A": 13,
-                  "Value #B": 6,
-                  "Value #C": 9,
-                  "Value #D": 4,
-                  "Value #E": 5,
-                  "Value #F": 7,
-                  "Value #G": 8,
-                  "Value #H": 10,
-                  "Value #I": 11,
-                  "Value #J": 12,
-                  "cluster": 1,
-                  "datacenter": 0,
-                  "model": 3,
-                  "node": 2
-                },
-                "renameByName": {
-                  "Value #A": "",
-                  "Value #B": "Min Ambient Temp (C)",
-                  "Value #C": "Min Temp (C)",
-                  "Value #D": "Power",
-                  "Value #E": "Avg Ambient Temp (C)",
-                  "Value #F": "Max Temp (C)",
-                  "Value #G": "Avg Temp (C)",
-                  "Value #H": "Max Fan Speed (rpm)",
-                  "Value #I": "Avg Fan Speed (rpm)",
-                  "Value #J": "Min Fan Speed (rpm)",
-                  "module_type": "",
-                  "op_status": "",
-                  "shelf_id": ""
-                }
-              }
-            }
-          ],
-          "type": "table"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "watt"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 0,
-            "y": 52
-          },
-          "id": 200,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": true,
-              "expr": "topk($TopResources,environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$TopEnvSensorPower\"})",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "{{node}}",
-              "refId": "B"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top Nodes by Power Consumed",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "celsius"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 12,
-            "y": 52
-          },
-          "id": 202,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": true,
-              "expr": "topk($TopResources,environment_sensor_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$TopEnvSensorAvgTemp\"})",
-              "interval": "",
-              "legendFormat": "{{node}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top Nodes by Average Temperature",
-          "type": "timeseries"
-        }
-      ],
-      "title": "Power",
-      "type": "row"
-    },
-    {
-      "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 22
       },
       "id": 97,
       "panels": [
@@ -3467,7 +2529,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 41
+        "y": 23
       },
       "id": 184,
       "panels": [
@@ -4141,7 +3203,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 42
+        "y": 24
       },
       "id": 214,
       "panels": [
@@ -4497,8 +3559,8 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "2",
-          "value": "2"
+          "text": "5",
+          "value": "5"
         },
         "description": null,
         "error": null,
@@ -4514,7 +3576,7 @@
             "value": "1"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "2",
             "value": "2"
           },
@@ -4529,7 +3591,7 @@
             "value": "4"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "5",
             "value": "5"
           },
@@ -4657,52 +3719,6 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": "",
-        "multi": true,
-        "name": "TopEnvSensorPower",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*node=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(environment_sensor_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": "",
-        "multi": true,
-        "name": "TopEnvSensorAvgTemp",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(environment_sensor_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*node=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[${__range}]))))",
         "description": null,
         "error": null,
@@ -4790,5 +3806,5 @@
   "timezone": "",
   "title": "ONTAP: Cluster",
   "uid": "",
-  "version": 14
+  "version": 16
 }

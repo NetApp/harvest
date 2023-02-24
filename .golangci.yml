@@ -22,6 +22,7 @@ linters:
     - thelper
     - typecheck
     - unconvert
+    - unparam
     - unused
 
 issues:
