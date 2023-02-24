@@ -566,6 +566,7 @@ func TestOnlyHighlightsExpanded(t *testing.T) {
 		"cmode/shelf.json":    2,
 		"cmode/security.json": 3,
 		"cmode/fsa.json":      2,
+		"cmode/smb2.json":     2,
 	}
 	// count number of expanded sections in dashboard and ensure num expanded = 1
 	visitDashboards(
