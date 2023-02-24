@@ -172,8 +172,11 @@ func (c *cli) printChangelog(highlightBytes []byte) {
 		if !ok {
 			log.Fatal().Str("kind", kind).Msg("missing kind")
 		}
-		fmt.Printf("\n### %s\n", ct.header)
 		prs := c.prsByKind[kind]
+		if len(prs) == 0 {
+			continue
+		}
+		fmt.Printf("\n### %s\n", ct.header)
 		for _, pr := range prs {
 			title := caser.String(pr.title)
 			title = strings.TrimSpace(title)
