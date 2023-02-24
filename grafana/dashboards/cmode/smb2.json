@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1677253489837,
+  "iteration": 1677255107891,
   "links": [
     {
       "asDropdown": true,
@@ -202,7 +202,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, smb2_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2ReadOPS\"})",
+          "expr": "topk($TopResources, smb2_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2ReadOPS\"})",
           "interval": "",
           "legendFormat": "read_ops - {{node}} - {{type}} - {{svm}}",
           "refId": "A"
@@ -288,7 +288,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "smb2_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
+          "expr": "topk($TopResources, smb2_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2WriteOPS\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "write_ops - {{node}} - {{type}} - {{svm}}",
@@ -375,7 +375,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "smb2_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2ReadLatency\"}",
+          "expr": "smb2_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2ReadLatency\"}",
           "interval": "",
           "legendFormat": "read_latency - {{node}} - {{type}} - {{svm}}",
           "refId": "A"
@@ -461,7 +461,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "smb2_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2WriteLatency\"}",
+          "expr": "smb2_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2WriteLatency\"}",
           "hide": false,
           "interval": "",
           "legendFormat": "write_latency - {{node}} - {{type}} - {{svm}}",
@@ -538,7 +538,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 5
+            "y": 23
           },
           "id": 77,
           "options": {
@@ -559,7 +559,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, smb2_negotiate_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2NegotiateOps\"})",
+              "expr": "topk($TopResources, smb2_negotiate_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2NegotiateOps\"})",
               "interval": "",
               "legendFormat": "negotiate_ops - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
@@ -624,7 +624,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 5
+            "y": 23
           },
           "id": 102,
           "options": {
@@ -645,7 +645,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, smb2_session_setup_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2SessionSetupOps\"})",
+              "expr": "topk($TopResources, smb2_session_setup_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2SessionSetupOps\"})",
               "interval": "",
               "legendFormat": "session_setup_ops - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
@@ -710,7 +710,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 5
+            "y": 23
           },
           "id": 103,
           "options": {
@@ -731,7 +731,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, smb2_tree_connect_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2TreeConnectOps\"})",
+              "expr": "topk($TopResources, smb2_tree_connect_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2TreeConnectOps\"})",
               "interval": "",
               "legendFormat": "tree_connect_ops - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
@@ -796,7 +796,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 14
+            "y": 32
           },
           "id": 104,
           "options": {
@@ -817,7 +817,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, smb2_create_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2CreateOps\"})",
+              "expr": "topk($TopResources, smb2_create_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2CreateOps\"})",
               "interval": "",
               "legendFormat": "tree_create_ops - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
@@ -882,7 +882,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 14
+            "y": 32
           },
           "id": 105,
           "options": {
@@ -903,7 +903,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, smb2_close_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2CloseOps\"})",
+              "expr": "topk($TopResources, smb2_close_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2CloseOps\"})",
               "interval": "",
               "legendFormat": "close_ops - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
@@ -968,7 +968,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 14
+            "y": 32
           },
           "id": 106,
           "options": {
@@ -989,7 +989,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, smb2_lock_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2LockOps\"})",
+              "expr": "topk($TopResources, smb2_lock_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2LockOps\"})",
               "interval": "",
               "legendFormat": "lock_ops - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
@@ -1054,7 +1054,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 23
+            "y": 41
           },
           "id": 107,
           "options": {
@@ -1075,7 +1075,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, smb2_query_directory_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2QueryDirectoryOps\"})",
+              "expr": "topk($TopResources, smb2_query_directory_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2QueryDirectoryOps\"})",
               "interval": "",
               "legendFormat": "query_directory_ops - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
@@ -1140,7 +1140,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 23
+            "y": 41
           },
           "id": 108,
           "options": {
@@ -1161,7 +1161,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, smb2_query_info_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2QueryInfoOps\"})",
+              "expr": "topk($TopResources, smb2_query_info_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2QueryInfoOps\"})",
               "interval": "",
               "legendFormat": "query_info_ops - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
@@ -1226,7 +1226,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 23
+            "y": 41
           },
           "id": 109,
           "options": {
@@ -1247,7 +1247,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, smb2_set_info_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2SetInfoOps\"})",
+              "expr": "topk($TopResources, smb2_set_info_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2SetInfoOps\"})",
               "interval": "",
               "legendFormat": "set_info_ops - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
@@ -1312,7 +1312,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 32
+            "y": 50
           },
           "id": 110,
           "options": {
@@ -1333,7 +1333,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, smb2_oplock_break_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2OplockBreakOps\"})",
+              "expr": "topk($TopResources, smb2_oplock_break_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2OplockBreakOps\"})",
               "interval": "",
               "legendFormat": "oplock_break_ops - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
@@ -1413,7 +1413,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 6
+            "y": 60
           },
           "id": 99,
           "options": {
@@ -1434,7 +1434,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, smb2_negotiate_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2NegotiateLatency\"})",
+              "expr": "topk($TopResources, smb2_negotiate_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2NegotiateLatency\"})",
               "interval": "",
               "legendFormat": "negotiate_latency - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
@@ -1499,7 +1499,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 6
+            "y": 60
           },
           "id": 111,
           "options": {
@@ -1520,7 +1520,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, smb2_session_setup_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2SessionSetupLatency\"})",
+              "expr": "topk($TopResources, smb2_session_setup_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2SessionSetupLatency\"})",
               "interval": "",
               "legendFormat": "session_setup_latency - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
@@ -1585,7 +1585,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 6
+            "y": 60
           },
           "id": 112,
           "options": {
@@ -1606,7 +1606,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, smb2_tree_connect_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2TreeConnectLatency\"})",
+              "expr": "topk($TopResources, smb2_tree_connect_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2TreeConnectLatency\"})",
               "interval": "",
               "legendFormat": "tree_connect_latency - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
@@ -1671,7 +1671,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 15
+            "y": 69
           },
           "id": 113,
           "options": {
@@ -1692,7 +1692,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, smb2_create_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2CreateLatency\"})",
+              "expr": "topk($TopResources, smb2_create_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2CreateLatency\"})",
               "interval": "",
               "legendFormat": "create_latency - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
@@ -1757,7 +1757,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 15
+            "y": 69
           },
           "id": 114,
           "options": {
@@ -1778,7 +1778,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, smb2_close_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2CloseLatency\"})",
+              "expr": "topk($TopResources, smb2_close_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2CloseLatency\"})",
               "interval": "",
               "legendFormat": "close_latency - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
@@ -1843,7 +1843,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 15
+            "y": 69
           },
           "id": 115,
           "options": {
@@ -1864,7 +1864,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, smb2_lock_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2LockLatency\"})",
+              "expr": "topk($TopResources, smb2_lock_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2LockLatency\"})",
               "interval": "",
               "legendFormat": "lock_latency - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
@@ -1929,7 +1929,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 24
+            "y": 78
           },
           "id": 116,
           "options": {
@@ -1950,7 +1950,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, smb2_query_directory_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2QueryDirectoryLatency\"})",
+              "expr": "topk($TopResources, smb2_query_directory_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2QueryDirectoryLatency\"})",
               "interval": "",
               "legendFormat": "query_directory_latency - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
@@ -2015,7 +2015,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 24
+            "y": 78
           },
           "id": 119,
           "options": {
@@ -2036,7 +2036,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, smb2_query_info_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2QueryInfoLatency\"})",
+              "expr": "topk($TopResources, smb2_query_info_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2QueryInfoLatency\"})",
               "interval": "",
               "legendFormat": "smb2_query_info_latency - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
@@ -2101,7 +2101,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 24
+            "y": 78
           },
           "id": 117,
           "options": {
@@ -2122,7 +2122,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, smb2_set_info_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2SetInfoLatency\"})",
+              "expr": "topk($TopResources, smb2_set_info_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2SetInfoLatency\"})",
               "interval": "",
               "legendFormat": "set_info_latency - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
@@ -2187,7 +2187,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 33
+            "y": 87
           },
           "id": 118,
           "options": {
@@ -2208,7 +2208,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, smb2_oplock_break_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2OplockBreakLatency\"})",
+              "expr": "topk($TopResources, smb2_oplock_break_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2OplockBreakLatency\"})",
               "interval": "",
               "legendFormat": "smb2_oplock_break_latency - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
@@ -2253,7 +2253,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 16
+            "y": 97
           },
           "heatmap": {},
           "hideZeroBuckets": true,
@@ -2268,7 +2268,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "sum(increase(smb2_session_setup_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2SessionSetupLatency\"}[$__interval])) by (le)",
+              "expr": "sum(increase(smb2_session_setup_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2SessionSetupLatency\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
@@ -2322,7 +2322,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 16
+            "y": 97
           },
           "heatmap": {},
           "hideZeroBuckets": true,
@@ -2337,7 +2337,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "sum(increase(smb2_close_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2CloseLatency\"}[$__interval])) by (le)",
+              "expr": "sum(increase(smb2_close_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2CloseLatency\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
@@ -2391,7 +2391,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 24
+            "y": 105
           },
           "heatmap": {},
           "hideZeroBuckets": true,
@@ -2406,7 +2406,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "sum(increase(smb2_query_directory_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2QueryDirectoryLatency\"}[$__interval])) by (le)",
+              "expr": "sum(increase(smb2_query_directory_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2QueryDirectoryLatency\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
@@ -2460,7 +2460,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 24
+            "y": 105
           },
           "heatmap": {},
           "hideZeroBuckets": true,
@@ -2475,7 +2475,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "sum(increase(smb2_set_info_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2SetInfoLatency\"}[$__interval])) by (le)",
+              "expr": "sum(increase(smb2_set_info_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2SetInfoLatency\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
@@ -2529,7 +2529,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 32
+            "y": 113
           },
           "heatmap": {},
           "hideZeroBuckets": true,
@@ -2544,7 +2544,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "sum(increase(smb2_create_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2CreateLatency\"}[$__interval])) by (le)",
+              "expr": "sum(increase(smb2_create_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2CreateLatency\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
@@ -2598,7 +2598,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 32
+            "y": 113
           },
           "heatmap": {},
           "hideZeroBuckets": true,
@@ -2613,7 +2613,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "sum(increase(smb2_lock_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2LockLatency\"}[$__interval])) by (le)",
+              "expr": "sum(increase(smb2_lock_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2LockLatency\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
@@ -2667,7 +2667,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 40
+            "y": 121
           },
           "heatmap": {},
           "hideZeroBuckets": true,
@@ -2682,7 +2682,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "sum(increase(smb2_query_info_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2QueryInfoLatency\"}[$__interval])) by (le)",
+              "expr": "sum(increase(smb2_query_info_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2QueryInfoLatency\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
@@ -2736,7 +2736,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 40
+            "y": 121
           },
           "heatmap": {},
           "hideZeroBuckets": true,
@@ -2751,7 +2751,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "sum(increase(smb2_session_setup_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2SessionSetupLatency\"}[$__interval])) by (le)",
+              "expr": "sum(increase(smb2_session_setup_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2SessionSetupLatency\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
@@ -2825,7 +2825,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(volume_labels{system_type!=\"7mode\"}, datacenter)",
+        "definition": "label_values(svm_labels{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -2835,7 +2835,7 @@
         "name": "Datacenter",
         "options": [],
         "query": {
-          "query": "label_values(volume_labels{system_type!=\"7mode\"}, datacenter)",
+          "query": "label_values(svm_labels{system_type!=\"7mode\"}, datacenter)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2851,7 +2851,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(volume_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
+        "definition": "label_values(svm_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -2861,7 +2861,7 @@
         "name": "Cluster",
         "options": [],
         "query": {
-          "query": "label_values(volume_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
+          "query": "label_values(svm_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2877,7 +2877,33 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(volume_labels{cluster=~\"$Cluster\"}, svm)",
+        "definition": "label_values(node_labels{cluster=~\"$Cluster\"}, node)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Node",
+        "options": [],
+        "query": {
+          "query": "label_values(node_labels{cluster=~\"$Cluster\"}, node)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(svm_labels{cluster=~\"$Cluster\"}, svm)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -2887,7 +2913,7 @@
         "name": "SVM",
         "options": [],
         "query": {
-          "query": "label_values(volume_labels{cluster=~\"$Cluster\"}, svm)",
+          "query": "label_values(svm_labels{cluster=~\"$Cluster\"}, svm)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2994,17 +3020,17 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(smb2_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
         "description": null,
         "error": null,
-        "hide": 2,
+        "hide": 0,
         "includeAll": true,
         "label": null,
         "multi": true,
         "name": "TopSMB2ReadOPS",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(smb2_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3017,7 +3043,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(smb2_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3027,7 +3053,7 @@
         "name": "TopSMB2WriteOPS",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(smb2_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3040,7 +3066,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(smb2_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3050,7 +3076,7 @@
         "name": "TopSMB2ReadLatency",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(smb2_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3063,7 +3089,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(smb2_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3073,7 +3099,7 @@
         "name": "TopSMB2WriteLatency",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(smb2_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3086,7 +3112,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_negotiate_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(smb2_negotiate_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3096,7 +3122,7 @@
         "name": "TopSMB2NegotiateLatency",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_negotiate_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(smb2_negotiate_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3109,7 +3135,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_session_setup_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(smb2_session_setup_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3119,7 +3145,7 @@
         "name": "TopSMB2SessionSetupLatency",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_session_setup_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(smb2_session_setup_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3132,7 +3158,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_tree_connect_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(smb2_tree_connect_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3142,7 +3168,7 @@
         "name": "TopSMB2TreeConnectLatency",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_tree_connect_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(smb2_tree_connect_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3155,7 +3181,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_create_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(smb2_create_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3165,7 +3191,7 @@
         "name": "TopSMB2CreateLatency",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_create_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(smb2_create_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3178,7 +3204,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_close_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(smb2_close_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3188,7 +3214,7 @@
         "name": "TopSMB2CloseLatency",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_close_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(smb2_close_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3201,7 +3227,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_lock_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(smb2_lock_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3211,7 +3237,7 @@
         "name": "TopSMB2LockLatency",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_lock_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(smb2_lock_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3224,7 +3250,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_query_directory_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(smb2_query_directory_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3234,7 +3260,7 @@
         "name": "TopSMB2QueryDirectoryLatency",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_query_directory_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(smb2_query_directory_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3247,7 +3273,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_query_info_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(smb2_query_info_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3257,7 +3283,7 @@
         "name": "TopSMB2QueryInfoLatency",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_query_info_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(smb2_query_info_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3270,7 +3296,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_set_info_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(smb2_set_info_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3280,7 +3306,7 @@
         "name": "TopSMB2SetInfoLatency",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_set_info_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(smb2_set_info_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3293,7 +3319,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_oplock_break_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(smb2_oplock_break_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3303,7 +3329,7 @@
         "name": "TopSMB2OplockBreakLatency",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_oplock_break_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(smb2_oplock_break_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3316,7 +3342,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_negotiate_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(smb2_negotiate_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3326,7 +3352,7 @@
         "name": "TopSMB2NegotiateOps",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_negotiate_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(smb2_negotiate_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3339,7 +3365,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_session_setup_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(smb2_session_setup_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3349,7 +3375,7 @@
         "name": "TopSMB2SessionSetupOps",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_session_setup_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(smb2_session_setup_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3362,7 +3388,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_tree_connect_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(smb2_tree_connect_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3372,7 +3398,7 @@
         "name": "TopSMB2TreeConnectOps",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_tree_connect_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(smb2_tree_connect_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3385,7 +3411,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_create_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(smb2_create_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3395,7 +3421,7 @@
         "name": "TopSMB2CreateOps",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_create_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(smb2_create_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3408,7 +3434,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_close_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(smb2_close_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3418,7 +3444,7 @@
         "name": "TopSMB2CloseOps",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_close_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(smb2_close_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3431,7 +3457,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_lock_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(smb2_lock_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3441,7 +3467,7 @@
         "name": "TopSMB2LockOps",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_lock_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(smb2_lock_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3454,7 +3480,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_query_directory_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(smb2_query_directory_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3464,7 +3490,7 @@
         "name": "TopSMB2QueryDirectoryOps",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_query_directory_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(smb2_query_directory_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3477,7 +3503,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_query_info_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(smb2_query_info_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3487,7 +3513,7 @@
         "name": "TopSMB2QueryInfoOps",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_query_info_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(smb2_query_info_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3500,7 +3526,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_set_info_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(smb2_set_info_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3510,7 +3536,7 @@
         "name": "TopSMB2SetInfoOps",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_set_info_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(smb2_set_info_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3523,7 +3549,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_oplock_break_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(smb2_oplock_break_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3533,7 +3559,7 @@
         "name": "TopSMB2OplockBreakOps",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_oplock_break_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(smb2_oplock_break_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3545,7 +3571,7 @@
     ]
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {
