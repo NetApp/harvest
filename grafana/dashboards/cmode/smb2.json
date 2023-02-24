@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1677255107891,
+  "iteration": 1677255107894,
   "links": [
     {
       "asDropdown": true,
@@ -3023,7 +3023,7 @@
         "definition": "query_result(topk($TopResources, avg_over_time(smb2_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
         "description": null,
         "error": null,
-        "hide": 0,
+        "hide": 2,
         "includeAll": true,
         "label": null,
         "multi": true,
