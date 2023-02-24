@@ -17,9 +17,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
-          go-version: ${{ inputs.go_version }}
-          cache: true
-          check-latest: true
+          go-version-file: 'go.mod'
       - run: go install golang.org/x/vuln/cmd/govulncheck@latest
       - run: govulncheck ./...
   build:
@@ -30,7 +28,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: '1.20.1'
+        go-version-file: 'go.mod'
 
     - name: Build
       run: go build -v ./...
@@ -50,7 +48,7 @@ jobs:
       - name: Install Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.20.1'
+          go-version-file: 'go.mod'
       - name: Install wwhrd
         env:
           GO111MODULE: 'off'
