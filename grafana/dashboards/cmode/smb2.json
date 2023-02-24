@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1677241152363,
+  "iteration": 1677253489837,
   "links": [
     {
       "asDropdown": true,
@@ -204,16 +204,8 @@
           "exemplar": false,
           "expr": "topk($TopResources, smb2_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2ReadOPS\"})",
           "interval": "",
-          "legendFormat": "read_ops - {{cluster}} - {{type}} - {{svm}}",
+          "legendFormat": "read_ops - {{node}} - {{type}} - {{svm}}",
           "refId": "A"
-        },
-        {
-          "exemplar": false,
-          "expr": "topk($TopResources, smb2_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2WriteOPS\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "write_ops - {{cluster}} - {{type}} - {{svm}}",
-          "refId": "B"
         }
       ],
       "timeFrom": null,
@@ -299,7 +291,7 @@
           "expr": "smb2_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
           "hide": false,
           "interval": "",
-          "legendFormat": "write_ops - {{cluster}} - {{type}} - {{svm}}",
+          "legendFormat": "write_ops - {{node}} - {{type}} - {{svm}}",
           "refId": "B"
         }
       ],
@@ -385,7 +377,7 @@
           "exemplar": false,
           "expr": "smb2_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2ReadLatency\"}",
           "interval": "",
-          "legendFormat": "read_latency - {{cluster}} - {{type}} - {{svm}}",
+          "legendFormat": "read_latency - {{node}} - {{type}} - {{svm}}",
           "refId": "A"
         }
       ],
@@ -472,7 +464,7 @@
           "expr": "smb2_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2WriteLatency\"}",
           "hide": false,
           "interval": "",
-          "legendFormat": "write_latency - {{cluster}} - {{type}} - {{svm}}",
+          "legendFormat": "write_latency - {{node}} - {{type}} - {{svm}}",
           "refId": "B"
         }
       ],
@@ -569,7 +561,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, smb2_negotiate_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2NegotiateOps\"})",
               "interval": "",
-              "legendFormat": "negotiate_ops - {{cluster}} - {{type}} - {{svm}}",
+              "legendFormat": "negotiate_ops - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
             }
           ],
@@ -655,7 +647,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, smb2_session_setup_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2SessionSetupOps\"})",
               "interval": "",
-              "legendFormat": "session_setup_ops - {{cluster}} - {{type}} - {{svm}}",
+              "legendFormat": "session_setup_ops - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
             }
           ],
@@ -741,7 +733,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, smb2_tree_connect_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2TreeConnectOps\"})",
               "interval": "",
-              "legendFormat": "tree_connect_ops - {{cluster}} - {{type}} - {{svm}}",
+              "legendFormat": "tree_connect_ops - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
             }
           ],
@@ -827,7 +819,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, smb2_create_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2CreateOps\"})",
               "interval": "",
-              "legendFormat": "tree_create_ops - {{cluster}} - {{type}} - {{svm}}",
+              "legendFormat": "tree_create_ops - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
             }
           ],
@@ -913,7 +905,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, smb2_close_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2CloseOps\"})",
               "interval": "",
-              "legendFormat": "close_ops - {{cluster}} - {{type}} - {{svm}}",
+              "legendFormat": "close_ops - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
             }
           ],
@@ -999,7 +991,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, smb2_lock_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2LockOps\"})",
               "interval": "",
-              "legendFormat": "lock_ops - {{cluster}} - {{type}} - {{svm}}",
+              "legendFormat": "lock_ops - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
             }
           ],
@@ -1085,7 +1077,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, smb2_query_directory_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2QueryDirectoryOps\"})",
               "interval": "",
-              "legendFormat": "query_directory_ops - {{cluster}} - {{type}} - {{svm}}",
+              "legendFormat": "query_directory_ops - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
             }
           ],
@@ -1171,7 +1163,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, smb2_query_info_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2QueryInfoOps\"})",
               "interval": "",
-              "legendFormat": "query_info_ops - {{cluster}} - {{type}} - {{svm}}",
+              "legendFormat": "query_info_ops - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
             }
           ],
@@ -1257,7 +1249,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, smb2_set_info_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2SetInfoOps\"})",
               "interval": "",
-              "legendFormat": "set_info_ops - {{cluster}} - {{type}} - {{svm}}",
+              "legendFormat": "set_info_ops - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
             }
           ],
@@ -1343,7 +1335,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, smb2_oplock_break_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2OplockBreakOps\"})",
               "interval": "",
-              "legendFormat": "oplock_break_ops - {{cluster}} - {{type}} - {{svm}}",
+              "legendFormat": "oplock_break_ops - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
             }
           ],
@@ -1444,7 +1436,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, smb2_negotiate_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2NegotiateLatency\"})",
               "interval": "",
-              "legendFormat": "negotiate_latency - {{cluster}} - {{type}} - {{svm}}",
+              "legendFormat": "negotiate_latency - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
             }
           ],
@@ -1530,7 +1522,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, smb2_session_setup_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2SessionSetupLatency\"})",
               "interval": "",
-              "legendFormat": "session_setup_latency - {{cluster}} - {{type}} - {{svm}}",
+              "legendFormat": "session_setup_latency - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
             }
           ],
@@ -1616,7 +1608,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, smb2_tree_connect_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2TreeConnectLatency\"})",
               "interval": "",
-              "legendFormat": "tree_connect_latency - {{cluster}} - {{type}} - {{svm}}",
+              "legendFormat": "tree_connect_latency - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
             }
           ],
@@ -1702,7 +1694,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, smb2_create_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2CreateLatency\"})",
               "interval": "",
-              "legendFormat": "create_latency - {{cluster}} - {{type}} - {{svm}}",
+              "legendFormat": "create_latency - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
             }
           ],
@@ -1788,7 +1780,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, smb2_close_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2CloseLatency\"})",
               "interval": "",
-              "legendFormat": "close_latency - {{cluster}} - {{type}} - {{svm}}",
+              "legendFormat": "close_latency - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
             }
           ],
@@ -1874,7 +1866,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, smb2_lock_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2LockLatency\"})",
               "interval": "",
-              "legendFormat": "lock_latency - {{cluster}} - {{type}} - {{svm}}",
+              "legendFormat": "lock_latency - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
             }
           ],
@@ -1960,7 +1952,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, smb2_query_directory_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2QueryDirectoryLatency\"})",
               "interval": "",
-              "legendFormat": "query_directory_latency - {{cluster}} - {{type}} - {{svm}}",
+              "legendFormat": "query_directory_latency - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
             }
           ],
@@ -2046,7 +2038,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, smb2_query_info_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2QueryInfoLatency\"})",
               "interval": "",
-              "legendFormat": "smb2_query_info_latency - {{cluster}} - {{type}} - {{svm}}",
+              "legendFormat": "smb2_query_info_latency - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
             }
           ],
@@ -2132,7 +2124,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, smb2_set_info_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2SetInfoLatency\"})",
               "interval": "",
-              "legendFormat": "set_info_latency - {{cluster}} - {{type}} - {{svm}}",
+              "legendFormat": "set_info_latency - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
             }
           ],
@@ -2218,7 +2210,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, smb2_oplock_break_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSMB2OplockBreakLatency\"})",
               "interval": "",
-              "legendFormat": "smb2_oplock_break_latency - {{cluster}} - {{type}} - {{svm}}",
+              "legendFormat": "smb2_oplock_break_latency - {{node}} - {{type}} - {{svm}}",
               "refId": "A"
             }
           ],
