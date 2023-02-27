@@ -278,13 +278,12 @@ func (a *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 
 				// if no ops happened
 				if count == 0 {
-					if err = metric.SetValueFloat64(instance, 0); err != nil {
-						a.Logger.Error().Stack().Err(err).Msgf("set value [%s] [%s]:", mn, key)
-					}
+					err = metric.SetValueFloat64(instance, 0)
 				} else {
-					if err = metric.SetValueFloat64(instance, v/count); err != nil {
-						a.Logger.Error().Stack().Err(err).Msgf("set value [%s] [%s]:", mn, key)
-					}
+					err = metric.SetValueFloat64(instance, v/count)
+				}
+				if err != nil {
+					a.Logger.Error().Err(err).Str("mn", mn).Str("key", key).Msg("set value")
 				}
 			}
 		}
