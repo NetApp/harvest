@@ -214,18 +214,20 @@ func (a *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 				// latency metric: weighted sum
 				if strings.Contains(key, "_latency") {
 					opsKey := objMetric.GetComment()
-					if opsMetric = data.GetMetric(opsKey); opsMetric == nil {
-						a.Logger.Warn().Msgf("metric [%s] not found in [%s] response", opsKey, rule.label)
-						continue
+					if opsKey != "" {
+						if opsMetric = data.GetMetric(opsKey); opsMetric == nil {
+							a.Logger.Warn().Msgf("metric [%s] not found in [%s] response", opsKey, rule.label)
+							continue
+						}
+						if opsValue, ok = opsMetric.GetValueFloat64(instance); !ok {
+							continue
+						}
+						if err = objMetric.AddValueFloat64(objInstance, opsValue*value); err != nil {
+							a.Logger.Error().Err(err).Msgf("add value [%s] [%s]:", key, objName)
+							continue
+						}
+						rule.counts[objKey][key] += opsValue
 					}
-					if opsValue, ok = opsMetric.GetValueFloat64(instance); !ok {
-						continue
-					}
-					if err = objMetric.AddValueFloat64(objInstance, opsValue*value); err != nil {
-						a.Logger.Error().Err(err).Msgf("add value [%s] [%s]:", key, objName)
-						continue
-					}
-					rule.counts[objKey][key] += opsValue
 				} else {
 					if err = objMetric.AddValueFloat64(objInstance, value); err != nil {
 						a.Logger.Error().Err(err).Msgf("add value [%s] [%s]:", key, objName)
@@ -274,8 +276,14 @@ func (a *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 					continue
 				}
 
-				if err = metric.SetValueFloat64(instance, v/count); err != nil {
-					a.Logger.Error().Stack().Err(err).Msgf("set value [%s] [%s]:", mn, key)
+				// if no ops happened
+				if count == 0 {
+					err = metric.SetValueFloat64(instance, 0)
+				} else {
+					err = metric.SetValueFloat64(instance, v/count)
+				}
+				if err != nil {
+					a.Logger.Error().Err(err).Str("mn", mn).Str("key", key).Msg("set value")
 				}
 			}
 		}
