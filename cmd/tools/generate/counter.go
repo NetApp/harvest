@@ -456,6 +456,14 @@ func generateCounterTemplate(counters map[string]Counter, client *rest.Client) {
 		}
 		counter := counters[k]
 
+		// Print such counters which are missing Rest mapping
+		if len(counter.APIs) == 1 {
+			if counter.APIs[0].API == "ZAPI" {
+				//missing Rest Mapping
+				fmt.Printf("Missing %s mapping for %v \n", "REST", counter)
+			}
+		}
+
 		values = append(values, counter)
 		for _, def := range counter.APIs {
 			if def.ONTAPCounter == "" {
