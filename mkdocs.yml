@@ -40,6 +40,7 @@ nav:
       - 'Matrix': 'resources/matrix.md'
       - 'ONTAP Metrics': 'ontap-metrics.md'
       - 'Templates And Metrics': 'resources/templates-and-metrics.md'
+      - 'REST Perf Metrics': 'resources/rest-perf-metrics.md'
   - About:
       - 'License': 'license.md'
       - 'Release Notes': 'release-notes.md'
