@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1677255107894,
+  "iteration": 1677494876229,
   "links": [
     {
       "asDropdown": true,
@@ -375,7 +375,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "smb2_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2ReadLatency\"}",
+          "expr": "topk($TopResources,smb2_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2ReadLatency\"})",
           "interval": "",
           "legendFormat": "read_latency - {{node}} - {{type}} - {{svm}}",
           "refId": "A"
@@ -461,7 +461,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "smb2_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2WriteLatency\"}",
+          "expr": "topk($TopResources, smb2_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2WriteLatency\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "write_latency - {{node}} - {{type}} - {{svm}}",
