@@ -620,7 +620,7 @@ curl 'https://$clusterIP/api/cluster/counter/tables'
 Ask ONTAP to return the schema for `system:node`. This will include the name, description, and metadata for all counters associated with `system:node`.
 
 ```bash
-curl 'https://$clusterIP/api/cluster/counter/tables/system:node?return_records=true '
+curl 'https://$clusterIP/api/cluster/counter/tables/system:node?return_records=true'
 ```
 
 <details><summary>Response</summary>
