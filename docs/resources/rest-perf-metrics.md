@@ -25,7 +25,7 @@ Performance REST responses include `properties` and `counters`. Counters are met
 ### Ask ONTAP for all resources that report performance metrics
 
 ```bash
-curl 'https://10.193.48.154/api/cluster/counter/tables'
+curl 'https://$clusterIP/api/cluster/counter/tables'
 ```
 
 <details><summary>Response</summary>
@@ -620,7 +620,7 @@ curl 'https://10.193.48.154/api/cluster/counter/tables'
 Ask ONTAP to return the schema for `system:node`. This will include the name, description, and metadata for all counters associated with `system:node`.
 
 ```bash
-curl 'https://10.193.48.154/api/cluster/counter/tables/system:node?return_records=true '
+curl 'https://$clusterIP/api/cluster/counter/tables/system:node?return_records=true '
 ```
 
 <details><summary>Response</summary>
@@ -1182,7 +1182,7 @@ curl 'https://10.193.48.154/api/cluster/counter/tables/system:node?return_record
 Ask ONTAP to return all instances of `system:node`. For each `system:node` include all of that node's properties and performance metrics.
 
 ```bash
-curl 'https://10.193.48.154/api/cluster/counter/tables/system:node/rows?fields=*&return_records=true'
+curl 'https://$clusterIP/api/cluster/counter/tables/system:node/rows?fields=*&return_records=true'
 ```
 
 <details><summary>Response</summary>
