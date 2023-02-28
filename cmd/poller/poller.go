@@ -882,6 +882,8 @@ func (p *Poller) loadExporter(name string) exporter.Exporter {
 		return nil
 	}
 
+	exp.GetMetaData().SetGlobalLabel("datacenter", p.params.Datacenter)
+
 	p.exporters = append(p.exporters, exp)
 	logger.Debug().Msgf("initialized exporter (%s)", name)
 

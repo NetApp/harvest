@@ -27,7 +27,8 @@ type Exporter interface {
 	GetExportCount() uint64             // return and reset number of exported data points, used by Poller to keep stats
 	AddExportCount(uint64)              // add count to the export count, called by the exporter itself
 	GetStatus() (uint8, string, string) // return current state of the exporter
-	Export(*matrix.Matrix) error        // render data in matrix to the desired format and emit
+	GetMetaData() *matrix.Matrix
+	Export(*matrix.Matrix) error // render data in matrix to the desired format and emit
 	// this is the only function that should be implemented by "real" exporters
 }
 
@@ -108,6 +109,11 @@ func (me *AbstractExporter) InitAbc() error {
 // GetClass returns the class of the AbstractExporter
 func (me *AbstractExporter) GetClass() string {
 	return me.Class
+}
+
+// GetMetaData returns the metadata of the AbstractExporter
+func (me *AbstractExporter) GetMetaData() *matrix.Matrix {
+	return me.Metadata
 }
 
 // GetName returns the name of the AbstractExporter
