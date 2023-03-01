@@ -3787,7 +3787,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Zapi Collectors Drilldown",
+      "title": "Collectors Drilldown",
       "type": "row"
     },
     {
