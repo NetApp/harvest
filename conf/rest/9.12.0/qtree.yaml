@@ -11,8 +11,6 @@ counters:
   - ^export_policy.name   => export_policy
   - ^security_style       => security_style
   - id                    => id
-  - filter:
-      - name=!""
 
 
 endpoints:
@@ -23,17 +21,18 @@ endpoints:
       - ^^qtree           => qtree
       - ^status           => status
       - ^oplock_mode      => oplocks
-      - filter:
-          - qtree=!""
+
 plugins:
+  - LabelAgent:
+      exclude_equals:
+        - qtree ``
+      replace:
+        - oplocks oplocks `enable` `enabled`
   - Qtree:
       quotaType:
         - tree
 #        - user
 #        - group
-  - LabelAgent:
-      replace:
-        - oplocks oplocks `enable` `enabled`
 
 export_options:
   instance_keys:
