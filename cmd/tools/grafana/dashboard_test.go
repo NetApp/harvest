@@ -63,6 +63,11 @@ func TestUnitsAndExprMatch(t *testing.T) {
 		"_lag_time": {"", "s", "short"},
 	}
 
+	// Normalize rates to their base unit
+	rates := map[string]string{
+		"KiBs": "kbytes",
+	}
+
 	metricNames := make([]string, 0, len(mt.metricsByUnit))
 	for m := range mt.metricsByUnit {
 		metricNames = append(metricNames, m)
@@ -73,6 +78,20 @@ func TestUnitsAndExprMatch(t *testing.T) {
 		u := mt.metricsByUnit[metric]
 
 		failText := strings.Builder{}
+		// Normalize units if there are rates
+		for unit, listMetricLoc := range u.units {
+			normal, ok := rates[unit]
+			if !ok {
+				continue
+			}
+			list, ok := u.units[normal]
+			if !ok {
+				continue
+			}
+			delete(u.units, unit)
+			list = append(list, listMetricLoc...)
+			u.units[normal] = list
+		}
 		numUnits := len(u.units)
 		for unit, location := range u.units {
 			if unit == "" || unit == "none" {
@@ -740,7 +759,7 @@ func checkRate1m(t *testing.T, path string, data []byte) {
 	expressions := allExpressions(data)
 	for _, expr := range expressions {
 		if strings.Contains(expr.metric, "[1m]") {
-			t.Errorf("dashboard=%s, expr should not use rate of [1m] expr=%s", path, expr)
+			t.Errorf("dashboard=%s, expr should not use rate of [1m] expr=%s", path, expr.metric)
 		}
 	}
 }

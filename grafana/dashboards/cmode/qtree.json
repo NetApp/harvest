@@ -679,7 +679,7 @@
                   }
                 ]
               },
-              "unit": "Kibits"
+              "unit": "KiBs"
             },
             "overrides": []
           },
