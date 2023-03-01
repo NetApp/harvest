@@ -782,3 +782,40 @@ func asTitle(id string) string {
 	replacer := strings.NewReplacer("[", ".", "]", "")
 	return replacer.Replace(path)
 }
+
+func TestPercentHasMinMax(t *testing.T) {
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkPercentHasMinMax(t, path, data)
+		})
+}
+
+func checkPercentHasMinMax(t *testing.T, path string, data []byte) {
+	dashPath := shortPath(path)
+
+	visitAllPanels(data, func(path string, key, value gjson.Result) {
+		panelType := value.Get("type").String()
+		if panelType != "timeseries" {
+			return
+		}
+		defaultUnit := value.Get("fieldConfig.defaults.unit").String()
+		if defaultUnit != "percent" && defaultUnit != "percentunit" {
+			return
+		}
+		min := value.Get("fieldConfig.defaults.min").String()
+		max := value.Get("fieldConfig.defaults.max").String()
+		if min != "0" {
+			t.Errorf(`dashboard=%s path=%s panel="%s" has unit=%s, min should be 0 got=%s`,
+				dashPath, path, value.Get("title").String(), defaultUnit, min)
+		}
+		if defaultUnit == "percent" && max != "100" {
+			t.Errorf(`dashboard=%s path=%s panel="%s" has unit=%s, max should be 100 got=%s`,
+				dashPath, path, value.Get("title").String(), defaultUnit, max)
+		}
+		if defaultUnit == "percentunit" && max != "1" {
+			t.Errorf(`dashboard=%s path=%s panel="%s" has unit=%s, max should be 1 got=%s`,
+				dashPath, path, value.Get("title").String(), defaultUnit, max)
+		}
+	})
+}
