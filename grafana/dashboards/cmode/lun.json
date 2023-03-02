@@ -3333,7 +3333,9 @@
                   }
                 ]
               },
-              "unit": "percent"
+              "unit": "percent",
+              "min": 0,
+              "max": 100
             },
             "overrides": []
           },
@@ -3409,7 +3411,6 @@
                 }
               },
               "mappings": [],
-              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -3423,7 +3424,9 @@
                   }
                 ]
               },
-              "unit": "percent"
+              "unit": "percent",
+              "min": 0,
+              "max": 100
             },
             "overrides": []
           },
@@ -3512,7 +3515,9 @@
                   }
                 ]
               },
-              "unit": "percent"
+              "unit": "percent",
+              "min": 0,
+              "max": 100
             },
             "overrides": []
           },
@@ -3588,7 +3593,6 @@
                 }
               },
               "mappings": [],
-              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -3602,7 +3606,9 @@
                   }
                 ]
               },
-              "unit": "percent"
+              "unit": "percent",
+              "min": 0,
+              "max": 100
             },
             "overrides": []
           },
@@ -3691,7 +3697,9 @@
                   }
                 ]
               },
-              "unit": "percentunit"
+              "unit": "percentunit",
+              "min": 0,
+              "max": 1
             },
             "overrides": []
           },
@@ -3782,7 +3790,9 @@
                   }
                 ]
               },
-              "unit": "percentunit"
+              "unit": "percentunit",
+              "min": 0,
+              "max": 1
             },
             "overrides": []
           },

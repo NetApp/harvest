@@ -1387,6 +1387,7 @@
           },
           "mappings": [],
           "min": 0,
+          "max": 100,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1484,6 +1485,7 @@
           },
           "mappings": [],
           "min": 0,
+          "max": 100,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1863,6 +1865,7 @@
           },
           "mappings": [],
           "min": 0,
+          "max": 100,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1953,6 +1956,7 @@
           },
           "mappings": [],
           "min": 0,
+          "max": 100,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -2043,6 +2047,7 @@
           },
           "mappings": [],
           "min": 0,
+          "max": 100,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -3172,7 +3177,9 @@
                   }
                 ]
               },
-              "unit": "percent"
+              "unit": "percent",
+              "min": 0,
+              "max": 100
             },
             "overrides": []
           },
@@ -3273,7 +3280,9 @@
                   }
                 ]
               },
-              "unit": "percent"
+              "unit": "percent",
+              "min": 0,
+              "max": 100
             },
             "overrides": [
               {
@@ -3943,7 +3952,9 @@
                   }
                 ]
               },
-              "unit": "percent"
+              "unit": "percent",
+              "min": 0,
+              "max": 100
             },
             "overrides": []
           },
@@ -4129,7 +4140,9 @@
                   }
                 ]
               },
-              "unit": "percent"
+              "unit": "percent",
+              "min": 0,
+              "max": 100
             },
             "overrides": []
           },

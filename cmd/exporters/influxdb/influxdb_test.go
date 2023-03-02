@@ -24,7 +24,7 @@ func setupInfluxDB(t *testing.T, exporterName string) *InfluxDB {
 		t.Fatalf(`exporter (%v) not defined in config`, exporterName)
 	}
 
-	influx := &InfluxDB{AbstractExporter: exporter.New("InfluxDB", exporterName, opts, e)}
+	influx := &InfluxDB{AbstractExporter: exporter.New("InfluxDB", exporterName, opts, e, nil)}
 	if err := influx.Init(); err != nil {
 		t.Fatal(err)
 	}

@@ -59,7 +59,7 @@ type AbstractExporter struct {
 // @n - exporter name
 // @o - poller options
 // @p - exporter parameters
-func New(c, n string, o *options.Options, p conf.Exporter) *AbstractExporter {
+func New(c, n string, o *options.Options, p conf.Exporter, params *conf.Poller) *AbstractExporter {
 	abc := AbstractExporter{
 		Class:    c,
 		Name:     n,
@@ -68,13 +68,16 @@ func New(c, n string, o *options.Options, p conf.Exporter) *AbstractExporter {
 		Logger:   logging.Get().SubLogger("exporter", n),
 		Mutex:    &sync.Mutex{},
 		countMux: &sync.Mutex{},
+		Metadata: matrix.New(n, "metadata_exporter", "metadata_exporter"),
+	}
+	if params != nil {
+		abc.Metadata.SetGlobalLabel("datacenter", params.Datacenter)
 	}
 	return &abc
 }
 
-// InitAbc() initializes AbstractExporter
+// InitAbc initializes AbstractExporter
 func (me *AbstractExporter) InitAbc() error {
-	me.Metadata = matrix.New(me.Name, "metadata_exporter", "metadata_exporter")
 	me.Metadata.SetGlobalLabel("hostname", me.Options.Hostname)
 	me.Metadata.SetGlobalLabel("version", me.Options.Version)
 	me.Metadata.SetGlobalLabel("poller", me.Options.Poller)

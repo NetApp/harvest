@@ -63,6 +63,11 @@ func TestUnitsAndExprMatch(t *testing.T) {
 		"_lag_time": {"", "s", "short"},
 	}
 
+	// Normalize rates to their base unit
+	rates := map[string]string{
+		"KiBs": "kbytes",
+	}
+
 	metricNames := make([]string, 0, len(mt.metricsByUnit))
 	for m := range mt.metricsByUnit {
 		metricNames = append(metricNames, m)
@@ -73,6 +78,20 @@ func TestUnitsAndExprMatch(t *testing.T) {
 		u := mt.metricsByUnit[metric]
 
 		failText := strings.Builder{}
+		// Normalize units if there are rates
+		for unit, listMetricLoc := range u.units {
+			normal, ok := rates[unit]
+			if !ok {
+				continue
+			}
+			list, ok := u.units[normal]
+			if !ok {
+				continue
+			}
+			delete(u.units, unit)
+			list = append(list, listMetricLoc...)
+			u.units[normal] = list
+		}
 		numUnits := len(u.units)
 		for unit, location := range u.units {
 			if unit == "" || unit == "none" {
@@ -740,7 +759,7 @@ func checkRate1m(t *testing.T, path string, data []byte) {
 	expressions := allExpressions(data)
 	for _, expr := range expressions {
 		if strings.Contains(expr.metric, "[1m]") {
-			t.Errorf("dashboard=%s, expr should not use rate of [1m] expr=%s", path, expr)
+			t.Errorf("dashboard=%s, expr should not use rate of [1m] expr=%s", path, expr.metric)
 		}
 	}
 }
@@ -781,4 +800,41 @@ func asTitle(id string) string {
 	path := strings.Join(splits, ".")
 	replacer := strings.NewReplacer("[", ".", "]", "")
 	return replacer.Replace(path)
+}
+
+func TestPercentHasMinMax(t *testing.T) {
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkPercentHasMinMax(t, path, data)
+		})
+}
+
+func checkPercentHasMinMax(t *testing.T, path string, data []byte) {
+	dashPath := shortPath(path)
+
+	visitAllPanels(data, func(path string, key, value gjson.Result) {
+		panelType := value.Get("type").String()
+		if panelType != "timeseries" {
+			return
+		}
+		defaultUnit := value.Get("fieldConfig.defaults.unit").String()
+		if defaultUnit != "percent" && defaultUnit != "percentunit" {
+			return
+		}
+		min := value.Get("fieldConfig.defaults.min").String()
+		max := value.Get("fieldConfig.defaults.max").String()
+		if min != "0" {
+			t.Errorf(`dashboard=%s path=%s panel="%s" has unit=%s, min should be 0 got=%s`,
+				dashPath, path, value.Get("title").String(), defaultUnit, min)
+		}
+		if defaultUnit == "percent" && max != "100" {
+			t.Errorf(`dashboard=%s path=%s panel="%s" has unit=%s, max should be 100 got=%s`,
+				dashPath, path, value.Get("title").String(), defaultUnit, max)
+		}
+		if defaultUnit == "percentunit" && max != "1" {
+			t.Errorf(`dashboard=%s path=%s panel="%s" has unit=%s, max should be 1 got=%s`,
+				dashPath, path, value.Get("title").String(), defaultUnit, max)
+		}
+	})
 }
