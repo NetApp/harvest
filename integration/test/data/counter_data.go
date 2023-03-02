@@ -41,14 +41,7 @@ func GetCounterMap() map[string][]string {
 		"svm_nfs_latency_hist_bucket",
 		"svm_nfs_read_latency_hist_bucket",
 		"svm_nfs_write_latency_hist_bucket",
-		"smb2_session_setup_latency_histogram",
-		"smb2_create_latency_histogram",
-		"smb2_close_latency_histogram",
-		"smb2_lock_latency_histogram",
-		"smb2_query_directory_latency_histogram",
-		"smb2_query_info_latency_histogram",
-		"smb2_set_info_latency_histogram",
-		"smb2_oplock_break_latency_histogram",
+		"smb2_",
 	}
 	//if docker.IsDockerBasedPoller() || setup.IsMac {
 	counterMap["NO_DATA_CONTAINS"] = append(counterMap["NO_DATA_CONTAINS"], "poller", "metadata_exporter_count")
