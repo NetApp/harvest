@@ -1919,7 +1919,9 @@
                   }
                 ]
               },
-              "unit": "percent"
+              "unit": "percent",
+              "min": 0,
+              "max": 100
             },
             "overrides": []
           },
@@ -2295,7 +2297,9 @@
                   }
                 ]
               },
-              "unit": "percent"
+              "unit": "percent",
+              "min": 0,
+              "max": 100
             },
             "overrides": []
           },
@@ -2373,7 +2377,6 @@
               },
               "links": [],
               "mappings": [],
-              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -2387,7 +2390,9 @@
                   }
                 ]
               },
-              "unit": "percent"
+              "unit": "percent",
+              "min": 0,
+              "max": 100
             },
             "overrides": []
           },
@@ -2478,7 +2483,9 @@
                   }
                 ]
               },
-              "unit": "percent"
+              "unit": "percent",
+              "min": 0,
+              "max": 100
             },
             "overrides": []
           },

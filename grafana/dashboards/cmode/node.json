@@ -424,8 +424,6 @@
       "fieldConfig": {
         "defaults": {
           "mappings": [],
-          "max": 100,
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -435,7 +433,9 @@
               }
             ]
           },
-          "unit": "percent"
+          "unit": "percent",
+          "min": 0,
+          "max": 100
         },
         "overrides": []
       },
@@ -753,8 +753,6 @@
       "fieldConfig": {
         "defaults": {
           "mappings": [],
-          "max": 100,
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -764,7 +762,9 @@
               }
             ]
           },
-          "unit": "percent"
+          "unit": "percent",
+          "min": 0,
+          "max": 100
         },
         "overrides": []
       },
@@ -1074,7 +1074,6 @@
                 }
               },
               "mappings": [],
-              "max": 100,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -1092,7 +1091,9 @@
                   }
                 ]
               },
-              "unit": "percent"
+              "unit": "percent",
+              "min": 0,
+              "max": 100
             },
             "overrides": []
           },
@@ -1184,7 +1185,9 @@
                   }
                 ]
               },
-              "unit": "percent"
+              "unit": "percent",
+              "min": 0,
+              "max": 100
             },
             "overrides": []
           },
@@ -1291,7 +1294,9 @@
                   }
                 ]
               },
-              "unit": "percentunit"
+              "unit": "percentunit",
+              "min": 0,
+              "max": 1
             },
             "overrides": []
           },
@@ -1381,7 +1386,9 @@
                   }
                 ]
               },
-              "unit": "percentunit"
+              "unit": "percentunit",
+              "min": 0,
+              "max": 1
             },
             "overrides": []
           },
@@ -1959,7 +1966,6 @@
                 }
               },
               "mappings": [],
-              "max": 100,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -1977,7 +1983,9 @@
                   }
                 ]
               },
-              "unit": "percent"
+              "unit": "percent",
+              "min": 0,
+              "max": 100
             },
             "overrides": []
           },
@@ -2080,7 +2088,6 @@
                 }
               },
               "mappings": [],
-              "max": 100,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -2094,7 +2101,9 @@
                   }
                 ]
               },
-              "unit": "percent"
+              "unit": "percent",
+              "min": 0,
+              "max": 100
             },
             "overrides": []
           },
