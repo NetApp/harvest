@@ -26,14 +26,14 @@ endpoints:
       - filter:
           - qtree=!""
 plugins:
-  - LabelAgent:
-      replace:
-        - oplocks oplocks `enable` `enabled`
   - Qtree:
       quotaType:
         - tree
 #        - user
 #        - group
+  - LabelAgent:
+      replace:
+        - oplocks oplocks `enable` `enabled`
 
 export_options:
   instance_keys:
