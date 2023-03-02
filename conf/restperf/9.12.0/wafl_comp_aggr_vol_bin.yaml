@@ -10,7 +10,7 @@ counters:
   - cloud_bin_op_latency_average
 
 plugins:
-  - FabricPool:
+  - FabricPool
 
 export_options:
   instance_keys:
