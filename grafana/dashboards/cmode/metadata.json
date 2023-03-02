@@ -2087,7 +2087,9 @@
                   }
                 ]
               },
-              "unit": "percent"
+              "unit": "percent",
+              "min": 0,
+              "max": 100
             },
             "overrides": []
           },
@@ -2179,7 +2181,9 @@
                   }
                 ]
               },
-              "unit": "percent"
+              "unit": "percent",
+              "min": 0,
+              "max": 100
             },
             "overrides": []
           },
@@ -3787,7 +3791,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Zapi Collectors Drilldown",
+      "title": "Collectors Drilldown",
       "type": "row"
     },
     {

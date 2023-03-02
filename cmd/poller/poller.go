@@ -867,7 +867,7 @@ func (p *Poller) loadExporter(name string) exporter.Exporter {
 		return nil
 	}
 
-	absExp := exporter.New(class, name, p.options, params)
+	absExp := exporter.New(class, name, p.options, params, p.params)
 	switch class {
 	case "Prometheus":
 		exp = prometheus.New(absExp)
