@@ -30,12 +30,6 @@
     },
     {
       "type": "panel",
-      "id": "text",
-      "name": "Text",
-      "version": ""
-    },
-    {
-      "type": "panel",
       "id": "timeseries",
       "name": "Time series",
       "version": ""
@@ -65,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1677494876229,
+  "iteration": 1677735866675,
   "links": [
     {
       "asDropdown": true,
@@ -85,42 +79,12 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
         "y": 0
-      },
-      "id": 96,
-      "panels": [],
-      "title": "Important Information about SMB2 dashboard",
-      "type": "row"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "gridPos": {
-        "h": 2,
-        "w": 24,
-        "x": 0,
-        "y": 1
-      },
-      "id": 98,
-      "options": {
-        "content": "You must enable the ZapiPerf collector in your harvest config and enable smb2.yaml section in your $HARVEST/conf/zapiperf/default.yaml file. \nPlease see https://netapp.github.io/harvest/latest/configure-templates/#create-a-new-object-template for more details.",
-        "mode": "markdown"
-      },
-      "pluginVersion": "8.1.8",
-      "type": "text"
-    },
-    {
-      "collapsed": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 3
       },
       "id": 68,
       "panels": [],
@@ -129,7 +93,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel includes read SMB OP’s /sec",
+      "description": "This panel includes sum of read and write SMB OP’s /sec",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -181,7 +145,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 4
+        "y": 1
       },
       "id": 75,
       "options": {
@@ -202,20 +166,122 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, smb2_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2ReadOPS\"})",
+          "expr": "sum(smb2_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
           "interval": "",
-          "legendFormat": "read_ops - {{node}} - {{type}} - {{svm}}",
+          "legendFormat": "read_ops - {{cluster}}",
           "refId": "A"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(smb2_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "write_ops - {{cluster}}",
+          "refId": "B"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Read IOPS",
+      "title": "Read / Write IOPS",
       "type": "timeseries"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel includes write SMB OP’s /sec",
+      "description": "This panel includes average SMB read and write latency",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "µs"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 1
+      },
+      "id": 76,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "avg(smb2_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+          "interval": "",
+          "legendFormat": "Read - {{cluster}}",
+          "refId": "A"
+        },
+        {
+          "exemplar": false,
+          "expr": "avg(smb2_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Write - {{cluster}}",
+          "refId": "B"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Read / Write Latency",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "This panel includes SMB OP’s /sec average broken down by other SMB operations.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -266,10 +332,10 @@
       "gridPos": {
         "h": 9,
         "w": 12,
-        "x": 12,
-        "y": 4
+        "x": 0,
+        "y": 10
       },
-      "id": 89,
+      "id": 77,
       "options": {
         "legend": {
           "calcs": [
@@ -288,107 +354,100 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, smb2_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2WriteOPS\"})",
+          "expr": "sum(smb2_negotiate_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+          "interval": "",
+          "legendFormat": "negotiate_ops - {{cluster}}",
+          "refId": "A"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(smb2_session_setup_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
           "hide": false,
           "interval": "",
-          "legendFormat": "write_ops - {{node}} - {{type}} - {{svm}}",
+          "legendFormat": "session_setup_ops - {{cluster}}",
           "refId": "B"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top $TopResources Write IOPS",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel includes SMB OP read latency",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "µs"
         },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 0,
-        "y": 13
-      },
-      "id": 76,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources,smb2_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2ReadLatency\"})",
+          "expr": "sum(smb2_tree_connect_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+          "hide": false,
           "interval": "",
-          "legendFormat": "read_latency - {{node}} - {{type}} - {{svm}}",
-          "refId": "A"
+          "legendFormat": "tree_connect_ops - {{cluster}}",
+          "refId": "C"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(smb2_create_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "create_ops - {{cluster}}",
+          "refId": "D"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(smb2_close_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "close_ops - {{cluster}}",
+          "refId": "E"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(smb2_lock_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "lock_ops - {{cluster}}",
+          "refId": "F"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(smb2_query_directory_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "query_directory_ops - {{cluster}}",
+          "refId": "G"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(smb2_query_info_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "query_info_ops - {{cluster}}",
+          "refId": "H"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(smb2_set_info_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "set_info_ops - {{cluster}}",
+          "refId": "I"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(smb2_tree_connect_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "tree_connect_ops - {{cluster}}",
+          "refId": "J"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(smb2_oplock_break_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "oplock_break_ops - {{cluster}}",
+          "refId": "K"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Read Latency",
+      "title": "Other IOPS",
       "type": "timeseries"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel includes SMB OP write latency",
+      "description": "This panel includes SMB latency broken down by other SMB operations.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -440,1799 +499,120 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 13
+        "y": 10
+      },
+      "id": 78,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "avg(smb2_negotiate_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+          "interval": "",
+          "legendFormat": "negotiate_latency - {{cluster}}",
+          "refId": "A"
+        },
+        {
+          "exemplar": false,
+          "expr": "avg(smb2_session_setup_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "session_setup_latency - {{cluster}}",
+          "refId": "B"
+        },
+        {
+          "exemplar": false,
+          "expr": "avg(smb2_tree_connect_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "tree_connect_latency - {{cluster}}",
+          "refId": "C"
+        },
+        {
+          "exemplar": false,
+          "expr": "avg(smb2_create_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "create_latency - {{cluster}}",
+          "refId": "D"
+        },
+        {
+          "exemplar": false,
+          "expr": "avg(smb2_close_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "close_latency - {{cluster}}",
+          "refId": "E"
+        },
+        {
+          "exemplar": false,
+          "expr": "avg(smb2_lock_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "lock_latency - {{cluster}}",
+          "refId": "F"
+        },
+        {
+          "exemplar": false,
+          "expr": "avg(smb2_query_directory_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "query_directory_latency - {{cluster}}",
+          "refId": "G"
+        },
+        {
+          "exemplar": false,
+          "expr": "avg(smb2_query_info_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "query_info_latency - {{cluster}}",
+          "refId": "H"
+        },
+        {
+          "exemplar": false,
+          "expr": "avg(smb2_set_info_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "set_info_latency - {{cluster}}",
+          "refId": "I"
+        },
+        {
+          "exemplar": false,
+          "expr": "avg(smb2_oplock_break_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "oplock_break_latency - {{cluster}}",
+          "refId": "J"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Other Latency",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 19
       },
       "id": 90,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "topk($TopResources, smb2_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2WriteLatency\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "write_latency - {{node}} - {{type}} - {{svm}}",
-          "refId": "B"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top $TopResources Write Latency",
-      "type": "timeseries"
-    },
-    {
-      "collapsed": true,
-      "datasource": null,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 22
-      },
-      "id": 92,
-      "panels": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "iops"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 0,
-            "y": 23
-          },
-          "id": 77,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "topk($TopResources, smb2_negotiate_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2NegotiateOps\"})",
-              "interval": "",
-              "legendFormat": "negotiate_ops - {{node}} - {{type}} - {{svm}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top $TopResources Negotiate IOPS",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "iops"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 8,
-            "y": 23
-          },
-          "id": 102,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "topk($TopResources, smb2_session_setup_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2SessionSetupOps\"})",
-              "interval": "",
-              "legendFormat": "session_setup_ops - {{node}} - {{type}} - {{svm}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top $TopResources Session Setup IOPS",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "iops"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 16,
-            "y": 23
-          },
-          "id": 103,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "topk($TopResources, smb2_tree_connect_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2TreeConnectOps\"})",
-              "interval": "",
-              "legendFormat": "tree_connect_ops - {{node}} - {{type}} - {{svm}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top $TopResources Tree Connect IOPS",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "iops"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 0,
-            "y": 32
-          },
-          "id": 104,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "topk($TopResources, smb2_create_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2CreateOps\"})",
-              "interval": "",
-              "legendFormat": "tree_create_ops - {{node}} - {{type}} - {{svm}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top $TopResources Create IOPS",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "iops"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 8,
-            "y": 32
-          },
-          "id": 105,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "topk($TopResources, smb2_close_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2CloseOps\"})",
-              "interval": "",
-              "legendFormat": "close_ops - {{node}} - {{type}} - {{svm}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top $TopResources Close IOPS",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "iops"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 16,
-            "y": 32
-          },
-          "id": 106,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "topk($TopResources, smb2_lock_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2LockOps\"})",
-              "interval": "",
-              "legendFormat": "lock_ops - {{node}} - {{type}} - {{svm}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top $TopResources Lock IOPS",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "iops"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 0,
-            "y": 41
-          },
-          "id": 107,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "topk($TopResources, smb2_query_directory_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2QueryDirectoryOps\"})",
-              "interval": "",
-              "legendFormat": "query_directory_ops - {{node}} - {{type}} - {{svm}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top $TopResources Query Directory IOPS",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "iops"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 8,
-            "y": 41
-          },
-          "id": 108,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "topk($TopResources, smb2_query_info_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2QueryInfoOps\"})",
-              "interval": "",
-              "legendFormat": "query_info_ops - {{node}} - {{type}} - {{svm}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top $TopResources Query Info IOPS",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "iops"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 16,
-            "y": 41
-          },
-          "id": 109,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "topk($TopResources, smb2_set_info_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2SetInfoOps\"})",
-              "interval": "",
-              "legendFormat": "set_info_ops - {{node}} - {{type}} - {{svm}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top $TopResources Set Info IOPS",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "iops"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 0,
-            "y": 50
-          },
-          "id": 110,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "topk($TopResources, smb2_oplock_break_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2OplockBreakOps\"})",
-              "interval": "",
-              "legendFormat": "oplock_break_ops - {{node}} - {{type}} - {{svm}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top $TopResources Oplock Break IOPS",
-          "type": "timeseries"
-        }
-      ],
-      "title": "Other OPS",
-      "type": "row"
-    },
-    {
-      "collapsed": true,
-      "datasource": null,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 23
-      },
-      "id": 101,
-      "panels": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "µs"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 0,
-            "y": 60
-          },
-          "id": 99,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "topk($TopResources, smb2_negotiate_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2NegotiateLatency\"})",
-              "interval": "",
-              "legendFormat": "negotiate_latency - {{node}} - {{type}} - {{svm}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top $TopResources Negotiate Latency",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "µs"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 8,
-            "y": 60
-          },
-          "id": 111,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "topk($TopResources, smb2_session_setup_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2SessionSetupLatency\"})",
-              "interval": "",
-              "legendFormat": "session_setup_latency - {{node}} - {{type}} - {{svm}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top $TopResources Session Setup Latency",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "µs"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 16,
-            "y": 60
-          },
-          "id": 112,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "topk($TopResources, smb2_tree_connect_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2TreeConnectLatency\"})",
-              "interval": "",
-              "legendFormat": "tree_connect_latency - {{node}} - {{type}} - {{svm}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top $TopResources Tree Connect Latency",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "µs"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 0,
-            "y": 69
-          },
-          "id": 113,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "topk($TopResources, smb2_create_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2CreateLatency\"})",
-              "interval": "",
-              "legendFormat": "create_latency - {{node}} - {{type}} - {{svm}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top $TopResources Create Latency",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "µs"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 8,
-            "y": 69
-          },
-          "id": 114,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "topk($TopResources, smb2_close_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2CloseLatency\"})",
-              "interval": "",
-              "legendFormat": "close_latency - {{node}} - {{type}} - {{svm}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top $TopResources Close Latency",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "µs"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 16,
-            "y": 69
-          },
-          "id": 115,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "topk($TopResources, smb2_lock_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2LockLatency\"})",
-              "interval": "",
-              "legendFormat": "lock_latency - {{node}} - {{type}} - {{svm}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top $TopResources Lock Latency",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "µs"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 0,
-            "y": 78
-          },
-          "id": 116,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "topk($TopResources, smb2_query_directory_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2QueryDirectoryLatency\"})",
-              "interval": "",
-              "legendFormat": "query_directory_latency - {{node}} - {{type}} - {{svm}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top $TopResources Query Directory Latency",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "µs"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 8,
-            "y": 78
-          },
-          "id": 119,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "topk($TopResources, smb2_query_info_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2QueryInfoLatency\"})",
-              "interval": "",
-              "legendFormat": "smb2_query_info_latency - {{node}} - {{type}} - {{svm}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top $TopResources Query Info Latency",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "µs"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 16,
-            "y": 78
-          },
-          "id": 117,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "topk($TopResources, smb2_set_info_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2SetInfoLatency\"})",
-              "interval": "",
-              "legendFormat": "set_info_latency - {{node}} - {{type}} - {{svm}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top $TopResources Set Info Latency",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "µs"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 0,
-            "y": 87
-          },
-          "id": 118,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "topk($TopResources, smb2_oplock_break_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2OplockBreakLatency\"})",
-              "interval": "",
-              "legendFormat": "smb2_oplock_break_latency - {{node}} - {{type}} - {{svm}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top $TopResources Oplock Break Latency",
-          "type": "timeseries"
-        }
-      ],
-      "title": "Other Latency",
-      "type": "row"
-    },
-    {
-      "collapsed": true,
-      "datasource": null,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 24
-      },
-      "id": 94,
       "panels": [
         {
           "cards": {
@@ -2253,7 +633,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 97
+            "y": 20
           },
           "heatmap": {},
           "hideZeroBuckets": true,
@@ -2268,7 +648,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "sum(increase(smb2_session_setup_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2SessionSetupLatency\"}[$__interval])) by (le)",
+              "expr": "sum(increase(smb2_session_setup_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
@@ -2278,214 +658,7 @@
             }
           ],
           "timeFrom": null,
-          "title": "Top $TopResources SVM Session Setup Latency Heatmap",
-          "tooltip": {
-            "show": true,
-            "showHistogram": false
-          },
-          "type": "heatmap",
-          "xAxis": {
-            "show": true
-          },
-          "xBucketNumber": null,
-          "xBucketSize": null,
-          "yAxis": {
-            "decimals": null,
-            "format": "µs",
-            "logBase": 1,
-            "max": null,
-            "min": null,
-            "show": true,
-            "splitFactor": null,
-            "width": null
-          },
-          "yBucketBound": "auto",
-          "yBucketNumber": null,
-          "yBucketSize": null
-        },
-        {
-          "cards": {
-            "cardPadding": null,
-            "cardRound": null
-          },
-          "color": {
-            "cardColor": "#b4ff00",
-            "colorScale": "sqrt",
-            "colorScheme": "interpolateOranges",
-            "exponent": 0.5,
-            "mode": "opacity"
-          },
-          "dataFormat": "tsbuckets",
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel tracks histograms for file closes",
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 12,
-            "y": 97
-          },
-          "heatmap": {},
-          "hideZeroBuckets": true,
-          "highlightCards": true,
-          "id": 87,
-          "interval": "6m",
-          "legend": {
-            "show": false
-          },
-          "maxDataPoints": 25,
-          "reverseYBuckets": false,
-          "targets": [
-            {
-              "exemplar": true,
-              "expr": "sum(increase(smb2_close_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2CloseLatency\"}[$__interval])) by (le)",
-              "format": "heatmap",
-              "instant": false,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "{{ le }}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "title": "Top $TopResources SVM Close Latency Heatmap",
-          "tooltip": {
-            "show": true,
-            "showHistogram": false
-          },
-          "type": "heatmap",
-          "xAxis": {
-            "show": true
-          },
-          "xBucketNumber": null,
-          "xBucketSize": null,
-          "yAxis": {
-            "decimals": null,
-            "format": "µs",
-            "logBase": 1,
-            "max": null,
-            "min": null,
-            "show": true,
-            "splitFactor": null,
-            "width": null
-          },
-          "yBucketBound": "auto",
-          "yBucketNumber": null,
-          "yBucketSize": null
-        },
-        {
-          "cards": {
-            "cardPadding": null,
-            "cardRound": null
-          },
-          "color": {
-            "cardColor": "#b4ff00",
-            "colorScale": "sqrt",
-            "colorScheme": "interpolateOranges",
-            "exponent": 0.5,
-            "mode": "opacity"
-          },
-          "dataFormat": "tsbuckets",
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel tracks histograms for readdir",
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 0,
-            "y": 105
-          },
-          "heatmap": {},
-          "hideZeroBuckets": true,
-          "highlightCards": true,
-          "id": 85,
-          "interval": "6m",
-          "legend": {
-            "show": false
-          },
-          "maxDataPoints": 25,
-          "reverseYBuckets": false,
-          "targets": [
-            {
-              "exemplar": true,
-              "expr": "sum(increase(smb2_query_directory_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2QueryDirectoryLatency\"}[$__interval])) by (le)",
-              "format": "heatmap",
-              "instant": false,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "{{ le }}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "title": "Top $TopResources SVM Query Directory Latency Heatmap",
-          "tooltip": {
-            "show": true,
-            "showHistogram": false
-          },
-          "type": "heatmap",
-          "xAxis": {
-            "show": true
-          },
-          "xBucketNumber": null,
-          "xBucketSize": null,
-          "yAxis": {
-            "decimals": null,
-            "format": "µs",
-            "logBase": 1,
-            "max": null,
-            "min": null,
-            "show": true,
-            "splitFactor": null,
-            "width": null
-          },
-          "yBucketBound": "auto",
-          "yBucketNumber": null,
-          "yBucketSize": null
-        },
-        {
-          "cards": {
-            "cardPadding": null,
-            "cardRound": null
-          },
-          "color": {
-            "cardColor": "#b4ff00",
-            "colorScale": "sqrt",
-            "colorScheme": "interpolateOranges",
-            "exponent": 0.5,
-            "mode": "opacity"
-          },
-          "dataFormat": "tsbuckets",
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel tracks histograms for setattr",
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 12,
-            "y": 105
-          },
-          "heatmap": {},
-          "hideZeroBuckets": true,
-          "highlightCards": true,
-          "id": 83,
-          "interval": "6m",
-          "legend": {
-            "show": false
-          },
-          "maxDataPoints": 25,
-          "reverseYBuckets": false,
-          "targets": [
-            {
-              "exemplar": true,
-              "expr": "sum(increase(smb2_set_info_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2SetInfoLatency\"}[$__interval])) by (le)",
-              "format": "heatmap",
-              "instant": false,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "{{ le }}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "title": "Top $TopResources SVM Set Info Latency Heatmap",
+          "title": "Session Setup Latency Heatmap",
           "tooltip": {
             "show": true,
             "showHistogram": false
@@ -2528,8 +701,8 @@
           "gridPos": {
             "h": 8,
             "w": 12,
-            "x": 0,
-            "y": 113
+            "x": 12,
+            "y": 20
           },
           "heatmap": {},
           "hideZeroBuckets": true,
@@ -2544,7 +717,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "sum(increase(smb2_create_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2CreateLatency\"}[$__interval])) by (le)",
+              "expr": "sum(increase(smb2_create_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
@@ -2554,7 +727,76 @@
             }
           ],
           "timeFrom": null,
-          "title": "Top $TopResources SVM Create Latency Heatmap",
+          "title": "Create Latency Heatmap",
+          "tooltip": {
+            "show": true,
+            "showHistogram": false
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": null,
+          "yAxis": {
+            "decimals": null,
+            "format": "µs",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null,
+            "width": null
+          },
+          "yBucketBound": "auto",
+          "yBucketNumber": null,
+          "yBucketSize": null
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateOranges",
+            "exponent": 0.5,
+            "mode": "opacity"
+          },
+          "dataFormat": "tsbuckets",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel tracks histograms for file closes",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 28
+          },
+          "heatmap": {},
+          "hideZeroBuckets": true,
+          "highlightCards": true,
+          "id": 87,
+          "interval": "6m",
+          "legend": {
+            "show": false
+          },
+          "maxDataPoints": 25,
+          "reverseYBuckets": false,
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "sum(increase(smb2_close_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
+              "format": "heatmap",
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "{{ le }}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "Close Latency Heatmap",
           "tooltip": {
             "show": true,
             "showHistogram": false
@@ -2598,7 +840,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 113
+            "y": 28
           },
           "heatmap": {},
           "hideZeroBuckets": true,
@@ -2613,7 +855,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "sum(increase(smb2_lock_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2LockLatency\"}[$__interval])) by (le)",
+              "expr": "sum(increase(smb2_lock_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
@@ -2623,7 +865,76 @@
             }
           ],
           "timeFrom": null,
-          "title": "Top $TopResources SVM Lock Latency Heatmap",
+          "title": "Lock Latency Heatmap",
+          "tooltip": {
+            "show": true,
+            "showHistogram": false
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": null,
+          "yAxis": {
+            "decimals": null,
+            "format": "µs",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null,
+            "width": null
+          },
+          "yBucketBound": "auto",
+          "yBucketNumber": null,
+          "yBucketSize": null
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateOranges",
+            "exponent": 0.5,
+            "mode": "opacity"
+          },
+          "dataFormat": "tsbuckets",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel tracks histograms for readdir",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 36
+          },
+          "heatmap": {},
+          "hideZeroBuckets": true,
+          "highlightCards": true,
+          "id": 85,
+          "interval": "6m",
+          "legend": {
+            "show": false
+          },
+          "maxDataPoints": 25,
+          "reverseYBuckets": false,
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "sum(increase(smb2_query_directory_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
+              "format": "heatmap",
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "{{ le }}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "Query Directory Latency Heatmap",
           "tooltip": {
             "show": true,
             "showHistogram": false
@@ -2666,8 +977,8 @@
           "gridPos": {
             "h": 8,
             "w": 12,
-            "x": 0,
-            "y": 121
+            "x": 12,
+            "y": 36
           },
           "heatmap": {},
           "hideZeroBuckets": true,
@@ -2682,7 +993,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "sum(increase(smb2_query_info_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2QueryInfoLatency\"}[$__interval])) by (le)",
+              "expr": "sum(increase(smb2_query_info_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
@@ -2692,7 +1003,76 @@
             }
           ],
           "timeFrom": null,
-          "title": "Top $TopResources SVM Query Info Latency Heatmap",
+          "title": "Query Info Latency Heatmap",
+          "tooltip": {
+            "show": true,
+            "showHistogram": false
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": null,
+          "yAxis": {
+            "decimals": null,
+            "format": "µs",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null,
+            "width": null
+          },
+          "yBucketBound": "auto",
+          "yBucketNumber": null,
+          "yBucketSize": null
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateOranges",
+            "exponent": 0.5,
+            "mode": "opacity"
+          },
+          "dataFormat": "tsbuckets",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel tracks histograms for setattr",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 44
+          },
+          "heatmap": {},
+          "hideZeroBuckets": true,
+          "highlightCards": true,
+          "id": 83,
+          "interval": "6m",
+          "legend": {
+            "show": false
+          },
+          "maxDataPoints": 25,
+          "reverseYBuckets": false,
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "sum(increase(smb2_set_info_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
+              "format": "heatmap",
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "{{ le }}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "Set Info Latency Heatmap",
           "tooltip": {
             "show": true,
             "showHistogram": false
@@ -2736,7 +1116,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 121
+            "y": 44
           },
           "heatmap": {},
           "hideZeroBuckets": true,
@@ -2751,7 +1131,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "sum(increase(smb2_session_setup_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$TopSMB2SessionSetupLatency\"}[$__interval])) by (le)",
+              "expr": "sum(increase(smb2_session_setup_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
@@ -2761,7 +1141,7 @@
             }
           ],
           "timeFrom": null,
-          "title": "Top $TopResources SVM Session Setup Latency Heatmap",
+          "title": "Session Setup Latency Heatmap",
           "tooltip": {
             "show": true,
             "showHistogram": false
@@ -2825,7 +1205,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(svm_labels{system_type!=\"7mode\"}, datacenter)",
+        "definition": "label_values(volume_labels{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -2835,7 +1215,7 @@
         "name": "Datacenter",
         "options": [],
         "query": {
-          "query": "label_values(svm_labels{system_type!=\"7mode\"}, datacenter)",
+          "query": "label_values(volume_labels{system_type!=\"7mode\"}, datacenter)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2851,7 +1231,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(svm_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
+        "definition": "label_values(volume_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -2861,7 +1241,7 @@
         "name": "Cluster",
         "options": [],
         "query": {
-          "query": "label_values(svm_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
+          "query": "label_values(volume_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2877,33 +1257,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(node_labels{cluster=~\"$Cluster\"}, node)",
-        "description": null,
-        "error": null,
-        "hide": 0,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "Node",
-        "options": [],
-        "query": {
-          "query": "label_values(node_labels{cluster=~\"$Cluster\"}, node)",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(svm_labels{cluster=~\"$Cluster\"}, svm)",
+        "definition": "label_values(volume_labels{cluster=~\"$Cluster\"}, svm)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -2913,7 +1267,7 @@
         "name": "SVM",
         "options": [],
         "query": {
-          "query": "label_values(svm_labels{cluster=~\"$Cluster\"}, svm)",
+          "query": "label_values(volume_labels{cluster=~\"$Cluster\"}, svm)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2924,654 +1278,11 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      },
-      {
-        "allValue": null,
-        "current": {
-          "selected": true,
-          "text": "5",
-          "value": "5"
-        },
-        "description": null,
-        "error": null,
-        "hide": 0,
-        "includeAll": false,
-        "label": null,
-        "multi": false,
-        "name": "TopResources",
-        "options": [
-          {
-            "selected": false,
-            "text": "1",
-            "value": "1"
-          },
-          {
-            "selected": false,
-            "text": "2",
-            "value": "2"
-          },
-          {
-            "selected": false,
-            "text": "3",
-            "value": "3"
-          },
-          {
-            "selected": false,
-            "text": "4",
-            "value": "4"
-          },
-          {
-            "selected": true,
-            "text": "5",
-            "value": "5"
-          },
-          {
-            "selected": false,
-            "text": "6",
-            "value": "6"
-          },
-          {
-            "selected": false,
-            "text": "8",
-            "value": "8"
-          },
-          {
-            "selected": false,
-            "text": "10",
-            "value": "10"
-          },
-          {
-            "selected": false,
-            "text": "15",
-            "value": "15"
-          },
-          {
-            "selected": false,
-            "text": "25",
-            "value": "25"
-          },
-          {
-            "selected": false,
-            "text": "50",
-            "value": "50"
-          },
-          {
-            "selected": false,
-            "text": "100",
-            "value": "100"
-          },
-          {
-            "selected": false,
-            "text": "250",
-            "value": "250"
-          },
-          {
-            "selected": false,
-            "text": "500",
-            "value": "500"
-          }
-        ],
-        "query": "1,2,3,4,5,6,8,10,15,25,50,100,250,500",
-        "queryValue": "",
-        "skipUrlSync": false,
-        "type": "custom"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopSMB2ReadOPS",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopSMB2WriteOPS",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopSMB2ReadLatency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopSMB2WriteLatency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_negotiate_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopSMB2NegotiateLatency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_negotiate_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_session_setup_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopSMB2SessionSetupLatency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_session_setup_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_tree_connect_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopSMB2TreeConnectLatency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_tree_connect_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_create_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopSMB2CreateLatency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_create_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_close_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopSMB2CloseLatency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_close_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_lock_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopSMB2LockLatency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_lock_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_query_directory_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopSMB2QueryDirectoryLatency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_query_directory_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_query_info_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopSMB2QueryInfoLatency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_query_info_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_set_info_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopSMB2SetInfoLatency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_set_info_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_oplock_break_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopSMB2OplockBreakLatency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_oplock_break_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_negotiate_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopSMB2NegotiateOps",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_negotiate_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_session_setup_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopSMB2SessionSetupOps",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_session_setup_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_tree_connect_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopSMB2TreeConnectOps",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_tree_connect_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_create_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopSMB2CreateOps",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_create_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_close_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopSMB2CloseOps",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_close_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_lock_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopSMB2LockOps",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_lock_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_query_directory_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopSMB2QueryDirectoryOps",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_query_directory_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_query_info_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopSMB2QueryInfoOps",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_query_info_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_set_info_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopSMB2SetInfoOps",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_set_info_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(smb2_oplock_break_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopSMB2OplockBreakOps",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(smb2_oplock_break_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",svm=~\"$SVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-3h",
     "to": "now"
   },
   "timepicker": {
