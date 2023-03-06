@@ -15,6 +15,9 @@ counters:
   - space.used              => size_used
 
 plugins:
+  - MetricAgent:
+      compute_metric:
+        - size_used_percent PERCENT size_used size
   - LabelAgent:
       value_to_num:
         - new_status state online online `0`
