@@ -171,3 +171,9 @@
   grafanaJson: ops
   grafanaDisplay: Blocks/sec(ops)
   comment: Number of block free per second
+
+- metric: quota_disk_used
+  ontapUnit: kilobytes
+  grafanaJson: kbytes
+  grafanaDisplay: kbytes
+  comment: Current amount of disk space, in kilobytes, used by the quota target.
