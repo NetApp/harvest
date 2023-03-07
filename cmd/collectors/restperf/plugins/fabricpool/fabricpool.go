@@ -15,7 +15,8 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 }
 
 // Run converts Rest lowercase metric names to uppercase to match ZapiPerf
-func (f *FabricPool) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (f *FabricPool) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+	data := dataMap[f.Object]
 	for _, metric := range data.GetMetrics() {
 		if !metric.IsArray() {
 			continue
