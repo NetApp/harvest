@@ -39,6 +39,8 @@ counters:
   - space.snapshot.reserve_size                   => snapshot_reserve_size
   - space.snapshot.reserve_percent                => snapshot_reserve_percent
   - space.snapshot.space_used_percent             => snapshot_reserve_used_percent
+  - space.overwrite_reserve_used                  => overwrite_reserve_used
+  - space.overwrite_reserve                       => overwrite_reserve_total
   - snapshot_count
   - hidden_fields:
     - space
@@ -71,6 +73,8 @@ plugins:
   - MetricAgent:
       compute_metric:
         - inode_used_percent PERCENT inode_files_used inode_files_total
+        - snapshot_reserve_used SUBTRACT snapshot_reserve_size snapshot_reserve_available
+        - overwrite_reserve_avail SUBTRACT overwrite_reserve_total overwrite_reserve_used
   - LabelAgent:
       exclude_equals:
         - style `flexgroup_constituent`
