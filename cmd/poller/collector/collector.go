@@ -391,9 +391,9 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 
 					pluginStart = time.Now()
 
-					for k, v := range c.Plugins {
+					for _, v := range c.Plugins {
 						for _, plg := range v {
-							if pluginData, err := plg.Run(data[k]); err != nil {
+							if pluginData, err := plg.Run(data); err != nil {
 								c.Logger.Error().Err(err).Str("plugin", plg.GetName()).Send()
 							} else if pluginData != nil {
 								results = append(results, pluginData...)

@@ -122,13 +122,14 @@ func (my *Shelf) Init() error {
 	return nil
 }
 
-func (my *Shelf) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *Shelf) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var (
 		err    error
 		output []*matrix.Matrix
 	)
 
+	data := dataMap[my.Object]
 	// Only 7mode is supported through this plugin
 	if my.client.IsClustered() {
 		return nil, nil

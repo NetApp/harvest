@@ -41,12 +41,13 @@ func (a *MetricAgent) Init() error {
 	return err
 }
 
-func (a *MetricAgent) Run(m *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (a *MetricAgent) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var err error
+	data := dataMap[a.Object]
 
 	for _, foo := range a.actions {
-		_ = foo(m)
+		_ = foo(data)
 	}
 
 	return nil, err

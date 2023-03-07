@@ -25,11 +25,12 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 //@TODO rewrite using vector arithmetic
 // will simplify the code a whole!!!
 
-func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (me *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var (
 		err error
 	)
+	data := dataMap[me.Object]
 	opsKeyPrefix := "temp_"
 	re := regexp.MustCompile(`^(.*)__(\d{4})$`)
 

@@ -56,7 +56,7 @@ func TestMultipleRule(t *testing.T) {
 		}
 	}
 
-	m := matrix.New("TestLabelAgent", "test", "test")
+	m := matrix.New("TestLabelAgent", "", "test")
 
 	metricA, err := m.NewMetricUint8("metricA")
 	if err != nil {
@@ -92,8 +92,11 @@ func TestMultipleRule(t *testing.T) {
 
 	results := make([]*matrix.Matrix, 0)
 	results = append(results, m)
+	dataMap := map[string]*matrix.Matrix{
+		m.Object: m,
+	}
 	for _, plg := range Plugins {
-		if pluginData, err := plg.Run(m); err != nil {
+		if pluginData, err := plg.Run(dataMap); err != nil {
 			panic(err)
 		} else if pluginData != nil {
 			results = append(results, pluginData...)

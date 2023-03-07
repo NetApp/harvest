@@ -86,8 +86,8 @@ func (v *VolumeAnalytics) initMatrix() error {
 	return nil
 }
 
-func (v *VolumeAnalytics) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
-
+func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+	data := dataMap[v.Object]
 	cluster, _ := data.GetGlobalLabels().GetHas("cluster")
 	clusterVersion := v.client.Cluster().GetVersion()
 	ontapVersion, err := goversion.NewVersion(clusterVersion)

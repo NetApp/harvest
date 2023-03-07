@@ -74,13 +74,14 @@ func (s *SecurityAccount) Init() error {
 	return nil
 }
 
-func (s *SecurityAccount) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (s *SecurityAccount) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 	var (
 		result                 []gjson.Result
 		err                    error
 		applicationToMethodMap map[string][]string
 	)
 
+	data := dataMap[s.Object]
 	// Purge and reset data
 	s.data.PurgeInstances()
 	s.data.Reset()

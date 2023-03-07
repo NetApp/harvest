@@ -49,12 +49,13 @@ func (my *Security) Init() error {
 	return nil
 }
 
-func (my *Security) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *Security) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var (
 		err error
 	)
 
+	data := dataMap[my.Object]
 	if my.currentVal >= my.PluginInvocationRate {
 		my.currentVal = 0
 

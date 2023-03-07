@@ -133,7 +133,7 @@ func (my *Qtree) Init() error {
 	return nil
 }
 
-func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 	var (
 		request, response *node.Node
 		quotas            []*node.Node
@@ -142,6 +142,7 @@ func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		numMetrics        int
 	)
 
+	data := dataMap[my.Object]
 	apiT := 0 * time.Second
 	parseT := 0 * time.Second
 
