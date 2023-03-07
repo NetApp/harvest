@@ -24,6 +24,12 @@
     },
     {
       "type": "panel",
+      "id": "text",
+      "name": "Text",
+      "version": ""
+    },
+    {
+      "type": "panel",
       "id": "timeseries",
       "name": "Time series",
       "version": ""
@@ -53,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1651152950740,
+  "iteration": 1678180174257,
   "links": [
     {
       "asDropdown": true,
@@ -72,13 +78,30 @@
   ],
   "panels": [
     {
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 59,
+      "options": {
+        "content": "You must enable the nfsv4_pool.yaml section in your $HARVEST/conf/zapiperf/default.yaml file. Please see https://github.com/NetApp/harvest/discussions/1796 for more details.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.1.8",
+      "title": "Important Information",
+      "type": "text"
+    },
+    {
       "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 3
       },
       "id": 57,
       "panels": [
@@ -338,7 +361,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 1
+        "y": 4
       },
       "id": 55,
       "panels": [
@@ -2098,5 +2121,5 @@
   "timezone": "",
   "title": "ONTAP: NFSv4 StorePool Monitors",
   "uid": "",
-  "version": 6
+  "version": 7
 }
