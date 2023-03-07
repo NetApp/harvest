@@ -31,8 +31,9 @@ Read on if you want to know how you can use REST sooner, or you want to take adv
 Harvest asks the cluster for its ONTAP version:
 
 * If the version is earlier than `9.12.1`, Harvest will use the collector(s) defined in your `harvest.yml`.
-* If the version is `9.12.1` or later, Harvest will use REST, unless the [HARVEST_NO_COLLECTOR_UPGRADE](#im-using-ontap-version-912x-but-i-want-to-continue-using-zapis-how-do-i-do-that) environment variable is set.
-  When the environment variable is set, Harvest will use ZAPIs unless the cluster no longer talks ZAPI. 
+* If the version is `9.12.1` or later, Harvest will use REST, unless the [HARVEST_NO_COLLECTOR_UPGRADE](#im-using-ontap-version-912x-but-i-want-to-continue-using-zapis-how-do-i-do-that) environment variable is set or 
+  the [`prefer_zapi`](https://netapp.github.io/harvest/latest/configure-harvest-basic/#pollers) poller option is true.
+  When the environment variable or `prefer_zapi` option are set, Harvest will use ZAPIs unless the cluster no longer talks ZAPI. 
 
 ```mermaid
 graph TD
@@ -44,7 +45,7 @@ B --> AA{Does your harvest.yml<br>specify a REST collector?}
 AA -->|No| F(Use ZAPI) 
 AA -->|Yes|G(Use REST)
 
-C --> CC{Is HARVEST_NO_COLLECTOR_UPGRADE<br>environment<br>variable set?}
+C --> CC{Is HARVEST_NO_COLLECTOR_UPGRADE<br>environment variable set?<br><br>Or is the prefer_zapi poller option setset?}
 CC --> |No| G
 CC --> |Yes|CZ(Use ZAPI) 
 
@@ -129,8 +130,11 @@ or [ask the Harvest team on Discord](#a-counter-is-missing-from-rest-what-do-i-d
 
 ### I'm using ONTAP version 9.12.X, but I want to continue using ZAPIs. How do I do that?
 
-Set the environment variable `HARVEST_NO_COLLECTOR_UPGRADE=1` and Harvest will not 
+There are two options:
+
+1. Set the environment variable `HARVEST_NO_COLLECTOR_UPGRADE=1` and Harvest will not 
 upgrade your collector from ZAPI to REST.
+2. Edit your `harvest.yml` config file and add the [`prefer_zapi`](https://netapp.github.io/harvest/latest/configure-harvest-basic/#pollers) option to the poller section. See [configure Harvest](https://netapp.github.io/harvest/latest/configure-harvest-basic/#pollers) for details.
 
 ## Reference
 
