@@ -45,7 +45,7 @@ const DefaultPollInterval = 3 * time.Minute
 type Plugin interface {
 	GetName() string
 	Init() error
-	Run(*matrix.Matrix) ([]*matrix.Matrix, error)
+	Run(map[string]*matrix.Matrix) ([]*matrix.Matrix, error)
 }
 
 var (
@@ -148,7 +148,7 @@ func (p *AbstractPlugin) InitAbc() error {
 
 // Run should run the plugin and return collected data as an array of matrices
 // (Since most plugins don't collect data, they will always return nil instead)
-func (p *AbstractPlugin) Run(*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (p *AbstractPlugin) Run(map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 	panic(p.Name + " has not implemented Run()")
 }
 

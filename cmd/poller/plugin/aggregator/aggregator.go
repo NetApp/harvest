@@ -112,8 +112,8 @@ func (a *Aggregator) parseRules() error {
 	return nil
 }
 
-func (a *Aggregator) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
-
+func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+	data := dataMap[a.Object]
 	matrices := make([]*matrix.Matrix, len(a.rules))
 
 	// initialize cache

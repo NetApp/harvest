@@ -135,12 +135,13 @@ func (my *Qtree) Init() error {
 	return nil
 }
 
-func (my *Qtree) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 	var (
 		result     []gjson.Result
 		err        error
 		numMetrics int
 	)
+	data := dataMap[my.Object]
 	// Purge and reset data
 	my.data.PurgeInstances()
 	my.data.Reset()

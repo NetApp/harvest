@@ -28,11 +28,12 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &SVM{AbstractPlugin: p}
 }
 
-func (my *SVM) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 	var (
 		err error
 	)
 
+	data := dataMap[my.Object]
 	// invoke nameservice-nsswitch-get-iter zapi and get nsswitch info
 	if my.nsswitchInfo, err = my.GetNSSwitchInfo(data); err != nil {
 		if errs.IsRestErr(err, errs.APINotFound) {

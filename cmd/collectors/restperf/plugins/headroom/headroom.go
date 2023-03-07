@@ -14,8 +14,9 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Headroom{AbstractPlugin: p}
 }
 
-func (me *Headroom) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (me *Headroom) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 
+	data := dataMap[me.Object]
 	for _, instance := range data.GetInstances() {
 
 		// no need to continue if labels are already parsed

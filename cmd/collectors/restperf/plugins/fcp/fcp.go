@@ -17,10 +17,11 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Fcp{AbstractPlugin: p}
 }
 
-func (f *Fcp) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (f *Fcp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var rx, tx, util, read, write *matrix.Metric
 	var err error
+	data := dataMap[f.Object]
 
 	if read = data.GetMetric("read_data"); read == nil {
 		return nil, errs.New(errs.ErrNoMetric, "read_data")

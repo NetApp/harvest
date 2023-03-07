@@ -13,10 +13,7 @@ import (
 
 var p *Aggregator
 
-var m *matrix.Matrix
-
-func TestInitPlugin(t *testing.T) {
-
+func TestMain(m *testing.M) {
 	params := node.NewS("Aggregator")
 	params.NewChildS("", "node")
 
@@ -24,52 +21,24 @@ func TestInitPlugin(t *testing.T) {
 	p = &Aggregator{AbstractPlugin: abc}
 
 	if err := p.Init(); err != nil {
-		t.Fatal(err)
+		panic(err)
 	}
+	m.Run()
 }
 
 func TestRuleSimpleAggregation(t *testing.T) {
-
-	// create artificial data
-	m = matrix.New("", "", "")
-	var n *matrix.Matrix
-
-	metricA, err := m.NewMetricUint8("metricA")
-	if err != nil {
-		t.Fatal(err)
-	}
-	metricB, err := m.NewMetricUint8("metricB")
-	if err != nil {
-		t.Fatal(err)
-	}
-	metricB.SetProperty("average")
-
-	instanceA, err := m.NewInstance("InstanceA")
-	if err != nil {
-		t.Fatal(err)
-	}
-	instanceA.SetLabel("node", "nodeA")
-
-	instanceB, err := m.NewInstance("InstanceB")
-	if err != nil {
-		t.Fatal(err)
-	}
-	instanceB.SetLabel("node", "nodeA")
-
-	if err = metricA.SetValueUint8(instanceA, 10); err != nil {
-		t.Fatal(err)
-	}
-
-	if err = metricA.SetValueUint8(instanceB, 10); err != nil {
-		t.Fatal(err)
-	}
-
-	if err = metricB.SetValueUint8(instanceA, 10); err != nil {
-		t.Fatal(err)
-	}
+	var (
+		n                *matrix.Matrix
+		instanceA        *matrix.Instance
+		metricA, metricB *matrix.Metric
+	)
+	m := newArtificialData()
 
 	// run the plugin
-	results, err := p.Run(m)
+	dataMap := map[string]*matrix.Matrix{
+		m.Object: m,
+	}
+	results, err := p.Run(dataMap)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -116,7 +85,7 @@ func TestRuleSimpleAggregation(t *testing.T) {
 }
 
 func TestRuleIncludeAllLabels(t *testing.T) {
-
+	m := newArtificialData()
 	var n *matrix.Matrix
 
 	params := node.NewS("Aggregator")
@@ -134,7 +103,10 @@ func TestRuleIncludeAllLabels(t *testing.T) {
 	}
 
 	// run the plugin
-	results, err := p.Run(m)
+	dataMap := map[string]*matrix.Matrix{
+		m.Object: m,
+	}
+	results, err := p.Run(dataMap)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -180,6 +152,7 @@ func TestComplexRuleRegex(t *testing.T) {
 	params.NewChildS("", "volume<`_\\d{4}$`>flexgroup aggr,svm")
 
 	p.Params = params
+	m := newArtificialData()
 
 	if err := p.Init(); err != nil {
 		t.Fatal(err)
@@ -246,7 +219,10 @@ func TestComplexRuleRegex(t *testing.T) {
 	}
 
 	// run the plugin
-	results, err := p.Run(m)
+	dataMap := map[string]*matrix.Matrix{
+		m.Object: m,
+	}
+	results, err := p.Run(dataMap)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -338,8 +314,7 @@ func TestRuleSimpleLatencyAggregation(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// create artificial data
-	m = matrix.New("", "", "")
+	m := newArtificialData()
 	var n *matrix.Matrix
 
 	metricA, err := m.NewMetricUint8("read_latency")
@@ -355,12 +330,14 @@ func TestRuleSimpleLatencyAggregation(t *testing.T) {
 	}
 	metricB.SetProperty("rate")
 
+	m.RemoveInstance("InstanceA")
 	instanceA, err := m.NewInstance("InstanceA")
 	if err != nil {
 		t.Fatal(err)
 	}
 	instanceA.SetLabel("node", "nodeA")
 
+	m.RemoveInstance("InstanceB")
 	instanceB, err := m.NewInstance("InstanceB")
 	if err != nil {
 		t.Fatal(err)
@@ -384,7 +361,10 @@ func TestRuleSimpleLatencyAggregation(t *testing.T) {
 	}
 
 	// run the plugin
-	results, err := p.Run(m)
+	dataMap := map[string]*matrix.Matrix{
+		m.Object: m,
+	}
+	results, err := p.Run(dataMap)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -441,8 +421,7 @@ func TestRuleSimpleLatencyZeroAggregation(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// create artificial data
-	m = matrix.New("", "", "")
+	m := newArtificialData()
 	var n *matrix.Matrix
 
 	metricA, err := m.NewMetricUint8("read_latency")
@@ -458,12 +437,14 @@ func TestRuleSimpleLatencyZeroAggregation(t *testing.T) {
 	}
 	metricB.SetProperty("rate")
 
+	m.RemoveInstance("InstanceA")
 	instanceA, err := m.NewInstance("InstanceA")
 	if err != nil {
 		t.Fatal(err)
 	}
 	instanceA.SetLabel("node", "nodeA")
 
+	m.RemoveInstance("InstanceB")
 	instanceB, err := m.NewInstance("InstanceB")
 	if err != nil {
 		t.Fatal(err)
@@ -487,7 +468,10 @@ func TestRuleSimpleLatencyZeroAggregation(t *testing.T) {
 	}
 
 	// run the plugin
-	results, err := p.Run(m)
+	dataMap := map[string]*matrix.Matrix{
+		m.Object: m,
+	}
+	results, err := p.Run(dataMap)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -531,4 +515,44 @@ func TestRuleSimpleLatencyZeroAggregation(t *testing.T) {
 	} else {
 		t.Logf("Value [total_read_ops] = (%d) correct!", value)
 	}
+}
+
+func newArtificialData() *matrix.Matrix {
+	m := matrix.New("", "", "")
+
+	metricA, err := m.NewMetricUint8("metricA")
+	if err != nil {
+		panic(err)
+	}
+	metricB, err := m.NewMetricUint8("metricB")
+	if err != nil {
+		panic(err)
+	}
+	metricB.SetProperty("average")
+
+	instanceA, err := m.NewInstance("InstanceA")
+	if err != nil {
+		panic(err)
+	}
+	instanceA.SetLabel("node", "nodeA")
+
+	instanceB, err := m.NewInstance("InstanceB")
+	if err != nil {
+		panic(err)
+	}
+	instanceB.SetLabel("node", "nodeA")
+
+	if err = metricA.SetValueUint8(instanceA, 10); err != nil {
+		panic(err)
+	}
+
+	if err = metricA.SetValueUint8(instanceB, 10); err != nil {
+		panic(err)
+	}
+
+	if err = metricB.SetValueUint8(instanceA, 10); err != nil {
+		panic(err)
+	}
+
+	return m
 }

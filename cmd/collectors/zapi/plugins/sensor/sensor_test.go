@@ -49,7 +49,7 @@ func init() {
 		}
 	}
 
-	mat = matrix.New("TestRemoveInstance", "test", "test")
+	mat = matrix.New("TestRemoveInstance", "sensor", "test")
 	instanceKeyPath := [][]string{{"environment-sensors-info", "node-name"}, {"environment-sensors-info", "sensor-name"}}
 	shortestPathPrefix := []string{"environment-sensors-info"}
 	_, _ = mat.NewMetricInt64("environment-sensors-info.critical-high-threshold")
@@ -114,7 +114,10 @@ func init() {
 
 func TestSensor_Run(t *testing.T) {
 
-	omat, _ := sensor.Run(mat)
+	dataMap := map[string]*matrix.Matrix{
+		mat.Object: mat,
+	}
+	omat, _ := sensor.Run(dataMap)
 
 	expected := map[string]map[string]float64{
 		"average_ambient_temperature": {"cdot-k3-05": 21.666666666666668, "cdot-k3-06": 22, "cdot-k3-07": 21.666666666666668, "cdot-k3-08": 22.333333333333332},

@@ -234,8 +234,9 @@ func (d *Disk) Init() error {
 	return nil
 }
 
-func (d *Disk) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 
+	data := dataMap[d.Object]
 	// Set all global labels from rest.go if already not exist
 	for a := range d.instanceLabels {
 		d.shelfData[a].SetGlobalLabels(data.GetGlobalLabels())

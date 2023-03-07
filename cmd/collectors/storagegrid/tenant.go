@@ -19,14 +19,14 @@ func NewTenant(p *plugin.AbstractPlugin, s *StorageGrid) plugin.Plugin {
 	return &Tenant{AbstractPlugin: p, sg: s}
 }
 
-func (t *Tenant) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (t *Tenant) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var (
 		used, quota, usedPercent *matrix.Metric
 		err                      error
 		tenantNamesByID          map[string]string
 	)
-
+	data := dataMap[t.Object]
 	if used = data.GetMetric("dataBytes"); used == nil {
 		return nil, errs.New(errs.ErrNoMetric, "logical_used")
 	}

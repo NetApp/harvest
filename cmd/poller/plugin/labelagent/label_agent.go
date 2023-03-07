@@ -55,12 +55,13 @@ func (a *LabelAgent) Init() error {
 	return err
 }
 
-func (a *LabelAgent) Run(m *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (a *LabelAgent) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var err error
 
+	data := dataMap[a.Object]
 	for _, foo := range a.actions {
-		_ = foo(m)
+		_ = foo(data)
 	}
 
 	return nil, err

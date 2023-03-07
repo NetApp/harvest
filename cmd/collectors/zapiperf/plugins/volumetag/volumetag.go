@@ -35,7 +35,7 @@ func (v *VolumeTag) Init() error {
 	return nil
 }
 
-func (v *VolumeTag) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var (
 		result  *node.Node
@@ -43,6 +43,7 @@ func (v *VolumeTag) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		err     error
 	)
 
+	data := dataMap[v.Object]
 	query := "volume-get-iter"
 	tag := "initial"
 	request := node.NewXMLS(query)

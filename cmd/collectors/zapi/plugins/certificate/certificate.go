@@ -61,7 +61,7 @@ func (my *Certificate) Init() error {
 	return nil
 }
 
-func (my *Certificate) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var (
 		adminVserver       string
@@ -69,6 +69,7 @@ func (my *Certificate) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
 		err                error
 	)
 
+	data := dataMap[my.Object]
 	if my.currentVal >= my.PluginInvocationRate {
 		my.currentVal = 0
 

@@ -42,11 +42,12 @@ func (b *Bucket) Init() error {
 	return nil
 }
 
-func (b *Bucket) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 	var (
 		instanceKey string
 	)
 
+	data := dataMap[b.Object]
 	metricToJSON := map[string]string{
 		"objects": "objectCount",
 		"bytes":   "dataBytes",
