@@ -1,0 +1,25 @@
+name:                     NetRoute
+query:                    api/network/ip/routes
+object:                   net_route
+
+counters:
+  - ^^uuid                                   => uuid
+  - ^svm.name                                => svm
+  - ^scope                                   => scope
+  - ^ipspace.name                            => ipspace
+  - ^gateway                                 => gateway
+  - ^destination.netmask                     => netmask_length
+  - ^destination.address                     => destination
+  - ^destination.family                      => family
+
+export_options:
+  instance_keys:
+    - uuid
+  instance_labels:
+    - svm
+    - gateway
+    - destination
+    - ipspace
+    - gateway
+    - family
+    - netmask_length
