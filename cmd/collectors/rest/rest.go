@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/certificate"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/disk"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/netroute"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/qtree"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/securityaccount"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/sensor"
@@ -365,6 +366,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 	switch kind {
 	case "Disk":
 		return disk.New(abc)
+	case "NetRoute":
+		return netroute.New(abc)
 	case "Qtree":
 		return qtree.New(abc)
 	case "Snapmirror":
