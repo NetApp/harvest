@@ -16,6 +16,7 @@ counters:
       - raid-size
       - ^state                                 => state
       - ^is-root-aggregate                     => root_aggr
+      - ^encrypt-with-aggr-key                 => is_encrypted
     - aggr-inode-attributes:
       - files-private-used
       - files-total
@@ -74,3 +75,4 @@ export_options:
   instance_labels:
     - type
     - state
+    - is_encrypted
