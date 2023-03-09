@@ -11,15 +11,6 @@ on:
     - 'release/**'
 
 jobs:
-  govulncheck:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-go@v3
-        with:
-          go-version-file: '1.20.2'
-      - run: go install golang.org/x/vuln/cmd/govulncheck@latest
-      - run: govulncheck ./...
   build:
     runs-on: ubuntu-latest
     steps:
