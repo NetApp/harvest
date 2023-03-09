@@ -17,6 +17,12 @@
       "version": "8.1.8"
     },
     {
+      "type": "panel",
+      "id": "heatmap",
+      "name": "Heatmap",
+      "version": ""
+    },
+    {
       "type": "datasource",
       "id": "prometheus",
       "name": "Prometheus",
@@ -58,7 +64,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1675087026731,
+  "iteration": 1678383760521,
   "links": [],
   "panels": [
     {
@@ -525,7 +531,7 @@
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 21
+            "y": 2
           },
           "id": 24,
           "options": {
@@ -647,7 +653,7 @@
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 21
+            "y": 2
           },
           "id": 26,
           "options": {
@@ -742,7 +748,7 @@
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 30
+            "y": 11
           },
           "id": 28,
           "options": {
@@ -825,6 +831,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -839,7 +846,7 @@
                   }
                 ]
               },
-              "unit": "locale"
+              "unit": "reqps"
             },
             "overrides": []
           },
@@ -847,7 +854,7 @@
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 30
+            "y": 11
           },
           "id": 30,
           "options": {
@@ -952,7 +959,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 39
+            "y": 20
           },
           "id": 32,
           "options": {
@@ -1588,6 +1595,533 @@
       ],
       "title": "Nodes",
       "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "id": 42,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "bps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 6
+          },
+          "id": 46,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "8 * sum by (cluster,policy)(rate(storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$Cluster\",policy=~\"$TopPolicyRx\"}[$__interval]))",
+              "hide": false,
+              "instant": false,
+              "interval": "3m",
+              "intervalFactor": 1,
+              "legendFormat": "{{cluster}} - {{policy}} - Received",
+              "refId": "A"
+            },
+            {
+              "exemplar": true,
+              "expr": "8 * sum by (cluster,policy)(rate(storagegrid_private_load_balancer_storage_tx_bytes{cluster=~\"$Cluster\",policy=~\"$TopPolicyTx\"}[$__interval]))",
+              "hide": false,
+              "interval": "3m",
+              "intervalFactor": 1,
+              "legendFormat": "{{cluster}} - {{policy}} - Sent",
+              "refId": "B"
+            }
+          ],
+          "title": "Top $TopResources Load Balancer Request Traffic by Policy",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "reqps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 6
+          },
+          "id": 47,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "sum by (cluster,policy)(rate(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",policy=~\"$TopPolicyRequestCount\"}[$__interval])) > 0",
+              "hide": false,
+              "instant": false,
+              "interval": "3m",
+              "intervalFactor": 1,
+              "legendFormat": "{{cluster}} - {{policy}} - Total",
+              "refId": "A"
+            },
+            {
+              "exemplar": true,
+              "expr": "sum by (cluster,policy,method)(rate(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",policy=~\"$TopPolicyRequestCount\"}[$__interval])) > 0",
+              "hide": false,
+              "interval": "3m",
+              "intervalFactor": 1,
+              "legendFormat": "{{cluster}} - {{policy}} - {{method}}",
+              "refId": "B"
+            }
+          ],
+          "title": "Top $TopResources Load Balancer Request Completion Rates by Policy",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "reqps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 15
+          },
+          "id": 48,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "sum by (cluster,policy,code)(rate(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",policy=~\"$TopPolicyRequestCount\",code=~\"[45].*\"}[$__interval])) > 0",
+              "hide": false,
+              "instant": false,
+              "interval": "3m",
+              "intervalFactor": 1,
+              "legendFormat": "{{cluster}} - {{policy}} - {{code}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Error Response Rates by Policy",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 15
+          },
+          "id": 49,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "sum by (cluster,policy,method)(rate(storagegrid_private_load_balancer_storage_request_time{cluster=~\"$Cluster\",policy=~\"$TopPolicyRequestTime\",code=~\"2.+\"}[$__interval])) / (sum by (cluster,policy,method)(rate(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",policy=~\"$TopPolicyRequestTime\",code=~\"2.+\"}[$__interval]))) > 0",
+              "hide": false,
+              "instant": false,
+              "interval": "3m",
+              "intervalFactor": 1,
+              "legendFormat": "{{cluster}} - {{policy}} - {{method}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Average Request Durations (Non-Error) By Policy",
+          "type": "timeseries"
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateTurbo",
+            "exponent": 0.5,
+            "mode": "opacity"
+          },
+          "dataFormat": "tsbuckets",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 24
+          },
+          "heatmap": {},
+          "hideZeroBuckets": false,
+          "highlightCards": true,
+          "id": 50,
+          "legend": {
+            "show": false
+          },
+          "reverseYBuckets": false,
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "sum(increase(storagegrid_private_load_balancer_storage_request_body_bytes_bucket{method=~\"PUT|POST\",policy=~\"$Policy\"}[$__interval])) by (cluster,policy,le)",
+              "format": "heatmap",
+              "hide": false,
+              "instant": false,
+              "interval": "3m",
+              "intervalFactor": 1,
+              "legendFormat": "{{le}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Write Request Rate by Object Size and Policy",
+          "tooltip": {
+            "show": true,
+            "showHistogram": true
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": null,
+          "yAxis": {
+            "decimals": null,
+            "format": "bytes",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null
+          },
+          "yBucketBound": "auto",
+          "yBucketNumber": null,
+          "yBucketSize": null
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateTurbo",
+            "exponent": 0.5,
+            "mode": "opacity"
+          },
+          "dataFormat": "tsbuckets",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 24
+          },
+          "heatmap": {},
+          "hideZeroBuckets": false,
+          "highlightCards": true,
+          "id": 52,
+          "legend": {
+            "show": false
+          },
+          "reverseYBuckets": false,
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "sum(increase(storagegrid_private_load_balancer_storage_request_body_bytes_bucket{method=~\"GET\",policy=~\"$Policy\"}[$__interval])) by (cluster,policy,le)",
+              "format": "heatmap",
+              "hide": false,
+              "instant": false,
+              "interval": "3m",
+              "intervalFactor": 1,
+              "legendFormat": "{{le}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Read Request Rate by Object Size and Policy",
+          "tooltip": {
+            "show": true,
+            "showHistogram": true
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": null,
+          "yAxis": {
+            "decimals": null,
+            "format": "bytes",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null
+          },
+          "yBucketBound": "auto",
+          "yBucketNumber": null,
+          "yBucketSize": null
+        }
+      ],
+      "title": "Traffic Classification",
+      "type": "row"
     }
   ],
   "schemaVersion": 30,
@@ -1666,10 +2200,33 @@
       },
       {
         "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(storagegrid_private_load_balancer_storage_rx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"},policy)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": true,
+        "name": "Policy",
+        "options": [],
+        "query": {
+          "query": "label_values(storagegrid_private_load_balancer_storage_rx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"},policy)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": null,
         "current": {
-          "selected": true,
-          "text": "5",
-          "value": "5"
+          "selected": false,
+          "text": "3",
+          "value": "3"
         },
         "description": null,
         "error": null,
@@ -1690,7 +2247,7 @@
             "value": "2"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "3",
             "value": "3"
           },
@@ -1700,7 +2257,7 @@
             "value": "4"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "5",
             "value": "5"
           },
@@ -1846,6 +2403,98 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$Cluster\",policy=~\"$Policy\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopPolicyRx",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$Cluster\",policy=~\"$Policy\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*policy=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_tx_bytes{cluster=~\"$Cluster\",policy=~\"$Policy\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopPolicyTx",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_tx_bytes{cluster=~\"$Cluster\",policy=~\"$Policy\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*policy=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",policy=~\"$Policy\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopPolicyRequestCount",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",policy=~\"$Policy\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*policy=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_request_time{cluster=~\"$Cluster\",policy=~\"$Policy\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopPolicyRequestTime",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_request_time{cluster=~\"$Cluster\",policy=~\"$Policy\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*policy=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
@@ -1857,5 +2506,5 @@
   "timezone": "",
   "title": "StorageGrid: Overview",
   "uid": "",
-  "version": 1
+  "version": 2
 }
