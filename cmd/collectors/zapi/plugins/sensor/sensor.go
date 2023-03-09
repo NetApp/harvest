@@ -78,7 +78,8 @@ func (my *Sensor) Init() error {
 	return nil
 }
 
-func (my *Sensor) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *Sensor) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+	data := dataMap[my.Object]
 	// Purge and reset data
 	my.data.PurgeInstances()
 	my.data.Reset()

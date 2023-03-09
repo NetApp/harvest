@@ -53,8 +53,9 @@ func (my *Volume) Init() error {
 	return nil
 }
 
-func (my *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 
+	data := dataMap[my.Object]
 	if my.currentVal >= my.PluginInvocationRate {
 		my.currentVal = 0
 

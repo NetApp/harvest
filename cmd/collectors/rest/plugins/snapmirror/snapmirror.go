@@ -78,8 +78,9 @@ func (my *SnapMirror) Init() error {
 	return nil
 }
 
-func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 	// Purge and reset data
+	data := dataMap[my.Object]
 	my.data.PurgeInstances()
 	my.data.Reset()
 

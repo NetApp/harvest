@@ -17,11 +17,12 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Volume{AbstractPlugin: p}
 }
 
-func (me *Volume) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (me *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var (
 		err error
 	)
+	data := dataMap[me.Object]
 	opsKeyPrefix := "temp_"
 
 	re := regexp.MustCompile(`^(.*)__(\d{4})$`)

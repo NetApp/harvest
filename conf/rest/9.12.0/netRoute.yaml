@@ -1,0 +1,32 @@
+name:                     NetRoute
+query:                    api/network/ip/routes
+object:                   net_route
+
+counters:
+  - ^^uuid                                   => uuid
+  - ^svm.name                                => svm
+  - ^scope                                   => scope
+  - ^ipspace.name                            => ipspace
+  - ^gateway                                 => gateway
+  - ^destination.netmask                     => netmask_length
+  - ^destination.address                     => destination
+  - ^destination.family                      => family
+  - ^interfaces.#.name                       => interface_name          # Added in Ontap 9.9
+  - ^interfaces.#.ip.address                 => interface_address       # Added in Ontap 9.9
+  - hidden_fields:
+      - interfaces
+
+plugins:
+  - NetRoute   #Creates net_route_interface_labels from interface_name and interface_address metrics collected above
+
+export_options:
+  instance_keys:
+    - uuid
+  instance_labels:
+    - svm
+    - scope
+    - ipspace
+    - gateway
+    - netmask_length
+    - destination
+    - family

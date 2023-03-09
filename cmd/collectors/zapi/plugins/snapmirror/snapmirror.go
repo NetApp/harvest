@@ -57,7 +57,8 @@ func (my *SnapMirror) Init() error {
 	my.Logger.Debug().Msg("plugin initialized")
 	return nil
 }
-func (my *SnapMirror) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+	data := dataMap[my.Object]
 	// update caches every so while
 	if my.limitUpdCounter == 0 {
 		if err := my.updateLimitCache(); err != nil {

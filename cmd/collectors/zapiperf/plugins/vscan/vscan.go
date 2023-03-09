@@ -15,7 +15,8 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Vscan{AbstractPlugin: p}
 }
 
-func (v *Vscan) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (v *Vscan) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+	data := dataMap[v.Object]
 	// defaults plugin options
 	isPerScanner := true
 

@@ -10,6 +10,7 @@ counters:
   - ^state                                                         => state
   - ^block_storage.primary.disk_type                               => type
   - ^block_storage.primary.raid_type                               => raid_type
+  - ^data_encryption.software_encryption_enabled                   => is_encrypted
   - block_storage.primary.raid_size                                => raid_size
   - space.cloud_storage.used                                       => space_capacity_tier_used
   - space.block_storage.data_compacted_count                       => space_data_compacted_count
@@ -79,3 +80,4 @@ export_options:
   instance_labels:
     - type
     - state
+    - is_encrypted

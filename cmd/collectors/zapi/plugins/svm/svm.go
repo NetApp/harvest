@@ -105,11 +105,12 @@ func (my *SVM) Init() error {
 	return nil
 }
 
-func (my *SVM) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 	var (
 		err error
 	)
 
+	data := dataMap[my.Object]
 	if my.currentVal >= my.PluginInvocationRate {
 		my.currentVal = 0
 

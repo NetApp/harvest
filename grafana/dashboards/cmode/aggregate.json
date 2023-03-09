@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1668670160259,
+  "iteration": 1678279418613,
   "links": [
     {
       "asDropdown": true,
@@ -792,6 +792,32 @@
                 "value": 498
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Encrypted"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "false": {
+                        "index": 0,
+                        "text": "No"
+                      },
+                      "true": {
+                        "index": 1,
+                        "text": "Yes"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -863,6 +889,15 @@
           "interval": "",
           "legendFormat": "",
           "refId": "F"
+        },
+        {
+          "exemplar": true,
+          "expr": "aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "format": "table",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "G"
         }
       ],
       "timeFrom": null,
@@ -895,6 +930,35 @@
         {
           "id": "merge",
           "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Value #G": true,
+              "state": true,
+              "type": true
+            },
+            "indexByName": {
+              "Value #A": 4,
+              "Value #B": 6,
+              "Value #C": 7,
+              "Value #D": 8,
+              "Value #E": 9,
+              "Value #F": 10,
+              "Value #G": 13,
+              "aggr": 3,
+              "cluster": 1,
+              "datacenter": 0,
+              "is_encrypted": 5,
+              "node": 2,
+              "state": 11,
+              "type": 12
+            },
+            "renameByName": {
+              "is_encrypted": "Encrypted"
+            }
+          }
         }
       ],
       "type": "table"
@@ -3226,11 +3290,12 @@
     },
     {
       "collapsed": true,
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 64
+        "y": 56
       },
       "id": 65,
       "panels": [
@@ -3809,7 +3874,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 81
+        "y": 57
       },
       "id": 81,
       "panels": [
@@ -4348,13 +4413,17 @@
         "type": "query"
       },
       {
+        "allValue": null,
         "current": {
           "selected": true,
           "text": "5",
           "value": "5"
         },
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": false,
+        "label": null,
         "multi": false,
         "name": "TopResources",
         "options": [
@@ -4435,8 +4504,12 @@
         "type": "custom"
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, avg_over_time(volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
         "label": "",
@@ -4454,8 +4527,12 @@
         "type": "query"
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
         "label": "",
@@ -4473,8 +4550,12 @@
         "type": "query"
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, avg_over_time(volume_snapshots_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
         "label": "",
@@ -4492,8 +4573,12 @@
         "type": "query"
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, avg_over_time(volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
         "label": "",
@@ -4520,5 +4605,5 @@
   "timezone": "",
   "title": "ONTAP: Aggregate",
   "uid": "",
-  "version": 6
+  "version": 7
 }

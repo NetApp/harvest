@@ -35,12 +35,13 @@ func (v *VolumeTag) Init() error {
 	return nil
 }
 
-func (v *VolumeTag) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var (
 		err error
 	)
 
+	data := dataMap[v.Object]
 	query := "api/storage/volumes"
 
 	href := rest.BuildHref("", "comment", nil, "", "", "", "", query)

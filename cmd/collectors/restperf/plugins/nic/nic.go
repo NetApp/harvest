@@ -30,10 +30,11 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 }
 
 // Run speed label is reported in bits-per-second and rx/tx is reported as bytes-per-second
-func (me *Nic) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (me *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var read, write, rx, tx, util *matrix.Metric
 	var err error
+	data := dataMap[me.Object]
 
 	if read = data.GetMetric("receive_bytes"); read == nil {
 		return nil, errs.New(errs.ErrNoMetric, "receive_bytes")

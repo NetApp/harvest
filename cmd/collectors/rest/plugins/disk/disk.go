@@ -16,8 +16,8 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Disk{AbstractPlugin: p}
 }
 
-func (me *Disk) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
-
+func (me *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+	data := dataMap[me.Object]
 	for _, instance := range data.GetInstances() {
 
 		containerType := instance.GetLabel("container_type")

@@ -113,8 +113,9 @@ func (m *Max) parseRules() error {
 	return nil
 }
 
-func (m *Max) Run(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 
+	data := dataMap[m.Object]
 	matrices := make(map[string]*matrix.Matrix)
 
 	// initialize cache
