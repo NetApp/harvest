@@ -74,7 +74,7 @@ plugins:
       compute_metric:
         - inode_used_percent PERCENT inode_files_used inode_files_total
         - snapshot_reserve_used SUBTRACT snapshot_reserve_size snapshot_reserve_available
-        - overwrite_reserve_avail SUBTRACT overwrite_reserve_total overwrite_reserve_used
+        - overwrite_reserve_available SUBTRACT overwrite_reserve_total overwrite_reserve_used
   - LabelAgent:
       exclude_equals:
         - style `flexgroup_constituent`

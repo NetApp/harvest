@@ -56,7 +56,6 @@ counters:
       - percentage-snapshot-reserve         => snapshot_reserve_percent
       - percentage-snapshot-reserve-used    => snapshot_reserve_used_percent
       - overwrite-reserve                   => overwrite_reserve_total
-      - overwrite-reserve-required          => overwrite_reserve_avail
       - overwrite-reserve-used              => overwrite_reserve_used
 
     - volume-state-attributes:
@@ -79,6 +78,7 @@ plugins:
       compute_metric:
         - inode_used_percent PERCENT inode_files_used inode_files_total
         - snapshot_reserve_used SUBTRACT snapshot_reserve_size snapshot_reserve_available
+        - overwrite_reserve_available SUBTRACT overwrite_reserve_total overwrite_reserve_used
   - LabelAgent:
     exclude_equals:
       - style `flexgroup_constituent`
