@@ -44,6 +44,7 @@ type Zapi struct {
 	instanceKeyPaths   [][]string
 	instanceLabelPaths map[string]string
 	shortestPathPrefix []string
+	arrayLabelPaths    map[string]string
 }
 
 func init() {
@@ -173,6 +174,7 @@ func (z *Zapi) InitCache() error {
 	}
 
 	z.instanceLabelPaths = make(map[string]string)
+	z.arrayLabelPaths = make(map[string]string)
 
 	counters := z.Params.GetChildS("counters")
 	if counters == nil {
@@ -256,8 +258,18 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 		newpath := append(path, node.GetNameS())
 		key := strings.Join(newpath, ".")
 		z.Logger.Trace().Msgf(" > %s(%s)%s <%s%d%s> name=[%s%s%s%s] value=[%s%s%s]", color.Grey, newpath, color.End, color.Red, len(node.GetChildren()), color.End, color.Bold, color.Cyan, node.GetNameS(), color.End, color.Yellow, node.GetContentS(), color.End)
+
 		if value := node.GetContentS(); value != "" {
-			if label, has := z.instanceLabelPaths[key]; has {
+			// Handling array with comma separated values
+			if label, has := z.arrayLabelPaths[key]; has {
+				if prevLabel := instance.GetLabel(label); prevLabel != "" {
+					instance.SetLabel(label, prevLabel+","+node.GetContentS())
+				} else {
+					instance.SetLabel(label, node.GetContentS())
+				}
+				z.Logger.Trace().Msgf(" > %slabel (%s) [%s] set value (%s)%s", color.Yellow, key, label, node.GetContentS(), color.End)
+				count++
+			} else if label, has = z.instanceLabelPaths[key]; has {
 				instance.SetLabel(label, value)
 				z.Logger.Trace().Msgf(" > %slabel (%s) [%s] set value (%s)%s", color.Yellow, key, label, value, color.End)
 				count++

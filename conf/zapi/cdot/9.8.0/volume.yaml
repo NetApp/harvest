@@ -16,7 +16,8 @@ counters:
       - ^name                       => volume
       - ^node                       => node
       - ^owning-vserver-name        => svm
-      - ^containing-aggregate-name  => aggr
+      - aggr-list:
+          - $aggr-name              => aggr
       - ^containing-aggregate-uuid  => aggrUuid
       - ^style-extended             => style
       - ^type                       => type
