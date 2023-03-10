@@ -9,7 +9,7 @@ require (
 	github.com/imdario/mergo v0.3.13
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/rs/zerolog v1.29.0
-	github.com/shirou/gopsutil/v3 v3.23.1
+	github.com/shirou/gopsutil/v3 v3.23.2
 	github.com/spf13/cobra v1.6.1
 	github.com/tidwall/gjson v1.14.4
 	github.com/tidwall/sjson v1.2.5
