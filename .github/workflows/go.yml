@@ -41,7 +41,7 @@ jobs:
       run: go test -v ./...
 
     - name: Check code formatting using gofmt
-      uses: Jerome1337/gofmt-action@v1.0.4
+      uses: Jerome1337/gofmt-action@v1.0.5
       
   license_check:
       name: License check
