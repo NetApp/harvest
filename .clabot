@@ -15,6 +15,7 @@
         "rmilkowski",
         "cordelster",
         "$$$ Bots $$$",
-        "dependabot"
+        "dependabot",
+        "dependabot[bot]"
     ]
 }
