@@ -8,7 +8,6 @@ updates:
     commit-message:
       prefix: "chore"
 
-
   - package-ecosystem: "gomod"
     open-pull-requests-limit: 10
     directory: "/integration"
