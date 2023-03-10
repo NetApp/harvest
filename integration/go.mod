@@ -9,7 +9,7 @@ require (
 	github.com/julienroland/usg v0.0.0-20160918114137-cb52eabb3d84
 	github.com/netapp/harvest/v2 v2.0.0-20230213142547-1be3ef44e7f6
 	github.com/rs/zerolog v1.29.0
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.8.2
 	github.com/tidwall/gjson v1.14.4
 	golang.org/x/text v0.8.0
 )
