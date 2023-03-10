@@ -84,10 +84,6 @@ func (t *JoinRest) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, err
 		for _, model := range t.translateMap {
 			bytes, err := t.client.GetGridRest(model.Rest)
 			if err != nil {
-				log.Error().Err(err).Str("request", model.Rest).Msg("Failed to call grid REST")
-				return nil, err
-			}
-			if err != nil {
 				log.Error().Err(err).Str("rest", model.Rest).Msg("Failed to collect records from REST")
 				continue
 			}
