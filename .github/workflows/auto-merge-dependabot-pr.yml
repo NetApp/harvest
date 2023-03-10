@@ -1,0 +1,22 @@
+# https://remarkablemark.org/blog/2022/11/18/dependabot-auto-merge-pull-request/
+name: "Auto-merge dependabot"
+on: pull_request_target
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge-dependabot-pr:
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    env:
+      PR_URL: ${{ github.event.pull_request.html_url }}
+      GITHUB_TOKEN: ${{ github.token }}
+
+    steps:
+      - name: Approve Dependabot PR
+        run: gh pr review --approve $PR_URL
+
+      - name: Auto-merge Dependabot PR
+        if: contains(github.event.pull_request.title, 'chore')
+        run: gh pr merge --auto --merge $PR_URL

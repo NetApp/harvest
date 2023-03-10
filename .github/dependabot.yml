@@ -4,7 +4,8 @@ updates:
     open-pull-requests-limit: 10
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "tuesday"
     commit-message:
       prefix: "chore"
 
