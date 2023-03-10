@@ -16,6 +16,9 @@ counters:
     - ^vserver => svm
 
 plugins:
+  - MetricAgent:
+      compute_metric:
+        - size_used_percent PERCENT size_used size
   - LabelAgent:
     # metric label zapi_value rest_value `default_value`
     value_to_num:
