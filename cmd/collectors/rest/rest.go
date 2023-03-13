@@ -191,7 +191,7 @@ func (r *Rest) getClient(a *collector.AbstractCollector) (*rest.Client, error) {
 		return nil, errs.New(errs.ErrMissingParam, "addr")
 	}
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-	if client, err = rest.New(*poller, timeout); err != nil {
+	if client, err = rest.New(poller, timeout); err != nil {
 		r.Logger.Error().Err(err).Str("poller", opt.Poller).Msg("error creating new client")
 		os.Exit(1)
 	}

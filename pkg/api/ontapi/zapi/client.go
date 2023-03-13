@@ -9,6 +9,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
+	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
@@ -39,7 +40,7 @@ type Client struct {
 	logZapi    bool            // used to log ZAPI request/response
 }
 
-func New(poller conf.Poller) (*Client, error) {
+func New(poller *conf.Poller) (*Client, error) {
 	var (
 		client         Client
 		httpclient     *http.Client
@@ -100,7 +101,7 @@ func New(poller conf.Poller) (*Client, error) {
 
 	// check if a credentials file is being used and if so, parse and use the values from it
 	if poller.CredentialsFile != "" {
-		err := conf.ReadCredentialsFile(poller.CredentialsFile, &poller)
+		err := conf.ReadCredentialsFile(poller.CredentialsFile, poller)
 		if err != nil {
 			client.Logger.Error().
 				Err(err).
@@ -151,14 +152,14 @@ func New(poller conf.Poller) (*Client, error) {
 			},
 		}
 	} else {
-
+		password := auth.Get().Password()
 		if poller.Username == "" {
 			return nil, errs.New(errs.ErrMissingParam, "username")
-		} else if poller.Password == "" {
+		} else if password == "" {
 			return nil, errs.New(errs.ErrMissingParam, "password")
 		}
 
-		request.SetBasicAuth(poller.Username, poller.Password)
+		request.SetBasicAuth(poller.Username, password)
 		transport = &http.Transport{
 			Proxy:           http.ProxyFromEnvironment,
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: useInsecureTLS}, //nolint:gosec

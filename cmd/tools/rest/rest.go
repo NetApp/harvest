@@ -5,7 +5,9 @@ package rest
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
@@ -71,6 +73,7 @@ func ReadOrDownloadSwagger(pName string) (string, error) {
 	if poller, addr, err = GetPollerAndAddr(pName); err != nil {
 		return "", err
 	}
+	auth.NewCredentials(poller, logging.Get())
 
 	tmp := os.TempDir()
 	swaggerPath := filepath.Join(tmp, addr+"-swagger.yaml")
@@ -177,7 +180,7 @@ func doData() {
 	}
 
 	timeout, _ := time.ParseDuration(DefaultTimeout)
-	if client, err = New(*poller, timeout); err != nil {
+	if client, err = New(poller, timeout); err != nil {
 		fmt.Printf("error creating new client %+v\n", err)
 		os.Exit(1)
 	}

@@ -135,7 +135,7 @@ func doCmd(cmd string) {
 	if poller, err = conf.PollerNamed(args.Poller); err != nil {
 		log.Fatal(err)
 	}
-	if connection, err = client.New(*poller); err != nil {
+	if connection, err = client.New(poller); err != nil {
 		log.Fatal(err)
 	}
 

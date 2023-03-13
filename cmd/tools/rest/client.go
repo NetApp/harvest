@@ -7,6 +7,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
+	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
@@ -33,7 +34,6 @@ type Client struct {
 	Logger   *logging.Logger
 	baseURL  string
 	cluster  Cluster
-	password string
 	username string
 	Timeout  time.Duration
 	logRest  bool // used to log Rest request/response
@@ -47,7 +47,7 @@ type Cluster struct {
 	Version [3]int
 }
 
-func New(poller conf.Poller, timeout time.Duration) (*Client, error) {
+func New(poller *conf.Poller, timeout time.Duration) (*Client, error) {
 	var (
 		client         Client
 		httpclient     *http.Client
@@ -83,7 +83,7 @@ func New(poller conf.Poller, timeout time.Duration) (*Client, error) {
 
 	// check if a credentials file is being used and if so, parse and use the values from it
 	if poller.CredentialsFile != "" {
-		err := conf.ReadCredentialsFile(poller.CredentialsFile, &poller)
+		err := conf.ReadCredentialsFile(poller.CredentialsFile, poller)
 		if err != nil {
 			client.Logger.Error().
 				Err(err).
@@ -133,9 +133,8 @@ func New(poller conf.Poller, timeout time.Duration) (*Client, error) {
 		}
 	} else {
 		username := poller.Username
-		password := poller.Password
+		password := auth.Get().Password()
 		client.username = username
-		client.password = password
 		if username == "" {
 			return nil, errs.New(errs.ErrMissingParam, "username")
 		} else if password == "" {
@@ -195,7 +194,7 @@ func (c *Client) GetRest(request string) ([]byte, error) {
 	}
 	c.request.Header.Set("accept", "application/json")
 	if c.username != "" {
-		c.request.SetBasicAuth(c.username, c.password)
+		c.request.SetBasicAuth(c.username, auth.Get().Password())
 	}
 	// ensure that we can change body dynamically
 	c.request.GetBody = func() (io.ReadCloser, error) {
@@ -273,13 +272,13 @@ func downloadSwagger(poller *conf.Poller, path string, url string, verbose bool)
 	}
 
 	timeout, _ := time.ParseDuration(DefaultTimeout)
-	if restClient, err = New(*poller, timeout); err != nil {
+	if restClient, err = New(poller, timeout); err != nil {
 		return 0, fmt.Errorf("error creating new client %w", err)
 	}
 
 	downClient := &http.Client{Transport: restClient.client.Transport, Timeout: restClient.client.Timeout}
 	if restClient.username != "" {
-		request.SetBasicAuth(restClient.username, restClient.password)
+		request.SetBasicAuth(restClient.username, auth.Get().Password())
 	}
 	if verbose {
 		requestOut, _ := httputil.DumpRequestOut(request, false)
