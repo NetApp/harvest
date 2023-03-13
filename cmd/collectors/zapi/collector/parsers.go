@@ -110,13 +110,6 @@ func (z *Zapi) HandleCounter(path []string, content string) string {
 			z.instanceKeyPaths = append(z.instanceKeyPaths, copied)
 			z.Logger.Trace().Msgf("%sadd (%s) as instance key [%s]%s => %v", color.Red, key, display, color.End, fullPath)
 		}
-	} else if content[0] == '$' {
-		// Array handling for zapi
-		name = strings.TrimSpace(strings.TrimLeft(name, "$"))
-		fullPath = append(path, name)
-		key = strings.Join(fullPath, ".")
-		z.arrayLabelPaths[key] = display
-		z.Logger.Trace().Msgf("%sadd (%s) as label [%s]%s => %v", color.Yellow, key, display, color.End, fullPath)
 	} else {
 		// use user-defined metric type
 		if t := z.Params.GetChildContentS("metric_type"); t != "" {

@@ -45,7 +45,6 @@ type Zapi struct {
 	instanceKeyPaths   [][]string
 	instanceLabelPaths map[string]string
 	shortestPathPrefix []string
-	arrayLabelPaths    map[string]string
 }
 
 func init() {
@@ -175,7 +174,6 @@ func (z *Zapi) InitCache() error {
 	}
 
 	z.instanceLabelPaths = make(map[string]string)
-	z.arrayLabelPaths = make(map[string]string)
 
 	counters := z.Params.GetChildS("counters")
 	if counters == nil {
