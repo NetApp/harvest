@@ -17,6 +17,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/set"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"sort"
 	"strconv"
 	"strings"
@@ -236,7 +237,7 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 		tag               string
 		err               error
 		ad, pd            time.Duration // Request/API time, Parse time, Fetch time
-		fetch             func(*matrix.Instance, *node.Node, []string)
+		fetch             func(*matrix.Instance, *node.Node, []string, bool)
 		instances         []*node.Node
 	)
 
@@ -253,25 +254,22 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 		oldInstances.Add(key)
 	}
 
-	fetch = func(instance *matrix.Instance, node *node.Node, path []string) {
+	fetch = func(instance *matrix.Instance, node *node.Node, path []string, isAppend bool) {
 
 		newpath := append(path, node.GetNameS())
 		key := strings.Join(newpath, ".")
 		z.Logger.Trace().Msgf(" > %s(%s)%s <%s%d%s> name=[%s%s%s%s] value=[%s%s%s]", color.Grey, newpath, color.End, color.Red, len(node.GetChildren()), color.End, color.Bold, color.Cyan, node.GetNameS(), color.End, color.Yellow, node.GetContentS(), color.End)
 
 		if value := node.GetContentS(); value != "" {
-			// Handling array with comma separated values
-			if label, has := z.arrayLabelPaths[key]; has {
-				if prevLabel := instance.GetLabel(label); prevLabel != "" {
-					instance.SetLabel(label, prevLabel+","+node.GetContentS())
+			if label, has := z.instanceLabelPaths[key]; has {
+				// Handling array with comma separated values
+				if isAppend && instance.GetLabel(label) != "" {
+					instance.SetLabel(label, instance.GetLabel(label)+","+value)
+					z.Logger.Trace().Msgf(" > %slabel (%s) [%s] set value (%s)%s", color.Yellow, key, label, instance.GetLabel(label)+","+value, color.End)
 				} else {
-					instance.SetLabel(label, node.GetContentS())
+					instance.SetLabel(label, value)
+					z.Logger.Trace().Msgf(" > %slabel (%s) [%s] set value (%s)%s", color.Yellow, key, label, value, color.End)
 				}
-				z.Logger.Trace().Msgf(" > %slabel (%s) [%s] set value (%s)%s", color.Yellow, key, label, node.GetContentS(), color.End)
-				count++
-			} else if label, has = z.instanceLabelPaths[key]; has {
-				instance.SetLabel(label, value)
-				z.Logger.Trace().Msgf(" > %slabel (%s) [%s] set value (%s)%s", color.Yellow, key, label, value, color.End)
 				count++
 			} else if metric := mat.GetMetric(key); metric != nil {
 				if err := metric.SetValueString(instance, value); err != nil {
@@ -291,7 +289,13 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		for _, child := range node.GetChildren() {
-			fetch(instance, child, newpath)
+			uniqueNames := util.RemoveDuplicateStr(child.GetAllChildNamesS())
+			if len(child.GetAllChildNamesS()) > 1 && len(uniqueNames) < len(child.GetAllChildNamesS()) && len(uniqueNames) == 1 {
+				z.Logger.Info().Msgf("Array detected for %s", uniqueNames[0])
+				fetch(instance, child, newpath, true)
+			} else {
+				fetch(instance, child, newpath, isAppend)
+			}
 		}
 	}
 
@@ -345,7 +349,7 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 					return nil, err
 				}
 			}
-			fetch(instance, instances[0], make([]string, 0))
+			fetch(instance, instances[0], make([]string, 0), false)
 			oldInstances.Remove("cluster")
 			break
 		}
@@ -372,7 +376,7 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 			oldInstances.Remove(key)
 			// clear all instance labels as there are some fields which may be missing between polls
 			instance.ClearLabels()
-			fetch(instance, instanceElem, make([]string, 0))
+			fetch(instance, instanceElem, make([]string, 0), false)
 		}
 	}
 

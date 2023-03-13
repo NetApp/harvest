@@ -14,13 +14,14 @@ counters:
     - volume-id-attributes:
       - ^^instance-uuid             => instance_uuid
       - ^name                       => volume
-      - ^node                       => node
       - ^owning-vserver-name        => svm
       - aggr-list:
-          - $aggr-name              => aggr
+          - ^aggr-name              => aggr
       - ^containing-aggregate-uuid  => aggrUuid
       - ^style-extended             => style
       - ^type                       => type
+      - nodes:
+          - ^node-name              => node
 
     - volume-inode-attributes:
       - files-used
