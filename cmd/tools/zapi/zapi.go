@@ -7,9 +7,11 @@ package zapi
 import (
 	"fmt"
 	client "github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
+	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/color"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
+	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/spf13/cobra"
 	"log"
@@ -135,6 +137,7 @@ func doCmd(cmd string) {
 	if poller, err = conf.PollerNamed(args.Poller); err != nil {
 		log.Fatal(err)
 	}
+	auth.NewCredentials(poller, logging.Get())
 	if connection, err = client.New(poller); err != nil {
 		log.Fatal(err)
 	}
@@ -330,7 +333,6 @@ var args = &Args{}
 
 func init() {
 	configPath := conf.GetDefaultHarvestConfigPath()
-
 	Cmd.AddCommand(showCmd, exportCmd)
 	flags := Cmd.PersistentFlags()
 	flags.StringVarP(&args.Poller, "poller", "p", "", "name of poller (cluster), as defined in your harvest config")

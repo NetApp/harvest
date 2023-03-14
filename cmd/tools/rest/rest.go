@@ -73,7 +73,6 @@ func ReadOrDownloadSwagger(pName string) (string, error) {
 	if poller, addr, err = GetPollerAndAddr(pName); err != nil {
 		return "", err
 	}
-	auth.NewCredentials(poller, logging.Get())
 
 	tmp := os.TempDir()
 	swaggerPath := filepath.Join(tmp, addr+"-swagger.yaml")
@@ -222,6 +221,7 @@ func GetPollerAndAddr(pName string) (*conf.Poller, string, error) {
 		fmt.Printf("Poller named [%s] does not have a valid addr=[]\n", pName)
 		return nil, "", err
 	}
+	auth.NewCredentials(poller, logging.Get())
 	return poller, poller.Addr, nil
 }
 
