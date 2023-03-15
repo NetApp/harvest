@@ -24,7 +24,7 @@ func Get() *Credentials {
 	return auth
 }
 
-func NewCredentials(p *conf.Poller, logger *logging.Logger) *Credentials {
+func NewCredentials(p *conf.Poller, logger *logging.Logger) {
 	once.Do(func() {
 		if auth == nil {
 			auth = &Credentials{
@@ -34,7 +34,6 @@ func NewCredentials(p *conf.Poller, logger *logging.Logger) *Credentials {
 			}
 		}
 	})
-	return auth
 }
 
 type Credentials struct {
