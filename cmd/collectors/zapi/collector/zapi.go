@@ -261,8 +261,9 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 		if value := node.GetContentS(); value != "" {
 			if label, has := z.instanceLabelPaths[key]; has {
 				// Handling array with comma separated values
-				if isAppend && instance.GetLabel(label) != "" {
-					instance.SetLabel(label, instance.GetLabel(label)+","+value)
+				previousValue := instance.GetLabel(label)
+				if isAppend && previousValue != "" {
+					instance.SetLabel(label, previousValue+","+value)
 					z.Logger.Trace().Msgf(" > %slabel (%s) [%s] set value (%s)%s", color.Yellow, key, label, instance.GetLabel(label)+","+value, color.End)
 				} else {
 					instance.SetLabel(label, value)
@@ -287,8 +288,9 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		for _, child := range node.GetChildren() {
-			uniqueNames := util.RemoveDuplicateStr(child.GetAllChildNamesS())
-			if len(child.GetAllChildNamesS()) > 1 && len(uniqueNames) < len(child.GetAllChildNamesS()) && len(uniqueNames) == 1 {
+			allChildNames := child.GetAllChildNamesS()
+			uniqueNames := util.RemoveDuplicateStr(allChildNames)
+			if len(uniqueNames) == 1 && len(allChildNames) > 1 && len(uniqueNames) < len(allChildNames) {
 				z.Logger.Info().Msgf("Array detected for %s", uniqueNames[0])
 				fetch(instance, child, newpath, true)
 			} else {
