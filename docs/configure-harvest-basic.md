@@ -16,6 +16,7 @@ All pollers are defined in `harvest.yml`, the main configuration file of Harvest
 | `ssl_cert`, `ssl_key`  | optional if `auth_style` is `certificate_auth` | Absolute paths to SSL (client) certificate and key used to authenticate with the target system.<br /><br />If not provided, the poller will look for `<hostname>.key` and `<hostname>.pem` in `$HARVEST_HOME/cert/`.<br/><br/>To create certificates for ONTAP systems, see [using certificate authentication](prepare-cdot-clusters.md#using-certificate-authentication) |                    |
 | `use_insecure_tls`     | optional, bool                                 | If true, disable TLS verification when connecting to ONTAP cluster                                                                                                                                                                                                                                                                                                        | false              |
 | `credentials_file`     | optional, string                               | Path to a yaml file that contains cluster credentials. The file should have the same shape as `harvest.yml`. See [here](configure-harvest-basic.md#credentials-file) for examples. Path can be relative to `harvest.yml` or absolute                                                                                                                                      |                    |          
+| `credentials_script`   | optional, section                              | Section that defines how Harvest should fetch credentials via external script. See [here](configure-harvest-basic.md#credentials-script) for details.                                                                                                                                                                                                                     |                    |          
 | `tls_min_version`      | optional, string                               | Minimum TLS version to use when connecting to ONTAP cluster: One of tls10, tls11, tls12 or tls13                                                                                                                                                                                                                                                                          | Platform decides   | 
 | `labels`               | optional, list of key-value pairs              | Each of the key-value pairs will be added to a poller's metrics. Details [below](configure-harvest-basic.md#labels)                                                                                                                                                                                                                                                       |                    |
 | `log_max_bytes`        |                                                | Maximum size of the log file before it will be rotated                                                                                                                                                                                                                                                                                                                    | `5_242_880` (5 MB) |
@@ -163,3 +164,47 @@ Pollers:
     username: harvest
     password: foo
 ```
+
+## Credentials Script
+
+You can fetch authentication information via an external script by using the `credentials_script` section in
+the `Pollers` section of your `harvest.yml` as shown in the [example below](#example). 
+
+At runtime, Harvest will invoke the script referenced in the `credentials_script` `path` section. 
+Harvest will call the script with two arguments via `standard in`, in this order:
+1. address of the cluster taken from your `harvest.yaml` file, section `Pollers` `addr`
+2. username of the cluster taken from your `harvest.yaml` file, section `Pollers` `username`
+
+The script should use the two arguments to look up and return the password via the script's `standard out`.
+If the script doesn't finish within the specified `timeout`, Harvest will kill the script and any spawned processes.
+
+Credential scripts are defined in your `harvest.yml` under the `Pollers` `credentials_script` section. 
+Below are the options for the `credentails_script` section  
+
+| parameter | type                    | description                                                                                                                                                                    | default |
+|-----------|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
+| path      | string                  | relative or absolute path to script that takes two arguments: addr and username, in that order                                                                                 |         |
+| schedule  | go duration or `always` | schedule used to call the authentication script. If the value is `always`, the script will be called everytime a password is requested, otherwise use the earlier cached value | 24h     |
+| timeout   | go duration             | amount of time Harvest will wait for the script to finish before killing it and descendents                                                                                    | 10s     |
+
+### Example
+
+```yaml
+Pollers:
+    ontap1:
+        datacenter: rtp
+        addr: 10.1.1.1
+        collectors:
+            - Rest
+            - RestPerf
+        credentials_script:
+            path: ./get_pass
+            schedule: 3h
+            timeout: 10s
+```
+
+### Troubleshooting
+
+* Make sure your script is executable 
+* Ensure the user/group that executes your poller also has read and execute permissions on the script. 
+  `su` as the user/group that runs Harvest and make sure you can execute the script too. 
