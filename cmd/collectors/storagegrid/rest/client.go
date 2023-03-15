@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/hashicorp/go-version"
+	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
@@ -31,7 +32,6 @@ type Client struct {
 	Logger   *logging.Logger
 	baseURL  string
 	Cluster  Cluster
-	password string
 	username string
 	token    string
 	Timeout  time.Duration
@@ -65,14 +65,14 @@ func NewClient(pollerName string, clientTimeout string) (*Client, error) {
 	if err != nil {
 		timeout, _ = time.ParseDuration(DefaultTimeout)
 	}
-	if client, err = New(*poller, timeout); err != nil {
+	if client, err = New(poller, timeout); err != nil {
 		return nil, fmt.Errorf("uanble to create poller [%s]. err: %w", pollerName, err)
 	}
 
 	return client, err
 }
 
-func New(poller conf.Poller, timeout time.Duration) (*Client, error) {
+func New(poller *conf.Poller, timeout time.Duration) (*Client, error) {
 	var (
 		client         Client
 		httpclient     *http.Client
@@ -105,7 +105,7 @@ func New(poller conf.Poller, timeout time.Duration) (*Client, error) {
 
 	// check if a credentials file is being used and if so, parse and use the values from it
 	if poller.CredentialsFile != "" {
-		err := conf.ReadCredentialsFile(poller.CredentialsFile, &poller)
+		err := conf.ReadCredentialsFile(poller.CredentialsFile, poller)
 		if err != nil {
 			client.Logger.Error().
 				Err(err).
@@ -135,9 +135,8 @@ func New(poller conf.Poller, timeout time.Duration) (*Client, error) {
 		}
 	} else {
 		username := poller.Username
-		password := poller.Password
+		password := auth.Get().Password()
 		client.username = username
-		client.password = password
 		if username == "" {
 			return nil, errs.New(errs.ErrMissingParam, "username")
 		} else if password == "" {
@@ -385,11 +384,11 @@ func (c *Client) fetchToken() error {
 	if err != nil {
 		return fmt.Errorf("failed to create auth URL err: %w", err)
 	}
-	auth := authBody{
+	authB := authBody{
 		Username: c.username,
-		Password: c.password,
+		Password: auth.Get().Password(),
 	}
-	postBody, err := json.Marshal(auth)
+	postBody, err := json.Marshal(authB)
 	if err != nil {
 		return err
 	}

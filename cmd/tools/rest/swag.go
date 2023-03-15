@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/bbrks/wrap/v2"
 	"github.com/go-openapi/spec"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	tw "github.com/olekukonko/tablewriter"
 	"gopkg.in/yaml.v3"
 	"html"
@@ -295,6 +296,10 @@ func readSwagger(args Args) (ontap, error) {
 	if err != nil {
 		fmt.Printf("error reading swagger file=[%s] err=%+v\n", args.SwaggerPath, err)
 		return ontap{}, err
+	}
+	if len(contents) == 0 {
+		fmt.Printf("swagger file=[%s] is emptpy. Remove swagger file and try again\n", args.SwaggerPath)
+		return ontap{}, errs.ErrConfig
 	}
 	// read ONTAP swagger yaml and convert to JSON since swagger only has JSON unmarshalling
 	node := make(map[string]interface{})
