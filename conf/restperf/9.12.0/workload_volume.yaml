@@ -33,12 +33,13 @@ override:
   - read_io_type_base: delta
 
 qos_labels:
-  - svm.name                   => svm
+  - name         => workload
+  - svm.name     => svm
   - volume
   - qtree
   - lun
   - file
-  - policy.name                => policy_group
+  - policy.name  => policy_group
   - wid
 
 export_options:
@@ -50,3 +51,4 @@ export_options:
     - lun
     - file
     - policy_group
+    - workload

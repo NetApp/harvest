@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1664349128957,
+  "iteration": 1678897124924,
   "links": [
     {
       "asDropdown": true,
@@ -1369,7 +1369,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 33
+        "y": 7
       },
       "id": 28,
       "panels": [
@@ -1932,7 +1932,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 34
+        "y": 8
       },
       "id": 55,
       "panels": [
@@ -2253,21 +2253,21 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 35
+        "y": 9
       },
       "id": 61,
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
           "gridPos": {
-            "h": 3,
+            "h": 5,
             "w": 24,
             "x": 0,
-            "y": 36
+            "y": 10
           },
           "id": 73,
           "options": {
-            "content": "You must enable the Workload/QOS counters in $HARVEST/conf/zapiperf/default.yaml.\n",
+            "content": "This dashboard requires Workload/QOS counters templates. Two actions are required to use this dashboard: <br>\n1. If you are using ZapiPerf Collector, then On Harvest, You must enable the Workload/QOS counters in $HARVEST/conf/zapiperf/default.yaml. <br>\n2. If you are using RestPerf Collector, then On Harvest, You must enable the Workload/QOS counters in $HARVEST/conf/restperf/default.yaml. <br>\n\nRefer ONTAP Performance - Resolution Guide https://kb.netapp.com/Advice_and_Troubleshooting/Data_Storage_Software/ONTAP_OS/ONTAP_9_Performance_-_Resolution_Guide",
             "mode": "markdown"
           },
           "pluginVersion": "8.1.8",
@@ -2324,7 +2324,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -2332,7 +2332,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 39
+            "y": 15
           },
           "id": 63,
           "options": {
@@ -2353,9 +2353,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopQosDetailVolumeResourceLatencyNetwork\",resource=\"network\"})/1000",
+              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopQosDetailVolumeResourceLatencyNetwork\",resource=\"network\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}}",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -2415,7 +2415,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -2423,7 +2423,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 39
+            "y": 15
           },
           "id": 64,
           "options": {
@@ -2444,9 +2444,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopQosDetailVolumeResourceLatencyThrottle\",resource=\"throttle\"})/1000",
+              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopQosDetailVolumeResourceLatencyThrottle\",resource=\"throttle\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}}",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -2506,7 +2506,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -2514,7 +2514,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 39
+            "y": 15
           },
           "id": 95,
           "options": {
@@ -2535,9 +2535,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopQosDetailVolumeResourceLatencyMin\",resource=\"qos_min\"})/1000",
+              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopQosDetailVolumeResourceLatencyMin\",resource=\"qos_min\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}}",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -2596,7 +2596,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -2604,7 +2604,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 48
+            "y": 24
           },
           "id": 66,
           "options": {
@@ -2625,9 +2625,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopQosDetailVolumeResourceLatencyCluster\",resource=\"cluster\"})/1000",
+              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopQosDetailVolumeResourceLatencyCluster\",resource=\"cluster\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}}",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -2686,7 +2686,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -2694,7 +2694,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 48
+            "y": 24
           },
           "id": 67,
           "options": {
@@ -2715,9 +2715,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopQosDetailVolumeResourceLatencyBackend\",resource=\"backend\"})/1000",
+              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopQosDetailVolumeResourceLatencyBackend\",resource=\"backend\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}}",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -2777,7 +2777,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -2785,7 +2785,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 48
+            "y": 24
           },
           "id": 97,
           "options": {
@@ -2806,9 +2806,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopQosDetailVolumeResourceLatencyCP\",resource=\"cp\"})/1000",
+              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopQosDetailVolumeResourceLatencyCP\",resource=\"cp\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}}",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -2867,7 +2867,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -2875,7 +2875,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 57
+            "y": 33
           },
           "id": 69,
           "options": {
@@ -2897,9 +2897,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopQosDetailVolumeResourceLatencySuspend\",resource=\"suspend\"})/1000",
+              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopQosDetailVolumeResourceLatencySuspend\",resource=\"suspend\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}} ",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}} ",
               "refId": "A"
             }
           ],
@@ -2959,7 +2959,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -2967,7 +2967,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 57
+            "y": 33
           },
           "id": 70,
           "options": {
@@ -2988,9 +2988,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopQosDetailVolumeResourceLatencyCloud\",resource=\"cloud\"})/1000",
+              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopQosDetailVolumeResourceLatencyCloud\",resource=\"cloud\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}} ",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}} ",
               "refId": "A"
             }
           ],
@@ -3049,7 +3049,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -3057,7 +3057,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 57
+            "y": 33
           },
           "id": 65,
           "options": {
@@ -3078,9 +3078,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopQosDetailVolumeResourceLatencyFrontend\",resource=\"frontend\"})/1000",
+              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopQosDetailVolumeResourceLatencyFrontend\",resource=\"frontend\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}}",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -3139,7 +3139,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -3147,7 +3147,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 66
+            "y": 42
           },
           "id": 71,
           "options": {
@@ -3168,9 +3168,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopQosDetailVolumeResourceLatencyNvlog\",resource=\"nvlog\"})/1000",
+              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopQosDetailVolumeResourceLatencyNvlog\",resource=\"nvlog\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}} ",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}} ",
               "refId": "A"
             }
           ],
@@ -3229,7 +3229,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -3237,7 +3237,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 66
+            "y": 42
           },
           "id": 68,
           "options": {
@@ -3258,9 +3258,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopQosDetailVolumeResourceLatencyDisk\",resource=\"disk\"})/1000",
+              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopQosDetailVolumeResourceLatencyDisk\",resource=\"disk\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}}",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -3280,7 +3280,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 36
+        "y": 10
       },
       "id": 75,
       "panels": [
@@ -3845,7 +3845,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 37
+        "y": 11
       },
       "id": 85,
       "panels": [
@@ -5321,5 +5321,5 @@
   "timezone": "",
   "title": "ONTAP: LUN",
   "uid": "",
-  "version": 5
+  "version": 6
 }
