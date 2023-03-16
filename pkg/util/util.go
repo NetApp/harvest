@@ -392,10 +392,13 @@ func EncodeURL(href string) (string, error) {
 	return u.RequestURI(), nil
 }
 
-func RemoveDuplicateStr(strSlice []string) []string {
+func IsArrayDetected(childSlice []string) bool {
+	if len(childSlice) <= 1 {
+		return false
+	}
 	allKeys := make(map[string]bool)
 	var list []string
-	for _, item := range strSlice {
+	for _, item := range childSlice {
 		if _, value := allKeys[item]; !value {
 			allKeys[item] = true
 			if len(item) > 0 {
@@ -403,5 +406,5 @@ func RemoveDuplicateStr(strSlice []string) []string {
 			}
 		}
 	}
-	return list
+	return len(list) == 1
 }
