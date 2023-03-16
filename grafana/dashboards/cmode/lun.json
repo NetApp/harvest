@@ -2260,7 +2260,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "gridPos": {
-            "h": 5,
+            "h": 4,
             "w": 24,
             "x": 0,
             "y": 10
