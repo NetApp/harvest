@@ -179,7 +179,7 @@ The script should use the two arguments to look up and return the password via t
 If the script doesn't finish within the specified `timeout`, Harvest will kill the script and any spawned processes.
 
 Credential scripts are defined in your `harvest.yml` under the `Pollers` `credentials_script` section. 
-Below are the options for the `credentails_script` section  
+Below are the options for the `credentials_script` section  
 
 | parameter | type                    | description                                                                                                                                                                    | default |
 |-----------|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
