@@ -183,7 +183,7 @@ Below are the options for the `credentials_script` section
 
 | parameter | type                    | description                                                                                                                                                                    | default |
 |-----------|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
-| path      | string                  | relative or absolute path to script that takes two arguments: addr and username, in that order                                                                                 |         |
+| path      | string                  | absolute path to script that takes two arguments: addr and username, in that order                                                                                             |         |
 | schedule  | go duration or `always` | schedule used to call the authentication script. If the value is `always`, the script will be called everytime a password is requested, otherwise use the earlier cached value | 24h     |
 | timeout   | go duration             | amount of time Harvest will wait for the script to finish before killing it and descendents                                                                                    | 10s     |
 
