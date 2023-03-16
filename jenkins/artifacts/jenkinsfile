@@ -32,6 +32,8 @@ pipeline {
         targetParentLocation = "/opt/home/nightly/"
         harvestPath = "harvest"
         imageName = "rahulguptajss/harvest"
+        ghcrImage = "ghcr.io/netapp/harvest"
+        GIT_USERNAME = "rahulguptajss"
         jfrogImagePrefix = "netappdownloads.jfrog.io/oss-docker-harvest-production/harvest"
         jfrogRepo = "netappdownloads.jfrog.io"
         COMMIT_ID = sh(returnStdout: true, script: 'git rev-parse HEAD')
@@ -212,6 +214,8 @@ pipeline {
            fi
            /opt/home/gh_2.8.0_linux_386/bin/gh release create nightly $targetLocation/*.rpm $targetLocation/*.deb $targetLocation/*.gz --notes "Nightly builds may include bugs and other issues. You might want to use the stable releases instead." --title "Harvest Nightly Release" --prerelease --target main
            docker build -f docker/onePollerPerContainer/Dockerfile --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET --build-arg GIT_TOKEN=$GIT_TOKEN  -t ${imageName}:latest -t ${imageName}:nightly -t ${jfrogImagePrefix}:latest -t ${jfrogImagePrefix}:nightly . --no-cache
+           echo $GIT_TOKEN | docker login ghcr.io -u $GIT_USERNAME --password-stdin
+           docker push ${ghcrImage}:nightly
             '''
           withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
             sh '''
