@@ -5,7 +5,9 @@ package rest
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
@@ -177,7 +179,7 @@ func doData() {
 	}
 
 	timeout, _ := time.ParseDuration(DefaultTimeout)
-	if client, err = New(*poller, timeout); err != nil {
+	if client, err = New(poller, timeout); err != nil {
 		fmt.Printf("error creating new client %+v\n", err)
 		os.Exit(1)
 	}
@@ -219,6 +221,7 @@ func GetPollerAndAddr(pName string) (*conf.Poller, string, error) {
 		fmt.Printf("Poller named [%s] does not have a valid addr=[]\n", pName)
 		return nil, "", err
 	}
+	auth.NewCredentials(poller, logging.Get())
 	return poller, poller.Addr, nil
 }
 

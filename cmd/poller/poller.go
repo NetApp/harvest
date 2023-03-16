@@ -48,7 +48,8 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/poller/schedule"
 	rest2 "github.com/netapp/harvest/v2/cmd/tools/rest"
-	client "github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
+	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
+	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
@@ -269,6 +270,9 @@ func (p *Poller) Init() error {
 			}
 		}
 	}
+
+	// create a shared auth service that all collectors will use
+	auth.NewCredentials(p.params, logger)
 
 	// initialize our metadata, the metadata will host status of our
 	// collectors and exporters, as well as ping stats to target host
@@ -806,7 +810,7 @@ func Union2(hNode *node.Node, poller *conf.Poller) {
 					case "!!str", "!!bool":
 						newNode.Content = []byte(valNode.Value)
 					case "!!seq":
-						// the poller node that's missing is a sequence so add all the children of the sequence
+						// the poller node that is missing is a sequence so add all the children of the sequence
 						for _, seqNode := range valNode.Content {
 							if seqNode.Tag == "!!str" {
 								newNode.NewChildS(seqNode.Value, seqNode.Value)
@@ -815,6 +819,11 @@ func Union2(hNode *node.Node, poller *conf.Poller) {
 									newNode.NewChildS(seqNode.Content[ci].Value, seqNode.Content[ci+1].Value)
 								}
 							}
+						}
+					case "!!map":
+						// the poller node that is missing is a map, add all the children of the map
+						for ci := 0; ci < len(valNode.Content); ci += 2 {
+							newNode.NewChildS(valNode.Content[ci].Value, valNode.Content[ci+1].Value)
 						}
 					}
 					hNode.AddChild(newNode)
@@ -1204,7 +1213,7 @@ func (p *Poller) negotiateAPI(c conf.Collector, clusterVersion string, checkZAPI
 func doZAPIsExist() error {
 	var (
 		poller     *conf.Poller
-		connection *client.Client
+		connection *zapi.Client
 		err        error
 	)
 
@@ -1212,7 +1221,7 @@ func doZAPIsExist() error {
 	if poller, err = conf.PollerNamed(args.Poller); err != nil {
 		return err
 	}
-	if connection, err = client.New(*poller); err != nil {
+	if connection, err = zapi.New(poller); err != nil {
 		return err
 
 	}

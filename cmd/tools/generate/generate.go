@@ -359,7 +359,7 @@ func generateMetrics(path string) {
 	}
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-	if restClient, err = rest.New(*poller, timeout); err != nil {
+	if restClient, err = rest.New(poller, timeout); err != nil {
 		fmt.Printf("error creating new client %+v\n", err)
 		os.Exit(1)
 	}
@@ -368,7 +368,7 @@ func generateMetrics(path string) {
 		os.Exit(1)
 	}
 
-	if zapiClient, err = zapi.New(*poller); err != nil {
+	if zapiClient, err = zapi.New(poller); err != nil {
 		fmt.Printf("error creating new client %+v\n", err)
 		os.Exit(1)
 	}
