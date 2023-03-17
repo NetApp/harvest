@@ -51,7 +51,7 @@ resource_map:
 
 qos_labels:
   - name
-  - vserver => svm
+  - vserver       => svm
   - volume
   - qtree
   - lun

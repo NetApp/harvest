@@ -35,7 +35,7 @@ override:
   - read_io_type_base: delta
 
 qos_labels:
-  - vserver      => svm
+  - vserver       => svm
   - volume
   - qtree
   - lun
