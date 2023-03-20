@@ -7,6 +7,7 @@ counters:
   - ^svm.name           => svm
   - ^volume.name        => volume
   - ^name               => bucket
+  - ^encryption.enabled => encryption_enabled
   - logical_used_size
   - size
 
@@ -22,3 +23,4 @@ export_options:
     - svm
   instance_labels:
     - volume
+    - encryption_enabled
