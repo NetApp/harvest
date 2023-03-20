@@ -392,19 +392,16 @@ func EncodeURL(href string) (string, error) {
 	return u.RequestURI(), nil
 }
 
-func IsArrayDetected(childSlice []string) bool {
-	if len(childSlice) <= 1 {
-		return false
-	}
-	allKeys := make(map[string]bool)
-	var list []string
-	for _, item := range childSlice {
-		if _, value := allKeys[item]; !value {
-			allKeys[item] = true
-			if len(item) > 0 {
-				list = append(list, item)
-			}
+func HasDuplicates(slice []string) bool {
+	encountered := map[string]bool{}
+
+	for _, v := range slice {
+		if encountered[v] {
+			return true
+		} else {
+			encountered[v] = true
 		}
 	}
-	return len(list) == 1
+
+	return false
 }

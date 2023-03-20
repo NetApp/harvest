@@ -288,8 +288,8 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		for _, child := range node.GetChildren() {
-			if util.IsArrayDetected(child.GetAllChildNamesS()) {
-				z.Logger.Info().Msgf("Array detected for %s", child.GetNameS())
+			if util.HasDuplicates(child.GetAllChildNamesS()) {
+				z.Logger.Debug().Msgf("Array detected for %s", child.GetNameS())
 				fetch(instance, child, newpath, true)
 			} else {
 				fetch(instance, child, newpath, isAppend)

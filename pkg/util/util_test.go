@@ -86,7 +86,7 @@ func TestParseMetricType(t *testing.T) {
 	}
 }
 
-func TestIsArrayDetected(t *testing.T) {
+func TestHasDuplicates(t *testing.T) {
 	type test struct {
 		testCase      string
 		childNames    []string
@@ -117,7 +117,7 @@ func TestIsArrayDetected(t *testing.T) {
 	}
 
 	for _, testcase := range tests {
-		isArray := IsArrayDetected(testcase.childNames)
+		isArray := HasDuplicates(testcase.childNames)
 		if isArray != testcase.expectedArray {
 			t.Errorf("array hasn't been detected properly for %s, isArray is = %v, isArray should = %v", testcase.testCase, isArray, testcase.expectedArray)
 		}
