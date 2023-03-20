@@ -11,7 +11,8 @@ Harvest is container-ready and supports several deployment strategies:
 
 Make sure Docker is installed and `docker --version` meets the [minimum required version](https://github.com/NetApp/harvest#requirements).
 
-Harvest releases are published on NetApp's Container Registry (https://cr.netapp.io) and [Dockerhub](https://hub.docker.com/r/rahulguptajss/harvest).
+Harvest releases are published on GitHub's Container Registry (https://ghcr.io/netapp/harvest)
+and [Dockerhub](https://hub.docker.com/r/rahulguptajss/harvest).
 
 ### Docker Compose Poller per Container
 
@@ -41,8 +42,8 @@ Adjust example command below as needed:
 PROM_PORT=12991 ; docker run --rm -it \
 -p $PROM_PORT:$PROM_PORT \
 --volume $(pwd)/harvest.yml:/opt/harvest/harvest.yml \
- cr.netapp.io/harvest \
- --poller infinity --promPort $PROM_PORT
+ghcr.io/netapp/harvest \
+--poller infinity --promPort $PROM_PORT
 ```
 
 You can also generate a [docker-compose file as described above](#docker-compose-poller-per-container) and use it as a guide without using Docker compose.
