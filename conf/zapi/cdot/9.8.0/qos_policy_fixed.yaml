@@ -1,0 +1,33 @@
+
+name:             QosPolicyFixed
+query:            qos-policy-group-get-iter
+object:           qosp_fixed
+
+counters:
+  qos-policy-group-info:
+    - ^^uuid               => uuid
+    - ^policy-group        => name
+    - ^vserver             => svm
+    - ^is-shared           => capacity_shared
+    - ^max-throughput      => max_xput
+    - ^min-throughput      => min_xput
+    - ^num-workloads       => object_count
+    - ^policy-group-class  => class
+
+collect_only_labels: true
+
+plugins:
+  - QosPolicyFixed
+
+export_options:
+  instance_keys:
+    - svm
+  instance_labels:
+    - name
+    - capacity_shared
+    - max_throughput_iops
+    - max_throughput_mbps
+    - min_throughput_iops
+    - min_throughput_mbps
+    - object_count
+    - class
