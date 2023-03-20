@@ -1189,7 +1189,7 @@
               }
             ]
           },
-          "unit": "short"
+          "unit": "kbytes"
         },
         "overrides": []
       },
@@ -1284,7 +1284,7 @@
               }
             ]
           },
-          "unit": "deckbytes"
+          "unit": "kbytes"
         },
         "overrides": []
       },

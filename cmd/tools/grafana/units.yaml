@@ -3,6 +3,7 @@
 # short  turns 12990 into 13.0 K
 # locale turns 12990 into 12,990
 # string turns 12990 into 12990
+# https://github.com/grafana/grafana/blob/661e44ae6d78dbec91e62161769072f38311ab9f/packages/grafana-data/src/valueFormats/categories.ts#L144
 
 - metric: aggr_space_total
   ontapUnit: bytes
