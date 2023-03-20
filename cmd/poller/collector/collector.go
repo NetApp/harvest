@@ -448,9 +448,9 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 		if nd := c.Schedule.NextDue(); nd > 0 {
 			c.Logger.Debug().Msgf("sleeping %s until next poll", nd.String()) //DEBUG
 			c.Schedule.Sleep()
-			// log if lagging by more than 50 ms
+			// log if lagging by more than 500 ms
 			// < is used since larger durations are more negative
-		} else if nd.Milliseconds() <= -50 && !c.Schedule.IsStandBy() {
+		} else if nd.Milliseconds() <= -500 && !c.Schedule.IsStandBy() {
 			c.Logger.Warn().
 				Str("lag", (-nd).String()).
 				Msg("lagging behind schedule")
