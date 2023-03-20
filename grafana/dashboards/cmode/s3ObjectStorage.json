@@ -208,7 +208,8 @@
                 "Value #B",
                 "Value #C",
                 "Value #D",
-                "volume"
+                "volume",
+                "encryption_enabled"
               ]
             }
           }
@@ -227,13 +228,14 @@
               "job": true
             },
             "indexByName": {
-              "Value #B": 4,
-              "Value #C": 5,
-              "Value #D": 6,
+              "Value #B": 5,
+              "Value #C": 6,
+              "Value #D": 7,
               "bucket": 3,
               "cluster": 0,
               "svm": 1,
-              "volume": 2
+              "volume": 2,
+              "encryption_enabled": 4
             },
             "renameByName": {
               "Value #A": "",
@@ -243,7 +245,8 @@
               "bucket": "Bucket",
               "cluster": "Cluster",
               "svm": "SVM",
-              "volume": "Volume"
+              "volume": "Volume",
+              "encryption_enabled": "Encrypted"
             }
           }
         }
