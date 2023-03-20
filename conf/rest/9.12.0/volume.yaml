@@ -9,6 +9,7 @@ counters:
   - ^name                                         => volume
   - ^svm.name                                     => svm
   - ^aggregates.#.uuid                            => aggrUuid        # handled in plugin for flexgroup
+  - ^aggregates.#.name                            => aggr
   - ^style                                        => style
   - ^type                                         => type
   - ^snapshot_policy.name                         => snapshot_policy
@@ -54,8 +55,7 @@ endpoints:
   - query: api/private/cli/volume
     counters:
       - ^^instance_uuid                           => instance_uuid
-      - ^node                                     => node
-      - ^aggregate                                => aggr
+      - ^nodes                                    => node
       - ^is_sis_volume                            => is_sis_volume
       - compression_space_saved_percent           => sis_compress_saved_percent
       - dedupe_space_saved_percent                => sis_dedup_saved_percent

@@ -85,3 +85,41 @@ func TestParseMetricType(t *testing.T) {
 		})
 	}
 }
+
+func TestHasDuplicates(t *testing.T) {
+	type test struct {
+		testCase      string
+		childNames    []string
+		expectedArray bool
+	}
+
+	tests := []test{
+		{
+			testCase:      "testcasenochild",
+			childNames:    []string{},
+			expectedArray: false,
+		},
+		{
+			testCase:      "testcaseonechild",
+			childNames:    []string{"type"},
+			expectedArray: false,
+		},
+		{
+			testCase:      "testcasemultipleChild",
+			childNames:    []string{"type", "style", "aggr"},
+			expectedArray: false,
+		},
+		{
+			testCase:      "testcasearray",
+			childNames:    []string{"aggr-name", "aggr-name", "aggr-name", "aggr-name"},
+			expectedArray: true,
+		},
+	}
+
+	for _, testcase := range tests {
+		isArray := HasDuplicates(testcase.childNames)
+		if isArray != testcase.expectedArray {
+			t.Errorf("array hasn't been detected properly for %s, isArray is = %v, isArray should = %v", testcase.testCase, isArray, testcase.expectedArray)
+		}
+	}
+}

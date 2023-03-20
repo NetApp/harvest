@@ -391,3 +391,17 @@ func EncodeURL(href string) (string, error) {
 	u.RawQuery = u.Query().Encode()
 	return u.RequestURI(), nil
 }
+
+func HasDuplicates(slice []string) bool {
+	encountered := map[string]bool{}
+
+	for _, v := range slice {
+		if encountered[v] {
+			return true
+		} else {
+			encountered[v] = true
+		}
+	}
+
+	return false
+}
