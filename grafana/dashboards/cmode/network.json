@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1664280004316,
+  "iteration": 1679400659206,
   "links": [
     {
       "asDropdown": true,
@@ -83,6 +83,20 @@
     }
   ],
   "panels": [
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 108,
+      "panels": [],
+      "title": "Highlights",
+      "type": "row"
+    },
     {
       "datasource": "${DS_PROMETHEUS}",
       "description": "",
@@ -107,7 +121,7 @@
         "h": 5,
         "w": 12,
         "x": 0,
-        "y": 0
+        "y": 1
       },
       "id": 26,
       "options": {
@@ -192,7 +206,7 @@
         "h": 5,
         "w": 12,
         "x": 12,
-        "y": 0
+        "y": 1
       },
       "id": 91,
       "options": {
@@ -257,7 +271,7 @@
         "h": 5,
         "w": 6,
         "x": 0,
-        "y": 5
+        "y": 6
       },
       "id": 27,
       "options": {
@@ -313,7 +327,7 @@
         "h": 5,
         "w": 6,
         "x": 6,
-        "y": 5
+        "y": 6
       },
       "id": 94,
       "options": {
@@ -397,7 +411,7 @@
         "h": 5,
         "w": 6,
         "x": 12,
-        "y": 5
+        "y": 6
       },
       "id": 92,
       "options": {
@@ -490,7 +504,7 @@
         "h": 5,
         "w": 6,
         "x": 18,
-        "y": 5
+        "y": 6
       },
       "id": 93,
       "options": {
@@ -538,7 +552,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 10
+        "y": 11
       },
       "id": 32,
       "panels": [
@@ -1389,7 +1403,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 11
+        "y": 12
       },
       "id": 80,
       "panels": [
@@ -2447,7 +2461,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 12
+        "y": 13
       },
       "id": 96,
       "panels": [
@@ -2999,6 +3013,120 @@
         }
       ],
       "title": "NVMe/FC Drilldown",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "id": 110,
+      "panels": [
+        {
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 15
+          },
+          "id": 112,
+          "options": {
+            "showHeader": true
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "net_route_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Routes",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true,
+                  "__name__": true,
+                  "instance": true,
+                  "job": true,
+                  "uuid": true
+                },
+                "indexByName": {
+                  "Time": 0,
+                  "Value": 14,
+                  "__name__": 1,
+                  "cluster": 2,
+                  "datacenter": 3,
+                  "destination": 6,
+                  "family": 7,
+                  "gateway": 8,
+                  "instance": 9,
+                  "ipspace": 10,
+                  "job": 11,
+                  "netmask_length": 12,
+                  "scope": 5,
+                  "svm": 4,
+                  "uuid": 13
+                },
+                "renameByName": {
+                  "cluster": "Cluster",
+                  "datacenter": "Datacenter",
+                  "destination": "Destination",
+                  "family": "Family",
+                  "gateway": "Gateway",
+                  "instance": "",
+                  "ipspace": "IPspace",
+                  "netmask_length": "Netmask",
+                  "scope": "Scope",
+                  "svm": "SVM",
+                  "uuid": ""
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Routes",
       "type": "row"
     }
   ],
@@ -3556,5 +3684,5 @@
   "timezone": "",
   "title": "ONTAP: Network",
   "uid": "",
-  "version": 6
+  "version": 7
 }
