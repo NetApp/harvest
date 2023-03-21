@@ -14,8 +14,6 @@ counters:
   - filter:
       - class=user_defined
 
-collect_only_labels: true
-
 plugins:
   - QosPolicyFixed
 
