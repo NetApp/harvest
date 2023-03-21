@@ -1,0 +1,25 @@
+name:                     ExportRule
+query:                    api/private/cli/export-policy/rule
+object:                   export_rule
+
+counters:
+  - ^^vserver          => svm
+  - ^^policyname       => policy
+  - ^^ruleindex        => index
+  - ^protocol          => protocol
+  - ^clientmatch       => clientmatch
+  - ^rorule            => rorule
+  - ^rwrule            => rwrule
+  - ^superuser         => superuser
+
+export_options:
+  instance_keys:
+    - svm
+    - policy
+    - index
+  instance_labels:
+    - protocol
+    - clientmatch
+    - rorule
+    - rwrule
+    - superuser
