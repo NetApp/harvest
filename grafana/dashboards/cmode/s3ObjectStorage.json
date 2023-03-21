@@ -105,7 +105,19 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "decbytes"
+                "value": "bytes"
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "basic"
+              },
+              {
+                "id": "max",
+                "value": 70368744177664
+              },
+              {
+                "id": "min",
+                "value": 83886080
               }
             ]
           },
@@ -117,7 +129,7 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "decbytes"
+                "value": "bytes"
               }
             ]
           },
@@ -129,7 +141,7 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "short"
+                "value": "locale"
               }
             ]
           }
