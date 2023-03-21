@@ -1,7 +1,7 @@
 
 name:             QosPolicyFixed
 query:            qos-policy-group-get-iter
-object:           qosp_fixed
+object:           qos_policy_fixed
 
 counters:
   qos-policy-group-info:

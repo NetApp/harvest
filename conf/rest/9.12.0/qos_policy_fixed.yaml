@@ -1,7 +1,7 @@
 
 name:               QosPolicyFixed
 query:              api/private/cli/qos/policy-group
-object:             qosp_fixed
+object:             qos_policy_fixed
 
 counters:
   - ^^uuid                => uuid
