@@ -9,6 +9,7 @@ schedule:
 
 objects:
   Aggr:                        aggr.yaml
+  CloudTarget:                 cloud_target.yaml
   ClusterPeer:                 clusterpeer.yaml
   Disk:                        disk.yaml
 #  ExportRule:                  exports.yaml
