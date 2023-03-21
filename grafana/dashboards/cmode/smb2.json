@@ -59,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1677735866675,
+  "iteration": 1679387873656,
   "links": [
     {
       "asDropdown": true,
@@ -1131,7 +1131,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "sum(increase(smb2_session_setup_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
+              "expr": "sum(increase(smb2_oplock_break_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
@@ -1141,7 +1141,7 @@
             }
           ],
           "timeFrom": null,
-          "title": "Session Setup Latency Heatmap",
+          "title": "Oplock Break Latency Heatmap",
           "tooltip": {
             "show": true,
             "showHistogram": false
@@ -1301,5 +1301,5 @@
   "timezone": "",
   "title": "ONTAP: SMB2",
   "uid": "",
-  "version": 1
+  "version": 2
 }
