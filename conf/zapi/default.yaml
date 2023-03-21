@@ -14,6 +14,7 @@ objects:
 #  NetPort:                     netPort.yaml
   Node:                        node.yaml
   NtpServer:                   ntpserver.yaml
+  QosPolicy:                   qos_policy_fixed.yaml
   Qtree:                       qtree.yaml
   Security:                    security.yaml
   SecurityAccount:             security_account.yaml
