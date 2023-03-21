@@ -36,13 +36,14 @@ override:
   - read_io_type_base: delta
 
 qos_labels:
-  - vserver => svm
+  - vserver       => svm
   - volume
   - qtree
   - lun
   - file
   - policy-group
   - wid
+  - workload-name => workload
 
 export_options:
   instance_keys:
@@ -53,3 +54,4 @@ export_options:
     - lun
     - file
     - policy_group
+    - workload

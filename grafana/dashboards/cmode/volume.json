@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1670268827108,
+  "iteration": 1678952925478,
   "links": [
     {
       "asDropdown": true,
@@ -2195,6 +2195,23 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "gridPos": {
+            "h": 4,
+            "w": 24,
+            "x": 0,
+            "y": 16
+          },
+          "id": 91,
+          "options": {
+            "content": "This dashboard requires Workload/QOS counters templates. Two actions are required to use this dashboard: <br>\n1. If you are using ZapiPerf Collector, then On Harvest, You must enable the Workload/QOS counters in $HARVEST/conf/zapiperf/default.yaml. <br>\n2. If you are using RestPerf Collector, then On Harvest, You must enable the Workload/QOS counters in $HARVEST/conf/restperf/default.yaml. <br>\n\nRefer ONTAP Performance - Resolution Guide https://kb.netapp.com/Advice_and_Troubleshooting/Data_Storage_Software/ONTAP_OS/ONTAP_9_Performance_-_Resolution_Guide",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.1.8",
+          "title": "Important Information on Top Volume QoS Resource Latency Graphs",
+          "type": "text"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2243,15 +2260,15 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
           "gridPos": {
             "h": 10,
-            "w": 8,
+            "w": 12,
             "x": 0,
-            "y": 4
+            "y": 21
           },
           "id": 72,
           "options": {
@@ -2272,9 +2289,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSReadLatency\"})/1000",
+              "expr": "topk($TopResources, qos_volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSReadLatency\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}}",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -2333,195 +2350,15 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "µs"
             },
             "overrides": []
           },
           "gridPos": {
             "h": 10,
-            "w": 8,
-            "x": 8,
-            "y": 4
-          },
-          "id": 74,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "topk($TopResources, qos_volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSReadData\"})",
-              "interval": "",
-              "legendFormat": "{{svm}} / {{volume}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top $TopResources Volumes by QoS Volume Read Throughput",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "iops"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 10,
-            "w": 8,
-            "x": 16,
-            "y": 4
-          },
-          "id": 76,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "topk($TopResources, qos_volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSReadOps\"})",
-              "interval": "",
-              "legendFormat": "{{svm}} / {{volume}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top $TopResources Volumes by QoS Volume Read IOPS",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "ms"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 10,
-            "w": 8,
-            "x": 0,
-            "y": 14
+            "w": 12,
+            "x": 12,
+            "y": 21
           },
           "id": 73,
           "options": {
@@ -2542,9 +2379,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSWriteLatency\"})/1000",
+              "expr": "topk($TopResources, qos_volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSWriteLatency\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}}",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -2603,17 +2440,17 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "iops"
             },
             "overrides": []
           },
           "gridPos": {
             "h": 10,
-            "w": 8,
-            "x": 8,
-            "y": 14
+            "w": 12,
+            "x": 0,
+            "y": 31
           },
-          "id": 75,
+          "id": 76,
           "options": {
             "legend": {
               "calcs": [
@@ -2632,15 +2469,15 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSWriteData\"})",
+              "expr": "topk($TopResources, qos_volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSReadOps\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}}",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Volumes by QoS Volume Write Throughput",
+          "title": "Top $TopResources Volumes by QoS Volume Read IOPS",
           "type": "timeseries"
         },
         {
@@ -2699,9 +2536,9 @@
           },
           "gridPos": {
             "h": 10,
-            "w": 8,
-            "x": 16,
-            "y": 14
+            "w": 12,
+            "x": 12,
+            "y": 31
           },
           "id": 77,
           "options": {
@@ -2724,7 +2561,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, qos_volume_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSWriteOps\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}}",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -2769,6 +2606,7 @@
                 }
               },
               "mappings": [],
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -2782,9 +2620,188 @@
                   }
                 ]
               },
-              "unit": "percentunit",
+              "unit": "Bps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 41
+          },
+          "id": 74,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "topk($TopResources, qos_volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSReadData\"})",
+              "interval": "",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Volumes by QoS Volume Read Throughput",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
               "min": 0,
-              "max": 1
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "Bps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 41
+          },
+          "id": 75,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "topk($TopResources, qos_volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSWriteData\"})",
+              "interval": "",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Volumes by QoS Volume Write Throughput",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "max": 1,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percentunit"
             },
             "overrides": []
           },
@@ -2792,7 +2809,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 24
+            "y": 51
           },
           "id": 79,
           "options": {
@@ -2815,7 +2832,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, qos_volume_sequential_reads{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSSequentialReads\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}}",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -2883,7 +2900,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 24
+            "y": 51
           },
           "id": 80,
           "options": {
@@ -2906,7 +2923,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, qos_volume_sequential_writes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSSequentialWrites\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}}",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -2933,14 +2950,14 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "gridPos": {
-            "h": 3,
+            "h": 5,
             "w": 24,
             "x": 0,
-            "y": 5
+            "y": 17
           },
-          "id": 91,
+          "id": 103,
           "options": {
-            "content": "You must enable the Workload/QOS counters in $HARVEST/conf/zapiperf/default.yaml.\n",
+            "content": "This dashboard requires Workload/QOS counters templates. Two actions are required to use this dashboard: <br>\n1. If you are using ZapiPerf Collector, then On Harvest, You must enable the Workload/QOS counters in $HARVEST/conf/zapiperf/default.yaml. <br>\n2. If you are using RestPerf Collector, then On Harvest, You must enable the Workload/QOS counters in $HARVEST/conf/restperf/default.yaml. <br>\n\nRefer ONTAP Performance - Resolution Guide https://kb.netapp.com/Advice_and_Troubleshooting/Data_Storage_Software/ONTAP_OS/ONTAP_9_Performance_-_Resolution_Guide",
             "mode": "markdown"
           },
           "pluginVersion": "8.1.8",
@@ -2997,7 +3014,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -3005,7 +3022,7 @@
             "h": 11,
             "w": 8,
             "x": 0,
-            "y": 8
+            "y": 22
           },
           "id": 48,
           "options": {
@@ -3026,9 +3043,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSNetwork\",resource=\"network\"})/1000",
+              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSNetwork\",resource=\"network\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}}",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -3088,7 +3105,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -3096,7 +3113,7 @@
             "h": 11,
             "w": 8,
             "x": 8,
-            "y": 8
+            "y": 22
           },
           "id": 50,
           "options": {
@@ -3117,9 +3134,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSThrottle\",resource=\"throttle\"})/1000",
+              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSThrottle\",resource=\"throttle\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}}",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -3179,7 +3196,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -3187,7 +3204,7 @@
             "h": 11,
             "w": 8,
             "x": 16,
-            "y": 8
+            "y": 22
           },
           "id": 88,
           "options": {
@@ -3208,9 +3225,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSMin\",resource=\"qos_min\"})/1000",
+              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSMin\",resource=\"qos_min\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}}",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -3269,7 +3286,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -3277,7 +3294,7 @@
             "h": 11,
             "w": 8,
             "x": 0,
-            "y": 19
+            "y": 33
           },
           "id": 54,
           "options": {
@@ -3298,9 +3315,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSCluster\",resource=\"cluster\"})/1000",
+              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSCluster\",resource=\"cluster\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}}",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -3359,7 +3376,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -3367,7 +3384,7 @@
             "h": 11,
             "w": 8,
             "x": 8,
-            "y": 19
+            "y": 33
           },
           "id": 56,
           "options": {
@@ -3388,9 +3405,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSBackend\",resource=\"backend\"})/1000",
+              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSBackend\",resource=\"backend\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}}",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -3450,7 +3467,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -3458,7 +3475,7 @@
             "h": 11,
             "w": 8,
             "x": 16,
-            "y": 19
+            "y": 33
           },
           "id": 89,
           "options": {
@@ -3479,9 +3496,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSCP\",resource=\"cp\"})/1000",
+              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSCP\",resource=\"cp\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}}",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -3540,7 +3557,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -3548,7 +3565,7 @@
             "h": 11,
             "w": 8,
             "x": 0,
-            "y": 30
+            "y": 44
           },
           "id": 60,
           "options": {
@@ -3570,9 +3587,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSSuspend\",resource=\"suspend\"})/1000",
+              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSSuspend\",resource=\"suspend\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}} ",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}} ",
               "refId": "A"
             }
           ],
@@ -3632,7 +3649,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -3640,7 +3657,7 @@
             "h": 11,
             "w": 8,
             "x": 8,
-            "y": 30
+            "y": 44
           },
           "id": 62,
           "options": {
@@ -3661,9 +3678,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSCloud\",resource=\"cloud\"})/1000",
+              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSCloud\",resource=\"cloud\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}} ",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}} ",
               "refId": "A"
             }
           ],
@@ -3722,7 +3739,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -3730,7 +3747,7 @@
             "h": 11,
             "w": 8,
             "x": 16,
-            "y": 30
+            "y": 44
           },
           "id": 52,
           "options": {
@@ -3751,9 +3768,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSfrontend\",resource=\"frontend\"})/1000",
+              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSfrontend\",resource=\"frontend\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}}",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -3812,7 +3829,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -3820,7 +3837,7 @@
             "h": 11,
             "w": 8,
             "x": 0,
-            "y": 41
+            "y": 55
           },
           "id": 64,
           "options": {
@@ -3841,9 +3858,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSNvlog\",resource=\"nvlog\"})/1000",
+              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSNvlog\",resource=\"nvlog\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}} ",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}} ",
               "refId": "A"
             }
           ],
@@ -3902,7 +3919,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -3910,7 +3927,7 @@
             "h": 11,
             "w": 8,
             "x": 8,
-            "y": 41
+            "y": 55
           },
           "id": 58,
           "options": {
@@ -3931,9 +3948,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSDisk\",resource=\"disk\"})/1000",
+              "expr": "topk($TopResources, qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeQOSDisk\",resource=\"disk\"})",
               "interval": "",
-              "legendFormat": "{{svm}} / {{volume}}",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -6235,5 +6252,5 @@
   "timezone": "",
   "title": "ONTAP: Volume",
   "uid": "",
-  "version": 8
+  "version": 9
 }
