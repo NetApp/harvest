@@ -30,6 +30,11 @@ resource_map:
   DELAY_CENTER_WAFL_SUSP_OTHER : suspend
   DELAY_CENTER_QOS_MIN_THROUGHPUT: qos_min
   DELAY_CENTER_WAFL_SUSP_CP: cp
+  DELAY_CENTER_FLEXCACHE_RAL: flexcache_ral
+  DELAY_CENTER_FLEXCACHE_SPINHI: flexcache_spinhi
+  DELAY_CENTER_SYNC_REPL: sync_repl
+  DELAY_CENTER_COP: cop
+  DELAY_CENTER_WAFL_ADM_CTRL: admission
   # CPU_dblade_background : 
   # CPU_exempt : 
   # CPU_ha : 
@@ -38,14 +43,11 @@ resource_map:
   # CPU_network : 
   # CPU_protocol : 
   # CPU_raid : 
-  # CPU_wafl_exempt : 
-  # DELAY_CENTER_FLEXCACHE_RAL : 
-  # DELAY_CENTER_FLEXCACHE_SPINHI : 
-  # DELAY_CENTER_SYNC_REPL : 
+  # CPU_wafl_exempt :
   # DISK_SSD_OTHER :
 
 qos_labels:
-  - name
+  - name          => workload
   - svm.name      => svm
   - volume
   - qtree
@@ -63,3 +65,4 @@ export_options:
     - lun
     - file
     - policy_group
+    - workload
